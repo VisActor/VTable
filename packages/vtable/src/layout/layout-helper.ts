@@ -91,7 +91,7 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
       (table.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
       table.layoutNodeId,
       table.options.rowHierarchyType,
-      table.options.rowHierarchyType === 'tree' ? table.options.rowExpandLevel : undefined
+      table.options.rowHierarchyType === 'tree' ? table.options.rowExpandLevel ?? 1 : undefined
     );
     if (
       table.options.indicatorsAsCol === false &&

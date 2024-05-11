@@ -117,7 +117,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
             this.layoutNodeId,
             this.options.rowHierarchyType,
-            this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
+            this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
           );
         }
         this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
@@ -166,7 +166,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
             this.layoutNodeId,
             this.options.rowHierarchyType,
-            this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
+            this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
           );
         }
         this.internalProps.layoutMap = new PivotHeaderLayoutMap(
@@ -298,7 +298,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
         );
       }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
@@ -345,7 +345,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
         );
       }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
@@ -1191,7 +1191,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
         );
       }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
