@@ -61,7 +61,8 @@ export function createComplexColumn(
     // 处理单元格合并
     let cellWidth = colWidth;
     // let cellHeight = table.internalProps.autoRowHeight ? 0 : table.getRowHeight(row);
-    let cellHeight = table.getRowHeight(row);
+    let cellHeight = Math.round(table.getRowHeight(row));
+    // let cellHeight = table.getRowHeight(row);
     let range;
     let isMerge;
     let customStyle;
