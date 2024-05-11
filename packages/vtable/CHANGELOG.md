@@ -1,6 +1,20 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 08 May 2024 10:48:37 GMT and should not be manually modified.
+This log was last generated on Fri, 10 May 2024 03:15:01 GMT and should not be manually modified.
+
+## 0.25.4
+Fri, 10 May 2024 03:15:01 GMT
+
+### Updates
+
+- feat: remove vutil-extension temply
+
+## 0.25.3
+Thu, 09 May 2024 11:13:29 GMT
+
+### Updates
+
+- feat: remove vutil-extension temply
 
 ## 0.25.2
 Wed, 08 May 2024 10:48:37 GMT
