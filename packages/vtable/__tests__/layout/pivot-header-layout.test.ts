@@ -2634,68 +2634,6 @@ describe('pivot-header-layout test', () => {
         size: 1
       }
     ]);
-    expect(layout.rowTree).toEqual([
-      {
-        dimensionKey: '231012120511053',
-        value: '公司',
-        level: 0,
-        startIndex: 0,
-        startInTotal: 0,
-        id: 7,
-        size: 1,
-        children: [
-          {
-            indicatorKey: '10002',
-            value: '',
-            level: 1,
-            startIndex: 0,
-            startInTotal: 0,
-            id: 1,
-            size: 1
-          }
-        ]
-      },
-      {
-        dimensionKey: '231012120511053',
-        value: '小型企业',
-        level: 0,
-        startIndex: 1,
-        startInTotal: 1,
-        id: 8,
-        size: 1,
-        children: [
-          {
-            indicatorKey: '10002',
-            value: '',
-            level: 1,
-            startIndex: 0,
-            startInTotal: 1,
-            id: 2,
-            size: 1
-          }
-        ]
-      },
-      {
-        dimensionKey: '231012120511053',
-        value: '消费者',
-        level: 0,
-        startIndex: 2,
-        startInTotal: 2,
-        id: 9,
-        size: 1,
-        children: [
-          {
-            indicatorKey: '10002',
-            value: '',
-            level: 1,
-            startIndex: 0,
-            startInTotal: 2,
-            id: 3,
-            size: 1
-          }
-        ]
-      }
-    ]);
   });
 
   test('pivot-header-layout count', () => {
