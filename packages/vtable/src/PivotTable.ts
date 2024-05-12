@@ -104,22 +104,22 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.recordsIsTwoDimensionalArray = true;
       }
       if (options.customConfig?.enableDataAnalysis === false) {
-        let columnDimensionTree;
-        let rowDimensionTree;
-        if (options.columnTree) {
-          columnDimensionTree = new DimensionTree(
-            (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
-            this.layoutNodeId
-          );
-        }
-        if (options.rowTree) {
-          rowDimensionTree = new DimensionTree(
-            (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
-            this.layoutNodeId,
-            this.options.rowHierarchyType,
-            this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
-          );
-        }
+        // let columnDimensionTree;
+        // let rowDimensionTree;
+        // if (options.columnTree) {
+        const columnDimensionTree = new DimensionTree(
+          (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
+        );
+        // }
+        // if (options.rowTree) {
+        const rowDimensionTree = new DimensionTree(
+          (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId,
+          this.options.rowHierarchyType,
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+        );
+        // }
         this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
         //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
         //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
