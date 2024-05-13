@@ -26,7 +26,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@visactor/vtable': path.resolve(__dirname, '../../vtable/src/index.ts'),
-      '@src': path.resolve(__dirname, '../../vtable/src/')
+      '@src': path.resolve(__dirname, '../../vtable/src/'),
+      '@vutils-extension': path.resolve(__dirname, '../../vtable/src/vutil-extension-temp')
       // ...localConf.resolve?.alias
     }
   }
