@@ -243,7 +243,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       canvasHeight,
       overscrollBehavior,
       limitMinWidth,
-      limitMinHeight
+      limitMinHeight,
+      clearDOM = true
     } = options;
     this.container = container;
     this.options = options;
@@ -349,8 +350,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.theme.isPivot = this.isPivotTable();
 
     if (container) {
-      //先清空
-      // container.innerHTML = '';
+      // 先清空
+      if (clearDOM) {
+        container.innerHTML = '';
+      }
       container.appendChild(internalProps.element);
       this._updateSize();
     } else {
