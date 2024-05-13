@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 10 May 2024 03:15:01 GMT and should not be manually modified.
+This log was last generated on Mon, 13 May 2024 13:47:37 GMT and should not be manually modified.
+
+## 0.25.5
+Mon, 13 May 2024 13:47:37 GMT
+
+### Updates
+
+- fix: trigger mousedown_table event region need extend #1668
+
+
 
 ## 0.25.4
 Fri, 10 May 2024 03:15:01 GMT
