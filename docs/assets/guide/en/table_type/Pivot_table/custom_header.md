@@ -80,7 +80,6 @@ const option = {
     }
   ],
   indicators: ['sales', 'profit'],
-  //enableDataAnalysis:true,
   corner: {
     titleOnDimension: 'none'
   },

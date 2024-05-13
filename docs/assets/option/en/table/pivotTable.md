@@ -49,17 +49,9 @@ Currently, it supports incoming flattened data formats, taking the sales of larg
 ]
 ```
 
-## enableDataAnalysis(boolean)
-
-Whether the pivot table enables data analysis. Default false.
-
-If the incoming data records are detailed data and VTable is required for aggregate analysis, enable this configuration.
-
-If the incoming data is aggregated, in order to improve performance, it is set to false and columnTree and rowTree are required to be passed in.
-
 ## dataConfig(IDataConfig)
 
-Data analysis related configuration This configuration will be effective only after enableDataAnalysis is turned on.
+Data analysis related configuration .
 
 ```
 /**

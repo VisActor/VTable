@@ -353,6 +353,7 @@ export function generateLayoutTree(tree: LayouTreeNode[], children: ITreeLayoutH
       dimensionKey?: string;
       indicatorKey?: string;
       value: string;
+      virtual?: boolean;
       hierarchyState: HierarchyState;
       children: any;
     } = {
@@ -360,7 +361,8 @@ export function generateLayoutTree(tree: LayouTreeNode[], children: ITreeLayoutH
       indicatorKey: node.indicatorKey,
       value: node.value,
       hierarchyState: node.hierarchyState,
-      children: undefined
+      children: undefined,
+      virtual: node.virtual ?? false
     };
     tree.push(diemnsonNode);
     if (node.children) {

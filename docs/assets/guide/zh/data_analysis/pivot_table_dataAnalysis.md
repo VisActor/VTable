@@ -18,8 +18,7 @@
 const option={
   rows:['region','province'], //行维度
   columns:['year','quarter'], //列维度
-  indicators:['sales','profit'], //指标
-  enableDataAnalysis: true, //是否开启数据分析功能
+  indicators:['sales','profit'], //指标 //是否开启数据分析功能
   records:[ //数据源 如果传入了汇总数据则使用用户传入数据
     {
       region:'东北',
@@ -233,8 +232,6 @@ filterRules: [
 
 虽然具有分析能力的多维表格可以自动分析各个维度的维度值组成行列表头的树形结构，并且可以根据`dataConfig.sortRules`进行排序，但具有复杂业务逻辑的场景还是期望可以能够**自定义行列表头维度值**及顺序。那么可以通过 rowTree 和 columnTree 来实现这些业务需求场景。
 
-- enableDataAnalysis 需设置为 false 来关闭 VTable 内部聚合数据的分析，提升一定的性能。
-
    <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-tree.png" />
     <p>custom rowTree columnTree</p>
@@ -307,7 +304,7 @@ const option = {
         ]
     }],
     indicators: ['sales', 'profit'],
-    //enableDataAnalysis:true,
+
     corner: {
         titleOnDimension: 'none'
     },

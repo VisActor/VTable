@@ -219,8 +219,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 排序状态
    */
   sortState?: SortState | SortState[];
-  /** 数据分析相关配置 enableDataAnalysis开启后该配置才会有效 */
-  // dataConfig?: IListTableDataConfig;
+
   /** 全局设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置编辑器 */
@@ -347,7 +346,7 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
    */
   rowHeaderTitle?: ITitleDefine;
   //#endregion
-  /** 数据分析相关配置 enableDataAnalysis开启后该配置才会有效 */
+  /** 数据分析相关配置 */
   dataConfig?: IPivotTableDataConfig;
 
   /** 指标标题 用于显示到角头的值*/
@@ -510,7 +509,7 @@ export interface IDimensionHeaderNode {
   children?: IHeaderTreeDefine[] | true;
   /** 折叠状态 TODO */
   hierarchyState?: HierarchyState;
-  /** 是否为虚拟节点 基于records数据做分析时忽略该维度字段 */
+  /** 是否为虚拟节点 在基于records数据做分析时忽略该维度字段 */
   virtual?: boolean;
 }
 

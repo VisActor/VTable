@@ -18,8 +18,7 @@ The configuration of the pivot table above is as follows:
 const option={
   rows:['region','province'], //row dimensions
   columns:['year','quarter'], //column dimensions
-  indicators:['sales','profit'], //Indicators
-  enableDataAnalysis: true, //Whether to enable data analysis function
+  indicators:['sales','profit'], //Indicators //Whether to enable data analysis function
   records:[ //Data source。 If summary data is passed in, use user incoming data
     {
       region:'东北',
@@ -225,8 +224,6 @@ According to the above traversed structure, a dimension tree will be generated, 
 
 Although multi-dimensional tables with analytical capabilities can automatically analyze the dimension values of each dimension to form a tree structure of row and column headers, and can be sorted according to `dataConfig.sortRules`, scenarios with complex business logic still expect to be able to **customize Row column header dimension value ** and order. Then these business requirement scenarios can be realized through rowTree and columnTree.
 
-- enableDataAnalysis needs to be set to false to turn off the analysis of aggregated data within VTable.
-
    <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-tree.png" />
     <p>custom rowTree columnTree</p>
@@ -299,7 +296,7 @@ const option = {
         ]
     }],
     indicators: ['sales', 'profit'],
-    //enableDataAnalysis:true,
+
     corner: {
         titleOnDimension: 'none'
     },

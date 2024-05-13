@@ -23,8 +23,6 @@ The following are the Key Configurations items and their descriptions for using 
 
 Here is a simple example of how to use a pivot table to present data:
 
-- enableDataAnalysis needs to be set to true
-
 ```javascript livedemo  template=vtable
 const data = [
   {
@@ -819,7 +817,6 @@ const option = {
     }
   },
   widthMode: 'standard',
-  enableDataAnalysis: true,
   defaultHeaderColWidth: 150,
   rowHierarchyIndent: 20,
   rowHierarchyTextStartAlignment: true
@@ -830,8 +827,6 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 ## Example: Customize row header column header tree structure
 
 In the following example, in order to make the display order of each dimension value of the table header meet the requirements, we set two fields: rowTree and columnTree, which represent the tree structure of the row header and column header respectively. You can see the difference in the display order of the tree structure latitude values analyzed by VTable above.
-
-- enableDataAnalysis needs to be set to false
 
 ```javascript livedemo  template=vtable
 const data = [

@@ -92,12 +92,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.internalProps.rowResizeType = options.rowResizeType ?? 'row';
       this.internalProps.dataConfig = cloneDeep(options.dataConfig);
 
-      // this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
-      // if (!options.rowTree && !options.columnTree) {
-      //   this.internalProps.enableDataAnalysis = true;
-      // } else {
-      //   this.internalProps.enableDataAnalysis = false;
-      // }
       const records = this.internalProps.records;
       this.internalProps.recordsIsTwoDimensionalArray = false;
       if (records?.[0]?.constructor === Array) {
@@ -255,12 +249,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.rowResizeType = options.rowResizeType ?? 'row';
     internalProps.dataConfig = cloneDeep(options.dataConfig);
-    // internalProps.enableDataAnalysis = options.enableDataAnalysis;
-    // if (!options.rowTree && !options.columnTree) {
-    //   internalProps.enableDataAnalysis = true;
-    // } else {
-    //   internalProps.enableDataAnalysis = false;
-    // }
+
     //维护tree树形结构的展开状态
     if (
       options?.rowHierarchyType === 'tree' &&

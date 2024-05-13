@@ -809,12 +809,6 @@ export interface PivotTableProtected extends IBaseTableProtected {
   recordsIsTwoDimensionalArray?: boolean;
   layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IPivotTableDataConfig;
-  /**
-   * 透视表是否开启数据分析
-   * 如果传入数据是明细数据需要聚合分析则开启
-   * 如传入数据是经过聚合好的为了提升性能这里设置为false，同时需要传入columnTree和rowTree
-   */
-  enableDataAnalysis?: boolean;
 
   /** 列表头树型结构 */
   columnTree?: IHeaderTreeDefine[];
