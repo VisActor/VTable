@@ -1011,7 +1011,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //     : this.internalProps.defaultRowHeight)
     //     );
     if (isValid(this.rowHeightsMap.get(row))) {
-      if (this.options._disableColumnAndRowSizeRound ?? true) {
+      if (this.options._disableColumnAndRowSizeRound) {
         const height = this.rowHeightsMap.get(row);
         let heightRange;
         if (row < this.frozenRowCount) {
@@ -1129,7 +1129,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         h += this.getRowHeight(i);
       }
     } else {
-      if (this.options._disableColumnAndRowSizeRound ?? true) {
+      if (this.options._disableColumnAndRowSizeRound) {
         // for (let i = startRow; i <= endRow; i++) {
         //   h += this.getRowHeight(i);
         // }
@@ -1263,7 +1263,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _setColWidth(col: number, width: string | number, clearCache?: boolean, skipCheckFrozen?: boolean): void {
     this.colWidthsMap.put(
       col,
-      typeof width === 'number' ? (this.options._disableColumnAndRowSizeRound ? width : Math.round(width)) : width
+      // typeof width === 'number' ? (this.options._disableColumnAndRowSizeRound ? width : Math.round(width)) : width
+      typeof width === 'number' ? Math.round(width) : width
     );
     // 清楚影响缓存
     if (clearCache) {
