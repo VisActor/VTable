@@ -1130,12 +1130,26 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
     } else {
       if (this.options._disableColumnAndRowSizeRound ?? true) {
-        for (let i = startRow; i <= endRow; i++) {
-          h += this.getRowHeight(i);
+        // for (let i = startRow; i <= endRow; i++) {
+        //   h += this.getRowHeight(i);
+        // }
+        const tempH = this.rowHeightsMap.getSumInRange(startRow, endRow);
+        let heightRange;
+        if (endRow < this.frozenRowCount) {
+          heightRange = this.rowHeightsMap.getSumInRange(0, endRow);
+        } else if (endRow >= this.rowCount - this.bottomFrozenRowCount) {
+          heightRange = this.rowHeightsMap.getSumInRange(endRow, this.rowCount - 1);
+        } else {
+          heightRange = this.rowHeightsMap.getSumInRange(this.frozenRowCount, endRow);
         }
-      } else {
-        h = this.rowHeightsMap.getSumInRange(startRow, endRow);
+        heightRange = Number(heightRange.toFixed(2)); // avoid precision problem
+        // if heightRange number is int
+        if (Number.isInteger(heightRange)) {
+          return Math.ceil(tempH);
+        }
+        return Math.floor(tempH);
       }
+      h = this.rowHeightsMap.getSumInRange(startRow, endRow);
     }
     // if (this.options._disableColumnAndRowSizeRound) {
     //   // console.log(startRow, endRow, Number(h.toFixed(2)));
