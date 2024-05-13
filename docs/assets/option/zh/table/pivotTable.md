@@ -257,6 +257,8 @@ export interface IDimensionHeaderNode {
   children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
   /** 折叠状态 配合树形结构展示使用。注意：仅在rowTree中有效 */
   hierarchyState?: HierarchyState;
+  /** 是否为虚拟节点。 如果配置为true，则在基于records数据做分析时会忽略该维度字段 */
+  virtual?: boolean;
 }
 ```
 

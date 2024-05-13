@@ -253,6 +253,8 @@ export interface IDimensionHeaderNode {
   children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
   /** Collapse status Used with tree structure display. Note: only valid in rowTree */
   hierarchyState?: HierarchyState;
+  /** Whether it is a virtual node. If configured to true, this dimension field will be ignored when analyzing based on records data */
+  virtual?: boolean;
 }
 ```
 
