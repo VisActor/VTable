@@ -1011,6 +1011,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //     : this.internalProps.defaultRowHeight)
     //     );
     if (isValid(this.rowHeightsMap.get(row))) {
+      if (this.options._disableColumnAndRowSizeRound) {
+        const height = this.rowHeightsMap.get(row);
+        let heightRange;
+        if (row < this.frozenRowCount) {
+          heightRange = this.rowHeightsMap.getSumInRange(0, row);
+        } else if (row >= this.rowCount - this.bottomFrozenRowCount) {
+          heightRange = this.rowHeightsMap.getSumInRange(row, this.rowCount - 1);
+        } else {
+          heightRange = this.rowHeightsMap.getSumInRange(this.frozenRowCount, row);
+        }
+        heightRange = Number(heightRange.toFixed(2)); // avoid precision problem
+        // if heightRange number is int
+        if (Number.isInteger(heightRange)) {
+          return Math.ceil(height);
+        }
+        return Math.floor(height);
+      }
       return this.rowHeightsMap.get(row);
     }
     const defaultHeight = this.getDefaultRowHeight(row);
@@ -1112,8 +1129,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         h += this.getRowHeight(i);
       }
     } else {
-      h = this.rowHeightsMap.getSumInRange(startRow, endRow);
+      if (this.options._disableColumnAndRowSizeRound) {
+        for (let i = startRow; i <= endRow; i++) {
+          h += this.getRowHeight(i);
+        }
+      } else {
+        h = this.rowHeightsMap.getSumInRange(startRow, endRow);
+      }
     }
+    // if (this.options._disableColumnAndRowSizeRound) {
+    //   // console.log(startRow, endRow, Number(h.toFixed(2)));
+    //   // return Number(h.toFixed(2));
+    //   return h;
+    // }
     return Math.round(h);
   }
   /**

@@ -61,8 +61,7 @@ export function createComplexColumn(
     // 处理单元格合并
     let cellWidth = colWidth;
     // let cellHeight = table.internalProps.autoRowHeight ? 0 : table.getRowHeight(row);
-    let cellHeight = Math.round(table.getRowHeight(row));
-    // let cellHeight = table.getRowHeight(row);
+    let cellHeight = table.getRowHeight(row);
     let range;
     let isMerge;
     let customStyle;
@@ -234,8 +233,10 @@ export function createComplexColumn(
         columnGroup.updateColumnHeight(rangeHeight);
         y += rangeHeight;
       } else {
-        columnGroup.updateColumnHeight(cellGroup.attribute.height);
-        y += cellGroup.attribute.height;
+        // columnGroup.updateColumnHeight(cellGroup.attribute.height);
+        // y += cellGroup.attribute.height;
+        columnGroup.updateColumnHeight(cellHeight);
+        y += cellHeight;
       }
     }
     if (rowLimit && row > rowLimit) {
