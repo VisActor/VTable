@@ -173,6 +173,31 @@ Configuration example:
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
 
+**Special Note:**
+
+1. AggregationType.NONE The usage scenario of the indicator without aggregation is mainly used to display the original data obtained according to the data record input by the user, such as:
+
+```
+records:[{
+  region: 'Central South',
+  province: 'Guangxi',
+  year: '2016',
+  quarter: '2016-Q1',
+  sales: 'NULL',
+  profit: 1546
+}],
+dataConfig:{
+  aggregationRules:[
+  {
+    indicatorKey: 'sales', //Indicator name
+    field: 'sales', //Indicator based field
+    aggregationType: VTable.TYPES.AggregationType.NONE, //Do not perform aggregation. Match the corresponding data to obtain the value of the corresponding field.
+  }]
+}
+```
+
+The sales indicator in this record is a non-numeric value, and it is required to display `"NULL"` directly in the table cell. In this case, you can set `NONE` to require the internal aggregation logic of VTable to directly obtain the value of the sales field without aggregation.
+
 ### 5. Derive Field
 
 [option description](../../../option/PivotTable#dataConfig.derivedFieldRules)
@@ -370,8 +395,6 @@ const option = {
 VTable official website example: https://visactor.io/vtable/demo/table-type/pivot-table.
 
 The complexity of the custom tree lies in the formation of the row, column and dimension trees. You can choose to use it according to the business scenario. If you have complex sorting, aggregation or paging rules, you can choose to use a custom method.
-
-**Note: If you choose the custom tree configuration method, the data aggregation capability inside the VTable will not be enabled, that is, one of the matched data entries will be used as the cell indicator value. **
 
 ## Other related configurations
 

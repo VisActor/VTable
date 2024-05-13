@@ -422,7 +422,7 @@ If it is a pivot analysis table (a pivot table with data analysis turned on), an
    * Get source data based on row and column numbers
    * @param {number} col col index.
    * @param {number} row row index.
-   * @return {object} record or record array
+   * @return {object} record or record array. ListTable return one record, PivotTable return an array of records.
    */
   getCellOriginRecord(col: number, row: number)
 ```

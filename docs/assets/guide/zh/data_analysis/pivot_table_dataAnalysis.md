@@ -173,6 +173,32 @@ filterRules: [
 
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
 
+**特别提示：**
+
+1. AggregationType.NONE 指标不做聚合的使用场景主要用于根据用户传入数据 record 获取的原始数据进行展示，如：
+
+```
+records:[{
+  region: '中南',
+  province: '广西',
+  year: '2016',
+  quarter: '2016-Q1',
+  sales: 'NULL',
+  profit: 1546
+}],
+dataConfig:{
+    aggregationRules: [
+        {
+          indicatorKey: 'sales', //指标名称
+          field: 'sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.NONE, //不做聚合 匹配到其中对应数据获取其对应field的值
+        }
+      ]
+}
+```
+
+其中该条 record 中 sales 指标是个非数值型的值，而且需求要将`"NULL"`直接显示到表格单元格中，那么可以设置 NONE，要求 VTable 的内部聚合逻辑不聚合直接取`sales`字段值。
+
 ### 5. 派生字段
 
 [option 说明](../../../option/PivotTable#dataConfig.derivedFieldRules)
@@ -378,8 +404,6 @@ const option = {
 VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
 
 自定义树的复杂在于组建行列维度树，可酌情根据业务场景来选择使用，如果具有复杂的排序、汇总或分页规则可选择使用自定义方式。
-
-**注意：如果选择自定义树的配置方式将不开启 VTable 内部的数据聚合能力，即匹配到的数据条目中的某一条作为单元格指标值。**
 
 ## 其他相关配置
 

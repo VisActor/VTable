@@ -369,5 +369,3 @@ const option = {
 VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
 
 自定义树的复杂在于组建行列维度树，可酌情根据业务场景来选择使用，如果具有复杂的排序、汇总或分页规则可选择使用自定义方式。
-
-**注意：如果选择自定义树的配置方式将不开启 VTable 内部的数据聚合能力，即匹配到的数据条目中的某一条作为单元格指标值。**

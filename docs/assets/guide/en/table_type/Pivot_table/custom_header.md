@@ -158,4 +158,38 @@ The complexity of custom trees lies in the formation of row and column dimension
 
 If rowHierarchyType is set to tree and you expect to load lazily when you click to expand the node, you also need to use a pivot table with a custom header. For the specific demo, please refer to: https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load.
 
-**Note: If you choose the configuration method of the custom tree, the data aggregation capability inside VTable will not be enabled, that is, one of the matched data entries will be used as the cell indicator value.**
+# Virtual header node
+
+In some scenarios of pivot table analysis, the table structure and data to be displayed do not match perfectly. For example, the pivot table may only have row dimensions and indicator values. When there are many fields for indicator values, you want to group the indicators by customizing column headers. In fact, the column headers are virtual, and the data records are not associated with corresponding dimension fields, and the number of levels is uncertain.
+
+Based on this scenario, VTable provides the function of virtual header node, through which the headers on the column can be grouped. For a specific example, see: URL_ADDRESS.
+
+Just add `virtual: true` when configuring the nodes in rowTree columnTree.
+
+like:
+
+```
+rowTree: [
+  {
+    dimensionKey: 'Segment-1',
+    value: 'Segment-1 (virtual-node)',
+    virtual: true,
+    children: [
+      {
+      indicatorKey: 'Quantity',
+      value: 'Quantity'
+      },
+      {
+      indicatorKey: 'Sales',
+      value: 'Sales'
+      },
+      {
+      indicatorKey: 'Profit',
+      value: 'Profit'
+      }
+    ]
+  }
+],
+```
+
+Specific demo:
