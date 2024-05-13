@@ -271,8 +271,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.sharedVar.seqId = Math.max(this.sharedVar.seqId, this._headerObjects.length);
     //生成cornerHeaderObjs及_cornerHeaderCellIds
     if (this.cornerSetting.titleOnDimension === 'column') {
+      const colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
       this.cornerHeaderObjs = this._addCornerHeaders(
-        this.columnHeaderTitle ? [''].concat(this.colDimensionKeys as any) : this.colDimensionKeys,
+        this.columnHeaderTitle ? [''].concat(colDimensionKeys) : colDimensionKeys,
         this.columnsDefine
       );
     } else if (this.cornerSetting.titleOnDimension === 'row') {
@@ -291,8 +292,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.rowsDefine.concat(extensionRowDimensions)
         );
       } else {
+        const rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
         this.cornerHeaderObjs = this._addCornerHeaders(
-          this.rowHeaderTitle ? [''].concat(this.rowDimensionKeys as any) : this.rowDimensionKeys,
+          this.rowHeaderTitle ? [''].concat(rowDimensionKeys) : rowDimensionKeys,
           this.rowsDefine
         );
       }

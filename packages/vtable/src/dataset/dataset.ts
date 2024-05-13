@@ -35,6 +35,7 @@ import {
   sortBy,
   typeSort
 } from './statistics-helper';
+import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 /**
  * 数据处理模块
  */
@@ -558,7 +559,7 @@ export class Dataset {
       const rowAttr = this.rows[l];
       if (rowAttr in record) {
         rowKey.push(record[rowAttr]);
-      } else {
+      } else if (rowAttr !== IndicatorDimensionKeyPlaceholder) {
         //如果数据中缺失某个维度的值 可以认为是用户传入的汇总数据
         if (
           this.dataConfig?.totals?.row?.showGrandTotals &&
@@ -589,7 +590,7 @@ export class Dataset {
       const colAttr = this.columns[n];
       if (colAttr in record) {
         colKey.push(record[colAttr]);
-      } else {
+      } else if (colAttr !== IndicatorDimensionKeyPlaceholder) {
         //如果数据中缺失某个维度的值 可以认为是用户传入的汇总数据
         if (
           this.dataConfig?.totals?.column?.showGrandTotals &&

@@ -80,6 +80,7 @@ export class DimensionTree {
   // blockStartIndexMap: Map<number, boolean> = new Map();
   // blockEndIndexMap: Map<number, boolean> = new Map();
   dimensionKeys: NumberMap<string> = new NumberMap<string>();
+  dimensionKeysIncludeVirtual: NumberMap<string> = new NumberMap<string>();
   // dimensions: IDimension[] | undefined;//目前用不到这个
   cache: Map<number, any> = new Map();
   constructor(
@@ -101,6 +102,7 @@ export class DimensionTree {
     // this.dimensions = dimensions;
     this.cache.clear();
     this.dimensionKeys = new NumberMap<string>();
+    this.dimensionKeysIncludeVirtual = new NumberMap<string>();
     this.tree.children = tree as ITreeLayoutHeadNode[];
     // const re = { totalLevel: 0 };
     // if (updateTreeNode) this.updateTreeNode(this.tree, 0, re, this.tree);
@@ -122,6 +124,16 @@ export class DimensionTree {
         !this.dimensionKeys.contain(node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey)
       ) {
         this.dimensionKeys.put(node.level, node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey);
+      }
+      if (
+        !this.dimensionKeysIncludeVirtual.contain(
+          node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey
+        )
+      ) {
+        this.dimensionKeysIncludeVirtual.put(
+          node.level,
+          node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey
+        );
       }
       if (!node.id) {
         node.id = ++this.sharedVar.seqId;

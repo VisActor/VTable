@@ -164,6 +164,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'virtual-node'
+      },
+      {
+        path: 'pivot',
+        name: 'virtual-node-2'
       }
     ]
   },

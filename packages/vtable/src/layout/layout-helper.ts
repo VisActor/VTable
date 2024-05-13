@@ -71,8 +71,8 @@ export function checkHasTreeDefine(layoutMap: SimpleHeaderLayoutMap) {
 export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: PivotTableConstructorOptions) {
   let columnDimensionTree;
   let rowDimensionTree;
-  let isNeedResetColumnDimensionTree = false;
-  let isNeedResetRowDimensionTree = false;
+  let isNeedResetColumnDimensionTree = true;
+  let isNeedResetRowDimensionTree = true;
   if (options.columnTree) {
     columnDimensionTree = new DimensionTree(
       (table.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
@@ -84,6 +84,8 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
       options.indicators?.length >= 1
     ) {
       isNeedResetColumnDimensionTree = true;
+    } else {
+      isNeedResetColumnDimensionTree = false;
     }
   }
   if (options.rowTree) {
@@ -99,6 +101,8 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
       options.indicators?.length >= 1
     ) {
       isNeedResetRowDimensionTree = true;
+    } else {
+      isNeedResetRowDimensionTree = false;
     }
   }
   const rowKeys = rowDimensionTree?.dimensionKeys?.count
