@@ -108,6 +108,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
       );
+    } else {
+      if (options.indicatorsAsCol !== false) {
+        this.internalProps.columnTree = supplementIndicatorNodesForCustomTree([], options.indicators);
+      }
     }
     if (options.rowTree) {
       if (options.indicatorsAsCol === false) {
@@ -120,6 +124,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
       );
+    } else {
+      if (options.indicatorsAsCol === false) {
+        this.internalProps.rowTree = supplementIndicatorNodesForCustomTree([], options.indicators);
+      }
     }
     const rowKeys = rowDimensionTree?.dimensionKeys?.count
       ? rowDimensionTree.dimensionKeys.valueArr()
@@ -290,6 +298,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
       );
+    } else {
+      if (options.indicatorsAsCol !== false) {
+        this.internalProps.columnTree = supplementIndicatorNodesForCustomTree([], options.indicators);
+      }
     }
     if (options.rowTree) {
       if (options.indicatorsAsCol === false) {
@@ -302,6 +314,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
       );
+    } else {
+      if (options.indicatorsAsCol !== false) {
+        this.internalProps.rowTree = supplementIndicatorNodesForCustomTree([], options.indicators);
+      }
     }
     const rowKeys = rowDimensionTree?.dimensionKeys?.count
       ? rowDimensionTree.dimensionKeys.valueArr()

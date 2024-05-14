@@ -71,8 +71,8 @@ export function checkHasTreeDefine(layoutMap: SimpleHeaderLayoutMap) {
 export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: PivotTableConstructorOptions) {
   let columnDimensionTree;
   let rowDimensionTree;
-  let isNeedResetColumnDimensionTree = true;
-  let isNeedResetRowDimensionTree = true;
+  // let isNeedResetColumnDimensionTree = true;
+  // let isNeedResetRowDimensionTree = true;
   if (options.columnTree) {
     if (table.options.indicatorsAsCol !== false && table.options.supplementIndicatorNodes !== false) {
       table.internalProps.columnTree = supplementIndicatorNodesForCustomTree(
@@ -85,15 +85,19 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
       table.layoutNodeId
     );
 
-    if (
-      table.options.supplementIndicatorNodes !== false &&
-      table.options.indicatorsAsCol !== false &&
-      !columnDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder) &&
-      options.indicators?.length >= 1
-    ) {
-      isNeedResetColumnDimensionTree = true;
-    } else {
-      isNeedResetColumnDimensionTree = false;
+    // if (
+    //   table.options.supplementIndicatorNodes !== false &&
+    //   table.options.indicatorsAsCol !== false &&
+    //   !columnDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder) &&
+    //   options.indicators?.length >= 1
+    // ) {
+    //   isNeedResetColumnDimensionTree = true;
+    // } else {
+    //   isNeedResetColumnDimensionTree = false;
+    // }
+  } else {
+    if (options.indicatorsAsCol !== false) {
+      table.internalProps.columnTree = supplementIndicatorNodesForCustomTree([], options.indicators);
     }
   }
   if (options.rowTree) {
@@ -109,15 +113,19 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
       table.options.rowHierarchyType,
       table.options.rowHierarchyType === 'tree' ? table.options.rowExpandLevel ?? 1 : undefined
     );
-    if (
-      table.options.supplementIndicatorNodes !== false &&
-      table.options.indicatorsAsCol === false &&
-      !rowDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder) &&
-      options.indicators?.length >= 1
-    ) {
-      isNeedResetRowDimensionTree = true;
-    } else {
-      isNeedResetRowDimensionTree = false;
+    // if (
+    //   table.options.supplementIndicatorNodes !== false &&
+    //   table.options.indicatorsAsCol === false &&
+    //   !rowDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder) &&
+    //   options.indicators?.length >= 1
+    // ) {
+    //   isNeedResetRowDimensionTree = true;
+    // } else {
+    //   isNeedResetRowDimensionTree = false;
+    // }
+  } else {
+    if (options.indicatorsAsCol !== false) {
+      table.internalProps.rowTree = supplementIndicatorNodesForCustomTree([], options.indicators);
     }
   }
   const rowKeys = rowDimensionTree?.dimensionKeys?.count
@@ -193,8 +201,8 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
     rowKeys,
     columnKeys,
     indicatorKeys,
-    isNeedResetColumnDimensionTree,
-    isNeedResetRowDimensionTree,
+    // isNeedResetColumnDimensionTree,
+    // isNeedResetRowDimensionTree,
     columnDimensionTree,
     rowDimensionTree
   };
