@@ -99,7 +99,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     let rowDimensionTree;
     if (options.columnTree) {
       if (options.indicatorsAsCol !== false) {
-        supplementIndicatorNodesForCustomTree(this.internalProps.columnTree, options.indicators);
+        this.internalProps.columnTree = supplementIndicatorNodesForCustomTree(
+          this.internalProps.columnTree,
+          options.indicators
+        );
       }
       columnDimensionTree = new DimensionTree(
         (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
@@ -108,7 +111,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     if (options.rowTree) {
       if (options.indicatorsAsCol === false) {
-        supplementIndicatorNodesForCustomTree(this.internalProps.rowTree, options.indicators);
+        this.internalProps.rowTree = supplementIndicatorNodesForCustomTree(
+          this.internalProps.rowTree,
+          options.indicators
+        );
       }
       rowDimensionTree = new DimensionTree(
         (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
@@ -275,7 +281,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     let rowDimensionTree;
     if (options.columnTree) {
       if (options.indicatorsAsCol !== false) {
-        supplementIndicatorNodesForCustomTree(this.internalProps.columnTree, options.indicators);
+        this.internalProps.columnTree = supplementIndicatorNodesForCustomTree(
+          this.internalProps.columnTree,
+          options.indicators
+        );
       }
       columnDimensionTree = new DimensionTree(
         (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
@@ -284,7 +293,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     if (options.rowTree) {
       if (options.indicatorsAsCol === false) {
-        supplementIndicatorNodesForCustomTree(this.internalProps.rowTree, options.indicators);
+        this.internalProps.rowTree = supplementIndicatorNodesForCustomTree(
+          this.internalProps.rowTree,
+          options.indicators
+        );
       }
       rowDimensionTree = new DimensionTree(
         (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],

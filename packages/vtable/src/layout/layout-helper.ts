@@ -75,7 +75,10 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
   let isNeedResetRowDimensionTree = true;
   if (options.columnTree) {
     if (table.options.indicatorsAsCol !== false && table.options.supplementIndicatorNodes !== false) {
-      supplementIndicatorNodesForCustomTree(table.internalProps.columnTree, options.indicators);
+      table.internalProps.columnTree = supplementIndicatorNodesForCustomTree(
+        table.internalProps.columnTree,
+        options.indicators
+      );
     }
     columnDimensionTree = new DimensionTree(
       (table.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
@@ -95,7 +98,10 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
   }
   if (options.rowTree) {
     if (table.options.indicatorsAsCol === false && table.options.supplementIndicatorNodes !== false) {
-      supplementIndicatorNodesForCustomTree(table.internalProps.rowTree, options.indicators);
+      table.internalProps.rowTree = supplementIndicatorNodesForCustomTree(
+        table.internalProps.rowTree,
+        options.indicators
+      );
     }
     rowDimensionTree = new DimensionTree(
       (table.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
