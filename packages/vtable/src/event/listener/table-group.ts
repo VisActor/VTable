@@ -21,7 +21,7 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CheckBox, CheckboxAttributes, Radio } from '@visactor/vrender-components';
-
+import { ResizeColumnHotSpotSize } from '../../tools/global';
 export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
@@ -655,7 +655,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
     }
   });
-  // stage 的pointerdown监听 如果点击在表格内部 是会被阻止点的tableGroup的pointerdown 监听有stopPropagation
+  // stage 的pointerdown监听
   table.scenegraph.stage.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
@@ -668,6 +668,22 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // eventManager._resizing = true;
       table.scenegraph.updateChartState(null);
       stateManager.updateInteractionState(InteractionState.grabing);
+
+      // 调整列宽最后一列有外扩了8px  需要将其考虑到table中 需要触发下MOUSEDOWN_TABLE事件
+      const { eventArgs } = eventArgsSet;
+      if (!eventArgs?.targetCell) {
+        const cell = table.getCellAt(
+          eventArgsSet.abstractPos.x - ResizeColumnHotSpotSize / 2,
+          eventArgsSet.abstractPos.y
+        );
+        if (cell) {
+          if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+            table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+              event: e.nativeEvent
+            });
+          }
+        }
+      }
       return;
     }
   });
