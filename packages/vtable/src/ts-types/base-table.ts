@@ -428,7 +428,7 @@ export interface BaseTableConstructorOptions {
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
   clearDOM?: boolean;
   customConfig?: {
-    /** 解析换行符 */
+    /** xTable对于没有配置autoWrapText并且有'\n'的文本，在计算行高是会当做一行处理，但是在渲染时会解析'\n'；显示效果就是单元格高度为一行文本高度，只显示第一个'\n'前的文字，后面显示'...'；multilinesForXTable配置实现和该功能对齐的样式 */
     multilinesForXTable?: boolean;
     /** 这里可以配置为false 来走flatDataToObject的数据处理逻辑 而不走dataset的分析 */
     enableDataAnalysis?: boolean;
