@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: lineDash judgement in group-contribution-render #1696",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
