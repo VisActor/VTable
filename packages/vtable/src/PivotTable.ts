@@ -132,7 +132,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       } else {
         const keysResults = parseColKeyRowKeyForPivotTable(this, options);
         const { rowKeys, columnKeys, indicatorKeys } = keysResults;
-        const { columnDimensionTree, rowDimensionTree } = keysResults;
+        let { columnDimensionTree, rowDimensionTree } = keysResults;
         this.dataset = new Dataset(
           this.internalProps.dataConfig,
           // this.pagination,
@@ -148,20 +148,20 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
           this.internalProps.rowTree
         );
-        // if (!options.columnTree || isNeedResetColumnDimensionTree) {
-        //   columnDimensionTree = new DimensionTree(
-        //     (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-        //     this.layoutNodeId
-        //   );
-        // }
-        // if (!options.rowTree || isNeedResetRowDimensionTree) {
-        //   rowDimensionTree = new DimensionTree(
-        //     (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-        //     this.layoutNodeId,
-        //     this.options.rowHierarchyType,
-        //     this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
-        //   );
-        // }
+        if (!options.columnTree) {
+          columnDimensionTree = new DimensionTree(
+            (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+            this.layoutNodeId
+          );
+        }
+        if (!options.rowTree) {
+          rowDimensionTree = new DimensionTree(
+            (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+            this.layoutNodeId,
+            this.options.rowHierarchyType,
+            this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+          );
+        }
         this.internalProps.layoutMap = new PivotHeaderLayoutMap(
           this,
           this.dataset,
@@ -307,7 +307,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     } else {
       const keysResults = parseColKeyRowKeyForPivotTable(this, options);
       const { rowKeys, columnKeys, indicatorKeys } = keysResults;
-      const { columnDimensionTree, rowDimensionTree } = keysResults;
+      let { columnDimensionTree, rowDimensionTree } = keysResults;
       this.dataset = new Dataset(
         internalProps.dataConfig,
         // this.pagination,
@@ -321,20 +321,20 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
         this.internalProps.rowTree
       );
-      // if (!options.columnTree || isNeedResetColumnDimensionTree) {
-      //   columnDimensionTree = new DimensionTree(
-      //     (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-      //     this.layoutNodeId
-      //   );
-      // }
-      // if (!options.rowTree || isNeedResetRowDimensionTree) {
-      //   rowDimensionTree = new DimensionTree(
-      //     (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-      //     this.layoutNodeId,
-      //     this.options.rowHierarchyType,
-      //     this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
-      //   );
-      // }
+      if (!options.columnTree) {
+        columnDimensionTree = new DimensionTree(
+          (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
+        );
+      }
+      if (!options.rowTree) {
+        rowDimensionTree = new DimensionTree(
+          (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId,
+          this.options.rowHierarchyType,
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+        );
+      }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
     }
     this.pivotSortState = [];
