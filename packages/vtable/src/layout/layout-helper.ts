@@ -95,10 +95,10 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
     // } else {
     //   isNeedResetColumnDimensionTree = false;
     // }
-  } else {
-    if (options.indicatorsAsCol !== false) {
-      table.internalProps.columnTree = supplementIndicatorNodesForCustomTree([], options.indicators);
-    }
+    // } else {
+    //   if (options.indicatorsAsCol !== false) {
+    //     table.internalProps.columnTree = supplementIndicatorNodesForCustomTree([], options.indicators);
+    //   }
   }
   if (options.rowTree) {
     if (table.options.indicatorsAsCol === false && table.options.supplementIndicatorNodes !== false) {
@@ -123,10 +123,10 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
     // } else {
     //   isNeedResetRowDimensionTree = false;
     // }
-  } else {
-    if (options.indicatorsAsCol === false) {
-      table.internalProps.rowTree = supplementIndicatorNodesForCustomTree([], options.indicators);
-    }
+    // } else {
+    //   if (options.indicatorsAsCol === false) {
+    //     table.internalProps.rowTree = supplementIndicatorNodesForCustomTree([], options.indicators);
+    //   }
   }
   const rowKeys = rowDimensionTree?.dimensionKeys?.count
     ? rowDimensionTree.dimensionKeys.valueArr()

@@ -108,10 +108,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
       );
-    } else {
-      if (options.indicatorsAsCol !== false) {
-        this.internalProps.columnTree = supplementIndicatorNodesForCustomTree([], options.indicators);
-      }
     }
     if (options.rowTree) {
       if (options.indicatorsAsCol === false) {
@@ -124,10 +120,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
       );
-    } else {
-      if (options.indicatorsAsCol === false) {
-        this.internalProps.rowTree = supplementIndicatorNodesForCustomTree([], options.indicators);
-      }
     }
     const rowKeys = rowDimensionTree?.dimensionKeys?.count
       ? rowDimensionTree.dimensionKeys.valueArr()
@@ -203,7 +195,22 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         ];
       }
     }
-
+    if (!options.columnTree) {
+      if (options.indicatorsAsCol !== false) {
+        this.dataset.colHeaderTree = supplementIndicatorNodesForCustomTree(
+          this.dataset.colHeaderTree,
+          options.indicators
+        );
+      }
+    }
+    if (!options.rowTree) {
+      if (options.indicatorsAsCol === false) {
+        this.dataset.rowHeaderTree = supplementIndicatorNodesForCustomTree(
+          this.dataset.rowHeaderTree,
+          options.indicators
+        );
+      }
+    }
     columnDimensionTree = new DimensionTree(
       (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
       this.layoutNodeId
@@ -298,10 +305,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
       );
-    } else {
-      if (options.indicatorsAsCol !== false) {
-        this.internalProps.columnTree = supplementIndicatorNodesForCustomTree([], options.indicators);
-      }
     }
     if (options.rowTree) {
       if (options.indicatorsAsCol === false) {
@@ -314,10 +317,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
       );
-    } else {
-      if (options.indicatorsAsCol === false) {
-        this.internalProps.rowTree = supplementIndicatorNodesForCustomTree([], options.indicators);
-      }
     }
     const rowKeys = rowDimensionTree?.dimensionKeys?.count
       ? rowDimensionTree.dimensionKeys.valueArr()
@@ -392,6 +391,24 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             value: ''
           }
         ];
+      }
+    }
+
+    if (!options.columnTree) {
+      if (options.indicatorsAsCol !== false) {
+        this.dataset.colHeaderTree = supplementIndicatorNodesForCustomTree(
+          this.dataset.colHeaderTree,
+          options.indicators
+        );
+      }
+    }
+
+    if (!options.rowTree) {
+      if (options.indicatorsAsCol === false) {
+        this.dataset.rowHeaderTree = supplementIndicatorNodesForCustomTree(
+          this.dataset.rowHeaderTree,
+          options.indicators
+        );
       }
     }
     columnDimensionTree = new DimensionTree(

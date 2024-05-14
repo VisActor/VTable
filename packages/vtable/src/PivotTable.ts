@@ -40,7 +40,7 @@ import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
 import { cloneDeepSpec } from '@vutils-extension';
-import { parseColKeyRowKeyForPivotTable } from './layout/layout-helper';
+import { parseColKeyRowKeyForPivotTable, supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotTableProtected;
@@ -149,12 +149,24 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           this.internalProps.rowTree
         );
         if (!options.columnTree) {
+          if (options.indicatorsAsCol !== false) {
+            this.dataset.colHeaderTree = supplementIndicatorNodesForCustomTree(
+              this.dataset.colHeaderTree,
+              options.indicators
+            );
+          }
           columnDimensionTree = new DimensionTree(
             (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
             this.layoutNodeId
           );
         }
         if (!options.rowTree) {
+          if (options.indicatorsAsCol === false) {
+            this.dataset.rowHeaderTree = supplementIndicatorNodesForCustomTree(
+              this.dataset.rowHeaderTree,
+              options.indicators
+            );
+          }
           rowDimensionTree = new DimensionTree(
             (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
             this.layoutNodeId,
@@ -322,12 +334,24 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.rowTree
       );
       if (!options.columnTree) {
+        if (options.indicatorsAsCol !== false) {
+          this.dataset.colHeaderTree = supplementIndicatorNodesForCustomTree(
+            this.dataset.colHeaderTree,
+            options.indicators
+          );
+        }
         columnDimensionTree = new DimensionTree(
           (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId
         );
       }
       if (!options.rowTree) {
+        if (options.indicatorsAsCol !== false) {
+          this.dataset.rowHeaderTree = supplementIndicatorNodesForCustomTree(
+            this.dataset.rowHeaderTree,
+            options.indicators
+          );
+        }
         rowDimensionTree = new DimensionTree(
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
