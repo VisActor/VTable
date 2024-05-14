@@ -426,9 +426,9 @@ export interface BaseTableConstructorOptions {
   customCellStyleArrangement?: CustomCellStyleArrangement[];
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
-
+  clearDOM?: boolean;
   customConfig?: {
-    /** 兼容老版本xtable  强制解析换行符 */
+    /** 解析换行符 */
     multilinesForXTable?: boolean;
     /** 这里可以配置为false 来走flatDataToObject的数据处理逻辑 而不走dataset的分析 */
     enableDataAnalysis?: boolean;
