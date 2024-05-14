@@ -15,6 +15,7 @@ import eventRebind from './event/event-rebind';
 
 import componentContainer from './component/component-container';
 
+export default listTable;
 // export default listEditor;
 // export default listOptionRecord;
 // export default listComponent;
@@ -29,4 +30,4 @@ import componentContainer from './component/component-container';
 // export default listTableEvent;
 // export default eventRebind;
 
-export default componentContainer;
+// export default componentContainer;
