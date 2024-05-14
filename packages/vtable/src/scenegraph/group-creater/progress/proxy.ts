@@ -801,10 +801,10 @@ function getCellByCache(cacheCellGroup: Group, row: number): Group | null {
   const prev = cacheCellGroup._prev as Group;
   const next = cacheCellGroup._next as Group;
   // cacheCellGroup may have wrong order
-  if (cacheCellGroup.row > row && prev && prev.row === row - 1) {
+  if (cacheCellGroup.row > row && prev && prev.row === cacheCellGroup.row - 1) {
     return getCellByCache(prev, row);
   }
-  if (cacheCellGroup.row < row && next && next.row === row + 1) {
+  if (cacheCellGroup.row < row && next && next.row === cacheCellGroup.row + 1) {
     return getCellByCache(next, row);
   }
   return null;
