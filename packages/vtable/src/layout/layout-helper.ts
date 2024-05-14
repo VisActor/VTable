@@ -124,7 +124,7 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
     //   isNeedResetRowDimensionTree = false;
     // }
   } else {
-    if (options.indicatorsAsCol !== false) {
+    if (options.indicatorsAsCol === false) {
       table.internalProps.rowTree = supplementIndicatorNodesForCustomTree([], options.indicators);
     }
   }

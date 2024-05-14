@@ -315,7 +315,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         this.layoutNodeId
       );
     } else {
-      if (options.indicatorsAsCol !== false) {
+      if (options.indicatorsAsCol === false) {
         this.internalProps.rowTree = supplementIndicatorNodesForCustomTree([], options.indicators);
       }
     }
