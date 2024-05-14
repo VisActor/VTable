@@ -1,4 +1,5 @@
 import { Dataset } from '../../dataset/dataset';
+import { supplementIndicatorNodesForCustomTree } from '../../layout/layout-helper';
 import type { ITreeLayoutHeadNode } from '../../layout/tree-helper';
 import { DimensionTree } from '../../layout/tree-helper';
 import type {
@@ -18,9 +19,15 @@ export function createDataset(options: PivotChartConstructorOptions) {
   let columnDimensionTree;
   let rowDimensionTree;
   if (options.columnTree) {
+    if (options.indicatorsAsCol !== false) {
+      supplementIndicatorNodesForCustomTree(options.columnTree, options.indicators);
+    }
     columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], layoutNodeId);
   }
   if (options.rowTree) {
+    if (options.indicatorsAsCol === false) {
+      supplementIndicatorNodesForCustomTree(options.rowTree, options.indicators);
+    }
     rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], layoutNodeId);
   }
   const rowKeys = rowDimensionTree.dimensionKeys?.count

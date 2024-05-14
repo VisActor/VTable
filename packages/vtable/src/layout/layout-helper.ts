@@ -194,7 +194,10 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
   };
 }
 
-function supplementIndicatorNodesForCustomTree(customTree: IHeaderTreeDefine[], indicators: (string | IIndicator)[]) {
+export function supplementIndicatorNodesForCustomTree(
+  customTree: IHeaderTreeDefine[],
+  indicators: (string | IIndicator)[]
+) {
   const checkNode = (nodes: IHeaderTreeDefine[], isHasIndicator: boolean) => {
     nodes.forEach((node: IHeaderTreeDefine) => {
       if (

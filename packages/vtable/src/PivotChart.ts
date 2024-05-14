@@ -47,6 +47,7 @@ import type { ITreeLayoutHeadNode } from './layout/tree-helper';
 import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
 import { IndicatorDimensionKeyPlaceholder } from './tools/global';
 import { checkHasCartesianChart } from './layout/chart-helper/get-chart-spec';
+import { supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
 export class PivotChart extends BaseTable implements PivotChartAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotChartProtected;
@@ -97,12 +98,18 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     let columnDimensionTree;
     let rowDimensionTree;
     if (options.columnTree) {
+      if (options.indicatorsAsCol !== false) {
+        supplementIndicatorNodesForCustomTree(this.internalProps.columnTree, options.indicators);
+      }
       columnDimensionTree = new DimensionTree(
         (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
       );
     }
     if (options.rowTree) {
+      if (options.indicatorsAsCol === false) {
+        supplementIndicatorNodesForCustomTree(this.internalProps.rowTree, options.indicators);
+      }
       rowDimensionTree = new DimensionTree(
         (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
@@ -267,12 +274,18 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     let columnDimensionTree;
     let rowDimensionTree;
     if (options.columnTree) {
+      if (options.indicatorsAsCol !== false) {
+        supplementIndicatorNodesForCustomTree(this.internalProps.columnTree, options.indicators);
+      }
       columnDimensionTree = new DimensionTree(
         (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
       );
     }
     if (options.rowTree) {
+      if (options.indicatorsAsCol === false) {
+        supplementIndicatorNodesForCustomTree(this.internalProps.rowTree, options.indicators);
+      }
       rowDimensionTree = new DimensionTree(
         (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
         this.layoutNodeId
