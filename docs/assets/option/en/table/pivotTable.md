@@ -380,38 +380,6 @@ Set the sorting state, only corresponding to the display effect of the button wi
     tableType = 'pivotTable'
 ) }}
 
-## editor (string|Object|Function)
+## supplementIndicatorNodes(boolean) = true
 
-Global configuration cell editor
-
-```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-```
-
-Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
-
-## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
-
-The trigger timing for entering the editing state.
-
-```
-
-/** Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' */
-editCellTrigger?: 'doubleclick' | 'click' | 'api';
-
-```
-
-{{ use: common-option-secondary(
-    prefix = '#',
-    tableType = 'listTable'
-) }}
-
-```
-
-## rowSeriesNumber(IRowSeriesNumber)
-
-set row serial number.
-{{ use: row-series-number(
-    prefix = '###',
-) }}
-```
+Whether to add index nodes to the corresponding custom table headers such as rowTree or columnTree. Default is true

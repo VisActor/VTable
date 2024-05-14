@@ -1367,28 +1367,40 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const paths = this.getCellHeaderPaths(_col, _row);
     if (this.indicatorsAsCol) {
       const indicatorKey = paths.colHeaderPaths?.find(colPath => colPath.indicatorKey)?.indicatorKey;
-      return (
-        this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
-        this._indicators[0] ?? {
+      return isValid(indicatorKey)
+        ? this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
+            this._indicators[0] ?? {
+              id: '',
+              field: undefined,
+              indicatorKey: undefined,
+              cellType: 'text',
+              define: undefined
+            }
+        : {
+            id: '',
+            field: undefined,
+            indicatorKey: undefined,
+            cellType: 'text',
+            define: undefined
+          };
+    }
+    const indicatorKey = paths.rowHeaderPaths?.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    return isValid(indicatorKey)
+      ? this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
+          this._indicators[0] ?? {
+            id: '',
+            field: undefined,
+            indicatorKey: undefined,
+            cellType: 'text',
+            define: undefined
+          }
+      : {
           id: '',
           field: undefined,
           indicatorKey: undefined,
           cellType: 'text',
           define: undefined
-        }
-      );
-    }
-    const indicatorKey = paths.rowHeaderPaths?.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
-    return (
-      this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
-      this._indicators[0] ?? {
-        id: '',
-        field: undefined,
-        indicatorKey: undefined,
-        cellType: 'text',
-        define: undefined
-      }
-    );
+        };
   }
   // getBodyLayoutRangeById(id: LayoutObjectId): CellRange {
   //   for (let col = 0; col < (this.colCount ?? 0); col++) {

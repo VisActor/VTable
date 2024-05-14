@@ -193,4 +193,47 @@ VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
         ],
 ```
 
-具体 demo：
+具体 demo：https://visactor.io/vtable/demo/table-type/pivot-table-virtual-header
+
+# 自定义树补全指标节点
+
+默认情况下，VTable 会自动补全指标节点，如用户可以传入一个维度树，但是不带又指标节点：
+
+```
+        rowTree: [
+          {
+            dimensionKey: 'Region',
+            value: 'North',
+          }
+        ],
+```
+
+同时用户在 indicators 中配置了指标信息：
+
+```
+indicators: ['Sales', 'Profit'],
+indicatorsAsCol:false,
+```
+
+VTable 会自动补全指标节点到行维度表头树中：
+
+```
+      rowTree: [
+          {
+            dimensionKey: 'Region',
+            value: 'North',
+            children: [
+              {
+                indicatorKey: 'Sales',
+                value: 'Sales'
+              },
+              {
+                indicatorKey: 'Profit',
+                value: 'Profit'
+              }
+            ]
+          }
+        ],
+```
+
+如果不需要自动补全指标节点，可通过设置 `supplementIndicatorNodes: false` 来关闭自动补全。

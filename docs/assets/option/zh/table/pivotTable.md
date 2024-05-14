@@ -384,33 +384,6 @@ export interface IIndicatorHeaderNode {
     tableType = 'pivotTable'
 ) }}
 
-## editor(string|Object|Function)
+## supplementIndicatorNodes(boolean) = true
 
-全局配置单元格编辑器
-
-```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-```
-
-其中 IEditor 是@visactor/vtable-editors 中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
-
-## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
-
-进入编辑状态的触发时机。
-
-```
-/** 编辑触发时机:双击事件 | 单击事件 | api手动开启编辑。默认为双击'doubleclick' */
-editCellTrigger?: 'doubleclick' | 'click' | 'api';
-```
-
-{{ use: common-option-secondary(
-    prefix = '#',
-    tableType = 'listTable'
-) }}
-
-## rowSeriesNumber(IRowSeriesNumber)
-
-配置行序号。
-{{ use: row-series-number(
-    prefix = '###',
-) }}
+是否需要补充指标节点到对应的自定义表头中如 rowTree 或者 columnTree. 默认为 true

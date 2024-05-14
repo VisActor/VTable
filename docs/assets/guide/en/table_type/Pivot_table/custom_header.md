@@ -192,4 +192,47 @@ rowTree: [
 ],
 ```
 
-Specific demo:
+Specific demo: https://visactor.io/vtable/demo/table-type/pivot-table-virtual-header
+
+# Custom tree completion indicator node
+
+By default, VTable will automatically complete the indicator node. For example, the user can pass in a dimension tree without an indicator node:
+
+```
+rowTree: [
+  {
+    dimensionKey: 'Region',
+    value: 'North',
+  }
+],
+```
+
+At the same time, the user configures indicator information in indicators:
+
+```
+indicators: ['Sales', 'Profit'],
+indicatorsAsCol:false,
+```
+
+VTable will automatically complete the indicator nodes into the row dimension header tree:
+
+```
+rowTree: [
+  {
+    dimensionKey: 'Region',
+    value: 'North',
+    children: [
+      {
+        indicatorKey: 'Sales',
+        value: 'Sales'
+      },
+      {
+        indicatorKey: 'Profit',
+        value: 'Profit'
+      }
+    ]
+  }
+],
+```
+
+If you don't need to automatically complete indicator nodes, you can turn off automatic completion by setting `supplementIndicatorNodes: false`.

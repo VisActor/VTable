@@ -247,9 +247,9 @@ export class Dataset {
 
       const t7 = typeof window !== 'undefined' ? window.performance.now() : 0;
       if (this.customRowTree) {
-        if (!this.indicatorsAsCol) {
-          this.customRowTree = this._adjustCustomTree(this.customRowTree);
-        }
+        // if (!this.indicatorsAsCol) {
+        //   this.customRowTree = this._adjustCustomTree(this.customRowTree);
+        // }
 
         this.rowHeaderTree = this.customRowTree;
       } else {
@@ -278,9 +278,9 @@ export class Dataset {
         }
       }
       if (this.customColTree) {
-        if (this.indicatorsAsCol) {
-          this.customColTree = this._adjustCustomTree(this.customColTree);
-        }
+        // if (this.indicatorsAsCol) {
+        //   this.customColTree = this._adjustCustomTree(this.customColTree);
+        // }
         this.colHeaderTree = this.customColTree;
       } else {
         this.colHeaderTree = this.ArrToTree(
@@ -1587,39 +1587,39 @@ export class Dataset {
     }
   }
 
-  private _adjustCustomTree(customTree: IHeaderTreeDefine[]) {
-    const checkNode = (nodes: IHeaderTreeDefine[], isHasIndicator: boolean) => {
-      nodes.forEach((node: IHeaderTreeDefine) => {
-        if (
-          !node.indicatorKey &&
-          !isHasIndicator &&
-          (!(node.children as IHeaderTreeDefine[])?.length || !node.children)
-        ) {
-          node.children = this.indicators?.map(
-            (indicator: IIndicator | string): { indicatorKey: string; value: string } => {
-              if (typeof indicator === 'string') {
-                return { indicatorKey: indicator, value: indicator };
-              }
-              return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
-            }
-          );
-        } else if (node.children && Array.isArray(node.children)) {
-          checkNode(node.children, isHasIndicator || !!node.indicatorKey);
-        }
-      });
-    };
-    if (customTree?.length) {
-      checkNode(customTree, false);
-    } else {
-      customTree = this.indicators?.map((indicator: IIndicator | string): { indicatorKey: string; value: string } => {
-        if (typeof indicator === 'string') {
-          return { indicatorKey: indicator, value: indicator };
-        }
-        return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
-      });
-    }
-    return customTree;
-  }
+  // private _adjustCustomTree(customTree: IHeaderTreeDefine[]) {
+  //   const checkNode = (nodes: IHeaderTreeDefine[], isHasIndicator: boolean) => {
+  //     nodes.forEach((node: IHeaderTreeDefine) => {
+  //       if (
+  //         !node.indicatorKey &&
+  //         !isHasIndicator &&
+  //         (!(node.children as IHeaderTreeDefine[])?.length || !node.children)
+  //       ) {
+  //         node.children = this.indicators?.map(
+  //           (indicator: IIndicator | string): { indicatorKey: string; value: string } => {
+  //             if (typeof indicator === 'string') {
+  //               return { indicatorKey: indicator, value: indicator };
+  //             }
+  //             return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
+  //           }
+  //         );
+  //       } else if (node.children && Array.isArray(node.children)) {
+  //         checkNode(node.children, isHasIndicator || !!node.indicatorKey);
+  //       }
+  //     });
+  //   };
+  //   if (customTree?.length) {
+  //     checkNode(customTree, false);
+  //   } else {
+  //     customTree = this.indicators?.map((indicator: IIndicator | string): { indicatorKey: string; value: string } => {
+  //       if (typeof indicator === 'string') {
+  //         return { indicatorKey: indicator, value: indicator };
+  //       }
+  //       return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
+  //     });
+  //   }
+  //   return customTree;
+  // }
 
   changeTreeNodeValue(
     rowKey: string[] | string = [],

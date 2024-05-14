@@ -390,7 +390,17 @@ Custom cell style
 
 ```
 {
-   customCellStyleArrangement: {cellPosition: {row?: number; col?: number; range?: {start: {row: number; col: number}; end: {row: number; col: number}}}; customStyleId: string} []
+  customCellStyleArrangement:
+  {
+    cellPosition: {
+      row?: number;
+      col?: number;
+      range?: {
+        start: {row: number; col: number};
+        end: {row: number; col: number}
+      }
+  };
+  customStyleId: string}[]
 }
 ```
 
@@ -400,3 +410,38 @@ Custom cell style assignment
   - Single cell: `{ row: number, column: number }`
   - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+#${prefix} editor (string|Object|Function)
+
+Global configuration cell editor
+
+```
+editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+
+Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
+
+#${prefix} headerEditor (string|Object|Function)
+
+Global configuration table header display title title editor
+
+```
+headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+
+#${prefix} editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
+
+The trigger timing for entering the editing state.
+
+```
+
+/** Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' */
+editCellTrigger?: 'doubleclick' | 'click' | 'api';
+```
+
+#${prefix} rowSeriesNumber(IRowSeriesNumber)
+
+set row serial number.
+{{ use: row-series-number(
+    prefix = '###',
+) }}

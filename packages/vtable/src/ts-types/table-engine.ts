@@ -358,6 +358,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 是否需要补充指标节点到对应的自定义表头中如rowTree或者columnTree. 默认为true */
+  supplementIndicatorNodes?: boolean;
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**

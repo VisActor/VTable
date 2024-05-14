@@ -9,6 +9,7 @@ import type {
   HeaderData,
   ICustomRender,
   IDimension,
+  IHeaderTreeDefine,
   IIndicator,
   IRowDimension,
   LayoutObjectId

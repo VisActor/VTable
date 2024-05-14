@@ -9,6 +9,7 @@ export function createTable() {
     .then(res => res.json())
     .then(data => {
       const option: VTable.PivotTableConstructorOptions = {
+        supplementIndicatorNodes: false,
         records: data,
         rows: [
           {
@@ -50,6 +51,15 @@ export function createTable() {
           }
         ],
         columnTree: [
+          {
+            dimensionKey: 'Segment-3',
+            value: 'Segment-3 (virtual-node)',
+            virtual: true
+          },
+          {
+            dimensionKey: 'Segment',
+            value: 'Consumer'
+          },
           {
             dimensionKey: 'Segment-1',
             value: 'Segment-1 (virtual-node)',
@@ -135,6 +145,15 @@ export function createTable() {
                 value: 'Profit'
               }
             ]
+          },
+          {
+            dimensionKey: 'Segment-4',
+            value: 'Segment-4 (virtual-node)',
+            virtual: true
+          },
+          {
+            dimensionKey: 'Segment',
+            value: 'Consumer'
           }
         ],
         indicators: [
@@ -145,6 +164,9 @@ export function createTable() {
             showSort: false,
             headerStyle: {
               fontWeight: 'normal'
+            },
+            format: rec => {
+              return '$' + Number(rec).toFixed(2);
             },
             style: {
               padding: [16, 28, 16, 28],
