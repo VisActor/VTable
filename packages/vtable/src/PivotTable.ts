@@ -346,7 +346,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         );
       }
       if (!options.rowTree) {
-        if (options.indicatorsAsCol !== false) {
+        if (options.indicatorsAsCol === false) {
           this.dataset.rowHeaderTree = supplementIndicatorNodesForCustomTree(
             this.dataset.rowHeaderTree,
             options.indicators
