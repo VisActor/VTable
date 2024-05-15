@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: mouse down on scroll rail trigger mousedown_table #1706\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
