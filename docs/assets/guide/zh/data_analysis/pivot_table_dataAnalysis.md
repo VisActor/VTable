@@ -414,3 +414,9 @@ VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
 在维度配置 rows 或者 columns 中加上 drillDown 的配置项来显示下载按钮，监听点击图标按钮事件`drillmenu_click`,根据事件参数`drillDown` 或者 `drillUp`来确定是维度下钻还是上卷，根据参数`dimensionKey`确定下钻或上钻的维度，将其添加或者删除到 rows 或者 columns 中，并获取新维度层级对应数据源，并调用接口`updateOption`将新的 option 更新至表格。
 
 具体 demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-table-drill
+
+## 相关接口
+
+### getCellOriginRecord
+
+可以帮助获取单元格聚合值对应的原始数据条目。

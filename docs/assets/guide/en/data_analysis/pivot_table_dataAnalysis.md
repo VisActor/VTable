@@ -405,3 +405,9 @@ We only provide the display of the drill-down download button. If you need this 
 Add the drillDown configuration item to the dimension configuration rows or columns to display the download button, listen to the icon button click event `drillmenu_click`, determine whether to drill down or roll up the dimension according to the event parameter `drillDown` or `drillUp`, determine the dimension to drill down or drill up according to the parameter `dimensionKey`, add or delete it to rows or columns, obtain the data source corresponding to the new dimension level, and call the interface `updateOption` to update the new option to the table.
 
 Specific demo: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-table-drill
+
+## Related interfaces
+
+### getCellOriginRecord
+
+It can help to obtain the original data entry corresponding to the cell aggregate value.
