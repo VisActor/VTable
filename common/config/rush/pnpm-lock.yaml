@@ -180,6 +180,7 @@ importers:
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       '@types/react-is': ^17.0.3
+      '@types/react-reconciler': 0.28.8
       '@visactor/vchart': 1.10.0
       '@visactor/vtable': workspace:*
       '@visactor/vutils': ~0.18.1
@@ -201,6 +202,7 @@ importers:
       react: ^18.0.0
       react-dom: ^18.0.0
       react-is: ^18.2.0
+      react-reconciler: 0.29.2
       rimraf: 3.0.2
       sass: 1.43.5
       ts-jest: ^26.0.0
@@ -216,6 +218,7 @@ importers:
       '@visactor/vtable': link:../vtable
       '@visactor/vutils': 0.18.1
       react-is: 18.2.0
+      react-reconciler: 0.29.2_react@18.2.0
     devDependencies:
       '@arco-design/web-react': 2.60.2_6qcp4jokx32fjqh56b7wyl7qsu
       '@babel/core': 7.20.12
@@ -232,6 +235,7 @@ importers:
       '@types/react': 18.2.78
       '@types/react-dom': 18.2.25
       '@types/react-is': 17.0.7
+      '@types/react-reconciler': 0.28.8
       '@visactor/vchart': 1.10.0
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.6.8
@@ -3330,6 +3334,12 @@ packages:
     resolution: {integrity: sha512-WrTEiT+c6rgq36QApoy0063uAOdltCrhF0QMXLIgYPaTvIdQhAB8hPb5oGGqX18xToElNILS9UprwU6GyINcJg==}
     dependencies:
       '@types/react': 17.0.80
+    dev: true
+
+  /@types/react-reconciler/0.28.8:
+    resolution: {integrity: sha512-SN9c4kxXZonFhbX4hJrZy37yw9e7EIxcpHCxQv5JUS18wDE5ovkQKlqQEkufdJCCMfuI9BnjUJvhYeJ9x5Ra7g==}
+    dependencies:
+      '@types/react': 18.2.78
     dev: true
 
   /@types/react/17.0.80:
@@ -11234,6 +11244,17 @@ packages:
   /react-is/18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
+  /react-reconciler/0.29.2_react@18.2.0:
+    resolution: {integrity: sha512-zZQqIiYgDCTP/f1N/mAR10nJGrPD2ZR+jDSEsKWJHYC7Cm2wodlwbR3upZRdC3cjIjSlTLNVyO7Iu0Yy7t2AYg==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      react: ^18.3.1
+    dependencies:
+      loose-envify: 1.4.0
+      react: 18.2.0
+      scheduler: 0.23.2
+    dev: false
+
   /react-refresh/0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
     engines: {node: '>=0.10.0'}
@@ -11868,6 +11889,12 @@ packages:
     resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
     dependencies:
       loose-envify: 1.4.0
+
+  /scheduler/0.23.2:
+    resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
+    dependencies:
+      loose-envify: 1.4.0
+    dev: false
 
   /scroll-into-view-if-needed/2.2.20:
     resolution: {integrity: sha512-P9kYMrhi9f6dvWwTGpO5I3HgjSU/8Mts7xL3lkoH5xlewK7O9Obdc5WmMCzppln7bCVGNmf3qfoZXrpCeyNJXw==}

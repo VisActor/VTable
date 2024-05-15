@@ -715,7 +715,7 @@ function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWra
     !autoWrapText &&
     !autoRowHeight &&
     !mayHaveIcon &&
-    oldCellGroup.firstChild?.type === 'text' &&
+    oldCellGroup.firstChild?.type === 'text' && // judgement for none text
     !isPromise(value)
   ) {
     return true;

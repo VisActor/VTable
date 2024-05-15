@@ -19,6 +19,7 @@ import type {
 import { Icon } from '../graphic/icon';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { percentCalcObj } from '../../render/layout';
+import { emptyCustomLayout } from '../../components/react/react-custom-layout';
 
 export function dealWithCustom(
   customLayout: ICustomLayout,
@@ -39,6 +40,10 @@ export function dealWithCustom(
   let customElements;
   let elementsGroup: VGroup;
 
+  if (customLayout === 'react-custom-layout') {
+    // customLayout = table._reactCreateGraphic;
+    customLayout = table.reactCustomLayout?.getCustomLayoutFunc(col, row) || emptyCustomLayout;
+  }
   if (typeof customLayout === 'function') {
     const arg = {
       col,

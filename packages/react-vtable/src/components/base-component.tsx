@@ -1,16 +1,19 @@
-import React, { useContext, useEffect } from 'react';
+import type { ReactElement } from 'react';
+import React, { cloneElement, useContext, useEffect } from 'react';
 import { isEqual, isNil, pickWithout } from '@visactor/vutils';
 
 import type { TableContextType } from '../context/table';
 import RootTableContext from '../context/table';
 import { bindEventsToTable } from '../eventsUtils';
 import { uid } from '../util';
+import { CustomLayout } from './custom/custom-layout';
 
 export interface BaseComponentProps {
   id?: string | number;
+  children?: React.ReactNode;
 }
 
-type ComponentProps = BaseComponentProps & { updateId?: number; componentId?: number };
+type ComponentProps = BaseComponentProps & { updateId?: number; componentId?: number; componentIndex?: number };
 
 export const createComponent = <T extends ComponentProps>(
   componentName: string,
@@ -18,7 +21,7 @@ export const createComponent = <T extends ComponentProps>(
   supportedEvents?: Record<string, string> | null,
   isSingle?: boolean
 ) => {
-  const ignoreKeys = ['id', 'updateId', 'componentId'];
+  const ignoreKeys = ['id', 'updateId', 'componentId', 'componentIndex', 'children'];
   const notOptionKeys = supportedEvents ? Object.keys(supportedEvents).concat(ignoreKeys) : ignoreKeys;
 
   const Comp: React.FC<T> = (props: T) => {
@@ -57,14 +60,20 @@ export const createComponent = <T extends ComponentProps>(
         // deleteToContext(context, id.current, optionName, isSingle);
       };
     }, []);
-
-    return null;
+    return props.children
+      ? cloneElement(props.children as ReactElement, { componentIndex: props.componentIndex })
+      : null;
   };
 
   Comp.displayName = componentName;
 
   (Comp as any).parseOption = (props: T & { updateId?: number; componentId?: string }) => {
     const newComponentOption: Partial<T> = pickWithout<T>(props, notOptionKeys);
+
+    // deal width customLayout
+    if (props.children && (props.children as React.ReactElement).type === CustomLayout) {
+      (newComponentOption as any).customLayout = 'react-custom-layout';
+    }
 
     return {
       option: newComponentOption,

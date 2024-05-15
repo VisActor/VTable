@@ -10,7 +10,7 @@ import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
-import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
+import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
@@ -542,7 +542,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       rect: getCellRect(col, row, table),
       table
     };
-    if (customLayout) {
+    if (isFunction(customLayout)) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
       if (customLayoutObj.rootContainer instanceof VGroup) {

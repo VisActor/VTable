@@ -126,6 +126,7 @@ import { RowSeriesNumberHelper } from './row-series-number-helper';
 import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 import type { ITextGraphicAttribute } from '@src/vrender';
+import { ReactCustomLayout } from '../components/react/react-custom-layout';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -194,6 +195,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   customCellStylePlugin: CustomCellStylePlugin;
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+
+  reactCustomLayout?: ReactCustomLayout;
 
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
@@ -4254,4 +4257,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   // startInertia() {
   //   startInertia(0, -1, 1, this.stateManager);
   // }
+
+  checkReactCustomLayout() {
+    if (!this.reactCustomLayout) {
+      this.reactCustomLayout = new ReactCustomLayout(this);
+    }
+  }
 }

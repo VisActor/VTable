@@ -17,7 +17,7 @@ import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@src/vrender';
-import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
+import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
@@ -439,7 +439,7 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       rect: getCellRect(col, row, table),
       table
     };
-    if (customLayout) {
+    if (isFunction(customLayout)) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
       if (customLayoutObj.rootContainer instanceof VGroup) {

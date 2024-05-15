@@ -269,7 +269,8 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
           <React.Fragment key={childId}>
             {React.cloneElement(child as React.ReactElement<any, React.JSXElementConstructor<any>>, {
               updateId: updateId,
-              componentId: childId
+              componentId: childId,
+              componentIndex: index
             })}
           </React.Fragment>
         );

@@ -90,6 +90,7 @@ import type { DiscreteTableLegend } from '../components/legend/discrete-legend/d
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
 import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
+import type { ReactCustomLayout } from '../components/react/react-custom-layout';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -786,6 +787,9 @@ export interface BaseTableAPI {
   isHasSeriesNumber: () => boolean;
   leftRowSeriesNumberCount: number;
   isAutoRowHeight: (row: number) => boolean;
+
+  reactCustomLayout?: ReactCustomLayout;
+  checkReactCustomLayout: () => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

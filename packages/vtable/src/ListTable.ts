@@ -69,9 +69,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     internalProps.sortState = options.sortState;
     internalProps.dataConfig = {}; //cloneDeep(options.dataConfig ?? {});
     internalProps.columns = options.columns
-      ? cloneDeepSpec(options.columns)
+      ? cloneDeepSpec(options.columns, ['children']) // children for react
       : options.header
-      ? cloneDeepSpec(options.header)
+      ? cloneDeepSpec(options.header, ['children'])
       : [];
     options.columns?.forEach((colDefine, index) => {
       //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
@@ -145,7 +145,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   updateColumns(columns: ColumnsDefine) {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
-    this.internalProps.columns = cloneDeepSpec(columns);
+    this.internalProps.columns = cloneDeepSpec(columns, ['children']);
     columns.forEach((colDefine, index) => {
       if (colDefine.editor) {
         this.internalProps.columns[index].editor = colDefine.editor;
@@ -380,9 +380,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns
-      ? cloneDeepSpec(options.columns)
+      ? cloneDeepSpec(options.columns, ['children'])
       : options.header
-      ? cloneDeepSpec(options.header)
+      ? cloneDeepSpec(options.header, ['children'])
       : [];
     options.columns.forEach((colDefine, index) => {
       if (colDefine.editor) {
