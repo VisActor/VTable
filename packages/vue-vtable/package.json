@@ -91,6 +91,8 @@
     "markdown-it": "^13.0.0",
     "node-fetch": "2.6.7",
     "form-data": "~4.0.0",
-    "axios": "^1.4.0"
+    "axios": "^1.4.0",
+    "eslint-plugin-vue": "^9.26.0",
+    "vue-eslint-parser": "^9.4.2"
   }
 }

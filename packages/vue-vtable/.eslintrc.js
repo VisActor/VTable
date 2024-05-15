@@ -5,8 +5,15 @@ module.exports = {
   extends: ['@internal/eslint-config/profile/lib', '@internal/eslint-config/profile/vue'],
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: './tscofig.eslint.json'
+    parser: '@typescript-eslint/parser', // 如果您使用 TypeScript
+    project: './tscofig.eslint.json',
+    extraFileExtensions: ['.vue'] 
   },
+  plugins: [
+    // ... 其他 plugins
+    'vue'
+  ],
+  parser: 'vue-eslint-parser',
   overrides: [
     {
       files: ['**/__tests__/**', '**/*.test.ts'],

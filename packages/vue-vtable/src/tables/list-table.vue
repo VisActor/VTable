@@ -1,5 +1,5 @@
 <template>
-  <div ref="vTableContainer" style="width: 100%; height: 400px"></div>
+  <div ref="vTableContainer" style="width: 100%; height: 400px" />
 </template>
 
 <script>
@@ -21,21 +21,12 @@ export default defineComponent({
     onMounted(() => {
       // 确保容器 DOM 存在
       if (vTableContainer.value) {
-        debugger;
         // 创建 VTable 实例并存储
         vTableInstance.value = new ListTable(vTableContainer.value, props.options);
       }
       // 假设您需要在组件销毁时销毁 VTable 实例，您可以存储这个实例
       // 并在 onBeforeUnmount 中调用它的销毁方法
     });
-    // onUnmounted(() => {
-    //   // 组件销毁时，销毁 VTable 实例
-    //   if (vTableInstance.value) {
-    //     // 这里假设 VTable 实例有一个名为 destroy 的方法来清理资源
-    //     vTableInstance.value.destroy();
-    //     vTableInstance.value = null; // 清空引用
-    //   }
-    // });
     return {
       vTableContainer
     };
