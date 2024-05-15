@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { CustomLayoutFunctionArg } from '../../../src';
 import { ListTable, ListColumn, CustomLayout, Group, Text } from '../../../src';
 
@@ -25,6 +25,8 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
     }
   ];
 
+  const groupRef = useRef(null);
+
   // useEffect(() => {
   //   flash(col, row, this);
   // }, [hover]);
@@ -39,6 +41,7 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
         alignItems: 'center',
         alignContent: 'center'
       }}
+      ref={groupRef}
     >
       {fieldData.map(item => {
         return (
@@ -57,6 +60,8 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
               //   }
               // }}
               onMouseEnter={(event: any) => {
+                // eslint-disable-next-line no-console, no-undef
+                console.log('groupRef', groupRef.current);
                 setHover(true);
                 event.currentTarget.stage.renderNextFrame();
               }}

@@ -60,10 +60,11 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: CustomLayoutPro
       table.reactCustomLayout?.setReactCreateGraphic(componentIndex, createGraphic, container.current); // set customLayout function
       table.reactCustomLayout?.updateCustomCell(componentIndex); // update cell content
     } else if (table) {
+      // update all container
       container.current.forEach((value, key) => {
         const [col, row] = key.split('-').map(Number);
-        const width = table.getColWidth(col);
-        const height = table.getRowHeight(row);
+        const width = table.getColWidth(col); // to be fixed: may be merge cell
+        const height = table.getRowHeight(row); // to be fixed: may be merge cell
         const currentContainer = value;
         const args = {
           col,
@@ -80,6 +81,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: CustomLayoutPro
           },
           table
         };
+        // update element in container
         reconcilor.updateContainer(React.cloneElement(props.children, { ...args }), currentContainer, null);
         table.scenegraph.updateNextFrame();
       });
