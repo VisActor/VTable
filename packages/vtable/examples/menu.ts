@@ -33,6 +33,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-tree-add-records'
+      },
+      {
+        path: 'list',
         name: 'list-transpose-autoFillWidth'
       },
       {
