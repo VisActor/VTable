@@ -110,23 +110,23 @@ const option = {
   columns: [
     {
       field: '0',
-      caption: 'name'
+      title: 'name'
     },
     {
       field: '1',
-      caption: 'age'
+      title: 'age'
     },
     {
       field: '2',
-      caption: 'gender'
+      title: 'gender'
     },
     {
       field: '3',
-      caption: 'hobby'
+      title: 'hobby'
     },
     {
       field: '4',
-      caption: 'city',
+      title: 'city',
       width: 150,
       editor: 'list-editor'
     }

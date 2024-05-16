@@ -9,17 +9,17 @@ option: ListTable-columns-text#columns
 
 # 基本表格表头分组
 
-将columns配置为嵌套多层结构来实现多层表头分组效果
+将 columns 配置为嵌套多层结构来实现多层表头分组效果
 
 ## 关键配置
 
-*   columns
+- columns
 
 ## Code demo
 
 ```javascript livedemo template=vtable
 let tableInstance;
-const records= [
+const records = [
   {
     id: 1,
     name1: 'a1',
@@ -50,52 +50,50 @@ const records= [
     name2: 'e2',
     name3: 'e3'
   }
-  ];
+];
 
-const columns =[
-   {
-      field: 'id',
-      caption: 'ID',
-      width: 100
-    },
-    {
-      caption: 'Name',
-      columns:[
+const columns = [
+  {
+    field: 'id',
+    title: 'ID',
+    width: 100
+  },
+  {
+    title: 'Name',
+    columns: [
+      {
+        field: 'name1',
+        title: 'name1',
+        width: 100
+      },
+      {
+        title: 'name-level-2',
+        width: 150,
+        columns: [
           {
-            field: 'name1',
-            caption: 'name1',
+            field: 'name2',
+            title: 'name2',
             width: 100
           },
           {
-            caption: 'name-level-2',
-            width: 150,
-            columns:[
-                  {
-                    field: 'name2',
-                    caption: 'name2',
-                    width: 100
-                  },
-                  {
-                    caption: 'name3',
-                    field: 'name3',
-                    width: 150,
-            
-                  }
-              ]
+            title: 'name3',
+            field: 'name3',
+            width: 150
           }
-      ]
-    }
+        ]
+      }
+    ]
+  }
 ];
 
 const option = {
   records,
   columns,
-  widthMode:'standard',
-  autoWrapText:true,
-  autoRowHeight:true,
-  defaultColWidth:150,
+  widthMode: 'standard',
+  autoWrapText: true,
+  autoRowHeight: true,
+  defaultColWidth: 150
 };
 tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
-
 ```
