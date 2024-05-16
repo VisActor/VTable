@@ -42,12 +42,26 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: CustomLayoutPro
     [children]
   );
 
+  const removeContainer = useCallback((col: number, row: number) => {
+    const key = `${col}-${row}`;
+    if (container.current.has(key)) {
+      const currentContainer = container.current.get(key);
+      reconcilor.updateContainer(null, currentContainer, null);
+      // group = currentContainer.containerInfo;
+      container.current.delete(key);
+    }
+  }, []);
+
   useLayoutEffect(() => {
     // init and release
     // eslint-disable-next-line no-undef
-    console.log('init/release', props, table);
+    console.log('init', props, table);
     // table && (table._reactCreateGraphic = createGraphic); // never go to here
     // table?.renderWithRecreateCells();
+    return () => {
+      // eslint-disable-next-line no-undef
+      console.log('release', props, table);
+    };
   }, []);
 
   useLayoutEffect(() => {
@@ -58,6 +72,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: CustomLayoutPro
     table?.checkReactCustomLayout(); // init reactCustomLayout component
     if (table && !table.reactCustomLayout?.hasReactCreateGraphic(componentIndex)) {
       table.reactCustomLayout?.setReactCreateGraphic(componentIndex, createGraphic, container.current); // set customLayout function
+      table.reactCustomLayout?.setReactRemoveGraphic(componentIndex, removeContainer); // set customLayout function
       table.reactCustomLayout?.updateCustomCell(componentIndex); // update cell content
     } else if (table) {
       // update all container

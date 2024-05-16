@@ -73,12 +73,21 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
           )
         );
       })}
+      {hover && (
+        <Text
+          attribute={{
+            text: 'hover',
+            fill: 'blue',
+            fontSize: 8
+          }}
+        />
+      )}
     </Group>
   );
 };
 
 function App() {
-  const records = new Array(10).fill(['John', 18, 'male', '🏀']);
+  const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
   const [preStr, setPreStr] = useState('vt');
 
   useEffect(() => {

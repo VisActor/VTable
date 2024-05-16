@@ -69,6 +69,8 @@ export function dealWithCustom(
     if (customRenderObj.rootContainer instanceof VGroup) {
       elementsGroup = customRenderObj.rootContainer;
       elementsGroup.name = 'custom-container';
+      (elementsGroup as any).col = col;
+      (elementsGroup as any).row = row;
       // } else if (customRenderObj.rootContainer) {
       //   customElements = customRenderObj.rootContainer.getElements(undefined, false, false);
     }
