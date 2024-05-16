@@ -271,6 +271,7 @@ function adjustElementToGroup(
       case 'line':
         const line = createLine({
           points: element.points,
+          lineWidth: element.lineWidth ?? 1,
           stroke: element.stroke as string,
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor
@@ -383,17 +384,31 @@ export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight
     if (isObject(child.attribute.width) && (child.attribute.width as percentCalcObj).percent) {
       child.setAttribute(
         'width',
-        ((child.attribute.width as percentCalcObj).percent / 100) * parentWidth +
-          ((child.attribute.width as percentCalcObj).delta ?? 0)
+        Math.max(
+          0,
+          ((child.attribute.width as percentCalcObj).percent / 100) * parentWidth +
+            ((child.attribute.width as percentCalcObj).delta ?? 0)
+        )
       );
+    }
+
+    if (child.attribute.width < 0) {
+      child.setAttribute('width', 0);
     }
 
     if (isObject(child.attribute.height) && (child.attribute.height as percentCalcObj).percent) {
       child.setAttribute(
         'height',
-        ((child.attribute.height as percentCalcObj).percent / 100) * parentHeight +
-          ((child.attribute.height as percentCalcObj).delta ?? 0)
+        Math.max(
+          0,
+          ((child.attribute.height as percentCalcObj).percent / 100) * parentHeight +
+            ((child.attribute.height as percentCalcObj).delta ?? 0)
+        )
       );
+    }
+
+    if (child.attribute.height < 0) {
+      child.setAttribute('height', 0);
     }
 
     if (child.type === 'group') {

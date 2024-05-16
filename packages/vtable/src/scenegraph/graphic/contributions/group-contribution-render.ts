@@ -16,6 +16,7 @@ import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { getQuadProps } from '../../utils/padding';
 import { getCellMergeInfo } from '../../utils/get-cell-merge';
 import { InteractionState } from '../../../ts-types';
+import { isArray } from '@visactor/vutils';
 
 // const highlightDash: number[] = [];
 
@@ -261,11 +262,13 @@ export function renderStroke(
   context.setStrokeStyle(group, group.attribute, x, y, groupAttribute);
   // if (isHighlight) {
   //   context.setLineDash(highlightDash);
-  //   context.lineCap = 'square';
+  //   context.lineCap = 'butt';
   // }
-  const lineDash = context.getLineDash();
+
+  const { lineDash = groupAttribute.lineDash } = group.attribute as any;
+  // const lineDash = context.getLineDash();
   let isDash = false;
-  if (lineDash.length) {
+  if (lineDash.length && lineDash.some((dash: number[] | null) => Array.isArray(dash))) {
     isDash = true;
   }
   // 单独处理每条边界，目前不考虑圆角
@@ -293,6 +296,9 @@ export function renderStroke(
         context.lineWidth = strokeArrayWidth[0];
       }
       context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
+      if (isDash) {
+        context.setLineDash(lineDash[0] ?? []);
+      }
       context.stroke();
       context.beginPath();
       context.moveTo(x + width, y);
@@ -321,6 +327,9 @@ export function renderStroke(
         context.lineWidth = strokeArrayWidth[1];
       }
       context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
+      if (isDash) {
+        context.setLineDash(lineDash[1] ?? []);
+      }
       context.stroke();
       context.beginPath();
       context.moveTo(x + width, y + height);
@@ -349,6 +358,9 @@ export function renderStroke(
         context.lineWidth = strokeArrayWidth[2];
       }
       context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
+      if (isDash) {
+        context.setLineDash(lineDash[2] ?? []);
+      }
       context.stroke();
       context.beginPath();
       context.moveTo(x, y + height);
@@ -377,6 +389,9 @@ export function renderStroke(
         context.lineWidth = strokeArrayWidth[3];
       }
       context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
+      if (isDash) {
+        context.setLineDash(lineDash[3] ?? []);
+      }
       context.stroke();
       context.beginPath();
       context.moveTo(x, y);
@@ -393,6 +408,7 @@ export function renderStroke(
     context.stroke();
   }
   context.lineDashOffset = 0;
+  context.setLineDash([]);
 }
 
 // DashGroupContribution处理虚线边框对齐
@@ -487,6 +503,9 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
       return;
     }
 
+    // convert lineDash to number[][]
+    const splitLineDash = isArray(lineDash[0]) ? getQuadLineDash(lineDash) : [lineDash, lineDash, lineDash, lineDash];
+
     // const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
     let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
     width = Math.ceil(width);
@@ -538,6 +557,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y);
     context.lineTo(x + widthForStroke, y);
     context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
+    context.setLineDash(splitLineDash[0] ?? []);
     context.stroke();
 
     // right
@@ -545,6 +565,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x + widthForStroke, y);
     context.lineTo(x + widthForStroke, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
+    context.setLineDash(splitLineDash[1] ?? []);
     context.stroke();
 
     // bottom
@@ -552,6 +573,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y + heightForStroke);
     context.lineTo(x + widthForStroke, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
+    context.setLineDash(splitLineDash[2] ?? []);
     context.stroke();
 
     // left
@@ -559,7 +581,11 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y);
     context.lineTo(x, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
+    context.setLineDash(splitLineDash[3] ?? []);
     context.stroke();
+
+    context.lineDashOffset = 0;
+    context.setLineDash([]);
   }
 }
 
@@ -979,4 +1005,14 @@ function getCellSizeForDraw(group: any, width: number, height: number) {
     }
   }
   return { width, height };
+}
+
+function getQuadLineDash(lineDash: number[][]) {
+  if (lineDash.length === 1) {
+    return [lineDash[0], lineDash[0], lineDash[0], lineDash[0]];
+  } else if (lineDash.length === 2) {
+    return [lineDash[0], lineDash[1], lineDash[0], lineDash[1]];
+  }
+  // 不考虑三个数的情况，三个数是用户传错了
+  return lineDash;
 }

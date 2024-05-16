@@ -34,7 +34,7 @@ use:
 tableInstance.updateTheme(newTheme)
 ```
 
-Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // will not automatically redraw after calling
@@ -44,6 +44,8 @@ tableInstance.theme = newTheme;
 ## updateColumns(Function)
 
 Update the configuration information of the columns field of the table, and it will be automatically redrawn after calling
+
+**ListTable Proprietary**
 
 ```ts
   /**
@@ -59,7 +61,7 @@ use:
 tableInstance. updateColumns(newColumns)
 ```
 
-Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // will not automatically redraw after calling
@@ -155,15 +157,35 @@ setRecords(records: Array<any>)
 
 ## setRecordChildren(Function)
 
-In the basic table tree display scenario, if you need to dynamically insert data of sub-nodes, you can use this interface. It is not applicable in other situations.
+**ListTable Proprietary**
+
+In the list table tree display scenario, if you need to dynamically insert data of sub-nodes, you can use this interface. It is not applicable in other situations.
 
 ```
-  /**
-   * @param records The data set to the cell's child nodes
-   * @param col needs to set the cell address of the child node
-   * @param row needs to set the cell address of the child node
-   */
-  setRecordChildren(records: any[], col: number, row: number)
+/**
+* In the tree display scenario, if you need to dynamically insert child node data, you can use this interface. It is not applicable in other situations.
+* @param records Set the data of the child nodes of this cell
+* @param col needs to set the cell address of the child node
+* @param row needs to set the cell address of the child node
+*/
+setRecordChildren(records: any[], col: number, row: number)
+```
+
+## setTreeNodeChildren(Function)
+
+**PivotTable Proprietary**
+
+In the pivot table tree display scenario, if you need to dynamically insert child node data, you can use this interface. It is not applicable in other cases. For lazy loading of node data, please refer to the demo: https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load
+
+```
+/**
+* In the tree display scenario, if you need to dynamically insert child node data, you can use this interface. It is not applicable in other situations.
+* @param children Set to the child nodes of this cell
+* @param records The node is expanded to add new data
+* @param col needs to set the cell address of the child node
+* @param row needs to set the cell address of the child node
+*/
+  setTreeNodeChildren(children: IHeaderTreeDefine[], records: any[], col: number, row: number)
 ```
 
 ## getDrawRange(Function)
@@ -232,15 +254,19 @@ Get the selected cell information, and the returned result is a two-dimensional 
 
 Clear the selection of all cells.
 
+## getCopyValue(Function)
+
+Get the contents of the selected area as the copy content. The return value is a string, with cells separated by `\t` and rows separated by `\n`.
+
 ## getCellValue(Function)
 
-Get cell display value
+Get the cell display value. If used in the customMergeCell function, you need to pass in the skipCustomMerge parameter, otherwise an error will be reported.
 
 ```
   /**
    * Get the cell display value
    */
-  getCellValue(col: number, row: number): FieldData;
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData;
 ```
 
 ## getCellOriginValue(Function)
@@ -332,14 +358,14 @@ Get the number of data in the current cell in the data source.
 
 If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd item in the children of the 2nd item in the data source.
 
-** ListTable proprietary **
+**ListTable proprietary**
 
 ```
   /** Get the number of the data in the current cell in the data source.
    * If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd item in the children of the 2nd item in the data source
    * Note: ListTable specific interface */
   getRecordIndexByCell(col: number, row: number): number | number[]
-** ListTable proprietary **
+**ListTable proprietary**
 ```
 
 ## getTableIndexByField(Function)
@@ -362,7 +388,7 @@ Note: ListTable specific interface
 
 Get the index of the current cell data in the body part, that is, remove the index of the header level number by the row and column number.(Related to transpose, the non-transpose gets the body row number, and the transpose table gets the body column number)
 
-** ListTable proprietary **
+**ListTable proprietary**
 
 ```
   /** Get the display index of the current cell in the body part,it is ( row / col )- headerLevelCount. Note: ListTable specific interface */
@@ -562,22 +588,6 @@ For pivot table interfaces, get specific cell addresses based on the header dime
   ) => CellAddress
 ```
 
-## getCheckboxState(Function)
-
-Get the selected status of all data in the checkbox under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
-
-```
-getCheckboxState(field?: string | number): Array
-```
-
-## getCellCheckboxState(Function)
-
-Get the status of a cell checkbox
-
-```
-getCellCheckboxState(col: number, row: number): Array
-```
-
 ## getScrollTop(Function)
 
 Get the current vertical scroll position
@@ -641,7 +651,7 @@ enum HierarchyState {
 
 ## getLayoutRowTree(Function)
 
-** PivotTable Proprietary **
+**PivotTable Proprietary**
 
 Get the table row header tree structure
 
@@ -655,7 +665,7 @@ Get the table row header tree structure
 
 ## getLayoutRowTreeCount(Function)
 
-** PivotTable Proprietary **
+**PivotTable Proprietary**
 
 Get the total number of nodes occupying the table row header tree structure.
 
@@ -897,7 +907,7 @@ Set the data source for the VTable table component instance. For specific usage,
 
 Add data, support multiple pieces of data
 
-** Note: ListTable specific interface **
+**Note: ListTable specific interface**
 
 ```
   /**
@@ -914,7 +924,7 @@ Add data, support multiple pieces of data
 
 Add data, single piece of data
 
-** Note: ListTable specific interface **
+**Note: ListTable specific interface**
 
 ```
   /**
@@ -931,7 +941,7 @@ Add data, single piece of data
 
 Delete data supports multiple pieces of data
 
-** Note: ListTable specific interface **
+**Note: ListTable specific interface**
 
 ```
   /**
@@ -945,7 +955,7 @@ Delete data supports multiple pieces of data
 
 Modify data to support multiple pieces of data
 
-** ListTable proprietary **
+**ListTable proprietary**
 
 ```
   /**
@@ -1012,3 +1022,99 @@ registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number;
   - Single cell: `{ row: number, column: number }`
   - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+## getCheckboxState(Function)
+
+Get the selected status of all data in the checkbox under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
+
+```
+getCheckboxState(field?: string | number): Array
+```
+
+## getCellCheckboxState(Function)
+
+Get the status of a cell checkbox
+
+```
+getCellCheckboxState(col: number, row: number): Array
+```
+
+## getRadioState(Function)
+
+Get the selected status of all radio data under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
+
+```
+getRadioState(field?: string | number): number | Record<number, boolean | number>
+```
+
+## getCellRadioState(Function)
+
+Get the status of a cell radio. If a cell contains multiple radio buttons, the return value is number, which refers to the index of the selected radio in the cell. Otherwise, the return value is boolean.
+
+```
+getCellRadioState(col: number, row: number): boolean | number
+```
+
+## setCellCheckboxState(Function)
+
+Set the checkbox state of a cell
+
+```
+setCellCheckboxState(col: number, row: number, checked: boolean) => void
+```
+
+- col: column number
+- row: row number
+- checked: whether checked
+
+## setCellRadioState(Function)
+
+Set the cell's radio state to selected
+
+```
+setCellRadioState(col: number, row: number, index?: number) => void
+```
+
+- col: column number
+- row: row number
+- index: the index of the updated target radio in the cell
+
+## getAllRowsHeight(Function)
+
+get all rows height
+
+```
+getAllRowsHeight: () => number;
+```
+
+## getAllColsWidth(Function)
+
+get all columns width
+
+```
+getAllColsWidth: () => number;
+```
+
+## setSortedIndexMap(Function)
+
+Set up a pre-sort index to improve initial sorting performance in scenarios where large amounts of data are sorted.
+
+```
+setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+```
+
+## getHeaderField(Function)
+
+In **ListTable** can get header's field.
+In **PivotTable** get indicatorKey.
+
+```
+  /**get field of header  */
+  getHeaderField: (col: number, row: number)
+```

@@ -131,6 +131,15 @@ export class CustomCellStylePlugin {
     }
     this.table.scenegraph.updateNextFrame();
   }
+
+  updateCustomCell(customCellStyle: CustomCellStyle[], customCellStyleArrangement: CustomCellStyleArrangement[]) {
+    customCellStyle.forEach((cellStyle: CustomCellStyle) => {
+      this.registerCustomCellStyle(cellStyle.id, cellStyle.style);
+    });
+    customCellStyleArrangement.forEach((cellStyle: CustomCellStyleArrangement) => {
+      this.arrangeCustomCellStyle(cellStyle.cellPosition, cellStyle.customStyleId);
+    });
+  }
 }
 
 export function mergeStyle(cacheStyle: Style, customCellStyle: ColumnStyleOption): Style {

@@ -15,17 +15,16 @@ import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
+import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
+import { computeCheckboxCellHeight, computeRadioCellHeight } from './height-util';
+import { measureTextBounds } from '../utils/text-measure';
+import { breakString } from '../utils/break-string';
 
-const utilTextMark = new Text({
-  ignoreBuf: true
-  // autoWrapText: true
-});
 const utilRichTextMark = new RichText({
   width: 0,
   height: 0,
   textConfig: []
 });
-const utilCheckBoxMark = new CheckBox({});
 
 export function computeRowsHeight(
   table: BaseTableAPI,
@@ -169,9 +168,9 @@ export function computeRowsHeight(
       }
     }
   } else {
-    if (table.rowCount !== table.rowHeightsMap.length) {
+    if (table.heightMode === 'adaptive' || table.autoFillHeight) {
       // for tree mode
-      // table.rowHeightsMap.clear();
+      // getRowHeight() in adaptive will return scaled height
       table.clearRowHeightCache();
     }
     if (update) {
@@ -189,11 +188,16 @@ export function computeRowsHeight(
   if (table.heightMode === 'adaptive') {
     table._clearRowRangeHeightsMap();
     // const canvasWidth = table.internalProps.canvas.width;
-    const columnHeaderHeight = table.getRowsHeight(0, table.columnHeaderLevelCount - 1);
-    const bottomHeaderHeight = table.isPivotChart() ? table.getBottomFrozenRowsHeight() : 0;
-    const totalDrawHeight = table.tableNoFrameHeight - columnHeaderHeight - bottomHeaderHeight;
-    const startRow = table.columnHeaderLevelCount;
-    const endRow = table.isPivotChart() ? table.rowCount - table.bottomFrozenRowCount : table.rowCount;
+    let totalDrawHeight = table.tableNoFrameHeight;
+    let startRow = 0;
+    let endRow = table.rowCount;
+    if (table.heightAdaptiveMode === 'only-body') {
+      const columnHeaderHeight = table.getRowsHeight(0, table.columnHeaderLevelCount - 1);
+      const bottomHeaderHeight = table.isPivotChart() ? table.getBottomFrozenRowsHeight() : 0;
+      totalDrawHeight = table.tableNoFrameHeight - columnHeaderHeight - bottomHeaderHeight;
+      startRow = table.columnHeaderLevelCount;
+      endRow = table.isPivotChart() ? table.rowCount - table.bottomFrozenRowCount : table.rowCount;
+    }
     let actualHeight = 0;
     for (let row = startRow; row < endRow; row++) {
       actualHeight += update ? newHeights[row] : table.getRowHeight(row);
@@ -392,13 +396,16 @@ function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
   const row = table.columnHeaderLevelCount;
   //设置了全局自动换行的话 不能复用高度计算
   if (
-    (table.internalProps.autoWrapText || table.isPivotChart()) &&
+    (table.internalProps.autoWrapText || table.internalProps.enableLineBreak || table.isPivotChart()) &&
     (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
   ) {
     return false;
   }
   for (let col = 0; col < table.colCount; col++) {
     const cellDefine = layoutMap.getBody(col, row);
+    if (cellDefine.cellType === 'radio') {
+      return false;
+    }
     if (
       typeof cellDefine.style === 'function' ||
       typeof (cellDefine as ColumnData).icon === 'function' ||
@@ -426,7 +433,7 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
   const { layoutMap } = table.internalProps;
   //设置了全局自动换行的话 不能复用高度计算
   if (
-    table.internalProps.autoWrapText &&
+    (table.internalProps.autoWrapText || table.internalProps.enableLineBreak) &&
     (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
   ) {
     return false;
@@ -645,50 +652,55 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const autoWrapText = getProp('autoWrapText', actStyle, col, row, table);
   let text;
-  if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
+  if (
+    cellType !== 'text' &&
+    cellType !== 'link' &&
+    cellType !== 'progressbar' &&
+    cellType !== 'checkbox' &&
+    cellType !== 'radio'
+  ) {
     maxHeight = lineHeight;
+  } else if (cellType === 'checkbox') {
+    maxHeight = computeCheckboxCellHeight(
+      cellValue,
+      col,
+      row,
+      endCol,
+      actStyle,
+      autoWrapText,
+      iconWidth,
+      fontSize,
+      fontStyle,
+      fontWeight,
+      fontFamily,
+      lineHeight,
+      padding,
+      table
+    );
+  } else if (cellType === 'radio') {
+    maxHeight = computeRadioCellHeight(
+      cellValue,
+      col,
+      row,
+      endCol,
+      actStyle,
+      autoWrapText,
+      iconWidth,
+      fontSize,
+      fontStyle,
+      fontWeight,
+      fontFamily,
+      lineHeight,
+      padding,
+      table
+    );
   } else {
-    if (cellType === 'checkbox') {
-      text = isObject(cellValue) ? (cellValue as any).text : cellValue;
-    } else {
-      text = cellValue;
-    }
-    const lines = validToString(text).split('\n') || [];
-
+    // text
+    text = cellValue;
+    const lines = breakString(text, table);
     const cellWidth = table.getColsWidth(col, endCol);
 
-    if (cellType === 'checkbox') {
-      const size = getProp('size', actStyle, col, row, table);
-      if (autoWrapText) {
-        const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', actStyle, col, row, table);
-        const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth - size - spaceBetweenTextAndIcon;
-        utilCheckBoxMark.setAttributes({
-          text: {
-            maxLineWidth,
-            text: lines,
-            fontSize,
-            fontStyle,
-            fontWeight,
-            fontFamily,
-            lineHeight,
-            wordBreak: 'break-word'
-          },
-          icon: {
-            width: Math.floor(size / 1.4), // icon : box => 10 : 14
-            height: Math.floor(size / 1.4)
-          },
-          box: {
-            width: size,
-            height: size
-          },
-          spaceBetweenTextAndIcon
-        });
-        utilCheckBoxMark.render();
-        maxHeight = utilTextMark.AABBBounds.height();
-      } else {
-        maxHeight = Math.max(size, lines.length * lineHeight);
-      }
-    } else if (iconInlineFront.length || iconInlineEnd.length) {
+    if (iconInlineFront.length || iconInlineEnd.length) {
       if (autoWrapText) {
         const textOption = Object.assign({
           text: cellValue?.toString(),
@@ -713,6 +725,9 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       } else {
         maxHeight = 0;
         lines.forEach((line: string, index: number) => {
+          if (table.options.customConfig?.multilinesForXTable && index !== 0) {
+            return;
+          }
           if (index === 0 && iconInlineFront.length) {
             maxHeight += Math.max(lineHeight, iconInlineFrontHeight);
           } else if (index === lines.length - 1 && iconInlineEnd.length) {
@@ -723,8 +738,9 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
         });
       }
     } else if (autoWrapText) {
-      const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth;
-      utilTextMark.setAttributes({
+      const hierarchyOffset = getHierarchyOffset(col, row, table);
+      const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth - hierarchyOffset;
+      const bounds = measureTextBounds({
         maxLineWidth,
         text: lines,
         fontSize,
@@ -735,7 +751,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
         wordBreak: 'break-word',
         whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
       });
-      maxHeight = utilTextMark.AABBBounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
+      maxHeight = bounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
     } else {
       // autoWrapText = false
       maxHeight = lines.length * lineHeight;

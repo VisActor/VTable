@@ -18,7 +18,7 @@ import type {
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
-import { isValid } from '@visactor/vutils';
+import { isNumber, isObject, isValid } from '@visactor/vutils';
 import { _setDataSource, _setRecords, sortRecords } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
@@ -34,6 +34,9 @@ import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
+import { getCellRadioState, setCellRadioState } from './state/radio/radio';
+import { cloneDeepSpec } from '@vutils-extension';
+import { setCellCheckboxState } from './state/checkbox/checkbox';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -66,9 +69,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     internalProps.sortState = options.sortState;
     internalProps.dataConfig = {}; //cloneDeep(options.dataConfig ?? {});
     internalProps.columns = options.columns
-      ? cloneDeep(options.columns)
+      ? cloneDeepSpec(options.columns)
       : options.header
-      ? cloneDeep(options.header)
+      ? cloneDeepSpec(options.header)
       : [];
     options.columns?.forEach((colDefine, index) => {
       //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
@@ -142,7 +145,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   updateColumns(columns: ColumnsDefine) {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
-    this.internalProps.columns = cloneDeep(columns);
+    this.internalProps.columns = cloneDeepSpec(columns);
     columns.forEach((colDefine, index) => {
       if (colDefine.editor) {
         this.internalProps.columns[index].editor = colDefine.editor;
@@ -193,7 +196,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return;
     }
     this.internalProps.transpose = transpose;
-    this.options.transpose = transpose;
+    // this.options.transpose = transpose; // cause extr update in react
     if (this.internalProps.layoutMap) {
       //后面如果修改是否转置
       this.internalProps.layoutMap.transpose = transpose;
@@ -205,13 +208,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
   /** 获取单元格展示值 */
-  getCellValue(col: number, row: number): FieldData {
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData {
     if (col === -1 || row === -1) {
       return null;
     }
-    const customMergeText = this.getCustomMergeValue(col, row);
-    if (customMergeText) {
-      return customMergeText;
+    if (!skipCustomMerge) {
+      const customMergeText = this.getCustomMergeValue(col, row);
+      if (customMergeText) {
+        return customMergeText;
+      }
     }
     const table = this;
     if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
@@ -370,13 +375,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
     //分页配置
     this.pagination = options.pagination;
+    internalProps.sortState = options.sortState;
     internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns
-      ? cloneDeep(options.columns)
+      ? cloneDeepSpec(options.columns)
       : options.header
-      ? cloneDeep(options.header)
+      ? cloneDeepSpec(options.header)
       : [];
     options.columns.forEach((colDefine, index) => {
       if (colDefine.editor) {
@@ -457,19 +463,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     if (!transpose) {
       //设置列宽  这里需要优化，考虑转置表格的情况 transpose，转置表格不需要设置colWidth  TODO
-      for (let col = 0; col < layoutMap.columnWidths.length; col++) {
-        const { width, minWidth, maxWidth } = layoutMap.columnWidths?.[col] ?? {};
-        // width 为 "auto" 时先不存储ColWidth
-        if (width && ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))) {
-          table._setColWidth(col, width);
-        }
-        if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
-          table.setMinColWidth(col, minWidth);
-        }
-        if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
-          table.setMaxColWidth(col, maxWidth);
-        }
-      }
+      this.setMinMaxLimitWidth(true);
     }
     //刷新表头，原来这里是_refreshRowCount 后改名为_refreshRowColCount  因为表头定义会影响行数，而转置模式下会影响列数
     this.refreshRowColCount();
@@ -581,15 +575,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
           //下面代码取自refreshHeader列宽设置逻辑
           //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
           this.colWidthsLimit = {}; //需要先清空
-          for (let col = 0; col < this.internalProps.layoutMap.columnWidths.length; col++) {
-            const { minWidth, maxWidth } = this.internalProps.layoutMap.columnWidths?.[col] ?? {};
-            if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
-              this.setMinColWidth(col, minWidth);
-            }
-            if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
-              this.setMaxColWidth(col, maxWidth);
-            }
-          }
+          this.setMinMaxLimitWidth();
         }
         // // 清空相关缓存
         // const colStart = Math.min(moveContext.sourceIndex, moveContext.targetIndex);
@@ -735,6 +721,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
+    this.stateManager.updateHoverIcon(col, row, undefined, undefined);
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
       this._refreshHierarchyState(col, row);
@@ -920,6 +907,25 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return undefined;
   }
+  /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
+  getRadioState(field?: string | number) {
+    if (isValid(field)) {
+      return this.stateManager.radioState[field];
+    }
+    return this.stateManager.radioState;
+  }
+  /** 获取某个单元格checkbox的状态 */
+  getCellRadioState(col: number, row: number): boolean | number {
+    return getCellRadioState(col, row, this);
+  }
+
+  setCellCheckboxState(col: number, row: number, checked: boolean) {
+    setCellCheckboxState(col, row, checked, this);
+  }
+
+  setCellRadioState(col: number, row: number, index?: number) {
+    setCellRadioState(col, row, index, this);
+  }
   /**
    * 设置表格数据 及排序状态
    * @param records
@@ -992,6 +998,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
 
     this.render();
+    if (isValid(oldHoverState.col) && isValid(oldHoverState.row) && oldHoverState.col >= 0 && oldHoverState.row >= 0) {
+      setTimeout(() => {
+        this.internalProps.tooltipHandler.showTooltip(oldHoverState.col, oldHoverState.row);
+      }, 0);
+    }
     console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
   }
   /**
@@ -1070,6 +1081,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const recordIndex = this.getRecordShowIndexByCell(col, row);
       const { field } = this.internalProps.layoutMap.getBody(col, row);
       const beforeChangeValue = this.getCellRawValue(col, row);
+      const oldValue = this.getCellOriginValue(col, row);
       if (this.isHeader(col, row)) {
         this.internalProps.layoutMap.updateColumnTitle(col, row, value as string);
       } else {
@@ -1125,8 +1137,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.heightMode === 'adaptive' ||
         (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)
       ) {
-        this.scenegraph.recalculateRowHeights();
-      } else if (this.heightMode === 'autoHeight') {
+        if (this.internalProps._heightResizedRowMap.size === 0) {
+          this.scenegraph.recalculateRowHeights();
+        }
+      } else if (this.heightMode === 'autoHeight' && !this.internalProps._heightResizedRowMap.has(row)) {
         const oldHeight = this.getRowHeight(row);
         const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
         this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
@@ -1135,6 +1149,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         col,
         row,
         rawValue: beforeChangeValue,
+        currentValue: oldValue,
         changedValue: this.getCellOriginValue(col, row)
       });
       this.scenegraph.updateNextFrame();
@@ -1171,6 +1186,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
           const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
           const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
           const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+          const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
           if (this.isHeader(startCol + j, startRow + i)) {
             this.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
           } else {
@@ -1180,6 +1196,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
             col: startCol + j,
             row: startRow + i,
             rawValue: beforeChangeValue,
+            currentValue: oldValue,
             changedValue: this.getCellOriginValue(startCol + j, startRow + i)
           });
         }

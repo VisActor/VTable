@@ -33,6 +33,10 @@ export interface TableEvents {
    */
   MOUSELEAVE_TABLE: 'mouseleave_table';
   /**
+   * 鼠标点击表格事件
+   */
+  MOUSEDOWN_TABLE: 'mousedown_table';
+  /**
    * 鼠标在某个单元格上移动事件
    */
   MOUSEMOVE_CELL: 'mousemove_cell';
@@ -56,6 +60,14 @@ export interface TableEvents {
    * 列宽调整结束事件
    */
   RESIZE_COLUMN_END: 'resize_column_end';
+  /**
+   * 行高调整事件
+   */
+  RESIZE_ROW: 'resize_row';
+  /**
+   * 行高调整结束事件
+   */
+  RESIZE_ROW_END: 'resize_row_end';
   /**
    * 拖拽表头移动位置的事件
    */
@@ -126,6 +138,7 @@ export interface TableEvents {
   MOUSELEAVE_AXIS: 'mouseleave_axis';
 
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change';
+  RADIO_STATE_CHANGE: 'radio_state_change';
   //#region lifecircle
   /** 每次渲染完成触发 */
   AFTER_RENDER: 'after_render';
@@ -160,12 +173,15 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   KEYDOWN: 'keydown',
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
+  MOUSEDOWN_TABLE: 'mousedown_table',
   MOUSEMOVE_CELL: 'mousemove_cell',
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
   CONTEXTMENU_CELL: 'contextmenu_cell',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
+  RESIZE_ROW: 'resize_row',
+  RESIZE_ROW_END: 'resize_row_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
   FREEZE_CLICK: 'freeze_click',
@@ -195,6 +211,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   MOUSELEAVE_AXIS: 'mouseleave_axis',
 
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change',
+  RADIO_STATE_CHANGE: 'radio_state_change',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
   CHANGE_CELL_VALUE: 'change_cell_value',

@@ -309,9 +309,26 @@ export class Dataset {
     for (const field in this.collectedValues) {
       if (this.collectValuesBy[field]?.sumBy) {
         for (const byKeys in this.collectedValues[field]) {
-          const max = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
-            return cur.value() > acc ? cur.value() : acc;
-          }, Number.MIN_SAFE_INTEGER);
+          let max;
+
+          //考虑有markLine设置sum的情况
+          if (this.collectValuesBy[field]?.extendRange === 'sum') {
+            max = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+              return acc + cur.value();
+            }, 0);
+            max += Math.round(max / 20);
+          } else {
+            // 寻找最大值作为轴范围的max
+            max = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+              return cur.value() > acc ? cur.value() : acc;
+            }, Number.MIN_SAFE_INTEGER);
+            //考虑有markLine设置max的情况
+            if (this.collectValuesBy[field]?.extendRange === 'max') {
+              max += Math.round(max / 20);
+            } else if (typeof this.collectValuesBy[field]?.extendRange === 'number') {
+              max = Math.max(max, this.collectValuesBy[field]?.extendRange as number);
+            }
+          }
           const min = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
             return cur.value() < acc ? cur.value() : acc;
           }, Number.MAX_SAFE_INTEGER);
@@ -458,7 +475,7 @@ export class Dataset {
     });
     //#region 按照collectValuesBy 收集维度值
     for (const field in this.collectValuesBy) {
-      if (record[field]) {
+      if (isValid(record[field])) {
         if (!this.collectedValues[field]) {
           this.collectedValues[field] = {};
         }
@@ -1514,11 +1531,15 @@ export class Dataset {
   private _adjustCustomTree(customTree: IHeaderTreeDefine[]) {
     const checkNode = (nodes: IHeaderTreeDefine[], isHasIndicator: boolean) => {
       nodes.forEach((node: IHeaderTreeDefine) => {
-        if (!node.indicatorKey && !isHasIndicator && !node.children?.length) {
+        if (
+          !node.indicatorKey &&
+          !isHasIndicator &&
+          (!(node.children as IHeaderTreeDefine[])?.length || !node.children)
+        ) {
           node.children = this.indicators?.map((indicator: IIndicator): { indicatorKey: string; value: string } => {
             return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
           });
-        } else if (node.children) {
+        } else if (node.children && Array.isArray(node.children)) {
           checkNode(node.children, isHasIndicator || !!node.indicatorKey);
         }
       });
@@ -1564,6 +1585,43 @@ export class Dataset {
       this.changedTree[flatRowKey] = {};
       this.changedTree[flatRowKey][flatColKey] = [];
       this.changedTree[flatRowKey][flatColKey][indicatorIndex] = newValue;
+    }
+  }
+
+  changeRecordFieldValue(fieldName: string, oldValue: string | number, value: string | number) {
+    let isIndicatorName = false;
+
+    for (let i = 0; i < this.indicatorKeys.length; i++) {
+      if (this.indicatorKeys[i] === fieldName) {
+        isIndicatorName = true;
+      }
+    }
+
+    if (!isIndicatorName) {
+      //常规records是数组的情况
+      if (Array.isArray(this.records)) {
+        for (let i = 0, len = this.records.length; i < len; i++) {
+          const record = this.records[i];
+          if (record[fieldName] === oldValue) {
+            record[fieldName] = value;
+          }
+        }
+      } else {
+        //records是用户传来的按指标分组后的数据
+        for (const key in this.records) {
+          for (let i = 0, len = this.records[key].length; i < len; i++) {
+            const record = this.records[key][i];
+            if (record[fieldName] === oldValue) {
+              record[fieldName] = value;
+            }
+          }
+        }
+      }
+
+      this.rowFlatKeys = {};
+      this.colFlatKeys = {};
+      this.tree = {};
+      this.processRecords();
     }
   }
 }

@@ -84,6 +84,7 @@ export class TableTheme implements ITableThemeDefine {
 
   private _axisStyle: RequiredTableThemeDefine['axisStyle'] | null = null;
   private _checkboxStyle: RequiredTableThemeDefine['checkboxStyle'] | null = null;
+  private _radioStyle: RequiredTableThemeDefine['radioStyle'] | null = null;
   private _textPopTipStyle: RequiredTableThemeDefine['textPopTipStyle'] | null = null;
 
   isPivot: boolean = false;
@@ -687,6 +688,19 @@ export class TableTheme implements ITableThemeDefine {
       this._checkboxStyle = checkboxStyle;
     }
     return this._checkboxStyle;
+  }
+
+  get radioStyle(): RequiredTableThemeDefine['radioStyle'] {
+    if (!this._radioStyle) {
+      const { obj, superTheme } = this.internalTheme;
+      const radioStyle: RequiredTableThemeDefine['radioStyle'] = ingoreNoneValueMerge(
+        {},
+        superTheme.radioStyle,
+        obj.radioStyle
+      );
+      this._radioStyle = radioStyle;
+    }
+    return this._radioStyle;
   }
 
   get textPopTipStyle(): RequiredTableThemeDefine['textPopTipStyle'] {

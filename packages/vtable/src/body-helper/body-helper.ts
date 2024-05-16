@@ -9,6 +9,7 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import * as icons from '../tools/icons';
 import { obj } from '../tools/helper';
 import { CheckboxStyle } from './style/CheckboxStyle';
+import { RadioStyle } from './style/RadioStyle';
 export class BodyHelper {
   expandIcon: SvgIcon;
   collapseIcon: SvgIcon;
@@ -82,7 +83,17 @@ export class BodyHelper {
     return iconArr;
   }
   getStyleClass(
-    cellType: 'text' | 'link' | 'image' | 'video' | 'chart' | 'sparkline' | 'progressbar' | 'chart' | 'checkbox'
+    cellType:
+      | 'text'
+      | 'link'
+      | 'image'
+      | 'video'
+      | 'chart'
+      | 'sparkline'
+      | 'progressbar'
+      | 'chart'
+      | 'checkbox'
+      | 'radio'
   ) {
     switch (cellType) {
       case 'text':
@@ -101,6 +112,8 @@ export class BodyHelper {
         return ProgressBarStyle;
       case 'checkbox':
         return CheckboxStyle;
+      case 'radio':
+        return RadioStyle;
     }
     return TextStyle;
   }
@@ -149,5 +162,8 @@ export class BodyHelper {
       return this.collapseIcon;
     }
     return undefined;
+  }
+  getHierarchyIconWidth() {
+    return this.expandIcon.width + (this.expandIcon.marginLeft ?? 0) + (this.expandIcon.marginRight ?? 0);
   }
 }

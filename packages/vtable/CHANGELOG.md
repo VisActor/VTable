@@ -1,6 +1,248 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 29 Mar 2024 09:26:36 GMT and should not be manually modified.
+This log was last generated on Mon, 13 May 2024 13:47:37 GMT and should not be manually modified.
+
+## 0.25.5
+Mon, 13 May 2024 13:47:37 GMT
+
+### Updates
+
+- fix: trigger mousedown_table event region need extend #1668
+
+
+
+## 0.25.4
+Fri, 10 May 2024 03:15:01 GMT
+
+### Updates
+
+- feat: remove vutil-extension temply
+
+## 0.25.3
+Thu, 09 May 2024 11:13:29 GMT
+
+### Updates
+
+- feat: remove vutil-extension temply
+
+## 0.25.2
+Wed, 08 May 2024 10:48:37 GMT
+
+### Updates
+
+- fix: fix veritial offset in text stick
+
+## 0.25.1
+Wed, 08 May 2024 08:38:35 GMT
+
+### Updates
+
+- feat: pivot chart support wordCloud rose radar gauge #1614
+
+
+- feat: pivot chart support scatter chart type #1618
+
+
+- fix: when copy blank cell paste not work #1646
+
+
+- feat: add CustomComponent in react-vtable
+- fix: fix custom merge cell size update #1636
+- fix: add arg in completeEdit()
+- fix: add selecting cell range deduplication #1628
+- fix: update @visactor/vutils-extension version
+
+## 0.25.0
+Sun, 28 Apr 2024 06:22:38 GMT
+
+### Minor changes
+
+- feat: add row resize function
+
+### Updates
+
+- feat: pivot table header cell support edit #1583
+
+
+- feat: customrender or customlayout support edit #1596
+
+
+- fix: editor input value handle with 0value #1590
+
+
+- fix: when set textStick init and updateOption text jump #1592
+
+
+- fix: clear async contain resize task before render #1593
+- fix: hierarchy state icon can not show when only one level
+
+
+- refactor: resize last column width can be more  flexibly #1567
+
+
+
+## 0.24.1
+Tue, 23 Apr 2024 11:19:00 GMT
+
+### Updates
+
+- docs: add drill down drill up demo #1556
+
+
+- fix: when has rowSeriesNumber minWidth maxWidth error #1572
+
+
+- feat: add startEditCell api #1573
+
+
+- refactor: pivot lazy load modify setTreeNodeChildren api #1580
+
+
+
+## 0.24.0
+Mon, 22 Apr 2024 10:59:12 GMT
+
+### Minor changes
+
+- feat: add lazy load for pivot table tree #1521
+
+
+- feat: add radio column type
+
+### Updates
+
+- fix: handle with editor input ctrl+a event #1552
+
+
+- refactor: optimize performance when row tree node exceed 8000 nodes #1557
+
+
+- fix: when resize window size the editor input size not match cell size #1559
+
+
+- feat: add setCellCheckboxState & setCellRadioState api #1504
+- fix: fix multilines new line style #1531
+- fix: fix cell group order in async data #1517
+- fix: add skipCustomMerge in getCellValue() #1543
+
+## 0.23.4
+Thu, 18 Apr 2024 08:13:35 GMT
+
+### Updates
+
+- fix: fix right & top axis visible
+
+## 0.23.3
+Tue, 16 Apr 2024 08:38:10 GMT
+
+### Updates
+
+- refactor: add mousedown_table event #1470
+
+
+- refactor: setRecords handle with tooltip overflow #1494
+
+
+- fix: release editor when release tableInstance #1495
+
+
+- fix: short table drag to out table occor error #1502
+
+
+- fix: row move funciton not work on mobile #1503
+
+
+- fix: defaultHeaderRowHeight not work with rowSeriesNumber #1520
+
+
+- fix: tree hierarchy state icon use rowHierarchyTextStartAlignment children node render error #1525
+
+
+- fix: resize col width trigger text stick change #1529
+
+
+- fix: fix theme textStick config in checkHaveTextStick() #1490 
+- fix: add button jedgement in click_cell event #1484
+- feat: add widthAdaptiveMode & heightAdaptiveMode config #1499
+- feat: add measureTextBounds api
+- fix: fix defalultQueryMethod in vtable-search #1448
+- fix: update customMergeCell in updateOption #1493
+
+## 0.23.2
+Wed, 10 Apr 2024 13:08:31 GMT
+
+### Updates
+
+- fix: records api when has merge cell render error #1286
+
+
+- refactor: update drilldown drillup svg
+
+
+- feat: scrollbar visible focus #1360
+
+
+- fix: add isAutoRowHeight to handle width row height compute #1379
+
+
+- feat: add rowHierarchyTextStartAlignment for tree mode #1417
+
+
+- refactor: handle width chartSpce with markLine #1420
+
+
+- fix: chart spec clone filtered dom problem #1422
+
+
+- refactor: supplement event type for react table #1434
+
+
+- fix: borderlinedash effect error handle with lineCap #1436
+
+
+- fix: trigger event selectedCell #1444
+
+
+- fix: set disableSelect drag cells occor error #1461
+
+
+- fix: left content width error when tree hierarchy state icon back rect showing #1466
+
+
+- fix: fix domain order in  horizontal #1453
+- fix: add columnWidthComputeMode update in opdateOption #1465
+- fix: fix inline icon tooltip config #1456
+- fix: 修复进度图部分情况遮挡表格边缘单元格
+
+
+- fix: fix transpose border theme #1463
+
+## 0.23.1
+Sun, 07 Apr 2024 02:48:06 GMT
+
+### Updates
+
+- fix: maxLineWidth value should consider hierarchyOffset #1224
+
+
+- fix: tree leaf node textAlign right render error #1393
+
+
+- feat: select range can extends during scroll #1400
+
+
+- fix: when copy or paste navigator.clipboard?.write occor undefined error in not https #1421
+
+
+- fix: fix header cell imageAutoSizing #1339
+- fix: hide icon background when hide icon
+- fix: fix nan verticalBarPos #1232
+- fix: fix progressbar cover cell border #1425
+- fix: remove container in table option
+- fix: add sync render in exportCellImg #1398
+- refactor: optimize performance when change tree hierarchy state #1406
+
+
 
 ## 0.23.0
 Fri, 29 Mar 2024 09:26:36 GMT

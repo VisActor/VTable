@@ -11,7 +11,8 @@ import type {
   MappingRule,
   ProgressbarColumnDefine,
   IRowSeriesNumber,
-  TextColumnDefine
+  TextColumnDefine,
+  RadioColumnDefine
 } from '../../ts-types';
 import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
@@ -35,6 +36,8 @@ import { getQuadProps } from '../utils/padding';
 import { convertInternal } from '../../tools/util';
 import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
 import { isArray } from '@visactor/vutils';
+import { breakString } from '../utils/break-string';
+import { createRadioCellGroup } from './cell-type/radio-cell';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -59,8 +62,10 @@ export function createCell(
     renderDefault: boolean;
   }
 ): Group {
+  let isAsync = false;
   if (isPromise(value)) {
     value = table.getCellValue(col, row);
+    isAsync = true;
   }
   // let bgColorFunc: Function;
   // // 判断是否有mapping  遍历dataset中mappingRules
@@ -148,7 +153,8 @@ export function createCell(
           cellWidth,
           cellHeight,
           false,
-          table.heightMode === 'autoHeight',
+          // table.heightMode === 'autoHeight',
+          table.isAutoRowHeight(row),
           padding,
           table
         );
@@ -175,7 +181,8 @@ export function createCell(
       customElementsGroup,
       renderDefault,
       cellTheme,
-      range
+      range,
+      isAsync
     );
 
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
@@ -209,7 +216,8 @@ export function createCell(
       textAlign,
       textBaseline,
       table,
-      cellTheme
+      cellTheme,
+      isAsync
     );
   } else if (type === 'video') {
     // 创建视频单元格
@@ -227,7 +235,8 @@ export function createCell(
       textAlign,
       textBaseline,
       table,
-      cellTheme
+      cellTheme,
+      isAsync
     );
   } else if (type === 'chart') {
     const chartInstance = table.internalProps.layoutMap.getChartInstance(col, row);
@@ -248,7 +257,8 @@ export function createCell(
       table.internalProps.layoutMap.getChartDataId(col, row) ?? 'data',
       table,
       cellTheme,
-      table.internalProps.layoutMap.isShareChartSpec(col, row)
+      table.internalProps.layoutMap.isShareChartSpec(col, row),
+      isAsync
     );
   } else if (type === 'progressbar') {
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
@@ -272,7 +282,8 @@ export function createCell(
       null,
       true,
       cellTheme,
-      range
+      range,
+      isAsync
     );
 
     // 创建bar group
@@ -305,7 +316,8 @@ export function createCell(
       cellHeight,
       padding,
       table,
-      cellTheme
+      cellTheme,
+      isAsync
     );
   } else if (type === 'checkbox') {
     cellGroup = createCheckboxCellGroup(
@@ -323,7 +335,26 @@ export function createCell(
       textBaseline,
       table,
       cellTheme,
-      define as CheckboxColumnDefine
+      define as CheckboxColumnDefine,
+      isAsync
+    );
+  } else if (type === 'radio') {
+    cellGroup = createRadioCellGroup(
+      null,
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      colWidth,
+      cellWidth,
+      cellHeight,
+      padding,
+      textAlign,
+      textBaseline,
+      table,
+      cellTheme,
+      define as RadioColumnDefine
     );
   }
 
@@ -371,7 +402,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
           table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
           table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
           false,
-          table.heightMode === 'autoHeight',
+          // table.heightMode === 'autoHeight',
+          table.isAutoRowHeight(row),
           [0, 0, 0, 0],
           table
         );
@@ -439,7 +471,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     const textMark = oldCellGroup.getChildByName('text');
     if (textMark) {
       const text = table.getCellValue(col, row);
-      const textArr = convertInternal(text).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      const textArr = breakString(text, table);
+
       const hierarchyOffset = getHierarchyOffset(col, row, table);
       const lineClamp = cellStyle.lineClamp;
       const padding = getQuadProps(getProp('padding', cellStyle, col, row, table)) ?? [0, 0, 0, 0];
@@ -466,7 +499,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit: cellHeight - (padding[0] + padding[2]),
         pickable: false,
-        dx: hierarchyOffset,
+        dx: textAlign === 'left' ? hierarchyOffset : 0,
         x
       };
       // const oldText = textMark.attribute.text;
@@ -671,7 +704,8 @@ function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWra
   const define = table.getBodyColumnDefine(col, row);
   const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
   const cellType = table.getBodyColumnType(col, row);
-  const autoRowHeight = table.heightMode === 'autoHeight';
+  // const autoRowHeight = table.heightMode === 'autoHeight';
+  const autoRowHeight = table.isAutoRowHeight(row);
   const value = table.getCellValue(col, row);
 
   if (
@@ -707,7 +741,8 @@ export function dealWithMergeCellSize(
           cellGroup,
           cellHeight,
           cellHeight,
-          table.heightMode === 'autoHeight',
+          // table.heightMode === 'autoHeight',
+          table.isAutoRowHeight(row),
           padding,
           textAlign,
           textBaseline
@@ -720,7 +755,8 @@ export function dealWithMergeCellSize(
           cellWidth,
           cellHeight,
           0,
-          table.heightMode === 'autoHeight',
+          // table.heightMode === 'autoHeight',
+          table.isAutoRowHeight(row),
           padding,
           textAlign,
           textBaseline,
@@ -833,7 +869,8 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
           table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
           table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
           false,
-          table.heightMode === 'autoHeight',
+          // table.heightMode === 'autoHeight',
+          table.isAutoRowHeight(row),
           [0, 0, 0, 0],
           table
         );
@@ -856,7 +893,7 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
 
         resizeCellGroup(cellGroup, rangeWidth, rangeHeight, customMergeRange, table);
 
-        return customResult;
+        return customMergeRange;
       }
     }
   }

@@ -167,6 +167,13 @@
           }
         },
         {
+          "path": "pivot-table-tree-lazy-load",
+          "title": {
+            "zh": "透视表树形懒加载子节点（自定义表头结构）",
+            "en": "Pivot Table Tree Lazy Load"
+          }
+        },
+        {
           "path": "pivot-table-multi-tree",
           "title": {
             "zh": "透视表多列树形展示",
@@ -194,6 +201,27 @@
           "title": {
             "zh": "透视组合图（饼图）",
             "en": "Pivot Chart Pie"
+          }
+        },
+        {
+          "path": "pivot-chart-radar",
+          "title": {
+            "zh": "透视组合图（雷达图）",
+            "en": "Pivot Chart Radar"
+          }
+        },
+        {
+          "path": "pivot-chart-scatter",
+          "title": {
+            "zh": "透视组合图（散点图）",
+            "en": "Pivot Chart Scatter"
+          }
+        },
+        {
+          "path": "pivot-chart-wordCloud",
+          "title": {
+            "zh": "透视组合图（词云图）",
+            "en": "Pivot Chart Word Cloud"
           }
         }
       ]
@@ -250,6 +278,22 @@
             "group": "Cell Type",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/checkbox.png",
             "link": "'../../guide/column_type/checkbox'",
+            "option": ""
+          }
+        },
+        {
+          "path": "radio",
+          "title": {
+            "zh": "单选框类型",
+            "en": "Radio Type"
+          },
+          "meta": {
+            "title": "Radio Type",
+            "keywords": "",
+            "category": "demo",
+            "group": "Cell Type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/radio.png",
+            "link": "'../../guide/column_type/radio'",
             "option": ""
           }
         },
@@ -350,6 +394,22 @@
             "category": "demo",
             "group": "Basic Features",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sort.gif",
+            "link": "'../../guide/basic_function/sort'",
+            "option": ""
+          }
+        },
+        {
+          "path": "pre-sort",
+          "title": {
+            "zh": "预排序",
+            "en": "Pre Sort"
+          },
+          "meta": {
+            "title": "Pre Sort",
+            "keywords": "",
+            "category": "demo",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pre-sort.png",
             "link": "'../../guide/basic_function/sort'",
             "option": ""
           }
@@ -456,6 +516,13 @@
             "zh": "行序号",
             "en": "row series number"
           }
+        },
+        {
+          "path": "pagination",
+          "title": {
+            "zh": "分页",
+            "en": "pagination"
+          }
         }
       ]
     },
@@ -517,8 +584,8 @@
         {
           "path": "context-menu",
           "title": {
-            "zh": "右键菜单",
-            "en": "Right click menu"
+            "zh": "右键菜单(复制/粘贴/删除)",
+            "en": "Right click menu(copy/paste/delete)"
           },
           "meta": {
             "title": "Right click menu",
@@ -535,6 +602,13 @@
           "title": {
             "zh": "调整列宽",
             "en": "Adjust column width"
+          }
+        },
+        {
+          "path": "resize-row-height",
+          "title": {
+            "zh": "调整行高",
+            "en": "Adjust row height"
           }
         },
         {
@@ -970,6 +1044,13 @@
             "zh": "指标聚合方式",
             "en": "Indicator Aggregation Type"
           }
+        },
+        {
+          "path": "pivot-analysis-table-drill",
+          "title": {
+            "zh": "透视表上钻下钻",
+            "en": "Pivot Table Drill"
+          }
         }
       ]
     },
@@ -1312,29 +1393,6 @@
           "title": {
             "zh": "销售数据气泡图",
             "en": "Sales Bubble"
-          }
-        }
-      ]
-    },
-    {
-      "path": "react",
-      "title": {
-        "zh": "react",
-        "en": "react"
-      },
-      "children": [
-        {
-          "path": "table-option",
-          "title": {
-            "zh": "table-option",
-            "en": "table-option"
-          }
-        },
-        {
-          "path": "table-component",
-          "title": {
-            "zh": "table-component",
-            "en": "table-component"
           }
         }
       ]

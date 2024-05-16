@@ -37,6 +37,10 @@
     prefix = ${prefix}
 ) }}
 
+{{ use: radio-cell-type(
+    prefix = ${prefix}
+) }}
+
 {{ use: composite-cell-type(
     prefix = ${prefix}
 ) }}

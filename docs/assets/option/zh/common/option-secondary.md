@@ -16,6 +16,20 @@
 - 'adaptive'：使用容器的高度分配每行高度，基于每行内容计算后的高度比例来分配。
 - 'autoHeight'：根据内容自动计算行高，计算依据 fontSize 和 lineHeight(文字行高)，以及 padding。相关搭配设置项`autoWrapText`自动换行，可以根据换行后的多行文本内容来计算行高。
 
+#${prefix} widthAdaptiveMode('only-body' | 'all') = 'only-body'
+
+adaptive 模式下宽度的适应策略，默认为 'only-body'。
+
+- 'only-body'：只有 body 部分的列参与宽度适应计算，表头部分宽度不变。
+- 'all'：所有列参与宽度适应计算。
+
+#${prefix} heightAdaptiveMode('only-body' | 'all') = 'only-body'
+
+adaptive 模式下高度的适应策略，默认为 'only-body'。
+
+- 'only-body'：只有 body 部分的行参与高度适应计算，表头部分高度不变。
+- 'all'：所有列参与高度适应计算。
+
 #${prefix} autoWrapText(boolean) = false
 
 是否自动换行
@@ -123,6 +137,15 @@
 #${prefix} columnResizeMode(string) = 'all'
 
 鼠标 hover 到单元格右边界可拖拽调整列宽。该操作可触发的范围：
+
+- 'all' 整列包括表头和 body 处的单元格均可调整列宽
+- 'none' 禁止调整
+- 'header' 只能在表头处单元格调整
+- 'body' 只能在 body 单元格调整
+
+#${prefix} rowResizeMode(string) = 'none'
+
+鼠标 hover 到单元格下边界可拖拽调整行高。该操作可触发的范围：
 
 - 'all' 整列包括表头和 body 处的单元格均可调整列宽
 - 'none' 禁止调整

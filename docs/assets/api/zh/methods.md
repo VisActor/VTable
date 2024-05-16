@@ -34,7 +34,7 @@
 tableInstance.updateTheme(newTheme)
 ```
 
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // 调用后不会自动重绘
@@ -44,6 +44,8 @@ tableInstance.theme = newTheme;
 ## updateColumns(Function)
 
 更新表格的 columns 字段配置信息，调用后会自动重绘。
+
+**ListTable 专有**
 
 ```ts
   /**
@@ -59,7 +61,7 @@ tableInstance.theme = newTheme;
 tableInstance.updateColumns(newColumns)
 ```
 
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // 调用后不会自动重绘
@@ -155,6 +157,8 @@ setRecords(records: Array<any>)
 
 ## setRecordChildren(Function)
 
+**ListTable 专有**
+
 基本表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
 
 ```
@@ -164,6 +168,23 @@ setRecords(records: Array<any>)
    * @param row  需要设置子节点的单元格地址
    */
   setRecordChildren(records: any[], col: number, row: number)
+```
+
+## setTreeNodeChildren(Function)
+
+**PivotTable 专有**
+
+透视表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用。节点数据懒加载可以参考 demo：https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load
+
+```
+  /**
+   * 树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
+   * @param children 设置到该单元格的子节点
+   * @param records 该节点展开后新增数据
+   * @param col 需要设置子节点的单元格地址
+   * @param row  需要设置子节点的单元格地址
+   */
+  setTreeNodeChildren(children: IHeaderTreeDefine[], records: any[], col: number, row: number)
 ```
 
 ## getDrawRange(Function)
@@ -231,15 +252,19 @@ setRecords(records: Array<any>)
 
 清除所有单元格的选中状态。
 
+## getCopyValue(Function)
+
+获取选中区域的内容 作为复制内容。返回值是个字符串，以`\t`分割单元格，以`\n`分割行。
+
 ## getCellValue(Function)
 
-获取单元格展示值
+获取单元格展示值，如果在 customMergeCell 函数中使用，需要传入 skipCustomMerge 参数，否则会导致报错。
 
 ```
   /**
    * 获取单元格展示值
    */
-  getCellValue(col: number, row: number): FieldData;
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData;
 ```
 
 ## getCellOriginValue(Function)
@@ -313,7 +338,7 @@ setRecords(records: Array<any>)
 
 根据数据源的 index 获取显示到表格中的 index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -331,21 +356,21 @@ setRecords(records: Array<any>)
 
 如果是树形模式的表格，将返回数组，如[1,2] 数据源中第 2 条数据中 children 中的第 3 条。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /** 获取当前单元格的数据是数据源中的第几条。
    * 如果是树形模式的表格，将返回数组，如[1,2] 数据源中第2条数据中children中的第3条
    * 注：ListTable特有接口 */
   getRecordIndexByCell(col: number, row: number): number | number[]
-** ListTable 专有 **
+**ListTable 专有**
 ```
 
 ## getTableIndexByField(Function)
 
 根据数据源的 field 获取显示到表格中的 index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -359,7 +384,7 @@ setRecords(records: Array<any>)
 
 获取当前单元格数据在 body 部分的索引，即通过行列号去除表头层级数的索引（与转置相关，非转置获取的是 body 行号，转置表获取的是 body 列号）。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /** 获取当前单元格在body部分的展示索引，即（ row / col ）- headerLevelCount。注：ListTable特有接口 */
@@ -559,22 +584,6 @@ setRecords(records: Array<any>)
   )=> CellAddress
 ```
 
-## getCheckboxState(Function)
-
-获取某个字段下 checkbox 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
-
-```
-getCheckboxState(field?: string | number): Array
-```
-
-## getCellCheckboxState(Function)
-
-获取某个单元格 checkbox 的状态
-
-```
-getCellCheckboxState(col: number, row: number): Array
-```
-
 ## getScrollTop(Function)
 
 获取当前竖向滚动位置
@@ -639,7 +648,7 @@ enum HierarchyState {
 
 ## getLayoutRowTree(Function)
 
-** PivotTable 专有 **
+**PivotTable 专有**
 
 获取表格行头树形结构
 
@@ -653,7 +662,7 @@ enum HierarchyState {
 
 ## getLayoutRowTreeCount(Function)
 
-** PivotTable 专有 **
+**PivotTable 专有**
 
 获取表格行头树形结构的占位的总节点数。
 
@@ -896,7 +905,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 添加数据，支持多条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -913,7 +922,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 添加数据，单条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -930,7 +939,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 删除数据 支持多条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -944,7 +953,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 修改数据 支持多条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -1011,3 +1020,99 @@ registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number;
   - 单个单元格：`{ row: number, column: number }`
   - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同
+
+## getCheckboxState(Function)
+
+获取某个字段下 checkbox 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
+```
+getCheckboxState(field?: string | number): Array
+```
+
+## getCellCheckboxState(Function)
+
+获取某个单元格 checkbox 的状态
+
+```
+getCellCheckboxState(col: number, row: number): Array
+```
+
+## getRadioState(Function)
+
+获取某个字段下 radio 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
+```
+getRadioState(field?: string | number): number | Record<number, boolean | number>
+```
+
+## getCellRadioState(Function)
+
+获取某个单元格 radio 的状态，如果一个单元格中包含多个单选框，则返回值为 number，指该单元格内选中 radio 的索引，否则返回值为 boolean
+
+```
+getCellRadioState(col: number, row: number): boolean | number
+```
+
+## setCellCheckboxState(Function)
+
+设置单元格的 checkbox 状态
+
+```
+setCellCheckboxState(col: number, row: number, checked: boolean) => void
+```
+
+- col: 列号
+- row: 行号
+- checked: 是否选中
+
+## setCellRadioState(Function)
+
+将单元格的 radio 状态设置为选中状态
+
+```
+setCellRadioState(col: number, row: number, index?: number) => void
+```
+
+- col: 列号
+- row: 行号
+- index: 更新的目标 radio 在单元格中的索引
+
+## getAllRowsHeight(Function)
+
+获取表格所有行的高度
+
+```
+getAllRowsHeight: () => number;
+```
+
+## getAllColsWidth(Function)
+
+获取表格所有列的宽度
+
+```
+getAllColsWidth: () => number;
+```
+
+## setSortedIndexMap(Function)
+
+设置预排序索引，用在大数据量排序的场景下，提升初次排序性能
+
+```
+setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+```
+
+## getHeaderField(Function)
+
+**ListTable**中表示获取对应 header 的 field。
+**PivotTable**中表示获取对应 indicatorKey。
+
+```
+  /**获取对应header的field  */
+  getHeaderField: (col: number, row: number)
+```

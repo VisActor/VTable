@@ -1,5 +1,5 @@
 // import { FederatedPointerEvent } from '@src/vrender';
-import type { FederatedPointerEvent, Gesture } from '@src/vrender';
+import type { FederatedPointerEvent, Gesture, IEventTarget } from '@src/vrender';
 import { RichText } from '@src/vrender';
 import type { ColumnDefine, MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
@@ -42,7 +42,7 @@ export class EventManager {
   touchEnd: boolean; // is touch event end when default touch event listener response
   touchMove: boolean; // is touch listener working, use to disable document touch scrolling function
   gesture: Gesture;
-  handleTextStickBindId: number;
+  handleTextStickBindId: number[];
 
   //鼠标事件记录。 PointerMove敏感度太高了 记录下上一个鼠标位置 在接收到PointerMove事件时做判断 是否到到触发框选或者移动表头操作的标准，防止误触
   LastPointerXY: { x: number; y: number };
@@ -51,12 +51,13 @@ export class EventManager {
   isDraging = false;
   scrollYSpeed: number;
   scrollXSpeed: number;
-
+  downIcon: IEventTarget; // 记录鼠标按下的sicon
   //报错已绑定过的事件 后续清除绑定
   globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
   inertiaScroll: InertiaScroll;
   constructor(table: BaseTableAPI) {
     this.table = table;
+    this.handleTextStickBindId = [];
     this.inertiaScroll = new InertiaScroll(table.stateManager);
     if (Env.mode === 'node' || table.options.disableInteraction) {
       return;
@@ -78,13 +79,28 @@ export class EventManager {
   updateEventBinder() {
     setTimeout(() => {
       // 处理textStick 是否绑定SCROLL的判断
-      if (checkHaveTextStick(this.table) && !this.handleTextStickBindId) {
-        this.handleTextStickBindId = this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
-          handleTextStick(this.table);
-        });
+      if (checkHaveTextStick(this.table) && this.handleTextStickBindId?.length === 0) {
+        this.handleTextStickBindId.push(
+          this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
+            handleTextStick(this.table);
+          })
+        );
+
+        this.handleTextStickBindId.push(
+          this.table.on(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, e => {
+            handleTextStick(this.table);
+          })
+        );
+        this.handleTextStickBindId.push(
+          this.table.on(TABLE_EVENT_TYPE.RESIZE_ROW_END, e => {
+            handleTextStick(this.table);
+          })
+        );
       } else if (!checkHaveTextStick(this.table) && this.handleTextStickBindId) {
-        this.table.off(this.handleTextStickBindId);
-        this.handleTextStickBindId = undefined;
+        this.handleTextStickBindId.forEach(id => {
+          this.table.off(id);
+        });
+        this.handleTextStickBindId = [];
       }
     }, 0);
   }
@@ -119,12 +135,12 @@ export class EventManager {
     });
 
     // 处理textStick
-    if (checkHaveTextStick(this.table)) {
-      this.handleTextStickBindId = this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
-        handleTextStick(this.table);
-      });
-    }
-
+    // if (checkHaveTextStick(this.table)) {
+    //   this.handleTextStickBindId = this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
+    //     handleTextStick(this.table);
+    //   });
+    // }
+    this.updateEventBinder();
     // link/image/video点击
     bindMediaClick(this.table);
 
@@ -227,7 +243,7 @@ export class EventManager {
     const { eventArgs } = eventArgsSet;
 
     if (eventArgs) {
-      if (eventArgs.target.name === 'checkbox') {
+      if (eventArgs.target.name === 'checkbox' || eventArgs.target.name === 'radio') {
         return false;
       }
 
@@ -462,23 +478,46 @@ export class EventManager {
 
   checkColumnResize(eventArgsSet: SceneEvent, update?: boolean): boolean {
     // return false;
+
+    const { eventArgs } = eventArgsSet;
+    // if (eventArgs) { // 如果是鼠标处理表格外部如最后一列的后面 也期望可以拖拽列宽
+    const resizeCol = this.table.scenegraph.getResizeColAt(
+      eventArgsSet.abstractPos.x,
+      eventArgsSet.abstractPos.y,
+      eventArgs?.targetCell
+    );
+    if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
+      if (update) {
+        this.table.stateManager.startResizeCol(
+          resizeCol.col,
+          eventArgsSet.abstractPos.x,
+          eventArgsSet.abstractPos.y,
+          resizeCol.rightFrozen
+        );
+      }
+      return true;
+    }
+    // }
+
+    return false;
+  }
+
+  checkRowResize(eventArgsSet: SceneEvent, update?: boolean): boolean {
     const { eventArgs } = eventArgsSet;
     if (eventArgs) {
-      const resizeCol = this.table.scenegraph.getResizeColAt(
+      const resizeRow = this.table.scenegraph.getResizeRowAt(
         eventArgsSet.abstractPos.x,
         eventArgsSet.abstractPos.y,
         eventArgs.targetCell
       );
 
-      if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
-        // this.table.stateManager.updateResizeCol(resizeCol.col, eventArgsSet.abstractPos.x, first);
-        // this._col = resizeCol.col;
+      if (this.table._canResizeRow(resizeRow.col, resizeRow.row) && resizeRow.row >= 0) {
         if (update) {
-          this.table.stateManager.startResizeCol(
-            resizeCol.col,
+          this.table.stateManager.startResizeRow(
+            resizeRow.row,
             eventArgsSet.abstractPos.x,
             eventArgsSet.abstractPos.y,
-            resizeCol.rightFrozen
+            resizeRow.bottomFrozen
           );
         }
         return true;
@@ -525,6 +564,10 @@ export class EventManager {
 
   dealColumnResize(xInTable: number, yInTable: number) {
     this.table.stateManager.updateResizeCol(xInTable, yInTable);
+  }
+
+  dealRowResize(xInTable: number, yInTable: number) {
+    this.table.stateManager.updateResizeRow(xInTable, yInTable);
   }
 
   chechColumnMover(eventArgsSet: SceneEvent): boolean {

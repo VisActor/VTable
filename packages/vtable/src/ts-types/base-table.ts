@@ -65,7 +65,9 @@ import type {
   IListTableDataConfig,
   IRowSeriesNumber,
   ColumnSeriesNumber,
-  ColumnStyleOption
+  ColumnStyleOption,
+  WidthAdaptiveModeDef,
+  HeightAdaptiveModeDef
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -88,6 +90,7 @@ import type { DiscreteTableLegend } from '../components/legend/discrete-legend/d
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
 import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
+import type { ISortedMapItem } from '../data/DataSource';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -118,7 +121,9 @@ export interface IBaseTableProtected {
   // disableRowHeaderColumnResize?: boolean;
   // 列宽调整模式（全列调整；全列不可调整；仅表头单元格可调整；仅内容单元格可调整）
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  rowResizeMode?: 'all' | 'none' | 'header' | 'body';
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+  rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
   /** 拖拽表头移动位置 针对冻结部分的规则
@@ -149,6 +154,7 @@ export interface IBaseTableProtected {
   _colRangeWidthsMap: Map<string, number>; //存储指定列范围的总宽度
 
   _widthResizedColMap: Set<number>; //记录下被手动调整过列宽的列号
+  _heightResizedRowMap: Set<number>; //记录下被手动调整过行高的行号
 
   bodyHelper: BodyHelper;
   headerHelper: HeaderHelper;
@@ -207,6 +213,7 @@ export interface IBaseTableProtected {
   //重新思考逻辑：如果为false，行高按设置的rowHeight；如果设置为true，则按lineHeight及是否自动换行综合计算行高 2021.11.19 by：lff
 
   autoWrapText?: boolean;
+  enableLineBreak?: boolean;
 
   menuHandler: MenuHandler;
 
@@ -219,6 +226,8 @@ export interface IBaseTableProtected {
    * 限制列宽最小值。
    */
   limitMinWidth?: number;
+
+  limitMinHeight?: number;
 
   title?: Title;
   legends?: DiscreteTableLegend | ContinueTableLegend;
@@ -282,6 +291,7 @@ export interface BaseTableConstructorOptions {
    * 调整列宽 可操作范围。'all' | 'none' | 'header' | 'body'; 整列间隔线|禁止调整|只能在表头处间隔线|只能在body间隔线
    */
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  rowResizeMode?: 'all' | 'none' | 'header' | 'body';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
 
@@ -350,6 +360,12 @@ export interface BaseTableConstructorOptions {
   autoFillWidth?: boolean;
   /** 当行高度不能占满容器时，是否需要自动拉高来填充容器的高度。默认false */
   autoFillHeight?: boolean;
+
+  /** adaptive 模式下宽度的适应策略 **/
+  widthAdaptiveMode?: WidthAdaptiveModeDef;
+  /** adaptive 模式下高度的适应策略 **/
+  heightAdaptiveMode?: HeightAdaptiveModeDef;
+
   // /** 行高是否根据内容来计算 */
   // autoRowHeight?: boolean;
   /** 设备的像素比 不配的话默认获取window.devicePixelRatio */
@@ -358,6 +374,8 @@ export interface BaseTableConstructorOptions {
   customRender?: ICustomRender;
   /** 开启自动换行 默认false */
   autoWrapText?: boolean;
+  /** 是否处理换行符 */
+  enableLineBreak?: boolean;
   /** 单元格中可显示最大字符数 默认200 */
   maxCharactersNumber?: number; //
   // /** toolip最大字符数 */
@@ -372,6 +390,7 @@ export interface BaseTableConstructorOptions {
    * 限制列宽最小值。如设置为true 则拖拽改变列宽时限制列宽最小为10px，设置为false则不进行限制。默认为10px
    */
   limitMinWidth?: boolean | number;
+  limitMinHeight?: boolean | number;
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
@@ -416,6 +435,10 @@ export interface BaseTableConstructorOptions {
   customCellStyleArrangement?: CustomCellStyleArrangement[];
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+
+  customConfig?: any; // 部分特殊配置，兼容xTable等作用
+
+  clearDOM?: boolean;
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */
@@ -491,6 +514,11 @@ export interface BaseTableAPI {
   autoFillWidth: boolean;
   /** 当行高度不能占满容器时，是否需要自动拉高来填充容器的高度。默认false */
   autoFillHeight?: boolean;
+
+  /** adaptive 模式下宽度的适应策略 **/
+  widthAdaptiveMode: WidthAdaptiveModeDef;
+  /** adaptive 模式下高度的适应策略 **/
+  heightAdaptiveMode: HeightAdaptiveModeDef;
 
   isReleased: boolean;
 
@@ -638,7 +666,7 @@ export interface BaseTableAPI {
 
   getHeaderDescription: (col: number, row: number) => string | undefined;
   /** 获取单元格展示值 */
-  getCellValue: (col: number, row: number) => string | null;
+  getCellValue: (col: number, row: number, skipCustomMerge?: boolean) => string | null;
   /** 获取单元格展示数据的format前的值 */
   getCellOriginValue: (col: number, row: number) => any;
   /** 获取单元格展示数据源最原始值 */
@@ -694,6 +722,7 @@ export interface BaseTableAPI {
   ) => ITextSize;
 
   _canResizeColumn: (col: number, row: number) => boolean;
+  _canResizeRow: (col: number, row: number) => boolean;
 
   getCustomRender: (col: number, row: number) => ICustomRender;
   getCustomLayout: (col: number, row: number) => ICustomLayout;
@@ -768,6 +797,9 @@ export interface BaseTableAPI {
   isSeriesNumber: (col: number, row?: number) => boolean;
   isHasSeriesNumber: () => boolean;
   leftRowSeriesNumberCount: number;
+  isAutoRowHeight: (row: number) => boolean;
+
+  setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

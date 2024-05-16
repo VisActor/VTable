@@ -171,7 +171,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
               cells.forEach(function (cell: string, cellIndex: number) {
                 // 单元格数据处理
                 const parsedCellData = !cell
-                  ? ''
+                  ? ' '
                   : cell
                       .toString()
                       .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks
@@ -190,7 +190,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
               });
               result.push('<tr>', ...rowValues, '</tr>');
 
-              if (rowIndex === rowCells.length - 1) {
+              if (rowIndex === rows.length - 1) {
                 result.push('</tbody>');
               }
             });
@@ -498,11 +498,19 @@ export function bindContainerDomListener(eventManager: EventManager) {
             colWidth: table.getColWidth(table.stateManager.columnResize.col)
           });
         }
+      } else if (stateManager.isResizeRow()) {
+        eventManager.dealRowResize(x, y);
+        if ((table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_ROW)) {
+          table.fireListeners(TABLE_EVENT_TYPE.RESIZE_ROW, {
+            row: table.stateManager.rowResize.row,
+            rowHeight: table.getRowHeight(table.stateManager.rowResize.row)
+          });
+        }
       }
     }
     const isSelecting = table.stateManager.isSelecting();
 
-    if (eventManager.isDraging && isSelecting) {
+    if (eventManager.isDraging && isSelecting && table.stateManager.select.ranges?.length > 0) {
       // 检测鼠标是否离开了table
       const drawRange = table.getDrawRange();
       // const element = table.getElement();
@@ -518,8 +526,12 @@ export function bindContainerDomListener(eventManager: EventManager) {
       const rightFrozenColsWidth = table.getRightFrozenColsWidth();
       const startCell = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].start;
       const endCell = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end;
-      const canScrollY = table.isFrozenRow(startCell.row) === false || table.isFrozenRow(endCell.row) === false;
-      const canScrollX = table.isFrozenColumn(startCell.col) === false || table.isFrozenColumn(endCell.col) === false;
+      const canScrollY =
+        (table.isFrozenRow(startCell.row) === false || table.isFrozenRow(endCell.row) === false) &&
+        table.getAllRowsHeight() > table.tableNoFrameHeight;
+      const canScrollX =
+        (table.isFrozenColumn(startCell.col) === false || table.isFrozenColumn(endCell.col) === false) &&
+        table.getAllColsWidth() > table.tableNoFrameWidth;
       if (
         ((y > drawRange.bottom - bottomFrozenRowHeight || y < drawRange.top + topFrozenRowHeight) && canScrollY) ||
         ((x > drawRange.right - rightFrozenColsWidth || x < drawRange.left + leftFrozenColsWidth) && canScrollX)

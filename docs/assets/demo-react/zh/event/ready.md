@@ -10,32 +10,33 @@ option: ListTable-columns-text#cellType
 
 # onReady
 
-onReady回调再表格完成初始化或更新后触发，可以获取表格实例和是否是首次渲染。
+onReady 回调再表格完成初始化或更新后触发，可以获取表格实例和是否是首次渲染。
 
 ## 代码演示
+
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
-      caption: 'name',
+      title: 'name'
     },
     {
       field: '1',
-      caption: 'age',
+      title: 'age'
     },
     {
       field: '2',
-      caption: 'gender',
+      title: 'gender'
     },
     {
       field: '3',
-      caption: 'hobby',
-    },
+      title: 'hobby'
+    }
   ],
-  records: new Array(1000).fill(['John', 18, 'male', '🏀']),
+  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
 };
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
@@ -44,7 +45,7 @@ root.render(
     option={option}
     height={'500px'}
     onReady={(tableInstance, isFirst) => {
-      console.log(tableInstance, isFirst)
+      console.log(tableInstance, isFirst);
     }}
   />
 );

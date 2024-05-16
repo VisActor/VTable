@@ -10,7 +10,7 @@ export function createTable() {
     rows: ['province', 'city'],
     columns: ['category', 'sub_category'],
     indicators: ['sales', 'number'],
-    enableDataAnalysis: true,
+    // rowHierarchyType: 'tree',
     indicatorTitle: '指标名称',
     indicatorsAsCol: false,
     corner: { titleOnDimension: 'row' },
@@ -273,6 +273,7 @@ export function createTable() {
       }
     ],
     editor: 'input',
+    headerEditor: 'input',
     widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
   };
 

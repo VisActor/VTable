@@ -221,7 +221,7 @@ According to the above traversed structure, a dimension tree will be generated, 
     <p>Correspondence between data source entries and cells</p>
   </div>
 
-### Custom dimension tree
+### Custom header structure width dimension tree
 
 Although multi-dimensional tables with analytical capabilities can automatically analyze the dimension values of each dimension to form a tree structure of row and column headers, and can be sorted according to `dataConfig.sortRules`, scenarios with complex business logic still expect to be able to **customize Row column header dimension value ** and order. Then these business requirement scenarios can be realized through rowTree and columnTree.
 
@@ -375,3 +375,13 @@ VTable official website example: https://visactor.io/vtable/demo/table-type/pivo
 The complexity of the custom tree lies in the formation of the row, column and dimension trees. You can choose to use it according to the business scenario. If you have complex sorting, aggregation or paging rules, you can choose to use a custom method.
 
 **Note: If you choose the custom tree configuration method, the data aggregation capability inside the VTable will not be enabled, that is, one of the matched data entries will be used as the cell indicator value. **
+
+## Other related configurations
+
+### Drilling up and down
+
+We only provide the display of the drill-down download button. If you need this capability, you need to combine events and interfaces to implement the relevant logic yourself.
+
+Add the drillDown configuration item to the dimension configuration rows or columns to display the download button, listen to the icon button click event `drillmenu_click`, determine whether to drill down or roll up the dimension according to the event parameter `drillDown` or `drillUp`, determine the dimension to drill down or drill up according to the parameter `dimensionKey`, add or delete it to rows or columns, obtain the data source corresponding to the new dimension level, and call the interface `updateOption` to update the new option to the table.
+
+Specific demo: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-table-drill

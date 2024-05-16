@@ -337,7 +337,9 @@ export class HeaderHelper {
     }
     return undefined;
   }
-
+  getHierarchyIconWidth() {
+    return this.expandIcon.width + (this.expandIcon.marginLeft ?? 0) + (this.expandIcon.marginRight ?? 0);
+  }
   private checkDropDownIcon(_table: BaseTableAPI, col: number, row: number) {
     /*
      * dropDownMenu有三种状态：

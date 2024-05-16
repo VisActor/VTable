@@ -29,7 +29,7 @@ yarn add @visactor/openinula-vtable
 It is recommended to use npm package to import
 
 ```js
-import { ListTable } from "@visactor/openinula-vtable";
+import { ListTable } from '@visactor/openinula-vtable';
 ```
 
 ## Draw a simple list
@@ -41,34 +41,31 @@ Here is a simple list example code:
 ```typescript
 import Openinula from 'openinula';
 import OpeninulaDOM from 'openinula-dom/client';
-import { ListTable } from "@visactor/openinula-vtable";
+import { ListTable } from '@visactor/openinula-vtable';
 
 const option = {
   columns: [
     {
-      field: "0",
-      caption: "name",
+      field: '0',
+      title: 'name'
     },
     {
-      field: "1",
-      caption: "age",
+      field: '1',
+      title: 'age'
     },
     {
-      field: "2",
-      caption: "gender",
+      field: '2',
+      title: 'gender'
     },
     {
-      field: "3",
-      caption: "hobby",
-    },
+      field: '3',
+      title: 'hobby'
+    }
   ],
-  records: new Array(1000).fill(["John", 18, "male", "🏀"]),
+  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
 };
 
-Inula.render(
-  <ListTable option={option} height={'500px'}/>,
-  document.getElementById('root')
-);
+Inula.render(<ListTable option={option} height={'500px'} />, document.getElementById('root'));
 ```
 
 Refer to [demo](../../demo-openinula/usage/option)
@@ -123,10 +120,10 @@ function App() {
   // ......
   return (
     <ListTable records={records}>
-      <ListColumn field={'0'} caption={'名称'} />
-      <ListColumn field={'1'} caption={'年龄'} />
-      <ListColumn field={'2'} caption={'性别'} />
-      <ListColumn field={'3'} caption={'爱好'} />
+      <ListColumn field={'0'} title={'名称'} />
+      <ListColumn field={'1'} title={'年龄'} />
+      <ListColumn field={'2'} title={'性别'} />
+      <ListColumn field={'3'} title={'爱好'} />
     </ListTable>
   );
 }
@@ -146,38 +143,38 @@ The props attributes accepted by PivotTable&PivotChart are the same as options. 
 - PivotCorner: Corner configuration, consistent with the definition of corner in option [api](../../option/PivotTable#corner)
 
 ```jsx
-  return (
-    <PivotTable
-      // ......
-    >
-      <PivotColumnHeaderTitle
-        // ......
-      />
-      <PivotColumnDimension
-        // ......
-      />
-      <PivotColumnDimension
-        // ......
-      />
-      <PivotRowDimension
-        // ......
-      />
-      <PivotRowDimension
-        // ......
-      />
-      <PivotIndicator
-        // ......
-      />
-      <PivotIndicator
-        // ......
-      />
-      <PivotCorner
-        // ......
-      />
-    </PivotTable>
-  );
-
+return (
+  <PivotTable
+  // ......
+  >
+    <PivotColumnHeaderTitle
+    // ......
+    />
+    <PivotColumnDimension
+    // ......
+    />
+    <PivotColumnDimension
+    // ......
+    />
+    <PivotRowDimension
+    // ......
+    />
+    <PivotRowDimension
+    // ......
+    />
+    <PivotIndicator
+    // ......
+    />
+    <PivotIndicator
+    // ......
+    />
+    <PivotCorner
+    // ......
+    />
+  </PivotTable>
+);
 ```
+
 Grammatical label demo: [PivotTable demo](../../demo-openinula/grammatical-tag/pivot-table) [PivotChart demo](../../demo-openinula/grammatical-tag/pivot-chart)
 
 #### Components outside the table
@@ -191,10 +188,10 @@ External components currently support:
 <PivotTable>
   // ......
   <Menu
-    // ......
+  // ......
   />
   <Tooltip
-    // ......
+  // ......
   />
 </PivotTable>
 ```
@@ -204,6 +201,7 @@ External components currently support:
 The Props of the outermost table component of the unified label or the syntactic table label inherit the event processing callback EventsProps of the table.
 
 EventsProps are defined as follows:
+
 ```ts
 interface EventsProps {
   onClickCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['click_cell']>;
@@ -247,6 +245,7 @@ interface EventsProps {
   onMouseLeaveAxis?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_axis']>;
 
   onCheckboxStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['checkbox_state_change']>;
+  onRadioStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['radio_state_change']>;
   onAfterRender?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_render']>;
   onInitialized?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['initialized']>;
 
@@ -260,6 +259,7 @@ interface EventsProps {
 ```
 
 Event usage example:
+
 ```jsx
 function App() {
   const option = {

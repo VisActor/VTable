@@ -174,7 +174,8 @@ export function updateCellHeight(
       cell.attribute.height,
       padding,
       scene.table,
-      getStyleTheme(headerStyle, scene.table, col, row, getProp).theme
+      getStyleTheme(headerStyle, scene.table, col, row, getProp).theme,
+      false
     );
   } else if (type === 'image' || type === 'video') {
     updateImageCellContentWhileResize(cell, col, row, scene.table);
@@ -188,7 +189,19 @@ export function updateCellHeight(
       customContainer.removeAllChild();
       cell.removeChild(customContainer);
 
-      if (!getCustomCellMergeCustom(col, row, cell, scene.table)) {
+      const customMergeRange = getCustomCellMergeCustom(col, row, cell, scene.table);
+      if (customMergeRange) {
+        for (let mergeRow = customMergeRange.start.row; mergeRow <= customMergeRange.end.row; mergeRow++) {
+          if (mergeRow === row) {
+            continue;
+          }
+          const mergedCell = scene.getCell(col, mergeRow);
+          const customContainer = mergedCell.getChildByName('custom-container') as Group;
+          customContainer.removeAllChild();
+          mergedCell.removeChild(customContainer);
+          getCustomCellMergeCustom(col, mergeRow, mergedCell, scene.table);
+        }
+      } else {
         let customRender;
         let customLayout;
         const cellLocation = scene.table.getCellLocation(col, row);
@@ -220,7 +233,8 @@ export function updateCellHeight(
             width,
             height,
             false,
-            scene.table.heightMode === 'autoHeight',
+            // scene.table.heightMode === 'autoHeight',
+            scene.table.isAutoRowHeight(row),
             padding,
             scene.table
           );
@@ -254,7 +268,8 @@ export function updateCellHeight(
       cell,
       distHeight,
       detaY,
-      scene.table.heightMode === 'autoHeight',
+      // scene.table.heightMode === 'autoHeight',
+      scene.table.isAutoRowHeight(row),
       renderDefault,
       scene.table
     );

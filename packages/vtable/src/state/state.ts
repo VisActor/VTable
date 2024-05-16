@@ -37,6 +37,17 @@ import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
+import { setRadioState, syncRadioState } from './radio/radio';
+import {
+  initCheckedState,
+  initLeftRecordsCheckState,
+  setCheckedState,
+  setHeaderCheckedState,
+  syncCheckedState,
+  updateHeaderCheckedState
+} from './checkbox/checkbox';
+import { updateResizeRow } from './resize/update-resize-row';
+import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -96,6 +107,13 @@ export class StateManager {
     x: number;
     resizing: boolean;
     isRightFrozen?: boolean;
+  };
+  rowResize: {
+    row: number;
+    /** x坐标是相对table内坐标 */
+    y: number;
+    resizing: boolean;
+    isBottomFrozen?: boolean;
   };
   columnMove: {
     colSource: number;
@@ -166,6 +184,8 @@ export class StateManager {
   _checkboxCellTypeFields: (string | number)[] = [];
 
   _headerCheckFuncs: Record<string | number, Function> = {};
+
+  radioState: Record<string | number, number | Record<number, number>> = {};
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
@@ -218,6 +238,11 @@ export class StateManager {
     this.columnResize = {
       col: -1,
       x: 0,
+      resizing: false
+    };
+    this.rowResize = {
+      row: -1,
+      y: 0,
       resizing: false
     };
     this.columnMove = {
@@ -295,6 +320,11 @@ export class StateManager {
     this.columnResize = {
       col: -1,
       x: 0,
+      resizing: false
+    };
+    this.rowResize = {
+      row: -1,
+      y: 0,
       resizing: false
     };
     this.columnMove = {
@@ -489,7 +519,7 @@ export class StateManager {
   }
 
   updateHoverIcon(col: number, row: number, target: any, cellGroup: Group, event?: FederatedEvent) {
-    if (target === this.residentHoverIcon?.icon) {
+    if (this.residentHoverIcon?.icon && target === this.residentHoverIcon?.icon) {
       return; // 常驻hover icon不更新交互
     }
     const iconInfo = getIconAndPositionFromTarget(target);
@@ -525,7 +555,12 @@ export class StateManager {
             rect: iconInfo.position,
             placement: inlineIcon.attribute.tooltip.placement
           },
-          style: Object.assign({}, this.table.internalProps.theme?.tooltipStyle, inlineIcon.tooltip?.style)
+          style: Object.assign(
+            {},
+            this.table.internalProps.theme?.tooltipStyle,
+            inlineIcon.tooltip?.style,
+            inlineIcon.attribute?.tooltip?.style
+          )
         };
         if (!this.table.internalProps.tooltipHandler.isBinded(tooltipOptions)) {
           this.table.showTooltip(col, row, tooltipOptions);
@@ -553,6 +588,9 @@ export class StateManager {
   isResizeCol(): boolean {
     return this.columnResize.resizing;
   }
+  isResizeRow(): boolean {
+    return this.rowResize.resizing;
+  }
   isFillHandle(): boolean {
     return this.fillHandle.isFilling;
   }
@@ -560,22 +598,49 @@ export class StateManager {
     return this.select.selecting;
   }
   endSelectCells(fireListener: boolean = true) {
-    this.select.selecting = false;
-    if (this.select.ranges.length === 0) {
-      return;
-    }
-    selectEnd(this.table.scenegraph);
+    if (this.select.selecting) {
+      this.select.selecting = false;
+      if (this.select.ranges.length === 0) {
+        return;
+      }
 
-    // 触发SELECTED_CELL
-    const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
-    const lastRow = this.select.ranges[this.select.ranges.length - 1].end.row;
-    fireListener &&
-      this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
-        ranges: this.select.ranges,
-        col: lastCol,
-        row: lastRow
-      });
+      // this.select.ranges deduplication
+      const currentRange = this.select.ranges[this.select.ranges.length - 1];
+      let isSame = false;
+      for (let i = 0; i < this.select.ranges.length - 1; i++) {
+        const range = this.select.ranges[i];
+        if (
+          range &&
+          range.start.col === currentRange.start.col &&
+          range.start.row === currentRange.start.row &&
+          range.end.col === currentRange.end.col &&
+          range.end.row === currentRange.end.row
+        ) {
+          isSame = true;
+          break;
+        }
+      }
+      if (isSame) {
+        this.select.ranges.pop();
+        // remove selecting rect
+        deleteAllSelectingBorder(this.table.scenegraph);
+        this.table.scenegraph.selectingRangeComponents.clear();
+      } else {
+        selectEnd(this.table.scenegraph);
+      }
+
+      // 触发SELECTED_CELL
+      const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
+      const lastRow = this.select.ranges[this.select.ranges.length - 1].end.row;
+      fireListener &&
+        this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
+          ranges: this.select.ranges,
+          col: lastCol,
+          row: lastRow
+        });
+    }
   }
+
   endResizeCol() {
     setTimeout(() => {
       this.columnResize.resizing = false;
@@ -598,6 +663,36 @@ export class StateManager {
 
     this.table.scenegraph.updateNextFrame();
   }
+  updateResizeCol(xInTable: number, yInTable: number) {
+    updateResizeColumn(xInTable, yInTable, this);
+  }
+
+  endResizeRow() {
+    setTimeout(() => {
+      this.rowResize.resizing = false;
+    }, 0);
+    this.table.scenegraph.updateChartSize(this.rowResize.row);
+    // this.checkFrozen();
+    this.table.scenegraph.component.hideResizeRow();
+    this.table.scenegraph.updateNextFrame();
+  }
+  startResizeRow(row: number, x: number, y: number, isBottomFrozen?: boolean) {
+    this.rowResize.resizing = true;
+    this.rowResize.row = row;
+    this.rowResize.y = y;
+    this.rowResize.isBottomFrozen = isBottomFrozen;
+
+    this.table.scenegraph.component.showResizeRow(row, x, isBottomFrozen);
+
+    // 调整列宽期间清空选中清空
+    this.updateSelectPos(-1, -1);
+
+    this.table.scenegraph.updateNextFrame();
+  }
+  updateResizeRow(xInTable: number, yInTable: number) {
+    updateResizeRow(xInTable, yInTable, this);
+  }
+
   startFillSelect(x: number, y: number) {
     this.fillHandle.isFilling = true;
     this.fillHandle.startX = x;
@@ -634,9 +729,7 @@ export class StateManager {
     this.fillHandle.beforeFillMinCol = undefined;
     this.fillHandle.beforeFillMinRow = undefined;
   }
-  updateResizeCol(xInTable: number, yInTable: number) {
-    updateResizeColumn(xInTable, yInTable, this);
-  }
+
   startMoveCol(col: number, row: number, x: number, y: number) {
     startMoveCol(col, row, x, y, this);
   }
@@ -806,22 +899,24 @@ export class StateManager {
     // 更新scrollbar位置
     const yRatio = top / (totalHeight - this.table.scenegraph.height);
     this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
-    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-      scrollTop: this.scroll.verticalBarPos,
-      scrollLeft: this.scroll.horizontalBarPos,
-      scrollHeight: this.table.theme.scrollStyle?.width,
-      scrollWidth: this.table.theme.scrollStyle?.width,
-      viewHeight: this.table.tableNoFrameHeight,
-      viewWidth: this.table.tableNoFrameWidth,
-      scrollDirection: 'vertical',
-      scrollRatioY: yRatio
-    });
 
     if (oldVerticalBarPos !== top) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth: this.table.tableNoFrameWidth,
+        scrollDirection: 'vertical',
+        scrollRatioY: yRatio
+      });
+
       this.checkVerticalScrollBarEnd();
     }
   }
   setScrollLeft(left: number) {
+    const oldScrollLeft = this.table.scrollLeft;
     // 矫正left值范围
     const totalWidth = this.table.getAllColsWidth();
     const frozenWidth = this.table.getFrozenColsWidth();
@@ -846,17 +941,18 @@ export class StateManager {
     const xRatio = left / (totalWidth - this.table.scenegraph.width);
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
 
-    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-      scrollTop: this.scroll.verticalBarPos,
-      scrollLeft: this.scroll.horizontalBarPos,
-      scrollHeight: this.table.theme.scrollStyle?.width,
-      scrollWidth: this.table.theme.scrollStyle?.width,
-      viewHeight: this.table.tableNoFrameHeight,
-      viewWidth: this.table.tableNoFrameWidth,
-      scrollDirection: 'horizontal',
-      scrollRatioX: xRatio
-    });
     if (oldHorizontalBarPos !== left) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth: this.table.tableNoFrameWidth,
+        scrollDirection: 'horizontal',
+        scrollRatioX: xRatio
+      });
+
       this.checkHorizontalScrollBarEnd();
     }
   }
@@ -1180,22 +1276,10 @@ export class StateManager {
     }
   }
   setCheckedState(col: number, row: number, field: string | number, checked: boolean) {
-    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
-    if (recordIndex >= 0) {
-      const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
-      if (this.checkedState[dataIndex]) {
-        this.checkedState[dataIndex][field] = checked;
-      } else {
-        this.checkedState[dataIndex] = {};
-        this.checkedState[dataIndex][field] = checked;
-      }
-    }
+    return setCheckedState(col, row, field, checked, this);
   }
   setHeaderCheckedState(field: string | number, checked: boolean) {
-    this.headerCheckedState[field] = checked;
-    this.checkedState?.forEach(recordCheckState => {
-      recordCheckState[field] = checked;
-    });
+    return setHeaderCheckedState(field, checked, this);
   }
 
   //#region CheckedState 状态维护
@@ -1209,33 +1293,7 @@ export class StateManager {
    * @returns
    */
   syncCheckedState(col: number, row: number, field: string | number, checked: boolean): boolean | 'indeterminate' {
-    if (this.table.isHeader(col, row)) {
-      if (isValid(this.headerCheckedState[field])) {
-        return this.headerCheckedState[field];
-      } else if (typeof checked === 'function') {
-        return undefined;
-      } else if (isValid(checked)) {
-        this.headerCheckedState[field] = checked;
-      } else if (this.checkedState?.length > 0) {
-        const isAllChecked = this.updateHeaderCheckedState(field);
-        return isAllChecked;
-      }
-      return this.headerCheckedState[field];
-    }
-    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
-    if (recordIndex >= 0) {
-      const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
-      if (isValid(this.checkedState[dataIndex]?.[field])) {
-        return this.checkedState[dataIndex][field];
-      }
-      if (this.checkedState[dataIndex]) {
-        this.checkedState[dataIndex][field] = checked;
-      } else {
-        this.checkedState[dataIndex] = {};
-        this.checkedState[dataIndex][field] = checked;
-      }
-    }
-    return checked;
+    return syncCheckedState(col, row, field, checked, this);
   }
   /**
    * 创建表头cell节点时同步状态 如果状态缓存有则用 如果没有则设置缓存
@@ -1263,60 +1321,7 @@ export class StateManager {
    * @param records
    */
   initCheckedState(records: any[]) {
-    let isNeedInitHeaderCheckedStateFromRecord = false;
-    this._checkboxCellTypeFields = [];
-    this._headerCheckFuncs = {};
-    this.table.internalProps.layoutMap.headerObjects.forEach((hd, index) => {
-      if (hd.headerType === 'checkbox') {
-        const headerChecked = (hd.define as CheckboxColumnDefine).checked as boolean;
-
-        if (headerChecked === undefined || headerChecked === null || typeof headerChecked === 'function') {
-          // 如果没有明确指定check的状态 则需要在下面遍历所有数据获取到节点状态 确定这个header的check状态
-          isNeedInitHeaderCheckedStateFromRecord = true;
-          if (typeof headerChecked === 'function') {
-            this._headerCheckFuncs[hd.field as string | number] = headerChecked;
-          }
-        } else {
-          this.headerCheckedState[hd.field as string | number] = headerChecked;
-        }
-        if (hd.define.cellType === 'checkbox' && !hd.fieldFormat) {
-          this._checkboxCellTypeFields.push(hd.field as string | number);
-        }
-      }
-    });
-    //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
-    if (isNeedInitHeaderCheckedStateFromRecord) {
-      records.forEach((record: any, index: number) => {
-        this._checkboxCellTypeFields.forEach(field => {
-          const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
-          let isChecked;
-          if (isObject(value)) {
-            isChecked = value.checked;
-          } else if (typeof value === 'boolean') {
-            isChecked = value;
-          }
-          if (isChecked === undefined || isChecked === null) {
-            const headerCheckFunc = this._headerCheckFuncs[field];
-            if (headerCheckFunc) {
-              //如果定义的checked是个函数 则需要每个都去计算这个值
-              const cellAddr = this.table.getCellAddrByFieldRecord(field, index);
-              const globalChecked = getOrApply(headerCheckFunc as any, {
-                col: cellAddr.col,
-                row: cellAddr.row,
-                table: this.table,
-                context: null,
-                value
-              });
-              isChecked = globalChecked;
-            }
-          }
-          if (!this.checkedState[index]) {
-            this.checkedState[index] = {};
-          }
-          this.checkedState[index][field] = isChecked;
-        });
-      });
-    }
+    return initCheckedState(records, this);
   }
   /**
    * 更新header单元checked的状态，依据当前列每一个数据checked的状态。
@@ -1324,50 +1329,35 @@ export class StateManager {
    * @returns
    */
   updateHeaderCheckedState(field: string | number): boolean | 'indeterminate' {
-    const allChecked = this.checkedState.every((state: Record<string | number, boolean>) => {
-      return state[field] === true;
-    });
-    if (allChecked) {
-      this.headerCheckedState[field] = true;
-      return allChecked;
-    }
-    const allUnChecked = this.checkedState.every((state: Record<string | number, boolean>) => {
-      return state[field] === false;
-    });
-    if (allUnChecked) {
-      this.headerCheckedState[field] = false;
-      return false;
-    }
-    const hasChecked = this.checkedState.find((state: Record<string | number, boolean>) => {
-      return state[field] === true;
-    });
-    if (hasChecked) {
-      this.headerCheckedState[field] = 'indeterminate';
-      return 'indeterminate'; //半选状态
-    }
-    return false;
+    return updateHeaderCheckedState(field, this);
   }
   /**
    * setRecords的时候虽然调用了initCheckedState 进行了初始化 但当每个表头的checked状态都用配置了的话 初始化不会遍历全部数据
    * @param records
    */
   initLeftRecordsCheckState(records: any[]) {
-    for (let index = this.checkedState.length; index < records.length; index++) {
-      const record = records[index];
-      this._checkboxCellTypeFields.forEach(field => {
-        const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
-        let isChecked;
-        if (isObject(value)) {
-          isChecked = value.checked;
-        } else if (typeof value === 'boolean') {
-          isChecked = value;
-        }
-        if (!this.checkedState[index]) {
-          this.checkedState[index] = {};
-        }
-        this.checkedState[index][field] = isChecked;
-      });
-    }
+    return initLeftRecordsCheckState(records, this);
   }
   //#endregion
+
+  setRadioState(
+    col: number,
+    row: number,
+    field: string | number,
+    radioType: 'column' | 'cell',
+    indexInCell: number | undefined
+  ) {
+    setRadioState(col, row, field, radioType, indexInCell, this);
+  }
+
+  syncRadioState(
+    col: number,
+    row: number,
+    field: string | number,
+    radioType: 'column' | 'cell',
+    indexInCell: number | undefined,
+    isChecked: boolean
+  ) {
+    return syncRadioState(col, row, field, radioType, indexInCell, isChecked, this);
+  }
 }

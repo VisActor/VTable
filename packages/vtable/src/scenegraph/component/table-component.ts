@@ -5,11 +5,8 @@ import type { Group } from '../graphic/group';
 import { MenuHandler } from './menu';
 import { DrillIcon } from './drill-icon';
 import { CellMover } from './cell-mover';
-import { getColX } from './util';
+import { getColX, getRowY } from './util';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { SceneEvent } from '../../event/util';
-import { getCellEventArgsSet } from '../../event/util';
-import type { ListTableAPI } from '../../ts-types';
 
 /**
  * @description: 表格内容外组件
@@ -23,10 +20,14 @@ export class TableComponent {
   columnResizeLine: ILine; // 表格列宽调整基准线
   columnResizeBgLine: ILine; // 表格列宽调整基准线背景
   columnResizeLabel: IGroup; // 表格列宽调整标记
+  rowResizeLine: ILine; // 表格列宽调整基准线
+  rowResizeBgLine: ILine; // 表格列宽调整基准线背景
+  rowResizeLabel: IGroup; // 表格列宽调整标记
   menu: MenuHandler; // 表格菜单
   vScrollBar: ScrollBar; // 表格横向滚动条
   hScrollBar: ScrollBar; // 表格纵向滚动条
   frozenShadowLine: IRect; // 表格冻结列右侧阴影块
+  rightFrozenShadowLine: IRect; // 表格右侧冻结列左侧阴影块
   drillIcon: DrillIcon; // drill icon
   cellMover: CellMover; // 表格列顺序调整标记
 
@@ -109,6 +110,67 @@ export class TableComponent {
     this.columnResizeLabel.appendChild(columnResizeLabelBack);
     this.columnResizeLabel.appendChild(columnResizeLabelText);
 
+    this.rowResizeLine = createLine({
+      visible: false,
+      pickable: false,
+      stroke: columnResizeColor as string,
+      lineWidth: columnResizeWidth as number,
+      x: 0,
+      y: 0,
+      points: [
+        { x: 0, y: 0 },
+        { x: 0, y: 0 }
+      ]
+    });
+    this.rowResizeBgLine = createLine({
+      visible: false,
+      pickable: false,
+      stroke: columnResizeBgColor as string,
+      lineWidth: columnResizeBgWidth as number,
+      x: 0,
+      y: 0,
+      // dx: -(columnResizeBgWidth - columnResizeWidth) / 2,
+      points: [
+        { x: 0, y: 0 },
+        { x: 0, y: 0 }
+      ]
+    });
+
+    // 列宽调整文字标签
+    const rowResizeLabelText = createText({
+      visible: false,
+      pickable: false,
+      x: 0,
+      y: 0,
+      fontSize: labelFontSize, // 10
+      fill: labelColor,
+      fontFamily: labelFontFamily,
+      text: '',
+      textBaseline: 'top',
+      dx: 12 + 4,
+      dy: -labelFontSize / 2
+    });
+    const rowResizeLabelBack = createRect({
+      visible: false,
+      pickable: false,
+      fill: labelBackgroundFill,
+      x: 0,
+      y: 0,
+      width: 5 * labelFontSize * 0.8,
+      height: labelFontSize + 8,
+      cornerRadius: labelBackgroundCornerRadius,
+      dx: 12,
+      dy: -labelFontSize / 2 - 4
+    });
+    this.rowResizeLabel = createGroup({
+      visible: false,
+      pickable: false,
+      x: 0,
+      y: 0
+    });
+    this.rowResizeLabel.appendChild(rowResizeLabelBack);
+    this.rowResizeLabel.appendChild(rowResizeLabelText);
+
     // 列顺序调整基准线
     this.cellMover = new CellMover(this.table);
 
@@ -135,6 +197,25 @@ export class TableComponent {
         ]
       }
     });
+    this.rightFrozenShadowLine = createRect({
+      visible: true,
+      pickable: false,
+      x: 0,
+      y: 0,
+      width: shadowWidth,
+      height: 0,
+      fill: {
+        gradient: 'linear',
+        x0: 0,
+        y0: 0,
+        x1: 1,
+        y1: 0,
+        stops: [
+          { color: shadowEndColor, offset: 0 },
+          { color: shadowStartColor, offset: 1 }
+        ]
+      }
+    });
 
     // TO BE DONE 冻结列border(theme.frozenColumnLine?.border)
 
@@ -157,10 +238,14 @@ export class TableComponent {
    */
   addToGroup(componentGroup: Group) {
     componentGroup.addChild(this.frozenShadowLine);
+    componentGroup.addChild(this.rightFrozenShadowLine);
     // componentGroup.addChild(this.selectBorder);
     componentGroup.addChild(this.columnResizeBgLine);
     componentGroup.addChild(this.columnResizeLine);
     componentGroup.addChild(this.columnResizeLabel);
+    componentGroup.addChild(this.rowResizeBgLine);
+    componentGroup.addChild(this.rowResizeLine);
+    componentGroup.addChild(this.rowResizeLabel);
 
     const hoverOn = this.table.theme.scrollStyle.hoverOn;
     if (hoverOn && !this.table.theme.scrollStyle.barToSide) {
@@ -257,7 +342,10 @@ export class TableComponent {
 
       let attrY = 0;
       if (this.table.theme.scrollStyle.barToSide) {
-        attrY = this.table.tableNoFrameHeight - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
+        attrY =
+          this.table.tableNoFrameHeight -
+          (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y) +
+          this.table.tableY;
       } else {
         attrY = y - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
       }
@@ -294,7 +382,10 @@ export class TableComponent {
       const hoverOn = this.table.theme.scrollStyle.hoverOn;
 
       if (this.table.theme.scrollStyle.barToSide) {
-        attrX = this.table.tableNoFrameWidth - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x);
+        attrX =
+          this.table.tableNoFrameWidth -
+          (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x) +
+          this.table.tableX;
       } else {
         attrX = x - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x);
       }
@@ -412,6 +503,87 @@ export class TableComponent {
   }
 
   /**
+   * @description: 隐藏列宽调整组件
+   * @return {*}
+   */
+  hideResizeRow() {
+    // this.columnResizeLine.attribute.visible = false;
+    this.rowResizeLine.setAttribute('visible', false);
+    this.rowResizeBgLine.setAttribute('visible', false);
+    this.rowResizeLabel.setAttribute('visible', false);
+    this.rowResizeLabel.hideAll();
+  }
+
+  /**
+   * @description: 显示列宽调整组件
+   * @param {number} col
+   * @param {number} y
+   * @return {*}
+   */
+  showResizeRow(row: number, x: number, isRightFrozen?: boolean) {
+    // 基准线
+    const rowY = getRowY(row, this.table, isRightFrozen);
+    this.rowResizeLine.setAttributes({
+      visible: true,
+      y: rowY,
+      points: [
+        { y: 0, x: 0 },
+        { y: 0, x: this.table.getColsWidth(0, this.table.colCount - 1) }
+      ]
+    });
+    this.rowResizeBgLine.setAttributes({
+      visible: true,
+      y: rowY,
+      points: [
+        { y: 0, x: 0 },
+        { y: 0, x: this.table.getColsWidth(0, this.table.colCount - 1) }
+      ]
+    });
+
+    // 标签
+    this.rowResizeLabel.showAll();
+    this.rowResizeLabel.setAttributes({
+      visible: true,
+      y: rowY,
+      x
+    });
+    (this.rowResizeLabel.lastChild as Text).setAttribute('text', `${this.table.getRowHeight(row)}px`);
+  }
+
+  /**
+   * @description: 更新列宽调整组件
+   * @param {number} col
+   * @param {number} y 标签显示的y坐标
+   * @return {*}
+   */
+  updateResizeRow(row: number, x: number, isBottomFrozen?: boolean) {
+    // 基准线
+    const rowY = getRowY(row, this.table, isBottomFrozen);
+    // this.columnResizeLine.setAttribute('x', x);
+    this.rowResizeLine.setAttributes({
+      y: rowY,
+      points: [
+        { y: 0, x: 0 },
+        { y: 0, x: this.table.getColsWidth(0, this.table.colCount - 1) } // todo: 优化points赋值
+      ]
+    });
+    this.rowResizeBgLine.setAttributes({
+      y: rowY,
+      points: [
+        { y: 0, x: 0 },
+        { y: 0, x: this.table.getColsWidth(0, this.table.colCount - 1) } // todo: 优化points赋值
+      ]
+    });
+
+    // 标签
+    this.rowResizeLabel.setAttributes({
+      y: rowY,
+      x
+    });
+    (this.rowResizeLabel.lastChild as Text).setAttribute('text', `${Math.floor(this.table.getRowHeight(row))}px`);
+  }
+
+  /**
    * @description: 隐藏列顺序调整组件
    * @return {*}
    */
@@ -455,6 +627,27 @@ export class TableComponent {
       this.frozenShadowLine.setAttributes({
         visible: true,
         x: colX,
+        height: this.table.getDrawRange().height
+      });
+    }
+  }
+
+  /**
+   * @description: 显示右侧冻结列shadow
+   * @param {number} col
+   * @return {*}
+   */
+  setRightFrozenColumnShadow(col: number) {
+    if (col >= this.table.colCount) {
+      this.rightFrozenShadowLine.setAttributes({
+        visible: false
+      });
+    } else {
+      // const colX = this.table.getColsWidth(0, col);
+      const colX = getColX(col, this.table, true);
+      this.rightFrozenShadowLine.setAttributes({
+        visible: true,
+        x: colX - this.rightFrozenShadowLine.attribute.width,
         height: this.table.getDrawRange().height
       });
     }
@@ -583,6 +776,22 @@ export class TableComponent {
       dy: -labelFontSize / 2 - 4
     });
 
+    // rowResizeLabelBack
+    (this.rowResizeLabel.lastChild as IText).setAttributes({
+      fontSize: labelFontSize, // 10
+      fill: labelColor,
+      fontFamily: labelFontFamily,
+      dy: -labelFontSize / 2
+    });
+    // rowResizeLabelText
+    (this.rowResizeLabel.firstChild as IRect).setAttributes({
+      fill: labelBackgroundFill,
+      width: 5 * labelFontSize * 0.8,
+      height: labelFontSize + 8,
+      cornerRadius: labelBackgroundCornerRadius,
+      dy: -labelFontSize / 2 - 4
+    });
+
     // frozenShadowLine
     const shadowWidth = theme.frozenColumnLine?.shadow?.width;
     const shadowStartColor = theme.frozenColumnLine?.shadow?.startColor;
@@ -598,6 +807,20 @@ export class TableComponent {
         stops: [
           { color: shadowStartColor, offset: 0 },
           { color: shadowEndColor, offset: 1 }
+        ]
+      }
+    });
+    this.rightFrozenShadowLine.setAttributes({
+      width: shadowWidth,
+      fill: {
+        gradient: 'linear',
+        x0: 0,
+        y0: 0,
+        x1: 1,
+        y1: 0,
+        stops: [
+          { color: shadowEndColor, offset: 0 },
+          { color: shadowStartColor, offset: 1 }
         ]
       }
     });

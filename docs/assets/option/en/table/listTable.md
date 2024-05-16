@@ -89,6 +89,17 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 
 ```
 
+## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
+
+The trigger timing for entering the editing state.
+
+```
+
+/\*_\_ Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' _/
+editCellTrigger?: 'doubleclick' | 'click' | 'api';
+
+```
+
 {{ use: common-option-secondary(
     prefix = '#',
     tableType = 'listTable'
@@ -102,6 +113,10 @@ When displayed as a tree structure, the indentation value of each layer of conte
 ## hierarchyExpandLevel(number)
 
 When displayed as a tree structure, the number of levels is expanded by default. The default value is 1, which only displays the root node. If configured to `Infinity`, all nodes will be expanded.
+
+## hierarchyTextStartAlignment(boolean) = false
+
+Whether nodes at the same level are aligned by text, such as nodes without collapsed expansion icons and nodes with icons. Default is false
 
 ## frozenColDragHeaderMode(string) = 'fixedFrozenCount'
 

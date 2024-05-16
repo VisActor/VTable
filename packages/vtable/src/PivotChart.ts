@@ -29,7 +29,7 @@ import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
 import { PIVOT_CHART_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 import { cellInRange, emptyFn } from './tools/helper';
 import { Dataset } from './dataset/dataset';
-import { _setDataSource } from './core/tableHelper';
+import { _setDataSource, parseMarkLineGetExtendRange } from './core/tableHelper';
 import { BaseTable } from './core/BaseTable';
 import type { BaseTableAPI, HeaderData, PivotChartProtected } from './ts-types/base-table';
 import type { IChartColumnIndicator } from './ts-types/pivot-table/indicator/chart-indicator';
@@ -46,7 +46,7 @@ import { Title } from './components/title/title';
 import { Env } from './tools/env';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
-
+import { cloneDeepSpec } from '@vutils-extension';
 export class PivotChart extends BaseTable implements PivotChartAPI {
   declare internalProps: PivotChartProtected;
   declare options: PivotChartConstructorOptions;
@@ -80,7 +80,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
-    this.internalProps.indicators = cloneDeep(options.indicators);
+    this.internalProps.indicators = cloneDeepSpec(options.indicators);
     this.internalProps.columnTree =
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =
@@ -89,6 +89,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     this.setCustomStateNameToSpec();
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
+    this.internalProps.rowResizeType = options.rowResizeType ?? 'row';
     this.internalProps.dataConfig = { isPivotChart: true };
     this._axes = isArray(options.axes) ? options.axes : [];
     const rowKeys =
@@ -188,7 +189,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     super.updateOption(options);
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
-    this.internalProps.indicators = !options.indicators?.length ? [] : cloneDeep(options.indicators);
+    this.internalProps.indicators = !options.indicators?.length ? [] : cloneDeepSpec(options.indicators);
     this.internalProps.columnTree =
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =
@@ -198,6 +199,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this._selectedDataItemsInChart = [];
     // 更新protectedSpace
     internalProps.columnResizeType = options.columnResizeType ?? 'column';
+    internalProps.rowResizeType = options.rowResizeType ?? 'row';
     internalProps.dataConfig = { isPivotChart: true };
 
     this._axes = isArray(options.axes) ? options.axes : [];
@@ -289,22 +291,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     //void
   }
   refreshHeader(): void {
-    const internalProps = this.internalProps;
-
-    //设置列宽
-    for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
-      const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
-      // width 为 "auto" 时先不存储ColWidth
-      if (width && ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))) {
-        this._setColWidth(col, width);
-      }
-      if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
-        this.setMinColWidth(col, minWidth);
-      }
-      if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
-        this.setMaxColWidth(col, maxWidth);
-      }
-    }
+    this.setMinMaxLimitWidth(true);
     //刷新表头，原来这里是_refreshRowCount 后改名为_refreshRowColCount  因为表头定义会影响行数，而转置模式下会影响列数
     this.refreshRowColCount();
   }
@@ -343,7 +330,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     if (sourceNode.value === targetNode.value && sourceNode.dimensionKey === targetNode.dimensionKey) {
       targetNode.hierarchyState =
         targetNode.hierarchyState ?? (targetNode?.children ? sourceNode.hierarchyState : undefined);
-      targetNode?.children?.forEach((targetChildNode: IHeaderTreeDefine, index: number) => {
+      (targetNode?.children as IHeaderTreeDefine[])?.forEach((targetChildNode: IHeaderTreeDefine, index: number) => {
         if (sourceNode?.children?.[index] && targetChildNode) {
           this.syncHierarchyState(sourceNode.children[index], targetChildNode);
         }
@@ -390,10 +377,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   //   return dataValue;
   // }
 
-  getCellValue(col: number, row: number): FieldData {
-    const customMergeText = this.getCustomMergeValue(col, row);
-    if (customMergeText) {
-      return customMergeText;
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData {
+    if (!skipCustomMerge) {
+      const customMergeText = this.getCustomMergeValue(col, row);
+      if (customMergeText) {
+        return customMergeText;
+      }
     }
     if (this.internalProps.layoutMap.isHeader(col, row)) {
       if (
@@ -606,15 +595,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.sourceSize);
         //下面代码取自refreshHeader列宽设置逻辑
         //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
-        for (let col = 0; col < this.internalProps.layoutMap.columnWidths.length; col++) {
-          const { minWidth, maxWidth } = this.internalProps.layoutMap.columnWidths?.[col] ?? {};
-          if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
-            this.setMinColWidth(col, minWidth);
-          }
-          if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
-            this.setMaxColWidth(col, maxWidth);
-          }
-        }
+        this.setMinMaxLimitWidth();
       } else if (moveContext.moveType === 'row') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
         if (this.options.records?.[0]?.constructor === Array) {
@@ -747,36 +728,40 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     for (let i = 0, len = indicators?.length; i < len; i++) {
       if (typeof indicators[i] !== 'string' && (indicators[i] as IChartColumnIndicator).chartSpec) {
-        if ((indicators[i] as IChartColumnIndicator).chartSpec?.type === 'pie') {
+        if (
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'pie' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'rose' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'radar' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'gauge' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'wordCloud'
+        ) {
           continue;
         }
+        const indicatorDefine = indicators[i] as IIndicator;
+        const indicatorSpec = (indicatorDefine as IChartColumnIndicator).chartSpec;
+
         if (this.options.indicatorsAsCol === false) {
-          const indicatorDefine = indicators[i] as IIndicator;
           //明确指定 chartSpec.stack为true
-          (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
-            ((indicatorDefine as IChartColumnIndicator).chartSpec?.type === 'bar' ||
-              (indicatorDefine as IChartColumnIndicator).chartSpec?.type === 'area') &&
-            ((indicatorDefine as IChartColumnIndicator).chartSpec.stack = true);
+          indicatorSpec?.stack !== false &&
+            (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
+            (indicatorSpec.stack = true);
           // 收集指标值的范围
           collectValuesBy[indicatorDefine.indicatorKey] = {
             by: rowKeys,
             range: true,
             // 判断是否需要匹配维度值相同的进行求和计算
-            sumBy:
-              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack &&
-              columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField)
+            sumBy: indicatorSpec?.stack && columnKeys.concat(indicatorSpec?.xField)
           };
-          if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
-            (indicatorDefine as IChartColumnIndicator).chartSpec.series.forEach((chartSeries: any) => {
+          if (indicatorSpec.series) {
+            indicatorSpec.series.forEach((chartSeries: any) => {
               const xField = typeof chartSeries.xField === 'string' ? chartSeries.xField : chartSeries.xField[0];
               collectValuesBy[xField] = {
                 by: columnKeys,
                 type: chartSeries.direction !== 'horizontal' ? 'xField' : undefined,
-                range: chartSeries.direction === 'horizontal',
+                range: chartSeries.type === 'scatter' ? true : chartSeries.direction === 'horizontal',
                 sortBy:
                   chartSeries.direction !== 'horizontal'
-                    ? chartSeries?.data?.fields?.[xField]?.domain ??
-                      (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[xField]?.domain
+                    ? chartSeries?.data?.fields?.[xField]?.domain ?? indicatorSpec?.data?.fields?.[xField]?.domain
                     : undefined
               };
 
@@ -786,76 +771,62 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                 (chartSeries.stack = true); //明确指定 chartSpec.stack为true
               collectValuesBy[yField] = {
                 by: rowKeys,
-                range: chartSeries.direction !== 'horizontal', // direction默认为'vertical'
+                range: chartSeries.type === 'scatter' ? true : chartSeries.direction !== 'horizontal', // direction默认为'vertical'
                 sumBy: chartSeries.stack && columnKeys.concat(chartSeries?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
                 sortBy:
                   chartSeries.direction === 'horizontal'
-                    ? chartSeries?.data?.fields?.[yField]?.domain ??
-                      (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[yField]?.domain
-                    : undefined
+                    ? chartSeries?.data?.fields?.[yField]?.domain ?? indicatorSpec?.data?.fields?.[yField]?.domain
+                    : undefined,
+                extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine)
               };
             });
           } else {
-            const xField =
-              typeof (indicatorDefine as IChartColumnIndicator).chartSpec.xField === 'string'
-                ? (indicatorDefine as IChartColumnIndicator).chartSpec.xField
-                : (indicatorDefine as IChartColumnIndicator).chartSpec.xField[0];
+            const xField = typeof indicatorSpec.xField === 'string' ? indicatorSpec.xField : indicatorSpec.xField[0];
             collectValuesBy[xField] = {
               by: columnKeys,
-              type:
-                (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal' ? 'xField' : undefined,
-              range: (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal',
+              type: indicatorSpec.direction !== 'horizontal' ? 'xField' : undefined,
+              range: indicatorSpec.type === 'scatter' ? true : indicatorSpec.direction === 'horizontal',
               sortBy:
-                (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal'
-                  ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[xField]?.domain
-                  : undefined
+                indicatorSpec.direction !== 'horizontal' ? indicatorSpec?.data?.fields?.[xField]?.domain : undefined
             };
             //明确指定 chartSpec.stack为true
-            (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
-              ((indicatorDefine as IChartColumnIndicator).chartSpec?.type === 'bar' ||
-                (indicatorDefine as IChartColumnIndicator).chartSpec?.type === 'area') &&
-              ((indicatorDefine as IChartColumnIndicator).chartSpec.stack = true);
+            indicatorSpec?.stack !== false &&
+              (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
+              (indicatorSpec.stack = true);
             //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
-            const yField = (indicatorDefine as IChartColumnIndicator).chartSpec.yField;
+            const yField = indicatorSpec.yField;
             collectValuesBy[yField] = {
               by: rowKeys,
-              range: (indicators[i] as IChartColumnIndicator).chartSpec.direction !== 'horizontal', // direction默认为'vertical'
-              sumBy:
-                (indicatorDefine as IChartColumnIndicator).chartSpec.stack &&
-                columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
+              range: indicatorSpec.direction !== 'horizontal', // direction默认为'vertical'
+              sumBy: indicatorSpec.stack && columnKeys.concat(indicatorSpec?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
               sortBy:
-                (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal'
-                  ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[yField]?.domain
-                  : undefined
+                indicatorSpec.direction === 'horizontal' ? indicatorSpec?.data?.fields?.[yField]?.domain : undefined,
+              extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine)
             };
           }
         } else {
           const indicatorDefine = indicators[i] as IIndicator;
           //明确指定 chartSpec.stack为true
-          (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
-            ((indicatorDefine as IChartColumnIndicator).chartSpec?.type === 'bar' ||
-              (indicatorDefine as IChartColumnIndicator).chartSpec?.type === 'area') &&
-            ((indicatorDefine as IChartColumnIndicator).chartSpec.stack = true);
+          indicatorSpec?.stack !== false &&
+            (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
+            (indicatorSpec.stack = true);
           // 收集指标值的范围
           collectValuesBy[indicatorDefine.indicatorKey] = {
             by: columnKeys,
             range: true,
             // 判断是否需要匹配维度值相同的进行求和计算
-            sumBy:
-              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack &&
-              rowKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.yField)
+            sumBy: indicatorSpec?.stack && rowKeys.concat(indicatorSpec?.yField)
           };
-          if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
-            (indicatorDefine as IChartColumnIndicator).chartSpec.series.forEach((chartSeries: any) => {
+          if (indicatorSpec.series) {
+            indicatorSpec.series.forEach((chartSeries: any) => {
               const yField = typeof chartSeries.yField === 'string' ? chartSeries.yField : chartSeries.yField[0];
               collectValuesBy[yField] = {
                 by: rowKeys,
                 type: chartSeries.direction === 'horizontal' ? 'yField' : undefined,
-                range: chartSeries.direction !== 'horizontal',
+                range: chartSeries.type === 'scatter' ? true : chartSeries.direction !== 'horizontal',
                 sortBy:
                   chartSeries.direction === 'horizontal'
-                    ? chartSeries?.data?.fields?.[yField]?.domain ??
-                      (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[yField]?.domain
+                    ? chartSeries?.data?.fields?.[yField]?.domain ?? indicatorSpec?.data?.fields?.[yField]?.domain
                     : undefined
               };
 
@@ -865,47 +836,37 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                 (chartSeries.stack = true); //明确指定 chartSpec.stack为true
               collectValuesBy[xField] = {
                 by: columnKeys,
-                range: chartSeries.direction === 'horizontal', // direction默认为'vertical'
+                range: chartSeries.type === 'scatter' ? true : chartSeries.direction === 'horizontal', // direction默认为'vertical'
                 sumBy: chartSeries.stack && rowKeys.concat(chartSeries?.yField),
                 sortBy:
                   chartSeries.direction !== 'horizontal'
-                    ? chartSeries?.data?.fields?.[xField]?.domain ??
-                      (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[xField]?.domain
-                    : undefined
+                    ? chartSeries?.data?.fields?.[xField]?.domain ?? indicatorSpec?.data?.fields?.[xField]?.domain
+                    : undefined,
+                extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine)
               };
             });
           } else {
-            const yField =
-              typeof (indicatorDefine as IChartColumnIndicator).chartSpec.yField === 'string'
-                ? (indicatorDefine as IChartColumnIndicator).chartSpec.yField
-                : (indicatorDefine as IChartColumnIndicator).chartSpec.yField[0];
+            const yField = typeof indicatorSpec.yField === 'string' ? indicatorSpec.yField : indicatorSpec.yField[0];
             collectValuesBy[yField] = {
               by: rowKeys,
-              type:
-                (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal' ? 'yField' : undefined,
-              range: (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal',
+              type: indicatorSpec.direction === 'horizontal' ? 'yField' : undefined,
+              range: indicatorSpec.type === 'scatter' ? true : indicatorSpec.direction !== 'horizontal',
               sortBy:
-                (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal'
-                  ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[yField]?.domain
-                  : undefined
+                indicatorSpec.direction === 'horizontal' ? indicatorSpec?.data?.fields?.[yField]?.domain : undefined
             };
             //明确指定 chartSpec.stack为true
-            (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
-              ((indicatorDefine as IChartColumnIndicator).chartSpec?.type === 'bar' ||
-                (indicatorDefine as IChartColumnIndicator).chartSpec?.type === 'area') &&
-              ((indicatorDefine as IChartColumnIndicator).chartSpec.stack = true);
+            indicatorSpec?.stack !== false &&
+              (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
+              (indicatorSpec.stack = true);
             //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
-            const xField = (indicatorDefine as IChartColumnIndicator).chartSpec.xField;
+            const xField = indicatorSpec.xField;
             collectValuesBy[xField] = {
               by: columnKeys,
-              range: (indicators[i] as IChartColumnIndicator).chartSpec.direction === 'horizontal', // direction默认为'vertical'
-              sumBy:
-                (indicatorDefine as IChartColumnIndicator).chartSpec.stack &&
-                rowKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.yField),
+              range: indicatorSpec.type === 'scatter' ? true : indicatorSpec.direction === 'horizontal', // direction默认为'vertical'
+              sumBy: indicatorSpec.stack && rowKeys.concat(indicatorSpec?.yField),
               sortBy:
-                (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal'
-                  ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[xField]?.domain
-                  : undefined
+                indicatorSpec.direction !== 'horizontal' ? indicatorSpec?.data?.fields?.[xField]?.domain : undefined,
+              extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine)
             };
           }
         }

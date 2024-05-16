@@ -6,6 +6,8 @@ When it comes to business scenarios of editing tables, the VTable library provid
 
 ## 1. Reference the editor package of VTable:
 
+### Use the NPM package
+
 First, make sure you have installed the VTable library and related editor packages correctly. You can install them using the following command:
 
 ```shell
@@ -16,6 +18,17 @@ Introduce the required type of editor module into your code:
 
 ```javascript
 import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
+```
+
+### use CDN
+
+你还可以通过 CDN 获取构建好的 VTable-Editor 文件。
+
+```html
+<script src="https://unpkg.com/@visactor/vtable-editors@latest/dist/vtable-editors.min.js"></script>
+<script>
+  const inputEditor = new VTable.editors.InputEditor();
+</script>
 ```
 
 ## 2. Create editor:
@@ -284,5 +297,9 @@ interface ListTableAPI {
 ## Header Editing
 
 The basic table supports editing the display title in the header. You can enable this by configuring `headerEditor` globally or within a column. The usage is the same as `editor`.
+
+**Editing the header of the pivot table will modify the field name in the records accordingly;**
+
+**If the pivot table has rowTree and columnsTree defined, modifying the cell value in body will modify the indicator value in records accordingly.**
 
 Through the above steps, you can create a table with editing functions, select the appropriate editor type according to business needs, customize the editor, listen to editing events, and obtain edited data. In this way, users can easily edit the data in the table, and you can process the edited data accordingly.

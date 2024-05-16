@@ -6,6 +6,8 @@
 
 ## 1. 引用 VTable 的编辑器包：
 
+### 使用 NPM 包
+
 首先，确保已经正确安装了 VTable 库@visactor/vtable 和相关的编辑器包@visactor/vtable-editors。你可以使用以下命令来安装它们：
 
 ```shell
@@ -21,6 +23,17 @@ yarn add @visactor/vtable-editors
 
 ```javascript
 import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
+```
+
+### 使用 CDN
+
+你还可以通过 CDN 获取构建好的 VTable-Editor 文件。
+
+```html
+<script src="https://unpkg.com/@visactor/vtable-editors@latest/dist/vtable-editors.min.js"></script>
+<script>
+  const inputEditor = new VTable.editors.InputEditor();
+</script>
 ```
 
 ## 2. 创建编辑器：
@@ -288,5 +301,9 @@ interface ListTableAPI {
 ## 表头编辑
 
 基本表格可支持编辑表头显示标题 title，在全局或者在 column 中配置`headerEditor`来开启，具体用法同`editor`。
+
+**透视表的表头编辑会对应修改 records 中的 field 名称；**
+
+**如果是定义了 rowTree 和 columnsTree 的透视表，修改 body 中的单元格数值会对应修改 records 中的指标值。**
 
 通过以上步骤，你可以创建一个具有编辑功能的表格，并根据业务需求选择合适的编辑器类型、自定义编辑器、监听编辑事件以及获取编辑后的数据。这样，用户就可以方便地编辑表格中的数据，并且你可以对编辑后的数据进行相应的处理。

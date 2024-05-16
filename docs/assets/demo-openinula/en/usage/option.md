@@ -12,28 +12,29 @@ link: '../guide/Developer_Ecology/openinula'
 You can use the complete option of VTable directly and pass the option into the table component as a prop.
 
 ## code demo
+
 ```javascript livedemo template=vtable-openinula
 // import * as InulaVTable from '@visactor/openinula-vtable';
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
-      caption: 'name',
+      title: 'name'
     },
     {
       field: '1',
-      caption: 'age',
+      title: 'age'
     },
     {
       field: '2',
-      caption: 'gender',
+      title: 'gender'
     },
     {
       field: '3',
-      caption: 'hobby',
-    },
+      title: 'hobby'
+    }
   ],
-  records: new Array(1000).fill(['John', 18, 'male', '🏀']),
+  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
 };
 
 const root = document.getElementById(CONTAINER_ID);

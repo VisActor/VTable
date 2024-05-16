@@ -73,7 +73,7 @@ VTable 中内置一套默认主题/DEFAULT，一套 ARCO 风格，一套暗黑�
 具体配置内容可查看：https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/ARCO.ts，注意改该主题有阴影占位，frameStyle中配置了shadowBlur的宽度。
 
     // 使用默认主题
-    option.theme = vTable.themes.ARCO;
+    option.theme = VTable.themes.ARCO;
 
     const tableInstance = new VTable.ListTable(option);
 
@@ -82,7 +82,7 @@ VTable 中内置一套默认主题/DEFAULT，一套 ARCO 风格，一套暗黑�
 具体配置内容可查看：https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/DARK.ts
 
     // 使用默认主题
-    option.theme = vTable.themes.DARK;
+    option.theme = VTable.themes.DARK;
 
     const tableInstance = new VTable.ListTable(option);
 
@@ -91,7 +91,7 @@ VTable 中内置一套默认主题/DEFAULT，一套 ARCO 风格，一套暗黑�
 具体配置内容可查看：https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/BRIGHT.ts
 
     // 使用默认主题
-    option.theme = vTable.themes.BRIGHT;
+    option.theme = VTable.themes.BRIGHT;
 
     const tableInstance = new VTable.ListTable(option);
 
@@ -100,7 +100,7 @@ VTable 中内置一套默认主题/DEFAULT，一套 ARCO 风格，一套暗黑�
 具体配置内容可查看：https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/SIMPLIFY.ts
 
     // 使用默认主题
-    option.theme = vTable.themes.SIMPLIFY;
+    option.theme = VTable.themes.SIMPLIFY;
 
     const tableInstance = new VTable.ListTable(option);
 
@@ -114,7 +114,7 @@ VTable 中内置一套默认主题/DEFAULT，一套 ARCO 风格，一套暗黑�
 
 ```
 
-option.theme = vTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red'}})
+option.theme = VTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red'}})
 
 const tableInstance = new vTable.ListTable(option);
 ```
@@ -1188,6 +1188,7 @@ const option = {
   },
   widthMode: 'standard',
   rowHierarchyIndent: 20,
+  rowHierarchyTextStartAlignment: true,
   theme: {
     defaultStyle: {
       borderLineWidth: 0

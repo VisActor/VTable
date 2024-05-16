@@ -13,6 +13,7 @@ import { getHierarchyOffset } from './get-hierarchy-offset';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { isNil, isNumber, isValid } from '@visactor/vutils';
 import { isMergeCellGroup } from './is-merge-cell-group';
+import { breakString } from './break-string';
 
 /**
  * @description: 创建单元格内容
@@ -74,7 +75,7 @@ export function createCellContent(
   if (!Array.isArray(icons) || icons.length === 0) {
     if (isValid(textStr)) {
       // 没有icon，cellGroup只添加WrapText
-      const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      const text = breakString(textStr, table);
 
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
@@ -88,7 +89,6 @@ export function createCellContent(
           _contentOffset = -table.theme._contentOffset;
         }
       }
-
       const attribute = {
         text: text.length === 1 ? text[0] : text,
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
@@ -99,9 +99,12 @@ export function createCellContent(
         lineClamp,
         wordBreak: 'break-word',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-        heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
+        heightLimit:
+          autoRowHeight && !table.options.customConfig?.multilinesForXTable
+            ? -1
+            : cellHeight - (padding[0] + padding[2]),
         pickable: false,
-        dx: hierarchyOffset + _contentOffset,
+        dx: (textAlign === 'left' ? hierarchyOffset : 0) + _contentOffset,
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
@@ -202,7 +205,8 @@ export function createCellContent(
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
         : getHierarchyOffset(cellGroup.col, cellGroup.row, table);
-      const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      const text = breakString(textStr, table);
+
       const attribute = {
         text: text.length === 1 ? text[0] : text,
         maxLineWidth: autoColWidth
@@ -212,13 +216,18 @@ export function createCellContent(
         // textAlign: 'left',
         textBaseline: 'top',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-        heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
+        heightLimit:
+          autoRowHeight && !table.options.customConfig?.multilinesForXTable
+            ? -1
+            : cellHeight - (padding[0] + padding[2]),
         pickable: false,
         autoWrapText,
         lineClamp,
         wordBreak: 'break-word',
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
-        dx: _contentOffset + (!contentLeftIcons.length && !contentRightIcons.length ? hierarchyOffset : 0)
+        dx:
+          (textAlign === 'left' ? (!contentLeftIcons.length && !contentRightIcons.length ? hierarchyOffset : 0) : 0) +
+          _contentOffset
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
@@ -530,7 +539,10 @@ export function updateCellContentWidth(
   let contentHeight: number;
   if (textMark instanceof Text) {
     oldTextHeight = textMark.AABBBounds.height();
-    textMark.setAttribute('maxLineWidth', distWidth - leftIconWidth - rightIconHeight - (padding[1] + padding[3]));
+    textMark.setAttribute(
+      'maxLineWidth',
+      distWidth - leftIconWidth - rightIconHeight - (padding[1] + padding[3]) - (textMark.attribute.dx ?? 0)
+    );
     // contentWidth = textMark.AABBBounds.width();
     contentHeight = textMark.AABBBounds.height();
   } else if (textMark instanceof RichText) {

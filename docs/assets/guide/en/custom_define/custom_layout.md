@@ -250,6 +250,8 @@ Basic custom components currently support `VTag`
 |Primitive Type|Basic Properties|
 |:----|:----|
 |tag|text, textStyle, shape, padding...|
+|radio|checked, disabled, text, icon...|
+|checkbox|checked, disabled, text, icon...|
 
 Primitives can be configured with the `boundsPadding` property to achieve a margin effect
 `boundsPadding: [marginLeft, marginRight, marginTop, marginBottom]`
@@ -342,6 +344,16 @@ Image Primitive
 | height | number | Image height                                      |
 | image  | string | HTMLImageElement \| HTMLCanvasElement \| Image content |
 
+### VLine
+
+Image Primitive
+
+| key    | type   | description                                       |
+| :----- | :----- | :------------------------------------------------ |
+| points  | {x: number, y: number}[] | The coordinates of the points that make up the line |
+| lineWidth  | number | stroke width |
+| stroke     | string | stroke color |
+
 ### VGroup
 
 Container
@@ -357,6 +369,48 @@ Container
 | alignItems     | 'flex-start' \| 'flex-end' \| 'center'                                      | Alignment rule on the cross axis       |
 | alignContent   | 'flex-start' \| 'center' \| 'space-between' \| 'space-around'               | Alignment rule on the main axis        |
 
+### VTag
+
+label component
+
+| key | type | description |
+| :----- | :----- | :---------------------------------- --------------- |
+| textStyle | ITextGraphicAttribute | Text style, same as text primitive attribute |
+| shape | TagShapeAttributes | Style configuration of the chart in the tag |
+| space | number | distance between icon and text |
+| padding | number[] | distance between content and border |
+| panel | BackgroundAttributes | The style of the outer border and background, the same as the rect primitive attributes |
+| minWidth | number | minimum width |
+| maxWidth | number | maximum width |
+
+### VRadio
+
+label component
+
+| key | type | description |
+| :----- | :----- | :---------------------------------- --------------- |
+| interactive | boolean | whether interactive |
+| disabled | boolean | Whether to disable |
+| checked | boolean | Whether to check |
+| spaceBetweenTextAndIcon | number | Between icon and text |
+| text | ITextGraphicAttribute | Text style, same as text primitive attribute |
+| circle | {disableFill?: IColor;checkedFill?: IColor;checkedStroke?: IColor;disableCheckedFill?: IColor;disableCheckedStroke?: IColor;} | icon style |
+
+### VCheckbox
+
+label component
+
+| key | type | description |
+| :----- | :----- | :---------------------------------- --------------- |
+| interactive | boolean | whether interactive |
+| disabled | boolean | Whether to disable |
+| checked | boolean | Whether to check |
+| indeterminate | boolean | Whether it is in an indeterminate state |
+| spaceBetweenTextAndIcon | number | Between icon and text |
+| text | ITextGraphicAttribute | Text style, same as text primitive attribute |
+| icon | {checkIconImage?: string | HTMLImageElement | HTMLCanvasElement;indeterminateIconImage?: string | HTMLImageElement | HTMLCanvasElement;} | icon style |
+| box | {disableFill?: IColor;checkedFill?: IColor;checkedStroke?: IColor;disableCheckedFill?: IColor;disableCheckedStroke?: IColor;} | chart background style |
+
 ## CustomLayout Creating Primitive Objects Usage
 
 _- customLayout supports object creation syntax_
@@ -365,3 +419,36 @@ To create primitive objects using CustomLayout, you need to use `new VTable.Cust
 
 For example:
 
+```ts
+const text1 = new VTable.CustomLayout.Text({
+  text: 'text',
+  fontSize: 28,
+  fontFamily: 'sans-serif',
+  fill: 'black'
+});
+
+const container = new VTable.CustomLayout.Container({
+  height,
+  width
+});
+containerRight.add(text1);
+
+return {
+  rootContainer: container,
+  renderDefault: false
+};
+```
+
+The correspondence between CustomLayout common graphics elements and jsx graphics elements is as follows:
+
+| JSX graphic | CustomLayout graphic   |
+| :------- | :------------------ |
+| VRect    | CustomLayout.Rect   |
+| VCircle  | CustomLayout.Circle |
+| VText    | CustomLayout.Text   |
+| VImage   | CustomLayout.Image  |
+| VLine   | CustomLayout.Line  |
+| VGroup   | CustomLayout.Group  |
+| VTag   | CustomLayout.Tag  |
+| VRadio   | CustomLayout.Radio  |
+| VCheckbox   | CustomLayout.Checkbox  |

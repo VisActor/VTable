@@ -1,8 +1,6 @@
-// @ts-nocheck
 /* eslint-disable no-undef */
-import type { IImage, Image, IThemeSpec } from '@src/vrender';
+import type { Cursor, IImage, Image, IThemeSpec } from '@src/vrender';
 import { createImage } from '@src/vrender';
-import type { BaseTableAPI } from '../../../ts-types';
 import * as icons from '../../../icons';
 import { Group } from '../../graphic/group';
 import { calcKeepAspectRatioSize } from '../../utils/keep-aspect-ratio';
@@ -12,6 +10,7 @@ import { getProp, getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import { getQuadProps } from '../../utils/padding';
 import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
+import type { BaseTableAPI } from '../../../ts-types/base-table';
 
 export function createImageCellGroup(
   columnGroup: Group,
@@ -27,7 +26,8 @@ export function createImageCellGroup(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   table: BaseTableAPI,
-  cellTheme: IThemeSpec
+  cellTheme: IThemeSpec,
+  isAsync: boolean
 ) {
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
@@ -44,33 +44,53 @@ export function createImageCellGroup(
 
   // cell
   const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
-  const cellGroup = new Group({
-    x: xOrigin,
-    y: yOrigin,
-    width,
-    height,
-    // childrenPickable: false,
 
-    // 背景相关，cell背景由cellGroup绘制
-    lineWidth: cellTheme?.group?.lineWidth ?? undefined,
-    fill: cellTheme?.group?.fill ?? undefined,
-    stroke: cellTheme?.group?.stroke ?? undefined,
-    strokeArrayWidth: strokeArrayWidth ?? undefined,
-    strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
-    cursor: (cellTheme?.group as any)?.cursor ?? undefined,
-    lineDash: cellTheme?.group?.lineDash ?? undefined,
-
-    lineCap: 'square',
-
-    clip: true,
-
-    cornerRadius: cellTheme.group.cornerRadius
-  });
-  cellGroup.role = 'cell';
-  cellGroup.col = col;
-  cellGroup.row = row;
-  // columnGroup?.addChild(cellGroup);
-  columnGroup?.addCellGroup(cellGroup);
+  let cellGroup: Group;
+  if (isAsync) {
+    cellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+    if (cellGroup && cellGroup.role === 'cell') {
+      cellGroup.setAttributes({
+        x: xOrigin,
+        y: yOrigin,
+        width,
+        height,
+        // 背景相关，cell背景由cellGroup绘制
+        lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+        fill: cellTheme?.group?.fill ?? undefined,
+        stroke: cellTheme?.group?.stroke ?? undefined,
+        strokeArrayWidth: strokeArrayWidth ?? undefined,
+        strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+        cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+        lineDash: cellTheme?.group?.lineDash ?? undefined,
+        lineCap: 'butt',
+        clip: true,
+        cornerRadius: cellTheme.group.cornerRadius
+      } as any);
+    }
+  }
+  if (!cellGroup || cellGroup.role !== 'cell') {
+    cellGroup = new Group({
+      x: xOrigin,
+      y: yOrigin,
+      width,
+      height,
+      // 背景相关，cell背景由cellGroup绘制
+      lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+      fill: cellTheme?.group?.fill ?? undefined,
+      stroke: cellTheme?.group?.stroke ?? undefined,
+      strokeArrayWidth: strokeArrayWidth ?? undefined,
+      strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+      cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+      lineDash: cellTheme?.group?.lineDash ?? undefined,
+      lineCap: 'butt',
+      clip: true,
+      cornerRadius: cellTheme.group.cornerRadius
+    } as any);
+    cellGroup.role = 'cell';
+    cellGroup.col = col;
+    cellGroup.row = row;
+    columnGroup?.addCellGroup(cellGroup);
+  }
 
   // image
   const value = table.getCellValue(col, row);
@@ -216,7 +236,7 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   }
   const originImage =
     (typeof image.attribute.image !== 'string' && image.attribute.image) ||
-    image.resources?.get(image.attribute.image).data;
+    image.resources?.get(image.attribute.image as string).data;
 
   if (!originImage) {
     return;
@@ -233,10 +253,10 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   const colEnd = cellGroup.mergeEndCol ?? cellGroup.col;
   const rowEnd = cellGroup.mergeEndCol ?? cellGroup.row;
 
-  if (image.keepAspectRatio) {
+  if ((image as any).keepAspectRatio) {
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
-      originImage.width || originImage.videoWidth,
-      originImage.height || originImage.videoHeight,
+      originImage.width || (originImage as any).videoWidth,
+      originImage.height || (originImage as any).videoHeight,
       // cellGroup.attribute.width - (padding[1] + padding[3]),
       // cellGroup.attribute.height - (padding[0] + padding[2])
       cellWidth - (padding[1] + padding[3]),
@@ -346,7 +366,13 @@ export function getCellRange(cellGroup: Group, table: BaseTableAPI) {
   };
 }
 
-export function updateImageDxDy(startCol, endCol, startRow, endRow, table) {
+export function updateImageDxDy(
+  startCol: number,
+  endCol: number,
+  startRow: number,
+  endRow: number,
+  table: BaseTableAPI
+) {
   for (let col = startCol; col <= endCol; col++) {
     for (let row = startRow; row <= endRow; row++) {
       const cellGroup = table.scenegraph.getCell(col, row);
@@ -376,11 +402,11 @@ function updateAutoSizingAndKeepAspectRatio(
   padding: [number, number, number, number],
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
-  image: Image,
+  image: IImage,
   cellGroup: Group,
   table: BaseTableAPI
 ) {
-  const originImage = image.resources.get(image.attribute.image).data;
+  const originImage = image.resources.get(image.attribute.image as string).data;
   const { col, row } = cellGroup;
 
   if (imageAutoSizing && !isDamagePic(image)) {

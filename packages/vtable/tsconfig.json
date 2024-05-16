@@ -17,7 +17,8 @@
     ],
     "strict": false,
     "paths": {
-      "@src/*": ["./src/*"]
+      "@src/*": ["./src/*"],
+      "@vutils-extension": ["./src/vutil-extension-temp"]
     }
   },
   "references": [

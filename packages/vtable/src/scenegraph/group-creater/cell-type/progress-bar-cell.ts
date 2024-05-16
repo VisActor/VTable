@@ -110,8 +110,7 @@ export function createProgressBarCell(
 
   contentWidth -= barPaddingRight + barPaddingLeft;
   contentHeight -= barPaddingBottom + barPaddingTop;
-
-  if (row === table.rowCount - 1) {
+  if (row === table.rowCount - 1 && [0, '0'].includes(barBottom)) {
     // 单元格边框在表格边界会向内缩进1px，为了避免进度图矩形覆盖边框，这里在最后一行向内缩进1px
     // 详见 packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw()
     contentHeight -= 1;
@@ -174,9 +173,13 @@ export function createProgressBarCell(
       const barMaxWidth = contentWidth;
       const barTop = top + contentHeight - (barHeight as number) - (barBottom as number);
       // const barLeft = 0 + barPaddingLeft;
-      const barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
+      let barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
       const barLeft = barRightToLeft ? left + right - barSize : left;
-
+      if (col === table.colCount - 1 && percentile === 1 && !barRightToLeft) {
+        // 单元格边框在表格边界会向内缩进1px，为了避免进度图矩形覆盖边框，这里在最后一行向内缩进1px
+        // 详见 packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw()
+        barSize -= 1;
+      }
       const bgFillColor = getOrApply(barBgColor as any, {
         col,
         row,
@@ -292,7 +295,12 @@ export function createProgressBarCell(
       percentCompleteBarGroup.addChild(barNega);
 
       // 绘制正值区域
-      const barSizePosi = Math.min(barMaxWidth * positiveFactor * positiveRate, barMaxWidth);
+      let barSizePosi = Math.min(barMaxWidth * positiveFactor * positiveRate, barMaxWidth);
+      if (col === table.colCount - 1 && positiveRate === 1 && !barRightToLeft) {
+        // 单元格边框在表格边界会向内缩进1px，为了避免进度图矩形覆盖边框，这里在最后一行向内缩进1px
+        // 详见 packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw()
+        barSizePosi -= 1;
+      }
       const barRectPosi = barRightToLeft
         ? {
             left: barLeft + positiveLeft - barSizePosi,
@@ -424,7 +432,12 @@ export function createProgressBarCell(
       // 绘制背景
       // const barMaxWidth = width - barPaddingLeft - barPaddingRight - 1; /*罫線*/
       const barMaxWidth = contentWidth;
-      const barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
+      let barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
+      if (col === table.colCount - 1 && percentile === 1 && !barRightToLeft) {
+        // 单元格边框在表格边界会向内缩进1px，为了避免进度图矩形覆盖边框，这里在最后一行向内缩进1px
+        // 详见 packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw()
+        barSize -= 1;
+      }
       // const barTop = bottom - barPaddingBottom - (barHeight as number) - (barBottom as number) - 1; /*罫線*/
       const barTop = top + contentHeight - (barHeight as number) - (barBottom as number);
       // const barLeft = barRightToLeft ? right - barPaddingRight - barSize : left + barPaddingLeft;
@@ -545,6 +558,5 @@ export function createProgressBarCell(
       }
     }
   }
-
   return percentCompleteBarGroup;
 }

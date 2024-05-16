@@ -309,6 +309,10 @@ Initial expansion level. In addition to configuring the expansion level of the u
 
 If tree display is set, the indentation distance of content displayed in the child cell compared to its parent cell content.
 
+## rowHierarchyTextStartAlignment(boolean) = false
+
+Whether nodes at the same level are aligned by text, such as nodes without collapsed expansion icons and nodes with icons. Default is false
+
 ## indicatorTitle(string)
 
 Indicator title used to display the value in the corner header
@@ -351,6 +355,15 @@ The range of effects when adjusting column width, configurable options:
 - `indicatorGroup`: Adjust the width of all indicator columns under the same parent dimension
 - `all`: All column widths are adjusted
 
+## rowResizeType(string)
+
+Adjust the effective range of row height, configurable items:
+
+- `row`: adjust the row height only adjust the current row
+- `indicator`: rows corresponding to the same indicator will be adjusted when the row height is adjusted
+- `indicatorGroup`: Adjust the height of all indicator rows under the same parent dimension
+- `all`: All row heights are adjusted
+
 ## pivotSortState(Array)
 
 Set the sorting state, only corresponding to the display effect of the button without data sorting logic
@@ -382,6 +395,17 @@ editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => s
 ```
 
 Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
+
+## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
+
+The trigger timing for entering the editing state.
+
+```
+
+/** Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' */
+editCellTrigger?: 'doubleclick' | 'click' | 'api';
+
+```
 
 {{ use: common-option-secondary(
     prefix = '#',

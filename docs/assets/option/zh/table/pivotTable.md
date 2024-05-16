@@ -313,6 +313,10 @@ export interface IIndicatorHeaderNode {
 
 如果设置了树形展示，子节点单元格中显示内容相比其父节点内容的缩进距离。
 
+## rowHierarchyTextStartAlignment(boolean) = false
+
+同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认 false
+
 ## indicatorTitle(string)
 
 指标标题 用于显示到角头的值
@@ -355,6 +359,15 @@ export interface IIndicatorHeaderNode {
 - `indicatorGroup`: 调整同父级维度下所有指标列的宽度
 - `all`： 所有列宽都被调整
 
+## rowResizeType(string)
+
+调整行高的生效范围，可配置项：
+
+- `row`: 调整行高只调整当前行
+- `indicator`: 调整行高时对应相同指标的行都会被调整
+- `indicatorGroup`: 调整同父级维度下所有指标行的宽度
+- `all`： 所有行高都被调整
+
 ## pivotSortState(Array)
 
 设置排序状态，只对应按钮展示效果 无数据排序逻辑
@@ -377,7 +390,7 @@ export interface IIndicatorHeaderNode {
     tableType = 'pivotTable'
 ) }}
 
-## editor (string|Object|Function)
+## editor(string|Object|Function)
 
 全局配置单元格编辑器
 
@@ -386,6 +399,15 @@ editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => s
 ```
 
 其中 IEditor 是@visactor/vtable-editors 中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
+
+## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
+
+进入编辑状态的触发时机。
+
+```
+/** 编辑触发时机:双击事件 | 单击事件 | api手动开启编辑。默认为双击'doubleclick' */
+editCellTrigger?: 'doubleclick' | 'click' | 'api';
+```
 
 {{ use: common-option-secondary(
     prefix = '#',

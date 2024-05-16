@@ -60,7 +60,7 @@ export class ListEditor implements IEditor {
 
     this.createElement(value);
 
-    if (value) {
+    if (value !== undefined && value !== null) {
       this.setValue(value);
     }
     if (referencePosition?.rect) {

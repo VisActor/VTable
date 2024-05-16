@@ -74,6 +74,13 @@
             "zh": "提示信息",
             "en": "tooltip"
           }
+        },
+        {
+          "path": "custom-component",
+          "title": {
+            "zh": "自定义组件",
+            "en": "custom component"
+          }
         }
       ]
     },
@@ -112,6 +119,22 @@
           "title": {
             "zh": "自定义布局",
             "en": "custom layout"
+          }
+        }
+      ]
+    },
+    {
+      "path": "functional-components",
+      "title": {
+        "zh": "功能性组件",
+        "en": "functional components"
+      },
+      "children": [
+        {
+          "path": "arco-select-editor",
+          "title": {
+            "zh": "ArcoDesign列表选择器",
+            "en": "Arco Design select editor"
           }
         }
       ]

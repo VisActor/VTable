@@ -16,6 +16,20 @@ The calculation mode of table row height, which can be 'standard' (standard mode
 - 'adaptive': Use the height of the container to assign the height of each row.
 - 'autoHeight': Automatically calculate line height based on content, based on fontSize and lineHeight(font height)，include padding. The related collocation setting item `autoWrapText` automatically wraps the line, and the line height can be calculated according to the content of the multi-line text after the line wrap.
 
+#${prefix} widthAdaptiveMode('only-body' | 'all') = 'only-body'
+
+The width adaptation strategy in adaptive mode, the default is 'only-body'.
+
+- 'only-body': Only the columns in the body part participate in the width adaptation calculation, and the width of the header part remains unchanged.
+- 'all': All columns participate in width adaptation calculation.
+
+#${prefix} heightAdaptiveMode('only-body' | 'all') = 'only-body'
+
+The height adaptable strategy in adaptive mode, default is 'only-body'.
+
+- 'only-body': Only the rows in the body part participate in the height adaptation calculation, and the height of the header part remains unchanged.
+- 'all': All columns participate in the height adaptation calculation.
+
 #${prefix} autoWrapText(boolean) = false
 
 Whether to automatically wrap text
@@ -128,6 +142,15 @@ Fill handle, when set to true, when a cell is selected, the fill handle will be 
 Mouse hover over the cell right border can drag and adjust column width. This operation can trigger the following range:
 
 - 'all' The entire column, including header and body cells, can adjust column width
+- 'none' Disable adjustment
+- 'header' Only adjustable in header cells
+- 'body' Only adjustable in body cells
+
+#${prefix} columnResizeMode(string) = 'all'
+
+Mouse hover over the cell bottom border can drag and adjust row height. This operation can trigger the following range:
+
+- 'all' The entire row, including header and body cells, can adjust row height
 - 'none' Disable adjustment
 - 'header' Only adjustable in header cells
 - 'body' Only adjustable in body cells

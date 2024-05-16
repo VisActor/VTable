@@ -151,6 +151,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-tree-lazy-load'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-rowSeriesNumber'
       },
       {
@@ -176,6 +180,30 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-wordCloud'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-radar'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-rose'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-gauge'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-scatter'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-scatter1'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart-pie'
       },
       {
@@ -189,6 +217,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-markLine'
       },
       {
         path: 'pivot-chart',
@@ -314,6 +346,10 @@ export const menus = [
       {
         path: 'type',
         name: 'checkbox'
+      },
+      {
+        path: 'type',
+        name: 'radio'
       }
     ]
   },
@@ -505,6 +541,14 @@ export const menus = [
       {
         path: 'interactive',
         name: 'update-column'
+      },
+      {
+        path: 'interactive',
+        name: 'row-resize'
+      },
+      {
+        path: 'interactive',
+        name: 'pre-sort'
       }
     ]
   },

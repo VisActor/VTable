@@ -7,33 +7,34 @@ order: 1-1
 link: '../guide/Developer_Ecology/react'
 ---
 
-# 使用完整option
+# 使用完整 option
 
-可以直接使用可以直接使用VTable的完整option，将option作为一个prop传入表格组件。
+可以直接使用可以直接使用 VTable 的完整 option，将 option 作为一个 prop 传入表格组件。
 
 ## 代码演示
+
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
-      caption: 'name',
+      title: 'name'
     },
     {
       field: '1',
-      caption: 'age',
+      title: 'age'
     },
     {
       field: '2',
-      caption: 'gender',
+      title: 'gender'
     },
     {
       field: '3',
-      caption: 'hobby',
-    },
+      title: 'hobby'
+    }
   ],
-  records: new Array(1000).fill(['John', 18, 'male', '🏀']),
+  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
 };
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));

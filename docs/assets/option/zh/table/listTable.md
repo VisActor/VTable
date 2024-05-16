@@ -87,6 +87,15 @@ ${prefix} headerEditor (string|Object|Function)
 headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
 
+## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
+
+进入编辑状态的触发时机。
+
+```
+/** 编辑触发时机:双击事件 | 单击事件 | api手动开启编辑。默认为双击'doubleclick' */
+editCellTrigger?: 'doubleclick' | 'click' | 'api';
+```
+
 {{ use: common-option-secondary(
     prefix = '#',
     tableType = 'listTable'
@@ -99,6 +108,10 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 ## hierarchyExpandLevel(number)
 
 展示为树形结构时，默认展开层数。默认为 1 只显示根节点，配置为`Infinity`则全部展开。
+
+## hierarchyTextStartAlignment(boolean) = false
+
+同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认 false
 
 ## frozenColDragHeaderMode(string) = 'fixedFrozenCount'
 

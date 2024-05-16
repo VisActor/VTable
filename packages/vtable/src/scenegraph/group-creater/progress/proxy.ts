@@ -14,6 +14,7 @@ import { sortVertical } from './update-position/sort-vertical';
 import { sortHorizontal } from './update-position/sort-horizontal';
 import { updateAutoColumn } from './update-position/update-auto-column';
 import { getDefaultHeight, getDefaultWidth } from './default-width-height';
+import { handleTextStick } from '../../stick-text';
 
 export class SceneProxy {
   table: BaseTableAPI;
@@ -237,6 +238,8 @@ export class SceneProxy {
           await this.createRow();
           await this.progress();
         }
+        handleTextStick(this.table);
+        this.table.scenegraph.updateNextFrame();
         resolve();
       }, 16);
     });
@@ -451,8 +454,9 @@ export class SceneProxy {
       this.updateDeltaY(y);
       this.updateBody(y - this.deltaY);
     } else if (
-      !this.table.scenegraph.bodyGroup.firstChild ||
-      this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
+      (!this.table.scenegraph.bodyGroup.firstChild || this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0) &&
+      (!this.table.scenegraph.rowHeaderGroup.firstChild ||
+        this.table.scenegraph.rowHeaderGroup.firstChild.childrenCount === 0)
     ) {
       this.updateDeltaY(y);
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollTop执行dynamicSetY会出错
@@ -652,19 +656,6 @@ export class SceneProxy {
     }
 
     const newCellGroup = this.table.scenegraph.updateCellContent(cellGroup.col, cellGroup.row);
-    // 更新内容
-    // const textMark = cellGroup.firstChild as WrapText;
-    // const autoWrapText = Array.isArray(textMark.attribute.text);
-    // const textStr: string = this.table.getCellValue(cellGroup.col, cellGroup.row);
-    // let text;
-    // if (autoWrapText) {
-    //   text = String(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
-    // } else {
-    //   text = textStr;
-    // }
-
-    // textMark.setAttribute('text', text);
-
     cellGroup.needUpdate = false;
     return newCellGroup || cellGroup;
   }
@@ -755,7 +746,10 @@ export class SceneProxy {
         this.deltaY = -deltaY;
       }
     } else if (isValid(screenTopY) && isValid(screenTopRow)) {
-      const cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, screenTopRow, true);
+      let cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, screenTopRow, true);
+      if (cellGroup.role !== 'cell') {
+        cellGroup = this.table.scenegraph.highPerformanceGetCell(0, screenTopRow, true);
+      }
       const bodyY = y - this.deltaY;
       const distRowYOffset = screenTopY - bodyY; // dist cell 距离表格顶部的位置差
       const currentRowYOffset = cellGroup.attribute.y - bodyY + this.table.getFrozenRowsHeight(); // current cell 距离表格顶部的位置差
