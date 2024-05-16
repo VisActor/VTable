@@ -1075,7 +1075,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return isValid(editorDefine);
   }
-  /** 更改单元格数据 会触发change_cell_value事件*/
+
+  /**
+   * 更改单元格数据 会触发change_cell_value事件
+   * @param col
+   * @param row
+   * @param value 更改后的值
+   * @param workOnEditableCell 限制只能更改配置了编辑器的单元格值。快捷键paste这里配置的true，限制只能修改可编辑单元格值
+   */
   changeCellValue(col: number, row: number, value: string | number | null, workOnEditableCell = false) {
     if ((workOnEditableCell && this.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
       const recordIndex = this.getRecordShowIndexByCell(col, row);
