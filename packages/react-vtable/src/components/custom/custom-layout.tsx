@@ -1,4 +1,6 @@
-import React, { useCallback, useContext, useLayoutEffect, useRef } from 'react';
+/* eslint-disable react-hooks/rules-of-hooks */
+import type { PropsWithChildren } from 'react';
+import React, { isValidElement, useCallback, useContext, useLayoutEffect, useRef } from 'react';
 import RootTableContext from '../../context/table';
 import { Group } from '@visactor/vtable/src/vrender';
 import type { ICustomLayoutFuc, CustomRenderFunctionArg } from '@visactor/vtable/src/ts-types';
@@ -6,14 +8,21 @@ import type { FiberRoot } from 'react-reconciler';
 import { reconcilor } from './reconciler';
 import { LegacyRoot } from 'react-reconciler/constants';
 
-type CustomLayoutProps = { componentIndex?: number; children: React.ReactElement };
+type CustomLayoutProps = { componentIndex?: number };
 
-export type CustomLayoutFunctionArg = Partial<CustomRenderFunctionArg>;
+export type CustomLayoutFunctionArg = Partial<CustomRenderFunctionArg> & {
+  role?: 'custom-layout' | 'header-custom-layout';
+};
 
-export const CustomLayout: React.FC<CustomLayoutProps> = (props: CustomLayoutProps, ref) => {
+export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildren<CustomLayoutProps>, ref) => {
   const { componentIndex, children } = props;
+  if (!isValidElement(children)) {
+    return null;
+  }
   const context = useContext(RootTableContext);
   const { table } = context;
+
+  const isHeaderCustomLayout = children.props.role === 'header-custom-layout';
 
   // react customLayout component container cache
   const container = useRef<Map<string, FiberRoot>>(new Map());
@@ -70,10 +79,15 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: CustomLayoutPro
     console.log('update props', props, table);
 
     table?.checkReactCustomLayout(); // init reactCustomLayout component
-    if (table && !table.reactCustomLayout?.hasReactCreateGraphic(componentIndex)) {
-      table.reactCustomLayout?.setReactCreateGraphic(componentIndex, createGraphic, container.current); // set customLayout function
-      table.reactCustomLayout?.setReactRemoveGraphic(componentIndex, removeContainer); // set customLayout function
-      table.reactCustomLayout?.updateCustomCell(componentIndex); // update cell content
+    if (table && !table.reactCustomLayout?.hasReactCreateGraphic(componentIndex, isHeaderCustomLayout)) {
+      table.reactCustomLayout?.setReactCreateGraphic(
+        componentIndex,
+        createGraphic,
+        // container.current,
+        isHeaderCustomLayout
+      ); // set customLayout function
+      table.reactCustomLayout?.setReactRemoveGraphic(componentIndex, removeContainer, isHeaderCustomLayout); // set customLayout function
+      table.reactCustomLayout?.updateCustomCell(componentIndex, isHeaderCustomLayout); // update cell content
     } else if (table) {
       // update all container
       container.current.forEach((value, key) => {
@@ -97,7 +111,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: CustomLayoutPro
           table
         };
         // update element in container
-        reconcilor.updateContainer(React.cloneElement(props.children, { ...args }), currentContainer, null);
+        reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
         table.scenegraph.updateNextFrame();
       });
     }

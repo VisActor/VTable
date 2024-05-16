@@ -86,6 +86,57 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
   );
 };
 
+const HeaderCustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }) => {
+  const { table, row, col, rect, text } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const [hover, setHover] = useState(false);
+
+  const groupRef = useRef(null);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        alignContent: 'center'
+      }}
+      ref={groupRef}
+    >
+      <Text
+        attribute={{
+          text: `header-${text}`,
+          fill: hover ? 'green' : '#000'
+        }}
+        onMouseEnter={(event: any) => {
+          // eslint-disable-next-line no-console, no-undef
+          console.log('groupRef-header', groupRef.current);
+          setHover(true);
+          event.currentTarget.stage.renderNextFrame();
+        }}
+        onMouseLeave={(event: any) => {
+          setHover(false);
+          event.currentTarget.stage.renderNextFrame();
+        }}
+      ></Text>
+      {hover && (
+        <Text
+          attribute={{
+            text: 'hover',
+            fill: 'red',
+            fontSize: 8
+          }}
+        />
+      )}
+    </Group>
+  );
+};
+
 function App() {
   const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
   const [preStr, setPreStr] = useState('vt');
@@ -103,9 +154,8 @@ function App() {
       <ListColumn field={'1'} title={'age'} />
       <ListColumn field={'2'} title={'gender'} />
       <ListColumn field={'3'} title={'hobby'}>
-        <CustomLayout>
-          <CustomLayoutComponent text={preStr} />
-        </CustomLayout>
+        <CustomLayoutComponent role={'custom-layout'} text={preStr} />
+        <HeaderCustomLayoutComponent role={'header-custom-layout'} text={preStr} />
       </ListColumn>
     </ListTable>
   );

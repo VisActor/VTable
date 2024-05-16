@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import React, { cloneElement, useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { isEqual, isNil, pickWithout } from '@visactor/vutils';
 
 import type { TableContextType } from '../context/table';
@@ -60,9 +60,17 @@ export const createComponent = <T extends ComponentProps>(
         // deleteToContext(context, id.current, optionName, isSingle);
       };
     }, []);
-    return props.children
-      ? cloneElement(props.children as ReactElement, { componentIndex: props.componentIndex })
-      : null;
+
+    // children are all custom layout temply
+    // return props.children
+    //   ? React.cloneElement(props.children as ReactElement, { componentIndex: props.componentIndex })
+    //   : null;
+    if (props.children) {
+      return React.Children.map(props.children as ReactElement, (child: ReactElement) => {
+        return React.createElement(CustomLayout, { componentIndex: props.componentIndex }, child);
+      });
+    }
+    return null;
   };
 
   Comp.displayName = componentName;
@@ -71,9 +79,20 @@ export const createComponent = <T extends ComponentProps>(
     const newComponentOption: Partial<T> = pickWithout<T>(props, notOptionKeys);
 
     // deal width customLayout
-    if (props.children && (props.children as React.ReactElement).type === CustomLayout) {
-      (newComponentOption as any).customLayout = 'react-custom-layout';
+    if (props.children) {
+      const { children } = props;
+      React.Children.map(children as ReactElement, (child: ReactElement) => {
+        if (child.props.role === 'custom-layout') {
+          (newComponentOption as any).customLayout = 'react-custom-layout';
+        }
+        if (child.props.role === 'header-custom-layout') {
+          (newComponentOption as any).headerCustomLayout = 'react-custom-layout';
+        }
+      });
     }
+    // if (props.children && (props.children as React.ReactElement).props.role === 'custom-layout') {
+    //   (newComponentOption as any).customLayout = 'react-custom-layout';
+    // }
 
     return {
       option: newComponentOption,
