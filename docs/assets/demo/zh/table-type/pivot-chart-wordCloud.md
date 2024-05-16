@@ -27,7 +27,6 @@ let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
   .then(res => res.json())
   .then(data => {
-    // data=data.splice(0,260);
     const columns = [
       {
         dimensionKey: 'Region',
@@ -64,10 +63,19 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
               shrink: true
             }
           },
+          random: false,
           data: {
             id: 'baseData',
             name: 'baseData'
-          }
+          },
+          scales: [
+            {
+              id: 'color',
+              type: 'ordinal',
+              domain: ['Consumer', 'Corporate', 'Home Office'],
+              range: ['#2E62F1', '#4DC36A', '#FF8406']
+            }
+          ]
         },
         style: {
           padding: 1
@@ -92,14 +100,49 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           autoWrapText: true
         }
       },
-
+      legends: {
+        orient: 'bottom',
+        type: 'discrete',
+        data: [
+          {
+            label: 'Consumer',
+            shape: {
+              fill: '#2E62F1',
+              symbolType: 'circle'
+            }
+          },
+          {
+            label: 'Corporate',
+            shape: {
+              fill: '#4DC36A',
+              symbolType: 'square'
+            }
+          },
+          {
+            label: 'Home Office',
+            shape: {
+              fill: '#FF8406',
+              symbolType: 'square'
+            }
+          }
+        ]
+      },
       pagination: {
         currentPage: 0,
         perPageCount: 8
       }
     };
     tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-
+    const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
+    tableInstance.on(LEGEND_ITEM_CLICK, args => {
+      console.log('LEGEND_ITEM_CLICK', args);
+      tableInstance.updateFilterRules([
+        {
+          filterKey: 'Segment',
+          filteredValues: args.value
+        }
+      ]);
+    });
     window.tableInstance = tableInstance;
   });
 ```
