@@ -65,14 +65,14 @@ export class EditManeger {
       //   console.warn("VTable Warn: cell has config custom render or layout, can't be edited");
       //   return;
       // }
-      if (!this.table.isHeader(col, row)) {
-        const range = this.table.getCellRange(col, row);
-        const isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
-        if (isMerge) {
-          console.warn("VTable Warn: this is merge cell, can't be edited");
-          return;
-        }
-      }
+      // if (!this.table.isHeader(col, row)) {
+      //   const range = this.table.getCellRange(col, row);
+      //   const isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+      //   if (isMerge) {
+      //     console.warn("VTable Warn: this is merge cell, can't be edited");
+      //     return;
+      //   }
+      // }
       if ((this.table.internalProps.layoutMap as SimpleHeaderLayoutMap)?.isAggregation?.(col, row)) {
         console.warn("VTable Warn: this is aggregation value, can't be edited");
         return;
@@ -134,8 +134,16 @@ export class EditManeger {
     }
     if (!this.editingEditor.validateValue || this.editingEditor.validateValue?.()) {
       const changedValue = this.editingEditor.getValue?.();
-      (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
-
+      const range = this.table.getCellRange(this.editCell.col, this.editCell.row);
+      const changedValues: any[] = [];
+      for (let row = range.start.row; row <= range.end.row; row++) {
+        const rowChangedValues = [];
+        for (let col = range.start.col; col <= range.end.col; col++) {
+          rowChangedValues.push(changedValue);
+        }
+        changedValues.push(rowChangedValues);
+      }
+      (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
       this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
       this.editingEditor.exit?.();
       this.editingEditor.onEnd?.();

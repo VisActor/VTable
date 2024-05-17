@@ -20,6 +20,7 @@
 | 鼠标按下                 | MOUSEDOWN_CELL              | 单元格鼠标按下事件                                                        |
 | 鼠标松开                 | MOUSEUP_CELL                | 单元格鼠标松开事件                                                        |
 | 选中状态改变             | SELECTED_CELL               | 单元格选中状态改变事件                                                    |
+| 选中状态被清除           | SELECTED_CLEAR              | 单元格选中状态全部清除事件                                                |
 | 鼠标进入                 | MOUSEENTER_CELL             | 鼠标进入单元格事件                                                        |
 | 鼠标移动                 | MOUSEMOVE_CELL              | 鼠标在某个单元格上移动事件                                                |
 | 鼠标离开                 | MOUSELEAVE_CELL             | 鼠标离开单元格事件                                                        |

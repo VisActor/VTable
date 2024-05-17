@@ -24,6 +24,18 @@ The perspective combination diagram combines the vchart chart library to render 
 ```javascript livedemo template=vtable
 VTable.register.chartModule('vchart', VChart);
 let tableInstance;
+function logScale(value, domain, range) {
+  // 计算域和范围的对数
+  const logDomain = domain.map(x => (x !== 0 ? Math.log10(x) : 0));
+  const logRange = range.map(x => Math.log10(x));
+
+  // 计算值在域内的位置，将其映射到范围内
+  const t = (Math.log10(value) - logDomain[0]) / (logDomain[1] - logDomain[0]);
+  const newValue = (logRange[1] - logRange[0]) * t + logRange[0];
+
+  // 返回映射后的值，还原对数缩放
+  return Math.pow(10, newValue);
+}
 const data = [
   {
     name: 'citroen ds-21 pallas',
@@ -1244,10 +1256,20 @@ const indicators = [
       type: 'scatter',
       xField: 'milesPerGallon',
       yField: 'horsepower',
-
+      seriesField: 'origin_country',
+      sizeField: 'milesPerGallon',
+      size: d => logScale(d.milesPerGallon, [0, Math.max(...data.map(d => d.milesPerGallon))], [1, 20]),
       data: {
         id: 'baseData'
       },
+      scales: [
+        {
+          id: 'color',
+          type: 'ordinal',
+          domain: ['USA', 'Germany', 'France', 'Japan'],
+          range: ['#2E62F1', '#4DC36A', '#FF8406', 'pink']
+        }
+      ],
       tooltip: {
         dimension: {
           visible: true
@@ -1294,10 +1316,10 @@ const indicators = [
           range: { min: 0 },
           type: 'linear',
           innerOffset: {
-            left: 4,
-            right: 4,
-            top: 4,
-            bottom: 4
+            left: 6,
+            right: 6,
+            top: 6,
+            bottom: 6
           }
         },
         {
@@ -1309,10 +1331,10 @@ const indicators = [
           label: { visible: true },
           type: 'linear',
           innerOffset: {
-            left: 4,
-            right: 4,
-            top: 4,
-            bottom: 4
+            left: 6,
+            right: 6,
+            top: 6,
+            bottom: 6
           }
         }
       ]
@@ -1333,6 +1355,40 @@ const option = {
   defaultHeaderColWidth: 100,
   indicatorTitle: '指标',
   autoWrapText: true,
+  legends: {
+    orient: 'bottom',
+    type: 'discrete',
+    data: [
+      {
+        label: 'USA',
+        shape: {
+          fill: '#2E62F1',
+          symbolType: 'circle'
+        }
+      },
+      {
+        label: 'Germany',
+        shape: {
+          fill: '#4DC36A',
+          symbolType: 'square'
+        }
+      },
+      {
+        label: 'France',
+        shape: {
+          fill: '#FF8406',
+          symbolType: 'square'
+        }
+      },
+      {
+        label: 'Janpan',
+        shape: {
+          fill: 'pink',
+          symbolType: 'square'
+        }
+      }
+    ]
+  },
   theme: {
     underlayBackgroundColor: 'rgba(255, 255, 255, 0)',
     defaultStyle: {
@@ -1507,6 +1563,15 @@ const option = {
   }
 };
 tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-
+const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
+tableInstance.on(LEGEND_ITEM_CLICK, args => {
+  console.log('LEGEND_ITEM_CLICK', args);
+  tableInstance.updateFilterRules([
+    {
+      filterKey: 'origin_country',
+      filteredValues: args.value
+    }
+  ]);
+});
 window.tableInstance = tableInstance;
 ```

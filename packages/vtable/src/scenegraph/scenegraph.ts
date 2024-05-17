@@ -1608,29 +1608,34 @@ export class Scenegraph {
   ): { col: number; row: number; x?: number; rightFrozen?: boolean } {
     let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
     if (!cellGroup) {
-      // to do: 处理最后一列外调整列宽
-      cell = this.table.getCellAt(abstractX - offset, abstractY);
-    } else {
-      if (abstractX < cellGroup.globalAABBBounds.x1 + offset) {
-        cell = { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
-      } else if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
-        cell = { col: cellGroup.col, row: cellGroup.row, x: cellGroup.globalAABBBounds.x2 };
+      const drawRange = this.table.getDrawRange();
+      if (abstractY >= drawRange.top && abstractY <= drawRange.bottom) {
+        // to do: 处理最后一列外调整列宽
+        cell = this.table.getCellAt(abstractX - offset, abstractY);
+        return cell;
       }
-      if (
-        cell &&
-        this.table.rightFrozenColCount > 0 &&
-        cell.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
-        this.table.tableNoFrameWidth -
-          this.table.getFrozenColsWidth() -
-          this.table.getRightFrozenColsWidth() +
-          this.table.scrollLeft <
-          this.bodyGroup.attribute.width
-      ) {
-        // 有右侧冻结列，并且横向没有滚动到最右侧时，右侧冻结列左侧调整对只对右侧冻结列生效
-        cell.col = cell.col + 1;
-        cell.rightFrozen = true;
-      }
+      return { col: -1, row: -1 };
     }
+    if (abstractX < cellGroup.globalAABBBounds.x1 + offset) {
+      cell = { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
+    } else if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
+      cell = { col: cellGroup.col, row: cellGroup.row, x: cellGroup.globalAABBBounds.x2 };
+    }
+    if (
+      cell &&
+      this.table.rightFrozenColCount > 0 &&
+      cell.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
+      this.table.tableNoFrameWidth -
+        this.table.getFrozenColsWidth() -
+        this.table.getRightFrozenColsWidth() +
+        this.table.scrollLeft <
+        this.bodyGroup.attribute.width
+    ) {
+      // 有右侧冻结列，并且横向没有滚动到最右侧时，右侧冻结列左侧调整对只对右侧冻结列生效
+      cell.col = cell.col + 1;
+      cell.rightFrozen = true;
+    }
+
     if (cell) {
       return cell;
     }

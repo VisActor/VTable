@@ -1,4 +1,12 @@
-import type { ColumnIconOption, ListTableAPI, PivotTableAPI, RectProps, SortOrder, SvgIcon } from '../ts-types';
+import type {
+  ColumnIconOption,
+  ColumnsDefine,
+  ListTableAPI,
+  PivotTableAPI,
+  RectProps,
+  SortOrder,
+  SvgIcon
+} from '../ts-types';
 import { HierarchyState, IconFuncTypeEnum, IconPosition, InternalIconName } from '../ts-types';
 import * as registerIcons from '../icons';
 import { cellInRange } from '../tools/helper';
@@ -384,5 +392,19 @@ export class HeaderHelper {
       case 'checkbox':
         return CheckboxStyle;
     }
+  }
+
+  setTableColumnsEditor() {
+    const setEditor = (colDefines: ColumnsDefine, setColumns: ColumnsDefine) => {
+      colDefines.forEach((colDefine, index) => {
+        if (colDefine.editor) {
+          setColumns[index].editor = colDefine.editor;
+        }
+        if (colDefine.columns) {
+          setEditor(colDefine.columns, setColumns[index].columns);
+        }
+      });
+    };
+    setEditor((this._table as ListTable).options.columns, (this._table as ListTable).internalProps.columns);
   }
 }

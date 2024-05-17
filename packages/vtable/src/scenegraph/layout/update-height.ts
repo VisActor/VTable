@@ -61,9 +61,9 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, s
   }
 
   // 更新以下行位置
-  for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex++) {
-    for (let colIndex = 0; colIndex < scene.table.colCount; colIndex++) {
-      const cellGroup = scene.getCell(colIndex, rowIndex);
+  for (let colIndex = 0; colIndex < scene.table.colCount; colIndex++) {
+    for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex++) {
+      const cellGroup = scene.highPerformanceGetCell(colIndex, rowIndex);
       if (cellGroup.role === 'cell') {
         cellGroup.setAttribute('y', cellGroup.attribute.y + detaY);
       }
