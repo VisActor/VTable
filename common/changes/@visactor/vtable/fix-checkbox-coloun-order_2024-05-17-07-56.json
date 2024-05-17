@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix checkbox and radio state update when change row index #1712",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
