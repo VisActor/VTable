@@ -2,6 +2,30 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.25.5",
+      "tag": "@visactor/vtable_v0.25.5",
+      "date": "Mon, 13 May 2024 13:47:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: trigger mousedown_table event region need extend #1668\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.4",
+      "tag": "@visactor/vtable_v0.25.4",
+      "date": "Fri, 10 May 2024 03:15:01 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: remove vutil-extension temply"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.25.3",
       "tag": "@visactor/vtable_v0.25.3",
       "date": "Thu, 09 May 2024 11:13:29 GMT",

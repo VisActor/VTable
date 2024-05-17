@@ -9,9 +9,10 @@ link: '../guide/Developer_Ecology/react'
 
 # 自定义组件
 
-自定义组件`CustomComponent`组件方便在React-VTable组件上叠加外部组件。
+自定义组件`CustomComponent`组件方便在 React-VTable 组件上叠加外部组件。
 
 ## 代码演示
+
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 
@@ -40,25 +41,25 @@ function App() {
     columns: [
       {
         field: '0',
-        caption: '名称'
+        title: '名称'
       },
       {
         field: '1',
-        caption: '年龄'
+        title: '年龄'
       },
       {
         field: '2',
-        caption: '性别'
+        title: '性别'
       },
       {
         field: '3',
-        caption: '爱好'
+        title: '爱好'
       }
     ],
     records: new Array(1000).fill(['张三', 18, '男', '🏀'])
   };
 
-  const updateHoverPos = useCallback((args) => {
+  const updateHoverPos = useCallback(args => {
     if (visible.current) {
       return;
     }
@@ -72,7 +73,7 @@ function App() {
     setHoverRow(-1);
   }, []);
 
-  const updateClickPos = useCallback((args) => {
+  const updateClickPos = useCallback(args => {
     setClickCol(args.col);
     setClickRow(args.row);
   }, []);
@@ -121,7 +122,7 @@ function App() {
             setClickCol(-1);
             setClickRow(-1);
           }}
-          onVisibleChange={(popVisible) => {
+          onVisibleChange={popVisible => {
             visible.current = popVisible;
           }}
         >

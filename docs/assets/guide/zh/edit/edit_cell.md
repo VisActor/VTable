@@ -6,6 +6,8 @@
 
 ## 1. 引用 VTable 的编辑器包：
 
+### 使用 NPM 包
+
 首先，确保已经正确安装了 VTable 库@visactor/vtable 和相关的编辑器包@visactor/vtable-editors。你可以使用以下命令来安装它们：
 
 ```shell
@@ -21,6 +23,17 @@ yarn add @visactor/vtable-editors
 
 ```javascript
 import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
+```
+
+### 使用 CDN
+
+你还可以通过 CDN 获取构建好的 VTable-Editor 文件。
+
+```html
+<script src="https://unpkg.com/@visactor/vtable-editors@latest/dist/vtable-editors.min.js"></script>
+<script>
+  const inputEditor = new VTable.editors.InputEditor();
+</script>
 ```
 
 ## 2. 创建编辑器：

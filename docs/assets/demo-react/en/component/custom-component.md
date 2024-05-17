@@ -12,6 +12,7 @@ link: '../guide/Developer_Ecology/react'
 The `CustomComponent` component facilitates overlaying external components on React-VTable components.
 
 ## Code Example
+
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 
@@ -40,25 +41,25 @@ function App() {
     columns: [
       {
         field: '0',
-        caption: 'name'
+        title: 'name'
       },
       {
         field: '1',
-        caption: 'age'
+        title: 'age'
       },
       {
         field: '2',
-        caption: 'gender'
+        title: 'gender'
       },
       {
         field: '3',
-        caption: 'hobby'
+        title: 'hobby'
       }
     ],
     records: new Array(1000).fill(['John', 18, 'male', '🏀'])
   };
 
-  const updateHoverPos = useCallback((args) => {
+  const updateHoverPos = useCallback(args => {
     if (visible.current) {
       return;
     }
@@ -72,7 +73,7 @@ function App() {
     setHoverRow(-1);
   }, []);
 
-  const updateClickPos = useCallback((args) => {
+  const updateClickPos = useCallback(args => {
     setClickCol(args.col);
     setClickRow(args.row);
   }, []);
@@ -121,7 +122,7 @@ function App() {
             setClickCol(-1);
             setClickRow(-1);
           }}
-          onVisibleChange={(popVisible) => {
+          onVisibleChange={popVisible => {
             visible.current = popVisible;
           }}
         >

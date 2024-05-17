@@ -13,6 +13,7 @@ option: ListTable-columns-text#cellType
 The onReady callback is triggered after the table completes initialization or update. You can obtain the table instance and whether it is the first rendering.
 
 ## code demo
+
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 
@@ -20,22 +21,22 @@ const option = {
   columns: [
     {
       field: '0',
-      caption: 'name',
+      title: 'name'
     },
     {
       field: '1',
-      caption: 'age',
+      title: 'age'
     },
     {
       field: '2',
-      caption: 'gender',
+      title: 'gender'
     },
     {
       field: '3',
-      caption: 'hobby',
-    },
+      title: 'hobby'
+    }
   ],
-  records: new Array(1000).fill(['John', 18, 'male', '🏀']),
+  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
 };
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
@@ -44,7 +45,7 @@ root.render(
     option={option}
     height={'500px'}
     onReady={(tableInstance, isFirst) => {
-      console.log(tableInstance, isFirst)
+      console.log(tableInstance, isFirst);
     }}
   />
 );
