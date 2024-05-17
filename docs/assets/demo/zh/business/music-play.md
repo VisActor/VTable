@@ -1,25 +1,29 @@
-/* eslint-disable */
-import { ListTableConstructorOptions } from '../../cjs/ts-types';
-import * as VTable from '../../src';
-import { theme } from '../../src/register';
-const ListTable = VTable.ListTable;
-const CONTAINER_ID = 'vTable';
-function getBackgroundColor(args): string {
-  const { row, table } = args;
-  const index = row - table.frozenRowCount;
-  if (!(index & 1)) {
-    return 'rgba(255,255,255,0.2)';
-  }
-  return 'rgba(255,255,255,0.5)';
-}
-export function createTable() {
-  const container = document.getElementById(CONTAINER_ID);
+---
+category: examples
+group: Business
+title: 音乐播放排行
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/music-play.png
+option: ListTable#theme
+---
+
+# 音乐播放排行
+
+该示例搭配背景图片，使用表格的透明背景色，展示了个人歌曲播放列表排行榜。
+
+## 关键配置
+
+- `theme` 配置表格各个区域样式
+
+## 代码演示
+
+```javascript livedemo template=vtable
+const container = document.getElementById(CONTAINER_ID);
   container!.style.padding = '50px';
   container!.style.backgroundImage = `url('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/background-image-music.jpeg')`;
   container!.style.backgroundRepeat = 'no-repeat';
   container!.style.backgroundSize = 'cover';
   container!.style.backgroundPosition = 'center center';
-  const options: ListTableConstructorOptions = {
+  const options = {
     columns: [
       {
         field: 'music_name',
@@ -30,8 +34,7 @@ export function createTable() {
           src: 'music_image',
           name: 'music_image',
           shape: 'circle',
-          //定义文本内容行内图标，第一个字符展示
-          width: 50, // Optional
+          width: 50,
           height: 50,
           positionType: VTable.TYPES.IconPosition.contentLeft,
           marginRight: 20,
@@ -42,15 +45,13 @@ export function createTable() {
       {
         field: 'singer',
         title: '歌手',
-
         width: 'auto',
         icon: {
           type: 'image',
           src: 'singer_image',
           name: 'singer_image',
           shape: 'circle',
-          //定义文本内容行内图标，第一个字符展示
-          width: 50, // Optional
+          width: 50,
           height: 50,
           positionType: VTable.TYPES.IconPosition.contentLeft,
           marginRight: 20,
@@ -150,8 +151,6 @@ export function createTable() {
       }
     }
   };
-  const instance = new ListTable(container!, options);
-
-  // 只为了方便控制太调试用，不要拷贝
-  window.tableInstance = instance;
-}
+const tableInstance = new VTable.PivotTable(container, option);
+window['tableInstance'] = tableInstance;
+```
