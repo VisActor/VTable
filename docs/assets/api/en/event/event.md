@@ -23,6 +23,7 @@ Supported event types:
   MOUSEDOWN_CELL: 'mousedown_cell',
   MOUSEUP_CELL: 'mouseup_cell',
   SELECTED_CELL: 'selected_cell',
+  SELECTED_CLEAR: 'selected_clear',
   KEYDOWN: 'keydown',
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
@@ -105,6 +106,10 @@ Refer to the parameter types introduced in the CLICK_CELL event for the paramete
 Cell selected state change event
 
 {{ use: SelectedCellEvent() }}
+
+## SELECTED_CLEAR
+
+Cell selected state all be cleard, when click table's blank region, this event will be triggered.
 
 ## KEYDOWN
 
