@@ -452,7 +452,7 @@ export class DashGroupBeforeRenderContribution implements IGroupRenderContributi
       stroke &&
       Array.isArray(lineDash) &&
       lineDash.length &&
-      lineDash[0].length &&
+      lineDash[0]?.length &&
       !Array.isArray(strokeArrayColor) &&
       !Array.isArray(strokeArrayWidth)
     ) {
@@ -497,7 +497,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
 
     if (
       !stroke ||
-      !(Array.isArray(lineDash) && lineDash.length && lineDash[0].length) ||
+      !(Array.isArray(lineDash) && lineDash.length && lineDash[0]?.length) ||
       Array.isArray(strokeArrayColor) ||
       Array.isArray(strokeArrayWidth)
     ) {
