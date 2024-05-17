@@ -175,6 +175,7 @@ export function endMoveCol(state: StateManager) {
         )
       ) {
         state.table.changeRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
+        state.changeCheckboxAndRadioOrder(moveContext.sourceIndex, moveContext.targetIndex);
       }
       // clear columns width and rows height cache
       if (moveContext.moveType === 'column') {

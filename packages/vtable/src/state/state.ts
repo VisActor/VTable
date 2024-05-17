@@ -37,8 +37,9 @@ import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
-import { setRadioState, syncRadioState } from './radio/radio';
+import { changeRadioOrder, setRadioState, syncRadioState } from './radio/radio';
 import {
+  changeCheckboxOrder,
   initCheckedState,
   initLeftRecordsCheckState,
   setCheckedState,
@@ -1359,5 +1360,14 @@ export class StateManager {
     isChecked: boolean
   ) {
     return syncRadioState(col, row, field, radioType, indexInCell, isChecked, this);
+  }
+
+  changeCheckboxAndRadioOrder(sourceIndex: number, targetIndex: number) {
+    if (this.checkedState.length) {
+      changeCheckboxOrder(sourceIndex, targetIndex, this);
+    }
+    if (this.radioState.length) {
+      changeRadioOrder(sourceIndex, targetIndex, this);
+    }
   }
 }
