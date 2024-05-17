@@ -73,13 +73,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
       : options.header
       ? cloneDeepSpec(options.header)
       : [];
-    options.columns?.forEach((colDefine, index) => {
-      //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
-      if (colDefine.editor) {
-        internalProps.columns[index].editor = colDefine.editor;
-      }
-    });
-
+    // options.columns?.forEach((colDefine, index) => {
+    //   //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
+    //   if (colDefine.editor) {
+    //     internalProps.columns[index].editor = colDefine.editor;
+    //   }
+    // });
+    this.internalProps.headerHelper.setTableColumnsEditor();
     this.showHeader = options.showHeader ?? true;
 
     this.transpose = options.transpose ?? false;
@@ -146,11 +146,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
   updateColumns(columns: ColumnsDefine) {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.columns = cloneDeepSpec(columns);
-    columns.forEach((colDefine, index) => {
-      if (colDefine.editor) {
-        this.internalProps.columns[index].editor = colDefine.editor;
-      }
-    });
+    // columns.forEach((colDefine, index) => {
+    //   if (colDefine.editor) {
+    //     this.internalProps.columns[index].editor = colDefine.editor;
+    //   }
+    // });
+    this.internalProps.headerHelper.setTableColumnsEditor();
     this.options.columns = columns;
     this.refreshHeader();
     this.scenegraph.clearCells();
@@ -384,11 +385,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       : options.header
       ? cloneDeepSpec(options.header)
       : [];
-    options.columns.forEach((colDefine, index) => {
-      if (colDefine.editor) {
-        internalProps.columns[index].editor = colDefine.editor;
-      }
-    });
+    // options.columns.forEach((colDefine, index) => {
+    //   if (colDefine.editor) {
+    //     internalProps.columns[index].editor = colDefine.editor;
+    //   }
+    // });
+    this.internalProps.headerHelper.setTableColumnsEditor();
     // 处理转置
     this.transpose = options.transpose ?? false;
     // 更新表头
@@ -1075,7 +1077,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return isValid(editorDefine);
   }
-  /** 更改单元格数据 会触发change_cell_value事件*/
+
+  /**
+   * 更改单元格数据 会触发change_cell_value事件
+   * @param col
+   * @param row
+   * @param value 更改后的值
+   * @param workOnEditableCell 限制只能更改配置了编辑器的单元格值。快捷键paste这里配置的true，限制只能修改可编辑单元格值
+   */
   changeCellValue(col: number, row: number, value: string | number | null, workOnEditableCell = false) {
     if ((workOnEditableCell && this.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
       const recordIndex = this.getRecordShowIndexByCell(col, row);
