@@ -714,6 +714,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
       eventManager.dealTableSelect();
+      stateManager.endSelectCells();
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
     } else if (table.eventManager.isDraging && stateManager.isSelecting()) {

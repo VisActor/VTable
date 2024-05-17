@@ -59,6 +59,7 @@ export type MousePointerSparklineEvent = MousePointerCellEvent & {
 
 export interface TableEventHandlersEventArgumentMap {
   selected_cell: SelectedCellEvent;
+  selected_clear: {};
   click_cell: MousePointerCellEvent;
   dblclick_cell: MousePointerCellEvent;
   mouseenter_table: { event?: MouseEvent | PointerEvent | TouchEvent };
@@ -201,6 +202,7 @@ export interface DrillMenuEventInfo {
 }
 export interface TableEventHandlersReturnMap {
   selected_cell: void;
+  selected_clear: void;
   click_cell: void;
   dblclick_cell: void;
   mouseenter_table: void;

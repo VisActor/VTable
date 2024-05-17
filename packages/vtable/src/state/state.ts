@@ -638,6 +638,10 @@ export class StateManager {
           col: lastCol,
           row: lastRow
         });
+    } else if (fireListener) {
+      if (this.select.ranges.length === 0) {
+        this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CLEAR, {});
+      }
     }
   }
 
