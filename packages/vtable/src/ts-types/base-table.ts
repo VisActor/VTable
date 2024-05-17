@@ -429,6 +429,7 @@ export interface BaseTableConstructorOptions {
 
   customConfig?: any; // 部分特殊配置，兼容xTable等作用
 
+  // _disableColumnAndRowSizeRound?: boolean;
   clearDOM?: boolean;
 }
 export interface BaseTableAPI {
