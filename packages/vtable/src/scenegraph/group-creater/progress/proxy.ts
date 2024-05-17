@@ -68,12 +68,19 @@ export class SceneProxy {
     this.table = table;
 
     if (this.table.isPivotChart()) {
-      this.rowLimit = 100;
-      this.colLimit = 100;
+      // this.rowLimit = 100;
+      // this.colLimit = 100;
+      this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
+      this.colLimit = Math.max(100, Math.ceil((table.tableNoFrameWidth * 2) / table.defaultColWidth));
     } else if (this.table.heightMode === 'autoHeight') {
-      this.rowLimit = 100;
+      // this.rowLimit = 100;
+      this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
     } else if (this.table.widthMode === 'autoWidth') {
-      this.colLimit = 100;
+      // this.colLimit = 100;
+      this.colLimit = Math.max(100, Math.ceil((table.tableNoFrameWidth * 2) / table.defaultColWidth));
+    } else {
+      this.rowLimit = Math.max(200, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
+      this.colLimit = Math.max(100, Math.ceil((table.tableNoFrameWidth * 2) / table.defaultColWidth));
     }
 
     if (this.table.internalProps.transpose) {

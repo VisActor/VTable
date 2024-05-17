@@ -406,6 +406,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     this.handleRowSeriesNumber(table.internalProps.rowSeriesNumber);
     this.setColumnWidths();
+
+    this.clearCellIds();
   }
   handleRowSeriesNumber(rowSeriesNumber: IRowSeriesNumber) {
     if (rowSeriesNumber) {
@@ -1136,7 +1138,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.columnHeaderLevelCount = count;
       return;
     }
-    this.columnHeaderLevelCount = 0;
+    // this.columnHeaderLevelCount = 0;
+    this.columnHeaderLevelCount = !this.indicatorsAsCol ? 0 : this.hideIndicatorName ? 0 : 1;
     return;
   }
   resetRowHeaderLevelCount() {
@@ -3067,6 +3070,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return o;
     }, {} as { [key: LayoutObjectId]: HeaderData });
     this.setPagination(this.pagination);
+
+    this.clearCellIds();
   }
   isSeriesNumberInHeader(col: number, row: number): boolean {
     if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
@@ -3157,6 +3162,34 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     const id = this.getCellId(col, row);
     this._headerObjectMap[id as number].title = value;
+  }
+
+  clearCellIds() {
+    // deal with hide header
+    if (!this.showColumnHeader) {
+      if (this.indicatorsAsCol && !this.hideIndicatorName) {
+        const indicatorIndex = this.colDimensionKeys.indexOf(IndicatorDimensionKeyPlaceholder);
+        this._columnHeaderCellIds = this._columnHeaderCellIds.splice(indicatorIndex, 1);
+      } else {
+        this._columnHeaderCellIds.splice(0, this._columnHeaderCellIds.length);
+      }
+    }
+
+    if (!this.showRowHeader) {
+      if (!this.indicatorsAsCol && !this.hideIndicatorName) {
+        const indicatorIndex = this.rowDimensionKeys.indexOf(IndicatorDimensionKeyPlaceholder);
+        this._rowHeaderCellIds_FULL.forEach((cellIds: number[]) => {
+          // cellIds.splice(0, cellIds.length - 1);
+          const indicator = cellIds.splice(indicatorIndex, 1);
+          cellIds.splice(0, cellIds.length);
+          cellIds.push(indicator[0]);
+        });
+      } else {
+        this._rowHeaderCellIds_FULL.forEach((cellIds: number[]) => {
+          cellIds.splice(0, cellIds.length);
+        });
+      }
+    }
   }
 }
 /** 计算 scale 的实际 range 长度 */

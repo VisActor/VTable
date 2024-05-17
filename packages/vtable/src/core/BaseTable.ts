@@ -1014,6 +1014,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //     : this.internalProps.defaultRowHeight)
     //     );
     if (isValid(this.rowHeightsMap.get(row))) {
+      if (this.options.customConfig?._disableColumnAndRowSizeRound) {
+        const height = this.rowHeightsMap.get(row);
+        let heightRange;
+        if (row < this.frozenRowCount) {
+          heightRange = this.rowHeightsMap.getSumInRange(0, row);
+        } else if (row >= this.rowCount - this.bottomFrozenRowCount) {
+          heightRange = this.rowHeightsMap.getSumInRange(row, this.rowCount - 1);
+        } else {
+          heightRange = this.rowHeightsMap.getSumInRange(this.frozenRowCount, row);
+        }
+        heightRange = Number(heightRange.toFixed(2)); // avoid precision problem
+        // if heightRange number is int
+        if (Number.isInteger(heightRange)) {
+          return Math.ceil(height);
+        }
+        return Math.floor(height);
+      }
       return this.rowHeightsMap.get(row);
     }
     const defaultHeight = this.getDefaultRowHeight(row);
@@ -1067,7 +1084,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   _setRowHeight(row: number, height: number, clearCache?: boolean): void {
     // this.rowHeightsMap.put(row, Math.round(height));
-    this.rowHeightsMap.put(row, Math.round(height));
+    this.rowHeightsMap.put(row, this.options.customConfig?._disableColumnAndRowSizeRound ? height : Math.round(height));
     // 清楚影响缓存
     if (clearCache) {
       this._clearRowRangeHeightsMap(row);
@@ -1115,8 +1132,33 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         h += this.getRowHeight(i);
       }
     } else {
+      if (this.options.customConfig?._disableColumnAndRowSizeRound) {
+        // for (let i = startRow; i <= endRow; i++) {
+        //   h += this.getRowHeight(i);
+        // }
+        const tempH = this.rowHeightsMap.getSumInRange(startRow, endRow);
+        let heightRange;
+        if (endRow < this.frozenRowCount) {
+          heightRange = this.rowHeightsMap.getSumInRange(0, endRow);
+        } else if (endRow >= this.rowCount - this.bottomFrozenRowCount) {
+          heightRange = this.rowHeightsMap.getSumInRange(endRow, this.rowCount - 1);
+        } else {
+          heightRange = this.rowHeightsMap.getSumInRange(this.frozenRowCount, endRow);
+        }
+        heightRange = Number(heightRange.toFixed(2)); // avoid precision problem
+        // if heightRange number is int
+        if (Number.isInteger(heightRange)) {
+          return Math.ceil(tempH);
+        }
+        return Math.floor(tempH);
+      }
       h = this.rowHeightsMap.getSumInRange(startRow, endRow);
     }
+    // if (this.options._disableColumnAndRowSizeRound) {
+    //   // console.log(startRow, endRow, Number(h.toFixed(2)));
+    //   // return Number(h.toFixed(2));
+    //   return h;
+    // }
     return Math.round(h);
   }
   /**
@@ -1222,7 +1264,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   _setColWidth(col: number, width: string | number, clearCache?: boolean, skipCheckFrozen?: boolean): void {
-    this.colWidthsMap.put(col, typeof width === 'number' ? Math.round(width) : width);
+    this.colWidthsMap.put(
+      col,
+      // typeof width === 'number' ? (this.options.customConfig?._disableColumnAndRowSizeRound ? width : Math.round(width)) : width
+      typeof width === 'number' ? Math.round(width) : width
+    );
     // 清楚影响缓存
     if (clearCache) {
       this._clearColRangeWidthsMap(col);

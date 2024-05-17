@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix column width may be zero #1708",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

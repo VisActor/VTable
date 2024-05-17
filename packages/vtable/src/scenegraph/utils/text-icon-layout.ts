@@ -541,7 +541,12 @@ export function updateCellContentWidth(
     oldTextHeight = textMark.AABBBounds.height();
     textMark.setAttribute(
       'maxLineWidth',
-      distWidth - leftIconWidth - rightIconHeight - (padding[1] + padding[3]) - (textMark.attribute.dx ?? 0)
+      distWidth -
+        leftIconWidth -
+        rightIconHeight -
+        (padding[1] + padding[3]) -
+        (textMark.attribute.dx ?? 0) -
+        (scene.table.theme._contentOffset ?? 0)
     );
     // contentWidth = textMark.AABBBounds.width();
     contentHeight = textMark.AABBBounds.height();
@@ -588,7 +593,7 @@ export function updateCellContentWidth(
   if (autoRowHeight) {
     let newHeight = Math.max(leftIconHeight, contentHeight, rightIconHeight); // + padding[0] + padding[2]
 
-    if (isCellHeightUpdate(scene, cellGroup, newHeight + padding[0] + padding[2], oldCellHeight)) {
+    if (isCellHeightUpdate(scene, cellGroup, Math.round(newHeight + padding[0] + padding[2]), oldCellHeight)) {
       // cellGroup.setAttribute('height', newHeight + padding[0] + padding[2]);
       return true;
     }
