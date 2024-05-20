@@ -1,20 +1,20 @@
 ---
 category: examples
 group: Business
-title: 音乐播放排行
+title: Song Play Ranking
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/music-play.png
 option: ListTable#theme
 ---
 
-# 音乐播放排行
+# Song Play Ranking
 
-该示例搭配背景图片，使用表格的透明背景色，展示了个人在音乐播放平台上的歌曲播放列表排行榜。
+This example, with a background image, uses the transparent background color of the table to show an individual's song playlist charts on a music playback platform.
 
-## 关键配置
+## Key Configurations
 
-- `theme` 配置表格各个区域样式
+- `theme` Configure the styles of each area of the table
 
-## 代码演示
+## Code demo
 
 ```javascript livedemo template=vtable
 function getBackgroundColor(args) {

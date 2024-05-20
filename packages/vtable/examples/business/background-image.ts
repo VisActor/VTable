@@ -80,12 +80,28 @@ export function createTable() {
         play_count: 400
       },
       {
+        music_name: 'I Am You',
+        music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/iamyou.jpeg',
+        singer: 'Kim Taylor',
+        singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/KimTaylor.png',
+        public_year: '2008',
+        play_count: 380
+      },
+      {
+        music_name: 'Reality',
+        music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/reality.jpeg',
+        singer: 'Lost Frequencies',
+        singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/LostFrequencies.png',
+        public_year: '2015',
+        play_count: 370
+      },
+      {
         music_name: '无名的人',
         music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/wumingderen.webp',
         singer: '毛不易',
         singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/maobuyi.webp',
         public_year: '2021',
-        play_count: 380
+        play_count: 360
       },
       {
         music_name: 'My love',
