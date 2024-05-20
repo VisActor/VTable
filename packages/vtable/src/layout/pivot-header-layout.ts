@@ -342,6 +342,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     } else {
       this._indicatorShowType = 'none';
     }
+
+    this.clearCellIds();
     this.setPagination((table as PivotTable).options.pagination);
 
     if (this._table.isPivotChart()) {
@@ -413,9 +415,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       // }
     }
     this.handleRowSeriesNumber(table.internalProps.rowSeriesNumber);
-    this.setColumnWidths();
 
-    this.clearCellIds();
+    this.setColumnWidths();
   }
   handleRowSeriesNumber(rowSeriesNumber: IRowSeriesNumber) {
     if (rowSeriesNumber) {
@@ -3099,9 +3100,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       o[e.id as number] = e;
       return o;
     }, {} as { [key: LayoutObjectId]: HeaderData });
-    this.setPagination(this.pagination);
-
     this.clearCellIds();
+    this.setPagination(this.pagination);
   }
   isSeriesNumberInHeader(col: number, row: number): boolean {
     if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
