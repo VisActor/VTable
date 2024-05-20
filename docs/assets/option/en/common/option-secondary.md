@@ -400,3 +400,7 @@ Custom cell style assignment
   - Single cell: `{ row: number, column: number }`
   - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+#${prefix} enableLineBreak(boolean) = false
+
+Whether to enable line break, the default is false.
