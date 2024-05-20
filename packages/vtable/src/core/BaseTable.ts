@@ -4066,7 +4066,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 导出某个单元格图片
    * @returns base64图片
    */
-  exportCellImg(col: number, row: number) {
+  exportCellImg(col: number, row: number, options?: { disableBackground?: boolean; disableBorder?: boolean }) {
     const isInView = this.cellIsInVisualView(col, row);
     const { scrollTop, scrollLeft } = this;
     if (!isInView) {
@@ -4084,15 +4084,35 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.component.hideVerticalScrollBar();
     this.scenegraph.component.hideHorizontalScrollBar();
 
-    this.scenegraph.renderSceneGraph();
+    // hide border
+    this.scenegraph.tableGroup.border.setAttribute('visible', false);
 
+    // deal with options
+    let oldFill;
+    if (options?.disableBackground) {
+      const cellGroup = this.scenegraph.getCell(col, row);
+      oldFill = cellGroup.attribute.fill;
+      cellGroup.setAttribute('fill', 'transparent');
+    }
+    let oldStroke;
+    if (options?.disableBorder) {
+      const cellGroup = this.scenegraph.getCell(col, row);
+      oldStroke = cellGroup.attribute.stroke;
+      cellGroup.setAttribute('stroke', false);
+    }
+
+    this.scenegraph.renderSceneGraph();
+    let sizeOffset = 0;
+    if (this.theme.cellBorderClipDirection === 'bottom-right') {
+      sizeOffset = 1;
+    }
     const c = this.scenegraph.stage.toCanvas(
       false,
       new AABBBounds().set(
         cellRect.left + this.tableX + 1,
         cellRect.top + this.tableY + 1,
-        cellRect.right + this.tableX,
-        cellRect.bottom + this.tableY
+        cellRect.right + this.tableX - sizeOffset,
+        cellRect.bottom + this.tableY - sizeOffset
       )
     );
     if (!isInView) {
@@ -4101,11 +4121,26 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     // return c.toDataURL('image/jpeg', 0.5);
 
+    // restore border
+    this.scenegraph.tableGroup.border.setAttribute('visible', true);
+
+    // restore options
+    if (oldFill) {
+      const cellGroup = this.scenegraph.getCell(col, row);
+      cellGroup.setAttribute('fill', oldFill);
+    }
+    if (oldStroke) {
+      const cellGroup = this.scenegraph.getCell(col, row);
+      cellGroup.setAttribute('stroke', oldStroke);
+    }
+
     // restore hover&select style
     if (this.stateManager.select?.ranges?.length > 0) {
       restoreCellSelectBorder(this.scenegraph);
     }
     this.stateManager.updateHoverPos(hoverCol, hoverRow);
+
+    this.scenegraph.updateNextFrame();
 
     return c.toDataURL();
   }
