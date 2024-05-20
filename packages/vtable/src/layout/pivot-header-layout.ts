@@ -2641,7 +2641,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.currentPageStartIndex = 0;
       this.currentPageEndIndex = this._rowHeaderCellIds_FULL.length;
       this._rowHeaderCellIds = this._rowHeaderCellIds_FULL?.slice(this.currentPageStartIndex, this.currentPageEndIndex);
-      this._rowHeaderCellFullPathIds = this._rowHeaderCelFullPathIds_FULL?.slice(
+      this._rowHeaderCellFullPathIds = this._rowHeaderCellFullPathIds_FULL?.slice(
         this.currentPageStartIndex,
         this.currentPageEndIndex
       );
