@@ -71,10 +71,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   cornerHeaderObjs: HeaderData[];
   columnHeaderObjs: HeaderData[] = [];
   rowHeaderObjs: HeaderData[] = [];
+
+  private _cornerHeaderCellFullPathIds: number[][] = [];
+  private _columnHeaderCellFullPathIds: number[][] = [];
+  private _rowHeaderCellFullPathIds: number[][] = [];
+  private _rowHeaderCellFullPathIds_FULL: number[][] = []; //分页需求新增  为了保存全量的id  当页的是_rowHeaderCellIds
+
+  /**下面四份代表实际展示的 如果隐藏了某部分表头 那这里就会相比上面的数组少了隐藏掉的id */
   private _cornerHeaderCellIds: number[][] = [];
   private _columnHeaderCellIds: number[][] = [];
   private _rowHeaderCellIds: number[][] = [];
   private _rowHeaderCellIds_FULL: number[][] = []; //分页需求新增  为了保存全量的id  当页的是_rowHeaderCellIds
+
   private _columnWidths: WidthData[] = [];
   private _columnHeaderLevelCount: number;
   private _rowHeaderLevelCount: number;
@@ -272,7 +280,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //  this.colAttrs[this.colAttrs.length-1]===this.indicatorDimensionKey&&this.colAttrs.pop();
     //  this.rowAttrs[this.rowAttrs.length-1]===this.indicatorDimensionKey&&this.rowAttrs.pop();
 
-    this._rowHeaderCellIds_FULL = transpose(this._rowHeaderCellIds_FULL);
+    this._rowHeaderCellFullPathIds_FULL = transpose(this._rowHeaderCellFullPathIds_FULL);
     if ((table as PivotTable).options.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
       this.generateExtensionRowTree();
 
@@ -459,14 +467,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   _generateColHeaderIds() {
     if (this.columnDimensionTree.tree.children?.length >= 1) {
-      this._addHeaders(this._columnHeaderCellIds, 0, this.columnDimensionTree.tree.children, [], this.columnHeaderObjs);
+      this._addHeaders(
+        this._columnHeaderCellFullPathIds,
+        0,
+        this.columnDimensionTree.tree.children,
+        [],
+        this.columnHeaderObjs
+      );
     }
     // if (typeof this.showColumnHeader !== 'boolean') {
     if (this.columnHeaderTitle) {
       this.sharedVar.seqId = Math.max(this.sharedVar.seqId, this._headerObjects.length);
       const id = ++this.sharedVar.seqId;
       const firstRowIds = Array(this.colCount - this.rowHeaderLevelCount).fill(id);
-      this._columnHeaderCellIds.unshift(firstRowIds);
+      this._columnHeaderCellFullPathIds.unshift(firstRowIds);
       const cell: HeaderData = {
         id,
         title:
@@ -495,7 +509,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.rowDimensionTree.tree.children?.length >= 1) {
       if (this.rowHierarchyType === 'tree') {
         this._addHeadersForTreeMode(
-          this._rowHeaderCellIds_FULL,
+          this._rowHeaderCellFullPathIds_FULL,
           0,
           this.rowDimensionTree.tree.children,
           [],
@@ -505,15 +519,23 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.rowHeaderObjs
         );
       } else {
-        this._addHeaders(this._rowHeaderCellIds_FULL, 0, this.rowDimensionTree.tree.children, [], this.rowHeaderObjs);
+        this._addHeaders(
+          this._rowHeaderCellFullPathIds_FULL,
+          0,
+          this.rowDimensionTree.tree.children,
+          [],
+          this.rowHeaderObjs
+        );
       }
     }
     // if (typeof this.showRowHeader !== 'boolean') {
     if (this.rowHeaderTitle) {
       this.sharedVar.seqId = Math.max(this.sharedVar.seqId, this._headerObjects.length);
       const id = ++this.sharedVar.seqId;
-      const firstColIds = Array(this._rowHeaderCellIds_FULL[0]?.length ?? this.rowDimensionTree.tree.size).fill(id);
-      this._rowHeaderCellIds_FULL.unshift(firstColIds);
+      const firstColIds = Array(this._rowHeaderCellFullPathIds_FULL[0]?.length ?? this.rowDimensionTree.tree.size).fill(
+        id
+      );
+      this._rowHeaderCellFullPathIds_FULL.unshift(firstColIds);
       const cell: HeaderData = {
         id,
         title:
@@ -644,18 +666,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         results[id] = cell;
         this._headerObjects[id] = cell;
         if (this.cornerSetting.titleOnDimension === 'column') {
-          if (!this._cornerHeaderCellIds[key]) {
-            this._cornerHeaderCellIds[key] = [];
+          if (!this._cornerHeaderCellFullPathIds[key]) {
+            this._cornerHeaderCellFullPathIds[key] = [];
           }
           for (let r = 0; r < this.rowHeaderLevelCount; r++) {
-            this._cornerHeaderCellIds[key][r] = id;
+            this._cornerHeaderCellFullPathIds[key][r] = id;
           }
         } else if (this.cornerSetting.titleOnDimension === 'row') {
           for (let r = 0; r < this.columnHeaderLevelCount; r++) {
-            if (!this._cornerHeaderCellIds[r]) {
-              this._cornerHeaderCellIds[r] = [];
+            if (!this._cornerHeaderCellFullPathIds[r]) {
+              this._cornerHeaderCellFullPathIds[r] = [];
             }
-            this._cornerHeaderCellIds[r][key] = id;
+            this._cornerHeaderCellFullPathIds[r][key] = id;
           }
         }
       });
@@ -679,10 +701,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this._headerObjects[id] = cell;
       for (let r = 0; r < this.columnHeaderLevelCount; r++) {
         for (let j = 0; j < this.rowHeaderLevelCount; j++) {
-          if (!this._cornerHeaderCellIds[r]) {
-            this._cornerHeaderCellIds[r] = [];
+          if (!this._cornerHeaderCellFullPathIds[r]) {
+            this._cornerHeaderCellFullPathIds[r] = [];
           }
-          this._cornerHeaderCellIds[r][j] = id;
+          this._cornerHeaderCellFullPathIds[r][j] = id;
         }
       }
     }
@@ -690,8 +712,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   private generateExtensionRowTree() {
     this.extensionRows.forEach((extensionRow, indexP) => {
-      const old_rowHeaderCellIds = this._rowHeaderCellIds_FULL;
-      this._rowHeaderCellIds_FULL = [];
+      const old_rowHeaderCellIds = this._rowHeaderCellFullPathIds_FULL;
+      this._rowHeaderCellFullPathIds_FULL = [];
       old_rowHeaderCellIds.forEach((row_ids: number[], index) => {
         const key = row_ids[row_ids.length - 1];
         this.colIndex = 0;
@@ -728,7 +750,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.rowHeaderObjs
         );
         for (let i = 0; i < extensionRowTreeHeaderIds[0].length; i++) {
-          this._rowHeaderCellIds_FULL.push(row_ids.concat(extensionRowTreeHeaderIds[0][i]));
+          this._rowHeaderCellFullPathIds_FULL.push(row_ids.concat(extensionRowTreeHeaderIds[0][i]));
         }
       });
     });
@@ -1626,7 +1648,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         //   rowPath = this.rowDimensionTree.getTreePath(recordRow, col + hd.hierarchyLevel);
         // }
         // 考虑多层级的ExtensionRowTree
-        const row_pathIds = this._rowHeaderCellIds[recordRow]; //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
+        const row_pathIds = this._rowHeaderCellFullPathIds[recordRow]; //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
         let findTree = this.rowDimensionTree; //第一棵寻找的树是第一列的维度树 主树
         let level = 0; //level和col对应，代表一层层树找的过程
         while (findTree) {
@@ -2611,10 +2633,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.currentPageStartIndex = perPageCount * (currentPage || 0);
       this.currentPageEndIndex = this.currentPageStartIndex + perPageCount;
       this._rowHeaderCellIds = this._rowHeaderCellIds_FULL?.slice(this.currentPageStartIndex, this.currentPageEndIndex);
+      this._rowHeaderCellFullPathIds = this._rowHeaderCellFullPathIds_FULL?.slice(
+        this.currentPageStartIndex,
+        this.currentPageEndIndex
+      );
     } else {
       this.currentPageStartIndex = 0;
       this.currentPageEndIndex = this._rowHeaderCellIds_FULL.length;
       this._rowHeaderCellIds = this._rowHeaderCellIds_FULL?.slice(this.currentPageStartIndex, this.currentPageEndIndex);
+      this._rowHeaderCellFullPathIds = this._rowHeaderCelFullPathIds_FULL?.slice(
+        this.currentPageStartIndex,
+        this.currentPageEndIndex
+      );
     }
     this.pagination && (this.pagination.totalCount = this._rowHeaderCellIds_FULL?.length);
   }
@@ -3166,28 +3196,69 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
   clearCellIds() {
     // deal with hide header
+    // 创建原数组的副本
+    this._columnHeaderCellIds = this._columnHeaderCellFullPathIds.slice();
     if (!this.showColumnHeader) {
       if (this.indicatorsAsCol && !this.hideIndicatorName) {
         const indicatorIndex = this.colDimensionKeys.indexOf(IndicatorDimensionKeyPlaceholder);
-        this._columnHeaderCellIds = this._columnHeaderCellIds.splice(indicatorIndex, 1);
+        const indicatorIds: number[][] = this._columnHeaderCellIds.splice(indicatorIndex, 1);
+        this._columnHeaderCellIds.splice(0, this._columnHeaderCellIds.length);
+        this._columnHeaderCellIds.push(indicatorIds[0]);
       } else {
         this._columnHeaderCellIds.splice(0, this._columnHeaderCellIds.length);
       }
     }
-
+    // 创建原数组的副本
+    this._rowHeaderCellIds_FULL = this._rowHeaderCellFullPathIds_FULL.slice();
     if (!this.showRowHeader) {
       if (!this.indicatorsAsCol && !this.hideIndicatorName) {
         const indicatorIndex = this.rowDimensionKeys.indexOf(IndicatorDimensionKeyPlaceholder);
-        this._rowHeaderCellIds_FULL.forEach((cellIds: number[]) => {
-          // cellIds.splice(0, cellIds.length - 1);
-          const indicator = cellIds.splice(indicatorIndex, 1);
-          cellIds.splice(0, cellIds.length);
-          cellIds.push(indicator[0]);
+        this._rowHeaderCellIds_FULL.forEach((cellIds: number[], index: number) => {
+          const _cellIds = cellIds.slice();
+          const indicator = _cellIds.splice(indicatorIndex, 1);
+          _cellIds.splice(0, _cellIds.length);
+          _cellIds.push(indicator[0]);
+          this._rowHeaderCellIds_FULL[index] = _cellIds;
         });
       } else {
-        this._rowHeaderCellIds_FULL.forEach((cellIds: number[]) => {
-          cellIds.splice(0, cellIds.length);
+        this._rowHeaderCellIds_FULL.forEach((cellIds: number[], index: number) => {
+          const _cellIds = cellIds.slice();
+          _cellIds.splice(0, _cellIds.length);
+          this._rowHeaderCellIds_FULL[index] = _cellIds;
         });
+      }
+    }
+    this._rowHeaderCellIds = this._rowHeaderCellIds_FULL.slice();
+
+    // 创建原数组的副本
+    this._cornerHeaderCellIds = this._cornerHeaderCellFullPathIds.slice();
+    if (this.rowHeaderLevelCount === 0 || this.columnHeaderLevelCount === 0) {
+      this._cornerHeaderCellIds = [];
+    } else if (this.cornerSetting.titleOnDimension === 'row' && !this.showRowHeader) {
+      if (!this.indicatorsAsCol && !this.hideIndicatorName) {
+        const indicatorIndex = this.rowDimensionKeys.indexOf(IndicatorDimensionKeyPlaceholder);
+        this._cornerHeaderCellIds.forEach((cellIds: number[], index: number) => {
+          const _cellIds = cellIds.slice();
+          const indicator = _cellIds.splice(indicatorIndex, 1);
+          _cellIds.splice(0, _cellIds.length);
+          _cellIds.push(indicator[0]);
+          this._cornerHeaderCellIds[index] = _cellIds;
+        });
+      } else {
+        this._cornerHeaderCellIds.forEach((cellIds: number[], index: number) => {
+          const _cellIds = cellIds.slice();
+          _cellIds.splice(0, _cellIds.length);
+          this._cornerHeaderCellIds[index] = _cellIds;
+        });
+      }
+    } else if (this.cornerSetting.titleOnDimension === 'column' && !this.showColumnHeader) {
+      if (this.indicatorsAsCol && !this.hideIndicatorName) {
+        const indicatorIndex = this.colDimensionKeys.indexOf(IndicatorDimensionKeyPlaceholder);
+        const indicatorIds: number[][] = this._cornerHeaderCellIds.splice(indicatorIndex, 1);
+        this._cornerHeaderCellIds.splice(0, this._cornerHeaderCellIds.length);
+        this._cornerHeaderCellIds.push(indicatorIds[0]);
+      } else {
+        this._cornerHeaderCellIds.splice(0, this._cornerHeaderCellIds.length);
       }
     }
   }
