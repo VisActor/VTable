@@ -395,3 +395,7 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
   - 单个单元格：`{ row: number, column: number }`
   - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同
+
+#${prefix} enableLineBreak(boolean) = false
+
+是否开启换行符解析，开启后，单元格内容中包含换行符时，会自动解析换行。
