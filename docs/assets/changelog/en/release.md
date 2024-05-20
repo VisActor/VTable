@@ -19,7 +19,7 @@
 - **@visactor/vtable**: fix getCell performance
 - **@visactor/vtable**: fix header hide func in pivot table
 - **@visactor/vtable**: lineDash judgement in group-contribution-render [#1696](https://github.com/VisActor/VTable/issues/1696)
--  **@visactor/vtable: trigger mousedown_table event region need extend [#1668](https://github.com/VisActor/VTable/issues/1668)
+- **@visactor/vtable**: trigger mousedown_table event region need extend [#1668](https://github.com/VisActor/VTable/issues/1668)
 
 
 

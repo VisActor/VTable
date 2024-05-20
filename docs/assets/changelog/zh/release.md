@@ -5,21 +5,21 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add selected_clear event [#1705](https://github.com/VisActor/VTable/issues/1705)
-- **@visactor/vtable**: add mergeCellInfo arg in event [#1667](https://github.com/VisActor/VTable/issues/1667)
+- **@visactor/vtable**: 添加 selected_clear 事件 [#1705](https://github.com/VisActor/VTable/issues/1705)
+- **@visactor/vtable**: 在事件中添加 mergeCellInfo 参数 [#1667](https://github.com/VisActor/VTable/issues/1667)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: mouse down on scroll rail trigger mousedown_table [#1706](https://github.com/VisActor/VTable/issues/1706)
-- **@visactor/vtable**: merge cell value can be edited [#1711](https://github.com/VisActor/VTable/issues/1711)
-- **@visactor/vtable**: sub colunms can not be edit when set editor instance [#1711](https://github.com/VisActor/VTable/issues/1711)
-- **@visactor/vtable**: fix checkbox and radio state update when change row index [#1712](https://github.com/VisActor/VTable/issues/1712)
-- **@visactor/vtable**: fix veritial offset in text stick
-- **@visactor/vtable**: fix column width may be zero [#1708](https://github.com/VisActor/VTable/issues/1708)
-- **@visactor/vtable**: fix getCell performance
-- **@visactor/vtable**: fix header hide func in pivot table
-- **@visactor/vtable**: lineDash judgement in group-contribution-render [#1696](https://github.com/VisActor/VTable/issues/1696)
--  **@visactor/vtable: trigger mousedown_table event region need extend [#1668](https://github.com/VisActor/VTable/issues/1668)
+- **@visactor/vtable**: 在滚动条上按下鼠标触发 mousedown_table 事件 [#1706](https://github.com/VisActor/VTable/issues/1706)
+- **@visactor/vtable**: 可编辑合并单元格的值 [#1711](https://github.com/VisActor/VTable/issues/1711)
+- **@visactor/vtable**: 修复设置编辑器实例时，子列无法编辑的问题 [#1711](https://github.com/VisActor/VTable/issues/1711)
+- **@visactor/vtable**: 修复更改行索引时复选框和单选按钮状态更新问题 [#1712](https://github.com/VisActor/VTable/issues/1712)
+- **@visactor/vtable**: 修复文本粘贴时的垂直偏移问题
+- **@visactor/vtable**: 修复列宽可能为零的问题 [#1708](https://github.com/VisActor/VTable/issues/1708)
+- **@visactor/vtable**: 优化 getCell 性能
+- **@visactor/vtable**: 修复透视表中隐藏表头的功能问题
+- **@visactor/vtable**: 在渲染中修正 lineDash 判断 [#1696](https://github.com/VisActor/VTable/issues/1696)
+- **@visactor/vtable**: 扩展触发 mousedown_table 事件的区域 [#1668](https://github.com/VisActor/VTable/issues/1668)
 
 
 
