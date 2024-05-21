@@ -32,6 +32,13 @@
       ]
     },
     {
+      "path": "Contribution_Guide",
+      "title": {
+        "zh": "贡献指南",
+        "en": "Contribution Guide"
+      }
+    },
+    {
       "path": "table_type",
       "title": {
         "zh": "表格形态",

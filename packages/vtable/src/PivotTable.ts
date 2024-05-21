@@ -223,7 +223,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   _canResizeColumn(col: number, row: number): boolean {
     const ifCan = super._canResizeColumn(col, row);
     if (ifCan) {
-      if (!this.internalProps.layoutMap.indicatorsAsCol) {
+      const isSeriesNumber = this.internalProps.layoutMap.isSeriesNumber(col, row);
+      if (isSeriesNumber && this.internalProps.rowSeriesNumber.disableColumnResize === true) {
+        return false;
+      } else if (!this.internalProps.layoutMap.indicatorsAsCol) {
         // 列上是否配置了禁止拖拽列宽的配置项disableColumnResize
         const cellDefine = this.internalProps.layoutMap.getBody(col, this.columnHeaderLevelCount);
         if ((cellDefine as IndicatorData)?.disableColumnResize) {
