@@ -1,3 +1,17 @@
+# v0.25.9
+
+2024-05-21
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when body cell is blank string,compute row height error [#1752](https://github.com/VisActor/VTable/issues/1752)
+- **@visactor/vtable**: fix custom merge cell display problem when select header
+
+
+
+[more detail about v0.25.9](https://github.com/VisActor/VTable/releases/tag/v0.25.9)
+
 # v0.25.8
 
 2024-05-21
