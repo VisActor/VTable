@@ -434,6 +434,7 @@ export interface BaseTableConstructorOptions {
     enableDataAnalysis?: boolean;
     /** 禁用行高列宽计算取整数逻辑 对齐xTable */
     _disableColumnAndRowSizeRound?: boolean;
+    imageMargin?: number;
   }; // 部分特殊配置，兼容xTable等作用
 }
 export interface BaseTableAPI {
