@@ -2209,7 +2209,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (targetIndex === sourceCellRange.start.col) {
           return null;
         }
-        // 逐行将每一行的source id 移动到目标地址targetCol处
+        // _columnHeaderCellIds  逐行将每一行的source id 移动到目标地址targetCol处
         for (let row = 0; row < this._columnHeaderCellIds.length; row++) {
           // 从header id的二维数组中取出需要操作的source ids
           const sourceIds = this._columnHeaderCellIds[row].splice(
@@ -2220,6 +2220,19 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           // 把sourceIds变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入sourceIds数组
           sourceIds.unshift(targetIndex - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount, 0);
           Array.prototype.splice.apply(this._columnHeaderCellIds[row], sourceIds);
+        }
+
+        // _columnHeaderCellFullPathIds 逐行将每一行的source id 移动到目标地址targetCol处
+        for (let row = 0; row < this._columnHeaderCellFullPathIds.length; row++) {
+          // 从header id的二维数组中取出需要操作的source ids
+          const sourceIds = this._columnHeaderCellFullPathIds[row].splice(
+            sourceCellRange.start.col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount,
+            sourceSize
+          );
+          // 将source ids插入到目标地址targetCol处
+          // 把sourceIds变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入sourceIds数组
+          sourceIds.unshift(targetIndex - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount, 0);
+          Array.prototype.splice.apply(this._columnHeaderCellFullPathIds[row], sourceIds);
         }
 
         //将_columns的列定义调整位置 同调整_headerCellIds逻辑
@@ -2281,6 +2294,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         );
         sourceIds.unshift((targetIndex - this.currentPageStartIndex) as any, 0 as any);
         Array.prototype.splice.apply(this._rowHeaderCellIds, sourceIds);
+
+        // 表头id _rowHeaderCellFullPathIds
+        const sourceIds0 = this._rowHeaderCellFullPathIds.splice(
+          sourceCellRange.start.row - this.columnHeaderLevelCount,
+          sourceSize
+        );
+        sourceIds0.unshift((targetIndex - this.currentPageStartIndex) as any, 0 as any);
+        Array.prototype.splice.apply(this._rowHeaderCellFullPathIds, sourceIds0);
         // 表头id _rowHeaderCellIds_FULL进行调整
         // 从header id的二维数组中取出需要操作的source ids
         const sourceIds_FULL = this._rowHeaderCellIds_FULL.splice(
@@ -2289,6 +2310,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         );
         sourceIds_FULL.unshift(targetIndex as any, 0 as any);
         Array.prototype.splice.apply(this._rowHeaderCellIds_FULL, sourceIds_FULL);
+        // 表头id _rowHeaderCellFullPathIds_FULL进行调整
+        const sourceIds_FULL0 = this._rowHeaderCellFullPathIds_FULL.splice(
+          sourceCellRange.start.row - this.columnHeaderLevelCount + this.currentPageStartIndex,
+          sourceSize
+        );
+        sourceIds_FULL0.unshift(targetIndex as any, 0 as any);
+        Array.prototype.splice.apply(this._rowHeaderCellFullPathIds_FULL, sourceIds_FULL0);
         // 对维度树结构调整节点位置
         this.rowDimensionTree.movePosition(
           sourceRowHeaderPaths.length - 1,
