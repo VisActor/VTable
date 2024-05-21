@@ -2209,19 +2209,19 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (targetIndex === sourceCellRange.start.col) {
           return null;
         }
-        // _columnHeaderCellIds  逐行将每一行的source id 移动到目标地址targetCol处
-        for (let row = 0; row < this._columnHeaderCellIds.length; row++) {
-          // 从header id的二维数组中取出需要操作的source ids
-          const sourceIds = this._columnHeaderCellIds[row].splice(
-            sourceCellRange.start.col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount,
-            sourceSize
-          );
-          // 将source ids插入到目标地址targetCol处
-          // 把sourceIds变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入sourceIds数组
-          sourceIds.unshift(targetIndex - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount, 0);
-          Array.prototype.splice.apply(this._columnHeaderCellIds[row], sourceIds);
-        }
-
+        // // _columnHeaderCellIds  逐行将每一行的source id 移动到目标地址targetCol处
+        // for (let row = 0; row < this._columnHeaderCellIds.length; row++) {
+        //   // 从header id的二维数组中取出需要操作的source ids
+        //   const sourceIds = this._columnHeaderCellIds[row].splice(
+        //     sourceCellRange.start.col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount,
+        //     sourceSize
+        //   );
+        //   // 将source ids插入到目标地址targetCol处
+        //   // 把sourceIds变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入sourceIds数组
+        //   sourceIds.unshift(targetIndex - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount, 0);
+        //   Array.prototype.splice.apply(this._columnHeaderCellIds[row], sourceIds);
+        // }
+        // _columnHeaderCellFullPathIds 调整了 _columnHeaderCellIds就不需要调整了  因为他们的第二层数组对象是引用关系
         // _columnHeaderCellFullPathIds 逐行将每一行的source id 移动到目标地址targetCol处
         for (let row = 0; row < this._columnHeaderCellFullPathIds.length; row++) {
           // 从header id的二维数组中取出需要操作的source ids
