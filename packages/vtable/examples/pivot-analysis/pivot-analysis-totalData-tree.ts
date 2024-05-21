@@ -7,7 +7,7 @@ export function createTable() {
     rows: ['province', 'city'],
     columns: ['category', 'sub_category'],
     indicators: ['sales', 'number'],
-    enableDataAnalysis: true,
+
     indicatorTitle: '指标名称',
     indicatorsAsCol: true,
     rowHierarchyType: 'tree',

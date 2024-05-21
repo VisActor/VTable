@@ -193,7 +193,6 @@ const option = {
       textStick: true
     }
   },
-  enableDataAnalysis: true,
   widthMode: 'standard'
 };
 tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
@@ -380,7 +379,6 @@ tableInstance.on('drillmenu_click', args => {
             textStick: true
           }
         },
-        enableDataAnalysis: true,
         widthMode: 'standard'
       });
     }
@@ -479,7 +477,6 @@ tableInstance.on('drillmenu_click', args => {
             textStick: true
           }
         },
-        enableDataAnalysis: true,
         widthMode: 'standard'
       });
     }
