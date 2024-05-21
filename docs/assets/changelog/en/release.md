@@ -1,3 +1,19 @@
+# v1.0.0
+
+2024-05-21
+
+**💥 Breaking change**
+
+- **@visactor/vtable**: The result returned by the pivot table getCellOriginRecord interface becomes an array structure.
+
+**🆕 New feature**
+
+- **@visactor/vtable**: rows and tree can  combined use  [#1644](https://github.com/VisActor/VTable/issues/1644)
+- **@visactor/vtable**: add virtual option for rowTree and columnTree [#1644](https://github.com/VisActor/VTable/issues/1644)
+
+
+
+[more detail about v1.0.0](https://github.com/VisActor/VTable/releases/tag/v1.0.0)
 # v0.25.9
 
 2024-05-21
