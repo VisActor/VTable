@@ -1,6 +1,16 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 21 May 2024 11:19:27 GMT and should not be manually modified.
+This log was last generated on Tue, 21 May 2024 12:33:13 GMT and should not be manually modified.
+
+## 0.25.9
+Tue, 21 May 2024 12:33:13 GMT
+
+### Updates
+
+- fix: when body cell is blank string,compute row height error #1752
+
+
+- fix: fix custom merge cell display problem when select header
 
 ## 0.25.8
 Tue, 21 May 2024 11:19:27 GMT
