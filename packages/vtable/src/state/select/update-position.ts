@@ -21,6 +21,7 @@ export function updateSelectPosition(
   const { table, interactionState } = state;
   const { scenegraph } = table;
   const { highlightScope, disableHeader, cellPos } = state.select;
+
   if ((disableHeader && table.isHeader(col, row)) || highlightScope === 'none') {
     col = -1;
     row = -1;
@@ -61,13 +62,7 @@ export function updateSelectPosition(
       end: { col: table.colCount - 1, row: table.rowCount - 1 }
     });
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
-    scenegraph.updateCellSelectBorder(
-      currentRange.start.col,
-      currentRange.start.row,
-      currentRange.end.col,
-      currentRange.end.row,
-      false
-    );
+    scenegraph.updateCellSelectBorder(currentRange, false);
   } else if (cellPos.col !== -1 && cellPos.row !== -1 && (col === -1 || row === -1)) {
     // 输入-1清空选中状态
     // clearMultiSelect(scenegraph, ranges, highlightScope, singleStyle);
@@ -102,12 +97,7 @@ export function updateSelectPosition(
         currentRange.end = { col, row };
       }
       scenegraph.deleteLastSelectedRangeComponents();
-      scenegraph.updateCellSelectBorder(
-        currentRange.start.col,
-        currentRange.start.row,
-        currentRange.end.col,
-        currentRange.end.row
-      );
+      scenegraph.updateCellSelectBorder(currentRange);
       // } else if (isCtrl) {
       //   cellPos.col = col;
       //   cellPos.row = row;
@@ -121,7 +111,7 @@ export function updateSelectPosition(
       //   // 更新select border
       //   // calculateAndUpdateMultiSelectBorder(scenegraph, col, row, col, row, state.select.ranges);
       //   // 更新select border
-      //   scenegraph.updateCellSelectBorder(cellPos.col, cellPos.row, cellPos.col, cellPos.row);
+      //   scenegraph.updateCellSelectBorder(cellPos);
     } else {
       let extendSelectRange = true;
       // 单选或多选开始
@@ -130,30 +120,39 @@ export function updateSelectPosition(
         scenegraph.deleteAllSelectBorder();
       }
       if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
+        // 选中行表头
         const cellRange = table.getCellRange(col, row);
         state.select.ranges.push({
           start: { col: cellRange.start.col, row },
-          end: { col: cellRange.end.col, row: table.rowCount - 1 }
+          end: { col: cellRange.end.col, row: table.rowCount - 1 },
+          skipBodyMerge: true
         });
       } else if (state.select.headerSelectMode !== 'cell' && table.isRowHeader(col, row)) {
+        // 选中列表头
         const cellRange = table.getCellRange(col, row);
         state.select.ranges.push({
           start: { col, row: cellRange.start.row },
-          end: { col: table.colCount - 1, row: cellRange.end.row }
+          end: { col: table.colCount - 1, row: cellRange.end.row },
+          skipBodyMerge: true
         });
       } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInHeader(col, row)) {
+        // 选中表头行号单元格
         extendSelectRange = false;
         state.select.ranges.push({
           start: { col: 0, row: 0 },
-          end: { col: table.colCount - 1, row: table.rowCount - 1 }
+          end: { col: table.colCount - 1, row: table.rowCount - 1 },
+          skipBodyMerge: true
         });
       } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)) {
+        // 选中内容行号单元格
         extendSelectRange = false;
         state.select.ranges.push({
           start: { col, row: row },
-          end: { col: table.colCount - 1, row: row }
+          end: { col: table.colCount - 1, row: row },
+          skipBodyMerge: true
         });
       } else if (col >= 0 && row >= 0) {
+        // 选中普通单元格
         const cellRange = table.getCellRange(col, row);
         state.select.ranges.push({
           start: { col: cellRange.start.col, row: cellRange.start.row },
@@ -164,14 +163,7 @@ export function updateSelectPosition(
       cellPos.row = row;
       // scenegraph.setCellNormalStyle(col, row);
       const currentRange = state.select.ranges?.[state.select.ranges.length - 1];
-      currentRange &&
-        scenegraph.updateCellSelectBorder(
-          currentRange.start.col,
-          currentRange.start.row,
-          currentRange.end.col,
-          currentRange.end.row,
-          extendSelectRange
-        );
+      currentRange && scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
     }
   } else if (
     (interactionState === InteractionState.grabing || table.eventManager.isDraging) &&
@@ -264,13 +256,7 @@ export function updateSelectPosition(
           };
         }
       }
-      scenegraph.updateCellSelectBorder(
-        currentRange.start.col,
-        currentRange.start.row,
-        currentRange.end.col,
-        currentRange.end.row,
-        extendSelectRange
-      );
+      scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
     }
   }
   scenegraph.updateNextFrame();

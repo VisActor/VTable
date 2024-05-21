@@ -1,6 +1,6 @@
 import type { IRect } from '@src/vrender';
 import type { Scenegraph } from '../scenegraph';
-import type { CellSubLocation } from '../../ts-types';
+import type { CellRange, CellSubLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 
 export function updateAllSelectComponent(scene: Scenegraph) {
@@ -318,12 +318,15 @@ function updateComponent(
 
 export function updateCellSelectBorder(
   scene: Scenegraph,
-  newStartCol: number,
-  newStartRow: number,
-  newEndCol: number,
-  newEndRow: number,
+  selectRange: CellRange & { skipBodyMerge?: boolean },
   ifExtendSelectRange: boolean = true
 ) {
+  const newStartCol = selectRange.start.col;
+  const newStartRow = selectRange.start.row;
+  const newEndCol = selectRange.end.col;
+  const newEndRow = selectRange.end.row;
+  const skipBodyMerge = selectRange.skipBodyMerge;
+
   let startCol = Math.max(Math.min(newEndCol, newStartCol), 0);
   let startRow = Math.max(Math.min(newEndRow, newStartRow), 0);
   let endCol = Math.min(Math.max(newEndCol, newStartCol), scene.table.colCount - 1);
@@ -334,6 +337,9 @@ export function updateCellSelectBorder(
     for (let col = startCol; col <= endCol; col++) {
       if (col === startCol) {
         for (let row = startRow; row <= endRow; row++) {
+          if (!scene.table.isHeader(col, row) && skipBodyMerge) {
+            continue;
+          }
           const mergeInfo = getCellMergeInfo(scene.table, col, row);
           if (mergeInfo && mergeInfo.start.col < startCol) {
             startCol = mergeInfo.start.col;
@@ -344,6 +350,9 @@ export function updateCellSelectBorder(
       }
       if (!isExtend && col === endCol) {
         for (let row = startRow; row <= endRow; row++) {
+          if (!scene.table.isHeader(col, row) && skipBodyMerge) {
+            continue;
+          }
           const mergeInfo = getCellMergeInfo(scene.table, col, row);
           if (mergeInfo && Math.min(mergeInfo.end.col, scene.table.colCount - 1) > endCol) {
             endCol = mergeInfo.end.col;
@@ -361,6 +370,9 @@ export function updateCellSelectBorder(
       for (let row = startRow; row <= endRow; row++) {
         if (row === startRow) {
           for (let col = startCol; col <= endCol; col++) {
+            if (!scene.table.isHeader(col, row) && skipBodyMerge) {
+              continue;
+            }
             const mergeInfo = getCellMergeInfo(scene.table, col, row);
             if (mergeInfo && mergeInfo.start.row < startRow) {
               startRow = mergeInfo.start.row;
@@ -371,6 +383,9 @@ export function updateCellSelectBorder(
         }
         if (!isExtend && row === endRow) {
           for (let col = startCol; col <= endCol; col++) {
+            if (!scene.table.isHeader(col, row) && skipBodyMerge) {
+              continue;
+            }
             const mergeInfo = getCellMergeInfo(scene.table, col, row);
             if (mergeInfo && Math.min(mergeInfo.end.row, scene.table.rowCount - 1) > endRow) {
               endRow = mergeInfo.end.row;
