@@ -2,6 +2,23 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.0.0",
+      "tag": "@visactor/vtable_v1.0.0",
+      "date": "Tue, 21 May 2024 12:41:50 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: rows and tree can  combined use  #1644\n\n"
+          }
+        ],
+        "major": [
+          {
+            "comment": "feat: add virtual option for rowTree and columnTree #1644\n\n BREAKING CHANGE: getCellOriginRecord will return an array of source data."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.25.9",
       "tag": "@visactor/vtable_v0.25.9",
       "date": "Tue, 21 May 2024 12:33:13 GMT",

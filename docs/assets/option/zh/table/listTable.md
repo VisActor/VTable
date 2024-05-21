@@ -69,33 +69,6 @@ SortState {
 }
 ```
 
-## editor (string|Object|Function)
-
-全局配置单元格编辑器
-
-```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-```
-
-其中 IEditor 是@visactor/vtable-editors 中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
-
-${prefix} headerEditor (string|Object|Function)
-
-全局配置表头显示标题 title 的编辑器
-
-```
-headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-```
-
-## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
-
-进入编辑状态的触发时机。
-
-```
-/** 编辑触发时机:双击事件 | 单击事件 | api手动开启编辑。默认为双击'doubleclick' */
-editCellTrigger?: 'doubleclick' | 'click' | 'api';
-```
-
 {{ use: common-option-secondary(
     prefix = '#',
     tableType = 'listTable'
@@ -152,10 +125,3 @@ type CustomAggregation = {
   formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
 };
 ```
-
-## rowSeriesNumber(IRowSeriesNumber)
-
-配置行序号。
-{{ use: row-series-number(
-    prefix = '###',
-) }}

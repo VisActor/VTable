@@ -1,6 +1,21 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 21 May 2024 12:33:13 GMT and should not be manually modified.
+This log was last generated on Tue, 21 May 2024 12:41:50 GMT and should not be manually modified.
+
+## 1.0.0
+Tue, 21 May 2024 12:41:50 GMT
+
+### Breaking changes
+
+- feat: add virtual option for rowTree and columnTree #1644
+
+ BREAKING CHANGE: getCellOriginRecord will return an array of source data.
+
+### Updates
+
+- feat: rows and tree can  combined use  #1644
+
+
 
 ## 0.25.9
 Tue, 21 May 2024 12:33:13 GMT
