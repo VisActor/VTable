@@ -119,6 +119,8 @@ export interface IRowSeriesNumber {
   // selectRangeInclude?: boolean;
   /** 是否可拖拽顺序 */
   dragOrder?: boolean;
+  /** 是否禁止列宽调整 */
+  disableColumnResize?: boolean;
 }
 
 export interface ColumnSeriesNumber {
