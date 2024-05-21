@@ -1,3 +1,25 @@
+# v0.25.8
+
+2024-05-21
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add scrollSliderCornerRadius config [#1369](https://github.com/VisActor/VTable/issues/1369)
+- **@visactor/vtable**: add disableBackground &  disableBorder in exportCellImg() [#1733](https://github.com/VisActor/VTable/issues/1733)
+- **@visactor/vtable**: add disableColumnResize for rowSeriesNumber
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: when set hideRowHeader, body cell value is blank [#1732](https://github.com/VisActor/VTable/issues/1732)
+- **@visactor/vtable**: setTableColumnsEditor occor error when not set columns [#1747](https://github.com/VisActor/VTable/issues/1747)
+- **@visactor/vtable**: fix col & row order in cellInRanges()
+- **@visactor/vtable**: add string mark in csv-export [#1730](https://github.com/VisActor/VTable/issues/1730)
+
+
+
+[更多详情请查看 v0.25.8](https://github.com/VisActor/VTable/releases/tag/v0.25.8)
+
 # v0.25.6
 
 2024-05-17
