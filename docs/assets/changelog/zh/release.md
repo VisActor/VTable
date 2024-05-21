@@ -14,6 +14,19 @@
 
 
 [更多详情请查看 v1.0.0](https://github.com/VisActor/VTable/releases/tag/v1.0.0)
+# v0.25.9
+
+2024-05-21
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复空字符串在行高计算时的问题 [#1752](https://github.com/VisActor/VTable/issues/1752)
+- **@visactor/vtable**: 修复自定义合并单元格在点击表头全选时的选中显示区域问题
+
+
+
+[更多详情请查看 v0.25.9](https://github.com/VisActor/VTable/releases/tag/v0.25.9)
 
 # v0.25.8
 
