@@ -2,6 +2,9 @@
 
 2024-05-21
 
+**💥 Breaking change**
+
+- **@visactor/vtable**: The result returned by the pivot table getCellOriginRecord interface becomes an array structure.
 
 **🆕 New feature**
 

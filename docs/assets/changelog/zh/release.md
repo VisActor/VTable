@@ -2,11 +2,14 @@
 
 2024-05-21
 
+**💥 Breaking change**
+
+- **@visactor/vtable**: 透视表 getCellOriginRecord接口返回结果变为数组结构
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: rows and tree can  combined use  [#1644](https://github.com/VisActor/VTable/issues/1644)
-- **@visactor/vtable**: add virtual option for rowTree and columnTree [#1644](https://github.com/VisActor/VTable/issues/1644)
+- **@visactor/vtable**: 自定义树形表头customTree可以和透视分析能力结合使用 [#1644](https://github.com/VisActor/VTable/issues/1644)
+- **@visactor/vtable**: 在 rowTree & columnTree 中加入virtual option [#1644](https://github.com/VisActor/VTable/issues/1644)
 
 
 
