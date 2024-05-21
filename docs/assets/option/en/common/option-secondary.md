@@ -445,3 +445,7 @@ set row serial number.
 {{ use: row-series-number(
     prefix = '###',
 ) }}
+
+#${prefix} enableLineBreak(boolean) = false
+
+Whether to enable line break, the default is false.

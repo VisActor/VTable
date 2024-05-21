@@ -830,7 +830,7 @@ Export a cell picture
    * Export a cell picture
    * @returns base64 picture
    */
-  exportCellImg(col: number, row: number): string
+  exportCellImg(col: number, row: number, options?: { disableBackground?: boolean; disableBorder?: boolean }): string
 ```
 
 ## exportCellRangeImg(Function)

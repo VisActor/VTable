@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add string mark in csv-export #1730",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

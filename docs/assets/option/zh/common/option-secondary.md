@@ -441,3 +441,7 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 editCellTrigger?: 'doubleclick' | 'click' | 'api';
 
 ```
+
+#${prefix} enableLineBreak(boolean) = false
+
+是否开启换行符解析，开启后，单元格内容中包含换行符时，会自动解析换行。
