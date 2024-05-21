@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "feat: add virtual option for rowTree and columnTree #1644\n\n",
-      "type": "minor",
+      "comment": "feat: add virtual option for rowTree and columnTree #1644\n\n BREAKING CHANGE: getCellOriginRecord will return an array of source data.",
+      "type": "major",
       "packageName": "@visactor/vtable"
     }
   ],
