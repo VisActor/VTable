@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.25.9",
+      "tag": "@visactor/vtable_v0.25.9",
+      "date": "Tue, 21 May 2024 12:33:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when body cell is blank string,compute row height error #1752\n\n"
+          },
+          {
+            "comment": "fix: fix custom merge cell display problem when select header"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.25.8",
       "tag": "@visactor/vtable_v0.25.8",
       "date": "Tue, 21 May 2024 11:19:27 GMT",

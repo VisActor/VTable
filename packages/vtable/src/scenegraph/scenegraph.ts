@@ -689,14 +689,8 @@ export class Scenegraph {
     deleteAllSelectBorder(this);
   }
 
-  updateCellSelectBorder(
-    newStartCol: number,
-    newStartRow: number,
-    newEndCol: number,
-    newEndRow: number,
-    extendSelectRange: boolean = true
-  ) {
-    updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow, extendSelectRange);
+  updateCellSelectBorder(selectRange: CellRange & { skipBodyMerge?: boolean }, extendSelectRange: boolean = true) {
+    updateCellSelectBorder(this, selectRange, extendSelectRange);
   }
 
   removeFillHandleFromSelectComponents() {
@@ -706,7 +700,7 @@ export class Scenegraph {
   recreateAllSelectRangeComponents() {
     deleteAllSelectBorder(this);
     this.table.stateManager.select.ranges.forEach((cellRange: CellRange) => {
-      updateCellSelectBorder(this, cellRange.start.col, cellRange.start.row, cellRange.end.col, cellRange.end.row);
+      updateCellSelectBorder(this, cellRange);
     });
     moveSelectingRangeComponentsToSelectedRangeComponents(this);
   }
