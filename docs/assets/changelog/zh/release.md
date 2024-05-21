@@ -5,8 +5,8 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when body cell is blank string,compute row height error [#1752](https://github.com/VisActor/VTable/issues/1752)
-- **@visactor/vtable**: fix custom merge cell display problem when select header
+- **@visactor/vtable**: 修复空字符串在行高计算时的问题 [#1752](https://github.com/VisActor/VTable/issues/1752)
+- **@visactor/vtable**: 修复自定义合并单元格在点击表头全选时的选中显示区域问题
 
 
 
