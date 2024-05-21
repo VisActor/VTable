@@ -34,7 +34,7 @@ use:
 tableInstance.updateTheme(newTheme)
 ```
 
-Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // will not automatically redraw after calling
@@ -44,6 +44,8 @@ tableInstance.theme = newTheme;
 ## updateColumns(Function)
 
 Update the configuration information of the columns field of the table, and it will be automatically redrawn after calling
+
+**ListTable Proprietary**
 
 ```ts
   /**
@@ -59,7 +61,7 @@ use:
 tableInstance. updateColumns(newColumns)
 ```
 
-Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // will not automatically redraw after calling

@@ -432,6 +432,8 @@ export interface BaseTableConstructorOptions {
     multilinesForXTable?: boolean;
     /** 这里可以配置为false 来走flatDataToObject的数据处理逻辑 而不走dataset的分析 */
     enableDataAnalysis?: boolean;
+    /** 禁用行高列宽计算取整数逻辑 对齐xTable */
+    _disableColumnAndRowSizeRound?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 }
 export interface BaseTableAPI {

@@ -37,6 +37,11 @@ export function bindScrollBarListener(eventManager: EventManager) {
   });
   scenegraph.component.vScrollBar.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成拖拽状态
+    if ((scenegraph.table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+      scenegraph.table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+        event: e.nativeEvent
+      });
+    }
   });
   scenegraph.component.vScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
     scenegraph.table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
@@ -75,6 +80,11 @@ export function bindScrollBarListener(eventManager: EventManager) {
   });
   scenegraph.component.hScrollBar.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成拖拽状态
+    if ((scenegraph.table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+      scenegraph.table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+        event: e.nativeEvent
+      });
+    }
   });
   scenegraph.component.hScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
     scenegraph.table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };

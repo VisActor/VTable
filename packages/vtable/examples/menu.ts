@@ -914,6 +914,14 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'pivotTable-size-legend'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unit-listTable-sort'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unit-listTable-frozen'
       }
     ]
   },

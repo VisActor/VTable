@@ -16,7 +16,7 @@
   tableInstance.on(CLICK_CELL, (args) => console.log(CLICK_CELL, args));
 ```
 
-支持的事件类型：
+支持的事件类型（这里列的不是全部的，可以参考 api）：
 
 ```
 TABLE_EVENT_TYPE = {
@@ -215,6 +215,7 @@ TABLE_EVENT_TYPE = {
       viewHeight: number;
     }
 ```
+
 ## SCROLL_HORIZONTAL_END
 
 横向滚动到右侧结束事件
@@ -231,6 +232,7 @@ TABLE_EVENT_TYPE = {
       viewHeight: number;
     }
 ```
+
 ## SCROLL_VERTICAL_END
 
 竖向滚动条滚动到底部事件

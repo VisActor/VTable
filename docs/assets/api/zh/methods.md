@@ -34,7 +34,7 @@
 tableInstance.updateTheme(newTheme)
 ```
 
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // 调用后不会自动重绘
@@ -44,6 +44,8 @@ tableInstance.theme = newTheme;
 ## updateColumns(Function)
 
 更新表格的 columns 字段配置信息，调用后会自动重绘。
+
+**ListTable 专有**
 
 ```ts
   /**
@@ -59,7 +61,7 @@ tableInstance.theme = newTheme;
 tableInstance.updateColumns(newColumns)
 ```
 
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // 调用后不会自动重绘

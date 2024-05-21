@@ -27,7 +27,6 @@ let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
   .then(res => res.json())
   .then(data => {
-    // data=data.splice(0,260);
     const columns = [
       {
         dimensionKey: 'Region',
@@ -35,8 +34,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         headerStyle: {
           textStick: true
         }
-      },
-      'Category'
+      }
     ];
     const rows = [
       {
@@ -57,11 +55,45 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         chartSpec: {
           type: 'radar',
           categoryField: 'Segment',
-          seriesField: 'Sub-Category',
+          seriesField: 'Category',
           valueField: 'Quantity',
           data: {
             id: 'baseData'
-          }
+          },
+          scales: [
+            {
+              id: 'color',
+              type: 'ordinal',
+              domain: ['Furniture', 'Office Supplies', 'Technology'],
+              range: ['#2E62F1', '#4DC36A', '#FF8406']
+            }
+          ]
+        },
+        style: {
+          padding: 1
+        }
+      },
+      {
+        indicatorKey: 'Profit',
+        title: 'Profit',
+        cellType: 'chart',
+        chartModule: 'vchart',
+        chartSpec: {
+          type: 'radar',
+          categoryField: 'Segment',
+          seriesField: 'Category',
+          valueField: 'Profit',
+          data: {
+            id: 'baseData'
+          },
+          scales: [
+            {
+              id: 'color',
+              type: 'ordinal',
+              domain: ['Furniture', 'Office Supplies', 'Technology'],
+              range: ['#2E62F1', '#4DC36A', '#FF8406']
+            }
+          ]
         },
         style: {
           padding: 1
@@ -69,7 +101,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       }
     ];
     const option = {
-      hideIndicatorName: true,
+      hideIndicatorName: false,
       rows,
       columns,
       indicators,
@@ -80,22 +112,55 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       defaultHeaderColWidth: 100,
       indicatorTitle: '指标',
       autoWrapText: true,
-      // widthMode: 'adaptive',
-      // heightMode: 'adaptive',
       corner: {
         titleOnDimension: 'row',
         headerStyle: {
           autoWrapText: true
         }
       },
-
+      legends: {
+        orient: 'bottom',
+        type: 'discrete',
+        data: [
+          {
+            label: 'Furniture',
+            shape: {
+              fill: '#2E62F1',
+              symbolType: 'circle'
+            }
+          },
+          {
+            label: 'Office Supplies',
+            shape: {
+              fill: '#4DC36A',
+              symbolType: 'square'
+            }
+          },
+          {
+            label: 'Technology',
+            shape: {
+              fill: '#FF8406',
+              symbolType: 'square'
+            }
+          }
+        ]
+      },
       pagination: {
         currentPage: 0,
         perPageCount: 8
       }
     };
     tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-
+    const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
+    tableInstance.on(LEGEND_ITEM_CLICK, args => {
+      console.log('LEGEND_ITEM_CLICK', args);
+      tableInstance.updateFilterRules([
+        {
+          filterKey: 'Category',
+          filteredValues: args.value
+        }
+      ]);
+    });
     window.tableInstance = tableInstance;
   });
 ```

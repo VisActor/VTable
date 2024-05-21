@@ -1,6 +1,36 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 13 May 2024 13:47:37 GMT and should not be manually modified.
+This log was last generated on Fri, 17 May 2024 12:08:43 GMT and should not be manually modified.
+
+## 0.25.7
+Fri, 17 May 2024 12:08:43 GMT
+
+_Version update only_
+
+## 0.25.6
+Fri, 17 May 2024 10:50:13 GMT
+
+### Updates
+
+- feat: add selected_clear event #1705
+
+
+- fix: mouse down on scroll rail trigger mousedown_table #1706
+
+
+- fix: merge cell value can be edited #1711
+
+
+- fix: sub colunms can not be edit when set editor instance #1711
+
+
+- feat: add mergeCellInfo arg in event #1667
+- fix: fix checkbox and radio state update when change row index #1712
+- fix: fix veritial offset in text stick
+- fix: fix column width may be zero #1708
+- fix: fix getCell performance
+- fix: fix header hide func in pivot table
+- fix: lineDash judgement in group-contribution-render #1696
 
 ## 0.25.5
 Mon, 13 May 2024 13:47:37 GMT

@@ -2,6 +2,54 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.25.7",
+      "tag": "@visactor/vtable_v0.25.7",
+      "date": "Fri, 17 May 2024 12:08:43 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.25.6",
+      "tag": "@visactor/vtable_v0.25.6",
+      "date": "Fri, 17 May 2024 10:50:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add selected_clear event #1705\n\n"
+          },
+          {
+            "comment": "fix: mouse down on scroll rail trigger mousedown_table #1706\n\n"
+          },
+          {
+            "comment": "fix: merge cell value can be edited #1711\n\n"
+          },
+          {
+            "comment": "fix: sub colunms can not be edit when set editor instance #1711\n\n"
+          },
+          {
+            "comment": "feat: add mergeCellInfo arg in event #1667"
+          },
+          {
+            "comment": "fix: fix checkbox and radio state update when change row index #1712"
+          },
+          {
+            "comment": "fix: fix veritial offset in text stick"
+          },
+          {
+            "comment": "fix: fix column width may be zero #1708"
+          },
+          {
+            "comment": "fix: fix getCell performance"
+          },
+          {
+            "comment": "fix: fix header hide func in pivot table"
+          },
+          {
+            "comment": "fix: lineDash judgement in group-contribution-render #1696"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.25.5",
       "tag": "@visactor/vtable_v0.25.5",
       "date": "Mon, 13 May 2024 13:47:37 GMT",
