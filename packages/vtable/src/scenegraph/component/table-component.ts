@@ -268,6 +268,7 @@ export class TableComponent {
     const theme = this.table.theme;
     const scrollRailColor = theme.scrollStyle?.scrollRailColor as string;
     const scrollSliderColor = theme.scrollStyle?.scrollSliderColor as string;
+    const scrollSliderCornerRadius = theme.scrollStyle?.scrollSliderCornerRadius;
     const width = theme.scrollStyle?.width as number;
     // const visible = theme.scrollStyle?.visible as string;
     // const hoverOn = theme.scrollStyle?.hoverOn as boolean;
@@ -283,6 +284,7 @@ export class TableComponent {
         fill: scrollRailColor
       },
       sliderStyle: {
+        cornerRadius: scrollSliderCornerRadius,
         fill: scrollSliderColor
       },
       range: [0, 0.1],
@@ -304,7 +306,8 @@ export class TableComponent {
         fill: scrollRailColor
       },
       sliderStyle: {
-        fill: scrollSliderColor
+        fill: scrollSliderColor,
+        cornerRadius: scrollSliderCornerRadius
       },
       range: [0, 0.1],
       visible: false
@@ -718,14 +721,17 @@ export class TableComponent {
     // scrollbar
     const scrollRailColor = theme.scrollStyle?.scrollRailColor as string;
     const scrollSliderColor = theme.scrollStyle?.scrollSliderColor as string;
+    const scrollSliderCornerRadius = theme.scrollStyle?.scrollSliderCornerRadius;
     const width = theme.scrollStyle?.width as number;
     this.hScrollBar.setAttributes({
       height: width,
       railStyle: {
-        fill: scrollRailColor
+        fill: scrollRailColor,
+        cornerRadius: scrollSliderCornerRadius
       },
       sliderStyle: {
-        fill: scrollSliderColor
+        fill: scrollSliderColor,
+        cornerRadius: scrollSliderCornerRadius
       }
     });
 
@@ -735,7 +741,8 @@ export class TableComponent {
         fill: scrollRailColor
       },
       sliderStyle: {
-        fill: scrollSliderColor
+        fill: scrollSliderColor,
+        cornerRadius: scrollSliderCornerRadius
       }
     });
 
