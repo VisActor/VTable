@@ -4,17 +4,16 @@
 
 
 **🆕 新增功能**
-
-- **@visactor/vtable**: add scrollSliderCornerRadius config [#1369](https://github.com/VisActor/VTable/issues/1369)
-- **@visactor/vtable**: add disableBackground &  disableBorder in exportCellImg() [#1733](https://github.com/VisActor/VTable/issues/1733)
-- **@visactor/vtable**: add disableColumnResize for rowSeriesNumber
+- **@visactor/vtable**: 添加滚动条滑块圆角配置scrollSliderCornerRadius [#1369](https://github.com/VisActor/VTable/issues/1369)
+- **@visactor/vtable**: 在exportCellImg()中添加禁用背景与禁用边框的功能 [#1733](https://github.com/VisActor/VTable/issues/1733)
+- **@visactor/vtable**: 添加禁止列调整大小的配置disableColumnResize到行号配置rowSeriesNumber中
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when set hideRowHeader, body cell value is blank [#1732](https://github.com/VisActor/VTable/issues/1732)
-- **@visactor/vtable**: setTableColumnsEditor occor error when not set columns [#1747](https://github.com/VisActor/VTable/issues/1747)
-- **@visactor/vtable**: fix col & row order in cellInRanges()
-- **@visactor/vtable**: add string mark in csv-export [#1730](https://github.com/VisActor/VTable/issues/1730)
+- **@visactor/vtable**: 修复当设置隐藏行头时，单元格内容显示为空白的问题 [#1732](https://github.com/VisActor/VTable/issues/1732)
+- **@visactor/vtable**: 修复在未设置列时，设置表格列编辑器会出错问题 [#1747](https://github.com/VisActor/VTable/issues/1747)
+- **@visactor/vtable**: 修复在cellInRanges()中列和行的顺序问题
+- **@visactor/vtable**: 在CSV导出中添加字符串标记 [#1730](https://github.com/VisActor/VTable/issues/1730)
 
 
 
