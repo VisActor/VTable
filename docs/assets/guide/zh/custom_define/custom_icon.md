@@ -84,7 +84,7 @@ const tableInstance = new VTable.ListTable({
 
 这个示例中，我们为单元格配置了一个名为 `Avatar` 的图标。该图标的作用是用来显示头像图片，图片 src 的值是从 records 的 avator 的字段中获取到的。
 
-效果图片：TODO
+在线 demo：https://visactor.io/vtable/demo/custom-render/custom-icon
 
 ## 如何注册 icon 及注册后的使用
 
