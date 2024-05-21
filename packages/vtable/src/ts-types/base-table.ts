@@ -792,6 +792,15 @@ export interface BaseTableAPI {
   isAutoRowHeight: (row: number) => boolean;
 
   setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+  exportImg: () => string;
+  exportCellImg: (
+    col: number,
+    row: number,
+    options?: { disableBackground?: boolean; disableBorder?: boolean }
+  ) => string;
+  exportCellRangeImg: (cellRange: CellRange) => string;
+  exportCanvas: () => HTMLCanvasElement;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
