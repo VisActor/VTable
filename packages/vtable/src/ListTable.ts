@@ -363,7 +363,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (!this.transpose) {
         // 列上是否配置了禁止拖拽列宽的配置项disableColumnResize
         const cellDefine = this.internalProps.layoutMap.getBody(col, this.columnHeaderLevelCount);
+        const isSeriesNumber = this.internalProps.layoutMap.isSeriesNumber(col, row);
         if ((cellDefine as ColumnData)?.disableColumnResize) {
+          return false;
+        } else if (isSeriesNumber && this.internalProps.rowSeriesNumber.disableColumnResize === true) {
           return false;
         }
       }
