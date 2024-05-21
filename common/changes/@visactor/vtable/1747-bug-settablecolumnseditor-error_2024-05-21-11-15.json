@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: setTableColumnsEditor occor error when not set columns #1747\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
