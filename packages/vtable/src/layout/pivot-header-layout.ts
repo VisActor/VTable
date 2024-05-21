@@ -3101,7 +3101,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   resetHeaderTree() {
     //和初始化代码逻辑一致 但未考虑透视图类型
-    this._rowHeaderCellIds_FULL = [];
+    this._rowHeaderCellFullPathIds_FULL = [];
     this._columnHeaderCellIds = [];
     const dataset = this.dataset;
     // if (dataset) {
@@ -3123,7 +3123,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._generateRowHeaderIds();
 
     this.resetColumnHeaderLevelCount();
-    this._rowHeaderCellIds_FULL = transpose(this._rowHeaderCellIds_FULL);
+    this._rowHeaderCellFullPathIds_FULL = transpose(this._rowHeaderCellFullPathIds_FULL);
 
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
       o[e.id as number] = e;
