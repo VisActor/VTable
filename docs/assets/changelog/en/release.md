@@ -1,3 +1,17 @@
+# v1.0.0
+
+2024-05-21
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: rows and tree can  combined use  [#1644](https://github.com/VisActor/VTable/issues/1644)
+- **@visactor/vtable**: add virtual option for rowTree and columnTree [#1644](https://github.com/VisActor/VTable/issues/1644)
+
+
+
+[more detail about v1.0.0](https://github.com/VisActor/VTable/releases/tag/v1.0.0)
+
 # v0.25.8
 
 2024-05-21
