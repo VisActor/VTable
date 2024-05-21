@@ -43,5 +43,9 @@ function getCopyCellValue(col: number, row: number, tableInstance: IVTable): str
   }
 
   const value = tableInstance.getCellValue(col, row);
+
+  if (typeof value === 'string') {
+    return '"' + value + '"';
+  }
   return value;
 }
