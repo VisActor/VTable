@@ -1,6 +1,27 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 17 May 2024 12:08:43 GMT and should not be manually modified.
+This log was last generated on Tue, 21 May 2024 11:19:27 GMT and should not be manually modified.
+
+## 0.25.8
+Tue, 21 May 2024 11:19:27 GMT
+
+### Updates
+
+- feat: add scrollSliderCornerRadius config #1369
+
+
+- fix: when set hideRowHeader, body cell value is blank #1732
+
+
+- fix: setTableColumnsEditor occor error when not set columns #1747
+
+
+- feat: add disableBackground &  disableBorder in exportCellImg() #1733
+- feat: add disableColumnResize for rowSeriesNumber
+
+
+- fix: fix col & row order in cellInRanges()
+- fix: add string mark in csv-export #1730
 
 ## 0.25.7
 Fri, 17 May 2024 12:08:43 GMT
