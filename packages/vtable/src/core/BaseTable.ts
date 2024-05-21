@@ -868,9 +868,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     if (Env.mode === 'browser') {
       const element = this.getElement();
-
-      const width1 = element.parentElement?.offsetWidth ?? 1 - 1;
-      const height1 = element.parentElement?.offsetHeight ?? 1 - 1;
+      let widthWithoutPadding = 0;
+      let heightWithoutPadding = 0;
+      if (element.parentElement) {
+        const computedStyle = element.parentElement.style || window.getComputedStyle(element.parentElement); // 兼容性处理
+        widthWithoutPadding =
+          element.parentElement.offsetWidth -
+          parseInt(computedStyle.paddingLeft || '0px', 10) -
+          parseInt(computedStyle.paddingRight || '0px', 10);
+        heightWithoutPadding =
+          element.parentElement.offsetHeight -
+          parseInt(computedStyle.paddingTop || '0px', 10) -
+          parseInt(computedStyle.paddingBottom || '0px', 20);
+      }
+      const width1 = widthWithoutPadding ?? 1 - 1;
+      const height1 = heightWithoutPadding ?? 1 - 1;
 
       element.style.width = (width1 && `${width1 - padding.left - padding.right}px`) || '0px';
       element.style.height = (height1 && `${height1 - padding.top - padding.bottom}px`) || '0px';

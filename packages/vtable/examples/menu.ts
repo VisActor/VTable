@@ -869,6 +869,10 @@ export const menus = [
       {
         path: 'business',
         name: 'sales-bubble'
+      },
+      {
+        path: 'business',
+        name: 'background-image'
       }
     ]
   },

@@ -1394,6 +1394,13 @@
             "zh": "销售数据气泡图",
             "en": "Sales Bubble"
           }
+        },
+        {
+          "path": "music-play",
+          "title": {
+            "zh": "歌曲播放排行榜",
+            "en": "Song Play Ranking"
+          }
         }
       ]
     }
