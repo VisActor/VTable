@@ -396,7 +396,7 @@ export class HeaderHelper {
 
   setTableColumnsEditor() {
     const setEditor = (colDefines: ColumnsDefine, setColumns: ColumnsDefine) => {
-      colDefines.forEach((colDefine, index) => {
+      colDefines?.forEach((colDefine, index) => {
         if (colDefine.editor) {
           setColumns[index].editor = colDefine.editor;
         }
