@@ -385,7 +385,17 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 
 ```
 {
-  customCellStyleArrangement: {cellPosition: {row?: number; col?: number; range?: {start: {row: number; col: number}; end: {row: number; col: number}}}; customStyleId: string}[]
+  customCellStyleArrangement:
+  {
+    cellPosition: {
+      row?: number;
+      col?: number;
+      range?: {
+        start: {row: number; col: number};
+        end: {row: number; col: number}
+      }
+  };
+  customStyleId: string}[]
 }
 ```
 
@@ -395,3 +405,43 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
   - 单个单元格：`{ row: number, column: number }`
   - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同
+
+#${prefix} rowSeriesNumber(IRowSeriesNumber)
+
+配置行序号。
+{{ use: row-series-number(
+    prefix = '###',
+) }}
+
+#${prefix} editor(string|Object|Function)
+
+全局配置单元格编辑器
+
+```
+editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+
+其中 IEditor 是@visactor/vtable-editors 中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
+
+#${prefix} headerEditor (string|Object|Function)
+
+全局配置表头显示标题 title 的编辑器
+
+```
+headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+
+#${prefix} editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
+
+进入编辑状态的触发时机。
+
+```
+
+/\*_ 编辑触发时机:双击事件 | 单击事件 | api 手动开启编辑。默认为双击'doubleclick' _/
+editCellTrigger?: 'doubleclick' | 'click' | 'api';
+
+```
+
+#${prefix} enableLineBreak(boolean) = false
+
+是否开启换行符解析，开启后，单元格内容中包含换行符时，会自动解析换行。

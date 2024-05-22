@@ -160,6 +160,14 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-tree-rowSeriesNumber'
+      },
+      {
+        path: 'pivot',
+        name: 'virtual-node'
+      },
+      {
+        path: 'pivot',
+        name: 'virtual-node-2'
       }
     ]
   },
@@ -869,6 +877,10 @@ export const menus = [
       {
         path: 'business',
         name: 'sales-bubble'
+      },
+      {
+        path: 'business',
+        name: 'background-image'
       }
     ]
   },

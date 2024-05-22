@@ -868,9 +868,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     if (Env.mode === 'browser') {
       const element = this.getElement();
-
-      const width1 = element.parentElement?.offsetWidth ?? 1 - 1;
-      const height1 = element.parentElement?.offsetHeight ?? 1 - 1;
+      let widthWithoutPadding = 0;
+      let heightWithoutPadding = 0;
+      if (element.parentElement) {
+        const computedStyle = element.parentElement.style || window.getComputedStyle(element.parentElement); // 兼容性处理
+        widthWithoutPadding =
+          element.parentElement.offsetWidth -
+          parseInt(computedStyle.paddingLeft || '0px', 10) -
+          parseInt(computedStyle.paddingRight || '0px', 10);
+        heightWithoutPadding =
+          element.parentElement.offsetHeight -
+          parseInt(computedStyle.paddingTop || '0px', 10) -
+          parseInt(computedStyle.paddingBottom || '0px', 20);
+      }
+      const width1 = widthWithoutPadding ?? 1 - 1;
+      const height1 = heightWithoutPadding ?? 1 - 1;
 
       element.style.width = (width1 && `${width1 - padding.left - padding.right}px`) || '0px';
       element.style.height = (height1 && `${height1 - padding.top - padding.bottom}px`) || '0px';
@@ -4066,7 +4078,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 导出某个单元格图片
    * @returns base64图片
    */
-  exportCellImg(col: number, row: number) {
+  exportCellImg(col: number, row: number, options?: { disableBackground?: boolean; disableBorder?: boolean }) {
     const isInView = this.cellIsInVisualView(col, row);
     const { scrollTop, scrollLeft } = this;
     if (!isInView) {
@@ -4084,15 +4096,35 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.component.hideVerticalScrollBar();
     this.scenegraph.component.hideHorizontalScrollBar();
 
-    this.scenegraph.renderSceneGraph();
+    // hide border
+    this.scenegraph.tableGroup.border.setAttribute('visible', false);
 
+    // deal with options
+    let oldFill;
+    if (options?.disableBackground) {
+      const cellGroup = this.scenegraph.getCell(col, row);
+      oldFill = cellGroup.attribute.fill;
+      cellGroup.setAttribute('fill', 'transparent');
+    }
+    let oldStroke;
+    if (options?.disableBorder) {
+      const cellGroup = this.scenegraph.getCell(col, row);
+      oldStroke = cellGroup.attribute.stroke;
+      cellGroup.setAttribute('stroke', false);
+    }
+
+    this.scenegraph.renderSceneGraph();
+    let sizeOffset = 0;
+    if (this.theme.cellBorderClipDirection === 'bottom-right') {
+      sizeOffset = 1;
+    }
     const c = this.scenegraph.stage.toCanvas(
       false,
       new AABBBounds().set(
         cellRect.left + this.tableX + 1,
         cellRect.top + this.tableY + 1,
-        cellRect.right + this.tableX,
-        cellRect.bottom + this.tableY
+        cellRect.right + this.tableX - sizeOffset,
+        cellRect.bottom + this.tableY - sizeOffset
       )
     );
     if (!isInView) {
@@ -4101,11 +4133,26 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     // return c.toDataURL('image/jpeg', 0.5);
 
+    // restore border
+    this.scenegraph.tableGroup.border.setAttribute('visible', true);
+
+    // restore options
+    if (oldFill) {
+      const cellGroup = this.scenegraph.getCell(col, row);
+      cellGroup.setAttribute('fill', oldFill);
+    }
+    if (oldStroke) {
+      const cellGroup = this.scenegraph.getCell(col, row);
+      cellGroup.setAttribute('stroke', oldStroke);
+    }
+
     // restore hover&select style
     if (this.stateManager.select?.ranges?.length > 0) {
       restoreCellSelectBorder(this.scenegraph);
     }
     this.stateManager.updateHoverPos(hoverCol, hoverRow);
+
+    this.scenegraph.updateNextFrame();
 
     return c.toDataURL();
   }

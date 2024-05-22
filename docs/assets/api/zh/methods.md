@@ -420,7 +420,7 @@ setRecords(records: Array<any>)
    * 根据行列号获取源数据
    * @param  {number} col col index.
    * @param  {number} row row index.
-   * @return {object} record or record array
+   * @return {object} record or record array.  ListTable return one record, PivotTable return an array of records.
    */
   getCellOriginRecord(col: number, row: number)
 ```
@@ -827,7 +827,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * 导出某个单元格图片
    * @returns base64图片
    */
-  exportCellImg(col: number, row: number): string
+  exportCellImg(col: number, row: number, options?: { disableBackground?: boolean; disableBorder?: boolean }): string
 ```
 
 ## exportCellRangeImg(Function)

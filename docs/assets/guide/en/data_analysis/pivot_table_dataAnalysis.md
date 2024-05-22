@@ -18,8 +18,7 @@ The configuration of the pivot table above is as follows:
 const option={
   rows:['region','province'], //row dimensions
   columns:['year','quarter'], //column dimensions
-  indicators:['sales','profit'], //Indicators
-  enableDataAnalysis: true, //Whether to enable data analysis function
+  indicators:['sales','profit'], //Indicators //Whether to enable data analysis function
   records:[ //Data source。 If summary data is passed in, use user incoming data
     {
       region:'东北',
@@ -174,6 +173,31 @@ Configuration example:
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
 
+**Special Note:**
+
+1. AggregationType.NONE The usage scenario of the indicator without aggregation is mainly used to display the original data obtained according to the data record input by the user, such as:
+
+```
+records:[{
+  region: 'Central South',
+  province: 'Guangxi',
+  year: '2016',
+  quarter: '2016-Q1',
+  sales: 'NULL',
+  profit: 1546
+}],
+dataConfig:{
+  aggregationRules:[
+  {
+    indicatorKey: 'sales', //Indicator name
+    field: 'sales', //Indicator based field
+    aggregationType: VTable.TYPES.AggregationType.NONE, //Do not perform aggregation. Match the corresponding data to obtain the value of the corresponding field.
+  }]
+}
+```
+
+The sales indicator in this record is a non-numeric value, and it is required to display `"NULL"` directly in the table cell. In this case, you can set `NONE` to require the internal aggregation logic of VTable to directly obtain the value of the sales field without aggregation.
+
 ### 5. Derive Field
 
 [option description](../../../option/PivotTable#dataConfig.derivedFieldRules)
@@ -224,8 +248,6 @@ According to the above traversed structure, a dimension tree will be generated, 
 ### Custom header structure width dimension tree
 
 Although multi-dimensional tables with analytical capabilities can automatically analyze the dimension values of each dimension to form a tree structure of row and column headers, and can be sorted according to `dataConfig.sortRules`, scenarios with complex business logic still expect to be able to **customize Row column header dimension value ** and order. Then these business requirement scenarios can be realized through rowTree and columnTree.
-
-- enableDataAnalysis needs to be set to false to turn off the analysis of aggregated data within VTable.
 
    <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-tree.png" />
@@ -299,7 +321,7 @@ const option = {
         ]
     }],
     indicators: ['sales', 'profit'],
-    //enableDataAnalysis:true,
+
     corner: {
         titleOnDimension: 'none'
     },
@@ -374,8 +396,6 @@ VTable official website example: https://visactor.io/vtable/demo/table-type/pivo
 
 The complexity of the custom tree lies in the formation of the row, column and dimension trees. You can choose to use it according to the business scenario. If you have complex sorting, aggregation or paging rules, you can choose to use a custom method.
 
-**Note: If you choose the custom tree configuration method, the data aggregation capability inside the VTable will not be enabled, that is, one of the matched data entries will be used as the cell indicator value. **
-
 ## Other related configurations
 
 ### Drilling up and down
@@ -385,3 +405,9 @@ We only provide the display of the drill-down download button. If you need this 
 Add the drillDown configuration item to the dimension configuration rows or columns to display the download button, listen to the icon button click event `drillmenu_click`, determine whether to drill down or roll up the dimension according to the event parameter `drillDown` or `drillUp`, determine the dimension to drill down or drill up according to the parameter `dimensionKey`, add or delete it to rows or columns, obtain the data source corresponding to the new dimension level, and call the interface `updateOption` to update the new option to the table.
 
 Specific demo: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-table-drill
+
+## Related interfaces
+
+### getCellOriginRecord
+
+It can help to obtain the original data entry corresponding to the cell aggregate value.

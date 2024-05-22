@@ -2,6 +2,68 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.0.0",
+      "tag": "@visactor/vtable_v1.0.0",
+      "date": "Tue, 21 May 2024 12:41:50 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: rows and tree can  combined use  #1644\n\n"
+          }
+        ],
+        "major": [
+          {
+            "comment": "feat: add virtual option for rowTree and columnTree #1644\n\n BREAKING CHANGE: getCellOriginRecord will return an array of source data."
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.9",
+      "tag": "@visactor/vtable_v0.25.9",
+      "date": "Tue, 21 May 2024 12:33:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when body cell is blank string,compute row height error #1752\n\n"
+          },
+          {
+            "comment": "fix: fix custom merge cell display problem when select header"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.8",
+      "tag": "@visactor/vtable_v0.25.8",
+      "date": "Tue, 21 May 2024 11:19:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add scrollSliderCornerRadius config #1369\n\n"
+          },
+          {
+            "comment": "fix: when set hideRowHeader, body cell value is blank #1732\n\n"
+          },
+          {
+            "comment": "fix: setTableColumnsEditor occor error when not set columns #1747\n\n"
+          },
+          {
+            "comment": "feat: add disableBackground &  disableBorder in exportCellImg() #1733"
+          },
+          {
+            "comment": "feat: add disableColumnResize for rowSeriesNumber\n\n"
+          },
+          {
+            "comment": "fix: fix col & row order in cellInRanges()"
+          },
+          {
+            "comment": "fix: add string mark in csv-export #1730"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.25.7",
       "tag": "@visactor/vtable_v0.25.7",
       "date": "Fri, 17 May 2024 12:08:43 GMT",

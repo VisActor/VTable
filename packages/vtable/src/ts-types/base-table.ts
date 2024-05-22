@@ -426,11 +426,16 @@ export interface BaseTableConstructorOptions {
   customCellStyleArrangement?: CustomCellStyleArrangement[];
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
-
-  customConfig?: any; // 部分特殊配置，兼容xTable等作用
-
-  // _disableColumnAndRowSizeRound?: boolean;
   clearDOM?: boolean;
+  customConfig?: {
+    /** xTable对于没有配置autoWrapText并且有'\n'的文本，在计算行高是会当做一行处理，但是在渲染时会解析'\n'；显示效果就是单元格高度为一行文本高度，只显示第一个'\n'前的文字，后面显示'...'；multilinesForXTable配置实现和该功能对齐的样式 */
+    multilinesForXTable?: boolean;
+    /** 这里可以配置为false 来走flatDataToObject的数据处理逻辑 而不走dataset的分析 */
+    enableDataAnalysis?: boolean;
+    /** 禁用行高列宽计算取整数逻辑 对齐xTable */
+    _disableColumnAndRowSizeRound?: boolean;
+    imageMargin?: number;
+  }; // 部分特殊配置，兼容xTable等作用
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */
@@ -792,6 +797,15 @@ export interface BaseTableAPI {
   isAutoRowHeight: (row: number) => boolean;
 
   setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+  exportImg: () => string;
+  exportCellImg: (
+    col: number,
+    row: number,
+    options?: { disableBackground?: boolean; disableBorder?: boolean }
+  ) => string;
+  exportCellRangeImg: (cellRange: CellRange) => string;
+  exportCanvas: () => HTMLCanvasElement;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
@@ -803,15 +817,10 @@ export interface ListTableProtected extends IBaseTableProtected {
 
 export interface PivotTableProtected extends IBaseTableProtected {
   /** 表格数据 */
-  records: any[] | null;
+  records: any[] | undefined;
+  recordsIsTwoDimensionalArray?: boolean;
   layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IPivotTableDataConfig;
-  /**
-   * 透视表是否开启数据分析
-   * 如果传入数据是明细数据需要聚合分析则开启
-   * 如传入数据是经过聚合好的为了提升性能这里设置为false，同时需要传入columnTree和rowTree
-   */
-  enableDataAnalysis?: boolean;
 
   /** 列表头树型结构 */
   columnTree?: IHeaderTreeDefine[];

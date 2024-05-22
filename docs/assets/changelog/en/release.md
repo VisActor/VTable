@@ -1,3 +1,82 @@
+# v1.0.0
+
+2024-05-21
+
+**💥 Breaking change**
+
+- **@visactor/vtable**: The result returned by the pivot table getCellOriginRecord interface becomes an array structure.
+
+**🆕 New feature**
+
+- **@visactor/vtable**: rows and tree can  combined use  [#1644](https://github.com/VisActor/VTable/issues/1644)
+- **@visactor/vtable**: add virtual option for rowTree and columnTree [#1644](https://github.com/VisActor/VTable/issues/1644)
+
+
+
+[more detail about v1.0.0](https://github.com/VisActor/VTable/releases/tag/v1.0.0)
+# v0.25.9
+
+2024-05-21
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when body cell is blank string,compute row height error [#1752](https://github.com/VisActor/VTable/issues/1752)
+- **@visactor/vtable**: fix custom merge cell display problem when select header
+
+
+
+[more detail about v0.25.9](https://github.com/VisActor/VTable/releases/tag/v0.25.9)
+
+# v0.25.8
+
+2024-05-21
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add scrollSliderCornerRadius config [#1369](https://github.com/VisActor/VTable/issues/1369)
+- **@visactor/vtable**: add disableBackground &  disableBorder in exportCellImg() [#1733](https://github.com/VisActor/VTable/issues/1733)
+- **@visactor/vtable**: add disableColumnResize for rowSeriesNumber
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when set hideRowHeader, body cell value is blank [#1732](https://github.com/VisActor/VTable/issues/1732)
+- **@visactor/vtable**: setTableColumnsEditor occor error when not set columns [#1747](https://github.com/VisActor/VTable/issues/1747)
+- **@visactor/vtable**: fix col & row order in cellInRanges()
+- **@visactor/vtable**: add string mark in csv-export [#1730](https://github.com/VisActor/VTable/issues/1730)
+
+
+
+[more detail about v0.25.8](https://github.com/VisActor/VTable/releases/tag/v0.25.8)
+
+# v0.25.6
+
+2024-05-17
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add selected_clear event [#1705](https://github.com/VisActor/VTable/issues/1705)
+- **@visactor/vtable**: add mergeCellInfo arg in event [#1667](https://github.com/VisActor/VTable/issues/1667)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: mouse down on scroll rail trigger mousedown_table [#1706](https://github.com/VisActor/VTable/issues/1706)
+- **@visactor/vtable**: merge cell value can be edited [#1711](https://github.com/VisActor/VTable/issues/1711)
+- **@visactor/vtable**: sub colunms can not be edit when set editor instance [#1711](https://github.com/VisActor/VTable/issues/1711)
+- **@visactor/vtable**: fix checkbox and radio state update when change row index [#1712](https://github.com/VisActor/VTable/issues/1712)
+- **@visactor/vtable**: fix veritial offset in text stick
+- **@visactor/vtable**: fix column width may be zero [#1708](https://github.com/VisActor/VTable/issues/1708)
+- **@visactor/vtable**: fix getCell performance
+- **@visactor/vtable**: fix header hide func in pivot table
+- **@visactor/vtable**: lineDash judgement in group-contribution-render [#1696](https://github.com/VisActor/VTable/issues/1696)
+- **@visactor/vtable**: trigger mousedown_table event region need extend [#1668](https://github.com/VisActor/VTable/issues/1668)
+
+
+
+[more detail about v0.25.6](https://github.com/VisActor/VTable/releases/tag/v0.25.6)
+
 # v0.25.1
 
 2024-05-08

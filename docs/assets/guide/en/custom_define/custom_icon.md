@@ -84,7 +84,7 @@ const tableInstance = new VTable.ListTable({
 
 In this example, we configure a cell named `Avatar` Icon. The role of this icon is to display the avatar picture, and the value of the picture src is obtained from the field of the avator of records.
 
-Effect picture: TODO
+online demo：https://visactor.io/vtable/demo/custom-render/custom-icon
 
 ## How to register the icon and use it after registration
 

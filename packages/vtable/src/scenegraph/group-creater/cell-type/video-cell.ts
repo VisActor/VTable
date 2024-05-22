@@ -11,6 +11,7 @@ import { getFunctionalProp, getProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
+import { getQuadProps } from '../../utils/padding';
 
 const regedIcons = icons.get();
 
@@ -34,7 +35,9 @@ export function createVideoCellGroup(
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   // const margin = getProp('padding', headerStyle, col, row, table);
-  if (isValid(functionalPadding)) {
+  if (table.options.customConfig?.imageMargin) {
+    padding = getQuadProps(table.options.customConfig?.imageMargin);
+  } else if (isValid(functionalPadding)) {
     padding = functionalPadding;
   }
   if (cellTheme?.text?.textAlign) {

@@ -14,6 +14,7 @@ VTable provides rich scroll style configuration items, and users can customize t
 
 - scrollRailColor: Configure the color of the scrollbar track.
 - scrollSliderColor: Configure the color of the scroll bar slider.
+- scrollSliderCornerRadius: The corner radius of the scroll bar slider
 - width: Configure the scroll bar width.
 - visible: Configure whether the scroll bar is visible, and can be configured with values: 'always' | 'scrolling' | 'none' | 'focus', which correspond to: resident display | display when scrolling | display | focus on the canvas. Default is'scrolling '.
 - hoverOn: Specifies whether the scroll bar is suspended on the container or independent of the container. The default is true to float on the container.
