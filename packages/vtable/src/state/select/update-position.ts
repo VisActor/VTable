@@ -16,7 +16,8 @@ export function updateSelectPosition(
   isShift: boolean,
   isCtrl: boolean,
   isSelectAll: boolean,
-  isSelectMoving: boolean = false
+  isSelectMoving: boolean = false,
+  skipBodyMerge: boolean = false
 ) {
   const { table, interactionState } = state;
   const { scenegraph } = table;
@@ -254,6 +255,9 @@ export function updateSelectPosition(
             col,
             row
           };
+          if (skipBodyMerge) {
+            currentRange.skipBodyMerge = true;
+          }
         }
       }
       scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
