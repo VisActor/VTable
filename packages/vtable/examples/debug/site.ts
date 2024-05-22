@@ -6,63 +6,63 @@ import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/test-demo-data/pre-sort.json')
+  let tableInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/company_struct.json')
     .then(res => res.json())
     .then(data => {
       const columns = [
         {
-          field: 'id',
-          title: 'ID',
-          width: 80,
-          sort: true
+          field: 'group',
+          title: 'department',
+          width: 'auto',
+          tree: true,
+          fieldFormat(rec) {
+            return rec['department'] ?? rec['group'] ?? rec['name'];
+          }
         },
         {
-          field: 'email1',
-          title: 'email(pre-sorted)',
-          width: 250,
-          sort: true
+          field: 'total_children',
+          title: 'memebers count',
+          width: 'auto',
+          fieldFormat(rec) {
+            if (rec?.['position']) {
+              return `position:  ${rec['position']}`;
+            } else return rec?.['total_children'];
+          }
         },
         {
-          field: 'hobbies',
-          title: 'hobbies(unsorted)',
-          width: 200,
-          sort: true
+          field: 'monthly_expense',
+          title: 'monthly expense',
+          width: 'auto',
+          fieldFormat(rec) {
+            if (rec?.['salary']) {
+              return `salary:  ${rec['salary']}`;
+            } else return rec?.['monthly_expense'];
+          }
         },
         {
-          field: 'birthday',
-          title: 'birthday',
-          width: 120
+          field: 'new_hires_this_month',
+          title: 'new hires this month',
+          width: 'auto'
         },
         {
-          field: 'sex',
-          title: 'sex',
-          width: 100
+          field: 'resignations_this_month',
+          title: 'resignations this month',
+          width: 'auto'
         },
         {
-          field: 'tel',
-          title: 'telephone',
-          width: 150
-        },
-        {
-          field: 'work',
-          title: 'job',
-          width: 200
-        },
-        {
-          field: 'city',
-          title: 'city',
-          width: 150
+          field: 'complaints_and_suggestions',
+          title: 'recived complaints counts',
+          width: 'auto'
         }
       ];
-      const option = {
-        records: data.data,
-        columns
-      };
-      const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-      window['tableInstance'] = tableInstance;
 
-      data.sort.forEach(item => {
-        tableInstance.setSortedIndexMap(item.key, item.value);
-      });
+      const option = {
+        records: data,
+        columns,
+        widthMode: 'standard'
+      };
+      tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+      window['tableInstance'] = tableInstance;
     });
 }
