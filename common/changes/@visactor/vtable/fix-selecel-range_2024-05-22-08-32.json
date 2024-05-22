@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add setRowHeight&setColWidth api",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
