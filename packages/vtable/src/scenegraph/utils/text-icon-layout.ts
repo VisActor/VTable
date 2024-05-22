@@ -225,9 +225,7 @@ export function createCellContent(
         lineClamp,
         wordBreak: 'break-word',
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
-        dx:
-          (textAlign === 'left' ? (!contentLeftIcons.length && !contentRightIcons.length ? hierarchyOffset : 0) : 0) +
-          _contentOffset
+        dx: (textAlign === 'left' ? (!contentLeftIcons.length ? hierarchyOffset : 0) : 0) + _contentOffset
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
@@ -287,15 +285,33 @@ export function createCellContent(
         align: textAlign,
         baseline: textBaseline
       });
-
+      const dealWithIconComputeVar = {
+        addedHierarchyOffset: 0
+      }; //为了只增加一次indent的缩进值，如果有两个icon都dealWithIcon的话
       contentLeftIcons.forEach(icon => {
-        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
+        const iconMark = dealWithIcon(
+          icon,
+          undefined,
+          cellGroup.col,
+          cellGroup.row,
+          range,
+          table,
+          dealWithIconComputeVar
+        );
         iconMark.role = 'icon-content-left';
         iconMark.name = icon.name;
         cellContent.addLeftOccupyingIcon(iconMark);
       });
       contentRightIcons.forEach(icon => {
-        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
+        const iconMark = dealWithIcon(
+          icon,
+          undefined,
+          cellGroup.col,
+          cellGroup.row,
+          range,
+          table,
+          dealWithIconComputeVar
+        );
         iconMark.role = 'icon-content-right';
         iconMark.name = icon.name;
         cellContent.addRightOccupyingIcon(iconMark);
@@ -377,7 +393,10 @@ export function dealWithIcon(
   col?: number,
   row?: number,
   range?: CellRange,
-  table?: BaseTableAPI
+  table?: BaseTableAPI,
+  dealWithIconComputeVar?: {
+    addedHierarchyOffset: number;
+  }
 ): Icon {
   // positionType在外部处理
   const iconAttribute = {} as any;
@@ -403,16 +422,23 @@ export function dealWithIcon(
 
   let hierarchyOffset = 0;
   if (
+    (!dealWithIconComputeVar || dealWithIconComputeVar?.addedHierarchyOffset === 0) &&
     isNumber(col) &&
     isNumber(row) &&
     table &&
-    (icon.funcType === IconFuncTypeEnum.collapse || icon.funcType === IconFuncTypeEnum.expand)
+    (icon.funcType === IconFuncTypeEnum.collapse ||
+      icon.funcType === IconFuncTypeEnum.expand ||
+      icon.positionType === IconPosition.contentLeft ||
+      icon.positionType === IconPosition.contentRight)
   ) {
     // compute hierarchy offset
     // hierarchyOffset = getHierarchyOffset(col, row, table);
     hierarchyOffset = range
       ? getHierarchyOffset(range.start.col, range.start.row, table)
       : getHierarchyOffset(col, row, table);
+    if (dealWithIconComputeVar) {
+      dealWithIconComputeVar.addedHierarchyOffset = 1;
+    }
   }
 
   iconAttribute.marginLeft = (icon.marginLeft ?? 0) + hierarchyOffset;
