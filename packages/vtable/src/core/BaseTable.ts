@@ -2677,7 +2677,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const { scrollLeft, scrollTop } = this;
     cellRanges.forEach((cellRange: CellRange, index: number) => {
       if (cellRange.start.col === cellRange.end.col && cellRange.start.row === cellRange.end.row) {
-        this.stateManager.updateSelectPos(cellRange.start.col, cellRange.start.row, false, index >= 1);
+        this.stateManager.updateSelectPos(
+          cellRange.start.col,
+          cellRange.start.row,
+          false,
+          index >= 1,
+          false,
+          false,
+          true
+        );
       } else {
         this.stateManager.updateSelectPos(cellRange.start.col, cellRange.start.row, false, index >= 1);
         this.stateManager.updateInteractionState(InteractionState.grabing);
