@@ -395,11 +395,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.eventManager = new EventManager(this);
 
     if (options.legends) {
-      internalProps.legends = createLegend(options.legends, this);
-      this.scenegraph.tableGroup.setAttributes({
-        x: this.tableX,
-        y: this.tableY
-      });
+      internalProps.legends = [];
+      if (Array.isArray(options.legends)) {
+        for (let i = 0; i < options.legends.length; i++) {
+          internalProps.legends.push(createLegend(options.legends[i], this));
+        }
+        this.scenegraph.tableGroup.setAttributes({
+          x: this.tableX,
+          y: this.tableY
+        });
+      } else {
+        internalProps.legends.push(createLegend(options.legends, this));
+        this.scenegraph.tableGroup.setAttributes({
+          x: this.tableX,
+          y: this.tableY
+        });
+      }
     }
 
     //原有的toolTip提示框处理，主要在文字绘制不全的时候 出来全文本提示信息 需要加个字段设置是否有效
@@ -469,9 +480,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   resize() {
     this._updateSize();
-    if (this.internalProps.legends) {
-      this.internalProps.legends.resize();
-    }
+    this.internalProps.legends?.forEach(legend => {
+      legend?.resize();
+    });
     if (this.internalProps.title) {
       this.internalProps.title.resize();
     }
@@ -2038,7 +2049,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.handler?.release?.();
     // internalProps.scrollable?.release?.();
     internalProps.focusControl?.release?.();
-    internalProps.legends?.release();
+    internalProps.legends?.forEach(legend => {
+      legend?.release();
+    });
     internalProps.title?.release();
     internalProps.layoutMap.release();
     if (internalProps.releaseList) {
@@ -2208,7 +2221,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         : 10;
     // 生成scenegraph
     this._vDataSet = new DataSet();
-    internalProps.legends?.release();
+    internalProps.legends?.forEach(legend => {
+      legend?.release();
+    });
     internalProps.title?.release();
     internalProps.layoutMap.release();
     this.scenegraph.clearCells();
@@ -2220,11 +2235,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // this.eventManager = new EventManager(this);
     this.eventManager.updateEventBinder();
     if (options.legends) {
-      internalProps.legends = createLegend(options.legends, this);
-      this.scenegraph.tableGroup.setAttributes({
-        x: this.tableX,
-        y: this.tableY
-      });
+      internalProps.legends = [];
+      if (Array.isArray(options.legends)) {
+        for (let i = 0; i < options.legends.length; i++) {
+          internalProps.legends.push(createLegend(options.legends[i], this));
+        }
+        this.scenegraph.tableGroup.setAttributes({
+          x: this.tableX,
+          y: this.tableY
+        });
+      } else {
+        internalProps.legends.push(createLegend(options.legends, this));
+        this.scenegraph.tableGroup.setAttributes({
+          x: this.tableX,
+          y: this.tableY
+        });
+      }
     }
     // if (options.title) {
     //   internalProps.title = new Title(options.title, this);

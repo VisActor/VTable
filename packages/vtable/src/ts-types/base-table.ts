@@ -230,7 +230,7 @@ export interface IBaseTableProtected {
   limitMinHeight?: number;
 
   title?: Title;
-  legends?: DiscreteTableLegend | ContinueTableLegend;
+  legends?: (DiscreteTableLegend | ContinueTableLegend)[];
 
   //是否开启图表异步渲染
   renderChartAsync?: boolean;
@@ -395,7 +395,7 @@ export interface BaseTableConstructorOptions {
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
 
-  legends?: ITableLegendOption;
+  legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
 
   /** 是否开启图表异步渲染 */
