@@ -1116,3 +1116,21 @@ interface ISortedMapItem {
   /**获取对应header的field  */
   getHeaderField: (col: number, row: number)
 ```
+
+## setColWidth(Function)
+
+设置列宽
+
+```
+  /**设置列宽 */
+  setColWidth: (col: number, width: number)
+```
+
+## setRowHeight(Function)
+
+设置行高
+
+```
+  /**设置行高 */
+  setRowHeight: (row: number, height: number)
+```

@@ -30,6 +30,12 @@ export class BodyHelper {
   ): ColumnIconOption[] {
     //加入固定列图标 排序 文本中元素
     const iconArr: ColumnIconOption[] = [];
+
+    const hierarchyIcon = this.getHierarchyIcon(col, row);
+    if (hierarchyIcon) {
+      iconArr.push(hierarchyIcon);
+    }
+
     const { icon: iconDefine } = this._table.getBodyColumnDefine(col, row);
 
     if (iconDefine) {
@@ -65,10 +71,6 @@ export class BodyHelper {
       } else {
         addIcon(iconResults);
       }
-    }
-    const hierarchyIcon = this.getHierarchyIcon(col, row);
-    if (hierarchyIcon) {
-      iconArr.push(hierarchyIcon);
     }
 
     context &&

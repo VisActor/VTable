@@ -1118,3 +1118,21 @@ In **PivotTable** get indicatorKey.
   /**get field of header  */
   getHeaderField: (col: number, row: number)
 ```
+
+## setColWidth(Function)
+
+set column width.
+
+```
+  /**set column width */
+  setColWidth: (col: number, width: number)
+```
+
+## setRowHeight(Function)
+
+set row height.
+
+```
+  /**set row height */
+  setRowHeight: (row: number, height: number)
+```

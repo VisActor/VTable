@@ -2,6 +2,24 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.0.1",
+      "tag": "@visactor/vtable_v1.0.1",
+      "date": "Wed, 22 May 2024 12:21:05 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: tree mode  can set icon #1697\n\n"
+          },
+          {
+            "comment": "fix: ignore cell merge in selectCells()"
+          },
+          {
+            "comment": "feat: add setRowHeight&setColWidth api"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.0",
       "tag": "@visactor/vtable_v1.0.0",
       "date": "Tue, 21 May 2024 12:41:50 GMT",
