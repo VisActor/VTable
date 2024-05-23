@@ -17,6 +17,10 @@ export const menus = [
       {
         path: 'debug',
         name: 'viewbox'
+      },
+      {
+        path: 'debug',
+        name: 'animation'
       }
     ]
   },
@@ -164,6 +168,14 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-tree-rowSeriesNumber'
+      },
+      {
+        path: 'pivot',
+        name: 'virtual-node'
+      },
+      {
+        path: 'pivot',
+        name: 'virtual-node-2'
       }
     ]
   },
@@ -873,6 +885,10 @@ export const menus = [
       {
         path: 'business',
         name: 'sales-bubble'
+      },
+      {
+        path: 'business',
+        name: 'background-image'
       }
     ]
   },
@@ -910,6 +926,14 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'pivotTable-size-legend'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unit-listTable-sort'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unit-listTable-frozen'
       }
     ]
   },

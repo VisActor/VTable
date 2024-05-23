@@ -119,6 +119,8 @@ export interface IRowSeriesNumber {
   // selectRangeInclude?: boolean;
   /** 是否可拖拽顺序 */
   dragOrder?: boolean;
+  /** 是否禁止列宽调整 */
+  disableColumnResize?: boolean;
 }
 
 export interface ColumnSeriesNumber {
@@ -219,8 +221,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 排序状态
    */
   sortState?: SortState | SortState[];
-  /** 数据分析相关配置 enableDataAnalysis开启后该配置才会有效 */
-  // dataConfig?: IListTableDataConfig;
+
   /** 全局设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置编辑器 */
@@ -347,7 +348,7 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
    */
   rowHeaderTitle?: ITitleDefine;
   //#endregion
-  /** 数据分析相关配置 enableDataAnalysis开启后该配置才会有效 */
+  /** 数据分析相关配置 */
   dataConfig?: IPivotTableDataConfig;
 
   /** 指标标题 用于显示到角头的值*/
@@ -359,6 +360,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 是否需要补充指标节点到对应的自定义表头中如rowTree或者columnTree. 默认为true */
+  supplementIndicatorNodes?: boolean;
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**
@@ -510,6 +513,8 @@ export interface IDimensionHeaderNode {
   children?: IHeaderTreeDefine[] | true;
   /** 折叠状态 TODO */
   hierarchyState?: HierarchyState;
+  /** 是否为虚拟节点 在基于records数据做分析时忽略该维度字段 */
+  virtual?: boolean;
 }
 
 export interface IExtensionRowDefine {

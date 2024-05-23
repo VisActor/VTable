@@ -50,6 +50,8 @@ export type ScrollStyle = {
   scrollRailColor?: string;
   /**滚动条滑块的颜色 */
   scrollSliderColor?: string;
+  /**滚动条滑块的圆角半径 */
+  scrollSliderCornerRadius?: number;
   /**滚动条宽度大小 */
   width?: number;
   /**滚动条是否可见  'always' | 'scrolling' | 'none' | 'focus',常驻|滚动时|不显示|聚焦在画布上时 */

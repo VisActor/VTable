@@ -405,6 +405,10 @@ function computeAutoColWidth(
     return colMinWidth;
   } else if (maxWidth > colMaxWidth) {
     return colMaxWidth;
+  } else if (maxWidth <= 0) {
+    // In the case of partially hiding the header, the width calculation may be 0.
+    // In this case, the default value is used to prevent it from being unable to be displayed
+    maxWidth = table.defaultColWidth;
   }
   return maxWidth;
 }

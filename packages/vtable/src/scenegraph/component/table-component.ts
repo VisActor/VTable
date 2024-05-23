@@ -7,6 +7,7 @@ import { DrillIcon } from './drill-icon';
 import { CellMover } from './cell-mover';
 import { getColX, getRowY } from './util';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import { isValid } from '@visactor/vutils';
 
 /**
  * @description: 表格内容外组件
@@ -268,7 +269,20 @@ export class TableComponent {
     const theme = this.table.theme;
     const scrollRailColor = theme.scrollStyle?.scrollRailColor as string;
     const scrollSliderColor = theme.scrollStyle?.scrollSliderColor as string;
+    const scrollSliderCornerRadius = theme.scrollStyle?.scrollSliderCornerRadius;
     const width = theme.scrollStyle?.width as number;
+
+    let sliderStyle;
+    if (isValid(scrollSliderCornerRadius)) {
+      sliderStyle = {
+        cornerRadius: scrollSliderCornerRadius,
+        fill: scrollSliderColor
+      };
+    } else {
+      sliderStyle = {
+        fill: scrollSliderColor
+      };
+    }
     // const visible = theme.scrollStyle?.visible as string;
     // const hoverOn = theme.scrollStyle?.hoverOn as boolean;
 
@@ -282,9 +296,7 @@ export class TableComponent {
       railStyle: {
         fill: scrollRailColor
       },
-      sliderStyle: {
-        fill: scrollSliderColor
-      },
+      sliderStyle,
       range: [0, 0.1],
       // scrollRange: [0.4, 0.8]
       visible: false
@@ -303,9 +315,7 @@ export class TableComponent {
       railStyle: {
         fill: scrollRailColor
       },
-      sliderStyle: {
-        fill: scrollSliderColor
-      },
+      sliderStyle,
       range: [0, 0.1],
       visible: false
     });
@@ -718,15 +728,26 @@ export class TableComponent {
     // scrollbar
     const scrollRailColor = theme.scrollStyle?.scrollRailColor as string;
     const scrollSliderColor = theme.scrollStyle?.scrollSliderColor as string;
+    const scrollSliderCornerRadius = theme.scrollStyle?.scrollSliderCornerRadius;
     const width = theme.scrollStyle?.width as number;
+
+    let sliderStyle;
+    if (isValid(scrollSliderCornerRadius)) {
+      sliderStyle = {
+        cornerRadius: scrollSliderCornerRadius,
+        fill: scrollSliderColor
+      };
+    } else {
+      sliderStyle = {
+        fill: scrollSliderColor
+      };
+    }
     this.hScrollBar.setAttributes({
       height: width,
       railStyle: {
         fill: scrollRailColor
       },
-      sliderStyle: {
-        fill: scrollSliderColor
-      }
+      sliderStyle
     });
 
     this.vScrollBar.setAttributes({
@@ -734,9 +755,7 @@ export class TableComponent {
       railStyle: {
         fill: scrollRailColor
       },
-      sliderStyle: {
-        fill: scrollSliderColor
-      }
+      sliderStyle
     });
 
     // columnResizeLine & columnResizeBgLine

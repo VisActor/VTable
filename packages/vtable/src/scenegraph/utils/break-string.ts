@@ -10,7 +10,7 @@ export function breakString(textStr: string, table: BaseTableAPI): string[] {
   }
 
   // clear empty string in array end
-  while (text.length && !text[text.length - 1]) {
+  while (text.length && text.length > 1 && !text[text.length - 1]) {
     text.pop();
   }
 

@@ -111,7 +111,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
           }),
           scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
           event: e.nativeEvent,
-          target: eventArgsSet?.eventArgs?.target
+          target: eventArgsSet?.eventArgs?.target,
+          mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
         });
       }
     }
@@ -143,7 +144,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
               funcType: (icon as any).attribute.funcType
             }
           : undefined,
-        target: eventArgsSet?.eventArgs?.target
+        target: eventArgsSet?.eventArgs?.target,
+        mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
       });
     }
   });
@@ -471,7 +473,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
           col: eventArgsSet.eventArgs.col,
           row: eventArgsSet.eventArgs.row,
           event: e.nativeEvent,
-          target: eventArgsSet?.eventArgs?.target
+          target: eventArgsSet?.eventArgs?.target,
+          mergeCellInfo: eventArgsSet.eventArgs.mergeInfo
         });
       }
     }
@@ -520,7 +523,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
             col: (eventArgsSet.eventArgs.target as unknown as Group).col,
             row: (eventArgsSet.eventArgs.target as unknown as Group).row,
             scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
-            target: eventArgsSet?.eventArgs?.target
+            target: eventArgsSet?.eventArgs?.target,
+            mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
           };
 
           cellsEvent.cells = table.getSelectedCellInfos();
@@ -540,7 +544,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
           col: eventArgsSet.eventArgs.col,
           row: eventArgsSet.eventArgs.row,
           event: e.nativeEvent,
-          target: eventArgsSet?.eventArgs?.target
+          target: eventArgsSet?.eventArgs?.target,
+          mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
         });
       }
     }
@@ -581,7 +586,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
                 funcType: (icon as any).attribute.funcType
               }
             : undefined,
-          target: eventArgsSet?.eventArgs?.target
+          target: eventArgsSet?.eventArgs?.target,
+          mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
         };
         if (cellInRanges(table.stateManager.select.ranges, col, row)) {
           // 用户右键点击已经选中的区域
@@ -649,7 +655,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
               funcType: (icon as any).attribute.funcType
             }
           : undefined,
-        target: eventArgsSet?.eventArgs?.target
+        target: eventArgsSet?.eventArgs?.target,
+        mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
       };
 
       table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
@@ -714,6 +721,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
       eventManager.dealTableSelect();
+      stateManager.endSelectCells();
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
     } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
@@ -777,6 +785,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       ...cellInfo,
       event: e.nativeEvent,
       target: eventArgsSet?.eventArgs?.target,
+      mergeCellInfo: eventArgsSet?.eventArgs?.mergeInfo,
       checked: (e.detail as unknown as { checked: boolean }).checked
     };
 
@@ -889,6 +898,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       ...cellInfo,
       event: e.nativeEvent,
       target: eventArgsSet?.eventArgs?.target,
+      mergeCellInfo: eventArgsSet?.eventArgs?.mergeInfo,
       radioIndexInCell
     };
     table.fireListeners(TABLE_EVENT_TYPE.RADIO_STATE_CHANGE, cellsEvent);
@@ -974,7 +984,8 @@ function dblclickHandler(e: FederatedPointerEvent, table: BaseTableAPI) {
             funcType: (icon as any).attribute.funcType
           }
         : undefined,
-      target: eventArgsSet?.eventArgs?.target
+      target: eventArgsSet?.eventArgs?.target,
+      mergeCellInfo: eventArgsSet?.eventArgs?.mergeInfo
     };
     table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL, cellsEvent);
   }

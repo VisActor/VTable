@@ -49,17 +49,9 @@
 ]
 ```
 
-## enableDataAnalysis(boolean)
-
-透视表是否开启数据分析。 默认 false
-
-如果传入的数据 records 是明细数据，需要 VTable 做聚合分析则开启该配置将其设置为 true。
-
-如传入数据是经过聚合好的，为了提升性能这里设置为 false，同时呢要求传入自己组织好的行头树结构 columnTree 和 rowTree。
-
 ## dataConfig(IDataConfig)
 
-数据分析相关配置 enableDataAnalysis 开启后该配置才会有效。
+数据分析相关配置
 
 ```
 /**
@@ -265,6 +257,8 @@ export interface IDimensionHeaderNode {
   children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
   /** 折叠状态 配合树形结构展示使用。注意：仅在rowTree中有效 */
   hierarchyState?: HierarchyState;
+  /** 是否为虚拟节点。 如果配置为true，则在基于records数据做分析时会忽略该维度字段 */
+  virtual?: boolean;
 }
 ```
 
@@ -390,33 +384,6 @@ export interface IIndicatorHeaderNode {
     tableType = 'pivotTable'
 ) }}
 
-## editor(string|Object|Function)
+## supplementIndicatorNodes(boolean) = true
 
-全局配置单元格编辑器
-
-```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-```
-
-其中 IEditor 是@visactor/vtable-editors 中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
-
-## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
-
-进入编辑状态的触发时机。
-
-```
-/** 编辑触发时机:双击事件 | 单击事件 | api手动开启编辑。默认为双击'doubleclick' */
-editCellTrigger?: 'doubleclick' | 'click' | 'api';
-```
-
-{{ use: common-option-secondary(
-    prefix = '#',
-    tableType = 'listTable'
-) }}
-
-## rowSeriesNumber(IRowSeriesNumber)
-
-配置行序号。
-{{ use: row-series-number(
-    prefix = '###',
-) }}
+是否需要补充指标节点到对应的自定义表头中如 rowTree 或者 columnTree. 默认为 true

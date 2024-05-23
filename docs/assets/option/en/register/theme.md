@@ -15,7 +15,7 @@ CLICK_CELL
 tableInstance.on(CLICK_CELL, (args) => console.log(CLICK_CELL, args));
 ``
 
-Supported event types:
+Supported event types（not all）:
 
 `TABLE_EVENT_TYPE = {
   CLICK_CELL: 'click_cell',

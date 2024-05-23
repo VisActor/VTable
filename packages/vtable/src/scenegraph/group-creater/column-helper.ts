@@ -233,8 +233,10 @@ export function createComplexColumn(
         columnGroup.updateColumnHeight(rangeHeight);
         y += rangeHeight;
       } else {
-        columnGroup.updateColumnHeight(cellGroup.attribute.height);
-        y += cellGroup.attribute.height;
+        // columnGroup.updateColumnHeight(cellGroup.attribute.height);
+        // y += cellGroup.attribute.height;
+        columnGroup.updateColumnHeight(cellHeight);
+        y += cellHeight;
       }
     }
     if (rowLimit && row > rowLimit) {

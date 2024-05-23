@@ -459,6 +459,9 @@ export class TableTheme implements ITableThemeDefine {
         get scrollSliderColor(): string | undefined {
           return scroll.scrollSliderColor ?? '#C0C0C0';
         },
+        get scrollSliderCornerRadius(): number | undefined {
+          return scroll.scrollSliderCornerRadius;
+        },
         get scrollRailColor(): string | undefined {
           return scroll.scrollRailColor;
         },

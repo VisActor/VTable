@@ -1,6 +1,82 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 13 May 2024 13:47:37 GMT and should not be manually modified.
+This log was last generated on Tue, 21 May 2024 12:41:50 GMT and should not be manually modified.
+
+## 1.0.0
+Tue, 21 May 2024 12:41:50 GMT
+
+### Breaking changes
+
+- feat: add virtual option for rowTree and columnTree #1644
+
+ BREAKING CHANGE: getCellOriginRecord will return an array of source data.
+
+### Updates
+
+- feat: rows and tree can  combined use  #1644
+
+
+
+## 0.25.9
+Tue, 21 May 2024 12:33:13 GMT
+
+### Updates
+
+- fix: when body cell is blank string,compute row height error #1752
+
+
+- fix: fix custom merge cell display problem when select header
+
+## 0.25.8
+Tue, 21 May 2024 11:19:27 GMT
+
+### Updates
+
+- feat: add scrollSliderCornerRadius config #1369
+
+
+- fix: when set hideRowHeader, body cell value is blank #1732
+
+
+- fix: setTableColumnsEditor occor error when not set columns #1747
+
+
+- feat: add disableBackground &  disableBorder in exportCellImg() #1733
+- feat: add disableColumnResize for rowSeriesNumber
+
+
+- fix: fix col & row order in cellInRanges()
+- fix: add string mark in csv-export #1730
+
+## 0.25.7
+Fri, 17 May 2024 12:08:43 GMT
+
+_Version update only_
+
+## 0.25.6
+Fri, 17 May 2024 10:50:13 GMT
+
+### Updates
+
+- feat: add selected_clear event #1705
+
+
+- fix: mouse down on scroll rail trigger mousedown_table #1706
+
+
+- fix: merge cell value can be edited #1711
+
+
+- fix: sub colunms can not be edit when set editor instance #1711
+
+
+- feat: add mergeCellInfo arg in event #1667
+- fix: fix checkbox and radio state update when change row index #1712
+- fix: fix veritial offset in text stick
+- fix: fix column width may be zero #1708
+- fix: fix getCell performance
+- fix: fix header hide func in pivot table
+- fix: lineDash judgement in group-contribution-render #1696
 
 ## 0.25.5
 Mon, 13 May 2024 13:47:37 GMT

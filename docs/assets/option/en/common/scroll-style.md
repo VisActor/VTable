@@ -11,6 +11,9 @@ Color of the scroll bar rail
 ##${prefix} scrollSliderColor(string)
 Color of the scroll bar slider
 
+##${prefix} scrollSliderCornerRadius(number)
+The corner radius of the scroll bar slider
+
 ##${prefix} width(number)
 Width of the scroll bar
 

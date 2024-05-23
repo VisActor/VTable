@@ -37,8 +37,9 @@ import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
-import { setRadioState, syncRadioState } from './radio/radio';
+import { changeRadioOrder, setRadioState, syncRadioState } from './radio/radio';
 import {
+  changeCheckboxOrder,
   initCheckedState,
   initLeftRecordsCheckState,
   setCheckedState,
@@ -62,7 +63,7 @@ export class StateManager {
   interactionState: InteractionState;
   // select记录两个位置，第二个位置只在range模式生效
   select: {
-    ranges: CellRange[];
+    ranges: (CellRange & { skipBodyMerge?: boolean })[];
     highlightScope: HighlightScope;
     cellPos: CellPosition;
     // cellPosStart: CellPosition;
@@ -638,6 +639,10 @@ export class StateManager {
           col: lastCol,
           row: lastRow
         });
+    } else if (fireListener) {
+      if (this.select.ranges.length === 0) {
+        this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CLEAR, {});
+      }
     }
   }
 
@@ -1359,5 +1364,14 @@ export class StateManager {
     isChecked: boolean
   ) {
     return syncRadioState(col, row, field, radioType, indexInCell, isChecked, this);
+  }
+
+  changeCheckboxAndRadioOrder(sourceIndex: number, targetIndex: number) {
+    if (this.checkedState.length) {
+      changeCheckboxOrder(sourceIndex, targetIndex, this);
+    }
+    if (this.radioState.length) {
+      changeRadioOrder(sourceIndex, targetIndex, this);
+    }
   }
 }

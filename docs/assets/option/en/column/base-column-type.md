@@ -85,16 +85,18 @@ icon?:
     | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
 ```
 
-#${prefix} ColumnIconOption definition:
+#${prefix} ColumnIconOption
 
 ```
 type ColumnIconOption = ImageIcon | SvgIcon;
 ```
 
 #${prefix} ImageIcon(Object)
+type is set to 'image'. The image address needs to be set in src
 {{ use: image-icon(  prefix = '##' + ${prefix}) }}
 
 #${prefix} SvgIcon(Object)
+type is set to 'svg'. You need to configure the svg address or the complete svg file string in svg
 {{ use: svg-icon(  prefix = '##' + ${prefix}) }}
 
 ${prefix} sort(boolean|Function)

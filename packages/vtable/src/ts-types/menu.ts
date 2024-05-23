@@ -34,7 +34,7 @@ export type MenuListItem =
 
 export type PivotInfo = {
   value: string;
-  dimensionKey: string | number;
+  dimensionKey: string;
   isPivotCorner: boolean;
   customInfo?: any;
 };
