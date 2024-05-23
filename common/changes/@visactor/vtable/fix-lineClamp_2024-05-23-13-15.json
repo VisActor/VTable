@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix lineClamp config in computeRowsHeight() #1772",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
