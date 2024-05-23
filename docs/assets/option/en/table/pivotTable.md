@@ -49,17 +49,9 @@ Currently, it supports incoming flattened data formats, taking the sales of larg
 ]
 ```
 
-## enableDataAnalysis(boolean)
-
-Whether the pivot table enables data analysis. Default false.
-
-If the incoming data records are detailed data and VTable is required for aggregate analysis, enable this configuration.
-
-If the incoming data is aggregated, in order to improve performance, it is set to false and columnTree and rowTree are required to be passed in.
-
 ## dataConfig(IDataConfig)
 
-Data analysis related configuration This configuration will be effective only after enableDataAnalysis is turned on.
+Data analysis related configuration .
 
 ```
 /**
@@ -261,6 +253,8 @@ export interface IDimensionHeaderNode {
   children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
   /** Collapse status Used with tree structure display. Note: only valid in rowTree */
   hierarchyState?: HierarchyState;
+  /** Whether it is a virtual node. If configured to true, this dimension field will be ignored when analyzing based on records data */
+  virtual?: boolean;
 }
 ```
 
@@ -386,38 +380,6 @@ Set the sorting state, only corresponding to the display effect of the button wi
     tableType = 'pivotTable'
 ) }}
 
-## editor (string|Object|Function)
+## supplementIndicatorNodes(boolean) = true
 
-Global configuration cell editor
-
-```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-```
-
-Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
-
-## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
-
-The trigger timing for entering the editing state.
-
-```
-
-/** Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' */
-editCellTrigger?: 'doubleclick' | 'click' | 'api';
-
-```
-
-{{ use: common-option-secondary(
-    prefix = '#',
-    tableType = 'listTable'
-) }}
-
-```
-
-## rowSeriesNumber(IRowSeriesNumber)
-
-set row serial number.
-{{ use: row-series-number(
-    prefix = '###',
-) }}
-```
+Whether to add index nodes to the corresponding custom table headers such as rowTree or columnTree. Default is true

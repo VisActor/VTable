@@ -1,3 +1,73 @@
+# v1.0.1
+
+2024-05-23
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: tree mode  can set icon [#1697](https://github.com/VisActor/VTable/issues/1697)
+- **@visactor/vtable**: add setRowHeight&setColWidth api
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: ignore cell merge in selectCells()
+
+
+
+[more detail about v1.0.1](https://github.com/VisActor/VTable/releases/tag/v1.0.1)
+
+# v1.0.0
+
+2024-05-21
+
+**💥 Breaking change**
+
+- **@visactor/vtable**: The result returned by the pivot table getCellOriginRecord interface becomes an array structure.
+
+**🆕 New feature**
+
+- **@visactor/vtable**: rows and tree can  combined use  [#1644](https://github.com/VisActor/VTable/issues/1644)
+- **@visactor/vtable**: add virtual option for rowTree and columnTree [#1644](https://github.com/VisActor/VTable/issues/1644)
+
+
+
+[more detail about v1.0.0](https://github.com/VisActor/VTable/releases/tag/v1.0.0)
+# v0.25.9
+
+2024-05-21
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when body cell is blank string,compute row height error [#1752](https://github.com/VisActor/VTable/issues/1752)
+- **@visactor/vtable**: fix custom merge cell display problem when select header
+
+
+
+[more detail about v0.25.9](https://github.com/VisActor/VTable/releases/tag/v0.25.9)
+
+# v0.25.8
+
+2024-05-21
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add scrollSliderCornerRadius config [#1369](https://github.com/VisActor/VTable/issues/1369)
+- **@visactor/vtable**: add disableBackground &  disableBorder in exportCellImg() [#1733](https://github.com/VisActor/VTable/issues/1733)
+- **@visactor/vtable**: add disableColumnResize for rowSeriesNumber
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when set hideRowHeader, body cell value is blank [#1732](https://github.com/VisActor/VTable/issues/1732)
+- **@visactor/vtable**: setTableColumnsEditor occor error when not set columns [#1747](https://github.com/VisActor/VTable/issues/1747)
+- **@visactor/vtable**: fix col & row order in cellInRanges()
+- **@visactor/vtable**: add string mark in csv-export [#1730](https://github.com/VisActor/VTable/issues/1730)
+
+
+
+[more detail about v0.25.8](https://github.com/VisActor/VTable/releases/tag/v0.25.8)
+
 # v0.25.6
 
 2024-05-17

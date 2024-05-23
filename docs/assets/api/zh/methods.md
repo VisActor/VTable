@@ -420,7 +420,7 @@ setRecords(records: Array<any>)
    * 根据行列号获取源数据
    * @param  {number} col col index.
    * @param  {number} row row index.
-   * @return {object} record or record array
+   * @return {object} record or record array.  ListTable return one record, PivotTable return an array of records.
    */
   getCellOriginRecord(col: number, row: number)
 ```
@@ -1115,4 +1115,22 @@ interface ISortedMapItem {
 ```
   /**获取对应header的field  */
   getHeaderField: (col: number, row: number)
+```
+
+## setColWidth(Function)
+
+设置列宽
+
+```
+  /**设置列宽 */
+  setColWidth: (col: number, width: number)
+```
+
+## setRowHeight(Function)
+
+设置行高
+
+```
+  /**设置行高 */
+  setRowHeight: (row: number, height: number)
 ```

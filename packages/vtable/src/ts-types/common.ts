@@ -86,12 +86,14 @@ export type IPivotTableCellHeaderPaths = {
     dimensionKey?: string;
     indicatorKey?: string;
     value?: string;
+    virtual?: boolean;
   }[];
   /** 行表头各级path表头信息 */
   readonly rowHeaderPaths?: {
     dimensionKey?: string;
     indicatorKey?: string;
     value?: string;
+    virtual?: boolean;
   }[];
   cellLocation: CellLocation;
 };

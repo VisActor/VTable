@@ -1,6 +1,42 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 21 May 2024 11:19:27 GMT and should not be manually modified.
+This log was last generated on Wed, 22 May 2024 12:21:05 GMT and should not be manually modified.
+
+## 1.0.1
+Wed, 22 May 2024 12:21:05 GMT
+
+### Updates
+
+- feat: tree mode  can set icon #1697
+
+
+- fix: ignore cell merge in selectCells()
+- feat: add setRowHeight&setColWidth api
+
+## 1.0.0
+Tue, 21 May 2024 12:41:50 GMT
+
+### Breaking changes
+
+- feat: add virtual option for rowTree and columnTree #1644
+
+ BREAKING CHANGE: getCellOriginRecord will return an array of source data.
+
+### Updates
+
+- feat: rows and tree can  combined use  #1644
+
+
+
+## 0.25.9
+Tue, 21 May 2024 12:33:13 GMT
+
+### Updates
+
+- fix: when body cell is blank string,compute row height error #1752
+
+
+- fix: fix custom merge cell display problem when select header
 
 ## 0.25.8
 Tue, 21 May 2024 11:19:27 GMT

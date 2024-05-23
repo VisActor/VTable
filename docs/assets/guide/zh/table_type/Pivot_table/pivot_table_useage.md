@@ -23,8 +23,6 @@
 
 下面是一个简单的示例，演示如何使用透视表来展示数据：
 
-- enableDataAnalysis 需设置为 true
-
 ```javascript livedemo  template=vtable
 const data = [
   {
@@ -819,7 +817,6 @@ const option = {
     }
   },
   widthMode: 'standard',
-  enableDataAnalysis: true,
   defaultHeaderColWidth: 150,
   rowHierarchyIndent: 20,
   rowHierarchyTextStartAlignment: true
@@ -830,8 +827,6 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 ## 示例：自定义行表头列表头树结构
 
 在下面示例中为了让表头各维度值的显示顺序符合需求，我们设置了 rowTree 和 columnTree 两个字段，分别表示行表头和列表头的树结构。可以看出和上面 VTable 分析出的树结构纬度值显示顺序的差别。
-
-- enableDataAnalysis 需设置为 false
 
 ```javascript livedemo  template=vtable
 const data = [

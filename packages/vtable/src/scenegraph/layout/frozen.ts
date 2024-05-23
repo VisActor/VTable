@@ -66,7 +66,7 @@ export function resetFrozen(scene: Scenegraph) {
 
   scene.deleteAllSelectBorder();
   scene.table.stateManager.select.ranges.forEach(range => {
-    scene.updateCellSelectBorder(range.start.col, range.start.row, range.end.col, range.end.row);
+    scene.updateCellSelectBorder(range);
   });
 
   // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
