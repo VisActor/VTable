@@ -363,7 +363,7 @@ function computeAutoColWidth(
       if ((hd as HeaderData)?.define?.columnWidthComputeMode === 'only-body') {
         continue;
       }
-      if ((hd as HeaderData)?.hierarchyLevel) {
+      if (isValid((hd as HeaderData)?.hierarchyLevel)) {
         cellHierarchyIndent =
           ((hd as HeaderData).hierarchyLevel ?? 0) * ((layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0);
         if (
