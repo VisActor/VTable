@@ -1,6 +1,15 @@
-import { isString } from '@visactor/vutils';
-import type { Aggregation, ListTableConstructorOptions, PivotTableConstructorOptions } from '../ts-types';
+import { isArray, isString } from '@visactor/vutils';
+import type { PivotTable } from '../PivotTable';
+import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
+import { AggregationType } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
+import type {
+  Aggregation,
+  IHeaderTreeDefine,
+  IIndicator,
+  ListTableConstructorOptions,
+  PivotTableConstructorOptions
+} from '../ts-types';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import type { SimpleHeaderLayoutMap } from './simple-header-layout';
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
@@ -58,7 +67,7 @@ export function checkHasAggregationOnBottom(layoutMap: SimpleHeaderLayoutMap) {
 
 export function checkHasTreeDefine(layoutMap: SimpleHeaderLayoutMap) {
   const { columns } = layoutMap._table.options as ListTableConstructorOptions;
-  if (columns.length > 0) {
+  if (isArray(columns) && columns.length > 0) {
     for (let i = 0; i < columns.length; i++) {
       const column = columns[i];
       if (isString(column)) {
@@ -76,7 +85,7 @@ export function hasAutoImageColumn(table: BaseTableAPI) {
   const { columns, rows, indicators } = table.options as PivotTableConstructorOptions;
   if (table.isPivotTable()) {
     // pivot table
-    if (columns.length > 0) {
+    if (isArray(columns) && columns.length > 0) {
       for (let i = 0; i < columns.length; i++) {
         const column = columns[i];
         if (isString(column)) {
@@ -90,7 +99,7 @@ export function hasAutoImageColumn(table: BaseTableAPI) {
         }
       }
     }
-    if (rows.length > 0) {
+    if (isArray(rows) && rows.length > 0) {
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         if (isString(row)) {
@@ -104,7 +113,7 @@ export function hasAutoImageColumn(table: BaseTableAPI) {
         }
       }
     }
-    if (indicators.length > 0) {
+    if (isArray(indicators) && indicators.length > 0) {
       for (let i = 0; i < indicators.length; i++) {
         const indicator = indicators[i];
         if (isString(indicator)) {
@@ -126,7 +135,7 @@ export function hasAutoImageColumn(table: BaseTableAPI) {
     }
   } else {
     // list table
-    if (columns.length > 0) {
+    if (isArray(columns) && columns.length > 0) {
       for (let i = 0; i < columns.length; i++) {
         const column = columns[i] as unknown as ListTableConstructorOptions['columns'][0];
         if (
