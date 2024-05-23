@@ -2687,7 +2687,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           true
         );
       } else {
-        this.stateManager.updateSelectPos(cellRange.start.col, cellRange.start.row, false, index >= 1);
+        this.stateManager.updateSelectPos(
+          cellRange.start.col,
+          cellRange.start.row,
+          false,
+          index >= 1,
+          false,
+          false,
+          true
+        );
         this.stateManager.updateInteractionState(InteractionState.grabing);
         this.stateManager.updateSelectPos(cellRange.end.col, cellRange.end.row, false, index >= 1, false, false, true);
       }
