@@ -1,6 +1,17 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 21 May 2024 12:41:50 GMT and should not be manually modified.
+This log was last generated on Wed, 22 May 2024 12:21:05 GMT and should not be manually modified.
+
+## 1.0.1
+Wed, 22 May 2024 12:21:05 GMT
+
+### Updates
+
+- feat: tree mode  can set icon #1697
+
+
+- fix: ignore cell merge in selectCells()
+- feat: add setRowHeight&setColWidth api
 
 ## 1.0.0
 Tue, 21 May 2024 12:41:50 GMT
