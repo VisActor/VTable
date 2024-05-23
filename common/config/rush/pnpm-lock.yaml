@@ -15,13 +15,13 @@ importers:
       '@types/markdown-it': ^13.0.0
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      '@visactor/openinula-vtable': workspace:*
-      '@visactor/react-vtable': workspace:*
+      '@visactor/openinula-vtable': workspace:0.25.9-alpha.0
+      '@visactor/react-vtable': workspace:0.25.9-alpha.0
       '@visactor/vchart': 1.11.0
-      '@visactor/vtable': workspace:*
-      '@visactor/vtable-editors': workspace:*
-      '@visactor/vtable-export': workspace:*
-      '@visactor/vtable-search': workspace:*
+      '@visactor/vtable': workspace:0.25.9-alpha.0
+      '@visactor/vtable-editors': workspace:0.25.9-alpha.0
+      '@visactor/vtable-export': workspace:0.25.9-alpha.0
+      '@visactor/vtable-search': workspace:0.25.9-alpha.0
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       buble: ^0.20.0
@@ -92,7 +92,7 @@ importers:
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
       '@visactor/vchart': 1.11.0
-      '@visactor/vtable': workspace:*
+      '@visactor/vtable': workspace:0.25.9-alpha.0
       '@visactor/vutils': ~0.18.1
       axios: ^1.4.0
       chai: 4.3.4
@@ -181,7 +181,7 @@ importers:
       '@types/react-dom': ^18.0.0
       '@types/react-is': ^17.0.3
       '@visactor/vchart': 1.11.0
-      '@visactor/vtable': workspace:*
+      '@visactor/vtable': workspace:0.25.9-alpha.0
       '@visactor/vutils': ~0.18.1
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
@@ -284,7 +284,7 @@ importers:
       '@visactor/vrender-core': 0.18.14-alpha.0
       '@visactor/vrender-kits': 0.18.14-alpha.0
       '@visactor/vscale': ~0.18.1
-      '@visactor/vtable-editors': workspace:*
+      '@visactor/vtable-editors': workspace:0.25.9-alpha.0
       '@visactor/vutils': ~0.18.1
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
@@ -447,7 +447,7 @@ importers:
       '@types/react-dom': ^18.0.0
       '@types/react-is': ^17.0.3
       '@visactor/vchart': 1.11.0
-      '@visactor/vtable': workspace:*
+      '@visactor/vtable': workspace:0.25.9-alpha.0
       '@visactor/vutils': ~0.18.1
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
@@ -549,7 +549,7 @@ importers:
       '@types/react-dom': ^18.0.0
       '@types/react-is': ^17.0.3
       '@visactor/vchart': 1.11.0
-      '@visactor/vtable': workspace:*
+      '@visactor/vtable': workspace:0.25.9-alpha.0
       '@visactor/vutils': ~0.18.1
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
