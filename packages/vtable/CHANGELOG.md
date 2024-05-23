@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 21 May 2024 11:19:27 GMT and should not be manually modified.
+This log was last generated on Thu, 23 May 2024 08:04:20 GMT and should not be manually modified.
+
+## 0.25.9
+Thu, 23 May 2024 08:04:20 GMT
+
+### Updates
+
+- fix: use table option in hasAutoImageColumn()
 
 ## 0.25.8
 Tue, 21 May 2024 11:19:27 GMT

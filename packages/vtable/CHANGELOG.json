@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.25.9",
+      "tag": "@visactor/vtable_v0.25.9",
+      "date": "Thu, 23 May 2024 08:04:20 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: use table option in hasAutoImageColumn()"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.25.8",
       "tag": "@visactor/vtable_v0.25.8",
       "date": "Tue, 21 May 2024 11:19:27 GMT",
