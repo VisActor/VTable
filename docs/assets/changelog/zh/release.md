@@ -1,3 +1,21 @@
+# v1.0.1
+
+2024-05-23
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: tree mode  can set icon [#1697](https://github.com/VisActor/VTable/issues/1697)
+- **@visactor/vtable**: add setRowHeight&setColWidth api
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: ignore cell merge in selectCells()
+
+
+
+[更多详情请查看 v1.0.1](https://github.com/VisActor/VTable/releases/tag/v1.0.1)
+
 # v1.0.0
 
 2024-05-21
