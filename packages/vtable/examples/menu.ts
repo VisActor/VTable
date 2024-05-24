@@ -256,6 +256,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-two-legends'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart-hideHeader'
       },
       {
