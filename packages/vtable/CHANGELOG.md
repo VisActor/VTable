@@ -1,6 +1,18 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 24 May 2024 10:08:07 GMT and should not be manually modified.
+This log was last generated on Fri, 24 May 2024 10:31:16 GMT and should not be manually modified.
+
+## 1.0.3
+Fri, 24 May 2024 10:31:16 GMT
+
+### Updates
+
+- refactor: legends support ser array form #1740
+
+
+- fix: first col tree mode compute col width error #1778
+
+
 
 ## 1.0.2
 Fri, 24 May 2024 10:08:07 GMT

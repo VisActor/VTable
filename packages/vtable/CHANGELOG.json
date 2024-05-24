@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.0.3",
+      "tag": "@visactor/vtable_v1.0.3",
+      "date": "Fri, 24 May 2024 10:31:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: legends support ser array form #1740\n\n"
+          },
+          {
+            "comment": "fix: first col tree mode compute col width error #1778\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.2",
       "tag": "@visactor/vtable_v1.0.2",
       "date": "Fri, 24 May 2024 10:08:07 GMT",
