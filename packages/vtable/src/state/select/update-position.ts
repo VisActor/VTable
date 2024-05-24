@@ -154,10 +154,11 @@ export function updateSelectPosition(
         });
       } else if (col >= 0 && row >= 0) {
         // 选中普通单元格
-        const cellRange = table.getCellRange(col, row);
+        const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
         state.select.ranges.push({
           start: { col: cellRange.start.col, row: cellRange.start.row },
-          end: { col: cellRange.end.col, row: cellRange.end.row }
+          end: { col: cellRange.end.col, row: cellRange.end.row },
+          skipBodyMerge: skipBodyMerge || undefined
         });
       }
       cellPos.col = col;

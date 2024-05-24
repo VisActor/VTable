@@ -651,6 +651,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   const lineHeight = getProp('lineHeight', actStyle, col, row, table) ?? fontSize;
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const autoWrapText = getProp('autoWrapText', actStyle, col, row, table);
+  const lineClamp = getProp('lineClamp', actStyle, col, row, table);
   let text;
   if (
     cellType !== 'text' &&
@@ -674,6 +675,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       fontWeight,
       fontFamily,
       lineHeight,
+      lineClamp,
       padding,
       table
     );
@@ -691,6 +693,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       fontWeight,
       fontFamily,
       lineHeight,
+      lineClamp,
       padding,
       table
     );
@@ -749,7 +752,8 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
         fontFamily,
         lineHeight,
         wordBreak: 'break-word',
-        whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
+        whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
+        lineClamp
       });
       maxHeight = bounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
     } else {

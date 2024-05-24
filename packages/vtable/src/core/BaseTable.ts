@@ -127,6 +127,7 @@ import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style'
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 import type { ITextGraphicAttribute } from '@src/vrender';
 import type { ISortedMapItem } from '../data/DataSource';
+import { hasAutoImageColumn } from '../layout/layout-helper';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -195,6 +196,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   customCellStylePlugin: CustomCellStylePlugin;
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+
+  _hasAutoImageColumn?: boolean;
 
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
@@ -2070,6 +2073,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   updateOption(options: BaseTableConstructorOptions) {
     (this.options as BaseTable['options']) = options;
+    this._hasAutoImageColumn = undefined;
     const {
       // rowCount = 0,
       // colCount = 0,
@@ -2687,7 +2691,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           true
         );
       } else {
-        this.stateManager.updateSelectPos(cellRange.start.col, cellRange.start.row, false, index >= 1);
+        this.stateManager.updateSelectPos(
+          cellRange.start.col,
+          cellRange.start.row,
+          false,
+          index >= 1,
+          false,
+          false,
+          true
+        );
         this.stateManager.updateInteractionState(InteractionState.grabing);
         this.stateManager.updateSelectPos(cellRange.end.col, cellRange.end.row, false, index >= 1, false, false, true);
       }
@@ -3985,28 +3997,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   hasAutoImageColumn() {
-    const bodyColumn = (this.internalProps.layoutMap.columnObjects as ColumnData[]).find((column: ColumnData) => {
-      if (
-        (column.cellType === 'image' || column.cellType === 'video' || typeof column.cellType === 'function') &&
-        (column.define as ImageColumnDefine).imageAutoSizing
-      ) {
-        return true;
-      }
-      return false;
-    });
-    const headerObj = (this.internalProps.layoutMap.headerObjects as HeaderData[]).find((column: HeaderData) => {
-      if (column) {
-        if (
-          (column.headerType === 'image' || column.headerType === 'video' || typeof column.headerType === 'function') &&
-          (column.define as ImageColumnDefine).imageAutoSizing
-        ) {
-          return true;
-        }
-      }
-      return false;
-    });
-    return bodyColumn || headerObj;
+    if (this._hasAutoImageColumn === undefined) {
+      this._hasAutoImageColumn = hasAutoImageColumn(this);
+    }
+    return this._hasAutoImageColumn;
   }
+
   /** 获取当前hover单元格的图表实例。这个方法hover实时获取有点缺陷：鼠标hover到单元格上触发了 chart.ts中的activate方法 但此时this.stateManager.hover?.cellPos?.col还是-1 */
   _getActiveChartInstance() {
     // 根据hover的单元格位置 获取单元格实例 拿到chart图元

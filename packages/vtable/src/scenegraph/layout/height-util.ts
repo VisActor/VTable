@@ -21,6 +21,7 @@ export function computeCheckboxCellHeight(
   fontWeight: string,
   fontFamily: string,
   lineHeight: number,
+  lineClamp: number | undefined,
   padding: [number, number, number, number],
   table: BaseTableAPI
 ) {
@@ -41,7 +42,8 @@ export function computeCheckboxCellHeight(
         fontWeight,
         fontFamily,
         lineHeight,
-        wordBreak: 'break-word'
+        wordBreak: 'break-word',
+        lineClamp
       },
       icon: {
         width: Math.floor(size / 1.4), // icon : box => 10 : 14
@@ -75,6 +77,7 @@ export function computeRadioCellHeight(
   fontWeight: string,
   fontFamily: string,
   lineHeight: number,
+  lineClamp: number | undefined,
   padding: [number, number, number, number],
   table: BaseTableAPI
 ) {
@@ -100,6 +103,7 @@ export function computeRadioCellHeight(
           fontWeight,
           fontFamily,
           lineHeight,
+          lineClamp,
           padding,
           table
         );
@@ -124,6 +128,7 @@ export function computeRadioCellHeight(
           fontWeight,
           fontFamily,
           lineHeight,
+          lineClamp,
           padding,
           table
         );
@@ -146,6 +151,7 @@ export function computeRadioCellHeight(
     fontWeight,
     fontFamily,
     lineHeight,
+    lineClamp,
     padding,
     table
   );
@@ -164,6 +170,7 @@ export function computeSingleRadioCellHeight(
   fontWeight: string,
   fontFamily: string,
   lineHeight: number,
+  lineClamp: number | undefined,
   padding: [number, number, number, number],
   table: BaseTableAPI
 ) {
@@ -189,7 +196,8 @@ export function computeSingleRadioCellHeight(
         fontWeight,
         fontFamily,
         lineHeight,
-        wordBreak: 'break-word'
+        wordBreak: 'break-word',
+        lineClamp
       },
       circle: {
         outerRadius

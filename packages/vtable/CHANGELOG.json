@@ -2,6 +2,33 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.0.2",
+      "tag": "@visactor/vtable_v1.0.2",
+      "date": "Fri, 24 May 2024 10:08:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: use table option in hasAutoImageColumn()"
+          },
+          {
+            "comment": "fix: axis size align with vrender-component #1784"
+          },
+          {
+            "comment": "fix: fix lineClamp config in computeRowsHeight() #1772"
+          },
+          {
+            "comment": "fix: fix progress cell create problem in vtable-export #1787"
+          },
+          {
+            "comment": "fix: ignore cell merge in selectCells()"
+          },
+          {
+            "comment": "feat: add setRowHeight&setColWidth api"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.1",
       "tag": "@visactor/vtable_v1.0.1",
       "date": "Wed, 22 May 2024 12:21:05 GMT",
