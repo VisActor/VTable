@@ -1,6 +1,18 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 22 May 2024 12:21:05 GMT and should not be manually modified.
+This log was last generated on Fri, 24 May 2024 10:08:07 GMT and should not be manually modified.
+
+## 1.0.2
+Fri, 24 May 2024 10:08:07 GMT
+
+### Updates
+
+- fix: use table option in hasAutoImageColumn()
+- fix: axis size align with vrender-component #1784
+- fix: fix lineClamp config in computeRowsHeight() #1772
+- fix: fix progress cell create problem in vtable-export #1787
+- fix: ignore cell merge in selectCells()
+- feat: add setRowHeight&setColWidth api
 
 ## 1.0.1
 Wed, 22 May 2024 12:21:05 GMT
