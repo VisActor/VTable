@@ -1160,10 +1160,17 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   }
   /** 获取图例的选择状态 */
   getLegendSelected() {
-    return (this.internalProps.legends.legendComponent as any)._getSelectedLegends().map((d: any) => d.label);
+    const selected: any[] = [];
+    this.internalProps.legends?.forEach(legend => {
+      const data = (legend.legendComponent as any)._getSelectedLegends().map((d: any) => d.label);
+      selected.push(...data);
+    });
+    return selected;
   }
   setLegendSelected(selectedData: (string | number)[]) {
-    (this.internalProps.legends.legendComponent as DiscreteLegend).setSelected(selectedData);
+    this.internalProps.legends?.forEach(legend => {
+      (legend.legendComponent as DiscreteLegend).setSelected(selectedData);
+    });
     // this.updateFilterRules([{ filterKey: '20001', filteredValues: selectedData }]);
     // this.invalidate();
   }
