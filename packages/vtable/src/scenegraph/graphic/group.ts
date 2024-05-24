@@ -377,10 +377,7 @@ export class Group extends VRenderGroup {
 }
 
 function after(group: Group, selfChange: boolean) {
-  if (!group.stage.dirtyBounds) {
-    return;
-  }
-  if (!(group.stage && group.stage.renderCount)) {
+  if (!group.stage || !group.stage.dirtyBounds || !group.stage.renderCount) {
     return;
   }
   // group的子元素导致的bounds更新不用做dirtyBounds
