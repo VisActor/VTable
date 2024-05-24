@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix progress cell create problem in vtable-export #1787",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

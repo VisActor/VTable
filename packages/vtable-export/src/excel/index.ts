@@ -175,6 +175,7 @@ function exportCellImg(col: number, row: number, tableInstance: IVTable) {
   let needRemove = false;
   if (cellGroup.role === 'empty') {
     cellGroup = updateCell(col, row, tableInstance as any, true);
+    cellGroup.setStage(tableInstance.scenegraph.stage);
     needRemove = true;
   }
   const oldStroke = cellGroup.attribute.stroke;
@@ -182,7 +183,7 @@ function exportCellImg(col: number, row: number, tableInstance: IVTable) {
   const canvas = graphicUtil.drawGraphicToCanvas(cellGroup as any, tableInstance.scenegraph.stage) as HTMLCanvasElement;
   cellGroup.attribute.stroke = oldStroke;
   if (needRemove) {
-    cellGroup.parent.removeChild(cellGroup);
+    cellGroup.parent?.removeChild(cellGroup);
   }
   return canvas.toDataURL();
 }
