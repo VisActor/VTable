@@ -1,3 +1,24 @@
+# v1.0.2
+
+2024-05-24
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add setRowHeight&setColWidth api
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: use table option in hasAutoImageColumn()
+- **@visactor/vtable**: axis size align with vrender-component [#1784](https://github.com/VisActor/VTable/issues/1784)
+- **@visactor/vtable**: fix lineClamp config in computeRowsHeight() [#1772](https://github.com/VisActor/VTable/issues/1772)
+- **@visactor/vtable**: fix progress cell create problem in vtable-export [#1787](https://github.com/VisActor/VTable/issues/1787)
+- **@visactor/vtable**: ignore cell merge in selectCells()
+
+
+
+[more detail about v1.0.2](https://github.com/VisActor/VTable/releases/tag/v1.0.2)
+
 # v1.0.1
 
 2024-05-23
