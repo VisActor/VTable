@@ -193,7 +193,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           // 散点图特殊处理
           inverse: transformInverse(
             axisOption,
-            (spec?.direction ?? chartType === 'scatter' ? 'vertical' : 'horizontal') === Direction.horizontal
+            (spec?.direction ?? (chartType === 'scatter' ? 'vertical' : 'horizontal')) === Direction.horizontal
           )
         }
       );
