@@ -172,12 +172,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 左侧维度轴
       return merge(
         {
-          domain:
-            chartType === 'scatter'
-              ? undefined
-              : spec?.series?.length >= 1 //chartType === 'common' 原来这样判断的
-              ? Array.from(domain)
-              : Array.from(domain).reverse(),
+          domain: chartType === 'scatter' ? undefined : Array.from(domain),
+          // : spec?.series?.length >= 1 //chartType === 'common' 原来这样判断的
+          // ? Array.from(domain)
+          // : Array.from(domain).reverse(),
           range: chartType === 'scatter' ? domain : undefined,
           title: {
             autoRotate: true
@@ -187,7 +185,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         {
           orient: 'left',
           type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
-          __vtableChartTheme: theme
+          __vtableChartTheme: theme,
+          inverse: transformInverse(axisOption, spec?.direction === Direction.horizontal)
         }
       );
     }
@@ -651,4 +650,26 @@ export function isLeftOrRightAxis(col: number, row: number, layout: PivotHeaderL
     }
   }
   return false;
+}
+
+const enum Direction {
+  vertical = 'vertical',
+  horizontal = 'horizontal'
+}
+
+// align with vchart (packages/vchart/src/component/axis/cartesian/util/common.ts)
+function transformInverse(spec: any, isHorizontal: boolean) {
+  // 这里处理下 direction === 'horizontal' 下的 Y 轴
+  // 因为 Y 轴绘制的时候默认是从下至上绘制的，但是在 direction === 'horizontal' 场景下，图表应该是按照从上至下阅读的
+  // 所以这里在这种场景下坐标轴会默认 inverse 已达到效果
+  let inverse = spec.inverse;
+  if (isHorizontal && !isXAxis(spec.orient)) {
+    inverse = isValid(spec.inverse) ? !spec.inverse : true;
+  }
+  return inverse;
+}
+
+type IOrientType = 'left' | 'top' | 'right' | 'bottom' | 'z';
+function isXAxis(orient: IOrientType) {
+  return orient === 'bottom' || orient === 'top';
 }

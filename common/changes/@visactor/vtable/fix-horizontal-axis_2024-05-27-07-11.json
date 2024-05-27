@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix left axis index in horizontal pivot chart",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
