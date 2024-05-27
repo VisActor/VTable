@@ -50,9 +50,9 @@
   },
   "dependencies": {
     "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vrender-core": "0.18.14-alpha.0",
-    "@visactor/vrender-kits": "0.18.14-alpha.0",
-    "@visactor/vrender-components": "0.18.14-alpha.0",
+    "@visactor/vrender-core": "0.19.6-alpha.3",
+    "@visactor/vrender-kits": "0.19.6-alpha.3",
+    "@visactor/vrender-components": "0.19.6-alpha.3",
     "@visactor/vutils": "~0.18.1",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",

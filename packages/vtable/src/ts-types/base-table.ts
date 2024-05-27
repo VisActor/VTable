@@ -91,6 +91,8 @@ import type { ContinueTableLegend } from '../components/legend/continue-legend/c
 import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 import type { ISortedMapItem } from '../data/DataSource';
+import type { IEmptyTip } from './component/empty-tip';
+import type { EmptyTip } from '../components/empty-tip/empty-tip';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -232,6 +234,7 @@ export interface IBaseTableProtected {
   title?: Title;
   legends?: (DiscreteTableLegend | ContinueTableLegend)[];
 
+  emptyTip?: EmptyTip;
   //是否开启图表异步渲染
   renderChartAsync?: boolean;
   // // 开启图表异步渲染 每批次渐进渲染图表个数
@@ -397,7 +400,7 @@ export interface BaseTableConstructorOptions {
 
   legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
-
+  emptyTip?: IEmptyTip;
   /** 是否开启图表异步渲染 */
   renderChartAsync?: boolean;
   /** 开启图表异步渲染 每批次渐进渲染图表个数  默认是5个 */

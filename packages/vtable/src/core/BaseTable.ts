@@ -2056,6 +2056,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       legend?.release();
     });
     internalProps.title?.release();
+    internalProps.title = null;
+    internalProps.emptyTip?.release();
+    internalProps.emptyTip = null;
     internalProps.layoutMap.release();
     if (internalProps.releaseList) {
       internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
@@ -2229,6 +2232,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       legend?.release();
     });
     internalProps.title?.release();
+    internalProps.title = null;
+    internalProps.emptyTip?.release();
+    internalProps.emptyTip = null;
     internalProps.layoutMap.release();
     this.scenegraph.clearCells();
     this.scenegraph.updateComponent();
