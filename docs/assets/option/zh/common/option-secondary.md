@@ -30,6 +30,14 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 - 'only-body'：只有 body 部分的行参与高度适应计算，表头部分高度不变。
 - 'all'：所有列参与高度适应计算。
 
+#${prefix} columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
+
+计算内容宽度时限定区域参与计算：
+
+- 'only-header'：只计算表头内容。
+- 'only-body'：只计算 body 单元格内容。
+- 'normal'：正常计算，即计算表头和 body 单元格内容。
+
 #${prefix} autoWrapText(boolean) = false
 
 是否自动换行

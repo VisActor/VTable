@@ -30,6 +30,14 @@ The height adaptable strategy in adaptive mode, default is 'only-body'.
 - 'only-body': Only the rows in the body part participate in the height adaptation calculation, and the height of the header part remains unchanged.
 - 'all': All columns participate in the height adaptation calculation.
 
+#${prefix} columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
+
+When calculating the content width, the limited area participates in the calculation:
+
+- 'only-header': Only the header content is calculated.
+- 'only-body': Only the body cell content is calculated.
+- 'normal': Normal calculation, that is, calculating the header and body cell contents.
+
 #${prefix} autoWrapText(boolean) = false
 
 Whether to automatically wrap text
