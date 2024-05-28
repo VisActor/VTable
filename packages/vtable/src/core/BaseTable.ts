@@ -489,6 +489,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.internalProps.title) {
       this.internalProps.title.resize();
     }
+    if (this.internalProps.emptyTip) {
+      this.internalProps.emptyTip.resize();
+    }
     // this.stateManager.checkFrozen();
     this.scenegraph.resize();
   }
