@@ -99,6 +99,7 @@ export function createComplexColumn(
             // table.heightMode === 'autoHeight',
             table.isAutoRowHeight(row),
             [0, 0, 0, 0],
+            range,
             table
           );
         }
