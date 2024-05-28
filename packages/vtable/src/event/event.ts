@@ -573,11 +573,12 @@ export class EventManager {
   chechColumnMover(eventArgsSet: SceneEvent): boolean {
     // return false;
     const { eventArgs } = eventArgsSet;
-
     if (
       eventArgs &&
       this.table.isHeader(eventArgs.col, eventArgs.row) &&
-      checkCellInSelect(eventArgs.col, eventArgs.row, this.table.stateManager.select.ranges) &&
+      (checkCellInSelect(eventArgs.col, eventArgs.row, this.table.stateManager.select.ranges) ||
+        this.table.options.select?.disableHeaderSelect ||
+        this.table.options.select?.disableSelect) &&
       // this.table.stateManager.select.cellPosStart.col === eventArgs.col &&
       // this.table.stateManager.select.cellPosStart.row === eventArgs.row &&
       this.table._canDragHeaderPosition(eventArgs.col, eventArgs.row)
