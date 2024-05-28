@@ -320,7 +320,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.rowResizeMode = rowResizeMode;
-    internalProps.dragHeaderMode = dragHeaderMode;
+    internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
@@ -2184,7 +2184,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.rowResizeMode = rowResizeMode;
-    internalProps.dragHeaderMode = dragHeaderMode;
+    internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
