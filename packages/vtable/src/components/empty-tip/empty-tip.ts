@@ -4,6 +4,8 @@ import type { EmptyTipAttributes } from '@visactor/vrender-components';
 import type { IEmptyTip } from '../../ts-types/component/empty-tip';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { isEqual } from '@visactor/vutils';
+import type { ListTable } from '../../ListTable';
+import type { PivotTable } from '../../PivotTable';
 export class EmptyTip {
   table: BaseTableAPI;
   _emptyTipOption: IEmptyTip;
@@ -39,14 +41,24 @@ export class EmptyTip {
     if (!this._emptyTipComponent) {
       return;
     }
+    const leftHeaderWidth =
+      (this.table as ListTable).transpose || (this.table as PivotTable).options.indicatorsAsCol === false
+        ? this.table.getFrozenColsWidth()
+        : 0;
+    const topHeaderHeight =
+      !(this.table as ListTable).transpose || (this.table as PivotTable).options.indicatorsAsCol
+        ? this.table.getFrozenRowsHeight()
+        : 0;
     const width =
-      this.table.columnHeaderLevelCount > 0 ? this.table.getDrawRange().width : this.table.tableNoFrameWidth;
+      (this.table.columnHeaderLevelCount > 0 ? this.table.getDrawRange().width : this.table.tableNoFrameWidth) -
+      leftHeaderWidth;
     const height =
-      this.table.rowHeaderLevelCount > 0 ? this.table.getDrawRange().height : this.table.tableNoFrameHeight;
+      (this.table.rowHeaderLevelCount > 0 ? this.table.getDrawRange().height : this.table.tableNoFrameHeight) -
+      topHeaderHeight;
     this._emptyTipComponent.setAttributes({
       spaceBetweenTextAndIcon: this._emptyTipOption.spaceBetweenTextAndIcon,
-      x: this.table.tableX,
-      y: this.table.tableY,
+      x: this.table.tableX + leftHeaderWidth,
+      y: this.table.tableY + topHeaderHeight,
       width,
       height,
       text: {
@@ -80,14 +92,25 @@ export class EmptyTip {
   }
 
   private _getEmptyTipAttrs() {
+    const leftHeaderWidth =
+      (this.table as ListTable).transpose || (this.table as PivotTable).options.indicatorsAsCol === false
+        ? this.table.getFrozenColsWidth()
+        : 0;
+    const topHeaderHeight =
+      !(this.table as ListTable).transpose || (this.table as PivotTable).options.indicatorsAsCol
+        ? this.table.getFrozenRowsHeight()
+        : 0;
     const width =
-      this.table.columnHeaderLevelCount > 0 ? this.table.getDrawRange().width : this.table.tableNoFrameWidth;
+      (this.table.columnHeaderLevelCount > 0 ? this.table.getDrawRange().width : this.table.tableNoFrameWidth) -
+      leftHeaderWidth;
     const height =
-      this.table.rowHeaderLevelCount > 0 ? this.table.getDrawRange().height : this.table.tableNoFrameHeight;
+      (this.table.rowHeaderLevelCount > 0 ? this.table.getDrawRange().height : this.table.tableNoFrameHeight) -
+      topHeaderHeight;
+
     return {
       spaceBetweenTextAndIcon: this._emptyTipOption.spaceBetweenTextAndIcon,
-      x: this.table.tableX,
-      y: this.table.tableY,
+      x: this.table.tableX + leftHeaderWidth,
+      y: this.table.tableY + topHeaderHeight,
       width,
       height,
       text: {
