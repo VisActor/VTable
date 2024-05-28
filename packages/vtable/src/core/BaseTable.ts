@@ -3571,22 +3571,29 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   _canDragHeaderPosition(col: number, row: number): boolean {
-    if (this.isHeader(col, row) && this.stateManager.isSelected(col, row)) {
+    if (
+      this.isHeader(col, row) &&
+      (this.stateManager.isSelected(col, row) ||
+        this.options.select?.disableHeaderSelect ||
+        this.options.select?.disableSelect)
+    ) {
       if (this.internalProps.frozenColDragHeaderMode === 'disabled' && this.isFrozenColumn(col)) {
         return false;
       }
-      const selectRange = this.stateManager.select.ranges[0];
-      //判断是否整行或者整列选中
-      if (this.isColumnHeader(col, row)) {
-        if (selectRange.end.row !== this.rowCount - 1) {
+      if (this.stateManager.isSelected(col, row)) {
+        const selectRange = this.stateManager.select.ranges[0];
+        //判断是否整行或者整列选中
+        if (this.isColumnHeader(col, row)) {
+          if (selectRange.end.row !== this.rowCount - 1) {
+            return false;
+          }
+        } else if (this.isRowHeader(col, row)) {
+          if (selectRange.end.col !== this.colCount - 1) {
+            return false;
+          }
+        } else {
           return false;
         }
-      } else if (this.isRowHeader(col, row)) {
-        if (selectRange.end.col !== this.colCount - 1) {
-          return false;
-        }
-      } else {
-        return false;
       }
       const define = this.getHeaderDefine(col, row);
       if (!define) {
