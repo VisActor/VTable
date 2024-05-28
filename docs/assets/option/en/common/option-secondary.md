@@ -155,7 +155,7 @@ Mouse hover over the cell bottom border can drag and adjust row height. This ope
 - 'header' Only adjustable in header cells
 - 'body' Only adjustable in body cells
 
-#${prefix} dragHeaderMode(string) = 'all'
+#${prefix} dragHeaderMode(string) = 'none'
 
 The switch of dragging the header to move the position. After selecting a cell, drag the cell to trigger the move. The range of replaceable cells is limited:
 
@@ -252,6 +252,18 @@ Set the selected state of the menu. Declaration type is `DropDownMenuHighlightIn
 
 {{ use: common-title(
   prefix = '#' + ${prefix},
+) }}
+
+#${prefix} emptyTip(Object)
+
+Table empty data prompt.
+
+You can directly configure `boolean` or `IEmptyTip` type objects. The default value is false, which means no prompt information is displayed.
+
+The IEmptyTip type is defined as follows:
+
+{{ use: common-emptyTip(
+prefix = '#' + ${prefix},
 ) }}
 
 #${prefix} tooltip(Object)
@@ -449,3 +461,7 @@ set row serial number.
 #${prefix} enableLineBreak(boolean) = false
 
 Whether to enable line break, the default is false.
+
+#${prefix} clearDOM(boolean) = true
+
+Whether to clear the container DOM.

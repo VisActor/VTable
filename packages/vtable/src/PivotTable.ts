@@ -41,6 +41,7 @@ import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
 import { cloneDeepSpec } from '@vutils-extension';
 import { parseColKeyRowKeyForPivotTable, supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
+import { EmptyTip } from './components/empty-tip/empty-tip';
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotTableProtected;
@@ -191,6 +192,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.refreshHeader();
       this.stateManager.initCheckedState(records);
       // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
+
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
       // this.render();
@@ -198,6 +200,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (options.title) {
         this.internalProps.title = new Title(options.title, this);
         this.scenegraph.resize();
+      }
+      if (this.options.emptyTip) {
+        if (this.internalProps.emptyTip) {
+          this.internalProps.emptyTip.resetVisible();
+        } else {
+          this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        }
       }
       //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
       setTimeout(() => {
@@ -396,7 +405,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
-
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+      }
+    }
     // this.render();
     return new Promise(resolve => {
       setTimeout(resolve, 0);

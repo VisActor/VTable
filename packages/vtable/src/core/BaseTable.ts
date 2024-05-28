@@ -320,7 +320,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.rowResizeMode = rowResizeMode;
-    internalProps.dragHeaderMode = dragHeaderMode;
+    internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
@@ -488,6 +488,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     });
     if (this.internalProps.title) {
       this.internalProps.title.resize();
+    }
+    if (this.internalProps.emptyTip) {
+      this.internalProps.emptyTip.resize();
     }
     // this.stateManager.checkFrozen();
     this.scenegraph.resize();
@@ -2056,6 +2059,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       legend?.release();
     });
     internalProps.title?.release();
+    internalProps.title = null;
+    internalProps.emptyTip?.release();
+    internalProps.emptyTip = null;
     internalProps.layoutMap.release();
     if (internalProps.releaseList) {
       internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
@@ -2178,7 +2184,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.rowResizeMode = rowResizeMode;
-    internalProps.dragHeaderMode = dragHeaderMode;
+    internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
@@ -2229,6 +2235,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       legend?.release();
     });
     internalProps.title?.release();
+    internalProps.title = null;
+    internalProps.emptyTip?.release();
+    internalProps.emptyTip = null;
     internalProps.layoutMap.release();
     this.scenegraph.clearCells();
     this.scenegraph.updateComponent();

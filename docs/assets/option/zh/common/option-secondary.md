@@ -143,7 +143,7 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 - 'header' 只能在表头处单元格调整
 - 'body' 只能在 body 单元格调整
 
-#${prefix} rowResizeMode(string) = 'none'
+#${prefix} rowResizeMode(string) = 'all'
 
 鼠标 hover 到单元格下边界可拖拽调整行高。该操作可触发的范围：
 
@@ -152,7 +152,7 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 - 'header' 只能在表头处单元格调整
 - 'body' 只能在 body 单元格调整
 
-#${prefix} dragHeaderMode(string) = 'all'
+#${prefix} dragHeaderMode(string) = 'none'
 
 控制拖拽表头移动位置的开关。选中某个单元格后，鼠标拖拽该单元格可触发移动。 可换位单元格范围限定：
 
@@ -244,6 +244,18 @@ DropDownMenuHighlightInfo 的定义如下：
 #${prefix} title(Object)
 
 {{ use: common-title(
+  prefix = '#' + ${prefix},
+) }}
+
+#${prefix} emptyTip(Object)
+
+表格空数据提示。
+
+可以直接配置`boolean` 或者 `IEmptyTip`类型对象， 默认为 false，不显示提示信息。
+
+`IEmptyTip`类型定如如下：
+
+{{ use: common-emptyTip(
   prefix = '#' + ${prefix},
 ) }}
 
@@ -445,3 +457,7 @@ editCellTrigger?: 'doubleclick' | 'click' | 'api';
 #${prefix} enableLineBreak(boolean) = false
 
 是否开启换行符解析，开启后，单元格内容中包含换行符时，会自动解析换行。
+
+#${prefix} clearDOM(boolean) = true
+
+是否清空容器 DOM。
