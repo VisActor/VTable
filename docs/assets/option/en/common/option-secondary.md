@@ -155,7 +155,7 @@ Mouse hover over the cell bottom border can drag and adjust row height. This ope
 - 'header' Only adjustable in header cells
 - 'body' Only adjustable in body cells
 
-#${prefix} dragHeaderMode(string) = 'all'
+#${prefix} dragHeaderMode(string) = 'none'
 
 The switch of dragging the header to move the position. After selecting a cell, drag the cell to trigger the move. The range of replaceable cells is limited:
 

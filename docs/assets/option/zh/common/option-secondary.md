@@ -143,7 +143,7 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 - 'header' 只能在表头处单元格调整
 - 'body' 只能在 body 单元格调整
 
-#${prefix} rowResizeMode(string) = 'none'
+#${prefix} rowResizeMode(string) = 'all'
 
 鼠标 hover 到单元格下边界可拖拽调整行高。该操作可触发的范围：
 
@@ -152,7 +152,7 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 - 'header' 只能在表头处单元格调整
 - 'body' 只能在 body 单元格调整
 
-#${prefix} dragHeaderMode(string) = 'all'
+#${prefix} dragHeaderMode(string) = 'none'
 
 控制拖拽表头移动位置的开关。选中某个单元格后，鼠标拖拽该单元格可触发移动。 可换位单元格范围限定：
 
