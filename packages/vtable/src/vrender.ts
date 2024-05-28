@@ -33,9 +33,13 @@ export function registerForVrender() {
   // 注册内置组件
   preLoadAllModule();
 
-  if (isBrowserEnv()) {
-    loadBrowserEnv(container);
-  } else if (isNodeEnv()) {
+  // if (isBrowserEnv()) {
+  //   loadBrowserEnv(container);
+  // } else if (isNodeEnv()) {
+  //   loadNodeEnv(container);
+  // }
+  loadBrowserEnv(container); // temply
+  if (isNodeEnv()) {
     loadNodeEnv(container);
   }
   registerArc();
