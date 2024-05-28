@@ -1202,7 +1202,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   get colCount(): number {
     return (
-      ((this._table.records ? (Array.isArray(this._table.records) ? this._table.records.length > 0 : true) : false)
+      ((
+        this._table.records || this.dataset.records
+          ? Array.isArray(this._table.records)
+            ? this._table.records.length > 0
+            : true
+          : false
+      )
         ? this.columnDimensionTree.tree.size
         : 0) +
       this.rowHeaderLevelCount +
@@ -1212,7 +1218,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   get rowCount(): number {
     return (
-      ((this._table.records ? (Array.isArray(this._table.records) ? this._table.records.length > 0 : true) : false) &&
+      ((this._table.records || this.dataset.records
+        ? Array.isArray(this._table.records)
+          ? this._table.records.length > 0
+          : true
+        : false) &&
       this._indicators?.length > 0 && // 前两个判断条件来判断  有展示的body值的情况 需要展示body row
       !this._rowHeaderCellIds?.length // 需要展示body值 但 _rowHeaderCellIds的长度维度为0  无rows 行表头为空
         ? 1 //兼容bugserver: https://bugserver.cn.goofy.app/case?product=VTable&fileid=65364a57173c354c242a7c4f
