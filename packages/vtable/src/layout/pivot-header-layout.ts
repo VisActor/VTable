@@ -1202,7 +1202,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   get colCount(): number {
     return (
-      (this.columnDimensionTree.totalLevel > 0 || this._table.isPivotChart() ? this.columnDimensionTree.tree.size : 0) +
+      (this.columnDimensionTree.totalLevel > 0 ||
+      this._table.isPivotChart() ||
+      (this.dataset.records as Array<any>)?.length > 0 ||
+      (this.dataset.records && !Array.isArray(this.dataset.records))
+        ? this.columnDimensionTree.tree.size
+        : 0) +
       this.rowHeaderLevelCount +
       this.rightHeaderColCount +
       this.leftRowSeriesNumberColumnCount
