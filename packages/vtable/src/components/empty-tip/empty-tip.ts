@@ -12,9 +12,9 @@ export class EmptyTip {
   isReleased: boolean = false;
   private _emptyTipComponent: EmptyTipComponents;
   private _cacheAttrs: EmptyTipAttributes;
-  constructor(emptyTipOption: IEmptyTip, table: BaseTableAPI) {
+  constructor(emptyTipOption: IEmptyTip | true, table: BaseTableAPI) {
     this.table = table;
-    this._emptyTipOption = emptyTipOption;
+    this._emptyTipOption = emptyTipOption === true ? {} : emptyTipOption;
 
     this._emptyTipComponent = this._createOrUpdateEmptyTipComponent(this._getEmptyTipAttrs());
   }

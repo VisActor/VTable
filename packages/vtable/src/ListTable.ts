@@ -1005,13 +1005,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       _setRecords(this, records);
     }
-    if (this.options.emptyTip) {
-      if (this.internalProps.emptyTip) {
-        this.internalProps.emptyTip.resetVisible();
-      } else {
-        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-      }
-    }
+
     this.stateManager.initCheckedState(records);
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
@@ -1022,6 +1016,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this._updateSize();
       this.internalProps.title.resize();
       this.scenegraph.resize();
+    }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+      }
     }
 
     this.render();

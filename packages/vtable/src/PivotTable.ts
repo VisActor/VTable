@@ -192,13 +192,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.refreshHeader();
       this.stateManager.initCheckedState(records);
       // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
-      if (this.options.emptyTip) {
-        if (this.internalProps.emptyTip) {
-          this.internalProps.emptyTip.resetVisible();
-        } else {
-          this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-        }
-      }
+
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
       // this.render();

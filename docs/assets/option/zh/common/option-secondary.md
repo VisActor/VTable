@@ -247,6 +247,18 @@ DropDownMenuHighlightInfo 的定义如下：
   prefix = '#' + ${prefix},
 ) }}
 
+#${prefix} emptyTip(Object)
+
+表格空数据提示。
+
+可以直接配置`boolean` 或者 `IEmptyTip`类型对象， 默认为 false，不显示提示信息。
+
+`IEmptyTip`类型定如如下：
+
+{{ use: common-emptyTip(
+  prefix = '#' + ${prefix},
+) }}
+
 #${prefix} tooltip(Object)
 
 tooltip 相关配置。具体配置如下：
@@ -445,3 +457,7 @@ editCellTrigger?: 'doubleclick' | 'click' | 'api';
 #${prefix} enableLineBreak(boolean) = false
 
 是否开启换行符解析，开启后，单元格内容中包含换行符时，会自动解析换行。
+
+#${prefix} clearDOM(boolean) = true
+
+是否清空容器 DOM。

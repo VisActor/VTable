@@ -254,6 +254,18 @@ Set the selected state of the menu. Declaration type is `DropDownMenuHighlightIn
   prefix = '#' + ${prefix},
 ) }}
 
+#${prefix} emptyTip(Object)
+
+Table empty data prompt.
+
+You can directly configure `boolean` or `IEmptyTip` type objects. The default value is false, which means no prompt information is displayed.
+
+The IEmptyTip type is defined as follows:
+
+{{ use: common-emptyTip(
+prefix = '#' + ${prefix},
+) }}
+
 #${prefix} tooltip(Object)
 
 Tooltip related configuration. Specific configuration items are as follows:
@@ -449,3 +461,7 @@ set row serial number.
 #${prefix} enableLineBreak(boolean) = false
 
 Whether to enable line break, the default is false.
+
+#${prefix} clearDOM(boolean) = true
+
+Whether to clear the container DOM.
