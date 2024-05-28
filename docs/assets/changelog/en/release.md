@@ -1,7 +1,23 @@
-# v1.0.2
+# v1.0.3
 
 2024-05-24
 
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: first col tree mode compute col width error [#1778](https://github.com/VisActor/VTable/issues/1778)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: legends support ser array form [#1740](https://github.com/VisActor/VTable/issues/1740)
+
+
+
+[more detail about v1.0.3](https://github.com/VisActor/VTable/releases/tag/v1.0.3)
+
+# v1.0.2
+
+2024-05-24
 
 **🆕 New feature**
 
