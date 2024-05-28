@@ -73,6 +73,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-empty-tip'
+      },
+      {
+        path: 'list',
         name: 'list-height-adaptive'
       },
       {

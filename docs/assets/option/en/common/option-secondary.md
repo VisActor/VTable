@@ -30,6 +30,14 @@ The height adaptable strategy in adaptive mode, default is 'only-body'.
 - 'only-body': Only the rows in the body part participate in the height adaptation calculation, and the height of the header part remains unchanged.
 - 'all': All columns participate in the height adaptation calculation.
 
+#${prefix} columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
+
+When calculating the content width, the limited area participates in the calculation:
+
+- 'only-header': Only the header content is calculated.
+- 'only-body': Only the body cell content is calculated.
+- 'normal': Normal calculation, that is, calculating the header and body cell contents.
+
 #${prefix} autoWrapText(boolean) = false
 
 Whether to automatically wrap text
@@ -155,7 +163,7 @@ Mouse hover over the cell bottom border can drag and adjust row height. This ope
 - 'header' Only adjustable in header cells
 - 'body' Only adjustable in body cells
 
-#${prefix} dragHeaderMode(string) = 'all'
+#${prefix} dragHeaderMode(string) = 'none'
 
 The switch of dragging the header to move the position. After selecting a cell, drag the cell to trigger the move. The range of replaceable cells is limited:
 
@@ -252,6 +260,18 @@ Set the selected state of the menu. Declaration type is `DropDownMenuHighlightIn
 
 {{ use: common-title(
   prefix = '#' + ${prefix},
+) }}
+
+#${prefix} emptyTip(Object)
+
+Table empty data prompt.
+
+You can directly configure `boolean` or `IEmptyTip` type objects. The default value is false, which means no prompt information is displayed.
+
+The IEmptyTip type is defined as follows:
+
+{{ use: common-emptyTip(
+prefix = '#' + ${prefix},
 ) }}
 
 #${prefix} tooltip(Object)
@@ -449,3 +469,7 @@ set row serial number.
 #${prefix} enableLineBreak(boolean) = false
 
 Whether to enable line break, the default is false.
+
+#${prefix} clearDOM(boolean) = true
+
+Whether to clear the container DOM.

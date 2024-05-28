@@ -37,6 +37,7 @@ import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@vutils-extension';
 import { setCellCheckboxState } from './state/checkbox/checkbox';
+import { EmptyTip } from './components/empty-tip/empty-tip';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -98,6 +99,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.title) {
       internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
+    }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+      }
     }
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
     setTimeout(() => {
@@ -425,6 +433,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.title) {
       internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
+    }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+      }
     }
     return new Promise(resolve => {
       setTimeout(resolve, 0);
@@ -1001,6 +1016,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this._updateSize();
       this.internalProps.title.resize();
       this.scenegraph.resize();
+    }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+      }
     }
 
     this.render();

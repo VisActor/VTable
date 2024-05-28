@@ -1,7 +1,23 @@
-# v1.0.2
+# v1.0.3
 
 2024-05-24
 
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: first col tree mode compute col width error [#1778](https://github.com/VisActor/VTable/issues/1778)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: legends support ser array form [#1740](https://github.com/VisActor/VTable/issues/1740)
+
+
+
+[更多详情请查看 v1.0.3](https://github.com/VisActor/VTable/releases/tag/v1.0.3)
+
+# v1.0.2
+
+2024-05-24
 
 **🆕 新增功能**
 
