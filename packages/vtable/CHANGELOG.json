@@ -2,6 +2,32 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.1.0",
+      "tag": "@visactor/vtable_v1.1.0",
+      "date": "Tue, 28 May 2024 12:24:56 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add update delete record api should maintain beforeChangedRecordsMap #1780\n\n"
+          },
+          {
+            "comment": "fix: when set disableSelect table should support drag header #1800\n\n"
+          },
+          {
+            "comment": "fix: fix tree create problem in getDataCellPath()"
+          },
+          {
+            "comment": "fix: fix left axis index in horizontal pivot chart"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add empty tip #1782\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.3",
       "tag": "@visactor/vtable_v1.0.3",
       "date": "Fri, 24 May 2024 10:31:16 GMT",
