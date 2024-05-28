@@ -400,7 +400,7 @@ export interface BaseTableConstructorOptions {
 
   legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
-  emptyTip?: IEmptyTip;
+  emptyTip?: true | IEmptyTip;
   /** 是否开启图表异步渲染 */
   renderChartAsync?: boolean;
   /** 开启图表异步渲染 每批次渐进渲染图表个数  默认是5个 */
