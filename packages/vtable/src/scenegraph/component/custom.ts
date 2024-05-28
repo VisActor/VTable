@@ -494,6 +494,9 @@ function parseToGraphic(g: any, props: any) {
 const CUSTOM_MERGE_PRE_NAME = '_custom_';
 
 function bindAttributeUpdate(group: VGroup, col: number, row: number, index: number, preId?: string) {
+  if (!group) {
+    return;
+  }
   group.name = `${CUSTOM_MERGE_PRE_NAME}${preId ?? ''}_${index}`;
   group.onBeforeAttributeUpdate = onBeforeAttributeUpdate as any;
   // group.on('afterAttributeUpdate', (e) => {console.log('afterAttributeUpdate', e)})
