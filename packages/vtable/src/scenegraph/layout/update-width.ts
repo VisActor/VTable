@@ -395,6 +395,12 @@ function updateCellWidth(
             // scene.table.heightMode === 'autoHeight',
             scene.table.isAutoRowHeight(row),
             padding,
+            isMergeCellGroup(cellGroup)
+              ? {
+                  start: { col: cellGroup.mergeStartCol, row: cellGroup.mergeStartRow },
+                  end: { col: cellGroup.mergeEndCol, row: cellGroup.mergeEndRow }
+                }
+              : undefined,
             scene.table
           );
           customElementsGroup = customResult.elementsGroup;

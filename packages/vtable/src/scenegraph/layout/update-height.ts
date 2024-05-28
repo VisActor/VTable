@@ -236,6 +236,12 @@ export function updateCellHeight(
             // scene.table.heightMode === 'autoHeight',
             scene.table.isAutoRowHeight(row),
             padding,
+            isMergeCellGroup(cell)
+              ? {
+                  start: { col: cell.mergeStartCol, row: cell.mergeStartRow },
+                  end: { col: cell.mergeEndCol, row: cell.mergeEndRow }
+                }
+              : undefined,
             scene.table
           );
           customElementsGroup = customResult.elementsGroup;

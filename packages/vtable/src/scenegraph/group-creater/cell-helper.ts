@@ -156,6 +156,7 @@ export function createCell(
           // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           padding,
+          range,
           table
         );
         customElementsGroup = customResult.elementsGroup;
@@ -405,6 +406,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
           // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           [0, 0, 0, 0],
+          range,
           table
         );
       }
@@ -872,6 +874,7 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
           // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           [0, 0, 0, 0],
+          customMergeRange,
           table
         );
 
