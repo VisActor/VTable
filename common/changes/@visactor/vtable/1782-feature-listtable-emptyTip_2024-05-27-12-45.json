@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: add empty tip #1782\n\n",
-      "type": "none",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
