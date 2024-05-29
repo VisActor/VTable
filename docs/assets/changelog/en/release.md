@@ -1,3 +1,23 @@
+# v1.1.0
+
+2024-05-28
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add empty tip [#1782](https://github.com/VisActor/VTable/issues/1782)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: add update delete record api should maintain beforeChangedRecordsMap [#1780](https://github.com/VisActor/VTable/issues/1780)
+- **@visactor/vtable**: when set disableSelect table should support drag header [#1800](https://github.com/VisActor/VTable/issues/1800)
+- **@visactor/vtable**: fix tree create problem in getDataCellPath()
+- **@visactor/vtable**: fix left axis index in horizontal pivot chart
+
+
+
+[more detail about v1.1.0](https://github.com/VisActor/VTable/releases/tag/v1.1.0)
+
 # v1.0.3
 
 2024-05-24
