@@ -48,6 +48,7 @@ import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
 import { IndicatorDimensionKeyPlaceholder } from './tools/global';
 import { checkHasCartesianChart } from './layout/chart-helper/get-chart-spec';
 import { supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
+import { EmptyTip } from './components/empty-tip/empty-tip';
 export class PivotChart extends BaseTable implements PivotChartAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotChartProtected;
@@ -228,6 +229,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     if (options.title) {
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
+    }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+      }
     }
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
     setTimeout(() => {
@@ -451,6 +459,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     if (options.title) {
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
+    }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+      }
     }
     return new Promise(resolve => {
       setTimeout(resolve, 0);
@@ -1160,10 +1175,17 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   }
   /** 获取图例的选择状态 */
   getLegendSelected() {
-    return (this.internalProps.legends.legendComponent as any)._getSelectedLegends().map((d: any) => d.label);
+    const selected: any[] = [];
+    this.internalProps.legends?.forEach(legend => {
+      const data = (legend.legendComponent as any)._getSelectedLegends().map((d: any) => d.label);
+      selected.push(...data);
+    });
+    return selected;
   }
   setLegendSelected(selectedData: (string | number)[]) {
-    (this.internalProps.legends.legendComponent as DiscreteLegend).setSelected(selectedData);
+    this.internalProps.legends?.forEach(legend => {
+      (legend.legendComponent as DiscreteLegend).setSelected(selectedData);
+    });
     // this.updateFilterRules([{ filterKey: '20001', filteredValues: selectedData }]);
     // this.invalidate();
   }

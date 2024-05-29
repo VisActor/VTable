@@ -110,7 +110,7 @@ git rebase develop
 - Commit the updated code to your own branch:
 
 ```
-git push upstram docs/add-funnel-demo
+git push origin docs/add-funnel-demo
 ```
 
 ### Step6: Submit a Pull Request

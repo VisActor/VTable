@@ -1,3 +1,78 @@
+# v1.1.0
+
+2024-05-28
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add empty tip [#1782](https://github.com/VisActor/VTable/issues/1782)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: add update delete record api should maintain beforeChangedRecordsMap [#1780](https://github.com/VisActor/VTable/issues/1780)
+- **@visactor/vtable**: when set disableSelect table should support drag header [#1800](https://github.com/VisActor/VTable/issues/1800)
+- **@visactor/vtable**: fix tree create problem in getDataCellPath()
+- **@visactor/vtable**: fix left axis index in horizontal pivot chart
+
+
+
+[more detail about v1.1.0](https://github.com/VisActor/VTable/releases/tag/v1.1.0)
+
+# v1.0.3
+
+2024-05-24
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: first col tree mode compute col width error [#1778](https://github.com/VisActor/VTable/issues/1778)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: legends support ser array form [#1740](https://github.com/VisActor/VTable/issues/1740)
+
+
+
+[more detail about v1.0.3](https://github.com/VisActor/VTable/releases/tag/v1.0.3)
+
+# v1.0.2
+
+2024-05-24
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add setRowHeight&setColWidth api
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: use table option in hasAutoImageColumn()
+- **@visactor/vtable**: axis size align with vrender-component [#1784](https://github.com/VisActor/VTable/issues/1784)
+- **@visactor/vtable**: fix lineClamp config in computeRowsHeight() [#1772](https://github.com/VisActor/VTable/issues/1772)
+- **@visactor/vtable**: fix progress cell create problem in vtable-export [#1787](https://github.com/VisActor/VTable/issues/1787)
+- **@visactor/vtable**: ignore cell merge in selectCells()
+
+
+
+[more detail about v1.0.2](https://github.com/VisActor/VTable/releases/tag/v1.0.2)
+
+# v1.0.1
+
+2024-05-23
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: tree mode  can set icon [#1697](https://github.com/VisActor/VTable/issues/1697)
+- **@visactor/vtable**: add setRowHeight&setColWidth api
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: ignore cell merge in selectCells()
+
+
+
+[more detail about v1.0.1](https://github.com/VisActor/VTable/releases/tag/v1.0.1)
+
 # v1.0.0
 
 2024-05-21

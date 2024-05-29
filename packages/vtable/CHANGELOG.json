@@ -2,6 +2,92 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.1.0",
+      "tag": "@visactor/vtable_v1.1.0",
+      "date": "Tue, 28 May 2024 12:24:56 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add update delete record api should maintain beforeChangedRecordsMap #1780\n\n"
+          },
+          {
+            "comment": "fix: when set disableSelect table should support drag header #1800\n\n"
+          },
+          {
+            "comment": "fix: fix tree create problem in getDataCellPath()"
+          },
+          {
+            "comment": "fix: fix left axis index in horizontal pivot chart"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add empty tip #1782\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.3",
+      "tag": "@visactor/vtable_v1.0.3",
+      "date": "Fri, 24 May 2024 10:31:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: legends support ser array form #1740\n\n"
+          },
+          {
+            "comment": "fix: first col tree mode compute col width error #1778\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.2",
+      "tag": "@visactor/vtable_v1.0.2",
+      "date": "Fri, 24 May 2024 10:08:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: use table option in hasAutoImageColumn()"
+          },
+          {
+            "comment": "fix: axis size align with vrender-component #1784"
+          },
+          {
+            "comment": "fix: fix lineClamp config in computeRowsHeight() #1772"
+          },
+          {
+            "comment": "fix: fix progress cell create problem in vtable-export #1787"
+          },
+          {
+            "comment": "fix: ignore cell merge in selectCells()"
+          },
+          {
+            "comment": "feat: add setRowHeight&setColWidth api"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.1",
+      "tag": "@visactor/vtable_v1.0.1",
+      "date": "Wed, 22 May 2024 12:21:05 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: tree mode  can set icon #1697\n\n"
+          },
+          {
+            "comment": "fix: ignore cell merge in selectCells()"
+          },
+          {
+            "comment": "feat: add setRowHeight&setColWidth api"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.0",
       "tag": "@visactor/vtable_v1.0.0",
       "date": "Tue, 21 May 2024 12:41:50 GMT",

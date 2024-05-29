@@ -92,6 +92,8 @@ import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 import type { ISortedMapItem } from '../data/DataSource';
 import type { IAnimationAppear } from './animation/appear';
+import type { IEmptyTip } from './component/empty-tip';
+import type { EmptyTip } from '../components/empty-tip/empty-tip';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -231,8 +233,9 @@ export interface IBaseTableProtected {
   limitMinHeight?: number;
 
   title?: Title;
-  legends?: DiscreteTableLegend | ContinueTableLegend;
+  legends?: (DiscreteTableLegend | ContinueTableLegend)[];
 
+  emptyTip?: EmptyTip;
   //是否开启图表异步渲染
   renderChartAsync?: boolean;
   // // 开启图表异步渲染 每批次渐进渲染图表个数
@@ -396,9 +399,9 @@ export interface BaseTableConstructorOptions {
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
 
-  legends?: ITableLegendOption;
+  legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
-
+  emptyTip?: true | IEmptyTip;
   /** 是否开启图表异步渲染 */
   renderChartAsync?: boolean;
   /** 开启图表异步渲染 每批次渐进渲染图表个数  默认是5个 */
@@ -571,12 +574,14 @@ export interface BaseTableAPI {
   getDefaultRowHeight: (row: number) => number | 'auto';
   getDefaultColumnWidth: (col: number) => number | 'auto';
   _setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
+  setRowHeight: (row: number, height: number) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;
   // setColWidthDefined: (col: number, width: number) => void;
   getColWidthDefinedNumber: (col: number) => number;
   // getColWidthDefine: (col: number) => string | number;
   _setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
+  setColWidth: (col: number, width: number) => void;
   _getColContentWidth: (col: number) => number;
   _setColContentWidth: (col: number, width: number | string, clearCache?: boolean) => void;
   getMaxColWidth: (col: number) => number;

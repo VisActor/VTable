@@ -363,9 +363,15 @@ function computeAutoColWidth(
       if ((hd as HeaderData)?.define?.columnWidthComputeMode === 'only-body') {
         continue;
       }
-      if ((hd as HeaderData)?.hierarchyLevel) {
+      if (isValid((hd as HeaderData)?.hierarchyLevel)) {
         cellHierarchyIndent =
           ((hd as HeaderData).hierarchyLevel ?? 0) * ((layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0);
+        if (
+          (layoutMap as PivotHeaderLayoutMap).rowHierarchyTextStartAlignment &&
+          !table.internalProps.headerHelper.getHierarchyIcon(col, row)
+        ) {
+          cellHierarchyIndent += table.internalProps.headerHelper.getHierarchyIconWidth();
+        }
       }
     } else {
       deltaRow = prepareDeltaRow;
@@ -379,6 +385,12 @@ function computeAutoColWidth(
           Array.isArray(indexArr) && table.getHierarchyState(col, row) !== HierarchyState.none
             ? (indexArr.length - 1) * ((layoutMap as SimpleHeaderLayoutMap).hierarchyIndent ?? 0)
             : 0;
+        if (
+          (layoutMap as SimpleHeaderLayoutMap).hierarchyTextStartAlignment &&
+          !table.internalProps.bodyHelper.getHierarchyIcon(col, row)
+        ) {
+          cellHierarchyIndent += table.internalProps.headerHelper.getHierarchyIconWidth();
+        }
       }
     }
 

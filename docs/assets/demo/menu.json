@@ -1225,6 +1225,13 @@
             "link": "",
             "option": ""
           }
+        },
+        {
+          "path": "empty-tip",
+          "title": {
+            "zh": "空数据提示",
+            "en": "empty tip"
+          }
         }
       ]
     },

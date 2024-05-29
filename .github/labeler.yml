@@ -1,12 +1,12 @@
-# Add 'vchart' label to any change within the 'vchart' package
+# Add 'vtable' label to any change within the 'vtable' package
 vtable:
   - packages/vtable/**
 
-# Add 'react-vchart' label to any change within the 'react-vchart' package
+# Add 'react-vtable' label to any change within the 'react-vtable' package
 react-vtable:
   - packages/react-vtable/**
 
-# Add 'openinula-vchart' label to any change within the 'openinula-vchart' package
+# Add 'openinula-vtable' label to any change within the 'openinula-vtable' package
 openinula-vtable:
   - packages/openinula-vtable/**
 
