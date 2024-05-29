@@ -9,7 +9,7 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: 增加更新record时保留beforeChangedRecordsMap功能 [#1780](https://github.com/VisActor/VTable/issues/1780)
+- **@visactor/vtable**: deleteRecord和updateRecord接口调用时，更新beforeChangedRecordsMap，以对应正确的rawData [#1780](https://github.com/VisActor/VTable/issues/1780)
 - **@visactor/vtable**: disableSelect模式下支持拖拽表头 [#1800](https://github.com/VisActor/VTable/issues/1800)
 - **@visactor/vtable**: 修复getDataCellPath方法中计算问题
 - **@visactor/vtable**: 修复部分坐标轴尺寸计算问题
