@@ -8,7 +8,7 @@ import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentHeight } from '../utils/text-icon-layout';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
-import { dealWithCustom } from '../component/custom';
+import { CUSTOM_CONTAINER_NAME, CUSTOM_MERGE_CONTAINER_NAME, dealWithCustom } from '../component/custom';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
@@ -183,7 +183,9 @@ export function updateCellHeight(
     (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {
     let renderDefault = true;
-    const customContainer = cell.getChildByName('custom-container') as Group;
+    const customContainer =
+      (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
+      (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
     if (customContainer) {
       let customElementsGroup;
       customContainer.removeAllChild();
@@ -196,7 +198,9 @@ export function updateCellHeight(
             continue;
           }
           const mergedCell = scene.getCell(col, mergeRow);
-          const customContainer = mergedCell.getChildByName('custom-container') as Group;
+          const customContainer =
+            (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
+            (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
           customContainer.removeAllChild();
           mergedCell.removeChild(customContainer);
           getCustomCellMergeCustom(col, mergeRow, mergedCell, scene.table);
