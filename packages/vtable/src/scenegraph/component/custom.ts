@@ -23,6 +23,10 @@ import type { percentCalcObj } from '../../render/layout';
 import { getTargetCell } from '../../event/util';
 import type { Group } from '../graphic/group';
 
+export const CUSTOM_MERGE_PRE_NAME = '_custom_';
+export const CUSTOM_CONTAINER_NAME = 'custom-container';
+export const CUSTOM_MERGE_CONTAINER_NAME = CUSTOM_MERGE_PRE_NAME + '_0';
+
 export function dealWithCustom(
   customLayout: ICustomLayout,
   customRender: ICustomRender,
@@ -67,7 +71,7 @@ export function dealWithCustom(
     // expectedHeight = customRenderObj.expectedHeight;
     if (customRenderObj.rootContainer instanceof VGroup) {
       elementsGroup = customRenderObj.rootContainer;
-      elementsGroup.name = 'custom-container';
+      elementsGroup.name = CUSTOM_CONTAINER_NAME;
       // } else if (customRenderObj.rootContainer) {
       //   customElements = customRenderObj.rootContainer.getElements(undefined, false, false);
     }
@@ -151,7 +155,7 @@ function adjustElementToGroup(
     stroke: false,
     pickable: false
   });
-  customGroup.name = 'custom-container';
+  customGroup.name = CUSTOM_CONTAINER_NAME;
 
   const elementsAdjusted = adjustElementsPos(elements, width, height, value);
   elementsAdjusted.forEach(element => {
@@ -491,8 +495,6 @@ function parseToGraphic(g: any, props: any) {
   }
 }
 
-const CUSTOM_MERGE_PRE_NAME = '_custom_';
-
 function bindAttributeUpdate(group: VGroup, col: number, row: number, index: number, preId?: string) {
   if (!group) {
     return;
@@ -511,7 +513,7 @@ function onBeforeAttributeUpdate(val: Record<string, any>, attribute: any) {
   // @ts-ignore
   const graphic = this as any;
   const cellGroup = getTargetCell(graphic) as Group;
-  const table = (cellGroup.stage as any).table as BaseTableAPI;
+  const table = ((cellGroup as any).stage as any).table as BaseTableAPI;
   graphic.skipAttributeUpdate = true;
   const { mergeStartCol, mergeEndCol, mergeStartRow, mergeEndRow } = cellGroup;
   if (
@@ -534,8 +536,17 @@ function onBeforeAttributeUpdate(val: Record<string, any>, attribute: any) {
           }
           for (const key in val) {
             // 表格内merge 单元格布局时，会使用dx dy定位，避免重复更新值，属性同步跳过 dx dy
+            // console.log(
+            //   '[onBeforeAttributeUpdate]',
+            //   target._uid,
+            //   cellGroup.col,
+            //   cellGroup.row,
+            //   col,
+            //   row,
+            //   key,
+            //   val[key]
+            // );
             if (val[key] !== target.attribute[key] && key !== 'dx' && key !== 'dy') {
-              console.log('[onBeforeAttributeUpdate]', target.uid, cellGroup.col, cellGroup.row, col, row);
               target.setAttribute(key, val[key]);
             }
           }
