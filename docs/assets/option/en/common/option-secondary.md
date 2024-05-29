@@ -473,3 +473,22 @@ Whether to enable line break, the default is false.
 #${prefix} clearDOM(boolean) = true
 
 Whether to clear the container DOM.
+
+#${prefix} animationAppear(boolean|Object|)
+
+Table entry animation configuration.
+
+```
+animationAppear?: boolean | {
+  type?: 'all' | 'one-by-one';
+  direction?: 'row' | 'column';
+  duration?: number;
+  delay?: number;
+};
+```
+
+You can configure true to enable the default animation, or you can configure the animation parameters:
+- `type` The type of the entry animation, currently supports `all` and `one-by-one`, and the default is `one-by-one`
+- `direction` The direction of the entry animation, currently supports `row` and `column`, and the default is `row`
+- `duration` The duration of a single animation, in milliseconds, for `one-by-one`, it is the duration of one animation, and the default is 500
+- `delay` The delay of the animation, in milliseconds; for `one-by-one`, it is the time difference between the two animations, for `all`, it is the delay of all animations, and the default is 0

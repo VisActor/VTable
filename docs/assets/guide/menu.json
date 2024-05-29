@@ -333,6 +333,22 @@
       ]
     },
     {
+      "path": "animation",
+      "title": {
+        "zh": "动画",
+        "en": "Animation"
+      },
+      "children": [
+        {
+          "path": "appear_animation",
+          "title": {
+            "zh": "入场动画",
+            "en": "appear animationt"
+          }
+        }
+      ]
+    },
+    {
       "path": "Event",
       "title": {
         "zh": "事件",
