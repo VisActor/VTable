@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": " feat: use loadBrowserEnv in all env",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
