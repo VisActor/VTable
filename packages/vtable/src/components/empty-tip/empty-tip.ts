@@ -90,7 +90,11 @@ export class EmptyTip {
     this.isReleased = true;
   }
   resetVisible() {
-    if (!this.table.recordsCount || this.table.recordsCount === 0) {
+    if (
+      ((!this.table.recordsCount || this.table.recordsCount === 0) &&
+        this.table.internalProps.layoutMap.rowCount === this.table.internalProps.layoutMap.columnHeaderLevelCount) ||
+      this.table.internalProps.layoutMap.colCount === this.table.internalProps.layoutMap.rowHeaderLevelCount
+    ) {
       // this._emptyTipComponent.setAttributes({
       //   visible: true
       // });
