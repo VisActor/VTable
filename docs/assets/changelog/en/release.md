@@ -1,3 +1,19 @@
+# v1.1.1
+
+2024-05-30
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when set emptyTip interaction not work well with has records [#1818](https://github.com/VisActor/VTable/issues/1818)
+- **@visactor/vtable**: fix table frame corner radius display problem [#1783](https://github.com/VisActor/VTable/issues/1783)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: dimension value same with indicator key cell value error [#1817](https://github.com/VisActor/VTable/issues/1817)
+
+[more detail about v1.1.1](https://github.com/VisActor/VTable/releases/tag/v1.1.1)
+
 # v1.1.0
 
 2024-05-28
