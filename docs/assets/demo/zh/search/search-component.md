@@ -1,6 +1,6 @@
 ---
 category: examples
-group: Component
+group: search
 title: 搜索
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png
 link: '../guide/search'
