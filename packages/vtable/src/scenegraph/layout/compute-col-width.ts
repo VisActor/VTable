@@ -469,6 +469,8 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
         enableCellPadding = customLayoutObj.enableCellPadding;
       } else {
         width = 0;
+        renderDefault = customLayoutObj.renderDefault;
+        enableCellPadding = customLayoutObj.enableCellPadding;
       }
     } else if (typeof customRender === 'function') {
       // 处理customRender

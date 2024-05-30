@@ -1686,4 +1686,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return results;
   }
+  /** 是否为聚合值单元格 */
+  isAggregation(col: number, row: number): boolean {
+    return this.internalProps.layoutMap.isAggregation(col, row);
+  }
 }
