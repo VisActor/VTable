@@ -43,8 +43,6 @@ export class EmptyTip {
       emptyTip.name = 'emptyTip';
       this.table.scenegraph.stage.defaultLayer.appendChild(emptyTip);
       this._emptyTipComponent = emptyTip;
-      // 代理 emptyTip 组件上的事件
-      // emptyTip.on('*', (event: any, type: string) => this._delegateEvent(emptyTip as unknown as INode, event, type));
     }
     // update table size
     // this._adjustTableSize(this._emptyTipComponent.attribute);
@@ -92,16 +90,26 @@ export class EmptyTip {
     this.isReleased = true;
   }
   resetVisible() {
-    if (!this.table.recordsCount || this.table.recordsCount === 0) {
-      this._emptyTipComponent.setAttributes({
-        visible: true
-      });
-      this._emptyTipComponent.showAll();
+    if (
+      ((!this.table.recordsCount || this.table.recordsCount === 0) &&
+        this.table.internalProps.layoutMap.rowCount === this.table.internalProps.layoutMap.columnHeaderLevelCount) ||
+      this.table.internalProps.layoutMap.colCount === this.table.internalProps.layoutMap.rowHeaderLevelCount
+    ) {
+      // this._emptyTipComponent.setAttributes({
+      //   visible: true
+      // });
+      // this._emptyTipComponent.showAll();
+      if (!this.table.scenegraph.stage.defaultLayer.children.includes(this._emptyTipComponent)) {
+        this.table.scenegraph.stage.defaultLayer.appendChild(this._emptyTipComponent);
+      }
     } else {
-      this._emptyTipComponent.setAttributes({
-        visible: false
-      });
-      this._emptyTipComponent.hideAll();
+      // this._emptyTipComponent.setAttributes({
+      //   visible: false
+      // });
+      // this._emptyTipComponent.hideAll();
+      if (this.table.scenegraph.stage.defaultLayer.children.includes(this._emptyTipComponent)) {
+        this.table.scenegraph.stage.defaultLayer.removeChild(this._emptyTipComponent);
+      }
     }
   }
 

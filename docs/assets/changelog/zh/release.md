@@ -1,3 +1,23 @@
+# v1.1.0
+
+2024-05-28
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 增加内容空白提示 [#1782](https://github.com/VisActor/VTable/issues/1782)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: deleteRecord和updateRecord接口调用时，更新beforeChangedRecordsMap，以对应正确的rawData [#1780](https://github.com/VisActor/VTable/issues/1780)
+- **@visactor/vtable**: disableSelect模式下支持拖拽表头 [#1800](https://github.com/VisActor/VTable/issues/1800)
+- **@visactor/vtable**: 修复getDataCellPath方法中计算问题
+- **@visactor/vtable**: 修复部分坐标轴尺寸计算问题
+
+
+
+[更多详情请查看 v1.1.0](https://github.com/VisActor/VTable/releases/tag/v1.1.0)
+
 # v1.0.3
 
 2024-05-24
@@ -5,11 +25,11 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: first col tree mode compute col width error [#1778](https://github.com/VisActor/VTable/issues/1778)
+- **@visactor/vtable**: 修复树形模式下第一列列宽计算问题 [#1778](https://github.com/VisActor/VTable/issues/1778)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: legends support ser array form [#1740](https://github.com/VisActor/VTable/issues/1740)
+- **@visactor/vtable**: 图例支持数组形式 [#1740](https://github.com/VisActor/VTable/issues/1740)
 
 
 
@@ -21,15 +41,15 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add setRowHeight&setColWidth api
+- **@visactor/vtable**: 增加setRowHeight & setColWidth api
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: use table option in hasAutoImageColumn()
-- **@visactor/vtable**: axis size align with vrender-component [#1784](https://github.com/VisActor/VTable/issues/1784)
-- **@visactor/vtable**: fix lineClamp config in computeRowsHeight() [#1772](https://github.com/VisActor/VTable/issues/1772)
-- **@visactor/vtable**: fix progress cell create problem in vtable-export [#1787](https://github.com/VisActor/VTable/issues/1787)
-- **@visactor/vtable**: ignore cell merge in selectCells()
+- **@visactor/vtable**: 优化hasAutoImageColumn方法性能
+- **@visactor/vtable**: 坐标轴size对齐vrender-component [#1784](https://github.com/VisActor/VTable/issues/1784)
+- **@visactor/vtable**: 修复lineClamp配置在行高计算中的问题 [#1772](https://github.com/VisActor/VTable/issues/1772)
+- **@visactor/vtable**: 修复vtable-export中渐进加载单元格的导出问题 [#1787](https://github.com/VisActor/VTable/issues/1787)
+- **@visactor/vtable**: 在selectCells方法中忽略单元格合并
 
 
 
@@ -42,12 +62,12 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: tree mode  can set icon [#1697](https://github.com/VisActor/VTable/issues/1697)
-- **@visactor/vtable**: add setRowHeight&setColWidth api
+- **@visactor/vtable**: 支持树形模式配置icon[#1697](https://github.com/VisActor/VTable/issues/1697)
+- **@visactor/vtable**: 增加setRowHeight & setColWidth api
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: ignore cell merge in selectCells()
+- **@visactor/vtable**: 在selectCells方法中忽略单元格合并
 
 
 

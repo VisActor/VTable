@@ -1,6 +1,19 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 28 May 2024 12:24:56 GMT and should not be manually modified.
+This log was last generated on Thu, 30 May 2024 08:07:33 GMT and should not be manually modified.
+
+## 1.1.1
+Thu, 30 May 2024 08:07:33 GMT
+
+### Updates
+
+- refactor: dimension value same with indicator key cell value error #1817
+
+
+- fix: when set emptyTip interaction not work well with has records #1818
+
+
+- fix: fix table frame corner radius display problem #1783
 
 ## 1.1.0
 Tue, 28 May 2024 12:24:56 GMT
