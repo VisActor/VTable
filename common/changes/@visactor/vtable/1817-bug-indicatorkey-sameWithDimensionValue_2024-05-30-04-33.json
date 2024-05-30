@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: dimension value same with indicator key cell value error #1817\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
