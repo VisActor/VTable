@@ -134,6 +134,7 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
+    emptyTip: true,
     container: document.getElementById(CONTAINER_ID),
     columns: [
       {
@@ -163,16 +164,17 @@ export function createTable() {
     widthMode: 'standard',
     autoFillWidth: true,
     allowFrozenColCount: 2,
-    editor: 'input'
+    editor: 'input',
+    headerEditor: 'input'
   };
 
   const instance = new ListTable(option);
 
   //设置表格数据
-  instance.setRecords(personsDataSource, {
-    field: 'progress',
-    order: 'desc'
-  });
+  // instance.setRecords(personsDataSource, {
+  //   field: 'progress',
+  //   order: 'desc'
+  // });
 
   instance.on('change_cell_value', arg => {
     console.log(arg);

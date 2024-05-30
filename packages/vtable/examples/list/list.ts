@@ -167,6 +167,7 @@ export function createTable() {
   ];
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
+    emptyTip: true,
     records,
     columns,
     tooltip: {

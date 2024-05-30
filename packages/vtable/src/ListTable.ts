@@ -105,6 +105,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.internalProps.emptyTip.resetVisible();
       } else {
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        this.internalProps.emptyTip.resetVisible();
       }
     }
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
@@ -439,6 +440,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.internalProps.emptyTip.resetVisible();
       } else {
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        this.internalProps.emptyTip.resetVisible();
       }
     }
     return new Promise(resolve => {
@@ -1022,6 +1024,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.internalProps.emptyTip.resetVisible();
       } else {
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        this.internalProps.emptyTip.resetVisible();
       }
     }
 
