@@ -1,6 +1,26 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 24 May 2024 10:31:16 GMT and should not be manually modified.
+This log was last generated on Tue, 28 May 2024 12:24:56 GMT and should not be manually modified.
+
+## 1.1.0
+Tue, 28 May 2024 12:24:56 GMT
+
+### Minor changes
+
+- feat: add empty tip #1782
+
+
+
+### Updates
+
+- fix: add update delete record api should maintain beforeChangedRecordsMap #1780
+
+
+- fix: when set disableSelect table should support drag header #1800
+
+
+- fix: fix tree create problem in getDataCellPath()
+- fix: fix left axis index in horizontal pivot chart
 
 ## 1.0.3
 Fri, 24 May 2024 10:31:16 GMT

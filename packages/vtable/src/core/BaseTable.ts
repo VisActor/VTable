@@ -320,7 +320,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.rowResizeMode = rowResizeMode;
-    internalProps.dragHeaderMode = dragHeaderMode;
+    internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
@@ -488,6 +488,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     });
     if (this.internalProps.title) {
       this.internalProps.title.resize();
+    }
+    if (this.internalProps.emptyTip) {
+      this.internalProps.emptyTip.resize();
     }
     // this.stateManager.checkFrozen();
     this.scenegraph.resize();
@@ -2056,6 +2059,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       legend?.release();
     });
     internalProps.title?.release();
+    internalProps.title = null;
+    internalProps.emptyTip?.release();
+    internalProps.emptyTip = null;
     internalProps.layoutMap.release();
     if (internalProps.releaseList) {
       internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
@@ -2178,7 +2184,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.rowResizeMode = rowResizeMode;
-    internalProps.dragHeaderMode = dragHeaderMode;
+    internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
@@ -2229,6 +2235,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       legend?.release();
     });
     internalProps.title?.release();
+    internalProps.title = null;
+    internalProps.emptyTip?.release();
+    internalProps.emptyTip = null;
     internalProps.layoutMap.release();
     this.scenegraph.clearCells();
     this.scenegraph.updateComponent();
@@ -3571,22 +3580,29 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   _canDragHeaderPosition(col: number, row: number): boolean {
-    if (this.isHeader(col, row) && this.stateManager.isSelected(col, row)) {
+    if (
+      this.isHeader(col, row) &&
+      (this.stateManager.isSelected(col, row) ||
+        this.options.select?.disableHeaderSelect ||
+        this.options.select?.disableSelect)
+    ) {
       if (this.internalProps.frozenColDragHeaderMode === 'disabled' && this.isFrozenColumn(col)) {
         return false;
       }
-      const selectRange = this.stateManager.select.ranges[0];
-      //判断是否整行或者整列选中
-      if (this.isColumnHeader(col, row)) {
-        if (selectRange.end.row !== this.rowCount - 1) {
+      if (this.stateManager.isSelected(col, row)) {
+        const selectRange = this.stateManager.select.ranges[0];
+        //判断是否整行或者整列选中
+        if (this.isColumnHeader(col, row)) {
+          if (selectRange.end.row !== this.rowCount - 1) {
+            return false;
+          }
+        } else if (this.isRowHeader(col, row)) {
+          if (selectRange.end.col !== this.colCount - 1) {
+            return false;
+          }
+        } else {
           return false;
         }
-      } else if (this.isRowHeader(col, row)) {
-        if (selectRange.end.col !== this.colCount - 1) {
-          return false;
-        }
-      } else {
-        return false;
       }
       const define = this.getHeaderDefine(col, row);
       if (!define) {

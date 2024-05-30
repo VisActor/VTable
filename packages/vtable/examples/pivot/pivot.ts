@@ -2,114 +2,447 @@ import * as VTable from '../../src';
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot2_data.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
     .then(res => res.json())
     .then(data => {
-      const option = {
-        rows: ['province', 'city'],
-        columns: ['category', 'sub_category'],
-        indicators: ['sales', 'number'],
-        enableDataAnalysis: true,
-        indicatorTitle: '指标名称',
-        indicatorsAsCol: true,
-        dataConfig: {
-          sortRules: [
-            {
-              sortField: 'province',
-              sortByIndicator: 'sales',
-              sortType: VTable.TYPES.SortType.DESC,
-              query: ['家具', '沙发']
-            }
-          ],
-          totals: {
-            row: {
-              subTotalsDimensions: ['province']
-              // grandTotalLabel: '行总计'
-              // subTotalLabel: '小计'
-            }
-          }
+      const option: VTable.PivotTableConstructorOptions = {
+        container: document.getElementById(CONTAINER_ID),
+        // records: data,
+        emptyTip: true,
+        menu: {
+          contextMenuItems: ['复制单元格内容', '查询详情']
         },
-        corner: { titleOnDimension: 'row' },
-        records: [
+        rowTree: [
           {
-            sales: 1295,
-            number: 4343,
-            province: '浙江省',
-            city: '杭州市',
-            category: '家具',
-            sub_category: '沙发'
+            dimensionKey: 'City',
+            value: 'Aberdeen'
           },
           {
-            sales: 995,
-            number: 5343,
-            province: '浙江省',
-            city: '南京市',
-            category: '家具',
-            sub_category: '沙发'
+            dimensionKey: 'City',
+            value: 'Abilene'
           },
           {
-            sales: 2295,
-            number: 5343,
-            province: '浙江省',
-            city: '杭州市',
-            category: '家具',
-            sub_category: '沙发2'
+            dimensionKey: 'City',
+            value: 'Akron'
           },
           {
-            sales: 1995,
-            number: 6343,
-            province: '浙江省',
-            city: '南京市',
-            category: '家具',
-            sub_category: '沙发2'
+            dimensionKey: 'City',
+            value: 'Albuquerque'
           },
           {
-            sales: 1045,
-            number: 3343,
-            province: '浙江省',
-            city: '宁波市',
-            category: '家具',
-            sub_category: '沙发'
+            dimensionKey: 'City',
+            value: 'Alexandria'
           },
           {
-            sales: 792,
-            number: 1432,
-            province: '江苏省',
-            city: '苏州市',
-            category: '家具',
-            sub_category: '沙发'
+            dimensionKey: 'City',
+            value: 'Allen'
           },
-
           {
-            sales: 800,
-            number: 2445,
-            province: '四川省',
-            city: '乐山市',
-            category: '家具',
-            sub_category: '沙发'
+            dimensionKey: 'City',
+            value: 'Allentown'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Altoona'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Amarillo'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Anaheim'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Andover'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Ann Arbor'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Antioch'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Apopka'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Apple Valley'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Appleton'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Arlington'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Arlington Heights'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Arvada'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Asheville'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Athens'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Atlanta'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Atlantic City'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Auburn'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Aurora'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Austin'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Avondale'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bakersfield'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Baltimore'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bangor'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bartlett'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bayonne'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Baytown'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Beaumont'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bedford'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Belleville'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bellevue'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bellingham'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bethlehem'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Beverly'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Billings'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bloomington'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Boca Raton'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Boise'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bolingbrook'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bossier City'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bowling Green'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Boynton Beach'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bozeman'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Brentwood'
           }
         ],
-        widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
+        columnTree: [
+          {
+            dimensionKey: 'Category',
+            value: 'Office Supplies',
+            children: [
+              {
+                indicatorKey: 'Quantity'
+              },
+              {
+                indicatorKey: 'Sales'
+              },
+              {
+                indicatorKey: 'Profit'
+              }
+            ]
+          },
+          {
+            dimensionKey: 'Category',
+            value: 'Technology',
+            children: [
+              {
+                indicatorKey: 'Quantity'
+              },
+              {
+                indicatorKey: 'Sales'
+              },
+              {
+                indicatorKey: 'Profit'
+              }
+            ]
+          },
+          {
+            dimensionKey: 'Category',
+            value: 'Furniture',
+            children: [
+              {
+                indicatorKey: 'Quantity'
+              },
+              {
+                indicatorKey: 'Sales'
+              },
+              {
+                indicatorKey: 'Profit'
+              }
+            ]
+          }
+        ],
+        rows: [
+          {
+            dimensionKey: 'City',
+            title: 'City',
+            headerStyle: {
+              textStick: true,
+              bgColor: '#356b9c',
+              color: '#00ffff'
+            },
+            width: 'auto'
+          }
+        ],
+        columns: [
+          {
+            dimensionKey: 'Category',
+            title: 'Category',
+            headerStyle: {
+              textStick: true,
+              bgColor: arg => {
+                const cellHeaderPaths = arg.table.getCellHeaderPaths(arg.col, arg.row);
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies') {
+                  return '#bd422a';
+                }
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Technology') {
+                  return '#ff9900';
+                }
+                return 'gray';
+              }
+            },
+            width: 'auto'
+          },
+          {
+            dimensionKey: 'Category',
+            title: 'Category',
+            headerStyle: {
+              textStick: true,
+              bgColor: arg => {
+                const cellHeaderPaths = arg.table.getCellHeaderPaths(arg.col, arg.row);
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies') {
+                  return '#bd422a';
+                }
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Technology') {
+                  return '#ff9900';
+                }
+                return 'gray';
+              }
+            },
+            width: 'auto'
+          }
+        ],
+        indicators: [
+          {
+            indicatorKey: 'Quantity',
+            title: 'Quantity',
+            width: 'auto',
+            showSort: false,
+            style: {
+              color: 'black',
+              fontWeight: 'bold',
+              bgColor: arg => {
+                const cellHeaderPaths = arg.table.getCellHeaderPaths(arg.col, arg.row);
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies') {
+                  return '#bd422a';
+                }
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Technology') {
+                  return '#ff9900';
+                }
+                return 'gray';
+              }
+            },
+            headerStyle: {
+              color: 'black',
+              textStick: true,
+              fontWeight: 'bold',
+              bgColor: arg => {
+                const cellHeaderPaths = arg.table.getCellHeaderPaths(arg.col, arg.row);
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies') {
+                  return '#bd422a';
+                }
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Technology') {
+                  return '#ff9900';
+                }
+                return 'gray';
+              }
+            }
+          },
+          {
+            indicatorKey: 'Sales',
+            title: 'Sales',
+            width: 'auto',
+            showSort: false,
+            format: value => {
+              if (value) {
+                return Number(value).toFixed(2);
+              }
+              return '--';
+            },
+            style: {
+              color: 'blue',
+              fontWeight: 'bold',
+              bgColor: arg => {
+                const cellHeaderPaths = arg.table.getCellHeaderPaths(arg.col, arg.row);
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies') {
+                  return '#bd422a';
+                }
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Technology') {
+                  return '#ff9900';
+                }
+                return 'gray';
+              }
+            },
+            headerStyle: {
+              textStick: true,
+              color: 'blue',
+              bgColor: arg => {
+                const cellHeaderPaths = arg.table.getCellHeaderPaths(arg.col, arg.row);
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies') {
+                  return '#bd422a';
+                }
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Technology') {
+                  return '#ff9900';
+                }
+                return 'gray';
+              }
+            }
+          },
+          {
+            indicatorKey: 'Profit',
+            title: 'Profit',
+            width: 'auto',
+            showSort: false,
+            format: value => {
+              return Number(value).toFixed(2);
+            },
+            style: {
+              color: 'white',
+              bgColor: arg => {
+                const cellHeaderPaths = arg.table.getCellHeaderPaths(arg.col, arg.row);
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies') {
+                  return '#bd422a';
+                }
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Technology') {
+                  return '#ff9900';
+                }
+                return 'gray';
+              }
+            },
+            headerStyle: {
+              color: 'white',
+              textStick: true,
+              bgColor: arg => {
+                const cellHeaderPaths = arg.table.getCellHeaderPaths(arg.col, arg.row);
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies') {
+                  return '#bd422a';
+                }
+                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Technology') {
+                  return '#ff9900';
+                }
+                return 'gray';
+              }
+            }
+          }
+        ],
+        corner: {
+          titleOnDimension: 'row',
+          headerStyle: {
+            bgColor: '#356b9c',
+            color: '#00ffff'
+          }
+        },
+        widthMode: 'adaptive',
+        keyboardOptions: {
+          pasteValueToCell: true
+        },
+        heightMode: 'autoHeight',
+        autoWrapText: true,
+        dragHeaderMode: 'all'
       };
-
-      const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+      const tableInstance = new VTable.PivotTable(option);
       // 只为了方便控制太调试用，不要拷贝
       window.tableInstance = tableInstance;
-      tableInstance.updateSortRules([
-        {
-          sortField: 'province',
-          sortByIndicator: 'sales',
-          sortType: VTable.TYPES.SortType.ASC,
-          query: ['家具', '沙发']
-        },
-        {
-          sortField: 'sub_category',
-          sortByIndicator: 'sales',
-          sortType: VTable.TYPES.SortType.DESC,
-          query: ['浙江省', '杭州市']
-        }
-      ]);
-      // tableInstance.setRecords(data);
+      tableInstance.setRecords(data);
       tableInstance.on('mouseenter_cell', args => {
         const { col, row } = args;
         const rect = tableInstance.getVisibleCellRangeRelativeRect({ col, row });
