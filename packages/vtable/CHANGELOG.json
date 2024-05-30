@@ -2,6 +2,24 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.1.1",
+      "tag": "@visactor/vtable_v1.1.1",
+      "date": "Thu, 30 May 2024 08:07:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: dimension value same with indicator key cell value error #1817\n\n"
+          },
+          {
+            "comment": "fix: when set emptyTip interaction not work well with has records #1818\n\n"
+          },
+          {
+            "comment": "fix: fix table frame corner radius display problem #1783"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.0",
       "tag": "@visactor/vtable_v1.1.0",
       "date": "Tue, 28 May 2024 12:24:56 GMT",
