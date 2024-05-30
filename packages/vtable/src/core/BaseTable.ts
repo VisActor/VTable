@@ -869,8 +869,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param pixelRatio
    */
   setPixelRatio(pixelRatio: number) {
-    this.internalProps.pixelRatio = pixelRatio;
-    this.scenegraph.setPixelRatio(pixelRatio);
+    if (pixelRatio !== this.internalProps.pixelRatio) {
+      this.internalProps.pixelRatio = pixelRatio;
+      const canvasWidth = this.options.canvasWidth;
+      this.internalProps.calcWidthContext = {
+        _: this.internalProps,
+        get full(): number {
+          if (Env.mode === 'node') {
+            return canvasWidth / (pixelRatio ?? 1);
+          }
+          return this._.canvas.width / ((this._.context as any).pixelRatio ?? window.devicePixelRatio);
+        }
+      };
+      this.scenegraph.setPixelRatio(pixelRatio);
+    }
   }
   /**
    * 窗口尺寸发生变化 或者像数比变化
