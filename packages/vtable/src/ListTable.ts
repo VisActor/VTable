@@ -498,10 +498,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!layoutMap) {
       return;
     }
+
+    const dataCount = table.internalProps.dataSource?.length ?? 0;
     layoutMap.recordsCount =
-      (table.internalProps.dataSource?.length ?? 0) +
-      layoutMap.hasAggregationOnTopCount +
-      layoutMap.hasAggregationOnBottomCount;
+      dataCount + (dataCount > 0 ? layoutMap.hasAggregationOnTopCount + layoutMap.hasAggregationOnBottomCount : 0);
 
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;
