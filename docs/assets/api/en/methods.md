@@ -1031,12 +1031,12 @@ Custom cell style
 - customStyleId: the unique id of the custom style
 - customStyle: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
 
-## registerCustomCellStyleArrangement(Function)
+## arrangeCustomCellStyle(Function)
 
 Assign custom styles
 
 ```
-registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
 ```
 
 - cellPosition: cell position information, supports configuration of single cells and cell areas
