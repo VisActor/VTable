@@ -702,9 +702,6 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   } else {
     // text
     text = cellValue;
-    if (isString(text)) {
-      text = text.slice(0, table.options.maxCharactersNumber || 200);
-    }
     const lines = breakString(text, table);
     const cellWidth = table.getColsWidth(col, endCol);
 

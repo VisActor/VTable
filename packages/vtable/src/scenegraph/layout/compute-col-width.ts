@@ -592,9 +592,6 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
   } else {
     text = cellValue;
   }
-  if (isString(text)) {
-    text = text.slice(0, table.options.maxCharactersNumber || 200);
-  }
   const lines = breakString(text, table);
   if (lines.length >= 1) {
     // eslint-disable-next-line no-loop-func
