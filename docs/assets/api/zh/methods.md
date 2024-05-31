@@ -1008,12 +1008,12 @@ registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption 
 - customStyleId: 自定义样式的唯一 id
 - customStyle: 自定义单元格样式，与`column`中的`style`配置相同，最终呈现效果是单元格原有样式与自定义样式融合
 
-## registerCustomCellStyleArrangement(Function)
+## arrangeCustomCellStyle(Function)
 
 分配自定义样式
 
 ```
-registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
 ```
 
 - cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
