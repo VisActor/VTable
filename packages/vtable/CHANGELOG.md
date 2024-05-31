@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 30 May 2024 08:07:33 GMT and should not be manually modified.
+This log was last generated on Fri, 31 May 2024 08:56:27 GMT and should not be manually modified.
+
+## 1.1.2
+Fri, 31 May 2024 08:56:27 GMT
+
+### Updates
+
+- chore: update vrender version
+
+
 
 ## 1.1.1
 Thu, 30 May 2024 08:07:33 GMT
