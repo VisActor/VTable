@@ -122,8 +122,8 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
     ) => boolean
   ) {
     const {
-      width = groupAttribute.width,
-      height = groupAttribute.height,
+      // width = groupAttribute.width,
+      // height = groupAttribute.height,
       // 基础border
       stroke = groupAttribute.stroke,
       strokeArrayColor = (groupAttribute as any).strokeArrayColor,
@@ -137,6 +137,7 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
       // highlightStrokeArrayWidth = (groupAttribute as any).highlightStrokeArrayWidth,
       // highlightStrokeArrayPart = (groupAttribute as any).highlightStrokeArrayPart,
     } = group.attribute as any;
+    let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
 
     // lineWidth === 0 不绘制
     if (!stroke || (!Array.isArray(strokeArrayWidth) && lineWidth === 0)) {
@@ -175,6 +176,10 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
           y = Math.floor(y) + 0.5;
         }
 
+        if (table.options.customConfig?._disableColumnAndRowSizeRound) {
+          width = Math.round(width);
+          height = Math.round(height);
+        }
         const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
           group,
           Math.ceil(width + deltaWidth),
@@ -504,22 +509,28 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
       return;
     }
 
+    const table = (group.stage as any).table as BaseTableAPI;
+    if (!table) {
+      return;
+    }
+
     // convert lineDash to number[][]
     const splitLineDash = isArray(lineDash[0]) ? getQuadLineDash(lineDash) : [lineDash, lineDash, lineDash, lineDash];
 
     // const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
     let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
-    width = Math.ceil(width);
-    height = Math.ceil(height);
+    if (table.options.customConfig?._disableColumnAndRowSizeRound) {
+      width = Math.round(width);
+      height = Math.round(height);
+    } else {
+      width = Math.ceil(width);
+      height = Math.ceil(height);
+    }
 
     let widthForStroke;
     let heightForStroke;
     if (lineWidth & 1) {
-      const table = (group.stage as any).table as BaseTableAPI;
-      if (!table) {
-        return;
-      }
-      const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
+      const bottomRight = table.theme.cellBorderClipDirection === 'bottom-right';
       let deltaWidth = 0;
       let deltaHeight = 0;
       if (bottomRight) {
@@ -682,7 +693,7 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       cornerRadius = groupAttribute.cornerRadius
     } = group.attribute as any;
 
-    const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
+    let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
     // width = Math.ceil(width);
     // height = Math.ceil(height);
 
@@ -716,16 +727,22 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       //     height -= 1;
       //   }
       // }
+
+      const table = (group.stage as any).table as BaseTableAPI;
+      if (!table) {
+        return;
+      }
+      if (table.options.customConfig?._disableColumnAndRowSizeRound) {
+        width = Math.round(width);
+        height = Math.round(height);
+      }
       const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
         group,
         Math.ceil(width),
         Math.ceil(height)
       );
       context.beginPath();
-      const table = (group.stage as any).table as BaseTableAPI;
-      if (!table) {
-        return;
-      }
+
       const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
       let deltaWidth = 0;
       let deltaHeight = 0;
