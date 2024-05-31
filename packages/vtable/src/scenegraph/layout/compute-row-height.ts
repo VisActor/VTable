@@ -10,7 +10,7 @@ import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
-import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
+import { isArray, isNumber, isObject, isString, isValid } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
@@ -702,6 +702,9 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   } else {
     // text
     text = cellValue;
+    if (isString(text)) {
+      text = text.slice(0, table.options.maxCharactersNumber || 200);
+    }
     const lines = breakString(text, table);
     const cellWidth = table.getColsWidth(col, endCol);
 
