@@ -43,7 +43,10 @@ VTable-ediotrs 库中目前提供了三种编辑器类型，包括文本输入�
 以下是创建编辑器的示例代码：
 
 ```javascript
-const inputEditor = new InputEditor();
+const inputEditor = new InputEditor({
+  readonly: false,
+  editorType: 'input' // 编辑器类型，默认为 input; 可选值：input | textarea
+});
 const dateInputEditor = new DateInputEditor();
 const listEditor = new ListEditor({ values: ['女', '男'] });
 ```
