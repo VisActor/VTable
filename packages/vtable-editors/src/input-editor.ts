@@ -1,8 +1,12 @@
 import type { EditContext, IEditor, Placement, RectProps } from './types';
 
+type InputEditorType = 'input' | 'textArea';
+
 export interface InputEditorConfig {
   max?: number;
   min?: number;
+  readonly?: boolean;
+  editorType?: InputEditorType;
 }
 
 export class InputEditor implements IEditor {
@@ -17,8 +21,19 @@ export class InputEditor implements IEditor {
   }
 
   createElement() {
-    const input = document.createElement('input');
+    let _editorType = 'input';
+    if (this.editorConfig?.editorType === 'textArea') {
+      _editorType = 'textarea';
+    }
+    const input = document.createElement(_editorType) as HTMLInputElement;
     input.setAttribute('type', 'text');
+    if ('readonly' in this.editorConfig) {
+      input.setAttribute('readonly', `${this.editorConfig.readonly}`);
+    }
+    if (this.editorConfig?.editorType === 'textArea') {
+      input.style.height = '100%';
+      input.style.resize = 'none';
+    }
     input.style.position = 'absolute';
     input.style.padding = '4px';
     input.style.width = '100%';
@@ -29,7 +44,9 @@ export class InputEditor implements IEditor {
 
     // 监听键盘事件
     input.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
+      const _isSelectAll = e.key === 'a' && (e.ctrlKey || e.metaKey);
+      const _isTextAreaNewLine = e.key === 'Enter' && e.shiftKey && this.editorConfig?.editorType === 'textArea';
+      if (_isSelectAll || _isTextAreaNewLine) {
         // 阻止冒泡  防止处理成表格全选事件
         e.stopPropagation();
       }
