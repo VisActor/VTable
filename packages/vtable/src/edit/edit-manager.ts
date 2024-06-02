@@ -4,6 +4,7 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import type { ListTableAPI, ListTableConstructorOptions } from '../ts-types';
 import { getCellEventArgsSet } from '../event/util';
 import type { SimpleHeaderLayoutMap } from '../layout';
+import { isPromise } from '../tools/helper';
 
 export class EditManeger {
   table: BaseTableAPI;
@@ -132,23 +133,40 @@ export class EditManeger {
     if (!this.editingEditor.getValue) {
       console.warn('VTable Warn: `getValue` is not provided, did you forget to implement it?');
     }
-    if (!this.editingEditor.validateValue || this.editingEditor.validateValue?.()) {
-      const changedValue = this.editingEditor.getValue?.();
-      const range = this.table.getCellRange(this.editCell.col, this.editCell.row);
-      const changedValues: any[] = [];
-      for (let row = range.start.row; row <= range.end.row; row++) {
-        const rowChangedValues = [];
-        for (let col = range.start.col; col <= range.end.col; col++) {
-          rowChangedValues.push(changedValue);
-        }
-        changedValues.push(rowChangedValues);
+    if (!this.editingEditor.validateValue) {
+      const maybePromiseOrValue = this.editingEditor.validateValue?.();
+      if (isPromise(maybePromiseOrValue)) {
+        maybePromiseOrValue
+          .then(result => {
+            if (result) {
+              this.doExit();
+            }
+          })
+          .catch((err: Error) => {
+            console.error('VTable Error:', err);
+          });
+      } else if (maybePromiseOrValue) {
+        this.doExit();
       }
-      (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
-      this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
-      this.editingEditor.exit?.();
-      this.editingEditor.onEnd?.();
-      this.editingEditor = null;
     }
+  }
+
+  private doExit() {
+    const changedValue = this.editingEditor.getValue?.();
+    const range = this.table.getCellRange(this.editCell.col, this.editCell.row);
+    const changedValues: any[] = [];
+    for (let row = range.start.row; row <= range.end.row; row++) {
+      const rowChangedValues = [];
+      for (let col = range.start.col; col <= range.end.col; col++) {
+        rowChangedValues.push(changedValue);
+      }
+      changedValues.push(rowChangedValues);
+    }
+    (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
+    this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
+    this.editingEditor.exit?.();
+    this.editingEditor.onEnd?.();
+    this.editingEditor = null;
   }
 
   cancelEdit() {
