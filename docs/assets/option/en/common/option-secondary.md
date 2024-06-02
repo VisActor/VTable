@@ -108,6 +108,15 @@ Shortcut key function settings, specific configuration items:
 
 Enable shortcut key to select all.
 
+##${prefix} selectAllOnCtrlAOption(Object)
+Shortcut key to select all option
+
+###${prefix} disableHeaderSelect(boolean) = false
+Enable shortcut key to select all, disable header selection。
+
+###${prefix} disableRowSeriesNumberSelect(boolean) = false
+Enable shortcut key to select all，disable selection of row serial numbers。
+
 ##${prefix} copySelected(boolean) = false
 
 Enable shortcut key to copy, consistent with the browser's shortcut key.
