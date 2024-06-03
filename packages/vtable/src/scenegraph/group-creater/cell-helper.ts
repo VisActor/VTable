@@ -471,7 +471,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     const textMark = oldCellGroup.getChildByName('text');
     if (textMark) {
       const text = table.getCellValue(col, row);
-      const textArr = breakString(text, table);
+      const { text: textArr, moreThanMaxCharacters } = breakString(text, table);
 
       const hierarchyOffset = getHierarchyOffset(col, row, table);
       const lineClamp = cellStyle.lineClamp;
@@ -489,6 +489,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
       const attribute = {
         text: textArr.length === 1 && !autoWrapText ? textArr[0] : textArr, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+        moreThanMaxCharacters,
         maxLineWidth: cellWidth - (padding[1] + padding[3] + hierarchyOffset),
         // fill: true,
         // textAlign: 'left',

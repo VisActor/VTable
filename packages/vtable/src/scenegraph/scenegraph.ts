@@ -1738,6 +1738,9 @@ export class Scenegraph {
     const text = cellGroup.getChildByName('text', true) as unknown as Text | RichText;
 
     if (text && text.type === 'text') {
+      if ((text.attribute as any).moreThanMaxCharacters) {
+        return this.table.getCellValue(col, row);
+      }
       const textAttributeStr = isArray(text.attribute.text)
         ? text.attribute.text.join('')
         : (text.attribute.text as string);
@@ -1750,7 +1753,8 @@ export class Scenegraph {
         });
       }
       if (cacheStr !== textAttributeStr) {
-        return textAttributeStr;
+        // return textAttributeStr;
+        return this.table.getCellValue(col, row);
       }
     } else if (text && text.type === 'richtext') {
       const richtext = text;
@@ -1760,7 +1764,8 @@ export class Scenegraph {
         richtext.attribute.height < richtext._frameCache.actualHeight
       ) {
         const textConfig = richtext.attribute.textConfig.find((item: any) => item.text);
-        return (textConfig as any).text as string;
+        // return (textConfig as any).text as string;
+        return this.table.getCellValue(col, row);
       }
     }
     return null;
