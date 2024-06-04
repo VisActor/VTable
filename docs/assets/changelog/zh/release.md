@@ -1,3 +1,14 @@
+# v1.1.2
+
+2024-06-04
+
+
+**🔧 项目配置**
+
+- **@visactor/vtable**: update vrender version
+
+[更多详情请查看 v1.1.2](https://github.com/VisActor/VTable/releases/tag/v1.1.2)
+
 # v1.1.1
 
 2024-05-30
