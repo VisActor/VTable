@@ -38,7 +38,10 @@ The VTable-ediotrs library currently provides three editor types, including text
 Here is sample code to create an editor:
 
 ```javascript
-const inputEditor = new InputEditor();
+const inputEditor = new InputEditor({
+  readonly: false,
+  editorType: 'input' // editor type, default: input; optional：input | textarea
+});
 const dateInputEditor = new DateInputEditor();
 const listEditor = new ListEditor({ values: ['Female', 'Male'] });
 ```
