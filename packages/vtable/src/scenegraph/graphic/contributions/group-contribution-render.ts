@@ -13,10 +13,10 @@ import { BaseRenderContributionTime, createRectPath, injectable } from '@src/vre
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
-import { getQuadProps } from '../../utils/padding';
 import { getCellMergeInfo } from '../../utils/get-cell-merge';
 import { InteractionState } from '../../../ts-types';
 import { isArray } from '@visactor/vutils';
+import { getCellSelectColor } from '../../../state/select/is-cell-select-highlight';
 
 // const highlightDash: number[] = [];
 
@@ -791,9 +791,14 @@ export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderCon
     if ((group as Group).role === 'cell') {
       const table = (group.stage as any).table as BaseTableAPI;
       if (table && table.stateManager.interactionState !== InteractionState.scrolling) {
-        const hoverColor = getCellHoverColor(group as Group, table);
-        if (hoverColor) {
-          (group.attribute as any)._vtableHoverFill = hoverColor;
+        const selectColor = getCellSelectColor(group as Group, table);
+        if (selectColor) {
+          (group.attribute as any)._vtableHightLightFill = selectColor;
+        } else {
+          const hoverColor = getCellHoverColor(group as Group, table);
+          if (hoverColor) {
+            (group.attribute as any)._vtableHightLightFill = hoverColor;
+          }
         }
       }
     }
@@ -828,18 +833,18 @@ export class AdjustColorGroupAfterRenderContribution implements IGroupRenderCont
     ) => boolean
   ) {
     // 处理hover颜色
-    if ((group.attribute as any)._vtableHoverFill) {
+    if ((group.attribute as any)._vtableHightLightFill) {
       if (fillCb) {
         // do nothing
         // fillCb(context, group.attribute, groupAttribute);
       } else if (fVisible) {
         const oldColor = group.attribute.fill;
         // draw hover fill
-        group.attribute.fill = (group.attribute as any)._vtableHoverFill as any;
+        group.attribute.fill = (group.attribute as any)._vtableHightLightFill as any;
         context.setCommonStyle(group, group.attribute, x, y, groupAttribute);
         context.fill();
         group.attribute.fill = oldColor;
-        (group.attribute as any)._vtableHoverFill = undefined;
+        (group.attribute as any)._vtableHightLightFill = undefined;
       }
     }
   }
