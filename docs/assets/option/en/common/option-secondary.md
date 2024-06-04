@@ -105,17 +105,15 @@ Default column width for row headers, can be set column by column. If not set, d
 Shortcut key function settings, specific configuration items:
 
 ##${prefix} selectAllOnCtrlA(boolean) = false
+Enable the shortcut key Select All.
+Supports `boolean` or specific configuration type `SelectAllOnCtrlAOption`.
 
-Enable shortcut key to select all.
-
-##${prefix} selectAllOnCtrlAOption(Object)
-Shortcut key to select all option
-
-###${prefix} disableHeaderSelect(boolean) = false
-Enable shortcut key to select all, disable header selection。
-
-###${prefix} disableRowSeriesNumberSelect(boolean) = false
-Enable shortcut key to select all，disable selection of row serial numbers。
+```
+export interface SelectAllOnCtrlAOption {
+disableHeaderSelect?: boolean; //Whether to disable header selection when the shortcut key is used to select all.
+disableRowSeriesNumberSelect?: boolean; //Whether to disable the selection of row sequence numbers when the shortcut key is used to select all.
+}
+```
 
 ##${prefix} copySelected(boolean) = false
 

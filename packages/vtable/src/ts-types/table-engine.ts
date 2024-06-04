@@ -93,8 +93,7 @@ export interface TableKeyboardOptions {
   /** 默认不开启即false。开启这个配置的话，如果当前是在编辑中的单元格，方向键可以移动到下个单元格并进入编辑状态，而不是编辑文本内字符串的光标移动。上下左右方向键切换选中单元格不受该配置影响，*/
   moveEditCellOnArrowKeys?: boolean;
   /** 开启快捷键全选 默认：false */
-  selectAllOnCtrlA?: boolean;
-  selectAllOnCtrlAOption?: SelectAllOnCtrlAOption;
+  selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
   /** 快捷键复制  默认：false*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
   /** 快捷键粘贴，默认：false 。粘贴内容到指定位置（即粘贴前要有选中的单元格）；支持批量粘贴；粘贴生效仅针对配置了编辑 editor 的单元格；*/

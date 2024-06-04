@@ -1,5 +1,6 @@
 import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { Scenegraph } from '../../scenegraph/scenegraph';
+import type { SelectAllOnCtrlAOption } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
 import type { StateManager } from '../state';
 /**
@@ -61,7 +62,7 @@ export function updateSelectPosition(
     let _startCol = 0;
     let _startRow = 0;
     const { disableHeaderSelect, disableRowSeriesNumberSelect } =
-      table.options.keyboardOptions?.selectAllOnCtrlAOption || {};
+      (table.options.keyboardOptions?.selectAllOnCtrlA as SelectAllOnCtrlAOption) || {};
 
     // 表头选中
     if (disableHeaderSelect) {
