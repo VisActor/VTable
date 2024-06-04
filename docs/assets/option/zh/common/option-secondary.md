@@ -106,6 +106,14 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 
 ##${prefix} selectAllOnCtrlA(boolean) = false
 开启快捷键全选。
+支持 `boolean` 或者具体配置类型`SelectAllOnCtrlAOption`。
+
+```
+export interface SelectAllOnCtrlAOption {
+  disableHeaderSelect?: boolean; //快捷键全选时，是否禁止选中表头。
+  disableRowSeriesNumberSelect?: boolean;  //快捷键全选时，是否禁止选中行序列号。
+}
+```
 
 ##${prefix} copySelected(boolean) = false
 开启快捷键复制，与浏览器的快捷键一致。
