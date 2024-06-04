@@ -9,7 +9,10 @@ import type { PopTipAttributes } from '@visactor/vrender-components';
 export type PartialTableThemeDefine = Partial<ITableThemeDefine>;
 export type ThemeStyle = ITextStyleOption & {
   hover?: Omit<InteractionStyle, 'cellBorderColor' | 'cellBorderLineWidth'>; //鼠标hover到某个单元格
-  // click?: Omit<InteractionStyle, 'inlineRowBgColor' | 'inlineColumnBgColor'>; //鼠标点击到某个单元格
+  select?: {
+    inlineRowBgColor?: ColorPropertyDefine; //交互所在整行的背景颜色
+    inlineColumnBgColor?: ColorPropertyDefine; //交互所在整列的背景颜色
+  };
   frameStyle?: FrameStyle;
 };
 export type InteractionStyle = {
@@ -136,6 +139,8 @@ export interface ITableThemeDefine {
     cellBorderColor?: string; //边框颜色
     cellBorderLineWidth?: number; //边框线宽度
     cellBgColor?: string; //选择框背景颜色
+    inlineRowBgColor?: string; //交互所在整行的背景颜色
+    inlineColumnBgColor?: string; //交互所在整列的背景颜色
   };
 
   // style for axis

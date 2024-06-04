@@ -188,6 +188,14 @@ export function createTable() {
     },
     autoWrapText: true,
     editor: '',
+    // theme: VTable.themes.ARCO,
+    // hover: {
+    //   highlightMode: 'cross'
+    // },
+    // select: {
+    //   headerSelectMode: 'cell',
+    //   highlightMode: 'cross'
+    // },
     excelOptions: {
       fillHandle: true
     }
