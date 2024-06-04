@@ -160,8 +160,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //     this.internalProps.columns[index].editor = colDefine.editor;
     //   }
     // });
-    this.internalProps.headerHelper.setTableColumnsEditor();
     this.options.columns = columns;
+    this.internalProps.headerHelper.setTableColumnsEditor();
     this._hasAutoImageColumn = undefined;
     this.refreshHeader();
     this.scenegraph.clearCells();
@@ -498,10 +498,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!layoutMap) {
       return;
     }
+
+    const dataCount = table.internalProps.dataSource?.length ?? 0;
     layoutMap.recordsCount =
-      (table.internalProps.dataSource?.length ?? 0) +
-      layoutMap.hasAggregationOnTopCount +
-      layoutMap.hasAggregationOnBottomCount;
+      dataCount + (dataCount > 0 ? layoutMap.hasAggregationOnTopCount + layoutMap.hasAggregationOnBottomCount : 0);
 
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;
@@ -1710,5 +1710,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     return results;
+  }
+  /** 是否为聚合值单元格 */
+  isAggregation(col: number, row: number): boolean {
+    return this.internalProps.layoutMap.isAggregation(col, row);
   }
 }

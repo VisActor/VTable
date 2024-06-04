@@ -4,7 +4,7 @@ export let defaultPixelRatio = 1;
 /*
  * @Description: 设置像素比
  */
-function setPixelRatio(): void {
+export function getPixelRatio(): number {
   if (isNode) {
     defaultPixelRatio = 1;
   } else {
@@ -14,5 +14,6 @@ function setPixelRatio(): void {
       defaultPixelRatio += 1;
     }
   }
+  return defaultPixelRatio;
 }
-setPixelRatio();
+getPixelRatio();

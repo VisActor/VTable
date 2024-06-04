@@ -313,7 +313,7 @@ Get the data item of this cell
    * Get the entire data record based on the row and column number
    * @param {number} col col index.
    * @param {number} row row index.
-   * @return {object} record.
+   * @return {object} record in ListTable. return Array<any> in PivotTable.
    */
   getRecordByCell(col: number, row: number)
 ```
@@ -996,6 +996,27 @@ Get the displayed row number range of the table body part
 ## getAggregateValuesByField(Function)
 
 Get aggregation summary value
+
+```
+/**
+* Get the aggregate value based on the field
+* @param field field name
+* Returns an array, including the column number and the aggregate value array of each column
+*/
+getAggregateValuesByField(field: string | number)
+```
+
+**ListTable Proprietary**
+
+## isAggregation(Function)
+
+Determine whether it is an aggregate cell
+
+```
+isAggregation(col: number, row: number): boolean
+```
+
+**ListTable Proprietary**
 
 ## registerCustomCellStyle(Function)
 
