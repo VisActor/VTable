@@ -91,6 +91,7 @@ import type { ContinueTableLegend } from '../components/legend/continue-legend/c
 import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 import type { ISortedMapItem } from '../data/DataSource';
+import type { IAnimationAppear } from './animation/appear';
 import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
 
@@ -441,6 +442,10 @@ export interface BaseTableConstructorOptions {
     _disableColumnAndRowSizeRound?: boolean;
     imageMargin?: number;
   }; // 部分特殊配置，兼容xTable等作用
+
+  animationAppear?: boolean | IAnimationAppear;
+
+  renderOption?: any;
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */

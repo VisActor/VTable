@@ -66,6 +66,7 @@ import { createCornerCell } from './style/corner-cell';
 import { updateCol } from './layout/update-col';
 import { deduplication } from '../tools/util';
 import { getDefaultHeight, getDefaultWidth } from './group-creater/progress/default-width-height';
+import { dealWithAnimationAppear } from './animation/appear';
 // import { contextModule } from './context/module';
 
 registerForVrender();
@@ -152,7 +153,8 @@ export class Scenegraph {
       afterRender: () => {
         this.table.fireListeners('after_render', null);
         // console.trace('after_render');
-      }
+      },
+      ...table.options.renderOption
       // event: { clickInterval: 400 }
       // autoRender: true
     });
@@ -1214,6 +1216,12 @@ export class Scenegraph {
     // 处理单元格内容需要textStick的情况  入股这里不处理 只依赖异步proxy progress中处理 会有闪烁问题
 
     handleTextStick(this.table);
+
+    // deal with animation
+
+    if (this.table.options.animationAppear) {
+      dealWithAnimationAppear(this.table);
+    }
 
     this.updateNextFrame();
   }
