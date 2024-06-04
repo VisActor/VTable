@@ -34,9 +34,10 @@ let tableInstance;
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();
 const list_editor = new VTable_editors.ListEditor({ values: ['girl', 'boy'] });
+const textArea_editor = new VTable_editors.TextAreaEditor({ readonly: false });
 VTable.register.editor('input-editor', input_editor);
 VTable.register.editor('date-input-editor', date_input_editor);
-VTable.register.editor('list-editor', list_editor);
+VTable.register.editor('textArea-editor', textArea_editor);
 
 function generateRandomString(length) {
   let result = '';
@@ -135,6 +136,7 @@ const generatePersons = count => {
       hobbies: generateRandomHobbies(),
       birthday: generateRandomBirthday(),
       tel: generateRandomPhoneNumber(),
+      address: `No.${i + 100} ${generateRandomString(10)} ${generateRandomString(5)}\n${generateRandomString(5)}`,
       sex: i % 2 === 0 ? 'boy' : 'girl',
       work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
       city: 'beijing'
@@ -193,6 +195,12 @@ const columns = [
     editor: 'list-editor'
   },
   {
+    field: 'address',
+    title: 'address\n(textArea editor)',
+    width: 350,
+    editor: 'textArea-editor'
+  },
+  {
     field: 'tel',
     title: 'telephone',
     width: 150
@@ -212,6 +220,7 @@ const option = {
   container: document.getElementById(CONTAINER_ID),
   records,
   columns,
+  enableLineBreak: true,
   autoWrapText: true,
   limitMaxAutoWidth: 600,
   heightMode: 'autoHeight',
