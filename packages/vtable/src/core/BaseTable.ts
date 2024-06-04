@@ -3014,7 +3014,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.internalProps.layoutMap.isHeader(col, row)) {
       return undefined;
     }
-    return this.internalProps.dataSource?.get(this.getRecordShowIndexByCell(col, row));
+    return this.getCellOriginRecord(col, row);
   }
   /** @deprecated 请使用getRecordByCell */
   getRecordByRowCol(col: number, row: number) {

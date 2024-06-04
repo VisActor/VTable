@@ -311,7 +311,7 @@ setRecords(records: Array<any>)
    * 根据行列号获取整条数据记录
    * @param  {number} col col index.
    * @param  {number} row row index.
-   * @return {object} record.
+   * @return {object} record in ListTable. return Array<any> in PivotTable.
    */
   getRecordByCell(col: number, row: number)
 ```
@@ -994,6 +994,27 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 ## getAggregateValuesByField(Function)
 
 获取聚合汇总的值
+
+```
+  /**
+   * 根据字段获取聚合值
+   * @param field 字段名
+   * 返回数组，包括列号和每一列的聚合值数组
+   */
+  getAggregateValuesByField(field: string | number)
+```
+
+**ListTable 专有**
+
+## isAggregation(Function)
+
+判断是否是聚合指单元格
+
+```
+  isAggregation(col: number, row: number): boolean
+```
+
+**ListTable 专有**
 
 ## registerCustomCellStyle(Function)
 
