@@ -70,7 +70,7 @@ export function updateSelectPosition(
       _startRow = table.columnHeaderLevelCount;
     }
     // 行号列选中
-    if (disableRowSeriesNumberSelect && table.options.rowSeriesNumber) {
+    if ((disableRowSeriesNumberSelect || disableHeaderSelect) && table.options.rowSeriesNumber) {
       _startCol += 1;
     }
 
