@@ -4,7 +4,7 @@ import { CartesianAxis } from '../../components/axis/axis';
 import { getStyleTheme } from '../../core/tableHelper';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
-import { dealWithCustom } from '../component/custom';
+import { CUSTOM_CONTAINER_NAME, CUSTOM_MERGE_CONTAINER_NAME, dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { createProgressBarCell } from '../group-creater/cell-type/progress-bar-cell';
@@ -342,7 +342,9 @@ function updateCellWidth(
     (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {
     let renderDefault = true;
-    const customContainer = cell.getChildByName('custom-container') as Group;
+    const customContainer =
+      (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
+      (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
     if (customContainer) {
       let customElementsGroup;
       customContainer.removeAllChild();
@@ -355,7 +357,9 @@ function updateCellWidth(
             continue;
           }
           const mergedCell = scene.getCell(mergeCol, row);
-          const customContainer = mergedCell.getChildByName('custom-container') as Group;
+          const customContainer =
+            (mergedCell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
+            (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
           customContainer.removeAllChild();
           mergedCell.removeChild(customContainer);
           getCustomCellMergeCustom(mergeCol, row, mergedCell, scene.table);
@@ -395,6 +399,12 @@ function updateCellWidth(
             // scene.table.heightMode === 'autoHeight',
             scene.table.isAutoRowHeight(row),
             padding,
+            isMergeCellGroup(cellGroup)
+              ? {
+                  start: { col: cellGroup.mergeStartCol, row: cellGroup.mergeStartRow },
+                  end: { col: cellGroup.mergeEndCol, row: cellGroup.mergeEndRow }
+                }
+              : undefined,
             scene.table
           );
           customElementsGroup = customResult.elementsGroup;

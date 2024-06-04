@@ -825,6 +825,31 @@
       ]
     },
     {
+      "path": "animation",
+      "title": {
+        "zh": "动画",
+        "en": "animation"
+      },
+      "children": [
+        {
+          "path": "appear-animation",
+          "title": {
+            "zh": "入场动画",
+            "en": "Appear Animation"
+          },
+          "meta": {
+            "title": "Appear Animation",
+            "keywords": "",
+            "category": "demo",
+            "group": "Animation",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/appear-animation.gif",
+            "link": "'../../guide/custom_define/custom_icon'",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
       "path": "custom-render",
       "title": {
         "zh": "自定义能力",
