@@ -38,15 +38,13 @@ The VTable-ediotrs library currently provides four editor types, including text 
 Here is sample code to create an editor:
 
 ```javascript
-const inputEditor = new InputEditor({
-  readonly: false,
-  editorType: 'input' // editor type, default: input; optional：input | textarea
-});
+const inputEditor = new InputEditor();
+const textAreaEditor = new TextAreaEditor();
 const dateInputEditor = new DateInputEditor();
 const listEditor = new ListEditor({ values: ['Female', 'Male'] });
 ```
 
-In the above example, we created a text input box editor (`InputEditor`), a date picker editor (`DateInputEditor`) and a drop-down list editor (`ListEditor`). You can choose the appropriate editor type according to your actual needs.
+In the above example, we created a text input box editor (`InputEditor`), a multi-line text area editor (`TextAreaEditor`), a date picker editor (`DateInputEditor`) and a drop-down list editor (`ListEditor`). You can choose the appropriate editor type according to your actual needs.
 
 ## 3. Register and use the editor:
 
@@ -56,6 +54,7 @@ Before using the editor, you need to register the editor instance into VTable:
 //Register editor to VTable
 VTable.register.editor('name-editor', inputEditor);
 VTable.register.editor('name-editor2', inputEditor2);
+VTable.register.editor('textArea-editor', textAreaEditor);
 VTable.register.editor('number-editor', numberEditor);
 VTable.register.editor('date-editor', dateInputEditor);
 VTable.register.editor('list-editor', listEditor);
@@ -73,6 +72,7 @@ columns: [
   } },
   { title: 'age', field: 'age', editor: 'number-editor' },
   { title: 'gender', field: 'gender', editor: 'list-editor' },
+  { title: 'address', field: 'address', editor: 'textArea-editor' },
   { title: 'birthday', field: 'birthDate', editor: 'date-editor' },
 ]
 ```
