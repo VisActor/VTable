@@ -248,6 +248,7 @@ export function getStyleTheme(
   const textAlign = getProp('textAlign', headerStyle, col, row, table);
   const textBaseline = getProp('textBaseline', headerStyle, col, row, table);
   const color = getProp('color', headerStyle, col, row, table);
+  const strokeColor = getProp('strokeColor', headerStyle, col, row, table);
 
   const lineHeight = getProp('lineHeight', headerStyle, col, row, table);
   const underline = getProp('underline', headerStyle, col, row, table); // boolean
@@ -292,6 +293,7 @@ export function getStyleTheme(
       fontStyle,
       fontVariant,
       fill: color,
+      stroke: strokeColor ?? false,
       textAlign,
       textBaseline,
       lineHeight: lineHeight ?? fontSize,
