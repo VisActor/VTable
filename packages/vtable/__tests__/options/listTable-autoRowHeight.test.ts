@@ -143,6 +143,6 @@ describe('listTable-autoRowHeight init test', () => {
   test('listTable-autoRowHeight API getCellLocation', () => {
     expect(listTable.getCellLocation(5, 3)).toEqual('body');
     expect(listTable.getCellLocation(5, 0)).toEqual('columnHeader');
+    listTable.release();
   });
-  listTable.release();
 });
