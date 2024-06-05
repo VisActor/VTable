@@ -749,6 +749,9 @@ export class TableTheme implements ITableThemeDefine {
       get color(): ColorPropertyDefine | undefined {
         return style.color;
       },
+      get strokeColor(): ColorPropertyDefine | undefined {
+        return style.strokeColor;
+      },
       get borderColor(): ColorsPropertyDefine | undefined {
         return style.borderColor;
       },

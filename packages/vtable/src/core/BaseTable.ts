@@ -3708,6 +3708,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         ? getProp('bgColor', actStyle, col, row, this)
         : (theme.group.fill as string),
       color: isBoolean(theme.text.fill) ? getProp('color', actStyle, col, row, this) : (theme.text.fill as string),
+      strokeColor: isBoolean(theme.text.stroke)
+        ? getProp('strokeColor', actStyle, col, row, this)
+        : (theme.text.stroke as string),
       fontFamily: theme.text.fontFamily,
       fontSize: theme.text.fontSize,
       fontWeight: theme.text.fontWeight,
