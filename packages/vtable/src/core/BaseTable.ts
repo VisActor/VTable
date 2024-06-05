@@ -4383,6 +4383,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   changeRecordOrder(source: number, target: number) {
     //
   }
+  hasCustomCellStyle(customStyleId: string): boolean {
+    return this.customCellStylePlugin.hasCustomCellStyle(customStyleId);
+  }
   registerCustomCellStyle(customStyleId: string, customStyle: ColumnStyleOption | undefined | null) {
     this.customCellStylePlugin.registerCustomCellStyle(customStyleId, customStyle);
   }

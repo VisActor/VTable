@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add merge cell custom graphic attribute sync #1718",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

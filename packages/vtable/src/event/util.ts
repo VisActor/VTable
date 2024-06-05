@@ -44,7 +44,7 @@ export function getCellEventArgsSet(e: FederatedPointerEvent): SceneEvent {
   return tableEvent;
 }
 
-function getTargetCell(target: any) {
+export function getTargetCell(target: any) {
   while (target && target.parent) {
     if (target.role === 'cell') {
       return target;
