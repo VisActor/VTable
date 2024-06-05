@@ -723,7 +723,7 @@ export class TableTheme implements ITableThemeDefine {
     return hasThemeProperty(obj, names) || hasThemeProperty(superTheme, names);
   }
   extends(obj: PartialTableThemeDefine): TableTheme {
-    return new TableTheme(obj, this);
+    return new TableTheme(obj, this.internalTheme.superTheme || this.internalTheme.obj);
   }
   private getStyle(style: ThemeStyle) {
     const that = this;
