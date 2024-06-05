@@ -1,3 +1,14 @@
+# v1.1.2
+
+2024-06-04
+
+
+**🔧 Configuration releated**
+
+- **@visactor/vtable**: update vrender version
+
+[more detail about v1.1.2](https://github.com/VisActor/VTable/releases/tag/v1.1.2)
+
 # v1.1.1
 
 2024-05-30

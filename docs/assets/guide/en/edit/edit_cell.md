@@ -17,7 +17,7 @@ npm install @visactor/vtable-editors
 Introduce the required type of editor module into your code:
 
 ```javascript
-import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
+import { DateInputEditor, InputEditor, TextareaEditor, ListEditor } from '@visactor/vtable-editors';
 ```
 
 ### use CDN
@@ -33,7 +33,7 @@ import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-edito
 
 ## 2. Create editor:
 
-The VTable-ediotrs library currently provides three editor types, including text input boxes, date pickers, drop-down lists, etc. You can choose the appropriate editor according to your needs.
+The VTable-ediotrs library currently provides four editor types, including text input boxes, textarea input boxes, date pickers, drop-down lists, etc. You can choose the appropriate editor according to your needs.
 
 Here is sample code to create an editor:
 

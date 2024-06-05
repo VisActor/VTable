@@ -22,7 +22,7 @@ yarn add @visactor/vtable-editors
 在代码中引入所需类型的编辑器模块：
 
 ```javascript
-import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
+import { DateInputEditor, InputEditor, ListEditor, TextAreaEditor } from '@visactor/vtable-editors';
 ```
 
 ### 使用 CDN
@@ -38,7 +38,7 @@ import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-edito
 
 ## 2. 创建编辑器：
 
-VTable-ediotrs 库中目前提供了三种编辑器类型，包括文本输入框、日期选择器、下拉列表等。你可以根据需要选择合适的编辑器。(下拉列表编辑器效果还在优化中，目前比较丑哈)
+VTable-ediotrs 库中目前提供了四种编辑器类型，包括文本输入框、多行文本输入框、日期选择器、下拉列表等。你可以根据需要选择合适的编辑器。(下拉列表编辑器效果还在优化中，目前比较丑哈)
 
 以下是创建编辑器的示例代码：
 
