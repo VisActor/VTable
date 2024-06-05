@@ -9,12 +9,14 @@ option: ListTable-columns-text#editor
 
 # edit cell
 
-This example shows the editability of the table. Double-click a cell to enter the edit state. If you want to change the timing of entering the edit state, you can set:
+This example shows the editability of the table. Click a cell to enter the edit state. If you want to change the timing of entering the edit state, you can set:
 
 ```
 /** Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' */
 editCellTrigger?: 'doubleclick' | 'click' | 'api';
 ```
+
+The current example has four editors: input, date, list, and textArea. Different effects can be achieved by setting different editors.
 
 For detailed introduction, please click on the tutorial to learn!
 

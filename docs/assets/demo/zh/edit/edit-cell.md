@@ -9,12 +9,14 @@ option: ListTable-columns-text#editor
 
 # 编辑单元格
 
-该示例展示了表格的可编辑能力。双击单元格，即可进入编辑状态。如果想要修改进入编辑的时机，可以设置：
+该示例展示了表格的可编辑能力。单击单元格，即可进入编辑状态。如果想要修改进入编辑的时机，可以设置：
 
 ```
  /** 编辑触发时机:双击事件 | 单击事件 | api手动开启编辑。默认为双击'doubleclick' */
   editCellTrigger?: 'doubleclick' | 'click' | 'api';
 ```
+
+当前示例中有 input、date、list、textArea 四种编辑器，可以通过设置不同的编辑器来实现不同的效果。
 
 具体介绍可以点击教程进入学习！
 
@@ -197,7 +199,7 @@ const columns = [
   {
     field: 'address',
     title: 'address\n(textArea editor)',
-    width: 350,
+    width: 300,
     editor: 'textArea-editor'
   },
   {
@@ -224,7 +226,12 @@ const option = {
   autoWrapText: true,
   limitMaxAutoWidth: 600,
   heightMode: 'autoHeight',
-  editCellTrigger: 'click'
+  editCellTrigger: 'click',
+  keyboardOptions: {
+    copySelected: true,
+    pasteValueToCell: true,
+    selectAllOnCtrlA: true
+  }
 };
 tableInstance = new VTable.ListTable(option);
 tableInstance.on('change_cell_value', arg => {
