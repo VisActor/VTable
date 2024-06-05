@@ -1,8 +1,6 @@
 import type { EditContext, IEditor, RectProps } from './types';
 
 export interface TextAreaEditorConfig {
-  max?: number;
-  min?: number;
   readonly?: boolean;
 }
 
