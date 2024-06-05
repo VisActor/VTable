@@ -1,29 +1,23 @@
 ---
 category: examples
 group: Interaction
-title: Select cell
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png
+title: Select Highlight Effect
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select-highlight.png
 link: '../guide/interaction/select'
-option: ListTable#keyboardOptions
+option: ListTable#select
 ---
 
-# Select cell
+# Select the cell row to highlight the effect
 
-Click on a cell to make a single selection, and drag to make a brush selection.
+Click on the cell, the entire row or column will be highlighted when the cell is selected. If more than one cell is selected, the highlight effect will disappear.
 
-Hold down ctrl or shift to make multiple selections.
-
-Turn on the shortcut key selectAllOnCtrlA configuration to select all.
-
-Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set select.headerSelectMode to 'cell'.
+The highlighted style can be configured in the style. Global configuration: `theme.selectionStyle`, or it can be configured separately for the header and body. For specific configuration methods, please refer to the tutorial.
 
 ## Key Configurations
 
-- `keyboardOptions: {
-    selectAllOnCtrlA: true,
-    copySelected: true
+- `select: {
+  highlightMode: 'cross'
 }`
-  Enable the ctrl + A optional function and shortcut to copy the selected content.
 
 ## Code demo
 
@@ -98,11 +92,21 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         selectAllOnCtrlA: true,
         copySelected: true
       },
+      select: {
+        highlightMode: 'cross'
+      },
       theme: VTable.themes.ARCO.extends({
         selectionStyle: {
+          cellBgColor: 'rgba(130, 178, 245, 0.2)',
           cellBorderLineWidth: 2,
-          cellBorderColor: '#9900ff',
-          cellBgColor: 'rgba(153,0,255,0.2)'
+          inlineRowBgColor: 'rgb(160,207,245)',
+          inlineColumnBgColor: 'rgb(160,207,245)'
+        },
+        headerStyle: {
+          select: {
+            inlineRowBgColor: 'rgb(0,207,245)',
+            inlineColumnBgColor: 'rgb(0,207,245)'
+          }
         }
       })
     };
