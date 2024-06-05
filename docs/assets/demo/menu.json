@@ -1244,6 +1244,20 @@
             "link": "'../../guide/export/excel'",
             "option": ""
           }
+        },
+        {
+          "path": "table-export-ignore-icon",
+          "title": {
+            "zh": "表格导出",
+            "en": "table export"
+          }
+        },
+        {
+          "path": "table-export-format",
+          "title": {
+            "zh": "表格导出",
+            "en": "table export"
+          }
         }
       ]
     },
