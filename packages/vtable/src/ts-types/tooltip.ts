@@ -27,4 +27,6 @@ export type TooltipOptions = {
     padding?: number[];
     arrowMark?: boolean;
   };
+  /** 设置tooltip的消失时间 */
+  disappearDelay?: number;
 };
