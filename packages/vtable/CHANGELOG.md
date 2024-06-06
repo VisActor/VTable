@@ -1,6 +1,39 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 31 May 2024 08:56:27 GMT and should not be manually modified.
+This log was last generated on Thu, 06 Jun 2024 02:34:10 GMT and should not be manually modified.
+
+## 1.2.0
+Thu, 06 Jun 2024 02:34:10 GMT
+
+### Minor changes
+
+- feat: add merge cell custom graphic attribute sync #1718
+
+### Updates
+
+- feat: support select highlightMode effect #1167
+
+
+- feat: add isAggregation api #1803
+
+
+- fix: when has no records should not has aggregation row #1804
+
+
+- refactor: update pixelRatio when resize #1823
+
+
+- fix: updateColumns set editor error #1828
+
+
+- chore: update vrender version
+
+
+- refactor: selectAllOnCtrlA option
+
+
+- feat: optimize large column performance #1840 #1824
+- fix: fix maxCharactersNumber effect #1830
 
 ## 1.1.2
 Fri, 31 May 2024 08:56:27 GMT
