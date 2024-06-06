@@ -89,7 +89,8 @@ export function createTable() {
     tooltip: {
       // 气泡框，按钮的的解释信息
       title: '更多操作',
-      style: { bgColor: 'black', arrowMark: true, color: 'white' }
+      style: { bgColor: 'black', arrowMark: true, color: 'white' },
+      disappearDelay: 100
     }
   });
   VTable.register.icon('phone', {
@@ -318,7 +319,8 @@ export function createTable() {
               style: { arrowMark: true },
               placement: VTable.TYPES.Placement.top,
               // 气泡框，按钮的的解释信息
-              title: '对象定义形式 非注册'
+              title: '对象定义形式 非注册',
+              disappearDelay: 100
             }
           }
         ],
@@ -421,7 +423,8 @@ export function createTable() {
     allowFrozenColCount: 8,
     tooltip: {
       renderMode: 'html',
-      isShowOverflowTextTooltip: false
+      isShowOverflowTextTooltip: true,
+      overflowTextTooltipDisappearDelay: 100
     },
     heightMode: 'autoHeight',
     title: {

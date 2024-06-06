@@ -10,7 +10,7 @@ We can configure the cell icons displayed in the header and body through icon an
 
 - `icon` The icon used to configure the body cell.
 
-The specific content of the configuration is[ColumnIconOption]() Type objects can also dynamically set the icon style of the cell by passing a custom function.
+The specific configuration content is an object of type `ColumnIconOption`. You can also pass a custom function to dynamically set the icon style of the cell. For the specific definition of ColumnIconOption, please refer to: https://visactor.io/vtable/option/ListTable-columns-text#icon
 
 ### Header icon configuration example
 
@@ -192,8 +192,7 @@ VTable.register.icon('frozenCurrent', {
 });
 ```
 
-The effect after replacement is as follows:
-TODO
+The effect after replacement is as follows: https://visactor.io/vtable/demo/custom-render/custom-icon
 
 In the same way, we can replace other functional icons. Several icons related to internal functions are built into VTable, such as sorting, fixed columns, drop-down menu icons, Expand folding icons, etc.
 
@@ -229,6 +228,6 @@ The list of resettable internal icons is as follows:
   ]
 ```
 
-At the same time, the icons registered in your own business do not need to configure `funcType`.
+**At the same time, the icons registered in your own business do not need to configure `funcType`.**
 
 At this point, the tutorial on how to use icons in VTable, register and replace function icons is all introduced. I hope this tutorial can help you better understand and use VTable, and create a more beautiful and practical data lake visualization table
