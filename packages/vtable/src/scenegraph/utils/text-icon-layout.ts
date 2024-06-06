@@ -75,7 +75,7 @@ export function createCellContent(
   if (!Array.isArray(icons) || icons.length === 0) {
     if (isValid(textStr)) {
       // 没有icon，cellGroup只添加WrapText
-      const text = breakString(textStr, table);
+      const { text, moreThanMaxCharacters } = breakString(textStr, table);
 
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
@@ -91,6 +91,7 @@ export function createCellContent(
       }
       const attribute = {
         text: text.length === 1 ? text[0] : text,
+        moreThanMaxCharacters,
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
         // fill: true,
         // textAlign: 'left',
@@ -205,10 +206,11 @@ export function createCellContent(
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
         : getHierarchyOffset(cellGroup.col, cellGroup.row, table);
-      const text = breakString(textStr, table);
+      const { text, moreThanMaxCharacters } = breakString(textStr, table);
 
       const attribute = {
         text: text.length === 1 ? text[0] : text,
+        moreThanMaxCharacters,
         maxLineWidth: autoColWidth
           ? Infinity
           : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth - hierarchyOffset,

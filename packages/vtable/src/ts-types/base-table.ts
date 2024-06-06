@@ -91,6 +91,7 @@ import type { ContinueTableLegend } from '../components/legend/continue-legend/c
 import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 import type { ISortedMapItem } from '../data/DataSource';
+import type { IAnimationAppear } from './animation/appear';
 import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
 
@@ -324,6 +325,8 @@ export interface BaseTableConstructorOptions {
   };
   /** 选择单元格交互配置 */
   select?: {
+    /** 高亮范围模式：十字交叉 整列 整行 或者单个单元格。默认`cell` */
+    highlightMode: 'cross' | 'column' | 'row' | 'cell';
     /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
     headerSelectMode?: 'inline' | 'cell';
     /** 不响应鼠标select交互 */
@@ -439,6 +442,10 @@ export interface BaseTableConstructorOptions {
     _disableColumnAndRowSizeRound?: boolean;
     imageMargin?: number;
   }; // 部分特殊配置，兼容xTable等作用
+
+  animationAppear?: boolean | IAnimationAppear;
+
+  renderOption?: any;
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */
@@ -811,6 +818,7 @@ export interface BaseTableAPI {
   ) => string;
   exportCellRangeImg: (cellRange: CellRange) => string;
   exportCanvas: () => HTMLCanvasElement;
+  setPixelRatio: (pixelRatio: number) => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

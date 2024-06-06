@@ -2,6 +2,47 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.2.0",
+      "tag": "@visactor/vtable_v1.2.0",
+      "date": "Thu, 06 Jun 2024 02:34:10 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support select highlightMode effect #1167\n\n"
+          },
+          {
+            "comment": "feat: add isAggregation api #1803\n\n"
+          },
+          {
+            "comment": "fix: when has no records should not has aggregation row #1804\n\n"
+          },
+          {
+            "comment": "refactor: update pixelRatio when resize #1823\n\n"
+          },
+          {
+            "comment": "fix: updateColumns set editor error #1828\n\n"
+          },
+          {
+            "comment": "chore: update vrender version\n\n"
+          },
+          {
+            "comment": "refactor: selectAllOnCtrlA option\n\n"
+          },
+          {
+            "comment": "feat: optimize large column performance #1840 #1824"
+          },
+          {
+            "comment": "fix: fix maxCharactersNumber effect #1830"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add merge cell custom graphic attribute sync #1718"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.2",
       "tag": "@visactor/vtable_v1.1.2",
       "date": "Fri, 31 May 2024 08:56:27 GMT",

@@ -229,6 +229,7 @@ export class SceneProxy {
         //   await this.progress();
         // } else
         if (this.colUpdatePos <= this.colEnd) {
+          // console.log('progress colUpdatePos', this.colUpdatePos);
           await this.updateColCellGroupsAsync();
           await this.progress();
         } else if (this.rowUpdatePos <= this.rowEnd) {

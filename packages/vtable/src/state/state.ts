@@ -408,14 +408,16 @@ export class StateManager {
       /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
       headerSelectMode,
       disableSelect,
-      disableHeaderSelect
+      disableHeaderSelect,
+      highlightMode
     } = Object.assign(
       {},
       {
         /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
         headerSelectMode: 'inline',
         disableSelect: false,
-        disableHeaderSelect: false
+        disableHeaderSelect: false,
+        highlightMode: 'cell'
       },
       this.table.options.select
     );
@@ -428,7 +430,15 @@ export class StateManager {
     //   this.select.highlightScope = HighlightScope.column;
     // } else
     if (!disableSelect) {
-      this.select.highlightScope = HighlightScope.single;
+      if (highlightMode === 'cross') {
+        this.select.highlightScope = HighlightScope.cross;
+      } else if (highlightMode === 'row') {
+        this.select.highlightScope = HighlightScope.row;
+      } else if (highlightMode === 'column') {
+        this.select.highlightScope = HighlightScope.column;
+      } else {
+        this.select.highlightScope = HighlightScope.single;
+      }
     } else {
       this.select.highlightScope = HighlightScope.none;
     }

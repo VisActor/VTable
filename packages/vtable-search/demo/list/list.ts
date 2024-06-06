@@ -113,4 +113,8 @@ export function createTable() {
   //   );
   //   return false; //return false代表不执行内部排序逻辑
   // });
+
+  setTimeout(() => {
+    tableInstance.updateOption(option);
+  }, 2000);
 }

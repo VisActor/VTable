@@ -5,7 +5,7 @@ import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
 import { browser } from '../../tools/helper';
 import type { EventManager } from '../event';
-import { BaseTableAPI } from '../../ts-types/base-table';
+import { getPixelRatio } from '../../tools/pixel-ratio';
 
 export function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager.table;
@@ -278,7 +278,12 @@ export function bindContainerDomListener(eventManager: EventManager) {
       // 临时绕行解决因为display设置为none产生的问题
       return;
     }
-    table.resize();
+    if (!isValid(table.options.pixelRatio)) {
+      table.setPixelRatio(getPixelRatio());
+    }
+    if (!e.windowSizeNotChange) {
+      table.resize();
+    }
   });
   function pasteHtmlToTable(item: ClipboardItem) {
     const ranges = table.stateManager.select.ranges;

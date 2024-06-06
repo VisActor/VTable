@@ -10,7 +10,7 @@ import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
-import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
+import { isArray, isNumber, isObject, isString, isValid } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
@@ -554,6 +554,8 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
         enableCellPadding = customLayoutObj.enableCellPadding;
       } else {
         height = 0;
+        renderDefault = customLayoutObj.renderDefault;
+        enableCellPadding = customLayoutObj.enableCellPadding;
       }
     } else if (typeof customRender === 'function') {
       // 处理customRender
@@ -700,7 +702,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   } else {
     // text
     text = cellValue;
-    const lines = breakString(text, table);
+    const lines = breakString(text, table).text;
     const cellWidth = table.getColsWidth(col, endCol);
 
     if (iconInlineFront.length || iconInlineEnd.length) {

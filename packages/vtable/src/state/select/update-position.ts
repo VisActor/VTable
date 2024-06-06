@@ -1,5 +1,6 @@
 import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { Scenegraph } from '../../scenegraph/scenegraph';
+import type { SelectAllOnCtrlAOption } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
 import type { StateManager } from '../state';
 /**
@@ -58,8 +59,23 @@ export function updateSelectPosition(
   if (isSelectAll) {
     state.select.ranges = [];
     scenegraph.deleteAllSelectBorder();
+    let _startCol = 0;
+    let _startRow = 0;
+    const { disableHeaderSelect, disableRowSeriesNumberSelect } =
+      (table.options.keyboardOptions?.selectAllOnCtrlA as SelectAllOnCtrlAOption) || {};
+
+    // 表头选中
+    if (disableHeaderSelect) {
+      _startCol = table.rowHeaderLevelCount;
+      _startRow = table.columnHeaderLevelCount;
+    }
+    // 行号列选中
+    if ((disableRowSeriesNumberSelect || disableHeaderSelect) && table.options.rowSeriesNumber) {
+      _startCol += 1;
+    }
+
     state.select.ranges.push({
-      start: { col: 0, row: 0 },
+      start: { col: _startCol, row: _startRow },
       end: { col: table.colCount - 1, row: table.rowCount - 1 }
     });
     const currentRange = state.select.ranges[state.select.ranges.length - 1];

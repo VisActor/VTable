@@ -17,7 +17,7 @@ import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@src/vrender';
-import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
+import { isArray, isNumber, isObject, isString, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { breakString } from '../utils/break-string';
 
@@ -469,6 +469,8 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
         enableCellPadding = customLayoutObj.enableCellPadding;
       } else {
         width = 0;
+        renderDefault = customLayoutObj.renderDefault;
+        enableCellPadding = customLayoutObj.enableCellPadding;
       }
     } else if (typeof customRender === 'function') {
       // 处理customRender
@@ -590,11 +592,11 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
   } else {
     text = cellValue;
   }
-  const lines = breakString(text, table);
+  const lines = breakString(text, table).text;
   if (lines.length >= 1) {
     // eslint-disable-next-line no-loop-func
     lines.forEach((line: string) => {
-      const width = table.measureText(line.slice(0, table.options.maxCharactersNumber || 200), {
+      const width = table.measureText(line, {
         fontSize,
         fontFamily,
         fontWeight
