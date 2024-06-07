@@ -982,7 +982,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   }
   _changePivotSortStateBySortRules() {
     this.pivotSortState = [];
-    const sortRules = this.internalProps.dataConfig.sortRules;
+    const sortRules = this.internalProps.dataConfig?.sortRules ?? [];
     for (let i = 0; i < sortRules.length; i++) {
       const sortRule = sortRules[i];
       if ((sortRule as SortByIndicatorRule).sortType) {
@@ -1136,7 +1136,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       // const { col: sortCol, row: sortRow, order } = this.pivotSortState[i];
       const order = pivotState.order;
 
-      if (cellInRange(cellRange, cell.col, cell.row)) {
+      if (cell && cellInRange(cellRange, cell.col, cell.row)) {
         return order;
       }
     }
