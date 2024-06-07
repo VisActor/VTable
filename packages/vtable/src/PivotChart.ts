@@ -760,6 +760,21 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.scenegraph.createSceneGraph();
     this.render();
   }
+
+  getPivotSortState(col: number, row: number): SortOrder {
+    if (!this.pivotSortState) {
+      return undefined;
+    }
+    const cellRange = this.getCellRange(col, row);
+    for (let i = 0; i < this.pivotSortState.length; i++) {
+      const { col: sortCol, row: sortRow, order } = this.pivotSortState[i];
+
+      if (cellInRange(cellRange, sortCol, sortRow)) {
+        return order;
+      }
+    }
+    return undefined;
+  }
   /**
    * 拖拽移动表头位置
    * @param source 移动源位置
