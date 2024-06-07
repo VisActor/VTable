@@ -2361,8 +2361,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //   }
     IPivotTableCellHeaderPaths | IDimensionInfo[]
   ): CellAddress | undefined {
-    let colHeaderPaths;
-    let rowHeaderPaths;
+    let colHeaderPaths: IDimensionInfo[];
+    let rowHeaderPaths: IDimensionInfo[];
     let isCornerCell = false;
     let forceBody = false;
     if (Array.isArray(dimensionPaths)) {
