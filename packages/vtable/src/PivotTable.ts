@@ -16,9 +16,11 @@ import type {
   IPagination,
   CellLocation,
   IIndicator,
-  ColumnDefine
+  ColumnDefine,
+  SortByIndicatorRule,
+  SortTypeRule
 } from './ts-types';
-import { HierarchyState } from './ts-types';
+import { HierarchyState, SortType } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
 import { FlatDataToObjects } from './dataset/flatDataToObject';
 import { PIVOT_TABLE_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
@@ -46,7 +48,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotTableProtected;
   declare options: PivotTableConstructorOptions;
-  pivotSortState: PivotSortState[];
+  pivotSortState: {
+    dimensions: IDimensionInfo[];
+    order: SortOrder;
+  }[];
   editorManager: EditManeger;
   dataset?: Dataset; //数据处理对象  开启数据透视分析的表
   flatDataToObjects?: FlatDataToObjects; //数据处理对象 聚合后的flat数据 转成便于查询的行列二维数组
@@ -184,11 +189,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
       this.pivotSortState = [];
       if (options.pivotSortState) {
-        this.updatePivotSortState(options.pivotSortState);
+        this.pivotSortState = options.pivotSortState;
+        // this.updatePivotSortState(options.pivotSortState);
       }
       if (Env.mode !== 'node') {
         this.editorManager = new EditManeger(this);
       }
+      this._changePivotSortStateBySortRules();
       this.refreshHeader();
       this.stateManager.initCheckedState(records);
       // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
@@ -376,8 +383,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     this.pivotSortState = [];
     if (options.pivotSortState) {
-      this.updatePivotSortState(options.pivotSortState);
+      this.pivotSortState = options.pivotSortState;
+      // this.updatePivotSortState(options.pivotSortState);
     }
+    this._changePivotSortStateBySortRules();
     // 更新表头
     this.refreshHeader();
 
@@ -962,6 +971,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   updateSortRules(sortRules: SortRules) {
     this.internalProps.dataConfig.sortRules = sortRules;
     this.dataset.updateSortRules(sortRules);
+    this._changePivotSortStateBySortRules();
     this.internalProps.layoutMap.resetHeaderTree();
     // 清空单元格内容
     this.scenegraph.clearCells();
@@ -969,6 +979,42 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
     this.render();
+  }
+  _changePivotSortStateBySortRules() {
+    this.pivotSortState = [];
+    const sortRules = this.internalProps.dataConfig.sortRules;
+    for (let i = 0; i < sortRules.length; i++) {
+      const sortRule = sortRules[i];
+      if ((sortRule as SortByIndicatorRule).sortType) {
+        const dimensions: IDimensionInfo[] = [];
+        if ((sortRule as SortByIndicatorRule).sortByIndicator) {
+          for (let j = 0; j < (sortRule as SortByIndicatorRule).query.length; j++) {
+            dimensions.push({
+              dimensionKey: this.dataset.indicatorsAsCol ? this.dataset.columns[j] : this.dataset.rows[j],
+              value: (sortRule as SortByIndicatorRule).query[j]
+            });
+          }
+          dimensions.push({
+            indicatorKey: (sortRule as SortByIndicatorRule).sortByIndicator,
+            value: (sortRule as SortByIndicatorRule).sortByIndicator
+          });
+        } else {
+          dimensions.push({
+            dimensionKey: (sortRule as SortTypeRule).sortField,
+            isPivotCorner: true,
+            value: (sortRule as SortTypeRule).sortField
+          });
+        }
+        this.pivotSortState.push({
+          dimensions,
+          order: (sortRule as SortByIndicatorRule).sortType
+        });
+        // this.changePivotSortState({
+        //   dimensions,
+        //   order: (sortRule as SortByIndicatorRule).sortType
+        // });
+      }
+    }
   }
   /**
    * 更新排序状态
@@ -980,31 +1026,102 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       order: SortOrder;
     }[]
   ) {
-    // // dimensions: IDimensionInfo[], order: SortOrder
-    // // 清空当前 pivot sort 状态
-    // const cells = this.pivotSortState.map((cell) => ({ col: cell.col, row: cell.row }));
-    // this.pivotSortState.length = 0;
-    // cells.map((cell) => {
-    //   this.invalidateCellRange(this.getCellRange(cell.col, cell.row));
-    // });
-
-    // 更新 pivot sort 状态
-    for (let i = 0; i < pivotSortStateConfig.length; i++) {
-      const { dimensions, order } = pivotSortStateConfig[i];
-      const cellAddress = (this.internalProps.layoutMap as PivotHeaderLayoutMap).getPivotCellAdress(dimensions);
-
-      cellAddress &&
-        this.pivotSortState.push({
-          col: cellAddress.col,
-          row: cellAddress.row,
-          order
-        });
+    this.pivotSortState = pivotSortStateConfig;
+  }
+  // changePivotSortState(pivotSortState: { dimensions: IDimensionInfo[]; order: SortOrder }) {
+  //   let isExist = false;
+  //   for (let i = 0; i < this.pivotSortState.length; i++) {
+  //     const pivotSortStateItem = this.pivotSortState[i];
+  //     const dimensions = pivotSortStateItem.dimensions;
+  //     const isEqual = dimensions.every(
+  //       (item, index) =>
+  //         (item.dimensionKey === pivotSortState.dimensions[index].dimensionKey ||
+  //           item.indicatorKey === pivotSortState.dimensions[index].indicatorKey) &&
+  //         item.value === pivotSortState.dimensions[index].value &&
+  //         ((isValid(item.isPivotCorner ?? pivotSortState.dimensions[index].isPivotCorner) &&
+  //           item.isPivotCorner === pivotSortState.dimensions[index].isPivotCorner) ||
+  //           (!isValid(item.isPivotCorner) && !isValid(pivotSortState.dimensions[index].isPivotCorner)))
+  //     );
+  //     if (isEqual) {
+  //       isExist = true;
+  //       pivotSortStateItem.order = pivotSortState.order;
+  //       break;
+  //     }
+  //   }
+  //   if (!isExist) {
+  //     this.pivotSortState.push(pivotSortState);
+  //   }
+  // }
+  /** 如果单元格所在维度或者指标配置了sort自动 可以通过该接口进行排序 */
+  sort(col: number, row: number, order: SortOrder) {
+    let dimensions: IDimensionInfo[];
+    if ((this as PivotTable).isCornerHeader(col, row)) {
+      const dimensionInfo = (this as PivotTable).getHeaderDefine(col, row) as any;
+      dimensions = [];
+      const dimension: IDimensionInfo = {
+        isPivotCorner: true,
+        dimensionKey: dimensionInfo.value,
+        value: dimensionInfo.value
+      };
+      dimensions.push(dimension);
+    } else if ((this as PivotTable).isColumnHeader(col, row)) {
+      dimensions = (this as PivotTable).getCellHeaderPaths(col, row).colHeaderPaths as IDimensionInfo[];
+    } else {
+      dimensions = (this as PivotTable).getCellHeaderPaths(col, row).rowHeaderPaths as IDimensionInfo[];
     }
 
-    // // 更新相关单元格样式
-    // this.pivotSortState.map((cell) => {
-    //   this.invalidateCellRange(this.getCellRange(cell.col, cell.row));
-    // });
+    const sortIndicator = dimensions[dimensions.length - 1].indicatorKey;
+
+    const headerDefine = this.getHeaderDefine(col, row) as any;
+    if (headerDefine.sort) {
+      if ((this as PivotTable).dataset.sortRules) {
+        for (let i = (this as PivotTable).dataset.sortRules.length - 1; i >= 0; i--) {
+          const sortRule = (this as PivotTable).dataset.sortRules[i];
+          if (headerDefine.dimensionKey && sortRule.sortField === headerDefine.dimensionKey) {
+            (this as PivotTable).dataset.sortRules.splice(i, 1);
+          } else if (
+            sortIndicator &&
+            // headerDefine.indicatorKey === sortIndicator &&
+            // sortIndicator === (sortRule as SortByIndicatorRule).sortByIndicator &&
+            sortRule.sortField ===
+              (this.dataset.indicatorsAsCol
+                ? this.dataset.rows[this.dataset.rows.length - 1]
+                : this.dataset.columns[this.dataset.columns.length - 1])
+          ) {
+            (this as PivotTable).dataset.sortRules.splice(i, 1);
+          }
+        }
+        if (sortIndicator) {
+          (this as PivotTable).dataset.sortRules.push({
+            sortField: this.dataset.indicatorsAsCol
+              ? this.dataset.rows[this.dataset.rows.length - 1]
+              : this.dataset.columns[this.dataset.columns.length - 1],
+            sortType: SortType[order],
+            sortByIndicator: sortIndicator,
+            query: dimensions.reduce((arr, dimension) => {
+              if (dimension.dimensionKey) {
+                arr.push(dimension.value);
+              }
+              return arr;
+            }, [])
+          });
+        } else {
+          (this as PivotTable).dataset.sortRules.push({
+            sortField: headerDefine.dimensionKey,
+            sortType: SortType[order]
+          });
+        }
+      } else {
+        (this as PivotTable).dataset.sortRules = [
+          {
+            sortField: headerDefine.dimensionKey,
+            sortType: SortType[order]
+          }
+        ];
+      }
+
+      (this as PivotTable).updateSortRules((this as PivotTable).dataset.sortRules);
+    }
   }
 
   getPivotSortState(col: number, row: number): SortOrder {
@@ -1013,9 +1130,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     const cellRange = this.getCellRange(col, row);
     for (let i = 0; i < this.pivotSortState.length; i++) {
-      const { col: sortCol, row: sortRow, order } = this.pivotSortState[i];
+      const pivotState = this.pivotSortState[i];
+      const dimensions = pivotState.dimensions;
+      const cell = this.getCellAddressByHeaderPaths(dimensions);
+      // const { col: sortCol, row: sortRow, order } = this.pivotSortState[i];
+      const order = pivotState.order;
 
-      if (cellInRange(cellRange, sortCol, sortRow)) {
+      if (cellInRange(cellRange, cell.col, cell.row)) {
         return order;
       }
     }
@@ -1317,7 +1438,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
       this.pivotSortState = [];
       if (options.pivotSortState) {
-        this.updatePivotSortState(options.pivotSortState);
+        this.pivotSortState = options.pivotSortState;
+        // this.updatePivotSortState(options.pivotSortState);
       }
     }
 
