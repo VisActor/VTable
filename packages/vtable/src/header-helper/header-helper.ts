@@ -62,8 +62,19 @@ export class HeaderHelper {
       const { showSort } = this._table.internalProps.layoutMap.getHeader(col, row) as HeaderData;
       if (showSort) {
         const order = (this._table as PivotTableAPI).getPivotSortState(col, row);
-        const sortIcon = order === 'asc' ? this.downIcon : order === 'desc' ? this.upIcon : this.normalIcon;
+        const sortIcon = order === 'ASC' ? this.downIcon : order === 'DESC' ? this.upIcon : this.normalIcon;
 
+        if (sortIcon) {
+          icons.push(sortIcon);
+        }
+      } else {
+        // 处理配置了sort的情况
+        const sortIcon = this.getSortIconForPivotTable(
+          (this._table as PivotTableAPI).getPivotSortState(col, row),
+          this._table,
+          col,
+          row
+        );
         if (sortIcon) {
           icons.push(sortIcon);
         }
@@ -199,6 +210,26 @@ export class HeaderHelper {
     ) {
       return null;
     }
+    return icon;
+  }
+
+  getSortIconForPivotTable(
+    order: SortOrder | undefined,
+    _table: BaseTableAPI,
+    col: number,
+    row: number
+  ): ColumnIconOption | null {
+    const headerC = _table.getHeaderDefine(col, row) as any;
+    if (
+      !headerC ||
+      headerC.showSort === false ||
+      (!isValid(headerC.showSort) && !headerC.sort) ||
+      (headerC.columns && headerC.columns.length > 0)
+    ) {
+      return null;
+    }
+    const icon = order === 'ASC' ? this.downIcon : order === 'DESC' ? this.upIcon : this.normalIcon;
+    // const icon = order === 'ASC' ? this.downIcon : this.upIcon;
     return icon;
   }
 

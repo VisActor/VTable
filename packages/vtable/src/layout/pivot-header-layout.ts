@@ -625,11 +625,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
               : dimensionKey === 'axis'
               ? ''
               : (dimensionKey as string),
-          field: '维度名称',
+          field: dimensionKey, //'维度名称',
           style: this.cornerSetting.headerStyle,
           headerType: this.cornerSetting.headerType ?? 'text',
+          showSort: dimensionInfo?.showSortInCorner,
+          sort: dimensionInfo?.sort,
           define: <any>{
-            dimensionKey: '维度名称',
+            showSort: dimensionInfo?.showSortInCorner,
+            sort: dimensionInfo?.sort,
+            dimensionKey: dimensionKey, // '维度名称',
             id,
             value: dimensionKey,
             disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
@@ -2358,11 +2362,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     IPivotTableCellHeaderPaths | IDimensionInfo[]
   ): CellAddress | undefined {
     let colHeaderPaths;
-    let rowHeaderPaths: {
-      dimensionKey?: string;
-      indicatorKey?: string;
-      value?: string;
-    }[];
+    let rowHeaderPaths;
+    let isCornerCell = false;
     let forceBody = false;
     if (Array.isArray(dimensionPaths)) {
       if (dimensionPaths.length > this.rowDimensionKeys.length + this.colDimensionKeys.length) {
@@ -2404,6 +2405,32 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.fullRowDimensionKeys.indexOf(b.dimensionKey ?? this.indicatorDimensionKey)
       );
     });
+
+    colHeaderPaths?.forEach(a => {
+      if (a.isPivotCorner) {
+        isCornerCell = true;
+      }
+    });
+    rowHeaderPaths?.forEach(a => {
+      if (a.isPivotCorner) {
+        isCornerCell = true;
+      }
+    });
+    if (isCornerCell) {
+      if (this.cornerSetting.titleOnDimension === 'row') {
+        for (let i = 0; i < this.rowDimensionKeys.length; i++) {
+          if (rowHeaderPaths[0].dimensionKey === this.rowDimensionKeys[i]) {
+            return { col: i + this.leftRowSeriesNumberColumnCount, row: 0 };
+          }
+        }
+      } else {
+        for (let i = 0; i < this.colDimensionKeys.length; i++) {
+          if (colHeaderPaths[0].dimensionKey === this.colDimensionKeys[i]) {
+            return { col: 0, row: i };
+          }
+        }
+      }
+    }
     let needLowestLevel = false; // needLowestLevel来标记是否需要 提供到最底层的维度层级信息
     // 如果行列维度都有值 说明是匹配body单元格 那这个时候 维度层级应该是满的
     if (colHeaderPaths?.length >= 1 && rowHeaderPaths?.length >= 1) {

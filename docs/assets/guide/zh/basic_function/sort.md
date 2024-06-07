@@ -1,10 +1,10 @@
 # 表格排序功能
 
+**注：该教程进针对基本表格 ListTable，透视表的排序教程可异步至：[透视数据分析](https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_dataAnalysis)**
+
 在数据分析过程中，排序（ 排序 ）功能对数据的组织和协助分析非常重要。通过排序，用户可以快速将关心的数据排列在前面，提高数据查找和分析的效率，同时也能快速发现数据中的异常点和规律。
 
 VTable 提供了丰富的排序功能，用户可以轻松地按需开启、自定义排序规则、设定初始排序状态等。
-
-**注**：该教程进针对基本表格 ListTable，透视表的排序教程可异步至：https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_dataAnalysis
 
 ## 开启排序
 
@@ -482,7 +482,7 @@ const listTable = new ListTable({
 
 ## 预排序
 
-在大数据量的情况下，首次排序可能会耗时较长，可以通过预排序来提升排序功能的性能。通过setSortedIndexMap方法，设置预排序的数据字段和排序顺序。
+在大数据量的情况下，首次排序可能会耗时较长，可以通过预排序来提升排序功能的性能。通过 setSortedIndexMap 方法，设置预排序的数据字段和排序顺序。
 
 ```js
 interface ISortedMapItem {

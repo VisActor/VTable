@@ -6,7 +6,6 @@ import type {
   CellAddress,
   CellPosition,
   CellRange,
-  CheckboxColumnDefine,
   DropDownMenuHighlightInfo,
   IDimensionInfo,
   ListTableAPI,
@@ -15,7 +14,7 @@ import type {
   SortOrder,
   SortState
 } from '../ts-types';
-import { HighlightScope, InteractionState } from '../ts-types';
+import { HighlightScope, InteractionState, SortType } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import { checkMultiCellInSelect } from './common/check-in-select';
 import { updateHoverPosition } from './hover/update-position';
@@ -49,6 +48,7 @@ import {
 } from './checkbox/checkbox';
 import { updateResizeRow } from './resize/update-resize-row';
 import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
+import type { PivotTable } from '../PivotTable';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -1174,7 +1174,13 @@ export class StateManager {
   triggerSort(col: number, row: number, iconMark: Icon, event: Event) {
     if (this.table.isPivotTable()) {
       // 透视表不执行sort操作
-      const order = (this.table as PivotTableAPI).getPivotSortState(col, row);
+      const sortState = (this.table as PivotTableAPI).getPivotSortState(col, row);
+
+      const order = sortState ? (sortState.toUpperCase() as SortOrder) : 'DESC';
+      // const new_order = order === 'ASC' ? 'DESC' : order === 'DESC' ? 'NORMAL' : 'ASC';
+      const new_order = order === 'ASC' ? 'DESC' : 'ASC';
+      (this.table as PivotTable).sort(col, row, new_order);
+
       // // 触发透视表排序按钮点击
       this.table.fireListeners(PIVOT_TABLE_EVENT_TYPE.PIVOT_SORT_CLICK, {
         col: col,

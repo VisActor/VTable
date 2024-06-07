@@ -1,10 +1,10 @@
 # Table sorting function
 
+**Note: This tutorial is only for the basic table ListTable. The pivot table sorting tutorial can be asynchronously accessed: [Pivot data analysis](https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_dataAnalysis)**
+
 In the process of data analytics, the sorting (sorting) function is very important for the organization and analysis of data. By sorting, users can quickly arrange the data they care about in front, improve the efficiency of data search and analysis, and quickly find outliers and patterns in the data.
 
 VTable provides rich sorting functions, users can easily open on demand, customize sorting rules, set initial sorting status, etc.
-
-**Note**: This tutorial is only for the basic table ListTable. The pivot table sorting tutorial can be asynchronously accessed: https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_dataAnalysis
 
 ## Enable sorting
 
