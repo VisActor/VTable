@@ -3153,8 +3153,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return totalCount;
   }
   resetHeaderTree() {
+    this.colIndex = 0;
     //和初始化代码逻辑一致 但未考虑透视图类型
     this._rowHeaderCellFullPathIds_FULL = [];
+    this._columnHeaderCellFullPathIds = [];
     this._columnHeaderCellIds = [];
     const dataset = this.dataset;
     // if (dataset) {
@@ -3182,6 +3184,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       o[e.id as number] = e;
       return o;
     }, {} as { [key: LayoutObjectId]: HeaderData });
+
+    this._CellHeaderPathMap = new Map();
+    this._largeCellRangeCache.length = 0;
     this.generateCellIdsConsiderHideHeader();
     this.setPagination(this.pagination);
   }
