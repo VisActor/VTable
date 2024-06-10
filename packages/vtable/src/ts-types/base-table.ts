@@ -412,7 +412,7 @@ export interface BaseTableConstructorOptions {
   customMergeCell?: CustomMergeCell;
 
   // #region for nodejs
-  mode?: 'node' | 'broswer';
+  mode?: 'node' | 'browser';
   modeParams?: any;
   canvasWidth?: number;
   canvasHeight?: number;
