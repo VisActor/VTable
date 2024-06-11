@@ -118,15 +118,20 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         if (hasRecords && props.records) {
           return {
             ...props.option,
+            clearDOM: false,
             records: props.records
           };
         }
-        return props.option;
+        return {
+          ...props.option,
+          clearDOM: false
+        };
       }
       return {
         records: props.records,
         ...prevOption.current,
-        ...optionFromChildren.current
+        ...optionFromChildren.current,
+        clearDOM: false
         // ...tableContext.current?.optionFromChildren
       } as IOption;
     },

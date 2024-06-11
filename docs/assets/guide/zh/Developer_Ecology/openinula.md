@@ -29,7 +29,7 @@ yarn add @visactor/openinula-vtable
 推荐使用 npm 包引入
 
 ```js
-import { ListTable } from "@visactor/openinula-vtable";
+import { ListTable } from '@visactor/openinula-vtable';
 ```
 
 ## 绘制一个简单的列表
@@ -41,53 +41,50 @@ import { ListTable } from "@visactor/openinula-vtable";
 ```typescript
 import Openinula from 'openinula';
 import OpeninulaDOM from 'openinula-dom/client';
-import { ListTable } from "@visactor/openinula-vtable";
+import { ListTable } from '@visactor/openinula-vtable';
 
 const option = {
   columns: [
     {
-      field: "0",
-      caption: "name",
+      field: '0',
+      title: 'name'
     },
     {
-      field: "1",
-      caption: "age",
+      field: '1',
+      title: 'age'
     },
     {
-      field: "2",
-      caption: "gender",
+      field: '2',
+      title: 'gender'
     },
     {
-      field: "3",
-      caption: "hobby",
-    },
+      field: '3',
+      title: 'hobby'
+    }
   ],
-  records: new Array(1000).fill(["John", 18, "male", "🏀"]),
+  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
 };
 
-Inula.render(
-  <ListTable option={option} height={'500px'}/>,
-  document.getElementById('root')
-);
+Inula.render(<ListTable option={option} height={'500px'} />, document.getElementById('root'));
 ```
 
 参考[demo](../../demo-openinula/usage/option)
 
 ## 使用方式
 
-Openinula-VTable提供两种风格的组件供开发者使用，分别是统一标签与语法化标签。
+Openinula-VTable 提供两种风格的组件供开发者使用，分别是统一标签与语法化标签。
 
 ### 统一标签
 
-统一标签是指是使用一个 Table 标签，接收一个完整的`option`配置，如果项目中已经使用了 VTable ，这种方式可以快速使用Openinula-VTable。上面的例子就是一个使用统一标签的[demo](../../demo-openinula/usage/grammatical-tag)。
+统一标签是指是使用一个 Table 标签，接收一个完整的`option`配置，如果项目中已经使用了 VTable ，这种方式可以快速使用 Openinula-VTable。上面的例子就是一个使用统一标签的[demo](../../demo-openinula/usage/grammatical-tag)。
 
-与VTable相同Openinula-VTable提供三种表格类型：
+与 VTable 相同 Openinula-VTable 提供三种表格类型：
 
 - ListTable: 列表表格，用于展示列表数据 [demo](../../demo-openinula/usage/grammatical-tag)
 - PivotTable: 透视表格，用于展示交叉透视数据 [demo](../../demo-openinula/grammatical-tag/pivot-table)
 - PivotChart: 透视图，用于展示交叉透视数据并以图表方式展示 [demo](../../demo-openinula/grammatical-tag/pivot-chart)
 
-这三种Openinula组件，其props定义如下：
+这三种 Openinula 组件，其 props 定义如下：
 
 ```ts
 interface VTableProps extends EventsProps {
@@ -99,23 +96,23 @@ interface VTableProps extends EventsProps {
 }
 ```
 
-EventsProps的定义参考事件绑定章节
+EventsProps 的定义参考事件绑定章节
 
-onReady是一个内置的回调事件，会在表格渲染或更新时触发，其入参分别代表表格实例对象，以及是否初次渲染。
+onReady 是一个内置的回调事件，会在表格渲染或更新时触发，其入参分别代表表格实例对象，以及是否初次渲染。
 
-Openinula-VTable统一标签几乎是VTable的对等功能，可以方便开发者进行Openinula版本的迁移，并且从社区或示例中心获得的option可以直接通过这种方式使用，开发者几乎没有额外的学习成本。
+Openinula-VTable 统一标签几乎是 VTable 的对等功能，可以方便开发者进行 Openinula 版本的迁移，并且从社区或示例中心获得的 option 可以直接通过这种方式使用，开发者几乎没有额外的学习成本。
 
 ### 语法化标签
 
-语法化标签是指Openinula-VTable将表格中的部分组件封装为Openinula组件导出给开发者，开发者可以通过更加语义化、更接近原生Openinula声明的方式来定义表格。需要说明的是语法化标签的定义内容，在多数场景下都是可以和表格描述`option`进行相互转化的。
+语法化标签是指 Openinula-VTable 将表格中的部分组件封装为 Openinula 组件导出给开发者，开发者可以通过更加语义化、更接近原生 Openinula 声明的方式来定义表格。需要说明的是语法化标签的定义内容，在多数场景下都是可以和表格描述`option`进行相互转化的。
 
-需要注意的是：虽然图表在定义上是通过Openinula组件的形式进行声明的，但实际实现中并不是将其解析为DOM进行渲染，因此假如使用审查元素时并不能看到各个图表组件对应的DOM。
+需要注意的是：虽然图表在定义上是通过 Openinula 组件的形式进行声明的，但实际实现中并不是将其解析为 DOM 进行渲染，因此假如使用审查元素时并不能看到各个图表组件对应的 DOM。
 
 #### ListTable
 
-ListTable接受的props属性与option一致，ListTable中的子组件如下
+ListTable 接受的 props 属性与 option 一致，ListTable 中的子组件如下
 
-- ListColumn: 列表列，同option中的columns的定义一致 [api](../../option/ListTable-columns-text#cellType)
+- ListColumn: 列表列，同 option 中的 columns 的定义一致 [api](../../option/ListTable-columns-text#cellType)
 
 ```jsx
 import { ListTable, ListColumn } from '../../../src';
@@ -123,87 +120,88 @@ function App() {
   // ......
   return (
     <ListTable records={records}>
-      <ListColumn field={'0'} caption={'名称'} />
-      <ListColumn field={'1'} caption={'年龄'} />
-      <ListColumn field={'2'} caption={'性别'} />
-      <ListColumn field={'3'} caption={'爱好'} />
+      <ListColumn field={'0'} title={'名称'} />
+      <ListColumn field={'1'} title={'年龄'} />
+      <ListColumn field={'2'} title={'性别'} />
+      <ListColumn field={'3'} title={'爱好'} />
     </ListTable>
   );
 }
 ```
 
-语法化标签demo：[demo](../../demo-openinula/usage/grammatical-tag)
+语法化标签 demo：[demo](../../demo-openinula/usage/grammatical-tag)
 
 #### PivotTable&PivotChart
 
-PivotTable&PivotChart接受的props属性与option一致，子组件如下：
+PivotTable&PivotChart 接受的 props 属性与 option 一致，子组件如下：
 
-- PivotColumnDimension: 列上的维度配置，同option中的columns的定义一致 [api](../../option/PivotTable-columns-text#headerType)
-- PivotRowDimension: 行上的维度配置，同option中的rows的定义一致 [api](../../option/PivotTable-rows-text#headerType)
-- PivotIndicator: 指标配置，同option中的indicators的定义一致 [api](../../option/PivotTable-indicators-text#cellType)
-- PivotColumnHeaderTitle: 列表头标题配置，同option中的columnHeaderTitle的定义一致 [api](../../option/PivotTable#rowHeaderTitle)
-- PivotRowHeaderTitle: 行头标题配置，同option中的rowHeaderTitle的定义一致 [api](../../option/PivotTable#columnHeaderTitle)
-- PivotCorner: 角头配置，同option中的corner的定义一致 [api](../../option/PivotTable#corner)
+- PivotColumnDimension: 列上的维度配置，同 option 中的 columns 的定义一致 [api](../../option/PivotTable-columns-text#headerType)
+- PivotRowDimension: 行上的维度配置，同 option 中的 rows 的定义一致 [api](../../option/PivotTable-rows-text#headerType)
+- PivotIndicator: 指标配置，同 option 中的 indicators 的定义一致 [api](../../option/PivotTable-indicators-text#cellType)
+- PivotColumnHeaderTitle: 列表头标题配置，同 option 中的 columnHeaderTitle 的定义一致 [api](../../option/PivotTable#rowHeaderTitle)
+- PivotRowHeaderTitle: 行头标题配置，同 option 中的 rowHeaderTitle 的定义一致 [api](../../option/PivotTable#columnHeaderTitle)
+- PivotCorner: 角头配置，同 option 中的 corner 的定义一致 [api](../../option/PivotTable#corner)
 
 ```jsx
-  return (
-    <PivotTable
-      // ......
-    >
-      <PivotColumnHeaderTitle
-        // ......
-      />
-      <PivotColumnDimension
-        // ......
-      />
-      <PivotColumnDimension
-        // ......
-      />
-      <PivotRowDimension
-        // ......
-      />
-      <PivotRowDimension
-        // ......
-      />
-      <PivotIndicator
-        // ......
-      />
-      <PivotIndicator
-        // ......
-      />
-      <PivotCorner
-        // ......
-      />
-    </PivotTable>
-  );
-
+return (
+  <PivotTable
+  // ......
+  >
+    <PivotColumnHeaderTitle
+    // ......
+    />
+    <PivotColumnDimension
+    // ......
+    />
+    <PivotColumnDimension
+    // ......
+    />
+    <PivotRowDimension
+    // ......
+    />
+    <PivotRowDimension
+    // ......
+    />
+    <PivotIndicator
+    // ......
+    />
+    <PivotIndicator
+    // ......
+    />
+    <PivotCorner
+    // ......
+    />
+  </PivotTable>
+);
 ```
-语法化标签demo：[PivotTable demo](../../demo-openinula/grammatical-tag/pivot-table) [PivotChart demo](../../demo-openinula/grammatical-tag/pivot-chart)
+
+语法化标签 demo：[PivotTable demo](../../demo-openinula/grammatical-tag/pivot-table) [PivotChart demo](../../demo-openinula/grammatical-tag/pivot-chart)
 
 #### 表格外组件
 
 表格外组件目前支持：
 
-- Menu: 下拉菜单组件，同option中的menu的定义一致 [api](../../option/ListTable#menu)
-- Tooltip: tooltip组件，同option中的tooltip的定义一致 [api](../../option/ListTable#tooltip)
+- Menu: 下拉菜单组件，同 option 中的 menu 的定义一致 [api](../../option/ListTable#menu)
+- Tooltip: tooltip 组件，同 option 中的 tooltip 的定义一致 [api](../../option/ListTable#tooltip)
 
 ```jsx
 <PivotTable>
   // ......
   <Menu
-    // ......
+  // ......
   />
   <Tooltip
-    // ......
+  // ......
   />
 </PivotTable>
 ```
 
 ### 事件绑定
 
-统一标签或是语法化表格标签最外层表格组件，其Props上都继承了表格的事件处理回调EventsProps。
+统一标签或是语法化表格标签最外层表格组件，其 Props 上都继承了表格的事件处理回调 EventsProps。
 
-EventsProps的定义如下：
+EventsProps 的定义如下：
+
 ```ts
 interface EventsProps {
   onClickCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['click_cell']>;
@@ -247,6 +245,7 @@ interface EventsProps {
   onMouseLeaveAxis?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_axis']>;
 
   onCheckboxStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['checkbox_state_change']>;
+  onRadioStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['radio_state_change']>;
   onAfterRender?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_render']>;
   onInitialized?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['initialized']>;
 
@@ -260,6 +259,7 @@ interface EventsProps {
 ```
 
 事件使用示例：
+
 ```jsx
 function App() {
   const option = {

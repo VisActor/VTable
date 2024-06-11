@@ -40,8 +40,8 @@ instance.registerCustomCellStyle(id, style)
 To use a registered custom style, you need to assign the custom style to the cell. The assignment needs to define two attributes: `cellPosition` and `customStyleId`:
 
 * cellPosition: cell position information, supports configuration of single cells and cell areas
-   * Single cell: `{ row: number, column: number }`
-   * Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+   * Single cell: `{ row: number, col: number }`
+   * Cell range: `{ range: { start: { row: number, col: number }, end: { row: number, col: number} } }`
 * customStyleId: Custom style id, the same as the id defined when registering the custom style
 
 There are two allocation methods, configuration in `option` and configuration using API:

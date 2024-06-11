@@ -34,7 +34,7 @@
 tableInstance.updateTheme(newTheme)
 ```
 
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // 调用后不会自动重绘
@@ -44,6 +44,8 @@ tableInstance.theme = newTheme;
 ## updateColumns(Function)
 
 更新表格的 columns 字段配置信息，调用后会自动重绘。
+
+**ListTable 专有**
 
 ```ts
   /**
@@ -59,7 +61,7 @@ tableInstance.theme = newTheme;
 tableInstance.updateColumns(newColumns)
 ```
 
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // 调用后不会自动重绘
@@ -309,7 +311,7 @@ setRecords(records: Array<any>)
    * 根据行列号获取整条数据记录
    * @param  {number} col col index.
    * @param  {number} row row index.
-   * @return {object} record.
+   * @return {object} record in ListTable. return Array<any> in PivotTable.
    */
   getRecordByCell(col: number, row: number)
 ```
@@ -418,7 +420,7 @@ setRecords(records: Array<any>)
    * 根据行列号获取源数据
    * @param  {number} col col index.
    * @param  {number} row row index.
-   * @return {object} record or record array
+   * @return {object} record or record array.  ListTable return one record, PivotTable return an array of records.
    */
   getCellOriginRecord(col: number, row: number)
 ```
@@ -580,38 +582,6 @@ setRecords(records: Array<any>)
         }
       | IDimensionInfo[]
   )=> CellAddress
-```
-
-## getCheckboxState(Function)
-
-获取某个字段下 checkbox 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
-
-```
-getCheckboxState(field?: string | number): Array
-```
-
-## getCellCheckboxState(Function)
-
-获取某个单元格 checkbox 的状态
-
-```
-getCellCheckboxState(col: number, row: number): Array
-```
-
-## getRadioState(Function)
-
-获取某个字段下 radio 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
-
-```
-getRadioState(field?: string | number): number | Record<number, boolean | number>
-```
-
-## getCellRadioState(Function)
-
-获取某个单元格 radio 的状态，如果一个单元格中包含多个单选框，则返回值为 number，指该单元格内选中 radio 的索引，否则返回值为 boolean
-
-```
-getCellRadioState(col: number, row: number): boolean | number
 ```
 
 ## getScrollTop(Function)
@@ -857,7 +827,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * 导出某个单元格图片
    * @returns base64图片
    */
-  exportCellImg(col: number, row: number): string
+  exportCellImg(col: number, row: number, options?: { disableBackground?: boolean; disableBorder?: boolean }): string
 ```
 
 ## exportCellRangeImg(Function)
@@ -1025,6 +995,27 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 获取聚合汇总的值
 
+```
+  /**
+   * 根据字段获取聚合值
+   * @param field 字段名
+   * 返回数组，包括列号和每一列的聚合值数组
+   */
+  getAggregateValuesByField(field: string | number)
+```
+
+**ListTable 专有**
+
+## isAggregation(Function)
+
+判断是否是聚合指单元格
+
+```
+  isAggregation(col: number, row: number): boolean
+```
+
+**ListTable 专有**
+
 ## registerCustomCellStyle(Function)
 
 注册自定义样式
@@ -1038,18 +1029,50 @@ registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption 
 - customStyleId: 自定义样式的唯一 id
 - customStyle: 自定义单元格样式，与`column`中的`style`配置相同，最终呈现效果是单元格原有样式与自定义样式融合
 
-## registerCustomCellStyleArrangement(Function)
+## arrangeCustomCellStyle(Function)
 
 分配自定义样式
 
 ```
-registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
 ```
 
 - cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
   - 单个单元格：`{ row: number, column: number }`
   - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同
+
+## getCheckboxState(Function)
+
+获取某个字段下 checkbox 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
+```
+getCheckboxState(field?: string | number): Array
+```
+
+## getCellCheckboxState(Function)
+
+获取某个单元格 checkbox 的状态
+
+```
+getCellCheckboxState(col: number, row: number): Array
+```
+
+## getRadioState(Function)
+
+获取某个字段下 radio 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
+```
+getRadioState(field?: string | number): number | Record<number, boolean | number>
+```
+
+## getCellRadioState(Function)
+
+获取某个单元格 radio 的状态，如果一个单元格中包含多个单选框，则返回值为 number，指该单元格内选中 radio 的索引，否则返回值为 boolean
+
+```
+getCellRadioState(col: number, row: number): boolean | number
+```
 
 ## setCellCheckboxState(Function)
 
@@ -1089,4 +1112,46 @@ getAllRowsHeight: () => number;
 
 ```
 getAllColsWidth: () => number;
+```
+
+## setSortedIndexMap(Function)
+
+设置预排序索引，用在大数据量排序的场景下，提升初次排序性能
+
+```
+setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+```
+
+## getHeaderField(Function)
+
+**ListTable**中表示获取对应 header 的 field。
+**PivotTable**中表示获取对应 indicatorKey。
+
+```
+  /**获取对应header的field  */
+  getHeaderField: (col: number, row: number)
+```
+
+## setColWidth(Function)
+
+设置列宽
+
+```
+  /**设置列宽 */
+  setColWidth: (col: number, width: number)
+```
+
+## setRowHeight(Function)
+
+设置行高
+
+```
+  /**设置行高 */
+  setRowHeight: (row: number, height: number)
 ```

@@ -21,7 +21,7 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CheckBox, CheckboxAttributes, Radio } from '@visactor/vrender-components';
-
+import { ResizeColumnHotSpotSize } from '../../tools/global';
 export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
@@ -111,7 +111,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
           }),
           scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
           event: e.nativeEvent,
-          target: eventArgsSet?.eventArgs?.target
+          target: eventArgsSet?.eventArgs?.target,
+          mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
         });
       }
     }
@@ -143,7 +144,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
               funcType: (icon as any).attribute.funcType
             }
           : undefined,
-        target: eventArgsSet?.eventArgs?.target
+        target: eventArgsSet?.eventArgs?.target,
+        mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
       });
     }
   });
@@ -471,7 +473,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
           col: eventArgsSet.eventArgs.col,
           row: eventArgsSet.eventArgs.row,
           event: e.nativeEvent,
-          target: eventArgsSet?.eventArgs?.target
+          target: eventArgsSet?.eventArgs?.target,
+          mergeCellInfo: eventArgsSet.eventArgs.mergeInfo
         });
       }
     }
@@ -520,7 +523,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
             col: (eventArgsSet.eventArgs.target as unknown as Group).col,
             row: (eventArgsSet.eventArgs.target as unknown as Group).row,
             scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
-            target: eventArgsSet?.eventArgs?.target
+            target: eventArgsSet?.eventArgs?.target,
+            mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
           };
 
           cellsEvent.cells = table.getSelectedCellInfos();
@@ -540,7 +544,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
           col: eventArgsSet.eventArgs.col,
           row: eventArgsSet.eventArgs.row,
           event: e.nativeEvent,
-          target: eventArgsSet?.eventArgs?.target
+          target: eventArgsSet?.eventArgs?.target,
+          mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
         });
       }
     }
@@ -581,7 +586,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
                 funcType: (icon as any).attribute.funcType
               }
             : undefined,
-          target: eventArgsSet?.eventArgs?.target
+          target: eventArgsSet?.eventArgs?.target,
+          mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
         };
         if (cellInRanges(table.stateManager.select.ranges, col, row)) {
           // 用户右键点击已经选中的区域
@@ -649,13 +655,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
               funcType: (icon as any).attribute.funcType
             }
           : undefined,
-        target: eventArgsSet?.eventArgs?.target
+        target: eventArgsSet?.eventArgs?.target,
+        mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
       };
 
       table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
     }
   });
-  // stage 的pointerdown监听 如果点击在表格内部 是会被阻止点的tableGroup的pointerdown 监听有stopPropagation
+  // stage 的pointerdown监听
   table.scenegraph.stage.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
@@ -668,6 +675,22 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // eventManager._resizing = true;
       table.scenegraph.updateChartState(null);
       stateManager.updateInteractionState(InteractionState.grabing);
+
+      // 调整列宽最后一列有外扩了8px  需要将其考虑到table中 需要触发下MOUSEDOWN_TABLE事件
+      const { eventArgs } = eventArgsSet;
+      if (!eventArgs?.targetCell) {
+        const cell = table.getCellAt(
+          eventArgsSet.abstractPos.x - ResizeColumnHotSpotSize / 2,
+          eventArgsSet.abstractPos.y
+        );
+        if (cell) {
+          if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+            table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+              event: e.nativeEvent
+            });
+          }
+        }
+      }
       return;
     }
   });
@@ -698,6 +721,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
       eventManager.dealTableSelect();
+      stateManager.endSelectCells();
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
     } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
@@ -761,6 +785,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       ...cellInfo,
       event: e.nativeEvent,
       target: eventArgsSet?.eventArgs?.target,
+      mergeCellInfo: eventArgsSet?.eventArgs?.mergeInfo,
       checked: (e.detail as unknown as { checked: boolean }).checked
     };
 
@@ -873,6 +898,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       ...cellInfo,
       event: e.nativeEvent,
       target: eventArgsSet?.eventArgs?.target,
+      mergeCellInfo: eventArgsSet?.eventArgs?.mergeInfo,
       radioIndexInCell
     };
     table.fireListeners(TABLE_EVENT_TYPE.RADIO_STATE_CHANGE, cellsEvent);
@@ -958,7 +984,8 @@ function dblclickHandler(e: FederatedPointerEvent, table: BaseTableAPI) {
             funcType: (icon as any).attribute.funcType
           }
         : undefined,
-      target: eventArgsSet?.eventArgs?.target
+      target: eventArgsSet?.eventArgs?.target,
+      mergeCellInfo: eventArgsSet?.eventArgs?.mergeInfo
     };
     table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL, cellsEvent);
   }

@@ -8,7 +8,7 @@ import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentHeight } from '../utils/text-icon-layout';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
-import { dealWithCustom } from '../component/custom';
+import { CUSTOM_CONTAINER_NAME, CUSTOM_MERGE_CONTAINER_NAME, dealWithCustom } from '../component/custom';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
@@ -61,9 +61,9 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, s
   }
 
   // 更新以下行位置
-  for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex++) {
-    for (let colIndex = 0; colIndex < scene.table.colCount; colIndex++) {
-      const cellGroup = scene.getCell(colIndex, rowIndex);
+  for (let colIndex = 0; colIndex < scene.table.colCount; colIndex++) {
+    for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex++) {
+      const cellGroup = scene.highPerformanceGetCell(colIndex, rowIndex);
       if (cellGroup.role === 'cell') {
         cellGroup.setAttribute('y', cellGroup.attribute.y + detaY);
       }
@@ -183,13 +183,29 @@ export function updateCellHeight(
     (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {
     let renderDefault = true;
-    const customContainer = cell.getChildByName('custom-container') as Group;
+    const customContainer =
+      (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
+      (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
     if (customContainer) {
       let customElementsGroup;
       customContainer.removeAllChild();
       cell.removeChild(customContainer);
 
-      if (!getCustomCellMergeCustom(col, row, cell, scene.table)) {
+      const customMergeRange = getCustomCellMergeCustom(col, row, cell, scene.table);
+      if (customMergeRange) {
+        for (let mergeRow = customMergeRange.start.row; mergeRow <= customMergeRange.end.row; mergeRow++) {
+          if (mergeRow === row) {
+            continue;
+          }
+          const mergedCell = scene.getCell(col, mergeRow);
+          const customContainer =
+            (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
+            (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
+          customContainer.removeAllChild();
+          mergedCell.removeChild(customContainer);
+          getCustomCellMergeCustom(col, mergeRow, mergedCell, scene.table);
+        }
+      } else {
         let customRender;
         let customLayout;
         const cellLocation = scene.table.getCellLocation(col, row);
@@ -224,6 +240,12 @@ export function updateCellHeight(
             // scene.table.heightMode === 'autoHeight',
             scene.table.isAutoRowHeight(row),
             padding,
+            isMergeCellGroup(cell)
+              ? {
+                  start: { col: cell.mergeStartCol, row: cell.mergeStartRow },
+                  end: { col: cell.mergeEndCol, row: cell.mergeEndRow }
+                }
+              : undefined,
             scene.table
           );
           customElementsGroup = customResult.elementsGroup;

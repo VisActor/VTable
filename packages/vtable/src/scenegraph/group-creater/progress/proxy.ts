@@ -68,12 +68,19 @@ export class SceneProxy {
     this.table = table;
 
     if (this.table.isPivotChart()) {
-      this.rowLimit = 100;
-      this.colLimit = 100;
+      // this.rowLimit = 100;
+      // this.colLimit = 100;
+      this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
+      this.colLimit = Math.max(100, Math.ceil((table.tableNoFrameWidth * 2) / table.defaultColWidth));
     } else if (this.table.heightMode === 'autoHeight') {
-      this.rowLimit = 100;
+      // this.rowLimit = 100;
+      this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
     } else if (this.table.widthMode === 'autoWidth') {
-      this.colLimit = 100;
+      // this.colLimit = 100;
+      this.colLimit = Math.max(100, Math.ceil((table.tableNoFrameWidth * 2) / table.defaultColWidth));
+    } else {
+      this.rowLimit = Math.max(200, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
+      this.colLimit = Math.max(100, Math.ceil((table.tableNoFrameWidth * 2) / table.defaultColWidth));
     }
 
     if (this.table.internalProps.transpose) {
@@ -222,6 +229,7 @@ export class SceneProxy {
         //   await this.progress();
         // } else
         if (this.colUpdatePos <= this.colEnd) {
+          // console.log('progress colUpdatePos', this.colUpdatePos);
           await this.updateColCellGroupsAsync();
           await this.progress();
         } else if (this.rowUpdatePos <= this.rowEnd) {
@@ -801,10 +809,10 @@ function getCellByCache(cacheCellGroup: Group, row: number): Group | null {
   const prev = cacheCellGroup._prev as Group;
   const next = cacheCellGroup._next as Group;
   // cacheCellGroup may have wrong order
-  if (cacheCellGroup.row > row && prev && prev.row === row - 1) {
+  if (cacheCellGroup.row > row && prev && prev.row === cacheCellGroup.row - 1) {
     return getCellByCache(prev, row);
   }
-  if (cacheCellGroup.row < row && next && next.row === row + 1) {
+  if (cacheCellGroup.row < row && next && next.row === cacheCellGroup.row + 1) {
     return getCellByCache(next, row);
   }
   return null;

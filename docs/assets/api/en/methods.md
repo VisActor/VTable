@@ -34,7 +34,7 @@ use:
 tableInstance.updateTheme(newTheme)
 ```
 
-Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // will not automatically redraw after calling
@@ -44,6 +44,8 @@ tableInstance.theme = newTheme;
 ## updateColumns(Function)
 
 Update the configuration information of the columns field of the table, and it will be automatically redrawn after calling
+
+**ListTable Proprietary**
 
 ```ts
   /**
@@ -59,7 +61,7 @@ use:
 tableInstance. updateColumns(newColumns)
 ```
 
-Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // will not automatically redraw after calling
@@ -311,7 +313,7 @@ Get the data item of this cell
    * Get the entire data record based on the row and column number
    * @param {number} col col index.
    * @param {number} row row index.
-   * @return {object} record.
+   * @return {object} record in ListTable. return Array<any> in PivotTable.
    */
   getRecordByCell(col: number, row: number)
 ```
@@ -422,7 +424,7 @@ If it is a pivot analysis table (a pivot table with data analysis turned on), an
    * Get source data based on row and column numbers
    * @param {number} col col index.
    * @param {number} row row index.
-   * @return {object} record or record array
+   * @return {object} record or record array. ListTable return one record, PivotTable return an array of records.
    */
   getCellOriginRecord(col: number, row: number)
 ```
@@ -584,38 +586,6 @@ For pivot table interfaces, get specific cell addresses based on the header dime
         }
       | IDimensionInfo[]
   ) => CellAddress
-```
-
-## getCheckboxState(Function)
-
-Get the selected status of all data in the checkbox under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
-
-```
-getCheckboxState(field?: string | number): Array
-```
-
-## getCellCheckboxState(Function)
-
-Get the status of a cell checkbox
-
-```
-getCellCheckboxState(col: number, row: number): Array
-```
-
-## getRadioState(Function)
-
-Get the selected status of all radio data under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
-
-```
-getRadioState(field?: string | number): number | Record<number, boolean | number>
-```
-
-## getCellRadioState(Function)
-
-Get the status of a cell radio. If a cell contains multiple radio buttons, the return value is number, which refers to the index of the selected radio in the cell. Otherwise, the return value is boolean.
-
-```
-getCellRadioState(col: number, row: number): boolean | number
 ```
 
 ## getScrollTop(Function)
@@ -860,7 +830,7 @@ Export a cell picture
    * Export a cell picture
    * @returns base64 picture
    */
-  exportCellImg(col: number, row: number): string
+  exportCellImg(col: number, row: number, options?: { disableBackground?: boolean; disableBorder?: boolean }): string
 ```
 
 ## exportCellRangeImg(Function)
@@ -1027,6 +997,27 @@ Get the displayed row number range of the table body part
 
 Get aggregation summary value
 
+```
+/**
+* Get the aggregate value based on the field
+* @param field field name
+* Returns an array, including the column number and the aggregate value array of each column
+*/
+getAggregateValuesByField(field: string | number)
+```
+
+**ListTable Proprietary**
+
+## isAggregation(Function)
+
+Determine whether it is an aggregate cell
+
+```
+isAggregation(col: number, row: number): boolean
+```
+
+**ListTable Proprietary**
+
 ## registerCustomCellStyle(Function)
 
 Register a custom style
@@ -1040,18 +1031,50 @@ Custom cell style
 - customStyleId: the unique id of the custom style
 - customStyle: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
 
-## registerCustomCellStyleArrangement(Function)
+## arrangeCustomCellStyle(Function)
 
 Assign custom styles
 
 ```
-registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
 ```
 
 - cellPosition: cell position information, supports configuration of single cells and cell areas
   - Single cell: `{ row: number, column: number }`
   - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+## getCheckboxState(Function)
+
+Get the selected status of all data in the checkbox under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
+
+```
+getCheckboxState(field?: string | number): Array
+```
+
+## getCellCheckboxState(Function)
+
+Get the status of a cell checkbox
+
+```
+getCellCheckboxState(col: number, row: number): Array
+```
+
+## getRadioState(Function)
+
+Get the selected status of all radio data under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
+
+```
+getRadioState(field?: string | number): number | Record<number, boolean | number>
+```
+
+## getCellRadioState(Function)
+
+Get the status of a cell radio. If a cell contains multiple radio buttons, the return value is number, which refers to the index of the selected radio in the cell. Otherwise, the return value is boolean.
+
+```
+getCellRadioState(col: number, row: number): boolean | number
+```
 
 ## setCellCheckboxState(Function)
 
@@ -1091,4 +1114,46 @@ get all columns width
 
 ```
 getAllColsWidth: () => number;
+```
+
+## setSortedIndexMap(Function)
+
+Set up a pre-sort index to improve initial sorting performance in scenarios where large amounts of data are sorted.
+
+```
+setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+```
+
+## getHeaderField(Function)
+
+In **ListTable** can get header's field.
+In **PivotTable** get indicatorKey.
+
+```
+  /**get field of header  */
+  getHeaderField: (col: number, row: number)
+```
+
+## setColWidth(Function)
+
+set column width.
+
+```
+  /**set column width */
+  setColWidth: (col: number, width: number)
+```
+
+## setRowHeight(Function)
+
+set row height.
+
+```
+  /**set row height */
+  setRowHeight: (row: number, height: number)
 ```

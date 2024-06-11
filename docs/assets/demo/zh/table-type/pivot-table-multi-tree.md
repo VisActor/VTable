@@ -378,7 +378,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       indicators: [
         {
           indicatorKey: 'Sales',
-          caption: 'Sales',
+          title: 'Sales',
           width: 'auto',
           showSort: false,
           headerStyle: {
@@ -402,7 +402,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         },
         {
           indicatorKey: 'Profit',
-          caption: 'Profit',
+          title: 'Profit',
           width: 'auto',
           showSort: false,
           headerStyle: {

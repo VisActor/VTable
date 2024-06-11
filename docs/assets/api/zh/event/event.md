@@ -25,6 +25,7 @@ TABLE_EVENT_TYPE = {
   MOUSEDOWN_CELL: 'mousedown_cell',
   MOUSEUP_CELL: 'mouseup_cell',
   SELECTED_CELL: 'selected_cell',
+  SELECTED_CLEAR: 'selected_clear',
   KEYDOWN: 'keydown',
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
@@ -108,6 +109,10 @@ TABLE_EVENT_TYPE = {
 单元格选中状态改变事件
 
 {{ use: SelectedCellEvent() }}
+
+## SELECTED_CLEAR
+
+当鼠标点击到表格空白区域，所有选择单元格将被取消，会触发这个事件
 
 ## KEYDOWN
 
@@ -466,3 +471,21 @@ icon 图标点击事件。
   checked: boolean;
 };
 ```
+
+## RADIO_STATE_CHANGE
+
+更改 radio 单选框状态。**ListTable 表格专有事件**
+
+事件回调函数的参数类型:
+
+```
+{
+  col: number;
+  row: number;
+  alue: string | number;
+  dataValue: string | number;
+  radioIndexInCell: boolean | number;
+};
+```
+
+如果单元格中只有一个单选框，radioIndexInCell 为 boolean 类型，表示是否选中；如果单元格中有多个单选框，radioIndexInCell 为 number 类型，表示选中的单选框的索引。

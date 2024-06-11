@@ -32,6 +32,13 @@
       ]
     },
     {
+      "path": "Contribution_Guide",
+      "title": {
+        "zh": "贡献指南",
+        "en": "Contribution Guide"
+      }
+    },
+    {
       "path": "table_type",
       "title": {
         "zh": "表格形态",
@@ -321,6 +328,22 @@
           "title": {
             "zh": "滚动",
             "en": "scroll"
+          }
+        }
+      ]
+    },
+    {
+      "path": "animation",
+      "title": {
+        "zh": "动画",
+        "en": "Animation"
+      },
+      "children": [
+        {
+          "path": "appear_animation",
+          "title": {
+            "zh": "入场动画",
+            "en": "appear animationt"
           }
         }
       ]

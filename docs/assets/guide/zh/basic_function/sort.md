@@ -479,3 +479,18 @@ const listTable = new ListTable({
   ]
 });
 ```
+
+## 预排序
+
+在大数据量的情况下，首次排序可能会耗时较长，可以通过预排序来提升排序功能的性能。通过setSortedIndexMap方法，设置预排序的数据字段和排序顺序。
+
+```js
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+tableInstance.setSortedIndexMap(field, filedMap as ISortedMapItem);
+```

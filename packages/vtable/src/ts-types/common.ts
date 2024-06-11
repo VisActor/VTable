@@ -42,6 +42,12 @@ export type BaseCellInfo = {
   /**原始值 */
   dataValue: FieldData;
 };
+export type MergeCellInfo = {
+  colStart: number;
+  colEnd: number;
+  rowStart: number;
+  rowEnd: number;
+};
 export type CellInfo = {
   col: number;
   row: number;
@@ -80,12 +86,14 @@ export type IPivotTableCellHeaderPaths = {
     dimensionKey?: string;
     indicatorKey?: string;
     value?: string;
+    virtual?: boolean;
   }[];
   /** 行表头各级path表头信息 */
   readonly rowHeaderPaths?: {
     dimensionKey?: string;
     indicatorKey?: string;
     value?: string;
+    virtual?: boolean;
   }[];
   cellLocation: CellLocation;
 };

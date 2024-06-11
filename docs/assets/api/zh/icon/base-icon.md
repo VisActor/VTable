@@ -12,6 +12,33 @@ icon 的高度。
 ${prefix} positionType (IconPosition)
 IconPosition 枚举类型。
 
+```
+/**
+ * icon 的位置
+ * inlineFront:文本内容的前面，
+ * inlineEnd：文本内容后面
+ *
+ */
+export enum IconPosition {
+  /**文本行内容前面的图标，跟随文本定位，随文本折行 */
+  inlineFront = 'inlineFront',
+  /**文本行内容后面的图标，跟随文本定位，随文本折行。如sort图表 放在文本内容的第一行 */
+  inlineEnd = 'inlineEnd',
+  /**单元格左侧按钮 且受padding影响 */
+  left = 'left',
+  /**单元格右侧按钮 受padding影响 如pin图表 */
+  right = 'right',
+  /**固定在右侧的图标，不占位，不受padding影响，可能压盖内容 如 dropDown */
+  absoluteRight = 'absoluteRight',
+  /**在单元格内容块的左侧的图标，跟随文本定位，不随文本折行 */
+  contentLeft = 'contentLeft',
+  /**在单元格内容块的右侧的图标,跟随文本定位，不随文本折行 */
+  contentRight = 'contentRight',
+  /**在单元格中自由定位 */
+  absolute = 'absolute'
+}
+```
+
 ${prefix} marginRight (number)
 和右侧元素间隔距离，或者与单元格边界的间隔距离。
 

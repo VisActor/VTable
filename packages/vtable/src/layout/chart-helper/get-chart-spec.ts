@@ -4,8 +4,8 @@ import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 import { getAxisOption, getAxisRange } from './get-axis-config';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import { getNewRangeToAlign } from './zero-align';
-import type { IChartIndicator } from '../../ts-types';
-import { cloneDeepSpec } from '@visactor/vutils-extension';
+import type { IChartIndicator, IIndicator } from '../../ts-types';
+import { cloneDeepSpec } from '@vutils-extension';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
 
@@ -53,13 +53,16 @@ export function isShareChartSpec(col: number, row: number, layout: PivotHeaderLa
   return true;
 }
 /** 检查是否有直角坐标系的图表 */
-export function checkHasCartesianChart(layout: PivotHeaderLayoutMap) {
+export function checkHasCartesianChart(indicatorsDefine: (IIndicator | IChartIndicator | string)[]) {
   let isHasCartesianChart = false;
-  for (let i = 0; i < layout.indicatorsDefine.length; i++) {
+  for (let i = 0; i < indicatorsDefine.length; i++) {
     //columnObjects数量和指标数量一样 并不是每个列都有 所有会快一些
-    const columnObj = layout.indicatorsDefine[i] as IChartIndicator;
+    const columnObj = indicatorsDefine[i] as IChartIndicator;
     if (columnObj.chartSpec) {
       if (
+        columnObj.chartSpec.type !== 'wordCloud' &&
+        columnObj.chartSpec.type !== 'radar' &&
+        columnObj.chartSpec.type !== 'gauge' &&
         columnObj.chartSpec.type !== 'pie' &&
         columnObj.chartSpec.type !== 'funnel' &&
         columnObj.chartSpec.type !== 'rose'
@@ -77,7 +80,14 @@ export function isCartesianChart(col: number, row: number, layout: PivotHeaderLa
   let isHasCartesianChart = true;
   const chartSpec = layout.getRawChartSpec(col, row);
   if (chartSpec) {
-    if (chartSpec.type === 'pie' || chartSpec.type === 'funnel' || chartSpec.type === 'rose') {
+    if (
+      chartSpec.type === 'pie' ||
+      chartSpec.type === 'radar' ||
+      chartSpec.type === 'gauge' ||
+      chartSpec.type === 'wordCloud' ||
+      chartSpec.type === 'funnel' ||
+      chartSpec.type === 'rose'
+    ) {
       isHasCartesianChart = false;
     }
   } else {
@@ -101,6 +111,9 @@ export function isHasCartesianChartInline(
       if (columnObj.chartSpec) {
         if (
           columnObj.chartSpec.type !== 'pie' &&
+          columnObj.chartSpec.type !== 'wordCloud' &&
+          columnObj.chartSpec.type !== 'radar' &&
+          columnObj.chartSpec.type !== 'gauge' &&
           columnObj.chartSpec.type !== 'funnel' &&
           columnObj.chartSpec.type !== 'rose'
         ) {
@@ -112,7 +125,14 @@ export function isHasCartesianChartInline(
   } else {
     const chartSpec = layout.getRawChartSpec(col, row);
     if (chartSpec) {
-      if (chartSpec.type !== 'pie' && chartSpec.type !== 'funnel' && chartSpec.type !== 'rose') {
+      if (
+        chartSpec.type !== 'pie' &&
+        chartSpec.type !== 'radar' &&
+        chartSpec.type !== 'gauge' &&
+        chartSpec.type !== 'wordCloud' &&
+        chartSpec.type !== 'funnel' &&
+        chartSpec.type !== 'rose'
+      ) {
         isHasCartesianChart = true;
       }
     } else {
@@ -133,7 +153,9 @@ export function getChartSpec(col: number, row: number, layout: PivotHeaderLayout
           serie.sortDataByAxis = true;
         });
       }
-      chartSpec.axes = layout.getChartAxes(col, row);
+      if (chartSpec.type !== 'gauge' && chartSpec.type !== 'rose' && chartSpec.type !== 'radar') {
+        chartSpec.axes = layout.getChartAxes(col, row);
+      }
       chartSpec.padding = 0;
       chartSpec.dataZoom = []; // Do not support datazoom temply
       return chartSpec;
@@ -219,16 +241,16 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       ([] as string[]);
     const rowPath = layout.getRowKeysPath(col, row);
     const domain = data[rowPath ?? ''] as Set<string>;
-
-    const { axisOption, isPercent } = getAxisOption(col, row, 'left', layout);
+    const { axisOption, isPercent, chartType } = getAxisOption(col, row, 'left', layout);
     axes.push(
       merge(
         {
-          domain: Array.from(domain ?? [])
+          domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
+          range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined
         },
         axisOption,
         {
-          type: 'band',
+          type: chartType === 'scatter' && !Array.isArray(domain) ? axisOption?.type ?? 'linear' : 'band',
           orient: 'left',
           // visible: true,
           label: { visible: false },
@@ -318,15 +340,16 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     const colPath = layout.getColKeysPath(col, row);
     const domain: string[] | Set<string> = (data?.[colPath ?? ''] as Set<string>) ?? [];
 
-    const { axisOption, isPercent } = getAxisOption(col, row, 'bottom', layout);
+    const { axisOption, isPercent, chartType } = getAxisOption(col, row, 'bottom', layout);
     axes.push(
       merge(
         {
-          domain: Array.from(domain)
+          domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
+          range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined
         },
         axisOption,
         {
-          type: 'band',
+          type: chartType === 'scatter' && !Array.isArray(domain) ? axisOption?.type ?? 'linear' : 'band',
           orient: 'bottom',
           visible: true,
           label: { visible: false },

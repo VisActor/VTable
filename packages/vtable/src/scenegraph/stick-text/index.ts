@@ -195,7 +195,8 @@ function dealVertical(
     if (cellTop < minTop || cellBottom > maxTop) {
       const visibleCellTop = Math.max(cellTop, minTop);
       const visibleCellBottom = Math.min(cellBottom, maxTop);
-      const delta = graphic.globalTransMatrix.f - (visibleCellBottom + visibleCellTop) / 2;
+      const delta =
+        graphic.globalTransMatrix.f - (visibleCellBottom + visibleCellTop) / 2 + graphic.AABBBounds.height() / 2;
       !changedCells.has(`${cellGroup.col}-${cellGroup.row}`) &&
         changedCells.set(`${cellGroup.col}-${cellGroup.row}`, {
           col: cellGroup.col,

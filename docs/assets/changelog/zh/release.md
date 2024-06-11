@@ -1,3 +1,262 @@
+# v1.2.0
+
+2024-06-06
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: support select highlightMode effect [#1167](https://github.com/VisActor/VTable/issues/1167)
+- **@visactor/vtable**: add isAggregation api [#1803](https://github.com/VisActor/VTable/issues/1803)
+- **@visactor/vtable**: optimize large column performance [#1840](https://github.com/VisActor/VTable/issues/1840) [#1824](https://github.com/VisActor/VTable/issues/1824)
+- **@visactor/vtable**: add merge cell custom graphic attribute sync [#1718](https://github.com/VisActor/VTable/issues/1718)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: when has no records should not has aggregation row [#1804](https://github.com/VisActor/VTable/issues/1804)
+- **@visactor/vtable**: updateColumns set editor error [#1828](https://github.com/VisActor/VTable/issues/1828)
+- **@visactor/vtable**: fix maxCharactersNumber effect [#1830](https://github.com/VisActor/VTable/issues/1830)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: update pixelRatio when resize [#1823](https://github.com/VisActor/VTable/issues/1823)
+- **@visactor/vtable**: selectAllOnCtrlA option
+
+**🔧 项目配置**
+
+- **@visactor/vtable**: update vrender version
+
+
+
+[更多详情请查看 v1.2.0](https://github.com/VisActor/VTable/releases/tag/v1.2.0)
+
+# v1.1.2
+
+2024-06-04
+
+
+**🔧 项目配置**
+
+- **@visactor/vtable**: update vrender version
+
+[更多详情请查看 v1.1.2](https://github.com/VisActor/VTable/releases/tag/v1.1.2)
+
+# v1.1.1
+
+2024-05-30
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: when set emptyTip interaction not work well with has records [#1818](https://github.com/VisActor/VTable/issues/1818)
+- **@visactor/vtable**: fix table frame corner radius display problem [#1783](https://github.com/VisActor/VTable/issues/1783)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: dimension value same with indicator key cell value error [#1817](https://github.com/VisActor/VTable/issues/1817)
+
+[更多详情请查看 v1.1.1](https://github.com/VisActor/VTable/releases/tag/v1.1.1)
+
+# v1.1.0
+
+2024-05-28
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 增加内容空白提示 [#1782](https://github.com/VisActor/VTable/issues/1782)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: deleteRecord和updateRecord接口调用时，更新beforeChangedRecordsMap，以对应正确的rawData [#1780](https://github.com/VisActor/VTable/issues/1780)
+- **@visactor/vtable**: disableSelect模式下支持拖拽表头 [#1800](https://github.com/VisActor/VTable/issues/1800)
+- **@visactor/vtable**: 修复getDataCellPath方法中计算问题
+- **@visactor/vtable**: 修复部分坐标轴尺寸计算问题
+
+
+
+[更多详情请查看 v1.1.0](https://github.com/VisActor/VTable/releases/tag/v1.1.0)
+
+# v1.0.3
+
+2024-05-24
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复树形模式下第一列列宽计算问题 [#1778](https://github.com/VisActor/VTable/issues/1778)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 图例支持数组形式 [#1740](https://github.com/VisActor/VTable/issues/1740)
+
+
+
+[更多详情请查看 v1.0.3](https://github.com/VisActor/VTable/releases/tag/v1.0.3)
+
+# v1.0.2
+
+2024-05-24
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 增加setRowHeight & setColWidth api
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 优化hasAutoImageColumn方法性能
+- **@visactor/vtable**: 坐标轴size对齐vrender-component [#1784](https://github.com/VisActor/VTable/issues/1784)
+- **@visactor/vtable**: 修复lineClamp配置在行高计算中的问题 [#1772](https://github.com/VisActor/VTable/issues/1772)
+- **@visactor/vtable**: 修复vtable-export中渐进加载单元格的导出问题 [#1787](https://github.com/VisActor/VTable/issues/1787)
+- **@visactor/vtable**: 在selectCells方法中忽略单元格合并
+
+
+
+[更多详情请查看 v1.0.2](https://github.com/VisActor/VTable/releases/tag/v1.0.2)
+
+# v1.0.1
+
+2024-05-23
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 支持树形模式配置icon[#1697](https://github.com/VisActor/VTable/issues/1697)
+- **@visactor/vtable**: 增加setRowHeight & setColWidth api
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 在selectCells方法中忽略单元格合并
+
+
+
+[更多详情请查看 v1.0.1](https://github.com/VisActor/VTable/releases/tag/v1.0.1)
+
+# v1.0.0
+
+2024-05-21
+
+**💥 Breaking change**
+
+- **@visactor/vtable**: 透视表 getCellOriginRecord接口返回结果变为数组结构
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 自定义树形表头customTree可以和透视分析能力结合使用 [#1644](https://github.com/VisActor/VTable/issues/1644)
+- **@visactor/vtable**: 在 rowTree & columnTree 中加入virtual option [#1644](https://github.com/VisActor/VTable/issues/1644)
+
+
+
+[更多详情请查看 v1.0.0](https://github.com/VisActor/VTable/releases/tag/v1.0.0)
+# v0.25.9
+
+2024-05-21
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复空字符串在行高计算时的问题 [#1752](https://github.com/VisActor/VTable/issues/1752)
+- **@visactor/vtable**: 修复自定义合并单元格在点击表头全选时的选中显示区域问题
+
+
+
+[更多详情请查看 v0.25.9](https://github.com/VisActor/VTable/releases/tag/v0.25.9)
+
+# v0.25.8
+
+2024-05-21
+
+
+**🆕 新增功能**
+- **@visactor/vtable**: 添加滚动条滑块圆角配置scrollSliderCornerRadius [#1369](https://github.com/VisActor/VTable/issues/1369)
+- **@visactor/vtable**: 在exportCellImg()中添加禁用背景与禁用边框的功能 [#1733](https://github.com/VisActor/VTable/issues/1733)
+- **@visactor/vtable**: 添加禁止列调整大小的配置disableColumnResize到行号配置rowSeriesNumber中
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复当设置隐藏行头时，单元格内容显示为空白的问题 [#1732](https://github.com/VisActor/VTable/issues/1732)
+- **@visactor/vtable**: 修复在未设置列时，设置表格列编辑器会出错问题 [#1747](https://github.com/VisActor/VTable/issues/1747)
+- **@visactor/vtable**: 修复在cellInRanges()中列和行的顺序问题
+- **@visactor/vtable**: 在CSV导出中添加字符串标记 [#1730](https://github.com/VisActor/VTable/issues/1730)
+
+
+
+[更多详情请查看 v0.25.8](https://github.com/VisActor/VTable/releases/tag/v0.25.8)
+
+# v0.25.6
+
+2024-05-17
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加 selected_clear 事件 [#1705](https://github.com/VisActor/VTable/issues/1705)
+- **@visactor/vtable**: 在事件中添加 mergeCellInfo 参数 [#1667](https://github.com/VisActor/VTable/issues/1667)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 在滚动条上按下鼠标触发 mousedown_table 事件 [#1706](https://github.com/VisActor/VTable/issues/1706)
+- **@visactor/vtable**: 可编辑合并单元格的值 [#1711](https://github.com/VisActor/VTable/issues/1711)
+- **@visactor/vtable**: 修复设置编辑器实例时，子列无法编辑的问题 [#1711](https://github.com/VisActor/VTable/issues/1711)
+- **@visactor/vtable**: 修复更改行索引时复选框和单选按钮状态更新问题 [#1712](https://github.com/VisActor/VTable/issues/1712)
+- **@visactor/vtable**: 修复文本粘贴时的垂直偏移问题
+- **@visactor/vtable**: 修复列宽可能为零的问题 [#1708](https://github.com/VisActor/VTable/issues/1708)
+- **@visactor/vtable**: 优化 getCell 性能
+- **@visactor/vtable**: 修复透视表中隐藏表头的功能问题
+- **@visactor/vtable**: 在渲染中修正 lineDash 判断 [#1696](https://github.com/VisActor/VTable/issues/1696)
+- **@visactor/vtable**: 扩展触发 mousedown_table 事件的区域 [#1668](https://github.com/VisActor/VTable/issues/1668)
+
+
+
+[更多详情请查看 v0.25.6](https://github.com/VisActor/VTable/releases/tag/v0.25.6)
+
+# v0.25.1
+
+2024-05-08
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 透视图支持词云、玫瑰图、雷达图、仪表盘 [#1614](https://github.com/VisActor/VTable/issues/1614)
+- **@visactor/vtable**: 透视图支持散点图类型 [#1618](https://github.com/VisActor/VTable/issues/1618)
+- **@visactor/vtable**: 在react-vtable中添加自定义组件
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复复制空白单元格无法粘贴的问题 [#1646](https://github.com/VisActor/VTable/issues/1646)
+- **@visactor/vtable**: 修复自定义合并单元格大小更新问题 [#1636](https://github.com/VisActor/VTable/issues/1636)
+- **@visactor/vtable**: 添加选择单元格范围重复选择逻辑 [#1628](https://github.com/VisActor/VTable/issues/1628)
+- **@visactor/vtable**: 更新@visactor/vutils-extension版本
+
+
+
+[更多详情请查看 v0.25.1](https://github.com/VisActor/VTable/releases/tag/v0.25.1)
+
+# v0.25.0
+
+2024-04-28
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 透视表表头支持编辑 [#1583](https://github.com/VisActor/VTable/issues/1583)
+- **@visactor/vtable**: customrender/customlayout单元格支持编辑 [#1596](https://github.com/VisActor/VTable/issues/1596)
+- **@visactor/vtable**: 支持拖拽改变行高
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 增加编辑器0值处理 [#1590](https://github.com/VisActor/VTable/issues/1590)
+- **@visactor/vtable**: 修复textStick显示问题 [#1592](https://github.com/VisActor/VTable/issues/1592)
+- **@visactor/vtable**: 修复异步渲染容器尺寸更新问题 [#1593](https://github.com/VisActor/VTable/issues/1593)
+- **@visactor/vtable**: 修复折叠按钮显示问题
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 增加调整最后一列宽度灵活性 [#1567](https://github.com/VisActor/VTable/issues/1567)
+
+
+
+[更多详情请查看 v0.25.0](https://github.com/VisActor/VTable/releases/tag/v0.25.0)
+
 # v0.24.1
 
 2024-04-23
@@ -5,19 +264,19 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add startEditCell api [#1573](https://github.com/VisActor/VTable/issues/1573)
+- **@visactor/vtable**: 增加startEditCell api [#1573](https://github.com/VisActor/VTable/issues/1573)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when has rowSeriesNumber minWidth maxWidth error [#1572](https://github.com/VisActor/VTable/issues/1572)
+- **@visactor/vtable**: 修复rowSeriesNumber最大/最小宽度显示问题 [#1572](https://github.com/VisActor/VTable/issues/1572)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: pivot lazy load modify setTreeNodeChildren api [#1580](https://github.com/VisActor/VTable/issues/1580)
+- **@visactor/vtable**: 在透视懒加载模式下优化setTreeNodeChildren api [#1580](https://github.com/VisActor/VTable/issues/1580)
 
 **📖 文档更新**
 
-- **@visactor/vtable**: add drill down drill up demo [#1556](https://github.com/VisActor/VTable/issues/1556)
+- **@visactor/vtable**: 增加上钻、下钻demo [#1556](https://github.com/VisActor/VTable/issues/1556)
 
 
 

@@ -37,8 +37,9 @@ import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
-import { setRadioState, syncRadioState } from './radio/radio';
+import { changeRadioOrder, setRadioState, syncRadioState } from './radio/radio';
 import {
+  changeCheckboxOrder,
   initCheckedState,
   initLeftRecordsCheckState,
   setCheckedState,
@@ -47,6 +48,7 @@ import {
   updateHeaderCheckedState
 } from './checkbox/checkbox';
 import { updateResizeRow } from './resize/update-resize-row';
+import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -61,7 +63,7 @@ export class StateManager {
   interactionState: InteractionState;
   // select记录两个位置，第二个位置只在range模式生效
   select: {
-    ranges: CellRange[];
+    ranges: (CellRange & { skipBodyMerge?: boolean })[];
     highlightScope: HighlightScope;
     cellPos: CellPosition;
     // cellPosStart: CellPosition;
@@ -406,14 +408,16 @@ export class StateManager {
       /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
       headerSelectMode,
       disableSelect,
-      disableHeaderSelect
+      disableHeaderSelect,
+      highlightMode
     } = Object.assign(
       {},
       {
         /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
         headerSelectMode: 'inline',
         disableSelect: false,
-        disableHeaderSelect: false
+        disableHeaderSelect: false,
+        highlightMode: 'cell'
       },
       this.table.options.select
     );
@@ -426,7 +430,15 @@ export class StateManager {
     //   this.select.highlightScope = HighlightScope.column;
     // } else
     if (!disableSelect) {
-      this.select.highlightScope = HighlightScope.single;
+      if (highlightMode === 'cross') {
+        this.select.highlightScope = HighlightScope.cross;
+      } else if (highlightMode === 'row') {
+        this.select.highlightScope = HighlightScope.row;
+      } else if (highlightMode === 'column') {
+        this.select.highlightScope = HighlightScope.column;
+      } else {
+        this.select.highlightScope = HighlightScope.single;
+      }
     } else {
       this.select.highlightScope = HighlightScope.none;
     }
@@ -499,12 +511,13 @@ export class StateManager {
     isShift: boolean = false,
     isCtrl: boolean = false,
     isSelectAll: boolean = false,
-    isSelectMoving: boolean = false
+    isSelectMoving: boolean = false,
+    skipBodyMerge: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving);
+    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving, skipBodyMerge);
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -602,7 +615,31 @@ export class StateManager {
       if (this.select.ranges.length === 0) {
         return;
       }
-      selectEnd(this.table.scenegraph);
+
+      // this.select.ranges deduplication
+      const currentRange = this.select.ranges[this.select.ranges.length - 1];
+      let isSame = false;
+      for (let i = 0; i < this.select.ranges.length - 1; i++) {
+        const range = this.select.ranges[i];
+        if (
+          range &&
+          range.start.col === currentRange.start.col &&
+          range.start.row === currentRange.start.row &&
+          range.end.col === currentRange.end.col &&
+          range.end.row === currentRange.end.row
+        ) {
+          isSame = true;
+          break;
+        }
+      }
+      if (isSame) {
+        this.select.ranges.pop();
+        // remove selecting rect
+        deleteAllSelectingBorder(this.table.scenegraph);
+        this.table.scenegraph.selectingRangeComponents.clear();
+      } else {
+        selectEnd(this.table.scenegraph);
+      }
 
       // 触发SELECTED_CELL
       const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
@@ -613,6 +650,10 @@ export class StateManager {
           col: lastCol,
           row: lastRow
         });
+    } else if (fireListener) {
+      if (this.select.ranges.length === 0) {
+        this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CLEAR, {});
+      }
     }
   }
 
@@ -1334,5 +1375,14 @@ export class StateManager {
     isChecked: boolean
   ) {
     return syncRadioState(col, row, field, radioType, indexInCell, isChecked, this);
+  }
+
+  changeCheckboxAndRadioOrder(sourceIndex: number, targetIndex: number) {
+    if (this.checkedState.length) {
+      changeCheckboxOrder(sourceIndex, targetIndex, this);
+    }
+    if (this.radioState.length) {
+      changeRadioOrder(sourceIndex, targetIndex, this);
+    }
   }
 }

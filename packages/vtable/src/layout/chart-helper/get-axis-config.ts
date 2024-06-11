@@ -5,7 +5,6 @@ import type { PivotChart } from '../../PivotChart';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import type { CollectedValue } from '../../ts-types';
 import { getNewRangeToAlign } from './zero-align';
-import { isCartesianChart } from './get-chart-spec';
 
 export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   if (!layout._table.isPivotChart()) {
@@ -138,7 +137,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             text: (indicatorInfo as any)?.title
             // autoRotate: true
           },
-          range: range
+          range
         },
         axisOption,
         {
@@ -169,10 +168,18 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (axisOption?.visible === false) {
         return;
       }
+      const spec = layout.getRawChartSpec(col + 1, row);
       // 左侧维度轴
       return merge(
         {
-          domain: chartType === 'common' ? Array.from(domain) : Array.from(domain).reverse(),
+          domain: chartType === 'scatter' ? undefined : Array.from(domain),
+          // domain:
+          //   chartType === 'scatter'
+          //     ? undefined
+          //     : spec?.series?.length >= 1 //chartType === 'common' 原来这样判断的
+          //     ? Array.from(domain)
+          //     : Array.from(domain).reverse(),
+          range: chartType === 'scatter' ? domain : undefined,
           title: {
             autoRotate: true
           }
@@ -180,8 +187,14 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'left',
-          type: 'band',
-          __vtableChartTheme: theme
+          type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
+          __vtableChartTheme: theme,
+          // 默认左侧维度轴对应的图表direction 为 horizontal
+          // 散点图特殊处理
+          inverse: transformInverse(
+            axisOption,
+            (spec?.direction ?? (chartType === 'scatter' ? 'vertical' : 'horizontal')) === Direction.horizontal
+          )
         }
       );
     }
@@ -331,19 +344,22 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const colPath = layout.getColKeysPath(col, row);
       const domain = (data?.[colPath ?? ''] as Array<string>) ?? [];
 
-      const { axisOption, isPercent, theme } = getAxisOption(col, row - 1, 'bottom', layout);
+      const { axisOption, isPercent, theme, chartType } = getAxisOption(col, row - 1, 'bottom', layout);
       if (axisOption?.visible === false) {
         return;
       }
       // 底部维度轴
       return merge(
         {
-          domain: Array.from(domain)
+          // domain: Array.from(domain)
+          domain: chartType === 'scatter' ? undefined : Array.from(domain),
+
+          range: chartType === 'scatter' ? domain : undefined
         },
         axisOption,
         {
           orient: 'bottom',
-          type: 'band',
+          type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
           __vtableChartTheme: theme
         }
       );
@@ -355,17 +371,32 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
 export function getAxisOption(col: number, row: number, orient: string, layout: PivotHeaderLayoutMap) {
   const spec = layout.getRawChartSpec(col, row);
-  if (spec && isArray(spec.axes)) {
-    const axisOption = spec.axes.find((axis: any) => {
+  const axes = spec.axes ?? [];
+  (layout._table as PivotChart).pivotChartAxes.forEach(axis => {
+    const index = axes.findIndex((a: any) => {
+      return axis.orient === a.orient;
+    });
+    if (index === -1) {
+      axes.push(axis);
+    }
+  });
+
+  if (spec && isArray(axes)) {
+    const axisOption = axes.find((axis: any) => {
       return axis.orient === orient;
     });
     if (axisOption) {
       const { seriesIndex, seriesId } = axisOption;
       let seriesIndice;
+      let seriesSpec: any;
       if (isValid(seriesId) && isArray(spec.series)) {
-        seriesIndice = (isArray(seriesId) ? seriesId : [seriesId]).map(id =>
-          spec.series.findIndex((s: any) => s.id === id)
-        );
+        seriesIndice = (isArray(seriesId) ? seriesId : [seriesId]).map(id => {
+          const index = spec.series.findIndex((s: any) => s.id === id);
+          if (index >= 0) {
+            seriesSpec = spec.series[index];
+          }
+          return index;
+        });
       } else if (isValid(seriesIndex) && isArray(spec.series)) {
         seriesIndice = seriesIndex;
       }
@@ -375,7 +406,7 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
         isZeroAlign: checkZeroAlign(spec, orient, layout),
         seriesIndice,
         theme: spec.theme,
-        chartType: spec.type
+        chartType: seriesSpec?.type ?? spec.type
       };
     }
   }
@@ -627,4 +658,26 @@ export function isLeftOrRightAxis(col: number, row: number, layout: PivotHeaderL
     }
   }
   return false;
+}
+
+const enum Direction {
+  vertical = 'vertical',
+  horizontal = 'horizontal'
+}
+
+// align with vchart (packages/vchart/src/component/axis/cartesian/util/common.ts)
+function transformInverse(spec: any, isHorizontal: boolean) {
+  // 这里处理下 direction === 'horizontal' 下的 Y 轴
+  // 因为 Y 轴绘制的时候默认是从下至上绘制的，但是在 direction === 'horizontal' 场景下，图表应该是按照从上至下阅读的
+  // 所以这里在这种场景下坐标轴会默认 inverse 已达到效果
+  let inverse = spec?.inverse;
+  if (isHorizontal && !isXAxis(spec?.orient)) {
+    inverse = isValid(spec?.inverse) ? !spec?.inverse : true;
+  }
+  return inverse;
+}
+
+type IOrientType = 'left' | 'top' | 'right' | 'bottom' | 'z';
+function isXAxis(orient: IOrientType) {
+  return orient === 'bottom' || orient === 'top';
 }

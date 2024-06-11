@@ -35,8 +35,9 @@ import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
-import { cloneDeepSpec } from '@visactor/vutils-extension';
+import { cloneDeepSpec } from '@vutils-extension';
 import { setCellCheckboxState } from './state/checkbox/checkbox';
+import { EmptyTip } from './components/empty-tip/empty-tip';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -73,13 +74,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
       : options.header
       ? cloneDeepSpec(options.header, ['children'])
       : [];
-    options.columns?.forEach((colDefine, index) => {
-      //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
-      if (colDefine.editor) {
-        internalProps.columns[index].editor = colDefine.editor;
-      }
-    });
-
+    // options.columns?.forEach((colDefine, index) => {
+    //   //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
+    //   if (colDefine.editor) {
+    //     internalProps.columns[index].editor = colDefine.editor;
+    //   }
+    // });
+    this.internalProps.headerHelper.setTableColumnsEditor();
     this.showHeader = options.showHeader ?? true;
 
     this.transpose = options.transpose ?? false;
@@ -98,6 +99,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.title) {
       internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
+    }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        this.internalProps.emptyTip.resetVisible();
+      }
     }
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
     setTimeout(() => {
@@ -146,12 +155,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
   updateColumns(columns: ColumnsDefine) {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.columns = cloneDeepSpec(columns, ['children']);
-    columns.forEach((colDefine, index) => {
-      if (colDefine.editor) {
-        this.internalProps.columns[index].editor = colDefine.editor;
-      }
-    });
+    // columns.forEach((colDefine, index) => {
+    //   if (colDefine.editor) {
+    //     this.internalProps.columns[index].editor = colDefine.editor;
+    //   }
+    // });
     this.options.columns = columns;
+    this.internalProps.headerHelper.setTableColumnsEditor();
+    this._hasAutoImageColumn = undefined;
     this.refreshHeader();
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
@@ -362,7 +373,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (!this.transpose) {
         // 列上是否配置了禁止拖拽列宽的配置项disableColumnResize
         const cellDefine = this.internalProps.layoutMap.getBody(col, this.columnHeaderLevelCount);
+        const isSeriesNumber = this.internalProps.layoutMap.isSeriesNumber(col, row);
         if ((cellDefine as ColumnData)?.disableColumnResize) {
+          return false;
+        } else if (isSeriesNumber && this.internalProps.rowSeriesNumber.disableColumnResize === true) {
           return false;
         }
       }
@@ -384,11 +398,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       : options.header
       ? cloneDeepSpec(options.header, ['children'])
       : [];
-    options.columns.forEach((colDefine, index) => {
-      if (colDefine.editor) {
-        internalProps.columns[index].editor = colDefine.editor;
-      }
-    });
+    // options.columns.forEach((colDefine, index) => {
+    //   if (colDefine.editor) {
+    //     internalProps.columns[index].editor = colDefine.editor;
+    //   }
+    // });
+    this.internalProps.headerHelper.setTableColumnsEditor();
     // 处理转置
     this.transpose = options.transpose ?? false;
     // 更新表头
@@ -419,6 +434,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.title) {
       internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
+    }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        this.internalProps.emptyTip.resetVisible();
+      }
     }
     return new Promise(resolve => {
       setTimeout(resolve, 0);
@@ -475,10 +498,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!layoutMap) {
       return;
     }
+
+    const dataCount = table.internalProps.dataSource?.length ?? 0;
     layoutMap.recordsCount =
-      (table.internalProps.dataSource?.length ?? 0) +
-      layoutMap.hasAggregationOnTopCount +
-      layoutMap.hasAggregationOnBottomCount;
+      dataCount + (dataCount > 0 ? layoutMap.hasAggregationOnTopCount + layoutMap.hasAggregationOnBottomCount : 0);
 
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;
@@ -996,6 +1019,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.internalProps.title.resize();
       this.scenegraph.resize();
     }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        this.internalProps.emptyTip.resetVisible();
+      }
+    }
 
     this.render();
     if (isValid(oldHoverState.col) && isValid(oldHoverState.row) && oldHoverState.col >= 0 && oldHoverState.row >= 0) {
@@ -1075,7 +1106,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return isValid(editorDefine);
   }
-  /** 更改单元格数据 会触发change_cell_value事件*/
+
+  /**
+   * 更改单元格数据 会触发change_cell_value事件
+   * @param col
+   * @param row
+   * @param value 更改后的值
+   * @param workOnEditableCell 限制只能更改配置了编辑器的单元格值。快捷键paste这里配置的true，限制只能修改可编辑单元格值
+   */
   changeCellValue(col: number, row: number, value: string | number | null, workOnEditableCell = false) {
     if ((workOnEditableCell && this.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
       const recordIndex = this.getRecordShowIndexByCell(col, row);
@@ -1672,5 +1710,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     return results;
+  }
+  /** 是否为聚合值单元格 */
+  isAggregation(col: number, row: number): boolean {
+    return this.internalProps.layoutMap.isAggregation(col, row);
   }
 }

@@ -91,6 +91,10 @@ import type { ContinueTableLegend } from '../components/legend/continue-legend/c
 import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 import type { ReactCustomLayout } from '../components/react/react-custom-layout';
+import type { ISortedMapItem } from '../data/DataSource';
+import type { IAnimationAppear } from './animation/appear';
+import type { IEmptyTip } from './component/empty-tip';
+import type { EmptyTip } from '../components/empty-tip/empty-tip';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -230,8 +234,9 @@ export interface IBaseTableProtected {
   limitMinHeight?: number;
 
   title?: Title;
-  legends?: DiscreteTableLegend | ContinueTableLegend;
+  legends?: (DiscreteTableLegend | ContinueTableLegend)[];
 
+  emptyTip?: EmptyTip;
   //是否开启图表异步渲染
   renderChartAsync?: boolean;
   // // 开启图表异步渲染 每批次渐进渲染图表个数
@@ -321,6 +326,8 @@ export interface BaseTableConstructorOptions {
   };
   /** 选择单元格交互配置 */
   select?: {
+    /** 高亮范围模式：十字交叉 整列 整行 或者单个单元格。默认`cell` */
+    highlightMode: 'cross' | 'column' | 'row' | 'cell';
     /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
     headerSelectMode?: 'inline' | 'cell';
     /** 不响应鼠标select交互 */
@@ -395,9 +402,9 @@ export interface BaseTableConstructorOptions {
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
 
-  legends?: ITableLegendOption;
+  legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
-
+  emptyTip?: true | IEmptyTip;
   /** 是否开启图表异步渲染 */
   renderChartAsync?: boolean;
   /** 开启图表异步渲染 每批次渐进渲染图表个数  默认是5个 */
@@ -426,8 +433,20 @@ export interface BaseTableConstructorOptions {
   customCellStyleArrangement?: CustomCellStyleArrangement[];
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+  clearDOM?: boolean;
+  customConfig?: {
+    /** xTable对于没有配置autoWrapText并且有'\n'的文本，在计算行高是会当做一行处理，但是在渲染时会解析'\n'；显示效果就是单元格高度为一行文本高度，只显示第一个'\n'前的文字，后面显示'...'；multilinesForXTable配置实现和该功能对齐的样式 */
+    multilinesForXTable?: boolean;
+    /** 这里可以配置为false 来走flatDataToObject的数据处理逻辑 而不走dataset的分析 */
+    enableDataAnalysis?: boolean;
+    /** 禁用行高列宽计算取整数逻辑 对齐xTable */
+    _disableColumnAndRowSizeRound?: boolean;
+    imageMargin?: number;
+  }; // 部分特殊配置，兼容xTable等作用
 
-  customConfig?: any; // 部分特殊配置，兼容xTable等作用
+  animationAppear?: boolean | IAnimationAppear;
+
+  renderOption?: any;
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */
@@ -558,12 +577,14 @@ export interface BaseTableAPI {
   getDefaultRowHeight: (row: number) => number | 'auto';
   getDefaultColumnWidth: (col: number) => number | 'auto';
   _setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
+  setRowHeight: (row: number, height: number) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;
   // setColWidthDefined: (col: number, width: number) => void;
   getColWidthDefinedNumber: (col: number) => number;
   // getColWidthDefine: (col: number) => string | number;
   _setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
+  setColWidth: (col: number, width: number) => void;
   _getColContentWidth: (col: number) => number;
   _setColContentWidth: (col: number, width: number | string, clearCache?: boolean) => void;
   getMaxColWidth: (col: number) => number;
@@ -790,6 +811,17 @@ export interface BaseTableAPI {
 
   reactCustomLayout?: ReactCustomLayout;
   checkReactCustomLayout: () => void;
+  setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+  exportImg: () => string;
+  exportCellImg: (
+    col: number,
+    row: number,
+    options?: { disableBackground?: boolean; disableBorder?: boolean }
+  ) => string;
+  exportCellRangeImg: (cellRange: CellRange) => string;
+  exportCanvas: () => HTMLCanvasElement;
+  setPixelRatio: (pixelRatio: number) => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
@@ -801,15 +833,10 @@ export interface ListTableProtected extends IBaseTableProtected {
 
 export interface PivotTableProtected extends IBaseTableProtected {
   /** 表格数据 */
-  records: any[] | null;
+  records: any[] | undefined;
+  recordsIsTwoDimensionalArray?: boolean;
   layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IPivotTableDataConfig;
-  /**
-   * 透视表是否开启数据分析
-   * 如果传入数据是明细数据需要聚合分析则开启
-   * 如传入数据是经过聚合好的为了提升性能这里设置为false，同时需要传入columnTree和rowTree
-   */
-  enableDataAnalysis?: boolean;
 
   /** 列表头树型结构 */
   columnTree?: IHeaderTreeDefine[];

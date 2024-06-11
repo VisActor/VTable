@@ -19,6 +19,7 @@ import { computeAxisComponentWidth } from '../../components/axis/get-axis-compon
 import { Group as VGroup } from '@src/vrender';
 import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
+import { breakString } from '../utils/break-string';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
@@ -362,9 +363,15 @@ function computeAutoColWidth(
       if ((hd as HeaderData)?.define?.columnWidthComputeMode === 'only-body') {
         continue;
       }
-      if ((hd as HeaderData)?.hierarchyLevel) {
+      if (isValid((hd as HeaderData)?.hierarchyLevel)) {
         cellHierarchyIndent =
           ((hd as HeaderData).hierarchyLevel ?? 0) * ((layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0);
+        if (
+          (layoutMap as PivotHeaderLayoutMap).rowHierarchyTextStartAlignment &&
+          !table.internalProps.headerHelper.getHierarchyIcon(col, row)
+        ) {
+          cellHierarchyIndent += table.internalProps.headerHelper.getHierarchyIconWidth();
+        }
       }
     } else {
       deltaRow = prepareDeltaRow;
@@ -378,6 +385,12 @@ function computeAutoColWidth(
           Array.isArray(indexArr) && table.getHierarchyState(col, row) !== HierarchyState.none
             ? (indexArr.length - 1) * ((layoutMap as SimpleHeaderLayoutMap).hierarchyIndent ?? 0)
             : 0;
+        if (
+          (layoutMap as SimpleHeaderLayoutMap).hierarchyTextStartAlignment &&
+          !table.internalProps.bodyHelper.getHierarchyIcon(col, row)
+        ) {
+          cellHierarchyIndent += table.internalProps.headerHelper.getHierarchyIconWidth();
+        }
       }
     }
 
@@ -404,6 +417,10 @@ function computeAutoColWidth(
     return colMinWidth;
   } else if (maxWidth > colMaxWidth) {
     return colMaxWidth;
+  } else if (maxWidth <= 0) {
+    // In the case of partially hiding the header, the width calculation may be 0.
+    // In this case, the default value is used to prevent it from being unable to be displayed
+    maxWidth = table.defaultColWidth;
   }
   return maxWidth;
 }
@@ -452,6 +469,8 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
         enableCellPadding = customLayoutObj.enableCellPadding;
       } else {
         width = 0;
+        renderDefault = customLayoutObj.renderDefault;
+        enableCellPadding = customLayoutObj.enableCellPadding;
       }
     } else if (typeof customRender === 'function') {
       // 处理customRender
@@ -573,16 +592,11 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
   } else {
     text = cellValue;
   }
-  let lines;
-  if (!table.internalProps.enableLineBreak && !table.options.customConfig?.multilinesForXTable) {
-    lines = [validToString(text)];
-  } else {
-    lines = validToString(text).split('\n') || [];
-  }
+  const lines = breakString(text, table).text;
   if (lines.length >= 1) {
     // eslint-disable-next-line no-loop-func
     lines.forEach((line: string) => {
-      const width = table.measureText(line.slice(0, table.options.maxCharactersNumber || 200), {
+      const width = table.measureText(line, {
         fontSize,
         fontFamily,
         fontWeight

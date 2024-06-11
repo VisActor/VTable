@@ -322,6 +322,6 @@ describe('PivotTable-size-legend init test', () => {
     //TODO 这个对应的例子pivotTable-size-legend 没有问题
     // const layerChild = pivotTable.scenegraph.stage.children[0].children;
     // expect(layerChild[layerChild.length - 1].name).toBe('legend');
+    pivotTable.release();
   });
-  pivotTable.release();
 });

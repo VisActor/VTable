@@ -1,8 +1,7 @@
-import type { EditContext, IEditor, Placement, RectProps } from './types';
+import type { EditContext, IEditor, RectProps } from './types';
 
 export interface InputEditorConfig {
-  max?: number;
-  min?: number;
+  readonly?: boolean;
 }
 
 export class InputEditor implements IEditor {
@@ -19,6 +18,11 @@ export class InputEditor implements IEditor {
   createElement() {
     const input = document.createElement('input');
     input.setAttribute('type', 'text');
+
+    if (this.editorConfig?.readonly) {
+      input.setAttribute('readonly', `${this.editorConfig.readonly}`);
+    }
+
     input.style.position = 'absolute';
     input.style.padding = '4px';
     input.style.width = '100%';

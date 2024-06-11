@@ -13,9 +13,10 @@ import { BaseRenderContributionTime, createRectPath, injectable } from '@src/vre
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
-import { getQuadProps } from '../../utils/padding';
 import { getCellMergeInfo } from '../../utils/get-cell-merge';
 import { InteractionState } from '../../../ts-types';
+import { isArray } from '@visactor/vutils';
+import { getCellSelectColor } from '../../../state/select/is-cell-select-highlight';
 
 // const highlightDash: number[] = [];
 
@@ -121,8 +122,8 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
     ) => boolean
   ) {
     const {
-      width = groupAttribute.width,
-      height = groupAttribute.height,
+      // width = groupAttribute.width,
+      // height = groupAttribute.height,
       // 基础border
       stroke = groupAttribute.stroke,
       strokeArrayColor = (groupAttribute as any).strokeArrayColor,
@@ -136,6 +137,7 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
       // highlightStrokeArrayWidth = (groupAttribute as any).highlightStrokeArrayWidth,
       // highlightStrokeArrayPart = (groupAttribute as any).highlightStrokeArrayPart,
     } = group.attribute as any;
+    let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
 
     // lineWidth === 0 不绘制
     if (!stroke || (!Array.isArray(strokeArrayWidth) && lineWidth === 0)) {
@@ -174,6 +176,10 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
           y = Math.floor(y) + 0.5;
         }
 
+        if (table.options.customConfig?._disableColumnAndRowSizeRound) {
+          width = Math.round(width);
+          height = Math.round(height);
+        }
         const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
           group,
           Math.ceil(width + deltaWidth),
@@ -451,6 +457,7 @@ export class DashGroupBeforeRenderContribution implements IGroupRenderContributi
       stroke &&
       Array.isArray(lineDash) &&
       lineDash.length &&
+      lineDash[0]?.length &&
       !Array.isArray(strokeArrayColor) &&
       !Array.isArray(strokeArrayWidth)
     ) {
@@ -495,26 +502,35 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
 
     if (
       !stroke ||
-      !(Array.isArray(lineDash) && lineDash.length) ||
+      !(Array.isArray(lineDash) && lineDash.length && lineDash[0]?.length) ||
       Array.isArray(strokeArrayColor) ||
       Array.isArray(strokeArrayWidth)
     ) {
       return;
     }
 
+    const table = (group.stage as any).table as BaseTableAPI;
+    if (!table) {
+      return;
+    }
+
+    // convert lineDash to number[][]
+    const splitLineDash = isArray(lineDash[0]) ? getQuadLineDash(lineDash) : [lineDash, lineDash, lineDash, lineDash];
+
     // const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
     let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
-    width = Math.ceil(width);
-    height = Math.ceil(height);
+    if (table.options.customConfig?._disableColumnAndRowSizeRound) {
+      width = Math.round(width);
+      height = Math.round(height);
+    } else {
+      width = Math.ceil(width);
+      height = Math.ceil(height);
+    }
 
     let widthForStroke;
     let heightForStroke;
     if (lineWidth & 1) {
-      const table = (group.stage as any).table as BaseTableAPI;
-      if (!table) {
-        return;
-      }
-      const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
+      const bottomRight = table.theme.cellBorderClipDirection === 'bottom-right';
       let deltaWidth = 0;
       let deltaHeight = 0;
       if (bottomRight) {
@@ -553,7 +569,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y);
     context.lineTo(x + widthForStroke, y);
     context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
-    context.setLineDash(lineDash[0] ?? []);
+    context.setLineDash(splitLineDash[0] ?? []);
     context.stroke();
 
     // right
@@ -561,7 +577,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x + widthForStroke, y);
     context.lineTo(x + widthForStroke, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
-    context.setLineDash(lineDash[1] ?? []);
+    context.setLineDash(splitLineDash[1] ?? []);
     context.stroke();
 
     // bottom
@@ -569,7 +585,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y + heightForStroke);
     context.lineTo(x + widthForStroke, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
-    context.setLineDash(lineDash[2] ?? []);
+    context.setLineDash(splitLineDash[2] ?? []);
     context.stroke();
 
     // left
@@ -577,7 +593,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y);
     context.lineTo(x, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
-    context.setLineDash(lineDash[3] ?? []);
+    context.setLineDash(splitLineDash[3] ?? []);
     context.stroke();
 
     context.lineDashOffset = 0;
@@ -677,7 +693,7 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       cornerRadius = groupAttribute.cornerRadius
     } = group.attribute as any;
 
-    const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
+    let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
     // width = Math.ceil(width);
     // height = Math.ceil(height);
 
@@ -711,16 +727,22 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       //     height -= 1;
       //   }
       // }
+
+      const table = (group.stage as any).table as BaseTableAPI;
+      if (!table) {
+        return;
+      }
+      if (table.options.customConfig?._disableColumnAndRowSizeRound) {
+        width = Math.round(width);
+        height = Math.round(height);
+      }
       const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
         group,
         Math.ceil(width),
         Math.ceil(height)
       );
       context.beginPath();
-      const table = (group.stage as any).table as BaseTableAPI;
-      if (!table) {
-        return;
-      }
+
       const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
       let deltaWidth = 0;
       let deltaHeight = 0;
@@ -786,9 +808,14 @@ export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderCon
     if ((group as Group).role === 'cell') {
       const table = (group.stage as any).table as BaseTableAPI;
       if (table && table.stateManager.interactionState !== InteractionState.scrolling) {
-        const hoverColor = getCellHoverColor(group as Group, table);
-        if (hoverColor) {
-          (group.attribute as any)._vtableHoverFill = hoverColor;
+        const selectColor = getCellSelectColor(group as Group, table);
+        if (selectColor) {
+          (group.attribute as any)._vtableHightLightFill = selectColor;
+        } else {
+          const hoverColor = getCellHoverColor(group as Group, table);
+          if (hoverColor) {
+            (group.attribute as any)._vtableHightLightFill = hoverColor;
+          }
         }
       }
     }
@@ -823,18 +850,18 @@ export class AdjustColorGroupAfterRenderContribution implements IGroupRenderCont
     ) => boolean
   ) {
     // 处理hover颜色
-    if ((group.attribute as any)._vtableHoverFill) {
+    if ((group.attribute as any)._vtableHightLightFill) {
       if (fillCb) {
         // do nothing
         // fillCb(context, group.attribute, groupAttribute);
       } else if (fVisible) {
         const oldColor = group.attribute.fill;
         // draw hover fill
-        group.attribute.fill = (group.attribute as any)._vtableHoverFill as any;
+        group.attribute.fill = (group.attribute as any)._vtableHightLightFill as any;
         context.setCommonStyle(group, group.attribute, x, y, groupAttribute);
         context.fill();
         group.attribute.fill = oldColor;
-        (group.attribute as any)._vtableHoverFill = undefined;
+        (group.attribute as any)._vtableHightLightFill = undefined;
       }
     }
   }
@@ -1001,4 +1028,14 @@ function getCellSizeForDraw(group: any, width: number, height: number) {
     }
   }
   return { width, height };
+}
+
+function getQuadLineDash(lineDash: number[][]) {
+  if (lineDash.length === 1) {
+    return [lineDash[0], lineDash[0], lineDash[0], lineDash[0]];
+  } else if (lineDash.length === 2) {
+    return [lineDash[0], lineDash[1], lineDash[0], lineDash[1]];
+  }
+  // 不考虑三个数的情况，三个数是用户传错了
+  return lineDash;
 }

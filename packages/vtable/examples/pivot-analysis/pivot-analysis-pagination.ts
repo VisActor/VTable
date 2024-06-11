@@ -90,7 +90,7 @@ export function createTable() {
             }
           }
         ],
-        enableDataAnalysis: true,
+
         indicatorTitle: '指标名称',
         indicatorsAsCol: false,
         dataConfig: {

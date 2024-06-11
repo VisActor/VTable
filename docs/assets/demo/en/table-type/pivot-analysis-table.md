@@ -17,7 +17,6 @@ Pivot analysis table
 - `columns`
 - `rows`
 - `indicators`
-- `enableDataAnalysis` turns on pivot data analysis
 - `dataConfig` configures data rules, optional configuration items
 
 ## Code demo
@@ -119,7 +118,6 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           }
         ]
       },
-      enableDataAnalysis: true,
       widthMode: 'standard'
     };
     tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);

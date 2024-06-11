@@ -46,7 +46,6 @@ describe('pivotTable-analysis init test', () => {
     rows: ['province', 'city'],
     columns: ['category', 'sub_category'],
     indicators: ['sales', 'number'],
-    enableDataAnalysis: true,
     indicatorTitle: '指标名称',
     indicatorsAsCol: false,
     corner: { titleOnDimension: 'row' },
@@ -376,6 +375,6 @@ describe('pivotTable-analysis init test', () => {
   });
   test('pivotTable-analysis cellValue', () => {
     expect(pivotTable.getCellValue(7, 4)).toBe(999);
+    pivotTable.release();
   });
-  pivotTable.release();
 });

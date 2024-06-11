@@ -23,6 +23,7 @@ Supported event types:
   MOUSEDOWN_CELL: 'mousedown_cell',
   MOUSEUP_CELL: 'mouseup_cell',
   SELECTED_CELL: 'selected_cell',
+  SELECTED_CLEAR: 'selected_clear',
   KEYDOWN: 'keydown',
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
@@ -105,6 +106,10 @@ Refer to the parameter types introduced in the CLICK_CELL event for the paramete
 Cell selected state change event
 
 {{ use: SelectedCellEvent() }}
+
+## SELECTED_CLEAR
+
+Cell selected state all be cleard, when click table's blank region, this event will be triggered.
 
 ## KEYDOWN
 
@@ -422,7 +427,7 @@ Parameter types of event callback function:
 
 ## CHECKBOX_STATE_CHANGE
 
-Change the checkbox checkbox state. **ListTable table exclusive event**
+Change the checkbox state. **ListTable table exclusive event**
 
 Parameter types of event callback function:
 
@@ -435,3 +440,21 @@ Parameter types of event callback function:
   checked: boolean;
 };
 ```
+
+## RADIO_STATE_CHANGE
+
+Change the radio state. **ListTable table exclusive event**
+
+Parameter types of event callback function:
+
+```
+{
+  col: number;
+  row: number;
+  alue: string | number;
+  dataValue: string | number;
+  radioIndexInCell: boolean | number;
+};
+```
+
+If there is only one radio button in the cell, radioIndexInCell is of type boolean, indicating whether it is selected; if there are multiple radio buttons in the cell, radioIndexInCell is of type number, indicating the index of the selected radio button.

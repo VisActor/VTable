@@ -32,7 +32,9 @@ export function createImageCellGroup(
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   // const margin = getProp('padding', headerStyle, col, row, table);
-  if (isValid(functionalPadding)) {
+  if (table.options.customConfig?.imageMargin) {
+    padding = getQuadProps(table.options.customConfig?.imageMargin);
+  } else if (isValid(functionalPadding)) {
     padding = functionalPadding;
   }
   if (cellTheme?.text?.textAlign) {
@@ -245,7 +247,12 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const textAlign = getProp('textAlign', headerStyle, col, row, table) ?? 'left';
   const textBaseline = getProp('textBaseline', headerStyle, col, row, table) ?? 'middle';
-  const padding = getQuadProps(getProp('padding', headerStyle, col, row, table)) ?? [0, 0, 0, 0];
+  let padding: [number, number, number, number];
+  if (table.options.customConfig?.imageMargin) {
+    padding = getQuadProps(table.options.customConfig?.imageMargin);
+  } else {
+    padding = getQuadProps(getProp('padding', headerStyle, col, row, table)) ?? [0, 0, 0, 0];
+  }
 
   const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, table);
   const colStart = cellGroup.mergeStartCol ?? cellGroup.col;

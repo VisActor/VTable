@@ -75,7 +75,7 @@ export function createCellContent(
   if (!Array.isArray(icons) || icons.length === 0) {
     if (isValid(textStr)) {
       // 没有icon，cellGroup只添加WrapText
-      const text = breakString(textStr, table);
+      const { text, moreThanMaxCharacters } = breakString(textStr, table);
 
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
@@ -91,6 +91,7 @@ export function createCellContent(
       }
       const attribute = {
         text: text.length === 1 ? text[0] : text,
+        moreThanMaxCharacters,
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
         // fill: true,
         // textAlign: 'left',
@@ -205,10 +206,11 @@ export function createCellContent(
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
         : getHierarchyOffset(cellGroup.col, cellGroup.row, table);
-      const text = breakString(textStr, table);
+      const { text, moreThanMaxCharacters } = breakString(textStr, table);
 
       const attribute = {
         text: text.length === 1 ? text[0] : text,
+        moreThanMaxCharacters,
         maxLineWidth: autoColWidth
           ? Infinity
           : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth - hierarchyOffset,
@@ -225,9 +227,7 @@ export function createCellContent(
         lineClamp,
         wordBreak: 'break-word',
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
-        dx:
-          (textAlign === 'left' ? (!contentLeftIcons.length && !contentRightIcons.length ? hierarchyOffset : 0) : 0) +
-          _contentOffset
+        dx: (textAlign === 'left' ? (!contentLeftIcons.length ? hierarchyOffset : 0) : 0) + _contentOffset
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
@@ -287,15 +287,33 @@ export function createCellContent(
         align: textAlign,
         baseline: textBaseline
       });
-
+      const dealWithIconComputeVar = {
+        addedHierarchyOffset: 0
+      }; //为了只增加一次indent的缩进值，如果有两个icon都dealWithIcon的话
       contentLeftIcons.forEach(icon => {
-        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
+        const iconMark = dealWithIcon(
+          icon,
+          undefined,
+          cellGroup.col,
+          cellGroup.row,
+          range,
+          table,
+          dealWithIconComputeVar
+        );
         iconMark.role = 'icon-content-left';
         iconMark.name = icon.name;
         cellContent.addLeftOccupyingIcon(iconMark);
       });
       contentRightIcons.forEach(icon => {
-        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
+        const iconMark = dealWithIcon(
+          icon,
+          undefined,
+          cellGroup.col,
+          cellGroup.row,
+          range,
+          table,
+          dealWithIconComputeVar
+        );
         iconMark.role = 'icon-content-right';
         iconMark.name = icon.name;
         cellContent.addRightOccupyingIcon(iconMark);
@@ -377,7 +395,10 @@ export function dealWithIcon(
   col?: number,
   row?: number,
   range?: CellRange,
-  table?: BaseTableAPI
+  table?: BaseTableAPI,
+  dealWithIconComputeVar?: {
+    addedHierarchyOffset: number;
+  }
 ): Icon {
   // positionType在外部处理
   const iconAttribute = {} as any;
@@ -403,16 +424,23 @@ export function dealWithIcon(
 
   let hierarchyOffset = 0;
   if (
+    (!dealWithIconComputeVar || dealWithIconComputeVar?.addedHierarchyOffset === 0) &&
     isNumber(col) &&
     isNumber(row) &&
     table &&
-    (icon.funcType === IconFuncTypeEnum.collapse || icon.funcType === IconFuncTypeEnum.expand)
+    (icon.funcType === IconFuncTypeEnum.collapse ||
+      icon.funcType === IconFuncTypeEnum.expand ||
+      icon.positionType === IconPosition.contentLeft ||
+      icon.positionType === IconPosition.contentRight)
   ) {
     // compute hierarchy offset
     // hierarchyOffset = getHierarchyOffset(col, row, table);
     hierarchyOffset = range
       ? getHierarchyOffset(range.start.col, range.start.row, table)
       : getHierarchyOffset(col, row, table);
+    if (dealWithIconComputeVar) {
+      dealWithIconComputeVar.addedHierarchyOffset = 1;
+    }
   }
 
   iconAttribute.marginLeft = (icon.marginLeft ?? 0) + hierarchyOffset;
@@ -541,7 +569,12 @@ export function updateCellContentWidth(
     oldTextHeight = textMark.AABBBounds.height();
     textMark.setAttribute(
       'maxLineWidth',
-      distWidth - leftIconWidth - rightIconHeight - (padding[1] + padding[3]) - (textMark.attribute.dx ?? 0)
+      distWidth -
+        leftIconWidth -
+        rightIconHeight -
+        (padding[1] + padding[3]) -
+        (textMark.attribute.dx ?? 0) -
+        (scene.table.theme._contentOffset ?? 0)
     );
     // contentWidth = textMark.AABBBounds.width();
     contentHeight = textMark.AABBBounds.height();
@@ -588,7 +621,7 @@ export function updateCellContentWidth(
   if (autoRowHeight) {
     let newHeight = Math.max(leftIconHeight, contentHeight, rightIconHeight); // + padding[0] + padding[2]
 
-    if (isCellHeightUpdate(scene, cellGroup, newHeight + padding[0] + padding[2], oldCellHeight)) {
+    if (isCellHeightUpdate(scene, cellGroup, Math.round(newHeight + padding[0] + padding[2]), oldCellHeight)) {
       // cellGroup.setAttribute('height', newHeight + padding[0] + padding[2]);
       return true;
     }

@@ -14,6 +14,7 @@ There are many application scenarios for perspective composite graphs in data la
 5.  Data reporting and presentation: Perspective composite diagrams can be used to present data reports. Data reports can be made easier to understand and present by grouping data according to different attributes and presenting each grouped data in a certain form.
 
 # The structure of the perspective combination chart
+
 The structure can be compared to [**pivot table**](../table_type/Pivot_table/pivot_table_overview). Compared with the pivot table, in addition to the column header, row header, corner header, and body, the perspective combination chart can also be configured with [**axis components**](../components/axes) in the four directions. Corresponds to the upper axis, next week, left axis, and right axis, and can also be configured separately [**Legend component**](../components/legend).
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/c0de7ff0a101bd4cb25c8170f.png)
 
@@ -135,19 +136,27 @@ The specific relevant configurations are as follows:
 
 Corresponding to the schematic structure of the perspective combination diagram above:
 
-*   Rows configures the Dimension'Order Year 'and'Ship Mode' corresponding to the row header;
-*   Columns configures the Dimension'Region 'and'Category' corresponding to the list header;
-*   Indicators configure the Metirc data'Quantity ',' Sales', 'Profit' to be analyzed; Quantity corresponds to Metirc 1 in the figure above, and a histogram is used to show the trend; Sales and Profit correspond to Metirc 2 and Metirc 3 in the figure above, using a combined biaxial graph to show the data of the two Metircs. You need to set `cellType:'chart', chartModule:'vchart'` in the specific configuration of the indicator to indicate the chart rendering type to be configured, and specify that the registered chart library name is `vchart`.
-*   IndicatorAsCol configures Metirc in the row header or column header, it should be noted that:
-    *   If true, that is, Metirc is in the column header, the display direction of the corresponding chart is'horizontal 'horizontal display;
-    *   If it is false, that is, Metirc is at the head of the row, then the display direction of the corresponding chart is'vertical '.
-*   Legends configuration legend style;
-    ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff07.png)
-*   Axes configures the global style of the axis. If axes have been configured in chartSpec in the Metirc configuration, the configuration in chartSpec will be used first.
+- rows configures the Dimension'Order Year 'and'Ship Mode' corresponding to the row header;
+- columns configures the Dimension'Region 'and'Category' corresponding to the list header;
+
+- indicators configures the indicator data to be analyzed: `Quantity`, `Sales`, `Profit`;
+  - `Quantity` corresponds to indicator 1 in the figure above, using a bar chart to show the trend;
+  - `Sales` and `Profit` correspond to indicators 2 and 3 in the above figure, and the data of the two indicators are displayed using a combined dual-axis chart.
+  - You need to set `cellType:'chart', chartModule:'vchart'` in the specific configuration of `indicator` to indicate that you want to configure the chart rendering type and specify that the registered chart library name is `vchart`.
+  - For specific chartSpec configuration, please refer to [VChart official website](https://visactor.io/vchart/option/barChart)
+- indicatorAsCol configures the indicator at the row or column header. Note that:
+
+  - If true, that is, the indicator is in the column header, the corresponding chart display direction is horizontal;
+  - If it is false, that is, the indicator is at the head of the row, the display direction of the corresponding chart is vertical;
+
+- legends configuration legend style;
+  ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff07.png)
+- axes configures the global style of the axis. If axes have been configured in chartSpec in the Metirc configuration, the configuration in chartSpec will be used first.
 
 # Chart Module Register
 
 The chart library component needs to be injected before use:
+
 ```
 import VChart from '@visactor/vchart';
 VTable.register.chartModule('vchart', VChart);
@@ -156,7 +165,8 @@ VTable.register.chartModule('vchart', VChart);
 # Chart Events
 
 If you want to monitor chart events, you can use onVChartEvent. vtable has made a simple event proxy. The supported event types and callbacks are still consistent with vchart. For details, please refer to [VChart Event](https://visactor.io/ vchart/api/API/event)
-```    
+
+```
      tableInstance.onVChartEvent('click', args => {
         console.log('onVChartEvent click', args);
       });
@@ -166,12 +176,16 @@ If you want to monitor chart events, you can use onVChartEvent. vtable has made 
 ```
 
 # Legend configuration and legend linkage
+
 How to achieve the linkage effect between table legend and chart?
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/legend-chart.gif)
+
 ## Legend configuration
+
 You can refer to the table [Legend Tutorial] (../components/legend) to configure the legend displayed outside the table.
 The configuration in the above picture is as follows:
+
 ```
      legends: {
       orient: 'bottom',
@@ -249,6 +263,7 @@ This configuration configures the color and shape of each item of the legend, as
 Because the color values need to be explicitly set in this configuration, the color mapping rules also need to be specified in the spec of the configuration chart. Please refer to [color configuration method](https://visactor.io/vchart/option/barChart#color).
 
 In the example above, we added the following configuration to the chartSpec to ensure that the colors in the chart and the legend are consistent:
+
 ```
 scales: [
               {
@@ -282,7 +297,9 @@ scales: [
               }
             ]
 ```
+
 ## Legend linkage
+
 Use the event `LEGEND_ITEM_CLICK` to monitor legend item clicks, and call the VTable interface `updateFilterRules` to process the data display filtered chart.
 
 ```

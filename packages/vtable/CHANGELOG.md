@@ -1,6 +1,242 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Sun, 28 Apr 2024 06:22:38 GMT and should not be manually modified.
+This log was last generated on Thu, 06 Jun 2024 02:34:10 GMT and should not be manually modified.
+
+## 1.2.0
+Thu, 06 Jun 2024 02:34:10 GMT
+
+### Minor changes
+
+- feat: add merge cell custom graphic attribute sync #1718
+
+### Updates
+
+- feat: support select highlightMode effect #1167
+
+
+- feat: add isAggregation api #1803
+
+
+- fix: when has no records should not has aggregation row #1804
+
+
+- refactor: update pixelRatio when resize #1823
+
+
+- fix: updateColumns set editor error #1828
+
+
+- chore: update vrender version
+
+
+- refactor: selectAllOnCtrlA option
+
+
+- feat: optimize large column performance #1840 #1824
+- fix: fix maxCharactersNumber effect #1830
+
+## 1.1.2
+Fri, 31 May 2024 08:56:27 GMT
+
+### Updates
+
+- chore: update vrender version
+
+
+
+## 1.1.1
+Thu, 30 May 2024 08:07:33 GMT
+
+### Updates
+
+- refactor: dimension value same with indicator key cell value error #1817
+
+
+- fix: when set emptyTip interaction not work well with has records #1818
+
+
+- fix: fix table frame corner radius display problem #1783
+
+## 1.1.0
+Tue, 28 May 2024 12:24:56 GMT
+
+### Minor changes
+
+- feat: add empty tip #1782
+
+
+
+### Updates
+
+- fix: add update delete record api should maintain beforeChangedRecordsMap #1780
+
+
+- fix: when set disableSelect table should support drag header #1800
+
+
+- fix: fix tree create problem in getDataCellPath()
+- fix: fix left axis index in horizontal pivot chart
+
+## 1.0.3
+Fri, 24 May 2024 10:31:16 GMT
+
+### Updates
+
+- refactor: legends support ser array form #1740
+
+
+- fix: first col tree mode compute col width error #1778
+
+
+
+## 1.0.2
+Fri, 24 May 2024 10:08:07 GMT
+
+### Updates
+
+- fix: use table option in hasAutoImageColumn()
+- fix: axis size align with vrender-component #1784
+- fix: fix lineClamp config in computeRowsHeight() #1772
+- fix: fix progress cell create problem in vtable-export #1787
+- fix: ignore cell merge in selectCells()
+- feat: add setRowHeight&setColWidth api
+
+## 1.0.1
+Wed, 22 May 2024 12:21:05 GMT
+
+### Updates
+
+- feat: tree mode  can set icon #1697
+
+
+- fix: ignore cell merge in selectCells()
+- feat: add setRowHeight&setColWidth api
+
+## 1.0.0
+Tue, 21 May 2024 12:41:50 GMT
+
+### Breaking changes
+
+- feat: add virtual option for rowTree and columnTree #1644
+
+ BREAKING CHANGE: getCellOriginRecord will return an array of source data.
+
+### Updates
+
+- feat: rows and tree can  combined use  #1644
+
+
+
+## 0.25.9
+Tue, 21 May 2024 12:33:13 GMT
+
+### Updates
+
+- fix: when body cell is blank string,compute row height error #1752
+
+
+- fix: fix custom merge cell display problem when select header
+
+## 0.25.8
+Tue, 21 May 2024 11:19:27 GMT
+
+### Updates
+
+- feat: add scrollSliderCornerRadius config #1369
+
+
+- fix: when set hideRowHeader, body cell value is blank #1732
+
+
+- fix: setTableColumnsEditor occor error when not set columns #1747
+
+
+- feat: add disableBackground &  disableBorder in exportCellImg() #1733
+- feat: add disableColumnResize for rowSeriesNumber
+
+
+- fix: fix col & row order in cellInRanges()
+- fix: add string mark in csv-export #1730
+
+## 0.25.7
+Fri, 17 May 2024 12:08:43 GMT
+
+_Version update only_
+
+## 0.25.6
+Fri, 17 May 2024 10:50:13 GMT
+
+### Updates
+
+- feat: add selected_clear event #1705
+
+
+- fix: mouse down on scroll rail trigger mousedown_table #1706
+
+
+- fix: merge cell value can be edited #1711
+
+
+- fix: sub colunms can not be edit when set editor instance #1711
+
+
+- feat: add mergeCellInfo arg in event #1667
+- fix: fix checkbox and radio state update when change row index #1712
+- fix: fix veritial offset in text stick
+- fix: fix column width may be zero #1708
+- fix: fix getCell performance
+- fix: fix header hide func in pivot table
+- fix: lineDash judgement in group-contribution-render #1696
+
+## 0.25.5
+Mon, 13 May 2024 13:47:37 GMT
+
+### Updates
+
+- fix: trigger mousedown_table event region need extend #1668
+
+
+
+## 0.25.4
+Fri, 10 May 2024 03:15:01 GMT
+
+### Updates
+
+- feat: remove vutil-extension temply
+
+## 0.25.3
+Thu, 09 May 2024 11:13:29 GMT
+
+### Updates
+
+- feat: remove vutil-extension temply
+
+## 0.25.2
+Wed, 08 May 2024 10:48:37 GMT
+
+### Updates
+
+- fix: fix veritial offset in text stick
+
+## 0.25.1
+Wed, 08 May 2024 08:38:35 GMT
+
+### Updates
+
+- feat: pivot chart support wordCloud rose radar gauge #1614
+
+
+- feat: pivot chart support scatter chart type #1618
+
+
+- fix: when copy blank cell paste not work #1646
+
+
+- feat: add CustomComponent in react-vtable
+- fix: fix custom merge cell size update #1636
+- fix: add arg in completeEdit()
+- fix: add selecting cell range deduplication #1628
+- fix: update @visactor/vutils-extension version
 
 ## 0.25.0
 Sun, 28 Apr 2024 06:22:38 GMT

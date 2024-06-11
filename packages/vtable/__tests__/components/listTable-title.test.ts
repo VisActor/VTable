@@ -95,6 +95,6 @@ describe('listTable-title init test', () => {
     expect(cell01AABB.y1).toBe(0);
     expect(cell01AABB.x2).toBe(151);
     expect(cell01AABB.y2).toBe(40);
+    listTable.release();
   });
-  listTable.release();
 });

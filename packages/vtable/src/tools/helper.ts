@@ -248,11 +248,16 @@ export function cellInRange(range: CellRange, col: number, row: number): boolean
   );
 }
 export function cellInRanges(ranges: CellRange[], col: number, row: number): boolean {
+  // cell range may in wrong order
   for (let i = 0; i < ranges.length; i++) {
     const range = ranges[i];
+    const startCol = Math.min(range.start.col, range.end.col);
+    const endCol = Math.max(range.start.col, range.end.col);
+    const startRow = Math.min(range.start.row, range.end.row);
+    const endRow = Math.max(range.start.row, range.end.row);
     if (
-      (range.start.col <= col && col <= range.end.col && range.start.row <= row && row <= range.end.row) ||
-      (range.end.col <= col && col <= range.start.col && range.end.row <= row && row <= range.start.row)
+      (startCol <= col && col <= endCol && startRow <= row && row <= endRow) ||
+      (endCol <= col && col <= startCol && endRow <= row && row <= startRow)
     ) {
       return true;
     }
