@@ -1,3 +1,34 @@
+# v1.2.0
+
+2024-06-06
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: support select highlightMode effect [#1167](https://github.com/VisActor/VTable/issues/1167)
+- **@visactor/vtable**: add isAggregation api [#1803](https://github.com/VisActor/VTable/issues/1803)
+- **@visactor/vtable**: optimize large column performance [#1840](https://github.com/VisActor/VTable/issues/1840) [#1824](https://github.com/VisActor/VTable/issues/1824)
+- **@visactor/vtable**: add merge cell custom graphic attribute sync [#1718](https://github.com/VisActor/VTable/issues/1718)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: when has no records should not has aggregation row [#1804](https://github.com/VisActor/VTable/issues/1804)
+- **@visactor/vtable**: updateColumns set editor error [#1828](https://github.com/VisActor/VTable/issues/1828)
+- **@visactor/vtable**: fix maxCharactersNumber effect [#1830](https://github.com/VisActor/VTable/issues/1830)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: update pixelRatio when resize [#1823](https://github.com/VisActor/VTable/issues/1823)
+- **@visactor/vtable**: selectAllOnCtrlA option
+
+**🔧 项目配置**
+
+- **@visactor/vtable**: update vrender version
+
+
+
+[更多详情请查看 v1.2.0](https://github.com/VisActor/VTable/releases/tag/v1.2.0)
+
 # v1.1.2
 
 2024-06-04
