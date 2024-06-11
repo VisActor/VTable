@@ -1,16 +1,14 @@
-# Table sorting function
+# 基本表格排序功能
 
-**Note: This tutorial is only for the basic table ListTable. The pivot table sorting tutorial can be asynchronously accessed: [Pivot data analysis](https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_dataAnalysis)**
+在数据分析过程中，排序（ 排序 ）功能对数据的组织和协助分析非常重要。通过排序，用户可以快速将关心的数据排列在前面，提高数据查找和分析的效率，同时也能快速发现数据中的异常点和规律。
 
-In the process of data analytics, the sorting (sorting) function is very important for the organization and analysis of data. By sorting, users can quickly arrange the data they care about in front, improve the efficiency of data search and analysis, and quickly find outliers and patterns in the data.
+VTable 提供了丰富的排序功能，用户可以轻松地按需开启、自定义排序规则、设定初始排序状态等。
 
-VTable provides rich sorting functions, users can easily open on demand, customize sorting rules, set initial sorting status, etc.
+## 开启排序
 
-## Enable sorting
+要使用 VTable 的排序功能，需要先对表格列进行配置。在 `columns` 中，每一列的配置项需要根据 cellType（列类型）进行设置。在本教程中，我们主要关注排序相关的配置。
 
-To use the sorting function of VTable, you need to configure the table columns first. exist `columns` The configuration items for each column need to be set according to cellType (column type). In this tutorial, we mainly focus on sorting-related configurations.
-
-Here is an example of enabling sorting:
+以下是一个开启排序功能的例子：
 
 ```js
 const listTable = new ListTable({
@@ -20,13 +18,14 @@ const listTable = new ListTable({
       title: '姓名',
       field: 'name',
       cellType: 'text',
-      sort: true
+      sort: true // 使用内置默认排序逻辑
     },
     {
       title: '年龄',
       field: 'age',
       cellType: 'text',
       sort: (v1, v2, order) => {
+        // 使用自定义排序逻辑
         if (order === 'desc') {
           return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
         }
@@ -37,16 +36,16 @@ const listTable = new ListTable({
 });
 ```
 
-In the above code,`sort` for `true`, indicating that the column supports sorting and uses the built-in collation.
+在上述代码中，`sort` 为 `true`，表示该列支持排序，并使用内置的排序规则。
 
-## Sorting Settings
+## 排序规则设置
 
-VTable allows users to customize collations. To specify a collation, you need to `sort` Set as a function. The function takes two arguments `a` and `b`, representing two values to compare. When the function returns a negative value,`a` line up in `b` Front; when the return value is positive,`a` line up in `b` Later; when the return value is 0,`a` and `b` The relative position remains unchanged.
+VTable 允许用户自定义排序规则。如自定义排序规则，需要将 `sort` 设置为一个函数。该函数接收两个参数 `a` 和 `b`，表示需要比较的两个值。函数返回值为负数时，`a` 排在 `b` 前面；返回值为正数时，`a` 排在 `b` 后面；返回值为 0 时，`a` 和 `b` 的相对位置不变。
 
-Here is an example of a custom collation:
+以下是一个自定义排序规则的例子：
 
 ```js
-const listTable = new ListTable({
+const listTable = new ListTable(document.getElementById(CONTAINER_ID), {
   // ...其它配置项
   columns: [
     {
@@ -65,11 +64,11 @@ const listTable = new ListTable({
 });
 ```
 
-In the above code,`姓名` Column usage `localeCompare` The function sorts to ensure the correct sorting result of Chinese characters;`年龄` Columns are sorted by number size.
+在上述代码中，`姓名` 列使用 `localeCompare` 函数进行排序，以保证中文字符的正确排序结果；`年龄` 列根据数字大小进行排序。
 
-## Initial sorting state
+## 初始排序状态
 
-VTable supports setting the initial sorting state for the table. To set the initial sorting state, you can `ListTable` Used in configuration items `sortState` Configure.`sortState` Type is `SortState` or `SortState[]`Among them,`SortState` Defined as follows:
+VTable 支持为表格设定初始排序状态。要设置初始排序状态，可以在 `ListTable` 配置项中使用 `sortState` 配置。`sortState` 类型为 `SortState` 或 `SortState[]`。其中，`SortState` 定义如下：
 
 ```ts
 SortState {
@@ -80,10 +79,10 @@ SortState {
 }
 ```
 
-Here is an example of setting the initial sort state:
+以下是一个设置初始排序状态的例子：
 
 ```js
-const listTable = new ListTable({
+const tableInstance = new ListTable({
   // ...其它配置项
   columns: [
     // ...列配置
@@ -97,23 +96,23 @@ const listTable = new ListTable({
 });
 ```
 
-In the above code, the initial sorting state of the table is in descending order by age.
+在上述代码中，表格的初始排序状态为按照年龄降序排列。
 
-## Sort state setting interface(update sort rule)
+## 排序状态设置接口(更改排序)
 
-VTable provides the `updateSortState` property for setting the sorting state.
-Interface Description:
+VTable 提供 `updateSortState` 属性用于设置排序状态。
+接口说明：
 
 ```
   /**
-   * Update sort status
-   * @param sortState The sorting state to be set
-   * @param executeSort Whether to execute internal sorting logic, setting false will only update the icon status and not perform data sorting
+   * 更新排序状态
+   * @param sortState 要设置的排序状态
+   * @param executeSort 是否执行内部排序逻辑，设置false将只更新图标状态不执行数据排序
    */
   updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true)
 ```
 
-When you need to modify the sorting status, you can call this interface directly. For example:
+当需要修改排序状态时，可以直接调用该接口。例如：
 
 ```js
 tableInstance.updateSortState({
@@ -122,26 +121,28 @@ tableInstance.updateSortState({
 });
 ```
 
-By using the `updateSortState` interface, users can dynamically adjust the sorting state of the table at any time to meet real-time analysis needs.
+通过使用 `updateSortState` 接口，用户可以在任意时刻动态调整表格的排序状态，以满足实时分析需求。
 
-## Disable internal sorting
+## 禁用内部排序
 
-In some scenarios, the execution of sorting logic is not expected to be performed by VTable, for example: the backend is responsible for sorting.
+在某些场景下，排序逻辑的执行并不期望由 VTable 来执行，如：后端负责排序。
 
-You can disable VTable's default sorting behavior by listening to events:
+可以通过监听事件来禁止 VTable 的默认排序行为：
 
 ```
 tableInstance.on('sort_click', args => {
     .....
-    return false; //return false means that internal sorting logic is not executed
+    return false; //return false代表不执行内部排序逻辑
   });
 ```
 
-After the sorting is completed, setRecords is required to update the data to the table. If you need to switch the sorting icon, you need to cooperate with the interface `updateSortState` and use the second parameter of the interface to be set to false to switch only the sorting icon.
+排序完成后需要 setRecords 将数据更新到表格，如果需要排序图标的切换则需要配合接口`updateSortState`，利用接口的第二个参数设置为 false，只切换排序图标.
 
-- When calling the setRecords interface, you need to set the second parameter's sortState set to null to clear the internal sorting state (otherwise, when setRecords is called, the data will be sorted according to the last set sorting state)
+注意：
 
-Example:
+- setRecords 接口调用时需将第二个参数 option 中的 sortState 设置为 null，这样就清除了内部排序状态（否则 setRecords 调用时会按上次设置过的排序状态对数据进行排序）
+
+示例：
 
 ```javascript livedemo template=vtable
 const records = [
@@ -390,6 +391,7 @@ tableInstance.on('sort_click', args => {
   const sortState = clickCount % 3 === 0 ? 'desc' : clickCount % 3 === 1 ? 'asc' : 'normal';
   sortRecords(args.field, sortState)
     .then(records => {
+      debugger;
       tableInstance.setRecords(records, { sortState: null });
       tableInstance.updateSortState(
         {
@@ -415,13 +417,13 @@ function sortRecords(field, sort) {
 }
 ```
 
-## Replace the default sort icon
+## 替换默认的排序图标
 
-If you do not want to use the internal icon, you can use the icon customization function to replace it. Follow the reference tutorial: https://www.visactor.io/vtable/guide/custom_define/custom_icon
+如果不希望使用内部的图标，可以使用图标自定义功能来替换，接参考教程：https://www.visactor.io/vtable/guide/custom_define/custom_icon
 
-Here is an example of replacing the sort icon:
+以下是一个替换排序图标的例子：
 
-Note: Configuration of `name` and `funcType`
+注意： `name`和`funcType`的配置
 
 ```
 VTable.register.icon("frozenCurrent", {
@@ -442,30 +444,30 @@ VTable.register.icon("frozenCurrent", {
 });
 ```
 
-## Hide sort icon
+## 隐藏排序图标
 
-We provide `showSort` configuration to hide the sorting icon, but the sorting logic can be executed normally
+我们提供了`showSort`配置来隐藏排序图标，但可以正常执行排序逻辑
 
-Here is an example of hiding the sort icon:
+以下是一个隐藏排序图标的例子：
 
 ```js
 const listTable = new ListTable({
-  // ...Other configuration items
+  // ...其它配置项
   columns: [
     {
-      title: 'name',
+      title: '姓名',
       field: 'name',
       cellType: 'text',
       showSort: false,
-      sort: true // Use built-in default sorting logic
+      sort: true // 使用内置默认排序逻辑
     },
     {
-      title: 'Age',
+      title: '年龄',
       field: 'age',
       cellType: 'text',
       showSort: false,
       sort: (v1, v2, order) => {
-        // Use custom sorting logic
+        // 使用自定义排序逻辑
         if (order === 'desc') {
           return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
         }
@@ -476,9 +478,9 @@ const listTable = new ListTable({
 });
 ```
 
-## Pre Sort
+## 预排序
 
-In the case of large amounts of data, the first sorting may take a long time, and pre-sorting can be used to improve the performance of the sorting function. Set the pre-sorted data fields and sort order through the `setSortedIndexMap` method.
+在大数据量的情况下，首次排序可能会耗时较长，可以通过预排序来提升排序功能的性能。通过 setSortedIndexMap 方法，设置预排序的数据字段和排序顺序。
 
 ```js
 interface ISortedMapItem {

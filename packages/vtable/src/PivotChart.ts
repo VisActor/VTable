@@ -750,7 +750,11 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param sortRules
    */
   updateSortRules(sortRules: SortRules) {
-    this.internalProps.dataConfig.sortRules = sortRules;
+    if (this.internalProps.dataConfig) {
+      this.internalProps.dataConfig.sortRules = sortRules;
+    } else {
+      this.internalProps.dataConfig = { sortRules };
+    }
     this.dataset.updateSortRules(sortRules);
     this.internalProps.layoutMap.resetHeaderTree();
     // 清空单元格内容

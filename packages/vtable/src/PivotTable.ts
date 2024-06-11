@@ -972,7 +972,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param sortRules
    */
   updateSortRules(sortRules: SortRules) {
-    this.internalProps.dataConfig.sortRules = sortRules;
+    if (this.internalProps.dataConfig) {
+      this.internalProps.dataConfig.sortRules = sortRules;
+    } else {
+      this.internalProps.dataConfig = { sortRules };
+    }
     this.dataset.updateSortRules(sortRules);
     this._changePivotSortStateBySortRules();
     this.internalProps.layoutMap.resetHeaderTree();
