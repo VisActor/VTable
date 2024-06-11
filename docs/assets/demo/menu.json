@@ -394,15 +394,6 @@
           "title": {
             "zh": "排序",
             "en": "Sort"
-          },
-          "meta": {
-            "title": "Sort",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sort.gif",
-            "link": "'../../guide/basic_function/sort'",
-            "option": ""
           }
         },
         {
@@ -410,15 +401,6 @@
           "title": {
             "zh": "预排序",
             "en": "Pre Sort"
-          },
-          "meta": {
-            "title": "Pre Sort",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pre-sort.png",
-            "link": "'../../guide/basic_function/sort'",
-            "option": ""
           }
         },
         {
@@ -426,15 +408,6 @@
           "title": {
             "zh": "合并单元格",
             "en": "Merge Cells"
-          },
-          "meta": {
-            "title": "Merge Cells",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/merge.png",
-            "link": "",
-            "option": ""
           }
         },
         {
@@ -442,15 +415,6 @@
           "title": {
             "zh": "自定义合并单元格",
             "en": "Custom Merge Cells"
-          },
-          "meta": {
-            "title": "Custom Merge Cells",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-merge-custom.png",
-            "link": "",
-            "option": ""
           }
         },
         {
@@ -458,15 +422,6 @@
           "title": {
             "zh": "适应容器高度",
             "en": "Row Height Mode - Adapt to Content"
-          },
-          "meta": {
-            "title": "Row Height Mode - Adapt to Content",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png",
-            "link": "'../../guide/basic_function/row_height_column_width'",
-            "option": ""
           }
         },
         {

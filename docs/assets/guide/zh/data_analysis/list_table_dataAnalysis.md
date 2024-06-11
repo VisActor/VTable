@@ -4,7 +4,7 @@
 
 # 数据排序
 
-具体可参阅教程：https://visactor.io/vtable/guide/basic_function/sort
+具体可参阅教程：https://visactor.io/vtable/guide/basic_function/sort/list_sort
 
 # 数据过滤
 
