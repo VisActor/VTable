@@ -89,19 +89,14 @@ class VTableBrowserEnvContribution extends BrowserEnvContribution {
 
     const tableDiv = dom.parentElement;
     if (tableDiv) {
-      const tableRect = tableDiv.getBoundingClientRect();
+      // const tableRect = tableDiv.getBoundingClientRect();
 
       const top = parseInt(params.style.top, 10);
       const left = parseInt(params.style.left, 10);
-      const domWidth = dom.offsetWidth;
-      const domHeight = dom.offsetHeight;
+      const domWidth = dom.offsetWidth; // TO DO: offsetWidth is 0 when display none
+      const domHeight = dom.offsetHeight; // TO DO: offsetHeight is 0 when display none
 
-      if (
-        top + domHeight < tableRect.top ||
-        left + domWidth < tableRect.left ||
-        top > tableRect.bottom ||
-        left > tableRect.right
-      ) {
+      if (top + domHeight < 0 || left + domWidth < 0 || top > tableDiv.offsetHeight || left > tableDiv.offsetWidth) {
         dom.style.display = 'none';
         return false;
       }

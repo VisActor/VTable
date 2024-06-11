@@ -131,7 +131,10 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         records: props.records,
         ...prevOption.current,
         ...optionFromChildren.current,
-        clearDOM: false
+        clearDOM: false,
+        customConfig: {
+          createReactContainer: true
+        }
         // ...tableContext.current?.optionFromChildren
       } as IOption;
     },

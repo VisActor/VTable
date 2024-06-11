@@ -140,6 +140,8 @@ const DomCustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: strin
         height,
         react: {
           pointerEvents: true,
+          container: table.bodyDomContainer, // table.headerDomContainer
+          // anchorType
           element: <CardInfo text={text} />
         }
       }}

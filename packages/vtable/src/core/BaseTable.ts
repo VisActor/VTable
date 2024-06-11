@@ -299,6 +299,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       internalProps.canvas = document.createElement('canvas');
       internalProps.element.appendChild(internalProps.canvas);
       internalProps.context = internalProps.canvas.getContext('2d')!;
+
+      if (options.customConfig?.createReactContainer) {
+        internalProps.bodyDomContainer = document.createElement('div');
+        internalProps.bodyDomContainer.classList.add('table-component-container');
+        internalProps.element.appendChild(internalProps.bodyDomContainer);
+        internalProps.headerDomContainer = document.createElement('div');
+        internalProps.headerDomContainer.classList.add('table-component-container');
+        internalProps.element.appendChild(internalProps.headerDomContainer);
+      }
     }
 
     internalProps.handler = new EventHandler();
@@ -933,6 +942,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
         canvas.style.width = `${widthP}px`;
         canvas.style.height = `${heightP}px`;
+      }
+
+      if (this.internalProps.bodyDomContainer) {
+        this.internalProps.bodyDomContainer.style.width = `${widthP}px`;
+        this.internalProps.bodyDomContainer.style.height = `${heightP}px`;
+      }
+      if (this.internalProps.headerDomContainer) {
+        this.internalProps.headerDomContainer.style.width = `${widthP}px`;
+        this.internalProps.headerDomContainer.style.height = `${heightP}px`;
       }
     } else if (Env.mode === 'node') {
       widthP = this.canvasWidth - 1;
@@ -4436,5 +4454,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (!this.reactCustomLayout) {
       this.reactCustomLayout = new ReactCustomLayout(this);
     }
+  }
+
+  get bodyDomContainer() {
+    return this.internalProps.bodyDomContainer;
+  }
+  get headerDomContainer() {
+    return this.internalProps.headerDomContainer;
   }
 }

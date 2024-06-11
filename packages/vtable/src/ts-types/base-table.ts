@@ -250,6 +250,10 @@ export interface IBaseTableProtected {
    *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
    * */
   overscrollBehavior?: 'auto' | 'none';
+
+  // react component container
+  bodyDomContainer?: HTMLElement;
+  headerDomContainer?: HTMLElement;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -442,6 +446,8 @@ export interface BaseTableConstructorOptions {
     /** 禁用行高列宽计算取整数逻辑 对齐xTable */
     _disableColumnAndRowSizeRound?: boolean;
     imageMargin?: number;
+    // 是否创建react custom container
+    createReactContainer?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -822,6 +828,9 @@ export interface BaseTableAPI {
   exportCellRangeImg: (cellRange: CellRange) => string;
   exportCanvas: () => HTMLCanvasElement;
   setPixelRatio: (pixelRatio: number) => void;
+
+  bodyDomContainer?: HTMLElement;
+  headerDomContainer?: HTMLElement;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
