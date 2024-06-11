@@ -59,7 +59,7 @@ export class HeaderHelper {
     const icons: ColumnIconOption[] = [];
     if (this._table.isPivotTable()) {
       // 透视表显示排序按钮
-      const { showSort } = this._table.internalProps.layoutMap.getHeader(col, row) as HeaderData;
+      const { showSort, sort } = this._table.internalProps.layoutMap.getHeader(col, row) as HeaderData;
       if (showSort) {
         const order = (this._table as PivotTableAPI).getPivotSortState(col, row);
         const sortIcon = order === 'ASC' ? this.downIcon : order === 'DESC' ? this.upIcon : this.normalIcon;
@@ -67,7 +67,7 @@ export class HeaderHelper {
         if (sortIcon) {
           icons.push(sortIcon);
         }
-      } else {
+      } else if (sort) {
         // 处理配置了sort的情况
         const sortIcon = this.getSortIconForPivotTable(
           (this._table as PivotTableAPI).getPivotSortState(col, row),
