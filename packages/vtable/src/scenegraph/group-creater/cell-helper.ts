@@ -500,7 +500,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         lineClamp,
         wordBreak: 'break-word',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-        heightLimit: cellHeight - (padding[0] + padding[2]),
+        heightLimit: cellHeight - Math.floor(padding[0] + padding[2]),
         pickable: false,
         dx: textAlign === 'left' ? hierarchyOffset : 0,
         x
