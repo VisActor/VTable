@@ -1005,7 +1005,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             }
             dimensions.push({
               indicatorKey: (sortRule as SortByIndicatorRule).sortByIndicator,
-              value: (sortRule as SortByIndicatorRule).sortByIndicator
+              value:
+                this.internalProps.layoutMap.getIndicatorInfo((sortRule as SortByIndicatorRule).sortByIndicator)
+                  ?.title ?? (sortRule as SortByIndicatorRule).sortByIndicator
             });
           }
         } else {
@@ -1122,12 +1124,30 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           });
         }
       } else {
-        (this as PivotTable).dataset.sortRules = [
-          {
-            sortField: headerDefine.dimensionKey,
-            sortType: SortType[order]
-          }
-        ];
+        if (sortIndicator) {
+          (this as PivotTable).dataset.sortRules = [
+            {
+              sortField: this.dataset.indicatorsAsCol
+                ? this.dataset.rows[this.dataset.rows.length - 1]
+                : this.dataset.columns[this.dataset.columns.length - 1],
+              sortType: SortType[order],
+              sortByIndicator: sortIndicator,
+              query: dimensions.reduce((arr, dimension) => {
+                if (dimension.dimensionKey) {
+                  arr.push(dimension.value);
+                }
+                return arr;
+              }, [])
+            }
+          ];
+        } else {
+          (this as PivotTable).dataset.sortRules = [
+            {
+              sortField: headerDefine.dimensionKey,
+              sortType: SortType[order]
+            }
+          ];
+        }
       }
 
       (this as PivotTable).updateSortRules((this as PivotTable).dataset.sortRules);
