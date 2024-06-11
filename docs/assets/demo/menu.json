@@ -557,6 +557,13 @@
           }
         },
         {
+          "path": "select-highlight",
+          "title": {
+            "zh": "选中整行高亮",
+            "en": "Select Highlight"
+          }
+        },
+        {
           "path": "hover-inline-cross",
           "title": {
             "zh": "hover行列十字高亮",

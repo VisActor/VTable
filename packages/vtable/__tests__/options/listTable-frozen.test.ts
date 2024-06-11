@@ -89,6 +89,6 @@ describe('listTable-frozen init test', () => {
   test('listTable frozenColCount set', () => {
     listTable.frozenColCount = 4;
     expect(listTable.frozenColCount).toBe(4);
+    listTable.release();
   });
-  listTable.release();
 });

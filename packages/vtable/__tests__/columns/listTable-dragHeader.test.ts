@@ -121,6 +121,6 @@ describe('listTable-cellType-function init test', () => {
       { field: 'work', title: 'job' },
       { field: 'city', title: 'city' }
     ]);
+    listTable.release();
   });
-  listTable.release();
 });

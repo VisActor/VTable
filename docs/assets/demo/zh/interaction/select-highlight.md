@@ -1,31 +1,25 @@
 ---
 category: examples
 group: Interaction
-title: Select cell
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png
+title: 选择单元格整行高亮
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select-highlight.png
 link: '../guide/interaction/select'
-option: ListTable#keyboardOptions
+option: ListTable#select
 ---
 
-# Select cell
+# 选择单元格整行高亮效果
 
-Click on a cell to make a single selection, and drag to make a brush selection.
+点击单元格，选中单元格的同时会高亮整行或者整列，如果非单个单元格被选中则高亮效果会消失。
 
-Hold down ctrl or shift to make multiple selections.
+高亮的样式可在样式中配置。全局配置：`theme.selectionStyle`中，也可以按表头及 body 分别配置，具体配置方式可查看教程。
 
-Turn on the shortcut key selectAllOnCtrlA configuration to select all.
+## 关键配置
 
-Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set select.headerSelectMode to 'cell'.
-
-## Key Configurations
-
-- `keyboardOptions: {
-    selectAllOnCtrlA: true,
-    copySelected: true
+- `select: {
+  highlightMode: 'cross'
 }`
-  Enable the ctrl + A optional function and shortcut to copy the selected content.
 
-## Code demo
+## 代码演示
 
 ```javascript livedemo template=vtable
 let tableInstance;
@@ -98,11 +92,21 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         selectAllOnCtrlA: true,
         copySelected: true
       },
+      select: {
+        highlightMode: 'cross'
+      },
       theme: VTable.themes.ARCO.extends({
         selectionStyle: {
+          cellBgColor: 'rgba(130, 178, 245, 0.2)',
           cellBorderLineWidth: 2,
-          cellBorderColor: '#9900ff',
-          cellBgColor: 'rgba(153,0,255,0.2)'
+          inlineRowBgColor: 'rgb(160,207,245)',
+          inlineColumnBgColor: 'rgb(160,207,245)'
+        },
+        headerStyle: {
+          select: {
+            inlineRowBgColor: 'rgb(0,207,245)',
+            inlineColumnBgColor: 'rgb(0,207,245)'
+          }
         }
       })
     };

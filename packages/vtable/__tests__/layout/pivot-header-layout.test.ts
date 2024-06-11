@@ -2868,7 +2868,6 @@ describe('pivot-header-layout test', () => {
     expect(layout.isEmpty(0, 4)).toBe(true);
     expect(layout.isEmpty(2, 4)).toBe(false);
     expect(layout.isEmpty(2, 1)).toBe(false);
+    tableInstance.release();
   });
-
-  tableInstance.release();
 });
