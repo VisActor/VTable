@@ -2545,7 +2545,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } //树形展示的情况下 肯定是在第0列
     }
     if (colDimensionFinded || forceBody) {
-      col = this.rowHeaderLevelCount;
+      col = this.rowHeaderLevelCount + this.leftRowSeriesNumberColumnCount;
       const { startInTotal, level } = (colDimensionFinded as ITreeLayoutHeadNode) ?? defaultDimension;
       col += startInTotal ?? 0;
       defaultRow = this.columnHeaderTitle ? level + 1 : level;

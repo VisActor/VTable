@@ -61,7 +61,10 @@ export class HeaderHelper {
       // 透视表显示排序按钮
       const { showSort, sort } = this._table.internalProps.layoutMap.getHeader(col, row) as HeaderData;
       if (showSort) {
-        const order = (this._table as PivotTableAPI).getPivotSortState(col, row);
+        let order = (this._table as PivotTableAPI).getPivotSortState(col, row) as string;
+        if (order) {
+          order = order.toUpperCase();
+        }
         const sortIcon = order === 'ASC' ? this.downIcon : order === 'DESC' ? this.upIcon : this.normalIcon;
 
         if (sortIcon) {
