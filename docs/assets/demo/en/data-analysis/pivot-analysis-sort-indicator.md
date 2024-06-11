@@ -9,7 +9,7 @@ option: PivotTable#dataConfig.sortRules
 
 # Pivot analysis table is sorted by indicator value
 
-The pivot table is sorted according to the dimension value of a certain dimension. SortRules can be configured in dataConfig. Multiple sorting rules can be configured. The one configured first has a higher priority. In this example, the indicators indicator is configured with sort:true, which will display a sort icon in the header cell of the indicator name. Click to sort by indicator value.
+The pivot table is sorted according to the dimension value of a certain dimension. SortRules can be configured in dataConfig. Multiple sorting rules can be configured. The one configured first has a higher priority. In this example, the indicators indicator is configured with sort:true, which will display a sort icon in the header cell that displays the indicator name. Click the icon to sort by indicator value.
 
 ## Key Configurations
 
