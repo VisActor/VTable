@@ -3287,8 +3287,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (this.isPivotTable() && !this.isBottomFrozenRow(row) && !this.isRightFrozenColumn(col)) {
         // use dimensionKey&indicatorKey to cache style object in pivot table
         const define = this.getHeaderDefine(col, row) as any;
+        const isCorner = this.isCornerHeader(col, row);
         cacheKey = define?.dimensionKey
-          ? `dim-${define.dimensionKey}`
+          ? isCorner
+            ? `dim-cor-${define.dimensionKey}`
+            : `dim-${define.dimensionKey}`
           : define?.indicatorKey
           ? `ind-${define.indicatorKey}`
           : `${col}-${row}`;
