@@ -9,12 +9,14 @@ option: ListTable-columns-text#editor
 
 # 编辑单元格
 
-该示例展示了表格的可编辑能力。双击单元格，即可进入编辑状态。如果想要修改进入编辑的时机，可以设置：
+该示例展示了表格的可编辑能力。单击单元格，即可进入编辑状态。如果想要修改进入编辑的时机，可以设置：
 
 ```
  /** 编辑触发时机:双击事件 | 单击事件 | api手动开启编辑。默认为双击'doubleclick' */
   editCellTrigger?: 'doubleclick' | 'click' | 'api';
 ```
+
+当前示例中有 input、date、list、textArea 四种编辑器，可以通过设置不同的编辑器来实现不同的效果。
 
 具体介绍可以点击教程进入学习！
 
@@ -34,9 +36,10 @@ let tableInstance;
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();
 const list_editor = new VTable_editors.ListEditor({ values: ['girl', 'boy'] });
+const textArea_editor = new VTable_editors.TextAreaEditor({ readonly: false });
 VTable.register.editor('input-editor', input_editor);
 VTable.register.editor('date-input-editor', date_input_editor);
-VTable.register.editor('list-editor', list_editor);
+VTable.register.editor('textArea-editor', textArea_editor);
 
 function generateRandomString(length) {
   let result = '';
@@ -135,6 +138,7 @@ const generatePersons = count => {
       hobbies: generateRandomHobbies(),
       birthday: generateRandomBirthday(),
       tel: generateRandomPhoneNumber(),
+      address: `No.${i + 100} ${generateRandomString(10)} ${generateRandomString(5)}\n${generateRandomString(5)}`,
       sex: i % 2 === 0 ? 'boy' : 'girl',
       work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
       city: 'beijing'
@@ -193,6 +197,12 @@ const columns = [
     editor: 'list-editor'
   },
   {
+    field: 'address',
+    title: 'address\n(textArea editor)',
+    width: 300,
+    editor: 'textArea-editor'
+  },
+  {
     field: 'tel',
     title: 'telephone',
     width: 150
@@ -212,10 +222,16 @@ const option = {
   container: document.getElementById(CONTAINER_ID),
   records,
   columns,
+  enableLineBreak: true,
   autoWrapText: true,
   limitMaxAutoWidth: 600,
   heightMode: 'autoHeight',
-  editCellTrigger: 'click'
+  editCellTrigger: 'click',
+  keyboardOptions: {
+    copySelected: true,
+    pasteValueToCell: true,
+    selectAllOnCtrlA: true
+  }
 };
 tableInstance = new VTable.ListTable(option);
 tableInstance.on('change_cell_value', arg => {

@@ -126,6 +126,6 @@ describe('listTable-checkbox init test', () => {
   test('listTable-checkbox getCheckboxState', () => {
     expect(listTable.stateManager?.checkedState.length).toEqual(101);
     expect(listTable.getCheckboxState().length).toEqual(2000);
+    listTable.release();
   });
-  listTable.release();
 });

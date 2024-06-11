@@ -375,6 +375,6 @@ describe('pivotTable-analysis init test', () => {
   });
   test('pivotTable-analysis cellValue', () => {
     expect(pivotTable.getCellValue(7, 4)).toBe(999);
+    pivotTable.release();
   });
-  pivotTable.release();
 });

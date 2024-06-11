@@ -723,6 +723,6 @@ describe('pivotTable init test', () => {
         利润: '550.2'
       }
     ]);
+    pivotTable.release();
   });
-  pivotTable.release();
 });

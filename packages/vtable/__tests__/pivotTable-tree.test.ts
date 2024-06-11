@@ -506,6 +506,6 @@ describe('pivotTableTree init test', () => {
         }
       ])
     ).toEqual({ col: 2, row: 0 });
+    pivotTableTree.release();
   });
-  pivotTableTree.release();
 });
