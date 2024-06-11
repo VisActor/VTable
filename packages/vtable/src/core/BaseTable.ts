@@ -2719,8 +2719,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param col
    * @param row
    */
-  selectCell(col: number, row: number) {
-    this.stateManager.updateSelectPos(col, row);
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean) {
+    this.stateManager.updateSelectPos(col, row, isShift, isCtrl);
     this.stateManager.endSelectCells();
   }
   /**
