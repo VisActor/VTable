@@ -22,7 +22,7 @@ yarn add @visactor/vtable-editors
 在代码中引入所需类型的编辑器模块：
 
 ```javascript
-import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
+import { DateInputEditor, InputEditor, ListEditor, TextAreaEditor } from '@visactor/vtable-editors';
 ```
 
 ### 使用 CDN
@@ -38,17 +38,18 @@ import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-edito
 
 ## 2. 创建编辑器：
 
-VTable-ediotrs 库中目前提供了三种编辑器类型，包括文本输入框、日期选择器、下拉列表等。你可以根据需要选择合适的编辑器。(下拉列表编辑器效果还在优化中，目前比较丑哈)
+VTable-ediotrs 库中目前提供了四种编辑器类型，包括文本输入框、多行文本输入框、日期选择器、下拉列表等。你可以根据需要选择合适的编辑器。(下拉列表编辑器效果还在优化中，目前比较丑哈)
 
 以下是创建编辑器的示例代码：
 
 ```javascript
 const inputEditor = new InputEditor();
+const textAreaEditor = new TextAreaEditor();
 const dateInputEditor = new DateInputEditor();
 const listEditor = new ListEditor({ values: ['女', '男'] });
 ```
 
-在上面的示例中，我们创建了一个文本输入框编辑器(`InputEditor`)、一个日期选择器编辑器(`DateInputEditor`)和一个下拉列表编辑器(`ListEditor`)。你可以根据实际需求选择适合的编辑器类型。
+在上面的示例中，我们创建了一个文本输入框编辑器(`InputEditor`)、一个多行文本框编辑器(`TextAreaEditor`)、 一个日期选择器编辑器(`DateInputEditor`)和一个下拉列表编辑器(`ListEditor`)。你可以根据实际需求选择适合的编辑器类型。
 
 ## 3. 注册并使用编辑器：
 
@@ -58,6 +59,7 @@ const listEditor = new ListEditor({ values: ['女', '男'] });
 // 注册编辑器到VTable
 VTable.register.editor('name-editor', inputEditor);
 VTable.register.editor('name-editor2', inputEditor2);
+VTable.register.editor('textArea-editor', textAreaEditor);
 VTable.register.editor('number-editor', numberEditor);
 VTable.register.editor('date-editor', dateInputEditor);
 VTable.register.editor('list-editor', listEditor);
@@ -75,6 +77,7 @@ columns: [
   } },
   { title: 'age', field: 'age', editor: 'number-editor' },
   { title: 'gender', field: 'gender', editor: 'list-editor' },
+   { title: 'address', field: 'address', editor: 'textArea-editor' },
   { title: 'birthday', field: 'birthDate', editor: 'date-editor' },
 ]
 ```
