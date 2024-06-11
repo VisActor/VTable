@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix ellipsis error in _disableColumnAndRowSizeRound mode #1884",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
