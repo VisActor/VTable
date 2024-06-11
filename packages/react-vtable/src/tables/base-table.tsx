@@ -1,6 +1,7 @@
 /* eslint-disable react/display-name */
 import * as VTable from '@visactor/vtable';
 import React, { useState, useEffect, useRef, useImperativeHandle, useCallback } from 'react';
+import ReactDOM from 'react-dom/client';
 import type { ContainerProps } from '../containers/withContainer';
 import withContainer from '../containers/withContainer';
 import type { TableContextType } from '../context/table';
@@ -21,6 +22,7 @@ import type {
   // TableLifeCycleEventProps
 } from '../eventsUtils';
 import { bindEventsToTable, TABLE_EVENTS_KEYS, TABLE_EVENTS } from '../eventsUtils';
+import { VTableReactAttributePlugin } from '../components/custom/vtable-react-attribute-plugin';
 
 export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 export type IOption =
@@ -141,6 +143,10 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       } else {
         vtable = new VTable.ListTable(props.container, parseOption(props));
       }
+      // vtable.scenegraph.stage.enableReactAttribute(ReactDOM);
+      vtable.scenegraph.stage.reactAttribute = ReactDOM;
+      vtable.scenegraph.stage.pluginService.register(new VTableReactAttributePlugin());
+      vtable.scenegraph.stage.params.ReactDOM = ReactDOM;
       tableContext.current = { ...tableContext.current, table: vtable };
       isUnmount.current = false;
     },

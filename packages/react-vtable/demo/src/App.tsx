@@ -15,6 +15,7 @@ import eventRebind from './event/event-rebind';
 
 import componentContainer from './component/component-container';
 import customLayout from './component/custom-layout';
+import customLayoutDom from './component/custom-layout-dom';
 
 // export default listEditor;
 // export default listOptionRecord;
@@ -31,4 +32,5 @@ import customLayout from './component/custom-layout';
 // export default eventRebind;
 
 // export default componentContainer;
-export default customLayout;
+// export default customLayout;
+export default customLayoutDom;

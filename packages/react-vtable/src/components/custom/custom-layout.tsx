@@ -34,13 +34,16 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
       let group;
       if (container.current.has(key)) {
         const currentContainer = container.current.get(key);
-        reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
+        // reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
+        reconcilorUpdateContainer(children, currentContainer, group, args);
         group = currentContainer.containerInfo;
       } else {
         group = new Group({});
         const currentContainer = reconcilor.createContainer(group, LegacyRoot, null, null, null, 'custom', null, null);
         container.current.set(key, currentContainer);
-        reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
+        reconcilorUpdateContainer(children, currentContainer, group, args);
+        // const ele = React.cloneElement(children, { ...args });
+        // reconcilor.updateContainer(ele, currentContainer, null);
       }
 
       return {
@@ -111,7 +114,9 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
           table
         };
         // update element in container
-        reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
+        const group = currentContainer.containerInfo;
+        reconcilorUpdateContainer(children, currentContainer, group, args);
+        // reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
         table.scenegraph.updateNextFrame();
       });
     }
@@ -119,3 +124,20 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
 
   return null;
 };
+
+function reconcilorUpdateContainer(children, currentContainer, group, args) {
+  reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
+  // group = group.firstChild;
+  // if (isReactElement(group.attribute.html?.dom)) {
+  //   const div = document.createElement('div');
+  //   const root = ReactDOM.createRoot(div as HTMLElement);
+  //   root.render(group.attribute.html.dom);
+  //   group.attribute.html.dom = div;
+  //   // debugger;
+  //   // group.html.dom = div;
+  // }
+}
+
+function isReactElement(obj) {
+  return obj && obj.$$typeof === Symbol.for('react.element');
+}

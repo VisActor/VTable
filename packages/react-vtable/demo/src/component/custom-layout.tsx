@@ -63,7 +63,7 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
                 // eslint-disable-next-line no-console, no-undef
                 console.log('groupRef', groupRef.current);
                 setHover(true);
-                event.currentTarget.stage.renderNextFrame();
+                event.currentTarget.stage.renderNextFrame(); // to do: auto execute in react-vtable
               }}
               onMouseLeave={(event: any) => {
                 setHover(false);

@@ -13,13 +13,22 @@ export const reconcilor = ReactReconciler({
 
   createInstance: (type: string, props: any, instance) => {
     const graphic = createGraphic(type, props);
-    bindEventsToGraphic(graphic, props);
+    if (graphic) {
+      bindEventsToGraphic(graphic, props);
+    } else {
+      return undefined;
+      // createInstance
+      // graphic = createGraphic('group', {});
+    }
     return graphic;
   },
 
   createTextInstance: (text, instance) => {
-    const textGraphic = createText({ text });
-    return textGraphic;
+    // const textGraphic = createText({ text });
+    // return textGraphic;
+    // debugger;
+    // return document.createTextNode(text);
+    return undefined;
   },
 
   appendInitialChild: (parentInstance: Instance, childInstance: Instance) => {
@@ -107,6 +116,10 @@ export const reconcilor = ReactReconciler({
 
   clearContainer: (container: Instance) => {
     container.removeAllChild();
+  },
+
+  commitTextUpdate: (textInstance: any, oldText: string, newText: string) => {
+    // debugger;
   }
 });
 
@@ -121,6 +134,9 @@ reconcilor.injectIntoDevTools({
 
 function createGraphic(type: string, props: any) {
   // may have unwanted onxxx prop
+  if (!application.graphicService.creator[type]) {
+    return;
+  }
   const graphic = application.graphicService.creator[type]((props as any).attribute);
   return graphic;
 }

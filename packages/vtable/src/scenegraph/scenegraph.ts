@@ -148,6 +148,7 @@ export class Scenegraph {
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
       enableLayout: true,
+      // enableHtmlAttribute: true,
       // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
       afterRender: () => {
         this.table.fireListeners('after_render', null);

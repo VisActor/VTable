@@ -41,6 +41,8 @@ export function importStyle() {
 	height: 100%;
 	text-align: left;
   -webkit-font-smoothing:auto;
+
+  overflow: hidden;
 }
 .vtable > canvas {
 	position: absolute;
