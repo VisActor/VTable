@@ -112,6 +112,9 @@ Placement 枚举类型定义：
 }
 ```
 
+#${prefix} disappearDelay (number)
+提示框消失延迟时间，如果有需要鼠标移动到 tooltip 上的需求，请配置上这个参数。
+
 #${prefix} style (Object)
 气泡框的样式。如果不配置，会使用 theme 中的样式。
 

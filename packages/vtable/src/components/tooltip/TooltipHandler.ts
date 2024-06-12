@@ -195,6 +195,7 @@ export class TooltipHandler {
           placement: Placement.bottom,
           rect
         },
+        disappearDelay: table.internalProps.tooltip.overflowTextTooltipDisappearDelay ?? 0,
         style: { arrowMark: false }
       };
     } else if (table.internalProps.tooltip?.isShowOverflowTextTooltip) {
@@ -210,6 +211,7 @@ export class TooltipHandler {
             placement: Placement.bottom,
             rect
           },
+          disappearDelay: table.internalProps.tooltip.overflowTextTooltipDisappearDelay ?? 0,
           style: table.theme.tooltipStyle
         };
       }
