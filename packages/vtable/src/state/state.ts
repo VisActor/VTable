@@ -762,7 +762,7 @@ export class StateManager {
 
   checkFrozen(): boolean {
     // 判断固定列的总宽度 是否过大
-    const originalFrozenColCount =
+    let originalFrozenColCount =
       this.table.isListTable() && !this.table.internalProps.transpose
         ? this.table.options.frozenColCount
         : this.table.isPivotChart()
@@ -772,6 +772,9 @@ export class StateManager {
             this.table.options.frozenColCount ?? 0
           );
     if (originalFrozenColCount) {
+      if (originalFrozenColCount > this.table.colCount) {
+        originalFrozenColCount = this.table.colCount;
+      }
       if (this.table.tableNoFrameWidth - this.table.getColsWidth(0, originalFrozenColCount - 1) <= 120) {
         this.table._setFrozenColCount(0);
         this.setFrozenCol(-1);
