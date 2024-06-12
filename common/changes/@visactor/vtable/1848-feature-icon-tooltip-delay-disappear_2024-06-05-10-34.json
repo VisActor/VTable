@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: tooltip disappear delay time #1848\n\n",
-      "type": "none",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
