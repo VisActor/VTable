@@ -137,7 +137,7 @@ export function setIconHoverStyle(baseIcon: Icon, col: number, row: number, cell
             iconBack.setAttributes({
               x:
                 (icon.attribute.x ?? 0) +
-                (icon.attribute.dx ?? 0) +
+                // (icon.attribute.dx ?? 0) +
                 (icon.AABBBounds.width() - icon.backgroundWidth) / 2,
               y: (icon.attribute.y ?? 0) + (icon.AABBBounds.height() - icon.backgroundHeight) / 2,
               dx: icon.attribute.dx ?? 0,
@@ -152,7 +152,7 @@ export function setIconHoverStyle(baseIcon: Icon, col: number, row: number, cell
             iconBack = createRect({
               x:
                 (icon.attribute.x ?? 0) +
-                (icon.attribute.dx ?? 0) +
+                // (icon.attribute.dx ?? 0) +
                 (icon.AABBBounds.width() - icon.backgroundWidth) / 2,
               y: (icon.attribute.y ?? 0) + (icon.AABBBounds.height() - icon.backgroundHeight) / 2,
               dx: icon.attribute.dx ?? 0,
