@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add sort config for pivotTable #1865\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

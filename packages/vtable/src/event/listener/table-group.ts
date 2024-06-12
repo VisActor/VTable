@@ -381,6 +381,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
     const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
       ? eventArgsSet.eventArgs.target
+      : (e.target as any).role?.startsWith('icon')
+      ? e.target
       : undefined;
     eventManager.downIcon = hitIcon;
     if (!hitIcon || (hitIcon.attribute as IIconGraphicAttribute).interactive === false) {
@@ -669,8 +671,15 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.hideMenu();
     }
     (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+
+    const hitIcon = (e.target as any).role?.startsWith('icon') ? e.target : undefined;
+    eventManager.downIcon = hitIcon;
     // 处理列宽调整  这里和tableGroup.addEventListener('pointerdown' 逻辑一样
-    if (!eventManager.checkCellFillhandle(eventArgsSet) && eventManager.checkColumnResize(eventArgsSet, true)) {
+    if (
+      !hitIcon &&
+      !eventManager.checkCellFillhandle(eventArgsSet) &&
+      eventManager.checkColumnResize(eventArgsSet, true)
+    ) {
       // eventManager.startColumnResize(e);
       // eventManager._resizing = true;
       table.scenegraph.updateChartState(null);

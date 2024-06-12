@@ -194,6 +194,7 @@ export function setIconHoverStyle(baseIcon: Icon, col: number, row: number, cell
         },
         placement: baseIcon.tooltip.placement
       },
+      disappearDelay: baseIcon.tooltip.disappearDelay,
       style: Object.assign({}, scene.table.internalProps.theme?.tooltipStyle, baseIcon.tooltip?.style)
     };
     if (!scene.table.internalProps.tooltipHandler.isBinded(tooltipOptions)) {

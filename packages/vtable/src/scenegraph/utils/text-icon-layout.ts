@@ -603,7 +603,7 @@ export function updateCellContentWidth(
       child.setAttribute('x', child.attribute.x + detaX);
     } else if (child.role === 'icon-absolute-right') {
       child.setAttribute('x', child.attribute.x + detaX);
-    } else if (child.name === 'content' || child.name === 'text') {
+    } else if (child.name === 'content' || (child.name === 'text' && child.type !== 'richtext')) {
       const childTextAlign = child.attribute.textAlign ?? textAlign;
       if (childTextAlign === 'center') {
         child.setAttribute(
