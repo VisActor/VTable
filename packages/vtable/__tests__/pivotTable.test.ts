@@ -473,67 +473,66 @@ describe('pivotTable init test', () => {
   test('pivotTable rowHeaderLevelCount', () => {
     expect(pivotTable.rowHeaderLevelCount).toBe(2);
   });
-  // TODO 修复 样式
-  // test('pivotTable API getCellStyle', () => {
-  //   expect(pivotTable.getCellStyle(1, 3)).toEqual({
-  //     textAlign: 'left',
-  //     textBaseline: 'middle',
-  //     bgColor: 'yellow',
-  //     color: 'red',
-  //     lineHeight: 16,
-  //     autoWrapText: true,
-  //     lineClamp: 'auto',
-  //     textOverflow: 'ellipsis',
-  //     borderColor: '#E1E4E8',
-  //     borderLineWidth: 1,
-  //     borderLineDash: [],
-  //     fontFamily: 'Arial,sans-serif',
-  //     fontSize: 16,
-  //     fontStyle: undefined,
-  //     fontVariant: undefined,
-  //     fontWeight: 'bold',
-  //     lineThrough: false,
-  //     lineThroughLineWidth: undefined,
-  //     // lineThroughDash: undefined,
-  //     underline: false,
-  //     underlineDash: undefined,
-  //     underlineOffset: undefined,
-  //     padding: [10, 16, 10, 16],
-  //     _linkColor: '#3772ff',
-  //     _strokeArrayColor: undefined,
-  //     _strokeArrayWidth: undefined
-  //   });
-  // });
-  // test('pivotTable API getCellStyle', () => {
-  //   expect(pivotTable.getCellStyle(2, 3)).toEqual({
-  //     textAlign: 'left',
-  //     textBaseline: 'middle',
-  //     bgColor: 'gray',
-  //     color: '#000',
-  //     lineHeight: 14,
-  //     autoWrapText: true,
-  //     lineClamp: 'auto',
-  //     textOverflow: 'ellipsis',
-  //     borderColor: 'red',
-  //     borderLineWidth: 1,
-  //     borderLineDash: [],
-  //     fontFamily: 'Arial,sans-serif',
-  //     fontSize: 14,
-  //     fontStyle: undefined,
-  //     fontVariant: undefined,
-  //     fontWeight: undefined,
-  //     lineThrough: false,
-  //     lineThroughLineWidth: undefined,
-  //     // lineThroughDash: undefined,
-  //     underline: false,
-  //     underlineDash: undefined,
-  //     underlineOffset: undefined,
-  //     padding: [10, 16, 10, 16],
-  //     _linkColor: '#3772ff',
-  //     _strokeArrayColor: undefined,
-  //     _strokeArrayWidth: undefined
-  //   });
-  // });
+  test('pivotTable API getCellStyle', () => {
+    expect(pivotTable.getCellStyle(1, 3)).toEqual({
+      textAlign: 'left',
+      textBaseline: 'middle',
+      bgColor: 'yellow',
+      color: 'red',
+      lineHeight: 16,
+      autoWrapText: true,
+      lineClamp: 'auto',
+      textOverflow: 'ellipsis',
+      borderColor: '#E1E4E8',
+      borderLineWidth: 1,
+      borderLineDash: [],
+      fontFamily: 'Arial,sans-serif',
+      fontSize: 16,
+      fontStyle: undefined,
+      fontVariant: undefined,
+      fontWeight: 'bold',
+      lineThrough: false,
+      lineThroughLineWidth: undefined,
+      // lineThroughDash: undefined,
+      underline: false,
+      underlineDash: undefined,
+      underlineOffset: undefined,
+      padding: [10, 16, 10, 16],
+      _linkColor: '#3772ff',
+      _strokeArrayColor: undefined,
+      _strokeArrayWidth: undefined
+    });
+  });
+  test('pivotTable API getCellStyle', () => {
+    expect(pivotTable.getCellStyle(2, 3)).toEqual({
+      textAlign: 'left',
+      textBaseline: 'middle',
+      bgColor: 'gray',
+      color: '#000',
+      lineHeight: 14,
+      autoWrapText: true,
+      lineClamp: 'auto',
+      textOverflow: 'ellipsis',
+      borderColor: 'red',
+      borderLineWidth: 1,
+      borderLineDash: [],
+      fontFamily: 'Arial,sans-serif',
+      fontSize: 14,
+      fontStyle: undefined,
+      fontVariant: undefined,
+      fontWeight: undefined,
+      lineThrough: false,
+      lineThroughLineWidth: undefined,
+      // lineThroughDash: undefined,
+      underline: false,
+      underlineDash: undefined,
+      underlineOffset: undefined,
+      padding: [10, 16, 10, 16],
+      _linkColor: '#3772ff',
+      _strokeArrayColor: undefined,
+      _strokeArrayWidth: undefined
+    });
+  });
   test('pivotTable getCellRange', () => {
     expect(pivotTable.getCellRange(0, 6)).toEqual({
       end: { col: 0, row: 10 },
