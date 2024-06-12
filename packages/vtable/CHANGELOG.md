@@ -1,6 +1,42 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 06 Jun 2024 02:34:10 GMT and should not be manually modified.
+This log was last generated on Wed, 12 Jun 2024 12:30:16 GMT and should not be manually modified.
+
+## 1.3.0
+Wed, 12 Jun 2024 12:30:16 GMT
+
+### Minor changes
+
+- feat: tooltip disappear delay time #1848
+
+
+- feat: add sort config for pivotTable #1865
+
+
+
+### Updates
+
+- refactor: memory release logic optimization #1856
+
+
+- refactor: arrow key with shift ctrl key to select cells #1873
+
+
+- fix: icon inlineEnd inlineFront x position compute error #1882
+
+
+- fix: drill down icon can not be click #1899
+
+
+- feat: add ignoreIcon&formatExportOutput config in vtable-export #1813
+- feat: add textArea editor
+
+
+- feat: add strokeColor style #1847
+- feat: add dx&dy in title component #1874
+- fix: fix frozenColCount large than colCount error #1872
+- feat: add shrinkSparklineFirst config #1862
+- fix: fix ellipsis error in _disableColumnAndRowSizeRound mode #1884
 
 ## 1.2.0
 Thu, 06 Jun 2024 02:34:10 GMT
