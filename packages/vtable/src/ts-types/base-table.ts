@@ -445,6 +445,8 @@ export interface BaseTableConstructorOptions {
     /** 禁用行高列宽计算取整数逻辑 对齐xTable */
     _disableColumnAndRowSizeRound?: boolean;
     imageMargin?: number;
+    // adaptive 模式下优先缩小迷你图
+    shrinkSparklineFirst?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
