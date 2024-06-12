@@ -966,6 +966,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   setViewBoxTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
+    this.internalProps.modifiedViewBoxTransform = true;
     this.scenegraph.stage.window.setViewBoxTransform(a, b, c, d, e, f);
   }
 
@@ -2417,7 +2418,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0) - (this.options.viewBox?.x1 ?? 0);
     const y =
       (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0) - (this.options.viewBox?.y1 ?? 0);
-    return { x, y, inTable };
+    const point = { x, y, inTable };
+
+    if (this.internalProps.modifiedViewBoxTransform && this.scenegraph.stage.window.getViewBoxTransform()) {
+      const transform = this.scenegraph.stage.window.getViewBoxTransform();
+      transform.transformPoint(point, point);
+    }
+    return point;
   }
   getTheme() {
     return this.internalProps.theme;
