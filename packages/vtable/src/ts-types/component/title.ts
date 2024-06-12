@@ -148,6 +148,9 @@ export type ITitle = {
      * 富文本配置
      */
     character?: IRichTextCharacter[];
+
+    dx?: number;
+    dy?: number;
   } & Partial<ITextGraphicAttribute> &
     Partial<IRichTextGraphicAttribute>;
 };
