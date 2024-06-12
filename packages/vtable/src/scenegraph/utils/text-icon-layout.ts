@@ -11,7 +11,7 @@ import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from './get-cell-merge';
 import { getHierarchyOffset } from './get-hierarchy-offset';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { isNil, isNumber, isValid } from '@visactor/vutils';
+import { isNil, isNumber, isValid, isValidNumber } from '@visactor/vutils';
 import { isMergeCellGroup } from './is-merge-cell-group';
 import { breakString } from './break-string';
 
@@ -545,6 +545,9 @@ export function updateCellContentWidth(
   textBaseline: CanvasTextBaseline,
   scene: Scenegraph
 ): boolean {
+  if (isValidNumber(cellGroup.contentWidth)) {
+    detaX = distWidth - (cellGroup.contentWidth ?? cellGroup.attribute.width);
+  }
   let leftIconWidth = 0;
   let leftIconHeight = 0;
   let rightIconWidth = 0;
