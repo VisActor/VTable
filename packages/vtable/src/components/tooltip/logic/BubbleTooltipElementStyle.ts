@@ -18,8 +18,8 @@ export function importStyle() {
 .vtable__bubble-tooltip-element {
 	position: absolute;
 	
-	pointer-events: none;
-	user-select: none;
+	// pointer-events: none;
+	//user-select: none;
 	max-width: 300px;
 	z-index: 99999;
 
@@ -33,6 +33,8 @@ export function importStyle() {
 }
 .vtable__bubble-tooltip-element--hidden {
 	opacity: 0;
+  pointer-events: none;
+	user-select: none;
 	/* transform: translate(-50%, -50%); */
 	transition: opacity 75ms linear;
 }

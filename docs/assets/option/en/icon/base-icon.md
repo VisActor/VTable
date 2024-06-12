@@ -112,6 +112,9 @@ Placement enumeration definition:
 }
 ```
 
+#${prefix} disappearDelay (number)
+The delay time for the tooltip to disappear. If you need to move the mouse to the tooltip, please configure this parameter.
+
 #${prefix} style (Object)
 The style of the tooltip. If not configured, the theme style will be used.
 
