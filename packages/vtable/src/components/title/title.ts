@@ -178,7 +178,9 @@ export class Title {
       subtextStyle: {
         width: realWidth,
         ...this._titleOption.subtextStyle
-      }
+      },
+      dx: this._titleOption.dx ?? 0,
+      dy: this._titleOption.dy ?? 0
     } as TitleAttrs;
   }
 }
