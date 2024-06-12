@@ -20,10 +20,6 @@ IconPosition 枚举类型。
  *
  */
 export enum IconPosition {
-  /**文本行内容前面的图标，跟随文本定位，随文本折行 */
-  inlineFront = 'inlineFront',
-  /**文本行内容后面的图标，跟随文本定位，随文本折行。如sort图表 放在文本内容的第一行 */
-  inlineEnd = 'inlineEnd',
   /**单元格左侧按钮 且受padding影响 */
   left = 'left',
   /**单元格右侧按钮 受padding影响 如pin图表 */
@@ -35,7 +31,12 @@ export enum IconPosition {
   /**在单元格内容块的右侧的图标,跟随文本定位，不随文本折行 */
   contentRight = 'contentRight',
   /**在单元格中自由定位 */
-  absolute = 'absolute'
+  absolute = 'absolute',
+
+  /**文本行内容前面的图标，跟随文本定位，随文本折行 */
+  inlineFront = 'inlineFront',
+  /**文本行内容后面的图标，跟随文本定位，随文本折行。如sort图表 放在文本内容的第一行 */
+  inlineEnd = 'inlineEnd',
 }
 ```
 
