@@ -103,7 +103,7 @@ export function createCellContent(
         heightLimit:
           autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
-            : cellHeight - (padding[0] + padding[2]),
+            : cellHeight - Math.floor(padding[0] + padding[2]),
         pickable: false,
         dx: (textAlign === 'left' ? hierarchyOffset : 0) + _contentOffset,
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
@@ -221,7 +221,7 @@ export function createCellContent(
         heightLimit:
           autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
-            : cellHeight - (padding[0] + padding[2]),
+            : cellHeight - Math.floor(padding[0] + padding[2]),
         pickable: false,
         autoWrapText,
         lineClamp,
@@ -676,7 +676,7 @@ export function updateCellContentHeight(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline
 ) {
-  const newHeight = distHeight - (padding[0] + padding[2]);
+  const newHeight = distHeight - Math.floor(padding[0] + padding[2]);
 
   const textMark = cellGroup.getChildByName('text');
 
