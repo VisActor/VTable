@@ -25,6 +25,12 @@
   prefix = ${prefix},
 ) }}
 
+#${prefix} strokeColor(ColorPropertyDefine)
+定义单元格的文字描边颜色
+{{ use: common-color(
+  prefix = ${prefix},
+) }}
+
 #${prefix} fontSize(FontSizePropertyDefine)
 定义单元格的文字大小
 {{ use: common-font-size(
