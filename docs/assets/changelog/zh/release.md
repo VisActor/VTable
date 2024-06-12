@@ -5,25 +5,25 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add ignoreIcon&formatExportOutput config in vtable-export [#1813](https://github.com/VisActor/VTable/issues/1813)
-- **@visactor/vtable**: add textArea editor
-- **@visactor/vtable**: add strokeColor style [#1847](https://github.com/VisActor/VTable/issues/1847)
-- **@visactor/vtable**: add dx&dy in title component [#1874](https://github.com/VisActor/VTable/issues/1874)
-- **@visactor/vtable**: add shrinkSparklineFirst config [#1862](https://github.com/VisActor/VTable/issues/1862)
-- **@visactor/vtable**: tooltip disappear delay time [#1848](https://github.com/VisActor/VTable/issues/1848)
-- **@visactor/vtable**: add sort config for pivotTable [#1865](https://github.com/VisActor/VTable/issues/1865)
+- **@visactor/vtable**: vtable-export增加ignoreIcon&formatExportOutput配置 [#1813](https://github.com/VisActor/VTable/issues/1813)
+- **@visactor/vtable**: 增加 textArea editor
+- **@visactor/vtable**: 增加 strokeColor 样式 [#1847](https://github.com/VisActor/VTable/issues/1847)
+- **@visactor/vtable**: title component增加 dx&dy 配置 [#1874](https://github.com/VisActor/VTable/issues/1874)
+- **@visactor/vtable**: 增加 shrinkSparklineFirst 配置 [#1862](https://github.com/VisActor/VTable/issues/1862)
+- **@visactor/vtable**: 增加 tooltip 消失延迟时间 [#1848](https://github.com/VisActor/VTable/issues/1848)
+- **@visactor/vtable**: 增加透视表排序配置 [#1865](https://github.com/VisActor/VTable/issues/1865)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: icon inlineEnd inlineFront x position compute error [#1882](https://github.com/VisActor/VTable/issues/1882)
-- **@visactor/vtable**: drill down icon can not be click [#1899](https://github.com/VisActor/VTable/issues/1899)
-- **@visactor/vtable**: fix frozenColCount large than colCount error [#1872](https://github.com/VisActor/VTable/issues/1872)
-- **@visactor/vtable**: fix ellipsis error in _disableColumnAndRowSizeRound mode [#1884](https://github.com/VisActor/VTable/issues/1884)
+- **@visactor/vtable**: 修复部分图标位置计算问题 [#1882](https://github.com/VisActor/VTable/issues/1882)
+- **@visactor/vtable**: 修复下钻按钮点击问题 [#1899](https://github.com/VisActor/VTable/issues/1899)
+- **@visactor/vtable**: 修复frozenColCount超过列数时的显示问题 [#1872](https://github.com/VisActor/VTable/issues/1872)
+- **@visactor/vtable**: 修复_disableColumnAndRowSizeRound模式下文字省略问题 [#1884](https://github.com/VisActor/VTable/issues/1884)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: memory release logic optimization [#1856](https://github.com/VisActor/VTable/issues/1856)
-- **@visactor/vtable**: arrow key with shift ctrl key to select cells [#1873](https://github.com/VisActor/VTable/issues/1873)
+- **@visactor/vtable**: 优化内存释放逻辑 [#1856](https://github.com/VisActor/VTable/issues/1856)
+- **@visactor/vtable**: 支持方向键 + shift ctrl选中多个单元格 [#1873](https://github.com/VisActor/VTable/issues/1873)
 
 [更多详情请查看 v1.3.0](https://github.com/VisActor/VTable/releases/tag/v1.3.0)
 
@@ -34,27 +34,21 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: support select highlightMode effect [#1167](https://github.com/VisActor/VTable/issues/1167)
-- **@visactor/vtable**: add isAggregation api [#1803](https://github.com/VisActor/VTable/issues/1803)
-- **@visactor/vtable**: optimize large column performance [#1840](https://github.com/VisActor/VTable/issues/1840) [#1824](https://github.com/VisActor/VTable/issues/1824)
-- **@visactor/vtable**: add merge cell custom graphic attribute sync [#1718](https://github.com/VisActor/VTable/issues/1718)
+- **@visactor/vtable**: 增加select highlightMode效果 [#1167](https://github.com/VisActor/VTable/issues/1167)
+- **@visactor/vtable**: 补充isAggregation api [#1803](https://github.com/VisActor/VTable/issues/1803)
+- **@visactor/vtable**: 优化大量列时的性能问题 [#1840](https://github.com/VisActor/VTable/issues/1840) [#1824](https://github.com/VisActor/VTable/issues/1824)
+- **@visactor/vtable**: 补充合并单元格自定义图元更新 [#1718](https://github.com/VisActor/VTable/issues/1718)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when has no records should not has aggregation row [#1804](https://github.com/VisActor/VTable/issues/1804)
-- **@visactor/vtable**: updateColumns set editor error [#1828](https://github.com/VisActor/VTable/issues/1828)
-- **@visactor/vtable**: fix maxCharactersNumber effect [#1830](https://github.com/VisActor/VTable/issues/1830)
+- **@visactor/vtable**: 修复无数据时汇总行展示 [#1804](https://github.com/VisActor/VTable/issues/1804)
+- **@visactor/vtable**: 修复updateColumns时设置editor问题 [#1828](https://github.com/VisActor/VTable/issues/1828)
+- **@visactor/vtable**: 修复maxCharactersNumber效果 [#1830](https://github.com/VisActor/VTable/issues/1830)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: update pixelRatio when resize [#1823](https://github.com/VisActor/VTable/issues/1823)
-- **@visactor/vtable**: selectAllOnCtrlA option
-
-**🔧 项目配置**
-
-- **@visactor/vtable**: update vrender version
-
-
+- **@visactor/vtable**: resize时更新pixelRatio [#1823](https://github.com/VisActor/VTable/issues/1823)
+- **@visactor/vtable**: 增加selectAllOnCtrlA配置
 
 [更多详情请查看 v1.2.0](https://github.com/VisActor/VTable/releases/tag/v1.2.0)
 
