@@ -26,6 +26,23 @@ The configuration items are:
       };
     }
 
+## Tooltip prompt box style settings
+
+The style configuration of tooltip can be set through theme.tooltipStyle. The specific configuration is as follows:
+
+```
+export type TooltipStyle = {
+  fontFamily?: string;
+  fontSize?: number;
+  color?: string;
+  padding?: number[];
+  bgColor?: string;
+  maxWidth?: number;
+  maxHeight?: number;
+};
+
+```
+
 ## Enable overflow content prompt
 
 By default, VTable enables the tooltip of overflow content: isShowOverflowTextTooltip defaults to true. If you need to delay disappearance so that the mouse can move to the tooltip content, you can configure overflowTextTooltipDisappearDelay.
@@ -100,3 +117,28 @@ The interface showTooltip can actively display tooltip information, which is use
 
 Effect:
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff05.gif)
+
+## Icon tooltip configuration
+
+When customizing the icon, you can display the prompt information by configuring the tooltip as follows:
+
+```
+VTable.register.icon('order', {
+  ... //其他配置
+  tooltip: {
+    // 气泡框，按钮的的解释信息
+    title:'Order ID is the unique identifier for each order',
+    style: {
+      fontSize: 14,
+      fontFamily: 'Arial',
+      padding: [10,10,10,10],
+      bgColor: 'black',
+      arrowMark: true,
+      color: 'white',
+      maxHeight: 100,
+      maxWidth: 200
+    },
+    disappearDelay: 1000
+  }
+})
+```

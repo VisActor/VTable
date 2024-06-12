@@ -133,5 +133,11 @@ Placement 枚举类型定义：
 ##${prefix} arrowMark (boolean)
 气泡框是否显示箭头。
 
+##${prefix} maxWidth (number)
+tooltip 的最大宽度。
+
+##${prefix} maxHeight (number)
+tooltip 的最大高度。
+
 ${prefix} interactive (boolean)
 是否可交互，默认为 true。目前已知不可交互按钮为下拉菜单状态。
