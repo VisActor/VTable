@@ -525,7 +525,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   get frozenColCount(): number {
     let frozenColCount = this.internalProps.layoutMap?.frozenColCount ?? this.internalProps.frozenColCount ?? 0;
-    if (frozenColCount > this.colCount) {
+    if (!this.internalProps.transpose && frozenColCount >= this.colCount) {
       frozenColCount = 0;
     }
     return frozenColCount;
