@@ -691,6 +691,8 @@ export function getAdaptiveWidth(
 ) {
   let actualWidth = 0;
   const adaptiveColumns: number[] = [];
+  const sparklineColumns = [];
+  let totalSparklineAbleWidth = 0;
   for (let col = startCol; col < endColPlus1; col++) {
     const width = update ? newWidths[col] : table.getColWidth(col);
     const maxWidth = table.getMaxColWidth(col);
@@ -702,9 +704,39 @@ export function getAdaptiveWidth(
       // fixed width, do not adaptive
       totalDrawWidth -= width;
     }
+
+    if (table.options.customConfig?.shrinkSparklineFirst) {
+      const bodyCellType = table.getBodyColumnType(col, 0);
+      if (bodyCellType === 'sparkline') {
+        sparklineColumns.push({ col, width });
+        totalSparklineAbleWidth += width - table.defaultColWidth;
+      }
+    }
   }
 
   const factor = totalDrawWidth / actualWidth;
+
+  if (
+    table.options.customConfig?.shrinkSparklineFirst &&
+    factor < 1 &&
+    totalDrawWidth - actualWidth < totalSparklineAbleWidth
+  ) {
+    // only shrink sparkline column
+    for (let i = 0; i < sparklineColumns.length; i++) {
+      const { col, width } = sparklineColumns[i];
+      const deltaWidth = (actualWidth - totalDrawWidth) / sparklineColumns.length;
+      const colWidth = Math.floor(width - deltaWidth);
+
+      if (update) {
+        newWidths[col] = table._adjustColWidth(col, colWidth);
+      } else if (fromScenegraph) {
+        table.scenegraph.setColWidth(col, table._adjustColWidth(col, colWidth));
+      } else {
+        table._setColWidth(col, table._adjustColWidth(col, colWidth), false, true);
+      }
+    }
+    return;
+  }
 
   for (let i = 0; i < adaptiveColumns.length; i++) {
     const col = adaptiveColumns[i];
