@@ -493,6 +493,12 @@ export class TableTheme implements ITableThemeDefine {
         },
         get color(): string | undefined {
           return tooltip.color ?? '#FFF';
+        },
+        get maxWidth(): number | undefined {
+          return tooltip.maxWidth;
+        },
+        get maxHeight(): number | undefined {
+          return tooltip.maxHeight;
         }
       };
     }
