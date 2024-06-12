@@ -524,7 +524,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 注意 这个值和options.frozenColCount 不一样！options.frozenColCount是用户实际设置的; 这里获取的值是调整过:frozen的列过宽时 frozeCount为0
    */
   get frozenColCount(): number {
-    return this.internalProps.layoutMap?.frozenColCount ?? this.internalProps.frozenColCount ?? 0;
+    let frozenColCount = this.internalProps.layoutMap?.frozenColCount ?? this.internalProps.frozenColCount ?? 0;
+    if (frozenColCount >= this.colCount) {
+      frozenColCount = 0;
+    }
+    return frozenColCount;
   }
   /**
    * Set the number of frozen columns.
