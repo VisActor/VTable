@@ -68,7 +68,7 @@ dataConfig application example:
 
 ### 1. Totals
 
-[option description](../../../option/PivotTable#dataConfig.totals)
+[option description](../../option/PivotTable#dataConfig.totals)
 Configuration example:
 
 ```
@@ -97,8 +97,13 @@ Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-total
 
 ### 2. Sorting rules
 
-[option description](../../../option/PivotTable#dataConfig.sortRules)
-Configuration example:
+VTable's pivot table supports four sorting methods: natural sorting of dimension values, specified dimension value order, indicator value sorting, and custom sorting.
+
+For definitions, please refer to:
+
+[option description](../../option/PivotTable#dataConfig.sortRules) [Usage tutorial](../../guide/basic_function/sort/pivot_sort)
+
+The following is an example of the indicator value sorting configuration:
 
 ```
     sortRules: [
@@ -118,7 +123,7 @@ Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-
 
 ### 3. Filter rules
 
-[option description](../../../option/PivotTable#dataConfig.filterRules)
+[option description](../../option/PivotTable#dataConfig.filterRules)
 Configuration example:
 
 ```
@@ -135,7 +140,7 @@ Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-filte
 
 ### 4. Aggregation method
 
-[option description](../../../option/PivotTable#dataConfig.aggregationRules)
+[option description](../../option/PivotTable#dataConfig.aggregationRules)
 Configuration example:
 
 ```
@@ -200,7 +205,7 @@ The sales indicator in this record is a non-numeric value, and it is required to
 
 ### 5. Derive Field
 
-[option description](../../../option/PivotTable#dataConfig.derivedFieldRules)
+[option description](../../option/PivotTable#dataConfig.derivedFieldRules)
 Configuration example:
 
 ```

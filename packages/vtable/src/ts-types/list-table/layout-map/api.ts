@@ -20,7 +20,8 @@ import type {
   SparklineSpec,
   HierarchyState,
   Aggregation,
-  IRowSeriesNumber
+  IRowSeriesNumber,
+  SortOption
 } from '../../';
 import type { Aggregator } from '../../../dataset/statistics-helper';
 import type { BaseTableAPI } from '../../base-table';
@@ -82,6 +83,7 @@ export interface HeaderData extends WidthData {
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 
   showSort?: boolean;
+  sort?: SortOption;
 
   /**
    * 表头描述 鼠标hover会提示该信息

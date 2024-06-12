@@ -424,7 +424,10 @@ export interface PivotTableAPI extends BaseTableAPI {
   options: PivotTableConstructorOptions;
   editorManager: EditManeger;
   // internalProps: PivotTableProtected;
-  pivotSortState: PivotSortState[];
+  pivotSortState: {
+    dimensions: IDimensionInfo[];
+    order: SortOrder;
+  }[];
   isListTable: () => false;
   isPivotTable: () => true;
   getPivotSortState: (col: number, row: number) => SortOrder;

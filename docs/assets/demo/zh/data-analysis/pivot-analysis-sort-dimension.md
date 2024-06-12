@@ -9,7 +9,7 @@ option: PivotTable#dataConfig.sortRules
 
 # 透视分析表维度值排序
 
-透视表按某个维度的维度值进行排序，在 dataConfig 中配置 sortRules，可配置多个排序规则，先配的优先级较高。
+透视表按某个维度的维度值进行排序，在 dataConfig 中配置 sortRules，可配置多个排序规则，先配的优先级较高。在这个示例中 rows 行维度'Sub-Category'配置了 sort:true，会在显示维度名称的角头单元格中显示排序图标，点击图标按维度值进行排序。
 
 ## 关键配置
 
@@ -40,6 +40,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         {
           dimensionKey: 'Sub-Category',
           title: 'Sub-Catogery',
+          sort: true,
           headerStyle: {
             textStick: true
           },
@@ -133,8 +134,8 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
             sortBy: ['Office Supplies', 'Technology', 'Furniture']
           },
           {
-            sortField: 'Sub-Category',
-            sortBy: ['Chairs', 'Tables', 'Labels', 'Art', 'Paper', 'Appliances']
+            sortField: 'Segment',
+            sortBy: ['Home Office', 'Consumer', 'Corporate']
           }
         ]
       },

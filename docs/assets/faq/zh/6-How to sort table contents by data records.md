@@ -62,5 +62,5 @@ instance.updateSortState({
 ## 相关文档
 
 - [表格排序 demo](https://visactor.io/vtable/demo/basic-functionality/sort)
-- [排序功能教程](https://visactor.io/vtable/guide/basic_function/sort)
+- [排序功能教程](https://visactor.io/vtable/guide/basic_function/sort/list_sort)
 - [github](https://github.com/VisActor/VTable)
