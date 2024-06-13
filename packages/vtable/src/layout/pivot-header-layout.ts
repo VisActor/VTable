@@ -281,7 +281,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.cornerSetting.titleOnDimension === 'column') {
       let colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
       //#region 处理需求 当没有数据时仍然显示角头维度名称
-      if ((this.dataset.records?.length ?? 0) === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+      if (
+        this.dataset &&
+        (this.dataset.records?.length ?? 0) === 0 &&
+        !this.dataset.customColTree &&
+        !this.dataset.customRowTree
+      ) {
         colDimensionKeys = this.columnsDefine.map(define => {
           if (typeof define === 'string') {
             return define;
@@ -312,7 +317,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } else {
         //#region 处理需求 当没有数据时仍然显示角头维度名称
         let rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
-        if ((this.dataset.records?.length ?? 0) === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+        if (
+          this.dataset &&
+          (this.dataset.records?.length ?? 0) === 0 &&
+          !this.dataset.customColTree &&
+          !this.dataset.customRowTree
+        ) {
           rowDimensionKeys = this.rowsDefine.map(define => {
             if (typeof define === 'string') {
               return define;
@@ -1164,13 +1174,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         count -= 1;
       }
       //#region 处理需求 当没有数据时仍然显示角头维度名称
-      if (count === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+      if (count === 0 && this.dataset && !this.dataset.customColTree && !this.dataset.customRowTree) {
         if (this.cornerSetting.titleOnDimension === 'row') {
           count = 1;
         } else if ((this.dataset.records?.length ?? 0) === 0 && this.cornerSetting.titleOnDimension === 'column') {
           count = this.columnsDefine.length ?? 0;
         }
       } else if (
+        this.dataset &&
         (this.dataset.records?.length ?? 0) === 0 &&
         !this.dataset.customColTree &&
         !this.dataset.customRowTree
@@ -1224,13 +1235,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       //   count+=1;
       // }
       //#region 处理需求 当没有数据时仍然显示角头维度名称
-      if (count === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+      if (count === 0 && this.dataset && !this.dataset.customColTree && !this.dataset.customRowTree) {
         if (this.cornerSetting.titleOnDimension === 'column') {
           count = 1;
         } else if ((this.dataset.records?.length ?? 0) === 0 && this.cornerSetting.titleOnDimension === 'row') {
           count = this.rowsDefine.length ?? 0;
         }
       } else if (
+        this.dataset &&
         (this.dataset.records?.length ?? 0) === 0 &&
         !this.dataset.customColTree &&
         !this.dataset.customRowTree
