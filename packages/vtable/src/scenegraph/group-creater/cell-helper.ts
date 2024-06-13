@@ -739,7 +739,7 @@ export function dealWithMergeCellSize(
     for (let row = range.start.row; row <= range.end.row; row++) {
       const cellGroup = table.scenegraph.getCell(col, row, true);
 
-      if (cellGroup.role === 'cell' && range.start.row !== range.end.row && cellGroup.contentWidth !== cellWidth) {
+      if (cellGroup.role === 'cell' && range.start.row !== range.end.row && cellGroup.contentHeight !== cellHeight) {
         updateCellContentHeight(
           cellGroup,
           cellHeight,
@@ -752,7 +752,7 @@ export function dealWithMergeCellSize(
           // 'middle'
         );
       }
-      if (cellGroup.role === 'cell' && range.start.col !== range.end.col && cellGroup.contentHeight !== cellHeight) {
+      if (cellGroup.role === 'cell' && range.start.col !== range.end.col && cellGroup.contentWidth !== cellWidth) {
         updateCellContentWidth(
           cellGroup,
           cellWidth,
