@@ -1151,6 +1151,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             : this.columnDimensionTree.totalLevel
           : this.columnDimensionTree.totalLevel
         : this.columnDimensionTree.totalLevel;
+
+      if (this.columnHeaderTitle) {
+        count += 1;
+      }
+      if (
+        this._table.isPivotChart() &&
+        this.indicatorsAsCol &&
+        !this.hasTwoIndicatorAxes &&
+        checkHasCartesianChart(this.indicatorsDefine)
+      ) {
+        count -= 1;
+      }
       //#region 处理需求 当没有数据时仍然显示角头维度名称
       if (count === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
         if (this.cornerSetting.titleOnDimension === 'row') {
@@ -1163,20 +1175,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         !this.dataset.customColTree &&
         !this.dataset.customRowTree
       ) {
-        count = this.columnsDefine.length;
+        if (this.cornerSetting.titleOnDimension === 'column') {
+          count = this.columnsDefine.length ?? 0;
+        }
       }
       //#endregion
-      if (this.columnHeaderTitle) {
-        count += 1;
-      }
-      if (
-        this._table.isPivotChart() &&
-        this.indicatorsAsCol &&
-        !this.hasTwoIndicatorAxes &&
-        checkHasCartesianChart(this.indicatorsDefine)
-      ) {
-        count -= 1;
-      }
       this.columnHeaderLevelCount = count;
       return;
     }
@@ -1213,6 +1216,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       ) {
         count = rowLevelCount - 1;
       }
+
+      if (this.rowHeaderTitle) {
+        count += 1;
+      }
+      // if (this._table.isPivotChart()&&this.indicatorsAsCol) {
+      //   count+=1;
+      // }
       //#region 处理需求 当没有数据时仍然显示角头维度名称
       if (count === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
         if (this.cornerSetting.titleOnDimension === 'column') {
@@ -1225,15 +1235,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         !this.dataset.customColTree &&
         !this.dataset.customRowTree
       ) {
-        count = this.rowsDefine.length;
+        if (this.cornerSetting.titleOnDimension === 'row') {
+          count = this.rowsDefine.length;
+        }
       }
       //#endregion
-      if (this.rowHeaderTitle) {
-        count += 1;
-      }
-      // if (this._table.isPivotChart()&&this.indicatorsAsCol) {
-      //   count+=1;
-      // }
       this.rowHeaderLevelCount = count;
       return;
     }
