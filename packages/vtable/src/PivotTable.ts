@@ -161,6 +161,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               options.indicators
             );
           }
+          if ((this.records?.length ?? 0) === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+            this.dataset.colHeaderTree = [];
+          }
           columnDimensionTree = new DimensionTree(
             (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
             this.layoutNodeId
@@ -172,6 +175,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               this.dataset.rowHeaderTree,
               options.indicators
             );
+          }
+          if ((this.records?.length ?? 0) === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+            this.dataset.rowHeaderTree = [];
           }
           rowDimensionTree = new DimensionTree(
             (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
@@ -361,6 +367,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             options.indicators
           );
         }
+        if ((this.records?.length ?? 0) === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+          this.dataset.colHeaderTree = [];
+        }
         columnDimensionTree = new DimensionTree(
           (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId
@@ -372,6 +381,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             this.dataset.rowHeaderTree,
             options.indicators
           );
+        }
+        if ((this.records?.length ?? 0) === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+          this.dataset.rowHeaderTree = [];
         }
         rowDimensionTree = new DimensionTree(
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
@@ -1454,6 +1466,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (options.columnTree) {
         columnDimensionTree = internalProps.layoutMap.columnDimensionTree;
       } else {
+        if ((this.records?.length ?? 0) === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+          this.dataset.colHeaderTree = [];
+        }
         columnDimensionTree = new DimensionTree(
           (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId
@@ -1462,6 +1477,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (options.rowTree) {
         rowDimensionTree = internalProps.layoutMap.rowDimensionTree;
       } else {
+        if ((this.records?.length ?? 0) === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+          this.dataset.rowHeaderTree = [];
+        }
         rowDimensionTree = new DimensionTree(
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,

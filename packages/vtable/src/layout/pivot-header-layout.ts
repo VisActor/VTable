@@ -279,7 +279,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.sharedVar.seqId = Math.max(this.sharedVar.seqId, this._headerObjects.length);
     //生成cornerHeaderObjs及_cornerHeaderCellIds
     if (this.cornerSetting.titleOnDimension === 'column') {
-      const colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+      let colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+      //#region 处理需求 当没有数据时仍然显示角头维度名称
+      if ((this.dataset.records?.length ?? 0) === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+        colDimensionKeys = this.columnsDefine.map(define => {
+          if (typeof define === 'string') {
+            return define;
+          }
+          return define.dimensionKey;
+        });
+      }
+      //#endregion
       this.cornerHeaderObjs = this._addCornerHeaders(
         this.columnHeaderTitle ? [''].concat(colDimensionKeys) : colDimensionKeys,
         this.columnsDefine
@@ -300,7 +310,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.rowsDefine.concat(extensionRowDimensions)
         );
       } else {
-        const rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+        //#region 处理需求 当没有数据时仍然显示角头维度名称
+        let rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+        if ((this.dataset.records?.length ?? 0) === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+          rowDimensionKeys = this.rowsDefine.map(define => {
+            if (typeof define === 'string') {
+              return define;
+            }
+            return define.dimensionKey;
+          });
+        }
+        //#endregion
         this.cornerHeaderObjs = this._addCornerHeaders(
           this.rowHeaderTitle ? [''].concat(rowDimensionKeys) : rowDimensionKeys,
           this.rowsDefine
@@ -1131,6 +1151,21 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             : this.columnDimensionTree.totalLevel
           : this.columnDimensionTree.totalLevel
         : this.columnDimensionTree.totalLevel;
+      //#region 处理需求 当没有数据时仍然显示角头维度名称
+      if (count === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+        if (this.cornerSetting.titleOnDimension === 'row') {
+          count = 1;
+        } else if ((this.dataset.records?.length ?? 0) === 0 && this.cornerSetting.titleOnDimension === 'column') {
+          count = this.columnsDefine.length ?? 0;
+        }
+      } else if (
+        (this.dataset.records?.length ?? 0) === 0 &&
+        !this.dataset.customColTree &&
+        !this.dataset.customRowTree
+      ) {
+        count = this.columnsDefine.length;
+      }
+      //#endregion
       if (this.columnHeaderTitle) {
         count += 1;
       }
@@ -1178,7 +1213,21 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       ) {
         count = rowLevelCount - 1;
       }
-
+      //#region 处理需求 当没有数据时仍然显示角头维度名称
+      if (count === 0 && !this.dataset.customColTree && !this.dataset.customRowTree) {
+        if (this.cornerSetting.titleOnDimension === 'column') {
+          count = 1;
+        } else if ((this.dataset.records?.length ?? 0) === 0 && this.cornerSetting.titleOnDimension === 'row') {
+          count = this.rowsDefine.length ?? 0;
+        }
+      } else if (
+        (this.dataset.records?.length ?? 0) === 0 &&
+        !this.dataset.customColTree &&
+        !this.dataset.customRowTree
+      ) {
+        count = this.rowsDefine.length;
+      }
+      //#endregion
       if (this.rowHeaderTitle) {
         count += 1;
       }
@@ -1321,13 +1370,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (this.isSeriesNumber(col, row)) {
         return '';
       } else if (this.isCornerHeader(col, row)) {
-        return this._cornerHeaderCellIds[row][col - this.leftRowSeriesNumberColumnCount];
+        return this._cornerHeaderCellIds[row]?.[col - this.leftRowSeriesNumberColumnCount];
       } else if (this.isColumnHeader(col, row)) {
-        return this._columnHeaderCellIds[row][col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount];
+        return this._columnHeaderCellIds[row]?.[col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount];
       } else if (this.isRowHeader(col, row)) {
         return this._rowHeaderCellIds[row - this.columnHeaderLevelCount]?.[col - this.leftRowSeriesNumberColumnCount];
       } else if (this.isRightFrozenColumn(col, row)) {
-        return this._rowHeaderCellIds[row - this.columnHeaderLevelCount][this.rowHeaderLevelCount - 1];
+        return this._rowHeaderCellIds[row - this.columnHeaderLevelCount]?.[this.rowHeaderLevelCount - 1];
       } else if (this.isBottomFrozenRow(col, row)) {
         return this._columnHeaderCellIds[this.columnHeaderLevelCount - 1]?.[
           col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount
