@@ -92,6 +92,8 @@ import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 import type { ISortedMapItem } from '../data/DataSource';
 import type { IAnimationAppear } from './animation/appear';
+import type { IEmptyTip } from './component/empty-tip';
+import type { EmptyTip } from '../components/empty-tip/empty-tip';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -195,6 +197,8 @@ export interface IBaseTableProtected {
     renderMode: 'html' | 'canvas';
     /** 代替原来hover:isShowTooltip配置 */
     isShowOverflowTextTooltip: boolean;
+    /** 缩略文字提示框 延迟消失时间 */
+    overflowTextTooltipDisappearDelay?: number;
     /** 弹框是否需要限定在表格区域内 */
     confine: boolean;
   };
@@ -231,8 +235,9 @@ export interface IBaseTableProtected {
   limitMinHeight?: number;
 
   title?: Title;
-  legends?: DiscreteTableLegend | ContinueTableLegend;
+  legends?: (DiscreteTableLegend | ContinueTableLegend)[];
 
+  emptyTip?: EmptyTip;
   //是否开启图表异步渲染
   renderChartAsync?: boolean;
   // // 开启图表异步渲染 每批次渐进渲染图表个数
@@ -324,6 +329,8 @@ export interface BaseTableConstructorOptions {
   };
   /** 选择单元格交互配置 */
   select?: {
+    /** 高亮范围模式：十字交叉 整列 整行 或者单个单元格。默认`cell` */
+    highlightMode: 'cross' | 'column' | 'row' | 'cell';
     /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
     headerSelectMode?: 'inline' | 'cell';
     /** 不响应鼠标select交互 */
@@ -346,8 +353,10 @@ export interface BaseTableConstructorOptions {
   tooltip?: {
     /** html目前实现较完整 先默认html渲染方式 */
     renderMode?: 'html'; // 目前暂不支持canvas方案
-    /** 代替原来hover:isShowTooltip配置 暂时需要将renderMode配置为html才能显示，canvas的还未开发*/
+    /** 是否显示缩略文字提示框。 代替原来hover:isShowTooltip配置 暂时需要将renderMode配置为html才能显示，canvas的还未开发*/
     isShowOverflowTextTooltip?: boolean;
+    /** 缩略文字提示框 延迟消失时间 */
+    overflowTextTooltipDisappearDelay?: number;
     /** 是否将 tooltip 框限制在画布区域内，默认开启。针对renderMode:"html"有效 */
     confine?: boolean;
   };
@@ -398,9 +407,9 @@ export interface BaseTableConstructorOptions {
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
 
-  legends?: ITableLegendOption;
+  legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
-
+  emptyTip?: true | IEmptyTip;
   /** 是否开启图表异步渲染 */
   renderChartAsync?: boolean;
   /** 开启图表异步渲染 每批次渐进渲染图表个数  默认是5个 */
@@ -447,6 +456,8 @@ export interface BaseTableConstructorOptions {
     /** 禁用行高列宽计算取整数逻辑 对齐xTable */
     _disableColumnAndRowSizeRound?: boolean;
     imageMargin?: number;
+    // adaptive 模式下优先缩小迷你图
+    shrinkSparklineFirst?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -582,12 +593,14 @@ export interface BaseTableAPI {
   getDefaultRowHeight: (row: number) => number | 'auto';
   getDefaultColumnWidth: (col: number) => number | 'auto';
   _setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
+  setRowHeight: (row: number, height: number) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;
   // setColWidthDefined: (col: number, width: number) => void;
   getColWidthDefinedNumber: (col: number) => number;
   // getColWidthDefine: (col: number) => string | number;
   _setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
+  setColWidth: (col: number, width: number) => void;
   _getColContentWidth: (col: number) => number;
   _setColContentWidth: (col: number, width: number | string, clearCache?: boolean) => void;
   getMaxColWidth: (col: number) => number;
@@ -620,7 +633,7 @@ export interface BaseTableAPI {
   getFrozenColsWidth: () => number;
   getBottomFrozenRowsHeight: () => number;
   getRightFrozenColsWidth: () => number;
-  selectCell: (col: number, row: number) => void;
+  selectCell: (col: number, row: number, isShift?: boolean, isCtrl?: boolean) => void;
   selectCells: (cellRanges: CellRange[]) => void;
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;
@@ -822,6 +835,7 @@ export interface BaseTableAPI {
   ) => string;
   exportCellRangeImg: (cellRange: CellRange) => string;
   exportCanvas: () => HTMLCanvasElement;
+  setPixelRatio: (pixelRatio: number) => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

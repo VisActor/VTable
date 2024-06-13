@@ -82,19 +82,9 @@ export type IListTableCellHeaderPaths = {
 };
 export type IPivotTableCellHeaderPaths = {
   /** 列表头各级path表头信息 */
-  readonly colHeaderPaths?: {
-    dimensionKey?: string;
-    indicatorKey?: string;
-    value?: string;
-    virtual?: boolean;
-  }[];
+  readonly colHeaderPaths?: IDimensionInfo[];
   /** 行表头各级path表头信息 */
-  readonly rowHeaderPaths?: {
-    dimensionKey?: string;
-    indicatorKey?: string;
-    value?: string;
-    virtual?: boolean;
-  }[];
+  readonly rowHeaderPaths?: IDimensionInfo[];
   cellLocation: CellLocation;
 };
 
@@ -103,6 +93,7 @@ export interface IDimensionInfo {
   value?: string;
   indicatorKey?: string;
   isPivotCorner?: boolean;
+  virtual?: boolean;
 }
 
 /**
@@ -135,7 +126,7 @@ export enum HighlightScope {
   'none' = 'none'
 }
 
-export type SortOrder = 'asc' | 'desc' | 'normal';
+export type SortOrder = 'asc' | 'desc' | 'normal' | 'ASC' | 'DESC' | 'NORMAL';
 
 export type CustomCellStyle = {
   id: string;

@@ -30,6 +30,14 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 - 'only-body'：只有 body 部分的行参与高度适应计算，表头部分高度不变。
 - 'all'：所有列参与高度适应计算。
 
+#${prefix} columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
+
+计算内容宽度时限定区域参与计算：
+
+- 'only-header'：只计算表头内容。
+- 'only-body'：只计算 body 单元格内容。
+- 'normal'：正常计算，即计算表头和 body 单元格内容。
+
 #${prefix} autoWrapText(boolean) = false
 
 是否自动换行
@@ -98,6 +106,14 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 
 ##${prefix} selectAllOnCtrlA(boolean) = false
 开启快捷键全选。
+支持 `boolean` 或者具体配置类型`SelectAllOnCtrlAOption`。
+
+```
+export interface SelectAllOnCtrlAOption {
+  disableHeaderSelect?: boolean; //快捷键全选时，是否禁止选中表头。
+  disableRowSeriesNumberSelect?: boolean;  //快捷键全选时，是否禁止选中行序列号。
+}
+```
 
 ##${prefix} copySelected(boolean) = false
 开启快捷键复制，与浏览器的快捷键一致。
@@ -143,7 +159,7 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 - 'header' 只能在表头处单元格调整
 - 'body' 只能在 body 单元格调整
 
-#${prefix} rowResizeMode(string) = 'none'
+#${prefix} rowResizeMode(string) = 'all'
 
 鼠标 hover 到单元格下边界可拖拽调整行高。该操作可触发的范围：
 
@@ -152,7 +168,7 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 - 'header' 只能在表头处单元格调整
 - 'body' 只能在 body 单元格调整
 
-#${prefix} dragHeaderMode(string) = 'all'
+#${prefix} dragHeaderMode(string) = 'none'
 
 控制拖拽表头移动位置的开关。选中某个单元格后，鼠标拖拽该单元格可触发移动。 可换位单元格范围限定：
 
@@ -247,6 +263,18 @@ DropDownMenuHighlightInfo 的定义如下：
   prefix = '#' + ${prefix},
 ) }}
 
+#${prefix} emptyTip(Object)
+
+表格空数据提示。
+
+可以直接配置`boolean` 或者 `IEmptyTip`类型对象， 默认为 false，不显示提示信息。
+
+`IEmptyTip`类型定如如下：
+
+{{ use: common-emptyTip(
+  prefix = '#' + ${prefix},
+) }}
+
 #${prefix} tooltip(Object)
 
 tooltip 相关配置。具体配置如下：
@@ -256,7 +284,11 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 
 ##${prefix} isShowOverflowTextTooltip (boolean)
 
-代替原来 hover:isShowTooltip 配置。暂时需要将 renderMode 配置为 html 才能显示，canvas 的还未开发。
+是否需要在 hover 到单元格时显示溢出文本内容 tooltip。暂时需要将 renderMode 配置为 html 才能显示，canvas 的还未开发。
+
+##${prefix} overflowTextTooltipDisappearDelay (number)
+
+溢出文本 tooltip 延时消失时间，如果需要延迟消失以使得鼠标可以移动到 tooltip 内容上，可以配置该配置项。
 
 ##${prefix} confine (boolean) = true
 
@@ -445,3 +477,27 @@ editCellTrigger?: 'doubleclick' | 'click' | 'api';
 #${prefix} enableLineBreak(boolean) = false
 
 是否开启换行符解析，开启后，单元格内容中包含换行符时，会自动解析换行。
+
+#${prefix} clearDOM(boolean) = true
+
+是否清空容器 DOM。
+
+#${prefix} animationAppear(boolean|Object|)
+
+表格的入场动画配置。
+
+```
+animationAppear?: boolean | {
+  type?: 'all' | 'one-by-one';
+  direction?: 'row' | 'column';
+  duration?: number;
+  delay?: number;
+};
+```
+
+可以配置 true 开启默认动画，也可以配置动画的参数：
+
+- `type` 入场动画的类型，目前支持 `all` 和 `one-by-one`两种，默认为 `one-by-one`
+- `direction` 入场动画的方向，目前支持 `row` 和 `column`两种，默认为 `row`
+- `duration` 单个动画的时长，单位为毫秒，`one-by-one` 时，为一次动画的时长，默认为 500
+- `delay` 动画的延迟，单位为毫秒；`one-by-one` 时为两次动画直接的时间差，`all` 时为所有动画的延迟，默认为 0

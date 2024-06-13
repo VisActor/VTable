@@ -867,7 +867,8 @@ export class Dataset {
     rowKey: string[] | string = [],
     colKey: string[] | string = [],
     indicator: string,
-    considerChangedValue: boolean = true
+    considerChangedValue: boolean = true,
+    indicatorPosition?: { position: 'col' | 'row'; index?: number }
   ): IAggregator {
     const indicatorIndex = this.indicatorKeys.indexOf(indicator);
     // let agg;
@@ -876,34 +877,28 @@ export class Dataset {
     if (typeof rowKey === 'string') {
       flatRowKey = rowKey;
     } else {
-      // flatRowKey = rowKey.join(this.stringJoinChar);
-
       //考虑 指标key有可能在数组中间位置或者前面的可能 将其删除再添加到尾部
-      // let isHasIndicator = false;
-      rowKey.map((key, i) => {
-        if (key === indicator) {
-          rowKey.splice(i, 1);
-          // isHasIndicator = true;
-        }
-      });
-      // isHasIndicator && rowKey.push(indicator);
+      if (!indicatorPosition || indicatorPosition.position === 'row') {
+        rowKey.map((key, i) => {
+          if (key === indicator && (!isValid(indicatorPosition?.index) || i === indicatorPosition.index)) {
+            rowKey.splice(i, 1);
+          }
+        });
+      }
       flatRowKey = rowKey.join(this.stringJoinChar);
     }
 
     if (typeof colKey === 'string') {
       flatColKey = colKey;
     } else {
-      // flatColKey = colKey.join(this.stringJoinChar);
-
       //考虑 指标key有可能在数组中间位置或者前面的可能 将其删除再添加到尾部
-      // let isHasIndicator = false;
-      colKey.map((key, i) => {
-        if (key === indicator) {
-          colKey.splice(i, 1);
-          // isHasIndicator = true;
-        }
-      });
-      // isHasIndicator && colKey.push(indicator);
+      if (!indicatorPosition || indicatorPosition.position === 'col') {
+        colKey.map((key, i) => {
+          if (key === indicator && (!isValid(indicatorPosition?.index) || i === indicatorPosition.index)) {
+            colKey.splice(i, 1);
+          }
+        });
+      }
       flatColKey = colKey.join(this.stringJoinChar);
     }
     //TODO 原有逻辑 但这里先强制跳过

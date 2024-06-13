@@ -37,6 +37,7 @@ import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@vutils-extension';
 import { setCellCheckboxState } from './state/checkbox/checkbox';
+import { EmptyTip } from './components/empty-tip/empty-tip';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -99,6 +100,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        this.internalProps.emptyTip.resetVisible();
+      }
+    }
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
     setTimeout(() => {
       this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
@@ -151,8 +160,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //     this.internalProps.columns[index].editor = colDefine.editor;
     //   }
     // });
-    this.internalProps.headerHelper.setTableColumnsEditor();
     this.options.columns = columns;
+    this.internalProps.headerHelper.setTableColumnsEditor();
+    this._hasAutoImageColumn = undefined;
     this.refreshHeader();
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
@@ -425,6 +435,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        this.internalProps.emptyTip.resetVisible();
+      }
+    }
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });
@@ -480,10 +498,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!layoutMap) {
       return;
     }
+
+    const dataCount = table.internalProps.dataSource?.length ?? 0;
     layoutMap.recordsCount =
-      (table.internalProps.dataSource?.length ?? 0) +
-      layoutMap.hasAggregationOnTopCount +
-      layoutMap.hasAggregationOnBottomCount;
+      dataCount + (dataCount > 0 ? layoutMap.hasAggregationOnTopCount + layoutMap.hasAggregationOnBottomCount : 0);
 
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;
@@ -908,7 +926,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const cellType = this.getCellType(col, row);
     if (isValid(field) && cellType === 'checkbox') {
       const dataIndex = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row));
-      return this.stateManager.checkedState[dataIndex as number][field as string | number];
+      return this.stateManager.checkedState[dataIndex as number]?.[field as string | number];
     }
     return undefined;
   }
@@ -1000,6 +1018,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this._updateSize();
       this.internalProps.title.resize();
       this.scenegraph.resize();
+    }
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        this.internalProps.emptyTip.resetVisible();
+      }
     }
 
     this.render();
@@ -1684,5 +1710,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     return results;
+  }
+  /** 是否为聚合值单元格 */
+  isAggregation(col: number, row: number): boolean {
+    return this.internalProps.layoutMap.isAggregation(col, row);
   }
 }

@@ -150,6 +150,9 @@ export type ITitle = {
     character?: IRichTextCharacter[];
   } & Partial<ITextGraphicAttribute> &
     Partial<IRichTextGraphicAttribute>;
+
+  dx?: number;
+  dy?: number;
 };
 export interface IPadding {
   top?: number;

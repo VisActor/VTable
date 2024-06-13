@@ -394,15 +394,6 @@
           "title": {
             "zh": "排序",
             "en": "Sort"
-          },
-          "meta": {
-            "title": "Sort",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sort.gif",
-            "link": "'../../guide/basic_function/sort'",
-            "option": ""
           }
         },
         {
@@ -410,15 +401,6 @@
           "title": {
             "zh": "预排序",
             "en": "Pre Sort"
-          },
-          "meta": {
-            "title": "Pre Sort",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pre-sort.png",
-            "link": "'../../guide/basic_function/sort'",
-            "option": ""
           }
         },
         {
@@ -426,15 +408,6 @@
           "title": {
             "zh": "合并单元格",
             "en": "Merge Cells"
-          },
-          "meta": {
-            "title": "Merge Cells",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/merge.png",
-            "link": "",
-            "option": ""
           }
         },
         {
@@ -442,15 +415,6 @@
           "title": {
             "zh": "自定义合并单元格",
             "en": "Custom Merge Cells"
-          },
-          "meta": {
-            "title": "Custom Merge Cells",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-merge-custom.png",
-            "link": "",
-            "option": ""
           }
         },
         {
@@ -458,15 +422,6 @@
           "title": {
             "zh": "适应容器高度",
             "en": "Row Height Mode - Adapt to Content"
-          },
-          "meta": {
-            "title": "Row Height Mode - Adapt to Content",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png",
-            "link": "'../../guide/basic_function/row_height_column_width'",
-            "option": ""
           }
         },
         {
@@ -554,6 +509,13 @@
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png",
             "link": "'../../guide/interaction_and_event/select'",
             "option": ""
+          }
+        },
+        {
+          "path": "select-highlight",
+          "title": {
+            "zh": "选中整行高亮",
+            "en": "Select Highlight"
           }
         },
         {
@@ -819,6 +781,31 @@
             "group": "Theme",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/simplify.png",
             "link": "'../../guide/theme_and_style/theme'",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
+      "path": "animation",
+      "title": {
+        "zh": "动画",
+        "en": "animation"
+      },
+      "children": [
+        {
+          "path": "appear-animation",
+          "title": {
+            "zh": "入场动画",
+            "en": "Appear Animation"
+          },
+          "meta": {
+            "title": "Appear Animation",
+            "keywords": "",
+            "category": "demo",
+            "group": "Animation",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/appear-animation.gif",
+            "link": "'../../guide/custom_define/custom_icon'",
             "option": ""
           }
         }
@@ -1225,6 +1212,13 @@
             "link": "",
             "option": ""
           }
+        },
+        {
+          "path": "empty-tip",
+          "title": {
+            "zh": "空数据提示",
+            "en": "empty tip"
+          }
         }
       ]
     },
@@ -1249,6 +1243,20 @@
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png",
             "link": "'../../guide/export/excel'",
             "option": ""
+          }
+        },
+        {
+          "path": "table-export-ignore-icon",
+          "title": {
+            "zh": "表格导出",
+            "en": "table export"
+          }
+        },
+        {
+          "path": "table-export-format",
+          "title": {
+            "zh": "表格导出",
+            "en": "table export"
           }
         }
       ]

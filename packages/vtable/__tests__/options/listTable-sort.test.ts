@@ -88,9 +88,6 @@ describe('listTable init test', () => {
   const listTable = new ListTable(option);
   test('listTable getCellValue', () => {
     expect(listTable.getCellValue(6, 3)).toBe('Sauder 书架, 金属');
+    listTable.release();
   });
-
-  // setTimeout(() => {
-  //   listTable.release();
-  // }, 1000);
 });

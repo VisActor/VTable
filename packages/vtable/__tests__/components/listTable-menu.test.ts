@@ -146,6 +146,6 @@ describe('listTable-menu init test', () => {
     });
 
     expect(listTable.stateManager.menu.isShow).toBe(true);
+    listTable.release();
   });
-  listTable.release();
 });

@@ -18,15 +18,17 @@ export function createDataset(options: PivotChartConstructorOptions) {
   const dataConfig: IPivotChartDataConfig = { isPivotChart: true };
   let columnDimensionTree;
   let rowDimensionTree;
+  let columnTree;
+  let rowTree;
   if (options.columnTree) {
     if (options.indicatorsAsCol !== false) {
-      supplementIndicatorNodesForCustomTree(options.columnTree, options.indicators);
+      columnTree = supplementIndicatorNodesForCustomTree(options.columnTree, options.indicators);
     }
     columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], layoutNodeId);
   }
   if (options.rowTree) {
     if (options.indicatorsAsCol === false) {
-      supplementIndicatorNodesForCustomTree(options.rowTree, options.indicators);
+      rowTree = supplementIndicatorNodesForCustomTree(options.rowTree, options.indicators);
     }
     rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], layoutNodeId);
   }
@@ -73,8 +75,8 @@ export function createDataset(options: PivotChartConstructorOptions) {
     options.indicatorsAsCol ?? true,
     options.records,
     undefined,
-    options.columnTree,
-    options.rowTree,
+    columnTree || options.columnTree,
+    rowTree || options.rowTree,
     true
   );
 

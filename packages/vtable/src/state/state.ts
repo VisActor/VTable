@@ -6,7 +6,6 @@ import type {
   CellAddress,
   CellPosition,
   CellRange,
-  CheckboxColumnDefine,
   DropDownMenuHighlightInfo,
   IDimensionInfo,
   ListTableAPI,
@@ -15,7 +14,7 @@ import type {
   SortOrder,
   SortState
 } from '../ts-types';
-import { HighlightScope, InteractionState } from '../ts-types';
+import { HighlightScope, InteractionState, SortType } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import { checkMultiCellInSelect } from './common/check-in-select';
 import { updateHoverPosition } from './hover/update-position';
@@ -49,6 +48,7 @@ import {
 } from './checkbox/checkbox';
 import { updateResizeRow } from './resize/update-resize-row';
 import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
+import type { PivotTable } from '../PivotTable';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -408,14 +408,16 @@ export class StateManager {
       /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
       headerSelectMode,
       disableSelect,
-      disableHeaderSelect
+      disableHeaderSelect,
+      highlightMode
     } = Object.assign(
       {},
       {
         /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
         headerSelectMode: 'inline',
         disableSelect: false,
-        disableHeaderSelect: false
+        disableHeaderSelect: false,
+        highlightMode: 'cell'
       },
       this.table.options.select
     );
@@ -428,7 +430,15 @@ export class StateManager {
     //   this.select.highlightScope = HighlightScope.column;
     // } else
     if (!disableSelect) {
-      this.select.highlightScope = HighlightScope.single;
+      if (highlightMode === 'cross') {
+        this.select.highlightScope = HighlightScope.cross;
+      } else if (highlightMode === 'row') {
+        this.select.highlightScope = HighlightScope.row;
+      } else if (highlightMode === 'column') {
+        this.select.highlightScope = HighlightScope.column;
+      } else {
+        this.select.highlightScope = HighlightScope.single;
+      }
     } else {
       this.select.highlightScope = HighlightScope.none;
     }
@@ -501,12 +511,13 @@ export class StateManager {
     isShift: boolean = false,
     isCtrl: boolean = false,
     isSelectAll: boolean = false,
-    isSelectMoving: boolean = false
+    isSelectMoving: boolean = false,
+    skipBodyMerge: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving);
+    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving, skipBodyMerge);
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -561,7 +572,8 @@ export class StateManager {
             this.table.internalProps.theme?.tooltipStyle,
             inlineIcon.tooltip?.style,
             inlineIcon.attribute?.tooltip?.style
-          )
+          ),
+          disappearDelay: inlineIcon.attribute.tooltip.disappearDelay
         };
         if (!this.table.internalProps.tooltipHandler.isBinded(tooltipOptions)) {
           this.table.showTooltip(col, row, tooltipOptions);
@@ -750,7 +762,7 @@ export class StateManager {
 
   checkFrozen(): boolean {
     // 判断固定列的总宽度 是否过大
-    const originalFrozenColCount =
+    let originalFrozenColCount =
       this.table.isListTable() && !this.table.internalProps.transpose
         ? this.table.options.frozenColCount
         : this.table.isPivotChart()
@@ -760,6 +772,9 @@ export class StateManager {
             this.table.options.frozenColCount ?? 0
           );
     if (originalFrozenColCount) {
+      if (originalFrozenColCount > this.table.colCount) {
+        originalFrozenColCount = this.table.colCount;
+      }
       if (this.table.tableNoFrameWidth - this.table.getColsWidth(0, originalFrozenColCount - 1) <= 120) {
         this.table._setFrozenColCount(0);
         this.setFrozenCol(-1);
@@ -1162,7 +1177,13 @@ export class StateManager {
   triggerSort(col: number, row: number, iconMark: Icon, event: Event) {
     if (this.table.isPivotTable()) {
       // 透视表不执行sort操作
-      const order = (this.table as PivotTableAPI).getPivotSortState(col, row);
+      const sortState = (this.table as PivotTableAPI).getPivotSortState(col, row);
+
+      const order = sortState ? (sortState.toUpperCase() as SortOrder) : 'DESC';
+      // const new_order = order === 'ASC' ? 'DESC' : order === 'DESC' ? 'NORMAL' : 'ASC';
+      const new_order = order === 'ASC' ? 'DESC' : 'ASC';
+      (this.table as PivotTable).sort(col, row, new_order);
+
       // // 触发透视表排序按钮点击
       this.table.fireListeners(PIVOT_TABLE_EVENT_TYPE.PIVOT_SORT_CLICK, {
         col: col,

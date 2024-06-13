@@ -156,6 +156,7 @@ export function createCell(
           // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           padding,
+          range,
           table
         );
         customElementsGroup = customResult.elementsGroup;
@@ -405,6 +406,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
           // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           [0, 0, 0, 0],
+          range,
           table
         );
       }
@@ -471,7 +473,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     const textMark = oldCellGroup.getChildByName('text');
     if (textMark) {
       const text = table.getCellValue(col, row);
-      const textArr = breakString(text, table);
+      const { text: textArr, moreThanMaxCharacters } = breakString(text, table);
 
       const hierarchyOffset = getHierarchyOffset(col, row, table);
       const lineClamp = cellStyle.lineClamp;
@@ -489,6 +491,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
       const attribute = {
         text: textArr.length === 1 && !autoWrapText ? textArr[0] : textArr, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+        moreThanMaxCharacters,
         maxLineWidth: cellWidth - (padding[1] + padding[3] + hierarchyOffset),
         // fill: true,
         // textAlign: 'left',
@@ -497,7 +500,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         lineClamp,
         wordBreak: 'break-word',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-        heightLimit: cellHeight - (padding[0] + padding[2]),
+        heightLimit: cellHeight - Math.floor(padding[0] + padding[2]),
         pickable: false,
         dx: textAlign === 'left' ? hierarchyOffset : 0,
         x
@@ -872,6 +875,7 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
           // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           [0, 0, 0, 0],
+          customMergeRange,
           table
         );
 

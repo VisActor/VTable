@@ -30,6 +30,14 @@ The height adaptable strategy in adaptive mode, default is 'only-body'.
 - 'only-body': Only the rows in the body part participate in the height adaptation calculation, and the height of the header part remains unchanged.
 - 'all': All columns participate in the height adaptation calculation.
 
+#${prefix} columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
+
+When calculating the content width, the limited area participates in the calculation:
+
+- 'only-header': Only the header content is calculated.
+- 'only-body': Only the body cell content is calculated.
+- 'normal': Normal calculation, that is, calculating the header and body cell contents.
+
 #${prefix} autoWrapText(boolean) = false
 
 Whether to automatically wrap text
@@ -97,8 +105,15 @@ Default column width for row headers, can be set column by column. If not set, d
 Shortcut key function settings, specific configuration items:
 
 ##${prefix} selectAllOnCtrlA(boolean) = false
+Enable the shortcut key Select All.
+Supports `boolean` or specific configuration type `SelectAllOnCtrlAOption`.
 
-Enable shortcut key to select all.
+```
+export interface SelectAllOnCtrlAOption {
+disableHeaderSelect?: boolean; //Whether to disable header selection when the shortcut key is used to select all.
+disableRowSeriesNumberSelect?: boolean; //Whether to disable the selection of row sequence numbers when the shortcut key is used to select all.
+}
+```
 
 ##${prefix} copySelected(boolean) = false
 
@@ -155,7 +170,7 @@ Mouse hover over the cell bottom border can drag and adjust row height. This ope
 - 'header' Only adjustable in header cells
 - 'body' Only adjustable in body cells
 
-#${prefix} dragHeaderMode(string) = 'all'
+#${prefix} dragHeaderMode(string) = 'none'
 
 The switch of dragging the header to move the position. After selecting a cell, drag the cell to trigger the move. The range of replaceable cells is limited:
 
@@ -254,6 +269,18 @@ Set the selected state of the menu. Declaration type is `DropDownMenuHighlightIn
   prefix = '#' + ${prefix},
 ) }}
 
+#${prefix} emptyTip(Object)
+
+Table empty data prompt.
+
+You can directly configure `boolean` or `IEmptyTip` type objects. The default value is false, which means no prompt information is displayed.
+
+The IEmptyTip type is defined as follows:
+
+{{ use: common-emptyTip(
+prefix = '#' + ${prefix},
+) }}
+
 #${prefix} tooltip(Object)
 
 Tooltip related configuration. Specific configuration items are as follows:
@@ -264,7 +291,11 @@ Html is currently more complete, default using html rendering method. Currently 
 
 ##${prefix} isShowOverflowTextTooltip (boolean)
 
-Replace the original hover:isShowTooltip configuration. Temporarily need to set renderMode to html to display, canvas has not been developed yet.
+Whether to display overflow text content tooltip when hovering over the cell. Temporarily, renderMode needs to be configured as html to display, and canvas has not been developed yet.
+
+##${prefix} overflowTextTooltipDisappearDelay (number)
+
+The overflow text tooltip delays disappearance time. If you need to delay disappearance so that the mouse can move to the tooltip content, you can configure this configuration item.
 
 ##${prefix} confine (boolean) = true
 
@@ -449,3 +480,27 @@ set row serial number.
 #${prefix} enableLineBreak(boolean) = false
 
 Whether to enable line break, the default is false.
+
+#${prefix} clearDOM(boolean) = true
+
+Whether to clear the container DOM.
+
+#${prefix} animationAppear(boolean|Object|)
+
+Table entry animation configuration.
+
+```
+animationAppear?: boolean | {
+  type?: 'all' | 'one-by-one';
+  direction?: 'row' | 'column';
+  duration?: number;
+  delay?: number;
+};
+```
+
+You can configure true to enable the default animation, or you can configure the animation parameters:
+
+- `type` The type of the entry animation, currently supports `all` and `one-by-one`, and the default is `one-by-one`
+- `direction` The direction of the entry animation, currently supports `row` and `column`, and the default is `row`
+- `duration` The duration of a single animation, in milliseconds, for `one-by-one`, it is the duration of one animation, and the default is 500
+- `delay` The delay of the animation, in milliseconds; for `one-by-one`, it is the time difference between the two animations, for `all`, it is the delay of all animations, and the default is 0

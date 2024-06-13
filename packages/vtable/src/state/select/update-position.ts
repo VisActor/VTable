@@ -1,5 +1,6 @@
 import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { Scenegraph } from '../../scenegraph/scenegraph';
+import type { SelectAllOnCtrlAOption } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
 import type { StateManager } from '../state';
 /**
@@ -16,7 +17,8 @@ export function updateSelectPosition(
   isShift: boolean,
   isCtrl: boolean,
   isSelectAll: boolean,
-  isSelectMoving: boolean = false
+  isSelectMoving: boolean = false,
+  skipBodyMerge: boolean = false
 ) {
   const { table, interactionState } = state;
   const { scenegraph } = table;
@@ -57,8 +59,23 @@ export function updateSelectPosition(
   if (isSelectAll) {
     state.select.ranges = [];
     scenegraph.deleteAllSelectBorder();
+    let _startCol = 0;
+    let _startRow = 0;
+    const { disableHeaderSelect, disableRowSeriesNumberSelect } =
+      (table.options.keyboardOptions?.selectAllOnCtrlA as SelectAllOnCtrlAOption) || {};
+
+    // 表头选中
+    if (disableHeaderSelect) {
+      _startCol = table.rowHeaderLevelCount;
+      _startRow = table.columnHeaderLevelCount;
+    }
+    // 行号列选中
+    if ((disableRowSeriesNumberSelect || disableHeaderSelect) && table.options.rowSeriesNumber) {
+      _startCol += 1;
+    }
+
     state.select.ranges.push({
-      start: { col: 0, row: 0 },
+      start: { col: _startCol, row: _startRow },
       end: { col: table.colCount - 1, row: table.rowCount - 1 }
     });
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
@@ -78,6 +95,10 @@ export function updateSelectPosition(
   ) {
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
     if (isShift && currentRange) {
+      if (!isCtrl) {
+        cellPos.col = col;
+        cellPos.row = row;
+      }
       if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
         const startCol = Math.min(currentRange.start.col, currentRange.end.col, col);
         const endCol = Math.max(currentRange.start.col, currentRange.end.col, col);
@@ -153,10 +174,11 @@ export function updateSelectPosition(
         });
       } else if (col >= 0 && row >= 0) {
         // 选中普通单元格
-        const cellRange = table.getCellRange(col, row);
+        const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
         state.select.ranges.push({
           start: { col: cellRange.start.col, row: cellRange.start.row },
-          end: { col: cellRange.end.col, row: cellRange.end.row }
+          end: { col: cellRange.end.col, row: cellRange.end.row },
+          skipBodyMerge: skipBodyMerge || undefined
         });
       }
       cellPos.col = col;
@@ -254,6 +276,9 @@ export function updateSelectPosition(
             col,
             row
           };
+          if (skipBodyMerge) {
+            currentRange.skipBodyMerge = true;
+          }
         }
       }
       scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);

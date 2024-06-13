@@ -6,7 +6,20 @@ import { updateCell, renderChart, graphicUtil } from '@visactor/vtable';
 import { isArray } from '@visactor/vutils';
 import type { ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/src/ts-types';
 
-export async function exportVTableToExcel(tableInstance: IVTable) {
+export type CellInfo = {
+  cellType: string;
+  cellValue: string;
+  table: IVTable;
+  col: number;
+  row: number;
+};
+
+export type ExportVTableToExcelOptions = {
+  ignoreIcon?: boolean;
+  formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
+};
+
+export async function exportVTableToExcel(tableInstance: IVTable, options?: ExportVTableToExcelOptions) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
   worksheet.properties.defaultRowHeight = 40;
@@ -30,7 +43,7 @@ export async function exportVTableToExcel(tableInstance: IVTable) {
         worksheetRow.height = rowHeight;
       }
 
-      addCell(col, row, tableInstance, worksheet, workbook);
+      addCell(col, row, tableInstance, worksheet, workbook, options);
 
       const cellRange = tableInstance.getCellRange(col, row);
       if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
@@ -85,7 +98,8 @@ function addCell(
   row: number,
   tableInstance: IVTable,
   worksheet: ExcelJS.Worksheet,
-  workbook: ExcelJS.Workbook
+  workbook: ExcelJS.Workbook,
+  options?: ExportVTableToExcelOptions
 ) {
   const { layoutMap } = tableInstance.internalProps;
   const cellType = tableInstance.getCellType(col, row);
@@ -113,13 +127,27 @@ function addCell(
     customLayout = (define as ColumnDefine)?.customLayout;
   }
 
+  if (options?.formatExportOutput) {
+    const cellInfo = { cellType, cellValue, table: tableInstance, col, row };
+    const formattedValue = options.formatExportOutput(cellInfo);
+    if (formattedValue !== undefined) {
+      const cell = worksheet.getCell(encodeCellAddress(col, row));
+      cell.value = formattedValue;
+      cell.font = getCellFont(cellStyle, cellType);
+      cell.fill = getCellFill(cellStyle);
+      cell.border = getCellBorder(cellStyle);
+      cell.alignment = getCellAlignment(cellStyle);
+      return;
+    }
+  }
+
   if (
     cellType === 'image' ||
     cellType === 'video' ||
     cellType === 'progressbar' ||
     cellType === 'sparkline' ||
     layoutMap.isAxisCell(col, row) ||
-    (isArray(icons) && icons.length) ||
+    (!options?.ignoreIcon && isArray(icons) && icons.length) ||
     customRender ||
     customLayout
   ) {
@@ -175,6 +203,7 @@ function exportCellImg(col: number, row: number, tableInstance: IVTable) {
   let needRemove = false;
   if (cellGroup.role === 'empty') {
     cellGroup = updateCell(col, row, tableInstance as any, true);
+    cellGroup.setStage(tableInstance.scenegraph.stage);
     needRemove = true;
   }
   const oldStroke = cellGroup.attribute.stroke;
@@ -182,7 +211,7 @@ function exportCellImg(col: number, row: number, tableInstance: IVTable) {
   const canvas = graphicUtil.drawGraphicToCanvas(cellGroup as any, tableInstance.scenegraph.stage) as HTMLCanvasElement;
   cellGroup.attribute.stroke = oldStroke;
   if (needRemove) {
-    cellGroup.parent.removeChild(cellGroup);
+    cellGroup.parent?.removeChild(cellGroup);
   }
   return canvas.toDataURL();
 }

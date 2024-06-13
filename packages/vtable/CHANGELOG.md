@@ -1,6 +1,152 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 21 May 2024 12:41:50 GMT and should not be manually modified.
+This log was last generated on Wed, 12 Jun 2024 12:30:16 GMT and should not be manually modified.
+
+## 1.3.0
+Wed, 12 Jun 2024 12:30:16 GMT
+
+### Minor changes
+
+- feat: tooltip disappear delay time #1848
+
+
+- feat: add sort config for pivotTable #1865
+
+
+
+### Updates
+
+- refactor: memory release logic optimization #1856
+
+
+- refactor: arrow key with shift ctrl key to select cells #1873
+
+
+- fix: icon inlineEnd inlineFront x position compute error #1882
+
+
+- fix: drill down icon can not be click #1899
+
+
+- feat: add ignoreIcon&formatExportOutput config in vtable-export #1813
+- feat: add textArea editor
+
+
+- feat: add strokeColor style #1847
+- feat: add dx&dy in title component #1874
+- fix: fix frozenColCount large than colCount error #1872
+- feat: add shrinkSparklineFirst config #1862
+- fix: fix ellipsis error in _disableColumnAndRowSizeRound mode #1884
+
+## 1.2.0
+Thu, 06 Jun 2024 02:34:10 GMT
+
+### Minor changes
+
+- feat: add merge cell custom graphic attribute sync #1718
+
+### Updates
+
+- feat: support select highlightMode effect #1167
+
+
+- feat: add isAggregation api #1803
+
+
+- fix: when has no records should not has aggregation row #1804
+
+
+- refactor: update pixelRatio when resize #1823
+
+
+- fix: updateColumns set editor error #1828
+
+
+- chore: update vrender version
+
+
+- refactor: selectAllOnCtrlA option
+
+
+- feat: optimize large column performance #1840 #1824
+- fix: fix maxCharactersNumber effect #1830
+
+## 1.1.2
+Fri, 31 May 2024 08:56:27 GMT
+
+### Updates
+
+- chore: update vrender version
+
+
+
+## 1.1.1
+Thu, 30 May 2024 08:07:33 GMT
+
+### Updates
+
+- refactor: dimension value same with indicator key cell value error #1817
+
+
+- fix: when set emptyTip interaction not work well with has records #1818
+
+
+- fix: fix table frame corner radius display problem #1783
+
+## 1.1.0
+Tue, 28 May 2024 12:24:56 GMT
+
+### Minor changes
+
+- feat: add empty tip #1782
+
+
+
+### Updates
+
+- fix: add update delete record api should maintain beforeChangedRecordsMap #1780
+
+
+- fix: when set disableSelect table should support drag header #1800
+
+
+- fix: fix tree create problem in getDataCellPath()
+- fix: fix left axis index in horizontal pivot chart
+
+## 1.0.3
+Fri, 24 May 2024 10:31:16 GMT
+
+### Updates
+
+- refactor: legends support ser array form #1740
+
+
+- fix: first col tree mode compute col width error #1778
+
+
+
+## 1.0.2
+Fri, 24 May 2024 10:08:07 GMT
+
+### Updates
+
+- fix: use table option in hasAutoImageColumn()
+- fix: axis size align with vrender-component #1784
+- fix: fix lineClamp config in computeRowsHeight() #1772
+- fix: fix progress cell create problem in vtable-export #1787
+- fix: ignore cell merge in selectCells()
+- feat: add setRowHeight&setColWidth api
+
+## 1.0.1
+Wed, 22 May 2024 12:21:05 GMT
+
+### Updates
+
+- feat: tree mode  can set icon #1697
+
+
+- fix: ignore cell merge in selectCells()
+- feat: add setRowHeight&setColWidth api
 
 ## 1.0.0
 Tue, 21 May 2024 12:41:50 GMT

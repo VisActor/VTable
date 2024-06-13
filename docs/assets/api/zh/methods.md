@@ -311,7 +311,7 @@ setRecords(records: Array<any>)
    * 根据行列号获取整条数据记录
    * @param  {number} col col index.
    * @param  {number} row row index.
-   * @return {object} record.
+   * @return {object} record in ListTable. return Array<any> in PivotTable.
    */
   getRecordByCell(col: number, row: number)
 ```
@@ -995,6 +995,27 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 获取聚合汇总的值
 
+```
+  /**
+   * 根据字段获取聚合值
+   * @param field 字段名
+   * 返回数组，包括列号和每一列的聚合值数组
+   */
+  getAggregateValuesByField(field: string | number)
+```
+
+**ListTable 专有**
+
+## isAggregation(Function)
+
+判断是否是聚合指单元格
+
+```
+  isAggregation(col: number, row: number): boolean
+```
+
+**ListTable 专有**
+
 ## registerCustomCellStyle(Function)
 
 注册自定义样式
@@ -1008,12 +1029,12 @@ registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption 
 - customStyleId: 自定义样式的唯一 id
 - customStyle: 自定义单元格样式，与`column`中的`style`配置相同，最终呈现效果是单元格原有样式与自定义样式融合
 
-## registerCustomCellStyleArrangement(Function)
+## arrangeCustomCellStyle(Function)
 
 分配自定义样式
 
 ```
-registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
 ```
 
 - cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
@@ -1115,4 +1136,22 @@ interface ISortedMapItem {
 ```
   /**获取对应header的field  */
   getHeaderField: (col: number, row: number)
+```
+
+## setColWidth(Function)
+
+设置列宽
+
+```
+  /**设置列宽 */
+  setColWidth: (col: number, width: number)
+```
+
+## setRowHeight(Function)
+
+设置行高
+
+```
+  /**设置行高 */
+  setRowHeight: (row: number, height: number)
 ```

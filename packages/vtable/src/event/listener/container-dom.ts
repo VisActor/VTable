@@ -5,7 +5,7 @@ import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
 import { browser } from '../../tools/helper';
 import type { EventManager } from '../event';
-import { BaseTableAPI } from '../../ts-types/base-table';
+import { getPixelRatio } from '../../tools/pixel-ratio';
 
 export function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager.table;
@@ -56,22 +56,54 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
       // 处理向上箭头键
       if (e.key === 'ArrowUp') {
-        targetCol = stateManager.select.cellPos.col;
-        targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row - 1));
+        if (e.ctrlKey || e.metaKey) {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = 0;
+        } else if (e.shiftKey) {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row - 1));
+        } else {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row - 1));
+        }
       } else if (e.key === 'ArrowDown') {
         // 处理向下箭头键
-        targetCol = stateManager.select.cellPos.col;
-        targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
+        if (e.ctrlKey || e.metaKey) {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = table.rowCount - 1;
+        } else if (e.shiftKey) {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
+        } else {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
+        }
       } else if (e.key === 'ArrowLeft') {
         // 处理向左箭头键
-        targetRow = stateManager.select.cellPos.row;
-        targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col - 1));
+        if (e.ctrlKey || e.metaKey) {
+          targetCol = 0;
+          targetRow = stateManager.select.cellPos.row;
+        } else if (e.shiftKey) {
+          targetRow = stateManager.select.cellPos.row;
+          targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col - 1));
+        } else {
+          targetRow = stateManager.select.cellPos.row;
+          targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col - 1));
+        }
       } else if (e.key === 'ArrowRight') {
         // 处理向右箭头键
-        targetRow = stateManager.select.cellPos.row;
-        targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col + 1));
+        if (e.ctrlKey || e.metaKey) {
+          targetCol = table.colCount - 1;
+          targetRow = stateManager.select.cellPos.row;
+        } else if (e.shiftKey) {
+          targetRow = stateManager.select.cellPos.row;
+          targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col + 1));
+        } else {
+          targetRow = stateManager.select.cellPos.row;
+          targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col + 1));
+        }
       }
-      table.selectCell(targetCol, targetRow);
+      table.selectCell(targetCol, targetRow, e.shiftKey);
       if (
         (table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
         (table as ListTableAPI).editorManager.editingEditor
@@ -277,7 +309,12 @@ export function bindContainerDomListener(eventManager: EventManager) {
         // 临时绕行解决因为display设置为none产生的问题
         return;
       }
-      table.resize();
+      if (!isValid(table.options.pixelRatio)) {
+        table.setPixelRatio(getPixelRatio());
+      }
+      if (!e.windowSizeNotChange) {
+        table.resize();
+      }
     });
   }
 

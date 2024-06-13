@@ -112,7 +112,7 @@ git rebase develop
 - 把更新代码提交到自己的分支中:
 
 ```
-git push upstream docs/add-funnel-demo
+git push origin docs/add-funnel-demo
 ```
 
 ### Step6：提交 Pull Request

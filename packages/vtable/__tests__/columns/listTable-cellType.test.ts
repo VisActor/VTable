@@ -273,6 +273,6 @@ fruit and seeds. They are also highly intelligent and social, and are considered
       col: -1,
       row: -1
     });
+    listTable.release();
   });
-  listTable.release();
 });
