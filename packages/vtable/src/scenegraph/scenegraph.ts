@@ -1802,6 +1802,7 @@ export class Scenegraph {
 
   updateRow(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
     this.table.internalProps.layoutMap.clearCellRangeMap();
+    this.table.internalProps.useOneRowHeightFillAll = false;
     const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
     const updateRows = deduplication(updateCells.map(cell => cell.row)).sort((a, b) => a - b);
     //这个值是后续为了autoFillHeight判断逻辑中用到的 判断是否更新前是未填满的情况

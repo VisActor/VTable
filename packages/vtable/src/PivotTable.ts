@@ -198,6 +198,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
 
       this.refreshHeader();
+      this.internalProps.useOneRowHeightFillAll = false;
       this.stateManager.initCheckedState(records);
       // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
 
@@ -392,6 +393,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     // 更新表头
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
 
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
@@ -983,6 +985,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // 清空单元格内容
     this.scenegraph.clearCells();
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
     this.render();
@@ -1479,6 +1482,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     // 更新表头
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
 
     // 清空单元格内容
     this.scenegraph.clearCells();
