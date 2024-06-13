@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: optimize row height update when useOneRowHeightFillAll",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

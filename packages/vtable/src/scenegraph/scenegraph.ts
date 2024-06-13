@@ -809,6 +809,7 @@ export class Scenegraph {
   }
 
   recalculateRowHeights() {
+    this.table.internalProps.useOneRowHeightFillAll = false;
     computeRowsHeight(this.table, 0, this.table.rowCount - 1, true, true);
   }
 
