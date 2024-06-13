@@ -55,6 +55,8 @@ export class EventManager {
   //报错已绑定过的事件 后续清除绑定
   globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
   inertiaScroll: InertiaScroll;
+
+  bindSparklineHoverEvent: boolean;
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.handleTextStickBindId = [];
@@ -102,6 +104,9 @@ export class EventManager {
         });
         this.handleTextStickBindId = [];
       }
+
+      // chart hover
+      bindSparklineHoverEvent(this.table);
     }, 0);
   }
   bindSelfEvent() {

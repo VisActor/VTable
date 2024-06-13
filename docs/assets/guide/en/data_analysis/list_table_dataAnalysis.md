@@ -4,7 +4,7 @@ Currently supported capabilities include sorting, filtering, and data aggregatio
 
 # Data sorting
 
-For details, please refer to the tutorial: https://visactor.io/vtable/guide/basic_function/sort
+For details, please refer to the tutorial: https://visactor.io/vtable/guide/basic_function/sort/list_sort
 
 # Data filtering
 

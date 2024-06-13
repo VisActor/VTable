@@ -20,10 +20,6 @@ IconPosition enumeration type.
 *
 */
 export enum IconPosition {
-  /**The icon in front of the text line content follows the text positioning and wraps with the text */
-  inlineFront = 'inlineFront',
-  /**The icon after the text line content, positioned with the text, and wrapped with the text. For example, the sort chart is placed in the first line of the text content */
-  inlineEnd = 'inlineEnd',
   /**Button on the left side of the cell and affected by padding */
   left = 'left',
   /**The button on the right side of the cell is affected by padding, such as the pin chart */
@@ -35,7 +31,12 @@ export enum IconPosition {
   /**The icon on the right side of the cell content block follows the text positioning and does not wrap with the text */
   contentRight = 'contentRight',
   /**Free positioning in the cell */
-  absolute = 'absolute'
+  absolute = 'absolute',
+
+  /**The icon in front of the text line content follows the text positioning and wraps with the text */
+  inlineFront = 'inlineFront',
+  /**The icon after the text line content, positioned with the text, and wrapped with the text. For example, the sort chart is placed in the first line of the text content */
+  inlineEnd = 'inlineEnd',
 }
 ```
 

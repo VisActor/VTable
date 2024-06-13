@@ -2719,8 +2719,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param col
    * @param row
    */
-  selectCell(col: number, row: number) {
-    this.stateManager.updateSelectPos(col, row);
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean) {
+    this.stateManager.updateSelectPos(col, row, isShift, isCtrl);
     this.stateManager.endSelectCells();
   }
   /**
@@ -3287,8 +3287,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (this.isPivotTable() && !this.isBottomFrozenRow(row) && !this.isRightFrozenColumn(col)) {
         // use dimensionKey&indicatorKey to cache style object in pivot table
         const define = this.getHeaderDefine(col, row) as any;
+        const isCorner = this.isCornerHeader(col, row);
         cacheKey = define?.dimensionKey
-          ? `dim-${define.dimensionKey}`
+          ? isCorner
+            ? `dim-cor-${define.dimensionKey}`
+            : `dim-${define.dimensionKey}`
           : define?.indicatorKey
           ? `ind-${define.indicatorKey}`
           : `${col}-${row}`;
@@ -3711,6 +3714,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         ? getProp('bgColor', actStyle, col, row, this)
         : (theme.group.fill as string),
       color: isBoolean(theme.text.fill) ? getProp('color', actStyle, col, row, this) : (theme.text.fill as string),
+      strokeColor: isBoolean(theme.text.stroke)
+        ? getProp('strokeColor', actStyle, col, row, this)
+        : (theme.text.stroke as string),
       fontFamily: theme.text.fontFamily,
       fontSize: theme.text.fontSize,
       fontWeight: theme.text.fontWeight,

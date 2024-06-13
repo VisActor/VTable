@@ -2,6 +2,56 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.3.0",
+      "tag": "@visactor/vtable_v1.3.0",
+      "date": "Wed, 12 Jun 2024 12:30:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: memory release logic optimization #1856\n\n"
+          },
+          {
+            "comment": "refactor: arrow key with shift ctrl key to select cells #1873\n\n"
+          },
+          {
+            "comment": "fix: icon inlineEnd inlineFront x position compute error #1882\n\n"
+          },
+          {
+            "comment": "fix: drill down icon can not be click #1899\n\n"
+          },
+          {
+            "comment": "feat: add ignoreIcon&formatExportOutput config in vtable-export #1813"
+          },
+          {
+            "comment": "feat: add textArea editor\n\n"
+          },
+          {
+            "comment": "feat: add strokeColor style #1847"
+          },
+          {
+            "comment": "feat: add dx&dy in title component #1874"
+          },
+          {
+            "comment": "fix: fix frozenColCount large than colCount error #1872"
+          },
+          {
+            "comment": "feat: add shrinkSparklineFirst config #1862"
+          },
+          {
+            "comment": "fix: fix ellipsis error in _disableColumnAndRowSizeRound mode #1884"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: tooltip disappear delay time #1848\n\n"
+          },
+          {
+            "comment": "feat: add sort config for pivotTable #1865\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.2.0",
       "tag": "@visactor/vtable_v1.2.0",
       "date": "Thu, 06 Jun 2024 02:34:10 GMT",
