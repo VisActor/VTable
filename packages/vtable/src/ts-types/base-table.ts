@@ -452,6 +452,9 @@ export interface BaseTableConstructorOptions {
   animationAppear?: boolean | IAnimationAppear;
 
   renderOption?: any;
+
+  blankAreaClickDeselect?: boolean; //点击空白区域是否取消选中
+  outsideClickDeselect?: boolean; //点击外部区域是否取消选中
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */
