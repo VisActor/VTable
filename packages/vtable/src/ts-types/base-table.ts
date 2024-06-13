@@ -251,6 +251,9 @@ export interface IBaseTableProtected {
    *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
    * */
   overscrollBehavior?: 'auto' | 'none';
+
+  // 已使用一行的高度填充所有行
+  useOneRowHeightFillAll?: boolean;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
