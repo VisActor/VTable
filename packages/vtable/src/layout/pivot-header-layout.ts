@@ -512,7 +512,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.columnHeaderTitle) {
       this.sharedVar.seqId = Math.max(this.sharedVar.seqId, this._headerObjects.length);
       const id = ++this.sharedVar.seqId;
-      const firstRowIds = Array(this.colCount - this.rowHeaderLevelCount).fill(id);
+      const firstRowIds = Array(this.colCount - this.rowHeaderLevelCount - this.rightFrozenColCount).fill(id);
       this._columnHeaderCellFullPathIds.unshift(firstRowIds);
       const cell: HeaderData = {
         id,
