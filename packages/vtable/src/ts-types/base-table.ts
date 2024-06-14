@@ -253,6 +253,8 @@ export interface IBaseTableProtected {
   overscrollBehavior?: 'auto' | 'none';
 
   modifiedViewBoxTransform?: boolean;
+  // 已使用一行的高度填充所有行
+  useOneRowHeightFillAll?: boolean;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -319,7 +321,7 @@ export interface BaseTableConstructorOptions {
   /** hover交互配置 */
   hover?: {
     /** hover交互响应模式：十字交叉 整列 整行 或者单个单元格 */
-    highlightMode: 'cross' | 'column' | 'row' | 'cell';
+    highlightMode?: 'cross' | 'column' | 'row' | 'cell';
     /** 不响应鼠标hover交互 */
     disableHover?: boolean;
     /** 单独设置表头不响应鼠标hover交互 */
@@ -330,7 +332,7 @@ export interface BaseTableConstructorOptions {
   /** 选择单元格交互配置 */
   select?: {
     /** 高亮范围模式：十字交叉 整列 整行 或者单个单元格。默认`cell` */
-    highlightMode: 'cross' | 'column' | 'row' | 'cell';
+    highlightMode?: 'cross' | 'column' | 'row' | 'cell';
     /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
     headerSelectMode?: 'inline' | 'cell';
     /** 不响应鼠标select交互 */
@@ -572,6 +574,9 @@ export interface BaseTableAPI {
   canvasHeight?: number;
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+
+  _rowRangeHeightsMap: Map<string, number>;
+  _colRangeWidthsMap: Map<string, number>;
 
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;

@@ -227,6 +227,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
@@ -442,6 +443,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     // 更新表头
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
 
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
@@ -764,6 +766,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // 清空单元格内容
     this.scenegraph.clearCells();
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
     this.render();
@@ -1398,6 +1401,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     // 更新表头
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
 
     // 清空单元格内容
     this.scenegraph.clearCells();

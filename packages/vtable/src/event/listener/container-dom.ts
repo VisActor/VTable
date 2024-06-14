@@ -650,14 +650,11 @@ export function bindContainerDomListener(eventManager: EventManager) {
             }
           }
           table.stateManager.updateInteractionState(InteractionState.grabing);
-          table.stateManager.updateSelectPos(
-            table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX).col,
-            table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY).row,
-            false,
-            false,
-            false,
-            true
-          );
+          const targetCol = table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX);
+          const targetRow = table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY);
+          if (isValid(targetCol) && isValid(targetRow)) {
+            table.stateManager.updateSelectPos(targetCol.col, targetRow.row, false, false, false, true);
+          }
         });
       } else if (table.eventManager.inertiaScroll.isInertiaScrolling()) {
         table.eventManager.inertiaScroll.endInertia();

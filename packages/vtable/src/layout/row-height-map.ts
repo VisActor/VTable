@@ -67,6 +67,10 @@ export class NumberRangeMap {
   put(position: number, newValue: number) {
     if (this.data.has(position)) {
       const oldValue = this.data.get(position);
+
+      if (oldValue === newValue) {
+        return;
+      }
       this.data.set(position, newValue);
       const difference = newValue - oldValue;
       this.totalSum += difference;
