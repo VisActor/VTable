@@ -1,6 +1,5 @@
-import { isArray, isString, isValid } from '@visactor/vutils';
+import { isArray, isString } from '@visactor/vutils';
 import type { PivotTable } from '../PivotTable';
-import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { AggregationType } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import type {
