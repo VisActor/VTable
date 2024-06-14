@@ -51,7 +51,7 @@ The currently supported data formats are, taking the sales of large supermarkets
 
 ## columnTree(Array)
 
-List header tree, type:`IDimensionHeaderNode|IIndicatorHeaderNode[]`. Among them, IDimensionHeaderNode refers to the dimension value node of the dimension non-indicator, and IIndicatorHeaderNode refers to the indicator name node.
+List header tree, type:`(IDimensionHeaderNode|IIndicatorHeaderNode)[]`. Among them, IDimensionHeaderNode refers to the dimension value node of the dimension non-indicator, and IIndicatorHeaderNode refers to the indicator name node.
 
 ** The specific configuration items of IDimensionHeaderNode are as follows:**
 
@@ -63,8 +63,8 @@ export interface IDimensionHeaderNode {
   dimensionKey: string | number;
   /** dimension member value */
   value: string;
-  /** Subdimension tree structure under dimension members */
-  children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
+  /** Subdimension tree structure under dimension members. */
+  children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[] ;
   /** The collapsed state is used with the tree structure display. Note: only valid in rowTree */
   hierarchyState?: HierarchyState;
 }

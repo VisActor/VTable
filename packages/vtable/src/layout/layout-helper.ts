@@ -303,7 +303,11 @@ export function supplementIndicatorNodesForCustomTree(
 ) {
   const checkNode = (nodes: IHeaderTreeDefine[], isHasIndicator: boolean) => {
     nodes.forEach((node: IHeaderTreeDefine) => {
-      if (!node.indicatorKey && !isHasIndicator && !isValid(node.children)) {
+      if (
+        !node.indicatorKey &&
+        !isHasIndicator &&
+        (!(node.children as IHeaderTreeDefine[])?.length || !node.children)
+      ) {
         node.children = indicators?.map((indicator: IIndicator | string): { indicatorKey: string; value: string } => {
           if (typeof indicator === 'string') {
             return { indicatorKey: indicator, value: indicator };
