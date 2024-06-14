@@ -486,7 +486,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.columnDimensionTree.tree.children?.length >= 1) {
       //#region 处理需求 当没有数据时仍然显示角头维度名称
       let startRow = 0;
-      if (this.indicatorsAsCol && this.columnDimensionTree.totalLevel < this.columnHeaderLevelCount) {
+      if (
+        this.dataset &&
+        (this.dataset.records?.length ?? 0) === 0 &&
+        !this.dataset.customColTree &&
+        !this.dataset.customRowTree &&
+        this.indicatorsAsCol &&
+        this.columnDimensionTree.totalLevel < this.columnHeaderLevelCount
+      ) {
         startRow = this.columnHeaderLevelCount - this.columnDimensionTree.totalLevel;
         for (let i = 0; i < startRow; i++) {
           this._columnHeaderCellFullPathIds.unshift([]);
@@ -547,7 +554,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } else {
         //#region 处理需求 当没有数据时仍然显示角头维度名称
         let startRow = 0;
-        if (!this.indicatorsAsCol && this.rowDimensionTree.totalLevel < this.rowHeaderLevelCount) {
+        if (
+          this.dataset &&
+          (this.dataset.records?.length ?? 0) === 0 &&
+          !this.dataset.customColTree &&
+          !this.dataset.customRowTree &&
+          !this.indicatorsAsCol &&
+          this.rowDimensionTree.totalLevel < this.rowHeaderLevelCount
+        ) {
           startRow = this.rowHeaderLevelCount - this.rowDimensionTree.totalLevel;
           for (let i = 0; i < startRow; i++) {
             this._rowHeaderCellFullPathIds_FULL.unshift([]);
