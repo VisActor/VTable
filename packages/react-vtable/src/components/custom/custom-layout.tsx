@@ -2,12 +2,13 @@
 import type { PropsWithChildren } from 'react';
 import React, { isValidElement, useCallback, useContext, useLayoutEffect, useRef } from 'react';
 import RootTableContext from '../../context/table';
-import { Group } from '@visactor/vtable/src/vrender';
+import { VRender } from '@visactor/vtable';
 import type { ICustomLayoutFuc, CustomRenderFunctionArg } from '@visactor/vtable/src/ts-types';
 import type { FiberRoot } from 'react-reconciler';
 import { reconcilor } from './reconciler';
 import { LegacyRoot } from 'react-reconciler/constants';
 
+const { Group } = VRender;
 type CustomLayoutProps = { componentIndex?: number };
 
 export type CustomLayoutFunctionArg = Partial<CustomRenderFunctionArg> & {

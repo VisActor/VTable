@@ -73,7 +73,8 @@ export class ReactCustomLayout {
         table.scenegraph.updateCellContent(col, row);
       }
     }
-    table.scenegraph.updateNextFrame();
+    // table.scenegraph.updateNextFrame();
+    table.scenegraph.renderSceneGraph(); // use sync render for faster update
   }
 
   getCustomLayoutFunc(col: number, row: number) {

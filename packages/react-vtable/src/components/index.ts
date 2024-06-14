@@ -10,6 +10,7 @@ export { Tooltip } from './component/tooltip';
 export { CustomComponent } from './custom-component';
 export { CustomLayout, type CustomLayoutFunctionArg } from './custom/custom-layout';
 export * from './custom/graphic';
+export * from './custom/component';
 
 type Props = { updateId?: number };
 

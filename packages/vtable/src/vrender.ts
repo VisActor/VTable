@@ -1,16 +1,8 @@
 import '@visactor/vrender-core';
-import type { CreateDOMParamsType } from '@visactor/vrender-core';
+import { container, isBrowserEnv, isNodeEnv, preLoadAllModule } from '@visactor/vrender-core';
 import {
-  ContainerModule,
-  EnvContribution,
-  container,
-  isBrowserEnv,
-  isNodeEnv,
-  preLoadAllModule
-} from '@visactor/vrender-core';
-import { loadBrowserEnv, loadNodeEnv } from '@visactor/vrender-kits';
-import { BrowserEnvContribution } from '@visactor/vrender-kits';
-import {
+  loadBrowserEnv,
+  loadNodeEnv,
   registerArc,
   registerArc3d,
   registerArea,
@@ -30,7 +22,6 @@ import {
   registerText,
   registerWrapText
 } from '@visactor/vrender-kits';
-import { isString } from '@visactor/vutils';
 // 导出版本号
 // export const version = __VERSION__;
 
@@ -66,60 +57,12 @@ export function registerForVrender() {
   registerSymbol();
   registerText();
   registerWrapText();
-
-  // for react-vtable
-  if (isBrowserEnv()) {
-    // bind(BrowserEnvContribution).toSelf().inSingletonScope();
-    // bind(EnvContribution).toService(BrowserEnvContribution);
-    container.load(reactEnvModule);
-  }
 }
+
+export { Direction } from '@visactor/vrender-core';
+export { GroupFadeIn } from '@visactor/vrender-core';
+export { GroupFadeOut } from '@visactor/vrender-core';
 
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';
-
-const reactEnvModule = new ContainerModule(bind => {
-  bind(VTableBrowserEnvContribution).toSelf().inSingletonScope();
-  bind(EnvContribution).toService(VTableBrowserEnvContribution);
-});
-
-class VTableBrowserEnvContribution extends BrowserEnvContribution {
-  updateDom(dom: HTMLElement, params: CreateDOMParamsType): boolean {
-    // debugger;
-
-    const tableDiv = dom.parentElement;
-    if (tableDiv) {
-      // const tableRect = tableDiv.getBoundingClientRect();
-
-      const top = parseInt(params.style.top, 10);
-      const left = parseInt(params.style.left, 10);
-      const domWidth = dom.offsetWidth; // TO DO: offsetWidth is 0 when display none
-      const domHeight = dom.offsetHeight; // TO DO: offsetHeight is 0 when display none
-
-      if (top + domHeight < 0 || left + domWidth < 0 || top > tableDiv.offsetHeight || left > tableDiv.offsetWidth) {
-        dom.style.display = 'none';
-        return false;
-      }
-    }
-
-    const { width, height, style } = params;
-
-    if (style) {
-      if (isString(style)) {
-        dom.setAttribute('style', style);
-      } else {
-        Object.keys(style).forEach(k => {
-          dom.style[k] = style[k];
-        });
-      }
-    }
-    if (width != null) {
-      dom.style.width = `${width}px`;
-    }
-    if (height != null) {
-      dom.style.height = `${height}px`;
-    }
-
-    return true;
-  }
-}
+export * from '@visactor/vrender-components';

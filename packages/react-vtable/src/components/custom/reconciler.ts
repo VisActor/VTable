@@ -1,10 +1,11 @@
-import type { Graphic } from '@visactor/vtable/src/vrender';
-import { application, createText, REACT_TO_CANOPUS_EVENTS } from '@visactor/vtable/src/vrender';
+import { VRender } from '@visactor/vtable';
 import { isFunction } from '@visactor/vutils';
 import React from 'react';
 import ReactReconciler from 'react-reconciler';
 import { DefaultEventPriority } from 'react-reconciler/constants.js';
 
+const { application, createText, REACT_TO_CANOPUS_EVENTS, Tag } = VRender;
+type Graphic = VRender.Graphic;
 type Instance = Graphic;
 
 export const reconcilor = ReactReconciler({
@@ -134,7 +135,10 @@ reconcilor.injectIntoDevTools({
 
 function createGraphic(type: string, props: any) {
   // may have unwanted onxxx prop
-  if (!application.graphicService.creator[type]) {
+  if (type === 'tag') {
+    const tag = new Tag(props.attribute);
+    return tag;
+  } else if (!application.graphicService.creator[type]) {
     return;
   }
   const graphic = application.graphicService.creator[type]((props as any).attribute);

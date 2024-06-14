@@ -535,7 +535,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 注意 这个值和options.frozenColCount 不一样！options.frozenColCount是用户实际设置的; 这里获取的值是调整过:frozen的列过宽时 frozeCount为0
    */
   get frozenColCount(): number {
-    return this.internalProps.layoutMap?.frozenColCount ?? this.internalProps.frozenColCount ?? 0;
+    return this.internalProps?.layoutMap?.frozenColCount ?? this.internalProps?.frozenColCount ?? 0;
   }
   /**
    * Set the number of frozen columns.
@@ -595,7 +595,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * Get the number of frozen rows.
    */
   get frozenRowCount(): number {
-    return this.internalProps.layoutMap?.frozenRowCount ?? this.internalProps.frozenRowCount ?? 0;
+    return this.internalProps?.layoutMap?.frozenRowCount ?? this.internalProps?.frozenRowCount ?? 0;
   }
   /**
    * Set the number of frozen rows.
@@ -606,7 +606,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   get rightFrozenColCount(): number {
-    return this.internalProps.layoutMap?.rightFrozenColCount ?? this.internalProps.rightFrozenColCount ?? 0;
+    return this.internalProps?.layoutMap?.rightFrozenColCount ?? this.internalProps?.rightFrozenColCount ?? 0;
   }
 
   set rightFrozenColCount(rightFrozenColCount: number) {
@@ -614,7 +614,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   get bottomFrozenRowCount(): number {
-    return this.internalProps.layoutMap?.bottomFrozenRowCount ?? this.internalProps.bottomFrozenRowCount ?? 0;
+    return this.internalProps?.layoutMap?.bottomFrozenRowCount ?? this.internalProps?.bottomFrozenRowCount ?? 0;
   }
 
   set bottomFrozenRowCount(bottomFrozenRowCount: number) {

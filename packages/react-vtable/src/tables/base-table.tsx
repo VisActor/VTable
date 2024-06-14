@@ -23,6 +23,8 @@ import type {
 } from '../eventsUtils';
 import { bindEventsToTable, TABLE_EVENTS_KEYS, TABLE_EVENTS } from '../eventsUtils';
 import { VTableReactAttributePlugin } from '../components/custom/vtable-react-attribute-plugin';
+import { reactEnvModule } from '../components/custom/vtable-browser-env-contribution';
+const { container, isBrowserEnv } = VTable.VRender;
 
 export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 export type IOption =
@@ -48,6 +50,11 @@ export interface BaseTableProps extends EventsProps {
   onReady?: (instance: IVTable, isInitial: boolean) => void;
   /** throw error when chart run into an error */
   onError?: (err: Error) => void;
+}
+
+// for react-vtable
+if (isBrowserEnv()) {
+  container.load(reactEnvModule);
 }
 
 type Props = React.PropsWithChildren<BaseTableProps>;

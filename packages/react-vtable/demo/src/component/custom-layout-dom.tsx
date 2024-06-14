@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CustomLayoutFunctionArg } from '../../../src';
-import { ListTable, ListColumn, CustomLayout, Group, Text } from '../../../src';
+import { ListTable, ListColumn, CustomLayout, Group, Text, Tag, Image } from '../../../src';
 import { Avatar, Button, Card, Popover, Space, Typography } from '@arco-design/web-react';
 import { IconThumbUp, IconShareInternal, IconMore } from '@arco-design/web-react/icon';
 const { Meta } = Card;
@@ -150,8 +150,82 @@ const DomCustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: strin
   );
 };
 
-const CardInfo = (props: { text: string }) => {
+const UserProfileComponent = (props: CustomLayoutFunctionArg & { text: string }) => {
+  const { table, row, col, rect, text } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+
+  const [hover, setHover] = useState(false);
+
+  // if (row === 2) {
+  //   setHover(true);
+  // }
+
   return (
+    <Group
+      attribute={{
+        width,
+        height
+      }}
+      // ref={groupRef}
+    >
+      <Group
+        attribute={{
+          x: 50,
+          y: 50,
+          width: 70,
+          height: 25,
+          fill: '#e6fffb',
+          lineWidth: 1,
+          cornerRadius: 10,
+          display: 'flex',
+          flexDirection: 'row',
+          flexWrap: 'nowrap',
+          alignItems: 'center',
+          alignContent: 'center',
+          react: {
+            pointerEvents: true,
+            container: table.bodyDomContainer, // table.headerDomContainer
+            anchorType: 'bottom-right',
+            element: <CardInfo text={text} hover={hover} row={row} />
+          }
+        }}
+        onMouseEnter={(event: any) => {
+          setHover(true);
+          event.currentTarget.stage.renderNextFrame(); // to do: auto execute in react-vtable
+        }}
+        onMouseLeave={(event: any) => {
+          setHover(false);
+          event.currentTarget.stage.renderNextFrame();
+        }}
+      >
+        <Image
+          attribute={{
+            width: 20,
+            height: 20,
+            image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
+            cornerRadius: 10,
+            boundsPadding: [0, 0, 0, 10]
+          }}
+        />
+        <Text
+          attribute={{
+            text,
+            fontSize: 14,
+            fontFamily: 'sans-serif',
+            fill: 'rgb(51, 101, 238)',
+            boundsPadding: [0, 0, 0, 10]
+          }}
+        />
+      </Group>
+    </Group>
+  );
+};
+
+const CardInfo = (props: { text: string; hover: boolean; row?: number }) => {
+  return props.hover ? (
     <Card
       className="card-with-icon-hover"
       style={{ width: 360 }}
@@ -191,14 +265,14 @@ const CardInfo = (props: { text: string }) => {
             >
               <Avatar size={24}>A</Avatar>
             </Popover>
-            <Typography.Text>{props.text}</Typography.Text>
+            <Typography.Text>{props.text + props.row}</Typography.Text>
           </Space>
         }
         title="Card Title"
         description="This is the description"
       />
     </Card>
-  );
+  ) : null;
 };
 
 function App() {
@@ -228,7 +302,8 @@ function App() {
       <ListColumn field={'2'} title={'gender'} />
       <ListColumn field={'3'} title={'hobby'} width={362}>
         {/* <CustomLayoutComponent role={'custom-layout'} text={preStr} /> */}
-        <DomCustomLayoutComponent role={'custom-layout'} text={preStr} />
+        {/* <DomCustomLayoutComponent role={'custom-layout'} text={preStr} /> */}
+        <UserProfileComponent role={'custom-layout'} text={preStr} />
       </ListColumn>
     </ListTable>
   );

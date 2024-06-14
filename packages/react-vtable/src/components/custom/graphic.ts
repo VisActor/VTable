@@ -3,21 +3,21 @@
 // export const Text = 'text';
 
 import type { ReactElement, ReactNode, Ref, JSXElementConstructor } from 'react';
-import type {
-  IGraphic,
-  IGroupGraphicAttribute,
-  ITextGraphicAttribute,
-  IEventParamsType,
-  IArcGraphicAttribute,
-  ICircleGraphicAttribute,
-  IImageGraphicAttribute,
-  ILineGraphicAttribute,
-  IPathGraphicAttribute,
-  IRectGraphicAttribute,
-  ISymbolGraphicAttribute,
-  IRichTextGraphicAttribute,
-  IPolygonGraphicAttribute
-} from '@visactor/vtable/src/vrender';
+import type { VRender } from '@visactor/vtable';
+
+type IGraphic = VRender.IGraphic;
+type IGroupGraphicAttribute = VRender.IGroupGraphicAttribute;
+type ITextGraphicAttribute = VRender.ITextGraphicAttribute;
+type IEventParamsType = VRender.IEventParamsType;
+type IArcGraphicAttribute = VRender.IArcGraphicAttribute;
+type ICircleGraphicAttribute = VRender.ICircleGraphicAttribute;
+type IImageGraphicAttribute = VRender.IImageGraphicAttribute;
+type ILineGraphicAttribute = VRender.ILineGraphicAttribute;
+type IPathGraphicAttribute = VRender.IPathGraphicAttribute;
+type IRectGraphicAttribute = VRender.IRectGraphicAttribute;
+type ISymbolGraphicAttribute = VRender.ISymbolGraphicAttribute;
+type IRichTextGraphicAttribute = VRender.IRichTextGraphicAttribute;
+type IPolygonGraphicAttribute = VRender.IPolygonGraphicAttribute;
 
 type GraphicProps<IGraphicGraphicAttribute> = {
   attribute: IGraphicGraphicAttribute;
