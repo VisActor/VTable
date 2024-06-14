@@ -1,4 +1,4 @@
-import { isArray, isString } from '@visactor/vutils';
+import { isArray, isString, isValid } from '@visactor/vutils';
 import type { PivotTable } from '../PivotTable';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { AggregationType } from '../ts-types';
@@ -303,11 +303,7 @@ export function supplementIndicatorNodesForCustomTree(
 ) {
   const checkNode = (nodes: IHeaderTreeDefine[], isHasIndicator: boolean) => {
     nodes.forEach((node: IHeaderTreeDefine) => {
-      if (
-        !node.indicatorKey &&
-        !isHasIndicator &&
-        (!(node.children as IHeaderTreeDefine[])?.length || !node.children)
-      ) {
+      if (!node.indicatorKey && !isHasIndicator && !isValid(node.children)) {
         node.children = indicators?.map((indicator: IIndicator | string): { indicatorKey: string; value: string } => {
           if (typeof indicator === 'string') {
             return { indicatorKey: indicator, value: indicator };
