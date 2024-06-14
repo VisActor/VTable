@@ -67,6 +67,7 @@ export function dealSort(col: number, row: number, table: ListTableAPI, event: E
   }
 
   // clear cell range cache
+  table.internalProps.useOneRowHeightFillAll = false;
   table.internalProps.layoutMap.clearCellRangeMap();
 
   table.scenegraph.sortCell();

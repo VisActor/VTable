@@ -1,6 +1,20 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 12 Jun 2024 12:30:16 GMT and should not be manually modified.
+This log was last generated on Thu, 13 Jun 2024 12:35:49 GMT and should not be manually modified.
+
+## 1.3.1
+Thu, 13 Jun 2024 12:35:49 GMT
+
+### Updates
+
+- fix: fix frozenColCount large than colCount error #1872
+
+
+- docs: update changlog of rush
+
+
+- fix: fix merge cell size update #1869
+- fix: optimize row height update when useOneRowHeightFillAll
 
 ## 1.3.0
 Wed, 12 Jun 2024 12:30:16 GMT

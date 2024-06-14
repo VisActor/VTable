@@ -2788,6 +2788,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
   setPagination(pagination: IPagination): void {
     this.clearCellRangeMap();
+    this._table.internalProps.useOneRowHeightFillAll = false;
     this.pagination = pagination;
 
     if (
