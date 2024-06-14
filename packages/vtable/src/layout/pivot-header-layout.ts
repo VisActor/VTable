@@ -223,7 +223,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.resetRowHeaderLevelCount();
 
     if (this._table.isPivotChart()) {
-      this.hasTwoIndicatorAxes = this._indicators.some(indicatorObject => {
+      this.hasTwoIndicatorAxes = this.indicatorsDefine.some((indicatorObject: any) => {
         if (
           indicatorObject.chartSpec &&
           indicatorObject.chartSpec.series &&
