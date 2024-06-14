@@ -222,13 +222,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
     this.resetRowHeaderLevelCount();
 
-    //生成列表头单元格
-    this._generateColHeaderIds();
-
-    this.colIndex = 0;
-    //生成行表头单元格
-    this._generateRowHeaderIds();
-
     if (this._table.isPivotChart()) {
       this.hasTwoIndicatorAxes = this._indicators.some(indicatorObject => {
         if (
@@ -257,6 +250,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // this.indicatorsAsCol = !isValid(this.rowDimensionKeys.find(key => key === this.indicatorDimensionKey));
     //  this.colAttrs[this.colAttrs.length-1]===this.indicatorDimensionKey&&this.colAttrs.pop();
     //  this.rowAttrs[this.rowAttrs.length-1]===this.indicatorDimensionKey&&this.rowAttrs.pop();
+
+    //生成列表头单元格
+    this._generateColHeaderIds();
+
+    this.colIndex = 0;
+    //生成行表头单元格
+    this._generateRowHeaderIds();
 
     this._rowHeaderCellFullPathIds_FULL = transpose(this._rowHeaderCellFullPathIds_FULL);
     if ((table as PivotTable).options.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
@@ -293,6 +293,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           }
           return define.dimensionKey;
         });
+        if (this.indicatorsAsCol) {
+          colDimensionKeys.push(this.indicatorDimensionKey);
+        }
       }
       //#endregion
       this.cornerHeaderObjs = this._addCornerHeaders(
@@ -329,6 +332,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             }
             return define.dimensionKey;
           });
+          if (!this.indicatorsAsCol) {
+            rowDimensionKeys.push(this.indicatorDimensionKey);
+          }
         }
         //#endregion
         this.cornerHeaderObjs = this._addCornerHeaders(
@@ -478,9 +484,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   _generateColHeaderIds() {
     if (this.columnDimensionTree.tree.children?.length >= 1) {
+      //#region 处理需求 当没有数据时仍然显示角头维度名称
+      let startRow = 0;
+      if (this.indicatorsAsCol && this.columnDimensionTree.totalLevel < this.columnHeaderLevelCount) {
+        startRow = this.columnHeaderLevelCount - this.columnDimensionTree.totalLevel;
+        for (let i = 0; i < startRow; i++) {
+          this._columnHeaderCellFullPathIds.unshift([]);
+        }
+      }
+      //#endregion
       this._addHeaders(
         this._columnHeaderCellFullPathIds,
-        0,
+        startRow,
         this.columnDimensionTree.tree.children,
         [],
         this.columnHeaderObjs
@@ -530,9 +545,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.rowHeaderObjs
         );
       } else {
+        //#region 处理需求 当没有数据时仍然显示角头维度名称
+        let startRow = 0;
+        if (!this.indicatorsAsCol && this.rowDimensionTree.totalLevel < this.rowHeaderLevelCount) {
+          startRow = this.rowHeaderLevelCount - this.rowDimensionTree.totalLevel;
+          for (let i = 0; i < startRow; i++) {
+            this._rowHeaderCellFullPathIds_FULL.unshift([]);
+          }
+        }
+        //#endregion
         this._addHeaders(
           this._rowHeaderCellFullPathIds_FULL,
-          0,
+          startRow,
           this.rowDimensionTree.tree.children,
           [],
           this.rowHeaderObjs
@@ -1188,6 +1212,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       ) {
         if (this.cornerSetting.titleOnDimension === 'column') {
           count = this.columnsDefine.length ?? 0;
+          if (!this.hideIndicatorName && this.indicatorsAsCol) {
+            count++;
+          }
         }
       }
       //#endregion
@@ -1249,6 +1276,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       ) {
         if (this.cornerSetting.titleOnDimension === 'row') {
           count = this.rowsDefine.length;
+          if (!this.hideIndicatorName && !this.indicatorsAsCol) {
+            count++;
+          }
         }
       }
       //#endregion
@@ -3237,14 +3267,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.rowHierarchyType,
       this.rowHierarchyType === 'tree' ? this.rowExpandLevel : undefined
     );
+
+    this.resetColumnHeaderLevelCount();
+
     //生成列表头单元格
     this._generateColHeaderIds();
 
     this.colIndex = 0;
     //生成行表头单元格
     this._generateRowHeaderIds();
-
-    this.resetColumnHeaderLevelCount();
     this._rowHeaderCellFullPathIds_FULL = transpose(this._rowHeaderCellFullPathIds_FULL);
 
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
