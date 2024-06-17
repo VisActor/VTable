@@ -213,6 +213,14 @@ Do not respond to mouse select interaction.
 
 Separately set the header not to respond to mouse select interaction.
 
+##${prefix} blankAreaClickDeselect(boolean) = false
+
+Whether to cancel the selection when clicking the blank area.
+
+##${prefix} outsideClickDeselect(boolean) = true
+
+Whether to cancel the selection when clicking outside the table.
+
 #${prefix} theme(Object)
 
 {{ use: common-theme(

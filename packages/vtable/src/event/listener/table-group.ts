@@ -12,7 +12,7 @@ import type { SceneEvent } from '../util';
 import { getCellEventArgsSet, regIndexReg } from '../util';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { Group } from '../../scenegraph/graphic/group';
-import { isValid, last } from '@visactor/vutils';
+import { isValid } from '@visactor/vutils';
 import { getIconAndPositionFromTarget } from '../../scenegraph/utils/icon';
 import { cellInRanges } from '../../tools/helper';
 import { Rect } from '../../tools/Rect';
@@ -338,7 +338,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     stateManager.updateInteractionState(InteractionState.default);
     eventManager.dealTableHover();
     //点击到表格外部不需要取消选中状态
-    // eventManager.dealTableSelect();
+    if (table.options.select?.outsideClickDeselect) {
+      eventManager.dealTableSelect();
+    }
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
@@ -729,8 +731,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
     ) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
-      eventManager.dealTableSelect();
       stateManager.endSelectCells();
+
+      // 点击空白区域取消选中
+      if (table.options.select?.blankAreaClickDeselect ?? true) {
+        eventManager.dealTableSelect();
+      }
+
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
     } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
