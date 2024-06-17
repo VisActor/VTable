@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: when rowTree children not set value can supplement indicators #1924\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
