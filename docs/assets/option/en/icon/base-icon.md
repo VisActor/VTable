@@ -134,5 +134,11 @@ Tooltip background color.
 ##${prefix} arrowMark (boolean)
 Whether the tooltip displays an arrow.
 
+##${prefix} maxWidth (number)
+The maximum width of the tooltip.
+
+##${prefix} maxHeight (number)
+The maximum height of the tooltip.
+
 ${prefix} interactive (boolean)
 Whether it is interactive, default is true. Currently known non-interactive buttons are dropdown menu states.

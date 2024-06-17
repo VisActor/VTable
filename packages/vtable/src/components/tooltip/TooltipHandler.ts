@@ -196,7 +196,7 @@ export class TooltipHandler {
           rect
         },
         disappearDelay: table.internalProps.tooltip.overflowTextTooltipDisappearDelay ?? 0,
-        style: { arrowMark: false }
+        style: table.theme.tooltipStyle
       };
     } else if (table.internalProps.tooltip?.isShowOverflowTextTooltip) {
       const overflowText = table.getCellOverflowText(col, row);

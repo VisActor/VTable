@@ -23,7 +23,7 @@ export class BubbleTooltipElement {
   constructor() {
     this._handler = new EventHandler();
     const rootElement = (this._rootElement = createElement('div', [TOOLTIP_CLASS, HIDDEN_CLASS]));
-    const messageElement = createElement('span', [CONTENT_CLASS]);
+    const messageElement = createElement('div', [CONTENT_CLASS]);
     const triangle = createElement('span', [TRIANGLE_CLASS]);
     rootElement.appendChild(triangle);
     rootElement.appendChild(messageElement);
@@ -36,6 +36,10 @@ export class BubbleTooltipElement {
     rootElement.addEventListener('mouseleave', () => {
       this._disappearDelay = undefined;
       this.unbindFromCell();
+    });
+
+    messageElement.addEventListener('wheel', e => {
+      e.stopPropagation();
     });
   }
   bindToCell(
@@ -69,6 +73,10 @@ export class BubbleTooltipElement {
       tooltipInstanceInfo?.style?.color && (messageElement.style.color = tooltipInstanceInfo?.style?.color);
       tooltipInstanceInfo?.style?.padding &&
         (messageElement.style.padding = `${tooltipInstanceInfo?.style?.padding.join('px ')}px`);
+      tooltipInstanceInfo?.style?.maxHeight &&
+        (messageElement.style.maxHeight = `${tooltipInstanceInfo?.style?.maxHeight}px`);
+      tooltipInstanceInfo?.style?.maxWidth &&
+        (messageElement.style.maxWidth = `${tooltipInstanceInfo?.style?.maxWidth}px`);
       messageElement && (messageElement.textContent = tooltipInstanceInfo?.content);
       const binded = this._bindToCell(
         table,
