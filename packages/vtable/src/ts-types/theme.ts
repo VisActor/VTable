@@ -73,6 +73,8 @@ export type TooltipStyle = {
   color?: string;
   padding?: number[];
   bgColor?: string;
+  maxWidth?: number;
+  maxHeight?: number;
   /** !目前未实现该逻辑。触发行为：hover or click */
   // trigger?: string | string[];
   /**气泡框位置，可选 top left right bottom */
