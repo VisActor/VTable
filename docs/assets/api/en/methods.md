@@ -1157,3 +1157,11 @@ set row height.
   /**set row height */
   setRowHeight: (row: number, height: number)
 ```
+
+## cellIsInVisualView(Function)
+
+Determines whether the cell is in the visible area of the cell. If the cell is completely in the visible area, it returns true. If part or all of the cell is outside the visible area, it returns false.
+
+```
+  cellIsInVisualView(col: number, row: number)
+```
