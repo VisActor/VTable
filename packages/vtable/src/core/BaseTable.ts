@@ -2333,6 +2333,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   renderWithRecreateCells() {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
     this.scenegraph.clearCells();
     this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();

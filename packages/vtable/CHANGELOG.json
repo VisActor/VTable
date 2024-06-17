@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.3.1",
+      "tag": "@visactor/vtable_v1.3.1",
+      "date": "Thu, 13 Jun 2024 12:35:49 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix frozenColCount large than colCount error #1872\n\n"
+          },
+          {
+            "comment": "docs: update changlog of rush\n\n"
+          },
+          {
+            "comment": "fix: fix merge cell size update #1869"
+          },
+          {
+            "comment": "fix: optimize row height update when useOneRowHeightFillAll"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.3.0",
       "tag": "@visactor/vtable_v1.3.0",
       "date": "Wed, 12 Jun 2024 12:30:16 GMT",
