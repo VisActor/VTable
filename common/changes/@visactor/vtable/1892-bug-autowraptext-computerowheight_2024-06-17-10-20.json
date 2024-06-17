@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: if set style autoWrapText, this config not wort when resize column width #1892\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
