@@ -171,7 +171,7 @@ export class DebugTool {
     // this._stage.defaultLayer.appendChild(this._rect);
     // this._stage.renderNextFrame();
 
-    const table = this._stage.table;
+    const table = (this._stage as any).table;
     const stage = table.scenegraph.stage;
     const stageMatrix = stage.window.getViewBoxTransform();
 
