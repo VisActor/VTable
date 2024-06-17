@@ -520,6 +520,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-str'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-empty-tip'
       }
     ]
   },

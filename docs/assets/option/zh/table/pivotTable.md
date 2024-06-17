@@ -241,7 +241,7 @@ export interface DerivedFieldRule {
 
 ## columnTree(Array)
 
-列表头树，类型为:`IDimensionHeaderNode|IIndicatorHeaderNode[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。
+列表头树，类型为:`(IDimensionHeaderNode|IIndicatorHeaderNode)[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。
 
 ** IDimensionHeaderNode 具体配置项如下：**
 
@@ -253,8 +253,8 @@ export interface IDimensionHeaderNode {
   dimensionKey: string | number;
   /** 维度成员值 */
   value: string;
-  /** 维度成员下的子维度树结构 */
-  children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
+  /** 维度成员下的子维度树结构。 true一般是用在显示折叠展开按钮，进行懒加载获取数据的场景中。 */
+  children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[] | true;
   /** 折叠状态 配合树形结构展示使用。注意：仅在rowTree中有效 */
   hierarchyState?: HierarchyState;
   /** 是否为虚拟节点。 如果配置为true，则在基于records数据做分析时会忽略该维度字段 */

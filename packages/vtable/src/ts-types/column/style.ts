@@ -56,6 +56,7 @@ export interface IStyleOption {
   textAlign?: TextAlignType;
   textBaseline?: TextBaselineType;
   color?: ColorPropertyDefine;
+  strokeColor?: ColorPropertyDefine;
 
   fontSize?: FontSizePropertyDefine;
   fontFamily?: FontFamilyPropertyDefine;

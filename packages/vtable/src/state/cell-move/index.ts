@@ -129,6 +129,7 @@ export function endMoveCol(state: StateManager) {
 
     // 更新状态
     if (moveContext) {
+      state.table.internalProps.useOneRowHeightFillAll = false;
       state.table.internalProps.layoutMap.clearCellRangeMap();
       const sourceMergeInfo = state.table.getCellRange(state.columnMove.colSource, state.columnMove.rowSource);
       const targetMergeInfo = state.table.getCellRange(state.columnMove.colTarget, state.columnMove.rowTarget);

@@ -198,6 +198,8 @@ export interface IBaseTableProtected {
     renderMode: 'html' | 'canvas';
     /** 代替原来hover:isShowTooltip配置 */
     isShowOverflowTextTooltip: boolean;
+    /** 缩略文字提示框 延迟消失时间 */
+    overflowTextTooltipDisappearDelay?: number;
     /** 弹框是否需要限定在表格区域内 */
     confine: boolean;
   };
@@ -254,6 +256,8 @@ export interface IBaseTableProtected {
   // react component container
   bodyDomContainer?: HTMLElement;
   headerDomContainer?: HTMLElement;
+  // 已使用一行的高度填充所有行
+  useOneRowHeightFillAll?: boolean;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -320,7 +324,7 @@ export interface BaseTableConstructorOptions {
   /** hover交互配置 */
   hover?: {
     /** hover交互响应模式：十字交叉 整列 整行 或者单个单元格 */
-    highlightMode: 'cross' | 'column' | 'row' | 'cell';
+    highlightMode?: 'cross' | 'column' | 'row' | 'cell';
     /** 不响应鼠标hover交互 */
     disableHover?: boolean;
     /** 单独设置表头不响应鼠标hover交互 */
@@ -331,13 +335,17 @@ export interface BaseTableConstructorOptions {
   /** 选择单元格交互配置 */
   select?: {
     /** 高亮范围模式：十字交叉 整列 整行 或者单个单元格。默认`cell` */
-    highlightMode: 'cross' | 'column' | 'row' | 'cell';
+    highlightMode?: 'cross' | 'column' | 'row' | 'cell';
     /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
     headerSelectMode?: 'inline' | 'cell';
     /** 不响应鼠标select交互 */
     disableSelect?: boolean;
     /** 单独设置表头不响应鼠标select交互 */
     disableHeaderSelect?: boolean;
+    /** 点击空白区域是否取消选中 */
+    blankAreaClickDeselect?: boolean;
+    /** 点击外部区域是否取消选中 */
+    outsideClickDeselect?: boolean; //
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
@@ -354,8 +362,10 @@ export interface BaseTableConstructorOptions {
   tooltip?: {
     /** html目前实现较完整 先默认html渲染方式 */
     renderMode?: 'html'; // 目前暂不支持canvas方案
-    /** 代替原来hover:isShowTooltip配置 暂时需要将renderMode配置为html才能显示，canvas的还未开发*/
+    /** 是否显示缩略文字提示框。 代替原来hover:isShowTooltip配置 暂时需要将renderMode配置为html才能显示，canvas的还未开发*/
     isShowOverflowTextTooltip?: boolean;
+    /** 缩略文字提示框 延迟消失时间 */
+    overflowTextTooltipDisappearDelay?: number;
     /** 是否将 tooltip 框限制在画布区域内，默认开启。针对renderMode:"html"有效 */
     confine?: boolean;
   };
@@ -417,7 +427,7 @@ export interface BaseTableConstructorOptions {
   customMergeCell?: CustomMergeCell;
 
   // #region for nodejs
-  mode?: 'node' | 'broswer';
+  mode?: 'node' | 'browser';
   modeParams?: any;
   canvasWidth?: number;
   canvasHeight?: number;
@@ -448,6 +458,8 @@ export interface BaseTableConstructorOptions {
     imageMargin?: number;
     // 是否创建react custom container
     createReactContainer?: boolean;
+    // adaptive 模式下优先缩小迷你图
+    shrinkSparklineFirst?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -623,7 +635,7 @@ export interface BaseTableAPI {
   getFrozenColsWidth: () => number;
   getBottomFrozenRowsHeight: () => number;
   getRightFrozenColsWidth: () => number;
-  selectCell: (col: number, row: number) => void;
+  selectCell: (col: number, row: number, isShift?: boolean, isCtrl?: boolean) => void;
   selectCells: (cellRanges: CellRange[]) => void;
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;

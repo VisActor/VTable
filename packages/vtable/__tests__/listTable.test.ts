@@ -118,6 +118,7 @@ describe('listTable init test', () => {
     expect(listTable.getScrollLeft()).toBe(901);
     expect(listTable.getScrollTop()).toBe(720);
     expect(listTable.getCellStyle(6, 16)).toStrictEqual({
+      strokeColor: undefined,
       textAlign: 'left',
       textBaseline: 'middle',
       bgColor: '#FFF',

@@ -5,6 +5,10 @@ import type { MousePointerCellEvent } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 
 export function bindSparklineHoverEvent(table: BaseTableAPI) {
+  if (table.eventManager.bindSparklineHoverEvent) {
+    return;
+  }
+
   // 判断是否有sparkline 类型
   let hasSparkLine = false;
   if (table.isPivotTable()) {
@@ -22,6 +26,8 @@ export function bindSparklineHoverEvent(table: BaseTableAPI) {
   if (!hasSparkLine) {
     return;
   }
+
+  table.eventManager.bindSparklineHoverEvent = true;
 
   table.on(TABLE_EVENT_TYPE.MOUSEMOVE_CELL, (e: MousePointerCellEvent) => {
     const { col, row, x, y } = e;

@@ -11,7 +11,7 @@ import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from './get-cell-merge';
 import { getHierarchyOffset } from './get-hierarchy-offset';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { isNil, isNumber, isValid } from '@visactor/vutils';
+import { isNil, isNumber, isValid, isValidNumber } from '@visactor/vutils';
 import { isMergeCellGroup } from './is-merge-cell-group';
 import { breakString } from './break-string';
 
@@ -103,7 +103,7 @@ export function createCellContent(
         heightLimit:
           autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
-            : cellHeight - (padding[0] + padding[2]),
+            : cellHeight - Math.floor(padding[0] + padding[2]),
         pickable: false,
         dx: (textAlign === 'left' ? hierarchyOffset : 0) + _contentOffset,
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
@@ -221,7 +221,7 @@ export function createCellContent(
         heightLimit:
           autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
-            : cellHeight - (padding[0] + padding[2]),
+            : cellHeight - Math.floor(padding[0] + padding[2]),
         pickable: false,
         autoWrapText,
         lineClamp,
@@ -545,6 +545,9 @@ export function updateCellContentWidth(
   textBaseline: CanvasTextBaseline,
   scene: Scenegraph
 ): boolean {
+  if (isValidNumber(cellGroup.contentWidth)) {
+    detaX = distWidth - (cellGroup.contentWidth ?? cellGroup.attribute.width);
+  }
   let leftIconWidth = 0;
   let leftIconHeight = 0;
   let rightIconWidth = 0;
@@ -600,7 +603,7 @@ export function updateCellContentWidth(
       child.setAttribute('x', child.attribute.x + detaX);
     } else if (child.role === 'icon-absolute-right') {
       child.setAttribute('x', child.attribute.x + detaX);
-    } else if (child.name === 'content' || child.name === 'text') {
+    } else if (child.name === 'content' || (child.name === 'text' && child.type !== 'richtext')) {
       const childTextAlign = child.attribute.textAlign ?? textAlign;
       if (childTextAlign === 'center') {
         child.setAttribute(
@@ -673,7 +676,7 @@ export function updateCellContentHeight(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline
 ) {
-  const newHeight = distHeight - (padding[0] + padding[2]);
+  const newHeight = distHeight - Math.floor(padding[0] + padding[2]);
 
   const textMark = cellGroup.getChildByName('text');
 

@@ -23,7 +23,7 @@ import type {
   PivotChartAPI
 } from './ts-types';
 import { AggregationType } from './ts-types';
-import { HierarchyState } from './ts-types';
+import type { HierarchyState } from './ts-types';
 import { getField } from './data/DataSource';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
 import { PIVOT_CHART_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
@@ -223,6 +223,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
@@ -438,6 +439,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     // 更新表头
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
 
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
@@ -750,47 +752,20 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param sortRules
    */
   updateSortRules(sortRules: SortRules) {
-    this.internalProps.dataConfig.sortRules = sortRules;
+    if (this.internalProps.dataConfig) {
+      this.internalProps.dataConfig.sortRules = sortRules;
+    } else {
+      this.internalProps.dataConfig = { sortRules };
+    }
     this.dataset.updateSortRules(sortRules);
     this.internalProps.layoutMap.resetHeaderTree();
     // 清空单元格内容
     this.scenegraph.clearCells();
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
     this.render();
-  }
-  updatePivotSortState(
-    pivotSortStateConfig: {
-      dimensions: IDimensionInfo[];
-      order: SortOrder;
-    }[]
-  ) {
-    // // dimensions: IDimensionInfo[], order: SortOrder
-    // // 清空当前 pivot sort 状态
-    // const cells = this.pivotSortState.map((cell) => ({ col: cell.col, row: cell.row }));
-    // this.pivotSortState.length = 0;
-    // cells.map((cell) => {
-    //   this.invalidateCellRange(this.getCellRange(cell.col, cell.row));
-    // });
-
-    // 更新 pivot sort 状态
-    for (let i = 0; i < pivotSortStateConfig.length; i++) {
-      const { dimensions, order } = pivotSortStateConfig[i];
-      const cellAddress = (this.internalProps.layoutMap as PivotHeaderLayoutMap).getPivotCellAdress(dimensions);
-
-      cellAddress &&
-        this.pivotSortState.push({
-          col: cellAddress.col,
-          row: cellAddress.row,
-          order
-        });
-    }
-
-    // // 更新相关单元格样式
-    // this.pivotSortState.map((cell) => {
-    //   this.invalidateCellRange(this.getCellRange(cell.col, cell.row));
-    // });
   }
 
   getPivotSortState(col: number, row: number): SortOrder {
@@ -856,31 +831,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
-    const hierarchyState = this.getHierarchyState(col, row);
-    if (hierarchyState === HierarchyState.expand) {
-      this.fireListeners(PIVOT_CHART_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-        col: col,
-        row: row,
-        hierarchyState: HierarchyState.collapse
-      });
-    } else if (hierarchyState === HierarchyState.collapse) {
-      this.fireListeners(PIVOT_CHART_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-        col: col,
-        row: row,
-        hierarchyState: HierarchyState.expand,
-        originData: this.getCellOriginRecord(col, row)
-      });
-    }
-
-    const result = (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
-    //影响行数
-    this.refreshRowColCount();
-    // this.scenegraph.clearCells();
-    // this.scenegraph.createSceneGraph();
-    // this.invalidate();
-    this.clearCellStyleCache();
-    this.scenegraph.updateHierarchyIcon(col, row);
-    this.scenegraph.updateRow(result.removeCellPositions, result.addCellPositions);
+    //nothing
   }
   /**
    * 通过表头的维度值路径来计算单元格位置  getCellAddressByHeaderPaths接口更强大一些 不限表头 不限参数格式
@@ -1439,6 +1390,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     // 更新表头
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
 
     // 清空单元格内容
     this.scenegraph.clearCells();

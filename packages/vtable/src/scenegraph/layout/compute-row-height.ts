@@ -502,6 +502,9 @@ function fillRowsHeight(
   table: BaseTableAPI,
   newHeights: number[] | undefined
 ) {
+  if (table.internalProps.useOneRowHeightFillAll) {
+    return;
+  }
   for (let row = startRow; row <= endRow; row++) {
     if (newHeights) {
       newHeights[row] = height;
@@ -509,6 +512,7 @@ function fillRowsHeight(
       table._setRowHeight(row, height);
     }
   }
+  table.internalProps.useOneRowHeightFillAll = true;
 }
 
 /**

@@ -500,7 +500,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         lineClamp,
         wordBreak: 'break-word',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-        heightLimit: cellHeight - (padding[0] + padding[2]),
+        heightLimit: cellHeight - Math.floor(padding[0] + padding[2]),
         pickable: false,
         dx: textAlign === 'left' ? hierarchyOffset : 0,
         x
@@ -748,7 +748,7 @@ export function dealWithMergeCellSize(
     for (let row = range.start.row; row <= range.end.row; row++) {
       const cellGroup = table.scenegraph.getCell(col, row, true);
 
-      if (cellGroup.role === 'cell' && range.start.row !== range.end.row && cellGroup.contentWidth !== cellWidth) {
+      if (cellGroup.role === 'cell' && range.start.row !== range.end.row && cellGroup.contentHeight !== cellHeight) {
         updateCellContentHeight(
           cellGroup,
           cellHeight,
@@ -761,7 +761,7 @@ export function dealWithMergeCellSize(
           // 'middle'
         );
       }
-      if (cellGroup.role === 'cell' && range.start.col !== range.end.col && cellGroup.contentHeight !== cellHeight) {
+      if (cellGroup.role === 'cell' && range.start.col !== range.end.col && cellGroup.contentWidth !== cellWidth) {
         updateCellContentWidth(
           cellGroup,
           cellWidth,

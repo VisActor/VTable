@@ -1645,6 +1645,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const scrollLeft = this.scrollLeft;
     if (this.isLeftFrozenColumn(startCol) && this.isRightFrozenColumn(endCol)) {
       width = this.tableNoFrameWidth - (this.getColsWidth(startCol + 1, this.colCount - 1) ?? 0) - absoluteLeft;
+      // width =
+      //   this.tableNoFrameWidth -
+      //   (this.getColsWidth(0, startCol - 1) ?? 0) -
+      //   (this.getColsWidth(endCol + 1, this.colCount - 1) ?? 0);
     } else if (this.isLeftFrozenColumn(startCol) && !this.isLeftFrozenColumn(endCol)) {
       width = Math.max(width - scrollLeft, this.getColsWidth(startCol, this.frozenColCount - 1));
     } else if (!this.isRightFrozenColumn(startCol) && this.isRightFrozenColumn(endCol)) {
@@ -1662,6 +1666,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const scrollTop = this.scrollTop;
     if (this.isTopFrozenRow(startRow) && this.isBottomFrozenRow(endRow)) {
       height = this.tableNoFrameHeight - (this.getRowsHeight(startRow + 1, this.rowCount - 1) ?? 0) - absoluteTop;
+      // height =
+      //   this.tableNoFrameHeight -
+      //   (this.getRowsHeight(0, startRow - 1) ?? 0) -
+      //   (this.getRowsHeight(endRow + 1, this.rowCount - 1) ?? 0);
     } else if (this.isTopFrozenRow(startRow) && !this.isTopFrozenRow(endRow)) {
       height = Math.max(height - scrollTop, this.getRowsHeight(startRow, this.frozenRowCount - 1));
     } else if (!this.isBottomFrozenRow(startRow) && this.isBottomFrozenRow(endRow)) {
@@ -2353,6 +2361,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   renderWithRecreateCells() {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
     this.scenegraph.clearCells();
     this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
@@ -2739,8 +2748,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param col
    * @param row
    */
-  selectCell(col: number, row: number) {
-    this.stateManager.updateSelectPos(col, row);
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean) {
+    this.stateManager.updateSelectPos(col, row, isShift, isCtrl);
     this.stateManager.endSelectCells();
   }
   /**
@@ -3307,8 +3316,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (this.isPivotTable() && !this.isBottomFrozenRow(row) && !this.isRightFrozenColumn(col)) {
         // use dimensionKey&indicatorKey to cache style object in pivot table
         const define = this.getHeaderDefine(col, row) as any;
+        const isCorner = this.isCornerHeader(col, row);
         cacheKey = define?.dimensionKey
-          ? `dim-${define.dimensionKey}`
+          ? isCorner
+            ? `dim-cor-${define.dimensionKey}`
+            : `dim-${define.dimensionKey}`
           : define?.indicatorKey
           ? `ind-${define.indicatorKey}`
           : `${col}-${row}`;
@@ -3731,6 +3743,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         ? getProp('bgColor', actStyle, col, row, this)
         : (theme.group.fill as string),
       color: isBoolean(theme.text.fill) ? getProp('color', actStyle, col, row, this) : (theme.text.fill as string),
+      strokeColor: isBoolean(theme.text.stroke)
+        ? getProp('strokeColor', actStyle, col, row, this)
+        : (theme.text.stroke as string),
       fontFamily: theme.text.fontFamily,
       fontSize: theme.text.fontSize,
       fontWeight: theme.text.fontWeight,
@@ -4104,28 +4119,58 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (col < this.frozenColCount && row < this.frozenRowCount) {
       return true;
     }
-
-    const colHeaderRangeRect = this.getCellRangeRelativeRect({
-      start: {
-        col: 0,
-        row: 0
-      },
-      end: {
-        col: this.colCount - 1,
-        row: this.columnHeaderLevelCount
-      }
-    });
-    const rowHeaderRangeRect = this.getCellRangeRelativeRect({
-      start: {
-        col: 0,
-        row: 0
-      },
-      end: {
-        col: this.rowHeaderLevelCount,
-        row: this.rowCount - 1
-      }
-    });
-
+    let colHeaderRangeRect;
+    if (this.frozenRowCount >= 1) {
+      colHeaderRangeRect = this.getCellRangeRelativeRect({
+        start: {
+          col: 0,
+          row: 0
+        },
+        end: {
+          col: this.colCount - 1,
+          row: this.frozenRowCount - 1
+        }
+      });
+    }
+    let rowHeaderRangeRect;
+    if (this.frozenColCount >= 1) {
+      rowHeaderRangeRect = this.getCellRangeRelativeRect({
+        start: {
+          col: 0,
+          row: 0
+        },
+        end: {
+          col: this.frozenColCount - 1,
+          row: this.rowCount - 1
+        }
+      });
+    }
+    let bottomFrozenRangeRect;
+    if (this.bottomFrozenRowCount >= 1) {
+      bottomFrozenRangeRect = this.getCellRangeRelativeRect({
+        start: {
+          col: 0,
+          row: this.rowCount - this.bottomFrozenRowCount
+        },
+        end: {
+          col: this.colCount - 1,
+          row: this.rowCount - 1
+        }
+      });
+    }
+    let rightFrozenRangeRect;
+    if (this.rightFrozenColCount >= 1) {
+      rightFrozenRangeRect = this.getCellRangeRelativeRect({
+        start: {
+          col: this.colCount - this.rightFrozenColCount,
+          row: 0
+        },
+        end: {
+          col: this.colCount - 1,
+          row: this.rowCount - 1
+        }
+      });
+    }
     if (
       rect.top >= drawRange.top &&
       rect.bottom <= drawRange.bottom &&
@@ -4133,12 +4178,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       rect.right <= drawRange.right
     ) {
       // return true;
-      if (this.isHeader(col, row)) {
+      if (this.isFrozenCell(col, row)) {
         return true;
       } else if (
         // body cell drawRange do not intersect colHeaderRangeRect&rowHeaderRangeRect
-        drawRange.top >= colHeaderRangeRect.bottom &&
-        drawRange.left >= rowHeaderRangeRect.right
+        rect.top >= (colHeaderRangeRect?.bottom ?? rect.top) &&
+        rect.left >= (rowHeaderRangeRect?.right ?? rect.left) &&
+        rect.bottom <= (bottomFrozenRangeRect?.top ?? rect.bottom) &&
+        rect.right <= (rightFrozenRangeRect?.left ?? rect.right)
       ) {
         return true;
       }
