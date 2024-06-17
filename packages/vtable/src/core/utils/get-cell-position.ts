@@ -367,7 +367,9 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
 
   const colInfo = getTargetColAtConsiderRightFrozen(rightFrozen ? x : x + _this.scrollLeft, rightFrozen, _this);
   const rowInfo = getTargetRowAtConsiderBottomFrozen(bottomFrozen ? y : y + _this.scrollTop, bottomFrozen, _this);
-
+  if (!colInfo || !rowInfo) {
+    return undefined;
+  }
   const { row, top, bottom, height } = rowInfo;
   const { col, left, right, width } = colInfo;
   const rect = {
