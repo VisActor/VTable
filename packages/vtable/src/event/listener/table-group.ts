@@ -338,7 +338,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     stateManager.updateInteractionState(InteractionState.default);
     eventManager.dealTableHover();
     //点击到表格外部不需要取消选中状态
-    if (table.options.outsideClickDeselect) {
+    if (table.options.select?.outsideClickDeselect) {
       eventManager.dealTableSelect();
     }
   });
@@ -734,7 +734,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.endSelectCells();
 
       // 点击空白区域取消选中
-      if (table.options.blankAreaClickDeselect ?? true) {
+      if (table.options.select?.blankAreaClickDeselect ?? true) {
         eventManager.dealTableSelect();
       }
 

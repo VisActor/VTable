@@ -32,14 +32,6 @@
 
 是否显示表头。
 
-## blankAreaClickDeselect(boolean) = false
-
-点击空白区域是否取消选中。
-
-## outsideClickDeselect(boolean) = true
-
-点击外部区域是否取消选中。
-
 ## pagination(IPagination)
 
 分页配置。

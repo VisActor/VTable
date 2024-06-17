@@ -32,13 +32,6 @@ Whether to transpose, default is false
 
 Whether to display the table header.
 
-## blankAreaClickDeselect(boolean) = false
-
-Whether to cancel the selection when clicking the blank area.
-
-## outsideClickDeselect(boolean) = true
-
-Whether to cancel the selection when clicking outside the table.
 
 ## pagination(IPagination)
 
