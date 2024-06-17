@@ -4099,27 +4099,32 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (col < this.frozenColCount && row < this.frozenRowCount) {
       return true;
     }
-
-    const colHeaderRangeRect = this.getCellRangeRelativeRect({
-      start: {
-        col: 0,
-        row: 0
-      },
-      end: {
-        col: this.colCount - 1,
-        row: this.columnHeaderLevelCount
-      }
-    });
-    const rowHeaderRangeRect = this.getCellRangeRelativeRect({
-      start: {
-        col: 0,
-        row: 0
-      },
-      end: {
-        col: this.rowHeaderLevelCount,
-        row: this.rowCount - 1
-      }
-    });
+    let colHeaderRangeRect;
+    if (this.frozenRowCount >= 1) {
+      colHeaderRangeRect = this.getCellRangeRelativeRect({
+        start: {
+          col: 0,
+          row: 0
+        },
+        end: {
+          col: this.colCount - 1,
+          row: this.frozenRowCount - 1
+        }
+      });
+    }
+    let rowHeaderRangeRect;
+    if (this.frozenColCount >= 1) {
+      rowHeaderRangeRect = this.getCellRangeRelativeRect({
+        start: {
+          col: 0,
+          row: 0
+        },
+        end: {
+          col: this.frozenColCount - 1,
+          row: this.rowCount - 1
+        }
+      });
+    }
     let bottomFrozenRangeRect;
     if (this.bottomFrozenRowCount >= 1) {
       bottomFrozenRangeRect = this.getCellRangeRelativeRect({
@@ -4153,12 +4158,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       rect.right <= drawRange.right
     ) {
       // return true;
-      if (this.isHeader(col, row)) {
+      if (this.isFrozenCell(col, row)) {
         return true;
       } else if (
         // body cell drawRange do not intersect colHeaderRangeRect&rowHeaderRangeRect
-        rect.top >= colHeaderRangeRect.bottom &&
-        rect.left >= rowHeaderRangeRect.right &&
+        rect.top >= (colHeaderRangeRect?.bottom ?? rect.top) &&
+        rect.left >= (rowHeaderRangeRect?.right ?? rect.left) &&
         rect.bottom <= (bottomFrozenRangeRect?.top ?? rect.bottom) &&
         rect.right <= (rightFrozenRangeRect?.left ?? rect.right)
       ) {
