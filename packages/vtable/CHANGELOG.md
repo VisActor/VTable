@@ -1,6 +1,30 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 13 Jun 2024 12:35:49 GMT and should not be manually modified.
+This log was last generated on Mon, 17 Jun 2024 11:51:18 GMT and should not be manually modified.
+
+## 1.3.2
+Mon, 17 Jun 2024 11:51:18 GMT
+
+### Updates
+
+- fix: cellIsInVisualView api error #1864
+
+
+- refactor: tooltip support scroll #1887
+
+
+- fix: if set style autoWrapText, this config not wort when resize column width #1892
+
+
+- refactor: when not records pivot table can show corner header #1895
+
+
+- refactor: when rowTree children not set value can supplement indicators #1924
+
+
+- feat: add blankAreaClickDeselect and outsideClickDeselect config
+
+
 
 ## 1.3.1
 Thu, 13 Jun 2024 12:35:49 GMT
