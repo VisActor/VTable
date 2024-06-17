@@ -338,6 +338,10 @@ export interface BaseTableConstructorOptions {
     disableSelect?: boolean;
     /** 单独设置表头不响应鼠标select交互 */
     disableHeaderSelect?: boolean;
+    /** 点击空白区域是否取消选中 */
+    blankAreaClickDeselect?: boolean;
+    /** 点击外部区域是否取消选中 */
+    outsideClickDeselect?: boolean; //
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
@@ -419,7 +423,7 @@ export interface BaseTableConstructorOptions {
   customMergeCell?: CustomMergeCell;
 
   // #region for nodejs
-  mode?: 'node' | 'broswer';
+  mode?: 'node' | 'browser';
   modeParams?: any;
   canvasWidth?: number;
   canvasHeight?: number;

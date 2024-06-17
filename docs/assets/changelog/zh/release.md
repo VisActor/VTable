@@ -1,3 +1,22 @@
+# v1.3.1
+
+2024-06-14
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix frozenColCount large than colCount error [#1872](https://github.com/VisActor/VTable/issues/1872)
+- **@visactor/vtable**: fix merge cell size update [#1869](https://github.com/VisActor/VTable/issues/1869)
+- **@visactor/vtable**: optimize row height update when useOneRowHeightFillAll
+
+**📖 文档更新**
+
+- **@visactor/vtable**: update changlog of rush
+
+
+
+[更多详情请查看 v1.3.1](https://github.com/VisActor/VTable/releases/tag/v1.3.1)
+
 # v1.3.0
 
 2024-06-12

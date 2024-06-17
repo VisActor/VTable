@@ -208,6 +208,14 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 单独设置表头不响应鼠标 select 交互。
 
+##${prefix} blankAreaClickDeselect(boolean) = false
+
+点击空白区域是否取消选中。
+
+##${prefix} outsideClickDeselect(boolean) = true
+
+点击外部区域是否取消选中。
+
 #${prefix} theme(Object)
 
 {{ use: common-theme(
