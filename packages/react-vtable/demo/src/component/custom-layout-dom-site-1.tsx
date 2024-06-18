@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import type { CustomLayoutFunctionArg } from '../../../src';
 import { ListTable, ListColumn, CustomLayout, Group, Text, Tag, Image } from '../../../src';
 import {
@@ -168,6 +169,7 @@ function App() {
         // eslint-disable-next-line no-undef
         // (window as any).tableInstance = table;
       }}
+      ReactDOM={ReactDOM}
     >
       <ListColumn field={'id'} title={'ID'} />
       <ListColumn field={'name'} title={'Comment'} width={300}>

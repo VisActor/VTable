@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
-import * as VTable from '@visactor/vtable';
+// import * as VTable from '@visactor/vtable';
+import { VTable } from '../vtable';
 import React, { useState, useEffect, useRef, useImperativeHandle, useCallback } from 'react';
-import ReactDOM from 'react-dom/client';
 import type { ContainerProps } from '../containers/withContainer';
 import withContainer from '../containers/withContainer';
 import type { TableContextType } from '../context/table';
@@ -45,6 +45,8 @@ export interface BaseTableProps extends EventsProps {
   /** 画布高度 */
   height?: number;
   skipFunctionDiff?: boolean;
+
+  ReactDOM?: any;
 
   /** 表格渲染完成事件 */
   onReady?: (instance: IVTable, isInitial: boolean) => void;
@@ -159,9 +161,9 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         vtable = new VTable.ListTable(props.container, parseOption(props));
       }
       // vtable.scenegraph.stage.enableReactAttribute(ReactDOM);
-      vtable.scenegraph.stage.reactAttribute = ReactDOM;
+      vtable.scenegraph.stage.reactAttribute = props.ReactDOM;
       vtable.scenegraph.stage.pluginService.register(new VTableReactAttributePlugin());
-      vtable.scenegraph.stage.params.ReactDOM = ReactDOM;
+      vtable.scenegraph.stage.params.ReactDOM = props.ReactDOM;
       tableContext.current = { ...tableContext.current, table: vtable };
       isUnmount.current = false;
     },

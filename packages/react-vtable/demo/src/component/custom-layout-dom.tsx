@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import type { CustomLayoutFunctionArg } from '../../../src';
 import { ListTable, ListColumn, CustomLayout, Group, Text, Tag, Image } from '../../../src';
 import { Avatar, Button, Card, Popover, Space, Typography } from '@arco-design/web-react';
@@ -296,6 +297,7 @@ function App() {
         // eslint-disable-next-line no-undef
         (window as any).tableInstance = table;
       }}
+      ReactDOM={ReactDOM}
     >
       <ListColumn field={'0'} title={'name'} />
       <ListColumn field={'1'} title={'age'} />
