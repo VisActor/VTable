@@ -563,12 +563,11 @@ export class Dataset {
             .sumBy!.map(byField => record[byField])
             .join(this.stringJoinChar);
           if (!this.collectedValues[field][collectKeys][sumByKeys]) {
-            this.collectedValues[field][collectKeys][sumByKeys] = new this.aggregators[AggregationType.SUM](
-              field,
-              undefined,
-              undefined,
-              this.needSplitPositiveAndNegative
-            );
+            this.collectedValues[field][collectKeys][sumByKeys] = new this.aggregators[AggregationType.SUM]({
+              key: field,
+              dimension: undefined,
+              needSplitPositiveAndNegative: this.needSplitPositiveAndNegative
+            });
           }
           this.collectedValues[field][collectKeys][sumByKeys].push(record);
         } else if (this.collectValuesBy[field].range) {
