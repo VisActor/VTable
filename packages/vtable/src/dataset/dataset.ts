@@ -163,15 +163,16 @@ export class Dataset {
     this.derivedFieldRules = this.dataConfig?.derivedFieldRules;
     this.mappingRules = this.dataConfig?.mappingRules;
     this.calculatedFieldRules = this.dataConfig?.calculatedFieldRules;
-    this.calculatedFiledKeys = this.calculatedFieldRules?.map(rule => rule.key);
-    this.calculatedFieldDependIndicatorKeys = this.calculatedFieldRules?.reduce((arr: string[], rule) => {
-      for (let i = 0; i < rule.dependIndicatorKeys.length; i++) {
-        if (arr.indexOf(rule.dependIndicatorKeys[i]) === -1) {
-          arr.push(rule.dependIndicatorKeys[i]);
+    this.calculatedFiledKeys = this.calculatedFieldRules?.map(rule => rule.key) ?? [];
+    this.calculatedFieldDependIndicatorKeys =
+      this.calculatedFieldRules?.reduce((arr: string[], rule) => {
+        for (let i = 0; i < rule.dependIndicatorKeys.length; i++) {
+          if (arr.indexOf(rule.dependIndicatorKeys[i]) === -1) {
+            arr.push(rule.dependIndicatorKeys[i]);
+          }
         }
-      }
-      return arr;
-    }, []);
+        return arr;
+      }, []) ?? [];
     this.totals = this.dataConfig?.totals;
     this.rows = rows;
     this.columns = columns;
