@@ -103,7 +103,7 @@ export class Dataset {
         dimension: string | string[];
         formatFun?: any;
         isRecord?: boolean;
-        needSplitPositiveAndNegative?: boolean;
+        needSplitPositiveAndNegativeForSum?: boolean;
         calculateFun?: any;
         dependAggregators?: any;
         dependIndicatorKeys?: string[];
@@ -566,8 +566,9 @@ export class Dataset {
           if (!this.collectedValues[field][collectKeys][sumByKeys]) {
             this.collectedValues[field][collectKeys][sumByKeys] = new this.aggregators[AggregationType.SUM]({
               key: field,
-              dimension: undefined,
-              needSplitPositiveAndNegative: this.needSplitPositiveAndNegative
+              dimension: field,
+              isRecord: undefined,
+              needSplitPositiveAndNegativeForSum: this.needSplitPositiveAndNegative
             });
           }
           this.collectedValues[field][collectKeys][sumByKeys].push(record);
