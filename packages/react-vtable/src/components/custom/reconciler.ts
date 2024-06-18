@@ -172,4 +172,7 @@ function updateGraphicProps(graphic: Graphic, newProps: any, oldProps: any) {
 
   // update all attribute
   graphic.initAttributes(newProps.attribute);
+  if (graphic.type === 'image') {
+    graphic.loadImage(newProps.attribute.image);
+  }
 }
