@@ -164,7 +164,7 @@ export class Dataset {
     this.mappingRules = this.dataConfig?.mappingRules;
     this.calculatedFieldRules = this.dataConfig?.calculatedFieldRules;
     this.calculatedFiledKeys = this.calculatedFieldRules?.map(rule => rule.key);
-    this.calculatedFieldDependIndicatorKeys = this.calculatedFieldRules.reduce((arr: string[], rule) => {
+    this.calculatedFieldDependIndicatorKeys = this.calculatedFieldRules?.reduce((arr: string[], rule) => {
       for (let i = 0; i < rule.dependIndicatorKeys.length; i++) {
         if (arr.indexOf(rule.dependIndicatorKeys[i]) === -1) {
           arr.push(rule.dependIndicatorKeys[i]);
