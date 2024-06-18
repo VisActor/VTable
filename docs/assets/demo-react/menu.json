@@ -120,6 +120,20 @@
             "zh": "自定义布局",
             "en": "custom layout"
           }
+        },
+        {
+          "path": "custom-layout-dom",
+          "title": {
+            "zh": "自定义布局dom",
+            "en": "custom layout dom"
+          }
+        },
+        {
+          "path": "custom-layout-all-dom",
+          "title": {
+            "zh": "自定义布局all dom",
+            "en": "custom layout all dom"
+          }
         }
       ]
     },
