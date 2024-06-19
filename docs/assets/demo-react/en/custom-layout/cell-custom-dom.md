@@ -1,17 +1,17 @@
 ---
 category: examples
 group: component
-title: 自定义组件
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-component.png
+title: cell custom dom component
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-vtable-cell-dom-component.jpeg
 order: 1-1
 link: '../guide/Developer_Ecology/react'
 ---
 
-# 自定义组件
+# cell custom dom component
 
-自定义组件`CustomComponent`组件方便在 React-VTable 组件上叠加外部组件。
+Use ArcoDesign in cells. For details, please refer to [Custom Components](../guide/Developer_Ecology/react-custom-component)
 
-## 代码演示
+## code demo
 
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';

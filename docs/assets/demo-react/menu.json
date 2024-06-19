@@ -115,24 +115,24 @@
       },
       "children": [
         {
-          "path": "custom-layout",
+          "path": "cell-custom-component",
           "title": {
-            "zh": "自定义布局",
-            "en": "custom layout"
+            "zh": "单元格自定义组件",
+            "en": "cell custom component"
           }
         },
         {
-          "path": "custom-layout-dom",
+          "path": "cell-custom-layout-dom",
           "title": {
-            "zh": "自定义布局dom",
-            "en": "custom layout dom"
+            "zh": "单元格自定义组件+dom组件",
+            "en": "cell custom component + dom component"
           }
         },
         {
-          "path": "custom-layout-all-dom",
+          "path": "cell-custom-dom",
           "title": {
-            "zh": "自定义布局all dom",
-            "en": "custom layout all dom"
+            "zh": "单元格内dom组件",
+            "en": "cell custom dom component"
           }
         }
       ]
