@@ -68,7 +68,10 @@ dataConfig 应用举例：
 
 ### 1. 数据汇总规则
 
+#### VTable 来计算小计总计配置：
+
 [option 说明](../../option/PivotTable#dataConfig.totals)
+
 配置示例：
 
 ```
@@ -94,6 +97,17 @@ dataConfig: {
 ```
 
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-total
+
+#### 自定义汇总数据
+
+如果需要自定义汇总数据，不期望 VTable 来计算小计总计值。除了需要配置上述配置外，还需要传入 VTable 的数据中需要包含对应的汇总数据。这样 VTable 内部会分析将其作为汇总数据而不使用 VTable 的汇总值来展示
+
+ <div style="width: 50%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-total-demo.png" />
+    <p>自定义小计总计示例代码</p>
+  </div>
+
+具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-custom-total
 
 ### 2. 排序规则
 
@@ -124,6 +138,7 @@ VTable 的透视表支持四种排序方式：维度值自然排序、指定维�
 ### 3. 过滤规则
 
 [option 说明](../../option/PivotTable#dataConfig.filterRules)
+
 配置示例：
 
 ```
@@ -141,6 +156,7 @@ filterRules: [
 ### 4. 聚合方式
 
 [option 说明](../../option/PivotTable#dataConfig.aggregationRules)
+
 配置示例：
 
 ```
@@ -207,6 +223,7 @@ dataConfig:{
 ### 5. 派生字段
 
 [option 说明](../../option/PivotTable#dataConfig.derivedFieldRules)
+
 配置示例：
 
 ```
@@ -223,6 +240,34 @@ dataConfig:{
 ```
 
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-derivedField
+
+### 6. 透视表计算字段
+
+[option 说明](../../option/PivotTable#dataConfig.calculatedFieldRules)
+
+配置示例：
+
+```
+     dataConfig: {
+        calculatedFieldRules: [
+          {
+            key: 'AvgPrice',
+            dependIndicatorKeys: ['Quantity', 'Sales'],
+            calculateFun: dependValue => {
+              return dependValue.Sales / dependValue.Quantity;
+            }
+          }
+        ],
+     }
+```
+
+配置解释说明：
+
+- key: 计算字段的 key 唯一标识，可以当做新指标，用于配置在 indicators 中在透视表中展示。
+- dependIndicatorKeys：计算字段依赖的指标，可以是在 records 中具体对应的指标字段。如果依赖的指标不在 records 中，则需要在 aggregationRules 中配置，具体指明聚合规则和 indicatorKey 以在 dependIndicatorKeys 所使用。
+- calculateFun：计算字段的计算函数，依赖的指标值作为参数传入，返回值作为计算字段的值。
+
+具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-calculatedField
 
 ## 数据分析过程
 

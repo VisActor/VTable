@@ -180,8 +180,12 @@ export type DerivedFieldRules = DerivedFieldRule[];
 
 //#region 计算字段规则
 export interface CalculateddFieldRule {
+  /** 唯一标识，可以当做新指标的key，用于配置在 indicators 中在透视表中展示。 */
   key: string;
+  /** 计算字段依赖的指标，可以是在 records 中具体对应的指标字段 or 不是数据records 中的字段
+   * 如果依赖的指标不在 records 中，则需要在 aggregationRules 中明确配置，具体指明聚合规则和 indicatorKey 以在 dependIndicatorKeys 所使用。 */
   dependIndicatorKeys: string[];
+  /** 计算字段的计算函数，依赖的指标值作为参数传入，返回值作为计算字段的值。   */
   calculateFun?: (dependFieldsValue: any) => any;
 }
 
