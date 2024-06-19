@@ -23,11 +23,11 @@ export abstract class Aggregator implements IAggregator {
   formatFun?: any;
   _formatedValue?: any;
 
-  constructor(key: string, dimension: string, formatFun?: any, isRecord?: boolean) {
-    this.key = key;
-    this.field = dimension;
-    this.formatFun = formatFun;
-    this.isRecord = isRecord ?? this.isRecord;
+  constructor(config: { key: string; dimension: string; formatFun?: any; isRecord?: boolean }) {
+    this.key = config.key;
+    this.field = config.dimension;
+    this.formatFun = config.formatFun;
+    this.isRecord = config.isRecord ?? this.isRecord;
   }
   abstract push(record: any): void;
   abstract value(): any;
@@ -112,7 +112,7 @@ export class CustomAggregator extends Aggregator {
     isRecord?: boolean;
     aggregationFun?: Function;
   }) {
-    super(config.key, config.dimension, config.formatFun, config.isRecord);
+    super(config);
     this.aggregationFun = config.aggregationFun;
   }
   push(record: any): void {
@@ -160,7 +160,7 @@ export class RecalculateAggregator extends Aggregator {
     dependAggregators: Aggregator[];
     dependIndicatorKeys: string[];
   }) {
-    super(config.key, config.dimension, config.formatFun, config.isRecord);
+    super(config);
     this.calculateFun = config.calculateFun;
     this.dependAggregators = config.dependAggregators;
     this.dependIndicatorKeys = config.dependIndicatorKeys;
@@ -203,7 +203,7 @@ export class SumAggregator extends Aggregator {
     isRecord?: boolean;
     needSplitPositiveAndNegative?: boolean;
   }) {
-    super(config.key, config.dimension, config.formatFun, config.isRecord);
+    super(config);
     this.needSplitPositiveAndNegativeForSum = config.needSplitPositiveAndNegative ?? false;
   }
   push(record: any): void {
