@@ -675,30 +675,53 @@ export class Dataset {
       if (!this.totalRecordsTree[flatRowKey][flatColKey]) {
         this.totalRecordsTree[flatRowKey][flatColKey] = [];
       }
-
-      for (let i = 0; i < this.indicatorKeys.length; i++) {
-        const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
-        if (!this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i]) {
-          this.totalRecordsTree[flatRowKey][flatColKey][i] = new this.aggregators[
-            aggRule?.aggregationType ?? AggregationType.SUM
-          ]({
-            key: this.indicatorKeys[i],
-            dimension: aggRule?.field ?? this.indicatorKeys[i],
-            formatFun:
-              aggRule?.formatFun ??
-              (
+      const toComputeIndicatorKeys = this.indicatorKeysIncludeCalculatedFieldDependIndicatorKeys;
+      for (let i = 0; i < toComputeIndicatorKeys.length; i++) {
+        if (this.calculatedFiledKeys.indexOf(toComputeIndicatorKeys[i]) >= 0) {
+          const calculatedFieldRule = this.calculatedFieldRules?.find(rule => rule.key === toComputeIndicatorKeys[i]);
+          if (!this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i]) {
+            this.totalRecordsTree[flatRowKey][flatColKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
+              key: toComputeIndicatorKeys[i],
+              dimension: toComputeIndicatorKeys[i],
+              isRecord: true,
+              formatFun: (
                 this.indicators?.find((indicator: string | IIndicator) => {
                   if (typeof indicator !== 'string') {
-                    return indicator.indicatorKey === this.indicatorKeys[i];
+                    return indicator.indicatorKey === toComputeIndicatorKeys[i];
                   }
                   return false;
                 }) as IIndicator
-              )?.format
-          });
-        }
+              )?.format,
+              calculateFun: calculatedFieldRule?.calculateFun,
+              dependAggregators: this.totalRecordsTree[flatRowKey][flatColKey],
+              dependIndicatorKeys: calculatedFieldRule?.dependIndicatorKeys
+            });
+          }
+          toComputeIndicatorKeys[i] in record && this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i].push(record);
+        } else {
+          const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
+          if (!this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i]) {
+            this.totalRecordsTree[flatRowKey][flatColKey][i] = new this.aggregators[
+              aggRule?.aggregationType ?? AggregationType.SUM
+            ]({
+              key: toComputeIndicatorKeys[i],
+              dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+              formatFun:
+                aggRule?.formatFun ??
+                (
+                  this.indicators?.find((indicator: string | IIndicator) => {
+                    if (typeof indicator !== 'string') {
+                      return indicator.indicatorKey === toComputeIndicatorKeys[i];
+                    }
+                    return false;
+                  }) as IIndicator
+                )?.format
+            });
+          }
 
-        //push融合了计算过程
-        this.indicatorKeys[i] in record && this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i].push(record);
+          //push融合了计算过程
+          toComputeIndicatorKeys[i] in record && this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i].push(record);
+        }
       }
       return;
     }
@@ -1265,7 +1288,11 @@ export class Dataset {
           return;
         }
         const colKey = flatColKey.split(this.stringJoinChar);
-        if (that.totals?.column?.subTotalsDimensions) {
+        if (
+          that.totals?.column?.subTotalsDimensions &&
+          that.totals?.column?.subTotalsDimensions?.length > 0 &&
+          that.totals.column.showSubTotals !== false
+        ) {
           for (let i = 0, len = that.totals?.column?.subTotalsDimensions?.length; i < len; i++) {
             const dimension = that.totals.column.subTotalsDimensions[i];
             const dimensionIndex = that.columns.indexOf(dimension);
@@ -1398,7 +1425,11 @@ export class Dataset {
       Object.keys(that.tree).forEach(flatRowKey => {
         const rowKey = flatRowKey.split(this.stringJoinChar);
         Object.keys(that.tree[flatRowKey]).forEach(flatColKey => {
-          if (that.totals?.row?.subTotalsDimensions) {
+          if (
+            that.totals?.row?.subTotalsDimensions &&
+            that.totals?.row?.subTotalsDimensions?.length > 0 &&
+            that.totals.row.showSubTotals !== false
+          ) {
             for (let i = 0, len = that.totals?.row?.subTotalsDimensions?.length; i < len; i++) {
               const dimension = that.totals.row.subTotalsDimensions[i];
               const dimensionIndex = that.rows.indexOf(dimension);
