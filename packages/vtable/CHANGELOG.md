@@ -1,6 +1,80 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 06 Jun 2024 02:34:10 GMT and should not be manually modified.
+This log was last generated on Mon, 17 Jun 2024 11:51:18 GMT and should not be manually modified.
+
+## 1.3.2
+Mon, 17 Jun 2024 11:51:18 GMT
+
+### Updates
+
+- fix: cellIsInVisualView api error #1864
+
+
+- refactor: tooltip support scroll #1887
+
+
+- fix: if set style autoWrapText, this config not wort when resize column width #1892
+
+
+- refactor: when not records pivot table can show corner header #1895
+
+
+- refactor: when rowTree children not set value can supplement indicators #1924
+
+
+- feat: add blankAreaClickDeselect and outsideClickDeselect config
+
+
+
+## 1.3.1
+Thu, 13 Jun 2024 12:35:49 GMT
+
+### Updates
+
+- fix: fix frozenColCount large than colCount error #1872
+
+
+- docs: update changlog of rush
+
+
+- fix: fix merge cell size update #1869
+- fix: optimize row height update when useOneRowHeightFillAll
+
+## 1.3.0
+Wed, 12 Jun 2024 12:30:16 GMT
+
+### Minor changes
+
+- feat: tooltip disappear delay time #1848
+
+
+- feat: add sort config for pivotTable #1865
+
+
+
+### Updates
+
+- refactor: memory release logic optimization #1856
+
+
+- refactor: arrow key with shift ctrl key to select cells #1873
+
+
+- fix: icon inlineEnd inlineFront x position compute error #1882
+
+
+- fix: drill down icon can not be click #1899
+
+
+- feat: add ignoreIcon&formatExportOutput config in vtable-export #1813
+- feat: add textArea editor
+
+
+- feat: add strokeColor style #1847
+- feat: add dx&dy in title component #1874
+- fix: fix frozenColCount large than colCount error #1872
+- feat: add shrinkSparklineFirst config #1862
+- fix: fix ellipsis error in _disableColumnAndRowSizeRound mode #1884
 
 ## 1.2.0
 Thu, 06 Jun 2024 02:34:10 GMT

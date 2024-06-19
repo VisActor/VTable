@@ -66,5 +66,5 @@ instance.updateSortState({
 ## Quote
 
 - [Table Sort demo](https://visactor.io/vtable/demo/basic-functionality/sort)
-- [Sort Tutorial](https://visactor.io/vtable/guide/basic_function/sort)
+- [Sort Tutorial](https://visactor.io/vtable/guide/basic_function/sort/list_sort)
 - [github](https://github.com/VisActor/VTable)

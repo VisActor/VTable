@@ -88,6 +88,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.editorManager = new EditManeger(this);
     }
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
 
     if (options.dataSource) {
       _setDataSource(this, options.dataSource);
@@ -164,6 +165,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.headerHelper.setTableColumnsEditor();
     this._hasAutoImageColumn = undefined;
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
@@ -190,6 +192,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.columns = header;
     this.options.header = header;
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
     //需要异步等待其他事情都完成后再绘制
     this.renderAsync();
   }
@@ -408,6 +411,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.transpose = options.transpose ?? false;
     // 更新表头
     this.refreshHeader();
+    this.internalProps.useOneRowHeightFillAll = false;
 
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
@@ -459,6 +463,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       pagination.perPageCount &&
         (this.pagination.perPageCount = pagination.perPageCount || this.pagination.perPageCount);
       this.internalProps.layoutMap.clearCellRangeMap();
+      this.internalProps.useOneRowHeightFillAll = false;
       // 清空单元格内容
       this.scenegraph.clearCells();
       //数据源缓存数据更新
@@ -796,6 +801,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     this.clearCellStyleCache();
     this.internalProps.layoutMap.clearCellRangeMap();
+    this.internalProps.useOneRowHeightFillAll = false;
     this.scenegraph.updateHierarchyIcon(col, row);
     this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions);
     if (checkHasChart) {
@@ -891,6 +897,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
         // clear cell range cache
         this.internalProps.layoutMap.clearCellRangeMap();
+        this.internalProps.useOneRowHeightFillAll = false;
         this.scenegraph.sortCell();
       }
     }
@@ -926,7 +933,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const cellType = this.getCellType(col, row);
     if (isValid(field) && cellType === 'checkbox') {
       const dataIndex = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row));
-      return this.stateManager.checkedState[dataIndex as number][field as string | number];
+      return this.stateManager.checkedState[dataIndex as number]?.[field as string | number];
     }
     return undefined;
   }

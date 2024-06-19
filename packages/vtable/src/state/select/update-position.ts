@@ -95,6 +95,10 @@ export function updateSelectPosition(
   ) {
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
     if (isShift && currentRange) {
+      if (!isCtrl) {
+        cellPos.col = col;
+        cellPos.row = row;
+      }
       if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
         const startCol = Math.min(currentRange.start.col, currentRange.end.col, col);
         const endCol = Math.max(currentRange.start.col, currentRange.end.col, col);

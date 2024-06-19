@@ -442,7 +442,7 @@ export function dealHeader(
     headerType: indicatorInfo?.headerType ?? dimensionInfo?.headerType ?? 'text',
     headerIcon: indicatorInfo?.headerIcon ?? dimensionInfo?.headerIcon,
     // define: <any>hd,
-    define: Object.assign({}, <any>hd, indicatorInfo ?? dimensionInfo),
+    define: Object.assign({}, <any>hd, indicatorInfo ?? Object.assign({}, dimensionInfo, { sort: undefined })),
     fieldFormat: indicatorInfo?.headerFormat ?? dimensionInfo?.headerFormat,
     // iconPositionList:[]
     dropDownMenu: indicatorInfo?.dropDownMenu ?? dimensionInfo?.dropDownMenu,
@@ -456,6 +456,7 @@ export function dealHeader(
     minWidth: (dimensionInfo as IRowDimension)?.minWidth,
     maxWidth: (dimensionInfo as IRowDimension)?.maxWidth,
     showSort: indicatorInfo?.showSort ?? dimensionInfo?.showSort,
+    sort: indicatorInfo?.sort,
     description: dimensionInfo?.description
   };
 

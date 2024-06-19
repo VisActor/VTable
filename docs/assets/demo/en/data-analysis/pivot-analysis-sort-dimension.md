@@ -9,7 +9,7 @@ option: PivotTable#dataConfig.sortRules
 
 # Sort dimension values of pivot analysis table
 
-The pivot table is sorted according to the dimension value of a certain dimension. SortRules can be configured in dataConfig. Multiple sorting rules can be configured. The one configured first has a higher priority.
+The pivot table is sorted according to the dimension value of a certain dimension. SortRules can be configured in dataConfig. Multiple sorting rules can be configured. The one configured first has a higher priority. In this example, the rows dimension 'Sub-Category' is configured with sort: true, which will display a sort icon in the header cell that displays the dimension name. Click the icon to sort by dimension value.
 
 ## Key Configurations
 
@@ -40,6 +40,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         {
           dimensionKey: 'Sub-Category',
           title: 'Sub-Catogery',
+          sort: true,
           headerStyle: {
             textStick: true
           },
@@ -133,8 +134,8 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
             sortBy: ['Office Supplies', 'Technology', 'Furniture']
           },
           {
-            sortField: 'Sub-Category',
-            sortBy: ['Chairs', 'Tables', 'Labels', 'Art', 'Paper', 'Appliances']
+            sortField: 'Segment',
+            sortBy: ['Home Office', 'Consumer', 'Corporate']
           }
         ]
       },

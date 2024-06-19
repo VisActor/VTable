@@ -12,7 +12,7 @@ import type { SceneEvent } from '../util';
 import { getCellEventArgsSet, regIndexReg } from '../util';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { Group } from '../../scenegraph/graphic/group';
-import { isValid, last } from '@visactor/vutils';
+import { isValid } from '@visactor/vutils';
 import { getIconAndPositionFromTarget } from '../../scenegraph/utils/icon';
 import { cellInRanges } from '../../tools/helper';
 import { Rect } from '../../tools/Rect';
@@ -338,7 +338,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     stateManager.updateInteractionState(InteractionState.default);
     eventManager.dealTableHover();
     //点击到表格外部不需要取消选中状态
-    // eventManager.dealTableSelect();
+    if (table.options.select?.outsideClickDeselect) {
+      eventManager.dealTableSelect();
+    }
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
@@ -381,6 +383,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
     const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
       ? eventArgsSet.eventArgs.target
+      : (e.target as any).role?.startsWith('icon')
+      ? e.target
       : undefined;
     eventManager.downIcon = hitIcon;
     if (!hitIcon || (hitIcon.attribute as IIconGraphicAttribute).interactive === false) {
@@ -669,8 +673,15 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.hideMenu();
     }
     (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+
+    const hitIcon = (e.target as any).role?.startsWith('icon') ? e.target : undefined;
+    eventManager.downIcon = hitIcon;
     // 处理列宽调整  这里和tableGroup.addEventListener('pointerdown' 逻辑一样
-    if (!eventManager.checkCellFillhandle(eventArgsSet) && eventManager.checkColumnResize(eventArgsSet, true)) {
+    if (
+      !hitIcon &&
+      !eventManager.checkCellFillhandle(eventArgsSet) &&
+      eventManager.checkColumnResize(eventArgsSet, true)
+    ) {
       // eventManager.startColumnResize(e);
       // eventManager._resizing = true;
       table.scenegraph.updateChartState(null);
@@ -720,8 +731,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
     ) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
-      eventManager.dealTableSelect();
       stateManager.endSelectCells();
+
+      // 点击空白区域取消选中
+      if (table.options.select?.blankAreaClickDeselect ?? true) {
+        eventManager.dealTableSelect();
+      }
+
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
     } else if (table.eventManager.isDraging && stateManager.isSelecting()) {

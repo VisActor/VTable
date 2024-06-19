@@ -115,7 +115,9 @@ export class Dataset {
   collectedValues: Record<string, Record<string, CollectedValue>> = {};
   cacheCollectedValues: Record<string, Record<string, CollectedValue>> = {};
   rows: string[];
+  rowsHasValue: boolean[]; //rows中的key是否有在records中体现
   columns: string[];
+  columnsHasValue: boolean[]; //columns中的key是否有在records中体现
   indicatorKeys: string[];
   customRowTree?: IHeaderTreeDefine[];
   customColTree?: IHeaderTreeDefine[];
@@ -198,6 +200,8 @@ export class Dataset {
     this.rowFlatKeys = {};
     this.colKeys = [];
     this.rowKeys = [];
+    this.rowsHasValue = [];
+    this.columnsHasValue = [];
     if (records) {
       //处理数据
       this.records = records;
@@ -256,7 +260,9 @@ export class Dataset {
         if (this.rowHierarchyType === 'tree') {
           this.rowHeaderTree = this.ArrToTree1(
             this.rowKeys,
-            this.rows,
+            this.rows.filter((key, index) => {
+              return this.rowsHasValue[index];
+            }),
             this.indicatorsAsCol ? undefined : this.indicators,
             this.totals?.row?.showGrandTotals ||
               (!this.indicatorsAsCol && this.columns.length === 0) ||
@@ -266,7 +272,9 @@ export class Dataset {
         } else {
           this.rowHeaderTree = this.ArrToTree(
             this.rowKeys,
-            this.rows,
+            this.rows.filter((key, index) => {
+              return this.rowsHasValue[index];
+            }),
             this.indicatorsAsCol ? undefined : this.indicators,
             this.rowsIsTotal,
             this.totals?.row?.showGrandTotals || (this.indicatorsAsCol && this.rows.length === 0),
@@ -285,7 +293,9 @@ export class Dataset {
       } else {
         this.colHeaderTree = this.ArrToTree(
           this.colKeys,
-          this.columns,
+          this.columns.filter((key, index) => {
+            return this.columnsHasValue[index];
+          }),
           this.indicatorsAsCol ? this.indicators : undefined,
           this.colsIsTotal,
           this.totals?.column?.showGrandTotals || (!this.indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
@@ -558,6 +568,7 @@ export class Dataset {
     for (let l = 0, len1 = this.rows.length; l < len1; l++) {
       const rowAttr = this.rows[l];
       if (rowAttr in record) {
+        this.rowsHasValue[l] = true;
         rowKey.push(record[rowAttr]);
       } else if (rowAttr !== IndicatorDimensionKeyPlaceholder) {
         //如果数据中缺失某个维度的值 可以认为是用户传入的汇总数据
@@ -589,6 +600,7 @@ export class Dataset {
     for (let n = 0, len2 = this.columns.length; n < len2; n++) {
       const colAttr = this.columns[n];
       if (colAttr in record) {
+        this.columnsHasValue[n] = true;
         colKey.push(record[colAttr]);
       } else if (colAttr !== IndicatorDimensionKeyPlaceholder) {
         //如果数据中缺失某个维度的值 可以认为是用户传入的汇总数据
@@ -767,7 +779,9 @@ export class Dataset {
       if (this.rowHierarchyType === 'tree') {
         this.rowHeaderTree = this.ArrToTree1(
           this.rowKeys,
-          this.rows,
+          this.rows.filter((key, index) => {
+            return this.rowsHasValue[index];
+          }),
           this.indicatorsAsCol ? undefined : this.indicators,
           this.totals?.row?.showGrandTotals ||
             (!this.indicatorsAsCol && this.columns.length === 0) ||
@@ -777,7 +791,9 @@ export class Dataset {
       } else {
         this.rowHeaderTree = this.ArrToTree(
           this.rowKeys,
-          this.rows,
+          this.rows.filter((key, index) => {
+            return this.rowsHasValue[index];
+          }),
           this.indicatorsAsCol ? undefined : this.indicators,
           this.rowsIsTotal,
           this.totals?.row?.showGrandTotals || (this.indicatorsAsCol && this.rows.length === 0),
@@ -792,7 +808,9 @@ export class Dataset {
     if (!this.customColTree) {
       this.colHeaderTree = this.ArrToTree(
         this.colKeys,
-        this.columns,
+        this.columns.filter((key, index) => {
+          return this.columnsHasValue[index];
+        }),
         this.indicatorsAsCol ? this.indicators : undefined,
         this.colsIsTotal,
         this.totals?.column?.showGrandTotals || (!this.indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉

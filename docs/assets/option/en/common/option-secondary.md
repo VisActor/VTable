@@ -213,6 +213,14 @@ Do not respond to mouse select interaction.
 
 Separately set the header not to respond to mouse select interaction.
 
+##${prefix} blankAreaClickDeselect(boolean) = false
+
+Whether to cancel the selection when clicking the blank area.
+
+##${prefix} outsideClickDeselect(boolean) = true
+
+Whether to cancel the selection when clicking outside the table.
+
 #${prefix} theme(Object)
 
 {{ use: common-theme(
@@ -291,7 +299,11 @@ Html is currently more complete, default using html rendering method. Currently 
 
 ##${prefix} isShowOverflowTextTooltip (boolean)
 
-Replace the original hover:isShowTooltip configuration. Temporarily need to set renderMode to html to display, canvas has not been developed yet.
+Whether to display overflow text content tooltip when hovering over the cell. Temporarily, renderMode needs to be configured as html to display, and canvas has not been developed yet.
+
+##${prefix} overflowTextTooltipDisappearDelay (number)
+
+The overflow text tooltip delays disappearance time. If you need to delay disappearance so that the mouse can move to the tooltip content, you can configure this configuration item.
 
 ##${prefix} confine (boolean) = true
 
@@ -495,6 +507,7 @@ animationAppear?: boolean | {
 ```
 
 You can configure true to enable the default animation, or you can configure the animation parameters:
+
 - `type` The type of the entry animation, currently supports `all` and `one-by-one`, and the default is `one-by-one`
 - `direction` The direction of the entry animation, currently supports `row` and `column`, and the default is `row`
 - `duration` The duration of a single animation, in milliseconds, for `one-by-one`, it is the duration of one animation, and the default is 500

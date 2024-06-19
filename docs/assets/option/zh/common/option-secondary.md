@@ -208,6 +208,14 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 单独设置表头不响应鼠标 select 交互。
 
+##${prefix} blankAreaClickDeselect(boolean) = false
+
+点击空白区域是否取消选中。
+
+##${prefix} outsideClickDeselect(boolean) = true
+
+点击外部区域是否取消选中。
+
 #${prefix} theme(Object)
 
 {{ use: common-theme(
@@ -284,7 +292,11 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 
 ##${prefix} isShowOverflowTextTooltip (boolean)
 
-代替原来 hover:isShowTooltip 配置。暂时需要将 renderMode 配置为 html 才能显示，canvas 的还未开发。
+是否需要在 hover 到单元格时显示溢出文本内容 tooltip。暂时需要将 renderMode 配置为 html 才能显示，canvas 的还未开发。
+
+##${prefix} overflowTextTooltipDisappearDelay (number)
+
+溢出文本 tooltip 延时消失时间，如果需要延迟消失以使得鼠标可以移动到 tooltip 内容上，可以配置该配置项。
 
 ##${prefix} confine (boolean) = true
 
@@ -491,7 +503,8 @@ animationAppear?: boolean | {
 };
 ```
 
-可以配置true开启默认动画，也可以配置动画的参数：
+可以配置 true 开启默认动画，也可以配置动画的参数：
+
 - `type` 入场动画的类型，目前支持 `all` 和 `one-by-one`两种，默认为 `one-by-one`
 - `direction` 入场动画的方向，目前支持 `row` 和 `column`两种，默认为 `row`
 - `duration` 单个动画的时长，单位为毫秒，`one-by-one` 时，为一次动画的时长，默认为 500

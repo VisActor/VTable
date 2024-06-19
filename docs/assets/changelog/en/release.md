@@ -1,3 +1,75 @@
+# v1.3.2
+
+2024-06-17
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add blankAreaClickDeselect and outsideClickDeselect config
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: cellIsInVisualView api error [#1864](https://github.com/VisActor/VTable/issues/1864)
+- **@visactor/vtable**: if set style autoWrapText, this config not wort when resize column width [#1892](https://github.com/VisActor/VTable/issues/1892)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: tooltip support scroll [#1887](https://github.com/VisActor/VTable/issues/1887)
+- **@visactor/vtable**: when not records pivot table can show corner header [#1895](https://github.com/VisActor/VTable/issues/1895)
+- **@visactor/vtable**: when rowTree children not set value can supplement indicators [#1924](https://github.com/VisActor/VTable/issues/1924)
+
+
+
+[more detail about v1.3.2](https://github.com/VisActor/VTable/releases/tag/v1.3.2)
+
+# v1.3.1
+
+2024-06-14
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix frozenColCount large than colCount error [#1872](https://github.com/VisActor/VTable/issues/1872)
+- **@visactor/vtable**: fix merge cell size update [#1869](https://github.com/VisActor/VTable/issues/1869)
+- **@visactor/vtable**: optimize row height update when useOneRowHeightFillAll
+
+**📖 Site / documentation update**
+
+- **@visactor/vtable**: update changlog of rush
+
+
+
+[more detail about v1.3.1](https://github.com/VisActor/VTable/releases/tag/v1.3.1)
+
+# v1.3.0
+
+2024-06-12
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add ignoreIcon&formatExportOutput config in vtable-export [#1813](https://github.com/VisActor/VTable/issues/1813)
+- **@visactor/vtable**: add textArea editor
+- **@visactor/vtable**: add strokeColor style [#1847](https://github.com/VisActor/VTable/issues/1847)
+- **@visactor/vtable**: add dx&dy in title component [#1874](https://github.com/VisActor/VTable/issues/1874)
+- **@visactor/vtable**: add shrinkSparklineFirst config [#1862](https://github.com/VisActor/VTable/issues/1862)
+- **@visactor/vtable**: tooltip disappear delay time [#1848](https://github.com/VisActor/VTable/issues/1848)
+- **@visactor/vtable**: add sort config for pivotTable [#1865](https://github.com/VisActor/VTable/issues/1865)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: icon inlineEnd inlineFront x position compute error [#1882](https://github.com/VisActor/VTable/issues/1882)
+- **@visactor/vtable**: drill down icon can not be click [#1899](https://github.com/VisActor/VTable/issues/1899)
+- **@visactor/vtable**: fix frozenColCount large than colCount error [#1872](https://github.com/VisActor/VTable/issues/1872)
+- **@visactor/vtable**: fix ellipsis error in _disableColumnAndRowSizeRound mode [#1884](https://github.com/VisActor/VTable/issues/1884)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: memory release logic optimization [#1856](https://github.com/VisActor/VTable/issues/1856)
+- **@visactor/vtable**: arrow key with shift ctrl key to select cells [#1873](https://github.com/VisActor/VTable/issues/1873)
+
+[more detail about v1.3.0](https://github.com/VisActor/VTable/releases/tag/v1.3.0)
+
 # v1.2.0
 
 2024-06-06

@@ -62,11 +62,13 @@ export class EmptyTip {
         ? this.table.getFrozenRowsHeight()
         : 0;
     const width =
-      (this.table.columnHeaderLevelCount > 0 ? this.table.getDrawRange().width : this.table.tableNoFrameWidth) -
-      leftHeaderWidth;
+      (this.table.columnHeaderLevelCount > 0 && this.table.isListTable()
+        ? this.table.getDrawRange().width
+        : this.table.tableNoFrameWidth) - leftHeaderWidth;
     const height =
-      (this.table.rowHeaderLevelCount > 0 ? this.table.getDrawRange().height : this.table.tableNoFrameHeight) -
-      topHeaderHeight;
+      (this.table.rowHeaderLevelCount > 0 && this.table.isListTable()
+        ? this.table.getDrawRange().height
+        : this.table.tableNoFrameHeight) - topHeaderHeight;
     this._emptyTipComponent.setAttributes({
       spaceBetweenTextAndIcon: this._emptyTipOption.spaceBetweenTextAndIcon,
       x: this.table.tableX + leftHeaderWidth,
@@ -123,11 +125,13 @@ export class EmptyTip {
         ? this.table.getFrozenRowsHeight()
         : 0;
     const width =
-      (this.table.columnHeaderLevelCount > 0 ? this.table.getDrawRange().width : this.table.tableNoFrameWidth) -
-      leftHeaderWidth;
+      (this.table.columnHeaderLevelCount > 0 && this.table.isListTable()
+        ? this.table.getDrawRange().width
+        : this.table.tableNoFrameWidth) - leftHeaderWidth;
     const height =
-      (this.table.rowHeaderLevelCount > 0 ? this.table.getDrawRange().height : this.table.tableNoFrameHeight) -
-      topHeaderHeight;
+      (this.table.rowHeaderLevelCount > 0 && this.table.isListTable()
+        ? this.table.getDrawRange().height
+        : this.table.tableNoFrameHeight) - topHeaderHeight;
 
     return {
       spaceBetweenTextAndIcon: this._emptyTipOption.spaceBetweenTextAndIcon,

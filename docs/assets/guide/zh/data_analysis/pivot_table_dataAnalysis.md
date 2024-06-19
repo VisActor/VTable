@@ -68,7 +68,7 @@ dataConfig 应用举例：
 
 ### 1. 数据汇总规则
 
-[option 说明](../../../option/PivotTable#dataConfig.totals)
+[option 说明](../../option/PivotTable#dataConfig.totals)
 配置示例：
 
 ```
@@ -97,8 +97,13 @@ dataConfig: {
 
 ### 2. 排序规则
 
-[option 说明](../../../option/PivotTable#dataConfig.sortRules)
-配置示例：
+VTable 的透视表支持四种排序方式：维度值自然排序、指定维度值顺序，指标值排序、自定义排序。
+
+定义可以参考：
+
+[option 说明](../../option/PivotTable#dataConfig.sortRules) [使用教程](../../guide/basic_function/sort/pivot_sort)
+
+指标值排序配置示例如下：
 
 ```
     sortRules: [
@@ -118,7 +123,7 @@ dataConfig: {
 
 ### 3. 过滤规则
 
-[option 说明](../../../option/PivotTable#dataConfig.filterRules)
+[option 说明](../../option/PivotTable#dataConfig.filterRules)
 配置示例：
 
 ```
@@ -135,7 +140,7 @@ filterRules: [
 
 ### 4. 聚合方式
 
-[option 说明](../../../option/PivotTable#dataConfig.aggregationRules)
+[option 说明](../../option/PivotTable#dataConfig.aggregationRules)
 配置示例：
 
 ```
@@ -201,7 +206,7 @@ dataConfig:{
 
 ### 5. 派生字段
 
-[option 说明](../../../option/PivotTable#dataConfig.derivedFieldRules)
+[option 说明](../../option/PivotTable#dataConfig.derivedFieldRules)
 配置示例：
 
 ```

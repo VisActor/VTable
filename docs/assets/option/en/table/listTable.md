@@ -32,6 +32,7 @@ Whether to transpose, default is false
 
 Whether to display the table header.
 
+
 ## pagination(IPagination)
 
 Pagination configuration.

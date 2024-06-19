@@ -429,7 +429,10 @@ function updateCellWidth(
     );
     isHeightChange = isHeightChange || cellChange;
   }
-
+  if (!autoWrapText) {
+    const style = scene.table._getCellStyle(col, row);
+    autoWrapText = style.autoWrapText;
+  }
   return autoRowHeight && autoWrapText ? isHeightChange : false;
 }
 

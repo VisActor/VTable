@@ -226,7 +226,23 @@
           "title": {
             "zh": "排序",
             "en": "sort"
-          }
+          },
+          "children": [
+            {
+              "path": "list_sort",
+              "title": {
+                "zh": "基本表格排序",
+                "en": "sort In ListTable"
+              }
+            },
+            {
+              "path": "pivot_sort",
+              "title": {
+                "zh": "透视表格排序",
+                "en": "sort In PivotTable"
+              }
+            }
+          ]
         },
         {
           "path": "frozen_column",

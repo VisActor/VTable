@@ -237,7 +237,7 @@ export interface DerivedFieldRule {
 
 ## columnTree(Array)
 
-Column header tree, type: `IDimensionHeaderNode|IIndicatorHeaderNode[]`. Among them, IDimensionHeaderNode refers to the dimension value node of non-indicator dimensions, and IIndicatorHeaderNode refers to the indicator name node.
+Column header tree, type: `(IDimensionHeaderNode|IIndicatorHeaderNode)[]`. Among them, IDimensionHeaderNode refers to the dimension value node of non-indicator dimensions, and IIndicatorHeaderNode refers to the indicator name node.
 
 ** Specific configuration of IDimensionHeaderNode is as follows: **
 
@@ -249,8 +249,8 @@ export interface IDimensionHeaderNode {
   dimensionKey: string | number;
   /** Dimension member value */
   value: string;
-  /** The tree structure of the sub-dimensions under the member */
-  children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
+  /** The tree structure of the sub-dimensions under the member. true is generally used to display the fold and expand buttons and to perform lazy loading to obtain data.  */
+  children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[] | true;
   /** Collapse status Used with tree structure display. Note: only valid in rowTree */
   hierarchyState?: HierarchyState;
   /** Whether it is a virtual node. If configured to true, this dimension field will be ignored when analyzing based on records data */
