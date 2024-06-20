@@ -1211,6 +1211,29 @@ export class ListTable extends BaseTable implements ListTableAPI {
     let pasteColEnd = startCol;
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
+    //#region 提前组织好未更改前的数据
+    const beforeChangeValues: (string | number)[][] = [];
+    const oldValues: (string | number)[][] = [];
+    for (let i = 0; i < values.length; i++) {
+      if (startRow + i > this.rowCount - 1) {
+        break;
+      }
+      const rowValues = values[i];
+      const rawRowValues: (string | number)[] = [];
+      const oldRowValues: (string | number)[] = [];
+      beforeChangeValues.push(rawRowValues);
+      oldValues.push(oldRowValues);
+      for (let j = 0; j < rowValues.length; j++) {
+        if (startCol + j > this.colCount - 1) {
+          break;
+        }
+        const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+        rawRowValues.push(beforeChangeValue);
+        const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
+        oldRowValues.push(oldValue);
+      }
+    }
+    //#endregion
     for (let i = 0; i < values.length; i++) {
       if (startRow + i > this.rowCount - 1) {
         break;
@@ -1230,8 +1253,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
           const value = rowValues[j];
           const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
           const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
-          const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
-          const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
+          // const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+          // const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
+          const beforeChangeValue = beforeChangeValues[i][j];
+          const oldValue = oldValues[i][j];
           if (this.isHeader(startCol + j, startRow + i)) {
             this.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
           } else {
