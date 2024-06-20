@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix column update problem #1951",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
