@@ -49,7 +49,9 @@ import type {
   TableEventOptions,
   WidthAdaptiveModeDef,
   HeightAdaptiveModeDef,
-  ListTableAPI
+  ListTableAPI,
+  ColumnInfo,
+  RowInfo
 } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
 
@@ -2460,7 +2462,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-  getTargetColAt(absoluteX: number): { col: number; left: number; right: number; width: number } | null {
+  getTargetColAt(absoluteX: number): ColumnInfo | null {
     if (absoluteX === 0) {
       return { left: 0, col: 0, right: 0, width: 0 };
     }
@@ -2529,7 +2531,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-  getTargetRowAt(absoluteY: number): { row: number; top: number; bottom: number; height: number } | null {
+  getTargetRowAt(absoluteY: number): RowInfo | null {
     if (absoluteY === 0) {
       return { top: 0, row: 0, bottom: 0, height: 0 };
     }
@@ -2604,10 +2606,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-  getTargetColAtConsiderRightFrozen(
-    absoluteX: number,
-    isConsider: boolean
-  ): { col: number; left: number; right: number; width: number } | null {
+  getTargetColAtConsiderRightFrozen(absoluteX: number, isConsider: boolean): ColumnInfo | null {
     if (absoluteX === 0) {
       return { left: 0, col: 0, right: 0, width: 0 };
     }
@@ -2636,10 +2635,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-  getTargetRowAtConsiderBottomFrozen(
-    absoluteY: number,
-    isConsider: boolean
-  ): { row: number; top: number; bottom: number; height: number } | null {
+  getTargetRowAtConsiderBottomFrozen(absoluteY: number, isConsider: boolean): RowInfo | null {
     if (absoluteY === 0) {
       return { top: 0, row: 0, bottom: 0, height: 0 };
     }

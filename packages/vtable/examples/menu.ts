@@ -17,6 +17,10 @@ export const menus = [
       {
         path: 'debug',
         name: 'animation'
+      },
+      {
+        path: 'debug',
+        name: 'scroll'
       }
     ]
   },
