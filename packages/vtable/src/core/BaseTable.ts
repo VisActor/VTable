@@ -2190,7 +2190,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.customRender = customRender;
     // 更新protectedSpace
     const internalProps: IBaseTableProtected = this.internalProps;
-    if (Env.mode !== 'node') {
+    if (Env.mode !== 'node' && !options.canvas) {
       updateRootElementPadding(internalProps.element, this.padding);
     }
 
