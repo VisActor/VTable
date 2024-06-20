@@ -524,6 +524,14 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-empty-tip'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-calculatedField'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-calculatedField2'
       }
     ]
   },

@@ -178,7 +178,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   // 注册聚合类型
   registedAggregators: {
     [key: string]: {
-      new (dimension: string | string[], formatFun?: any, isRecord?: boolean, aggregationFun?: Function): Aggregator;
+      new (config: {
+        dimension: string | string[];
+        formatFun?: any;
+        isRecord?: boolean;
+        aggregationFun?: Function;
+      }): Aggregator;
     };
   } = {};
   rowHierarchyType: 'grid' | 'tree';
@@ -279,12 +284,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (Array.isArray(aggragation)) {
         for (let j = 0; j < aggragation.length; j++) {
           const item = aggragation[j];
-          const aggregator = new this.registedAggregators[item.aggregationType](
-            field as string,
-            item.formatFun,
-            true,
-            (item as CustomAggregation).aggregationFun
-          );
+          const aggregator = new this.registedAggregators[item.aggregationType]({
+            dimension: field as string,
+            formatFun: item.formatFun,
+            isRecord: true,
+            aggregationFun: (item as CustomAggregation).aggregationFun
+          });
           this.fieldAggregators.push(aggregator);
           if (!columnObjs[i].aggregator) {
             columnObjs[i].aggregator = [];
@@ -292,12 +297,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           columnObjs[i].aggregator.push(aggregator);
         }
       } else {
-        const aggregator = new this.registedAggregators[aggragation.aggregationType](
-          field as string,
-          aggragation.formatFun,
-          true,
-          (aggragation as CustomAggregation).aggregationFun
-        );
+        const aggregator = new this.registedAggregators[aggragation.aggregationType]({
+          dimension: field as string,
+          formatFun: aggragation.formatFun,
+          isRecord: true,
+          aggregationFun: (aggragation as CustomAggregation).aggregationFun
+        });
         this.fieldAggregators.push(aggregator);
         columnObjs[i].aggregator = aggregator;
       }
