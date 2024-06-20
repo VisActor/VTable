@@ -1517,7 +1517,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
     let editorDefine;
-    if (this.isHeader(col, row) && !this.isCornerHeader(col, row)) {
+    if (this.isCornerHeader(col, row)) {
+      const define = this.getHeaderDefine(col, row);
+      editorDefine = (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor;
+    } else if (this.isHeader(col, row)) {
       const define = this.getHeaderDefine(col, row);
       editorDefine = (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor;
     } else {
@@ -1708,7 +1711,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.records[rowIndex][colIndex] = newValue;
     } else if (this.dataset) {
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      if (this.isHeader(col, row)) {
+      if (this.isCornerHeader(col, row)) {
+        this.internalProps.layoutMap.changeCornerTitle(col, row, newValue as string);
+      } else if (this.isHeader(col, row)) {
         this.internalProps.layoutMap.changeTreeNodeTitle(col, row, newValue as string);
 
         !this.isCornerHeader(col, row) &&
