@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: when drag cell and enter edit state but can not exit edit rightly #1945\n\n",
+      "comment": "fix: when drag cell and enter edit state but can not exit edit rightly #1956\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
