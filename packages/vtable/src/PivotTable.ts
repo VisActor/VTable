@@ -29,7 +29,7 @@ import { Dataset } from './dataset/dataset';
 import { BaseTable } from './core/BaseTable';
 import type { BaseTableAPI, HeaderData, PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
-import { cloneDeep, isValid } from '@visactor/vutils';
+import { cloneDeep, isNumber, isValid } from '@visactor/vutils';
 import { Env } from './tools/env';
 import type { ITreeLayoutHeadNode } from './layout/tree-helper';
 import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
@@ -973,7 +973,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * 全量更新排序规则
    * @param sortRules
    */
-  updateSortRules(sortRules: SortRules) {
+  updateSortRules(sortRules: SortRules, col?: number, row?: number) {
     if (this.internalProps.dataConfig) {
       this.internalProps.dataConfig.sortRules = sortRules;
     } else {
@@ -981,13 +981,31 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     this.dataset.updateSortRules(sortRules);
     this._changePivotSortStateBySortRules();
-    this.internalProps.layoutMap.resetHeaderTree();
+    const { layoutMap } = this.internalProps;
+    layoutMap.resetHeaderTree();
     // 清空单元格内容
     this.scenegraph.clearCells();
-    this.refreshHeader();
+    if (isNumber(col) && isNumber(row)) {
+      if (this.isRowHeader(col, row)) {
+        this.setMinMaxLimitWidth(true);
+        this.internalProps._widthResizedColMap.clear();
+      } else if (this.isCornerHeader(col, row)) {
+        if (layoutMap.cornerSetting.titleOnDimension === 'column') {
+          this.setMinMaxLimitWidth(true);
+          this.internalProps._widthResizedColMap.clear();
+        } else if (layoutMap.cornerSetting.titleOnDimension === 'row') {
+          this.internalProps._heightResizedRowMap.clear();
+        }
+      } else if (this.isColumnHeader(col, row)) {
+        this.internalProps._heightResizedRowMap.clear();
+      }
+      this.refreshRowColCount();
+    } else {
+      this.refreshHeader();
+    }
     this.internalProps.useOneRowHeightFillAll = false;
     // 生成单元格场景树
-    this.scenegraph.createSceneGraph();
+    this.scenegraph.createSceneGraph(true);
     this.render();
   }
   _changePivotSortStateBySortRules() {
@@ -1157,7 +1175,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }
       }
 
-      (this as PivotTable).updateSortRules((this as PivotTable).dataset.sortRules);
+      (this as PivotTable).updateSortRules((this as PivotTable).dataset.sortRules, col, row);
     }
   }
 
