@@ -868,12 +868,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
       // 解除排序状态
       if (this.internalProps.sortState) {
         if (Array.isArray(this.internalProps.sortState)) {
-          for (let i = 0; i < (<SortState[]>this.internalProps.sortState).length; i++) {
-            const sortState: SortState = this.internalProps.sortState[i];
-            sortState.order = 'normal';
-          }
+          // for (let i = 0; i < (<SortState[]>this.internalProps.sortState).length; i++) {
+          sortState = this.internalProps.sortState?.[0];
+          sortState && (sortState.order = 'normal');
+          // }
         } else {
           (<SortState>this.internalProps.sortState).order = 'normal';
+          sortState = this.internalProps.sortState;
         }
       }
     } else {
@@ -884,8 +885,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     let order: any;
     let field: any;
     if (Array.isArray(this.internalProps.sortState)) {
-      ({ order, field } = this.internalProps.sortState?.[0]);
-    } else {
+      if (this.internalProps.sortState?.[0]) {
+        ({ order, field } = this.internalProps.sortState?.[0]);
+      }
+    } else if (this.internalProps.sortState) {
       ({ order, field } = this.internalProps.sortState as SortState);
     }
     if (field && executeSort) {
@@ -901,7 +904,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.scenegraph.sortCell();
       }
     }
-    this.stateManager.updateSortState(sortState as SortState);
+    if (sortState) {
+      this.stateManager.updateSortState(sortState as SortState);
+    }
   }
   updateFilterRules(filterRules: FilterRules) {
     this.scenegraph.clearCells();
