@@ -1,3 +1,27 @@
+# v1.4.0
+
+2024-06-21
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 支持角头单元格编辑 [#1945](https://github.com/VisActor/VTable/issues/1945)
+- **@visactor/vtable**: vtable-export支持缩进导出
+- **@visactor/vtable**: react-vtable支持 CustomComponent & CustomLayout component 组件
+- **@visactor/vtable**: PivotTable支持field计算 [#1941](https://github.com/VisActor/VTable/issues/1941)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复updateSortState api 调用问题 [#1939](https://github.com/VisActor/VTable/issues/1939)
+- **@visactor/vtable**: 调用 setRecords 时更新 emptyTip 组件 [#1953](https://github.com/VisActor/VTable/issues/1953)
+- **@visactor/vtable**: 修复冻结单元格 getCellRect api 获取 bounds 错误 [#1955](https://github.com/VisActor/VTable/issues/1955)
+- **@visactor/vtable**: when drag cell and enter edit state but can not exit edit rightly [#1956](https://github.com/VisActor/VTable/issues/1956)
+- **@visactor/vtable**: 修复自定义单元格列宽计算问题 [#1905](https://github.com/VisActor/VTable/issues/1905)
+- **@visactor/vtable**: 修复 getCellRange 中的内容判断逻辑 [#1911](https://github.com/VisActor/VTable/issues/1911)
+- **@visactor/vtable**: 修复透视表排序时尺寸更新问题 [#1958](https://github.com/VisActor/VTable/issues/1958)
+
+[更多详情请查看 v1.4.0](https://github.com/VisActor/VTable/releases/tag/v1.4.0)
+
 # v1.3.2
 
 2024-06-17
@@ -5,18 +29,18 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add blankAreaClickDeselect and outsideClickDeselect config
+- **@visactor/vtable**: 增加 blankAreaClickDeselect & outsideClickDeselect 配置
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: cellIsInVisualView api error [#1864](https://github.com/VisActor/VTable/issues/1864)
-- **@visactor/vtable**: if set style autoWrapText, this config not wort when resize column width [#1892](https://github.com/VisActor/VTable/issues/1892)
+- **@visactor/vtable**: 修复cellIsInVisualView api调用问题 [#1864](https://github.com/VisActor/VTable/issues/1864)
+- **@visactor/vtable**: 修复改变列宽时autoWrapText不生效问题 [#1892](https://github.com/VisActor/VTable/issues/1892)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: tooltip support scroll [#1887](https://github.com/VisActor/VTable/issues/1887)
-- **@visactor/vtable**: when not records pivot table can show corner header [#1895](https://github.com/VisActor/VTable/issues/1895)
-- **@visactor/vtable**: when rowTree children not set value can supplement indicators [#1924](https://github.com/VisActor/VTable/issues/1924)
+- **@visactor/vtable**: 支持tooltip滚动 [#1887](https://github.com/VisActor/VTable/issues/1887)
+- **@visactor/vtable**: 支持透视表没有数据是的角头展示 [#1895](https://github.com/VisActor/VTable/issues/1895)
+- **@visactor/vtable**: 支持rowTree没有children时的指标展示 [#1924](https://github.com/VisActor/VTable/issues/1924)
 
 
 
@@ -29,15 +53,9 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix frozenColCount large than colCount error [#1872](https://github.com/VisActor/VTable/issues/1872)
-- **@visactor/vtable**: fix merge cell size update [#1869](https://github.com/VisActor/VTable/issues/1869)
-- **@visactor/vtable**: optimize row height update when useOneRowHeightFillAll
-
-**📖 文档更新**
-
-- **@visactor/vtable**: update changlog of rush
-
-
+- **@visactor/vtable**: 修复frozenColCount超过列数时的显示问题 [#1872](https://github.com/VisActor/VTable/issues/1872)
+- **@visactor/vtable**: 修复合并单元格的尺寸更新问题 [#1869](https://github.com/VisActor/VTable/issues/1869)
+- **@visactor/vtable**: 修复单行填充所有行时的行高更新问题
 
 [更多详情请查看 v1.3.1](https://github.com/VisActor/VTable/releases/tag/v1.3.1)
 
