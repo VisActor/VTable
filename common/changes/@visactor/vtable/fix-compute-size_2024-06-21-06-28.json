@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix content judgement in getCellRange() #1911",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

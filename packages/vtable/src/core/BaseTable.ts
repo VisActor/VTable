@@ -3069,7 +3069,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCellRange(col: number, row: number): CellRange {
     if (this.internalProps.customMergeCell) {
       const customMerge = this.internalProps.customMergeCell(col, row, this);
-      if (customMerge && customMerge.range && customMerge.text) {
+      if (
+        customMerge &&
+        customMerge.range &&
+        (customMerge.text || customMerge.customLayout || customMerge.customRender)
+      ) {
         return customMerge.range;
       }
     }
