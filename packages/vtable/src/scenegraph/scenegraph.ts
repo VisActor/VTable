@@ -345,8 +345,10 @@ export class Scenegraph {
    * @description: 依据数据创建表格场景树
    * @return {*}
    */
-  createSceneGraph() {
-    this.table.rowHeightsMap.clear();
+  createSceneGraph(skipRowHeightClear = false) {
+    if (!skipRowHeightClear) {
+      this.table.rowHeightsMap.clear();
+    }
 
     // if (this.table.heightMode === 'autoHeight') {
     //   this.table.defaultRowHeight = getDefaultHeight(this.table);

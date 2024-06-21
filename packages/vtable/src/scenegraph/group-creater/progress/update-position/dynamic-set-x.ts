@@ -1,3 +1,4 @@
+import type { ColumnInfo } from '../../../../ts-types';
 import type { BaseTableAPI } from '../../../../ts-types/base-table';
 import type { Group } from '../../../graphic/group';
 import { computeColsWidth } from '../../../layout/compute-col-width';
@@ -5,16 +6,12 @@ import type { SceneProxy } from '../proxy';
 import { updateAutoColumn } from './update-auto-column';
 import { checkFirstColMerge, getFirstChild, getLastChild } from './util';
 
-export async function dynamicSetX(x: number, isEnd: boolean, proxy: SceneProxy) {
-  const screenLeft = (proxy.table as BaseTableAPI).getTargetColAt(
-    x + proxy.table.scenegraph.rowHeaderGroup.attribute.width
-  );
+export async function dynamicSetX(x: number, screenLeft: ColumnInfo | null, isEnd: boolean, proxy: SceneProxy) {
   if (!screenLeft) {
     return;
   }
   const screenLeftCol = screenLeft.col;
   const screenLeftX = screenLeft.left;
-  proxy.screenLeftCol = screenLeftCol;
 
   let deltaCol;
   if (isEnd) {

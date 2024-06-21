@@ -49,7 +49,9 @@ import type {
   TableEventOptions,
   WidthAdaptiveModeDef,
   HeightAdaptiveModeDef,
-  ListTableAPI
+  ListTableAPI,
+  ColumnInfo,
+  RowInfo
 } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
 
@@ -1488,7 +1490,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const width = this.getColWidth(col);
     if (isFrozenCell && isFrozenCell.col) {
       if (this.isRightFrozenColumn(col, row)) {
-        absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(col, this.colCount - 1) ?? 0);
+        if (this.getAllColsWidth() <= this.tableNoFrameWidth) {
+          absoluteLeft = this.getColsWidth(0, col - 1) || 0;
+        } else {
+          absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(col, this.colCount - 1) ?? 0);
+        }
       } else {
         absoluteLeft = this.getColsWidth(0, col - 1) || 0;
         // absoluteLeft += this.scrollLeft;
@@ -1501,7 +1507,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const height = this.getRowHeight(row);
     if (isFrozenCell && isFrozenCell.row) {
       if (this.isBottomFrozenRow(col, row)) {
-        absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(row, this.rowCount - 1) ?? 0);
+        if (this.getAllRowsHeight() <= this.tableNoFrameHeight) {
+          absoluteTop = this.getRowsHeight(0, row - 1);
+        } else {
+          absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(row, this.rowCount - 1) ?? 0);
+        }
       } else {
         absoluteTop = this.getRowsHeight(0, row - 1);
         // absoluteTop += this.scrollTop;
@@ -2480,7 +2490,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-  getTargetColAt(absoluteX: number): { col: number; left: number; right: number; width: number } | null {
+  getTargetColAt(absoluteX: number): ColumnInfo | null {
     if (absoluteX === 0) {
       return { left: 0, col: 0, right: 0, width: 0 };
     }
@@ -2549,7 +2559,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-  getTargetRowAt(absoluteY: number): { row: number; top: number; bottom: number; height: number } | null {
+  getTargetRowAt(absoluteY: number): RowInfo | null {
     if (absoluteY === 0) {
       return { top: 0, row: 0, bottom: 0, height: 0 };
     }
@@ -2624,10 +2634,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-  getTargetColAtConsiderRightFrozen(
-    absoluteX: number,
-    isConsider: boolean
-  ): { col: number; left: number; right: number; width: number } | null {
+  getTargetColAtConsiderRightFrozen(absoluteX: number, isConsider: boolean): ColumnInfo | null {
     if (absoluteX === 0) {
       return { left: 0, col: 0, right: 0, width: 0 };
     }
@@ -2656,10 +2663,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-  getTargetRowAtConsiderBottomFrozen(
-    absoluteY: number,
-    isConsider: boolean
-  ): { row: number; top: number; bottom: number; height: number } | null {
+  getTargetRowAtConsiderBottomFrozen(absoluteY: number, isConsider: boolean): RowInfo | null {
     if (absoluteY === 0) {
       return { top: 0, row: 0, bottom: 0, height: 0 };
     }
@@ -3093,7 +3097,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCellRange(col: number, row: number): CellRange {
     if (this.internalProps.customMergeCell) {
       const customMerge = this.internalProps.customMergeCell(col, row, this);
-      if (customMerge && customMerge.range && customMerge.text) {
+      if (
+        customMerge &&
+        customMerge.range &&
+        (customMerge.text || customMerge.customLayout || customMerge.customRender)
+      ) {
         return customMerge.range;
       }
     }

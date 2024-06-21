@@ -1,3 +1,27 @@
+# v1.3.2
+
+2024-06-17
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add blankAreaClickDeselect and outsideClickDeselect config
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: cellIsInVisualView api error [#1864](https://github.com/VisActor/VTable/issues/1864)
+- **@visactor/vtable**: if set style autoWrapText, this config not wort when resize column width [#1892](https://github.com/VisActor/VTable/issues/1892)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: tooltip support scroll [#1887](https://github.com/VisActor/VTable/issues/1887)
+- **@visactor/vtable**: when not records pivot table can show corner header [#1895](https://github.com/VisActor/VTable/issues/1895)
+- **@visactor/vtable**: when rowTree children not set value can supplement indicators [#1924](https://github.com/VisActor/VTable/issues/1924)
+
+
+
+[更多详情请查看 v1.3.2](https://github.com/VisActor/VTable/releases/tag/v1.3.2)
+
 # v1.3.1
 
 2024-06-14

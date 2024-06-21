@@ -220,7 +220,7 @@ export interface Total {
 
 ### derivedFieldRules(DerivedFieldRules)
 
-Add derived fields
+Add a derived field. The vtable will generate a new field based on the rules defined by the derived field and add the new field to the data. The new field can be used as a dimension item or an indicator item.
 
 ```
 export type DerivedFieldRules = DerivedFieldRule[];
@@ -232,6 +232,26 @@ The specific function is to generate new fields for source data, which is custom
 export interface DerivedFieldRule {
   fieldName?: string;
   derivedFunc?: (record: Record<string, any>) => any;
+}
+```
+
+### calculatedFieldRules (CalculatedFieldRules)
+
+Calculated fields are similar to the calculated fields in Excel pivot tables. New indicator values can be calculated through calculated fields, and they are all recalculated based on the summary results. Note: Different from derived fields.
+
+```
+export type CalculateddFieldRules = CalculateddFieldRule[];
+```
+
+```
+export interface CalculatedFieldRule {
+  /** Unique identifier, which can be used as the key of a new indicator and used to configure indicators to be displayed in a pivot table. */
+  key: string;
+  /** The indicator that the calculated field depends on, which can be the corresponding indicator field in records or not the field in data records
+  * If the dependent indicator is not in records, it needs to be explicitly configured in aggregationRules, specifying the aggregation rule and indicatorKey to be used in dependIndicatorKeys. */
+  dependIndicatorKeys: string[];
+  /** The calculation function of the calculated field. The dependent indicator value is passed in as a parameter, and the return value is used as the value of the calculated field. */
+  calculateFun?: (dependFieldsValue: any) => any;
 }
 ```
 

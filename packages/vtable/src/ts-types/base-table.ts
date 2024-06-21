@@ -67,7 +67,9 @@ import type {
   ColumnSeriesNumber,
   ColumnStyleOption,
   WidthAdaptiveModeDef,
-  HeightAdaptiveModeDef
+  HeightAdaptiveModeDef,
+  ColumnInfo,
+  RowInfo
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -767,16 +769,10 @@ export interface BaseTableAPI {
 
   getMergeCellRect: (col: number, row: number) => Rect;
 
-  getTargetColAt: (absoluteX: number) => { col: number; left: number; right: number; width: number } | null;
-  getTargetRowAt: (absoluteY: number) => { row: number; top: number; bottom: number; height: number } | null;
-  getTargetColAtConsiderRightFrozen: (
-    absoluteX: number,
-    isConsider: boolean
-  ) => { col: number; left: number; right: number; width: number } | null;
-  getTargetRowAtConsiderBottomFrozen: (
-    absoluteY: number,
-    isConsider: boolean
-  ) => { row: number; top: number; bottom: number; height: number } | null;
+  getTargetColAt: (absoluteX: number) => ColumnInfo | null;
+  getTargetRowAt: (absoluteY: number) => RowInfo | null;
+  getTargetColAtConsiderRightFrozen: (absoluteX: number, isConsider: boolean) => ColumnInfo | null;
+  getTargetRowAtConsiderBottomFrozen: (absoluteY: number, isConsider: boolean) => RowInfo | null;
   renderWithRecreateCells: () => void;
   //#endregion  tableAPI
 

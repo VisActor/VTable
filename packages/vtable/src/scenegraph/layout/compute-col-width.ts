@@ -481,6 +481,7 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       width = customRender?.expectedWidth ?? 0;
       renderDefault = customRender?.renderDefault;
     }
+    width = Math.ceil(width);
     if (enableCellPadding) {
       const actStyle = table._getCellStyle(col, row);
       const padding = getQuadProps(getProp('padding', actStyle, col, row, table));

@@ -68,7 +68,10 @@ dataConfig application example:
 
 ### 1. Totals
 
+#### VTable to calculate subtotals configuration:
+
 [option description](../../option/PivotTable#dataConfig.totals)
+
 Configuration example:
 
 ```
@@ -94,6 +97,17 @@ dataConfig: {
 ```
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-total
+
+#### Custom summary data
+
+If you need to customize summary data, you do not want VTable to calculate the subtotals. In addition to the above configuration, you also need to include the corresponding summary data in the data passed to VTable. In this way, VTable will analyze it internally and display it as summary data instead of using VTable's summary value.
+
+<div style="width: 50%; text-align: center;">
+<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-total-demo.png" />
+<p>Custom subtotal total sample code</p>
+</div>
+
+Specific example: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-custom-total
 
 ### 2. Sorting rules
 
@@ -124,6 +138,7 @@ Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-
 ### 3. Filter rules
 
 [option description](../../option/PivotTable#dataConfig.filterRules)
+
 Configuration example:
 
 ```
@@ -141,6 +156,7 @@ Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-filte
 ### 4. Aggregation method
 
 [option description](../../option/PivotTable#dataConfig.aggregationRules)
+
 Configuration example:
 
 ```
@@ -206,6 +222,7 @@ The sales indicator in this record is a non-numeric value, and it is required to
 ### 5. Derive Field
 
 [option description](../../option/PivotTable#dataConfig.derivedFieldRules)
+
 Configuration example:
 
 ```
@@ -222,6 +239,34 @@ Configuration example:
 ```
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-derivedField
+
+### 6. Pivot table calculated fields
+
+[option description](../../option/PivotTable#dataConfig.calculatedFieldRules)
+
+Configuration example:
+
+```
+dataConfig: {
+  calculatedFieldRules:[
+    {
+      key: 'AvgPrice',
+      dependIndicatorKeys: ['Quantity', 'Sales'],
+      calculateFun: dependValue => {
+        return dependValue.Sales / dependValue.Quantity;
+      }
+    }
+  ],
+}
+```
+
+Configuration explanation:
+
+- key: The key unique identifier of the calculated field, which can be used as a new indicator and configured in indicators for display in the pivot table.
+- dependIndicatorKeys: The indicators that the calculated field depends on, which can be the corresponding indicator fields in records. If the dependent indicator is not in records, it needs to be configured in aggregationRules, specifying the aggregation rules and indicatorKey to be used in dependIndicatorKeys.
+- calculateFun: the calculation function of the calculated field, the function parameter is the value of the dependent indicator.
+
+Specific example: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-calculatedField
 
 ## Data analysis process
 
