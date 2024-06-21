@@ -128,6 +128,7 @@ import { RowSeriesNumberHelper } from './row-series-number-helper';
 import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 import type { ITextGraphicAttribute } from '@src/vrender';
+import { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
 import { hasAutoImageColumn } from '../layout/layout-helper';
 
@@ -199,6 +200,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 
+  reactCustomLayout?: ReactCustomLayout;
   _hasAutoImageColumn?: boolean;
 
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
@@ -299,6 +301,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       internalProps.canvas = document.createElement('canvas');
       internalProps.element.appendChild(internalProps.canvas);
       internalProps.context = internalProps.canvas.getContext('2d')!;
+
+      if (options.customConfig?.createReactContainer) {
+        internalProps.bodyDomContainer = document.createElement('div');
+        internalProps.bodyDomContainer.classList.add('table-component-container');
+        internalProps.element.appendChild(internalProps.bodyDomContainer);
+        internalProps.headerDomContainer = document.createElement('div');
+        internalProps.headerDomContainer.classList.add('table-component-container');
+        internalProps.element.appendChild(internalProps.headerDomContainer);
+      }
     }
 
     internalProps.handler = new EventHandler();
@@ -526,7 +537,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 注意 这个值和options.frozenColCount 不一样！options.frozenColCount是用户实际设置的; 这里获取的值是调整过:frozen的列过宽时 frozeCount为0
    */
   get frozenColCount(): number {
-    return this.internalProps.layoutMap?.frozenColCount ?? this.internalProps.frozenColCount ?? 0;
+    return this.internalProps?.layoutMap?.frozenColCount ?? this.internalProps?.frozenColCount ?? 0;
   }
   /**
    * Set the number of frozen columns.
@@ -586,7 +597,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * Get the number of frozen rows.
    */
   get frozenRowCount(): number {
-    return this.internalProps.layoutMap?.frozenRowCount ?? this.internalProps.frozenRowCount ?? 0;
+    return this.internalProps?.layoutMap?.frozenRowCount ?? this.internalProps?.frozenRowCount ?? 0;
   }
   /**
    * Set the number of frozen rows.
@@ -597,7 +608,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   get rightFrozenColCount(): number {
-    return this.internalProps.layoutMap?.rightFrozenColCount ?? this.internalProps.rightFrozenColCount ?? 0;
+    return this.internalProps?.layoutMap?.rightFrozenColCount ?? this.internalProps?.rightFrozenColCount ?? 0;
   }
 
   set rightFrozenColCount(rightFrozenColCount: number) {
@@ -605,7 +616,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   get bottomFrozenRowCount(): number {
-    return this.internalProps.layoutMap?.bottomFrozenRowCount ?? this.internalProps.bottomFrozenRowCount ?? 0;
+    return this.internalProps?.layoutMap?.bottomFrozenRowCount ?? this.internalProps?.bottomFrozenRowCount ?? 0;
   }
 
   set bottomFrozenRowCount(bottomFrozenRowCount: number) {
@@ -933,6 +944,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
         canvas.style.width = `${widthP}px`;
         canvas.style.height = `${heightP}px`;
+      }
+
+      if (this.internalProps.bodyDomContainer) {
+        this.internalProps.bodyDomContainer.style.width = `${widthP}px`;
+        this.internalProps.bodyDomContainer.style.height = `${heightP}px`;
+      }
+      if (this.internalProps.headerDomContainer) {
+        this.internalProps.headerDomContainer.style.width = `${widthP}px`;
+        this.internalProps.headerDomContainer.style.height = `${heightP}px`;
       }
     } else if (Env.mode === 'node') {
       widthP = this.canvasWidth - 1;
@@ -4484,4 +4504,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   // startInertia() {
   //   startInertia(0, -1, 1, this.stateManager);
   // }
+
+  checkReactCustomLayout() {
+    if (!this.reactCustomLayout) {
+      this.reactCustomLayout = new ReactCustomLayout(this);
+    }
+  }
+
+  get bodyDomContainer() {
+    return this.internalProps.bodyDomContainer;
+  }
+  get headerDomContainer() {
+    return this.internalProps.headerDomContainer;
+  }
 }

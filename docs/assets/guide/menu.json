@@ -596,6 +596,13 @@
           }
         },
         {
+          "path": "react-custom-component",
+          "title": {
+            "zh": "React自定义组件",
+            "en": "React Custom Component"
+          }
+        },
+        {
           "path": "openinula",
           "title": {
             "zh": "Openinula-VTable",

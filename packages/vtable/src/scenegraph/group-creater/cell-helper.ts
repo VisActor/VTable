@@ -668,6 +668,14 @@ function updateCellContent(
   if (!addNew && (oldCellGroup.row !== row || oldCellGroup.col !== col)) {
     return null;
   }
+  if (!addNew && oldCellGroup.parent) {
+    // clear react container
+    if (table.reactCustomLayout) {
+      const reactGroup = oldCellGroup.getChildByName('custom-container');
+      const { col, row } = reactGroup;
+      table.reactCustomLayout.removeCustomCell(col, row);
+    }
+  }
   const newCellGroup = createCell(
     type,
     value,
@@ -691,6 +699,7 @@ function updateCellContent(
     customResult
   );
   if (!addNew && oldCellGroup.parent) {
+    // update cell
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
     oldCellGroup.parent.removeChild(oldCellGroup);
 
@@ -718,7 +727,7 @@ function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWra
     !autoWrapText &&
     !autoRowHeight &&
     !mayHaveIcon &&
-    oldCellGroup.firstChild?.type === 'text' &&
+    oldCellGroup.firstChild?.type === 'text' && // judgement for none text
     !isPromise(value)
   ) {
     return true;

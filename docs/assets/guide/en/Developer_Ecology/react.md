@@ -176,7 +176,6 @@ return (
   </PivotTable>
 );
 ```
-
 Grammatical label demo: [PivotTable demo](../../demo-react/grammatical-tag/pivot-table) [PivotChart demo](../../demo-react/grammatical-tag/pivot-chart)
 
 #### Components outside the table
@@ -279,52 +278,3 @@ function App() {
 ```
 
 For detailed description of the event, please refer to: [Event Introduction](../../guide/Event/event_list)
-
-## Custom component
-
-In order to facilitate the superposition of external components on the React-VTable component, React-VTable provides a `CustomComponent` tool component to quickly locate external components into the table.
-
-```jsx
-<ListTable option={option} onMouseEnterCell={updatePos} onMouseLeaveTable={hide} onReady={ready}>
-  <CustomComponent width="50%" height="100%" displayMode="cell" col={col} row={row} anchor="bottom-right" dx="-50%">
-    <UserComponent value={value} />
-  </CustomComponent>
-</ListTable>
-```
-
-Among them, `CustomComponent` is used as a container for positioning in the table and automatically matching the size (based on anchored cells). There are two ways to use it:
-
-1. Absolute positioning
-
-   For absolute positioning, you need to specify `displayMode` as `position`, `x` and `y` attributes, which are used to position the container to the specified pixel position in the table (based on the upper left corner), `width` and `height `property specifies the pixel dimensions of the container.
-
-2. Relative positioning
-
-   For relative positioning, you need to specify `displayMode` as `cell`, the container is positioned relative to the cell, the `col` and `row` attributes are used to specify the anchored cell coordinates, and the `anchor` attribute specifies the container relative to the cell. The anchor position, `dx` and `dy` attributes specify the offset of the container relative to the anchor cell, and the `width` and `height` properties specify the size of the container, where `dx` `dy` `width` and The `height` attribute supports units of pixels or percentages. When it is a percentage, it is calculated relative to the size of the cell.
-
-### API
-
-```ts
-interface CustomComponentProps {
-  children: React.ReactNode;
-  displayMode: 'position' | 'cell'; // positioning method
-  col?: number; // anchored column coordinates
-  row?: number; // anchored row coordinates
-  anchor?:
-    | 'top-left'
-    | 'top-center'
-    | 'top-right'
-    | 'middle-left'
-    | 'middle-center'
-    | 'middle-right'
-    | 'bottom-left'
-    | 'bottom-center'
-    | 'bottom-right'; // anchored position
-  dx?: number | string; // offset in x direction
-  dy?: number | string; // offset in y direction
-  width?: number | string; // container width
-  height?: number | string; // container height
-}
-```
-
-[custom component demo](../../demo-react/component/custom-component)

@@ -180,6 +180,7 @@ importers:
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       '@types/react-is': ^17.0.3
+      '@types/react-reconciler': 0.28.8
       '@visactor/vchart': 1.11.4
       '@visactor/vtable': workspace:*
       '@visactor/vutils': ~0.18.9
@@ -201,6 +202,7 @@ importers:
       react: ^18.0.0
       react-dom: ^18.0.0
       react-is: ^18.2.0
+      react-reconciler: 0.29.2
       rimraf: 3.0.2
       sass: 1.43.5
       ts-jest: ^26.0.0
@@ -216,6 +218,7 @@ importers:
       '@visactor/vtable': link:../vtable
       '@visactor/vutils': 0.18.9
       react-is: 18.3.1
+      react-reconciler: 0.29.2_react@18.3.1
     devDependencies:
       '@arco-design/web-react': 2.60.2_psuonouaqi5wuc37nxyknoubym
       '@babel/core': 7.20.12
@@ -232,6 +235,7 @@ importers:
       '@types/react': 18.3.3
       '@types/react-dom': 18.3.0
       '@types/react-is': 17.0.7
+      '@types/react-reconciler': 0.28.8
       '@visactor/vchart': 1.11.4
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.7.2
@@ -3399,6 +3403,12 @@ packages:
     resolution: {integrity: sha512-WrTEiT+c6rgq36QApoy0063uAOdltCrhF0QMXLIgYPaTvIdQhAB8hPb5oGGqX18xToElNILS9UprwU6GyINcJg==}
     dependencies:
       '@types/react': 17.0.80
+    dev: true
+
+  /@types/react-reconciler/0.28.8:
+    resolution: {integrity: sha512-SN9c4kxXZonFhbX4hJrZy37yw9e7EIxcpHCxQv5JUS18wDE5ovkQKlqQEkufdJCCMfuI9BnjUJvhYeJ9x5Ra7g==}
+    dependencies:
+      '@types/react': 18.3.3
     dev: true
 
   /@types/react/17.0.80:
@@ -11245,6 +11255,17 @@ packages:
 
   /react-is/18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
+
+  /react-reconciler/0.29.2_react@18.3.1:
+    resolution: {integrity: sha512-zZQqIiYgDCTP/f1N/mAR10nJGrPD2ZR+jDSEsKWJHYC7Cm2wodlwbR3upZRdC3cjIjSlTLNVyO7Iu0Yy7t2AYg==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      react: ^18.3.1
+    dependencies:
+      loose-envify: 1.4.0
+      react: 18.3.1
+      scheduler: 0.23.2
+    dev: false
 
   /react-refresh/0.14.2:
     resolution: {integrity: sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==}
