@@ -1470,7 +1470,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const width = this.getColWidth(col);
     if (isFrozenCell && isFrozenCell.col) {
       if (this.isRightFrozenColumn(col, row)) {
-        absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(col, this.colCount - 1) ?? 0);
+        if (this.getAllColsWidth() <= this.tableNoFrameWidth) {
+          absoluteLeft = this.getColsWidth(0, col - 1) || 0;
+        } else {
+          absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(col, this.colCount - 1) ?? 0);
+        }
       } else {
         absoluteLeft = this.getColsWidth(0, col - 1) || 0;
         // absoluteLeft += this.scrollLeft;
@@ -1483,7 +1487,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const height = this.getRowHeight(row);
     if (isFrozenCell && isFrozenCell.row) {
       if (this.isBottomFrozenRow(col, row)) {
-        absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(row, this.rowCount - 1) ?? 0);
+        if (this.getAllRowsHeight() <= this.tableNoFrameHeight) {
+          absoluteTop = this.getRowsHeight(0, row - 1);
+        } else {
+          absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(row, this.rowCount - 1) ?? 0);
+        }
       } else {
         absoluteTop = this.getRowsHeight(0, row - 1);
         // absoluteTop += this.scrollTop;

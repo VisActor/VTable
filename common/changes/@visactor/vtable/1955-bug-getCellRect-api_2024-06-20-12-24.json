@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: getCellRect api when cell is frozen get bounds error #1955\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
