@@ -1,32 +1,13 @@
----
-category: examples
-group: data-analysis
-title: Derived Field
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-derivedField.png
-link: '../guide/data_analysis/pivot_table_dataAnalysis'
-option: PivotTable#dataConfig.derivedFieldRules
----
+import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+const PivotTable = VTable.PivotTable;
+const CONTAINER_ID = 'vTable';
 
-# Derived Field
-
-To pivot analysis table data data filtering rules, configure derivedFieldRules in dataConfig.
-
-## Key Configurations
-
-- `PivotTable`
-- `columns`
-- `rows`
-- `indicators`
-- `dataConfig` configures data rules, optional configuration items
-
-## Code demo
-
-```javascript livedemo template=vtable
 let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
   .then(res => res.json())
   .then(data => {
-    const option = {
+    const option: VTable.PivotTableConstructorOptions = {
       records: data,
       rows: [
         {
@@ -52,16 +33,14 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           title: 'Year',
           headerStyle: {
             textStick: true
-          },
-          width: 'auto'
+          }
         },
         {
           dimensionKey: 'Month',
           title: 'Month',
           headerStyle: {
             textStick: true
-          },
-          width: 'auto'
+          }
         }
       ],
       indicators: [
@@ -76,7 +55,9 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           style: {
             padding: [16, 28, 16, 28],
             color(args) {
-              if (args.dataValue >= 0) return 'black';
+              if (args.dataValue >= 0) {
+                return 'black';
+              }
               return 'red';
             }
           }
@@ -95,7 +76,9 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           style: {
             padding: [16, 28, 16, 28],
             color(args) {
-              if (args.dataValue >= 0) return 'black';
+              if (args.dataValue >= 0) {
+                return 'black';
+              }
               return 'red';
             }
           }
@@ -114,17 +97,28 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           style: {
             padding: [16, 28, 16, 28],
             color(args) {
-              if (args.dataValue >= 0) return 'black';
+              if (args.dataValue >= 0) {
+                return 'black';
+              }
               return 'red';
             }
+          }
+        },
+        {
+          indicatorKey: 'calField1',
+          title: 'AvgPrice',
+          width: 'auto',
+          format: rec => {
+            return '$' + Number(rec).toFixed(2);
+          },
+          style: {
+            color: 'blue'
           }
         }
       ],
       corner: {
         titleOnDimension: 'row',
-        headerStyle: {
-          textStick: true
-        }
+        headerStyle: {}
       },
       dataConfig: {
         derivedFieldRules: [
@@ -137,16 +131,39 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
             derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%n', true)
           }
         ],
-        sortRules: [
+        calculatedFieldRules: [
           {
-            sortField: 'Month',
-            sortBy: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            key: 'calField1',
+            dependIndicatorKeys: ['Quantity', 'Sales'],
+            calculateFun: (dependValue: any) => {
+              return dependValue.Sales / dependValue.Quantity;
+            }
           }
-        ]
+        ],
+        totals: {
+          row: {
+            showGrandTotals: true,
+            showSubTotals: true,
+            subTotalsDimensions: ['Category'],
+            grandTotalLabel: '行总计',
+            subTotalLabel: '小计'
+          },
+          column: {
+            showGrandTotals: true,
+            showSubTotals: true,
+            subTotalsDimensions: ['Year'],
+            grandTotalLabel: '列总计',
+            subTotalLabel: '小计'
+          }
+        }
       },
-、      widthMode: 'standard'
+      widthMode: 'standard'
     };
     tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    window.tableInstance = tableInstance;
+
+    bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
+  })
+  .catch(e => {
+    console.error(e);
   });
-```
