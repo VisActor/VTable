@@ -1497,6 +1497,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.scenegraph.resize();
     }
     this.eventManager.updateEventBinder();
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        this.internalProps.emptyTip.resetVisible();
+      }
+    }
   }
   /** 开启单元格编辑 */
   startEditCell(col?: number, row?: number) {
