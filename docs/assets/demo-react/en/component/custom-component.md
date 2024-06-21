@@ -12,7 +12,6 @@ link: '../guide/Developer_Ecology/react'
 The `CustomComponent` component facilitates overlaying external components on React-VTable components.
 
 ## Code Example
-
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 

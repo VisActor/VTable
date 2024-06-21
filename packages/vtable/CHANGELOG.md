@@ -1,6 +1,42 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 20 Jun 2024 12:19:07 GMT and should not be manually modified.
+This log was last generated on Fri, 21 Jun 2024 10:26:08 GMT and should not be manually modified.
+
+## 1.4.0
+Fri, 21 Jun 2024 10:26:08 GMT
+
+### Minor changes
+
+- feat: support calculate field for PivotTable #1941
+
+
+
+### Updates
+
+- fix: updateSortState api occor error #1939
+
+
+- feat: support corner header cell edit value #1945
+
+
+- fix: when setRecords should update emptyTip #1953
+
+
+- fix: getCellRect api when cell is frozen get bounds error #1955
+
+
+- fix: when drag cell and enter edit state but can not exit edit rightly #1956
+
+
+- chore: update vrender version
+
+
+- feat: add indent in vtable-export
+- feat: add CustomComponent in react-vtable
+- feat: add CustomLayout component in react-vtable
+- fix: fix custom width problem #1905
+- fix: fix content judgement in getCellRange() #1911
+- fix: fix size update problem in pivot table sort #1958
 
 ## 1.3.3
 Thu, 20 Jun 2024 12:19:07 GMT

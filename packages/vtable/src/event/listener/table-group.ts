@@ -40,7 +40,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }
-    if (stateManager.interactionState === InteractionState.grabing) {
+    if (
+      stateManager.interactionState === InteractionState.grabing &&
+      !(table as ListTableAPI).editorManager.editingEditor
+    ) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizeCol()) {
           /* do nothing */
@@ -53,7 +56,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
       return;
-    } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
+    } else if (
+      table.eventManager.isDraging &&
+      stateManager.isSelecting() &&
+      !(table as ListTableAPI).editorManager.editingEditor
+    ) {
       eventManager.dealTableSelect(eventArgsSet, true);
     }
     // 更新列宽调整pointer

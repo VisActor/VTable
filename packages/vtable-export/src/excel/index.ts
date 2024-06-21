@@ -5,6 +5,7 @@ import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './sty
 import { updateCell, renderChart, graphicUtil } from '@visactor/vtable';
 import { isArray } from '@visactor/vutils';
 import type { ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/src/ts-types';
+import { getHierarchyOffset } from '../util/indent';
 
 export type CellInfo = {
   cellType: string;
@@ -136,7 +137,8 @@ function addCell(
       cell.font = getCellFont(cellStyle, cellType);
       cell.fill = getCellFill(cellStyle);
       cell.border = getCellBorder(cellStyle);
-      cell.alignment = getCellAlignment(cellStyle);
+      const offset = getHierarchyOffset(col, row, tableInstance as any);
+      cell.alignment = getCellAlignment(cellStyle, Math.ceil(offset / cell.font.size));
       return;
     }
   }
@@ -168,7 +170,8 @@ function addCell(
     cell.font = getCellFont(cellStyle, cellType);
     cell.fill = getCellFill(cellStyle);
     cell.border = getCellBorder(cellStyle);
-    cell.alignment = getCellAlignment(cellStyle);
+    const offset = getHierarchyOffset(col, row, tableInstance as any);
+    cell.alignment = getCellAlignment(cellStyle, Math.ceil(offset / cell.font.size));
   } else if (cellType === 'chart') {
     const cellGroup = tableInstance.scenegraph.getCell(col, row);
     renderChart(cellGroup.firstChild as any); // render chart first
