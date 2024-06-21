@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 17 Jun 2024 11:51:18 GMT and should not be manually modified.
+This log was last generated on Thu, 20 Jun 2024 12:19:07 GMT and should not be manually modified.
+
+## 1.3.3
+Thu, 20 Jun 2024 12:19:07 GMT
+
+### Updates
+
+- fix: fix column update problem #1951
 
 ## 1.3.2
 Mon, 17 Jun 2024 11:51:18 GMT
