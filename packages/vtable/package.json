@@ -50,9 +50,9 @@
   },
   "dependencies": {
     "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vrender-core": "0.19.10-beta.1",
-    "@visactor/vrender-kits": "0.19.10-beta.1",
-    "@visactor/vrender-components": "0.19.10-beta.1",
+    "@visactor/vrender-core": "0.19.11",
+    "@visactor/vrender-kits": "0.19.11",
+    "@visactor/vrender-components": "0.19.11",
     "@visactor/vutils": "~0.18.9",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "luxon": "*",
-    "@visactor/vchart": "1.11.0",
+    "@visactor/vchart": "1.11.4",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
