@@ -1509,6 +1509,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /** 开启单元格编辑 */
   startEditCell(col?: number, row?: number) {
     if (isValid(col) && isValid(row)) {
+      this.eventManager.isDraging = false;
       this.selectCell(col, row);
       this.editorManager.startEditCell(col, row);
     } else if (this.stateManager.select?.cellPos) {
@@ -1525,7 +1526,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
     let editorDefine;
-    if (this.isHeader(col, row) && !this.isCornerHeader(col, row)) {
+    if (this.isCornerHeader(col, row)) {
+      const define = this.getHeaderDefine(col, row);
+      editorDefine = (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor;
+    } else if (this.isHeader(col, row)) {
       const define = this.getHeaderDefine(col, row);
       editorDefine = (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor;
     } else {
@@ -1626,6 +1630,29 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     let pasteColEnd = startCol;
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
+    //#region 提前组织好未更改前的数据
+    const beforeChangeValues: (string | number)[][] = [];
+    const oldValues: (string | number)[][] = [];
+    for (let i = 0; i < values.length; i++) {
+      if (startRow + i > this.rowCount - 1) {
+        break;
+      }
+      const rowValues = values[i];
+      const rawRowValues: (string | number)[] = [];
+      const oldRowValues: (string | number)[] = [];
+      beforeChangeValues.push(rawRowValues);
+      oldValues.push(oldRowValues);
+      for (let j = 0; j < rowValues.length; j++) {
+        if (startCol + j > this.colCount - 1) {
+          break;
+        }
+        const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+        rawRowValues.push(beforeChangeValue);
+        const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
+        oldRowValues.push(oldValue);
+      }
+    }
+    //#endregion
     for (let i = 0; i < values.length; i++) {
       if (startRow + i > this.rowCount - 1) {
         break;
@@ -1645,8 +1672,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         ) {
           const value = rowValues[j];
           let newValue: string | number = value;
-          const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
-          const rawValue = this.getCellRawValue(startCol + j, startRow + i);
+          const oldValue = oldValues[i][j];
+          const rawValue = beforeChangeValues[i][j];
           if (typeof rawValue === 'number' && isAllDigits(value)) {
             newValue = parseFloat(value);
           }
@@ -1716,7 +1743,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.records[rowIndex][colIndex] = newValue;
     } else if (this.dataset) {
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      if (this.isHeader(col, row)) {
+      if (this.isCornerHeader(col, row)) {
+        this.internalProps.layoutMap.changeCornerTitle(col, row, newValue as string);
+      } else if (this.isHeader(col, row)) {
         this.internalProps.layoutMap.changeTreeNodeTitle(col, row, newValue as string);
 
         !this.isCornerHeader(col, row) &&

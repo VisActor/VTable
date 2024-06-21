@@ -704,6 +704,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             dimensionKey: dimensionKey, // '维度名称',
             id,
             value: dimensionKey,
+            headerEditor: this.cornerSetting.headerEditor,
             disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
             disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
           },
@@ -3395,7 +3396,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const id = this.getCellId(col, row);
     this._headerObjectMap[id as number].title = value;
   }
-
+  changeCornerTitle(col: number, row: number, value: string) {
+    if (this.isCornerHeader(col, row)) {
+      const id = this.getCellId(col, row);
+      this._headerObjectMap[id as number].title = value;
+    }
+  }
   generateCellIdsConsiderHideHeader() {
     // deal with hide header
     // 创建原数组的副本
