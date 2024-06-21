@@ -764,7 +764,11 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       maxHeight = bounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
     } else {
       // autoWrapText = false
-      maxHeight = lines.length * lineHeight;
+      if (table.options.customConfig?.multilinesForXTable) {
+        maxHeight = lineHeight;
+      } else {
+        maxHeight = lines.length * lineHeight;
+      }
     }
   }
   return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;
