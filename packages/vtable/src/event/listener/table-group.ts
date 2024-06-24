@@ -42,7 +42,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     // }
     if (
       stateManager.interactionState === InteractionState.grabing &&
-      !(table as ListTableAPI).editorManager.editingEditor
+      !(table as ListTableAPI).editorManager?.editingEditor
     ) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizeCol()) {
@@ -59,7 +59,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     } else if (
       table.eventManager.isDraging &&
       stateManager.isSelecting() &&
-      !(table as ListTableAPI).editorManager.editingEditor
+      !(table as ListTableAPI).editorManager?.editingEditor
     ) {
       eventManager.dealTableSelect(eventArgsSet, true);
     }
