@@ -49,7 +49,9 @@ import type {
   TableEventOptions,
   WidthAdaptiveModeDef,
   HeightAdaptiveModeDef,
-  ListTableAPI
+  ListTableAPI,
+  ColumnInfo,
+  RowInfo
 } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
 
@@ -124,6 +126,7 @@ import { RowSeriesNumberHelper } from './row-series-number-helper';
 import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 import type { ITextGraphicAttribute } from '@src/vrender';
+import { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
 import { hasAutoImageColumn } from '../layout/layout-helper';
 import {
@@ -205,6 +208,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 
+  reactCustomLayout?: ReactCustomLayout;
   _hasAutoImageColumn?: boolean;
 
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
@@ -305,6 +309,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       internalProps.canvas = document.createElement('canvas');
       internalProps.element.appendChild(internalProps.canvas);
       internalProps.context = internalProps.canvas.getContext('2d')!;
+
+      if (options.customConfig?.createReactContainer) {
+        internalProps.bodyDomContainer = document.createElement('div');
+        internalProps.bodyDomContainer.classList.add('table-component-container');
+        internalProps.element.appendChild(internalProps.bodyDomContainer);
+        internalProps.headerDomContainer = document.createElement('div');
+        internalProps.headerDomContainer.classList.add('table-component-container');
+        internalProps.element.appendChild(internalProps.headerDomContainer);
+      }
     }
 
     internalProps.handler = new EventHandler();
@@ -532,7 +545,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 注意 这个值和options.frozenColCount 不一样！options.frozenColCount是用户实际设置的; 这里获取的值是调整过:frozen的列过宽时 frozeCount为0
    */
   get frozenColCount(): number {
-    return this.internalProps.layoutMap?.frozenColCount ?? this.internalProps.frozenColCount ?? 0;
+    return this.internalProps?.layoutMap?.frozenColCount ?? this.internalProps?.frozenColCount ?? 0;
   }
   /**
    * Set the number of frozen columns.
@@ -592,7 +605,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * Get the number of frozen rows.
    */
   get frozenRowCount(): number {
-    return this.internalProps.layoutMap?.frozenRowCount ?? this.internalProps.frozenRowCount ?? 0;
+    return this.internalProps?.layoutMap?.frozenRowCount ?? this.internalProps?.frozenRowCount ?? 0;
   }
   /**
    * Set the number of frozen rows.
@@ -603,7 +616,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   get rightFrozenColCount(): number {
-    return this.internalProps.layoutMap?.rightFrozenColCount ?? this.internalProps.rightFrozenColCount ?? 0;
+    return this.internalProps?.layoutMap?.rightFrozenColCount ?? this.internalProps?.rightFrozenColCount ?? 0;
   }
 
   set rightFrozenColCount(rightFrozenColCount: number) {
@@ -611,7 +624,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   get bottomFrozenRowCount(): number {
-    return this.internalProps.layoutMap?.bottomFrozenRowCount ?? this.internalProps.bottomFrozenRowCount ?? 0;
+    return this.internalProps?.layoutMap?.bottomFrozenRowCount ?? this.internalProps?.bottomFrozenRowCount ?? 0;
   }
 
   set bottomFrozenRowCount(bottomFrozenRowCount: number) {
@@ -939,6 +952,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
         canvas.style.width = `${widthP}px`;
         canvas.style.height = `${heightP}px`;
+      }
+
+      if (this.internalProps.bodyDomContainer) {
+        this.internalProps.bodyDomContainer.style.width = `${widthP}px`;
+        this.internalProps.bodyDomContainer.style.height = `${heightP}px`;
+      }
+      if (this.internalProps.headerDomContainer) {
+        this.internalProps.headerDomContainer.style.width = `${widthP}px`;
+        this.internalProps.headerDomContainer.style.height = `${heightP}px`;
       }
     } else if (Env.mode === 'node') {
       widthP = this.canvasWidth - 1;
@@ -1476,7 +1498,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const width = this.getColWidth(col);
     if (isFrozenCell && isFrozenCell.col) {
       if (this.isRightFrozenColumn(col, row)) {
-        absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(col, this.colCount - 1) ?? 0);
+        if (this.getAllColsWidth() <= this.tableNoFrameWidth) {
+          absoluteLeft = this.getColsWidth(0, col - 1) || 0;
+        } else {
+          absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(col, this.colCount - 1) ?? 0);
+        }
       } else {
         absoluteLeft = this.getColsWidth(0, col - 1) || 0;
         // absoluteLeft += this.scrollLeft;
@@ -1489,7 +1515,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const height = this.getRowHeight(row);
     if (isFrozenCell && isFrozenCell.row) {
       if (this.isBottomFrozenRow(col, row)) {
-        absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(row, this.rowCount - 1) ?? 0);
+        if (this.getAllRowsHeight() <= this.tableNoFrameHeight) {
+          absoluteTop = this.getRowsHeight(0, row - 1);
+        } else {
+          absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(row, this.rowCount - 1) ?? 0);
+        }
       } else {
         absoluteTop = this.getRowsHeight(0, row - 1);
         // absoluteTop += this.scrollTop;
@@ -1633,6 +1663,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const scrollLeft = this.scrollLeft;
     if (this.isLeftFrozenColumn(startCol) && this.isRightFrozenColumn(endCol)) {
       width = this.tableNoFrameWidth - (this.getColsWidth(startCol + 1, this.colCount - 1) ?? 0) - absoluteLeft;
+      // width =
+      //   this.tableNoFrameWidth -
+      //   (this.getColsWidth(0, startCol - 1) ?? 0) -
+      //   (this.getColsWidth(endCol + 1, this.colCount - 1) ?? 0);
     } else if (this.isLeftFrozenColumn(startCol) && !this.isLeftFrozenColumn(endCol)) {
       width = Math.max(width - scrollLeft, this.getColsWidth(startCol, this.frozenColCount - 1));
     } else if (!this.isRightFrozenColumn(startCol) && this.isRightFrozenColumn(endCol)) {
@@ -1650,6 +1684,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const scrollTop = this.scrollTop;
     if (this.isTopFrozenRow(startRow) && this.isBottomFrozenRow(endRow)) {
       height = this.tableNoFrameHeight - (this.getRowsHeight(startRow + 1, this.rowCount - 1) ?? 0) - absoluteTop;
+      // height =
+      //   this.tableNoFrameHeight -
+      //   (this.getRowsHeight(0, startRow - 1) ?? 0) -
+      //   (this.getRowsHeight(endRow + 1, this.rowCount - 1) ?? 0);
     } else if (this.isTopFrozenRow(startRow) && !this.isTopFrozenRow(endRow)) {
       height = Math.max(height - scrollTop, this.getRowsHeight(startRow, this.frozenRowCount - 1));
     } else if (!this.isBottomFrozenRow(startRow) && this.isBottomFrozenRow(endRow)) {
@@ -2422,7 +2460,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-  getTargetColAt(absoluteX: number): { col: number; left: number; right: number; width: number } | null {
+
+  getTargetColAt(absoluteX: number): ColumnInfo | null {
     return getTargetColAt(absoluteX, this);
   }
   /**
@@ -2431,7 +2470,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-  getTargetRowAt(absoluteY: number): { row: number; top: number; bottom: number; height: number } | null {
+
+  getTargetRowAt(absoluteY: number): RowInfo | null {
     return getTargetRowAt(absoluteY, this);
   }
 
@@ -2441,10 +2481,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
+
   getTargetColAtConsiderRightFrozen(
     absoluteX: number,
     isConsider: boolean
-  ): { col: number; left: number; right: number; width: number } | null {
+  ): ColumnInfo | null {
     return getTargetColAtConsiderRightFrozen(absoluteX, isConsider, this);
   }
 
@@ -2454,10 +2495,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
+
   getTargetRowAtConsiderBottomFrozen(
     absoluteY: number,
     isConsider: boolean
-  ): { row: number; top: number; bottom: number; height: number } | null {
+  ): RowInfo | null {
     return getTargetRowAtConsiderBottomFrozen(absoluteY, isConsider, this);
   }
 
@@ -2817,7 +2859,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCellRange(col: number, row: number): CellRange {
     if (this.internalProps.customMergeCell) {
       const customMerge = this.internalProps.customMergeCell(col, row, this);
-      if (customMerge && customMerge.range && customMerge.text) {
+      if (
+        customMerge &&
+        customMerge.range &&
+        (customMerge.text || customMerge.customLayout || customMerge.customRender)
+      ) {
         return customMerge.range;
       }
     }
@@ -3843,28 +3889,58 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (col < this.frozenColCount && row < this.frozenRowCount) {
       return true;
     }
-
-    const colHeaderRangeRect = this.getCellRangeRelativeRect({
-      start: {
-        col: 0,
-        row: 0
-      },
-      end: {
-        col: this.colCount - 1,
-        row: this.columnHeaderLevelCount
-      }
-    });
-    const rowHeaderRangeRect = this.getCellRangeRelativeRect({
-      start: {
-        col: 0,
-        row: 0
-      },
-      end: {
-        col: this.rowHeaderLevelCount,
-        row: this.rowCount - 1
-      }
-    });
-
+    let colHeaderRangeRect;
+    if (this.frozenRowCount >= 1) {
+      colHeaderRangeRect = this.getCellRangeRelativeRect({
+        start: {
+          col: 0,
+          row: 0
+        },
+        end: {
+          col: this.colCount - 1,
+          row: this.frozenRowCount - 1
+        }
+      });
+    }
+    let rowHeaderRangeRect;
+    if (this.frozenColCount >= 1) {
+      rowHeaderRangeRect = this.getCellRangeRelativeRect({
+        start: {
+          col: 0,
+          row: 0
+        },
+        end: {
+          col: this.frozenColCount - 1,
+          row: this.rowCount - 1
+        }
+      });
+    }
+    let bottomFrozenRangeRect;
+    if (this.bottomFrozenRowCount >= 1) {
+      bottomFrozenRangeRect = this.getCellRangeRelativeRect({
+        start: {
+          col: 0,
+          row: this.rowCount - this.bottomFrozenRowCount
+        },
+        end: {
+          col: this.colCount - 1,
+          row: this.rowCount - 1
+        }
+      });
+    }
+    let rightFrozenRangeRect;
+    if (this.rightFrozenColCount >= 1) {
+      rightFrozenRangeRect = this.getCellRangeRelativeRect({
+        start: {
+          col: this.colCount - this.rightFrozenColCount,
+          row: 0
+        },
+        end: {
+          col: this.colCount - 1,
+          row: this.rowCount - 1
+        }
+      });
+    }
     if (
       rect.top >= drawRange.top &&
       rect.bottom <= drawRange.bottom &&
@@ -3872,12 +3948,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       rect.right <= drawRange.right
     ) {
       // return true;
-      if (this.isHeader(col, row)) {
+      if (this.isFrozenCell(col, row)) {
         return true;
       } else if (
         // body cell drawRange do not intersect colHeaderRangeRect&rowHeaderRangeRect
-        drawRange.top >= colHeaderRangeRect.bottom &&
-        drawRange.left >= rowHeaderRangeRect.right
+        rect.top >= (colHeaderRangeRect?.bottom ?? rect.top) &&
+        rect.left >= (rowHeaderRangeRect?.right ?? rect.left) &&
+        rect.bottom <= (bottomFrozenRangeRect?.top ?? rect.bottom) &&
+        rect.right <= (rightFrozenRangeRect?.left ?? rect.right)
       ) {
         return true;
       }
@@ -4188,4 +4266,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   // startInertia() {
   //   startInertia(0, -1, 1, this.stateManager);
   // }
+
+  checkReactCustomLayout() {
+    if (!this.reactCustomLayout) {
+      this.reactCustomLayout = new ReactCustomLayout(this);
+    }
+  }
+
+  get bodyDomContainer() {
+    return this.internalProps.bodyDomContainer;
+  }
+  get headerDomContainer() {
+    return this.internalProps.headerDomContainer;
+  }
 }

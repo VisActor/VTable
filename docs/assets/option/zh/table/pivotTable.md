@@ -224,7 +224,7 @@ export interface Total {
 
 ### derivedFieldRules(DerivedFieldRules)
 
-增加派生字段
+增加派生字段，vtable 会基于派生字段定义的规则来生成新的字段，并将新字段加入到数据中。该新的字段可以作为维度项或者指标项。
 
 ```
 export type DerivedFieldRules = DerivedFieldRule[];
@@ -239,9 +239,29 @@ export interface DerivedFieldRule {
 }
 ```
 
+### calculatedFieldRules (CalculateddFieldRules)
+
+计算字段，类 Excel 透视表中的计算字段，可以通过计算字段来计算新的指标值，且都是在汇总结果基础上进行的再计算。注意：不同于派生字段。
+
+```
+export type CalculateddFieldRules = CalculateddFieldRule[];
+```
+
+```
+export interface CalculateddFieldRule {
+  /** 唯一标识，可以当做新指标的key，用于配置在 indicators 中在透视表中展示。 */
+  key: string;
+  /** 计算字段依赖的指标，可以是在 records 中具体对应的指标字段 or 不是数据records 中的字段
+   * 如果依赖的指标不在 records 中，则需要在 aggregationRules 中明确配置，具体指明聚合规则和 indicatorKey 以在 dependIndicatorKeys 所使用。 */
+  dependIndicatorKeys: string[];
+  /** 计算字段的计算函数，依赖的指标值作为参数传入，返回值作为计算字段的值。   */
+  calculateFun?: (dependFieldsValue: any) => any;
+}
+```
+
 ## columnTree(Array)
 
-列表头树，类型为:`IDimensionHeaderNode|IIndicatorHeaderNode[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。
+列表头树，类型为:`(IDimensionHeaderNode|IIndicatorHeaderNode)[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。
 
 ** IDimensionHeaderNode 具体配置项如下：**
 
@@ -253,8 +273,8 @@ export interface IDimensionHeaderNode {
   dimensionKey: string | number;
   /** 维度成员值 */
   value: string;
-  /** 维度成员下的子维度树结构 */
-  children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
+  /** 维度成员下的子维度树结构。 true一般是用在显示折叠展开按钮，进行懒加载获取数据的场景中。 */
+  children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[] | true;
   /** 折叠状态 配合树形结构展示使用。注意：仅在rowTree中有效 */
   hierarchyState?: HierarchyState;
   /** 是否为虚拟节点。 如果配置为true，则在基于records数据做分析时会忽略该维度字段 */

@@ -70,9 +70,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     internalProps.sortState = options.sortState;
     internalProps.dataConfig = {}; //cloneDeep(options.dataConfig ?? {});
     internalProps.columns = options.columns
-      ? cloneDeepSpec(options.columns)
+      ? cloneDeepSpec(options.columns, ['children']) // children for react
       : options.header
-      ? cloneDeepSpec(options.header)
+      ? cloneDeepSpec(options.header, ['children'])
       : [];
     // options.columns?.forEach((colDefine, index) => {
     //   //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
@@ -155,7 +155,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   updateColumns(columns: ColumnsDefine) {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
-    this.internalProps.columns = cloneDeepSpec(columns);
+    this.internalProps.columns = cloneDeepSpec(columns, ['children']);
     // columns.forEach((colDefine, index) => {
     //   if (colDefine.editor) {
     //     this.internalProps.columns[index].editor = colDefine.editor;
@@ -397,9 +397,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns
-      ? cloneDeepSpec(options.columns)
+      ? cloneDeepSpec(options.columns, ['children'])
       : options.header
-      ? cloneDeepSpec(options.header)
+      ? cloneDeepSpec(options.header, ['children'])
       : [];
     // options.columns.forEach((colDefine, index) => {
     //   if (colDefine.editor) {
@@ -868,12 +868,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
       // 解除排序状态
       if (this.internalProps.sortState) {
         if (Array.isArray(this.internalProps.sortState)) {
-          for (let i = 0; i < (<SortState[]>this.internalProps.sortState).length; i++) {
-            const sortState: SortState = this.internalProps.sortState[i];
-            sortState.order = 'normal';
-          }
+          // for (let i = 0; i < (<SortState[]>this.internalProps.sortState).length; i++) {
+          sortState = this.internalProps.sortState?.[0];
+          sortState && (sortState.order = 'normal');
+          // }
         } else {
           (<SortState>this.internalProps.sortState).order = 'normal';
+          sortState = this.internalProps.sortState;
         }
       }
     } else {
@@ -884,8 +885,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     let order: any;
     let field: any;
     if (Array.isArray(this.internalProps.sortState)) {
-      ({ order, field } = this.internalProps.sortState?.[0]);
-    } else {
+      if (this.internalProps.sortState?.[0]) {
+        ({ order, field } = this.internalProps.sortState?.[0]);
+      }
+    } else if (this.internalProps.sortState) {
       ({ order, field } = this.internalProps.sortState as SortState);
     }
     if (field && executeSort) {
@@ -901,7 +904,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.scenegraph.sortCell();
       }
     }
-    this.stateManager.updateSortState(sortState as SortState);
+    if (sortState) {
+      this.stateManager.updateSortState(sortState as SortState);
+    }
   }
   updateFilterRules(filterRules: FilterRules) {
     this.scenegraph.clearCells();
@@ -1059,6 +1064,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /** 开启单元格编辑 */
   startEditCell(col?: number, row?: number) {
     if (isValid(col) && isValid(row)) {
+      this.eventManager.isDraging = false;
       this.selectCell(col, row);
       this.editorManager.startEditCell(col, row);
     } else if (this.stateManager.select?.cellPos) {
@@ -1211,6 +1217,29 @@ export class ListTable extends BaseTable implements ListTableAPI {
     let pasteColEnd = startCol;
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
+    //#region 提前组织好未更改前的数据
+    const beforeChangeValues: (string | number)[][] = [];
+    const oldValues: (string | number)[][] = [];
+    for (let i = 0; i < values.length; i++) {
+      if (startRow + i > this.rowCount - 1) {
+        break;
+      }
+      const rowValues = values[i];
+      const rawRowValues: (string | number)[] = [];
+      const oldRowValues: (string | number)[] = [];
+      beforeChangeValues.push(rawRowValues);
+      oldValues.push(oldRowValues);
+      for (let j = 0; j < rowValues.length; j++) {
+        if (startCol + j > this.colCount - 1) {
+          break;
+        }
+        const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+        rawRowValues.push(beforeChangeValue);
+        const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
+        oldRowValues.push(oldValue);
+      }
+    }
+    //#endregion
     for (let i = 0; i < values.length; i++) {
       if (startRow + i > this.rowCount - 1) {
         break;
@@ -1230,8 +1259,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
           const value = rowValues[j];
           const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
           const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
-          const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
-          const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
+          // const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+          // const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
+          const beforeChangeValue = beforeChangeValues[i][j];
+          const oldValue = oldValues[i][j];
           if (this.isHeader(startCol + j, startRow + i)) {
             this.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
           } else {

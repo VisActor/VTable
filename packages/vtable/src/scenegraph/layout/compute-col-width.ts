@@ -17,7 +17,7 @@ import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@src/vrender';
-import { isArray, isNumber, isObject, isString, isValid } from '@visactor/vutils';
+import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { breakString } from '../utils/break-string';
 
@@ -456,7 +456,7 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       rect: getCellRect(col, row, table),
       table
     };
-    if (customLayout) {
+    if (isFunction(customLayout)) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
       if (customLayoutObj.rootContainer instanceof VGroup) {
@@ -481,6 +481,7 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       width = customRender?.expectedWidth ?? 0;
       renderDefault = customRender?.renderDefault;
     }
+    width = Math.ceil(width);
     if (enableCellPadding) {
       const actStyle = table._getCellStyle(col, row);
       const padding = getQuadProps(getProp('padding', actStyle, col, row, table));

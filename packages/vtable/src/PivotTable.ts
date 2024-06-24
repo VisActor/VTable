@@ -29,7 +29,7 @@ import { Dataset } from './dataset/dataset';
 import { BaseTable } from './core/BaseTable';
 import type { BaseTableAPI, HeaderData, PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
-import { cloneDeep, isValid } from '@visactor/vutils';
+import { cloneDeep, isNumber, isValid } from '@visactor/vutils';
 import { Env } from './tools/env';
 import type { ITreeLayoutHeadNode } from './layout/tree-helper';
 import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
@@ -973,7 +973,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * 全量更新排序规则
    * @param sortRules
    */
-  updateSortRules(sortRules: SortRules) {
+  updateSortRules(sortRules: SortRules, col?: number, row?: number) {
     if (this.internalProps.dataConfig) {
       this.internalProps.dataConfig.sortRules = sortRules;
     } else {
@@ -981,13 +981,31 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     this.dataset.updateSortRules(sortRules);
     this._changePivotSortStateBySortRules();
-    this.internalProps.layoutMap.resetHeaderTree();
+    const { layoutMap } = this.internalProps;
+    layoutMap.resetHeaderTree();
     // 清空单元格内容
     this.scenegraph.clearCells();
-    this.refreshHeader();
+    if (isNumber(col) && isNumber(row)) {
+      if (this.isRowHeader(col, row)) {
+        this.setMinMaxLimitWidth(true);
+        this.internalProps._widthResizedColMap.clear();
+      } else if (this.isCornerHeader(col, row)) {
+        if (layoutMap.cornerSetting.titleOnDimension === 'column') {
+          this.setMinMaxLimitWidth(true);
+          this.internalProps._widthResizedColMap.clear();
+        } else if (layoutMap.cornerSetting.titleOnDimension === 'row') {
+          this.internalProps._heightResizedRowMap.clear();
+        }
+      } else if (this.isColumnHeader(col, row)) {
+        this.internalProps._heightResizedRowMap.clear();
+      }
+      this.refreshRowColCount();
+    } else {
+      this.refreshHeader();
+    }
     this.internalProps.useOneRowHeightFillAll = false;
     // 生成单元格场景树
-    this.scenegraph.createSceneGraph();
+    this.scenegraph.createSceneGraph(true);
     this.render();
   }
   _changePivotSortStateBySortRules() {
@@ -1157,7 +1175,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }
       }
 
-      (this as PivotTable).updateSortRules((this as PivotTable).dataset.sortRules);
+      (this as PivotTable).updateSortRules((this as PivotTable).dataset.sortRules, col, row);
     }
   }
 
@@ -1497,10 +1515,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.scenegraph.resize();
     }
     this.eventManager.updateEventBinder();
+    if (this.options.emptyTip) {
+      if (this.internalProps.emptyTip) {
+        this.internalProps.emptyTip.resetVisible();
+      } else {
+        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+        this.internalProps.emptyTip.resetVisible();
+      }
+    }
   }
   /** 开启单元格编辑 */
   startEditCell(col?: number, row?: number) {
     if (isValid(col) && isValid(row)) {
+      this.eventManager.isDraging = false;
       this.selectCell(col, row);
       this.editorManager.startEditCell(col, row);
     } else if (this.stateManager.select?.cellPos) {
@@ -1517,7 +1544,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
     let editorDefine;
-    if (this.isHeader(col, row) && !this.isCornerHeader(col, row)) {
+    if (this.isCornerHeader(col, row)) {
+      const define = this.getHeaderDefine(col, row);
+      editorDefine = (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor;
+    } else if (this.isHeader(col, row)) {
       const define = this.getHeaderDefine(col, row);
       editorDefine = (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor;
     } else {
@@ -1618,6 +1648,29 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     let pasteColEnd = startCol;
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
+    //#region 提前组织好未更改前的数据
+    const beforeChangeValues: (string | number)[][] = [];
+    const oldValues: (string | number)[][] = [];
+    for (let i = 0; i < values.length; i++) {
+      if (startRow + i > this.rowCount - 1) {
+        break;
+      }
+      const rowValues = values[i];
+      const rawRowValues: (string | number)[] = [];
+      const oldRowValues: (string | number)[] = [];
+      beforeChangeValues.push(rawRowValues);
+      oldValues.push(oldRowValues);
+      for (let j = 0; j < rowValues.length; j++) {
+        if (startCol + j > this.colCount - 1) {
+          break;
+        }
+        const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+        rawRowValues.push(beforeChangeValue);
+        const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
+        oldRowValues.push(oldValue);
+      }
+    }
+    //#endregion
     for (let i = 0; i < values.length; i++) {
       if (startRow + i > this.rowCount - 1) {
         break;
@@ -1637,8 +1690,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         ) {
           const value = rowValues[j];
           let newValue: string | number = value;
-          const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
-          const rawValue = this.getCellRawValue(startCol + j, startRow + i);
+          const oldValue = oldValues[i][j];
+          const rawValue = beforeChangeValues[i][j];
           if (typeof rawValue === 'number' && isAllDigits(value)) {
             newValue = parseFloat(value);
           }
@@ -1708,7 +1761,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.records[rowIndex][colIndex] = newValue;
     } else if (this.dataset) {
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      if (this.isHeader(col, row)) {
+      if (this.isCornerHeader(col, row)) {
+        this.internalProps.layoutMap.changeCornerTitle(col, row, newValue as string);
+      } else if (this.isHeader(col, row)) {
         this.internalProps.layoutMap.changeTreeNodeTitle(col, row, newValue as string);
 
         !this.isCornerHeader(col, row) &&

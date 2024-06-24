@@ -1155,3 +1155,11 @@ interface ISortedMapItem {
   /**设置行高 */
   setRowHeight: (row: number, height: number)
 ```
+
+## cellIsInVisualView(Function)
+
+判断单元格是否在单元格可见区域，如果单元格完全都在可见区域才会返回 true，如果有部分或者完全都在可见区域外就返回 false
+
+```
+  cellIsInVisualView(col: number, row: number)
+```
