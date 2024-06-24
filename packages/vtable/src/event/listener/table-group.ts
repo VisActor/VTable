@@ -12,7 +12,7 @@ import type { SceneEvent } from '../util';
 import { getCellEventArgsSet, regIndexReg } from '../util';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { Group } from '../../scenegraph/graphic/group';
-import { isValid, last } from '@visactor/vutils';
+import { isValid } from '@visactor/vutils';
 import { getIconAndPositionFromTarget } from '../../scenegraph/utils/icon';
 import { cellInRanges } from '../../tools/helper';
 import { Rect } from '../../tools/Rect';
@@ -40,7 +40,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }
-    if (stateManager.interactionState === InteractionState.grabing) {
+    if (
+      stateManager.interactionState === InteractionState.grabing &&
+      !(table as ListTableAPI).editorManager.editingEditor
+    ) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizeCol()) {
           /* do nothing */
@@ -53,7 +56,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
       return;
-    } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
+    } else if (
+      table.eventManager.isDraging &&
+      stateManager.isSelecting() &&
+      !(table as ListTableAPI).editorManager.editingEditor
+    ) {
       eventManager.dealTableSelect(eventArgsSet, true);
     }
     // 更新列宽调整pointer
@@ -338,7 +345,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     stateManager.updateInteractionState(InteractionState.default);
     eventManager.dealTableHover();
     //点击到表格外部不需要取消选中状态
-    // eventManager.dealTableSelect();
+    if (table.options.select?.outsideClickDeselect) {
+      eventManager.dealTableSelect();
+    }
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
@@ -729,8 +738,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
     ) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
-      eventManager.dealTableSelect();
       stateManager.endSelectCells();
+
+      // 点击空白区域取消选中
+      if (table.options.select?.blankAreaClickDeselect ?? true) {
+        eventManager.dealTableSelect();
+      }
+
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
     } else if (table.eventManager.isDraging && stateManager.isSelecting()) {

@@ -10,7 +10,7 @@ import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
-import { isArray, isNumber, isObject, isString, isValid } from '@visactor/vutils';
+import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
@@ -546,7 +546,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       rect: getCellRect(col, row, table),
       table
     };
-    if (customLayout) {
+    if (isFunction(customLayout)) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
       if (customLayoutObj.rootContainer instanceof VGroup) {
@@ -764,7 +764,11 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       maxHeight = bounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
     } else {
       // autoWrapText = false
-      maxHeight = lines.length * lineHeight;
+      if (table.options.customConfig?.multilinesForXTable) {
+        maxHeight = lineHeight;
+      } else {
+        maxHeight = lines.length * lineHeight;
+      }
     }
   }
   return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;

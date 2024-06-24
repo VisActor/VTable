@@ -20,6 +20,7 @@ import type {
 import { Icon } from '../graphic/icon';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { percentCalcObj } from '../../render/layout';
+import { emptyCustomLayout } from '../../components/react/react-custom-layout';
 import { getTargetCell } from '../../event/util';
 import type { Group } from '../graphic/group';
 
@@ -47,6 +48,10 @@ export function dealWithCustom(
   let customElements;
   let elementsGroup: VGroup;
 
+  if (customLayout === 'react-custom-layout') {
+    // customLayout = table._reactCreateGraphic;
+    customLayout = table.reactCustomLayout?.getCustomLayoutFunc(col, row) || emptyCustomLayout;
+  }
   if (typeof customLayout === 'function') {
     const arg = {
       col,
@@ -72,6 +77,8 @@ export function dealWithCustom(
     if (customRenderObj.rootContainer instanceof VGroup) {
       elementsGroup = customRenderObj.rootContainer;
       elementsGroup.name = CUSTOM_CONTAINER_NAME;
+      (elementsGroup as any).col = col;
+      (elementsGroup as any).row = row;
       // } else if (customRenderObj.rootContainer) {
       //   customElements = customRenderObj.rootContainer.getElements(undefined, false, false);
     }

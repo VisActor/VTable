@@ -751,26 +751,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   getCellRawRecord(col: number, row: number) {
     return this.getCellOriginRecord(col, row);
   }
-  /**
-   * 全量更新排序规则 TODO  待完善
-   * @param sortRules
-   */
-  updateSortRules(sortRules: SortRules) {
-    if (this.internalProps.dataConfig) {
-      this.internalProps.dataConfig.sortRules = sortRules;
-    } else {
-      this.internalProps.dataConfig = { sortRules };
-    }
-    this.dataset.updateSortRules(sortRules);
-    this.internalProps.layoutMap.resetHeaderTree();
-    // 清空单元格内容
-    this.scenegraph.clearCells();
-    this.refreshHeader();
-    this.internalProps.useOneRowHeightFillAll = false;
-    // 生成单元格场景树
-    this.scenegraph.createSceneGraph();
-    this.render();
-  }
 
   getPivotSortState(col: number, row: number): SortOrder {
     if (!this.pivotSortState) {

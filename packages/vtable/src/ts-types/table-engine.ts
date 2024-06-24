@@ -540,3 +540,6 @@ export type CustomMerge = {
   customLayout?: ICustomLayout;
   customRender?: ICustomRender;
 };
+
+export type ColumnInfo = { col: number; left: number; right: number; width: number };
+export type RowInfo = { row: number; top: number; bottom: number; height: number };

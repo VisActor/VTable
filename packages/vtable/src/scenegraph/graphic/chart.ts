@@ -197,7 +197,7 @@ export class Chart extends Group {
    */
   deactivate() {
     this.active = false;
-    // move active chart view box out of broswer view
+    // move active chart view box out of browser view
     // to avoid async render when chart is releasd
     this.activeChartInstance?.updateViewBox(
       {

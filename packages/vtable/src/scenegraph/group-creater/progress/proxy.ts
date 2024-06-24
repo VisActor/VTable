@@ -15,6 +15,7 @@ import { sortHorizontal } from './update-position/sort-horizontal';
 import { updateAutoColumn } from './update-position/update-auto-column';
 import { getDefaultHeight, getDefaultWidth } from './default-width-height';
 import { handleTextStick } from '../../stick-text';
+import type { ColumnInfo, RowInfo } from '../../../ts-types';
 
 export class SceneProxy {
   table: BaseTableAPI;
@@ -453,6 +454,12 @@ export class SceneProxy {
     const yLimitTop =
       this.table.getRowsHeight(this.bodyTopRow, this.bodyTopRow + (this.rowEnd - this.rowStart + 1)) / 2;
     const yLimitBottom = this.table.getAllRowsHeight() - yLimitTop;
+
+    const screenTop = this.table.getTargetRowAt(y + this.table.scenegraph.colHeaderGroup.attribute.height);
+    if (screenTop) {
+      this.screenTopRow = screenTop.row;
+    }
+
     if (y < yLimitTop && this.rowStart === this.bodyTopRow) {
       // 执行真实body group坐标修改
       this.updateDeltaY(y);
@@ -471,7 +478,7 @@ export class SceneProxy {
       this.updateBody(y - this.deltaY);
     } else {
       // 执行动态更新节点
-      this.dynamicSetY(y, isEnd);
+      this.dynamicSetY(y, screenTop, isEnd);
     }
   }
 
@@ -479,6 +486,12 @@ export class SceneProxy {
     const xLimitLeft =
       this.table.getColsWidth(this.bodyLeftCol, this.bodyLeftCol + (this.colEnd - this.colStart + 1)) / 2;
     const xLimitRight = this.table.getAllColsWidth() - xLimitLeft;
+
+    const screenLeft = this.table.getTargetColAt(x + this.table.scenegraph.rowHeaderGroup.attribute.width);
+    if (screenLeft) {
+      this.screenLeftCol = screenLeft.col;
+    }
+
     if (x < xLimitLeft && this.colStart === this.bodyLeftCol) {
       // 执行真实body group坐标修改
       this.updateDeltaX(x);
@@ -496,15 +509,15 @@ export class SceneProxy {
       this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else {
       // 执行动态更新节点
-      this.dynamicSetX(x, isEnd);
+      this.dynamicSetX(x, screenLeft, isEnd);
     }
   }
 
-  async dynamicSetY(y: number, isEnd = false) {
-    dynamicSetY(y, isEnd, this);
+  async dynamicSetY(y: number, screenTop: RowInfo | null, isEnd = false) {
+    dynamicSetY(y, screenTop, isEnd, this);
   }
-  async dynamicSetX(x: number, isEnd = false) {
-    dynamicSetX(x, isEnd, this);
+  async dynamicSetX(x: number, screenLeft: ColumnInfo | null, isEnd = false) {
+    dynamicSetX(x, screenLeft, isEnd, this);
   }
 
   updateBody(y: number) {

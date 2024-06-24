@@ -1040,6 +1040,13 @@
           }
         },
         {
+          "path": "pivot-analysis-calculatedField",
+          "title": {
+            "zh": "计算字段",
+            "en": "Calculate Field"
+          }
+        },
+        {
           "path": "pivot-analysis-table-drill",
           "title": {
             "zh": "透视表上钻下钻",

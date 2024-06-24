@@ -153,6 +153,7 @@ export class Scenegraph {
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
       enableLayout: true,
+      // enableHtmlAttribute: true,
       // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
       beforeRender: (stage: Stage) => {
         this.table.options.beforeRender && this.table.options.beforeRender(stage);
@@ -355,8 +356,10 @@ export class Scenegraph {
    * @description: 依据数据创建表格场景树
    * @return {*}
    */
-  createSceneGraph() {
-    this.table.rowHeightsMap.clear();
+  createSceneGraph(skipRowHeightClear = false) {
+    if (!skipRowHeightClear) {
+      this.table.rowHeightsMap.clear();
+    }
 
     // if (this.table.heightMode === 'autoHeight') {
     //   this.table.defaultRowHeight = getDefaultHeight(this.table);
@@ -1554,6 +1557,8 @@ export class Scenegraph {
     this.updateTableSize();
     this.component.updateScrollBar();
 
+    this.updateDomContainer();
+
     this.updateNextFrame();
   }
 
@@ -1951,4 +1956,18 @@ export class Scenegraph {
   // updateCellValue(col: number, row: number) {
   //   updateCell(col, row, this.table);
   // }
+  updateDomContainer() {
+    const { headerDomContainer, bodyDomContainer } = this.table.internalProps;
+    if (headerDomContainer) {
+      headerDomContainer.style.width = `${headerDomContainer.parentElement?.offsetWidth ?? 1 - 1}px`;
+      headerDomContainer.style.height = `${this.table.getFrozenRowsHeight()}px`;
+    }
+    if (bodyDomContainer) {
+      bodyDomContainer.style.width = `${bodyDomContainer.parentElement?.offsetWidth ?? 1 - 1}px`;
+      bodyDomContainer.style.height = `${
+        bodyDomContainer.parentElement?.offsetHeight ?? 1 - 1 - this.table.getFrozenRowsHeight()
+      }px`;
+      bodyDomContainer.style.top = `${this.table.getFrozenRowsHeight()}px`;
+    }
+  }
 }

@@ -1,5 +1,6 @@
 /* eslint-disable react/display-name */
-import * as VTable from '@visactor/vtable';
+// import * as VTable from '@visactor/vtable';
+import { VTable } from '../vtable';
 import React, { useState, useEffect, useRef, useImperativeHandle, useCallback } from 'react';
 import type { ContainerProps } from '../containers/withContainer';
 import withContainer from '../containers/withContainer';
@@ -21,6 +22,9 @@ import type {
   // TableLifeCycleEventProps
 } from '../eventsUtils';
 import { bindEventsToTable, TABLE_EVENTS_KEYS, TABLE_EVENTS } from '../eventsUtils';
+import { VTableReactAttributePlugin } from '../components/custom/vtable-react-attribute-plugin';
+import { reactEnvModule } from '../components/custom/vtable-browser-env-contribution';
+const { container, isBrowserEnv } = VTable.VRender;
 
 export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 export type IOption =
@@ -42,10 +46,17 @@ export interface BaseTableProps extends EventsProps {
   height?: number;
   skipFunctionDiff?: boolean;
 
+  ReactDOM?: any;
+
   /** 表格渲染完成事件 */
   onReady?: (instance: IVTable, isInitial: boolean) => void;
   /** throw error when chart run into an error */
   onError?: (err: Error) => void;
+}
+
+// for react-vtable
+if (isBrowserEnv()) {
+  container.load(reactEnvModule);
 }
 
 type Props = React.PropsWithChildren<BaseTableProps>;
@@ -129,7 +140,10 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         records: props.records,
         ...prevOption.current,
         ...optionFromChildren.current,
-        clearDOM: false
+        clearDOM: false,
+        customConfig: {
+          createReactContainer: true
+        }
         // ...tableContext.current?.optionFromChildren
       } as IOption;
     },
@@ -146,6 +160,10 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       } else {
         vtable = new VTable.ListTable(props.container, parseOption(props));
       }
+      // vtable.scenegraph.stage.enableReactAttribute(ReactDOM);
+      vtable.scenegraph.stage.reactAttribute = props.ReactDOM;
+      vtable.scenegraph.stage.pluginService.register(new VTableReactAttributePlugin());
+      vtable.scenegraph.stage.params.ReactDOM = props.ReactDOM;
       tableContext.current = { ...tableContext.current, table: vtable };
       isUnmount.current = false;
     },
@@ -274,7 +292,8 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
           <React.Fragment key={childId}>
             {React.cloneElement(child as React.ReactElement<any, React.JSXElementConstructor<any>>, {
               updateId: updateId,
-              componentId: childId
+              componentId: childId,
+              componentIndex: index
             })}
           </React.Fragment>
         );

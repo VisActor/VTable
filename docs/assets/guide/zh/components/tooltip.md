@@ -30,6 +30,23 @@
 }
 ```
 
+## tooltip 提示框的样式设置
+
+tooltip 的样式配置可以通过 theme.tooltipStyle 来进行设置，具体配置如下：
+
+```
+export type TooltipStyle = {
+  fontFamily?: string;
+  fontSize?: number;
+  color?: string;
+  padding?: number[];
+  bgColor?: string;
+  maxWidth?: number;
+  maxHeight?: number;
+};
+
+```
+
 ## 开启溢出内容提示
 
 VTable 默认开启溢出内容的 tooltip：isShowOverflowTextTooltip 默认为 true。如果需要延迟消失以使得鼠标可以移动到 tooltip 内容上，可以配置 overflowTextTooltipDisappearDelay。
@@ -106,3 +123,28 @@ const tableInstance = new VTable.ListTable({
 
 效果：
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff05.gif)
+
+## icon 的 tooltip 配置
+
+当自定义 icon 时，可以通过配置 tooltip 来显示提示信息，如下使用方式：
+
+```
+VTable.register.icon('order', {
+  ... //其他配置
+  tooltip: {
+    // 气泡框，按钮的的解释信息
+    title:'Order ID is the unique identifier for each order',
+    style: {
+      fontSize: 14,
+      fontFamily: 'Arial',
+      padding: [10,10,10,10],
+      bgColor: 'black',
+      arrowMark: true,
+      color: 'white',
+      maxHeight: 100,
+      maxWidth: 200
+    },
+    disappearDelay: 1000
+  }
+})
+```

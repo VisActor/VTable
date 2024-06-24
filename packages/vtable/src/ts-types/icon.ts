@@ -63,6 +63,8 @@ export interface IIconBase {
       padding?: number[];
       bgColor?: string;
       arrowMark?: boolean;
+      maxWidth?: number;
+      maxHeight?: number;
     };
     disappearDelay?: number;
   };

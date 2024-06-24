@@ -67,7 +67,9 @@ import type {
   ColumnSeriesNumber,
   ColumnStyleOption,
   WidthAdaptiveModeDef,
-  HeightAdaptiveModeDef
+  HeightAdaptiveModeDef,
+  ColumnInfo,
+  RowInfo
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -90,6 +92,7 @@ import type { DiscreteTableLegend } from '../components/legend/discrete-legend/d
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
 import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
+import type { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
 import type { IAnimationAppear } from './animation/appear';
 import type { IEmptyTip } from './component/empty-tip';
@@ -253,6 +256,9 @@ export interface IBaseTableProtected {
   overscrollBehavior?: 'auto' | 'none';
 
   modifiedViewBoxTransform?: boolean;
+  // react component container
+  bodyDomContainer?: HTMLElement;
+  headerDomContainer?: HTMLElement;
   // 已使用一行的高度填充所有行
   useOneRowHeightFillAll?: boolean;
 }
@@ -339,6 +345,10 @@ export interface BaseTableConstructorOptions {
     disableSelect?: boolean;
     /** 单独设置表头不响应鼠标select交互 */
     disableHeaderSelect?: boolean;
+    /** 点击空白区域是否取消选中 */
+    blankAreaClickDeselect?: boolean;
+    /** 点击外部区域是否取消选中 */
+    outsideClickDeselect?: boolean; //
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
@@ -420,7 +430,7 @@ export interface BaseTableConstructorOptions {
   customMergeCell?: CustomMergeCell;
 
   // #region for nodejs
-  mode?: 'node' | 'broswer';
+  mode?: 'node' | 'browser';
   modeParams?: any;
   canvasWidth?: number;
   canvasHeight?: number;
@@ -458,6 +468,8 @@ export interface BaseTableConstructorOptions {
     /** 禁用行高列宽计算取整数逻辑 对齐xTable */
     _disableColumnAndRowSizeRound?: boolean;
     imageMargin?: number;
+    // 是否创建react custom container
+    createReactContainer?: boolean;
     // adaptive 模式下优先缩小迷你图
     shrinkSparklineFirst?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
@@ -770,16 +782,10 @@ export interface BaseTableAPI {
 
   getMergeCellRect: (col: number, row: number) => Rect;
 
-  getTargetColAt: (absoluteX: number) => { col: number; left: number; right: number; width: number } | null;
-  getTargetRowAt: (absoluteY: number) => { row: number; top: number; bottom: number; height: number } | null;
-  getTargetColAtConsiderRightFrozen: (
-    absoluteX: number,
-    isConsider: boolean
-  ) => { col: number; left: number; right: number; width: number } | null;
-  getTargetRowAtConsiderBottomFrozen: (
-    absoluteY: number,
-    isConsider: boolean
-  ) => { row: number; top: number; bottom: number; height: number } | null;
+  getTargetColAt: (absoluteX: number) => ColumnInfo | null;
+  getTargetRowAt: (absoluteY: number) => RowInfo | null;
+  getTargetColAtConsiderRightFrozen: (absoluteX: number, isConsider: boolean) => ColumnInfo | null;
+  getTargetRowAtConsiderBottomFrozen: (absoluteY: number, isConsider: boolean) => RowInfo | null;
   renderWithRecreateCells: () => void;
   //#endregion  tableAPI
 
@@ -830,6 +836,8 @@ export interface BaseTableAPI {
   leftRowSeriesNumberCount: number;
   isAutoRowHeight: (row: number) => boolean;
 
+  reactCustomLayout?: ReactCustomLayout;
+  checkReactCustomLayout: () => void;
   setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
 
   exportImg: () => string;
@@ -841,6 +849,9 @@ export interface BaseTableAPI {
   exportCellRangeImg: (cellRange: CellRange) => string;
   exportCanvas: () => HTMLCanvasElement;
   setPixelRatio: (pixelRatio: number) => void;
+
+  bodyDomContainer?: HTMLElement;
+  headerDomContainer?: HTMLElement;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

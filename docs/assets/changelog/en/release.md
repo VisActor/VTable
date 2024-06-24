@@ -1,3 +1,56 @@
+# v1.4.0
+
+2024-06-21
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: support corner header cell edit value [#1945](https://github.com/VisActor/VTable/issues/1945)
+- **@visactor/vtable**: add indent in vtable-export
+- **@visactor/vtable**: add CustomComponent in react-vtable
+- **@visactor/vtable**: add CustomLayout component in react-vtable
+- **@visactor/vtable**: support calculate field for PivotTable [#1941](https://github.com/VisActor/VTable/issues/1941)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: updateSortState api occor error [#1939](https://github.com/VisActor/VTable/issues/1939)
+- **@visactor/vtable**: when setRecords should update emptyTip [#1953](https://github.com/VisActor/VTable/issues/1953)
+- **@visactor/vtable**: getCellRect api when cell is frozen get bounds error [#1955](https://github.com/VisActor/VTable/issues/1955)
+- **@visactor/vtable**: when drag cell and enter edit state but can not exit edit rightly [#1956](https://github.com/VisActor/VTable/issues/1956)
+- **@visactor/vtable**: fix custom width problem [#1905](https://github.com/VisActor/VTable/issues/1905)
+- **@visactor/vtable**: fix content judgement in getCellRange() [#1911](https://github.com/VisActor/VTable/issues/1911)
+- **@visactor/vtable**: fix size update problem in pivot table sort [#1958](https://github.com/VisActor/VTable/issues/1958)
+
+**🔧 Configuration releated**
+
+- **@visactor/vtable**: update vrender version
+
+[more detail about v1.4.0](https://github.com/VisActor/VTable/releases/tag/v1.4.0)
+
+# v1.3.2
+
+2024-06-17
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add blankAreaClickDeselect and outsideClickDeselect config
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: cellIsInVisualView api error [#1864](https://github.com/VisActor/VTable/issues/1864)
+- **@visactor/vtable**: if set style autoWrapText, this config not wort when resize column width [#1892](https://github.com/VisActor/VTable/issues/1892)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: tooltip support scroll [#1887](https://github.com/VisActor/VTable/issues/1887)
+- **@visactor/vtable**: when not records pivot table can show corner header [#1895](https://github.com/VisActor/VTable/issues/1895)
+- **@visactor/vtable**: when rowTree children not set value can supplement indicators [#1924](https://github.com/VisActor/VTable/issues/1924)
+
+
+
+[more detail about v1.3.2](https://github.com/VisActor/VTable/releases/tag/v1.3.2)
+
 # v1.3.1
 
 2024-06-14
