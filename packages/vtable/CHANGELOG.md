@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 21 Jun 2024 10:26:08 GMT and should not be manually modified.
+This log was last generated on Mon, 24 Jun 2024 08:48:40 GMT and should not be manually modified.
+
+## 1.4.1
+Mon, 24 Jun 2024 08:48:40 GMT
+
+### Updates
+
+- fix: fix editingEditor missing problem
 
 ## 1.4.0
 Fri, 21 Jun 2024 10:26:08 GMT
