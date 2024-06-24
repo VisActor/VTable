@@ -61,7 +61,7 @@ export class EventManager {
     this.table = table;
     this.handleTextStickBindId = [];
     this.inertiaScroll = new InertiaScroll(table.stateManager);
-    if (Env.mode === 'node') {
+    if (Env.mode === 'node' || table.options.disableInteraction) {
       return;
     }
     this.bindOuterEvent();

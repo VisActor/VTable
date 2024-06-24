@@ -1,4 +1,4 @@
-import type { ITextSize } from '@visactor/vutils';
+import type { IBoundsLike, ITextSize } from '@visactor/vutils';
 import type {
   RectProps,
   MaybePromiseOrUndefined,
@@ -255,6 +255,7 @@ export interface IBaseTableProtected {
    * */
   overscrollBehavior?: 'auto' | 'none';
 
+  modifiedViewBoxTransform?: boolean;
   // react component container
   bodyDomContainer?: HTMLElement;
   headerDomContainer?: HTMLElement;
@@ -443,6 +444,15 @@ export interface BaseTableConstructorOptions {
   // resize response time
   resizeTime?: number;
 
+  canvas?: HTMLCanvasElement;
+  viewBox?: IBoundsLike;
+  chartOption?: any;
+  disableInteraction?: boolean;
+
+  specFormat?: (spec: any) => { needFormatSpec: boolean; spec?: any };
+
+  beforeRender?: (stage: any) => void;
+  afterRender?: (stage: any) => void;
   rowSeriesNumber?: IRowSeriesNumber;
   // columnSeriesNumber?: ColumnSeriesNumber[];
   customCellStyle?: CustomCellStyle[];
@@ -576,6 +586,9 @@ export interface BaseTableAPI {
   canvasHeight?: number;
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+
+  _rowRangeHeightsMap: Map<string, number>;
+  _colRangeWidthsMap: Map<string, number>;
 
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;

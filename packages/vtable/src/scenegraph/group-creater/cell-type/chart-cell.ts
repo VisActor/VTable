@@ -109,13 +109,14 @@ export function createChartCellGroup(
     //   y1: Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
     //   y2: Math.ceil(cellGroup.globalAABBBounds.y1 + height - padding[2] + table.scrollTop)
     // },
-    axes: table.isPivotChart() ? table.internalProps.layoutMap.getChartAxes(col, row) : []
+    axes: table.isPivotChart() ? table.internalProps.layoutMap.getChartAxes(col, row) : [],
     // clipRect: {
     //   left: cellGroup.globalAABBBounds.x1 + (table as any).tableX + padding[3],
     //   top: cellGroup.globalAABBBounds.y1 + (table as any).tableY + padding[0],
     //   width: width - padding[1] - padding[3], //cellGroup.globalAABBBounds.width() - padding[1] - padding[3],
     //   height: height - padding[0] - padding[2],
     // },
+    tableChartOption: table.options.chartOption
   });
   cellGroup.appendChild(chartGroup);
   // 将生成的实例存到layoutMap中 共享

@@ -22,7 +22,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
   });
-
   handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
     handleWhell(e, stateManager);
   });
@@ -43,7 +42,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     ) {
       if (
         !(table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
-        (table as ListTableAPI).editorManager.editingEditor
+        (table as ListTableAPI).editorManager?.editingEditor
       ) {
         // 编辑单元格状态下 如果没有开启方向键切换cell 则退出 。方向键可以在编辑input内移动光标
         return;
@@ -107,7 +106,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       table.selectCell(targetCol, targetRow, e.shiftKey);
       if (
         (table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
-        (table as ListTableAPI).editorManager.editingEditor
+        (table as ListTableAPI).editorManager?.editingEditor
       ) {
         // 开启了方向键切换编辑单元格  并且当前已经在编辑状态下 切换到下一个需先退出再进入下个单元格的编辑
         (table as ListTableAPI).editorManager.completeEdit();
@@ -120,7 +119,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       (table as ListTableAPI).editorManager.cancelEdit();
     } else if (e.key === 'Enter') {
       // 如果按enter键 可以结束当前的编辑 或开启编辑选中的单元格（仅限单选）
-      if ((table as ListTableAPI).editorManager.editingEditor) {
+      if ((table as ListTableAPI).editorManager?.editingEditor) {
         (table as ListTableAPI).editorManager.completeEdit();
         table.getElement().focus();
       } else {
@@ -157,7 +156,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
             targetCol = stateManager.select.cellPos.col + 1;
           }
           table.selectCell(targetCol, targetRow);
-          if ((table as ListTableAPI).editorManager.editingEditor) {
+          if ((table as ListTableAPI).editorManager?.editingEditor) {
             (table as ListTableAPI).editorManager.completeEdit();
             table.getElement().focus();
             if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
@@ -179,7 +178,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
       table.fireListeners(TABLE_EVENT_TYPE.KEYDOWN, cellsEvent);
     }
   });
-
   handler.on(table.getElement(), 'copy', (e: KeyboardEvent) => {
     if (table.keyboardOptions?.copySelected) {
       const data = table.getCopyValue();
@@ -305,18 +303,21 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
   });
 
-  handler.on(table.getContainer(), 'resize', e => {
-    if (e.width === 0 && e.height === 0) {
-      // 临时绕行解决因为display设置为none产生的问题
-      return;
-    }
-    if (!isValid(table.options.pixelRatio)) {
-      table.setPixelRatio(getPixelRatio());
-    }
-    if (!e.windowSizeNotChange) {
-      table.resize();
-    }
-  });
+  if (!table.options.canvas) {
+    handler.on(table.getContainer(), 'resize', e => {
+      if (e.width === 0 && e.height === 0) {
+        // 临时绕行解决因为display设置为none产生的问题
+        return;
+      }
+      if (!isValid(table.options.pixelRatio)) {
+        table.setPixelRatio(getPixelRatio());
+      }
+      if (!e.windowSizeNotChange) {
+        table.resize();
+      }
+    });
+  }
+
   function pasteHtmlToTable(item: ClipboardItem) {
     const ranges = table.stateManager.select.ranges;
     const selectRangeLength = ranges.length;
