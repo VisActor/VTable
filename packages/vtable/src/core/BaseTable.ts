@@ -2511,67 +2511,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getTargetColAt(absoluteX: number): ColumnInfo | null {
-    if (absoluteX === 0) {
-      return { left: 0, col: 0, right: 0, width: 0 };
-    }
-    const findBefore = (
-      startCol: number,
-      startRight: number
-    ): {
-      left: number;
-      col: number;
-      right: number;
-      width: number;
-    } | null => {
-      let right = startRight;
-      for (let col = startCol; col >= 0; col--) {
-        const width = this.getColWidth(col);
-        const left = right - width;
-        if (Math.round(left) <= Math.round(absoluteX) && Math.round(absoluteX) < Math.round(right)) {
-          return {
-            left,
-            col,
-            right,
-            width
-          };
-        }
-        right = left;
-      }
-      return null;
-    };
-    const findAfter = (
-      startCol: number,
-      startRight: number
-    ): {
-      left: number;
-      col: number;
-      right: number;
-      width: number;
-    } | null => {
-      let left = startRight - this.getColWidth(startCol);
-      const { colCount } = this.internalProps;
-      for (let col = startCol; col < colCount; col++) {
-        const width = this.getColWidth(col);
-        const right = left + width;
-        if (Math.round(left) <= Math.round(absoluteX) && Math.round(absoluteX) < Math.round(right)) {
-          return {
-            left,
-            col,
-            right,
-            width
-          };
-        }
-        left = right;
-      }
-      return null;
-    };
-    //计算这个位置处是第几行
-    const candCol = this.computeTargetColByX(absoluteX);
-    const right = this.getColsWidth(0, candCol);
-    if (absoluteX >= right) {
-      return findAfter(candCol, right);
-    }
-    return findBefore(candCol, right);
+    return getTargetColAt(absoluteX, this);
   }
   /**
    * 根据y获取该位置所处行值
@@ -2580,72 +2520,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getTargetRowAt(absoluteY: number): RowInfo | null {
-    if (absoluteY === 0) {
-      return { top: 0, row: 0, bottom: 0, height: 0 };
-    }
-
-    const findBefore = (
-      startRow: number,
-      startBottom: number
-    ): {
-      top: number;
-      row: number;
-      bottom: number;
-      height: number;
-    } | null => {
-      let bottom = startBottom;
-      for (let row = startRow; row >= 0; row--) {
-        const height = this.getRowHeight(row);
-        const top = bottom - height;
-        if (Math.round(top) <= Math.round(absoluteY) && Math.round(absoluteY) < Math.round(bottom)) {
-          return {
-            top,
-            row,
-            bottom,
-            height
-          };
-        }
-        bottom = top;
-      }
-      return null;
-    };
-    const findAfter = (
-      startRow: number,
-      startBottom: number
-    ): {
-      top: number;
-      row: number;
-      bottom: number;
-      height: number;
-    } | null => {
-      let top = startBottom - this.getRowHeight(startRow);
-      const { rowCount } = this.internalProps;
-      for (let row = startRow; row < rowCount; row++) {
-        const height = this.getRowHeight(row);
-        const bottom = top + height;
-        if (Math.round(top) <= Math.round(absoluteY) && Math.round(absoluteY) < Math.round(bottom)) {
-          return {
-            top,
-            row,
-            bottom,
-            height
-          };
-        }
-        top = bottom;
-      }
-      return null;
-    };
-    // const candRow = Math.min(
-    //   Math.ceil(absoluteY / this.internalProps.defaultRowHeight),
-    //   this.rowCount - 1
-    // );
-    //计算这个位置处是第几行
-    const candRow = this.computeTargetRowByY(absoluteY);
-    const bottom = this.getRowsHeight(0, candRow);
-    if (absoluteY >= bottom) {
-      return findAfter(candRow, bottom);
-    }
-    return findBefore(candRow, bottom);
+    return getTargetRowAt(absoluteY, this);
   }
 
   /**
@@ -2655,26 +2530,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getTargetColAtConsiderRightFrozen(absoluteX: number, isConsider: boolean): ColumnInfo | null {
-    if (absoluteX === 0) {
-      return { left: 0, col: 0, right: 0, width: 0 };
-    }
-    if (
-      isConsider &&
-      absoluteX > this.tableNoFrameWidth - this.getRightFrozenColsWidth() &&
-      absoluteX < this.tableNoFrameWidth
-    ) {
-      for (let i = 0; i < this.rightFrozenColCount; i++) {
-        if (absoluteX > this.tableNoFrameWidth - this.getColsWidth(this.colCount - i - 1, this.colCount - 1)) {
-          return {
-            col: this.colCount - i - 1,
-            left: undefined,
-            right: undefined,
-            width: undefined
-          };
-        }
-      }
-    }
-    return this.getTargetColAt(absoluteX);
+    return getTargetColAtConsiderRightFrozen(absoluteX, isConsider, this);
   }
 
   /**
@@ -2684,26 +2540,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getTargetRowAtConsiderBottomFrozen(absoluteY: number, isConsider: boolean): RowInfo | null {
-    if (absoluteY === 0) {
-      return { top: 0, row: 0, bottom: 0, height: 0 };
-    }
-    if (
-      isConsider &&
-      absoluteY > this.tableNoFrameHeight - this.getBottomFrozenRowsHeight() &&
-      absoluteY < this.tableNoFrameHeight
-    ) {
-      for (let i = 0; i < this.rightFrozenColCount; i++) {
-        if (absoluteY > this.tableNoFrameHeight - this.getRowsHeight(this.rowCount - i - 1, this.rowCount - 1)) {
-          return {
-            row: this.rowCount - i - 1,
-            top: undefined,
-            bottom: undefined,
-            height: undefined
-          };
-        }
-      }
-    }
-    return this.getTargetRowAt(absoluteY);
+    return getTargetRowAtConsiderBottomFrozen(absoluteY, isConsider, this);
   }
 
   /**

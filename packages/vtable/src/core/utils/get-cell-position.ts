@@ -1,4 +1,4 @@
-import type { CellAddressWithBound } from '../../ts-types';
+import type { CellAddressWithBound, ColumnInfo, RowInfo } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { _getTargetFrozenColAt, _getTargetFrozenRowAt } from '../tableHelper';
 
@@ -82,10 +82,7 @@ export function getCellAt(absoluteX: number, absoluteY: number, _this: BaseTable
  * @param absoluteX
  * @returns
  */
-export function getTargetColAt(
-  absoluteX: number,
-  _this: BaseTableAPI
-): { col: number; left: number; right: number; width: number } | null {
+export function getTargetColAt(absoluteX: number, _this: BaseTableAPI): ColumnInfo | null {
   if (absoluteX === 0) {
     return { left: 0, col: 0, right: 0, width: 0 };
   }
@@ -154,10 +151,7 @@ export function getTargetColAt(
  * @param absoluteX
  * @returns
  */
-export function getTargetRowAt(
-  absoluteY: number,
-  _this: BaseTableAPI
-): { row: number; top: number; bottom: number; height: number } | null {
+export function getTargetRowAt(absoluteY: number, _this: BaseTableAPI): RowInfo | null {
   if (absoluteY === 0) {
     return { top: 0, row: 0, bottom: 0, height: 0 };
   }
@@ -236,7 +230,7 @@ export function getTargetColAtConsiderRightFrozen(
   absoluteX: number,
   isConsider: boolean,
   _this: BaseTableAPI
-): { col: number; left: number; right: number; width: number } | null {
+): ColumnInfo | null {
   if (absoluteX === 0) {
     return { left: 0, col: 0, right: 0, width: 0 };
   }
@@ -269,7 +263,7 @@ export function getTargetRowAtConsiderBottomFrozen(
   absoluteY: number,
   isConsider: boolean,
   _this: BaseTableAPI
-): { row: number; top: number; bottom: number; height: number } | null {
+): RowInfo | null {
   if (absoluteY === 0) {
     return { top: 0, row: 0, bottom: 0, height: 0 };
   }
