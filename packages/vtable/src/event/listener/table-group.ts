@@ -346,8 +346,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     eventManager.dealTableHover();
     //点击到表格外部不需要取消选中状态
     if (table.options.select?.outsideClickDeselect) {
+      const isHasSelected = !!stateManager.select.ranges?.length;
       eventManager.dealTableSelect();
-      stateManager.endSelectCells();
+      stateManager.endSelectCells(true, isHasSelected);
     }
   });
 
@@ -636,8 +637,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
         if (eventManager.touchSetTimeout) {
           clearTimeout(eventManager.touchSetTimeout);
+          const isHasSelected = !!stateManager.select.ranges?.length;
           eventManager.dealTableSelect(eventArgsSet);
-          stateManager.endSelectCells();
+          stateManager.endSelectCells(true, isHasSelected);
           eventManager.touchSetTimeout = undefined;
         }
       }
@@ -688,6 +690,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if (
       !hitIcon &&
       !eventManager.checkCellFillhandle(eventArgsSet) &&
+      !stateManager.columnResize.resizing &&
       eventManager.checkColumnResize(eventArgsSet, true)
     ) {
       // eventManager.startColumnResize(e);
@@ -739,11 +742,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
     ) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
+      const isHasSelected = !!stateManager.select.ranges?.length;
       // 点击空白区域取消选中
       if (table.options.select?.blankAreaClickDeselect ?? true) {
         eventManager.dealTableSelect();
       }
-      stateManager.endSelectCells();
+      stateManager.endSelectCells(true, isHasSelected);
 
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
