@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.4.1",
+      "tag": "@visactor/vtable_v1.4.1",
+      "date": "Mon, 24 Jun 2024 08:48:40 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix editingEditor missing problem"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.4.0",
       "tag": "@visactor/vtable_v1.4.0",
       "date": "Fri, 21 Jun 2024 10:26:08 GMT",
