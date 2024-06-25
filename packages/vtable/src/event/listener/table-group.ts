@@ -347,6 +347,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     //点击到表格外部不需要取消选中状态
     if (table.options.select?.outsideClickDeselect) {
       eventManager.dealTableSelect();
+      stateManager.endSelectCells();
     }
   });
 
@@ -738,12 +739,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
     ) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
-      stateManager.endSelectCells();
-
       // 点击空白区域取消选中
       if (table.options.select?.blankAreaClickDeselect ?? true) {
         eventManager.dealTableSelect();
       }
+      stateManager.endSelectCells();
 
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
