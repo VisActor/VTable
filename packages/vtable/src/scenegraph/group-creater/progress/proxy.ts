@@ -107,6 +107,7 @@ export class SceneProxy {
     this.totalActualBodyColCount = totalActualBodyColCount;
     this.totalCol = this.bodyLeftCol + totalActualBodyColCount - 1; // 目标渐进完成的col
     this.colStart = this.bodyLeftCol;
+    this.colEnd = this.totalCol; // temp for first screen, will replace in createGroupForFirstScreen()
     const defaultColWidth = this.table.defaultColWidth;
     // const defaultColWidth = getDefaultHeight(this.table);
     this.taskColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth) * 1;
@@ -140,6 +141,7 @@ export class SceneProxy {
     this.totalActualBodyRowCount = totalActualBodyRowCount;
     this.totalRow = this.bodyTopRow + totalActualBodyRowCount - 1; // 目标渐进完成的row
     this.rowStart = this.bodyTopRow;
+    this.rowEnd = this.totalRow; // temp for first screen, will replace in createGroupForFirstScreen()
     const defaultRowHeight = this.table.defaultRowHeight;
     // const defaultRowHeight = getDefaultWidth(this.table);
     this.taskRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight) * 1;
