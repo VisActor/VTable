@@ -485,6 +485,13 @@
             "zh": "分页（翻页）",
             "en": "pagination"
           }
+        },
+        {
+          "path": "pivot-table-corner-title",
+          "title": {
+            "zh": "透视表角头显示维度名",
+            "en": "Pivot Table corner title"
+          }
         }
       ]
     },
