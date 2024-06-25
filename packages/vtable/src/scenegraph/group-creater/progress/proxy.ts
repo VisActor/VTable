@@ -277,6 +277,8 @@ export class SceneProxy {
     // compute rows height
     computeRowsHeight(this.table, this.currentRow + 1, endRow, false);
 
+    this.rowEnd = endRow;
+
     if (this.table.frozenColCount) {
       // create row header row cellGroup
       let maxHeight = 0;
@@ -345,9 +347,7 @@ export class SceneProxy {
     this.table.scenegraph.bodyGroup.setAttribute('height', maxHeight);
 
     this.currentRow = endRow;
-    this.rowEnd = endRow;
     this.rowUpdatePos = this.rowEnd;
-    // this.referenceRow = this.rowStart + Math.floor((endRow - this.rowStart) / 2);
 
     // update container group size and border
     this.table.scenegraph.updateContainer();
@@ -358,6 +358,8 @@ export class SceneProxy {
     // compute rows height
     const endCol = Math.min(this.totalCol, this.currentCol + onceCount);
     computeColsWidth(this.table, this.currentCol + 1, endCol);
+
+    this.colEnd = endCol;
 
     // update last merge cell size
     for (let row = 0; row < this.table.rowCount; row++) {
@@ -441,13 +443,9 @@ export class SceneProxy {
     );
 
     this.currentCol = endCol;
-    this.colEnd = endCol;
     this.colUpdatePos = this.colEnd;
-    // this.referenceCol = this.colStart + Math.floor((endCol - this.colStart) / 2);
-    // console.log('async', this.referenceCol, this.colStart, this.colEnd);
 
     // update container group size and border
-    // this.table.scenegraph.updateContainerAttrWidthAndX();
     this.table.scenegraph.updateContainer();
     this.table.scenegraph.updateBorderSizeAndPosition();
   }
