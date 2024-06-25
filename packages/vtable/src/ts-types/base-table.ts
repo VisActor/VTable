@@ -92,6 +92,7 @@ import type { DiscreteTableLegend } from '../components/legend/discrete-legend/d
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
 import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
+import type { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
 import type { IAnimationAppear } from './animation/appear';
 import type { IEmptyTip } from './component/empty-tip';
@@ -254,6 +255,9 @@ export interface IBaseTableProtected {
    * */
   overscrollBehavior?: 'auto' | 'none';
 
+  // react component container
+  bodyDomContainer?: HTMLElement;
+  headerDomContainer?: HTMLElement;
   // 已使用一行的高度填充所有行
   useOneRowHeightFillAll?: boolean;
 }
@@ -454,6 +458,8 @@ export interface BaseTableConstructorOptions {
     /** 禁用行高列宽计算取整数逻辑 对齐xTable */
     _disableColumnAndRowSizeRound?: boolean;
     imageMargin?: number;
+    // 是否创建react custom container
+    createReactContainer?: boolean;
     // adaptive 模式下优先缩小迷你图
     shrinkSparklineFirst?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
@@ -817,6 +823,8 @@ export interface BaseTableAPI {
   leftRowSeriesNumberCount: number;
   isAutoRowHeight: (row: number) => boolean;
 
+  reactCustomLayout?: ReactCustomLayout;
+  checkReactCustomLayout: () => void;
   setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
 
   exportImg: () => string;
@@ -828,6 +836,9 @@ export interface BaseTableAPI {
   exportCellRangeImg: (cellRange: CellRange) => string;
   exportCanvas: () => HTMLCanvasElement;
   setPixelRatio: (pixelRatio: number) => void;
+
+  bodyDomContainer?: HTMLElement;
+  headerDomContainer?: HTMLElement;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

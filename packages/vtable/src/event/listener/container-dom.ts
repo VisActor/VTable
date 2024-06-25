@@ -43,7 +43,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     ) {
       if (
         !(table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
-        (table as ListTableAPI).editorManager.editingEditor
+        (table as ListTableAPI).editorManager?.editingEditor
       ) {
         // 编辑单元格状态下 如果没有开启方向键切换cell 则退出 。方向键可以在编辑input内移动光标
         return;
@@ -107,7 +107,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       table.selectCell(targetCol, targetRow, e.shiftKey);
       if (
         (table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
-        (table as ListTableAPI).editorManager.editingEditor
+        (table as ListTableAPI).editorManager?.editingEditor
       ) {
         // 开启了方向键切换编辑单元格  并且当前已经在编辑状态下 切换到下一个需先退出再进入下个单元格的编辑
         (table as ListTableAPI).editorManager.completeEdit();
@@ -123,7 +123,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
       if ((table as ListTableAPI).editorManager.editingEditor) {
         // 如果是结束当前编辑，且有主动监听keydown事件，则先触发keydown事件，之后再结束编辑
         handleKeydownListener(e);
-
         (table as ListTableAPI).editorManager.completeEdit();
         table.getElement().focus();
         // 直接返回，不再触发最后的keydown监听事件相关代码
@@ -133,7 +132,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         (table.options.keyboardOptions?.editCellOnEnter ?? true) &&
         (table.stateManager.select.ranges?.length ?? 0) === 1
       ) {
-        // 如果开启按enter键进入编辑的配置 且当前有选中的单元格 则进入编辑
+        // 如果开启按enter键进入编辑的配置 且当前有选中的单元格 则进入编辑（仅限单选）
         const startCol = table.stateManager.select.ranges[0].start.col;
         const startRow = table.stateManager.select.ranges[0].start.row;
         const endCol = table.stateManager.select.ranges[0].end.col;
@@ -161,7 +160,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
             targetCol = stateManager.select.cellPos.col + 1;
           }
           table.selectCell(targetCol, targetRow);
-          if ((table as ListTableAPI).editorManager.editingEditor) {
+          if ((table as ListTableAPI).editorManager?.editingEditor) {
             (table as ListTableAPI).editorManager.completeEdit();
             table.getElement().focus();
             if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {

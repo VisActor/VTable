@@ -2,6 +2,68 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.4.1",
+      "tag": "@visactor/vtable_v1.4.1",
+      "date": "Mon, 24 Jun 2024 08:48:40 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix editingEditor missing problem"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.4.0",
+      "tag": "@visactor/vtable_v1.4.0",
+      "date": "Fri, 21 Jun 2024 10:26:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: updateSortState api occor error #1939\n\n"
+          },
+          {
+            "comment": "feat: support corner header cell edit value #1945\n\n"
+          },
+          {
+            "comment": "fix: when setRecords should update emptyTip #1953\n\n"
+          },
+          {
+            "comment": "fix: getCellRect api when cell is frozen get bounds error #1955\n\n"
+          },
+          {
+            "comment": "fix: when drag cell and enter edit state but can not exit edit rightly #1956\n\n"
+          },
+          {
+            "comment": "chore: update vrender version\n\n"
+          },
+          {
+            "comment": "feat: add indent in vtable-export"
+          },
+          {
+            "comment": "feat: add CustomComponent in react-vtable"
+          },
+          {
+            "comment": "feat: add CustomLayout component in react-vtable"
+          },
+          {
+            "comment": "fix: fix custom width problem #1905"
+          },
+          {
+            "comment": "fix: fix content judgement in getCellRange() #1911"
+          },
+          {
+            "comment": "fix: fix size update problem in pivot table sort #1958"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: support calculate field for PivotTable #1941\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.3.3",
       "tag": "@visactor/vtable_v1.3.3",
       "date": "Thu, 20 Jun 2024 12:19:07 GMT",

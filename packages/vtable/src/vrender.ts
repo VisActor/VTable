@@ -1,7 +1,8 @@
 import '@visactor/vrender-core';
 import { container, isBrowserEnv, isNodeEnv, preLoadAllModule } from '@visactor/vrender-core';
-import { loadBrowserEnv, loadNodeEnv } from '@visactor/vrender-kits';
 import {
+  loadBrowserEnv,
+  loadNodeEnv,
   registerArc,
   registerArc3d,
   registerArea,
@@ -58,5 +59,10 @@ export function registerForVrender() {
   registerWrapText();
 }
 
+export { Direction } from '@visactor/vrender-core';
+export { GroupFadeIn } from '@visactor/vrender-core';
+export { GroupFadeOut } from '@visactor/vrender-core';
+
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';
+export * from '@visactor/vrender-components';

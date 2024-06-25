@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import React, { useContext, useEffect } from 'react';
 import { isEqual, isNil, pickWithout } from '@visactor/vutils';
 
@@ -5,12 +6,14 @@ import type { TableContextType } from '../context/table';
 import RootTableContext from '../context/table';
 import { bindEventsToTable } from '../eventsUtils';
 import { uid } from '../util';
+import { CustomLayout } from './custom/custom-layout';
 
 export interface BaseComponentProps {
   id?: string | number;
+  children?: React.ReactNode;
 }
 
-type ComponentProps = BaseComponentProps & { updateId?: number; componentId?: number };
+type ComponentProps = BaseComponentProps & { updateId?: number; componentId?: number; componentIndex?: number };
 
 export const createComponent = <T extends ComponentProps>(
   componentName: string,
@@ -18,7 +21,7 @@ export const createComponent = <T extends ComponentProps>(
   supportedEvents?: Record<string, string> | null,
   isSingle?: boolean
 ) => {
-  const ignoreKeys = ['id', 'updateId', 'componentId'];
+  const ignoreKeys = ['id', 'updateId', 'componentId', 'componentIndex', 'children'];
   const notOptionKeys = supportedEvents ? Object.keys(supportedEvents).concat(ignoreKeys) : ignoreKeys;
 
   const Comp: React.FC<T> = (props: T) => {
@@ -58,6 +61,15 @@ export const createComponent = <T extends ComponentProps>(
       };
     }, []);
 
+    // children are all custom layout temply
+    // return props.children
+    //   ? React.cloneElement(props.children as ReactElement, { componentIndex: props.componentIndex })
+    //   : null;
+    if (props.children) {
+      return React.Children.map(props.children as ReactElement, (child: ReactElement) => {
+        return React.createElement(CustomLayout, { componentIndex: props.componentIndex }, child);
+      });
+    }
     return null;
   };
 
@@ -65,6 +77,22 @@ export const createComponent = <T extends ComponentProps>(
 
   (Comp as any).parseOption = (props: T & { updateId?: number; componentId?: string }) => {
     const newComponentOption: Partial<T> = pickWithout<T>(props, notOptionKeys);
+
+    // deal width customLayout
+    if (props.children) {
+      const { children } = props;
+      React.Children.map(children as ReactElement, (child: ReactElement) => {
+        if (child.props.role === 'custom-layout') {
+          (newComponentOption as any).customLayout = 'react-custom-layout';
+        }
+        if (child.props.role === 'header-custom-layout') {
+          (newComponentOption as any).headerCustomLayout = 'react-custom-layout';
+        }
+      });
+    }
+    // if (props.children && (props.children as React.ReactElement).props.role === 'custom-layout') {
+    //   (newComponentOption as any).customLayout = 'react-custom-layout';
+    // }
 
     return {
       option: newComponentOption,
