@@ -1,3 +1,4 @@
+import { loadPoptip } from '@visactor/vrender-components';
 import '@visactor/vrender-core';
 import { container, isBrowserEnv, isNodeEnv, preLoadAllModule } from '@visactor/vrender-core';
 import {
@@ -57,6 +58,8 @@ export function registerForVrender() {
   registerSymbol();
   registerText();
   // registerWrapText();
+
+  loadPoptip();
 }
 
 export { Direction } from '@visactor/vrender-core';

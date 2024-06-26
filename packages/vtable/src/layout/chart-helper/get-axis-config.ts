@@ -2,9 +2,10 @@ import { isArray, isNumber, isValid, merge } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotChart } from '../../PivotChart';
-import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import type { CollectedValue } from '../../ts-types';
 import { getNewRangeToAlign } from './zero-align';
+import { Factory } from '../../core/factory';
+import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
 
 export type GetAxisConfigInPivotChart = (col: number, row: number, layout: PivotHeaderLayoutMap) => any;
 export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotHeaderLayoutMap): any {
@@ -559,6 +560,7 @@ function getRange(
     range.min = range.min < 0 ? -1 : 0;
     range.max = range.max > 0 ? 1 : 0;
   }
+  const getAxisDomainRangeAndLabels = Factory.getFunction('getAxisDomainRangeAndLabels') as GetAxisDomainRangeAndLabels;
   const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(
     range.min,
     range.max,

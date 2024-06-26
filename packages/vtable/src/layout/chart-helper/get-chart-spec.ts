@@ -2,10 +2,11 @@ import { cloneDeep, isArray, isNumber, merge } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 import { getAxisOption, getAxisRange } from './get-axis-config';
-import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import { getNewRangeToAlign } from './zero-align';
 import type { IChartIndicator, IIndicator } from '../../ts-types';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
+import { Factory } from '../../core/factory';
+import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
 
@@ -424,6 +425,9 @@ function getRange(
     range.max = Math.max(range.max, 0);
   }
   if (axisOption?.nice) {
+    const getAxisDomainRangeAndLabels = Factory.getFunction(
+      'getAxisDomainRangeAndLabels'
+    ) as GetAxisDomainRangeAndLabels;
     const { range: axisRange } = getAxisDomainRangeAndLabels(
       range.min,
       range.max,

@@ -31,6 +31,7 @@ import type {
   TextBaselineType
 } from './ts-types';
 import { ListTable } from './ListTable';
+import { ListTableSimple } from './ListTable-simple';
 import { PivotTable } from './PivotTable';
 import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
@@ -61,6 +62,7 @@ export {
   TYPES,
   core,
   ListTable,
+  ListTableSimple,
   ListTableConstructorOptions,
   PivotTable,
   PivotTableConstructorOptions,
@@ -114,3 +116,6 @@ function clearGlobal() {
   // columns.type.clearGlobal();
 }
 TYPES.AggregationType;
+
+export * from './components';
+export * from './scenegraph/group-creater/cell-type';

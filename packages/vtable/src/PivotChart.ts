@@ -58,6 +58,16 @@ import {
   registerTitle,
   registerTooltip
 } from './components';
+import {
+  registerChartCell,
+  registerCheckboxCell,
+  registerImageCell,
+  registerProgressBarCell,
+  registerRadioCell,
+  registerSparkLineCell,
+  registerTextCell,
+  registerVideoCell
+} from './scenegraph/group-creater/cell-type';
 
 registerAxis();
 registerEmptyTip();
@@ -65,6 +75,16 @@ registerLegend();
 registerMenu();
 registerTitle();
 registerTooltip();
+
+registerChartCell();
+registerCheckboxCell();
+registerImageCell();
+registerProgressBarCell();
+registerRadioCell();
+registerSparkLineCell();
+registerTextCell();
+registerVideoCell();
+
 export class PivotChart extends BaseTable implements PivotChartAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotChartProtected;

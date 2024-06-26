@@ -37,21 +37,6 @@ import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { setCellCheckboxState } from './state/checkbox/checkbox';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
-import {
-  registerAxis,
-  registerEmptyTip,
-  registerLegend,
-  registerMenu,
-  registerTitle,
-  registerTooltip
-} from './components';
-
-registerAxis();
-registerEmptyTip();
-registerLegend();
-registerMenu();
-registerTitle();
-registerTooltip();
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;

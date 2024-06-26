@@ -233,3 +233,5 @@ function createCheckbox(
 
   return checkbox;
 }
+
+export type CreateCheckboxCellGroup = typeof createCheckboxCellGroup;
