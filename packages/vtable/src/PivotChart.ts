@@ -42,7 +42,7 @@ import { Title } from './components/title/title';
 import { Env } from './tools/env';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
-import { cloneDeepSpec } from '@vutils-extension';
+import { cloneDeepSpec } from '@visactor/vutils-extension';
 import type { ITreeLayoutHeadNode } from './layout/tree-helper';
 import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
 import { IndicatorDimensionKeyPlaceholder } from './tools/global';

@@ -41,7 +41,7 @@ import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
-import { cloneDeepSpec } from '@vutils-extension';
+import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { parseColKeyRowKeyForPivotTable, supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
 import { EmptyTip } from './components/empty-tip/empty-tip';
 export class PivotTable extends BaseTable implements PivotTableAPI {

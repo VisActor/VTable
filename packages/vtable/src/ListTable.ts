@@ -18,15 +18,13 @@ import type {
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
-import { isNumber, isObject, isValid } from '@visactor/vutils';
+import { isValid } from '@visactor/vutils';
 import { _setDataSource, _setRecords, sortRecords } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { Title } from './components/title/title';
-import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
-import { editor } from './register';
 import * as editors from './edit/editors';
 import { EditManeger } from './edit/edit-manager';
 import { computeColWidth } from './scenegraph/layout/compute-col-width';
@@ -35,7 +33,7 @@ import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
-import { cloneDeepSpec } from '@vutils-extension';
+import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { setCellCheckboxState } from './state/checkbox/checkbox';
 import { EmptyTip } from './components/empty-tip/empty-tip';
 

@@ -56,6 +56,7 @@
     "@visactor/vutils": "~0.18.9",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
+    "@visactor/vutils-extension": "~1.11.5",
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
