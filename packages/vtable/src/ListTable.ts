@@ -23,7 +23,7 @@ import { _setDataSource, _setRecords, sortRecords } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
-import { Title } from './components/title/title';
+import type { ITitleComponent } from './components/title/title';
 import { Env } from './tools/env';
 import * as editors from './edit/editors';
 import { EditManeger } from './edit/edit-manager';
@@ -35,7 +35,23 @@ import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { setCellCheckboxState } from './state/checkbox/checkbox';
-import { EmptyTip } from './components/empty-tip/empty-tip';
+import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
+import { Factory } from './core/factory';
+import {
+  registerAxis,
+  registerEmptyTip,
+  registerLegend,
+  registerMenu,
+  registerTitle,
+  registerTooltip
+} from './components';
+
+registerAxis();
+registerEmptyTip();
+registerLegend();
+registerMenu();
+registerTitle();
+registerTooltip();
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -96,6 +112,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.setRecords([]);
     }
     if (options.title) {
+      const Title = Factory.getComponent('title') as ITitleComponent;
       internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
@@ -103,6 +120,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
@@ -434,6 +452,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.render();
     }
     if (options.title) {
+      const Title = Factory.getComponent('title') as ITitleComponent;
       internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
@@ -441,6 +460,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
@@ -1033,6 +1053,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }

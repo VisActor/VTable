@@ -70,7 +70,7 @@ import { EventManager } from '../event/event';
 import { BodyHelper } from '../body-helper/body-helper';
 import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
-import { TooltipHandler } from '../components/tooltip/TooltipHandler';
+import type { ITooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import {
   AABBBounds,
@@ -106,7 +106,7 @@ import {
   getStyleTheme,
   updateRootElementPadding
 } from './tableHelper';
-import { MenuHandler } from '../components/menu/dom/MenuHandler';
+import type { IMenuHandler } from '../components/menu/dom/MenuHandler';
 import type {
   BaseTableAPI,
   BaseTableConstructorOptions,
@@ -115,7 +115,7 @@ import type {
 } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
-import { createLegend } from '../components/legend/create-legend';
+import type { CreateLegend } from '../components/legend/create-legend';
 import type { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
 import type { Chart } from '../scenegraph/graphic/chart';
@@ -131,6 +131,7 @@ import type { ITextGraphicAttribute } from '@src/vrender';
 import { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
 import { hasAutoImageColumn } from '../layout/layout-helper';
+import { Factory } from './factory';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -412,6 +413,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     if (options.legends) {
       internalProps.legends = [];
+      const createLegend = Factory.getFunction('createLegend') as CreateLegend;
       if (Array.isArray(options.legends)) {
         for (let i = 0; i < options.legends.length; i++) {
           internalProps.legends.push(createLegend(options.legends[i], this));
@@ -439,6 +441,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       options.tooltip
     );
     if (internalProps.tooltip.renderMode === 'html') {
+      const TooltipHandler = Factory.getComponent('tooltipHandler') as ITooltipHandler;
       internalProps.tooltipHandler = new TooltipHandler(this, internalProps.tooltip.confine);
     }
     internalProps.menu = Object.assign(
@@ -455,6 +458,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       (this.globalDropDownMenu = options.menu.defaultHeaderMenuItems);
 
     if (internalProps.menu.renderMode === 'html') {
+      const MenuHandler = Factory.getComponent('menuHandler') as IMenuHandler;
       internalProps.menuHandler = new MenuHandler(this);
     }
 
@@ -2302,6 +2306,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.eventManager.updateEventBinder();
     if (options.legends) {
       internalProps.legends = [];
+      const createLegend = Factory.getFunction('createLegend') as CreateLegend;
       if (Array.isArray(options.legends)) {
         for (let i = 0; i < options.legends.length; i++) {
           internalProps.legends.push(createLegend(options.legends[i], this));
@@ -2334,6 +2339,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       options.tooltip
     );
     if (internalProps.tooltip.renderMode === 'html' && !internalProps.tooltipHandler) {
+      const TooltipHandler = Factory.getComponent('tooltipHandler') as ITooltipHandler;
       internalProps.tooltipHandler = new TooltipHandler(this, internalProps.tooltip.confine);
     }
 
@@ -2352,6 +2358,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       (this.globalDropDownMenu = options.menu.defaultHeaderMenuItems);
 
     if (internalProps.menu.renderMode === 'html' && !internalProps.menuHandler) {
+      const MenuHandler = Factory.getComponent('menuHandler') as IMenuHandler;
       internalProps.menuHandler = new MenuHandler(this);
     }
     this.clearCellStyleCache();

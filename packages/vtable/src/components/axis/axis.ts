@@ -123,14 +123,16 @@ export class CartesianAxis {
   }
 
   initData() {
+    if (!this.table._vDataSet) {
+      this.table._vDataSet = new DataSet();
+    }
+
     registerDataSetInstanceParser(this.table._vDataSet, 'scale', scaleParser);
     registerDataSetInstanceTransform(this.table._vDataSet, 'ticks', ticks);
 
     const label = this.option.label || {};
     const tick = this.option.tick || {};
-    if (!this.table._vDataSet) {
-      this.table._vDataSet = new DataSet();
-    }
+
     const tickData = new DataView(this.table._vDataSet)
       .parse(this.scale._scale, {
         type: 'scale'

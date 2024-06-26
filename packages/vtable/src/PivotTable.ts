@@ -28,7 +28,7 @@ import { cellInRange, emptyFn } from './tools/helper';
 import { Dataset } from './dataset/dataset';
 import { BaseTable } from './core/BaseTable';
 import type { BaseTableAPI, HeaderData, PivotTableProtected } from './ts-types/base-table';
-import { Title } from './components/title/title';
+import type { ITitleComponent } from './components/title/title';
 import { cloneDeep, isNumber, isValid } from '@visactor/vutils';
 import { Env } from './tools/env';
 import type { ITreeLayoutHeadNode } from './layout/tree-helper';
@@ -43,7 +43,24 @@ import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { parseColKeyRowKeyForPivotTable, supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
-import { EmptyTip } from './components/empty-tip/empty-tip';
+import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
+import { Factory } from './core/factory';
+import {
+  registerAxis,
+  registerEmptyTip,
+  registerLegend,
+  registerMenu,
+  registerTitle,
+  registerTooltip
+} from './components';
+
+registerAxis();
+registerEmptyTip();
+registerLegend();
+registerMenu();
+registerTitle();
+registerTooltip();
+
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotTableProtected;
@@ -207,6 +224,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       // this.render();
 
       if (options.title) {
+        const Title = Factory.getComponent('title') as ITitleComponent;
         this.internalProps.title = new Title(options.title, this);
         this.scenegraph.resize();
       }
@@ -214,6 +232,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         if (this.internalProps.emptyTip) {
           this.internalProps.emptyTip.resetVisible();
         } else {
+          const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
           this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
           this.internalProps.emptyTip.resetVisible();
         }
@@ -417,6 +436,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //   this.scenegraph.resize();
     // }
     if (options.title) {
+      const Title = Factory.getComponent('title') as ITitleComponent;
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
@@ -424,6 +444,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
@@ -1519,6 +1540,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }

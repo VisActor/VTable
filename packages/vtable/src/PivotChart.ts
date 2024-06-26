@@ -38,7 +38,7 @@ import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node
 import type { ITableAxisOption } from './ts-types/component/axis';
 import { cloneDeep, isArray } from '@visactor/vutils';
 import type { DiscreteLegend } from '@visactor/vrender-components';
-import { Title } from './components/title/title';
+import type { ITitleComponent } from './components/title/title';
 import { Env } from './tools/env';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
@@ -48,10 +48,23 @@ import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
 import { IndicatorDimensionKeyPlaceholder } from './tools/global';
 import { checkHasCartesianChart } from './layout/chart-helper/get-chart-spec';
 import { supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
-import { EmptyTip } from './components/empty-tip/empty-tip';
-import { registerAxis } from './components';
+import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
+import { Factory } from './core/factory';
+import {
+  registerAxis,
+  registerEmptyTip,
+  registerLegend,
+  registerMenu,
+  registerTitle,
+  registerTooltip
+} from './components';
 
-// registerAxis();
+registerAxis();
+registerEmptyTip();
+registerLegend();
+registerMenu();
+registerTitle();
+registerTooltip();
 export class PivotChart extends BaseTable implements PivotChartAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotChartProtected;
@@ -231,6 +244,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
     if (options.title) {
+      const Title = Factory.getComponent('title') as ITitleComponent;
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
@@ -238,6 +252,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
@@ -463,6 +478,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
     if (options.title) {
+      const Title = Factory.getComponent('title') as ITitleComponent;
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
@@ -470,6 +486,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
