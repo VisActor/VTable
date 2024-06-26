@@ -116,7 +116,7 @@ import type {
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
 import { createLegend } from '../components/legend/create-legend';
-import { DataSet } from '@visactor/vdataset';
+import type { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
 import type { Chart } from '../scenegraph/graphic/chart';
 import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
@@ -159,7 +159,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   canvasWidth?: number;
   canvasHeight?: number;
 
-  _vDataSet: DataSet;
+  _vDataSet?: DataSet;
   scenegraph: Scenegraph;
   stateManager: StateManager;
   eventManager: EventManager;
@@ -405,7 +405,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           : 0
         : 10;
     // 生成scenegraph
-    this._vDataSet = new DataSet();
+    // this._vDataSet = new DataSet();
     this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
@@ -2283,7 +2283,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           : 0
         : 10;
     // 生成scenegraph
-    this._vDataSet = new DataSet();
+    // this._vDataSet = new DataSet();
     internalProps.legends?.forEach(legend => {
       legend?.release();
     });

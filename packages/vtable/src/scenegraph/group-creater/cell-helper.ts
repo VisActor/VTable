@@ -8,7 +8,6 @@ import type {
   ColumnDefine,
   ColumnTypeOption,
   ImageColumnDefine,
-  MappingRule,
   ProgressbarColumnDefine,
   IRowSeriesNumber,
   TextColumnDefine,
@@ -23,17 +22,15 @@ import { createProgressBarCell } from './cell-type/progress-bar-cell';
 import { createSparkLineCellGroup } from './cell-type/spark-line-cell';
 import { createCellGroup } from './cell-type/text-cell';
 import { createVideoCellGroup } from './cell-type/video-cell';
-import type { BaseTableAPI, HeaderData, PivotTableProtected } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
-import { CartesianAxis } from '../../components/axis/axis';
+import type { ICartesianAxis } from '../../components/axis/axis';
+import { Factory } from '../../core/factory';
 import { createCheckboxCellGroup } from './cell-type/checkbox-cell';
-// import type { PivotLayoutMap } from '../../layout/pivot-layout';
-import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getQuadProps } from '../utils/padding';
-import { convertInternal } from '../../tools/util';
 import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
 import { isArray } from '@visactor/vutils';
 import { breakString } from '../utils/break-string';
@@ -188,6 +185,7 @@ export function createCell(
 
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
     if (axisConfig) {
+      const CartesianAxis: ICartesianAxis = Factory.getComponent('axis');
       const axis = new CartesianAxis(axisConfig, cellGroup.attribute.width, cellGroup.attribute.height, padding, table);
       cellGroup.clear();
       cellGroup.appendChild(axis.component);

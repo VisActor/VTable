@@ -14,8 +14,8 @@ import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
-import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
-import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
+import type { ComputeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
+import { Factory } from '../../core/factory';
 import { Group as VGroup } from '@src/vrender';
 import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
@@ -301,8 +301,9 @@ function computeAutoColWidth(
     // 判断透视图轴组件
     if (table.isPivotChart()) {
       const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
-      const axisConfig = getAxisConfigInPivotChart(col, row, layout);
+      const axisConfig = layout.getAxisConfigInPivotChart(col, row);
       if (axisConfig) {
+        const computeAxisComponentWidth: ComputeAxisComponentWidth = Factory.getFunction('computeAxisComponentWidth');
         const axisWidth = computeAxisComponentWidth(axisConfig, table);
         if (typeof axisWidth === 'number') {
           maxWidth = Math.max(axisWidth, maxWidth);

@@ -1,8 +1,6 @@
-import type { ILine, ISymbol, IThemeSpec } from '@src/vrender';
-import { createLine, createSymbol } from '@src/vrender';
-import { PointScale, LinearScale } from '@visactor/vscale';
+import type { IThemeSpec } from '@src/vrender';
 import { Group } from '../../graphic/group';
-import type { CellInfo, CheckboxColumnDefine, CheckboxStyleOption, SparklineSpec } from '../../../ts-types';
+import type { CheckboxColumnDefine, CheckboxStyleOption } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isObject } from '@visactor/vutils';
 import type { CheckboxAttributes } from '@visactor/vrender-components';

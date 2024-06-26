@@ -1,6 +1,7 @@
 import type { IGraphic } from '@src/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
-import { CartesianAxis } from '../../components/axis/axis';
+import type { ICartesianAxis } from '../../components/axis/axis';
+import { Factory } from '../../core/factory';
 import { getStyleTheme } from '../../core/tableHelper';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
@@ -327,6 +328,7 @@ function updateCellWidth(
     const cellStyle = scene.table._getCellStyle(col, row);
     const padding = getQuadProps(getProp('padding', cellStyle, col, row, scene.table));
     if (axisConfig) {
+      const CartesianAxis: ICartesianAxis = Factory.getComponent('axis');
       const axis = new CartesianAxis(
         axisConfig,
         cellGroup.attribute.width,

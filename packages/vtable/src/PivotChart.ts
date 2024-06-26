@@ -49,6 +49,9 @@ import { IndicatorDimensionKeyPlaceholder } from './tools/global';
 import { checkHasCartesianChart } from './layout/chart-helper/get-chart-spec';
 import { supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
 import { EmptyTip } from './components/empty-tip/empty-tip';
+import { registerAxis } from './components';
+
+// registerAxis();
 export class PivotChart extends BaseTable implements PivotChartAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotChartProtected;

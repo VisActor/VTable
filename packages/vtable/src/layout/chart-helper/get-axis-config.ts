@@ -6,6 +6,7 @@ import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import type { CollectedValue } from '../../ts-types';
 import { getNewRangeToAlign } from './zero-align';
 
+export type GetAxisConfigInPivotChart = (col: number, row: number, layout: PivotHeaderLayoutMap) => any;
 export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   if (!layout._table.isPivotChart()) {
     return undefined;
@@ -422,7 +423,7 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
   };
 }
 
-export function checkZeroAlign(spec: any, orient: string, layout: PivotHeaderLayoutMap) {
+function checkZeroAlign(spec: any, orient: string, layout: PivotHeaderLayoutMap) {
   // check condition:
   // 1. two axes and one set sync
   // 2. axisId in sync is another
