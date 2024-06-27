@@ -30,7 +30,7 @@ import type {
   TextAlignType,
   TextBaselineType
 } from './ts-types';
-import { ListTable } from './ListTable';
+import { ListTableAll as ListTable } from './ListTable-all';
 import { ListTableSimple } from './ListTable-simple';
 import { PivotTable } from './PivotTable';
 import { PivotChart } from './PivotChart';

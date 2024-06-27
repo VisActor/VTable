@@ -19,7 +19,14 @@
     "url": "https://VisActor.io/"
   },
   "license": "MIT",
-  "sideEffects": true,
+  "sideEffects": [
+    "./src/ListTable-all.js",
+    "./src/ListTable-simple.js",
+    "./src/PivotTable.js",
+    "./src/PivotChart.js",
+    "./src/index.js",
+    "./src/scenegraph/scenegraph.js"
+  ],
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",

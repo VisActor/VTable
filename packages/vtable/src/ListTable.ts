@@ -37,6 +37,40 @@ import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { setCellCheckboxState } from './state/checkbox/checkbox';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
+// import {
+//   registerAxis,
+//   registerEmptyTip,
+//   registerLegend,
+//   registerMenu,
+//   registerTitle,
+//   registerTooltip
+// } from './components';
+// import {
+//   registerChartCell,
+//   registerCheckboxCell,
+//   registerImageCell,
+//   registerProgressBarCell,
+//   registerRadioCell,
+//   registerSparkLineCell,
+//   registerTextCell,
+//   registerVideoCell
+// } from './scenegraph/group-creater/cell-type';
+
+// registerAxis();
+// registerEmptyTip();
+// registerLegend();
+// registerMenu();
+// registerTitle();
+// registerTooltip();
+
+// registerChartCell();
+// registerCheckboxCell();
+// registerImageCell();
+// registerProgressBarCell();
+// registerRadioCell();
+// registerSparkLineCell();
+// registerTextCell();
+// registerVideoCell();
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
