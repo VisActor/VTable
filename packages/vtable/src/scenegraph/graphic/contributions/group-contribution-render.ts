@@ -268,9 +268,9 @@ export function renderStroke(
   context.setStrokeStyle(group, group.attribute, x, y, groupAttribute);
   // if (isHighlight) {
   //   context.setLineDash(highlightDash);
-  //   context.lineCap = 'butt';
   // }
-  // context.lineCap = 'square';
+  const oldLineCap = context.lineCap;
+  context.lineCap = 'square';
 
   const { lineDash = groupAttribute.lineDash } = group.attribute as any;
   // const lineDash = context.getLineDash();
@@ -428,6 +428,7 @@ export function renderStroke(
     context.stroke();
   }
   context.lineDashOffset = 0;
+  context.lineCap = oldLineCap;
   context.setLineDash([]);
 }
 
