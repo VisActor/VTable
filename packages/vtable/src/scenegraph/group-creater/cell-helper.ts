@@ -334,9 +334,11 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
+      mayHaveIcon,
       table,
       cellTheme,
       define as CheckboxColumnDefine,
+      range,
       isAsync
     );
   } else if (type === 'radio') {
