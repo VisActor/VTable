@@ -251,4 +251,9 @@ Data aggregation summary configuration to analyze the column data.
 
 Global options can also be configured to configure aggregation rules for each column.
 
-Please refer to the tutorial document
+Please refer to [the tutorial document](https://visactor.io/vtable/guide/data_analysis/list_table_dataAnalysis)
+
+${prefix} hide(boolean) = false
+Not required.
+
+Weather hide column.

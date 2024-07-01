@@ -253,4 +253,10 @@ ${prefix} aggregation(Aggregation | CustomAggregation | Array)
 
 全局 option 也可以配置，对每一列都配置聚合规则。
 
-可参考教程文档
+可参考[教程文档](https://visactor.io/vtable/guide/data_analysis/list_table_dataAnalysis)
+
+
+${prefix} hide(boolean) = false
+非必填。
+
+是否隐藏列
