@@ -76,7 +76,7 @@ export function createGroupForFirstScreen(
     0, // colStart
     table.frozenColCount - 1, // colEnd
     0, // rowStart
-    table.columnHeaderLevelCount - 1, // rowEnd
+    table.frozenRowCount - 1, // rowEnd
     table.isListTable() ? 'columnHeader' : 'cornerHeader', // CellType
     table
   );
@@ -91,7 +91,7 @@ export function createGroupForFirstScreen(
       // Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
       distCol - table.rightFrozenColCount,
       0, // rowStart
-      table.columnHeaderLevelCount - 1, // rowEnd
+      table.frozenRowCount - 1, // rowEnd
       'columnHeader', // isHeader
       table
     );
@@ -105,7 +105,7 @@ export function createGroupForFirstScreen(
         yOrigin,
         0, // colStart
         table.leftRowSeriesNumberCount - 1, // colEnd
-        table.columnHeaderLevelCount, // rowStart
+        table.frozenRowCount, // rowStart
         // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
         distRow - table.bottomFrozenRowCount,
         'rowHeader', // isHeader
@@ -119,7 +119,7 @@ export function createGroupForFirstScreen(
         yOrigin,
         table.leftRowSeriesNumberCount, // colStart
         table.leftRowSeriesNumberCount + table.rowHeaderLevelCount - 1, // colEnd
-        table.columnHeaderLevelCount, // rowStart
+        table.frozenRowCount, // rowStart
         // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
         distRow - table.bottomFrozenRowCount,
         'rowHeader', // isHeader
@@ -133,7 +133,7 @@ export function createGroupForFirstScreen(
         yOrigin,
         table.rowHeaderLevelCount + table.leftRowSeriesNumberCount, // colStart
         table.frozenColCount - 1, // colEnd
-        table.columnHeaderLevelCount, // rowStart
+        table.frozenRowCount, // rowStart
         // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
         distRow - table.bottomFrozenRowCount,
         'body',
@@ -240,7 +240,7 @@ export function createGroupForFirstScreen(
       table.colCount - 1 - table.rightFrozenColCount + 1, // colStart
       table.colCount - 1, // colEnd
       0, // rowStart
-      table.columnHeaderLevelCount - 1, // rowEnd
+      table.frozenRowCount - 1, // rowEnd
       'columnHeader', // isHeader
       table
     );
@@ -252,7 +252,7 @@ export function createGroupForFirstScreen(
       yOrigin,
       table.colCount - 1 - table.rightFrozenColCount + 1, // colStart
       table.colCount - 1, // colEnd
-      table.columnHeaderLevelCount, // rowStart
+      table.frozenRowCount, // rowStart
       // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
       distRow - table.bottomFrozenRowCount,
       table.isPivotChart() ? 'rowHeader' : 'body', // isHeader
@@ -284,7 +284,7 @@ export function createGroupForFirstScreen(
       table.frozenColCount, // colStart
       // Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
       distCol - table.rightFrozenColCount,
-      table.columnHeaderLevelCount, // rowStart
+      table.frozenRowCount, // rowStart
       // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
       distRow - table.bottomFrozenRowCount,
       'body', // isHeader
