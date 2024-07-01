@@ -212,7 +212,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // rowCount = 0,
       // colCount = 0,
       frozenColCount = 0,
-      // frozenRowCount = 0,
+      frozenRowCount,
       defaultRowHeight = 40,
       defaultHeaderRowHeight,
       defaultColWidth = 80,
@@ -319,6 +319,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.pixelRatio = pixelRatio;
     internalProps.frozenColCount = frozenColCount;
+    internalProps.frozenRowCount = frozenRowCount;
 
     internalProps.defaultRowHeight = defaultRowHeight;
     internalProps.defaultHeaderRowHeight = defaultHeaderRowHeight ?? defaultRowHeight; // defaultHeaderRowHeight没有设置取defaultRowHeight
