@@ -216,8 +216,10 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
+      mayHaveIcon,
       table,
       cellTheme,
+      range,
       isAsync
     );
   } else if (type === 'video') {
@@ -235,8 +237,10 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
+      mayHaveIcon,
       table,
       cellTheme,
+      range,
       isAsync
     );
   } else if (type === 'chart') {
