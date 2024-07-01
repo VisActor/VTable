@@ -151,6 +151,16 @@ Fill in the changes of this submission according to the template:
 
 After filling in the relevant information, click Create pull request to submit.
 
+### Other points to note
+
+1. Unit Testing:
+
+If it involves interface modification, please add unit tests in the **tests** directory and run the `rushx test` command for testing.
+
+When pushing the code, the unit test will be automatically checked before it is pushed. If all pass, the code will be pushed to the remote. If it fails, there should be a problem with the code logic or the unit test data needs to be modified. Please correct it according to the situation.
+
+If you encounter the error "Cannot find module '@visactor/vtable-editors'" when running unit tests, please execute the `rushx build` command in the vtable-editors project first, and then return to the vtable project to execute the command.
+
 ## Mini Task Development Guide
 
 "**good first issue**" is a common label in open source communities, and its purpose is to help new contributors find suitable entry-level issues.

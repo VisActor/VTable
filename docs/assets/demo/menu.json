@@ -326,6 +326,13 @@
           }
         },
         {
+          "path": "pivot-sparkline",
+          "title": {
+            "zh": "透视表迷你图展示",
+            "en": "Sparkline In PivotTable"
+          }
+        },
+        {
           "path": "composite-cellType",
           "title": {
             "zh": "单元格类型混用",

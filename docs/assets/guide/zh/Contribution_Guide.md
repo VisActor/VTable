@@ -149,6 +149,16 @@ git push origin docs/add-funnel-demo
   </div>
 相关信息填写完成后，点击 Create pull request 提交。
 
+### 其他注意点
+
+1. 单元测试：
+
+如果是涉及接口修改请在**tests**目录下添加单元测试，并运行`rushx test`命令进行测试。
+
+当 push 推送代码前会自动进行单元测试的检查，如果全部通过会推送代码到远程，如果没有通过那么应该是代码逻辑有问题或者需求修改单测数据，请根据情况进行修正。
+
+运行单元测试中如果遇到"Cannot find module '@visactor/vtable-editors'" 的错误，请先到 vtable-editors 项目中执行`rushx build`命令，然后再回到 vtable 项目中执行命令。
+
 ## Mini Task 开发指南
 
 "**good first issue**" 是一个在开源社区常见的标签，这个标签的目的是帮助新贡献者找到适合入门的问题。
