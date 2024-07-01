@@ -22,7 +22,8 @@
   "sideEffects": [
     "./src/ListTable-all.js",
     "./src/ListTable-simple.js",
-    "./src/PivotTable.js",
+    "./src/PivotTable-all.js",
+    "./src/PivotTable-simple.js",
     "./src/PivotChart.js",
     "./src/index.js",
     "./src/scenegraph/scenegraph.js"

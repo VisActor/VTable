@@ -32,7 +32,9 @@ import type {
 } from './ts-types';
 import { ListTableAll as ListTable } from './ListTable-all';
 import { ListTableSimple } from './ListTable-simple';
-import { PivotTable } from './PivotTable';
+// import { PivotTable } from './PivotTable';
+import { PivotTableAll as PivotTable } from './PivotTable-all';
+import { PivotTableSimple } from './PivotTable-simple';
 import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
@@ -65,6 +67,7 @@ export {
   ListTableSimple,
   ListTableConstructorOptions,
   PivotTable,
+  PivotTableSimple,
   PivotTableConstructorOptions,
   PivotChartConstructorOptions,
   PivotChart,

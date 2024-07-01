@@ -45,40 +45,6 @@ import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { parseColKeyRowKeyForPivotTable, supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
-import {
-  registerAxis,
-  registerEmptyTip,
-  registerLegend,
-  registerMenu,
-  registerTitle,
-  registerTooltip
-} from './components';
-import {
-  registerChartCell,
-  registerCheckboxCell,
-  registerImageCell,
-  registerProgressBarCell,
-  registerRadioCell,
-  registerSparkLineCell,
-  registerTextCell,
-  registerVideoCell
-} from './scenegraph/group-creater/cell-type';
-
-registerAxis();
-registerEmptyTip();
-registerLegend();
-registerMenu();
-registerTitle();
-registerTooltip();
-
-registerChartCell();
-registerCheckboxCell();
-registerImageCell();
-registerProgressBarCell();
-registerRadioCell();
-registerSparkLineCell();
-registerTextCell();
-registerVideoCell();
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
