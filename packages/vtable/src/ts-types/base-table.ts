@@ -271,6 +271,7 @@ export interface BaseTableConstructorOptions {
    * 当前需要冻结的列数 基本表格生效
    */
   frozenColCount?: number;
+  frozenRowCount?: number;
   rightFrozenColCount?: number;
   bottomFrozenRowCount?: number;
 

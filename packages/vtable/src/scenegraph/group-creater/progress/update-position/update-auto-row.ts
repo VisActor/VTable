@@ -34,7 +34,7 @@ export function updateAutoRow(
           }
         } else {
           // 估计位置
-          y = table.getRowsHeight(table.columnHeaderLevelCount, cellGroup.row - 1);
+          y = table.getRowsHeight(table.frozenRowCount, cellGroup.row - 1);
         }
         if (isValid(y)) {
           cellGroup.setAttribute('y', y);
@@ -61,8 +61,8 @@ export function updateAutoRow(
           }
         } else {
           // 估计位置
-          y = table.getRowsHeight(table.columnHeaderLevelCount, cellGroup.row - 1);
-          // console.log('估计位置', table.getRowsHeight(table.columnHeaderLevelCount, cellGroup.row));
+          y = table.getRowsHeight(table.frozenRowCount, cellGroup.row - 1);
+          // console.log('估计位置', table.getRowsHeight(table.frozenRowCount, cellGroup.row));
         }
         if (isValid(y)) {
           cellGroup.setAttribute('y', y);
@@ -77,11 +77,8 @@ export function updateAutoRow(
     table.scenegraph.proxy.bodyBottomRow - table.scenegraph.proxy.bodyTopRow + 1
   );
   // 渐进加载总row数量
-  const totalBodyHeight = table.getRowsHeight(
-    table.columnHeaderLevelCount,
-    table.columnHeaderLevelCount + totalActualBodyRowCount
-  );
-  const totalHeight = table.getRowsHeight(table.columnHeaderLevelCount, table.rowCount - 1);
+  const totalBodyHeight = table.getRowsHeight(table.frozenRowCount, table.frozenRowCount + totalActualBodyRowCount);
+  const totalHeight = table.getRowsHeight(table.frozenRowCount, table.rowCount - 1);
   table.scenegraph.proxy.yLimitTop = totalBodyHeight / 2;
   table.scenegraph.proxy.yLimitBottom = totalHeight - totalBodyHeight / 2;
 

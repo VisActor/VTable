@@ -370,7 +370,7 @@ export class Scenegraph {
     this.clear = false;
     // this.frozenColCount = this.table.rowHeaderLevelCount;
     this.frozenColCount = this.table.frozenColCount;
-    this.frozenRowCount = this.table.columnHeaderLevelCount;
+    this.frozenRowCount = this.table.frozenRowCount;
 
     this.proxy = new SceneProxy(this.table);
 
@@ -1905,12 +1905,12 @@ export class Scenegraph {
   }
 
   getCellGroupY(row: number) {
-    if (row < this.table.columnHeaderLevelCount) {
+    if (row < this.table.frozenRowCount) {
       // column header
       return this.table.getRowsHeight(0, row - 1);
     } else if (row < this.table.rowCount - this.table.bottomFrozenRowCount) {
       // body
-      return this.table.getRowsHeight(this.table.columnHeaderLevelCount, row - 1);
+      return this.table.getRowsHeight(this.table.frozenRowCount, row - 1);
     } else if (row < this.table.rowCount) {
       // bottom frozen
       return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);
