@@ -2753,8 +2753,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param row
    */
   selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean) {
+    const isHasSelected = !!this.stateManager.select.ranges?.length;
     this.stateManager.updateSelectPos(col, row, isShift, isCtrl);
-    this.stateManager.endSelectCells();
+    this.stateManager.endSelectCells(true, isHasSelected);
   }
   /**
    * 选中单元格区域，可设置多个区域同时选中
@@ -2786,7 +2787,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         this.stateManager.updateInteractionState(InteractionState.grabing);
         this.stateManager.updateSelectPos(cellRange.end.col, cellRange.end.row, false, index >= 1, false, false, true);
       }
-      this.stateManager.endSelectCells(false);
+      this.stateManager.endSelectCells(false, false);
       this.stateManager.updateInteractionState(InteractionState.default);
     });
     // 选择后 会自动滚动到所选区域最后一行一列的位置 这里再设置回滚动前位置
