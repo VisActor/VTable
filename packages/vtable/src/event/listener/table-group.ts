@@ -341,7 +341,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
     }
-    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    if (!isCompleteEdit) {
+      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+      return;
+    }
     stateManager.updateInteractionState(InteractionState.default);
     eventManager.dealTableHover();
     //点击到表格外部不需要取消选中状态
@@ -388,8 +392,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 点击在menu外，且不是下拉菜单的icon，移除menu
       stateManager.hideMenu();
     }
-    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-
+    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    if (!isCompleteEdit) {
+      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+      return;
+    }
     const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
       ? eventArgsSet.eventArgs.target
       : (e.target as any).role?.startsWith('icon')
@@ -682,7 +689,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       stateManager.hideMenu();
     }
-    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    if (isCompleteEdit) {
+      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+      return;
+    }
 
     const hitIcon = (e.target as any).role?.startsWith('icon') ? e.target : undefined;
     eventManager.downIcon = hitIcon;
