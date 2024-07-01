@@ -1,12 +1,7 @@
-/*eslint no-bitwise:0*/
-
 import type { ITableThemeDefine, StylePropertyFunctionArg } from '../ts-types';
 
 function getBackgroundColor(args: StylePropertyFunctionArg): string {
   const { row, table } = args;
-  // if (row < table.frozenRowCount) {
-  //   return "#FFF";
-  // }
   const index = row - table.frozenRowCount;
   if (!(index & 1)) {
     return '#FAF9FB';
@@ -106,15 +101,15 @@ export default {
       endColor: 'rgba(225, 228, 232, 0.6)'
     }
   },
-  // menuStyle: {
-  //   color: '#000',
-  //   highlightColor: '#2E68CF',
-  //   fontSize: 12,
-  //   fontFamily: 'Arial,sans-serif',
-  //   highlightFontSize: 12,
-  //   highlightFontFamily: 'Arial,sans-serif',
-  //   hoverBgColor: '#EEE'
-  // },
+  menuStyle: {
+    color: '#000',
+    highlightColor: '#2E68CF',
+    fontSize: 12,
+    fontFamily: 'Arial,sans-serif',
+    highlightFontSize: 12,
+    highlightFontFamily: 'Arial,sans-serif',
+    hoverBgColor: '#EEE'
+  },
   selectionStyle: {
     cellBgColor: 'rgba(0, 0, 255,0.1)',
     cellBorderLineWidth: 2,
