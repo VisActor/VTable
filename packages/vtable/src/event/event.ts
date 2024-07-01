@@ -129,7 +129,9 @@ export class EventManager {
       } else if (funcType === IconFuncTypeEnum.drillDown) {
         drillClick(this.table);
       } else if (funcType === IconFuncTypeEnum.collapse || funcType === IconFuncTypeEnum.expand) {
-        this.table.stateManager.updateSelectPos(-1, -1);
+        const isHasSelected = !!stateManager.select.ranges?.length;
+        stateManager.updateSelectPos(-1, -1);
+        stateManager.endSelectCells(true, isHasSelected);
         this.table.toggleHierarchyState(col, row);
       }
     });

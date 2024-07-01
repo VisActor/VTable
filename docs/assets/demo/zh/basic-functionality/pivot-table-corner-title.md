@@ -1,25 +1,32 @@
 ---
 category: examples
-group: data-analysis
-title: Sort Indicator
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-sort-indicator.png
-link: '../guide/data_analysis/pivot_table_dataAnalysis'
-option: PivotTable#dataConfig.sortRules
+group: Basic Features
+title: 透视表角头显示维度名称
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-corner-title.png
+link: '../guide/table_type/Pivot_table/pivot_table_useage'
+option: PivotTable#corner
 ---
 
-# Pivot analysis table is sorted by indicator value
+# 透视表角头显示维度名称
 
-The pivot table is sorted according to the dimension value of a certain dimension. SortRules can be configured in dataConfig. Multiple sorting rules can be configured. The one configured first has a higher priority. In this example, the indicators indicator is configured with sort:true, which will display a sort icon in the header cell that displays the indicator name. Click the icon to sort by indicator value.
+将角头标题显示内容依据设置为`'all'`，则角头单元格内容为行维度名称和列维度名称的拼接。
 
-## Key Configurations
+titleOnDimension 角头标题显示内容依据：
+
+- 'column' 列维度名称作为角头单元格内容
+- 'row' 行维度名称作为角头单元格内容
+- 'none' 角头单元格内容为空
+- 'all' 角头单元格内容为行维度名称和列维度名称的拼接
+
+## 关键配置
 
 - `PivotTable`
 - `columns`
 - `rows`
 - `indicators`
-- `dataConfig` configures data rules, optional configuration items
+- `corner.titleOnDimension` 角头标题显示内容依据
 
-## Code demo
+## 代码演示
 
 ```javascript livedemo template=vtable
 let tableInstance;
@@ -154,21 +161,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         }
       ],
       corner: {
-        titleOnDimension: 'row'
-      },
-      dataConfig: {
-        sortRules: [
-          {
-            sortField: 'Sub-Category',
-            sortByIndicator: 'Sales',
-            sortType: VTable.TYPES.SortType.DESC,
-            query: ['East', 'Consumer']
-          },
-          {
-            sortField: 'Region',
-            sortBy: ['East', 'Central']
-          }
-        ]
+        titleOnDimension: 'all'
       },
       widthMode: 'standard'
     };
