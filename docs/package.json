@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "serve": "vite --host",
+    "build": "vite build && cp -r ./assets ./dist",
     "watch": "node ./libs/template-parse/build.js --env dev --watch",
     "start": "npx concurrently --kill-others \"npm:watch\" \"npm:serve\""
   },
@@ -25,7 +26,8 @@
     "react-dom": "^18.0.0",
     "react-router-dom": "6.9.0",
     "lodash": "4.17.21",
-    "openinula": "~0.1.2-SNAPSHOT"
+    "openinula": "~0.1.2-SNAPSHOT",
+    "@visactor/vutils": "~0.18.9"
   },
   "devDependencies": {
     "@internal/eslint-config": "workspace:*",

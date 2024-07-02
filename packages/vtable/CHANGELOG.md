@@ -1,6 +1,38 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 24 Jun 2024 08:48:40 GMT and should not be manually modified.
+This log was last generated on Tue, 02 Jul 2024 12:48:08 GMT and should not be manually modified.
+
+## 1.4.2
+Tue, 02 Jul 2024 12:48:08 GMT
+
+### Updates
+
+- feat: corner title can display row and column diemensionTitle #1926
+
+
+- fix: when not exit edit state then can not select other cells #1974
+
+
+- fix: selected_clear event trigger #1981
+
+
+- feat: add column hide config #1991
+
+
+- refactor: sparkline cellType set aggregationType None automatically #1999
+
+
+- fix: pivotTable virtual node edit value not work #2002
+
+
+- fix: tooltip content can not be selected #2003
+
+
+- feat: add getCellAtRelativePosition api
+- fix: fix vrender export module
+- fix: fix merge cell update performance problem #1972
+- fix: fix regexp format for webpack 3 #2005
+- fix: fix width computation in shrinkSparklineFirst mode
 
 ## 1.4.1
 Mon, 24 Jun 2024 08:48:40 GMT

@@ -188,6 +188,11 @@ Configuration example:
           indicatorKey: 'OrderSalesValue', //Indicator name
           field: 'Sales', //Indicator based on field
           aggregationType: VTable.TYPES.AggregationType.NONE, //don't aggregate
+        },
+        {
+          indicatorKey: 'orderRecords', //Indicator name
+          field: 'Sales', //Indicator based on field
+          aggregationType: VTable.TYPES.AggregationType.RECORD, //don't aggregate. Match all the corresponding data as the value of the cell
         }
       ]
 ```
@@ -218,6 +223,8 @@ dataConfig:{
 ```
 
 The sales indicator in this record is a non-numeric value, and it is required to display `"NULL"` directly in the table cell. In this case, you can set `NONE` to require the internal aggregation logic of VTable to directly obtain the value of the sales field without aggregation.
+
+2. The usage scenario of AggregationType.RECORD indicator without aggregation is mainly used to match all data according to the data record passed by the user, and use it as the display data of the cell. The usage scenario is such as collecting data sets as mini-charts. For specific demo, see: https://visactor.io/vtable/demo/cell-type/pivot-sparkline
 
 ### 5. Derive Field
 

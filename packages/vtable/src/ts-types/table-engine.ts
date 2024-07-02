@@ -64,7 +64,7 @@ export type WidthModeDef = 'standard' | 'adaptive' | 'autoWidth';
 export type HeightModeDef = 'standard' | 'adaptive' | 'autoHeight';
 export type WidthAdaptiveModeDef = 'only-body' | 'all';
 export type HeightAdaptiveModeDef = 'only-body' | 'all';
-export type ShowColumnRowType = 'column' | 'row' | 'none';
+export type ShowColumnRowType = 'column' | 'row' | 'none' | 'all';
 /** 单元格所处表格哪部分 */
 export type CellLocation = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
 export type CellSubLocation =

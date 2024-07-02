@@ -154,10 +154,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         }
       ],
       corner: {
-        titleOnDimension: 'row',
-        headerStyle: {
-          textStick: true
-        }
+        titleOnDimension: 'row'
       },
       dataConfig: {
         sortRules: [

@@ -188,6 +188,11 @@ filterRules: [
           indicatorKey: 'OrderSalesValue', //指标名称
           field: 'Sales', //指标依据字段
           aggregationType: VTable.TYPES.AggregationType.NONE, //不做聚合 匹配到其中对应数据获取其对应field的值
+        },
+        {
+          indicatorKey: 'orderRecords', //指标名称
+          field: 'Sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.RECORD, //不做聚合 匹配到其中对应的全部数据作为单元格的值
         }
       ]
 ```
@@ -219,6 +224,8 @@ dataConfig:{
 ```
 
 其中该条 record 中 sales 指标是个非数值型的值，而且需求要将`"NULL"`直接显示到表格单元格中，那么可以设置 NONE，要求 VTable 的内部聚合逻辑不聚合直接取`sales`字段值。
+
+2. AggregationType.RECORD 指标不做聚合的使用场景主要用于根据用户传入数据 record 匹配到所有数据，将其作为单元格的展示数据，用法场景如需要搜集数据集作为迷你图展示，具体 demo 见：https://visactor.io/vtable/demo/cell-type/pivot-sparkline
 
 ### 5. 派生字段
 

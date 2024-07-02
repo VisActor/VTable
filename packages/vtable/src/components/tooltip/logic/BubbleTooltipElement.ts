@@ -3,7 +3,7 @@ import type { RectProps } from '../../../ts-types';
 import { Placement } from '../../../ts-types';
 import { createElement } from '../../../tools/dom';
 import { importStyle } from './BubbleTooltipElementStyle';
-import { isMobile } from '../../../tools/util';
+import { isDivSelected, isMobile } from '../../../tools/util';
 import type { TooltipOptions } from '../../../ts-types/tooltip';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 importStyle();
@@ -40,6 +40,12 @@ export class BubbleTooltipElement {
 
     messageElement.addEventListener('wheel', e => {
       e.stopPropagation();
+    });
+    messageElement.addEventListener('copy', e => {
+      const isSelected = isDivSelected(messageElement as HTMLDivElement); // 判断tooltip弹框内容是否有选中
+      if (isSelected) {
+        e.stopPropagation();
+      }
     });
   }
   bindToCell(

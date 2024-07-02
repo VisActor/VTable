@@ -204,6 +204,15 @@ $ rush change-all
 
 3.  Submit all code and create a Pull Request on Github, inviting others to review it.
 
+### Promotion Task Contribution Guide
+A promotion task refers to the action of publicly releasing materials related to VisActor, such as articles, demos, videos, etc., across various media channels.
+
+You can create a new issue, select the type others and tag it with promotion. Then, post it along with relevant links, screenshots, summaries, etc.
+
+For example, see https://github.com/VisActor/VChart/issues/2858.
+
+Every quarter, we will select some promotional works for VisActor and provide the authors with material rewards.
+
 ## Embrace the VisActor Community
 
 In addition to contributing code to VisActor, we encourage you to participate in other activities that will make the community more prosperous, such as:

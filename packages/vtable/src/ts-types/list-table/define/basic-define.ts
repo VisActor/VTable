@@ -80,6 +80,8 @@ export interface IBasicColumnBodyDefine {
   // style?: ColumnStyleOption | null;
   /** 是否对相同内容合并单元格 **/
   mergeCell?: MergeCellOption;
+  /** 是否隐藏 */
+  hide?: boolean;
   customRender?: ICustomRender;
   customLayout?: ICustomLayout;
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);

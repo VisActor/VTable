@@ -72,7 +72,9 @@ export function dealSort(col: number, row: number, table: ListTableAPI, event: E
 
   table.scenegraph.sortCell();
   // 排序后，清除选中效果
+  const isHasSelected = !!table.stateManager.select.ranges?.length;
   table.stateManager.updateSelectPos(-1, -1);
+  table.stateManager.endSelectCells(true, isHasSelected);
 }
 
 function executeSort(newState: SortState, table: BaseTableAPI, headerDefine: HeaderDefine): void {

@@ -22,6 +22,7 @@ importers:
       '@visactor/vtable-editors': workspace:*
       '@visactor/vtable-export': workspace:*
       '@visactor/vtable-search': workspace:*
+      '@visactor/vutils': ~0.18.9
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       buble: ^0.20.0
@@ -50,6 +51,7 @@ importers:
       '@visactor/vtable-editors': link:../packages/vtable-editors
       '@visactor/vtable-export': link:../packages/vtable-export
       '@visactor/vtable-search': link:../packages/vtable-search
+      '@visactor/vutils': 0.18.9
       axios: 1.7.2
       buble: 0.20.0
       highlight.js: 11.9.0

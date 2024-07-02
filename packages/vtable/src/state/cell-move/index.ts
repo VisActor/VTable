@@ -29,8 +29,9 @@ export function startMoveCol(col: number, row: number, x: number, y: number, sta
   state.table.scenegraph.component.showMoveCol(col, row, delta);
 
   // 调整列顺序期间清空选中清空
+  const isHasSelected = !!state.select.ranges?.length;
   state.table.stateManager.updateSelectPos(-1, -1);
-
+  state.table.stateManager.endSelectCells(true, isHasSelected);
   state.table.scenegraph.updateNextFrame();
 }
 

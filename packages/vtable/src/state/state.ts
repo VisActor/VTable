@@ -610,7 +610,7 @@ export class StateManager {
   isSelecting(): boolean {
     return this.select.selecting;
   }
-  endSelectCells(fireListener: boolean = true) {
+  endSelectCells(fireListener: boolean = true, fireClear: boolean = true) {
     if (this.select.selecting) {
       this.select.selecting = false;
       if (this.select.ranges.length === 0) {
@@ -651,7 +651,7 @@ export class StateManager {
           col: lastCol,
           row: lastRow
         });
-    } else if (fireListener) {
+    } else if (fireClear) {
       if (this.select.ranges.length === 0) {
         this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CLEAR, {});
       }
@@ -676,8 +676,9 @@ export class StateManager {
     this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
     // 调整列宽期间清空选中清空
+    const isHasSelected = !!this.select.ranges?.length;
     this.updateSelectPos(-1, -1);
-
+    this.endSelectCells(true, isHasSelected);
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeCol(xInTable: number, yInTable: number) {
@@ -702,8 +703,9 @@ export class StateManager {
     this.table.scenegraph.component.showResizeRow(row, x, isBottomFrozen);
 
     // 调整列宽期间清空选中清空
+    const isHasSelected = !!this.select.ranges?.length;
     this.updateSelectPos(-1, -1);
-
+    this.endSelectCells(true, isHasSelected);
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeRow(xInTable: number, yInTable: number) {
