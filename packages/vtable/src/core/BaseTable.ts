@@ -4281,4 +4281,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   get headerDomContainer() {
     return this.internalProps.headerDomContainer;
   }
+  /**
+   * 显示移动列或移动行的高亮线  如果(col，row)单元格是列头 则显示高亮列线；  如果(col，row)单元格是行头 则显示高亮行线
+   * @param col 在表头哪一列后显示高亮线
+   * @param row 在表头哪一行后显示高亮线
+   */
+  showMoverLine(col: number, row: number) {
+    this.scenegraph.component.showMoveCol(col, row, 0);
+    this.scenegraph.renderSceneGraph();
+  }
+  /**
+   * 隐藏掉移动列或移动行的高亮线
+   * @param col
+   * @param row
+   */
+  hideMoverLine(col: number, row: number) {
+    this.scenegraph.component.hideMoveCol();
+    this.scenegraph.renderSceneGraph();
+  }
 }
