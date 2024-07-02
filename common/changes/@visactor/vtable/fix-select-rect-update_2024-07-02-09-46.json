@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix select-rect update when scroll #2015",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
