@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix width computation in shrinkSparklineFirst mode",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

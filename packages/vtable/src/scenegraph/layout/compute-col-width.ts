@@ -720,7 +720,7 @@ export function getAdaptiveWidth(
   if (
     table.options.customConfig?.shrinkSparklineFirst &&
     factor < 1 &&
-    totalDrawWidth - actualWidth < totalSparklineAbleWidth
+    actualWidth - totalDrawWidth < totalSparklineAbleWidth
   ) {
     // only shrink sparkline column
     for (let i = 0; i < sparklineColumns.length; i++) {
