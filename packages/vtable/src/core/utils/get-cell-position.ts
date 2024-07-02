@@ -363,6 +363,18 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
   x -= _this.tableX;
   y -= _this.tableY;
 
+  // top frozen
+  let topFrozen = false;
+  if (y > 0 && y < _this.getFrozenRowsHeight()) {
+    topFrozen = true;
+  }
+
+  // left frozen
+  let leftFrozen = false;
+  if (x > 0 && x < _this.getFrozenColsWidth()) {
+    leftFrozen = true;
+  }
+
   // bottom frozen
   let bottomFrozen = false;
   if (y > _this.tableNoFrameHeight - _this.getBottomFrozenRowsHeight() && y < _this.tableNoFrameHeight) {
@@ -374,8 +386,16 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
     rightFrozen = true;
   }
 
-  const colInfo = getTargetColAtConsiderRightFrozen(rightFrozen ? x : x + _this.scrollLeft, rightFrozen, _this);
-  const rowInfo = getTargetRowAtConsiderBottomFrozen(bottomFrozen ? y : y + _this.scrollTop, bottomFrozen, _this);
+  const colInfo = getTargetColAtConsiderRightFrozen(
+    leftFrozen || rightFrozen ? x : x + _this.scrollLeft,
+    rightFrozen,
+    _this
+  );
+  const rowInfo = getTargetRowAtConsiderBottomFrozen(
+    topFrozen || bottomFrozen ? y : y + _this.scrollTop,
+    bottomFrozen,
+    _this
+  );
 
   const { row, top, bottom, height } = rowInfo;
   const { col, left, right, width } = colInfo;
