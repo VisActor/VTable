@@ -214,6 +214,9 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
+  bindDebugTool(tableInstance.scenegraph.stage, {
+    customGrapicKeys: ['col', 'row']
+  });
   tableInstance.on('change_cell_value', arg => {
     console.log(arg);
   });
