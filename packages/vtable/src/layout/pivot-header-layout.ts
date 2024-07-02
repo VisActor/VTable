@@ -3159,7 +3159,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
             const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
               for (const itemKey in item) {
-                if (item[itemKey] !== datum[itemKey]) {
+                if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
                   return false;
                 }
               }
@@ -3169,7 +3169,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
             // 判断维度点击
             const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
-              if (datum[item.key] !== item.value) {
+              if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
                 return false;
               }
               return true;
@@ -3184,7 +3184,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
             const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
               for (const itemKey in item) {
-                if (item[itemKey] !== datum[itemKey]) {
+                if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
                   return false;
                 }
               }
@@ -3194,7 +3194,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
             // 判断维度点击
             const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
-              if (datum[item.key] !== item.value) {
+              if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
                 return false;
               }
               return true;
