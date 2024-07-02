@@ -45,6 +45,15 @@ export const defalutPoptipStyle = {
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     size: 0,
     space: 12
-  }
+  },
   // maxWidthPercent: 0.8
+  menuStyle: {
+    color: '#000',
+    highlightColor: '#2E68CF',
+    fontSize: 12,
+    fontFamily: 'Arial,sans-serif',
+    highlightFontSize: 12,
+    highlightFontFamily: 'Arial,sans-serif',
+    hoverBgColor: '#EEE'
+  }
 };

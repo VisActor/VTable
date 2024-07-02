@@ -17,6 +17,15 @@ function getBackgroundColor(args: StylePropertyFunctionArg): string {
 export default {
   underlayBackgroundColor: '#FFF',
   // selectionBgColor: '#CCE0FF',
+  menuStyle: {
+    color: '#000',
+    highlightColor: '#2E68CF',
+    fontSize: 12,
+    fontFamily: 'Arial,sans-serif',
+    highlightFontSize: 12,
+    highlightFontFamily: 'Arial,sans-serif',
+    hoverBgColor: '#EEE'
+  },
   defaultStyle: {
     color: '#1B1F23',
     bgColor: '#EEF1F5',

@@ -119,5 +119,14 @@ export default {
     color: '#000',
     fontSize: 12,
     fontFamily: 'Arial,sans-serif'
+  },
+  menuStyle: {
+    color: '#000',
+    highlightColor: '#2E68CF',
+    fontSize: 12,
+    fontFamily: 'Arial,sans-serif',
+    highlightFontSize: 12,
+    highlightFontFamily: 'Arial,sans-serif',
+    hoverBgColor: '#EEE'
   }
 } as ITableThemeDefine;
