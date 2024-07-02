@@ -269,8 +269,8 @@ export function renderStroke(
   // if (isHighlight) {
   //   context.setLineDash(highlightDash);
   // }
-  const oldLineCap = context.lineCap;
-  context.lineCap = 'square';
+  // const oldLineCap = context.lineCap;
+  // context.lineCap = 'square';
 
   const { lineDash = groupAttribute.lineDash } = group.attribute as any;
   // const lineDash = context.getLineDash();
@@ -290,8 +290,8 @@ export function renderStroke(
   // top
   if (strokeTop) {
     // context.lineTo(x + width, y);
-    const deltaLeft = strokeLeft ? 0 : (isWidthNumber ? widthInfo.width : strokeArrayWidth[3]) / 2;
-    const deltaRight = strokeRight ? 0 : (isWidthNumber ? widthInfo.width : strokeArrayWidth[1]) / 2;
+    const deltaLeft = (isWidthNumber ? widthInfo.width : strokeArrayWidth[0]) / 2;
+    const deltaRight = (isWidthNumber ? widthInfo.width : strokeArrayWidth[0]) / 2;
     if (isPart && Array.isArray(part[0])) {
       context.moveTo(x - deltaLeft + (width + deltaLeft + deltaRight) * part[0][0], y);
       context.lineTo(x - deltaLeft + (width + deltaLeft + deltaRight) * (part[0][1] - part[0][0]), y);
@@ -323,8 +323,8 @@ export function renderStroke(
   // right
   if (strokeRight) {
     // context.lineTo(x + width, y + height);
-    const deltaTop = strokeTop ? 0 : (isWidthNumber ? widthInfo.width : strokeArrayWidth[0]) / 2;
-    const deltaBottom = strokeBottom ? 0 : (isWidthNumber ? widthInfo.width : strokeArrayWidth[2]) / 2;
+    const deltaTop = (isWidthNumber ? widthInfo.width : strokeArrayWidth[1]) / 2;
+    const deltaBottom = (isWidthNumber ? widthInfo.width : strokeArrayWidth[1]) / 2;
     if (isPart && Array.isArray(part[1])) {
       context.moveTo(x + width, y - deltaTop + height * part[1][0]);
       context.lineTo(x + width, y - deltaTop + (height + deltaTop + deltaBottom) * (part[1][1] - part[1][0]));
@@ -356,8 +356,8 @@ export function renderStroke(
   // bottom
   if (strokeBottom) {
     // context.lineTo(x, y + height);
-    const deltaLeft = strokeLeft ? 0 : (isWidthNumber ? widthInfo.width : strokeArrayWidth[3]) / 2;
-    const deltaRight = strokeRight ? 0 : (isWidthNumber ? widthInfo.width : strokeArrayWidth[1]) / 2;
+    const deltaLeft = (isWidthNumber ? widthInfo.width : strokeArrayWidth[2]) / 2;
+    const deltaRight = (isWidthNumber ? widthInfo.width : strokeArrayWidth[2]) / 2;
     if (isPart && Array.isArray(part[2])) {
       context.moveTo(x - deltaLeft + (width + deltaLeft + deltaRight) * part[2][0], y + height);
       context.lineTo(x - deltaLeft + (width + deltaLeft + deltaRight) * (part[2][1] - part[2][0]), y + height);
@@ -389,8 +389,8 @@ export function renderStroke(
   // left
   if (strokeLeft) {
     // context.lineTo(x, y);
-    const deltaTop = strokeTop ? 0 : (isWidthNumber ? widthInfo.width : strokeArrayWidth[0]) / 2;
-    const deltaBottom = strokeBottom ? 0 : (isWidthNumber ? widthInfo.width : strokeArrayWidth[2]) / 2;
+    const deltaTop = (isWidthNumber ? widthInfo.width : strokeArrayWidth[3]) / 2;
+    const deltaBottom = (isWidthNumber ? widthInfo.width : strokeArrayWidth[3]) / 2;
     if (isPart && Array.isArray(part[3])) {
       context.moveTo(x, y - deltaTop + (height + deltaTop + deltaBottom) * part[3][0]);
       context.lineTo(x, y - deltaTop + (height + deltaTop + deltaBottom) * (part[3][1] - part[3][0]));
@@ -428,7 +428,7 @@ export function renderStroke(
     context.stroke();
   }
   context.lineDashOffset = 0;
-  context.lineCap = oldLineCap;
+  // context.lineCap = oldLineCap;
   context.setLineDash([]);
 }
 
