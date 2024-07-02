@@ -327,6 +327,12 @@ export function bindContainerDomListener(eventManager: EventManager) {
       table.resize();
     }
   });
+
+  // const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
+  const regex = /<tr[^>]*>([\s\S]*?)<\/tr>/g; // for webpack3
+  // const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
+  const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/g; // for webpack3
+
   function pasteHtmlToTable(item: ClipboardItem) {
     const ranges = table.stateManager.select.ranges;
     const selectRangeLength = ranges.length;
@@ -341,12 +347,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
       blob.text().then((pastedData: any) => {
         // 解析html数据
         if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
-          const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
           // const matches = pastedData.matchAll(regex);
           const matches = Array.from(pastedData.matchAll(regex));
           for (const match of matches) {
             const rowContent = match[1]; // 获取<tr>标签中的内容
-            const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
             const cellMatches: RegExpMatchArray[] = Array.from(rowContent.matchAll(cellRegex)); // 获取<td>标签中的内容
             const rowValues = cellMatches.map(cellMatch => {
               return (
