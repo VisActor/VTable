@@ -1544,7 +1544,7 @@ export class Scenegraph {
     const type = this.table.getBodyColumnType(col, row);
     const cellGroup = this.getCell(col, row);
     if (type === 'image' || type === 'video') {
-      updateImageCellContentWhileResize(cellGroup, col, row, this.table);
+      updateImageCellContentWhileResize(cellGroup, col, row, 0, 0, this.table);
     }
   }
 
