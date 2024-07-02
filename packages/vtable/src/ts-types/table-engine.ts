@@ -22,7 +22,7 @@ import type {
   ITitleDefine
 } from './pivot-table';
 import type { ColumnsDefine } from './list-table';
-import type { ICellAxisOption, ITableAxisOption } from './component/axis';
+import type { ITableAxisOption } from './component/axis';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
 import type { DataSource } from '../data';

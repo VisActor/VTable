@@ -72,7 +72,7 @@ import { dealWithAnimationAppear } from './animation/appear';
 registerForVrender();
 
 // VChart poptip theme
-loadPoptip();
+// loadPoptip();
 container.load(splitModule);
 container.load(textMeasureModule);
 // container.load(renderServiceModule);

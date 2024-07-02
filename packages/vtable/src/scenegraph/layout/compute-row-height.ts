@@ -8,8 +8,8 @@ import type { ColumnData, ColumnDefine, TextColumnDefine } from '../../ts-types/
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
-import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
-import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
+import type { ComputeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
+import { Factory } from '../../core/factory';
 import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
@@ -351,8 +351,10 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     // Axis component height calculation
     if (table.isPivotChart()) {
       const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
-      const axisConfig = getAxisConfigInPivotChart(col, row, layout);
+      const axisConfig = layout.getAxisConfigInPivotChart(col, row);
       if (axisConfig) {
+        const computeAxisComponentHeight: ComputeAxisComponentHeight =
+          Factory.getFunction('computeAxisComponentHeight');
         const axisWidth = computeAxisComponentHeight(axisConfig, table);
         if (typeof axisWidth === 'number') {
           maxHeight = isValid(maxHeight) ? Math.max(axisWidth, maxHeight) : axisWidth;

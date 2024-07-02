@@ -2,7 +2,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestPivotTable
 import records from '../data/marketsales.json';
-import { PivotTable } from '../../src/PivotTable';
+import { PivotTable } from '../../src';
 import { register } from '../../src';
 import { InputEditor } from '@visactor/vtable-editors';
 import { createDiv } from '../dom';

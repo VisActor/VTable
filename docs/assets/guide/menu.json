@@ -552,6 +552,13 @@
       ]
     },
     {
+      "path": "Load_on_Demand",
+      "title": {
+        "zh": "按需加载",
+        "en": "Load on Demand"
+      }
+    },
+    {
       "path": "search",
       "title": {
         "zh": "搜索",

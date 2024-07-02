@@ -1,7 +1,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
 import records from '../data/marketsales.json';
-import { ListTable } from '../../src/ListTable';
+import { ListTable } from '../../src';
 import * as VTable from '../../src/index';
 import { createDiv } from '../dom';
 global.__VERSION__ = 'none';

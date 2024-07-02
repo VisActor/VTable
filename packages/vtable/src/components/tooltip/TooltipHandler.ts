@@ -21,6 +21,9 @@ type AttachInfo = {
   range: CellRange;
   tooltipOptions: TooltipOptions;
 };
+export interface ITooltipHandler {
+  new (table: BaseTableAPI, confine: boolean): TooltipHandler;
+}
 
 export class TooltipHandler {
   private _table: BaseTableAPI;

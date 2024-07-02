@@ -3,6 +3,8 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
 import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE, commonAxis } from './get-axis-attributes';
 
+export type ComputeAxisComponentWidth = (config: ICellAxisOption, table: BaseTableAPI) => number;
+export type ComputeAxisComponentHeight = (config: ICellAxisOption, table: BaseTableAPI) => number;
 /**
  * @description: compuational vertical axis width
  * @param {ICellAxisOption} config
