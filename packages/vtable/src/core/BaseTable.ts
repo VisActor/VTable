@@ -97,8 +97,6 @@ import { IconCache } from '../plugins/icons';
 import {
   _applyColWidthLimits,
   _getScrollableVisibleRect,
-  _getTargetFrozenColAt,
-  _getTargetFrozenRowAt,
   _setDataSource,
   _setRecords,
   _toPxWidth,
@@ -131,6 +129,16 @@ import type { ITextGraphicAttribute } from '@src/vrender';
 import { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
 import { hasAutoImageColumn } from '../layout/layout-helper';
+import {
+  getCellAt,
+  getCellAtRelativePosition,
+  getColAt,
+  getRowAt,
+  getTargetColAt,
+  getTargetColAtConsiderRightFrozen,
+  getTargetRowAt,
+  getTargetRowAtConsiderBottomFrozen
+} from './utils/get-cell-position';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -1772,20 +1780,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getRowAt(absoluteY: number): { top: number; row: number; bottom: number; height: number } {
-    const frozen = _getTargetFrozenRowAt(this, absoluteY);
-    if (frozen) {
-      return frozen;
-    }
-    let row = this.getTargetRowAt(absoluteY);
-    if (!row) {
-      row = {
-        top: -1,
-        row: -1,
-        bottom: -1,
-        height: -1
-      };
-    }
-    return row;
+    return getRowAt(absoluteY, this);
   }
   /**
    * 根据x值计算所在列
@@ -1793,20 +1788,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getColAt(absoluteX: number): { left: number; col: number; right: number; width: number } {
-    const frozen = _getTargetFrozenColAt(this, absoluteX);
-    if (frozen) {
-      return frozen;
-    }
-    let col = this.getTargetColAt(absoluteX);
-    if (!col) {
-      col = {
-        left: -1,
-        col: -1,
-        right: -1,
-        width: 1
-      };
-    }
-    return col;
+    return getColAt(absoluteX, this);
   }
   /**
    * 根据坐标值获取行列位置，index和rect范围
@@ -1815,23 +1797,18 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getCellAt(absoluteX: number, absoluteY: number): CellAddressWithBound {
-    const rowInfo = this.getRowAt(absoluteY);
-    const { row, top, bottom, height } = rowInfo;
-    const colInfo = this.getColAt(absoluteX);
-    const { col, left, right, width } = colInfo;
-    const rect = {
-      left,
-      right,
-      top,
-      bottom,
-      width,
-      height
-    };
-    return {
-      row,
-      col,
-      rect
-    };
+    return getCellAt(absoluteX, absoluteY, this);
+  }
+
+  /**
+   * 获取屏幕坐标对应的单元格信息，考虑滚动
+   * @param this
+   * @param relativeX 左边x值，相对于容器左上角，考虑表格滚动
+   * @param relativeY 左边y值，相对于容器左上角，考虑表格滚动
+   * @returns
+   */
+  getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound {
+    return getCellAtRelativePosition(relativeX, relativeY, this);
   }
   /**
    * 检查行列号是否正确
@@ -2490,68 +2467,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
+
   getTargetColAt(absoluteX: number): ColumnInfo | null {
-    if (absoluteX === 0) {
-      return { left: 0, col: 0, right: 0, width: 0 };
-    }
-    const findBefore = (
-      startCol: number,
-      startRight: number
-    ): {
-      left: number;
-      col: number;
-      right: number;
-      width: number;
-    } | null => {
-      let right = startRight;
-      for (let col = startCol; col >= 0; col--) {
-        const width = this.getColWidth(col);
-        const left = right - width;
-        if (Math.round(left) <= Math.round(absoluteX) && Math.round(absoluteX) < Math.round(right)) {
-          return {
-            left,
-            col,
-            right,
-            width
-          };
-        }
-        right = left;
-      }
-      return null;
-    };
-    const findAfter = (
-      startCol: number,
-      startRight: number
-    ): {
-      left: number;
-      col: number;
-      right: number;
-      width: number;
-    } | null => {
-      let left = startRight - this.getColWidth(startCol);
-      const { colCount } = this.internalProps;
-      for (let col = startCol; col < colCount; col++) {
-        const width = this.getColWidth(col);
-        const right = left + width;
-        if (Math.round(left) <= Math.round(absoluteX) && Math.round(absoluteX) < Math.round(right)) {
-          return {
-            left,
-            col,
-            right,
-            width
-          };
-        }
-        left = right;
-      }
-      return null;
-    };
-    //计算这个位置处是第几行
-    const candCol = this.computeTargetColByX(absoluteX);
-    const right = this.getColsWidth(0, candCol);
-    if (absoluteX >= right) {
-      return findAfter(candCol, right);
-    }
-    return findBefore(candCol, right);
+    return getTargetColAt(absoluteX, this);
   }
   /**
    * 根据y获取该位置所处行值
@@ -2559,73 +2477,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-  getTargetRowAt(absoluteY: number): RowInfo | null {
-    if (absoluteY === 0) {
-      return { top: 0, row: 0, bottom: 0, height: 0 };
-    }
 
-    const findBefore = (
-      startRow: number,
-      startBottom: number
-    ): {
-      top: number;
-      row: number;
-      bottom: number;
-      height: number;
-    } | null => {
-      let bottom = startBottom;
-      for (let row = startRow; row >= 0; row--) {
-        const height = this.getRowHeight(row);
-        const top = bottom - height;
-        if (Math.round(top) <= Math.round(absoluteY) && Math.round(absoluteY) < Math.round(bottom)) {
-          return {
-            top,
-            row,
-            bottom,
-            height
-          };
-        }
-        bottom = top;
-      }
-      return null;
-    };
-    const findAfter = (
-      startRow: number,
-      startBottom: number
-    ): {
-      top: number;
-      row: number;
-      bottom: number;
-      height: number;
-    } | null => {
-      let top = startBottom - this.getRowHeight(startRow);
-      const { rowCount } = this.internalProps;
-      for (let row = startRow; row < rowCount; row++) {
-        const height = this.getRowHeight(row);
-        const bottom = top + height;
-        if (Math.round(top) <= Math.round(absoluteY) && Math.round(absoluteY) < Math.round(bottom)) {
-          return {
-            top,
-            row,
-            bottom,
-            height
-          };
-        }
-        top = bottom;
-      }
-      return null;
-    };
-    // const candRow = Math.min(
-    //   Math.ceil(absoluteY / this.internalProps.defaultRowHeight),
-    //   this.rowCount - 1
-    // );
-    //计算这个位置处是第几行
-    const candRow = this.computeTargetRowByY(absoluteY);
-    const bottom = this.getRowsHeight(0, candRow);
-    if (absoluteY >= bottom) {
-      return findAfter(candRow, bottom);
-    }
-    return findBefore(candRow, bottom);
+  getTargetRowAt(absoluteY: number): RowInfo | null {
+    return getTargetRowAt(absoluteY, this);
   }
 
   /**
@@ -2634,27 +2488,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
+
   getTargetColAtConsiderRightFrozen(absoluteX: number, isConsider: boolean): ColumnInfo | null {
-    if (absoluteX === 0) {
-      return { left: 0, col: 0, right: 0, width: 0 };
-    }
-    if (
-      isConsider &&
-      absoluteX > this.tableNoFrameWidth - this.getRightFrozenColsWidth() &&
-      absoluteX < this.tableNoFrameWidth
-    ) {
-      for (let i = 0; i < this.rightFrozenColCount; i++) {
-        if (absoluteX > this.tableNoFrameWidth - this.getColsWidth(this.colCount - i - 1, this.colCount - 1)) {
-          return {
-            col: this.colCount - i - 1,
-            left: undefined,
-            right: undefined,
-            width: undefined
-          };
-        }
-      }
-    }
-    return this.getTargetColAt(absoluteX);
+    return getTargetColAtConsiderRightFrozen(absoluteX, isConsider, this);
   }
 
   /**
@@ -2663,84 +2499,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
+
   getTargetRowAtConsiderBottomFrozen(absoluteY: number, isConsider: boolean): RowInfo | null {
-    if (absoluteY === 0) {
-      return { top: 0, row: 0, bottom: 0, height: 0 };
-    }
-    if (
-      isConsider &&
-      absoluteY > this.tableNoFrameHeight - this.getBottomFrozenRowsHeight() &&
-      absoluteY < this.tableNoFrameHeight
-    ) {
-      for (let i = 0; i < this.rightFrozenColCount; i++) {
-        if (absoluteY > this.tableNoFrameHeight - this.getRowsHeight(this.rowCount - i - 1, this.rowCount - 1)) {
-          return {
-            row: this.rowCount - i - 1,
-            top: undefined,
-            bottom: undefined,
-            height: undefined
-          };
-        }
-      }
-    }
-    return this.getTargetRowAt(absoluteY);
+    return getTargetRowAtConsiderBottomFrozen(absoluteY, isConsider, this);
   }
 
-  /**
-   * 根据y值（包括了scroll的）计算所在行
-   * @param this
-   * @param absoluteY 左边y值，包含了scroll滚动距离
-   * @returns
-   */
-  private computeTargetRowByY(absoluteY: number): number {
-    let defaultRowHeight = this.internalProps.defaultRowHeight;
-
-    //使用二分法计算出row
-    if (this._rowRangeHeightsMap.get(`$0$${this.rowCount - 1}`)) {
-      defaultRowHeight = this._rowRangeHeightsMap.get(`$0$${this.rowCount - 1}`) / this.rowCount;
-      // let startRow = 0;
-      // let endRow = this.rowCount - 1;
-      // while (endRow - startRow > 1) {
-      //   const midRow = Math.floor((startRow + endRow) / 2);
-      //   if (absoluteY < this._rowRangeHeightsMap.get(`$0$${midRow}`)) {
-      //     endRow = midRow;
-      //   } else if (absoluteY > this._rowRangeHeightsMap.get(`$0$${midRow}`)) {
-      //     startRow = midRow;
-      //   } else {
-      //     return midRow;
-      //   }
-      // }
-      // return endRow;
-    }
-    //否则使用defaultRowHeight大约计算一个row
-    return Math.min(Math.ceil(absoluteY / defaultRowHeight), this.rowCount - 1);
-  }
-  /**
-   * 根据x值（包括了scroll的）计算所在列 主要借助colRangeWidthsMap缓存来提高计算效率
-   * @param this
-   * @param absoluteX 左边x值，包含了scroll滚动距离
-   * @returns
-   */
-  private computeTargetColByX(absoluteX: number): number {
-    //使用二分法计算出col
-    if (this._colRangeWidthsMap.get(`$0$${this.colCount - 1}`)) {
-      let startCol = 0;
-      let endCol = this.colCount - 1;
-      while (endCol - startCol > 1) {
-        const midCol = Math.floor((startCol + endCol) / 2);
-        if (absoluteX < this._colRangeWidthsMap.get(`$0$${midCol}`)) {
-          endCol = midCol;
-        } else if (absoluteX > this._colRangeWidthsMap.get(`$0$${midCol}`)) {
-          startCol = midCol;
-        } else {
-          return midCol;
-        }
-      }
-      return endCol;
-    }
-    //否则使用defaultColWidth大约计算一个col
-    return Math.min(Math.ceil(absoluteX / this.internalProps.defaultColWidth), this.colCount - 1);
-  }
   /**
    * 清除选中单元格
    */
