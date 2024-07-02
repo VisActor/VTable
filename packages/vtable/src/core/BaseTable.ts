@@ -1800,6 +1800,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return getCellAt(absoluteX, absoluteY, this);
   }
 
+  /**
+   * 获取屏幕坐标对应的单元格信息，考虑滚动
+   * @param this
+   * @param relativeX 左边x值，相对于容器左上角，考虑表格滚动
+   * @param relativeY 左边y值，相对于容器左上角，考虑表格滚动
+   * @returns
+   */
   getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound {
     return getCellAtRelativePosition(relativeX, relativeY, this);
   }
@@ -2482,10 +2489,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
 
-  getTargetColAtConsiderRightFrozen(
-    absoluteX: number,
-    isConsider: boolean
-  ): ColumnInfo | null {
+  getTargetColAtConsiderRightFrozen(absoluteX: number, isConsider: boolean): ColumnInfo | null {
     return getTargetColAtConsiderRightFrozen(absoluteX, isConsider, this);
   }
 
@@ -2496,10 +2500,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
 
-  getTargetRowAtConsiderBottomFrozen(
-    absoluteY: number,
-    isConsider: boolean
-  ): RowInfo | null {
+  getTargetRowAtConsiderBottomFrozen(absoluteY: number, isConsider: boolean): RowInfo | null {
     return getTargetRowAtConsiderBottomFrozen(absoluteY, isConsider, this);
   }
 
