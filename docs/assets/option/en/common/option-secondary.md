@@ -68,6 +68,10 @@ Minimum column width limit. If set to true, the column width will be limited to 
 
 The number of frozen columns
 
+#${prefix} frozenRowCount(number) = 0
+
+The number of frozen columns(including the header)
+
 #${prefix} rightFrozenColCount(number) = 0
 
 Freeze Columns Right
