@@ -1803,8 +1803,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 获取屏幕坐标对应的单元格信息，考虑滚动
    * @param this
-   * @param relativeX 左边x值，相对于容器左上角，考虑表格滚动
-   * @param relativeY 左边y值，相对于容器左上角，考虑表格滚动
+   * @param relativeX 左边x值，相对于容器左上角，已考虑格滚动情况
+   * @param relativeY 左边y值，相对于容器左上角，已考虑格滚动情况
    * @returns
    */
   getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound {
