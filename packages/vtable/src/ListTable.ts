@@ -1045,7 +1045,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         if (order && field && order !== 'normal') {
           const sortFunc = this._getSortFuncFromHeaderOption(undefined, field);
           // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
-          const hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
+          const hd = this.internalProps.layoutMap.headerObjectsIncludeHided.find(
+            (col: any) => col && col.field === field
+          );
           // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
           if (hd.define.sort !== false) {
             this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);

@@ -1,15 +1,22 @@
 ---
 category: examples
-group: data-analysis
-title: Sort Indicator
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-sort-indicator.png
-link: '../guide/data_analysis/pivot_table_dataAnalysis'
-option: PivotTable#dataConfig.sortRules
+group: Basic Features
+title: Display dimension names in pivot table headers
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-corner-title.png
+link: '../guide/table_type/Pivot_table/pivot_table_useage'
+option: PivotTable#corner
 ---
 
-# Pivot analysis table is sorted by indicator value
+# Display dimension names in pivot table headers
 
-The pivot table is sorted according to the dimension value of a certain dimension. SortRules can be configured in dataConfig. Multiple sorting rules can be configured. The one configured first has a higher priority. In this example, the indicators indicator is configured with sort:true, which will display a sort icon in the header cell that displays the indicator name. Click the icon to sort by indicator value.
+If you set the header title display content basis to `'all'`, the header cell content will be the concatenation of the row dimension name and the column dimension name.
+
+titleOnDimension The corner title displays content based on:
+
+- 'column' column dimension name as header cell content
+- 'row' row dimension name as header cell content
+- 'none' means the header cell content is empty
+- 'all' means the header cell content is the concatenation of the row dimension name and the column dimension name
 
 ## Key Configurations
 
@@ -17,9 +24,9 @@ The pivot table is sorted according to the dimension value of a certain dimensio
 - `columns`
 - `rows`
 - `indicators`
-- `dataConfig` configures data rules, optional configuration items
+- `corner.titleOnDimension` Corner title display content based on
 
-## Code demo
+## Code Demo
 
 ```javascript livedemo template=vtable
 let tableInstance;
@@ -154,21 +161,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         }
       ],
       corner: {
-        titleOnDimension: 'row'
-      },
-      dataConfig: {
-        sortRules: [
-          {
-            sortField: 'Sub-Category',
-            sortByIndicator: 'Sales',
-            sortType: VTable.TYPES.SortType.DESC,
-            query: ['East', 'Consumer']
-          },
-          {
-            sortField: 'Region',
-            sortBy: ['East', 'Central']
-          }
-        ]
+        titleOnDimension: 'all'
       },
       widthMode: 'standard'
     };

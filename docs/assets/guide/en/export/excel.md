@@ -77,3 +77,35 @@ const excelOption = {
 };
 downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
+
+
+### formatExcelJSCell
+
+If you need to further customize the export style, you can set `formatExcelJSCell` to a function. The function parameters are cell information and ExcelJS cell objects. The function return value is the ExcelJS cell object. If `undefined` is returned, the default export logic is used. You can automatically set ExcelJS cell properties in the function. For details, please refer to https://github.com/exceljs/exceljs?tab=readme-ov-file#styles
+
+```ts
+type CellInfo = {
+  cellType: string;
+  cellValue: string;
+  table: IVTable;
+  col: number;
+  row: number;
+};
+
+type ExportVTableToExcelOptions = {
+  // ......
+  formatExceljsCell?: (cellInfo: CellInfo, cellInExceljs: ExcelJS.Cell) => ExcelJS.Cell;
+};
+```
+
+```js
+const excelOption = {
+  formatExcelJSCell: (cellInfo, cell) => {
+    if (cellInfo.col === 1) {
+      cell.numFmt = '0.00%';
+    }
+    return cell;
+  }
+};
+downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+```

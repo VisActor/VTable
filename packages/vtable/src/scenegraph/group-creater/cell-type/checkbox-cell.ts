@@ -1,6 +1,6 @@
 import type { IThemeSpec } from '@src/vrender';
 import { Group } from '../../graphic/group';
-import type { CheckboxColumnDefine, CheckboxStyleOption } from '../../../ts-types';
+import type { CellInfo, CellRange, CheckboxColumnDefine, CheckboxStyleOption, SparklineSpec } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isObject } from '@visactor/vutils';
 import type { CheckboxAttributes } from '@visactor/vrender-components';
@@ -10,6 +10,7 @@ import { getOrApply } from '../../../tools/helper';
 import type { CheckboxStyle } from '../../../body-helper/style/CheckboxStyle';
 import { getProp } from '../../utils/get-prop';
 import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
+import { dealWithIconLayout } from '../../utils/text-icon-layout';
 
 export function createCheckboxCellGroup(
   cellGroup: Group | null,
@@ -18,15 +19,17 @@ export function createCheckboxCellGroup(
   yOrigin: number,
   col: number,
   row: number,
-  colWidth: number | 'auto',
+  colWidth: number,
   width: number,
   height: number,
   padding: number[],
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
+  mayHaveIcon: boolean,
   table: BaseTableAPI,
   cellTheme: IThemeSpec,
   define: CheckboxColumnDefine,
+  range: CellRange | undefined,
   isAsync: boolean
 ) {
   // cell
@@ -80,22 +83,84 @@ export function createCheckboxCellGroup(
     }
   }
 
+  let icons;
+  if (mayHaveIcon) {
+    let iconCol = col;
+    let iconRow = row;
+    if (range) {
+      iconCol = range.start.col;
+      iconRow = range.start.row;
+    }
+    icons = table.getCellIcons(iconCol, iconRow);
+  }
+
+  let iconWidth = 0;
+  let cellLeftIconWidth = 0;
+  let cellRightIconWidth = 0;
+  if (Array.isArray(icons) && icons.length !== 0) {
+    const { leftIconWidth, rightIconWidth, absoluteLeftIconWidth, absoluteRightIconWidth } = dealWithIconLayout(
+      icons,
+      cellGroup,
+      range,
+      table
+    );
+
+    iconWidth = leftIconWidth + rightIconWidth;
+    cellLeftIconWidth = leftIconWidth;
+    cellRightIconWidth = rightIconWidth;
+
+    // 更新各个部分横向位置
+    cellGroup.forEachChildren((child: any) => {
+      if (child.role === 'icon-left') {
+        child.setAttribute('x', child.attribute.x + padding[3]);
+      } else if (child.role === 'icon-right') {
+        child.setAttribute('x', child.attribute.x + width - rightIconWidth - padding[1]);
+      } else if (child.role === 'icon-absolute-right') {
+        child.setAttribute('x', child.attribute.x + width - absoluteRightIconWidth - padding[1]);
+      }
+    });
+
+    // 更新各个部分纵向位置
+    cellGroup.forEachChildren((child: any) => {
+      if (textBaseline === 'middle') {
+        child.setAttribute('y', (height - child.AABBBounds.height()) / 2);
+      } else if (textBaseline === 'bottom') {
+        child.setAttribute('y', height - child.AABBBounds.height() - padding[2]);
+      } else {
+        child.setAttribute('y', padding[0]);
+      }
+    });
+  }
+
   // checkbox
-  const checkboxComponent = createCheckbox(col, row, colWidth, width, height, padding, cellTheme, define, table);
+  const checkboxComponent = createCheckbox(
+    col,
+    row,
+    colWidth - iconWidth,
+    width,
+    height,
+    padding,
+    cellTheme,
+    define,
+    table
+  );
   if (checkboxComponent) {
     cellGroup.appendChild(checkboxComponent);
   }
 
   checkboxComponent.render();
 
-  width -= padding[1] + padding[3];
+  width -= padding[1] + padding[3] + iconWidth;
   height -= padding[0] + padding[2];
   if (textAlign === 'center') {
-    checkboxComponent.setAttribute('x', padding[3] + (width - checkboxComponent.AABBBounds.width()) / 2);
+    checkboxComponent.setAttribute(
+      'x',
+      padding[3] + cellLeftIconWidth + (width - checkboxComponent.AABBBounds.width()) / 2
+    );
   } else if (textAlign === 'right') {
-    checkboxComponent.setAttribute('x', padding[3] + width - checkboxComponent.AABBBounds.width());
+    checkboxComponent.setAttribute('x', padding[3] + cellLeftIconWidth + width - checkboxComponent.AABBBounds.width());
   } else {
-    checkboxComponent.setAttribute('x', padding[3]);
+    checkboxComponent.setAttribute('x', padding[3] + cellLeftIconWidth);
   }
 
   if (textBaseline === 'middle') {

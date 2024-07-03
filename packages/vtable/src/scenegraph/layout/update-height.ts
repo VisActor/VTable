@@ -181,7 +181,7 @@ export function updateCellHeight(
       false
     );
   } else if (type === 'image' || type === 'video') {
-    updateImageCellContentWhileResize(cell, col, row, scene.table);
+    updateImageCellContentWhileResize(cell, col, row, 0, detaY, scene.table);
   } else if (cell.firstChild?.name === 'axis') {
     (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {

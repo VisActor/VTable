@@ -120,23 +120,26 @@ export function bindContainerDomListener(eventManager: EventManager) {
       (table as ListTableAPI).editorManager.cancelEdit();
     } else if (e.key === 'Enter') {
       // 如果按enter键 可以结束当前的编辑 或开启编辑选中的单元格（仅限单选）
-      if ((table as ListTableAPI).editorManager?.editingEditor) {
+      if ((table as ListTableAPI).editorManager.editingEditor) {
+        // 如果是结束当前编辑，且有主动监听keydown事件，则先触发keydown事件，之后再结束编辑
+        handleKeydownListener(e);
         (table as ListTableAPI).editorManager.completeEdit();
         table.getElement().focus();
-      } else {
-        if (
-          (table.options.keyboardOptions?.editCellOnEnter ?? true) &&
-          (table.stateManager.select.ranges?.length ?? 0) === 1
-        ) {
-          // 如果开启按enter键进入编辑的配置 且当前有选中的单元格 则进入编辑
-          const startCol = table.stateManager.select.ranges[0].start.col;
-          const startRow = table.stateManager.select.ranges[0].start.row;
-          const endCol = table.stateManager.select.ranges[0].end.col;
-          const endRow = table.stateManager.select.ranges[0].end.row;
-          if (startCol === endCol && startRow === endRow) {
-            if ((table as ListTableAPI).getEditor(startCol, startRow)) {
-              (table as ListTableAPI).editorManager.startEditCell(startCol, startRow);
-            }
+        // 直接返回，不再触发最后的keydown监听事件相关代码
+        return;
+      }
+      if (
+        (table.options.keyboardOptions?.editCellOnEnter ?? true) &&
+        (table.stateManager.select.ranges?.length ?? 0) === 1
+      ) {
+        // 如果开启按enter键进入编辑的配置 且当前有选中的单元格 则进入编辑（仅限单选）
+        const startCol = table.stateManager.select.ranges[0].start.col;
+        const startRow = table.stateManager.select.ranges[0].start.row;
+        const endCol = table.stateManager.select.ranges[0].end.col;
+        const endRow = table.stateManager.select.ranges[0].end.row;
+        if (startCol === endCol && startRow === endRow) {
+          if ((table as ListTableAPI).getEditor(startCol, startRow)) {
+            (table as ListTableAPI).editorManager.startEditCell(startCol, startRow);
           }
         }
       }
@@ -168,6 +171,13 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     }
 
+    handleKeydownListener(e);
+  });
+  /**
+   * 处理主动注册的keydown事件
+   * @param e
+   */
+  function handleKeydownListener(e: KeyboardEvent) {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.KEYDOWN)) {
       const cellsEvent: KeydownEvent = {
         keyCode: e.keyCode ?? e.which,
@@ -178,7 +188,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       };
       table.fireListeners(TABLE_EVENT_TYPE.KEYDOWN, cellsEvent);
     }
-  });
+  }
 
   handler.on(table.getElement(), 'copy', (e: KeyboardEvent) => {
     if (table.keyboardOptions?.copySelected) {
@@ -317,6 +327,12 @@ export function bindContainerDomListener(eventManager: EventManager) {
       table.resize();
     }
   });
+
+  // const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
+  const regex = /<tr[^>]*>([\s\S]*?)<\/tr>/g; // for webpack3
+  // const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
+  const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/g; // for webpack3
+
   function pasteHtmlToTable(item: ClipboardItem) {
     const ranges = table.stateManager.select.ranges;
     const selectRangeLength = ranges.length;
@@ -331,12 +347,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
       blob.text().then((pastedData: any) => {
         // 解析html数据
         if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
-          const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
           // const matches = pastedData.matchAll(regex);
           const matches = Array.from(pastedData.matchAll(regex));
           for (const match of matches) {
             const rowContent = match[1]; // 获取<tr>标签中的内容
-            const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
             const cellMatches: RegExpMatchArray[] = Array.from(rowContent.matchAll(cellRegex)); // 获取<td>标签中的内容
             const rowValues = cellMatches.map(cellMatch => {
               return (

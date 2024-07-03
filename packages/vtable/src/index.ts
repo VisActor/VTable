@@ -50,7 +50,8 @@ export { getDataCellPath } from './tools/get-data-path';
 export * from './render/jsx';
 export { getTargetCell } from './event/util';
 
-export * as VRender from './vrender';
+// export * as VRender from './vrender';
+import * as VRender from './vrender';
 
 export const version = __VERSION__;
 /**
@@ -103,7 +104,8 @@ export {
   renderChart,
   graphicUtil,
   setCustomAlphabetCharSet,
-  restoreMeasureText
+  restoreMeasureText,
+  VRender
 };
 
 /** @private */

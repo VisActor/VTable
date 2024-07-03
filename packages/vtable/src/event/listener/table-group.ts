@@ -341,12 +341,18 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
     }
-    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    if (isCompleteEdit === false) {
+      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+      return;
+    }
     stateManager.updateInteractionState(InteractionState.default);
     eventManager.dealTableHover();
     //点击到表格外部不需要取消选中状态
     if (table.options.select?.outsideClickDeselect) {
+      const isHasSelected = !!stateManager.select.ranges?.length;
       eventManager.dealTableSelect();
+      stateManager.endSelectCells(true, isHasSelected);
     }
   });
 
@@ -386,8 +392,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 点击在menu外，且不是下拉菜单的icon，移除menu
       stateManager.hideMenu();
     }
-    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-
+    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    if (isCompleteEdit === false) {
+      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+      return;
+    }
     const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
       ? eventArgsSet.eventArgs.target
       : (e.target as any).role?.startsWith('icon')
@@ -635,8 +644,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
         if (eventManager.touchSetTimeout) {
           clearTimeout(eventManager.touchSetTimeout);
+          const isHasSelected = !!stateManager.select.ranges?.length;
           eventManager.dealTableSelect(eventArgsSet);
-          stateManager.endSelectCells();
+          stateManager.endSelectCells(true, isHasSelected);
           eventManager.touchSetTimeout = undefined;
         }
       }
@@ -679,7 +689,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       stateManager.hideMenu();
     }
-    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    if (isCompleteEdit === false) {
+      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+      return;
+    }
 
     const hitIcon = (e.target as any).role?.startsWith('icon') ? e.target : undefined;
     eventManager.downIcon = hitIcon;
@@ -687,6 +701,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if (
       !hitIcon &&
       !eventManager.checkCellFillhandle(eventArgsSet) &&
+      !stateManager.columnResize.resizing &&
       eventManager.checkColumnResize(eventArgsSet, true)
     ) {
       // eventManager.startColumnResize(e);
@@ -738,12 +753,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
     ) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
-      stateManager.endSelectCells();
-
+      const isHasSelected = !!stateManager.select.ranges?.length;
       // 点击空白区域取消选中
       if (table.options.select?.blankAreaClickDeselect ?? true) {
         eventManager.dealTableSelect();
       }
+      stateManager.endSelectCells(true, isHasSelected);
 
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);

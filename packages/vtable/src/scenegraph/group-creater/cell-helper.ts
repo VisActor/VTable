@@ -216,8 +216,10 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
+      mayHaveIcon,
       table,
       cellTheme,
+      range,
       isAsync
     );
   } else if (type === 'video') {
@@ -236,8 +238,10 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
+      mayHaveIcon,
       table,
       cellTheme,
+      range,
       isAsync
     );
   } else if (type === 'chart') {
@@ -340,9 +344,11 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
+      mayHaveIcon,
       table,
       cellTheme,
       define as CheckboxColumnDefine,
+      range,
       isAsync
     );
   } else if (type === 'radio') {
@@ -753,9 +759,14 @@ export function dealWithMergeCellSize(
 ) {
   for (let col = range.start.col; col <= range.end.col; col++) {
     for (let row = range.start.row; row <= range.end.row; row++) {
-      const cellGroup = table.scenegraph.getCell(col, row, true);
+      // const cellGroup = table.scenegraph.getCell(col, row, true);
+      const cellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
 
-      if (cellGroup.role === 'cell' && range.start.row !== range.end.row && cellGroup.contentHeight !== cellHeight) {
+      if (cellGroup.role !== 'cell') {
+        continue;
+      }
+
+      if (range.start.row !== range.end.row && cellGroup.contentHeight !== cellHeight) {
         updateCellContentHeight(
           cellGroup,
           cellHeight,
@@ -768,7 +779,7 @@ export function dealWithMergeCellSize(
           // 'middle'
         );
       }
-      if (cellGroup.role === 'cell' && range.start.col !== range.end.col && cellGroup.contentWidth !== cellWidth) {
+      if (range.start.col !== range.end.col && cellGroup.contentWidth !== cellWidth) {
         updateCellContentWidth(
           cellGroup,
           cellWidth,
@@ -808,25 +819,33 @@ export function resizeCellGroup(
   cellGroup.forEachChildren((child: IGraphic) => {
     // 利用_dx hack解决掉 合并单元格的范围内的格子依次执行该方法 如果挨个调用updateCell的话 执行多次后dx累计问题
     if (typeof child._dx === 'number') {
+      child.skipMergeUpdate = true;
       child.setAttributes({
         dx: (child._dx ?? 0) + dx
       });
+      child.skipMergeUpdate = false;
     } else {
+      child.skipMergeUpdate = true;
       child._dx = child.attribute.dx ?? 0;
       child.setAttributes({
         dx: (child.attribute.dx ?? 0) + dx
       });
+      child.skipMergeUpdate = false;
     }
 
     if (typeof child._dy === 'number') {
+      child.skipMergeUpdate = true;
       child.setAttributes({
         dy: (child._dy ?? 0) + dy
       });
+      child.skipMergeUpdate = false;
     } else {
       child._dy = child.attribute.dy ?? 0;
+      child.skipMergeUpdate = true;
       child.setAttributes({
         dy: (child.attribute.dy ?? 0) + dy
       });
+      child.skipMergeUpdate = false;
     }
   });
 
@@ -850,11 +869,13 @@ export function resizeCellGroup(
   const widthChange = rangeWidth !== cellGroup.attribute.width;
   const heightChange = rangeHeight !== cellGroup.attribute.height;
 
+  (cellGroup as any).skipMergeUpdate = true;
   cellGroup.setAttributes({
     width: rangeWidth,
     height: rangeHeight,
     strokeArrayWidth: newLineWidth
   } as any);
+  (cellGroup as any).skipMergeUpdate = false;
 
   cellGroup.mergeStartCol = range.start.col;
   cellGroup.mergeStartRow = range.start.row;

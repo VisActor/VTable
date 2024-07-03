@@ -276,74 +276,73 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
 
     this.sharedVar.seqId = Math.max(this.sharedVar.seqId, this._headerObjects.length);
-    //生成cornerHeaderObjs及_cornerHeaderCellIds
-    if (this.cornerSetting.titleOnDimension === 'column') {
-      let colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+    //#region 生成cornerHeaderObjs及_cornerHeaderCellIds
+    // if (this.cornerSetting.titleOnDimension === 'all') {
+    let colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+    //#region 处理需求 当没有数据时仍然显示角头维度名称
+    if (
+      this.dataset &&
+      (this.dataset.records?.length ?? 0) === 0 &&
+      !this.dataset.customColTree &&
+      !this.dataset.customRowTree
+    ) {
+      colDimensionKeys = this.columnsDefine.map(define => {
+        if (typeof define === 'string') {
+          return define;
+        }
+        return define.dimensionKey;
+      });
+      if (this.indicatorsAsCol) {
+        colDimensionKeys.push(this.indicatorDimensionKey);
+      }
+    }
+    //#endregion
+
+    colDimensionKeys = this.columnHeaderTitle ? [''].concat(colDimensionKeys) : colDimensionKeys;
+
+    let rowDimensionKeys: string[];
+    let extensionRowDimensions = [];
+    if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
+      // 如果是有扩展行维度
+      const rowTreeFirstKey = [];
+      rowTreeFirstKey.push(this.rowDimensionKeys[0]);
+      this._extensionRowDimensionKeys.forEach(extensionRowKeys => {
+        rowTreeFirstKey.push(extensionRowKeys[0]);
+      });
+      extensionRowDimensions = this.extensionRows.reduce((dimensions, cur) => {
+        return dimensions.concat(cur.rows);
+      }, []);
+
+      rowDimensionKeys = this.rowHeaderTitle ? [''].concat(rowTreeFirstKey as any) : rowTreeFirstKey;
+    } else {
       //#region 处理需求 当没有数据时仍然显示角头维度名称
+      rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
       if (
         this.dataset &&
         (this.dataset.records?.length ?? 0) === 0 &&
         !this.dataset.customColTree &&
         !this.dataset.customRowTree
       ) {
-        colDimensionKeys = this.columnsDefine.map(define => {
+        rowDimensionKeys = this.rowsDefine.map(define => {
           if (typeof define === 'string') {
             return define;
           }
           return define.dimensionKey;
         });
-        if (this.indicatorsAsCol) {
-          colDimensionKeys.push(this.indicatorDimensionKey);
+        if (!this.indicatorsAsCol) {
+          rowDimensionKeys.push(this.indicatorDimensionKey);
         }
       }
       //#endregion
-      this.cornerHeaderObjs = this._addCornerHeaders(
-        this.columnHeaderTitle ? [''].concat(colDimensionKeys) : colDimensionKeys,
-        this.columnsDefine
-      );
-    } else if (this.cornerSetting.titleOnDimension === 'row') {
-      if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
-        // 如果是有扩展行维度
-        const rowTreeFirstKey = [];
-        rowTreeFirstKey.push(this.rowDimensionKeys[0]);
-        this._extensionRowDimensionKeys.forEach(extensionRowKeys => {
-          rowTreeFirstKey.push(extensionRowKeys[0]);
-        });
-        const extensionRowDimensions = this.extensionRows.reduce((dimensions, cur) => {
-          return dimensions.concat(cur.rows);
-        }, []);
-        this.cornerHeaderObjs = this._addCornerHeaders(
-          this.rowHeaderTitle ? [''].concat(rowTreeFirstKey as any) : rowTreeFirstKey,
-          this.rowsDefine.concat(extensionRowDimensions)
-        );
-      } else {
-        //#region 处理需求 当没有数据时仍然显示角头维度名称
-        let rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
-        if (
-          this.dataset &&
-          (this.dataset.records?.length ?? 0) === 0 &&
-          !this.dataset.customColTree &&
-          !this.dataset.customRowTree
-        ) {
-          rowDimensionKeys = this.rowsDefine.map(define => {
-            if (typeof define === 'string') {
-              return define;
-            }
-            return define.dimensionKey;
-          });
-          if (!this.indicatorsAsCol) {
-            rowDimensionKeys.push(this.indicatorDimensionKey);
-          }
-        }
-        //#endregion
-        this.cornerHeaderObjs = this._addCornerHeaders(
-          this.rowHeaderTitle ? [''].concat(rowDimensionKeys) : rowDimensionKeys,
-          this.rowsDefine
-        );
-      }
-    } else {
-      this.cornerHeaderObjs = this._addCornerHeaders(null, undefined);
+      rowDimensionKeys = this.rowHeaderTitle ? [''].concat(rowDimensionKeys) : rowDimensionKeys;
     }
+
+    this.cornerHeaderObjs = this._addCornerHeaders(
+      colDimensionKeys,
+      rowDimensionKeys,
+      this.columnsDefine.concat(...this.rowsDefine, ...extensionRowDimensions)
+    );
+    //#endregion
     this.colIndex = 0;
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
       o[e.id as number] = e;
@@ -399,35 +398,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // }
         return false;
       });
-
-      // if (this.indicatorsAsCol) {
-      //   const cell_id = 'rowHeaderEmpty';
-      //   this._headerObjectMap[cell_id] = {
-      //     id: cell_id,
-      //     title: '',
-      //     field: cell_id,
-      //     headerType: this.cornerSetting.headerType ?? 'text',
-      //     style: this.cornerSetting.headerStyle,
-      //     define: <any>{
-      //       // id:
-      //     }
-      //   };
-      //   this._headerObjects.push(this._headerObjectMap[cell_id]);
-      //   // this.rowShowAttrs.push(cell_id);
-
-      //   // deal with sub indicator axis
-
-      //   if (!this.hasTwoIndicatorAxes) {
-      //     // this.colShowAttrs.pop();
-      //   }
-      // } else {
-      //   const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-      //     return axisOption.orient === 'left';
-      //   });
-      //   if (axisOption?.visible === false) {
-      //     // this.rowShowAttrs.pop();
-      //   }
-      // }
     }
     this.handleRowSeriesNumber(table.internalProps.rowSeriesNumber);
 
@@ -667,73 +637,290 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       dealHeaderForTreeMode(hd, _headerCellIds, results, roots, row, totalLevel, show, dimensions, this);
     }
   }
-  private _addCornerHeaders(dimensionKeys: string[] | null, dimensions: (string | IDimension)[]) {
+  private _addCornerHeaders(
+    colDimensionKeys: string[] | null,
+    rowDimensionKeys: string[] | null,
+    dimensions: (string | IDimension)[]
+  ) {
     const results: HeaderData[] = [];
-    if (dimensionKeys) {
-      dimensionKeys.forEach((dimensionKey: string, key: number) => {
-        const id = ++this.sharedVar.seqId;
-        // const dimensionInfo: IDimension =
-        //   (this.rowsDefine?.find(dimension =>
-        //     typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-        //   ) as IDimension) ??
-        //   (this.columnsDefine?.find(dimension =>
-        //     typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-        //   ) as IDimension);
-        const dimensionInfo: IDimension = dimensions.find(dimension =>
-          typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-        ) as IDimension;
-        const cell: HeaderData = {
-          id,
-          title:
-            dimensionKey === this.indicatorDimensionKey
-              ? this.indicatorTitle
-              : dimensionInfo
-              ? dimensionInfo.title
-              : dimensionKey === 'axis'
-              ? ''
-              : (dimensionKey as string),
-          field: dimensionKey, //'维度名称',
-          style: this.cornerSetting.headerStyle,
-          headerType: this.cornerSetting.headerType ?? 'text',
-          showSort: dimensionInfo?.showSortInCorner,
-          sort: dimensionInfo?.sort,
-          define: <any>{
+    if (this.cornerSetting.titleOnDimension === 'all') {
+      if (this.indicatorsAsCol) {
+        let indicatorAtIndex = -1;
+        if (colDimensionKeys) {
+          colDimensionKeys.forEach((dimensionKey: string, key: number) => {
+            if (dimensionKey === this.indicatorDimensionKey) {
+              indicatorAtIndex = key;
+            }
+            const id = ++this.sharedVar.seqId;
+            const dimensionInfo: IDimension = dimensions.find(dimension =>
+              typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+            ) as IDimension;
+            const cell: HeaderData = {
+              id,
+              title:
+                dimensionKey === this.indicatorDimensionKey
+                  ? this.indicatorTitle
+                  : dimensionInfo
+                  ? dimensionInfo.title
+                  : dimensionKey === 'axis'
+                  ? ''
+                  : (dimensionKey as string),
+              field: dimensionKey, //'维度名称',
+              style: this.cornerSetting.headerStyle,
+              headerType: this.cornerSetting.headerType ?? 'text',
+              showSort: dimensionInfo?.showSortInCorner,
+              sort: dimensionInfo?.sort,
+              define: <any>{
+                showSort: dimensionInfo?.showSortInCorner,
+                sort: dimensionInfo?.sort,
+                dimensionKey: dimensionKey, // '维度名称',
+                id,
+                value: dimensionKey,
+                headerEditor: this.cornerSetting.headerEditor,
+                disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
+                disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
+              },
+              dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              pivotInfo: {
+                value: dimensionInfo?.title ?? '',
+                dimensionKey,
+                isPivotCorner: true
+                // customInfo: dimensionInfo?.customInfo
+              },
+              description: dimensionInfo?.cornerDescription
+            };
+            results[id] = cell;
+            this._headerObjects[id] = cell;
+
+            if (!this._cornerHeaderCellFullPathIds[key]) {
+              this._cornerHeaderCellFullPathIds[key] = [];
+            }
+            for (let r = 0; r < this.rowHeaderLevelCount; r++) {
+              this._cornerHeaderCellFullPathIds[key][r] = id;
+            }
+          });
+        }
+        if (rowDimensionKeys) {
+          rowDimensionKeys.forEach((dimensionKey: string, key: number) => {
+            const id = ++this.sharedVar.seqId;
+            const dimensionInfo: IDimension = dimensions.find(dimension =>
+              typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+            ) as IDimension;
+            const cell: HeaderData = {
+              id,
+              title:
+                dimensionKey === this.indicatorDimensionKey
+                  ? this.indicatorTitle
+                  : dimensionInfo
+                  ? dimensionInfo.title
+                  : dimensionKey === 'axis'
+                  ? ''
+                  : (dimensionKey as string),
+              field: dimensionKey, //'维度名称',
+              style: this.cornerSetting.headerStyle,
+              headerType: this.cornerSetting.headerType ?? 'text',
+              showSort: dimensionInfo?.showSortInCorner,
+              sort: dimensionInfo?.sort,
+              define: <any>{
+                showSort: dimensionInfo?.showSortInCorner,
+                sort: dimensionInfo?.sort,
+                dimensionKey: dimensionKey, // '维度名称',
+                id,
+                value: dimensionKey,
+                headerEditor: this.cornerSetting.headerEditor,
+                disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
+                disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
+              },
+              dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              pivotInfo: {
+                value: dimensionInfo?.title ?? '',
+                dimensionKey,
+                isPivotCorner: true
+                // customInfo: dimensionInfo?.customInfo
+              },
+              description: dimensionInfo?.cornerDescription
+            };
+            results[id] = cell;
+            this._headerObjects[id] = cell;
+            if (!this._cornerHeaderCellFullPathIds[indicatorAtIndex]) {
+              this._cornerHeaderCellFullPathIds[indicatorAtIndex] = [];
+            }
+            this._cornerHeaderCellFullPathIds[indicatorAtIndex][key] = id;
+          });
+        }
+      } else {
+        let indicatorAtIndex = -1;
+        if (rowDimensionKeys) {
+          rowDimensionKeys.forEach((dimensionKey: string, key: number) => {
+            if (dimensionKey === this.indicatorDimensionKey) {
+              indicatorAtIndex = key;
+            }
+            const id = ++this.sharedVar.seqId;
+            const dimensionInfo: IDimension = dimensions.find(dimension =>
+              typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+            ) as IDimension;
+            const cell: HeaderData = {
+              id,
+              title:
+                dimensionKey === this.indicatorDimensionKey
+                  ? this.indicatorTitle
+                  : dimensionInfo
+                  ? dimensionInfo.title
+                  : dimensionKey === 'axis'
+                  ? ''
+                  : (dimensionKey as string),
+              field: dimensionKey, //'维度名称',
+              style: this.cornerSetting.headerStyle,
+              headerType: this.cornerSetting.headerType ?? 'text',
+              showSort: dimensionInfo?.showSortInCorner,
+              sort: dimensionInfo?.sort,
+              define: <any>{
+                showSort: dimensionInfo?.showSortInCorner,
+                sort: dimensionInfo?.sort,
+                dimensionKey: dimensionKey, // '维度名称',
+                id,
+                value: dimensionKey,
+                headerEditor: this.cornerSetting.headerEditor,
+                disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
+                disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
+              },
+              dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              pivotInfo: {
+                value: dimensionInfo?.title ?? '',
+                dimensionKey,
+                isPivotCorner: true
+                // customInfo: dimensionInfo?.customInfo
+              },
+              description: dimensionInfo?.cornerDescription
+            };
+            results[id] = cell;
+            this._headerObjects[id] = cell;
+
+            for (let r = 0; r < this.columnHeaderLevelCount; r++) {
+              if (!this._cornerHeaderCellFullPathIds[r]) {
+                this._cornerHeaderCellFullPathIds[r] = [];
+              }
+              this._cornerHeaderCellFullPathIds[r][key] = id;
+            }
+          });
+        }
+        if (colDimensionKeys) {
+          colDimensionKeys.forEach((dimensionKey: string, key: number) => {
+            const id = ++this.sharedVar.seqId;
+            const dimensionInfo: IDimension = dimensions.find(dimension =>
+              typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+            ) as IDimension;
+            const cell: HeaderData = {
+              id,
+              title:
+                dimensionKey === this.indicatorDimensionKey
+                  ? this.indicatorTitle
+                  : dimensionInfo
+                  ? dimensionInfo.title
+                  : dimensionKey === 'axis'
+                  ? ''
+                  : (dimensionKey as string),
+              field: dimensionKey, //'维度名称',
+              style: this.cornerSetting.headerStyle,
+              headerType: this.cornerSetting.headerType ?? 'text',
+              showSort: dimensionInfo?.showSortInCorner,
+              sort: dimensionInfo?.sort,
+              define: <any>{
+                showSort: dimensionInfo?.showSortInCorner,
+                sort: dimensionInfo?.sort,
+                dimensionKey: dimensionKey, // '维度名称',
+                id,
+                value: dimensionKey,
+                headerEditor: this.cornerSetting.headerEditor,
+                disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
+                disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
+              },
+              dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              pivotInfo: {
+                value: dimensionInfo?.title ?? '',
+                dimensionKey,
+                isPivotCorner: true
+                // customInfo: dimensionInfo?.customInfo
+              },
+              description: dimensionInfo?.cornerDescription
+            };
+            results[id] = cell;
+            this._headerObjects[id] = cell;
+            // if (!this._cornerHeaderCellFullPathIds[indicatorAtIndex]) {
+            //   this._cornerHeaderCellFullPathIds[indicatorAtIndex] = [];
+            // }
+            this._cornerHeaderCellFullPathIds[key][indicatorAtIndex] = id;
+          });
+        }
+      }
+    } else if (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'column') {
+      const dimensionKeys = this.cornerSetting?.titleOnDimension === 'row' ? rowDimensionKeys : colDimensionKeys;
+      if (dimensionKeys) {
+        dimensionKeys.forEach((dimensionKey: string, key: number) => {
+          const id = ++this.sharedVar.seqId;
+          // const dimensionInfo: IDimension =
+          //   (this.rowsDefine?.find(dimension =>
+          //     typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+          //   ) as IDimension) ??
+          //   (this.columnsDefine?.find(dimension =>
+          //     typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+          //   ) as IDimension);
+          const dimensionInfo: IDimension = dimensions.find(dimension =>
+            typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+          ) as IDimension;
+          const cell: HeaderData = {
+            id,
+            title:
+              dimensionKey === this.indicatorDimensionKey
+                ? this.indicatorTitle
+                : dimensionInfo
+                ? dimensionInfo.title
+                : dimensionKey === 'axis'
+                ? ''
+                : (dimensionKey as string),
+            field: dimensionKey, //'维度名称',
+            style: this.cornerSetting.headerStyle,
+            headerType: this.cornerSetting.headerType ?? 'text',
             showSort: dimensionInfo?.showSortInCorner,
             sort: dimensionInfo?.sort,
-            dimensionKey: dimensionKey, // '维度名称',
-            id,
-            value: dimensionKey,
-            headerEditor: this.cornerSetting.headerEditor,
-            disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
-            disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
-          },
-          dropDownMenu: dimensionInfo?.cornerDropDownMenu,
-          pivotInfo: {
-            value: dimensionInfo?.title ?? '',
-            dimensionKey,
-            isPivotCorner: true
-            // customInfo: dimensionInfo?.customInfo
-          },
-          description: dimensionInfo?.cornerDescription
-        };
-        results[id] = cell;
-        this._headerObjects[id] = cell;
-        if (this.cornerSetting.titleOnDimension === 'column') {
-          if (!this._cornerHeaderCellFullPathIds[key]) {
-            this._cornerHeaderCellFullPathIds[key] = [];
-          }
-          for (let r = 0; r < this.rowHeaderLevelCount; r++) {
-            this._cornerHeaderCellFullPathIds[key][r] = id;
-          }
-        } else if (this.cornerSetting.titleOnDimension === 'row') {
-          for (let r = 0; r < this.columnHeaderLevelCount; r++) {
-            if (!this._cornerHeaderCellFullPathIds[r]) {
-              this._cornerHeaderCellFullPathIds[r] = [];
+            define: <any>{
+              showSort: dimensionInfo?.showSortInCorner,
+              sort: dimensionInfo?.sort,
+              dimensionKey: dimensionKey, // '维度名称',
+              id,
+              value: dimensionKey,
+              headerEditor: this.cornerSetting.headerEditor,
+              disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
+              disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
+            },
+            dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+            pivotInfo: {
+              value: dimensionInfo?.title ?? '',
+              dimensionKey,
+              isPivotCorner: true
+              // customInfo: dimensionInfo?.customInfo
+            },
+            description: dimensionInfo?.cornerDescription
+          };
+          results[id] = cell;
+          this._headerObjects[id] = cell;
+          if (this.cornerSetting.titleOnDimension === 'column') {
+            if (!this._cornerHeaderCellFullPathIds[key]) {
+              this._cornerHeaderCellFullPathIds[key] = [];
             }
-            this._cornerHeaderCellFullPathIds[r][key] = id;
+            for (let r = 0; r < this.rowHeaderLevelCount; r++) {
+              this._cornerHeaderCellFullPathIds[key][r] = id;
+            }
+          } else if (this.cornerSetting.titleOnDimension === 'row') {
+            for (let r = 0; r < this.columnHeaderLevelCount; r++) {
+              if (!this._cornerHeaderCellFullPathIds[r]) {
+                this._cornerHeaderCellFullPathIds[r] = [];
+              }
+              this._cornerHeaderCellFullPathIds[r][key] = id;
+            }
           }
-        }
-      });
+        });
+      }
     } else {
       const id = ++this.sharedVar.seqId;
       const cell: HeaderData = {
@@ -761,6 +948,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
       }
     }
+
     return results;
   }
   private generateExtensionRowTree() {
@@ -1215,7 +1403,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (count === 0 && this.dataset && !this.dataset.customColTree && !this.dataset.customRowTree) {
         if (this.cornerSetting.titleOnDimension === 'row') {
           count = 1;
-        } else if ((this.dataset.records?.length ?? 0) === 0 && this.cornerSetting.titleOnDimension === 'column') {
+        } else if (
+          (this.dataset.records?.length ?? 0) === 0 &&
+          (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all')
+        ) {
           count = this.columnsDefine.length ?? 0;
         }
       } else if (
@@ -1224,7 +1415,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         !this.dataset.customColTree &&
         !this.dataset.customRowTree
       ) {
-        if (this.cornerSetting.titleOnDimension === 'column') {
+        if (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all') {
           count = this.columnsDefine.length ?? 0;
           if (!this.hideIndicatorName && this.indicatorsAsCol) {
             count++;
@@ -1279,7 +1470,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (count === 0 && this.dataset && !this.dataset.customColTree && !this.dataset.customRowTree) {
         if (this.cornerSetting.titleOnDimension === 'column') {
           count = 1;
-        } else if ((this.dataset.records?.length ?? 0) === 0 && this.cornerSetting.titleOnDimension === 'row') {
+        } else if (
+          (this.dataset.records?.length ?? 0) === 0 &&
+          (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all')
+        ) {
           count = this.rowsDefine.length ?? 0;
         }
       } else if (
@@ -1288,7 +1482,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         !this.dataset.customColTree &&
         !this.dataset.customRowTree
       ) {
-        if (this.cornerSetting.titleOnDimension === 'row') {
+        if (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all') {
           count = this.rowsDefine.length;
           if (!this.hideIndicatorName && !this.indicatorsAsCol) {
             count++;
