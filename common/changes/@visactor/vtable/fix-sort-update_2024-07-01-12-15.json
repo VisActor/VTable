@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix frozen cell update problem in sort #1997",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

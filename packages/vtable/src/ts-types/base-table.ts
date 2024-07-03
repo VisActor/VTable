@@ -578,6 +578,9 @@ export interface BaseTableAPI {
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 
+  _rowRangeHeightsMap: Map<string, number>;
+  _colRangeWidthsMap: Map<string, number>;
+
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */

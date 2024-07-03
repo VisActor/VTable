@@ -320,7 +320,7 @@ function updateCellWidth(
     // // 只更新背景边框
     // const rect = cell.firstChild as Rect;
     // rect.setAttribute('width', cell.attribute.width);
-    updateImageCellContentWhileResize(cellGroup, col, row, scene.table);
+    updateImageCellContentWhileResize(cellGroup, col, row, detaX, 0, scene.table);
   } else if (cellGroup.firstChild?.name === 'axis') {
     // recreate axis component
     const axisConfig = scene.table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);

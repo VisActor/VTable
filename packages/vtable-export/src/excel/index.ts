@@ -18,6 +18,7 @@ export type CellInfo = {
 export type ExportVTableToExcelOptions = {
   ignoreIcon?: boolean;
   formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
+  formatExcelJSCell?: (cellInfo: CellInfo, cellInExcelJS: ExcelJS.Cell) => ExcelJS.Cell;
 };
 
 export async function exportVTableToExcel(tableInstance: IVTable, options?: ExportVTableToExcelOptions) {
@@ -132,17 +133,25 @@ function addCell(
     const cellInfo = { cellType, cellValue, table: tableInstance, col, row };
     const formattedValue = options.formatExportOutput(cellInfo);
     if (formattedValue !== undefined) {
-      const cell = worksheet.getCell(encodeCellAddress(col, row));
+      let cell = worksheet.getCell(encodeCellAddress(col, row));
       cell.value = formattedValue;
       cell.font = getCellFont(cellStyle, cellType);
       cell.fill = getCellFill(cellStyle);
       cell.border = getCellBorder(cellStyle);
       const offset = getHierarchyOffset(col, row, tableInstance as any);
       cell.alignment = getCellAlignment(cellStyle, Math.ceil(offset / cell.font.size));
-      return;
+
+      if (cell && options.formatExcelJSCell) {
+        const formatedCell = options.formatExcelJSCell({ cellType, cellValue, table: tableInstance, col, row }, cell);
+        if (formatedCell) {
+          cell = formatedCell;
+        }
+      }
+      return cell;
     }
   }
 
+  let cell;
   if (
     cellType === 'image' ||
     cellType === 'video' ||
@@ -165,7 +174,7 @@ function addCell(
       // ext: { width: tableInstance.getColWidth(col), height: tableInstance.getRowHeight(row) }
     });
   } else if (cellType === 'text' || cellType === 'link') {
-    const cell = worksheet.getCell(encodeCellAddress(col, row));
+    cell = worksheet.getCell(encodeCellAddress(col, row));
     cell.value = getCellValue(cellValue, cellType);
     cell.font = getCellFont(cellStyle, cellType);
     cell.fill = getCellFill(cellStyle);
@@ -188,6 +197,14 @@ function addCell(
     });
     tableInstance.scenegraph.updateNextFrame(); // rerender chart to avoid display error
   }
+
+  if (cell && options.formatExcelJSCell) {
+    const formatedCell = options.formatExcelJSCell({ cellType, cellValue, table: tableInstance, col, row }, cell);
+    if (formatedCell) {
+      cell = formatedCell;
+    }
+  }
+  return cell;
 }
 
 function getCellValue(cellValue: string, cellType: CellType) {

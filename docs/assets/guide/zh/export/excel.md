@@ -62,7 +62,7 @@ type CellInfo = {
 };
 
 type ExportVTableToExcelOptions = {
-  ignoreIcon?: boolean;
+  // ......
   formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
 };
 ```
@@ -73,6 +73,37 @@ const excelOption = {
     if (cellType === 'checkbox') {
       return table.getCellCheckboxState(col, row) ? 'true' : 'false';
     }
+  }
+};
+downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+```
+
+### formatExcelJSCell
+
+对于导出样式有进一步的定制化需求的话，可以设置`formatExcelJSCell`为一个函数，函数的参数为单元格信息和ExcelJS的单元格对象，函数的返回值为ExcelJS的单元格对象，如果返回`undefined`，则按照默认导出逻辑处理。可以在函数中自动设置ExcelJS的单元格属性，具体可以参考 https://github.com/exceljs/exceljs?tab=readme-ov-file#styles
+
+```ts
+type CellInfo = {
+  cellType: string;
+  cellValue: string;
+  table: IVTable;
+  col: number;
+  row: number;
+};
+
+type ExportVTableToExcelOptions = {
+  // ......
+  formatExceljsCell?: (cellInfo: CellInfo, cellInExceljs: ExcelJS.Cell) => ExcelJS.Cell;
+};
+```
+
+```js
+const excelOption = {
+  formatExcelJSCell: (cellInfo, cell) => {
+    if (cellInfo.col === 1) {
+      cell.numFmt = '0.00%';
+    }
+    return cell;
   }
 };
 downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
