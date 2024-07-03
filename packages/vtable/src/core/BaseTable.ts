@@ -2864,7 +2864,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (
         customMerge &&
         customMerge.range &&
-        (customMerge.text || customMerge.customLayout || customMerge.customRender)
+        (isValid(customMerge.text) || customMerge.customLayout || customMerge.customRender)
       ) {
         return customMerge.range;
       }
@@ -2879,7 +2879,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCustomMerge(col: number, row: number) {
     if (this.internalProps.customMergeCell) {
       const customMerge = this.internalProps.customMergeCell(col, row, this);
-      if (customMerge && customMerge.range && (customMerge.text || customMerge.customLayout || this.customRender)) {
+      if (
+        customMerge &&
+        customMerge.range &&
+        (isValid(customMerge.text) || customMerge.customLayout || this.customRender)
+      ) {
         if (customMerge.style) {
           const styleClass = this.internalProps.bodyHelper.getStyleClass('text');
           const style = customMerge.style;
