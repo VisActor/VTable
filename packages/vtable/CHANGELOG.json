@@ -2,6 +2,51 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.4.2",
+      "tag": "@visactor/vtable_v1.4.2",
+      "date": "Tue, 02 Jul 2024 12:48:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: corner title can display row and column diemensionTitle #1926\n\n"
+          },
+          {
+            "comment": "fix: when not exit edit state then can not select other cells #1974\n\n"
+          },
+          {
+            "comment": "fix: selected_clear event trigger #1981\n\n"
+          },
+          {
+            "comment": "feat: add column hide config #1991\n\n"
+          },
+          {
+            "comment": "refactor: sparkline cellType set aggregationType None automatically #1999\n\n"
+          },
+          {
+            "comment": "fix: pivotTable virtual node edit value not work #2002\n\n"
+          },
+          {
+            "comment": "fix: tooltip content can not be selected #2003\n\n"
+          },
+          {
+            "comment": "feat: add getCellAtRelativePosition api"
+          },
+          {
+            "comment": "fix: fix vrender export module"
+          },
+          {
+            "comment": "fix: fix merge cell update performance problem #1972"
+          },
+          {
+            "comment": "fix: fix regexp format for webpack 3 #2005"
+          },
+          {
+            "comment": "fix: fix width computation in shrinkSparklineFirst mode"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.4.1",
       "tag": "@visactor/vtable_v1.4.1",
       "date": "Mon, 24 Jun 2024 08:48:40 GMT",
