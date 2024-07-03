@@ -17,6 +17,7 @@ import type { IImageColumnIndicator, IImageHeaderIndicator } from '../ts-types/p
 import type { IImageColumnBodyDefine, IImageHeaderDefine } from '../ts-types/list-table/define/image-define';
 import type { ITreeLayoutHeadNode } from './tree-helper';
 import { DimensionTree } from './tree-helper';
+import type { ISparklineColumnIndicator } from '../ts-types/pivot-table/indicator/sparkline-indicator';
 
 export function checkHasAggregation(layoutMap: SimpleHeaderLayoutMap) {
   const columnObjects = layoutMap.columnObjects;
@@ -242,13 +243,22 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
         keys.push(indicatorObj);
       } else {
         keys.push(indicatorObj.indicatorKey);
-        if ((indicatorObj as IChartColumnIndicator).chartSpec) {
+        if (
+          (indicatorObj as IChartColumnIndicator).chartSpec ||
+          (indicatorObj as ISparklineColumnIndicator).sparklineSpec
+        ) {
           if (table.internalProps.dataConfig?.aggregationRules) {
-            table.internalProps.dataConfig?.aggregationRules.push({
-              field: indicatorObj.indicatorKey,
-              indicatorKey: indicatorObj.indicatorKey,
-              aggregationType: AggregationType.NONE
-            });
+            if (
+              !table.internalProps.dataConfig.aggregationRules.find(aggregation => {
+                return aggregation.indicatorKey === indicatorObj.indicatorKey;
+              })
+            ) {
+              table.internalProps.dataConfig.aggregationRules.push({
+                field: indicatorObj.indicatorKey,
+                indicatorKey: indicatorObj.indicatorKey,
+                aggregationType: AggregationType.NONE
+              });
+            }
           } else if (table.internalProps.dataConfig) {
             table.internalProps.dataConfig.aggregationRules = [
               {

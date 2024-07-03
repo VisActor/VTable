@@ -108,10 +108,10 @@ export class EditManeger {
     }
   }
 
-  /** 如果是事件触发调用该接口 请传入原始事件对象 将判断事件对象是否在编辑器本身上面  来处理是否结束编辑 */
-  completeEdit(e?: Event) {
+  /** 如果是事件触发调用该接口 请传入原始事件对象 将判断事件对象是否在编辑器本身上面  来处理是否结束编辑  返回值如果为false说明没有退出编辑状态*/
+  completeEdit(e?: Event): boolean {
     if (!this.editingEditor) {
-      return;
+      return true;
     }
 
     const target = e?.target as HTMLElement | undefined;
@@ -122,10 +122,10 @@ export class EditManeger {
         console.warn('VTable Warn: `targetIsOnEditor` is deprecated, please use `isEditorElement` instead.');
 
         if (editor.targetIsOnEditor(target)) {
-          return;
+          return false;
         }
       } else if (!editor.isEditorElement || editor.isEditorElement(target)) {
-        return;
+        return false;
       }
     }
 
@@ -148,7 +148,9 @@ export class EditManeger {
       this.editingEditor.exit?.();
       this.editingEditor.onEnd?.();
       this.editingEditor = null;
+      return true;
     }
+    return false;
   }
 
   cancelEdit() {

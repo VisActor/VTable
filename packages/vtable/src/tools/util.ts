@@ -422,3 +422,13 @@ export function deduplication(array: number[]) {
   }
   return result;
 }
+
+/** 判断div中的文本是否有被选中 */
+export function isDivSelected(div: HTMLDivElement) {
+  const selection = window.getSelection();
+  if (selection.rangeCount) {
+    const range = selection.getRangeAt(0);
+    return range.endOffset > range.startOffset && div.contains(range.commonAncestorContainer);
+  }
+  return false;
+}
