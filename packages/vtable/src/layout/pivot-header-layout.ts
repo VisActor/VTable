@@ -3692,7 +3692,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._getBodyCache.clear();
   }
   disableUseGetBodyCache() {
-    this._useGetBodyCache = true;
+    this._useGetBodyCache = false;
     this._getBodyCache.clear();
   }
   enableUseHeaderPathCache() {
@@ -3701,7 +3701,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._rowHeaderPathCache.clear();
   }
   disableUseHeaderPathCache() {
-    this._useHeaderPathCache = true;
+    this._useHeaderPathCache = false;
     this._colHeaderPathCache.clear();
     this._rowHeaderPathCache.clear();
   }
