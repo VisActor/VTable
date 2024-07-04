@@ -103,7 +103,7 @@ function updateComponent(
     visible: true
   });
   if (selectComp.fillhandle) {
-    selectComp.fillhandle.setAttributes({
+    selectComp.fillhandle?.setAttributes({
       x: lastCellBound.x2 - scene.tableGroup.attribute.x - 3, // 调整小方块位置
       y: lastCellBound.y2 - scene.tableGroup.attribute.y - 3, // 调整小方块位置
       width: 6,
@@ -210,7 +210,7 @@ function updateComponent(
         x: selectComp.rect.attribute.x + (table.getFrozenColsWidth() - selectComp.rect.attribute.x),
         width: width > 0 ? width : 0
       });
-      selectComp.fillhandle.setAttributes({
+      selectComp.fillhandle?.setAttributes({
         visible: width > 0
       });
     }
@@ -226,7 +226,7 @@ function updateComponent(
         x: selectComp.rect.attribute.x,
         width: width > 0 ? width : 0
       });
-      selectComp.fillhandle.setAttributes({
+      selectComp.fillhandle?.setAttributes({
         visible: width - colsWidth > 0
       });
     }
@@ -241,7 +241,7 @@ function updateComponent(
         y: selectComp.rect.attribute.y + (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y),
         height: height > 0 ? height : 0
       });
-      selectComp.fillhandle.setAttributes({
+      selectComp.fillhandle?.setAttributes({
         visible: height > 0
       });
     }
@@ -256,7 +256,7 @@ function updateComponent(
         y: selectComp.rect.attribute.y,
         height: height > 0 ? height : 0
       });
-      selectComp.fillhandle.setAttributes({
+      selectComp.fillhandle?.setAttributes({
         visible: height - rowsHeight > 0
       });
     }
@@ -297,7 +297,7 @@ function updateComponent(
     selectComp.rect.setAttributes({
       width: selectComp.rect.attribute.width - diffSize
     });
-    // selectComp.fillhandle.setAttributes({
+    // selectComp.fillhandle?.setAttributes({
     //   width: selectComp.rect.attribute.width - diffSize
     // });
   }
@@ -309,7 +309,7 @@ function updateComponent(
       x: selectComp.rect.attribute.x + diffSize,
       width: selectComp.rect.attribute.width - diffSize
     });
-    // selectComp.fillhandle.setAttributes({
+    // selectComp.fillhandle?.setAttributes({
     //   x: selectComp.rect.attribute.x + diffSize,
     //   width: selectComp.rect.attribute.width - diffSize
     // });
@@ -321,7 +321,7 @@ function updateComponent(
     selectComp.rect.setAttributes({
       height: selectComp.rect.attribute.height - diffSize
     });
-    // selectComp.fillhandle.setAttributes({
+    // selectComp.fillhandle?.setAttributes({
     //   height: selectComp.rect.attribute.height - diffSize
     // });
   }
@@ -333,7 +333,7 @@ function updateComponent(
       y: selectComp.rect.attribute.y + diffSize,
       height: selectComp.rect.attribute.height - diffSize
     });
-    // selectComp.fillhandle.setAttributes({
+    // selectComp.fillhandle?.setAttributes({
     //   y: selectComp.rect.attribute.y + diffSize,
     //   height: selectComp.rect.attribute.height - diffSize
     // });
