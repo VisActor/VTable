@@ -114,7 +114,7 @@ function updateComponent(
 
   //#region 判断是不是按着表头部分的选中框 因为绘制层级的原因 线宽会被遮住一半，因此需要动态调整层级
   let isNearRowHeader = table.frozenColCount ? startCol === table.frozenColCount : false;
-  if (!isNearRowHeader && table.frozenColCount && table.scrollLeft > 0) {
+  if (!isNearRowHeader && table.frozenColCount && table.scrollLeft > 0 && startCol >= table.frozenColCount) {
     const startColRelativePosition = table.getColsWidth(0, startCol - 1) - table.scrollLeft;
     if (startColRelativePosition < table.getFrozenColsWidth()) {
       isNearRowHeader = true;
@@ -124,7 +124,7 @@ function updateComponent(
   let isNearRightRowHeader = table.rightFrozenColCount
     ? table.rightFrozenColCount > 0 && endCol === table.colCount - table.rightFrozenColCount - 1
     : false;
-  if (!isNearRightRowHeader && table.rightFrozenColCount) {
+  if (!isNearRightRowHeader && table.rightFrozenColCount && endCol < table.colCount - table.rightFrozenColCount) {
     const endColRelativePosition = table.getColsWidth(0, endCol) - table.scrollLeft;
     if (endColRelativePosition > table.tableNoFrameWidth - table.getRightFrozenColsWidth()) {
       isNearRightRowHeader = true;
@@ -132,7 +132,7 @@ function updateComponent(
   }
 
   let isNearColHeader = table.frozenRowCount ? startRow === table.frozenRowCount : true;
-  if (!isNearColHeader && table.frozenRowCount && table.scrollTop > 0) {
+  if (!isNearColHeader && table.frozenRowCount && table.scrollTop > 0 && startRow >= table.frozenRowCount) {
     const startRowRelativePosition = table.getRowsHeight(0, startRow - 1) - table.scrollTop;
     if (startRowRelativePosition < table.getFrozenRowsHeight()) {
       isNearColHeader = true;
@@ -142,7 +142,7 @@ function updateComponent(
   let isNearBottomColHeader = table.bottomFrozenRowCount
     ? endRow === table.rowCount - table.bottomFrozenRowCount - 1
     : false;
-  if (!isNearBottomColHeader && table.bottomFrozenRowCount) {
+  if (!isNearBottomColHeader && table.bottomFrozenRowCount && endRow < table.rowCount - table.bottomFrozenRowCount) {
     const endRowRelativePosition = table.getRowsHeight(0, endRow) - table.scrollTop;
     if (endRowRelativePosition > table.tableNoFrameHeight - table.getBottomFrozenRowsHeight()) {
       isNearBottomColHeader = true;
