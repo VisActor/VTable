@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: disable select and edit input should move when input is outside of table #2039\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
