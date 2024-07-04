@@ -291,7 +291,7 @@ export function computeRowsHeight(
   if (update) {
     for (let row = rowStart; row <= rowEnd; row++) {
       const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
-      if (newRowHeight !== oldRowHeights[row]) {
+      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
         table._setRowHeight(row, newRowHeight);
       }
     }
@@ -302,24 +302,24 @@ export function computeRowsHeight(
     ) {
       for (let row = 0; row <= table.columnHeaderLevelCount - 1; row++) {
         const newRowHeight = table.getRowHeight(row);
-        if (newRowHeight !== oldRowHeights[row]) {
+        if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
           // update the row height in scenegraph
-          table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+          table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
         }
       }
       for (let row = table.rowCount - table.bottomFrozenRowCount; row <= table.rowCount - 1; row++) {
         const newRowHeight = table.getRowHeight(row);
-        if (newRowHeight !== oldRowHeights[row]) {
+        if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
           // update the row height in scenegraph
-          table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+          table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
         }
       }
     }
     for (let row = table.scenegraph.proxy.rowStart; row <= table.scenegraph.proxy.rowEnd; row++) {
       const newRowHeight = table.getRowHeight(row);
-      if (newRowHeight !== oldRowHeights[row]) {
+      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
         // update the row height in scenegraph
-        table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+        table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
       }
     }
   }
