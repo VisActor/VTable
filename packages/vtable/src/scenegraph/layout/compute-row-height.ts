@@ -206,7 +206,7 @@ export function computeRowsHeight(
     }
     let actualHeight = 0;
     for (let row = startRow; row < endRow; row++) {
-      actualHeight += update ? newHeights[row] : table.getRowHeight(row);
+      actualHeight += update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row);
     }
     const factor = totalDrawHeight / actualHeight;
     for (let row = startRow; row < endRow; row++) {
@@ -223,7 +223,9 @@ export function computeRowsHeight(
               }, 0)
             : table.getRowsHeight(startRow, endRow - 2));
       } else {
-        rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
+        rowHeight = Math.round(
+          (update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row)) * factor
+        );
       }
       if (update) {
         newHeights[row] = rowHeight;
@@ -273,7 +275,9 @@ export function computeRowsHeight(
                 }, 0)
               : table.getRowsHeight(startRow, endRow - 2));
         } else {
-          rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
+          rowHeight = Math.round(
+            (update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row)) * factor
+          );
         }
         if (update) {
           newHeights[row] = rowHeight;

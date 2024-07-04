@@ -808,15 +808,34 @@ export class Scenegraph {
    * recalculates column width in all autowidth columns
    */
   recalculateColWidths() {
+    const table = this.table;
     // computeColsWidth(this.table, 0, this.table.colCount - 1, true);
-    this.table._clearColRangeWidthsMap();
-    computeColsWidth(this.table, this.proxy.colStart, this.proxy.colEnd, true);
+    table._clearColRangeWidthsMap();
+    // left frozen
+    if (table.frozenColCount > 0) {
+      computeColsWidth(this.table, 0, table.frozenColCount - 1, true);
+    }
+    // right frozen
+    if (table.rightFrozenColCount > 0) {
+      computeColsWidth(this.table, table.rightFrozenColCount, table.colCount - 1, true);
+    }
+    // body
+    computeColsWidth(table, this.proxy.colStart, this.proxy.colEnd, true);
   }
 
   recalculateRowHeights() {
-    this.table.internalProps.useOneRowHeightFillAll = false;
+    const table = this.table;
+    table.internalProps.useOneRowHeightFillAll = false;
     // computeRowsHeight(this.table, 0, this.table.rowCount - 1, true, true);
-    computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd, true, true);
+    // top frozen
+    if (table.frozenRowCount > 0) {
+      computeRowsHeight(this.table, 0, table.frozenRowCount - 1, true, true);
+    }
+    // bottom frozen
+    if (table.bottomFrozenRowCount > 0) {
+      computeRowsHeight(this.table, table.bottomFrozenRowCount, table.rowCount - 1, true, true);
+    }
+    computeRowsHeight(table, this.proxy.rowStart, this.proxy.rowEnd, true, true);
   }
 
   resize() {

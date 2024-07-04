@@ -101,7 +101,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     let endCol = table.colCount;
     if (table.widthAdaptiveMode === 'only-body') {
       for (let col = 0; col < table.colCount; col++) {
-        const colWidth = update ? newWidths[col] : table.getColWidth(col);
+        const colWidth = update ? newWidths[col] ?? table.getColWidth(col) : table.getColWidth(col);
         if (
           col < table.rowHeaderLevelCount ||
           (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
@@ -152,7 +152,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     let actualHeaderWidth = 0;
     let actualWidth = 0;
     for (let col = 0; col < table.colCount; col++) {
-      const colWidth = update ? newWidths[col] : table.getColWidth(col);
+      const colWidth = update ? newWidths[col] ?? table.getColWidth(col) : table.getColWidth(col);
       if (
         col < table.rowHeaderLevelCount ||
         (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
@@ -204,7 +204,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     for (let col = 0; col < table.colCount; col++) {
       // newColWidth could not be in column min max range possibly
       // const newColWidth = table._adjustColWidth(col, newWidths[col]) ?? table.getColWidth(col);
-      const newColWidth = newWidths[col] ?? table.getColWidth(col);
+      const newColWidth = newWidths[col] ?? table.getColWidth(col) ?? table.getColWidth(col);
       if (newColWidth !== oldColWidths[col]) {
         // update the column width in scenegraph
         table._setColWidth(col, newColWidth, false, true);
@@ -706,7 +706,7 @@ export function getAdaptiveWidth(
   const sparklineColumns = [];
   let totalSparklineAbleWidth = 0;
   for (let col = startCol; col < endColPlus1; col++) {
-    const width = update ? newWidths[col] : table.getColWidth(col);
+    const width = update ? newWidths[col] ?? table.getColWidth(col) : table.getColWidth(col);
     const maxWidth = table.getMaxColWidth(col);
     const minWidth = table.getMinColWidth(col);
     if (width !== maxWidth && width !== minWidth) {
@@ -758,12 +758,12 @@ export function getAdaptiveWidth(
         totalDrawWidth -
         adaptiveColumns.reduce((acr, cur, index) => {
           if (cur !== col) {
-            return acr + (update ? newWidths[cur] : table.getColWidth(cur));
+            return acr + (update ? newWidths[cur] ?? table.getColWidth(col) : table.getColWidth(cur));
           }
           return acr;
         }, 0);
     } else {
-      colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
+      colWidth = Math.round((update ? newWidths[col] ?? table.getColWidth(col) : table.getColWidth(col)) * factor);
     }
     if (update) {
       newWidths[col] = table._adjustColWidth(col, colWidth);
