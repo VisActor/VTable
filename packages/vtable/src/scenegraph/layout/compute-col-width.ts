@@ -35,6 +35,12 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     //   }
   }
 
+  const layoutMap = table.internalProps.layoutMap;
+  if (table.isPivotTable()) {
+    (layoutMap as PivotHeaderLayoutMap).enableUseGetBodyCache();
+    (layoutMap as PivotHeaderLayoutMap).enableUseHeaderPathCache();
+  }
+
   const oldColWidths: number[] = [];
   const newWidths: number[] = [];
   if (update) {
@@ -219,6 +225,11 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     table.scenegraph.updateContainer(true);
   }
   // console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time, colStart, colEnd);
+
+  if (table.isPivotTable()) {
+    (layoutMap as PivotHeaderLayoutMap).disableUseGetBodyCache();
+    (layoutMap as PivotHeaderLayoutMap).disableUseHeaderPathCache();
+  }
 }
 
 /**
@@ -373,7 +384,7 @@ function computeAutoColWidth(
           cellHierarchyIndent += table.internalProps.headerHelper.getHierarchyIconWidth();
         }
       }
-    } else {
+    } else if (table.isListTable()) {
       deltaRow = prepareDeltaRow;
       // 基本表格表身body单元格 如果是树形展开 需要考虑缩进值
       // const cellHierarchyState = table.getHierarchyState(col, row);
@@ -594,7 +605,7 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
     text = cellValue;
   }
   const lines = breakString(text, table).text;
-  if (lines.length >= 1) {
+  if (lines.length >= 1 && !(lines.length === 1 && lines[0] === '')) {
     // eslint-disable-next-line no-loop-func
     lines.forEach((line: string) => {
       const width = table.measureText(line, {

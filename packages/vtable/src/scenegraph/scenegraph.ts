@@ -808,12 +808,15 @@ export class Scenegraph {
    * recalculates column width in all autowidth columns
    */
   recalculateColWidths() {
-    computeColsWidth(this.table, 0, this.table.colCount - 1, true);
+    // computeColsWidth(this.table, 0, this.table.colCount - 1, true);
+    this.table._clearColRangeWidthsMap();
+    computeColsWidth(this.table, this.proxy.colStart, this.proxy.colEnd, true);
   }
 
   recalculateRowHeights() {
     this.table.internalProps.useOneRowHeightFillAll = false;
-    computeRowsHeight(this.table, 0, this.table.rowCount - 1, true, true);
+    // computeRowsHeight(this.table, 0, this.table.rowCount - 1, true, true);
+    computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd, true, true);
   }
 
   resize() {

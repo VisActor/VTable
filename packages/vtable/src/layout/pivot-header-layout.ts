@@ -150,16 +150,19 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   _chartItemBandSize: number;
   _chartPadding?: number | number[];
 
-  _lastCellCol: number;
-  _lastCellRow: number;
-  _lastCellHeaderPath: IPivotTableCellHeaderPaths;
-
   rowSeriesNumberColumn: SeriesNumberColumnData[];
   leftRowSeriesNumberColumn: SeriesNumberColumnData[];
   leftRowSeriesNumberColumnCount: number = 0;
   rightRowSeriesNumberColumn: SeriesNumberColumnData[];
   rightRowSeriesNumberColumnCount: number = 0;
   //#endregion
+
+  _useGetBodyCache: boolean = false;
+  _getBodyCache: Map<number, IndicatorData | SeriesNumberColumnData> = new Map();
+
+  _useHeaderPathCache: boolean = false;
+  _colHeaderPathCache: Map<number, ITreeLayoutHeadNode[]> = new Map();
+  _rowHeaderPathCache: Map<number, ITreeLayoutHeadNode[]> = new Map();
   constructor(
     table: PivotTable | PivotChart,
     dataset: Dataset,
@@ -1701,8 +1704,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   //TODO 这里的indicators是否可以改为和真正指标值一样数量 但目前也不会造成太多内存浪费 对象较简单 引用对象
   getBody(_col: number, _row: number): IndicatorData | SeriesNumberColumnData {
+    const cache = this.getBodyWidthCache(_col, _row);
+    if (cache) {
+      return cache;
+    }
     if (this.isSeriesNumber(_col, _row)) {
-      return this.getSeriesNumberBody(_col, _row);
+      const body = this.getSeriesNumberBody(_col, _row);
+      this.setBodyWidthCache(_col, _row, body);
+      return body;
     }
     // let indicatorData;
     //正常情况下 通过行号或者列号可以取到Indicator的配置信息 但如果指标在前维度在后的情况下（如风神：列配置【指标名称，地区】） indicators中的数量是和真正指标值一样数量
@@ -1712,26 +1721,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const paths = this.getCellHeaderPaths(_col, _row);
     if (this.indicatorsAsCol) {
       const indicatorKey = paths.colHeaderPaths?.find(colPath => colPath.indicatorKey)?.indicatorKey;
-      return isValid(indicatorKey)
+      const body = isValid(indicatorKey)
         ? this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
-            this._indicators[0] ?? {
-              id: '',
-              field: undefined,
-              indicatorKey: undefined,
-              cellType: 'text',
-              define: undefined
-            }
-        : {
-            id: '',
-            field: undefined,
-            indicatorKey: undefined,
-            cellType: 'text',
-            define: undefined
-          };
-    }
-    const indicatorKey = paths.rowHeaderPaths?.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
-    return isValid(indicatorKey)
-      ? this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
           this._indicators[0] ?? {
             id: '',
             field: undefined,
@@ -1739,13 +1730,35 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             cellType: 'text',
             define: undefined
           }
-      : {
+        : ({
+            id: '',
+            field: undefined,
+            indicatorKey: undefined,
+            cellType: 'text',
+            define: undefined
+          } as IndicatorData);
+      this.setBodyWidthCache(_col, _row, body);
+      return body;
+    }
+    const indicatorKey = paths.rowHeaderPaths?.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    const body = isValid(indicatorKey)
+      ? this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
+        this._indicators[0] ?? {
           id: '',
           field: undefined,
           indicatorKey: undefined,
           cellType: 'text',
           define: undefined
-        };
+        }
+      : ({
+          id: '',
+          field: undefined,
+          indicatorKey: undefined,
+          cellType: 'text',
+          define: undefined
+        } as IndicatorData);
+    this.setBodyWidthCache(_col, _row, body);
+    return body;
   }
   // getBodyLayoutRangeById(id: LayoutObjectId): CellRange {
   //   for (let col = 0; col < (this.colCount ?? 0); col++) {
@@ -1918,9 +1931,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // if (this._CellHeaderPathMap.has(`${col}-${row}`)) {
     //   return this._CellHeaderPathMap.get(`${col}-${row}`);
     // }
-    if (col === this._lastCellCol && row === this._lastCellRow) {
-      return this._lastCellHeaderPath;
-    }
+    // if (col === this._lastCellCol && row === this._lastCellRow) {
+    //   return this._lastCellHeaderPath;
+    // }
+
     let _largeCellRangeCacheIndex = -1;
     for (let i = 0; i < this._largeCellRangeCache.length; i++) {
       const range = this._largeCellRangeCache[i];
@@ -1929,6 +1943,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         break;
       }
     }
+
+    let colPath: ITreeLayoutHeadNode[] = this.getColHeaderPathCache(col, row);
+    let rowPath: ITreeLayoutHeadNode[] = this.getRowHeaderPathCache(col, row);
+
     // if (_largeCellRangeCacheIndex !== -1) {
     //   const range = this._largeCellRangeCache[_largeCellRangeCacheIndex];
     //   if (this._CellHeaderPathMap.has(`${range.start.col}-${range.start.row}`)) {
@@ -1938,17 +1956,22 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // console.log(`${col}-${row}`);
     const recordCol = this.getBodyIndexByCol(col);
     const recordRow = this.getBodyIndexByRow(row) + this.currentPageStartIndex;
-    let colPath: ITreeLayoutHeadNode[] = [];
-    let rowPath: ITreeLayoutHeadNode[] = [];
-    if (row >= 0 && recordCol >= 0) {
+
+    // column
+    if (!colPath && row >= 0 && recordCol >= 0) {
       colPath = this.columnDimensionTree.getTreePath(
         recordCol,
         this.showHeader && this.showColumnHeader
           ? row - (this.columnHeaderTitle ? 1 : 0)
           : this.columnDimensionTree.totalLevel
       );
+      // this._colHeaderPathCache.set(col, colPath);
+      this.setColHeaderPathCache(col, row, colPath);
     }
-    if (col >= 0 && recordRow >= 0) {
+
+    // row
+    if (!rowPath && col >= 0 && recordRow >= 0) {
+      rowPath = [];
       if (this.rowHierarchyType === 'tree') {
         // 注释了原有逻辑
         // if (col >= this.rowHeaderLevelCount) {
@@ -1979,7 +2002,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           }
           // 组装好pathIds后从树中找出具体路径paths
           const findedRowPath = findTree.getTreePathByCellIds(pathIds);
-          rowPath = rowPath.concat(findedRowPath);
+          // rowPath = rowPath.concat(findedRowPath);
+          rowPath.push(...findedRowPath);
           findTree = this._rowHeaderExtensionTree[row_pathIds[level]];
           level++;
         }
@@ -1991,12 +2015,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             : this.rowDimensionTree.totalLevel
         );
       }
+      // this._rowHeaderPathCache.set(row, rowPath);
+      this.setRowHeaderPathCache(col, row, rowPath);
     }
     const p = { colHeaderPaths: colPath, rowHeaderPaths: rowPath, cellLocation: this.getCellLocation(col, row) };
     // this._CellHeaderPathMap.set(`${col}-${row}`, p);
-    this._lastCellHeaderPath = p;
-    this._lastCellCol = col;
-    this._lastCellRow = row;
     return p;
   }
   getCellHeaderPaths(col: number, row: number): IPivotTableCellHeaderPaths {
@@ -3662,6 +3685,71 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } else {
         this._cornerHeaderCellIds.splice(0, this._cornerHeaderCellIds.length);
       }
+    }
+  }
+  enableUseGetBodyCache() {
+    this._useGetBodyCache = true;
+    this._getBodyCache.clear();
+  }
+  disableUseGetBodyCache() {
+    this._useGetBodyCache = true;
+    this._getBodyCache.clear();
+  }
+  enableUseHeaderPathCache() {
+    this._useHeaderPathCache = true;
+    this._colHeaderPathCache.clear();
+    this._rowHeaderPathCache.clear();
+  }
+  disableUseHeaderPathCache() {
+    this._useHeaderPathCache = true;
+    this._colHeaderPathCache.clear();
+    this._rowHeaderPathCache.clear();
+  }
+  getBodyWidthCache(col: number, row: number) {
+    if (!this._useGetBodyCache || this.isHeader(col, row)) {
+      return undefined;
+    }
+    if (this.indicatorsAsCol && this._getBodyCache.has(col)) {
+      return this._getBodyCache.get(col);
+    } else if (!this.indicatorsAsCol && this._getBodyCache.has(row)) {
+      return this._getBodyCache.get(col);
+    }
+    return undefined;
+  }
+  setBodyWidthCache(col: number, row: number, cache: IndicatorData | SeriesNumberColumnData) {
+    if (!this._useGetBodyCache || this.isHeader(col, row)) {
+      return;
+    }
+    if (this.indicatorsAsCol) {
+      this._getBodyCache.set(col, cache);
+    } else {
+      this._getBodyCache.set(row, cache);
+    }
+  }
+
+  getColHeaderPathCache(col: number, row: number) {
+    if (this._useHeaderPathCache && !this.isHeader(col, row) && this._colHeaderPathCache.has(col)) {
+      return this._colHeaderPathCache.get(col);
+    }
+    return undefined;
+  }
+
+  setColHeaderPathCache(col: number, row: number, cache: ITreeLayoutHeadNode[]) {
+    if (this._useHeaderPathCache && !this.isHeader(col, row)) {
+      this._colHeaderPathCache.set(col, cache);
+    }
+  }
+
+  getRowHeaderPathCache(col: number, row: number) {
+    if (this._useHeaderPathCache && !this.isHeader(col, row) && this._rowHeaderPathCache.has(row)) {
+      return this._rowHeaderPathCache.get(row);
+    }
+    return undefined;
+  }
+
+  setRowHeaderPathCache(col: number, row: number, cache: ITreeLayoutHeadNode[]) {
+    if (this._useHeaderPathCache && !this.isHeader(col, row)) {
+      this._rowHeaderPathCache.set(row, cache);
     }
   }
 }
