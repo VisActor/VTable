@@ -221,7 +221,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // rowCount = 0,
       // colCount = 0,
       frozenColCount = 0,
-      // frozenRowCount = 0,
+      frozenRowCount,
       defaultRowHeight = 40,
       defaultHeaderRowHeight,
       defaultColWidth = 80,
@@ -328,6 +328,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.pixelRatio = pixelRatio;
     internalProps.frozenColCount = frozenColCount;
+    internalProps.frozenRowCount = frozenRowCount;
 
     internalProps.defaultRowHeight = defaultRowHeight;
     internalProps.defaultHeaderRowHeight = defaultHeaderRowHeight ?? defaultRowHeight; // defaultHeaderRowHeight没有设置取defaultRowHeight
@@ -1807,8 +1808,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 获取屏幕坐标对应的单元格信息，考虑滚动
    * @param this
-   * @param relativeX 左边x值，相对于容器左上角，考虑表格滚动
-   * @param relativeY 左边y值，相对于容器左上角，考虑表格滚动
+   * @param relativeX 左边x值，相对于容器左上角，已考虑格滚动情况
+   * @param relativeY 左边y值，相对于容器左上角，已考虑格滚动情况
    * @returns
    */
   getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound {
@@ -2871,7 +2872,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (
         customMerge &&
         customMerge.range &&
-        (customMerge.text || customMerge.customLayout || customMerge.customRender)
+        (isValid(customMerge.text) || customMerge.customLayout || customMerge.customRender)
       ) {
         return customMerge.range;
       }
@@ -2886,7 +2887,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCustomMerge(col: number, row: number) {
     if (this.internalProps.customMergeCell) {
       const customMerge = this.internalProps.customMergeCell(col, row, this);
-      if (customMerge && customMerge.range && (customMerge.text || customMerge.customLayout || this.customRender)) {
+      if (
+        customMerge &&
+        customMerge.range &&
+        (isValid(customMerge.text) || customMerge.customLayout || this.customRender)
+      ) {
         if (customMerge.style) {
           const styleClass = this.internalProps.bodyHelper.getStyleClass('text');
           const style = customMerge.style;
@@ -4287,5 +4292,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   get headerDomContainer() {
     return this.internalProps.headerDomContainer;
+  }
+  /**
+   * 显示移动列或移动行的高亮线  如果(col，row)单元格是列头 则显示高亮列线；  如果(col，row)单元格是行头 则显示高亮行线
+   * @param col 在表头哪一列后显示高亮线
+   * @param row 在表头哪一行后显示高亮线
+   */
+  showMoverLine(col: number, row: number) {
+    this.scenegraph.component.showMoveCol(col, row, 0);
+    this.scenegraph.renderSceneGraph();
+  }
+  /**
+   * 隐藏掉移动列或移动行的高亮线
+   * @param col
+   * @param row
+   */
+  hideMoverLine(col: number, row: number) {
+    this.scenegraph.component.hideMoveCol();
+    this.scenegraph.renderSceneGraph();
   }
 }

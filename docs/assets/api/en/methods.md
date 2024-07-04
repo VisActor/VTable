@@ -1165,3 +1165,46 @@ Determines whether the cell is in the visible area of the cell. If the cell is c
 ```
   cellIsInVisualView(col: number, row: number)
 ```
+
+## getCellAtRelativePosition(Function)
+
+Gets the cell position relative to the upper left corner of the table.
+
+In the case of scrolling, the cells obtained are those after scrolling. For example, if the currently displayed rows are 100-120, the cell position relative to the upper left corner of the table (10,100) is (first column, 103rd row), assuming the row height is 40px.
+
+```
+/**
+* Get the cell information corresponding to the screen coordinates, taking scrolling into account
+* @param this
+* @param relativeX The left x value, relative to the upper left corner of the container, taking into account the scrolling of the grid
+* @param relativeY The left y value, relative to the upper left corner of the container, taking into account the scrolling of the grid
+* @returns
+*/
+getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound
+```
+
+## showMoverLine(Function)
+
+Displays a highlighted line for moving columns or rows
+
+```
+/**
+* Display the highlight line of the moving column or row If the (col, row) cell is the column header, the highlight column line is displayed; If the (col, row) cell is the row header, the highlight row line is displayed
+* @param col Which column in the table header should be highlighted after?
+* @param row The row after which the highlighted line is displayed
+*/
+showMoverLine(col: number, row: number)
+```
+
+## hideMoverLine(Function)
+
+Hide the highlight line of the moved column or row
+
+```
+/**
+* Hide the highlight line of the moved column or row
+* @param col
+* @param row
+*/
+hideMoverLine(col: number, row: number)
+```

@@ -4,7 +4,7 @@ group: component
 title: cell custom dom component
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-vtable-cell-dom-component.jpeg
 order: 1-1
-link: '../guide/Developer_Ecology/react'
+link: '../../guide/Developer_Ecology/react'
 ---
 
 # cell custom dom component

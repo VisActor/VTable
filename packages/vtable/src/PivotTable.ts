@@ -501,7 +501,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       (layoutMap.rowHeaderLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount,
       this.options.frozenColCount ?? 0
     );
-    table.frozenRowCount = layoutMap.headerLevelCount;
+    // table.frozenRowCount = layoutMap.headerLevelCount;
+    table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
 
     if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
       table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
