@@ -69,7 +69,8 @@ import type {
   WidthAdaptiveModeDef,
   HeightAdaptiveModeDef,
   ColumnInfo,
-  RowInfo
+  RowInfo,
+  CellAddressWithBound
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -624,7 +625,8 @@ export interface BaseTableAPI {
   isFrozenCell: (col: number, row: number) => { row: boolean; col: boolean } | null;
   getRowAt: (absoluteY: number) => { top: number; row: number; bottom: number };
   getColAt: (absoluteX: number) => { left: number; col: number; right: number };
-  getCellAt: (absoluteX: number, absoluteY: number) => CellAddress;
+  getCellAt: (absoluteX: number, absoluteY: number) => CellAddressWithBound;
+  getCellAtRelativePosition: (absoluteX: number, absoluteY: number) => CellAddressWithBound;
   _makeVisibleCell: (col: number, row: number) => void;
   // setFocusCursor(col: number, row: number): void;
   // focusCell(col: number, row: number): void;

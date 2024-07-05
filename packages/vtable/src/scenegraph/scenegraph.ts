@@ -1619,7 +1619,7 @@ export class Scenegraph {
       const drawRange = this.table.getDrawRange();
       if (abstractY >= drawRange.top && abstractY <= drawRange.bottom) {
         // to do: 处理最后一列外调整列宽
-        cell = this.table.getCellAt(abstractX - offset, abstractY);
+        cell = this.table.getCellAtRelativePosition(abstractX - offset, abstractY);
         return cell;
       }
       return { col: -1, row: -1 };

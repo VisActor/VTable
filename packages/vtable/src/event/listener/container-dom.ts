@@ -6,6 +6,7 @@ import { handleWhell } from '../scroll';
 import { browser } from '../../tools/helper';
 import type { EventManager } from '../event';
 import { getPixelRatio } from '../../tools/pixel-ratio';
+import { endResizeCol, endResizeRow } from './table-group';
 
 export function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager.table;
@@ -512,6 +513,11 @@ export function bindContainerDomListener(eventManager: EventManager) {
     table.eventManager.isDown = false;
     table.eventManager.isDraging = false;
     table.eventManager.inertiaScroll.endInertia();
+    if (stateManager.isResizeCol()) {
+      endResizeCol(table);
+    } else if (stateManager.isResizeRow()) {
+      endResizeRow(table);
+    }
   };
   eventManager.globalEventListeners.push({
     name: 'pointerup',
