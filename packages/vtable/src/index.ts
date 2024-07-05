@@ -22,6 +22,7 @@ import type {
   ListTableConstructorOptions,
   PivotTableConstructorOptions,
   PivotChartConstructorOptions,
+  GanttConstructorOptions,
   IHeaderTreeDefine,
   IDimension,
   IIndicator,
@@ -33,6 +34,7 @@ import type {
 import { ListTable } from './ListTable';
 import { PivotTable } from './PivotTable';
 import { PivotChart } from './PivotChart';
+import { Gantt } from './Gantt';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
 
@@ -67,6 +69,8 @@ export {
   PivotTableConstructorOptions,
   PivotChartConstructorOptions,
   PivotChart,
+  GanttConstructorOptions,
+  Gantt,
   IHeaderTreeDefine,
   IDimension,
   IIndicator,
