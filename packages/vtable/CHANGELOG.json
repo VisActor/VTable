@@ -2,6 +2,47 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.5.0",
+      "tag": "@visactor/vtable_v1.5.0",
+      "date": "Fri, 05 Jul 2024 10:43:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add showMoverLine and hideMoverLine api #2009\n\n"
+          },
+          {
+            "comment": "fix: pivot chart select state #2017\n\n"
+          },
+          {
+            "comment": "fix: disable select and edit input should move when input is outside of table #2039\n\n"
+          },
+          {
+            "comment": "fix: last column resize width error #2040\n\n"
+          },
+          {
+            "comment": "fix: fix test judgement in customMergeCell #2031"
+          },
+          {
+            "comment": "fix: fix selected highlight update when scrolling #2028"
+          },
+          {
+            "comment": "fix: fix select-rect update when scroll #2015"
+          },
+          {
+            "comment": "fix: fix frozen cell update problem in sort #1997"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add formatExcelJSCell config in vtable-export #1989"
+          },
+          {
+            "comment": "feat: optimize package size & add load on demand feature"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.4.2",
       "tag": "@visactor/vtable_v1.4.2",
       "date": "Tue, 02 Jul 2024 12:48:08 GMT",
