@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/vtable",
       "comment": "feat: add formatExcelJSCell config in vtable-export #1989",
-      "type": "none"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vtable"
