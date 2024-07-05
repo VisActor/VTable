@@ -1,3 +1,33 @@
+# v1.4.2
+
+2024-07-05
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: corner title can display row and column diemensionTitle [#1926](https://github.com/VisActor/VTable/issues/1926)
+- **@visactor/vtable**: add column hide config [#1991](https://github.com/VisActor/VTable/issues/1991)
+- **@visactor/vtable**: add getCellAtRelativePosition api
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: when not exit edit state then can not select other cells [#1974](https://github.com/VisActor/VTable/issues/1974)
+- **@visactor/vtable**: selected_clear event trigger [#1981](https://github.com/VisActor/VTable/issues/1981)
+- **@visactor/vtable**: pivotTable virtual node edit value not work [#2002](https://github.com/VisActor/VTable/issues/2002)
+- **@visactor/vtable**: tooltip content can not be selected [#2003](https://github.com/VisActor/VTable/issues/2003)
+- **@visactor/vtable**: fix vrender export module
+- **@visactor/vtable**: fix merge cell update performance problem [#1972](https://github.com/VisActor/VTable/issues/1972)
+- **@visactor/vtable**: fix regexp format for webpack 3 [#2005](https://github.com/VisActor/VTable/issues/2005)
+- **@visactor/vtable**: fix width computation in shrinkSparklineFirst mode
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: sparkline cellType set aggregationType None automatically [#1999](https://github.com/VisActor/VTable/issues/1999)
+
+
+
+[更多详情请查看 v1.4.2](https://github.com/VisActor/VTable/releases/tag/v1.4.2)
+
 # v1.4.0
 
 2024-06-21

@@ -8,7 +8,6 @@ import type {
   ColumnDefine,
   ColumnTypeOption,
   ImageColumnDefine,
-  MappingRule,
   ProgressbarColumnDefine,
   IRowSeriesNumber,
   TextColumnDefine,
@@ -17,27 +16,25 @@ import type {
 import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
 import { getProp } from '../utils/get-prop';
-import { createChartCellGroup } from './cell-type/chart-cell';
-import { createImageCellGroup } from './cell-type/image-cell';
-import { createProgressBarCell } from './cell-type/progress-bar-cell';
-import { createSparkLineCellGroup } from './cell-type/spark-line-cell';
-import { createCellGroup } from './cell-type/text-cell';
-import { createVideoCellGroup } from './cell-type/video-cell';
-import type { BaseTableAPI, HeaderData, PivotTableProtected } from '../../ts-types/base-table';
+import type { CreateChartCellGroup } from './cell-type/chart-cell';
+import type { CreateImageCellGroup } from './cell-type/image-cell';
+import type { CreateProgressBarCell } from './cell-type/progress-bar-cell';
+import type { CreateSparkLineCellGroup } from './cell-type/spark-line-cell';
+import type { CreateTextCellGroup } from './cell-type/text-cell';
+import type { CreateVideoCellGroup } from './cell-type/video-cell';
+import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
-import { CartesianAxis } from '../../components/axis/axis';
-import { createCheckboxCellGroup } from './cell-type/checkbox-cell';
-// import type { PivotLayoutMap } from '../../layout/pivot-layout';
-import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
+import type { ICartesianAxis } from '../../components/axis/axis';
+import { Factory } from '../../core/factory';
+import type { CreateCheckboxCellGroup } from './cell-type/checkbox-cell';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getQuadProps } from '../utils/padding';
-import { convertInternal } from '../../tools/util';
 import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
 import { isArray } from '@visactor/vutils';
 import { breakString } from '../utils/break-string';
-import { createRadioCellGroup } from './cell-type/radio-cell';
+import type { CreateRadioCellGroup } from './cell-type/radio-cell';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -164,7 +161,8 @@ export function createCell(
       }
     }
 
-    cellGroup = createCellGroup(
+    const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
+    cellGroup = createTextCellGroup(
       table,
       value,
       columnGroup,
@@ -188,6 +186,7 @@ export function createCell(
 
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
     if (axisConfig) {
+      const CartesianAxis: ICartesianAxis = Factory.getComponent('axis');
       const axis = new CartesianAxis(axisConfig, cellGroup.attribute.width, cellGroup.attribute.height, padding, table);
       cellGroup.clear();
       cellGroup.appendChild(axis.component);
@@ -203,6 +202,7 @@ export function createCell(
     }
   } else if (type === 'image') {
     // 创建图片单元格
+    const createImageCellGroup = Factory.getFunction('createImageCellGroup') as CreateImageCellGroup;
     cellGroup = createImageCellGroup(
       columnGroup,
       0,
@@ -216,12 +216,15 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
+      mayHaveIcon,
       table,
       cellTheme,
+      range,
       isAsync
     );
   } else if (type === 'video') {
     // 创建视频单元格
+    const createVideoCellGroup = Factory.getFunction('createVideoCellGroup') as CreateVideoCellGroup;
     cellGroup = createVideoCellGroup(
       columnGroup,
       0,
@@ -235,12 +238,15 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
+      mayHaveIcon,
       table,
       cellTheme,
+      range,
       isAsync
     );
   } else if (type === 'chart') {
     const chartInstance = table.internalProps.layoutMap.getChartInstance(col, row);
+    const createChartCellGroup = Factory.getFunction('createChartCellGroup') as CreateChartCellGroup;
     cellGroup = createChartCellGroup(
       null,
       columnGroup,
@@ -265,7 +271,8 @@ export function createCell(
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
     const dataValue = table.getCellOriginValue(col, row);
     // 创建基础文字单元格
-    cellGroup = createCellGroup(
+    const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
+    cellGroup = createTextCellGroup(
       table,
       value,
       columnGroup,
@@ -288,6 +295,7 @@ export function createCell(
     );
 
     // 创建bar group
+    const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
     const progressBarGroup = createProgressBarCell(
       define as ProgressbarColumnDefine,
       style,
@@ -306,6 +314,7 @@ export function createCell(
       cellGroup.appendChild(progressBarGroup);
     }
   } else if (type === 'sparkline') {
+    const createSparkLineCellGroup = Factory.getFunction('createSparkLineCellGroup') as CreateSparkLineCellGroup;
     cellGroup = createSparkLineCellGroup(
       null,
       columnGroup,
@@ -321,6 +330,7 @@ export function createCell(
       isAsync
     );
   } else if (type === 'checkbox') {
+    const createCheckboxCellGroup = Factory.getFunction('createCheckboxCellGroup') as CreateCheckboxCellGroup;
     cellGroup = createCheckboxCellGroup(
       null,
       columnGroup,
@@ -334,12 +344,15 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
+      mayHaveIcon,
       table,
       cellTheme,
       define as CheckboxColumnDefine,
+      range,
       isAsync
     );
   } else if (type === 'radio') {
+    const createRadioCellGroup = Factory.getFunction('createRadioCellGroup') as CreateRadioCellGroup;
     cellGroup = createRadioCellGroup(
       null,
       columnGroup,

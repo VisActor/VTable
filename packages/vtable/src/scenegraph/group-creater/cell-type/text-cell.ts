@@ -179,6 +179,8 @@ export function createCellGroup(
   return cellGroup;
 }
 
+export type CreateTextCellGroup = typeof createCellGroup;
+
 // /**
 //  * @description: 获取函数式赋值的样式，记录在cellTheme中
 //  * @param {BaseTableAPI} table

@@ -72,7 +72,7 @@ import { dealWithAnimationAppear } from './animation/appear';
 registerForVrender();
 
 // VChart poptip theme
-loadPoptip();
+// loadPoptip();
 container.load(splitModule);
 container.load(textMeasureModule);
 // container.load(renderServiceModule);
@@ -370,7 +370,7 @@ export class Scenegraph {
     this.clear = false;
     // this.frozenColCount = this.table.rowHeaderLevelCount;
     this.frozenColCount = this.table.frozenColCount;
-    this.frozenRowCount = this.table.columnHeaderLevelCount;
+    this.frozenRowCount = this.table.frozenRowCount;
 
     this.proxy = new SceneProxy(this.table);
 
@@ -1544,7 +1544,7 @@ export class Scenegraph {
     const type = this.table.getBodyColumnType(col, row);
     const cellGroup = this.getCell(col, row);
     if (type === 'image' || type === 'video') {
-      updateImageCellContentWhileResize(cellGroup, col, row, this.table);
+      updateImageCellContentWhileResize(cellGroup, col, row, 0, 0, this.table);
     }
   }
 
@@ -1619,7 +1619,7 @@ export class Scenegraph {
       const drawRange = this.table.getDrawRange();
       if (abstractY >= drawRange.top && abstractY <= drawRange.bottom) {
         // to do: 处理最后一列外调整列宽
-        cell = this.table.getCellAt(abstractX - offset, abstractY);
+        cell = this.table.getCellAtRelativePosition(abstractX - offset, abstractY);
         return cell;
       }
       return { col: -1, row: -1 };
@@ -1905,12 +1905,12 @@ export class Scenegraph {
   }
 
   getCellGroupY(row: number) {
-    if (row < this.table.columnHeaderLevelCount) {
+    if (row < this.table.frozenRowCount) {
       // column header
       return this.table.getRowsHeight(0, row - 1);
     } else if (row < this.table.rowCount - this.table.bottomFrozenRowCount) {
       // body
-      return this.table.getRowsHeight(this.table.columnHeaderLevelCount, row - 1);
+      return this.table.getRowsHeight(this.table.frozenRowCount, row - 1);
     } else if (row < this.table.rowCount) {
       // bottom frozen
       return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);

@@ -70,7 +70,7 @@ import { EventManager } from '../event/event';
 import { BodyHelper } from '../body-helper/body-helper';
 import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
-import { TooltipHandler } from '../components/tooltip/TooltipHandler';
+import type { ITooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import {
   AABBBounds,
@@ -104,7 +104,7 @@ import {
   getStyleTheme,
   updateRootElementPadding
 } from './tableHelper';
-import { MenuHandler } from '../components/menu/dom/MenuHandler';
+import type { IMenuHandler } from '../components/menu/dom/MenuHandler';
 import type {
   BaseTableAPI,
   BaseTableConstructorOptions,
@@ -113,8 +113,8 @@ import type {
 } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
-import { createLegend } from '../components/legend/create-legend';
-import { DataSet } from '@visactor/vdataset';
+import type { CreateLegend } from '../components/legend/create-legend';
+import type { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
 import type { Chart } from '../scenegraph/graphic/chart';
 import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
@@ -129,6 +129,7 @@ import type { ITextGraphicAttribute } from '@src/vrender';
 import { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
 import { hasAutoImageColumn } from '../layout/layout-helper';
+import { Factory } from './factory';
 import {
   getCellAt,
   getCellAtRelativePosition,
@@ -167,7 +168,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   canvasWidth?: number;
   canvasHeight?: number;
 
-  _vDataSet: DataSet;
+  _vDataSet?: DataSet;
   scenegraph: Scenegraph;
   stateManager: StateManager;
   eventManager: EventManager;
@@ -220,7 +221,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // rowCount = 0,
       // colCount = 0,
       frozenColCount = 0,
-      // frozenRowCount = 0,
+      frozenRowCount,
       defaultRowHeight = 40,
       defaultHeaderRowHeight,
       defaultColWidth = 80,
@@ -327,6 +328,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.pixelRatio = pixelRatio;
     internalProps.frozenColCount = frozenColCount;
+    internalProps.frozenRowCount = frozenRowCount;
 
     internalProps.defaultRowHeight = defaultRowHeight;
     internalProps.defaultHeaderRowHeight = defaultHeaderRowHeight ?? defaultRowHeight; // defaultHeaderRowHeight没有设置取defaultRowHeight
@@ -413,13 +415,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           : 0
         : 10;
     // 生成scenegraph
-    this._vDataSet = new DataSet();
+    // this._vDataSet = new DataSet();
     this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
 
     if (options.legends) {
       internalProps.legends = [];
+      const createLegend = Factory.getFunction('createLegend') as CreateLegend;
       if (Array.isArray(options.legends)) {
         for (let i = 0; i < options.legends.length; i++) {
           internalProps.legends.push(createLegend(options.legends[i], this));
@@ -447,6 +450,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       options.tooltip
     );
     if (internalProps.tooltip.renderMode === 'html') {
+      const TooltipHandler = Factory.getComponent('tooltipHandler') as ITooltipHandler;
       internalProps.tooltipHandler = new TooltipHandler(this, internalProps.tooltip.confine);
     }
     internalProps.menu = Object.assign(
@@ -463,6 +467,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       (this.globalDropDownMenu = options.menu.defaultHeaderMenuItems);
 
     if (internalProps.menu.renderMode === 'html') {
+      const MenuHandler = Factory.getComponent('menuHandler') as IMenuHandler;
       internalProps.menuHandler = new MenuHandler(this);
     }
 
@@ -1803,8 +1808,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 获取屏幕坐标对应的单元格信息，考虑滚动
    * @param this
-   * @param relativeX 左边x值，相对于容器左上角，考虑表格滚动
-   * @param relativeY 左边y值，相对于容器左上角，考虑表格滚动
+   * @param relativeX 左边x值，相对于容器左上角，已考虑格滚动情况
+   * @param relativeY 左边y值，相对于容器左上角，已考虑格滚动情况
    * @returns
    */
   getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound {
@@ -2260,7 +2265,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           : 0
         : 10;
     // 生成scenegraph
-    this._vDataSet = new DataSet();
+    // this._vDataSet = new DataSet();
     internalProps.legends?.forEach(legend => {
       legend?.release();
     });
@@ -2279,6 +2284,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.eventManager.updateEventBinder();
     if (options.legends) {
       internalProps.legends = [];
+      const createLegend = Factory.getFunction('createLegend') as CreateLegend;
       if (Array.isArray(options.legends)) {
         for (let i = 0; i < options.legends.length; i++) {
           internalProps.legends.push(createLegend(options.legends[i], this));
@@ -2311,6 +2317,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       options.tooltip
     );
     if (internalProps.tooltip.renderMode === 'html' && !internalProps.tooltipHandler) {
+      const TooltipHandler = Factory.getComponent('tooltipHandler') as ITooltipHandler;
       internalProps.tooltipHandler = new TooltipHandler(this, internalProps.tooltip.confine);
     }
 
@@ -2329,6 +2336,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       (this.globalDropDownMenu = options.menu.defaultHeaderMenuItems);
 
     if (internalProps.menu.renderMode === 'html' && !internalProps.menuHandler) {
+      const MenuHandler = Factory.getComponent('menuHandler') as IMenuHandler;
       internalProps.menuHandler = new MenuHandler(this);
     }
     this.clearCellStyleCache();
@@ -2864,7 +2872,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (
         customMerge &&
         customMerge.range &&
-        (customMerge.text || customMerge.customLayout || customMerge.customRender)
+        (isValid(customMerge.text) || customMerge.customLayout || customMerge.customRender)
       ) {
         return customMerge.range;
       }
@@ -2879,7 +2887,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCustomMerge(col: number, row: number) {
     if (this.internalProps.customMergeCell) {
       const customMerge = this.internalProps.customMergeCell(col, row, this);
-      if (customMerge && customMerge.range && (customMerge.text || customMerge.customLayout || this.customRender)) {
+      if (
+        customMerge &&
+        customMerge.range &&
+        (isValid(customMerge.text) || customMerge.customLayout || this.customRender)
+      ) {
         if (customMerge.style) {
           const styleClass = this.internalProps.bodyHelper.getStyleClass('text');
           const style = customMerge.style;
@@ -4280,5 +4292,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   get headerDomContainer() {
     return this.internalProps.headerDomContainer;
+  }
+  /**
+   * 显示移动列或移动行的高亮线  如果(col，row)单元格是列头 则显示高亮列线；  如果(col，row)单元格是行头 则显示高亮行线
+   * @param col 在表头哪一列后显示高亮线
+   * @param row 在表头哪一行后显示高亮线
+   */
+  showMoverLine(col: number, row: number) {
+    this.scenegraph.component.showMoveCol(col, row, 0);
+    this.scenegraph.renderSceneGraph();
+  }
+  /**
+   * 隐藏掉移动列或移动行的高亮线
+   * @param col
+   * @param row
+   */
+  hideMoverLine(col: number, row: number) {
+    this.scenegraph.component.hideMoveCol();
+    this.scenegraph.renderSceneGraph();
   }
 }

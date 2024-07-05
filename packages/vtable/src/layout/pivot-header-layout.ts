@@ -34,8 +34,6 @@ import type { PivotTable } from '../PivotTable';
 import type { PivotChart } from '../PivotChart';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { diffCellAddress } from '../tools/diff-cell';
-import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
-import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 import {
   checkHasCartesianChart,
   checkHasChart,
@@ -54,7 +52,8 @@ import { cloneDeep, isArray, isValid } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';
 import type { ITableAxisOption } from '../ts-types/component/axis';
 import { getQuadProps } from '../scenegraph/utils/padding';
-import { getAxisConfigInPivotChart } from './chart-helper/get-axis-config';
+import type { GetAxisConfigInPivotChart } from './chart-helper/get-axis-config';
+import { Factory } from '../core/factory';
 
 // export const sharedVar = { seqId: 0 };
 // let colIndex = 0;
@@ -2913,6 +2912,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       ((this.isFrozenRow(col, row) || this.isBottomFrozenRow(col, row)) &&
         isHasCartesianChartInline(col, row, 'col', this))
     ) {
+      const getAxisConfigInPivotChart = Factory.getFunction('getAxisConfigInPivotChart') as GetAxisConfigInPivotChart;
       return getAxisConfigInPivotChart(col, row, this);
     }
     return undefined;
@@ -3159,7 +3159,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
             const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
               for (const itemKey in item) {
-                if (item[itemKey] !== datum[itemKey]) {
+                if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
                   return false;
                 }
               }
@@ -3169,7 +3169,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
             // 判断维度点击
             const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
-              if (datum[item.key] !== item.value) {
+              if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
                 return false;
               }
               return true;
@@ -3184,7 +3184,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
             const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
               for (const itemKey in item) {
-                if (item[itemKey] !== datum[itemKey]) {
+                if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
                   return false;
                 }
               }
@@ -3194,7 +3194,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
             // 判断维度点击
             const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
-              if (datum[item.key] !== item.value) {
+              if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
                 return false;
               }
               return true;

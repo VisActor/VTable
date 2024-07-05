@@ -245,10 +245,10 @@
           ]
         },
         {
-          "path": "frozen_column",
+          "path": "frozen_column_row",
           "title": {
             "zh": "冻结",
-            "en": "frozen column"
+            "en": "frozen column & row"
           }
         },
         {
@@ -550,6 +550,13 @@
           }
         }
       ]
+    },
+    {
+      "path": "Load_on_Demand",
+      "title": {
+        "zh": "按需加载",
+        "en": "Load on Demand"
+      }
     },
     {
       "path": "search",

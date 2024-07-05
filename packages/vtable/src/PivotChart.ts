@@ -38,17 +38,53 @@ import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node
 import type { ITableAxisOption } from './ts-types/component/axis';
 import { cloneDeep, isArray } from '@visactor/vutils';
 import type { DiscreteLegend } from '@visactor/vrender-components';
-import { Title } from './components/title/title';
+import type { ITitleComponent } from './components/title/title';
 import { Env } from './tools/env';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
-import { cloneDeepSpec } from '@vutils-extension';
+import { cloneDeepSpec } from '@visactor/vutils-extension';
 import type { ITreeLayoutHeadNode } from './layout/tree-helper';
 import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
 import { IndicatorDimensionKeyPlaceholder } from './tools/global';
 import { checkHasCartesianChart } from './layout/chart-helper/get-chart-spec';
 import { supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
-import { EmptyTip } from './components/empty-tip/empty-tip';
+import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
+import { Factory } from './core/factory';
+import {
+  registerAxis,
+  registerEmptyTip,
+  registerLegend,
+  registerMenu,
+  registerTitle,
+  registerTooltip
+} from './components';
+import {
+  registerChartCell,
+  registerCheckboxCell,
+  registerImageCell,
+  registerProgressBarCell,
+  registerRadioCell,
+  registerSparkLineCell,
+  registerTextCell,
+  registerVideoCell
+} from './scenegraph/group-creater/cell-type';
+
+registerAxis();
+registerEmptyTip();
+registerLegend();
+registerMenu();
+registerTitle();
+registerTooltip();
+
+registerChartCell();
+registerCheckboxCell();
+registerImageCell();
+registerProgressBarCell();
+registerRadioCell();
+registerSparkLineCell();
+registerTextCell();
+registerVideoCell();
+
 export class PivotChart extends BaseTable implements PivotChartAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotChartProtected;
@@ -228,6 +264,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
     if (options.title) {
+      const Title = Factory.getComponent('title') as ITitleComponent;
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
@@ -235,6 +272,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
@@ -460,6 +498,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
     if (options.title) {
+      const Title = Factory.getComponent('title') as ITitleComponent;
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
@@ -467,6 +506,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
@@ -493,7 +533,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     table.rowCount = layoutMap.rowCount ?? 0;
     // table.frozenColCount = layoutMap.rowHeaderLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
     table.internalProps.frozenColCount = layoutMap.rowHeaderLevelCount ?? 0;
-    table.frozenRowCount = layoutMap.headerLevelCount;
+    // table.frozenRowCount = layoutMap.headerLevelCount;
+    table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
     if (table.bottomFrozenRowCount !== (layoutMap?.bottomFrozenRowCount ?? 0)) {
       table.bottomFrozenRowCount = layoutMap?.bottomFrozenRowCount ?? 0;
     }

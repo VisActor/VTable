@@ -89,3 +89,5 @@ export function getAxisDomainRangeAndLabels(
     ticks: scaleTicks
   };
 }
+
+export type GetAxisDomainRangeAndLabels = typeof getAxisDomainRangeAndLabels;

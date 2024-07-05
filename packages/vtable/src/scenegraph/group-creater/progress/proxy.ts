@@ -131,7 +131,7 @@ export class SceneProxy {
   }
 
   setParamsForRow() {
-    this.bodyTopRow = this.table.columnHeaderLevelCount;
+    this.bodyTopRow = this.table.frozenRowCount;
     this.bodyBottomRow = this.table.rowCount - 1 - this.table.bottomFrozenRowCount;
     // this.bodyLeftCol = 0;
     // this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
@@ -370,7 +370,7 @@ export class SceneProxy {
     }
 
     // create column
-    if (this.table.columnHeaderLevelCount) {
+    if (this.table.frozenRowCount) {
       // create colGroup
       const lastColumnGroup = (
         this.table.scenegraph.colHeaderGroup.lastChild instanceof Group
@@ -387,7 +387,7 @@ export class SceneProxy {
         this.currentCol + 1, // colStart
         endCol, // colEnd
         0, // rowStart
-        this.table.columnHeaderLevelCount - 1, // rowEnd
+        this.table.frozenRowCount - 1, // rowEnd
         'columnHeader', // isHeader
         this.table
       );
@@ -704,7 +704,7 @@ export class SceneProxy {
     // }
 
     if (
-      row >= this.table.columnHeaderLevelCount && // not column header
+      row >= this.table.frozenRowCount && // not column header
       row < this.table.rowCount - this.table.bottomFrozenRowCount && // not bottom frozen
       (row < this.rowStart || row > this.rowEnd) // not in proxy row range
     ) {

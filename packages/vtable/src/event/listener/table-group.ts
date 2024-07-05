@@ -957,7 +957,7 @@ export function bindGesture(eventManager: EventManager) {
     dblclickHandler(e, table);
   });
 }
-function endResizeCol(table: BaseTableAPI) {
+export function endResizeCol(table: BaseTableAPI) {
   table.stateManager.endResizeCol();
   // textStick 依赖了这个事件 所以一定要触发RESIZE_COLUMN_END
   // if ((table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END)) {
@@ -974,7 +974,7 @@ function endResizeCol(table: BaseTableAPI) {
   // }
 }
 
-function endResizeRow(table: BaseTableAPI) {
+export function endResizeRow(table: BaseTableAPI) {
   table.stateManager.endResizeRow();
 
   table.fireListeners(TABLE_EVENT_TYPE.RESIZE_ROW_END, {
