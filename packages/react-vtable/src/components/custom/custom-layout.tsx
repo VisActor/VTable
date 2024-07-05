@@ -13,6 +13,7 @@ type CustomLayoutProps = { componentIndex?: number };
 
 export type CustomLayoutFunctionArg = Partial<CustomRenderFunctionArg> & {
   role?: 'custom-layout' | 'header-custom-layout';
+  renderDefault?: boolean;
 };
 
 export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildren<CustomLayoutProps>, ref) => {
@@ -49,7 +50,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
 
       return {
         rootContainer: group,
-        renderDefault: false
+        renderDefault: !!children.props.renderDefault
       };
     },
     [children]
