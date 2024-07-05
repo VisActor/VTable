@@ -433,10 +433,11 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     colForDefine = range.start.col;
     rowForDefine = range.start.row;
   }
-  const define =
+  const define: TextColumnDefine = (
     cellLocation !== 'body'
       ? table.getHeaderDefine(colForDefine, rowForDefine)
-      : table.getBodyColumnDefine(colForDefine, rowForDefine);
+      : table.getBodyColumnDefine(colForDefine, rowForDefine)
+  ) as any;
 
   if (!range && (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)) {
     // 只有表头或者column配置合并单元格后再进行信息获取
@@ -456,7 +457,12 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
 
   // fast method for text
-  if (!addNew && !isMerge && canUseFastUpdate(col, row, oldCellGroup, autoWrapText, table)) {
+  if (
+    !addNew &&
+    !isMerge &&
+    !(define.customLayout || define.customRender || define.headerCustomLayout || define.headerCustomRender) &&
+    canUseFastUpdate(col, row, oldCellGroup, autoWrapText, table)
+  ) {
     // update group
     const cellWidth = table.getColWidth(col);
     const cellHeight = table.getRowHeight(row);
@@ -685,8 +691,10 @@ function updateCellContent(
     // clear react container
     if (table.reactCustomLayout) {
       const reactGroup = oldCellGroup.getChildByName('custom-container');
-      const { col, row } = reactGroup;
-      table.reactCustomLayout.removeCustomCell(col, row);
+      if (reactGroup) {
+        const { col, row } = reactGroup;
+        table.reactCustomLayout.removeCustomCell(col, row);
+      }
     }
   }
   const newCellGroup = createCell(
