@@ -5,21 +5,19 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add showMoverLine and hideMoverLine api [#2009](https://github.com/VisActor/VTable/issues/2009)
-- **@visactor/vtable**: add formatExcelJSCell config in vtable-export [#1989](https://github.com/VisActor/VTable/issues/1989)
-- **@visactor/vtable**: optimize package size & add load on demand feature
+- **@visactor/vtable**: 添加 showMoverLine 和 hideMoverLine API [#2009](https://github.com/VisActor/VTable/issues/2009)
+- **@visactor/vtable**: 在 vtable-export 中添加 formatExcelJSCell 配置 [#1989](https://github.com/VisActor/VTable/issues/1989)
+- **@visactor/vtable**: 优化包大小并添加按需加载功能
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: pivot chart select state [#2017](https://github.com/VisActor/VTable/issues/2017)
-- **@visactor/vtable**: disable select and edit input should move when input is outside of table [#2039](https://github.com/VisActor/VTable/issues/2039)
-- **@visactor/vtable**: last column resize width error [#2040](https://github.com/VisActor/VTable/issues/2040)
-- **@visactor/vtable**: fix test judgement in customMergeCell [#2031](https://github.com/VisActor/VTable/issues/2031)
-- **@visactor/vtable**: fix selected highlight update when scrolling [#2028](https://github.com/VisActor/VTable/issues/2028)
-- **@visactor/vtable**: fix select-rect update when scroll [#2015](https://github.com/VisActor/VTable/issues/2015)
-- **@visactor/vtable**: fix frozen cell update problem in sort [#1997](https://github.com/VisActor/VTable/issues/1997)
-
-
+- **@visactor/vtable**: 修复数据透视图选择状态问题 [#2017](https://github.com/VisActor/VTable/issues/2017)
+- **@visactor/vtable**: 修复输入框在表格外时选中进入编辑状态后表格移动的问题 [#2039](https://github.com/VisActor/VTable/issues/2039)
+- **@visactor/vtable**: 修复最后一列调整宽度错误 [#2040](https://github.com/VisActor/VTable/issues/2040)
+- **@visactor/vtable**: 修复自定义合并单元格的测试判断问题 [#2031](https://github.com/VisActor/VTable/issues/2031)
+- **@visactor/vtable**: 修复滚动时选中高亮更新问题 [#2028](https://github.com/VisActor/VTable/issues/2028)
+- **@visactor/vtable**: 修复滚动时选择矩形框更新问题 [#2015](https://github.com/VisActor/VTable/issues/2015)
+- **@visactor/vtable**: 修复排序中冻结单元格更新问题 [#1997](https://github.com/VisActor/VTable/issues/1997)
 
 [更多详情请查看 v1.5.0](https://github.com/VisActor/VTable/releases/tag/v1.5.0)
 
@@ -27,27 +25,26 @@
 
 2024-07-05
 
-
 **🆕 新增功能**
 
-- **@visactor/vtable**: corner title can display row and column diemensionTitle [#1926](https://github.com/VisActor/VTable/issues/1926)
-- **@visactor/vtable**: add column hide config [#1991](https://github.com/VisActor/VTable/issues/1991)
-- **@visactor/vtable**: add getCellAtRelativePosition api
+- **@visactor/vtable**: 角头标题可以显示行和列的维度标题 [#1926](https://github.com/VisActor/VTable/issues/1926)
+- **@visactor/vtable**: 添加列隐藏配置 [#1991](https://github.com/VisActor/VTable/issues/1991)
+- **@visactor/vtable**: 添加获取相对位置单元格的 API
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when not exit edit state then can not select other cells [#1974](https://github.com/VisActor/VTable/issues/1974)
-- **@visactor/vtable**: selected_clear event trigger [#1981](https://github.com/VisActor/VTable/issues/1981)
-- **@visactor/vtable**: pivotTable virtual node edit value not work [#2002](https://github.com/VisActor/VTable/issues/2002)
-- **@visactor/vtable**: tooltip content can not be selected [#2003](https://github.com/VisActor/VTable/issues/2003)
-- **@visactor/vtable**: fix vrender export module
-- **@visactor/vtable**: fix merge cell update performance problem [#1972](https://github.com/VisActor/VTable/issues/1972)
-- **@visactor/vtable**: fix regexp format for webpack 3 [#2005](https://github.com/VisActor/VTable/issues/2005)
-- **@visactor/vtable**: fix width computation in shrinkSparklineFirst mode
+- **@visactor/vtable**: 判断当未退出编辑状态时无法选择其他单元格 [#1974](https://github.com/VisActor/VTable/issues/1974)
+- **@visactor/vtable**: 触发 selected_clear 事件 [#1981](https://github.com/VisActor/VTable/issues/1981)
+- **@visactor/vtable**: 修复数据透视表虚拟节点编辑值不生效的问题 [#2002](https://github.com/VisActor/VTable/issues/2002)
+- **@visactor/vtable**: 修复无法选择Tooltip提示内容的问题 [#2003](https://github.com/VisActor/VTable/issues/2003)
+- **@visactor/vtable**: 修复 vrender 导出模块
+- **@visactor/vtable**: 修复合并单元格更新性能问题 [#1972](https://github.com/VisActor/VTable/issues/1972)
+- **@visactor/vtable**: 修复 webpack 3 的正则表达式格式问题 [#2005](https://github.com/VisActor/VTable/issues/2005)
+- **@visactor/vtable**: 修复 shrinkSparklineFirst 模式下宽度计算问题
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: sparkline cellType set aggregationType None automatically [#1999](https://github.com/VisActor/VTable/issues/1999)
+- **@visactor/vtable**: 自动将 sparkline cellType 的聚合类型设置为 None [#1999](https://github.com/VisActor/VTable/issues/1999)
 
 
 
