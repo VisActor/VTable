@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, ReactElement } from 'react';
 import React, { isValidElement, useCallback, useContext, useLayoutEffect, useRef } from 'react';
 import RootTableContext from '../../context/table';
 import { VRender } from '@visactor/vtable';
@@ -9,7 +9,7 @@ import { reconcilor } from './reconciler';
 import { LegacyRoot } from 'react-reconciler/constants';
 
 const { Group } = VRender;
-type CustomLayoutProps = { componentIndex?: number };
+type CustomLayoutProps = { componentId: string };
 
 export type CustomLayoutFunctionArg = Partial<CustomRenderFunctionArg> & {
   role?: 'custom-layout' | 'header-custom-layout';
@@ -17,7 +17,7 @@ export type CustomLayoutFunctionArg = Partial<CustomRenderFunctionArg> & {
 };
 
 export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildren<CustomLayoutProps>, ref) => {
-  const { componentIndex, children } = props;
+  const { componentId, children } = props;
   if (!isValidElement(children)) {
     return null;
   }
@@ -84,15 +84,15 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     console.log('update props', props, table);
 
     table?.checkReactCustomLayout(); // init reactCustomLayout component
-    if (table && !table.reactCustomLayout?.hasReactCreateGraphic(componentIndex, isHeaderCustomLayout)) {
+    if (table && !table.reactCustomLayout?.hasReactCreateGraphic(componentId, isHeaderCustomLayout)) {
       table.reactCustomLayout?.setReactCreateGraphic(
-        componentIndex,
+        componentId,
         createGraphic,
         // container.current,
         isHeaderCustomLayout
       ); // set customLayout function
-      table.reactCustomLayout?.setReactRemoveGraphic(componentIndex, removeContainer, isHeaderCustomLayout); // set customLayout function
-      table.reactCustomLayout?.updateCustomCell(componentIndex, isHeaderCustomLayout); // update cell content
+      table.reactCustomLayout?.setReactRemoveGraphic(componentId, removeContainer, isHeaderCustomLayout); // set customLayout function
+      table.reactCustomLayout?.updateCustomCell(componentId, isHeaderCustomLayout); // update cell content
     } else if (table) {
       // update all container
       container.current.forEach((value, key) => {
@@ -127,7 +127,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
   return null;
 };
 
-function reconcilorUpdateContainer(children, currentContainer, group, args) {
+function reconcilorUpdateContainer(children: ReactElement, currentContainer: any, group: typeof Group, args: any) {
   reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
   // group = group.firstChild;
   // if (isReactElement(group.attribute.html?.dom)) {
