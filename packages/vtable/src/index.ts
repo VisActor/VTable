@@ -30,8 +30,11 @@ import type {
   TextAlignType,
   TextBaselineType
 } from './ts-types';
-import { ListTable } from './ListTable';
-import { PivotTable } from './PivotTable';
+import { ListTableAll as ListTable } from './ListTable-all';
+import { ListTableSimple } from './ListTable-simple';
+// import { PivotTable } from './PivotTable';
+import { PivotTableAll as PivotTable } from './PivotTable-all';
+import { PivotTableSimple } from './PivotTable-simple';
 import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
@@ -62,8 +65,10 @@ export {
   TYPES,
   core,
   ListTable,
+  ListTableSimple,
   ListTableConstructorOptions,
   PivotTable,
+  PivotTableSimple,
   PivotTableConstructorOptions,
   PivotChartConstructorOptions,
   PivotChart,
@@ -116,3 +121,6 @@ function clearGlobal() {
   // columns.type.clearGlobal();
 }
 TYPES.AggregationType;
+
+export * from './components';
+export * from './scenegraph/group-creater/cell-type';

@@ -262,3 +262,5 @@ export function createVideoCellGroup(
 
   return cellGroup;
 }
+
+export type CreateVideoCellGroup = typeof createVideoCellGroup;

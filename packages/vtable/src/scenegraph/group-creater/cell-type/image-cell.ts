@@ -220,6 +220,8 @@ export function createImageCellGroup(
   return cellGroup;
 }
 
+export type CreateImageCellGroup = typeof createImageCellGroup;
+
 /**
  * 调整某个图片资源所在行列的行高列宽 之后重绘
  * @param col

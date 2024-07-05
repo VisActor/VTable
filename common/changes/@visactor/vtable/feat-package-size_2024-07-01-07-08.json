@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: optimize package size & add load on demand feature",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

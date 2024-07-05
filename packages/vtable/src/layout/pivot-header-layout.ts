@@ -34,8 +34,6 @@ import type { PivotTable } from '../PivotTable';
 import type { PivotChart } from '../PivotChart';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { diffCellAddress } from '../tools/diff-cell';
-import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
-import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 import {
   checkHasCartesianChart,
   checkHasChart,
@@ -54,7 +52,8 @@ import { cloneDeep, isArray, isValid } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';
 import type { ITableAxisOption } from '../ts-types/component/axis';
 import { getQuadProps } from '../scenegraph/utils/padding';
-import { getAxisConfigInPivotChart } from './chart-helper/get-axis-config';
+import type { GetAxisConfigInPivotChart } from './chart-helper/get-axis-config';
+import { Factory } from '../core/factory';
 
 // export const sharedVar = { seqId: 0 };
 // let colIndex = 0;
@@ -2913,6 +2912,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       ((this.isFrozenRow(col, row) || this.isBottomFrozenRow(col, row)) &&
         isHasCartesianChartInline(col, row, 'col', this))
     ) {
+      const getAxisConfigInPivotChart = Factory.getFunction('getAxisConfigInPivotChart') as GetAxisConfigInPivotChart;
       return getAxisConfigInPivotChart(col, row, this);
     }
     return undefined;
