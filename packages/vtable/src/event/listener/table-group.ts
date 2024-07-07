@@ -14,7 +14,7 @@ import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { Group } from '../../scenegraph/graphic/group';
 import { isValid } from '@visactor/vutils';
 import { getIconAndPositionFromTarget } from '../../scenegraph/utils/icon';
-import { cellInRanges } from '../../tools/helper';
+import { cellInRanges, getPromiseValue } from '../../tools/helper';
 import { Rect } from '../../tools/Rect';
 import type { EventManager } from '../event';
 import type { BaseTableAPI } from '../../ts-types/base-table';
@@ -342,18 +342,20 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
     }
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-    if (isCompleteEdit === false) {
-      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
-      return;
-    }
-    stateManager.updateInteractionState(InteractionState.default);
-    eventManager.dealTableHover();
-    //点击到表格外部不需要取消选中状态
-    if (table.options.select?.outsideClickDeselect) {
-      const isHasSelected = !!stateManager.select.ranges?.length;
-      eventManager.dealTableSelect();
-      stateManager.endSelectCells(true, isHasSelected);
-    }
+    getPromiseValue<boolean>(isCompleteEdit, (isCompleteEdit)=>{
+      if (isCompleteEdit === false) {
+        // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+        return;
+      }
+      stateManager.updateInteractionState(InteractionState.default);
+      eventManager.dealTableHover();
+      //点击到表格外部不需要取消选中状态
+      if (table.options.select?.outsideClickDeselect) {
+        const isHasSelected = !!stateManager.select.ranges?.length;
+        eventManager.dealTableSelect();
+        stateManager.endSelectCells(true, isHasSelected);
+      }
+    })
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
@@ -393,111 +395,114 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.hideMenu();
     }
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-    if (isCompleteEdit === false) {
-      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
-      return;
-    }
-    const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
-      ? eventArgsSet.eventArgs.target
-      : (e.target as any).role?.startsWith('icon')
-      ? e.target
-      : undefined;
-    eventManager.downIcon = hitIcon;
-    if (!hitIcon || (hitIcon.attribute as IIconGraphicAttribute).interactive === false) {
-      if (e.pointerType === 'touch') {
-        // 移动端事件特殊处理
-        eventManager.touchEnd = false;
-        eventManager.touchSetTimeout = setTimeout(() => {
-          eventManager.isTouchdown = false;
-          eventManager.touchMove = true;
+    getPromiseValue<boolean>(isCompleteEdit, (isCompleteEdit)=>{
+      if (isCompleteEdit === false) {
+        // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+        return;
+      }
+
+      const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
+        ? eventArgsSet.eventArgs.target
+        : (e.target as any).role?.startsWith('icon')
+          ? e.target
+          : undefined;
+      eventManager.downIcon = hitIcon;
+      if (!hitIcon || (hitIcon.attribute as IIconGraphicAttribute).interactive === false) {
+        if (e.pointerType === 'touch') {
+          // 移动端事件特殊处理
+          eventManager.touchEnd = false;
+          eventManager.touchSetTimeout = setTimeout(() => {
+            eventManager.isTouchdown = false;
+            eventManager.touchMove = true;
+            // 处理列宽调整
+            if (
+              !eventManager.touchEnd &&
+              (eventManager.checkColumnResize(eventArgsSet, true) || eventManager.checkRowResize(eventArgsSet, true))
+            ) {
+              // eventManager.startColumnResize(e);
+              // eventManager._resizing = true;
+              stateManager.updateInteractionState(InteractionState.grabing);
+              return;
+            }
+
+            // 处理column mover
+            if (!eventManager.touchEnd && eventManager.chechColumnMover(eventArgsSet)) {
+              stateManager.updateInteractionState(InteractionState.grabing);
+              return;
+            }
+
+            // 处理单元格选择
+            if (eventManager.dealTableSelect(eventArgsSet) && !eventManager.touchEnd) {
+              // 先执行单选逻辑，再更新为grabing模式
+              // stateManager.interactionState = 'grabing';
+              stateManager.updateInteractionState(InteractionState.grabing);
+              // console.log('DRAG_SELECT_START');
+            }
+          }, 500);
+          // 这里处理成hover  这样移动端 当点击到带有下拉菜单dropdown的单元格时 那个icon才能绘制出来。可以测试example的menu示例
+          eventManager.dealTableHover(eventArgsSet);
+        } else {
           // 处理列宽调整
           if (
-            !eventManager.touchEnd &&
+            !eventManager.checkCellFillhandle(eventArgsSet) &&
             (eventManager.checkColumnResize(eventArgsSet, true) || eventManager.checkRowResize(eventArgsSet, true))
           ) {
             // eventManager.startColumnResize(e);
             // eventManager._resizing = true;
+            table.scenegraph.updateChartState(null);
             stateManager.updateInteractionState(InteractionState.grabing);
             return;
           }
 
           // 处理column mover
-          if (!eventManager.touchEnd && eventManager.chechColumnMover(eventArgsSet)) {
+          if (eventManager.chechColumnMover(eventArgsSet)) {
             stateManager.updateInteractionState(InteractionState.grabing);
             return;
           }
 
+          // 处理填充功能
+          if (eventManager.checkCellFillhandle(eventArgsSet, true) && eventManager.dealFillSelect(eventArgsSet)) {
+            // table.eventManager.LastRange = {
+            //   start: table.stateManager.select.ranges[0].start,
+            //   end: {
+            //     col: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).col,
+            //     row: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).row
+            //   }
+            // };
+            // table.eventManager.SelectData = table.getCopyValue();
+            stateManager.updateInteractionState(InteractionState.grabing);
+            return;
+          }
           // 处理单元格选择
-          if (eventManager.dealTableSelect(eventArgsSet) && !eventManager.touchEnd) {
+          if (eventManager.dealTableSelect(eventArgsSet)) {
             // 先执行单选逻辑，再更新为grabing模式
             // stateManager.interactionState = 'grabing';
             stateManager.updateInteractionState(InteractionState.grabing);
             // console.log('DRAG_SELECT_START');
           }
-        }, 500);
-        // 这里处理成hover  这样移动端 当点击到带有下拉菜单dropdown的单元格时 那个icon才能绘制出来。可以测试example的menu示例
-        eventManager.dealTableHover(eventArgsSet);
-      } else {
-        // 处理列宽调整
-        if (
-          !eventManager.checkCellFillhandle(eventArgsSet) &&
-          (eventManager.checkColumnResize(eventArgsSet, true) || eventManager.checkRowResize(eventArgsSet, true))
-        ) {
-          // eventManager.startColumnResize(e);
-          // eventManager._resizing = true;
-          table.scenegraph.updateChartState(null);
-          stateManager.updateInteractionState(InteractionState.grabing);
-          return;
         }
-
-        // 处理column mover
-        if (eventManager.chechColumnMover(eventArgsSet)) {
-          stateManager.updateInteractionState(InteractionState.grabing);
-          return;
-        }
-
-        // 处理填充功能
-        if (eventManager.checkCellFillhandle(eventArgsSet, true) && eventManager.dealFillSelect(eventArgsSet)) {
-          // table.eventManager.LastRange = {
-          //   start: table.stateManager.select.ranges[0].start,
-          //   end: {
-          //     col: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).col,
-          //     row: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).row
-          //   }
-          // };
-          // table.eventManager.SelectData = table.getCopyValue();
-          stateManager.updateInteractionState(InteractionState.grabing);
-          return;
-        }
-        // 处理单元格选择
-        if (eventManager.dealTableSelect(eventArgsSet)) {
-          // 先执行单选逻辑，再更新为grabing模式
-          // stateManager.interactionState = 'grabing';
-          stateManager.updateInteractionState(InteractionState.grabing);
-          // console.log('DRAG_SELECT_START');
+      } else if ((hitIcon.attribute as any).funcType === IconFuncTypeEnum.dragReorder) {
+        stateManager.startMoveCol(
+          eventArgsSet.eventArgs.col,
+          eventArgsSet.eventArgs.row,
+          eventArgsSet.abstractPos.x,
+          eventArgsSet.abstractPos.y
+        );
+        stateManager.updateInteractionState(InteractionState.grabing);
+      }
+      if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_CELL)) {
+        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+        if (eventArgsSet.eventArgs) {
+          table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_CELL, {
+            col: eventArgsSet.eventArgs.col,
+            row: eventArgsSet.eventArgs.row,
+            event: e.nativeEvent,
+            target: eventArgsSet?.eventArgs?.target,
+            mergeCellInfo: eventArgsSet.eventArgs.mergeInfo
+          });
         }
       }
-    } else if ((hitIcon.attribute as any).funcType === IconFuncTypeEnum.dragReorder) {
-      stateManager.startMoveCol(
-        eventArgsSet.eventArgs.col,
-        eventArgsSet.eventArgs.row,
-        eventArgsSet.abstractPos.x,
-        eventArgsSet.abstractPos.y
-      );
-      stateManager.updateInteractionState(InteractionState.grabing);
-    }
-    if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_CELL)) {
-      const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-      if (eventArgsSet.eventArgs) {
-        table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_CELL, {
-          col: eventArgsSet.eventArgs.col,
-          row: eventArgsSet.eventArgs.row,
-          event: e.nativeEvent,
-          target: eventArgsSet?.eventArgs?.target,
-          mergeCellInfo: eventArgsSet.eventArgs.mergeInfo
-        });
-      }
-    }
+    })
   });
   // 注意和pointertap事件的处理 vrender中的事件系统： 是先触发pointerup 如果是点击到的场景树图元节点则会继续触发pointertap 否则不触发pointertap
   table.scenegraph.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
@@ -690,42 +695,43 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.hideMenu();
     }
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-    if (isCompleteEdit === false) {
-      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
-      return;
-    }
+    getPromiseValue<boolean>(isCompleteEdit, (isCompleteEdit)=>{
+      if (isCompleteEdit === false) {
+        // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+        return;
+      }
+      const hitIcon = (e.target as any).role?.startsWith('icon') ? e.target : undefined;
+      eventManager.downIcon = hitIcon;
+      // 处理列宽调整  这里和tableGroup.addEventListener('pointerdown' 逻辑一样
+      if (
+        !hitIcon &&
+        !eventManager.checkCellFillhandle(eventArgsSet) &&
+        !stateManager.columnResize.resizing &&
+        eventManager.checkColumnResize(eventArgsSet, true)
+      ) {
+        // eventManager.startColumnResize(e);
+        // eventManager._resizing = true;
+        table.scenegraph.updateChartState(null);
+        stateManager.updateInteractionState(InteractionState.grabing);
 
-    const hitIcon = (e.target as any).role?.startsWith('icon') ? e.target : undefined;
-    eventManager.downIcon = hitIcon;
-    // 处理列宽调整  这里和tableGroup.addEventListener('pointerdown' 逻辑一样
-    if (
-      !hitIcon &&
-      !eventManager.checkCellFillhandle(eventArgsSet) &&
-      !stateManager.columnResize.resizing &&
-      eventManager.checkColumnResize(eventArgsSet, true)
-    ) {
-      // eventManager.startColumnResize(e);
-      // eventManager._resizing = true;
-      table.scenegraph.updateChartState(null);
-      stateManager.updateInteractionState(InteractionState.grabing);
-
-      // 调整列宽最后一列有外扩了8px  需要将其考虑到table中 需要触发下MOUSEDOWN_TABLE事件
-      const { eventArgs } = eventArgsSet;
-      if (!eventArgs?.targetCell) {
-        const cell = table.getCellAt(
-          eventArgsSet.abstractPos.x - ResizeColumnHotSpotSize / 2,
-          eventArgsSet.abstractPos.y
-        );
-        if (cell) {
-          if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
-            table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
-              event: e.nativeEvent
-            });
+        // 调整列宽最后一列有外扩了8px  需要将其考虑到table中 需要触发下MOUSEDOWN_TABLE事件
+        const { eventArgs } = eventArgsSet;
+        if (!eventArgs?.targetCell) {
+          const cell = table.getCellAt(
+            eventArgsSet.abstractPos.x - ResizeColumnHotSpotSize / 2,
+            eventArgsSet.abstractPos.y
+          );
+          if (cell) {
+            if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+              table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+                event: e.nativeEvent
+              });
+            }
           }
         }
+        return;
       }
-      return;
-    }
+    })
   });
   table.scenegraph.stage.addEventListener('pointerup', (e: FederatedPointerEvent) => {
     // 处理列宽调整  这里和tableGroup.addEventListener('pointerup' 逻辑一样
