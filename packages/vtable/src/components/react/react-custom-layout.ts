@@ -109,7 +109,8 @@ export class ReactCustomLayout {
 function getUpdateCustomCellRange(componentId: string, table: BaseTableAPI, isHeaderCustomLayout?: boolean) {
   const rowSeriesNumber = table.internalProps.rowSeriesNumber ? 1 : 0;
   if (isHeaderCustomLayout) {
-    const { headerObjects, _headerCellIds, transpose } = table.internalProps.layoutMap;
+    const { headerObjects, _headerCellIds } = table.internalProps.layoutMap as any;
+    const { transpose } = table.internalProps;
     let headerId;
     for (let i = 0; i < headerObjects.length; i++) {
       const headerObject = headerObjects[i];
@@ -188,10 +189,10 @@ function getUpdateCustomCellRange(componentId: string, table: BaseTableAPI, isHe
 
   // to do: pivot table
 
-  // return {
-  //   startCol: 0,
-  //   endCol: table.colCount - 1,
-  //   startRow: 0,
-  //   endRow: table.rowCount - 1
-  // };
+  return {
+    startCol: 0,
+    endCol: table.colCount - 1,
+    startRow: 0,
+    endRow: table.rowCount - 1
+  };
 }
