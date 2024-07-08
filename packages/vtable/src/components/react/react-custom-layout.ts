@@ -216,16 +216,16 @@ function getUpdateCustomCellRangeInListTable(componentId: string, table: BaseTab
     }
   }
 
-  // return {
-  //   start: {
-  //     col: 0,
-  //     row: 0
-  //   },
-  //   end: {
-  //     col: table.colCount - 1,
-  //     row: table.rowCount - 1
-  //   }
-  // };
+  return {
+    start: {
+      col: 0,
+      row: 0
+    },
+    end: {
+      col: table.colCount - 1,
+      row: table.rowCount - 1
+    }
+  };
 }
 
 function getUpdateCustomCellRangeInPivotTable(
