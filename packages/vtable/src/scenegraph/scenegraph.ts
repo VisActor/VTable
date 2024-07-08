@@ -810,7 +810,7 @@ export class Scenegraph {
   recalculateColWidths() {
     const table = this.table;
 
-    if (table.widthMode === 'adaptive' || table.autoFillWidth) {
+    if (table.widthMode === 'adaptive' || table.autoFillWidth || table.internalProps.transpose) {
       computeColsWidth(this.table, 0, this.table.colCount - 1, true);
     } else {
       table._clearColRangeWidthsMap();
