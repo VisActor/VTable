@@ -171,10 +171,10 @@ export function createTable() {
   const instance = new ListTable(option);
 
   //设置表格数据
-  // instance.setRecords(personsDataSource, {
-  //   field: 'progress',
-  //   order: 'desc'
-  // });
+  instance.setRecords(personsDataSource, {
+    field: 'progress',
+    order: 'desc'
+  });
 
   instance.on('change_cell_value', arg => {
     console.log(arg);

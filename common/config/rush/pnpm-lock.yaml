@@ -292,6 +292,7 @@ importers:
       '@visactor/vscale': ~0.18.1
       '@visactor/vtable-editors': workspace:*
       '@visactor/vutils': ~0.18.9
+      '@visactor/vutils-extension': ~1.11.5
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
@@ -336,6 +337,7 @@ importers:
       '@visactor/vscale': 0.18.9
       '@visactor/vtable-editors': link:../vtable-editors
       '@visactor/vutils': 0.18.9
+      '@visactor/vutils-extension': 1.11.5
       cssfontparser: 1.2.1
     devDependencies:
       '@babel/core': 7.20.12
@@ -3818,6 +3820,13 @@ packages:
     dependencies:
       '@visactor/vdataset': 0.18.9
       '@visactor/vutils': 0.18.9
+
+  /@visactor/vutils-extension/1.11.5:
+    resolution: {integrity: sha512-FDTFOsEB3AIsXJQJH8reH3FWfNpXkhvTPiaGez4OFy0i7iWBzN74PDvKZmSDImQCWgfVeo4KWz9Jvl3qZO1tSw==}
+    dependencies:
+      '@visactor/vdataset': 0.18.9
+      '@visactor/vutils': 0.18.9
+    dev: false
 
   /@visactor/vutils/0.18.9:
     resolution: {integrity: sha512-+CPwBATTQUPtXQ0KVXFRz8SCwAY9m5aR9QmtsVqya+mgaay3moFaAPNTbdkLBuZM5ewRYVcv/3fsDxuH+NXfFg==}

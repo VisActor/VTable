@@ -560,3 +560,5 @@ export function createProgressBarCell(
   }
   return percentCompleteBarGroup;
 }
+
+export type CreateProgressBarCell = typeof createProgressBarCell;

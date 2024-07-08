@@ -1,6 +1,33 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 02 Jul 2024 12:48:08 GMT and should not be manually modified.
+This log was last generated on Fri, 05 Jul 2024 10:43:51 GMT and should not be manually modified.
+
+## 1.5.0
+Fri, 05 Jul 2024 10:43:51 GMT
+
+### Minor changes
+
+- feat: add formatExcelJSCell config in vtable-export #1989
+- feat: optimize package size & add load on demand feature
+
+### Updates
+
+- feat: add showMoverLine and hideMoverLine api #2009
+
+
+- fix: pivot chart select state #2017
+
+
+- fix: disable select and edit input should move when input is outside of table #2039
+
+
+- fix: last column resize width error #2040
+
+
+- fix: fix test judgement in customMergeCell #2031
+- fix: fix selected highlight update when scrolling #2028
+- fix: fix select-rect update when scroll #2015
+- fix: fix frozen cell update problem in sort #1997
 
 ## 1.4.2
 Tue, 02 Jul 2024 12:48:08 GMT
