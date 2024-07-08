@@ -9,6 +9,58 @@ const { Meta } = Card;
 
 import '@arco-design/web-react/dist/css/arco.css';
 
+const HeaderCustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }) => {
+  const { table, row, col, rect, text } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const [hover, setHover] = useState(false);
+
+  const groupRef = useRef(null);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        alignContent: 'center'
+      }}
+      ref={groupRef}
+    >
+      <Text
+        attribute={{
+          text: `header-${text}`,
+          fill: hover ? 'green' : '#000'
+        }}
+        onMouseEnter={(event: any) => {
+          // eslint-disable-next-line no-console, no-undef
+          console.log('groupRef-header', groupRef.current);
+          setHover(true);
+          event.currentTarget.stage.renderNextFrame();
+        }}
+        onMouseLeave={(event: any) => {
+          setHover(false);
+          event.currentTarget.stage.renderNextFrame();
+        }}
+      ></Text>
+      {/* {hover && (
+        // to do: component add/remove sync
+        <Text
+          attribute={{
+            text: 'hover',
+            fill: 'red',
+            fontSize: 8
+          }}
+        />
+      )} */}
+    </Group>
+  );
+};
+
 const UserProfileComponent = (props: CustomLayoutFunctionArg) => {
   const { table, row, col, rect, dataValue } = props;
   if (!table || row === undefined || col === undefined) {
@@ -35,7 +87,7 @@ const UserProfileComponent = (props: CustomLayoutFunctionArg) => {
         attribute={{
           width: 190,
           height: 25,
-          fill: '#e6fffb',
+          // fill: '#e6fffb',
           lineWidth: 1,
           cornerRadius: 10,
           display: 'flex',
@@ -209,17 +261,24 @@ function App() {
       // defaultRowHeight={80}
       onReady={table => {
         // eslint-disable-next-line no-undef
-        // (window as any).tableInstance = table;
+        (window as any).tableInstance = table;
       }}
       ReactDOM={ReactDOM}
+      rowSeriesNumber={{ title: '序号' }}
+      dragHeaderMode="column"
     >
       <ListColumn field={'bloggerId'} title={'ID'} />
-      <ListColumn field={'bloggerName'} title={'Name'} width={220}>
-        <UserProfileComponent role={'custom-layout'} />
+      <ListColumn field={'bloggerName'} title={'Name'} width={220} />
+      <ListColumn title={'Fan & Work & View'}>
+        <ListColumn title={'Fan & Work'}>
+          <ListColumn field={'fansCount'} title={'Fan'}>
+            <UserProfileComponent role={'custom-layout'} renderDefault={true} />
+          </ListColumn>
+          <ListColumn field={'worksCount'} title={'Work'} />
+          <HeaderCustomLayoutComponent role={'header-custom-layout'} text="aaaaaaaaa" />
+        </ListColumn>
+        <ListColumn field={'viewCount'} title={'View'} />
       </ListColumn>
-      <ListColumn field={'fansCount'} title={'Fan'} />
-      <ListColumn field={'worksCount'} title={'Work'} />
-      <ListColumn field={'viewCount'} title={'View'} />
     </ListTable>
   );
 }
