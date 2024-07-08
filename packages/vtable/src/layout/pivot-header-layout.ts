@@ -3712,7 +3712,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.indicatorsAsCol && this._getBodyCache.has(col)) {
       return this._getBodyCache.get(col);
     } else if (!this.indicatorsAsCol && this._getBodyCache.has(row)) {
-      return this._getBodyCache.get(col);
+      return this._getBodyCache.get(row);
     }
     return undefined;
   }
