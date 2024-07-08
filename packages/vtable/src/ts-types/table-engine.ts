@@ -562,6 +562,7 @@ export interface GanttConstructorOptions {
   }[];
   /** 定义列 */
   columns: ColumnsDefine; // (string | IDimension)[];
+  infoTableWidth?: 'auto' | number;
   /** 时间刻度对应的字段名 */
   startField: string;
   /** 时间刻度对应的字段名 */

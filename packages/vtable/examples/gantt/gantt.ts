@@ -47,9 +47,9 @@ export function createTable() {
 
   const columns: VTable.ColumnsDefine = [
     {
-      field: '',
-      title: '',
-      width: 50,
+      field: 'id',
+      title: 'ID',
+      width: 80,
       sort: true
     },
     {
@@ -75,6 +75,7 @@ export function createTable() {
   const option: VTable.GanttConstructorOptions = {
     records,
     columns,
+    infoTableWidth: 300,
     startField: 'start',
     endField: 'end',
     scales: [
