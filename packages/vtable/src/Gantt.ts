@@ -27,7 +27,7 @@ import { RowSeriesNumberHelper } from './core/row-series-number-helper';
 import type { EditManeger } from './edit/edit-manager';
 import { SimpleHeaderLayoutMap } from './layout';
 import { ListTable } from './ListTable';
-import { generateGanttChartColumns } from './gantt-helper';
+// import { generateGanttChartColumns } from './gantt-helper';
 
 export class Gantt {
   options: GanttConstructorOptions;
@@ -154,7 +154,7 @@ export class Gantt {
         listTable_options[key] = this.options[key];
       } else if (key === 'scales') {
         // debugger;
-        const cols = generateGanttChartColumns(this.options.scales, this.options.minDate, this.options.maxDate);
+        // const cols = generateGanttChartColumns(this.options.scales, this.options.minDate, this.options.maxDate);
       }
     }
     listTable_options.canvasWidth = this.options.infoTableWidth as number;

@@ -60,133 +60,100 @@ export class Scenegraph {
     this.grid = new GridComponent();
   }
 
-  updateTableSize() {
-    this.tableGroup.setAttributes({
-      x: this.table.tableX,
-      y: this.table.tableY,
-      width: Math.min(
-        this.table.tableNoFrameWidth,
-        Math.max(
-          this.colHeaderGroup.attribute.width,
-          this.bodyGroup.attribute.width,
-          this.bottomFrozenGroup.attribute.width,
-          0
-        ) +
-          Math.max(
-            this.cornerHeaderGroup.attribute.width,
-            this.rowHeaderGroup.attribute.width,
-            this.leftBottomCornerGroup.attribute.width,
-            0
-          ) +
-          Math.max(
-            this.rightTopCornerGroup.attribute.width,
-            this.rightFrozenGroup.attribute.width,
-            this.rightBottomCornerGroup.attribute.width,
-            0
-          )
-      ),
-      height: Math.min(
-        this.table.tableNoFrameHeight,
-        Math.max(
-          this.colHeaderGroup.attribute.height,
-          this.cornerHeaderGroup.attribute.height,
-          this.rightTopCornerGroup.attribute.height,
-          0
-        ) +
-          Math.max(
-            this.rowHeaderGroup.attribute.height,
-            this.bodyGroup.attribute.height,
-            this.rightFrozenGroup.attribute.height,
-            0
-          ) +
-          Math.max(
-            this.leftBottomCornerGroup.attribute.height,
-            this.bottomFrozenGroup.attribute.height,
-            this.rightBottomCornerGroup.attribute.height,
-            0
-          )
-      )
-    } as any);
+  // updateTableSize() {
+  //   this.tableGroup.setAttributes({
+  //     x: this._gantt.tableX,
+  //     y: this._gantt.tableY,
+  //     width: Math.min(
+  //       this._gantt.tableNoFrameWidth,
+  //       Math.max(
+  //         this.colHeaderGroup.attribute.width,
+  //         this.bodyGroup.attribute.width,
+  //         this.bottomFrozenGroup.attribute.width,
+  //         0
+  //       ) +
+  //         Math.max(
+  //           this.cornerHeaderGroup.attribute.width,
+  //           this.rowHeaderGroup.attribute.width,
+  //           this.leftBottomCornerGroup.attribute.width,
+  //           0
+  //         ) +
+  //         Math.max(
+  //           this.rightTopCornerGroup.attribute.width,
+  //           this.rightFrozenGroup.attribute.width,
+  //           this.rightBottomCornerGroup.attribute.width,
+  //           0
+  //         )
+  //     ),
+  //     height: Math.min(
+  //       this._gantt.tableNoFrameHeight,
+  //       Math.max(
+  //         this.colHeaderGroup.attribute.height,
+  //         this.cornerHeaderGroup.attribute.height,
+  //         this.rightTopCornerGroup.attribute.height,
+  //         0
+  //       ) +
+  //         Math.max(
+  //           this.rowHeaderGroup.attribute.height,
+  //           this.bodyGroup.attribute.height,
+  //           this.rightFrozenGroup.attribute.height,
+  //           0
+  //         ) +
+  //         Math.max(
+  //           this.leftBottomCornerGroup.attribute.height,
+  //           this.bottomFrozenGroup.attribute.height,
+  //           this.rightBottomCornerGroup.attribute.height,
+  //           0
+  //         )
+  //     )
+  //   } as any);
 
-    if (this.tableGroup.border && this.tableGroup.border.type === 'rect') {
-      if (this.table.theme.frameStyle?.innerBorder) {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
-      } else {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-        });
-      }
-    } else if (this.tableGroup.border && this.tableGroup.border.type === 'group') {
-      if (this.table.theme.frameStyle?.innerBorder) {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
-        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-          x: 0,
-          y: 0,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
-      } else {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-        });
-        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-          x: this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width,
-          height: this.tableGroup.attribute.height
-        });
-      }
-    }
-
-    if (this.table.bottomFrozenRowCount > 0) {
-      this.bottomFrozenGroup.setAttribute(
-        'y',
-        this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight()
-      );
-      this.leftBottomCornerGroup.setAttributes({
-        visible: true,
-        y: this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight(),
-        height: this.table.getBottomFrozenRowsHeight(),
-        width: this.table.getFrozenColsWidth()
-      });
-      this.rightBottomCornerGroup.setAttributes({
-        visible: true,
-        y: this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight(),
-        height: this.table.getBottomFrozenRowsHeight()
-      });
-    }
-
-    if (this.table.rightFrozenColCount > 0) {
-      this.rightFrozenGroup.setAttribute('x', this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth());
-      this.rightTopCornerGroup.setAttributes({
-        visible: true,
-        x: this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth(),
-        width: this.table.getRightFrozenColsWidth(),
-        height: this.table.getFrozenRowsHeight()
-      });
-      this.rightBottomCornerGroup.setAttributes({
-        visible: true,
-        x: this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth(),
-        width: this.table.getRightFrozenColsWidth()
-      });
-    }
-  }
+  //   if (this.tableGroup.border && this.tableGroup.border.type === 'rect') {
+  //     if (this._gantt.theme.frameStyle?.innerBorder) {
+  //       this.tableGroup.border.setAttributes({
+  //         x: this._gantt.tableX + this.tableGroup.border.attribute.lineWidth / 2,
+  //         y: this._gantt.tableY + this.tableGroup.border.attribute.lineWidth / 2,
+  //         width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
+  //         height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
+  //       });
+  //     } else {
+  //       this.tableGroup.border.setAttributes({
+  //         x: this._gantt.tableX - this.tableGroup.border.attribute.lineWidth / 2,
+  //         y: this._gantt.tableY - this.tableGroup.border.attribute.lineWidth / 2,
+  //         width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
+  //         height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+  //       });
+  //     }
+  //   } else if (this.tableGroup.border && this.tableGroup.border.type === 'group') {
+  //     if (this._gantt.theme.frameStyle?.innerBorder) {
+  //       this.tableGroup.border.setAttributes({
+  //         x: this._gantt.tableX + this.tableGroup.border.attribute.lineWidth / 2,
+  //         y: this._gantt.tableY + this.tableGroup.border.attribute.lineWidth / 2,
+  //         width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
+  //         height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
+  //       });
+  //       (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+  //         x: 0,
+  //         y: 0,
+  //         width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
+  //         height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
+  //       });
+  //     } else {
+  //       this.tableGroup.border.setAttributes({
+  //         x: this._gantt.tableX - this.tableGroup.border.attribute.lineWidth / 2,
+  //         y: this._gantt.tableY - this.tableGroup.border.attribute.lineWidth / 2,
+  //         width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
+  //         height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+  //       });
+  //       (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+  //         x: this.tableGroup.border.attribute.lineWidth / 2,
+  //         y: this.tableGroup.border.attribute.lineWidth / 2,
+  //         width: this.tableGroup.attribute.width,
+  //         height: this.tableGroup.attribute.height
+  //       });
+  //     }
+  //   }
+  // }
 }
 
 export function initSceneGraph(scene: Scenegraph) {
@@ -194,10 +161,10 @@ export function initSceneGraph(scene: Scenegraph) {
   const height = scene._gantt.tableNoFrameHeight;
 
   scene.tableGroup = new Group({ x: 0, y: 0, width, height, clip: true, pickable: false });
-  scene.tableGroup.role = 'table';
+  (scene.tableGroup as any).role = 'table';
 
   const dateHeader = createContainerGroup(0, 0, true);
-  dateHeader.role = 'date-header';
+  (dateHeader as any).role = 'date-header';
   scene.dateHeader = dateHeader;
 
   scene.tableGroup.addChild(dateHeader);
