@@ -397,6 +397,21 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
     _this
   );
 
+  if (!rowInfo || !colInfo) {
+    return {
+      row: -1,
+      col: -1,
+      rect: {
+        left: undefined,
+        right: undefined,
+        top: undefined,
+        bottom: undefined,
+        width: undefined,
+        height: undefined
+      }
+    };
+  }
+
   const { row, top, bottom, height } = rowInfo;
   const { col, left, right, width } = colInfo;
   const rect = {

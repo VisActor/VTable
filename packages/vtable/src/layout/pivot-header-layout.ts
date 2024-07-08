@@ -3706,7 +3706,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._rowHeaderPathCache.clear();
   }
   getBodyWidthCache(col: number, row: number) {
-    if (!this._useGetBodyCache || this.isHeader(col, row)) {
+    if (!this._useGetBodyCache || this.isHeader(col, row) || this.isSeriesNumber(col, row)) {
       return undefined;
     }
     if (this.indicatorsAsCol && this._getBodyCache.has(col)) {
@@ -3717,7 +3717,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return undefined;
   }
   setBodyWidthCache(col: number, row: number, cache: IndicatorData | SeriesNumberColumnData) {
-    if (!this._useGetBodyCache || this.isHeader(col, row)) {
+    if (!this._useGetBodyCache || this.isHeader(col, row) || this.isSeriesNumber(col, row)) {
       return;
     }
     if (this.indicatorsAsCol) {
@@ -3728,27 +3728,37 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
 
   getColHeaderPathCache(col: number, row: number) {
-    if (this._useHeaderPathCache && !this.isHeader(col, row) && this._colHeaderPathCache.has(col)) {
+    if (
+      this._useHeaderPathCache &&
+      !this.isHeader(col, row) &&
+      !this.isSeriesNumber(col, row) &&
+      this._colHeaderPathCache.has(col)
+    ) {
       return this._colHeaderPathCache.get(col);
     }
     return undefined;
   }
 
   setColHeaderPathCache(col: number, row: number, cache: ITreeLayoutHeadNode[]) {
-    if (this._useHeaderPathCache && !this.isHeader(col, row)) {
+    if (this._useHeaderPathCache && !this.isHeader(col, row) && !this.isSeriesNumber(col, row)) {
       this._colHeaderPathCache.set(col, cache);
     }
   }
 
   getRowHeaderPathCache(col: number, row: number) {
-    if (this._useHeaderPathCache && !this.isHeader(col, row) && this._rowHeaderPathCache.has(row)) {
+    if (
+      this._useHeaderPathCache &&
+      !this.isHeader(col, row) &&
+      !this.isSeriesNumber(col, row) &&
+      this._rowHeaderPathCache.has(row)
+    ) {
       return this._rowHeaderPathCache.get(row);
     }
     return undefined;
   }
 
   setRowHeaderPathCache(col: number, row: number, cache: ITreeLayoutHeadNode[]) {
-    if (this._useHeaderPathCache && !this.isHeader(col, row)) {
+    if (this._useHeaderPathCache && !this.isHeader(col, row) && !this.isSeriesNumber(col, row)) {
       this._rowHeaderPathCache.set(row, cache);
     }
   }
