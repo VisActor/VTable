@@ -43,19 +43,19 @@ const option = {
   header: [
     {
       field: "0",
-      caption: "name",
+      title: "name",
     },
     {
       field: "1",
-      caption: "age",
+      title: "age",
     },
     {
       field: "2",
-      caption: "gender",
+      title: "gender",
     },
     {
       field: "3",
-      caption: "hobby",
+      title: "hobby",
     },
   ],
   records: new Array(1000).fill(["John", 18, "male", "🏀"]),
