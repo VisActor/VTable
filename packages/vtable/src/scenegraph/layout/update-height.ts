@@ -187,6 +187,10 @@ export function updateCellHeight(
       (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
       (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
     if (customContainer) {
+      if (scene.table.reactCustomLayout) {
+        scene.table.reactCustomLayout.removeCustomCell(col, row);
+      }
+
       let customElementsGroup;
       customContainer.removeAllChild();
       cell.removeChild(customContainer);
