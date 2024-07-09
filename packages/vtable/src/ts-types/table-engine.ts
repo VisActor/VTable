@@ -553,7 +553,7 @@ export interface GanttConstructorOptions {
    */
   records?: any[];
   /** 时间刻度 */
-  scales: {
+  timelineScales: {
     unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
     step: number;
     format: (date: Date) => string;
@@ -561,8 +561,23 @@ export interface GanttConstructorOptions {
     headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   }[];
   /** 定义列 */
-  columns: ColumnsDefine; // (string | IDimension)[];
+  infoTableColumns?: ColumnsDefine; // (string | IDimension)[];
   infoTableWidth?: 'auto' | number;
+  gridStyle?: {
+    vertical: {
+      style: {
+        lineColor?: string;
+        lineWidth?: number;
+      };
+    };
+    horizontal: {
+      style: {
+        lineColor?: string;
+        lineWidth?: number;
+      };
+    };
+  };
+  timelineStyle?: {} | {}[];
   /** 时间刻度对应的字段名 */
   startField: string;
   /** 时间刻度对应的字段名 */
@@ -575,15 +590,12 @@ export interface GanttConstructorOptions {
   /** 设置的表格主题 */
   theme?: TableTheme;
   /** 设置任务条样式 可以设置多组 依次循环使用 */
-  barStyle?: IBarStyleOption[];
-
-  defaultRowHeight?: number;
+  barStyle?: IBarStyleOption[]; // 参考https://lightcharts.bytedance.net/charts/doc/options#series.gantt.barStyle
   defaultHeaderRowHeight?: number;
-  defaultColWidth?: number;
-  defaultHeaderColWidth?: number;
+  defaultRowHeight?: number;
+  timelineColWidth?: number;
 
   rowSeriesNumber?: IRowSeriesNumber;
-
   dragHeader?: boolean;
 
   /**

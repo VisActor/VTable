@@ -27,6 +27,7 @@ import { RowSeriesNumberHelper } from './core/row-series-number-helper';
 import type { EditManeger } from './edit/edit-manager';
 import { SimpleHeaderLayoutMap } from './layout';
 import { ListTable } from './ListTable';
+import { title } from 'process';
 // import { generateGanttChartColumns } from './gantt-helper';
 
 export class Gantt {
@@ -53,8 +54,20 @@ export class Gantt {
   element: HTMLElement;
   context: CanvasRenderingContext2D;
   theme: ITableThemeDefine;
+  rowHeight: number;
+  timelineColWidth: number;
+  colWidthPerDay: number; //分配给每日的宽度
+
+  orderedScales: any;
+  reverseOrderedScales: any;
+  headerLevel: number;
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
     this.options = options;
+    this.rowHeight = options?.defaultRowHeight ?? 40;
+    this.timelineColWidth = options?.timelineColWidth ?? 60;
+    this._orderScales();
+    this._generateTimeLineDateMap();
+    this.headerLevel = this.orderedScales.length;
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
     this.element.style.top = '0px';
     this.element.style.left = this.options.infoTableWidth ? `${this.options.infoTableWidth}px` : '0px';
@@ -150,15 +163,17 @@ export class Gantt {
   generateListTableOptions() {
     const listTable_options: ListTableConstructorOptions = {};
     for (const key in this.options) {
-      if (key !== 'scales' && key !== 'barStyle') {
-        listTable_options[key] = this.options[key];
-      } else if (key === 'scales') {
+      if (key === 'infoTableColumns') {
+        listTable_options.columns = this.options.infoTableColumns;
         // debugger;
-        // const cols = generateGanttChartColumns(this.options.scales, this.options.minDate, this.options.maxDate);
+        // const cols = generateGanttChartColumns(this.options.timelineScales, this.options.minDate, this.options.maxDate);
+      } else if (key !== 'timelineScales' && key !== 'barStyle') {
+        listTable_options[key] = this.options[key];
       }
     }
     listTable_options.canvasWidth = this.options.infoTableWidth as number;
     listTable_options.canvasHeight = this.canvasHeight ?? this.tableNoFrameHeight;
+    listTable_options.defaultHeaderRowHeight = this.rowHeight * this.headerLevel;
     listTable_options.clearDOM = false;
     return listTable_options;
   }
@@ -168,5 +183,98 @@ export class Gantt {
    */
   getElement(): HTMLElement {
     return this.element;
+  }
+
+  _orderScales() {
+    const { timelineScales } = this.options;
+    if (timelineScales) {
+      const order = ['year', 'quarter', 'month', 'week', 'day'];
+      const orderedScales = timelineScales.slice().sort((a, b) => {
+        const indexA = order.indexOf(a.unit);
+        const indexB = order.indexOf(b.unit);
+        if (indexA === -1) {
+          return 1;
+        } else if (indexB === -1) {
+          return -1;
+        }
+        return indexA - indexB;
+      });
+      const reverseOrderedScales = timelineScales.slice().sort((a, b) => {
+        const indexA = order.indexOf(a.unit);
+        const indexB = order.indexOf(b.unit);
+        if (indexA === -1) {
+          return 1;
+        } else if (indexB === -1) {
+          return -1;
+        }
+        return indexB - indexA;
+      });
+
+      this.orderedScales = orderedScales;
+      this.reverseOrderedScales = reverseOrderedScales;
+    }
+  }
+
+  _generateTimeLineDateMap() {
+    const startDate = new Date(this.options.minDate);
+    const endDate = new Date(this.options.maxDate);
+    let colWidthIncludeDays = 1000000;
+    // Iterate over each scale
+    for (const scale of this.reverseOrderedScales) {
+      const { unit, step, format } = scale;
+      const timelineDates: any[] = [];
+      scale.timelineDates = timelineDates;
+      // Generate the sub-columns for each step within the scale
+      let currentDate = new Date(startDate);
+
+      while (currentDate <= endDate) {
+        if (unit === 'day') {
+          const formattedDate = format(currentDate);
+          const columnTitle = formattedDate || currentDate.getDate().toString();
+          const dayCellConfig = {
+            days: step,
+            start: currentDate,
+            end: new Date(currentDate.getTime() + step * 24 * 60 * 60 * 1000),
+            title: columnTitle
+          };
+          timelineDates.push(dayCellConfig);
+          currentDate.setDate(currentDate.getDate() + step);
+        } else if (unit === 'month') {
+          const year = currentDate.getFullYear();
+          const month = currentDate.getMonth() + 1;
+          const end = new Date(year, month + step - 1, 0);
+          if (end.getTime() > endDate.getTime()) {
+            end.setDate(endDate.getDate());
+          }
+          const start = currentDate;
+          const formattedDate = format(month);
+          const columnTitle = formattedDate || month;
+          const dayCellConfig = {
+            days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+            start,
+            end,
+            title: columnTitle
+          };
+
+          timelineDates.push(dayCellConfig);
+          currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + step, 1);
+        }
+      }
+    }
+
+    const firstScale = this.reverseOrderedScales[0];
+    const { unit, step } = firstScale;
+    if (unit === 'day') {
+      colWidthIncludeDays = step;
+    } else if (unit === 'month') {
+      colWidthIncludeDays = 30;
+    } else if (unit === 'week') {
+      colWidthIncludeDays = 7;
+    } else if (unit === 'quarter') {
+      colWidthIncludeDays = 90;
+    } else if (unit === 'year') {
+      colWidthIncludeDays = 365;
+    }
+    this.colWidthPerDay = this.timelineColWidth / colWidthIncludeDays;
   }
 }

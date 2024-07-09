@@ -1,18 +1,6 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
-const generatePersons = count => {
-  return Array.from(new Array(count)).map((_, i) => ({
-    id: i + 1,
-    email1: `${i + 1}@xxx.com`,
-    name: `小明${i + 1}`,
-    lastName: '王',
-    date1: '2022年9月1日',
-    tel: '000-0000-0000',
-    sex: i % 2 === 0 ? 'boy' : 'girl',
-    work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
-    city: 'beijing'
-  }));
-};
 
 export function createTable() {
   const records = [
@@ -74,11 +62,12 @@ export function createTable() {
   ];
   const option: VTable.GanttConstructorOptions = {
     records,
-    columns,
+    infoTableColumns: columns,
     infoTableWidth: 300,
+    timelineColWidth: 60,
     startField: 'start',
     endField: 'end',
-    scales: [
+    timelineScales: [
       {
         unit: 'month',
         step: 1,
@@ -94,8 +83,8 @@ export function createTable() {
         }
       }
     ],
-    minDate: '2024-07-01',
-    maxDate: '2024-07-31'
+    minDate: '2024-07-10',
+    maxDate: '2024-09-17'
   };
   // columns:[
   //   {
@@ -114,4 +103,8 @@ export function createTable() {
   // ]
   const tableInstance = new VTable.Gantt(document.getElementById(CONTAINER_ID)!, option);
   window.tableInstance = tableInstance;
+
+  bindDebugTool(tableInstance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 }

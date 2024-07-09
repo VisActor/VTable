@@ -1,5 +1,5 @@
 import type { IRect, Stage } from '@visactor/vrender-core';
-import { Group, createStage, vglobal } from '@visactor/vrender-core';
+import { Group, Text, createStage, vglobal } from '@visactor/vrender-core';
 import { GridComponent } from './grid-component';
 import { createDateHeader } from './date-header';
 import type { Gantt } from '../Gantt';
@@ -36,9 +36,10 @@ export class Scenegraph {
       // background: gantt.theme.underlayBackgroundColor,
       // dpr: gantt.internalProps.pixelRatio,
       enableLayout: true,
-      afterRender: () => {
-        this._gantt.fireListeners('after_render', null);
-      }
+      autoRender: true
+      // afterRender: () => {
+      // this._gantt.fireListeners('after_render', null);
+      // }
     });
 
     this.stage.defaultLayer.setTheme({
@@ -154,20 +155,108 @@ export class Scenegraph {
   //     }
   //   }
   // }
+
+  /**
+   * @description: 绘制场景树
+   * @param {any} element
+   * @param {CellRange} visibleCoord
+   * @return {*}
+   */
+  renderSceneGraph() {
+    this.stage.render();
+  }
 }
 
 export function initSceneGraph(scene: Scenegraph) {
   const width = scene._gantt.tableNoFrameWidth;
   const height = scene._gantt.tableNoFrameHeight;
 
-  scene.tableGroup = new Group({ x: 0, y: 0, width, height, clip: true, pickable: false });
+  scene.tableGroup = new Group({
+    x: 0,
+    y: 0,
+    width: width - 2,
+    height: height - 2,
+    clip: true,
+    pickable: false,
+    stroke: 'green',
+    lineWidth: 2
+    // fill: false
+  });
   (scene.tableGroup as any).role = 'table';
 
-  const dateHeader = createContainerGroup(0, 0, true);
+  const dateHeader = new Group({
+    x: 0,
+    y: 0,
+    width: width - 2,
+    height: scene._gantt.rowHeight * scene._gantt.headerLevel,
+    clip: true,
+    pickable: true,
+    fill: 'purple',
+    stroke: 'green',
+    lineWidth: 2
+  });
   (dateHeader as any).role = 'date-header';
   scene.dateHeader = dateHeader;
 
   scene.tableGroup.addChild(dateHeader);
+
+  const y = 0;
+  for (let i = 0; i < scene._gantt.headerLevel; i++) {
+    const rowHeader = new Group({
+      x: 0,
+      y: scene._gantt.rowHeight * i,
+      width: width - 2,
+      height: scene._gantt.rowHeight,
+      clip: true,
+      pickable: true,
+      fill: 'pink',
+      stroke: 'green',
+      lineWidth: 2
+    });
+    (rowHeader as any).role = 'row-header';
+    dateHeader.addChild(rowHeader);
+
+    const { unit, timelineDates } = scene._gantt.orderedScales[i];
+    let x = 0;
+
+    for (let j = 0; j < timelineDates.length; j++) {
+      const date = new Group({
+        x,
+        y: 0,
+        width: scene._gantt.colWidthPerDay * timelineDates[j].days,
+        height: scene._gantt.rowHeight,
+        clip: true,
+        pickable: true,
+        fill: i === 1 ? 'yellow' : 'blue',
+        stroke: 'green',
+        lineWidth: 2
+      });
+      (date as any).role = 'date-cell';
+      // debugger;
+      const text = new Text({
+        x: 0,
+        y: 0,
+        maxLineWidth: scene._gantt.colWidthPerDay * timelineDates[j].days,
+        // width: scene._gantt.colWidthPerDay * timelineDates[j].days,
+        heightLimit: scene._gantt.rowHeight,
+        // clip: true,
+        pickable: true,
+        text: timelineDates[j].title.toLocaleString(),
+        fontSize: 18,
+        // textAlign: 'left',
+        dx: 20,
+        dy: 10,
+        textBaseline: 'top',
+        fill: 'white',
+        stroke: 'green',
+        lineWidth: 2
+      });
+      date.appendChild(text);
+      rowHeader.addChild(date);
+      x += scene._gantt.colWidthPerDay * timelineDates[j].days;
+    }
+    // y += scene._gantt.rowHeight;
+  }
 }
 
 export function createContainerGroup(width: number, height: number, clip?: boolean) {
@@ -177,6 +266,6 @@ export function createContainerGroup(width: number, height: number, clip?: boole
     width,
     height,
     clip: clip ?? false,
-    pickable: false
+    pickable: true
   });
 }
