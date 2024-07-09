@@ -4,6 +4,7 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import type { ListTableAPI, ListTableConstructorOptions } from '../ts-types';
 import { getCellEventArgsSet } from '../event/util';
 import type { SimpleHeaderLayoutMap } from '../layout';
+import { isPromise } from '../tools/helper';
 
 export class EditManeger {
   table: BaseTableAPI;
@@ -109,7 +110,7 @@ export class EditManeger {
   }
 
   /** 如果是事件触发调用该接口 请传入原始事件对象 将判断事件对象是否在编辑器本身上面  来处理是否结束编辑  返回值如果为false说明没有退出编辑状态*/
-  completeEdit(e?: Event): boolean {
+  completeEdit(e?: Event): boolean | Promise<boolean> {
     if (!this.editingEditor) {
       return true;
     }
@@ -132,25 +133,50 @@ export class EditManeger {
     if (!this.editingEditor.getValue) {
       console.warn('VTable Warn: `getValue` is not provided, did you forget to implement it?');
     }
-    if (!this.editingEditor.validateValue || this.editingEditor.validateValue?.()) {
-      const changedValue = this.editingEditor.getValue?.();
-      const range = this.table.getCellRange(this.editCell.col, this.editCell.row);
-      const changedValues: any[] = [];
-      for (let row = range.start.row; row <= range.end.row; row++) {
-        const rowChangedValues = [];
-        for (let col = range.start.col; col <= range.end.col; col++) {
-          rowChangedValues.push(changedValue);
-        }
-        changedValues.push(rowChangedValues);
+    if (this.editingEditor.validateValue) {
+      const maybePromiseOrValue = this.editingEditor.validateValue?.();
+      if (isPromise(maybePromiseOrValue)) {
+        return new Promise((resolve, reject)=>{
+          maybePromiseOrValue
+            .then(result => {
+              if (result) {
+                this.doExit();
+                resolve(true);
+              }else{
+                resolve(false);
+              }
+            })
+            .catch((err: Error) => {
+              console.error('VTable Error:', err);
+              reject(err);
+            });
+        })
+      } else if (maybePromiseOrValue) {
+        this.doExit();
+        return true;
       }
-      (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
-      this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
-      this.editingEditor.exit?.();
-      this.editingEditor.onEnd?.();
-      this.editingEditor = null;
+    } else {
+      this.doExit();
       return true;
     }
-    return false;
+  }
+
+  private doExit() {
+    const changedValue = this.editingEditor.getValue?.();
+    const range = this.table.getCellRange(this.editCell.col, this.editCell.row);
+    const changedValues: any[] = [];
+    for (let row = range.start.row; row <= range.end.row; row++) {
+      const rowChangedValues = [];
+      for (let col = range.start.col; col <= range.end.col; col++) {
+        rowChangedValues.push(changedValue);
+      }
+      changedValues.push(rowChangedValues);
+    }
+    (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
+    this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
+    this.editingEditor.exit?.();
+    this.editingEditor.onEnd?.();
+    this.editingEditor = null;
   }
 
   cancelEdit() {
