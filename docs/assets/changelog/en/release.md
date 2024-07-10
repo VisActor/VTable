@@ -1,3 +1,17 @@
+# v1.5.1
+
+2024-07-10
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: getCellAtRelativePosition api return value [#2054](https://github.com/VisActor/VTable/issues/2054)
+- **@visactor/vtable**: add tolerance for scroll in _disableColumnAndRowSizeRound mode
+
+
+
+[more detail about v1.5.1](https://github.com/VisActor/VTable/releases/tag/v1.5.1)
+
 # v1.5.0
 
 2024-07-05
