@@ -28,7 +28,7 @@ keyboardOptions: {
   /** 上下左右方向键，默认不开启即false。开启这个配置的话，如果当前是在编辑中的单元格，方向键可以移动到下个单元格并进入编辑状态，而不是编辑文本内字符串的光标移动 */
   moveEditCellOnArrowKeys?: boolean;
   /** 开启快捷键全选 默认：false */
-  selectAllOnCtrlA?: boolean;
+  selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
   /** 快捷键复制  默认false 不开启*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
   /** 快捷键粘贴。粘贴内容到指定位置（即需要有选中状态），支持批量粘贴。 默认：false */

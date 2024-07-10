@@ -55,6 +55,8 @@ export class EventManager {
   //报错已绑定过的事件 后续清除绑定
   globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
   inertiaScroll: InertiaScroll;
+
+  bindSparklineHoverEvent: boolean;
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.handleTextStickBindId = [];
@@ -102,6 +104,9 @@ export class EventManager {
         });
         this.handleTextStickBindId = [];
       }
+
+      // chart hover
+      bindSparklineHoverEvent(this.table);
     }, 0);
   }
   bindSelfEvent() {
@@ -124,7 +129,9 @@ export class EventManager {
       } else if (funcType === IconFuncTypeEnum.drillDown) {
         drillClick(this.table);
       } else if (funcType === IconFuncTypeEnum.collapse || funcType === IconFuncTypeEnum.expand) {
-        this.table.stateManager.updateSelectPos(-1, -1);
+        const isHasSelected = !!stateManager.select.ranges?.length;
+        stateManager.updateSelectPos(-1, -1);
+        stateManager.endSelectCells(true, isHasSelected);
         this.table.toggleHierarchyState(col, row);
       }
     });
@@ -573,11 +580,12 @@ export class EventManager {
   chechColumnMover(eventArgsSet: SceneEvent): boolean {
     // return false;
     const { eventArgs } = eventArgsSet;
-
     if (
       eventArgs &&
       this.table.isHeader(eventArgs.col, eventArgs.row) &&
-      checkCellInSelect(eventArgs.col, eventArgs.row, this.table.stateManager.select.ranges) &&
+      (checkCellInSelect(eventArgs.col, eventArgs.row, this.table.stateManager.select.ranges) ||
+        this.table.options.select?.disableHeaderSelect ||
+        this.table.options.select?.disableSelect) &&
       // this.table.stateManager.select.cellPosStart.col === eventArgs.col &&
       // this.table.stateManager.select.cellPosStart.row === eventArgs.row &&
       this.table._canDragHeaderPosition(eventArgs.col, eventArgs.row)

@@ -2634,68 +2634,6 @@ describe('pivot-header-layout test', () => {
         size: 1
       }
     ]);
-    expect(layout.rowTree).toEqual([
-      {
-        dimensionKey: '231012120511053',
-        value: '公司',
-        children: [
-          {
-            indicatorKey: '10002',
-            value: '',
-            level: 1,
-            startIndex: 0,
-            startInTotal: 0,
-            id: 8,
-            size: 1
-          }
-        ],
-        level: 0,
-        startIndex: 0,
-        startInTotal: 0,
-        id: 7,
-        size: 1
-      },
-      {
-        dimensionKey: '231012120511053',
-        value: '小型企业',
-        children: [
-          {
-            indicatorKey: '10002',
-            value: '',
-            level: 1,
-            startIndex: 0,
-            startInTotal: 1,
-            id: 10,
-            size: 1
-          }
-        ],
-        level: 0,
-        startIndex: 1,
-        startInTotal: 1,
-        id: 9,
-        size: 1
-      },
-      {
-        dimensionKey: '231012120511053',
-        value: '消费者',
-        children: [
-          {
-            indicatorKey: '10002',
-            value: '',
-            level: 1,
-            startIndex: 0,
-            startInTotal: 2,
-            id: 12,
-            size: 1
-          }
-        ],
-        level: 0,
-        startIndex: 2,
-        startInTotal: 2,
-        id: 11,
-        size: 1
-      }
-    ]);
   });
 
   test('pivot-header-layout count', () => {
@@ -2930,7 +2868,6 @@ describe('pivot-header-layout test', () => {
     expect(layout.isEmpty(0, 4)).toBe(true);
     expect(layout.isEmpty(2, 4)).toBe(false);
     expect(layout.isEmpty(2, 1)).toBe(false);
+    tableInstance.release();
   });
-
-  tableInstance.release();
 });

@@ -14,6 +14,10 @@ import listTableEvent from './event/list-table';
 import eventRebind from './event/event-rebind';
 
 import componentContainer from './component/component-container';
+import customLayout from './component/custom-layout';
+import customLayoutDom from './component/custom-layout-dom';
+import customLayoutDomSite from './component/custom-layout-dom-site';
+import customLayoutDomSite1 from './component/custom-layout-dom-site-1';
 
 export default listTable;
 // export default listEditor;
@@ -31,3 +35,7 @@ export default listTable;
 // export default eventRebind;
 
 // export default componentContainer;
+export default customLayout;
+// export default customLayoutDom;
+// export default customLayoutDomSite;
+// export default customLayoutDomSite1;

@@ -49,17 +49,9 @@ Currently, it supports incoming flattened data formats, taking the sales of larg
 ]
 ```
 
-## enableDataAnalysis(boolean)
-
-Whether the pivot table enables data analysis. Default false.
-
-If the incoming data records are detailed data and VTable is required for aggregate analysis, enable this configuration.
-
-If the incoming data is aggregated, in order to improve performance, it is set to false and columnTree and rowTree are required to be passed in.
-
 ## dataConfig(IDataConfig)
 
-Data analysis related configuration This configuration will be effective only after enableDataAnalysis is turned on.
+Data analysis related configuration .
 
 ```
 /**
@@ -228,7 +220,7 @@ export interface Total {
 
 ### derivedFieldRules(DerivedFieldRules)
 
-Add derived fields
+Add a derived field. The vtable will generate a new field based on the rules defined by the derived field and add the new field to the data. The new field can be used as a dimension item or an indicator item.
 
 ```
 export type DerivedFieldRules = DerivedFieldRule[];
@@ -243,9 +235,29 @@ export interface DerivedFieldRule {
 }
 ```
 
+### calculatedFieldRules (CalculatedFieldRules)
+
+Calculated fields are similar to the calculated fields in Excel pivot tables. New indicator values can be calculated through calculated fields, and they are all recalculated based on the summary results. Note: Different from derived fields.
+
+```
+export type CalculateddFieldRules = CalculateddFieldRule[];
+```
+
+```
+export interface CalculatedFieldRule {
+  /** Unique identifier, which can be used as the key of a new indicator and used to configure indicators to be displayed in a pivot table. */
+  key: string;
+  /** The indicator that the calculated field depends on, which can be the corresponding indicator field in records or not the field in data records
+  * If the dependent indicator is not in records, it needs to be explicitly configured in aggregationRules, specifying the aggregation rule and indicatorKey to be used in dependIndicatorKeys. */
+  dependIndicatorKeys: string[];
+  /** The calculation function of the calculated field. The dependent indicator value is passed in as a parameter, and the return value is used as the value of the calculated field. */
+  calculateFun?: (dependFieldsValue: any) => any;
+}
+```
+
 ## columnTree(Array)
 
-Column header tree, type: `IDimensionHeaderNode|IIndicatorHeaderNode[]`. Among them, IDimensionHeaderNode refers to the dimension value node of non-indicator dimensions, and IIndicatorHeaderNode refers to the indicator name node.
+Column header tree, type: `(IDimensionHeaderNode|IIndicatorHeaderNode)[]`. Among them, IDimensionHeaderNode refers to the dimension value node of non-indicator dimensions, and IIndicatorHeaderNode refers to the indicator name node.
 
 ** Specific configuration of IDimensionHeaderNode is as follows: **
 
@@ -257,10 +269,12 @@ export interface IDimensionHeaderNode {
   dimensionKey: string | number;
   /** Dimension member value */
   value: string;
-  /** The tree structure of the sub-dimensions under the member */
-  children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
+  /** The tree structure of the sub-dimensions under the member. true is generally used to display the fold and expand buttons and to perform lazy loading to obtain data.  */
+  children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[] | true;
   /** Collapse status Used with tree structure display. Note: only valid in rowTree */
   hierarchyState?: HierarchyState;
+  /** Whether it is a virtual node. If configured to true, this dimension field will be ignored when analyzing based on records data */
+  virtual?: boolean;
 }
 ```
 
@@ -386,38 +400,6 @@ Set the sorting state, only corresponding to the display effect of the button wi
     tableType = 'pivotTable'
 ) }}
 
-## editor (string|Object|Function)
+## supplementIndicatorNodes(boolean) = true
 
-Global configuration cell editor
-
-```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-```
-
-Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
-
-## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
-
-The trigger timing for entering the editing state.
-
-```
-
-/** Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' */
-editCellTrigger?: 'doubleclick' | 'click' | 'api';
-
-```
-
-{{ use: common-option-secondary(
-    prefix = '#',
-    tableType = 'listTable'
-) }}
-
-```
-
-## rowSeriesNumber(IRowSeriesNumber)
-
-set row serial number.
-{{ use: row-series-number(
-    prefix = '###',
-) }}
-```
+Whether to add index nodes to the corresponding custom table headers such as rowTree or columnTree. Default is true

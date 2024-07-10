@@ -5,7 +5,8 @@ import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
 import { browser } from '../../tools/helper';
 import type { EventManager } from '../event';
-import { BaseTableAPI } from '../../ts-types/base-table';
+import { getPixelRatio } from '../../tools/pixel-ratio';
+import { endResizeCol, endResizeRow } from './table-group';
 
 export function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager.table;
@@ -43,7 +44,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     ) {
       if (
         !(table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
-        (table as ListTableAPI).editorManager.editingEditor
+        (table as ListTableAPI).editorManager?.editingEditor
       ) {
         // 编辑单元格状态下 如果没有开启方向键切换cell 则退出 。方向键可以在编辑input内移动光标
         return;
@@ -57,25 +58,57 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
       // 处理向上箭头键
       if (e.key === 'ArrowUp') {
-        targetCol = stateManager.select.cellPos.col;
-        targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row - 1));
+        if (e.ctrlKey || e.metaKey) {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = 0;
+        } else if (e.shiftKey) {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row - 1));
+        } else {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row - 1));
+        }
       } else if (e.key === 'ArrowDown') {
         // 处理向下箭头键
-        targetCol = stateManager.select.cellPos.col;
-        targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
+        if (e.ctrlKey || e.metaKey) {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = table.rowCount - 1;
+        } else if (e.shiftKey) {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
+        } else {
+          targetCol = stateManager.select.cellPos.col;
+          targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
+        }
       } else if (e.key === 'ArrowLeft') {
         // 处理向左箭头键
-        targetRow = stateManager.select.cellPos.row;
-        targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col - 1));
+        if (e.ctrlKey || e.metaKey) {
+          targetCol = 0;
+          targetRow = stateManager.select.cellPos.row;
+        } else if (e.shiftKey) {
+          targetRow = stateManager.select.cellPos.row;
+          targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col - 1));
+        } else {
+          targetRow = stateManager.select.cellPos.row;
+          targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col - 1));
+        }
       } else if (e.key === 'ArrowRight') {
         // 处理向右箭头键
-        targetRow = stateManager.select.cellPos.row;
-        targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col + 1));
+        if (e.ctrlKey || e.metaKey) {
+          targetCol = table.colCount - 1;
+          targetRow = stateManager.select.cellPos.row;
+        } else if (e.shiftKey) {
+          targetRow = stateManager.select.cellPos.row;
+          targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col + 1));
+        } else {
+          targetRow = stateManager.select.cellPos.row;
+          targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col + 1));
+        }
       }
-      table.selectCell(targetCol, targetRow);
+      table.selectCell(targetCol, targetRow, e.shiftKey);
       if (
         (table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
-        (table as ListTableAPI).editorManager.editingEditor
+        (table as ListTableAPI).editorManager?.editingEditor
       ) {
         // 开启了方向键切换编辑单元格  并且当前已经在编辑状态下 切换到下一个需先退出再进入下个单元格的编辑
         (table as ListTableAPI).editorManager.completeEdit();
@@ -89,22 +122,25 @@ export function bindContainerDomListener(eventManager: EventManager) {
     } else if (e.key === 'Enter') {
       // 如果按enter键 可以结束当前的编辑 或开启编辑选中的单元格（仅限单选）
       if ((table as ListTableAPI).editorManager.editingEditor) {
+        // 如果是结束当前编辑，且有主动监听keydown事件，则先触发keydown事件，之后再结束编辑
+        handleKeydownListener(e);
         (table as ListTableAPI).editorManager.completeEdit();
         table.getElement().focus();
-      } else {
-        if (
-          (table.options.keyboardOptions?.editCellOnEnter ?? true) &&
-          (table.stateManager.select.ranges?.length ?? 0) === 1
-        ) {
-          // 如果开启按enter键进入编辑的配置 且当前有选中的单元格 则进入编辑
-          const startCol = table.stateManager.select.ranges[0].start.col;
-          const startRow = table.stateManager.select.ranges[0].start.row;
-          const endCol = table.stateManager.select.ranges[0].end.col;
-          const endRow = table.stateManager.select.ranges[0].end.row;
-          if (startCol === endCol && startRow === endRow) {
-            if ((table as ListTableAPI).getEditor(startCol, startRow)) {
-              (table as ListTableAPI).editorManager.startEditCell(startCol, startRow);
-            }
+        // 直接返回，不再触发最后的keydown监听事件相关代码
+        return;
+      }
+      if (
+        (table.options.keyboardOptions?.editCellOnEnter ?? true) &&
+        (table.stateManager.select.ranges?.length ?? 0) === 1
+      ) {
+        // 如果开启按enter键进入编辑的配置 且当前有选中的单元格 则进入编辑（仅限单选）
+        const startCol = table.stateManager.select.ranges[0].start.col;
+        const startRow = table.stateManager.select.ranges[0].start.row;
+        const endCol = table.stateManager.select.ranges[0].end.col;
+        const endRow = table.stateManager.select.ranges[0].end.row;
+        if (startCol === endCol && startRow === endRow) {
+          if ((table as ListTableAPI).getEditor(startCol, startRow)) {
+            (table as ListTableAPI).editorManager.startEditCell(startCol, startRow);
           }
         }
       }
@@ -125,7 +161,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
             targetCol = stateManager.select.cellPos.col + 1;
           }
           table.selectCell(targetCol, targetRow);
-          if ((table as ListTableAPI).editorManager.editingEditor) {
+          if ((table as ListTableAPI).editorManager?.editingEditor) {
             (table as ListTableAPI).editorManager.completeEdit();
             table.getElement().focus();
             if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
@@ -136,6 +172,13 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     }
 
+    handleKeydownListener(e);
+  });
+  /**
+   * 处理主动注册的keydown事件
+   * @param e
+   */
+  function handleKeydownListener(e: KeyboardEvent) {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.KEYDOWN)) {
       const cellsEvent: KeydownEvent = {
         keyCode: e.keyCode ?? e.which,
@@ -146,7 +189,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       };
       table.fireListeners(TABLE_EVENT_TYPE.KEYDOWN, cellsEvent);
     }
-  });
+  }
 
   handler.on(table.getElement(), 'copy', (e: KeyboardEvent) => {
     if (table.keyboardOptions?.copySelected) {
@@ -278,8 +321,19 @@ export function bindContainerDomListener(eventManager: EventManager) {
       // 临时绕行解决因为display设置为none产生的问题
       return;
     }
-    table.resize();
+    if (!isValid(table.options.pixelRatio)) {
+      table.setPixelRatio(getPixelRatio());
+    }
+    if (!e.windowSizeNotChange) {
+      table.resize();
+    }
   });
+
+  // const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
+  const regex = /<tr[^>]*>([\s\S]*?)<\/tr>/g; // for webpack3
+  // const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
+  const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/g; // for webpack3
+
   function pasteHtmlToTable(item: ClipboardItem) {
     const ranges = table.stateManager.select.ranges;
     const selectRangeLength = ranges.length;
@@ -294,12 +348,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
       blob.text().then((pastedData: any) => {
         // 解析html数据
         if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
-          const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
           // const matches = pastedData.matchAll(regex);
           const matches = Array.from(pastedData.matchAll(regex));
           for (const match of matches) {
             const rowContent = match[1]; // 获取<tr>标签中的内容
-            const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
             const cellMatches: RegExpMatchArray[] = Array.from(rowContent.matchAll(cellRegex)); // 获取<td>标签中的内容
             const rowValues = cellMatches.map(cellMatch => {
               return (
@@ -461,6 +513,11 @@ export function bindContainerDomListener(eventManager: EventManager) {
     table.eventManager.isDown = false;
     table.eventManager.isDraging = false;
     table.eventManager.inertiaScroll.endInertia();
+    if (stateManager.isResizeCol()) {
+      endResizeCol(table);
+    } else if (stateManager.isResizeRow()) {
+      endResizeRow(table);
+    }
   };
   eventManager.globalEventListeners.push({
     name: 'pointerup',
@@ -612,14 +669,11 @@ export function bindContainerDomListener(eventManager: EventManager) {
             }
           }
           table.stateManager.updateInteractionState(InteractionState.grabing);
-          table.stateManager.updateSelectPos(
-            table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX).col,
-            table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY).row,
-            false,
-            false,
-            false,
-            true
-          );
+          const targetCol = table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX);
+          const targetRow = table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY);
+          if (isValid(targetCol) && isValid(targetRow)) {
+            table.stateManager.updateSelectPos(targetCol.col, targetRow.row, false, false, false, true);
+          }
         });
       } else if (table.eventManager.inertiaScroll.isInertiaScrolling()) {
         table.eventManager.inertiaScroll.endInertia();

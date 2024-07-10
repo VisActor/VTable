@@ -5,8 +5,23 @@ import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './sty
 import { updateCell, renderChart, graphicUtil } from '@visactor/vtable';
 import { isArray } from '@visactor/vutils';
 import type { ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/src/ts-types';
+import { getHierarchyOffset } from '../util/indent';
 
-export async function exportVTableToExcel(tableInstance: IVTable) {
+export type CellInfo = {
+  cellType: string;
+  cellValue: string;
+  table: IVTable;
+  col: number;
+  row: number;
+};
+
+export type ExportVTableToExcelOptions = {
+  ignoreIcon?: boolean;
+  formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
+  formatExcelJSCell?: (cellInfo: CellInfo, cellInExcelJS: ExcelJS.Cell) => ExcelJS.Cell;
+};
+
+export async function exportVTableToExcel(tableInstance: IVTable, options?: ExportVTableToExcelOptions) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
   worksheet.properties.defaultRowHeight = 40;
@@ -30,7 +45,7 @@ export async function exportVTableToExcel(tableInstance: IVTable) {
         worksheetRow.height = rowHeight;
       }
 
-      addCell(col, row, tableInstance, worksheet, workbook);
+      addCell(col, row, tableInstance, worksheet, workbook, options);
 
       const cellRange = tableInstance.getCellRange(col, row);
       if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
@@ -85,7 +100,8 @@ function addCell(
   row: number,
   tableInstance: IVTable,
   worksheet: ExcelJS.Worksheet,
-  workbook: ExcelJS.Workbook
+  workbook: ExcelJS.Workbook,
+  options?: ExportVTableToExcelOptions
 ) {
   const { layoutMap } = tableInstance.internalProps;
   const cellType = tableInstance.getCellType(col, row);
@@ -113,13 +129,36 @@ function addCell(
     customLayout = (define as ColumnDefine)?.customLayout;
   }
 
+  if (options?.formatExportOutput) {
+    const cellInfo = { cellType, cellValue, table: tableInstance, col, row };
+    const formattedValue = options.formatExportOutput(cellInfo);
+    if (formattedValue !== undefined) {
+      let cell = worksheet.getCell(encodeCellAddress(col, row));
+      cell.value = formattedValue;
+      cell.font = getCellFont(cellStyle, cellType);
+      cell.fill = getCellFill(cellStyle);
+      cell.border = getCellBorder(cellStyle);
+      const offset = getHierarchyOffset(col, row, tableInstance as any);
+      cell.alignment = getCellAlignment(cellStyle, Math.ceil(offset / cell.font.size));
+
+      if (cell && options.formatExcelJSCell) {
+        const formatedCell = options.formatExcelJSCell({ cellType, cellValue, table: tableInstance, col, row }, cell);
+        if (formatedCell) {
+          cell = formatedCell;
+        }
+      }
+      return cell;
+    }
+  }
+
+  let cell;
   if (
     cellType === 'image' ||
     cellType === 'video' ||
     cellType === 'progressbar' ||
     cellType === 'sparkline' ||
     layoutMap.isAxisCell(col, row) ||
-    (isArray(icons) && icons.length) ||
+    (!options?.ignoreIcon && isArray(icons) && icons.length) ||
     customRender ||
     customLayout
   ) {
@@ -135,12 +174,13 @@ function addCell(
       // ext: { width: tableInstance.getColWidth(col), height: tableInstance.getRowHeight(row) }
     });
   } else if (cellType === 'text' || cellType === 'link') {
-    const cell = worksheet.getCell(encodeCellAddress(col, row));
+    cell = worksheet.getCell(encodeCellAddress(col, row));
     cell.value = getCellValue(cellValue, cellType);
     cell.font = getCellFont(cellStyle, cellType);
     cell.fill = getCellFill(cellStyle);
     cell.border = getCellBorder(cellStyle);
-    cell.alignment = getCellAlignment(cellStyle);
+    const offset = getHierarchyOffset(col, row, tableInstance as any);
+    cell.alignment = getCellAlignment(cellStyle, Math.ceil(offset / cell.font.size));
   } else if (cellType === 'chart') {
     const cellGroup = tableInstance.scenegraph.getCell(col, row);
     renderChart(cellGroup.firstChild as any); // render chart first
@@ -157,6 +197,14 @@ function addCell(
     });
     tableInstance.scenegraph.updateNextFrame(); // rerender chart to avoid display error
   }
+
+  if (cell && options.formatExcelJSCell) {
+    const formatedCell = options.formatExcelJSCell({ cellType, cellValue, table: tableInstance, col, row }, cell);
+    if (formatedCell) {
+      cell = formatedCell;
+    }
+  }
+  return cell;
 }
 
 function getCellValue(cellValue: string, cellType: CellType) {
@@ -175,6 +223,7 @@ function exportCellImg(col: number, row: number, tableInstance: IVTable) {
   let needRemove = false;
   if (cellGroup.role === 'empty') {
     cellGroup = updateCell(col, row, tableInstance as any, true);
+    cellGroup.setStage(tableInstance.scenegraph.stage);
     needRemove = true;
   }
   const oldStroke = cellGroup.attribute.stroke;
@@ -182,7 +231,7 @@ function exportCellImg(col: number, row: number, tableInstance: IVTable) {
   const canvas = graphicUtil.drawGraphicToCanvas(cellGroup as any, tableInstance.scenegraph.stage) as HTMLCanvasElement;
   cellGroup.attribute.stroke = oldStroke;
   if (needRemove) {
-    cellGroup.parent.removeChild(cellGroup);
+    cellGroup.parent?.removeChild(cellGroup);
   }
   return canvas.toDataURL();
 }

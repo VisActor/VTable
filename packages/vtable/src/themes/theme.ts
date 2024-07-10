@@ -121,6 +121,7 @@ export class TableTheme implements ITableThemeDefine {
 
   get defaultStyle(): RequiredTableThemeDefine['defaultStyle'] {
     // const defaultStyle = getProp(obj, superTheme, ["defaultStyle"]);
+    const that = this;
     if (!this._defaultStyle) {
       const { obj, superTheme } = this.internalTheme;
       const defaultStyle: ThemeStyle = ingoreNoneValueMerge({}, superTheme.defaultStyle, obj.defaultStyle);
@@ -189,42 +190,33 @@ export class TableTheme implements ITableThemeDefine {
           }
           return undefined;
         },
-        // get click(): InteractionStyle | undefined {
-        //   if (defaultStyle.click)
-        //     return {
-        //       get cellBgColor(): ColorPropertyDefine | undefined {
-        //         return defaultStyle.click?.cellBgColor ?? undefined;
-        //       },
-        //       get cellBorderColor(): ColorsPropertyDefine | undefined {
-        //         return defaultStyle.click?.cellBorderColor ?? undefined;
-        //       },
-        //       get cellBorderLineWidth(): LineWidthsPropertyDefine | undefined {
-        //         return defaultStyle.click?.cellBorderLineWidth ?? undefined;
-        //       },
-        //       // get cellBorderLineDash(): LineDashsPropertyDefine |undefined{
-        //       //   return defaultStyle.click?.cellBorderLineDash??undefined
-        //       // },
-        //       get inlineColumnBgColor(): ColorPropertyDefine | undefined {
-        //         return (
-        //           // defaultStyle.click?.inlineColumnBgColor ??
-        //           (defaultStyle.click?.cellBgColor &&
-        //           typeof defaultStyle.click?.cellBgColor === 'string'
-        //             ? changeColor(defaultStyle.click?.cellBgColor, 0.1, false)
-        //             : undefined) ?? undefined
-        //         );
-        //       },
-        //       get inlineRowBgColor(): ColorPropertyDefine | undefined {
-        //         return (
-        //           // defaultStyle.click?.inlineRowBgColor ??
-        //           (defaultStyle.click?.cellBgColor &&
-        //           typeof defaultStyle.click?.cellBgColor === 'string'
-        //             ? changeColor(defaultStyle.click?.cellBgColor, 0.1, false)
-        //             : undefined) ?? undefined
-        //         );
-        //       },
-        //     };
-        //   return undefined;
-        // },
+        get select(): InteractionStyle | undefined {
+          if (defaultStyle.select) {
+            return {
+              get inlineColumnBgColor(): ColorPropertyDefine | undefined {
+                return (
+                  defaultStyle.select?.inlineColumnBgColor ??
+                  that.selectionStyle?.inlineColumnBgColor ??
+                  (that.selectionStyle?.cellBgColor && typeof that.selectionStyle.cellBgColor === 'string'
+                    ? changeColor(that.selectionStyle.cellBgColor, 0.1, false)
+                    : undefined) ??
+                  undefined
+                );
+              },
+              get inlineRowBgColor(): ColorPropertyDefine | undefined {
+                return (
+                  defaultStyle.select?.inlineRowBgColor ??
+                  that.selectionStyle.inlineRowBgColor ??
+                  (that.selectionStyle?.cellBgColor && typeof that.selectionStyle.cellBgColor === 'string'
+                    ? changeColor(that.selectionStyle.cellBgColor, 0.1, false)
+                    : undefined) ??
+                  undefined
+                );
+              }
+            };
+          }
+          return undefined;
+        },
         get padding(): PaddingsPropertyDefine {
           return defaultStyle.padding ?? [10, 16, 10, 16];
         },
@@ -459,6 +451,9 @@ export class TableTheme implements ITableThemeDefine {
         get scrollSliderColor(): string | undefined {
           return scroll.scrollSliderColor ?? '#C0C0C0';
         },
+        get scrollSliderCornerRadius(): number | undefined {
+          return scroll.scrollSliderCornerRadius;
+        },
         get scrollRailColor(): string | undefined {
           return scroll.scrollRailColor;
         },
@@ -498,6 +493,12 @@ export class TableTheme implements ITableThemeDefine {
         },
         get color(): string | undefined {
           return tooltip.color ?? '#FFF';
+        },
+        get maxWidth(): number | undefined {
+          return tooltip.maxWidth;
+        },
+        get maxHeight(): number | undefined {
+          return tooltip.maxHeight;
         }
       };
     }
@@ -658,6 +659,12 @@ export class TableTheme implements ITableThemeDefine {
         },
         get cellBorderLineWidth(): number | undefined {
           return selectionStyle?.cellBorderLineWidth ?? 2;
+        },
+        get inlineColumnBgColor(): string | undefined {
+          return selectionStyle?.inlineColumnBgColor;
+        },
+        get inlineRowBgColor(): string | undefined {
+          return selectionStyle?.inlineRowBgColor;
         }
       };
     }
@@ -722,9 +729,10 @@ export class TableTheme implements ITableThemeDefine {
     return hasThemeProperty(obj, names) || hasThemeProperty(superTheme, names);
   }
   extends(obj: PartialTableThemeDefine): TableTheme {
-    return new TableTheme(obj, this);
+    return new TableTheme(obj, this.internalTheme.superTheme || this.internalTheme.obj);
   }
   private getStyle(style: ThemeStyle) {
+    const that = this;
     return {
       get fontSize(): FontSizePropertyDefine | undefined {
         return style.fontSize;
@@ -747,6 +755,9 @@ export class TableTheme implements ITableThemeDefine {
       get color(): ColorPropertyDefine | undefined {
         return style.color;
       },
+      get strokeColor(): ColorPropertyDefine | undefined {
+        return style.strokeColor;
+      },
       get borderColor(): ColorsPropertyDefine | undefined {
         return style.borderColor;
       },
@@ -762,12 +773,6 @@ export class TableTheme implements ITableThemeDefine {
             get cellBgColor(): ColorPropertyDefine | undefined {
               return style.hover?.cellBgColor ?? undefined;
             },
-            // get cellBorderColor(): ColorsPropertyDefine | undefined {
-            //   return style.hover?.cellBorderColor ?? undefined;
-            // },
-            // get cellBorderLineWidth(): LineWidthsPropertyDefine | undefined {
-            //   return style.hover?.cellBorderLineWidth ?? undefined;
-            // },
             get inlineColumnBgColor(): ColorPropertyDefine | undefined {
               return (
                 style.hover?.inlineColumnBgColor ??
@@ -790,40 +795,34 @@ export class TableTheme implements ITableThemeDefine {
         }
         return undefined;
       },
-      // get click(): InteractionStyle | undefined {
-      //   if (style.click)
-      //     return {
-      //       get cellBgColor(): ColorPropertyDefine | undefined {
-      //         return style.click?.cellBgColor ?? undefined;
-      //       },
-      //       get cellBorderColor(): ColorsPropertyDefine | undefined {
-      //         return style.click?.cellBorderColor ?? undefined;
-      //       },
-      //       get cellBorderLineWidth(): LineWidthsPropertyDefine | undefined {
-      //         return style.click?.cellBorderLineWidth ?? undefined;
-      //       },
-      //       // get cellBorderLineDash(): LineDashsPropertyDefine |undefined{
-      //       //   return style.click?.cellBorderLineDash??undefined
-      //       // },
-      //       get inlineColumnBgColor(): ColorPropertyDefine | undefined {
-      //         return (
-      //           // style.click?.inlineColumnBgColor ??
-      //           (style.click?.cellBgColor && typeof style.click?.cellBgColor === 'string'
-      //             ? changeColor(style.click?.cellBgColor, 0.1, false)
-      //             : undefined) ?? undefined
-      //         );
-      //       },
-      //       get inlineRowBgColor(): ColorPropertyDefine | undefined {
-      //         return (
-      //           // style.click?.inlineRowBgColor ??
-      //           (style.click?.cellBgColor && typeof style.click?.cellBgColor === 'string'
-      //             ? changeColor(style.click?.cellBgColor, 0.1, false)
-      //             : undefined) ?? undefined
-      //         );
-      //       },
-      //     };
-      //   return undefined;
-      // },
+      get select(): InteractionStyle | undefined {
+        // if (style.select) {
+        return {
+          get inlineColumnBgColor(): ColorPropertyDefine | undefined {
+            return (
+              style.select?.inlineColumnBgColor ??
+              that.selectionStyle?.inlineColumnBgColor ??
+              (that.selectionStyle?.cellBgColor && typeof that.selectionStyle.cellBgColor === 'string'
+                ? changeColor(that.selectionStyle.cellBgColor, 0.1, false)
+                : undefined) ??
+              undefined
+            );
+          },
+          get inlineRowBgColor(): ColorPropertyDefine | undefined {
+            return (
+              style.select?.inlineRowBgColor ??
+              that.selectionStyle.inlineRowBgColor ??
+              (that.selectionStyle?.cellBgColor && typeof that.selectionStyle.cellBgColor === 'string'
+                ? changeColor(that.selectionStyle.cellBgColor, 0.1, false)
+                : undefined) ??
+              undefined
+            );
+          }
+        };
+        // }
+        // return undefined;
+      },
+
       get frameStyle(): FrameStyle | undefined {
         if (style.frameStyle) {
           return {

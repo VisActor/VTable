@@ -5,6 +5,10 @@ import type { ITitle } from '../../ts-types/component/title';
 import { getQuadProps } from '../../scenegraph/utils/padding';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { isEqual } from '@visactor/vutils';
+
+export interface ITitleComponent {
+  new (titleOption: ITitle, table: BaseTableAPI): Title;
+}
 export class Title {
   table: BaseTableAPI;
   _titleOption: ITitle;
@@ -178,7 +182,9 @@ export class Title {
       subtextStyle: {
         width: realWidth,
         ...this._titleOption.subtextStyle
-      }
+      },
+      dx: this._titleOption.dx ?? 0,
+      dy: this._titleOption.dy ?? 0
     } as TitleAttrs;
   }
 }

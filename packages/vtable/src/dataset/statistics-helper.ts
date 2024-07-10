@@ -2,19 +2,32 @@ import type { SortOrder } from '../ts-types';
 import { AggregationType } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 
-export abstract class Aggregator {
+export interface IAggregator {
+  records?: any[];
+  value: () => any;
+  className: string;
+  push: (record: any) => void;
+  recalculate: () => any;
+  formatValue?: (col?: number, row?: number, table?: BaseTableAPI) => any;
+  formatFun?: () => any;
+  clearCacheValue: () => any;
+  reset: () => void;
+}
+export abstract class Aggregator implements IAggregator {
   className = 'Aggregator';
   isRecord?: boolean = true; //是否需要维护records 将数据源都记录下来
   records?: any[] = [];
   type?: string;
+  key: string;
   field?: string | string[];
   formatFun?: any;
   _formatedValue?: any;
 
-  constructor(dimension: string, formatFun?: any, isRecord?: boolean) {
-    this.field = dimension;
-    this.formatFun = formatFun;
-    this.isRecord = isRecord ?? this.isRecord;
+  constructor(config: { key: string; dimension: string; formatFun?: any; isRecord?: boolean }) {
+    this.key = config.key;
+    this.field = config.dimension;
+    this.formatFun = config.formatFun;
+    this.isRecord = config.isRecord ?? this.isRecord;
   }
   abstract push(record: any): void;
   abstract value(): any;
@@ -40,7 +53,7 @@ export class RecordAggregator extends Aggregator {
   type: string = AggregationType.RECORD;
   isRecord?: boolean = true;
   push(record: any): void {
-    if (this.isRecord) {
+    if (record && this.isRecord && this.records) {
       if (record.className === 'Aggregator') {
         this.records.push(...record.records);
       } else {
@@ -65,10 +78,14 @@ export class NoneAggregator extends Aggregator {
   declare field?: string;
   fieldValue?: any;
   push(record: any): void {
-    if (this.isRecord) {
-      this.records = [record];
+    if (record) {
+      if (this.isRecord) {
+        this.records = [record];
+      }
+      if (this.field) {
+        this.fieldValue = record[this.field];
+      }
     }
-    this.fieldValue = record[this.field];
   }
   value() {
     return this.fieldValue;
@@ -85,26 +102,82 @@ export class CustomAggregator extends Aggregator {
   type: string = AggregationType.CUSTOM; //仅获取其中一条数据 不做聚合 其fieldValue可以是number或者string类型
   isRecord?: boolean = true;
   declare field?: string;
-  aggregationFun: Function;
+  aggregationFun?: Function;
   values: (string | number)[] = [];
   fieldValue?: any;
-  constructor(dimension: string, formatFun?: any, isRecord?: boolean, aggregationFun?: Function) {
-    super(dimension, formatFun, isRecord);
-    this.aggregationFun = aggregationFun;
+  constructor(config: {
+    key: string;
+    dimension: string;
+    formatFun?: any;
+    isRecord?: boolean;
+    aggregationFun?: Function;
+  }) {
+    super(config);
+    this.aggregationFun = config.aggregationFun;
   }
   push(record: any): void {
-    if (this.isRecord) {
+    if (record) {
+      if (this.isRecord && this.records) {
+        if (record.className === 'Aggregator') {
+          this.records.push(...record.records);
+        } else {
+          this.records.push(record);
+        }
+      }
+      if (this.field) {
+        this.values.push(record[this.field]);
+      }
+    }
+  }
+  value() {
+    if (!this.fieldValue) {
+      this.fieldValue = this.aggregationFun?.(this.values, this.records, this.field);
+    }
+    return this.fieldValue;
+  }
+  reset() {
+    this.records = [];
+    this.fieldValue = undefined;
+  }
+  recalculate() {
+    // do nothing
+  }
+}
+export class RecalculateAggregator extends Aggregator {
+  type: string = AggregationType.RECALCULATE; //仅获取其中一条数据 不做聚合 其fieldValue可以是number或者string类型
+  isRecord?: boolean = true;
+  declare field?: string;
+  calculateFun: Function;
+  fieldValue?: any;
+  dependAggregators: Aggregator[];
+  dependIndicatorKeys: string[];
+  constructor(config: {
+    key: string;
+    dimension: string;
+    formatFun: any;
+    isRecord: boolean;
+    calculateFun: Function;
+    dependAggregators: Aggregator[];
+    dependIndicatorKeys: string[];
+  }) {
+    super(config);
+    this.calculateFun = config.calculateFun;
+    this.dependAggregators = config.dependAggregators;
+    this.dependIndicatorKeys = config.dependIndicatorKeys;
+  }
+  push(record: any): void {
+    if (record && this.isRecord && this.records) {
       if (record.className === 'Aggregator') {
         this.records.push(...record.records);
       } else {
         this.records.push(record);
       }
     }
-    this.values.push(record[this.field]);
   }
   value() {
     if (!this.fieldValue) {
-      this.fieldValue = this.aggregationFun?.(this.values, this.records, this.field);
+      const aggregatorValue = _getDependAggregatorValues(this.dependAggregators, this.dependIndicatorKeys);
+      this.fieldValue = this.calculateFun?.(aggregatorValue, this.records, this.field);
     }
     return this.fieldValue;
   }
@@ -123,36 +196,44 @@ export class SumAggregator extends Aggregator {
   nagetiveSum = 0;
   declare field?: string;
   needSplitPositiveAndNegativeForSum?: boolean = false;
-  constructor(dimension: string, formatFun?: any, isRecord?: boolean, needSplitPositiveAndNegative?: boolean) {
-    super(dimension, formatFun, isRecord);
-    this.needSplitPositiveAndNegativeForSum = needSplitPositiveAndNegative ?? false;
+  constructor(config: {
+    key: string;
+    dimension: string;
+    formatFun?: any;
+    isRecord?: boolean;
+    needSplitPositiveAndNegative?: boolean;
+  }) {
+    super(config);
+    this.needSplitPositiveAndNegativeForSum = config.needSplitPositiveAndNegative ?? false;
   }
   push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
-      }
-    }
-    if (record.className === 'Aggregator') {
-      const value = record.value();
-      this.sum += value;
-      if (this.needSplitPositiveAndNegativeForSum) {
-        if (value > 0) {
-          this.positiveSum += value;
-        } else if (value < 0) {
-          this.nagetiveSum += value;
+    if (record) {
+      if (this.isRecord && this.records) {
+        if (record.className === 'Aggregator') {
+          this.records.push(...record.records);
+        } else {
+          this.records.push(record);
         }
       }
-    } else if (!isNaN(parseFloat(record[this.field]))) {
-      const value = parseFloat(record[this.field]);
-      this.sum += value;
-      if (this.needSplitPositiveAndNegativeForSum) {
-        if (value > 0) {
-          this.positiveSum += value;
-        } else if (value < 0) {
-          this.nagetiveSum += value;
+      if (record.className === 'Aggregator') {
+        const value = record.value();
+        this.sum += value;
+        if (this.needSplitPositiveAndNegativeForSum) {
+          if (value > 0) {
+            this.positiveSum += value;
+          } else if (value < 0) {
+            this.nagetiveSum += value;
+          }
+        }
+      } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
+        const value = parseFloat(record[this.field]);
+        this.sum += value;
+        if (this.needSplitPositiveAndNegativeForSum) {
+          if (value > 0) {
+            this.positiveSum += value;
+          } else if (value < 0) {
+            this.nagetiveSum += value;
+          }
         }
       }
     }
@@ -173,26 +254,28 @@ export class SumAggregator extends Aggregator {
   recalculate() {
     this.sum = 0;
     this._formatedValue = undefined;
-    for (let i = 0; i < this.records.length; i++) {
-      const record = this.records[i];
-      if (record.className === 'Aggregator') {
-        const value = record.value();
-        this.sum += value;
-        if (this.needSplitPositiveAndNegativeForSum) {
-          if (value > 0) {
-            this.positiveSum += value;
-          } else if (value < 0) {
-            this.nagetiveSum += value;
+    if (this.records) {
+      for (let i = 0; i < this.records.length; i++) {
+        const record = this.records[i];
+        if (record.className === 'Aggregator') {
+          const value = record.value();
+          this.sum += value;
+          if (this.needSplitPositiveAndNegativeForSum) {
+            if (value > 0) {
+              this.positiveSum += value;
+            } else if (value < 0) {
+              this.nagetiveSum += value;
+            }
           }
-        }
-      } else if (!isNaN(parseFloat(record[this.field]))) {
-        const value = parseFloat(record[this.field]);
-        this.sum += value;
-        if (this.needSplitPositiveAndNegativeForSum) {
-          if (value > 0) {
-            this.positiveSum += value;
-          } else if (value < 0) {
-            this.nagetiveSum += value;
+        } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
+          const value = parseFloat(record[this.field]);
+          this.sum += value;
+          if (this.needSplitPositiveAndNegativeForSum) {
+            if (value > 0) {
+              this.positiveSum += value;
+            } else if (value < 0) {
+              this.nagetiveSum += value;
+            }
           }
         }
       }
@@ -205,17 +288,19 @@ export class CountAggregator extends Aggregator {
   count = 0;
   declare field?: string;
   push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
+    if (record) {
+      if (this.isRecord && this.records) {
+        if (record.className === 'Aggregator') {
+          this.records.push(...record.records);
+        } else {
+          this.records.push(record);
+        }
       }
-    }
-    if (record.className === 'Aggregator') {
-      this.count += record.value();
-    } else {
-      this.count++;
+      if (record.className === 'Aggregator') {
+        this.count += record.value();
+      } else {
+        this.count++;
+      }
     }
   }
   value() {
@@ -228,12 +313,14 @@ export class CountAggregator extends Aggregator {
   recalculate() {
     this.count = 0;
     this._formatedValue = undefined;
-    for (let i = 0; i < this.records.length; i++) {
-      const record = this.records[i];
-      if (record.className === 'Aggregator') {
-        this.count += record.value();
-      } else {
-        this.count++;
+    if (this.records) {
+      for (let i = 0; i < this.records.length; i++) {
+        const record = this.records[i];
+        if (record.className === 'Aggregator') {
+          this.count += record.value();
+        } else {
+          this.count++;
+        }
       }
     }
   }
@@ -244,19 +331,21 @@ export class AvgAggregator extends Aggregator {
   count = 0;
   declare field?: string;
   push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
+    if (record) {
+      if (this.isRecord && this.records) {
+        if (record.className === 'Aggregator') {
+          this.records.push(...record.records);
+        } else {
+          this.records.push(record);
+        }
       }
-    }
-    if (record.className === 'Aggregator' && record.type === AggregationType.AVG) {
-      this.sum += record.sum;
-      this.count += record.count;
-    } else if (!isNaN(parseFloat(record[this.field]))) {
-      this.sum += parseFloat(record[this.field]);
-      this.count++;
+      if (record.className === 'Aggregator' && record.type === AggregationType.AVG) {
+        this.sum += record.sum;
+        this.count += record.count;
+      } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
+        this.sum += parseFloat(record[this.field]);
+        this.count++;
+      }
     }
   }
   value() {
@@ -271,14 +360,16 @@ export class AvgAggregator extends Aggregator {
     this.sum = 0;
     this.count = 0;
     this._formatedValue = undefined;
-    for (let i = 0; i < this.records.length; i++) {
-      const record = this.records[i];
-      if (record.className === 'Aggregator' && record.type === AggregationType.AVG) {
-        this.sum += record.sum;
-        this.count += record.count;
-      } else if (!isNaN(parseFloat(record[this.field]))) {
-        this.sum += parseFloat(record[this.field]);
-        this.count++;
+    if (this.records) {
+      for (let i = 0; i < this.records.length; i++) {
+        const record = this.records[i];
+        if (record.className === 'Aggregator' && record.type === AggregationType.AVG) {
+          this.sum += record.sum;
+          this.count += record.count;
+        } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
+          this.sum += parseFloat(record[this.field]);
+          this.count++;
+        }
       }
     }
   }
@@ -288,21 +379,23 @@ export class MaxAggregator extends Aggregator {
   max: number = Number.MIN_SAFE_INTEGER;
   declare field?: string;
   push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
+    if (record) {
+      if (this.isRecord && this.records) {
+        if (record.className === 'Aggregator') {
+          this.records.push(...record.records);
+        } else {
+          this.records.push(record);
+        }
       }
-    }
-    if (record.className === 'Aggregator') {
-      this.max = record.max > this.max ? record.max : this.max;
-    } else if (typeof record === 'number') {
-      this.max = record > this.max ? record : this.max;
-    } else if (typeof record[this.field] === 'number') {
-      this.max = record[this.field] > this.max ? record[this.field] : this.max;
-    } else if (!isNaN(record[this.field])) {
-      this.max = parseFloat(record[this.field]) > this.max ? parseFloat(record[this.field]) : this.max;
+      if (record.className === 'Aggregator') {
+        this.max = record.max > this.max ? record.max : this.max;
+      } else if (typeof record === 'number') {
+        this.max = record > this.max ? record : this.max;
+      } else if (this.field && typeof record[this.field] === 'number') {
+        this.max = record[this.field] > this.max ? record[this.field] : this.max;
+      } else if (this.field && !isNaN(record[this.field])) {
+        this.max = parseFloat(record[this.field]) > this.max ? parseFloat(record[this.field]) : this.max;
+      }
     }
   }
   value() {
@@ -315,16 +408,18 @@ export class MaxAggregator extends Aggregator {
   recalculate() {
     this.max = Number.MIN_SAFE_INTEGER;
     this._formatedValue = undefined;
-    for (let i = 0; i < this.records.length; i++) {
-      const record = this.records[i];
-      if (record.className === 'Aggregator') {
-        this.max = record.max > this.max ? record.max : this.max;
-      } else if (typeof record === 'number') {
-        this.max = record > this.max ? record : this.max;
-      } else if (typeof record[this.field] === 'number') {
-        this.max = record[this.field] > this.max ? record[this.field] : this.max;
-      } else if (!isNaN(record[this.field])) {
-        this.max = parseFloat(record[this.field]) > this.max ? parseFloat(record[this.field]) : this.max;
+    if (this.records) {
+      for (let i = 0; i < this.records.length; i++) {
+        const record = this.records[i];
+        if (record.className === 'Aggregator') {
+          this.max = record.max > this.max ? record.max : this.max;
+        } else if (typeof record === 'number') {
+          this.max = record > this.max ? record : this.max;
+        } else if (this.field && typeof record[this.field] === 'number') {
+          this.max = record[this.field] > this.max ? record[this.field] : this.max;
+        } else if (this.field && !isNaN(record[this.field])) {
+          this.max = parseFloat(record[this.field]) > this.max ? parseFloat(record[this.field]) : this.max;
+        }
       }
     }
   }
@@ -334,19 +429,21 @@ export class MinAggregator extends Aggregator {
   min: number = Number.MAX_SAFE_INTEGER;
   declare field?: string;
   push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
+    if (record) {
+      if (this.isRecord && this.records) {
+        if (record.className === 'Aggregator') {
+          this.records.push(...record.records);
+        } else {
+          this.records.push(record);
+        }
       }
-    }
-    if (record.className === 'Aggregator') {
-      this.min = record.min < this.min ? record.min : this.min;
-    } else if (typeof record === 'number') {
-      this.min = record < this.min ? record : this.min;
-    } else if (typeof record[this.field] === 'number') {
-      this.min = record[this.field] < this.min ? record[this.field] : this.min;
+      if (record.className === 'Aggregator') {
+        this.min = record.min < this.min ? record.min : this.min;
+      } else if (typeof record === 'number') {
+        this.min = record < this.min ? record : this.min;
+      } else if (this.field && typeof record[this.field] === 'number') {
+        this.min = record[this.field] < this.min ? record[this.field] : this.min;
+      }
     }
   }
   value() {
@@ -359,14 +456,16 @@ export class MinAggregator extends Aggregator {
   recalculate() {
     this.min = Number.MAX_SAFE_INTEGER;
     this._formatedValue = undefined;
-    for (let i = 0; i < this.records.length; i++) {
-      const record = this.records[i];
-      if (record.className === 'Aggregator') {
-        this.min = record.min < this.min ? record.min : this.min;
-      } else if (typeof record === 'number') {
-        this.min = record < this.min ? record : this.min;
-      } else if (typeof record[this.field] === 'number') {
-        this.min = record[this.field] < this.min ? record[this.field] : this.min;
+    if (this.records) {
+      for (let i = 0; i < this.records.length; i++) {
+        const record = this.records[i];
+        if (record.className === 'Aggregator') {
+          this.min = record.min < this.min ? record.min : this.min;
+        } else if (typeof record === 'number') {
+          this.min = record < this.min ? record : this.min;
+        } else if (this.field && typeof record[this.field] === 'number') {
+          this.min = record[this.field] < this.min ? record[this.field] : this.min;
+        }
       }
     }
   }
@@ -499,4 +598,15 @@ export function sortBy(order: string[]) {
     }
     return naturalSort(a, b);
   };
+}
+
+function _getDependAggregatorValues(aggregators: Aggregator[], dependIndicatorKeys: string[]) {
+  const dependAggregatorValues: any = {};
+  for (let m = 0; m < dependIndicatorKeys?.length; m++) {
+    const aggrator = aggregators.find(aggrator => aggrator.key === dependIndicatorKeys[m]);
+    if (aggrator) {
+      dependAggregatorValues[aggrator.key] = aggrator?.value();
+    }
+  }
+  return dependAggregatorValues;
 }

@@ -18,8 +18,7 @@ The configuration of the pivot table above is as follows:
 const option={
   rows:['region','province'], //row dimensions
   columns:['year','quarter'], //column dimensions
-  indicators:['sales','profit'], //Indicators
-  enableDataAnalysis: true, //Whether to enable data analysis function
+  indicators:['sales','profit'], //Indicators //Whether to enable data analysis function
   records:[ //Data source。 If summary data is passed in, use user incoming data
     {
       region:'东北',
@@ -69,7 +68,10 @@ dataConfig application example:
 
 ### 1. Totals
 
-[option description](../../../option/PivotTable#dataConfig.totals)
+#### VTable to calculate subtotals configuration:
+
+[option description](../../option/PivotTable#dataConfig.totals)
+
 Configuration example:
 
 ```
@@ -96,10 +98,26 @@ dataConfig: {
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-total
 
+#### Custom summary data
+
+If you need to customize summary data, you do not want VTable to calculate the subtotals. In addition to the above configuration, you also need to include the corresponding summary data in the data passed to VTable. In this way, VTable will analyze it internally and display it as summary data instead of using VTable's summary value.
+
+<div style="width: 50%; text-align: center;">
+<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-total-demo.png" />
+<p>Custom subtotal total sample code</p>
+</div>
+
+Specific example: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-custom-total
+
 ### 2. Sorting rules
 
-[option description](../../../option/PivotTable#dataConfig.sortRules)
-Configuration example:
+VTable's pivot table supports four sorting methods: natural sorting of dimension values, specified dimension value order, indicator value sorting, and custom sorting.
+
+For definitions, please refer to:
+
+[option description](../../option/PivotTable#dataConfig.sortRules) [Usage tutorial](../../guide/basic_function/sort/pivot_sort)
+
+The following is an example of the indicator value sorting configuration:
 
 ```
     sortRules: [
@@ -119,7 +137,8 @@ Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-
 
 ### 3. Filter rules
 
-[option description](../../../option/PivotTable#dataConfig.filterRules)
+[option description](../../option/PivotTable#dataConfig.filterRules)
+
 Configuration example:
 
 ```
@@ -136,7 +155,8 @@ Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-filte
 
 ### 4. Aggregation method
 
-[option description](../../../option/PivotTable#dataConfig.aggregationRules)
+[option description](../../option/PivotTable#dataConfig.aggregationRules)
+
 Configuration example:
 
 ```
@@ -168,15 +188,48 @@ Configuration example:
           indicatorKey: 'OrderSalesValue', //Indicator name
           field: 'Sales', //Indicator based on field
           aggregationType: VTable.TYPES.AggregationType.NONE, //don't aggregate
+        },
+        {
+          indicatorKey: 'orderRecords', //Indicator name
+          field: 'Sales', //Indicator based on field
+          aggregationType: VTable.TYPES.AggregationType.RECORD, //don't aggregate. Match all the corresponding data as the value of the cell
         }
       ]
 ```
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
 
+**Special Note:**
+
+1. AggregationType.NONE The usage scenario of the indicator without aggregation is mainly used to display the original data obtained according to the data record input by the user, such as:
+
+```
+records:[{
+  region: 'Central South',
+  province: 'Guangxi',
+  year: '2016',
+  quarter: '2016-Q1',
+  sales: 'NULL',
+  profit: 1546
+}],
+dataConfig:{
+  aggregationRules:[
+  {
+    indicatorKey: 'sales', //Indicator name
+    field: 'sales', //Indicator based field
+    aggregationType: VTable.TYPES.AggregationType.NONE, //Do not perform aggregation. Match the corresponding data to obtain the value of the corresponding field.
+  }]
+}
+```
+
+The sales indicator in this record is a non-numeric value, and it is required to display `"NULL"` directly in the table cell. In this case, you can set `NONE` to require the internal aggregation logic of VTable to directly obtain the value of the sales field without aggregation.
+
+2. The usage scenario of AggregationType.RECORD indicator without aggregation is mainly used to match all data according to the data record passed by the user, and use it as the display data of the cell. The usage scenario is such as collecting data sets as mini-charts. For specific demo, see: https://visactor.io/vtable/demo/cell-type/pivot-sparkline
+
 ### 5. Derive Field
 
-[option description](../../../option/PivotTable#dataConfig.derivedFieldRules)
+[option description](../../option/PivotTable#dataConfig.derivedFieldRules)
+
 Configuration example:
 
 ```
@@ -193,6 +246,34 @@ Configuration example:
 ```
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-derivedField
+
+### 6. Pivot table calculated fields
+
+[option description](../../option/PivotTable#dataConfig.calculatedFieldRules)
+
+Configuration example:
+
+```
+dataConfig: {
+  calculatedFieldRules:[
+    {
+      key: 'AvgPrice',
+      dependIndicatorKeys: ['Quantity', 'Sales'],
+      calculateFun: dependValue => {
+        return dependValue.Sales / dependValue.Quantity;
+      }
+    }
+  ],
+}
+```
+
+Configuration explanation:
+
+- key: The key unique identifier of the calculated field, which can be used as a new indicator and configured in indicators for display in the pivot table.
+- dependIndicatorKeys: The indicators that the calculated field depends on, which can be the corresponding indicator fields in records. If the dependent indicator is not in records, it needs to be configured in aggregationRules, specifying the aggregation rules and indicatorKey to be used in dependIndicatorKeys.
+- calculateFun: the calculation function of the calculated field, the function parameter is the value of the dependent indicator.
+
+Specific example: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-calculatedField
 
 ## Data analysis process
 
@@ -224,8 +305,6 @@ According to the above traversed structure, a dimension tree will be generated, 
 ### Custom header structure width dimension tree
 
 Although multi-dimensional tables with analytical capabilities can automatically analyze the dimension values of each dimension to form a tree structure of row and column headers, and can be sorted according to `dataConfig.sortRules`, scenarios with complex business logic still expect to be able to **customize Row column header dimension value ** and order. Then these business requirement scenarios can be realized through rowTree and columnTree.
-
-- enableDataAnalysis needs to be set to false to turn off the analysis of aggregated data within VTable.
 
    <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-tree.png" />
@@ -299,7 +378,7 @@ const option = {
         ]
     }],
     indicators: ['sales', 'profit'],
-    //enableDataAnalysis:true,
+
     corner: {
         titleOnDimension: 'none'
     },
@@ -374,8 +453,6 @@ VTable official website example: https://visactor.io/vtable/demo/table-type/pivo
 
 The complexity of the custom tree lies in the formation of the row, column and dimension trees. You can choose to use it according to the business scenario. If you have complex sorting, aggregation or paging rules, you can choose to use a custom method.
 
-**Note: If you choose the custom tree configuration method, the data aggregation capability inside the VTable will not be enabled, that is, one of the matched data entries will be used as the cell indicator value. **
-
 ## Other related configurations
 
 ### Drilling up and down
@@ -385,3 +462,9 @@ We only provide the display of the drill-down download button. If you need this 
 Add the drillDown configuration item to the dimension configuration rows or columns to display the download button, listen to the icon button click event `drillmenu_click`, determine whether to drill down or roll up the dimension according to the event parameter `drillDown` or `drillUp`, determine the dimension to drill down or drill up according to the parameter `dimensionKey`, add or delete it to rows or columns, obtain the data source corresponding to the new dimension level, and call the interface `updateOption` to update the new option to the table.
 
 Specific demo: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-table-drill
+
+## Related interfaces
+
+### getCellOriginRecord
+
+It can help to obtain the original data entry corresponding to the cell aggregate value.

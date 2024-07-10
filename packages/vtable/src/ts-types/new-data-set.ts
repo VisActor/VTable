@@ -18,7 +18,8 @@ export enum AggregationType {
   MAX = 'MAX',
   AVG = 'AVG',
   COUNT = 'COUNT',
-  CUSTOM = 'CUSTOM'
+  CUSTOM = 'CUSTOM',
+  RECALCULATE = 'RECALCULATE'
 }
 export enum SortType {
   ASC = 'ASC',
@@ -168,11 +169,29 @@ export type MappingFuncRule = {
 };
 
 //#endregion 映射规则
+
+//#region 派生字段规则
 export interface DerivedFieldRule {
   fieldName?: string;
   derivedFunc?: (record: Record<string, any>) => any;
 }
 export type DerivedFieldRules = DerivedFieldRule[];
+//#endregion 派生字段规则
+
+//#region 计算字段规则
+export interface CalculateddFieldRule {
+  /** 唯一标识，可以当做新指标的key，用于配置在 indicators 中在透视表中展示。 */
+  key: string;
+  /** 计算字段依赖的指标，可以是在 records 中具体对应的指标字段 or 不是数据records 中的字段
+   * 如果依赖的指标不在 records 中，则需要在 aggregationRules 中明确配置，具体指明聚合规则和 indicatorKey 以在 dependIndicatorKeys 所使用。 */
+  dependIndicatorKeys: string[];
+  /** 计算字段的计算函数，依赖的指标值作为参数传入，返回值作为计算字段的值。   */
+  calculateFun?: (dependFieldsValue: any) => any;
+}
+
+export type CalculateddFieldRules = CalculateddFieldRule[];
+//#endregion 计算字段规则
+
 /**
  * 基本表数据处理配置
  */
@@ -196,6 +215,7 @@ export interface IPivotTableDataConfig {
    */
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
+  calculatedFieldRules?: CalculateddFieldRules;
 }
 
 /**

@@ -1,6 +1,6 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
-import { ListTable } from '../../src/ListTable';
+import { ListTable } from '../../src';
 import { createDiv } from '../dom';
 global.__VERSION__ = 'none';
 describe('listTable-cellType init test', () => {
@@ -273,6 +273,6 @@ fruit and seeds. They are also highly intelligent and social, and are considered
       col: -1,
       row: -1
     });
+    listTable.release();
   });
-  listTable.release();
 });

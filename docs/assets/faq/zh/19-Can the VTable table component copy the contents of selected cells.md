@@ -14,7 +14,7 @@ VTable 有专门的快捷键配置项 keyboardOptions，具体如下：
    keyboardOptions:
    {
       /** 开启快捷键全选 默认：false */
-      selectAllOnCtrlA?: boolean;
+      selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
       /** 快捷键复制 默认不开启*/
       copySelected?: boolean; //这个copy快捷键是和浏览器的快捷键一致的
    }
