@@ -67,6 +67,18 @@ export function createTable() {
     timelineColWidth: 60,
     startField: 'start',
     endField: 'end',
+    gridStyle: {
+      vertical: {
+        lineWidth: 1,
+        lineColor: 'purple'
+      },
+      horizontal: {
+        lineWidth: 1,
+        lineColor: 'green'
+      }
+    },
+    defaultHeaderRowHeight: 60,
+    defaultRowHeight: 30,
     timelineScales: [
       {
         unit: 'month',

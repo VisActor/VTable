@@ -565,16 +565,12 @@ export interface GanttConstructorOptions {
   infoTableWidth?: 'auto' | number;
   gridStyle?: {
     vertical: {
-      style: {
-        lineColor?: string;
-        lineWidth?: number;
-      };
+      lineColor?: string;
+      lineWidth?: number;
     };
     horizontal: {
-      style: {
-        lineColor?: string;
-        lineWidth?: number;
-      };
+      lineColor?: string;
+      lineWidth?: number;
     };
   };
   timelineStyle?: {} | {}[];
@@ -603,6 +599,8 @@ export interface GanttConstructorOptions {
    *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
    * */
   overscrollBehavior?: 'auto' | 'none';
+
+  // infoTableTheme?: ITableThemeDefine;
 }
 
 export type IBarStyleOption = {

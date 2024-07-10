@@ -1,4 +1,3 @@
-import type { EventManager } from './event/event';
 import {
   AABBBounds,
   isNumber,
@@ -14,7 +13,6 @@ import { BaseTable } from './core';
 import { createRootElement } from './core/tableHelper';
 import { EventHandler } from './event/EventHandler';
 import { Scenegraph } from './gantt/scenegraph';
-import type { StateManager } from './state/state';
 import { Env } from './tools/env';
 import { extend } from './tools/helper';
 import type { GanttConstructorOptions, ITableThemeDefine, ListTableConstructorOptions } from './ts-types';
@@ -28,6 +26,8 @@ import type { EditManeger } from './edit/edit-manager';
 import { SimpleHeaderLayoutMap } from './layout';
 import { ListTable } from './ListTable';
 import { title } from 'process';
+import { EventManager } from './gantt/event-manager';
+import { StateManager } from './gantt/state-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
 
 export class Gantt {
@@ -54,6 +54,7 @@ export class Gantt {
   element: HTMLElement;
   context: CanvasRenderingContext2D;
   theme: ITableThemeDefine;
+  headerRowHeight: number;
   rowHeight: number;
   timelineColWidth: number;
   colWidthPerDay: number; //分配给每日的宽度
@@ -61,8 +62,14 @@ export class Gantt {
   orderedScales: any;
   reverseOrderedScales: any;
   headerLevel: number;
+  itemCount: number;
+  drawHeight: number;
+  headerHeight: number;
+  gridHeight: number;
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
     this.options = options;
+    this.theme = options.theme ?? themes.DEFAULT;
+    this.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
     this.rowHeight = options?.defaultRowHeight ?? 40;
     this.timelineColWidth = options?.timelineColWidth ?? 60;
     this._orderScales();
@@ -82,8 +89,14 @@ export class Gantt {
     }
     const listTableOption = this.generateListTableOptions();
     this.listTableInstance = new ListTable(container, listTableOption);
-
+    this.itemCount = this.listTableInstance.rowCount - this.listTableInstance.columnHeaderLevelCount;
+    this.drawHeight = this.listTableInstance.getDrawRange().height;
+    this.headerHeight = this.headerRowHeight * this.headerLevel;
+    this.gridHeight = this.drawHeight - this.headerHeight;
+    this.eventManager = new EventManager(this);
+    this.stateManager = new StateManager(this);
     this.scenegraph = new Scenegraph(this);
+    this.scenegraph.afterCreateSceneGraph();
   }
 
   /**
@@ -173,7 +186,7 @@ export class Gantt {
     }
     listTable_options.canvasWidth = this.options.infoTableWidth as number;
     listTable_options.canvasHeight = this.canvasHeight ?? this.tableNoFrameHeight;
-    listTable_options.defaultHeaderRowHeight = this.rowHeight * this.headerLevel;
+    listTable_options.defaultHeaderRowHeight = this.headerRowHeight * this.headerLevel;
     listTable_options.clearDOM = false;
     return listTable_options;
   }
@@ -276,5 +289,23 @@ export class Gantt {
       colWidthIncludeDays = 365;
     }
     this.colWidthPerDay = this.timelineColWidth / colWidthIncludeDays;
+  }
+  getAllRowsHeight() {
+    return this.headerRowHeight * this.headerLevel + this.itemCount * this.rowHeight;
+  }
+  getAllColsWidth() {
+    return (
+      this.colWidthPerDay *
+        (Math.ceil(
+          Math.abs(new Date(this.options.maxDate).getTime() - new Date(this.options.minDate).getTime()) /
+            (1000 * 60 * 60 * 24)
+        ) +
+          1) +
+      <number>this.options.infoTableWidth
+    );
+  }
+
+  getFrozenRowsHeight() {
+    return this.headerRowHeight * this.headerLevel;
   }
 }

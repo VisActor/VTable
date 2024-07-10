@@ -1,9 +1,9 @@
 import type { IRect, Stage } from '@visactor/vrender-core';
 import { Group, Text, createStage, vglobal } from '@visactor/vrender-core';
 import { GridComponent } from './grid-component';
-import { createDateHeader } from './date-header';
 import type { Gantt } from '../Gantt';
 import { Env } from '../tools/env';
+import { ScrollBarComponent } from './scrollbar';
 
 export class Scenegraph {
   dateStepWidth: number;
@@ -13,6 +13,7 @@ export class Scenegraph {
   dateHeader: Group;
   _gantt: any;
   tableGroup: Group;
+  scrollbarComponent: ScrollBarComponent;
   stage: Stage;
   constructor(gantt: Gantt) {
     this._gantt = gantt;
@@ -56,9 +57,8 @@ export class Scenegraph {
     this.stage.defaultLayer.add(this.tableGroup);
   }
 
-  createSceneGraph() {
-    // this.dateHeader = createContainerGroup(100, 100);
-    this.grid = new GridComponent();
+  afterCreateSceneGraph() {
+    this.scrollbarComponent.updateScrollBar();
   }
 
   // updateTableSize() {
@@ -165,17 +165,58 @@ export class Scenegraph {
   renderSceneGraph() {
     this.stage.render();
   }
+
+  /**
+   * @description: 触发下一帧渲染
+   * @return {*}
+   */
+  updateNextFrame() {
+    this.stage.renderNextFrame();
+  }
+  get width(): number {
+    return this.tableGroup.attribute?.width ?? 0;
+  }
+
+  get height(): number {
+    return this.tableGroup.attribute?.height ?? 0;
+  }
+
+  get x(): number {
+    return this.tableGroup.attribute?.x ?? 0;
+  }
+
+  get y(): number {
+    return this.tableGroup.attribute?.y ?? 0;
+  }
+
+  /**
+   * @description: 设置表格的x位置，滚动中使用
+   * @param {number} x
+   * @return {*}
+   */
+  setX(x: number, isEnd = false) {
+    // this._gantt.scenegraph.proxy.setX(-x, isEnd);
+  }
+
+  /**
+   * @description: 更新表格的y位置，滚动中使用
+   * @param {number} y
+   * @return {*}
+   */
+  setY(y: number, isEnd = false) {
+    // this._gantt.scenegraph.proxy.setY(-y, isEnd);
+  }
 }
 
 export function initSceneGraph(scene: Scenegraph) {
   const width = scene._gantt.tableNoFrameWidth;
-  const height = scene._gantt.tableNoFrameHeight;
+  const height = Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight);
 
   scene.tableGroup = new Group({
-    x: 0,
-    y: 0,
-    width: width - 2,
-    height: height - 2,
+    x: 1,
+    y: 1,
+    width: width,
+    height: height,
     clip: true,
     pickable: false,
     stroke: 'green',
@@ -188,7 +229,7 @@ export function initSceneGraph(scene: Scenegraph) {
     x: 0,
     y: 0,
     width: width - 2,
-    height: scene._gantt.rowHeight * scene._gantt.headerLevel,
+    height: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
     clip: true,
     pickable: true,
     fill: 'purple',
@@ -204,9 +245,9 @@ export function initSceneGraph(scene: Scenegraph) {
   for (let i = 0; i < scene._gantt.headerLevel; i++) {
     const rowHeader = new Group({
       x: 0,
-      y: scene._gantt.rowHeight * i,
+      y: scene._gantt.headerRowHeight * i,
       width: width - 2,
-      height: scene._gantt.rowHeight,
+      height: scene._gantt.headerRowHeight,
       clip: true,
       pickable: true,
       fill: 'pink',
@@ -224,7 +265,7 @@ export function initSceneGraph(scene: Scenegraph) {
         x,
         y: 0,
         width: scene._gantt.colWidthPerDay * timelineDates[j].days,
-        height: scene._gantt.rowHeight,
+        height: scene._gantt.headerRowHeight,
         clip: true,
         pickable: true,
         fill: i === 1 ? 'yellow' : 'blue',
@@ -238,7 +279,7 @@ export function initSceneGraph(scene: Scenegraph) {
         y: 0,
         maxLineWidth: scene._gantt.colWidthPerDay * timelineDates[j].days,
         // width: scene._gantt.colWidthPerDay * timelineDates[j].days,
-        heightLimit: scene._gantt.rowHeight,
+        heightLimit: scene._gantt.headerRowHeight,
         // clip: true,
         pickable: true,
         text: timelineDates[j].title.toLocaleString(),
@@ -255,7 +296,29 @@ export function initSceneGraph(scene: Scenegraph) {
       rowHeader.addChild(date);
       x += scene._gantt.colWidthPerDay * timelineDates[j].days;
     }
-    // y += scene._gantt.rowHeight;
+    scene.grid = new GridComponent({
+      vertical: true,
+      horizontal: true,
+      gridStyle: {
+        stroke: 'red',
+        lineWidth: 1
+      },
+      scrollLeft: 0,
+      scrollTop: 0,
+      x: 0,
+      y: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
+      width: width - 2,
+      height: height - scene._gantt.headerRowHeight * scene._gantt.headerLevel,
+      timelineDates: scene._gantt.reverseOrderedScales[0].timelineDates,
+      colWidthPerDay: scene._gantt.colWidthPerDay,
+      rowHeight: scene._gantt.rowHeight,
+      rowCount: scene._gantt.itemCount
+    });
+    scene.tableGroup.addChild(scene.grid.group);
+
+    scene.scrollbarComponent = new ScrollBarComponent(scene._gantt);
+    scene.stage.defaultLayer.addChild(scene.scrollbarComponent.hScrollBar);
+    scene.stage.defaultLayer.addChild(scene.scrollbarComponent.vScrollBar);
   }
 }
 
