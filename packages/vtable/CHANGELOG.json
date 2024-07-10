@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.5.1",
+      "tag": "@visactor/vtable_v1.5.1",
+      "date": "Wed, 10 Jul 2024 06:19:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: getCellAtRelativePosition api return value #2054\n\n"
+          },
+          {
+            "comment": "fix: add tolerance for scroll in _disableColumnAndRowSizeRound mode"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.5.0",
       "tag": "@visactor/vtable_v1.5.0",
       "date": "Fri, 05 Jul 2024 10:43:51 GMT",

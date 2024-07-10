@@ -1,6 +1,16 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 05 Jul 2024 10:43:51 GMT and should not be manually modified.
+This log was last generated on Wed, 10 Jul 2024 06:19:15 GMT and should not be manually modified.
+
+## 1.5.1
+Wed, 10 Jul 2024 06:19:15 GMT
+
+### Updates
+
+- fix: getCellAtRelativePosition api return value #2054
+
+
+- fix: add tolerance for scroll in _disableColumnAndRowSizeRound mode
 
 ## 1.5.0
 Fri, 05 Jul 2024 10:43:51 GMT
