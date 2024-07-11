@@ -261,6 +261,9 @@ export interface IBaseTableProtected {
   headerDomContainer?: HTMLElement;
   // 已使用一行的高度填充所有行
   useOneRowHeightFillAll?: boolean;
+
+  // 启用树形结构数据内的merge配置
+  enableTreeNodeMerge?: boolean;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */

@@ -247,6 +247,8 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
         col: number;
         field: string;
       }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
+
+  enableTreeNodeMerge?: boolean;
 }
 
 export interface ListTableAPI extends BaseTableAPI {

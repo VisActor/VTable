@@ -113,6 +113,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //     internalProps.columns[index].editor = colDefine.editor;
     //   }
     // });
+
+    internalProps.enableTreeNodeMerge = options.enableTreeNodeMerge;
+
     this.internalProps.headerHelper.setTableColumnsEditor();
     this.showHeader = options.showHeader ?? true;
 
