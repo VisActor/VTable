@@ -17,7 +17,9 @@ export class GridComponent {
   rowHeight: number;
   rowCount: number;
   group: Group;
-
+  verticalLineGroup: Group;
+  horizontalLineGroup: Group;
+  allGridHeight: number;
   constructor(gridOption: {
     vertical: boolean;
     horizontal: boolean;
@@ -32,6 +34,7 @@ export class GridComponent {
     colWidthPerDay: number;
     rowHeight: number;
     rowCount: number;
+    allGridHeight: number;
   }) {
     this.vertical = gridOption.vertical;
     this.horizontal = gridOption.horizontal;
@@ -46,6 +49,8 @@ export class GridComponent {
     this.colWidthPerDay = gridOption.colWidthPerDay;
     this.rowHeight = gridOption.rowHeight;
     this.rowCount = gridOption.rowCount;
+    this.allGridHeight = gridOption.allGridHeight;
+    console.trace('new GridComponent');
     this.group = new Group({
       x: gridOption.x,
       y: gridOption.y,
@@ -57,20 +62,21 @@ export class GridComponent {
       lineWidth: 2
       // fill: false
     });
-
+    (this.group as any).role = 'grid';
     if (this.vertical) {
-      const vGroup = new Group({
+      this.verticalLineGroup = new Group({
         x: 0,
         y: 0,
         width: this.width,
-        height: this.height,
+        height: this.allGridHeight,
         clip: true,
         pickable: false,
         stroke: 'red',
         lineWidth: 2
         // fill: false
       });
-      this.group.addChild(vGroup);
+      (this.verticalLineGroup as any).role = 'grid-vertical';
+      this.group.addChild(this.verticalLineGroup);
 
       const vLines = [];
       let x = 0;
@@ -84,27 +90,27 @@ export class GridComponent {
 
           points: [
             { x, y: 0 },
-            { x, y: this.height }
+            { x, y: this.allGridHeight }
           ]
         });
         vLines.push(line);
-        vGroup.addChild(line);
+        this.verticalLineGroup.addChild(line);
       }
     }
 
     if (this.horizontal) {
-      const hGroup = new Group({
+      this.horizontalLineGroup = new Group({
         x: 0,
         y: 0,
         width: this.width,
-        height: this.height,
-        clip: true,
+        height: this.allGridHeight,
         pickable: false,
         stroke: 'red',
         lineWidth: 2
         // fill: false
       });
-      this.group.addChild(hGroup);
+      (this.horizontalLineGroup as any).role = 'grid-horizontal';
+      this.group.addChild(this.horizontalLineGroup);
 
       const hLines = [];
       let y = 0;
@@ -114,15 +120,22 @@ export class GridComponent {
           pickable: false,
           stroke: 'red' as string,
           lineWidth: 1 as number,
-
           points: [
             { x: 0, y },
             { x: this.width, y }
           ]
         });
         hLines.push(line);
-        hGroup.addChild(line);
+        this.horizontalLineGroup.addChild(line);
       }
     }
+  }
+  setX(x: number) {
+    this.verticalLineGroup.setAttribute('x', x);
+    this.horizontalLineGroup.setAttribute('x', x);
+  }
+  setY(y: number) {
+    this.verticalLineGroup.setAttribute('y', y);
+    this.horizontalLineGroup.setAttribute('y', y);
   }
 }

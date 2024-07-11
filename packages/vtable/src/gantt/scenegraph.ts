@@ -4,6 +4,7 @@ import { GridComponent } from './grid-component';
 import type { Gantt } from '../Gantt';
 import { Env } from '../tools/env';
 import { ScrollBarComponent } from './scrollbar';
+import { bindScrollBarListener } from './event/scroll';
 
 export class Scenegraph {
   dateStepWidth: number;
@@ -11,7 +12,7 @@ export class Scenegraph {
   _scales: {}[];
   grid: GridComponent;
   dateHeader: Group;
-  _gantt: any;
+  _gantt: Gantt;
   tableGroup: Group;
   scrollbarComponent: ScrollBarComponent;
   stage: Stage;
@@ -36,8 +37,8 @@ export class Scenegraph {
       disableDirtyBounds: false,
       // background: gantt.theme.underlayBackgroundColor,
       // dpr: gantt.internalProps.pixelRatio,
-      enableLayout: true,
-      autoRender: true
+      enableLayout: true
+      // autoRender: true
       // afterRender: () => {
       // this._gantt.fireListeners('after_render', null);
       // }
@@ -59,6 +60,7 @@ export class Scenegraph {
 
   afterCreateSceneGraph() {
     this.scrollbarComponent.updateScrollBar();
+    bindScrollBarListener(this._gantt.eventManager);
   }
 
   // updateTableSize() {
@@ -195,6 +197,9 @@ export class Scenegraph {
    * @return {*}
    */
   setX(x: number, isEnd = false) {
+    this.dateHeader.setAttribute('x', x);
+    this.grid.setX(x);
+    this.updateNextFrame();
     // this._gantt.scenegraph.proxy.setX(-x, isEnd);
   }
 
@@ -205,6 +210,8 @@ export class Scenegraph {
    */
   setY(y: number, isEnd = false) {
     // this._gantt.scenegraph.proxy.setY(-y, isEnd);
+    this.grid.setY(y);
+    this.updateNextFrame();
   }
 }
 
@@ -228,7 +235,7 @@ export function initSceneGraph(scene: Scenegraph) {
   const dateHeader = new Group({
     x: 0,
     y: 0,
-    width: width - 2,
+    width: scene._gantt.getAllColsWidth(), //width - 2,
     height: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
     clip: true,
     pickable: true,
@@ -246,7 +253,7 @@ export function initSceneGraph(scene: Scenegraph) {
     const rowHeader = new Group({
       x: 0,
       y: scene._gantt.headerRowHeight * i,
-      width: width - 2,
+      width: scene._gantt.getAllColsWidth(),
       height: scene._gantt.headerRowHeight,
       clip: true,
       pickable: true,
@@ -296,30 +303,31 @@ export function initSceneGraph(scene: Scenegraph) {
       rowHeader.addChild(date);
       x += scene._gantt.colWidthPerDay * timelineDates[j].days;
     }
-    scene.grid = new GridComponent({
-      vertical: true,
-      horizontal: true,
-      gridStyle: {
-        stroke: 'red',
-        lineWidth: 1
-      },
-      scrollLeft: 0,
-      scrollTop: 0,
-      x: 0,
-      y: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
-      width: width - 2,
-      height: height - scene._gantt.headerRowHeight * scene._gantt.headerLevel,
-      timelineDates: scene._gantt.reverseOrderedScales[0].timelineDates,
-      colWidthPerDay: scene._gantt.colWidthPerDay,
-      rowHeight: scene._gantt.rowHeight,
-      rowCount: scene._gantt.itemCount
-    });
-    scene.tableGroup.addChild(scene.grid.group);
-
-    scene.scrollbarComponent = new ScrollBarComponent(scene._gantt);
-    scene.stage.defaultLayer.addChild(scene.scrollbarComponent.hScrollBar);
-    scene.stage.defaultLayer.addChild(scene.scrollbarComponent.vScrollBar);
   }
+  scene.grid = new GridComponent({
+    vertical: true,
+    horizontal: true,
+    gridStyle: {
+      stroke: 'red',
+      lineWidth: 1
+    },
+    scrollLeft: 0,
+    scrollTop: 0,
+    x: 0,
+    y: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
+    width: scene._gantt.getAllColsWidth(),
+    height: height - scene._gantt.headerRowHeight * scene._gantt.headerLevel,
+    timelineDates: scene._gantt.reverseOrderedScales[0].timelineDates,
+    colWidthPerDay: scene._gantt.colWidthPerDay,
+    rowHeight: scene._gantt.rowHeight,
+    rowCount: scene._gantt.itemCount,
+    allGridHeight: scene._gantt.getAllGridHeight()
+  });
+  scene.tableGroup.addChild(scene.grid.group);
+
+  scene.scrollbarComponent = new ScrollBarComponent(scene._gantt);
+  scene.stage.defaultLayer.addChild(scene.scrollbarComponent.hScrollBar);
+  scene.stage.defaultLayer.addChild(scene.scrollbarComponent.vScrollBar);
 }
 
 export function createContainerGroup(width: number, height: number, clip?: boolean) {

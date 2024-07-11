@@ -296,13 +296,18 @@ export class Gantt {
   getAllColsWidth() {
     return (
       this.colWidthPerDay *
-        (Math.ceil(
-          Math.abs(new Date(this.options.maxDate).getTime() - new Date(this.options.minDate).getTime()) /
-            (1000 * 60 * 60 * 24)
-        ) +
-          1) +
-      <number>this.options.infoTableWidth
+      (Math.ceil(
+        Math.abs(new Date(this.options.maxDate).getTime() - new Date(this.options.minDate).getTime()) /
+          (1000 * 60 * 60 * 24)
+      ) +
+        1)
+      //      +
+      // <number>this.options.infoTableWidth
     );
+  }
+
+  getAllGridHeight() {
+    return this.itemCount * this.rowHeight;
   }
 
   getFrozenRowsHeight() {

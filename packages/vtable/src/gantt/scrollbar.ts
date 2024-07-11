@@ -1,7 +1,9 @@
 import { ScrollBar } from '@visactor/vrender-components';
 import { isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
-
+import type { EventManager } from './event-manager';
+import type { FederatedPointerEvent } from '@visactor/vrender-core';
+import { throttle } from '../tools/util';
 /**
  * @description: 创建滚动条组件
  * @return {*}

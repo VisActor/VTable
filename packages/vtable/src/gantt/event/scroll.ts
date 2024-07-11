@@ -1,6 +1,9 @@
+import type { FederatedPointerEvent } from '@visactor/vrender-core';
 import type { Gantt } from '../../Gantt';
 import type { StateManager } from '../../state/state';
 import { InteractionState } from '../../ts-types';
+import type { EventManager } from '../event-manager';
+import { throttle } from '../../tools/util';
 /**
  *
  * @param event
@@ -9,8 +12,7 @@ import { InteractionState } from '../../ts-types';
  */
 export function handleWhell(event: WheelEvent, gantt: Gantt, isWheelEvent: boolean = true) {
   let { deltaX, deltaY } = event;
-  console.log('deltaX', deltaX);
-  console.log('deltaY', deltaY);
+  console.log('deltaX deltaY', deltaX, deltaY);
   // 如果按住了shift 则进行横向滚动 纵向不滚动
   if (event.shiftKey && event.deltaY) {
     //mac电脑按住shift 鼠标滚动deltaX和deltaY是自动互换的，所以此逻辑只针对windows电脑有效及mac触摸板有效
@@ -160,4 +162,142 @@ export class InertiaScroll {
   isInertiaScrolling() {
     return !!this.runingId;
   }
+}
+
+export function bindScrollBarListener(eventManager: EventManager) {
+  const table = eventManager._gantt;
+  const stateManager = table.stateManager;
+  const scenegraph = table.scenegraph;
+
+  // 监听滚动条组件pointover事件
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerover', (e: any) => {
+    scenegraph.scrollbarComponent.showVerticalScrollBar();
+  });
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerover', (e: any) => {
+    scenegraph.scrollbarComponent.showHorizontalScrollBar();
+  });
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerout', (e: any) => {
+    // if (stateManager.interactionState === InteractionState.scrolling) {
+    //   return;
+    // }
+    scenegraph.scrollbarComponent.hideVerticalScrollBar();
+  });
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerout', (e: any) => {
+    // if (stateManager.interactionState === InteractionState.scrolling) {
+    //   return;
+    // }
+    scenegraph.scrollbarComponent.hideHorizontalScrollBar();
+  });
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointermove', (e: FederatedPointerEvent) => {
+    // scenegraph._gantt.stateManager.updateCursor('default');
+    e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成可拖拽
+  });
+  // scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
+  //   e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成拖拽状态
+  //   if ((scenegraph._gantt as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+  //     scenegraph._gantt.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+  //       event: e.nativeEvent
+  //     });
+  //   }
+  // });
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
+    // scenegraph._gantt.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
+    scenegraph._gantt.eventManager.isDown = true;
+
+    // if ((scenegraph._gantt as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+    //   scenegraph._gantt.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+    //     event: e.nativeEvent
+    //   });
+    // }
+  });
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerup', () => {
+    // stateManager.fastScrolling = false;
+    // scenegraph._gantt.eventManager.isDraging = false;
+    // if (stateManager.interactionState === InteractionState.scrolling) {
+    //   stateManager.updateInteractionState(InteractionState.default);
+    // }
+  });
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerupoutside', () => {
+    // stateManager.fastScrolling = false;
+    // if (stateManager.interactionState === InteractionState.scrolling) {
+    //   stateManager.updateInteractionState(InteractionState.default);
+    // }
+  });
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('scrollUp', (e: FederatedPointerEvent) => {
+    scenegraph._gantt.eventManager.isDraging = false;
+  });
+
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointermove', (e: FederatedPointerEvent) => {
+    // scenegraph._gantt.stateManager.updateCursor('default');
+    e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成可拖拽
+  });
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
+    e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成拖拽状态
+    // if ((scenegraph._gantt as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+    //   scenegraph._gantt.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+    //     event: e.nativeEvent
+    //   });
+    // }
+  });
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
+    // scenegraph._gantt.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
+    scenegraph._gantt.eventManager.isDown = true;
+    // if (stateManager.interactionState !== InteractionState.scrolling) {
+    //   stateManager.updateInteractionState(InteractionState.scrolling);
+    // }
+
+    // if ((scenegraph._gantt as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+    //   scenegraph._gantt.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+    //     event: e.nativeEvent
+    //   });
+    // }
+  });
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerup', () => {
+    // stateManager.fastScrolling = false;
+    // scenegraph._gantt.eventManager.isDraging = false;
+    // if (stateManager.interactionState === InteractionState.scrolling) {
+    //   stateManager.updateInteractionState(InteractionState.default);
+    // }
+  });
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerupoutside', () => {
+    // stateManager.fastScrolling = false;
+    // if (stateManager.interactionState === InteractionState.scrolling) {
+    //   stateManager.updateInteractionState(InteractionState.default);
+    // }
+  });
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollUp', (e: FederatedPointerEvent) => {
+    scenegraph._gantt.eventManager.isDraging = false;
+  });
+  const throttleVerticalWheel = throttle(stateManager.updateVerticalScrollBar, 20);
+  const throttleHorizontalWheel = throttle(stateManager.updateHorizontalScrollBar, 20);
+
+  // 监听滚动条组件scroll事件
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('scrollDrag', (e: any) => {
+    if (scenegraph._gantt.eventManager.isDown) {
+      scenegraph._gantt.eventManager.isDraging = true;
+    }
+    // stateManager.fastScrolling = true;
+    // if (stateManager.interactionState !== InteractionState.scrolling) {
+    //   stateManager.updateInteractionState(InteractionState.scrolling);
+    // }
+    const ratio = e.detail.value[0] / (1 - e.detail.value[1] + e.detail.value[0]);
+    throttleVerticalWheel(ratio, e);
+  });
+
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollDrag', (e: any) => {
+    if (scenegraph._gantt.eventManager.isDown) {
+      scenegraph._gantt.eventManager.isDraging = true;
+    }
+    stateManager.fastScrolling = true;
+    if (stateManager.interactionState !== InteractionState.scrolling) {
+      stateManager.updateInteractionState(InteractionState.scrolling);
+    }
+    // stateManager._gantt.scenegraph.proxy.isSkipProgress = true;
+    const ratio = e.detail.value[0] / (1 - e.detail.value[1] + e.detail.value[0]);
+    throttleHorizontalWheel(ratio);
+    // setTimeout(() => {
+    //   console.log('isSkipProgress', false);
+    //   stateManager._gantt.scenegraph.proxy.isSkipProgress = false;
+    // }, 10);
+  });
 }
