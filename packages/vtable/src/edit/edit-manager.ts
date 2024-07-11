@@ -109,7 +109,8 @@ export class EditManeger {
     }
   }
 
-  /** 如果是事件触发调用该接口 请传入原始事件对象 将判断事件对象是否在编辑器本身上面  来处理是否结束编辑  返回值如果为false说明没有退出编辑状态*/
+  /** 如果是鼠标事件触发调用该接口 请传入原始事件对象 将判断事件对象是否在编辑器本身上面  来处理是否结束编辑
+   * 返回值如果为false说明没有退出编辑状态  validateValue接口返回false 说明校验失败不退出编辑 */
   completeEdit(e?: Event): boolean | Promise<boolean> {
     if (!this.editingEditor) {
       return true;
@@ -136,13 +137,13 @@ export class EditManeger {
     if (this.editingEditor.validateValue) {
       const maybePromiseOrValue = this.editingEditor.validateValue?.();
       if (isPromise(maybePromiseOrValue)) {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
           maybePromiseOrValue
             .then(result => {
               if (result) {
                 this.doExit();
                 resolve(true);
-              }else{
+              } else {
                 resolve(false);
               }
             })
@@ -150,15 +151,15 @@ export class EditManeger {
               console.error('VTable Error:', err);
               reject(err);
             });
-        })
+        });
       } else if (maybePromiseOrValue) {
         this.doExit();
         return true;
       }
-    } else {
-      this.doExit();
-      return true;
+      return false;
     }
+    this.doExit();
+    return true;
   }
 
   private doExit() {
