@@ -438,10 +438,28 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       ? table.getHeaderDefine(colForDefine, rowForDefine)
       : table.getBodyColumnDefine(colForDefine, rowForDefine);
 
-  if (!range && (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)) {
+  let mayHaveIcon =
+    cellLocation !== 'body'
+      ? true
+      : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
+
+  if (
+    !range &&
+    (table.internalProps.enableTreeNodeMerge || cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)
+  ) {
     // 只有表头或者column配置合并单元格后再进行信息获取
     range = table.getCellRange(col, row);
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+  }
+
+  if (table.internalProps.enableTreeNodeMerge && isMerge) {
+    const { vtableMergeName, vTableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
+    if (vTableMerge) {
+      mayHaveIcon = true;
+    }
+    if (vtableMergeName) {
+      value = vtableMergeName;
+    }
   }
 
   if (!cellTheme) {
@@ -456,7 +474,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
 
   // fast method for text
-  if (!addNew && !isMerge && canUseFastUpdate(col, row, oldCellGroup, autoWrapText, table)) {
+  if (!addNew && !isMerge && canUseFastUpdate(col, row, oldCellGroup, autoWrapText, mayHaveIcon, table)) {
     // update group
     const cellWidth = table.getColWidth(col);
     const cellHeight = table.getRowHeight(row);
@@ -547,10 +565,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : table.getBodyColumnType(col, row);
 
-  const mayHaveIcon =
-    cellLocation !== 'body'
-      ? true
-      : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;
   const textBaseline = cellTheme.text.textBaseline;
@@ -724,10 +738,17 @@ function updateCellContent(
   return newCellGroup;
 }
 
-function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWrapText: boolean, table: BaseTableAPI) {
+function canUseFastUpdate(
+  col: number,
+  row: number,
+  oldCellGroup: Group,
+  autoWrapText: boolean,
+  mayHaveIcon: boolean,
+  table: BaseTableAPI
+) {
   // return false;
-  const define = table.getBodyColumnDefine(col, row);
-  const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
+  // const define = table.getBodyColumnDefine(col, row);
+  // const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
   const cellType = table.getBodyColumnType(col, row);
   // const autoRowHeight = table.heightMode === 'autoHeight';
   const autoRowHeight = table.isAutoRowHeight(row);
