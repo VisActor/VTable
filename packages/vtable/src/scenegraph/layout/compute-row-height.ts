@@ -44,6 +44,12 @@ export function computeRowsHeight(
     }
   }
 
+  const layoutMap = table.internalProps.layoutMap;
+  if (table.isPivotTable()) {
+    (layoutMap as PivotHeaderLayoutMap).enableUseGetBodyCache();
+    (layoutMap as PivotHeaderLayoutMap).enableUseHeaderPathCache();
+  }
+
   table.defaultHeaderRowHeight;
   table.defaultHeaderColWidth;
   const isDefaultHeaderHasAuto =
@@ -200,7 +206,7 @@ export function computeRowsHeight(
     }
     let actualHeight = 0;
     for (let row = startRow; row < endRow; row++) {
-      actualHeight += update ? newHeights[row] : table.getRowHeight(row);
+      actualHeight += update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row);
     }
     const factor = totalDrawHeight / actualHeight;
     for (let row = startRow; row < endRow; row++) {
@@ -217,7 +223,9 @@ export function computeRowsHeight(
               }, 0)
             : table.getRowsHeight(startRow, endRow - 2));
       } else {
-        rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
+        rowHeight = Math.round(
+          (update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row)) * factor
+        );
       }
       if (update) {
         newHeights[row] = rowHeight;
@@ -267,7 +275,9 @@ export function computeRowsHeight(
                 }, 0)
               : table.getRowsHeight(startRow, endRow - 2));
         } else {
-          rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
+          rowHeight = Math.round(
+            (update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row)) * factor
+          );
         }
         if (update) {
           newHeights[row] = rowHeight;
@@ -281,7 +291,7 @@ export function computeRowsHeight(
   if (update) {
     for (let row = rowStart; row <= rowEnd; row++) {
       const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
-      if (newRowHeight !== oldRowHeights[row]) {
+      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
         table._setRowHeight(row, newRowHeight);
       }
     }
@@ -292,28 +302,33 @@ export function computeRowsHeight(
     ) {
       for (let row = 0; row <= table.columnHeaderLevelCount - 1; row++) {
         const newRowHeight = table.getRowHeight(row);
-        if (newRowHeight !== oldRowHeights[row]) {
+        if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
           // update the row height in scenegraph
-          table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+          table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
         }
       }
       for (let row = table.rowCount - table.bottomFrozenRowCount; row <= table.rowCount - 1; row++) {
         const newRowHeight = table.getRowHeight(row);
-        if (newRowHeight !== oldRowHeights[row]) {
+        if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
           // update the row height in scenegraph
-          table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+          table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
         }
       }
     }
     for (let row = table.scenegraph.proxy.rowStart; row <= table.scenegraph.proxy.rowEnd; row++) {
       const newRowHeight = table.getRowHeight(row);
-      if (newRowHeight !== oldRowHeights[row]) {
+      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
         // update the row height in scenegraph
-        table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+        table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
       }
     }
   }
   // console.log('computeRowsHeight  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time, rowStart, rowEnd);
+
+  if (table.isPivotTable()) {
+    (layoutMap as PivotHeaderLayoutMap).disableUseGetBodyCache();
+    (layoutMap as PivotHeaderLayoutMap).disableUseHeaderPathCache();
+  }
 }
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
