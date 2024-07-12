@@ -922,7 +922,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let heightP = 0;
 
     if (Env.mode === 'browser') {
-      const element = this.getElement();
+      const col = 1; // 示例列
+      const row = 2; // 示例行
+      const element = this.getElement(col, row); // 提供 col 和 row 参数
       let widthWithoutPadding = 0;
       let heightWithoutPadding = 0;
       if (element.parentElement) {

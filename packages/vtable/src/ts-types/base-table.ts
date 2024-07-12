@@ -589,7 +589,7 @@ export interface BaseTableAPI {
     evt: TouchEvent | MouseEvent | undefined,
     isAddScroll?: boolean
   ) => { x: number; y: number; inTable: boolean };
-  getElement: () => HTMLElement;
+  getElement: (col: number, row: number) => HTMLElement;
   getContainer: () => HTMLElement;
 
   setFrozenColCount: (count: number) => void;
