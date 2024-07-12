@@ -1,16 +1,16 @@
 import type { FederatedPointerEvent } from '@visactor/vrender-core';
 import type { Gantt } from '../../Gantt';
-import type { StateManager } from '../../state/state';
 import { InteractionState } from '../../ts-types';
 import type { EventManager } from '../event-manager';
 import { throttle } from '../../tools/util';
+import type { StateManager } from '../state-manager';
 /**
  *
  * @param event
  * @param state
  * @param isWheelEvent 是否是由鼠标或者触摸板原生滚动事件触发进入？
  */
-export function handleWhell(event: WheelEvent, gantt: Gantt, isWheelEvent: boolean = true) {
+export function handleWhell(event: WheelEvent, state: StateManager, gantt: Gantt, isWheelEvent: boolean = true) {
   let { deltaX, deltaY } = event;
   console.log('deltaX deltaY', deltaX, deltaY);
   // 如果按住了shift 则进行横向滚动 纵向不滚动
@@ -27,11 +27,11 @@ export function handleWhell(event: WheelEvent, gantt: Gantt, isWheelEvent: boole
   }
 
   if (optimizedDeltaX) {
-    // state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX);
+    state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX);
     gantt.scenegraph.scrollbarComponent.showHorizontalScrollBar();
   }
   if (optimizedDeltaY) {
-    // state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY);
+    state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY);
     gantt.scenegraph.scrollbarComponent.showVerticalScrollBar();
   }
   // isWheelEvent && state.resetInteractionState();

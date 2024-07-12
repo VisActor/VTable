@@ -28,8 +28,9 @@ function bindTableGroupListener(event: EventManager) {
 
 function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager._gantt;
+  const stateManager = table.stateManager;
   const handler = eventManager._eventHandler;
   handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
-    handleWhell(e, eventManager._gantt);
+    handleWhell(e, stateManager, eventManager._gantt);
   });
 }
