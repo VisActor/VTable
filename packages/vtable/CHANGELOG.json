@@ -2,6 +2,36 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.5.2",
+      "tag": "@visactor/vtable_v1.5.2",
+      "date": "Fri, 12 Jul 2024 10:47:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: edit api validateValue support async\n\n"
+          },
+          {
+            "comment": "feat: add api disableScroll and enableScroll #2073\n\n"
+          },
+          {
+            "comment": "fix: api changeFieldValue occor errow when records has null #2067\n\n"
+          },
+          {
+            "comment": "fix: fix react component error in updateCell() #2038"
+          },
+          {
+            "comment": "feat: add renderDefault prop in react customLayout component"
+          },
+          {
+            "comment": "feat: support multiple columns tag in react-vtable"
+          },
+          {
+            "comment": "fix: fix axes default config in scatter chart #2071"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.5.1",
       "tag": "@visactor/vtable_v1.5.1",
       "date": "Wed, 10 Jul 2024 06:19:15 GMT",
