@@ -4311,4 +4311,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.component.hideMoveCol();
     this.scenegraph.renderSceneGraph();
   }
+  /** 关闭表格的滚动 */
+  disableScroll() {
+    this.eventManager.disableScroll();
+  }
+  /** 开启表格的滚动 */
+  enableScroll() {
+    this.eventManager.enableScroll();
+  }
 }

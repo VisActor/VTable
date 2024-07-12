@@ -405,6 +405,7 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
     bottomFrozen,
     _this
   );
+
   if (colInfo && rowInfo) {
     const { row, top, bottom, height } = rowInfo;
     const { col, left, right, width } = colInfo;

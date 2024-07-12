@@ -57,6 +57,8 @@ export class EventManager {
   inertiaScroll: InertiaScroll;
 
   bindSparklineHoverEvent: boolean;
+
+  _enableTableScroll: boolean = true;
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.handleTextStickBindId = [];
@@ -681,5 +683,13 @@ export class EventManager {
       }
     });
     this.globalEventListeners = [];
+  }
+
+  enableScroll() {
+    this._enableTableScroll = true;
+  }
+
+  disableScroll() {
+    this._enableTableScroll = false;
   }
 }
