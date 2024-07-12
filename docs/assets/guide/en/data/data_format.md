@@ -120,13 +120,15 @@ Example:
 ```javascript livedemo template=vtable
 const option = {
   container: document.getElementById(CONTAINER_ID),
+  indicatorsAsCol: false,
   rowTree: [
     {
       dimensionKey: 'city',
       value: 'beijing',
       children: [
         {
-          indicatorKey: 'income'
+          indicatorKey: 'income',
+          value: 'income'
         }
       ]
     },
