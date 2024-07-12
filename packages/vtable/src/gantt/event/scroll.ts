@@ -37,7 +37,7 @@ export function handleWhell(event: WheelEvent, state: StateManager, gantt: Gantt
   // isWheelEvent && state.resetInteractionState();
   // if (
   //   event.cancelable &&
-  //   (state.table.internalProps.overscrollBehavior === 'none' ||
+  //   (state._gantt.internalProps.overscrollBehavior === 'none' ||
   //     (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, state)) ||
   //     (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, state)))
   // ) {
@@ -68,7 +68,7 @@ function optimizeScrollXY(x: number, y: number, ratio: ScrollSpeedRatio): [numbe
 }
 
 export function isVerticalScrollable(deltaY: number, state: StateManager) {
-  const totalHeight = state.table.getAllRowsHeight() - state.table.scenegraph.height;
+  const totalHeight = state._gantt.getAllRowsHeight() - state._gantt.scenegraph.height;
   if (totalHeight === 0) {
     return false;
   }
@@ -76,7 +76,7 @@ export function isVerticalScrollable(deltaY: number, state: StateManager) {
 }
 
 export function isHorizontalScrollable(deltaX: number, state: StateManager) {
-  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  const totalWidth = state._gantt.getAllColsWidth() - state._gantt.scenegraph.width;
   if (totalWidth === 0) {
     return false;
   }
@@ -84,22 +84,22 @@ export function isHorizontalScrollable(deltaX: number, state: StateManager) {
 }
 
 function isScrollToTop(deltaY: number, state: StateManager) {
-  const totalHeight = state.table.getAllRowsHeight() - state.table.scenegraph.height;
+  const totalHeight = state._gantt.getAllRowsHeight() - state._gantt.scenegraph.height;
   return totalHeight !== 0 && deltaY <= 0 && state.scroll.verticalBarPos < 1;
 }
 
 function isScrollToBottom(deltaY: number, state: StateManager) {
-  const totalHeight = state.table.getAllRowsHeight() - state.table.scenegraph.height;
+  const totalHeight = state._gantt.getAllRowsHeight() - state._gantt.scenegraph.height;
   return totalHeight !== 0 && deltaY >= 0 && Math.abs(state.scroll.verticalBarPos - totalHeight) < 1;
 }
 
 function isScrollToLeft(deltaX: number, state: StateManager) {
-  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  const totalWidth = state._gantt.getAllColsWidth() - state._gantt.scenegraph.width;
   return totalWidth !== 0 && deltaX <= 0 && state.scroll.horizontalBarPos < 1;
 }
 
 function isScrollToRight(deltaX: number, state: StateManager) {
-  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  const totalWidth = state._gantt.getAllColsWidth() - state._gantt.scenegraph.width;
   return totalWidth !== 0 && deltaX >= 0 && Math.abs(state.scroll.horizontalBarPos - totalWidth) < 1;
 }
 
