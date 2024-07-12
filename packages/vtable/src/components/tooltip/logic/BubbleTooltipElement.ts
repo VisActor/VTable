@@ -144,7 +144,7 @@ export class BubbleTooltipElement {
   }
   _canBindToCell(table: BaseTableAPI, col: number, row: number): boolean {
     const rect = table.getCellRangeRelativeRect({ col, row });
-    const element = table.getElement();
+    const element = table.getElement(col, row);
     const { bottom, left, right, top } = rect;
     // const { frozenRowCount, frozenColCount } = table;
     // if (row >= frozenRowCount && frozenRowCount > 0) {
@@ -198,7 +198,7 @@ export class BubbleTooltipElement {
   ): boolean {
     const rootElement = this._rootElement;
     const rect = table.getCellRangeRelativeRect({ col, row });
-    const element = table.getElement();
+    const element = table.getElement(col, row);
     const containerWidth = table.internalProps.element.offsetWidth;
     const { width } = rect;
     if (rootElement) {

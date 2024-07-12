@@ -9,27 +9,30 @@ import { getPixelRatio } from '../../tools/pixel-ratio';
 import { endResizeCol, endResizeRow } from './table-group';
 
 export function bindContainerDomListener(eventManager: EventManager) {
+  const col = 1; // 示例列
+  const row = 2; // 示例行
   const table = eventManager.table;
   const stateManager = table.stateManager;
   const handler: EventHandler = table.internalProps.handler;
 
-  // handler.on(table.getElement(), 'mousedown', (e: MouseEvent) => {
+  // handler.on(table.getElement(col, row), 'mousedown', (e: MouseEvent) => {
   // if (table.eventManager.isPointerDownOnTable) {
   //   e.stopPropagation();
   // }
   // });
 
-  handler.on(table.getElement(), 'blur', (e: MouseEvent) => {
+  handler.on(table.getElement(col, row), 'blur', (e: MouseEvent) => {
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
   });
 
-  handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
+  handler.on(table.getElement(col, row), 'wheel', (e: WheelEvent) => {
     handleWhell(e, stateManager);
   });
 
   // 监听键盘事件
-  handler.on(table.getElement(), 'keydown', (e: KeyboardEvent) => {
+
+  handler.on(table.getElement(col, row), 'keydown', (e: KeyboardEvent) => {
     if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
       if (table.keyboardOptions?.selectAllOnCtrlA) {
         // 处理全选
@@ -112,7 +115,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       ) {
         // 开启了方向键切换编辑单元格  并且当前已经在编辑状态下 切换到下一个需先退出再进入下个单元格的编辑
         (table as ListTableAPI).editorManager.completeEdit();
-        table.getElement().focus();
+        table.getElement(col, row).focus();
         if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
           (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
         }
@@ -125,7 +128,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         // 如果是结束当前编辑，且有主动监听keydown事件，则先触发keydown事件，之后再结束编辑
         handleKeydownListener(e);
         (table as ListTableAPI).editorManager.completeEdit();
-        table.getElement().focus();
+        table.getElement(col, row).focus();
         // 直接返回，不再触发最后的keydown监听事件相关代码
         return;
       }
@@ -163,7 +166,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
           table.selectCell(targetCol, targetRow);
           if ((table as ListTableAPI).editorManager?.editingEditor) {
             (table as ListTableAPI).editorManager.completeEdit();
-            table.getElement().focus();
+            table.getElement(col, row).focus();
             if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
               (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
             }
@@ -191,7 +194,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
   }
 
-  handler.on(table.getElement(), 'copy', (e: KeyboardEvent) => {
+  handler.on(table.getElement(col, row), 'copy', (e: KeyboardEvent) => {
     if (table.keyboardOptions?.copySelected) {
       const data = table.getCopyValue();
       if (isValid(data)) {
@@ -263,7 +266,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     }
   });
-  handler.on(table.getElement(), 'paste', (e: any) => {
+  handler.on(table.getElement(col, row), 'paste', (e: any) => {
     if (table.keyboardOptions?.pasteValueToCell && (table as ListTableAPI).changeCellValues) {
       if ((table as ListTableAPI).editorManager?.editingEditor) {
         return;
@@ -310,7 +313,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
   });
 
-  handler.on(table.getElement(), 'contextmenu', (e: any) => {
+  handler.on(table.getElement(col, row), 'contextmenu', (e: any) => {
     if (table.eventOptions?.preventDefaultContextMenu !== false) {
       e.preventDefault();
     }
@@ -569,7 +572,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     if (eventManager.isDraging && isSelecting && table.stateManager.select.ranges?.length > 0) {
       // 检测鼠标是否离开了table
       const drawRange = table.getDrawRange();
-      // const element = table.getElement();
+      // const element = table.getElement(col, row);
       // const { x: rootLeft, y: rootTop, width: rootWidth } = element.getBoundingClientRect();
       // const tableLeft = drawRange.left + rootLeft;
       // const tableTop = drawRange.top + rootTop;
