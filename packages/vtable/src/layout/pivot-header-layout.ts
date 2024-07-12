@@ -478,6 +478,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.columnDimensionTree.tree.children,
         [],
         this.columnHeaderObjs
+        // this.columnDimensionTree.totalLevel,
+        // this.indicatorKeys
       );
     }
     // if (typeof this.showColumnHeader !== 'boolean') {
@@ -546,6 +548,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.rowDimensionTree.tree.children,
           [],
           this.rowHeaderObjs
+          // this.columnDimensionTree.totalLevel,
+          // this.indicatorKeys
         );
       }
     }
@@ -587,6 +591,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     header: ITreeLayoutHeadNode[],
     roots: number[],
     results: HeaderData[]
+    // totalLevel: number,
+    // indicatorKeys: string[]
   ) {
     const _this = this;
     function _newRow(row: number): number[] {
@@ -606,7 +612,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
     for (let i = 0; i < header.length; i++) {
       const hd = header[i];
-      dealHeader(hd, _headerCellIds, results, roots, row, this);
+      dealHeader(
+        hd,
+        _headerCellIds,
+        results,
+        roots,
+        row,
+        this
+        // totalLevel, indicatorKeys
+      );
     }
   }
   _addHeadersForTreeMode(

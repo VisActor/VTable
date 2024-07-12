@@ -412,6 +412,8 @@ export function dealHeader(
   roots: number[],
   row: number,
   layoutMap: PivotHeaderLayoutMap
+  // totalLevel: number,
+  // indicatorKeys: string[]
 ) {
   // const col = this._columns.length;
   const id = hd.id;
@@ -505,10 +507,35 @@ export function dealHeader(
   // }
   results[id] = cell;
   layoutMap._headerObjects[id] = cell;
-  _headerCellIds[row][layoutMap.colIndex] = id;
+  // //这个if判断处理上层维度和指标之间跨级的情况。即表头可能总共有5层，但是有的节点从跟到指标只有三级，那么合并单元格之前是指标单元格跨了三个单元格，现在处理成最后一个维度单元格跨三个单元格
+  // if (
+  //   ((hd as any).levelSpan ?? 0) <= 1 &&
+  //   row < totalLevel - 1 &&
+  //   hd.indicatorKey &&
+  //   indicatorKeys.includes(hd.indicatorKey) &&
+  //   (hd.children?.length ?? 0) === 0
+  // ) {
+  //   const newRoots = [...roots];
+  //   const lastId = newRoots[row - 1] ?? id;
+  //   for (; row < totalLevel - 1; row++) {
+  //     if (!_headerCellIds[row]) {
+  //       _headerCellIds[row] = [];
+  //     }
+  //     _headerCellIds[row][layoutMap.colIndex] = lastId;
+  //     newRoots[row] = lastId;
+  //   }
+  //   for (let r = row - 1; r >= 0; r--) {
+  //     _headerCellIds[r][layoutMap.colIndex] = newRoots[r];
+  //   }
+  //   if (!_headerCellIds[row]) {
+  //     _headerCellIds[row] = [];
+  //   }
+  // } else {
   for (let r = row - 1; r >= 0; r--) {
     _headerCellIds[r][layoutMap.colIndex] = roots[r];
   }
+  // }
+  _headerCellIds[row][layoutMap.colIndex] = id;
 
   // 处理汇总小计跨维度层级的情况
   if ((hd as any).levelSpan > 1) {
@@ -527,6 +554,8 @@ export function dealHeader(
       (hd as ITreeLayoutHeadNode).children ?? [],
       [...roots, ...Array((hd as any).levelSpan ?? 1).fill(id)],
       results
+      // totalLevel,
+      // indicatorKeys
     );
     // .forEach(c => results.push(c));
   } else {
