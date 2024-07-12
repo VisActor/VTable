@@ -245,7 +245,8 @@ export function getTargetColAtConsiderRightFrozen(
   if (
     isConsider &&
     absoluteX > _this.tableNoFrameWidth - _this.getRightFrozenColsWidth() &&
-    absoluteX < _this.tableNoFrameWidth
+    absoluteX < _this.tableNoFrameWidth &&
+    absoluteX <= _this.getAllColsWidth()
   ) {
     for (let i = 0; i < _this.rightFrozenColCount; i++) {
       if (absoluteX > _this.tableNoFrameWidth - _this.getColsWidth(_this.colCount - i - 1, _this.colCount - 1)) {
@@ -377,12 +378,20 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
 
   // bottom frozen
   let bottomFrozen = false;
-  if (y > _this.tableNoFrameHeight - _this.getBottomFrozenRowsHeight() && y < _this.tableNoFrameHeight) {
+  if (
+    y > _this.tableNoFrameHeight - _this.getBottomFrozenRowsHeight() &&
+    y < _this.tableNoFrameHeight &&
+    y <= _this.getAllRowsHeight()
+  ) {
     bottomFrozen = true;
   }
   // right frozen
   let rightFrozen = false;
-  if (x > _this.tableNoFrameWidth - _this.getRightFrozenColsWidth() && x < _this.tableNoFrameWidth) {
+  if (
+    x > _this.tableNoFrameWidth - _this.getRightFrozenColsWidth() &&
+    x < _this.tableNoFrameWidth &&
+    x <= _this.getAllColsWidth()
+  ) {
     rightFrozen = true;
   }
 
@@ -397,34 +406,22 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
     _this
   );
 
-  if (!rowInfo || !colInfo) {
+  if (colInfo && rowInfo) {
+    const { row, top, bottom, height } = rowInfo;
+    const { col, left, right, width } = colInfo;
+    const rect = {
+      left,
+      right,
+      top,
+      bottom,
+      width,
+      height
+    };
     return {
-      row: -1,
-      col: -1,
-      rect: {
-        left: undefined,
-        right: undefined,
-        top: undefined,
-        bottom: undefined,
-        width: undefined,
-        height: undefined
-      }
+      row,
+      col,
+      rect
     };
   }
-
-  const { row, top, bottom, height } = rowInfo;
-  const { col, left, right, width } = colInfo;
-  const rect = {
-    left,
-    right,
-    top,
-    bottom,
-    width,
-    height
-  };
-  return {
-    row,
-    col,
-    rect
-  };
+  return { col: -1, row: -1 };
 }

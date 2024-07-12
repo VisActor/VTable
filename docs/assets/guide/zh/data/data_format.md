@@ -119,6 +119,7 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 
 ```javascript livedemo template=vtable
 const option = {
+  indicatorsAsCol: false,
   rowTree: [
     {
       dimensionKey: 'city',
