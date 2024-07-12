@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.24.7",
+    "@visactor/vtable": "^1.5.1"
+  }
+}

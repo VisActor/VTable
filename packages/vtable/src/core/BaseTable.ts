@@ -497,7 +497,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 获取表格创建的DOM根节点
    */
-  getElement(): HTMLElement {
+  getElement(col: number, row: number): HTMLElement {
     return this.internalProps.element;
   }
   /**
