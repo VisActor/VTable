@@ -1206,3 +1206,25 @@ interface ISortedMapItem {
    */
   hideMoverLine(col: number, row: number)
 ```
+
+## disableScroll(Function)
+
+关闭表格的滚动，业务场景中如果有不期望表格内容滚动的话，可以调用该方法。
+
+```
+  /** 关闭表格的滚动 */
+  disableScroll() {
+    this.eventManager.disableScroll();
+  }
+```
+
+## enableScroll(Function)
+
+开启表格的滚动
+
+```
+  /** 开启表格的滚动 */
+  enableScroll() {
+    this.eventManager.enableScroll();
+  }
+```
