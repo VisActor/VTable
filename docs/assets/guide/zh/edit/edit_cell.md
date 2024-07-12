@@ -275,7 +275,9 @@ interface ListTableConstructorOptions {
 
 需要校验的情况 请自定义编辑器实现校验函数`validateValue`
 
-如未定义该接口则编辑值值默认不做校验，接口返回 false，校验失败则保留在编辑状态。
+如未定义该接口则编辑值值默认不做校验，接口返回 false，校验失败则保留在编辑状态;
+
+若需要实现异步校验，可以返回一个Promise对象，该Promise对象在校验成功时以真值解析，校验失败时以假值解析。
 
 ## 9. 相关 api
 

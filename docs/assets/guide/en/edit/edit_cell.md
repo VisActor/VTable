@@ -273,6 +273,8 @@ If verification is required, please customize the editor to implement the verifi
 
 If this interface is not defined, the editing value will not be verified by default, and the interface will return false. If the verification fails, it will remain in the editing state.
 
+If asynchronous verification is needed, you can return a Promise object. This Promise object should resolve to true upon successful verification and false upon verification failure.
+
 ## 9. Related APIs
 
 ```ts
