@@ -25,7 +25,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
   });
 
   handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
-    handleWhell(e, stateManager);
+    if (table.eventManager._enableTableScroll) {
+      handleWhell(e, stateManager);
+    }
   });
 
   // 监听键盘事件
@@ -566,7 +568,12 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
     const isSelecting = table.stateManager.isSelecting();
 
-    if (eventManager.isDraging && isSelecting && table.stateManager.select.ranges?.length > 0) {
+    if (
+      eventManager._enableTableScroll &&
+      eventManager.isDraging &&
+      isSelecting &&
+      table.stateManager.select.ranges?.length > 0
+    ) {
       // 检测鼠标是否离开了table
       const drawRange = table.getDrawRange();
       // const element = table.getElement();
