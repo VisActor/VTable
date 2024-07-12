@@ -683,7 +683,7 @@ function isXAxis(orient: IOrientType) {
   return orient === 'bottom' || orient === 'top';
 }
 
-export function hasLinearAxis(spec: any, isHorizontal: boolean, isThisXAxis: boolean): boolean {
+export function hasLinearAxis(spec: any, tableAxesConfig: any, isHorizontal: boolean, isThisXAxis: boolean): boolean {
   if (!isArray(spec.axes) || spec.axes.length === 0) {
     return (isHorizontal && isThisXAxis) || (!isHorizontal && !isThisXAxis);
   }
@@ -704,6 +704,27 @@ export function hasLinearAxis(spec: any, isHorizontal: boolean, isThisXAxis: boo
 
     if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left' && axisSpec.type === 'linear') {
       return true;
+    }
+  }
+
+  if (isArray(tableAxesConfig) && tableAxesConfig.length > 0) {
+    for (let i = 0; i < tableAxesConfig.length; i++) {
+      const axisSpec = tableAxesConfig[i];
+      if (!isHorizontal && isThisXAxis && axisSpec.orient === 'bottom' && axisSpec.type === 'linear') {
+        return true;
+      }
+
+      if (isHorizontal && isThisXAxis && axisSpec.orient === 'bottom' && axisSpec.type !== 'linear') {
+        return true;
+      }
+
+      if (!isHorizontal && !isThisXAxis && axisSpec.orient === 'left' && axisSpec.type !== 'linear') {
+        return true;
+      }
+
+      if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left' && axisSpec.type === 'linear') {
+        return true;
+      }
     }
   }
 
