@@ -497,7 +497,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 获取表格创建的DOM根节点
    */
-  getElement(col: number, row: number): HTMLElement {
+  getElement(): HTMLElement {
     return this.internalProps.element;
   }
   /**
@@ -922,9 +922,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let heightP = 0;
 
     if (Env.mode === 'browser') {
-      const col = 1; // 示例列
-      const row = 2; // 示例行
-      const element = this.getElement(col, row); // 提供 col 和 row 参数
+      const element = this.getElement();
       let widthWithoutPadding = 0;
       let heightWithoutPadding = 0;
       if (element.parentElement) {
@@ -4312,5 +4310,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   hideMoverLine(col: number, row: number) {
     this.scenegraph.component.hideMoveCol();
     this.scenegraph.renderSceneGraph();
+  }
+  /** 关闭表格的滚动 */
+  disableScroll() {
+    this.eventManager.disableScroll();
+  }
+  /** 开启表格的滚动 */
+  enableScroll() {
+    this.eventManager.enableScroll();
   }
 }

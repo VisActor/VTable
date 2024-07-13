@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import React, { useContext, useEffect } from 'react';
 import { isEqual, isNil, pickWithout } from '@visactor/vutils';
 
@@ -13,7 +13,7 @@ export interface BaseComponentProps {
   children?: React.ReactNode;
 }
 
-type ComponentProps = BaseComponentProps & { updateId?: number; componentId?: number; componentIndex?: number };
+type ComponentProps = BaseComponentProps & { updateId?: number; componentId?: string; componentIndex?: number };
 
 export const createComponent = <T extends ComponentProps>(
   componentName: string,
@@ -21,7 +21,7 @@ export const createComponent = <T extends ComponentProps>(
   supportedEvents?: Record<string, string> | null,
   isSingle?: boolean
 ) => {
-  const ignoreKeys = ['id', 'updateId', 'componentId', 'componentIndex', 'children'];
+  const ignoreKeys = ['id', 'updateId', 'componentIndex', 'children'];
   const notOptionKeys = supportedEvents ? Object.keys(supportedEvents).concat(ignoreKeys) : ignoreKeys;
 
   const Comp: React.FC<T> = (props: T) => {
@@ -65,29 +65,25 @@ export const createComponent = <T extends ComponentProps>(
     // return props.children
     //   ? React.cloneElement(props.children as ReactElement, { componentIndex: props.componentIndex })
     //   : null;
-    if (props.children) {
-      return React.Children.map(props.children as ReactElement, (child: ReactElement) => {
-        return React.createElement(CustomLayout, { componentIndex: props.componentIndex }, child);
-      });
-    }
-    return null;
+    // if (props.children) {
+    //   return React.Children.map(props.children as ReactElement, (child: ReactElement) => {
+    //     if (child.props.role === 'custom-layout' || child.props.role === 'header-custom-layout') {
+    //       return React.createElement(CustomLayout, { componentId: props.componentId }, child);
+    //     }
+    //   });
+    // }
+    return parseCustomChildren(props.children, props.componentId);
   };
 
   Comp.displayName = componentName;
 
   (Comp as any).parseOption = (props: T & { updateId?: number; componentId?: string }) => {
     const newComponentOption: Partial<T> = pickWithout<T>(props, notOptionKeys);
-
     // deal width customLayout
     if (props.children) {
       const { children } = props;
-      React.Children.map(children as ReactElement, (child: ReactElement) => {
-        if (child.props.role === 'custom-layout') {
-          (newComponentOption as any).customLayout = 'react-custom-layout';
-        }
-        if (child.props.role === 'header-custom-layout') {
-          (newComponentOption as any).headerCustomLayout = 'react-custom-layout';
-        }
+      React.Children.map(children as ReactElement, (child: ReactElement, index) => {
+        parseChild(child, props, newComponentOption, notOptionKeys, props.componentId + '-' + index);
       });
     }
     // if (props.children && (props.children as React.ReactElement).props.role === 'custom-layout') {
@@ -104,58 +100,50 @@ export const createComponent = <T extends ComponentProps>(
   return Comp;
 };
 
-// const updateToContext = (
-//   context: TableContextType,
-//   id: string | number,
-//   optionName: string,
-//   isSingle: boolean,
-//   props: Partial<ComponentProps>
-// ) => {
-//   if (!context.optionFromChildren) {
-//     return;
-//   }
+function parseChild(
+  child: ReactElement,
+  componentProps: any,
+  newComponentOption: any,
+  notOptionKeys: string[],
+  componentId: string
+) {
+  if (child.props.role === 'custom-layout') {
+    (newComponentOption as any).customLayout = 'react-custom-layout';
+    (newComponentOption as any).customLayoutComponentId = componentId;
+  }
+  if (child.props.role === 'header-custom-layout') {
+    (newComponentOption as any).headerCustomLayout = 'react-custom-layout';
+    (newComponentOption as any).headerCustomLayoutComponentId = componentId;
+  }
+  if ((child.type as any).displayName === 'ListColumn') {
+    if (!newComponentOption.columns) {
+      newComponentOption.columns = [];
+    }
+    const childOption = pickWithout(child.props, notOptionKeys);
+    newComponentOption.columns.push(childOption);
+    childOption.componentId = componentId;
+    if (child.props.children) {
+      React.Children.map(child.props.children as ReactElement, (child: ReactElement, index) => {
+        parseChild(child, componentProps, childOption, notOptionKeys, componentId + '-' + index);
+      });
+    }
+  }
+}
 
-//   if (isSingle) {
-//     context.optionFromChildren[optionName] = { ...props };
-//   } else {
-//     if (!context.optionFromChildren[optionName]) {
-//       context.optionFromChildren[optionName] = [];
-//     }
+function parseCustomChildren(children: ReactNode, componentId: string): ReactNode | undefined {
+  if (isReactElement(children) || Array.isArray(children)) {
+    return React.Children.map(children as ReactElement, (child: ReactElement, index) => {
+      if (child.props.children) {
+        return parseCustomChildren(child.props.children as ReactElement, componentId + '-' + index);
+      } else if (child.props.role === 'custom-layout' || child.props.role === 'header-custom-layout') {
+        return React.createElement(CustomLayout, { componentId: componentId }, child);
+      }
+      return null;
+    });
+  }
+  return null;
+}
 
-//     const comps = context.optionFromChildren[optionName];
-//     const index = comps.findIndex((entry: any) => entry.id === id);
-
-//     if (index >= 0) {
-//       comps[index] = {
-//         id,
-//         ...props
-//       };
-//     } else {
-//       context.optionFromChildren[optionName].push({
-//         id,
-//         ...props
-//       });
-//     }
-//   }
-//   context.isChildrenUpdated = true;
-// };
-
-// const deleteToContext = (context: TableContextType, id: string | number, optionName: string, isSingle: boolean) => {
-//   if (!context.optionFromChildren) {
-//     return;
-//   }
-
-//   if (isSingle) {
-//     context.optionFromChildren[optionName] = null;
-//   } else {
-//     const comps = context.optionFromChildren[optionName] ?? [];
-//     const index = comps.findIndex((entry: any) => entry.id === id);
-
-//     if (index >= 0) {
-//       const newComps = comps.slice(0, index - 1).concat(comps.slice(index + 1));
-
-//       context.optionFromChildren[optionName] = newComps;
-//       context.isChildrenUpdated = true;
-//     }
-//   }
-// };
+function isReactElement(obj: any) {
+  return obj && obj.$$typeof === Symbol.for('react.element');
+}

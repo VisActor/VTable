@@ -246,15 +246,19 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     const domain = data[rowPath ?? ''] as Set<string>;
     const { axisOption, isPercent, chartType } = getAxisOption(col, row, 'left', layout);
     axes.push(
+      // 左侧维度轴
       merge(
         {
-          domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
-          range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined,
+          // domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
+          domain: axisOption?.type === 'linear' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
+          // range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined,
+          range: axisOption?.type === 'linear' && !Array.isArray(domain) ? domain : undefined,
           label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
         },
         axisOption,
         {
-          type: chartType === 'scatter' && !Array.isArray(domain) ? axisOption?.type ?? 'linear' : 'band',
+          // type: chartType === 'scatter' && !Array.isArray(domain) ? axisOption?.type ?? 'linear' : 'band',
+          type: axisOption?.type ?? 'band',
           orient: 'left',
           // visible: true,
           label: { visible: false },
@@ -347,15 +351,19 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
 
     const { axisOption, isPercent, chartType } = getAxisOption(col, row, 'bottom', layout);
     axes.push(
+      // 底部维度轴
       merge(
         {
-          domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
-          range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined,
+          // domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
+          domain: axisOption?.type === 'linear' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
+          // range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined,
+          range: axisOption?.type === 'linear' && !Array.isArray(domain) ? domain : undefined,
           label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
         },
         axisOption,
         {
-          type: chartType === 'scatter' && !Array.isArray(domain) ? axisOption?.type ?? 'linear' : 'band',
+          // type: chartType === 'scatter' && !Array.isArray(domain) ? axisOption?.type ?? 'linear' : 'band',
+          type: axisOption?.type ?? 'band',
           orient: 'bottom',
           visible: true,
           label: { visible: false },

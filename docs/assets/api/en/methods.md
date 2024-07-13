@@ -1208,3 +1208,25 @@ Hide the highlight line of the moved column or row
 */
 hideMoverLine(col: number, row: number)
 ```
+
+## disableScroll(Function)
+
+Close the scrolling of the table. If you do not want the table content to scroll in the business scenario, you can call this method.
+
+```
+/** Turn off scrolling of the table */
+disableScroll() {
+this.eventManager.disableScroll();
+}
+```
+
+## enableScroll(Function)
+
+Enable scrolling of the table
+
+```
+/** Enable scrolling of the table */
+enableScroll() {
+this.eventManager.enableScroll();
+}
+```
