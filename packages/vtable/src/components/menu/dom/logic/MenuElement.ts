@@ -202,7 +202,7 @@ export class MenuElement {
         secondElement.innerHTML = '';
 
         // 添加item
-        const children = (this._menuInstanceInfo.content[dropDownIndex] as any)?.children;
+        const children = (this._menuInstanceInfo.content[dropDownIndex] as unknown)?.children;
         for (let i = 0; i < children.length; i++) {
           const menuItem = children[i];
           const isHighlight = table.stateManager.menu.dropDownMenuHighlight
@@ -447,7 +447,7 @@ export class MenuElement {
   }
   _canBindToCell(table: BaseTableAPI, col: number, row: number): boolean {
     const rect = table.getCellRangeRelativeRect({ col, row });
-    const element = table.getElement();
+    const element = table.getElement(col, row); // 提供 col 和 row 参数
     const { top, bottom, left, right } = rect;
     if (table.isFrozenCell(col, row)) {
       return true;
@@ -477,7 +477,7 @@ export class MenuElement {
     referencePosition?: { rect: RectProps; placement?: Placement }
   ): boolean {
     const rootElement = this._rootElement;
-    const element = table.getElement();
+    const element = table.getElement(col, row); // 提供 col 和 row 参数
     const { width: containerWidth, height: containerHeight } = table.internalProps.element.getBoundingClientRect();
     if (rootElement) {
       if (rootElement.parentElement !== element) {
@@ -527,7 +527,7 @@ export class MenuElement {
   _bindSecondElement(table: BaseTableAPI, col: number, row: number, x: number, y: number): boolean {
     const secondElement = this._secondElement;
     const rootElement = this._rootElement;
-    const element = table.getElement();
+    const element = table.getElement(col, row); // 提供 col 和 row 参数
     const {
       width: containerWidth,
       left: containerLeft,

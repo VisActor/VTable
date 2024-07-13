@@ -564,6 +564,10 @@ export const menus = [
       },
       {
         path: 'interactive',
+        name: 'createStyledProgressTable'
+      },
+      {
+        path: 'interactive',
         name: 'tooltip'
       },
       {

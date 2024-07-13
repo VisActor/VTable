@@ -141,7 +141,7 @@ export class MenuContainer {
   }
   _canBindToCell(table: BaseTableAPI, col: number, row: number): boolean {
     const rect = table.getCellRangeRelativeRect({ col, row });
-    const element = table.getElement();
+    const element = table.getElement(col, row); // 提供 col 和 row 参数
     const { top, bottom, left, right } = rect;
     if (table.isFrozenCell(col, row)) {
       return true;
@@ -172,7 +172,7 @@ export class MenuContainer {
     referencePosition: { rect: RectProps; placement?: Placement }
   ): boolean {
     const rootElement = this._rootElement;
-    const element = table.getElement();
+    const element = table.getElement(col, row); // 提供 col 和 row 参数
     const { width: containerWidth, height: containerHeight } = table.internalProps.element.getBoundingClientRect();
     if (rootElement) {
       if (rootElement.parentElement !== element) {

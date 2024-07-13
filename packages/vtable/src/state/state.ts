@@ -1276,9 +1276,10 @@ export class StateManager {
 
     this.frozen.icon = iconMark;
   }
-
+  col = 1; // 示例列
+  row = 2; // 示例行
   updateCursor(mode: string = 'default') {
-    this.table.getElement().style.cursor = mode;
+    this.table.getElement(this.col, this.row).style.cursor = mode;
   }
 
   updateDrillState(

@@ -47,11 +47,12 @@ export class EditManeger {
         this.startEditCell(col, row);
       }
     });
-
-    handler.on(this.table.getElement(), 'wheel', (e: WheelEvent) => {
+    const col = 1; // 示例列
+    const row = 2; // 示例行
+    handler.on(this.table.getElement(col, row), 'wheel', (e: WheelEvent) => {
       this.completeEdit();
     });
-    handler.on(this.table.getElement(), 'resize', (e: Event) => {
+    handler.on(this.table.getElement(col, row), 'resize', (e: Event) => {
       if (this.table.autoFillWidth || this.table.autoFillHeight) {
         this.completeEdit();
       }
@@ -88,7 +89,7 @@ export class EditManeger {
       const referencePosition = { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } };
 
       editor.beginEditing && console.warn('VTable Warn: `beginEditing` is deprecated, please use `onStart` instead.');
-      editor.beginEditing?.(this.table.getElement(), referencePosition, dataValue);
+      editor.beginEditing?.(this.table.getElement(col, row), referencePosition, dataValue);
 
       if (editor.bindSuccessCallback) {
         console.warn('VTable Warn: `bindSuccessCallback` is deprecated, please use `onStart` instead.');
@@ -102,7 +103,7 @@ export class EditManeger {
           this.completeEdit();
         },
         referencePosition,
-        container: this.table.getElement(),
+        container: this.table.getElement(col, row),
         col,
         row
       });
