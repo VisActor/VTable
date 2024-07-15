@@ -848,6 +848,13 @@ export interface BaseTableAPI {
 
   bodyDomContainer?: HTMLElement;
   headerDomContainer?: HTMLElement;
+
+  showMoverLine: (col: number, row: number) => void;
+  hideMoverLine: (col: number, row: number) => void;
+  /** 关闭表格的滚动 */
+  disableScroll: () => void;
+  /** 开启表格的滚动 */
+  enableScroll: () => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

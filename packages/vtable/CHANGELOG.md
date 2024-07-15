@@ -1,6 +1,25 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 10 Jul 2024 06:19:15 GMT and should not be manually modified.
+This log was last generated on Fri, 12 Jul 2024 10:47:37 GMT and should not be manually modified.
+
+## 1.5.2
+Fri, 12 Jul 2024 10:47:37 GMT
+
+### Updates
+
+- fix: edit api validateValue support async
+
+
+- feat: add api disableScroll and enableScroll #2073
+
+
+- fix: api changeFieldValue occor errow when records has null #2067
+
+
+- fix: fix react component error in updateCell() #2038
+- feat: add renderDefault prop in react customLayout component
+- feat: support multiple columns tag in react-vtable
+- fix: fix axes default config in scatter chart #2071
 
 ## 1.5.1
 Wed, 10 Jul 2024 06:19:15 GMT

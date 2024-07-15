@@ -38,6 +38,7 @@ import {
   typeSort
 } from './statistics-helper';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
+import { join } from '../tools/join';
 /**
  * 数据处理模块
  */
@@ -994,7 +995,8 @@ export class Dataset {
           }
         });
       }
-      flatRowKey = rowKey.join(this.stringJoinChar);
+      // flatRowKey = rowKey.join(this.stringJoinChar);
+      flatRowKey = join(rowKey, this.stringJoinChar);
     }
 
     if (typeof colKey === 'string') {
@@ -1008,7 +1010,8 @@ export class Dataset {
           }
         });
       }
-      flatColKey = colKey.join(this.stringJoinChar);
+      // flatColKey = colKey.join(this.stringJoinChar);
+      flatColKey = join(colKey, this.stringJoinChar);
     }
     //TODO 原有逻辑 但这里先强制跳过
     // if ( rowKey.length === 0 && colKey.length === 0) {

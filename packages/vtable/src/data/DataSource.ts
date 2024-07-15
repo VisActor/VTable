@@ -679,7 +679,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
       if (!this.beforeChangedRecordsMap[dataIndex]) {
         const originRecord = this.getOriginalRecord(dataIndex);
-        this.beforeChangedRecordsMap[dataIndex] = cloneDeep(originRecord);
+        this.beforeChangedRecordsMap[dataIndex] = cloneDeep(originRecord) ?? {};
       }
       if (typeof field === 'string' || typeof field === 'number') {
         const beforeChangedValue = this.beforeChangedRecordsMap[dataIndex][field]; // this.getOriginalField(index, field, col, row, table);
@@ -697,7 +697,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
               console.error('VTable Error:', err);
             });
         } else {
-          record[field] = formatValue;
+          if (record) {
+            record[field] = formatValue;
+          } else {
+            this.records[dataIndex] = {};
+            this.records[dataIndex][field] = formatValue;
+          }
         }
       }
     }
