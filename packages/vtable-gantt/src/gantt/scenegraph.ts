@@ -2,7 +2,7 @@ import type { IRect, Stage } from '@visactor/vrender-core';
 import { Group, Text, createStage, vglobal } from '@visactor/vrender-core';
 import { GridComponent } from './grid-component';
 import type { Gantt } from '../Gantt';
-import { Env } from '../tools/env';
+import { Env } from '../env';
 import { ScrollBarComponent } from './scrollbar';
 import { bindScrollBarListener } from './event/scroll';
 

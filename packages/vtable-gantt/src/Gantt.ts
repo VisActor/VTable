@@ -4,7 +4,7 @@ import { Scenegraph } from './gantt/scenegraph';
 import { Env } from './env';
 import type { GanttConstructorOptions } from './ts-types';
 import type { ITableThemeDefine, ListTableConstructorOptions } from '@visactor/vtable';
-import { ListTable } from '@visactor/vtable';
+import { ListTable, themes } from '@visactor/vtable';
 import { EventManager } from './gantt/event-manager';
 import { StateManager } from './gantt/state-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
@@ -60,7 +60,7 @@ export class Gantt {
   gridHeight: number;
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
     this.options = options;
-    // this.theme = options.theme ?? themes.DEFAULT;
+    this.theme = options.theme ?? themes.DEFAULT;
     this.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
     this.rowHeight = options?.defaultRowHeight ?? 40;
     this.timelineColWidth = options?.timelineColWidth ?? 60;

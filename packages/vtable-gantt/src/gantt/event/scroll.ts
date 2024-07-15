@@ -2,7 +2,7 @@ import type { FederatedPointerEvent } from '@visactor/vrender-core';
 import type { Gantt } from '../../Gantt';
 import { InteractionState } from '../../ts-types';
 import type { EventManager } from '../event-manager';
-import { throttle } from '../../tools/util';
+import { throttle } from '../../util';
 import type { StateManager } from '../state-manager';
 /**
  *
