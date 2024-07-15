@@ -1,5 +1,7 @@
 import type * as VTable from '@visactor/vtable';
-import { Gantt } from '../../src/Gantt';
+import type { GanttConstructorOptions } from '../../src/index';
+import { Gantt } from '../../src/index';
+import { style } from '../../../vtable/es/tools/helper';
 // import { bindDebugTool } from '../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 
@@ -412,10 +414,10 @@ export function createTable() {
       sort: true
     }
   ];
-  const option: VTable.GanttConstructorOptions = {
+  const option: GanttConstructorOptions = {
     records,
-    infoTableColumns: columns,
-    infoTableWidth: 300,
+    taskTableColumns: columns,
+    taskTableWidth: 300,
     timelineColWidth: 60,
     startField: 'start',
     endField: 'end',
@@ -431,6 +433,14 @@ export function createTable() {
     },
     defaultHeaderRowHeight: 60,
     defaultRowHeight: 40,
+    timelineHeaderStyle: {
+      borderColor: 'red',
+      borderWidth: 1,
+      fontSize: 10,
+      fontWeight: 'bold',
+      color: 'red',
+      backgroundColor: 'yellow'
+    },
     timelineScales: [
       {
         unit: 'month',

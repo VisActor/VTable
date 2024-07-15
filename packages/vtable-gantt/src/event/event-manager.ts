@@ -1,8 +1,8 @@
 import type { FederatedPointerEvent } from '@visactor/vrender-core';
 import type { Gantt } from '../Gantt';
-import { EventHandler } from './event/EventHandler';
-import { handleWhell } from './event/scroll';
-import { throttle } from '../util';
+import { EventHandler } from '../event/EventHandler';
+import { handleWhell } from '../event/scroll';
+import { throttle } from '../tools/util';
 
 export class EventManager {
   _gantt: Gantt;

@@ -1,9 +1,6 @@
 import { ScrollBar } from '@visactor/vrender-components';
 import { isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
-import type { EventManager } from './event-manager';
-import type { FederatedPointerEvent } from '@visactor/vrender-core';
-import { throttle } from '../tools/util';
 /**
  * @description: 创建滚动条组件
  * @return {*}
@@ -76,7 +73,7 @@ export class ScrollBarComponent {
   }
 
   hideVerticalScrollBar() {
-    const visable = this._gantt.theme.scrollStyle.visible;
+    const visable = this._gantt.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {
       return;
     }
@@ -85,7 +82,7 @@ export class ScrollBarComponent {
     this._gantt.scenegraph.updateNextFrame();
   }
   showVerticalScrollBar() {
-    const visable = this._gantt.theme.scrollStyle.visible;
+    const visable = this._gantt.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {
       return;
     }
@@ -94,7 +91,7 @@ export class ScrollBarComponent {
     this._gantt.scenegraph.updateNextFrame();
   }
   hideHorizontalScrollBar() {
-    const visable = this._gantt.theme.scrollStyle.visible;
+    const visable = this._gantt.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {
       return;
     }
@@ -103,7 +100,7 @@ export class ScrollBarComponent {
     this._gantt.scenegraph.updateNextFrame();
   }
   showHorizontalScrollBar() {
-    const visable = this._gantt.theme.scrollStyle.visible;
+    const visable = this._gantt.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {
       return;
     }
@@ -142,9 +139,9 @@ export class ScrollBarComponent {
     const oldHorizontalBarPos = this._gantt.stateManager.scroll.horizontalBarPos;
     const oldVerticalBarPos = this._gantt.stateManager.scroll.verticalBarPos;
 
-    const theme = this._gantt.theme;
-    const width = theme.scrollStyle?.width as number;
-    const visible = theme.scrollStyle?.visible as string;
+    const scrollStyle = this._gantt.scrollStyle;
+    const width = scrollStyle?.width as number;
+    const visible = scrollStyle?.visible as string;
     // const hoverOn = theme.scrollStyle?.hoverOn as boolean;
     const tableWidth = Math.ceil(this._gantt.scenegraph.tableGroup.attribute.width);
     const tableHeight = Math.ceil(this._gantt.scenegraph.tableGroup.attribute.height);
@@ -159,10 +156,10 @@ export class ScrollBarComponent {
       const y = Math.min(tableHeight, totalHeight);
       const rangeEnd = Math.max(0.05, tableWidth / totalWidth);
 
-      const hoverOn = this._gantt.theme.scrollStyle.hoverOn;
+      const hoverOn = scrollStyle.hoverOn;
 
       let attrY = 0;
-      if (this._gantt.theme.scrollStyle.barToSide) {
+      if (scrollStyle.barToSide) {
         attrY =
           this._gantt.tableNoFrameHeight -
           (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.y) +
@@ -200,9 +197,9 @@ export class ScrollBarComponent {
       const rangeEnd = Math.max(0.05, (tableHeight - frozenRowsHeight) / (totalHeight - frozenRowsHeight));
 
       let attrX = 0;
-      const hoverOn = this._gantt.theme.scrollStyle.hoverOn;
+      const hoverOn = this._gantt.scrollStyle.hoverOn;
 
-      if (this._gantt.theme.scrollStyle.barToSide) {
+      if (this._gantt.scrollStyle.barToSide) {
         attrX =
           this._gantt.tableNoFrameWidth -
           (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.x) +

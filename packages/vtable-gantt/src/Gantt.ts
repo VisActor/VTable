@@ -1,12 +1,12 @@
 // import themes from './themes';
 // import { createRootElement } from './core/tableHelper';
-import { Scenegraph } from './gantt/scenegraph';
+import { Scenegraph } from './scenegraph/scenegraph';
 import { Env } from './env';
 import type { GanttConstructorOptions } from './ts-types';
-import type { ITableThemeDefine, ListTableConstructorOptions } from '@visactor/vtable';
-import { ListTable, themes } from '@visactor/vtable';
-import { EventManager } from './gantt/event-manager';
-import { StateManager } from './gantt/state-manager';
+import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
+import { ListTable } from '@visactor/vtable';
+import { EventManager } from './event/event-manager';
+import { StateManager } from './state/state-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
   const element = document.createElement('div');
@@ -45,7 +45,6 @@ export class Gantt {
   canvas: HTMLCanvasElement;
   element: HTMLElement;
   context: CanvasRenderingContext2D;
-  theme: ITableThemeDefine;
   headerRowHeight: number;
   rowHeight: number;
   timelineColWidth: number;
@@ -58,9 +57,18 @@ export class Gantt {
   drawHeight: number;
   headerHeight: number;
   gridHeight: number;
+
+  scrollStyle: TYPES.ScrollStyle;
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
     this.options = options;
-    this.theme = options.theme ?? themes.DEFAULT;
+    this.scrollStyle = options?.scrollStyle ?? {
+      scrollRailColor: 'rgba(100, 100, 100, 0.2)',
+      scrollSliderColor: 'rgba(100, 100, 100, 0.5)',
+      width: 10,
+      visible: 'always',
+      hoverOn: true,
+      barToSide: false
+    };
     this.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
     this.rowHeight = options?.defaultRowHeight ?? 40;
     this.timelineColWidth = options?.timelineColWidth ?? 60;
@@ -69,7 +77,7 @@ export class Gantt {
     this.headerLevel = this.orderedScales.length;
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
     this.element.style.top = '0px';
-    this.element.style.left = this.options.infoTableWidth ? `${this.options.infoTableWidth}px` : '0px';
+    this.element.style.left = this.options.taskTableWidth ? `${this.options.taskTableWidth}px` : '0px';
     this.canvas = document.createElement('canvas');
     this.element.appendChild(this.canvas);
     this.context = this.canvas.getContext('2d')!;
@@ -145,7 +153,7 @@ export class Gantt {
     // const width = Math.floor(widthP - style.getScrollBarSize(this.getTheme().scrollStyle));
     // const height = Math.floor(heightP - style.getScrollBarSize(this.getTheme().scrollStyle));
 
-    this.tableNoFrameWidth = widthP - (this.options.infoTableWidth as number);
+    this.tableNoFrameWidth = widthP - (this.options.taskTableWidth as number);
     this.tableNoFrameHeight = Math.floor(heightP);
     // if (this.internalProps.theme?.frameStyle) {
     //   //考虑表格整体边框的问题
@@ -169,15 +177,16 @@ export class Gantt {
   generateListTableOptions() {
     const listTable_options: ListTableConstructorOptions = {};
     for (const key in this.options) {
-      if (key === 'infoTableColumns') {
-        listTable_options.columns = this.options.infoTableColumns;
+      if (key === 'taskTableColumns') {
+        listTable_options.columns = this.options.taskTableColumns;
         // debugger;
         // const cols = generateGanttChartColumns(this.options.timelineScales, this.options.minDate, this.options.maxDate);
       } else if (key !== 'timelineScales' && key !== 'barStyle') {
         listTable_options[key] = this.options[key];
       }
     }
-    listTable_options.canvasWidth = this.options.infoTableWidth as number;
+    listTable_options.theme = {};
+    listTable_options.canvasWidth = this.options.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvasHeight ?? this.tableNoFrameHeight;
     listTable_options.defaultHeaderRowHeight = this.headerRowHeight * this.headerLevel;
     listTable_options.clearDOM = false;
@@ -295,7 +304,7 @@ export class Gantt {
       ) +
         1)
       //      +
-      // <number>this.options.infoTableWidth
+      // <number>this.options.taskTableWidth
     );
   }
 

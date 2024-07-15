@@ -1,12 +1,4 @@
-import type {
-  RectProps,
-  IRowSeriesNumber,
-  ColumnDefine,
-  ColumnsDefine,
-  ITextStyleOption,
-  ColorPropertyDefine,
-  StylePropertyFunctionArg
-} from '@visactor/vtable';
+import type { ColumnsDefine, TYPES } from '@visactor/vtable';
 export type LayoutObjectId = number | string;
 
 export interface CellAddress {
@@ -16,7 +8,7 @@ export interface CellAddress {
 export interface CellAddressWithBound {
   col: number;
   row: number;
-  rect?: RectProps;
+  rect?: TYPES.RectProps;
   x?: number;
   y?: number;
 }
@@ -37,12 +29,10 @@ export interface GanttConstructorOptions {
     unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
     step: number;
     format: (date: Date) => string;
-    // 时间刻度对应的字段名
-    headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   }[];
   /** 定义列 */
-  infoTableColumns?: ColumnsDefine; // (string | IDimension)[];
-  infoTableWidth?: 'auto' | number;
+  taskTableColumns?: ColumnsDefine; // (string | IDimension)[];
+  taskTableWidth?: 'auto' | number;
   gridStyle?: {
     vertical: {
       lineColor?: string;
@@ -53,7 +43,14 @@ export interface GanttConstructorOptions {
       lineWidth?: number;
     };
   };
-  timelineStyle?: {} | {}[];
+  timelineHeaderStyle?: {
+    borderColor?: string;
+    borderWidth?: number;
+    fontSize?: number;
+    fontWeight?: string;
+    color?: string;
+    backgroundColor?: string;
+  };
   /** 时间刻度对应的字段名 */
   startField: string;
   /** 时间刻度对应的字段名 */
@@ -67,11 +64,12 @@ export interface GanttConstructorOptions {
   // theme?: TableTheme;
   /** 设置任务条样式 可以设置多组 依次循环使用 */
   barStyle?: IBarStyleOption[]; // 参考https://lightcharts.bytedance.net/charts/doc/options#series.gantt.barStyle
+  scrollStyle: TYPES.ScrollStyle;
   defaultHeaderRowHeight?: number;
   defaultRowHeight?: number;
   timelineColWidth?: number;
 
-  rowSeriesNumber?: IRowSeriesNumber;
+  rowSeriesNumber?: TYPES.IRowSeriesNumber;
   dragHeader?: boolean;
 
   /**
@@ -80,14 +78,14 @@ export interface GanttConstructorOptions {
    * */
   overscrollBehavior?: 'auto' | 'none';
 
-  // infoTableTheme?: ITableThemeDefine;
+  // taskTableTheme?: ITableThemeDefine;
 }
 
 export type IBarStyleOption = {
   /** 任务条的颜色 */
-  barColor?: ColorPropertyDefine;
+  barColor?: string;
   /** 已完成部分任务条的颜色 */
-  barColor2?: ColorPropertyDefine;
+  barColor2?: string;
   /** 任务条的宽度 */
   width?: number;
   /** 任务条的圆角 */
@@ -95,7 +93,8 @@ export type IBarStyleOption = {
   /** 任务条的边框 */
   borderWidth?: number;
   /** 边框颜色 */
-  borderColor?: ColorPropertyDefine;
-  font?: ITextStyleOption;
+  borderColor?: string;
+  fontFamily?: string;
+  fontSize?: number;
 };
 //#endregion

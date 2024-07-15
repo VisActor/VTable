@@ -1,7 +1,7 @@
 // import type { AnyFunction, EventListenerId } from '../ts-types';
 import type { EventTarget as CustomEventTarget } from './EventTarget';
-import { debounce } from '../../debounce';
-import { Env } from '../../env';
+import { debounce } from '../tools/debounce';
+import { Env } from '../env';
 export type EventListenerId = any; //TODO 类型
 let idCount = 1;
 type EventHandlerTarget = EventTarget | CustomEventTarget;
