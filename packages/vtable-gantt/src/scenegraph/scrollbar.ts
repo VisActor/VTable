@@ -16,10 +16,10 @@ export class ScrollBarComponent {
   }
 
   createScrollBar(tableWidth: number, tableHeight: number) {
-    const scrollRailColor = 'black' as string;
-    const scrollSliderColor = 'orange' as string;
-    const scrollSliderCornerRadius = 3;
-    const width = 10 as number;
+    const scrollRailColor = this._gantt.scrollStyle.scrollRailColor;
+    const scrollSliderColor = this._gantt.scrollStyle.scrollSliderColor;
+    const scrollSliderCornerRadius = this._gantt.scrollStyle.scrollSliderCornerRadius;
+    const width = this._gantt.scrollStyle.width;
 
     let sliderStyle;
     if (isValid(scrollSliderCornerRadius)) {
@@ -32,8 +32,8 @@ export class ScrollBarComponent {
         fill: scrollSliderColor
       };
     }
-    // const visible = theme.scrollStyle?.visible as string;
-    // const hoverOn = theme.scrollStyle?.hoverOn as boolean;
+    const visible = this._gantt.scrollStyle?.visible as string;
+    const hoverOn = this._gantt.scrollStyle?.hoverOn as boolean;
 
     this.hScrollBar = new ScrollBar({
       direction: 'horizontal',
@@ -48,7 +48,7 @@ export class ScrollBarComponent {
       sliderStyle,
       range: [0, 0.1],
       // scrollRange: [0.4, 0.8]
-      visible: false
+      visible
     });
     // hack方案实现初始化隐藏滚动条，也可以add到stage之后执行hideAll
     (this.hScrollBar as any).render();
@@ -66,7 +66,7 @@ export class ScrollBarComponent {
       },
       sliderStyle,
       range: [0, 0.1],
-      visible: false
+      visible
     });
     (this.vScrollBar as any).render();
     this.vScrollBar.hideAll();

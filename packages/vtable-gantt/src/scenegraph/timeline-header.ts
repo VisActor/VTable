@@ -1,5 +1,5 @@
 import type { Scenegraph } from './scenegraph';
-import { Group, Text, createStage, vglobal } from '@visactor/vrender-core';
+import { Group, Text, createStage, vglobal, createRect } from '@visactor/vrender-core';
 export class TimelineHeader {
   group: Group;
   constructor(scene: Scenegraph) {
@@ -9,10 +9,10 @@ export class TimelineHeader {
       width: scene._gantt.getAllColsWidth(), //width - 2,
       height: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
       clip: true,
-      pickable: true,
-      fill: 'purple',
-      stroke: 'green',
-      lineWidth: 2
+      pickable: false
+      // fill: 'purple',
+      // stroke: 'green',
+      // lineWidth: 2
     });
     this.group = dateHeader;
     (dateHeader as any).role = 'date-header';
@@ -25,31 +25,43 @@ export class TimelineHeader {
         width: scene._gantt.getAllColsWidth(),
         height: scene._gantt.headerRowHeight,
         clip: true,
-        pickable: true,
-        fill: 'pink',
-        stroke: 'green',
-        lineWidth: 2
+        pickable: false
+        // fill: 'pink',
+        // stroke: 'green',
+        // lineWidth: 2
       });
       (rowHeader as any).role = 'row-header';
       dateHeader.addChild(rowHeader);
 
+      //创建表头分割线 水平分割线 TODO
+
       const { unit, timelineDates } = scene._gantt.orderedScales[i];
       let x = 0;
-
+      // debugger;
+      // if (scene._gantt.timelineHeaderStyle?.borderWidth & 1) {
+      //   x += 0.5;
+      // }
+      // x += scene._gantt.timelineHeaderStyle?.borderWidth / 2;
+      console.log(scene._gantt.timelineHeaderStyle?.borderWidth * 2);
       for (let j = 0; j < timelineDates.length; j++) {
         const date = new Group({
           x,
           y: 0,
           width: scene._gantt.colWidthPerDay * timelineDates[j].days,
           height: scene._gantt.headerRowHeight,
-          clip: true,
-          pickable: true,
-          fill: i === 1 ? 'yellow' : 'blue',
-          stroke: i === 1 ? 'black' : 'white',
-          lineWidth: 2
+          clip: true
         });
         (date as any).role = 'date-cell';
         // debugger;
+        const rect = createRect({
+          x: 0,
+          y: 0,
+          width: scene._gantt.colWidthPerDay * timelineDates[j].days,
+          height: scene._gantt.headerRowHeight,
+          fill: scene._gantt.timelineHeaderStyle?.backgroundColor
+        });
+        date.appendChild(rect);
+
         const text = new Text({
           x: 0,
           y: 0,

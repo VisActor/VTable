@@ -125,15 +125,12 @@ export function initSceneGraph(scene: Scenegraph) {
   const height = Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight);
 
   scene.tableGroup = new Group({
-    x: 1,
-    y: 1,
+    x: 0,
+    y: 0,
     width: width,
     height: height,
     clip: true,
-    pickable: false,
-    stroke: 'green',
-    lineWidth: 2
-    // fill: false
+    pickable: false
   });
   (scene.tableGroup as any).role = 'table';
   // 初始化顶部时间线表头部分
@@ -143,10 +140,7 @@ export function initSceneGraph(scene: Scenegraph) {
   scene.grid = new GridComponent({
     vertical: true,
     horizontal: true,
-    gridStyle: {
-      stroke: 'red',
-      lineWidth: 1
-    },
+    gridStyle: scene._gantt.gridStyle,
     scrollLeft: 0,
     scrollTop: 0,
     x: 0,
@@ -160,6 +154,8 @@ export function initSceneGraph(scene: Scenegraph) {
     allGridHeight: scene._gantt.getAllGridHeight()
   });
   scene.tableGroup.addChild(scene.grid.group);
+
+  debugger;
   // 初始化滚动条组件
   scene.scrollbarComponent = new ScrollBarComponent(scene._gantt);
   scene.stage.defaultLayer.addChild(scene.scrollbarComponent.hScrollBar);

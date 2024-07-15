@@ -16,7 +16,24 @@ export interface CellRange {
   start: CellAddress;
   end: CellAddress;
 }
-
+export type TimelineHeaderStyle = {
+  borderColor?: string;
+  borderWidth?: number;
+  fontSize?: number;
+  fontWeight?: string;
+  color?: string;
+  backgroundColor?: string;
+};
+export type GridStyle = {
+  vertical: {
+    lineColor?: string;
+    lineWidth?: number;
+  };
+  horizontal: {
+    lineColor?: string;
+    lineWidth?: number;
+  };
+};
 //#region gantt
 export interface GanttConstructorOptions {
   container?: HTMLElement;
@@ -33,24 +50,8 @@ export interface GanttConstructorOptions {
   /** 定义列 */
   taskTableColumns?: ColumnsDefine; // (string | IDimension)[];
   taskTableWidth?: 'auto' | number;
-  gridStyle?: {
-    vertical: {
-      lineColor?: string;
-      lineWidth?: number;
-    };
-    horizontal: {
-      lineColor?: string;
-      lineWidth?: number;
-    };
-  };
-  timelineHeaderStyle?: {
-    borderColor?: string;
-    borderWidth?: number;
-    fontSize?: number;
-    fontWeight?: string;
-    color?: string;
-    backgroundColor?: string;
-  };
+  gridStyle?: GridStyle;
+  timelineHeaderStyle?: TimelineHeaderStyle;
   /** 时间刻度对应的字段名 */
   startField: string;
   /** 时间刻度对应的字段名 */
@@ -64,7 +65,7 @@ export interface GanttConstructorOptions {
   // theme?: TableTheme;
   /** 设置任务条样式 可以设置多组 依次循环使用 */
   barStyle?: IBarStyleOption[]; // 参考https://lightcharts.bytedance.net/charts/doc/options#series.gantt.barStyle
-  scrollStyle: TYPES.ScrollStyle;
+  scrollStyle?: TYPES.ScrollStyle;
   defaultHeaderRowHeight?: number;
   defaultRowHeight?: number;
   timelineColWidth?: number;

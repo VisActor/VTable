@@ -2,7 +2,7 @@ import type * as VTable from '@visactor/vtable';
 import type { GanttConstructorOptions } from '../../src/index';
 import { Gantt } from '../../src/index';
 import { style } from '../../../vtable/es/tools/helper';
-// import { bindDebugTool } from '../src/scenegraph/debug-tool';
+import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
@@ -434,7 +434,7 @@ export function createTable() {
     defaultHeaderRowHeight: 60,
     defaultRowHeight: 40,
     timelineHeaderStyle: {
-      borderColor: 'red',
+      borderColor: 'black',
       borderWidth: 1,
       fontSize: 10,
       fontWeight: 'bold',
@@ -478,7 +478,7 @@ export function createTable() {
   const tableInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
   window.tableInstance = tableInstance;
 
-  // bindDebugTool(tableInstance.scenegraph.stage as any, {
-  //   customGrapicKeys: ['role', '_updateTag']
-  // });
+  bindDebugTool(tableInstance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 }

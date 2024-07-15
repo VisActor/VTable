@@ -2,7 +2,7 @@
 // import { createRootElement } from './core/tableHelper';
 import { Scenegraph } from './scenegraph/scenegraph';
 import { Env } from './env';
-import type { GanttConstructorOptions } from './ts-types';
+import type { GanttConstructorOptions, GridStyle, TimelineHeaderStyle } from './ts-types';
 import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
@@ -59,16 +59,49 @@ export class Gantt {
   gridHeight: number;
 
   scrollStyle: TYPES.ScrollStyle;
+  timelineHeaderStyle: TimelineHeaderStyle;
+  gridStyle: GridStyle;
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
     this.options = options;
-    this.scrollStyle = options?.scrollStyle ?? {
-      scrollRailColor: 'rgba(100, 100, 100, 0.2)',
-      scrollSliderColor: 'rgba(100, 100, 100, 0.5)',
-      width: 10,
-      visible: 'always',
-      hoverOn: true,
-      barToSide: false
-    };
+    this.scrollStyle = Object.assign(
+      {},
+      {
+        scrollRailColor: 'rgba(100, 100, 100, 0.2)',
+        scrollSliderColor: 'rgba(100, 100, 100, 0.5)',
+        scrollSliderCornerRadius: 4,
+        width: 10,
+        visible: 'always',
+        hoverOn: true,
+        barToSide: false
+      },
+      options?.scrollStyle
+    );
+    this.timelineHeaderStyle = Object.assign(
+      {},
+      {
+        borderColor: 'gray',
+        borderWidth: 1,
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#000',
+        backgroundColor: '#fff'
+      },
+      options?.timelineHeaderStyle
+    );
+    this.gridStyle = Object.assign(
+      {},
+      {
+        vertical: {
+          lineColor: 'red',
+          lineWidth: 1
+        },
+        horizontal: {
+          lineColor: 'blue',
+          lineWidth: 1
+        }
+      },
+      options?.gridStyle
+    );
     this.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
     this.rowHeight = options?.defaultRowHeight ?? 40;
     this.timelineColWidth = options?.timelineColWidth ?? 60;
