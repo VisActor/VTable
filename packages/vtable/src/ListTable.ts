@@ -37,6 +37,7 @@ import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { setCellCheckboxState } from './state/checkbox/checkbox';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
+import { getGroupByDataConfig } from './core/group-helper';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -101,7 +102,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //分页配置
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
-    internalProps.dataConfig = {}; //cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = options.groupBy ? getGroupByDataConfig(options.groupBy) : {}; //cloneDeep(options.dataConfig ?? {});
     internalProps.columns = options.columns
       ? cloneDeepSpec(options.columns, ['children']) // children for react
       : options.header
@@ -114,7 +115,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //   }
     // });
 
-    internalProps.enableTreeNodeMerge = options.enableTreeNodeMerge;
+    internalProps.enableTreeNodeMerge = options.enableTreeNodeMerge ?? isValid(options.groupBy) ?? false;
 
     this.internalProps.headerHelper.setTableColumnsEditor();
     this.showHeader = options.showHeader ?? true;
@@ -776,9 +777,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @returns
    */
   getHierarchyState(col: number, row: number) {
-    const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
-    if (!define.tree) {
-      return HierarchyState.none;
+    if (!this.options.groupBy) {
+      const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
+      if (!define.tree) {
+        return HierarchyState.none;
+      }
     }
     const index = this.getRecordShowIndexByCell(col, row);
     return this.dataSource.getHierarchyState(index);
