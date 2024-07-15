@@ -1,10 +1,12 @@
-import type {
-  FieldData,
-  FieldDef,
-  IListTableDataConfig,
-  IPagination,
-  MaybePromise,
-  MaybePromiseOrUndefined
+import { isArray, isValid } from '@visactor/vutils';
+import {
+  AggregationType,
+  type FieldData,
+  type FieldDef,
+  type IListTableDataConfig,
+  type IPagination,
+  type MaybePromise,
+  type MaybePromiseOrUndefined
 } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
@@ -66,6 +68,8 @@ export class CachedDataSource extends DataSource {
       hierarchyExpandLevel
     );
   }
+
+  groupAggregator: any;
   constructor(
     opt?: DataSourceParam,
     dataConfig?: IListTableDataConfig,
@@ -74,6 +78,9 @@ export class CachedDataSource extends DataSource {
     rowHierarchyType?: 'grid' | 'tree',
     hierarchyExpandLevel?: number
   ) {
+    if (isArray(dataConfig?.groupByRules)) {
+      rowHierarchyType = 'tree';
+    }
     super(opt, dataConfig, pagination, columnObjs, rowHierarchyType, hierarchyExpandLevel);
     this._recordCache = [];
     this._fieldCache = {};
@@ -124,5 +131,86 @@ export class CachedDataSource extends DataSource {
     super.release?.();
     this._recordCache = null;
     this._fieldCache = null;
+  }
+
+  _generateFieldAggragations() {
+    super._generateFieldAggragations();
+    // groupby aggragations
+    if (isArray(this.dataConfig?.groupByRules)) {
+      // const groupByKey = this.dataConfig.groupByRules[0];
+      const groupByKeys = this.dataConfig.groupByRules;
+      this.groupAggregator = new this.registedAggregators[AggregationType.CUSTOM]({
+        dimension: '',
+        aggregationFun: (values: any, records: any, field: any) => {
+          const groupMap = new Map();
+          const groupResult = [] as any[];
+          for (let i = 0; i < records.length; i++) {
+            dealWithGroup(records[i], groupResult, groupMap, groupByKeys, 0);
+            // const record = records[i];
+            // const value = record[groupByKey];
+            // if (value !== undefined) {
+            //   if (groupMap.has(value)) {
+            //     const index = groupMap.get(value);
+            //     groupResult[index].children.push(record);
+            //   } else {
+            //     groupMap.set(value, groupResult.length);
+            //     groupResult.push({
+            //       vTableMerge: true,
+            //       vtableMergeName: value,
+            //       children: [] as any,
+            //       map: new Map()
+            //     });
+            //   }
+            // }
+          }
+          return groupResult;
+        }
+      });
+      this.fieldAggregators.push(this.groupAggregator);
+    }
+  }
+
+  processRecords(records: any[]) {
+    const result = super.processRecords(records);
+    const groupResult = this.groupAggregator?.value();
+    if (groupResult) {
+      return groupResult;
+    }
+    return result;
+  }
+
+  getGroupLength() {
+    return this.dataConfig?.groupByRules?.length ?? 0;
+  }
+}
+
+function dealWithGroup(record: any, children: any[], map: Map<number, any>, groupByKeys: string[], level: number) {
+  const groupByKey = groupByKeys[level];
+  if (!isValid(groupByKey)) {
+    children.push(record);
+    return;
+  }
+  const value = record[groupByKey];
+  if (value !== undefined) {
+    if (map.has(value)) {
+      const index = map.get(value);
+      // children[index].children.push(record);
+      dealWithGroup(record, children[index].children, children[index].map, groupByKeys, level + 1);
+    } else {
+      map.set(value, children.length);
+      children.push({
+        vTableMerge: true,
+        vtableMergeName: value,
+        children: [] as any,
+        map: new Map()
+      });
+      dealWithGroup(
+        record,
+        children[children.length - 1].children,
+        children[children.length - 1].map,
+        groupByKeys,
+        level + 1
+      );
+    }
   }
 }

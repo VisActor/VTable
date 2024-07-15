@@ -122,6 +122,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-tree-group'
+      },
+      {
+        path: 'list',
+        name: 'list-group'
       }
     ]
   },
