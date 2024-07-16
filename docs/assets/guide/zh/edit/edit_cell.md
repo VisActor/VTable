@@ -277,7 +277,7 @@ interface ListTableConstructorOptions {
 
 如未定义该接口则编辑值值默认不做校验，接口返回 false，校验失败则保留在编辑状态;
 
-若需要实现异步校验，可以返回一个Promise对象，该Promise对象在校验成功时以真值解析，校验失败时以假值解析。
+若需要实现异步校验，可以返回一个 Promise 对象，该 Promise 对象在校验成功时以真值解析，校验失败时以假值解析。
 
 ## 9. 相关 api
 
@@ -296,7 +296,7 @@ interface ListTableAPI {
   /** 获取单元格配置的编辑器 */
   getEditor: (col: number, row: number) => IEditor;
   /** 开启单元格编辑 */
-  startEditCell: (col?: number, row?: number) => void;
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
   /** 结束编辑 */
   completeEditCell: () => void;
   // ...

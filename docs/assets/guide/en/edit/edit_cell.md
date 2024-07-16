@@ -292,7 +292,7 @@ interface ListTableAPI {
   /** Get the editor of cell configuration */
   getEditor: (col: number, row: number) => IEditor;
   /** Enable cell editing */
-  startEditCell: (col?: number, row?: number) => void;
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
   /** End editing */
   completeEditCell: () => void;
   // ...
