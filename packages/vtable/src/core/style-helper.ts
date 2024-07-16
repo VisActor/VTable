@@ -177,7 +177,7 @@ export function getCellStyle(col: number, row: number, table: BaseTableAPI): Ful
 
   let cacheKey;
   const cellType = table.getCellType(col, row);
-  const rawRecord = table.getCellRawRecord(col, row);
+  const rawRecord = table.getCellOriginRecord(col, row);
 
   //如果是主体部分，获取相应的style
   if (rawRecord?.vTableMerge) {
