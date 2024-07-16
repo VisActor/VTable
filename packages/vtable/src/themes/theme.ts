@@ -74,6 +74,7 @@ export class TableTheme implements ITableThemeDefine {
   private _bottomFrozen: ITableThemeDefine['bottomFrozenStyle'] | null = null;
   private _rowHeader: ITableThemeDefine['rowHeaderStyle'] | null = null;
   private _body: ITableThemeDefine['bodyStyle'] | null = null;
+  private _groupTitle: ITableThemeDefine['groupTitleStyle'] | null = null;
   private _scroll: ITableThemeDefine['scrollStyle'] | null = null;
   private _tooltip: ITableThemeDefine['tooltipStyle'] | null = null;
   private _frameStyle: ITableThemeDefine['frameStyle'] | null = null;
@@ -405,6 +406,21 @@ export class TableTheme implements ITableThemeDefine {
     }
 
     return this._body;
+  }
+
+  get groupTitleStyle(): ITableThemeDefine['groupTitleStyle'] {
+    if (!this._groupTitle) {
+      const { obj, superTheme } = this.internalTheme;
+      const groupTitle: ThemeStyle = ingoreNoneValueMerge(
+        {},
+        this.defaultStyle,
+        superTheme.groupTitleStyle,
+        obj.groupTitleStyle
+      );
+      this._groupTitle = this.getStyle(groupTitle);
+    }
+
+    return this._groupTitle;
   }
 
   get frameStyle(): ITableThemeDefine['frameStyle'] {

@@ -60,10 +60,19 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
       table.pagination,
       table.internalProps.layoutMap.columnObjects,
       table.internalProps.layoutMap.rowHierarchyType,
-      (table.options as any).hierarchyExpandLevel ?? (table._hasHierarchyTreeHeader?.() ? 1 : undefined)
+      getHierarchyExpandLevel(table)
     ));
     table.addReleaseObj(newDataSource);
   });
+}
+
+function getHierarchyExpandLevel(table: ListTableAPI) {
+  if ((table.options as any).hierarchyExpandLevel) {
+    return (table.options as any).hierarchyExpandLevel;
+  } else if (table.options.groupBy) {
+    return Infinity;
+  }
+  return table._hasHierarchyTreeHeader?.() ? 1 : undefined;
 }
 
 export function _setDataSource(table: BaseTableAPI, dataSource: DataSource): void {

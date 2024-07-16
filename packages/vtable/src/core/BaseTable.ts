@@ -140,13 +140,13 @@ import {
   getTargetRowAt,
   getTargetRowAtConsiderBottomFrozen
 } from './utils/get-cell-position';
+import { getCellStyle } from './style-helper';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
 importStyle();
 
-const EMPTY_STYLE = {};
 export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showFrozenIcon = true;
@@ -198,9 +198,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   // eslint-disable-next-line default-param-last
   id = `VTable${Date.now()}`;
 
-  headerStyleCache: any;
-  bodyStyleCache: any;
-  bodyBottomStyleCache: any;
+  headerStyleCache: Map<string, any>;
+  bodyStyleCache: Map<string, any>;
+  bodyMergeTitleCache: Map<string, any>;
+  bodyBottomStyleCache: Map<string, any>;
   container: HTMLElement;
   isReleased: boolean = false;
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
@@ -473,6 +474,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
+    this.bodyMergeTitleCache = new Map();
     this.bodyBottomStyleCache = new Map();
 
     internalProps.stick = { changedCells: new Map() };
@@ -3091,232 +3093,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   _getCellStyle(col: number, row: number): FullExtendStyle {
-    const customCellStyle = this.customCellStylePlugin.getCustomCellStyle(col, row);
-    const { layoutMap } = this.internalProps;
-    const isHeader = layoutMap.isHeader(col, row);
-    if (isHeader) {
-      // const cacheKey = `${col}-${row}`;
-      let cacheKey;
-      if (this.isPivotTable() && !this.isBottomFrozenRow(row) && !this.isRightFrozenColumn(col)) {
-        // use dimensionKey&indicatorKey to cache style object in pivot table
-        const define = this.getHeaderDefine(col, row) as any;
-        const isCorner = this.isCornerHeader(col, row);
-        cacheKey = define?.dimensionKey
-          ? isCorner
-            ? `dim-cor-${define.dimensionKey}`
-            : `dim-${define.dimensionKey}`
-          : define?.indicatorKey
-          ? `ind-${define.indicatorKey}`
-          : `${col}-${row}`;
-      } else {
-        cacheKey = `${col}-${row}`;
-      }
-      let cacheStyle = this.headerStyleCache.get(cacheKey);
-      if (cacheStyle) {
-        if (customCellStyle) {
-          return mergeStyle(cacheStyle, customCellStyle);
-        }
-        return cacheStyle;
-      }
-      const hd = layoutMap.getHeader(col, row);
-
-      let paddingForAxis;
-      if (
-        this.isPivotChart() &&
-        isTopOrBottomAxis(col, row, layoutMap as PivotHeaderLayoutMap) &&
-        layoutMap.isAxisCell(col, row)
-      ) {
-        // get chart padding for axis cell
-        const chartColumn = layoutMap.getBody(col, this.rowHeaderLevelCount);
-        const padding = (chartColumn.style as any)?.padding ?? this.theme.bodyStyle.padding;
-        paddingForAxis = padding;
-      } else if (
-        this.isPivotChart() &&
-        isLeftOrRightAxis(col, row, layoutMap as PivotHeaderLayoutMap) &&
-        layoutMap.isAxisCell(col, row)
-      ) {
-        // get chart padding for axis cell
-        const chartColumn = layoutMap.getBody(this.columnHeaderLevelCount, row);
-        const padding = (chartColumn.style as any)?.padding ?? this.theme.bodyStyle.padding;
-        paddingForAxis = padding;
-      }
-
-      if (
-        (!hd || (hd as HeaderData).isEmpty) &&
-        (layoutMap.isLeftBottomCorner(col, row) ||
-          layoutMap.isRightBottomCorner(col, row) ||
-          layoutMap.isCornerHeader(col, row) ||
-          layoutMap.isRightTopCorner(col, row))
-      ) {
-        return EMPTY_STYLE;
-      }
-
-      const styleClass = this.internalProps.headerHelper.getStyleClass((hd as HeaderData)?.headerType || 'text');
-      if (layoutMap.isBottomFrozenRow(col, row) && this.theme.bottomFrozenStyle) {
-        cacheStyle = <FullExtendStyle>headerStyleContents.of(
-          paddingForAxis ? { padding: paddingForAxis } : {},
-          this.theme.bottomFrozenStyle,
-          {
-            col,
-            row,
-            table: this as BaseTableAPI,
-            value: this.getCellValue(col, row),
-            dataValue: this.getCellOriginValue(col, row),
-            cellHeaderPaths: this.getCellHeaderPaths(col, row)
-          },
-          styleClass,
-          this.options.autoWrapText,
-          this.theme
-        );
-      } else if (layoutMap.isRightFrozenColumn(col, row) && this.theme.rightFrozenStyle) {
-        cacheStyle = <FullExtendStyle>headerStyleContents.of(
-          paddingForAxis ? { padding: paddingForAxis } : {},
-          this.theme.rightFrozenStyle,
-          {
-            col,
-            row,
-            table: this as BaseTableAPI,
-            value: this.getCellValue(col, row),
-            dataValue: this.getCellOriginValue(col, row),
-            cellHeaderPaths: this.getCellHeaderPaths(col, row)
-          },
-          styleClass,
-          this.options.autoWrapText,
-          this.theme
-        );
-      } else {
-        // let defaultStyle;
-        // if (layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)) {
-        //   defaultStyle = this.theme.headerStyle;
-        // } else if (this.internalProps.transpose && layoutMap.isRowHeader(col, row)) {
-        //   defaultStyle = this.theme.headerStyle;
-        // } else if (layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)) {
-        //   defaultStyle = this.theme.rowHeaderStyle;
-        // } else {
-        //   defaultStyle = this.theme.cornerHeaderStyle;
-        // }
-        // const styleClass = hd.headerType.StyleClass; //BaseHeader文件
-        // const { style } = hd;
-        const style = hd?.style || {};
-        if (paddingForAxis) {
-          (style as any).padding = paddingForAxis;
-        }
-        cacheStyle = <FullExtendStyle>headerStyleContents.of(
-          style,
-          // defaultStyle,
-          layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)
-            ? this.theme.headerStyle
-            : layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)
-            ? this.theme.rowHeaderStyle
-            : this.theme.cornerHeaderStyle,
-          {
-            col,
-            row,
-            table: this as BaseTableAPI,
-            value: this.getCellValue(col, row),
-            dataValue: this.getCellOriginValue(col, row),
-            cellHeaderPaths: this.getCellHeaderPaths(col, row)
-          },
-          styleClass,
-          this.options.autoWrapText,
-          this.theme
-        );
-      }
-      this.headerStyleCache.set(cacheKey, cacheStyle);
-      if (customCellStyle) {
-        return mergeStyle(cacheStyle, customCellStyle);
-      }
-      return cacheStyle;
-    }
-
-    let bgColorFunc: ColorPropertyDefine;
-    // 判断是否有mapping  遍历dataset中mappingRules
-    if ((this.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !this.isHeader(col, row)) {
-      (this.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
-        (mappingRule: MappingRule, i: number) => {
-          if (
-            mappingRule.bgColor &&
-            (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row) ===
-              mappingRule.bgColor.indicatorKey
-          ) {
-            bgColorFunc = mappingRule.bgColor.mapping;
-          }
-        }
-      );
-      // // 判断是否有mapping  遍历dataset中mappingRules 但这里还需要根据fieldName来判断
-      // if (bgColorFunc && typeof bgColorFunc === 'function') {
-      //   const cellValue = this.getCellOriginValue(col, row);
-      //   bgColor = bgColorFunc(this, cellValue);
-      // }
-    }
-
-    let cacheKey;
-    const cellType = this.getCellType(col, row);
-    //如果是主体部分，获取相应的style
-    if (this.isSeriesNumberInBody(col, row)) {
-      // 如果是行序号
-      cacheKey = `${col}-series-` + cellType;
-    } else if (
-      (this.isListTable() && !(this as any).transpose) ||
-      (this.isPivotTable() && (this.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)
-    ) {
-      cacheKey = col + cellType;
-    } else {
-      cacheKey = row + cellType;
-    }
-    let cacheStyle;
-    if (layoutMap.isBottomFrozenRow(row)) {
-      cacheStyle = this.bodyBottomStyleCache.get(cacheKey);
-    } else {
-      cacheStyle = this.bodyStyleCache.get(cacheKey);
-    }
-    if (cacheStyle) {
-      if (customCellStyle) {
-        return mergeStyle(cacheStyle, customCellStyle);
-      }
-      return cacheStyle;
-    }
-    const column = layoutMap.getBody(col, row);
-    // const styleClass = column?.cellType?.StyleClass; //BaseColumn文件
-    const styleClass = this.internalProps.bodyHelper.getStyleClass(this.getCellType(col, row));
-    const style = column?.style;
-    cacheStyle = <FullExtendStyle>columnStyleContents.of(
-      style,
-      layoutMap.isBottomFrozenRow(row) && this.theme.bottomFrozenStyle
-        ? this.theme.bottomFrozenStyle
-        : layoutMap.isRightFrozenColumn(col) && this.theme.rightFrozenStyle
-        ? this.theme.rightFrozenStyle
-        : this.theme.bodyStyle,
-      {
-        col,
-        row,
-        table: this,
-        value: this.getCellValue(col, row),
-        dataValue: this.getCellOriginValue(col, row),
-        cellHeaderPaths: this.getCellHeaderPaths(col, row)
-      },
-      styleClass,
-      this.options.autoWrapText,
-      this.theme
-    );
-    if (bgColorFunc) {
-      cacheStyle = mergeStyle(cacheStyle as any, { bgColor: bgColorFunc });
-    }
-    if (!isFunction(style)) {
-      if (layoutMap.isBottomFrozenRow(row)) {
-        this.bodyBottomStyleCache.set(cacheKey, cacheStyle);
-      } else {
-        this.bodyStyleCache.set(cacheKey, cacheStyle);
-      }
-    }
-    if (customCellStyle) {
-      return mergeStyle(cacheStyle as any, customCellStyle);
-    }
-    return cacheStyle;
+    return getCellStyle(col, row, this);
   }
   clearCellStyleCache() {
     this.headerStyleCache.clear();
     this.bodyStyleCache.clear();
+    this.bodyMergeTitleCache.clear();
     this.bodyBottomStyleCache.clear();
 
     // this._newRowHeightsMap.clear();
