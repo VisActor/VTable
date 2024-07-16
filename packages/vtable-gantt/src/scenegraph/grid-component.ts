@@ -1,6 +1,7 @@
 import { Group, createLine } from '@visactor/vrender-core';
 import { TYPES } from '@visactor/vtable';
 import type { GridStyle } from '../ts-types';
+import { str } from '@visactor/vtable/es/tools/helper';
 export class GridComponent {
   vertical: boolean;
   horizontal: boolean;
@@ -57,11 +58,7 @@ export class GridComponent {
       y: gridOption.y,
       width: gridOption.width,
       height: gridOption.height - 4,
-      clip: true,
-      pickable: false,
-      stroke: 'blue',
-      lineWidth: 2
-      // fill: false
+      clip: true
     });
     (this.group as any).role = 'grid';
     if (this.vertical) {
@@ -72,16 +69,16 @@ export class GridComponent {
         height: this.allGridHeight
       });
       (this.verticalLineGroup as any).role = 'grid-vertical';
-      this.group.addChild(this.verticalLineGroup);
+      this.group.appendChild(this.verticalLineGroup);
 
       const vLines = [];
       let x = 0;
+      if (this.gridStyle?.vertical.lineWidth & 1) {
+        x = 0.5;
+      }
       for (let i = 0; i < this.timelineDates.length - 1; i++) {
         const dateline = this.timelineDates[i];
-        x = Math.floor(x + this.colWidthPerDay * dateline.days);
-        if (this.gridStyle?.vertical.lineWidth & 1) {
-          x += 0.5;
-        }
+        x = x + Math.floor(this.colWidthPerDay * dateline.days);
         const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.vertical.lineColor,
@@ -92,7 +89,7 @@ export class GridComponent {
           ]
         });
         vLines.push(line);
-        this.verticalLineGroup.addChild(line);
+        this.verticalLineGroup.appendChild(line);
       }
     }
 
@@ -104,15 +101,15 @@ export class GridComponent {
         height: this.allGridHeight
       });
       (this.horizontalLineGroup as any).role = 'grid-horizontal';
-      this.group.addChild(this.horizontalLineGroup);
+      this.group.appendChild(this.horizontalLineGroup);
 
       const hLines = [];
       let y = 0;
+      if (this.gridStyle?.horizontal.lineWidth & 1) {
+        y += 0.5;
+      }
       for (let i = 0; i < this.rowCount - 1; i++) {
-        y = Math.floor(y + this.rowHeight);
-        if (this.gridStyle?.horizontal.lineWidth & 1) {
-          y += 0.5;
-        }
+        y = y + Math.floor(this.rowHeight);
         const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.horizontal.lineColor,
@@ -123,12 +120,12 @@ export class GridComponent {
           ]
         });
         hLines.push(line);
-        this.horizontalLineGroup.addChild(line);
+        this.horizontalLineGroup.appendChild(line);
       }
     }
   }
   setX(x: number) {
-    this.verticalLineGroup.setAttribute('x', x + 1);
+    this.verticalLineGroup.setAttribute('x', x);
     this.horizontalLineGroup.setAttribute('x', x);
   }
   setY(y: number) {
