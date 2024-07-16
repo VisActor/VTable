@@ -19,7 +19,7 @@ import type {
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
 import { isArray, isValid } from '@visactor/vutils';
-import { _setDataSource, _setRecords, sortRecords } from './core/tableHelper';
+import { _setDataSource, _setRecords } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
@@ -39,6 +39,13 @@ import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
 import type { CachedDataSource } from './data';
+import {
+  listTableAddRecord,
+  listTableAddRecords,
+  listTableDeleteRecords,
+  listTableUpdateRecords,
+  sortRecords
+} from './core/record-helper';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -1407,80 +1414,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
   addRecord(record: any, recordIndex?: number) {
-    if (this.sortState) {
-      this.dataSource.addRecordForSorted(record);
-      sortRecords(this);
-      this.refreshRowColCount();
-      // 更新整个场景树
-      this.scenegraph.clearCells();
-      this.scenegraph.createSceneGraph();
-    } else {
-      if (recordIndex === undefined || recordIndex > this.dataSource.sourceLength) {
-        recordIndex = this.dataSource.sourceLength;
-      }
-      const headerCount = this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount;
-      this.dataSource.addRecord(record, recordIndex);
-      const oldRowCount = this.rowCount;
-      this.refreshRowColCount();
-      if (this.scenegraph.proxy.totalActualBodyRowCount === 0) {
-        this.scenegraph.clearCells();
-        this.scenegraph.createSceneGraph();
-        return;
-      }
-      const newRowCount = this.transpose ? this.colCount : this.rowCount;
-      if (this.pagination) {
-        const { perPageCount, currentPage } = this.pagination;
-        const startIndex = perPageCount * (currentPage || 0);
-        const endIndex = startIndex + perPageCount;
-        if (recordIndex < endIndex) {
-          //插入当前页或者前面的数据才需要更新 如果是插入的是当前页后面的数据不需要更新场景树
-          if (recordIndex < endIndex - perPageCount) {
-            // 如果是当页之前的数据 则整个场景树都更新
-            this.scenegraph.clearCells();
-            this.scenegraph.createSceneGraph();
-          } else {
-            //如果是插入当前页数据
-            const rowNum = recordIndex - (endIndex - perPageCount) + headerCount;
-            if (oldRowCount - headerCount === this.pagination.perPageCount) {
-              //如果当页数据是满的 则更新插入的部分行
-              const updateRows = [];
-              for (let row = rowNum; row < newRowCount; row++) {
-                if (this.transpose) {
-                  updateRows.push({ col: row, row: 0 });
-                } else {
-                  updateRows.push({ col: 0, row });
-                }
-              }
-              this.transpose
-                ? this.scenegraph.updateCol([], [], updateRows)
-                : this.scenegraph.updateRow([], [], updateRows);
-            } else {
-              //如果当页数据不是满的 则插入新数据
-              const addRows = [];
-              for (let row = rowNum; row < Math.min(newRowCount, rowNum + 1); row++) {
-                if (this.transpose) {
-                  addRows.push({ col: row, row: 0 });
-                } else {
-                  addRows.push({ col: 0, row });
-                }
-              }
-              this.transpose ? this.scenegraph.updateCol([], addRows, []) : this.scenegraph.updateRow([], addRows, []);
-            }
-          }
-        }
-      } else {
-        const addRows = [];
-        for (let row = recordIndex + headerCount; row < recordIndex + headerCount + 1; row++) {
-          if (this.transpose) {
-            addRows.push({ col: row, row: 0 });
-          } else {
-            addRows.push({ col: 0, row });
-          }
-        }
-        this.transpose ? this.scenegraph.updateCol([], addRows, []) : this.scenegraph.updateRow([], addRows, []);
-      }
-    }
-    // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
+    listTableAddRecord(record, recordIndex, this);
   }
 
   /**
@@ -1491,91 +1425,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
   addRecords(records: any[], recordIndex?: number) {
-    if (this.sortState) {
-      this.dataSource.addRecordsForSorted(records);
-      sortRecords(this);
-      this.refreshRowColCount();
-      // 更新整个场景树
-      this.scenegraph.clearCells();
-      this.scenegraph.createSceneGraph();
-    } else {
-      if (recordIndex === undefined || recordIndex > this.dataSource.sourceLength) {
-        recordIndex = this.dataSource.sourceLength;
-      } else if (recordIndex < 0) {
-        recordIndex = 0;
-      }
-      const headerCount = this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount;
-      this.dataSource.addRecords(records, recordIndex);
-      const oldRowCount = this.transpose ? this.colCount : this.rowCount;
-      this.refreshRowColCount();
-      if (this.scenegraph.proxy.totalActualBodyRowCount === 0) {
-        this.scenegraph.clearCells();
-        this.scenegraph.createSceneGraph();
-        return;
-      }
-      const newRowCount = this.transpose ? this.colCount : this.rowCount;
-      if (this.pagination) {
-        const { perPageCount, currentPage } = this.pagination;
-        const startIndex = perPageCount * (currentPage || 0);
-        const endIndex = startIndex + perPageCount;
-        if (recordIndex < endIndex) {
-          //插入当前页或者前面的数据才需要更新 如果是插入的是当前页后面的数据不需要更新场景树
-          if (recordIndex < endIndex - perPageCount) {
-            // 如果是当页之前的数据 则整个场景树都更新
-            this.scenegraph.clearCells();
-            this.scenegraph.createSceneGraph();
-          } else {
-            //如果是插入当前页数据
-
-            const rowNum = recordIndex - (endIndex - perPageCount) + headerCount;
-            if (oldRowCount - headerCount === this.pagination.perPageCount) {
-              //如果当页数据是满的 则更新插入的部分行
-              const updateRows = [];
-              for (let row = rowNum; row < newRowCount; row++) {
-                if (this.transpose) {
-                  updateRows.push({ col: row, row: 0 });
-                } else {
-                  updateRows.push({ col: 0, row });
-                }
-              }
-              this.transpose
-                ? this.scenegraph.updateCol([], [], updateRows)
-                : this.scenegraph.updateRow([], [], updateRows);
-            } else {
-              //如果当页数据不是满的 则插入新数据
-              const addRows = [];
-              for (
-                let row = rowNum;
-                row < Math.min(newRowCount, rowNum + (Array.isArray(records) ? records.length : 1));
-                row++
-              ) {
-                if (this.transpose) {
-                  addRows.push({ col: row, row: 0 });
-                } else {
-                  addRows.push({ col: 0, row });
-                }
-              }
-              this.transpose ? this.scenegraph.updateCol([], addRows, []) : this.scenegraph.updateRow([], addRows, []);
-            }
-          }
-        }
-      } else {
-        const addRows = [];
-        for (
-          let row = recordIndex + headerCount;
-          row < recordIndex + headerCount + (Array.isArray(records) ? records.length : 1);
-          row++
-        ) {
-          if (this.transpose) {
-            addRows.push({ col: row, row: 0 });
-          } else {
-            addRows.push({ col: 0, row });
-          }
-        }
-        this.transpose ? this.scenegraph.updateCol([], addRows, []) : this.scenegraph.updateRow([], addRows, []);
-      }
-    }
-    // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
+    listTableAddRecords(records, recordIndex, this);
   }
 
   /**
@@ -1583,83 +1433,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param recordIndexs 要删除数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
    */
   deleteRecords(recordIndexs: number[]) {
-    if (recordIndexs?.length > 0) {
-      if (this.sortState) {
-        this.dataSource.deleteRecordsForSorted(recordIndexs);
-        sortRecords(this);
-        this.refreshRowColCount();
-        // 更新整个场景树
-        this.scenegraph.clearCells();
-        this.scenegraph.createSceneGraph();
-      } else {
-        const deletedRecordIndexs = this.dataSource.deleteRecords(recordIndexs);
-        if (deletedRecordIndexs.length === 0) {
-          return;
-        }
-        const oldRowCount = this.transpose ? this.colCount : this.rowCount;
-        this.refreshRowColCount();
-        const newRowCount = this.transpose ? this.colCount : this.rowCount;
-        const recordIndexsMinToMax = deletedRecordIndexs.sort((a, b) => a - b);
-        const minRecordIndex = recordIndexsMinToMax[0];
-        if (this.pagination) {
-          const { perPageCount, currentPage } = this.pagination;
-          const startIndex = perPageCount * (currentPage || 0);
-          const endIndex = startIndex + perPageCount;
-          if (minRecordIndex < endIndex) {
-            //删除当前页或者前面的数据才需要更新 如果是删除的是当前页后面的数据不需要更新场景树
-            if (minRecordIndex < endIndex - perPageCount) {
-              // 如果删除包含当页之前的数据 则整个场景树都更新
-              this.scenegraph.clearCells();
-              this.scenegraph.createSceneGraph();
-            } else {
-              //如果是仅删除当前页数据
-              const minRowNum =
-                minRecordIndex -
-                (endIndex - perPageCount) +
-                (this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount);
-              //如果当页数据是满的 则更新影响的部分行
-              const updateRows = [];
-              const delRows = [];
-
-              for (let row = minRowNum; row < newRowCount; row++) {
-                if (this.transpose) {
-                  updateRows.push({ col: row, row: 0 });
-                } else {
-                  updateRows.push({ col: 0, row });
-                }
-              }
-              if (newRowCount < oldRowCount) {
-                //如果如果删除后不满 需要有删除数据
-                for (let row = newRowCount; row < oldRowCount; row++) {
-                  if (this.transpose) {
-                    delRows.push({ col: row, row: 0 });
-                  } else {
-                    delRows.push({ col: 0, row });
-                  }
-                }
-              }
-              this.transpose
-                ? this.scenegraph.updateCol(delRows, [], updateRows)
-                : this.scenegraph.updateRow(delRows, [], updateRows);
-            }
-          }
-        } else {
-          const delRows = [];
-
-          for (let index = 0; index < recordIndexsMinToMax.length; index++) {
-            const recordIndex = recordIndexsMinToMax[index];
-            const rowNum = recordIndex + (this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount);
-            if (this.transpose) {
-              delRows.push({ col: rowNum, row: 0 });
-            } else {
-              delRows.push({ col: 0, row: rowNum });
-            }
-          }
-          this.transpose ? this.scenegraph.updateCol(delRows, [], []) : this.scenegraph.updateRow(delRows, [], []);
-        }
-      }
-      // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
-    }
+    listTableDeleteRecords(recordIndexs, this);
   }
 
   /**
@@ -1668,68 +1442,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
    */
   updateRecords(records: any[], recordIndexs: number[]) {
-    if (recordIndexs?.length > 0) {
-      if (this.sortState) {
-        this.dataSource.updateRecordsForSorted(records, recordIndexs);
-        sortRecords(this);
-        this.refreshRowColCount();
-        // 更新整个场景树
-        this.scenegraph.clearCells();
-        this.scenegraph.createSceneGraph();
-      } else {
-        const updateRecordIndexs = this.dataSource.updateRecords(records, recordIndexs);
-        if (updateRecordIndexs.length === 0) {
-          return;
-        }
-
-        const recordIndexsMinToMax = updateRecordIndexs.sort((a, b) => a - b);
-        if (this.pagination) {
-          const { perPageCount, currentPage } = this.pagination;
-          const startIndex = perPageCount * (currentPage || 0);
-          const endIndex = startIndex + perPageCount;
-          const updateRows = [];
-          for (let index = 0; index < recordIndexsMinToMax.length; index++) {
-            const recordIndex = recordIndexsMinToMax[index];
-            if (recordIndex < endIndex && recordIndex >= endIndex - perPageCount) {
-              const rowNum =
-                recordIndex -
-                (endIndex - perPageCount) +
-                (this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount);
-              updateRows.push(rowNum);
-            }
-          }
-          if (updateRows.length >= 1) {
-            const updateRowCells = [];
-            for (let index = 0; index < updateRows.length; index++) {
-              const updateRow = updateRows[index];
-              if (this.transpose) {
-                updateRowCells.push({ col: updateRow, row: 0 });
-              } else {
-                updateRowCells.push({ col: 0, row: updateRow });
-              }
-            }
-            this.transpose
-              ? this.scenegraph.updateCol([], [], updateRowCells)
-              : this.scenegraph.updateRow([], [], updateRowCells);
-          }
-        } else {
-          const updateRows = [];
-          for (let index = 0; index < recordIndexsMinToMax.length; index++) {
-            const recordIndex = recordIndexsMinToMax[index];
-            const rowNum = recordIndex + (this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount);
-            if (this.transpose) {
-              updateRows.push({ col: rowNum, row: 0 });
-            } else {
-              updateRows.push({ col: 0, row: rowNum });
-            }
-          }
-          this.transpose
-            ? this.scenegraph.updateCol([], [], updateRows)
-            : this.scenegraph.updateRow([], [], updateRows);
-        }
-      }
-      // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
-    }
+    listTableUpdateRecords(records, recordIndexs, this);
   }
 
   _hasCustomRenderOrLayout() {
