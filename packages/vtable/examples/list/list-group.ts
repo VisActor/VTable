@@ -70,8 +70,14 @@ export function createTable() {
         records: data.slice(0, 100),
         columns,
         widthMode: 'standard',
-        groupBy: ['Category', 'Sub-Category', 'Region', 'City'],
-        hierarchyExpandLevel: Infinity
+        groupBy: ['Category', 'Sub-Category'],
+        // hierarchyExpandLevel: Infinity,
+        theme: VTable.themes.DEFAULT.extends({
+          groupTitleStyle: {
+            fontWeight: 'bold',
+            bgColor: '#3370ff'
+          }
+        })
       };
       tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;

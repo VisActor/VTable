@@ -93,6 +93,7 @@ export interface ITableThemeDefine {
   headerStyle?: ThemeStyle;
   rowHeaderStyle?: ThemeStyle;
   bodyStyle?: ThemeStyle;
+  groupTitleStyle?: ThemeStyle;
   frameStyle?: TableFrameStyle;
   //列调整宽度的直线
   columnResize?: {
