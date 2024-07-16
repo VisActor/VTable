@@ -863,6 +863,7 @@ export interface BaseTableAPI {
   bodyStyleCache: Map<string, any>;
   bodyMergeTitleCache: Map<string, any>;
   isSeriesNumberInBody: (col: number, row: number) => boolean;
+  getGroupTitleLevel: (col: number, row: number) => number | undefined;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
