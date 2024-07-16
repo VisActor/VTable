@@ -84,8 +84,11 @@ function isScrollToTop(deltaY: number, state: StateManager) {
 }
 
 function isScrollToBottom(deltaY: number, state: StateManager) {
+  // 这里加入tolerance，避免出现无用滚动
+  const sizeTolerance = state.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
+
   const totalHeight = state.table.getAllRowsHeight() - state.table.scenegraph.height;
-  return totalHeight !== 0 && deltaY >= 0 && Math.abs(state.scroll.verticalBarPos - totalHeight) < 1;
+  return totalHeight !== 0 && deltaY >= 0 && Math.abs(state.scroll.verticalBarPos - totalHeight) < 1 + sizeTolerance;
 }
 
 function isScrollToLeft(deltaX: number, state: StateManager) {
@@ -94,8 +97,11 @@ function isScrollToLeft(deltaX: number, state: StateManager) {
 }
 
 function isScrollToRight(deltaX: number, state: StateManager) {
+  // 这里加入tolerance，避免出现无用滚动
+  const sizeTolerance = state.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
+
   const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
-  return totalWidth !== 0 && deltaX >= 0 && Math.abs(state.scroll.horizontalBarPos - totalWidth) < 1;
+  return totalWidth !== 0 && deltaX >= 0 && Math.abs(state.scroll.horizontalBarPos - totalWidth) < 1 + sizeTolerance;
 }
 
 export class InertiaScroll {
