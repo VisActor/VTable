@@ -18,7 +18,7 @@ import type {
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
-import { isValid } from '@visactor/vutils';
+import { isArray, isValid } from '@visactor/vutils';
 import { _setDataSource, _setRecords, sortRecords } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
@@ -38,6 +38,7 @@ import { setCellCheckboxState } from './state/checkbox/checkbox';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
+import type { CachedDataSource } from './data';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -1798,5 +1799,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /** 是否为聚合值单元格 */
   isAggregation(col: number, row: number): boolean {
     return this.internalProps.layoutMap.isAggregation(col, row);
+  }
+
+  getGroupTitleLevel(col: number, row: number): number | undefined {
+    if (!(this.options as ListTableConstructorOptions).groupBy) {
+      return undefined;
+    }
+    const indexArr = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row));
+    const groupLength = (this.dataSource as CachedDataSource).getGroupLength() ?? 0;
+    let indexArrLngth = isArray(indexArr) ? indexArr.length - 1 : 0;
+    if (groupLength > 0 && indexArrLngth === groupLength) {
+      indexArrLngth = undefined;
+    }
+    return indexArrLngth;
   }
 }

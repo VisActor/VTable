@@ -3,6 +3,7 @@ import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
 
+const titleColorPool = ['#3370ff', '#34c724', '#ff9f1a', '#ff4050', '#1f2329'];
 export function createTable() {
   let tableInstance;
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
@@ -75,7 +76,14 @@ export function createTable() {
         theme: VTable.themes.DEFAULT.extends({
           groupTitleStyle: {
             fontWeight: 'bold',
-            bgColor: '#3370ff'
+            // bgColor: '#3370ff'
+            bgColor: args => {
+              const { col, row, table } = args;
+              const index = table.getGroupTitleLevel(col, row);
+              if (index !== undefined) {
+                return titleColorPool[index % titleColorPool.length];
+              }
+            }
           }
         })
       };

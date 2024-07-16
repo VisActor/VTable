@@ -4101,4 +4101,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   enableScroll() {
     this.eventManager.enableScroll();
   }
+
+  getGroupTitleLevel(col: number, row: number): number | undefined {
+    return undefined;
+  }
 }
