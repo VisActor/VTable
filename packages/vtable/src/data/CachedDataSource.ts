@@ -91,6 +91,15 @@ export class CachedDataSource extends DataSource {
     }
     return super.getOriginalRecord(index);
   }
+  protected getRawRecord(index: number): MaybePromiseOrUndefined {
+    if (this.beforeChangedRecordsMap?.[index as number]) {
+      return this.beforeChangedRecordsMap[index as number];
+    }
+    if (this._recordCache && this._recordCache[index]) {
+      return this._recordCache[index];
+    }
+    return super.getRawRecord(index);
+  }
   protected getOriginalField<F extends FieldDef>(
     index: number,
     field: F,
