@@ -70,6 +70,7 @@ export class CachedDataSource extends DataSource {
   }
 
   groupAggregator: any;
+  // _originalRecords: any[];
   constructor(
     opt?: DataSourceParam,
     dataConfig?: IListTableDataConfig,
@@ -183,6 +184,7 @@ export class CachedDataSource extends DataSource {
     const result = super.processRecords(records);
     const groupResult = this.groupAggregator?.value();
     if (groupResult) {
+      // this._originalRecords = result;
       return groupResult;
     }
     return result;
@@ -190,6 +192,62 @@ export class CachedDataSource extends DataSource {
 
   getGroupLength() {
     return this.dataConfig?.groupByRules?.length ?? 0;
+  }
+
+  updateGroup() {
+    (this as any)._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
+    this.sourceLength = this.source?.length || 0;
+    this.sortedIndexMap.clear();
+    this.currentIndexedData = Array.from({ length: this.sourceLength }, (_, i) => i);
+    if (!this.userPagination) {
+      this.pagination.perPageCount = this.sourceLength;
+      this.pagination.totalCount = this.sourceLength;
+    }
+
+    this.initTreeHierarchyState();
+    this.updatePagerData();
+  }
+
+  addRecordsForGroup(recordArr: any) {
+    if (!isArray(recordArr) || recordArr.length === 0) {
+      return;
+    }
+    this.dataSourceObj.records.push(...recordArr);
+
+    this.updateGroup();
+  }
+
+  deleteRecordsForGroup(recordIndexs: number[]) {
+    if (!isArray(recordIndexs) || recordIndexs.length === 0) {
+      return;
+    }
+    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
+    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
+      const recordIndex = recordIndexsMaxToMin[index];
+      if (recordIndex >= this.sourceLength || recordIndex < 0) {
+        continue;
+      }
+      delete this.beforeChangedRecordsMap[recordIndex];
+      this.dataSourceObj.records.splice(recordIndex, 1);
+      this.sourceLength -= 1;
+    }
+
+    this.updateGroup();
+  }
+
+  updateRecordsForGroup(records: any[], recordIndexs: number[]) {
+    // const realDeletedRecordIndexs: number[] = [];
+    for (let index = 0; index < recordIndexs.length; index++) {
+      const recordIndex = recordIndexs[index];
+      if (recordIndex >= this.sourceLength || recordIndex < 0) {
+        continue;
+      }
+      delete this.beforeChangedRecordsMap[recordIndex];
+      // realDeletedRecordIndexs.push(recordIndex);
+      this.dataSourceObj.records[recordIndex] = records[index];
+    }
+
+    this.updateGroup();
   }
 }
 

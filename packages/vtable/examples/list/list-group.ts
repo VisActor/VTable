@@ -90,6 +90,12 @@ export function createTable() {
       tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;
       bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
+
+      let index = 100;
+      window.addRecords = () => {
+        tableInstance.addRecords(data.slice(index, index + 100));
+        index += 100;
+      };
     })
     .catch(e => {
       console.error(e);
