@@ -1,3 +1,25 @@
+# v1.5.2
+
+2024-07-15
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add api disableScroll and enableScroll [#2073](https://github.com/VisActor/VTable/issues/2073)
+- **@visactor/vtable**: add renderDefault prop in react customLayout component
+- **@visactor/vtable**: support multiple columns tag in react-vtable
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: edit api validateValue support async
+- **@visactor/vtable**: api changeFieldValue occor errow when records has null [#2067](https://github.com/VisActor/VTable/issues/2067)
+- **@visactor/vtable**: fix react component error in updateCell() [#2038](https://github.com/VisActor/VTable/issues/2038)
+- **@visactor/vtable**: fix axes default config in scatter chart [#2071](https://github.com/VisActor/VTable/issues/2071)
+
+
+
+[更多详情请查看 v1.5.2](https://github.com/VisActor/VTable/releases/tag/v1.5.2)
+
 # v1.5.1
 
 2024-07-10
