@@ -64,7 +64,8 @@ export class TaskBar {
         y: (this._scene._gantt.rowHeight - taskbarHeight) / 2,
         width: taskBarSize,
         height: taskbarHeight,
-        fill: this._scene._gantt.barStyle.barColor
+        fill: this._scene._gantt.barStyle.barColor,
+        pickable: true
       });
       barGroup.appendChild(rect);
       // 创建已完成部分任务条rect
@@ -73,7 +74,8 @@ export class TaskBar {
         y: (this._scene._gantt.rowHeight - taskbarHeight) / 2,
         width: (taskBarSize * taskRecord[progressField]) / 100,
         height: taskbarHeight,
-        fill: this._scene._gantt.barStyle.barColor2
+        fill: this._scene._gantt.barStyle.barColor2,
+        pickable: false
       });
       barGroup.appendChild(progress_rect);
     }
