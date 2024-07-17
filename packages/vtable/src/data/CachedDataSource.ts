@@ -39,6 +39,9 @@ export class CachedDataSource extends DataSource {
    * field cache 当用户定义field为promise的时候 可以用fCache缓存已获取值
    */
   private _fieldCache: { [index: number]: Map<FieldDef, any> };
+
+  groupAggregator: any;
+
   static get EVENT_TYPE(): typeof DataSource.EVENT_TYPE {
     return DataSource.EVENT_TYPE;
   }
@@ -69,7 +72,6 @@ export class CachedDataSource extends DataSource {
     );
   }
 
-  groupAggregator: any;
   // _originalRecords: any[];
   constructor(
     opt?: DataSourceParam,

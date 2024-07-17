@@ -1,7 +1,10 @@
 import * as VTable from '../../src';
+import { InputEditor } from '@visactor/vtable-editors';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
+const input_editor = new InputEditor({});
+VTable.register.editor('input', input_editor);
 
 const titleColorPool = ['#3370ff', '#34c724', '#ff9f1a', '#ff4050', '#1f2329'];
 export function createTable() {
@@ -13,7 +16,8 @@ export function createTable() {
         {
           field: 'Order ID',
           title: 'Order ID',
-          width: 'auto'
+          width: 'auto',
+          sort: true
         },
         {
           field: 'Customer ID',
@@ -67,7 +71,7 @@ export function createTable() {
         }
       ];
 
-      const option = {
+      const option: VTable.ListTableConstructorOptions = {
         records: data.slice(0, 100),
         columns,
         widthMode: 'standard',
@@ -85,7 +89,12 @@ export function createTable() {
               }
             }
           }
-        })
+        }),
+        editor: 'input',
+        sortState: {
+          field: 'Order ID',
+          order: 'asc'
+        }
       };
       tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;
