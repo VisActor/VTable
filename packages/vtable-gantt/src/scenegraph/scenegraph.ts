@@ -3,9 +3,10 @@ import { Group, Text, createStage, vglobal } from '@visactor/vrender-core';
 import { GridComponent } from './grid-component';
 import type { Gantt } from '../Gantt';
 import { Env } from '../env';
-import { ScrollBarComponent } from './scrollbar';
+import { ScrollBarComponent } from './scroll-bar';
 import { bindScrollBarListener } from '../event/scroll';
 import { TimelineHeader } from './timeline-header';
+import { TaskBar } from './task-bar';
 
 export class Scenegraph {
   dateStepWidth: number;
@@ -13,6 +14,7 @@ export class Scenegraph {
   _scales: {}[];
   timelineHeader: TimelineHeader;
   grid: GridComponent;
+  taskBar: TaskBar;
   _gantt: Gantt;
   tableGroup: Group;
   scrollbarComponent: ScrollBarComponent;
@@ -56,7 +58,6 @@ export class Scenegraph {
       }
     });
     initSceneGraph(this);
-    this.stage.defaultLayer.add(this.tableGroup);
   }
 
   afterCreateSceneGraph() {
@@ -104,6 +105,7 @@ export class Scenegraph {
   setX(x: number, isEnd = false) {
     this.timelineHeader.setX(x);
     this.grid.setX(x);
+    this.taskBar.setX(x);
     this.updateNextFrame();
     // this._gantt.scenegraph.proxy.setX(-x, isEnd);
   }
@@ -116,6 +118,7 @@ export class Scenegraph {
   setY(y: number, isEnd = false) {
     // this._gantt.scenegraph.proxy.setY(-y, isEnd);
     this.grid.setY(y);
+    this.taskBar.setY(y);
     this.updateNextFrame();
   }
 }
@@ -132,6 +135,7 @@ export function initSceneGraph(scene: Scenegraph) {
     clip: true,
     pickable: false
   });
+  scene.stage.defaultLayer.add(scene.tableGroup);
   (scene.tableGroup as any).role = 'table';
   // 初始化顶部时间线表头部分
   scene.timelineHeader = new TimelineHeader(scene);
@@ -145,17 +149,20 @@ export function initSceneGraph(scene: Scenegraph) {
     scrollTop: 0,
     x: 0,
     y: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
-    width: scene._gantt.getAllColsWidth(),
+    width,
     height: height - scene._gantt.headerRowHeight * scene._gantt.headerLevel,
     timelineDates: scene._gantt.reverseOrderedScales[0].timelineDates,
     colWidthPerDay: scene._gantt.colWidthPerDay,
     rowHeight: scene._gantt.rowHeight,
     rowCount: scene._gantt.itemCount,
-    allGridHeight: scene._gantt.getAllGridHeight()
+    allGridHeight: scene._gantt.getAllGridHeight(),
+    allGridWidth: scene._gantt.getAllColsWidth()
   });
   scene.tableGroup.addChild(scene.grid.group);
 
-  debugger;
+  // 初始化网格线组件
+  scene.taskBar = new TaskBar(scene);
+  scene.tableGroup.addChild(scene.taskBar.group);
   // 初始化滚动条组件
   scene.scrollbarComponent = new ScrollBarComponent(scene._gantt);
   scene.stage.defaultLayer.addChild(scene.scrollbarComponent.hScrollBar);

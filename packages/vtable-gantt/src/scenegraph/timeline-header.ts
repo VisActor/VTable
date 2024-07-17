@@ -103,10 +103,8 @@ export class TimelineHeader {
   }
   setX(x: number) {
     this.group.setAttribute('x', x);
-    this.group.setAttribute('x', x);
   }
   setY(y: number) {
-    this.group.setAttribute('y', y);
     this.group.setAttribute('y', y);
   }
 }

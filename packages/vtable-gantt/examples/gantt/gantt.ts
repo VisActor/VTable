@@ -11,8 +11,62 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
+      start: '2024-07-30',
+      end: '2024-08-14',
+      progress: 31,
+      priority: 'P0'
+    },
+    {
+      id: 2,
+      title: 'Scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-24',
+      end: '2024-08-04',
+      progress: 60,
+      priority: 'P0'
+    },
+    {
+      id: 3,
+      title: 'Determine project scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-24',
+      end: '2024-08-04',
+      progress: 100,
+      priority: 'P1'
+    },
+    {
+      id: 1,
+      title: 'Software Development',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-24',
+      end: '2024-08-04',
+      progress: 31,
+      priority: 'P0'
+    },
+    {
+      id: 2,
+      title: 'Scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-24',
+      end: '2024-08-04',
+      progress: 60,
+      priority: 'P0'
+    },
+    {
+      id: 3,
+      title: 'Determine project scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-24',
+      end: '2024-08-04',
+      progress: 100,
+      priority: 'P1'
+    },
+    {
+      id: 1,
+      title: 'Software Development',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-24',
+      end: '2024-08-04',
       progress: 31,
       priority: 'P0'
     },
@@ -38,8 +92,35 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
+      start: '2024-07-24',
+      end: '2024-08-04',
+      progress: 31,
+      priority: 'P0'
+    },
+    {
+      id: 2,
+      title: 'Scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-06',
+      end: '2024-07-08',
+      progress: 60,
+      priority: 'P0'
+    },
+    {
+      id: 3,
+      title: 'Determine project scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-08-09',
+      end: '2024-09-11',
+      progress: 100,
+      priority: 'P1'
+    },
+    {
+      id: 1,
+      title: 'Software Development',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-24',
+      end: '2024-08-04',
       progress: 31,
       priority: 'P0'
     },
@@ -65,8 +146,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
+      start: '2024-07-24',
+      end: '2024-08-04',
       progress: 31,
       priority: 'P0'
     },
@@ -92,8 +173,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
+      start: '2024-07-24',
+      end: '2024-08-04',
       progress: 31,
       priority: 'P0'
     },
@@ -119,8 +200,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
+      start: '2024-07-24',
+      end: '2024-08-04',
       progress: 31,
       priority: 'P0'
     },
@@ -146,8 +227,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
+      start: '2024-07-24',
+      end: '2024-08-04',
       progress: 31,
       priority: 'P0'
     },
@@ -173,8 +254,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
+      start: '2024-07-24',
+      end: '2024-08-04',
       progress: 31,
       priority: 'P0'
     },
@@ -200,8 +281,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
+      start: '2024-07-24',
+      end: '2024-08-04',
       progress: 31,
       priority: 'P0'
     },
@@ -227,8 +308,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
+      start: '2024-07-24',
+      end: '2024-08-04',
       progress: 31,
       priority: 'P0'
     },
@@ -254,8 +335,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
+      start: '2024-07-24',
+      end: '2024-08-04',
       progress: 31,
       priority: 'P0'
     },
@@ -281,89 +362,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2019-07-04',
-      end: '2019-07-04',
+      start: '2024-07-24',
+      end: '2024-08-04',
       progress: 31,
       priority: 'P0'
     },
@@ -401,9 +401,21 @@ export function createTable() {
       sort: true
     },
     {
+      field: 'start',
+      title: 'start',
+      width: 150,
+      sort: true
+    },
+    {
+      field: 'end',
+      title: 'end',
+      width: 150,
+      sort: true
+    },
+    {
       field: 'priority',
       title: 'priority',
-      width: 200,
+      width: 100,
       sort: true
     },
 
@@ -417,11 +429,13 @@ export function createTable() {
   const option: GanttConstructorOptions = {
     records,
     taskTableColumns: columns,
-    taskTableWidth: 300,
+    taskTableWidth: 500,
     timelineColWidth: 60,
-    startField: 'start',
-    endField: 'end',
+    startDateField: 'start',
+    endDateField: 'end',
+    progressField: 'progress',
     gridStyle: {
+      // backgroundColor: 'gray',
       vertical: {
         lineWidth: 1,
         lineColor: 'purple'
@@ -440,6 +454,9 @@ export function createTable() {
       fontWeight: 'bold',
       color: 'red',
       backgroundColor: 'yellow'
+    },
+    barStyle: {
+      width: 30
     },
     timelineScales: [
       {

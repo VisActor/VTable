@@ -22,6 +22,7 @@ export class GridComponent {
   verticalLineGroup: Group;
   horizontalLineGroup: Group;
   allGridHeight: number;
+  allGridWidth: number;
   constructor(gridOption: {
     vertical: boolean;
     horizontal: boolean;
@@ -36,6 +37,7 @@ export class GridComponent {
     rowHeight: number;
     rowCount: number;
     allGridHeight: number;
+    allGridWidth: number;
     gridStyle: GridStyle;
   }) {
     this.vertical = gridOption.vertical;
@@ -51,21 +53,23 @@ export class GridComponent {
     this.colWidthPerDay = gridOption.colWidthPerDay;
     this.rowHeight = gridOption.rowHeight;
     this.rowCount = gridOption.rowCount;
+    this.allGridWidth = gridOption.allGridWidth;
     this.allGridHeight = gridOption.allGridHeight;
     console.trace('new GridComponent');
     this.group = new Group({
       x: gridOption.x,
       y: gridOption.y,
       width: gridOption.width,
-      height: gridOption.height - 4,
-      clip: true
+      height: gridOption.height,
+      clip: true,
+      fill: gridOption.gridStyle?.backgroundColor
     });
     (this.group as any).role = 'grid';
     if (this.vertical) {
       this.verticalLineGroup = new Group({
         x: 0,
         y: 0,
-        width: this.width,
+        width: this.allGridWidth,
         height: this.allGridHeight
       });
       (this.verticalLineGroup as any).role = 'grid-vertical';
@@ -97,7 +101,7 @@ export class GridComponent {
       this.horizontalLineGroup = new Group({
         x: 0,
         y: 0,
-        width: this.width,
+        width: this.allGridWidth,
         height: this.allGridHeight
       });
       (this.horizontalLineGroup as any).role = 'grid-horizontal';
@@ -116,7 +120,7 @@ export class GridComponent {
           lineWidth: this.gridStyle?.horizontal.lineWidth,
           points: [
             { x: 0, y },
-            { x: this.width, y }
+            { x: this.allGridWidth, y }
           ]
         });
         hLines.push(line);

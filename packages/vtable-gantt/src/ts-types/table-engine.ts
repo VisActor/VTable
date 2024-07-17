@@ -25,6 +25,7 @@ export type TimelineHeaderStyle = {
   backgroundColor?: string;
 };
 export type GridStyle = {
+  backgroundColor?: string;
   vertical: {
     lineColor?: string;
     lineWidth?: number;
@@ -53,9 +54,11 @@ export interface GanttConstructorOptions {
   gridStyle?: GridStyle;
   timelineHeaderStyle?: TimelineHeaderStyle;
   /** 时间刻度对应的字段名 */
-  startField: string;
+  startDateField: string;
   /** 时间刻度对应的字段名 */
-  endField: string;
+  endDateField: string;
+  /** 进度对应的字段名 */
+  progressField: string;
   /** 指定整个甘特图的最小日期 */
   minDate?: string;
   /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
@@ -64,7 +67,7 @@ export interface GanttConstructorOptions {
   // /** 设置的表格主题 */
   // theme?: TableTheme;
   /** 设置任务条样式 可以设置多组 依次循环使用 */
-  barStyle?: IBarStyleOption[]; // 参考https://lightcharts.bytedance.net/charts/doc/options#series.gantt.barStyle
+  barStyle?: BarStyle; // 参考https://lightcharts.bytedance.net/charts/doc/options#series.gantt.barStyle
   scrollStyle?: TYPES.ScrollStyle;
   defaultHeaderRowHeight?: number;
   defaultRowHeight?: number;
@@ -82,7 +85,7 @@ export interface GanttConstructorOptions {
   // taskTableTheme?: ITableThemeDefine;
 }
 
-export type IBarStyleOption = {
+export type BarStyle = {
   /** 任务条的颜色 */
   barColor?: string;
   /** 已完成部分任务条的颜色 */

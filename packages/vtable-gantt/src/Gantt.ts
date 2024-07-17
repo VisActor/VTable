@@ -2,7 +2,7 @@
 // import { createRootElement } from './core/tableHelper';
 import { Scenegraph } from './scenegraph/scenegraph';
 import { Env } from './env';
-import type { GanttConstructorOptions, GridStyle, TimelineHeaderStyle } from './ts-types';
+import type { BarStyle, GanttConstructorOptions, GridStyle, TimelineHeaderStyle } from './ts-types';
 import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
@@ -40,7 +40,7 @@ export class Gantt {
   headerStyleCache: any;
   bodyStyleCache: any;
   bodyBottomStyleCache: any;
-  listTableInstance: ListTable;
+  listTableInstance?: ListTable;
 
   canvas: HTMLCanvasElement;
   element: HTMLElement;
@@ -61,8 +61,28 @@ export class Gantt {
   scrollStyle: TYPES.ScrollStyle;
   timelineHeaderStyle: TimelineHeaderStyle;
   gridStyle: GridStyle;
+  barStyle: BarStyle;
+  startDateField: string;
+  endDateField: string;
+  progressField: string;
+  minDate: Date;
+  maxDate: Date;
+  taskTableWidth: number;
+  taskTableColumns: TYPES.ColumnsDefine;
+  records: any[];
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
     this.options = options;
+    this.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
+    this.rowHeight = options?.defaultRowHeight ?? 40;
+    this.timelineColWidth = options?.timelineColWidth ?? 60;
+    this.startDateField = options?.startDateField ?? 'startDate';
+    this.endDateField = options?.endDateField ?? 'endDate';
+    this.progressField = options?.progressField ?? 'progress';
+    this.minDate = options?.minDate ? new Date(options?.minDate) : new Date(2024, 1, 1);
+    this.maxDate = options?.maxDate ? new Date(options?.maxDate) : new Date(2025, 1, 1);
+    this.taskTableWidth = typeof options?.taskTableWidth === 'number' ? options?.taskTableWidth : 100;
+    this.taskTableColumns = options?.taskTableColumns ?? [];
+    this.records = options?.records ?? [];
     this.scrollStyle = Object.assign(
       {},
       {
@@ -91,6 +111,7 @@ export class Gantt {
     this.gridStyle = Object.assign(
       {},
       {
+        backgroundColor: '#fff',
         vertical: {
           lineColor: 'red',
           lineWidth: 1
@@ -102,15 +123,32 @@ export class Gantt {
       },
       options?.gridStyle
     );
-    this.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
-    this.rowHeight = options?.defaultRowHeight ?? 40;
-    this.timelineColWidth = options?.timelineColWidth ?? 60;
+    this.barStyle = Object.assign(
+      {},
+      {
+        barColor: 'blue',
+        /** 已完成部分任务条的颜色 */
+        barColor2: 'gray',
+        /** 任务条的宽度 */
+        width: this.rowHeight,
+        /** 任务条的圆角 */
+        cornerRadius: 3,
+        /** 任务条的边框 */
+        borderWidth: 1,
+        /** 边框颜色 */
+        borderColor: 'red',
+        fontFamily: 'Arial',
+        fontSize: 14
+      },
+      options?.barStyle
+    );
+
     this._orderScales();
     this._generateTimeLineDateMap();
     this.headerLevel = this.orderedScales.length;
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
     this.element.style.top = '0px';
-    this.element.style.left = this.options.taskTableWidth ? `${this.options.taskTableWidth}px` : '0px';
+    this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
     this.canvas = document.createElement('canvas');
     this.element.appendChild(this.canvas);
     this.context = this.canvas.getContext('2d')!;
@@ -121,10 +159,12 @@ export class Gantt {
       this._updateSize();
     }
     const listTableOption = this.generateListTableOptions();
-    this.listTableInstance = new ListTable(container, listTableOption);
-    this.itemCount = this.listTableInstance.rowCount - this.listTableInstance.columnHeaderLevelCount;
-    this.drawHeight = this.listTableInstance.getDrawRange().height;
+    if (this.taskTableColumns.length >= 1) {
+      this.listTableInstance = new ListTable(container, listTableOption);
+    }
+    this.itemCount = this.records.length;
     this.headerHeight = this.headerRowHeight * this.headerLevel;
+    this.drawHeight = Math.min(this.headerHeight + this.rowHeight * this.itemCount, this.tableNoFrameHeight);
     this.gridHeight = this.drawHeight - this.headerHeight;
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
@@ -186,7 +226,7 @@ export class Gantt {
     // const width = Math.floor(widthP - style.getScrollBarSize(this.getTheme().scrollStyle));
     // const height = Math.floor(heightP - style.getScrollBarSize(this.getTheme().scrollStyle));
 
-    this.tableNoFrameWidth = widthP - (this.options.taskTableWidth as number);
+    this.tableNoFrameWidth = widthP - (this.taskTableWidth as number);
     this.tableNoFrameHeight = Math.floor(heightP);
     // if (this.internalProps.theme?.frameStyle) {
     //   //考虑表格整体边框的问题
@@ -213,13 +253,12 @@ export class Gantt {
       if (key === 'taskTableColumns') {
         listTable_options.columns = this.options.taskTableColumns;
         // debugger;
-        // const cols = generateGanttChartColumns(this.options.timelineScales, this.options.minDate, this.options.maxDate);
       } else if (key !== 'timelineScales' && key !== 'barStyle') {
         listTable_options[key] = this.options[key];
       }
     }
     listTable_options.theme = {};
-    listTable_options.canvasWidth = this.options.taskTableWidth as number;
+    listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvasHeight ?? this.tableNoFrameHeight;
     listTable_options.defaultHeaderRowHeight = this.headerRowHeight * this.headerLevel;
     listTable_options.clearDOM = false;
@@ -264,8 +303,8 @@ export class Gantt {
   }
 
   _generateTimeLineDateMap() {
-    const startDate = new Date(this.options.minDate);
-    const endDate = new Date(this.options.maxDate);
+    const startDate = new Date(this.minDate);
+    const endDate = new Date(this.maxDate);
     let colWidthIncludeDays = 1000000;
     // Iterate over each scale
     for (const scale of this.reverseOrderedScales) {
@@ -332,12 +371,9 @@ export class Gantt {
     return (
       this.colWidthPerDay *
       (Math.ceil(
-        Math.abs(new Date(this.options.maxDate).getTime() - new Date(this.options.minDate).getTime()) /
-          (1000 * 60 * 60 * 24)
+        Math.abs(new Date(this.maxDate).getTime() - new Date(this.minDate).getTime()) / (1000 * 60 * 60 * 24)
       ) +
         1)
-      //      +
-      // <number>this.options.taskTableWidth
     );
   }
 
