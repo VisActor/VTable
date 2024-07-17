@@ -141,7 +141,7 @@ function addCell(
       const offset = getHierarchyOffset(col, row, tableInstance as any);
       cell.alignment = getCellAlignment(cellStyle, Math.ceil(offset / cell.font.size));
 
-      if (cell && options.formatExcelJSCell) {
+      if (cell && options?.formatExcelJSCell) {
         const formatedCell = options.formatExcelJSCell({ cellType, cellValue, table: tableInstance, col, row }, cell);
         if (formatedCell) {
           cell = formatedCell;
@@ -198,7 +198,7 @@ function addCell(
     tableInstance.scenegraph.updateNextFrame(); // rerender chart to avoid display error
   }
 
-  if (cell && options.formatExcelJSCell) {
+  if (cell && options?.formatExcelJSCell) {
     const formatedCell = options.formatExcelJSCell({ cellType, cellValue, table: tableInstance, col, row }, cell);
     if (formatedCell) {
       cell = formatedCell;

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix option config in vtable-export",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
