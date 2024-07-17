@@ -166,10 +166,10 @@ export class Gantt {
     this.headerHeight = this.headerRowHeight * this.headerLevel;
     this.drawHeight = Math.min(this.headerHeight + this.rowHeight * this.itemCount, this.tableNoFrameHeight);
     this.gridHeight = this.drawHeight - this.headerHeight;
+    this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
 
-    this.scenegraph = new Scenegraph(this);
     this.scenegraph.afterCreateSceneGraph();
   }
 
@@ -383,5 +383,13 @@ export class Gantt {
 
   getFrozenRowsHeight() {
     return this.headerRowHeight * this.headerLevel;
+  }
+
+  getRecordByIndex(index: number) {
+    return this.listTableInstance.getRecordByRowCol(0, index + this.listTableInstance.columnHeaderLevelCount);
+  }
+
+  updateRecord(record: any, index: number) {
+    this.listTableInstance.updateRecords([record], [index]);
   }
 }

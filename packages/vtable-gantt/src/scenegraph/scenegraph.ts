@@ -40,8 +40,8 @@ export class Scenegraph {
       disableDirtyBounds: false,
       // background: gantt.theme.underlayBackgroundColor,
       // dpr: gantt.internalProps.pixelRatio,
-      enableLayout: true
-      // autoRender: true
+      enableLayout: true,
+      autoRender: false
       // afterRender: () => {
       // this._gantt.fireListeners('after_render', null);
       // }
@@ -136,7 +136,7 @@ export function initSceneGraph(scene: Scenegraph) {
     pickable: false
   });
   scene.stage.defaultLayer.add(scene.tableGroup);
-  (scene.tableGroup as any).role = 'table';
+  scene.tableGroup.name = 'table';
   // 初始化顶部时间线表头部分
   scene.timelineHeader = new TimelineHeader(scene);
   scene.tableGroup.addChild(scene.timelineHeader.group);

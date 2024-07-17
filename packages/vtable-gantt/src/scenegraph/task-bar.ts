@@ -13,10 +13,10 @@ export class TaskBar {
       y: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
       width: scene._gantt.tableNoFrameWidth,
       height: height - scene._gantt.headerRowHeight * scene._gantt.headerLevel,
-      pickable: false,
+      pickable: true,
       clip: true
     });
-    (this.group as any).role = 'task-bar';
+    this.group.name = 'task-bar-container';
     this.barContainer = new Group({
       x: 0,
       y: 0,
@@ -57,6 +57,7 @@ export class TaskBar {
         width: taskBarSize,
         height: this._scene._gantt.rowHeight
       });
+      barGroup.name = 'task-bar';
       this.barContainer.appendChild(barGroup);
       // 创建整个任务条rect
       const rect = createRect({
@@ -65,9 +66,11 @@ export class TaskBar {
         width: taskBarSize,
         height: taskbarHeight,
         fill: this._scene._gantt.barStyle.barColor,
-        pickable: true
+        pickable: false
       });
+      rect.name = 'task-bar-rect';
       barGroup.appendChild(rect);
+
       // 创建已完成部分任务条rect
       const progress_rect = createRect({
         x: 0,

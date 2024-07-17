@@ -1,7 +1,9 @@
 import { isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import { InteractionState } from '../ts-types';
-
+import type { Group, FederatedPointerEvent } from '@visactor/vrender-core';
+import { DayTimes, getTaskIndexByY } from '../gantt-helper';
+import { formatDate, parseDateFormat } from '../tools/util';
 export class StateManager {
   _gantt: Gantt;
 
@@ -19,11 +21,25 @@ export class StateManager {
    * Scrolling 滚动中
    */
   interactionState: InteractionState;
+
+  moveTaskBar: {
+    /** x坐标是相对table内坐标 */
+    startX: number;
+    targetStartX: number;
+    moving: boolean;
+    target: Group;
+  };
   constructor(gantt: Gantt) {
     this._gantt = gantt;
     this.scroll = {
       horizontalBarPos: 0,
       verticalBarPos: 0
+    };
+    this.moveTaskBar = {
+      targetStartX: null,
+      startX: null,
+      moving: false,
+      target: null
     };
 
     this.updateVerticalScrollBar = this.updateVerticalScrollBar.bind(this);
@@ -150,5 +166,49 @@ export class StateManager {
     // if (oldHorizontalBarPos !== this.scroll.horizontalBarPos) {
     //   this.checkHorizontalScrollBarEnd();
     // }
+  }
+
+  startMoveTaskBar(target: Group, x: number) {
+    this.moveTaskBar.moving = true;
+    this.moveTaskBar.target = target;
+    this.moveTaskBar.targetStartX = target.attribute.x;
+    this.moveTaskBar.startX = x;
+  }
+  isMoveingTaskBar() {
+    return this.moveTaskBar.moving;
+  }
+  endMoveTaskBar(x: number, y: number) {
+    const deltaX = x - this.moveTaskBar.startX;
+
+    const days = Math.round(deltaX / this._gantt.colWidthPerDay);
+    const correctX = days * this._gantt.colWidthPerDay;
+    const targetEndX = this.moveTaskBar.targetStartX + correctX;
+    this._gantt.stateManager.moveTaskBar.target.setAttribute('x', targetEndX);
+    const taskIndex = getTaskIndexByY(y, this._gantt);
+    const taskRecord = this._gantt.getRecordByIndex(taskIndex);
+    const startDateField = this._gantt.startDateField;
+    const endDateField = this._gantt.endDateField;
+    const dateFormat = parseDateFormat(taskRecord[startDateField]);
+    const startDate = new Date(taskRecord[startDateField]);
+    const endDate = new Date(taskRecord[endDateField]);
+    const newStartDate = formatDate(new Date(days * DayTimes + startDate.getTime()), dateFormat);
+    const newEndDate = formatDate(new Date(days * DayTimes + endDate.getTime()), dateFormat);
+    taskRecord[startDateField] = newStartDate;
+    taskRecord[endDateField] = newEndDate;
+    this._gantt.updateRecord(taskRecord, taskIndex);
+    this.moveTaskBar.moving = false;
+    this.moveTaskBar.target = null;
+    this._gantt.scenegraph.updateNextFrame();
+  }
+  dealTaskBarMove(e: FederatedPointerEvent) {
+    const x1 = this._gantt.eventManager.LastPointerXY.x;
+    const x2 = e.x;
+    const dx = x2 - x1;
+    this._gantt.stateManager.moveTaskBar.target.setAttribute(
+      'x',
+      this._gantt.stateManager.moveTaskBar.target.attribute.x + dx
+    );
+    this._gantt.scenegraph.updateNextFrame();
+    //
   }
 }

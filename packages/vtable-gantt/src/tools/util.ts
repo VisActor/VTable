@@ -40,3 +40,130 @@ export function throttle2(func: Function, delay: number) {
     }
   };
 }
+// export function parseDateFormat(dateString: string) {
+//   const formats = [
+//     'yyyy-mm-dd',
+//     'dd-mm-yyyy',
+//     'mm/dd/yyyy',
+//     'yyyy/mm/dd',
+//     'dd/mm/yyyy',
+//     'yyyy.mm.dd',
+//     'dd.mm.yyyy',
+//     'mm.dd.yyyy'
+//   ];
+//   const separatorsInDate = dateString.match(/[^\w]/g);
+//   for (let i = 0; i < formats.length; i++) {
+//     const format = formats[i];
+//     const separators = format.match(/[^\w]/g);
+//     let isValidFormat = true;
+//     for (let j = 0; j < separators.length; j++) {
+//       const part = separators[j];
+//       if (part !== separatorsInDate[j]) {
+//         isValidFormat = false;
+//         break;
+//       }
+//     }
+//     if (isValidFormat) {
+//       return format;
+//     }
+//   }
+
+//   return null;
+// }
+
+// export function parseDate(dateString, format) {
+//   // 根据解析出的格式将 dateString 解析为日期对象
+//   // 这里只是一个示例，假设解析格式为 "yyyy-mm-dd"
+//   const parts = dateString.split('-');
+//   const year = parseInt(parts[0], 10);
+//   const month = parseInt(parts[1], 10) - 1;
+//   const day = parseInt(parts[2], 10);
+//   return new Date(year, month, day);
+// }
+
+export function formatDate(date: Date, format: string) {
+  const year = date.getFullYear().toString();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+
+  format = format.replace('yyyy', year);
+  format = format.replace('mm', month);
+  format = format.replace('dd', day);
+
+  return format;
+}
+
+// 修正后的 validateDate 函数
+function validateDate(dateParts: string[], format: string) {
+  // 根据格式确定年、月、日的索引
+  const yearIndex = format.indexOf('yyyy');
+  const monthIndex = format.indexOf('mm');
+  const dayIndex = format.indexOf('dd');
+  const dateYearIndex = yearIndex < monthIndex ? (yearIndex < dayIndex ? 0 : 1) : monthIndex < dayIndex ? 1 : 2;
+  const dateMonthIndex = monthIndex < yearIndex ? (monthIndex < dayIndex ? 0 : 1) : monthIndex < dayIndex ? 1 : 2;
+  const dateDayIndex = dayIndex < yearIndex ? (dayIndex < monthIndex ? 0 : 1) : dayIndex < monthIndex ? 1 : 2;
+  // 解析年、月、日
+  const year = parseInt(dateParts[dateYearIndex], 10);
+  const month = parseInt(dateParts[dateMonthIndex], 10) - 1; // 月份从0开始
+  const day = parseInt(dateParts[dateDayIndex], 10);
+
+  // 检查年份是否有效
+  if (isNaN(year) || year < 1) {
+    return false;
+  }
+
+  // 检查月份是否有效
+  if (isNaN(month) || month < 0 || month > 11) {
+    return false;
+  }
+
+  // 检查日期是否有效
+  // 每个月的天数不同，需要考虑闰年
+  const daysInMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  if (isNaN(day) || day < 1 || day > daysInMonth[month]) {
+    return false;
+  }
+
+  return true;
+}
+
+// 辅助函数，用于判断是否为闰年
+function isLeapYear(year: number) {
+  // 能被4整除且不能被100整除，或者能被400整除的年份是闰年
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+// 修正后的 parseDateFormat 函数
+export function parseDateFormat(dateString: string) {
+  const formats = [
+    'yyyy-mm-dd',
+    'dd-mm-yyyy',
+    'mm/dd/yyyy',
+    'yyyy/mm/dd',
+    'dd/mm/yyyy',
+    'yyyy.mm.dd',
+    'dd.mm.yyyy',
+    'mm.dd.yyyy'
+  ];
+  dateString = dateString.replace(/\s+/g, ''); // 移除空格
+  for (let i = 0; i < formats.length; i++) {
+    const format = formats[i];
+    const dateParts = dateString.split(getSeparator(format));
+    const isValid = validateDate(dateParts, format);
+    if (dateParts.length === 3 && isValid) {
+      return format;
+    }
+  }
+  return null;
+}
+
+// 根据日期格式获取分隔符正则表达式
+function getSeparator(format: string) {
+  // 找到日期格式中的分隔符
+  const separators = format.match(/[^\w]/g);
+  if (separators) {
+    // 转义分隔符，以确保正则表达式正确处理特殊字符
+    const escapedSeparators = separators.map(s => '\\' + s).join('|');
+    return new RegExp(escapedSeparators, 'g');
+  }
+  return /[^\w]/;
+}

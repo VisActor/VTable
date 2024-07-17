@@ -15,7 +15,7 @@ export class TimelineHeader {
       // lineWidth: 2
     });
     this.group = dateHeader;
-    (dateHeader as any).role = 'date-header';
+    dateHeader.name = 'date-header-container';
 
     const y = 0;
     for (let i = 0; i < scene._gantt.headerLevel; i++) {
@@ -26,7 +26,7 @@ export class TimelineHeader {
         height: scene._gantt.headerRowHeight,
         clip: false
       });
-      (rowHeader as any).role = 'row-header';
+      rowHeader.name = 'row-header';
       dateHeader.addChild(rowHeader);
 
       const { unit, timelineDates } = scene._gantt.orderedScales[i];
@@ -41,7 +41,7 @@ export class TimelineHeader {
           clip: false,
           fill: scene._gantt.timelineHeaderStyle?.backgroundColor
         });
-        (date as any).role = 'date-cell';
+        date.name = 'date-cell';
         // const rect = createRect({
         //   x: 0,
         //   y: 0,

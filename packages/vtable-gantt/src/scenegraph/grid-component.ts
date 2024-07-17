@@ -55,7 +55,6 @@ export class GridComponent {
     this.rowCount = gridOption.rowCount;
     this.allGridWidth = gridOption.allGridWidth;
     this.allGridHeight = gridOption.allGridHeight;
-    console.trace('new GridComponent');
     this.group = new Group({
       x: gridOption.x,
       y: gridOption.y,
@@ -64,7 +63,7 @@ export class GridComponent {
       clip: true,
       fill: gridOption.gridStyle?.backgroundColor
     });
-    (this.group as any).role = 'grid';
+    this.group.name = 'grid-container';
     if (this.vertical) {
       this.verticalLineGroup = new Group({
         x: 0,
@@ -72,7 +71,7 @@ export class GridComponent {
         width: this.allGridWidth,
         height: this.allGridHeight
       });
-      (this.verticalLineGroup as any).role = 'grid-vertical';
+      this.verticalLineGroup.name = 'grid-vertical';
       this.group.appendChild(this.verticalLineGroup);
 
       const vLines = [];
@@ -104,7 +103,7 @@ export class GridComponent {
         width: this.allGridWidth,
         height: this.allGridHeight
       });
-      (this.horizontalLineGroup as any).role = 'grid-horizontal';
+      this.horizontalLineGroup.name = 'grid-horizontal';
       this.group.appendChild(this.horizontalLineGroup);
 
       const hLines = [];
