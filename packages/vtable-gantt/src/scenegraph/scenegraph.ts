@@ -1,23 +1,25 @@
 import type { IRect, Stage } from '@visactor/vrender-core';
 import { Group, Text, createStage, vglobal } from '@visactor/vrender-core';
-import { GridComponent } from './grid-component';
+import { Grid } from './grid';
 import type { Gantt } from '../Gantt';
 import { Env } from '../env';
 import { ScrollBarComponent } from './scroll-bar';
 import { bindScrollBarListener } from '../event/scroll';
 import { TimelineHeader } from './timeline-header';
 import { TaskBar } from './task-bar';
+import { MarkLine } from './mark-line';
 
 export class Scenegraph {
   dateStepWidth: number;
   rowHeight: number;
   _scales: {}[];
   timelineHeader: TimelineHeader;
-  grid: GridComponent;
+  grid: Grid;
   taskBar: TaskBar;
   _gantt: Gantt;
   tableGroup: Group;
   scrollbarComponent: ScrollBarComponent;
+  markLine: MarkLine;
   stage: Stage;
   constructor(gantt: Gantt) {
     this._gantt = gantt;
@@ -106,6 +108,7 @@ export class Scenegraph {
     this.timelineHeader.setX(x);
     this.grid.setX(x);
     this.taskBar.setX(x);
+    this.markLine.setX(x);
     this.updateNextFrame();
     // this._gantt.scenegraph.proxy.setX(-x, isEnd);
   }
@@ -141,7 +144,7 @@ export function initSceneGraph(scene: Scenegraph) {
   scene.timelineHeader = new TimelineHeader(scene);
   scene.tableGroup.addChild(scene.timelineHeader.group);
   // 初始化网格线组件
-  scene.grid = new GridComponent({
+  scene.grid = new Grid({
     vertical: true,
     horizontal: true,
     gridStyle: scene._gantt.gridStyle,
@@ -163,6 +166,10 @@ export function initSceneGraph(scene: Scenegraph) {
   // 初始化网格线组件
   scene.taskBar = new TaskBar(scene);
   scene.tableGroup.addChild(scene.taskBar.group);
+
+  // 初始化网格线组件
+  scene.markLine = new MarkLine(scene);
+  scene.tableGroup.addChild(scene.markLine.group);
   // 初始化滚动条组件
   scene.scrollbarComponent = new ScrollBarComponent(scene._gantt);
   scene.stage.defaultLayer.addChild(scene.scrollbarComponent.hScrollBar);

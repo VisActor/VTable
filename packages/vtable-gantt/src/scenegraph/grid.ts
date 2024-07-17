@@ -1,8 +1,8 @@
 import { Group, createLine } from '@visactor/vrender-core';
 import { TYPES } from '@visactor/vtable';
-import type { GridStyle } from '../ts-types';
+import type { IGridStyle } from '../ts-types';
 import { str } from '@visactor/vtable/es/tools/helper';
-export class GridComponent {
+export class Grid {
   vertical: boolean;
   horizontal: boolean;
   // verticalLineSpace: number;
@@ -38,7 +38,7 @@ export class GridComponent {
     rowCount: number;
     allGridHeight: number;
     allGridWidth: number;
-    gridStyle: GridStyle;
+    gridStyle: IGridStyle;
   }) {
     this.vertical = gridOption.vertical;
     this.horizontal = gridOption.horizontal;

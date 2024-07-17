@@ -1,30 +1,15 @@
 import type { ColumnsDefine, TYPES } from '@visactor/vtable';
 export type LayoutObjectId = number | string;
 
-export interface CellAddress {
-  col: number;
-  row: number;
-}
-export interface CellAddressWithBound {
-  col: number;
-  row: number;
-  rect?: TYPES.RectProps;
-  x?: number;
-  y?: number;
-}
-export interface CellRange {
-  start: CellAddress;
-  end: CellAddress;
-}
-export type TimelineHeaderStyle = {
+export interface ITimelineHeaderStyle {
   borderColor?: string;
   borderWidth?: number;
   fontSize?: number;
   fontWeight?: string;
   color?: string;
   backgroundColor?: string;
-};
-export type GridStyle = {
+}
+export interface IGridStyle {
   backgroundColor?: string;
   vertical: {
     lineColor?: string;
@@ -34,7 +19,7 @@ export type GridStyle = {
     lineColor?: string;
     lineWidth?: number;
   };
-};
+}
 //#region gantt
 export interface GanttConstructorOptions {
   container?: HTMLElement;
@@ -51,8 +36,8 @@ export interface GanttConstructorOptions {
   /** 定义列 */
   taskTableColumns?: ColumnsDefine; // (string | IDimension)[];
   taskTableWidth?: 'auto' | number;
-  gridStyle?: GridStyle;
-  timelineHeaderStyle?: TimelineHeaderStyle;
+  gridStyle?: IGridStyle;
+  timelineHeaderStyle?: ITimelineHeaderStyle;
   /** 时间刻度对应的字段名 */
   startDateField: string;
   /** 时间刻度对应的字段名 */
@@ -63,11 +48,11 @@ export interface GanttConstructorOptions {
   minDate?: string;
   /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
   maxDate?: string;
-
+  markLine?: boolean | IMarkLine | IMarkLine[];
   // /** 设置的表格主题 */
   // theme?: TableTheme;
   /** 设置任务条样式 可以设置多组 依次循环使用 */
-  barStyle?: BarStyle; // 参考https://lightcharts.bytedance.net/charts/doc/options#series.gantt.barStyle
+  barStyle?: IBarStyle; // 参考https://lightcharts.bytedance.net/charts/doc/options#series.gantt.barStyle
   scrollStyle?: TYPES.ScrollStyle;
   defaultHeaderRowHeight?: number;
   defaultRowHeight?: number;
@@ -85,7 +70,7 @@ export interface GanttConstructorOptions {
   // taskTableTheme?: ITableThemeDefine;
 }
 
-export type BarStyle = {
+export interface IBarStyle {
   /** 任务条的颜色 */
   barColor?: string;
   /** 已完成部分任务条的颜色 */
@@ -100,5 +85,13 @@ export type BarStyle = {
   borderColor?: string;
   fontFamily?: string;
   fontSize?: number;
-};
+}
+export interface IMarkLine {
+  date?: string;
+  style?: {
+    lineColor?: string;
+    lineWidth?: number;
+    lineDash?: number[];
+  };
+}
 //#endregion

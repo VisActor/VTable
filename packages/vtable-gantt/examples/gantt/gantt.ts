@@ -475,7 +475,25 @@ export function createTable() {
       }
     ],
     minDate: '2024-07-10',
-    maxDate: '2025-01-17'
+    maxDate: '2025-01-17',
+    markLine: [
+      {
+        date: '2024-07-17',
+        style: {
+          lineWidth: 1,
+          lineColor: 'blue',
+          lineDash: [8, 4]
+        }
+      },
+      {
+        date: '2024-08-17',
+        style: {
+          lineWidth: 2,
+          lineColor: 'red',
+          lineDash: [8, 4]
+        }
+      }
+    ]
   };
   // columns:[
   //   {

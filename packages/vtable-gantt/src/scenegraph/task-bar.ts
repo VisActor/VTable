@@ -13,7 +13,7 @@ export class TaskBar {
       y: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
       width: scene._gantt.tableNoFrameWidth,
       height: height - scene._gantt.headerRowHeight * scene._gantt.headerLevel,
-      pickable: true,
+      pickable: false,
       clip: true
     });
     this.group.name = 'task-bar-container';

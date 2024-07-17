@@ -2,11 +2,12 @@
 // import { createRootElement } from './core/tableHelper';
 import { Scenegraph } from './scenegraph/scenegraph';
 import { Env } from './env';
-import type { BarStyle, GanttConstructorOptions, GridStyle, TimelineHeaderStyle } from './ts-types';
+import type { IBarStyle, GanttConstructorOptions, IGridStyle, ITimelineHeaderStyle, IMarkLine } from './ts-types';
 import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
+import { generateMarkLine } from './gantt-helper';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
   const element = document.createElement('div');
@@ -59,9 +60,9 @@ export class Gantt {
   gridHeight: number;
 
   scrollStyle: TYPES.ScrollStyle;
-  timelineHeaderStyle: TimelineHeaderStyle;
-  gridStyle: GridStyle;
-  barStyle: BarStyle;
+  timelineHeaderStyle: ITimelineHeaderStyle;
+  gridStyle: IGridStyle;
+  barStyle: IBarStyle;
   startDateField: string;
   endDateField: string;
   progressField: string;
@@ -69,6 +70,7 @@ export class Gantt {
   maxDate: Date;
   taskTableWidth: number;
   taskTableColumns: TYPES.ColumnsDefine;
+  markLine: IMarkLine[];
   records: any[];
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
     this.options = options;
@@ -142,6 +144,7 @@ export class Gantt {
       },
       options?.barStyle
     );
+    this.markLine = generateMarkLine(options?.markLine);
 
     this._orderScales();
     this._generateTimeLineDateMap();
