@@ -1,8 +1,302 @@
 /* eslint-disable max-depth */
 import type { ListTable } from '../ListTable';
 import type { CachedDataSource } from '../data';
+import { computeColWidth } from '../scenegraph/layout/compute-col-width';
+import { computeRowHeight } from '../scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from '../tools/util';
 import type { SortState } from '../ts-types';
+import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
+
+/**
+ * 更改单元格数据 会触发change_cell_value事件
+ * @param col
+ * @param row
+ * @param value 更改后的值
+ * @param workOnEditableCell 限制只能更改配置了编辑器的单元格值。快捷键paste这里配置的true，限制只能修改可编辑单元格值
+ */
+export function listTableChangeCellValue(
+  col: number,
+  row: number,
+  value: string | number | null,
+  workOnEditableCell: boolean,
+  table: ListTable
+) {
+  if ((workOnEditableCell && table.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
+    const recordIndex = table.getRecordShowIndexByCell(col, row);
+    const { field } = table.internalProps.layoutMap.getBody(col, row);
+    const beforeChangeValue = table.getCellRawValue(col, row);
+    const oldValue = table.getCellOriginValue(col, row);
+    if (table.isHeader(col, row)) {
+      table.internalProps.layoutMap.updateColumnTitle(col, row, value as string);
+    } else {
+      table.dataSource.changeFieldValue(value, recordIndex, field, col, row, table);
+    }
+    const range = table.getCellRange(col, row);
+    //改变单元格的值后 聚合值做重新计算
+    const aggregators = table.internalProps.layoutMap.getAggregatorsByCell(col, row);
+    if (aggregators) {
+      if (Array.isArray(aggregators)) {
+        for (let i = 0; i < aggregators?.length; i++) {
+          aggregators[i].recalculate();
+        }
+      } else {
+        aggregators.recalculate();
+      }
+      const aggregatorCells = table.internalProps.layoutMap.getAggregatorCellAddress(
+        range.start.col,
+        range.start.row,
+        range.end.col,
+        range.end.row
+      );
+      for (let i = 0; i < aggregatorCells.length; i++) {
+        const range = table.getCellRange(aggregatorCells[i].col, aggregatorCells[i].row);
+        for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
+          for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
+            table.scenegraph.updateCellContent(sCol, sRow);
+          }
+        }
+      }
+    }
+
+    // const cell_value = table.getCellValue(col, row);
+
+    for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
+      for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
+        table.scenegraph.updateCellContent(sCol, sRow);
+      }
+    }
+    if (table.widthMode === 'adaptive' || (table.autoFillWidth && table.getAllColsWidth() <= table.tableNoFrameWidth)) {
+      if (table.internalProps._widthResizedColMap.size === 0) {
+        //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
+        table.scenegraph.recalculateColWidths();
+      }
+    } else if (!table.internalProps._widthResizedColMap.has(col)) {
+      const oldWidth = table.getColWidth(col);
+      const newWidth = computeColWidth(col, 0, table.rowCount - 1, table, false);
+      if (newWidth !== oldWidth) {
+        table.scenegraph.updateColWidth(col, newWidth - oldWidth);
+      }
+    }
+    if (
+      table.heightMode === 'adaptive' ||
+      (table.autoFillHeight && table.getAllRowsHeight() <= table.tableNoFrameHeight)
+    ) {
+      if (table.internalProps._heightResizedRowMap.size === 0) {
+        table.scenegraph.recalculateRowHeights();
+      }
+    } else if (table.heightMode === 'autoHeight' && !table.internalProps._heightResizedRowMap.has(row)) {
+      const oldHeight = table.getRowHeight(row);
+      const newHeight = computeRowHeight(row, 0, table.colCount - 1, table);
+      table.scenegraph.updateRowHeight(row, newHeight - oldHeight);
+    }
+    table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+      col,
+      row,
+      rawValue: beforeChangeValue,
+      currentValue: oldValue,
+      changedValue: table.getCellOriginValue(col, row)
+    });
+    table.scenegraph.updateNextFrame();
+  }
+}
+/**
+ * 批量更新多个单元格的数据
+ * @param col 粘贴数据的起始列号
+ * @param row 粘贴数据的起始行号
+ * @param values 多个单元格的数据数组
+ * @param workOnEditableCell 是否仅更改可编辑单元格
+ */
+export function listTableChangeCellValues(
+  startCol: number,
+  startRow: number,
+  values: (string | number)[][],
+  workOnEditableCell: boolean,
+  table: ListTable
+) {
+  let pasteColEnd = startCol;
+  let pasteRowEnd = startRow;
+  // const rowCount = values.length;
+  //#region 提前组织好未更改前的数据
+  const beforeChangeValues: (string | number)[][] = [];
+  const oldValues: (string | number)[][] = [];
+  let cellUpdateType: 'normal' | 'sort' | 'group';
+
+  for (let i = 0; i < values.length; i++) {
+    if (startRow + i > table.rowCount - 1) {
+      break;
+    }
+    const rowValues = values[i];
+    const rawRowValues: (string | number)[] = [];
+    const oldRowValues: (string | number)[] = [];
+    beforeChangeValues.push(rawRowValues);
+    oldValues.push(oldRowValues);
+    for (let j = 0; j < rowValues.length; j++) {
+      if (startCol + j > table.colCount - 1) {
+        break;
+      }
+      cellUpdateType = getCellUpdateType(startCol + j, startRow + i, table, cellUpdateType);
+      const beforeChangeValue = table.getCellRawValue(startCol + j, startRow + i);
+      rawRowValues.push(beforeChangeValue);
+      const oldValue = table.getCellOriginValue(startCol + j, startRow + i);
+      oldRowValues.push(oldValue);
+    }
+  }
+  //#endregion
+  for (let i = 0; i < values.length; i++) {
+    if (startRow + i > table.rowCount - 1) {
+      break;
+    }
+    pasteRowEnd = startRow + i;
+    const rowValues = values[i];
+    let thisRowPasteColEnd = startCol;
+    for (let j = 0; j < rowValues.length; j++) {
+      if (startCol + j > table.colCount - 1) {
+        break;
+      }
+      thisRowPasteColEnd = startCol + j;
+      if ((workOnEditableCell && table.isHasEditorDefine(startCol + j, startRow + i)) || workOnEditableCell === false) {
+        const value = rowValues[j];
+        const recordIndex = table.getRecordShowIndexByCell(startCol + j, startRow + i);
+        const { field } = table.internalProps.layoutMap.getBody(startCol + j, startRow + i);
+        // const beforeChangeValue = table.getCellRawValue(startCol + j, startRow + i);
+        // const oldValue = table.getCellOriginValue(startCol + j, startRow + i);
+        const beforeChangeValue = beforeChangeValues[i][j];
+        const oldValue = oldValues[i][j];
+        if (table.isHeader(startCol + j, startRow + i)) {
+          table.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
+        } else {
+          table.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, table);
+        }
+        table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+          col: startCol + j,
+          row: startRow + i,
+          rawValue: beforeChangeValue,
+          currentValue: oldValue,
+          changedValue: table.getCellOriginValue(startCol + j, startRow + i)
+        });
+      }
+    }
+    pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
+  }
+
+  // const cell_value = table.getCellValue(col, row);
+  const startRange = table.getCellRange(startCol, startRow);
+  const range = table.getCellRange(pasteColEnd, pasteRowEnd);
+
+  //改变单元格的值后 聚合值做重新计算
+  const aggregators = table.internalProps.layoutMap.getAggregatorsByCellRange(
+    startRange.start.col,
+    startRange.start.row,
+    range.end.col,
+    range.end.row
+  );
+
+  if (aggregators) {
+    for (let i = 0; i < aggregators?.length; i++) {
+      aggregators[i].recalculate();
+    }
+
+    if (cellUpdateType === 'normal') {
+      const aggregatorCells = table.internalProps.layoutMap.getAggregatorCellAddress(
+        startRange.start.col,
+        startRange.start.row,
+        range.end.col,
+        range.end.row
+      );
+      for (let i = 0; i < aggregatorCells.length; i++) {
+        const range = table.getCellRange(aggregatorCells[i].col, aggregatorCells[i].row);
+        for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
+          for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
+            table.scenegraph.updateCellContent(sCol, sRow);
+          }
+        }
+      }
+    }
+  }
+
+  if (cellUpdateType === 'group') {
+    (table.dataSource as CachedDataSource).updateRecordsForGroup([], []);
+  }
+
+  if (cellUpdateType === 'sort' || cellUpdateType === 'group') {
+    (table.dataSource as any).sortedIndexMap.clear();
+    sortRecords(table);
+    table.refreshRowColCount();
+    table.internalProps.layoutMap.clearCellRangeMap();
+    // 更新整个场景树
+    table.scenegraph.clearCells();
+    table.scenegraph.createSceneGraph();
+    return;
+  }
+
+  for (let sCol = startRange.start.col; sCol <= range.end.col; sCol++) {
+    for (let sRow = startRange.start.row; sRow <= range.end.row; sRow++) {
+      table.scenegraph.updateCellContent(sCol, sRow);
+    }
+  }
+  if (table.widthMode === 'adaptive' || (table.autoFillWidth && table.getAllColsWidth() <= table.tableNoFrameWidth)) {
+    if (table.internalProps._widthResizedColMap.size === 0) {
+      //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
+      table.scenegraph.recalculateColWidths();
+    }
+  } else {
+    for (let sCol = startCol; sCol <= range.end.col; sCol++) {
+      if (!table.internalProps._widthResizedColMap.has(sCol)) {
+        const oldWidth = table.getColWidth(sCol);
+        const newWidth = computeColWidth(sCol, 0, table.rowCount - 1, table, false);
+        if (newWidth !== oldWidth) {
+          table.scenegraph.updateColWidth(sCol, newWidth - oldWidth);
+        }
+      }
+    }
+  }
+  if (
+    table.heightMode === 'adaptive' ||
+    (table.autoFillHeight && table.getAllRowsHeight() <= table.tableNoFrameHeight)
+  ) {
+    table.scenegraph.recalculateRowHeights();
+  } else if (table.heightMode === 'autoHeight') {
+    const rows: number[] = [];
+    const deltaYs: number[] = [];
+    for (let sRow = startRow; sRow <= range.end.row; sRow++) {
+      if (table.rowHeightsMap.get(sRow)) {
+        // 已经计算过行高的才走更新逻辑
+        const oldHeight = table.getRowHeight(sRow);
+        const newHeight = computeRowHeight(sRow, 0, table.colCount - 1, table);
+        rows.push(sRow);
+        deltaYs.push(newHeight - oldHeight);
+      }
+    }
+    table.scenegraph.updateRowsHeight(rows, deltaYs);
+  }
+
+  table.scenegraph.updateNextFrame();
+}
+
+type CellUpdateType = 'normal' | 'sort' | 'group';
+function getCellUpdateType(
+  col: number,
+  row: number,
+  table: ListTable,
+  oldCellUpdateType: CellUpdateType | undefined
+): CellUpdateType {
+  if (oldCellUpdateType === 'group') {
+    return oldCellUpdateType;
+  }
+  if (oldCellUpdateType === 'sort' && !table.options.groupBy) {
+    return oldCellUpdateType;
+  }
+  let cellUpdateType: CellUpdateType = 'normal';
+  if (table.options.groupBy) {
+    cellUpdateType = 'group';
+  } else if (!table.isHeader(col, row) && (table.dataSource as any).lastOrderField) {
+    const field = table.getBodyField(col, row);
+    if (field === (table.dataSource as any).lastOrderField) {
+      cellUpdateType = 'sort';
+    }
+  }
+  return cellUpdateType;
+}
 
 export function sortRecords(table: ListTable) {
   if (table.sortState) {
