@@ -92,10 +92,47 @@ export function createTable() {
       bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 
       let index = 100;
-      window.addRecords = () => {
+      let updateing = false;
+      const addRecords = () => {
         tableInstance.addRecords(data.slice(index, index + 100));
         index += 100;
       };
+      const showLoading = () => {
+        const container = document.createElement('div');
+        container.id = 'loading';
+        container.style.width = '100vw';
+        container.style.height = '100vh';
+        container.style.position = 'absolute';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.background = 'rgba(0, 0, 0, 0.5)';
+        container.innerHTML = 'loading...';
+        container.style.fontSize = '40px';
+        container.style.color = 'white';
+        container.style.fontWeight = 'bold';
+        container.style.textAlign = 'center';
+        container.style.lineHeight = '100vh';
+        document.body.appendChild(container);
+      };
+      const hideLoading = () => {
+        const container = document.getElementById('loading');
+        if (container) {
+          document.body.removeChild(container);
+        }
+      };
+
+      tableInstance.on('scroll_vertical_end', () => {
+        if (updateing) {
+          return;
+        }
+        updateing = true;
+        showLoading();
+        setTimeout(() => {
+          addRecords();
+          hideLoading();
+          updateing = false;
+        }, 1000);
+      });
     })
     .catch(e => {
       console.error(e);
