@@ -411,6 +411,9 @@ export class TableTheme implements ITableThemeDefine {
   get groupTitleStyle(): ITableThemeDefine['groupTitleStyle'] {
     if (!this._groupTitle) {
       const { obj, superTheme } = this.internalTheme;
+      if (!superTheme.groupTitleStyle && !obj.groupTitleStyle) {
+        return this._groupTitle;
+      }
       const groupTitle: ThemeStyle = ingoreNoneValueMerge(
         {},
         this.defaultStyle,
