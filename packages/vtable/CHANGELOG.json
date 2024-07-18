@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.5.3",
+      "tag": "@visactor/vtable_v1.5.3",
+      "date": "Thu, 18 Jul 2024 12:13:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add param value for startEditCell api #2089\n\n"
+          },
+          {
+            "comment": "fix: fix option config in vtable-export"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.5.2",
       "tag": "@visactor/vtable_v1.5.2",
       "date": "Fri, 12 Jul 2024 10:47:37 GMT",
