@@ -5,6 +5,7 @@ import type { ListTableAPI, ListTableConstructorOptions } from '../ts-types';
 import { getCellEventArgsSet } from '../event/util';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { isPromise } from '../tools/helper';
+import { isValid } from '@visactor/vutils';
 
 export class EditManeger {
   table: BaseTableAPI;
@@ -58,7 +59,7 @@ export class EditManeger {
     });
   }
 
-  startEditCell(col: number, row: number) {
+  startEditCell(col: number, row: number, value?: string | number) {
     const editor = (this.table as ListTableAPI).getEditor(col, row);
     if (editor) {
       // //自定义内容单元格不允许编辑
@@ -83,7 +84,7 @@ export class EditManeger {
         this.editCell = { col, row };
       }
       this.editingEditor = editor;
-      const dataValue = this.table.getCellOriginValue(col, row);
+      const dataValue = isValid(value) ? value : this.table.getCellOriginValue(col, row);
       const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
       const referencePosition = { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } };
 

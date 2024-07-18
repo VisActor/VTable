@@ -272,8 +272,14 @@ export interface ListTableAPI extends BaseTableAPI {
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */
   getEditor: (col: number, row: number) => IEditor;
-  /** 开启单元格编辑 */
-  startEditCell: (col?: number, row?: number) => void;
+  /**
+   * 开启单元格编辑
+   * @param col
+   * @param row
+   * @param value 如果想要改变显示到编辑框中的值 可以value来设置改变
+   * @returns
+   */
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
   /** 结束编辑 */
   completeEditCell: () => void;
   //#endregion

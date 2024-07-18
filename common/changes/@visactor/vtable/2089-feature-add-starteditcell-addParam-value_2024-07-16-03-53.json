@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add param value for startEditCell api #2089\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
