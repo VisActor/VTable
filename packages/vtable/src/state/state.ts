@@ -900,7 +900,7 @@ export class StateManager {
       this.checkHorizontalScrollBarEnd();
     }
   }
-  setScrollTop(top: number) {
+  setScrollTop(top: number, triggerEvent: boolean = true) {
     // 矫正top值范围
     const totalHeight = this.table.getAllRowsHeight();
     top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height));
@@ -922,7 +922,7 @@ export class StateManager {
     const yRatio = top / (totalHeight - this.table.scenegraph.height);
     this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
 
-    if (oldVerticalBarPos !== top) {
+    if (oldVerticalBarPos !== top && triggerEvent) {
       this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
         scrollTop: this.scroll.verticalBarPos,
         scrollLeft: this.scroll.horizontalBarPos,
@@ -937,7 +937,7 @@ export class StateManager {
       this.checkVerticalScrollBarEnd();
     }
   }
-  setScrollLeft(left: number) {
+  setScrollLeft(left: number, triggerEvent: boolean = true) {
     const oldScrollLeft = this.table.scrollLeft;
     // 矫正left值范围
     const totalWidth = this.table.getAllColsWidth();
@@ -963,7 +963,7 @@ export class StateManager {
     const xRatio = left / (totalWidth - this.table.scenegraph.width);
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
 
-    if (oldHorizontalBarPos !== left) {
+    if (oldHorizontalBarPos !== left && triggerEvent) {
       this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
         scrollTop: this.scroll.verticalBarPos,
         scrollLeft: this.scroll.horizontalBarPos,

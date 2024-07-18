@@ -53,16 +53,20 @@ export class TaskBar {
         x:
           this._scene._gantt.colWidthPerDay *
           Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)),
-        y: this._scene._gantt.rowHeight * i,
+        // y: this._scene._gantt.rowHeight * i,
+        y: this._scene._gantt.rowHeight * i + (this._scene._gantt.rowHeight - taskbarHeight) / 2,
         width: taskBarSize,
-        height: this._scene._gantt.rowHeight
+        // height: this._scene._gantt.rowHeight,
+        height: taskbarHeight,
+        cornerRadius: this._scene._gantt.barStyle.cornerRadius,
+        clip: true
       });
       barGroup.name = 'task-bar';
       this.barContainer.appendChild(barGroup);
       // 创建整个任务条rect
       const rect = createRect({
         x: 0,
-        y: (this._scene._gantt.rowHeight - taskbarHeight) / 2,
+        y: 0, //this._scene._gantt.rowHeight - taskbarHeight) / 2,
         width: taskBarSize,
         height: taskbarHeight,
         fill: this._scene._gantt.barStyle.barColor,
@@ -74,7 +78,7 @@ export class TaskBar {
       // 创建已完成部分任务条rect
       const progress_rect = createRect({
         x: 0,
-        y: (this._scene._gantt.rowHeight - taskbarHeight) / 2,
+        y: 0, //(this._scene._gantt.rowHeight - taskbarHeight) / 2,
         width: (taskBarSize * taskRecord[progressField]) / 100,
         height: taskbarHeight,
         fill: this._scene._gantt.barStyle.barColor2,

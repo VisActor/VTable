@@ -975,8 +975,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightP = this.canvasHeight - 1;
     }
 
-    const width = Math.floor(widthP - style.getScrollBarSize(this.getTheme().scrollStyle));
-    const height = Math.floor(heightP - style.getScrollBarSize(this.getTheme().scrollStyle));
+    const width = Math.floor(widthP - style.getVerticalScrollBarSize(this.getTheme().scrollStyle));
+    const height = Math.floor(heightP - style.getHorizontalScrollBarSize(this.getTheme().scrollStyle));
 
     if (this.internalProps.theme?.frameStyle) {
       //考虑表格整体边框的问题

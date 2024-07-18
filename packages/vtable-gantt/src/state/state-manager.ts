@@ -1,8 +1,8 @@
 import { isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
-import { InteractionState } from '../ts-types';
+import { InteractionState, GANTT_EVENT_TYPE } from '../ts-types';
 import type { Group, FederatedPointerEvent } from '@visactor/vrender-core';
-import { DayTimes, getTaskIndexByY } from '../gantt-helper';
+import { DayTimes, getTaskIndexByY, syncScrollStateToTable } from '../gantt-helper';
 import { formatDate, parseDateFormat } from '../tools/util';
 export class StateManager {
   _gantt: Gantt;
@@ -46,12 +46,12 @@ export class StateManager {
     this.updateHorizontalScrollBar = this.updateHorizontalScrollBar.bind(this);
   }
 
-  setScrollTop(top: number) {
+  setScrollTop(top: number, triggerEvent: boolean = true) {
     // 矫正top值范围
     const totalHeight = this._gantt.getAllRowsHeight();
     top = Math.max(0, Math.min(top, totalHeight - this._gantt.scenegraph.height));
     top = Math.ceil(top);
-
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
     // this._gantt.stateManager.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
     if (!isValid(this.scroll.verticalBarPos) || isNaN(this.scroll.verticalBarPos)) {
@@ -64,22 +64,21 @@ export class StateManager {
     const yRatio = top / (totalHeight - this._gantt.scenegraph.height);
     this._gantt.scenegraph.scrollbarComponent.updateVerticalScrollBarPos(yRatio);
 
-    // if (oldVerticalBarPos !== top) {
-    //   this._gantt.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-    //     scrollTop: this.scroll.verticalBarPos,
-    //     scrollLeft: this.scroll.horizontalBarPos,
-    //     scrollHeight: this._gantt.theme.scrollStyle?.width,
-    //     scrollWidth: this._gantt.theme.scrollStyle?.width,
-    //     viewHeight: this._gantt.tableNoFrameHeight,
-    //     viewWidth: this._gantt.tableNoFrameWidth,
-    //     scrollDirection: 'vertical',
-    //     scrollRatioY: yRatio
-    //   });
-
-    //   this.checkVerticalScrollBarEnd();
-    // }
+    if (oldVerticalBarPos !== top && triggerEvent) {
+      syncScrollStateToTable(this._gantt);
+      this._gantt.fireListeners(GANTT_EVENT_TYPE.SCROLL, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft: this.scroll.horizontalBarPos,
+        // scrollHeight: this._gantt.theme.scrollStyle?.width,
+        // scrollWidth: this._gantt.theme.scrollStyle?.width,
+        // viewHeight: this._gantt.tableNoFrameHeight,
+        // viewWidth: this._gantt.tableNoFrameWidth,
+        scrollDirection: 'vertical',
+        scrollRatioY: yRatio
+      });
+    }
   }
-  setScrollLeft(left: number) {
+  setScrollLeft(left: number, triggerEvent: boolean = true) {
     // 矫正left值范围
     const totalWidth = this._gantt.getAllColsWidth();
 
@@ -90,6 +89,7 @@ export class StateManager {
     //   this.updateHoverPos(-1, -1);
     // }
     // this._gantt.stateManager.updateSelectPos(-1, -1);
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = left;
     if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
       this.scroll.horizontalBarPos = 0;
@@ -102,20 +102,18 @@ export class StateManager {
     const xRatio = left / (totalWidth - this._gantt.scenegraph.width);
     this._gantt.scenegraph.scrollbarComponent.updateHorizontalScrollBarPos(xRatio);
 
-    // if (oldHorizontalBarPos !== left) {
-    //   this._gantt.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-    //     scrollTop: this.scroll.verticalBarPos,
-    //     scrollLeft: this.scroll.horizontalBarPos,
-    //     scrollHeight: this._gantt.theme.scrollStyle?.width,
-    //     scrollWidth: this._gantt.theme.scrollStyle?.width,
-    //     viewHeight: this._gantt.tableNoFrameHeight,
-    //     viewWidth: this._gantt.tableNoFrameWidth,
-    //     scrollDirection: 'horizontal',
-    //     scrollRatioX: xRatio
-    //   });
-
-    //   this.checkHorizontalScrollBarEnd();
-    // }
+    if (oldHorizontalBarPos !== left && triggerEvent) {
+      this._gantt.fireListeners(GANTT_EVENT_TYPE.SCROLL, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft: this.scroll.horizontalBarPos,
+        // scrollHeight: this._gantt.theme.scrollStyle?.width,
+        // scrollWidth: this._gantt.theme.scrollStyle?.width,
+        // viewHeight: this._gantt.tableNoFrameHeight,
+        // viewWidth: this._gantt.tableNoFrameWidth,
+        scrollDirection: 'horizontal',
+        scrollRatioX: xRatio
+      });
+    }
   }
 
   updateInteractionState(mode: InteractionState) {
@@ -140,6 +138,17 @@ export class StateManager {
       this.scroll.verticalBarPos = 0;
     }
     this._gantt.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
+    syncScrollStateToTable(this._gantt);
+    this._gantt.fireListeners(GANTT_EVENT_TYPE.SCROLL, {
+      scrollTop: this.scroll.verticalBarPos,
+      scrollLeft: this.scroll.horizontalBarPos,
+      // scrollHeight: this.table.theme.scrollStyle?.width,
+      // scrollWidth: this.table.theme.scrollStyle?.width,
+      // viewHeight: this.table.tableNoFrameHeight,
+      // viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'vertical',
+      scrollRatioY: yRatio
+    });
   }
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this._gantt.getAllColsWidth();
@@ -149,6 +158,16 @@ export class StateManager {
       this.scroll.horizontalBarPos = 0;
     }
     this._gantt.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
+    this._gantt.fireListeners(GANTT_EVENT_TYPE.SCROLL, {
+      scrollTop: this.scroll.verticalBarPos,
+      scrollLeft: this.scroll.horizontalBarPos,
+      // scrollHeight: this.table.theme.scrollStyle?.width,
+      // scrollWidth: this.table.theme.scrollStyle?.width,
+      // viewHeight: this.table.tableNoFrameHeight,
+      // viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'horizontal',
+      scrollRatioY: xRatio
+    });
     // this.scroll.horizontalBarPos -= this._gantt.scenegraph.proxy.deltaX;
     // this._gantt.scenegraph.proxy.deltaX = 0;
 

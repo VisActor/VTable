@@ -333,7 +333,9 @@ export class TableComponent {
 
     const theme = this.table.theme;
     const width = theme.scrollStyle?.width as number;
-    const visible = theme.scrollStyle?.visible as string;
+    const visible1 = theme.scrollStyle?.visible as string;
+    const horizontalVisible = theme.scrollStyle?.horizontalVisible ?? visible1;
+    const verticalVisible = theme.scrollStyle?.verticalVisible ?? visible1;
     // const hoverOn = theme.scrollStyle?.hoverOn as boolean;
     const tableWidth = Math.ceil(this.table.scenegraph.tableGroup.attribute.width);
     const tableHeight = Math.ceil(this.table.scenegraph.tableGroup.attribute.height);
@@ -365,14 +367,14 @@ export class TableComponent {
         y: attrY,
         width: tableWidth - frozenColsWidth - rightFrozenColsWidth,
         range: [0, rangeEnd],
-        visible: visible === 'always'
+        visible: horizontalVisible === 'always'
       });
       const bounds = this.hScrollBar.AABBBounds && this.hScrollBar.globalAABBBounds;
       (this.hScrollBar as any)._viewPosition = {
         x: bounds.x1,
         y: bounds.y1
       };
-      if (visible === 'always') {
+      if (horizontalVisible === 'always') {
         this.hScrollBar.showAll();
       }
     } else {
@@ -405,7 +407,7 @@ export class TableComponent {
         y: frozenRowsHeight + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.y : 0),
         height: tableHeight - frozenRowsHeight - bottomFrozenRowsHeight,
         range: [0, rangeEnd],
-        visible: visible === 'always'
+        visible: verticalVisible === 'always'
       });
       const bounds = this.vScrollBar.AABBBounds && this.vScrollBar.globalAABBBounds;
       (this.vScrollBar as any)._viewPosition = {
@@ -413,7 +415,7 @@ export class TableComponent {
         y: bounds.y1
       };
 
-      if (visible === 'always') {
+      if (verticalVisible === 'always') {
         this.vScrollBar.showAll();
       }
     } else {
@@ -664,8 +666,9 @@ export class TableComponent {
   }
 
   hideVerticalScrollBar() {
-    const visable = this.table.theme.scrollStyle.visible;
-    if (visable !== 'focus' && visable !== 'scrolling') {
+    const visible1 = this.table.theme.scrollStyle.visible;
+    const verticalVisible = this.table.theme.scrollStyle.verticalVisible ?? visible1;
+    if (verticalVisible !== 'focus' && verticalVisible !== 'scrolling') {
       return;
     }
     this.vScrollBar.setAttribute('visible', false);
@@ -673,8 +676,9 @@ export class TableComponent {
     this.table.scenegraph.updateNextFrame();
   }
   showVerticalScrollBar() {
-    const visable = this.table.theme.scrollStyle.visible;
-    if (visable !== 'focus' && visable !== 'scrolling') {
+    const visible1 = this.table.theme.scrollStyle.visible;
+    const verticalVisible = this.table.theme.scrollStyle.verticalVisible ?? visible1;
+    if (verticalVisible !== 'focus' && verticalVisible !== 'scrolling') {
       return;
     }
     this.vScrollBar.setAttribute('visible', true);
@@ -682,8 +686,9 @@ export class TableComponent {
     this.table.scenegraph.updateNextFrame();
   }
   hideHorizontalScrollBar() {
-    const visable = this.table.theme.scrollStyle.visible;
-    if (visable !== 'focus' && visable !== 'scrolling') {
+    const visible1 = this.table.theme.scrollStyle.visible;
+    const horizontalVisible = this.table.theme.scrollStyle.horizontalVisible ?? visible1;
+    if (horizontalVisible !== 'focus' && horizontalVisible !== 'scrolling') {
       return;
     }
     this.hScrollBar.setAttribute('visible', false);
@@ -691,8 +696,9 @@ export class TableComponent {
     this.table.scenegraph.updateNextFrame();
   }
   showHorizontalScrollBar() {
-    const visable = this.table.theme.scrollStyle.visible;
-    if (visable !== 'focus' && visable !== 'scrolling') {
+    const visible1 = this.table.theme.scrollStyle.visible;
+    const horizontalVisible = this.table.theme.scrollStyle.horizontalVisible ?? visible1;
+    if (horizontalVisible !== 'focus' && horizontalVisible !== 'scrolling') {
       return;
     }
     this.hScrollBar.setAttribute('visible', true);

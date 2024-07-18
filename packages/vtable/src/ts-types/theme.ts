@@ -59,6 +59,8 @@ export type ScrollStyle = {
   width?: number;
   /**滚动条是否可见  'always' | 'scrolling' | 'none' | 'focus',常驻|滚动时|不显示|聚焦在画布上时 */
   visible?: 'always' | 'scrolling' | 'none' | 'focus';
+  horizontalVisible?: 'always' | 'scrolling' | 'none' | 'focus';
+  verticalVisible?: 'always' | 'scrolling' | 'none' | 'focus';
   /*** 悬浮与容器上，还是独立于容器外 */
   hoverOn?: boolean;
   /** 是否显示到容器的边缘 尽管内容没有撑满的情况下 默认false */

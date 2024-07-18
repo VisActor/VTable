@@ -7,7 +7,8 @@ import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
-import { generateMarkLine } from './gantt-helper';
+import { generateMarkLine, syncScrollStateFromTable } from './gantt-helper';
+import { EventTarget } from './event/EventTarget';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
   const element = document.createElement('div');
@@ -24,7 +25,7 @@ export function createRootElement(padding: any, className: string = 'vtable'): H
 
   return element;
 }
-export class Gantt {
+export class Gantt extends EventTarget {
   options: GanttConstructorOptions;
   container: HTMLElement;
   canvasWidth?: number;
@@ -73,6 +74,7 @@ export class Gantt {
   markLine: IMarkLine[];
   records: any[];
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
+    super();
     this.options = options;
     this.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
     this.rowHeight = options?.defaultRowHeight ?? 40;
@@ -174,6 +176,7 @@ export class Gantt {
     this.eventManager = new EventManager(this);
 
     this.scenegraph.afterCreateSceneGraph();
+    syncScrollStateFromTable(this);
   }
 
   /**
@@ -260,7 +263,14 @@ export class Gantt {
         listTable_options[key] = this.options[key];
       }
     }
-    listTable_options.theme = {};
+    listTable_options.theme = {
+      scrollStyle: {
+        verticalVisible: 'none'
+      },
+      headerStyle: {
+        bgColor: this.timelineHeaderStyle.backgroundColor
+      }
+    };
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvasHeight ?? this.tableNoFrameHeight;
     listTable_options.defaultHeaderRowHeight = this.headerRowHeight * this.headerLevel;

@@ -6,7 +6,7 @@ export class MarkLine {
   group: Group;
   markLine: IMarkLine[];
   markLIneContainer: Group;
-  markLineContainerWidth: 20;
+  markLineContainerWidth: number = 20;
   constructor(scene: Scenegraph) {
     this._scene = scene;
     this.markLine = scene._gantt.markLine;
@@ -46,6 +46,7 @@ export class MarkLine {
         this._scene._gantt.colWidthPerDay *
         Math.ceil(Math.abs(date.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
       const markLineGroup = new Group({
+        pickable: false,
         x: dateX - this.markLineContainerWidth / 2,
         y: 0,
         width: this.markLineContainerWidth,
@@ -55,7 +56,7 @@ export class MarkLine {
       this.markLIneContainer.appendChild(markLineGroup);
       // 创建整个任务条rect
       const lineObj = createLine({
-        pickable: true,
+        pickable: false,
         stroke: style.lineColor,
         lineWidth: style.lineWidth,
         lineDash: style.lineDash,

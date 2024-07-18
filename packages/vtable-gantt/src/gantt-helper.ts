@@ -46,3 +46,21 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]) {
     }
   ];
 }
+
+export function syncScrollStateToTable(gantt: Gantt) {
+  const { scroll } = gantt.stateManager;
+  const { verticalBarPos } = scroll;
+  gantt.listTableInstance.stateManager.setScrollTop(verticalBarPos, false);
+}
+
+export function syncScrollStateFromTable(gantt: Gantt) {
+  if (gantt.listTableInstance) {
+    gantt.listTableInstance.on('scroll', (args: any) => {
+      if (args.scrollDirection === 'vertical') {
+        const { scroll } = gantt.listTableInstance.stateManager;
+        const { verticalBarPos } = scroll;
+        gantt.stateManager.setScrollTop(verticalBarPos, false);
+      }
+    });
+  }
+}

@@ -38,9 +38,9 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
+      start: '2024-08-04',
       end: '2024-08-04',
-      progress: 31,
+      progress: 90,
       priority: 'P0'
     },
     {
@@ -453,10 +453,22 @@ export function createTable() {
       fontSize: 10,
       fontWeight: 'bold',
       color: 'red',
-      backgroundColor: 'yellow'
+      backgroundColor: '#EEF1F5'
     },
     barStyle: {
-      width: 30
+      width: 20,
+      /** 任务条的颜色 */
+      barColor: '#ee8800',
+      /** 已完成部分任务条的颜色 */
+      barColor2: '#91e8e0',
+      /** 任务条的圆角 */
+      cornerRadius: 8,
+      /** 任务条的边框 */
+      borderWidth: 1,
+      /** 边框颜色 */
+      borderColor: 'black',
+      fontFamily: 'Arial',
+      fontSize: 15
     },
     timelineScales: [
       {
@@ -512,7 +524,13 @@ export function createTable() {
   // ]
   const tableInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
   window.tableInstance = tableInstance;
+  tableInstance.on('scroll', e => {
+    console.log('scroll', e);
+  });
 
+  tableInstance.listTableInstance.on('scroll', e => {
+    console.log('listTable scroll', e);
+  });
   bindDebugTool(tableInstance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']
   });
