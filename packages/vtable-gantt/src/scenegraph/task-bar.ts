@@ -59,7 +59,8 @@ export class TaskBar {
         // height: this._scene._gantt.rowHeight,
         height: taskbarHeight,
         cornerRadius: this._scene._gantt.barStyle.cornerRadius,
-        clip: true
+        clip: true,
+        cursor: 'grab'
       });
       barGroup.name = 'task-bar';
       this.barContainer.appendChild(barGroup);

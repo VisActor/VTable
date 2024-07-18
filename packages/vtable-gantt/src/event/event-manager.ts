@@ -10,7 +10,7 @@ export class EventManager {
   _eventHandler: EventHandler;
   isDown: boolean = false;
   isDraging: boolean = false;
-  LastPointerXY: { x: number; y: number };
+  lastDragPointerXY: { x: number; y: number };
   constructor(gantt: Gantt) {
     this._gantt = gantt;
     this._eventHandler = new EventHandler();
@@ -30,7 +30,7 @@ function bindTableGroupListener(event: EventManager) {
   const eventManager = event;
   const stateManager = gantt.stateManager;
   scene.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
-    gantt.eventManager.LastPointerXY = { x: e.x, y: e.y };
+    gantt.eventManager.lastDragPointerXY = { x: e.x, y: e.y };
     if (e.button !== 0) {
       // 只处理左键
       return;
@@ -42,14 +42,18 @@ function bindTableGroupListener(event: EventManager) {
   });
 
   scene.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    const lastX = gantt.eventManager.LastPointerXY?.x ?? e.x;
-    const lastY = gantt.eventManager.LastPointerXY?.y ?? e.y;
+    const lastX = gantt.eventManager.lastDragPointerXY?.x ?? e.x;
+    const lastY = gantt.eventManager.lastDragPointerXY?.y ?? e.y;
     if (stateManager.interactionState === InteractionState.grabing) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isMoveingTaskBar()) {
           stateManager.dealTaskBarMove(e);
         }
-        gantt.eventManager.LastPointerXY = { x: e.x, y: e.y };
+        gantt.eventManager.lastDragPointerXY = { x: e.x, y: e.y };
+      }
+    } else if (stateManager.interactionState === InteractionState.default) {
+      if (e.target?.name === 'task-bar') {
+        stateManager.dealTaskBarHover(e);
       }
     }
   });

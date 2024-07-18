@@ -29,6 +29,13 @@ export class StateManager {
     moving: boolean;
     target: Group;
   };
+
+  hoverTaskBar: {
+    /** x坐标是相对table内坐标 */
+    startX: number;
+    targetStartX: number;
+    target: Group;
+  };
   constructor(gantt: Gantt) {
     this._gantt = gantt;
     this.scroll = {
@@ -220,7 +227,18 @@ export class StateManager {
     this._gantt.scenegraph.updateNextFrame();
   }
   dealTaskBarMove(e: FederatedPointerEvent) {
-    const x1 = this._gantt.eventManager.LastPointerXY.x;
+    const x1 = this._gantt.eventManager.lastDragPointerXY.x;
+    const x2 = e.x;
+    const dx = x2 - x1;
+    this._gantt.stateManager.moveTaskBar.target.setAttribute(
+      'x',
+      this._gantt.stateManager.moveTaskBar.target.attribute.x + dx
+    );
+    this._gantt.scenegraph.updateNextFrame();
+    //
+  }
+  dealTaskBarHover(e: FederatedPointerEvent) {
+    const x1 = this._gantt.eventManager.lastDragPointerXY.x;
     const x2 = e.x;
     const dx = x2 - x1;
     this._gantt.stateManager.moveTaskBar.target.setAttribute(
