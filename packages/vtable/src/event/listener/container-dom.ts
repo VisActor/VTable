@@ -7,7 +7,7 @@ import { browser } from '../../tools/helper';
 import type { EventManager } from '../event';
 import { getPixelRatio } from '../../tools/pixel-ratio';
 import { endResizeCol, endResizeRow } from './table-group';
-
+import { isCellDisableSelect } from '../../state/select/is-cell-select-highlight';
 export function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
@@ -107,6 +107,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
           targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col + 1));
         }
       }
+      // 如果是不支持选中的单元格 则退出
+      if (isCellDisableSelect(table, targetCol, targetRow)) {
+        return;
+      }
       table.selectCell(targetCol, targetRow, e.shiftKey);
       if (
         (table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
@@ -161,6 +165,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
           } else {
             targetRow = stateManager.select.cellPos.row;
             targetCol = stateManager.select.cellPos.col + 1;
+          }
+          // 如果是不支持选中的单元格 则退出
+          if (isCellDisableSelect(table, targetCol, targetRow)) {
+            return;
           }
           table.selectCell(targetCol, targetRow);
           if ((table as ListTableAPI).editorManager?.editingEditor) {

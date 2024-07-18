@@ -113,3 +113,15 @@ export function isCellSelected(state: StateManager, col: number, row: number, ce
   }
   return selectMode;
 }
+
+export function isCellDisableSelect(table: BaseTableAPI, col: number, row: number) {
+  const columnDefine = table.getBodyColumnDefine(col, row);
+  const isHeader = table.isHeader(col, row);
+  if ((columnDefine as ColumnDefine)?.disableSelect && !isHeader) {
+    return true;
+  }
+  if (isHeader && (columnDefine as ColumnDefine)?.disableHeaderSelect) {
+    return true;
+  }
+  return false;
+}
