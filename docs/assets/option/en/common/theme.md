@@ -91,6 +91,14 @@ Corner header cell style configuration
   prefix = '#' + ${prefix},
 ) }}
 
+#${prefix} groupTitleStyle(Object)
+
+Group title style configuration in grouping display mode
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
 #${prefix} defaultStyle(Object)
 
 Common style, if the items in headerStyle, rowHeaderStyle, and defaultStyle are not configured, the items in this will be used for configuration
