@@ -1,6 +1,7 @@
 import { isArray, isValid } from '@visactor/vutils';
 import {
   AggregationType,
+  HierarchyState,
   type FieldData,
   type FieldDef,
   type IListTableDataConfig,
@@ -158,22 +159,6 @@ export class CachedDataSource extends DataSource {
           const groupResult = [] as any[];
           for (let i = 0; i < records.length; i++) {
             dealWithGroup(records[i], groupResult, groupMap, groupByKeys, 0);
-            // const record = records[i];
-            // const value = record[groupByKey];
-            // if (value !== undefined) {
-            //   if (groupMap.has(value)) {
-            //     const index = groupMap.get(value);
-            //     groupResult[index].children.push(record);
-            //   } else {
-            //     groupMap.set(value, groupResult.length);
-            //     groupResult.push({
-            //       vTableMerge: true,
-            //       vtableMergeName: value,
-            //       children: [] as any,
-            //       map: new Map()
-            //     });
-            //   }
-            // }
           }
           return groupResult;
         }
@@ -197,7 +182,15 @@ export class CachedDataSource extends DataSource {
   }
 
   updateGroup() {
+    this.clearCache();
+
+    const oldSource = this.source;
     (this as any)._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
+    if (oldSource) {
+      syncGroupCollapseState(oldSource, this.source);
+    }
+
+    // syncGroupCollapseState(this.source, newSource.source);
     this.sourceLength = this.source?.length || 0;
     this.sortedIndexMap.clear();
     this.currentIndexedData = Array.from({ length: this.sourceLength }, (_, i) => i);
@@ -280,6 +273,49 @@ function dealWithGroup(record: any, children: any[], map: Map<number, any>, grou
         groupByKeys,
         level + 1
       );
+    }
+  }
+}
+
+function syncGroupCollapseState(
+  oldSource: any,
+  newSource: any,
+  oldGroupMap?: Map<string, number>,
+  newGroupMap?: Map<string, number>
+) {
+  if (!oldGroupMap) {
+    oldGroupMap = new Map();
+    for (let i = 0; i < oldSource.length; i++) {
+      const record = oldSource[i];
+      if (record.vTableMerge) {
+        oldGroupMap.set(record.vtableMergeName, i);
+      }
+    }
+  }
+
+  if (!newGroupMap) {
+    newGroupMap = new Map();
+    for (let i = 0; i < newSource.length; i++) {
+      const record = newSource[i];
+      if (record.vTableMerge) {
+        newGroupMap.set(record.vtableMergeName, i);
+      }
+    }
+  }
+
+  for (let i = 0; i < oldSource.length; i++) {
+    const oldRecord = oldSource[i];
+    const newRecord = newSource[newGroupMap.get(oldRecord.vtableMergeName)];
+    if (isValid(newRecord)) {
+      newRecord.hierarchyState = oldSource[i].hierarchyState;
+    }
+    if (
+      isArray(oldRecord.children) &&
+      isArray(newRecord.children) &&
+      oldRecord.map.size !== 0 &&
+      newRecord.map.size !== 0
+    ) {
+      syncGroupCollapseState(oldRecord.children, newRecord.children, oldRecord.map, newRecord.map);
     }
   }
 }
