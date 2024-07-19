@@ -1,3 +1,20 @@
+# v1.5.3
+
+2024-07-19
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add param value for startEditCell api [#2089](https://github.com/VisActor/VTable/issues/2089)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix option config in vtable-export
+
+
+
+[more detail about v1.5.3](https://github.com/VisActor/VTable/releases/tag/v1.5.3)
+
 # v1.5.2
 
 2024-07-15
