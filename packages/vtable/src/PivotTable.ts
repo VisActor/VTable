@@ -1572,16 +1572,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
     }
   }
-  /** 开启单元格编辑 */
-  startEditCell(col?: number, row?: number) {
+
+  startEditCell(col?: number, row?: number, value?: string | number) {
     if (isValid(col) && isValid(row)) {
       this.eventManager.isDraging = false;
       this.selectCell(col, row);
-      this.editorManager.startEditCell(col, row);
+      this.editorManager.startEditCell(col, row, value);
     } else if (this.stateManager.select?.cellPos) {
       const { col, row } = this.stateManager.select.cellPos;
       if (isValid(col) && isValid(row)) {
-        this.editorManager.startEditCell(col, row);
+        this.editorManager.startEditCell(col, row, value);
       }
     }
   }

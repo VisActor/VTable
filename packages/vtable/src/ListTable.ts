@@ -1101,16 +1101,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.dataSource.setRecord(record, index);
     this._refreshHierarchyState(col, row);
   }
-  /** 开启单元格编辑 */
-  startEditCell(col?: number, row?: number) {
+
+  startEditCell(col?: number, row?: number, value?: string | number) {
     if (isValid(col) && isValid(row)) {
       this.eventManager.isDraging = false;
       this.selectCell(col, row);
-      this.editorManager.startEditCell(col, row);
+      this.editorManager.startEditCell(col, row, value);
     } else if (this.stateManager.select?.cellPos) {
       const { col, row } = this.stateManager.select.cellPos;
       if (isValid(col) && isValid(row)) {
-        this.editorManager.startEditCell(col, row);
+        this.editorManager.startEditCell(col, row, value);
       }
     }
   }

@@ -879,11 +879,13 @@ Get the editor for the cell configuration
 
 ## startEditCell(Function)
 
-Enable cell editing
+Enable cell editing.
+
+If you want to change the value displayed in the edit box, you can configure the value to set the change
 
 ```
   /** Enable cell editing */
-  startEditCell: (col?: number, row?: number) => void;
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
 ```
 
 ## completeEditCell(Function)
