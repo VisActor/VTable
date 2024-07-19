@@ -11,7 +11,8 @@ import type {
   ProgressbarColumnDefine,
   IRowSeriesNumber,
   TextColumnDefine,
-  RadioColumnDefine
+  RadioColumnDefine,
+  ListTableConstructorOptions
 } from '../../ts-types';
 import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
@@ -457,6 +458,21 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     const { vtableMergeName, vTableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
     if (vTableMerge) {
       mayHaveIcon = true;
+      if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+        customResult = dealWithCustom(
+          (table.options as ListTableConstructorOptions).groupTitleCustomLayout,
+          undefined,
+          range.start.col,
+          range.start.row,
+          table.getColsWidth(range.start.col, range.end.col),
+          table.getRowsHeight(range.start.row, range.end.row),
+          false,
+          table.isAutoRowHeight(row),
+          [0, 0, 0, 0],
+          range,
+          table
+        );
+      }
     }
     if (vtableMergeName) {
       value = vtableMergeName;

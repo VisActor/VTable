@@ -252,6 +252,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
 
   enableTreeNodeMerge?: boolean;
   groupBy?: GroupByOption;
+  groupTitleCustomLayout?: ICustomLayout;
 }
 
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];

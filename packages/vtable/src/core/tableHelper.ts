@@ -5,7 +5,7 @@ import { parseFont } from '../scenegraph/utils/font';
 import { getQuadProps } from '../scenegraph/utils/padding';
 import { Rect } from '../tools/Rect';
 import * as calc from '../tools/calc';
-import type { FullExtendStyle, ListTableAPI, SortState } from '../ts-types';
+import type { FullExtendStyle, ListTableAPI, ListTableConstructorOptions, SortState } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { defaultOrderFn } from '../tools/util';
 import type { ListTable } from '../ListTable';
@@ -67,8 +67,8 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
 }
 
 function getHierarchyExpandLevel(table: ListTableAPI) {
-  if ((table.options as any).hierarchyExpandLevel) {
-    return (table.options as any).hierarchyExpandLevel;
+  if ((table.options as ListTableConstructorOptions).hierarchyExpandLevel) {
+    return (table.options as ListTableConstructorOptions).hierarchyExpandLevel;
   } else if (table.options.groupBy) {
     return Infinity;
   }

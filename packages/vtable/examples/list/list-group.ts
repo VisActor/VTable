@@ -7,6 +7,8 @@ const input_editor = new InputEditor({});
 VTable.register.editor('input', input_editor);
 
 const titleColorPool = ['#3370ff', '#34c724', '#ff9f1a', '#ff4050', '#1f2329'];
+const bloggerAvatar = 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg';
+
 export function createTable() {
   let tableInstance;
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
@@ -94,6 +96,45 @@ export function createTable() {
         sortState: {
           field: 'Order ID',
           order: 'asc'
+        },
+        groupTitleCustomLayout: args => {
+          const { table, row, col, rect } = args;
+          const record = table.getCellOriginRecord(col, row);
+          const { height, width } = rect ?? table.getCellRect(col, row);
+          const container = new VTable.CustomLayout.Group({
+            height,
+            width,
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'nowrap',
+            cursor: 'pointer',
+            alignItems: 'center'
+          });
+          container.addEventListener('click', e => {
+            // 折叠后单元格的行列值会变化，需要动态获取
+            const { col, row } = e.target.parent;
+            table.toggleHierarchyState(col, row);
+          });
+          const icon = new VTable.CustomLayout.Image({
+            id: 'icon0',
+            width: 40,
+            height: 40,
+            image: bloggerAvatar,
+            cornerRadius: 20,
+            boundsPadding: [0, 20, 0, 20 + table.getGroupTitleLevel(col, row) * 20]
+          });
+          container.add(icon);
+          const bloggerName = new VTable.CustomLayout.Text({
+            text: record.vtableMergeName,
+            fontSize: 13,
+            fontFamily: 'sans-serif',
+            fill: 'black'
+          });
+          container.add(bloggerName);
+          return {
+            rootContainer: container,
+            renderDefault: false
+          };
         }
       };
       tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);

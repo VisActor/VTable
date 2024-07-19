@@ -1,6 +1,13 @@
 /* eslint-disable no-undef */
 import type { IThemeSpec } from '@src/vrender';
-import type { CellLocation, CellRange, ColumnDefine, IRowSeriesNumber, TextColumnDefine } from '../../ts-types';
+import type {
+  CellLocation,
+  CellRange,
+  ColumnDefine,
+  IRowSeriesNumber,
+  ListTableConstructorOptions,
+  TextColumnDefine
+} from '../../ts-types';
 import { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
@@ -141,6 +148,21 @@ export function createComplexColumn(
       const { vtableMergeName, vTableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
       if (vTableMerge) {
         mayHaveIcon = true;
+        if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+          customResult = dealWithCustom(
+            (table.options as ListTableConstructorOptions).groupTitleCustomLayout,
+            undefined,
+            range.start.col,
+            range.start.row,
+            table.getColsWidth(range.start.col, range.end.col),
+            table.getRowsHeight(range.start.row, range.end.row),
+            false,
+            table.isAutoRowHeight(row),
+            [0, 0, 0, 0],
+            range,
+            table
+          );
+        }
       }
       if (vtableMergeName) {
         value = vtableMergeName;
