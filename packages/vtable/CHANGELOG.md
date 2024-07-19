@@ -1,6 +1,16 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 12 Jul 2024 10:47:37 GMT and should not be manually modified.
+This log was last generated on Thu, 18 Jul 2024 12:13:07 GMT and should not be manually modified.
+
+## 1.5.3
+Thu, 18 Jul 2024 12:13:07 GMT
+
+### Updates
+
+- feat: add param value for startEditCell api #2089
+
+
+- fix: fix option config in vtable-export
 
 ## 1.5.2
 Fri, 12 Jul 2024 10:47:37 GMT
