@@ -8,7 +8,7 @@ import { bindScrollBarListener } from '../event/scroll';
 import { TimelineHeader } from './timeline-header';
 import { TaskBar } from './task-bar';
 import { MarkLine } from './mark-line';
-import { TaskBarHoverIcon } from './task-bar-hover-icon';
+import type { TaskBarHoverIcon } from './task-bar-hover-icon';
 
 export class Scenegraph {
   dateStepWidth: number;
@@ -173,9 +173,6 @@ export function initSceneGraph(scene: Scenegraph) {
   scene.markLine = new MarkLine(scene);
   scene.tableGroup.addChild(scene.markLine.group);
 
-  // 初始化任务条hover组件
-  scene.taskBarHoverIcon = new TaskBarHoverIcon(scene);
-  scene.tableGroup.addChild(scene.taskBarHoverIcon.group);
   // 初始化滚动条组件
   scene.scrollbarComponent = new ScrollBarComponent(scene._gantt);
 

@@ -405,4 +405,7 @@ export class Gantt extends EventTarget {
   updateRecord(record: any, index: number) {
     this.listTableInstance.updateRecords([record], [index]);
   }
+  updateRecordToListTable(record: any, index: number) {
+    this.listTableInstance.updateRecords([record], [index]);
+  }
 }
