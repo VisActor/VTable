@@ -2761,13 +2761,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (isCornerCell) {
       if (this.cornerSetting.titleOnDimension === 'row') {
         for (let i = 0; i < this.rowDimensionKeys.length; i++) {
-          if (rowHeaderPaths[0].dimensionKey === this.rowDimensionKeys[i]) {
+          if (rowHeaderPaths[0]?.dimensionKey === this.rowDimensionKeys[i]) {
             return { col: i + this.leftRowSeriesNumberColumnCount, row: 0 };
           }
         }
       } else {
         for (let i = 0; i < this.colDimensionKeys.length; i++) {
-          if (colHeaderPaths[0].dimensionKey === this.colDimensionKeys[i]) {
+          if (colHeaderPaths[0]?.dimensionKey === this.colDimensionKeys[i]) {
             return { col: 0, row: i };
           }
         }
