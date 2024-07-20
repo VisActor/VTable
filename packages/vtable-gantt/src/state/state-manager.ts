@@ -2,8 +2,7 @@ import { isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import { InteractionState, GANTT_EVENT_TYPE } from '../ts-types';
 import type { Group, FederatedPointerEvent } from '@visactor/vrender-core';
-import { DayTimes, getTaskIndexByY, syncScrollStateToTable } from '../gantt-helper';
-import { formatDate, parseDateFormat } from '../tools/util';
+import { getTaskIndexByY, syncScrollStateToTable } from '../gantt-helper';
 export class StateManager {
   _gantt: Gantt;
 
@@ -235,23 +234,12 @@ export class StateManager {
   }
   endMoveTaskBar(x: number) {
     const deltaX = x - this.moveTaskBar.startX;
-
     const days = Math.round(deltaX / this._gantt.colWidthPerDay);
     const correctX = days * this._gantt.colWidthPerDay;
     const targetEndX = this.moveTaskBar.targetStartX + correctX;
     this._gantt.stateManager.moveTaskBar.target.setAttribute('x', targetEndX);
     const taskIndex = getTaskIndexByY(this.moveTaskBar.startY, this._gantt);
-    const taskRecord = this._gantt.getRecordByIndex(taskIndex);
-    const startDateField = this._gantt.startDateField;
-    const endDateField = this._gantt.endDateField;
-    const dateFormat = parseDateFormat(taskRecord[startDateField]);
-    const startDate = new Date(taskRecord[startDateField]);
-    const endDate = new Date(taskRecord[endDateField]);
-    const newStartDate = formatDate(new Date(days * DayTimes + startDate.getTime()), dateFormat);
-    const newEndDate = formatDate(new Date(days * DayTimes + endDate.getTime()), dateFormat);
-    taskRecord[startDateField] = newStartDate;
-    taskRecord[endDateField] = newEndDate;
-    this._gantt.updateRecordToListTable(taskRecord, taskIndex);
+    this._gantt.updateDateToTaskRecord('move', days, taskIndex);
     this.moveTaskBar.moving = false;
     this.moveTaskBar.target = null;
     this._gantt.scenegraph.updateNextFrame();
@@ -282,6 +270,7 @@ export class StateManager {
     return this.resizeTaskBar.resizing;
   }
   endtResizeTaskBar(x: number) {
+    const direction = this._gantt.stateManager.resizeTaskBar.onIconName;
     const deltaX = x - this.resizeTaskBar.startX;
     const days = Math.round(deltaX / this._gantt.colWidthPerDay);
     const correctX = days * this._gantt.colWidthPerDay;
@@ -289,22 +278,21 @@ export class StateManager {
     const tastBarGroup = this._gantt.stateManager.resizeTaskBar.target;
     const rect = this._gantt.stateManager.resizeTaskBar.target.barRect;
     const progressRect = this._gantt.stateManager.resizeTaskBar.target.progressRect;
-
-    const progressField = this._gantt.progressField;
     const taskIndex = getTaskIndexByY(this.resizeTaskBar.startY, this._gantt);
-    const taskRecord = this._gantt.getRecordByIndex(taskIndex);
-    const progress = taskRecord[progressField];
-
-    if (this._gantt.stateManager.resizeTaskBar.onIconName === 'left') {
+    const { taskDays, progress } = this._gantt.getTaskInfoByTaskListIndex(taskIndex);
+    const taskBarSize = this._gantt.colWidthPerDay * (taskDays + (direction === 'left' ? -days : days));
+    if (direction === 'left') {
       tastBarGroup.setAttribute('x', targetEndX);
+      tastBarGroup.setAttribute('width', taskBarSize);
+      rect.setAttribute('width', tastBarGroup.attribute.width);
+      progressRect.setAttribute('width', (progress / 100) * tastBarGroup.attribute.width);
+      this._gantt.updateDateToTaskRecord('start-move', days, taskIndex);
+    } else if (direction === 'right') {
+      tastBarGroup.setAttribute('width', taskBarSize);
+      rect.setAttribute('width', tastBarGroup.attribute.width);
+      progressRect.setAttribute('width', (progress / 100) * tastBarGroup.attribute.width);
+      this._gantt.updateDateToTaskRecord('end-move', days, taskIndex);
     }
-    tastBarGroup.setAttribute(
-      'width',
-      tastBarGroup.attribute.width +
-        (this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -correctX : correctX)
-    );
-    rect.setAttribute('width', tastBarGroup.attribute.width);
-    progressRect.setAttribute('width', (progress / 100) * tastBarGroup.attribute.width);
     this._gantt.scenegraph.taskBar.showHoverBar(
       tastBarGroup.attribute.x,
       tastBarGroup.attribute.y,

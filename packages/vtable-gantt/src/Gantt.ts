@@ -7,8 +7,9 @@ import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
-import { generateMarkLine, syncScrollStateFromTable } from './gantt-helper';
+import { DayTimes, generateMarkLine, syncScrollStateFromTable } from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
+import { formatDate, parseDateFormat } from './tools/util';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
   const element = document.createElement('div');
@@ -399,7 +400,10 @@ export class Gantt extends EventTarget {
   }
 
   getRecordByIndex(index: number) {
-    return this.listTableInstance.getRecordByRowCol(0, index + this.listTableInstance.columnHeaderLevelCount);
+    if (this.listTableInstance) {
+      return this.listTableInstance.getRecordByRowCol(0, index + this.listTableInstance.columnHeaderLevelCount);
+    }
+    return this.records[index];
   }
 
   updateRecord(record: any, index: number) {
@@ -407,5 +411,43 @@ export class Gantt extends EventTarget {
   }
   updateRecordToListTable(record: any, index: number) {
     this.listTableInstance.updateRecords([record], [index]);
+  }
+  getTaskInfoByTaskListIndex(index: number) {
+    const taskRecord = this.getRecordByIndex(index);
+    const startDateField = this.startDateField;
+    const endDateField = this.endDateField;
+    const progressField = this.progressField;
+    const startDate = new Date(taskRecord[startDateField]);
+    const endDate = new Date(taskRecord[endDateField]);
+    const progress = taskRecord[progressField];
+    const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    return {
+      taskDays,
+      startDate,
+      endDate,
+      progress
+    };
+  }
+
+  updateDateToTaskRecord(updateDateType: 'move' | 'start-move' | 'end-move', days: number, index: number) {
+    const taskRecord = this.getRecordByIndex(index);
+    const startDateField = this.startDateField;
+    const endDateField = this.endDateField;
+    const dateFormat = parseDateFormat(taskRecord[startDateField]);
+    const startDate = new Date(taskRecord[startDateField]);
+    const endDate = new Date(taskRecord[endDateField]);
+    if (updateDateType === 'move') {
+      const newStartDate = formatDate(new Date(days * DayTimes + startDate.getTime()), dateFormat);
+      const newEndDate = formatDate(new Date(days * DayTimes + endDate.getTime()), dateFormat);
+      taskRecord[startDateField] = newStartDate;
+      taskRecord[endDateField] = newEndDate;
+    } else if (updateDateType === 'start-move') {
+      const newStartDate = formatDate(new Date(days * DayTimes + startDate.getTime()), dateFormat);
+      taskRecord[startDateField] = newStartDate;
+    } else if (updateDateType === 'end-move') {
+      const newEndDate = formatDate(new Date(days * DayTimes + endDate.getTime()), dateFormat);
+      taskRecord[endDateField] = newEndDate;
+    }
+    this.updateRecordToListTable(taskRecord, index);
   }
 }

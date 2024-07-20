@@ -3,8 +3,10 @@ import { createRect } from '@visactor/vrender-core';
 import type { Scenegraph } from './scenegraph';
 import { Icon } from './icon';
 
-const TASKBAR_HOVER_ICON =
-  '<svg t="1721370852076" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7166" width="200" height="200"><path d="M320 864c-17.67 0-32-14.31-32-32V192c0-17.67 14.33-32 32-32s32 14.33 32 32v640c0 17.69-14.33 32-32 32zM704 864c-17.69 0-32-14.31-32-32V192c0-17.67 14.31-32 32-32s32 14.33 32 32v640c0 17.69-14.31 32-32 32z" fill="#333333" p-id="7167"></path></svg>';
+const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
+  <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
+  <line x1="70" y1="10" x2="70" y2="190" stroke="black" stroke-width="4"/>
+</svg>`;
 
 export class TaskBar {
   group: Group;
@@ -40,21 +42,7 @@ export class TaskBar {
   initBars() {
     const listTableInstance = this._scene._gantt.listTableInstance;
     for (let i = 0; i < this._scene._gantt.itemCount; i++) {
-      let taskRecord;
-      if (listTableInstance) {
-        taskRecord = listTableInstance.getRecordByRowCol(
-          0,
-          i + this._scene._gantt.listTableInstance.columnHeaderLevelCount
-        );
-      } else {
-        taskRecord = this._scene._gantt.records[i];
-      }
-      const startDateField = this._scene._gantt.startDateField;
-      const endDateField = this._scene._gantt.endDateField;
-      const progressField = this._scene._gantt.progressField;
-      const startDate = new Date(taskRecord[startDateField]);
-      const endDate = new Date(taskRecord[endDateField]);
-      const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      const { startDate, endDate, taskDays, progress } = this._scene._gantt.getTaskInfoByTaskListIndex(i);
       const taskBarSize = this._scene._gantt.colWidthPerDay * taskDays;
       const taskbarHeight = this._scene._gantt.barStyle.width;
       const minDate = new Date(this._scene._gantt.minDate);
@@ -89,7 +77,7 @@ export class TaskBar {
       const progress_rect = createRect({
         x: 0,
         y: 0, //(this._scene._gantt.rowHeight - taskbarHeight) / 2,
-        width: (taskBarSize * taskRecord[progressField]) / 100,
+        width: (taskBarSize * progress) / 100,
         height: taskbarHeight,
         fill: this._scene._gantt.barStyle.barColor2,
         pickable: false
@@ -129,7 +117,7 @@ export class TaskBar {
     const icon = new Icon({
       x: 0,
       y: 0, //this._scene._gantt.rowHeight - taskbarHeight) / 2,
-      width: 20,
+      width: 10,
       height: 20,
       image: TASKBAR_HOVER_ICON,
       pickable: true,
@@ -143,7 +131,7 @@ export class TaskBar {
     const rightIcon = new Icon({
       x: 0,
       y: 0, //this._scene._gantt.rowHeight - taskbarHeight) / 2,
-      width: 20,
+      width: 10,
       height: 20,
       image: TASKBAR_HOVER_ICON,
       pickable: true,
@@ -172,11 +160,11 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('visibleAll', true);
     this.hoverBarLeftIcon.setAttribute('x', 0);
     this.hoverBarLeftIcon.setAttribute('y', 0);
-    this.hoverBarLeftIcon.setAttribute('width', 20);
+    this.hoverBarLeftIcon.setAttribute('width', 10);
     this.hoverBarLeftIcon.setAttribute('height', 20);
-    this.hoverBarRightIcon.setAttribute('x', width - 20);
+    this.hoverBarRightIcon.setAttribute('x', width - 10);
     this.hoverBarRightIcon.setAttribute('y', 0);
-    this.hoverBarRightIcon.setAttribute('width', 20);
+    this.hoverBarRightIcon.setAttribute('width', 10);
     this.hoverBarRightIcon.setAttribute('height', 20);
   }
   hideHoverBar() {
