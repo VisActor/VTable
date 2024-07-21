@@ -138,49 +138,44 @@ export const TABLE_EVENTS = {
 
 export const TABLE_EVENTS_KEYS = Object.keys(TABLE_EVENTS);
 
-export const findEventProps = <T extends EventsProps>(
-  props: T,
-  supportedEvents: Record<string, string> = TABLE_EVENTS
-): EventsProps => {
-  const result: EventsProps = {};
+// export const findEventProps = <T extends EventsProps>(
+//   props: T,
+//   supportedEvents: Record<string, string> = TABLE_EVENTS
+// ): EventsProps => {
+//   const result: EventsProps = {};
 
-  Object.keys(props).forEach(key => {
-    if (supportedEvents[key] && props[key]) {
-      result[key] = props[key];
-    }
-  });
+//   Object.keys(props).forEach(key => {
+//     if (supportedEvents[key] && props[key]) {
+//       result[key] = props[key];
+//     }
+//   });
 
-  return result;
-};
+//   return result;
+// };
 
-export const bindEventsToTable = <T>(
-  table: IVTable,
-  newProps?: T | null,
-  prevProps?: T | null,
-  supportedEvents: Record<string, string> = TABLE_EVENTS
-) => {
-  if ((!newProps && !prevProps) || !table) {
-    return false;
-  }
+// export const bindEventsToTable = <T>(
+//   table: IVTable,
+//   newProps?: T | null,
+//   prevProps?: T | null,
+//   supportedEvents: Record<string, string> = TABLE_EVENTS
+// ) => {
+//   if (!table) return false;
+//   const prevEventProps = prevProps ? findEventProps(prevProps, supportedEvents) : {};
+//   const newEventProps = newProps ? findEventProps(newProps, supportedEvents) : {};
 
-  const prevEventProps = prevProps ? findEventProps(prevProps, supportedEvents) : null;
-  const newEventProps = newProps ? findEventProps(newProps, supportedEvents) : null;
+//   Object.keys(supportedEvents).forEach(eventKey => {
+//     const prevHandler = prevEventProps[eventKey];
+//     const newHandler = newEventProps[eventKey];
 
-  if (prevEventProps) {
-    Object.keys(prevEventProps).forEach(eventKey => {
-      if (!newEventProps || !newEventProps[eventKey] || newEventProps[eventKey] !== prevEventProps[eventKey]) {
-        table.off(supportedEvents[eventKey], prevProps[eventKey]);
-      }
-    });
-  }
+//     if (prevHandler !== newHandler) {
+//       if (prevHandler) {
+//         table.off(supportedEvents[eventKey], prevHandler);
+//       }
+//       if (newHandler) {
+//         table.on(supportedEvents[eventKey] as keyof TYPES.TableEventHandlersEventArgumentMap, newHandler);
+//       }
+//     }
+//   });
 
-  if (newEventProps) {
-    Object.keys(newEventProps).forEach(eventKey => {
-      if (!prevEventProps || !prevEventProps[eventKey] || prevEventProps[eventKey] !== newEventProps[eventKey]) {
-        table.on(supportedEvents[eventKey] as keyof TYPES.TableEventHandlersEventArgumentMap, newEventProps[eventKey]);
-      }
-    });
-  }
-
-  return true;
-};
+//   return true;
+// };

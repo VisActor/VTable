@@ -1,7 +1,7 @@
 <template>
   <BaseTable
     :options="options"
-    type="list"
+    type="pivot"
     :records="records"
     :width="width"
     :height="height"
@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps} from 'vue';
+import { ref, computed, defineProps,} from 'vue';
 import BaseTable from './base-table.vue';
 
 // Define props
