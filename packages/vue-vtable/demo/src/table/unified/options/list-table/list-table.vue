@@ -1,12 +1,11 @@
 <template>
-  <vue-list-table :options="tableOptions" />
+  <vue-list-table :options="tableOptions"/>
 </template>
 
 <script>
 // ... 导入和注册 VueVTable 组件的代码
 export default {
   data() {
-    debugger;
     const option = {
       header: [
         {
