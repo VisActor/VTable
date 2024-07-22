@@ -57,7 +57,7 @@ Or you can directly define a custom theme:
 The color filled in the canvas outside the table drawing area
 
 #${prefix} cellInnerBorder(boolean)
-Whether the cell draws an inner border. If true, the border of the border cell close to the border will be hidden.
+Whether the cell draws an inner border. If false, the border of the border cell close to the border will be hidden.
 
 #${prefix} bodyStyle(Object)
 

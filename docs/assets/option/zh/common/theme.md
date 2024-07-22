@@ -57,7 +57,7 @@ VTable.themes.ARCO.extend({
 表格绘制范围外的 canvas 上填充的颜色
 
 #${prefix} cellInnerBorder(boolean)
-单元格是否绘制内边框，如果为 true，边界单元格靠近边界的边框会被隐藏
+单元格是否绘制内边框，如果为 false，边界单元格靠近边界的边框会被隐藏
 
 #${prefix} bodyStyle(Object)
 
