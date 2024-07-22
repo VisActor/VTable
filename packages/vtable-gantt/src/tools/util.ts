@@ -167,3 +167,39 @@ function getSeparator(format: string) {
   }
   return /[^\w]/;
 }
+
+export function parseStringTemplate(template: string, data: any) {
+  const result = template.replace(/\{([^}]+)\}/g, (match, key) => {
+    const keys = key.split('.');
+    let value = data;
+
+    for (const k of keys) {
+      if (value.hasOwnProperty(k)) {
+        value = value[k];
+      } else {
+        value = match; // 如果找不到对应的字段值，保持原样
+        break;
+      }
+    }
+
+    return value;
+  });
+  return result;
+}
+
+export function toBoxArray<T>(obj: T | T[]): [T, T, T, T] {
+  if (!Array.isArray(obj)) {
+    return [obj /*top*/, obj /*right*/, obj /*bottom*/, obj /*left*/];
+  }
+  if (obj.length === 3) {
+    return [obj[0] /*top*/, obj[1] /*right*/, obj[2] /*bottom*/, obj[1] /*left*/];
+  }
+  if (obj.length === 2) {
+    return [obj[0] /*top*/, obj[1] /*right*/, obj[0] /*bottom*/, obj[1] /*left*/];
+  }
+  if (obj.length === 1) {
+    return [obj[0] /*top*/, obj[0] /*right*/, obj[0] /*bottom*/, obj[0] /*left*/];
+  }
+  // return obj as [T, T, T, T];//原先这种返回方式，会造成修改引用问题
+  return [obj[0] /*top*/, obj[1] /*right*/, obj[2] /*bottom*/, obj[3] /*left*/];
+}

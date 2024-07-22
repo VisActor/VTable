@@ -1,7 +1,7 @@
-import type * as VTable from '@visactor/vtable';
+import type { ColumnsDefine } from '@visactor/vtable';
+import { TYPES } from '@visactor/vtable';
 import type { GanttConstructorOptions } from '../../src/index';
 import { Gantt } from '../../src/index';
-import { style } from '../../../vtable/es/tools/helper';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 
@@ -387,13 +387,13 @@ export function createTable() {
     }
   ];
 
-  const columns: VTable.ColumnsDefine = [
-    {
-      field: 'id',
-      title: 'ID',
-      width: 80,
-      sort: true
-    },
+  const columns: ColumnsDefine = [
+    // {
+    //   field: 'id',
+    //   title: 'ID',
+    //   width: 80,
+    //   sort: true
+    // },
     {
       field: 'title',
       title: 'title',
@@ -428,12 +428,19 @@ export function createTable() {
   ];
   const option: GanttConstructorOptions = {
     records,
-    taskTableColumns: columns,
-    taskTableWidth: 500,
+    taskTable: {
+      columns: columns,
+      width: 500
+    },
     timelineColWidth: 60,
     startDateField: 'start',
     endDateField: 'end',
     progressField: 'progress',
+    frameStyle: {
+      borderLineWidth: 10,
+      borderColor: 'orange',
+      cornerRadius: 8
+    },
     gridStyle: {
       // backgroundColor: 'gray',
       vertical: {
@@ -455,20 +462,26 @@ export function createTable() {
       color: 'red',
       backgroundColor: '#EEF1F5'
     },
-    barStyle: {
-      width: 20,
-      /** 任务条的颜色 */
-      barColor: '#ee8800',
-      /** 已完成部分任务条的颜色 */
-      barColor2: '#91e8e0',
-      /** 任务条的圆角 */
-      cornerRadius: 8,
-      /** 任务条的边框 */
-      borderWidth: 1,
-      /** 边框颜色 */
-      borderColor: 'black',
-      fontFamily: 'Arial',
-      fontSize: 15
+    taskBar: {
+      labelText: '{title} {progress}%',
+      labelTextStyle: {
+        fontFamily: 'Arial',
+        fontSize: 16,
+        textAlign: 'right'
+      },
+      barStyle: {
+        width: 20,
+        /** 任务条的颜色 */
+        barColor: '#ee8800',
+        /** 已完成部分任务条的颜色 */
+        barColor2: '#91e8e0',
+        /** 任务条的圆角 */
+        cornerRadius: 8,
+        /** 任务条的边框 */
+        borderWidth: 1,
+        /** 边框颜色 */
+        borderColor: 'black'
+      }
     },
     timelineScales: [
       {
@@ -505,7 +518,8 @@ export function createTable() {
           lineDash: [8, 4]
         }
       }
-    ]
+    ],
+    rowSeriesNumber: true
   };
   // columns:[
   //   {

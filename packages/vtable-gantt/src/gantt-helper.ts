@@ -1,5 +1,9 @@
 import type { Gantt } from './Gantt';
-import type { IMarkLine } from './ts-types';
+import type { IMarkLine, IScrollStyle } from './ts-types';
+
+import { parsePadding } from '@src/vrender';
+import { isArray, isNumber, isString } from '@visactor/vutils';
+
 export const DayTimes = 1000 * 60 * 60 * 24;
 /** 通过事件坐标y计算鼠标当前所在所几条任务条上 */
 export function getTaskIndexByY(y: number, gantt: Gantt) {
@@ -63,4 +67,50 @@ export function syncScrollStateFromTable(gantt: Gantt) {
       }
     });
   }
+}
+
+export function getHorizontalScrollBarSize(scrollStyle?: IScrollStyle): number {
+  if (
+    scrollStyle?.hoverOn ||
+    (scrollStyle?.horizontalVisible && scrollStyle?.horizontalVisible === 'none') ||
+    (!scrollStyle?.horizontalVisible && scrollStyle?.visible === 'none')
+  ) {
+    return 0;
+  }
+  return scrollStyle?.width ?? 7;
+}
+
+export function getVerticalScrollBarSize(scrollStyle?: IScrollStyle): number {
+  if (
+    scrollStyle?.hoverOn ||
+    (scrollStyle?.verticalVisible && scrollStyle?.verticalVisible === 'none') ||
+    (!scrollStyle?.verticalVisible && scrollStyle?.visible === 'none')
+  ) {
+    return 0;
+  }
+  return scrollStyle?.width ?? 7;
+}
+
+// 复制文件 https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/scenegraph/utils/padding.ts
+export function getQuadProps(
+  paddingOrigin: number | string | number[] | { left?: number; right?: number; top?: number; bottom?: number }
+): [number, number, number, number] {
+  if (isNumber(paddingOrigin) || isString(paddingOrigin) || isArray(paddingOrigin)) {
+    let padding = parsePadding(paddingOrigin as number);
+    if (typeof padding === 'number' || typeof padding === 'string') {
+      padding = [padding, padding, padding, padding];
+    } else if (Array.isArray(padding)) {
+      padding = padding.slice(0) as any;
+    }
+    return padding as any;
+  } else if (
+    paddingOrigin &&
+    (isFinite(paddingOrigin.bottom) ||
+      isFinite(paddingOrigin.left) ||
+      isFinite(paddingOrigin.right) ||
+      isFinite(paddingOrigin.top))
+  ) {
+    return [paddingOrigin.top ?? 0, paddingOrigin.right ?? 0, paddingOrigin.bottom ?? 0, paddingOrigin.left ?? 0];
+  }
+  return [0, 0, 0, 0];
 }

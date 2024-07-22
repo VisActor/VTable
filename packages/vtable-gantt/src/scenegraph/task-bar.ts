@@ -1,7 +1,8 @@
 import { Group } from '@visactor/vrender-core';
-import { createRect } from '@visactor/vrender-core';
+import { createRect, createText } from '@visactor/vrender-core';
 import type { Scenegraph } from './scenegraph';
 import { Icon } from './icon';
+import { parseStringTemplate } from '../tools/util';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -40,9 +41,8 @@ export class TaskBar {
     this.initHoverBarIcons();
   }
   initBars() {
-    const listTableInstance = this._scene._gantt.listTableInstance;
     for (let i = 0; i < this._scene._gantt.itemCount; i++) {
-      const { startDate, endDate, taskDays, progress } = this._scene._gantt.getTaskInfoByTaskListIndex(i);
+      const { startDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(i);
       const taskBarSize = this._scene._gantt.colWidthPerDay * taskDays;
       const taskbarHeight = this._scene._gantt.barStyle.width;
       const minDate = new Date(this._scene._gantt.minDate);
@@ -84,6 +84,29 @@ export class TaskBar {
       });
       barGroup.appendChild(progress_rect);
       barGroup.progressRect = progress_rect;
+      //创建label 文字
+      const label = createText({
+        // visible: false,
+        pickable: false,
+        x:
+          this._scene._gantt.barLabelStyle.textAlign === 'center'
+            ? taskBarSize / 2
+            : this._scene._gantt.barLabelStyle.textAlign === 'left'
+            ? 10
+            : taskBarSize - 10,
+        y: this._scene._gantt.barLabelStyle.fontSize / 2,
+        fontSize: this._scene._gantt.barLabelStyle.fontSize, // 10
+        fill: this._scene._gantt.barLabelStyle.color,
+        fontFamily: this._scene._gantt.barLabelStyle.fontFamily,
+        text: parseStringTemplate(this._scene._gantt.barLabelText as string, taskRecord),
+        maxLineWidth: taskBarSize - 20,
+        textBaseline: 'middle',
+        textAlign: this._scene._gantt.barLabelStyle.textAlign
+        // dx: 12 + 4,
+        // dy: this._scene._gantt.barLabelStyle.fontSize / 2
+      });
+      barGroup.appendChild(label);
+      barGroup.textLabel = label;
     }
   }
 

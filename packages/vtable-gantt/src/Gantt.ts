@@ -2,14 +2,31 @@
 // import { createRootElement } from './core/tableHelper';
 import { Scenegraph } from './scenegraph/scenegraph';
 import { Env } from './env';
-import type { IBarStyle, GanttConstructorOptions, IGridStyle, ITimelineHeaderStyle, IMarkLine } from './ts-types';
+import type {
+  IBarStyle,
+  GanttConstructorOptions,
+  IGridStyle,
+  ITimelineHeaderStyle,
+  IMarkLine,
+  IBarLabelText,
+  IBarLableTextStyle,
+  IScrollStyle,
+  IFrameStyle,
+  ITableColumnsDefine
+} from './ts-types';
 import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
-import { DayTimes, generateMarkLine, syncScrollStateFromTable } from './gantt-helper';
+import {
+  DayTimes,
+  generateMarkLine,
+  getHorizontalScrollBarSize,
+  getVerticalScrollBarSize,
+  syncScrollStateFromTable
+} from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
-import { formatDate, parseDateFormat } from './tools/util';
+import { formatDate, parseDateFormat, toBoxArray } from './tools/util';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
   const element = document.createElement('div');
@@ -61,17 +78,21 @@ export class Gantt extends EventTarget {
   headerHeight: number;
   gridHeight: number;
 
-  scrollStyle: TYPES.ScrollStyle;
+  scrollStyle: IScrollStyle;
   timelineHeaderStyle: ITimelineHeaderStyle;
   gridStyle: IGridStyle;
   barStyle: IBarStyle;
+  barLabelText: IBarLabelText;
+  barLabelStyle: IBarLableTextStyle;
+  frameStyle: IFrameStyle;
+
   startDateField: string;
   endDateField: string;
   progressField: string;
   minDate: Date;
   maxDate: Date;
   taskTableWidth: number;
-  taskTableColumns: TYPES.ColumnsDefine;
+  taskTableColumns: ITableColumnsDefine;
   markLine: IMarkLine[];
   records: any[];
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
@@ -85,8 +106,8 @@ export class Gantt extends EventTarget {
     this.progressField = options?.progressField ?? 'progress';
     this.minDate = options?.minDate ? new Date(options?.minDate) : new Date(2024, 1, 1);
     this.maxDate = options?.maxDate ? new Date(options?.maxDate) : new Date(2025, 1, 1);
-    this.taskTableWidth = typeof options?.taskTableWidth === 'number' ? options?.taskTableWidth : 100;
-    this.taskTableColumns = options?.taskTableColumns ?? [];
+    this.taskTableWidth = typeof options?.taskTable?.width === 'number' ? options?.taskTable?.width : 100;
+    this.taskTableColumns = options?.taskTable?.columns ?? [];
     this.records = options?.records ?? [];
     this.scrollStyle = Object.assign(
       {},
@@ -145,7 +166,23 @@ export class Gantt extends EventTarget {
         fontFamily: 'Arial',
         fontSize: 14
       },
-      options?.barStyle
+      options?.taskBar?.barStyle
+    );
+    this.barLabelText = options?.taskBar?.labelText ?? '';
+    this.barLabelStyle = {
+      fontFamily: options?.taskBar?.labelTextStyle.fontFamily ?? 'Arial',
+      fontSize: options?.taskBar?.labelTextStyle.fontSize ?? this.rowHeight,
+      color: options?.taskBar?.labelTextStyle.color ?? '#F01',
+      textAlign: options?.taskBar?.labelTextStyle.textAlign ?? 'left'
+    };
+    this.frameStyle = Object.assign(
+      {},
+      {
+        borderColor: 'gray',
+        borderLineWidth: [1, 1, 1, 1],
+        cornerRadius: 4
+      },
+      options?.frameStyle
     );
     this.markLine = generateMarkLine(options?.markLine);
 
@@ -203,15 +240,16 @@ export class Gantt extends EventTarget {
           parseInt(computedStyle.paddingTop || '0px', 10) -
           parseInt(computedStyle.paddingBottom || '0px', 20);
       }
-      const width1 = widthWithoutPadding ?? 1 - 1;
-      const height1 = heightWithoutPadding ?? 1 - 1;
+      const width1 = (widthWithoutPadding ?? 1) - 1 - this.taskTableWidth;
+      const height1 = (heightWithoutPadding ?? 1) - 1;
 
       element.style.width = (width1 && `${width1}px`) || '0px';
       element.style.height = (height1 && `${height1}px`) || '0px';
 
       const { canvas } = this;
-      widthP = canvas.parentElement?.offsetWidth ?? 1 - 1;
-      heightP = canvas.parentElement?.offsetHeight ?? 1 - 1;
+
+      widthP = canvas.parentElement?.offsetWidth ?? 1;
+      heightP = canvas.parentElement?.offsetHeight ?? 1;
 
       //style 与 width，height相同
       if (this?.scenegraph?.stage) {
@@ -229,51 +267,44 @@ export class Gantt extends EventTarget {
       widthP = this.canvasWidth - 1;
       heightP = this.canvasHeight - 1;
     }
+    const width = Math.floor(widthP - getVerticalScrollBarSize(this.scrollStyle));
+    const height = Math.floor(heightP - getHorizontalScrollBarSize(this.scrollStyle));
 
-    // const width = Math.floor(widthP - style.getScrollBarSize(this.getTheme().scrollStyle));
-    // const height = Math.floor(heightP - style.getScrollBarSize(this.getTheme().scrollStyle));
-
-    this.tableNoFrameWidth = widthP - (this.taskTableWidth as number);
+    this.tableNoFrameWidth = widthP;
     this.tableNoFrameHeight = Math.floor(heightP);
-    // if (this.internalProps.theme?.frameStyle) {
-    //   //考虑表格整体边框的问题
-    //   const lineWidths = [0, 0, 0, 0]; //toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
-    //   const shadowWidths = [0, 0, 0, 0]; // toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
-    //   if (this.theme.frameStyle?.innerBorder) {
-    //     this.tableX = 0;
-    //     this.tableY = 0;
-    //     this.tableNoFrameWidth = width - (shadowWidths[1] ?? 0);
-    //     this.tableNoFrameHeight = height - (shadowWidths[2] ?? 0);
-    //   } else {
-    //     this.tableX = (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
-    //     this.tableY = (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
-    //     this.tableNoFrameWidth =
-    //       width - ((lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0)) - ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0));
-    //     this.tableNoFrameHeight =
-    //       height - ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) - ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
-    //   }
-    // }
+    if (this.frameStyle) {
+      //考虑表格整体边框的问题
+      const lineWidth = this.frameStyle?.borderLineWidth; // toBoxArray(this.frameStyle?.borderLineWidth ?? [null]);
+      this.tableX = lineWidth;
+      this.tableY = lineWidth;
+      this.tableNoFrameWidth = width - lineWidth;
+
+      this.tableNoFrameHeight = height - lineWidth * 2;
+    }
   }
   generateListTableOptions() {
     const listTable_options: ListTableConstructorOptions = {};
     for (const key in this.options) {
-      if (key === 'taskTableColumns') {
-        listTable_options.columns = this.options.taskTableColumns;
-        // debugger;
-      } else if (key !== 'timelineScales' && key !== 'barStyle') {
+      if (key !== 'timelineScales' && key !== 'barStyle' && key !== 'theme') {
         listTable_options[key] = this.options[key];
       }
     }
+    listTable_options.columns = this.options.taskTable.columns;
+    // lineWidthArr[1] = 0;
     listTable_options.theme = {
       scrollStyle: {
         verticalVisible: 'none'
       },
       headerStyle: {
         bgColor: this.timelineHeaderStyle.backgroundColor
-      }
+      },
+      cellInnerBorder: false,
+      frameStyle: Object.assign({}, this.frameStyle, {
+        cornerRadius: [this.frameStyle.cornerRadius, 0, 0, this.frameStyle.cornerRadius]
+      })
     };
     listTable_options.canvasWidth = this.taskTableWidth as number;
-    listTable_options.canvasHeight = this.canvasHeight ?? this.tableNoFrameHeight;
+    listTable_options.canvasHeight = this.canvasHeight ?? this.canvas.height;
     listTable_options.defaultHeaderRowHeight = this.headerRowHeight * this.headerLevel;
     listTable_options.clearDOM = false;
     return listTable_options;
@@ -422,6 +453,7 @@ export class Gantt extends EventTarget {
     const progress = taskRecord[progressField];
     const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     return {
+      taskRecord,
       taskDays,
       startDate,
       endDate,

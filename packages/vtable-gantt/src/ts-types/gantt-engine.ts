@@ -1,4 +1,4 @@
-import type { ColumnsDefine, TYPES } from '@visactor/vtable';
+import type { ColumnsDefine, TYPES, LineDashsDef } from '@visactor/vtable';
 export type LayoutObjectId = number | string;
 
 export interface ITimelineHeaderStyle {
@@ -33,11 +33,7 @@ export interface GanttConstructorOptions {
     step: number;
     format: (date: Date) => string;
   }[];
-  /** 定义列 */
-  taskTableColumns?: ColumnsDefine; // (string | IDimension)[];
-  taskTableWidth?: 'auto' | number;
-  gridStyle?: IGridStyle;
-  timelineHeaderStyle?: ITimelineHeaderStyle;
+
   /** 时间刻度对应的字段名 */
   startDateField: string;
   /** 时间刻度对应的字段名 */
@@ -48,17 +44,11 @@ export interface GanttConstructorOptions {
   minDate?: string;
   /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
   maxDate?: string;
-  markLine?: boolean | IMarkLine | IMarkLine[];
-  // /** 设置的表格主题 */
-  // theme?: TableTheme;
-  /** 设置任务条样式 可以设置多组 依次循环使用 */
-  barStyle?: IBarStyle; // 参考https://lightcharts.bytedance.net/charts/doc/options#series.gantt.barStyle
-  scrollStyle?: TYPES.ScrollStyle;
   defaultHeaderRowHeight?: number;
   defaultRowHeight?: number;
   timelineColWidth?: number;
 
-  rowSeriesNumber?: TYPES.IRowSeriesNumber;
+  rowSeriesNumber?: IRowSeriesNumber;
   dragHeader?: boolean;
 
   /**
@@ -67,9 +57,41 @@ export interface GanttConstructorOptions {
    * */
   overscrollBehavior?: 'auto' | 'none';
 
+  markLine?: boolean | IMarkLine | IMarkLine[];
+  // /** 设置的表格主题 */
+  // theme?: TableTheme;
+  /** 设置任务条样式 可以设置多组 依次循环使用 */
+  taskBar?: {
+    labelText?: IBarLabelText;
+    labelTextStyle: IBarLableTextStyle;
+    barStyle: IBarStyle;
+  };
+
+  taskTable?: {
+    /** 定义列 */
+    columns?: ColumnsDefine; // (string | IDimension)[];
+    width?: 'auto' | number;
+    headerStyle?: ITableStyle;
+    bodyStyle?: ITableStyle;
+  };
+  gridStyle?: IGridStyle;
+  timelineHeaderStyle?: ITimelineHeaderStyle;
+  scrollStyle?: IScrollStyle;
+
+  frameStyle: IFrameStyle;
   // taskTableTheme?: ITableThemeDefine;
 }
-
+/**
+ * IBarLabelText
+ * 可以配置固定文本 或者 ${fieldName} 或者自定义函数
+ */
+export type IBarLabelText = string; //| string[] | ((args: any) => string | string[]);
+export interface IBarLableTextStyle {
+  fontFamily?: string;
+  fontSize?: number;
+  color?: string;
+  textAlign?: string;
+}
 export interface IBarStyle {
   /** 任务条的颜色 */
   barColor?: string;
@@ -83,8 +105,6 @@ export interface IBarStyle {
   borderWidth?: number;
   /** 边框颜色 */
   borderColor?: string;
-  fontFamily?: string;
-  fontSize?: number;
 }
 export interface IMarkLine {
   date?: string;
@@ -94,4 +114,14 @@ export interface IMarkLine {
     lineDash?: number[];
   };
 }
+export type ITableColumnsDefine = ColumnsDefine;
+export type IFrameStyle = {
+  borderColor?: string;
+  borderLineWidth?: number;
+  borderLineDash?: number[];
+  cornerRadius?: number;
+};
+export type ITableStyle = TYPES.ThemeStyle;
+export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
+export type IScrollStyle = TYPES.ScrollStyle;
 //#endregion

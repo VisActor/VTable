@@ -311,6 +311,7 @@ export class StateManager {
     const tastBarGroup = this._gantt.stateManager.resizeTaskBar.target;
     const rect = this._gantt.stateManager.resizeTaskBar.target.barRect;
     const progressRect = this._gantt.stateManager.resizeTaskBar.target.progressRect;
+    const textLabel = this._gantt.stateManager.resizeTaskBar.target.textLabel;
 
     const progressField = this._gantt.progressField;
     const taskIndex = getTaskIndexByY(this.resizeTaskBar.startY, this._gantt);
@@ -319,12 +320,21 @@ export class StateManager {
     if (this._gantt.stateManager.resizeTaskBar.onIconName === 'left') {
       tastBarGroup.setAttribute('x', tastBarGroup.attribute.x + dx);
     }
-    tastBarGroup.setAttribute(
-      'width',
-      tastBarGroup.attribute.width + (this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx)
-    );
+    const taskBarSize =
+      tastBarGroup.attribute.width + (this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx);
+    tastBarGroup.setAttribute('width', taskBarSize);
+
     rect.setAttribute('width', tastBarGroup.attribute.width);
     progressRect.setAttribute('width', (progress / 100) * tastBarGroup.attribute.width);
+    textLabel.setAttribute(
+      'x',
+      this._gantt.barLabelStyle.textAlign === 'center'
+        ? taskBarSize / 2
+        : this._gantt.barLabelStyle.textAlign === 'left'
+        ? 10
+        : taskBarSize - 10
+    );
+    textLabel.setAttribute('maxLineWidth', taskBarSize - 20);
 
     const x = tastBarGroup.attribute.x;
     const y = tastBarGroup.attribute.y;
