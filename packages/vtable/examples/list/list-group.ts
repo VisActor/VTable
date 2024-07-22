@@ -1,6 +1,7 @@
 import * as VTable from '../../src';
 import { InputEditor } from '@visactor/vtable-editors';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+import { createGroup } from '@visactor/vrender-core';
 const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
 const input_editor = new InputEditor({});
@@ -183,8 +184,108 @@ export function createTable() {
           updateing = false;
         }, 1000);
       });
+
+      tableInstance.on('scroll', () => {
+        updateGroupTitle(tableInstance);
+      });
     })
     .catch(e => {
       console.error(e);
     });
+}
+
+function updateGroupTitle(tableInstance: VTable.ListTable) {
+  const titleRows = getGroupTitleInfo(tableInstance);
+  const colHeaderGroup = tableInstance.scenegraph.colHeaderGroup;
+  const shadowGroup = colHeaderGroup.shadowRoot;
+  shadowGroup.setAttributes({
+    // shadowRootIdx: 1,
+    // width: 500,
+    // height: 500,
+    // fill: 'red'
+  });
+  shadowGroup.removeAllChild();
+
+  for (let col = 0; col < tableInstance.colCount; col++) {
+    const colGroup = createGroup({
+      x: tableInstance.getColsWidth(0, col - 1),
+      y: tableInstance.getFrozenRowsHeight()
+    });
+    shadowGroup.add(colGroup);
+    for (let i = 0; i < titleRows.length; i++) {
+      const row = titleRows[i];
+      const cell = tableInstance.scenegraph.getCell(col, row);
+      if (cell.role === 'cell') {
+        // const newCell = cell.clone();
+        const newCell = cloneGraphic(cell);
+        newCell.setAttributes({
+          y: i * 40
+        });
+        colGroup.add(newCell);
+      }
+    }
+  }
+}
+
+let titleRows;
+function getGroupTitleInfo(tableInstance: VTable.ListTable) {
+  const row = tableInstance.scenegraph.proxy.screenTopRow + (titleRows?.length ?? 0) + 1;
+  const recordIndex = tableInstance.getRecordIndexByCell(0, row); // [0, 0, 6]/0
+
+  titleRows = getTitleRowsByRecordIndex(tableInstance, recordIndex, row);
+  console.log('titleRows', titleRows);
+  return titleRows;
+}
+
+function getTitleRowsByRecordIndex(tableInstance: VTable.ListTable, recordIndex: number | number[], row: number) {
+  const titleRecords = [];
+  if (!Array.isArray(recordIndex)) {
+    recordIndex = [recordIndex];
+  }
+
+  for (let i = 0; i < recordIndex.length; i++) {
+    const index = recordIndex.slice(0, i + 1);
+    const record = tableInstance.dataSource.getRawRecord(index);
+    titleRecords.push(record);
+  }
+
+  const titleRows = [];
+  let titleIndex = recordIndex.slice(0, recordIndex.length - 1);
+  const currentIndexedData = tableInstance.dataSource.currentIndexedData;
+  const startIndex = row - tableInstance.columnHeaderLevelCount;
+
+  for (let i = startIndex; i >= 0; i--) {
+    const currentIndex = currentIndexedData[i];
+    if (Array.isArray(currentIndex) && titleIndex.length === currentIndex.length) {
+      let isMatch = true;
+      for (let j = 0; j < currentIndex.length; j++) {
+        if (currentIndex[j] !== titleIndex[j]) {
+          isMatch = false;
+          break;
+        }
+      }
+      if (isMatch) {
+        titleRows.push(i + tableInstance.columnHeaderLevelCount);
+        titleIndex = titleIndex.slice(0, titleIndex.length - 1);
+      }
+    } else if (currentIndex === recordIndex[0]) {
+      titleRows.push(i + tableInstance.columnHeaderLevelCount);
+      break;
+    }
+  }
+
+  return titleRows.reverse();
+  // return titleRecords;
+}
+
+function cloneGraphic(graphic: VTable.Graphic) {
+  const newGraphic = graphic.clone();
+  if (graphic.type === 'group') {
+    const newGroup = newGraphic as VTable.Group;
+    graphic.forEachChildren(child => {
+      const newChild = cloneGraphic(child);
+      newGroup.add(newChild);
+    });
+  }
+  return newGraphic;
 }

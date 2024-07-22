@@ -10,6 +10,7 @@ export function initSceneGraph(scene: Scenegraph) {
   scene.tableGroup.role = 'table';
 
   const colHeaderGroup = createContainerGroup(0, 0, true);
+  colHeaderGroup.attachShadow();
   colHeaderGroup.role = 'col-header';
   scene.colHeaderGroup = colHeaderGroup;
 
