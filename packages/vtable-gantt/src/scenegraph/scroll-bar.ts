@@ -165,7 +165,7 @@ export class ScrollBarComponent {
           (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.y) +
           this._gantt.tableY;
       } else {
-        attrY = y - (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.y);
+        attrY = y - (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.y) + this._gantt.tableY;
       }
 
       this.hScrollBar.setAttributes({
@@ -210,7 +210,7 @@ export class ScrollBarComponent {
 
       this.vScrollBar.setAttributes({
         x: attrX,
-        y: frozenRowsHeight + (!hoverOn ? this._gantt.scenegraph.tableGroup.attribute.y : 0),
+        y: frozenRowsHeight + (!hoverOn ? this._gantt.scenegraph.tableGroup.attribute.y : 0) + this._gantt.tableY,
         height: tableHeight - frozenRowsHeight,
         range: [0, rangeEnd],
         visible: visible === 'always'

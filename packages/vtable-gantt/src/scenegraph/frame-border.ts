@@ -5,112 +5,94 @@ import { isArray } from '@visactor/vutils';
 import type { IFrameStyle } from '../ts-types';
 import type { Gantt } from '../Gantt';
 import { getQuadProps } from '../gantt-helper';
+import type { Scenegraph } from './scenegraph';
 
-/**
- * @description: create frame border
- * @param {Group} group
- * @param {TableFrameStyle} frameTheme
- * @param {string} role
- * @param {[boolean, boolean, boolean, boolean]} strokeArray
- * @return {*}
- */
-export function createFrameBorder(
-  group: Group,
-  frameTheme: IFrameStyle | undefined,
-  role: string,
-  strokeArray: [boolean, boolean, boolean, boolean] | undefined, // to do 处理成0b001111形式
-  justForXYPosition?: boolean
-) {
-  if (!frameTheme) {
-    return;
+export class FrameBorder {
+  _scene: Scenegraph;
+  border: IRect;
+  constructor(scene: Scenegraph) {
+    this._scene = scene;
+    this.createFrameBorder();
   }
+  createFrameBorder() {
+    const justForXYPosition = false;
+    const group = this._scene.tableGroup;
+    const frameTheme = this._scene._gantt.frameStyle;
+    // const strokeArray = [true, true, true, false];
+    if (!frameTheme) {
+      return;
+    }
+    const { cornerRadius, borderColor, borderLineWidth, borderLineDash } = frameTheme;
 
-  const isTableGroup = role === 'table';
+    // const hasShadow = false;
+    const groupAttributes: IGroupGraphicAttribute = {};
+    const rectAttributes: IRectGraphicAttribute = {
+      pickable: false
+    };
 
-  const {
-    shadowBlur,
-    shadowOffsetX,
-    shadowOffsetY,
-    shadowColor,
-    cornerRadius,
-    borderColor,
-    borderLineWidth,
-    borderLineDash
-  } = frameTheme;
+    // 处理边框
+    if (borderLineWidth) {
+      rectAttributes.stroke = true;
+      rectAttributes.fill = false;
+      rectAttributes.stroke = borderColor; // getStroke(borderColor, strokeArray);
+      rectAttributes.lineWidth = borderLineWidth as number;
+      borderLineDash && (rectAttributes.lineDash = borderLineDash as number[]);
+      rectAttributes.lineCap = 'butt';
+    }
+    if (Array.isArray(borderColor)) {
+      (rectAttributes as any).strokeArrayColor = getQuadProps(borderColor as any);
+    }
 
-  // const hasShadow = false;
-  const groupAttributes: IGroupGraphicAttribute = {};
-  const rectAttributes: IRectGraphicAttribute = {
-    pickable: false
-  };
-  // // 处理shadow
-  // if (shadowBlur && isTableGroup) {
-  //   // 只有table才能配置shadow
-  //   rectAttributes.shadowBlur = shadowBlur;
-  //   rectAttributes.shadowOffsetX = shadowOffsetX;
-  //   rectAttributes.shadowOffsetY = shadowOffsetY;
-  //   rectAttributes.shadowColor = shadowColor;
-  //   rectAttributes.stroke = true;
-  //   rectAttributes.stroke = shadowColor;
-  //   rectAttributes.lineWidth = 1;
-  //   hasShadow = true;
+    // if (Array.isArray(borderLineWidth)) {
+    //   (rectAttributes as any).strokeArrayWidth = getQuadProps(borderLineWidth);
+    //   (rectAttributes as any).lineWidth = 1;
+    // }
 
-  //   // rectAttributes.fill = true;
-  //   // rectAttributes.fillOpacity = 0.01;
-  // }
+    if (cornerRadius) {
+      rectAttributes.cornerRadius = [0, 10, 10, 0];
+      groupAttributes.cornerRadius = [0, 10, 10, 0];
+    }
 
-  // 处理边框
-  if (borderLineWidth) {
-    rectAttributes.stroke = true;
-    rectAttributes.fill = false;
-    rectAttributes.stroke = borderColor; // getStroke(borderColor, strokeArray);
-    rectAttributes.lineWidth = borderLineWidth as number;
-    borderLineDash && (rectAttributes.lineDash = borderLineDash as number[]);
-    rectAttributes.lineCap = 'butt';
+    // const borderTop = (rectAttributes as any).strokeArrayWidth
+    //   ? (rectAttributes as any).strokeArrayWidth[0]
+    //   : (rectAttributes.lineWidth as number) ?? 0;
+    // const borderRight = (rectAttributes as any).strokeArrayWidth
+    //   ? (rectAttributes as any).strokeArrayWidth[1]
+    //   : (rectAttributes.lineWidth as number) ?? 0;
+    // const borderBottom = (rectAttributes as any).strokeArrayWidth
+    //   ? (rectAttributes as any).strokeArrayWidth[2]
+    //   : (rectAttributes.lineWidth as number) ?? 0;
+    // const borderLeft = (rectAttributes as any).strokeArrayWidth
+    //   ? (rectAttributes as any).strokeArrayWidth[3]
+    //   : (rectAttributes.lineWidth as number) ?? 0;
+    group.setAttributes(groupAttributes);
+
+    if (justForXYPosition) {
+      return;
+    }
+
+    if (rectAttributes.stroke) {
+      rectAttributes.x = -borderLineWidth / 2; //为了可以绘制完整矩形 且左侧的边框不出现在group中
+      rectAttributes.y = borderLineWidth / 2;
+      rectAttributes.pickable = false;
+
+      rectAttributes.width = group.attribute.width + borderLineWidth / 2 + borderLineWidth / 2;
+      rectAttributes.height = group.attribute.height + borderLineWidth / 2 + borderLineWidth / 2;
+      const borderRect = createRect(rectAttributes);
+      borderRect.name = 'border-rect';
+      group.parent.insertAfter(borderRect, group);
+      (group as any).border = borderRect;
+      this.border = borderRect;
+    }
   }
-  if (Array.isArray(borderColor)) {
-    (rectAttributes as any).strokeArrayColor = getQuadProps(borderColor as any);
-  }
-
-  if (Array.isArray(borderLineWidth)) {
-    (rectAttributes as any).strokeArrayWidth = getQuadProps(borderLineWidth);
-    (rectAttributes as any).lineWidth = 1;
-  }
-
-  if (cornerRadius) {
-    rectAttributes.cornerRadius = [0, 10, 10, 0];
-    groupAttributes.cornerRadius = [0, 10, 10, 0];
-  }
-
-  const borderTop = (rectAttributes as any).strokeArrayWidth
-    ? (rectAttributes as any).strokeArrayWidth[0]
-    : (rectAttributes.lineWidth as number) ?? 0;
-  const borderRight = (rectAttributes as any).strokeArrayWidth
-    ? (rectAttributes as any).strokeArrayWidth[1]
-    : (rectAttributes.lineWidth as number) ?? 0;
-  const borderBottom = (rectAttributes as any).strokeArrayWidth
-    ? (rectAttributes as any).strokeArrayWidth[2]
-    : (rectAttributes.lineWidth as number) ?? 0;
-  const borderLeft = (rectAttributes as any).strokeArrayWidth
-    ? (rectAttributes as any).strokeArrayWidth[3]
-    : (rectAttributes.lineWidth as number) ?? 0;
-  group.setAttributes(groupAttributes);
-
-  if (justForXYPosition) {
-    return;
-  }
-
-  if (rectAttributes.stroke) {
-    rectAttributes.x = -borderLeft / 2; //为了可以绘制完整矩形 且左侧的边框不出现在group中
-    rectAttributes.y = borderTop / 2;
-    rectAttributes.pickable = false;
-
-    rectAttributes.width = group.attribute.width + borderLeft / 2 + borderRight / 2;
-    rectAttributes.height = group.attribute.height + borderTop / 2 + borderBottom / 2;
-    const borderRect = createRect(rectAttributes);
-    borderRect.name = 'border-rect';
-    group.parent.insertAfter(borderRect, group);
-    (group as any).border = borderRect;
+  resize() {
+    const { cornerRadius, borderColor, borderLineWidth, borderLineDash } = this._scene._gantt.frameStyle;
+    this.border.setAttributes({
+      // x: -borderLineWidth / 2,
+      // y: borderLineWidth / 2,
+      width: this._scene.tableGroup.attribute.width + this.border.attribute.lineWidth,
+      height: this._scene.tableGroup.attribute.height + this.border.attribute.lineWidth
+    });
   }
 }
 

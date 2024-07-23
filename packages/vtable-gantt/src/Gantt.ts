@@ -85,6 +85,7 @@ export class Gantt extends EventTarget {
   barLabelText: IBarLabelText;
   barLabelStyle: IBarLableTextStyle;
   frameStyle: IFrameStyle;
+  pixelRatio: number;
 
   startDateField: string;
   endDateField: string;
@@ -109,6 +110,7 @@ export class Gantt extends EventTarget {
     this.taskTableWidth = typeof options?.taskTable?.width === 'number' ? options?.taskTable?.width : 100;
     this.taskTableColumns = options?.taskTable?.columns ?? [];
     this.records = options?.records ?? [];
+    this.pixelRatio = options?.pixelRatio ?? 1;
     this.scrollStyle = Object.assign(
       {},
       {
@@ -292,9 +294,9 @@ export class Gantt extends EventTarget {
     listTable_options.columns = this.options.taskTable.columns;
     // lineWidthArr[1] = 0;
     listTable_options.theme = {
-      scrollStyle: {
+      scrollStyle: Object.assign({}, this.scrollStyle, {
         verticalVisible: 'none'
-      },
+      }),
       headerStyle: {
         bgColor: this.timelineHeaderStyle.backgroundColor
       },
@@ -315,6 +317,13 @@ export class Gantt extends EventTarget {
    */
   getElement(): HTMLElement {
     return this.element;
+  }
+
+  /**
+   * 获取创建gantt传入的容器
+   */
+  getContainer(): HTMLElement {
+    return this.element.parentElement;
   }
 
   _orderScales() {
@@ -481,5 +490,23 @@ export class Gantt extends EventTarget {
       taskRecord[endDateField] = newEndDate;
     }
     this.updateRecordToListTable(taskRecord, index);
+  }
+
+  /**
+   * 设置像数比
+   * @param pixelRatio
+   */
+  setPixelRatio(pixelRatio: number) {
+    this.pixelRatio = pixelRatio;
+    this.scenegraph.setPixelRatio(pixelRatio);
+  }
+
+  _resize() {
+    this._updateSize();
+    this.scenegraph.resize();
+    this.listTableInstance.setCanvasSize(
+      this.taskTableWidth,
+      this.tableNoFrameHeight + this.frameStyle.borderLineWidth * 2
+    );
   }
 }

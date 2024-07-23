@@ -107,4 +107,8 @@ export class TimelineHeader {
   setY(y: number) {
     this.group.setAttribute('y', y);
   }
+  resize() {
+    this.group.setAttribute('width', this.group.attribute?.width ?? 0);
+    this.group.setAttribute('height', this.group.attribute?.height ?? 0);
+  }
 }

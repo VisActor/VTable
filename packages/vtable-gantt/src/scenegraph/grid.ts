@@ -2,6 +2,7 @@ import { Group, createLine } from '@visactor/vrender-core';
 import { TYPES } from '@visactor/vtable';
 import type { IGridStyle } from '../ts-types';
 import { str } from '@visactor/vtable/es/tools/helper';
+import type { Scenegraph } from './scenegraph';
 export class Grid {
   vertical: boolean;
   horizontal: boolean;
@@ -23,45 +24,31 @@ export class Grid {
   horizontalLineGroup: Group;
   allGridHeight: number;
   allGridWidth: number;
-  constructor(gridOption: {
-    vertical: boolean;
-    horizontal: boolean;
-    scrollLeft: number;
-    scrollTop: number;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    timelineDates: any;
-    colWidthPerDay: number;
-    rowHeight: number;
-    rowCount: number;
-    allGridHeight: number;
-    allGridWidth: number;
-    gridStyle: IGridStyle;
-  }) {
-    this.vertical = gridOption.vertical;
-    this.horizontal = gridOption.horizontal;
-    this.gridStyle = gridOption.gridStyle;
-    this.scrollLeft = gridOption.scrollLeft;
-    this.scrollTop = gridOption.scrollTop;
-    this.x = gridOption.x;
-    this.y = gridOption.y;
-    this.width = gridOption.width;
-    this.height = gridOption.height;
-    this.timelineDates = gridOption.timelineDates;
-    this.colWidthPerDay = gridOption.colWidthPerDay;
-    this.rowHeight = gridOption.rowHeight;
-    this.rowCount = gridOption.rowCount;
-    this.allGridWidth = gridOption.allGridWidth;
-    this.allGridHeight = gridOption.allGridHeight;
+  _scene: Scenegraph;
+  constructor(scene: Scenegraph) {
+    this._scene = scene;
+    this.vertical = !!scene._gantt.gridStyle.vertical;
+    this.horizontal = !!scene._gantt.gridStyle.horizontal;
+    this.gridStyle = scene._gantt.gridStyle;
+    this.scrollLeft = 0;
+    this.scrollTop = 0;
+    this.x = 0;
+    this.y = scene._gantt.headerRowHeight * scene._gantt.headerLevel;
+    this.width = scene.tableGroup.attribute.width;
+    this.height = scene.tableGroup.attribute.height - scene.timelineHeader.group.attribute.height;
+    this.timelineDates = scene._gantt.reverseOrderedScales[0].timelineDates;
+    this.colWidthPerDay = scene._gantt.colWidthPerDay;
+    this.rowHeight = scene._gantt.rowHeight;
+    this.rowCount = scene._gantt.itemCount;
+    this.allGridWidth = scene._gantt.getAllColsWidth();
+    this.allGridHeight = scene._gantt.getAllGridHeight();
     this.group = new Group({
-      x: gridOption.x,
-      y: gridOption.y,
-      width: gridOption.width,
-      height: gridOption.height,
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height,
       clip: true,
-      fill: gridOption.gridStyle?.backgroundColor
+      fill: this.gridStyle?.backgroundColor
     });
     this.group.name = 'grid-container';
     if (this.vertical) {
@@ -134,5 +121,11 @@ export class Grid {
   setY(y: number) {
     this.verticalLineGroup.setAttribute('y', y);
     this.horizontalLineGroup.setAttribute('y', y);
+  }
+  resize() {
+    this.width = this._scene.tableGroup.attribute.width;
+    this.height = this._scene.tableGroup.attribute.height - this._scene.timelineHeader.group.attribute.height;
+    this.group.setAttribute('width', this.width);
+    this.group.setAttribute('height', this.height);
   }
 }

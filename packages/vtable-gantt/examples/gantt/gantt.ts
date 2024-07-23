@@ -467,7 +467,7 @@ export function createTable() {
       labelTextStyle: {
         fontFamily: 'Arial',
         fontSize: 16,
-        textAlign: 'right'
+        textAlign: 'left'
       },
       barStyle: {
         width: 20,

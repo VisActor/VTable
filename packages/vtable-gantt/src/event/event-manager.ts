@@ -4,6 +4,8 @@ import { EventHandler } from '../event/EventHandler';
 import { handleWhell } from '../event/scroll';
 import { throttle } from '../tools/util';
 import { InteractionState } from '../ts-types';
+import { isValid } from '@visactor/vutils';
+import { getPixelRatio } from '../tools/pixel-ratio';
 
 export class EventManager {
   _gantt: Gantt;
@@ -93,5 +95,21 @@ function bindContainerDomListener(eventManager: EventManager) {
   const handler = eventManager._eventHandler;
   handler.on(gantt.getElement(), 'wheel', (e: WheelEvent) => {
     handleWhell(e, stateManager, eventManager._gantt);
+  });
+
+  handler.on(gantt.getContainer(), 'resize', e => {
+    // if (table.canvasSizeSeted) {
+    //   return;
+    // }
+    if (e.width === 0 && e.height === 0) {
+      // 临时绕行解决因为display设置为none产生的问题
+      return;
+    }
+    if (!isValid(gantt.options.pixelRatio)) {
+      gantt.setPixelRatio(getPixelRatio());
+    }
+    if (!e.windowSizeNotChange) {
+      gantt._resize();
+    }
   });
 }

@@ -9,7 +9,7 @@ import { TimelineHeader } from './timeline-header';
 import { TaskBar } from './task-bar';
 import { MarkLine } from './mark-line';
 import type { TaskBarHoverIcon } from './task-bar-hover-icon';
-import { createFrameBorder } from './frame-border';
+import { FrameBorder, createFrameBorder } from './frame-border';
 
 export class Scenegraph {
   dateStepWidth: number;
@@ -22,6 +22,7 @@ export class Scenegraph {
   tableGroup: Group;
   scrollbarComponent: ScrollBarComponent;
   markLine: MarkLine;
+  frameBorder: FrameBorder;
   taskBarHoverIcon: TaskBarHoverIcon;
   stage: Stage;
   constructor(gantt: Gantt) {
@@ -72,42 +73,13 @@ export class Scenegraph {
 
   updateTableSize() {
     this.tableGroup.setAttributes({
-      x: this._gantt.tableX,
+      x: 0,
       y: this._gantt.tableY,
       width: this._gantt.tableNoFrameWidth,
       height: this._gantt.tableNoFrameHeight
     } as any);
-
-    if (this.tableGroup.border && this.tableGroup.border.type === 'rect') {
-      if (this._gantt.frameStyle?.innerBorder) {
-        this.tableGroup.border.setAttributes({
-          x: this._gantt.tableX + this.tableGroup.border.attribute.lineWidth / 2,
-          y: this._gantt.tableY + this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
-      } else {
-        this.tableGroup.border.setAttributes({
-          x: this._gantt.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-          y: this._gantt.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-        });
-      }
-    } else if (this.tableGroup.border && this.tableGroup.border.type === 'group') {
-      this.tableGroup.border.setAttributes({
-        x: this._gantt.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-        y: this._gantt.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-        width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-        height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-      });
-      (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-        x: this.tableGroup.border.attribute.lineWidth / 2,
-        y: this.tableGroup.border.attribute.lineWidth / 2,
-        width: this.tableGroup.attribute.width,
-        height: this.tableGroup.attribute.height
-      });
-    }
+    this.grid.resize();
+    this.frameBorder.resize();
   }
 
   /**
@@ -168,6 +140,23 @@ export class Scenegraph {
     this.taskBar.setY(y);
     this.updateNextFrame();
   }
+
+  setPixelRatio(pixelRatio: number) {
+    // this.stage.setDpr(pixelRatio);
+    // 这里因为本时刻部分节点有更新bounds标记，直接render回导致开启DirtyBounds，无法完整重绘画布；
+    // 所以这里先关闭DirtyBounds，等待下一帧再开启
+    this.stage.disableDirtyBounds();
+    this.stage.window.setDpr(pixelRatio);
+    this.stage.render();
+    this.stage.enableDirtyBounds();
+  }
+
+  resize() {
+    this.updateTableSize();
+    // this.updateBorderSizeAndPosition();
+    this.scrollbarComponent.updateScrollBar();
+    this.updateNextFrame();
+  }
 }
 
 export function initSceneGraph(scene: Scenegraph) {
@@ -176,7 +165,7 @@ export function initSceneGraph(scene: Scenegraph) {
 
   scene.tableGroup = new Group({
     x: 0,
-    y: scene._gantt.frameStyle.borderLineWidth,
+    y: scene._gantt.tableY,
     width: width,
     height: height,
     clip: true,
@@ -188,23 +177,7 @@ export function initSceneGraph(scene: Scenegraph) {
   scene.timelineHeader = new TimelineHeader(scene);
   scene.tableGroup.addChild(scene.timelineHeader.group);
   // 初始化网格线组件
-  scene.grid = new Grid({
-    vertical: true,
-    horizontal: true,
-    gridStyle: scene._gantt.gridStyle,
-    scrollLeft: 0,
-    scrollTop: 0,
-    x: 0,
-    y: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
-    width,
-    height: height - scene._gantt.headerRowHeight * scene._gantt.headerLevel,
-    timelineDates: scene._gantt.reverseOrderedScales[0].timelineDates,
-    colWidthPerDay: scene._gantt.colWidthPerDay,
-    rowHeight: scene._gantt.rowHeight,
-    rowCount: scene._gantt.itemCount,
-    allGridHeight: scene._gantt.getAllGridHeight(),
-    allGridWidth: scene._gantt.getAllColsWidth()
-  });
+  scene.grid = new Grid(scene);
   scene.tableGroup.addChild(scene.grid.group);
 
   // 初始化任务条线组件
@@ -215,13 +188,13 @@ export function initSceneGraph(scene: Scenegraph) {
   scene.markLine = new MarkLine(scene);
   scene.tableGroup.addChild(scene.markLine.group);
 
+  scene.frameBorder = new FrameBorder(scene);
+
   // 初始化滚动条组件
   scene.scrollbarComponent = new ScrollBarComponent(scene._gantt);
 
   scene.stage.defaultLayer.addChild(scene.scrollbarComponent.hScrollBar);
   scene.stage.defaultLayer.addChild(scene.scrollbarComponent.vScrollBar);
-
-  createFrameBorder(scene.tableGroup, scene._gantt.frameStyle, scene.tableGroup.role, [true, true, true, false]);
 }
 
 export function createContainerGroup(width: number, height: number, clip?: boolean) {

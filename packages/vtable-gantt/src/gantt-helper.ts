@@ -3,7 +3,7 @@ import type { IMarkLine, IScrollStyle } from './ts-types';
 
 import { parsePadding } from '@src/vrender';
 import { isArray, isNumber, isString } from '@visactor/vutils';
-
+const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
 export const DayTimes = 1000 * 60 * 60 * 24;
 /** 通过事件坐标y计算鼠标当前所在所几条任务条上 */
 export function getTaskIndexByY(y: number, gantt: Gantt) {
@@ -114,3 +114,4 @@ export function getQuadProps(
   }
   return [0, 0, 0, 0];
 }
+export { isNode };

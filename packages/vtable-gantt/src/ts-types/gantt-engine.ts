@@ -79,6 +79,7 @@ export interface GanttConstructorOptions {
   scrollStyle?: IScrollStyle;
 
   frameStyle: IFrameStyle;
+  pixelRatio?: number;
   // taskTableTheme?: ITableThemeDefine;
 }
 /**
