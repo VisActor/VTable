@@ -51,6 +51,19 @@ export class Grid {
       fill: this.gridStyle?.backgroundColor
     });
     this.group.name = 'grid-container';
+
+    //补充timelineHeader中不好绘制的底部的边线
+    const line = createLine({
+      pickable: false,
+      stroke: scene._gantt.timelineHeaderStyle?.borderColor,
+      lineWidth: scene._gantt.timelineHeaderStyle?.borderWidth,
+      points: [
+        { x: 0, y: scene._gantt.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0 },
+        { x: scene._gantt.getAllColsWidth(), y: scene._gantt.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0 }
+      ]
+    });
+    this.group.addChild(line);
+
     if (this.vertical) {
       this.verticalLineGroup = new Group({
         x: 0,

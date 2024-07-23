@@ -437,7 +437,7 @@ export function createTable() {
     endDateField: 'end',
     progressField: 'progress',
     frameStyle: {
-      borderLineWidth: 10,
+      borderLineWidth: 2,
       borderColor: 'orange',
       cornerRadius: 8
     },
