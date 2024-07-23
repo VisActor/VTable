@@ -505,7 +505,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   get canvas(): HTMLCanvasElement {
     return this.internalProps.canvas;
   }
-
+  setCanvasSize(canvasWidth: number, canvasHeight: number) {
+    this.canvasWidth = canvasWidth;
+    this.canvasHeight = canvasHeight;
+    this.resize();
+  }
   resize() {
     this._updateSize();
     this.internalProps.legends?.forEach(legend => {

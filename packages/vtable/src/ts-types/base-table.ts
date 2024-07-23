@@ -770,7 +770,8 @@ export interface BaseTableAPI {
   toggleHierarchyState: (col: number, row: number) => void;
 
   resize: () => void;
-
+  /** 直接设置canvas的宽高 不根据容器宽高来决定表格的尺寸 */
+  setCanvasSize: (width: number, height: number) => void;
   getMergeCellRect: (col: number, row: number) => Rect;
 
   getTargetColAt: (absoluteX: number) => ColumnInfo | null;
