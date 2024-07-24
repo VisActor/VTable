@@ -115,3 +115,82 @@ export function getQuadProps(
   return [0, 0, 0, 0];
 }
 export { isNode };
+
+export function initOptions(gantt: Gantt) {
+  gantt.scrollStyle = Object.assign(
+    {},
+    {
+      scrollRailColor: 'rgba(100, 100, 100, 0.2)',
+      scrollSliderColor: 'rgba(100, 100, 100, 0.5)',
+      scrollSliderCornerRadius: 4,
+      width: 10,
+      visible: 'always',
+      hoverOn: true,
+      barToSide: false
+    },
+    gantt.options?.scrollStyle
+  );
+  gantt.timelineHeaderStyle = Object.assign(
+    {},
+    {
+      borderColor: 'gray',
+      borderWidth: 1,
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#000',
+      backgroundColor: '#fff'
+    },
+    gantt.options?.timelineHeaderStyle
+  );
+  gantt.gridStyle = Object.assign(
+    {},
+    {
+      backgroundColor: '#fff',
+      vertical: {
+        lineColor: 'red',
+        lineWidth: 1
+      },
+      horizontal: {
+        lineColor: 'blue',
+        lineWidth: 1
+      }
+    },
+    gantt.options?.gridStyle
+  );
+  gantt.barStyle = Object.assign(
+    {},
+    {
+      barColor: 'blue',
+      /** 已完成部分任务条的颜色 */
+      barColor2: 'gray',
+      /** 任务条的宽度 */
+      width: gantt.rowHeight,
+      /** 任务条的圆角 */
+      cornerRadius: 3,
+      /** 任务条的边框 */
+      borderWidth: 1,
+      /** 边框颜色 */
+      borderColor: 'red',
+      fontFamily: 'Arial',
+      fontSize: 14
+    },
+    gantt.options?.taskBar?.barStyle
+  );
+  gantt.barLabelText = gantt.options?.taskBar?.labelText ?? '';
+  gantt.barLabelStyle = {
+    fontFamily: gantt.options?.taskBar?.labelTextStyle.fontFamily ?? 'Arial',
+    fontSize: gantt.options?.taskBar?.labelTextStyle.fontSize ?? gantt.rowHeight,
+    color: gantt.options?.taskBar?.labelTextStyle.color ?? '#F01',
+    textAlign: gantt.options?.taskBar?.labelTextStyle.textAlign ?? 'left'
+  };
+  gantt.frameStyle = Object.assign(
+    {},
+    {
+      borderColor: 'gray',
+      borderLineWidth: [1, 1, 1, 1],
+      cornerRadius: 4
+    },
+    gantt.options?.frameStyle
+  );
+  gantt.markLine = generateMarkLine(gantt.options?.markLine);
+}

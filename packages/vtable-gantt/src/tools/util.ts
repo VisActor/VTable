@@ -203,3 +203,15 @@ export function toBoxArray<T>(obj: T | T[]): [T, T, T, T] {
   // return obj as [T, T, T, T];//原先这种返回方式，会造成修改引用问题
   return [obj[0] /*top*/, obj[1] /*right*/, obj[2] /*bottom*/, obj[3] /*left*/];
 }
+
+export function getWeekNumber(date: Date) {
+  const startOfYear = new Date(date.getFullYear(), 0, 1);
+  const startDay = startOfYear.getDay();
+  const diff = startDay > 0 ? startDay - 1 : 6;
+  startOfYear.setDate(startOfYear.getDate() - diff);
+
+  const dayOfYear = Math.floor((date.getTime() - startOfYear.getTime()) / 86400000);
+  const weekOfYear = Math.ceil((dayOfYear + startOfYear.getDay() + 1) / 7);
+
+  return weekOfYear;
+}

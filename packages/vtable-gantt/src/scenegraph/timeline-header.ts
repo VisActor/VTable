@@ -29,7 +29,7 @@ export class TimelineHeader {
       rowHeader.name = 'row-header';
       dateHeader.addChild(rowHeader);
 
-      const { unit, timelineDates } = scene._gantt.orderedScales[i];
+      const { unit, timelineDates } = scene._gantt.sortedScales[i];
       let x = 0;
       console.log(scene._gantt.timelineHeaderStyle?.borderWidth * 2);
       for (let j = 0; j < timelineDates.length; j++) {

@@ -31,6 +31,7 @@ export interface GanttConstructorOptions {
   timelineScales: {
     unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
     step: number;
+    startOfWeek?: 'sunday' | 'monday';
     format: (date: Date) => string;
   }[];
 

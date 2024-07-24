@@ -23,10 +23,11 @@ import {
   generateMarkLine,
   getHorizontalScrollBarSize,
   getVerticalScrollBarSize,
+  initOptions,
   syncScrollStateFromTable
 } from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
-import { formatDate, parseDateFormat, toBoxArray } from './tools/util';
+import { formatDate, getWeekNumber, parseDateFormat, toBoxArray } from './tools/util';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
   const element = document.createElement('div');
@@ -70,8 +71,8 @@ export class Gantt extends EventTarget {
   timelineColWidth: number;
   colWidthPerDay: number; //分配给每日的宽度
 
-  orderedScales: any;
-  reverseOrderedScales: any;
+  sortedScales: any;
+  reverseSortedScales: any;
   headerLevel: number;
   itemCount: number;
   drawHeight: number;
@@ -111,86 +112,10 @@ export class Gantt extends EventTarget {
     this.taskTableColumns = options?.taskTable?.columns ?? [];
     this.records = options?.records ?? [];
     this.pixelRatio = options?.pixelRatio ?? 1;
-    this.scrollStyle = Object.assign(
-      {},
-      {
-        scrollRailColor: 'rgba(100, 100, 100, 0.2)',
-        scrollSliderColor: 'rgba(100, 100, 100, 0.5)',
-        scrollSliderCornerRadius: 4,
-        width: 10,
-        visible: 'always',
-        hoverOn: true,
-        barToSide: false
-      },
-      options?.scrollStyle
-    );
-    this.timelineHeaderStyle = Object.assign(
-      {},
-      {
-        borderColor: 'gray',
-        borderWidth: 1,
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#000',
-        backgroundColor: '#fff'
-      },
-      options?.timelineHeaderStyle
-    );
-    this.gridStyle = Object.assign(
-      {},
-      {
-        backgroundColor: '#fff',
-        vertical: {
-          lineColor: 'red',
-          lineWidth: 1
-        },
-        horizontal: {
-          lineColor: 'blue',
-          lineWidth: 1
-        }
-      },
-      options?.gridStyle
-    );
-    this.barStyle = Object.assign(
-      {},
-      {
-        barColor: 'blue',
-        /** 已完成部分任务条的颜色 */
-        barColor2: 'gray',
-        /** 任务条的宽度 */
-        width: this.rowHeight,
-        /** 任务条的圆角 */
-        cornerRadius: 3,
-        /** 任务条的边框 */
-        borderWidth: 1,
-        /** 边框颜色 */
-        borderColor: 'red',
-        fontFamily: 'Arial',
-        fontSize: 14
-      },
-      options?.taskBar?.barStyle
-    );
-    this.barLabelText = options?.taskBar?.labelText ?? '';
-    this.barLabelStyle = {
-      fontFamily: options?.taskBar?.labelTextStyle.fontFamily ?? 'Arial',
-      fontSize: options?.taskBar?.labelTextStyle.fontSize ?? this.rowHeight,
-      color: options?.taskBar?.labelTextStyle.color ?? '#F01',
-      textAlign: options?.taskBar?.labelTextStyle.textAlign ?? 'left'
-    };
-    this.frameStyle = Object.assign(
-      {},
-      {
-        borderColor: 'gray',
-        borderLineWidth: [1, 1, 1, 1],
-        cornerRadius: 4
-      },
-      options?.frameStyle
-    );
-    this.markLine = generateMarkLine(options?.markLine);
-
-    this._orderScales();
+    initOptions(this);
+    this._sortScales();
     this._generateTimeLineDateMap();
-    this.headerLevel = this.orderedScales.length;
+    this.headerLevel = this.sortedScales.length;
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
     this.element.style.top = '0px';
     this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
@@ -326,13 +251,13 @@ export class Gantt extends EventTarget {
     return this.element.parentElement;
   }
 
-  _orderScales() {
+  _sortScales() {
     const { timelineScales } = this.options;
     if (timelineScales) {
-      const order = ['year', 'quarter', 'month', 'week', 'day'];
+      const sortOrder = ['year', 'quarter', 'month', 'week', 'day'];
       const orderedScales = timelineScales.slice().sort((a, b) => {
-        const indexA = order.indexOf(a.unit);
-        const indexB = order.indexOf(b.unit);
+        const indexA = sortOrder.indexOf(a.unit);
+        const indexB = sortOrder.indexOf(b.unit);
         if (indexA === -1) {
           return 1;
         } else if (indexB === -1) {
@@ -341,8 +266,8 @@ export class Gantt extends EventTarget {
         return indexA - indexB;
       });
       const reverseOrderedScales = timelineScales.slice().sort((a, b) => {
-        const indexA = order.indexOf(a.unit);
-        const indexB = order.indexOf(b.unit);
+        const indexA = sortOrder.indexOf(a.unit);
+        const indexB = sortOrder.indexOf(b.unit);
         if (indexA === -1) {
           return 1;
         } else if (indexB === -1) {
@@ -351,8 +276,8 @@ export class Gantt extends EventTarget {
         return indexB - indexA;
       });
 
-      this.orderedScales = orderedScales;
-      this.reverseOrderedScales = reverseOrderedScales;
+      this.sortedScales = orderedScales;
+      this.reverseSortedScales = reverseOrderedScales;
     }
   }
 
@@ -361,7 +286,7 @@ export class Gantt extends EventTarget {
     const endDate = new Date(this.maxDate);
     let colWidthIncludeDays = 1000000;
     // Iterate over each scale
-    for (const scale of this.reverseOrderedScales) {
+    for (const scale of this.reverseSortedScales) {
       const { unit, step, format } = scale;
       const timelineDates: any[] = [];
       scale.timelineDates = timelineDates;
@@ -398,12 +323,77 @@ export class Gantt extends EventTarget {
           };
 
           timelineDates.push(dayCellConfig);
-          currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + step, 1);
+          currentDate = new Date(year, currentDate.getMonth() + step, 1);
+        } else if (unit === 'quarter') {
+          const year = currentDate.getFullYear();
+          const quarter = Math.floor(currentDate.getMonth() / 3 + 1);
+          const end = new Date(year, (quarter + step - 1) * 3, 0);
+          if (end.getTime() > endDate.getTime()) {
+            end.setDate(endDate.getDate());
+          }
+          const start = currentDate;
+          const formattedDate = format(quarter);
+          const columnTitle = formattedDate || quarter;
+          const dayCellConfig = {
+            days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+            start,
+            end,
+            title: columnTitle
+          };
+          timelineDates.push(dayCellConfig);
+          currentDate = new Date(year, (quarter + step - 1) * 3, 1);
+        } else if (unit === 'year') {
+          const year = currentDate.getFullYear();
+          const end = new Date(year, 11, 31);
+          if (end.getTime() > endDate.getTime()) {
+            end.setDate(endDate.getDate());
+          }
+          const start = currentDate;
+          const formattedDate = format(year);
+          const columnTitle = formattedDate || year;
+          const dayCellConfig = {
+            days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+            start,
+            end,
+            title: columnTitle
+          };
+          timelineDates.push(dayCellConfig);
+          currentDate = new Date(year + step, 0, 1);
+        } else if (unit === 'week') {
+          const startOfWeekSetting = scale.startOfWeek ?? 'monday';
+          let dayOfWeek = currentDate.getDay(); // index从0开始
+          if (startOfWeekSetting === 'monday') {
+            dayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Calculate the difference between the current day and the start of the week
+          }
+          const startOfWeek = new Date(currentDate);
+          const endOfWeek = new Date(startOfWeek.getTime() + (6 - dayOfWeek) * 24 * 60 * 60 * 1000); // Calculate the end of the week
+
+          if (endOfWeek > endDate) {
+            endOfWeek.setDate(endDate.getDate());
+          }
+
+          // Calculate the week number within the year
+          const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+          const weekNumber = Math.ceil(((startOfWeek.getTime() - startOfYear.getTime()) / 86400000 + 1) / 7);
+
+          const columnTitle = format(weekNumber);
+
+          const dayCellConfig = {
+            days: Math.ceil((endOfWeek.getTime() - startOfWeek.getTime()) / (24 * 60 * 60 * 1000)) + 1,
+            start: startOfWeek,
+            end: endOfWeek,
+            title: columnTitle
+          };
+
+          timelineDates.push(dayCellConfig);
+
+          // Move currentDate to the next week
+          currentDate.setDate(currentDate.getDate() + (7 - dayOfWeek));
         }
       }
     }
 
-    const firstScale = this.reverseOrderedScales[0];
+    const firstScale = this.reverseSortedScales[0];
     const { unit, step } = firstScale;
     if (unit === 'day') {
       colWidthIncludeDays = step;

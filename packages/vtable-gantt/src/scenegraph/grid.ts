@@ -36,7 +36,7 @@ export class Grid {
     this.y = scene._gantt.headerRowHeight * scene._gantt.headerLevel;
     this.width = scene.tableGroup.attribute.width;
     this.height = scene.tableGroup.attribute.height - scene.timelineHeader.group.attribute.height;
-    this.timelineDates = scene._gantt.reverseOrderedScales[0].timelineDates;
+    this.timelineDates = scene._gantt.reverseSortedScales[0].timelineDates;
     this.colWidthPerDay = scene._gantt.colWidthPerDay;
     this.rowHeight = scene._gantt.rowHeight;
     this.rowCount = scene._gantt.itemCount;
