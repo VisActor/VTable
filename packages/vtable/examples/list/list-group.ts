@@ -2,6 +2,7 @@ import * as VTable from '../../src';
 import { InputEditor } from '@visactor/vtable-editors';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 import { createGroup } from '@visactor/vrender-core';
+import { isValid } from '@visactor/vutils';
 const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
 const input_editor = new InputEditor({});
@@ -75,7 +76,7 @@ export function createTable() {
       ];
 
       const option: VTable.ListTableConstructorOptions = {
-        records: data.slice(0, 100),
+        records: data.slice(0, 300),
         columns,
         widthMode: 'standard',
         groupBy: ['Category', 'Sub-Category'],
@@ -143,7 +144,7 @@ export function createTable() {
       bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 
       let index = 100;
-      let updateing = false;
+      const updateing = false;
       const addRecords = () => {
         tableInstance.addRecords(data.slice(index, index + 100));
         index += 100;
@@ -172,18 +173,18 @@ export function createTable() {
         }
       };
 
-      tableInstance.on('scroll_vertical_end', () => {
-        if (updateing) {
-          return;
-        }
-        updateing = true;
-        showLoading();
-        setTimeout(() => {
-          addRecords();
-          hideLoading();
-          updateing = false;
-        }, 1000);
-      });
+      // tableInstance.on('scroll_vertical_end', () => {
+      //   if (updateing) {
+      //     return;
+      //   }
+      //   updateing = true;
+      //   showLoading();
+      //   setTimeout(() => {
+      //     addRecords();
+      //     hideLoading();
+      //     updateing = false;
+      //   }, 1000);
+      // });
 
       tableInstance.on('scroll', () => {
         updateGroupTitle(tableInstance);
@@ -194,8 +195,45 @@ export function createTable() {
     });
 }
 
+let titleRows = [];
+const showTitleRows = [];
+let nowRow = -1;
+let isTitle = false;
+let skip = 0;
+const skipAll = false;
+
+let startRow;
+let endRow;
+
 function updateGroupTitle(tableInstance: VTable.ListTable) {
-  const titleRows = getGroupTitleInfo(tableInstance);
+  let renderLast = false;
+  if (isValid(startRow) && isValid(endRow) && startRow !== tableInstance.scenegraph.proxy.bodyTopRow - 1) {
+    if (
+      tableInstance.scenegraph.proxy.screenTopRow <= startRow ||
+      tableInstance.scenegraph.proxy.screenTopRow >= endRow
+    ) {
+      startRow = undefined;
+      endRow = undefined;
+      getGroupTitleInfo(tableInstance);
+    } else {
+      // const row = tableInstance.scenegraph.proxy.screenTopRow + titleRows.length;
+      // nowRow = row;
+      renderLast = true;
+    }
+  } else {
+    startRow = undefined;
+    endRow = undefined;
+    getGroupTitleInfo(tableInstance);
+  }
+  // getGroupTitleInfo(tableInstance);
+
+  // if (showTitleRows.length === titleRows.length && showTitleRows.every((item, index) => item === titleRows[index])) {
+  //   return;
+  // }
+
+  // const topRow = tableInstance.scenegraph.proxy.screenTopRow + (titleRows?.length ?? 0);
+  const topRow = nowRow;
+  // console.log('titleRows', titleRows, showTitleRows, topRow, isTitle, skip);
   const colHeaderGroup = tableInstance.scenegraph.colHeaderGroup;
   const shadowGroup = colHeaderGroup.shadowRoot;
   shadowGroup.setAttributes({
@@ -206,34 +244,118 @@ function updateGroupTitle(tableInstance: VTable.ListTable) {
   });
   shadowGroup.removeAllChild();
 
-  for (let col = 0; col < tableInstance.colCount; col++) {
-    const colGroup = createGroup({
-      x: tableInstance.getColsWidth(0, col - 1),
-      y: tableInstance.getFrozenRowsHeight()
-    });
-    shadowGroup.add(colGroup);
-    for (let i = 0; i < titleRows.length; i++) {
-      const row = titleRows[i];
-      const cell = tableInstance.scenegraph.getCell(col, row);
-      if (cell.role === 'cell') {
-        // const newCell = cell.clone();
-        const newCell = cloneGraphic(cell);
-        newCell.setAttributes({
-          y: i * 40
-        });
-        colGroup.add(newCell);
+  // if (titleRows.length < showTitleRows.length) {
+  //   return;
+  // }
+
+  if (renderLast) {
+    for (let col = 0; col < tableInstance.colCount; col++) {
+      const colGroup = createGroup({
+        x: tableInstance.getColsWidth(0, col - 1),
+        y: tableInstance.getFrozenRowsHeight()
+      });
+      shadowGroup.add(colGroup);
+      for (let i = 0; i < titleRows.length; i++) {
+        const row = titleRows[i];
+        if (isSkipRow(row, topRow, tableInstance.scenegraph.proxy.screenTopRow)) {
+          // skipOne = true;
+          col === 0 && skip++;
+          continue;
+        }
+        // if (col === 0) {
+        //   showTitleRows.push(row);
+        // }
+        const cell = tableInstance.scenegraph.getCell(col, row);
+        if (cell.role === 'cell') {
+          // const newCell = cell.clone();
+          const newCell = cloneGraphic(cell);
+          newCell.setAttributes({
+            y: i * 40
+          });
+          colGroup.add(newCell);
+        }
       }
     }
+  } else {
+    showTitleRows.length = 0;
+    skip = 0;
+    for (let col = 0; col < tableInstance.colCount; col++) {
+      const colGroup = createGroup({
+        x: tableInstance.getColsWidth(0, col - 1),
+        y: tableInstance.getFrozenRowsHeight()
+      });
+      shadowGroup.add(colGroup);
+      for (let i = 0; i < titleRows.length; i++) {
+        const row = titleRows[i];
+        if (isSkipRow(row, topRow, tableInstance.scenegraph.proxy.screenTopRow)) {
+          // skipOne = true;
+          col === 0 && skip++;
+          continue;
+        }
+        if (col === 0) {
+          showTitleRows.push(row);
+        }
+        const cell = tableInstance.scenegraph.getCell(col, row);
+        if (cell.role === 'cell') {
+          // const newCell = cell.clone();
+          const newCell = cloneGraphic(cell);
+          newCell.setAttributes({
+            y: i * 40
+          });
+          colGroup.add(newCell);
+        }
+      }
+    }
+
+    if (skip > 0) {
+      const titleRowsLength = titleRows.length;
+      startRow = tableInstance.scenegraph.proxy.screenTopRow - 1;
+      endRow = tableInstance.scenegraph.proxy.screenTopRow + 1;
+    }
   }
+  // if (showTitleRows.length === 0) {
+  //   skipAll = true;
+  //   // skip = titleRows[0] - tableInstance.scenegraph.proxy.screenTopRow;
+  // } else {
+  //   skipAll = false;
+  // }
+
+  console.log(
+    'titleRows-after',
+    titleRows,
+    showTitleRows,
+    topRow,
+    tableInstance.scenegraph.proxy.screenTopRow,
+    isTitle,
+    skip,
+    startRow,
+    endRow
+  );
+
+  // if (skip > 0) {
+  //   skip += titleRows.length - 1;
+  // }
+  // console.log('skip', skip);
 }
 
-let titleRows;
 function getGroupTitleInfo(tableInstance: VTable.ListTable) {
-  const row = tableInstance.scenegraph.proxy.screenTopRow + (titleRows?.length ?? 0) + 1;
+  // const row = skipAll
+  //   ? tableInstance.scenegraph.proxy.screenTopRow + titleRows.length + 1 - skip
+  //   : tableInstance.scenegraph.proxy.screenTopRow + showTitleRows.length + skip;
+  // const row = tableInstance.scenegraph.proxy.screenTopRow + skip;
+  const row = tableInstance.scenegraph.proxy.screenTopRow + titleRows.length;
+  // skipOne = false;
   const recordIndex = tableInstance.getRecordIndexByCell(0, row); // [0, 0, 6]/0
 
+  // lastTitleRows = titleRows;
   titleRows = getTitleRowsByRecordIndex(tableInstance, recordIndex, row);
-  console.log('titleRows', titleRows);
+  nowRow = row;
+
+  // if (nowRow === titleRows[titleRows.length - 1] && isTitle) {
+  //   skipOne = true;
+  // } else {
+  //   skipOne = false;
+  // }
   return titleRows;
 }
 
@@ -250,7 +372,8 @@ function getTitleRowsByRecordIndex(tableInstance: VTable.ListTable, recordIndex:
   }
 
   const titleRows = [];
-  let titleIndex = recordIndex.slice(0, recordIndex.length - 1);
+  isTitle = !(recordIndex.length === tableInstance.options.groupBy.length + 1);
+  let titleIndex = recordIndex.slice(0, !isTitle ? recordIndex.length - 1 : recordIndex.length);
   const currentIndexedData = tableInstance.dataSource.currentIndexedData;
   const startIndex = row - tableInstance.columnHeaderLevelCount;
 
@@ -288,4 +411,19 @@ function cloneGraphic(graphic: VTable.Graphic) {
     });
   }
   return newGraphic;
+}
+
+function isSkipRow(row, topRow, screenTopRow) {
+  if (row === topRow && row !== screenTopRow + (titleRows?.length ?? 0) - 1) {
+    return true;
+  }
+
+  // const rowLimit = topRow - (titleRows?.length ?? 0);
+  const rowIndex = titleRows.indexOf(row);
+  const rowLimit = screenTopRow + rowIndex + 1;
+  if (row === rowLimit && row < topRow) {
+    return true;
+  }
+
+  return false;
 }
