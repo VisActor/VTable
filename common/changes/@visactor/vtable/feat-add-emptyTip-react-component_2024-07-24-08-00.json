@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add react-component for option-emptyTip - demo\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "Ajialuo@outlook.com"
+}
