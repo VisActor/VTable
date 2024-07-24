@@ -48,6 +48,7 @@ import {
   listTableUpdateRecords,
   sortRecords
 } from './core/record-helper';
+import type { IListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -157,6 +158,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
+    }
+
+    if (options.enableTreeStickCell) {
+      const ListTreeStickCellPlugin = Factory.getComponent('listTreeStickCellPlugin') as IListTreeStickCellPlugin;
+      this.listTreeStickCellPlugin = new ListTreeStickCellPlugin(this);
     }
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
     setTimeout(() => {

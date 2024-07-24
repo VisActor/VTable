@@ -76,7 +76,7 @@ export function createTable() {
       ];
 
       const option: VTable.ListTableConstructorOptions = {
-        records: data.slice(0, 300),
+        records: data.slice(0, 100),
         columns,
         widthMode: 'standard',
         groupBy: ['Category', 'Sub-Category'],
@@ -137,7 +137,8 @@ export function createTable() {
             rootContainer: container,
             renderDefault: false
           };
-        }
+        },
+        enableTreeStickCell: true
       };
       tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;
@@ -186,9 +187,9 @@ export function createTable() {
       //   }, 1000);
       // });
 
-      tableInstance.on('scroll', () => {
-        updateGroupTitle(tableInstance);
-      });
+      // tableInstance.on('scroll', () => {
+      //   updateGroupTitle(tableInstance);
+      // });
     })
     .catch(e => {
       console.error(e);
