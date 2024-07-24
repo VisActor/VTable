@@ -239,7 +239,6 @@ const option = {
   autoFillWidth: true
 };
 
-// Set the table options
 tableOptions.value = option;
-console.log(tableOptions.value);
+
 </script>

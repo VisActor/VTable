@@ -29,13 +29,12 @@ export interface BaseTableProps extends EventsProps {
 const props = withDefaults(defineProps<BaseTableProps>(), {
   width: '100%',
   height: '100%',
-  records: () => [],
 });
 const emit = defineEmits(TABLE_EVENTS_KEYS);
 
 const vTableContainer = ref<HTMLElement | null>(null);
 const vTableInstance = shallowRef<IVTable | null>(null);
-defineExpose({ vTableInstance });// need to find a way to expose vTableInstance
+defineExpose({ vTableInstance });//需要优化，暴露的方式不够“优雅”
 
 const containerWidth = computed(() => (typeof props.width === 'number' ? `${props.width}px` : props.width));
 const containerHeight = computed(() => (typeof props.height === 'number' ? `${props.height}px` : props.height));

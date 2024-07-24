@@ -13,8 +13,7 @@
 import { ref, computed, defineProps,} from 'vue';
 import BaseTable from './base-table.vue';
 
-// Define props
-const props = defineProps<{
+defineProps<{
   options: Record<string, unknown>,
   records?: Array<Record<string, unknown>>,
   width?: string | number,

@@ -121,7 +121,6 @@ onMounted(async () => {
   await nextTick();
   createPagination(10, 1, tableRef.value.vTableInstance);
 
-  console.log('tableRef', tableRef.value);
 
   tableRef.value.vTableInstance.on('dropdown_menu_click', args => {
     console.log('menu click', args);

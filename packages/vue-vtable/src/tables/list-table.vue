@@ -13,14 +13,14 @@
 import { ref, computed, defineProps} from 'vue';
 import BaseTable from './base-table.vue';
 
-// Define props
-const props = defineProps<{
+defineProps<{
   options: Record<string, unknown>,
   records?: Array<Record<string, unknown>>,
   width?: string | number,
   height?: string | number,
 }>();
 
+// 需要优化，暴露的方式不够“优雅”
 const baseTableRef = ref<InstanceType<typeof BaseTable> | null>(null);
 const vTableInstance = computed(() => baseTableRef.value ? baseTableRef.value.vTableInstance : null);
 defineExpose({ vTableInstance });

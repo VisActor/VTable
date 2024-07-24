@@ -40,7 +40,7 @@ const handleClickCell = (args) => {
 };
 
 const handleDropdownMenuClick = (args) => {
-  // console.log('menu click', args);
+  console.log('menu click', args);
   if (args.menuKey === 'copy') {
     copyData.value = listTableRef.value.baseTableRef.vTableInstance.getCopyValue();
   } else if (args.menuKey === 'paste') {
