@@ -1,4 +1,5 @@
 import type { GanttConstructorOptions } from './ts-types';
+import * as TYPES from './ts-types';
 import type {
   ColumnDefine,
   ColumnsDefine,
@@ -19,11 +20,7 @@ export const version = __VERSION__;
  * @namespace VTable
  */
 export {
-  /**
-   * Types
-   * @namespace VTable.TYPES
-   */
-
+  TYPES,
   GanttConstructorOptions,
   Gantt,
   ColumnsDefine,

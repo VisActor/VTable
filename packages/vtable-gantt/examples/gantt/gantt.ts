@@ -1,6 +1,5 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { TYPES } from '@visactor/vtable';
-import type { GanttConstructorOptions } from '../../src/index';
+import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
@@ -865,38 +864,38 @@ export function createTable() {
       {
         unit: 'year',
         step: 1,
-        format(date: number) {
-          return date;
+        format(date: TYPES.DateFormatArgumentType) {
+          return `${date.dateIndex}`;
         }
       },
 
       {
         unit: 'month',
         step: 1,
-        format(date: number) {
-          return date + '月';
+        format(date: TYPES.DateFormatArgumentType) {
+          return date.dateIndex + '月';
         }
       },
       {
         unit: 'week',
         step: 1,
         startOfWeek: 'sunday',
-        format(date: number) {
-          return `Week ${date}`;
+        format(date: TYPES.DateFormatArgumentType) {
+          return `Week ${date.dateIndex}`;
         }
       },
       {
         unit: 'day',
         step: 1,
-        format(date: Date) {
-          return date.toLocaleString('default', { day: '2-digit' });
+        format(date: TYPES.DateFormatArgumentType) {
+          return date.dateIndex;
         }
       },
       {
         unit: 'quarter',
         step: 1,
-        format(date: number) {
-          return '第' + date + '季度';
+        format(date: TYPES.DateFormatArgumentType) {
+          return '第' + date.dateIndex + '季度';
         }
       }
     ],

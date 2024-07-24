@@ -28,12 +28,7 @@ export interface GanttConstructorOptions {
    */
   records?: any[];
   /** 时间刻度 */
-  timelineScales: {
-    unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
-    step: number;
-    startOfWeek?: 'sunday' | 'monday';
-    format: (date: Date) => string;
-  }[];
+  timelineScales: ITimelineScale[];
 
   /** 时间刻度对应的字段名 */
   startDateField: string;
@@ -88,6 +83,12 @@ export interface GanttConstructorOptions {
  * 可以配置固定文本 或者 ${fieldName} 或者自定义函数
  */
 export type IBarLabelText = string; //| string[] | ((args: any) => string | string[]);
+export interface ITimelineScale {
+  unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
+  step: number;
+  startOfWeek?: 'sunday' | 'monday';
+  format: (date: DateFormatArgumentType) => string | number;
+}
 export interface IBarLableTextStyle {
   fontFamily?: string;
   fontSize?: number;
@@ -126,4 +127,5 @@ export type IFrameStyle = {
 export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
+export type DateFormatArgumentType = { dateIndex: number; dateStart: Date; dateEnd: Date };
 //#endregion
