@@ -100,6 +100,7 @@ export class Gantt extends EventTarget {
   records: any[];
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
     super();
+    this.container = container;
     this.options = options;
     this.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
     this.rowHeight = options?.defaultRowHeight ?? 40;
@@ -129,10 +130,7 @@ export class Gantt extends EventTarget {
     } else {
       this._updateSize();
     }
-    const listTableOption = this.generateListTableOptions();
-    if (this.taskTableColumns.length >= 1) {
-      this.listTableInstance = new ListTable(container, listTableOption);
-    }
+    this._generateListTable();
     this.itemCount = this.records.length;
     this.headerHeight = this.headerRowHeight * this.headerLevel;
     this.drawHeight = Math.min(this.headerHeight + this.rowHeight * this.itemCount, this.tableNoFrameHeight);
@@ -142,9 +140,10 @@ export class Gantt extends EventTarget {
     this.eventManager = new EventManager(this);
 
     this.scenegraph.afterCreateSceneGraph();
-    syncScrollStateFromTable(this);
   }
-
+  renderTaskTable() {
+    this.scenegraph.updateNextFrame();
+  }
   /**
    * 窗口尺寸发生变化 或者像数比变化
    * @return {void}
@@ -210,7 +209,23 @@ export class Gantt extends EventTarget {
       this.tableNoFrameHeight = height - lineWidth * 2;
     }
   }
-  generateListTableOptions() {
+  _generateListTable() {
+    const listTableOption = this._generateListTableOptions();
+    if (this.taskTableColumns.length >= 1) {
+      this.listTableInstance = new ListTable(this.container, listTableOption);
+
+      if (this.options?.taskTable?.width === 'auto') {
+        this.taskTableWidth = this.listTableInstance.getAllColsWidth() + this.listTableInstance.tableX * 2;
+        this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
+        this.listTableInstance.setCanvasSize(
+          this.taskTableWidth,
+          this.tableNoFrameHeight + this.frameStyle.borderLineWidth * 2
+        );
+        this._updateSize();
+      }
+    }
+  }
+  _generateListTableOptions() {
     const listTable_options: ListTableConstructorOptions = {};
     for (const key in this.options) {
       if (key !== 'timelineScales' && key !== 'barStyle' && key !== 'theme') {
@@ -228,7 +243,7 @@ export class Gantt extends EventTarget {
       },
       cellInnerBorder: false,
       frameStyle: Object.assign({}, this.frameStyle, {
-        cornerRadius: [this.frameStyle.cornerRadius, 0, 0, this.frameStyle.cornerRadius]
+        cornerRadius: 0 //[this.frameStyle.cornerRadius, 0, 0, this.frameStyle.cornerRadius]
       })
     };
     listTable_options.canvasWidth = this.taskTableWidth as number;

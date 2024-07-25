@@ -2,7 +2,12 @@ import { isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import { InteractionState, GANTT_EVENT_TYPE } from '../ts-types';
 import type { Group, FederatedPointerEvent } from '@visactor/vrender-core';
-import { getTaskIndexByY, syncScrollStateToTable } from '../gantt-helper';
+import {
+  getTaskIndexByY,
+  syncResizeStateFromTable,
+  syncScrollStateFromTable,
+  syncScrollStateToTable
+} from '../gantt-helper';
 export class StateManager {
   _gantt: Gantt;
 
@@ -75,6 +80,9 @@ export class StateManager {
 
     this.updateVerticalScrollBar = this.updateVerticalScrollBar.bind(this);
     this.updateHorizontalScrollBar = this.updateHorizontalScrollBar.bind(this);
+
+    syncScrollStateFromTable(this._gantt);
+    syncResizeStateFromTable(this._gantt);
   }
 
   setScrollTop(top: number, triggerEvent: boolean = true) {

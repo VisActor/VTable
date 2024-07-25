@@ -807,7 +807,7 @@ export function createTable() {
     records,
     taskTable: {
       columns: columns,
-      width: 500
+      width: 400
     },
     timelineColWidth: 60,
     startDateField: 'start',
@@ -861,21 +861,21 @@ export function createTable() {
       }
     },
     timelineScales: [
-      {
-        unit: 'year',
-        step: 1,
-        format(date: TYPES.DateFormatArgumentType) {
-          return `${date.dateIndex}`;
-        }
-      },
+      // {
+      //   unit: 'year',
+      //   step: 1,
+      //   format(date: TYPES.DateFormatArgumentType) {
+      //     return `${date.dateIndex}`;
+      //   }
+      // },
 
-      {
-        unit: 'month',
-        step: 1,
-        format(date: TYPES.DateFormatArgumentType) {
-          return date.dateIndex + '月';
-        }
-      },
+      // {
+      //   unit: 'month',
+      //   step: 1,
+      //   format(date: TYPES.DateFormatArgumentType) {
+      //     return date.dateIndex + '月';
+      //   }
+      // },
       {
         unit: 'week',
         step: 1,
@@ -890,14 +890,14 @@ export function createTable() {
         format(date: TYPES.DateFormatArgumentType) {
           return date.dateIndex;
         }
-      },
-      {
-        unit: 'quarter',
-        step: 1,
-        format(date: TYPES.DateFormatArgumentType) {
-          return '第' + date.dateIndex + '季度';
-        }
       }
+      // {
+      //   unit: 'quarter',
+      //   step: 1,
+      //   format(date: TYPES.DateFormatArgumentType) {
+      //     return '第' + date.dateIndex + '季度';
+      //   }
+      // }
     ],
     minDate: '2024-05-11',
     maxDate: '2024-10-15',
@@ -919,7 +919,12 @@ export function createTable() {
         }
       }
     ],
-    rowSeriesNumber: true
+    rowSeriesNumber: {
+      title: '行号',
+      headerStyle: {
+        bgColor: '#EEF1F5'
+      }
+    }
   };
   // columns:[
   //   {

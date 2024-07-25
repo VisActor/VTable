@@ -68,6 +68,15 @@ export function syncScrollStateFromTable(gantt: Gantt) {
     });
   }
 }
+export function syncResizeStateFromTable(gantt: Gantt) {
+  if (gantt.listTableInstance && gantt.options.taskTable?.width === 'auto') {
+    gantt.listTableInstance.on('resize_column', (args: any) => {
+      gantt.taskTableWidth = gantt.listTableInstance.getAllColsWidth() + gantt.listTableInstance.tableX * 2;
+      gantt.element.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth}px` : '0px';
+      gantt._resize();
+    });
+  }
+}
 
 export function getHorizontalScrollBarSize(scrollStyle?: IScrollStyle): number {
   if (
