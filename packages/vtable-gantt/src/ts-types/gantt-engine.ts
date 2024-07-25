@@ -66,10 +66,13 @@ export interface GanttConstructorOptions {
   taskTable?: {
     /** 定义列 */
     columns?: ColumnsDefine; // (string | IDimension)[];
+    /** 左侧任务列表信息占用的宽度。如果设置为'auto'表示将所有列完全展示 */
     width?: 'auto' | number;
     headerStyle?: ITableStyle;
     bodyStyle?: ITableStyle;
+    /** 左侧任务列表 最小宽度 */
     minWidth?: number;
+    /** 左侧任务列表 最大宽度 */
     maxWidth?: number;
   };
   gridStyle?: IGridStyle;

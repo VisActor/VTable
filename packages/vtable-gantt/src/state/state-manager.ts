@@ -389,11 +389,20 @@ export class StateManager {
     if (Math.abs(deltaX) >= 1) {
       const startWidth = this._gantt.taskTableWidth;
       let width = startWidth + deltaX;
-      if (deltaX > 0 && width > this._gantt.listTableInstance.getAllColsWidth() + this._gantt.tableX * 2) {
-        width = this._gantt.listTableInstance.getAllColsWidth() + this._gantt.tableX * 2;
+      const maxWidth = Math.min(
+        this._gantt.listTableInstance.getAllColsWidth() + this._gantt.tableX * 2,
+        this._gantt.options.taskTable.maxWidth ?? 100000
+      );
+      const minWidth = Math.max(this._gantt.tableX * 2, this._gantt.options.taskTable.minWidth ?? 0);
+      if (deltaX > 0 && width > maxWidth) {
+        width = maxWidth;
+      }
+      if (deltaX < 0 && width < minWidth) {
+        width = minWidth;
       }
       this._gantt.taskTableWidth = width;
       this._gantt.element.style.left = this._gantt.taskTableWidth ? `${this._gantt.taskTableWidth}px` : '0px';
+      this._gantt.resizeLine.style.left = this._gantt.taskTableWidth ? `${this._gantt.taskTableWidth - 7}px` : '0px';
       this._gantt._resize();
       this.resizeTableWidth.lastX = e.pageX;
     }

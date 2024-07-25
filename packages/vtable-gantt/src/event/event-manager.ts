@@ -115,7 +115,7 @@ function bindContainerDomListener(eventManager: EventManager) {
     }
   });
 
-  gantt.resizeLine.addEventListener('mousedown', e => {
+  gantt.resizeLine?.addEventListener('mousedown', e => {
     console.log('mousedown resizeLine');
     // eventManager.lastDragPointerXYOnResizeLine = { x: e.x, y: e.y };
     stateManager.updateInteractionState(InteractionState.grabing);
@@ -127,7 +127,9 @@ function bindContainerDomListener(eventManager: EventManager) {
     }
   });
   document.body.addEventListener('mouseup', () => {
-    stateManager.updateInteractionState(InteractionState.default);
-    stateManager.endResizeTableWidth();
+    if (stateManager.isResizingTableWidth()) {
+      stateManager.updateInteractionState(InteractionState.default);
+      stateManager.endResizeTableWidth();
+    }
   });
 }

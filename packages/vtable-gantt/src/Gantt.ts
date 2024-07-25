@@ -264,36 +264,36 @@ export class Gantt extends EventTarget {
       this.resizeLine.style.left = this.taskTableWidth ? `${this.taskTableWidth - 7}px` : '0px';
       this.resizeLine.style.width = '14px';
       this.resizeLine.style.height = '100%';
-      this.resizeLine.style.background = '#e1e4e8';
+      this.resizeLine.style.backgroundColor = 'rgba(0,0,0,0)';
       this.resizeLine.style.zIndex = '100';
       this.resizeLine.style.cursor = 'col-resize';
       this.resizeLine.style.userSelect = 'none';
-      this.resizeLine.style.opacity = '0';
+      this.resizeLine.style.opacity = '1';
 
       const highlightLine = document.createElement('div');
       highlightLine.style.position = 'absolute';
       highlightLine.style.top = '0px';
-      highlightLine.style.left = '7px';
-      highlightLine.style.width = '10px';
+      highlightLine.style.left = '5px';
+      highlightLine.style.width = '4px';
       highlightLine.style.height = '100%';
-      highlightLine.style.background = '#ffcc00';
+      highlightLine.style.backgroundColor = '#ffcc00';
       highlightLine.style.zIndex = '100';
       highlightLine.style.cursor = 'col-resize';
       highlightLine.style.userSelect = 'none';
       highlightLine.style.pointerEvents = 'none';
-      // highlightLine.style.opacity = '0';
-      highlightLine.style.transition = 'background-color 0.3s';
+      highlightLine.style.opacity = '0';
+      // highlightLine.style.transition = 'background-color 0.3s';
       this.resizeLine.appendChild(highlightLine);
       // 添加鼠标悬停时的高亮效果
       this.resizeLine.addEventListener('mouseover', () => {
-        highlightLine.style.backgroundColor = '#ffcc00';
+        // highlightLine.style.backgroundColor = '#ffcc00';
         highlightLine.style.opacity = '1';
       });
 
       // 添加鼠标移出时恢复初始样式
       this.resizeLine.addEventListener('mouseout', () => {
         // highlightLine.style.backgroundColor = '#e1e4e8';
-        // highlightLine.style.opacity = '0';
+        highlightLine.style.opacity = '0';
       });
       (this.container as HTMLElement).appendChild(this.resizeLine);
     }

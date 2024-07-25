@@ -837,7 +837,9 @@ export function createTable() {
     records,
     taskTable: {
       columns: columns,
-      width: 400
+      width: 400,
+      minWidth: 100,
+      maxWidth: 600
     },
     timelineColWidth: 60,
     startDateField: 'start',
@@ -845,7 +847,7 @@ export function createTable() {
     progressField: 'progress',
     frameStyle: {
       borderLineWidth: 2,
-      borderColor: 'orange',
+      borderColor: 'red',
       cornerRadius: 8
     },
     gridStyle: {
