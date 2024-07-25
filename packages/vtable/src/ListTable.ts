@@ -48,7 +48,7 @@ import {
   listTableUpdateRecords,
   sortRecords
 } from './core/record-helper';
-import type { IListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
+import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -92,6 +92,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   declare options: ListTableConstructorOptions;
   showHeader = true;
   editorManager: EditManeger;
+
+  listTreeStickCellPlugin?: ListTreeStickCellPlugin;
+
   // eslint-disable-next-line default-param-last
   constructor(options: ListTableConstructorOptions);
   constructor(container: HTMLElement, options: ListTableConstructorOptions);
