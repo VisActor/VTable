@@ -1,3 +1,4 @@
+import { isArray } from '@visactor/vutils';
 import type { ListTable } from '../ListTable';
 import { Factory } from '../core/factory';
 import { Group } from '../scenegraph/graphic/group';
@@ -54,13 +55,17 @@ export class ListTreeStickCellPlugin {
   updateGroupTitleInfo() {
     this.rowNow = this.table.scenegraph.proxy.screenTopRow + this.titleRows.length;
     const recordIndex = this.table.getRecordIndexByCell(0, this.rowNow); // [0, 0, 6]/0
-    this.getTitleRowsByRecordIndex(recordIndex);
+    const nextRecordIndex = this.table.getRecordIndexByCell(0, this.rowNow + 1);
+    this.getTitleRowsByRecordIndex(recordIndex, nextRecordIndex);
   }
 
-  getTitleRowsByRecordIndex(recordIndex: number | number[]) {
+  getTitleRowsByRecordIndex(recordIndex: number | number[], nextRecordIndex: number | number[]) {
     const titleRecords = [];
-    if (!Array.isArray(recordIndex)) {
+    if (!isArray(recordIndex)) {
       recordIndex = [recordIndex];
+    }
+    if (!isArray(nextRecordIndex)) {
+      nextRecordIndex = [nextRecordIndex];
     }
 
     for (let i = 0; i < recordIndex.length; i++) {
@@ -70,14 +75,15 @@ export class ListTreeStickCellPlugin {
     }
 
     const titleRows = [];
-    const isTitle = !(recordIndex.length === (this.table.options.groupBy as any).length + 1);
+    // const isTitle = !(recordIndex.length === (this.table.options.groupBy as any).length + 1);
+    const isTitle = nextRecordIndex.length === recordIndex.length + 1;
     let titleIndex = recordIndex.slice(0, !isTitle ? recordIndex.length - 1 : recordIndex.length);
     const currentIndexedData = this.table.dataSource.currentIndexedData;
     const startIndex = this.rowNow - this.table.columnHeaderLevelCount;
 
     for (let i = startIndex; i >= 0; i--) {
       const currentIndex = currentIndexedData[i];
-      if (Array.isArray(currentIndex) && titleIndex.length === currentIndex.length) {
+      if (isArray(currentIndex) && titleIndex.length === currentIndex.length) {
         let isMatch = true;
         for (let j = 0; j < currentIndex.length; j++) {
           if (currentIndex[j] !== titleIndex[j]) {
