@@ -10,10 +10,10 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import { defaultOrderFn } from '../tools/util';
 import type { ListTable } from '../ListTable';
 
-export function createRootElement(padding: any): HTMLElement {
+export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
   const element = document.createElement('div');
   element.setAttribute('tabindex', '0');
-  element.classList.add('vtable');
+  element.classList.add(className);
   element.style.outline = 'none';
   element.style.margin = `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`;
 

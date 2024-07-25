@@ -43,6 +43,15 @@
       "versionPolicyName": "vtableMain"
     },
     {
+      "packageName": "@visactor/vtable-gantt",
+      "projectFolder": "packages/vtable-gantt",
+      "tags": [
+        "package"
+      ],
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
+    },
+    {
       "packageName": "@internal/docs",
       "projectFolder": "docs",
       "tags": [
