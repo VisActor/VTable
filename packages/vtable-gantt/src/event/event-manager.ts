@@ -12,7 +12,9 @@ export class EventManager {
   _eventHandler: EventHandler;
   isDown: boolean = false;
   isDraging: boolean = false;
-  lastDragPointerXY: { x: number; y: number };
+  lastDragPointerXYOnTableGroup: { x: number; y: number };
+
+  // lastDragPointerXYOnResizeLine: { x: number; y: number };
   constructor(gantt: Gantt) {
     this._gantt = gantt;
     this._eventHandler = new EventHandler();
@@ -31,7 +33,7 @@ function bindTableGroupListener(event: EventManager) {
   const gantt = event._gantt;
   const stateManager = gantt.stateManager;
   scene.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
-    gantt.eventManager.lastDragPointerXY = { x: e.x, y: e.y };
+    gantt.eventManager.lastDragPointerXYOnTableGroup = { x: e.x, y: e.y };
     if (e.button !== 0) {
       // 只处理左键
       return;
@@ -49,8 +51,8 @@ function bindTableGroupListener(event: EventManager) {
   });
 
   scene.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    const lastX = gantt.eventManager.lastDragPointerXY?.x ?? e.x;
-    const lastY = gantt.eventManager.lastDragPointerXY?.y ?? e.y;
+    const lastX = gantt.eventManager.lastDragPointerXYOnTableGroup?.x ?? e.x;
+    const lastY = gantt.eventManager.lastDragPointerXYOnTableGroup?.y ?? e.y;
     if (stateManager.interactionState === InteractionState.grabing) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isMoveingTaskBar()) {
@@ -58,7 +60,7 @@ function bindTableGroupListener(event: EventManager) {
         } else if (stateManager.isResizingTaskBar()) {
           stateManager.dealTaskBartResize(e);
         }
-        gantt.eventManager.lastDragPointerXY = { x: e.x, y: e.y };
+        gantt.eventManager.lastDragPointerXYOnTableGroup = { x: e.x, y: e.y };
       }
     } else if (stateManager.interactionState === InteractionState.default) {
       console.log(e.target?.name, e.target?.name === 'task-bar-hover-shadow-left-icon');
@@ -111,5 +113,21 @@ function bindContainerDomListener(eventManager: EventManager) {
     if (!e.windowSizeNotChange) {
       gantt._resize();
     }
+  });
+
+  gantt.resizeLine.addEventListener('mousedown', e => {
+    console.log('mousedown resizeLine');
+    // eventManager.lastDragPointerXYOnResizeLine = { x: e.x, y: e.y };
+    stateManager.updateInteractionState(InteractionState.grabing);
+    stateManager.startResizeTableWidth(e);
+  });
+  document.body.addEventListener('mousemove', (e: MouseEvent) => {
+    if (stateManager.isResizingTableWidth()) {
+      stateManager.dealResizeTableWidth(e);
+    }
+  });
+  document.body.addEventListener('mouseup', () => {
+    stateManager.updateInteractionState(InteractionState.default);
+    stateManager.endResizeTableWidth();
   });
 }

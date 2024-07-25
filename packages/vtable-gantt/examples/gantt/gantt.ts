@@ -775,32 +775,62 @@ export function createTable() {
       field: 'title',
       title: 'title',
       width: 200,
-      sort: true
+      sort: true,
+      headerStyle: {
+        borderColor: '#e1e4e8'
+      },
+      style: {
+        borderColor: '#e1e4e8'
+      }
     },
     {
       field: 'start',
       title: 'start',
       width: 150,
-      sort: true
+      sort: true,
+      headerStyle: {
+        borderColor: '#e1e4e8'
+      },
+      style: {
+        borderColor: '#e1e4e8'
+      }
     },
     {
       field: 'end',
       title: 'end',
       width: 150,
-      sort: true
+      sort: true,
+      headerStyle: {
+        borderColor: '#e1e4e8'
+      },
+      style: {
+        borderColor: '#e1e4e8'
+      }
     },
     {
       field: 'priority',
       title: 'priority',
       width: 100,
-      sort: true
+      sort: true,
+      headerStyle: {
+        borderColor: '#e1e4e8'
+      },
+      style: {
+        borderColor: '#e1e4e8'
+      }
     },
 
     {
       field: 'progress',
       title: 'progress',
       width: 200,
-      sort: true
+      sort: true,
+      headerStyle: {
+        borderColor: '#e1e4e8'
+      },
+      style: {
+        borderColor: '#e1e4e8'
+      }
     }
   ];
   const option: GanttConstructorOptions = {
@@ -822,17 +852,17 @@ export function createTable() {
       // backgroundColor: 'gray',
       vertical: {
         lineWidth: 1,
-        lineColor: 'purple'
+        lineColor: '#e1e4e8'
       },
       horizontal: {
         lineWidth: 1,
-        lineColor: 'green'
+        lineColor: '#e1e4e8'
       }
     },
     defaultHeaderRowHeight: 60,
     defaultRowHeight: 40,
     timelineHeaderStyle: {
-      borderColor: 'black',
+      borderColor: '#e1e4e8',
       borderWidth: 1,
       fontSize: 10,
       fontWeight: 'bold',
@@ -899,7 +929,7 @@ export function createTable() {
       //   }
       // }
     ],
-    minDate: '2024-05-11',
+    minDate: '2024-07-11',
     maxDate: '2024-10-15',
     markLine: [
       {
@@ -922,7 +952,12 @@ export function createTable() {
     rowSeriesNumber: {
       title: '行号',
       headerStyle: {
-        bgColor: '#EEF1F5'
+        bgColor: '#EEF1F5',
+
+        borderColor: '#e1e4e8'
+      },
+      style: {
+        borderColor: '#e1e4e8'
       }
     }
   };

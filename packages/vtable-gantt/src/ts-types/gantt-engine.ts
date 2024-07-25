@@ -69,6 +69,8 @@ export interface GanttConstructorOptions {
     width?: 'auto' | number;
     headerStyle?: ITableStyle;
     bodyStyle?: ITableStyle;
+    minWidth?: number;
+    maxWidth?: number;
   };
   gridStyle?: IGridStyle;
   timelineHeaderStyle?: ITimelineHeaderStyle;

@@ -50,6 +50,11 @@ export class StateManager {
     resizing: boolean;
     onIconName: string;
   };
+  resizeTableWidth: {
+    /** x坐标是相对table内坐标 */
+    lastX: number;
+    resizing: boolean;
+  };
   constructor(gantt: Gantt) {
     this._gantt = gantt;
     this.scroll = {
@@ -73,6 +78,14 @@ export class StateManager {
       targetStartX: null,
       startX: null,
       startY: null,
+      target: null,
+      resizing: false,
+      onIconName: ''
+    };
+    this.resizeTableWidth = {
+      targetStartX: null,
+      lastX: null,
+      lastY: null,
       target: null,
       resizing: false,
       onIconName: ''
@@ -254,7 +267,7 @@ export class StateManager {
   }
   dealTaskBarMove(e: FederatedPointerEvent) {
     const target = this.moveTaskBar.target;
-    const x1 = this._gantt.eventManager.lastDragPointerXY.x;
+    const x1 = this._gantt.eventManager.lastDragPointerXYOnTableGroup.x;
     const x2 = e.x;
     const dx = x2 - x1;
     target.setAttribute('x', target.attribute.x + dx);
@@ -262,7 +275,7 @@ export class StateManager {
 
     //
   }
-
+  //#region 调整拖拽任务条的大小
   startResizeTaskBar(target: Group, x: number, y: number, onIconName: string) {
     // if (target.name === 'task-bar-hover-shadow') {
     target = target.parent.parent;
@@ -312,7 +325,7 @@ export class StateManager {
     this._gantt.scenegraph.updateNextFrame();
   }
   dealTaskBartResize(e: FederatedPointerEvent) {
-    const x1 = this._gantt.eventManager.lastDragPointerXY.x;
+    const x1 = this._gantt.eventManager.lastDragPointerXYOnTableGroup.x;
     const x2 = e.x;
     const dx = x2 - x1;
     // debugger;
@@ -352,6 +365,40 @@ export class StateManager {
     this._gantt.scenegraph.updateNextFrame();
     //
   }
+  //#endregion
+
+  //#region 调整左侧任务列表表格整体的宽度
+  startResizeTableWidth(e: MouseEvent) {
+    this.resizeTableWidth.resizing = true;
+    this.resizeTableWidth.lastX = e.pageX;
+    this.resizeTableWidth.lastY = e.pageY;
+    //this.resizeTableWidth.startWidth = this._gantt.tableNoFrameWidth;
+  }
+  isResizingTableWidth() {
+    return this.resizeTableWidth.resizing;
+  }
+  endResizeTableWidth() {
+    this.resizeTableWidth.resizing = false;
+  }
+
+  dealResizeTableWidth(e: MouseEvent) {
+    if (!this.resizeTableWidth.resizing) {
+      return;
+    }
+    const deltaX = e.pageX - this.resizeTableWidth.lastX;
+    if (Math.abs(deltaX) >= 1) {
+      const startWidth = this._gantt.taskTableWidth;
+      let width = startWidth + deltaX;
+      if (deltaX > 0 && width > this._gantt.listTableInstance.getAllColsWidth() + this._gantt.tableX * 2) {
+        width = this._gantt.listTableInstance.getAllColsWidth() + this._gantt.tableX * 2;
+      }
+      this._gantt.taskTableWidth = width;
+      this._gantt.element.style.left = this._gantt.taskTableWidth ? `${this._gantt.taskTableWidth}px` : '0px';
+      this._gantt._resize();
+      this.resizeTableWidth.lastX = e.pageX;
+    }
+  }
+  //#endregion
 
   showTaskBarHover(e: FederatedPointerEvent) {
     const taskBarTarget =

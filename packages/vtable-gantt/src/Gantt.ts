@@ -66,6 +66,7 @@ export class Gantt extends EventTarget {
 
   canvas: HTMLCanvasElement;
   element: HTMLElement;
+  resizeLine: HTMLDivElement;
   context: CanvasRenderingContext2D;
   headerRowHeight: number;
   rowHeight: number;
@@ -121,6 +122,7 @@ export class Gantt extends EventTarget {
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
     this.element.style.top = '0px';
     this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
+
     this.canvas = document.createElement('canvas');
     this.element.appendChild(this.canvas);
     this.context = this.canvas.getContext('2d')!;
@@ -135,6 +137,8 @@ export class Gantt extends EventTarget {
     this.headerHeight = this.headerRowHeight * this.headerLevel;
     this.drawHeight = Math.min(this.headerHeight + this.rowHeight * this.itemCount, this.tableNoFrameHeight);
     this.gridHeight = this.drawHeight - this.headerHeight;
+
+    this._createResizeLine();
     this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
@@ -252,7 +256,48 @@ export class Gantt extends EventTarget {
     listTable_options.clearDOM = false;
     return listTable_options;
   }
+  _createResizeLine() {
+    if (this.listTableInstance && this.options.taskTable.width !== 'auto') {
+      this.resizeLine = document.createElement('div');
+      this.resizeLine.style.position = 'absolute';
+      this.resizeLine.style.top = '0px';
+      this.resizeLine.style.left = this.taskTableWidth ? `${this.taskTableWidth - 7}px` : '0px';
+      this.resizeLine.style.width = '14px';
+      this.resizeLine.style.height = '100%';
+      this.resizeLine.style.background = '#e1e4e8';
+      this.resizeLine.style.zIndex = '100';
+      this.resizeLine.style.cursor = 'col-resize';
+      this.resizeLine.style.userSelect = 'none';
+      this.resizeLine.style.opacity = '0';
 
+      const highlightLine = document.createElement('div');
+      highlightLine.style.position = 'absolute';
+      highlightLine.style.top = '0px';
+      highlightLine.style.left = '7px';
+      highlightLine.style.width = '10px';
+      highlightLine.style.height = '100%';
+      highlightLine.style.background = '#ffcc00';
+      highlightLine.style.zIndex = '100';
+      highlightLine.style.cursor = 'col-resize';
+      highlightLine.style.userSelect = 'none';
+      highlightLine.style.pointerEvents = 'none';
+      // highlightLine.style.opacity = '0';
+      highlightLine.style.transition = 'background-color 0.3s';
+      this.resizeLine.appendChild(highlightLine);
+      // 添加鼠标悬停时的高亮效果
+      this.resizeLine.addEventListener('mouseover', () => {
+        highlightLine.style.backgroundColor = '#ffcc00';
+        highlightLine.style.opacity = '1';
+      });
+
+      // 添加鼠标移出时恢复初始样式
+      this.resizeLine.addEventListener('mouseout', () => {
+        // highlightLine.style.backgroundColor = '#e1e4e8';
+        // highlightLine.style.opacity = '0';
+      });
+      (this.container as HTMLElement).appendChild(this.resizeLine);
+    }
+  }
   /**
    * 获取表格创建的DOM根节点
    */
