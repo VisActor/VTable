@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: remove resizing update in endResizeCol() #2101",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
