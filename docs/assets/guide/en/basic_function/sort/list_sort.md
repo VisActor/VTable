@@ -383,8 +383,9 @@ const option = {
 // 创建 VTable 实例
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window.tableInstance = tableInstance;
-const clickCount = 0;
+let clickCount = 0;
 tableInstance.on('sort_click', args => {
+  clickCount++;
   const sortState = clickCount % 3 === 0 ? 'desc' : clickCount % 3 === 1 ? 'asc' : 'normal';
   sortRecords(args.field, sortState)
     .then(records => {

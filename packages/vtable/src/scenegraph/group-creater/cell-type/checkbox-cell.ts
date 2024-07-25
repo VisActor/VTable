@@ -1,6 +1,4 @@
-import type { ILine, ISymbol, IThemeSpec } from '@src/vrender';
-import { createLine, createSymbol } from '@src/vrender';
-import { PointScale, LinearScale } from '@visactor/vscale';
+import type { IThemeSpec } from '@src/vrender';
 import { Group } from '../../graphic/group';
 import type { CellInfo, CellRange, CheckboxColumnDefine, CheckboxStyleOption, SparklineSpec } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -300,3 +298,5 @@ function createCheckbox(
 
   return checkbox;
 }
+
+export type CreateCheckboxCellGroup = typeof createCheckboxCellGroup;

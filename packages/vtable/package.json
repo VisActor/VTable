@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "1.4.2",
+  "version": "1.5.3",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -19,7 +19,15 @@
     "url": "https://VisActor.io/"
   },
   "license": "MIT",
-  "sideEffects": true,
+  "sideEffects": [
+    "./src/ListTable-all.js",
+    "./src/ListTable-simple.js",
+    "./src/PivotTable-all.js",
+    "./src/PivotTable-simple.js",
+    "./src/PivotChart.js",
+    "./src/index.js",
+    "./src/scenegraph/scenegraph.js"
+  ],
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
@@ -56,6 +64,7 @@
     "@visactor/vutils": "~0.18.9",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
+    "@visactor/vutils-extension": "~1.11.5",
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {

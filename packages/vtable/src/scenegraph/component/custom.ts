@@ -523,6 +523,9 @@ function onBeforeAttributeUpdate(val: Record<string, any>, attribute: any) {
     return;
   }
   const cellGroup = getTargetCell(graphic) as Group;
+  if (!cellGroup || cellGroup.stage) {
+    return;
+  }
   const table = ((cellGroup as any).stage as any).table as BaseTableAPI;
   graphic.skipAttributeUpdate = true;
   const { mergeStartCol, mergeEndCol, mergeStartRow, mergeEndRow } = cellGroup;

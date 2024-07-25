@@ -877,11 +877,13 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 ## startEditCell(Function)
 
-开启单元格编辑
+开启单元格编辑。
+
+如果想要改变显示到编辑框中的值 可以配置上 value 来设置改变
 
 ```
   /** 开启单元格编辑 */
-  startEditCell: (col?: number, row?: number) => void;
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
 ```
 
 ## completeEditCell(Function)
@@ -1205,6 +1207,28 @@ interface ISortedMapItem {
    * @param row
    */
   hideMoverLine(col: number, row: number)
+```
+
+## disableScroll(Function)
+
+关闭表格的滚动，业务场景中如果有不期望表格内容滚动的话，可以调用该方法。
+
+```
+  /** 关闭表格的滚动 */
+  disableScroll() {
+    this.eventManager.disableScroll();
+  }
+```
+
+## enableScroll(Function)
+
+开启表格的滚动
+
+```
+  /** 开启表格的滚动 */
+  enableScroll() {
+    this.eventManager.enableScroll();
+  }
 ```
 
 ## setCanvasSize(Function)

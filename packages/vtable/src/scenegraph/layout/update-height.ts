@@ -1,7 +1,7 @@
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import type { Group } from '../graphic/group';
-import { createProgressBarCell } from '../group-creater/cell-type/progress-bar-cell';
-import { createSparkLineCellGroup } from '../group-creater/cell-type/spark-line-cell';
+import type { CreateProgressBarCell } from '../group-creater/cell-type/progress-bar-cell';
+import type { CreateSparkLineCellGroup } from '../group-creater/cell-type/spark-line-cell';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getProp } from '../utils/get-prop';
@@ -17,6 +17,7 @@ import { resizeCellGroup, getCustomCellMergeCustom } from '../group-creater/cell
 import type { IGraphic } from '@src/vrender';
 import { getCellMergeRange } from '../../tools/merge-range';
 import type { ColumnDefine } from '../../ts-types';
+import { Factory } from '../../core/factory';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
   // 更新table行高存储
@@ -139,6 +140,7 @@ export function updateCellHeight(
     const dataValue = scene.table.getCellOriginValue(col, row);
     const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
 
+    const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
     const newBarCell = createProgressBarCell(
       columnDefine,
       style,
@@ -163,6 +165,7 @@ export function updateCellHeight(
     cell.removeAllChild();
     const headerStyle = scene.table._getCellStyle(col, row);
     const padding = getQuadProps(getProp('padding', headerStyle, col, row, scene.table));
+    const createSparkLineCellGroup = Factory.getFunction('createSparkLineCellGroup') as CreateSparkLineCellGroup;
     createSparkLineCellGroup(
       cell,
       cell.parent,
@@ -187,6 +190,10 @@ export function updateCellHeight(
       (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
       (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
     if (customContainer) {
+      if (scene.table.reactCustomLayout) {
+        scene.table.reactCustomLayout.removeCustomCell(col, row);
+      }
+
       let customElementsGroup;
       customContainer.removeAllChild();
       cell.removeChild(customContainer);

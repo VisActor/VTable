@@ -98,6 +98,8 @@ export function createRadioCellGroup(
   return cellGroup;
 }
 
+export type CreateRadioCellGroup = typeof createRadioCellGroup;
+
 function createRadio(
   col: number,
   row: number,

@@ -70,7 +70,7 @@ import { EventManager } from '../event/event';
 import { BodyHelper } from '../body-helper/body-helper';
 import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
-import { TooltipHandler } from '../components/tooltip/TooltipHandler';
+import type { ITooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import {
   AABBBounds,
@@ -104,7 +104,7 @@ import {
   getStyleTheme,
   updateRootElementPadding
 } from './tableHelper';
-import { MenuHandler } from '../components/menu/dom/MenuHandler';
+import type { IMenuHandler } from '../components/menu/dom/MenuHandler';
 import type {
   BaseTableAPI,
   BaseTableConstructorOptions,
@@ -113,8 +113,8 @@ import type {
 } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
-import { createLegend } from '../components/legend/create-legend';
-import { DataSet } from '@visactor/vdataset';
+import type { CreateLegend } from '../components/legend/create-legend';
+import type { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
 import type { Chart } from '../scenegraph/graphic/chart';
 import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
@@ -129,6 +129,7 @@ import type { ITextGraphicAttribute } from '@src/vrender';
 import { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
 import { hasAutoImageColumn } from '../layout/layout-helper';
+import { Factory } from './factory';
 import {
   getCellAt,
   getCellAtRelativePosition,
@@ -167,7 +168,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   canvasWidth?: number;
   canvasHeight?: number;
 
-  _vDataSet: DataSet;
+  _vDataSet?: DataSet;
   scenegraph: Scenegraph;
   stateManager: StateManager;
   eventManager: EventManager;
@@ -417,13 +418,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           : 0
         : 10;
     // 生成scenegraph
-    this._vDataSet = new DataSet();
+    // this._vDataSet = new DataSet();
     this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
 
     if (options.legends) {
       internalProps.legends = [];
+      const createLegend = Factory.getFunction('createLegend') as CreateLegend;
       if (Array.isArray(options.legends)) {
         for (let i = 0; i < options.legends.length; i++) {
           internalProps.legends.push(createLegend(options.legends[i], this));
@@ -451,6 +453,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       options.tooltip
     );
     if (internalProps.tooltip.renderMode === 'html') {
+      const TooltipHandler = Factory.getComponent('tooltipHandler') as ITooltipHandler;
       internalProps.tooltipHandler = new TooltipHandler(this, internalProps.tooltip.confine);
     }
     internalProps.menu = Object.assign(
@@ -467,6 +470,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       (this.globalDropDownMenu = options.menu.defaultHeaderMenuItems);
 
     if (internalProps.menu.renderMode === 'html') {
+      const MenuHandler = Factory.getComponent('menuHandler') as IMenuHandler;
       internalProps.menuHandler = new MenuHandler(this);
     }
 
@@ -2272,7 +2276,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           : 0
         : 10;
     // 生成scenegraph
-    this._vDataSet = new DataSet();
+    // this._vDataSet = new DataSet();
     internalProps.legends?.forEach(legend => {
       legend?.release();
     });
@@ -2291,6 +2295,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.eventManager.updateEventBinder();
     if (options.legends) {
       internalProps.legends = [];
+      const createLegend = Factory.getFunction('createLegend') as CreateLegend;
       if (Array.isArray(options.legends)) {
         for (let i = 0; i < options.legends.length; i++) {
           internalProps.legends.push(createLegend(options.legends[i], this));
@@ -2323,6 +2328,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       options.tooltip
     );
     if (internalProps.tooltip.renderMode === 'html' && !internalProps.tooltipHandler) {
+      const TooltipHandler = Factory.getComponent('tooltipHandler') as ITooltipHandler;
       internalProps.tooltipHandler = new TooltipHandler(this, internalProps.tooltip.confine);
     }
 
@@ -2341,6 +2347,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       (this.globalDropDownMenu = options.menu.defaultHeaderMenuItems);
 
     if (internalProps.menu.renderMode === 'html' && !internalProps.menuHandler) {
+      const MenuHandler = Factory.getComponent('menuHandler') as IMenuHandler;
       internalProps.menuHandler = new MenuHandler(this);
     }
     this.clearCellStyleCache();
@@ -4314,5 +4321,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   hideMoverLine(col: number, row: number) {
     this.scenegraph.component.hideMoveCol();
     this.scenegraph.renderSceneGraph();
+  }
+  /** 关闭表格的滚动 */
+  disableScroll() {
+    this.eventManager.disableScroll();
+  }
+  /** 开启表格的滚动 */
+  enableScroll() {
+    this.eventManager.enableScroll();
   }
 }

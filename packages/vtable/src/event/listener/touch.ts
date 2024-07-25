@@ -43,22 +43,23 @@ export function bindTouchListener(eventManager: EventManager) {
         y: e.changedTouches[0].pageY,
         timestamp: Date.now()
       });
+      if (eventManager._enableTableScroll) {
+        const deltaX =
+          -eventManager.touchMovePoints[eventManager.touchMovePoints.length - 1].x +
+          eventManager.touchMovePoints[eventManager.touchMovePoints.length - 2].x;
+        const deltaY =
+          -eventManager.touchMovePoints[eventManager.touchMovePoints.length - 1].y +
+          eventManager.touchMovePoints[eventManager.touchMovePoints.length - 2].y;
+        handleWhell({ deltaX, deltaY } as any, stateManager);
 
-      const deltaX =
-        -eventManager.touchMovePoints[eventManager.touchMovePoints.length - 1].x +
-        eventManager.touchMovePoints[eventManager.touchMovePoints.length - 2].x;
-      const deltaY =
-        -eventManager.touchMovePoints[eventManager.touchMovePoints.length - 1].y +
-        eventManager.touchMovePoints[eventManager.touchMovePoints.length - 2].y;
-      handleWhell({ deltaX, deltaY } as any, stateManager);
-
-      if (
-        e.cancelable &&
-        (table.internalProps.overscrollBehavior === 'none' ||
-          (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, stateManager)) ||
-          (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, stateManager)))
-      ) {
-        e.preventDefault();
+        if (
+          e.cancelable &&
+          (table.internalProps.overscrollBehavior === 'none' ||
+            (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, stateManager)) ||
+            (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, stateManager)))
+        ) {
+          e.preventDefault();
+        }
       }
     }
   };
@@ -89,15 +90,18 @@ export function bindTouchListener(eventManager: EventManager) {
           timestamp: Date.now()
         });
         // compute inertia parameter
-        const firstPoint = eventManager.touchMovePoints[0];
-        const lastPoint = eventManager.touchMovePoints[eventManager.touchMovePoints?.length - 1];
-        const vX = (lastPoint.x - firstPoint.x) / (lastPoint.timestamp - firstPoint.timestamp);
-        const vY = (lastPoint.y - firstPoint.y) / (lastPoint.timestamp - firstPoint.timestamp);
-        //开始惯性滚动
-        eventManager.inertiaScroll.startInertia(vX, vY, 0.95);
-        table.eventManager.inertiaScroll.setScrollHandle((dx: number, dy: number) => {
-          handleWhell({ deltaX: -dx, deltaY: -dy } as any, table.stateManager);
-        });
+
+        if (eventManager._enableTableScroll) {
+          const firstPoint = eventManager.touchMovePoints[0];
+          const lastPoint = eventManager.touchMovePoints[eventManager.touchMovePoints?.length - 1];
+          const vX = (lastPoint.x - firstPoint.x) / (lastPoint.timestamp - firstPoint.timestamp);
+          const vY = (lastPoint.y - firstPoint.y) / (lastPoint.timestamp - firstPoint.timestamp);
+          //开始惯性滚动
+          eventManager.inertiaScroll.startInertia(vX, vY, 0.95);
+          table.eventManager.inertiaScroll.setScrollHandle((dx: number, dy: number) => {
+            handleWhell({ deltaX: -dx, deltaY: -dy } as any, table.stateManager);
+          });
+        }
       }
     }
     eventManager.isTouchdown = false;

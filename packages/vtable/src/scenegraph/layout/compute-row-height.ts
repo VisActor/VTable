@@ -8,8 +8,8 @@ import type { ColumnData, ColumnDefine, TextColumnDefine } from '../../ts-types/
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
-import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
-import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
+import type { ComputeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
+import { Factory } from '../../core/factory';
 import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
@@ -42,6 +42,12 @@ export function computeRowsHeight(
       // oldRowHeights.push(table.getRowHeight(row));
       oldRowHeights[row] = table.getRowHeight(row);
     }
+  }
+
+  const layoutMap = table.internalProps.layoutMap;
+  if (table.isPivotTable()) {
+    (layoutMap as PivotHeaderLayoutMap).enableUseGetBodyCache();
+    (layoutMap as PivotHeaderLayoutMap).enableUseHeaderPathCache();
   }
 
   table.defaultHeaderRowHeight;
@@ -200,7 +206,7 @@ export function computeRowsHeight(
     }
     let actualHeight = 0;
     for (let row = startRow; row < endRow; row++) {
-      actualHeight += update ? newHeights[row] : table.getRowHeight(row);
+      actualHeight += update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row);
     }
     const factor = totalDrawHeight / actualHeight;
     for (let row = startRow; row < endRow; row++) {
@@ -217,7 +223,9 @@ export function computeRowsHeight(
               }, 0)
             : table.getRowsHeight(startRow, endRow - 2));
       } else {
-        rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
+        rowHeight = Math.round(
+          (update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row)) * factor
+        );
       }
       if (update) {
         newHeights[row] = rowHeight;
@@ -267,7 +275,9 @@ export function computeRowsHeight(
                 }, 0)
               : table.getRowsHeight(startRow, endRow - 2));
         } else {
-          rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
+          rowHeight = Math.round(
+            (update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row)) * factor
+          );
         }
         if (update) {
           newHeights[row] = rowHeight;
@@ -281,7 +291,7 @@ export function computeRowsHeight(
   if (update) {
     for (let row = rowStart; row <= rowEnd; row++) {
       const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
-      if (newRowHeight !== oldRowHeights[row]) {
+      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
         table._setRowHeight(row, newRowHeight);
       }
     }
@@ -292,28 +302,33 @@ export function computeRowsHeight(
     ) {
       for (let row = 0; row <= table.columnHeaderLevelCount - 1; row++) {
         const newRowHeight = table.getRowHeight(row);
-        if (newRowHeight !== oldRowHeights[row]) {
+        if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
           // update the row height in scenegraph
-          table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+          table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
         }
       }
       for (let row = table.rowCount - table.bottomFrozenRowCount; row <= table.rowCount - 1; row++) {
         const newRowHeight = table.getRowHeight(row);
-        if (newRowHeight !== oldRowHeights[row]) {
+        if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
           // update the row height in scenegraph
-          table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+          table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
         }
       }
     }
     for (let row = table.scenegraph.proxy.rowStart; row <= table.scenegraph.proxy.rowEnd; row++) {
       const newRowHeight = table.getRowHeight(row);
-      if (newRowHeight !== oldRowHeights[row]) {
+      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
         // update the row height in scenegraph
-        table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+        table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
       }
     }
   }
   // console.log('computeRowsHeight  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time, rowStart, rowEnd);
+
+  if (table.isPivotTable()) {
+    (layoutMap as PivotHeaderLayoutMap).disableUseGetBodyCache();
+    (layoutMap as PivotHeaderLayoutMap).disableUseHeaderPathCache();
+  }
 }
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
@@ -351,8 +366,10 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     // Axis component height calculation
     if (table.isPivotChart()) {
       const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
-      const axisConfig = getAxisConfigInPivotChart(col, row, layout);
+      const axisConfig = layout.getAxisConfigInPivotChart(col, row);
       if (axisConfig) {
+        const computeAxisComponentHeight: ComputeAxisComponentHeight =
+          Factory.getFunction('computeAxisComponentHeight');
         const axisWidth = computeAxisComponentHeight(axisConfig, table);
         if (typeof axisWidth === 'number') {
           maxHeight = isValid(maxHeight) ? Math.max(axisWidth, maxHeight) : axisWidth;

@@ -879,11 +879,13 @@ Get the editor for the cell configuration
 
 ## startEditCell(Function)
 
-Enable cell editing
+Enable cell editing.
+
+If you want to change the value displayed in the edit box, you can configure the value to set the change
 
 ```
   /** Enable cell editing */
-  startEditCell: (col?: number, row?: number) => void;
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
 ```
 
 ## completeEditCell(Function)
@@ -1207,6 +1209,28 @@ Hide the highlight line of the moved column or row
 * @param row
 */
 hideMoverLine(col: number, row: number)
+```
+
+## disableScroll(Function)
+
+Close the scrolling of the table. If you do not want the table content to scroll in the business scenario, you can call this method.
+
+```
+/** Turn off scrolling of the table */
+disableScroll() {
+this.eventManager.disableScroll();
+}
+```
+
+## enableScroll(Function)
+
+Enable scrolling of the table
+
+```
+/** Enable scrolling of the table */
+enableScroll() {
+this.eventManager.enableScroll();
+}
 ```
 
 ## setCanvasSize(Function)
