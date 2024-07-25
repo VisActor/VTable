@@ -376,7 +376,7 @@ export function createCell(
   return cellGroup;
 }
 
-export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean) {
+export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean, isShadow?: boolean) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
   const cellStyle = table._getCellStyle(col, row);
@@ -681,7 +681,20 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     newCellGroup.contentWidth = contentWidth;
     newCellGroup.contentHeight = contentHeight;
 
-    dealWithMergeCellSize(range, cellWidth, cellHeight, padding, textAlign, textBaseline, table);
+    if (isShadow) {
+      dealWithMergeCellSizeForShadow(
+        range,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        table,
+        newCellGroup
+      );
+    } else {
+      dealWithMergeCellSize(range, cellWidth, cellHeight, padding, textAlign, textBaseline, table);
+    }
   }
 
   return newCellGroup;
@@ -848,6 +861,54 @@ export function dealWithMergeCellSize(
       resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
     }
   }
+}
+
+export function dealWithMergeCellSizeForShadow(
+  range: CellRange,
+  cellWidth: number,
+  cellHeight: number,
+  padding: [number, number, number, number],
+  textAlign: CanvasTextAlign,
+  textBaseline: CanvasTextBaseline,
+  table: BaseTableAPI,
+  cellGroup: Group
+) {
+  const { col, row } = cellGroup;
+  if (range.start.row !== range.end.row && cellGroup.contentHeight !== cellHeight) {
+    updateCellContentHeight(
+      cellGroup,
+      cellHeight,
+      cellHeight,
+      // table.heightMode === 'autoHeight',
+      table.isAutoRowHeight(row),
+      padding,
+      textAlign,
+      textBaseline
+      // 'middle'
+    );
+  }
+  if (range.start.col !== range.end.col && cellGroup.contentWidth !== cellWidth) {
+    updateCellContentWidth(
+      cellGroup,
+      cellWidth,
+      cellHeight,
+      0,
+      // table.heightMode === 'autoHeight',
+      table.isAutoRowHeight(row),
+      padding,
+      textAlign,
+      textBaseline,
+      table.scenegraph
+    );
+  }
+
+  cellGroup.contentWidth = cellWidth;
+  cellGroup.contentHeight = cellHeight;
+
+  const rangeHeight = table.getRowHeight(row);
+  const rangeWidth = table.getColWidth(col);
+
+  resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
 }
 
 export function resizeCellGroup(

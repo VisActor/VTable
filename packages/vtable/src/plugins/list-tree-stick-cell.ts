@@ -3,6 +3,7 @@ import type { ListTable } from '../ListTable';
 import { Factory } from '../core/factory';
 import { Group } from '../scenegraph/graphic/group';
 import type { Graphic } from '../vrender';
+import { updateCell } from '../scenegraph/group-creater/cell-helper';
 
 export class ListTreeStickCellPlugin {
   table: ListTable;
@@ -108,7 +109,7 @@ export class ListTreeStickCellPlugin {
     const colHeaderGroup = this.table.scenegraph.colHeaderGroup;
     const shadowGroup = colHeaderGroup.shadowRoot;
     shadowGroup.setAttributes({
-      // shadowRootIdx: 1,
+      // shadowRootIdx: -1
       // width: 500,
       // height: 500,
       // fill: 'red'
@@ -136,6 +137,13 @@ export class ListTreeStickCellPlugin {
         const cell = this.table.scenegraph.getCell(col, row);
         if (cell.role === 'cell') {
           const newCell = cloneGraphic(cell);
+          newCell.setAttributes({
+            y: i * 40
+          });
+          colGroup.add(newCell);
+        } else {
+          // create a fake cellGroup for title
+          const newCell = updateCell(col, row, this.table, true, true);
           newCell.setAttributes({
             y: i * 40
           });
