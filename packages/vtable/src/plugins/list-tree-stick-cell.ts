@@ -2,8 +2,9 @@ import { isArray } from '@visactor/vutils';
 import type { ListTable } from '../ListTable';
 import { Factory } from '../core/factory';
 import { Group } from '../scenegraph/graphic/group';
-import type { Graphic } from '../vrender';
+import { createRect, type Graphic } from '../vrender';
 import { updateCell } from '../scenegraph/group-creater/cell-helper';
+import { getTargetCell } from '../event/util';
 
 export class ListTreeStickCellPlugin {
   table: ListTable;
@@ -107,7 +108,27 @@ export class ListTreeStickCellPlugin {
 
   updateScenegraph() {
     const colHeaderGroup = this.table.scenegraph.colHeaderGroup;
-    const shadowGroup = colHeaderGroup.shadowRoot;
+    if (!colHeaderGroup.border) {
+      const hackBorder = createRect({
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0
+      });
+      colHeaderGroup.add(hackBorder);
+      colHeaderGroup.border = hackBorder;
+      (hackBorder as any).attachShadow(hackBorder.shadowRoot);
+
+      hackBorder.addEventListener('click', (e: any) => {
+        const { shadowTarget } = e.pickParams;
+        const cellGroup = getTargetCell(shadowTarget);
+        const { col, row } = cellGroup;
+        const rowIndex = this.titleRows.indexOf(row);
+        this.table.scrollToCell({ col, row: row - rowIndex });
+      });
+    }
+    // const shadowGroup = colHeaderGroup.shadowRoot;
+    const shadowGroup = colHeaderGroup.border.shadowRoot;
     shadowGroup.setAttributes({
       // shadowRootIdx: -1
       // width: 500,
@@ -175,6 +196,9 @@ function isSkipRow(row: number, topRow: number, screenTopRow: number, titleRows:
 
 function cloneGraphic(graphic: Graphic) {
   const newGraphic = graphic.clone();
+  (newGraphic as any).role = (graphic as any).role;
+  (newGraphic as any).col = (graphic as any).col;
+  (newGraphic as any).row = (graphic as any).row;
   if (graphic.type === 'group') {
     const newGroup = newGraphic as Group;
     graphic.forEachChildren(child => {
