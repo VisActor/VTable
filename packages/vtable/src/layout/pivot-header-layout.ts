@@ -698,6 +698,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
               },
               dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              headerIcon: dimensionInfo?.cornerHeaderIcon,
               pivotInfo: {
                 value: dimensionInfo?.title ?? '',
                 dimensionKey,
@@ -749,6 +750,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
               },
               dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              headerIcon: dimensionInfo?.cornerHeaderIcon,
               pivotInfo: {
                 value: dimensionInfo?.title ?? '',
                 dimensionKey,
@@ -802,6 +804,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
               },
               dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              headerIcon: dimensionInfo?.cornerHeaderIcon,
               pivotInfo: {
                 value: dimensionInfo?.title ?? '',
                 dimensionKey,
@@ -853,6 +856,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
               },
               dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              headerIcon: dimensionInfo?.cornerHeaderIcon,
               pivotInfo: {
                 value: dimensionInfo?.title ?? '',
                 dimensionKey,
@@ -911,6 +915,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
               disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
             },
             dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+            headerIcon: dimensionInfo?.cornerHeaderIcon,
             pivotInfo: {
               value: dimensionInfo?.title ?? '',
               dimensionKey,
