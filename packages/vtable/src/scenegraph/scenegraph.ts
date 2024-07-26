@@ -33,6 +33,7 @@ import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
 import {
   deleteAllSelectBorder,
+  deleteAllSelectingBorder,
   deleteLastSelectedRangeComponents,
   removeFillHandleFromSelectComponents
 } from './select/delete-select-border';
@@ -692,6 +693,7 @@ export class Scenegraph {
   }
   deleteAllSelectBorder() {
     deleteAllSelectBorder(this);
+    deleteAllSelectingBorder(this);
   }
 
   updateCellSelectBorder(selectRange: CellRange & { skipBodyMerge?: boolean }, extendSelectRange: boolean = true) {
