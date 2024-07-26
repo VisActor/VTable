@@ -610,7 +610,7 @@ export class StateManager {
   isSelecting(): boolean {
     return this.select.selecting;
   }
-  endSelectCells(fireListener: boolean = true) {
+  endSelectCells(fireListener: boolean = true, fireClear: boolean = true) {
     if (this.select.selecting) {
       this.select.selecting = false;
       if (this.select.ranges.length === 0) {
@@ -651,7 +651,7 @@ export class StateManager {
           col: lastCol,
           row: lastRow
         });
-    } else if (fireListener) {
+    } else if (fireClear) {
       if (this.select.ranges.length === 0) {
         this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CLEAR, {});
       }
@@ -676,8 +676,9 @@ export class StateManager {
     this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
     // 调整列宽期间清空选中清空
+    const isHasSelected = !!this.select.ranges?.length;
     this.updateSelectPos(-1, -1);
-
+    this.endSelectCells(true, isHasSelected);
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeCol(xInTable: number, yInTable: number) {
@@ -702,8 +703,9 @@ export class StateManager {
     this.table.scenegraph.component.showResizeRow(row, x, isBottomFrozen);
 
     // 调整列宽期间清空选中清空
+    const isHasSelected = !!this.select.ranges?.length;
     this.updateSelectPos(-1, -1);
-
+    this.endSelectCells(true, isHasSelected);
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeRow(xInTable: number, yInTable: number) {
@@ -901,7 +903,12 @@ export class StateManager {
   setScrollTop(top: number) {
     // 矫正top值范围
     const totalHeight = this.table.getAllRowsHeight();
-    top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height));
+    // _disableColumnAndRowSizeRound环境中，可能出现
+    // getAllColsWidth/getAllRowsHeight(A) + getAllColsWidth/getAllRowsHeight(B) < getAllColsWidth/getAllRowsHeight(A+B)
+    // （由于小数在取数时被省略）
+    // 这里加入tolerance，避免出现无用滚动
+    const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
+    top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height - sizeTolerance));
     top = Math.ceil(top);
     // 滚动期间清空选中清空 如果调用接口hover状态需要保留，但是如果不调用updateHoverPos透视图处于hover状态的图就不能及时更新 所以这里单独判断了isPivotChart
     if (top !== this.scroll.verticalBarPos || this.table.isPivotChart()) {
@@ -941,7 +948,13 @@ export class StateManager {
     const totalWidth = this.table.getAllColsWidth();
     const frozenWidth = this.table.getFrozenColsWidth();
 
-    left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width));
+    // _disableColumnAndRowSizeRound环境中，可能出现
+    // getAllColsWidth/getAllRowsHeight(A) + getAllColsWidth/getAllRowsHeight(B) < getAllColsWidth/getAllRowsHeight(A+B)
+    // （由于小数在取数时被省略）
+    // 这里加入tolerance，避免出现无用滚动
+    const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
+
+    left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width - sizeTolerance));
     left = Math.ceil(left);
     // 滚动期间清空选中清空
     if (left !== this.scroll.horizontalBarPos) {

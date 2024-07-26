@@ -68,6 +68,10 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 
 冻结列数
 
+#${prefix} frozenRowCount(number) = 0
+
+冻结行数（包含表头）
+
 #${prefix} rightFrozenColCount(number) = 0
 
 右侧冻结列数
@@ -373,7 +377,7 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 
 ```
 'auto': 表格滚动到顶部或者底部时，触发浏览器默认行为;
-'none': 表格滚动到顶部或者底部时, 触发浏览器默认行为;
+'none': 表格滚动到顶部或者底部时, 禁止触发浏览器默认行为;
 ```
 
 #${prefix} customMergeCell(Function)

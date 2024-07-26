@@ -1,6 +1,111 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 21 Jun 2024 10:26:08 GMT and should not be manually modified.
+This log was last generated on Thu, 18 Jul 2024 12:13:07 GMT and should not be manually modified.
+
+## 1.5.3
+Thu, 18 Jul 2024 12:13:07 GMT
+
+### Updates
+
+- feat: add param value for startEditCell api #2089
+
+
+- fix: fix option config in vtable-export
+
+## 1.5.2
+Fri, 12 Jul 2024 10:47:37 GMT
+
+### Updates
+
+- fix: edit api validateValue support async
+
+
+- feat: add api disableScroll and enableScroll #2073
+
+
+- fix: api changeFieldValue occor errow when records has null #2067
+
+
+- fix: fix react component error in updateCell() #2038
+- feat: add renderDefault prop in react customLayout component
+- feat: support multiple columns tag in react-vtable
+- fix: fix axes default config in scatter chart #2071
+
+## 1.5.1
+Wed, 10 Jul 2024 06:19:15 GMT
+
+### Updates
+
+- fix: getCellAtRelativePosition api return value #2054
+
+
+- fix: add tolerance for scroll in _disableColumnAndRowSizeRound mode
+
+## 1.5.0
+Fri, 05 Jul 2024 10:43:51 GMT
+
+### Minor changes
+
+- feat: add formatExcelJSCell config in vtable-export #1989
+- feat: optimize package size & add load on demand feature
+
+### Updates
+
+- feat: add showMoverLine and hideMoverLine api #2009
+
+
+- fix: pivot chart select state #2017
+
+
+- fix: disable select and edit input should move when input is outside of table #2039
+
+
+- fix: last column resize width error #2040
+
+
+- fix: fix test judgement in customMergeCell #2031
+- fix: fix selected highlight update when scrolling #2028
+- fix: fix select-rect update when scroll #2015
+- fix: fix frozen cell update problem in sort #1997
+
+## 1.4.2
+Tue, 02 Jul 2024 12:48:08 GMT
+
+### Updates
+
+- feat: corner title can display row and column diemensionTitle #1926
+
+
+- fix: when not exit edit state then can not select other cells #1974
+
+
+- fix: selected_clear event trigger #1981
+
+
+- feat: add column hide config #1991
+
+
+- refactor: sparkline cellType set aggregationType None automatically #1999
+
+
+- fix: pivotTable virtual node edit value not work #2002
+
+
+- fix: tooltip content can not be selected #2003
+
+
+- feat: add getCellAtRelativePosition api
+- fix: fix vrender export module
+- fix: fix merge cell update performance problem #1972
+- fix: fix regexp format for webpack 3 #2005
+- fix: fix width computation in shrinkSparklineFirst mode
+
+## 1.4.1
+Mon, 24 Jun 2024 08:48:40 GMT
+
+### Updates
+
+- fix: fix editingEditor missing problem
 
 ## 1.4.0
 Fri, 21 Jun 2024 10:26:08 GMT

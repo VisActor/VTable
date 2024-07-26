@@ -67,4 +67,10 @@ export interface IBasicDimension {
   disableHeaderSelect?: boolean;
   /** 设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 定义角头维度名称对应的icon */
+  cornerHeaderIcon?:
+    | string
+    | ColumnIconOption
+    | (string | ColumnIconOption)[]
+    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
 }

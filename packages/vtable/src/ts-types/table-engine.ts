@@ -22,7 +22,7 @@ import type {
   ITitleDefine
 } from './pivot-table';
 import type { ColumnsDefine } from './list-table';
-import type { ICellAxisOption, ITableAxisOption } from './component/axis';
+import type { ITableAxisOption } from './component/axis';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
 import type { DataSource } from '../data';
@@ -64,7 +64,7 @@ export type WidthModeDef = 'standard' | 'adaptive' | 'autoWidth';
 export type HeightModeDef = 'standard' | 'adaptive' | 'autoHeight';
 export type WidthAdaptiveModeDef = 'only-body' | 'all';
 export type HeightAdaptiveModeDef = 'only-body' | 'all';
-export type ShowColumnRowType = 'column' | 'row' | 'none';
+export type ShowColumnRowType = 'column' | 'row' | 'none' | 'all';
 /** 单元格所处表格哪部分 */
 export type CellLocation = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
 export type CellSubLocation =
@@ -272,8 +272,14 @@ export interface ListTableAPI extends BaseTableAPI {
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */
   getEditor: (col: number, row: number) => IEditor;
-  /** 开启单元格编辑 */
-  startEditCell: (col?: number, row?: number) => void;
+  /**
+   * 开启单元格编辑
+   * @param col
+   * @param row
+   * @param value 如果想要改变显示到编辑框中的值 可以value来设置改变
+   * @returns
+   */
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
   /** 结束编辑 */
   completeEditCell: () => void;
   //#endregion

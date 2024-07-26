@@ -25,6 +25,9 @@ export function updateSelectPosition(
   const { highlightScope, disableHeader, cellPos } = state.select;
 
   if ((disableHeader && table.isHeader(col, row)) || highlightScope === 'none') {
+    if (col !== -1 && row !== -1 && !isSelectMoving) {
+      table._makeVisibleCell(col, row);
+    }
     col = -1;
     row = -1;
   }

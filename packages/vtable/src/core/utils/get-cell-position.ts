@@ -4,14 +4,14 @@ import { _getTargetFrozenColAt, _getTargetFrozenRowAt } from '../tableHelper';
 
 /**
  * 根据y值计算所在行
- * @param absoluteY
+ * @param absoluteY 相对于表格左上角的y坐标（无滚动）
  * @returns
  */
 export function getRowAt(
   absoluteY: number,
   _this: BaseTableAPI
 ): { top: number; row: number; bottom: number; height: number } {
-  const frozen = _getTargetFrozenRowAt(_this, absoluteY);
+  const frozen = _getTargetFrozenRowAt(_this as any, absoluteY);
   if (frozen) {
     return frozen;
   }
@@ -26,16 +26,17 @@ export function getRowAt(
   }
   return row;
 }
+
 /**
  * 根据x值计算所在列
- * @param absoluteX
+ * @param absoluteX 相对于表格左上角的x坐标（无滚动）
  * @returns
  */
 export function getColAt(
   absoluteX: number,
   _this: BaseTableAPI
 ): { left: number; col: number; right: number; width: number } {
-  const frozen = _getTargetFrozenColAt(_this, absoluteX);
+  const frozen = _getTargetFrozenColAt(_this as any, absoluteX);
   if (frozen) {
     return frozen;
   }
@@ -52,8 +53,8 @@ export function getColAt(
 }
 /**
  * 根据坐标值获取行列位置，index和rect范围
- * @param absoluteX
- * @param absoluteY
+ * @param absoluteX 表格左上角的x坐标（无滚动）
+ * @param absoluteY 表格左上角的y坐标（无滚动）
  * @returns
  */
 export function getCellAt(absoluteX: number, absoluteY: number, _this: BaseTableAPI): CellAddressWithBound {
@@ -79,7 +80,7 @@ export function getCellAt(absoluteX: number, absoluteY: number, _this: BaseTable
 /**
  * 根据x获取该位置所处列值
  * @param table
- * @param absoluteX
+ * @param absoluteX 表格左上角的x坐标（无滚动）
  * @returns
  */
 export function getTargetColAt(absoluteX: number, _this: BaseTableAPI): ColumnInfo | null {
@@ -145,10 +146,11 @@ export function getTargetColAt(absoluteX: number, _this: BaseTableAPI): ColumnIn
   }
   return findBefore(candCol, right);
 }
+
 /**
  * 根据y获取该位置所处行值
  * @param table
- * @param absoluteX
+ * @param absoluteX 表格左上角的y坐标（无滚动）
  * @returns
  */
 export function getTargetRowAt(absoluteY: number, _this: BaseTableAPI): RowInfo | null {
@@ -221,9 +223,9 @@ export function getTargetRowAt(absoluteY: number, _this: BaseTableAPI): RowInfo 
 }
 
 /**
- * 根据x获取该位置所处列值
+ * 根据x获取右侧冻结中该位置所处列值
  * @param table
- * @param absoluteX
+ * @param absoluteX 屏幕坐标x值
  * @returns
  */
 export function getTargetColAtConsiderRightFrozen(
@@ -237,7 +239,8 @@ export function getTargetColAtConsiderRightFrozen(
   if (
     isConsider &&
     absoluteX > _this.tableNoFrameWidth - _this.getRightFrozenColsWidth() &&
-    absoluteX < _this.tableNoFrameWidth
+    absoluteX < _this.tableNoFrameWidth &&
+    absoluteX <= _this.getAllColsWidth()
   ) {
     for (let i = 0; i < _this.rightFrozenColCount; i++) {
       if (absoluteX > _this.tableNoFrameWidth - _this.getColsWidth(_this.colCount - i - 1, _this.colCount - 1)) {
@@ -254,9 +257,9 @@ export function getTargetColAtConsiderRightFrozen(
 }
 
 /**
- * 根据y获取该位置所处行值
+ * 根据y获取底部冻结该位置所处行值
  * @param table
- * @param absoluteX
+ * @param absoluteX 屏幕坐标y值
  * @returns
  */
 export function getTargetRowAtConsiderBottomFrozen(
@@ -315,6 +318,7 @@ export function computeTargetRowByY(absoluteY: number, _this: BaseTableAPI): num
   //否则使用defaultRowHeight大约计算一个row
   return Math.min(Math.ceil(absoluteY / defaultRowHeight), _this.rowCount - 1);
 }
+
 /**
  * 根据x值（包括了scroll的）计算所在列 主要借助colRangeWidthsMap缓存来提高计算效率
  * @param this
@@ -342,41 +346,76 @@ export function computeTargetColByX(absoluteX: number, _this: BaseTableAPI): num
   return Math.min(Math.ceil(absoluteX / _this.internalProps.defaultColWidth), _this.colCount - 1);
 }
 
-// 获取屏幕坐标对应的单元格信息，考虑滚动
+/**
+ * 获取屏幕坐标对应的单元格信息，考虑滚动
+ * @param this
+ * @param relativeX 左边x值，相对于容器左上角，考虑表格滚动
+ * @param relativeY 左边y值，相对于容器左上角，考虑表格滚动
+ * @returns
+ */
 export function getCellAtRelativePosition(x: number, y: number, _this: BaseTableAPI): CellAddressWithBound {
   // table border and outer component
   x -= _this.tableX;
   y -= _this.tableY;
 
+  // top frozen
+  let topFrozen = false;
+  if (y > 0 && y < _this.getFrozenRowsHeight()) {
+    topFrozen = true;
+  }
+
+  // left frozen
+  let leftFrozen = false;
+  if (x > 0 && x < _this.getFrozenColsWidth()) {
+    leftFrozen = true;
+  }
+
   // bottom frozen
   let bottomFrozen = false;
-  if (y > _this.tableNoFrameHeight - _this.getBottomFrozenRowsHeight() && y < _this.tableNoFrameHeight) {
+  if (
+    y > _this.tableNoFrameHeight - _this.getBottomFrozenRowsHeight() &&
+    y < _this.tableNoFrameHeight &&
+    y <= _this.getAllRowsHeight()
+  ) {
     bottomFrozen = true;
   }
   // right frozen
   let rightFrozen = false;
-  if (x > _this.tableNoFrameWidth - _this.getRightFrozenColsWidth() && x < _this.tableNoFrameWidth) {
+  if (
+    x > _this.tableNoFrameWidth - _this.getRightFrozenColsWidth() &&
+    x < _this.tableNoFrameWidth &&
+    x <= _this.getAllColsWidth()
+  ) {
     rightFrozen = true;
   }
 
-  const colInfo = getTargetColAtConsiderRightFrozen(rightFrozen ? x : x + _this.scrollLeft, rightFrozen, _this);
-  const rowInfo = getTargetRowAtConsiderBottomFrozen(bottomFrozen ? y : y + _this.scrollTop, bottomFrozen, _this);
-  if (!colInfo || !rowInfo) {
-    return undefined;
+  const colInfo = getTargetColAtConsiderRightFrozen(
+    leftFrozen || rightFrozen ? x : x + _this.scrollLeft,
+    rightFrozen,
+    _this
+  );
+  const rowInfo = getTargetRowAtConsiderBottomFrozen(
+    topFrozen || bottomFrozen ? y : y + _this.scrollTop,
+    bottomFrozen,
+    _this
+  );
+
+  if (colInfo && rowInfo) {
+    const { row, top, bottom, height } = rowInfo;
+    const { col, left, right, width } = colInfo;
+    const rect = {
+      left,
+      right,
+      top,
+      bottom,
+      width,
+      height
+    };
+    return {
+      row,
+      col,
+      rect
+    };
   }
-  const { row, top, bottom, height } = rowInfo;
-  const { col, left, right, width } = colInfo;
-  const rect = {
-    left,
-    right,
-    top,
-    bottom,
-    width,
-    height
-  };
-  return {
-    row,
-    col,
-    rect
-  };
+  return { col: -1, row: -1 };
 }

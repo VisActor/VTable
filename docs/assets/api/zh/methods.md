@@ -877,11 +877,13 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 ## startEditCell(Function)
 
-开启单元格编辑
+开启单元格编辑。
+
+如果想要改变显示到编辑框中的值 可以配置上 value 来设置改变
 
 ```
   /** 开启单元格编辑 */
-  startEditCell: (col?: number, row?: number) => void;
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
 ```
 
 ## completeEditCell(Function)
@@ -1162,4 +1164,69 @@ interface ISortedMapItem {
 
 ```
   cellIsInVisualView(col: number, row: number)
+```
+
+## getCellAtRelativePosition(Function)
+
+获取相对于表格左上角的坐标对应的单元格位置。
+
+有滚动的情况下，获取的单元格是滚动后的，如当前显示的行是 100-120 行，获取相对于表格左上角（10,100）位置的单元格位置是（第一列，第 103 行），假设行高 40px。
+
+```
+  /**
+   * 获取屏幕坐标对应的单元格信息，考虑滚动
+   * @param this
+   * @param relativeX 左边x值，相对于容器左上角，已考虑格滚动情况
+   * @param relativeY 左边y值，相对于容器左上角，已考虑格滚动情况
+   * @returns
+   */
+  getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound
+```
+
+## showMoverLine(Function)
+
+显示移动列或移动行的高亮标记线
+
+```
+  /**
+   * 显示移动列或移动行的高亮线  如果(col，row)单元格是列头 则显示高亮列线；  如果(col，row)单元格是行头 则显示高亮行线
+   * @param col 在表头哪一列后显示高亮线
+   * @param row 在表头哪一行后显示高亮线
+   */
+  showMoverLine(col: number, row: number)
+```
+
+## hideMoverLine(Function)
+
+隐藏掉移动列或移动行的高亮线
+
+```
+  /**
+   * 隐藏掉移动列或移动行的高亮线
+   * @param col
+   * @param row
+   */
+  hideMoverLine(col: number, row: number)
+```
+
+## disableScroll(Function)
+
+关闭表格的滚动，业务场景中如果有不期望表格内容滚动的话，可以调用该方法。
+
+```
+  /** 关闭表格的滚动 */
+  disableScroll() {
+    this.eventManager.disableScroll();
+  }
+```
+
+## enableScroll(Function)
+
+开启表格的滚动
+
+```
+  /** 开启表格的滚动 */
+  enableScroll() {
+    this.eventManager.enableScroll();
+  }
 ```

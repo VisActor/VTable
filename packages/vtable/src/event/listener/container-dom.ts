@@ -6,7 +6,8 @@ import { handleWhell } from '../scroll';
 import { browser } from '../../tools/helper';
 import type { EventManager } from '../event';
 import { getPixelRatio } from '../../tools/pixel-ratio';
-
+import { endResizeCol, endResizeRow } from './table-group';
+import { isCellDisableSelect } from '../../state/select/is-cell-select-highlight';
 export function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
@@ -23,7 +24,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
     // eventManager.dealTableSelect();
   });
   handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
-    handleWhell(e, stateManager);
+    if (table.eventManager._enableTableScroll) {
+      handleWhell(e, stateManager);
+    }
   });
 
   // 监听键盘事件
@@ -103,6 +106,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
           targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col + 1));
         }
       }
+      // 如果是不支持选中的单元格 则退出
+      if (isCellDisableSelect(table, targetCol, targetRow)) {
+        return;
+      }
       table.selectCell(targetCol, targetRow, e.shiftKey);
       if (
         (table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
@@ -120,22 +127,25 @@ export function bindContainerDomListener(eventManager: EventManager) {
     } else if (e.key === 'Enter') {
       // 如果按enter键 可以结束当前的编辑 或开启编辑选中的单元格（仅限单选）
       if ((table as ListTableAPI).editorManager?.editingEditor) {
+        // 如果是结束当前编辑，且有主动监听keydown事件，则先触发keydown事件，之后再结束编辑
+        handleKeydownListener(e);
         (table as ListTableAPI).editorManager.completeEdit();
         table.getElement().focus();
-      } else {
-        if (
-          (table.options.keyboardOptions?.editCellOnEnter ?? true) &&
-          (table.stateManager.select.ranges?.length ?? 0) === 1
-        ) {
-          // 如果开启按enter键进入编辑的配置 且当前有选中的单元格 则进入编辑
-          const startCol = table.stateManager.select.ranges[0].start.col;
-          const startRow = table.stateManager.select.ranges[0].start.row;
-          const endCol = table.stateManager.select.ranges[0].end.col;
-          const endRow = table.stateManager.select.ranges[0].end.row;
-          if (startCol === endCol && startRow === endRow) {
-            if ((table as ListTableAPI).getEditor(startCol, startRow)) {
-              (table as ListTableAPI).editorManager.startEditCell(startCol, startRow);
-            }
+        // 直接返回，不再触发最后的keydown监听事件相关代码
+        return;
+      }
+      if (
+        (table.options.keyboardOptions?.editCellOnEnter ?? true) &&
+        (table.stateManager.select.ranges?.length ?? 0) === 1
+      ) {
+        // 如果开启按enter键进入编辑的配置 且当前有选中的单元格 则进入编辑（仅限单选）
+        const startCol = table.stateManager.select.ranges[0].start.col;
+        const startRow = table.stateManager.select.ranges[0].start.row;
+        const endCol = table.stateManager.select.ranges[0].end.col;
+        const endRow = table.stateManager.select.ranges[0].end.row;
+        if (startCol === endCol && startRow === endRow) {
+          if ((table as ListTableAPI).getEditor(startCol, startRow)) {
+            (table as ListTableAPI).editorManager.startEditCell(startCol, startRow);
           }
         }
       }
@@ -155,6 +165,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
             targetRow = stateManager.select.cellPos.row;
             targetCol = stateManager.select.cellPos.col + 1;
           }
+          // 如果是不支持选中的单元格 则退出
+          if (isCellDisableSelect(table, targetCol, targetRow)) {
+            return;
+          }
           table.selectCell(targetCol, targetRow);
           if ((table as ListTableAPI).editorManager?.editingEditor) {
             (table as ListTableAPI).editorManager.completeEdit();
@@ -167,6 +181,13 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     }
 
+    handleKeydownListener(e);
+  });
+  /**
+   * 处理主动注册的keydown事件
+   * @param e
+   */
+  function handleKeydownListener(e: KeyboardEvent) {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.KEYDOWN)) {
       const cellsEvent: KeydownEvent = {
         keyCode: e.keyCode ?? e.which,
@@ -177,7 +198,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
       };
       table.fireListeners(TABLE_EVENT_TYPE.KEYDOWN, cellsEvent);
     }
-  });
+  }
+
   handler.on(table.getElement(), 'copy', (e: KeyboardEvent) => {
     if (table.keyboardOptions?.copySelected) {
       const data = table.getCopyValue();
@@ -318,6 +340,11 @@ export function bindContainerDomListener(eventManager: EventManager) {
     });
   }
 
+  // const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
+  const regex = /<tr[^>]*>([\s\S]*?)<\/tr>/g; // for webpack3
+  // const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
+  const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/g; // for webpack3
+
   function pasteHtmlToTable(item: ClipboardItem) {
     const ranges = table.stateManager.select.ranges;
     const selectRangeLength = ranges.length;
@@ -332,12 +359,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
       blob.text().then((pastedData: any) => {
         // 解析html数据
         if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
-          const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
           // const matches = pastedData.matchAll(regex);
           const matches = Array.from(pastedData.matchAll(regex));
           for (const match of matches) {
             const rowContent = match[1]; // 获取<tr>标签中的内容
-            const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
             const cellMatches: RegExpMatchArray[] = Array.from(rowContent.matchAll(cellRegex)); // 获取<td>标签中的内容
             const rowValues = cellMatches.map(cellMatch => {
               return (
@@ -499,6 +524,11 @@ export function bindContainerDomListener(eventManager: EventManager) {
     table.eventManager.isDown = false;
     table.eventManager.isDraging = false;
     table.eventManager.inertiaScroll.endInertia();
+    if (stateManager.isResizeCol()) {
+      endResizeCol(table);
+    } else if (stateManager.isResizeRow()) {
+      endResizeRow(table);
+    }
   };
   eventManager.globalEventListeners.push({
     name: 'pointerup',
@@ -547,7 +577,12 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
     const isSelecting = table.stateManager.isSelecting();
 
-    if (eventManager.isDraging && isSelecting && table.stateManager.select.ranges?.length > 0) {
+    if (
+      eventManager._enableTableScroll &&
+      eventManager.isDraging &&
+      isSelecting &&
+      table.stateManager.select.ranges?.length > 0
+    ) {
       // 检测鼠标是否离开了table
       const drawRange = table.getDrawRange();
       // const element = table.getElement();

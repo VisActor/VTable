@@ -124,3 +124,5 @@ export function createChartCellGroup(
 
   return cellGroup;
 }
+
+export type CreateChartCellGroup = typeof createChartCellGroup;

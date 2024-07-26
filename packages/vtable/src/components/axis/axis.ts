@@ -2,15 +2,15 @@ import { degreeToRadian, isNil, isValidNumber, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
 import { LineAxis, type LineAxisAttributes } from '@visactor/vrender-components';
-import { commonAxis, getAxisAttributes, getCommonAxis } from './get-axis-attributes';
+import { getAxisAttributes, getCommonAxis } from './get-axis-attributes';
 import { isXAxis, isYAxis } from '../util/orient';
 import type { IOrientType } from '../../ts-types/component/util';
 import { BandAxisScale } from './band-scale';
 import { registerDataSetInstanceParser, registerDataSetInstanceTransform } from '../util/register';
 import type { Parser } from '@visactor/vdataset';
-import { DataView } from '@visactor/vdataset';
+import { DataSet, DataView } from '@visactor/vdataset';
 import type { IBaseScale } from '@visactor/vscale';
-import { ticks } from '@vutils-extension';
+import { ticks } from '@src/vrender';
 import { LinearAxisScale } from './linear-scale';
 import { doOverlap } from './label-overlap';
 import type { TableTheme } from '../../themes/theme';
@@ -20,6 +20,16 @@ const DEFAULT_BAND_OUTER_PADDING = 0.3;
 const scaleParser: Parser = (scale: IBaseScale) => {
   return scale;
 };
+
+export interface ICartesianAxis {
+  new (
+    option: ICellAxisOption,
+    width: number,
+    height: number,
+    padding: [number, number, number, number],
+    table: BaseTableAPI
+  ): CartesianAxis;
+}
 
 export class CartesianAxis {
   width: number;
@@ -113,11 +123,16 @@ export class CartesianAxis {
   }
 
   initData() {
+    if (!this.table._vDataSet) {
+      this.table._vDataSet = new DataSet();
+    }
+
     registerDataSetInstanceParser(this.table._vDataSet, 'scale', scaleParser);
     registerDataSetInstanceTransform(this.table._vDataSet, 'ticks', ticks);
 
     const label = this.option.label || {};
     const tick = this.option.tick || {};
+
     const tickData = new DataView(this.table._vDataSet)
       .parse(this.scale._scale, {
         type: 'scale'

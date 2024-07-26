@@ -64,6 +64,50 @@ export function createTable() {
             dimensionKey: 'Segment-1',
             value: 'Segment-1 (virtual-node)',
             virtual: true,
+            // levelSpan: 2,
+            children: [
+              // {
+              //   dimensionKey: 'Segment',
+              //   value: 'Consumer',
+              //   children: [
+              {
+                indicatorKey: 'Quantity',
+                value: 'Quantity'
+              },
+              {
+                indicatorKey: 'Sales',
+                value: 'Sales'
+              },
+              {
+                indicatorKey: 'Profit',
+                value: 'Profit'
+              },
+              //   ]
+              // },
+              {
+                dimensionKey: 'Segment',
+                value: 'Corporate',
+                children: [
+                  {
+                    indicatorKey: 'Quantity',
+                    value: 'Quantity'
+                  },
+                  {
+                    indicatorKey: 'Sales',
+                    value: 'Sales'
+                  },
+                  {
+                    indicatorKey: 'Profit',
+                    value: 'Profit'
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            dimensionKey: 'Segment-1',
+            value: 'Segment-1 (virtual-node)',
+            virtual: true,
             children: [
               {
                 dimensionKey: 'Segment',

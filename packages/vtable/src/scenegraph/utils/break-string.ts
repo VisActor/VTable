@@ -21,6 +21,14 @@ export function breakString(textStr: string, table: BaseTableAPI) {
     text.pop();
   }
 
+  if (table.options.customConfig?.multilinesForXTable && !table.internalProps.autoWrapText) {
+    // clear empty string in array start;
+    // align width xtable display
+    while (text.length && text.length > 1 && !text[0]) {
+      text.shift();
+    }
+  }
+
   return {
     text,
     moreThanMaxCharacters

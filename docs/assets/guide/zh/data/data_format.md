@@ -20,6 +20,8 @@
 
 ## 基本表格数据
 
+### JSON 数据
+
 在基本表格中，数据是以行为单位进行展示的，每一行含多个字段（列）。例如：姓名、年龄、性别、和地址。数据项中的每个对象将对应一行。
 
 根据上述 JSON 数据创建一个基本表格应配置相应的 [`ListTableConstructorOptions`](../../option/ListTable#container) 配项，并将 `records` 配置为数据源。
@@ -61,6 +63,8 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 ```
 
+### 二维数组结构
+
 如果使用二维数组作为数据源，可以按如下配置来运行：
 
 ```javascript livedemo  template=vtable
@@ -98,6 +102,43 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 ```
 
+### 多级数据特殊用法
+
+多层级数据结构的数据源，可以通过设置 `records` 为 `[{}]` 来实现。
+如：
+
+```
+records:
+    [
+      {
+        id: "7981",
+        details:{
+            productName:'fff'
+        }
+      }
+    ]
+```
+
+details 作为数据条目中的一个对象，在数据源中，可以通过`details.name`来获取到对应的值。
+
+需要再 columns 中需要这样配合上面的多级对象配置：
+
+```
+const columns =[
+    {
+        "field": ['details','productName'],
+        "title": "Order productName",
+        "width": "auto"
+    },
+]
+```
+
+效果如下图：
+
+ <div style="width: 50%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/list-record-obj.png" />
+  </div>
+
 ## 透视表数据
 
 透视表格的主要目的是对数据进行多维度的展示和分析，在配置透视表格时，我们需要指定分组（行和列）维度以及指标维度。例如，我们可以将数据按照性别分组，并计算每个的人数和平均年龄。
@@ -119,6 +160,7 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 
 ```javascript livedemo template=vtable
 const option = {
+  indicatorsAsCol: false,
   rowTree: [
     {
       dimensionKey: 'city',

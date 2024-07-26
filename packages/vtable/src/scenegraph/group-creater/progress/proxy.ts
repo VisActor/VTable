@@ -107,6 +107,7 @@ export class SceneProxy {
     this.totalActualBodyColCount = totalActualBodyColCount;
     this.totalCol = this.bodyLeftCol + totalActualBodyColCount - 1; // 目标渐进完成的col
     this.colStart = this.bodyLeftCol;
+    this.colEnd = this.totalCol; // temp for first screen, will replace in createGroupForFirstScreen()
     const defaultColWidth = this.table.defaultColWidth;
     // const defaultColWidth = getDefaultHeight(this.table);
     this.taskColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth) * 1;
@@ -130,7 +131,7 @@ export class SceneProxy {
   }
 
   setParamsForRow() {
-    this.bodyTopRow = this.table.columnHeaderLevelCount;
+    this.bodyTopRow = this.table.frozenRowCount;
     this.bodyBottomRow = this.table.rowCount - 1 - this.table.bottomFrozenRowCount;
     // this.bodyLeftCol = 0;
     // this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
@@ -140,6 +141,7 @@ export class SceneProxy {
     this.totalActualBodyRowCount = totalActualBodyRowCount;
     this.totalRow = this.bodyTopRow + totalActualBodyRowCount - 1; // 目标渐进完成的row
     this.rowStart = this.bodyTopRow;
+    this.rowEnd = this.totalRow; // temp for first screen, will replace in createGroupForFirstScreen()
     const defaultRowHeight = this.table.defaultRowHeight;
     // const defaultRowHeight = getDefaultWidth(this.table);
     this.taskRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight) * 1;
@@ -275,6 +277,8 @@ export class SceneProxy {
     // compute rows height
     computeRowsHeight(this.table, this.currentRow + 1, endRow, false);
 
+    this.rowEnd = endRow;
+
     if (this.table.frozenColCount) {
       // create row header row cellGroup
       let maxHeight = 0;
@@ -343,9 +347,7 @@ export class SceneProxy {
     this.table.scenegraph.bodyGroup.setAttribute('height', maxHeight);
 
     this.currentRow = endRow;
-    this.rowEnd = endRow;
     this.rowUpdatePos = this.rowEnd;
-    // this.referenceRow = this.rowStart + Math.floor((endRow - this.rowStart) / 2);
 
     // update container group size and border
     this.table.scenegraph.updateContainer();
@@ -357,6 +359,8 @@ export class SceneProxy {
     const endCol = Math.min(this.totalCol, this.currentCol + onceCount);
     computeColsWidth(this.table, this.currentCol + 1, endCol);
 
+    this.colEnd = endCol;
+
     // update last merge cell size
     for (let row = 0; row < this.table.rowCount; row++) {
       const cellGroup = this.highPerformanceGetCell(this.currentCol, row);
@@ -366,7 +370,7 @@ export class SceneProxy {
     }
 
     // create column
-    if (this.table.columnHeaderLevelCount) {
+    if (this.table.frozenRowCount) {
       // create colGroup
       const lastColumnGroup = (
         this.table.scenegraph.colHeaderGroup.lastChild instanceof Group
@@ -383,7 +387,7 @@ export class SceneProxy {
         this.currentCol + 1, // colStart
         endCol, // colEnd
         0, // rowStart
-        this.table.columnHeaderLevelCount - 1, // rowEnd
+        this.table.frozenRowCount - 1, // rowEnd
         'columnHeader', // isHeader
         this.table
       );
@@ -439,13 +443,9 @@ export class SceneProxy {
     );
 
     this.currentCol = endCol;
-    this.colEnd = endCol;
     this.colUpdatePos = this.colEnd;
-    // this.referenceCol = this.colStart + Math.floor((endCol - this.colStart) / 2);
-    // console.log('async', this.referenceCol, this.colStart, this.colEnd);
 
     // update container group size and border
-    // this.table.scenegraph.updateContainerAttrWidthAndX();
     this.table.scenegraph.updateContainer();
     this.table.scenegraph.updateBorderSizeAndPosition();
   }
@@ -704,7 +704,7 @@ export class SceneProxy {
     // }
 
     if (
-      row >= this.table.columnHeaderLevelCount && // not column header
+      row >= this.table.frozenRowCount && // not column header
       row < this.table.rowCount - this.table.bottomFrozenRowCount && // not bottom frozen
       (row < this.rowStart || row > this.rowEnd) // not in proxy row range
     ) {

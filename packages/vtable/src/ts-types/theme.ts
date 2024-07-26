@@ -2,7 +2,6 @@
 import type { ColorsDef, LineDashsDef, LineWidthsDef, LineWidthsPropertyDefine, LineDashsPropertyDefine } from '.';
 import type { CheckboxStyle, ITextStyleOption, RadioStyle } from './column/style';
 import type { ColorPropertyDefine, ColorsPropertyDefine } from './style-define';
-import type { ColumnIconOption } from './icon';
 import type { ICellAxisOption } from './component/axis';
 import type { PopTipAttributes } from '@visactor/vrender-components';
 // ****** Custom Theme *******

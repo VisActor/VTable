@@ -18,15 +18,13 @@ import type {
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
-import { isNumber, isObject, isValid } from '@visactor/vutils';
+import { isValid } from '@visactor/vutils';
 import { _setDataSource, _setRecords, sortRecords } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
-import { Title } from './components/title/title';
-import { cloneDeep } from '@visactor/vutils';
+import type { ITitleComponent } from './components/title/title';
 import { Env } from './tools/env';
-import { editor } from './register';
 import * as editors from './edit/editors';
 import { EditManeger } from './edit/edit-manager';
 import { computeColWidth } from './scenegraph/layout/compute-col-width';
@@ -35,9 +33,44 @@ import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
-import { cloneDeepSpec } from '@vutils-extension';
+import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { setCellCheckboxState } from './state/checkbox/checkbox';
-import { EmptyTip } from './components/empty-tip/empty-tip';
+import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
+import { Factory } from './core/factory';
+// import {
+//   registerAxis,
+//   registerEmptyTip,
+//   registerLegend,
+//   registerMenu,
+//   registerTitle,
+//   registerTooltip
+// } from './components';
+// import {
+//   registerChartCell,
+//   registerCheckboxCell,
+//   registerImageCell,
+//   registerProgressBarCell,
+//   registerRadioCell,
+//   registerSparkLineCell,
+//   registerTextCell,
+//   registerVideoCell
+// } from './scenegraph/group-creater/cell-type';
+
+// registerAxis();
+// registerEmptyTip();
+// registerLegend();
+// registerMenu();
+// registerTitle();
+// registerTooltip();
+
+// registerChartCell();
+// registerCheckboxCell();
+// registerImageCell();
+// registerProgressBarCell();
+// registerRadioCell();
+// registerSparkLineCell();
+// registerTextCell();
+// registerVideoCell();
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -98,6 +131,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.setRecords([]);
     }
     if (options.title) {
+      const Title = Factory.getComponent('title') as ITitleComponent;
       internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
@@ -105,6 +139,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
@@ -436,6 +471,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.render();
     }
     if (options.title) {
+      const Title = Factory.getComponent('title') as ITitleComponent;
       internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
@@ -443,6 +479,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
@@ -528,7 +565,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       table.rowCount = layoutMap.recordsCount * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
       // table.frozenColCount = table.options.frozenColCount ?? 0; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
       this.internalProps.frozenColCount = this.options.frozenColCount ?? 0;
-      table.frozenRowCount = layoutMap.headerLevelCount;
+      table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
 
       if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
         table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
@@ -1008,7 +1045,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         if (order && field && order !== 'normal') {
           const sortFunc = this._getSortFuncFromHeaderOption(undefined, field);
           // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
-          const hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
+          const hd = this.internalProps.layoutMap.headerObjectsIncludeHided.find(
+            (col: any) => col && col.field === field
+          );
           // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
           if (hd.define.sort !== false) {
             this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
@@ -1035,6 +1074,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
@@ -1061,16 +1101,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.dataSource.setRecord(record, index);
     this._refreshHierarchyState(col, row);
   }
-  /** 开启单元格编辑 */
-  startEditCell(col?: number, row?: number) {
+
+  startEditCell(col?: number, row?: number, value?: string | number) {
     if (isValid(col) && isValid(row)) {
       this.eventManager.isDraging = false;
       this.selectCell(col, row);
-      this.editorManager.startEditCell(col, row);
+      this.editorManager.startEditCell(col, row, value);
     } else if (this.stateManager.select?.cellPos) {
       const { col, row } = this.stateManager.select.cellPos;
       if (isValid(col) && isValid(row)) {
-        this.editorManager.startEditCell(col, row);
+        this.editorManager.startEditCell(col, row, value);
       }
     }
   }

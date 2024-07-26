@@ -28,7 +28,7 @@ import { cellInRange, emptyFn } from './tools/helper';
 import { Dataset } from './dataset/dataset';
 import { BaseTable } from './core/BaseTable';
 import type { BaseTableAPI, HeaderData, PivotTableProtected } from './ts-types/base-table';
-import { Title } from './components/title/title';
+import type { ITitleComponent } from './components/title/title';
 import { cloneDeep, isNumber, isValid } from '@visactor/vutils';
 import { Env } from './tools/env';
 import type { ITreeLayoutHeadNode } from './layout/tree-helper';
@@ -41,9 +41,11 @@ import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
-import { cloneDeepSpec } from '@vutils-extension';
+import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { parseColKeyRowKeyForPivotTable, supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
-import { EmptyTip } from './components/empty-tip/empty-tip';
+import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
+import { Factory } from './core/factory';
+
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotTableProtected;
@@ -207,6 +209,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       // this.render();
 
       if (options.title) {
+        const Title = Factory.getComponent('title') as ITitleComponent;
         this.internalProps.title = new Title(options.title, this);
         this.scenegraph.resize();
       }
@@ -214,6 +217,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         if (this.internalProps.emptyTip) {
           this.internalProps.emptyTip.resetVisible();
         } else {
+          const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
           this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
           this.internalProps.emptyTip.resetVisible();
         }
@@ -417,6 +421,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //   this.scenegraph.resize();
     // }
     if (options.title) {
+      const Title = Factory.getComponent('title') as ITitleComponent;
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
@@ -424,6 +429,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
@@ -495,7 +501,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       (layoutMap.rowHeaderLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount,
       this.options.frozenColCount ?? 0
     );
-    table.frozenRowCount = layoutMap.headerLevelCount;
+    // table.frozenRowCount = layoutMap.headerLevelCount;
+    table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
 
     if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
       table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
@@ -572,24 +579,32 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       if (cellDimensionPath) {
         let indicatorPosition: { position: 'col' | 'row'; index?: number };
-        const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any, index: number) => {
-          if (colPath.indicatorKey) {
-            indicatorPosition = {
-              position: 'col',
-              index
-            };
-          }
-          return colPath.indicatorKey ?? colPath.value;
-        });
-        const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any, index: number) => {
-          if (rowPath.indicatorKey) {
-            indicatorPosition = {
-              position: 'row',
-              index
-            };
-          }
-          return rowPath.indicatorKey ?? rowPath.value;
-        });
+        const colKeys = cellDimensionPath.colHeaderPaths
+          ?.filter((path: any) => {
+            return !path.virtual;
+          })
+          .map((colPath: any, index: number) => {
+            if (colPath.indicatorKey) {
+              indicatorPosition = {
+                position: 'col',
+                index
+              };
+            }
+            return colPath.indicatorKey ?? colPath.value;
+          });
+        const rowKeys = cellDimensionPath.rowHeaderPaths
+          ?.filter((path: any) => {
+            return !path.virtual;
+          })
+          .map((rowPath: any, index: number) => {
+            if (rowPath.indicatorKey) {
+              indicatorPosition = {
+                position: 'row',
+                index
+              };
+            }
+            return rowPath.indicatorKey ?? rowPath.value;
+          });
         const aggregator = this.dataset.getAggregator(
           // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
           // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
@@ -736,24 +751,32 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     } else if (this.dataset) {
       let indicatorPosition: { position: 'col' | 'row'; index?: number };
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any, index: number) => {
-        if (colPath.indicatorKey) {
-          indicatorPosition = {
-            position: 'col',
-            index
-          };
-        }
-        return colPath.indicatorKey ?? colPath.value;
-      });
-      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any, index: number) => {
-        if (rowPath.indicatorKey) {
-          indicatorPosition = {
-            position: 'row',
-            index
-          };
-        }
-        return rowPath.indicatorKey ?? rowPath.value;
-      });
+      const colKeys = cellDimensionPath.colHeaderPaths
+        ?.filter((path: any) => {
+          return !path.virtual;
+        })
+        .map((colPath: any, index: number) => {
+          if (colPath.indicatorKey) {
+            indicatorPosition = {
+              position: 'col',
+              index
+            };
+          }
+          return colPath.indicatorKey ?? colPath.value;
+        });
+      const rowKeys = cellDimensionPath.rowHeaderPaths
+        ?.filter((path: any) => {
+          return !path.virtual;
+        })
+        .map((rowPath: any, index: number) => {
+          if (rowPath.indicatorKey) {
+            indicatorPosition = {
+              position: 'row',
+              index
+            };
+          }
+          return rowPath.indicatorKey ?? rowPath.value;
+        });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
         // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
@@ -801,24 +824,32 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     } else if (this.dataset) {
       let indicatorPosition: { position: 'col' | 'row'; index?: number };
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any, index: number) => {
-        if (colPath.indicatorKey) {
-          indicatorPosition = {
-            position: 'col',
-            index
-          };
-        }
-        return colPath.indicatorKey ?? colPath.value;
-      });
-      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any, index: number) => {
-        if (rowPath.indicatorKey) {
-          indicatorPosition = {
-            position: 'row',
-            index
-          };
-        }
-        return rowPath.indicatorKey ?? rowPath.value;
-      });
+      const colKeys = cellDimensionPath.colHeaderPaths
+        ?.filter((path: any) => {
+          return !path.virtual;
+        })
+        .map((colPath: any, index: number) => {
+          if (colPath.indicatorKey) {
+            indicatorPosition = {
+              position: 'col',
+              index
+            };
+          }
+          return colPath.indicatorKey ?? colPath.value;
+        });
+      const rowKeys = cellDimensionPath.rowHeaderPaths
+        ?.filter((path: any) => {
+          return !path.virtual;
+        })
+        .map((rowPath: any, index: number) => {
+          if (rowPath.indicatorKey) {
+            indicatorPosition = {
+              position: 'row',
+              index
+            };
+          }
+          return rowPath.indicatorKey ?? rowPath.value;
+        });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
         // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
@@ -862,24 +893,32 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     } else if (this.dataset) {
       let indicatorPosition: { position: 'col' | 'row'; index?: number };
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any, index: number) => {
-        if (colPath.indicatorKey) {
-          indicatorPosition = {
-            position: 'col',
-            index
-          };
-        }
-        return colPath.indicatorKey ?? colPath.value;
-      });
-      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any, index: number) => {
-        if (rowPath.indicatorKey) {
-          indicatorPosition = {
-            position: 'row',
-            index
-          };
-        }
-        return rowPath.indicatorKey ?? rowPath.value;
-      });
+      const colKeys = cellDimensionPath.colHeaderPaths
+        ?.filter((path: any) => {
+          return !path.virtual;
+        })
+        .map((colPath: any, index: number) => {
+          if (colPath.indicatorKey) {
+            indicatorPosition = {
+              position: 'col',
+              index
+            };
+          }
+          return colPath.indicatorKey ?? colPath.value;
+        });
+      const rowKeys = cellDimensionPath.rowHeaderPaths
+        ?.filter((path: any) => {
+          return !path.virtual;
+        })
+        .map((rowPath: any, index: number) => {
+          if (rowPath.indicatorKey) {
+            indicatorPosition = {
+              position: 'row',
+              index
+            };
+          }
+          return rowPath.indicatorKey ?? rowPath.value;
+        });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
         // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
@@ -922,24 +961,32 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     } else if (this.dataset) {
       let indicatorPosition: { position: 'col' | 'row'; index?: number };
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any, index: number) => {
-        if (colPath.indicatorKey) {
-          indicatorPosition = {
-            position: 'col',
-            index
-          };
-        }
-        return colPath.indicatorKey ?? colPath.value;
-      });
-      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any, index: number) => {
-        if (rowPath.indicatorKey) {
-          indicatorPosition = {
-            position: 'row',
-            index
-          };
-        }
-        return rowPath.indicatorKey ?? rowPath.value;
-      });
+      const colKeys = cellDimensionPath.colHeaderPaths
+        ?.filter((path: any) => {
+          return !path.virtual;
+        })
+        .map((colPath: any, index: number) => {
+          if (colPath.indicatorKey) {
+            indicatorPosition = {
+              position: 'col',
+              index
+            };
+          }
+          return colPath.indicatorKey ?? colPath.value;
+        });
+      const rowKeys = cellDimensionPath.rowHeaderPaths
+        ?.filter((path: any) => {
+          return !path.virtual;
+        })
+        .map((rowPath: any, index: number) => {
+          if (rowPath.indicatorKey) {
+            indicatorPosition = {
+              position: 'row',
+              index
+            };
+          }
+          return rowPath.indicatorKey ?? rowPath.value;
+        });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
         // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
@@ -1519,21 +1566,22 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip.resetVisible();
       } else {
+        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
         this.internalProps.emptyTip.resetVisible();
       }
     }
   }
-  /** 开启单元格编辑 */
-  startEditCell(col?: number, row?: number) {
+
+  startEditCell(col?: number, row?: number, value?: string | number) {
     if (isValid(col) && isValid(row)) {
       this.eventManager.isDraging = false;
       this.selectCell(col, row);
-      this.editorManager.startEditCell(col, row);
+      this.editorManager.startEditCell(col, row, value);
     } else if (this.stateManager.select?.cellPos) {
       const { col, row } = this.stateManager.select.cellPos;
       if (isValid(col) && isValid(row)) {
-        this.editorManager.startEditCell(col, row);
+        this.editorManager.startEditCell(col, row, value);
       }
     }
   }
@@ -1777,12 +1825,20 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             newValue
           );
       } else {
-        const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-          return colPath.indicatorKey ?? colPath.value;
-        });
-        const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-          return rowPath.indicatorKey ?? rowPath.value;
-        });
+        const colKeys = cellDimensionPath.colHeaderPaths
+          ?.filter((path: any) => {
+            return !path.virtual;
+          })
+          .map((colPath: any) => {
+            return colPath.indicatorKey ?? colPath.value;
+          });
+        const rowKeys = cellDimensionPath.rowHeaderPaths
+          ?.filter((path: any) => {
+            return !path.virtual;
+          })
+          .map((rowPath: any) => {
+            return rowPath.indicatorKey ?? rowPath.value;
+          });
         this.dataset.changeTreeNodeValue(
           !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
           this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,

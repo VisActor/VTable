@@ -2,10 +2,12 @@ import { isArray, isNumber, isValid, merge } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotChart } from '../../PivotChart';
-import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import type { CollectedValue } from '../../ts-types';
 import { getNewRangeToAlign } from './zero-align';
+import { Factory } from '../../core/factory';
+import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
 
+export type GetAxisConfigInPivotChart = (col: number, row: number, layout: PivotHeaderLayoutMap) => any;
 export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   if (!layout._table.isPivotChart()) {
     return undefined;
@@ -172,14 +174,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 左侧维度轴
       return merge(
         {
-          domain: chartType === 'scatter' ? undefined : Array.from(domain),
-          // domain:
-          //   chartType === 'scatter'
-          //     ? undefined
-          //     : spec?.series?.length >= 1 //chartType === 'common' 原来这样判断的
-          //     ? Array.from(domain)
-          //     : Array.from(domain).reverse(),
-          range: chartType === 'scatter' ? domain : undefined,
+          // domain: chartType === 'scatter' ? undefined : Array.from(domain),
+          domain: axisOption?.type === 'linear' ? undefined : Array.from(domain),
+          // range: chartType === 'scatter' ? domain : undefined,
+          range: axisOption?.type === 'linear' ? domain : undefined,
           title: {
             autoRotate: true
           }
@@ -187,7 +185,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'left',
-          type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
+          // type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
+          type: axisOption?.type ?? 'band',
           __vtableChartTheme: theme,
           // 默认左侧维度轴对应的图表direction 为 horizontal
           // 散点图特殊处理
@@ -351,15 +350,16 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 底部维度轴
       return merge(
         {
-          // domain: Array.from(domain)
-          domain: chartType === 'scatter' ? undefined : Array.from(domain),
-
-          range: chartType === 'scatter' ? domain : undefined
+          // domain: chartType === 'scatter' ? undefined : Array.from(domain),
+          domain: axisOption?.type === 'linear' ? undefined : Array.from(domain),
+          // range: chartType === 'scatter' ? domain : undefined
+          range: axisOption?.type === 'linear' ? domain : undefined
         },
         axisOption,
         {
           orient: 'bottom',
-          type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
+          // type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
+          type: axisOption?.type ?? 'band',
           __vtableChartTheme: theme
         }
       );
@@ -422,7 +422,7 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
   };
 }
 
-export function checkZeroAlign(spec: any, orient: string, layout: PivotHeaderLayoutMap) {
+function checkZeroAlign(spec: any, orient: string, layout: PivotHeaderLayoutMap) {
   // check condition:
   // 1. two axes and one set sync
   // 2. axisId in sync is another
@@ -558,6 +558,7 @@ function getRange(
     range.min = range.min < 0 ? -1 : 0;
     range.max = range.max > 0 ? 1 : 0;
   }
+  const getAxisDomainRangeAndLabels = Factory.getFunction('getAxisDomainRangeAndLabels') as GetAxisDomainRangeAndLabels;
   const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(
     range.min,
     range.max,
@@ -680,4 +681,52 @@ function transformInverse(spec: any, isHorizontal: boolean) {
 type IOrientType = 'left' | 'top' | 'right' | 'bottom' | 'z';
 function isXAxis(orient: IOrientType) {
   return orient === 'bottom' || orient === 'top';
+}
+
+export function hasLinearAxis(spec: any, tableAxesConfig: any, isHorizontal: boolean, isThisXAxis: boolean): boolean {
+  if (!isArray(spec.axes) || spec.axes.length === 0) {
+    return (isHorizontal && isThisXAxis) || (!isHorizontal && !isThisXAxis);
+  }
+
+  for (let i = 0; i < spec.axes.length; i++) {
+    const axisSpec = spec.axes[i];
+    if (!isHorizontal && isThisXAxis && axisSpec.orient === 'bottom' && axisSpec.type === 'linear') {
+      return true;
+    }
+
+    if (isHorizontal && isThisXAxis && axisSpec.orient === 'bottom' && axisSpec.type !== 'linear') {
+      return true;
+    }
+
+    if (!isHorizontal && !isThisXAxis && axisSpec.orient === 'left' && axisSpec.type !== 'linear') {
+      return true;
+    }
+
+    if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left' && axisSpec.type === 'linear') {
+      return true;
+    }
+  }
+
+  if (isArray(tableAxesConfig) && tableAxesConfig.length > 0) {
+    for (let i = 0; i < tableAxesConfig.length; i++) {
+      const axisSpec = tableAxesConfig[i];
+      if (!isHorizontal && isThisXAxis && axisSpec.orient === 'bottom' && axisSpec.type === 'linear') {
+        return true;
+      }
+
+      if (isHorizontal && isThisXAxis && axisSpec.orient === 'bottom' && axisSpec.type !== 'linear') {
+        return true;
+      }
+
+      if (!isHorizontal && !isThisXAxis && axisSpec.orient === 'left' && axisSpec.type !== 'linear') {
+        return true;
+      }
+
+      if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left' && axisSpec.type === 'linear') {
+        return true;
+      }
+    }
+  }
+
+  return (isHorizontal && isThisXAxis) || (!isHorizontal && !isThisXAxis);
 }

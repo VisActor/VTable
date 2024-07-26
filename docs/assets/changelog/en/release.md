@@ -1,3 +1,111 @@
+# v1.5.3
+
+2024-07-19
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add param value for startEditCell api [#2089](https://github.com/VisActor/VTable/issues/2089)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix option config in vtable-export
+
+
+
+[more detail about v1.5.3](https://github.com/VisActor/VTable/releases/tag/v1.5.3)
+
+# v1.5.2
+
+2024-07-15
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add api disableScroll and enableScroll [#2073](https://github.com/VisActor/VTable/issues/2073)
+- **@visactor/vtable**: add renderDefault prop in react customLayout component
+- **@visactor/vtable**: support multiple columns tag in react-vtable
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: edit api validateValue support async
+- **@visactor/vtable**: api changeFieldValue occor errow when records has null [#2067](https://github.com/VisActor/VTable/issues/2067)
+- **@visactor/vtable**: fix react component error in updateCell() [#2038](https://github.com/VisActor/VTable/issues/2038)
+- **@visactor/vtable**: fix axes default config in scatter chart [#2071](https://github.com/VisActor/VTable/issues/2071)
+
+
+
+[more detail about v1.5.2](https://github.com/VisActor/VTable/releases/tag/v1.5.2)
+
+# v1.5.1
+
+2024-07-10
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: getCellAtRelativePosition api return value [#2054](https://github.com/VisActor/VTable/issues/2054)
+- **@visactor/vtable**: add tolerance for scroll in _disableColumnAndRowSizeRound mode
+
+
+
+[more detail about v1.5.1](https://github.com/VisActor/VTable/releases/tag/v1.5.1)
+
+# v1.5.0
+
+2024-07-05
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add showMoverLine and hideMoverLine api [#2009](https://github.com/VisActor/VTable/issues/2009)
+- **@visactor/vtable**: add formatExcelJSCell config in vtable-export [#1989](https://github.com/VisActor/VTable/issues/1989)
+- **@visactor/vtable**: optimize package size & add load on demand feature
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: pivot chart select state [#2017](https://github.com/VisActor/VTable/issues/2017)
+- **@visactor/vtable**: disable select and edit input should move when input is outside of table [#2039](https://github.com/VisActor/VTable/issues/2039)
+- **@visactor/vtable**: last column resize width error [#2040](https://github.com/VisActor/VTable/issues/2040)
+- **@visactor/vtable**: fix test judgement in customMergeCell [#2031](https://github.com/VisActor/VTable/issues/2031)
+- **@visactor/vtable**: fix selected highlight update when scrolling [#2028](https://github.com/VisActor/VTable/issues/2028)
+- **@visactor/vtable**: fix select-rect update when scroll [#2015](https://github.com/VisActor/VTable/issues/2015)
+- **@visactor/vtable**: fix frozen cell update problem in sort [#1997](https://github.com/VisActor/VTable/issues/1997)
+
+
+
+[more detail about v1.5.0](https://github.com/VisActor/VTable/releases/tag/v1.5.0)
+
+# v1.4.2
+
+2024-07-05
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: corner title can display row and column diemensionTitle [#1926](https://github.com/VisActor/VTable/issues/1926)
+- **@visactor/vtable**: add column hide config [#1991](https://github.com/VisActor/VTable/issues/1991)
+- **@visactor/vtable**: add getCellAtRelativePosition api
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when not exit edit state then can not select other cells [#1974](https://github.com/VisActor/VTable/issues/1974)
+- **@visactor/vtable**: selected_clear event trigger [#1981](https://github.com/VisActor/VTable/issues/1981)
+- **@visactor/vtable**: pivotTable virtual node edit value not work [#2002](https://github.com/VisActor/VTable/issues/2002)
+- **@visactor/vtable**: tooltip content can not be selected [#2003](https://github.com/VisActor/VTable/issues/2003)
+- **@visactor/vtable**: fix vrender export module
+- **@visactor/vtable**: fix merge cell update performance problem [#1972](https://github.com/VisActor/VTable/issues/1972)
+- **@visactor/vtable**: fix regexp format for webpack 3 [#2005](https://github.com/VisActor/VTable/issues/2005)
+- **@visactor/vtable**: fix width computation in shrinkSparklineFirst mode
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: sparkline cellType set aggregationType None automatically [#1999](https://github.com/VisActor/VTable/issues/1999)
+
+
+
+[more detail about v1.4.2](https://github.com/VisActor/VTable/releases/tag/v1.4.2)
+
 # v1.4.0
 
 2024-06-21

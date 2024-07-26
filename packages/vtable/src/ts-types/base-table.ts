@@ -69,7 +69,8 @@ import type {
   WidthAdaptiveModeDef,
   HeightAdaptiveModeDef,
   ColumnInfo,
-  RowInfo
+  RowInfo,
+  CellAddressWithBound
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -272,6 +273,7 @@ export interface BaseTableConstructorOptions {
    * 当前需要冻结的列数 基本表格生效
    */
   frozenColCount?: number;
+  frozenRowCount?: number;
   rightFrozenColCount?: number;
   bottomFrozenRowCount?: number;
 
@@ -570,7 +572,7 @@ export interface BaseTableAPI {
   ) => EventListenerId;
   // &(<T extends keyof TableEventHandlersEventArgumentMap>(type: string, listener: AnyListener<T>) => EventListenerId);
 
-  _vDataSet: DataSet;
+  _vDataSet?: DataSet;
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */
@@ -633,7 +635,8 @@ export interface BaseTableAPI {
   isFrozenCell: (col: number, row: number) => { row: boolean; col: boolean } | null;
   getRowAt: (absoluteY: number) => { top: number; row: number; bottom: number };
   getColAt: (absoluteX: number) => { left: number; col: number; right: number };
-  getCellAt: (absoluteX: number, absoluteY: number) => CellAddress;
+  getCellAt: (absoluteX: number, absoluteY: number) => CellAddressWithBound;
+  getCellAtRelativePosition: (absoluteX: number, absoluteY: number) => CellAddressWithBound;
   _makeVisibleCell: (col: number, row: number) => void;
   // setFocusCursor(col: number, row: number): void;
   // focusCell(col: number, row: number): void;
@@ -852,6 +855,13 @@ export interface BaseTableAPI {
 
   bodyDomContainer?: HTMLElement;
   headerDomContainer?: HTMLElement;
+
+  showMoverLine: (col: number, row: number) => void;
+  hideMoverLine: (col: number, row: number) => void;
+  /** 关闭表格的滚动 */
+  disableScroll: () => void;
+  /** 开启表格的滚动 */
+  enableScroll: () => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

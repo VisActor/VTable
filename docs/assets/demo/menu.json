@@ -326,6 +326,13 @@
           }
         },
         {
+          "path": "pivot-sparkline",
+          "title": {
+            "zh": "透视表迷你图展示",
+            "en": "Sparkline In PivotTable"
+          }
+        },
+        {
           "path": "composite-cellType",
           "title": {
             "zh": "单元格类型混用",
@@ -385,7 +392,23 @@
             "category": "demo",
             "group": "Basic Features",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-col.gif",
-            "link": "'../../guide/basic_function/frozen_column'",
+            "link": "'../../guide/basic_function/frozen_column_row'",
+            "option": ""
+          }
+        },
+        {
+          "path": "frozen-row",
+          "title": {
+            "zh": "冻结行",
+            "en": "frozen row"
+          },
+          "meta": {
+            "title": "frozen row",
+            "keywords": "",
+            "category": "demo",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-row.gif",
+            "link": "'../../guide/basic_function/frozen_column_row'",
             "option": ""
           }
         },
@@ -484,6 +507,13 @@
           "title": {
             "zh": "分页（翻页）",
             "en": "pagination"
+          }
+        },
+        {
+          "path": "pivot-table-corner-title",
+          "title": {
+            "zh": "透视表角头显示维度名",
+            "en": "Pivot Table corner title"
           }
         }
       ]

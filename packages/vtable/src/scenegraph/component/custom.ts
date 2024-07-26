@@ -519,7 +519,13 @@ function bindAttributeUpdate(group: VGroup, col: number, row: number, index: num
 function onBeforeAttributeUpdate(val: Record<string, any>, attribute: any) {
   // @ts-ignore
   const graphic = this as any;
+  if (graphic.skipMergeUpdate) {
+    return;
+  }
   const cellGroup = getTargetCell(graphic) as Group;
+  if (!cellGroup || cellGroup.stage) {
+    return;
+  }
   const table = ((cellGroup as any).stage as any).table as BaseTableAPI;
   graphic.skipAttributeUpdate = true;
   const { mergeStartCol, mergeEndCol, mergeStartRow, mergeEndRow } = cellGroup;
@@ -535,7 +541,8 @@ function onBeforeAttributeUpdate(val: Record<string, any>, attribute: any) {
         if (col === cellGroup.col && row === cellGroup.row) {
           continue;
         }
-        const cell = table.scenegraph.getCell(col, row);
+        // const cell = table.scenegraph.getCell(col, row);
+        const cell = table.scenegraph.highPerformanceGetCell(col, row);
         if (cell.role === 'cell') {
           const target = cell.getChildByName(graphic.name, true);
           if (!target || target.skipAttributeUpdate) {

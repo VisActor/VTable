@@ -68,6 +68,10 @@ Minimum column width limit. If set to true, the column width will be limited to 
 
 The number of frozen columns
 
+#${prefix} frozenRowCount(number) = 0
+
+The number of frozen columns(including the header)
+
 #${prefix} rightFrozenColCount(number) = 0
 
 Freeze Columns Right
@@ -377,7 +381,7 @@ Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'
 
 ```
 'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
-'none': triggers the browser's default behavior when the table scrolls to the top or bottom;
+'none': don't triggers the browser's default behavior when the table scrolls to the top or bottom;
 ```
 
 #${prefix} customMergeCell(Function)
