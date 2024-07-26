@@ -381,7 +381,7 @@ Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'
 
 ```
 'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
-'none': triggers the browser's default behavior when the table scrolls to the top or bottom;
+'none': don't triggers the browser's default behavior when the table scrolls to the top or bottom;
 ```
 
 #${prefix} customMergeCell(Function)

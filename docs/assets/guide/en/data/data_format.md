@@ -20,6 +20,8 @@ Next we will describe how to apply this data to basic tables and pivot tables, r
 
 ## Basic tabular data
 
+### JSON data
+
 In a basic table, data is presented in units of behavior, and each row contains multiple fields (columns). For example: name, age, gender, and address. Each object in the data item will correspond to a row.
 
 Creating a basic table based on the above JSON data should configure the corresponding [`ListTableConstructorOptions`](../../option/ListTable#container) Assign, and will `records` Configure as a data source.
@@ -61,6 +63,8 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 ```
 
+### Two-dimensional array structure
+
 If you use a two-dimensional array as the data source, you can run it as follows:
 
 ```javascript livedemo  template=vtable
@@ -97,6 +101,42 @@ const option = {
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 ```
+
+### Special usage of multi-level data
+
+A data source with a multi-level data structure can be implemented by setting `records` to `[{}]`.
+like:
+
+```
+records:
+[
+  {
+    id: "7981",
+    details:
+    productName:'fff'
+  }
+]
+```
+
+details is an object in the data entry. In the data source, the corresponding value can be obtained through `details.name`.
+
+You need to configure the above multi-level objects in columns like this:
+
+```
+const columns = [
+  {
+    "field": ['details','productName'],
+    "title": "Order productName",
+    "width": "auto"
+  },
+]
+```
+
+The effect is as follows:
+
+<div style="width: 50%; text-align: center;">
+<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/list-record-obj.png" />
+</div>
 
 ## Pivot Table Data
 
