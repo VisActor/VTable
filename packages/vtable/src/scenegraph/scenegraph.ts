@@ -349,6 +349,7 @@ export class Scenegraph {
   createSceneGraph(skipRowHeightClear = false) {
     if (!skipRowHeightClear) {
       this.table.rowHeightsMap.clear();
+      this.table.internalProps.layoutMap.clearCellRangeMap();
     }
 
     // if (this.table.heightMode === 'autoHeight') {
