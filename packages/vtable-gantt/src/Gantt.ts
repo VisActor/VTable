@@ -12,7 +12,8 @@ import type {
   IBarLableTextStyle,
   IScrollStyle,
   IFrameStyle,
-  ITableColumnsDefine
+  ITableColumnsDefine,
+  IResizeLineStyle
 } from './ts-types';
 import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
@@ -98,6 +99,7 @@ export class Gantt extends EventTarget {
   taskTableWidth: number;
   taskTableColumns: ITableColumnsDefine;
   markLine: IMarkLine[];
+  resizeLineStyle: IResizeLineStyle;
   records: any[];
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
     super();
@@ -274,15 +276,15 @@ export class Gantt extends EventTarget {
       highlightLine.style.position = 'absolute';
       highlightLine.style.top = '0px';
       highlightLine.style.left = '5px';
-      highlightLine.style.width = '4px';
+      highlightLine.style.width = this.resizeLineStyle.lineWidth + 'px';
       highlightLine.style.height = '100%';
-      highlightLine.style.backgroundColor = '#ffcc00';
+      highlightLine.style.backgroundColor = this.resizeLineStyle.lineColor;
       highlightLine.style.zIndex = '100';
       highlightLine.style.cursor = 'col-resize';
       highlightLine.style.userSelect = 'none';
       highlightLine.style.pointerEvents = 'none';
       highlightLine.style.opacity = '0';
-      // highlightLine.style.transition = 'background-color 0.3s';
+      highlightLine.style.transition = 'background-color 0.3s';
       this.resizeLine.appendChild(highlightLine);
       // 添加鼠标悬停时的高亮效果
       this.resizeLine.addEventListener('mouseover', () => {

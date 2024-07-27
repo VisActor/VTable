@@ -81,6 +81,9 @@ export interface GanttConstructorOptions {
 
   frameStyle: IFrameStyle;
   pixelRatio?: number;
+
+  //列调整宽度的直线
+  resizeLineStyle?: IResizeLineStyle;
   // taskTableTheme?: ITableThemeDefine;
 }
 /**
@@ -128,6 +131,10 @@ export type IFrameStyle = {
   borderLineWidth?: number;
   borderLineDash?: number[];
   cornerRadius?: number;
+};
+export type IResizeLineStyle = {
+  lineColor: string; //线的颜色
+  lineWidth: number; //线的宽度
 };
 export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;

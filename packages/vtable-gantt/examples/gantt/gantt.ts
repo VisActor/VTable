@@ -841,6 +841,10 @@ export function createTable() {
       minWidth: 100,
       maxWidth: 600
     },
+    resizeLineStyle: {
+      lineColor: 'green',
+      lineWidth: 3
+    },
     timelineColWidth: 60,
     startDateField: 'start',
     endDateField: 'end',
@@ -953,6 +957,7 @@ export function createTable() {
     ],
     rowSeriesNumber: {
       title: '行号',
+      dragOrder: true,
       headerStyle: {
         bgColor: '#EEF1F5',
 

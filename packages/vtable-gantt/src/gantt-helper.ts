@@ -199,9 +199,13 @@ export function initOptions(gantt: Gantt) {
       borderLineWidth: [1, 1, 1, 1],
       cornerRadius: 4
     },
-    gantt.options?.frameStyle
+    gantt.options.frameStyle
   );
   gantt.markLine = generateMarkLine(gantt.options?.markLine);
+  gantt.resizeLineStyle = {
+    lineColor: gantt.options.resizeLineStyle?.lineColor ?? 'yellow',
+    lineWidth: gantt.options.resizeLineStyle?.lineWidth ?? 2
+  };
 }
 
 export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: ITimelineScale) {
