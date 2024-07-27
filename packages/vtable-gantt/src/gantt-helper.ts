@@ -77,7 +77,14 @@ export function syncResizeStateFromTable(gantt: Gantt) {
     });
   }
 }
-
+export function syncEditCellFromTable(gantt: Gantt) {
+  gantt.listTableInstance.on('change_cell_value', (args: any) => {
+    const { col, row, rawValue, changedValue } = args;
+    gantt.updateRecord(row - gantt.listTableInstance.columnHeaderLevelCount);
+    // const record = gantt.getRecordByIndex(row - gantt.listTableInstance.columnHeaderLevelCount);
+    // debugger;
+  });
+}
 export function getHorizontalScrollBarSize(scrollStyle?: IScrollStyle): number {
   if (
     scrollStyle?.hoverOn ||

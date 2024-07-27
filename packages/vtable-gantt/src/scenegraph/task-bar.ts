@@ -43,6 +43,9 @@ export class TaskBar {
   initBars() {
     for (let i = 0; i < this._scene._gantt.itemCount; i++) {
       const { startDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(i);
+      if (taskDays <= 0) {
+        continue;
+      }
       const taskBarSize = this._scene._gantt.colWidthPerDay * taskDays;
       const taskbarHeight = this._scene._gantt.barStyle.width;
       const minDate = new Date(this._scene._gantt.minDate);
@@ -82,6 +85,7 @@ export class TaskBar {
         fill: this._scene._gantt.barStyle.barColor2,
         pickable: false
       });
+      progress_rect.name = 'task-bar-progress-rect';
       barGroup.appendChild(progress_rect);
       barGroup.progressRect = progress_rect;
       //创建label 文字
@@ -109,7 +113,45 @@ export class TaskBar {
       barGroup.textLabel = label;
     }
   }
-
+  updateTaskBarNode(index: number) {
+    const taskbarGroup = this.barContainer.getChildren()?.[index];
+    if (taskbarGroup) {
+      const { startDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(index);
+      const taskBarSize = this._scene._gantt.colWidthPerDay * taskDays;
+      const taskbarHeight = this._scene._gantt.barStyle.width;
+      const minDate = new Date(this._scene._gantt.minDate);
+      taskbarGroup.setAttributes({
+        x:
+          this._scene._gantt.colWidthPerDay *
+          Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)),
+        y: this._scene._gantt.rowHeight * index + (this._scene._gantt.rowHeight - taskbarHeight) / 2,
+        width: taskBarSize
+      });
+      taskbarGroup.forEachChildren((childNode: any) => {
+        if (childNode.type === 'rect' && childNode.name === 'task-bar-rect') {
+          childNode.setAttributes({
+            width: taskBarSize
+          });
+        } else if (childNode.type === 'rect' && childNode.name === 'task-bar-progress-rect') {
+          childNode.setAttributes({
+            width: (taskBarSize * progress) / 100
+          });
+        } else if (childNode.type === 'text') {
+          childNode.setAttributes({
+            x:
+              this._scene._gantt.barLabelStyle.textAlign === 'center'
+                ? taskBarSize / 2
+                : this._scene._gantt.barLabelStyle.textAlign === 'left'
+                ? 10
+                : taskBarSize - 10,
+            y: this._scene._gantt.barLabelStyle.fontSize / 2,
+            text: parseStringTemplate(this._scene._gantt.barLabelText as string, taskRecord),
+            maxLineWidth: taskBarSize - 20
+          });
+        }
+      });
+    }
+  }
   initHoverBarIcons() {
     // const target = this._scene._gantt.stateManager.hoverTaskBar.target;
 

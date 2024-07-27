@@ -4,6 +4,7 @@ import { InteractionState, GANTT_EVENT_TYPE } from '../ts-types';
 import type { Group, FederatedPointerEvent } from '@visactor/vrender-core';
 import {
   getTaskIndexByY,
+  syncEditCellFromTable,
   syncResizeStateFromTable,
   syncScrollStateFromTable,
   syncScrollStateToTable
@@ -96,6 +97,7 @@ export class StateManager {
 
     syncScrollStateFromTable(this._gantt);
     syncResizeStateFromTable(this._gantt);
+    syncEditCellFromTable(this._gantt);
   }
 
   setScrollTop(top: number, triggerEvent: boolean = true) {
@@ -293,26 +295,32 @@ export class StateManager {
   endtResizeTaskBar(x: number) {
     const direction = this._gantt.stateManager.resizeTaskBar.onIconName;
     const deltaX = x - this.resizeTaskBar.startX;
-    const days = Math.round(deltaX / this._gantt.colWidthPerDay);
-    const correctX = days * this._gantt.colWidthPerDay;
-    const targetEndX = this.resizeTaskBar.targetStartX + correctX;
+    let diff_days = Math.round(deltaX / this._gantt.colWidthPerDay);
+    diff_days = direction === 'left' ? -diff_days : diff_days;
+
     const tastBarGroup = this._gantt.stateManager.resizeTaskBar.target;
     const rect = this._gantt.stateManager.resizeTaskBar.target.barRect;
     const progressRect = this._gantt.stateManager.resizeTaskBar.target.progressRect;
     const taskIndex = getTaskIndexByY(this.resizeTaskBar.startY, this._gantt);
     const { taskDays, progress } = this._gantt.getTaskInfoByTaskListIndex(taskIndex);
-    const taskBarSize = this._gantt.colWidthPerDay * (taskDays + (direction === 'left' ? -days : days));
+    if (diff_days < 0 && taskDays + diff_days <= 0) {
+      diff_days = 1 - taskDays;
+    }
+    const correctX = (direction === 'left' ? -diff_days : diff_days) * this._gantt.colWidthPerDay;
+    const targetEndX = this.resizeTaskBar.targetStartX + correctX;
+
+    const taskBarSize = this._gantt.colWidthPerDay * (taskDays + diff_days);
     if (direction === 'left') {
       tastBarGroup.setAttribute('x', targetEndX);
       tastBarGroup.setAttribute('width', taskBarSize);
       rect.setAttribute('width', tastBarGroup.attribute.width);
       progressRect.setAttribute('width', (progress / 100) * tastBarGroup.attribute.width);
-      this._gantt.updateDateToTaskRecord('start-move', days, taskIndex);
+      this._gantt.updateDateToTaskRecord('start-move', -diff_days, taskIndex);
     } else if (direction === 'right') {
       tastBarGroup.setAttribute('width', taskBarSize);
       rect.setAttribute('width', tastBarGroup.attribute.width);
       progressRect.setAttribute('width', (progress / 100) * tastBarGroup.attribute.width);
-      this._gantt.updateDateToTaskRecord('end-move', days, taskIndex);
+      this._gantt.updateDateToTaskRecord('end-move', diff_days, taskIndex);
     }
     this._gantt.scenegraph.taskBar.showHoverBar(
       tastBarGroup.attribute.x,
@@ -338,12 +346,18 @@ export class StateManager {
     const taskIndex = getTaskIndexByY(this.resizeTaskBar.startY, this._gantt);
     const taskRecord = this._gantt.getRecordByIndex(taskIndex);
     const progress = taskRecord[progressField];
-    if (this._gantt.stateManager.resizeTaskBar.onIconName === 'left') {
-      tastBarGroup.setAttribute('x', tastBarGroup.attribute.x + dx);
+
+    let diffWidth = this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx;
+    let taskBarSize = tastBarGroup.attribute.width + diffWidth;
+    if (diffWidth < 0 && taskBarSize <= this._gantt.colWidthPerDay) {
+      diffWidth = this._gantt.colWidthPerDay - tastBarGroup.atrribute.width;
+      taskBarSize += diffWidth;
     }
-    const taskBarSize =
-      tastBarGroup.attribute.width + (this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx);
+
     tastBarGroup.setAttribute('width', taskBarSize);
+    if (this._gantt.stateManager.resizeTaskBar.onIconName === 'left') {
+      tastBarGroup.setAttribute('x', tastBarGroup.attribute.x - diffWidth);
+    }
 
     rect.setAttribute('width', tastBarGroup.attribute.width);
     progressRect.setAttribute('width', (progress / 100) * tastBarGroup.attribute.width);

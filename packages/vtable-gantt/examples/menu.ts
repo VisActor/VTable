@@ -5,6 +5,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-editor'
   }
   //   ]
   // }

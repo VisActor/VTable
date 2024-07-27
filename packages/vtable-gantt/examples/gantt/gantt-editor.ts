@@ -1,74 +1,79 @@
 import type { ColumnsDefine } from '@visactor/vtable';
+import { register } from '@visactor/vtable';
+import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
-
+const date_input_editor = new DateInputEditor({});
+const input_editor = new InputEditor({});
+register.editor('input', input_editor);
+register.editor('date-input', date_input_editor);
 export function createTable() {
   const records = [
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-30',
-      end: '2024-08-14',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024/07/24',
-      end: '2024/08/04',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-08-04',
-      end: '2024-08-04',
-      progress: 90,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '07/24/2024',
-      end: '08/04/2024',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
+    // {
+    //   id: 1,
+    //   title: 'Software Development',
+    //   developer: 'liufangfang.jane@bytedance.com',
+    //   start: '2024-07-30',
+    //   end: '2024-08-14',
+    //   progress: 31,
+    //   priority: 'P0'
+    // },
+    // {
+    //   id: 2,
+    //   title: 'Scope',
+    //   developer: 'liufangfang.jane@bytedance.com',
+    //   start: '2024-07-24',
+    //   end: '2024-08-04',
+    //   progress: 60,
+    //   priority: 'P0'
+    // },
+    // {
+    //   id: 3,
+    //   title: 'Determine project scope',
+    //   developer: 'liufangfang.jane@bytedance.com',
+    //   start: '2024/07/24',
+    //   end: '2024/08/04',
+    //   progress: 100,
+    //   priority: 'P1'
+    // },
+    // {
+    //   id: 1,
+    //   title: 'Software Development',
+    //   developer: 'liufangfang.jane@bytedance.com',
+    //   start: '2024-08-04',
+    //   end: '2024-08-04',
+    //   progress: 90,
+    //   priority: 'P0'
+    // },
+    // {
+    //   id: 2,
+    //   title: 'Scope',
+    //   developer: 'liufangfang.jane@bytedance.com',
+    //   start: '07/24/2024',
+    //   end: '08/04/2024',
+    //   progress: 60,
+    //   priority: 'P0'
+    // },
+    // {
+    //   id: 3,
+    //   title: 'Determine project scope',
+    //   developer: 'liufangfang.jane@bytedance.com',
+    //   start: '2024-07-24',
+    //   end: '2024-08-04',
+    //   progress: 100,
+    //   priority: 'P1'
+    // },
+    // {
+    //   id: 1,
+    //   title: 'Software Development',
+    //   developer: 'liufangfang.jane@bytedance.com',
+    //   start: '2024-07-24',
+    //   end: '2024-08-04',
+    //   progress: 31,
+    //   priority: 'P0'
+    // },
     {
       id: 2,
       title: 'Scope',
@@ -781,7 +786,8 @@ export function createTable() {
       },
       style: {
         borderColor: '#e1e4e8'
-      }
+      },
+      editor: 'input'
     },
     {
       field: 'start',
@@ -793,7 +799,8 @@ export function createTable() {
       },
       style: {
         borderColor: '#e1e4e8'
-      }
+      },
+      editor: 'date-input'
     },
     {
       field: 'end',
@@ -805,7 +812,8 @@ export function createTable() {
       },
       style: {
         borderColor: '#e1e4e8'
-      }
+      },
+      editor: 'date-input'
     },
     {
       field: 'priority',
@@ -817,7 +825,8 @@ export function createTable() {
       },
       style: {
         borderColor: '#e1e4e8'
-      }
+      },
+      editor: 'input'
     },
 
     {
@@ -830,7 +839,8 @@ export function createTable() {
       },
       style: {
         borderColor: '#e1e4e8'
-      }
+      },
+      editor: 'input'
     }
   ];
   const option: GanttConstructorOptions = {
@@ -935,7 +945,7 @@ export function createTable() {
       //   }
       // }
     ],
-    minDate: '2024-07-01',
+    minDate: '2024-07-07',
     maxDate: '2024-10-15',
     markLine: [
       {

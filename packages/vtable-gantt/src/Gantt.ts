@@ -96,6 +96,8 @@ export class Gantt extends EventTarget {
   progressField: string;
   minDate: Date;
   maxDate: Date;
+  _minDateTime: number;
+  _maxDateTime: number;
   taskTableWidth: number;
   taskTableColumns: ITableColumnsDefine;
   markLine: IMarkLine[];
@@ -113,6 +115,8 @@ export class Gantt extends EventTarget {
     this.progressField = options?.progressField ?? 'progress';
     this.minDate = options?.minDate ? new Date(options?.minDate) : new Date(2024, 1, 1);
     this.maxDate = options?.maxDate ? new Date(options?.maxDate) : new Date(2025, 1, 1);
+    this._minDateTime = this.minDate.getTime();
+    this._maxDateTime = this.maxDate.getTime();
     this.taskTableWidth = typeof options?.taskTable?.width === 'number' ? options?.taskTable?.width : 100;
     this.taskTableColumns = options?.taskTable?.columns ?? [];
     this.records = options?.records ?? [];
@@ -399,8 +403,10 @@ export class Gantt extends EventTarget {
     return this.records[index];
   }
 
-  updateRecord(record: any, index: number) {
-    this.listTableInstance.updateRecords([record], [index]);
+  updateRecord(index: number) {
+    // this.listTableInstance.updateRecords([record], [index]);
+    this.scenegraph.taskBar.updateTaskBarNode(index);
+    this.scenegraph.updateNextFrame();
   }
   updateRecordToListTable(record: any, index: number) {
     this.listTableInstance.updateRecords([record], [index]);
@@ -410,8 +416,15 @@ export class Gantt extends EventTarget {
     const startDateField = this.startDateField;
     const endDateField = this.endDateField;
     const progressField = this.progressField;
-    const startDate = new Date(taskRecord[startDateField]);
-    const endDate = new Date(taskRecord[endDateField]);
+    const rawDateStartDateTime = new Date(taskRecord[startDateField]).getTime();
+    const rawDateEndDateTime = new Date(taskRecord[endDateField]).getTime();
+    if (rawDateEndDateTime < this._minDateTime || rawDateStartDateTime > this._maxDateTime) {
+      return {
+        taskDays: 0
+      };
+    }
+    const startDate = new Date(Math.min(Math.max(this._minDateTime, rawDateStartDateTime), this._maxDateTime));
+    const endDate = new Date(Math.max(Math.min(this._maxDateTime, rawDateEndDateTime), this._minDateTime));
     const progress = taskRecord[progressField];
     const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     return {
@@ -442,6 +455,10 @@ export class Gantt extends EventTarget {
       const newEndDate = formatDate(new Date(days * DayTimes + endDate.getTime()), dateFormat);
       taskRecord[endDateField] = newEndDate;
     }
+    this.updateRecordToListTable(taskRecord, index);
+  }
+  updateTaskRecord(index: number) {
+    const taskRecord = this.getRecordByIndex(index);
     this.updateRecordToListTable(taskRecord, index);
   }
 
