@@ -1,7 +1,7 @@
 // import { FederatedPointerEvent } from '@src/vrender';
 import type { FederatedPointerEvent, Gesture, IEventTarget } from '@src/vrender';
 import { RichText } from '@src/vrender';
-import type { ColumnDefine, MousePointerCellEvent } from '../ts-types';
+import type { ColumnDefine, ListTableConstructorOptions, MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManager } from '../state/state';
 import type { Group } from '../scenegraph/graphic/group';
@@ -487,8 +487,11 @@ export class EventManager {
 
   checkColumnResize(eventArgsSet: SceneEvent, update?: boolean): boolean {
     // return false;
-
     const { eventArgs } = eventArgsSet;
+
+    if ((this.table.options as ListTableConstructorOptions).enableTreeStickCell && !eventArgs) {
+      return false;
+    }
     // if (eventArgs) { // 如果是鼠标处理表格外部如最后一列的后面 也期望可以拖拽列宽
     const resizeCol = this.table.scenegraph.getResizeColAt(
       eventArgsSet.abstractPos.x,

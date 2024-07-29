@@ -17,7 +17,11 @@ export function initSceneGraph(scene: Scenegraph) {
   colHeaderGroup.role = 'col-header';
   scene.colHeaderGroup = colHeaderGroup;
 
-  const cornerHeaderGroup = createContainerGroup(0, 0, true);
+  const cornerHeaderGroup = createContainerGroup(
+    0,
+    0,
+    !(scene.table.options as ListTableConstructorOptions).enableTreeStickCell
+  );
   cornerHeaderGroup.role = 'corner-header';
   scene.cornerHeaderGroup = cornerHeaderGroup;
 

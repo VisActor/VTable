@@ -107,47 +107,30 @@ export class ListTreeStickCellPlugin {
   }
 
   updateScenegraph() {
-    const colHeaderGroup = this.table.scenegraph.colHeaderGroup;
-    if (!colHeaderGroup.border) {
-      const hackBorder = createRect({
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0
-      });
-      colHeaderGroup.add(hackBorder);
-      colHeaderGroup.border = hackBorder;
-      (hackBorder as any).attachShadow(hackBorder.shadowRoot);
-
-      hackBorder.addEventListener('click', (e: any) => {
-        const { shadowTarget } = e.pickParams;
-        const cellGroup = getTargetCell(shadowTarget);
-        const { col, row } = cellGroup;
-        const rowIndex = this.titleRows.indexOf(row);
-        this.table.scrollToCell({ col, row: row - rowIndex });
-      });
-    }
-    // const shadowGroup = colHeaderGroup.shadowRoot;
-    const shadowGroup = colHeaderGroup.border.shadowRoot;
-    shadowGroup.setAttributes({
-      // shadowRootIdx: -1
-      // width: 500,
-      // height: 500,
-      // fill: 'red'
-    });
-    shadowGroup.removeAllChild();
+    const { table } = this;
+    const { shadowGroup, shadowGroupFrozen } = prepareShadowRoot(table);
 
     this.showedTitleRows.length = 0;
     let skip = 0;
-    for (let col = 0; col < this.table.colCount; col++) {
-      const colGroup = new Group({
-        x: this.table.getColsWidth(0, col - 1),
-        y: this.table.getFrozenRowsHeight()
-      });
-      shadowGroup.add(colGroup);
+    for (let col = 0; col < table.colCount; col++) {
+      let colGroup;
+      if (col < table.frozenColCount) {
+        colGroup = new Group({
+          x: table.getColsWidth(0, col - 1),
+          y: table.getFrozenRowsHeight()
+        });
+        shadowGroupFrozen.add(colGroup);
+      } else {
+        colGroup = new Group({
+          x: table.getColsWidth(table.frozenColCount, col - 1),
+          y: table.getFrozenRowsHeight()
+        });
+        shadowGroup.add(colGroup);
+      }
+      colGroup.col = col;
       for (let i = 0; i < this.titleRows.length; i++) {
         const row = this.titleRows[i];
-        if (isSkipRow(row, this.rowNow, this.table.scenegraph.proxy.screenTopRow, this.titleRows)) {
+        if (isSkipRow(row, this.rowNow, table.scenegraph.proxy.screenTopRow, this.titleRows)) {
           // skipOne = true;
           col === 0 && skip++;
           continue;
@@ -155,7 +138,7 @@ export class ListTreeStickCellPlugin {
         if (col === 0) {
           this.showedTitleRows.push(row);
         }
-        const cell = this.table.scenegraph.getCell(col, row);
+        const cell = table.scenegraph.getCell(col, row);
         if (cell.role === 'cell') {
           const newCell = cloneGraphic(cell);
           newCell.setAttributes({
@@ -164,7 +147,7 @@ export class ListTreeStickCellPlugin {
           colGroup.add(newCell);
         } else {
           // create a fake cellGroup for title
-          const newCell = updateCell(col, row, this.table, true, true);
+          const newCell = updateCell(col, row, table, true, true);
           newCell.setAttributes({
             y: i * 40
           });
@@ -174,8 +157,8 @@ export class ListTreeStickCellPlugin {
     }
 
     if (skip > 0 && this.skipStartRow === -1 && this.skipEndRow === -1) {
-      this.skipStartRow = this.table.scenegraph.proxy.screenTopRow - 1;
-      this.skipEndRow = this.table.scenegraph.proxy.screenTopRow + 1;
+      this.skipStartRow = table.scenegraph.proxy.screenTopRow - 1;
+      this.skipEndRow = table.scenegraph.proxy.screenTopRow + 1;
     }
   }
 }
@@ -199,6 +182,24 @@ function cloneGraphic(graphic: Graphic) {
   (newGraphic as any).role = (graphic as any).role;
   (newGraphic as any).col = (graphic as any).col;
   (newGraphic as any).row = (graphic as any).row;
+  (newGraphic as any).mergeStartCol = (graphic as any).mergeStartCol;
+  (newGraphic as any).mergeStartRow = (graphic as any).mergeStartRow;
+  (newGraphic as any).mergeEndCol = (graphic as any).mergeEndCol;
+  (newGraphic as any).mergeEndRow = (graphic as any).mergeEndRow;
+  (newGraphic as any).contentWidth = (graphic as any).contentWidth;
+  (newGraphic as any).contentHeight = (graphic as any).contentHeight;
+
+  if ((newGraphic as any).role === 'cell') {
+    // hack for vrender not support shadow group pick
+    const hackRect = createRect({
+      x: 0,
+      y: 0,
+      width: newGraphic.attribute.width,
+      height: newGraphic.attribute.height
+    });
+    newGraphic.add(hackRect);
+  }
+
   if (graphic.type === 'group') {
     const newGroup = newGraphic as Group;
     graphic.forEachChildren(child => {
@@ -207,6 +208,59 @@ function cloneGraphic(graphic: Graphic) {
     });
   }
   return newGraphic;
+}
+
+function prepareShadowRoot(table: ListTable) {
+  const colHeaderGroup = table.scenegraph.colHeaderGroup;
+  const cornerHeaderGroup = table.scenegraph.cornerHeaderGroup;
+  if (!colHeaderGroup.border) {
+    const hackBorder = createRect({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    colHeaderGroup.add(hackBorder);
+    colHeaderGroup.border = hackBorder;
+    (hackBorder as any).attachShadow(hackBorder.shadowRoot);
+
+    hackBorder.addEventListener('click', (e: any) => {
+      const titleRows = table.listTreeStickCellPlugin.titleRows;
+      const { shadowTarget } = e.pickParams;
+      const cellGroup = getTargetCell(shadowTarget);
+      const { col, row } = cellGroup;
+      const rowIndex = titleRows.indexOf(row);
+      table.scrollToCell({ col, row: row - rowIndex });
+    });
+  }
+
+  if (!cornerHeaderGroup.border) {
+    const hackBorder = createRect({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    cornerHeaderGroup.add(hackBorder);
+    cornerHeaderGroup.border = hackBorder;
+    (hackBorder as any).attachShadow(hackBorder.shadowRoot);
+
+    hackBorder.addEventListener('click', (e: any) => {
+      const titleRows = table.listTreeStickCellPlugin.titleRows;
+      const { shadowTarget } = e.pickParams;
+      const cellGroup = getTargetCell(shadowTarget);
+      const { col, row } = cellGroup;
+      const rowIndex = titleRows.indexOf(row);
+      table.scrollToCell({ col, row: row - rowIndex });
+    });
+  }
+
+  const shadowGroup = colHeaderGroup.border.shadowRoot;
+  const shadowGroupFrozen = cornerHeaderGroup.border.shadowRoot;
+  shadowGroup.removeAllChild();
+  shadowGroupFrozen.removeAllChild();
+
+  return { shadowGroup, shadowGroupFrozen };
 }
 
 export const registerListTreeStickCellPlugin = () => {
