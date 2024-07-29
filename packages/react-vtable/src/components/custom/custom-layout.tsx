@@ -97,8 +97,9 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
       // update all container
       container.current.forEach((value, key) => {
         const [col, row] = key.split('-').map(Number);
-        const width = table.getColWidth(col); // to be fixed: may be merge cell
-        const height = table.getRowHeight(row); // to be fixed: may be merge cell
+        // const width = table.getColWidth(col); // to be fixed: may be merge cell
+        // const height = table.getRowHeight(row); // to be fixed: may be merge cell
+        const { width, height } = getCellRect(col, row, table);
         const currentContainer = value;
         const args = {
           col,
@@ -142,4 +143,10 @@ function reconcilorUpdateContainer(children: ReactElement, currentContainer: any
 
 function isReactElement(obj) {
   return obj && obj.$$typeof === Symbol.for('react.element');
+}
+
+function getCellRect(col: number, row: number, table: any) {
+  const range = table.getCellRange(col, row);
+  const rect = table.getCellsRect(range.start.col, range.start.row, range.end.col, range.end.row);
+  return rect;
 }
