@@ -2465,6 +2465,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.isSeriesNumberInHeader(target.col, target.row) || this.isSeriesNumberInHeader(source.col, source.row)) {
       return false;
     }
+    if (this.isCornerHeader(target.col, target.row)) {
+      return false;
+    }
     if (source.col < 0 || source.row < 0 || target.col < 0 || target.row < 0) {
       return false;
     }
