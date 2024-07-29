@@ -223,6 +223,7 @@ function prepareShadowRoot(table: ListTable) {
     colHeaderGroup.add(hackBorder);
     colHeaderGroup.border = hackBorder;
     (hackBorder as any).attachShadow(hackBorder.shadowRoot);
+    hackBorder.name = 'border-rect';
 
     hackBorder.addEventListener('click', (e: any) => {
       const titleRows = table.listTreeStickCellPlugin.titleRows;
@@ -244,6 +245,7 @@ function prepareShadowRoot(table: ListTable) {
     cornerHeaderGroup.add(hackBorder);
     cornerHeaderGroup.border = hackBorder;
     (hackBorder as any).attachShadow(hackBorder.shadowRoot);
+    hackBorder.name = 'border-rect';
 
     hackBorder.addEventListener('click', (e: any) => {
       const titleRows = table.listTreeStickCellPlugin.titleRows;
