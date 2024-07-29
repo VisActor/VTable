@@ -9,6 +9,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-editor'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-tree'
   }
   //   ]
   // }

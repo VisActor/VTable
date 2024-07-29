@@ -18,26 +18,29 @@ export function createTable() {
       start: '2024-07-30',
       end: '2024-08-14',
       progress: 31,
-      priority: 'P0'
+      priority: 'P0',
+      children: [
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-24',
+          end: '2024-08-04',
+          progress: 60,
+          priority: 'P0'
+        },
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024/07/24',
+          end: '2024/08/04',
+          progress: 100,
+          priority: 'P1'
+        }
+      ]
     },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024/07/24',
-      end: '2024/08/04',
-      progress: 100,
-      priority: 'P1'
-    },
+
     {
       id: 1,
       title: 'Software Development',
@@ -781,6 +784,7 @@ export function createTable() {
       title: 'title',
       width: 200,
       sort: true,
+      tree: true,
       headerStyle: {
         borderColor: '#e1e4e8'
       },
