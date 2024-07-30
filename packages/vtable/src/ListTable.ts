@@ -1083,7 +1083,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.render();
     if (isValid(oldHoverState.col) && isValid(oldHoverState.row) && oldHoverState.col >= 0 && oldHoverState.row >= 0) {
       setTimeout(() => {
-        this.internalProps.tooltipHandler.showTooltip(oldHoverState.col, oldHoverState.row);
+        this.internalProps?.tooltipHandler.showTooltip(oldHoverState.col, oldHoverState.row);
       }, 0);
     }
     console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
