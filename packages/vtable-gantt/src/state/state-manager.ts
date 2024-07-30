@@ -408,10 +408,10 @@ export class StateManager {
       const startWidth = this._gantt.taskTableWidth;
       let width = startWidth + deltaX;
       const maxWidth = Math.min(
-        this._gantt.listTableInstance.getAllColsWidth() + this._gantt.tableX * 2,
-        this._gantt.options.taskTable.maxWidth ?? 100000
+        this._gantt.taskListTableInstance.getAllColsWidth() + this._gantt.tableX * 2,
+        this._gantt.options.taskListTable.maxWidth ?? 100000
       );
-      const minWidth = Math.max(this._gantt.tableX * 2, this._gantt.options.taskTable.minWidth ?? 0);
+      const minWidth = Math.max(this._gantt.tableX * 2, this._gantt.options.taskListTable.minWidth ?? 0);
       if (deltaX > 0 && width > maxWidth) {
         width = maxWidth;
       }

@@ -28,11 +28,11 @@ export function handleWhell(event: WheelEvent, state: StateManager, gantt: Gantt
 
   if (optimizedDeltaX) {
     state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX);
-    gantt.scenegraph.scrollbarComponent.showHorizontalScrollBar();
+    gantt.scenegraph.scrollbarComponent.showHorizontalScrollBar(true);
   }
   if (optimizedDeltaY) {
     state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY);
-    gantt.scenegraph.scrollbarComponent.showVerticalScrollBar();
+    gantt.scenegraph.scrollbarComponent.showVerticalScrollBar(true);
   }
   // isWheelEvent && state.resetInteractionState();
   // if (

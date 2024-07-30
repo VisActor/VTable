@@ -461,10 +461,10 @@ export class TableTheme implements ITableThemeDefine {
           return scroll.visible ?? 'scrolling';
         },
         get verticalVisible(): 'always' | 'scrolling' | 'none' | 'focus' {
-          return scroll.verticalVisible ?? 'scrolling';
+          return scroll.verticalVisible;
         },
         get horizontalVisible(): 'always' | 'scrolling' | 'none' | 'focus' {
-          return scroll.horizontalVisible ?? 'scrolling';
+          return scroll.horizontalVisible;
         },
         get width(): number | undefined {
           return scroll.width ?? 7;

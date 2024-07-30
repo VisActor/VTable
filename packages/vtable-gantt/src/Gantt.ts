@@ -16,7 +16,7 @@ import type {
   IResizeLineStyle
 } from './ts-types';
 import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
-import { ListTable } from '@visactor/vtable';
+import { ListTable, themes } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
 import {
@@ -25,8 +25,7 @@ import {
   generateTimeLineDate,
   getHorizontalScrollBarSize,
   getVerticalScrollBarSize,
-  initOptions,
-  syncScrollStateFromTable
+  initOptions
 } from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
 import { formatDate, getWeekNumber, parseDateFormat, toBoxArray } from './tools/util';
@@ -63,7 +62,7 @@ export class Gantt extends EventTarget {
   headerStyleCache: any;
   bodyStyleCache: any;
   bodyBottomStyleCache: any;
-  listTableInstance?: ListTable;
+  taskListTableInstance?: ListTable;
 
   canvas: HTMLCanvasElement;
   element: HTMLElement;
@@ -117,8 +116,8 @@ export class Gantt extends EventTarget {
     this.maxDate = options?.maxDate ? new Date(options?.maxDate) : new Date(2025, 1, 1);
     this._minDateTime = this.minDate.getTime();
     this._maxDateTime = this.maxDate.getTime();
-    this.taskTableWidth = typeof options?.taskTable?.width === 'number' ? options?.taskTable?.width : 100;
-    this.taskTableColumns = options?.taskTable?.columns ?? [];
+    this.taskTableWidth = typeof options?.taskListTable?.width === 'number' ? options?.taskListTable?.width : 100;
+    this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
     this.pixelRatio = options?.pixelRatio ?? 1;
     initOptions(this);
@@ -139,8 +138,8 @@ export class Gantt extends EventTarget {
       this._updateSize();
     }
     this._generateListTable();
-    this.itemCount = this.listTableInstance
-      ? this.listTableInstance.rowCount - this.listTableInstance.columnHeaderLevelCount
+    this.itemCount = this.taskListTableInstance
+      ? this.taskListTableInstance.rowCount - this.taskListTableInstance.columnHeaderLevelCount
       : this.records.length;
     this.headerHeight = this.headerRowHeight * this.headerLevel;
     this.drawHeight = Math.min(this.headerHeight + this.rowHeight * this.itemCount, this.tableNoFrameHeight);
@@ -224,12 +223,12 @@ export class Gantt extends EventTarget {
   _generateListTable() {
     const listTableOption = this._generateListTableOptions();
     if (this.taskTableColumns.length >= 1) {
-      this.listTableInstance = new ListTable(this.container, listTableOption);
+      this.taskListTableInstance = new ListTable(this.container, listTableOption);
 
-      if (this.options?.taskTable?.width === 'auto') {
-        this.taskTableWidth = this.listTableInstance.getAllColsWidth() + this.listTableInstance.tableX * 2;
+      if (this.options?.taskListTable?.width === 'auto') {
+        this.taskTableWidth = this.taskListTableInstance.getAllColsWidth() + this.taskListTableInstance.tableX * 2;
         this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
-        this.listTableInstance.setCanvasSize(
+        this.taskListTableInstance.setCanvasSize(
           this.taskTableWidth,
           this.tableNoFrameHeight + this.frameStyle.borderLineWidth * 2
         );
@@ -244,19 +243,25 @@ export class Gantt extends EventTarget {
         listTable_options[key] = this.options[key];
       }
     }
-    listTable_options.columns = this.options.taskTable.columns;
+    listTable_options.columns = this.options.taskListTable.columns;
     // lineWidthArr[1] = 0;
     listTable_options.theme = {
       scrollStyle: Object.assign({}, this.scrollStyle, {
         verticalVisible: 'none'
       }),
-      headerStyle: {
-        bgColor: this.timelineHeaderStyle.backgroundColor
-      },
+      headerStyle: Object.assign(
+        {},
+        themes.DEFAULT.headerStyle,
+        {
+          bgColor: this.timelineHeaderStyle.backgroundColor
+        },
+        this.options.taskListTable.headerStyle
+      ),
       cellInnerBorder: false,
       frameStyle: Object.assign({}, this.frameStyle, {
         cornerRadius: 0 //[this.frameStyle.cornerRadius, 0, 0, this.frameStyle.cornerRadius]
-      })
+      }),
+      bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable.bodyStyle)
     };
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvasHeight ?? this.canvas.height;
@@ -265,13 +270,13 @@ export class Gantt extends EventTarget {
     return listTable_options;
   }
   _createResizeLine() {
-    if (this.listTableInstance && this.options.taskTable.width !== 'auto') {
+    if (this.taskListTableInstance && this.options.taskListTable.width !== 'auto') {
       this.resizeLine = document.createElement('div');
       this.resizeLine.style.position = 'absolute';
-      this.resizeLine.style.top = '0px';
+      this.resizeLine.style.top = this.tableY + 'px';
       this.resizeLine.style.left = this.taskTableWidth ? `${this.taskTableWidth - 7}px` : '0px';
       this.resizeLine.style.width = '14px';
-      this.resizeLine.style.height = '100%';
+      this.resizeLine.style.height = this.drawHeight + 'px'; //'100%';
       this.resizeLine.style.backgroundColor = 'rgba(0,0,0,0)';
       this.resizeLine.style.zIndex = '100';
       this.resizeLine.style.cursor = 'col-resize';
@@ -399,8 +404,8 @@ export class Gantt extends EventTarget {
   }
 
   getRecordByIndex(index: number) {
-    if (this.listTableInstance) {
-      return this.listTableInstance.getRecordByRowCol(0, index + this.listTableInstance.columnHeaderLevelCount);
+    if (this.taskListTableInstance) {
+      return this.taskListTableInstance.getRecordByRowCol(0, index + this.taskListTableInstance.columnHeaderLevelCount);
     }
     return this.records[index];
   }
@@ -411,7 +416,7 @@ export class Gantt extends EventTarget {
     this.scenegraph.updateNextFrame();
   }
   updateRecordToListTable(record: any, index: number) {
-    this.listTableInstance.updateRecords([record], [index]);
+    this.taskListTableInstance.updateRecords([record], [index]);
   }
   getTaskInfoByTaskListIndex(index: number) {
     const taskRecord = this.getRecordByIndex(index);
@@ -476,14 +481,14 @@ export class Gantt extends EventTarget {
   _resize() {
     this._updateSize();
     this.scenegraph.resize();
-    this.listTableInstance.setCanvasSize(
+    this.taskListTableInstance.setCanvasSize(
       this.taskTableWidth,
       this.tableNoFrameHeight + this.frameStyle.borderLineWidth * 2
     );
   }
-  syncStateFromTable() {
-    this.itemCount = this.listTableInstance
-      ? this.listTableInstance.rowCount - this.listTableInstance.columnHeaderLevelCount
+  _syncPropsFromTable() {
+    this.itemCount = this.taskListTableInstance
+      ? this.taskListTableInstance.rowCount - this.taskListTableInstance.columnHeaderLevelCount
       : this.records.length;
     this.drawHeight = Math.min(this.headerHeight + this.rowHeight * this.itemCount, this.tableNoFrameHeight);
     this.gridHeight = this.drawHeight - this.headerHeight;

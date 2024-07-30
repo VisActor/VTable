@@ -3,6 +3,7 @@ import { createRect, createText } from '@visactor/vrender-core';
 import type { Scenegraph } from './scenegraph';
 import { Icon } from './icon';
 import { parseStringTemplate } from '../tools/util';
+import { isValid } from '@visactor/vutils';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -94,24 +95,28 @@ export class TaskBar {
       progress_rect.name = 'task-bar-progress-rect';
       barGroup.appendChild(progress_rect);
       barGroup.progressRect = progress_rect;
+      const { textAlign, fontSize, fontFamily, textOverflow, color } = this._scene._gantt.barLabelStyle;
       //创建label 文字
       const label = createText({
         // visible: false,
         pickable: false,
-        x:
-          this._scene._gantt.barLabelStyle.textAlign === 'center'
-            ? taskBarSize / 2
-            : this._scene._gantt.barLabelStyle.textAlign === 'left'
-            ? 10
-            : taskBarSize - 10,
-        y: this._scene._gantt.barLabelStyle.fontSize / 2,
-        fontSize: this._scene._gantt.barLabelStyle.fontSize, // 10
-        fill: this._scene._gantt.barLabelStyle.color,
-        fontFamily: this._scene._gantt.barLabelStyle.fontFamily,
+        x: textAlign === 'center' ? taskBarSize / 2 : textAlign === 'left' ? 10 : taskBarSize - 10,
+        y: fontSize / 2,
+        fontSize: fontSize, // 10
+        fill: color,
+        fontFamily: fontFamily,
         text: parseStringTemplate(this._scene._gantt.barLabelText as string, taskRecord),
         maxLineWidth: taskBarSize - 20,
         textBaseline: 'middle',
-        textAlign: this._scene._gantt.barLabelStyle.textAlign
+        textAlign: textAlign,
+        ellipsis:
+          textOverflow === 'clip'
+            ? ''
+            : textOverflow === 'ellipsis'
+            ? '...'
+            : isValid(textOverflow)
+            ? textOverflow
+            : undefined
         // dx: 12 + 4,
         // dy: this._scene._gantt.barLabelStyle.fontSize / 2
       });

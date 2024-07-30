@@ -13,6 +13,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-tree'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-style'
   }
   //   ]
   // }

@@ -586,33 +586,44 @@ export function createTable() {
       field: 'title',
       title: 'title',
       width: 200,
+      sort: true,
       tree: true,
-      sort: true
+      editor: 'input'
     },
     {
       field: 'start',
       title: 'start',
       width: 150,
-      sort: true
+      sort: true,
+      editor: 'date-input'
     },
     {
       field: 'end',
       title: 'end',
       width: 150,
-      sort: true
+      sort: true,
+      editor: 'date-input'
     },
     {
       field: 'priority',
       title: 'priority',
       width: 100,
-      sort: true
+      sort: true,
+      editor: 'input'
     },
-
     {
       field: 'progress',
       title: 'progress',
       width: 200,
-      sort: true
+      sort: true,
+      headerStyle: {
+        borderColor: '#e1e4e8'
+      },
+      style: {
+        borderColor: '#e1e4e8',
+        color: 'green'
+      },
+      editor: 'input'
     }
   ];
   const option: GanttConstructorOptions = {
@@ -621,7 +632,22 @@ export function createTable() {
       columns: columns,
       width: 400,
       minWidth: 100,
-      maxWidth: 600
+      maxWidth: 600,
+      headerStyle: {
+        borderColor: '#e1e4e8',
+        borderLineWidth: 1,
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'red',
+        bgColor: '#EEF1F5'
+      },
+      bodyStyle: {
+        borderColor: '#e1e4e8',
+        borderLineWidth: [1, 0, 1, 0],
+        fontSize: 16,
+        color: '#4D4D4D',
+        bgColor: '#FFF'
+      }
     },
     resizeLineStyle: {
       lineColor: 'green',
@@ -638,10 +664,10 @@ export function createTable() {
     },
     gridStyle: {
       // backgroundColor: 'gray',
-      vertical: {
-        lineWidth: 1,
-        lineColor: '#e1e4e8'
-      },
+      // vertical: {
+      //   lineWidth: 1,
+      //   lineColor: '#e1e4e8'
+      // },
       horizontal: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
@@ -662,7 +688,8 @@ export function createTable() {
       labelTextStyle: {
         fontFamily: 'Arial',
         fontSize: 16,
-        textAlign: 'left'
+        textAlign: 'left',
+        textOverflow: 'ellipsis'
       },
       barStyle: {
         width: 20,
@@ -742,12 +769,18 @@ export function createTable() {
       dragOrder: true,
       headerStyle: {
         bgColor: '#EEF1F5',
-
         borderColor: '#e1e4e8'
       },
       style: {
         borderColor: '#e1e4e8'
       }
+    },
+    scrollStyle: {
+      scrollRailColor: 'RGBA(246,246,246,0.5)',
+      visible: 'scrolling',
+      width: 6,
+      scrollSliderCornerRadius: 2,
+      scrollSliderColor: '#5cb85c'
     }
   };
   // columns:[
@@ -771,7 +804,7 @@ export function createTable() {
     console.log('scroll', e);
   });
 
-  tableInstance.listTableInstance?.on('scroll', e => {
+  tableInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
   // bindDebugTool(tableInstance.scenegraph.stage as any, {

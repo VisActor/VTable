@@ -775,67 +775,37 @@ export function createTable() {
       field: 'title',
       title: 'title',
       width: 200,
-      sort: true,
-      headerStyle: {
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      }
+      sort: true
     },
     {
       field: 'start',
       title: 'start',
       width: 150,
-      sort: true,
-      headerStyle: {
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      }
+      sort: true
     },
     {
       field: 'end',
       title: 'end',
       width: 150,
-      sort: true,
-      headerStyle: {
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      }
+      sort: true
     },
     {
       field: 'priority',
       title: 'priority',
       width: 100,
-      sort: true,
-      headerStyle: {
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      }
+      sort: true
     },
 
     {
       field: 'progress',
       title: 'progress',
       width: 200,
-      sort: true,
-      headerStyle: {
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      }
+      sort: true
     }
   ];
   const option: GanttConstructorOptions = {
     records,
-    taskTable: {
+    taskListTable: {
       columns: columns,
       width: 400,
       minWidth: 100,

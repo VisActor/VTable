@@ -10,6 +10,8 @@ export class ScrollBarComponent {
   hScrollBar: ScrollBar;
   vScrollBar: ScrollBar;
   _gantt: Gantt;
+  _clearHorizontalScrollBar: any;
+  _clearVerticalScrollBar: any;
   constructor(gantt: Gantt) {
     this._gantt = gantt;
     this.createScrollBar(gantt.tableNoFrameWidth, gantt.tableNoFrameHeight - gantt.headerRowHeight * gantt.headerLevel);
@@ -83,7 +85,7 @@ export class ScrollBarComponent {
     this.vScrollBar.hideAll();
     this._gantt.scenegraph.updateNextFrame();
   }
-  showVerticalScrollBar() {
+  showVerticalScrollBar(autoHide?: boolean) {
     const visable = this._gantt.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {
       return;
@@ -91,6 +93,13 @@ export class ScrollBarComponent {
     this.vScrollBar.setAttribute('visible', true);
     this.vScrollBar.showAll();
     this._gantt.scenegraph.updateNextFrame();
+    if (autoHide) {
+      // 滚轮触发滚动条显示后，异步隐藏
+      clearTimeout(this._clearVerticalScrollBar);
+      this._clearVerticalScrollBar = setTimeout(() => {
+        this.hideVerticalScrollBar();
+      }, 1000);
+    }
   }
   hideHorizontalScrollBar() {
     const visable = this._gantt.scrollStyle.visible;
@@ -101,7 +110,7 @@ export class ScrollBarComponent {
     this.hScrollBar.hideAll();
     this._gantt.scenegraph.updateNextFrame();
   }
-  showHorizontalScrollBar() {
+  showHorizontalScrollBar(autoHide?: boolean) {
     const visable = this._gantt.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {
       return;
@@ -109,6 +118,13 @@ export class ScrollBarComponent {
     this.hScrollBar.setAttribute('visible', true);
     this.hScrollBar.showAll();
     this._gantt.scenegraph.updateNextFrame();
+    if (autoHide) {
+      // 滚轮触发滚动条显示后，异步隐藏
+      clearTimeout(this._clearHorizontalScrollBar);
+      this._clearHorizontalScrollBar = setTimeout(() => {
+        this.hideHorizontalScrollBar();
+      }, 1000);
+    }
   }
   updateVerticalScrollBarPos(topRatio: number) {
     const range = this.vScrollBar.attribute.range;

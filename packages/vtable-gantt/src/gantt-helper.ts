@@ -126,17 +126,17 @@ export function initOptions(gantt: Gantt) {
   );
   gantt.gridStyle = Object.assign(
     {},
-    {
-      backgroundColor: '#fff',
-      vertical: {
-        lineColor: 'red',
-        lineWidth: 1
-      },
-      horizontal: {
-        lineColor: 'blue',
-        lineWidth: 1
-      }
-    },
+    // {
+    //   backgroundColor: '#fff',
+    //   vertical: {
+    //     lineColor: 'red',
+    //     lineWidth: 1
+    //   },
+    //   horizontal: {
+    //     lineColor: 'blue',
+    //     lineWidth: 1
+    //   }
+    // },
     gantt.options?.gridStyle
   );
   gantt.barStyle = Object.assign(
@@ -163,7 +163,8 @@ export function initOptions(gantt: Gantt) {
     fontFamily: gantt.options?.taskBar?.labelTextStyle.fontFamily ?? 'Arial',
     fontSize: gantt.options?.taskBar?.labelTextStyle.fontSize ?? gantt.rowHeight,
     color: gantt.options?.taskBar?.labelTextStyle.color ?? '#F01',
-    textAlign: gantt.options?.taskBar?.labelTextStyle.textAlign ?? 'left'
+    textAlign: gantt.options?.taskBar?.labelTextStyle.textAlign ?? 'left',
+    textOverflow: gantt.options?.taskBar?.labelTextStyle.textOverflow
   };
   gantt.frameStyle = Object.assign(
     {},

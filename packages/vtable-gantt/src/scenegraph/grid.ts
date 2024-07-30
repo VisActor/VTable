@@ -143,18 +143,18 @@ export class Grid {
     this.rowCount = this._scene._gantt.itemCount;
     this.allGridWidth = this._scene._gantt.getAllColsWidth();
     this.allGridHeight = this._scene._gantt.getAllGridHeight();
-    this.verticalLineGroup.parent.removeChild(this.verticalLineGroup);
-    this.horizontalLineGroup.parent.removeChild(this.horizontalLineGroup);
+    this.verticalLineGroup?.parent.removeChild(this.verticalLineGroup);
+    this.horizontalLineGroup?.parent.removeChild(this.horizontalLineGroup);
     this.createVerticalLines();
     this.createHorizontalLines();
   }
   setX(x: number) {
-    this.verticalLineGroup.setAttribute('x', x);
-    this.horizontalLineGroup.setAttribute('x', x);
+    this.verticalLineGroup?.setAttribute('x', x);
+    this.horizontalLineGroup?.setAttribute('x', x);
   }
   setY(y: number) {
-    this.verticalLineGroup.setAttribute('y', y);
-    this.horizontalLineGroup.setAttribute('y', y);
+    this.verticalLineGroup?.setAttribute('y', y);
+    this.horizontalLineGroup?.setAttribute('y', y);
   }
   resize() {
     this.width = this._scene.tableGroup.attribute.width;

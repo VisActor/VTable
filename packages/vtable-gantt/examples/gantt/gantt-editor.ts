@@ -781,12 +781,6 @@ export function createTable() {
       title: 'title',
       width: 200,
       sort: true,
-      headerStyle: {
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      },
       editor: 'input'
     },
     {
@@ -794,12 +788,6 @@ export function createTable() {
       title: 'start',
       width: 150,
       sort: true,
-      headerStyle: {
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      },
       editor: 'date-input'
     },
     {
@@ -807,12 +795,6 @@ export function createTable() {
       title: 'end',
       width: 150,
       sort: true,
-      headerStyle: {
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      },
       editor: 'date-input'
     },
     {
@@ -820,12 +802,6 @@ export function createTable() {
       title: 'priority',
       width: 100,
       sort: true,
-      headerStyle: {
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      },
       editor: 'input'
     },
 
@@ -834,18 +810,12 @@ export function createTable() {
       title: 'progress',
       width: 200,
       sort: true,
-      headerStyle: {
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      },
       editor: 'input'
     }
   ];
   const option: GanttConstructorOptions = {
     records,
-    taskTable: {
+    taskListTable: {
       columns: columns,
       width: 400,
       minWidth: 100,

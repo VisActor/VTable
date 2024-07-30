@@ -1,4 +1,4 @@
-import type { ColumnsDefine, TYPES, LineDashsDef } from '@visactor/vtable';
+import type { ColumnsDefine, TYPES, CustomLayout } from '@visactor/vtable';
 export type LayoutObjectId = number | string;
 
 export interface ITimelineHeaderStyle {
@@ -11,11 +11,11 @@ export interface ITimelineHeaderStyle {
 }
 export interface IGridStyle {
   backgroundColor?: string;
-  vertical: {
+  vertical?: {
     lineColor?: string;
     lineWidth?: number;
   };
-  horizontal: {
+  horizontal?: {
     lineColor?: string;
     lineWidth?: number;
   };
@@ -57,13 +57,15 @@ export interface GanttConstructorOptions {
   // /** 设置的表格主题 */
   // theme?: TableTheme;
   /** 设置任务条样式 可以设置多组 依次循环使用 */
-  taskBar?: {
-    labelText?: IBarLabelText;
-    labelTextStyle: IBarLableTextStyle;
-    barStyle: IBarStyle;
-  };
+  taskBar?:
+    | {
+        labelText?: IBarLabelText;
+        labelTextStyle: IBarLableTextStyle;
+        barStyle: IBarStyle;
+      }
+    | CustomTaskBar;
 
-  taskTable?: {
+  taskListTable?: {
     /** 定义列 */
     columns?: ColumnsDefine; // (string | IDimension)[];
     /** 左侧任务列表信息占用的宽度。如果设置为'auto'表示将所有列完全展示 */
@@ -102,6 +104,7 @@ export interface IBarLableTextStyle {
   fontSize?: number;
   color?: string;
   textAlign?: string;
+  textOverflow?: string;
 }
 export interface IBarStyle {
   /** 任务条的颜色 */
@@ -140,4 +143,5 @@ export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
 export type DateFormatArgumentType = { dateIndex: number; dateStart: Date; dateEnd: Date };
+export type CustomTaskBar = {}; //CustomLayout
 //#endregion

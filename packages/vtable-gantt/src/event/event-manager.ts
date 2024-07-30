@@ -89,6 +89,36 @@ function bindTableGroupListener(event: EventManager) {
       }
     }
   });
+
+  scene.tableGroup.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
+    if (
+      (gantt.scrollStyle.horizontalVisible && gantt.scrollStyle.horizontalVisible === 'focus') ||
+      (!gantt.scrollStyle.horizontalVisible && gantt.scrollStyle.visible === 'focus')
+    ) {
+      scene.scrollbarComponent.showHorizontalScrollBar();
+    }
+    if (
+      (gantt.scrollStyle.verticalVisible && gantt.scrollStyle.verticalVisible === 'focus') ||
+      (!gantt.scrollStyle.verticalVisible && gantt.scrollStyle.visible === 'focus')
+    ) {
+      scene.scrollbarComponent.showVerticalScrollBar();
+    }
+  });
+
+  scene.tableGroup.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
+    if (
+      (gantt.scrollStyle.horizontalVisible && gantt.scrollStyle.horizontalVisible === 'focus') ||
+      (!gantt.scrollStyle.horizontalVisible && gantt.scrollStyle.visible === 'focus')
+    ) {
+      scene.scrollbarComponent.hideHorizontalScrollBar();
+    }
+    if (
+      (gantt.scrollStyle.verticalVisible && gantt.scrollStyle.verticalVisible === 'focus') ||
+      (!gantt.scrollStyle.verticalVisible && gantt.scrollStyle.visible === 'focus')
+    ) {
+      scene.scrollbarComponent.hideVerticalScrollBar();
+    }
+  });
 }
 
 function bindContainerDomListener(eventManager: EventManager) {
