@@ -1,8 +1,10 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import {ListTable}  from '../../src/index';
-
+import { ListTable, PivotTable, PivotChart } from '../../src/index';
+// import './index.css';
 
 const app = createApp(App);
-app.component('vue-list-table', ListTable); // 这样在整个应用中都可以使用 <vue-list-table> 标签了
+app.component('VueListTable', ListTable);
+app.component('VuePivotTable', PivotTable);
+app.component('VuePivotChart', PivotChart);
 app.mount('#app');
