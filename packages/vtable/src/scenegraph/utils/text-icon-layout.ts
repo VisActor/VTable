@@ -295,8 +295,8 @@ export function createCellContent(
         x: 0,
         y: 0,
         fill: false,
-        stroke: false
-        // pickable: false,
+        stroke: false,
+        pickable: false
       });
       cellContent.name = 'content';
 
