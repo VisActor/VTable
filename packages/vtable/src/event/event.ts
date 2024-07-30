@@ -82,6 +82,10 @@ export class EventManager {
   }
   updateEventBinder() {
     setTimeout(() => {
+      if (this.table.isReleased) {
+        return;
+      }
+
       // 处理textStick 是否绑定SCROLL的判断
       if (checkHaveTextStick(this.table) && this.handleTextStickBindId?.length === 0) {
         this.handleTextStickBindId.push(
