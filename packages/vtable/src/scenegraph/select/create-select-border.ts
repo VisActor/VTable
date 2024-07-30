@@ -46,7 +46,10 @@ export function createCellSelectBorder(
   const bodyClickLineWidth = theme.selectionStyle?.cellBorderLineWidth;
   const rect = createRect({
     pickable: false,
-    fill: (theme.selectionStyle?.cellBgColor as any) ?? 'rgba(0, 0, 255,0.1)',
+    fill:
+      theme.selectionStyle?.selectFillMode === 'contain'
+        ? false
+        : (theme.selectionStyle?.cellBgColor as any) ?? 'rgba(0, 0, 255,0.1)',
 
     lineWidth: bodyClickLineWidth as number,
     // stroke: bodyClickBorderColor as string,

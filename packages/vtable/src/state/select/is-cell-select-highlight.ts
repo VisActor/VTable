@@ -110,6 +110,14 @@ export function isCellSelected(state: StateManager, col: number, row: number, ce
         selectMode = undefined;
       }
     }
+  } else if (state.table.theme.selectionStyle.selectFillMode === 'contain') {
+    for (let i = 0; i < ranges.length; i++) {
+      const range = ranges[i];
+      if (range.start.col <= col && range.start.row <= row && range.end.col >= col && range.end.row >= row) {
+        selectMode = 'cellBgColor';
+        break;
+      }
+    }
   }
   return selectMode;
 }
