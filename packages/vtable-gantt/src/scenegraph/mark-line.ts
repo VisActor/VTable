@@ -7,27 +7,29 @@ export class MarkLine {
   markLine: IMarkLine[];
   markLIneContainer: Group;
   markLineContainerWidth: number = 20;
+  height: number;
   constructor(scene: Scenegraph) {
     this._scene = scene;
     this.markLine = scene._gantt.markLine;
-    const height =
+    this.height =
       Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight) -
       scene._gantt.headerRowHeight * scene._gantt.headerLevel;
     this.group = new Group({
       x: 0,
       y: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
       width: scene._gantt.tableNoFrameWidth,
-      height,
+      height: this.height,
       pickable: false,
       clip: true
     });
-
     this.group.name = 'mark-line-container';
+    scene.tableGroup.addChild(this.group);
+
     this.markLIneContainer = new Group({
       x: 0,
       y: 0,
       width: this._scene._gantt.getAllColsWidth(),
-      height,
+      height: this.height,
       pickable: false,
       clip: true
     });
@@ -35,9 +37,6 @@ export class MarkLine {
     this.initMarkLines();
   }
   initMarkLines() {
-    const height =
-      Math.min(this._scene._gantt.tableNoFrameHeight, this._scene._gantt.drawHeight) -
-      this._scene._gantt.headerRowHeight * this._scene._gantt.headerLevel;
     this.markLine.forEach(line => {
       const style = line.style;
       const date = new Date(line.date);
@@ -50,7 +49,7 @@ export class MarkLine {
         x: dateX - this.markLineContainerWidth / 2,
         y: 0,
         width: this.markLineContainerWidth,
-        height
+        height: this.height
       });
       markLineGroup.name = 'mark-line';
       this.markLIneContainer.appendChild(markLineGroup);
@@ -62,11 +61,22 @@ export class MarkLine {
         lineDash: style.lineDash,
         points: [
           { x: dateX, y: 0 },
-          { x: dateX, y: height }
+          { x: dateX, y: this.height }
         ]
       });
       markLineGroup.appendChild(lineObj);
     });
+  }
+
+  /** 重新场景场景树节点 */
+  refresh() {
+    this.height =
+      Math.min(this._scene._gantt.tableNoFrameHeight, this._scene._gantt.drawHeight) -
+      this._scene._gantt.headerRowHeight * this._scene._gantt.headerLevel;
+    this.markLIneContainer.removeAllChild();
+    this.group.setAttribute('height', this.height);
+    this.markLIneContainer.setAttribute('height', this.height);
+    this.initMarkLines();
   }
   setX(x: number) {
     this.markLIneContainer.setAttribute('x', x);

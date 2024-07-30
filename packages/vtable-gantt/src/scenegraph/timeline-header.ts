@@ -16,7 +16,7 @@ export class TimelineHeader {
     });
     this.group = dateHeader;
     dateHeader.name = 'date-header-container';
-
+    scene.tableGroup.addChild(this.group);
     const y = 0;
     for (let i = 0; i < scene._gantt.headerLevel; i++) {
       const rowHeader = new Group({

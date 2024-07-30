@@ -71,7 +71,9 @@ export class ScrollBarComponent {
     (this.vScrollBar as any).render();
     this.vScrollBar.hideAll();
   }
-
+  refresh() {
+    //
+  }
   hideVerticalScrollBar() {
     const visable = this._gantt.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {

@@ -16,18 +16,28 @@ export class TaskBar {
   hoverBarLeftIcon: Icon;
   hoverBarRightIcon: Icon;
   _scene: Scenegraph;
+  width: number;
+  height: number;
   constructor(scene: Scenegraph) {
     this._scene = scene;
-    const height = Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight);
+    // const height = Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight);
+    this.width = scene._gantt.tableNoFrameWidth;
+    this.height = scene._gantt.gridHeight;
     this.group = new Group({
       x: 0,
       y: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
-      width: scene._gantt.tableNoFrameWidth,
-      height: height - scene._gantt.headerRowHeight * scene._gantt.headerLevel,
+      width: this.width,
+      height: this.height,
       pickable: false,
       clip: true
     });
     this.group.name = 'task-bar-container';
+    scene.tableGroup.addChild(this.group);
+    this.initBars();
+    this.initHoverBarIcons();
+  }
+
+  initBars() {
     this.barContainer = new Group({
       x: 0,
       y: 0,
@@ -37,10 +47,6 @@ export class TaskBar {
       clip: true
     });
     this.group.appendChild(this.barContainer);
-    this.initBars();
-    this.initHoverBarIcons();
-  }
-  initBars() {
     for (let i = 0; i < this._scene._gantt.itemCount; i++) {
       const { startDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(i);
       if (taskDays <= 0) {
@@ -113,6 +119,7 @@ export class TaskBar {
       barGroup.textLabel = label;
     }
   }
+
   updateTaskBarNode(index: number) {
     const taskbarGroup = this.barContainer.getChildren()?.[index];
     if (taskbarGroup) {
@@ -211,6 +218,20 @@ export class TaskBar {
   }
   setY(y: number) {
     this.barContainer.setAttribute('y', y);
+  }
+  /** 重新创建任务条节点 */
+  refreshItems() {
+    this.height = this._scene._gantt.gridHeight;
+    this.group.setAttribute('height', this.height);
+    this.barContainer.removeAllChild();
+    this.group.removeChild(this.barContainer);
+    this.initBars();
+  }
+  resize() {
+    this.width = this._scene._gantt.tableNoFrameWidth;
+    this.height = this._scene._gantt.gridHeight;
+    this.group.setAttribute('width', this.width);
+    this.group.setAttribute('height', this.height);
   }
 
   showHoverBar(x: number, y: number, width: number, height: number, target?: Group) {

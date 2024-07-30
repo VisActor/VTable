@@ -139,7 +139,9 @@ export class Gantt extends EventTarget {
       this._updateSize();
     }
     this._generateListTable();
-    this.itemCount = this.records.length;
+    this.itemCount = this.listTableInstance
+      ? this.listTableInstance.rowCount - this.listTableInstance.columnHeaderLevelCount
+      : this.records.length;
     this.headerHeight = this.headerRowHeight * this.headerLevel;
     this.drawHeight = Math.min(this.headerHeight + this.rowHeight * this.itemCount, this.tableNoFrameHeight);
     this.gridHeight = this.drawHeight - this.headerHeight;
@@ -478,5 +480,12 @@ export class Gantt extends EventTarget {
       this.taskTableWidth,
       this.tableNoFrameHeight + this.frameStyle.borderLineWidth * 2
     );
+  }
+  syncStateFromTable() {
+    this.itemCount = this.listTableInstance
+      ? this.listTableInstance.rowCount - this.listTableInstance.columnHeaderLevelCount
+      : this.records.length;
+    this.drawHeight = Math.min(this.headerHeight + this.rowHeight * this.itemCount, this.tableNoFrameHeight);
+    this.gridHeight = this.drawHeight - this.headerHeight;
   }
 }

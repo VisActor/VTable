@@ -25,9 +25,12 @@ export class Scenegraph {
   frameBorder: FrameBorder;
   taskBarHoverIcon: TaskBarHoverIcon;
   stage: Stage;
+  tableGroupWidth: number;
+  tableGroupHeight: number;
   constructor(gantt: Gantt) {
     this._gantt = gantt;
-
+    this.tableGroupWidth = gantt.tableNoFrameWidth;
+    this.tableGroupHeight = Math.min(gantt.tableNoFrameHeight, gantt.drawHeight);
     let width;
     let height;
     if (Env.mode === 'node') {
@@ -63,7 +66,41 @@ export class Scenegraph {
         ignoreBuf: true
       }
     });
-    initSceneGraph(this);
+    this.initSceneGraph();
+  }
+
+  initSceneGraph() {
+    const scene = this;
+
+    scene.tableGroup = new Group({
+      x: 0,
+      y: scene._gantt.tableY,
+      width: this.tableGroupWidth,
+      height: this.tableGroupHeight,
+      clip: true,
+      pickable: false
+    });
+    scene.stage.defaultLayer.add(scene.tableGroup);
+    scene.tableGroup.name = 'table';
+    // 初始化顶部时间线表头部分
+    scene.timelineHeader = new TimelineHeader(scene);
+
+    // 初始化网格线组件
+    scene.grid = new Grid(scene);
+
+    // 初始化任务条线组件
+    scene.taskBar = new TaskBar(scene);
+
+    // 初始化标记线组件
+    scene.markLine = new MarkLine(scene);
+
+    // 初始化边框
+    scene.frameBorder = new FrameBorder(scene);
+
+    // 初始化滚动条组件
+    scene.scrollbarComponent = new ScrollBarComponent(scene._gantt);
+    scene.stage.defaultLayer.addChild(scene.scrollbarComponent.hScrollBar);
+    scene.stage.defaultLayer.addChild(scene.scrollbarComponent.vScrollBar);
   }
 
   afterCreateSceneGraph() {
@@ -71,14 +108,37 @@ export class Scenegraph {
     bindScrollBarListener(this._gantt.eventManager);
   }
 
+  refreshTaskBars() {
+    // this.timelineHeader.refresh();
+    // this.grid.refresh();
+    this.taskBar.refreshItems();
+    // this.markLine.refresh();
+    // this.frameBorder.refresh();
+    // this.scrollbarComponent.refresh();
+    this.updateNextFrame();
+  }
+  refreshTaskBarsAndGrid() {
+    this.tableGroupHeight = Math.min(this._gantt.tableNoFrameHeight, this._gantt.drawHeight);
+    this.tableGroup.setAttribute('height', this.tableGroupHeight);
+    // this.timelineHeader.refresh();
+    this.grid.refresh();
+    this.taskBar.refreshItems();
+    this.markLine.refresh();
+    this.frameBorder.resize();
+    this.scrollbarComponent.updateScrollBar();
+    this.updateNextFrame();
+  }
+
   updateTableSize() {
+    this.tableGroupHeight = Math.min(this._gantt.tableNoFrameHeight, this._gantt.drawHeight);
     this.tableGroup.setAttributes({
       x: 0,
       y: this._gantt.tableY,
       width: this._gantt.tableNoFrameWidth,
-      height: this._gantt.tableNoFrameHeight
+      height: this.tableGroupHeight
     } as any);
     this.grid.resize();
+    this.taskBar.resize();
     this.frameBorder.resize();
   }
 
@@ -157,44 +217,6 @@ export class Scenegraph {
     this.scrollbarComponent.updateScrollBar();
     this.updateNextFrame();
   }
-}
-
-export function initSceneGraph(scene: Scenegraph) {
-  const width = scene._gantt.tableNoFrameWidth;
-  const height = Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight);
-
-  scene.tableGroup = new Group({
-    x: 0,
-    y: scene._gantt.tableY,
-    width: width,
-    height: height,
-    clip: true,
-    pickable: false
-  });
-  scene.stage.defaultLayer.add(scene.tableGroup);
-  scene.tableGroup.name = 'table';
-  // 初始化顶部时间线表头部分
-  scene.timelineHeader = new TimelineHeader(scene);
-  scene.tableGroup.addChild(scene.timelineHeader.group);
-  // 初始化网格线组件
-  scene.grid = new Grid(scene);
-  scene.tableGroup.addChild(scene.grid.group);
-
-  // 初始化任务条线组件
-  scene.taskBar = new TaskBar(scene);
-  scene.tableGroup.addChild(scene.taskBar.group);
-
-  // 初始化标记线组件
-  scene.markLine = new MarkLine(scene);
-  scene.tableGroup.addChild(scene.markLine.group);
-
-  scene.frameBorder = new FrameBorder(scene);
-
-  // 初始化滚动条组件
-  scene.scrollbarComponent = new ScrollBarComponent(scene._gantt);
-
-  scene.stage.defaultLayer.addChild(scene.scrollbarComponent.hScrollBar);
-  scene.stage.defaultLayer.addChild(scene.scrollbarComponent.vScrollBar);
 }
 
 export function createContainerGroup(width: number, height: number, clip?: boolean) {

@@ -40,67 +40,96 @@ export function createTable() {
         }
       ]
     },
+    {
+      id: 2,
+      title: 'Scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '07/24/2024',
+      end: '08/04/2024',
+      progress: 60,
+      priority: 'P0'
+    },
+    {
+      id: 3,
+      title: 'Determine project scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-24',
+      end: '2024-08-04',
+      progress: 100,
+      priority: 'P1',
+      children: [
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-08-04',
+          end: '2024-08-04',
+          progress: 90,
+          priority: 'P0'
+        },
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-24',
+          end: '2024-08-04',
+          progress: 31,
+          priority: 'P0'
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024.07.06',
+          end: '2024.07.08',
+          progress: 60,
+          priority: 'P0'
+        },
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024/07/09',
+          end: '2024/07/11',
+          progress: 100,
+          priority: 'P1'
+        },
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '07.24.2024',
+          end: '08.04.2024',
+          progress: 31,
+          priority: 'P0'
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-06',
+          end: '2024-07-08',
+          progress: 60,
+          priority: 'P0'
+        },
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-08-09',
+          end: '2024-09-11',
+          progress: 100,
+          priority: 'P1'
+        }
+      ]
+    },
 
     {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-08-04',
-      end: '2024-08-04',
-      progress: 90,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '07/24/2024',
-      end: '08/04/2024',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
       start: '2024-07-24',
       end: '2024-08-04',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024.07.06',
-      end: '2024.07.08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024/07/09',
-      end: '2024/07/11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '07.24.2024',
-      end: '08.04.2024',
       progress: 31,
       priority: 'P0'
     },
@@ -111,16 +140,207 @@ export function createTable() {
       start: '2024-07-06',
       end: '2024-07-08',
       progress: 60,
-      priority: 'P0'
+      priority: 'P0',
+      children: [
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-09',
+          end: '2024-07-11',
+          progress: 100,
+          priority: 'P1',
+          children: [
+            {
+              id: 1,
+              title: 'Software Development',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-24',
+              end: '2024-08-04',
+              progress: 31,
+              priority: 'P0'
+            },
+            {
+              id: 2,
+              title: 'Scope',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-06',
+              end: '2024-07-08',
+              progress: 60,
+              priority: 'P0'
+            },
+            {
+              id: 3,
+              title: 'Determine project scope',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-09',
+              end: '2024-07-11',
+              progress: 100,
+              priority: 'P1'
+            }
+          ]
+        },
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-24',
+          end: '2024-08-04',
+          progress: 31,
+          priority: 'P0',
+          children: [
+            {
+              id: 1,
+              title: 'Software Development',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-24',
+              end: '2024-08-04',
+              progress: 31,
+              priority: 'P0'
+            },
+            {
+              id: 2,
+              title: 'Scope',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-06',
+              end: '2024-07-08',
+              progress: 60,
+              priority: 'P0'
+            },
+            {
+              id: 3,
+              title: 'Determine project scope',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-09',
+              end: '2024-07-11',
+              progress: 100,
+              priority: 'P1'
+            }
+          ]
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-06',
+          end: '2024-07-08',
+          progress: 60,
+          priority: 'P0'
+        },
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-09',
+          end: '2024-07-11',
+          progress: 100,
+          priority: 'P1',
+          children: [
+            {
+              id: 1,
+              title: 'Software Development',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-24',
+              end: '2024-08-04',
+              progress: 31,
+              priority: 'P0'
+            },
+            {
+              id: 2,
+              title: 'Scope',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-06',
+              end: '2024-07-08',
+              progress: 60,
+              priority: 'P0'
+            }
+          ]
+        },
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-24',
+          end: '2024-08-04',
+          progress: 31,
+          priority: 'P0'
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-06',
+          end: '2024-07-08',
+          progress: 60,
+          priority: 'P0'
+        },
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-09',
+          end: '2024-07-11',
+          progress: 100,
+          priority: 'P1'
+        }
+      ]
     },
+
     {
       id: 3,
       title: 'Determine project scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-08-09',
-      end: '2024-09-11',
+      start: '2024-07-09',
+      end: '2024-07-11',
       progress: 100,
-      priority: 'P1'
+      priority: 'P1',
+      children: [
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-24',
+          end: '2024-08-04',
+          progress: 31,
+          priority: 'P0'
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-06',
+          end: '2024-07-08',
+          progress: 60,
+          priority: 'P0'
+        },
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-09',
+          end: '2024-07-11',
+          progress: 100,
+          priority: 'P1'
+        },
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-30',
+          end: '2024-08-14',
+          progress: 31,
+          priority: 'P0'
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-24',
+          end: '2024-08-04',
+          progress: 60,
+          priority: 'P0'
+        }
+      ]
     },
     {
       id: 1,
@@ -129,7 +349,36 @@ export function createTable() {
       start: '2024-07-24',
       end: '2024-08-04',
       progress: 31,
-      priority: 'P0'
+      priority: 'P0',
+      children: [
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024/07/24',
+          end: '2024/08/04',
+          progress: 100,
+          priority: 'P1'
+        },
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-08-04',
+          end: '2024-08-04',
+          progress: 90,
+          priority: 'P0'
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '07/24/2024',
+          end: '08/04/2024',
+          progress: 60,
+          priority: 'P0'
+        }
+      ]
     },
     {
       id: 2,
@@ -147,7 +396,90 @@ export function createTable() {
       start: '2024-07-09',
       end: '2024-07-11',
       progress: 100,
-      priority: 'P1'
+      priority: 'P1',
+      children: [
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '07.24.2024',
+          end: '08.04.2024',
+          progress: 31,
+          priority: 'P0'
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-06',
+          end: '2024-07-08',
+          progress: 60,
+          priority: 'P0'
+        },
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-08-09',
+          end: '2024-09-11',
+          progress: 100,
+          priority: 'P1'
+        },
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-24',
+          end: '2024-08-04',
+          progress: 31,
+          priority: 'P0'
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-06',
+          end: '2024-07-08',
+          progress: 60,
+          priority: 'P0'
+        },
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-09',
+          end: '2024-07-11',
+          progress: 100,
+          priority: 'P1'
+        },
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-24',
+          end: '2024-08-04',
+          progress: 31,
+          priority: 'P0'
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-06',
+          end: '2024-07-08',
+          progress: 60,
+          priority: 'P0'
+        },
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-09',
+          end: '2024-07-11',
+          progress: 100,
+          priority: 'P1'
+        }
+      ]
     },
     {
       id: 1,
@@ -156,574 +488,45 @@ export function createTable() {
       start: '2024-07-24',
       end: '2024-08-04',
       progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-30',
-      end: '2024-08-14',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024/07/24',
-      end: '2024/08/04',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-08-04',
-      end: '2024-08-04',
-      progress: 90,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '07/24/2024',
-      end: '08/04/2024',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024.07.06',
-      end: '2024.07.08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024/07/09',
-      end: '2024/07/11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '07.24.2024',
-      end: '08.04.2024',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-08-09',
-      end: '2024-09-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
+      priority: 'P0',
+      children: [
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-24',
+          end: '2024-08-04',
+          progress: 100,
+          priority: 'P1'
+        },
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-24',
+          end: '2024-08-04',
+          progress: 31,
+          priority: 'P0'
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024.07.06',
+          end: '2024.07.08',
+          progress: 60,
+          priority: 'P0'
+        },
+        {
+          id: 3,
+          title: 'Determine project scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024/07/09',
+          end: '2024/07/11',
+          progress: 100,
+          priority: 'P1'
+        }
+      ]
     },
     {
       id: 2,

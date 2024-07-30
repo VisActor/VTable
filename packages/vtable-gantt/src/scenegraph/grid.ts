@@ -51,7 +51,7 @@ export class Grid {
       fill: this.gridStyle?.backgroundColor
     });
     this.group.name = 'grid-container';
-
+    scene.tableGroup.addChild(this.group);
     //补充timelineHeader中不好绘制的底部的边线
     const line = createLine({
       pickable: false,
@@ -63,7 +63,11 @@ export class Grid {
       ]
     });
     this.group.addChild(line);
+    this.createVerticalLines();
 
+    this.createHorizontalLines();
+  }
+  createVerticalLines() {
     if (this.vertical) {
       this.verticalLineGroup = new Group({
         x: 0,
@@ -95,7 +99,8 @@ export class Grid {
         this.verticalLineGroup.appendChild(line);
       }
     }
-
+  }
+  createHorizontalLines() {
     if (this.horizontal) {
       this.horizontalLineGroup = new Group({
         x: 0,
@@ -126,6 +131,22 @@ export class Grid {
         this.horizontalLineGroup.appendChild(line);
       }
     }
+  }
+  /** 重新创建网格线场景树结点 */
+  refresh() {
+    this.width = this._scene.tableGroup.attribute.width;
+    this.height = this._scene.tableGroup.attribute.height - this._scene.timelineHeader.group.attribute.height;
+    this.group.setAttributes({
+      width: this.width,
+      height: this.height
+    });
+    this.rowCount = this._scene._gantt.itemCount;
+    this.allGridWidth = this._scene._gantt.getAllColsWidth();
+    this.allGridHeight = this._scene._gantt.getAllGridHeight();
+    this.verticalLineGroup.parent.removeChild(this.verticalLineGroup);
+    this.horizontalLineGroup.parent.removeChild(this.horizontalLineGroup);
+    this.createVerticalLines();
+    this.createHorizontalLines();
   }
   setX(x: number) {
     this.verticalLineGroup.setAttribute('x', x);

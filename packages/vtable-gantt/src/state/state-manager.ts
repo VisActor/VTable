@@ -3,12 +3,14 @@ import type { Gantt } from '../Gantt';
 import { InteractionState, GANTT_EVENT_TYPE } from '../ts-types';
 import type { Group, FederatedPointerEvent } from '@visactor/vrender-core';
 import {
-  getTaskIndexByY,
   syncEditCellFromTable,
   syncResizeStateFromTable,
   syncScrollStateFromTable,
-  syncScrollStateToTable
-} from '../gantt-helper';
+  syncScrollStateToTable,
+  syncDragOrderFromTable,
+  syncTreeChangeFromTable
+} from './gantt-table-sync';
+import { getTaskIndexByY } from '../gantt-helper';
 export class StateManager {
   _gantt: Gantt;
 
@@ -98,6 +100,8 @@ export class StateManager {
     syncScrollStateFromTable(this._gantt);
     syncResizeStateFromTable(this._gantt);
     syncEditCellFromTable(this._gantt);
+    syncDragOrderFromTable(this._gantt);
+    syncTreeChangeFromTable(this._gantt);
   }
 
   setScrollTop(top: number, triggerEvent: boolean = true) {
