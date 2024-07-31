@@ -79,7 +79,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   declare options: ListTableConstructorOptions;
   showHeader = true;
-  editorManager: EditManeger;
   // eslint-disable-next-line default-param-last
   constructor(options: ListTableConstructorOptions);
   constructor(container: HTMLElement, options: ListTableConstructorOptions);
