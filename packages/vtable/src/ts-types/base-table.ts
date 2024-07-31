@@ -833,7 +833,7 @@ export interface BaseTableAPI {
   isAutoRowHeight: (row: number) => boolean;
 
   reactCustomLayout?: ReactCustomLayout;
-  checkReactCustomLayout: () => void;
+  checkReactCustomLayout: (removeAllContainer: () => void) => void;
   setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
 
   exportImg: () => string;

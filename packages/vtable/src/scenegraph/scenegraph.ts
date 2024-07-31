@@ -320,6 +320,8 @@ export class Scenegraph {
       delete (this.tableGroup as any).border;
     }
     this.proxy?.release();
+
+    this.table.reactCustomLayout?.clearCache();
   }
 
   updateStageBackground() {

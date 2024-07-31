@@ -37,13 +37,14 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
       if (container.current.has(key)) {
         const currentContainer = container.current.get(key);
         // reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
-        reconcilorUpdateContainer(children, currentContainer, group, args);
+        reconcilorUpdateContainer(children, currentContainer, args);
         group = currentContainer.containerInfo;
+        // 这里更新group，可能会残留dx dy
       } else {
         group = new Group({});
         const currentContainer = reconcilor.createContainer(group, LegacyRoot, null, null, null, 'custom', null, null);
         container.current.set(key, currentContainer);
-        reconcilorUpdateContainer(children, currentContainer, group, args);
+        reconcilorUpdateContainer(children, currentContainer, args);
         // const ele = React.cloneElement(children, { ...args });
         // reconcilor.updateContainer(ele, currentContainer, null);
       }
@@ -66,6 +67,14 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     }
   }, []);
 
+  const removeAllContainer = useCallback(() => {
+    container.current.forEach((value, key) => {
+      const currentContainer = value;
+      reconcilor.updateContainer(null, currentContainer, null);
+    });
+    container.current.clear();
+  }, []);
+
   useLayoutEffect(() => {
     // init and release
     // eslint-disable-next-line no-undef
@@ -83,7 +92,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     // eslint-disable-next-line no-undef
     console.log('update props', props, table);
 
-    table?.checkReactCustomLayout(); // init reactCustomLayout component
+    table?.checkReactCustomLayout(removeAllContainer); // init reactCustomLayout component
     if (table && !table.reactCustomLayout?.hasReactCreateGraphic(componentId, isHeaderCustomLayout)) {
       table.reactCustomLayout?.setReactCreateGraphic(
         componentId,
@@ -118,7 +127,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
         };
         // update element in container
         const group = currentContainer.containerInfo;
-        reconcilorUpdateContainer(children, currentContainer, group, args);
+        reconcilorUpdateContainer(children, currentContainer, args);
         // reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
         table.scenegraph.updateNextFrame();
       });
@@ -128,7 +137,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
   return null;
 };
 
-function reconcilorUpdateContainer(children: ReactElement, currentContainer: any, group: typeof Group, args: any) {
+function reconcilorUpdateContainer(children: ReactElement, currentContainer: any, args: any) {
   reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
   // group = group.firstChild;
   // if (isReactElement(group.attribute.html?.dom)) {
