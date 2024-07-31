@@ -451,7 +451,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //分页配置
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
-    internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
+    // internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = options.groupBy ? getGroupByDataConfig(options.groupBy) : {}; //cloneDeep(options.dataConfig ?? {});
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns
