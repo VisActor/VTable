@@ -8,7 +8,7 @@ export function syncScrollStateToTable(gantt: Gantt) {
 
 export function syncScrollStateFromTable(gantt: Gantt) {
   if (gantt.taskListTableInstance) {
-    gantt.taskListTableInstance.on('scroll', (args: any) => {
+    gantt.taskListTableInstance?.on('scroll', (args: any) => {
       if (args.scrollDirection === 'vertical') {
         const { scroll } = gantt.taskListTableInstance.stateManager;
         const { verticalBarPos } = scroll;
@@ -19,7 +19,7 @@ export function syncScrollStateFromTable(gantt: Gantt) {
 }
 export function syncResizeStateFromTable(gantt: Gantt) {
   if (gantt.taskListTableInstance && gantt.options.taskListTable?.width === 'auto') {
-    gantt.taskListTableInstance.on('resize_column', (args: any) => {
+    gantt.taskListTableInstance?.on('resize_column', (args: any) => {
       gantt.taskTableWidth = gantt.taskListTableInstance.getAllColsWidth() + gantt.taskListTableInstance.tableX * 2;
       gantt.element.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth}px` : '0px';
       gantt._resize();
@@ -27,7 +27,7 @@ export function syncResizeStateFromTable(gantt: Gantt) {
   }
 }
 export function syncEditCellFromTable(gantt: Gantt) {
-  gantt.taskListTableInstance.on('change_cell_value', (args: any) => {
+  gantt.taskListTableInstance?.on('change_cell_value', (args: any) => {
     const { col, row, rawValue, changedValue } = args;
     gantt.updateRecord(row - gantt.taskListTableInstance.columnHeaderLevelCount);
     // const record = gantt.getRecordByIndex(row - gantt.listTableInstance.columnHeaderLevelCount);
@@ -36,14 +36,14 @@ export function syncEditCellFromTable(gantt: Gantt) {
 }
 
 export function syncDragOrderFromTable(gantt: Gantt) {
-  gantt.taskListTableInstance.on('change_header_position', (args: any) => {
+  gantt.taskListTableInstance?.on('change_header_position', (args: any) => {
     // const { dragOrder, dragOrderIndex } = args;
     gantt.scenegraph.refreshTaskBars();
   });
 }
 
 export function syncTreeChangeFromTable(gantt: Gantt) {
-  gantt.taskListTableInstance.on('tree_hierarchy_state_change', (args: any) => {
+  gantt.taskListTableInstance?.on('tree_hierarchy_state_change', (args: any) => {
     gantt._syncPropsFromTable();
     gantt.resizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
     gantt.scenegraph.refreshTaskBarsAndGrid();

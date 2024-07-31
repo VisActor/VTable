@@ -1,4 +1,4 @@
-import type { ColumnsDefine, TYPES, CustomLayout } from '@visactor/vtable';
+import type { ColumnsDefine, TYPES, VRender } from '@visactor/vtable';
 export type LayoutObjectId = number | string;
 
 export interface ITimelineHeaderStyle {
@@ -57,13 +57,12 @@ export interface GanttConstructorOptions {
   // /** 设置的表格主题 */
   // theme?: TableTheme;
   /** 设置任务条样式 可以设置多组 依次循环使用 */
-  taskBar?:
-    | {
-        labelText?: IBarLabelText;
-        labelTextStyle: IBarLableTextStyle;
-        barStyle: IBarStyle;
-      }
-    | CustomTaskBar;
+  taskBar?: {
+    labelText?: IBarLabelText;
+    labelTextStyle: IBarLableTextStyle;
+    barStyle: IBarStyle;
+    custom: ICustomTaskBar;
+  };
 
   taskListTable?: {
     /** 定义列 */
@@ -143,5 +142,11 @@ export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
 export type DateFormatArgumentType = { dateIndex: number; dateStart: Date; dateEnd: Date };
-export type CustomTaskBar = {}; //CustomLayout
+export type ICustomTaskBar = (args: any) => ICustomTaskBartObj; //CustomLayout
+export type ICustomTaskBartObj = {
+  rootContainer: VRender.Container;
+  renderDefaultBar?: boolean; // 默认true
+  renderDefaultText?: boolean; // 默认true
+};
+
 //#endregion

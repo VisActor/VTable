@@ -14,7 +14,6 @@ import type {
   TextBaselineType
 } from '@visactor/vtable';
 import { Gantt } from './Gantt';
-
 export const version = __VERSION__;
 /**
  * @namespace VTable

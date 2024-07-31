@@ -221,8 +221,8 @@ export class Gantt extends EventTarget {
     }
   }
   _generateListTable() {
-    const listTableOption = this._generateListTableOptions();
     if (this.taskTableColumns.length >= 1) {
+      const listTableOption = this._generateListTableOptions();
       this.taskListTableInstance = new ListTable(this.container, listTableOption);
 
       if (this.options?.taskListTable?.width === 'auto') {
