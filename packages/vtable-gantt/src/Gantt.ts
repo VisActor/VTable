@@ -3,17 +3,18 @@
 import { Scenegraph } from './scenegraph/scenegraph';
 import { Env } from './env';
 import type {
-  IBarStyle,
+  ITaskBarStyle,
   GanttConstructorOptions,
   IGridStyle,
   ITimelineHeaderStyle,
   IMarkLine,
-  IBarLabelText,
-  IBarLableTextStyle,
+  ITaskBarLabelText,
+  ITaskBarLabelTextStyle,
   IScrollStyle,
   IFrameStyle,
   ITableColumnsDefine,
-  IResizeLineStyle
+  IResizeLineStyle,
+  ITaskBarCustomRender
 } from './ts-types';
 import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
 import { ListTable, themes } from '@visactor/vtable';
@@ -84,9 +85,10 @@ export class Gantt extends EventTarget {
   scrollStyle: IScrollStyle;
   timelineHeaderStyle: ITimelineHeaderStyle;
   gridStyle: IGridStyle;
-  barStyle: IBarStyle;
-  barLabelText: IBarLabelText;
-  barLabelStyle: IBarLableTextStyle;
+  taskBarStyle: ITaskBarStyle;
+  taskBarLabelText: ITaskBarLabelText;
+  taskBarLabelStyle: ITaskBarLabelTextStyle;
+  taskBarCustomRender: ITaskBarCustomRender;
   frameStyle: IFrameStyle;
   pixelRatio: number;
 

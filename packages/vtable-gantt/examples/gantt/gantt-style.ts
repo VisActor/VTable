@@ -686,6 +686,7 @@ export function createTable() {
     taskBar: {
       labelText: '{title} {progress}%',
       labelTextStyle: {
+        padding: 2,
         fontFamily: 'Arial',
         fontSize: 16,
         textAlign: 'left',
@@ -696,7 +697,7 @@ export function createTable() {
         /** 任务条的颜色 */
         barColor: '#ee8800',
         /** 已完成部分任务条的颜色 */
-        barColor2: '#91e8e0',
+        completedBarColor: '#91e8e0',
         /** 任务条的圆角 */
         cornerRadius: 8,
         /** 任务条的边框 */

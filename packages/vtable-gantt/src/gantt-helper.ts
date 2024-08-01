@@ -139,12 +139,12 @@ export function initOptions(gantt: Gantt) {
     // },
     gantt.options?.gridStyle
   );
-  gantt.barStyle = Object.assign(
+  gantt.taskBarStyle = Object.assign(
     {},
     {
       barColor: 'blue',
       /** 已完成部分任务条的颜色 */
-      barColor2: 'gray',
+      completedBarColor: 'gray',
       /** 任务条的宽度 */
       width: gantt.rowHeight,
       /** 任务条的圆角 */
@@ -158,14 +158,18 @@ export function initOptions(gantt: Gantt) {
     },
     gantt.options?.taskBar?.barStyle
   );
-  gantt.barLabelText = gantt.options?.taskBar?.labelText ?? '';
-  gantt.barLabelStyle = {
+  gantt.taskBarLabelText = gantt.options?.taskBar?.labelText ?? '';
+  gantt.taskBarLabelStyle = {
     fontFamily: gantt.options?.taskBar?.labelTextStyle.fontFamily ?? 'Arial',
     fontSize: gantt.options?.taskBar?.labelTextStyle.fontSize ?? gantt.rowHeight,
     color: gantt.options?.taskBar?.labelTextStyle.color ?? '#F01',
     textAlign: gantt.options?.taskBar?.labelTextStyle.textAlign ?? 'left',
+    textBaseline: gantt.options?.taskBar?.labelTextStyle.textBaseline ?? 'middle',
+    padding: gantt.options?.taskBar?.labelTextStyle.padding ?? 0,
     textOverflow: gantt.options?.taskBar?.labelTextStyle.textOverflow
   };
+  gantt.taskBarCustomRender = gantt.options?.taskBar?.customRender;
+
   gantt.frameStyle = Object.assign(
     {},
     {
@@ -285,4 +289,34 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
     }
   }
   return timelineDates;
+}
+
+/**
+ * @description: 获取对应样式和容器尺寸下的文字位置
+ * @return {*}
+ */
+export function getTextPos(
+  padding: number[],
+  textAlign: CanvasTextAlign,
+  textBaseline: CanvasTextBaseline,
+  width: number,
+  height: number
+) {
+  let textX = padding[3] ?? 10;
+  if (textAlign === 'right' || textAlign === 'end') {
+    textX = width - 0 - (padding[1] ?? 10);
+  } else if (textAlign === 'center') {
+    textX = 0 + (width - 0 + (padding[3] ?? 10) - (padding[1] ?? 10)) / 2;
+  }
+  let textY = 0 + (padding[0] ?? 10);
+  if (textBaseline === 'bottom' || textBaseline === 'alphabetic' || textBaseline === 'ideographic') {
+    textY = height - 0 - (padding[2] ?? 10);
+  } else if (textBaseline === 'middle') {
+    textY = 0 + (height - 0 - (padding[0] ?? 10) - (padding[2] ?? 10)) / 2 + (padding[0] ?? 10);
+  }
+
+  return {
+    x: textX,
+    y: textY
+  };
 }

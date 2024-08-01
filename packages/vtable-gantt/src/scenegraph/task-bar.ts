@@ -2,8 +2,9 @@ import { Group } from '@visactor/vrender-core';
 import { createRect, createText } from '@visactor/vrender-core';
 import type { Scenegraph } from './scenegraph';
 import { Icon } from './icon';
-import { parseStringTemplate } from '../tools/util';
+import { parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
+import { getTextPos } from '../gantt-helper';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -48,13 +49,16 @@ export class TaskBar {
       clip: true
     });
     this.group.appendChild(this.barContainer);
+
+    const taskBarCustomRender = this._scene._gantt.taskBarCustomRender;
+
     for (let i = 0; i < this._scene._gantt.itemCount; i++) {
-      const { startDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(i);
+      const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(i);
       if (taskDays <= 0) {
         continue;
       }
       const taskBarSize = this._scene._gantt.colWidthPerDay * taskDays;
-      const taskbarHeight = this._scene._gantt.barStyle.width;
+      const taskbarHeight = this._scene._gantt.taskBarStyle.width;
       const minDate = new Date(this._scene._gantt.minDate);
       const barGroup = new Group({
         x:
@@ -65,63 +69,100 @@ export class TaskBar {
         width: taskBarSize,
         // height: this._scene._gantt.rowHeight,
         height: taskbarHeight,
-        cornerRadius: this._scene._gantt.barStyle.cornerRadius,
+        cornerRadius: this._scene._gantt.taskBarStyle.cornerRadius,
         clip: true,
         cursor: 'grab'
       });
       barGroup.name = 'task-bar';
       this.barContainer.appendChild(barGroup);
-      // 创建整个任务条rect
-      const rect = createRect({
-        x: 0,
-        y: 0, //this._scene._gantt.rowHeight - taskbarHeight) / 2,
-        width: taskBarSize,
-        height: taskbarHeight,
-        fill: this._scene._gantt.barStyle.barColor,
-        pickable: false
-      });
-      rect.name = 'task-bar-rect';
-      barGroup.appendChild(rect);
-      barGroup.barRect = rect;
-      // 创建已完成部分任务条rect
-      const progress_rect = createRect({
-        x: 0,
-        y: 0, //(this._scene._gantt.rowHeight - taskbarHeight) / 2,
-        width: (taskBarSize * progress) / 100,
-        height: taskbarHeight,
-        fill: this._scene._gantt.barStyle.barColor2,
-        pickable: false
-      });
-      progress_rect.name = 'task-bar-progress-rect';
-      barGroup.appendChild(progress_rect);
-      barGroup.progressRect = progress_rect;
-      const { textAlign, fontSize, fontFamily, textOverflow, color } = this._scene._gantt.barLabelStyle;
-      //创建label 文字
-      const label = createText({
-        // visible: false,
-        pickable: false,
-        x: textAlign === 'center' ? taskBarSize / 2 : textAlign === 'left' ? 10 : taskBarSize - 10,
-        y: fontSize / 2,
-        fontSize: fontSize, // 10
-        fill: color,
-        fontFamily: fontFamily,
-        text: parseStringTemplate(this._scene._gantt.barLabelText as string, taskRecord),
-        maxLineWidth: taskBarSize - 20,
-        textBaseline: 'middle',
-        textAlign: textAlign,
-        ellipsis:
-          textOverflow === 'clip'
-            ? ''
-            : textOverflow === 'ellipsis'
-            ? '...'
-            : isValid(textOverflow)
-            ? textOverflow
-            : undefined
-        // dx: 12 + 4,
-        // dy: this._scene._gantt.barLabelStyle.fontSize / 2
-      });
-      barGroup.appendChild(label);
-      barGroup.textLabel = label;
+      let rootContainer;
+      let renderDefaultBar = true;
+      let renderDefaultText = true;
+
+      if (taskBarCustomRender) {
+        let customRenderObj;
+        if (typeof taskBarCustomRender === 'function') {
+          const arg = {
+            width: taskBarSize,
+            height: taskbarHeight,
+            index: i,
+            startDate,
+            endDate,
+            taskDays,
+            progress,
+            taskRecord,
+            ganttInstance: this._scene._gantt
+          };
+          customRenderObj = taskBarCustomRender(arg);
+        } else {
+          customRenderObj = taskBarCustomRender;
+        }
+        if (customRenderObj) {
+          rootContainer = customRenderObj.rootContainer;
+          renderDefaultBar = customRenderObj.renderDefaultBar ?? false;
+          renderDefaultText = customRenderObj.renderDefaultText ?? false;
+        }
+      }
+
+      if (renderDefaultBar) {
+        // 创建整个任务条rect
+        const rect = createRect({
+          x: 0,
+          y: 0, //this._scene._gantt.rowHeight - taskbarHeight) / 2,
+          width: taskBarSize,
+          height: taskbarHeight,
+          fill: this._scene._gantt.taskBarStyle.barColor,
+          pickable: false
+        });
+        rect.name = 'task-bar-rect';
+        barGroup.appendChild(rect);
+        barGroup.barRect = rect;
+        // 创建已完成部分任务条rect
+        const progress_rect = createRect({
+          x: 0,
+          y: 0, //(this._scene._gantt.rowHeight - taskbarHeight) / 2,
+          width: (taskBarSize * progress) / 100,
+          height: taskbarHeight,
+          fill: this._scene._gantt.taskBarStyle.completedBarColor,
+          pickable: false
+        });
+        progress_rect.name = 'task-bar-progress-rect';
+        barGroup.appendChild(progress_rect);
+        barGroup.progressRect = progress_rect;
+      }
+
+      rootContainer && barGroup.appendChild(rootContainer);
+      if (renderDefaultText) {
+        const { textAlign, textBaseline, fontSize, fontFamily, textOverflow, color, padding } =
+          this._scene._gantt.taskBarLabelStyle;
+        const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, taskBarSize, taskbarHeight);
+        //创建label 文字
+        const label = createText({
+          // visible: false,
+          pickable: false,
+          x: position.x, //extAlign === 'center' ? taskBarSize / 2 : textAlign === 'left' ? 10 : taskBarSize - 10,
+          y: position.y, //fontSize / 2,
+          fontSize: fontSize, // 10
+          fill: color,
+          fontFamily: fontFamily,
+          text: parseStringTemplate(this._scene._gantt.taskBarLabelText as string, taskRecord),
+          maxLineWidth: taskBarSize - 20,
+          textBaseline,
+          textAlign,
+          ellipsis:
+            textOverflow === 'clip'
+              ? ''
+              : textOverflow === 'ellipsis'
+              ? '...'
+              : isValid(textOverflow)
+              ? textOverflow
+              : undefined
+          // dx: 12 + 4,
+          // dy: this._scene._gantt.barLabelStyle.fontSize / 2
+        });
+        barGroup.appendChild(label);
+        barGroup.textLabel = label;
+      }
     }
   }
 
@@ -130,7 +171,7 @@ export class TaskBar {
     if (taskbarGroup) {
       const { startDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(index);
       const taskBarSize = this._scene._gantt.colWidthPerDay * taskDays;
-      const taskbarHeight = this._scene._gantt.barStyle.width;
+      const taskbarHeight = this._scene._gantt.taskBarStyle.width;
       const minDate = new Date(this._scene._gantt.minDate);
       taskbarGroup.setAttributes({
         x:
@@ -151,13 +192,13 @@ export class TaskBar {
         } else if (childNode.type === 'text') {
           childNode.setAttributes({
             x:
-              this._scene._gantt.barLabelStyle.textAlign === 'center'
+              this._scene._gantt.taskBarLabelStyle.textAlign === 'center'
                 ? taskBarSize / 2
-                : this._scene._gantt.barLabelStyle.textAlign === 'left'
+                : this._scene._gantt.taskBarLabelStyle.textAlign === 'left'
                 ? 10
                 : taskBarSize - 10,
-            y: this._scene._gantt.barLabelStyle.fontSize / 2,
-            text: parseStringTemplate(this._scene._gantt.barLabelText as string, taskRecord),
+            y: this._scene._gantt.taskBarLabelStyle.fontSize / 2,
+            text: parseStringTemplate(this._scene._gantt.taskBarLabelText as string, taskRecord),
             maxLineWidth: taskBarSize - 20
           });
         }
@@ -183,7 +224,7 @@ export class TaskBar {
       height: 100,
       clip: true,
       cursor: 'grab',
-      cornerRadius: this._scene._gantt.barStyle.cornerRadius,
+      cornerRadius: this._scene._gantt.taskBarStyle.cornerRadius,
       fill: 'rgba(0,0,0,0.2)',
       visibleAll: false
     });

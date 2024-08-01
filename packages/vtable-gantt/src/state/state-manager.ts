@@ -367,9 +367,9 @@ export class StateManager {
     progressRect.setAttribute('width', (progress / 100) * tastBarGroup.attribute.width);
     textLabel.setAttribute(
       'x',
-      this._gantt.barLabelStyle.textAlign === 'center'
+      this._gantt.taskBarLabelStyle.textAlign === 'center'
         ? taskBarSize / 2
-        : this._gantt.barLabelStyle.textAlign === 'left'
+        : this._gantt.taskBarLabelStyle.textAlign === 'left'
         ? 10
         : taskBarSize - 10
     );

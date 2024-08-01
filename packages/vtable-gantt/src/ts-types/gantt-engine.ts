@@ -58,10 +58,10 @@ export interface GanttConstructorOptions {
   // theme?: TableTheme;
   /** 设置任务条样式 可以设置多组 依次循环使用 */
   taskBar?: {
-    labelText?: IBarLabelText;
-    labelTextStyle: IBarLableTextStyle;
-    barStyle: IBarStyle;
-    custom: ICustomTaskBar;
+    labelText?: ITaskBarLabelText;
+    labelTextStyle?: ITaskBarLabelTextStyle;
+    barStyle?: ITaskBarStyle;
+    customRender?: ITaskBarCustomRender;
   };
 
   taskListTable?: {
@@ -91,25 +91,27 @@ export interface GanttConstructorOptions {
  * IBarLabelText
  * 可以配置固定文本 或者 ${fieldName} 或者自定义函数
  */
-export type IBarLabelText = string; //| string[] | ((args: any) => string | string[]);
+export type ITaskBarLabelText = string; //| string[] | ((args: any) => string | string[]);
 export interface ITimelineScale {
   unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
   step: number;
   startOfWeek?: 'sunday' | 'monday';
   format: (date: DateFormatArgumentType) => string | number;
 }
-export interface IBarLableTextStyle {
+export interface ITaskBarLabelTextStyle {
   fontFamily?: string;
   fontSize?: number;
   color?: string;
-  textAlign?: string;
+  textAlign?: 'center' | 'end' | 'left' | 'right' | 'start'; // 设置单元格内文字的水平对齐方式
   textOverflow?: string;
+  textBaseline?: 'alphabetic' | 'bottom' | 'middle' | 'top'; // 设置单元格内文字的垂直对齐方式
+  padding?: number | number[];
 }
-export interface IBarStyle {
+export interface ITaskBarStyle {
   /** 任务条的颜色 */
   barColor?: string;
   /** 已完成部分任务条的颜色 */
-  barColor2?: string;
+  completedBarColor?: string;
   /** 任务条的宽度 */
   width?: number;
   /** 任务条的圆角 */
@@ -142,11 +144,11 @@ export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
 export type DateFormatArgumentType = { dateIndex: number; dateStart: Date; dateEnd: Date };
-export type ICustomTaskBar = (args: any) => ICustomTaskBartObj; //CustomLayout
-export type ICustomTaskBartObj = {
+export type ITaskBarCustomRender = ITaskBarCustomRenderObj | ((args: any) => ITaskBarCustomRenderObj); //CustomLayout
+export type ITaskBarCustomRenderObj = {
   rootContainer: VRender.Container;
-  renderDefaultBar?: boolean; // 默认true
-  renderDefaultText?: boolean; // 默认true
+  renderDefaultBar?: boolean; // 默认false
+  renderDefaultText?: boolean; // 默认false
 };
 
 //#endregion

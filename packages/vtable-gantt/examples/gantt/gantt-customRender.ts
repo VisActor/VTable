@@ -1,5 +1,5 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { register } from '@visactor/vtable';
+import { register, VRender, CustomLayout } from '@visactor/vtable';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import { Gantt } from '../../src/index';
@@ -9,6 +9,7 @@ const date_input_editor = new DateInputEditor({});
 const input_editor = new InputEditor({});
 register.editor('input', input_editor);
 register.editor('date-input', date_input_editor);
+const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#7f7f7f', '#d62728', '#bcbd22', '#9467bd'];
 export function createTable() {
   const records = [
     {
@@ -586,33 +587,44 @@ export function createTable() {
       field: 'title',
       title: 'title',
       width: 200,
+      sort: true,
       tree: true,
-      sort: true
+      editor: 'input'
     },
     {
       field: 'start',
       title: 'start',
       width: 150,
-      sort: true
+      sort: true,
+      editor: 'date-input'
     },
     {
       field: 'end',
       title: 'end',
       width: 150,
-      sort: true
+      sort: true,
+      editor: 'date-input'
     },
     {
       field: 'priority',
       title: 'priority',
       width: 100,
-      sort: true
+      sort: true,
+      editor: 'input'
     },
-
     {
       field: 'progress',
       title: 'progress',
       width: 200,
-      sort: true
+      sort: true,
+      headerStyle: {
+        borderColor: '#e1e4e8'
+      },
+      style: {
+        borderColor: '#e1e4e8',
+        color: 'green'
+      },
+      editor: 'input'
     }
   ];
   const option: GanttConstructorOptions = {
@@ -621,7 +633,22 @@ export function createTable() {
       columns: columns,
       width: 400,
       minWidth: 100,
-      maxWidth: 600
+      maxWidth: 600,
+      headerStyle: {
+        borderColor: '#e1e4e8',
+        borderLineWidth: 1,
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'red',
+        bgColor: '#EEF1F5'
+      },
+      bodyStyle: {
+        borderColor: '#e1e4e8',
+        borderLineWidth: [1, 0, 1, 0],
+        fontSize: 16,
+        color: '#4D4D4D',
+        bgColor: '#FFF'
+      }
     },
     resizeLineStyle: {
       lineColor: 'green',
@@ -638,17 +665,17 @@ export function createTable() {
     },
     gridStyle: {
       // backgroundColor: 'gray',
-      vertical: {
-        lineWidth: 1,
-        lineColor: '#e1e4e8'
-      },
+      // vertical: {
+      //   lineWidth: 1,
+      //   lineColor: '#e1e4e8'
+      // },
       horizontal: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
       }
     },
     defaultHeaderRowHeight: 60,
-    defaultRowHeight: 40,
+    defaultRowHeight: 80,
     timelineHeaderStyle: {
       borderColor: '#e1e4e8',
       borderWidth: 1,
@@ -658,14 +685,79 @@ export function createTable() {
       backgroundColor: '#EEF1F5'
     },
     taskBar: {
+      customRender: (args: any) => {
+        const colorLength = barColors.length;
+        const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
+        const container = new VRender.Group({
+          width,
+          height,
+          fill: barColors[index % colorLength],
+          display: 'flex',
+          flexDirection: 'row',
+          flexWrap: 'nowrap'
+        });
+        const containerLeft = new VRender.Group({
+          height,
+          width: 60,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-around'
+          // fill: 'red'
+        });
+        container.add(containerLeft);
+
+        const icon0 = new VRender.Image({
+          width: 50,
+          height: 50,
+          image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
+          cornerRadius: 25
+        });
+        containerLeft.add(icon0);
+
+        const containerRight = new VRender.Group({
+          height,
+          width: width - 60,
+          display: 'flex',
+          flexDirection: 'column'
+          // alignItems: 'left'
+        });
+        container.add(containerRight);
+
+        const bloggerName = new VRender.Text({
+          text: taskRecord.title,
+          fontSize: 16,
+          fontFamily: 'sans-serif',
+          fill: 'white',
+          maxLineWidth: width - 60,
+          boundsPadding: [10, 0, 0, 0]
+        });
+        containerRight.add(bloggerName);
+
+        const days = new VRender.Text({
+          text: `${taskDays}天`,
+          fontSize: 13,
+          fontFamily: 'sans-serif',
+          fill: 'white',
+          boundsPadding: [10, 0, 0, 0]
+        });
+        containerRight.add(days);
+        return {
+          rootContainer: container,
+          renderDefaultBar: true
+        };
+      },
       labelText: '{title} {progress}%',
       labelTextStyle: {
         fontFamily: 'Arial',
         fontSize: 16,
-        textAlign: 'left'
+        textAlign: 'right',
+        textOverflow: 'ellipsis',
+        padding: [0, 20],
+        textBaseline: 'bottom'
       },
       barStyle: {
-        width: 20,
+        width: 60,
         /** 任务条的颜色 */
         barColor: '#ee8800',
         /** 已完成部分任务条的颜色 */
@@ -742,12 +834,18 @@ export function createTable() {
       dragOrder: true,
       headerStyle: {
         bgColor: '#EEF1F5',
-
         borderColor: '#e1e4e8'
       },
       style: {
         borderColor: '#e1e4e8'
       }
+    },
+    scrollStyle: {
+      scrollRailColor: 'RGBA(246,246,246,0.5)',
+      visible: 'scrolling',
+      width: 6,
+      scrollSliderCornerRadius: 2,
+      scrollSliderColor: '#5cb85c'
     }
   };
   // columns:[
@@ -771,7 +869,7 @@ export function createTable() {
     console.log('scroll', e);
   });
 
-  tableInstance.listTableInstance?.on('scroll', e => {
+  tableInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
   // bindDebugTool(tableInstance.scenegraph.stage as any, {
