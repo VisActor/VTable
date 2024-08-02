@@ -5,27 +5,27 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: pivot table corner cell support icon [#2120](https://github.com/VisActor/VTable/issues/2120)
-- **@visactor/vtable**: support editCellTrigger set keydown [#2136](https://github.com/VisActor/VTable/issues/2136)
-- **@visactor/vtable**: add react-component for option-emptyTip
-- **@visactor/vtable**: add react-component for option-emptyTip - demo
-- **@visactor/vtable**: add escape config in csv-exporter
-- **@visactor/vtable**: add selectionFillMode config in theme.selectionStyle [#2132](https://github.com/VisActor/VTable/issues/2132) [#2027](https://github.com/VisActor/VTable/issues/2027)
+- **@visactor/vtable**: 透视表角表头单元格支持图标配置 [#2120](https://github.com/VisActor/VTable/issues/2120)
+- **@visactor/vtable**: 支持将 editCellTrigger 设置为 keydown [#2136](https://github.com/VisActor/VTable/issues/2136)
+- **@visactor/vtable**: 为 option-emptyTip 添加 React 组件
+- **@visactor/vtable**: 为 option-emptyTip 添加 React 组件 - 示例
+- **@visactor/vtable**: 在 csv-exporter 中添加转义配置
+- **@visactor/vtable**: 在 theme.selectionStyle 中添加 selectionFillMode 配置 [#2132](https://github.com/VisActor/VTable/issues/2132) [#2027](https://github.com/VisActor/VTable/issues/2027)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: set sort rule occor error [#2106](https://github.com/VisActor/VTable/issues/2106)
-- **@visactor/vtable**: clearSelected api clear ctrl+a border [#2115](https://github.com/VisActor/VTable/issues/2115)
-- **@visactor/vtable**: move header position not work not trigger change_header_position event [#2129](https://github.com/VisActor/VTable/issues/2129)
-- **@visactor/vtable**: set cellType is function, resize col width chart size render error [#2160](https://github.com/VisActor/VTable/issues/2160)
-- **@visactor/vtable**: when call setRowHeight should update chart size [#2155](https://github.com/VisActor/VTable/issues/2155)
-- **@visactor/vtable**: fix cell range clear in update record
-- **@visactor/vtable**: fix custom-element update problem [#2126](https://github.com/VisActor/VTable/issues/2126)
-- **@visactor/vtable**: fix customMege cell update
-- **@visactor/vtable**: fix CellContent pickable config [#2134](https://github.com/VisActor/VTable/issues/2134)
-- **@visactor/vtable**: fix legend visible config [#2137](https://github.com/VisActor/VTable/issues/2137)
-- **@visactor/vtable**: fix released async problem [#2145](https://github.com/VisActor/VTable/issues/2145)
-- **@visactor/vtable**: remove resizing update in endResizeCol() [#2101](https://github.com/VisActor/VTable/issues/2101)
+- **@visactor/vtable**: 设置排序规则时出现错误 [#2106](https://github.com/VisActor/VTable/issues/2106)
+- **@visactor/vtable**: clearSelected API 清除 ctrl+a 边框 [#2115](https://github.com/VisActor/VTable/issues/2115)
+- **@visactor/vtable**: 修复移动表头位置不生效且不触发 change_header_position 事件 [#2129](https://github.com/VisActor/VTable/issues/2129)
+- **@visactor/vtable**: 当 cellType 设置为函数时，调整列宽导致图表大小渲染错误 [#2160](https://github.com/VisActor/VTable/issues/2160)
+- **@visactor/vtable**: 调用 setRowHeight 时应更新图表大小 [#2155](https://github.com/VisActor/VTable/issues/2155)
+- **@visactor/vtable**: 修复更新记录时单元格范围清除问题
+- **@visactor/vtable**: 修复自定义元素更新问题 [#2126](https://github.com/VisActor/VTable/issues/2126)
+- **@visactor/vtable**: 修复自定义合并单元格更新
+- **@visactor/vtable**: 修复 CellContent 可拾取配置 [#2134](https://github.com/VisActor/VTable/issues/2134)
+- **@visactor/vtable**: 修复图例可见性配置 [#2137](https://github.com/VisActor/VTable/issues/2137)
+- **@visactor/vtable**: 修复释放异步问题 [#2145](https://github.com/VisActor/VTable/issues/2145)
+- **@visactor/vtable**: 在 endResizeCol() 中移除调整大小更新 [#2101](https://github.com/VisActor/VTable/issues/2101)
 
 [更多详情请查看 v1.5.4](https://github.com/VisActor/VTable/releases/tag/v1.5.4)
 
@@ -36,11 +36,11 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add param value for startEditCell api [#2089](https://github.com/VisActor/VTable/issues/2089)
+- **@visactor/vtable**: 为 startEditCell API 添加默认参数 value [#2089](https://github.com/VisActor/VTable/issues/2089)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix option config in vtable-export
+- **@visactor/vtable**: 修复 vtable-export 中的选项配置
 
 
 
@@ -53,16 +53,16 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add api disableScroll and enableScroll [#2073](https://github.com/VisActor/VTable/issues/2073)
-- **@visactor/vtable**: add renderDefault prop in react customLayout component
-- **@visactor/vtable**: support multiple columns tag in react-vtable
+- **@visactor/vtable**: 添加 disableScroll 和 enableScroll API [#2073](https://github.com/VisActor/VTable/issues/2073)
+- **@visactor/vtable**: 在 react customLayout 组件中添加 renderDefault 属性
+- **@visactor/vtable**: 在 react-vtable 中支持多列标签
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: edit api validateValue support async
-- **@visactor/vtable**: api changeFieldValue occor errow when records has null [#2067](https://github.com/VisActor/VTable/issues/2067)
-- **@visactor/vtable**: fix react component error in updateCell() [#2038](https://github.com/VisActor/VTable/issues/2038)
-- **@visactor/vtable**: fix axes default config in scatter chart [#2071](https://github.com/VisActor/VTable/issues/2071)
+- **@visactor/vtable**: edit 相关 API validateValue 支持异步
+- **@visactor/vtable**: 当记录包含 null 时，API changeFieldValue 出现错误 [#2067](https://github.com/VisActor/VTable/issues/2067)
+- **@visactor/vtable**: 修复 updateCell() 中的 react 组件错误 [#2038](https://github.com/VisActor/VTable/issues/2038)
+- **@visactor/vtable**: 修复散点图中的坐标轴默认配置 [#2071](https://github.com/VisActor/VTable/issues/2071)
 
 
 
@@ -75,8 +75,8 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: getCellAtRelativePosition api return value [#2054](https://github.com/VisActor/VTable/issues/2054)
-- **@visactor/vtable**: add tolerance for scroll in _disableColumnAndRowSizeRound mode
+- **@visactor/vtable**: 修复 getCellAtRelativePosition API 返回值 [#2054](https://github.com/VisActor/VTable/issues/2054)
+- **@visactor/vtable**: 在 _disableColumnAndRowSizeRound 模式下为滚动添加容差
 
 
 
