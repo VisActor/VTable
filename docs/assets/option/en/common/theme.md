@@ -158,8 +158,8 @@ prefix = ${prefix}
 
 ##${prefix} selectionFillMode(boolean)
 Fill color rules for the selected area
-- `cover`: The fill color of the selected area will cover the background color of the cell (usually a color value with transparency)
-- `contain`: The fill color of the selected area will replace the background color of the cell
+- `overlay`: The fill color of the selected area will cover the background color of the cell (usually a color value with transparency)
+- `replace`: The fill color of the selected area will replace the background color of the cell
 {{ use: common-color(
   prefix = ${prefix}
   ) }}
