@@ -1,5 +1,6 @@
 import { isValid } from '@visactor/vutils';
 import type { EventHandler } from '../EventHandler';
+import type { ListTableConstructorOptions } from '../../ts-types';
 import { InteractionState, type KeydownEvent, type ListTableAPI } from '../../ts-types';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
@@ -25,6 +26,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
   });
 
   handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
+    table.editorManager.completeEdit();
     if (table.eventManager._enableTableScroll) {
       handleWhell(e, stateManager);
     }
@@ -132,10 +134,30 @@ export function bindContainerDomListener(eventManager: EventManager) {
         handleKeydownListener(e);
         (table as ListTableAPI).editorManager.completeEdit();
         table.getElement().focus();
+
+        if (table.options.keyboardOptions?.moveFocusCellOnEnter === true) {
+          // 利用enter键选中下一个单元格
+          const targetCol = stateManager.select.cellPos.col;
+          const targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
+          // 如果是不支持选中的单元格 则退出
+          if (isCellDisableSelect(table, targetCol, targetRow)) {
+            return;
+          }
+          table.selectCell(targetCol, targetRow, e.shiftKey);
+        }
         // 直接返回，不再触发最后的keydown监听事件相关代码
         return;
       }
-      if (
+      if (table.options.keyboardOptions?.moveFocusCellOnEnter === true) {
+        // 利用enter键选中下一个单元格
+        const targetCol = stateManager.select.cellPos.col;
+        const targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
+        // 如果是不支持选中的单元格 则退出
+        if (isCellDisableSelect(table, targetCol, targetRow)) {
+          return;
+        }
+        table.selectCell(targetCol, targetRow, e.shiftKey);
+      } else if (
         (table.options.keyboardOptions?.editCellOnEnter ?? true) &&
         (table.stateManager.select.ranges?.length ?? 0) === 1
       ) {
@@ -180,8 +202,18 @@ export function bindContainerDomListener(eventManager: EventManager) {
           }
         }
       }
+    } else {
+      const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
+      if (
+        (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
+        !table.editorManager.editingEditor
+      ) {
+        const allowedKeys = /^[a-zA-Z0-9+\-*\/%=.,\s]$/; // 允许的键值正则表达式
+        if (e.key.match(allowedKeys)) {
+          table.editorManager.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
+        }
+      }
     }
-
     handleKeydownListener(e);
   });
   /**
@@ -330,6 +362,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
     if (e.width === 0 && e.height === 0) {
       // 临时绕行解决因为display设置为none产生的问题
       return;
+    }
+    if (table.autoFillWidth || table.autoFillHeight) {
+      table.editorManager.completeEdit();
     }
     if (!isValid(table.options.pixelRatio)) {
       table.setPixelRatio(getPixelRatio());
