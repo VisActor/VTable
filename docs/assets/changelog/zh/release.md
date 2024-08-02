@@ -1,3 +1,20 @@
+# v1.5.3
+
+2024-07-19
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add param value for startEditCell api [#2089](https://github.com/VisActor/VTable/issues/2089)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix option config in vtable-export
+
+
+
+[更多详情请查看 v1.5.3](https://github.com/VisActor/VTable/releases/tag/v1.5.3)
+
 # v1.5.2
 
 2024-07-15

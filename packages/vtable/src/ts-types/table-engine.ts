@@ -88,8 +88,10 @@ export interface SelectAllOnCtrlAOption {
 export interface TableKeyboardOptions {
   /** tab键 默认为true。开启tab键移动选中单元格，如果当前是在编辑单元格 则移动到下一个单元格也是编辑状态 */
   moveFocusCellOnTab?: boolean;
-  /** enter键 默认true 如果选中单元格可编辑则进入单元格编辑*/
+  /** enter键 默认true 如果选中单元格按下enter键进入单元格编辑*/
   editCellOnEnter?: boolean;
+  /** enter键 默认fasle 按下enter键选择下一个单元格。和editCellOnEnter互斥，同设置为true优先级高于editCellOnEnter */
+  moveFocusCellOnEnter?: boolean;
   /** 默认不开启即false。开启这个配置的话，如果当前是在编辑中的单元格，方向键可以移动到下个单元格并进入编辑状态，而不是编辑文本内字符串的光标移动。上下左右方向键切换选中单元格不受该配置影响，*/
   moveEditCellOnArrowKeys?: boolean;
   /** 开启快捷键全选 默认：false */
@@ -231,8 +233,8 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置编辑器 */
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-  /** 编辑触发时机 双击事件  单击事件 api手动开启编辑。默认为双击'doubleclick' */
-  editCellTrigger?: 'doubleclick' | 'click' | 'api';
+  /** 编辑触发时机 双击事件  单击事件 api手动开启编辑 或者 鼠标按下新值即可开启编辑。默认为双击'doubleclick' */
+  editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
   /** 拖拽表头移动位置 针对冻结部分的规则  默认为fixedFrozenCount
    * "disabled"（禁止调整冻结列位置）：不允许其他列的表头移入冻结列，也不允许冻结列移出，冻结列保持不变。
    * "adjustFrozenCount"（根据交互结果调整冻结数量）：允许其他列的表头移入冻结列，及冻结列移出，并根据拖拽的动作调整冻结列的数量。当其他列的表头被拖拽进入冻结列位置时，冻结列数量增加；当其他列的表头被拖拽移出冻结列位置时，冻结列数量减少。

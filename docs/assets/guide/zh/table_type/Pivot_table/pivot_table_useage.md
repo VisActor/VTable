@@ -18,6 +18,7 @@
 - `showRowHeader`：是否显示行表头，默认为 true。
 - `showColumnHeader`：是否显示列表头，默认为 true。
 - `corner`：角表头各项配置及样式自定义。
+- `dataConfig`: 数据分析配置，可以配置数据的聚合方式和计算方式，排序过滤等。
 
 ## 示例：创建一个简单的透视表
 
