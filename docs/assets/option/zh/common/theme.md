@@ -158,8 +158,8 @@ body 单元格的样式配置
 
 ##${prefix} selectionFillMode(boolean)
 选中区域的填充色规则
-  - `cover`: 选中区域的填充色会覆盖单元格的背景色（常用带透明度的颜色值）
-  - `contain`: 选中区域的填充色会替换单元格的背景色
+  - `overlay`: 选中区域的填充色会覆盖单元格的背景色（常用带透明度的颜色值）
+  - `replace`: 选中区域的填充色会替换单元格的背景色
 {{ use: common-color(
   prefix = ${prefix}
   ) }}
