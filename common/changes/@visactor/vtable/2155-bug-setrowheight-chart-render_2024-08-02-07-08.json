@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: set cellType is function, resize col width chart size render error #2160\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

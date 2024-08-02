@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix CellContent pickable config #2134",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
