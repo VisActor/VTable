@@ -15,6 +15,7 @@ option: ListTable#groupBy
 ## 关键配置
 
 - groupBy: 指定分组字段名称
+- enableTreeStickCell: 开启分组标题吸附功能
 
 ## 代码演示
 
@@ -99,7 +100,8 @@ option: ListTable#groupBy
               }
             }
           }
-        })
+        }),
+        enableTreeStickCell: true
       };
       tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;

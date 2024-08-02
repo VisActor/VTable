@@ -133,3 +133,13 @@ type CustomAggregation = {
 ## groupBy(string|string[])
 
 Enable the group display function to display the hierarchical structure of the group fields in the data. The value is the group field name, which can be configured as one field or an array of multiple fields.
+
+## enableTreeStickCell(boolean) = false
+
+Enable the group title sticking function.
+
+## groupTitleCustomLayout(CustomLayout)
+
+Customize the group title layout.
+
+ groupTitleStyle(CustomLayoutStyle)

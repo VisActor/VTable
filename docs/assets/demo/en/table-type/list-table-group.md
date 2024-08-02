@@ -15,6 +15,7 @@ Basic table grouping display, used to display the hierarchical structure of grou
 ## Key configuration
 
 - groupBy: Specify the grouping field name
+- enableTreeStickCell: enable group title sticky function
 
 ## Code demonstration
 
@@ -99,7 +100,8 @@ Basic table grouping display, used to display the hierarchical structure of grou
               }
             }
           }
-        })
+        }),
+        enableTreeStickCell: true
       };
       tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;
