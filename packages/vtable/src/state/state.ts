@@ -659,9 +659,9 @@ export class StateManager {
   }
 
   endResizeCol() {
-    setTimeout(() => {
-      this.columnResize.resizing = false;
-    }, 0);
+    // setTimeout(() => {
+    this.columnResize.resizing = false;
+    // }, 0);
     this.table.scenegraph.updateChartSizeForResizeColWidth(this.columnResize.col);
     this.checkFrozen();
     this.table.scenegraph.component.hideResizeCol();
@@ -998,7 +998,7 @@ export class StateManager {
       // 滚轮触发滚动条显示后，异步隐藏
       clearTimeout(this._clearVerticalScrollBar);
       this._clearVerticalScrollBar = setTimeout(() => {
-        this.table.scenegraph.component.hideVerticalScrollBar();
+        this.table.scenegraph?.component.hideVerticalScrollBar();
       }, 1000);
     }
   }
@@ -1011,7 +1011,7 @@ export class StateManager {
       // 滚轮触发滚动条显示后，异步隐藏
       clearTimeout(this._clearHorizontalScrollBar);
       this._clearHorizontalScrollBar = setTimeout(() => {
-        this.table.scenegraph.component.hideHorizontalScrollBar();
+        this.table.scenegraph?.component.hideHorizontalScrollBar();
       }, 1000);
     }
   }

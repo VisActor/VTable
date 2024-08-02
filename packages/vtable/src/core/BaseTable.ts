@@ -140,6 +140,7 @@ import {
   getTargetRowAt,
   getTargetRowAtConsiderBottomFrozen
 } from './utils/get-cell-position';
+import type { EditManeger } from '../edit/edit-manager';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -172,6 +173,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   scenegraph: Scenegraph;
   stateManager: StateManager;
   eventManager: EventManager;
+  editorManager: EditManeger;
   _pixelRatio: number;
 
   // bottomFrozenRowCount: number = 0;
@@ -4286,9 +4288,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   //   startInertia(0, -1, 1, this.stateManager);
   // }
 
-  checkReactCustomLayout() {
+  checkReactCustomLayout(removeAllContainer: () => void) {
     if (!this.reactCustomLayout) {
-      this.reactCustomLayout = new ReactCustomLayout(this);
+      this.reactCustomLayout = new ReactCustomLayout(removeAllContainer, this);
     }
   }
 

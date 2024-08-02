@@ -324,6 +324,8 @@ export class Scenegraph {
       delete (this.tableGroup as any).border;
     }
     this.proxy?.release();
+
+    this.table.reactCustomLayout?.clearCache();
   }
 
   updateStageBackground() {
@@ -353,6 +355,7 @@ export class Scenegraph {
   createSceneGraph(skipRowHeightClear = false) {
     if (!skipRowHeightClear) {
       this.table.rowHeightsMap.clear();
+      this.table.internalProps.layoutMap.clearCellRangeMap();
     }
 
     // if (this.table.heightMode === 'autoHeight') {
