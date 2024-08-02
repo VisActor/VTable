@@ -1169,6 +1169,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   setRowHeight(row: number, height: number) {
     this.scenegraph.setRowHeight(row, height);
+    this.scenegraph.updateChartSizeForResizeRowHeight(row);
     this.internalProps._heightResizedRowMap.add(row); // add resize tag
   }
 
@@ -1364,6 +1365,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   setColWidth(col: number, width: number) {
     this.scenegraph.setColWidth(col, width);
+    this.scenegraph.updateChartSizeForResizeColWidth(col);
     this.internalProps._widthResizedColMap.add(col); // add resize tag
   }
 

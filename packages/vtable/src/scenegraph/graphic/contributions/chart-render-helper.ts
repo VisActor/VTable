@@ -35,6 +35,7 @@ export function renderChart(chart: Chart) {
       autoFit: false
     });
     chartInstance.renderSync();
+    chart.chartInstance = chartInstance;
   }
   const viewBox = chart.getViewBox();
 
