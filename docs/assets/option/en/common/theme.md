@@ -156,7 +156,7 @@ The highlight color of the entire column when selected
 prefix = ${prefix}
 ) }}
 
-##${prefix} selectFillMode(boolean)
+##${prefix} selectionFillMode(boolean)
 Fill color rules for the selected area
 - `cover`: The fill color of the selected area will cover the background color of the cell (usually a color value with transparency)
 - `contain`: The fill color of the selected area will replace the background color of the cell

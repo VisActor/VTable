@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "feat: add selectFillMode config in theme.selectionStyle #2132 #2027",
+      "comment": "feat: add selectionFillMode config in theme.selectionStyle #2132 #2027",
       "type": "none"
     }
   ],
