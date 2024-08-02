@@ -46,67 +46,67 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
     state.table
   );
 
-  state.columnMove.x = x - state.table.tableX;
-  state.columnMove.y = y - state.table.tableY;
-  console.log('columnMoveY', state.columnMove.y);
-  state.columnMove.colTarget = targetCell.col;
-  state.columnMove.rowTarget = targetCell.row;
-
   const canMove = state.table.internalProps.layoutMap.canMoveHeaderPosition(
     { col: state.columnMove.colSource, row: state.columnMove.rowSource },
-    { col: state.columnMove.colTarget, row: state.columnMove.rowTarget }
+    { col: targetCell.col, row: targetCell.row }
   );
 
   if (!canMove) {
     state.updateCursor('not-allowed');
+    state.columnMove.colTarget = state.columnMove.colSource;
+    state.columnMove.rowTarget = state.columnMove.rowSource;
   } else {
+    state.columnMove.x = x - state.table.tableX;
+    state.columnMove.y = y - state.table.tableY;
+    state.columnMove.colTarget = targetCell.col;
+    state.columnMove.rowTarget = targetCell.row;
     state.updateCursor('grabbing');
-  }
-
-  let lineX;
-  let backX;
-  let lineY;
-  let backY;
-  const cellLocation = state.table.getCellLocation(state.columnMove.colSource, state.columnMove.rowSource);
-  if (cellLocation === 'columnHeader') {
-    backX = state.columnMove.x;
-    if (state.table.isLeftFrozenColumn(col)) {
-      lineX =
-        state.columnMove.colTarget >= state.columnMove.colSource
-          ? state.table.getColsWidth(0, state.columnMove.colTarget)
-          : state.table.getColsWidth(0, state.columnMove.colTarget - 1);
-    } else if (state.table.isRightFrozenColumn(col)) {
-      lineX = state.table.tableNoFrameWidth - state.table.getColsWidth(targetCell.col + 1, state.table.colCount - 1);
-    } else {
-      lineX =
-        (state.columnMove.colTarget >= state.columnMove.colSource
-          ? state.table.getColsWidth(0, state.columnMove.colTarget)
-          : state.table.getColsWidth(0, state.columnMove.colTarget - 1)) -
-        state.table.stateManager.scroll.horizontalBarPos;
+    let lineX;
+    let backX;
+    let lineY;
+    let backY;
+    const cellLocation = state.table.getCellLocation(state.columnMove.colSource, state.columnMove.rowSource);
+    if (cellLocation === 'columnHeader') {
+      backX = state.columnMove.x;
+      if (state.table.isLeftFrozenColumn(col)) {
+        lineX =
+          state.columnMove.colTarget >= state.columnMove.colSource
+            ? state.table.getColsWidth(0, state.columnMove.colTarget)
+            : state.table.getColsWidth(0, state.columnMove.colTarget - 1);
+      } else if (state.table.isRightFrozenColumn(col)) {
+        lineX = state.table.tableNoFrameWidth - state.table.getColsWidth(targetCell.col + 1, state.table.colCount - 1);
+      } else {
+        lineX =
+          (state.columnMove.colTarget >= state.columnMove.colSource
+            ? state.table.getColsWidth(0, state.columnMove.colTarget)
+            : state.table.getColsWidth(0, state.columnMove.colTarget - 1)) -
+          state.table.stateManager.scroll.horizontalBarPos;
+      }
+    } else if (
+      cellLocation === 'rowHeader' ||
+      (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+    ) {
+      backY = state.columnMove.y;
+      if (state.table.isFrozenRow(row)) {
+        lineY =
+          state.columnMove.rowTarget >= state.columnMove.rowSource
+            ? state.table.getRowsHeight(0, state.columnMove.rowTarget)
+            : state.table.getRowsHeight(0, state.columnMove.rowTarget - 1);
+      } else if (state.table.isBottomFrozenRow(row)) {
+        lineY =
+          state.table.tableNoFrameHeight - state.table.getRowsHeight(targetCell.row + 1, state.table.rowCount - 1);
+      } else {
+        lineY =
+          (state.columnMove.rowTarget >= state.columnMove.rowSource
+            ? state.table.getRowsHeight(0, state.columnMove.rowTarget)
+            : state.table.getRowsHeight(0, state.columnMove.rowTarget - 1)) -
+          state.table.stateManager.scroll.verticalBarPos;
+      }
     }
-  } else if (
-    cellLocation === 'rowHeader' ||
-    (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
-  ) {
-    backY = state.columnMove.y;
-    if (state.table.isFrozenRow(row)) {
-      lineY =
-        state.columnMove.rowTarget >= state.columnMove.rowSource
-          ? state.table.getRowsHeight(0, state.columnMove.rowTarget)
-          : state.table.getRowsHeight(0, state.columnMove.rowTarget - 1);
-    } else if (state.table.isBottomFrozenRow(row)) {
-      lineY = state.table.tableNoFrameHeight - state.table.getRowsHeight(targetCell.row + 1, state.table.rowCount - 1);
-    } else {
-      lineY =
-        (state.columnMove.rowTarget >= state.columnMove.rowSource
-          ? state.table.getRowsHeight(0, state.columnMove.rowTarget)
-          : state.table.getRowsHeight(0, state.columnMove.rowTarget - 1)) -
-        state.table.stateManager.scroll.verticalBarPos;
-    }
-  }
 
-  state.table.scenegraph.component.updateMoveCol(backX, lineX, backY, lineY);
-  state.table.scenegraph.updateNextFrame();
+    state.table.scenegraph.component.updateMoveCol(backX, lineX, backY, lineY);
+    state.table.scenegraph.updateNextFrame();
+  }
 }
 
 export function endMoveCol(state: StateManager) {

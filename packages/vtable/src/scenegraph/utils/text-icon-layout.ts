@@ -14,6 +14,7 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import { isNil, isNumber, isValid, isValidNumber } from '@visactor/vutils';
 import { isMergeCellGroup } from './is-merge-cell-group';
 import { breakString } from './break-string';
+import { CUSTOM_CONTAINER_NAME } from '../component/custom';
 
 /**
  * @description: 创建单元格内容
@@ -652,7 +653,7 @@ export function updateCellContentWidth(
     newHeight = (cellGroup.contentHeight ?? cellHeight) - (padding[0] + padding[2]);
 
     cellGroup.forEachChildren((child: any) => {
-      if (child.type === 'rect' || child.type === 'chart') {
+      if (child.type === 'rect' || child.type === 'chart' || child.name === CUSTOM_CONTAINER_NAME) {
         return;
       }
       if (child.name === 'mark') {
@@ -667,7 +668,7 @@ export function updateCellContentWidth(
     });
   } else if (textBaseline === 'middle' || textBaseline === 'bottom') {
     cellGroup.forEachChildren((child: any) => {
-      if (child.type === 'rect' || child.type === 'chart') {
+      if (child.type === 'rect' || child.type === 'chart' || child.name === CUSTOM_CONTAINER_NAME) {
         return;
       }
       if (child.name === 'mark') {
@@ -716,7 +717,7 @@ export function updateCellContentHeight(
   // 更新y方向位置
   cellGroup.forEachChildren((child: any) => {
     child.setAttribute('dy', 0);
-    if (child.type === 'rect' || child.type === 'chart') {
+    if (child.type === 'rect' || child.type === 'chart' || child.name === CUSTOM_CONTAINER_NAME) {
       // do nothing
     } else if (child.name === 'mark') {
       child.setAttribute('y', 0);

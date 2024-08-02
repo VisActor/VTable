@@ -54,7 +54,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     dimensions: IDimensionInfo[];
     order: SortOrder;
   }[];
-  editorManager: EditManeger;
   dataset?: Dataset; //数据处理对象  开启数据透视分析的表
   flatDataToObjects?: FlatDataToObjects; //数据处理对象 聚合后的flat数据 转成便于查询的行列二维数组
   // drillMenu: Menu; //上卷下钻的按钮

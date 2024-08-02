@@ -19,10 +19,12 @@ export class EditManeger {
 
   bindEvent() {
     const handler = this.table.internalProps.handler;
+    const editCellTrigger = (this.table.options as ListTableConstructorOptions).editCellTrigger;
     this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
       if (
-        !(this.table.options as ListTableConstructorOptions).editCellTrigger || //默认为双击
-        (this.table.options as ListTableConstructorOptions).editCellTrigger === 'doubleclick'
+        !editCellTrigger || //默认为双击
+        editCellTrigger === 'doubleclick' ||
+        (Array.isArray(editCellTrigger) && editCellTrigger.includes('doubleclick'))
       ) {
         const { col, row } = e;
 
@@ -43,20 +45,20 @@ export class EditManeger {
     });
 
     this.table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
-      if ((this.table.options as ListTableConstructorOptions).editCellTrigger === 'click') {
+      if (editCellTrigger === 'click' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('click'))) {
         const { col, row } = e;
         this.startEditCell(col, row);
       }
     });
 
-    handler.on(this.table.getElement(), 'wheel', (e: WheelEvent) => {
-      this.completeEdit();
-    });
-    handler.on(this.table.getElement(), 'resize', (e: Event) => {
-      if (this.table.autoFillWidth || this.table.autoFillHeight) {
-        this.completeEdit();
-      }
-    });
+    // handler.on(this.table.getElement(), 'wheel', (e: WheelEvent) => {
+    //   this.completeEdit();
+    // });
+    // handler.on(this.table.getElement(), 'resize', (e: Event) => {
+    //   if (this.table.autoFillWidth || this.table.autoFillHeight) {
+    //     this.completeEdit();
+    //   }
+    // });
   }
 
   startEditCell(col: number, row: number, value?: string | number) {

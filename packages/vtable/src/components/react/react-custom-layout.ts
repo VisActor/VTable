@@ -13,13 +13,15 @@ export function emptyCustomLayout(args: CustomRenderFunctionArg) {
 }
 
 export class ReactCustomLayout {
+  removeAllContainer: () => void;
   table: BaseTableAPI;
   customLayoutFuncCache: Map<string, ICustomLayoutFuc>;
   reactRemoveGraphicCache: Map<string, (col: number, row: number) => void>;
   headerCustomLayoutFuncCache: Map<string, ICustomLayoutFuc>;
   headerReactRemoveGraphicCache: Map<string, (col: number, row: number) => void>;
   // reactContainerCache: Map<number, Map<string, any>>;
-  constructor(table: BaseTableAPI) {
+  constructor(removeAllContainer: () => void, table: BaseTableAPI) {
+    this.removeAllContainer = removeAllContainer;
     this.table = table;
     this.customLayoutFuncCache = new Map();
     // this.reactContainerCache = new Map();
@@ -124,6 +126,10 @@ export class ReactCustomLayout {
     if (removeFun) {
       removeFun(col, row);
     }
+  }
+
+  clearCache() {
+    this.removeAllContainer();
   }
 }
 
