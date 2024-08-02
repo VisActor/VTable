@@ -1,3 +1,34 @@
+# v1.5.4
+
+2024-08-02
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: pivot table corner cell support icon [#2120](https://github.com/VisActor/VTable/issues/2120)
+- **@visactor/vtable**: support editCellTrigger set keydown [#2136](https://github.com/VisActor/VTable/issues/2136)
+- **@visactor/vtable**: add react-component for option-emptyTip
+- **@visactor/vtable**: add react-component for option-emptyTip - demo
+- **@visactor/vtable**: add escape config in csv-exporter
+- **@visactor/vtable**: add selectionFillMode config in theme.selectionStyle [#2132](https://github.com/VisActor/VTable/issues/2132) [#2027](https://github.com/VisActor/VTable/issues/2027)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: set sort rule occor error [#2106](https://github.com/VisActor/VTable/issues/2106)
+- **@visactor/vtable**: clearSelected api clear ctrl+a border [#2115](https://github.com/VisActor/VTable/issues/2115)
+- **@visactor/vtable**: move header position not work not trigger change_header_position event [#2129](https://github.com/VisActor/VTable/issues/2129)
+- **@visactor/vtable**: set cellType is function, resize col width chart size render error [#2160](https://github.com/VisActor/VTable/issues/2160)
+- **@visactor/vtable**: when call setRowHeight should update chart size [#2155](https://github.com/VisActor/VTable/issues/2155)
+- **@visactor/vtable**: fix cell range clear in update record
+- **@visactor/vtable**: fix custom-element update problem [#2126](https://github.com/VisActor/VTable/issues/2126)
+- **@visactor/vtable**: fix customMege cell update
+- **@visactor/vtable**: fix CellContent pickable config [#2134](https://github.com/VisActor/VTable/issues/2134)
+- **@visactor/vtable**: fix legend visible config [#2137](https://github.com/VisActor/VTable/issues/2137)
+- **@visactor/vtable**: fix released async problem [#2145](https://github.com/VisActor/VTable/issues/2145)
+- **@visactor/vtable**: remove resizing update in endResizeCol() [#2101](https://github.com/VisActor/VTable/issues/2101)
+
+[更多详情请查看 v1.5.4](https://github.com/VisActor/VTable/releases/tag/v1.5.4)
+
 # v1.5.3
 
 2024-07-19
