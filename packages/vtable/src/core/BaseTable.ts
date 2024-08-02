@@ -4257,6 +4257,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const internalProps = this.internalProps;
     //设置列宽
     for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
+      if (this.internalProps._widthResizedColMap.has(col)) {
+        continue;
+      }
       const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
       // width 为 "auto" 时先不存储ColWidth
       if (
