@@ -412,7 +412,7 @@ export class Gantt extends EventTarget {
     return this.records[index];
   }
 
-  updateRecord(index: number) {
+  redrawRecord(index: number) {
     // this.listTableInstance.updateRecords([record], [index]);
     this.scenegraph.taskBar.updateTaskBarNode(index);
     this.scenegraph.updateNextFrame();
@@ -482,11 +482,13 @@ export class Gantt extends EventTarget {
 
   _resize() {
     this._updateSize();
-    this.scenegraph.resize();
+
     this.taskListTableInstance.setCanvasSize(
       this.taskTableWidth,
       this.tableNoFrameHeight + this.frameStyle.borderLineWidth * 2
     );
+
+    this.scenegraph.resize();
   }
   _syncPropsFromTable() {
     this.itemCount = this.taskListTableInstance
