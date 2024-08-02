@@ -18,6 +18,7 @@ The following are the Key Configurations items and their descriptions for using 
 - `showRowHeader`: Whether to display the row header, the default is true.
 - `showColumnHeader`: Whether to display the column header, the default is true.
 - `corner`: Various configurations and style customization of the corner table header.
+- `dataConfig`: Data analysis configuration, which can configure data aggregation and calculation methods, sorting and filtering, etc.
 
 ## Example: Create a simple pivot table
 

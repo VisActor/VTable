@@ -33,6 +33,7 @@ import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
 import {
   deleteAllSelectBorder,
+  deleteAllSelectingBorder,
   deleteLastSelectedRangeComponents,
   removeFillHandleFromSelectComponents
 } from './select/delete-select-border';
@@ -319,6 +320,8 @@ export class Scenegraph {
       delete (this.tableGroup as any).border;
     }
     this.proxy?.release();
+
+    this.table.reactCustomLayout?.clearCache();
   }
 
   updateStageBackground() {
@@ -348,6 +351,7 @@ export class Scenegraph {
   createSceneGraph(skipRowHeightClear = false) {
     if (!skipRowHeightClear) {
       this.table.rowHeightsMap.clear();
+      this.table.internalProps.layoutMap.clearCellRangeMap();
     }
 
     // if (this.table.heightMode === 'autoHeight') {
@@ -692,6 +696,7 @@ export class Scenegraph {
   }
   deleteAllSelectBorder() {
     deleteAllSelectBorder(this);
+    deleteAllSelectingBorder(this);
   }
 
   updateCellSelectBorder(selectRange: CellRange & { skipBodyMerge?: boolean }, extendSelectRange: boolean = true) {

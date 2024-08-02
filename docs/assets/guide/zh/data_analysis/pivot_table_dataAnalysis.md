@@ -37,16 +37,17 @@ const option={
 
 ## 数据分析相关配置：
 
-| 配置项                       | 类型                           | 描述                                     |
-| :--------------------------- | :----------------------------- | :--------------------------------------- |
-| rows                         | (IRowDimension \| string)[]    | 行维度字段数组，用于解析出对应的维度成员 |
-| columns                      | (IColumnDimension \| string)[] | 列维度字段数组，用于解析出对应的维度成员 |
-| indicators                   | (IIndicator \| string)[]       | 具体展示指标                             |
-| dataConfig.aggregationRules  | aggregationRule[]              | 按照行列维度聚合值计算规则               |
-| dataConfig.derivedFieldRules | DerivedFieldRule[]             | 派生字段                                 |
-| dataConfig.sortRules         | sortRule[]                     | 排序规则                                 |
-| dataConfig.filterRules       | filterRule[]                   | 过滤规则                                 |
-| dataConfig.totals            | totalRule[]                    | 小计或总计                               |
+| 配置项                          | 类型                           | 描述                                     |
+| :------------------------------ | :----------------------------- | :--------------------------------------- |
+| rows                            | (IRowDimension \| string)[]    | 行维度字段数组，用于解析出对应的维度成员 |
+| columns                         | (IColumnDimension \| string)[] | 列维度字段数组，用于解析出对应的维度成员 |
+| indicators                      | (IIndicator \| string)[]       | 具体展示指标                             |
+| dataConfig.aggregationRules     | aggregationRule[]              | 按照行列维度聚合值计算规则               |
+| dataConfig.derivedFieldRules    | DerivedFieldRule[]             | 派生字段                                 |
+| dataConfig.sortRules            | sortRule[]                     | 排序规则                                 |
+| dataConfig.filterRules          | filterRule[]                   | 过滤规则                                 |
+| dataConfig.totals               | totalRule[]                    | 小计或总计                               |
+| dataConfig.calculatedFieldRules | CalculateddFieldRule[]         | 计算字段                                 |
 
 dataConfig 配置定义：
 
@@ -55,7 +56,7 @@ dataConfig 配置定义：
  * 数据处理配置
  */
 export interface IDataConfig {
-  aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；
+  aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；默认所有指标值都会按照加和SUM的方式计算
   sortRules?: SortRules; //排序规则；
   filterRules?: FilterRules; //过滤规则；
   totals?: Totals; //小计或总计；
@@ -120,6 +121,7 @@ VTable 的透视表支持四种排序方式：维度值自然排序、指定维�
 指标值排序配置示例如下：
 
 ```
+dataConfig: {
     sortRules: [
         {
           sortField: 'city',
@@ -128,7 +130,7 @@ VTable 的透视表支持四种排序方式：维度值自然排序、指定维�
           query: ['办公用品', '笔']
         } as VTable.TYPES.SortByIndicatorRule
       ]
-
+}
 ```
 
 如果需要修改排序规则 透视表可以使用接口 `updateSortRules`。
@@ -142,24 +144,29 @@ VTable 的透视表支持四种排序方式：维度值自然排序、指定维�
 配置示例：
 
 ```
-filterRules: [
+dataConfig: {
+  filterRules: [
         {
           filterFunc: (record: Record<string, any>) => {
             return record.province !== '四川省' || record.category !== '家具';
           }
         }
       ]
+}
 ```
 
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-filter
 
 ### 4. 聚合方式
 
+默认所有指标值都会按照加和 SUM 的方式计算，如果不想这个默认的计算方式，可以通过配置 aggregationRules 来修改。通常情况下如果指标是字符串型，需要配置 NONE 来显示数据源字段原始值。
+
 [option 说明](../../option/PivotTable#dataConfig.aggregationRules)
 
 配置示例：
 
 ```
+dataConfig: {
     aggregationRules: [
         //做聚合计算的依据，如销售额如果没有配置则默认按聚合sum计算结果显示单元格内容
         {
@@ -195,6 +202,7 @@ filterRules: [
           aggregationType: VTable.TYPES.AggregationType.RECORD, //不做聚合 匹配到其中对应的全部数据作为单元格的值
         }
       ]
+}
 ```
 
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
@@ -234,6 +242,7 @@ dataConfig:{
 配置示例：
 
 ```
+dataConfig: {
     derivedFieldRules: [
       {
         fieldName: 'Year',
@@ -244,6 +253,7 @@ dataConfig:{
         derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%n', true),
       }
     ]
+}
 ```
 
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-derivedField
