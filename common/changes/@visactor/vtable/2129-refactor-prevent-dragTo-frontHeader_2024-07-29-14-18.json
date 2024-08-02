@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: move header position not work not trigger change_header_position event #2129\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
