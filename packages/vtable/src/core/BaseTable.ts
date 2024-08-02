@@ -1171,6 +1171,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   setRowHeight(row: number, height: number) {
     this.scenegraph.setRowHeight(row, height);
+    this.scenegraph.updateChartSizeForResizeRowHeight(row);
     this.internalProps._heightResizedRowMap.add(row); // add resize tag
   }
 
@@ -1366,6 +1367,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   setColWidth(col: number, width: number) {
     this.scenegraph.setColWidth(col, width);
+    this.scenegraph.updateChartSizeForResizeColWidth(col);
     this.internalProps._widthResizedColMap.add(col); // add resize tag
   }
 
@@ -4259,6 +4261,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const internalProps = this.internalProps;
     //设置列宽
     for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
+      if (this.internalProps._widthResizedColMap.has(col)) {
+        continue;
+      }
       const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
       // width 为 "auto" 时先不存储ColWidth
       if (

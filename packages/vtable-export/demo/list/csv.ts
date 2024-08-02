@@ -17,8 +17,10 @@ const generatePersons = count => {
 export function createTable() {
   const records = generatePersons(10);
   // eslint-disable-next-line max-len, prettier/prettier
-  records[0].id =
-    '"/dev/nvme0n1", "max_speed": "16.0 GT/s", "max_width": "x4", "sta_speed": "8.0 GT/s", "sta_width": "x2", "Vendor_ID": "144d", "Device_ID": "a80a", "SVendor_ID": "144d", "SDevice_ID": "aa8a", "NUMANode": "0", "manufacturer": "0x144d", "sn": "S666NN0W404994", "model": "SAMSUNG MZ1L21T9HCLS-00A07", "fw_version": "GDC7502Q", "power_mode": "0", "capacity": 1.92}}}, "host_type": "default"}\n\n辛苦安排处理下 可以停机';
+  records[0].id = `"/dev/nvme0n1", "max_speed": "16.0 GT/s", "max_width": "x4", "sta_speed": "8.0 GT/s", 
+    "sta_width": "x2", "Vendor_ID": "144d", "Device_ID": "a80a", "SVendor_ID": "144d", "SDevice_ID": "aa8a", 
+    "NUMANode": "0", "manufacturer": "0x144d", "sn": "S666NN0W404994", "model": "SAMSUNG MZ1L21T9HCLS-00A07", 
+    "fw_version": "GDC7502Q", "power_mode": "0", "capacity": 1.92}}}, "host_type": "default"}\n\n辛苦安排处理下 可以停机`;
   const columns: VTable.ColumnsDefine = [
     {
       field: '',

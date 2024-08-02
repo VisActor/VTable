@@ -1380,7 +1380,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
       }
       if (this.widthMode === 'adaptive' || notFillWidth || this.heightMode === 'adaptive' || notFillHeight) {
-        this.scenegraph.updateChartSize(0); // 如果收起展开有性能问题 可以排查下这个防范
+        this.scenegraph.updateChartSizeForResizeColWidth(0); // 如果收起展开有性能问题 可以排查下这个防范
       }
     }
   }

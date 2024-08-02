@@ -26,7 +26,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
   });
 
   handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
-    table.editorManager.completeEdit();
+    table.editorManager?.completeEdit();
     if (table.eventManager._enableTableScroll) {
       handleWhell(e, stateManager);
     }
@@ -126,10 +126,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
         }
       }
     } else if (e.key === 'Escape') {
-      (table as ListTableAPI).editorManager.cancelEdit();
+      (table as ListTableAPI).editorManager?.cancelEdit();
     } else if (e.key === 'Enter') {
       // 如果按enter键 可以结束当前的编辑 或开启编辑选中的单元格（仅限单选）
-      if ((table as ListTableAPI).editorManager.editingEditor) {
+      if ((table as ListTableAPI).editorManager?.editingEditor) {
         // 如果是结束当前编辑，且有主动监听keydown事件，则先触发keydown事件，之后再结束编辑
         handleKeydownListener(e);
         (table as ListTableAPI).editorManager.completeEdit();
@@ -206,7 +206,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
       if (
         (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
-        !table.editorManager.editingEditor
+        !table.editorManager?.editingEditor
       ) {
         const allowedKeys = /^[a-zA-Z0-9+\-*\/%=.,\s]$/; // 允许的键值正则表达式
         if (e.key.match(allowedKeys)) {
@@ -364,7 +364,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       return;
     }
     if (table.autoFillWidth || table.autoFillHeight) {
-      table.editorManager.completeEdit();
+      table.editorManager?.completeEdit();
     }
     if (!isValid(table.options.pixelRatio)) {
       table.setPixelRatio(getPixelRatio());

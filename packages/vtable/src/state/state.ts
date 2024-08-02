@@ -659,9 +659,10 @@ export class StateManager {
   }
 
   endResizeCol() {
+    // setTimeout(() => {
     this.columnResize.resizing = false;
-    // setTimeout(() => {}, 0);
-    this.table.scenegraph.updateChartSize(this.columnResize.col);
+    // }, 0);
+    this.table.scenegraph.updateChartSizeForResizeColWidth(this.columnResize.col);
     this.checkFrozen();
     this.table.scenegraph.component.hideResizeCol();
     this.table.scenegraph.updateNextFrame();
@@ -688,7 +689,7 @@ export class StateManager {
     setTimeout(() => {
       this.rowResize.resizing = false;
     }, 0);
-    this.table.scenegraph.updateChartSize(this.rowResize.row);
+    this.table.scenegraph.updateChartSizeForResizeColWidth(this.rowResize.row);
     // this.checkFrozen();
     this.table.scenegraph.component.hideResizeRow();
     this.table.scenegraph.updateNextFrame();
