@@ -659,8 +659,9 @@ export class StateManager {
   }
 
   endResizeCol() {
-    this.columnResize.resizing = false;
-    // setTimeout(() => {}, 0);
+    setTimeout(() => {
+      this.columnResize.resizing = false;
+    }, 0);
     this.table.scenegraph.updateChartSize(this.columnResize.col);
     this.checkFrozen();
     this.table.scenegraph.component.hideResizeCol();
