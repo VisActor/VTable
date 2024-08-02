@@ -1,4 +1,4 @@
-import { isArray } from '@visactor/vutils';
+import { isArray, isValid } from '@visactor/vutils';
 import type { ListTable } from '../ListTable';
 import { Factory } from '../core/factory';
 import { Group } from '../scenegraph/graphic/group';
@@ -23,11 +23,19 @@ export class ListTreeStickCellPlugin {
       }
       this.updateGroupTitle();
     });
+
+    this.table.on('resize_column', e => {
+      this.updateGroupTitle();
+    });
   }
 
   updateGroupTitle() {
     // this.updateGroupTitleInfo();
-    if (
+    if (this.table.scrollTop === 0) {
+      // do nothing
+      this.titleRows = [];
+      this.showedTitleRows = [];
+    } else if (
       this.skipStartRow !== -1 &&
       this.skipEndRow !== -1 &&
       this.skipStartRow !== this.table.scenegraph.proxy.bodyTopRow - 1
@@ -218,7 +226,8 @@ function prepareShadowRoot(table: ListTable) {
       x: 0,
       y: 0,
       width: 0,
-      height: 0
+      height: 0,
+      cursor: 'pointer'
     });
     colHeaderGroup.add(hackBorder);
     colHeaderGroup.border = hackBorder;
@@ -231,7 +240,8 @@ function prepareShadowRoot(table: ListTable) {
       const cellGroup = getTargetCell(shadowTarget);
       const { col, row } = cellGroup;
       const rowIndex = titleRows.indexOf(row);
-      table.scrollToCell({ col, row: row - rowIndex });
+      // table.scrollToCell({ col, row: row - rowIndex });
+      scrollToRow(row - rowIndex, table);
     });
   }
 
@@ -240,7 +250,8 @@ function prepareShadowRoot(table: ListTable) {
       x: 0,
       y: 0,
       width: 0,
-      height: 0
+      height: 0,
+      cursor: 'pointer'
     });
     cornerHeaderGroup.add(hackBorder);
     cornerHeaderGroup.border = hackBorder;
@@ -253,7 +264,8 @@ function prepareShadowRoot(table: ListTable) {
       const cellGroup = getTargetCell(shadowTarget);
       const { col, row } = cellGroup;
       const rowIndex = titleRows.indexOf(row);
-      table.scrollToCell({ col, row: row - rowIndex });
+      // table.scrollToCell({ col, row: row - rowIndex });
+      scrollToRow(row - rowIndex, table);
     });
   }
 
@@ -263,6 +275,17 @@ function prepareShadowRoot(table: ListTable) {
   shadowGroupFrozen.removeAllChild();
 
   return { shadowGroup, shadowGroupFrozen };
+}
+
+function scrollToRow(row: number, table: ListTable) {
+  const drawRange = table.getDrawRange();
+
+  if (isValid(row) && row >= table.frozenRowCount) {
+    const frozenHeight = table.getFrozenRowsHeight();
+    const top = table.getRowsHeight(0, row - 1);
+    table.scrollTop = Math.min(top - frozenHeight, table.getAllRowsHeight() - drawRange.height) - 1;
+  }
+  table.scenegraph.updateNextFrame();
 }
 
 export const registerListTreeStickCellPlugin = () => {

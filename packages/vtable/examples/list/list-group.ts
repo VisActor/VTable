@@ -1,15 +1,25 @@
+/* eslint-disable max-len */
 import * as VTable from '../../src';
 import { InputEditor } from '@visactor/vtable-editors';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 import { createGroup } from '@visactor/vrender-core';
 import { isValid } from '@visactor/vutils';
+// import { VGroup } from '@visactor/vrender-kits';
 const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
 const input_editor = new InputEditor({});
 VTable.register.editor('input', input_editor);
 
+const { VGroup, VText, jsx } = VTable;
+
 const titleColorPool = ['#3370ff', '#34c724', '#ff9f1a', '#ff4050', '#1f2329'];
 const bloggerAvatar = 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg';
+const collapseRight = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 11.3501Z" fill="#141414" fill-opacity="0.65"/>
+      </svg>`;
+const collapseDown = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+<path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 6.81235Z" fill="#141414" fill-opacity="0.65"/>
+</svg>`;
 
 export function createTable() {
   let tableInstance;
@@ -76,10 +86,12 @@ export function createTable() {
       ];
 
       const option: VTable.ListTableConstructorOptions = {
-        records: data.slice(0, 100),
+        records: data.slice(0, 50),
         columns,
         widthMode: 'standard',
         groupBy: ['Category', 'Sub-Category'],
+        // autoFillWidth: true,
+
         // hierarchyExpandLevel: Infinity,
         theme: VTable.themes.DEFAULT.extends({
           groupTitleStyle: {
@@ -94,50 +106,230 @@ export function createTable() {
             }
           }
         }),
-        editor: 'input',
-        sortState: {
-          field: 'Order ID',
-          order: 'asc'
-        },
-        groupTitleCustomLayout: args => {
-          const { table, row, col, rect } = args;
-          const record = table.getCellOriginRecord(col, row);
-          const { height, width } = rect ?? table.getCellRect(col, row);
-          const container = new VTable.CustomLayout.Group({
-            height,
-            width,
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'nowrap',
-            cursor: 'pointer',
-            alignItems: 'center'
-          });
-          container.addEventListener('click', e => {
-            // 折叠后单元格的行列值会变化，需要动态获取
-            const { col, row } = e.target.parent;
-            table.toggleHierarchyState(col, row);
-          });
-          const icon = new VTable.CustomLayout.Image({
-            id: 'icon0',
-            width: 40,
-            height: 40,
-            image: bloggerAvatar,
-            cornerRadius: 20,
-            boundsPadding: [0, 20, 0, 20 + table.getGroupTitleLevel(col, row) * 20]
-          });
-          container.add(icon);
-          const bloggerName = new VTable.CustomLayout.Text({
-            text: record.vtableMergeName,
-            fontSize: 13,
-            fontFamily: 'sans-serif',
-            fill: 'black'
-          });
-          container.add(bloggerName);
-          return {
-            rootContainer: container,
-            renderDefault: false
-          };
-        },
+        // editor: 'input',
+        // sortState: {
+        //   field: 'Order ID',
+        //   order: 'asc'
+        // },
+        // groupTitleCustomLayout: args => {
+        //   // const { table, row, col, rect } = args;
+        //   // const record = table.getCellOriginRecord(col, row);
+        //   // const { height, width } = rect ?? table.getCellRect(col, row);
+        //   // const hierarchyState = table.getHierarchyState(col, row);
+
+        //   // const container = new VTable.CustomLayout.Group({
+        //   //   height,
+        //   //   width,
+        //   //   display: 'flex',
+        //   //   flexDirection: 'row',
+        //   //   flexWrap: 'nowrap',
+        //   //   cursor: 'pointer',
+        //   //   alignItems: 'center'
+        //   // });
+
+        //   // const icon = new VTable.CustomLayout.Image({
+        //   //   id: 'hierarchy',
+        //   //   image: hierarchyState === 'collapse' ? collapseRight : collapseDown,
+        //   //   width: 18,
+        //   //   height: 18,
+        //   //   boundsPadding: [0, 0, 0, 10],
+        //   //   cursor: 'pointer'
+        //   // });
+        //   // icon.stateProxy = (stateName: string) => {
+        //   //   if (stateName === 'hover') {
+        //   //     return {
+        //   //       background: {
+        //   //         fill: '#ccc',
+        //   //         cornerRadius: 5,
+        //   //         expandX: 1,
+        //   //         expandY: 1
+        //   //       }
+        //   //     };
+        //   //   }
+        //   // };
+        //   // icon.addEventListener('pointerenter', event => {
+        //   //   event.currentTarget.addState('hover', true, false);
+        //   //   event.currentTarget.stage.renderNextFrame();
+        //   // });
+        //   // icon.addEventListener('pointerleave', event => {
+        //   //   event.currentTarget.removeState('hover', false);
+        //   //   event.currentTarget.stage.renderNextFrame();
+        //   // });
+        //   // container.add(icon);
+
+        //   // const avatar = new VTable.CustomLayout.Image({
+        //   //   id: 'hierarchy',
+        //   //   image: bloggerAvatar,
+        //   //   width: 30,
+        //   //   height: 30,
+        //   //   boundsPadding: [0, 0, 0, 10],
+        //   //   cursor: 'pointer',
+        //   //   cornerRadius: 15
+        //   // });
+        //   // container.add(avatar);
+
+        //   // const bloggerName = new VTable.CustomLayout.Text({
+        //   //   text: record.vtableMergeName,
+        //   //   fontSize: 13,
+        //   //   fontFamily: 'sans-serif',
+        //   //   fill: 'black',
+        //   //   boundsPadding: [0, 0, 0, 10]
+        //   // });
+        //   // container.add(bloggerName);
+
+        //   // const info = new VTable.CustomLayout.Text({
+        //   //   text: 'some info',
+        //   //   fontSize: 13,
+        //   //   fontFamily: 'sans-serif',
+        //   //   fill: 'black',
+        //   //   boundsPadding: [0, 0, 0, 100]
+        //   // });
+        //   // container.add(info);
+
+        //   // container.addEventListener('click', e => {
+        //   //   // 折叠后单元格的行列值会变化，需要动态获取
+        //   //   const { col, row } = e.target.parent;
+        //   //   const hierarchyState = table.getHierarchyState(col, row);
+        //   //   // 更新按钮状态
+        //   //   icon.setAttribute('image', hierarchyState !== 'collapse' ? collapseRight : collapseDown);
+        //   //   // 除非折叠
+        //   //   table.toggleHierarchyState(col, row);
+        //   //   // e.target.stage.renderNextFrame();
+        //   // });
+
+        //   // const container = (
+        //   //   <VGroup
+        //   //     attribute={{
+        //   //       id: 'container',
+        //   //       width,
+        //   //       height,
+        //   //       display: 'flex',
+        //   //       flexWrap: 'no-wrap',
+        //   //       justifyContent: 'flex-start',
+        //   //       alignContent: 'center'
+        //   //     }}
+        //   //   >
+        //   //     <VText
+        //   //       attribute={{
+        //   //         id: 'bloggerName',
+        //   //         text: 'record.bloggerName',
+        //   //         fontSize: 13,
+        //   //         fontFamily: 'sans-serif',
+        //   //         fill: 'black',
+        //   //         textAlign: 'left',
+        //   //         textBaseline: 'top',
+        //   //         boundsPadding: [0, 0, 0, 10]
+        //   //       }}
+        //   //     ></VText>
+        //   //   </VGroup>
+        //   // );
+
+        //   const { table, row, col, rect } = args;
+        //   const record = table.getCellOriginRecord(col, row);
+        //   const { height, width } = rect ?? table.getCellRect(col, row);
+        //   const hierarchyState = table.getHierarchyState(col, row);
+        //   const bloggerAvatar = 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg';
+        //   const collapseRight = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        //           <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 11.3501Z" fill="#141414" fill-opacity="0.65"/>
+        //         </svg>`;
+        //   const collapseDown = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        //   <path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 6.81235Z" fill="#141414" fill-opacity="0.65"/>
+        //   </svg>`;
+        //   const container = new VTable.CustomLayout.Group({
+        //     height,
+        //     width,
+        //     display: 'flex',
+        //     flexDirection: 'row',
+        //     flexWrap: 'nowrap',
+        //     cursor: 'pointer',
+        //     alignItems: 'center'
+        //   });
+        //   const icon = new VTable.CustomLayout.Image({
+        //     // id: 'hierarchy',
+        //     image: hierarchyState === 'collapse' ? collapseRight : collapseDown,
+        //     width: 18,
+        //     height: 18,
+        //     boundsPadding: [0, 0, 0, 10],
+        //     cursor: 'pointer'
+        //   });
+        //   icon.stateProxy = (stateName: string) => {
+        //     if (stateName === 'hover') {
+        //       return {
+        //         background: {
+        //           fill: '#ccc',
+        //           cornerRadius: 5,
+        //           expandX: 1,
+        //           expandY: 1
+        //         }
+        //       };
+        //     }
+        //   };
+        //   icon.addEventListener('pointerenter', event => {
+        //     event.currentTarget.addState('hover', true, false);
+        //     event.currentTarget.stage.renderNextFrame();
+        //   });
+        //   icon.addEventListener('pointerleave', event => {
+        //     event.currentTarget.removeState('hover', false);
+        //     event.currentTarget.stage.renderNextFrame();
+        //   });
+        //   container.add(icon);
+        //   const taskGroup = new VTable.CustomLayout.Group({
+        //     height,
+        //     width: 340,
+        //     display: 'flex',
+        //     flexDirection: 'row',
+        //     flexWrap: 'nowrap',
+        //     cursor: 'pointer',
+        //     alignItems: 'center',
+        //     justifyContent: 'space-between'
+        //   });
+        //   const leftGroup = new VTable.CustomLayout.Group({
+        //     height,
+        //     display: 'flex',
+        //     flexDirection: 'row',
+        //     flexWrap: 'nowrap',
+        //     cursor: 'pointer',
+        //     alignItems: 'center'
+        //   });
+        //   const avatar = new VTable.CustomLayout.Image({
+        //     image: bloggerAvatar,
+        //     width: 24,
+        //     height: 24,
+        //     boundsPadding: [0, 8, 0, 8],
+        //     cursor: 'pointer',
+        //     cornerRadius: 12
+        //   });
+        //   const bloggerName = new VTable.CustomLayout.Text({
+        //     text: record.vtableMergeName,
+        //     fontSize: 14,
+        //     fill: 'black'
+        //   });
+        //   leftGroup.add(avatar);
+        //   leftGroup.add(bloggerName);
+        //   taskGroup.add(leftGroup);
+        //   const info = new VTable.CustomLayout.Text({
+        //     text: `${record.children.length} 条记录`,
+        //     fontSize: 12
+        //   });
+        //   taskGroup.add(info);
+        //   container.add(taskGroup);
+        //   container.addEventListener('click', e => {
+        //     // 折叠后单元格的行列值会变化，需要动态获取
+        //     const { col, row } = e.currentTarget.parent;
+        //     const hierarchyState = table.getHierarchyState(col, row);
+        //     // 更新按钮状态
+        //     icon.setAttribute('image', hierarchyState === 'collapse' ? collapseDown : collapseRight);
+        //     // 除非折叠
+        //     table.toggleHierarchyState(col, row);
+        //     // e.target.stage.renderNextFrame();
+        //   });
+
+        //   return {
+        //     rootContainer: container,
+        //     renderDefault: false
+        //   };
+        // },
+        // frozenColCount: 1
         enableTreeStickCell: true
       };
       tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
