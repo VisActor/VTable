@@ -558,9 +558,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
     table.eventManager.isDown = false;
     table.eventManager.isDraging = false;
     table.eventManager.inertiaScroll.endInertia();
-    if (stateManager.isResizeCol()) {
+    if (stateManager.interactionState === 'grabing' && stateManager.isResizeCol()) {
       endResizeCol(table);
-    } else if (stateManager.isResizeRow()) {
+    } else if (stateManager.interactionState === 'grabing' && stateManager.isResizeRow()) {
       endResizeRow(table);
     }
   };
