@@ -313,18 +313,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
       ) {
         // 下面触发CHANGE_HEADER_POSITION 区别于pointerup
         if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
-          if (
-            table.stateManager.columnMove.colTarget !== table.stateManager.columnMove.colSource ||
-            table.stateManager.columnMove.rowTarget !== table.stateManager.columnMove.rowSource
-          ) {
-            table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
-              target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
-              source: {
-                col: table.stateManager.columnMove.colSource,
-                row: table.stateManager.columnMove.rowSource
-              }
-            });
-          }
+          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
+            target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
+            source: {
+              col: table.stateManager.columnMove.colSource,
+              row: table.stateManager.columnMove.rowSource
+            }
+          });
         }
       }
     } else if (stateManager.isSelecting()) {
@@ -528,18 +523,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
         table.stateManager.endMoveCol();
         if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
-          if (
-            table.stateManager.columnMove.colTarget !== table.stateManager.columnMove.colSource ||
-            table.stateManager.columnMove.rowTarget !== table.stateManager.columnMove.rowSource
-          ) {
-            table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
-              target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.colTarget },
-              source: {
-                col: table.stateManager.columnMove.colSource,
-                row: table.stateManager.columnMove.rowSource
-              }
-            });
-          }
+          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
+            target: { col: eventArgsSet.eventArgs.col, row: eventArgsSet.eventArgs.row },
+            source: {
+              col: table.stateManager.columnMove.colSource,
+              row: table.stateManager.columnMove.rowSource
+            }
+          });
         }
       } else if (stateManager.isSelecting()) {
         table.stateManager.endSelectCells();
@@ -749,9 +739,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // stateManager.interactionState = 'default';
       stateManager.updateInteractionState(InteractionState.default);
       // eventManager._resizing = false;
-      // if (stateManager.isResizeCol()) {
-      //   endResizeCol(table);
-      // }
+      if (stateManager.isResizeCol()) {
+        endResizeCol(table);
+      }
     }
   });
   // click outside
