@@ -47,7 +47,7 @@ export function createCellSelectBorder(
   const rect = createRect({
     pickable: false,
     fill:
-      theme.selectionStyle?.selectFillMode === 'contain'
+      theme.selectionStyle?.selectionFillMode === 'replace'
         ? false
         : (theme.selectionStyle?.cellBgColor as any) ?? 'rgba(0, 0, 255,0.1)',
 
