@@ -58,7 +58,7 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
       }
 
       let fileType = 'ts';
-      if (path === 'custom-layout-jsx') {
+      if (path === 'gantt-jsx') {
         fileType = 'tsx';
       }
       import(`./${path}/${name}.${fileType}`)

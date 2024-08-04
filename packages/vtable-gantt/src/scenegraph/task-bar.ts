@@ -104,6 +104,9 @@ export class TaskBar {
         customRenderObj = taskBarCustomRender;
       }
       if (customRenderObj) {
+        // if (customRenderObj.rootContainer) {
+        //   customRenderObj.rootContainer = decodeReactDom(customRenderObj.rootContainer);
+        // }
         rootContainer = customRenderObj.rootContainer;
         renderDefaultBar = customRenderObj.renderDefaultBar ?? false;
         renderDefaultText = customRenderObj.renderDefaultText ?? false;

@@ -1,5 +1,5 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { register, VRender, CustomLayout } from '@visactor/vtable';
+import { register, VRender, CustomLayout, jsx } from '@visactor/vtable';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
@@ -625,6 +625,7 @@ export function createTable() {
       editor: 'input'
     }
   ];
+  debugger;
   const option: GanttConstructorOptions = {
     records,
     taskListTable: {
@@ -686,60 +687,65 @@ export function createTable() {
       customRender: (args: any) => {
         const colorLength = barColors.length;
         const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
-        const container = new VRender.Group({
-          width,
-          height,
-          fill: barColors[index % colorLength],
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'nowrap'
-        });
-        const containerLeft = new VRender.Group({
-          height,
-          width: 60,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-around'
-          // fill: 'red'
-        });
-        container.add(containerLeft);
-
-        const icon0 = new VRender.Image({
-          width: 50,
-          height: 50,
-          image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
-          cornerRadius: 25
-        });
-        containerLeft.add(icon0);
-
-        const containerRight = new VRender.Group({
-          height,
-          width: width - 60,
-          display: 'flex',
-          flexDirection: 'column'
-          // alignItems: 'left'
-        });
-        container.add(containerRight);
-
-        const bloggerName = new VRender.Text({
-          text: taskRecord.title,
-          fontSize: 16,
-          fontFamily: 'sans-serif',
-          fill: 'white',
-          maxLineWidth: width - 60,
-          boundsPadding: [10, 0, 0, 0]
-        });
-        containerRight.add(bloggerName);
-
-        const days = new VRender.Text({
-          text: `${taskDays}天`,
-          fontSize: 13,
-          fontFamily: 'sans-serif',
-          fill: 'white',
-          boundsPadding: [10, 0, 0, 0]
-        });
-        containerRight.add(days);
+        const container = (
+          <VGroup
+            attribute={{
+              width,
+              height,
+              fill: barColors[index % colorLength],
+              display: 'flex',
+              flexWrap: 'nowrap',
+              alignContent: 'center'
+            }}
+          >
+            <VGroup
+              attribute={{
+                width: 60,
+                height,
+                display: 'flex',
+                justifyContent: 'space-around',
+                alignItems: 'center'
+              }}
+            >
+              <VImage
+                attribute={{
+                  width: 50,
+                  height: 50,
+                  image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
+                  cornerRadius: 25
+                }}
+              ></VImage>
+            </VGroup>
+            <VGroup
+              attribute={{
+                height,
+                width: width - 60,
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <VText
+                attribute={{
+                  text: taskRecord.title,
+                  fontSize: 16,
+                  fontFamily: 'sans-serif',
+                  fill: 'white',
+                  maxLineWidth: width - 60,
+                  boundsPadding: [10, 0, 0, 0]
+                }}
+              ></VText>
+              <VText
+                attribute={{
+                  text: `${taskDays}天`,
+                  fontSize: 13,
+                  fontFamily: 'sans-serif',
+                  fill: 'white',
+                  boundsPadding: [10, 0, 0, 0]
+                }}
+              ></VText>
+            </VGroup>
+          </VGroup>
+        );
         return {
           rootContainer: container,
           renderDefaultBar: true
