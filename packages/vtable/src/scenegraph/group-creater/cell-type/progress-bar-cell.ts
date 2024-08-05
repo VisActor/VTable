@@ -335,7 +335,15 @@ export function createProgressBarCell(
 
       // 绘制坐标轴
       const lineLeft = barRightToLeft ? barRectNega.left : barRectPosi.left;
-      const lineStrokeColor = getOrApply(barAxisColor as any);
+      const lineStrokeColor = getOrApply(barAxisColor as any, {
+        col,
+        row,
+        table,
+        context: null,
+        value,
+        dataValue,
+        percentile: positiveRate
+      });
       const line = createLine({
         x: 0,
         y: 0,
