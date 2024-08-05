@@ -1,15 +1,22 @@
-import { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
+// import { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
 import type { IVTable } from './tables/base-table';
 import type { TYPES } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE.js';
+import {
+  PIVOT_CHART_EVENT_TYPE,
+  PIVOT_TABLE_EVENT_TYPE
+} from '@visactor/vtable/src/ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 
 export type EventCallback<Params> = (params: Params) => void;
 
 const EVENT_TYPE = {
-  ...ListTable.EVENT_TYPE,
-  ...PivotTable.EVENT_TYPE,
-  ...PivotChart.EVENT_TYPE
+  // ...ListTable.EVENT_TYPE,
+  // ...PivotTable.EVENT_TYPE,
+  // ...PivotChart.EVENT_TYPE,
+  TABLE_EVENT_TYPE,
+  PIVOT_TABLE_EVENT_TYPE,
+  PIVOT_CHART_EVENT_TYPE
 };
-
 export interface EventsProps {
   onClickCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['click_cell']>;
   onDblClickCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dblclick_cell']>;
