@@ -25,6 +25,14 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '@visactor/vtable/src/core/TABLE_EVENT_TYPE.js': path.resolve(
+        __dirname,
+        '../../vtable/src/core/TABLE_EVENT_TYPE'
+      ),
+      '@visactor/vtable/src/ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE': path.resolve(
+        __dirname,
+        '../../vtable/src/ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE'
+      ),
       '@visactor/vtable/src/vrender': path.resolve(__dirname, '../../vtable/src/vrender.ts'),
       '@visactor/vtable': path.resolve(__dirname, '../../vtable/src/index.ts'),
       '@src': path.resolve(__dirname, '../../vtable/src/'),
