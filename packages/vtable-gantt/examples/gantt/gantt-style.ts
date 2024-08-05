@@ -10,7 +10,7 @@ const input_editor = new InputEditor({});
 register.editor('input', input_editor);
 register.editor('date-input', date_input_editor);
 export function createTable() {
-  const records = [
+  const records0 = [
     {
       id: 1,
       title: 'Software Development',
@@ -527,54 +527,13 @@ export function createTable() {
           priority: 'P1'
         }
       ]
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
     }
   ];
 
+  const records = [];
+  for (let i = 0; i < 1000; i++) {
+    records.push(...records0);
+  }
   const columns: ColumnsDefine = [
     // {
     //   field: 'id',
@@ -678,9 +637,12 @@ export function createTable() {
     timelineHeaderStyle: {
       borderColor: '#e1e4e8',
       borderWidth: 1,
-      fontSize: 10,
+      fontSize: 20,
       fontWeight: 'bold',
-      color: 'red',
+      color: 'white',
+      strokeColor: 'black',
+      textAlign: 'right',
+      textBaseline: 'bottom',
       backgroundColor: '#EEF1F5'
     },
     taskBar: {
@@ -727,14 +689,14 @@ export function createTable() {
         step: 1,
         startOfWeek: 'sunday',
         format(date: TYPES.DateFormatArgumentType) {
-          return `Week ${date.dateIndex}`;
+          return `Week ${date.index}`;
         }
       },
       {
         unit: 'day',
         step: 1,
         format(date: TYPES.DateFormatArgumentType) {
-          return date.dateIndex;
+          return date.index;
         }
       }
       // {

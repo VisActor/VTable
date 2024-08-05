@@ -497,4 +497,8 @@ export class Gantt extends EventTarget {
     this.drawHeight = Math.min(this.headerHeight + this.rowHeight * this.itemCount, this.tableNoFrameHeight);
     this.gridHeight = this.drawHeight - this.headerHeight;
   }
+  /** 获取绘制画布的canvas上下文 */
+  getContext(): CanvasRenderingContext2D {
+    return this.context;
+  }
 }

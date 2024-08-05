@@ -38,15 +38,20 @@ function bindTableGroupListener(event: EventManager) {
       // 只处理左键
       return;
     }
-    if (e.target?.name === 'task-bar' || e.target?.name === 'task-bar-hover-shadow') {
-      stateManager.startMoveTaskBar(e.target, e.x, e.y);
-      stateManager.updateInteractionState(InteractionState.grabing);
-    } else if (e.target?.name === 'task-bar-hover-shadow-left-icon') {
-      stateManager.startResizeTaskBar(e.target, e.x, e.y, 'left');
-      stateManager.updateInteractionState(InteractionState.grabing);
-    } else if (e.target?.name === 'task-bar-hover-shadow-right-icon') {
-      stateManager.startResizeTaskBar(e.target, e.x, e.y, 'right');
-      stateManager.updateInteractionState(InteractionState.grabing);
+    const taskBarTarget = e.detailPath.find((pathNode: any) => {
+      return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
+    });
+    if (taskBarTarget) {
+      if (e.target.name === 'task-bar-hover-shadow-left-icon') {
+        stateManager.startResizeTaskBar(taskBarTarget, e.x, e.y, 'left');
+        stateManager.updateInteractionState(InteractionState.grabing);
+      } else if (e.target.name === 'task-bar-hover-shadow-right-icon') {
+        stateManager.startResizeTaskBar(taskBarTarget, e.x, e.y, 'right');
+        stateManager.updateInteractionState(InteractionState.grabing);
+      } else {
+        stateManager.startMoveTaskBar(taskBarTarget, e.x, e.y);
+        stateManager.updateInteractionState(InteractionState.grabing);
+      }
     }
   });
 
@@ -63,12 +68,15 @@ function bindTableGroupListener(event: EventManager) {
         gantt.eventManager.lastDragPointerXYOnTableGroup = { x: e.x, y: e.y };
       }
     } else if (stateManager.interactionState === InteractionState.default) {
-      console.log(e.target?.name, e.target?.name === 'task-bar-hover-shadow-left-icon');
+      const taksIndex = e.detailPath.find((pathNode: any) => {
+        return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
+      });
       if (
-        e.target?.name === 'task-bar' ||
-        e.target?.name === 'task-bar-hover-shadow' ||
-        e.target?.name === 'task-bar-hover-shadow-left-icon' ||
-        e.target?.name === 'task-bar-hover-shadow-right-icon'
+        // e.target?.name === 'task-bar' ||
+        // e.target?.name === 'task-bar-hover-shadow' ||
+        // e.target?.name === 'task-bar-hover-shadow-left-icon' ||
+        // e.target?.name === 'task-bar-hover-shadow-right-icon'
+        taksIndex
       ) {
         console.log('show');
         stateManager.showTaskBarHover(e);
@@ -85,7 +93,7 @@ function bindTableGroupListener(event: EventManager) {
       if (stateManager.isMoveingTaskBar()) {
         stateManager.endMoveTaskBar(e.x);
       } else if (stateManager.isResizingTaskBar()) {
-        stateManager.endtResizeTaskBar(e.x);
+        stateManager.endResizeTaskBar(e.x);
       }
     }
   });

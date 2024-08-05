@@ -4,7 +4,6 @@ import { createGroup, createRect } from '@visactor/vrender-core';
 import { isArray } from '@visactor/vutils';
 import type { IFrameStyle } from '../ts-types';
 import type { Gantt } from '../Gantt';
-import { getQuadProps } from '../gantt-helper';
 import type { Scenegraph } from './scenegraph';
 
 export class FrameBorder {
@@ -17,12 +16,12 @@ export class FrameBorder {
   createFrameBorder() {
     const justForXYPosition = false;
     const group = this._scene.tableGroup;
-    const frameTheme = this._scene._gantt.frameStyle;
+    const frameStyle = this._scene._gantt.frameStyle;
     // const strokeArray = [true, true, true, false];
-    if (!frameTheme) {
+    if (!frameStyle) {
       return;
     }
-    const { cornerRadius, borderColor, borderLineWidth, borderLineDash } = frameTheme;
+    const { cornerRadius, borderColor, borderLineWidth, borderLineDash } = frameStyle;
 
     // const hasShadow = false;
     const groupAttributes: IGroupGraphicAttribute = {};
@@ -38,9 +37,6 @@ export class FrameBorder {
       rectAttributes.lineWidth = borderLineWidth as number;
       borderLineDash && (rectAttributes.lineDash = borderLineDash as number[]);
       rectAttributes.lineCap = 'butt';
-    }
-    if (Array.isArray(borderColor)) {
-      (rectAttributes as any).strokeArrayColor = getQuadProps(borderColor as any);
     }
 
     // if (Array.isArray(borderLineWidth)) {

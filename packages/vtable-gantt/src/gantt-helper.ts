@@ -1,8 +1,7 @@
+import { text } from 'stream/consumers';
 import type { Gantt } from './Gantt';
 import type { IMarkLine, IScrollStyle, ITimelineScale } from './ts-types';
 
-import { parsePadding } from '@src/vrender';
-import { isArray, isNumber, isString } from '@visactor/vutils';
 const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
 export const DayTimes = 1000 * 60 * 60 * 24;
 /** 通过事件坐标y计算鼠标当前所在所几条任务条上 */
@@ -73,29 +72,6 @@ export function getVerticalScrollBarSize(scrollStyle?: IScrollStyle): number {
   return scrollStyle?.width ?? 7;
 }
 
-// 复制文件 https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/scenegraph/utils/padding.ts
-export function getQuadProps(
-  paddingOrigin: number | string | number[] | { left?: number; right?: number; top?: number; bottom?: number }
-): [number, number, number, number] {
-  if (isNumber(paddingOrigin) || isString(paddingOrigin) || isArray(paddingOrigin)) {
-    let padding = parsePadding(paddingOrigin as number);
-    if (typeof padding === 'number' || typeof padding === 'string') {
-      padding = [padding, padding, padding, padding];
-    } else if (Array.isArray(padding)) {
-      padding = padding.slice(0) as any;
-    }
-    return padding as any;
-  } else if (
-    paddingOrigin &&
-    (isFinite(paddingOrigin.bottom) ||
-      isFinite(paddingOrigin.left) ||
-      isFinite(paddingOrigin.right) ||
-      isFinite(paddingOrigin.top))
-  ) {
-    return [paddingOrigin.top ?? 0, paddingOrigin.right ?? 0, paddingOrigin.bottom ?? 0, paddingOrigin.left ?? 0];
-  }
-  return [0, 0, 0, 0];
-}
 export { isNode };
 
 export function initOptions(gantt: Gantt) {
@@ -117,8 +93,10 @@ export function initOptions(gantt: Gantt) {
     {
       borderColor: 'gray',
       borderWidth: 1,
-      fontSize: 16,
+      fontSize: 20,
       fontWeight: 'bold',
+      textAlign: 'center',
+      textBaseline: 'middle',
       color: '#000',
       backgroundColor: '#fff'
     },
@@ -192,7 +170,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
   while (currentDate <= endDate) {
     if (unit === 'day') {
       const dateEnd = new Date(currentDate.getTime() + step * 24 * 60 * 60 * 1000);
-      const formattedDate = format({ dateIndex: currentDate.getDate(), dateStart: currentDate, dateEnd });
+      const formattedDate = format({ index: currentDate.getDate(), startDate: currentDate, endDate: dateEnd });
       const columnTitle = formattedDate || currentDate.getDate().toString();
       const dayCellConfig = {
         days: step,
@@ -210,7 +188,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         end.setDate(endDate.getDate());
       }
       const start = currentDate;
-      const formattedDate = format({ dateIndex: month, dateStart: start, dateEnd: end });
+      const formattedDate = format({ index: month, startDate: start, endDate: end });
       const columnTitle = formattedDate || month;
       const dayCellConfig = {
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
@@ -229,7 +207,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         end.setDate(endDate.getDate());
       }
       const start = currentDate;
-      const formattedDate = format({ dateIndex: quarter, dateStart: start, dateEnd: end });
+      const formattedDate = format({ index: quarter, startDate: start, endDate: end });
       const columnTitle = formattedDate || quarter;
       const dayCellConfig = {
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
@@ -246,7 +224,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         end.setDate(endDate.getDate());
       }
       const start = currentDate;
-      const formattedDate = format({ dateIndex: year, dateStart: start, dateEnd: end });
+      const formattedDate = format({ index: year, startDate: start, endDate: end });
       const columnTitle = formattedDate || year;
       const dayCellConfig = {
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
@@ -273,7 +251,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
       const weekNumber = Math.ceil(((startOfWeek.getTime() - startOfYear.getTime()) / 86400000 + 1) / 7);
 
-      const columnTitle = format({ dateIndex: weekNumber, dateStart: startOfWeek, dateEnd: endOfWeek });
+      const columnTitle = format({ index: weekNumber, startDate: startOfWeek, endDate: endOfWeek });
 
       const dayCellConfig = {
         days: Math.ceil((endOfWeek.getTime() - startOfWeek.getTime()) / (24 * 60 * 60 * 1000)) + 1,

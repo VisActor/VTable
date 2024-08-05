@@ -678,7 +678,7 @@ export function createTable() {
     timelineHeaderStyle: {
       borderColor: '#e1e4e8',
       borderWidth: 1,
-      fontSize: 10,
+      fontSize: 20,
       fontWeight: 'bold',
       color: 'red',
       backgroundColor: '#EEF1F5'

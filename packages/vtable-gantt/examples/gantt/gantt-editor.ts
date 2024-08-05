@@ -850,7 +850,7 @@ export function createTable() {
     timelineHeaderStyle: {
       borderColor: '#e1e4e8',
       borderWidth: 1,
-      fontSize: 10,
+      fontSize: 20,
       fontWeight: 'bold',
       color: 'red',
       backgroundColor: '#EEF1F5'
@@ -897,14 +897,14 @@ export function createTable() {
         step: 1,
         startOfWeek: 'sunday',
         format(date: TYPES.DateFormatArgumentType) {
-          return `Week ${date.dateIndex}`;
+          return `Week ${date.index}`;
         }
       },
       {
         unit: 'day',
         step: 1,
         format(date: TYPES.DateFormatArgumentType) {
-          return date.dateIndex;
+          return date.index;
         }
       }
       // {

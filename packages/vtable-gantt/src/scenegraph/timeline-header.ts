@@ -1,3 +1,6 @@
+import { isValid } from '@visactor/vutils';
+import { getTextPos } from '../gantt-helper';
+import { toBoxArray } from '../tools/util';
 import type { Scenegraph } from './scenegraph';
 import { Group, Text, createStage, vglobal, createRect, createLine } from '@visactor/vrender-core';
 export class TimelineHeader {
@@ -31,7 +34,6 @@ export class TimelineHeader {
 
       const { unit, timelineDates } = scene._gantt.sortedScales[i];
       let x = 0;
-      console.log(scene._gantt.timelineHeaderStyle?.borderWidth * 2);
       for (let j = 0; j < timelineDates.length; j++) {
         const date = new Group({
           x,
@@ -63,24 +65,41 @@ export class TimelineHeader {
           });
           date.appendChild(line);
         }
+        const { padding, textAlign, textBaseline, textOverflow, fontSize, fontWeight, color, strokeColor } =
+          scene._gantt.timelineHeaderStyle;
 
+        const position = getTextPos(
+          toBoxArray(padding),
+          textAlign,
+          textBaseline,
+          scene._gantt.colWidthPerDay * timelineDates[j].days,
+          scene._gantt.headerRowHeight
+        );
         const text = new Text({
-          x: 0,
-          y: 0,
+          x: position.x,
+          y: position.y,
           maxLineWidth: scene._gantt.colWidthPerDay * timelineDates[j].days,
           // width: scene._gantt.colWidthPerDay * timelineDates[j].days,
           heightLimit: scene._gantt.headerRowHeight,
           // clip: true,
           pickable: true,
           text: timelineDates[j].title.toLocaleString(),
-          fontSize: 18,
-          // textAlign: 'left',
-          dx: 20,
-          dy: 10,
-          textBaseline: 'top',
-          fill: 'white',
-          stroke: 'green',
-          lineWidth: 2
+          fontSize: fontSize,
+
+          fontWeight: fontWeight,
+          fill: color,
+          stroke: strokeColor,
+          lineWidth: 2,
+          textAlign,
+          textBaseline,
+          ellipsis:
+            textOverflow === 'clip'
+              ? ''
+              : textOverflow === 'ellipsis'
+              ? '...'
+              : isValid(textOverflow)
+              ? textOverflow
+              : undefined
         });
         date.appendChild(text);
         rowHeader.addChild(date);

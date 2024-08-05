@@ -1,13 +1,19 @@
 import type { ColumnsDefine, TYPES, VRender } from '@visactor/vtable';
+import type { Gantt } from '../Gantt';
 export type LayoutObjectId = number | string;
 
 export interface ITimelineHeaderStyle {
+  padding?: number | number[];
   borderColor?: string;
   borderWidth?: number;
   fontSize?: number;
   fontWeight?: string;
   color?: string;
+  strokeColor?: string;
   backgroundColor?: string;
+  textAlign?: 'center' | 'end' | 'left' | 'right' | 'start'; // 设置单元格内文字的水平对齐方式
+  textOverflow?: string;
+  textBaseline?: 'alphabetic' | 'bottom' | 'middle' | 'top'; // 设置单元格内文字的垂直对齐方式
 }
 export interface IGridStyle {
   backgroundColor?: string;
@@ -143,11 +149,25 @@ export type IResizeLineStyle = {
 export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
-export type DateFormatArgumentType = { dateIndex: number; dateStart: Date; dateEnd: Date };
-export type ITaskBarCustomRender = ITaskBarCustomRenderObj | ((args: any) => ITaskBarCustomRenderObj); //CustomLayout
+export type DateFormatArgumentType = { index: number; startDate: Date; endDate: Date };
+export type TaskBarCustomRenderArgumentType = {
+  width: number;
+  height: number;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  taskDays: number;
+  progress: number;
+  taskRecord: any;
+  ganttInstance: Gantt;
+};
+export type ITaskBarCustomRender =
+  | ITaskBarCustomRenderObj
+  | ((args: TaskBarCustomRenderArgumentType) => ITaskBarCustomRenderObj); //CustomLayout
 export type ITaskBarCustomRenderObj = {
   rootContainer: VRender.Container;
   renderDefaultBar?: boolean; // 默认false
+  renderDefaultResizeIcon?: boolean; // 默认false
   renderDefaultText?: boolean; // 默认false
 };
 

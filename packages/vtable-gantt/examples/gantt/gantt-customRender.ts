@@ -9,9 +9,10 @@ const date_input_editor = new DateInputEditor({});
 const input_editor = new InputEditor({});
 register.editor('input', input_editor);
 register.editor('date-input', date_input_editor);
+const barColors0 = ['#aecde6', '#c6a49a', '#ffb582', '#eec1de', '#b3d9b3', '#cccccc', '#e59a9c', '#d9d1a5', '#c9bede'];
 const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#7f7f7f', '#d62728', '#bcbd22', '#9467bd'];
 export function createTable() {
-  const records = [
+  const records0 = [
     {
       id: 1,
       title: 'Software Development',
@@ -528,54 +529,13 @@ export function createTable() {
           priority: 'P1'
         }
       ]
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
     }
   ];
 
+  const records = [];
+  for (let i = 0; i < 100; i++) {
+    records.push(...records0);
+  }
   const columns: ColumnsDefine = [
     // {
     //   field: 'id',
@@ -679,7 +639,7 @@ export function createTable() {
     timelineHeaderStyle: {
       borderColor: '#e1e4e8',
       borderWidth: 1,
-      fontSize: 10,
+      fontSize: 20,
       fontWeight: 'bold',
       color: 'red',
       backgroundColor: '#EEF1F5'
@@ -691,7 +651,27 @@ export function createTable() {
         const container = new VRender.Group({
           width,
           height,
-          fill: barColors[index % colorLength],
+          fill: {
+            gradient: 'linear',
+            x0: 0,
+            y0: 0,
+            x1: 1,
+            y1: 0,
+            stops: [
+              {
+                offset: 0,
+                color: barColors0[index % colorLength]
+              },
+              {
+                offset: 0.5,
+                color: barColors[index % colorLength]
+              },
+              {
+                offset: 1,
+                color: barColors0[index % colorLength]
+              }
+            ]
+          },
           display: 'flex',
           flexDirection: 'row',
           flexWrap: 'nowrap'
@@ -743,8 +723,9 @@ export function createTable() {
         });
         containerRight.add(days);
         return {
-          rootContainer: container,
-          renderDefaultBar: true
+          rootContainer: container
+          // renderDefaultBar: true
+          // renderDefaultText: true
         };
       },
       labelText: '{title} {progress}%',
@@ -791,14 +772,14 @@ export function createTable() {
         step: 1,
         startOfWeek: 'sunday',
         format(date: TYPES.DateFormatArgumentType) {
-          return `Week ${date.dateIndex}`;
+          return `Week ${date.index}`;
         }
       },
       {
         unit: 'day',
         step: 1,
         format(date: TYPES.DateFormatArgumentType) {
-          return date.dateIndex;
+          return date.index;
         }
       }
       // {

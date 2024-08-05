@@ -284,7 +284,7 @@ export class StateManager {
   //#region 调整拖拽任务条的大小
   startResizeTaskBar(target: Group, x: number, y: number, onIconName: string) {
     // if (target.name === 'task-bar-hover-shadow') {
-    target = target.parent.parent;
+    // target = target.parent.parent;
     // }
     this.resizeTaskBar.onIconName = onIconName;
     this.resizeTaskBar.resizing = true;
@@ -296,13 +296,13 @@ export class StateManager {
   isResizingTaskBar() {
     return this.resizeTaskBar.resizing;
   }
-  endtResizeTaskBar(x: number) {
+  endResizeTaskBar(x: number) {
     const direction = this._gantt.stateManager.resizeTaskBar.onIconName;
     const deltaX = x - this.resizeTaskBar.startX;
     let diff_days = Math.round(deltaX / this._gantt.colWidthPerDay);
     diff_days = direction === 'left' ? -diff_days : diff_days;
 
-    const tastBarGroup = this._gantt.stateManager.resizeTaskBar.target;
+    const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
     const rect = this._gantt.stateManager.resizeTaskBar.target.barRect;
     const progressRect = this._gantt.stateManager.resizeTaskBar.target.progressRect;
     const taskIndex = getTaskIndexByY(this.resizeTaskBar.startY, this._gantt);
@@ -315,23 +315,24 @@ export class StateManager {
 
     const taskBarSize = this._gantt.colWidthPerDay * (taskDays + diff_days);
     if (direction === 'left') {
-      tastBarGroup.setAttribute('x', targetEndX);
-      tastBarGroup.setAttribute('width', taskBarSize);
-      rect.setAttribute('width', tastBarGroup.attribute.width);
-      progressRect.setAttribute('width', (progress / 100) * tastBarGroup.attribute.width);
+      taskBarGroup.setAttribute('x', targetEndX);
+      taskBarGroup.setAttribute('width', taskBarSize);
+      rect?.setAttribute('width', taskBarGroup.attribute.width);
+      progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
       this._gantt.updateDateToTaskRecord('start-move', -diff_days, taskIndex);
     } else if (direction === 'right') {
-      tastBarGroup.setAttribute('width', taskBarSize);
-      rect.setAttribute('width', tastBarGroup.attribute.width);
-      progressRect.setAttribute('width', (progress / 100) * tastBarGroup.attribute.width);
+      taskBarGroup.setAttribute('width', taskBarSize);
+      rect?.setAttribute('width', taskBarGroup.attribute.width);
+      progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
       this._gantt.updateDateToTaskRecord('end-move', diff_days, taskIndex);
     }
     this._gantt.scenegraph.taskBar.showHoverBar(
-      tastBarGroup.attribute.x,
-      tastBarGroup.attribute.y,
-      tastBarGroup.attribute.width,
-      tastBarGroup.attribute.height
+      taskBarGroup.attribute.x,
+      taskBarGroup.attribute.y,
+      taskBarGroup.attribute.width,
+      taskBarGroup.attribute.height
     );
+    reCreateCustomNode(this._gantt, taskBarGroup, taskIndex);
     this.resizeTaskBar.resizing = false;
     this.resizeTaskBar.target = null;
     this._gantt.scenegraph.updateNextFrame();
@@ -341,10 +342,10 @@ export class StateManager {
     const x2 = e.x;
     const dx = x2 - x1;
     // debugger;
-    const tastBarGroup = this._gantt.stateManager.resizeTaskBar.target;
-    const rect = this._gantt.stateManager.resizeTaskBar.target.barRect;
-    const progressRect = this._gantt.stateManager.resizeTaskBar.target.progressRect;
-    const textLabel = this._gantt.stateManager.resizeTaskBar.target.textLabel;
+    const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
+    const rect = taskBarGroup.barRect;
+    const progressRect = taskBarGroup.progressRect;
+    const textLabel = taskBarGroup.textLabel;
 
     const progressField = this._gantt.progressField;
     const taskIndex = getTaskIndexByY(this.resizeTaskBar.startY, this._gantt);
@@ -352,20 +353,20 @@ export class StateManager {
     const progress = taskRecord[progressField];
 
     let diffWidth = this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx;
-    let taskBarSize = tastBarGroup.attribute.width + diffWidth;
+    let taskBarSize = taskBarGroup.attribute.width + diffWidth;
     if (diffWidth < 0 && taskBarSize <= this._gantt.colWidthPerDay) {
-      diffWidth = this._gantt.colWidthPerDay - tastBarGroup.atrribute.width;
+      diffWidth = this._gantt.colWidthPerDay - taskBarGroup.atrribute.width;
       taskBarSize += diffWidth;
     }
 
-    tastBarGroup.setAttribute('width', taskBarSize);
+    taskBarGroup.setAttribute('width', taskBarSize);
     if (this._gantt.stateManager.resizeTaskBar.onIconName === 'left') {
-      tastBarGroup.setAttribute('x', tastBarGroup.attribute.x - diffWidth);
+      taskBarGroup.setAttribute('x', taskBarGroup.attribute.x - diffWidth);
     }
 
-    rect.setAttribute('width', tastBarGroup.attribute.width);
-    progressRect.setAttribute('width', (progress / 100) * tastBarGroup.attribute.width);
-    textLabel.setAttribute(
+    rect?.setAttribute('width', taskBarGroup.attribute.width);
+    progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
+    textLabel?.setAttribute(
       'x',
       this._gantt.taskBarLabelStyle.textAlign === 'center'
         ? taskBarSize / 2
@@ -373,13 +374,15 @@ export class StateManager {
         ? 10
         : taskBarSize - 10
     );
-    textLabel.setAttribute('maxLineWidth', taskBarSize - 20);
+    textLabel?.setAttribute('maxLineWidth', taskBarSize - 20);
 
-    const x = tastBarGroup.attribute.x;
-    const y = tastBarGroup.attribute.y;
-    const width = tastBarGroup.attribute.width;
-    const height = tastBarGroup.attribute.height;
+    const x = taskBarGroup.attribute.x;
+    const y = taskBarGroup.attribute.y;
+    const width = taskBarGroup.attribute.width;
+    const height = taskBarGroup.attribute.height;
     this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, e.target);
+
+    reCreateCustomNode(this._gantt, taskBarGroup, taskIndex);
     this._gantt.scenegraph.updateNextFrame();
     //
   }
@@ -389,7 +392,6 @@ export class StateManager {
   startResizeTableWidth(e: MouseEvent) {
     this.resizeTableWidth.resizing = true;
     this.resizeTableWidth.lastX = e.pageX;
-    this.resizeTableWidth.lastY = e.pageY;
     //this.resizeTableWidth.startWidth = this._gantt.tableNoFrameWidth;
   }
   isResizingTableWidth() {
@@ -428,10 +430,13 @@ export class StateManager {
   //#endregion
 
   showTaskBarHover(e: FederatedPointerEvent) {
-    const taskBarTarget =
-      e.target?.name === 'task-bar-hover-shadow-left-icon' || e.target?.name === 'task-bar-hover-shadow-right-icon'
-        ? e.target.parent //转成父级元素task-bar-hover-shadow  后面逻辑需要宽高值
-        : e.target;
+    // const taskBarTarget =
+    //   e.target?.name === 'task-bar-hover-shadow-left-icon' || e.target?.name === 'task-bar-hover-shadow-right-icon'
+    //     ? e.target.parent //转成父级元素task-bar-hover-shadow  后面逻辑需要宽高值
+    //     : e.target;
+    const taskBarTarget = e.detailPath.find((pathNode: any) => {
+      return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
+    });
     if (this._gantt.stateManager.hoverTaskBar.target !== taskBarTarget) {
       this._gantt.stateManager.hoverTaskBar.target = taskBarTarget;
       const target = this._gantt.stateManager.hoverTaskBar.target;
@@ -439,7 +444,7 @@ export class StateManager {
       const y = target.attribute.y;
       const width = target.attribute.width;
       const height = target.attribute.height;
-      this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, e.target);
+      this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, taskBarTarget);
       this._gantt.scenegraph.updateNextFrame();
     }
     //
@@ -448,5 +453,39 @@ export class StateManager {
     this._gantt.stateManager.hoverTaskBar.target = null;
     this._gantt.scenegraph.taskBar.hideHoverBar();
     this._gantt.scenegraph.updateNextFrame();
+  }
+}
+
+function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number) {
+  const taskBarCustomRender = gantt.taskBarCustomRender;
+  if (taskBarCustomRender) {
+    let customRenderObj;
+    if (typeof taskBarCustomRender === 'function') {
+      const { startDate, endDate, taskDays, progress, taskRecord } = gantt.getTaskInfoByTaskListIndex(taskIndex);
+      const arg = {
+        width: taskBarGroup.attribute.width,
+        height: taskBarGroup.attribute.height,
+        index: taskIndex,
+        startDate,
+        endDate,
+        taskDays,
+        progress,
+        taskRecord,
+        ganttInstance: gantt
+      };
+      customRenderObj = taskBarCustomRender(arg);
+    } else {
+      customRenderObj = taskBarCustomRender;
+    }
+    if (customRenderObj) {
+      const rootContainer = customRenderObj.rootContainer;
+      rootContainer.name = 'task-bar-custom-render';
+      const oldCustomIndex = taskBarGroup.children.findIndex((node: any) => {
+        return node.name === 'task-bar-custom-render';
+      });
+      const oldCustomNode = taskBarGroup.children[oldCustomIndex];
+      taskBarGroup.removeChild(oldCustomNode);
+      taskBarGroup.insertInto(rootContainer, oldCustomIndex);
+    }
   }
 }

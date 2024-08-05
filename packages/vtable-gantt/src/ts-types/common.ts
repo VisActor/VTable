@@ -1,23 +1,3 @@
-export interface RectProps {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-  width: number;
-  height: number;
-}
-
-export interface CellPosition {
-  col: number;
-  row: number;
-}
-
-export type ColorsDef = string | (string | null)[];
-export type LineWidthsDef = number | (number | null)[];
-export type LineDashsDef = number[] | (number[] | null)[];
-export type shadowColorsDef = { from: string; to: string } | ({ from: string; to: string } | null)[];
-export type PaddingsDef = number | (number | null)[];
-
 /**
  * 当前表格的交互状态：
  * Default 默认展示

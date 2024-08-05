@@ -1,7 +1,8 @@
+import { Image } from '@visactor/vrender-core';
 import { Group } from '@visactor/vrender-core';
 import { createRect, createText } from '@visactor/vrender-core';
 import type { Scenegraph } from './scenegraph';
-import { Icon } from './icon';
+// import { Icon } from './icon';
 import { parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
 import { getTextPos } from '../gantt-helper';
@@ -15,8 +16,8 @@ export class TaskBar {
   group: Group;
   barContainer: Group;
   hoverBarGroup: Group;
-  hoverBarLeftIcon: Icon;
-  hoverBarRightIcon: Icon;
+  hoverBarLeftIcon: Image;
+  hoverBarRightIcon: Image;
   _scene: Scenegraph;
   width: number;
   height: number;
@@ -110,6 +111,7 @@ export class TaskBar {
         rootContainer = customRenderObj.rootContainer;
         renderDefaultBar = customRenderObj.renderDefaultBar ?? false;
         renderDefaultText = customRenderObj.renderDefaultText ?? false;
+        rootContainer.name = 'task-bar-custom-render';
       }
     }
 
@@ -211,7 +213,7 @@ export class TaskBar {
     hoverBarGroup.name = 'task-bar-hover-shadow';
     // this.barContainer.appendChild(hoverBarGroup);
     // 创建左侧的icon
-    const icon = new Icon({
+    const icon = new Image({
       x: 0,
       y: 0, //this._scene._gantt.rowHeight - taskbarHeight) / 2,
       width: 10,
@@ -225,7 +227,7 @@ export class TaskBar {
     hoverBarGroup.appendChild(icon);
 
     // 创建右侧的icon
-    const rightIcon = new Icon({
+    const rightIcon = new Image({
       x: 0,
       y: 0, //this._scene._gantt.rowHeight - taskbarHeight) / 2,
       width: 10,
@@ -270,13 +272,13 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('height', height);
     this.hoverBarGroup.setAttribute('visibleAll', true);
     this.hoverBarLeftIcon.setAttribute('x', 0);
-    this.hoverBarLeftIcon.setAttribute('y', 0);
+    this.hoverBarLeftIcon.setAttribute('y', Math.ceil(height / 10));
     this.hoverBarLeftIcon.setAttribute('width', 10);
-    this.hoverBarLeftIcon.setAttribute('height', 20);
+    this.hoverBarLeftIcon.setAttribute('height', height - 2 * Math.ceil(height / 10));
     this.hoverBarRightIcon.setAttribute('x', width - 10);
-    this.hoverBarRightIcon.setAttribute('y', 0);
+    this.hoverBarRightIcon.setAttribute('y', Math.ceil(height / 10));
     this.hoverBarRightIcon.setAttribute('width', 10);
-    this.hoverBarRightIcon.setAttribute('height', 20);
+    this.hoverBarRightIcon.setAttribute('height', height - 2 * Math.ceil(height / 10));
   }
   hideHoverBar() {
     this.hoverBarGroup.setAttribute('visibleAll', false);
