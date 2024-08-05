@@ -823,7 +823,7 @@ export function createTable() {
     },
     scrollStyle: {
       scrollRailColor: 'RGBA(246,246,246,0.5)',
-      visible: 'scrolling',
+      visible: 'focus',
       width: 6,
       scrollSliderCornerRadius: 2,
       scrollSliderColor: '#5cb85c'

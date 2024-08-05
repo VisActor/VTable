@@ -8,7 +8,7 @@ export const DayTimes = 1000 * 60 * 60 * 24;
 export function getTaskIndexByY(y: number, gantt: Gantt) {
   const gridY = y - gantt.headerHeight;
   const taskBarHeight = gantt.stateManager.scroll.verticalBarPos + gridY;
-  const taskBarIndex = Math.floor(taskBarHeight / gantt.rowHeight);
+  const taskBarIndex = Math.floor(taskBarHeight / gantt.parsedOptions.rowHeight);
   return taskBarIndex;
 }
 
@@ -75,7 +75,19 @@ export function getVerticalScrollBarSize(scrollStyle?: IScrollStyle): number {
 export { isNode };
 
 export function initOptions(gantt: Gantt) {
-  gantt.scrollStyle = Object.assign(
+  const options = gantt.options;
+  gantt.parsedOptions.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
+  gantt.parsedOptions.rowHeight = options?.defaultRowHeight ?? 40;
+  gantt.parsedOptions.timelineColWidth = options?.timelineColWidth ?? 60;
+  gantt.parsedOptions.startDateField = options?.startDateField ?? 'startDate';
+  gantt.parsedOptions.endDateField = options?.endDateField ?? 'endDate';
+  gantt.parsedOptions.progressField = options?.progressField ?? 'progress';
+  gantt.parsedOptions.minDate = options?.minDate ? new Date(options?.minDate) : new Date(2024, 1, 1);
+  gantt.parsedOptions.maxDate = options?.maxDate ? new Date(options?.maxDate) : new Date(2025, 1, 1);
+  gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate.getTime();
+  gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate.getTime();
+  gantt.parsedOptions.overscrollBehavior = options?.overscrollBehavior ?? 'auto';
+  gantt.parsedOptions.scrollStyle = Object.assign(
     {},
     {
       scrollRailColor: 'rgba(100, 100, 100, 0.2)',
@@ -86,9 +98,9 @@ export function initOptions(gantt: Gantt) {
       hoverOn: true,
       barToSide: false
     },
-    gantt.options?.scrollStyle
+    options?.scrollStyle
   );
-  gantt.timelineHeaderStyle = Object.assign(
+  gantt.parsedOptions.timelineHeaderStyle = Object.assign(
     {},
     {
       borderColor: 'gray',
@@ -100,9 +112,9 @@ export function initOptions(gantt: Gantt) {
       color: '#000',
       backgroundColor: '#fff'
     },
-    gantt.options?.timelineHeaderStyle
+    options?.timelineHeaderStyle
   );
-  gantt.gridStyle = Object.assign(
+  gantt.parsedOptions.gridStyle = Object.assign(
     {},
     // {
     //   backgroundColor: '#fff',
@@ -115,16 +127,16 @@ export function initOptions(gantt: Gantt) {
     //     lineWidth: 1
     //   }
     // },
-    gantt.options?.gridStyle
+    options?.gridStyle
   );
-  gantt.taskBarStyle = Object.assign(
+  gantt.parsedOptions.taskBarStyle = Object.assign(
     {},
     {
       barColor: 'blue',
       /** 已完成部分任务条的颜色 */
       completedBarColor: 'gray',
       /** 任务条的宽度 */
-      width: gantt.rowHeight,
+      width: gantt.parsedOptions.rowHeight,
       /** 任务条的圆角 */
       cornerRadius: 3,
       /** 任务条的边框 */
@@ -134,33 +146,37 @@ export function initOptions(gantt: Gantt) {
       fontFamily: 'Arial',
       fontSize: 14
     },
-    gantt.options?.taskBar?.barStyle
+    options?.taskBar?.barStyle
   );
-  gantt.taskBarLabelText = gantt.options?.taskBar?.labelText ?? '';
-  gantt.taskBarLabelStyle = {
-    fontFamily: gantt.options?.taskBar?.labelTextStyle.fontFamily ?? 'Arial',
-    fontSize: gantt.options?.taskBar?.labelTextStyle.fontSize ?? gantt.rowHeight,
-    color: gantt.options?.taskBar?.labelTextStyle.color ?? '#F01',
-    textAlign: gantt.options?.taskBar?.labelTextStyle.textAlign ?? 'left',
-    textBaseline: gantt.options?.taskBar?.labelTextStyle.textBaseline ?? 'middle',
-    padding: gantt.options?.taskBar?.labelTextStyle.padding ?? 0,
-    textOverflow: gantt.options?.taskBar?.labelTextStyle.textOverflow
+  gantt.parsedOptions.taskBarLabelText = options?.taskBar?.labelText ?? '';
+  gantt.parsedOptions.taskBarMoveable = options?.taskBar?.moveable ?? true;
+  gantt.parsedOptions.taskBarResizable = options?.taskBar?.resizable ?? true;
+  gantt.parsedOptions.taskBarHoverColor =
+    options?.taskBar?.hoverColor === null ? 'rgba(0,0,0,0)' : options?.taskBar?.hoverColor ?? 'rgba(0,0,0,0.1)';
+  gantt.parsedOptions.taskBarLabelStyle = {
+    fontFamily: options?.taskBar?.labelTextStyle.fontFamily ?? 'Arial',
+    fontSize: options?.taskBar?.labelTextStyle.fontSize ?? gantt.parsedOptions.rowHeight,
+    color: options?.taskBar?.labelTextStyle.color ?? '#F01',
+    textAlign: options?.taskBar?.labelTextStyle.textAlign ?? 'left',
+    textBaseline: options?.taskBar?.labelTextStyle.textBaseline ?? 'middle',
+    padding: options?.taskBar?.labelTextStyle.padding ?? 0,
+    textOverflow: options?.taskBar?.labelTextStyle.textOverflow
   };
-  gantt.taskBarCustomRender = gantt.options?.taskBar?.customRender;
+  gantt.parsedOptions.taskBarCustomRender = options?.taskBar?.customRender;
 
-  gantt.frameStyle = Object.assign(
+  gantt.parsedOptions.frameStyle = Object.assign(
     {},
     {
       borderColor: 'gray',
       borderLineWidth: [1, 1, 1, 1],
       cornerRadius: 4
     },
-    gantt.options.frameStyle
+    options.frameStyle
   );
-  gantt.markLine = generateMarkLine(gantt.options?.markLine);
-  gantt.resizeLineStyle = {
-    lineColor: gantt.options.resizeLineStyle?.lineColor ?? 'yellow',
-    lineWidth: gantt.options.resizeLineStyle?.lineWidth ?? 2
+  gantt.parsedOptions.markLine = generateMarkLine(options?.markLine);
+  gantt.parsedOptions.resizeLineStyle = {
+    lineColor: options.resizeLineStyle?.lineColor ?? 'yellow',
+    lineWidth: options.resizeLineStyle?.lineWidth ?? 2
   };
 }
 

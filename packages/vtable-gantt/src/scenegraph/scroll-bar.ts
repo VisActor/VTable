@@ -1,4 +1,4 @@
-import { ScrollBar } from '@visactor/vrender-components';
+import { VRender } from '@visactor/vtable';
 import { isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 /**
@@ -7,21 +7,24 @@ import type { Gantt } from '../Gantt';
  */
 
 export class ScrollBarComponent {
-  hScrollBar: ScrollBar;
-  vScrollBar: ScrollBar;
+  hScrollBar: VRender.ScrollBar;
+  vScrollBar: VRender.ScrollBar;
   _gantt: Gantt;
   _clearHorizontalScrollBar: any;
   _clearVerticalScrollBar: any;
   constructor(gantt: Gantt) {
     this._gantt = gantt;
-    this.createScrollBar(gantt.tableNoFrameWidth, gantt.tableNoFrameHeight - gantt.headerRowHeight * gantt.headerLevel);
+    this.createScrollBar(
+      gantt.tableNoFrameWidth,
+      gantt.tableNoFrameHeight - gantt.parsedOptions.headerRowHeight * gantt.headerLevel
+    );
   }
 
   createScrollBar(tableWidth: number, tableHeight: number) {
-    const scrollRailColor = this._gantt.scrollStyle.scrollRailColor;
-    const scrollSliderColor = this._gantt.scrollStyle.scrollSliderColor;
-    const scrollSliderCornerRadius = this._gantt.scrollStyle.scrollSliderCornerRadius;
-    const width = this._gantt.scrollStyle.width;
+    const scrollRailColor = this._gantt.parsedOptions.scrollStyle.scrollRailColor;
+    const scrollSliderColor = this._gantt.parsedOptions.scrollStyle.scrollSliderColor;
+    const scrollSliderCornerRadius = this._gantt.parsedOptions.scrollStyle.scrollSliderCornerRadius;
+    const width = this._gantt.parsedOptions.scrollStyle.width;
 
     let sliderStyle;
     if (isValid(scrollSliderCornerRadius)) {
@@ -34,10 +37,10 @@ export class ScrollBarComponent {
         fill: scrollSliderColor
       };
     }
-    const visible = this._gantt.scrollStyle?.visible as string;
-    const hoverOn = this._gantt.scrollStyle?.hoverOn as boolean;
+    const visible = this._gantt.parsedOptions.scrollStyle?.visible as string;
+    const hoverOn = this._gantt.parsedOptions.scrollStyle?.hoverOn as boolean;
 
-    this.hScrollBar = new ScrollBar({
+    this.hScrollBar = new VRender.ScrollBar({
       direction: 'horizontal',
       x: -tableWidth * 2,
       y: -tableHeight * 2,
@@ -50,13 +53,13 @@ export class ScrollBarComponent {
       sliderStyle,
       range: [0, 0.1],
       // scrollRange: [0.4, 0.8]
-      visible
+      visible: false
     });
     // hack方案实现初始化隐藏滚动条，也可以add到stage之后执行hideAll
     (this.hScrollBar as any).render();
     this.hScrollBar.hideAll();
 
-    this.vScrollBar = new ScrollBar({
+    this.vScrollBar = new VRender.ScrollBar({
       direction: 'vertical',
       x: -tableWidth * 2,
       y: -tableHeight * 2,
@@ -68,7 +71,7 @@ export class ScrollBarComponent {
       },
       sliderStyle,
       range: [0, 0.1],
-      visible
+      visible: false
     });
     (this.vScrollBar as any).render();
     this.vScrollBar.hideAll();
@@ -77,7 +80,7 @@ export class ScrollBarComponent {
     //
   }
   hideVerticalScrollBar() {
-    const visable = this._gantt.scrollStyle.visible;
+    const visable = this._gantt.parsedOptions.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {
       return;
     }
@@ -86,7 +89,7 @@ export class ScrollBarComponent {
     this._gantt.scenegraph.updateNextFrame();
   }
   showVerticalScrollBar(autoHide?: boolean) {
-    const visable = this._gantt.scrollStyle.visible;
+    const visable = this._gantt.parsedOptions.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {
       return;
     }
@@ -102,7 +105,7 @@ export class ScrollBarComponent {
     }
   }
   hideHorizontalScrollBar() {
-    const visable = this._gantt.scrollStyle.visible;
+    const visable = this._gantt.parsedOptions.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {
       return;
     }
@@ -111,7 +114,7 @@ export class ScrollBarComponent {
     this._gantt.scenegraph.updateNextFrame();
   }
   showHorizontalScrollBar(autoHide?: boolean) {
-    const visable = this._gantt.scrollStyle.visible;
+    const visable = this._gantt.parsedOptions.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {
       return;
     }
@@ -157,7 +160,7 @@ export class ScrollBarComponent {
     const oldHorizontalBarPos = this._gantt.stateManager.scroll.horizontalBarPos;
     const oldVerticalBarPos = this._gantt.stateManager.scroll.verticalBarPos;
 
-    const scrollStyle = this._gantt.scrollStyle;
+    const scrollStyle = this._gantt.parsedOptions.scrollStyle;
     const width = scrollStyle?.width as number;
     const visible = scrollStyle?.visible as string;
     // const hoverOn = theme.scrollStyle?.hoverOn as boolean;
@@ -215,9 +218,9 @@ export class ScrollBarComponent {
       const rangeEnd = Math.max(0.05, (tableHeight - frozenRowsHeight) / (totalHeight - frozenRowsHeight));
 
       let attrX = 0;
-      const hoverOn = this._gantt.scrollStyle.hoverOn;
+      const hoverOn = this._gantt.parsedOptions.scrollStyle.hoverOn;
 
-      if (this._gantt.scrollStyle.barToSide) {
+      if (this._gantt.parsedOptions.scrollStyle.barToSide) {
         attrX =
           this._gantt.tableNoFrameWidth -
           (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.x) +

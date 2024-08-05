@@ -46,12 +46,18 @@ export interface GanttConstructorOptions {
   minDate?: string;
   /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
   maxDate?: string;
+
+  /** 顶部表头部分默认行高 */
   defaultHeaderRowHeight?: number;
+
+  /** 数据默认行高 */
   defaultRowHeight?: number;
+
+  /** 时间刻度列宽度 */
   timelineColWidth?: number;
 
+  /** 行号配置 */
   rowSeriesNumber?: IRowSeriesNumber;
-  dragHeader?: boolean;
 
   /**
    * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
@@ -68,6 +74,9 @@ export interface GanttConstructorOptions {
     labelTextStyle?: ITaskBarLabelTextStyle;
     barStyle?: ITaskBarStyle;
     customRender?: ITaskBarCustomRender;
+    resizable?: boolean;
+    moveable?: boolean;
+    hoverColor?: string | null;
   };
 
   taskListTable?: {
@@ -165,7 +174,7 @@ export type ITaskBarCustomRender =
   | ITaskBarCustomRenderObj
   | ((args: TaskBarCustomRenderArgumentType) => ITaskBarCustomRenderObj); //CustomLayout
 export type ITaskBarCustomRenderObj = {
-  rootContainer: VRender.Container;
+  rootContainer: VRender.Group;
   renderDefaultBar?: boolean; // 默认false
   renderDefaultResizeIcon?: boolean; // 默认false
   renderDefaultText?: boolean; // 默认false

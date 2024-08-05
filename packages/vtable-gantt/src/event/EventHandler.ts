@@ -161,7 +161,7 @@ export class EventHandler {
     const id = this.on(
       target,
       type,
-      (...args) => {
+      (...args: any[]) => {
         this.off(id);
         listener(...args);
       },

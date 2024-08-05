@@ -936,7 +936,11 @@ export function createTable() {
       style: {
         borderColor: '#e1e4e8'
       }
-    }
+    },
+    scrollStyle: {
+      visible: 'scrolling'
+    },
+    overscrollBehavior: 'none'
   };
   // columns:[
   //   {

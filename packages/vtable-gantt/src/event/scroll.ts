@@ -1,4 +1,4 @@
-import type { FederatedPointerEvent } from '@visactor/vrender-core';
+import type { VRender } from '@visactor/vtable';
 import type { Gantt } from '../Gantt';
 import { InteractionState } from '../ts-types';
 import type { EventManager } from './event-manager';
@@ -34,15 +34,15 @@ export function handleWhell(event: WheelEvent, state: StateManager, gantt: Gantt
     state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY);
     gantt.scenegraph.scrollbarComponent.showVerticalScrollBar(true);
   }
-  // isWheelEvent && state.resetInteractionState();
-  // if (
-  //   event.cancelable &&
-  //   (state._gantt.internalProps.overscrollBehavior === 'none' ||
-  //     (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, state)) ||
-  //     (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, state)))
-  // ) {
-  //   event.preventDefault();
-  // }
+  isWheelEvent && state.resetInteractionState();
+  if (
+    event.cancelable &&
+    (state._gantt.parsedOptions.overscrollBehavior === 'none' ||
+      (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, state)) ||
+      (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, state)))
+  ) {
+    event.preventDefault();
+  }
 }
 
 interface ScrollSpeedRatio {
@@ -177,22 +177,22 @@ export function bindScrollBarListener(eventManager: EventManager) {
     scenegraph.scrollbarComponent.showHorizontalScrollBar();
   });
   scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerout', (e: any) => {
-    // if (stateManager.interactionState === InteractionState.scrolling) {
-    //   return;
-    // }
+    if (stateManager.interactionState === InteractionState.scrolling) {
+      return;
+    }
     scenegraph.scrollbarComponent.hideVerticalScrollBar();
   });
   scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerout', (e: any) => {
-    // if (stateManager.interactionState === InteractionState.scrolling) {
-    //   return;
-    // }
+    if (stateManager.interactionState === InteractionState.scrolling) {
+      return;
+    }
     scenegraph.scrollbarComponent.hideHorizontalScrollBar();
   });
-  scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointermove', (e: FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointermove', (e: VRender.FederatedPointerEvent) => {
     // scenegraph._gantt.stateManager.updateCursor('default');
     e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成可拖拽
   });
-  // scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
+  // scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerdown', (e: VRender.FederatedPointerEvent) => {
   //   e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成拖拽状态
   //   if ((scenegraph._gantt as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
   //     scenegraph._gantt.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
@@ -200,7 +200,7 @@ export function bindScrollBarListener(eventManager: EventManager) {
   //     });
   //   }
   // });
-  scenegraph.scrollbarComponent.vScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('scrollDown', (e: VRender.FederatedPointerEvent) => {
     // scenegraph._gantt.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
     scenegraph._gantt.eventManager.isDown = true;
 
@@ -212,26 +212,26 @@ export function bindScrollBarListener(eventManager: EventManager) {
   });
   scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerup', () => {
     // stateManager.fastScrolling = false;
-    // scenegraph._gantt.eventManager.isDraging = false;
-    // if (stateManager.interactionState === InteractionState.scrolling) {
-    //   stateManager.updateInteractionState(InteractionState.default);
-    // }
+    scenegraph._gantt.eventManager.isDraging = false;
+    if (stateManager.interactionState === InteractionState.scrolling) {
+      stateManager.updateInteractionState(InteractionState.default);
+    }
   });
   scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerupoutside', () => {
     // stateManager.fastScrolling = false;
-    // if (stateManager.interactionState === InteractionState.scrolling) {
-    //   stateManager.updateInteractionState(InteractionState.default);
-    // }
+    if (stateManager.interactionState === InteractionState.scrolling) {
+      stateManager.updateInteractionState(InteractionState.default);
+    }
   });
-  scenegraph.scrollbarComponent.vScrollBar.addEventListener('scrollUp', (e: FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('scrollUp', (e: VRender.FederatedPointerEvent) => {
     scenegraph._gantt.eventManager.isDraging = false;
   });
 
-  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointermove', (e: FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointermove', (e: VRender.FederatedPointerEvent) => {
     // scenegraph._gantt.stateManager.updateCursor('default');
     e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成可拖拽
   });
-  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerdown', (e: VRender.FederatedPointerEvent) => {
     e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成拖拽状态
     // if ((scenegraph._gantt as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
     //   scenegraph._gantt.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
@@ -239,12 +239,12 @@ export function bindScrollBarListener(eventManager: EventManager) {
     //   });
     // }
   });
-  scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollDown', (e: VRender.FederatedPointerEvent) => {
     // scenegraph._gantt.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
     scenegraph._gantt.eventManager.isDown = true;
-    // if (stateManager.interactionState !== InteractionState.scrolling) {
-    //   stateManager.updateInteractionState(InteractionState.scrolling);
-    // }
+    if (stateManager.interactionState !== InteractionState.scrolling) {
+      stateManager.updateInteractionState(InteractionState.scrolling);
+    }
 
     // if ((scenegraph._gantt as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
     //   scenegraph._gantt.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
@@ -255,17 +255,17 @@ export function bindScrollBarListener(eventManager: EventManager) {
   scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerup', () => {
     // stateManager.fastScrolling = false;
     // scenegraph._gantt.eventManager.isDraging = false;
-    // if (stateManager.interactionState === InteractionState.scrolling) {
-    //   stateManager.updateInteractionState(InteractionState.default);
-    // }
+    if (stateManager.interactionState === InteractionState.scrolling) {
+      stateManager.updateInteractionState(InteractionState.default);
+    }
   });
   scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerupoutside', () => {
     // stateManager.fastScrolling = false;
-    // if (stateManager.interactionState === InteractionState.scrolling) {
-    //   stateManager.updateInteractionState(InteractionState.default);
-    // }
+    if (stateManager.interactionState === InteractionState.scrolling) {
+      stateManager.updateInteractionState(InteractionState.default);
+    }
   });
-  scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollUp', (e: FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollUp', (e: VRender.FederatedPointerEvent) => {
     scenegraph._gantt.eventManager.isDraging = false;
   });
   const throttleVerticalWheel = throttle(stateManager.updateVerticalScrollBar, 20);
@@ -277,9 +277,9 @@ export function bindScrollBarListener(eventManager: EventManager) {
       scenegraph._gantt.eventManager.isDraging = true;
     }
     // stateManager.fastScrolling = true;
-    // if (stateManager.interactionState !== InteractionState.scrolling) {
-    //   stateManager.updateInteractionState(InteractionState.scrolling);
-    // }
+    if (stateManager.interactionState !== InteractionState.scrolling) {
+      stateManager.updateInteractionState(InteractionState.scrolling);
+    }
     const ratio = e.detail.value[0] / (1 - e.detail.value[1] + e.detail.value[0]);
     throttleVerticalWheel(ratio, e);
   });
@@ -295,9 +295,5 @@ export function bindScrollBarListener(eventManager: EventManager) {
     // stateManager._gantt.scenegraph.proxy.isSkipProgress = true;
     const ratio = e.detail.value[0] / (1 - e.detail.value[1] + e.detail.value[0]);
     throttleHorizontalWheel(ratio);
-    // setTimeout(() => {
-    //   console.log('isSkipProgress', false);
-    //   stateManager._gantt.scenegraph.proxy.isSkipProgress = false;
-    // }, 10);
   });
 }

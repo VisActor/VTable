@@ -1,4 +1,4 @@
-import { Group, createLine } from '@visactor/vrender-core';
+import { VRender } from '@visactor/vtable';
 import { TYPES } from '@visactor/vtable';
 import type { IGridStyle } from '../ts-types';
 import { str } from '@visactor/vtable/es/tools/helper';
@@ -19,30 +19,30 @@ export class Grid {
   colWidthPerDay: number;
   rowHeight: number;
   rowCount: number;
-  group: Group;
-  verticalLineGroup: Group;
-  horizontalLineGroup: Group;
+  group: VRender.Group;
+  verticalLineGroup: VRender.Group;
+  horizontalLineGroup: VRender.Group;
   allGridHeight: number;
   allGridWidth: number;
   _scene: Scenegraph;
   constructor(scene: Scenegraph) {
     this._scene = scene;
-    this.vertical = !!scene._gantt.gridStyle.vertical;
-    this.horizontal = !!scene._gantt.gridStyle.horizontal;
-    this.gridStyle = scene._gantt.gridStyle;
+    this.vertical = !!scene._gantt.parsedOptions.gridStyle.vertical;
+    this.horizontal = !!scene._gantt.parsedOptions.gridStyle.horizontal;
+    this.gridStyle = scene._gantt.parsedOptions.gridStyle;
     this.scrollLeft = 0;
     this.scrollTop = 0;
     this.x = 0;
-    this.y = scene._gantt.headerRowHeight * scene._gantt.headerLevel;
+    this.y = scene._gantt.parsedOptions.headerRowHeight * scene._gantt.headerLevel;
     this.width = scene.tableGroup.attribute.width;
     this.height = scene.tableGroup.attribute.height - scene.timelineHeader.group.attribute.height;
     this.timelineDates = scene._gantt.reverseSortedScales[0].timelineDates;
-    this.colWidthPerDay = scene._gantt.colWidthPerDay;
-    this.rowHeight = scene._gantt.rowHeight;
+    this.colWidthPerDay = scene._gantt.parsedOptions.colWidthPerDay;
+    this.rowHeight = scene._gantt.parsedOptions.rowHeight;
     this.rowCount = scene._gantt.itemCount;
     this.allGridWidth = scene._gantt.getAllColsWidth();
     this.allGridHeight = scene._gantt.getAllGridHeight();
-    this.group = new Group({
+    this.group = new VRender.Group({
       x: this.x,
       y: this.y,
       width: this.width,
@@ -53,13 +53,16 @@ export class Grid {
     this.group.name = 'grid-container';
     scene.tableGroup.addChild(this.group);
     //补充timelineHeader中不好绘制的底部的边线
-    const line = createLine({
+    const line = VRender.createLine({
       pickable: false,
-      stroke: scene._gantt.timelineHeaderStyle?.borderColor,
-      lineWidth: scene._gantt.timelineHeaderStyle?.borderWidth,
+      stroke: scene._gantt.parsedOptions.timelineHeaderStyle?.borderColor,
+      lineWidth: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth,
       points: [
-        { x: 0, y: scene._gantt.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0 },
-        { x: scene._gantt.getAllColsWidth(), y: scene._gantt.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0 }
+        { x: 0, y: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0 },
+        {
+          x: scene._gantt.getAllColsWidth(),
+          y: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0
+        }
       ]
     });
     this.group.addChild(line);
@@ -69,7 +72,7 @@ export class Grid {
   }
   createVerticalLines() {
     if (this.vertical) {
-      this.verticalLineGroup = new Group({
+      this.verticalLineGroup = new VRender.Group({
         x: 0,
         y: 0,
         width: this.allGridWidth,
@@ -86,7 +89,7 @@ export class Grid {
       for (let i = 0; i < this.timelineDates.length - 1; i++) {
         const dateline = this.timelineDates[i];
         x = x + Math.floor(this.colWidthPerDay * dateline.days);
-        const line = createLine({
+        const line = VRender.createLine({
           pickable: false,
           stroke: this.gridStyle?.vertical.lineColor,
           lineWidth: this.gridStyle?.vertical.lineWidth,
@@ -102,7 +105,7 @@ export class Grid {
   }
   createHorizontalLines() {
     if (this.horizontal) {
-      this.horizontalLineGroup = new Group({
+      this.horizontalLineGroup = new VRender.Group({
         x: 0,
         y: 0,
         width: this.allGridWidth,
@@ -118,7 +121,7 @@ export class Grid {
       }
       for (let i = 0; i < this.rowCount - 1; i++) {
         y = y + Math.floor(this.rowHeight);
-        const line = createLine({
+        const line = VRender.createLine({
           pickable: false,
           stroke: this.gridStyle?.horizontal.lineColor,
           lineWidth: this.gridStyle?.horizontal.lineWidth,

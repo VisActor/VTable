@@ -2,15 +2,15 @@ import { isValid } from '@visactor/vutils';
 import { getTextPos } from '../gantt-helper';
 import { toBoxArray } from '../tools/util';
 import type { Scenegraph } from './scenegraph';
-import { Group, Text, createStage, vglobal, createRect, createLine } from '@visactor/vrender-core';
+import { VRender } from '@visactor/vtable';
 export class TimelineHeader {
-  group: Group;
+  group: VRender.Group;
   constructor(scene: Scenegraph) {
-    const dateHeader = new Group({
+    const dateHeader = new VRender.Group({
       x: 0,
       y: 0,
       width: scene._gantt.getAllColsWidth(), //width - 2,
-      height: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
+      height: scene._gantt.parsedOptions.headerRowHeight * scene._gantt.headerLevel,
       clip: true,
       pickable: false
       // fill: 'purple',
@@ -22,11 +22,11 @@ export class TimelineHeader {
     scene.tableGroup.addChild(this.group);
     const y = 0;
     for (let i = 0; i < scene._gantt.headerLevel; i++) {
-      const rowHeader = new Group({
+      const rowHeader = new VRender.Group({
         x: 0,
-        y: scene._gantt.headerRowHeight * i,
+        y: scene._gantt.parsedOptions.headerRowHeight * i,
         width: scene._gantt.getAllColsWidth(),
-        height: scene._gantt.headerRowHeight,
+        height: scene._gantt.parsedOptions.headerRowHeight,
         clip: false
       });
       rowHeader.name = 'row-header';
@@ -35,52 +35,55 @@ export class TimelineHeader {
       const { unit, timelineDates } = scene._gantt.sortedScales[i];
       let x = 0;
       for (let j = 0; j < timelineDates.length; j++) {
-        const date = new Group({
+        const date = new VRender.Group({
           x,
           y: 0,
-          width: scene._gantt.colWidthPerDay * timelineDates[j].days,
-          height: scene._gantt.headerRowHeight,
+          width: scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
+          height: scene._gantt.parsedOptions.headerRowHeight,
           clip: false,
-          fill: scene._gantt.timelineHeaderStyle?.backgroundColor
+          fill: scene._gantt.parsedOptions.timelineHeaderStyle?.backgroundColor
         });
         date.name = 'date-cell';
         // const rect = createRect({
         //   x: 0,
         //   y: 0,
-        //   width: scene._gantt.colWidthPerDay * timelineDates[j].days,
-        //   height: scene._gantt.headerRowHeight,
-        //   fill: scene._gantt.timelineHeaderStyle?.backgroundColor
+        //   width: scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
+        //   height: scene._gantt.parsedOptions.headerRowHeight,
+        //   fill: scene._gantt.parsedOptions.timelineHeaderStyle?.backgroundColor
         // });
         // date.appendChild(rect);
 
         if (j > 0) {
-          const line = createLine({
+          const line = VRender.createLine({
             pickable: false,
-            stroke: scene._gantt.timelineHeaderStyle?.borderColor,
-            lineWidth: scene._gantt.timelineHeaderStyle?.borderWidth,
+            stroke: scene._gantt.parsedOptions.timelineHeaderStyle?.borderColor,
+            lineWidth: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth,
             points: [
-              { x: scene._gantt.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0, y: 0 },
-              { x: scene._gantt.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0, y: scene._gantt.headerRowHeight }
+              { x: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0, y: 0 },
+              {
+                x: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0,
+                y: scene._gantt.parsedOptions.headerRowHeight
+              }
             ]
           });
           date.appendChild(line);
         }
         const { padding, textAlign, textBaseline, textOverflow, fontSize, fontWeight, color, strokeColor } =
-          scene._gantt.timelineHeaderStyle;
+          scene._gantt.parsedOptions.timelineHeaderStyle;
 
         const position = getTextPos(
           toBoxArray(padding),
           textAlign,
           textBaseline,
-          scene._gantt.colWidthPerDay * timelineDates[j].days,
-          scene._gantt.headerRowHeight
+          scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
+          scene._gantt.parsedOptions.headerRowHeight
         );
-        const text = new Text({
+        const text = new VRender.Text({
           x: position.x,
           y: position.y,
-          maxLineWidth: scene._gantt.colWidthPerDay * timelineDates[j].days,
-          // width: scene._gantt.colWidthPerDay * timelineDates[j].days,
-          heightLimit: scene._gantt.headerRowHeight,
+          maxLineWidth: scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
+          // width: scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
+          heightLimit: scene._gantt.parsedOptions.headerRowHeight,
           // clip: true,
           pickable: true,
           text: timelineDates[j].title.toLocaleString(),
@@ -103,17 +106,20 @@ export class TimelineHeader {
         });
         date.appendChild(text);
         rowHeader.addChild(date);
-        x += scene._gantt.colWidthPerDay * timelineDates[j].days;
+        x += scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days;
       }
       //创建表头分割线 水平分割线 TODO
       if (i > 0) {
-        const line = createLine({
+        const line = VRender.createLine({
           pickable: false,
-          stroke: scene._gantt.timelineHeaderStyle?.borderColor,
-          lineWidth: scene._gantt.timelineHeaderStyle?.borderWidth,
+          stroke: scene._gantt.parsedOptions.timelineHeaderStyle?.borderColor,
+          lineWidth: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth,
           points: [
-            { x: 0, y: scene._gantt.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0 },
-            { x: scene._gantt.getAllColsWidth(), y: scene._gantt.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0 }
+            { x: 0, y: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0 },
+            {
+              x: scene._gantt.getAllColsWidth(),
+              y: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0
+            }
           ]
         });
         rowHeader.addChild(line);

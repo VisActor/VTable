@@ -1,6 +1,4 @@
-import { Image } from '@visactor/vrender-core';
-import { Group } from '@visactor/vrender-core';
-import { createRect, createText } from '@visactor/vrender-core';
+import { VRender } from '@visactor/vtable';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
 import { parseStringTemplate, toBoxArray } from '../tools/util';
@@ -13,11 +11,11 @@ const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.o
 </svg>`;
 
 export class TaskBar {
-  group: Group;
-  barContainer: Group;
-  hoverBarGroup: Group;
-  hoverBarLeftIcon: Image;
-  hoverBarRightIcon: Image;
+  group: VRender.Group;
+  barContainer: VRender.Group;
+  hoverBarGroup: VRender.Group;
+  hoverBarLeftIcon: VRender.Image;
+  hoverBarRightIcon: VRender.Image;
   _scene: Scenegraph;
   width: number;
   height: number;
@@ -26,9 +24,9 @@ export class TaskBar {
     // const height = Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight);
     this.width = scene._gantt.tableNoFrameWidth;
     this.height = scene._gantt.gridHeight;
-    this.group = new Group({
+    this.group = new VRender.Group({
       x: 0,
-      y: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
+      y: scene._gantt.parsedOptions.headerRowHeight * scene._gantt.headerLevel,
       width: this.width,
       height: this.height,
       pickable: false,
@@ -41,7 +39,7 @@ export class TaskBar {
   }
 
   initBars() {
-    this.barContainer = new Group({
+    this.barContainer = new VRender.Group({
       x: 0,
       y: 0,
       width: this._scene._gantt.getAllColsWidth(),
@@ -59,26 +57,27 @@ export class TaskBar {
     }
   }
   initBar(index: number) {
-    const taskBarCustomRender = this._scene._gantt.taskBarCustomRender;
+    const taskBarCustomRender = this._scene._gantt.parsedOptions.taskBarCustomRender;
     const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(index);
     if (taskDays <= 0) {
-      return;
+      return null;
     }
-    const taskBarSize = this._scene._gantt.colWidthPerDay * taskDays;
-    const taskbarHeight = this._scene._gantt.taskBarStyle.width;
-    const minDate = new Date(this._scene._gantt.minDate);
-    const barGroup = new Group({
+    const taskBarSize = this._scene._gantt.parsedOptions.colWidthPerDay * taskDays;
+    const taskbarHeight = this._scene._gantt.parsedOptions.taskBarStyle.width;
+    const minDate = new Date(this._scene._gantt.parsedOptions.minDate);
+    const barGroup = new VRender.Group({
       x:
-        this._scene._gantt.colWidthPerDay *
+        this._scene._gantt.parsedOptions.colWidthPerDay *
         Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)),
-      // y: this._scene._gantt.rowHeight * i,
-      y: this._scene._gantt.rowHeight * index + (this._scene._gantt.rowHeight - taskbarHeight) / 2,
+      // y: this._scene._gantt.parsedOptions.rowHeight * i,
+      y:
+        this._scene._gantt.parsedOptions.rowHeight * index +
+        (this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
       width: taskBarSize,
-      // height: this._scene._gantt.rowHeight,
+      // height: this._scene._gantt.parsedOptions.rowHeight,
       height: taskbarHeight,
-      cornerRadius: this._scene._gantt.taskBarStyle.cornerRadius,
-      clip: true,
-      cursor: 'grab'
+      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
+      clip: true
     });
     barGroup.name = 'task-bar';
     // this.barContainer.appendChild(barGroup);
@@ -117,24 +116,24 @@ export class TaskBar {
 
     if (renderDefaultBar) {
       // 创建整个任务条rect
-      const rect = createRect({
+      const rect = VRender.createRect({
         x: 0,
-        y: 0, //this._scene._gantt.rowHeight - taskbarHeight) / 2,
+        y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
         width: taskBarSize,
         height: taskbarHeight,
-        fill: this._scene._gantt.taskBarStyle.barColor,
+        fill: this._scene._gantt.parsedOptions.taskBarStyle.barColor,
         pickable: false
       });
       rect.name = 'task-bar-rect';
       barGroup.appendChild(rect);
       barGroup.barRect = rect;
       // 创建已完成部分任务条rect
-      const progress_rect = createRect({
+      const progress_rect = VRender.createRect({
         x: 0,
-        y: 0, //(this._scene._gantt.rowHeight - taskbarHeight) / 2,
+        y: 0, //(this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
         width: (taskBarSize * progress) / 100,
         height: taskbarHeight,
-        fill: this._scene._gantt.taskBarStyle.completedBarColor,
+        fill: this._scene._gantt.parsedOptions.taskBarStyle.completedBarColor,
         pickable: false
       });
       progress_rect.name = 'task-bar-progress-rect';
@@ -145,10 +144,10 @@ export class TaskBar {
     rootContainer && barGroup.appendChild(rootContainer);
     if (renderDefaultText) {
       const { textAlign, textBaseline, fontSize, fontFamily, textOverflow, color, padding } =
-        this._scene._gantt.taskBarLabelStyle;
+        this._scene._gantt.parsedOptions.taskBarLabelStyle;
       const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, taskBarSize, taskbarHeight);
       //创建label 文字
-      const label = createText({
+      const label = VRender.createText({
         // visible: false,
         pickable: false,
         x: position.x, //extAlign === 'center' ? taskBarSize / 2 : textAlign === 'left' ? 10 : taskBarSize - 10,
@@ -156,7 +155,7 @@ export class TaskBar {
         fontSize: fontSize, // 10
         fill: color,
         fontFamily: fontFamily,
-        text: parseStringTemplate(this._scene._gantt.taskBarLabelText as string, taskRecord),
+        text: parseStringTemplate(this._scene._gantt.parsedOptions.taskBarLabelText as string, taskRecord),
         maxLineWidth: taskBarSize - 20,
         textBaseline,
         textAlign,
@@ -189,7 +188,7 @@ export class TaskBar {
   initHoverBarIcons() {
     // const target = this._scene._gantt.stateManager.hoverTaskBar.target;
 
-    // const barGroup = new Group({
+    // const barGroup = new VRender.Group({
     //   x: target.attribute.x,
     //   y: target.attribute.y,
     //   width: target.attribute.width,
@@ -198,47 +197,50 @@ export class TaskBar {
     //   clip: true,
     //   cursor: 'grab'
     // });
-    const hoverBarGroup = new Group({
+    const hoverBarGroup = new VRender.Group({
       x: 0,
       y: 0,
       width: 100,
       height: 100,
       clip: true,
-      cursor: 'grab',
-      cornerRadius: this._scene._gantt.taskBarStyle.cornerRadius,
-      fill: 'rgba(0,0,0,0.2)',
+      cursor: this._scene._gantt.parsedOptions.taskBarMoveable ? 'grab' : 'default',
+      pickable: false,
+      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
+      fill: this._scene._gantt.parsedOptions.taskBarHoverColor,
       visibleAll: false
     });
     this.hoverBarGroup = hoverBarGroup;
     hoverBarGroup.name = 'task-bar-hover-shadow';
     // this.barContainer.appendChild(hoverBarGroup);
     // 创建左侧的icon
-    const icon = new Image({
-      x: 0,
-      y: 0, //this._scene._gantt.rowHeight - taskbarHeight) / 2,
-      width: 10,
-      height: 20,
-      image: TASKBAR_HOVER_ICON,
-      pickable: true,
-      cursor: 'col-resize'
-    });
-    icon.name = 'task-bar-hover-shadow-left-icon';
-    this.hoverBarLeftIcon = icon;
-    hoverBarGroup.appendChild(icon);
+    if (this._scene._gantt.parsedOptions.taskBarResizable) {
+      const icon = new VRender.Image({
+        x: 0,
+        y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
+        width: 10,
+        height: 20,
+        image: TASKBAR_HOVER_ICON,
+        pickable: true,
+        cursor: 'col-resize'
+      });
+      icon.name = 'task-bar-hover-shadow-left-icon';
+      this.hoverBarLeftIcon = icon;
+      hoverBarGroup.appendChild(icon);
 
-    // 创建右侧的icon
-    const rightIcon = new Image({
-      x: 0,
-      y: 0, //this._scene._gantt.rowHeight - taskbarHeight) / 2,
-      width: 10,
-      height: 20,
-      image: TASKBAR_HOVER_ICON,
-      pickable: true,
-      cursor: 'col-resize'
-    });
-    rightIcon.name = 'task-bar-hover-shadow-right-icon';
-    this.hoverBarRightIcon = rightIcon;
-    hoverBarGroup.appendChild(rightIcon);
+      // 创建右侧的icon
+      const rightIcon = new VRender.Image({
+        x: 0,
+        y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
+        width: 10,
+        height: 20,
+        image: TASKBAR_HOVER_ICON,
+        pickable: true,
+        cursor: 'col-resize'
+      });
+      rightIcon.name = 'task-bar-hover-shadow-right-icon';
+      this.hoverBarRightIcon = rightIcon;
+      hoverBarGroup.appendChild(rightIcon);
+    }
   }
   setX(x: number) {
     this.barContainer.setAttribute('x', x);
@@ -261,7 +263,7 @@ export class TaskBar {
     this.group.setAttribute('height', this.height);
   }
 
-  showHoverBar(x: number, y: number, width: number, height: number, target?: Group) {
+  showHoverBar(x: number, y: number, width: number, height: number, target?: VRender.Group) {
     if (target && target.name === 'task-bar') {
       // this.hoverBarGroup.releatedTaskBar = target;
       target.appendChild(this.hoverBarGroup);
@@ -271,14 +273,16 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('width', width);
     this.hoverBarGroup.setAttribute('height', height);
     this.hoverBarGroup.setAttribute('visibleAll', true);
-    this.hoverBarLeftIcon.setAttribute('x', 0);
-    this.hoverBarLeftIcon.setAttribute('y', Math.ceil(height / 10));
-    this.hoverBarLeftIcon.setAttribute('width', 10);
-    this.hoverBarLeftIcon.setAttribute('height', height - 2 * Math.ceil(height / 10));
-    this.hoverBarRightIcon.setAttribute('x', width - 10);
-    this.hoverBarRightIcon.setAttribute('y', Math.ceil(height / 10));
-    this.hoverBarRightIcon.setAttribute('width', 10);
-    this.hoverBarRightIcon.setAttribute('height', height - 2 * Math.ceil(height / 10));
+    if (this.hoverBarLeftIcon) {
+      this.hoverBarLeftIcon.setAttribute('x', 0);
+      this.hoverBarLeftIcon.setAttribute('y', Math.ceil(height / 10));
+      this.hoverBarLeftIcon.setAttribute('width', 10);
+      this.hoverBarLeftIcon.setAttribute('height', height - 2 * Math.ceil(height / 10));
+      this.hoverBarRightIcon.setAttribute('x', width - 10);
+      this.hoverBarRightIcon.setAttribute('y', Math.ceil(height / 10));
+      this.hoverBarRightIcon.setAttribute('width', 10);
+      this.hoverBarRightIcon.setAttribute('height', height - 2 * Math.ceil(height / 10));
+    }
   }
   hideHoverBar() {
     this.hoverBarGroup.setAttribute('visibleAll', false);

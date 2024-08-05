@@ -58,21 +58,13 @@ export class Gantt extends EventTarget {
   scenegraph: Scenegraph;
   stateManager: StateManager;
   eventManager: EventManager;
-  // internalProps: IBaseTableProtected;
 
-  headerStyleCache: any;
-  bodyStyleCache: any;
-  bodyBottomStyleCache: any;
   taskListTableInstance?: ListTable;
 
   canvas: HTMLCanvasElement;
   element: HTMLElement;
   resizeLine: HTMLDivElement;
   context: CanvasRenderingContext2D;
-  headerRowHeight: number;
-  rowHeight: number;
-  timelineColWidth: number;
-  colWidthPerDay: number; //分配给每日的宽度
 
   sortedScales: any;
   reverseSortedScales: any;
@@ -82,46 +74,50 @@ export class Gantt extends EventTarget {
   headerHeight: number;
   gridHeight: number;
 
-  scrollStyle: IScrollStyle;
-  timelineHeaderStyle: ITimelineHeaderStyle;
-  gridStyle: IGridStyle;
-  taskBarStyle: ITaskBarStyle;
-  taskBarLabelText: ITaskBarLabelText;
-  taskBarLabelStyle: ITaskBarLabelTextStyle;
-  taskBarCustomRender: ITaskBarCustomRender;
-  frameStyle: IFrameStyle;
-  pixelRatio: number;
+  parsedOptions: {
+    headerRowHeight: number;
+    rowHeight: number;
+    timelineColWidth: number;
+    colWidthPerDay: number; //分配给每日的宽度
 
-  startDateField: string;
-  endDateField: string;
-  progressField: string;
-  minDate: Date;
-  maxDate: Date;
-  _minDateTime: number;
-  _maxDateTime: number;
+    scrollStyle: IScrollStyle;
+    timelineHeaderStyle: ITimelineHeaderStyle;
+    gridStyle: IGridStyle;
+    taskBarStyle: ITaskBarStyle;
+    taskBarLabelText: ITaskBarLabelText;
+    taskBarMoveable: boolean;
+    taskBarResizable: boolean;
+    taskBarHoverColor: string;
+    taskBarLabelStyle: ITaskBarLabelTextStyle;
+    taskBarCustomRender: ITaskBarCustomRender;
+    frameStyle: IFrameStyle;
+    pixelRatio: number;
+
+    startDateField: string;
+    endDateField: string;
+    progressField: string;
+    minDate: Date;
+    maxDate: Date;
+    _minDateTime: number;
+    _maxDateTime: number;
+    markLine: IMarkLine[];
+    resizeLineStyle: IResizeLineStyle;
+    overscrollBehavior: 'auto' | 'none';
+  } = {} as any;
+
   taskTableWidth: number;
   taskTableColumns: ITableColumnsDefine;
-  markLine: IMarkLine[];
-  resizeLineStyle: IResizeLineStyle;
+
   records: any[];
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
     super();
     this.container = container;
     this.options = options;
-    this.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
-    this.rowHeight = options?.defaultRowHeight ?? 40;
-    this.timelineColWidth = options?.timelineColWidth ?? 60;
-    this.startDateField = options?.startDateField ?? 'startDate';
-    this.endDateField = options?.endDateField ?? 'endDate';
-    this.progressField = options?.progressField ?? 'progress';
-    this.minDate = options?.minDate ? new Date(options?.minDate) : new Date(2024, 1, 1);
-    this.maxDate = options?.maxDate ? new Date(options?.maxDate) : new Date(2025, 1, 1);
-    this._minDateTime = this.minDate.getTime();
-    this._maxDateTime = this.maxDate.getTime();
+
     this.taskTableWidth = typeof options?.taskListTable?.width === 'number' ? options?.taskListTable?.width : 100;
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
-    this.pixelRatio = options?.pixelRatio ?? 1;
+    this.parsedOptions.pixelRatio = options?.pixelRatio ?? 1;
     initOptions(this);
     this._sortScales();
     this._generateTimeLineDateMap();
@@ -143,8 +139,11 @@ export class Gantt extends EventTarget {
     this.itemCount = this.taskListTableInstance
       ? this.taskListTableInstance.rowCount - this.taskListTableInstance.columnHeaderLevelCount
       : this.records.length;
-    this.headerHeight = this.headerRowHeight * this.headerLevel;
-    this.drawHeight = Math.min(this.headerHeight + this.rowHeight * this.itemCount, this.tableNoFrameHeight);
+    this.headerHeight = this.parsedOptions.headerRowHeight * this.headerLevel;
+    this.drawHeight = Math.min(
+      this.headerHeight + this.parsedOptions.rowHeight * this.itemCount,
+      this.tableNoFrameHeight
+    );
     this.gridHeight = this.drawHeight - this.headerHeight;
 
     this._createResizeLine();
@@ -207,14 +206,14 @@ export class Gantt extends EventTarget {
       widthP = this.canvasWidth - 1;
       heightP = this.canvasHeight - 1;
     }
-    const width = Math.floor(widthP - getVerticalScrollBarSize(this.scrollStyle));
-    const height = Math.floor(heightP - getHorizontalScrollBarSize(this.scrollStyle));
+    const width = Math.floor(widthP - getVerticalScrollBarSize(this.parsedOptions.scrollStyle));
+    const height = Math.floor(heightP - getHorizontalScrollBarSize(this.parsedOptions.scrollStyle));
 
     this.tableNoFrameWidth = widthP;
     this.tableNoFrameHeight = Math.floor(heightP);
-    if (this.frameStyle) {
+    if (this.parsedOptions.frameStyle) {
       //考虑表格整体边框的问题
-      const lineWidth = this.frameStyle?.borderLineWidth; // toBoxArray(this.frameStyle?.borderLineWidth ?? [null]);
+      const lineWidth = this.parsedOptions.frameStyle?.borderLineWidth; // toBoxArray(this.parsedOptions.frameStyle?.borderLineWidth ?? [null]);
       this.tableX = lineWidth;
       this.tableY = lineWidth;
       this.tableNoFrameWidth = width - lineWidth;
@@ -232,7 +231,7 @@ export class Gantt extends EventTarget {
         this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
         this.taskListTableInstance.setCanvasSize(
           this.taskTableWidth,
-          this.tableNoFrameHeight + this.frameStyle.borderLineWidth * 2
+          this.tableNoFrameHeight + this.parsedOptions.frameStyle.borderLineWidth * 2
         );
         this._updateSize();
       }
@@ -248,27 +247,28 @@ export class Gantt extends EventTarget {
     listTable_options.columns = this.options.taskListTable.columns;
     // lineWidthArr[1] = 0;
     listTable_options.theme = {
-      scrollStyle: Object.assign({}, this.scrollStyle, {
+      scrollStyle: Object.assign({}, this.parsedOptions.scrollStyle, {
         verticalVisible: 'none'
       }),
       headerStyle: Object.assign(
         {},
         themes.DEFAULT.headerStyle,
         {
-          bgColor: this.timelineHeaderStyle.backgroundColor
+          bgColor: this.parsedOptions.timelineHeaderStyle.backgroundColor
         },
         this.options.taskListTable.headerStyle
       ),
       cellInnerBorder: false,
-      frameStyle: Object.assign({}, this.frameStyle, {
-        cornerRadius: 0 //[this.frameStyle.cornerRadius, 0, 0, this.frameStyle.cornerRadius]
+      frameStyle: Object.assign({}, this.parsedOptions.frameStyle, {
+        cornerRadius: 0 //[this.parsedOptions.frameStyle.cornerRadius, 0, 0, this.parsedOptions.frameStyle.cornerRadius]
       }),
       bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable.bodyStyle)
     };
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvasHeight ?? this.canvas.height;
-    listTable_options.defaultHeaderRowHeight = this.headerRowHeight * this.headerLevel;
+    listTable_options.defaultHeaderRowHeight = this.parsedOptions.headerRowHeight * this.headerLevel;
     listTable_options.clearDOM = false;
+    listTable_options.overscrollBehavior = this.parsedOptions.overscrollBehavior;
     return listTable_options;
   }
   _createResizeLine() {
@@ -289,9 +289,9 @@ export class Gantt extends EventTarget {
       highlightLine.style.position = 'absolute';
       highlightLine.style.top = '0px';
       highlightLine.style.left = '5px';
-      highlightLine.style.width = this.resizeLineStyle.lineWidth + 'px';
+      highlightLine.style.width = this.parsedOptions.resizeLineStyle.lineWidth + 'px';
       highlightLine.style.height = '100%';
-      highlightLine.style.backgroundColor = this.resizeLineStyle.lineColor;
+      highlightLine.style.backgroundColor = this.parsedOptions.resizeLineStyle.lineColor;
       highlightLine.style.zIndex = '100';
       highlightLine.style.cursor = 'col-resize';
       highlightLine.style.userSelect = 'none';
@@ -358,8 +358,8 @@ export class Gantt extends EventTarget {
   }
 
   _generateTimeLineDateMap() {
-    const startDate = new Date(this.minDate);
-    const endDate = new Date(this.maxDate);
+    const startDate = new Date(this.parsedOptions.minDate);
+    const endDate = new Date(this.parsedOptions.maxDate);
     let colWidthIncludeDays = 1000000;
     // Iterate over each scale
     for (const scale of this.reverseSortedScales) {
@@ -382,27 +382,28 @@ export class Gantt extends EventTarget {
     } else if (unit === 'year') {
       colWidthIncludeDays = 365;
     }
-    this.colWidthPerDay = this.timelineColWidth / colWidthIncludeDays;
+    this.parsedOptions.colWidthPerDay = this.parsedOptions.timelineColWidth / colWidthIncludeDays;
   }
   getAllRowsHeight() {
-    return this.headerRowHeight * this.headerLevel + this.itemCount * this.rowHeight;
+    return this.parsedOptions.headerRowHeight * this.headerLevel + this.itemCount * this.parsedOptions.rowHeight;
   }
   getAllColsWidth() {
     return (
-      this.colWidthPerDay *
+      this.parsedOptions.colWidthPerDay *
       (Math.ceil(
-        Math.abs(new Date(this.maxDate).getTime() - new Date(this.minDate).getTime()) / (1000 * 60 * 60 * 24)
+        Math.abs(new Date(this.parsedOptions.maxDate).getTime() - new Date(this.parsedOptions.minDate).getTime()) /
+          (1000 * 60 * 60 * 24)
       ) +
         1)
     );
   }
 
   getAllGridHeight() {
-    return this.itemCount * this.rowHeight;
+    return this.itemCount * this.parsedOptions.rowHeight;
   }
 
   getFrozenRowsHeight() {
-    return this.headerRowHeight * this.headerLevel;
+    return this.parsedOptions.headerRowHeight * this.headerLevel;
   }
 
   getRecordByIndex(index: number) {
@@ -422,18 +423,25 @@ export class Gantt extends EventTarget {
   }
   getTaskInfoByTaskListIndex(index: number) {
     const taskRecord = this.getRecordByIndex(index);
-    const startDateField = this.startDateField;
-    const endDateField = this.endDateField;
-    const progressField = this.progressField;
+    const startDateField = this.parsedOptions.startDateField;
+    const endDateField = this.parsedOptions.endDateField;
+    const progressField = this.parsedOptions.progressField;
     const rawDateStartDateTime = new Date(taskRecord[startDateField]).getTime();
     const rawDateEndDateTime = new Date(taskRecord[endDateField]).getTime();
-    if (rawDateEndDateTime < this._minDateTime || rawDateStartDateTime > this._maxDateTime) {
+    if (
+      rawDateEndDateTime < this.parsedOptions._minDateTime ||
+      rawDateStartDateTime > this.parsedOptions._maxDateTime
+    ) {
       return {
         taskDays: 0
       };
     }
-    const startDate = new Date(Math.min(Math.max(this._minDateTime, rawDateStartDateTime), this._maxDateTime));
-    const endDate = new Date(Math.max(Math.min(this._maxDateTime, rawDateEndDateTime), this._minDateTime));
+    const startDate = new Date(
+      Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
+    );
+    const endDate = new Date(
+      Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
+    );
     const progress = taskRecord[progressField];
     const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     return {
@@ -447,8 +455,8 @@ export class Gantt extends EventTarget {
 
   updateDateToTaskRecord(updateDateType: 'move' | 'start-move' | 'end-move', days: number, index: number) {
     const taskRecord = this.getRecordByIndex(index);
-    const startDateField = this.startDateField;
-    const endDateField = this.endDateField;
+    const startDateField = this.parsedOptions.startDateField;
+    const endDateField = this.parsedOptions.endDateField;
     const dateFormat = parseDateFormat(taskRecord[startDateField]);
     const startDate = new Date(taskRecord[startDateField]);
     const endDate = new Date(taskRecord[endDateField]);
@@ -476,7 +484,7 @@ export class Gantt extends EventTarget {
    * @param pixelRatio
    */
   setPixelRatio(pixelRatio: number) {
-    this.pixelRatio = pixelRatio;
+    this.parsedOptions.pixelRatio = pixelRatio;
     this.scenegraph.setPixelRatio(pixelRatio);
   }
 
@@ -485,7 +493,7 @@ export class Gantt extends EventTarget {
 
     this.taskListTableInstance.setCanvasSize(
       this.taskTableWidth,
-      this.tableNoFrameHeight + this.frameStyle.borderLineWidth * 2
+      this.tableNoFrameHeight + this.parsedOptions.frameStyle.borderLineWidth * 2
     );
 
     this.scenegraph.resize();
@@ -494,7 +502,10 @@ export class Gantt extends EventTarget {
     this.itemCount = this.taskListTableInstance
       ? this.taskListTableInstance.rowCount - this.taskListTableInstance.columnHeaderLevelCount
       : this.records.length;
-    this.drawHeight = Math.min(this.headerHeight + this.rowHeight * this.itemCount, this.tableNoFrameHeight);
+    this.drawHeight = Math.min(
+      this.headerHeight + this.parsedOptions.rowHeight * this.itemCount,
+      this.tableNoFrameHeight
+    );
     this.gridHeight = this.drawHeight - this.headerHeight;
   }
   /** 获取绘制画布的canvas上下文 */

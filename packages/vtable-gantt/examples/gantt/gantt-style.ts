@@ -646,6 +646,9 @@ export function createTable() {
       backgroundColor: '#EEF1F5'
     },
     taskBar: {
+      // resizable: false,
+      moveable: false,
+      hoverColor: 'rgba(99, 144, 0, 0.4)',
       labelText: '{title} {progress}%',
       labelTextStyle: {
         padding: 2,
@@ -740,7 +743,7 @@ export function createTable() {
     },
     scrollStyle: {
       scrollRailColor: 'RGBA(246,246,246,0.5)',
-      visible: 'scrolling',
+      visible: 'always',
       width: 6,
       scrollSliderCornerRadius: 2,
       scrollSliderColor: '#5cb85c'

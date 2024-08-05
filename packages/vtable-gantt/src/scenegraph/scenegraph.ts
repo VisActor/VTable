@@ -1,5 +1,4 @@
-import type { IRect, Stage } from '@visactor/vrender-core';
-import { Group, Text, createStage, vglobal } from '@visactor/vrender-core';
+import { VRender } from '@visactor/vtable';
 import { Grid } from './grid';
 import type { Gantt } from '../Gantt';
 import { Env } from '../env';
@@ -8,8 +7,7 @@ import { bindScrollBarListener } from '../event/scroll';
 import { TimelineHeader } from './timeline-header';
 import { TaskBar } from './task-bar';
 import { MarkLine } from './mark-line';
-import type { TaskBarHoverIcon } from './task-bar-hover-icon';
-import { FrameBorder, createFrameBorder } from './frame-border';
+import { FrameBorder } from './frame-border';
 
 export class Scenegraph {
   dateStepWidth: number;
@@ -19,12 +17,11 @@ export class Scenegraph {
   grid: Grid;
   taskBar: TaskBar;
   _gantt: Gantt;
-  tableGroup: Group;
+  tableGroup: VRender.Group;
   scrollbarComponent: ScrollBarComponent;
   markLine: MarkLine;
   frameBorder: FrameBorder;
-  taskBarHoverIcon: TaskBarHoverIcon;
-  stage: Stage;
+  stage: VRender.Stage;
   tableGroupWidth: number;
   tableGroupHeight: number;
   constructor(gantt: Gantt) {
@@ -34,15 +31,15 @@ export class Scenegraph {
     let width;
     let height;
     if (Env.mode === 'node') {
-      // vglobal.setEnv('node', gantt.options.modeParams);
+      // VRender.vglobal.setEnv('node', gantt.options.modeParams);
       // width = table.canvasWidth;
       // height = table.canvasHeight;
     } else {
-      vglobal.setEnv('browser');
+      VRender.vglobal.setEnv('browser');
       width = gantt.canvas.width;
       height = gantt.canvas.height;
     }
-    this.stage = createStage({
+    this.stage = VRender.createStage({
       canvas: gantt.canvas,
       width,
       height,
@@ -72,7 +69,7 @@ export class Scenegraph {
   initSceneGraph() {
     const scene = this;
 
-    scene.tableGroup = new Group({
+    scene.tableGroup = new VRender.Group({
       x: 0,
       y: scene._gantt.tableY,
       width: this.tableGroupWidth,
@@ -220,7 +217,7 @@ export class Scenegraph {
 }
 
 export function createContainerGroup(width: number, height: number, clip?: boolean) {
-  return new Group({
+  return new VRender.Group({
     x: 0,
     y: 0,
     width,

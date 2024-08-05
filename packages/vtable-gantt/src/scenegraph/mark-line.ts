@@ -1,22 +1,22 @@
 import type { IMarkLine } from '../ts-types';
 import type { Scenegraph } from './scenegraph';
-import { Group, createLine } from '@visactor/vrender-core';
+import { VRender } from '@visactor/vtable';
 export class MarkLine {
   _scene: Scenegraph;
-  group: Group;
+  group: VRender.Group;
   markLine: IMarkLine[];
-  markLIneContainer: Group;
+  markLIneContainer: VRender.Group;
   markLineContainerWidth: number = 20;
   height: number;
   constructor(scene: Scenegraph) {
     this._scene = scene;
-    this.markLine = scene._gantt.markLine;
+    this.markLine = scene._gantt.parsedOptions.markLine;
     this.height =
       Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight) -
-      scene._gantt.headerRowHeight * scene._gantt.headerLevel;
-    this.group = new Group({
+      scene._gantt.parsedOptions.headerRowHeight * scene._gantt.headerLevel;
+    this.group = new VRender.Group({
       x: 0,
-      y: scene._gantt.headerRowHeight * scene._gantt.headerLevel,
+      y: scene._gantt.parsedOptions.headerRowHeight * scene._gantt.headerLevel,
       width: scene._gantt.tableNoFrameWidth,
       height: this.height,
       pickable: false,
@@ -25,7 +25,7 @@ export class MarkLine {
     this.group.name = 'mark-line-container';
     scene.tableGroup.addChild(this.group);
 
-    this.markLIneContainer = new Group({
+    this.markLIneContainer = new VRender.Group({
       x: 0,
       y: 0,
       width: this._scene._gantt.getAllColsWidth(),
@@ -40,11 +40,11 @@ export class MarkLine {
     this.markLine.forEach(line => {
       const style = line.style;
       const date = new Date(line.date);
-      const minDate = new Date(this._scene._gantt.minDate);
+      const minDate = new Date(this._scene._gantt.parsedOptions.minDate);
       const dateX =
-        this._scene._gantt.colWidthPerDay *
+        this._scene._gantt.parsedOptions.colWidthPerDay *
         Math.ceil(Math.abs(date.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
-      const markLineGroup = new Group({
+      const markLineGroup = new VRender.Group({
         pickable: false,
         x: dateX - this.markLineContainerWidth / 2,
         y: 0,
@@ -54,7 +54,7 @@ export class MarkLine {
       markLineGroup.name = 'mark-line';
       this.markLIneContainer.appendChild(markLineGroup);
       // 创建整个任务条rect
-      const lineObj = createLine({
+      const lineObj = VRender.createLine({
         pickable: false,
         stroke: style.lineColor,
         lineWidth: style.lineWidth,
@@ -72,7 +72,7 @@ export class MarkLine {
   refresh() {
     this.height =
       Math.min(this._scene._gantt.tableNoFrameHeight, this._scene._gantt.drawHeight) -
-      this._scene._gantt.headerRowHeight * this._scene._gantt.headerLevel;
+      this._scene._gantt.parsedOptions.headerRowHeight * this._scene._gantt.headerLevel;
     this.markLIneContainer.removeAllChild();
     this.group.setAttribute('height', this.height);
     this.markLIneContainer.setAttribute('height', this.height);

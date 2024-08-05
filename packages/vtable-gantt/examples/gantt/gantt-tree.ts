@@ -748,6 +748,13 @@ export function createTable() {
       style: {
         borderColor: '#e1e4e8'
       }
+    },
+    scrollStyle: {
+      scrollRailColor: 'RGBA(246,246,246,0.5)',
+      visible: 'none',
+      width: 6,
+      scrollSliderCornerRadius: 2,
+      scrollSliderColor: '#5cb85c'
     }
   };
   // columns:[

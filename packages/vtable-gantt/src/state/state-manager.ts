@@ -1,7 +1,7 @@
 import { isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import { InteractionState, GANTT_EVENT_TYPE } from '../ts-types';
-import type { Group, FederatedPointerEvent } from '@visactor/vrender-core';
+import type { VRender } from '@visactor/vtable';
 import {
   syncEditCellFromTable,
   syncResizeStateFromTable,
@@ -11,6 +11,7 @@ import {
   syncTreeChangeFromTable
 } from './gantt-table-sync';
 import { getTaskIndexByY } from '../gantt-helper';
+import { debounce } from '../tools/debounce';
 export class StateManager {
   _gantt: Gantt;
 
@@ -35,21 +36,21 @@ export class StateManager {
     startY: number;
     targetStartX: number;
     moving: boolean;
-    target: Group;
+    target: VRender.Group;
   };
 
   hoverTaskBar: {
     /** x坐标是相对table内坐标 */
     startX: number;
     targetStartX: number;
-    target: Group;
+    target: VRender.Group;
   };
   resizeTaskBar: {
     /** x坐标是相对table内坐标 */
     startX: number;
     startY: number;
     targetStartX: number;
-    target: Group;
+    target: VRender.Group;
     resizing: boolean;
     onIconName: string;
   };
@@ -58,6 +59,11 @@ export class StateManager {
     lastX: number;
     resizing: boolean;
   };
+
+  // 供滚动重置为default使用
+  resetInteractionState = debounce(() => {
+    this.updateInteractionState(InteractionState.default);
+  }, 100);
   constructor(gantt: Gantt) {
     this._gantt = gantt;
     this.scroll = {
@@ -86,12 +92,8 @@ export class StateManager {
       onIconName: ''
     };
     this.resizeTableWidth = {
-      targetStartX: null,
       lastX: null,
-      lastY: null,
-      target: null,
-      resizing: false,
-      onIconName: ''
+      resizing: false
     };
 
     this.updateVerticalScrollBar = this.updateVerticalScrollBar.bind(this);
@@ -245,7 +247,7 @@ export class StateManager {
     // }
   }
 
-  startMoveTaskBar(target: Group, x: number, y: number) {
+  startMoveTaskBar(target: VRender.Group, x: number, y: number) {
     if (target.name === 'task-bar-hover-shadow') {
       target = target.parent;
     }
@@ -261,8 +263,8 @@ export class StateManager {
   }
   endMoveTaskBar(x: number) {
     const deltaX = x - this.moveTaskBar.startX;
-    const days = Math.round(deltaX / this._gantt.colWidthPerDay);
-    const correctX = days * this._gantt.colWidthPerDay;
+    const days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
+    const correctX = days * this._gantt.parsedOptions.colWidthPerDay;
     const targetEndX = this.moveTaskBar.targetStartX + correctX;
     this._gantt.stateManager.moveTaskBar.target.setAttribute('x', targetEndX);
     const taskIndex = getTaskIndexByY(this.moveTaskBar.startY, this._gantt);
@@ -271,9 +273,9 @@ export class StateManager {
     this.moveTaskBar.target = null;
     this._gantt.scenegraph.updateNextFrame();
   }
-  dealTaskBarMove(e: FederatedPointerEvent) {
+  dealTaskBarMove(e: VRender.FederatedPointerEvent) {
     const target = this.moveTaskBar.target;
-    const x1 = this._gantt.eventManager.lastDragPointerXYOnTableGroup.x;
+    const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
     const x2 = e.x;
     const dx = x2 - x1;
     target.setAttribute('x', target.attribute.x + dx);
@@ -282,7 +284,7 @@ export class StateManager {
     //
   }
   //#region 调整拖拽任务条的大小
-  startResizeTaskBar(target: Group, x: number, y: number, onIconName: string) {
+  startResizeTaskBar(target: VRender.Group, x: number, y: number, onIconName: string) {
     // if (target.name === 'task-bar-hover-shadow') {
     // target = target.parent.parent;
     // }
@@ -299,7 +301,7 @@ export class StateManager {
   endResizeTaskBar(x: number) {
     const direction = this._gantt.stateManager.resizeTaskBar.onIconName;
     const deltaX = x - this.resizeTaskBar.startX;
-    let diff_days = Math.round(deltaX / this._gantt.colWidthPerDay);
+    let diff_days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
     diff_days = direction === 'left' ? -diff_days : diff_days;
 
     const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
@@ -310,10 +312,10 @@ export class StateManager {
     if (diff_days < 0 && taskDays + diff_days <= 0) {
       diff_days = 1 - taskDays;
     }
-    const correctX = (direction === 'left' ? -diff_days : diff_days) * this._gantt.colWidthPerDay;
+    const correctX = (direction === 'left' ? -diff_days : diff_days) * this._gantt.parsedOptions.colWidthPerDay;
     const targetEndX = this.resizeTaskBar.targetStartX + correctX;
 
-    const taskBarSize = this._gantt.colWidthPerDay * (taskDays + diff_days);
+    const taskBarSize = this._gantt.parsedOptions.colWidthPerDay * (taskDays + diff_days);
     if (direction === 'left') {
       taskBarGroup.setAttribute('x', targetEndX);
       taskBarGroup.setAttribute('width', taskBarSize);
@@ -337,8 +339,8 @@ export class StateManager {
     this.resizeTaskBar.target = null;
     this._gantt.scenegraph.updateNextFrame();
   }
-  dealTaskBartResize(e: FederatedPointerEvent) {
-    const x1 = this._gantt.eventManager.lastDragPointerXYOnTableGroup.x;
+  dealTaskBartResize(e: VRender.FederatedPointerEvent) {
+    const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
     const x2 = e.x;
     const dx = x2 - x1;
     // debugger;
@@ -347,15 +349,15 @@ export class StateManager {
     const progressRect = taskBarGroup.progressRect;
     const textLabel = taskBarGroup.textLabel;
 
-    const progressField = this._gantt.progressField;
+    const progressField = this._gantt.parsedOptions.progressField;
     const taskIndex = getTaskIndexByY(this.resizeTaskBar.startY, this._gantt);
     const taskRecord = this._gantt.getRecordByIndex(taskIndex);
     const progress = taskRecord[progressField];
 
     let diffWidth = this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx;
     let taskBarSize = taskBarGroup.attribute.width + diffWidth;
-    if (diffWidth < 0 && taskBarSize <= this._gantt.colWidthPerDay) {
-      diffWidth = this._gantt.colWidthPerDay - taskBarGroup.atrribute.width;
+    if (diffWidth < 0 && taskBarSize <= this._gantt.parsedOptions.colWidthPerDay) {
+      diffWidth = this._gantt.parsedOptions.colWidthPerDay - taskBarGroup.atrribute.width;
       taskBarSize += diffWidth;
     }
 
@@ -368,9 +370,9 @@ export class StateManager {
     progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
     textLabel?.setAttribute(
       'x',
-      this._gantt.taskBarLabelStyle.textAlign === 'center'
+      this._gantt.parsedOptions.taskBarLabelStyle.textAlign === 'center'
         ? taskBarSize / 2
-        : this._gantt.taskBarLabelStyle.textAlign === 'left'
+        : this._gantt.parsedOptions.taskBarLabelStyle.textAlign === 'left'
         ? 10
         : taskBarSize - 10
     );
@@ -429,14 +431,14 @@ export class StateManager {
   }
   //#endregion
 
-  showTaskBarHover(e: FederatedPointerEvent) {
+  showTaskBarHover(e: VRender.FederatedPointerEvent) {
     // const taskBarTarget =
     //   e.target?.name === 'task-bar-hover-shadow-left-icon' || e.target?.name === 'task-bar-hover-shadow-right-icon'
     //     ? e.target.parent //转成父级元素task-bar-hover-shadow  后面逻辑需要宽高值
     //     : e.target;
     const taskBarTarget = e.detailPath.find((pathNode: any) => {
       return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
-    });
+    }) as any;
     if (this._gantt.stateManager.hoverTaskBar.target !== taskBarTarget) {
       this._gantt.stateManager.hoverTaskBar.target = taskBarTarget;
       const target = this._gantt.stateManager.hoverTaskBar.target;
@@ -456,8 +458,8 @@ export class StateManager {
   }
 }
 
-function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number) {
-  const taskBarCustomRender = gantt.taskBarCustomRender;
+function reCreateCustomNode(gantt: Gantt, taskBarGroup: VRender.Group, taskIndex: number) {
+  const taskBarCustomRender = gantt.parsedOptions.taskBarCustomRender;
   if (taskBarCustomRender) {
     let customRenderObj;
     if (typeof taskBarCustomRender === 'function') {
@@ -483,7 +485,7 @@ function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number
       const oldCustomIndex = taskBarGroup.children.findIndex((node: any) => {
         return node.name === 'task-bar-custom-render';
       });
-      const oldCustomNode = taskBarGroup.children[oldCustomIndex];
+      const oldCustomNode = taskBarGroup.children[oldCustomIndex] as VRender.Group;
       taskBarGroup.removeChild(oldCustomNode);
       taskBarGroup.insertInto(rootContainer, oldCustomIndex);
     }
