@@ -6,6 +6,7 @@ import listEditor from './list-table/list-table-editor';
 
 import pivotTable from './pivot-table/pivot-table';
 import pivotComponent from './pivot-table/pivot-comonent';
+import pivotComponentEmptyTip from './pivot-table/pivot-component-empty-tip';
 
 import pivotChart from './pivot-chart/pivot-chart';
 import pivotChartComponent from './pivot-chart/pivot-chart-component';
@@ -28,6 +29,7 @@ export default listTable;
 
 // export default pivotTable;
 // export default pivotComponent;
+export default pivotComponentEmptyTip;
 
 // export default pivotChart;
 // export default pivotChartComponent;

@@ -254,7 +254,7 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 |checkbox|checked, disabled, text, icon...|
 
 图元可以配置`boundsPadding`属性，实现 margin 效果
-`boundsPadding: [marginLeft, marginRight, marginTop, marginBottom]`
+`boundsPadding: [marginTop, marginRight, marginBottom, marginLeft]`
 图元的 margin 会计算在图元所占的空间
 
 ### 图元状态更新及交互事件

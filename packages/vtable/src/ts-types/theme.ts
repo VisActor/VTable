@@ -11,6 +11,7 @@ export type ThemeStyle = ITextStyleOption & {
   select?: {
     inlineRowBgColor?: ColorPropertyDefine; //交互所在整行的背景颜色
     inlineColumnBgColor?: ColorPropertyDefine; //交互所在整列的背景颜色
+    cellBgColor?: ColorPropertyDefine; //交互所在单元格的背景颜色
   };
   frameStyle?: FrameStyle;
 };
@@ -143,6 +144,7 @@ export interface ITableThemeDefine {
     cellBgColor?: string; //选择框背景颜色
     inlineRowBgColor?: string; //交互所在整行的背景颜色
     inlineColumnBgColor?: string; //交互所在整列的背景颜色
+    selectionFillMode?: 'overlay' | 'replace'; //选择框填充模式，overlay表示选择框背景色覆盖在表格上（需要配饰透明度），replace表示背景色替换原有单元格的背景色
   };
 
   // style for axis

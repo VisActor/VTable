@@ -206,8 +206,8 @@ export function updateCellHeight(
           }
           const mergedCell = scene.getCell(col, mergeRow);
           const customContainer =
-            (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
-            (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
+            (mergedCell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
+            (mergedCell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
           customContainer.removeAllChild();
           mergedCell.removeChild(customContainer);
           getCustomCellMergeCustom(col, mergeRow, mergedCell, scene.table);

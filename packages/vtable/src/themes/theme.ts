@@ -684,6 +684,9 @@ export class TableTheme implements ITableThemeDefine {
         },
         get inlineRowBgColor(): string | undefined {
           return selectionStyle?.inlineRowBgColor;
+        },
+        get selectionFillMode(): 'overlay' | 'replace' {
+          return selectionStyle?.selectionFillMode ?? 'overlay';
         }
       };
     }
@@ -836,6 +839,12 @@ export class TableTheme implements ITableThemeDefine {
                 : undefined) ??
               undefined
             );
+          },
+          get cellBgColor(): ColorPropertyDefine | undefined {
+            if (that.selectionStyle.selectionFillMode === 'replace') {
+              return style.select?.cellBgColor ?? that.selectionStyle.cellBgColor ?? undefined;
+            }
+            return undefined;
           }
         };
         // }

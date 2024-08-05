@@ -99,6 +99,7 @@ import type { IAnimationAppear } from './animation/appear';
 import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
+import type { EditManeger } from '../edit/edit-manager';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -573,6 +574,8 @@ export interface BaseTableAPI {
   stateManager: StateManager;
   /** 事件管理模块 */
   eventManager: EventManager;
+
+  editorManager: EditManeger;
   /** 行表头的层数 */
   rowHeaderLevelCount: number;
   /** 列表头的层数 */
@@ -834,7 +837,7 @@ export interface BaseTableAPI {
   isAutoRowHeight: (row: number) => boolean;
 
   reactCustomLayout?: ReactCustomLayout;
-  checkReactCustomLayout: () => void;
+  checkReactCustomLayout: (removeAllContainer: () => void) => void;
   setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
 
   exportImg: () => string;

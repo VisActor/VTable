@@ -37,16 +37,17 @@ This configuration is the simplest configuration for multidimensional tables. As
 
 ## Data analysis related configuration:
 
-| Configuration item           | Type                           | Description                                                                         |
-| :--------------------------- | :----------------------------- | :---------------------------------------------------------------------------------- |
-| rows                         | (IRowDimension \| string)[]    | Row dimension field array, used to parse out the corresponding dimension members    |
-| columns                      | (IColumnDimension \| string)[] | Column dimension field array, used to parse out the corresponding dimension members |
-| indicators                   | (IIndicator \| string)[]       | Specific display indicators                                                         |
-| dataConfig.aggregationRules  | aggregationRule[]              | Aggregation value calculation rules according to row and column dimensions          |
-| dataConfig.derivedFieldRules | DerivedFieldRule[]             | Derived fields                                                                      |
-| dataConfig.sortRules         | sortRule[]                     | Sort rules                                                                          |
-| dataConfig.filterRules       | filterRule[]                   | Filter Rules                                                                        |
-| dataConfig.totals            | totalRule[]                    | Subtotal or total                                                                   |
+| Configuration item              | Type                           | Description                                                                         |
+| :------------------------------ | :----------------------------- | :---------------------------------------------------------------------------------- |
+| rows                            | (IRowDimension \| string)[]    | Row dimension field array, used to parse out the corresponding dimension members    |
+| columns                         | (IColumnDimension \| string)[] | Column dimension field array, used to parse out the corresponding dimension members |
+| indicators                      | (IIndicator \| string)[]       | Specific display indicators                                                         |
+| dataConfig.aggregationRules     | aggregationRule[]              | Aggregation value calculation rules according to row and column dimensions          |
+| dataConfig.derivedFieldRules    | DerivedFieldRule[]             | Derived fields                                                                      |
+| dataConfig.sortRules            | sortRule[]                     | Sort rules                                                                          |
+| dataConfig.filterRules          | filterRule[]                   | Filter Rules                                                                        |
+| dataConfig.totals               | totalRule[]                    | Subtotal or total                                                                   |
+| dataConfig.calculatedFieldRules | CalculateddFieldRule[]         | calculated fields                                                                   |
 
 dataConfig configuration definition:
 
@@ -55,7 +56,7 @@ dataConfig configuration definition:
  * Data processing configuration
  */
 export interface IDataConfig {
-  aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；
+  aggregationRules?: AggregationRules; //Calculate the aggregated values according to row and column dimensions; by default, all indicator values will be calculated by summing them up.
   sortRules?: SortRules; //排序规则；
   filterRules?: FilterRules; //过滤规则；
   totals?: Totals; //小计或总计；
@@ -120,6 +121,7 @@ For definitions, please refer to:
 The following is an example of the indicator value sorting configuration:
 
 ```
+dataConfig: {
     sortRules: [
         {
           sortField: 'city',
@@ -128,7 +130,7 @@ The following is an example of the indicator value sorting configuration:
           query: ['office supplies', 'pen']
         } as VTable.TYPES.SortByIndicatorRule
       ]
-
+}
 ```
 
 If you need to modify the sorting rules of the pivot table, you can use the interface `updateSortRules`.
@@ -142,24 +144,29 @@ Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-
 Configuration example:
 
 ```
-filterRules: [
+dataConfig: {
+  filterRules: [
         {
           filterFunc: (record: Record<string, any>) => {
             return record.province !== 'Sichuan Province' || record.category !== 'Furniture';
           }
         }
       ]
+}
 ```
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-filter
 
 ### 4. Aggregation method
 
+By default, all indicator values are calculated as SUM. If you do not want this default calculation method, you can modify it by configuring aggregationRules. Usually, if the indicator is a string type, you need to configure NONE to display the original value of the data source field.
+
 [option description](../../option/PivotTable#dataConfig.aggregationRules)
 
 Configuration example:
 
 ```
+dataConfig: {
     aggregationRules: [
         //The basis for doing aggregate calculations, such as sales. If there is no configuration, the cell content will be displayed by default based on the aggregate sum calculation result.
         {
@@ -195,6 +202,7 @@ Configuration example:
           aggregationType: VTable.TYPES.AggregationType.RECORD, //don't aggregate. Match all the corresponding data as the value of the cell
         }
       ]
+}
 ```
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
@@ -233,6 +241,7 @@ The sales indicator in this record is a non-numeric value, and it is required to
 Configuration example:
 
 ```
+dataConfig: {
     derivedFieldRules: [
       {
         fieldName: 'Year',
@@ -243,6 +252,7 @@ Configuration example:
         derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%n', true),
       }
     ]
+}
 ```
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-derivedField
