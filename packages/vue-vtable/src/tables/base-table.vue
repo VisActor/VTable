@@ -10,12 +10,14 @@ import { TABLE_EVENTS, TABLE_EVENTS_KEYS } from '../eventsUtils';
 import type * as VTable from '@visactor/vtable';
 import type { EventsProps } from '../eventsUtils';
 
+// 定义表格实例和选项的类型
 export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 export type IOption = 
   | VTable.ListTableConstructorOptions
   | VTable.PivotTableConstructorOptions
   | VTable.PivotChartConstructorOptions;
 
+// 定义组件的属性接口
 export interface BaseTableProps extends EventsProps {
   type?: string;
   options?: IOption;
@@ -26,19 +28,25 @@ export interface BaseTableProps extends EventsProps {
   onError?: (err: Error) => void;
 }
 
+// 设置默认属性
 const props = withDefaults(defineProps<BaseTableProps>(), {
   width: '100%',
   height: '100%',
 });
-const emit = defineEmits(TABLE_EVENTS_KEYS);
 
+// 创建用于引用 DOM 元素和表格实例的 ref
 const vTableContainer = ref<HTMLElement | null>(null);
 const vTableInstance = shallowRef<IVTable | null>(null);
-defineExpose({ vTableInstance });//需要优化，暴露的方式不够“优雅”
 
+// 公开 vTableInstance，以便外部组件可以访问
+defineExpose({ vTableInstance });
+
+// 计算容器的宽度和高度
 const containerWidth = computed(() => (typeof props.width === 'number' ? `${props.width}px` : props.width));
 const containerHeight = computed(() => (typeof props.height === 'number' ? `${props.height}px` : props.height));
 
+// 绑定事件到表格实例
+const emit = defineEmits(TABLE_EVENTS_KEYS);
 const bindEvents = (instance: IVTable) => {
   TABLE_EVENTS_KEYS.forEach(eventKey => {
     const vueEventHandler = (event: any) => {
@@ -48,26 +56,42 @@ const bindEvents = (instance: IVTable) => {
   });
 };
 
+// 创建表格实例
 const createVTable = () => {
   if (!vTableContainer.value) return;
 
   if (vTableInstance.value) {
     vTableInstance.value.release();
   }
-  
+
+  const getRecords = () => {
+    return props.records !== undefined && props.records !== null && props.records.length > 0 ? props.records : props.options.records;
+  };
+
+  const createTableInstance = (Type: any, options: any) => {
+    vTableInstance.value = new Type(vTableContainer.value, options);
+  };
+
   try {
     switch (props.type) {
       case 'list':
-        vTableInstance.value = new ListTable(vTableContainer.value, props.options as VTable.ListTableConstructorOptions);
+        createTableInstance(ListTable, {
+          ...props.options,
+          records: getRecords()
+        } as VTable.ListTableConstructorOptions);
         break;
       case 'pivot':
-        vTableInstance.value = new PivotTable(vTableContainer.value, props.options as VTable.PivotTableConstructorOptions);
+        createTableInstance(PivotTable, {
+          ...props.options,
+          records: getRecords()
+        } as VTable.PivotTableConstructorOptions);
         break;
       case 'chart':
-        vTableInstance.value = new PivotChart(vTableContainer.value, props.options as VTable.PivotChartConstructorOptions);
+        createTableInstance(PivotChart, {
+          ...props.options,
+          records: getRecords()
+        } as VTable.PivotChartConstructorOptions);
         break;
-      default:
-        throw new Error(`Unknown table type: ${props.type}`);
     }
     bindEvents(vTableInstance.value);
     props.onReady?.(vTableInstance.value, true);
@@ -76,6 +100,7 @@ const createVTable = () => {
   }
 };
 
+// 更新表格实例
 const updateVTable = (newOptions: IOption) => {
   if (!vTableInstance.value) return;
 
@@ -102,14 +127,15 @@ const updateVTable = (newOptions: IOption) => {
   }
 };
 
+// 组件挂载时创建表格
 onMounted(createVTable);
 onBeforeUnmount(() => vTableInstance.value?.release());
 
-// 粒度更细的监听 TODO: 优化
+// 监听 options 属性的变化
 watch(
   () => props.options,
   (newOptions, oldOptions) => {
-    if (!isEqual(newOptions, oldOptions)) {
+    if (isEqual(newOptions, oldOptions)) {
       if (vTableInstance.value) {
         updateVTable(newOptions);
       } else {
@@ -119,25 +145,17 @@ watch(
   },
 );
 
+// 监听 records 属性的变化并更新表格
 watch(
   () => props.records,
-  (newRecords, oldRecords) => {
-    if (!isEqual(newRecords, oldRecords)) {
+  (newRecords) => {
       if (vTableInstance.value && vTableInstance.value.updateOption) {
         updateVTable({ ...props.options, records: newRecords });
       } else {
         createVTable();
       }
-    }
-  },
+    },
+  { deep: true }
 );
 
-watch(
-  () => props.type,
-  (newType, oldType) => {
-    if (newType !== oldType) {
-      createVTable();
-    }
-  }
-);
 </script>
