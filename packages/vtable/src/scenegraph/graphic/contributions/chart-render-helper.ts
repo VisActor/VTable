@@ -1,5 +1,6 @@
-import type { IStage } from '@src/vrender';
+import { container, VWindow, type IStage, type IWindow } from '@src/vrender';
 import type { Chart } from '../chart';
+import type { IAABBBounds } from '@visactor/vutils';
 import { Bounds, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 export const cancelRenderChartQueue = false;
@@ -194,7 +195,7 @@ const cacheCanvasSizeLimit = 2000;
 function cacheStageCanvas(stage: IStage, chart: Chart) {
   const { viewWidth, viewHeight } = stage;
   if (viewWidth < cacheCanvasSizeLimit && viewHeight < cacheCanvasSizeLimit) {
-    chart.cacheCanvas = stage.toCanvas();
+    chart.cacheCanvas = toCanvas(stage);
     if (!chart.isShareChartSpec) {
       // 不能整列共享chart的情况 生成完图片后即将chartInstance清除
       chart.chartInstance?.release();
@@ -219,7 +220,7 @@ function cacheStageCanvas(stage: IStage, chart: Chart) {
       const bounds = new Bounds();
       bounds.setValue(startX, startY, endX, endY);
 
-      const canvas = stage.toCanvas(false, bounds);
+      const canvas = toCanvas(stage, false, bounds);
       cacheCanvas.push({
         canvas,
         x: startX,
@@ -231,4 +232,54 @@ function cacheStageCanvas(stage: IStage, chart: Chart) {
   }
 
   chart.cacheCanvas = cacheCanvas;
+}
+
+function toCanvas(stage: IStage, fullImage: boolean = true, viewBox?: IAABBBounds): HTMLCanvasElement | null {
+  if ((stage as any).releaseStatus === 'released') {
+    return null;
+  }
+  const matrix = stage.window.getViewBoxTransform();
+  const window = renderToNewWindow(stage, fullImage, viewBox);
+  window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, 0, 0);
+  (stage as any).renderTo(window);
+  const c = window.getNativeHandler();
+  if (c.nativeCanvas) {
+    return c.nativeCanvas;
+  }
+  return null;
+}
+
+function renderToNewWindow(stage: IStage, fullImage: boolean = true, viewBox?: IAABBBounds): IWindow {
+  const matrix = stage.window.getViewBoxTransform();
+  const window = container.get<IWindow>(VWindow);
+  const x1 = viewBox ? -viewBox.x1 : 0;
+  const y1 = viewBox ? -viewBox.y1 : 0;
+  const x2 = viewBox ? viewBox.x2 : stage.viewWidth;
+  const y2 = viewBox ? viewBox.y2 : stage.viewHeight;
+  const width = viewBox ? viewBox.width() : stage.viewWidth;
+  const height = viewBox ? viewBox.height() : stage.viewHeight;
+  if (fullImage) {
+    window.create({
+      viewBox: { x1, y1, x2, y2 },
+      width: width * matrix.a,
+      height: height * matrix.d,
+      dpr: stage.window.dpr,
+      canvasControled: true,
+      offscreen: true,
+      title: ''
+    });
+  } else {
+    window.create({
+      viewBox: { x1, y1, x2, y2 },
+      width: width * matrix.a,
+      height: height * matrix.d,
+      dpr: stage.window.dpr,
+      canvasControled: true,
+      offscreen: true,
+      title: ''
+    });
+  }
+
+  (stage as any).renderTo(window);
+  return window;
 }
