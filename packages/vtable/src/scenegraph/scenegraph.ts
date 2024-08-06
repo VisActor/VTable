@@ -42,7 +42,11 @@ import { handleTextStick } from './stick-text';
 import { computeRowHeight, computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
 import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
-import { updateChartSize, updateChartState } from './refresh-node/update-chart';
+import {
+  updateChartSizeForResizeColWidth,
+  updateChartSizeForResizeRowHeight,
+  updateChartState
+} from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
 import type { CheckBox } from '@visactor/vrender-components';
@@ -331,6 +335,8 @@ export class Scenegraph {
       delete (this.tableGroup as any).border;
     }
     this.proxy?.release();
+
+    this.table.reactCustomLayout?.clearCache();
   }
 
   updateStageBackground() {
@@ -360,6 +366,7 @@ export class Scenegraph {
   createSceneGraph(skipRowHeightClear = false) {
     if (!skipRowHeightClear) {
       this.table.rowHeightsMap.clear();
+      this.table.internalProps.layoutMap.clearCellRangeMap();
     }
 
     // if (this.table.heightMode === 'autoHeight') {
@@ -742,8 +749,17 @@ export class Scenegraph {
    * @param {number} col
    * @return {*}
    */
-  updateChartSize(col: number) {
-    updateChartSize(this, col);
+  updateChartSizeForResizeColWidth(col: number) {
+    updateChartSizeForResizeColWidth(this, col);
+  }
+
+  /**
+   * @description: 行高调整需要修改Chart的尺寸
+   * @param {number} col
+   * @return {*}
+   */
+  updateChartSizeForResizeRowHeight(col: number) {
+    updateChartSizeForResizeRowHeight(this, col);
   }
   /** 更新图表的高亮状态 */
   updateChartState(datum: any) {
@@ -900,7 +916,7 @@ export class Scenegraph {
       this.table.autoFillWidth ||
       this.table.autoFillHeight
     ) {
-      this.updateChartSize(this.table.rowHeaderLevelCount);
+      this.updateChartSizeForResizeColWidth(this.table.rowHeaderLevelCount);
     }
 
     this.proxy.progress();

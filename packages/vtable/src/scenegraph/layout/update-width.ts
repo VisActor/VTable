@@ -366,7 +366,7 @@ function updateCellWidth(
           const mergedCell = scene.getCell(mergeCol, row);
           const customContainer =
             (mergedCell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
-            (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
+            (mergedCell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
           customContainer.removeAllChild();
           mergedCell.removeChild(customContainer);
           getCustomCellMergeCustom(mergeCol, row, mergedCell, scene.table);

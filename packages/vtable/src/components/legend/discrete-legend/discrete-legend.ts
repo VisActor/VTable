@@ -41,6 +41,17 @@ export class DiscreteTableLegend {
     );
     legend.name = 'legend';
     this.legendComponent = legend;
+    if (this.visible === false) {
+      legend.setAttributes({
+        maxWidth: 0,
+        width: 0,
+        maxHeight: 0,
+        height: 0,
+        clip: true
+        // visible: false
+      });
+      legend.hideAll();
+    }
     this.table.scenegraph.stage.defaultLayer.appendChild(legend);
 
     this.adjustTableSize(attrs);

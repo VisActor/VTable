@@ -79,7 +79,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   declare options: ListTableConstructorOptions;
   showHeader = true;
-  editorManager: EditManeger;
   // eslint-disable-next-line default-param-last
   constructor(options: ListTableConstructorOptions);
   constructor(container: HTMLElement, options: ListTableConstructorOptions);
@@ -850,7 +849,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
       }
       if (this.widthMode === 'adaptive' || notFillWidth || this.heightMode === 'adaptive' || notFillHeight) {
-        this.scenegraph.updateChartSize(0); // 如果收起展开有性能问题 可以排查下这个防范
+        this.scenegraph.updateChartSizeForResizeColWidth(0); // 如果收起展开有性能问题 可以排查下这个防范
       }
     }
   }

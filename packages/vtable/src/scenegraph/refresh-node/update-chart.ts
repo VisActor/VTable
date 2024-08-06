@@ -11,7 +11,7 @@ import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 
 /** 供调整列宽后更新chart使用 */
-export function updateChartSize(scenegraph: Scenegraph, col: number) {
+export function updateChartSizeForResizeColWidth(scenegraph: Scenegraph, col: number) {
   // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
   for (let c = col; c <= scenegraph.proxy.colEnd; c++) {
     const columnGroup = scenegraph.getColGroup(c);
@@ -93,7 +93,51 @@ export function updateChartSize(scenegraph: Scenegraph, col: number) {
     }
   }
 }
+/** 供调整列宽后更新chart使用 */
+export function updateChartSizeForResizeRowHeight(scenegraph: Scenegraph, row: number) {
+  const updateCellNode = (c: number, r: number) => {
+    const cellNode = scenegraph.getCell(c, r);
+    const width = scenegraph.table.getColWidth(cellNode.col);
+    const height = scenegraph.table.getRowHeight(cellNode.row);
+    cellNode.children.forEach((node: Chart) => {
+      if ((node as any).type === 'chart') {
+        node.cacheCanvas = null;
+        console.log('bf', c, r, node.attribute.width, node.attribute.height);
 
+        node.setAttribute('width', Math.ceil(width - node.attribute.cellPadding[3] - node.attribute.cellPadding[1]));
+        node.setAttribute('height', Math.ceil(height - node.attribute.cellPadding[0] - node.attribute.cellPadding[2]));
+        console.log('af', c, r, node.attribute.width, node.attribute.height);
+      }
+    });
+  };
+  // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
+  for (let c = scenegraph.proxy.colStart; c <= scenegraph.proxy.colEnd; c++) {
+    for (let r = row; r <= scenegraph.proxy.rowEnd; r++) {
+      updateCellNode(c, r);
+    }
+  }
+
+  // 右侧冻结的单元格也需要调整
+  if (scenegraph.table.rightFrozenColCount >= 1) {
+    for (
+      let c = scenegraph.table.colCount - scenegraph.table.rightFrozenColCount;
+      c <= scenegraph.table.colCount - 1;
+      c++
+    ) {
+      for (let r = row; r <= scenegraph.proxy.rowEnd; r++) {
+        updateCellNode(c, r);
+      }
+    }
+  }
+  // 左侧冻结的单元格
+  if (scenegraph.table.frozenColCount >= 1) {
+    for (let c = 0; c <= scenegraph.table.frozenColCount - 1; c++) {
+      for (let r = row; r <= scenegraph.proxy.rowEnd; r++) {
+        updateCellNode(c, r);
+      }
+    }
+  }
+}
 /** 清理所有chart节点的 图表缓存图片 */
 export function clearChartCacheImage(scenegraph: Scenegraph) {
   // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
