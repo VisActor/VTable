@@ -6,6 +6,7 @@ import { throttle } from '../tools/util';
 import { InteractionState } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
+import type { GanttTaskBarNode } from '../scenegraph/ganttNode';
 
 export class EventManager {
   _gantt: Gantt;
@@ -39,16 +40,16 @@ function bindTableGroupListener(event: EventManager) {
     }
     const taskBarTarget = e.detailPath.find((pathNode: any) => {
       return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
-    }) as any;
+    }) as any as GanttTaskBarNode;
     if (taskBarTarget) {
       if (e.target.name === 'task-bar-hover-shadow-left-icon') {
-        stateManager.startResizeTaskBar(taskBarTarget, e.nativeEvent.x, e.nativeEvent.y, 'left');
+        stateManager.startResizeTaskBar(taskBarTarget, (e.nativeEvent as any).x, (e.nativeEvent as any).y, 'left');
         stateManager.updateInteractionState(InteractionState.grabing);
       } else if (e.target.name === 'task-bar-hover-shadow-right-icon') {
-        stateManager.startResizeTaskBar(taskBarTarget, e.nativeEvent.x, e.nativeEvent.y, 'right');
+        stateManager.startResizeTaskBar(taskBarTarget, (e.nativeEvent as any).x, (e.nativeEvent as any).y, 'right');
         stateManager.updateInteractionState(InteractionState.grabing);
       } else if (gantt.parsedOptions.taskBarMoveable) {
-        stateManager.startMoveTaskBar(taskBarTarget, e.nativeEvent.x, e.nativeEvent.y);
+        stateManager.startMoveTaskBar(taskBarTarget, (e.nativeEvent as any).x, (e.nativeEvent as any).y);
         stateManager.updateInteractionState(InteractionState.grabing);
       }
     }
@@ -112,7 +113,7 @@ function bindContainerDomListener(eventManager: EventManager) {
     handleWhell(e, stateManager, eventManager._gantt);
   });
 
-  handler.on(gantt.getContainer(), 'resize', e => {
+  handler.on(gantt.getContainer(), 'resize', (e: any) => {
     // if (table.canvasSizeSeted) {
     //   return;
     // }
@@ -133,10 +134,10 @@ function bindContainerDomListener(eventManager: EventManager) {
     stateManager.updateInteractionState(InteractionState.grabing);
     stateManager.startResizeTableWidth(e);
   });
-  VRender.vglobal.addEventListener('mousedown', (e: MouseEvent) => {
+  VRender.vglobal.addEventListener('mousedown', (e: VRender.FederatedPointerEvent) => {
     gantt.eventManager.lastDragPointerXYOnWindow = { x: e.x, y: e.y };
   });
-  VRender.vglobal.addEventListener('mousemove', (e: MouseEvent) => {
+  VRender.vglobal.addEventListener('mousemove', (e: VRender.FederatedPointerEvent) => {
     if (stateManager.interactionState === InteractionState.grabing) {
       const lastX = gantt.eventManager.lastDragPointerXYOnWindow?.x ?? e.x;
       const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
@@ -146,7 +147,7 @@ function bindContainerDomListener(eventManager: EventManager) {
         } else if (stateManager.isMoveingTaskBar()) {
           stateManager.dealTaskBarMove(e);
         } else if (stateManager.isResizingTaskBar()) {
-          stateManager.dealTaskBartResize(e);
+          stateManager.dealTaskBarResize(e);
         }
         gantt.eventManager.lastDragPointerXYOnWindow = { x: e.x, y: e.y };
       }

@@ -5,7 +5,7 @@ import fs, { ReadStream } from 'fs';
 import path from 'path';
 
 const BUG_SERVER_HOST = 'https://bug-server.zijieapi.com';
-const PRODUCT = 'VisActor/VTable';
+const PRODUCT = 'VisActor/VTable-Gantt';
 const CHECK_SCM_BUILD_INTERVAL_MS = 10 * 1000;
 const CHECK_SCM_BUILD_MAX_COUNT = 30;
 const CHECK_PHOTO_TEST_INTERVAL_MS = 10 * 1000;
@@ -125,7 +125,7 @@ const getFormData = (data: Record<string, string | ReadStream>) => {
 };
 
 async function uploadFile() {
-  const localFilePath = path.resolve(process.cwd(), 'dist/vtable.js');
+  const localFilePath = path.resolve(process.cwd(), 'dist/vtable-gantt.js');
   console.info(`[uploadFile] local path: ${localFilePath}`);
 
   let stream = fs.createReadStream(localFilePath);

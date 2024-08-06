@@ -4,6 +4,7 @@ import type { Scenegraph } from './scenegraph';
 import { parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
 import { getTextPos } from '../gantt-helper';
+import { GanttTaskBarNode } from './ganttNode';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -65,7 +66,7 @@ export class TaskBar {
     const taskBarSize = this._scene._gantt.parsedOptions.colWidthPerDay * taskDays;
     const taskbarHeight = this._scene._gantt.parsedOptions.taskBarStyle.width;
     const minDate = new Date(this._scene._gantt.parsedOptions.minDate);
-    const barGroup = new VRender.Group({
+    const barGroup = new GanttTaskBarNode({
       x:
         this._scene._gantt.parsedOptions.colWidthPerDay *
         Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)),
@@ -176,7 +177,7 @@ export class TaskBar {
     return barGroup;
   }
   updateTaskBarNode(index: number) {
-    const taskbarGroup = this.barContainer.getChildren()?.[index];
+    const taskbarGroup = this.barContainer.getChildren()?.[index] as GanttTaskBarNode;
     if (taskbarGroup) {
       this.barContainer.removeChild(taskbarGroup);
       const barGroup = this.initBar(index);

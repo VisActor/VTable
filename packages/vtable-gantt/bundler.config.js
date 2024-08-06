@@ -5,15 +5,13 @@ module.exports = {
   formats: ['cjs', 'es', 'umd'],
   noEmitOnError: false,
   copy: ['css'],
-  name: 'VTable',
-  umdOutputFilename: 'vtable',
+  name: 'VTable.gantt',
+  umdOutputFilename: 'vtable-gantt',
   rollupOptions: {
     treeshake: true
   },
   globals: {
-    // '@visactor/vtable-editors': 'VTable.editors'
   },
   external: [
-    // '@visactor/vtable-editors'
   ]
 };

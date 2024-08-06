@@ -31,7 +31,7 @@ import {
 import { EventTarget } from './event/EventTarget';
 import { formatDate, getWeekNumber, parseDateFormat, toBoxArray } from './tools/util';
 // import { generateGanttChartColumns } from './gantt-helper';
-export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
+export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
   element.setAttribute('tabindex', '0');
   element.classList.add(className);

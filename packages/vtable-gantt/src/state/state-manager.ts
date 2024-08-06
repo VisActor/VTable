@@ -12,6 +12,7 @@ import {
 } from './gantt-table-sync';
 import { getTaskIndexByY } from '../gantt-helper';
 import { debounce } from '../tools/debounce';
+import type { GanttTaskBarNode } from '../scenegraph/ganttNode';
 export class StateManager {
   _gantt: Gantt;
 
@@ -36,21 +37,21 @@ export class StateManager {
     startY: number;
     targetStartX: number;
     moving: boolean;
-    target: VRender.Group;
+    target: GanttTaskBarNode;
   };
 
   hoverTaskBar: {
     /** x坐标是相对table内坐标 */
     startX: number;
     targetStartX: number;
-    target: VRender.Group;
+    target: GanttTaskBarNode;
   };
   resizeTaskBar: {
     /** x坐标是相对table内坐标 */
     startX: number;
     startY: number;
     targetStartX: number;
-    target: VRender.Group;
+    target: GanttTaskBarNode;
     resizing: boolean;
     onIconName: string;
   };
@@ -247,7 +248,7 @@ export class StateManager {
     // }
   }
 
-  startMoveTaskBar(target: VRender.Group, x: number, y: number) {
+  startMoveTaskBar(target: GanttTaskBarNode, x: number, y: number) {
     if (target.name === 'task-bar-hover-shadow') {
       target = target.parent;
     }
@@ -339,7 +340,7 @@ export class StateManager {
     this.resizeTaskBar.target = null;
     this._gantt.scenegraph.updateNextFrame();
   }
-  dealTaskBartResize(e: VRender.FederatedPointerEvent) {
+  dealTaskBarResize(e: VRender.FederatedPointerEvent) {
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
     const x2 = e.x;
     const dx = x2 - x1;
@@ -357,7 +358,7 @@ export class StateManager {
     let diffWidth = this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx;
     let taskBarSize = taskBarGroup.attribute.width + diffWidth;
     if (diffWidth < 0 && taskBarSize <= this._gantt.parsedOptions.colWidthPerDay) {
-      diffWidth = this._gantt.parsedOptions.colWidthPerDay - taskBarGroup.atrribute.width;
+      diffWidth = this._gantt.parsedOptions.colWidthPerDay - taskBarGroup.attribute.width;
       taskBarSize += diffWidth;
     }
 
@@ -382,7 +383,7 @@ export class StateManager {
     const y = taskBarGroup.attribute.y;
     const width = taskBarGroup.attribute.width;
     const height = taskBarGroup.attribute.height;
-    this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, e.target);
+    this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, this.resizeTaskBar.target);
 
     reCreateCustomNode(this._gantt, taskBarGroup, taskIndex);
     this._gantt.scenegraph.updateNextFrame();

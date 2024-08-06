@@ -3,11 +3,13 @@
   "version": "1.4.2",
   "description": "canvas table width high performance",
   "keywords": [
+    "vtable-gantt",
     "grid",
     "table",
     "pivottable",
     "visualization",
     "VTable",
+    "gantt",
     "VisActor",
     "spreadsheet",
     "canvas",
