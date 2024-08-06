@@ -3,7 +3,7 @@ import * as VTableEditors from '@visactor/vtable-editors';
 import * as VTableGantt from '@visactor/vtable-gantt';
 
 // @ts-ignore
-window.VTable = VTable;
+window.VTable = { ...VTable, editors: VTableEditors };
 // @ts-ignore
 window.VTableEditors = VTableEditors;
 // @ts-ignore
