@@ -47,12 +47,6 @@ const columns = [
   }
 ];
 
-const updateRandomColumn = () => {
-  const index = Math.floor(Math.random() * columns.length);
-  columns[index].caption = columns[index].caption + '!';
-  console.log('updateRandomColumn', columns);
-};
-setInterval(updateRandomColumn, 1000);
 
 function getRandomName() {
   const names = ['张三', '李四', '王五', '赵六', '陈七', '吴八', '郑九', '王十'];
@@ -80,17 +74,28 @@ const generateRandomRecords = (num) => {
   return records;
 };
 
-const records = ref(generateRandomRecords(1000));
+const records = ref(generateRandomRecords(100));
 
-const updateRandomRecords = () => {
-  for (let i = 0; i < 1000; i++) {
+
+
+const updateRandomColumn = () => {
+  const index = Math.floor(Math.random() * columns.length);
+  columns[index].caption = columns[index].caption + '!';
+  console.log('updateRandomColumn', columns);
+};
+
+
+const updateRandomRecord = () => {
+  console.log('updateRandomRecord');
+  for (let i = 0; i < 100; i++) {
     const index = Math.floor(Math.random() * records.value.length);
     records.value[index] = [getRandomName(), getRandomAge(), getRandomGender(), getRandomSport()];
   }
 };
 
-// 每秒更新10条记录
-// setInterval(updateRandomRecords, 1000);
+//每秒更新10条记录
+setInterval(updateRandomColumn, 1000);
+// setInterval(updateRandomRecord, 1000);
 
 const tableOptions = ref({
   menu: {

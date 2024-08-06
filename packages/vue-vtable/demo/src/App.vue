@@ -19,7 +19,9 @@ import PivotTable from './table/gramatical/options/PivotTable.vue';
 </script>
 
 <template>
+  <!-- ------- -->
   <!-- unified -->
+  <!-- ------- -->
 
   <!-- <listtable /> -->
   <!-- <listTableEdit /> -->
@@ -29,8 +31,11 @@ import PivotTable from './table/gramatical/options/PivotTable.vue';
   <!-- <pivotTableTitleOnDimension /> -->
   
   <!-- <pivotChart /> -->
-  
+
+  <!-- ---------- -->
   <!-- gramatical -->
+  <!-- ---------- -->
+
   <ListTable/>
   <!-- <ListTableDes /> -->
   <!-- <ListTableTree /> -->
