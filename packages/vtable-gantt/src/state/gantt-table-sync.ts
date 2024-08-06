@@ -37,8 +37,11 @@ export function syncEditCellFromTable(gantt: Gantt) {
 
 export function syncDragOrderFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('change_header_position', (args: any) => {
-    // const { dragOrder, dragOrderIndex } = args;
     gantt.scenegraph.refreshTaskBars();
+    const left = gantt.stateManager.scroll.horizontalBarPos;
+    const top = gantt.stateManager.scroll.verticalBarPos;
+    gantt.scenegraph.setX(-left);
+    gantt.scenegraph.setY(-top);
   });
 }
 

@@ -756,7 +756,7 @@ export function createTable() {
       //   unit: 'year',
       //   step: 1,
       //   format(date: TYPES.DateFormatArgumentType) {
-      //     return `${date.dateIndex}`;
+      //     return `${date.index}`;
       //   }
       // },
 
@@ -764,7 +764,7 @@ export function createTable() {
       //   unit: 'month',
       //   step: 1,
       //   format(date: TYPES.DateFormatArgumentType) {
-      //     return date.dateIndex + '月';
+      //     return date.index + '月';
       //   }
       // },
       {
@@ -786,7 +786,7 @@ export function createTable() {
       //   unit: 'quarter',
       //   step: 1,
       //   format(date: TYPES.DateFormatArgumentType) {
-      //     return '第' + date.dateIndex + '季度';
+      //     return '第' + date.index + '季度';
       //   }
       // }
     ],

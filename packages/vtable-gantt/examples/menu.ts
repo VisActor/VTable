@@ -8,6 +8,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-minMaxDate'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-editor'
   },
   {
@@ -25,6 +29,10 @@ export const menus = [
   {
     path: 'gantt-jsx',
     name: 'gantt-customRender-jsx'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-1w-1k'
   }
   //   ]
   // }

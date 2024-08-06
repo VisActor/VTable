@@ -1,15 +1,18 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { register, VRender, CustomLayout, jsx } from '@visactor/vtable';
+import { register, VRender, CustomLayout } from '@visactor/vtable';
+import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
-const VGroup = VRender.VGroup;
-const VText = VRender.VText;
-const VImage = VRender.VImage;
+const date_input_editor = new DateInputEditor({});
+const input_editor = new InputEditor({});
+register.editor('input', input_editor);
+register.editor('date-input', date_input_editor);
+const barColors0 = ['#aecde6', '#c6a49a', '#ffb582', '#eec1de', '#b3d9b3', '#cccccc', '#e59a9c', '#d9d1a5', '#c9bede'];
 const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#7f7f7f', '#d62728', '#bcbd22', '#9467bd'];
 export function createTable() {
-  const records = [
+  const records0 = [
     {
       id: 1,
       title: 'Software Development',
@@ -526,54 +529,13 @@ export function createTable() {
           priority: 'P1'
         }
       ]
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 1,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 2,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 3,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
     }
   ];
 
+  const records = [];
+  for (let i = 0; i < 1000; i++) {
+    records.push(...records0);
+  }
   const columns: ColumnsDefine = [
     // {
     //   field: 'id',
@@ -625,7 +587,6 @@ export function createTable() {
       editor: 'input'
     }
   ];
-  debugger;
   const option: GanttConstructorOptions = {
     records,
     taskListTable: {
@@ -687,68 +648,84 @@ export function createTable() {
       customRender: (args: any) => {
         const colorLength = barColors.length;
         const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
-        const container = (
-          <VGroup
-            attribute={{
-              width,
-              height,
-              fill: barColors[index % colorLength],
-              display: 'flex',
-              flexWrap: 'nowrap',
-              alignContent: 'center'
-            }}
-          >
-            <VGroup
-              attribute={{
-                width: 60,
-                height,
-                display: 'flex',
-                justifyContent: 'space-around',
-                alignItems: 'center'
-              }}
-            >
-              <VImage
-                attribute={{
-                  width: 50,
-                  height: 50,
-                  image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
-                  cornerRadius: 25
-                }}
-              ></VImage>
-            </VGroup>
-            <VGroup
-              attribute={{
-                height,
-                width: width - 60,
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
-              <VText
-                attribute={{
-                  text: taskRecord.title,
-                  fontSize: 16,
-                  fontFamily: 'sans-serif',
-                  fill: 'white',
-                  maxLineWidth: width - 60,
-                  boundsPadding: [10, 0, 0, 0]
-                }}
-              ></VText>
-              <VText
-                attribute={{
-                  text: `${taskDays}天`,
-                  fontSize: 13,
-                  fontFamily: 'sans-serif',
-                  fill: 'white',
-                  boundsPadding: [10, 0, 0, 0]
-                }}
-              ></VText>
-            </VGroup>
-          </VGroup>
-        );
+        const container = new VRender.Group({
+          width,
+          height,
+          fill: {
+            gradient: 'linear',
+            x0: 0,
+            y0: 0,
+            x1: 1,
+            y1: 0,
+            stops: [
+              {
+                offset: 0,
+                color: barColors0[index % colorLength]
+              },
+              {
+                offset: 0.5,
+                color: barColors[index % colorLength]
+              },
+              {
+                offset: 1,
+                color: barColors0[index % colorLength]
+              }
+            ]
+          },
+          display: 'flex',
+          flexDirection: 'row',
+          flexWrap: 'nowrap'
+        });
+        const containerLeft = new VRender.Group({
+          height,
+          width: 60,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-around'
+          // fill: 'red'
+        });
+        container.add(containerLeft);
+
+        const icon0 = new VRender.Image({
+          width: 50,
+          height: 50,
+          image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
+          cornerRadius: 25
+        });
+        containerLeft.add(icon0);
+
+        const containerRight = new VRender.Group({
+          height,
+          width: width - 60,
+          display: 'flex',
+          flexDirection: 'column'
+          // alignItems: 'left'
+        });
+        container.add(containerRight);
+
+        const bloggerName = new VRender.Text({
+          text: taskRecord.title,
+          fontSize: 16,
+          fontFamily: 'sans-serif',
+          fill: 'white',
+          maxLineWidth: width - 60,
+          boundsPadding: [10, 0, 0, 0]
+        });
+        containerRight.add(bloggerName);
+
+        const days = new VRender.Text({
+          text: `${taskDays}天`,
+          fontSize: 13,
+          fontFamily: 'sans-serif',
+          fill: 'white',
+          boundsPadding: [10, 0, 0, 0]
+        });
+        containerRight.add(days);
         return {
-          rootContainer: container,
-          renderDefaultBar: true
+          rootContainer: container
+          // renderDefaultBar: true
+          // renderDefaultText: true
         };
       },
       labelText: '{title} {progress}%',
@@ -813,8 +790,8 @@ export function createTable() {
       //   }
       // }
     ],
-    minDate: '2024-07-07',
-    maxDate: '2024-10-15',
+    minDate: '2024-06-07',
+    maxDate: '2027-06-01',
     markLine: [
       {
         date: '2024-07-17',
@@ -846,7 +823,7 @@ export function createTable() {
     },
     scrollStyle: {
       scrollRailColor: 'RGBA(246,246,246,0.5)',
-      visible: 'scrolling',
+      visible: 'focus',
       width: 6,
       scrollSliderCornerRadius: 2,
       scrollSliderColor: '#5cb85c'

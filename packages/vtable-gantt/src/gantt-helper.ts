@@ -76,16 +76,17 @@ export { isNode };
 
 export function initOptions(gantt: Gantt) {
   const options = gantt.options;
+  gantt.parsedOptions.pixelRatio = options?.pixelRatio ?? 1;
   gantt.parsedOptions.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
   gantt.parsedOptions.rowHeight = options?.defaultRowHeight ?? 40;
   gantt.parsedOptions.timelineColWidth = options?.timelineColWidth ?? 60;
   gantt.parsedOptions.startDateField = options?.startDateField ?? 'startDate';
   gantt.parsedOptions.endDateField = options?.endDateField ?? 'endDate';
   gantt.parsedOptions.progressField = options?.progressField ?? 'progress';
-  gantt.parsedOptions.minDate = options?.minDate ? new Date(options?.minDate) : new Date(2024, 1, 1);
-  gantt.parsedOptions.maxDate = options?.maxDate ? new Date(options?.maxDate) : new Date(2025, 1, 1);
-  gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate.getTime();
-  gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate.getTime();
+  gantt.parsedOptions.minDate = options?.minDate ? new Date(options?.minDate) : undefined;
+  gantt.parsedOptions.maxDate = options?.maxDate ? new Date(options?.maxDate) : undefined;
+  gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
+  gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
   gantt.parsedOptions.overscrollBehavior = options?.overscrollBehavior ?? 'auto';
   gantt.parsedOptions.scrollStyle = Object.assign(
     {},

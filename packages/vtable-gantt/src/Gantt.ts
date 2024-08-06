@@ -30,6 +30,7 @@ import {
 } from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
 import { formatDate, getWeekNumber, parseDateFormat, toBoxArray } from './tools/util';
+import { DataSource } from './data/DataSource';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
@@ -109,6 +110,7 @@ export class Gantt extends EventTarget {
   taskTableColumns: ITableColumnsDefine;
 
   records: any[];
+  data: DataSource;
   constructor(container: HTMLElement, options?: GanttConstructorOptions) {
     super();
     this.container = container;
@@ -117,8 +119,9 @@ export class Gantt extends EventTarget {
     this.taskTableWidth = typeof options?.taskListTable?.width === 'number' ? options?.taskListTable?.width : 100;
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
-    this.parsedOptions.pixelRatio = options?.pixelRatio ?? 1;
+
     initOptions(this);
+    this.data = new DataSource(this);
     this._sortScales();
     this._generateTimeLineDateMap();
     this.headerLevel = this.sortedScales.length;

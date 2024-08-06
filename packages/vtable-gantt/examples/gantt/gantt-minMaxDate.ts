@@ -905,8 +905,8 @@ export function createTable() {
       //   }
       // }
     ],
-    minDate: '2024-07-01',
-    maxDate: '2024-10-15',
+    minDate: '2024-08-07',
+    // maxDate: '2024-10-15',
     markLine: [
       {
         date: '2024-07-17',
