@@ -135,7 +135,7 @@ onBeforeUnmount(() => vTableInstance.value?.release());
 watch(
   () => props.options,
   (newOptions, oldOptions) => {
-    if (isEqual(newOptions, oldOptions)) {
+    if (!isEqual(newOptions, oldOptions)) {
       if (vTableInstance.value) {
         updateVTable(newOptions);
       } else {
@@ -146,16 +146,19 @@ watch(
 );
 
 // 监听 records 属性的变化并更新表格
+// 需要去做细颗粒度的比较
 watch(
   () => props.records,
-  (newRecords) => {
-      if (vTableInstance.value && vTableInstance.value.updateOption) {
+  (newRecords, oldRecords) => { 
+    // if (!isEqual(newRecords, oldRecords)) {
+      if (vTableInstance.value) {
         updateVTable({ ...props.options, records: newRecords });
       } else {
         createVTable();
       }
-    },
-  { deep: true }
+    // }
+  },
+  { deep: true },
 );
 
 </script>
