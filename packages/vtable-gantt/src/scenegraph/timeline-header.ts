@@ -5,7 +5,9 @@ import type { Scenegraph } from './scenegraph';
 import { VRender } from '@visactor/vtable';
 export class TimelineHeader {
   group: VRender.Group;
+  _scene: Scenegraph;
   constructor(scene: Scenegraph) {
+    this._scene = scene;
     const dateHeader = new VRender.Group({
       x: 0,
       y: 0,
@@ -32,13 +34,14 @@ export class TimelineHeader {
       rowHeader.name = 'row-header';
       dateHeader.addChild(rowHeader);
 
-      const { unit, timelineDates } = scene._gantt.sortedScales[i];
+      const { unit, timelineDates, customRender } = scene._gantt.sortedTimelineScales[i];
       let x = 0;
       for (let j = 0; j < timelineDates.length; j++) {
+        const { days, endDate, startDate, title } = timelineDates[j];
         const date = new VRender.Group({
           x,
           y: 0,
-          width: scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
+          width: scene._gantt.parsedOptions.colWidthPerDay * days,
           height: scene._gantt.parsedOptions.headerRowHeight,
           clip: false,
           fill: scene._gantt.parsedOptions.timelineHeaderStyle?.backgroundColor
@@ -68,45 +71,72 @@ export class TimelineHeader {
           });
           date.appendChild(line);
         }
-        const { padding, textAlign, textBaseline, textOverflow, fontSize, fontWeight, color, strokeColor } =
-          scene._gantt.parsedOptions.timelineHeaderStyle;
+        let rootContainer;
+        let renderDefaultText = true;
+        const width = scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days;
+        const height = scene._gantt.parsedOptions.headerRowHeight;
+        if (customRender) {
+          let customRenderObj;
+          if (typeof customRender === 'function') {
+            const arg = {
+              width,
+              height,
+              index: j,
+              startDate,
+              endDate,
+              days,
+              title,
+              ganttInstance: this._scene._gantt
+            };
+            customRenderObj = customRender(arg);
+          } else {
+            customRenderObj = customRender;
+          }
+          if (customRenderObj) {
+            // if (customRenderObj.rootContainer) {
+            //   customRenderObj.rootContainer = decodeReactDom(customRenderObj.rootContainer);
+            // }
+            rootContainer = customRenderObj.rootContainer;
+            renderDefaultText = customRenderObj.renderDefaultText ?? false;
+            rootContainer.name = 'task-bar-custom-render';
+          }
+          rootContainer && date.appendChild(rootContainer);
+        }
+        if (renderDefaultText) {
+          const { padding, textAlign, textBaseline, textOverflow, fontSize, fontWeight, color, strokeColor } =
+            scene._gantt.parsedOptions.timelineHeaderStyle;
 
-        const position = getTextPos(
-          toBoxArray(padding),
-          textAlign,
-          textBaseline,
-          scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
-          scene._gantt.parsedOptions.headerRowHeight
-        );
-        const text = new VRender.Text({
-          x: position.x,
-          y: position.y,
-          maxLineWidth: scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
-          // width: scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
-          heightLimit: scene._gantt.parsedOptions.headerRowHeight,
-          // clip: true,
-          pickable: true,
-          text: timelineDates[j].title.toLocaleString(),
-          fontSize: fontSize,
+          const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, width, height);
+          const text = new VRender.Text({
+            x: position.x,
+            y: position.y,
+            maxLineWidth: width,
+            // width: scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
+            heightLimit: height,
+            // clip: true,
+            pickable: true,
+            text: title.toLocaleString(),
+            fontSize: fontSize,
 
-          fontWeight: fontWeight,
-          fill: color,
-          stroke: strokeColor,
-          lineWidth: 2,
-          textAlign,
-          textBaseline,
-          ellipsis:
-            textOverflow === 'clip'
-              ? ''
-              : textOverflow === 'ellipsis'
-              ? '...'
-              : isValid(textOverflow)
-              ? textOverflow
-              : undefined
-        });
-        date.appendChild(text);
+            fontWeight: fontWeight,
+            fill: color,
+            stroke: strokeColor,
+            lineWidth: 2,
+            textAlign,
+            textBaseline,
+            ellipsis:
+              textOverflow === 'clip'
+                ? ''
+                : textOverflow === 'ellipsis'
+                ? '...'
+                : isValid(textOverflow)
+                ? textOverflow
+                : undefined
+          });
+          date.appendChild(text);
+        }
         rowHeader.addChild(date);
-        x += scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days;
+        x += width;
       }
       //创建表头分割线 水平分割线 TODO
       if (i > 0) {

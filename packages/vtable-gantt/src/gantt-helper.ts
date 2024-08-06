@@ -1,6 +1,7 @@
 import { text } from 'stream/consumers';
 import type { Gantt } from './Gantt';
-import type { IMarkLine, IScrollStyle, ITimelineScale } from './ts-types';
+import type { IMarkLine, IScrollStyle, ITimelineDateInfo, ITimelineScale } from './ts-types';
+import { getWeekNumber } from './tools/util';
 
 const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
 export const DayTimes = 1000 * 60 * 60 * 24;
@@ -183,16 +184,17 @@ export function initOptions(gantt: Gantt) {
 
 export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: ITimelineScale) {
   const { unit, step, format } = scale;
-  const timelineDates = [];
+  const timelineDates: ITimelineDateInfo[] = [];
   while (currentDate <= endDate) {
     if (unit === 'day') {
       const dateEnd = new Date(currentDate.getTime() + step * 24 * 60 * 60 * 1000);
-      const formattedDate = format({ index: currentDate.getDate(), startDate: currentDate, endDate: dateEnd });
+      const startDate = new Date(currentDate);
+      const formattedDate = format?.({ index: currentDate.getDate(), startDate, endDate: dateEnd });
       const columnTitle = formattedDate || currentDate.getDate().toString();
       const dayCellConfig = {
         days: step,
-        start: currentDate,
-        end: dateEnd,
+        startDate,
+        endDate: dateEnd,
         title: columnTitle
       };
       timelineDates.push(dayCellConfig);
@@ -205,12 +207,12 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         end.setDate(endDate.getDate());
       }
       const start = currentDate;
-      const formattedDate = format({ index: month, startDate: start, endDate: end });
-      const columnTitle = formattedDate || month;
+      const formattedDate = format?.({ index: month, startDate: start, endDate: end });
+      const columnTitle = formattedDate || month.toString();
       const dayCellConfig = {
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
-        start,
-        end,
+        startDate: start,
+        endDate: end,
         title: columnTitle
       };
 
@@ -224,12 +226,12 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         end.setDate(endDate.getDate());
       }
       const start = currentDate;
-      const formattedDate = format({ index: quarter, startDate: start, endDate: end });
-      const columnTitle = formattedDate || quarter;
+      const formattedDate = format?.({ index: quarter, startDate: start, endDate: end });
+      const columnTitle = formattedDate || quarter.toString();
       const dayCellConfig = {
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
-        start,
-        end,
+        startDate: start,
+        endDate: end,
         title: columnTitle
       };
       timelineDates.push(dayCellConfig);
@@ -241,12 +243,12 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         end.setDate(endDate.getDate());
       }
       const start = currentDate;
-      const formattedDate = format({ index: year, startDate: start, endDate: end });
-      const columnTitle = formattedDate || year;
+      const formattedDate = format?.({ index: year, startDate: start, endDate: end });
+      const columnTitle = formattedDate || year.toString();
       const dayCellConfig = {
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
-        start,
-        end,
+        startDate: start,
+        endDate: end,
         title: columnTitle
       };
       timelineDates.push(dayCellConfig);
@@ -265,15 +267,17 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       }
 
       // Calculate the week number within the year
-      const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
-      const weekNumber = Math.ceil(((startOfWeek.getTime() - startOfYear.getTime()) / 86400000 + 1) / 7);
+      // const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+      // const weekNumber = Math.ceil(((startOfWeek.getTime() - startOfYear.getTime()) / 86400000 + 1) / 7);
+      const weekNumber = getWeekNumber(startOfWeek);
 
-      const columnTitle = format({ index: weekNumber, startDate: startOfWeek, endDate: endOfWeek });
+      const columnTitle =
+        format?.({ index: weekNumber, startDate: startOfWeek, endDate: endOfWeek }) || weekNumber.toString();
 
       const dayCellConfig = {
         days: Math.ceil((endOfWeek.getTime() - startOfWeek.getTime()) / (24 * 60 * 60 * 1000)) + 1,
-        start: startOfWeek,
-        end: endOfWeek,
+        startDate: startOfWeek,
+        endDate: endOfWeek,
         title: columnTitle
       };
 

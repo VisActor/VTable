@@ -2,6 +2,13 @@ import type { ColumnsDefine, TYPES, VRender } from '@visactor/vtable';
 import type { Gantt } from '../Gantt';
 export type LayoutObjectId = number | string;
 
+export interface ITimelineDateInfo {
+  days: number;
+  endDate: Date;
+  startDate: Date;
+  title: string;
+}
+
 export interface ITimelineHeaderStyle {
   padding?: number | number[];
   borderColor?: string;
@@ -111,7 +118,8 @@ export interface ITimelineScale {
   unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
   step: number;
   startOfWeek?: 'sunday' | 'monday';
-  format: (date: DateFormatArgumentType) => string | number;
+  customRender?: IDateCustomRender;
+  format?: (date: DateFormatArgumentType) => string;
 }
 export interface ITaskBarLabelTextStyle {
   fontFamily?: string;
@@ -177,6 +185,21 @@ export type ITaskBarCustomRenderObj = {
   rootContainer: VRender.Group;
   renderDefaultBar?: boolean; // 默认false
   renderDefaultResizeIcon?: boolean; // 默认false
+  renderDefaultText?: boolean; // 默认false
+};
+
+export type DateCustomRenderArgumentType = {
+  width: number;
+  height: number;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  days: number;
+  ganttInstance: Gantt;
+};
+export type IDateCustomRender = IDateCustomRenderObj | ((args: DateCustomRenderArgumentType) => IDateCustomRenderObj); //CustomLayout
+export type IDateCustomRenderObj = {
+  rootContainer: VRender.Group;
   renderDefaultText?: boolean; // 默认false
 };
 

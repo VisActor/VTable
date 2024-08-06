@@ -204,14 +204,9 @@ export function toBoxArray<T>(obj: T | T[]): [T, T, T, T] {
   return [obj[0] /*top*/, obj[1] /*right*/, obj[2] /*bottom*/, obj[3] /*left*/];
 }
 
-export function getWeekNumber(date: Date) {
-  const startOfYear = new Date(date.getFullYear(), 0, 1);
-  const startDay = startOfYear.getDay();
-  const diff = startDay > 0 ? startDay - 1 : 6;
-  startOfYear.setDate(startOfYear.getDate() - diff);
-
-  const dayOfYear = Math.floor((date.getTime() - startOfYear.getTime()) / 86400000);
-  const weekOfYear = Math.ceil((dayOfYear + startOfYear.getDay() + 1) / 7);
-
-  return weekOfYear;
+export function getWeekNumber(currentDate: Date) {
+  // Calculate the week number within the year
+  const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+  const weekNumber = Math.ceil(((currentDate.getTime() - startOfYear.getTime()) / 86400000 + 1) / 7);
+  return weekNumber;
 }

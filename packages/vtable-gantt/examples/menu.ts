@@ -27,6 +27,10 @@ export const menus = [
     name: 'gantt-customRender'
   },
   {
+    path: 'gantt',
+    name: 'gantt-header-customRender'
+  },
+  {
     path: 'gantt-jsx',
     name: 'gantt-customRender-jsx'
   },

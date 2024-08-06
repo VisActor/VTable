@@ -14,7 +14,9 @@ import type {
   IFrameStyle,
   ITableColumnsDefine,
   IResizeLineStyle,
-  ITaskBarCustomRender
+  ITaskBarCustomRender,
+  ITimelineDateInfo,
+  ITimelineScale
 } from './ts-types';
 import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
 import { ListTable, themes } from '@visactor/vtable';
@@ -67,8 +69,8 @@ export class Gantt extends EventTarget {
   resizeLine: HTMLDivElement;
   context: CanvasRenderingContext2D;
 
-  sortedScales: any;
-  reverseSortedScales: any;
+  sortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
+  reverseSortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
   headerLevel: number;
   itemCount: number;
   drawHeight: number;
@@ -124,7 +126,7 @@ export class Gantt extends EventTarget {
     this.data = new DataSource(this);
     this._sortScales();
     this._generateTimeLineDateMap();
-    this.headerLevel = this.sortedScales.length;
+    this.headerLevel = this.sortedTimelineScales.length;
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
     this.element.style.top = '0px';
     this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
@@ -347,8 +349,8 @@ export class Gantt extends EventTarget {
         return indexB - indexA;
       });
 
-      this.sortedScales = orderedScales;
-      this.reverseSortedScales = reverseOrderedScales;
+      this.sortedTimelineScales = orderedScales;
+      this.reverseSortedTimelineScales = reverseOrderedScales;
     }
   }
 
@@ -357,14 +359,14 @@ export class Gantt extends EventTarget {
     const endDate = new Date(this.parsedOptions.maxDate);
     let colWidthIncludeDays = 1000000;
     // Iterate over each scale
-    for (const scale of this.reverseSortedScales) {
+    for (const scale of this.reverseSortedTimelineScales) {
       // Generate the sub-columns for each step within the scale
       const currentDate = new Date(startDate);
       // const timelineDates: any[] = [];
       scale.timelineDates = generateTimeLineDate(currentDate, endDate, scale);
     }
 
-    const firstScale = this.reverseSortedScales[0];
+    const firstScale = this.reverseSortedTimelineScales[0];
     const { unit, step } = firstScale;
     if (unit === 'day') {
       colWidthIncludeDays = step;
