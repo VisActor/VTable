@@ -136,15 +136,7 @@ export class Gantt extends EventTarget {
       this._updateSize();
     }
     this._generateListTable();
-    this.itemCount = this.taskListTableInstance
-      ? this.taskListTableInstance.rowCount - this.taskListTableInstance.columnHeaderLevelCount
-      : this.records.length;
-    this.headerHeight = this.parsedOptions.headerRowHeight * this.headerLevel;
-    this.drawHeight = Math.min(
-      this.headerHeight + this.parsedOptions.rowHeight * this.itemCount,
-      this.tableNoFrameHeight
-    );
-    this.gridHeight = this.drawHeight - this.headerHeight;
+    this._syncPropsFromTable();
 
     this._createResizeLine();
     this.scenegraph = new Scenegraph(this);
@@ -490,18 +482,18 @@ export class Gantt extends EventTarget {
 
   _resize() {
     this._updateSize();
-
     this.taskListTableInstance.setCanvasSize(
       this.taskTableWidth,
       this.tableNoFrameHeight + this.parsedOptions.frameStyle.borderLineWidth * 2
     );
-
+    this._syncPropsFromTable();
     this.scenegraph.resize();
   }
   _syncPropsFromTable() {
     this.itemCount = this.taskListTableInstance
       ? this.taskListTableInstance.rowCount - this.taskListTableInstance.columnHeaderLevelCount
       : this.records.length;
+    this.headerHeight = this.parsedOptions.headerRowHeight * this.headerLevel;
     this.drawHeight = Math.min(
       this.headerHeight + this.parsedOptions.rowHeight * this.itemCount,
       this.tableNoFrameHeight

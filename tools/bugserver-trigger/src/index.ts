@@ -7,11 +7,7 @@ window.VTable = VTable;
 // @ts-ignore
 window.VTableEditors = VTableEditors;
 // @ts-ignore
-window.VTable.editors = VTableEditors; //兼容bugserver case中的写法
-// @ts-ignore
 window.VTableGantt = VTableGantt;
-// @ts-ignore
-window.VTable.gantt = VTableGantt; //兼容bugserver case中的写法
 
 export default {
   VTable,
