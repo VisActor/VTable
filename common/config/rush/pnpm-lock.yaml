@@ -778,6 +778,41 @@ importers:
   ../../share/ts-config:
     specifiers: {}
 
+  ../../tools/bugserver-trigger:
+    specifiers:
+      '@internal/bundler': workspace:*
+      '@internal/eslint-config': workspace:*
+      '@internal/ts-config': workspace:*
+      '@rushstack/eslint-patch': ~1.1.4
+      '@types/node': '*'
+      '@types/node-fetch': 2.6.4
+      '@visactor/vtable': workspace:*
+      '@visactor/vtable-editors': workspace:*
+      '@visactor/vtable-gantt': workspace:*
+      cross-env: ^7.0.3
+      eslint: ~8.18.0
+      form-data: ~4.0.0
+      node-fetch: 2.6.7
+      ts-node: 10.9.0
+      typescript: 4.9.5
+    dependencies:
+      '@visactor/vtable': link:../../packages/vtable
+      '@visactor/vtable-editors': link:../../packages/vtable-editors
+      '@visactor/vtable-gantt': link:../../packages/vtable-gantt
+    devDependencies:
+      '@internal/bundler': link:../bundler
+      '@internal/eslint-config': link:../../share/eslint-config
+      '@internal/ts-config': link:../../share/ts-config
+      '@rushstack/eslint-patch': 1.1.4
+      '@types/node': 20.14.2
+      '@types/node-fetch': 2.6.4
+      cross-env: 7.0.3
+      eslint: 8.18.0
+      form-data: 4.0.0
+      node-fetch: 2.6.7
+      ts-node: 10.9.0_daz7tukh2qp4t5y5hskra5bsgy
+      typescript: 4.9.5
+
   ../../tools/bundler:
     specifiers:
       '@babel/core': 7.20.12
@@ -3478,6 +3513,13 @@ packages:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: true
 
+  /@types/node-fetch/2.6.4:
+    resolution: {integrity: sha512-1ZX9fcN4Rvkvgv4E6PAY5WXUFWFcRWxZa3EW83UjycOB9ljJCedb2CupIP4RZMEwF/M3eTcCihbBRgwtGbg5Rg==}
+    dependencies:
+      '@types/node': 20.14.2
+      form-data: 3.0.1
+    dev: true
+
   /@types/node/12.20.55:
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
     dev: true
@@ -5488,6 +5530,14 @@ packages:
 
   /create-require/1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+
+  /cross-env/7.0.3:
+    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
+    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
+    dev: true
 
   /cross-spawn/6.0.5:
     resolution: {integrity: sha512-eTVLrBSt7fjbDygz805pMnstIs2VTBNkRm0qxZd+M7A5XDdxVRWO5MxGBXZhjY4cqLYLdtrGqRf8mBPmzwSpWQ==}
