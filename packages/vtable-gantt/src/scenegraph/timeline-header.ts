@@ -12,7 +12,7 @@ export class TimelineHeader {
       x: 0,
       y: 0,
       width: scene._gantt.getAllColsWidth(), //width - 2,
-      height: scene._gantt.parsedOptions.headerRowHeight * scene._gantt.headerLevel,
+      height: scene._gantt.getAllHeaderRowsHeight(),
       clip: true,
       pickable: false
       // fill: 'purple',
@@ -22,15 +22,19 @@ export class TimelineHeader {
     this.group = dateHeader;
     dateHeader.name = 'date-header-container';
     scene.tableGroup.addChild(this.group);
-    const y = 0;
+
+    let y = 0;
     for (let i = 0; i < scene._gantt.headerLevel; i++) {
       const rowHeader = new VRender.Group({
         x: 0,
-        y: scene._gantt.parsedOptions.headerRowHeight * i,
+        y,
         width: scene._gantt.getAllColsWidth(),
-        height: scene._gantt.parsedOptions.headerRowHeight,
+        height: Array.isArray(scene._gantt.parsedOptions.headerRowHeight)
+          ? scene._gantt.parsedOptions.headerRowHeight[i]
+          : scene._gantt.parsedOptions.headerRowHeight,
         clip: false
       });
+      y += rowHeader.attribute.height;
       rowHeader.name = 'row-header';
       dateHeader.addChild(rowHeader);
 
@@ -42,9 +46,9 @@ export class TimelineHeader {
           x,
           y: 0,
           width: scene._gantt.parsedOptions.colWidthPerDay * days,
-          height: scene._gantt.parsedOptions.headerRowHeight,
+          height: rowHeader.attribute.height,
           clip: false,
-          fill: scene._gantt.parsedOptions.timelineHeaderStyle?.backgroundColor
+          fill: scene._gantt.parsedOptions.timelineHeaderBackgroundColor
         });
         date.name = 'date-cell';
         // const rect = createRect({
@@ -58,7 +62,7 @@ export class TimelineHeader {
         let rootContainer;
         let renderDefaultText = true;
         const width = scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days;
-        const height = scene._gantt.parsedOptions.headerRowHeight;
+        const height = rowHeader.attribute.height;
         if (customLayout) {
           let customLayoutObj;
           if (typeof customLayout === 'function') {
@@ -89,7 +93,7 @@ export class TimelineHeader {
         }
         if (renderDefaultText) {
           const { padding, textAlign, textBaseline, textOverflow, fontSize, fontWeight, color, strokeColor } =
-            scene._gantt.parsedOptions.timelineHeaderStyle;
+            scene._gantt.parsedOptions.timelineHeaderStyles[i];
 
           const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, width, height);
           const text = new VRender.Text({
@@ -125,13 +129,13 @@ export class TimelineHeader {
         if (j > 0) {
           const line = VRender.createLine({
             pickable: false,
-            stroke: scene._gantt.parsedOptions.timelineHeaderStyle?.borderColor,
-            lineWidth: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth,
+            stroke: scene._gantt.parsedOptions.timelineHeaderVerticalLineStyle?.lineColor,
+            lineWidth: scene._gantt.parsedOptions.timelineHeaderVerticalLineStyle?.lineWidth,
             points: [
-              { x: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0, y: 0 },
+              { x: scene._gantt.parsedOptions.timelineHeaderVerticalLineStyle?.lineWidth & 1 ? 0.5 : 0, y: 0 },
               {
-                x: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0,
-                y: scene._gantt.parsedOptions.headerRowHeight
+                x: scene._gantt.parsedOptions.timelineHeaderVerticalLineStyle?.lineWidth & 1 ? 0.5 : 0,
+                y: rowHeader.attribute.height
               }
             ]
           });
@@ -143,13 +147,13 @@ export class TimelineHeader {
       if (i > 0) {
         const line = VRender.createLine({
           pickable: false,
-          stroke: scene._gantt.parsedOptions.timelineHeaderStyle?.borderColor,
-          lineWidth: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth,
+          stroke: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineColor,
+          lineWidth: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth,
           points: [
-            { x: 0, y: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0 },
+            { x: 0, y: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth & 1 ? 0.5 : 0 },
             {
               x: scene._gantt.getAllColsWidth(),
-              y: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0
+              y: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth & 1 ? 0.5 : 0
             }
           ]
         });

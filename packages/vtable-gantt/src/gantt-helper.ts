@@ -78,9 +78,9 @@ export { isNode };
 export function initOptions(gantt: Gantt) {
   const options = gantt.options;
   gantt.parsedOptions.pixelRatio = options?.pixelRatio ?? 1;
-  gantt.parsedOptions.headerRowHeight = options?.defaultHeaderRowHeight ?? 40;
-  gantt.parsedOptions.rowHeight = options?.defaultRowHeight ?? 40;
-  gantt.parsedOptions.timelineColWidth = options?.timelineColWidth ?? 60;
+  gantt.parsedOptions.headerRowHeight = options?.headerRowHeight ?? 40;
+  gantt.parsedOptions.rowHeight = options?.rowHeight ?? 40;
+  gantt.parsedOptions.timelineColWidth = options?.timelineHeader?.colWidth ?? 60;
   gantt.parsedOptions.startDateField = options?.startDateField ?? 'startDate';
   gantt.parsedOptions.endDateField = options?.endDateField ?? 'endDate';
   gantt.parsedOptions.progressField = options?.progressField ?? 'progress';
@@ -102,20 +102,26 @@ export function initOptions(gantt: Gantt) {
     },
     options?.scrollStyle
   );
-  gantt.parsedOptions.timelineHeaderStyle = Object.assign(
-    {},
-    {
-      borderColor: 'gray',
-      borderWidth: 1,
-      fontSize: 20,
-      fontWeight: 'bold',
-      textAlign: 'center',
-      textBaseline: 'middle',
-      color: '#000',
-      backgroundColor: '#fff'
-    },
-    options?.timelineHeaderStyle
-  );
+  gantt.parsedOptions.timelineHeaderHorizontalLineStyle = options?.timelineHeader?.horizontalLine;
+  gantt.parsedOptions.timelineHeaderVerticalLineStyle = options?.timelineHeader?.verticalLine;
+  gantt.parsedOptions.timelineHeaderBackgroundColor = options?.timelineHeader?.backgroundColor;
+  gantt.parsedOptions.timelineHeaderStyles = [];
+  for (let i = 0; i < options?.timelineHeader?.scales?.length ?? 0; i++) {
+    const style = options?.timelineHeader?.scales[i].style;
+    gantt.parsedOptions.timelineHeaderStyles.push(
+      Object.assign(
+        {
+          fontSize: 20,
+          fontWeight: 'bold',
+          textAlign: 'center',
+          textBaseline: 'middle',
+          color: '#000',
+          backgroundColor: '#fff'
+        },
+        style
+      )
+    );
+  }
   gantt.parsedOptions.gridStyle = Object.assign(
     {},
     // {

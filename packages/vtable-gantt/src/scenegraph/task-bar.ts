@@ -27,7 +27,7 @@ export class TaskBar {
     this.height = scene._gantt.gridHeight;
     this.group = new VRender.Group({
       x: 0,
-      y: scene._gantt.parsedOptions.headerRowHeight * scene._gantt.headerLevel,
+      y: scene._gantt.getAllHeaderRowsHeight(),
       width: this.width,
       height: this.height,
       pickable: false,

@@ -12,11 +12,10 @@ export class MarkLine {
     this._scene = scene;
     this.markLine = scene._gantt.parsedOptions.markLine;
     this.height =
-      Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight) -
-      scene._gantt.parsedOptions.headerRowHeight * scene._gantt.headerLevel;
+      Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight) - scene._gantt.getAllHeaderRowsHeight();
     this.group = new VRender.Group({
       x: 0,
-      y: scene._gantt.parsedOptions.headerRowHeight * scene._gantt.headerLevel,
+      y: scene._gantt.getAllHeaderRowsHeight(),
       width: scene._gantt.tableNoFrameWidth,
       height: this.height,
       pickable: false,
@@ -72,7 +71,7 @@ export class MarkLine {
   refresh() {
     this.height =
       Math.min(this._scene._gantt.tableNoFrameHeight, this._scene._gantt.drawHeight) -
-      this._scene._gantt.parsedOptions.headerRowHeight * this._scene._gantt.headerLevel;
+      this._scene._gantt.getAllHeaderRowsHeight();
     this.markLIneContainer.removeAllChild();
     this.group.setAttribute('height', this.height);
     this.markLIneContainer.setAttribute('height', this.height);

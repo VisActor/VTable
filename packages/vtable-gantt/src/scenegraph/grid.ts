@@ -27,13 +27,13 @@ export class Grid {
   _scene: Scenegraph;
   constructor(scene: Scenegraph) {
     this._scene = scene;
-    this.vertical = !!scene._gantt.parsedOptions.gridStyle.vertical;
-    this.horizontal = !!scene._gantt.parsedOptions.gridStyle.horizontal;
+    this.vertical = !!scene._gantt.parsedOptions.gridStyle.verticalLine;
+    this.horizontal = !!scene._gantt.parsedOptions.gridStyle.horizontalLine;
     this.gridStyle = scene._gantt.parsedOptions.gridStyle;
     this.scrollLeft = 0;
     this.scrollTop = 0;
     this.x = 0;
-    this.y = scene._gantt.parsedOptions.headerRowHeight * scene._gantt.headerLevel;
+    this.y = scene._gantt.getAllHeaderRowsHeight();
     this.width = scene.tableGroup.attribute.width;
     this.height = scene.tableGroup.attribute.height - scene.timelineHeader.group.attribute.height;
     this.timelineDates = scene._gantt.reverseSortedTimelineScales[0].timelineDates;
@@ -55,13 +55,13 @@ export class Grid {
     //补充timelineHeader中不好绘制的底部的边线
     const line = VRender.createLine({
       pickable: false,
-      stroke: scene._gantt.parsedOptions.timelineHeaderStyle?.borderColor,
-      lineWidth: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth,
+      stroke: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineColor,
+      lineWidth: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth,
       points: [
-        { x: 0, y: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0 },
+        { x: 0, y: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth & 1 ? 0.5 : 0 },
         {
           x: scene._gantt.getAllColsWidth(),
-          y: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0
+          y: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth & 1 ? 0.5 : 0
         }
       ]
     });
@@ -83,7 +83,7 @@ export class Grid {
 
       const vLines = [];
       let x = 0;
-      if (this.gridStyle?.vertical.lineWidth & 1) {
+      if (this.gridStyle?.verticalLine.lineWidth & 1) {
         x = 0.5;
       }
       for (let i = 0; i < this.timelineDates.length - 1; i++) {
@@ -91,8 +91,8 @@ export class Grid {
         x = x + Math.floor(this.colWidthPerDay * dateline.days);
         const line = VRender.createLine({
           pickable: false,
-          stroke: this.gridStyle?.vertical.lineColor,
-          lineWidth: this.gridStyle?.vertical.lineWidth,
+          stroke: this.gridStyle?.verticalLine.lineColor,
+          lineWidth: this.gridStyle?.verticalLine.lineWidth,
           points: [
             { x, y: 0 },
             { x, y: this.allGridHeight }
@@ -116,15 +116,15 @@ export class Grid {
 
       const hLines = [];
       let y = 0;
-      if (this.gridStyle?.horizontal.lineWidth & 1) {
+      if (this.gridStyle?.horizontalLine.lineWidth & 1) {
         y += 0.5;
       }
       for (let i = 0; i < this.rowCount - 1; i++) {
         y = y + Math.floor(this.rowHeight);
         const line = VRender.createLine({
           pickable: false,
-          stroke: this.gridStyle?.horizontal.lineColor,
-          lineWidth: this.gridStyle?.horizontal.lineWidth,
+          stroke: this.gridStyle?.horizontalLine.lineColor,
+          lineWidth: this.gridStyle?.horizontalLine.lineWidth,
           points: [
             { x: 0, y },
             { x: this.allGridWidth, y }

@@ -14,10 +14,7 @@ export class ScrollBarComponent {
   _clearVerticalScrollBar: any;
   constructor(gantt: Gantt) {
     this._gantt = gantt;
-    this.createScrollBar(
-      gantt.tableNoFrameWidth,
-      gantt.tableNoFrameHeight - gantt.parsedOptions.headerRowHeight * gantt.headerLevel
-    );
+    this.createScrollBar(gantt.tableNoFrameWidth, gantt.tableNoFrameHeight - gantt.getAllHeaderRowsHeight());
   }
 
   createScrollBar(tableWidth: number, tableHeight: number) {
@@ -169,7 +166,7 @@ export class ScrollBarComponent {
 
     const totalHeight = this._gantt.getAllRowsHeight();
     const totalWidth = this._gantt.getAllColsWidth();
-    const frozenRowsHeight = this._gantt.getFrozenRowsHeight();
+    const frozenRowsHeight = this._gantt.getAllHeaderRowsHeight();
     // const frozenColsWidth = this._gantt.getFrozenColsWidth();
     // const bottomFrozenRowsHeight = this._gantt.getBottomFrozenRowsHeight();
     // const rightFrozenColsWidth = this._gantt.getRightFrozenColsWidth();

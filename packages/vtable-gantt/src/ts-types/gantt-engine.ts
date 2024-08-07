@@ -12,8 +12,8 @@ export interface ITimelineDateInfo {
 
 export interface ITimelineHeaderStyle {
   padding?: number | number[];
-  borderColor?: string;
-  borderWidth?: number;
+  // borderColor?: string;
+  // borderWidth?: number;
   fontSize?: number;
   fontWeight?: string;
   color?: string;
@@ -25,14 +25,8 @@ export interface ITimelineHeaderStyle {
 }
 export interface IGridStyle {
   backgroundColor?: string;
-  vertical?: {
-    lineColor?: string;
-    lineWidth?: number;
-  };
-  horizontal?: {
-    lineColor?: string;
-    lineWidth?: number;
-  };
+  verticalLine?: ILineStyle;
+  horizontalLine?: ILineStyle;
 }
 //#region gantt
 export interface GanttConstructorOptions {
@@ -42,7 +36,15 @@ export interface GanttConstructorOptions {
    */
   records?: any[];
   /** 时间刻度 */
-  timelineScales: ITimelineScale[];
+  timelineHeader: {
+    backgroundColor?: string;
+    colWidth?: number;
+    /** 垂直间隔线样式 */
+    verticalLine?: ILineStyle;
+    /** 水平间隔线样式 */
+    horizontalLine?: ILineStyle;
+    scales: ITimelineScale[];
+  };
 
   /** 时间刻度对应的字段名 */
   startDateField: string;
@@ -55,14 +57,11 @@ export interface GanttConstructorOptions {
   /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
   maxDate?: string;
 
-  /** 顶部表头部分默认行高 */
-  defaultHeaderRowHeight?: number;
+  /** 顶部表头部分默认行高。如果配置成数组，请务必配置成和timelineHeader.scales数组长度一样长的数组 */
+  headerRowHeight?: number | number[];
 
   /** 数据默认行高 */
-  defaultRowHeight?: number;
-
-  /** 时间刻度列宽度 */
-  timelineColWidth?: number;
+  rowHeight?: number;
 
   /** 行号配置 */
   rowSeriesNumber?: IRowSeriesNumber;
@@ -73,9 +72,9 @@ export interface GanttConstructorOptions {
    * */
   overscrollBehavior?: 'auto' | 'none';
 
+  /** 标记线配置 如果配置为true 会自动给今天做标记 */
   markLine?: boolean | IMarkLine | IMarkLine[];
-  // /** 设置的表格主题 */
-  // theme?: TableTheme;
+
   /** 设置任务条样式 可以设置多组 依次循环使用 */
   taskBar?: {
     labelText?: ITaskBarLabelText;
@@ -92,6 +91,7 @@ export interface GanttConstructorOptions {
     columns?: ColumnsDefine; // (string | IDimension)[];
     /** 左侧任务列表信息占用的宽度。如果设置为'auto'表示将所有列完全展示 */
     width?: 'auto' | number;
+    colWidth?: number;
     headerStyle?: ITableStyle;
     bodyStyle?: ITableStyle;
     /** 左侧任务列表 最小宽度 */
@@ -100,7 +100,7 @@ export interface GanttConstructorOptions {
     maxWidth?: number;
   };
   gridStyle?: IGridStyle;
-  timelineHeaderStyle?: ITimelineHeaderStyle;
+  // timelineHeaderStyle?: ITimelineHeaderStyle;
   scrollStyle?: IScrollStyle;
 
   frameStyle: IFrameStyle;
@@ -108,7 +108,6 @@ export interface GanttConstructorOptions {
 
   //列调整宽度的直线
   resizeLineStyle?: IResizeLineStyle;
-  // taskTableTheme?: ITableThemeDefine;
 }
 /**
  * IBarLabelText
@@ -120,6 +119,7 @@ export interface ITimelineScale {
   step: number;
   startOfWeek?: 'sunday' | 'monday';
   customLayout?: IDateCustomLayout;
+  style?: ITimelineHeaderStyle;
   format?: (date: DateFormatArgumentType) => string;
 }
 export interface ITaskBarLabelTextStyle {
@@ -145,13 +145,14 @@ export interface ITaskBarStyle {
   /** 边框颜色 */
   borderColor?: string;
 }
+export type ILineStyle = {
+  lineColor?: string;
+  lineWidth?: number;
+  lineDash?: number[];
+};
 export interface IMarkLine {
   date?: string;
-  style?: {
-    lineColor?: string;
-    lineWidth?: number;
-    lineDash?: number[];
-  };
+  style?: ILineStyle;
 }
 export type ITableColumnsDefine = ColumnsDefine;
 export type IFrameStyle = {

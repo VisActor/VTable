@@ -16,7 +16,8 @@ import type {
   IResizeLineStyle,
   ITaskBarCustomLayout,
   ITimelineDateInfo,
-  ITimelineScale
+  ITimelineScale,
+  ILineStyle
 } from './ts-types';
 import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
 import { ListTable, themes } from '@visactor/vtable';
@@ -78,13 +79,17 @@ export class Gantt extends EventTarget {
   gridHeight: number;
 
   parsedOptions: {
-    headerRowHeight: number;
+    headerRowHeight: number | number[];
     rowHeight: number;
     timelineColWidth: number;
     colWidthPerDay: number; //分配给每日的宽度
 
     scrollStyle: IScrollStyle;
-    timelineHeaderStyle: ITimelineHeaderStyle;
+    // timelineHeaderStyle: ITimelineHeaderStyle;
+    timelineHeaderVerticalLineStyle: ILineStyle;
+    timelineHeaderHorizontalLineStyle: ILineStyle;
+    timelineHeaderBackgroundColor: string;
+    timelineHeaderStyles: ITimelineHeaderStyle[];
     gridStyle: IGridStyle;
     taskBarStyle: ITaskBarStyle;
     taskBarLabelText: ITaskBarLabelText;
@@ -233,6 +238,22 @@ export class Gantt extends EventTarget {
         );
         this._updateSize();
       }
+
+      if (this.taskListTableInstance.columnHeaderLevelCount > 1) {
+        if (
+          Array.isArray(this.parsedOptions.headerRowHeight) &&
+          this.taskListTableInstance.columnHeaderLevelCount === this.parsedOptions.headerRowHeight.length
+        ) {
+          for (let i = 0; i < this.taskListTableInstance.columnHeaderLevelCount; i++) {
+            this.taskListTableInstance.setRowHeight(i, this.parsedOptions.headerRowHeight[i]);
+          }
+        } else {
+          const newRowHeight = this.getAllHeaderRowsHeight() / this.taskListTableInstance.columnHeaderLevelCount;
+          for (let i = 0; i < this.taskListTableInstance.columnHeaderLevelCount; i++) {
+            this.taskListTableInstance.setRowHeight(i, newRowHeight);
+          }
+        }
+      }
     }
   }
   _generateListTableOptions() {
@@ -252,7 +273,7 @@ export class Gantt extends EventTarget {
         {},
         themes.DEFAULT.headerStyle,
         {
-          bgColor: this.parsedOptions.timelineHeaderStyle.backgroundColor
+          bgColor: this.parsedOptions.timelineHeaderBackgroundColor
         },
         this.options.taskListTable.headerStyle
       ),
@@ -264,7 +285,8 @@ export class Gantt extends EventTarget {
     };
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvasHeight ?? this.canvas.height;
-    listTable_options.defaultHeaderRowHeight = this.parsedOptions.headerRowHeight * this.headerLevel;
+    listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
+    listTable_options.defaultRowHeight = this.parsedOptions.rowHeight;
     listTable_options.clearDOM = false;
     listTable_options.overscrollBehavior = this.parsedOptions.overscrollBehavior;
     return listTable_options;
@@ -326,8 +348,9 @@ export class Gantt extends EventTarget {
   }
 
   _sortScales() {
-    const { timelineScales } = this.options;
-    if (timelineScales) {
+    const { timelineHeader } = this.options;
+    if (timelineHeader) {
+      const timelineScales = timelineHeader.scales;
       const sortOrder = ['year', 'quarter', 'month', 'week', 'day'];
       const orderedScales = timelineScales.slice().sort((a, b) => {
         const indexA = sortOrder.indexOf(a.unit);
@@ -383,7 +406,15 @@ export class Gantt extends EventTarget {
     this.parsedOptions.colWidthPerDay = this.parsedOptions.timelineColWidth / colWidthIncludeDays;
   }
   getAllRowsHeight() {
-    return this.parsedOptions.headerRowHeight * this.headerLevel + this.itemCount * this.parsedOptions.rowHeight;
+    return this.getAllHeaderRowsHeight() + this.itemCount * this.parsedOptions.rowHeight;
+  }
+  getAllHeaderRowsHeight() {
+    if (Array.isArray(this.parsedOptions.headerRowHeight)) {
+      return this.parsedOptions.headerRowHeight.reduce((acc, curr, index) => {
+        return acc + curr;
+      }, 0);
+    }
+    return (this.parsedOptions.headerRowHeight as number) * this.headerLevel;
   }
   getAllColsWidth() {
     return (
@@ -398,10 +429,6 @@ export class Gantt extends EventTarget {
 
   getAllGridHeight() {
     return this.itemCount * this.parsedOptions.rowHeight;
-  }
-
-  getFrozenRowsHeight() {
-    return this.parsedOptions.headerRowHeight * this.headerLevel;
   }
 
   getRecordByIndex(index: number) {
@@ -499,7 +526,7 @@ export class Gantt extends EventTarget {
     this.itemCount = this.taskListTableInstance
       ? this.taskListTableInstance.rowCount - this.taskListTableInstance.columnHeaderLevelCount
       : this.records.length;
-    this.headerHeight = this.parsedOptions.headerRowHeight * this.headerLevel;
+    this.headerHeight = this.getAllHeaderRowsHeight();
     this.drawHeight = Math.min(
       this.headerHeight + this.parsedOptions.rowHeight * this.itemCount,
       this.tableNoFrameHeight
