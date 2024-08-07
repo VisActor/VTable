@@ -214,15 +214,7 @@ export class Scenegraph {
     this.scrollbarComponent.updateScrollBar();
     this.updateNextFrame();
   }
-}
-
-export function createContainerGroup(width: number, height: number, clip?: boolean) {
-  return new VRender.Group({
-    x: 0,
-    y: 0,
-    width,
-    height,
-    clip: clip ?? false,
-    pickable: true
-  });
+  release() {
+    this.stage.release();
+  }
 }

@@ -150,6 +150,7 @@ export class Gantt extends EventTarget {
 
     this.scenegraph.afterCreateSceneGraph();
   }
+
   renderTaskTable() {
     this.scenegraph.updateNextFrame();
   }
@@ -508,5 +509,16 @@ export class Gantt extends EventTarget {
   /** 获取绘制画布的canvas上下文 */
   getContext(): CanvasRenderingContext2D {
     return this.context;
+  }
+
+  release(): void {
+    super.release?.();
+    this.eventManager.release();
+    this.taskListTableInstance?.release();
+    const { parentElement } = this.element;
+    if (parentElement) {
+      parentElement.removeChild(this.element);
+    }
+    this.scenegraph = null;
   }
 }

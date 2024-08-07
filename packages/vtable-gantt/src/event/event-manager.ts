@@ -21,7 +21,9 @@ export class EventManager {
     this._eventHandler = new EventHandler();
     this.bindEvent();
   }
-
+  release() {
+    this._eventHandler.release();
+  }
   // 绑定DOM事件
   bindEvent() {
     bindTableGroupListener(this);
@@ -129,11 +131,12 @@ function bindContainerDomListener(eventManager: EventManager) {
     }
   });
 
-  gantt.resizeLine?.addEventListener('mousedown', e => {
+  handler.on(gantt.resizeLine, 'mousedown', (e: MouseEvent) => {
     console.log('mousedown resizeLine');
     stateManager.updateInteractionState(InteractionState.grabing);
     stateManager.startResizeTableWidth(e);
   });
+
   VRender.vglobal.addEventListener('mousedown', (e: VRender.FederatedPointerEvent) => {
     gantt.eventManager.lastDragPointerXYOnWindow = { x: e.x, y: e.y };
   });
