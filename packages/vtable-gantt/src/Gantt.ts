@@ -521,4 +521,7 @@ export class Gantt extends EventTarget {
     }
     this.scenegraph = null;
   }
+  setRecords(records: any[]) {
+    this.records = records;
+  }
 }
