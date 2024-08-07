@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add setRecords api\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable-gantt"
+    }
+  ],
+  "packageName": "@visactor/vtable-gantt",
+  "email": "892739385@qq.com"
+}
