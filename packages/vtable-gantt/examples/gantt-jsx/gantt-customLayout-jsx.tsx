@@ -1,18 +1,15 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { register, VRender, CustomLayout } from '@visactor/vtable';
-import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
+import { register, VRender, CustomLayout, jsx } from '@visactor/vtable';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
-import { Gantt, tools } from '../../src/index';
+import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
-const date_input_editor = new DateInputEditor({});
-const input_editor = new InputEditor({});
-register.editor('input', input_editor);
-register.editor('date-input', date_input_editor);
-const barColors0 = ['#aecde6', '#c6a49a', '#ffb582', '#eec1de', '#b3d9b3', '#cccccc', '#e59a9c', '#d9d1a5', '#c9bede'];
+const VGroup = VRender.VGroup;
+const VText = VRender.VText;
+const VImage = VRender.VImage;
 const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#7f7f7f', '#d62728', '#bcbd22', '#9467bd'];
 export function createTable() {
-  const records0 = [
+  const records = [
     {
       id: 1,
       title: 'Software Development',
@@ -529,13 +526,54 @@ export function createTable() {
           priority: 'P1'
         }
       ]
+    },
+    {
+      id: 2,
+      title: 'Scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-06',
+      end: '2024-07-08',
+      progress: 60,
+      priority: 'P0'
+    },
+    {
+      id: 3,
+      title: 'Determine project scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-09',
+      end: '2024-07-11',
+      progress: 100,
+      priority: 'P1'
+    },
+    {
+      id: 1,
+      title: 'Software Development',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-24',
+      end: '2024-08-04',
+      progress: 31,
+      priority: 'P0'
+    },
+    {
+      id: 2,
+      title: 'Scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-06',
+      end: '2024-07-08',
+      progress: 60,
+      priority: 'P0'
+    },
+    {
+      id: 3,
+      title: 'Determine project scope',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-09',
+      end: '2024-07-11',
+      progress: 100,
+      priority: 'P1'
     }
   ];
 
-  const records = [];
-  for (let i = 0; i < 100; i++) {
-    records.push(...records0);
-  }
   const columns: ColumnsDefine = [
     // {
     //   field: 'id',
@@ -645,87 +683,71 @@ export function createTable() {
       backgroundColor: '#EEF1F5'
     },
     taskBar: {
-      customRender: (args: any) => {
+      customLayout: (args: any) => {
         const colorLength = barColors.length;
         const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
-        const container = new VRender.Group({
-          width,
-          height,
-          fill: {
-            gradient: 'linear',
-            x0: 0,
-            y0: 0,
-            x1: 1,
-            y1: 0,
-            stops: [
-              {
-                offset: 0,
-                color: barColors0[index % colorLength]
-              },
-              {
-                offset: 0.5,
-                color: barColors[index % colorLength]
-              },
-              {
-                offset: 1,
-                color: barColors0[index % colorLength]
-              }
-            ]
-          },
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'nowrap'
-        });
-        const containerLeft = new VRender.Group({
-          height,
-          width: 60,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-around'
-          // fill: 'red'
-        });
-        container.add(containerLeft);
-
-        const icon0 = new VRender.Image({
-          width: 50,
-          height: 50,
-          image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
-          cornerRadius: 25
-        });
-        containerLeft.add(icon0);
-
-        const containerRight = new VRender.Group({
-          height,
-          width: width - 60,
-          display: 'flex',
-          flexDirection: 'column'
-          // alignItems: 'left'
-        });
-        container.add(containerRight);
-
-        const bloggerName = new VRender.Text({
-          text: taskRecord.title,
-          fontSize: 16,
-          fontFamily: 'sans-serif',
-          fill: 'white',
-          maxLineWidth: width - 60,
-          boundsPadding: [10, 0, 0, 0]
-        });
-        containerRight.add(bloggerName);
-
-        const days = new VRender.Text({
-          text: `${taskDays}天`,
-          fontSize: 13,
-          fontFamily: 'sans-serif',
-          fill: 'white',
-          boundsPadding: [10, 0, 0, 0]
-        });
-        containerRight.add(days);
+        const container = (
+          <VGroup
+            attribute={{
+              width,
+              height,
+              fill: barColors[index % colorLength],
+              display: 'flex',
+              flexWrap: 'nowrap',
+              alignContent: 'center'
+            }}
+          >
+            <VGroup
+              attribute={{
+                width: 60,
+                height,
+                display: 'flex',
+                justifyContent: 'space-around',
+                alignItems: 'center'
+              }}
+            >
+              <VImage
+                attribute={{
+                  width: 50,
+                  height: 50,
+                  image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
+                  cornerRadius: 25
+                }}
+              ></VImage>
+            </VGroup>
+            <VGroup
+              attribute={{
+                height,
+                width: width - 60,
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <VText
+                attribute={{
+                  text: taskRecord.title,
+                  fontSize: 16,
+                  fontFamily: 'sans-serif',
+                  fill: 'white',
+                  maxLineWidth: width - 60,
+                  boundsPadding: [10, 0, 0, 0]
+                }}
+              ></VText>
+              <VText
+                attribute={{
+                  text: `${taskDays}天`,
+                  fontSize: 13,
+                  fontFamily: 'sans-serif',
+                  fill: 'white',
+                  boundsPadding: [10, 0, 0, 0]
+                }}
+              ></VText>
+            </VGroup>
+          </VGroup>
+        );
         return {
-          rootContainer: container
-          // renderDefaultBar: true
-          // renderDefaultText: true
+          rootContainer: container,
+          renderDefaultBar: true
         };
       },
       labelText: '{title} {progress}%',
@@ -771,156 +793,15 @@ export function createTable() {
         unit: 'week',
         step: 1,
         startOfWeek: 'sunday',
-        // format(date: TYPES.DateFormatArgumentType) {
-        //   return `Week ${date.index}`;
-        // },
-        customRender: (args: any) => {
-          const colorLength = barColors.length;
-          const { width, height, index, startDate, endDate, days, title, ganttInstance } = args;
-          console.log('week', index);
-          const container = new VRender.Group({
-            width,
-            height,
-            fill: {
-              gradient: 'linear',
-              x0: 0,
-              y0: 0,
-              x1: 1,
-              y1: 0,
-              stops: [
-                {
-                  offset: 0,
-                  color: barColors0[index % colorLength]
-                },
-                {
-                  offset: 0.5,
-                  color: barColors[index % colorLength]
-                },
-                {
-                  offset: 1,
-                  color: barColors0[index % colorLength]
-                }
-              ]
-            },
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'nowrap'
-          });
-          const containerLeft = new VRender.Group({
-            height,
-            width: 60,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'space-around'
-            // fill: 'red'
-          });
-          container.add(containerLeft);
-
-          const icon0 = new VRender.Image({
-            width: 50,
-            height: 50,
-            image:
-              '<svg t="1722943462248" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5107" width="200" height="200"><path d="M866.462 137.846H768V98.462c0-31.508-25.6-59.077-59.077-59.077-31.508 0-59.077 25.6-59.077 59.077v39.384H374.154V98.462c0-31.508-25.6-59.077-59.077-59.077-31.508 0-59.077 25.6-59.077 59.077v39.384h-98.462c-43.323 0-78.769 35.446-78.769 78.77v49.23c0 15.754 13.785 29.539 29.539 29.539h807.384c15.754 0 29.539-13.785 29.539-29.539v-49.23c0-43.324-35.446-78.77-78.77-78.77z m49.23 256H108.308c-15.754 0-29.539 13.785-29.539 29.539v482.461c0 43.323 35.446 78.77 78.77 78.77h708.923c43.323 0 78.769-35.447 78.769-78.77V423.385c0-15.754-13.785-29.539-29.539-29.539zM645.908 580.923L521.846 844.8c-5.908 13.785-19.692 21.662-35.446 21.662-21.662 0-37.415-17.724-37.415-35.447 0-3.938 1.969-9.846 3.938-15.753l104.37-224.493H407.63c-17.723 0-33.477-11.815-33.477-29.538 0-15.754 15.754-29.539 33.477-29.539h204.8c19.692 0 37.415 15.754 37.415 35.446 0 5.908-1.97 9.847-3.938 13.785z" fill="#1296db" p-id="5108"></path></svg>',
-            cornerRadius: 25
-          });
-          containerLeft.add(icon0);
-
-          const containerRight = new VRender.Group({
-            height,
-            width: width - 60,
-            display: 'flex',
-            flexDirection: 'column'
-            // alignItems: 'left'
-          });
-          container.add(containerRight);
-
-          const weekNumber = new VRender.Text({
-            text: `Week ${title}`,
-            fontSize: 20,
-            fontWeight: 'bold',
-            fontFamily: 'sans-serif',
-            fill: 'white',
-            maxLineWidth: width - 60,
-            boundsPadding: [10, 0, 0, 0]
-          });
-          containerRight.add(weekNumber);
-
-          const daysFromText = new VRender.Text({
-            text: `${tools.formatDate(startDate, 'mm/dd')}-${tools.formatDate(endDate, 'mm/dd')}`,
-            fontSize: 13,
-            fontFamily: 'sans-serif',
-            fill: 'white',
-            boundsPadding: [10, 0, 0, 0]
-          });
-          containerRight.add(daysFromText);
-          return {
-            rootContainer: container
-            //renderDefaultText: true
-          };
+        format(date: TYPES.DateFormatArgumentType) {
+          return `Week ${date.index}`;
         }
       },
       {
         unit: 'day',
         step: 1,
         format(date: TYPES.DateFormatArgumentType) {
-          return date.index.toString() + 'th';
-        },
-        customRender: (args: any) => {
-          const colorLength = barColors.length;
-          const { width, height, index, startDate, endDate, days, title, ganttInstance } = args;
-          const weekNumberofYear = tools.getWeekNumber(startDate);
-          console.log(startDate, weekNumberofYear, index);
-          const container = new VRender.Group({
-            width,
-            height,
-            fill: barColors[weekNumberofYear % colorLength],
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'nowrap'
-          });
-          const containerLeft = new VRender.Group({
-            height,
-            width: 60,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'space-around'
-            // fill: 'red'
-          });
-          container.add(containerLeft);
-          const containerRight = new VRender.Group({
-            height,
-            width: width - 60,
-            display: 'flex',
-            flexDirection: 'column'
-            // alignItems: 'left'
-          });
-          container.add(containerRight);
-
-          const weekNumber = new VRender.Text({
-            text: `Week ${title}`,
-            fontSize: 20,
-            fontWeight: 'bold',
-            fontFamily: 'sans-serif',
-            fill: 'white',
-            maxLineWidth: width - 60,
-            boundsPadding: [10, 0, 0, 0]
-          });
-          containerRight.add(weekNumber);
-
-          const daysFromText = new VRender.Text({
-            text: `${tools.formatDate(startDate, 'mm/dd')}-${tools.formatDate(endDate, 'mm/dd')}`,
-            fontSize: 13,
-            fontFamily: 'sans-serif',
-            fill: 'white',
-            boundsPadding: [10, 0, 0, 0]
-          });
-          containerRight.add(daysFromText);
-          return {
-            rootContainer: container
-            //renderDefaultText: true
-          };
+          return date.index;
         }
       }
       // {
@@ -964,7 +845,7 @@ export function createTable() {
     },
     scrollStyle: {
       scrollRailColor: 'RGBA(246,246,246,0.5)',
-      visible: 'focus',
+      visible: 'scrolling',
       width: 6,
       scrollSliderCornerRadius: 2,
       scrollSliderColor: '#5cb85c'

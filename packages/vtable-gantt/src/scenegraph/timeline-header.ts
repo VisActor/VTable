@@ -34,10 +34,10 @@ export class TimelineHeader {
       rowHeader.name = 'row-header';
       dateHeader.addChild(rowHeader);
 
-      const { unit, timelineDates, customRender } = scene._gantt.sortedTimelineScales[i];
+      const { unit, timelineDates, customLayout } = scene._gantt.sortedTimelineScales[i];
       let x = 0;
       for (let j = 0; j < timelineDates.length; j++) {
-        const { days, endDate, startDate, title } = timelineDates[j];
+        const { days, endDate, startDate, title, dateIndex } = timelineDates[j];
         const date = new VRender.Group({
           x,
           y: 0,
@@ -55,29 +55,13 @@ export class TimelineHeader {
         //   fill: scene._gantt.parsedOptions.timelineHeaderStyle?.backgroundColor
         // });
         // date.appendChild(rect);
-
-        if (j > 0) {
-          const line = VRender.createLine({
-            pickable: false,
-            stroke: scene._gantt.parsedOptions.timelineHeaderStyle?.borderColor,
-            lineWidth: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth,
-            points: [
-              { x: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0, y: 0 },
-              {
-                x: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0,
-                y: scene._gantt.parsedOptions.headerRowHeight
-              }
-            ]
-          });
-          date.appendChild(line);
-        }
         let rootContainer;
         let renderDefaultText = true;
         const width = scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days;
         const height = scene._gantt.parsedOptions.headerRowHeight;
-        if (customRender) {
-          let customRenderObj;
-          if (typeof customRender === 'function') {
+        if (customLayout) {
+          let customLayoutObj;
+          if (typeof customLayout === 'function') {
             const arg = {
               width,
               height,
@@ -85,19 +69,20 @@ export class TimelineHeader {
               startDate,
               endDate,
               days,
+              dateIndex,
               title,
               ganttInstance: this._scene._gantt
             };
-            customRenderObj = customRender(arg);
+            customLayoutObj = customLayout(arg);
           } else {
-            customRenderObj = customRender;
+            customLayoutObj = customLayout;
           }
-          if (customRenderObj) {
-            // if (customRenderObj.rootContainer) {
-            //   customRenderObj.rootContainer = decodeReactDom(customRenderObj.rootContainer);
+          if (customLayoutObj) {
+            // if (customLayoutObj.rootContainer) {
+            //   customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
             // }
-            rootContainer = customRenderObj.rootContainer;
-            renderDefaultText = customRenderObj.renderDefaultText ?? false;
+            rootContainer = customLayoutObj.rootContainer;
+            renderDefaultText = customLayoutObj.renderDefaultText ?? false;
             rootContainer.name = 'task-bar-custom-render';
           }
           rootContainer && date.appendChild(rootContainer);
@@ -136,6 +121,22 @@ export class TimelineHeader {
           date.appendChild(text);
         }
         rowHeader.addChild(date);
+
+        if (j > 0) {
+          const line = VRender.createLine({
+            pickable: false,
+            stroke: scene._gantt.parsedOptions.timelineHeaderStyle?.borderColor,
+            lineWidth: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth,
+            points: [
+              { x: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0, y: 0 },
+              {
+                x: scene._gantt.parsedOptions.timelineHeaderStyle?.borderWidth & 1 ? 0.5 : 0,
+                y: scene._gantt.parsedOptions.headerRowHeight
+              }
+            ]
+          });
+          date.appendChild(line);
+        }
         x += width;
       }
       //创建表头分割线 水平分割线 TODO

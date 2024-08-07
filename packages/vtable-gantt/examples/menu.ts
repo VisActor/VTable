@@ -24,15 +24,15 @@ export const menus = [
   },
   {
     path: 'gantt',
-    name: 'gantt-customRender'
-  },
-  {
-    path: 'gantt',
-    name: 'gantt-header-customRender'
+    name: 'gantt-customLayout'
   },
   {
     path: 'gantt-jsx',
-    name: 'gantt-customRender-jsx'
+    name: 'gantt-header-customLayout'
+  },
+  {
+    path: 'gantt-jsx',
+    name: 'gantt-customLayout-jsx'
   },
   {
     path: 'gantt',

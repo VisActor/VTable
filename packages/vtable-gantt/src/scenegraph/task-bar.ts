@@ -58,7 +58,7 @@ export class TaskBar {
     }
   }
   initBar(index: number) {
-    const taskBarCustomRender = this._scene._gantt.parsedOptions.taskBarCustomRender;
+    const taskBarCustomLayout = this._scene._gantt.parsedOptions.taskBarCustomLayout;
     const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(index);
     if (taskDays <= 0) {
       return null;
@@ -86,9 +86,9 @@ export class TaskBar {
     let renderDefaultBar = true;
     let renderDefaultText = true;
 
-    if (taskBarCustomRender) {
-      let customRenderObj;
-      if (typeof taskBarCustomRender === 'function') {
+    if (taskBarCustomLayout) {
+      let customLayoutObj;
+      if (typeof taskBarCustomLayout === 'function') {
         const arg = {
           width: taskBarSize,
           height: taskbarHeight,
@@ -100,17 +100,17 @@ export class TaskBar {
           taskRecord,
           ganttInstance: this._scene._gantt
         };
-        customRenderObj = taskBarCustomRender(arg);
+        customLayoutObj = taskBarCustomLayout(arg);
       } else {
-        customRenderObj = taskBarCustomRender;
+        customLayoutObj = taskBarCustomLayout;
       }
-      if (customRenderObj) {
-        // if (customRenderObj.rootContainer) {
-        //   customRenderObj.rootContainer = decodeReactDom(customRenderObj.rootContainer);
+      if (customLayoutObj) {
+        // if (customLayoutObj.rootContainer) {
+        //   customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
         // }
-        rootContainer = customRenderObj.rootContainer;
-        renderDefaultBar = customRenderObj.renderDefaultBar ?? false;
-        renderDefaultText = customRenderObj.renderDefaultText ?? false;
+        rootContainer = customLayoutObj.rootContainer;
+        renderDefaultBar = customLayoutObj.renderDefaultBar ?? false;
+        renderDefaultText = customLayoutObj.renderDefaultText ?? false;
         rootContainer.name = 'task-bar-custom-render';
       }
     }

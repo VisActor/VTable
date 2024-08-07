@@ -14,7 +14,7 @@ import type {
   IFrameStyle,
   ITableColumnsDefine,
   IResizeLineStyle,
-  ITaskBarCustomRender,
+  ITaskBarCustomLayout,
   ITimelineDateInfo,
   ITimelineScale
 } from './ts-types';
@@ -92,7 +92,7 @@ export class Gantt extends EventTarget {
     taskBarResizable: boolean;
     taskBarHoverColor: string;
     taskBarLabelStyle: ITaskBarLabelTextStyle;
-    taskBarCustomRender: ITaskBarCustomRender;
+    taskBarCustomLayout: ITaskBarCustomLayout;
     frameStyle: IFrameStyle;
     pixelRatio: number;
 

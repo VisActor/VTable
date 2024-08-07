@@ -460,10 +460,10 @@ export class StateManager {
 }
 
 function reCreateCustomNode(gantt: Gantt, taskBarGroup: VRender.Group, taskIndex: number) {
-  const taskBarCustomRender = gantt.parsedOptions.taskBarCustomRender;
-  if (taskBarCustomRender) {
-    let customRenderObj;
-    if (typeof taskBarCustomRender === 'function') {
+  const taskBarCustomLayout = gantt.parsedOptions.taskBarCustomLayout;
+  if (taskBarCustomLayout) {
+    let customLayoutObj;
+    if (typeof taskBarCustomLayout === 'function') {
       const { startDate, endDate, taskDays, progress, taskRecord } = gantt.getTaskInfoByTaskListIndex(taskIndex);
       const arg = {
         width: taskBarGroup.attribute.width,
@@ -476,12 +476,12 @@ function reCreateCustomNode(gantt: Gantt, taskBarGroup: VRender.Group, taskIndex
         taskRecord,
         ganttInstance: gantt
       };
-      customRenderObj = taskBarCustomRender(arg);
+      customLayoutObj = taskBarCustomLayout(arg);
     } else {
-      customRenderObj = taskBarCustomRender;
+      customLayoutObj = taskBarCustomLayout;
     }
-    if (customRenderObj) {
-      const rootContainer = customRenderObj.rootContainer;
+    if (customLayoutObj) {
+      const rootContainer = customLayoutObj.rootContainer;
       rootContainer.name = 'task-bar-custom-render';
       const oldCustomIndex = taskBarGroup.children.findIndex((node: any) => {
         return node.name === 'task-bar-custom-render';

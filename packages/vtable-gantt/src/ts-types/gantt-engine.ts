@@ -7,6 +7,7 @@ export interface ITimelineDateInfo {
   endDate: Date;
   startDate: Date;
   title: string;
+  dateIndex: number;
 }
 
 export interface ITimelineHeaderStyle {
@@ -80,7 +81,7 @@ export interface GanttConstructorOptions {
     labelText?: ITaskBarLabelText;
     labelTextStyle?: ITaskBarLabelTextStyle;
     barStyle?: ITaskBarStyle;
-    customRender?: ITaskBarCustomRender;
+    customLayout?: ITaskBarCustomLayout;
     resizable?: boolean;
     moveable?: boolean;
     hoverColor?: string | null;
@@ -118,7 +119,7 @@ export interface ITimelineScale {
   unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
   step: number;
   startOfWeek?: 'sunday' | 'monday';
-  customRender?: IDateCustomRender;
+  customLayout?: IDateCustomLayout;
   format?: (date: DateFormatArgumentType) => string;
 }
 export interface ITaskBarLabelTextStyle {
@@ -167,7 +168,7 @@ export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
 export type DateFormatArgumentType = { index: number; startDate: Date; endDate: Date };
-export type TaskBarCustomRenderArgumentType = {
+export type TaskBarCustomLayoutArgumentType = {
   width: number;
   height: number;
   index: number;
@@ -178,27 +179,29 @@ export type TaskBarCustomRenderArgumentType = {
   taskRecord: any;
   ganttInstance: Gantt;
 };
-export type ITaskBarCustomRender =
-  | ITaskBarCustomRenderObj
-  | ((args: TaskBarCustomRenderArgumentType) => ITaskBarCustomRenderObj); //CustomLayout
-export type ITaskBarCustomRenderObj = {
+export type ITaskBarCustomLayout =
+  | ITaskBarCustomLayoutObj
+  | ((args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj); //CustomLayout
+export type ITaskBarCustomLayoutObj = {
   rootContainer: VRender.Group;
   renderDefaultBar?: boolean; // 默认false
   renderDefaultResizeIcon?: boolean; // 默认false
   renderDefaultText?: boolean; // 默认false
 };
 
-export type DateCustomRenderArgumentType = {
+export type DateCustomLayoutArgumentType = {
   width: number;
   height: number;
   index: number;
+  dateIndex: number;
+  title: string;
   startDate: Date;
   endDate: Date;
   days: number;
   ganttInstance: Gantt;
 };
-export type IDateCustomRender = IDateCustomRenderObj | ((args: DateCustomRenderArgumentType) => IDateCustomRenderObj); //CustomLayout
-export type IDateCustomRenderObj = {
+export type IDateCustomLayout = IDateCustomLayoutObj | ((args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj); //CustomLayout
+export type IDateCustomLayoutObj = {
   rootContainer: VRender.Group;
   renderDefaultText?: boolean; // 默认false
 };

@@ -645,7 +645,7 @@ export function createTable() {
       backgroundColor: '#EEF1F5'
     },
     taskBar: {
-      customRender: (args: any) => {
+      customLayout: (args: any) => {
         const colorLength = barColors.length;
         const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
         const container = new VRender.Group({

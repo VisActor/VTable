@@ -1,9 +1,10 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { register, VRender, CustomLayout } from '@visactor/vtable';
+import { register, VRender, jsx } from '@visactor/vtable';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
-import { Gantt } from '../../src/index';
+import { Gantt, tools } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
+import type { DateCustomLayoutArgumentType } from '../../src/ts-types';
 const CONTAINER_ID = 'vTable';
 const date_input_editor = new DateInputEditor({});
 const input_editor = new InputEditor({});
@@ -645,7 +646,7 @@ export function createTable() {
       backgroundColor: '#EEF1F5'
     },
     taskBar: {
-      customRender: (args: any) => {
+      customLayout: (args: any) => {
         const colorLength = barColors.length;
         const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
         const container = new VRender.Group({
@@ -773,13 +774,136 @@ export function createTable() {
         startOfWeek: 'sunday',
         format(date: TYPES.DateFormatArgumentType) {
           return `Week ${date.index}`;
+        },
+        customLayout: (args: DateCustomLayoutArgumentType) => {
+          const colorLength = barColors.length;
+          const { width, height, index, startDate, endDate, days, dateIndex, title, ganttInstance } = args;
+          console.log('week', index);
+          const container = new VRender.Group({
+            width,
+            height,
+            fill: {
+              gradient: 'linear',
+              x0: 0,
+              y0: 0,
+              x1: 1,
+              y1: 0,
+              stops: [
+                {
+                  offset: 0,
+                  color: barColors0[dateIndex % colorLength]
+                },
+                {
+                  offset: 0.5,
+                  color: barColors[dateIndex % colorLength]
+                },
+                {
+                  offset: 1,
+                  color: barColors0[dateIndex % colorLength]
+                }
+              ]
+            },
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'nowrap'
+          });
+          const containerLeft = new VRender.Group({
+            height,
+            width: 60,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-around'
+            // fill: 'red'
+          });
+          container.add(containerLeft);
+
+          const icon0 = new VRender.Image({
+            width: 50,
+            height: 50,
+            image:
+              '<svg t="1722943462248" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5107" width="200" height="200"><path d="M866.462 137.846H768V98.462c0-31.508-25.6-59.077-59.077-59.077-31.508 0-59.077 25.6-59.077 59.077v39.384H374.154V98.462c0-31.508-25.6-59.077-59.077-59.077-31.508 0-59.077 25.6-59.077 59.077v39.384h-98.462c-43.323 0-78.769 35.446-78.769 78.77v49.23c0 15.754 13.785 29.539 29.539 29.539h807.384c15.754 0 29.539-13.785 29.539-29.539v-49.23c0-43.324-35.446-78.77-78.77-78.77z m49.23 256H108.308c-15.754 0-29.539 13.785-29.539 29.539v482.461c0 43.323 35.446 78.77 78.77 78.77h708.923c43.323 0 78.769-35.447 78.769-78.77V423.385c0-15.754-13.785-29.539-29.539-29.539zM645.908 580.923L521.846 844.8c-5.908 13.785-19.692 21.662-35.446 21.662-21.662 0-37.415-17.724-37.415-35.447 0-3.938 1.969-9.846 3.938-15.753l104.37-224.493H407.63c-17.723 0-33.477-11.815-33.477-29.538 0-15.754 15.754-29.539 33.477-29.539h204.8c19.692 0 37.415 15.754 37.415 35.446 0 5.908-1.97 9.847-3.938 13.785z" fill="#1296db" p-id="5108"></path></svg>',
+            cornerRadius: 25
+          });
+          containerLeft.add(icon0);
+
+          const containerRight = new VRender.Group({
+            height,
+            width: width - 60,
+            display: 'flex',
+            flexDirection: 'column'
+            // alignItems: 'left'
+          });
+          container.add(containerRight);
+
+          const weekNumber = new VRender.Text({
+            text: `Week ${title}`,
+            fontSize: 20,
+            fontWeight: 'bold',
+            fontFamily: 'sans-serif',
+            fill: 'white',
+            textAlign: 'right',
+            maxLineWidth: width - 60,
+            boundsPadding: [10, 0, 0, 0]
+          });
+          containerRight.add(weekNumber);
+
+          const daysFromText = new VRender.Text({
+            text: `${tools.formatDate(startDate, 'mm/dd')}-${tools.formatDate(endDate, 'mm/dd')}`,
+            fontSize: 13,
+            fontFamily: 'sans-serif',
+            fill: 'white',
+            boundsPadding: [10, 0, 0, 0]
+          });
+          containerRight.add(daysFromText);
+          return {
+            rootContainer: container
+            //renderDefaultText: true
+          };
         }
       },
       {
         unit: 'day',
         step: 1,
         format(date: TYPES.DateFormatArgumentType) {
-          return date.index;
+          return date.index.toString() + 'th';
+        },
+        customLayout: (args: any) => {
+          const colorLength = barColors.length;
+          const { width, height, index, startDate, endDate, days, title, ganttInstance } = args;
+          const weekNumberofYear = tools.getWeekNumber(startDate);
+          console.log(startDate, weekNumberofYear, index);
+          const rootContainer = (
+            <VRender.VGroup
+              attribute={{
+                width: width,
+                height,
+                fill: barColors[weekNumberofYear % colorLength],
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <VRender.VText
+                attribute={{
+                  text: title,
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  fontFamily: 'sans-serif',
+                  fill: 'white',
+                  maxLineWidth: width,
+                  textBaseline: 'middle',
+                  textAlign: 'center',
+                  boundsPadding: [0, 0, 0, 0]
+                }}
+              ></VRender.VText>
+            </VRender.VGroup>
+          );
+
+          return {
+            rootContainer
+            //renderDefaultText: true
+          };
         }
       }
       // {

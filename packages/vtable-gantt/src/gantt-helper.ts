@@ -164,7 +164,7 @@ export function initOptions(gantt: Gantt) {
     padding: options?.taskBar?.labelTextStyle.padding ?? 0,
     textOverflow: options?.taskBar?.labelTextStyle.textOverflow
   };
-  gantt.parsedOptions.taskBarCustomRender = options?.taskBar?.customRender;
+  gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
 
   gantt.parsedOptions.frameStyle = Object.assign(
     {},
@@ -195,7 +195,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         days: step,
         startDate,
         endDate: dateEnd,
-        title: columnTitle
+        title: columnTitle,
+        dateIndex: currentDate.getDate()
       };
       timelineDates.push(dayCellConfig);
       currentDate.setDate(currentDate.getDate() + step);
@@ -213,7 +214,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
         startDate: start,
         endDate: end,
-        title: columnTitle
+        title: columnTitle,
+        dateIndex: month
       };
 
       timelineDates.push(dayCellConfig);
@@ -232,7 +234,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
         startDate: start,
         endDate: end,
-        title: columnTitle
+        title: columnTitle,
+        dateIndex: quarter
       };
       timelineDates.push(dayCellConfig);
       currentDate = new Date(year, (quarter + step - 1) * 3, 1);
@@ -249,7 +252,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
         startDate: start,
         endDate: end,
-        title: columnTitle
+        title: columnTitle,
+        dateIndex: year
       };
       timelineDates.push(dayCellConfig);
       currentDate = new Date(year + step, 0, 1);
@@ -278,7 +282,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         days: Math.ceil((endOfWeek.getTime() - startOfWeek.getTime()) / (24 * 60 * 60 * 1000)) + 1,
         startDate: startOfWeek,
         endDate: endOfWeek,
-        title: columnTitle
+        title: columnTitle,
+        dateIndex: weekNumber
       };
 
       timelineDates.push(dayCellConfig);
