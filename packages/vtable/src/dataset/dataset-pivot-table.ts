@@ -411,6 +411,7 @@ export class DatasetForPivotTable {
     return agg
       ? agg
       : {
+          key: '',
           className: '',
           push() {
             // do nothing

@@ -460,6 +460,12 @@ export class TableTheme implements ITableThemeDefine {
         get visible(): 'always' | 'scrolling' | 'none' | 'focus' {
           return scroll.visible ?? 'scrolling';
         },
+        get verticalVisible(): 'always' | 'scrolling' | 'none' | 'focus' {
+          return scroll.verticalVisible;
+        },
+        get horizontalVisible(): 'always' | 'scrolling' | 'none' | 'focus' {
+          return scroll.horizontalVisible;
+        },
         get width(): number | undefined {
           return scroll.width ?? 7;
         },
