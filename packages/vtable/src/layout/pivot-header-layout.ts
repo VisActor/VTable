@@ -1422,7 +1422,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         count -= 1;
       }
       //#region 处理需求 当没有数据时仍然显示角头维度名称
-      if (count === 0 && this.dataset && !this.dataset.customColTree && !this.dataset.customRowTree) {
+      if (
+        count === 0 &&
+        this.dataset &&
+        !this.dataset.customColTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
+        // && !this.dataset.customRowTree?.length
+      ) {
         if (this.cornerSetting.titleOnDimension === 'row') {
           count = 1;
         } else if (
@@ -1489,7 +1494,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       //   count+=1;
       // }
       //#region 处理需求 当没有数据时仍然显示角头维度名称
-      if (count === 0 && this.dataset && !this.dataset.customColTree && !this.dataset.customRowTree) {
+      if (
+        count === 0 &&
+        this.dataset &&
+        // && !this.dataset.customColTree
+        !this.dataset.customRowTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
+      ) {
         if (this.cornerSetting.titleOnDimension === 'column') {
           count = 1;
         } else if (
