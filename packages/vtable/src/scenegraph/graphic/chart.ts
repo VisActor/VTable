@@ -142,13 +142,15 @@ export class Chart extends Group {
             true
           );
           ctx.translate(viewBox.x1, viewBox.y1);
-          ctx.setTransformForCurrent(true);
+          ctx.setTransformForCurrent(true); // 替代原有的chart viewBox
           ctx.beginPath();
           ctx.rect(clipBound.x1, clipBound.y1, clipBound.x2 - clipBound.x1, clipBound.y2 - clipBound.y1);
           ctx.clip();
           ctx.clearMatrix();
 
-          if (!(chartStage as any).needRender) {
+          if (table.options.canvas && !(chartStage as any).needRender) {
+            // 在使用viewbox局部渲染时，activate单独渲染chart stage，可能导致外部stage场景层级错乱
+            // 此时触发整个表格的重绘，外部stage场景可以通过table的beforeRender配置触发更上一级的重绘
             chartStage.pauseRender();
             table.scenegraph.stage.dirtyBounds.union(this.globalAABBBounds);
             table.scenegraph.updateNextFrame();

@@ -180,7 +180,7 @@ export class DebugTool {
     this._highlightRect.style.width = `${bounds.width()}px`;
     this._highlightRect.style.height = `${bounds.height()}px`;
 
-    console.log(this._highlightRect.style.left);
+    // console.log(this._highlightRect.style.left);
   }
 
   // removeHighlightBounds() {
