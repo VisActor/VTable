@@ -758,8 +758,8 @@ export class Scenegraph {
    * @param {number} col
    * @return {*}
    */
-  updateChartSizeForResizeRowHeight(col: number) {
-    updateChartSizeForResizeRowHeight(this, col);
+  updateChartSizeForResizeRowHeight(row: number) {
+    updateChartSizeForResizeRowHeight(this, row);
   }
   /** 更新图表的高亮状态 */
   updateChartState(datum: any) {
@@ -916,7 +916,7 @@ export class Scenegraph {
       this.table.autoFillWidth ||
       this.table.autoFillHeight
     ) {
-      this.updateChartSizeForResizeColWidth(this.table.rowHeaderLevelCount);
+      this.updateChartSizeForResizeColWidth(-1);
     }
 
     this.proxy.progress();

@@ -14,7 +14,7 @@ import { getProp } from '../utils/get-prop';
 export function updateChartSizeForResizeColWidth(scenegraph: Scenegraph, col: number) {
   const { table } = scenegraph;
   const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
-  const columnResizeType = table.internalProps.columnResizeType;
+  const columnResizeType = col === -1 ? 'all' : table.internalProps.columnResizeType;
 
   if (columnResizeType === 'column') {
     const columnGroup = scenegraph.getColGroup(col);
@@ -142,7 +142,7 @@ export function updateChartSizeForResizeRowHeight(scenegraph: Scenegraph, row: n
   const { table } = scenegraph;
   const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
   const state = table.stateManager;
-  const rowResizeType = table.internalProps.rowResizeType;
+  const rowResizeType = row === -1 ? 'all' : table.internalProps.rowResizeType;
 
   let startRow = table.columnHeaderLevelCount;
   let endRow = table.rowCount - 1;
