@@ -34,9 +34,13 @@ import { BaseTable } from './core/BaseTable';
 import type { BaseTableAPI, HeaderData, PivotChartProtected } from './ts-types/base-table';
 import type { IChartColumnIndicator } from './ts-types/pivot-table/indicator/chart-indicator';
 import type { Chart } from './scenegraph/graphic/chart';
-import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node/update-chart';
+import {
+  clearCellChartCacheImage,
+  clearChartCacheImage,
+  updateChartData
+} from './scenegraph/refresh-node/update-chart';
 import type { ITableAxisOption } from './ts-types/component/axis';
-import { cloneDeep, isArray } from '@visactor/vutils';
+import { cloneDeep, isArray, isNumber } from '@visactor/vutils';
 import type { DiscreteLegend } from '@visactor/vrender-components';
 import type { ITitleComponent } from './components/title/title';
 import { Env } from './tools/env';
@@ -1199,6 +1203,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     clearChartCacheImage(this.scenegraph);
     updateChartData(this.scenegraph);
     this.render();
+  }
+  clearChartCacheImage(col?: number, row?: number) {
+    if (isNumber(col) && isNumber(row)) {
+      clearCellChartCacheImage(col, row, this.scenegraph);
+    } else {
+      clearChartCacheImage(this.scenegraph);
+    }
   }
   /** 获取图例的选择状态 */
   getLegendSelected() {

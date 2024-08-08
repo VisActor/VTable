@@ -198,13 +198,15 @@ export function isPromise(data: any | Promise<any> | undefined): data is Promise
   return Boolean(data && typeof (data as Promise<any>).then === 'function');
 }
 
-export function getPromiseValue<T=any>(value:T | Promise<T>, callback:(value:T)=>void){
+export function getPromiseValue<T = any>(value: T | Promise<T>, callback: (value: T) => void) {
   if (isPromise(value)) {
-    value.then(result => {
-      callback(result);
-    }).catch((err: Error) => {
-      console.error('Error:', err);
-    });
+    value
+      .then(result => {
+        callback(result);
+      })
+      .catch((err: Error) => {
+        console.error('Error:', err);
+      });
   } else {
     callback(value);
   }
