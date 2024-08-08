@@ -1428,7 +1428,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         !this.dataset.customColTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
         // && !this.dataset.customRowTree?.length
       ) {
-        if (this.cornerSetting.titleOnDimension === 'row') {
+        if (this.cornerSetting.titleOnDimension === 'row' && this.cornerSetting.forceShowHeader) {
           count = 1;
         } else if (
           (this.dataset.records?.length ?? 0) === 0 &&
@@ -1500,7 +1500,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // && !this.dataset.customColTree
         !this.dataset.customRowTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
       ) {
-        if (this.cornerSetting.titleOnDimension === 'column') {
+        if (this.cornerSetting.titleOnDimension === 'column' && this.cornerSetting.forceShowHeader) {
           count = 1;
         } else if (
           (this.dataset.records?.length ?? 0) === 0 &&
