@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ListTableSimple, ListColumn } from '../../../src';
+import { ListTableSimple, ListColumn, Title } from '../../../src';
+import * as VTable from '@visactor/vtable';
 function App() {
   const option = {
     header: [
@@ -31,7 +32,15 @@ function App() {
   // }, [setData]);
 
   return (
-    <ListTableSimple records={records}>
+    <ListTableSimple
+      records={records}
+      theme={VTable.themes.DARK.extends({
+        headerStyle: {
+          bgColor: '#5071f9'
+        }
+      })}
+    >
+      <Title text={'title'} />
       <ListColumn field={'0'} title={'名称'} />
       <ListColumn field={'1'} title={'年龄'} />
       <ListColumn field={'2'} title={'性别'} />
