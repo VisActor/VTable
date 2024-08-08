@@ -37,7 +37,6 @@ export function createFrameBorder(
     borderLineWidth,
     borderLineDash
   } = frameTheme;
-
   let hasShadow = false;
   const groupAttributes: IGroupGraphicAttribute = {};
   const rectAttributes: IRectGraphicAttribute = {
@@ -63,7 +62,7 @@ export function createFrameBorder(
   if (borderLineWidth) {
     rectAttributes.stroke = true;
     rectAttributes.fill = false;
-    rectAttributes.stroke = getStroke(borderColor, strokeArray);
+    rectAttributes.stroke = getStroke(borderColor, strokeArray, borderLineWidth);
     rectAttributes.lineWidth = borderLineWidth as number;
     borderLineDash && (rectAttributes.lineDash = borderLineDash as number[]);
     rectAttributes.lineCap = 'butt';
@@ -119,7 +118,14 @@ export function createFrameBorder(
     rectAttributes.pickable = false;
     if (isTableGroup) {
       if (cornerRadius) {
-        rectAttributes.cornerRadius = cornerRadius + (rectAttributes.lineWidth ?? 0) / 2;
+        if (Array.isArray(cornerRadius)) {
+          cornerRadius[0] = cornerRadius[0] + Math.min(borderLeft, borderTop) / 2;
+          cornerRadius[1] && (cornerRadius[1] = cornerRadius[1] + Math.min(borderTop, borderRight) / 2);
+          cornerRadius[2] && (cornerRadius[2] = cornerRadius[2] + Math.min(borderRight, borderBottom) / 2);
+          cornerRadius[3] && (cornerRadius[3] = cornerRadius[3] + Math.min(borderBottom, borderLeft) / 2);
+        } else {
+          rectAttributes.cornerRadius = cornerRadius + (rectAttributes.lineWidth ?? 0) / 2;
+        }
       }
       if (frameTheme.innerBorder) {
         rectAttributes.x = group.attribute.x + borderLeft / 2;
@@ -205,10 +211,14 @@ export function updateFrameBorder(
   group.border?.setAttribute('stroke', getStroke(borderColor, strokeArray));
 }
 
-export function getStroke(borderColor: string | string[], strokeArray: boolean[] | undefined) {
+export function getStroke(
+  borderColor: string | string[],
+  strokeArray: boolean[] | undefined,
+  strokeLineWidth?: number | number[]
+) {
   let stroke: boolean | string | (boolean | string)[] = true;
-  if (strokeArray && !isArray(borderColor)) {
-    stroke = strokeArray.map(stroke => {
+  if ((strokeArray || isArray(strokeLineWidth)) && !isArray(borderColor)) {
+    stroke = (strokeArray ?? (strokeLineWidth as number[])).map(stroke => {
       if (stroke) {
         return borderColor;
       }
