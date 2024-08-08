@@ -973,7 +973,7 @@ export class Scenegraph {
     } as any);
 
     if (this.tableGroup.border) {
-      const rectAttributes = this.tableGroup.border?.attributes;
+      const rectAttributes = this.tableGroup.border?.attribute;
       let borderTop;
       let borderRight;
       let borderBottom;
