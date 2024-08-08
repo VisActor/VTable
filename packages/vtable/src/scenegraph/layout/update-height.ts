@@ -16,7 +16,7 @@ import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import { resizeCellGroup, getCustomCellMergeCustom } from '../group-creater/cell-helper';
 import type { IGraphic } from '@src/vrender';
 import { getCellMergeRange } from '../../tools/merge-range';
-import type { ColumnDefine } from '../../ts-types';
+import type { ColumnDefine, ListTableConstructorOptions } from '../../ts-types';
 import { Factory } from '../../core/factory';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
@@ -216,7 +216,11 @@ export function updateCellHeight(
         let customRender;
         let customLayout;
         const cellLocation = scene.table.getCellLocation(col, row);
-        if (cellLocation !== 'body') {
+        const { vTableMerge } = scene.table.getCellRawRecord(col, row);
+
+        if (vTableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+          customLayout = (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout;
+        } else if (cellLocation !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);
           customRender = (define as ColumnDefine)?.headerCustomRender;
           customLayout = (define as ColumnDefine)?.headerCustomLayout;
@@ -224,6 +228,16 @@ export function updateCellHeight(
           const define = scene.table.getBodyColumnDefine(col, row);
           customRender = (define as ColumnDefine)?.customRender || scene.table.customRender;
           customLayout = (define as ColumnDefine)?.customLayout;
+        }
+
+        if ((customRender || customLayout) && isMergeCellGroup(cell)) {
+          for (let mergeCol = cell.mergeStartCol; mergeCol <= cell.mergeEndCol; mergeCol++) {
+            for (let mergeRow = cell.mergeStartRow; mergeRow <= cell.mergeEndRow; mergeRow++) {
+              if (mergeRow !== row) {
+                scene.updateCellContent(mergeCol, mergeRow);
+              }
+            }
+          }
         }
 
         if (customLayout || customRender) {

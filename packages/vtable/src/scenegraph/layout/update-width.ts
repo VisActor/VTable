@@ -21,7 +21,7 @@ import { computeRowHeight } from './compute-row-height';
 import { updateCellHeightForRow } from './update-height';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getCellMergeRange } from '../../tools/merge-range';
-import type { ColumnDefine } from '../../ts-types';
+import type { ColumnDefine, ListTableConstructorOptions } from '../../ts-types';
 // import { updateAutoRowHeight } from './auto-height';
 
 /**
@@ -375,7 +375,11 @@ function updateCellWidth(
         let customRender;
         let customLayout;
         const cellType = scene.table.getCellLocation(col, row);
-        if (cellType !== 'body') {
+        const { vTableMerge } = scene.table.getCellRawRecord(col, row);
+
+        if (vTableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+          customLayout = (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout;
+        } else if (cellType !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);
           customRender = (define as ColumnDefine)?.headerCustomRender;
           customLayout = (define as ColumnDefine)?.headerCustomLayout;
@@ -383,6 +387,16 @@ function updateCellWidth(
           const define = scene.table.getBodyColumnDefine(col, row);
           customRender = (define as ColumnDefine)?.customRender || scene.table.customRender;
           customLayout = (define as ColumnDefine)?.customLayout;
+        }
+
+        if ((customRender || customLayout) && isMergeCellGroup(cellGroup)) {
+          for (let mergeCol = cellGroup.mergeStartCol; mergeCol <= cellGroup.mergeEndCol; mergeCol++) {
+            if (mergeCol !== col) {
+              for (let mergeRow = cellGroup.mergeStartRow; mergeRow <= cellGroup.mergeEndRow; mergeRow++) {
+                scene.updateCellContent(mergeCol, mergeRow);
+              }
+            }
+          }
         }
 
         if (customLayout || customRender) {
@@ -398,8 +412,8 @@ function updateCellWidth(
           const customResult = dealWithCustom(
             customLayout,
             customRender,
-            col,
-            row,
+            cellGroup.mergeStartCol ?? col,
+            cellGroup.mergeStartRow ?? row,
             width,
             height,
             false,

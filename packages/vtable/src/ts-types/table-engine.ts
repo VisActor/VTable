@@ -164,6 +164,8 @@ export interface DataSourceAPI {
   getIndexKey: (index: number) => number | number[];
   /** 数据是否为树形结构 且可以展开收起 */
   hierarchyExpandLevel: number;
+
+  getGroupLength?: () => number;
 }
 
 export interface SortState {
@@ -249,7 +251,20 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
         col: number;
         field: string;
       }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
+
+  enableTreeNodeMerge?: boolean;
+  groupBy?: GroupByOption;
+  groupTitleCustomLayout?: ICustomLayout;
+
+  enableTreeStickCell?: boolean;
 }
+
+export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
+
+export type GroupConfig = {
+  key: string;
+  sort?: SortOrder;
+};
 
 export interface ListTableAPI extends BaseTableAPI {
   options: ListTableConstructorOptions;

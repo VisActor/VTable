@@ -91,6 +91,14 @@ body 单元格的样式配置
   prefix = '#' + ${prefix},
 ) }}
 
+#${prefix} groupTitleStyle(Object)
+
+分组展示时，分组标题的样式配置
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
 #${prefix} defaultStyle(Object)
 
 公共样式，如果 headerStyle，rowHeaderStyle, defaultStyle 都没有配置的项，则使用这个里面的配置项

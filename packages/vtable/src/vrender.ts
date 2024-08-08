@@ -54,7 +54,7 @@ export function registerForVrender() {
   registerRect();
   // registerRect3d();
   registerRichtext();
-  // registerShadowRoot();
+  registerShadowRoot();
   registerSymbol();
   registerText();
   // registerWrapText();

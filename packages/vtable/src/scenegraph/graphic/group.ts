@@ -324,6 +324,11 @@ export class Group extends VRenderGroup {
       // 更新bounds之后需要设置父节点，否则tag丢失
       this.parent && this.parent.addChildUpdateBoundTag();
       this.clearUpdateBoundTag();
+
+      if (this.shadowRoot) {
+        // this.shadowRoot.clearUpdateBoundTag();
+        this.shadowRoot.tryUpdateAABBBounds();
+      }
       return this._AABBBounds;
     }
     return super.doUpdateAABBBounds();
