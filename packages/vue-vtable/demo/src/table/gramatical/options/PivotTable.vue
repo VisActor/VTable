@@ -1,7 +1,7 @@
 <template>
   <vue-pivot-table :options="tableOptions" :records="data" @onMouseEnterCell="onMouseEnterCell" ref="pivotTableRef">
 
-    <PivotColumn title="Category" dimensionKey="Category" :headerStyle="{ textStick: true }" width="auto" />
+    <PivotColumnDimension title="Category" dimensionKey="Category" :headerStyle="{ textStick: true }" width="auto" />
 
     <PivotRowDimension
       v-for="row in rows"
@@ -12,7 +12,7 @@
       :width="row.width"
     />
 
-    <PivotIndicators
+    <PivotIndicator
       v-for="indicator in indicators"
       :key="indicator.indicatorKey"
       :indicatorKey="indicator.indicatorKey"
@@ -27,13 +27,18 @@
     <PivotCorner titleOnDimension="row" :headerStyle="{ textStick: true }" />
 
     <Menu menuType="html" :contextMenuItems="['copy', 'paste', 'delete', '...']" />
+
+    <!-- <PivotRowHeaderTitle title="City" :headerStyle="{ textStick: true }" /> -->
     
+    <!-- <PivotColumnHeaderTitle title="Category" :headerStyle="{ textStick: true }" /> -->
+
   </vue-pivot-table>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import * as VTable from '@visactor/vtable';//TODO
+import * as VTable from '@visactor/vtable';
+import { PivotColumnDimension, PivotRowDimension, PivotIndicator, PivotCorner, Menu , PivotRowHeaderTitle , PivotColumnHeaderTitle } from '../../../../../src/components/index';
 
 const pivotTableRef = ref(null);
 

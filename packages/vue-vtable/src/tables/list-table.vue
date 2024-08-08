@@ -43,26 +43,27 @@ function flattenVNodes(vnodes: any[]): any[] {
 // 合并props.options和插槽中的配置
 const computedOptions = computed(() => {
   const flattenedSlots = flattenVNodes(slots.default?.() || []);
-
   const options = {
     columns: [] as Record<string, unknown>[],
     tooltip: null as Record<string, unknown> | null,
     menu: null as Record<string, unknown> | null,
   };
+
+  const typeMapping: Record<string, keyof typeof options> = {
+    'list-column': 'columns',
+    'tooltip': 'tooltip',
+    'menu': 'menu',
+  };
   
   flattenedSlots.forEach(vnode => {
-    if (vnode.type) {
-      switch ( vnode.type?.__name ?? vnode.type) {
-        case 'list-column':
-        case 'ListColumn':
-          options.columns.push(vnode.props);
-          break;
-        case 'Tooltip':
-          options.tooltip = vnode.props;
-          break;
-        case 'Menu':
-          options.menu = vnode.props;
-          break;
+    const typeName = vnode.type?.__name ;
+    const optionKey = typeMapping[typeName];
+
+    if (optionKey) {
+      if (Array.isArray(options[optionKey])) {
+        (options[optionKey] as any[]).push(vnode.props);
+      } else {
+        options[optionKey] = vnode.props;
       }
     }
   });

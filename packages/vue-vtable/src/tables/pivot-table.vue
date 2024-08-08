@@ -14,20 +14,9 @@
 <script setup lang="ts">
 import { shallowRef, computed, defineProps, useSlots, VNode } from 'vue';
 import BaseTable from './base-table.vue';
-import type { ICornerDefine as PivotCornerProps, IIndicator as PivotIndicatorsProps, IColumnDimension as PivotColumnProps, IRowDimension as PivotRowProps , TYPES} from '@visactor/vtable';
-
-export type TooltipProps = {
-  renderMode?: 'html';
-  isShowOverflowTextTooltip?: boolean;
-  confine?: boolean;
-};
-
-export type MenuProps = {
-  renderMode?: 'canvas' | 'html';
-  defaultHeaderMenuItems?: TYPES.MenuListItem[];
-  contextMenuItems?: TYPES.MenuListItem[] | ((field: string, row: number, col: number) => TYPES.MenuListItem[]);
-  dropDownMenuHighlight?: TYPES.DropDownMenuHighlightInfo[];
-}
+import type { ICornerDefine as PivotCornerProps, IIndicator as PivotIndicatorsProps, IDimension as PivotColumnDimensionProps, IDimension as PivotRowDimensionProps, ITitleDefine } from '@visactor/vtable';
+import type { TooltipProps } from '../components/component/tooltip.vue';
+import type { MenuProps } from '../components/component/menu.vue';
 
 interface Props {
   options: Record<string, unknown>;
@@ -51,44 +40,49 @@ function flattenVNodes(vnodes: VNode[]): VNode[] {
 
 const computedOptions = computed(() => {
   const flattenedSlots = flattenVNodes(slots.default?.() || []);
+
   const options = {
-    columns: [] as PivotColumnProps[],
+    columns: [] as PivotColumnDimensionProps[],
+    columnHeaderTitle: [] as ITitleDefine[],
+    rows: [] as PivotRowDimensionProps[],
+    rowHeaderTitle: [] as ITitleDefine[],
     indicators: [] as PivotIndicatorsProps[],
-    rows: [] as PivotRowProps[],
     corner: null as PivotCornerProps | null,
     tooltip: null as TooltipProps | null,
     menu: null as MenuProps | null,
   };
 
+  const typeMapping: Record<string, keyof typeof options> = {
+    'pivot-column-dimension': 'columns',
+    'pivot-column-header-title': 'columnHeaderTitle',
+    'pivot-row-dimension': 'rows',
+    'pivot-row-header-title': 'rowHeaderTitle',
+    'pivot-corner': 'corner',
+    'pivot-indicator': 'indicators',
+    'tooltip': 'tooltip',
+    'menu': 'menu',
+  };
+
   flattenedSlots.forEach(vnode => {
-    console.log('vnode', vnode);
-    switch (vnode.type) {
-      case 'PivotColumn':
-        options.columns.push(vnode.props as PivotColumnProps);
-        break;
-      case 'PivotIndicators':
-        options.indicators.push(vnode.props as PivotIndicatorsProps);
-        break;
-      case 'PivotRowDimension':
-        options.rows.push(vnode.props as PivotRowProps);
-        break;
-      case 'PivotCorner':
-        options.corner = vnode.props as PivotCornerProps;
-        break;
-      case 'Tooltip':
-        options.tooltip = vnode.props as TooltipProps;
-        break;
-      case 'Menu':
-        options.menu = vnode.props as MenuProps;
-        break;
+    const typeName = vnode.type?.__name ;
+    const optionKey = typeMapping[typeName];
+
+    if (optionKey) {
+      if (Array.isArray(options[optionKey])) {
+        (options[optionKey] as any[]).push(vnode.props);
+      } else {
+        options[optionKey] = vnode.props;
+      }
     }
   });
 
   return {
     ...props.options,
     columns: options.columns.length ? options.columns : props.options.columns,
-    indicators: options.indicators.length ? options.indicators : props.options.indicators,
+    columnHeaderTitle: options.columnHeaderTitle.length ? options.columnHeaderTitle : props.options.columnHeaderTitle,
     rows: options.rows.length ? options.rows : props.options.rows,
+    rowHeaderTitle: options.rowHeaderTitle.length ? options.rowHeaderTitle : props.options.rowHeaderTitle,
+    indicators: options.indicators.length ? options.indicators : props.options.indicators,
     corner: options.corner || props.options.corner,
     tooltip: options.tooltip || props.options.tooltip,
     menu: options.menu || props.options.menu,
