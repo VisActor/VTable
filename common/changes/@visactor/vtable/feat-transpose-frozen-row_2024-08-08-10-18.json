@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add frozenRowCount in transpose table #2182",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
