@@ -1,6 +1,14 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 07 Aug 2024 12:08:17 GMT and should not be manually modified.
+This log was last generated on Thu, 08 Aug 2024 02:54:17 GMT and should not be manually modified.
+
+## 1.5.6
+Thu, 08 Aug 2024 02:54:17 GMT
+
+### Updates
+
+- feat: add canvas & viewbox config
+- fix: fix released async problem #2145
 
 ## 1.5.5
 Wed, 07 Aug 2024 12:08:17 GMT
