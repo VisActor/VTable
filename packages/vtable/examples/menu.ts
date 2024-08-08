@@ -53,6 +53,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-transpose-frozen-row'
+      },
+      {
+        path: 'list',
         name: 'list-tree'
       },
       {
