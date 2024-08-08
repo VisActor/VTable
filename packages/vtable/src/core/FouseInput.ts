@@ -3,6 +3,7 @@ import type { Rect } from '../tools/Rect';
 import { Env } from '../tools/env';
 
 export class FocusInput extends EventTarget {
+  private _container: HTMLDivElement;
   private _table: BaseTable;
   private _input: HTMLInputElement;
   constructor(table: BaseTable, parentElement: HTMLElement) {
@@ -23,6 +24,7 @@ export class FocusInput extends EventTarget {
     input.dataset.vtable = 'vtable';
     input.readOnly = true;
     parentElement.appendChild(div);
+    this._container = div;
   }
 
   focus(): void {
@@ -45,5 +47,6 @@ export class FocusInput extends EventTarget {
   }
   release(): void {
     // document.removeChild(this._input);
+    this._container.parentElement?.removeChild(this._container);
   }
 }
