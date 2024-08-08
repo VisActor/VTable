@@ -58,7 +58,7 @@ export function updateResizeRow(xInTable: number, yInTable: number, state: State
 }
 
 function updateResizeColForRow(detaY: number, state: StateManager) {
-  if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.colCount - 1) {
+  if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.rowCount - 1) {
     state.table.scenegraph.updateRowHeight(state.rowResize.row, detaY);
     state.table.scenegraph.updateRowHeight(state.rowResize.row + 1, -detaY);
 
