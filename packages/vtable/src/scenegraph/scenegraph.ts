@@ -973,12 +973,12 @@ export class Scenegraph {
     } as any);
 
     if (this.tableGroup.border) {
-      const rectAttributes = this.tableGroup.border.attributes;
+      const rectAttributes = this.tableGroup.border?.attributes;
       let borderTop;
       let borderRight;
       let borderBottom;
       let borderLeft;
-      if ((rectAttributes as any).strokeArrayWidth) {
+      if ((rectAttributes as any)?.strokeArrayWidth) {
         borderTop = (rectAttributes as any).strokeArrayWidth
           ? (rectAttributes as any).strokeArrayWidth[0]
           : (rectAttributes.lineWidth as number) ?? 0;
@@ -992,10 +992,10 @@ export class Scenegraph {
           ? (rectAttributes as any).strokeArrayWidth[3]
           : (rectAttributes.lineWidth as number) ?? 0;
       } else {
-        borderTop = (rectAttributes.lineWidth as number) ?? 0;
-        borderRight = (rectAttributes.lineWidth as number) ?? 0;
-        borderBottom = (rectAttributes.lineWidth as number) ?? 0;
-        borderLeft = (rectAttributes.lineWidth as number) ?? 0;
+        borderTop = (rectAttributes?.lineWidth as number) ?? 0;
+        borderRight = (rectAttributes?.lineWidth as number) ?? 0;
+        borderBottom = (rectAttributes?.lineWidth as number) ?? 0;
+        borderLeft = (rectAttributes?.lineWidth as number) ?? 0;
       }
       if (this.tableGroup.border.type === 'rect') {
         if (this.table.theme.frameStyle?.innerBorder) {
