@@ -258,12 +258,15 @@ export class Gantt extends EventTarget {
   }
   _generateListTableOptions() {
     const listTable_options: ListTableConstructorOptions = {};
+    const needPutInListTableKeys = ['container', 'records', 'pixelRatio', 'overscrollBehavior', 'pixelRatio'];
     for (const key in this.options) {
-      if (key !== 'timelineScales' && key !== 'barStyle' && key !== 'theme') {
+      if (needPutInListTableKeys.indexOf(key) >= 0) {
         listTable_options[key] = this.options[key];
       }
     }
-    listTable_options.columns = this.options.taskListTable.columns;
+    for (const key in this.options.taskListTable) {
+      listTable_options[key] = this.options.taskListTable[key];
+    }
     // lineWidthArr[1] = 0;
     listTable_options.theme = {
       scrollStyle: Object.assign({}, this.parsedOptions.scrollStyle, {
@@ -288,7 +291,6 @@ export class Gantt extends EventTarget {
     listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
     listTable_options.defaultRowHeight = this.parsedOptions.rowHeight;
     listTable_options.clearDOM = false;
-    listTable_options.overscrollBehavior = this.parsedOptions.overscrollBehavior;
     return listTable_options;
   }
   _createResizeLine() {

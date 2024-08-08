@@ -750,7 +750,7 @@ export function createTable() {
           step: 1,
           startOfWeek: 'sunday',
           format(date: TYPES.DateFormatArgumentType) {
-            return `Week ${date.index}`;
+            return `Week ${date.dateIndex}`;
           },
           customLayout: (args: DateCustomLayoutArgumentType) => {
             const colorLength = barColors.length;
@@ -843,7 +843,7 @@ export function createTable() {
           unit: 'day',
           step: 1,
           format(date: TYPES.DateFormatArgumentType) {
-            return date.index.toString() + 'th';
+            return date.dateIndex.toString() + 'th';
           },
           customLayout: (args: any) => {
             const colorLength = barColors.length;
@@ -869,8 +869,6 @@ export function createTable() {
                     fontFamily: 'sans-serif',
                     fill: 'white',
                     maxLineWidth: width,
-                    textBaseline: 'middle',
-                    textAlign: 'center',
                     boundsPadding: [0, 0, 0, 0]
                   }}
                 ></VRender.VText>

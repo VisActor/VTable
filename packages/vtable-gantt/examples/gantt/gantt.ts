@@ -875,7 +875,7 @@ export function createTable() {
           step: 1,
           startOfWeek: 'sunday',
           format(date: TYPES.DateFormatArgumentType) {
-            return `Week ${date.index}`;
+            return `Week ${date.dateIndex}`;
           },
           style: {
             fontSize: 20,
@@ -888,7 +888,7 @@ export function createTable() {
           unit: 'day',
           step: 1,
           format(date: TYPES.DateFormatArgumentType) {
-            return date.index.toString();
+            return date.dateIndex.toString();
           },
           style: {
             fontSize: 20,

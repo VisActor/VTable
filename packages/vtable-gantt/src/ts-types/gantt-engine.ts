@@ -98,6 +98,7 @@ export interface GanttConstructorOptions {
     minWidth?: number;
     /** 左侧任务列表 最大宽度 */
     maxWidth?: number;
+    rightFrozenColCount?: number;
   };
   gridStyle?: IGridStyle;
   // timelineHeaderStyle?: ITimelineHeaderStyle;
@@ -168,7 +169,7 @@ export type IResizeLineStyle = {
 export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
-export type DateFormatArgumentType = { index: number; startDate: Date; endDate: Date };
+export type DateFormatArgumentType = { dateIndex: number; startDate: Date; endDate: Date };
 export type TaskBarCustomLayoutArgumentType = {
   width: number;
   height: number;

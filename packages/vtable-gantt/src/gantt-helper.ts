@@ -195,7 +195,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
     if (unit === 'day') {
       const dateEnd = new Date(currentDate.getTime() + step * 24 * 60 * 60 * 1000);
       const startDate = new Date(currentDate);
-      const formattedDate = format?.({ index: currentDate.getDate(), startDate, endDate: dateEnd });
+      const formattedDate = format?.({ dateIndex: currentDate.getDate(), startDate, endDate: dateEnd });
       const columnTitle = formattedDate || currentDate.getDate().toString();
       const dayCellConfig = {
         days: step,
@@ -214,7 +214,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         end.setDate(endDate.getDate());
       }
       const start = currentDate;
-      const formattedDate = format?.({ index: month, startDate: start, endDate: end });
+      const formattedDate = format?.({ dateIndex: month, startDate: start, endDate: end });
       const columnTitle = formattedDate || month.toString();
       const dayCellConfig = {
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
@@ -234,7 +234,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         end.setDate(endDate.getDate());
       }
       const start = currentDate;
-      const formattedDate = format?.({ index: quarter, startDate: start, endDate: end });
+      const formattedDate = format?.({ dateIndex: quarter, startDate: start, endDate: end });
       const columnTitle = formattedDate || quarter.toString();
       const dayCellConfig = {
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
@@ -252,7 +252,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         end.setDate(endDate.getDate());
       }
       const start = currentDate;
-      const formattedDate = format?.({ index: year, startDate: start, endDate: end });
+      const formattedDate = format?.({ dateIndex: year, startDate: start, endDate: end });
       const columnTitle = formattedDate || year.toString();
       const dayCellConfig = {
         days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
@@ -282,7 +282,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const weekNumber = getWeekNumber(startOfWeek);
 
       const columnTitle =
-        format?.({ index: weekNumber, startDate: startOfWeek, endDate: endOfWeek }) || weekNumber.toString();
+        format?.({ dateIndex: weekNumber, startDate: startOfWeek, endDate: endOfWeek }) || weekNumber.toString();
 
       const dayCellConfig = {
         days: Math.ceil((endOfWeek.getTime() - startOfWeek.getTime()) / (24 * 60 * 60 * 1000)) + 1,

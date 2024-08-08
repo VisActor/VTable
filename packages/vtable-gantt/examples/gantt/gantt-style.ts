@@ -573,7 +573,7 @@ export function createTable() {
     {
       field: 'progress',
       title: 'progress',
-      width: 200,
+      width: 80,
       sort: true,
       headerStyle: {
         borderColor: '#e1e4e8'
@@ -588,7 +588,7 @@ export function createTable() {
   const option: GanttConstructorOptions = {
     records,
     taskListTable: {
-      columns: columns,
+      columns,
       width: 400,
       minWidth: 100,
       maxWidth: 600,
@@ -606,13 +606,13 @@ export function createTable() {
         fontSize: 16,
         color: '#4D4D4D',
         bgColor: '#FFF'
-      }
+      },
+      rightFrozenColCount: 1
     },
     resizeLineStyle: {
       lineColor: 'green',
       lineWidth: 3
     },
-    timelineColWidth: 60,
     startDateField: 'start',
     endDateField: 'end',
     progressField: 'progress',
@@ -627,24 +627,13 @@ export function createTable() {
       //   lineWidth: 1,
       //   lineColor: '#e1e4e8'
       // },
-      horizontal: {
+      horizontalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
       }
     },
-    defaultHeaderRowHeight: 60,
-    defaultRowHeight: 40,
-    timelineHeaderStyle: {
-      borderColor: '#e1e4e8',
-      borderWidth: 1,
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: 'white',
-      strokeColor: 'black',
-      textAlign: 'right',
-      textBaseline: 'bottom',
-      backgroundColor: '#EEF1F5'
-    },
+    headerRowHeight: 60,
+    rowHeight: 40,
     taskBar: {
       // resizable: false,
       moveable: false,
@@ -671,45 +660,54 @@ export function createTable() {
         borderColor: 'black'
       }
     },
-    timelineScales: [
-      // {
-      //   unit: 'year',
-      //   step: 1,
-      //   format(date: TYPES.DateFormatArgumentType) {
-      //     return `${date.index}`;
-      //   }
-      // },
-
-      // {
-      //   unit: 'month',
-      //   step: 1,
-      //   format(date: TYPES.DateFormatArgumentType) {
-      //     return date.index + '月';
-      //   }
-      // },
-      {
-        unit: 'week',
-        step: 1,
-        startOfWeek: 'sunday',
-        format(date: TYPES.DateFormatArgumentType) {
-          return `Week ${date.index}`;
-        }
+    timelineHeader: {
+      horizontalLine: {
+        lineWidth: 1,
+        lineColor: '#e1e4e8'
       },
-      {
-        unit: 'day',
-        step: 1,
-        format(date: TYPES.DateFormatArgumentType) {
-          return date.index;
+      scales: [
+        {
+          unit: 'week',
+          step: 1,
+          startOfWeek: 'sunday',
+          format(date: TYPES.DateFormatArgumentType) {
+            return `Week ${date.dateIndex}`;
+          },
+          style: {
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: 'white',
+            strokeColor: 'black',
+            textAlign: 'right',
+            textBaseline: 'bottom',
+            backgroundColor: '#EEF1F5'
+          }
+        },
+        {
+          unit: 'day',
+          step: 1,
+          format(date: TYPES.DateFormatArgumentType) {
+            return date.dateIndex.toString();
+          },
+          style: {
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: 'white',
+            strokeColor: 'black',
+            textAlign: 'right',
+            textBaseline: 'bottom',
+            backgroundColor: '#EEF1F5'
+          }
         }
-      }
-      // {
-      //   unit: 'quarter',
-      //   step: 1,
-      //   format(date: TYPES.DateFormatArgumentType) {
-      //     return '第' + date.index + '季度';
-      //   }
-      // }
-    ],
+        // {
+        //   unit: 'quarter',
+        //   step: 1,
+        //   format(date: TYPES.DateFormatArgumentType) {
+        //     return '第' + date.index + '季度';
+        //   }
+        // }
+      ]
+    },
     minDate: '2024-07-07',
     maxDate: '2024-10-15',
     markLine: [
