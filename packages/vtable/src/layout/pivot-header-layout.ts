@@ -195,7 +195,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.rowExpandLevel = (table as PivotTable).options.rowExpandLevel ?? 1;
     this.rowHierarchyIndent = (table as PivotTable).options.rowHierarchyIndent ?? 20;
     this.rowHierarchyTextStartAlignment = (table as PivotTable).options.rowHierarchyTextStartAlignment;
-    this.cornerSetting = table.options.corner ?? { titleOnDimension: 'column' };
+    this.cornerSetting = Object.assign({ titleOnDimension: 'column', forceShowHeader: false }, table.options.corner);
 
     if (dataset) {
       this.rowTree = dataset.rowHeaderTree;
