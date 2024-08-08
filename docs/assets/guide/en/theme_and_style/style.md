@@ -113,7 +113,7 @@ Contains the following configuration items:
 
 ### Text adsorption effect
 
-`textStick`: Set whether the text of the cell has an adsorption fruit \[Dynamically adjust the position of the cell content when scrolling]
+`textStick`: Set whether the text of the cell has an adsorption fruit \[Dynamically adjust the position of the cell content when scrolling].Can be set to true to enable, or set to 'horizontal' or 'vertical' to specify in which direction to snap only.
 `textStickBaseOnAlign`: When the cell text has an adsorption effect [the text can dynamically adjust its position when scrolling], the basis for adsorption is the horizontal alignment of the cell. For example, when `textStickBaseOnAlign` is `true` and `textAlign` is `'center'`, the text will be adsorbed to the horizontal center of the cell; otherwise, it will be adsorbed to the left or right edge of the cell (depending on the scroll position) )
 
 ### Cell Tag

@@ -47,7 +47,7 @@ export function handleTextStick(table: BaseTableAPI) {
     }
     [colStart, colEnd].forEach((col: number) => {
       const style = table._getCellStyle(col, row);
-      if (style?.textStick) {
+      if (style?.textStick && style?.textStick !== 'vertical') {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell Horizontal
         adjustCellContentHorizontalLayout(
@@ -69,7 +69,11 @@ export function handleTextStick(table: BaseTableAPI) {
     }
     [rowStart, rowEnd].forEach((row: number) => {
       const style = table._getCellStyle(col, row);
-      if (style?.textStick && (table.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'tree') {
+      if (
+        style?.textStick &&
+        (table.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'tree' &&
+        style?.textStick !== 'horizontal'
+      ) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
         adjustCellContentVerticalLayout(
@@ -91,7 +95,7 @@ export function handleTextStick(table: BaseTableAPI) {
     }
     [rowStart, rowEnd].forEach((row: number) => {
       const style = table._getCellStyle(col, row);
-      if (style?.textStick) {
+      if (style?.textStick && style?.textStick !== 'horizontal') {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
         adjustCellContentVerticalLayout(
@@ -105,13 +109,13 @@ export function handleTextStick(table: BaseTableAPI) {
       }
     });
   }
-  for (let row = rowStart; row < rowEnd; row++) {
+  for (let row = rowStart; row <= rowEnd; row++) {
     if (colEnd < colStart) {
       break;
     }
     [colStart, colEnd].forEach((col: number) => {
       const style = table._getCellStyle(col, row);
-      if (table._getCellStyle(col, row)?.textStick) {
+      if (style?.textStick && style?.textStick !== 'vertical') {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell Horizontal
         adjustCellContentHorizontalLayout(

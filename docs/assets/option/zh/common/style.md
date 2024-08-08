@@ -117,8 +117,8 @@
   prefix = ${prefix}
   ) }}
 
-#${prefix} textStick(boolean)
-设置单元格的文本是否带有吸附效果【当滚动时文本可动态调整位置】
+#${prefix} textStick(boolean | 'horizontal' | 'vertical')
+设置单元格的文本是否带有吸附效果【当滚动时文本可动态调整位置】，可以设置为 true 开启， 或者设置 'horizontal' 或 'vertical' 指定仅在哪个方向吸附。
 
 #${prefix} textStickBaseOnAlign(boolean)
 当单元格的文本有吸附效果【当滚动时文本可动态调整位置】时，吸附的基准是单元格的水平对齐方式。例如当`textStickBaseOnAlign`为`true`时，`textAlign`为`'center'`时，文本会吸附在单元格的水平中心位置；否则就会吸附在单元格左边缘或右边缘（依据滚动位置决定）。

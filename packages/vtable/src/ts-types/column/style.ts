@@ -93,7 +93,7 @@ export interface IStyleOption {
   // dropDownHoverIcon?: IconPropertyDefine;
   cursor?: CursorPropertyDefine;
 
-  textStick?: boolean;
+  textStick?: boolean | 'vertical' | 'horizontal';
   textStickBaseOnAlign?: boolean;
 
   marked?: MarkedPropertyDefine;
@@ -121,7 +121,7 @@ export type ColumnStyleOption =
   | ((styleArg: StylePropertyFunctionArg) => IStyleOption | ITextStyleOption | IImageStyleOption);
 
 export type HeaderStyleOption =
-  | (IStyleOption & { textStick?: boolean }) //表头可以配置吸附
+  | (IStyleOption & { textStick?: boolean | 'vertical' | 'horizontal' }) //表头可以配置吸附
   | ITextStyleOption
   | IImageStyleOption
   // | ISortHeaderStyleOption
