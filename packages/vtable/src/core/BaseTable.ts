@@ -453,7 +453,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     );
     if (internalProps.tooltip.renderMode === 'html') {
       const TooltipHandler = Factory.getComponent('tooltipHandler') as ITooltipHandler;
-      internalProps.tooltipHandler = new TooltipHandler(this, internalProps.tooltip.confine);
+      TooltipHandler && (internalProps.tooltipHandler = new TooltipHandler(this, internalProps.tooltip.confine));
     }
     internalProps.menu = Object.assign(
       {
