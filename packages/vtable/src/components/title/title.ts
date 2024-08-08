@@ -18,6 +18,7 @@ export class Title {
   constructor(titleOption: ITitle, table: BaseTableAPI) {
     this.table = table;
     this._titleOption = titleOption;
+    this._titleOption.orient = titleOption.orient ?? 'top';
     if (titleOption.visible !== false) {
       this._titleComponent = this._createOrUpdateTitleComponent(this._getTitleAttrs());
     }

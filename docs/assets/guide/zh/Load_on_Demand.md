@@ -36,3 +36,45 @@ registerTooltip();
 * registerSparkLineCell: 迷你图单元格
 * registerTextCell: 文字单元格
 * registerVideoCell: 视频单元格
+
+## react-vtable按需加载
+
+与VTable相同，react-vtable 也提供了 `ListTableSimple` 和 `PivotTableSimple` 两个组件，分别是最简化的列表和透视表，只支持文字类型的显示，不包含菜单、标题等外部组件。
+
+```tsx
+function App() {
+  const records = new Array(10).fill(['John', 18, 'male', '🏀']);
+
+  return (
+    <ListTableSimple records={records}>
+      <ListColumn field={'0'} title={'name'} />
+      <ListColumn field={'1'} title={'age'} />
+      <ListColumn field={'2'} title={'sex'} />
+      <ListColumn field={'3'} title={'hobby'} />
+    </ListTableSimple>
+  );
+}
+```
+
+需要注意的是，react-vtable 如果需要注册组件，需要先 vtable 包中引入注册函数，进行按需注册。项目中使用的`'@visactor/vtable'`和`'@visactor/react-vtable'`的版本需要保持一致。
+
+```tsx
+import {ListTableSimple} form '@visactor/vtable';
+import {registerTitle, registerTooltip} from '@visactor/vtable';
+
+registerTitle();
+
+function App() {
+  const records = new Array(10).fill(['John', 18, 'male', '🏀']);
+
+  return (
+    <ListTableSimple records={records}>
+      <Title text={'title'} />
+      <ListColumn field={'0'} title={'name'} />
+      <ListColumn field={'1'} title={'age'} />
+      <ListColumn field={'2'} title={'sex'} />
+      <ListColumn field={'3'} title={'hobby'} />
+    </ListTableSimple>
+  );
+}
+```
