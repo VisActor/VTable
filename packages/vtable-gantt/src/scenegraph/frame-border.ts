@@ -15,7 +15,7 @@ export class FrameBorder {
   createFrameBorder() {
     const justForXYPosition = false;
     const group = this._scene.tableGroup;
-    const frameStyle = this._scene._gantt.parsedOptions.frameStyle;
+    const frameStyle = this._scene._gantt.parsedOptions.outerFrameStyle;
     // const strokeArray = [true, true, true, false];
     if (!frameStyle) {
       return;
@@ -81,7 +81,8 @@ export class FrameBorder {
     }
   }
   resize() {
-    const { cornerRadius, borderColor, borderLineWidth, borderLineDash } = this._scene._gantt.parsedOptions.frameStyle;
+    const { cornerRadius, borderColor, borderLineWidth, borderLineDash } =
+      this._scene._gantt.parsedOptions.outerFrameStyle;
     this.border.setAttributes({
       // x: -borderLineWidth / 2,
       // y: borderLineWidth / 2,

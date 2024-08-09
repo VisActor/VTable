@@ -589,7 +589,7 @@ export function createTable() {
     records,
     taskListTable: {
       columns,
-      width: 400,
+      width: 'auto',
       minWidth: 100,
       maxWidth: 600,
       headerStyle: {
@@ -609,18 +609,19 @@ export function createTable() {
       },
       rightFrozenColCount: 1
     },
-    resizeLineStyle: {
-      lineColor: 'green',
-      lineWidth: 3
-    },
+
     startDateField: 'start',
     endDateField: 'end',
     progressField: 'progress',
-    frameStyle: {
+    frame: {
       outerFrameStyle: {
         borderLineWidth: 2,
         borderColor: 'red',
         cornerRadius: 8
+      },
+      verticalSplitLineHighlight: {
+        lineColor: 'green',
+        lineWidth: 3
       }
     },
     gridStyle: {
@@ -639,7 +640,9 @@ export function createTable() {
     taskBar: {
       // resizable: false,
       moveable: false,
-      hoverColor: 'rgba(99, 144, 0, 0.4)',
+      hoverBarStyle: {
+        barOverLayColor: 'rgba(99, 144, 0, 0.4)'
+      },
       labelText: '{title} {progress}%',
       labelTextStyle: {
         padding: 2,

@@ -156,11 +156,25 @@ export function initOptions(gantt: Gantt) {
     },
     options?.taskBar?.barStyle
   );
+
+  gantt.parsedOptions.taskBarHoverStyle = Object.assign(
+    {
+      barOverLayColor: 'rgba(99, 144, 0, 0.4)'
+    },
+    options?.taskBar?.hoverBarStyle
+  );
+
+  gantt.parsedOptions.taskBarSelectionStyle = Object.assign(
+    {
+      barOverLayColor: 'rgba(99, 144, 0, 0.4)'
+    },
+    options?.taskBar?.selectionBarStyle
+  );
   gantt.parsedOptions.taskBarLabelText = options?.taskBar?.labelText ?? '';
   gantt.parsedOptions.taskBarMoveable = options?.taskBar?.moveable ?? true;
   gantt.parsedOptions.taskBarResizable = options?.taskBar?.resizable ?? true;
-  gantt.parsedOptions.taskBarHoverColor =
-    options?.taskBar?.hoverColor === null ? 'rgba(0,0,0,0)' : options?.taskBar?.hoverColor ?? 'rgba(0,0,0,0.1)';
+  // gantt.parsedOptions.taskBarHoverColor =
+  //   options?.taskBar?.hoverColor === null ? 'rgba(0,0,0,0)' : options?.taskBar?.hoverColor ?? 'rgba(0,0,0,0.1)';
   gantt.parsedOptions.taskBarLabelStyle = {
     fontFamily: options?.taskBar?.labelTextStyle.fontFamily ?? 'Arial',
     fontSize: options?.taskBar?.labelTextStyle.fontSize ?? gantt.parsedOptions.rowHeight,
@@ -172,20 +186,31 @@ export function initOptions(gantt: Gantt) {
   };
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
 
-  gantt.parsedOptions.frameStyle = Object.assign(
-    {},
+  gantt.parsedOptions.outerFrameStyle = Object.assign(
     {
       borderColor: 'gray',
-      borderLineWidth: [1, 1, 1, 1],
+      borderLineWidth: 1,
       cornerRadius: 4
     },
-    options.frameStyle?.outerFrameStyle
+    options.frame?.outerFrameStyle
   );
   gantt.parsedOptions.markLine = generateMarkLine(options?.markLine);
-  gantt.parsedOptions.resizeLineStyle = {
-    lineColor: options.resizeLineStyle?.lineColor ?? 'yellow',
-    lineWidth: options.resizeLineStyle?.lineWidth ?? 2
-  };
+  gantt.parsedOptions.verticalSplitLineHighlight = Object.assign(
+    {
+      lineColor: 'yellow',
+      lineWidth: 2
+    },
+    options.frame?.verticalSplitLineHighlight
+  );
+  gantt.parsedOptions.verticalSplitLine = Object.assign(
+    {
+      lineColor: gantt.parsedOptions.outerFrameStyle.borderColor,
+      lineWidth: gantt.parsedOptions.outerFrameStyle.borderLineWidth
+    },
+    options.frame?.verticalSplitLine
+  );
+  gantt.parsedOptions.horizontalSplitLine = options.frame?.horizontalSplitLine;
+  gantt.parsedOptions.verticalSplitLineMoveable = options.frame.verticalSplitLineMoveable;
 }
 
 export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: ITimelineScale) {

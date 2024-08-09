@@ -207,7 +207,7 @@ export class TaskBar {
       cursor: this._scene._gantt.parsedOptions.taskBarMoveable ? 'grab' : 'default',
       pickable: false,
       cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
-      fill: this._scene._gantt.parsedOptions.taskBarHoverColor,
+      fill: this._scene._gantt.parsedOptions.taskBarHoverStyle.barOverLayColor,
       visibleAll: false
     });
     this.hoverBarGroup = hoverBarGroup;

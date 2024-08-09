@@ -13,7 +13,6 @@ import type {
   IScrollStyle,
   IFrameStyle,
   ITableColumnsDefine,
-  IResizeLineStyle,
   ITaskBarCustomLayout,
   ITimelineDateInfo,
   ITimelineScale,
@@ -92,13 +91,14 @@ export class Gantt extends EventTarget {
     timelineHeaderStyles: ITimelineHeaderStyle[];
     gridStyle: IGridStyle;
     taskBarStyle: ITaskBarStyle;
+    taskBarHoverStyle: ITaskBarStyle & { barOverLayColor?: string };
+    taskBarSelectionStyle: ITaskBarStyle & { barOverLayColor?: string };
     taskBarLabelText: ITaskBarLabelText;
     taskBarMoveable: boolean;
     taskBarResizable: boolean;
-    taskBarHoverColor: string;
     taskBarLabelStyle: ITaskBarLabelTextStyle;
     taskBarCustomLayout: ITaskBarCustomLayout;
-    frameStyle: IFrameStyle;
+    outerFrameStyle: IFrameStyle;
     pixelRatio: number;
 
     startDateField: string;
@@ -109,7 +109,10 @@ export class Gantt extends EventTarget {
     _minDateTime: number;
     _maxDateTime: number;
     markLine: IMarkLine[];
-    resizeLineStyle: IResizeLineStyle;
+    horizontalSplitLine: ILineStyle;
+    verticalSplitLine: ILineStyle;
+    verticalSplitLineHighlight: ILineStyle;
+    verticalSplitLineMoveable?: boolean;
     overscrollBehavior: 'auto' | 'none';
   } = {} as any;
 
@@ -133,7 +136,7 @@ export class Gantt extends EventTarget {
     this._generateTimeLineDateMap();
     this.headerLevel = this.sortedTimelineScales.length;
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
-    this.element.style.top = '0px';
+    // this.element.style.top = '0px';
     this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
 
     this.canvas = document.createElement('canvas');
@@ -214,9 +217,9 @@ export class Gantt extends EventTarget {
 
     this.tableNoFrameWidth = widthP;
     this.tableNoFrameHeight = Math.floor(heightP);
-    if (this.parsedOptions.frameStyle) {
+    if (this.parsedOptions.outerFrameStyle) {
       //考虑表格整体边框的问题
-      const lineWidth = this.parsedOptions.frameStyle?.borderLineWidth; // toBoxArray(this.parsedOptions.frameStyle?.borderLineWidth ?? [null]);
+      const lineWidth = this.parsedOptions.outerFrameStyle?.borderLineWidth; // toBoxArray(this.parsedOptions.frameStyle?.borderLineWidth ?? [null]);
       this.tableX = lineWidth;
       this.tableY = lineWidth;
       this.tableNoFrameWidth = width - lineWidth;
@@ -234,7 +237,7 @@ export class Gantt extends EventTarget {
         this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
         this.taskListTableInstance.setCanvasSize(
           this.taskTableWidth,
-          this.tableNoFrameHeight + this.parsedOptions.frameStyle.borderLineWidth * 2
+          this.tableNoFrameHeight + this.parsedOptions.outerFrameStyle.borderLineWidth * 2
         );
         this._updateSize();
       }
@@ -266,6 +269,9 @@ export class Gantt extends EventTarget {
     }
     for (const key in this.options.taskListTable) {
       listTable_options[key] = this.options.taskListTable[key];
+      if (key === 'columns') {
+        listTable_options[key][listTable_options[key].length - 1].disableColumnResize = true;
+      }
     }
     // lineWidthArr[1] = 0;
     listTable_options.theme = {
@@ -281,13 +287,13 @@ export class Gantt extends EventTarget {
         this.options.taskListTable.headerStyle
       ),
       cellInnerBorder: false,
-      frameStyle: Object.assign({}, this.parsedOptions.frameStyle, {
-        cornerRadius: this.parsedOptions.frameStyle.cornerRadius, //[this.parsedOptions.frameStyle.cornerRadius, 0, 0, this.parsedOptions.frameStyle.cornerRadius],
+      frameStyle: Object.assign({}, this.parsedOptions.outerFrameStyle, {
+        cornerRadius: this.parsedOptions.outerFrameStyle.cornerRadius, //[this.parsedOptions.frameStyle.cornerRadius, 0, 0, this.parsedOptions.frameStyle.cornerRadius],
         borderLineWidth: [
-          this.parsedOptions.frameStyle.borderLineWidth,
+          this.parsedOptions.outerFrameStyle.borderLineWidth,
           0,
-          this.parsedOptions.frameStyle.borderLineWidth,
-          this.parsedOptions.frameStyle.borderLineWidth
+          this.parsedOptions.outerFrameStyle.borderLineWidth,
+          this.parsedOptions.outerFrameStyle.borderLineWidth
         ]
       }),
       bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable.bodyStyle)
@@ -300,7 +306,7 @@ export class Gantt extends EventTarget {
     return listTable_options;
   }
   _createResizeLine() {
-    if (this.taskListTableInstance && this.options.taskListTable.width !== 'auto') {
+    if (this.taskListTableInstance) {
       this.resizeLine = document.createElement('div');
       this.resizeLine.style.position = 'absolute';
       this.resizeLine.style.top = this.tableY + 'px';
@@ -309,17 +315,31 @@ export class Gantt extends EventTarget {
       this.resizeLine.style.height = this.drawHeight + 'px'; //'100%';
       this.resizeLine.style.backgroundColor = 'rgba(0,0,0,0)';
       this.resizeLine.style.zIndex = '100';
-      this.resizeLine.style.cursor = 'col-resize';
+      this.parsedOptions.verticalSplitLineMoveable && (this.resizeLine.style.cursor = 'col-resize');
       this.resizeLine.style.userSelect = 'none';
       this.resizeLine.style.opacity = '1';
+
+      const verticalSplitLine = document.createElement('div');
+      verticalSplitLine.style.position = 'absolute';
+      verticalSplitLine.style.top = '0px';
+      verticalSplitLine.style.left = `${(14 - this.parsedOptions.verticalSplitLine.lineWidth) / 2}px`;
+      verticalSplitLine.style.width = this.parsedOptions.verticalSplitLine.lineWidth + 'px';
+      verticalSplitLine.style.height = '100%';
+      verticalSplitLine.style.backgroundColor = this.parsedOptions.verticalSplitLine.lineColor;
+      verticalSplitLine.style.zIndex = '100';
+      verticalSplitLine.style.userSelect = 'none';
+      verticalSplitLine.style.pointerEvents = 'none';
+      // verticalSplitLine.style.opacity = '0';
+      verticalSplitLine.style.transition = 'background-color 0.3s';
+      this.resizeLine.appendChild(verticalSplitLine);
 
       const highlightLine = document.createElement('div');
       highlightLine.style.position = 'absolute';
       highlightLine.style.top = '0px';
-      highlightLine.style.left = '5px';
-      highlightLine.style.width = this.parsedOptions.resizeLineStyle.lineWidth + 'px';
+      highlightLine.style.left = `${(14 - this.parsedOptions.verticalSplitLineHighlight.lineWidth) / 2}px`;
+      highlightLine.style.width = this.parsedOptions.verticalSplitLineHighlight.lineWidth + 'px';
       highlightLine.style.height = '100%';
-      highlightLine.style.backgroundColor = this.parsedOptions.resizeLineStyle.lineColor;
+      highlightLine.style.backgroundColor = this.parsedOptions.verticalSplitLineHighlight.lineColor;
       highlightLine.style.zIndex = '100';
       highlightLine.style.cursor = 'col-resize';
       highlightLine.style.userSelect = 'none';
@@ -327,17 +347,7 @@ export class Gantt extends EventTarget {
       highlightLine.style.opacity = '0';
       highlightLine.style.transition = 'background-color 0.3s';
       this.resizeLine.appendChild(highlightLine);
-      // 添加鼠标悬停时的高亮效果
-      this.resizeLine.addEventListener('mouseover', () => {
-        // highlightLine.style.backgroundColor = '#ffcc00';
-        highlightLine.style.opacity = '1';
-      });
 
-      // 添加鼠标移出时恢复初始样式
-      this.resizeLine.addEventListener('mouseout', () => {
-        // highlightLine.style.backgroundColor = '#e1e4e8';
-        highlightLine.style.opacity = '0';
-      });
       (this.container as HTMLElement).appendChild(this.resizeLine);
     }
   }
@@ -525,7 +535,7 @@ export class Gantt extends EventTarget {
     this._updateSize();
     this.taskListTableInstance.setCanvasSize(
       this.taskTableWidth,
-      this.tableNoFrameHeight + this.parsedOptions.frameStyle.borderLineWidth * 2
+      this.tableNoFrameHeight + this.parsedOptions.outerFrameStyle.borderLineWidth * 2
     );
     this._syncPropsFromTable();
     this.scenegraph.resize();

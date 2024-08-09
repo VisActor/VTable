@@ -83,7 +83,8 @@ export interface GanttConstructorOptions {
     customLayout?: ITaskBarCustomLayout;
     resizable?: boolean;
     moveable?: boolean;
-    hoverColor?: string | null;
+    hoverBarStyle?: ITaskBarStyle & { barOverLayColor?: string };
+    selectionBarStyle?: ITaskBarStyle & { barOverLayColor?: string };
   };
 
   taskListTable?: {
@@ -104,15 +105,15 @@ export interface GanttConstructorOptions {
   // timelineHeaderStyle?: ITimelineHeaderStyle;
   scrollStyle?: IScrollStyle;
 
-  frameStyle: {
+  frame: {
     outerFrameStyle: IFrameStyle;
     verticalSplitLine?: ILineStyle;
     horizontalSplitLine?: ILineStyle;
+    verticalSplitLineMoveable?: boolean;
+    //列调整宽度的直线
+    verticalSplitLineHighlight?: ILineStyle;
   };
   pixelRatio?: number;
-
-  //列调整宽度的直线
-  resizeLineStyle?: IResizeLineStyle;
 }
 /**
  * IBarLabelText
@@ -166,10 +167,7 @@ export type IFrameStyle = {
   borderLineDash?: number[];
   cornerRadius?: number;
 };
-export type IResizeLineStyle = {
-  lineColor: string; //线的颜色
-  lineWidth: number; //线的宽度
-};
+
 export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;

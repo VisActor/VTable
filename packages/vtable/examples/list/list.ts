@@ -199,6 +199,13 @@ export function createTable() {
     },
     autoWrapText: true,
     editor: '',
+    theme: {
+      cellInnerBorder: false,
+      frameStyle: {
+        borderLineWidth: 2,
+        borderColor: 'red'
+      }
+    },
     // theme: VTable.themes.ARCO,
     // hover: {
     //   highlightMode: 'cross'

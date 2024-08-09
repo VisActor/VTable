@@ -811,18 +811,24 @@ export function createTable() {
       minWidth: 100,
       maxWidth: 600
     },
-    resizeLineStyle: {
-      lineColor: 'green',
-      lineWidth: 3
-    },
+
     startDateField: 'start',
     endDateField: 'end',
     progressField: 'progress',
-    frameStyle: {
+    frame: {
+      verticalSplitLineMoveable: true,
       outerFrameStyle: {
         borderLineWidth: 2,
         borderColor: 'red',
         cornerRadius: 8
+      },
+      verticalSplitLine: {
+        lineWidth: 3,
+        lineColor: '#e1e4e8'
+      },
+      verticalSplitLineHighlight: {
+        lineColor: 'green',
+        lineWidth: 3
       }
     },
     gridStyle: {

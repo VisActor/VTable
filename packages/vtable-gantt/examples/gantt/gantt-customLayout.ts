@@ -610,18 +610,18 @@ export function createTable() {
         bgColor: '#FFF'
       }
     },
-    resizeLineStyle: {
-      lineColor: 'green',
-      lineWidth: 3
-    },
     startDateField: 'start',
     endDateField: 'end',
     progressField: 'progress',
-    frameStyle: {
+    frame: {
       outerFrameStyle: {
         borderLineWidth: 2,
         borderColor: 'red',
         cornerRadius: 8
+      },
+      verticalSplitLineHighlight: {
+        lineColor: 'green',
+        lineWidth: 3
       }
     },
     gridStyle: {
