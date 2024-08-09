@@ -12,8 +12,8 @@ option: ListTable-columns-text#editor
 该示例展示了表格的可编辑能力。单击单元格，即可进入编辑状态。如果想要修改进入编辑的时机，可以设置：
 
 ```
- /** 编辑触发时机:双击事件 | 单击事件 | api手动开启编辑。默认为双击'doubleclick' */
-  editCellTrigger?: 'doubleclick' | 'click' | 'api';
+ /** 编辑触发时机:双击事件 | 单击事件 | api手动开启编辑 | 键入新值。默认为双击'doubleclick' */
+  editCellTrigger?:'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
 ```
 
 当前示例中有 input、date、list、textArea 四种编辑器，可以通过设置不同的编辑器来实现不同的效果。

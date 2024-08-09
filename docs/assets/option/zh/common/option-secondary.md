@@ -129,7 +129,10 @@ export interface SelectAllOnCtrlAOption {
 开启 tab 键交互 默认为 true。开启 tab 键移动选中单元格，如果当前是在编辑单元格 则移动到下一个单元格也是编辑状态
 
 ##${prefix} editCellOnEnter(boolean) = true
-开启 enter 键交互 默认 true 如果选中单元格可编辑则进入单元格编辑。
+开启 enter 键交互 。默认 true 如果选中单元格按下 enter 键进入单元格编辑
+
+##${prefix} moveEditCellOnArrowKeys(boolean) = false
+默认不开启即 false。开启这个配置的话，如果当前是在编辑中的单元格，方向键可以移动到下个单元格并进入编辑状态，而不是编辑文本内字符串的光标移动。上下左右方向键切换选中单元格不受该配置影响，
 
 ##${prefix} moveEditCellOnArrowKeys(boolean) = false
 
@@ -377,7 +380,7 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 
 ```
 'auto': 表格滚动到顶部或者底部时，触发浏览器默认行为;
-'none': 表格滚动到顶部或者底部时, 触发浏览器默认行为;
+'none': 表格滚动到顶部或者底部时, 禁止触发浏览器默认行为;
 ```
 
 #${prefix} customMergeCell(Function)
@@ -475,14 +478,14 @@ editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => s
 headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
 
-#${prefix} editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
+#${prefix} editCellTrigger('doubleclick' | 'click' | 'api' | 'keydown') = 'doubleclick'
 
 进入编辑状态的触发时机。
 
 ```
 
-/\*_ 编辑触发时机:双击事件 | 单击事件 | api 手动开启编辑。默认为双击'doubleclick' _/
-editCellTrigger?: 'doubleclick' | 'click' | 'api';
+/** 编辑触发时机:双击事件 | 单击事件 | api 手动开启编辑 | 键入新值。默认为双击'doubleclick' /
+editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
 
 ```
 
