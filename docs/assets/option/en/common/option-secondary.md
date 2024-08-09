@@ -130,6 +130,9 @@ Enable shortcut key to paste, consistent with the browser's shortcut key.Paste t
 ##${prefix} moveFocusCellOnTab(boolean) = true
 Enable tab key interaction. The default is true. Turn on the tab key to move the selected cell. If you are currently editing a cell, moving to the next cell is also in the editing state.
 
+##${prefix} moveFocusCellOnEnter(boolean) = false
+Enable enter key interaction. Default is false. Press enter key to select next cell. Mutually exclusive with editCellOnEnter. If set to true at the same time, it takes precedence over editCellOnEnter.
+
 ##${prefix} editCellOnEnter(boolean) = true
 Enable enter key interaction. Default is true. If the selected cell is editable, enter cell editing.
 

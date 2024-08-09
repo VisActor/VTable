@@ -972,49 +972,75 @@ export class Scenegraph {
       )
     } as any);
 
-    if (this.tableGroup.border && this.tableGroup.border.type === 'rect') {
-      if (this.table.theme.frameStyle?.innerBorder) {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
+    if (this.tableGroup.border) {
+      const rectAttributes = this.tableGroup.border?.attribute;
+      let borderTop;
+      let borderRight;
+      let borderBottom;
+      let borderLeft;
+      if ((rectAttributes as any)?.strokeArrayWidth) {
+        borderTop = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[0]
+          : (rectAttributes.lineWidth as number) ?? 0;
+        borderRight = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[1]
+          : (rectAttributes.lineWidth as number) ?? 0;
+        borderBottom = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[2]
+          : (rectAttributes.lineWidth as number) ?? 0;
+        borderLeft = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[3]
+          : (rectAttributes.lineWidth as number) ?? 0;
       } else {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-        });
+        borderTop = (rectAttributes?.lineWidth as number) ?? 0;
+        borderRight = (rectAttributes?.lineWidth as number) ?? 0;
+        borderBottom = (rectAttributes?.lineWidth as number) ?? 0;
+        borderLeft = (rectAttributes?.lineWidth as number) ?? 0;
       }
-    } else if (this.tableGroup.border && this.tableGroup.border.type === 'group') {
-      if (this.table.theme.frameStyle?.innerBorder) {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
-        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-          x: 0,
-          y: 0,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
-      } else {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-        });
-        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-          x: this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width,
-          height: this.tableGroup.attribute.height
-        });
+      if (this.tableGroup.border.type === 'rect') {
+        if (this.table.theme.frameStyle?.innerBorder) {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX + borderLeft / 2,
+            y: this.table.tableY + borderTop / 2,
+            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+          });
+        } else {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX - borderLeft / 2,
+            y: this.table.tableY - borderTop / 2,
+            width: this.tableGroup.attribute.width + borderLeft / 2 + borderRight / 2,
+            height: this.tableGroup.attribute.height + borderTop / 2 + borderBottom / 2
+          });
+        }
+      } else if (this.tableGroup.border.type === 'group') {
+        if (this.table.theme.frameStyle?.innerBorder) {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX + borderLeft / 2,
+            y: this.table.tableY + borderTop / 2,
+            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+          });
+          (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+            x: 0,
+            y: 0,
+            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+          });
+        } else {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX - borderLeft / 2,
+            y: this.table.tableY - borderTop / 2,
+            width: this.tableGroup.attribute.width + borderLeft / 2 + borderRight / 2,
+            height: this.tableGroup.attribute.height + borderTop / 2 + borderBottom / 2
+          });
+          (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+            x: borderLeft / 2,
+            y: borderTop / 2,
+            width: this.tableGroup.attribute.width,
+            height: this.tableGroup.attribute.height
+          });
+        }
       }
     }
 
