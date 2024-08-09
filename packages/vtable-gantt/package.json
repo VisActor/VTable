@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-gantt",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "canvas table width high performance",
   "keywords": [
     "vtable-gantt",
@@ -38,7 +38,6 @@
   },
   "scripts": {
     "demo": "vite serve examples",
-    "site-demo": "vite serve site-demo",
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
     "build": "bundle --clean",
@@ -109,7 +108,7 @@
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "build/es5/index.js"
+    "dist/vtable-gantt.js"
   ],
   "publishConfig": {
     "access": "public"
@@ -118,6 +117,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/VisActor/VTable.git",
-    "directory": "packages/vtable"
+    "directory": "packages/vtable-gantt"
   }
 }
