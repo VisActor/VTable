@@ -2795,7 +2795,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   getBodyColumnType(col: number, row: number): ColumnTypeOption {
-    const cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
+    const cellType = this.internalProps.layoutMap.getBody(col, row)?.cellType ?? 'text';
     return getProp('cellType', { cellType }, col, row, this);
   }
 
