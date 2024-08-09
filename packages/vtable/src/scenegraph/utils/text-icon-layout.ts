@@ -576,10 +576,12 @@ export function updateCellContentWidth(
   // let hasIcon = false;
   cellGroup.forEachChildren((iconMark: Icon) => {
     if (iconMark.role === 'icon-left') {
-      leftIconWidth += iconMark.AABBBounds.width();
+      leftIconWidth +=
+        iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
       leftIconHeight = Math.max(leftIconHeight, iconMark.AABBBounds.height());
     } else if (iconMark.role === 'icon-right') {
-      rightIconWidth += iconMark.AABBBounds.width();
+      rightIconWidth +=
+        iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
       rightIconHeight = Math.max(rightIconHeight, iconMark.AABBBounds.height());
     }
   });
@@ -595,7 +597,7 @@ export function updateCellContentWidth(
       'maxLineWidth',
       distWidth -
         leftIconWidth -
-        rightIconHeight -
+        rightIconWidth -
         (padding[1] + padding[3]) -
         (textMark.attribute.dx ?? 0) -
         (scene.table.theme._contentOffset ?? 0)
@@ -604,12 +606,12 @@ export function updateCellContentWidth(
     contentHeight = textMark.AABBBounds.height();
   } else if (textMark instanceof RichText) {
     oldTextHeight = textMark.AABBBounds.height();
-    textMark.setAttribute('width', distWidth - leftIconWidth - rightIconHeight - (padding[1] + padding[3]));
+    textMark.setAttribute('width', distWidth - leftIconWidth - rightIconWidth - (padding[1] + padding[3]));
     // contentWidth = textMark.AABBBounds.width();
     contentHeight = textMark.AABBBounds.height();
   } else if (cellContent) {
     oldTextHeight = cellContent.AABBBounds.height();
-    cellContent.updateWidth(distWidth - leftIconWidth - rightIconHeight - (padding[1] + padding[3]));
+    cellContent.updateWidth(distWidth - leftIconWidth - rightIconWidth - (padding[1] + padding[3]));
     // contentWidth = cellContent.AABBBounds.width();
     contentHeight = cellContent.AABBBounds.height();
   }
