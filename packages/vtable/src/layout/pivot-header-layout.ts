@@ -698,6 +698,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
               },
               dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              headerIcon: dimensionInfo?.cornerHeaderIcon,
               pivotInfo: {
                 value: dimensionInfo?.title ?? '',
                 dimensionKey,
@@ -749,6 +750,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
               },
               dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              headerIcon: dimensionInfo?.cornerHeaderIcon,
               pivotInfo: {
                 value: dimensionInfo?.title ?? '',
                 dimensionKey,
@@ -802,6 +804,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
               },
               dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              headerIcon: dimensionInfo?.cornerHeaderIcon,
               pivotInfo: {
                 value: dimensionInfo?.title ?? '',
                 dimensionKey,
@@ -853,6 +856,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
               },
               dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+              headerIcon: dimensionInfo?.cornerHeaderIcon,
               pivotInfo: {
                 value: dimensionInfo?.title ?? '',
                 dimensionKey,
@@ -911,6 +915,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
               disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
             },
             dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+            headerIcon: dimensionInfo?.cornerHeaderIcon,
             pivotInfo: {
               value: dimensionInfo?.title ?? '',
               dimensionKey,
@@ -2460,6 +2465,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.isSeriesNumberInHeader(target.col, target.row) || this.isSeriesNumberInHeader(source.col, source.row)) {
       return false;
     }
+    if (this.isCornerHeader(target.col, target.row)) {
+      return false;
+    }
     if (source.col < 0 || source.row < 0 || target.col < 0 || target.row < 0) {
       return false;
     }
@@ -2761,13 +2769,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (isCornerCell) {
       if (this.cornerSetting.titleOnDimension === 'row') {
         for (let i = 0; i < this.rowDimensionKeys.length; i++) {
-          if (rowHeaderPaths[0].dimensionKey === this.rowDimensionKeys[i]) {
+          if (rowHeaderPaths[0]?.dimensionKey === this.rowDimensionKeys[i]) {
             return { col: i + this.leftRowSeriesNumberColumnCount, row: 0 };
           }
         }
       } else {
         for (let i = 0; i < this.colDimensionKeys.length; i++) {
-          if (colHeaderPaths[0].dimensionKey === this.colDimensionKeys[i]) {
+          if (colHeaderPaths[0]?.dimensionKey === this.colDimensionKeys[i]) {
             return { col: 0, row: i };
           }
         }

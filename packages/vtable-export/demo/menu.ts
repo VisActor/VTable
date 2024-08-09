@@ -37,6 +37,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-checkbox'
+      },
+      {
+        path: 'list',
+        name: 'csv'
       }
     ]
   },

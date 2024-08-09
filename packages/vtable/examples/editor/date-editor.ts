@@ -143,15 +143,7 @@ export function createTable() {
     {
       field: 'hobbies',
       title: 'hobbies',
-      width: 200,
-      editor(args) {
-        if (args.row % 3 === 0) {
-          return new InputEditor({});
-        } else if (args.row % 3 === 1) {
-          return new DateInputEditor({});
-        }
-        return null;
-      }
+      width: 200
     },
     {
       field: 'birthday',
@@ -185,7 +177,14 @@ export function createTable() {
     records,
     columns,
     heightMode: 'autoHeight',
-    autoWrapText: true
+    autoWrapText: true,
+    editCellTrigger: ['keydown', 'doubleclick'],
+    keyboardOptions: {
+      moveFocusCellOnEnter: true
+    },
+    editor(args) {
+      return new InputEditor({});
+    }
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.on('initialized', args => {

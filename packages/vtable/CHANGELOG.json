@@ -2,6 +2,69 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.5.4",
+      "tag": "@visactor/vtable_v1.5.4",
+      "date": "Fri, 02 Aug 2024 11:20:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: set sort rule occor error #2106\n\n"
+          },
+          {
+            "comment": "fix: clearSelected api clear ctrl+a border #2115\n\n"
+          },
+          {
+            "comment": "feat: pivot table corner cell support icon #2120\n\n"
+          },
+          {
+            "comment": "fix: move header position not work not trigger change_header_position event #2129\n\n"
+          },
+          {
+            "comment": "feat: support editCellTrigger set keydown #2136\n\n"
+          },
+          {
+            "comment": "fix: set cellType is function, resize col width chart size render error #2160\n\n"
+          },
+          {
+            "comment": "fix: when call setRowHeight should update chart size #2155\n\n"
+          },
+          {
+            "comment": "feat: add react-component for option-emptyTip\n\n"
+          },
+          {
+            "comment": "feat: add react-component for option-emptyTip - demo\n\n"
+          },
+          {
+            "comment": "feat: add escape config in csv-exporter"
+          },
+          {
+            "comment": "feat: add selectionFillMode config in theme.selectionStyle #2132 #2027"
+          },
+          {
+            "comment": "fix: fix cell range clear in update record"
+          },
+          {
+            "comment": "fix: fix custom-element update problem #2126"
+          },
+          {
+            "comment": "fix: fix customMege cell update"
+          },
+          {
+            "comment": "fix: fix CellContent pickable config #2134"
+          },
+          {
+            "comment": "fix: fix legend visible config #2137"
+          },
+          {
+            "comment": "fix: fix released async problem #2145"
+          },
+          {
+            "comment": "fix: remove resizing update in endResizeCol() #2101"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.5.3",
       "tag": "@visactor/vtable_v1.5.3",
       "date": "Thu, 18 Jul 2024 12:13:07 GMT",

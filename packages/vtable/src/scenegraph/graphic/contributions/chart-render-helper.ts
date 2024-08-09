@@ -20,8 +20,23 @@ export function IsHandlingChartQueue() {
   return isHandlingChartQueue;
 }
 export function renderChart(chart: Chart) {
-  const { axes, dataId, data, spec } = chart.attribute;
-  const { chartInstance } = chart;
+  const { axes, dataId, data, spec, ClassType, canvas, mode, modeParams, dpr } = chart.attribute;
+  let { chartInstance } = chart;
+  if (!chartInstance) {
+    chartInstance = new ClassType(spec, {
+      renderCanvas: canvas,
+      mode: mode === 'node' ? 'node' : 'desktop-browser',
+      modeParams: modeParams,
+      canvasControled: false,
+      viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
+      dpr: dpr,
+      interactive: false,
+      animation: false,
+      autoFit: false
+    });
+    chartInstance.renderSync();
+    chart.chartInstance = chartInstance;
+  }
   const viewBox = chart.getViewBox();
 
   // avoid canvas size 0
@@ -64,8 +79,9 @@ export function renderChart(chart: Chart) {
   );
 
   // to be fixed: update state everytimes render, need be fix by vchart
-  const table = (chart.getRootNode() as any).table as BaseTableAPI;
-  (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(chartInstance);
+  //  测试的没发现问题  这里应该能去掉吧 留着每次都要调用一次
+  // const table = (chart.getRootNode() as any).table as BaseTableAPI;
+  // (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(chartInstance);
 
   if (typeof dataId === 'string') {
     chartInstance.updateDataSync(dataId, data ?? []);

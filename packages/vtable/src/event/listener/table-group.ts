@@ -360,7 +360,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
     }
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-    getPromiseValue<boolean>(isCompleteEdit, (isCompleteEdit)=>{
+    getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
       if (isCompleteEdit === false) {
         // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
         return;
@@ -373,7 +373,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         eventManager.dealTableSelect();
         stateManager.endSelectCells(true, isHasSelected);
       }
-    })
+    });
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
@@ -413,7 +413,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.hideMenu();
     }
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-    getPromiseValue<boolean>(isCompleteEdit, (isCompleteEdit)=>{
+    getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
       if (isCompleteEdit === false) {
         // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
         return;
@@ -422,8 +422,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
         ? eventArgsSet.eventArgs.target
         : (e.target as any).role?.startsWith('icon')
-          ? e.target
-          : undefined;
+        ? e.target
+        : undefined;
       eventManager.downIcon = hitIcon;
       if (!hitIcon || (hitIcon.attribute as IIconGraphicAttribute).interactive === false) {
         if (e.pointerType === 'touch') {
@@ -520,7 +520,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
           });
         }
       }
-    })
+    });
   });
   // 注意和pointertap事件的处理 vrender中的事件系统： 是先触发pointerup 如果是点击到的场景树图元节点则会继续触发pointertap 否则不触发pointertap
   table.scenegraph.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
@@ -713,7 +713,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.hideMenu();
     }
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-    getPromiseValue<boolean>(isCompleteEdit, (isCompleteEdit)=>{
+    getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
       if (isCompleteEdit === false) {
         // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
         return;
@@ -749,7 +749,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
         return;
       }
-    })
+    });
   });
   table.scenegraph.stage.addEventListener('pointerup', (e: FederatedPointerEvent) => {
     // 处理列宽调整  这里和tableGroup.addEventListener('pointerup' 逻辑一样

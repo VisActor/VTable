@@ -6,6 +6,7 @@ export { PivotColumnHeaderTitle, PivotRowHeaderTitle } from './pivot/pivot-heade
 export { PivotCorner } from './pivot/pivot-corner';
 export { Menu } from './component/menu';
 export { Tooltip } from './component/tooltip';
+export { EmptyTip } from './component/emptyTip';
 
 export { CustomComponent } from './custom-component';
 export { CustomLayout, type CustomLayoutFunctionArg } from './custom/custom-layout';

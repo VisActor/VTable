@@ -266,7 +266,7 @@ tableInstance.records;
 ```ts
 interface ListTableConstructorOptions {
   /** 编辑触发时机 双击事件  单击事件 api手动开启编辑。默认为双击'doubleclick' */
-  editCellTrigger?: 'doubleclick' | 'click' | 'api';
+  editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
   // ...
 }
 ```

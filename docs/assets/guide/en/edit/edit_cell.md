@@ -262,7 +262,7 @@ Editing trigger timing support: double-click a cell to enter editing, click a ce
 ```ts
 interface ListTableConstructorOptions {
   /** Editing trigger timing Double-click event Click event API manually starts editing. The default is double-click 'doubleclick' */
-  editCellTrigger?: 'doubleclick' | 'click' | 'api';
+  editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
   // ...
 }
 ```

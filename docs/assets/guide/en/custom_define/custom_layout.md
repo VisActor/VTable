@@ -254,7 +254,7 @@ Basic custom components currently support `VTag`
 |checkbox|checked, disabled, text, icon...|
 
 Primitives can be configured with the `boundsPadding` property to achieve a margin effect
-`boundsPadding: [marginLeft, marginRight, marginTop, marginBottom]`
+`boundsPadding: [marginTop, marginRight, marginBottom, marginLeft]`
 The margin of a primitive is calculated in the space it occupies
 
 ### Primitive State Updates and Interaction Events

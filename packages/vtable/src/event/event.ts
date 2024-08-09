@@ -82,6 +82,10 @@ export class EventManager {
   }
   updateEventBinder() {
     setTimeout(() => {
+      if (this.table.isReleased) {
+        return;
+      }
+
       // 处理textStick 是否绑定SCROLL的判断
       if (checkHaveTextStick(this.table) && this.handleTextStickBindId?.length === 0) {
         this.handleTextStickBindId.push(
@@ -168,7 +172,7 @@ export class EventManager {
           this.table.scenegraph.updateAutoColWidth(resizeCol.col);
           this.table.internalProps._widthResizedColMap.add(resizeCol.col);
           // if (this.table.isPivotChart()) {
-          this.table.scenegraph.updateChartSize(resizeCol.col);
+          this.table.scenegraph.updateChartSizeForResizeColWidth(resizeCol.col);
           // }
           const state = this.table.stateManager;
           // update frozen shadowline component

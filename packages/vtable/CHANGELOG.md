@@ -1,6 +1,48 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 18 Jul 2024 12:13:07 GMT and should not be manually modified.
+This log was last generated on Fri, 02 Aug 2024 11:20:11 GMT and should not be manually modified.
+
+## 1.5.4
+Fri, 02 Aug 2024 11:20:11 GMT
+
+### Updates
+
+- fix: set sort rule occor error #2106
+
+
+- fix: clearSelected api clear ctrl+a border #2115
+
+
+- feat: pivot table corner cell support icon #2120
+
+
+- fix: move header position not work not trigger change_header_position event #2129
+
+
+- feat: support editCellTrigger set keydown #2136
+
+
+- fix: set cellType is function, resize col width chart size render error #2160
+
+
+- fix: when call setRowHeight should update chart size #2155
+
+
+- feat: add react-component for option-emptyTip
+
+
+- feat: add react-component for option-emptyTip - demo
+
+
+- feat: add escape config in csv-exporter
+- feat: add selectionFillMode config in theme.selectionStyle #2132 #2027
+- fix: fix cell range clear in update record
+- fix: fix custom-element update problem #2126
+- fix: fix customMege cell update
+- fix: fix CellContent pickable config #2134
+- fix: fix legend visible config #2137
+- fix: fix released async problem #2145
+- fix: remove resizing update in endResizeCol() #2101
 
 ## 1.5.3
 Thu, 18 Jul 2024 12:13:07 GMT

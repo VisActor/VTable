@@ -134,6 +134,9 @@ Enable tab key interaction. The default is true. Turn on the tab key to move the
 Enable enter key interaction. Default is true. If the selected cell is editable, enter cell editing.
 
 ##${prefix} moveEditCellOnArrowKeys(boolean) = false
+By default, it is not enabled, that is, false. If this configuration is enabled, if the cell is currently being edited, the arrow keys can move to the next cell and enter the editing state, instead of moving the cursor of the string in the edit text. The up, down, left, and right arrow keys to switch the selected cell are not affected by this configuration.
+
+##${prefix} moveEditCellOnArrowKeys(boolean) = false
 
 The default is not enabled, which is false.
 
@@ -381,7 +384,7 @@ Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'
 
 ```
 'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
-'none': triggers the browser's default behavior when the table scrolls to the top or bottom;
+'none': don't triggers the browser's default behavior when the table scrolls to the top or bottom;
 ```
 
 #${prefix} customMergeCell(Function)
@@ -472,14 +475,14 @@ Global configuration table header display title title editor
 headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
 
-#${prefix} editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
+#${prefix} editCellTrigger('doubleclick' | 'click' | 'api' |'keydown') = 'doubleclick'
 
 The trigger timing for entering the editing state.
 
 ```
 
-/** Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' */
-editCellTrigger?: 'doubleclick' | 'click' | 'api';
+/** Edit triggering time: double click event | single click event | api to manually start editing | keydown event. Default is double click 'doubleclick' */
+editCellTrigger?:'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
 ```
 
 #${prefix} rowSeriesNumber(IRowSeriesNumber)

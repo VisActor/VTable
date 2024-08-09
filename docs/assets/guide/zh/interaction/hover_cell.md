@@ -4,7 +4,7 @@
 
 ## hover交互的模式
 
-VTable支持四种hover交互模式，分别为：十字交叉（'cross'）、整（'column'）、整行（'row'）和单个单元格（'cell'）。默认情况下，hover交互模式为十字交叉（'cross'）。可以通过`hoverMode`选项进行配置。
+VTable支持四种hover交互模式，分别为：十字交叉（'cross'）、整列（'column'）、整行（'row'）和单个单元格（'cell'）。默认情况下，hover交互模式为十字交叉（'cross'）。可以通过`hoverMode`选项进行配置。
 
 例如，将hover交互模式设置为行列交叉：
 
