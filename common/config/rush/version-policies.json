@@ -4,6 +4,6 @@
     "policyName": "vtableMain",
     "version": "1.5.3",
     "mainProject": "@visactor/vtable",
-    "nextBump": "patch"
+    "nextBump": "minor"
   }
 ]

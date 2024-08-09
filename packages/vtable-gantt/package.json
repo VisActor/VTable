@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-gantt",
-  "version": "1.5.4",
+  "version": "1.6.0-alpha.3",
   "description": "canvas table width high performance",
   "keywords": [
     "vtable-gantt",
@@ -49,7 +49,7 @@
     "build:es": "bundle --clean -f es --ignorePostTasks"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable": "workspace:1.6.0-alpha.3",
     "@visactor/vutils": "~0.18.9",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
