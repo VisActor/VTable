@@ -5,6 +5,7 @@ import type { Group } from '../graphic/group';
 import { isArray } from '@visactor/vutils';
 import { getQuadProps } from '../utils/padding';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import { toBoxArray } from '../../tools/helper';
 
 /**
  * @description: create frame border
@@ -297,48 +298,49 @@ export function updateCornerRadius(table: BaseTableAPI) {
   rightFrozenGroup.setAttribute('cornerRadius', 0);
   bottomFrozenGroup.setAttribute('cornerRadius', 0);
 
+  const cornerRadiusArray = toBoxArray(cornerRadius);
   // left top
   if (cornerHeaderGroup.attribute.width > 0 && cornerHeaderGroup.attribute.height > 0) {
-    setCornerRadius(cornerHeaderGroup, [cornerRadius, 0, 0, 0]);
+    setCornerRadius(cornerHeaderGroup, [cornerRadiusArray[0], 0, 0, 0]);
   } else if (colHeaderGroup.attribute.height > 0) {
-    setCornerRadius(colHeaderGroup, [cornerRadius, 0, 0, 0]);
+    setCornerRadius(colHeaderGroup, [cornerRadiusArray[0], 0, 0, 0]);
   } else if (rowHeaderGroup.attribute.width > 0) {
-    setCornerRadius(rowHeaderGroup, [cornerRadius, 0, 0, 0]);
+    setCornerRadius(rowHeaderGroup, [cornerRadiusArray[0], 0, 0, 0]);
   } else {
-    setCornerRadius(bodyGroup, [cornerRadius, 0, 0, 0]);
+    setCornerRadius(bodyGroup, [cornerRadiusArray[0], 0, 0, 0]);
   }
 
   // left bottom
   if (leftBottomCornerGroup.attribute.width > 0 && leftBottomCornerGroup.attribute.height > 0) {
-    setCornerRadius(leftBottomCornerGroup, [0, 0, 0, cornerRadius]);
+    setCornerRadius(leftBottomCornerGroup, [0, 0, 0, cornerRadiusArray[3]]);
   } else if (bottomFrozenGroup.attribute.height > 0) {
-    setCornerRadius(bottomFrozenGroup, [0, 0, 0, cornerRadius]);
+    setCornerRadius(bottomFrozenGroup, [0, 0, 0, cornerRadiusArray[3]]);
   } else if (rowHeaderGroup.attribute.width > 0) {
-    setCornerRadius(rowHeaderGroup, [0, 0, 0, cornerRadius]);
+    setCornerRadius(rowHeaderGroup, [0, 0, 0, cornerRadiusArray[3]]);
   } else {
-    setCornerRadius(bodyGroup, [0, 0, 0, cornerRadius]);
+    setCornerRadius(bodyGroup, [0, 0, 0, cornerRadiusArray[3]]);
   }
 
   // right top
   if (rightTopCornerGroup.attribute.width > 0 && rightTopCornerGroup.attribute.height > 0) {
-    setCornerRadius(rightTopCornerGroup, [0, cornerRadius, 0, 0]);
+    setCornerRadius(rightTopCornerGroup, [0, cornerRadiusArray[1], 0, 0]);
   } else if (colHeaderGroup.attribute.height > 0) {
-    setCornerRadius(colHeaderGroup, [0, cornerRadius, 0, 0]);
+    setCornerRadius(colHeaderGroup, [0, cornerRadiusArray[1], 0, 0]);
   } else if (rightFrozenGroup.attribute.width > 0) {
-    setCornerRadius(rightFrozenGroup, [0, cornerRadius, 0, 0]);
+    setCornerRadius(rightFrozenGroup, [0, cornerRadiusArray[1], 0, 0]);
   } else {
-    setCornerRadius(bodyGroup, [0, cornerRadius, 0, 0]);
+    setCornerRadius(bodyGroup, [0, cornerRadiusArray[1], 0, 0]);
   }
 
   // right bottom
   if (rightBottomCornerGroup.attribute.width > 0 && rightBottomCornerGroup.attribute.height > 0) {
-    setCornerRadius(rightBottomCornerGroup, [0, 0, cornerRadius, 0]);
+    setCornerRadius(rightBottomCornerGroup, [0, 0, cornerRadiusArray[2], 0]);
   } else if (rightFrozenGroup.attribute.width > 0) {
-    setCornerRadius(rightFrozenGroup, [0, 0, cornerRadius, 0]);
+    setCornerRadius(rightFrozenGroup, [0, 0, cornerRadiusArray[2], 0]);
   } else if (bottomFrozenGroup.attribute.height > 0) {
-    setCornerRadius(bottomFrozenGroup, [0, 0, cornerRadius, 0]);
+    setCornerRadius(bottomFrozenGroup, [0, 0, cornerRadiusArray[2], 0]);
   } else {
-    setCornerRadius(bodyGroup, [0, 0, cornerRadius, 0]);
+    setCornerRadius(bodyGroup, [0, 0, cornerRadiusArray[2], 0]);
   }
 }
 
