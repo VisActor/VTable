@@ -282,7 +282,13 @@ export class Gantt extends EventTarget {
       ),
       cellInnerBorder: false,
       frameStyle: Object.assign({}, this.parsedOptions.frameStyle, {
-        cornerRadius: 0 //[this.parsedOptions.frameStyle.cornerRadius, 0, 0, this.parsedOptions.frameStyle.cornerRadius]
+        cornerRadius: this.parsedOptions.frameStyle.cornerRadius, //[this.parsedOptions.frameStyle.cornerRadius, 0, 0, this.parsedOptions.frameStyle.cornerRadius],
+        borderLineWidth: [
+          this.parsedOptions.frameStyle.borderLineWidth,
+          0,
+          this.parsedOptions.frameStyle.borderLineWidth,
+          this.parsedOptions.frameStyle.borderLineWidth
+        ]
       }),
       bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable.bodyStyle)
     };

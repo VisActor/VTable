@@ -104,7 +104,11 @@ export interface GanttConstructorOptions {
   // timelineHeaderStyle?: ITimelineHeaderStyle;
   scrollStyle?: IScrollStyle;
 
-  frameStyle: IFrameStyle;
+  frameStyle: {
+    outerFrameStyle: IFrameStyle;
+    verticalSplitLine?: ILineStyle;
+    horizontalSplitLine?: ILineStyle;
+  };
   pixelRatio?: number;
 
   //列调整宽度的直线

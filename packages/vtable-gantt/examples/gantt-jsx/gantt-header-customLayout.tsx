@@ -619,9 +619,11 @@ export function createTable() {
     endDateField: 'end',
     progressField: 'progress',
     frameStyle: {
-      borderLineWidth: 2,
-      borderColor: 'red',
-      cornerRadius: 8
+      outerFrameStyle: {
+        borderLineWidth: 2,
+        borderColor: 'red',
+        cornerRadius: 8
+      }
     },
     gridStyle: {
       // backgroundColor: 'gray',

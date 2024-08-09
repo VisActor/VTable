@@ -179,7 +179,7 @@ export function initOptions(gantt: Gantt) {
       borderLineWidth: [1, 1, 1, 1],
       cornerRadius: 4
     },
-    options.frameStyle
+    options.frameStyle?.outerFrameStyle
   );
   gantt.parsedOptions.markLine = generateMarkLine(options?.markLine);
   gantt.parsedOptions.resizeLineStyle = {
