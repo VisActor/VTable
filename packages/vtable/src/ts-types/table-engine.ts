@@ -596,7 +596,7 @@ export interface GanttConstructorOptions {
   /** 设置的表格主题 */
   theme?: TableTheme;
   /** 设置任务条样式 可以设置多组 依次循环使用 */
-  barStyle?: IBarStyleOption[]; // 参考https://lightcharts.bytedance.net/charts/doc/options#series.gantt.barStyle
+  barStyle?: IBarStyleOption[];
   defaultHeaderRowHeight?: number;
   defaultRowHeight?: number;
   timelineColWidth?: number;
