@@ -815,15 +815,16 @@ export function createTable() {
     endDateField: 'end',
     progressField: 'progress',
     frame: {
+      verticalSplitLineMoveable: true,
       outerFrameStyle: {
         borderLineWidth: 2,
         borderColor: 'red',
         cornerRadius: 8
-      },
-      verticalSplitLineHighlight: {
-        lineColor: 'green',
-        lineWidth: 3
       }
+      // verticalSplitLineHighlight: {
+      //   lineColor: 'green',
+      //   lineWidth: 3
+      // }
     },
     gridStyle: {
       // backgroundColor: 'gray',

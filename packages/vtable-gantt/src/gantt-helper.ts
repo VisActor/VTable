@@ -195,13 +195,8 @@ export function initOptions(gantt: Gantt) {
     options.frame?.outerFrameStyle
   );
   gantt.parsedOptions.markLine = generateMarkLine(options?.markLine);
-  gantt.parsedOptions.verticalSplitLineHighlight = Object.assign(
-    {
-      lineColor: 'yellow',
-      lineWidth: 2
-    },
-    options.frame?.verticalSplitLineHighlight
-  );
+  gantt.parsedOptions.verticalSplitLineHighlight = options.frame?.verticalSplitLineHighlight;
+
   gantt.parsedOptions.verticalSplitLine = Object.assign(
     {
       lineColor: gantt.parsedOptions.outerFrameStyle.borderColor,

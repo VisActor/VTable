@@ -586,6 +586,7 @@ export function createTable() {
     }
   ];
   const option: GanttConstructorOptions = {
+    overscrollBehavior: 'none',
     records,
     taskListTable: {
       columns,
@@ -606,8 +607,8 @@ export function createTable() {
         fontSize: 16,
         color: '#4D4D4D',
         bgColor: '#FFF'
-      },
-      rightFrozenColCount: 1
+      }
+      //rightFrozenColCount: 1
     },
 
     startDateField: 'start',
@@ -619,6 +620,15 @@ export function createTable() {
         borderColor: 'red',
         cornerRadius: 8
       },
+      verticalSplitLine: {
+        lineColor: '#e1e4e8',
+        lineWidth: 3
+      },
+      horizontalSplitLine: {
+        lineColor: '#e1e4e8',
+        lineWidth: 3
+      },
+      verticalSplitLineMoveable: true,
       verticalSplitLineHighlight: {
         lineColor: 'green',
         lineWidth: 3

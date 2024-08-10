@@ -53,15 +53,16 @@ export class Grid {
     this.group.name = 'grid-container';
     scene.tableGroup.addChild(this.group);
     //补充timelineHeader中不好绘制的底部的边线
+    const horizontalSplitLineWidth = scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth;
     const line = VRender.createLine({
       pickable: false,
       stroke: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineColor,
-      lineWidth: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth,
+      lineWidth: horizontalSplitLineWidth,
       points: [
-        { x: 0, y: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth & 1 ? 0.5 : 0 },
+        { x: 0, y: horizontalSplitLineWidth & 1 ? 0.5 : 0 },
         {
           x: scene._gantt.getAllColsWidth(),
-          y: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth & 1 ? 0.5 : 0
+          y: horizontalSplitLineWidth & 1 ? 0.5 : 0
         }
       ]
     });

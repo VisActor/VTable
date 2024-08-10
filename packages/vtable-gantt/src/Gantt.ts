@@ -67,6 +67,7 @@ export class Gantt extends EventTarget {
   canvas: HTMLCanvasElement;
   element: HTMLElement;
   resizeLine: HTMLDivElement;
+  horizontalSplitLine: HTMLDivElement;
   context: CanvasRenderingContext2D;
 
   sortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
@@ -151,7 +152,7 @@ export class Gantt extends EventTarget {
     this._generateListTable();
     this._syncPropsFromTable();
 
-    this._createResizeLine();
+    this._createSplitLineAndResizeLine();
     this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
@@ -234,6 +235,12 @@ export class Gantt extends EventTarget {
 
       if (this.options?.taskListTable?.width === 'auto') {
         this.taskTableWidth = this.taskListTableInstance.getAllColsWidth() + this.taskListTableInstance.tableX * 2;
+        if (this.options?.taskListTable?.maxWidth) {
+          this.taskTableWidth = Math.min(this.options?.taskListTable?.maxWidth, this.taskTableWidth);
+        }
+        if (this.options?.taskListTable?.minWidth) {
+          this.taskTableWidth = Math.max(this.options?.taskListTable?.minWidth, this.taskTableWidth);
+        }
         this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
         this.taskListTableInstance.setCanvasSize(
           this.taskTableWidth,
@@ -297,7 +304,7 @@ export class Gantt extends EventTarget {
         ]
       }),
       bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable.bodyStyle)
-    };
+    } as ListTableConstructorOptions.theme;
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvasHeight ?? this.canvas.height;
     listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
@@ -305,7 +312,20 @@ export class Gantt extends EventTarget {
     listTable_options.clearDOM = false;
     return listTable_options;
   }
-  _createResizeLine() {
+  _createSplitLineAndResizeLine() {
+    if (this.parsedOptions.horizontalSplitLine) {
+      this.horizontalSplitLine = document.createElement('div');
+      this.horizontalSplitLine.style.position = 'absolute';
+      this.horizontalSplitLine.style.top = this.getAllHeaderRowsHeight() + 'px';
+      this.horizontalSplitLine.style.left = this.tableY + 'px';
+      this.horizontalSplitLine.style.height = (this.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
+      this.horizontalSplitLine.style.width = this.tableNoFrameHeight + this.taskTableWidth + 'px'; //'100%';
+      this.horizontalSplitLine.style.backgroundColor = this.parsedOptions.horizontalSplitLine.lineColor;
+      this.horizontalSplitLine.style.zIndex = '100';
+      this.horizontalSplitLine.style.userSelect = 'none';
+      this.horizontalSplitLine.style.opacity = '1';
+      (this.container as HTMLElement).appendChild(this.horizontalSplitLine);
+    }
     if (this.taskListTableInstance) {
       this.resizeLine = document.createElement('div');
       this.resizeLine.style.position = 'absolute';
@@ -333,21 +353,22 @@ export class Gantt extends EventTarget {
       verticalSplitLine.style.transition = 'background-color 0.3s';
       this.resizeLine.appendChild(verticalSplitLine);
 
-      const highlightLine = document.createElement('div');
-      highlightLine.style.position = 'absolute';
-      highlightLine.style.top = '0px';
-      highlightLine.style.left = `${(14 - this.parsedOptions.verticalSplitLineHighlight.lineWidth) / 2}px`;
-      highlightLine.style.width = this.parsedOptions.verticalSplitLineHighlight.lineWidth + 'px';
-      highlightLine.style.height = '100%';
-      highlightLine.style.backgroundColor = this.parsedOptions.verticalSplitLineHighlight.lineColor;
-      highlightLine.style.zIndex = '100';
-      highlightLine.style.cursor = 'col-resize';
-      highlightLine.style.userSelect = 'none';
-      highlightLine.style.pointerEvents = 'none';
-      highlightLine.style.opacity = '0';
-      highlightLine.style.transition = 'background-color 0.3s';
-      this.resizeLine.appendChild(highlightLine);
-
+      if (this.parsedOptions.verticalSplitLineHighlight) {
+        const highlightLine = document.createElement('div');
+        highlightLine.style.position = 'absolute';
+        highlightLine.style.top = '0px';
+        highlightLine.style.left = `${(14 - this.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) / 2}px`;
+        highlightLine.style.width = (this.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) + 'px';
+        highlightLine.style.height = '100%';
+        highlightLine.style.backgroundColor = this.parsedOptions.verticalSplitLineHighlight.lineColor;
+        highlightLine.style.zIndex = '100';
+        highlightLine.style.cursor = 'col-resize';
+        highlightLine.style.userSelect = 'none';
+        highlightLine.style.pointerEvents = 'none';
+        highlightLine.style.opacity = '0';
+        highlightLine.style.transition = 'background-color 0.3s';
+        this.resizeLine.appendChild(highlightLine);
+      }
       (this.container as HTMLElement).appendChild(this.resizeLine);
     }
   }
