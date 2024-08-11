@@ -24,7 +24,6 @@ import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
 import {
   DayTimes,
-  generateMarkLine,
   generateTimeLineDate,
   getHorizontalScrollBarSize,
   getVerticalScrollBarSize,
@@ -517,7 +516,7 @@ export class Gantt extends EventTarget {
     };
   }
 
-  updateDateToTaskRecord(updateDateType: 'move' | 'start-move' | 'end-move', days: number, index: number) {
+  _updateDateToTaskRecord(updateDateType: 'move' | 'start-move' | 'end-move', days: number, index: number) {
     const taskRecord = this.getRecordByIndex(index);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
@@ -538,9 +537,9 @@ export class Gantt extends EventTarget {
     }
     this.updateRecordToListTable(taskRecord, index);
   }
-  updateTaskRecord(index: number) {
-    const taskRecord = this.getRecordByIndex(index);
-    this.updateRecordToListTable(taskRecord, index);
+  updateTaskRecord(index: number, record: any) {
+    //const taskRecord = this.getRecordByIndex(index);
+    this.updateRecordToListTable(record, index);
   }
 
   /**

@@ -8,6 +8,7 @@ import { TimelineHeader } from './timeline-header';
 import { TaskBar } from './task-bar';
 import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
+import { getTaskIndexByY } from '../gantt-helper';
 
 export class Scenegraph {
   dateStepWidth: number;
@@ -216,5 +217,8 @@ export class Scenegraph {
   }
   release() {
     this.stage.release();
+  }
+  getTaskBarNodeByY(y: number) {
+    const taskIndex = getTaskIndexByY(y, this._gantt);
   }
 }

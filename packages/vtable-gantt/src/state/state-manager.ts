@@ -270,7 +270,7 @@ export class StateManager {
     const targetEndX = this.moveTaskBar.targetStartX + correctX;
     this._gantt.stateManager.moveTaskBar.target.setAttribute('x', targetEndX);
     const taskIndex = getTaskIndexByY(this.moveTaskBar.startY, this._gantt);
-    this._gantt.updateDateToTaskRecord('move', days, taskIndex);
+    this._gantt._updateDateToTaskRecord('move', days, taskIndex);
     this.moveTaskBar.moving = false;
     this.moveTaskBar.target = null;
     this._gantt.scenegraph.updateNextFrame();
@@ -323,12 +323,12 @@ export class StateManager {
       taskBarGroup.setAttribute('width', taskBarSize);
       rect?.setAttribute('width', taskBarGroup.attribute.width);
       progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-      this._gantt.updateDateToTaskRecord('start-move', -diff_days, taskIndex);
+      this._gantt._updateDateToTaskRecord('start-move', -diff_days, taskIndex);
     } else if (direction === 'right') {
       taskBarGroup.setAttribute('width', taskBarSize);
       rect?.setAttribute('width', taskBarGroup.attribute.width);
       progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-      this._gantt.updateDateToTaskRecord('end-move', diff_days, taskIndex);
+      this._gantt._updateDateToTaskRecord('end-move', diff_days, taskIndex);
     }
     this._gantt.scenegraph.taskBar.showHoverBar(
       taskBarGroup.attribute.x,
