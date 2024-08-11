@@ -181,7 +181,7 @@ export function initOptions(gantt: Gantt) {
     color: options?.taskBar?.labelTextStyle.color ?? '#F01',
     textAlign: options?.taskBar?.labelTextStyle.textAlign ?? 'left',
     textBaseline: options?.taskBar?.labelTextStyle.textBaseline ?? 'middle',
-    padding: options?.taskBar?.labelTextStyle.padding ?? 0,
+    padding: options?.taskBar?.labelTextStyle.padding ?? [0, 0, 0, 10],
     textOverflow: options?.taskBar?.labelTextStyle.textOverflow
   };
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;

@@ -10,6 +10,7 @@ const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.o
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
   <line x1="70" y1="10" x2="70" y2="190" stroke="black" stroke-width="4"/>
 </svg>`;
+export const TASKBAR_HOVER_ICON_WIDTH = 10;
 
 export class TaskBar {
   group: VRender.Group;
@@ -157,7 +158,7 @@ export class TaskBar {
         fill: color,
         fontFamily: fontFamily,
         text: parseStringTemplate(this._scene._gantt.parsedOptions.taskBarLabelText as string, taskRecord),
-        maxLineWidth: taskBarSize - 20,
+        maxLineWidth: taskBarSize - TASKBAR_HOVER_ICON_WIDTH,
         textBaseline,
         textAlign,
         ellipsis:
@@ -218,7 +219,7 @@ export class TaskBar {
       const icon = new VRender.Image({
         x: 0,
         y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
-        width: 10,
+        width: TASKBAR_HOVER_ICON_WIDTH,
         height: 20,
         image: TASKBAR_HOVER_ICON,
         pickable: true,
@@ -232,7 +233,7 @@ export class TaskBar {
       const rightIcon = new VRender.Image({
         x: 0,
         y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
-        width: 10,
+        width: TASKBAR_HOVER_ICON_WIDTH,
         height: 20,
         image: TASKBAR_HOVER_ICON,
         pickable: true,
@@ -277,11 +278,11 @@ export class TaskBar {
     if (this.hoverBarLeftIcon) {
       this.hoverBarLeftIcon.setAttribute('x', 0);
       this.hoverBarLeftIcon.setAttribute('y', Math.ceil(height / 10));
-      this.hoverBarLeftIcon.setAttribute('width', 10);
+      this.hoverBarLeftIcon.setAttribute('width', TASKBAR_HOVER_ICON_WIDTH);
       this.hoverBarLeftIcon.setAttribute('height', height - 2 * Math.ceil(height / 10));
-      this.hoverBarRightIcon.setAttribute('x', width - 10);
+      this.hoverBarRightIcon.setAttribute('x', width - TASKBAR_HOVER_ICON_WIDTH);
       this.hoverBarRightIcon.setAttribute('y', Math.ceil(height / 10));
-      this.hoverBarRightIcon.setAttribute('width', 10);
+      this.hoverBarRightIcon.setAttribute('width', TASKBAR_HOVER_ICON_WIDTH);
       this.hoverBarRightIcon.setAttribute('height', height - 2 * Math.ceil(height / 10));
     }
   }

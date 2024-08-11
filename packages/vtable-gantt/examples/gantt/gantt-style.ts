@@ -15,8 +15,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-30',
-      end: '2024-08-14',
+      start: '2024-07-24',
+      end: '2024-07-26',
       progress: 31,
       priority: 'P0',
       children: [
@@ -636,10 +636,10 @@ export function createTable() {
     },
     gridStyle: {
       // backgroundColor: 'gray',
-      // vertical: {
-      //   lineWidth: 1,
-      //   lineColor: '#e1e4e8'
-      // },
+      verticalLine: {
+        lineWidth: 1,
+        lineColor: '#e1e4e8'
+      },
       horizontalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
@@ -649,13 +649,13 @@ export function createTable() {
     rowHeight: 40,
     taskBar: {
       // resizable: false,
-      moveable: false,
+      moveable: true,
       hoverBarStyle: {
         barOverLayColor: 'rgba(99, 144, 0, 0.4)'
       },
       labelText: '{title} {progress}%',
       labelTextStyle: {
-        padding: 2,
+        // padding: 2,
         fontFamily: 'Arial',
         fontSize: 16,
         textAlign: 'left',
@@ -678,6 +678,10 @@ export function createTable() {
     timelineHeader: {
       backgroundColor: '#EEF1F5',
       horizontalLine: {
+        lineWidth: 1,
+        lineColor: '#e1e4e8'
+      },
+      verticalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
       },
@@ -724,7 +728,7 @@ export function createTable() {
         // }
       ]
     },
-    minDate: '2024-07-07',
+    minDate: '2024-07-23',
     maxDate: '2024-10-15',
     markLine: [
       {

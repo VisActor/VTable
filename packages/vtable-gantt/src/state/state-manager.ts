@@ -13,6 +13,7 @@ import {
 import { getTaskIndexByY } from '../gantt-helper';
 import { debounce } from '../tools/debounce';
 import type { GanttTaskBarNode } from '../scenegraph/ganttNode';
+import { TASKBAR_HOVER_ICON_WIDTH } from '../scenegraph/task-bar';
 export class StateManager {
   _gantt: Gantt;
 
@@ -369,15 +370,8 @@ export class StateManager {
 
     rect?.setAttribute('width', taskBarGroup.attribute.width);
     progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-    textLabel?.setAttribute(
-      'x',
-      this._gantt.parsedOptions.taskBarLabelStyle.textAlign === 'center'
-        ? taskBarSize / 2
-        : this._gantt.parsedOptions.taskBarLabelStyle.textAlign === 'left'
-        ? 10
-        : taskBarSize - 10
-    );
-    textLabel?.setAttribute('maxLineWidth', taskBarSize - 20);
+
+    textLabel?.setAttribute('maxLineWidth', taskBarSize - TASKBAR_HOVER_ICON_WIDTH * 2);
 
     const x = taskBarGroup.attribute.x;
     const y = taskBarGroup.attribute.y;

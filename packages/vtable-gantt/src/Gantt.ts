@@ -589,5 +589,13 @@ export class Gantt extends EventTarget {
   }
   setRecords(records: any[]) {
     this.records = records;
+    this.taskListTableInstance.setRecords(records);
+    this._syncPropsFromTable();
+    this.resizeLine.style.height = this.drawHeight + 'px'; //'100%';
+    this.scenegraph.refreshTaskBarsAndGrid();
+    const left = this.stateManager.scroll.horizontalBarPos;
+    const top = this.stateManager.scroll.verticalBarPos;
+    this.scenegraph.setX(-left);
+    this.scenegraph.setY(-top);
   }
 }
