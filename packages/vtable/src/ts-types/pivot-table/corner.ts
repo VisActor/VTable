@@ -13,6 +13,8 @@ interface IBasicCornerDefine {
   disableHeaderHover?: boolean;
   /** 该表头单元格不支持选中 */
   disableHeaderSelect?: boolean;
+  /** 强制显示角头。当row或者column方向上没有维度的时候 本身是不会显示角表头的 但是某些场景下仍然需显示维度名称在角头，请配置这个字段。 */
+  forceShowHeader?: boolean;
 }
 
 interface ITextCornerDefine extends IBasicCornerDefine {
