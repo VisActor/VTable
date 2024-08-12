@@ -50,7 +50,7 @@ export class TimelineHeader {
           clip: false,
           fill: scene._gantt.parsedOptions.timelineHeaderBackgroundColor
         });
-        date.name = 'date-cell';
+        date.name = 'date-header-cell';
         // const rect = createRect({
         //   x: 0,
         //   y: 0,
@@ -123,6 +123,7 @@ export class TimelineHeader {
                 : undefined
           });
           date.appendChild(text);
+          text.name = 'date-header-cell-text';
         }
         rowHeader.addChild(date);
 

@@ -23,6 +23,7 @@ import { ListTable, themes } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
 import {
+  convertProgress,
   DayTimes,
   generateTimeLineDate,
   getHorizontalScrollBarSize,
@@ -484,7 +485,18 @@ export class Gantt extends EventTarget {
   updateRecordToListTable(record: any, index: number) {
     this.taskListTableInstance.updateRecords([record], [index]);
   }
-  getTaskInfoByTaskListIndex(index: number) {
+  /**
+   * 获取指定index处任务数据的具体信息
+   * @param index
+   * @returns 当前任务信息
+   */
+  getTaskInfoByTaskListIndex(index: number): {
+    taskRecord: any;
+    taskDays: number;
+    startDate: Date;
+    endDate: Date;
+    progress: number;
+  } {
     const taskRecord = this.getRecordByIndex(index);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
@@ -496,7 +508,11 @@ export class Gantt extends EventTarget {
       rawDateStartDateTime > this.parsedOptions._maxDateTime
     ) {
       return {
-        taskDays: 0
+        taskDays: 0,
+        progress: 0,
+        startDate: null,
+        endDate: null,
+        taskRecord
       };
     }
     const startDate = new Date(
@@ -505,7 +521,7 @@ export class Gantt extends EventTarget {
     const endDate = new Date(
       Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
     );
-    const progress = taskRecord[progressField];
+    const progress = convertProgress(taskRecord[progressField]);
     const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     return {
       taskRecord,
@@ -515,7 +531,12 @@ export class Gantt extends EventTarget {
       progress
     };
   }
-
+  /**
+   * 拖拽任务条或者调整任务条尺寸修改日期更新到数据中
+   * @param updateDateType
+   * @param days
+   * @param index
+   */
   _updateDateToTaskRecord(updateDateType: 'move' | 'start-move' | 'end-move', days: number, index: number) {
     const taskRecord = this.getRecordByIndex(index);
     const startDateField = this.parsedOptions.startDateField;
@@ -537,6 +558,7 @@ export class Gantt extends EventTarget {
     }
     this.updateRecordToListTable(taskRecord, index);
   }
+  /** TODO */
   updateTaskRecord(index: number, record: any) {
     //const taskRecord = this.getRecordByIndex(index);
     this.updateRecordToListTable(record, index);

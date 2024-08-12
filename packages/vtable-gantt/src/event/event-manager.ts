@@ -136,7 +136,8 @@ function bindContainerDomListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.grabing);
       stateManager.startResizeTableWidth(e);
     });
-
+  }
+  if (gantt.parsedOptions.verticalSplitLineHighlight) {
     // 添加鼠标悬停时的高亮效果
     handler.on(gantt.resizeLine, 'mouseover', (e: MouseEvent) => {
       console.log('resizeLine mouseover');

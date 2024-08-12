@@ -12,7 +12,6 @@ import type { StateManager } from '../state/state-manager';
  */
 export function handleWhell(event: WheelEvent, state: StateManager, gantt: Gantt, isWheelEvent: boolean = true) {
   let { deltaX, deltaY } = event;
-  console.log('deltaX deltaY', deltaX, deltaY);
   // 如果按住了shift 则进行横向滚动 纵向不滚动
   if (event.shiftKey && event.deltaY) {
     //mac电脑按住shift 鼠标滚动deltaX和deltaY是自动互换的，所以此逻辑只针对windows电脑有效及mac触摸板有效

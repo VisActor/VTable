@@ -350,3 +350,20 @@ export function getTextPos(
     y: textY
   };
 }
+
+export function convertProgress(progress: number | string) {
+  // 如果是字符串类型，去掉可能存在的百分号
+  if (typeof progress === 'string') {
+    progress = progress.replace('%', '');
+    // 转换成数字类型
+    progress = parseFloat(progress);
+  }
+
+  // 如果小于或等于1，说明是0.4这种情况，转换成百分比
+  if (progress <= 1) {
+    progress = progress * 100;
+  }
+
+  // 最后转换成整数
+  return Math.round(progress);
+}

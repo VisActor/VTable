@@ -9,7 +9,8 @@ import { TaskBar } from './task-bar';
 import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
 import { getTaskIndexByY } from '../gantt-helper';
-
+import graphicContribution from './graphic';
+VRender.container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
   rowHeight: number;
@@ -48,12 +49,15 @@ export class Scenegraph {
       // background: gantt.theme.underlayBackgroundColor,
       // dpr: gantt.internalProps.pixelRatio,
       enableLayout: true,
-      autoRender: false
+      autoRender: false,
+      context: {
+        appName: 'vtable'
+      }
       // afterRender: () => {
       // this._gantt.fireListeners('after_render', null);
       // }
     });
-
+    (this.stage as any).gantt = this._gantt;
     this.stage.defaultLayer.setTheme({
       group: {
         boundsPadding: 0,
