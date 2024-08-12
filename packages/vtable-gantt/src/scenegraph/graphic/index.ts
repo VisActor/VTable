@@ -5,8 +5,8 @@ import { DateHeaderGroupBeforeRenderContribution } from './group-contribution-re
 
 export default new VRender.ContainerModule((bind, unbind, isBound, rebind) => {
   // text 渲染器注入contributions
-  bind(TextStickBeforeRenderContribution).toSelf().inSingletonScope();
-  bind(VRender.TextRenderContribution).toService(TextStickBeforeRenderContribution);
+  // bind(TextStickBeforeRenderContribution).toSelf().inSingletonScope();
+  // bind(VRender.TextRenderContribution).toService(TextStickBeforeRenderContribution);
 
   // group 渲染器注入contributions
   bind(DateHeaderGroupBeforeRenderContribution).toSelf().inSingletonScope();

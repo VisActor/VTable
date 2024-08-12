@@ -92,8 +92,17 @@ export class TimelineHeader {
           rootContainer && date.appendChild(rootContainer);
         }
         if (renderDefaultText) {
-          const { padding, textAlign, textBaseline, textOverflow, fontSize, fontWeight, color, strokeColor } =
-            scene._gantt.parsedOptions.timelineHeaderStyles[i];
+          const {
+            padding,
+            textAlign,
+            textBaseline,
+            textOverflow,
+            fontSize,
+            fontWeight,
+            color,
+            strokeColor,
+            textStick
+          } = scene._gantt.parsedOptions.timelineHeaderStyles[i];
 
           const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, width, height);
           const text = new VRender.Text({
@@ -122,6 +131,7 @@ export class TimelineHeader {
                 ? textOverflow
                 : undefined
           });
+          (text.attribute as any).textStick = textStick;
           date.appendChild(text);
           text.name = 'date-header-cell-text';
         }

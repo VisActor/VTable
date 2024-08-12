@@ -700,7 +700,9 @@ export function createTable() {
             strokeColor: 'black',
             textAlign: 'right',
             textBaseline: 'bottom',
-            backgroundColor: '#EEF1F5'
+            backgroundColor: '#EEF1F5',
+            textStick: true
+            // padding: [0, 30, 0, 20]
           }
         },
         {
