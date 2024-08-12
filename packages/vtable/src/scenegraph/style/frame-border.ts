@@ -120,12 +120,24 @@ export function createFrameBorder(
     if (isTableGroup) {
       if (cornerRadius) {
         if (Array.isArray(cornerRadius)) {
-          cornerRadius[0] = cornerRadius[0] + Math.min(borderLeft, borderTop) / 2;
-          cornerRadius[1] && (cornerRadius[1] = cornerRadius[1] + Math.min(borderTop, borderRight) / 2);
-          cornerRadius[2] && (cornerRadius[2] = cornerRadius[2] + Math.min(borderRight, borderBottom) / 2);
-          cornerRadius[3] && (cornerRadius[3] = cornerRadius[3] + Math.min(borderBottom, borderLeft) / 2);
+          const cornerRadiusArr = getQuadProps(cornerRadius);
+          rectAttributes.cornerRadius = cornerRadiusArr;
+          groupAttributes.cornerRadius = cornerRadiusArr;
+          cornerRadiusArr[0] && (cornerRadiusArr[0] = cornerRadiusArr[0] + Math.min(borderLeft, borderTop) / 2);
+          cornerRadiusArr[1] && (cornerRadiusArr[1] = cornerRadiusArr[1] + Math.min(borderTop, borderRight) / 2);
+          cornerRadiusArr[2] && (cornerRadiusArr[2] = cornerRadiusArr[2] + Math.min(borderRight, borderBottom) / 2);
+          cornerRadiusArr[3] && (cornerRadiusArr[3] = cornerRadiusArr[3] + Math.min(borderBottom, borderLeft) / 2);
+        } else if (isArray(borderLineWidth)) {
+          const cornerRadiusArr = [];
+          rectAttributes.cornerRadius = cornerRadiusArr;
+          groupAttributes.cornerRadius = cornerRadiusArr;
+          cornerRadiusArr[0] = cornerRadius + Math.min(borderLeft, borderTop) / 2;
+          cornerRadiusArr[1] = cornerRadius + Math.min(borderTop, borderRight) / 2;
+          cornerRadiusArr[2] = cornerRadius + Math.min(borderRight, borderBottom) / 2;
+          cornerRadiusArr[3] = cornerRadius + Math.min(borderBottom, borderLeft) / 2;
         } else {
           rectAttributes.cornerRadius = cornerRadius + (rectAttributes.lineWidth ?? 0) / 2;
+          groupAttributes.cornerRadius = cornerRadius + (rectAttributes.lineWidth ?? 0) / 2;
         }
       }
       if (frameTheme.innerBorder) {
