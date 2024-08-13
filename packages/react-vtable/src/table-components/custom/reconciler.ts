@@ -1,11 +1,11 @@
-import { VRender } from '@visactor/vtable';
-import { isFunction } from '@visactor/vutils';
+import { application, REACT_TO_CANOPUS_EVENTS, Tag } from '@visactor/vtable/es/vrender';
+import type { Graphic, IGraphic, IGraphicCreator } from '@visactor/vtable/es/vrender';
+import { isFunction, merge } from '@visactor/vutils';
 import React from 'react';
 import ReactReconciler from 'react-reconciler';
 import { DefaultEventPriority } from 'react-reconciler/constants.js';
+import { createVRenderComponent } from '../../components/component-creater';
 
-const { application, createText, REACT_TO_CANOPUS_EVENTS, Tag } = VRender;
-type Graphic = VRender.Graphic;
 type Instance = Graphic;
 
 export const reconcilor = ReactReconciler({
@@ -15,7 +15,7 @@ export const reconcilor = ReactReconciler({
   createInstance: (type: string, props: any, instance) => {
     const graphic = createGraphic(type, props);
     if (graphic) {
-      bindEventsToGraphic(graphic, props);
+      bindEventsToGraphic(graphic as IGraphic, props);
     } else {
       return undefined;
       // createInstance
@@ -134,14 +134,14 @@ reconcilor.injectIntoDevTools({
 });
 
 function createGraphic(type: string, props: any) {
-  // may have unwanted onxxx prop
-  if (type === 'tag') {
-    const tag = new Tag(props.attribute);
-    return tag;
-  } else if (!application.graphicService.creator[type]) {
-    return;
+  const component = createVRenderComponent(type, props);
+  if (component) {
+    return component;
   }
-  const graphic = application.graphicService.creator[type]((props as any).attribute);
+  if (!application.graphicService.creator[type as keyof IGraphicCreator]) {
+    return undefined;
+  }
+  const graphic = application.graphicService.creator[type as keyof IGraphicCreator]((props as any).attribute);
   return graphic;
 }
 
@@ -149,30 +149,36 @@ function isEventProp(key: string, props: any) {
   return key.startsWith('on') && isFunction(props[key]);
 }
 
-function bindEventsToGraphic(graphic: Graphic, props: any) {
+function bindEventsToGraphic(graphic: IGraphic, props: any) {
   for (const key in props) {
-    if (isEventProp(key, props)) {
-      graphic.addEventListener(REACT_TO_CANOPUS_EVENTS[key], props[key]);
+    if (isEventProp(key, props) && REACT_TO_CANOPUS_EVENTS[key as keyof typeof REACT_TO_CANOPUS_EVENTS]) {
+      graphic.addEventListener(REACT_TO_CANOPUS_EVENTS[key as keyof typeof REACT_TO_CANOPUS_EVENTS], props[key]);
     }
   }
 }
 
-function updateGraphicProps(graphic: Graphic, newProps: any, oldProps: any) {
+function updateGraphicProps(graphic: IGraphic, newProps: any, oldProps: any) {
   // deal width event update
   for (const propKey in oldProps) {
     if (isEventProp(propKey, oldProps) && oldProps[propKey] !== newProps[propKey]) {
-      graphic.removeEventListener(REACT_TO_CANOPUS_EVENTS[propKey], oldProps[propKey]);
+      graphic.removeEventListener(
+        REACT_TO_CANOPUS_EVENTS[propKey as keyof typeof REACT_TO_CANOPUS_EVENTS],
+        oldProps[propKey]
+      );
     }
   }
   for (const propKey in newProps) {
     if (isEventProp(propKey, newProps) && oldProps[propKey] !== newProps[propKey]) {
-      graphic.addEventListener(REACT_TO_CANOPUS_EVENTS[propKey], newProps[propKey]);
+      graphic.addEventListener(
+        REACT_TO_CANOPUS_EVENTS[propKey as keyof typeof REACT_TO_CANOPUS_EVENTS],
+        newProps[propKey]
+      );
     }
   }
-
   // update all attribute
-  graphic.initAttributes(newProps.attribute);
+  const attribute = newProps.attribute ?? merge({}, newProps);
+  graphic.initAttributes(attribute);
   if (graphic.type === 'image') {
-    graphic.loadImage(newProps.attribute.image);
+    graphic.loadImage(attribute.image);
   }
 }
