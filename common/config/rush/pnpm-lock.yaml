@@ -795,6 +795,7 @@ importers:
       '@types/undertaker': 1.2.8
       '@types/vinyl': 2.0.7
       '@types/yargs-parser': 21.0.0
+      '@vitejs/plugin-vue': ^5.0.3
       autoprefixer: 10.4.13
       babel-plugin-import: 1.13.6
       clean-css: 5.3.2
@@ -847,6 +848,7 @@ importers:
       '@rollup/plugin-typescript': 11.1.0_ivokygnvpraqsbyfg47pib5bri
       '@rollup/plugin-url': 8.0.1_rollup@3.20.5
       '@trufflesuite/spinnies': 0.1.1
+      '@vitejs/plugin-vue': 5.0.4
       autoprefixer: 10.4.13_postcss@8.4.21
       babel-plugin-import: 1.13.6
       clean-css: 5.3.2
@@ -3866,6 +3868,14 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@vitejs/plugin-vue/5.0.4:
+    resolution: {integrity: sha512-WS3hevEszI6CEVEx28F8RjTX97k3KsrcY6kvTg7+Whm5y3oYvcqzVeGCU3hxSAn4uY2CLCkeokkGKpoctccilQ==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    peerDependencies:
+      vite: ^5.0.0
+      vue: ^3.2.25
+    dev: false
 
   /@vitejs/plugin-vue/5.0.4_vite@3.2.6+vue@3.4.27:
     resolution: {integrity: sha512-WS3hevEszI6CEVEx28F8RjTX97k3KsrcY6kvTg7+Whm5y3oYvcqzVeGCU3hxSAn4uY2CLCkeokkGKpoctccilQ==}

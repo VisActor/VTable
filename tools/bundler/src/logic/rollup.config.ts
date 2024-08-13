@@ -13,6 +13,7 @@ import url from '@rollup/plugin-url';
 import Alias from '@rollup/plugin-alias';
 import postcss from 'rollup-plugin-postcss';
 import strip from '@rollup/plugin-strip';
+import vue from '@vitejs/plugin-vue';
 import * as path from 'path';
 import { Config } from './config';
 
@@ -43,6 +44,7 @@ export function getRollupOptions(
     plugins: [
       resolve(),
       commonjs(),
+      vue(),
       babel({ ...babelPlugins, babelHelpers: 'bundled' }),
       replace({ ...config.envs, preventAssignment: true }),
       typescript({
