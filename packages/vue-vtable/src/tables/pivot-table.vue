@@ -8,15 +8,15 @@
     ref="baseTableRef"
     v-bind="$attrs"
   />
-  <slot></slot>
+  <slot/>
 </template>
 
 <script setup lang="ts">
 import { shallowRef, computed, defineProps, useSlots, VNode } from 'vue';
 import BaseTable from './base-table.vue';
 import type { ICornerDefine as PivotCornerProps, IIndicator as PivotIndicatorsProps, IDimension as PivotColumnDimensionProps, IDimension as PivotRowDimensionProps, ITitleDefine } from '@visactor/vtable';
-import type { TooltipProps } from '../components/component/tooltip.vue';
-import type { MenuProps } from '../components/component/menu.vue';
+import type { TooltipProps } from '../components/component/tooltip';
+import type { MenuProps } from '../components/component/menu';
 
 interface Props {
   options: Record<string, unknown>;
@@ -47,24 +47,24 @@ const computedOptions = computed(() => {
     rows: [] as PivotRowDimensionProps[],
     rowHeaderTitle: [] as ITitleDefine[],
     indicators: [] as PivotIndicatorsProps[],
-    corner: null as PivotCornerProps | null,
-    tooltip: null as TooltipProps | null,
-    menu: null as MenuProps | null,
+    corner: Object as PivotCornerProps | null,
+    tooltip: Object as TooltipProps | null,
+    menu: Object as MenuProps | null,
   };
 
   const typeMapping: Record<string, keyof typeof options> = {
-    'pivot-column-dimension': 'columns',
-    'pivot-column-header-title': 'columnHeaderTitle',
-    'pivot-row-dimension': 'rows',
-    'pivot-row-header-title': 'rowHeaderTitle',
-    'pivot-corner': 'corner',
-    'pivot-indicator': 'indicators',
-    'tooltip': 'tooltip',
-    'menu': 'menu',
+    'PivotColumnDimension': 'columns',
+    'PivotColumnHeaderTitle': 'columnHeaderTitle',
+    'PivotRowDimension': 'rows',
+    'PivotRowHeaderTitle': 'rowHeaderTitle',
+    'PivotCorner': 'corner',
+    'PivotIndicator': 'indicators',
+    'Tooltip': 'tooltip',
+    'Menu': 'menu',
   };
 
   flattenedSlots.forEach(vnode => {
-    const typeName = vnode.type?.__name ;
+    const typeName = vnode.type?.name || vnode.type?.__name;
     const optionKey = typeMapping[typeName];
 
     if (optionKey) {

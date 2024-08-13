@@ -1,6 +1,4 @@
-<template></template>
-
-<script setup lang="ts">
+import type { VNode } from 'vue';
 import type { TYPES } from '@visactor/vtable';
 
 export type MenuProps = {
@@ -8,7 +6,8 @@ export type MenuProps = {
   defaultHeaderMenuItems?: TYPES.MenuListItem[];
   contextMenuItems?: TYPES.MenuListItem[] | ((field: string, row: number, col: number) => TYPES.MenuListItem[]);
   dropDownMenuHighlight?: TYPES.DropDownMenuHighlightInfo[];
-}
-defineProps<MenuProps>();
+};
 
-</script>  
+export default function Menu(props: MenuProps): VNode {
+  return null;
+}

@@ -1,6 +1,4 @@
-<template></template>
-
-<script setup lang="ts">
+import type { VNode } from 'vue';
 
 export type TooltipProps = {
   renderMode?: 'html';
@@ -8,6 +6,6 @@ export type TooltipProps = {
   confine?: boolean;
 };
 
-defineProps<TooltipProps>();
-
-</script>  
+export default function Tooltip(props: TooltipProps): VNode {
+  return null;
+}

@@ -8,13 +8,16 @@
     ref="baseTableRef"
     v-bind="$attrs"
   >
-    <slot></slot>
-  </BaseTable>
+</BaseTable>
+<slot/>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, defineProps, useSlots} from 'vue';
 import BaseTable from './base-table.vue';
+import type { ColumnDefine } from '@visactor/vtable';
+import type { TooltipProps } from '../components/component/tooltip';
+import type { MenuProps } from '../components/component/menu';
 
 // 定义属性接口
 interface Props {
@@ -30,7 +33,6 @@ const props = defineProps<Props>();
 // 引用BaseTable实例
 const baseTableRef = ref<InstanceType<typeof BaseTable> | null>(null);
 const slots = useSlots();
-console.log();
 
 
 // 展平嵌套的虚拟节点
@@ -44,21 +46,21 @@ function flattenVNodes(vnodes: any[]): any[] {
 const computedOptions = computed(() => {
   const flattenedSlots = flattenVNodes(slots.default?.() || []);
   const options = {
-    columns: [] as Record<string, unknown>[],
-    tooltip: null as Record<string, unknown> | null,
-    menu: null as Record<string, unknown> | null,
+    columns: [] as ColumnDefine[],
+    tooltip: Object as TooltipProps,
+    menu: Object as MenuProps,
   };
 
   const typeMapping: Record<string, keyof typeof options> = {
-    'list-column': 'columns',
-    'tooltip': 'tooltip',
-    'menu': 'menu',
+    'ListColumn': 'columns',
+    'Tooltip': 'tooltip',
+    'Menu': 'menu',
   };
   
   flattenedSlots.forEach(vnode => {
-    const typeName = vnode.type?.__name ;
+    const typeName = vnode.type?.name || vnode.type?.__name;
     const optionKey = typeMapping[typeName];
-
+    // console.log(typeName);
     if (optionKey) {
       if (Array.isArray(options[optionKey])) {
         (options[optionKey] as any[]).push(vnode.props);
@@ -75,6 +77,7 @@ const computedOptions = computed(() => {
     menu: options.menu || props.options.menu,
   };
 });
+
 
 // 暴露实例
 defineExpose({ vTableInstance: computed(() => baseTableRef.value?.vTableInstance || null) });
