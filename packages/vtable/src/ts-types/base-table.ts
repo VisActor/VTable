@@ -98,6 +98,7 @@ import type { ISortedMapItem } from '../data/DataSource';
 import type { IAnimationAppear } from './animation/appear';
 import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
+import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { EditManeger } from '../edit/edit-manager';
 
 export interface IBaseTableProtected {
@@ -263,6 +264,9 @@ export interface IBaseTableProtected {
   headerDomContainer?: HTMLElement;
   // 已使用一行的高度填充所有行
   useOneRowHeightFillAll?: boolean;
+
+  // 启用树形结构数据内的merge配置
+  enableTreeNodeMerge?: boolean;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -866,6 +870,14 @@ export interface BaseTableAPI {
   disableScroll: () => void;
   /** 开启表格的滚动 */
   enableScroll: () => void;
+
+  customCellStylePlugin: CustomCellStylePlugin;
+  headerStyleCache: Map<string, any>;
+  bodyBottomStyleCache: Map<string, any>;
+  bodyStyleCache: Map<string, any>;
+  bodyMergeTitleCache: Map<string, any>;
+  isSeriesNumberInBody: (col: number, row: number) => boolean;
+  getGroupTitleLevel: (col: number, row: number) => number | undefined;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

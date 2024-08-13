@@ -69,6 +69,9 @@ export function checkHasAggregationOnBottom(layoutMap: SimpleHeaderLayoutMap) {
 }
 
 export function checkHasTreeDefine(layoutMap: SimpleHeaderLayoutMap) {
+  if (layoutMap._table.options.groupBy) {
+    return true;
+  }
   const { columns } = layoutMap._table.options as ListTableConstructorOptions;
   if (isArray(columns) && columns.length > 0) {
     for (let i = 0; i < columns.length; i++) {

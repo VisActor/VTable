@@ -196,6 +196,7 @@ export type CalculateddFieldRules = CalculateddFieldRule[];
  * 基本表数据处理配置
  */
 export interface IListTableDataConfig {
+  groupByRules?: string[]; //按照行列维度分组规则；
   // aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；
   // sortRules?: SortTypeRule | SortByRule | SortFuncRule; //排序规则 不能简单的将sortState挪到这里 sort的规则在column中配置的；
   filterRules?: FilterRules; //过滤规则；

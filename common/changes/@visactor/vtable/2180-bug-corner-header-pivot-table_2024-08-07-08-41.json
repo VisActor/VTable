@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: corner header display dimension name in some case #2180\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

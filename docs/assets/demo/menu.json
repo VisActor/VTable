@@ -80,6 +80,13 @@
           }
         },
         {
+          "path": "list-table-group",
+          "title": {
+            "zh": "基本表格分组展示",
+            "en": "List Table Group"
+          }
+        },
+        {
           "path": "transpose-table",
           "title": {
             "zh": "转置表格",
@@ -1285,15 +1292,15 @@
         {
           "path": "table-export-ignore-icon",
           "title": {
-            "zh": "表格导出",
-            "en": "table export"
+            "zh": "表格导出（忽略图标）",
+            "en": "table export(ignore-icon)"
           }
         },
         {
           "path": "table-export-format",
           "title": {
-            "zh": "表格导出",
-            "en": "table export"
+            "zh": "表格导出（格式化）",
+            "en": "table export(format)"
           }
         }
       ]

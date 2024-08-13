@@ -122,6 +122,14 @@ export const menus = [
       {
         path: 'list',
         name: 'list-large-columns'
+      },
+      {
+        path: 'list',
+        name: 'list-tree-group'
+      },
+      {
+        path: 'list',
+        name: 'list-group'
       }
     ]
   },
