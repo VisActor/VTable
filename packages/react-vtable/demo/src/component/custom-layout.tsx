@@ -1,8 +1,51 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CustomLayoutFunctionArg } from '../../../src';
-import { ListTable, ListColumn, CustomLayout, Group, Text } from '../../../src';
+import { ListTable, ListColumn, CustomLayout, Group, Text, Tag, Checkbox, Radio } from '../../../src';
 
 type FieldData = { value: string; label: string };
+
+const CustomLayoutComponentMulti = (props: CustomLayoutFunctionArg & { text: string }) => {
+  const { table, row, col, rect, text } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const groupRef = useRef(null);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        display: 'flex',
+        flexWrap: 'wrap',
+        flexDirection: 'column',
+        alignItems: 'center',
+        alignContent: 'center'
+      }}
+      ref={groupRef}
+    >
+      <Tag
+        text={text}
+        textStyle={{
+          fontSize: 10,
+          fontFamily: 'sans-serif',
+          fill: 'rgb(51, 101, 238)'
+          // textAlign: 'left',
+          // textBaseline: 'rop',
+        }}
+        panel={{
+          visible: true,
+          fill: '#e6fffb',
+          lineWidth: 1,
+          cornerRadius: 4
+        }}
+      ></Tag>
+      <Checkbox text={{ text }} />
+      <Radio text={{ text }} />
+    </Group>
+  );
+};
 
 const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }) => {
   const { table, row, col, rect, text } = props;
@@ -152,7 +195,9 @@ function App() {
     <ListTable records={records} height={500} defaultRowHeight={80}>
       <ListColumn field={'0'} title={'name'} />
       <ListColumn field={'1'} title={'age'} />
-      <ListColumn field={'2'} title={'gender'} />
+      <ListColumn field={'2'} title={'gender'}>
+        <CustomLayoutComponentMulti role={'custom-layout'} text={preStr} />
+      </ListColumn>
       <ListColumn field={'3'} title={'hobby'}>
         <CustomLayoutComponent role={'custom-layout'} text={preStr} />
         <HeaderCustomLayoutComponent role={'header-custom-layout'} text={preStr} />

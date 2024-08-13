@@ -2,7 +2,7 @@
  * @type {Partial<import('@internal/bundler').Config>}
  */
 module.exports = {
-  formats: ['cjs', 'es', 'umd'],
+  formats: ['cjs', 'es'],
   noEmitOnError: false,
   copy: ['css'],
   name: 'ReactVTable',

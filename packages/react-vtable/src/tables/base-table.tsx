@@ -9,7 +9,7 @@ import RootTableContext from '../context/table';
 import { isEqual, isNil, pickWithout } from '@visactor/vutils';
 import { toArray } from '../util';
 import { REACT_PRIVATE_PROPS } from '../constants';
-import type { IMarkElement } from '../components';
+import type { IMarkElement } from '../table-components';
 import type {
   EventsProps
   // LegendEventProps,

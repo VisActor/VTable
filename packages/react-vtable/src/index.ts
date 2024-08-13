@@ -1,5 +1,5 @@
 export * from './tables';
+export * from './table-components';
 export * from './components';
-// export * from './vtable';
 
 export const version = __VERSION__;

@@ -1,13 +1,14 @@
-import { VRender } from '@visactor/vtable';
+import type {
+  CommonDomOptions,
+  CreateDOMParamsType,
+  IGraphic,
+  IStage,
+  IText,
+  SimpleDomStyleOptions
+} from '@visactor/vtable/es/vrender';
+import { ReactAttributePlugin, application } from '@visactor/vtable/es/vrender';
 import { calculateAnchorOfBounds, isFunction, isNil, isObject, isString, styleStringToObject } from '@visactor/vutils';
-
-const { ReactAttributePlugin, application } = VRender;
-type CommonDomOptions = VRender.CommonDomOptions;
-type CreateDOMParamsType = VRender.CreateDOMParamsType;
-type IGraphic = VRender.CreateDOMParamsType;
-type IStage = VRender.CreateDOMParamsType;
-type IText = VRender.CreateDOMParamsType;
-type SimpleDomStyleOptions = VRender.CreateDOMParamsType;
+import type { CreateDOMParamsTypeForVTable } from './vtable-browser-env-contribution';
 
 export class VTableReactAttributePlugin extends ReactAttributePlugin {
   removeElement(id: string) {
@@ -164,6 +165,6 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
       height: options.width,
       style: calculateStyle,
       graphic
-    });
+    } as CreateDOMParamsTypeForVTable);
   }
 }

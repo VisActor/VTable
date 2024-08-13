@@ -1,8 +1,12 @@
-import { getTargetCell, VRender } from '@visactor/vtable';
+import { getTargetCell } from '@visactor/vtable';
+import type { CreateDOMParamsType, IGraphic } from '@visactor/vtable/es/vrender';
+import { ContainerModule, EnvContribution, BrowserEnvContribution } from '@visactor/vtable/es/vrender';
 import { isString } from '@visactor/vutils';
 
-const { ContainerModule, EnvContribution, BrowserEnvContribution } = VRender;
-type CreateDOMParamsType = VRender.CreateDOMParamsType;
+export type CreateDOMParamsTypeForVTable = CreateDOMParamsType & {
+  graphic: IGraphic;
+  style?: Record<string, any>;
+};
 
 export const reactEnvModule = new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(VTableBrowserEnvContribution).toSelf().inSingletonScope();
@@ -14,7 +18,7 @@ export const reactEnvModule = new ContainerModule((bind, unbind, isBound, rebind
 });
 
 class VTableBrowserEnvContribution extends BrowserEnvContribution {
-  updateDom(dom: HTMLElement, params: CreateDOMParamsType): boolean {
+  updateDom(dom: HTMLElement, params: CreateDOMParamsTypeForVTable): boolean {
     const tableDiv = dom.parentElement;
     if (tableDiv) {
       const top = parseInt(params.style.top, 10);
@@ -42,7 +46,7 @@ class VTableBrowserEnvContribution extends BrowserEnvContribution {
       if (isString(style)) {
         dom.setAttribute('style', style);
       } else {
-        Object.keys(style).forEach(k => {
+        Object.keys(style).forEach((k: any) => {
           dom.style[k] = style[k];
         });
       }
