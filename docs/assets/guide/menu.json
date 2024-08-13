@@ -79,6 +79,13 @@
                 "zh": "树形结构",
                 "en": "tree list"
               }
+            },
+            {
+              "path": "group_list",
+              "title": {
+                "zh": "分组展示",
+                "en": "group list"
+              }
             }
           ]
         },
