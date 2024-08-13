@@ -636,7 +636,7 @@ export function createTable() {
         lineColor: '#e1e4e8'
       }
     },
-    headerRowHeight: [80, 50],
+    headerRowHeight: 60,
     rowHeight: 80,
     taskBar: {
       customLayout: (args: any) => {

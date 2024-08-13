@@ -294,7 +294,12 @@ export class Gantt extends EventTarget {
       ),
       cellInnerBorder: false,
       frameStyle: Object.assign({}, this.parsedOptions.outerFrameStyle, {
-        cornerRadius: this.parsedOptions.outerFrameStyle.cornerRadius, //[this.parsedOptions.frameStyle.cornerRadius, 0, 0, this.parsedOptions.frameStyle.cornerRadius],
+        cornerRadius: [
+          this.parsedOptions.outerFrameStyle.cornerRadius,
+          0,
+          0,
+          this.parsedOptions.outerFrameStyle.cornerRadius
+        ],
         borderLineWidth: [
           this.parsedOptions.outerFrameStyle.borderLineWidth,
           0,
