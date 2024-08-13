@@ -236,7 +236,7 @@ function getIgnoreCase(obj: any, name: string): any {
   return undefined;
 }
 
-function toBoxArray<T>(obj: T | T[]): [T, T, T, T] {
+export function toBoxArray<T>(obj: T | T[]): [T, T, T, T] {
   if (!Array.isArray(obj)) {
     return [obj /*top*/, obj /*right*/, obj /*bottom*/, obj /*left*/];
   }
