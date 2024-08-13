@@ -18,8 +18,14 @@ import type {
   ITimelineScale,
   ILineStyle
 } from './ts-types';
-import type { ListTableConstructorOptions, TYPES } from '@visactor/vtable';
-import { ListTable, themes } from '@visactor/vtable';
+import type { ListTableConstructorOptions } from '@visactor/vtable';
+import {
+  ListTableSimple,
+  themes,
+  registerCheckboxCell,
+  registerProgressBarCell,
+  registerRadioCell
+} from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
 import {
@@ -35,6 +41,9 @@ import {
 import { EventTarget } from './event/EventTarget';
 import { formatDate, getWeekNumber, parseDateFormat, toBoxArray } from './tools/util';
 import { DataSource } from './data/DataSource';
+registerCheckboxCell();
+registerProgressBarCell();
+registerRadioCell();
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
@@ -64,7 +73,7 @@ export class Gantt extends EventTarget {
   stateManager: StateManager;
   eventManager: EventManager;
 
-  taskListTableInstance?: ListTable;
+  taskListTableInstance?: ListTableSimple;
 
   canvas: HTMLCanvasElement;
   element: HTMLElement;
@@ -233,7 +242,7 @@ export class Gantt extends EventTarget {
   _generateListTable() {
     if (this.taskTableColumns.length >= 1) {
       const listTableOption = this._generateListTableOptions();
-      this.taskListTableInstance = new ListTable(this.container, listTableOption);
+      this.taskListTableInstance = new ListTableSimple(this.container, listTableOption);
 
       if (this.options?.taskListTable?.width === 'auto') {
         this.taskTableWidth = this.taskListTableInstance.getAllColsWidth() + this.taskListTableInstance.tableX * 2;
@@ -526,6 +535,7 @@ export class Gantt extends EventTarget {
     );
     this._syncPropsFromTable();
     this.scenegraph.resize();
+    updateSplitLineAndResizeLine(this);
   }
   _syncPropsFromTable() {
     this.itemCount = this.taskListTableInstance
@@ -550,6 +560,8 @@ export class Gantt extends EventTarget {
     const { parentElement } = this.element;
     if (parentElement) {
       parentElement.removeChild(this.element);
+      parentElement.removeChild(this.verticalSplitResizeLine);
+      parentElement.removeChild(this.horizontalSplitLine);
     }
     this.scenegraph = null;
   }

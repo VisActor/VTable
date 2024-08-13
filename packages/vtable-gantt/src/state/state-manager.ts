@@ -1,4 +1,4 @@
-import { isValid } from '@visactor/vutils';
+import { clone, cloneDeep, isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import { InteractionState, GANTT_EVENT_TYPE } from '../ts-types';
 import type { VRender } from '@visactor/vtable';
@@ -266,13 +266,30 @@ export class StateManager {
   endMoveTaskBar(x: number) {
     const deltaX = x - this.moveTaskBar.startX;
     const days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
+
     const correctX = days * this._gantt.parsedOptions.colWidthPerDay;
     const targetEndX = this.moveTaskBar.targetStartX + correctX;
     this._gantt.stateManager.moveTaskBar.target.setAttribute('x', targetEndX);
-    const taskIndex = getTaskIndexByY(this.moveTaskBar.startY, this._gantt);
-    this._gantt._updateDateToTaskRecord('move', days, taskIndex);
-    this.moveTaskBar.moving = false;
-    this.moveTaskBar.target = null;
+    if (Math.abs(days) >= 1) {
+      const taskIndex = getTaskIndexByY(this.moveTaskBar.startY, this._gantt);
+      const oldRecord = this._gantt.getRecordByIndex(taskIndex);
+      const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
+      const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
+      this._gantt._updateDateToTaskRecord('move', days, taskIndex);
+      this.moveTaskBar.moving = false;
+      this.moveTaskBar.target = null;
+      if (this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
+        const newRecord = this._gantt.getRecordByIndex(taskIndex);
+        this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
+          startDate: newRecord[this._gantt.parsedOptions.startDateField],
+          endDate: newRecord[this._gantt.parsedOptions.endDateField],
+          oldStartDate,
+          oldEndDate,
+          index: taskIndex,
+          record: newRecord
+        });
+      }
+    }
     this._gantt.scenegraph.updateNextFrame();
   }
   dealTaskBarMove(e: VRender.FederatedPointerEvent) {
@@ -303,43 +320,60 @@ export class StateManager {
   endResizeTaskBar(x: number) {
     const direction = this._gantt.stateManager.resizeTaskBar.onIconName;
     const deltaX = x - this.resizeTaskBar.startX;
-    let diff_days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
-    diff_days = direction === 'left' ? -diff_days : diff_days;
+    if (Math.abs(deltaX) >= 1) {
+      let diff_days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
+      diff_days = direction === 'left' ? -diff_days : diff_days;
 
-    const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
-    const rect = this._gantt.stateManager.resizeTaskBar.target.barRect;
-    const progressRect = this._gantt.stateManager.resizeTaskBar.target.progressRect;
-    const taskIndex = getTaskIndexByY(this.resizeTaskBar.startY, this._gantt);
-    const { taskDays, progress } = this._gantt.getTaskInfoByTaskListIndex(taskIndex);
-    if (diff_days < 0 && taskDays + diff_days <= 0) {
-      diff_days = 1 - taskDays;
-    }
-    const correctX = (direction === 'left' ? -diff_days : diff_days) * this._gantt.parsedOptions.colWidthPerDay;
-    const targetEndX = this.resizeTaskBar.targetStartX + correctX;
+      const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
+      const rect = this._gantt.stateManager.resizeTaskBar.target.barRect;
+      const progressRect = this._gantt.stateManager.resizeTaskBar.target.progressRect;
+      const taskIndex = getTaskIndexByY(this.resizeTaskBar.startY, this._gantt);
+      const oldRecord = this._gantt.getRecordByIndex(taskIndex);
+      const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
+      const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
+      const { taskDays, progress } = this._gantt.getTaskInfoByTaskListIndex(taskIndex);
+      if (diff_days < 0 && taskDays + diff_days <= 0) {
+        diff_days = 1 - taskDays;
+      }
+      const correctX = (direction === 'left' ? -diff_days : diff_days) * this._gantt.parsedOptions.colWidthPerDay;
+      const targetEndX = this.resizeTaskBar.targetStartX + correctX;
 
-    const taskBarSize = this._gantt.parsedOptions.colWidthPerDay * (taskDays + diff_days);
-    if (direction === 'left') {
-      taskBarGroup.setAttribute('x', targetEndX);
-      taskBarGroup.setAttribute('width', taskBarSize);
-      rect?.setAttribute('width', taskBarGroup.attribute.width);
-      progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-      this._gantt._updateDateToTaskRecord('start-move', -diff_days, taskIndex);
-    } else if (direction === 'right') {
-      taskBarGroup.setAttribute('width', taskBarSize);
-      rect?.setAttribute('width', taskBarGroup.attribute.width);
-      progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-      this._gantt._updateDateToTaskRecord('end-move', diff_days, taskIndex);
+      const taskBarSize = this._gantt.parsedOptions.colWidthPerDay * (taskDays + diff_days);
+      if (direction === 'left') {
+        taskBarGroup.setAttribute('x', targetEndX);
+        taskBarGroup.setAttribute('width', taskBarSize);
+        rect?.setAttribute('width', taskBarGroup.attribute.width);
+        progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
+        this._gantt._updateDateToTaskRecord('start-move', -diff_days, taskIndex);
+      } else if (direction === 'right') {
+        taskBarGroup.setAttribute('width', taskBarSize);
+        rect?.setAttribute('width', taskBarGroup.attribute.width);
+        progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
+        this._gantt._updateDateToTaskRecord('end-move', diff_days, taskIndex);
+      }
+      this._gantt.scenegraph.taskBar.showHoverBar(
+        taskBarGroup.attribute.x,
+        taskBarGroup.attribute.y,
+        taskBarGroup.attribute.width,
+        taskBarGroup.attribute.height
+      );
+      reCreateCustomNode(this._gantt, taskBarGroup, taskIndex);
+      this.resizeTaskBar.resizing = false;
+      this.resizeTaskBar.target = null;
+
+      if (Math.abs(diff_days) >= 1 && this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
+        const newRecord = this._gantt.getRecordByIndex(taskIndex);
+        this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
+          startDate: newRecord[this._gantt.parsedOptions.startDateField],
+          endDate: newRecord[this._gantt.parsedOptions.endDateField],
+          oldStartDate,
+          oldEndDate,
+          index: taskIndex,
+          record: newRecord
+        });
+      }
+      this._gantt.scenegraph.updateNextFrame();
     }
-    this._gantt.scenegraph.taskBar.showHoverBar(
-      taskBarGroup.attribute.x,
-      taskBarGroup.attribute.y,
-      taskBarGroup.attribute.width,
-      taskBarGroup.attribute.height
-    );
-    reCreateCustomNode(this._gantt, taskBarGroup, taskIndex);
-    this.resizeTaskBar.resizing = false;
-    this.resizeTaskBar.target = null;
-    this._gantt.scenegraph.updateNextFrame();
   }
   dealTaskBarResize(e: VRender.FederatedPointerEvent) {
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;

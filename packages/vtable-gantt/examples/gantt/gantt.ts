@@ -971,6 +971,9 @@ export function createTable() {
   tableInstance.on('scroll', e => {
     console.log('scroll', e);
   });
+  tableInstance.on('change_date_range', e => {
+    console.log('change_date_range', e);
+  });
 
   tableInstance.listTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
