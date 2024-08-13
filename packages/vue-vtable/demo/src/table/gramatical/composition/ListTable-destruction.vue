@@ -1,6 +1,6 @@
 <template>
   <vue-list-table :options="tableOptions" :records="records" @onDropdownMenuClick="handleDropdownMenuClick" @onMouseEnterCell="handleMouseEnterCell">
-    <ListColumn v-for="column in columns" :key="column.field" :field="column.field" :title="column.caption" maxWidth="300" dragHeader="true" />
+    <ListColumn v-for="column in columns" :field="column.field" :title="column.caption" maxWidth="300" />
   </vue-list-table>
 </template>
 
@@ -66,10 +66,29 @@ function getRandomSport() {
   return sports[Math.floor(Math.random() * sports.length)];
 }
 
+function getRandomCompany() {
+  const companies = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+  return companies[Math.floor(Math.random() * companies.length)];
+}
+
+function getRandomAddress() {
+  const addresses = ['北京', '上海', '广州', '深圳', '杭州', '南京', '武汉', '成都'];
+  return addresses[Math.floor(Math.random() * addresses.length)];
+}
+
+function getRandomPhone() {
+  return '1' + Math.floor(Math.random() * 1000000000);
+}
+
+function getRandomEmail() {
+  return 'test' + Math.floor(Math.random() * 100000) + '@test.com';
+}
+
+
 const generateRandomRecords = (num) => {
   const records = [];
   for (let i = 0; i < num; i++) {
-    records.push([getRandomName(), getRandomAge(), getRandomGender(), getRandomSport()]);
+    records.push([getRandomName(), getRandomAge(), getRandomGender(), getRandomSport(), getRandomCompany(), getRandomAddress(), getRandomPhone(), getRandomEmail()]);
   }
   return records;
 };
@@ -89,12 +108,12 @@ const updateRandomRecord = () => {
   console.log('updateRandomRecord');
   for (let i = 0; i < 100; i++) {
     const index = Math.floor(Math.random() * records.value.length);
-    records.value[index] = [getRandomName(), getRandomAge(), getRandomGender(), getRandomSport()];
+    records.value[index] = [getRandomName(), getRandomAge(), getRandomGender(), getRandomSport(), getRandomCompany(), getRandomAddress(), getRandomPhone(), getRandomEmail()];
   }
 };
 
 //每秒更新10条记录
-setInterval(updateRandomColumn, 1000);
+// setInterval(updateRandomColumn, 1000);
 // setInterval(updateRandomRecord, 1000);
 
 const tableOptions = ref({

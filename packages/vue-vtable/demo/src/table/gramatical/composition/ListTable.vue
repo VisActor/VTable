@@ -1,14 +1,14 @@
 <template>
   <vue-list-table :options="tableOptions" :records="records" @onDropdownMenuClick="handleDropdownMenuClick" @onMouseEnterCell="handleMouseEnterCell">
-    <ListColumn field="0" title="名字" maxWidth="300" dragHeader="true" />
-    <ListColumn field="1" title="年龄" maxWidth="300" dragHeader="true" />
-    <ListColumn field="2" title="性别" maxWidth="300" dragHeader="true" />
-    <ListColumn field="3" title="爱好" maxWidth="300" dragHeader="true" />
+    <ListColumn field="0" title="名字" maxWidth="300" :dragHeader="true" />
+    <ListColumn field="1" title="年龄" maxWidth="300" :dragHeader="true" />
+    <ListColumn field="2" title="性别" maxWidth="300" :dragHeader="true" />
+    <ListColumn field="3" title="爱好" maxWidth="300" :dragHeader="true" />
   </vue-list-table>
 </template>
 
 <script setup>
-import { ref , onMounted } from 'vue';
+import { ref } from 'vue';
 import { ListColumn } from '../../../../../src/components/index';
 
 const records = ref([
