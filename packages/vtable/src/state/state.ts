@@ -689,7 +689,7 @@ export class StateManager {
     setTimeout(() => {
       this.rowResize.resizing = false;
     }, 0);
-    this.table.scenegraph.updateChartSizeForResizeColWidth(this.rowResize.row);
+    this.table.scenegraph.updateChartSizeForResizeRowHeight(this.rowResize.row);
     // this.checkFrozen();
     this.table.scenegraph.component.hideResizeRow();
     this.table.scenegraph.updateNextFrame();

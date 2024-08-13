@@ -16,6 +16,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'viewbox'
+      },
+      {
+        path: 'debug',
         name: 'animation'
       },
       {

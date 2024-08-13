@@ -72,6 +72,7 @@ import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { ITooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
+import type { IBoundsLike } from '@visactor/vutils';
 import {
   AABBBounds,
   isNumber,
@@ -217,7 +218,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
-    if (!container && options.mode !== 'node') {
+    if (!container && options.mode !== 'node' && !options.canvas) {
       throw new Error("vtable's container is undefined");
     }
     const {
@@ -309,7 +310,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //设置是否自动撑开的配置
     // internalProps.autoRowHeight = options.autoRowHeight ?? false;
 
-    if (Env.mode !== 'node') {
+    if (this.options.canvas) {
+      internalProps.element = this.options.canvas.parentElement;
+      internalProps.element.style.position = 'relative';
+      internalProps.focusControl = new FocusInput(this, internalProps.element);
+      internalProps.canvas = this.options.canvas;
+      internalProps.context = internalProps.canvas.getContext('2d')!;
+    } else if (Env.mode !== 'node') {
       internalProps.element = createRootElement(this.padding);
       internalProps.focusControl = new FocusInput(this, internalProps.element);
       internalProps.canvas = document.createElement('canvas');
@@ -929,7 +936,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let widthP = 0;
     let heightP = 0;
-    if (Env.mode === 'browser') {
+    this.tableX = 0;
+    this.tableY = 0;
+
+    if (this.options.canvas && this.options.viewBox) {
+      widthP = this.options.viewBox.x2 - this.options.viewBox.x1;
+      heightP = this.options.viewBox.y2 - this.options.viewBox.y1;
+      // this.tableX = this.options.viewBox.x1;
+      // this.tableY = this.options.viewBox.y1;
+      if (this?.scenegraph?.stage) {
+        if (this.options.viewBox) {
+          (this.scenegraph.stage as any).setViewBox(this.options.viewBox, false);
+        } else {
+          this.scenegraph.stage.resize(widthP, heightP);
+        }
+      }
+    } else if (Env.mode === 'browser') {
       const element = this.getElement();
       let widthWithoutPadding = 0;
       let heightWithoutPadding = 0;
@@ -1006,6 +1028,24 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           height - ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) - ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
       }
     }
+  }
+
+  updateViewBox(newViewBox: IBoundsLike) {
+    const oldWidth = this.options?.viewBox.x2 ?? 0 - this.options?.viewBox.x1 ?? 0;
+    const oldHeight = this.options?.viewBox.y2 ?? 0 - this.options?.viewBox.y1 ?? 0;
+    const newWidth = newViewBox.x2 - newViewBox.x1;
+    const newHeight = newViewBox.y2 - newViewBox.y1;
+    this.options.viewBox = newViewBox;
+    if (oldWidth !== newWidth || oldHeight !== newHeight) {
+      this.resize();
+    } else {
+      (this.scenegraph.stage as any).setViewBox(this.options.viewBox, true);
+    }
+  }
+
+  setViewBoxTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
+    this.internalProps.modifiedViewBoxTransform = true;
+    this.scenegraph.stage.window.setViewBoxTransform(a, b, c, d, e, f);
   }
 
   get rowHierarchyType(): 'grid' | 'tree' {
@@ -1908,6 +1948,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const visibleRect = this.getVisibleRect();
     rect.offsetLeft(this.tableX - (relativeX ? visibleRect.left : 0));
     rect.offsetTop(this.tableY - (relativeY ? visibleRect.top : 0));
+    rect.offsetLeft(this.options.viewBox?.x1 ?? 0);
+    rect.offsetTop(this.options.viewBox?.y1 ?? 0);
     return rect;
   }
 
@@ -2119,8 +2161,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.stage.release();
     this.scenegraph.proxy.release();
 
+    internalProps.focusControl.release();
     const { parentElement } = internalProps.element;
-    if (parentElement) {
+    if (parentElement && !this.options.canvas) {
       parentElement.removeChild(internalProps.element);
     }
     (this as any).editorManager?.editingEditor?.onEnd?.();
@@ -2213,7 +2256,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.customRender = customRender;
     // 更新protectedSpace
     const internalProps: IBaseTableProtected = this.internalProps;
-    if (Env.mode !== 'node') {
+    if (Env.mode !== 'node' && !options.canvas) {
       updateRootElementPadding(internalProps.element, this.padding);
     }
 
@@ -2476,9 +2519,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const originHeight = this.canvas.offsetHeight || currentHeight;
     const heightRatio = currentHeight / originHeight;
 
-    const x = (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0);
-    const y = (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0);
-    return { x, y, inTable };
+    const x =
+      (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0) - (this.options.viewBox?.x1 ?? 0);
+    const y =
+      (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0) - (this.options.viewBox?.y1 ?? 0);
+    const point = { x, y, inTable };
+
+    if (this.internalProps.modifiedViewBoxTransform && this.scenegraph.stage.window.getViewBoxTransform()) {
+      const transform = this.scenegraph.stage.window.getViewBoxTransform();
+      transform.transformPoint(point, point);
+    }
+    return point;
   }
   getTheme() {
     return this.internalProps.theme;
@@ -2490,7 +2541,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-
   getTargetColAt(absoluteX: number): ColumnInfo | null {
     return getTargetColAt(absoluteX, this);
   }
@@ -2500,7 +2550,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-
   getTargetRowAt(absoluteY: number): RowInfo | null {
     return getTargetRowAt(absoluteY, this);
   }
@@ -2511,7 +2560,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-
   getTargetColAtConsiderRightFrozen(absoluteX: number, isConsider: boolean): ColumnInfo | null {
     return getTargetColAtConsiderRightFrozen(absoluteX, isConsider, this);
   }
@@ -2522,7 +2570,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteX
    * @returns
    */
-
   getTargetRowAtConsiderBottomFrozen(absoluteY: number, isConsider: boolean): RowInfo | null {
     return getTargetRowAtConsiderBottomFrozen(absoluteY, isConsider, this);
   }

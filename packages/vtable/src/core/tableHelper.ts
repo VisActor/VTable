@@ -83,7 +83,7 @@ export function _setDataSource(table: BaseTableAPI, dataSource: DataSource): voi
   });
 }
 export function _getTargetFrozenRowAt(
-  table: BaseTable,
+  table: BaseTableAPI,
   absoluteY: number
 ): {
   top: number;
@@ -113,7 +113,7 @@ export function _getTargetFrozenRowAt(
 }
 
 export function _getTargetFrozenColAt(
-  table: BaseTable,
+  table: BaseTableAPI,
   absoluteX: number
 ): {
   left: number;

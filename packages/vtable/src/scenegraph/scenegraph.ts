@@ -1,4 +1,4 @@
-import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@src/vrender';
+import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage } from '@src/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
@@ -137,7 +137,11 @@ export class Scenegraph {
     setPoptipTheme(this.table.theme.textPopTipStyle);
     let width;
     let height;
-    if (Env.mode === 'node') {
+    if (table.options.canvas && table.options.viewBox) {
+      vglobal.setEnv('browser');
+      width = table.options.viewBox.x2 - table.options.viewBox.x1;
+      height = table.options.viewBox.y2 - table.options.viewBox.y1;
+    } else if (Env.mode === 'node') {
       vglobal.setEnv('node', table.options.modeParams);
       width = table.canvasWidth;
       height = table.canvasHeight;
@@ -156,13 +160,20 @@ export class Scenegraph {
       enableLayout: true,
       // enableHtmlAttribute: true,
       // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
-      afterRender: () => {
+      beforeRender: (stage: Stage) => {
+        this.table.options.beforeRender && this.table.options.beforeRender(stage);
+      },
+      afterRender: (stage: Stage) => {
+        this.table.options.afterRender && this.table.options.afterRender(stage);
         this.table.fireListeners('after_render', null);
         // console.trace('after_render');
       },
-      ...table.options.renderOption
       // event: { clickInterval: 400 }
       // autoRender: true
+
+      canvasControled: !table.options.canvas,
+      viewBox: table.options.viewBox,
+      ...table.options.renderOption
     });
 
     this.stage.defaultLayer.setTheme({
@@ -747,8 +758,8 @@ export class Scenegraph {
    * @param {number} col
    * @return {*}
    */
-  updateChartSizeForResizeRowHeight(col: number) {
-    updateChartSizeForResizeRowHeight(this, col);
+  updateChartSizeForResizeRowHeight(row: number) {
+    updateChartSizeForResizeRowHeight(this, row);
   }
   /** 更新图表的高亮状态 */
   updateChartState(datum: any) {
@@ -905,7 +916,7 @@ export class Scenegraph {
       this.table.autoFillWidth ||
       this.table.autoFillHeight
     ) {
-      this.updateChartSizeForResizeColWidth(this.table.rowHeaderLevelCount);
+      this.updateChartSizeForResizeColWidth(-1);
     }
 
     this.proxy.progress();
@@ -1268,6 +1279,17 @@ export class Scenegraph {
 
     handleTextStick(this.table);
 
+    // // temp add rect
+    // const rect = createRect({
+    //   x: 200,
+    //   y: 200,
+    //   width: 100,
+    //   height: 100,
+    //   fill: 'red',
+    //   stroke: 'blue',
+    //   lineWidth: 1
+    // });
+    // this.tableGroup.addChild(rect);
     // deal with animation
 
     if (this.table.options.animationAppear) {

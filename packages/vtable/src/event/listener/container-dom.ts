@@ -24,7 +24,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
   });
-
   handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
     table.editorManager?.completeEdit();
     if (table.eventManager._enableTableScroll) {
@@ -358,24 +357,23 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
   });
 
-  handler.on(table.getContainer(), 'resize', e => {
-    if (table.canvasSizeSeted) {
-      return;
-    }
-    if (e.width === 0 && e.height === 0) {
-      // 临时绕行解决因为display设置为none产生的问题
-      return;
-    }
-    if (table.autoFillWidth || table.autoFillHeight) {
-      table.editorManager?.completeEdit();
-    }
-    if (!isValid(table.options.pixelRatio)) {
-      table.setPixelRatio(getPixelRatio());
-    }
-    if (!e.windowSizeNotChange) {
-      table.resize();
-    }
-  });
+  if (!table.options.canvas) {
+    handler.on(table.getContainer(), 'resize', e => {
+      if (e.width === 0 && e.height === 0) {
+        // 临时绕行解决因为display设置为none产生的问题
+        return;
+      }
+      if (table.autoFillWidth || table.autoFillHeight) {
+        table.editorManager?.completeEdit();
+      }
+      if (!isValid(table.options.pixelRatio)) {
+        table.setPixelRatio(getPixelRatio());
+      }
+      if (!e.windowSizeNotChange) {
+        table.resize();
+      }
+    });
+  }
 
   // const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
   const regex = /<tr[^>]*>([\s\S]*?)<\/tr>/g; // for webpack3
