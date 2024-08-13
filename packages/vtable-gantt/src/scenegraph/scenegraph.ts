@@ -110,10 +110,22 @@ export class Scenegraph {
     bindScrollBarListener(this._gantt.eventManager);
   }
 
+  refreshAll() {
+    this.tableGroupHeight = Math.min(this._gantt.tableNoFrameHeight, this._gantt.drawHeight);
+    this.tableGroup.setAttribute('height', this.tableGroupHeight);
+    this.timelineHeader.refresh();
+    this.grid.refresh();
+    this.taskBar.refresh();
+    this.markLine.refresh();
+    this.frameBorder.resize();
+    this.scrollbarComponent.updateScrollBar();
+    this.updateNextFrame();
+  }
+
   refreshTaskBars() {
     // this.timelineHeader.refresh();
     // this.grid.refresh();
-    this.taskBar.refreshItems();
+    this.taskBar.refresh();
     // this.markLine.refresh();
     // this.frameBorder.refresh();
     // this.scrollbarComponent.refresh();
@@ -124,7 +136,7 @@ export class Scenegraph {
     this.tableGroup.setAttribute('height', this.tableGroupHeight);
     // this.timelineHeader.refresh();
     this.grid.refresh();
-    this.taskBar.refreshItems();
+    this.taskBar.refresh();
     this.markLine.refresh();
     this.frameBorder.resize();
     this.scrollbarComponent.updateScrollBar();

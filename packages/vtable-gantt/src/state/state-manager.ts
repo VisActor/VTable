@@ -419,7 +419,9 @@ export class StateManager {
       }
       this._gantt.taskTableWidth = width;
       this._gantt.element.style.left = this._gantt.taskTableWidth ? `${this._gantt.taskTableWidth}px` : '0px';
-      this._gantt.resizeLine.style.left = this._gantt.taskTableWidth ? `${this._gantt.taskTableWidth - 7}px` : '0px';
+      this._gantt.verticalSplitResizeLine.style.left = this._gantt.taskTableWidth
+        ? `${this._gantt.taskTableWidth - 7}px`
+        : '0px';
       this._gantt._resize();
       this.resizeTableWidth.lastX = e.pageX;
     }
@@ -447,9 +449,11 @@ export class StateManager {
     //
   }
   hideTaskBarHover() {
-    this._gantt.stateManager.hoverTaskBar.target = null;
-    this._gantt.scenegraph.taskBar.hideHoverBar();
-    this._gantt.scenegraph.updateNextFrame();
+    if (this._gantt.stateManager.hoverTaskBar.target) {
+      this._gantt.stateManager.hoverTaskBar.target = null;
+      this._gantt.scenegraph.taskBar.hideHoverBar();
+      this._gantt.scenegraph.updateNextFrame();
+    }
   }
 }
 

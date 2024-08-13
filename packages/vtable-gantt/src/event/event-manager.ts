@@ -131,7 +131,7 @@ function bindContainerDomListener(eventManager: EventManager) {
     }
   });
   if (gantt.parsedOptions.verticalSplitLineMoveable) {
-    handler.on(gantt.resizeLine, 'mousedown', (e: MouseEvent) => {
+    handler.on(gantt.verticalSplitResizeLine, 'mousedown', (e: MouseEvent) => {
       console.log('resizeLine mousedown');
       stateManager.updateInteractionState(InteractionState.grabing);
       stateManager.startResizeTableWidth(e);
@@ -139,15 +139,15 @@ function bindContainerDomListener(eventManager: EventManager) {
   }
   if (gantt.parsedOptions.verticalSplitLineHighlight) {
     // 添加鼠标悬停时的高亮效果
-    handler.on(gantt.resizeLine, 'mouseover', (e: MouseEvent) => {
+    handler.on(gantt.verticalSplitResizeLine, 'mouseover', (e: MouseEvent) => {
       console.log('resizeLine mouseover');
-      (gantt.resizeLine.childNodes[1] as HTMLDivElement).style.opacity = '1';
+      (gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement).style.opacity = '1';
     });
 
     // 添加鼠标移出时恢复初始样式
-    handler.on(gantt.resizeLine, 'mouseout', (e: MouseEvent) => {
+    handler.on(gantt.verticalSplitResizeLine, 'mouseout', (e: MouseEvent) => {
       console.log('resizeLine mouseout');
-      (gantt.resizeLine.childNodes[1] as HTMLDivElement).style.opacity = '0';
+      (gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement).style.opacity = '0';
     });
   }
   VRender.vglobal.addEventListener('mousedown', (e: VRender.FederatedPointerEvent) => {

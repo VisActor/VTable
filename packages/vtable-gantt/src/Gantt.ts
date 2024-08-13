@@ -24,11 +24,13 @@ import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
 import {
   convertProgress,
+  createSplitLineAndResizeLine,
   DayTimes,
   generateTimeLineDate,
   getHorizontalScrollBarSize,
   getVerticalScrollBarSize,
-  initOptions
+  initOptions,
+  updateSplitLineAndResizeLine
 } from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
 import { formatDate, getWeekNumber, parseDateFormat, toBoxArray } from './tools/util';
@@ -66,20 +68,18 @@ export class Gantt extends EventTarget {
 
   canvas: HTMLCanvasElement;
   element: HTMLElement;
-  resizeLine: HTMLDivElement;
+  verticalSplitResizeLine: HTMLDivElement;
   horizontalSplitLine: HTMLDivElement;
   context: CanvasRenderingContext2D;
 
-  sortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
-  reverseSortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
-  headerLevel: number;
+  timeLineHeaderLevel: number;
   itemCount: number;
   drawHeight: number;
   headerHeight: number;
   gridHeight: number;
 
   parsedOptions: {
-    headerRowHeight: number | number[];
+    timeLineHeaderRowHeights: number[];
     rowHeight: number;
     timelineColWidth: number;
     colWidthPerDay: number; //分配给每日的宽度
@@ -90,6 +90,8 @@ export class Gantt extends EventTarget {
     timelineHeaderHorizontalLineStyle: ILineStyle;
     timelineHeaderBackgroundColor: string;
     timelineHeaderStyles: ITimelineHeaderStyle[];
+    sortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
+    reverseSortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
     gridStyle: IGridStyle;
     taskBarStyle: ITaskBarStyle;
     taskBarHoverStyle: ITaskBarStyle & { barOverLayColor?: string };
@@ -130,12 +132,12 @@ export class Gantt extends EventTarget {
     this.taskTableWidth = typeof options?.taskListTable?.width === 'number' ? options?.taskListTable?.width : 100;
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
-
-    initOptions(this);
-    this.data = new DataSource(this);
     this._sortScales();
+    initOptions(this);
+
     this._generateTimeLineDateMap();
-    this.headerLevel = this.sortedTimelineScales.length;
+    this.data = new DataSource(this);
+    this.timeLineHeaderLevel = this.parsedOptions.sortedTimelineScales.length;
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
     // this.element.style.top = '0px';
     this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
@@ -152,7 +154,7 @@ export class Gantt extends EventTarget {
     this._generateListTable();
     this._syncPropsFromTable();
 
-    this._createSplitLineAndResizeLine();
+    createSplitLineAndResizeLine(this);
     this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
@@ -250,12 +252,9 @@ export class Gantt extends EventTarget {
       }
 
       if (this.taskListTableInstance.columnHeaderLevelCount > 1) {
-        if (
-          Array.isArray(this.parsedOptions.headerRowHeight) &&
-          this.taskListTableInstance.columnHeaderLevelCount === this.parsedOptions.headerRowHeight.length
-        ) {
+        if (this.taskListTableInstance.columnHeaderLevelCount === this.parsedOptions.timeLineHeaderRowHeights.length) {
           for (let i = 0; i < this.taskListTableInstance.columnHeaderLevelCount; i++) {
-            this.taskListTableInstance.setRowHeight(i, this.parsedOptions.headerRowHeight[i]);
+            this.taskListTableInstance.setRowHeight(i, this.parsedOptions.timeLineHeaderRowHeights[i]);
           }
         } else {
           const newRowHeight = this.getAllHeaderRowsHeight() / this.taskListTableInstance.columnHeaderLevelCount;
@@ -304,7 +303,7 @@ export class Gantt extends EventTarget {
         ]
       }),
       bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable.bodyStyle)
-    } as ListTableConstructorOptions.theme;
+    };
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvasHeight ?? this.canvas.height;
     listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
@@ -312,66 +311,7 @@ export class Gantt extends EventTarget {
     listTable_options.clearDOM = false;
     return listTable_options;
   }
-  _createSplitLineAndResizeLine() {
-    if (this.parsedOptions.horizontalSplitLine) {
-      this.horizontalSplitLine = document.createElement('div');
-      this.horizontalSplitLine.style.position = 'absolute';
-      this.horizontalSplitLine.style.top = this.getAllHeaderRowsHeight() + 'px';
-      this.horizontalSplitLine.style.left = this.tableY + 'px';
-      this.horizontalSplitLine.style.height = (this.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
-      this.horizontalSplitLine.style.width = this.tableNoFrameHeight + this.taskTableWidth + 'px'; //'100%';
-      this.horizontalSplitLine.style.backgroundColor = this.parsedOptions.horizontalSplitLine.lineColor;
-      this.horizontalSplitLine.style.zIndex = '100';
-      this.horizontalSplitLine.style.userSelect = 'none';
-      this.horizontalSplitLine.style.opacity = '1';
-      (this.container as HTMLElement).appendChild(this.horizontalSplitLine);
-    }
-    if (this.taskListTableInstance) {
-      this.resizeLine = document.createElement('div');
-      this.resizeLine.style.position = 'absolute';
-      this.resizeLine.style.top = this.tableY + 'px';
-      this.resizeLine.style.left = this.taskTableWidth ? `${this.taskTableWidth - 7}px` : '0px';
-      this.resizeLine.style.width = '14px';
-      this.resizeLine.style.height = this.drawHeight + 'px'; //'100%';
-      this.resizeLine.style.backgroundColor = 'rgba(0,0,0,0)';
-      this.resizeLine.style.zIndex = '100';
-      this.parsedOptions.verticalSplitLineMoveable && (this.resizeLine.style.cursor = 'col-resize');
-      this.resizeLine.style.userSelect = 'none';
-      this.resizeLine.style.opacity = '1';
 
-      const verticalSplitLine = document.createElement('div');
-      verticalSplitLine.style.position = 'absolute';
-      verticalSplitLine.style.top = '0px';
-      verticalSplitLine.style.left = `${(14 - this.parsedOptions.verticalSplitLine.lineWidth) / 2}px`;
-      verticalSplitLine.style.width = this.parsedOptions.verticalSplitLine.lineWidth + 'px';
-      verticalSplitLine.style.height = '100%';
-      verticalSplitLine.style.backgroundColor = this.parsedOptions.verticalSplitLine.lineColor;
-      verticalSplitLine.style.zIndex = '100';
-      verticalSplitLine.style.userSelect = 'none';
-      verticalSplitLine.style.pointerEvents = 'none';
-      // verticalSplitLine.style.opacity = '0';
-      verticalSplitLine.style.transition = 'background-color 0.3s';
-      this.resizeLine.appendChild(verticalSplitLine);
-
-      if (this.parsedOptions.verticalSplitLineHighlight) {
-        const highlightLine = document.createElement('div');
-        highlightLine.style.position = 'absolute';
-        highlightLine.style.top = '0px';
-        highlightLine.style.left = `${(14 - this.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) / 2}px`;
-        highlightLine.style.width = (this.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) + 'px';
-        highlightLine.style.height = '100%';
-        highlightLine.style.backgroundColor = this.parsedOptions.verticalSplitLineHighlight.lineColor;
-        highlightLine.style.zIndex = '100';
-        highlightLine.style.cursor = 'col-resize';
-        highlightLine.style.userSelect = 'none';
-        highlightLine.style.pointerEvents = 'none';
-        highlightLine.style.opacity = '0';
-        highlightLine.style.transition = 'background-color 0.3s';
-        this.resizeLine.appendChild(highlightLine);
-      }
-      (this.container as HTMLElement).appendChild(this.resizeLine);
-    }
-  }
   /**
    * 获取表格创建的DOM根节点
    */
@@ -412,8 +352,8 @@ export class Gantt extends EventTarget {
         return indexB - indexA;
       });
 
-      this.sortedTimelineScales = orderedScales;
-      this.reverseSortedTimelineScales = reverseOrderedScales;
+      this.parsedOptions.sortedTimelineScales = orderedScales;
+      this.parsedOptions.reverseSortedTimelineScales = reverseOrderedScales;
     }
   }
 
@@ -422,14 +362,14 @@ export class Gantt extends EventTarget {
     const endDate = new Date(this.parsedOptions.maxDate);
     let colWidthIncludeDays = 1000000;
     // Iterate over each scale
-    for (const scale of this.reverseSortedTimelineScales) {
+    for (const scale of this.parsedOptions.reverseSortedTimelineScales) {
       // Generate the sub-columns for each step within the scale
       const currentDate = new Date(startDate);
       // const timelineDates: any[] = [];
       scale.timelineDates = generateTimeLineDate(currentDate, endDate, scale);
     }
 
-    const firstScale = this.reverseSortedTimelineScales[0];
+    const firstScale = this.parsedOptions.reverseSortedTimelineScales[0];
     const { unit, step } = firstScale;
     if (unit === 'day') {
       colWidthIncludeDays = step;
@@ -448,12 +388,12 @@ export class Gantt extends EventTarget {
     return this.getAllHeaderRowsHeight() + this.itemCount * this.parsedOptions.rowHeight;
   }
   getAllHeaderRowsHeight() {
-    if (Array.isArray(this.parsedOptions.headerRowHeight)) {
-      return this.parsedOptions.headerRowHeight.reduce((acc, curr, index) => {
-        return acc + curr;
-      }, 0);
-    }
-    return (this.parsedOptions.headerRowHeight as number) * this.headerLevel;
+    // if (Array.isArray(this.parsedOptions.timeLineHeaderRowHeights)) {
+    return this.parsedOptions.timeLineHeaderRowHeights.reduce((acc, curr, index) => {
+      return acc + curr;
+    }, 0);
+    // }
+    // return (this.parsedOptions.timeLineHeaderRowHeights as number) * this.timeLineHeaderLevel;
   }
   getAllColsWidth() {
     return (
@@ -612,11 +552,33 @@ export class Gantt extends EventTarget {
     this.records = records;
     this.taskListTableInstance.setRecords(records);
     this._syncPropsFromTable();
-    this.resizeLine.style.height = this.drawHeight + 'px'; //'100%';
+    this.verticalSplitResizeLine.style.height = this.drawHeight + 'px'; //'100%';
     this.scenegraph.refreshTaskBarsAndGrid();
     const left = this.stateManager.scroll.horizontalBarPos;
     const top = this.stateManager.scroll.verticalBarPos;
     this.scenegraph.setX(-left);
     this.scenegraph.setY(-top);
+  }
+  updateScales(scales: ITimelineScale[]) {
+    const gantt = this;
+    this.options.timelineHeader.scales = scales;
+    this._sortScales();
+    initOptions(gantt);
+    this._generateTimeLineDateMap();
+    this.timeLineHeaderLevel = this.parsedOptions.sortedTimelineScales.length;
+    this.scenegraph.refreshAll();
+    updateSplitLineAndResizeLine(this);
+    if (this.taskListTableInstance) {
+      if (this.taskListTableInstance.columnHeaderLevelCount === this.parsedOptions.timeLineHeaderRowHeights.length) {
+        for (let i = 0; i < this.taskListTableInstance.columnHeaderLevelCount; i++) {
+          this.taskListTableInstance.setRowHeight(i, this.parsedOptions.timeLineHeaderRowHeights[i]);
+        }
+      } else {
+        const newRowHeight = this.getAllHeaderRowsHeight() / this.taskListTableInstance.columnHeaderLevelCount;
+        for (let i = 0; i < this.taskListTableInstance.columnHeaderLevelCount; i++) {
+          this.taskListTableInstance.setRowHeight(i, newRowHeight);
+        }
+      }
+    }
   }
 }

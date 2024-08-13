@@ -48,7 +48,7 @@ export function syncDragOrderFromTable(gantt: Gantt) {
 export function syncTreeChangeFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('tree_hierarchy_state_change', (args: any) => {
     gantt._syncPropsFromTable();
-    gantt.resizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
+    gantt.verticalSplitResizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
     gantt.scenegraph.refreshTaskBarsAndGrid();
     const left = gantt.stateManager.scroll.horizontalBarPos;
     const top = gantt.stateManager.scroll.verticalBarPos;

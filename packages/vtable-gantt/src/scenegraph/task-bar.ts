@@ -251,9 +251,14 @@ export class TaskBar {
     this.barContainer.setAttribute('y', y);
   }
   /** 重新创建任务条节点 */
-  refreshItems() {
+  refresh() {
+    this.width = this._scene._gantt.tableNoFrameWidth;
     this.height = this._scene._gantt.gridHeight;
-    this.group.setAttribute('height', this.height);
+    this.group.setAttributes({
+      height: this.height,
+      width: this.width,
+      y: this._scene._gantt.getAllHeaderRowsHeight()
+    });
     this.barContainer.removeAllChild();
     this.group.removeChild(this.barContainer);
     this.initBars();

@@ -8,6 +8,10 @@ export class TimelineHeader {
   _scene: Scenegraph;
   constructor(scene: Scenegraph) {
     this._scene = scene;
+    this.initNodes();
+  }
+  initNodes() {
+    const { _scene: scene } = this;
     const dateHeader = new VRender.Group({
       x: 0,
       y: 0,
@@ -24,21 +28,19 @@ export class TimelineHeader {
     scene.tableGroup.addChild(this.group);
 
     let y = 0;
-    for (let i = 0; i < scene._gantt.headerLevel; i++) {
+    for (let i = 0; i < scene._gantt.timeLineHeaderLevel; i++) {
       const rowHeader = new VRender.Group({
         x: 0,
         y,
         width: scene._gantt.getAllColsWidth(),
-        height: Array.isArray(scene._gantt.parsedOptions.headerRowHeight)
-          ? scene._gantt.parsedOptions.headerRowHeight[i]
-          : scene._gantt.parsedOptions.headerRowHeight,
+        height: scene._gantt.parsedOptions.timeLineHeaderRowHeights[i],
         clip: false
       });
       y += rowHeader.attribute.height;
       rowHeader.name = 'row-header';
       dateHeader.addChild(rowHeader);
 
-      const { unit, timelineDates, customLayout } = scene._gantt.sortedTimelineScales[i];
+      const { unit, timelineDates, customLayout } = scene._gantt.parsedOptions.sortedTimelineScales[i];
       let x = 0;
       for (let j = 0; j < timelineDates.length; j++) {
         const { days, endDate, startDate, title, dateIndex } = timelineDates[j];
@@ -181,5 +183,10 @@ export class TimelineHeader {
   resize() {
     this.group.setAttribute('width', this.group.attribute?.width ?? 0);
     this.group.setAttribute('height', this.group.attribute?.height ?? 0);
+  }
+
+  refresh() {
+    this.group?.parent.removeChild(this.group);
+    this.initNodes();
   }
 }

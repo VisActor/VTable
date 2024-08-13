@@ -58,8 +58,8 @@ export interface GanttConstructorOptions {
   /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
   maxDate?: string;
 
-  /** 顶部表头部分默认行高。如果配置成数组，请务必配置成和timelineHeader.scales数组长度一样长的数组 */
-  headerRowHeight?: number | number[];
+  /** 顶部表头部分默认行高。如果想按表头层级依次配置，请配置到timelineHeader.scale中 */
+  headerRowHeight?: number;
 
   /** 数据默认行高 */
   rowHeight?: number;
@@ -122,6 +122,7 @@ export interface GanttConstructorOptions {
  */
 export type ITaskBarLabelText = string; //| string[] | ((args: any) => string | string[]);
 export interface ITimelineScale {
+  rowHeight?: number;
   unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
   step: number;
   startOfWeek?: 'sunday' | 'monday';

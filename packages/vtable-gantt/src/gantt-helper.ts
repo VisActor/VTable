@@ -78,7 +78,6 @@ export { isNode };
 export function initOptions(gantt: Gantt) {
   const options = gantt.options;
   gantt.parsedOptions.pixelRatio = options?.pixelRatio ?? 1;
-  gantt.parsedOptions.headerRowHeight = options?.headerRowHeight ?? 40;
   gantt.parsedOptions.rowHeight = options?.rowHeight ?? 40;
   gantt.parsedOptions.timelineColWidth = options?.timelineHeader?.colWidth ?? 60;
   gantt.parsedOptions.startDateField = options?.startDateField ?? 'startDate';
@@ -105,9 +104,10 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.timelineHeaderHorizontalLineStyle = options?.timelineHeader?.horizontalLine;
   gantt.parsedOptions.timelineHeaderVerticalLineStyle = options?.timelineHeader?.verticalLine;
   gantt.parsedOptions.timelineHeaderBackgroundColor = options?.timelineHeader?.backgroundColor;
+  gantt.parsedOptions.timeLineHeaderRowHeights = [];
   gantt.parsedOptions.timelineHeaderStyles = [];
-  for (let i = 0; i < options?.timelineHeader?.scales?.length ?? 0; i++) {
-    const style = options?.timelineHeader?.scales[i].style;
+  for (let i = 0; i < gantt.parsedOptions.sortedTimelineScales.length ?? 0; i++) {
+    const style = gantt.parsedOptions.sortedTimelineScales[i].style;
     gantt.parsedOptions.timelineHeaderStyles.push(
       Object.assign(
         {
@@ -120,6 +120,10 @@ export function initOptions(gantt: Gantt) {
         },
         style
       )
+    );
+
+    gantt.parsedOptions.timeLineHeaderRowHeights.push(
+      gantt.parsedOptions.sortedTimelineScales[i].rowHeight ?? options?.headerRowHeight ?? 40
     );
   }
   gantt.parsedOptions.gridStyle = Object.assign(
@@ -366,4 +370,120 @@ export function convertProgress(progress: number | string) {
 
   // 最后转换成整数
   return Math.round(progress);
+}
+
+export function createSplitLineAndResizeLine(gantt: Gantt) {
+  if (gantt.parsedOptions.horizontalSplitLine) {
+    gantt.horizontalSplitLine = document.createElement('div');
+    gantt.horizontalSplitLine.style.position = 'absolute';
+    gantt.horizontalSplitLine.style.top = gantt.getAllHeaderRowsHeight() + 'px';
+    gantt.horizontalSplitLine.style.left = gantt.tableY + 'px';
+    gantt.horizontalSplitLine.style.height = (gantt.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
+    gantt.horizontalSplitLine.style.width = gantt.tableNoFrameHeight + gantt.taskTableWidth + 'px'; //'100%';
+    gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
+    gantt.horizontalSplitLine.style.zIndex = '100';
+    gantt.horizontalSplitLine.style.userSelect = 'none';
+    gantt.horizontalSplitLine.style.opacity = '1';
+    (gantt.container as HTMLElement).appendChild(gantt.horizontalSplitLine);
+  }
+  if (gantt.taskListTableInstance) {
+    gantt.verticalSplitResizeLine = document.createElement('div');
+    gantt.verticalSplitResizeLine.style.position = 'absolute';
+    gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';
+    gantt.verticalSplitResizeLine.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth - 7}px` : '0px';
+    gantt.verticalSplitResizeLine.style.width = '14px';
+    gantt.verticalSplitResizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
+    gantt.verticalSplitResizeLine.style.backgroundColor = 'rgba(0,0,0,0)';
+    gantt.verticalSplitResizeLine.style.zIndex = '100';
+    gantt.parsedOptions.verticalSplitLineMoveable && (gantt.verticalSplitResizeLine.style.cursor = 'col-resize');
+    gantt.verticalSplitResizeLine.style.userSelect = 'none';
+    gantt.verticalSplitResizeLine.style.opacity = '1';
+
+    const verticalSplitLine = document.createElement('div');
+    verticalSplitLine.style.position = 'absolute';
+    verticalSplitLine.style.top = '0px';
+    verticalSplitLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLine.lineWidth) / 2}px`;
+    verticalSplitLine.style.width = gantt.parsedOptions.verticalSplitLine.lineWidth + 'px';
+    verticalSplitLine.style.height = '100%';
+    verticalSplitLine.style.backgroundColor = gantt.parsedOptions.verticalSplitLine.lineColor;
+    verticalSplitLine.style.zIndex = '100';
+    verticalSplitLine.style.userSelect = 'none';
+    verticalSplitLine.style.pointerEvents = 'none';
+    // verticalSplitLine.style.opacity = '0';
+    verticalSplitLine.style.transition = 'background-color 0.3s';
+    gantt.verticalSplitResizeLine.appendChild(verticalSplitLine);
+
+    if (gantt.parsedOptions.verticalSplitLineHighlight) {
+      const highlightLine = document.createElement('div');
+      highlightLine.style.position = 'absolute';
+      highlightLine.style.top = '0px';
+      highlightLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) / 2}px`;
+      highlightLine.style.width = (gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) + 'px';
+      highlightLine.style.height = '100%';
+      highlightLine.style.backgroundColor = gantt.parsedOptions.verticalSplitLineHighlight.lineColor;
+      highlightLine.style.zIndex = '100';
+      highlightLine.style.cursor = 'col-resize';
+      highlightLine.style.userSelect = 'none';
+      highlightLine.style.pointerEvents = 'none';
+      highlightLine.style.opacity = '0';
+      highlightLine.style.transition = 'background-color 0.3s';
+      gantt.verticalSplitResizeLine.appendChild(highlightLine);
+    }
+    (gantt.container as HTMLElement).appendChild(gantt.verticalSplitResizeLine);
+  }
+}
+
+export function updateSplitLineAndResizeLine(gantt: Gantt) {
+  if (gantt.horizontalSplitLine) {
+    gantt.horizontalSplitLine.style.position = 'absolute';
+    gantt.horizontalSplitLine.style.top = gantt.getAllHeaderRowsHeight() + 'px';
+    gantt.horizontalSplitLine.style.left = gantt.tableY + 'px';
+    gantt.horizontalSplitLine.style.height = (gantt.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
+    gantt.horizontalSplitLine.style.width = gantt.tableNoFrameHeight + gantt.taskTableWidth + 'px'; //'100%';
+    gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
+    gantt.horizontalSplitLine.style.zIndex = '100';
+    gantt.horizontalSplitLine.style.userSelect = 'none';
+    gantt.horizontalSplitLine.style.opacity = '1';
+  }
+  if (gantt.verticalSplitResizeLine) {
+    gantt.verticalSplitResizeLine.style.position = 'absolute';
+    gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';
+    gantt.verticalSplitResizeLine.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth - 7}px` : '0px';
+    gantt.verticalSplitResizeLine.style.width = '14px';
+    gantt.verticalSplitResizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
+    gantt.verticalSplitResizeLine.style.backgroundColor = 'rgba(0,0,0,0)';
+    gantt.verticalSplitResizeLine.style.zIndex = '100';
+    gantt.parsedOptions.verticalSplitLineMoveable && (gantt.verticalSplitResizeLine.style.cursor = 'col-resize');
+    gantt.verticalSplitResizeLine.style.userSelect = 'none';
+    gantt.verticalSplitResizeLine.style.opacity = '1';
+
+    const verticalSplitLine = gantt.verticalSplitResizeLine.childNodes[0] as HTMLDivElement;
+    verticalSplitLine.style.position = 'absolute';
+    verticalSplitLine.style.top = '0px';
+    verticalSplitLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLine.lineWidth) / 2}px`;
+    verticalSplitLine.style.width = gantt.parsedOptions.verticalSplitLine.lineWidth + 'px';
+    verticalSplitLine.style.height = '100%';
+    verticalSplitLine.style.backgroundColor = gantt.parsedOptions.verticalSplitLine.lineColor;
+    verticalSplitLine.style.zIndex = '100';
+    verticalSplitLine.style.userSelect = 'none';
+    verticalSplitLine.style.pointerEvents = 'none';
+    // verticalSplitLine.style.opacity = '0';
+    verticalSplitLine.style.transition = 'background-color 0.3s';
+
+    if (gantt.verticalSplitResizeLine.childNodes[1]) {
+      const highlightLine = gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement;
+      highlightLine.style.position = 'absolute';
+      highlightLine.style.top = '0px';
+      highlightLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) / 2}px`;
+      highlightLine.style.width = (gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) + 'px';
+      highlightLine.style.height = '100%';
+      highlightLine.style.backgroundColor = gantt.parsedOptions.verticalSplitLineHighlight.lineColor;
+      highlightLine.style.zIndex = '100';
+      highlightLine.style.cursor = 'col-resize';
+      highlightLine.style.userSelect = 'none';
+      highlightLine.style.pointerEvents = 'none';
+      highlightLine.style.opacity = '0';
+      highlightLine.style.transition = 'background-color 0.3s';
+    }
+  }
 }
