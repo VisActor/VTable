@@ -9,12 +9,14 @@ option: ListTable-columns-text#editor
 
 # edit cell
 
-This example shows the editability of the table. Double-click a cell to enter the edit state. If you want to change the timing of entering the edit state, you can set:
+This example shows the editability of the table. Click a cell to enter the edit state. If you want to change the timing of entering the edit state, you can set:
 
 ```
 /** Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' */
 editCellTrigger?: 'doubleclick' | 'click' | 'api';
 ```
+
+The current example has four editors: input, date, list, and textArea. Different effects can be achieved by setting different editors.
 
 For detailed introduction, please click on the tutorial to learn!
 
@@ -34,9 +36,11 @@ let tableInstance;
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();
 const list_editor = new VTable_editors.ListEditor({ values: ['girl', 'boy'] });
+const textArea_editor = new VTable_editors.TextAreaEditor({ readonly: false });
 VTable.register.editor('input-editor', input_editor);
 VTable.register.editor('date-input-editor', date_input_editor);
 VTable.register.editor('list-editor', list_editor);
+VTable.register.editor('textArea-editor', textArea_editor);
 
 function generateRandomString(length) {
   let result = '';
@@ -135,6 +139,7 @@ const generatePersons = count => {
       hobbies: generateRandomHobbies(),
       birthday: generateRandomBirthday(),
       tel: generateRandomPhoneNumber(),
+      address: `No.${i + 100} ${generateRandomString(10)} ${generateRandomString(5)}\n${generateRandomString(5)}`,
       sex: i % 2 === 0 ? 'boy' : 'girl',
       work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
       city: 'beijing'
@@ -191,6 +196,12 @@ const columns = [
     title: 'sex\n(list editor)',
     width: 100,
     editor: 'list-editor'
+  },
+  {
+    field: 'address',
+    title: 'address\n(textArea editor)',
+    width: 350,
+    editor: 'textArea-editor'
   },
   {
     field: 'tel',

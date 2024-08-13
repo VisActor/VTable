@@ -144,8 +144,10 @@ export function createCellGroup(
       typeof lineClamp === 'number' ? lineClamp : undefined,
       // autoColWidth ? 0 : colWidth,
       // table.getRowHeight(row),
-      cellWidth,
-      cellHeight,
+      // cellWidth,
+      // cellHeight,
+      cellGroup.attribute.width,
+      cellGroup.attribute.height,
       textAlign,
       textBaseline,
       table,
@@ -176,6 +178,8 @@ export function createCellGroup(
   }
   return cellGroup;
 }
+
+export type CreateTextCellGroup = typeof createCellGroup;
 
 // /**
 //  * @description: 获取函数式赋值的样式，记录在cellTheme中

@@ -21,6 +21,9 @@ type AttachInfo = {
   range: CellRange;
   tooltipOptions: TooltipOptions;
 };
+export interface ITooltipHandler {
+  new (table: BaseTableAPI, confine: boolean): TooltipHandler;
+}
 
 export class TooltipHandler {
   private _table: BaseTableAPI;
@@ -195,7 +198,8 @@ export class TooltipHandler {
           placement: Placement.bottom,
           rect
         },
-        style: { arrowMark: false }
+        disappearDelay: table.internalProps.tooltip.overflowTextTooltipDisappearDelay ?? 0,
+        style: table.theme.tooltipStyle
       };
     } else if (table.internalProps.tooltip?.isShowOverflowTextTooltip) {
       const overflowText = table.getCellOverflowText(col, row);
@@ -210,6 +214,7 @@ export class TooltipHandler {
             placement: Placement.bottom,
             rect
           },
+          disappearDelay: table.internalProps.tooltip.overflowTextTooltipDisappearDelay ?? 0,
           style: table.theme.tooltipStyle
         };
       }

@@ -29,8 +29,9 @@ export function startMoveCol(col: number, row: number, x: number, y: number, sta
   state.table.scenegraph.component.showMoveCol(col, row, delta);
 
   // 调整列顺序期间清空选中清空
+  const isHasSelected = !!state.select.ranges?.length;
   state.table.stateManager.updateSelectPos(-1, -1);
-
+  state.table.stateManager.endSelectCells(true, isHasSelected);
   state.table.scenegraph.updateNextFrame();
 }
 
@@ -129,6 +130,7 @@ export function endMoveCol(state: StateManager) {
 
     // 更新状态
     if (moveContext) {
+      state.table.internalProps.useOneRowHeightFillAll = false;
       state.table.internalProps.layoutMap.clearCellRangeMap();
       const sourceMergeInfo = state.table.getCellRange(state.columnMove.colSource, state.columnMove.rowSource);
       const targetMergeInfo = state.table.getCellRange(state.columnMove.colTarget, state.columnMove.rowTarget);
@@ -175,6 +177,7 @@ export function endMoveCol(state: StateManager) {
         )
       ) {
         state.table.changeRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
+        state.changeCheckboxAndRadioOrder(moveContext.sourceIndex, moveContext.targetIndex);
       }
       // clear columns width and rows height cache
       if (moveContext.moveType === 'column') {

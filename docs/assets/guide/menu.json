@@ -32,6 +32,13 @@
       ]
     },
     {
+      "path": "Contribution_Guide",
+      "title": {
+        "zh": "贡献指南",
+        "en": "Contribution Guide"
+      }
+    },
+    {
       "path": "table_type",
       "title": {
         "zh": "表格形态",
@@ -219,13 +226,29 @@
           "title": {
             "zh": "排序",
             "en": "sort"
-          }
+          },
+          "children": [
+            {
+              "path": "list_sort",
+              "title": {
+                "zh": "基本表格排序",
+                "en": "sort In ListTable"
+              }
+            },
+            {
+              "path": "pivot_sort",
+              "title": {
+                "zh": "透视表格排序",
+                "en": "sort In PivotTable"
+              }
+            }
+          ]
         },
         {
-          "path": "frozen_column",
+          "path": "frozen_column_row",
           "title": {
             "zh": "冻结",
-            "en": "frozen column"
+            "en": "frozen column & row"
           }
         },
         {
@@ -321,6 +344,22 @@
           "title": {
             "zh": "滚动",
             "en": "scroll"
+          }
+        }
+      ]
+    },
+    {
+      "path": "animation",
+      "title": {
+        "zh": "动画",
+        "en": "Animation"
+      },
+      "children": [
+        {
+          "path": "appear_animation",
+          "title": {
+            "zh": "入场动画",
+            "en": "appear animationt"
           }
         }
       ]
@@ -513,6 +552,13 @@
       ]
     },
     {
+      "path": "Load_on_Demand",
+      "title": {
+        "zh": "按需加载",
+        "en": "Load on Demand"
+      }
+    },
+    {
       "path": "search",
       "title": {
         "zh": "搜索",
@@ -554,6 +600,13 @@
           "title": {
             "zh": "React-VTable",
             "en": "React-VTable"
+          }
+        },
+        {
+          "path": "react-custom-component",
+          "title": {
+            "zh": "React自定义组件",
+            "en": "React Custom Component"
           }
         },
         {

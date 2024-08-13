@@ -34,7 +34,7 @@ use:
 tableInstance.updateTheme(newTheme)
 ```
 
-Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // will not automatically redraw after calling
@@ -44,6 +44,8 @@ tableInstance.theme = newTheme;
 ## updateColumns(Function)
 
 Update the configuration information of the columns field of the table, and it will be automatically redrawn after calling
+
+**ListTable Proprietary**
 
 ```ts
   /**
@@ -59,7 +61,7 @@ use:
 tableInstance. updateColumns(newColumns)
 ```
 
-Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // will not automatically redraw after calling
@@ -311,7 +313,7 @@ Get the data item of this cell
    * Get the entire data record based on the row and column number
    * @param {number} col col index.
    * @param {number} row row index.
-   * @return {object} record.
+   * @return {object} record in ListTable. return Array<any> in PivotTable.
    */
   getRecordByCell(col: number, row: number)
 ```
@@ -422,7 +424,7 @@ If it is a pivot analysis table (a pivot table with data analysis turned on), an
    * Get source data based on row and column numbers
    * @param {number} col col index.
    * @param {number} row row index.
-   * @return {object} record or record array
+   * @return {object} record or record array. ListTable return one record, PivotTable return an array of records.
    */
   getCellOriginRecord(col: number, row: number)
 ```
@@ -828,7 +830,7 @@ Export a cell picture
    * Export a cell picture
    * @returns base64 picture
    */
-  exportCellImg(col: number, row: number): string
+  exportCellImg(col: number, row: number, options?: { disableBackground?: boolean; disableBorder?: boolean }): string
 ```
 
 ## exportCellRangeImg(Function)
@@ -995,6 +997,27 @@ Get the displayed row number range of the table body part
 
 Get aggregation summary value
 
+```
+/**
+* Get the aggregate value based on the field
+* @param field field name
+* Returns an array, including the column number and the aggregate value array of each column
+*/
+getAggregateValuesByField(field: string | number)
+```
+
+**ListTable Proprietary**
+
+## isAggregation(Function)
+
+Determine whether it is an aggregate cell
+
+```
+isAggregation(col: number, row: number): boolean
+```
+
+**ListTable Proprietary**
+
 ## registerCustomCellStyle(Function)
 
 Register a custom style
@@ -1008,12 +1031,12 @@ Custom cell style
 - customStyleId: the unique id of the custom style
 - customStyle: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
 
-## registerCustomCellStyleArrangement(Function)
+## arrangeCustomCellStyle(Function)
 
 Assign custom styles
 
 ```
-registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
 ```
 
 - cellPosition: cell position information, supports configuration of single cells and cell areas
@@ -1115,4 +1138,73 @@ In **PivotTable** get indicatorKey.
 ```
   /**get field of header  */
   getHeaderField: (col: number, row: number)
+```
+
+## setColWidth(Function)
+
+set column width.
+
+```
+  /**set column width */
+  setColWidth: (col: number, width: number)
+```
+
+## setRowHeight(Function)
+
+set row height.
+
+```
+  /**set row height */
+  setRowHeight: (row: number, height: number)
+```
+
+## cellIsInVisualView(Function)
+
+Determines whether the cell is in the visible area of the cell. If the cell is completely in the visible area, it returns true. If part or all of the cell is outside the visible area, it returns false.
+
+```
+  cellIsInVisualView(col: number, row: number)
+```
+
+## getCellAtRelativePosition(Function)
+
+Gets the cell position relative to the upper left corner of the table.
+
+In the case of scrolling, the cells obtained are those after scrolling. For example, if the currently displayed rows are 100-120, the cell position relative to the upper left corner of the table (10,100) is (first column, 103rd row), assuming the row height is 40px.
+
+```
+/**
+* Get the cell information corresponding to the screen coordinates, taking scrolling into account
+* @param this
+* @param relativeX The left x value, relative to the upper left corner of the container, taking into account the scrolling of the grid
+* @param relativeY The left y value, relative to the upper left corner of the container, taking into account the scrolling of the grid
+* @returns
+*/
+getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound
+```
+
+## showMoverLine(Function)
+
+Displays a highlighted line for moving columns or rows
+
+```
+/**
+* Display the highlight line of the moving column or row If the (col, row) cell is the column header, the highlight column line is displayed; If the (col, row) cell is the row header, the highlight row line is displayed
+* @param col Which column in the table header should be highlighted after?
+* @param row The row after which the highlighted line is displayed
+*/
+showMoverLine(col: number, row: number)
+```
+
+## hideMoverLine(Function)
+
+Hide the highlight line of the moved column or row
+
+```
+/**
+* Hide the highlight line of the moved column or row
+* @param col
+* @param row
+*/
+hideMoverLine(col: number, row: number)
 ```

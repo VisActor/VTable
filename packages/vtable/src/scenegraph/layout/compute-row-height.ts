@@ -8,9 +8,9 @@ import type { ColumnData, ColumnDefine, TextColumnDefine } from '../../ts-types/
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
-import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
-import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
-import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
+import type { ComputeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
+import { Factory } from '../../core/factory';
+import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
@@ -351,8 +351,10 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     // Axis component height calculation
     if (table.isPivotChart()) {
       const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
-      const axisConfig = getAxisConfigInPivotChart(col, row, layout);
+      const axisConfig = layout.getAxisConfigInPivotChart(col, row);
       if (axisConfig) {
+        const computeAxisComponentHeight: ComputeAxisComponentHeight =
+          Factory.getFunction('computeAxisComponentHeight');
         const axisWidth = computeAxisComponentHeight(axisConfig, table);
         if (typeof axisWidth === 'number') {
           maxHeight = isValid(maxHeight) ? Math.max(axisWidth, maxHeight) : axisWidth;
@@ -502,6 +504,9 @@ function fillRowsHeight(
   table: BaseTableAPI,
   newHeights: number[] | undefined
 ) {
+  if (table.internalProps.useOneRowHeightFillAll) {
+    return;
+  }
   for (let row = startRow; row <= endRow; row++) {
     if (newHeights) {
       newHeights[row] = height;
@@ -509,6 +514,7 @@ function fillRowsHeight(
       table._setRowHeight(row, height);
     }
   }
+  table.internalProps.useOneRowHeightFillAll = true;
 }
 
 /**
@@ -542,7 +548,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       rect: getCellRect(col, row, table),
       table
     };
-    if (customLayout) {
+    if (isFunction(customLayout)) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
       if (customLayoutObj.rootContainer instanceof VGroup) {
@@ -554,6 +560,8 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
         enableCellPadding = customLayoutObj.enableCellPadding;
       } else {
         height = 0;
+        renderDefault = customLayoutObj.renderDefault;
+        enableCellPadding = customLayoutObj.enableCellPadding;
       }
     } else if (typeof customRender === 'function') {
       // 处理customRender
@@ -651,6 +659,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   const lineHeight = getProp('lineHeight', actStyle, col, row, table) ?? fontSize;
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const autoWrapText = getProp('autoWrapText', actStyle, col, row, table);
+  const lineClamp = getProp('lineClamp', actStyle, col, row, table);
   let text;
   if (
     cellType !== 'text' &&
@@ -674,6 +683,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       fontWeight,
       fontFamily,
       lineHeight,
+      lineClamp,
       padding,
       table
     );
@@ -691,13 +701,14 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       fontWeight,
       fontFamily,
       lineHeight,
+      lineClamp,
       padding,
       table
     );
   } else {
     // text
     text = cellValue;
-    const lines = breakString(text, table);
+    const lines = breakString(text, table).text;
     const cellWidth = table.getColsWidth(col, endCol);
 
     if (iconInlineFront.length || iconInlineEnd.length) {
@@ -749,12 +760,17 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
         fontFamily,
         lineHeight,
         wordBreak: 'break-word',
-        whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
+        whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
+        lineClamp
       });
       maxHeight = bounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
     } else {
       // autoWrapText = false
-      maxHeight = lines.length * lineHeight;
+      if (table.options.customConfig?.multilinesForXTable) {
+        maxHeight = lineHeight;
+      } else {
+        maxHeight = lines.length * lineHeight;
+      }
     }
   }
   return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;

@@ -1,14 +1,14 @@
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import type { Group } from '../graphic/group';
-import { createProgressBarCell } from '../group-creater/cell-type/progress-bar-cell';
-import { createSparkLineCellGroup } from '../group-creater/cell-type/spark-line-cell';
+import type { CreateProgressBarCell } from '../group-creater/cell-type/progress-bar-cell';
+import type { CreateSparkLineCellGroup } from '../group-creater/cell-type/spark-line-cell';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentHeight } from '../utils/text-icon-layout';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
-import { dealWithCustom } from '../component/custom';
+import { CUSTOM_CONTAINER_NAME, CUSTOM_MERGE_CONTAINER_NAME, dealWithCustom } from '../component/custom';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
@@ -17,6 +17,7 @@ import { resizeCellGroup, getCustomCellMergeCustom } from '../group-creater/cell
 import type { IGraphic } from '@src/vrender';
 import { getCellMergeRange } from '../../tools/merge-range';
 import type { ColumnDefine } from '../../ts-types';
+import { Factory } from '../../core/factory';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
   // 更新table行高存储
@@ -44,13 +45,13 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, s
   let rowStart = 0;
   let rowEnd = 0;
   // 更新header 高度
-  if (row < scene.table.columnHeaderLevelCount) {
+  if (row < scene.table.frozenRowCount) {
     // scene.colHeaderGroup.setAttribute('height', scene.colHeaderGroup.attribute.height + detaY);
     // scene.rowHeaderGroup.setAttribute('y', scene.rowHeaderGroup.attribute.y + detaY);
     // scene.bodyGroup.setAttribute('y', scene.bodyGroup.attribute.y + detaY);
 
     rowStart = row + 1;
-    rowEnd = scene.table.columnHeaderLevelCount - 1;
+    rowEnd = scene.table.frozenRowCount - 1;
   } else if (row >= scene.table.rowCount - scene.table.bottomFrozenRowCount) {
     rowStart = row + 1;
     rowEnd = scene.table.rowCount - 1;
@@ -61,9 +62,9 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, s
   }
 
   // 更新以下行位置
-  for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex++) {
-    for (let colIndex = 0; colIndex < scene.table.colCount; colIndex++) {
-      const cellGroup = scene.getCell(colIndex, rowIndex);
+  for (let colIndex = 0; colIndex < scene.table.colCount; colIndex++) {
+    for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex++) {
+      const cellGroup = scene.highPerformanceGetCell(colIndex, rowIndex);
       if (cellGroup.role === 'cell') {
         cellGroup.setAttribute('y', cellGroup.attribute.y + detaY);
       }
@@ -139,6 +140,7 @@ export function updateCellHeight(
     const dataValue = scene.table.getCellOriginValue(col, row);
     const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
 
+    const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
     const newBarCell = createProgressBarCell(
       columnDefine,
       style,
@@ -163,6 +165,7 @@ export function updateCellHeight(
     cell.removeAllChild();
     const headerStyle = scene.table._getCellStyle(col, row);
     const padding = getQuadProps(getProp('padding', headerStyle, col, row, scene.table));
+    const createSparkLineCellGroup = Factory.getFunction('createSparkLineCellGroup') as CreateSparkLineCellGroup;
     createSparkLineCellGroup(
       cell,
       cell.parent,
@@ -178,12 +181,14 @@ export function updateCellHeight(
       false
     );
   } else if (type === 'image' || type === 'video') {
-    updateImageCellContentWhileResize(cell, col, row, scene.table);
+    updateImageCellContentWhileResize(cell, col, row, 0, detaY, scene.table);
   } else if (cell.firstChild?.name === 'axis') {
     (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {
     let renderDefault = true;
-    const customContainer = cell.getChildByName('custom-container') as Group;
+    const customContainer =
+      (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
+      (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
     if (customContainer) {
       let customElementsGroup;
       customContainer.removeAllChild();
@@ -196,7 +201,9 @@ export function updateCellHeight(
             continue;
           }
           const mergedCell = scene.getCell(col, mergeRow);
-          const customContainer = mergedCell.getChildByName('custom-container') as Group;
+          const customContainer =
+            (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
+            (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
           customContainer.removeAllChild();
           mergedCell.removeChild(customContainer);
           getCustomCellMergeCustom(col, mergeRow, mergedCell, scene.table);
@@ -236,6 +243,12 @@ export function updateCellHeight(
             // scene.table.heightMode === 'autoHeight',
             scene.table.isAutoRowHeight(row),
             padding,
+            isMergeCellGroup(cell)
+              ? {
+                  start: { col: cell.mergeStartCol, row: cell.mergeStartRow },
+                  end: { col: cell.mergeEndCol, row: cell.mergeEndRow }
+                }
+              : undefined,
             scene.table
           );
           customElementsGroup = customResult.elementsGroup;

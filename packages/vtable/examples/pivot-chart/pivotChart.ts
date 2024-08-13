@@ -9433,6 +9433,7 @@ export function createTable() {
   };
   const option: VTable.PivotChartConstructorOptions = {
     columnTree,
+    emptyTip: true,
     rowTree,
     rows,
     columns,

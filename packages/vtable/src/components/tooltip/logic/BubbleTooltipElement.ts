@@ -3,7 +3,7 @@ import type { RectProps } from '../../../ts-types';
 import { Placement } from '../../../ts-types';
 import { createElement } from '../../../tools/dom';
 import { importStyle } from './BubbleTooltipElementStyle';
-import { isMobile } from '../../../tools/util';
+import { isDivSelected, isMobile } from '../../../tools/util';
 import type { TooltipOptions } from '../../../ts-types/tooltip';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 importStyle();
@@ -18,15 +18,35 @@ export class BubbleTooltipElement {
   private _rootElement?: HTMLElement;
   private _messageElement?: HTMLElement;
   private _triangleElement?: HTMLElement;
+  private _disappearDelay?: number; // 提示框延迟多久消失
+  private _disappearDelayId?: any;
   constructor() {
     this._handler = new EventHandler();
     const rootElement = (this._rootElement = createElement('div', [TOOLTIP_CLASS, HIDDEN_CLASS]));
-    const messageElement = createElement('span', [CONTENT_CLASS]);
+    const messageElement = createElement('div', [CONTENT_CLASS]);
     const triangle = createElement('span', [TRIANGLE_CLASS]);
     rootElement.appendChild(triangle);
     rootElement.appendChild(messageElement);
     this._messageElement = <HTMLElement>rootElement.querySelector(`.${CONTENT_CLASS}`) || undefined;
     this._triangleElement = <HTMLElement>rootElement.querySelector(`.${TRIANGLE_CLASS}`) || undefined;
+
+    rootElement.addEventListener('mousemove', () => {
+      this._disappearDelayId && clearTimeout(this._disappearDelayId);
+    });
+    rootElement.addEventListener('mouseleave', () => {
+      this._disappearDelay = undefined;
+      this.unbindFromCell();
+    });
+
+    messageElement.addEventListener('wheel', e => {
+      e.stopPropagation();
+    });
+    messageElement.addEventListener('copy', e => {
+      const isSelected = isDivSelected(messageElement as HTMLDivElement); // 判断tooltip弹框内容是否有选中
+      if (isSelected) {
+        e.stopPropagation();
+      }
+    });
   }
   bindToCell(
     table: BaseTableAPI,
@@ -35,6 +55,8 @@ export class BubbleTooltipElement {
     tooltipInstanceInfo: TooltipOptions,
     confine: boolean
   ): boolean {
+    this._disappearDelay = tooltipInstanceInfo?.disappearDelay;
+    this._disappearDelayId && clearTimeout(this._disappearDelayId);
     const rootElement = this._rootElement;
     const messageElement = this._messageElement;
     const triangle = this._triangleElement;
@@ -57,6 +79,10 @@ export class BubbleTooltipElement {
       tooltipInstanceInfo?.style?.color && (messageElement.style.color = tooltipInstanceInfo?.style?.color);
       tooltipInstanceInfo?.style?.padding &&
         (messageElement.style.padding = `${tooltipInstanceInfo?.style?.padding.join('px ')}px`);
+      tooltipInstanceInfo?.style?.maxHeight &&
+        (messageElement.style.maxHeight = `${tooltipInstanceInfo?.style?.maxHeight}px`);
+      tooltipInstanceInfo?.style?.maxWidth &&
+        (messageElement.style.maxWidth = `${tooltipInstanceInfo?.style?.maxWidth}px`);
       messageElement && (messageElement.textContent = tooltipInstanceInfo?.content);
       const binded = this._bindToCell(
         table,
@@ -100,10 +126,20 @@ export class BubbleTooltipElement {
     }
   }
   unbindFromCell(): void {
-    const rootElement = this._rootElement;
-    if (rootElement?.parentElement) {
-      rootElement.classList.remove(SHOWN_CLASS);
-      rootElement.classList.add(HIDDEN_CLASS);
+    if (this._disappearDelay) {
+      this._disappearDelayId = setTimeout(() => {
+        const rootElement = this._rootElement;
+        if (rootElement?.parentElement) {
+          rootElement.classList.remove(SHOWN_CLASS);
+          rootElement.classList.add(HIDDEN_CLASS);
+        }
+      }, this._disappearDelay ?? 0);
+    } else {
+      const rootElement = this._rootElement;
+      if (rootElement?.parentElement) {
+        rootElement.classList.remove(SHOWN_CLASS);
+        rootElement.classList.add(HIDDEN_CLASS);
+      }
     }
   }
   _canBindToCell(table: BaseTableAPI, col: number, row: number): boolean {

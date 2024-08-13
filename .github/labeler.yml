@@ -1,6 +1,14 @@
-# Add 'core' label to any change within the 'core' package
-core:
+# Add 'vtable' label to any change within the 'vtable' package
+vtable:
   - packages/vtable/**
+
+# Add 'react-vtable' label to any change within the 'react-vtable' package
+react-vtable:
+  - packages/react-vtable/**
+
+# Add 'openinula-vtable' label to any change within the 'openinula-vtable' package
+openinula-vtable:
+  - packages/openinula-vtable/**
 
 # Add 'test' label to any change to packages/*/__tests__/* files within the source dir
 test:
@@ -34,3 +42,5 @@ bundler:
 # Add 'chore' label to any change to common/** files within the source dir
 chore:
   - common/**
+  - .github/**
+  - .vscode/**

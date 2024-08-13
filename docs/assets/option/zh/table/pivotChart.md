@@ -51,7 +51,7 @@
 
 ## columnTree(Array)
 
-列表头树，类型为:`IDimensionHeaderNode|IIndicatorHeaderNode[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。
+列表头树，类型为:`(IDimensionHeaderNode|IIndicatorHeaderNode)[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。
 
 ** IDimensionHeaderNode 具体配置项如下：**
 
@@ -64,7 +64,7 @@ export interface IDimensionHeaderNode {
   /** 维度成员值 */
   value: string;
   /** 维度成员下的子维度树结构 */
-  children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
+  children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[];
   /** 折叠状态 配合树形结构展示使用。注意：仅在rowTree中有效 */
   hierarchyState?: HierarchyState;
 }
@@ -102,7 +102,7 @@ export interface IIndicatorHeaderNode {
 
 ## indicatorsAsCol(boolean) = true
 
-指标显示在列上，默认是true。如果配置为false，则显示在行，指标以行展示
+指标显示在列上，默认是 true。如果配置为 false，则显示在行，指标以行展示
 
 ## indicatorTitle(string)
 
@@ -161,7 +161,7 @@ export interface IIndicatorHeaderNode {
 
 ## renderChartAsyncBatchCount(number)
 
-开启图表异步渲染，每批次渐进渲染图表个数，建议5-10个，具体可以视整体效果调整。默认值5.
+开启图表异步渲染，每批次渐进渲染图表个数，建议 5-10 个，具体可以视整体效果调整。默认值 5.
 
 {{ use: common-option-secondary(
       prefix = '#',

@@ -20,6 +20,11 @@ export interface TableEvents {
    * 单元格选中状态改变事件
    */
   SELECTED_CELL: 'selected_cell';
+
+  /**
+   * 单元格选中状态改变事件
+   */
+  SELECTED_CLEAR: 'selected_clear';
   /**
    * 键盘按下事件
    */
@@ -170,6 +175,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   MOUSEDOWN_CELL: 'mousedown_cell',
   MOUSEUP_CELL: 'mouseup_cell',
   SELECTED_CELL: 'selected_cell',
+  SELECTED_CLEAR: 'selected_clear',
   KEYDOWN: 'keydown',
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',

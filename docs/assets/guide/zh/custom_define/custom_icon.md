@@ -10,7 +10,7 @@
 
 - `icon` 则用于配置 body 单元格的图标。
 
-配置具体内容为[ColumnIconOption]() 类型的对象，也可以通过传递一个自定义函数，动态设置单元格的图标样式。
+配置具体内容为`ColumnIconOption`类型的对象，也可以通过传递一个自定义函数，动态设置单元格的图标样式。ColumnIconOption 具体定义可以参考：https://visactor.io/vtable/option/ListTable-columns-text#icon
 
 ### 表头图标配置示例
 
@@ -84,7 +84,7 @@ const tableInstance = new VTable.ListTable({
 
 这个示例中，我们为单元格配置了一个名为 `Avatar` 的图标。该图标的作用是用来显示头像图片，图片 src 的值是从 records 的 avator 的字段中获取到的。
 
-效果图片：TODO
+在线 demo：https://visactor.io/vtable/demo/custom-render/custom-icon
 
 ## 如何注册 icon 及注册后的使用
 
@@ -192,8 +192,7 @@ VTable.register.icon('frozenCurrent', {
 });
 ```
 
-替换后的效果如：
-TODO
+替换后的效果在 demo 中查看：https://visactor.io/vtable/demo/custom-render/custom-icon
 
 同样的方法，我们可以替换其他功能性图标。在 VTable 中内置了几种关联内部功能的图标，如排序，固定列，下拉菜单图标，展开折叠图标等。
 
@@ -229,6 +228,6 @@ TODO
   ]
 ```
 
-同时自己业务中注册的图标，不需要配置`funcType`。
+**注意：同时自己业务中注册的图标，不需要配置`funcType`。**
 
 至此，关于 VTable 中 icon 的使用方法、注册和替换功能图标的教程就全部介绍完毕。希望本教程能帮助您更好地理解和使用 VTable，打造出更加优美、实用的数据可视化表格

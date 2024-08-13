@@ -2,7 +2,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestPivotTable
 import records from './data/North_American_Superstore_pivot_extension_rows.json';
-import { PivotTable } from '../src/PivotTable';
+import { PivotTable } from '../src';
 import { createDiv } from './dom';
 global.__VERSION__ = 'none';
 describe('pivotTableTree init test', () => {
@@ -506,6 +506,6 @@ describe('pivotTableTree init test', () => {
         }
       ])
     ).toEqual({ col: 2, row: 0 });
+    pivotTableTree.release();
   });
-  pivotTableTree.release();
 });

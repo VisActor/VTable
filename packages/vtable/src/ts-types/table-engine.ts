@@ -22,7 +22,7 @@ import type {
   ITitleDefine
 } from './pivot-table';
 import type { ColumnsDefine } from './list-table';
-import type { ICellAxisOption, ITableAxisOption } from './component/axis';
+import type { ITableAxisOption } from './component/axis';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
 import type { DataSource } from '../data';
@@ -64,7 +64,7 @@ export type WidthModeDef = 'standard' | 'adaptive' | 'autoWidth';
 export type HeightModeDef = 'standard' | 'adaptive' | 'autoHeight';
 export type WidthAdaptiveModeDef = 'only-body' | 'all';
 export type HeightAdaptiveModeDef = 'only-body' | 'all';
-export type ShowColumnRowType = 'column' | 'row' | 'none';
+export type ShowColumnRowType = 'column' | 'row' | 'none' | 'all';
 /** 单元格所处表格哪部分 */
 export type CellLocation = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
 export type CellSubLocation =
@@ -80,6 +80,11 @@ export type CellSubLocation =
   | 'rowSeriesNumber'
   | 'colSeriesNumber';
 
+export interface SelectAllOnCtrlAOption {
+  disableHeaderSelect?: boolean;
+  disableRowSeriesNumberSelect?: boolean;
+}
+
 export interface TableKeyboardOptions {
   /** tab键 默认为true。开启tab键移动选中单元格，如果当前是在编辑单元格 则移动到下一个单元格也是编辑状态 */
   moveFocusCellOnTab?: boolean;
@@ -88,7 +93,7 @@ export interface TableKeyboardOptions {
   /** 默认不开启即false。开启这个配置的话，如果当前是在编辑中的单元格，方向键可以移动到下个单元格并进入编辑状态，而不是编辑文本内字符串的光标移动。上下左右方向键切换选中单元格不受该配置影响，*/
   moveEditCellOnArrowKeys?: boolean;
   /** 开启快捷键全选 默认：false */
-  selectAllOnCtrlA?: boolean;
+  selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
   /** 快捷键复制  默认：false*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
   /** 快捷键粘贴，默认：false 。粘贴内容到指定位置（即粘贴前要有选中的单元格）；支持批量粘贴；粘贴生效仅针对配置了编辑 editor 的单元格；*/
@@ -119,6 +124,8 @@ export interface IRowSeriesNumber {
   // selectRangeInclude?: boolean;
   /** 是否可拖拽顺序 */
   dragOrder?: boolean;
+  /** 是否禁止列宽调整 */
+  disableColumnResize?: boolean;
 }
 
 export interface ColumnSeriesNumber {
@@ -219,8 +226,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 排序状态
    */
   sortState?: SortState | SortState[];
-  /** 数据分析相关配置 enableDataAnalysis开启后该配置才会有效 */
-  // dataConfig?: IListTableDataConfig;
+
   /** 全局设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置编辑器 */
@@ -347,7 +353,7 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
    */
   rowHeaderTitle?: ITitleDefine;
   //#endregion
-  /** 数据分析相关配置 enableDataAnalysis开启后该配置才会有效 */
+  /** 数据分析相关配置 */
   dataConfig?: IPivotTableDataConfig;
 
   /** 指标标题 用于显示到角头的值*/
@@ -359,6 +365,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 是否需要补充指标节点到对应的自定义表头中如rowTree或者columnTree. 默认为true */
+  supplementIndicatorNodes?: boolean;
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**
@@ -416,7 +424,10 @@ export interface PivotTableAPI extends BaseTableAPI {
   options: PivotTableConstructorOptions;
   editorManager: EditManeger;
   // internalProps: PivotTableProtected;
-  pivotSortState: PivotSortState[];
+  pivotSortState: {
+    dimensions: IDimensionInfo[];
+    order: SortOrder;
+  }[];
   isListTable: () => false;
   isPivotTable: () => true;
   getPivotSortState: (col: number, row: number) => SortOrder;
@@ -510,6 +521,8 @@ export interface IDimensionHeaderNode {
   children?: IHeaderTreeDefine[] | true;
   /** 折叠状态 TODO */
   hierarchyState?: HierarchyState;
+  /** 是否为虚拟节点 在基于records数据做分析时忽略该维度字段 */
+  virtual?: boolean;
 }
 
 export interface IExtensionRowDefine {
@@ -527,3 +540,6 @@ export type CustomMerge = {
   customLayout?: ICustomLayout;
   customRender?: ICustomRender;
 };
+
+export type ColumnInfo = { col: number; left: number; right: number; width: number };
+export type RowInfo = { row: number; top: number; bottom: number; height: number };

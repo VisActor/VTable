@@ -80,7 +80,7 @@ const option = {
     }
   ],
   indicators: ['sales', 'profit'],
-  //enableDataAnalysis:true,
+
   corner: {
     titleOnDimension: 'none'
   },
@@ -159,4 +159,81 @@ VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
 
 如果 rowHierarchyType 设置为 tree，并且期望点击展开节点时懒加载，那么也需要使用自定义表头的透视表，具体 demo 可参考： https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load 。
 
-**注意：如果选择自定义树的配置方式将不开启 VTable 内部的数据聚合能力，即匹配到的数据条目中的某一条作为单元格指标值。**
+# 虚拟表头节点
+
+在数据透视分析的一些场景中，并不是需要展示的表格结构和数据能完美匹配，例如：有可能透视表只有行维度和指标值，当指标值的字段又非常多的时候，希望通过自定义列头的形式对指标进行分组。而实际上列上的表头都是虚拟的，数据 records 并没有对应的维度字段来关联，层级数也不确定。
+
+基于此场景下 VTable 提供了虚拟表头节点的功能，通过虚拟表头节点可以实现对列上的表头进行分组，具体示例可参考： URL_ADDRESS 。
+
+只需要将 rowTree columnTree 中的节点配置时添加 `virtual: true` 即可。
+
+如：
+
+```
+        rowTree: [
+          {
+            dimensionKey: 'Segment-1',
+            value: 'Segment-1 (virtual-node)',
+            virtual: true,
+            children: [
+              {
+                indicatorKey: 'Quantity',
+                value: 'Quantity'
+              },
+              {
+                indicatorKey: 'Sales',
+                value: 'Sales'
+              },
+              {
+                indicatorKey: 'Profit',
+                value: 'Profit'
+              }
+            ]
+          }
+        ],
+```
+
+具体 demo：https://visactor.io/vtable/demo/table-type/pivot-table-virtual-header
+
+# 自定义树补全指标节点
+
+默认情况下，VTable 会自动补全指标节点，如用户可以传入一个维度树，但是不带又指标节点：
+
+```
+        rowTree: [
+          {
+            dimensionKey: 'Region',
+            value: 'North',
+          }
+        ],
+```
+
+同时用户在 indicators 中配置了指标信息：
+
+```
+indicators: ['Sales', 'Profit'],
+indicatorsAsCol:false,
+```
+
+VTable 会自动补全指标节点到行维度表头树中：
+
+```
+      rowTree: [
+          {
+            dimensionKey: 'Region',
+            value: 'North',
+            children: [
+              {
+                indicatorKey: 'Sales',
+                value: 'Sales'
+              },
+              {
+                indicatorKey: 'Profit',
+                value: 'Profit'
+              }
+            ]
+          }
+        ],
+```
+
+如果不需要自动补全指标节点，可通过设置 `supplementIndicatorNodes: false` 来关闭自动补全。

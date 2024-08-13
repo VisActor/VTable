@@ -1,7 +1,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
 import records from '../data/marketsales.json';
-import { ListTable } from '../../src/ListTable';
+import { ListTable } from '../../src';
 import { createDiv } from '../dom';
 global.__VERSION__ = 'none';
 describe('listTable-menu init test', () => {
@@ -146,6 +146,6 @@ describe('listTable-menu init test', () => {
     });
 
     expect(listTable.stateManager.menu.isShow).toBe(true);
+    listTable.release();
   });
-  listTable.release();
 });

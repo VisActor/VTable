@@ -1,13 +1,9 @@
+import type { InputEditorConfig } from './input-editor';
 import { InputEditor } from './input-editor';
 import type { IEditor } from './types';
-export interface DateInputEditorConfig {
-  max?: number;
-  min?: number;
-}
-
 export class DateInputEditor extends InputEditor implements IEditor {
   editorType: string = 'DateInput';
-  constructor(editorConfig?: DateInputEditorConfig) {
+  constructor(editorConfig?: InputEditorConfig) {
     super(editorConfig);
     this.editorConfig = editorConfig;
   }

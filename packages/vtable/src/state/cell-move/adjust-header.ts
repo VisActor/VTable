@@ -31,9 +31,9 @@ export function adjustMoveHeaderTarget(source: CellAddress, target: CellAddress,
     }
     // tree模式[透视表行表头]
     if (layoutMap.rowHierarchyType === 'tree') {
-      const sourceRowHeaderPaths = layoutMap.getCellHeaderPathsWidthTreeNode(source.col, source.row)
+      const sourceRowHeaderPaths = layoutMap.getCellHeaderPathsWithTreeNode(source.col, source.row)
         .rowHeaderPaths as any;
-      const targetRowHeaderPaths = layoutMap.getCellHeaderPathsWidthTreeNode(target.col, target.row)
+      const targetRowHeaderPaths = layoutMap.getCellHeaderPathsWithTreeNode(target.col, target.row)
         .rowHeaderPaths as any;
       if (sourceRowHeaderPaths.length <= targetRowHeaderPaths.length) {
         const targetPathNode = targetRowHeaderPaths[sourceRowHeaderPaths.length - 1]; //找到共同层级节点

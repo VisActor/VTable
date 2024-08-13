@@ -1,7 +1,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
 import records from '../data/marketsales.json';
-import { ListTable } from '../../src/ListTable';
+import { ListTable } from '../../src';
 import { createDiv, removeDom } from '../dom';
 global.__VERSION__ = 'none';
 describe('listTable-autoRowHeight init test', () => {
@@ -143,6 +143,6 @@ describe('listTable-autoRowHeight init test', () => {
   test('listTable-autoRowHeight API getCellLocation', () => {
     expect(listTable.getCellLocation(5, 3)).toEqual('body');
     expect(listTable.getCellLocation(5, 0)).toEqual('columnHeader');
+    listTable.release();
   });
-  listTable.release();
 });

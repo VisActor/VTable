@@ -1,5 +1,6 @@
 import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { Scenegraph } from '../../scenegraph/scenegraph';
+import type { SelectAllOnCtrlAOption } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
 import type { StateManager } from '../state';
 /**
@@ -16,12 +17,17 @@ export function updateSelectPosition(
   isShift: boolean,
   isCtrl: boolean,
   isSelectAll: boolean,
-  isSelectMoving: boolean = false
+  isSelectMoving: boolean = false,
+  skipBodyMerge: boolean = false
 ) {
   const { table, interactionState } = state;
   const { scenegraph } = table;
   const { highlightScope, disableHeader, cellPos } = state.select;
+
   if ((disableHeader && table.isHeader(col, row)) || highlightScope === 'none') {
+    if (col !== -1 && row !== -1 && !isSelectMoving) {
+      table._makeVisibleCell(col, row);
+    }
     col = -1;
     row = -1;
   }
@@ -56,18 +62,27 @@ export function updateSelectPosition(
   if (isSelectAll) {
     state.select.ranges = [];
     scenegraph.deleteAllSelectBorder();
+    let _startCol = 0;
+    let _startRow = 0;
+    const { disableHeaderSelect, disableRowSeriesNumberSelect } =
+      (table.options.keyboardOptions?.selectAllOnCtrlA as SelectAllOnCtrlAOption) || {};
+
+    // 表头选中
+    if (disableHeaderSelect) {
+      _startCol = table.rowHeaderLevelCount;
+      _startRow = table.columnHeaderLevelCount;
+    }
+    // 行号列选中
+    if ((disableRowSeriesNumberSelect || disableHeaderSelect) && table.options.rowSeriesNumber) {
+      _startCol += 1;
+    }
+
     state.select.ranges.push({
-      start: { col: 0, row: 0 },
+      start: { col: _startCol, row: _startRow },
       end: { col: table.colCount - 1, row: table.rowCount - 1 }
     });
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
-    scenegraph.updateCellSelectBorder(
-      currentRange.start.col,
-      currentRange.start.row,
-      currentRange.end.col,
-      currentRange.end.row,
-      false
-    );
+    scenegraph.updateCellSelectBorder(currentRange, false);
   } else if (cellPos.col !== -1 && cellPos.row !== -1 && (col === -1 || row === -1)) {
     // 输入-1清空选中状态
     // clearMultiSelect(scenegraph, ranges, highlightScope, singleStyle);
@@ -83,6 +98,10 @@ export function updateSelectPosition(
   ) {
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
     if (isShift && currentRange) {
+      if (!isCtrl) {
+        cellPos.col = col;
+        cellPos.row = row;
+      }
       if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
         const startCol = Math.min(currentRange.start.col, currentRange.end.col, col);
         const endCol = Math.max(currentRange.start.col, currentRange.end.col, col);
@@ -102,12 +121,7 @@ export function updateSelectPosition(
         currentRange.end = { col, row };
       }
       scenegraph.deleteLastSelectedRangeComponents();
-      scenegraph.updateCellSelectBorder(
-        currentRange.start.col,
-        currentRange.start.row,
-        currentRange.end.col,
-        currentRange.end.row
-      );
+      scenegraph.updateCellSelectBorder(currentRange);
       // } else if (isCtrl) {
       //   cellPos.col = col;
       //   cellPos.row = row;
@@ -121,7 +135,7 @@ export function updateSelectPosition(
       //   // 更新select border
       //   // calculateAndUpdateMultiSelectBorder(scenegraph, col, row, col, row, state.select.ranges);
       //   // 更新select border
-      //   scenegraph.updateCellSelectBorder(cellPos.col, cellPos.row, cellPos.col, cellPos.row);
+      //   scenegraph.updateCellSelectBorder(cellPos);
     } else {
       let extendSelectRange = true;
       // 单选或多选开始
@@ -130,48 +144,51 @@ export function updateSelectPosition(
         scenegraph.deleteAllSelectBorder();
       }
       if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
+        // 选中行表头
         const cellRange = table.getCellRange(col, row);
         state.select.ranges.push({
           start: { col: cellRange.start.col, row },
-          end: { col: cellRange.end.col, row: table.rowCount - 1 }
+          end: { col: cellRange.end.col, row: table.rowCount - 1 },
+          skipBodyMerge: true
         });
       } else if (state.select.headerSelectMode !== 'cell' && table.isRowHeader(col, row)) {
+        // 选中列表头
         const cellRange = table.getCellRange(col, row);
         state.select.ranges.push({
           start: { col, row: cellRange.start.row },
-          end: { col: table.colCount - 1, row: cellRange.end.row }
+          end: { col: table.colCount - 1, row: cellRange.end.row },
+          skipBodyMerge: true
         });
       } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInHeader(col, row)) {
+        // 选中表头行号单元格
         extendSelectRange = false;
         state.select.ranges.push({
           start: { col: 0, row: 0 },
-          end: { col: table.colCount - 1, row: table.rowCount - 1 }
+          end: { col: table.colCount - 1, row: table.rowCount - 1 },
+          skipBodyMerge: true
         });
       } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)) {
+        // 选中内容行号单元格
         extendSelectRange = false;
         state.select.ranges.push({
           start: { col, row: row },
-          end: { col: table.colCount - 1, row: row }
+          end: { col: table.colCount - 1, row: row },
+          skipBodyMerge: true
         });
       } else if (col >= 0 && row >= 0) {
-        const cellRange = table.getCellRange(col, row);
+        // 选中普通单元格
+        const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
         state.select.ranges.push({
           start: { col: cellRange.start.col, row: cellRange.start.row },
-          end: { col: cellRange.end.col, row: cellRange.end.row }
+          end: { col: cellRange.end.col, row: cellRange.end.row },
+          skipBodyMerge: skipBodyMerge || undefined
         });
       }
       cellPos.col = col;
       cellPos.row = row;
       // scenegraph.setCellNormalStyle(col, row);
       const currentRange = state.select.ranges?.[state.select.ranges.length - 1];
-      currentRange &&
-        scenegraph.updateCellSelectBorder(
-          currentRange.start.col,
-          currentRange.start.row,
-          currentRange.end.col,
-          currentRange.end.row,
-          extendSelectRange
-        );
+      currentRange && scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
     }
   } else if (
     (interactionState === InteractionState.grabing || table.eventManager.isDraging) &&
@@ -262,15 +279,12 @@ export function updateSelectPosition(
             col,
             row
           };
+          if (skipBodyMerge) {
+            currentRange.skipBodyMerge = true;
+          }
         }
       }
-      scenegraph.updateCellSelectBorder(
-        currentRange.start.col,
-        currentRange.start.row,
-        currentRange.end.col,
-        currentRange.end.row,
-        extendSelectRange
-      );
+      scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
     }
   }
   scenegraph.updateNextFrame();

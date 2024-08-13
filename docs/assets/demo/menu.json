@@ -174,6 +174,13 @@
           }
         },
         {
+          "path": "pivot-table-virtual-header",
+          "title": {
+            "zh": "透视表自定义表头（虚拟节点）",
+            "en": "Pivot Table Virtual Header"
+          }
+        },
+        {
           "path": "pivot-table-multi-tree",
           "title": {
             "zh": "透视表多列树形展示",
@@ -319,6 +326,13 @@
           }
         },
         {
+          "path": "pivot-sparkline",
+          "title": {
+            "zh": "透视表迷你图展示",
+            "en": "Sparkline In PivotTable"
+          }
+        },
+        {
           "path": "composite-cellType",
           "title": {
             "zh": "单元格类型混用",
@@ -378,7 +392,23 @@
             "category": "demo",
             "group": "Basic Features",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-col.gif",
-            "link": "'../../guide/basic_function/frozen_column'",
+            "link": "'../../guide/basic_function/frozen_column_row'",
+            "option": ""
+          }
+        },
+        {
+          "path": "frozen-row",
+          "title": {
+            "zh": "冻结行",
+            "en": "frozen row"
+          },
+          "meta": {
+            "title": "frozen row",
+            "keywords": "",
+            "category": "demo",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-row.gif",
+            "link": "'../../guide/basic_function/frozen_column_row'",
             "option": ""
           }
         },
@@ -387,15 +417,6 @@
           "title": {
             "zh": "排序",
             "en": "Sort"
-          },
-          "meta": {
-            "title": "Sort",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sort.gif",
-            "link": "'../../guide/basic_function/sort'",
-            "option": ""
           }
         },
         {
@@ -403,15 +424,6 @@
           "title": {
             "zh": "预排序",
             "en": "Pre Sort"
-          },
-          "meta": {
-            "title": "Pre Sort",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pre-sort.png",
-            "link": "'../../guide/basic_function/sort'",
-            "option": ""
           }
         },
         {
@@ -419,15 +431,6 @@
           "title": {
             "zh": "合并单元格",
             "en": "Merge Cells"
-          },
-          "meta": {
-            "title": "Merge Cells",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/merge.png",
-            "link": "",
-            "option": ""
           }
         },
         {
@@ -435,15 +438,6 @@
           "title": {
             "zh": "自定义合并单元格",
             "en": "Custom Merge Cells"
-          },
-          "meta": {
-            "title": "Custom Merge Cells",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-merge-custom.png",
-            "link": "",
-            "option": ""
           }
         },
         {
@@ -451,15 +445,6 @@
           "title": {
             "zh": "适应容器高度",
             "en": "Row Height Mode - Adapt to Content"
-          },
-          "meta": {
-            "title": "Row Height Mode - Adapt to Content",
-            "keywords": "",
-            "category": "demo",
-            "group": "Basic Features",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png",
-            "link": "'../../guide/basic_function/row_height_column_width'",
-            "option": ""
           }
         },
         {
@@ -520,8 +505,15 @@
         {
           "path": "pagination",
           "title": {
-            "zh": "分页",
+            "zh": "分页（翻页）",
             "en": "pagination"
+          }
+        },
+        {
+          "path": "pivot-table-corner-title",
+          "title": {
+            "zh": "透视表角头显示维度名",
+            "en": "Pivot Table corner title"
           }
         }
       ]
@@ -547,6 +539,13 @@
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png",
             "link": "'../../guide/interaction_and_event/select'",
             "option": ""
+          }
+        },
+        {
+          "path": "select-highlight",
+          "title": {
+            "zh": "选中整行高亮",
+            "en": "Select Highlight"
           }
         },
         {
@@ -818,6 +817,31 @@
       ]
     },
     {
+      "path": "animation",
+      "title": {
+        "zh": "动画",
+        "en": "animation"
+      },
+      "children": [
+        {
+          "path": "appear-animation",
+          "title": {
+            "zh": "入场动画",
+            "en": "Appear Animation"
+          },
+          "meta": {
+            "title": "Appear Animation",
+            "keywords": "",
+            "category": "demo",
+            "group": "Animation",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/appear-animation.gif",
+            "link": "'../../guide/custom_define/custom_icon'",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
       "path": "custom-render",
       "title": {
         "zh": "自定义能力",
@@ -1046,6 +1070,13 @@
           }
         },
         {
+          "path": "pivot-analysis-calculatedField",
+          "title": {
+            "zh": "计算字段",
+            "en": "Calculate Field"
+          }
+        },
+        {
           "path": "pivot-analysis-table-drill",
           "title": {
             "zh": "透视表上钻下钻",
@@ -1218,6 +1249,13 @@
             "link": "",
             "option": ""
           }
+        },
+        {
+          "path": "empty-tip",
+          "title": {
+            "zh": "空数据提示",
+            "en": "empty tip"
+          }
         }
       ]
     },
@@ -1242,6 +1280,20 @@
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png",
             "link": "'../../guide/export/excel'",
             "option": ""
+          }
+        },
+        {
+          "path": "table-export-ignore-icon",
+          "title": {
+            "zh": "表格导出",
+            "en": "table export"
+          }
+        },
+        {
+          "path": "table-export-format",
+          "title": {
+            "zh": "表格导出",
+            "en": "table export"
           }
         }
       ]
@@ -1393,6 +1445,13 @@
           "title": {
             "zh": "销售数据气泡图",
             "en": "Sales Bubble"
+          }
+        },
+        {
+          "path": "music-play",
+          "title": {
+            "zh": "歌曲播放排行榜",
+            "en": "Song Play Ranking"
           }
         }
       ]

@@ -1,4 +1,7 @@
 import { Dataset } from '../../dataset/dataset';
+import { supplementIndicatorNodesForCustomTree } from '../../layout/layout-helper';
+import type { ITreeLayoutHeadNode } from '../../layout/tree-helper';
+import { DimensionTree } from '../../layout/tree-helper';
 import type {
   AggregationRule,
   AggregationRules,
@@ -11,26 +14,44 @@ import { AggregationType } from '../../ts-types';
 import type { IChartColumnIndicator } from '../../ts-types/pivot-table/indicator/chart-indicator';
 
 export function createDataset(options: PivotChartConstructorOptions) {
+  const layoutNodeId = { seqId: 0 };
   const dataConfig: IPivotChartDataConfig = { isPivotChart: true };
-
-  const rowKeys =
-    options.rows?.reduce((keys, rowObj) => {
-      if (typeof rowObj === 'string') {
-        keys.push(rowObj);
-      } else {
-        keys.push(rowObj.dimensionKey);
-      }
-      return keys;
-    }, []) ?? [];
-  const columnKeys =
-    options.columns?.reduce((keys, columnObj) => {
-      if (typeof columnObj === 'string') {
-        keys.push(columnObj);
-      } else {
-        keys.push(columnObj.dimensionKey);
-      }
-      return keys;
-    }, []) ?? [];
+  let columnDimensionTree;
+  let rowDimensionTree;
+  let columnTree;
+  let rowTree;
+  if (options.columnTree) {
+    if (options.indicatorsAsCol !== false) {
+      columnTree = supplementIndicatorNodesForCustomTree(options.columnTree, options.indicators);
+    }
+    columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], layoutNodeId);
+  }
+  if (options.rowTree) {
+    if (options.indicatorsAsCol === false) {
+      rowTree = supplementIndicatorNodesForCustomTree(options.rowTree, options.indicators);
+    }
+    rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], layoutNodeId);
+  }
+  const rowKeys = rowDimensionTree.dimensionKeys?.count
+    ? rowDimensionTree.dimensionKeys.valueArr()
+    : options.rows?.reduce((keys, rowObj) => {
+        if (typeof rowObj === 'string') {
+          keys.push(rowObj);
+        } else {
+          keys.push(rowObj.dimensionKey);
+        }
+        return keys;
+      }, []) ?? [];
+  const columnKeys = columnDimensionTree.dimensionKeys?.count
+    ? columnDimensionTree.dimensionKeys.valueArr()
+    : options.columns?.reduce((keys, columnObj) => {
+        if (typeof columnObj === 'string') {
+          keys.push(columnObj);
+        } else {
+          keys.push(columnObj.dimensionKey);
+        }
+        return keys;
+      }, []) ?? [];
   const indicatorKeys =
     options.indicators?.reduce((keys, indicatorObj) => {
       if (typeof indicatorObj === 'string') {
@@ -54,12 +75,12 @@ export function createDataset(options: PivotChartConstructorOptions) {
     options.indicatorsAsCol ?? true,
     options.records,
     undefined,
-    options.columnTree,
-    options.rowTree,
+    columnTree || options.columnTree,
+    rowTree || options.rowTree,
     true
   );
 
-  return dataset;
+  return { dataset, columnDimensionTree, rowDimensionTree, layoutNodeId };
 }
 
 function _generateCollectValuesConfig(

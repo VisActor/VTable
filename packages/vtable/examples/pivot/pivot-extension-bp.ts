@@ -44,7 +44,7 @@ const records = [];
 export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
     rowHierarchyType: 'tree',
-    enableDataAnalysis: false,
+
     autoRowHeight: true,
     widthMode: 'standard',
     disableColumnResize: false,

@@ -275,6 +275,9 @@ const utilTextMark = new Text({
 });
 
 export function measureTextBounds(attribute: ITextGraphicAttribute) {
-  utilTextMark.setAttributes(attribute);
+  utilTextMark.initAttributes({
+    ...attribute,
+    ignoreBuf: true
+  });
   return utilTextMark.AABBBounds;
 }

@@ -34,7 +34,7 @@
 tableInstance.updateTheme(newTheme)
 ```
 
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // 调用后不会自动重绘
@@ -44,6 +44,8 @@ tableInstance.theme = newTheme;
 ## updateColumns(Function)
 
 更新表格的 columns 字段配置信息，调用后会自动重绘。
+
+**ListTable 专有**
 
 ```ts
   /**
@@ -59,7 +61,7 @@ tableInstance.theme = newTheme;
 tableInstance.updateColumns(newColumns)
 ```
 
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // 调用后不会自动重绘
@@ -309,7 +311,7 @@ setRecords(records: Array<any>)
    * 根据行列号获取整条数据记录
    * @param  {number} col col index.
    * @param  {number} row row index.
-   * @return {object} record.
+   * @return {object} record in ListTable. return Array<any> in PivotTable.
    */
   getRecordByCell(col: number, row: number)
 ```
@@ -418,7 +420,7 @@ setRecords(records: Array<any>)
    * 根据行列号获取源数据
    * @param  {number} col col index.
    * @param  {number} row row index.
-   * @return {object} record or record array
+   * @return {object} record or record array.  ListTable return one record, PivotTable return an array of records.
    */
   getCellOriginRecord(col: number, row: number)
 ```
@@ -825,7 +827,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * 导出某个单元格图片
    * @returns base64图片
    */
-  exportCellImg(col: number, row: number): string
+  exportCellImg(col: number, row: number, options?: { disableBackground?: boolean; disableBorder?: boolean }): string
 ```
 
 ## exportCellRangeImg(Function)
@@ -993,6 +995,27 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 获取聚合汇总的值
 
+```
+  /**
+   * 根据字段获取聚合值
+   * @param field 字段名
+   * 返回数组，包括列号和每一列的聚合值数组
+   */
+  getAggregateValuesByField(field: string | number)
+```
+
+**ListTable 专有**
+
+## isAggregation(Function)
+
+判断是否是聚合指单元格
+
+```
+  isAggregation(col: number, row: number): boolean
+```
+
+**ListTable 专有**
+
 ## registerCustomCellStyle(Function)
 
 注册自定义样式
@@ -1006,12 +1029,12 @@ registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption 
 - customStyleId: 自定义样式的唯一 id
 - customStyle: 自定义单元格样式，与`column`中的`style`配置相同，最终呈现效果是单元格原有样式与自定义样式融合
 
-## registerCustomCellStyleArrangement(Function)
+## arrangeCustomCellStyle(Function)
 
 分配自定义样式
 
 ```
-registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
 ```
 
 - cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
@@ -1113,4 +1136,73 @@ interface ISortedMapItem {
 ```
   /**获取对应header的field  */
   getHeaderField: (col: number, row: number)
+```
+
+## setColWidth(Function)
+
+设置列宽
+
+```
+  /**设置列宽 */
+  setColWidth: (col: number, width: number)
+```
+
+## setRowHeight(Function)
+
+设置行高
+
+```
+  /**设置行高 */
+  setRowHeight: (row: number, height: number)
+```
+
+## cellIsInVisualView(Function)
+
+判断单元格是否在单元格可见区域，如果单元格完全都在可见区域才会返回 true，如果有部分或者完全都在可见区域外就返回 false
+
+```
+  cellIsInVisualView(col: number, row: number)
+```
+
+## getCellAtRelativePosition(Function)
+
+获取相对于表格左上角的坐标对应的单元格位置。
+
+有滚动的情况下，获取的单元格是滚动后的，如当前显示的行是 100-120 行，获取相对于表格左上角（10,100）位置的单元格位置是（第一列，第 103 行），假设行高 40px。
+
+```
+  /**
+   * 获取屏幕坐标对应的单元格信息，考虑滚动
+   * @param this
+   * @param relativeX 左边x值，相对于容器左上角，已考虑格滚动情况
+   * @param relativeY 左边y值，相对于容器左上角，已考虑格滚动情况
+   * @returns
+   */
+  getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound
+```
+
+## showMoverLine(Function)
+
+显示移动列或移动行的高亮标记线
+
+```
+  /**
+   * 显示移动列或移动行的高亮线  如果(col，row)单元格是列头 则显示高亮列线；  如果(col，row)单元格是行头 则显示高亮行线
+   * @param col 在表头哪一列后显示高亮线
+   * @param row 在表头哪一行后显示高亮线
+   */
+  showMoverLine(col: number, row: number)
+```
+
+## hideMoverLine(Function)
+
+隐藏掉移动列或移动行的高亮线
+
+```
+  /**
+   * 隐藏掉移动列或移动行的高亮线
+   * @param col
+   * @param row
+   */
+  hideMoverLine(col: number, row: number)
 ```

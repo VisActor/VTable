@@ -29,7 +29,7 @@ yarn add @visactor/react-vtable
 It is recommended to use npm package to import
 
 ```js
-import { ListTable } from "@visactor/react-vtable";
+import { ListTable } from '@visactor/react-vtable';
 ```
 
 ## Draw a simple list
@@ -41,32 +41,32 @@ Here is a simple list example code:
 ```typescript
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { ListTable } from "@visactor/react-vtable";
+import { ListTable } from '@visactor/react-vtable';
 
 const option = {
   columns: [
     {
-      field: "0",
-      caption: "name",
+      field: '0',
+      title: 'name'
     },
     {
-      field: "1",
-      caption: "age",
+      field: '1',
+      title: 'age'
     },
     {
-      field: "2",
-      caption: "gender",
+      field: '2',
+      title: 'gender'
     },
     {
-      field: "3",
-      caption: "hobby",
-    },
+      field: '3',
+      title: 'hobby'
+    }
   ],
-  records: new Array(1000).fill(["John", 18, "male", "🏀"]),
+  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
 };
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <ListTable option={option} height={'500px'}/>
+  <ListTable option={option} height={'500px'} />
 );
 ```
 
@@ -122,10 +122,10 @@ function App() {
   // ......
   return (
     <ListTable records={records}>
-      <ListColumn field={'0'} caption={'名称'} />
-      <ListColumn field={'1'} caption={'年龄'} />
-      <ListColumn field={'2'} caption={'性别'} />
-      <ListColumn field={'3'} caption={'爱好'} />
+      <ListColumn field={'0'} title={'名称'} />
+      <ListColumn field={'1'} title={'年龄'} />
+      <ListColumn field={'2'} title={'性别'} />
+      <ListColumn field={'3'} title={'爱好'} />
     </ListTable>
   );
 }
@@ -145,37 +145,36 @@ The props attributes accepted by PivotTable&PivotChart are the same as options. 
 - PivotCorner: Corner configuration, consistent with the definition of corner in option [api](../../option/PivotTable#corner)
 
 ```jsx
-  return (
-    <PivotTable
-      // ......
-    >
-      <PivotColumnHeaderTitle
-        // ......
-      />
-      <PivotColumnDimension
-        // ......
-      />
-      <PivotColumnDimension
-        // ......
-      />
-      <PivotRowDimension
-        // ......
-      />
-      <PivotRowDimension
-        // ......
-      />
-      <PivotIndicator
-        // ......
-      />
-      <PivotIndicator
-        // ......
-      />
-      <PivotCorner
-        // ......
-      />
-    </PivotTable>
-  );
-
+return (
+  <PivotTable
+  // ......
+  >
+    <PivotColumnHeaderTitle
+    // ......
+    />
+    <PivotColumnDimension
+    // ......
+    />
+    <PivotColumnDimension
+    // ......
+    />
+    <PivotRowDimension
+    // ......
+    />
+    <PivotRowDimension
+    // ......
+    />
+    <PivotIndicator
+    // ......
+    />
+    <PivotIndicator
+    // ......
+    />
+    <PivotCorner
+    // ......
+    />
+  </PivotTable>
+);
 ```
 Grammatical label demo: [PivotTable demo](../../demo-react/grammatical-tag/pivot-table) [PivotChart demo](../../demo-react/grammatical-tag/pivot-chart)
 
@@ -190,10 +189,10 @@ External components currently support:
 <PivotTable>
   // ......
   <Menu
-    // ......
+  // ......
   />
   <Tooltip
-    // ......
+  // ......
   />
 </PivotTable>
 ```
@@ -203,6 +202,7 @@ External components currently support:
 The Props of the outermost table component of the unified label or the syntactic table label inherit the event processing callback EventsProps of the table.
 
 EventsProps are defined as follows:
+
 ```ts
 interface EventsProps {
   onClickCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['click_cell']>;
@@ -246,7 +246,8 @@ interface EventsProps {
   onMouseLeaveAxis?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_axis']>;
 
   onCheckboxStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['checkbox_state_change']>;
-  onRadioStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['radio_state_change']>;  onAfterRender?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_render']>;
+  onRadioStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['radio_state_change']>;
+  onAfterRender?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_render']>;
   onInitialized?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['initialized']>;
 
   // pivot table only
@@ -259,6 +260,7 @@ interface EventsProps {
 ```
 
 Event usage example:
+
 ```jsx
 function App() {
   const option = {
@@ -276,43 +278,3 @@ function App() {
 ```
 
 For detailed description of the event, please refer to: [Event Introduction](../../guide/Event/event_list)
-
-## Custom component
-
-In order to facilitate the superposition of external components on the React-VTable component, React-VTable provides a `CustomComponent` tool component to quickly locate external components into the table.
-
-```jsx
-<ListTable option={option} onMouseEnterCell={updatePos} onMouseLeaveTable={hide} onReady={ready}>
-  <CustomComponent width="50%" height="100%" displayMode="cell" col={col} row={row} anchor="bottom-right" dx="-50%">
-    <UserComponent value={value} />
-  </CustomComponent>
-</ListTable>
-```
-
-Among them, `CustomComponent` is used as a container for positioning in the table and automatically matching the size (based on anchored cells). There are two ways to use it:
-
-1. Absolute positioning
-
-    For absolute positioning, you need to specify `displayMode` as `position`, `x` and `y` attributes, which are used to position the container to the specified pixel position in the table (based on the upper left corner), `width` and `height `property specifies the pixel dimensions of the container.
-
-2. Relative positioning
-
-    For relative positioning, you need to specify `displayMode` as `cell`, the container is positioned relative to the cell, the `col` and `row` attributes are used to specify the anchored cell coordinates, and the `anchor` attribute specifies the container relative to the cell. The anchor position, `dx` and `dy` attributes specify the offset of the container relative to the anchor cell, and the `width` and `height` properties specify the size of the container, where `dx` `dy` `width` and The `height` attribute supports units of pixels or percentages. When it is a percentage, it is calculated relative to the size of the cell.
-
-### API
-
-```ts
-interface CustomComponentProps {
-  children: React.ReactNode;
-  displayMode: 'position' | 'cell'; // positioning method
-  col?: number; // anchored column coordinates
-  row?: number; // anchored row coordinates
-  anchor?: 'top-left' | 'top-center' | 'top-right' |'middle-left' |'middle-center' |'middle-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'; // anchored position
-  dx?: number | string; // offset in x direction
-  dy?: number | string; // offset in y direction
-  width?: number | string; // container width
-  height?: number | string; // container height
-}
-```
-
-[custom component demo](../../demo-react/component/custom-component)

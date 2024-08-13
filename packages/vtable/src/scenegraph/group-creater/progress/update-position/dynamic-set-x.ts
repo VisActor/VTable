@@ -1,3 +1,4 @@
+import type { ColumnInfo } from '../../../../ts-types';
 import type { BaseTableAPI } from '../../../../ts-types/base-table';
 import type { Group } from '../../../graphic/group';
 import { computeColsWidth } from '../../../layout/compute-col-width';
@@ -5,16 +6,12 @@ import type { SceneProxy } from '../proxy';
 import { updateAutoColumn } from './update-auto-column';
 import { checkFirstColMerge, getFirstChild, getLastChild } from './util';
 
-export async function dynamicSetX(x: number, isEnd: boolean, proxy: SceneProxy) {
-  const screenLeft = (proxy.table as BaseTableAPI).getTargetColAt(
-    x + proxy.table.scenegraph.rowHeaderGroup.attribute.width
-  );
+export async function dynamicSetX(x: number, screenLeft: ColumnInfo | null, isEnd: boolean, proxy: SceneProxy) {
   if (!screenLeft) {
     return;
   }
   const screenLeftCol = screenLeft.col;
   const screenLeftX = screenLeft.left;
-  proxy.screenLeftCol = screenLeftCol;
 
   let deltaCol;
   if (isEnd) {
@@ -202,18 +199,31 @@ function updateColGroupContent(colGroup: Group, proxy: SceneProxy) {
   if (!colGroup) {
     return;
   }
-  // colGroup.forEachChildren((cellGroup: Group) => {
-  //   proxy.updateCellGroupContent(cellGroup);
-  // });
-  // for (let row = (colGroup.firstChild as Group).row; row <= (colGroup.lastChild as Group).row; row++) {
-  //   const cellGroup = proxy.highPerformanceGetCell(colGroup.col, row);
-  //   proxy.updateCellGroupContent(cellGroup);
-  // }
   let cellGroup = colGroup.firstChild;
   while (cellGroup) {
     const newCellGroup = proxy.updateCellGroupContent(cellGroup as Group);
     cellGroup = newCellGroup._next;
   }
+  colGroup.needUpdate = false;
+  colGroup.setAttribute('width', proxy.table.getColWidth(colGroup.col));
+}
+
+// update cells async
+function updateColGroupContentAsync(colGroup: Group, proxy: SceneProxy) {
+  if (!colGroup) {
+    return;
+  }
+  const screenTopRow = proxy.screenTopRow;
+  const topRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
+  const bottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
+
+  for (let row = topRow; row <= bottomRow; row++) {
+    // const cellGroup = proxy.table.scenegraph.getCell(col, row);
+    const cellGroup = proxy.highPerformanceGetCell(colGroup.col, row, true);
+    proxy.updateCellGroupContent(cellGroup);
+  }
+  proxy.rowUpdatePos = proxy.rowStart;
+
   colGroup.needUpdate = false;
   colGroup.setAttribute('width', proxy.table.getColWidth(colGroup.col));
 }
@@ -265,9 +275,6 @@ function updateColPosition(containerGroup: Group, direction: 'left' | 'right', p
 
 export function updateColContent(syncLeftCol: number, syncRightCol: number, proxy: SceneProxy) {
   for (let col = syncLeftCol; col <= syncRightCol; col++) {
-    const colGroup = proxy.table.scenegraph.getColGroup(col);
-    colGroup && updateColGroupContent(colGroup, proxy);
-
     const colHeaderColGroup = proxy.table.scenegraph.getColGroup(col, true);
     colHeaderColGroup && updateColGroupContent(colHeaderColGroup, proxy);
 
@@ -279,7 +286,11 @@ export function updateColContent(syncLeftCol: number, syncRightCol: number, prox
 
     const rightBottomColGroup = proxy.table.scenegraph.getColGroupInRightBottomCorner(col);
     rightBottomColGroup && updateColGroupContent(rightBottomColGroup, proxy);
+
+    const colGroup = proxy.table.scenegraph.getColGroup(col);
+    colGroup && updateColGroupContentAsync(colGroup, proxy);
   }
+  proxy.progress();
 }
 
 function updateAllColPosition(distStartColY: number, count: number, direction: 'left' | 'right', proxy: SceneProxy) {
