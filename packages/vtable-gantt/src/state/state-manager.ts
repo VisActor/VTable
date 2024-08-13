@@ -479,14 +479,32 @@ export class StateManager {
       const height = target.attribute.height;
       this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, taskBarTarget);
       this._gantt.scenegraph.updateNextFrame();
+      if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR)) {
+        const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, this._gantt);
+        const record = this._gantt.getRecordByIndex(taskIndex);
+        this._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
+          event: e.nativeEvent,
+          index: taskIndex,
+          record
+        });
+      }
     }
     //
   }
-  hideTaskBarHover() {
+  hideTaskBarHover(e: VRender.FederatedPointerEvent) {
     if (this._gantt.stateManager.hoverTaskBar.target) {
       this._gantt.stateManager.hoverTaskBar.target = null;
       this._gantt.scenegraph.taskBar.hideHoverBar();
       this._gantt.scenegraph.updateNextFrame();
+      if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR)) {
+        const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, this._gantt);
+        const record = this._gantt.getRecordByIndex(taskIndex);
+        this._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
+          event: e.nativeEvent,
+          index: taskIndex,
+          record
+        });
+      }
     }
   }
 }

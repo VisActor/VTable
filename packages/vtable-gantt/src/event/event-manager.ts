@@ -3,10 +3,11 @@ import type { Gantt } from '../Gantt';
 import { EventHandler } from '../event/EventHandler';
 import { handleWhell } from '../event/scroll';
 import { throttle } from '../tools/util';
-import { InteractionState } from '../ts-types';
+import { GANTT_EVENT_TYPE, InteractionState } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
 import type { GanttTaskBarNode } from '../scenegraph/ganttNode';
+import { getTaskIndexByY } from '../gantt-helper';
 
 export class EventManager {
   _gantt: Gantt;
@@ -35,7 +36,9 @@ function bindTableGroupListener(event: EventManager) {
   const scene = event._gantt.scenegraph;
   const gantt = event._gantt;
   const stateManager = gantt.stateManager;
+  let poniterState: 'down' | 'draging' | 'up';
   scene.tableGroup.addEventListener('pointerdown', (e: VRender.FederatedPointerEvent) => {
+    poniterState = 'down';
     if (e.button !== 0) {
       // 只处理左键
       return;
@@ -58,6 +61,17 @@ function bindTableGroupListener(event: EventManager) {
   });
 
   scene.tableGroup.addEventListener('pointermove', (e: VRender.FederatedPointerEvent) => {
+    if (poniterState === 'down') {
+      const x1 = gantt.eventManager.lastDragPointerXYOnWindow.x;
+      const x2 = e.x;
+      const dx = x2 - x1;
+      const y1 = gantt.eventManager.lastDragPointerXYOnWindow.y;
+      const y2 = e.y;
+      const dy = y2 - y1;
+      if (dx >= 1 || dy >= 1) {
+        poniterState = 'draging';
+      }
+    }
     if (stateManager.interactionState === InteractionState.default) {
       const taksIndex = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
@@ -65,11 +79,22 @@ function bindTableGroupListener(event: EventManager) {
       if (taksIndex) {
         stateManager.showTaskBarHover(e);
       } else {
-        stateManager.hideTaskBarHover();
+        stateManager.hideTaskBarHover(e);
       }
     }
   });
-  // scene.stage.addEventListener('pointerup', (e: FederatedPointerEvent) => {});
+  scene.tableGroup.addEventListener('pointerup', (e: VRender.FederatedPointerEvent) => {
+    if (poniterState === 'down' && gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
+      const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, gantt);
+      const record = gantt.getRecordByIndex(taskIndex);
+      gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
+        event: e.nativeEvent,
+        index: taskIndex,
+        record
+      });
+    }
+    poniterState = 'up';
+  });
 
   scene.tableGroup.addEventListener('pointerenter', (e: VRender.FederatedPointerEvent) => {
     if (

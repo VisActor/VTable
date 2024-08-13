@@ -974,7 +974,15 @@ export function createTable() {
   tableInstance.on('change_date_range', e => {
     console.log('change_date_range', e);
   });
-
+  tableInstance.on('mouseenter_task_bar', e => {
+    console.log('mouseenter_taskbar', e);
+  });
+  tableInstance.on('mouseleave_task_bar', e => {
+    console.log('mouseleave_taskbar', e);
+  });
+  tableInstance.on('click_task_bar', e => {
+    console.log('click_task_bar', e);
+  });
   tableInstance.listTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });

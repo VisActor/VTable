@@ -15,12 +15,12 @@ export interface TableEventHandlersEventArgumentMap {
     scrollRatioX?: number;
     scrollRatioY?: number;
   };
-  mouseenter_taskbar: {
+  mouseenter_task_bar: {
     index: number;
     record: any;
     event: Event;
   };
-  mouseleave_taskbar: {
+  mouseleave_task_bar: {
     index: number;
     record: any;
     event: Event;
