@@ -17,15 +17,6 @@ export function syncScrollStateFromTable(gantt: Gantt) {
     });
   }
 }
-export function syncResizeStateFromTable(gantt: Gantt) {
-  // if (gantt.taskListTableInstance && gantt.options.taskListTable?.width === 'auto') {
-  //   gantt.taskListTableInstance?.on('resize_column', (args: any) => {
-  //     gantt.taskTableWidth = gantt.taskListTableInstance.getAllColsWidth() + gantt.taskListTableInstance.tableX * 2;
-  //     gantt.element.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth}px` : '0px';
-  //     gantt._resize();
-  //   });
-  // }
-}
 export function syncEditCellFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('change_cell_value', (args: any) => {
     const { col, row, rawValue, changedValue } = args;

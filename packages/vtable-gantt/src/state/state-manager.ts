@@ -4,7 +4,6 @@ import { InteractionState, GANTT_EVENT_TYPE } from '../ts-types';
 import type { VRender } from '@visactor/vtable';
 import {
   syncEditCellFromTable,
-  syncResizeStateFromTable,
   syncScrollStateFromTable,
   syncScrollStateToTable,
   syncDragOrderFromTable,
@@ -102,7 +101,6 @@ export class StateManager {
     this.updateHorizontalScrollBar = this.updateHorizontalScrollBar.bind(this);
 
     syncScrollStateFromTable(this._gantt);
-    syncResizeStateFromTable(this._gantt);
     syncEditCellFromTable(this._gantt);
     syncDragOrderFromTable(this._gantt);
     syncTreeChangeFromTable(this._gantt);
@@ -441,10 +439,14 @@ export class StateManager {
       const startWidth = this._gantt.taskTableWidth;
       let width = startWidth + deltaX;
       const maxWidth = Math.min(
-        this._gantt.taskListTableInstance.getAllColsWidth() + this._gantt.tableX * 2,
+        this._gantt.taskListTableInstance.getAllColsWidth() +
+          this._gantt.parsedOptions.outerFrameStyle.borderLineWidth * 2,
         this._gantt.options.taskListTable.maxWidth ?? 100000
       );
-      const minWidth = Math.max(this._gantt.tableX * 2, this._gantt.options.taskListTable.minWidth ?? 0);
+      const minWidth = Math.max(
+        this._gantt.parsedOptions.outerFrameStyle.borderLineWidth * 2,
+        this._gantt.options.taskListTable.minWidth ?? 0
+      );
       if (deltaX > 0 && width > maxWidth) {
         width = maxWidth;
       }
@@ -482,7 +484,7 @@ export class StateManager {
       if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR)) {
         const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, this._gantt);
         const record = this._gantt.getRecordByIndex(taskIndex);
-        this._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
+        this._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
           event: e.nativeEvent,
           index: taskIndex,
           record

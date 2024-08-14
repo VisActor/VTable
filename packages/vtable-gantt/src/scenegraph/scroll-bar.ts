@@ -187,7 +187,7 @@ export class ScrollBarComponent {
       }
 
       this.hScrollBar.setAttributes({
-        x: !hoverOn ? this._gantt.scenegraph.tableGroup.attribute.x : 0,
+        x: this._gantt.scenegraph.tableGroup.attribute.x,
         y: attrY,
         width: tableWidth,
         range: [0, rangeEnd],
@@ -211,17 +211,14 @@ export class ScrollBarComponent {
     }
 
     if (totalHeight > tableHeight) {
-      const x = Math.min(tableWidth, totalWidth);
+      const x = Math.min(tableWidth, totalWidth) + this._gantt.scenegraph.tableGroup.attribute.x;
       const rangeEnd = Math.max(0.05, (tableHeight - frozenRowsHeight) / (totalHeight - frozenRowsHeight));
 
       let attrX = 0;
       const hoverOn = this._gantt.parsedOptions.scrollStyle.hoverOn;
 
       if (this._gantt.parsedOptions.scrollStyle.barToSide) {
-        attrX =
-          this._gantt.tableNoFrameWidth -
-          (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.x) +
-          this._gantt.tableX;
+        attrX = this._gantt.tableNoFrameWidth - (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.x);
       } else {
         attrX = x - (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.x);
       }

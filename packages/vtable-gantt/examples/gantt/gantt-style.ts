@@ -622,7 +622,7 @@ export function createTable() {
       },
       verticalSplitLine: {
         lineColor: '#e1e4e8',
-        lineWidth: 3
+        lineWidth: 10
       },
       horizontalSplitLine: {
         lineColor: '#e1e4e8',
@@ -706,34 +706,34 @@ export function createTable() {
             // padding: [0, 30, 0, 20]
           }
         },
-        // {
-        //   unit: 'day',
-        //   step: 1,
-        //   format(date: TYPES.DateFormatArgumentType) {
-        //     return date.dateIndex.toString();
-        //   },
-        //   style: {
-        //     fontSize: 20,
-        //     fontWeight: 'bold',
-        //     color: 'white',
-        //     strokeColor: 'black',
-        //     textAlign: 'right',
-        //     textBaseline: 'bottom',
-        //     backgroundColor: '#EEF1F5'
-        //   }
-        // }
         {
-          unit: 'quarter',
+          unit: 'day',
           step: 1,
-          rowHeight: 100,
           format(date: TYPES.DateFormatArgumentType) {
-            return '第' + date.dateIndex + '季度';
+            return date.dateIndex.toString();
+          },
+          style: {
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: 'white',
+            strokeColor: 'black',
+            textAlign: 'right',
+            textBaseline: 'bottom',
+            backgroundColor: '#EEF1F5'
           }
         }
+        // {
+        //   unit: 'quarter',
+        //   step: 1,
+        //   rowHeight: 100,
+        //   format(date: TYPES.DateFormatArgumentType) {
+        //     return '第' + date.dateIndex + '季度';
+        //   }
+        // }
       ]
     },
-    minDate: '2024-07-23',
-    maxDate: '2024-10-15',
+    // minDate: '2024-07-23',
+    // maxDate: '2024-10-15',
     markLine: [
       {
         date: '2024-07-17',

@@ -71,7 +71,11 @@ export class FrameBorder {
       rectAttributes.y = borderLineWidth / 2;
       rectAttributes.pickable = false;
 
-      rectAttributes.width = group.attribute.width + borderLineWidth / 2 + borderLineWidth / 2;
+      rectAttributes.width =
+        group.attribute.width +
+        borderLineWidth / 2 +
+        borderLineWidth / 2 +
+        this._scene._gantt.parsedOptions.verticalSplitLine.lineWidth;
       rectAttributes.height = group.attribute.height + borderLineWidth / 2 + borderLineWidth / 2;
       const borderRect = VRender.createRect(rectAttributes);
       borderRect.name = 'border-rect';
@@ -86,7 +90,10 @@ export class FrameBorder {
     this.border.setAttributes({
       // x: -borderLineWidth / 2,
       // y: borderLineWidth / 2,
-      width: this._scene.tableGroup.attribute.width + this.border.attribute.lineWidth,
+      width:
+        this._scene.tableGroup.attribute.width +
+        this.border.attribute.lineWidth +
+        this._scene._gantt.parsedOptions.verticalSplitLine.lineWidth,
       height: this._scene.tableGroup.attribute.height + this.border.attribute.lineWidth
     });
   }

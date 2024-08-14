@@ -63,10 +63,14 @@ export function createRootElement(padding: any, className: string = 'vtable-gant
 export class Gantt extends EventTarget {
   options: GanttConstructorOptions;
   container: HTMLElement;
-  canvasWidth?: number;
-  canvasHeight?: number;
+  /** 相比于canvas的宽度  会减掉:右侧frame边框的宽度 以及中间分割线verticalSplitLine.lineWidth  */
   tableNoFrameWidth: number;
+  /** 相比于canvas的宽度  会减掉:上面和下面frame边框的宽度 */
   tableNoFrameHeight: number;
+  /** 真正展示gantt甘特图的其实位置 应该是等于中间分割线的宽度verticalSplitLine.lineWidth。
+   * 分割线底部仍然是canvas 因为需要canvas绘制frame边框线
+   * scenegraph中的tableGroup的 attr.x 会等于该值
+   */
   tableX: number;
   tableY: number;
   scenegraph: Scenegraph;
@@ -127,7 +131,7 @@ export class Gantt extends EventTarget {
     verticalSplitLineMoveable?: boolean;
     overscrollBehavior: 'auto' | 'none';
   } = {} as any;
-
+  /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
   taskTableColumns: ITableColumnsDefine;
 
@@ -141,11 +145,12 @@ export class Gantt extends EventTarget {
     this.taskTableWidth = typeof options?.taskListTable?.width === 'number' ? options?.taskListTable?.width : 100;
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
+
     this._sortScales();
     initOptions(this);
-
-    this._generateTimeLineDateMap();
     this.data = new DataSource(this);
+    this._generateTimeLineDateMap();
+
     this.timeLineHeaderLevel = this.parsedOptions.sortedTimelineScales.length;
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
     // this.element.style.top = '0px';
@@ -232,9 +237,9 @@ export class Gantt extends EventTarget {
     if (this.parsedOptions.outerFrameStyle) {
       //考虑表格整体边框的问题
       const lineWidth = this.parsedOptions.outerFrameStyle?.borderLineWidth; // toBoxArray(this.parsedOptions.frameStyle?.borderLineWidth ?? [null]);
-      this.tableX = lineWidth;
+      this.tableX = this.parsedOptions.verticalSplitLine.lineWidth ?? 0;
       this.tableY = lineWidth;
-      this.tableNoFrameWidth = width - lineWidth;
+      this.tableNoFrameWidth = width - lineWidth - this.parsedOptions.verticalSplitLine.lineWidth;
 
       this.tableNoFrameHeight = height - lineWidth * 2;
     }
@@ -245,7 +250,8 @@ export class Gantt extends EventTarget {
       this.taskListTableInstance = new ListTableSimple(this.container, listTableOption);
 
       if (this.options?.taskListTable?.width === 'auto') {
-        this.taskTableWidth = this.taskListTableInstance.getAllColsWidth() + this.taskListTableInstance.tableX * 2;
+        this.taskTableWidth =
+          this.taskListTableInstance.getAllColsWidth() + this.parsedOptions.outerFrameStyle.borderLineWidth * 2;
         if (this.options?.taskListTable?.maxWidth) {
           this.taskTableWidth = Math.min(this.options?.taskListTable?.maxWidth, this.taskTableWidth);
         }
@@ -561,8 +567,8 @@ export class Gantt extends EventTarget {
     const { parentElement } = this.element;
     if (parentElement) {
       parentElement.removeChild(this.element);
-      parentElement.removeChild(this.verticalSplitResizeLine);
-      parentElement.removeChild(this.horizontalSplitLine);
+      this.verticalSplitResizeLine && parentElement.removeChild(this.verticalSplitResizeLine);
+      this.horizontalSplitLine && parentElement.removeChild(this.horizontalSplitLine);
     }
     this.scenegraph = null;
   }

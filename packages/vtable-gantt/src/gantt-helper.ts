@@ -379,7 +379,11 @@ export function createSplitLineAndResizeLine(gantt: Gantt) {
     gantt.horizontalSplitLine.style.top = gantt.getAllHeaderRowsHeight() + 'px';
     gantt.horizontalSplitLine.style.left = gantt.tableY + 'px';
     gantt.horizontalSplitLine.style.height = (gantt.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
-    gantt.horizontalSplitLine.style.width = gantt.tableNoFrameWidth + gantt.taskTableWidth + 'px'; //'100%';
+    gantt.horizontalSplitLine.style.width =
+      gantt.tableNoFrameWidth +
+      (gantt.taskListTableInstance?.tableNoFrameWidth ?? 0) +
+      +gantt.parsedOptions.verticalSplitLine.lineWidth +
+      'px'; //'100%';
     gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
     gantt.horizontalSplitLine.style.zIndex = '100';
     gantt.horizontalSplitLine.style.userSelect = 'none';
@@ -390,7 +394,9 @@ export function createSplitLineAndResizeLine(gantt: Gantt) {
     gantt.verticalSplitResizeLine = document.createElement('div');
     gantt.verticalSplitResizeLine.style.position = 'absolute';
     gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';
-    gantt.verticalSplitResizeLine.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth - 7}px` : '0px';
+    gantt.verticalSplitResizeLine.style.left = gantt.taskTableWidth
+      ? `${gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2}px`
+      : '0px';
     gantt.verticalSplitResizeLine.style.width = '14px';
     gantt.verticalSplitResizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
     gantt.verticalSplitResizeLine.style.backgroundColor = 'rgba(0,0,0,0)';
@@ -439,7 +445,11 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
     gantt.horizontalSplitLine.style.top = gantt.getAllHeaderRowsHeight() + 'px';
     gantt.horizontalSplitLine.style.left = gantt.tableY + 'px';
     gantt.horizontalSplitLine.style.height = (gantt.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
-    gantt.horizontalSplitLine.style.width = gantt.tableNoFrameWidth + gantt.taskTableWidth + 'px'; //'100%';
+    gantt.horizontalSplitLine.style.width =
+      gantt.tableNoFrameWidth +
+      (gantt.taskListTableInstance?.tableNoFrameWidth ?? 0) +
+      gantt.parsedOptions.verticalSplitLine.lineWidth +
+      'px'; //'100%';
     gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
     gantt.horizontalSplitLine.style.zIndex = '100';
     gantt.horizontalSplitLine.style.userSelect = 'none';
@@ -448,7 +458,9 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
   if (gantt.verticalSplitResizeLine) {
     gantt.verticalSplitResizeLine.style.position = 'absolute';
     gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';
-    gantt.verticalSplitResizeLine.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth - 7}px` : '0px';
+    gantt.verticalSplitResizeLine.style.left = gantt.taskTableWidth
+      ? `${gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2}px`
+      : '0px';
     gantt.verticalSplitResizeLine.style.width = '14px';
     gantt.verticalSplitResizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
     gantt.verticalSplitResizeLine.style.backgroundColor = 'rgba(0,0,0,0)';

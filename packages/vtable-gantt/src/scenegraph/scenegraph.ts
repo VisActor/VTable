@@ -75,7 +75,7 @@ export class Scenegraph {
     const scene = this;
 
     scene.tableGroup = new VRender.Group({
-      x: 0,
+      x: scene._gantt.tableX,
       y: scene._gantt.tableY,
       width: this.tableGroupWidth,
       height: this.tableGroupHeight,
@@ -146,7 +146,7 @@ export class Scenegraph {
   updateTableSize() {
     this.tableGroupHeight = Math.min(this._gantt.tableNoFrameHeight, this._gantt.drawHeight);
     this.tableGroup.setAttributes({
-      x: 0,
+      x: this._gantt.tableX,
       y: this._gantt.tableY,
       width: this._gantt.tableNoFrameWidth,
       height: this.tableGroupHeight
