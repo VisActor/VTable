@@ -1,7 +1,7 @@
 <template>
   <BaseTable
-    :options="computedOptions"
     type="pivot"
+    :options="computedOptions"
     :records="records"
     :width="width"
     :height="height"
@@ -12,7 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import { shallowRef, computed, defineProps, useSlots, VNode } from 'vue';
+import { shallowRef, computed, defineProps, useSlots } from 'vue';
+import { flattenVNodes } from './utils';
 import BaseTable from './base-table.vue';
 import type { ICornerDefine as PivotCornerProps, IIndicator as PivotIndicatorsProps, IDimension as PivotColumnDimensionProps, IDimension as PivotRowDimensionProps, ITitleDefine } from '@visactor/vtable';
 import type { TooltipProps } from '../components/component/tooltip';
@@ -29,14 +30,6 @@ const props = defineProps<Props>();
 const baseTableRef = shallowRef<InstanceType<typeof BaseTable> | null>(null);
 const slots = useSlots();
 
-function flattenVNodes(vnodes: VNode[]): VNode[] {  
-  return vnodes.flatMap(vnode => {
-    if (Array.isArray(vnode.children)) {
-      return flattenVNodes(vnode.children as VNode[]);
-    }
-    return vnode;
-  });
-}
 
 const computedOptions = computed(() => {
   const flattenedSlots = flattenVNodes(slots.default?.() || []);
