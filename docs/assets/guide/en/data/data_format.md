@@ -8,12 +8,11 @@ In VTable, the main data format we need to deal with is a JSON array. For exampl
 
 ```json
 [
-  { "name": "zhang_san", "age": 20, "sex": "", "phone": "123456789", "address": "beijing haidian" },
-  { "name": "li_si", "age": 30, "sex": "female", "phone": "23456789", "address": "beijing chaoyang" },
-  { "name": "wang_wu", "age": 40, "sex": "male", "phone": "3456789", "address": "beijing fengtai" }
+  {"name": "zhang_san","age": 20,"sex": "","phone": "123456789","address": "beijing haidian"},
+  {"name": "li_si","age": 30,"sex": "female","phone": "23456789","address": "beijing chaoyang"},
+  {"name": "wang_wu","age": 40,"sex": "male","phone": "3456789","address": "beijing fengtai"}
 ]
 ```
-
 At the same time: the data structure of two-dimensional array can also support setting.
 
 Next we will describe how to apply this data to basic tables and pivot tables, respectively.
@@ -27,74 +26,76 @@ Creating a basic table based on the above JSON data should configure the corresp
 Example:
 
 ```javascript livedemo  template=vtable
-const option = {
-  columns: [
-    {
-      field: 'name',
-      title: 'name',
-      sort: true,
-      width: 'auto'
-    },
-    {
-      field: 'age',
-      title: 'age'
-    },
-    {
-      field: 'sex',
-      title: 'sex'
-    },
-    {
-      field: 'phone',
-      title: 'phone'
-    },
-    {
-      field: 'address',
-      title: 'address'
-    }
-  ],
-  records: [
-    { name: 'zhang_san', age: 20, sex: 'female', phone: '123456789', address: 'beijing haidian' },
-    { name: 'li_si', age: 30, sex: 'female', phone: '23456789', address: 'beijing chaoyang' },
-    { name: 'wang_wu', age: 40, sex: 'male', phone: '3456789', address: 'beijing fengtai' }
-  ]
-};
+
+ const option = {
+    columns : [
+        {
+            "field": "name",
+            "title": "name",
+            "sort": true,
+            "width":'auto',
+        },
+        {
+            "field": "age",
+            "title": "age"
+        },
+        {
+            "field": "sex",
+            "title": "sex"
+        },
+        {
+            "field": "phone",
+            "title": "phone"
+        },
+        {
+            "field": "address",
+            "title": "address"
+        },
+    ],
+    "records":[
+     {"name": "zhang_san","age": 20,"sex": "female","phone": "123456789","address": "beijing haidian"},
+     {"name": "li_si","age": 30,"sex": "female","phone": "23456789","address": "beijing chaoyang"},
+     {"name": "wang_wu","age": 40,"sex": "male","phone": "3456789","address": "beijing fengtai"}
+    ]
+}
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+
 ```
 
 If you use a two-dimensional array as the data source, you can run it as follows:
 
 ```javascript livedemo  template=vtable
-const option = {
-  columns: [
-    {
-      field: '0',
-      title: 'name',
-      sort: true,
-      width: 'auto'
-    },
-    {
-      field: '1',
-      title: 'age'
-    },
-    {
-      field: '2',
-      title: 'sex'
-    },
-    {
-      field: '3',
-      title: 'phone'
-    },
-    {
-      field: '4',
-      title: 'address'
-    }
-  ],
-  records: [
-    ['zhang_san', 20, 'female', '123456789', 'beijing haidian'],
-    ['li_si', 30, 'female', '23456789', 'beijing chaoyang'],
-    ['wang_wu', 40, 'male', '3456789', 'beijing fengtai']
-  ]
-};
+    const option = {
+      columns : [
+        {
+            "field": "0",
+            "title": "name",
+            "sort": true,
+            "width":'auto',
+        },
+        {
+            "field": "1",
+            "title": "age"
+        },
+        {
+            "field": "2",
+            "title": "sex"
+        },
+        {
+            "field": "3",
+            "title": "phone"
+        },
+        {
+            "field": "4",
+            "title": "address"
+        },
+    ],
+    "records":[
+     [ "zhang_san", 20,"female", "123456789", "beijing haidian"],
+     ["li_si", 30,"female", "23456789", "beijing chaoyang"],
+     [ "wang_wu", 40, "male", "3456789", "beijing fengtai"]
+    ]
+}
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 ```
 
@@ -106,12 +107,12 @@ Its configuration item is [`PivotTableConstructorOptions`](https://visactor.io/v
 
 ```json
 [
-  { "age": 30, "sex": "male", "city": "北京", "income": 430 },
-  { "age": 30, "sex": "female", "city": "上海", "income": 440 },
-  { "age": 30, "sex ": "male", "city": "深圳", "income": 420 },
-  { "age": 25, "sex": "male", "city": "北京", "income": 400 },
-  { "age": 25, "sex": "female", "city": "上海", "income": 400 },
-  { "age": 25, "sex ": "male", "city": "深圳", "income": 380 }
+  {"age": 30,"sex": "male","city": "北京", "income": 430},
+  {"age": 30,"sex": "female","city": "上海", "income": 440},
+  {"age": 30,"sex ": "male","city": "深圳",  "income": 420},
+  {"age": 25,"sex": "male","city": "北京", "income": 400},
+  {"age": 25,"sex": "female","city": "上海", "income": 400},
+  {"age": 25,"sex ": "male","city": "深圳",  "income": 380}
 ]
 ```
 
@@ -120,84 +121,83 @@ Example:
 ```javascript livedemo template=vtable
 const option = {
   container: document.getElementById(CONTAINER_ID),
-  rowTree: [
+  "rowTree": [
     {
-      dimensionKey: 'city',
-      value: 'beijing',
-      children: [
+      "dimensionKey": "city",
+      "value": "beijing",
+       "children": [
         {
-          indicatorKey: 'income'
-        }
-      ]
+          "indicatorKey": "income",
+        },
+       ]
     },
     {
-      dimensionKey: 'city',
-      value: 'shanghai',
-      children: [
+      "dimensionKey": "city",
+      "value": "shanghai",
+       "children": [
         {
-          indicatorKey: 'income'
-        }
-      ]
+          "indicatorKey": "income",
+        },
+       ]
     },
     {
-      dimensionKey: 'city',
-      value: 'shenzhen',
-      children: [
+      "dimensionKey": "city",
+      "value": "shenzhen",
+       "children": [
         {
-          indicatorKey: 'income'
-        }
-      ]
+          "indicatorKey": "income",
+        },
+       ]
     }
   ],
-  columnTree: [
+  "columnTree": [
     {
-      dimensionKey: 'sex',
-      value: 'male',
-      children: [
+      "dimensionKey": "sex",
+      "value": "male",
+      "children": [
         {
-          dimensionKey: 'age',
-          value: '30'
+          "dimensionKey": "age",
+          "value": "30"
         },
         {
-          dimensionKey: 'age',
-          value: '25'
+          "dimensionKey": "age",
+          "value": "25"
         }
       ]
     },
     {
-      dimensionKey: 'sex',
-      value: 'female',
-      children: [
+      "dimensionKey": "sex",
+      "value": "female",
+      "children": [
         {
-          dimensionKey: 'age',
-          value: '30'
+          "dimensionKey": "age",
+          "value": "30"
         },
         {
-          dimensionKey: 'age',
-          value: '25'
+          "dimensionKey": "age",
+          "value": "25"
         }
       ]
     }
   ],
-  indicators: [
-    {
-      indicatorKey: 'income',
-      title: 'income'
-    }
+  "indicators": [{
+    "indicatorKey": "income",
+    "title": "income"
+  }],
+  "records": [
+    { "age": 30, "sex": "male", "city": "beijing", "income": 400 },
+    { "age": 30, "sex": "female", "city": "shanghai", "income": 410 },
+    { "age": 30, "sex ": "female", "city": "shenzhen", "income": 420 },
+    { "age": 25, "sex": "male", "city": "beijing", "income": 430 },
+    { "age": 30, "sex ": "male", "city": "shenzhen", "income": 440 },
+    { "age": 25, "sex": "male", "city": "shanghai", "income": 450 },
+    { "age": 25, "sex": "female", "city": "shanghai", "income": 460 },
+    { "age": 25, "sex ": "male", "city": "shenzhen", "income": 470 }
   ],
-  records: [
-    { age: 30, sex: 'male', city: 'beijing', income: 400 },
-    { age: 30, sex: 'female', city: 'shanghai', income: 410 },
-    { age: 30, 'sex ': 'female', city: 'shenzhen', income: 420 },
-    { age: 25, sex: 'male', city: 'beijing', income: 430 },
-    { age: 30, 'sex ': 'male', city: 'shenzhen', income: 440 },
-    { age: 25, sex: 'male', city: 'shanghai', income: 450 },
-    { age: 25, sex: 'female', city: 'shanghai', income: 460 },
-    { age: 25, 'sex ': 'male', city: 'shenzhen', income: 470 }
-  ],
-  defaultHeaderColWidth: 100
-};
+  defaultHeaderColWidth:100
+}
 const tableInstance = new VTable.PivotTable(option);
+
 ```
 
 At the same time, the records data format also supports cell-by-cell corresponding configuration:
@@ -216,110 +216,94 @@ Example of setting up records with a two-dimensional array:
 ```javascript livedemo template=vtable
 const option = {
   container: document.getElementById(CONTAINER_ID),
-  rowTree: [
+  "rowTree": [
     {
-      dimensionKey: 'city',
-      value: 'beijing',
-      children: [
+      "dimensionKey": "city",
+      "value": "beijing",
+       "children": [
         {
-          indicatorKey: 'income'
-        }
-      ]
+          "indicatorKey": "income",
+        },
+       ]
     },
     {
-      dimensionKey: 'city',
-      value: 'shanghai',
-      children: [
+      "dimensionKey": "city",
+      "value": "shanghai",
+       "children": [
         {
-          indicatorKey: 'income'
-        }
-      ]
+          "indicatorKey": "income",
+        },
+       ]
     },
     {
-      dimensionKey: 'city',
-      value: 'shenzhen',
-      children: [
+      "dimensionKey": "city",
+      "value": "shenzhen",
+       "children": [
         {
-          indicatorKey: 'income'
-        }
-      ]
+          "indicatorKey": "income",
+        },
+       ]
     }
   ],
-  columnTree: [
+  "columnTree": [
     {
-      dimensionKey: 'sex',
-      value: 'male',
-      children: [
+      "dimensionKey": "sex",
+      "value": "male",
+      "children": [
         {
-          dimensionKey: 'age',
-          value: '30'
+          "dimensionKey": "age",
+          "value": "30"
         },
         {
-          dimensionKey: 'age',
-          value: '25'
+          "dimensionKey": "age",
+          "value": "25"
         }
       ]
     },
     {
-      dimensionKey: 'sex',
-      value: 'female',
-      children: [
+      "dimensionKey": "sex",
+      "value": "female",
+      "children": [
         {
-          dimensionKey: 'age',
-          value: '30'
+          "dimensionKey": "age",
+          "value": "30"
         },
         {
-          dimensionKey: 'age',
-          value: '25'
+          "dimensionKey": "age",
+          "value": "25"
         }
       ]
     }
   ],
-  indicators: [
-    {
-      indicatorKey: 'income',
-      title: 'income'
-    }
+  "indicators": [{
+    "indicatorKey": "income",
+    "title": "income"
+  }],
+  records:[
+    [430,650,657,325],
+    [300,550,557,425],
+    [430,450,607,455]
   ],
-  records: [
-    [430, 650, 657, 325],
-    [300, 550, 557, 425],
-    [430, 450, 607, 455]
-  ],
-  defaultHeaderColWidth: 100
-};
+  defaultHeaderColWidth:100
+}
 const tableInstance = new VTable.PivotTable(option);
-```
 
+```
 ## Data interface
 
 ### Reset data
-
 You can use setRecords to change table data. Please check the api documentation for details.
 
 ### adding data
-
 You can use `addRecords` or `addRecord` to add table data. Please check the api documentation for details.
 
 ### delete data
-
 Table data can be deleted using `deleteRecords`. Please check the api documentation for details.
 
 ### change the data
-
 Table data can be modified using `updateRecords`. Please check the api documentation for details.
 
 Or you can modify a certain data field using the `changeCellValue` or `changeCellValues` interface.
-
-## Empty data prompt
-
-If the data source is not passed, or an empty array is passed, you can configure emptyTip to display an empty data prompt.
-
-Both the prompt message and the icon are configurable.
-
-Configuration reference: https://visactor.io/vtable/option/ListTable#emptyTip
-
-Example reference: https://visactor.io/vtable/demo/component/emptyTip
 
 ## summarize
 

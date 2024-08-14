@@ -2,12 +2,10 @@ import { cloneDeep, isArray, isNumber, merge } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 import { getAxisOption, getAxisRange } from './get-axis-config';
+import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import { getNewRangeToAlign } from './zero-align';
-import type { IChartIndicator, IIndicator } from '../../ts-types';
-import { cloneDeepSpec } from '@visactor/vutils-extension';
-import { Factory } from '../../core/factory';
-import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
-import { DEFAULT_TEXT_FONT_SIZE } from '../../components/axis/get-axis-attributes';
+import type { IChartIndicator } from '../../ts-types';
+import { cloneDeepSpec } from '@vutils-extension';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
 
@@ -55,11 +53,11 @@ export function isShareChartSpec(col: number, row: number, layout: PivotHeaderLa
   return true;
 }
 /** 检查是否有直角坐标系的图表 */
-export function checkHasCartesianChart(indicatorsDefine: (IIndicator | IChartIndicator | string)[]) {
+export function checkHasCartesianChart(layout: PivotHeaderLayoutMap) {
   let isHasCartesianChart = false;
-  for (let i = 0; i < indicatorsDefine.length; i++) {
+  for (let i = 0; i < layout.indicatorsDefine.length; i++) {
     //columnObjects数量和指标数量一样 并不是每个列都有 所有会快一些
-    const columnObj = indicatorsDefine[i] as IChartIndicator;
+    const columnObj = layout.indicatorsDefine[i] as IChartIndicator;
     if (columnObj.chartSpec) {
       if (
         columnObj.chartSpec.type !== 'wordCloud' &&
@@ -213,15 +211,14 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       axes.push(
         merge(
           {
-            range,
-            label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
+            range
           },
           axisOption,
           {
             type: axisOption?.type || 'linear',
             orient: index === 0 ? 'bottom' : 'top',
             // visible: true,
-            label: { visible: false, flush: true },
+            label: { visible: false },
             // label: { flush: true },
             title: { visible: false },
             domainLine: { visible: false },
@@ -249,8 +246,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       merge(
         {
           domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
-          range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined,
-          label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
+          range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined
         },
         axisOption,
         {
@@ -312,15 +308,14 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       axes.push(
         merge(
           {
-            range,
-            label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
+            range
           },
           axisOption,
           {
             type: axisOption?.type || 'linear',
             orient: index === 0 ? 'left' : 'right',
             // visible: true,
-            label: { visible: false, flush: true },
+            label: { visible: false },
             // label: { flush: true },
             title: { visible: false },
             domainLine: { visible: false },
@@ -350,8 +345,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       merge(
         {
           domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
-          range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined,
-          label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
+          range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined
         },
         axisOption,
         {
@@ -430,9 +424,6 @@ function getRange(
     range.max = Math.max(range.max, 0);
   }
   if (axisOption?.nice) {
-    const getAxisDomainRangeAndLabels = Factory.getFunction(
-      'getAxisDomainRangeAndLabels'
-    ) as GetAxisDomainRangeAndLabels;
     const { range: axisRange } = getAxisDomainRangeAndLabels(
       range.min,
       range.max,

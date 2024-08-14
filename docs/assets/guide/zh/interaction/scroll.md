@@ -14,7 +14,6 @@ VTable 提供了丰富的滚动样式配置项，用户可以按照自己的需�
 
 - scrollRailColor： 配置滚动条轨道的颜色。
 - scrollSliderColor：配置滚动条滑块的颜色。
-- scrollSliderCornerRadius:滚动条滑块的圆角半径
 - width：配置滚动条宽度。
 - visible：配置滚动条是否可见，可配值：'always' | 'scrolling' | 'none' | 'focus'，分别对应：常驻显示|滚动时显示|显示|聚焦在画布上时。默认为‘scrolling’。
 - hoverOn ：指定滚动条是悬浮在容器上，还是独立于容器。默认为 true 即悬浮于容器上。

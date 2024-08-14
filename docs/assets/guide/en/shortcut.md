@@ -28,7 +28,7 @@ keyboardOptions: {
   /** The up, down, left and right direction keys are not enabled by default, which is false. If this configuration is turned on, if you are currently editing a cell, the arrow keys can move to the next cell and enter the editing state, instead of moving the cursor to edit the string within the text */
   moveEditCellOnArrowKeys?: boolean;
   /** Enable shortcut key selection. Default: false */
-  selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
+  selectAllOnCtrlA?: boolean;
   /** Shortcut key copy, default false, not enabled*/
   copySelected?: boolean; //This copy is consistent with the browser’s shortcut keys
   /** Shortcut key to paste. Paste content to the specified location (that is, it needs to be selected). Batch paste is supported. Default: false */

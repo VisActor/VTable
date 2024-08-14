@@ -22,7 +22,6 @@ export default {
       '@visactor/vtable-search': path.resolve('../packages/vtable-search/src/index.ts'),
       '@visactor/react-vtable': path.resolve('../packages/react-vtable/src/index.ts'),
       '@visactor/openinula-vtable': path.resolve('../packages/openinula-vtable/src/index.ts'),
-      '@vutils-extension': path.resolve(__dirname, '../packages/vtable/src/vutil-extension-temp'),
       '@src': path.resolve(__dirname, '../packages/vtable/src/'),
 
       // react: 'openinula', // 新增

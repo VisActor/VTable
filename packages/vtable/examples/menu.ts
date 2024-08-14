@@ -13,14 +13,6 @@ export const menus = [
       {
         path: 'debug',
         name: 'site'
-      },
-      {
-        path: 'debug',
-        name: 'animation'
-      },
-      {
-        path: 'debug',
-        name: 'scroll'
       }
     ]
   },
@@ -78,10 +70,6 @@ export const menus = [
       {
         path: 'list',
         name: 'list-title'
-      },
-      {
-        path: 'list',
-        name: 'list-empty-tip'
       },
       {
         path: 'list',
@@ -172,14 +160,6 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-tree-rowSeriesNumber'
-      },
-      {
-        path: 'pivot',
-        name: 'virtual-node'
-      },
-      {
-        path: 'pivot',
-        name: 'virtual-node-2'
       }
     ]
   },
@@ -265,10 +245,6 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-legend'
-      },
-      {
-        path: 'pivot-chart',
-        name: 'pivotChart-two-legends'
       },
       {
         path: 'pivot-chart',
@@ -524,18 +500,6 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-str'
-      },
-      {
-        path: 'pivot-analysis',
-        name: 'pivot-empty-tip'
-      },
-      {
-        path: 'pivot-analysis',
-        name: 'pivot-analysis-calculatedField'
-      },
-      {
-        path: 'pivot-analysis',
-        name: 'pivot-analysis-calculatedField2'
       }
     ]
   },
@@ -905,10 +869,6 @@ export const menus = [
       {
         path: 'business',
         name: 'sales-bubble'
-      },
-      {
-        path: 'business',
-        name: 'background-image'
       }
     ]
   },
@@ -946,14 +906,6 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'pivotTable-size-legend'
-      },
-      {
-        path: 'unit-test-demo',
-        name: 'unit-listTable-sort'
-      },
-      {
-        path: 'unit-test-demo',
-        name: 'unit-listTable-frozen'
       }
     ]
   },

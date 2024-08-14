@@ -34,6 +34,8 @@ import type { PivotTable } from '../PivotTable';
 import type { PivotChart } from '../PivotChart';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { diffCellAddress } from '../tools/diff-cell';
+import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
+import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 import {
   checkHasCartesianChart,
   checkHasChart,
@@ -52,8 +54,7 @@ import { cloneDeep, isArray, isValid } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';
 import type { ITableAxisOption } from '../ts-types/component/axis';
 import { getQuadProps } from '../scenegraph/utils/padding';
-import type { GetAxisConfigInPivotChart } from './chart-helper/get-axis-config';
-import { Factory } from '../core/factory';
+import { getAxisConfigInPivotChart } from './chart-helper/get-axis-config';
 
 // export const sharedVar = { seqId: 0 };
 // let colIndex = 0;
@@ -70,18 +71,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   cornerHeaderObjs: HeaderData[];
   columnHeaderObjs: HeaderData[] = [];
   rowHeaderObjs: HeaderData[] = [];
-
-  private _cornerHeaderCellFullPathIds: number[][] = [];
-  private _columnHeaderCellFullPathIds: number[][] = [];
-  private _rowHeaderCellFullPathIds: number[][] = [];
-  private _rowHeaderCellFullPathIds_FULL: number[][] = []; //分页需求新增  为了保存全量的id  当页的是_rowHeaderCellIds
-
-  /**下面四份代表实际展示的 如果隐藏了某部分表头 那这里就会相比上面的数组少了隐藏掉的id */
   private _cornerHeaderCellIds: number[][] = [];
   private _columnHeaderCellIds: number[][] = [];
   private _rowHeaderCellIds: number[][] = [];
   private _rowHeaderCellIds_FULL: number[][] = []; //分页需求新增  为了保存全量的id  当页的是_rowHeaderCellIds
-
   private _columnWidths: WidthData[] = [];
   private _columnHeaderLevelCount: number;
   private _rowHeaderLevelCount: number;
@@ -159,13 +152,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   rightRowSeriesNumberColumn: SeriesNumberColumnData[];
   rightRowSeriesNumberColumnCount: number = 0;
   //#endregion
-  constructor(
-    table: PivotTable | PivotChart,
-    dataset: Dataset,
-    columnDimensionTree: DimensionTree,
-    rowDimensionTree: DimensionTree
-  ) {
-    this.sharedVar = table.layoutNodeId;
+  constructor(table: PivotTable | PivotChart, dataset: Dataset) {
+    this.sharedVar = { seqId: 0 };
     this._table = table;
     if ((table as PivotTable).options.rowHierarchyType === 'tree') {
       this.extensionRows = (table as PivotTable).options.extensionRows;
@@ -197,6 +185,34 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (dataset) {
       this.rowTree = dataset.rowHeaderTree;
       this.columnTree = dataset.colHeaderTree;
+      if (this.indicatorsAsCol && this._table.isPivotChart() && checkHasCartesianChart(this)) {
+        const supplyAxisNode = (nodes: IHeaderTreeDefine[]) => {
+          nodes.forEach((node: IHeaderTreeDefine) => {
+            if ((node.children as IHeaderTreeDefine[])?.length) {
+              supplyAxisNode(node.children as IHeaderTreeDefine[]);
+            } else {
+              // 在指标在列上的透视图中，主指标轴（离散轴）显示在左侧，因此需要在原先行表头的布局中最右侧加入一列，用来显示坐标轴
+              // 加入的这一列dimensionKey配置为'axis'，在后续行列计算维度时需要注意，这一列是为了显示坐标轴加入的，不在行列维度信息内
+              node.children = [
+                {
+                  dimensionKey: 'axis',
+                  value: ''
+                }
+              ];
+            }
+          });
+        };
+        if (this.rowTree?.length) {
+          supplyAxisNode(this.rowTree);
+        } else {
+          this.rowTree = [
+            {
+              dimensionKey: 'axis',
+              value: ''
+            }
+          ];
+        }
+      }
     }
     // 收集指标所有key
     this.indicatorsDefine?.forEach(indicator => {
@@ -207,22 +223,28 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.indicatorKeys.push(indicator.indicatorKey);
       }
     });
-    this.columnDimensionTree = columnDimensionTree; // new DimensionTree((this.columnTree as ITreeLayoutHeadNode[]) ?? [], this.sharedVar);
-    this.rowDimensionTree = rowDimensionTree;
-    // new DimensionTree(
-    //   (this.rowTree as ITreeLayoutHeadNode[]) ?? [],
-    //   this.sharedVar,
-    //   this.rowHierarchyType,
-    //   this.rowHierarchyType === 'tree' ? this.rowExpandLevel : undefined
-    // );
+    this.columnDimensionTree = new DimensionTree((this.columnTree as ITreeLayoutHeadNode[]) ?? [], this.sharedVar);
+    this.rowDimensionTree = new DimensionTree(
+      (this.rowTree as ITreeLayoutHeadNode[]) ?? [],
+      this.sharedVar,
+      this.rowHierarchyType,
+      this.rowHierarchyType === 'tree' ? this.rowExpandLevel : undefined
+    );
     this.colDimensionKeys = this.columnDimensionTree.dimensionKeys.valueArr();
     this.rowDimensionKeys = this.rowDimensionTree.dimensionKeys.valueArr();
     this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
 
     this.resetRowHeaderLevelCount();
 
+    //生成列表头单元格
+    this._generateColHeaderIds();
+
+    this.colIndex = 0;
+    //生成行表头单元格
+    this._generateRowHeaderIds();
+
     if (this._table.isPivotChart()) {
-      this.hasTwoIndicatorAxes = this.indicatorsDefine.some((indicatorObject: any) => {
+      this.hasTwoIndicatorAxes = this._indicators.some(indicatorObject => {
         if (
           indicatorObject.chartSpec &&
           indicatorObject.chartSpec.series &&
@@ -250,14 +272,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //  this.colAttrs[this.colAttrs.length-1]===this.indicatorDimensionKey&&this.colAttrs.pop();
     //  this.rowAttrs[this.rowAttrs.length-1]===this.indicatorDimensionKey&&this.rowAttrs.pop();
 
-    //生成列表头单元格
-    this._generateColHeaderIds();
-
-    this.colIndex = 0;
-    //生成行表头单元格
-    this._generateRowHeaderIds();
-
-    this._rowHeaderCellFullPathIds_FULL = transpose(this._rowHeaderCellFullPathIds_FULL);
+    this._rowHeaderCellIds_FULL = transpose(this._rowHeaderCellIds_FULL);
     if ((table as PivotTable).options.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
       this.generateExtensionRowTree();
 
@@ -276,73 +291,36 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
 
     this.sharedVar.seqId = Math.max(this.sharedVar.seqId, this._headerObjects.length);
-    //#region 生成cornerHeaderObjs及_cornerHeaderCellIds
-    // if (this.cornerSetting.titleOnDimension === 'all') {
-    let colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
-    //#region 处理需求 当没有数据时仍然显示角头维度名称
-    if (
-      this.dataset &&
-      (this.dataset.records?.length ?? 0) === 0 &&
-      !this.dataset.customColTree &&
-      !this.dataset.customRowTree
-    ) {
-      colDimensionKeys = this.columnsDefine.map(define => {
-        if (typeof define === 'string') {
-          return define;
-        }
-        return define.dimensionKey;
-      });
-      if (this.indicatorsAsCol) {
-        colDimensionKeys.push(this.indicatorDimensionKey);
-      }
-    }
-    //#endregion
-
-    colDimensionKeys = this.columnHeaderTitle ? [''].concat(colDimensionKeys) : colDimensionKeys;
-
-    let rowDimensionKeys: string[];
-    let extensionRowDimensions = [];
-    if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
-      // 如果是有扩展行维度
-      const rowTreeFirstKey = [];
-      rowTreeFirstKey.push(this.rowDimensionKeys[0]);
-      this._extensionRowDimensionKeys.forEach(extensionRowKeys => {
-        rowTreeFirstKey.push(extensionRowKeys[0]);
-      });
-      extensionRowDimensions = this.extensionRows.reduce((dimensions, cur) => {
-        return dimensions.concat(cur.rows);
-      }, []);
-
-      rowDimensionKeys = this.rowHeaderTitle ? [''].concat(rowTreeFirstKey as any) : rowTreeFirstKey;
-    } else {
-      //#region 处理需求 当没有数据时仍然显示角头维度名称
-      rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
-      if (
-        this.dataset &&
-        (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree &&
-        !this.dataset.customRowTree
-      ) {
-        rowDimensionKeys = this.rowsDefine.map(define => {
-          if (typeof define === 'string') {
-            return define;
-          }
-          return define.dimensionKey;
+    //生成cornerHeaderObjs及_cornerHeaderCellIds
+    if (this.cornerSetting.titleOnDimension === 'column') {
+      this.cornerHeaderObjs = this._addCornerHeaders(
+        this.columnHeaderTitle ? [''].concat(this.colDimensionKeys as any) : this.colDimensionKeys,
+        this.columnsDefine
+      );
+    } else if (this.cornerSetting.titleOnDimension === 'row') {
+      if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
+        // 如果是有扩展行维度
+        const rowTreeFirstKey = [];
+        rowTreeFirstKey.push(this.rowDimensionKeys[0]);
+        this._extensionRowDimensionKeys.forEach(extensionRowKeys => {
+          rowTreeFirstKey.push(extensionRowKeys[0]);
         });
-        if (!this.indicatorsAsCol) {
-          rowDimensionKeys.push(this.indicatorDimensionKey);
-        }
+        const extensionRowDimensions = this.extensionRows.reduce((dimensions, cur) => {
+          return dimensions.concat(cur.rows);
+        }, []);
+        this.cornerHeaderObjs = this._addCornerHeaders(
+          this.rowHeaderTitle ? [''].concat(rowTreeFirstKey as any) : rowTreeFirstKey,
+          this.rowsDefine.concat(extensionRowDimensions)
+        );
+      } else {
+        this.cornerHeaderObjs = this._addCornerHeaders(
+          this.rowHeaderTitle ? [''].concat(this.rowDimensionKeys as any) : this.rowDimensionKeys,
+          this.rowsDefine
+        );
       }
-      //#endregion
-      rowDimensionKeys = this.rowHeaderTitle ? [''].concat(rowDimensionKeys) : rowDimensionKeys;
+    } else {
+      this.cornerHeaderObjs = this._addCornerHeaders(null, undefined);
     }
-
-    this.cornerHeaderObjs = this._addCornerHeaders(
-      colDimensionKeys,
-      rowDimensionKeys,
-      this.columnsDefine.concat(...this.rowsDefine, ...extensionRowDimensions)
-    );
-    //#endregion
     this.colIndex = 0;
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
       o[e.id as number] = e;
@@ -356,8 +334,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     } else {
       this._indicatorShowType = 'none';
     }
-
-    this.generateCellIdsConsiderHideHeader();
     this.setPagination((table as PivotTable).options.pagination);
 
     if (this._table.isPivotChart()) {
@@ -398,9 +374,37 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // }
         return false;
       });
+
+      // if (this.indicatorsAsCol) {
+      //   const cell_id = 'rowHeaderEmpty';
+      //   this._headerObjectMap[cell_id] = {
+      //     id: cell_id,
+      //     title: '',
+      //     field: cell_id,
+      //     headerType: this.cornerSetting.headerType ?? 'text',
+      //     style: this.cornerSetting.headerStyle,
+      //     define: <any>{
+      //       // id:
+      //     }
+      //   };
+      //   this._headerObjects.push(this._headerObjectMap[cell_id]);
+      //   // this.rowShowAttrs.push(cell_id);
+
+      //   // deal with sub indicator axis
+
+      //   if (!this.hasTwoIndicatorAxes) {
+      //     // this.colShowAttrs.pop();
+      //   }
+      // } else {
+      //   const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      //     return axisOption.orient === 'left';
+      //   });
+      //   if (axisOption?.visible === false) {
+      //     // this.rowShowAttrs.pop();
+      //   }
+      // }
     }
     this.handleRowSeriesNumber(table.internalProps.rowSeriesNumber);
-
     this.setColumnWidths();
   }
   handleRowSeriesNumber(rowSeriesNumber: IRowSeriesNumber) {
@@ -453,36 +457,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   _generateColHeaderIds() {
     if (this.columnDimensionTree.tree.children?.length >= 1) {
-      //#region 处理需求 当没有数据时仍然显示角头维度名称
-      let startRow = 0;
-      if (
-        this.dataset &&
-        (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree &&
-        !this.dataset.customRowTree &&
-        this.indicatorsAsCol &&
-        this.columnDimensionTree.totalLevel < this.columnHeaderLevelCount
-      ) {
-        startRow = this.columnHeaderLevelCount - this.columnDimensionTree.totalLevel;
-        for (let i = 0; i < startRow; i++) {
-          this._columnHeaderCellFullPathIds.unshift([]);
-        }
-      }
-      //#endregion
-      this._addHeaders(
-        this._columnHeaderCellFullPathIds,
-        startRow,
-        this.columnDimensionTree.tree.children,
-        [],
-        this.columnHeaderObjs
-      );
+      this._addHeaders(this._columnHeaderCellIds, 0, this.columnDimensionTree.tree.children, [], this.columnHeaderObjs);
     }
     // if (typeof this.showColumnHeader !== 'boolean') {
     if (this.columnHeaderTitle) {
       this.sharedVar.seqId = Math.max(this.sharedVar.seqId, this._headerObjects.length);
       const id = ++this.sharedVar.seqId;
-      const firstRowIds = Array(this.colCount - this.rowHeaderLevelCount - this.rightFrozenColCount).fill(id);
-      this._columnHeaderCellFullPathIds.unshift(firstRowIds);
+      const firstRowIds = Array(this.colCount - this.rowHeaderLevelCount).fill(id);
+      this._columnHeaderCellIds.unshift(firstRowIds);
       const cell: HeaderData = {
         id,
         title:
@@ -511,7 +493,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.rowDimensionTree.tree.children?.length >= 1) {
       if (this.rowHierarchyType === 'tree') {
         this._addHeadersForTreeMode(
-          this._rowHeaderCellFullPathIds_FULL,
+          this._rowHeaderCellIds_FULL,
           0,
           this.rowDimensionTree.tree.children,
           [],
@@ -521,39 +503,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.rowHeaderObjs
         );
       } else {
-        //#region 处理需求 当没有数据时仍然显示角头维度名称
-        let startRow = 0;
-        if (
-          this.dataset &&
-          (this.dataset.records?.length ?? 0) === 0 &&
-          !this.dataset.customColTree &&
-          !this.dataset.customRowTree &&
-          !this.indicatorsAsCol &&
-          this.rowDimensionTree.totalLevel < this.rowHeaderLevelCount
-        ) {
-          startRow = this.rowHeaderLevelCount - this.rowDimensionTree.totalLevel;
-          for (let i = 0; i < startRow; i++) {
-            this._rowHeaderCellFullPathIds_FULL.unshift([]);
-          }
-        }
-        //#endregion
-        this._addHeaders(
-          this._rowHeaderCellFullPathIds_FULL,
-          startRow,
-          this.rowDimensionTree.tree.children,
-          [],
-          this.rowHeaderObjs
-        );
+        this._addHeaders(this._rowHeaderCellIds_FULL, 0, this.rowDimensionTree.tree.children, [], this.rowHeaderObjs);
       }
     }
     // if (typeof this.showRowHeader !== 'boolean') {
     if (this.rowHeaderTitle) {
       this.sharedVar.seqId = Math.max(this.sharedVar.seqId, this._headerObjects.length);
       const id = ++this.sharedVar.seqId;
-      const firstColIds = Array(this._rowHeaderCellFullPathIds_FULL[0]?.length ?? this.rowDimensionTree.tree.size).fill(
-        id
-      );
-      this._rowHeaderCellFullPathIds_FULL.unshift(firstColIds);
+      const firstColIds = Array(this._rowHeaderCellIds_FULL[0]?.length ?? this.rowDimensionTree.tree.size).fill(id);
+      this._rowHeaderCellIds_FULL.unshift(firstColIds);
       const cell: HeaderData = {
         id,
         title:
@@ -637,290 +595,68 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       dealHeaderForTreeMode(hd, _headerCellIds, results, roots, row, totalLevel, show, dimensions, this);
     }
   }
-  private _addCornerHeaders(
-    colDimensionKeys: string[] | null,
-    rowDimensionKeys: string[] | null,
-    dimensions: (string | IDimension)[]
-  ) {
+  private _addCornerHeaders(dimensionKeys: (string | number)[] | null, dimensions: (string | IDimension)[]) {
     const results: HeaderData[] = [];
-    if (this.cornerSetting.titleOnDimension === 'all') {
-      if (this.indicatorsAsCol) {
-        let indicatorAtIndex = -1;
-        if (colDimensionKeys) {
-          colDimensionKeys.forEach((dimensionKey: string, key: number) => {
-            if (dimensionKey === this.indicatorDimensionKey) {
-              indicatorAtIndex = key;
-            }
-            const id = ++this.sharedVar.seqId;
-            const dimensionInfo: IDimension = dimensions.find(dimension =>
-              typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-            ) as IDimension;
-            const cell: HeaderData = {
-              id,
-              title:
-                dimensionKey === this.indicatorDimensionKey
-                  ? this.indicatorTitle
-                  : dimensionInfo
-                  ? dimensionInfo.title
-                  : dimensionKey === 'axis'
-                  ? ''
-                  : (dimensionKey as string),
-              field: dimensionKey, //'维度名称',
-              style: this.cornerSetting.headerStyle,
-              headerType: this.cornerSetting.headerType ?? 'text',
-              showSort: dimensionInfo?.showSortInCorner,
-              sort: dimensionInfo?.sort,
-              define: <any>{
-                showSort: dimensionInfo?.showSortInCorner,
-                sort: dimensionInfo?.sort,
-                dimensionKey: dimensionKey, // '维度名称',
-                id,
-                value: dimensionKey,
-                headerEditor: this.cornerSetting.headerEditor,
-                disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
-                disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
-              },
-              dropDownMenu: dimensionInfo?.cornerDropDownMenu,
-              pivotInfo: {
-                value: dimensionInfo?.title ?? '',
-                dimensionKey,
-                isPivotCorner: true
-                // customInfo: dimensionInfo?.customInfo
-              },
-              description: dimensionInfo?.cornerDescription
-            };
-            results[id] = cell;
-            this._headerObjects[id] = cell;
-
-            if (!this._cornerHeaderCellFullPathIds[key]) {
-              this._cornerHeaderCellFullPathIds[key] = [];
-            }
-            for (let r = 0; r < this.rowHeaderLevelCount; r++) {
-              this._cornerHeaderCellFullPathIds[key][r] = id;
-            }
-          });
-        }
-        if (rowDimensionKeys) {
-          rowDimensionKeys.forEach((dimensionKey: string, key: number) => {
-            const id = ++this.sharedVar.seqId;
-            const dimensionInfo: IDimension = dimensions.find(dimension =>
-              typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-            ) as IDimension;
-            const cell: HeaderData = {
-              id,
-              title:
-                dimensionKey === this.indicatorDimensionKey
-                  ? this.indicatorTitle
-                  : dimensionInfo
-                  ? dimensionInfo.title
-                  : dimensionKey === 'axis'
-                  ? ''
-                  : (dimensionKey as string),
-              field: dimensionKey, //'维度名称',
-              style: this.cornerSetting.headerStyle,
-              headerType: this.cornerSetting.headerType ?? 'text',
-              showSort: dimensionInfo?.showSortInCorner,
-              sort: dimensionInfo?.sort,
-              define: <any>{
-                showSort: dimensionInfo?.showSortInCorner,
-                sort: dimensionInfo?.sort,
-                dimensionKey: dimensionKey, // '维度名称',
-                id,
-                value: dimensionKey,
-                headerEditor: this.cornerSetting.headerEditor,
-                disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
-                disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
-              },
-              dropDownMenu: dimensionInfo?.cornerDropDownMenu,
-              pivotInfo: {
-                value: dimensionInfo?.title ?? '',
-                dimensionKey,
-                isPivotCorner: true
-                // customInfo: dimensionInfo?.customInfo
-              },
-              description: dimensionInfo?.cornerDescription
-            };
-            results[id] = cell;
-            this._headerObjects[id] = cell;
-            if (!this._cornerHeaderCellFullPathIds[indicatorAtIndex]) {
-              this._cornerHeaderCellFullPathIds[indicatorAtIndex] = [];
-            }
-            this._cornerHeaderCellFullPathIds[indicatorAtIndex][key] = id;
-          });
-        }
-      } else {
-        let indicatorAtIndex = -1;
-        if (rowDimensionKeys) {
-          rowDimensionKeys.forEach((dimensionKey: string, key: number) => {
-            if (dimensionKey === this.indicatorDimensionKey) {
-              indicatorAtIndex = key;
-            }
-            const id = ++this.sharedVar.seqId;
-            const dimensionInfo: IDimension = dimensions.find(dimension =>
-              typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-            ) as IDimension;
-            const cell: HeaderData = {
-              id,
-              title:
-                dimensionKey === this.indicatorDimensionKey
-                  ? this.indicatorTitle
-                  : dimensionInfo
-                  ? dimensionInfo.title
-                  : dimensionKey === 'axis'
-                  ? ''
-                  : (dimensionKey as string),
-              field: dimensionKey, //'维度名称',
-              style: this.cornerSetting.headerStyle,
-              headerType: this.cornerSetting.headerType ?? 'text',
-              showSort: dimensionInfo?.showSortInCorner,
-              sort: dimensionInfo?.sort,
-              define: <any>{
-                showSort: dimensionInfo?.showSortInCorner,
-                sort: dimensionInfo?.sort,
-                dimensionKey: dimensionKey, // '维度名称',
-                id,
-                value: dimensionKey,
-                headerEditor: this.cornerSetting.headerEditor,
-                disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
-                disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
-              },
-              dropDownMenu: dimensionInfo?.cornerDropDownMenu,
-              pivotInfo: {
-                value: dimensionInfo?.title ?? '',
-                dimensionKey,
-                isPivotCorner: true
-                // customInfo: dimensionInfo?.customInfo
-              },
-              description: dimensionInfo?.cornerDescription
-            };
-            results[id] = cell;
-            this._headerObjects[id] = cell;
-
-            for (let r = 0; r < this.columnHeaderLevelCount; r++) {
-              if (!this._cornerHeaderCellFullPathIds[r]) {
-                this._cornerHeaderCellFullPathIds[r] = [];
-              }
-              this._cornerHeaderCellFullPathIds[r][key] = id;
-            }
-          });
-        }
-        if (colDimensionKeys) {
-          colDimensionKeys.forEach((dimensionKey: string, key: number) => {
-            const id = ++this.sharedVar.seqId;
-            const dimensionInfo: IDimension = dimensions.find(dimension =>
-              typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-            ) as IDimension;
-            const cell: HeaderData = {
-              id,
-              title:
-                dimensionKey === this.indicatorDimensionKey
-                  ? this.indicatorTitle
-                  : dimensionInfo
-                  ? dimensionInfo.title
-                  : dimensionKey === 'axis'
-                  ? ''
-                  : (dimensionKey as string),
-              field: dimensionKey, //'维度名称',
-              style: this.cornerSetting.headerStyle,
-              headerType: this.cornerSetting.headerType ?? 'text',
-              showSort: dimensionInfo?.showSortInCorner,
-              sort: dimensionInfo?.sort,
-              define: <any>{
-                showSort: dimensionInfo?.showSortInCorner,
-                sort: dimensionInfo?.sort,
-                dimensionKey: dimensionKey, // '维度名称',
-                id,
-                value: dimensionKey,
-                headerEditor: this.cornerSetting.headerEditor,
-                disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
-                disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
-              },
-              dropDownMenu: dimensionInfo?.cornerDropDownMenu,
-              pivotInfo: {
-                value: dimensionInfo?.title ?? '',
-                dimensionKey,
-                isPivotCorner: true
-                // customInfo: dimensionInfo?.customInfo
-              },
-              description: dimensionInfo?.cornerDescription
-            };
-            results[id] = cell;
-            this._headerObjects[id] = cell;
-            // if (!this._cornerHeaderCellFullPathIds[indicatorAtIndex]) {
-            //   this._cornerHeaderCellFullPathIds[indicatorAtIndex] = [];
-            // }
-            this._cornerHeaderCellFullPathIds[key][indicatorAtIndex] = id;
-          });
-        }
-      }
-    } else if (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'column') {
-      const dimensionKeys = this.cornerSetting?.titleOnDimension === 'row' ? rowDimensionKeys : colDimensionKeys;
-      if (dimensionKeys) {
-        dimensionKeys.forEach((dimensionKey: string, key: number) => {
-          const id = ++this.sharedVar.seqId;
-          // const dimensionInfo: IDimension =
-          //   (this.rowsDefine?.find(dimension =>
-          //     typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-          //   ) as IDimension) ??
-          //   (this.columnsDefine?.find(dimension =>
-          //     typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-          //   ) as IDimension);
-          const dimensionInfo: IDimension = dimensions.find(dimension =>
-            typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-          ) as IDimension;
-          const cell: HeaderData = {
+    if (dimensionKeys) {
+      dimensionKeys.forEach((dimensionKey: string | number, key: number) => {
+        const id = ++this.sharedVar.seqId;
+        // const dimensionInfo: IDimension =
+        //   (this.rowsDefine?.find(dimension =>
+        //     typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+        //   ) as IDimension) ??
+        //   (this.columnsDefine?.find(dimension =>
+        //     typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+        //   ) as IDimension);
+        const dimensionInfo: IDimension = dimensions.find(dimension =>
+          typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+        ) as IDimension;
+        const cell: HeaderData = {
+          id,
+          title:
+            dimensionKey === this.indicatorDimensionKey
+              ? this.indicatorTitle
+              : dimensionInfo
+              ? dimensionInfo.title
+              : dimensionKey === 'axis'
+              ? ''
+              : (dimensionKey as string),
+          field: '维度名称',
+          style: this.cornerSetting.headerStyle,
+          headerType: this.cornerSetting.headerType ?? 'text',
+          define: <any>{
+            dimensionKey: '维度名称',
             id,
-            title:
-              dimensionKey === this.indicatorDimensionKey
-                ? this.indicatorTitle
-                : dimensionInfo
-                ? dimensionInfo.title
-                : dimensionKey === 'axis'
-                ? ''
-                : (dimensionKey as string),
-            field: dimensionKey, //'维度名称',
-            style: this.cornerSetting.headerStyle,
-            headerType: this.cornerSetting.headerType ?? 'text',
-            showSort: dimensionInfo?.showSortInCorner,
-            sort: dimensionInfo?.sort,
-            define: <any>{
-              showSort: dimensionInfo?.showSortInCorner,
-              sort: dimensionInfo?.sort,
-              dimensionKey: dimensionKey, // '维度名称',
-              id,
-              value: dimensionKey,
-              headerEditor: this.cornerSetting.headerEditor,
-              disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
-              disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
-            },
-            dropDownMenu: dimensionInfo?.cornerDropDownMenu,
-            pivotInfo: {
-              value: dimensionInfo?.title ?? '',
-              dimensionKey,
-              isPivotCorner: true
-              // customInfo: dimensionInfo?.customInfo
-            },
-            description: dimensionInfo?.cornerDescription
-          };
-          results[id] = cell;
-          this._headerObjects[id] = cell;
-          if (this.cornerSetting.titleOnDimension === 'column') {
-            if (!this._cornerHeaderCellFullPathIds[key]) {
-              this._cornerHeaderCellFullPathIds[key] = [];
-            }
-            for (let r = 0; r < this.rowHeaderLevelCount; r++) {
-              this._cornerHeaderCellFullPathIds[key][r] = id;
-            }
-          } else if (this.cornerSetting.titleOnDimension === 'row') {
-            for (let r = 0; r < this.columnHeaderLevelCount; r++) {
-              if (!this._cornerHeaderCellFullPathIds[r]) {
-                this._cornerHeaderCellFullPathIds[r] = [];
-              }
-              this._cornerHeaderCellFullPathIds[r][key] = id;
-            }
+            value: dimensionKey,
+            disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
+            disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
+          },
+          dropDownMenu: dimensionInfo?.cornerDropDownMenu,
+          pivotInfo: {
+            value: dimensionInfo?.title ?? '',
+            dimensionKey,
+            isPivotCorner: true
+            // customInfo: dimensionInfo?.customInfo
+          },
+          description: dimensionInfo?.cornerDescription
+        };
+        results[id] = cell;
+        this._headerObjects[id] = cell;
+        if (this.cornerSetting.titleOnDimension === 'column') {
+          if (!this._cornerHeaderCellIds[key]) {
+            this._cornerHeaderCellIds[key] = [];
           }
-        });
-      }
+          for (let r = 0; r < this.rowHeaderLevelCount; r++) {
+            this._cornerHeaderCellIds[key][r] = id;
+          }
+        } else if (this.cornerSetting.titleOnDimension === 'row') {
+          for (let r = 0; r < this.columnHeaderLevelCount; r++) {
+            if (!this._cornerHeaderCellIds[r]) {
+              this._cornerHeaderCellIds[r] = [];
+            }
+            this._cornerHeaderCellIds[r][key] = id;
+          }
+        }
+      });
     } else {
       const id = ++this.sharedVar.seqId;
       const cell: HeaderData = {
@@ -941,20 +677,19 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this._headerObjects[id] = cell;
       for (let r = 0; r < this.columnHeaderLevelCount; r++) {
         for (let j = 0; j < this.rowHeaderLevelCount; j++) {
-          if (!this._cornerHeaderCellFullPathIds[r]) {
-            this._cornerHeaderCellFullPathIds[r] = [];
+          if (!this._cornerHeaderCellIds[r]) {
+            this._cornerHeaderCellIds[r] = [];
           }
-          this._cornerHeaderCellFullPathIds[r][j] = id;
+          this._cornerHeaderCellIds[r][j] = id;
         }
       }
     }
-
     return results;
   }
   private generateExtensionRowTree() {
     this.extensionRows.forEach((extensionRow, indexP) => {
-      const old_rowHeaderCellIds = this._rowHeaderCellFullPathIds_FULL;
-      this._rowHeaderCellFullPathIds_FULL = [];
+      const old_rowHeaderCellIds = this._rowHeaderCellIds_FULL;
+      this._rowHeaderCellIds_FULL = [];
       old_rowHeaderCellIds.forEach((row_ids: number[], index) => {
         const key = row_ids[row_ids.length - 1];
         this.colIndex = 0;
@@ -991,7 +726,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.rowHeaderObjs
         );
         for (let i = 0; i < extensionRowTreeHeaderIds[0].length; i++) {
-          this._rowHeaderCellFullPathIds_FULL.push(row_ids.concat(extensionRowTreeHeaderIds[0][i]));
+          this._rowHeaderCellIds_FULL.push(row_ids.concat(extensionRowTreeHeaderIds[0][i]));
         }
       });
     });
@@ -1387,7 +1122,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             : this.columnDimensionTree.totalLevel
           : this.columnDimensionTree.totalLevel
         : this.columnDimensionTree.totalLevel;
-
       if (this.columnHeaderTitle) {
         count += 1;
       }
@@ -1395,39 +1129,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this._table.isPivotChart() &&
         this.indicatorsAsCol &&
         !this.hasTwoIndicatorAxes &&
-        checkHasCartesianChart(this.indicatorsDefine)
+        checkHasCartesianChart(this)
       ) {
         count -= 1;
       }
-      //#region 处理需求 当没有数据时仍然显示角头维度名称
-      if (count === 0 && this.dataset && !this.dataset.customColTree && !this.dataset.customRowTree) {
-        if (this.cornerSetting.titleOnDimension === 'row') {
-          count = 1;
-        } else if (
-          (this.dataset.records?.length ?? 0) === 0 &&
-          (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all')
-        ) {
-          count = this.columnsDefine.length ?? 0;
-        }
-      } else if (
-        this.dataset &&
-        (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree &&
-        !this.dataset.customRowTree
-      ) {
-        if (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all') {
-          count = this.columnsDefine.length ?? 0;
-          if (!this.hideIndicatorName && this.indicatorsAsCol) {
-            count++;
-          }
-        }
-      }
-      //#endregion
       this.columnHeaderLevelCount = count;
       return;
     }
-    // this.columnHeaderLevelCount = 0;
-    this.columnHeaderLevelCount = !this.indicatorsAsCol ? 0 : this.hideIndicatorName ? 0 : 1;
+    this.columnHeaderLevelCount = 0;
     return;
   }
   resetRowHeaderLevelCount() {
@@ -1441,7 +1150,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.rowHeaderLevelCount = 1 + extensionRowCount;
         return;
       }
-      const rowLevelCount = this.rowDimensionTree.totalLevel;
+      const rowLevelCount = this.rowDimensionKeys.length;
       // let count = this.indicatorsAsCol
       //   ? rowLevelCount
       //   : this.hideIndicatorName //设置隐藏表头，且表头最下面一级就是指标维度 则-1
@@ -1466,30 +1175,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       // if (this._table.isPivotChart()&&this.indicatorsAsCol) {
       //   count+=1;
       // }
-      //#region 处理需求 当没有数据时仍然显示角头维度名称
-      if (count === 0 && this.dataset && !this.dataset.customColTree && !this.dataset.customRowTree) {
-        if (this.cornerSetting.titleOnDimension === 'column') {
-          count = 1;
-        } else if (
-          (this.dataset.records?.length ?? 0) === 0 &&
-          (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all')
-        ) {
-          count = this.rowsDefine.length ?? 0;
-        }
-      } else if (
-        this.dataset &&
-        (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree &&
-        !this.dataset.customRowTree
-      ) {
-        if (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all') {
-          count = this.rowsDefine.length;
-          if (!this.hideIndicatorName && !this.indicatorsAsCol) {
-            count++;
-          }
-        }
-      }
-      //#endregion
       this.rowHeaderLevelCount = count;
       return;
     }
@@ -1511,24 +1196,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   get colCount(): number {
     return (
-      (this.columnDimensionTree.totalLevel > 0 ||
-      this._table.isPivotChart() ||
-      (this.dataset.records as Array<any>)?.length > 0 ||
-      (this.dataset.records && !Array.isArray(this.dataset.records))
-        ? this.columnDimensionTree.tree.size
-        : 0) +
+      this.columnDimensionTree.tree.size +
       this.rowHeaderLevelCount +
       this.rightHeaderColCount +
-      this.leftRowSeriesNumberColumnCount
-    ); // 小心rightFrozenColCount和colCount的循环引用 造成调用栈溢出
+      this.leftRowSeriesNumberColumnCount // 小心rightFrozenColCount和colCount的循环引用 造成调用栈溢出
+    );
   }
   get rowCount(): number {
     return (
-      ((this._table.records || this.dataset.records
-        ? Array.isArray(this._table.records)
-          ? this._table.records.length > 0
-          : true
-        : false) &&
+      ((Array.isArray(this._table.records) ? this._table.records.length > 0 : true) &&
       this._indicators?.length > 0 && // 前两个判断条件来判断  有展示的body值的情况 需要展示body row
       !this._rowHeaderCellIds?.length // 需要展示body值 但 _rowHeaderCellIds的长度维度为0  无rows 行表头为空
         ? 1 //兼容bugserver: https://bugserver.cn.goofy.app/case?product=VTable&fileid=65364a57173c354c242a7c4f
@@ -1552,7 +1228,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
       return 0;
     }
-    if (this.indicatorKeys.length >= 1 && checkHasCartesianChart(this.indicatorsDefine)) {
+    if (this.indicatorKeys.length >= 1 && checkHasCartesianChart(this)) {
       const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
         return axisOption.orient === 'bottom';
       });
@@ -1626,13 +1302,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (this.isSeriesNumber(col, row)) {
         return '';
       } else if (this.isCornerHeader(col, row)) {
-        return this._cornerHeaderCellIds[row]?.[col - this.leftRowSeriesNumberColumnCount];
+        return this._cornerHeaderCellIds[row][col - this.leftRowSeriesNumberColumnCount];
       } else if (this.isColumnHeader(col, row)) {
-        return this._columnHeaderCellIds[row]?.[col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount];
+        return this._columnHeaderCellIds[row][col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount];
       } else if (this.isRowHeader(col, row)) {
         return this._rowHeaderCellIds[row - this.columnHeaderLevelCount]?.[col - this.leftRowSeriesNumberColumnCount];
       } else if (this.isRightFrozenColumn(col, row)) {
-        return this._rowHeaderCellIds[row - this.columnHeaderLevelCount]?.[this.rowHeaderLevelCount - 1];
+        return this._rowHeaderCellIds[row - this.columnHeaderLevelCount][this.rowHeaderLevelCount - 1];
       } else if (this.isBottomFrozenRow(col, row)) {
         return this._columnHeaderCellIds[this.columnHeaderLevelCount - 1]?.[
           col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount
@@ -1711,40 +1387,28 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const paths = this.getCellHeaderPaths(_col, _row);
     if (this.indicatorsAsCol) {
       const indicatorKey = paths.colHeaderPaths?.find(colPath => colPath.indicatorKey)?.indicatorKey;
-      return isValid(indicatorKey)
-        ? this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
-            this._indicators[0] ?? {
-              id: '',
-              field: undefined,
-              indicatorKey: undefined,
-              cellType: 'text',
-              define: undefined
-            }
-        : {
-            id: '',
-            field: undefined,
-            indicatorKey: undefined,
-            cellType: 'text',
-            define: undefined
-          };
-    }
-    const indicatorKey = paths.rowHeaderPaths?.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
-    return isValid(indicatorKey)
-      ? this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
-          this._indicators[0] ?? {
-            id: '',
-            field: undefined,
-            indicatorKey: undefined,
-            cellType: 'text',
-            define: undefined
-          }
-      : {
+      return (
+        this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
+        this._indicators[0] ?? {
           id: '',
           field: undefined,
           indicatorKey: undefined,
           cellType: 'text',
           define: undefined
-        };
+        }
+      );
+    }
+    const indicatorKey = paths.rowHeaderPaths?.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    return (
+      this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
+      this._indicators[0] ?? {
+        id: '',
+        field: undefined,
+        indicatorKey: undefined,
+        cellType: 'text',
+        define: undefined
+      }
+    );
   }
   // getBodyLayoutRangeById(id: LayoutObjectId): CellRange {
   //   for (let col = 0; col < (this.colCount ?? 0); col++) {
@@ -1912,7 +1576,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   //   return { start: { col: 0, row: 0 }, end: { col: 0, row: 0 } };
   // }
 
-  getCellHeaderPathsWithTreeNode(col: number, row: number): IPivotTableCellHeaderPaths {
+  getCellHeaderPathsWidthTreeNode(col: number, row: number): IPivotTableCellHeaderPaths {
     // if (this._CellHeaderPathMap.has(`$${col}$${row}`))
     // if (this._CellHeaderPathMap.has(`${col}-${row}`)) {
     //   return this._CellHeaderPathMap.get(`${col}-${row}`);
@@ -1959,7 +1623,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         //   rowPath = this.rowDimensionTree.getTreePath(recordRow, col + hd.hierarchyLevel);
         // }
         // 考虑多层级的ExtensionRowTree
-        const row_pathIds = this._rowHeaderCellFullPathIds[recordRow]; //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
+        const row_pathIds = this._rowHeaderCellIds[recordRow]; //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
         let findTree = this.rowDimensionTree; //第一棵寻找的树是第一列的维度树 主树
         let level = 0; //level和col对应，代表一层层树找的过程
         while (findTree) {
@@ -1999,7 +1663,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return p;
   }
   getCellHeaderPaths(col: number, row: number): IPivotTableCellHeaderPaths {
-    const headerPathsWidthNode = this.getCellHeaderPathsWithTreeNode(col, row);
+    const headerPathsWidthNode = this.getCellHeaderPathsWidthTreeNode(col, row);
     const headerPaths: IPivotTableCellHeaderPaths = {
       colHeaderPaths: [],
       rowHeaderPaths: [],
@@ -2010,13 +1674,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         dimensionKey?: string;
         indicatorKey?: string;
         value?: string;
-        virtual?: boolean;
       } = {};
       colHeaderPath.dimensionKey = colHeader.dimensionKey;
       colHeaderPath.indicatorKey = colHeader.indicatorKey;
       colHeaderPath.value = colHeader.value ?? this.getIndicatorInfoByIndicatorKey(colHeader.indicatorKey)?.title ?? '';
-      colHeaderPath.virtual = colHeader.virtual;
-      headerPaths.colHeaderPaths!.push(colHeaderPath);
+      headerPaths.colHeaderPaths.push(colHeaderPath);
     });
 
     headerPathsWidthNode.rowHeaderPaths?.forEach((rowHeader: any) => {
@@ -2025,14 +1687,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           dimensionKey?: string;
           indicatorKey?: string;
           value?: string;
-          virtual?: boolean;
         } = {};
         rowHeaderPath.dimensionKey = rowHeader.dimensionKey;
         rowHeaderPath.indicatorKey = rowHeader.indicatorKey;
         rowHeaderPath.value =
           rowHeader.value ?? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? '';
-        rowHeaderPath.virtual = rowHeader.virtual;
-        headerPaths.rowHeaderPaths!.push(rowHeaderPath);
+        headerPaths.rowHeaderPaths.push(rowHeaderPath);
       }
     });
     return headerPaths;
@@ -2139,7 +1799,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
-    const oldRowHeaderCellIds = this._rowHeaderCellFullPathIds_FULL.slice(0);
+    const oldRowHeaderCellIds = this._rowHeaderCellIds_FULL.slice(0);
     const oldRowHeaderCellPositons = oldRowHeaderCellIds.map((id, row) => {
       return { col, row: row + this.columnHeaderLevelCount };
     });
@@ -2148,12 +1808,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       (<any>hd.define).hierarchyState === HierarchyState.collapse ? HierarchyState.expand : HierarchyState.collapse;
     //过程类似构造函数处理过程
     this.rowDimensionTree.reset(this.rowDimensionTree.tree.children, true);
-    this._rowHeaderCellFullPathIds_FULL = [];
+    this._rowHeaderCellIds_FULL = [];
     this.rowDimensionKeys = this.rowDimensionTree.dimensionKeys.valueArr();
     this.fullRowDimensionKeys = [];
     this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
     this._addHeadersForTreeMode(
-      this._rowHeaderCellFullPathIds_FULL,
+      this._rowHeaderCellIds_FULL,
       0,
       this.rowDimensionTree.tree.children,
       [],
@@ -2166,7 +1826,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.rowHeaderTitle) {
       const id = ++this.sharedVar.seqId;
       const firstColIds = Array(this.rowCount - this.columnHeaderLevelCount).fill(id);
-      this._rowHeaderCellFullPathIds_FULL.unshift(firstColIds);
+      this._rowHeaderCellIds_FULL.unshift(firstColIds);
       const cell: HeaderData = {
         id,
         title:
@@ -2192,7 +1852,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.rowHeaderObjs.push(cell);
       this._headerObjects[id] = cell;
     }
-    this._rowHeaderCellFullPathIds_FULL = transpose(this._rowHeaderCellFullPathIds_FULL);
+    this._rowHeaderCellIds_FULL = transpose(this._rowHeaderCellIds_FULL);
     if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
       this.generateExtensionRowTree();
     }
@@ -2212,13 +1872,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       col,
       row,
       oldRowHeaderCellIds.map(oldCellId => oldCellId[col - this.leftRowSeriesNumberColumnCount]),
-      this._rowHeaderCellFullPathIds_FULL.map(newCellId => newCellId[col - this.leftRowSeriesNumberColumnCount]),
+      this._rowHeaderCellIds_FULL.map(newCellId => newCellId[col - this.leftRowSeriesNumberColumnCount]),
       oldRowHeaderCellPositons,
       this
     );
-    // this._rowHeaderCellIds = this._rowHeaderCellIds_FULL.slice();
-    this.generateCellIdsConsiderHideHeader();
-    this.setPagination(this.pagination);
+    this._rowHeaderCellIds = this._rowHeaderCellIds_FULL.slice();
+
     return diffCell;
   }
   // 为列宽计算专用，兼容列表
@@ -2450,10 +2109,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     } else if (this.isRowHeader(source.col, source.row)) {
       if (this.rowHierarchyType === 'tree') {
         const sourceRowHeaderPaths = cloneDeep(
-          this.getCellHeaderPathsWithTreeNode(source.col, source.row).rowHeaderPaths
+          this.getCellHeaderPathsWidthTreeNode(source.col, source.row).rowHeaderPaths
         );
         const targetRowHeaderPaths = cloneDeep(
-          this.getCellHeaderPathsWithTreeNode(target.col, target.row).rowHeaderPaths
+          this.getCellHeaderPathsWidthTreeNode(target.col, target.row).rowHeaderPaths
         );
         sourceRowHeaderPaths.pop(); // 如果用了缓存_CellHeaderPathMap的话 这里pop会影响缓存的值 所以上面使用clone
         targetRowHeaderPaths.pop();
@@ -2523,30 +2182,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (targetIndex === sourceCellRange.start.col) {
           return null;
         }
-        // // _columnHeaderCellIds  逐行将每一行的source id 移动到目标地址targetCol处
-        // for (let row = 0; row < this._columnHeaderCellIds.length; row++) {
-        //   // 从header id的二维数组中取出需要操作的source ids
-        //   const sourceIds = this._columnHeaderCellIds[row].splice(
-        //     sourceCellRange.start.col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount,
-        //     sourceSize
-        //   );
-        //   // 将source ids插入到目标地址targetCol处
-        //   // 把sourceIds变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入sourceIds数组
-        //   sourceIds.unshift(targetIndex - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount, 0);
-        //   Array.prototype.splice.apply(this._columnHeaderCellIds[row], sourceIds);
-        // }
-        // _columnHeaderCellFullPathIds 调整了 _columnHeaderCellIds就不需要调整了  因为他们的第二层数组对象是引用关系
-        // _columnHeaderCellFullPathIds 逐行将每一行的source id 移动到目标地址targetCol处
-        for (let row = 0; row < this._columnHeaderCellFullPathIds.length; row++) {
+        // 逐行将每一行的source id 移动到目标地址targetCol处
+        for (let row = 0; row < this._columnHeaderCellIds.length; row++) {
           // 从header id的二维数组中取出需要操作的source ids
-          const sourceIds = this._columnHeaderCellFullPathIds[row].splice(
+          const sourceIds = this._columnHeaderCellIds[row].splice(
             sourceCellRange.start.col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount,
             sourceSize
           );
           // 将source ids插入到目标地址targetCol处
           // 把sourceIds变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入sourceIds数组
           sourceIds.unshift(targetIndex - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount, 0);
-          Array.prototype.splice.apply(this._columnHeaderCellFullPathIds[row], sourceIds);
+          Array.prototype.splice.apply(this._columnHeaderCellIds[row], sourceIds);
         }
 
         //将_columns的列定义调整位置 同调整_headerCellIds逻辑
@@ -2559,7 +2205,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
         // 对维度树结构调整节点位置
         this.columnDimensionTree.movePosition(
-          this.getCellHeaderPathsWithTreeNode(source.col, source.row).colHeaderPaths.length - 1,
+          this.getCellHeaderPathsWidthTreeNode(source.col, source.row).colHeaderPaths.length - 1,
           sourceCellRange.start.col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount,
           targetCellRange.start.col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount
         );
@@ -2577,8 +2223,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } else if (this.isRowHeader(source.col, source.row)) {
         // 插入目标地址的列index
         let targetIndex;
-        const sourceRowHeaderPaths = this.getCellHeaderPathsWithTreeNode(source.col, source.row).rowHeaderPaths as any;
-        const targetRowHeaderPaths = this.getCellHeaderPathsWithTreeNode(target.col, target.row).rowHeaderPaths as any;
+        const sourceRowHeaderPaths = this.getCellHeaderPathsWidthTreeNode(source.col, source.row).rowHeaderPaths as any;
+        const targetRowHeaderPaths = this.getCellHeaderPathsWidthTreeNode(target.col, target.row).rowHeaderPaths as any;
         const sourceRowHeaderNode = sourceRowHeaderPaths[sourceRowHeaderPaths.length - 1];
         const targetRowHeaderNode = targetRowHeaderPaths[sourceRowHeaderPaths.length - 1];
         //整体移动的列数
@@ -2608,14 +2254,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         );
         sourceIds.unshift((targetIndex - this.currentPageStartIndex) as any, 0 as any);
         Array.prototype.splice.apply(this._rowHeaderCellIds, sourceIds);
-
-        // 表头id _rowHeaderCellFullPathIds
-        const sourceIds0 = this._rowHeaderCellFullPathIds.splice(
-          sourceCellRange.start.row - this.columnHeaderLevelCount,
-          sourceSize
-        );
-        sourceIds0.unshift((targetIndex - this.currentPageStartIndex) as any, 0 as any);
-        Array.prototype.splice.apply(this._rowHeaderCellFullPathIds, sourceIds0);
         // 表头id _rowHeaderCellIds_FULL进行调整
         // 从header id的二维数组中取出需要操作的source ids
         const sourceIds_FULL = this._rowHeaderCellIds_FULL.splice(
@@ -2624,13 +2262,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         );
         sourceIds_FULL.unshift(targetIndex as any, 0 as any);
         Array.prototype.splice.apply(this._rowHeaderCellIds_FULL, sourceIds_FULL);
-        // 表头id _rowHeaderCellFullPathIds_FULL进行调整
-        const sourceIds_FULL0 = this._rowHeaderCellFullPathIds_FULL.splice(
-          sourceCellRange.start.row - this.columnHeaderLevelCount + this.currentPageStartIndex,
-          sourceSize
-        );
-        sourceIds_FULL0.unshift(targetIndex as any, 0 as any);
-        Array.prototype.splice.apply(this._rowHeaderCellFullPathIds_FULL, sourceIds_FULL0);
         // 对维度树结构调整节点位置
         this.rowDimensionTree.movePosition(
           sourceRowHeaderPaths.length - 1,
@@ -2666,9 +2297,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //   }
     IPivotTableCellHeaderPaths | IDimensionInfo[]
   ): CellAddress | undefined {
-    let colHeaderPaths: IDimensionInfo[];
-    let rowHeaderPaths: IDimensionInfo[];
-    let isCornerCell = false;
+    let colHeaderPaths;
+    let rowHeaderPaths: {
+      dimensionKey?: string;
+      indicatorKey?: string;
+      value?: string;
+    }[];
     let forceBody = false;
     if (Array.isArray(dimensionPaths)) {
       if (dimensionPaths.length > this.rowDimensionKeys.length + this.colDimensionKeys.length) {
@@ -2710,32 +2344,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.fullRowDimensionKeys.indexOf(b.dimensionKey ?? this.indicatorDimensionKey)
       );
     });
-
-    colHeaderPaths?.forEach(a => {
-      if (a.isPivotCorner) {
-        isCornerCell = true;
-      }
-    });
-    rowHeaderPaths?.forEach(a => {
-      if (a.isPivotCorner) {
-        isCornerCell = true;
-      }
-    });
-    if (isCornerCell) {
-      if (this.cornerSetting.titleOnDimension === 'row') {
-        for (let i = 0; i < this.rowDimensionKeys.length; i++) {
-          if (rowHeaderPaths[0].dimensionKey === this.rowDimensionKeys[i]) {
-            return { col: i + this.leftRowSeriesNumberColumnCount, row: 0 };
-          }
-        }
-      } else {
-        for (let i = 0; i < this.colDimensionKeys.length; i++) {
-          if (colHeaderPaths[0].dimensionKey === this.colDimensionKeys[i]) {
-            return { col: 0, row: i };
-          }
-        }
-      }
-    }
     let needLowestLevel = false; // needLowestLevel来标记是否需要 提供到最底层的维度层级信息
     // 如果行列维度都有值 说明是匹配body单元格 那这个时候 维度层级应该是满的
     if (colHeaderPaths?.length >= 1 && rowHeaderPaths?.length >= 1) {
@@ -2850,7 +2458,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } //树形展示的情况下 肯定是在第0列
     }
     if (colDimensionFinded || forceBody) {
-      col = this.rowHeaderLevelCount + this.leftRowSeriesNumberColumnCount;
+      col = this.rowHeaderLevelCount;
       const { startInTotal, level } = (colDimensionFinded as ITreeLayoutHeadNode) ?? defaultDimension;
       col += startInTotal ?? 0;
       defaultRow = this.columnHeaderTitle ? level + 1 : level;
@@ -2912,7 +2520,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       ((this.isFrozenRow(col, row) || this.isBottomFrozenRow(col, row)) &&
         isHasCartesianChartInline(col, row, 'col', this))
     ) {
-      const getAxisConfigInPivotChart = Factory.getFunction('getAxisConfigInPivotChart') as GetAxisConfigInPivotChart;
       return getAxisConfigInPivotChart(col, row, this);
     }
     return undefined;
@@ -2936,7 +2543,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (!this._table.isPivotChart()) {
       return false;
     }
-    if (this.indicatorKeys.length >= 1 && checkHasCartesianChart(this.indicatorsDefine)) {
+    if (this.indicatorKeys.length >= 1 && checkHasCartesianChart(this)) {
       if (
         (this.isBottomFrozenRow(col, row) && isHasCartesianChartInline(col, row, 'col', this)) ||
         (this.isRightFrozenColumn(col, row) && isHasCartesianChartInline(col, row, 'row', this))
@@ -2983,7 +2590,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
   setPagination(pagination: IPagination): void {
     this.clearCellRangeMap();
-    this._table.internalProps.useOneRowHeightFillAll = false;
     this.pagination = pagination;
 
     if (
@@ -3002,18 +2608,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.currentPageStartIndex = perPageCount * (currentPage || 0);
       this.currentPageEndIndex = this.currentPageStartIndex + perPageCount;
       this._rowHeaderCellIds = this._rowHeaderCellIds_FULL?.slice(this.currentPageStartIndex, this.currentPageEndIndex);
-      this._rowHeaderCellFullPathIds = this._rowHeaderCellFullPathIds_FULL?.slice(
-        this.currentPageStartIndex,
-        this.currentPageEndIndex
-      );
     } else {
       this.currentPageStartIndex = 0;
       this.currentPageEndIndex = this._rowHeaderCellIds_FULL.length;
       this._rowHeaderCellIds = this._rowHeaderCellIds_FULL?.slice(this.currentPageStartIndex, this.currentPageEndIndex);
-      this._rowHeaderCellFullPathIds = this._rowHeaderCellFullPathIds_FULL?.slice(
-        this.currentPageStartIndex,
-        this.currentPageEndIndex
-      );
     }
     this.pagination && (this.pagination.totalCount = this._rowHeaderCellIds_FULL?.length);
   }
@@ -3025,17 +2623,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     });
   }
 
-  getHeadNode(col: number, row: number) {
-    let dimensions: IDimensionInfo[];
-    const headerPaths = this.getCellHeaderPaths(col, row);
-    if (headerPaths.rowHeaderPaths && (headerPaths.rowHeaderPaths?.length ?? 0) > 0) {
-      dimensions = headerPaths.rowHeaderPaths?.slice(0, headerPaths.rowHeaderPaths.length);
-    } else if (headerPaths.colHeaderPaths && headerPaths.colHeaderPaths.length > 0) {
-      dimensions = headerPaths.colHeaderPaths.slice(0, headerPaths.colHeaderPaths.length);
-    }
-    return this.getHeadNodeByRowOrColDimensions(dimensions, col, row);
-  }
-  getHeadNodeByRowOrColDimensions(dimensions: IDimensionInfo[], col?: number, row?: number) {
+  getHeadNode(dimensions: IDimensionInfo[]) {
     if (!Array.isArray(dimensions)) {
       return undefined;
     }
@@ -3043,18 +2631,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     let rowDimension;
     let colArr = this.columnTree;
     let colDimension;
-
-    // 处理带有扩展row时 获取node错误问题 rowArr需要变更为有相应扩展后的tree
-    if (
-      isValid(row) &&
-      isValid(col) &&
-      this.rowHierarchyType === 'tree' &&
-      this.extensionRows &&
-      col >= 1 + this.leftRowSeriesNumberColumnCount
-    ) {
-      const hdId = this.getCellId(col - 1, row);
-      rowArr = this._rowHeaderExtensionTree[hdId].tree.children;
-    }
     for (let i = 0; i < dimensions.length; i++) {
       const highlightDimension = dimensions[i];
       if (
@@ -3087,7 +2663,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (isCol) {
         continue;
       }
-      for (let k = 0; k < rowArr?.length ?? 0; k++) {
+      for (let k = 0; k < rowArr.length; k++) {
         const dimension = rowArr[k];
         if (
           (isValid(highlightDimension.dimensionKey) &&
@@ -3114,6 +2690,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return undefined;
   }
+
   clearCellRangeMap() {
     // this._cellRangeMap.clear();
     this._largeCellRangeCache.length = 0;
@@ -3159,7 +2736,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
             const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
               for (const itemKey in item) {
-                if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
+                if (item[itemKey] !== datum[itemKey]) {
                   return false;
                 }
               }
@@ -3169,7 +2746,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
             // 判断维度点击
             const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
-              if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
+              if (datum[item.key] !== item.value) {
                 return false;
               }
               return true;
@@ -3184,7 +2761,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
             const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
               for (const itemKey in item) {
-                if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
+                if (item[itemKey] !== datum[itemKey]) {
                   return false;
                 }
               }
@@ -3194,7 +2771,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
             // 判断维度点击
             const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
-              if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
+              if (datum[item.key] !== item.value) {
                 return false;
               }
               return true;
@@ -3460,10 +3037,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return totalCount;
   }
   resetHeaderTree() {
-    this.colIndex = 0;
     //和初始化代码逻辑一致 但未考虑透视图类型
-    this._rowHeaderCellFullPathIds_FULL = [];
-    this._columnHeaderCellFullPathIds = [];
+    this._rowHeaderCellIds_FULL = [];
     this._columnHeaderCellIds = [];
     const dataset = this.dataset;
     // if (dataset) {
@@ -3477,25 +3052,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.rowHierarchyType,
       this.rowHierarchyType === 'tree' ? this.rowExpandLevel : undefined
     );
-
-    this.resetColumnHeaderLevelCount();
-
     //生成列表头单元格
     this._generateColHeaderIds();
 
     this.colIndex = 0;
     //生成行表头单元格
     this._generateRowHeaderIds();
-    this._rowHeaderCellFullPathIds_FULL = transpose(this._rowHeaderCellFullPathIds_FULL);
+
+    this.resetColumnHeaderLevelCount();
+    this._rowHeaderCellIds_FULL = transpose(this._rowHeaderCellIds_FULL);
 
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
       o[e.id as number] = e;
       return o;
     }, {} as { [key: LayoutObjectId]: HeaderData });
-
-    this._CellHeaderPathMap = new Map();
-    this._largeCellRangeCache.length = 0;
-    this.generateCellIdsConsiderHideHeader();
     this.setPagination(this.pagination);
   }
   isSeriesNumberInHeader(col: number, row: number): boolean {
@@ -3577,92 +3147,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
   /** 修改表头值 */
   changeTreeNodeTitle(col: number, row: number, value: string) {
-    // const headerPaths = this.getCellHeaderPaths(col, row);
-    // if (headerPaths.rowHeaderPaths.length > 0) {
-    //   const headerTreeNode = this.getHeadNode(headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length));
-    //   headerTreeNode.value = value;
-    // } else if (headerPaths.colHeaderPaths.length > 0) {
-    //   const headerTreeNode = this.getHeadNode(headerPaths.colHeaderPaths.slice(0, headerPaths.colHeaderPaths.length));
-    //   headerTreeNode.value = value;
-    // }
-    const headerTreeNode = this.getHeadNode(col, row);
-    headerTreeNode.value = value;
+    const headerPaths = this.getCellHeaderPaths(col, row);
+    if (headerPaths.rowHeaderPaths.length > 0) {
+      const headerTreeNode = this.getHeadNode(headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length));
+      headerTreeNode.value = value;
+    } else if (headerPaths.colHeaderPaths.length > 0) {
+      const headerTreeNode = this.getHeadNode(headerPaths.colHeaderPaths.slice(0, headerPaths.colHeaderPaths.length));
+      headerTreeNode.value = value;
+    }
     const id = this.getCellId(col, row);
     this._headerObjectMap[id as number].title = value;
-  }
-  changeCornerTitle(col: number, row: number, value: string) {
-    if (this.isCornerHeader(col, row)) {
-      const id = this.getCellId(col, row);
-      this._headerObjectMap[id as number].title = value;
-    }
-  }
-  generateCellIdsConsiderHideHeader() {
-    // deal with hide header
-    // 创建原数组的副本
-    this._columnHeaderCellIds = this._columnHeaderCellFullPathIds.slice();
-    if (!this.showColumnHeader) {
-      if (this.indicatorsAsCol && !this.hideIndicatorName) {
-        const indicatorIndex = this.colDimensionKeys.indexOf(IndicatorDimensionKeyPlaceholder);
-        const indicatorIds: number[][] = this._columnHeaderCellIds.splice(indicatorIndex, 1);
-        this._columnHeaderCellIds.splice(0, this._columnHeaderCellIds.length);
-        this._columnHeaderCellIds.push(indicatorIds[0]);
-      } else {
-        this._columnHeaderCellIds.splice(0, this._columnHeaderCellIds.length);
-      }
-    }
-    // 创建原数组的副本
-    this._rowHeaderCellIds_FULL = this._rowHeaderCellFullPathIds_FULL.slice();
-    if (!this.showRowHeader) {
-      if (!this.indicatorsAsCol && !this.hideIndicatorName) {
-        const indicatorIndex = this.rowDimensionKeys.indexOf(IndicatorDimensionKeyPlaceholder);
-        this._rowHeaderCellIds_FULL.forEach((cellIds: number[], index: number) => {
-          const _cellIds = cellIds.slice();
-          const indicator = _cellIds.splice(indicatorIndex, 1);
-          _cellIds.splice(0, _cellIds.length);
-          _cellIds.push(indicator[0]);
-          this._rowHeaderCellIds_FULL[index] = _cellIds;
-        });
-      } else {
-        this._rowHeaderCellIds_FULL.forEach((cellIds: number[], index: number) => {
-          const _cellIds = cellIds.slice();
-          _cellIds.splice(0, _cellIds.length);
-          this._rowHeaderCellIds_FULL[index] = _cellIds;
-        });
-      }
-    }
-    this._rowHeaderCellIds = this._rowHeaderCellIds_FULL.slice();
-
-    // 创建原数组的副本
-    this._cornerHeaderCellIds = this._cornerHeaderCellFullPathIds.slice();
-    if (this.rowHeaderLevelCount === 0 || this.columnHeaderLevelCount === 0) {
-      this._cornerHeaderCellIds = [];
-    } else if (this.cornerSetting.titleOnDimension === 'row' && !this.showRowHeader) {
-      if (!this.indicatorsAsCol && !this.hideIndicatorName) {
-        const indicatorIndex = this.rowDimensionKeys.indexOf(IndicatorDimensionKeyPlaceholder);
-        this._cornerHeaderCellIds.forEach((cellIds: number[], index: number) => {
-          const _cellIds = cellIds.slice();
-          const indicator = _cellIds.splice(indicatorIndex, 1);
-          _cellIds.splice(0, _cellIds.length);
-          _cellIds.push(indicator[0]);
-          this._cornerHeaderCellIds[index] = _cellIds;
-        });
-      } else {
-        this._cornerHeaderCellIds.forEach((cellIds: number[], index: number) => {
-          const _cellIds = cellIds.slice();
-          _cellIds.splice(0, _cellIds.length);
-          this._cornerHeaderCellIds[index] = _cellIds;
-        });
-      }
-    } else if (this.cornerSetting.titleOnDimension === 'column' && !this.showColumnHeader) {
-      if (this.indicatorsAsCol && !this.hideIndicatorName) {
-        const indicatorIndex = this.colDimensionKeys.indexOf(IndicatorDimensionKeyPlaceholder);
-        const indicatorIds: number[][] = this._cornerHeaderCellIds.splice(indicatorIndex, 1);
-        this._cornerHeaderCellIds.splice(0, this._cornerHeaderCellIds.length);
-        this._cornerHeaderCellIds.push(indicatorIds[0]);
-      } else {
-        this._cornerHeaderCellIds.splice(0, this._cornerHeaderCellIds.length);
-      }
-    }
   }
 }
 /** 计算 scale 的实际 range 长度 */

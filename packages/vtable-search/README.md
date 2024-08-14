@@ -22,32 +22,51 @@ VTable is not just a high-performance multidimensional data analysis table, but 
 
 ## Installation
 
-[npm package](https://www.npmjs.com/package/@visactor/vtable-search)
+[npm package](https://www.npmjs.com/package/@visactor/vtable-export)
 
 ```bash
 // npm
-npm install @visactor/vtable-search
+npm install @visactor/vtable-export
 
 // yarn
-yarn add @visactor/vtable-search
+yarn add @visactor/vtable-export
 ```
 
 ## Quick Start
 
 ```jsx
-const option = {
-  container: document.getElementById(CONTAINER_ID),
-  records,
-  columns,
-};
-const tableInstance = new VTable.ListTable(option);
-window.tableInstance = tableInstance;
+import * as VTable from '@visactor/vtable';
+import { downloadCsv, exportVTableToCsv, downloadExcel, exportVTableToExcel } from '@visactor/vtable-export';
 
-const search = new SearchComponent({
-  table: tableInstance,
-  autoJump: true
-});
-window.search = search;
+const option = {
+  header: [
+    {
+      field: "0",
+      caption: "name",
+    },
+    {
+      field: "1",
+      caption: "age",
+    },
+    {
+      field: "2",
+      caption: "gender",
+    },
+    {
+      field: "3",
+      caption: "hobby",
+    },
+  ],
+  records: new Array(1000).fill(["John", 18, "male", "🏀"]),
+};
+
+const tableInstance = new VTable.ListTable(option);
+
+// donload csv file
+downloadCsv(exportVTableToCsv(tableInstance), 'export-csv');
+
+// donload excel file
+downloadExcel(await exportVTableToExcel(tableInstance), 'export-excel');
 
 ```
 

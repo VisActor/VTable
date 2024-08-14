@@ -2,13 +2,6 @@
   "menu": "changelog",
   "children": [
     {
-      "path": "important-release",
-      "title": {
-        "zh": "重大版本",
-        "en": "Important Release"
-      }
-    },
-    {
       "path": "release",
       "title": {
         "zh": "发版记录",

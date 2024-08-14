@@ -225,19 +225,3 @@ export function setCellCheckboxState(col: number, row: number, checked: boolean,
     }
   }
 }
-
-export function changeCheckboxOrder(sourceIndex: number, targetIndex: number, state: StateManager) {
-  const { checkedState, table } = state;
-  if (table.internalProps.transpose) {
-    sourceIndex = table.getRecordShowIndexByCell(sourceIndex, 0);
-    targetIndex = table.getRecordShowIndexByCell(targetIndex, 0);
-  } else {
-    sourceIndex = table.getRecordShowIndexByCell(0, sourceIndex);
-    targetIndex = table.getRecordShowIndexByCell(0, targetIndex);
-  }
-  if (sourceIndex !== targetIndex) {
-    const sourceRecord = checkedState[sourceIndex];
-    checkedState[sourceIndex] = checkedState[targetIndex];
-    checkedState[targetIndex] = sourceRecord;
-  }
-}

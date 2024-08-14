@@ -2,16 +2,14 @@
 import type { ColorsDef, LineDashsDef, LineWidthsDef, LineWidthsPropertyDefine, LineDashsPropertyDefine } from '.';
 import type { CheckboxStyle, ITextStyleOption, RadioStyle } from './column/style';
 import type { ColorPropertyDefine, ColorsPropertyDefine } from './style-define';
+import type { ColumnIconOption } from './icon';
 import type { ICellAxisOption } from './component/axis';
 import type { PopTipAttributes } from '@visactor/vrender-components';
 // ****** Custom Theme *******
 export type PartialTableThemeDefine = Partial<ITableThemeDefine>;
 export type ThemeStyle = ITextStyleOption & {
   hover?: Omit<InteractionStyle, 'cellBorderColor' | 'cellBorderLineWidth'>; //鼠标hover到某个单元格
-  select?: {
-    inlineRowBgColor?: ColorPropertyDefine; //交互所在整行的背景颜色
-    inlineColumnBgColor?: ColorPropertyDefine; //交互所在整列的背景颜色
-  };
+  // click?: Omit<InteractionStyle, 'inlineRowBgColor' | 'inlineColumnBgColor'>; //鼠标点击到某个单元格
   frameStyle?: FrameStyle;
 };
 export type InteractionStyle = {
@@ -52,8 +50,6 @@ export type ScrollStyle = {
   scrollRailColor?: string;
   /**滚动条滑块的颜色 */
   scrollSliderColor?: string;
-  /**滚动条滑块的圆角半径 */
-  scrollSliderCornerRadius?: number;
   /**滚动条宽度大小 */
   width?: number;
   /**滚动条是否可见  'always' | 'scrolling' | 'none' | 'focus',常驻|滚动时|不显示|聚焦在画布上时 */
@@ -72,8 +68,6 @@ export type TooltipStyle = {
   color?: string;
   padding?: number[];
   bgColor?: string;
-  maxWidth?: number;
-  maxHeight?: number;
   /** !目前未实现该逻辑。触发行为：hover or click */
   // trigger?: string | string[];
   /**气泡框位置，可选 top left right bottom */
@@ -140,8 +134,6 @@ export interface ITableThemeDefine {
     cellBorderColor?: string; //边框颜色
     cellBorderLineWidth?: number; //边框线宽度
     cellBgColor?: string; //选择框背景颜色
-    inlineRowBgColor?: string; //交互所在整行的背景颜色
-    inlineColumnBgColor?: string; //交互所在整列的背景颜色
   };
 
   // style for axis

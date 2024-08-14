@@ -1,7 +1,7 @@
 import type { CellAddress, CellRange, CellLocation, FieldDef, CellAddressWithBound } from './table-engine';
 import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 
-import type { IDimensionInfo, MergeCellInfo, RectProps, SortOrder } from './common';
+import type { IDimensionInfo, RectProps, SortOrder } from './common';
 import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
 import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
@@ -44,8 +44,6 @@ export type MousePointerCellEvent = CellAddressWithBound &
     event?: MouseEvent | PointerEvent | TouchEvent;
     federatedEvent?: FederatedPointerEvent;
     target: IEventTarget | undefined;
-
-    mergeCellInfo?: MergeCellInfo;
   };
 // 多单元格的事件传出参数 需要将当前鼠标处的单元格的信息FocusedCellInfo也带着
 export type MousePointerMultiCellEvent = MousePointerCellEvent & {
@@ -61,7 +59,6 @@ export type MousePointerSparklineEvent = MousePointerCellEvent & {
 
 export interface TableEventHandlersEventArgumentMap {
   selected_cell: SelectedCellEvent;
-  selected_clear: {};
   click_cell: MousePointerCellEvent;
   dblclick_cell: MousePointerCellEvent;
   mouseenter_table: { event?: MouseEvent | PointerEvent | TouchEvent };
@@ -204,7 +201,6 @@ export interface DrillMenuEventInfo {
 }
 export interface TableEventHandlersReturnMap {
   selected_cell: void;
-  selected_clear: void;
   click_cell: void;
   dblclick_cell: void;
   mouseenter_table: void;

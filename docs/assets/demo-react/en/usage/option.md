@@ -12,29 +12,28 @@ link: '../guide/Developer_Ecology/react'
 You can use the complete option of VTable directly and pass the option into the table component as a prop.
 
 ## code demo
-
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 const option = {
   columns: [
     {
       field: '0',
-      title: 'name'
+      caption: 'name',
     },
     {
       field: '1',
-      title: 'age'
+      caption: 'age',
     },
     {
       field: '2',
-      title: 'gender'
+      caption: 'gender',
     },
     {
       field: '3',
-      title: 'hobby'
-    }
+      caption: 'hobby',
+    },
   ],
-  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
+  records: new Array(1000).fill(['John', 18, 'male', '🏀']),
 };
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));

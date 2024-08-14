@@ -1,5 +1,4 @@
 import type * as VTable from '@visactor/vtable';
-import type { CellInfo } from '../excel';
 
 type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 type CellRange = VTable.TYPES.CellRange;
@@ -7,11 +6,7 @@ type CellRange = VTable.TYPES.CellRange;
 const newLine = '\r\n';
 const separator = ',';
 
-export type ExportVTableToCsvOptions = {
-  formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
-};
-
-export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableToCsvOptions): string {
+export function exportVTableToCsv(tableInstance: IVTable): string {
   const minRow = 0;
   const maxRow = tableInstance.rowCount - 1;
   const minCol = 0;
@@ -20,7 +15,7 @@ export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableT
   let copyValue = '';
   for (let row = minRow; row <= maxRow; row++) {
     for (let col = minCol; col <= maxCol; col++) {
-      const copyCellValue = getCopyCellValue(col, row, tableInstance, option);
+      const copyCellValue = getCopyCellValue(col, row, tableInstance);
       if (typeof Promise !== 'undefined' && copyCellValue instanceof Promise) {
         // not support async
       } else {
@@ -38,22 +33,7 @@ export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableT
   return copyValue;
 }
 
-function getCopyCellValue(
-  col: number,
-  row: number,
-  tableInstance: IVTable,
-  option?: ExportVTableToCsvOptions
-): string | Promise<string> | void {
-  if (option?.formatExportOutput) {
-    const cellInfo = { cellType: '', cellValue: '', table: tableInstance, col, row };
-    const formattedValue = option.formatExportOutput(cellInfo);
-    if (formattedValue !== undefined) {
-      if (typeof formattedValue === 'string') {
-        return '"' + formattedValue + '"';
-      }
-      return formattedValue;
-    }
-  }
+function getCopyCellValue(col: number, row: number, tableInstance: IVTable): string | Promise<string> | void {
   const cellRange: CellRange = tableInstance.getCellRange(col, row);
   const copyStartCol = cellRange.start.col;
   const copyStartRow = cellRange.start.row;
@@ -63,9 +43,5 @@ function getCopyCellValue(
   }
 
   const value = tableInstance.getCellValue(col, row);
-
-  if (typeof value === 'string') {
-    return '"' + value + '"';
-  }
   return value;
 }

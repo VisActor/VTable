@@ -7,7 +7,6 @@ import { DrillIcon } from './drill-icon';
 import { CellMover } from './cell-mover';
 import { getColX, getRowY } from './util';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { isValid } from '@visactor/vutils';
 
 /**
  * @description: 表格内容外组件
@@ -269,20 +268,7 @@ export class TableComponent {
     const theme = this.table.theme;
     const scrollRailColor = theme.scrollStyle?.scrollRailColor as string;
     const scrollSliderColor = theme.scrollStyle?.scrollSliderColor as string;
-    const scrollSliderCornerRadius = theme.scrollStyle?.scrollSliderCornerRadius;
     const width = theme.scrollStyle?.width as number;
-
-    let sliderStyle;
-    if (isValid(scrollSliderCornerRadius)) {
-      sliderStyle = {
-        cornerRadius: scrollSliderCornerRadius,
-        fill: scrollSliderColor
-      };
-    } else {
-      sliderStyle = {
-        fill: scrollSliderColor
-      };
-    }
     // const visible = theme.scrollStyle?.visible as string;
     // const hoverOn = theme.scrollStyle?.hoverOn as boolean;
 
@@ -296,7 +282,9 @@ export class TableComponent {
       railStyle: {
         fill: scrollRailColor
       },
-      sliderStyle,
+      sliderStyle: {
+        fill: scrollSliderColor
+      },
       range: [0, 0.1],
       // scrollRange: [0.4, 0.8]
       visible: false
@@ -315,7 +303,9 @@ export class TableComponent {
       railStyle: {
         fill: scrollRailColor
       },
-      sliderStyle,
+      sliderStyle: {
+        fill: scrollSliderColor
+      },
       range: [0, 0.1],
       visible: false
     });
@@ -344,13 +334,7 @@ export class TableComponent {
     const frozenColsWidth = this.table.getFrozenColsWidth();
     const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
     const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
-
-    // _disableColumnAndRowSizeRound环境中，可能出现
-    // getAllColsWidth/getAllRowsHeight(A) + getAllColsWidth/getAllRowsHeight(B) < getAllColsWidth/getAllRowsHeight(A+B)
-    // （由于小数在取数时被省略）
-    // 这里加入tolerance，避免出现无用滚动
-    const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
-    if (totalWidth > tableWidth + sizeTolerance) {
+    if (totalWidth > tableWidth) {
       const y = Math.min(tableHeight, totalHeight);
       const rangeEnd = Math.max(0.05, (tableWidth - frozenColsWidth) / (totalWidth - frozenColsWidth));
 
@@ -390,7 +374,7 @@ export class TableComponent {
       });
     }
 
-    if (totalHeight > tableHeight + sizeTolerance) {
+    if (totalHeight > tableHeight) {
       const x = Math.min(tableWidth, totalWidth);
       const rangeEnd = Math.max(0.05, (tableHeight - frozenRowsHeight) / (totalHeight - frozenRowsHeight));
 
@@ -734,26 +718,15 @@ export class TableComponent {
     // scrollbar
     const scrollRailColor = theme.scrollStyle?.scrollRailColor as string;
     const scrollSliderColor = theme.scrollStyle?.scrollSliderColor as string;
-    const scrollSliderCornerRadius = theme.scrollStyle?.scrollSliderCornerRadius;
     const width = theme.scrollStyle?.width as number;
-
-    let sliderStyle;
-    if (isValid(scrollSliderCornerRadius)) {
-      sliderStyle = {
-        cornerRadius: scrollSliderCornerRadius,
-        fill: scrollSliderColor
-      };
-    } else {
-      sliderStyle = {
-        fill: scrollSliderColor
-      };
-    }
     this.hScrollBar.setAttributes({
       height: width,
       railStyle: {
         fill: scrollRailColor
       },
-      sliderStyle
+      sliderStyle: {
+        fill: scrollSliderColor
+      }
     });
 
     this.vScrollBar.setAttributes({
@@ -761,7 +734,9 @@ export class TableComponent {
       railStyle: {
         fill: scrollRailColor
       },
-      sliderStyle
+      sliderStyle: {
+        fill: scrollSliderColor
+      }
     });
 
     // columnResizeLine & columnResizeBgLine

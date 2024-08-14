@@ -17,9 +17,6 @@ export function dealFrozen(scene: Scenegraph) {
     }
   } else if (scene.table.frozenColCount < scene.table.rowHeaderLevelCount) {
     // move columnGroup from rowHeaderGroup into bodyGroup(from cornerHeaderGroup into colHeaderGroup)
-    scene.bodyGroup.setAttribute('height', scene.rowHeaderGroup.attribute.height);
-    scene.bodyGroup.setAttribute('y', scene.rowHeaderGroup.attribute.y);
-    scene.colHeaderGroup.setAttribute('height', scene.cornerHeaderGroup.attribute.height);
     for (let i = 0; i < scene.table.rowHeaderLevelCount - scene.table.frozenColCount; i++) {
       moveColumnFromRowHeaderToBody(scene);
       moveColumnFromCornerHeaderToColHeader(scene);
@@ -50,9 +47,6 @@ export function dealFrozen(scene: Scenegraph) {
 export function resetFrozen(scene: Scenegraph) {
   if (scene.frozenColCount > scene.table.frozenColCount) {
     // move columnGroup from rowHeaderGroup into bodyGroup(from cornerHeaderGroup into colHeaderGroup)
-    scene.bodyGroup.setAttribute('height', scene.rowHeaderGroup.attribute.height);
-    scene.bodyGroup.setAttribute('y', scene.rowHeaderGroup.attribute.y);
-    scene.colHeaderGroup.setAttribute('height', scene.cornerHeaderGroup.attribute.height);
     for (let i = 0; i < scene.frozenColCount - scene.table.frozenColCount; i++) {
       moveColumnFromRowHeaderToBody(scene);
       moveColumnFromCornerHeaderToColHeader(scene);
@@ -72,7 +66,7 @@ export function resetFrozen(scene: Scenegraph) {
 
   scene.deleteAllSelectBorder();
   scene.table.stateManager.select.ranges.forEach(range => {
-    scene.updateCellSelectBorder(range);
+    scene.updateCellSelectBorder(range.start.col, range.start.row, range.end.col, range.end.row);
   });
 
   // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;

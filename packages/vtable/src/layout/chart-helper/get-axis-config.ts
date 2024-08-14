@@ -2,12 +2,10 @@ import { isArray, isNumber, isValid, merge } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotChart } from '../../PivotChart';
+import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import type { CollectedValue } from '../../ts-types';
 import { getNewRangeToAlign } from './zero-align';
-import { Factory } from '../../core/factory';
-import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
 
-export type GetAxisConfigInPivotChart = (col: number, row: number, layout: PivotHeaderLayoutMap) => any;
 export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   if (!layout._table.isPivotChart()) {
     return undefined;
@@ -174,13 +172,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 左侧维度轴
       return merge(
         {
-          domain: chartType === 'scatter' ? undefined : Array.from(domain),
-          // domain:
-          //   chartType === 'scatter'
-          //     ? undefined
-          //     : spec?.series?.length >= 1 //chartType === 'common' 原来这样判断的
-          //     ? Array.from(domain)
-          //     : Array.from(domain).reverse(),
+          domain:
+            chartType === 'scatter'
+              ? undefined
+              : spec?.series?.length >= 1 //chartType === 'common' 原来这样判断的
+              ? Array.from(domain)
+              : Array.from(domain).reverse(),
           range: chartType === 'scatter' ? domain : undefined,
           title: {
             autoRotate: true
@@ -190,13 +187,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         {
           orient: 'left',
           type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
-          __vtableChartTheme: theme,
-          // 默认左侧维度轴对应的图表direction 为 horizontal
-          // 散点图特殊处理
-          inverse: transformInverse(
-            axisOption,
-            (spec?.direction ?? (chartType === 'scatter' ? 'vertical' : 'horizontal')) === Direction.horizontal
-          )
+          __vtableChartTheme: theme
         }
       );
     }
@@ -424,7 +415,7 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
   };
 }
 
-function checkZeroAlign(spec: any, orient: string, layout: PivotHeaderLayoutMap) {
+export function checkZeroAlign(spec: any, orient: string, layout: PivotHeaderLayoutMap) {
   // check condition:
   // 1. two axes and one set sync
   // 2. axisId in sync is another
@@ -560,7 +551,6 @@ function getRange(
     range.min = range.min < 0 ? -1 : 0;
     range.max = range.max > 0 ? 1 : 0;
   }
-  const getAxisDomainRangeAndLabels = Factory.getFunction('getAxisDomainRangeAndLabels') as GetAxisDomainRangeAndLabels;
   const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(
     range.min,
     range.max,
@@ -661,26 +651,4 @@ export function isLeftOrRightAxis(col: number, row: number, layout: PivotHeaderL
     }
   }
   return false;
-}
-
-const enum Direction {
-  vertical = 'vertical',
-  horizontal = 'horizontal'
-}
-
-// align with vchart (packages/vchart/src/component/axis/cartesian/util/common.ts)
-function transformInverse(spec: any, isHorizontal: boolean) {
-  // 这里处理下 direction === 'horizontal' 下的 Y 轴
-  // 因为 Y 轴绘制的时候默认是从下至上绘制的，但是在 direction === 'horizontal' 场景下，图表应该是按照从上至下阅读的
-  // 所以这里在这种场景下坐标轴会默认 inverse 已达到效果
-  let inverse = spec?.inverse;
-  if (isHorizontal && !isXAxis(spec?.orient)) {
-    inverse = isValid(spec?.inverse) ? !spec?.inverse : true;
-  }
-  return inverse;
-}
-
-type IOrientType = 'left' | 'top' | 'right' | 'bottom' | 'z';
-function isXAxis(orient: IOrientType) {
-  return orient === 'bottom' || orient === 'top';
 }

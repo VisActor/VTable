@@ -27,7 +27,7 @@ export class CustomCellStylePlugin {
     const customStyleId = this.getCustomCellStyleId(col, row);
     if (customStyleId) {
       const styleOption = this.getCustomCellStyleOption(customStyleId);
-      return styleOption?.style;
+      return styleOption.style;
     }
     return undefined;
   }
@@ -133,18 +133,12 @@ export class CustomCellStylePlugin {
   }
 
   updateCustomCell(customCellStyle: CustomCellStyle[], customCellStyleArrangement: CustomCellStyleArrangement[]) {
-    this.customCellStyle.length = 0;
-    this.customCellStyleArrangement.length = 0;
     customCellStyle.forEach((cellStyle: CustomCellStyle) => {
       this.registerCustomCellStyle(cellStyle.id, cellStyle.style);
     });
     customCellStyleArrangement.forEach((cellStyle: CustomCellStyleArrangement) => {
       this.arrangeCustomCellStyle(cellStyle.cellPosition, cellStyle.customStyleId);
     });
-  }
-
-  hasCustomCellStyle(customStyleId: string) {
-    return this.customCellStyle.some(style => style.id === customStyleId);
   }
 }
 

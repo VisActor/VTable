@@ -14,13 +14,6 @@ export async function sortHorizontal(proxy: SceneProxy) {
       });
     }
   });
-
-  // 更新同步范围
-  const syncLeftCol = Math.max(proxy.bodyLeftCol, proxy.screenLeftCol - proxy.screenColCount * 1);
-  const syncRightCol = Math.min(proxy.bodyRightCol, proxy.screenLeftCol + proxy.screenColCount * 2);
-
-  computeColsWidth(proxy.table, syncLeftCol, syncRightCol);
-
   for (let col = proxy.colStart; col <= proxy.colEnd; col++) {
     // 将该列的chartInstance清除掉
     const columnGroup = proxy.table.scenegraph.getColGroup(col);
@@ -40,6 +33,11 @@ export async function sortHorizontal(proxy: SceneProxy) {
       proxy.table.scenegraph.updateCellContent(col, row);
     }
   }
+  // 更新同步范围
+  const syncLeftCol = Math.max(proxy.bodyLeftCol, proxy.screenLeftCol - proxy.screenColCount * 1);
+  const syncRightCol = Math.min(proxy.bodyRightCol, proxy.screenLeftCol + proxy.screenColCount * 2);
+
+  computeColsWidth(proxy.table, syncLeftCol, syncRightCol);
 
   updateColContent(syncLeftCol, syncRightCol, proxy);
 

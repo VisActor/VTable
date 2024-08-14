@@ -4,7 +4,7 @@ Currently supported capabilities include sorting, filtering, and data aggregatio
 
 # Data sorting
 
-For details, please refer to the tutorial: https://visactor.io/vtable/guide/basic_function/sort/list_sort
+For details, please refer to the tutorial: https://visactor.io/vtable/guide/basic_function/sort
 
 # Data filtering
 
@@ -62,34 +62,32 @@ Aggregation configuration can be set in the `columns` column definition or confi
 In the column definition, the aggregation method can be configured through the `aggregation` attribute. Here is an example of an aggregation configuration:
 
 ```javascript
-columns: [
-  {
-    field: 'salary',
-    title: 'salary',
-    width: 100,
-    aggregation: [
-      {
-        aggregationType: AggregationType.MAX,
-        formatFun(value) {
-          return 'Maximum salary:' + Math.round(value) + 'yuan';
-        }
-      },
-      {
-        aggregationType: AggregationType.MIN,
-        formatFun(value) {
-          return 'Minimum salary:' + Math.round(value) + 'yuan';
-        }
-      },
-      {
-        aggregationType: AggregationType.AVG,
-        showOnTop: false,
-        formatFun(value, col, row, table) {
-          return 'Average:' + Math.round(value) + 'Yuan (total' + table.recordsCount + 'data)';
-        }
+columns: {
+  field: 'salary',
+  title: 'salary',
+  width: 100,
+  aggregation: [
+    {
+      aggregationType: AggregationType.MAX,
+      formatFun(value) {
+        return 'Maximum salary:' + Math.round(value) + 'yuan';
       }
-    ]
-  }
-];
+    },
+    {
+      aggregationType: AggregationType.MIN,
+      formatFun(value) {
+        return 'Minimum salary:' + Math.round(value) + 'yuan';
+      }
+    },
+    {
+      aggregationType: AggregationType.AVG,
+      showOnTop: false,
+      formatFun(value, col, row, table) {
+        return 'Average:' + Math.round(value) + 'Yuan (total' + table.recordsCount + 'data)';
+      }
+    }
+  ]
+}
 ```
 
 In the above example, we set three aggregation methods for the `salary` column: maximum value, minimum value and average value. Use `aggregationType` to specify the aggregation method, and then use `formatFun` to customize the display format of the aggregation results, and use `showOnTop` to control whether the aggregation results are displayed at the top or bottom of the body.

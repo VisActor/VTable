@@ -14,10 +14,10 @@ import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
-import type { ComputeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
-import { Factory } from '../../core/factory';
+import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
+import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@src/vrender';
-import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
+import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { breakString } from '../utils/break-string';
 
@@ -301,9 +301,8 @@ function computeAutoColWidth(
     // 判断透视图轴组件
     if (table.isPivotChart()) {
       const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
-      const axisConfig = layout.getAxisConfigInPivotChart(col, row);
+      const axisConfig = getAxisConfigInPivotChart(col, row, layout);
       if (axisConfig) {
-        const computeAxisComponentWidth: ComputeAxisComponentWidth = Factory.getFunction('computeAxisComponentWidth');
         const axisWidth = computeAxisComponentWidth(axisConfig, table);
         if (typeof axisWidth === 'number') {
           maxWidth = Math.max(axisWidth, maxWidth);
@@ -364,15 +363,9 @@ function computeAutoColWidth(
       if ((hd as HeaderData)?.define?.columnWidthComputeMode === 'only-body') {
         continue;
       }
-      if (isValid((hd as HeaderData)?.hierarchyLevel)) {
+      if ((hd as HeaderData)?.hierarchyLevel) {
         cellHierarchyIndent =
           ((hd as HeaderData).hierarchyLevel ?? 0) * ((layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0);
-        if (
-          (layoutMap as PivotHeaderLayoutMap).rowHierarchyTextStartAlignment &&
-          !table.internalProps.headerHelper.getHierarchyIcon(col, row)
-        ) {
-          cellHierarchyIndent += table.internalProps.headerHelper.getHierarchyIconWidth();
-        }
       }
     } else {
       deltaRow = prepareDeltaRow;
@@ -386,12 +379,6 @@ function computeAutoColWidth(
           Array.isArray(indexArr) && table.getHierarchyState(col, row) !== HierarchyState.none
             ? (indexArr.length - 1) * ((layoutMap as SimpleHeaderLayoutMap).hierarchyIndent ?? 0)
             : 0;
-        if (
-          (layoutMap as SimpleHeaderLayoutMap).hierarchyTextStartAlignment &&
-          !table.internalProps.bodyHelper.getHierarchyIcon(col, row)
-        ) {
-          cellHierarchyIndent += table.internalProps.headerHelper.getHierarchyIconWidth();
-        }
       }
     }
 
@@ -418,10 +405,6 @@ function computeAutoColWidth(
     return colMinWidth;
   } else if (maxWidth > colMaxWidth) {
     return colMaxWidth;
-  } else if (maxWidth <= 0) {
-    // In the case of partially hiding the header, the width calculation may be 0.
-    // In this case, the default value is used to prevent it from being unable to be displayed
-    maxWidth = table.defaultColWidth;
   }
   return maxWidth;
 }
@@ -457,7 +440,7 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       rect: getCellRect(col, row, table),
       table
     };
-    if (isFunction(customLayout)) {
+    if (customLayout) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
       if (customLayoutObj.rootContainer instanceof VGroup) {
@@ -470,8 +453,6 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
         enableCellPadding = customLayoutObj.enableCellPadding;
       } else {
         width = 0;
-        renderDefault = customLayoutObj.renderDefault;
-        enableCellPadding = customLayoutObj.enableCellPadding;
       }
     } else if (typeof customRender === 'function') {
       // 处理customRender
@@ -482,7 +463,6 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       width = customRender?.expectedWidth ?? 0;
       renderDefault = customRender?.renderDefault;
     }
-    width = Math.ceil(width);
     if (enableCellPadding) {
       const actStyle = table._getCellStyle(col, row);
       const padding = getQuadProps(getProp('padding', actStyle, col, row, table));
@@ -594,11 +574,11 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
   } else {
     text = cellValue;
   }
-  const lines = breakString(text, table).text;
+  const lines = breakString(text, table);
   if (lines.length >= 1) {
     // eslint-disable-next-line no-loop-func
     lines.forEach((line: string) => {
-      const width = table.measureText(line, {
+      const width = table.measureText(line.slice(0, table.options.maxCharactersNumber || 200), {
         fontSize,
         fontFamily,
         fontWeight
@@ -693,8 +673,6 @@ export function getAdaptiveWidth(
 ) {
   let actualWidth = 0;
   const adaptiveColumns: number[] = [];
-  const sparklineColumns = [];
-  let totalSparklineAbleWidth = 0;
   for (let col = startCol; col < endColPlus1; col++) {
     const width = update ? newWidths[col] : table.getColWidth(col);
     const maxWidth = table.getMaxColWidth(col);
@@ -706,39 +684,9 @@ export function getAdaptiveWidth(
       // fixed width, do not adaptive
       totalDrawWidth -= width;
     }
-
-    if (table.options.customConfig?.shrinkSparklineFirst) {
-      const bodyCellType = table.getBodyColumnType(col, 0);
-      if (bodyCellType === 'sparkline') {
-        sparklineColumns.push({ col, width });
-        totalSparklineAbleWidth += width - table.defaultColWidth;
-      }
-    }
   }
 
   const factor = totalDrawWidth / actualWidth;
-
-  if (
-    table.options.customConfig?.shrinkSparklineFirst &&
-    factor < 1 &&
-    actualWidth - totalDrawWidth < totalSparklineAbleWidth
-  ) {
-    // only shrink sparkline column
-    for (let i = 0; i < sparklineColumns.length; i++) {
-      const { col, width } = sparklineColumns[i];
-      const deltaWidth = (actualWidth - totalDrawWidth) / sparklineColumns.length;
-      const colWidth = Math.floor(width - deltaWidth);
-
-      if (update) {
-        newWidths[col] = table._adjustColWidth(col, colWidth);
-      } else if (fromScenegraph) {
-        table.scenegraph.setColWidth(col, table._adjustColWidth(col, colWidth));
-      } else {
-        table._setColWidth(col, table._adjustColWidth(col, colWidth), false, true);
-      }
-    }
-    return;
-  }
 
   for (let i = 0; i < adaptiveColumns.length; i++) {
     const col = adaptiveColumns[i];

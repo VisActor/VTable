@@ -115,9 +115,6 @@ type AttachInfo = {
   range: CellRange;
 };
 
-export interface IMenuHandler {
-  new (table: BaseTableAPI): MenuHandler;
-}
 export class MenuHandler {
   private _table: BaseTableAPI;
   private _menuInstances?: { [type: string]: BaseMenu };

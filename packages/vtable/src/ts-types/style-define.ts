@@ -81,7 +81,6 @@ export type CellStyle = {
   padding: PaddingsDef;
   textBaseline: CanvasTextBaseline;
   color: CanvasRenderingContext2D['fillStyle'];
-  strokeColor?: CanvasRenderingContext2D['fillStyle'];
   bgColor: CanvasRenderingContext2D['fillStyle'];
   // font: string;
   fontSize: number;

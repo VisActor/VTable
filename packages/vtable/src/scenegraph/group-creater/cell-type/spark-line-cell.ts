@@ -85,8 +85,6 @@ export function createSparkLineCellGroup(
   return cellGroup;
 }
 
-export type CreateSparkLineCellGroup = typeof createSparkLineCellGroup;
-
 function createSparkLine(
   col: number,
   row: number,

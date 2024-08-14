@@ -9,7 +9,6 @@ import type {
   HeaderData,
   ICustomRender,
   IDimension,
-  IHeaderTreeDefine,
   IIndicator,
   IRowDimension,
   LayoutObjectId
@@ -44,7 +43,6 @@ interface ITreeLayoutBaseHeadNode {
 
 interface ITreeLayoutDimensionHeadNode extends ITreeLayoutBaseHeadNode {
   dimensionKey: string;
-  virtual?: boolean;
 }
 interface ITreeLayoutIndicatorHeadNode extends ITreeLayoutBaseHeadNode {
   indicatorKey: string;
@@ -81,8 +79,8 @@ export class DimensionTree {
   // blockStartIndexMap: Map<number, boolean> = new Map();
   // blockEndIndexMap: Map<number, boolean> = new Map();
   dimensionKeys: NumberMap<string> = new NumberMap<string>();
-  dimensionKeysIncludeVirtual: NumberMap<string> = new NumberMap<string>();
   // dimensions: IDimension[] | undefined;//目前用不到这个
+
   cache: Map<number, any> = new Map();
   constructor(
     tree: ITreeLayoutHeadNode[],
@@ -103,13 +101,12 @@ export class DimensionTree {
     // this.dimensions = dimensions;
     this.cache.clear();
     this.dimensionKeys = new NumberMap<string>();
-    this.dimensionKeysIncludeVirtual = new NumberMap<string>();
     this.tree.children = tree as ITreeLayoutHeadNode[];
     // const re = { totalLevel: 0 };
     // if (updateTreeNode) this.updateTreeNode(this.tree, 0, re, this.tree);
     // else
     this.setTreeNode(this.tree, 0, this.tree);
-    // this.totalLevel = this.dimensionKeys.count();
+    this.totalLevel = this.dimensionKeys.count();
   }
   setTreeNode(node: ITreeLayoutHeadNode, startIndex: number, parent: ITreeLayoutHeadNode): number {
     node.startIndex = startIndex;
@@ -120,22 +117,8 @@ export class DimensionTree {
     //   if (!node.id) node.id = ++seqId;
     // }
     if (node.dimensionKey ?? node.indicatorKey) {
-      if (
-        !node.virtual &&
-        !this.dimensionKeys.contain(node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey)
-      ) {
+      !this.dimensionKeys.contain(node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey) &&
         this.dimensionKeys.put(node.level, node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey);
-      }
-      if (
-        !this.dimensionKeysIncludeVirtual.contain(
-          node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey
-        )
-      ) {
-        this.dimensionKeysIncludeVirtual.put(
-          node.level,
-          node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey
-        );
-      }
       if (!node.id) {
         node.id = ++this.sharedVar.seqId;
       }
@@ -147,7 +130,6 @@ export class DimensionTree {
       if (children?.length >= 1) {
         children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
-          this.totalLevel = Math.max(this.totalLevel, n.level + 1);
           size += this.setTreeNode(n, size, node);
         });
       } else {
@@ -158,14 +140,12 @@ export class DimensionTree {
       //树形展示 有子节点 且下一层需要展开
       children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
-        this.totalLevel = Math.max(this.totalLevel, n.level + 1);
         size += this.setTreeNode(n, size, node);
       });
     } else if (node.hierarchyState === HierarchyState.collapse && children?.length >= 1) {
       //树形展示 有子节点 且下一层不需要展开
       children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
-        this.totalLevel = Math.max(this.totalLevel, n.level + 1);
         this.setTreeNode(n, size, node);
       });
     } else if (
@@ -178,7 +158,6 @@ export class DimensionTree {
       children?.length >= 1 &&
         children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
-          this.totalLevel = Math.max(this.totalLevel, n.level + 1);
           size += this.setTreeNode(n, size, node);
         });
     } else if (children?.length >= 1 || children === true) {
@@ -187,7 +166,6 @@ export class DimensionTree {
       children?.length >= 1 &&
         children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
-          this.totalLevel = Math.max(this.totalLevel, n.level + 1);
           this.setTreeNode(n, size, node);
         });
     } else {
@@ -366,7 +344,6 @@ export function generateLayoutTree(tree: LayouTreeNode[], children: ITreeLayoutH
       dimensionKey?: string;
       indicatorKey?: string;
       value: string;
-      virtual?: boolean;
       hierarchyState: HierarchyState;
       children: any;
     } = {
@@ -374,8 +351,7 @@ export function generateLayoutTree(tree: LayouTreeNode[], children: ITreeLayoutH
       indicatorKey: node.indicatorKey,
       value: node.value,
       hierarchyState: node.hierarchyState,
-      children: undefined,
-      virtual: node.virtual ?? false
+      children: undefined
     };
     tree.push(diemnsonNode);
     if (node.children) {
@@ -442,7 +418,7 @@ export function dealHeader(
     headerType: indicatorInfo?.headerType ?? dimensionInfo?.headerType ?? 'text',
     headerIcon: indicatorInfo?.headerIcon ?? dimensionInfo?.headerIcon,
     // define: <any>hd,
-    define: Object.assign({}, <any>hd, indicatorInfo ?? Object.assign({}, dimensionInfo, { sort: undefined })),
+    define: Object.assign({}, <any>hd, indicatorInfo ?? dimensionInfo),
     fieldFormat: indicatorInfo?.headerFormat ?? dimensionInfo?.headerFormat,
     // iconPositionList:[]
     dropDownMenu: indicatorInfo?.dropDownMenu ?? dimensionInfo?.dropDownMenu,
@@ -456,7 +432,6 @@ export function dealHeader(
     minWidth: (dimensionInfo as IRowDimension)?.minWidth,
     maxWidth: (dimensionInfo as IRowDimension)?.maxWidth,
     showSort: indicatorInfo?.showSort ?? dimensionInfo?.showSort,
-    sort: indicatorInfo?.sort,
     description: dimensionInfo?.description
   };
 

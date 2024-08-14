@@ -433,15 +433,14 @@ export function createTable() {
           }
         ],
         corner: {
-          // headerEditor: 'input',
           titleOnDimension: 'row',
           headerStyle: {
             bgColor: '#356b9c',
             color: '#00ffff'
           }
-        },
+        }
         // widthMode: 'adaptive',
-        headerEditor: 'input'
+        // headerEditor: 'input'
       };
       const tableInstance = new VTable.PivotTable(option);
       // 只为了方便控制太调试用，不要拷贝

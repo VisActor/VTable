@@ -1,22 +1,20 @@
 {{ target: common-theme }}
 
-表格主题，其中内置主题名称有 DEFAULT, ARCO, BRIGHT, DARK, SIMPLIFY，具体配置方式可用内置类型或者直接使用字符串名称配置：
-
+表格主题，其中内置主题名称有DEFAULT, ARCO, BRIGHT, DARK, SIMPLIFY，具体配置方式可用内置类型或者直接使用字符串名称配置：
 - `VTable.themes.DEFAULT`
 - `VTable.themes.ARCO;`
 - `VTable.themes.BRIGHT`
 - `VTable.themes.DARK`
 - `VTable.themes.SIMPLIFY`
-
+  
 or
-
 - `'default'`
 - `'arco'`
 - `'bright'`
 - `'dark'`
 - `'simplify'`
 
-同时可以基于内置主题进行扩展，例如想基于 ARCO 主题改变字体:
+同时可以基于内置主题进行扩展，例如想基于ARCO主题改变字体:
 
 ```
 VTable.themes.ARCO.extend({
@@ -54,14 +52,14 @@ VTable.themes.ARCO.extend({
 ```
 
 #${prefix} underlayBackgroundColor(string)
-表格绘制范围外的 canvas 上填充的颜色
+表格绘制范围外的canvas上填充的颜色
 
 #${prefix} cellInnerBorder(boolean)
-单元格是否绘制内边框，如果为 true，边界单元格靠近边界的边框会被隐藏
+单元格是否绘制内边框，如果为true，边界单元格靠近边界的边框会被隐藏
 
 #${prefix} bodyStyle(Object)
 
-body 单元格的样式配置
+body单元格的样式配置
 
 {{ use: common-theme-style(
   prefix = '#' + ${prefix},
@@ -93,7 +91,7 @@ body 单元格的样式配置
 
 #${prefix} defaultStyle(Object)
 
-公共样式，如果 headerStyle，rowHeaderStyle, defaultStyle 都没有配置的项，则使用这个里面的配置项
+公共样式，如果headerStyle，rowHeaderStyle, defaultStyle都没有配置的项，则使用这个里面的配置项
 
 {{ use: common-theme-style(
   prefix = '#' + ${prefix},
@@ -144,14 +142,4 @@ body 单元格的样式配置
 ##${prefix} cellBorderLineWidth(number)
 选择框边框粗细
 
-##${prefix} inlineRowBgColor(ColorPropertyDefine)
-选中时整行高亮颜色
-{{ use: common-color(
-  prefix = ${prefix}
-  ) }}
-
-##${prefix} inlineColumnBgColor(ColorPropertyDefine)
-选中时整列高亮颜色
-{{ use: common-color(
-  prefix = ${prefix}
-  ) }}
+#${prefix} 示例：[TODO](xxxx)

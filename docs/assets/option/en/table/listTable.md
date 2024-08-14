@@ -32,7 +32,6 @@ Whether to transpose, default is false
 
 Whether to display the table header.
 
-
 ## pagination(IPagination)
 
 Pagination configuration.
@@ -71,6 +70,35 @@ order: 'desc' | 'asc' | 'normal';
 
 ```
 
+## editor (string|Object|Function)
+
+Global configuration cell editor
+```
+
+editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+
+```
+Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
+
+${prefix} headerEditor (string|Object|Function)
+
+Global configuration for the editor of the display title in the table header
+```
+
+headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+
+```
+
+## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
+
+The trigger timing for entering the editing state.
+
+```
+
+/\*_\_ Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' _/
+editCellTrigger?: 'doubleclick' | 'click' | 'api';
+
+```
 
 {{ use: common-option-secondary(
     prefix = '#',
@@ -129,3 +157,10 @@ type CustomAggregation = {
   formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
 };
 ```
+
+## rowSeriesNumber(IRowSeriesNumber)
+
+set row serial number.
+{{ use: row-series-number(
+    prefix = '###',
+) }}

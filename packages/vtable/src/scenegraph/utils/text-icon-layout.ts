@@ -11,7 +11,7 @@ import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from './get-cell-merge';
 import { getHierarchyOffset } from './get-hierarchy-offset';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { isNil, isNumber, isValid, isValidNumber } from '@visactor/vutils';
+import { isNil, isNumber, isValid } from '@visactor/vutils';
 import { isMergeCellGroup } from './is-merge-cell-group';
 import { breakString } from './break-string';
 
@@ -54,28 +54,28 @@ export function createCellContent(
   cellTheme: IThemeSpec,
   range: CellRange | undefined
 ) {
-  // const leftIcons: ColumnIconOption[] = [];
-  // const rightIcons: ColumnIconOption[] = [];
-  // const contentLeftIcons: ColumnIconOption[] = [];
-  // const contentRightIcons: ColumnIconOption[] = [];
-  // const inlineFrontIcons: ColumnIconOption[] = [];
-  // const inlineEndIcons: ColumnIconOption[] = [];
-  // const absoluteLeftIcons: ColumnIconOption[] = [];
-  // const absoluteRightIcons: ColumnIconOption[] = [];
+  const leftIcons: ColumnIconOption[] = [];
+  const rightIcons: ColumnIconOption[] = [];
+  const contentLeftIcons: ColumnIconOption[] = [];
+  const contentRightIcons: ColumnIconOption[] = [];
+  const inlineFrontIcons: ColumnIconOption[] = [];
+  const inlineEndIcons: ColumnIconOption[] = [];
+  const absoluteLeftIcons: ColumnIconOption[] = [];
+  const absoluteRightIcons: ColumnIconOption[] = [];
 
   let contentWidth: number;
   let contentHeight: number;
   let leftIconWidth = 0;
-  // let leftIconHeight = 0;
+  let leftIconHeight = 0;
   let rightIconWidth = 0;
-  // let rightIconHeight = 0;
-  // let absoluteLeftIconWidth = 0;
+  let rightIconHeight = 0;
+  let absoluteLeftIconWidth = 0;
   let absoluteRightIconWidth = 0;
 
   if (!Array.isArray(icons) || icons.length === 0) {
     if (isValid(textStr)) {
       // 没有icon，cellGroup只添加WrapText
-      const { text, moreThanMaxCharacters } = breakString(textStr, table);
+      const text = breakString(textStr, table);
 
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
@@ -91,7 +91,6 @@ export function createCellContent(
       }
       const attribute = {
         text: text.length === 1 ? text[0] : text,
-        moreThanMaxCharacters,
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
         // fill: true,
         // textAlign: 'left',
@@ -103,7 +102,7 @@ export function createCellContent(
         heightLimit:
           autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
-            : cellHeight - Math.floor(padding[0] + padding[2]),
+            : cellHeight - (padding[0] + padding[2]),
         pickable: false,
         dx: (textAlign === 'left' ? hierarchyOffset : 0) + _contentOffset,
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
@@ -118,98 +117,78 @@ export function createCellContent(
       contentHeight = wrapText.AABBBounds.height();
     }
   } else {
-    // // icon分类
-    // icons.forEach(icon => {
-    //   switch (icon.positionType) {
-    //     case IconPosition.left:
-    //       leftIcons.push(icon);
-    //       break;
-    //     case IconPosition.right:
-    //       rightIcons.push(icon);
-    //       break;
-    //     case IconPosition.contentLeft:
-    //       contentLeftIcons.push(icon);
-    //       break;
-    //     case IconPosition.contentRight:
-    //       contentRightIcons.push(icon);
-    //       break;
-    //     // case IconPosition.absoluteLeft:
-    //     //   absoluteLeftIcons.push(icon);
-    //     //   break;
-    //     case IconPosition.absoluteRight:
-    //       absoluteRightIcons.push(icon);
-    //       break;
-    //     case IconPosition.inlineFront:
-    //       inlineFrontIcons.push(icon);
-    //       break;
-    //     case IconPosition.inlineEnd:
-    //       inlineEndIcons.push(icon);
-    //       break;
-    //   }
-    // });
+    // icon分类
+    icons.forEach(icon => {
+      switch (icon.positionType) {
+        case IconPosition.left:
+          leftIcons.push(icon);
+          break;
+        case IconPosition.right:
+          rightIcons.push(icon);
+          break;
+        case IconPosition.contentLeft:
+          contentLeftIcons.push(icon);
+          break;
+        case IconPosition.contentRight:
+          contentRightIcons.push(icon);
+          break;
+        // case IconPosition.absoluteLeft:
+        //   absoluteLeftIcons.push(icon);
+        //   break;
+        case IconPosition.absoluteRight:
+          absoluteRightIcons.push(icon);
+          break;
+        case IconPosition.inlineFront:
+          inlineFrontIcons.push(icon);
+          break;
+        case IconPosition.inlineEnd:
+          inlineEndIcons.push(icon);
+          break;
+      }
+    });
 
-    // // 添加非cell icon & absolute icon
-    // leftIcons.forEach(icon => {
-    //   const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
-    //   iconMark.role = 'icon-left';
-    //   iconMark.name = icon.name;
-    //   iconMark.setAttribute('x', leftIconWidth + (iconMark.attribute.marginLeft ?? 0));
-    //   leftIconWidth +=
-    //     iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
-    //   leftIconHeight = Math.max(leftIconHeight, iconMark.AABBBounds.height());
-    //   cellGroup.appendChild(iconMark);
-    // });
+    // 添加非cell icon & absolute icon
+    leftIcons.forEach(icon => {
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
+      iconMark.role = 'icon-left';
+      iconMark.name = icon.name;
+      iconMark.setAttribute('x', leftIconWidth + (iconMark.attribute.marginLeft ?? 0));
+      leftIconWidth +=
+        iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
+      leftIconHeight = Math.max(leftIconHeight, iconMark.AABBBounds.height());
+      cellGroup.appendChild(iconMark);
+    });
 
-    // rightIcons.forEach(icon => {
-    //   const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
-    //   iconMark.role = 'icon-right';
-    //   iconMark.name = icon.name;
-    //   iconMark.setAttribute('x', rightIconWidth + (iconMark.attribute.marginLeft ?? 0));
-    //   rightIconWidth +=
-    //     iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
-    //   rightIconHeight = Math.max(rightIconHeight, iconMark.AABBBounds.height());
-    //   cellGroup.appendChild(iconMark);
-    // });
+    rightIcons.forEach(icon => {
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
+      iconMark.role = 'icon-right';
+      iconMark.name = icon.name;
+      iconMark.setAttribute('x', rightIconWidth + (iconMark.attribute.marginLeft ?? 0));
+      rightIconWidth +=
+        iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
+      rightIconHeight = Math.max(rightIconHeight, iconMark.AABBBounds.height());
+      cellGroup.appendChild(iconMark);
+    });
 
-    // absoluteLeftIcons.forEach(icon => {
-    //   const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
-    //   iconMark.role = 'icon-absolute-left';
-    //   iconMark.name = icon.name;
-    //   iconMark.setAttribute('x', absoluteLeftIconWidth + (iconMark.attribute.marginLeft ?? 0));
-    //   absoluteLeftIconWidth +=
-    //     iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
-    //   cellGroup.appendChild(iconMark);
-    // });
+    absoluteLeftIcons.forEach(icon => {
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
+      iconMark.role = 'icon-absolute-left';
+      iconMark.name = icon.name;
+      iconMark.setAttribute('x', absoluteLeftIconWidth + (iconMark.attribute.marginLeft ?? 0));
+      absoluteLeftIconWidth +=
+        iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
+      cellGroup.appendChild(iconMark);
+    });
 
-    // absoluteRightIcons.forEach(icon => {
-    //   const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
-    //   iconMark.role = 'icon-absolute-right';
-    //   iconMark.name = icon.name;
-    //   iconMark.setAttribute('x', absoluteRightIconWidth + (iconMark.attribute.marginLeft ?? 0));
-    //   absoluteRightIconWidth +=
-    //     iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
-    //   cellGroup.appendChild(iconMark);
-    // });
-
-    const {
-      inlineFrontIcons,
-      inlineEndIcons,
-      contentLeftIcons,
-      contentRightIcons,
-      leftIconWidth: layoutLeftIconWidth,
-      // leftIconHeight: layoutLeftIconHeight,
-      rightIconWidth: layoutRightIconWidth,
-      // rightIconHeight: layoutRightIconHeight,
-      // absoluteLeftIconWidth: layoutAbsoluteLeftIconWidth,
-      absoluteRightIconWidth: layoutAbsoluteRightIconWidth
-    } = dealWithIconLayout(icons, cellGroup, range, table);
-
-    leftIconWidth = layoutLeftIconWidth;
-    // leftIconHeight = layoutLeftIconHeight;
-    rightIconWidth = layoutRightIconWidth;
-    // rightIconHeight = layoutRightIconHeight;
-    // absoluteLeftIconWidth = layoutAbsoluteLeftIconWidth;
-    absoluteRightIconWidth = layoutAbsoluteRightIconWidth;
+    absoluteRightIcons.forEach(icon => {
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
+      iconMark.role = 'icon-absolute-right';
+      iconMark.name = icon.name;
+      iconMark.setAttribute('x', absoluteRightIconWidth + (iconMark.attribute.marginLeft ?? 0));
+      absoluteRightIconWidth +=
+        iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
+      cellGroup.appendChild(iconMark);
+    });
 
     // 添加text & content icon & inline icon
     let textMark;
@@ -226,11 +205,10 @@ export function createCellContent(
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
         : getHierarchyOffset(cellGroup.col, cellGroup.row, table);
-      const { text, moreThanMaxCharacters } = breakString(textStr, table);
+      const text = breakString(textStr, table);
 
       const attribute = {
         text: text.length === 1 ? text[0] : text,
-        moreThanMaxCharacters,
         maxLineWidth: autoColWidth
           ? Infinity
           : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth - hierarchyOffset,
@@ -241,13 +219,15 @@ export function createCellContent(
         heightLimit:
           autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
-            : cellHeight - Math.floor(padding[0] + padding[2]),
+            : cellHeight - (padding[0] + padding[2]),
         pickable: false,
         autoWrapText,
         lineClamp,
         wordBreak: 'break-word',
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
-        dx: (textAlign === 'left' ? (!contentLeftIcons.length ? hierarchyOffset : 0) : 0) + _contentOffset
+        dx:
+          (textAlign === 'left' ? (!contentLeftIcons.length && !contentRightIcons.length ? hierarchyOffset : 0) : 0) +
+          _contentOffset
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
@@ -307,33 +287,15 @@ export function createCellContent(
         align: textAlign,
         baseline: textBaseline
       });
-      const dealWithIconComputeVar = {
-        addedHierarchyOffset: 0
-      }; //为了只增加一次indent的缩进值，如果有两个icon都dealWithIcon的话
+
       contentLeftIcons.forEach(icon => {
-        const iconMark = dealWithIcon(
-          icon,
-          undefined,
-          cellGroup.col,
-          cellGroup.row,
-          range,
-          table,
-          dealWithIconComputeVar
-        );
+        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
         iconMark.role = 'icon-content-left';
         iconMark.name = icon.name;
         cellContent.addLeftOccupyingIcon(iconMark);
       });
       contentRightIcons.forEach(icon => {
-        const iconMark = dealWithIcon(
-          icon,
-          undefined,
-          cellGroup.col,
-          cellGroup.row,
-          range,
-          table,
-          dealWithIconComputeVar
-        );
+        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
         iconMark.role = 'icon-content-right';
         iconMark.name = icon.name;
         cellContent.addRightOccupyingIcon(iconMark);
@@ -415,10 +377,7 @@ export function dealWithIcon(
   col?: number,
   row?: number,
   range?: CellRange,
-  table?: BaseTableAPI,
-  dealWithIconComputeVar?: {
-    addedHierarchyOffset: number;
-  }
+  table?: BaseTableAPI
 ): Icon {
   // positionType在外部处理
   const iconAttribute = {} as any;
@@ -444,23 +403,16 @@ export function dealWithIcon(
 
   let hierarchyOffset = 0;
   if (
-    (!dealWithIconComputeVar || dealWithIconComputeVar?.addedHierarchyOffset === 0) &&
     isNumber(col) &&
     isNumber(row) &&
     table &&
-    (icon.funcType === IconFuncTypeEnum.collapse ||
-      icon.funcType === IconFuncTypeEnum.expand ||
-      icon.positionType === IconPosition.contentLeft ||
-      icon.positionType === IconPosition.contentRight)
+    (icon.funcType === IconFuncTypeEnum.collapse || icon.funcType === IconFuncTypeEnum.expand)
   ) {
     // compute hierarchy offset
     // hierarchyOffset = getHierarchyOffset(col, row, table);
     hierarchyOffset = range
       ? getHierarchyOffset(range.start.col, range.start.row, table)
       : getHierarchyOffset(col, row, table);
-    if (dealWithIconComputeVar) {
-      dealWithIconComputeVar.addedHierarchyOffset = 1;
-    }
   }
 
   iconAttribute.marginLeft = (icon.marginLeft ?? 0) + hierarchyOffset;
@@ -565,9 +517,6 @@ export function updateCellContentWidth(
   textBaseline: CanvasTextBaseline,
   scene: Scenegraph
 ): boolean {
-  if (isValidNumber(cellGroup.contentWidth)) {
-    detaX = distWidth - (cellGroup.contentWidth ?? cellGroup.attribute.width);
-  }
   let leftIconWidth = 0;
   let leftIconHeight = 0;
   let rightIconWidth = 0;
@@ -592,12 +541,7 @@ export function updateCellContentWidth(
     oldTextHeight = textMark.AABBBounds.height();
     textMark.setAttribute(
       'maxLineWidth',
-      distWidth -
-        leftIconWidth -
-        rightIconHeight -
-        (padding[1] + padding[3]) -
-        (textMark.attribute.dx ?? 0) -
-        (scene.table.theme._contentOffset ?? 0)
+      distWidth - leftIconWidth - rightIconHeight - (padding[1] + padding[3]) - (textMark.attribute.dx ?? 0)
     );
     // contentWidth = textMark.AABBBounds.width();
     contentHeight = textMark.AABBBounds.height();
@@ -623,7 +567,7 @@ export function updateCellContentWidth(
       child.setAttribute('x', child.attribute.x + detaX);
     } else if (child.role === 'icon-absolute-right') {
       child.setAttribute('x', child.attribute.x + detaX);
-    } else if (child.name === 'content' || (child.name === 'text' && child.type !== 'richtext')) {
+    } else if (child.name === 'content' || child.name === 'text') {
       const childTextAlign = child.attribute.textAlign ?? textAlign;
       if (childTextAlign === 'center') {
         child.setAttribute(
@@ -644,7 +588,7 @@ export function updateCellContentWidth(
   if (autoRowHeight) {
     let newHeight = Math.max(leftIconHeight, contentHeight, rightIconHeight); // + padding[0] + padding[2]
 
-    if (isCellHeightUpdate(scene, cellGroup, Math.round(newHeight + padding[0] + padding[2]), oldCellHeight)) {
+    if (isCellHeightUpdate(scene, cellGroup, newHeight + padding[0] + padding[2], oldCellHeight)) {
       // cellGroup.setAttribute('height', newHeight + padding[0] + padding[2]);
       return true;
     }
@@ -696,7 +640,7 @@ export function updateCellContentHeight(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline
 ) {
-  const newHeight = distHeight - Math.floor(padding[0] + padding[2]);
+  const newHeight = distHeight - (padding[0] + padding[2]);
 
   const textMark = cellGroup.getChildByName('text');
 
@@ -770,117 +714,4 @@ function isCellHeightUpdate(scene: Scenegraph, cellGroup: Group, newHeight: numb
   }
 
   return false;
-}
-
-export function dealWithIconLayout(
-  icons: ColumnIconOption[],
-  cellGroup: Group,
-  range: CellRange | undefined,
-  table: BaseTableAPI
-) {
-  const leftIcons: ColumnIconOption[] = [];
-  const rightIcons: ColumnIconOption[] = [];
-  const contentLeftIcons: ColumnIconOption[] = [];
-  const contentRightIcons: ColumnIconOption[] = [];
-  const inlineFrontIcons: ColumnIconOption[] = [];
-  const inlineEndIcons: ColumnIconOption[] = [];
-  const absoluteLeftIcons: ColumnIconOption[] = [];
-  const absoluteRightIcons: ColumnIconOption[] = [];
-
-  let leftIconWidth = 0;
-  let leftIconHeight = 0;
-  let rightIconWidth = 0;
-  let rightIconHeight = 0;
-  let absoluteLeftIconWidth = 0;
-  let absoluteRightIconWidth = 0;
-
-  // icon分类
-  icons.forEach(icon => {
-    switch (icon.positionType) {
-      case IconPosition.left:
-        leftIcons.push(icon);
-        break;
-      case IconPosition.right:
-        rightIcons.push(icon);
-        break;
-      case IconPosition.contentLeft:
-        contentLeftIcons.push(icon);
-        break;
-      case IconPosition.contentRight:
-        contentRightIcons.push(icon);
-        break;
-      // case IconPosition.absoluteLeft:
-      //   absoluteLeftIcons.push(icon);
-      //   break;
-      case IconPosition.absoluteRight:
-        absoluteRightIcons.push(icon);
-        break;
-      case IconPosition.inlineFront:
-        inlineFrontIcons.push(icon);
-        break;
-      case IconPosition.inlineEnd:
-        inlineEndIcons.push(icon);
-        break;
-    }
-  });
-
-  // 添加非cell icon & absolute icon
-  leftIcons.forEach(icon => {
-    const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
-    iconMark.role = 'icon-left';
-    iconMark.name = icon.name;
-    iconMark.setAttribute('x', leftIconWidth + (iconMark.attribute.marginLeft ?? 0));
-    leftIconWidth +=
-      iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
-    leftIconHeight = Math.max(leftIconHeight, iconMark.AABBBounds.height());
-    cellGroup.appendChild(iconMark);
-  });
-
-  rightIcons.forEach(icon => {
-    const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
-    iconMark.role = 'icon-right';
-    iconMark.name = icon.name;
-    iconMark.setAttribute('x', rightIconWidth + (iconMark.attribute.marginLeft ?? 0));
-    rightIconWidth +=
-      iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
-    rightIconHeight = Math.max(rightIconHeight, iconMark.AABBBounds.height());
-    cellGroup.appendChild(iconMark);
-  });
-
-  absoluteLeftIcons.forEach(icon => {
-    const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
-    iconMark.role = 'icon-absolute-left';
-    iconMark.name = icon.name;
-    iconMark.setAttribute('x', absoluteLeftIconWidth + (iconMark.attribute.marginLeft ?? 0));
-    absoluteLeftIconWidth +=
-      iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
-    cellGroup.appendChild(iconMark);
-  });
-
-  absoluteRightIcons.forEach(icon => {
-    const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
-    iconMark.role = 'icon-absolute-right';
-    iconMark.name = icon.name;
-    iconMark.setAttribute('x', absoluteRightIconWidth + (iconMark.attribute.marginLeft ?? 0));
-    absoluteRightIconWidth +=
-      iconMark.AABBBounds.width() + (iconMark.attribute.marginLeft ?? 0) + (iconMark.attribute.marginRight ?? 0);
-    cellGroup.appendChild(iconMark);
-  });
-
-  return {
-    leftIcons,
-    rightIcons,
-    contentLeftIcons,
-    contentRightIcons,
-    inlineFrontIcons,
-    inlineEndIcons,
-    absoluteLeftIcons,
-    absoluteRightIcons,
-    leftIconWidth,
-    leftIconHeight,
-    rightIconWidth,
-    rightIconHeight,
-    absoluteLeftIconWidth,
-    absoluteRightIconWidth
-  };
 }

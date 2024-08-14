@@ -1,7 +1,6 @@
 import { isEqual } from '@visactor/vutils';
 import type { PivotChart } from '../../PivotChart';
-import type { ICartesianAxis } from '../../components/axis/axis';
-import { Factory } from '../../core/factory';
+import { CartesianAxis } from '../../components/axis/axis';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Chart } from '../graphic/chart';
 import type { Group } from '../graphic/group';
@@ -210,7 +209,6 @@ function updateTableAxes(containerGroup: Group, table: BaseTableAPI) {
             const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(cell.col, cell.row);
             const cellStyle = table._getCellStyle(cell.col, cell.row);
             const padding = getQuadProps(getProp('padding', cellStyle, cell.col, cell.row, table));
-            const CartesianAxis: ICartesianAxis = Factory.getComponent('axis');
             const axis = new CartesianAxis(axisConfig, cell.attribute.width, cell.attribute.height, padding, table);
             cell.clear();
             cell.appendChild(axis.component);

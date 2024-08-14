@@ -12,7 +12,7 @@ import type { SceneEvent } from '../util';
 import { getCellEventArgsSet, regIndexReg } from '../util';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { Group } from '../../scenegraph/graphic/group';
-import { isValid } from '@visactor/vutils';
+import { isValid, last } from '@visactor/vutils';
 import { getIconAndPositionFromTarget } from '../../scenegraph/utils/icon';
 import { cellInRanges } from '../../tools/helper';
 import { Rect } from '../../tools/Rect';
@@ -40,10 +40,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }
-    if (
-      stateManager.interactionState === InteractionState.grabing &&
-      !(table as ListTableAPI).editorManager?.editingEditor
-    ) {
+    if (stateManager.interactionState === InteractionState.grabing) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizeCol()) {
           /* do nothing */
@@ -56,11 +53,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
       return;
-    } else if (
-      table.eventManager.isDraging &&
-      stateManager.isSelecting() &&
-      !(table as ListTableAPI).editorManager?.editingEditor
-    ) {
+    } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
       eventManager.dealTableSelect(eventArgsSet, true);
     }
     // 更新列宽调整pointer
@@ -118,8 +111,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
           }),
           scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
           event: e.nativeEvent,
-          target: eventArgsSet?.eventArgs?.target,
-          mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
+          target: eventArgsSet?.eventArgs?.target
         });
       }
     }
@@ -151,8 +143,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
               funcType: (icon as any).attribute.funcType
             }
           : undefined,
-        target: eventArgsSet?.eventArgs?.target,
-        mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
+        target: eventArgsSet?.eventArgs?.target
       });
     }
   });
@@ -341,19 +332,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
     }
-    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-    if (isCompleteEdit === false) {
-      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
-      return;
-    }
+    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
     stateManager.updateInteractionState(InteractionState.default);
     eventManager.dealTableHover();
     //点击到表格外部不需要取消选中状态
-    if (table.options.select?.outsideClickDeselect) {
-      const isHasSelected = !!stateManager.select.ranges?.length;
-      eventManager.dealTableSelect();
-      stateManager.endSelectCells(true, isHasSelected);
-    }
+    // eventManager.dealTableSelect();
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
@@ -392,15 +375,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 点击在menu外，且不是下拉菜单的icon，移除menu
       stateManager.hideMenu();
     }
-    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-    if (isCompleteEdit === false) {
-      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
-      return;
-    }
+    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+
     const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
       ? eventArgsSet.eventArgs.target
-      : (e.target as any).role?.startsWith('icon')
-      ? e.target
       : undefined;
     eventManager.downIcon = hitIcon;
     if (!hitIcon || (hitIcon.attribute as IIconGraphicAttribute).interactive === false) {
@@ -493,8 +471,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
           col: eventArgsSet.eventArgs.col,
           row: eventArgsSet.eventArgs.row,
           event: e.nativeEvent,
-          target: eventArgsSet?.eventArgs?.target,
-          mergeCellInfo: eventArgsSet.eventArgs.mergeInfo
+          target: eventArgsSet?.eventArgs?.target
         });
       }
     }
@@ -543,8 +520,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
             col: (eventArgsSet.eventArgs.target as unknown as Group).col,
             row: (eventArgsSet.eventArgs.target as unknown as Group).row,
             scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
-            target: eventArgsSet?.eventArgs?.target,
-            mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
+            target: eventArgsSet?.eventArgs?.target
           };
 
           cellsEvent.cells = table.getSelectedCellInfos();
@@ -564,8 +540,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
           col: eventArgsSet.eventArgs.col,
           row: eventArgsSet.eventArgs.row,
           event: e.nativeEvent,
-          target: eventArgsSet?.eventArgs?.target,
-          mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
+          target: eventArgsSet?.eventArgs?.target
         });
       }
     }
@@ -606,8 +581,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
                 funcType: (icon as any).attribute.funcType
               }
             : undefined,
-          target: eventArgsSet?.eventArgs?.target,
-          mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
+          target: eventArgsSet?.eventArgs?.target
         };
         if (cellInRanges(table.stateManager.select.ranges, col, row)) {
           // 用户右键点击已经选中的区域
@@ -644,9 +618,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
         if (eventManager.touchSetTimeout) {
           clearTimeout(eventManager.touchSetTimeout);
-          const isHasSelected = !!stateManager.select.ranges?.length;
           eventManager.dealTableSelect(eventArgsSet);
-          stateManager.endSelectCells(true, isHasSelected);
+          stateManager.endSelectCells();
           eventManager.touchSetTimeout = undefined;
         }
       }
@@ -676,8 +649,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
               funcType: (icon as any).attribute.funcType
             }
           : undefined,
-        target: eventArgsSet?.eventArgs?.target,
-        mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
+        target: eventArgsSet?.eventArgs?.target
       };
 
       table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
@@ -689,21 +661,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       stateManager.hideMenu();
     }
-    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-    if (isCompleteEdit === false) {
-      // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
-      return;
-    }
-
-    const hitIcon = (e.target as any).role?.startsWith('icon') ? e.target : undefined;
-    eventManager.downIcon = hitIcon;
+    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
     // 处理列宽调整  这里和tableGroup.addEventListener('pointerdown' 逻辑一样
-    if (
-      !hitIcon &&
-      !eventManager.checkCellFillhandle(eventArgsSet) &&
-      !stateManager.columnResize.resizing &&
-      eventManager.checkColumnResize(eventArgsSet, true)
-    ) {
+    if (!eventManager.checkCellFillhandle(eventArgsSet) && eventManager.checkColumnResize(eventArgsSet, true)) {
       // eventManager.startColumnResize(e);
       // eventManager._resizing = true;
       table.scenegraph.updateChartState(null);
@@ -753,13 +713,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     ) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
-      const isHasSelected = !!stateManager.select.ranges?.length;
-      // 点击空白区域取消选中
-      if (table.options.select?.blankAreaClickDeselect ?? true) {
-        eventManager.dealTableSelect();
-      }
-      stateManager.endSelectCells(true, isHasSelected);
-
+      eventManager.dealTableSelect();
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
     } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
@@ -823,7 +777,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
       ...cellInfo,
       event: e.nativeEvent,
       target: eventArgsSet?.eventArgs?.target,
-      mergeCellInfo: eventArgsSet?.eventArgs?.mergeInfo,
       checked: (e.detail as unknown as { checked: boolean }).checked
     };
 
@@ -936,7 +889,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
       ...cellInfo,
       event: e.nativeEvent,
       target: eventArgsSet?.eventArgs?.target,
-      mergeCellInfo: eventArgsSet?.eventArgs?.mergeInfo,
       radioIndexInCell
     };
     table.fireListeners(TABLE_EVENT_TYPE.RADIO_STATE_CHANGE, cellsEvent);
@@ -957,7 +909,7 @@ export function bindGesture(eventManager: EventManager) {
     dblclickHandler(e, table);
   });
 }
-export function endResizeCol(table: BaseTableAPI) {
+function endResizeCol(table: BaseTableAPI) {
   table.stateManager.endResizeCol();
   // textStick 依赖了这个事件 所以一定要触发RESIZE_COLUMN_END
   // if ((table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END)) {
@@ -974,7 +926,7 @@ export function endResizeCol(table: BaseTableAPI) {
   // }
 }
 
-export function endResizeRow(table: BaseTableAPI) {
+function endResizeRow(table: BaseTableAPI) {
   table.stateManager.endResizeRow();
 
   table.fireListeners(TABLE_EVENT_TYPE.RESIZE_ROW_END, {
@@ -1022,8 +974,7 @@ function dblclickHandler(e: FederatedPointerEvent, table: BaseTableAPI) {
             funcType: (icon as any).attribute.funcType
           }
         : undefined,
-      target: eventArgsSet?.eventArgs?.target,
-      mergeCellInfo: eventArgsSet?.eventArgs?.mergeInfo
+      target: eventArgsSet?.eventArgs?.target
     };
     table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL, cellsEvent);
   }

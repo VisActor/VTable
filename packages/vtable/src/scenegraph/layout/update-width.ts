@@ -1,15 +1,14 @@
 import type { IGraphic } from '@src/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
-import type { ICartesianAxis } from '../../components/axis/axis';
-import { Factory } from '../../core/factory';
+import { CartesianAxis } from '../../components/axis/axis';
 import { getStyleTheme } from '../../core/tableHelper';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
-import { CUSTOM_CONTAINER_NAME, CUSTOM_MERGE_CONTAINER_NAME, dealWithCustom } from '../component/custom';
+import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
-import type { CreateProgressBarCell } from '../group-creater/cell-type/progress-bar-cell';
-import type { CreateSparkLineCellGroup } from '../group-creater/cell-type/spark-line-cell';
+import { createProgressBarCell } from '../group-creater/cell-type/progress-bar-cell';
+import { createSparkLineCellGroup } from '../group-creater/cell-type/spark-line-cell';
 import { resizeCellGroup, getCustomCellMergeCustom } from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
@@ -279,7 +278,6 @@ function updateCellWidth(
     const dataValue = scene.table.getCellOriginValue(col, row);
     const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
 
-    const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
     const newBarCell = createProgressBarCell(
       columnDefine,
       style,
@@ -304,7 +302,6 @@ function updateCellWidth(
     cellGroup.removeAllChild();
     const headerStyle = scene.table._getCellStyle(col, row);
     const padding = getQuadProps(getProp('padding', headerStyle, col, row, scene.table));
-    const createSparkLineCellGroup = Factory.getFunction('createSparkLineCellGroup') as CreateSparkLineCellGroup;
     createSparkLineCellGroup(
       cellGroup,
       cellGroup.parent,
@@ -323,14 +320,13 @@ function updateCellWidth(
     // // 只更新背景边框
     // const rect = cell.firstChild as Rect;
     // rect.setAttribute('width', cell.attribute.width);
-    updateImageCellContentWhileResize(cellGroup, col, row, detaX, 0, scene.table);
+    updateImageCellContentWhileResize(cellGroup, col, row, scene.table);
   } else if (cellGroup.firstChild?.name === 'axis') {
     // recreate axis component
     const axisConfig = scene.table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
     const cellStyle = scene.table._getCellStyle(col, row);
     const padding = getQuadProps(getProp('padding', cellStyle, col, row, scene.table));
     if (axisConfig) {
-      const CartesianAxis: ICartesianAxis = Factory.getComponent('axis');
       const axis = new CartesianAxis(
         axisConfig,
         cellGroup.attribute.width,
@@ -346,9 +342,7 @@ function updateCellWidth(
     (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {
     let renderDefault = true;
-    const customContainer =
-      (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
-      (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
+    const customContainer = cell.getChildByName('custom-container') as Group;
     if (customContainer) {
       let customElementsGroup;
       customContainer.removeAllChild();
@@ -361,9 +355,7 @@ function updateCellWidth(
             continue;
           }
           const mergedCell = scene.getCell(mergeCol, row);
-          const customContainer =
-            (mergedCell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
-            (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
+          const customContainer = mergedCell.getChildByName('custom-container') as Group;
           customContainer.removeAllChild();
           mergedCell.removeChild(customContainer);
           getCustomCellMergeCustom(mergeCol, row, mergedCell, scene.table);
@@ -403,12 +395,6 @@ function updateCellWidth(
             // scene.table.heightMode === 'autoHeight',
             scene.table.isAutoRowHeight(row),
             padding,
-            isMergeCellGroup(cellGroup)
-              ? {
-                  start: { col: cellGroup.mergeStartCol, row: cellGroup.mergeStartRow },
-                  end: { col: cellGroup.mergeEndCol, row: cellGroup.mergeEndRow }
-                }
-              : undefined,
             scene.table
           );
           customElementsGroup = customResult.elementsGroup;
@@ -433,10 +419,7 @@ function updateCellWidth(
     );
     isHeightChange = isHeightChange || cellChange;
   }
-  if (!autoWrapText) {
-    const style = scene.table._getCellStyle(col, row);
-    autoWrapText = style.autoWrapText;
-  }
+
   return autoRowHeight && autoWrapText ? isHeightChange : false;
 }
 

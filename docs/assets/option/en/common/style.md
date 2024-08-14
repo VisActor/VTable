@@ -25,12 +25,6 @@ Define the text color of the cell
   prefix = ${prefix},
 ) }}
 
-#${prefix} strokeColor(ColorPropertyDefine)
-Define the text stroke color of the cell
-{{ use: common-color(
-  prefix = ${prefix},
-) }}
-
 #${prefix} fontSize(FontSizePropertyDefine)
 Define the text size of the cell
 {{ use: common-font-size(

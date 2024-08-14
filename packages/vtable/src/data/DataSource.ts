@@ -178,12 +178,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   // 注册聚合类型
   registedAggregators: {
     [key: string]: {
-      new (config: {
-        dimension: string | string[];
-        formatFun?: any;
-        isRecord?: boolean;
-        aggregationFun?: Function;
-      }): Aggregator;
+      new (dimension: string | string[], formatFun?: any, isRecord?: boolean, aggregationFun?: Function): Aggregator;
     };
   } = {};
   rowHierarchyType: 'grid' | 'tree';
@@ -284,12 +279,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (Array.isArray(aggragation)) {
         for (let j = 0; j < aggragation.length; j++) {
           const item = aggragation[j];
-          const aggregator = new this.registedAggregators[item.aggregationType]({
-            dimension: field as string,
-            formatFun: item.formatFun,
-            isRecord: true,
-            aggregationFun: (item as CustomAggregation).aggregationFun
-          });
+          const aggregator = new this.registedAggregators[item.aggregationType](
+            field as string,
+            item.formatFun,
+            true,
+            (item as CustomAggregation).aggregationFun
+          );
           this.fieldAggregators.push(aggregator);
           if (!columnObjs[i].aggregator) {
             columnObjs[i].aggregator = [];
@@ -297,12 +292,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           columnObjs[i].aggregator.push(aggregator);
         }
       } else {
-        const aggregator = new this.registedAggregators[aggragation.aggregationType]({
-          dimension: field as string,
-          formatFun: aggragation.formatFun,
-          isRecord: true,
-          aggregationFun: (aggragation as CustomAggregation).aggregationFun
-        });
+        const aggregator = new this.registedAggregators[aggragation.aggregationType](
+          field as string,
+          aggragation.formatFun,
+          true,
+          (aggragation as CustomAggregation).aggregationFun
+        );
         this.fieldAggregators.push(aggregator);
         columnObjs[i].aggregator = aggregator;
       }
@@ -738,7 +733,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   addRecord(record: any, index: number) {
     if (Array.isArray(this.records)) {
       this.records.splice(index, 0, record);
-      this.adjustBeforeChangedRecordsMap(index, 1);
       this.currentIndexedData.push(this.currentIndexedData.length);
       this._sourceLength += 1;
       if (this.rowHierarchyType === 'tree') {
@@ -773,7 +767,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     if (Array.isArray(this.records)) {
       if (Array.isArray(recordArr)) {
         this.records.splice(index, 0, ...recordArr);
-        this.adjustBeforeChangedRecordsMap(index, recordArr.length);
         for (let i = 0; i < recordArr.length; i++) {
           this.currentIndexedData.push(this.currentIndexedData.length);
         }
@@ -808,7 +801,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    */
   addRecordForSorted(record: any) {
     if (Array.isArray(this.records)) {
-      this.beforeChangedRecordsMap = []; // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
       this.records.push(record);
       this.currentIndexedData.push(this.currentIndexedData.length);
       this._sourceLength += 1;
@@ -826,7 +818,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    */
   addRecordsForSorted(recordArr: any) {
     if (Array.isArray(this.records)) {
-      this.beforeChangedRecordsMap = []; // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
       if (Array.isArray(recordArr)) {
         this.records.push(...recordArr);
         for (let i = 0; i < recordArr.length; i++) {
@@ -842,14 +833,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
   }
 
-  adjustBeforeChangedRecordsMap(insertIndex: number, insertCount: number) {
-    const length = this.beforeChangedRecordsMap.length;
-    for (let key = length - 1; key >= insertIndex; key--) {
-      const record = this.beforeChangedRecordsMap[key];
-      delete this.beforeChangedRecordsMap[key];
-      this.beforeChangedRecordsMap[key + insertCount] = record;
-    }
-  }
   /**
    * 删除多条数据recordIndexs
    */
@@ -862,7 +845,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (recordIndex >= this._sourceLength || recordIndex < 0) {
           continue;
         }
-        delete this.beforeChangedRecordsMap[recordIndex];
         realDeletedRecordIndexs.push(recordIndex);
         this.records.splice(recordIndex, 1);
         this.currentIndexedData.pop();
@@ -895,7 +877,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           continue;
         }
         const rawIndex = this.currentIndexedData[recordIndex] as number;
-        delete this.beforeChangedRecordsMap[rawIndex];
         this.records.splice(rawIndex, 1);
         this._sourceLength -= 1;
       }
@@ -917,7 +898,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (recordIndex >= this._sourceLength || recordIndex < 0) {
         continue;
       }
-      delete this.beforeChangedRecordsMap[recordIndex];
       realDeletedRecordIndexs.push(recordIndex);
       this.records[recordIndex] = records[index];
     }
@@ -942,7 +922,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (typeof rawIndex !== 'number') {
         return;
       }
-      delete this.beforeChangedRecordsMap[rawIndex];
       realDeletedRecordIndexs.push(recordIndex);
       this.records[rawIndex] = records[index];
     }

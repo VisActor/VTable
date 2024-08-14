@@ -128,13 +128,7 @@ Contains the following configuration items:
 
 ### Maximum number of rows setting
 
-- `lineClamp`: Set the maximum number of rows of the unit, you can set number or'auto ', set it to'auto', it will be automatically calculated
-
-### Cell padding
-
-- `padding`: defines the padding of the cell
-
-The width and height of a cell consists of two parts: padding and content.
+- `lineamp`: Set the maximum number of rows of the unit, you can set number or'auto ', set it to'auto', it will be automatically calculated
 
 Through the above introduction, you have mastered the use of style in VTable, and then you can create a table with a personalized style according to your needs.
 

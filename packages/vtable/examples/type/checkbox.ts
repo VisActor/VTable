@@ -9,7 +9,7 @@ export function createTable() {
     columns: [
       {
         field: '',
-        headerType: 'checkbox',
+        // headerType: 'checkbox',
         cellType: 'checkbox',
         width: 'auto',
         checked(args) {
@@ -72,7 +72,6 @@ export function createTable() {
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     heightMode: 'autoHeight',
-    allowFrozenColCount: 3,
     // transpose: true
     theme: VTable.themes.DEFAULT.extends({
       checkboxStyle: {

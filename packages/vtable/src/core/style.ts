@@ -41,15 +41,6 @@ export function importStyle() {
 	height: 100%;
 	text-align: left;
   -webkit-font-smoothing:auto;
-
-  overflow: hidden; // for react-vtable dom custom element
-}
-.vtable .table-component-container {
-  pointer-events: none;
-  overflow: hidden;
-  position: absolute;
-  top: 0px;
-  left: 0px;
 }
 .vtable > canvas {
 	position: absolute;
