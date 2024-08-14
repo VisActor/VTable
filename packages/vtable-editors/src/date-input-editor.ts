@@ -16,6 +16,8 @@ export class DateInputEditor extends InputEditor implements IEditor {
     input.style.width = '100%';
     input.style.boxSizing = 'border-box';
     input.style.position = 'absolute';
+    input.style.backgroundColor = '#FFFFFF';
+
     this.element = input;
     this.container.appendChild(input);
     // 测试successCallback 调用是否正确
