@@ -39,6 +39,7 @@
     "@rollup/plugin-url": "8.0.1",
     "@rollup/plugin-json": "4.1.0",
     "@rollup/plugin-strip": "3.0.2",
+    "rollup-plugin-typescript2": "0.36.0",
     "@vitejs/plugin-vue": "^5.0.3",
     "@trufflesuite/spinnies": "0.1.1",
     "autoprefixer": "10.4.13",
