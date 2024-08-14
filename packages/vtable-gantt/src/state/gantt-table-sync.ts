@@ -29,7 +29,7 @@ export function syncResizeStateFromTable(gantt: Gantt) {
 export function syncEditCellFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('change_cell_value', (args: any) => {
     const { col, row, rawValue, changedValue } = args;
-    gantt.redrawRecord(row - gantt.taskListTableInstance.columnHeaderLevelCount);
+    gantt.refreshTaskBar(row - gantt.taskListTableInstance.columnHeaderLevelCount);
     // const record = gantt.getRecordByIndex(row - gantt.listTableInstance.columnHeaderLevelCount);
     // debugger;
   });

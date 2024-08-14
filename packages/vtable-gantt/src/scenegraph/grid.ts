@@ -41,7 +41,7 @@ export class Grid {
     this.rowHeight = scene._gantt.parsedOptions.rowHeight;
     this.rowCount = scene._gantt.itemCount;
     this.allGridWidth = scene._gantt.getAllColsWidth();
-    this.allGridHeight = scene._gantt.getAllGridHeight();
+    this.allGridHeight = scene._gantt.getAllTaskBarsHeight();
     this.group = new VRender.Group({
       x: this.x,
       y: this.y,
@@ -147,7 +147,7 @@ export class Grid {
     });
     this.rowCount = this._scene._gantt.itemCount;
     this.allGridWidth = this._scene._gantt.getAllColsWidth();
-    this.allGridHeight = this._scene._gantt.getAllGridHeight();
+    this.allGridHeight = this._scene._gantt.getAllTaskBarsHeight();
     this.verticalLineGroup?.parent.removeChild(this.verticalLineGroup);
     this.horizontalLineGroup?.parent.removeChild(this.horizontalLineGroup);
     this.createVerticalLines();

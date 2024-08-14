@@ -45,7 +45,7 @@ export class TaskBar {
       x: 0,
       y: 0,
       width: this._scene._gantt.getAllColsWidth(),
-      height: this._scene._gantt.getAllGridHeight(),
+      height: this._scene._gantt.getAllTaskBarsHeight(),
       pickable: false,
       clip: true
     });

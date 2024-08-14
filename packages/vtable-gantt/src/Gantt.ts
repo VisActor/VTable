@@ -171,7 +171,7 @@ export class Gantt extends EventTarget {
     this.scenegraph.afterCreateSceneGraph();
   }
 
-  renderTaskTable() {
+  renderTaskBarsTable() {
     this.scenegraph.updateNextFrame();
   }
   /**
@@ -420,7 +420,7 @@ export class Gantt extends EventTarget {
     );
   }
 
-  getAllGridHeight() {
+  getAllTaskBarsHeight() {
     return this.itemCount * this.parsedOptions.rowHeight;
   }
 
@@ -431,7 +431,7 @@ export class Gantt extends EventTarget {
     return this.records[index];
   }
 
-  redrawRecord(index: number) {
+  refreshTaskBar(index: number) {
     // this.listTableInstance.updateRecords([record], [index]);
     this.scenegraph.taskBar.updateTaskBarNode(index);
     this.scenegraph.updateNextFrame();
@@ -513,9 +513,10 @@ export class Gantt extends EventTarget {
     this.updateRecordToListTable(taskRecord, index);
   }
   /** TODO */
-  updateTaskRecord(index: number, record: any) {
+  updateTaskRecord(record: any, index: number) {
     //const taskRecord = this.getRecordByIndex(index);
     this.updateRecordToListTable(record, index);
+    this.refreshTaskBar(index);
   }
 
   /**
