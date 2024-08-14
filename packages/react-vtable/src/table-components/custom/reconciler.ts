@@ -4,7 +4,7 @@ import { isFunction, merge } from '@visactor/vutils';
 import React from 'react';
 import ReactReconciler from 'react-reconciler';
 import { DefaultEventPriority } from 'react-reconciler/constants.js';
-import { createVRenderComponent } from '../../components/component-creater';
+import { createVRenderComponent } from '../../components/vrender-components/component-creater';
 
 type Instance = Graphic;
 

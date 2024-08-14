@@ -1,3 +1,4 @@
-export * from './tag';
-export * from './checkbox';
-export * from './radio';
+export * from './vrender-components/tag';
+export * from './vrender-components/checkbox';
+export * from './vrender-components/radio';
+export * from './button/button';
