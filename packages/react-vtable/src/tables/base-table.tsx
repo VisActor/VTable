@@ -22,9 +22,9 @@ import type {
   // TableLifeCycleEventProps
 } from '../eventsUtils';
 import { bindEventsToTable, TABLE_EVENTS_KEYS, TABLE_EVENTS } from '../eventsUtils';
-import { VTableReactAttributePlugin } from '../components/custom/vtable-react-attribute-plugin';
-import { reactEnvModule } from '../components/custom/vtable-browser-env-contribution';
-import { VRender } from '@visactor/vtable';
+import { VTableReactAttributePlugin } from '../table-components/custom/vtable-react-attribute-plugin';
+import { reactEnvModule } from '../table-components/custom/vtable-browser-env-contribution';
+import { container, isBrowserEnv } from '@visactor/vtable/es/vrender';
 import type {
   ListTable,
   PivotTable,
@@ -33,7 +33,6 @@ import type {
   PivotTableConstructorOptions,
   PivotChartConstructorOptions
 } from '@visactor/vtable';
-const { container, isBrowserEnv } = VRender;
 
 export type IVTable = ListTable | PivotTable | PivotChart;
 export type IOption = ListTableConstructorOptions | PivotTableConstructorOptions | PivotChartConstructorOptions;

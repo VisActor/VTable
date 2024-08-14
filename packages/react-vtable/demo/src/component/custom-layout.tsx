@@ -1,8 +1,41 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CustomLayoutFunctionArg } from '../../../src';
-import { ListTable, ListColumn, CustomLayout, Group, Text, Tag, Checkbox, Radio } from '../../../src';
+import { ListTable, ListColumn, CustomLayout, Group, Text, Tag, Checkbox, Radio, Button } from '../../../src';
 
 type FieldData = { value: string; label: string };
+
+const CustomLayoutReactComponent = (props: CustomLayoutFunctionArg & { text: string }) => {
+  const { table, row, col, rect, text } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const groupRef = useRef(null);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        display: 'flex',
+        flexWrap: 'wrap',
+        flexDirection: 'column',
+        alignItems: 'center',
+        alignContent: 'center'
+      }}
+      ref={groupRef}
+    >
+      <Button
+        disabled={true}
+        onClick={e => {
+          // console.log('button click');
+        }}
+      >
+        {text}
+      </Button>
+    </Group>
+  );
+};
 
 const CustomLayoutComponentMulti = (props: CustomLayoutFunctionArg & { text: string }) => {
   const { table, row, col, rect, text } = props;
@@ -181,7 +214,7 @@ const HeaderCustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: st
 };
 
 function App() {
-  const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
+  const records = new Array(10).fill(['John', 18, 'male', '🏀']);
   const [preStr, setPreStr] = useState('vt');
 
   useEffect(() => {
@@ -195,6 +228,9 @@ function App() {
     <ListTable records={records} height={500} defaultRowHeight={80}>
       <ListColumn field={'0'} title={'name'} />
       <ListColumn field={'1'} title={'age'} />
+      <ListColumn field={'2'} title={'gender'}>
+        <CustomLayoutReactComponent role={'custom-layout'} text={preStr} />
+      </ListColumn>
       <ListColumn field={'2'} title={'gender'}>
         <CustomLayoutComponentMulti role={'custom-layout'} text={preStr} />
       </ListColumn>

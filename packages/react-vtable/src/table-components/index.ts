@@ -7,11 +7,11 @@ export { PivotCorner } from './pivot/pivot-corner';
 export { Menu } from './component/menu';
 export { Tooltip } from './component/tooltip';
 export { EmptyTip } from './component/emptyTip';
+export { Title } from './component/title';
 
 export { CustomComponent } from './custom-component';
 export { CustomLayout, type CustomLayoutFunctionArg } from './custom/custom-layout';
 export * from './custom/graphic';
-// export * from './custom/component';
 
 type Props = { updateId?: number };
 
