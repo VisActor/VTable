@@ -59,8 +59,8 @@ export class MarkLine {
         lineWidth: style.lineWidth,
         lineDash: style.lineDash,
         points: [
-          { x: dateX, y: 0 },
-          { x: dateX, y: this.height }
+          { x: this.markLineContainerWidth / 2, y: 0 },
+          { x: this.markLineContainerWidth / 2, y: this.height }
         ]
       });
       markLineGroup.appendChild(lineObj);

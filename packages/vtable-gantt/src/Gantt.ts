@@ -282,7 +282,7 @@ export class Gantt extends EventTarget {
   }
   _generateListTableOptions() {
     const listTable_options: ListTableConstructorOptions = {};
-    const needPutInListTableKeys = ['container', 'records', 'pixelRatio', 'overscrollBehavior', 'pixelRatio'];
+    const needPutInListTableKeys = ['container', 'records', 'rowSeriesNumber', 'overscrollBehavior', 'pixelRatio'];
     for (const key in this.options) {
       if (needPutInListTableKeys.indexOf(key) >= 0) {
         listTable_options[key] = this.options[key];
@@ -325,7 +325,7 @@ export class Gantt extends EventTarget {
       bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable.bodyStyle)
     };
     listTable_options.canvasWidth = this.taskTableWidth as number;
-    listTable_options.canvasHeight = this.canvasHeight ?? this.canvas.height;
+    listTable_options.canvasHeight = this.canvas.height;
     listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
     listTable_options.defaultRowHeight = this.parsedOptions.rowHeight;
     listTable_options.clearDOM = false;
