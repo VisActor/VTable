@@ -1,10 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CustomLayoutFunctionArg } from '../../../src';
-import { ListTable, ListColumn, CustomLayout, Group, Text, Tag, Checkbox, Radio, Button } from '../../../src';
+import {
+  ListTable,
+  ListColumn,
+  CustomLayout,
+  Group,
+  Text,
+  Tag,
+  Checkbox,
+  Radio,
+  Button,
+  Link,
+  Avatar,
+  Image
+} from '../../../src';
 
 type FieldData = { value: string; label: string };
 
-const CustomLayoutReactComponent = (props: CustomLayoutFunctionArg & { text: string }) => {
+const CustomLayoutButton = (props: CustomLayoutFunctionArg & { text: string }) => {
   const { table, row, col, rect, text } = props;
   if (!table || row === undefined || col === undefined) {
     return null;
@@ -21,7 +34,8 @@ const CustomLayoutReactComponent = (props: CustomLayoutFunctionArg & { text: str
         flexWrap: 'wrap',
         flexDirection: 'column',
         alignItems: 'center',
-        alignContent: 'center'
+        alignContent: 'center',
+        justifyContent: 'space-around'
       }}
       ref={groupRef}
     >
@@ -31,8 +45,83 @@ const CustomLayoutReactComponent = (props: CustomLayoutFunctionArg & { text: str
           // console.log('button click');
         }}
       >
-        {text}
+        {'button-' + text}
       </Button>
+      <Button
+        onClick={e => {
+          // console.log('button click');
+        }}
+      >
+        {'button-' + text}
+      </Button>
+    </Group>
+  );
+};
+
+const CustomLayoutLink = (props: CustomLayoutFunctionArg & { text: string }) => {
+  const { table, row, col, rect, text } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const groupRef = useRef(null);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        display: 'flex',
+        flexWrap: 'wrap',
+        flexDirection: 'column',
+        alignItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'space-around'
+      }}
+      ref={groupRef}
+    >
+      <Link href="#">{'link-' + text}</Link>
+      <Link href="#" disabled>
+        {'link-' + text}
+      </Link>
+      <Link icon href="#">
+        {'link-' + text}
+      </Link>
+    </Group>
+  );
+};
+
+const CustomLayoutAvatar = (props: CustomLayoutFunctionArg & { text: string }) => {
+  const { table, row, col, rect, text } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const groupRef = useRef(null);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        display: 'flex',
+        flexWrap: 'wrap',
+        flexDirection: 'column',
+        alignItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'space-around'
+      }}
+      ref={groupRef}
+    >
+      <Avatar>{'A-' + text}</Avatar>
+      <Avatar shape={'square'}>{'A-' + text}</Avatar>
+      <Avatar>
+        <Image
+          attribute={{
+            image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
+          }}
+        />
+      </Avatar>
     </Group>
   );
 };
@@ -54,11 +143,12 @@ const CustomLayoutComponentMulti = (props: CustomLayoutFunctionArg & { text: str
         flexWrap: 'wrap',
         flexDirection: 'column',
         alignItems: 'center',
-        alignContent: 'center'
+        alignContent: 'center',
+        justifyContent: 'space-around'
       }}
       ref={groupRef}
     >
-      <Tag
+      {/* <Tag
         text={text}
         textStyle={{
           fontSize: 10,
@@ -73,7 +163,7 @@ const CustomLayoutComponentMulti = (props: CustomLayoutFunctionArg & { text: str
           lineWidth: 1,
           cornerRadius: 4
         }}
-      ></Tag>
+      ></Tag> */}
       <Checkbox text={{ text }} />
       <Radio text={{ text }} />
     </Group>
@@ -214,7 +304,7 @@ const HeaderCustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: st
 };
 
 function App() {
-  const records = new Array(10).fill(['John', 18, 'male', '🏀']);
+  const records = new Array(1).fill(['John', 18, 'male', '🏀']);
   const [preStr, setPreStr] = useState('vt');
 
   useEffect(() => {
@@ -224,14 +314,24 @@ function App() {
     }, 1000);
   }, []);
 
+  const tableRef = useRef<any>(null);
+  // eslint-disable-next-line no-undef
+  window.tableRef = tableRef;
+
   return (
-    <ListTable records={records} height={500} defaultRowHeight={80}>
+    <ListTable ref={tableRef} records={records} height={500} defaultRowHeight={200} defaultHeaderRowHeight={80}>
       <ListColumn field={'0'} title={'name'} />
       <ListColumn field={'1'} title={'age'} />
-      <ListColumn field={'2'} title={'gender'}>
-        <CustomLayoutReactComponent role={'custom-layout'} text={preStr} />
+      <ListColumn field={'2'} title={'button'} width={120}>
+        <CustomLayoutButton role={'custom-layout'} text={preStr} />
       </ListColumn>
-      <ListColumn field={'2'} title={'gender'}>
+      <ListColumn field={'2'} title={'link'} width={120}>
+        <CustomLayoutLink role={'custom-layout'} text={preStr} />
+      </ListColumn>
+      <ListColumn field={'2'} title={'avatar'} width={120}>
+        <CustomLayoutAvatar role={'custom-layout'} text={preStr} />
+      </ListColumn>
+      <ListColumn field={'2'} title={'gender'} width={120}>
         <CustomLayoutComponentMulti role={'custom-layout'} text={preStr} />
       </ListColumn>
       <ListColumn field={'3'} title={'hobby'}>

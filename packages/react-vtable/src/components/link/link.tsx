@@ -11,7 +11,7 @@ import { Tag as VTag } from '../vrender-components/tag';
 import { merge } from '@visactor/vutils';
 import React, { useEffect } from 'react';
 
-interface ButtonStateStyle {
+interface LinkStateStyle {
   textStyle?: {
     hover?: Partial<ITextGraphicAttribute>;
     disabled?: Partial<ITextGraphicAttribute>;
@@ -22,49 +22,57 @@ interface ButtonStateStyle {
   };
 }
 
-export interface ButtonProps {
+export interface LinkProps {
   children?: string;
   textStyle?: Partial<ITextGraphicAttribute>;
   padding?: Padding;
+  space?: number;
   panelStyle?: BackgroundAttributes;
   minWidth?: number;
   maxWidth?: number;
   visible?: boolean;
-  state?: ButtonStateStyle;
+  state?: LinkStateStyle;
   disabled?: boolean;
+  icon?: boolean;
   cursor?: Cursor;
+  href?: string;
   onClick?: (e: Event) => void;
 }
 
-const defaultProps: ButtonProps = {
+const defaultProps: LinkProps = {
   textStyle: {
     fontSize: 14,
     fontFamily: 'sans-serif',
-    fill: '#FFF'
+    fill: 'rgb(64, 128, 255)'
   },
   panelStyle: {
     visible: true,
-    fill: 'rgb(22, 93, 255)',
+    opacity: 0,
+    fill: 'rgb(242, 243, 245)',
     lineWidth: 1,
     cornerRadius: 2
   },
-  padding: 10,
+  padding: 4,
+  space: 6,
   // cursor: 'pointer',
   state: {
-    panelStyle: {
-      hover: {
-        fill: 'rgb(64, 128, 255)'
-      },
+    textStyle: {
       disabled: {
         fill: 'rgb(148, 191, 255)'
+      }
+    },
+    panelStyle: {
+      hover: {
+        // visible: true
+        opacity: 1
       }
     }
   }
 };
 
-function ButtonComponent(baseProps: ButtonProps, ref: React.Ref<Tag>) {
-  const props: ButtonProps = merge({}, defaultProps, baseProps);
-  const { disabled, onClick } = props;
+function LinkComponent(baseProps: LinkProps, ref: React.Ref<Tag>) {
+  const props: LinkProps = merge({}, defaultProps, baseProps);
+  const { disabled, href, onClick } = props;
   let buttomRef = React.useRef<Tag>(null);
   buttomRef = ref ? (ref as React.RefObject<Tag>) : buttomRef;
 
@@ -75,8 +83,12 @@ function ButtonComponent(baseProps: ButtonProps, ref: React.Ref<Tag>) {
         return;
       }
       onClick && onClick(event);
+      if (href) {
+        // eslint-disable-next-line no-undef
+        window.open(href);
+      }
     },
-    [disabled, onClick]
+    [disabled, href, onClick]
   );
 
   const attribute: TagAttributes = getTagAttribute(props);
@@ -100,7 +112,7 @@ function ButtonComponent(baseProps: ButtonProps, ref: React.Ref<Tag>) {
         buttomRef.current.stage.renderNextFrame();
       }
     });
-  });
+  }, []);
 
   useEffect(() => {
     if (disabled) {
@@ -124,8 +136,21 @@ function ButtonComponent(baseProps: ButtonProps, ref: React.Ref<Tag>) {
   return <VTag ref={buttomRef} attribute={attribute} onClick={handleClick}></VTag>;
 }
 
-function getTagAttribute(props: ButtonProps) {
-  const { textStyle, padding, panelStyle, minWidth, maxWidth, visible, cursor, disabled, state, children } = props;
+function getTagAttribute(props: LinkProps) {
+  const {
+    textStyle,
+    padding,
+    space,
+    panelStyle,
+    minWidth,
+    maxWidth,
+    visible,
+    cursor,
+    disabled,
+    icon,
+    state,
+    children
+  } = props;
   const attr: TagAttributes = {
     text: children,
     textStyle,
@@ -145,12 +170,21 @@ function getTagAttribute(props: ButtonProps) {
         hover: state?.panelStyle?.hover,
         disabled: state?.panelStyle?.disabled
       }
+    },
+    space,
+    shape: {
+      visible: !!icon,
+      fill: false,
+      stroke: textStyle.fill,
+      symbolType:
+        // eslint-disable-next-line max-len
+        'M -0.2927 -15.4348 L -15.142 -0.5855 C -18.6567 2.9292 -18.6567 8.6277 -15.142 12.1424 V 12.1424 C -11.6273 15.6571 -5.9288 15.6571 -2.4141 12.1424 L 15.2636 -5.5353 C 17.6067 -7.8784 17.6067 -11.6774 15.2636 -14.0206 V -14.0206 C 12.9205 -16.3637 9.1215 -16.3637 6.7783 -14.0206 L -10.8993 3.6571 C -12.0709 4.8287 -12.0709 6.7282 -10.8993 7.8997 V 7.8997 C -9.7278 9.0713 -7.8283 9.0713 -6.6567 7.8997 L 8.1925 -6.9495'
     }
   };
 
   return attr;
 }
 
-export const Button = React.forwardRef<Tag, ButtonProps>(ButtonComponent);
+export const Link = React.forwardRef<Tag, LinkProps>(LinkComponent);
 
-Button.displayName = 'Button';
+Link.displayName = 'Link';
