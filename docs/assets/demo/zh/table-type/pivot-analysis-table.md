@@ -3,7 +3,7 @@ category: examples
 group: table-type
 title: 透视分析表格
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
-link: '../guide/data_analysis/pivot_table_dataAnalysis'
+link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 option: PivotTable#dataConfig
 ---
 
@@ -17,6 +17,7 @@ option: PivotTable#dataConfig
 - `columns` 列维度配置
 - `rows` 行维度配置
 - `indicators` 指标配置
+- `enableDataAnalysis` 设置为 true， 开启透视数据分析
 - `dataConfig` 配置数据规则，可选配置项
 
 ## 代码演示
@@ -118,6 +119,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           }
         ]
       },
+      enableDataAnalysis: true,
       widthMode: 'standard'
     };
     tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);

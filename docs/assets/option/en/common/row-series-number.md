@@ -27,7 +27,3 @@ Table header cell style, please refer to: [headerStyle](../option/PivotTable-col
 ${prefix} style
 
 Body cell style, please refer to: [style](../option/ListTable-columns-text#style.bgColor)
-
-${prefix} disableColumnResize(boolean)
-
-Whether to disable row serial number width adjustment.The default is false.

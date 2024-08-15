@@ -42,12 +42,6 @@ export type BaseCellInfo = {
   /**原始值 */
   dataValue: FieldData;
 };
-export type MergeCellInfo = {
-  colStart: number;
-  colEnd: number;
-  rowStart: number;
-  rowEnd: number;
-};
 export type CellInfo = {
   col: number;
   row: number;
@@ -82,9 +76,17 @@ export type IListTableCellHeaderPaths = {
 };
 export type IPivotTableCellHeaderPaths = {
   /** 列表头各级path表头信息 */
-  readonly colHeaderPaths?: IDimensionInfo[];
+  readonly colHeaderPaths?: {
+    dimensionKey?: string;
+    indicatorKey?: string;
+    value?: string;
+  }[];
   /** 行表头各级path表头信息 */
-  readonly rowHeaderPaths?: IDimensionInfo[];
+  readonly rowHeaderPaths?: {
+    dimensionKey?: string;
+    indicatorKey?: string;
+    value?: string;
+  }[];
   cellLocation: CellLocation;
 };
 
@@ -93,7 +95,6 @@ export interface IDimensionInfo {
   value?: string;
   indicatorKey?: string;
   isPivotCorner?: boolean;
-  virtual?: boolean;
 }
 
 /**
@@ -126,7 +127,7 @@ export enum HighlightScope {
   'none' = 'none'
 }
 
-export type SortOrder = 'asc' | 'desc' | 'normal' | 'ASC' | 'DESC' | 'NORMAL';
+export type SortOrder = 'asc' | 'desc' | 'normal';
 
 export type CustomCellStyle = {
   id: string;

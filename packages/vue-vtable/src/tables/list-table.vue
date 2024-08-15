@@ -1,7 +1,7 @@
 <template>
   <BaseTable
+    type="list" 
     :options="computedOptions"
-    type="list"
     :records="records"
     :width="width"
     :height="height"
@@ -9,11 +9,12 @@
     v-bind="$attrs"
   >
 </BaseTable>
-<slot/>
+  <slot />
 </template>
 
 <script setup lang="ts">
 import { ref, computed, defineProps, useSlots} from 'vue';
+import { flattenVNodes } from './utils';
 import BaseTable from './base-table.vue';
 import type { ColumnDefine } from '@visactor/vtable';
 import type { TooltipProps } from '../components/component/tooltip';
@@ -34,14 +35,6 @@ const props = defineProps<Props>();
 const baseTableRef = ref<InstanceType<typeof BaseTable> | null>(null);
 const slots = useSlots();
 
-
-// 展平嵌套的虚拟节点
-function flattenVNodes(vnodes: any[]): any[] {  
-  return vnodes.flatMap(vnode => 
-    Array.isArray(vnode.children) ? flattenVNodes(vnode.children) : vnode
-  );
-}
-
 // 合并props.options和插槽中的配置
 const computedOptions = computed(() => {
   const flattenedSlots = flattenVNodes(slots.default?.() || []);
@@ -60,7 +53,6 @@ const computedOptions = computed(() => {
   flattenedSlots.forEach(vnode => {
     const typeName = vnode.type?.name || vnode.type?.__name;
     const optionKey = typeMapping[typeName];
-    // console.log(typeName);
     if (optionKey) {
       if (Array.isArray(options[optionKey])) {
         (options[optionKey] as any[]).push(vnode.props);
@@ -69,6 +61,7 @@ const computedOptions = computed(() => {
       }
     }
   });
+  console.log(props);
 
   return {
     ...props.options,
@@ -80,5 +73,8 @@ const computedOptions = computed(() => {
 
 
 // 暴露实例
-defineExpose({ vTableInstance: computed(() => baseTableRef.value?.vTableInstance || null) });
+defineExpose({
+  vTableInstance: computed(() => baseTableRef.value?.vTableInstance || null),
+  vTableContainer: computed(() => baseTableRef.value?.vTableContainer || null)
+});
 </script>

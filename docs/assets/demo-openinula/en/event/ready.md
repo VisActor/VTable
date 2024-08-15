@@ -13,7 +13,6 @@ option: ListTable-columns-text#cellType
 The onReady callback is triggered after the table completes initialization or update. You can obtain the table instance and whether it is the first rendering.
 
 ## code demo
-
 ```javascript livedemo template=vtable-openinula
 // import * as InulaVTable from '@visactor/openinula-vtable';
 
@@ -21,22 +20,22 @@ const option = {
   columns: [
     {
       field: '0',
-      title: 'name'
+      caption: 'name',
     },
     {
       field: '1',
-      title: 'age'
+      caption: 'age',
     },
     {
       field: '2',
-      title: 'gender'
+      caption: 'gender',
     },
     {
       field: '3',
-      title: 'hobby'
-    }
+      caption: 'hobby',
+    },
   ],
-  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
+  records: new Array(1000).fill(['John', 18, 'male', '🏀']),
 };
 
 const root = document.getElementById(CONTAINER_ID);
@@ -45,7 +44,7 @@ Inula.render(
     option={option}
     height={'500px'}
     onReady={(tableInstance, isFirst) => {
-      console.log(tableInstance, isFirst);
+      console.log(tableInstance, isFirst)
     }}
   />,
   root

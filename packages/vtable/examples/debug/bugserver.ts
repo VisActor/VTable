@@ -21,6 +21,7 @@ import('https://unpkg.com/@visactor/vchart@latest/build/index.min.js')
       rows: ['province', 'city'],
       columns: ['category', 'sub_category'],
       indicators: ['sales', 'number'],
+      enableDataAnalysis: true,
       indicatorTitle: '指标名称',
       indicatorsAsCol: false,
       dataConfig: {

@@ -65,6 +65,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         isShowOverflowTextTooltip: true
       },
       hideIndicatorName: true,
+      enableDataAnalysis: true,
       defaultHeaderRowHeight: 30,
       defaultRowHeight: 40,
       defaultColWidth: 60,

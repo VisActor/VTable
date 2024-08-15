@@ -4,7 +4,7 @@ group: Basic Features
 title: Pre Sort
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pre-sort.png
 order: 3-2
-link: '../guide/basic_function/sort/list_sort'
+link: '../guide/basic_function/sort'
 ---
 
 # Pre Sort
@@ -36,54 +36,54 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/test-demo-data
         field: 'id',
         title: 'ID',
         width: 80,
-        sort: true
+        sort: true,
       },
       {
         field: 'email1',
         title: 'email(pre-sorted)',
         width: 250,
-        sort: true
+        sort: true,
       },
       {
         field: 'hobbies',
         title: 'hobbies(unsorted)',
         width: 200,
-        sort: true
+        sort: true,
       },
       {
         field: 'birthday',
         title: 'birthday',
-        width: 120
+        width: 120,
       },
       {
         field: 'sex',
         title: 'sex',
-        width: 100
+        width: 100,
       },
       {
         field: 'tel',
         title: 'telephone',
-        width: 150
+        width: 150,
       },
       {
         field: 'work',
         title: 'job',
-        width: 200
+        width: 200,
       },
       {
         field: 'city',
         title: 'city',
-        width: 150
-      }
+        width: 150,
+      },
     ];
     const option = {
       records: data.data,
       columns
     };
-    const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
     window['tableInstance'] = tableInstance;
-
-    data.sort.forEach(item => {
+  
+    data.sort.forEach((item) => {
       tableInstance.setSortedIndexMap(item.key, item.value);
     });
   });

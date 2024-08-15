@@ -3,7 +3,7 @@ category: examples
 group: data-analysis
 title: 透视分析表格下钻上钻
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-drill.gif
-link: '../guide/data_analysis/pivot_table_dataAnalysis'
+link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 option: PivotTable-columns-text#drillDown
 ---
 
@@ -193,6 +193,7 @@ const option = {
       textStick: true
     }
   },
+  enableDataAnalysis: true,
   widthMode: 'standard'
 };
 tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
@@ -379,6 +380,7 @@ tableInstance.on('drillmenu_click', args => {
             textStick: true
           }
         },
+        enableDataAnalysis: true,
         widthMode: 'standard'
       });
     }
@@ -477,6 +479,7 @@ tableInstance.on('drillmenu_click', args => {
             textStick: true
           }
         },
+        enableDataAnalysis: true,
         widthMode: 'standard'
       });
     }

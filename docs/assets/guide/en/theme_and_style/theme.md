@@ -73,7 +73,7 @@ The specific configuration content can be viewed at: https://github.com/VisActor
 The specific configuration content can be viewed at: https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/ARCO.ts
 
     // 使用默认主题
-    option.theme = VTable.themes.ARCO;
+    option.theme = vTable.themes.ARCO;
 
     const tableInstance = new VTable.ListTable(option);
 
@@ -82,7 +82,7 @@ The specific configuration content can be viewed at: https://github.com/VisActor
 The specific configuration content can be viewed at: https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/DARK.ts
 
     // 使用默认主题
-    option.theme = VTable.themes.DARK;
+    option.theme = vTable.themes.DARK;
 
     const tableInstance = new VTable.ListTable(option);
 
@@ -91,7 +91,7 @@ The specific configuration content can be viewed at: https://github.com/VisActor
 The specific configuration content can be viewed at: https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/BRIGHT.ts
 
     // 使用默认主题
-    option.theme = VTable.themes.BRIGHT;
+    option.theme = vTable.themes.BRIGHT;
 
     const tableInstance = new VTable.ListTable(option);
 
@@ -100,7 +100,7 @@ The specific configuration content can be viewed at: https://github.com/VisActor
 The specific configuration content can be viewed at: https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/SIMPLIFY.ts
 
     // 使用默认主题
-    option.theme = VTable.themes.SIMPLIFY;
+    option.theme = vTable.themes.SIMPLIFY;
 
     const tableInstance = new VTable.ListTable(option);
 
@@ -114,7 +114,7 @@ Such as extending for DEFAULT
 
 ```
 
-option.theme = VTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red'}})
+option.theme = vTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red'}})
 
 const tableInstance = new vTable.ListTable(option);
 ```

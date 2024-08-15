@@ -1,15 +1,13 @@
 {{ target: common-theme }}
 
 Table theme, which has built-in theme names DEFAULT, ARCO, BRIGHT, DARK, SIMPLIFY. The configuration can be made using built-in types or directly with string names:
-
 - `VTable.themes.DEFAULT`
 - `VTable.themes.ARCO;`
 - `VTable.themes.BRIGHT`
 - `VTable.themes.DARK`
 - `VTable.themes.SIMPLIFY`
-
+  
 or
-
 - `'default'`
 - `'arco'`
 - `'bright'`
@@ -144,14 +142,4 @@ Selection box border color
 ##${prefix} cellBorderLineWidth(number)
 Selection box border thickness
 
-##${prefix} inlineRowBgColor(ColorPropertyDefine)
-The highlight color of the entire row when selected
-{{ use: common-color(
-prefix = ${prefix}
-) }}
-
-##${prefix} inlineColumnBgColor(ColorPropertyDefine)
-The highlight color of the entire column when selected
-{{ use: common-color(
-prefix = ${prefix}
-) }}
+#${prefix} Example: [TODO](xxxx)

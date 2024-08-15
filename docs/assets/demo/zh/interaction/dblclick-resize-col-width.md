@@ -13,94 +13,101 @@ option: ListTable#columnResizeMode
 
 ## 关键配置
 
+
 ## 代码演示
 
 ```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
-  .then(res => res.json())
-  .then(data => {
-    const option = {
-      columnResizeMode: 'header',
-      records: data,
-      rows: [
+
+let  tableInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+    .then((res) => res.json())
+    .then((data) => {
+
+const option = {
+  columnResizeMode:'header',
+  records:data,
+  enableDataAnalysis: true,
+    "rows": [
         {
-          dimensionKey: 'City',
-          title: 'City',
-          headerStyle: {
-            textStick: true
-          },
-          width: 'auto'
-        }
-      ],
-      columns: [
-        {
-          dimensionKey: 'Category',
-          title: 'Category',
-          headerStyle: {
-            textStick: true
-          },
-          width: 'auto'
-        }
-      ],
-      indicators: [
-        {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          showSort: false,
-          headerStyle: {
-            fontWeight: 'normal'
-          },
-          style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
-            }
-          }
+            "dimensionKey": "City",
+            "title": "City",
+            "headerStyle": {
+                "textStick": true
+            },
+            "width": "auto",
         },
+    ],
+    "columns": [
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          showSort: false,
-          headerStyle: {
-            fontWeight: 'normal'
-          },
-          style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
-            }
-          }
+           "dimensionKey": "Category",
+            "title": "Category",
+            "headerStyle": {
+                "textStick": true
+            },
+            "width": "auto",
         },
-        {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          showSort: false,
-          headerStyle: {
-            fontWeight: 'normal'
-          },
-          style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
-            }
-          }
+    ],
+    "indicators": [
+                {
+                    "indicatorKey": "Quantity",
+                    "title": "Quantity",
+                    "showSort": false,
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
+                },
+                {
+                    "indicatorKey": "Sales",
+                    "title": "Sales",
+                    "showSort": false,
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
+                },
+                {
+                    "indicatorKey": "Profit",
+                    "title": "Profit",
+                    "showSort": false,
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
+                }
+            ],
+    "corner": {
+        "titleOnDimension": "row",
+        "headerStyle": {
+            "textStick": true
         }
-      ],
-      corner: {
-        titleOnDimension: 'row',
-        headerStyle: {
-          textStick: true
-        }
-      },
-      //columnResizeType:'all',
-      widthMode: 'standard',
-      defaultColWidth: 120
-    };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
-  });
+    },
+    //columnResizeType:'all',
+  widthMode:'standard',
+  defaultColWidth:120,
+};
+tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
+window['tableInstance'] = tableInstance;
+    })
 ```

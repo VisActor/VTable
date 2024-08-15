@@ -63,10 +63,7 @@ export interface IIconBase {
       padding?: number[];
       bgColor?: string;
       arrowMark?: boolean;
-      maxWidth?: number;
-      maxHeight?: number;
     };
-    disappearDelay?: number;
   };
   /**
    * 是否可交互 默认为true  目前已知不可交互按钮：下拉菜单状态

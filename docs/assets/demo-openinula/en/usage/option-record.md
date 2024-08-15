@@ -12,28 +12,27 @@ link: '../guide/Developer_Ecology/openinula'
 Records can be separated from options and passed into the table component as a separate prop.
 
 ## code demo
-
 ```javascript livedemo template=vtable-openinula
 // import * as InulaVTable from '@visactor/openinula-vtable';
 const option = {
   columns: [
     {
       field: '0',
-      title: 'name'
+      caption: 'name',
     },
     {
       field: '1',
-      title: 'age'
+      caption: 'age',
     },
     {
       field: '2',
-      title: 'gender'
+      caption: 'gender',
     },
     {
       field: '3',
-      title: 'hobby'
-    }
-  ]
+      caption: 'hobby',
+    },
+  ],
 };
 const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
 

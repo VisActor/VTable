@@ -5,6 +5,7 @@ const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const options = {
+    enableDataAnalysis: false,
     heightMode: 'autoHeight',
     widthMode: 'standard',
     disableColumnResize: false,

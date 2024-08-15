@@ -147,13 +147,6 @@
         "zh": "21.怎么取消表格mousedown事件的冒泡？",
         "en": "21.How to cancel the bubbling of the table event?"
       }
-    },
-    {
-      "path": "22-How to deal with line-break",
-      "title": {
-        "zh": "22.怎么处理换行符？",
-        "en": "22.How to deal with line-break?"
-      }
     }
   ]
 }

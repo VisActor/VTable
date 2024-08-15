@@ -4,7 +4,7 @@
 
 # 数据排序
 
-具体可参阅教程：https://visactor.io/vtable/guide/basic_function/sort/list_sort
+具体可参阅教程：https://visactor.io/vtable/guide/basic_function/sort
 
 # 数据过滤
 
@@ -62,34 +62,32 @@ tableInstance.updateFilterRules([
 在列定义中，可以通过`aggregation`属性来配置聚合方式。下面是一个聚合配置的示例：
 
 ```javascript
-columns: [
-  {
-    field: 'salary',
-    title: 'salary',
-    width: 100,
-    aggregation: [
-      {
-        aggregationType: AggregationType.MAX,
-        formatFun(value) {
-          return '最高薪资:' + Math.round(value) + '元';
-        }
-      },
-      {
-        aggregationType: AggregationType.MIN,
-        formatFun(value) {
-          return '最低薪资:' + Math.round(value) + '元';
-        }
-      },
-      {
-        aggregationType: AggregationType.AVG,
-        showOnTop: false,
-        formatFun(value, col, row, table) {
-          return '平均:' + Math.round(value) + '元 (共计' + table.recordsCount + '条数据)';
-        }
+columns: {
+  field: 'salary',
+  title: 'salary',
+  width: 100,
+  aggregation: [
+    {
+      aggregationType: AggregationType.MAX,
+      formatFun(value) {
+        return '最高薪资:' + Math.round(value) + '元';
       }
-    ]
-  }
-];
+    },
+    {
+      aggregationType: AggregationType.MIN,
+      formatFun(value) {
+        return '最低薪资:' + Math.round(value) + '元';
+      }
+    },
+    {
+      aggregationType: AggregationType.AVG,
+      showOnTop: false,
+      formatFun(value, col, row, table) {
+        return '平均:' + Math.round(value) + '元 (共计' + table.recordsCount + '条数据)';
+      }
+    }
+  ]
+}
 ```
 
 在上述示例中，我们针对`salary`这一列设置了三种聚合方式：最大值、最小值和平均值。通过`aggregationType`来指定聚合方式，然后可以通过`formatFun`来自定义聚合结果的展示格式，通过`showOnTop`来控制将聚合结果展示在 body 的顶部还是底部。

@@ -40,25 +40,25 @@ function App() {
     columns: [
       {
         field: '0',
-        title: 'name'
+        caption: 'name'
       },
       {
         field: '1',
-        title: 'age'
+        caption: 'age'
       },
       {
         field: '2',
-        title: 'gender'
+        caption: 'gender'
       },
       {
         field: '3',
-        title: 'hobby'
+        caption: 'hobby'
       }
     ],
     records: new Array(1000).fill(['John', 18, 'male', '🏀'])
   };
 
-  const updateHoverPos = useCallback(args => {
+  const updateHoverPos = useCallback((args) => {
     if (visible.current) {
       return;
     }
@@ -72,7 +72,7 @@ function App() {
     setHoverRow(-1);
   }, []);
 
-  const updateClickPos = useCallback(args => {
+  const updateClickPos = useCallback((args) => {
     setClickCol(args.col);
     setClickRow(args.row);
   }, []);
@@ -121,7 +121,7 @@ function App() {
             setClickCol(-1);
             setClickRow(-1);
           }}
-          onVisibleChange={popVisible => {
+          onVisibleChange={(popVisible) => {
             visible.current = popVisible;
           }}
         >

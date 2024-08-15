@@ -3,11 +3,9 @@
 ${prefix} titleOnDimension(string) ='row'
 
 Corner header content display based on:
-
 - 'column' The column dimension name is used as the corner header cell content
 - 'row' The row dimension name is used as the corner header cell content
 - 'none' The corner header cell content is empty
-- 'all' means the header cell content is the concatenation of the row dimension name and the column dimension name
 
 ${prefix} headerType(string)
 

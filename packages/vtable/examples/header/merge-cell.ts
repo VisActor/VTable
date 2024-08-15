@@ -1,10 +1,7 @@
 import * as VTable from '../../src';
 const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
-import { InputEditor } from '@visactor/vtable-editors';
 
-const input_editor = new InputEditor({});
-VTable.register.editor('input', input_editor);
 export function createTable() {
   const personsDataSource = [
     {
@@ -301,8 +298,7 @@ export function createTable() {
           }
         };
       }
-    },
-    editor: 'input'
+    }
   };
 
   const instance = new ListTable(option);

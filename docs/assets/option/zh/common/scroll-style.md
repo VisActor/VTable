@@ -11,9 +11,6 @@
 ##${prefix} scrollSliderColor(string)
 滚动条滑块的颜色
 
-##${prefix} scrollSliderCornerRadius(number)
-滚动条滑块的圆角半径
-
 ##${prefix} width(number)
 滚动条宽度大小
 

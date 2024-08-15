@@ -1,7 +1,5 @@
 import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
 import type { Group } from '../scenegraph/graphic/group';
-import type { MergeCellInfo } from '../ts-types';
-import { isValid } from '@visactor/vutils';
 
 export interface SceneEvent {
   abstractPos: {
@@ -13,7 +11,6 @@ export interface SceneEvent {
     row: number;
     event: FederatedPointerEvent;
     targetCell: Group;
-    mergeInfo?: MergeCellInfo;
     target: IEventTarget;
   };
 }
@@ -37,14 +34,13 @@ export function getCellEventArgsSet(e: FederatedPointerEvent): SceneEvent {
       row: targetCell.row,
       event: e,
       targetCell,
-      mergeInfo: getMergeCellInfo(targetCell),
       target: e.target
     };
   }
   return tableEvent;
 }
 
-export function getTargetCell(target: any) {
+function getTargetCell(target: any) {
   while (target && target.parent) {
     if (target.role === 'cell') {
       return target;
@@ -52,23 +48,6 @@ export function getTargetCell(target: any) {
     target = target.parent;
   }
   return null;
-}
-
-function getMergeCellInfo(cellGroup: Group): MergeCellInfo | undefined {
-  if (
-    isValid(cellGroup.mergeStartCol) &&
-    isValid(cellGroup.mergeStartRow) &&
-    isValid(cellGroup.mergeEndCol) &&
-    isValid(cellGroup.mergeEndRow)
-  ) {
-    return {
-      colStart: cellGroup.mergeStartCol,
-      colEnd: cellGroup.mergeEndCol,
-      rowStart: cellGroup.mergeStartRow,
-      rowEnd: cellGroup.mergeEndRow
-    };
-  }
-  return undefined;
 }
 
 export const regIndexReg = /radio-\d+-\d+-(\d+)/;

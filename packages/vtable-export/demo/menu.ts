@@ -29,14 +29,6 @@ export const menus = [
       {
         path: 'list',
         name: 'list-large'
-      },
-      {
-        path: 'list',
-        name: 'list-tree'
-      },
-      {
-        path: 'list',
-        name: 'list-checkbox'
       }
     ]
   },

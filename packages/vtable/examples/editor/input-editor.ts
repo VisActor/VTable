@@ -134,7 +134,6 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    emptyTip: true,
     container: document.getElementById(CONTAINER_ID),
     columns: [
       {
@@ -164,8 +163,7 @@ export function createTable() {
     widthMode: 'standard',
     autoFillWidth: true,
     allowFrozenColCount: 2,
-    editor: 'input',
-    headerEditor: 'input'
+    editor: 'input'
   };
 
   const instance = new ListTable(option);

@@ -5,6 +5,7 @@ const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const option = {
+    enableDataAnalysis: false,
     allowRangePaste: true,
     columnTree: [
       {

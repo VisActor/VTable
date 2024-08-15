@@ -15,16 +15,16 @@
 ```javascript
 {
   field: 'full name',
-  title: 'Full name',
+  caption: 'Full name',
   columns: [
     {
       field: 'name',
-      title: 'First Name',
+      caption: 'First Name',
       width: 120
     },
     {
       field: 'lastName',
-      title: 'Last Name',
+      caption: 'Last Name',
       width: 100
     }
   ]

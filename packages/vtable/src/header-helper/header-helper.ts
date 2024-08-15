@@ -1,12 +1,4 @@
-import type {
-  ColumnIconOption,
-  ColumnsDefine,
-  ListTableAPI,
-  PivotTableAPI,
-  RectProps,
-  SortOrder,
-  SvgIcon
-} from '../ts-types';
+import type { ColumnIconOption, ListTableAPI, PivotTableAPI, RectProps, SortOrder, SvgIcon } from '../ts-types';
 import { HierarchyState, IconFuncTypeEnum, IconPosition, InternalIconName } from '../ts-types';
 import * as registerIcons from '../icons';
 import { cellInRange } from '../tools/helper';
@@ -59,25 +51,11 @@ export class HeaderHelper {
     const icons: ColumnIconOption[] = [];
     if (this._table.isPivotTable()) {
       // 透视表显示排序按钮
-      const { showSort, sort } = this._table.internalProps.layoutMap.getHeader(col, row) as HeaderData;
+      const { showSort } = this._table.internalProps.layoutMap.getHeader(col, row) as HeaderData;
       if (showSort) {
-        let order = (this._table as PivotTableAPI).getPivotSortState(col, row) as string;
-        if (order) {
-          order = order.toUpperCase();
-        }
-        const sortIcon = order === 'ASC' ? this.downIcon : order === 'DESC' ? this.upIcon : this.normalIcon;
+        const order = (this._table as PivotTableAPI).getPivotSortState(col, row);
+        const sortIcon = order === 'asc' ? this.downIcon : order === 'desc' ? this.upIcon : this.normalIcon;
 
-        if (sortIcon) {
-          icons.push(sortIcon);
-        }
-      } else if (sort) {
-        // 处理配置了sort的情况
-        const sortIcon = this.getSortIconForPivotTable(
-          (this._table as PivotTableAPI).getPivotSortState(col, row),
-          this._table,
-          col,
-          row
-        );
         if (sortIcon) {
           icons.push(sortIcon);
         }
@@ -213,26 +191,6 @@ export class HeaderHelper {
     ) {
       return null;
     }
-    return icon;
-  }
-
-  getSortIconForPivotTable(
-    order: SortOrder | undefined,
-    _table: BaseTableAPI,
-    col: number,
-    row: number
-  ): ColumnIconOption | null {
-    const headerC = _table.getHeaderDefine(col, row) as any;
-    if (
-      !headerC ||
-      headerC.showSort === false ||
-      (!isValid(headerC.showSort) && !headerC.sort) ||
-      (headerC.columns && headerC.columns.length > 0)
-    ) {
-      return null;
-    }
-    const icon = order === 'ASC' ? this.downIcon : order === 'DESC' ? this.upIcon : this.normalIcon;
-    // const icon = order === 'ASC' ? this.downIcon : this.upIcon;
     return icon;
   }
 
@@ -426,19 +384,5 @@ export class HeaderHelper {
       case 'checkbox':
         return CheckboxStyle;
     }
-  }
-
-  setTableColumnsEditor() {
-    const setEditor = (colDefines: ColumnsDefine, setColumns: ColumnsDefine) => {
-      colDefines?.forEach((colDefine, index) => {
-        if (colDefine.editor) {
-          setColumns[index].editor = colDefine.editor;
-        }
-        if (colDefine.columns) {
-          setEditor(colDefine.columns, setColumns[index].columns);
-        }
-      });
-    };
-    setEditor((this._table as ListTable).options.columns, (this._table as ListTable).internalProps.columns);
   }
 }

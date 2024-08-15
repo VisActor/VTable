@@ -143,13 +143,13 @@ function bindExport() {
 
   exportCsvButton.addEventListener('click', () => {
     if (window.tableInstance) {
-      downloadCsv(exportVTableToCsv(window.tableInstance, window.csvOption), 'export');
+      downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
     }
   });
 
   exportExcelButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      downloadExcel(await exportVTableToExcel(window.tableInstance, window.excelOption), 'export');
+      downloadExcel(await exportVTableToExcel(window.tableInstance), 'export');
     }
   });
 }

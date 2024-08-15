@@ -72,7 +72,6 @@ export function createFrameBorder(
   if (Array.isArray(borderColor)) {
     (rectAttributes as any).strokeArrayColor = getQuadProps(borderColor as any);
   }
-
   if (Array.isArray(borderLineWidth)) {
     (rectAttributes as any).strokeArrayWidth = getQuadProps(borderLineWidth);
     (rectAttributes as any).lineWidth = 1;
@@ -118,9 +117,6 @@ export function createFrameBorder(
     rectAttributes.y = borderTop / 2;
     rectAttributes.pickable = false;
     if (isTableGroup) {
-      if (cornerRadius) {
-        rectAttributes.cornerRadius = cornerRadius + (rectAttributes.lineWidth ?? 0) / 2;
-      }
       if (frameTheme.innerBorder) {
         rectAttributes.x = group.attribute.x + borderLeft / 2;
         rectAttributes.y = group.attribute.y + borderTop / 2;

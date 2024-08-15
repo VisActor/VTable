@@ -95,9 +95,9 @@ function updateResizeColForIndicator(detaY: number, state: StateManager) {
     resizeIndicatorKey = layout.getIndicatorKey(state.table.rowHeaderLevelCount, state.rowResize.row);
   } else {
     const headerPaths = layout.getCellHeaderPaths(state.table.rowHeaderLevelCount - 1, state.rowResize.row);
-    const headerPath = headerPaths.rowHeaderPaths?.[headerPaths.rowHeaderPaths.length - 1];
-    resizeDimensionKey = headerPath?.dimensionKey;
-    resizeDimensionValue = headerPath?.value;
+    const headerPath = headerPaths.rowHeaderPaths[headerPaths.rowHeaderPaths.length - 1];
+    resizeDimensionKey = headerPath.dimensionKey;
+    resizeDimensionValue = headerPath.value;
   }
   for (
     let row = state.table.columnHeaderLevelCount;
@@ -110,7 +110,7 @@ function updateResizeColForIndicator(detaY: number, state: StateManager) {
       state.table.internalProps._heightResizedRowMap.add(row);
     } else if (layout.indicatorsAsCol) {
       const headerPaths = layout.getCellHeaderPaths(state.table.rowHeaderLevelCount - 1, row);
-      const headerPath = headerPaths?.rowHeaderPaths?.[headerPaths.rowHeaderPaths.length - 1];
+      const headerPath = headerPaths?.rowHeaderPaths[headerPaths.rowHeaderPaths.length - 1];
       if (headerPath && resizeDimensionKey === headerPath.dimensionKey && resizeDimensionValue === headerPath.value) {
         state.table.scenegraph.updateRowHeight(row, detaY);
         state.table.internalProps._heightResizedRowMap.add(row);
@@ -124,9 +124,7 @@ function updateResizeColForIndicatorGroup(detaY: number, state: StateManager) {
   const layout = state.table.internalProps.layoutMap as PivotHeaderLayoutMap;
   //通过getCellHeaderPaths接口获取列表头最后一层指标维度的path
   const headerPaths = layout.getCellHeaderPaths(state.table.rowHeaderLevelCount, state.rowResize.row);
-  const node = layout.getHeadNodeByRowOrColDimensions(
-    headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length - 1)
-  ) as any;
+  const node = layout.getHeadNode(headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length - 1)) as any;
   // 计算宽度受影响列的起止
   const startRow = node.startInTotal + state.table.frozenRowCount;
   const endRow = node.startInTotal + state.table.frozenRowCount + node.size - 1;

@@ -224,6 +224,8 @@ According to the above traversed structure, a dimension tree will be generated, 
 
 Although multi-dimensional tables with analytical capabilities can automatically analyze the dimension values of each dimension to form a tree structure of row and column headers, and can be sorted according to `dataConfig.sortRules`, scenarios with complex business logic still expect to be able to **customize Row column header dimension value ** and order. Then these business requirement scenarios can be realized through rowTree and columnTree.
 
+- enableDataAnalysis needs to be set to false to turn off the analysis of aggregated data within VTable.
+
    <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-tree.png" />
     <p>custom rowTree columnTree</p>
@@ -369,3 +371,5 @@ const option = {
 VTable official website example: https://visactor.io/vtable/demo/table-type/pivot-table.
 
 The complexity of the custom tree lies in the formation of the row, column and dimension trees. You can choose to use it according to the business scenario. If you have complex sorting, aggregation or paging rules, you can choose to use a custom method.
+
+**Note: If you choose the custom tree configuration method, the data aggregation capability inside the VTable will not be enabled, that is, one of the matched data entries will be used as the cell indicator value. **

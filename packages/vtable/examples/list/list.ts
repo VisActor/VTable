@@ -16,7 +16,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(2000);
+  const records = generatePersons(1000000);
   const columns: VTable.ColumnsDefine = [
     {
       field: '',
@@ -167,20 +167,8 @@ export function createTable() {
   ];
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
-    emptyTip: true,
     records,
-    columns: [
-      ...columns,
-      ...columns,
-      ...columns,
-      ...columns,
-      ...columns,
-      ...columns,
-      ...columns,
-      ...columns,
-      ...columns,
-      ...columns
-    ],
+    columns,
     tooltip: {
       isShowOverflowTextTooltip: true
     },
@@ -199,14 +187,6 @@ export function createTable() {
     },
     autoWrapText: true,
     editor: '',
-    // theme: VTable.themes.ARCO,
-    // hover: {
-    //   highlightMode: 'cross'
-    // },
-    // select: {
-    //   headerSelectMode: 'cell',
-    //   highlightMode: 'cross'
-    // },
     excelOptions: {
       fillHandle: true
     }
@@ -214,9 +194,6 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
-  bindDebugTool(tableInstance.scenegraph.stage, {
-    customGrapicKeys: ['col', 'row']
-  });
   tableInstance.on('change_cell_value', arg => {
     console.log(arg);
   });

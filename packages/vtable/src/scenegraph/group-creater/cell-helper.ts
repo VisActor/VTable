@@ -8,6 +8,7 @@ import type {
   ColumnDefine,
   ColumnTypeOption,
   ImageColumnDefine,
+  MappingRule,
   ProgressbarColumnDefine,
   IRowSeriesNumber,
   TextColumnDefine,
@@ -16,25 +17,27 @@ import type {
 import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
 import { getProp } from '../utils/get-prop';
-import type { CreateChartCellGroup } from './cell-type/chart-cell';
-import type { CreateImageCellGroup } from './cell-type/image-cell';
-import type { CreateProgressBarCell } from './cell-type/progress-bar-cell';
-import type { CreateSparkLineCellGroup } from './cell-type/spark-line-cell';
-import type { CreateTextCellGroup } from './cell-type/text-cell';
-import type { CreateVideoCellGroup } from './cell-type/video-cell';
-import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
+import { createChartCellGroup } from './cell-type/chart-cell';
+import { createImageCellGroup } from './cell-type/image-cell';
+import { createProgressBarCell } from './cell-type/progress-bar-cell';
+import { createSparkLineCellGroup } from './cell-type/spark-line-cell';
+import { createCellGroup } from './cell-type/text-cell';
+import { createVideoCellGroup } from './cell-type/video-cell';
+import type { BaseTableAPI, HeaderData, PivotTableProtected } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
-import type { ICartesianAxis } from '../../components/axis/axis';
-import { Factory } from '../../core/factory';
-import type { CreateCheckboxCellGroup } from './cell-type/checkbox-cell';
+import { CartesianAxis } from '../../components/axis/axis';
+import { createCheckboxCellGroup } from './cell-type/checkbox-cell';
+// import type { PivotLayoutMap } from '../../layout/pivot-layout';
+import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getQuadProps } from '../utils/padding';
+import { convertInternal } from '../../tools/util';
 import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
 import { isArray } from '@visactor/vutils';
 import { breakString } from '../utils/break-string';
-import type { CreateRadioCellGroup } from './cell-type/radio-cell';
+import { createRadioCellGroup } from './cell-type/radio-cell';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -153,7 +156,6 @@ export function createCell(
           // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           padding,
-          range,
           table
         );
         customElementsGroup = customResult.elementsGroup;
@@ -161,8 +163,7 @@ export function createCell(
       }
     }
 
-    const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
-    cellGroup = createTextCellGroup(
+    cellGroup = createCellGroup(
       table,
       value,
       columnGroup,
@@ -186,7 +187,6 @@ export function createCell(
 
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
     if (axisConfig) {
-      const CartesianAxis: ICartesianAxis = Factory.getComponent('axis');
       const axis = new CartesianAxis(axisConfig, cellGroup.attribute.width, cellGroup.attribute.height, padding, table);
       cellGroup.clear();
       cellGroup.appendChild(axis.component);
@@ -202,7 +202,6 @@ export function createCell(
     }
   } else if (type === 'image') {
     // 创建图片单元格
-    const createImageCellGroup = Factory.getFunction('createImageCellGroup') as CreateImageCellGroup;
     cellGroup = createImageCellGroup(
       columnGroup,
       0,
@@ -216,15 +215,12 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
-      mayHaveIcon,
       table,
       cellTheme,
-      range,
       isAsync
     );
   } else if (type === 'video') {
     // 创建视频单元格
-    const createVideoCellGroup = Factory.getFunction('createVideoCellGroup') as CreateVideoCellGroup;
     cellGroup = createVideoCellGroup(
       columnGroup,
       0,
@@ -238,15 +234,12 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
-      mayHaveIcon,
       table,
       cellTheme,
-      range,
       isAsync
     );
   } else if (type === 'chart') {
     const chartInstance = table.internalProps.layoutMap.getChartInstance(col, row);
-    const createChartCellGroup = Factory.getFunction('createChartCellGroup') as CreateChartCellGroup;
     cellGroup = createChartCellGroup(
       null,
       columnGroup,
@@ -271,8 +264,7 @@ export function createCell(
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
     const dataValue = table.getCellOriginValue(col, row);
     // 创建基础文字单元格
-    const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
-    cellGroup = createTextCellGroup(
+    cellGroup = createCellGroup(
       table,
       value,
       columnGroup,
@@ -295,7 +287,6 @@ export function createCell(
     );
 
     // 创建bar group
-    const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
     const progressBarGroup = createProgressBarCell(
       define as ProgressbarColumnDefine,
       style,
@@ -314,7 +305,6 @@ export function createCell(
       cellGroup.appendChild(progressBarGroup);
     }
   } else if (type === 'sparkline') {
-    const createSparkLineCellGroup = Factory.getFunction('createSparkLineCellGroup') as CreateSparkLineCellGroup;
     cellGroup = createSparkLineCellGroup(
       null,
       columnGroup,
@@ -330,7 +320,6 @@ export function createCell(
       isAsync
     );
   } else if (type === 'checkbox') {
-    const createCheckboxCellGroup = Factory.getFunction('createCheckboxCellGroup') as CreateCheckboxCellGroup;
     cellGroup = createCheckboxCellGroup(
       null,
       columnGroup,
@@ -344,15 +333,12 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
-      mayHaveIcon,
       table,
       cellTheme,
       define as CheckboxColumnDefine,
-      range,
       isAsync
     );
   } else if (type === 'radio') {
-    const createRadioCellGroup = Factory.getFunction('createRadioCellGroup') as CreateRadioCellGroup;
     cellGroup = createRadioCellGroup(
       null,
       columnGroup,
@@ -419,7 +405,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
           // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           [0, 0, 0, 0],
-          range,
           table
         );
       }
@@ -486,7 +471,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     const textMark = oldCellGroup.getChildByName('text');
     if (textMark) {
       const text = table.getCellValue(col, row);
-      const { text: textArr, moreThanMaxCharacters } = breakString(text, table);
+      const textArr = breakString(text, table);
 
       const hierarchyOffset = getHierarchyOffset(col, row, table);
       const lineClamp = cellStyle.lineClamp;
@@ -504,7 +489,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
       const attribute = {
         text: textArr.length === 1 && !autoWrapText ? textArr[0] : textArr, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
-        moreThanMaxCharacters,
         maxLineWidth: cellWidth - (padding[1] + padding[3] + hierarchyOffset),
         // fill: true,
         // textAlign: 'left',
@@ -513,7 +497,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         lineClamp,
         wordBreak: 'break-word',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-        heightLimit: cellHeight - Math.floor(padding[0] + padding[2]),
+        heightLimit: cellHeight - (padding[0] + padding[2]),
         pickable: false,
         dx: textAlign === 'left' ? hierarchyOffset : 0,
         x
@@ -681,14 +665,6 @@ function updateCellContent(
   if (!addNew && (oldCellGroup.row !== row || oldCellGroup.col !== col)) {
     return null;
   }
-  if (!addNew && oldCellGroup.parent) {
-    // clear react container
-    if (table.reactCustomLayout) {
-      const reactGroup = oldCellGroup.getChildByName('custom-container');
-      const { col, row } = reactGroup;
-      table.reactCustomLayout.removeCustomCell(col, row);
-    }
-  }
   const newCellGroup = createCell(
     type,
     value,
@@ -712,7 +688,6 @@ function updateCellContent(
     customResult
   );
   if (!addNew && oldCellGroup.parent) {
-    // update cell
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
     oldCellGroup.parent.removeChild(oldCellGroup);
 
@@ -740,7 +715,7 @@ function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWra
     !autoWrapText &&
     !autoRowHeight &&
     !mayHaveIcon &&
-    oldCellGroup.firstChild?.type === 'text' && // judgement for none text
+    oldCellGroup.firstChild?.type === 'text' &&
     !isPromise(value)
   ) {
     return true;
@@ -759,14 +734,9 @@ export function dealWithMergeCellSize(
 ) {
   for (let col = range.start.col; col <= range.end.col; col++) {
     for (let row = range.start.row; row <= range.end.row; row++) {
-      // const cellGroup = table.scenegraph.getCell(col, row, true);
-      const cellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+      const cellGroup = table.scenegraph.getCell(col, row, true);
 
-      if (cellGroup.role !== 'cell') {
-        continue;
-      }
-
-      if (range.start.row !== range.end.row && cellGroup.contentHeight !== cellHeight) {
+      if (cellGroup.role === 'cell' && range.start.row !== range.end.row && cellGroup.contentWidth !== cellWidth) {
         updateCellContentHeight(
           cellGroup,
           cellHeight,
@@ -779,7 +749,7 @@ export function dealWithMergeCellSize(
           // 'middle'
         );
       }
-      if (range.start.col !== range.end.col && cellGroup.contentWidth !== cellWidth) {
+      if (cellGroup.role === 'cell' && range.start.col !== range.end.col && cellGroup.contentHeight !== cellHeight) {
         updateCellContentWidth(
           cellGroup,
           cellWidth,
@@ -819,33 +789,25 @@ export function resizeCellGroup(
   cellGroup.forEachChildren((child: IGraphic) => {
     // 利用_dx hack解决掉 合并单元格的范围内的格子依次执行该方法 如果挨个调用updateCell的话 执行多次后dx累计问题
     if (typeof child._dx === 'number') {
-      child.skipMergeUpdate = true;
       child.setAttributes({
         dx: (child._dx ?? 0) + dx
       });
-      child.skipMergeUpdate = false;
     } else {
-      child.skipMergeUpdate = true;
       child._dx = child.attribute.dx ?? 0;
       child.setAttributes({
         dx: (child.attribute.dx ?? 0) + dx
       });
-      child.skipMergeUpdate = false;
     }
 
     if (typeof child._dy === 'number') {
-      child.skipMergeUpdate = true;
       child.setAttributes({
         dy: (child._dy ?? 0) + dy
       });
-      child.skipMergeUpdate = false;
     } else {
       child._dy = child.attribute.dy ?? 0;
-      child.skipMergeUpdate = true;
       child.setAttributes({
         dy: (child.attribute.dy ?? 0) + dy
       });
-      child.skipMergeUpdate = false;
     }
   });
 
@@ -869,13 +831,11 @@ export function resizeCellGroup(
   const widthChange = rangeWidth !== cellGroup.attribute.width;
   const heightChange = rangeHeight !== cellGroup.attribute.height;
 
-  (cellGroup as any).skipMergeUpdate = true;
   cellGroup.setAttributes({
     width: rangeWidth,
     height: rangeHeight,
     strokeArrayWidth: newLineWidth
   } as any);
-  (cellGroup as any).skipMergeUpdate = false;
 
   cellGroup.mergeStartCol = range.start.col;
   cellGroup.mergeStartRow = range.start.row;
@@ -912,7 +872,6 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
           // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           [0, 0, 0, 0],
-          customMergeRange,
           table
         );
 

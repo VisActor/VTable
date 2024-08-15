@@ -65,14 +65,14 @@ export class EditManeger {
       //   console.warn("VTable Warn: cell has config custom render or layout, can't be edited");
       //   return;
       // }
-      // if (!this.table.isHeader(col, row)) {
-      //   const range = this.table.getCellRange(col, row);
-      //   const isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
-      //   if (isMerge) {
-      //     console.warn("VTable Warn: this is merge cell, can't be edited");
-      //     return;
-      //   }
-      // }
+      if (!this.table.isHeader(col, row)) {
+        const range = this.table.getCellRange(col, row);
+        const isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+        if (isMerge) {
+          console.warn("VTable Warn: this is merge cell, can't be edited");
+          return;
+        }
+      }
       if ((this.table.internalProps.layoutMap as SimpleHeaderLayoutMap)?.isAggregation?.(col, row)) {
         console.warn("VTable Warn: this is aggregation value, can't be edited");
         return;
@@ -108,10 +108,10 @@ export class EditManeger {
     }
   }
 
-  /** 如果是事件触发调用该接口 请传入原始事件对象 将判断事件对象是否在编辑器本身上面  来处理是否结束编辑  返回值如果为false说明没有退出编辑状态*/
-  completeEdit(e?: Event): boolean {
+  /** 如果是事件触发调用该接口 请传入原始事件对象 将判断事件对象是否在编辑器本身上面  来处理是否结束编辑 */
+  completeEdit(e?: Event) {
     if (!this.editingEditor) {
-      return true;
+      return;
     }
 
     const target = e?.target as HTMLElement | undefined;
@@ -122,10 +122,10 @@ export class EditManeger {
         console.warn('VTable Warn: `targetIsOnEditor` is deprecated, please use `isEditorElement` instead.');
 
         if (editor.targetIsOnEditor(target)) {
-          return false;
+          return;
         }
       } else if (!editor.isEditorElement || editor.isEditorElement(target)) {
-        return false;
+        return;
       }
     }
 
@@ -134,23 +134,13 @@ export class EditManeger {
     }
     if (!this.editingEditor.validateValue || this.editingEditor.validateValue?.()) {
       const changedValue = this.editingEditor.getValue?.();
-      const range = this.table.getCellRange(this.editCell.col, this.editCell.row);
-      const changedValues: any[] = [];
-      for (let row = range.start.row; row <= range.end.row; row++) {
-        const rowChangedValues = [];
-        for (let col = range.start.col; col <= range.end.col; col++) {
-          rowChangedValues.push(changedValue);
-        }
-        changedValues.push(rowChangedValues);
-      }
-      (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
+      (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
+
       this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
       this.editingEditor.exit?.();
       this.editingEditor.onEnd?.();
       this.editingEditor = null;
-      return true;
     }
-    return false;
   }
 
   cancelEdit() {

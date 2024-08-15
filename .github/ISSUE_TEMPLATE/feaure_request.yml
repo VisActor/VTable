@@ -1,7 +1,7 @@
 name: Feature Request
 description: Request a new feature from @VisActor/vtable
 title: '[Feature] '
-labels: [feature]
+labels: [new-feature]
 body:
   - type: markdown
     attributes:

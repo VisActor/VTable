@@ -99,7 +99,6 @@ export function createComplexColumn(
             // table.heightMode === 'autoHeight',
             table.isAutoRowHeight(row),
             [0, 0, 0, 0],
-            range,
             table
           );
         }
@@ -234,10 +233,8 @@ export function createComplexColumn(
         columnGroup.updateColumnHeight(rangeHeight);
         y += rangeHeight;
       } else {
-        // columnGroup.updateColumnHeight(cellGroup.attribute.height);
-        // y += cellGroup.attribute.height;
-        columnGroup.updateColumnHeight(cellHeight);
-        y += cellHeight;
+        columnGroup.updateColumnHeight(cellGroup.attribute.height);
+        y += cellGroup.attribute.height;
       }
     }
     if (rowLimit && row > rowLimit) {

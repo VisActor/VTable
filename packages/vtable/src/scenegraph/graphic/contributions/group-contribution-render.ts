@@ -13,10 +13,10 @@ import { BaseRenderContributionTime, createRectPath, injectable } from '@src/vre
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
+import { getQuadProps } from '../../utils/padding';
 import { getCellMergeInfo } from '../../utils/get-cell-merge';
 import { InteractionState } from '../../../ts-types';
 import { isArray } from '@visactor/vutils';
-import { getCellSelectColor } from '../../../state/select/is-cell-select-highlight';
 
 // const highlightDash: number[] = [];
 
@@ -122,8 +122,8 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
     ) => boolean
   ) {
     const {
-      // width = groupAttribute.width,
-      // height = groupAttribute.height,
+      width = groupAttribute.width,
+      height = groupAttribute.height,
       // 基础border
       stroke = groupAttribute.stroke,
       strokeArrayColor = (groupAttribute as any).strokeArrayColor,
@@ -137,7 +137,6 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
       // highlightStrokeArrayWidth = (groupAttribute as any).highlightStrokeArrayWidth,
       // highlightStrokeArrayPart = (groupAttribute as any).highlightStrokeArrayPart,
     } = group.attribute as any;
-    let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
 
     // lineWidth === 0 不绘制
     if (!stroke || (!Array.isArray(strokeArrayWidth) && lineWidth === 0)) {
@@ -156,35 +155,30 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
           return;
         }
         const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
-        // let deltaWidth = 0;
-        // let deltaHeight = 0;
+        let deltaWidth = 0;
+        let deltaHeight = 0;
         if (bottomRight) {
           x = Math.floor(x) - 0.5;
           y = Math.floor(y) - 0.5;
-          // if (group.role === 'cell') {
-          //   const col = (group as any).col as number;
-          //   const row = (group as any).row as number;
-          //   if (table && col === table.colCount - 1) {
-          //     deltaWidth = 1;
-          //   }
-          //   if (table && row === table.rowCount - 1) {
-          //     deltaHeight = 1;
-          //   }
-          // }
+          if (group.role === 'cell') {
+            const col = (group as any).col as number;
+            const row = (group as any).row as number;
+            if (table && col === table.colCount - 1) {
+              deltaWidth = 1;
+            }
+            if (table && row === table.rowCount - 1) {
+              deltaHeight = 1;
+            }
+          }
         } else {
           x = Math.floor(x) + 0.5;
           y = Math.floor(y) + 0.5;
         }
 
-        if (table.options.customConfig?._disableColumnAndRowSizeRound) {
-          width = Math.round(width);
-          height = Math.round(height);
-        }
         const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
           group,
-          Math.ceil(width),
-          Math.ceil(height),
-          bottomRight
+          Math.ceil(width + deltaWidth),
+          Math.ceil(height + deltaHeight)
         );
         widthForStroke = widthFroDraw;
         heightForStroke = heightFroDraw;
@@ -268,9 +262,8 @@ export function renderStroke(
   context.setStrokeStyle(group, group.attribute, x, y, groupAttribute);
   // if (isHighlight) {
   //   context.setLineDash(highlightDash);
+  //   context.lineCap = 'butt';
   // }
-  // const oldLineCap = context.lineCap;
-  // context.lineCap = 'square';
 
   const { lineDash = groupAttribute.lineDash } = group.attribute as any;
   // const lineDash = context.getLineDash();
@@ -282,23 +275,16 @@ export function renderStroke(
   context.beginPath();
   context.moveTo(x, y);
 
-  const strokeTop = (isStrokeTrue || stroke[0]) && (isWidthNumber || strokeArrayWidth[0]);
-  const strokeRight = (isStrokeTrue || stroke[1]) && (isWidthNumber || strokeArrayWidth[1]);
-  const strokeBottom = (isStrokeTrue || stroke[2]) && (isWidthNumber || strokeArrayWidth[2]);
-  const strokeLeft = (isStrokeTrue || stroke[3]) && (isWidthNumber || strokeArrayWidth[3]);
-
   // top
-  if (strokeTop) {
+  if ((isStrokeTrue || stroke[0]) && (isWidthNumber || strokeArrayWidth[0])) {
     // context.lineTo(x + width, y);
-    const deltaLeft = (isWidthNumber ? widthInfo.width : strokeArrayWidth[0]) / 2;
-    const deltaRight = (isWidthNumber ? widthInfo.width : strokeArrayWidth[0]) / 2;
     if (isPart && Array.isArray(part[0])) {
-      context.moveTo(x - deltaLeft + (width + deltaLeft + deltaRight) * part[0][0], y);
-      context.lineTo(x - deltaLeft + (width + deltaLeft + deltaRight) * (part[0][1] - part[0][0]), y);
-      context.moveTo(x + width + deltaRight, y);
+      context.moveTo(x + width * part[0][0], y);
+      context.lineTo(x + width * (part[0][1] - part[0][0]), y);
+      context.moveTo(x + width, y);
     } else {
-      context.moveTo(x - deltaLeft, y);
-      context.lineTo(x + width + deltaRight, y);
+      context.moveTo(x, y);
+      context.lineTo(x + width, y);
     }
     if (isSplitDraw || isDash) {
       if (strokeArrayColor && strokeArrayColor[0]) {
@@ -321,17 +307,15 @@ export function renderStroke(
     context.moveTo(x + width, y);
   }
   // right
-  if (strokeRight) {
+  if ((isStrokeTrue || stroke[1]) && (isWidthNumber || strokeArrayWidth[1])) {
     // context.lineTo(x + width, y + height);
-    const deltaTop = (isWidthNumber ? widthInfo.width : strokeArrayWidth[1]) / 2;
-    const deltaBottom = (isWidthNumber ? widthInfo.width : strokeArrayWidth[1]) / 2;
     if (isPart && Array.isArray(part[1])) {
-      context.moveTo(x + width, y - deltaTop + height * part[1][0]);
-      context.lineTo(x + width, y - deltaTop + (height + deltaTop + deltaBottom) * (part[1][1] - part[1][0]));
-      context.moveTo(x + width, y + height + deltaBottom);
+      context.moveTo(x + width, y + height * part[1][0]);
+      context.lineTo(x + width, y + height * (part[1][1] - part[1][0]));
+      context.moveTo(x + width, y + height);
     } else {
-      context.moveTo(x + width, y - deltaTop);
-      context.lineTo(x + width, y + height + deltaBottom);
+      context.moveTo(x + width, y);
+      context.lineTo(x + width, y + height);
     }
     if (isSplitDraw || isDash) {
       if (strokeArrayColor && strokeArrayColor[1]) {
@@ -354,17 +338,15 @@ export function renderStroke(
     context.moveTo(x + width, y + height);
   }
   // bottom
-  if (strokeBottom) {
+  if ((isStrokeTrue || stroke[2]) && (isWidthNumber || strokeArrayWidth[2])) {
     // context.lineTo(x, y + height);
-    const deltaLeft = (isWidthNumber ? widthInfo.width : strokeArrayWidth[2]) / 2;
-    const deltaRight = (isWidthNumber ? widthInfo.width : strokeArrayWidth[2]) / 2;
     if (isPart && Array.isArray(part[2])) {
-      context.moveTo(x - deltaLeft + (width + deltaLeft + deltaRight) * part[2][0], y + height);
-      context.lineTo(x - deltaLeft + (width + deltaLeft + deltaRight) * (part[2][1] - part[2][0]), y + height);
-      context.moveTo(x - deltaLeft, y + height);
+      context.moveTo(x + width * part[2][0], y + height);
+      context.lineTo(x + width * (part[2][1] - part[2][0]), y + height);
+      context.moveTo(x, y + height);
     } else {
-      context.moveTo(x - deltaLeft, y + height);
-      context.lineTo(x + width + deltaRight, y + height);
+      context.moveTo(x, y + height);
+      context.lineTo(x + width, y + height);
     }
     if (isSplitDraw || isDash) {
       if (strokeArrayColor && strokeArrayColor[2]) {
@@ -387,17 +369,15 @@ export function renderStroke(
     context.moveTo(x, y + height);
   }
   // left
-  if (strokeLeft) {
+  if ((isStrokeTrue || stroke[3]) && (isWidthNumber || strokeArrayWidth[3])) {
     // context.lineTo(x, y);
-    const deltaTop = (isWidthNumber ? widthInfo.width : strokeArrayWidth[3]) / 2;
-    const deltaBottom = (isWidthNumber ? widthInfo.width : strokeArrayWidth[3]) / 2;
     if (isPart && Array.isArray(part[3])) {
-      context.moveTo(x, y - deltaTop + (height + deltaTop + deltaBottom) * part[3][0]);
-      context.lineTo(x, y - deltaTop + (height + deltaTop + deltaBottom) * (part[3][1] - part[3][0]));
-      context.moveTo(x, y - deltaTop);
+      context.moveTo(x, y + height * part[3][0]);
+      context.lineTo(x, y + height * (part[3][1] - part[3][0]));
+      context.moveTo(x, y);
     } else {
-      context.moveTo(x, y - deltaTop);
-      context.lineTo(x, y + height + deltaBottom);
+      context.moveTo(x, y);
+      context.lineTo(x, y + height);
     }
     if (isSplitDraw || isDash) {
       if (strokeArrayColor && strokeArrayColor[3]) {
@@ -428,7 +408,6 @@ export function renderStroke(
     context.stroke();
   }
   context.lineDashOffset = 0;
-  // context.lineCap = oldLineCap;
   context.setLineDash([]);
 }
 
@@ -473,7 +452,6 @@ export class DashGroupBeforeRenderContribution implements IGroupRenderContributi
       stroke &&
       Array.isArray(lineDash) &&
       lineDash.length &&
-      lineDash[0]?.length &&
       !Array.isArray(strokeArrayColor) &&
       !Array.isArray(strokeArrayWidth)
     ) {
@@ -518,15 +496,10 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
 
     if (
       !stroke ||
-      !(Array.isArray(lineDash) && lineDash.length && lineDash[0]?.length) ||
+      !(Array.isArray(lineDash) && lineDash.length) ||
       Array.isArray(strokeArrayColor) ||
       Array.isArray(strokeArrayWidth)
     ) {
-      return;
-    }
-
-    const table = (group.stage as any).table as BaseTableAPI;
-    if (!table) {
       return;
     }
 
@@ -535,33 +508,32 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
 
     // const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
     let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
-    if (table.options.customConfig?._disableColumnAndRowSizeRound) {
-      width = Math.round(width);
-      height = Math.round(height);
-    } else {
-      width = Math.ceil(width);
-      height = Math.ceil(height);
-    }
+    width = Math.ceil(width);
+    height = Math.ceil(height);
 
     let widthForStroke;
     let heightForStroke;
     if (lineWidth & 1) {
-      const bottomRight = table.theme.cellBorderClipDirection === 'bottom-right';
-      const deltaWidth = 0;
-      const deltaHeight = 0;
+      const table = (group.stage as any).table as BaseTableAPI;
+      if (!table) {
+        return;
+      }
+      const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
+      let deltaWidth = 0;
+      let deltaHeight = 0;
       if (bottomRight) {
         x = Math.floor(x) - 0.5;
         y = Math.floor(y) - 0.5;
-        // if (group.role === 'cell') {
-        //   const col = (group as any).col as number;
-        //   const row = (group as any).row as number;
-        //   if (table && col === table.colCount - 1) {
-        //     deltaWidth = 1;
-        //   }
-        //   if (table && row === table.rowCount - 1) {
-        //     deltaHeight = 1;
-        //   }
-        // }
+        if (group.role === 'cell') {
+          const col = (group as any).col as number;
+          const row = (group as any).row as number;
+          if (table && col === table.colCount - 1) {
+            deltaWidth = 1;
+          }
+          if (table && row === table.rowCount - 1) {
+            deltaHeight = 1;
+          }
+        }
       } else {
         x = Math.floor(x) + 0.5;
         y = Math.floor(y) + 0.5;
@@ -570,8 +542,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
       const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
         group,
         Math.ceil(width + deltaWidth),
-        Math.ceil(height + deltaHeight),
-        bottomRight
+        Math.ceil(height + deltaHeight)
       );
       widthForStroke = widthFroDraw;
       heightForStroke = heightFroDraw;
@@ -710,7 +681,7 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       cornerRadius = groupAttribute.cornerRadius
     } = group.attribute as any;
 
-    let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
+    const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
     // width = Math.ceil(width);
     // height = Math.ceil(height);
 
@@ -744,45 +715,36 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       //     height -= 1;
       //   }
       // }
-
+      const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
+        group,
+        Math.ceil(width),
+        Math.ceil(height)
+      );
+      context.beginPath();
       const table = (group.stage as any).table as BaseTableAPI;
       if (!table) {
         return;
       }
-      if (table.options.customConfig?._disableColumnAndRowSizeRound) {
-        width = Math.round(width);
-        height = Math.round(height);
-      }
-
-      context.beginPath();
-
       const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
-      const deltaWidth = 0;
-      const deltaHeight = 0;
+      let deltaWidth = 0;
+      let deltaHeight = 0;
       if (bottomRight) {
         x = Math.floor(x) - 0.5;
         y = Math.floor(y) - 0.5;
-        // if (group.role === 'cell') {
-        //   const col = (group as any).col as number;
-        //   const row = (group as any).row as number;
-        //   if (table && col === table.colCount - 1) {
-        //     deltaWidth = 1;
-        //   }
-        //   if (table && row === table.rowCount - 1) {
-        //     deltaHeight = 1;
-        //   }
-        // }
+        if (group.role === 'cell') {
+          const col = (group as any).col as number;
+          const row = (group as any).row as number;
+          if (table && col === table.colCount - 1) {
+            deltaWidth = 1;
+          }
+          if (table && row === table.rowCount - 1) {
+            deltaHeight = 1;
+          }
+        }
       } else {
         x = Math.floor(x) + 0.5;
         y = Math.floor(y) + 0.5;
       }
-
-      const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
-        group,
-        Math.ceil(width),
-        Math.ceil(height),
-        bottomRight
-      );
 
       if (cornerRadius) {
         // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
@@ -827,16 +789,10 @@ export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderCon
     // 处理hover颜色
     if ((group as Group).role === 'cell') {
       const table = (group.stage as any).table as BaseTableAPI;
-      if (table) {
-        const selectColor = getCellSelectColor(group as Group, table);
-        if (selectColor) {
-          // show select highlight when scrolling
-          (group.attribute as any)._vtableHightLightFill = selectColor;
-        } else if (table.stateManager.interactionState !== InteractionState.scrolling) {
-          const hoverColor = getCellHoverColor(group as Group, table);
-          if (hoverColor) {
-            (group.attribute as any)._vtableHightLightFill = hoverColor;
-          }
+      if (table && table.stateManager.interactionState !== InteractionState.scrolling) {
+        const hoverColor = getCellHoverColor(group as Group, table);
+        if (hoverColor) {
+          (group.attribute as any)._vtableHoverFill = hoverColor;
         }
       }
     }
@@ -871,18 +827,18 @@ export class AdjustColorGroupAfterRenderContribution implements IGroupRenderCont
     ) => boolean
   ) {
     // 处理hover颜色
-    if ((group.attribute as any)._vtableHightLightFill) {
+    if ((group.attribute as any)._vtableHoverFill) {
       if (fillCb) {
         // do nothing
         // fillCb(context, group.attribute, groupAttribute);
       } else if (fVisible) {
         const oldColor = group.attribute.fill;
         // draw hover fill
-        group.attribute.fill = (group.attribute as any)._vtableHightLightFill as any;
+        group.attribute.fill = (group.attribute as any)._vtableHoverFill as any;
         context.setCommonStyle(group, group.attribute, x, y, groupAttribute);
         context.fill();
         group.attribute.fill = oldColor;
-        (group.attribute as any)._vtableHightLightFill = undefined;
+        (group.attribute as any)._vtableHoverFill = undefined;
       }
     }
   }
@@ -1019,7 +975,7 @@ export class ClipBodyGroupAfterRenderContribution implements IGroupRenderContrib
   }
 }
 
-function getCellSizeForDraw(group: any, width: number, height: number, bottomRight: boolean) {
+function getCellSizeForDraw(group: any, width: number, height: number) {
   const table = group.stage.table as BaseTableAPI;
   if (group.role === 'cell') {
     let col = group.col as number;
@@ -1030,25 +986,24 @@ function getCellSizeForDraw(group: any, width: number, height: number, bottomRig
       row = mergeInfo.end.row;
     }
 
-    if (table && col === table.colCount - 1 && !bottomRight) {
+    if (table && col === table.colCount - 1) {
       width -= 1;
-    } else if (table && col === table.frozenColCount - 1 && table.scrollLeft && !bottomRight) {
+    } else if (table && col === table.frozenColCount - 1 && table.scrollLeft) {
       width -= 1;
     }
-    if (table && row === table.rowCount - 1 && !bottomRight) {
+    if (table && row === table.rowCount - 1) {
       height -= 1;
-    } else if (table && row === table.frozenRowCount - 1 && table.scrollTop && !bottomRight) {
+    } else if (table && row === table.frozenRowCount - 1 && table.scrollTop) {
       height -= 1;
     }
   } else if (group.role === 'corner-frozen') {
-    if (table && table.scrollLeft && !bottomRight) {
+    if (table && table.scrollLeft) {
       width -= 1;
     }
-    if (table && table.scrollTop && !bottomRight) {
+    if (table && table.scrollTop) {
       height -= 1;
     }
   }
-
   return { width, height };
 }
 

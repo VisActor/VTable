@@ -43,15 +43,15 @@ const records = [
 const columns = [
   {
     field: "230517143221027",
-    title: "Order ID"
+    caption: "Order ID"
   },
   {
     field: "230517143221030",
-    title: "Customer ID"
+    caption: "Customer ID"
   },
   {
     field: "230517143221032",
-    title: "Product Name",
+    caption: "Product Name",
     style: {
       fontSize(args: any) {
         if (args.row % 2 === 1) return 20;

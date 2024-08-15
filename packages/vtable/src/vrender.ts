@@ -1,9 +1,7 @@
-import { loadPoptip } from '@visactor/vrender-components';
 import '@visactor/vrender-core';
 import { container, isBrowserEnv, isNodeEnv, preLoadAllModule } from '@visactor/vrender-core';
+import { loadBrowserEnv, loadNodeEnv } from '@visactor/vrender-kits';
 import {
-  loadBrowserEnv,
-  loadNodeEnv,
   registerArc,
   registerArc3d,
   registerArea,
@@ -41,31 +39,24 @@ export function registerForVrender() {
     loadNodeEnv(container);
   }
   registerArc();
-  // registerArc3d();
-  // registerArea();
+  registerArc3d();
+  registerArea();
   registerCircle();
-  // registerGlyph();
+  registerGlyph();
   registerGroup();
   registerImage();
   registerLine();
-  // registerPath();
-  // registerPolygon();
-  // registerPyramid3d();
+  registerPath();
+  registerPolygon();
+  registerPyramid3d();
   registerRect();
-  // registerRect3d();
+  registerRect3d();
   registerRichtext();
-  // registerShadowRoot();
+  registerShadowRoot();
   registerSymbol();
   registerText();
-  // registerWrapText();
-
-  loadPoptip();
+  registerWrapText();
 }
-
-export { Direction } from '@visactor/vrender-core';
-export { GroupFadeIn } from '@visactor/vrender-core';
-export { GroupFadeOut } from '@visactor/vrender-core';
 
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';
-export * from '@visactor/vrender-components';

@@ -98,8 +98,6 @@ export function createRadioCellGroup(
   return cellGroup;
 }
 
-export type CreateRadioCellGroup = typeof createRadioCellGroup;
-
 function createRadio(
   col: number,
   row: number,
@@ -162,7 +160,7 @@ function createRadio(
     lineClamp,
     wordBreak: 'break-word',
     // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-    heightLimit: autoRowHeight ? -1 : cellHeight - Math.floor(padding[0] + padding[2]),
+    heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
     pickable: false,
     dx: hierarchyOffset
     // whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'

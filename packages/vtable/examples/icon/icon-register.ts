@@ -88,10 +88,8 @@ export function createTable() {
       </svg>`,
     tooltip: {
       // 气泡框，按钮的的解释信息
-      title:
-        '更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作更多操作操作 更多操作更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作更多操作',
-      style: { bgColor: 'black', arrowMark: true, color: 'white', maxHeight: 100, maxWidth: 100 },
-      disappearDelay: 100
+      title: '更多操作',
+      style: { bgColor: 'black', arrowMark: true, color: 'white' }
     }
   });
   VTable.register.icon('phone', {
@@ -320,8 +318,7 @@ export function createTable() {
               style: { arrowMark: true },
               placement: VTable.TYPES.Placement.top,
               // 气泡框，按钮的的解释信息
-              title: '对象定义形式 非注册',
-              disappearDelay: 100
+              title: '对象定义形式 非注册'
             }
           }
         ],
@@ -397,8 +394,7 @@ export function createTable() {
           return `这是第${rec.id}号`;
         },
         title: 'ID说明',
-        description: `这是一个ID详细描述\n这是一个ID详细描述
-这是一个ID详细描述`,
+        description: '这是一个ID详细描述',
         sort: (v1, v2, order) => {
           if (order === 'desc') {
             return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
@@ -425,18 +421,12 @@ export function createTable() {
     allowFrozenColCount: 8,
     tooltip: {
       renderMode: 'html',
-      isShowOverflowTextTooltip: true,
-      overflowTextTooltipDisappearDelay: 100
+      isShowOverflowTextTooltip: false
     },
     heightMode: 'autoHeight',
     title: {
       text: 'title',
       orient: 'top'
-    },
-    theme: {
-      tooltipStyle: {
-        maxWidth: 200
-      }
     }
   };
 

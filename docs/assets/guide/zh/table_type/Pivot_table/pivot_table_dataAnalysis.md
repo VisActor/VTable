@@ -224,6 +224,8 @@ filterRules: [
 
 虽然具有分析能力的多维表格可以自动分析各个维度的维度值组成行列表头的树形结构，并且可以根据`dataConfig.sortRules`进行排序，但具有复杂业务逻辑的场景还是期望可以能够**自定义行列表头维度值**及顺序。那么可以通过 rowTree 和 columnTree 来实现这些业务需求场景。
 
+- enableDataAnalysis 需设置为 false 来关闭 VTable 内部聚合数据的分析，提升一定的性能。
+
    <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-tree.png" />
     <p>custom rowTree columnTree</p>
@@ -369,3 +371,5 @@ const option = {
 VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
 
 自定义树的复杂在于组建行列维度树，可酌情根据业务场景来选择使用，如果具有复杂的排序、汇总或分页规则可选择使用自定义方式。
+
+**注意：如果选择自定义树的配置方式将不开启 VTable 内部的数据聚合能力，即匹配到的数据条目中的某一条作为单元格指标值。**

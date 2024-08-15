@@ -138,19 +138,3 @@ export function setCellRadioState(col: number, row: number, index: number | unde
     radio?._handlePointerUp();
   }
 }
-
-export function changeRadioOrder(sourceIndex: number, targetIndex: number, state: StateManager) {
-  const { radioState, table } = state;
-  if (table.internalProps.transpose) {
-    sourceIndex = table.getRecordShowIndexByCell(sourceIndex, 0);
-    targetIndex = table.getRecordShowIndexByCell(targetIndex, 0);
-  } else {
-    sourceIndex = table.getRecordShowIndexByCell(0, sourceIndex);
-    targetIndex = table.getRecordShowIndexByCell(0, targetIndex);
-  }
-  if (sourceIndex !== targetIndex) {
-    const sourceRecord = radioState[sourceIndex];
-    radioState[sourceIndex] = radioState[targetIndex];
-    radioState[targetIndex] = sourceRecord;
-  }
-}

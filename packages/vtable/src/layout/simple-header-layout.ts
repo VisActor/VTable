@@ -37,12 +37,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   private seqId: number = 0;
   private _headerObjects: HeaderData[];
   private _headerObjectMap: { [key in LayoutObjectId]: HeaderData };
-  private _headerObjectsIncludeHided: HeaderData[];
-  // private _headerObjectMapIncludeHided: { [key in LayoutObjectId]: HeaderData };
   // private _headerObjectFieldKey: { [key in string]: HeaderData };
   private _headerCellIds: number[][];
   private _columns: ColumnData[];
-  private _columnsIncludeHided: ColumnData[];
   rowSeriesNumberColumn: SeriesNumberColumnData[];
   leftRowSeriesNumberColumn: SeriesNumberColumnData[];
   rightRowSeriesNumberColumn: SeriesNumberColumnData[];
@@ -72,20 +69,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._showHeader = showHeader;
     this._table = table;
     this._columns = [];
-    this._columnsIncludeHided = [];
     this._headerCellIds = [];
     this.hierarchyIndent = hierarchyIndent ?? 20;
     this.hierarchyTextStartAlignment = table.options.hierarchyTextStartAlignment;
     this.columnTree = new DimensionTree(columns as any, { seqId: 0 }); //seqId这里没有利用上 所有顺便传了0
-    this._headerObjectsIncludeHided = this._addHeaders(0, columns, []);
-    // this._headerObjectMapIncludeHided = this._headerObjectsIncludeHided.reduce((o, e) => {
-    //   o[e.id as number] = e;
-    //   return o;
-    // }, {} as { [key in LayoutObjectId]: HeaderData });
-
-    this._headerObjects = this._headerObjectsIncludeHided.filter(col => {
-      return col.define.hide !== true;
-    });
+    this._headerObjects = this._addHeaders(0, columns, []);
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
       o[e.id as number] = e;
       return o;
@@ -741,9 +729,6 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   get columnObjects(): ColumnData[] {
     return this._columns;
   }
-  get headerObjectsIncludeHided(): HeaderData[] {
-    return this._headerObjectsIncludeHided;
-  }
   //对比multi-layout 那个里面有columWidths对象，保持结构一致
   get columnWidths(): WidthData[] {
     if (this.leftRowSeriesNumberColumnCount) {
@@ -1129,33 +1114,29 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           c => results.push(c)
         );
       } else {
-        const colDef = {
+        const colDef = hd;
+        this._columns.push({
           id: this.seqId++,
-          field: hd.field,
+          field: colDef.field,
           // fieldKey: colDef.fieldKey,
-          fieldFormat: hd.fieldFormat,
-          width: hd.width,
-          minWidth: hd.minWidth,
-          maxWidth: hd.maxWidth,
-          icon: hd.icon,
-          cellType: hd.cellType ?? (hd as any).columnType ?? 'text',
-          chartModule: 'chartModule' in hd ? hd.chartModule : null, // todo: 放到对应的column对象中
-          chartSpec: 'chartSpec' in hd ? hd.chartSpec : null, // todo: 放到对应的column对象中
-          sparklineSpec: 'sparklineSpec' in hd ? hd.sparklineSpec : DefaultSparklineSpec, // todo: 放到对应的column对象中
-          style: hd.style,
-          define: hd,
-          columnWidthComputeMode: hd.columnWidthComputeMode,
-          disableColumnResize: hd?.disableColumnResize,
-          aggregation: this._getAggregationForColumn(hd, col),
+          fieldFormat: colDef.fieldFormat,
+          width: colDef.width,
+          minWidth: colDef.minWidth,
+          maxWidth: colDef.maxWidth,
+          icon: colDef.icon,
+          cellType: colDef.cellType ?? (colDef as any).columnType ?? 'text',
+          chartModule: 'chartModule' in colDef ? colDef.chartModule : null, // todo: 放到对应的column对象中
+          chartSpec: 'chartSpec' in colDef ? colDef.chartSpec : null, // todo: 放到对应的column对象中
+          sparklineSpec: 'sparklineSpec' in colDef ? colDef.sparklineSpec : DefaultSparklineSpec, // todo: 放到对应的column对象中
+          style: colDef.style,
+          define: colDef,
+          columnWidthComputeMode: colDef.columnWidthComputeMode,
+          disableColumnResize: colDef?.disableColumnResize,
+          aggregation: this._getAggregationForColumn(colDef, col),
           isChildNode: row >= 1
-        };
-        this._columnsIncludeHided.push(colDef);
-        if (hd.hide !== true) {
-          this._columns.push(colDef);
-
-          for (let r = row + 1; r < this._headerCellIds.length; r++) {
-            this._headerCellIds[r][col] = id;
-          }
+        });
+        for (let r = row + 1; r < this._headerCellIds.length; r++) {
+          this._headerCellIds[r][col] = id;
         }
       }
     });

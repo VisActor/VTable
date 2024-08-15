@@ -96,18 +96,16 @@ icon?:
     | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
 ```
 
-#${prefix}ColumnIconOption
+#${prefix}ColumnIconOption 定义：
 
 ```
 type ColumnIconOption = ImageIcon | SvgIcon;
 ```
 
 #${prefix}ImageIcon(Object)
-type 配置成 'image'。需要配置图片地址在 src 中
 {{ use: image-icon(  prefix = '##' + ${prefix}) }}
 
 #${prefix}SvgIcon(Object)
-type 配置成 'svg'。需要配置 svg 地址或者 svg 完整文件字符串在 svg 中
 {{ use: svg-icon(  prefix = '##' + ${prefix}) }}
 
 ${prefix} headerCustomRender(Function|Object)
