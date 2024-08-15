@@ -5,7 +5,7 @@ import { Env } from './env';
 import type {
   ITaskBarStyle,
   GanttConstructorOptions,
-  IGridStyle,
+  IGrid,
   ITimelineHeaderStyle,
   IMarkLine,
   ITaskBarLabelText,
@@ -105,7 +105,7 @@ export class Gantt extends EventTarget {
     timelineHeaderStyles: ITimelineHeaderStyle[];
     sortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
     reverseSortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
-    gridStyle: IGridStyle;
+    grid: IGrid;
     taskBarStyle: ITaskBarStyle;
     taskBarHoverStyle: ITaskBarStyle & { barOverLayColor?: string };
     taskBarSelectionStyle: ITaskBarStyle & { barOverLayColor?: string };
@@ -137,7 +137,7 @@ export class Gantt extends EventTarget {
 
   records: any[];
   data: DataSource;
-  constructor(container: HTMLElement, options?: GanttConstructorOptions) {
+  constructor(container: HTMLElement, options: GanttConstructorOptions) {
     super();
     this.container = container;
     this.options = options;

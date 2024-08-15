@@ -1,6 +1,6 @@
 import { VRender } from '@visactor/vtable';
 import { TYPES } from '@visactor/vtable';
-import type { IGridStyle } from '../ts-types';
+import type { IGrid } from '../ts-types';
 import { str } from '@visactor/vtable/es/tools/helper';
 import type { Scenegraph } from './scenegraph';
 export class Grid {
@@ -27,9 +27,9 @@ export class Grid {
   _scene: Scenegraph;
   constructor(scene: Scenegraph) {
     this._scene = scene;
-    this.vertical = !!scene._gantt.parsedOptions.gridStyle.verticalLine;
-    this.horizontal = !!scene._gantt.parsedOptions.gridStyle.horizontalLine;
-    this.gridStyle = scene._gantt.parsedOptions.gridStyle;
+    this.vertical = !!scene._gantt.parsedOptions.grid.verticalLine;
+    this.horizontal = !!scene._gantt.parsedOptions.grid.horizontalLine;
+    this.gridStyle = scene._gantt.parsedOptions.grid;
     this.scrollLeft = 0;
     this.scrollTop = 0;
     this.x = 0;

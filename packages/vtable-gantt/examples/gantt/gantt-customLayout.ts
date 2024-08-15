@@ -610,9 +610,7 @@ export function createTable() {
         bgColor: '#FFF'
       }
     },
-    startDateField: 'start',
-    endDateField: 'end',
-    progressField: 'progress',
+
     frame: {
       outerFrameStyle: {
         borderLineWidth: 2,
@@ -624,7 +622,7 @@ export function createTable() {
         lineWidth: 3
       }
     },
-    gridStyle: {
+    grid: {
       // backgroundColor: 'gray',
       // vertical: {
       //   lineWidth: 1,
@@ -638,6 +636,9 @@ export function createTable() {
     headerRowHeight: 60,
     rowHeight: 80,
     taskBar: {
+      startDateField: 'start',
+      endDateField: 'end',
+      progressField: 'progress',
       customLayout: (args: any) => {
         const colorLength = barColors.length;
         const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
@@ -826,21 +827,6 @@ export function createTable() {
       scrollSliderColor: '#5cb85c'
     }
   };
-  // columns:[
-  //   {
-  //     title:'2024-07',
-  //     columns:[
-  //       {
-  //         title:'01'
-  //       },
-  //       {
-  //         title:'02'
-  //       },
-  //       ...
-  //     ]
-  //   },
-  //   ...
-  // ]
   const tableInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
   window.tableInstance = tableInstance;
   tableInstance.on('scroll', e => {

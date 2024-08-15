@@ -12,8 +12,6 @@ export interface ITimelineDateInfo {
 
 export interface ITimelineHeaderStyle {
   padding?: number | number[];
-  // borderColor?: string;
-  // borderWidth?: number;
   fontSize?: number;
   fontWeight?: string;
   color?: string;
@@ -24,14 +22,13 @@ export interface ITimelineHeaderStyle {
   textBaseline?: 'alphabetic' | 'bottom' | 'middle' | 'top'; // 设置单元格内文字的垂直对齐方式
   textStick?: boolean;
 }
-export interface IGridStyle {
+export interface IGrid {
   backgroundColor?: string;
   verticalLine?: ILineStyle;
   horizontalLine?: ILineStyle;
 }
 //#region gantt
 export interface GanttConstructorOptions {
-  container?: HTMLElement;
   /**
    * 数据集合
    */
@@ -47,12 +44,6 @@ export interface GanttConstructorOptions {
     scales: ITimelineScale[];
   };
 
-  /** 时间刻度对应的字段名 */
-  startDateField: string;
-  /** 时间刻度对应的字段名 */
-  endDateField: string;
-  /** 进度对应的字段名 */
-  progressField: string;
   /** 指定整个甘特图的最小日期 */
   minDate?: string;
   /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
@@ -76,15 +67,29 @@ export interface GanttConstructorOptions {
   /** 标记线配置 如果配置为true 会自动给今天做标记 */
   markLine?: boolean | IMarkLine | IMarkLine[];
 
-  /** 设置任务条样式 可以设置多组 依次循环使用 */
+  /** 设置任务条配置及样式 */
   taskBar?: {
+    /** 任务开始日期对应的数据字段名 默认按'startDate' */
+    startDateField?: string;
+    /** 任务结束日期对应的数据字段名 默认按'endDate'  */
+    endDateField?: string;
+    /** 任务进度对应的数据字段名 */
+    progressField?: string;
+    /** 任务条展示文字。可以配置固定文本 或者 字符串模版`${fieldName}` */
     labelText?: ITaskBarLabelText;
+    /** 任务条文字样式 */
     labelTextStyle?: ITaskBarLabelTextStyle;
+    /** 任务条样式 */
     barStyle?: ITaskBarStyle;
+    /** 自定义布局渲染 */
     customLayout?: ITaskBarCustomLayout;
+    /** 任务条是否可调整大小 */
     resizable?: boolean;
+    /** 任务条是否可移动 */
     moveable?: boolean;
+    /** 任务条hover时的样式 */
     hoverBarStyle?: ITaskBarStyle & { barOverLayColor?: string };
+    /** 任务条选择时的样式 TODO */
     selectionBarStyle?: ITaskBarStyle & { barOverLayColor?: string };
   };
 
@@ -102,11 +107,11 @@ export interface GanttConstructorOptions {
     maxWidth?: number;
     rightFrozenColCount?: number;
   };
-  gridStyle?: IGridStyle;
+  grid?: IGrid;
   // timelineHeaderStyle?: ITimelineHeaderStyle;
   scrollStyle?: IScrollStyle;
 
-  frame: {
+  frame?: {
     outerFrameStyle: IFrameStyle;
     verticalSplitLine?: ILineStyle;
     horizontalSplitLine?: ILineStyle;
@@ -185,9 +190,7 @@ export type TaskBarCustomLayoutArgumentType = {
   taskRecord: any;
   ganttInstance: Gantt;
 };
-export type ITaskBarCustomLayout =
-  | ITaskBarCustomLayoutObj
-  | ((args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj); //CustomLayout
+export type ITaskBarCustomLayout = (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj; //CustomLayout
 export type ITaskBarCustomLayoutObj = {
   rootContainer: VRender.Group;
   renderDefaultBar?: boolean; // 默认false
@@ -206,7 +209,7 @@ export type DateCustomLayoutArgumentType = {
   days: number;
   ganttInstance: Gantt;
 };
-export type IDateCustomLayout = IDateCustomLayoutObj | ((args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj); //CustomLayout
+export type IDateCustomLayout = (args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj;
 export type IDateCustomLayoutObj = {
   rootContainer: VRender.Group;
   renderDefaultText?: boolean; // 默认false

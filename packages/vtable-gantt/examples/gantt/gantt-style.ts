@@ -610,10 +610,6 @@ export function createTable() {
       }
       //rightFrozenColCount: 1
     },
-
-    startDateField: 'start',
-    endDateField: 'end',
-    progressField: 'progress',
     frame: {
       outerFrameStyle: {
         borderLineWidth: 2,
@@ -634,7 +630,7 @@ export function createTable() {
         lineWidth: 3
       }
     },
-    gridStyle: {
+    grid: {
       // backgroundColor: 'gray',
       verticalLine: {
         lineWidth: 1,
@@ -648,6 +644,9 @@ export function createTable() {
     headerRowHeight: 60,
     rowHeight: 40,
     taskBar: {
+      startDateField: 'start',
+      endDateField: 'end',
+      progressField: 'progress',
       // resizable: false,
       moveable: true,
       hoverBarStyle: {

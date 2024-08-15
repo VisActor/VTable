@@ -811,9 +811,7 @@ export function createTable() {
       minWidth: 100,
       maxWidth: 600
     },
-    startDateField: 'start',
-    endDateField: 'end',
-    progressField: 'progress',
+
     frame: {
       verticalSplitLineMoveable: true,
       outerFrameStyle: {
@@ -826,7 +824,7 @@ export function createTable() {
       //   lineWidth: 3
       // }
     },
-    gridStyle: {
+    grid: {
       // backgroundColor: 'gray',
       verticalLine: {
         lineWidth: 1,
@@ -840,6 +838,9 @@ export function createTable() {
     headerRowHeight: 60,
     rowHeight: 40,
     taskBar: {
+      startDateField: 'start',
+      endDateField: 'end',
+      progressField: 'progress',
       labelText: '{title} {progress}%',
       labelTextStyle: {
         fontFamily: 'Arial',

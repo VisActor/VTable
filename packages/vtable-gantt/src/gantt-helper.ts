@@ -80,9 +80,9 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.pixelRatio = options?.pixelRatio ?? 1;
   gantt.parsedOptions.rowHeight = options?.rowHeight ?? 40;
   gantt.parsedOptions.timelineColWidth = options?.timelineHeader?.colWidth ?? 60;
-  gantt.parsedOptions.startDateField = options?.startDateField ?? 'startDate';
-  gantt.parsedOptions.endDateField = options?.endDateField ?? 'endDate';
-  gantt.parsedOptions.progressField = options?.progressField ?? 'progress';
+  gantt.parsedOptions.startDateField = options.taskBar?.startDateField ?? 'startDate';
+  gantt.parsedOptions.endDateField = options.taskBar?.endDateField ?? 'endDate';
+  gantt.parsedOptions.progressField = options.taskBar?.progressField ?? 'progress';
   gantt.parsedOptions.minDate = options?.minDate ? new Date(options?.minDate) : undefined;
   gantt.parsedOptions.maxDate = options?.maxDate ? new Date(options?.maxDate) : undefined;
   gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
@@ -126,7 +126,7 @@ export function initOptions(gantt: Gantt) {
       gantt.parsedOptions.sortedTimelineScales[i].rowHeight ?? options?.headerRowHeight ?? 40
     );
   }
-  gantt.parsedOptions.gridStyle = Object.assign(
+  gantt.parsedOptions.grid = Object.assign(
     {},
     // {
     //   backgroundColor: '#fff',
@@ -139,7 +139,7 @@ export function initOptions(gantt: Gantt) {
     //     lineWidth: 1
     //   }
     // },
-    options?.gridStyle
+    options?.grid
   );
   gantt.parsedOptions.taskBarStyle = Object.assign(
     {},
