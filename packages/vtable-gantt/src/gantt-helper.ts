@@ -192,7 +192,7 @@ export function initOptions(gantt: Gantt) {
 
   gantt.parsedOptions.outerFrameStyle = Object.assign(
     {
-      borderColor: 'gray',
+      borderColor: '#e1e4e8',
       borderLineWidth: 1,
       cornerRadius: 4
     },
@@ -203,13 +203,13 @@ export function initOptions(gantt: Gantt) {
 
   gantt.parsedOptions.verticalSplitLine = Object.assign(
     {
-      lineColor: gantt.parsedOptions.outerFrameStyle.borderColor,
-      lineWidth: gantt.parsedOptions.outerFrameStyle.borderLineWidth
+      lineColor: gantt.parsedOptions.outerFrameStyle?.borderColor,
+      lineWidth: gantt.parsedOptions.outerFrameStyle?.borderLineWidth
     },
     options.frame?.verticalSplitLine
   );
   gantt.parsedOptions.horizontalSplitLine = options.frame?.horizontalSplitLine;
-  gantt.parsedOptions.verticalSplitLineMoveable = options.frame.verticalSplitLineMoveable;
+  gantt.parsedOptions.verticalSplitLineMoveable = options.frame?.verticalSplitLineMoveable;
 }
 
 export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: ITimelineScale) {
