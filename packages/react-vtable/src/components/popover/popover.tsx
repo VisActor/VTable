@@ -11,7 +11,7 @@ import type {
 } from '@visactor/vtable/es/vrender';
 import { Tag as VTag } from '../vrender-components/tag';
 import type { BoundsAnchorType } from '@visactor/vutils';
-import { merge } from '@visactor/vutils';
+import { isValid, merge } from '@visactor/vutils';
 import type { CSSProperties, ReactElement, ReactNode } from 'react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Group } from '../../table-components';
@@ -87,6 +87,7 @@ function PopoverComponent(baseProps: PopoverProps, ref: React.Ref<IGroup>) {
     } else {
       setPopupOpen(false);
     }
+    popoverRef.current.stage.renderNextFrame();
   }, [popupVisible]);
 
   useEffect(() => {
@@ -113,11 +114,17 @@ function PopoverComponent(baseProps: PopoverProps, ref: React.Ref<IGroup>) {
   };
 
   const groupMouseEnter = useCallback((event: any) => {
+    if (isValid(popupVisible)) {
+      return;
+    }
     setPopupOpen(true);
     event.currentTarget.stage.renderNextFrame();
   }, []);
 
   const groupMouseLeave = useCallback((event: any) => {
+    if (isValid(popupVisible)) {
+      return;
+    }
     setPopupOpen(false);
     event.currentTarget.stage.renderNextFrame();
   }, []);
