@@ -22,7 +22,7 @@ importers:
       '@visactor/vtable-editors': workspace:*
       '@visactor/vtable-export': workspace:*
       '@visactor/vtable-search': workspace:*
-      '@visactor/vutils': ~0.18.13
+      '@visactor/vutils': ~0.18.9
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       buble: ^0.20.0
@@ -95,7 +95,7 @@ importers:
       '@types/offscreencanvas': 2019.6.4
       '@visactor/vchart': 1.11.10
       '@visactor/vtable': workspace:*
-      '@visactor/vutils': ~0.18.13
+      '@visactor/vutils': ~0.18.9
       axios: ^1.4.0
       chai: 4.3.4
       eslint: ~8.18.0
@@ -185,7 +185,7 @@ importers:
       '@types/react-reconciler': 0.28.8
       '@visactor/vchart': 1.11.10
       '@visactor/vtable': workspace:*
-      '@visactor/vutils': ~0.18.13
+      '@visactor/vutils': ~0.18.9
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
@@ -291,7 +291,7 @@ importers:
       '@visactor/vrender-kits': 0.19.25-alpha.2
       '@visactor/vscale': ~0.18.1
       '@visactor/vtable-editors': workspace:*
-      '@visactor/vutils': ~0.18.13
+      '@visactor/vutils': ~0.18.9
       '@visactor/vutils-extension': ~1.11.5
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
@@ -456,7 +456,7 @@ importers:
       '@types/react-is': ^17.0.3
       '@visactor/vchart': 1.11.10
       '@visactor/vtable': workspace:*
-      '@visactor/vutils': ~0.18.13
+      '@visactor/vutils': ~0.18.9
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
@@ -558,7 +558,7 @@ importers:
       '@types/react-is': ^17.0.3
       '@visactor/vchart': 1.11.10
       '@visactor/vtable': workspace:*
-      '@visactor/vutils': ~0.18.13
+      '@visactor/vutils': ~0.18.9
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
