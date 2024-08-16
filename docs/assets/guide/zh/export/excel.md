@@ -108,3 +108,18 @@ const excelOption = {
 };
 downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
+
+### excelJSWorksheetCallback
+
+`@visactor/vtable-export`使用`exceljs`库作为导出Excel文件的工具，如果需要对ExcelJS的Worksheet对象进行进一步的定制化（例如添加页面页脚），可以设置`excelJSWorksheetCallback`为一个函数，函数的参数为ExcelJS的Worksheet对象，可以在函数中操作ExcelJS的Worksheet。`exceljs`的详细使用方法请参考 [exceljs](https://github.com/exceljs/exceljs/blob/master/README.md)
+
+```js
+const excelOption = {
+  excelJSWorksheetCallback: (worksheet) => {
+    // 添加页面与页脚
+    worksheet.headerFooter.oddHeader = 'Hello Exceljs';
+    worksheet.headerFooter.oddFooter = 'Hello World';
+  }
+};
+downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+```
