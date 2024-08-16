@@ -48,8 +48,8 @@ const defaultProps: AvatarProps = {
 function AvatarComponent(baseProps: AvatarProps, ref: React.Ref<IGroup>) {
   const props: AvatarProps = merge({}, defaultProps, baseProps);
   const { size, children, onClick } = props;
-  let buttomRef = React.useRef<IGroup>(null);
-  buttomRef = ref ? (ref as React.RefObject<IGroup>) : buttomRef;
+  let avatarRef = React.useRef<IGroup>(null);
+  avatarRef = ref ? (ref as React.RefObject<IGroup>) : avatarRef;
 
   const handleClick: React.MouseEventHandler<HTMLElement> = React.useCallback(
     (event: any): void => {
@@ -62,7 +62,7 @@ function AvatarComponent(baseProps: AvatarProps, ref: React.Ref<IGroup>) {
   if (isString(children)) {
     const textAttribute = getTextAttribute(props);
     return (
-      <Group ref={buttomRef} attribute={groupAttribute} onClick={handleClick}>
+      <Group ref={avatarRef} attribute={groupAttribute} onClick={handleClick}>
         <Text attribute={textAttribute}></Text>
       </Group>
     );
@@ -72,7 +72,7 @@ function AvatarComponent(baseProps: AvatarProps, ref: React.Ref<IGroup>) {
     (children as ReactElement).props.attribute.height = size;
   }
   return (
-    <Group ref={buttomRef} attribute={groupAttribute} onClick={handleClick}>
+    <Group ref={avatarRef} attribute={groupAttribute} onClick={handleClick}>
       {children}
     </Group>
   );

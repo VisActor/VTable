@@ -1,7 +1,10 @@
-export * from './vrender-components/tag';
-export * from './vrender-components/checkbox';
-export * from './vrender-components/radio';
+// export * from './vrender-components/tag';
+// export * from './vrender-components/checkbox';
+// export * from './vrender-components/radio';
 export * from './button/button';
 export * from './link/link';
 export * from './avatar/avatar';
 export * from './popover/popover';
+export * from './tag/tag';
+export * from './radio/radio';
+export * from './checkbox/checkbox';

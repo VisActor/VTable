@@ -65,8 +65,8 @@ const defaultProps: ButtonProps = {
 function ButtonComponent(baseProps: ButtonProps, ref: React.Ref<Tag>) {
   const props: ButtonProps = merge({}, defaultProps, baseProps);
   const { disabled, onClick } = props;
-  let buttomRef = React.useRef<Tag>(null);
-  buttomRef = ref ? (ref as React.RefObject<Tag>) : buttomRef;
+  let buttonRef = React.useRef<Tag>(null);
+  buttonRef = ref ? (ref as React.RefObject<Tag>) : buttonRef;
 
   const handleClick: React.MouseEventHandler<HTMLElement> = React.useCallback(
     (event: any): void => {
@@ -82,46 +82,46 @@ function ButtonComponent(baseProps: ButtonProps, ref: React.Ref<Tag>) {
   const attribute: TagAttributes = getTagAttribute(props);
 
   useEffect(() => {
-    buttomRef.current.addEventListener('mouseenter', () => {
-      // console.log('mouseenter', buttomRef.current, e.clone());
+    buttonRef.current.addEventListener('mouseenter', () => {
+      // console.log('mouseenter', buttonRef.current, e.clone());
       if (!disabled) {
-        buttomRef.current.addState('hover', true, false);
-        // buttomRef.current._bgRect.addState('hover', true, false);
-        // buttomRef.current._textShape.addState('hover', true, false);
-        buttomRef.current.stage.renderNextFrame();
+        buttonRef.current.addState('hover', true, false);
+        // buttonRef.current._bgRect.addState('hover', true, false);
+        // buttonRef.current._textShape.addState('hover', true, false);
+        buttonRef.current.stage.renderNextFrame();
       }
     });
-    buttomRef.current.addEventListener('mouseleave', () => {
-      // console.log('mouseleave', buttomRef.current, e.clone());
+    buttonRef.current.addEventListener('mouseleave', () => {
+      // console.log('mouseleave', buttonRef.current, e.clone());
       if (!disabled) {
-        buttomRef.current.removeState('hover', false);
-        // buttomRef.current._bgRect.removeState('hover', false);
-        // buttomRef.current._textShape.removeState('hover', false);
-        buttomRef.current.stage.renderNextFrame();
+        buttonRef.current.removeState('hover', false);
+        // buttonRef.current._bgRect.removeState('hover', false);
+        // buttonRef.current._textShape.removeState('hover', false);
+        buttonRef.current.stage.renderNextFrame();
       }
     });
   });
 
   useEffect(() => {
     if (disabled) {
-      buttomRef.current.removeState('disabled', false);
-      // buttomRef.current._bgRect.removeState('disabled', false);
-      // buttomRef.current._textShape.removeState('disabled', false);
+      buttonRef.current.removeState('disabled', false);
+      // buttonRef.current._bgRect.removeState('disabled', false);
+      // buttonRef.current._textShape.removeState('disabled', false);
 
-      buttomRef.current.addState('disabled', true, false);
-      // buttomRef.current._bgRect.addState('disabled', true, false);
-      // buttomRef.current._textShape.addState('disabled', true, false);
+      buttonRef.current.addState('disabled', true, false);
+      // buttonRef.current._bgRect.addState('disabled', true, false);
+      // buttonRef.current._textShape.addState('disabled', true, false);
       // console.log('add disable');
     } else {
-      buttomRef.current.removeState('disabled', false);
-      // buttomRef.current._bgRect.removeState('disabled', false);
-      // buttomRef.current._textShape.removeState('disabled', false);
+      buttonRef.current.removeState('disabled', false);
+      // buttonRef.current._bgRect.removeState('disabled', false);
+      // buttonRef.current._textShape.removeState('disabled', false);
       // console.log('remove disable');
     }
-    buttomRef.current.stage.renderNextFrame();
+    buttonRef.current.stage.renderNextFrame();
   });
 
-  return <VTag ref={buttomRef} attribute={attribute} onClick={handleClick}></VTag>;
+  return <VTag ref={buttonRef} attribute={attribute} onClick={handleClick}></VTag>;
 }
 
 function getTagAttribute(props: ButtonProps) {

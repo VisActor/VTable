@@ -48,7 +48,7 @@ const defaultProps: LinkProps = {
   panelStyle: {
     visible: true,
     opacity: 0,
-    fill: 'rgb(242, 243, 245)',
+    fill: 'rgba(242, 243, 245, 0.5)',
     lineWidth: 1,
     cornerRadius: 2
   },
@@ -73,8 +73,8 @@ const defaultProps: LinkProps = {
 function LinkComponent(baseProps: LinkProps, ref: React.Ref<Tag>) {
   const props: LinkProps = merge({}, defaultProps, baseProps);
   const { disabled, href, onClick } = props;
-  let buttomRef = React.useRef<Tag>(null);
-  buttomRef = ref ? (ref as React.RefObject<Tag>) : buttomRef;
+  let linkRef = React.useRef<Tag>(null);
+  linkRef = ref ? (ref as React.RefObject<Tag>) : linkRef;
 
   const handleClick: React.MouseEventHandler<HTMLElement> = React.useCallback(
     (event: any): void => {
@@ -94,46 +94,46 @@ function LinkComponent(baseProps: LinkProps, ref: React.Ref<Tag>) {
   const attribute: TagAttributes = getTagAttribute(props);
 
   useEffect(() => {
-    buttomRef.current.addEventListener('mouseenter', () => {
-      // console.log('mouseenter', buttomRef.current, e.clone());
+    linkRef.current.addEventListener('mouseenter', () => {
+      // console.log('mouseenter', linkRef.current, e.clone());
       if (!disabled) {
-        buttomRef.current.addState('hover', true, false);
-        // buttomRef.current._bgRect.addState('hover', true, false);
-        // buttomRef.current._textShape.addState('hover', true, false);
-        buttomRef.current.stage.renderNextFrame();
+        linkRef.current.addState('hover', true, false);
+        // linkRef.current._bgRect.addState('hover', true, false);
+        // linkRef.current._textShape.addState('hover', true, false);
+        linkRef.current.stage.renderNextFrame();
       }
     });
-    buttomRef.current.addEventListener('mouseleave', () => {
-      // console.log('mouseleave', buttomRef.current, e.clone());
+    linkRef.current.addEventListener('mouseleave', () => {
+      // console.log('mouseleave', linkRef.current, e.clone());
       if (!disabled) {
-        buttomRef.current.removeState('hover', false);
-        // buttomRef.current._bgRect.removeState('hover', false);
-        // buttomRef.current._textShape.removeState('hover', false);
-        buttomRef.current.stage.renderNextFrame();
+        linkRef.current.removeState('hover', false);
+        // linkRef.current._bgRect.removeState('hover', false);
+        // linkRef.current._textShape.removeState('hover', false);
+        linkRef.current.stage.renderNextFrame();
       }
     });
   }, []);
 
   useEffect(() => {
     if (disabled) {
-      buttomRef.current.removeState('disabled', false);
-      // buttomRef.current._bgRect.removeState('disabled', false);
-      // buttomRef.current._textShape.removeState('disabled', false);
+      linkRef.current.removeState('disabled', false);
+      // linkRef.current._bgRect.removeState('disabled', false);
+      // linkRef.current._textShape.removeState('disabled', false);
 
-      buttomRef.current.addState('disabled', true, false);
-      // buttomRef.current._bgRect.addState('disabled', true, false);
-      // buttomRef.current._textShape.addState('disabled', true, false);
+      linkRef.current.addState('disabled', true, false);
+      // linkRef.current._bgRect.addState('disabled', true, false);
+      // linkRef.current._textShape.addState('disabled', true, false);
       // console.log('add disable');
     } else {
-      buttomRef.current.removeState('disabled', false);
-      // buttomRef.current._bgRect.removeState('disabled', false);
-      // buttomRef.current._textShape.removeState('disabled', false);
+      linkRef.current.removeState('disabled', false);
+      // linkRef.current._bgRect.removeState('disabled', false);
+      // linkRef.current._textShape.removeState('disabled', false);
       // console.log('remove disable');
     }
-    buttomRef.current.stage.renderNextFrame();
+    linkRef.current.stage.renderNextFrame();
   });
 
-  return <VTag ref={buttomRef} attribute={attribute} onClick={handleClick}></VTag>;
+  return <VTag ref={linkRef} attribute={attribute} onClick={handleClick}></VTag>;
 }
 
 function getTagAttribute(props: LinkProps) {

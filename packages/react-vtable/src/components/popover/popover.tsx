@@ -20,19 +20,19 @@ type Anchor = 'top' | 'tl' | 'tr' | 'bottom' | 'bl' | 'br' | 'left' | 'lt' | 'lb
 export interface PopoverProps {
   children?: ReactElement;
   defaultPopupVisible?: boolean;
-  disabled?: boolean;
-  popupHoverStay?: boolean;
+  // disabled?: boolean;
+  // popupHoverStay?: boolean;
   popupVisible?: boolean;
-  color?: string;
+  // color?: string;
   position?: Anchor;
   content?: ReactNode;
-  onVisibleChange?: (visible: boolean) => void;
+  // onVisibleChange?: (visible: boolean) => void;
 }
 
 const defaultProps: PopoverProps = {
   defaultPopupVisible: false,
-  popupHoverStay: true,
-  popupVisible: false,
+  // popupHoverStay: true,
+  // popupVisible: false,
   position: 'top'
 };
 

@@ -129,7 +129,7 @@ const CustomLayoutAvatar = (props: CustomLayoutFunctionArg & { text: string }) =
             <p>Here is the text content</p>
           </span>
         }
-        popupVisible={popupVisible}
+        // popupVisible={popupVisible}
       >
         <Avatar>{'A-' + text}</Avatar>
       </Popover>
