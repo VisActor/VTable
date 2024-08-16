@@ -19,6 +19,7 @@ export type ExportVTableToExcelOptions = {
   ignoreIcon?: boolean;
   formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
   formatExcelJSCell?: (cellInfo: CellInfo, cellInExcelJS: ExcelJS.Cell) => ExcelJS.Cell;
+  excelJSWorksheetCallback?: (worksheet: ExcelJS.Worksheet) => void;
 };
 
 export async function exportVTableToExcel(tableInstance: IVTable, options?: ExportVTableToExcelOptions) {
@@ -90,6 +91,10 @@ export async function exportVTableToExcel(tableInstance: IVTable, options?: Expo
   }
   // not support bottom&right frozen
   worksheet.views = frozenView;
+
+  if (options?.excelJSWorksheetCallback) {
+    options.excelJSWorksheetCallback(worksheet);
+  }
 
   const buffer = await workbook.xlsx.writeBuffer();
   return buffer;

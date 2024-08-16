@@ -193,7 +193,12 @@ export function createTable() {
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
   window.tableInstance = tableInstance;
   window.excelOption = {
-    ignoreIcon: true
+    ignoreIcon: true,
+    excelJSWorksheetCallback: worksheet => {
+      // worksheet.headerFooter.oddFooter = '第 &P 页，共 &N 页';
+      worksheet.headerFooter.oddHeader = 'Hello Exceljs';
+      worksheet.headerFooter.oddFooter = 'Hello World';
+    }
   };
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
