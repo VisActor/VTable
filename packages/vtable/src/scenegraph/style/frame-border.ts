@@ -128,7 +128,7 @@ export function createFrameBorder(
           cornerRadiusArr[2] && (cornerRadiusArr[2] = cornerRadiusArr[2] + Math.min(borderRight, borderBottom) / 2);
           cornerRadiusArr[3] && (cornerRadiusArr[3] = cornerRadiusArr[3] + Math.min(borderBottom, borderLeft) / 2);
         } else if (isArray(borderLineWidth)) {
-          const cornerRadiusArr = [];
+          const cornerRadiusArr: number[] = [];
           rectAttributes.cornerRadius = cornerRadiusArr;
           groupAttributes.cornerRadius = cornerRadiusArr;
           cornerRadiusArr[0] = cornerRadius + Math.min(borderLeft, borderTop) / 2;
