@@ -98,8 +98,8 @@ function LinkComponent(baseProps: LinkProps, ref: React.Ref<Tag>) {
       // console.log('mouseenter', buttomRef.current, e.clone());
       if (!disabled) {
         buttomRef.current.addState('hover', true, false);
-        buttomRef.current._bgRect.addState('hover', true, false);
-        buttomRef.current._textShape.addState('hover', true, false);
+        // buttomRef.current._bgRect.addState('hover', true, false);
+        // buttomRef.current._textShape.addState('hover', true, false);
         buttomRef.current.stage.renderNextFrame();
       }
     });
@@ -107,8 +107,8 @@ function LinkComponent(baseProps: LinkProps, ref: React.Ref<Tag>) {
       // console.log('mouseleave', buttomRef.current, e.clone());
       if (!disabled) {
         buttomRef.current.removeState('hover', false);
-        buttomRef.current._bgRect.removeState('hover', false);
-        buttomRef.current._textShape.removeState('hover', false);
+        // buttomRef.current._bgRect.removeState('hover', false);
+        // buttomRef.current._textShape.removeState('hover', false);
         buttomRef.current.stage.renderNextFrame();
       }
     });
@@ -117,17 +117,17 @@ function LinkComponent(baseProps: LinkProps, ref: React.Ref<Tag>) {
   useEffect(() => {
     if (disabled) {
       buttomRef.current.removeState('disabled', false);
-      buttomRef.current._bgRect.removeState('disabled', false);
-      buttomRef.current._textShape.removeState('disabled', false);
+      // buttomRef.current._bgRect.removeState('disabled', false);
+      // buttomRef.current._textShape.removeState('disabled', false);
 
       buttomRef.current.addState('disabled', true, false);
-      buttomRef.current._bgRect.addState('disabled', true, false);
-      buttomRef.current._textShape.addState('disabled', true, false);
+      // buttomRef.current._bgRect.addState('disabled', true, false);
+      // buttomRef.current._textShape.addState('disabled', true, false);
       // console.log('add disable');
     } else {
       buttomRef.current.removeState('disabled', false);
-      buttomRef.current._bgRect.removeState('disabled', false);
-      buttomRef.current._textShape.removeState('disabled', false);
+      // buttomRef.current._bgRect.removeState('disabled', false);
+      // buttomRef.current._textShape.removeState('disabled', false);
       // console.log('remove disable');
     }
     buttomRef.current.stage.renderNextFrame();

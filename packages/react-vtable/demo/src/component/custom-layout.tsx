@@ -101,6 +101,14 @@ const CustomLayoutAvatar = (props: CustomLayoutFunctionArg & { text: string }) =
   const { height, width } = rect || table.getCellRect(col, row);
   const groupRef = useRef(null);
 
+  const [popupVisible, setPopupVisible] = useState(true);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setPopupVisible(!popupVisible);
+  //   }, 1000);
+  // }, []);
+
   return (
     <Group
       attribute={{
@@ -121,6 +129,7 @@ const CustomLayoutAvatar = (props: CustomLayoutFunctionArg & { text: string }) =
             <p>Here is the text content</p>
           </span>
         }
+        popupVisible={popupVisible}
       >
         <Avatar>{'A-' + text}</Avatar>
       </Popover>
