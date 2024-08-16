@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import type { CustomLayoutFunctionArg } from '../../../src';
 import {
   ListTable,
@@ -12,7 +13,8 @@ import {
   Button,
   Link,
   Avatar,
-  Image
+  Image,
+  Popover
 } from '../../../src';
 
 type FieldData = { value: string; label: string };
@@ -113,7 +115,15 @@ const CustomLayoutAvatar = (props: CustomLayoutFunctionArg & { text: string }) =
       }}
       ref={groupRef}
     >
-      <Avatar>{'A-' + text}</Avatar>
+      <Popover
+        content={
+          <span>
+            <p>Here is the text content</p>
+          </span>
+        }
+      >
+        <Avatar>{'A-' + text}</Avatar>
+      </Popover>
       <Avatar shape={'square'}>{'A-' + text}</Avatar>
       <Avatar>
         <Image
@@ -319,7 +329,14 @@ function App() {
   window.tableRef = tableRef;
 
   return (
-    <ListTable ref={tableRef} records={records} height={500} defaultRowHeight={200} defaultHeaderRowHeight={80}>
+    <ListTable
+      ref={tableRef}
+      records={records}
+      height={500}
+      defaultRowHeight={200}
+      defaultHeaderRowHeight={80}
+      ReactDOM={ReactDOM}
+    >
       <ListColumn field={'0'} title={'name'} />
       <ListColumn field={'1'} title={'age'} />
       <ListColumn field={'2'} title={'button'} width={120}>
