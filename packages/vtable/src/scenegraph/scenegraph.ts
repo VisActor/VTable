@@ -2034,13 +2034,15 @@ export class Scenegraph {
   updateDomContainer() {
     const { headerDomContainer, bodyDomContainer } = this.table.internalProps;
     if (headerDomContainer) {
-      headerDomContainer.style.width = `${headerDomContainer.parentElement?.offsetWidth ?? 1 - 1}px`;
+      headerDomContainer.style.width = `${(headerDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
       headerDomContainer.style.height = `${this.table.getFrozenRowsHeight()}px`;
     }
     if (bodyDomContainer) {
-      bodyDomContainer.style.width = `${bodyDomContainer.parentElement?.offsetWidth ?? 1 - 1}px`;
+      const totalFrozenRowsHeight = this.table.getFrozenRowsHeight() + this.table.getBottomFrozenRowsHeight();
+
+      bodyDomContainer.style.width = `${(bodyDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
       bodyDomContainer.style.height = `${
-        bodyDomContainer.parentElement?.offsetHeight ?? 1 - 1 - this.table.getFrozenRowsHeight()
+        (bodyDomContainer.parentElement?.offsetHeight ?? 1) - 1 - totalFrozenRowsHeight
       }px`;
       bodyDomContainer.style.top = `${this.table.getFrozenRowsHeight()}px`;
     }
