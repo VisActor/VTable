@@ -8,11 +8,15 @@ import type {
   IRectRenderContribution,
   IGroup,
   IGroupGraphicAttribute,
-  IDrawContext
+  IDrawContext,
+  ICustomPath2D
 } from '@src/vrender';
 import { BaseRenderContributionTime, injectable } from '@src/vrender';
-import { renderStroke } from './group-contribution-render';
+import { getWidthInfo, renderStroke } from './group-contribution-render';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
+import type { vec2, vec4 } from '@visactor/vutils';
+import { abs, arrayEqual, halfPi, isArray, isNumber, pi } from '@visactor/vutils';
+import { createRectPath } from '@visactor/vrender-core';
 
 @injectable()
 export class SplitRectBeforeRenderContribution implements IRectRenderContribution {
@@ -139,7 +143,9 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
       strokeArrayWidth = (rectAttribute as any).strokeArrayWidth,
 
       lineWidth = rectAttribute.lineWidth,
-      strokeColor = rectAttribute.stroke
+      strokeColor = rectAttribute.stroke,
+
+      cornerRadius = rectAttribute.cornerRadius
       // // select & hover border
       // highlightStroke = (rectAttribute as any).highlightStroke,
       // highlightStrokeArrayColor = (rectAttribute as any).highlightStrokeArrayColor,
@@ -174,23 +180,254 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
         y = Math.floor(y) + 0.5;
         // }
       }
-      renderStroke(
-        rect as IGroup,
-        context,
-        x,
-        y,
-        rectAttribute,
-        stroke,
-        strokeArrayWidth || lineWidth,
-        strokeArrayColor || strokeColor,
-        Math.ceil(width + deltaWidth),
-        Math.ceil(height + deltaHeight)
-      );
+
+      // 带不同stroke边框
+      if (!(cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0)))) {
+        // let lastStrokeI = 0;
+        // let lastStroke: any;
+        context.beginPath();
+        // debugger;
+        createRectPath(
+          context,
+          x,
+          y,
+          width,
+          height,
+          cornerRadius,
+          new Array(4).fill(0).map((_, i) => (x1: number, y1: number, x2: number, y2: number) => {
+            renderStrokeWithCornerRadius(
+              i,
+              x1,
+              y1,
+              x2,
+              y2,
+              rect,
+              context,
+              x,
+              y,
+              rectAttribute,
+              stroke,
+              strokeArrayWidth || lineWidth,
+              strokeArrayColor || strokeColor,
+              Math.ceil(width + deltaWidth),
+              Math.ceil(height + deltaHeight)
+            );
+          })
+        );
+
+        context.stroke();
+      } else {
+        renderStroke(
+          rect as IGroup,
+          context,
+          x,
+          y,
+          rectAttribute,
+          stroke,
+          strokeArrayWidth || lineWidth,
+          strokeArrayColor || strokeColor,
+          Math.ceil(width + deltaWidth),
+          Math.ceil(height + deltaHeight)
+        );
+      }
     }
   }
 }
 
-// 判断是否为整数，如果是整数，需要偏移0.5px
-function isInteger(num: number) {
-  return num % 1 === 0;
+export function renderStrokeWithCornerRadius(
+  i: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  rect: IRect,
+  context: IContext2d,
+  x: number,
+  y: number,
+  rectAttribute: Required<IRectGraphicAttribute>,
+  stroke: any,
+  strokeArrayWidth: any,
+  strokeArrayColor: any,
+  width: number,
+  height: number
+) {
+  const group = rect;
+  const groupAttribute = rectAttribute;
+
+  // if (stroke[i]) {
+  //   if (!(lastStrokeI === i - 1 && stroke[i] === lastStroke)) {
+  //     context.setStrokeStyle(rect, { ...rect.attribute, stroke: stroke[i] }, x, y, rectAttribute);
+  //     context.beginPath();
+  //     context.moveTo(x1, y1);
+  //     lastStroke = stroke[i];
+  //   }
+  //   lastStrokeI = i;
+  //   context.lineTo(x2, y2);
+  //   context.stroke();
+  //   if (i === 3) {
+  //     context.beginPath();
+  //   }
+  // }
+
+  const widthInfo = getWidthInfo(strokeArrayWidth);
+  const isWidthNumber = !Array.isArray(strokeArrayWidth);
+  const isStrokeTrue = !Array.isArray(stroke);
+  const isSplitDraw = Array.isArray(strokeArrayColor) || widthInfo.isSplitDraw;
+
+  context.setStrokeStyle(rect, rect.attribute, x, y, rectAttribute);
+  const { lineDash = groupAttribute.lineDash } = group.attribute as any;
+  // const lineDash = context.getLineDash();
+  let isDash = false;
+  if (lineDash.length && lineDash.some((dash: number[] | null) => Array.isArray(dash))) {
+    isDash = true;
+  }
+
+  // 单独处理每条边界，目前不考虑圆角
+  // context.beginPath();
+  context.moveTo(x, y);
+
+  const strokeTop = (isStrokeTrue || stroke[0]) && (isWidthNumber || strokeArrayWidth[0]);
+  const strokeRight = (isStrokeTrue || stroke[1]) && (isWidthNumber || strokeArrayWidth[1]);
+  const strokeBottom = (isStrokeTrue || stroke[2]) && (isWidthNumber || strokeArrayWidth[2]);
+  const strokeLeft = (isStrokeTrue || stroke[3]) && (isWidthNumber || strokeArrayWidth[3]);
+
+  // top
+  if (strokeTop && i === 0) {
+    // context.lineTo(x + width, y);
+    const deltaLeft = (isWidthNumber ? widthInfo.width : strokeArrayWidth[0]) / 2;
+    const deltaRight = (isWidthNumber ? widthInfo.width : strokeArrayWidth[0]) / 2;
+
+    // context.moveTo(x - deltaLeft, y);
+    // context.lineTo(x + width + deltaRight, y);
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+
+    if (isSplitDraw || isDash) {
+      if (strokeArrayColor && strokeArrayColor[0]) {
+        context.strokeStyle = strokeArrayColor[0];
+      } else {
+        context.strokeStyle = 'transparent';
+      }
+      if (!isWidthNumber) {
+        context.lineWidth = strokeArrayWidth[0];
+      }
+      context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
+      if (isDash) {
+        context.setLineDash(lineDash[0] ?? []);
+      }
+      context.stroke();
+      context.beginPath();
+      // context.moveTo(x + width, y);
+    }
+  } else if (i === 0) {
+    context.moveTo(x + width, y);
+  }
+  // right
+  if (strokeRight && i === 1) {
+    // context.lineTo(x + width, y + height);
+    const deltaTop = (isWidthNumber ? widthInfo.width : strokeArrayWidth[1]) / 2;
+    const deltaBottom = (isWidthNumber ? widthInfo.width : strokeArrayWidth[1]) / 2;
+
+    // context.moveTo(x + width, y - deltaTop);
+    // context.lineTo(x + width, y + height + deltaBottom);
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+
+    if (isSplitDraw || isDash) {
+      if (strokeArrayColor && strokeArrayColor[1]) {
+        context.strokeStyle = strokeArrayColor[1];
+      } else {
+        context.strokeStyle = 'transparent';
+      }
+      if (!isWidthNumber) {
+        context.lineWidth = strokeArrayWidth[1];
+      }
+      context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
+      if (isDash) {
+        context.setLineDash(lineDash[1] ?? []);
+      }
+      context.stroke();
+      context.beginPath();
+      context.moveTo(x + width, y + height);
+    }
+  } else if (i === 1) {
+    context.moveTo(x + width, y + height);
+  }
+  // bottom
+  if (strokeBottom && i === 2) {
+    // context.lineTo(x, y + height);
+    const deltaLeft = (isWidthNumber ? widthInfo.width : strokeArrayWidth[2]) / 2;
+    const deltaRight = (isWidthNumber ? widthInfo.width : strokeArrayWidth[2]) / 2;
+
+    // context.moveTo(x - deltaLeft, y + height);
+    // context.lineTo(x + width + deltaRight, y + height);
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+
+    if (isSplitDraw || isDash) {
+      if (strokeArrayColor && strokeArrayColor[2]) {
+        context.strokeStyle = strokeArrayColor[2];
+      } else {
+        context.strokeStyle = 'transparent';
+      }
+      if (!isWidthNumber) {
+        context.lineWidth = strokeArrayWidth[2];
+      }
+      context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
+      if (isDash) {
+        context.setLineDash(lineDash[2] ?? []);
+      }
+      context.stroke();
+      context.beginPath();
+      context.moveTo(x, y + height);
+    }
+  } else if (i === 2) {
+    context.moveTo(x, y + height);
+  }
+  // left
+  if (strokeLeft && i === 3) {
+    // context.lineTo(x, y);
+    const deltaTop = (isWidthNumber ? widthInfo.width : strokeArrayWidth[3]) / 2;
+    const deltaBottom = (isWidthNumber ? widthInfo.width : strokeArrayWidth[3]) / 2;
+
+    // context.moveTo(x, y - deltaTop);
+    // context.lineTo(x, y + height + deltaBottom);
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+
+    if (isSplitDraw || isDash) {
+      if (strokeArrayColor && strokeArrayColor[3]) {
+        context.strokeStyle = strokeArrayColor[3];
+      } else {
+        context.strokeStyle = 'transparent';
+      }
+      if (!isWidthNumber) {
+        context.lineWidth = strokeArrayWidth[3];
+      }
+      context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
+      if (isDash) {
+        context.setLineDash(lineDash[3] ?? []);
+      }
+      context.stroke();
+      context.beginPath();
+      context.moveTo(x, y);
+    }
+  } else if (i === 3) {
+    context.moveTo(x, y);
+  }
+
+  if (!isSplitDraw && !isDash) {
+    // context.strokeStyle = strokeArrayColor;
+    if (!isWidthNumber && widthInfo.width) {
+      context.lineWidth = widthInfo.width;
+    }
+    context.stroke();
+  }
+  context.lineDashOffset = 0;
+  // context.lineCap = oldLineCap;
+  context.setLineDash([]);
+
+  context.closePath();
 }
+
+type IEdgeCb = (x1: number, y1: number, x2: number, y2: number) => void;

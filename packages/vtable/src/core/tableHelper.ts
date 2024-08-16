@@ -344,7 +344,17 @@ export function getStyleTheme(
 
 export function getCellCornerRadius(col: number, row: number, table: BaseTableAPI) {
   const tableCornerRadius = table.theme.frameStyle.cornerRadius;
-  if (tableCornerRadius) {
+  if (Array.isArray(tableCornerRadius)) {
+    if (col === 0 && row === 0) {
+      return [tableCornerRadius[0], 0, 0, 0];
+    } else if (col === table.colCount - 1 && row === 0) {
+      return [0, tableCornerRadius[1], 0, 0];
+    } else if (col === 0 && row === table.rowCount - 1) {
+      return [0, 0, 0, tableCornerRadius[3]];
+    } else if (col === table.colCount - 1 && row === table.rowCount - 1) {
+      return [0, 0, tableCornerRadius[2], 0];
+    }
+  } else if (tableCornerRadius) {
     if (col === 0 && row === 0) {
       return [tableCornerRadius, 0, 0, 0];
     } else if (col === table.colCount - 1 && row === 0) {

@@ -455,7 +455,7 @@ export class TableTheme implements ITableThemeDefine {
         get shadowOffsetY(): number {
           return frameStyle.shadowOffsetY;
         },
-        get cornerRadius(): number {
+        get cornerRadius(): number | [number, number, number, number] {
           return frameStyle.cornerRadius;
         }
       };

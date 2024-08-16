@@ -128,6 +128,9 @@ export interface SelectAllOnCtrlAOption {
 ##${prefix} moveFocusCellOnTab(boolean) = true
 开启 tab 键交互 默认为 true。开启 tab 键移动选中单元格，如果当前是在编辑单元格 则移动到下一个单元格也是编辑状态
 
+##${prefix} moveFocusCellOnEnter(boolean) = false
+开启 enter 键交互 默认 fasle。 按下 enter 键选择下一个单元格。和 editCellOnEnter 互斥，同时设置为 true 优先级高于 editCellOnEnter。
+
 ##${prefix} editCellOnEnter(boolean) = true
 开启 enter 键交互 。默认 true 如果选中单元格按下 enter 键进入单元格编辑
 

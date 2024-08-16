@@ -207,6 +207,16 @@ export function createTable() {
     //   headerSelectMode: 'cell',
     //   highlightMode: 'cross'
     // },
+    theme: {
+      frameStyle: {
+        cornerRadius: [10, 0, 0, 10],
+        // cornerRadius: 10,
+        borderLineWidth: [10, 0, 10, 10],
+        // borderLineWidth: 10,
+        borderColor: 'red',
+        shadowBlur: 0
+      }
+    },
     excelOptions: {
       fillHandle: true
     }
@@ -214,20 +224,11 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
+
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']
   });
-  tableInstance.on('change_cell_value', arg => {
-    console.log(arg);
-  });
-  let count = 0;
-  const intervalId = setTimeout(() => {
-    count++;
-    tableInstance.updateOption(option);
-    if (count > 100) {
-      clearInterval(intervalId);
-    }
-  }, 3000);
+
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
   //     {

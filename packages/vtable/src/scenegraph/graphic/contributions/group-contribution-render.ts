@@ -9,7 +9,7 @@ import type {
   IDrawContext,
   IRectGraphicAttribute
 } from '@src/vrender';
-import { BaseRenderContributionTime, createRectPath, injectable } from '@src/vrender';
+import { BaseRenderContributionTime, injectable, createRectPath } from '@src/vrender';
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -17,6 +17,7 @@ import { getCellMergeInfo } from '../../utils/get-cell-merge';
 import { InteractionState } from '../../../ts-types';
 import { isArray } from '@visactor/vutils';
 import { getCellSelectColor } from '../../../state/select/is-cell-select-highlight';
+import { renderStrokeWithCornerRadius } from './rect-contribution-render';
 
 // const highlightDash: number[] = [];
 
@@ -130,7 +131,9 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
       strokeArrayWidth = (groupAttribute as any).strokeArrayWidth,
 
       lineWidth = groupAttribute.lineWidth,
-      strokeColor = groupAttribute.stroke
+      strokeColor = groupAttribute.stroke,
+
+      cornerRadius = groupAttribute.cornerRadius
       // // select & hover border
       // highlightStroke = (groupAttribute as any).highlightStroke,
       // highlightStrokeArrayColor = (groupAttribute as any).highlightStrokeArrayColor,
@@ -144,8 +147,8 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
       return;
     }
 
-    let widthForStroke;
-    let heightForStroke;
+    let widthForStroke: number;
+    let heightForStroke: number;
     if (Array.isArray(strokeArrayColor) || Array.isArray(strokeArrayWidth)) {
       if (
         (typeof lineWidth === 'number' && lineWidth & 1) ||
@@ -192,20 +195,58 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
         widthForStroke = Math.ceil(width);
         heightForStroke = Math.ceil(height);
       }
-      renderStroke(
-        group,
-        context,
-        x,
-        y,
-        groupAttribute,
-        stroke,
-        strokeArrayWidth || lineWidth,
-        strokeArrayColor || strokeColor,
-        // Math.ceil(width),
-        // Math.ceil(height)
-        widthForStroke,
-        heightForStroke
-      );
+
+      // 带不同stroke边框
+      if (!(cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0)))) {
+        // let lastStrokeI = 0;
+        // let lastStroke: any;
+        context.beginPath();
+        // debugger;
+        createRectPath(
+          context,
+          x,
+          y,
+          widthForStroke,
+          heightForStroke,
+          cornerRadius,
+          new Array(4).fill(0).map((_, i) => (x1: number, y1: number, x2: number, y2: number) => {
+            renderStrokeWithCornerRadius(
+              i,
+              x1,
+              y1,
+              x2,
+              y2,
+              group,
+              context,
+              x,
+              y,
+              groupAttribute as any,
+              stroke,
+              strokeArrayWidth || lineWidth,
+              strokeArrayColor || strokeColor,
+              widthForStroke,
+              heightForStroke
+            );
+          })
+        );
+
+        context.stroke();
+      } else {
+        renderStroke(
+          group,
+          context,
+          x,
+          y,
+          groupAttribute,
+          stroke,
+          strokeArrayWidth || lineWidth,
+          strokeArrayColor || strokeColor,
+          // Math.ceil(width),
+          // Math.ceil(height)
+          widthForStroke,
+          heightForStroke
+        );
+      }
     }
   }
 }
