@@ -155,7 +155,7 @@ function bindContainerDomListener(eventManager: EventManager) {
       gantt._resize();
     }
   });
-  if (gantt.parsedOptions.verticalSplitLineMoveable) {
+  if (gantt.taskListTableInstance && gantt.parsedOptions.verticalSplitLineMoveable) {
     handler.on(gantt.verticalSplitResizeLine, 'mousedown', (e: MouseEvent) => {
       console.log('resizeLine mousedown');
       stateManager.updateInteractionState(InteractionState.grabing);

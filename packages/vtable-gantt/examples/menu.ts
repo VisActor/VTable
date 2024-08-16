@@ -8,6 +8,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-noLeftListTable'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-minMaxDate'
   },
   {

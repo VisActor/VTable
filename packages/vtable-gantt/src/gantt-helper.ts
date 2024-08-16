@@ -148,7 +148,7 @@ export function initOptions(gantt: Gantt) {
       /** 已完成部分任务条的颜色 */
       completedBarColor: 'gray',
       /** 任务条的宽度 */
-      width: gantt.parsedOptions.rowHeight,
+      width: (gantt.parsedOptions.rowHeight * 3) / 4,
       /** 任务条的圆角 */
       cornerRadius: 3,
       /** 任务条的边框 */
@@ -180,13 +180,13 @@ export function initOptions(gantt: Gantt) {
   // gantt.parsedOptions.taskBarHoverColor =
   //   options?.taskBar?.hoverColor === null ? 'rgba(0,0,0,0)' : options?.taskBar?.hoverColor ?? 'rgba(0,0,0,0.1)';
   gantt.parsedOptions.taskBarLabelStyle = {
-    fontFamily: options?.taskBar?.labelTextStyle.fontFamily ?? 'Arial',
-    fontSize: options?.taskBar?.labelTextStyle.fontSize ?? gantt.parsedOptions.rowHeight,
-    color: options?.taskBar?.labelTextStyle.color ?? '#F01',
-    textAlign: options?.taskBar?.labelTextStyle.textAlign ?? 'left',
-    textBaseline: options?.taskBar?.labelTextStyle.textBaseline ?? 'middle',
-    padding: options?.taskBar?.labelTextStyle.padding ?? [0, 0, 0, 10],
-    textOverflow: options?.taskBar?.labelTextStyle.textOverflow
+    fontFamily: options?.taskBar?.labelTextStyle?.fontFamily ?? 'Arial',
+    fontSize: options?.taskBar?.labelTextStyle?.fontSize ?? gantt.parsedOptions.rowHeight,
+    color: options?.taskBar?.labelTextStyle?.color ?? '#F01',
+    textAlign: options?.taskBar?.labelTextStyle?.textAlign ?? 'left',
+    textBaseline: options?.taskBar?.labelTextStyle?.textBaseline ?? 'middle',
+    padding: options?.taskBar?.labelTextStyle?.padding ?? [0, 0, 0, 10],
+    textOverflow: options?.taskBar?.labelTextStyle?.textOverflow
   };
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
 
@@ -382,7 +382,7 @@ export function createSplitLineAndResizeLine(gantt: Gantt) {
     gantt.horizontalSplitLine.style.width =
       gantt.tableNoFrameWidth +
       (gantt.taskListTableInstance?.tableNoFrameWidth ?? 0) +
-      +gantt.parsedOptions.verticalSplitLine.lineWidth +
+      +(gantt.taskListTableInstance ? gantt.parsedOptions.verticalSplitLine.lineWidth : 0) +
       'px'; //'100%';
     gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
     gantt.horizontalSplitLine.style.zIndex = '100';
@@ -448,7 +448,7 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
     gantt.horizontalSplitLine.style.width =
       gantt.tableNoFrameWidth +
       (gantt.taskListTableInstance?.tableNoFrameWidth ?? 0) +
-      gantt.parsedOptions.verticalSplitLine.lineWidth +
+      (gantt.taskListTableInstance ? gantt.parsedOptions.verticalSplitLine.lineWidth : 0) +
       'px'; //'100%';
     gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
     gantt.horizontalSplitLine.style.zIndex = '100';

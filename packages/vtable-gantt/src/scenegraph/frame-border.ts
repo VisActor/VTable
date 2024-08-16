@@ -38,28 +38,26 @@ export class FrameBorder {
       rectAttributes.lineCap = 'butt';
     }
 
-    // if (Array.isArray(borderLineWidth)) {
-    //   (rectAttributes as any).strokeArrayWidth = getQuadProps(borderLineWidth);
-    //   (rectAttributes as any).lineWidth = 1;
-    // }
-
     if (cornerRadius) {
-      rectAttributes.cornerRadius = [0, 10, 10, 0];
-      groupAttributes.cornerRadius = [0, 10, 10, 0];
+      if (this._scene._gantt.taskListTableInstance) {
+        rectAttributes.cornerRadius = [
+          0,
+          this._scene._gantt.parsedOptions.outerFrameStyle.cornerRadius ?? 0,
+          this._scene._gantt.parsedOptions.outerFrameStyle.cornerRadius ?? 0,
+          0
+        ];
+        groupAttributes.cornerRadius = [
+          0,
+          this._scene._gantt.parsedOptions.outerFrameStyle.cornerRadius ?? 0,
+          this._scene._gantt.parsedOptions.outerFrameStyle.cornerRadius ?? 0,
+          0
+        ];
+      } else {
+        rectAttributes.cornerRadius = this._scene._gantt.parsedOptions.outerFrameStyle.cornerRadius ?? 0;
+        groupAttributes.cornerRadius = this._scene._gantt.parsedOptions.outerFrameStyle.cornerRadius ?? 0;
+      }
     }
 
-    // const borderTop = (rectAttributes as any).strokeArrayWidth
-    //   ? (rectAttributes as any).strokeArrayWidth[0]
-    //   : (rectAttributes.lineWidth as number) ?? 0;
-    // const borderRight = (rectAttributes as any).strokeArrayWidth
-    //   ? (rectAttributes as any).strokeArrayWidth[1]
-    //   : (rectAttributes.lineWidth as number) ?? 0;
-    // const borderBottom = (rectAttributes as any).strokeArrayWidth
-    //   ? (rectAttributes as any).strokeArrayWidth[2]
-    //   : (rectAttributes.lineWidth as number) ?? 0;
-    // const borderLeft = (rectAttributes as any).strokeArrayWidth
-    //   ? (rectAttributes as any).strokeArrayWidth[3]
-    //   : (rectAttributes.lineWidth as number) ?? 0;
     group.setAttributes(groupAttributes);
 
     if (justForXYPosition) {
@@ -67,15 +65,14 @@ export class FrameBorder {
     }
 
     if (rectAttributes.stroke) {
-      rectAttributes.x = -borderLineWidth / 2; //为了可以绘制完整矩形 且左侧的边框不出现在group中
+      rectAttributes.x = this._scene._gantt.taskListTableInstance ? -borderLineWidth / 2 : borderLineWidth / 2; //为了可以绘制完整矩形 且左侧的边框不出现在group中
       rectAttributes.y = borderLineWidth / 2;
       rectAttributes.pickable = false;
 
       rectAttributes.width =
         group.attribute.width +
-        borderLineWidth / 2 +
-        borderLineWidth / 2 +
-        this._scene._gantt.parsedOptions.verticalSplitLine.lineWidth;
+        borderLineWidth +
+        (this._scene._gantt.taskListTableInstance ? this._scene._gantt.parsedOptions.verticalSplitLine.lineWidth : 0);
       rectAttributes.height = group.attribute.height + borderLineWidth / 2 + borderLineWidth / 2;
       const borderRect = VRender.createRect(rectAttributes);
       borderRect.name = 'border-rect';

@@ -142,7 +142,12 @@ export class Gantt extends EventTarget {
     this.container = container;
     this.options = options;
 
-    this.taskTableWidth = typeof options?.taskListTable?.width === 'number' ? options?.taskListTable?.width : 100;
+    this.taskTableWidth =
+      typeof options?.taskListTable?.width === 'number'
+        ? options?.taskListTable?.width
+        : options?.taskListTable
+        ? 100
+        : 0;
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
 
@@ -237,7 +242,7 @@ export class Gantt extends EventTarget {
     if (this.parsedOptions.outerFrameStyle) {
       //考虑表格整体边框的问题
       const lineWidth = this.parsedOptions.outerFrameStyle?.borderLineWidth; // toBoxArray(this.parsedOptions.frameStyle?.borderLineWidth ?? [null]);
-      this.tableX = this.parsedOptions.verticalSplitLine.lineWidth ?? 0;
+      this.tableX = this.taskListTableInstance ? this.parsedOptions.verticalSplitLine.lineWidth ?? 0 : lineWidth;
       this.tableY = lineWidth;
       this.tableNoFrameWidth = width - lineWidth - this.parsedOptions.verticalSplitLine.lineWidth;
 
