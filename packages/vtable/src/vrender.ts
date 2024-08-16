@@ -62,7 +62,7 @@ export function registerForVrender() {
   loadPoptip();
 }
 
-export { Direction } from '@visactor/vrender-core';
+export { Direction, Timeline } from '@visactor/vrender-core';
 export { GroupFadeIn } from '@visactor/vrender-core';
 export { GroupFadeOut } from '@visactor/vrender-core';
 
