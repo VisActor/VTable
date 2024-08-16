@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix react custom layout component container height\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "nikoohp@outlook.com"
+}
