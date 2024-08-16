@@ -210,8 +210,11 @@ export function createTable() {
     theme: {
       frameStyle: {
         cornerRadius: [10, 0, 0, 10],
+        // cornerRadius: 10,
         borderLineWidth: [10, 0, 10, 10],
-        borderColor: 'red'
+        // borderLineWidth: 10,
+        borderColor: 'red',
+        shadowBlur: 0
       }
     },
     excelOptions: {
@@ -221,6 +224,10 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
+
+  bindDebugTool(tableInstance.scenegraph.stage, {
+    customGrapicKeys: ['col', 'row']
+  });
 
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
