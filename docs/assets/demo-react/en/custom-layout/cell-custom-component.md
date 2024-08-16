@@ -255,24 +255,21 @@ const CustomLayoutComponent = (props) => {
                 // }}></VText>
                 <VTag
                   key={i}
-                  attribute={{
-                    text: str,
-                    textStyle: {
-                      fontSize: 10,
-                      fontFamily: 'sans-serif',
-                      fill: 'rgb(51, 101, 238)'
-                      // textAlign: 'left',
-                      // textBaseline: 'rop',
-                    },
-                    panel: {
-                      visible: true,
-                      fill: '#e6fffb',
-                      lineWidth: 1,
-                      cornerRadius: 4
-                    },
-                    boundsPadding: [0, 0, 0, 10]
+                  textStyle={{
+                    fontSize: 10,
+                    fontFamily: 'sans-serif',
+                    fill: 'rgb(51, 101, 238)'
+                    // textAlign: 'left',
+                    // textBaseline: 'rop',
                   }}
-                ></VTag>
+                  panelStyle={{
+                    visible: true,
+                    fill: '#e6fffb',
+                    lineWidth: 1,
+                    cornerRadius: 4
+                  }}
+                  boundsPadding={[0, 0, 0, 10]}
+                >{str}</VTag>
               ))
             : null}
         </VGroup>

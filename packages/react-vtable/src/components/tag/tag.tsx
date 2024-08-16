@@ -28,7 +28,7 @@ const defaultProps: TagProps = {
     fontFamily: 'sans-serif',
     fill: 'rgb(51, 101, 238)'
   },
-  padding: [8, 10],
+  // padding: [8, 10],
   panelStyle: {
     visible: true,
     fill: '#e6fffb',
