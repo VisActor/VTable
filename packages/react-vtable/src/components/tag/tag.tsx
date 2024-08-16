@@ -12,6 +12,7 @@ import { merge } from '@visactor/vutils';
 import React, { useEffect } from 'react';
 
 export interface TagProps {
+  attribute?: TagAttributes;
   children?: string;
   textStyle?: Partial<ITextGraphicAttribute>;
   panelStyle?: Partial<IRectGraphicAttribute>;
@@ -38,18 +39,20 @@ const defaultProps: TagProps = {
 
 function TagComponent(baseProps: TagProps, ref: React.Ref<VRenderTag>) {
   const props: TagProps = merge({}, defaultProps, baseProps);
-  const { panelStyle, children, ...rest } = props;
+  const { attribute, panelStyle, children, ...rest } = props;
   let tagRef = React.useRef<VRenderTag>(null);
   tagRef = ref ? (ref as React.RefObject<VRenderTag>) : tagRef;
 
   return (
     <VTag
       ref={tagRef}
-      attribute={{
-        text: children,
-        panel: panelStyle as any,
-        ...rest
-      }}
+      attribute={
+        attribute ?? {
+          text: children,
+          panel: panelStyle as any,
+          ...rest
+        }
+      }
     ></VTag>
   );
 }
