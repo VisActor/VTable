@@ -13,6 +13,7 @@ import { getTaskIndexByY } from '../gantt-helper';
 import { debounce } from '../tools/debounce';
 import type { GanttTaskBarNode } from '../scenegraph/ganttNode';
 import { TASKBAR_HOVER_ICON_WIDTH } from '../scenegraph/task-bar';
+import { Inertia } from '../tools/inertia';
 export class StateManager {
   _gantt: Gantt;
 
@@ -35,9 +36,12 @@ export class StateManager {
     /** x坐标是相对table内坐标 */
     startX: number;
     startY: number;
+    deltaX: number;
     targetStartX: number;
     moving: boolean;
     target: GanttTaskBarNode;
+    moveTaskBarXSpeed: number;
+    moveTaskBarXInertia: Inertia;
   };
 
   hoverTaskBar: {
@@ -73,10 +77,13 @@ export class StateManager {
     };
     this.moveTaskBar = {
       targetStartX: null,
+      deltaX: 0,
       startX: null,
       startY: null,
       moving: false,
-      target: null
+      target: null,
+      moveTaskBarXSpeed: 0,
+      moveTaskBarXInertia: new Inertia()
     };
 
     this.hoverTaskBar = {
@@ -137,6 +144,12 @@ export class StateManager {
         scrollRatioY: yRatio
       });
     }
+  }
+  get scrollLeft() {
+    return this.scroll.horizontalBarPos;
+  }
+  get scrollTop() {
+    return this.scroll.verticalBarPos;
   }
   setScrollLeft(left: number, triggerEvent: boolean = true) {
     // 矫正left值范围
@@ -262,20 +275,29 @@ export class StateManager {
     return this.moveTaskBar.moving;
   }
   endMoveTaskBar(x: number) {
-    const deltaX = x - this.moveTaskBar.startX;
+    if (this.moveTaskBar.moveTaskBarXInertia.isInertiaScrolling()) {
+      this.moveTaskBar.moveTaskBarXInertia.endInertia();
+    }
+    // const deltaX = x - this.moveTaskBar.startX;
+    const deltaX = this.moveTaskBar.deltaX;
     const days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
 
     const correctX = days * this._gantt.parsedOptions.colWidthPerDay;
     const targetEndX = this.moveTaskBar.targetStartX + correctX;
-    this._gantt.stateManager.moveTaskBar.target.setAttribute('x', targetEndX);
+    const target = this._gantt.stateManager.moveTaskBar.target;
+    target.setAttribute('x', targetEndX);
+    // if (target.attribute.x < this._gantt.stateManager.scrollLeft - 2) {
+    //   this._gantt.stateManager.setScrollLeft(target.attribute.x);
+    // }
+    // if(this._gantt.stateManager.scrollLeft===0){
+
+    // }
     if (Math.abs(days) >= 1) {
       const taskIndex = getTaskIndexByY(this.moveTaskBar.startY, this._gantt);
       const oldRecord = this._gantt.getRecordByIndex(taskIndex);
       const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
       const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
       this._gantt._updateDateToTaskRecord('move', days, taskIndex);
-      this.moveTaskBar.moving = false;
-      this.moveTaskBar.target = null;
       if (this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
         const newRecord = this._gantt.getRecordByIndex(taskIndex);
         this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
@@ -289,13 +311,51 @@ export class StateManager {
       }
     }
     this._gantt.scenegraph.updateNextFrame();
+    this.moveTaskBar.moving = false;
+    this.moveTaskBar.target = null;
+    this.moveTaskBar.deltaX = 0;
+    this.moveTaskBar.moveTaskBarXSpeed = 0;
   }
   dealTaskBarMove(e: VRender.FederatedPointerEvent) {
     const target = this.moveTaskBar.target;
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
     const x2 = e.x;
     const dx = x2 - x1;
+    this.moveTaskBar.deltaX += dx;
     target.setAttribute('x', target.attribute.x + dx);
+    // if (target.attribute.x < this._gantt.stateManager.scrollLeft - 2) {
+    // this._gantt.stateManager.setScrollLeft(target.attribute.x);
+    // }
+    if (target.attribute.x <= this._gantt.stateManager.scrollLeft && dx < 0) {
+      this.moveTaskBar.moveTaskBarXSpeed = -this._gantt.parsedOptions.colWidthPerDay / 100;
+
+      this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
+      this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
+        this.moveTaskBar.deltaX += dx;
+        target.setAttribute('x', target.attribute.x + dx);
+        this._gantt.stateManager.setScrollLeft(target.attribute.x);
+      });
+    } else if (
+      target.attribute.x + target.attribute.width >=
+        this._gantt.stateManager.scrollLeft + this._gantt.tableNoFrameWidth &&
+      dx > 0
+    ) {
+      this.moveTaskBar.moveTaskBarXSpeed = this._gantt.parsedOptions.colWidthPerDay / 100;
+
+      this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
+      this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
+        this.moveTaskBar.deltaX += dx;
+        target.setAttribute('x', target.attribute.x + dx);
+        this._gantt.stateManager.setScrollLeft(
+          target.attribute.x + target.attribute.width - this._gantt.tableNoFrameWidth
+        );
+      });
+    } else if (this.moveTaskBar.moveTaskBarXInertia.isInertiaScrolling()) {
+      this.moveTaskBar.moveTaskBarXInertia.endInertia();
+    } else {
+      this.moveTaskBar.moveTaskBarXSpeed = 0;
+    }
+
     this._gantt.scenegraph.updateNextFrame();
 
     //

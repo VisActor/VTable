@@ -49,15 +49,15 @@ ${prefix} customLayout(ITaskBarCustomLayout)
 
 {{ use: common-gantt-task-bar-custom-layout }}
 
-${prefix} resizable(boolean)
+${prefix} resizable(boolean) = true
 
-任务条是否可调整大小
+任务条是否可调整大小。默认为true
 
 非必填
 
-${prefix} moveable(boolean)
+${prefix} moveable(boolean) = true
 
-任务条是否可移动
+任务条是否可移动。默认为true
 
 非必填
 

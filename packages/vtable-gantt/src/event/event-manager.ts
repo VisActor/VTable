@@ -181,8 +181,8 @@ function bindContainerDomListener(eventManager: EventManager) {
   VRender.vglobal.addEventListener('mousemove', (e: VRender.FederatedPointerEvent) => {
     if (stateManager.interactionState === InteractionState.grabing) {
       const lastX = gantt.eventManager.lastDragPointerXYOnWindow?.x ?? e.x;
-      const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
-      if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
+      // const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
+      if (Math.abs(lastX - e.x) >= 1) {
         if (stateManager.isResizingTableWidth()) {
           stateManager.dealResizeTableWidth(e);
         } else if (stateManager.isMoveingTaskBar()) {
