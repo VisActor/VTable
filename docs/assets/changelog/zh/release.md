@@ -1,3 +1,34 @@
+# v1.6.1
+
+2024-08-19
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add option forceShowHeader
+- **@visactor/vtable**: frameStyle cornerRadius support array type [#2207](https://github.com/VisActor/VTable/issues/2207)
+- **@visactor/vtable**: add table releated components in react-vtable
+- **@visactor/vtable**: add enum in textStick config
+- **@visactor/vtable**: add frozenRowCount in transpose table [#2182](https://github.com/VisActor/VTable/issues/2182)
+- **@visactor/vtable**: add excelJSWorksheetCallback config in vtable-export
+- **@visactor/vtable**: add group function
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: corner header display dimension name in some case [#2180](https://github.com/VisActor/VTable/issues/2180)
+- **@visactor/vtable**: frameStyle borrerLineWidth set array, table render positon error [#2200](https://github.com/VisActor/VTable/issues/2200)
+- **@visactor/vtable**: fix icon margin error in update size [#2206](https://github.com/VisActor/VTable/issues/2206)
+- **@visactor/vtable**: fix react custom layout component container height
+- **@visactor/vtable**: fix jsx customLayout size compute mode [#2192](https://github.com/VisActor/VTable/issues/2192)
+- **@visactor/vtable**: add default color in vtable-export
+- **@visactor/vtable**: fix row-series cell type [#2188](https://github.com/VisActor/VTable/issues/2188)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: supplement backgroundColor for editor [#1518](https://github.com/VisActor/VTable/issues/1518)
+
+[更多详情请查看 v1.6.1](https://github.com/VisActor/VTable/releases/tag/v1.6.1)
+
 # v1.5.6
 
 2024-08-08
