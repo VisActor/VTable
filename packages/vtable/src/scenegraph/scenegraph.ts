@@ -27,7 +27,7 @@ import type { TooltipOptions } from '../ts-types/tooltip';
 import { computeColWidth, computeColsWidth, getAdaptiveWidth } from './layout/compute-col-width';
 import { moveHeaderPosition } from './layout/move-cell';
 import { updateCell } from './group-creater/cell-helper';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { updateAllSelectComponent, updateCellSelectBorder } from './select/update-select-border';
 import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
@@ -1636,7 +1636,9 @@ export class Scenegraph {
   }
 
   updateCellContentWhileResize(col: number, row: number) {
-    const type = this.table.getBodyColumnType(col, row);
+    const type = this.table.isHeader(col, row)
+      ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+      : this.table.getBodyColumnType(col, row);
     const cellGroup = this.getCell(col, row);
     if (type === 'image' || type === 'video') {
       updateImageCellContentWhileResize(cellGroup, col, row, 0, 0, this.table);
@@ -2032,13 +2034,15 @@ export class Scenegraph {
   updateDomContainer() {
     const { headerDomContainer, bodyDomContainer } = this.table.internalProps;
     if (headerDomContainer) {
-      headerDomContainer.style.width = `${headerDomContainer.parentElement?.offsetWidth ?? 1 - 1}px`;
+      headerDomContainer.style.width = `${(headerDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
       headerDomContainer.style.height = `${this.table.getFrozenRowsHeight()}px`;
     }
     if (bodyDomContainer) {
-      bodyDomContainer.style.width = `${bodyDomContainer.parentElement?.offsetWidth ?? 1 - 1}px`;
+      const totalFrozenRowsHeight = this.table.getFrozenRowsHeight() + this.table.getBottomFrozenRowsHeight();
+
+      bodyDomContainer.style.width = `${(bodyDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
       bodyDomContainer.style.height = `${
-        bodyDomContainer.parentElement?.offsetHeight ?? 1 - 1 - this.table.getFrozenRowsHeight()
+        (bodyDomContainer.parentElement?.offsetHeight ?? 1) - 1 - totalFrozenRowsHeight
       }px`;
       bodyDomContainer.style.top = `${this.table.getFrozenRowsHeight()}px`;
     }

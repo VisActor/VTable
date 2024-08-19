@@ -17,7 +17,7 @@ import { getCellMergeInfo } from '../../utils/get-cell-merge';
 import { InteractionState } from '../../../ts-types';
 import { isArray } from '@visactor/vutils';
 import { getCellSelectColor } from '../../../state/select/is-cell-select-highlight';
-import { createRectPath as createRectPathForVTable, renderStrokeWithCornerRadius } from './rect-contribution-render';
+import { renderStrokeWithCornerRadius } from './rect-contribution-render';
 
 // const highlightDash: number[] = [];
 
@@ -202,7 +202,7 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
         // let lastStroke: any;
         context.beginPath();
         // debugger;
-        createRectPathForVTable(
+        createRectPath(
           context,
           x,
           y,

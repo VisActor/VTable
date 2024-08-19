@@ -16,6 +16,7 @@ export default {
   },
   resolve: {
     alias: {
+      '@visactor/vtable/es/vrender': path.resolve('../packages/vtable/src/vrender.ts'),
       '@visactor/vtable': path.resolve('../packages/vtable/src/index.ts'),
       '@visactor/vtable-gantt': path.resolve('../packages/vtable-gantt/src/index.ts'),
       '@visactor/vtable-editors': path.resolve('../packages/vtable-editors/src/index.ts'),

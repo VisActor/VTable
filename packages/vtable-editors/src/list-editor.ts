@@ -24,7 +24,7 @@ export class ListEditor implements IEditor {
     select.style.padding = '4px';
     select.style.width = '100%';
     select.style.boxSizing = 'border-box';
-
+    select.style.backgroundColor = '#FFFFFF';
     this.element = select;
 
     // create option tags

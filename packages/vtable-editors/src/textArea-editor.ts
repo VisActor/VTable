@@ -26,6 +26,8 @@ export class TextAreaEditor implements IEditor {
     input.style.width = '100%';
     input.style.height = '100%';
     input.style.boxSizing = 'border-box';
+    input.style.backgroundColor = '#FFFFFF';
+
     this.element = input;
 
     this.container.appendChild(input);

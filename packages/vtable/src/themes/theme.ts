@@ -900,7 +900,7 @@ export class TableTheme implements ITableThemeDefine {
       get cursor(): CursorPropertyDefine | undefined {
         return style.cursor;
       },
-      get textStick(): boolean | undefined {
+      get textStick(): boolean | 'vertical' | 'horizontal' | undefined {
         return style.textStick;
       },
       get marked(): MarkedPropertyDefine | undefined {

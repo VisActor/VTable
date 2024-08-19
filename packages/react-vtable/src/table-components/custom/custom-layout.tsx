@@ -2,13 +2,12 @@
 import type { PropsWithChildren, ReactElement } from 'react';
 import React, { isValidElement, useCallback, useContext, useLayoutEffect, useRef } from 'react';
 import RootTableContext from '../../context/table';
-import { VRender } from '@visactor/vtable';
-import type { ICustomLayoutFuc, CustomRenderFunctionArg } from '@visactor/vtable/src/ts-types';
+import { Group } from '@visactor/vtable/es/vrender';
+import type { ICustomLayoutFuc, CustomRenderFunctionArg } from '@visactor/vtable/es/ts-types';
 import type { FiberRoot } from 'react-reconciler';
 import { reconcilor } from './reconciler';
 import { LegacyRoot } from 'react-reconciler/constants';
 
-const { Group } = VRender;
 type CustomLayoutProps = { componentId: string };
 
 export type CustomLayoutFunctionArg = Partial<CustomRenderFunctionArg> & {
@@ -148,10 +147,6 @@ function reconcilorUpdateContainer(children: ReactElement, currentContainer: any
   //   // debugger;
   //   // group.html.dom = div;
   // }
-}
-
-function isReactElement(obj) {
-  return obj && obj.$$typeof === Symbol.for('react.element');
 }
 
 function getCellRect(col: number, row: number, table: any) {

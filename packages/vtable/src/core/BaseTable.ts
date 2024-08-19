@@ -464,7 +464,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     );
     if (internalProps.tooltip.renderMode === 'html') {
       const TooltipHandler = Factory.getComponent('tooltipHandler') as ITooltipHandler;
-      internalProps.tooltipHandler = new TooltipHandler(this, internalProps.tooltip.confine);
+      TooltipHandler && (internalProps.tooltipHandler = new TooltipHandler(this, internalProps.tooltip.confine));
     }
     internalProps.menu = Object.assign(
       {
@@ -2172,6 +2172,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.isReleased = true;
     this.scenegraph = null;
     this.internalProps = null;
+
+    this.reactCustomLayout?.clearCache();
   }
 
   fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(
@@ -2807,7 +2809,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   getBodyColumnType(col: number, row: number): ColumnTypeOption {
-    const cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
+    const cellType = this.internalProps.layoutMap.getBody(col, row)?.cellType ?? 'text';
     return getProp('cellType', { cellType }, col, row, this);
   }
 

@@ -1,4 +1,5 @@
-import { RichText, Text, Group as VGroup } from '@src/vrender';
+import type { Group as VGroup } from '@src/vrender';
+import { RichText, Text } from '@src/vrender';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { validToString } from '../../tools/util';
 import type { ColumnIconOption, ColumnTypeOption, IRowSeriesNumber } from '../../ts-types';
@@ -566,7 +567,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     if (isFunction(customLayout)) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
-      if (customLayoutObj.rootContainer instanceof VGroup) {
+      if (customLayoutObj.rootContainer) {
         customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
         dealPercentCalc(customLayoutObj.rootContainer, table.getColWidth(col), 0);
         customLayoutObj.rootContainer.setStage(table.scenegraph.stage);

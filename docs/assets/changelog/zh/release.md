@@ -1,3 +1,34 @@
+# v1.6.1
+
+2024-08-19
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 新增分组渲染功能
+- **@visactor/vtable**: react-vtable中增加表格相关组件
+- **@visactor/vtable**: 新增`forceShowHeader`配置
+- **@visactor/vtable**: `frameStyle`中`cornerRadius`支持数组配置 [#2207](https://github.com/VisActor/VTable/issues/2207)
+- **@visactor/vtable**: `textStick`配置支持配置方向
+- **@visactor/vtable**: 转置列表支持`frozenRowCount`配置 [#2182](https://github.com/VisActor/VTable/issues/2182)
+- **@visactor/vtable**: `vtable-export`增加`excelJSWorksheetCallback`配置
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复角头显示维度名称问题 [#2180](https://github.com/VisActor/VTable/issues/2180)
+- **@visactor/vtable**: 修复`frameStyle`中`borrerLineWidth`配置为数组时渲染问题 [#2200](https://github.com/VisActor/VTable/issues/2200)
+- **@visactor/vtable**: 修复`icon margin`在尺寸更新时的问题 [#2206](https://github.com/VisActor/VTable/issues/2206)
+- **@visactor/vtable**: 修复`react custom layout component`容器高度问题
+- **@visactor/vtable**: 修复`jsx customLayout`尺寸计算问题 [#2192](https://github.com/VisActor/VTable/issues/2192)
+- **@visactor/vtable**: `vtable-export`增加默认颜色
+- **@visactor/vtable**: 修复`row-series`单元格类型 [#2188](https://github.com/VisActor/VTable/issues/2188)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 编辑器组件支持`backgroundColor`配置 [#1518](https://github.com/VisActor/VTable/issues/1518)
+
+[更多详情请查看 v1.6.1](https://github.com/VisActor/VTable/releases/tag/v1.6.1)
+
 # v1.5.6
 
 2024-08-08
@@ -5,11 +36,11 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add canvas & viewbox config
+- **@visactor/vtable**: 新增canvas & viewbox配置
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix released async problem [#2145](https://github.com/VisActor/VTable/issues/2145)
+- **@visactor/vtable**: 修复异步释放问题 [#2145](https://github.com/VisActor/VTable/issues/2145)
 
 
 
