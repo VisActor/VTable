@@ -137,7 +137,7 @@ In order to facilitate users to quickly implement customized cell content, React
 
 #### Tag
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState } = React;
 const { ListTable, ListColumn, Group, Tag } = ReactVTable;
 
@@ -232,7 +232,7 @@ API
 
 #### Radio
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Radio } = ReactVTable;
 
@@ -360,7 +360,7 @@ API
 
 #### Checkbox
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Checkbox } = ReactVTable;
 
@@ -443,7 +443,7 @@ API
 
 #### Button
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Button } = ReactVTable;
 
@@ -516,7 +516,7 @@ API
 
 #### Link
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Link } = ReactVTable;
 
@@ -592,7 +592,7 @@ API
 
 #### Avatar
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Avatar, Image } = ReactVTable;
 
@@ -669,7 +669,7 @@ API
 
 #### Popover
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Avatar, Popover } = ReactVTable;
 

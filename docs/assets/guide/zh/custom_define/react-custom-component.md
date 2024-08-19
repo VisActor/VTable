@@ -139,7 +139,7 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
 
 文字标签
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState } = React;
 const { ListTable, ListColumn, Group, Tag } = ReactVTable;
 
@@ -236,7 +236,7 @@ API
 
 单选框
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Radio } = ReactVTable;
 
@@ -366,7 +366,7 @@ API
 
 复选框
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Checkbox } = ReactVTable;
 
@@ -456,7 +456,7 @@ API
 
 按钮
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Button } = ReactVTable;
 
@@ -531,7 +531,7 @@ API
 
 链接
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Link } = ReactVTable;
 
@@ -609,7 +609,7 @@ API
 
 头像
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Avatar, Image } = ReactVTable;
 
@@ -688,7 +688,7 @@ API
 
 气泡卡片
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Avatar, Popover } = ReactVTable;
 
