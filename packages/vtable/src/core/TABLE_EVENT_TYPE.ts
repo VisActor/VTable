@@ -113,7 +113,7 @@ export interface TableEvents {
   /** 复制完成 */
   COPY_DATA: 'copy_data';
   /**
-   * 点击下拉菜单按钮
+   * 点击下拉菜单按钮1
    */
   DROPDOWN_ICON_CLICK: 'dropdown_icon_click';
   /**
