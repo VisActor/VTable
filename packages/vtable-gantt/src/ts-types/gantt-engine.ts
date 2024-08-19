@@ -33,6 +33,22 @@ export interface GanttConstructorOptions {
    * 数据集合
    */
   records?: any[];
+
+  /** 左侧任务信息表格相关配置 */
+  taskListTable?: {
+    /** 定义列 */
+    columns?: ColumnsDefine; // (string | IDimension)[];
+    /** 左侧任务列表信息占用的宽度。如果设置为'auto'表示将所有列完全展示 */
+    width?: 'auto' | number;
+    colWidth?: number;
+    headerStyle?: ITableStyle;
+    bodyStyle?: ITableStyle;
+    /** 左侧任务列表 最小宽度 */
+    minWidth?: number;
+    /** 左侧任务列表 最大宽度 */
+    maxWidth?: number;
+    rightFrozenColCount?: number;
+  };
   /** 时间刻度 */
   timelineHeader: {
     backgroundColor?: string;
@@ -44,30 +60,7 @@ export interface GanttConstructorOptions {
     scales: ITimelineScale[];
   };
 
-  /** 指定整个甘特图的最小日期 */
-  minDate?: string;
-  /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
-  maxDate?: string;
-
-  /** 顶部表头部分默认行高。如果想按表头层级依次配置，请配置到timelineHeader.scale中 */
-  headerRowHeight?: number;
-
-  /** 数据默认行高 */
-  rowHeight?: number;
-
-  /** 行号配置 */
-  rowSeriesNumber?: IRowSeriesNumber;
-
-  /**
-   * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
-   *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
-   * */
-  overscrollBehavior?: 'auto' | 'none';
-
-  /** 标记线配置 如果配置为true 会自动给今天做标记 */
-  markLine?: boolean | IMarkLine | IMarkLine[];
-
-  /** 设置任务条配置及样式 */
+  /** 任务条相关配置及样式 */
   taskBar?: {
     /** 任务开始日期对应的数据字段名 默认按'startDate' */
     startDateField?: string;
@@ -92,25 +85,10 @@ export interface GanttConstructorOptions {
     /** 任务条选择时的样式 TODO */
     selectionBarStyle?: ITaskBarStyle & { barOverLayColor?: string };
   };
-
-  taskListTable?: {
-    /** 定义列 */
-    columns?: ColumnsDefine; // (string | IDimension)[];
-    /** 左侧任务列表信息占用的宽度。如果设置为'auto'表示将所有列完全展示 */
-    width?: 'auto' | number;
-    colWidth?: number;
-    headerStyle?: ITableStyle;
-    bodyStyle?: ITableStyle;
-    /** 左侧任务列表 最小宽度 */
-    minWidth?: number;
-    /** 左侧任务列表 最大宽度 */
-    maxWidth?: number;
-    rightFrozenColCount?: number;
-  };
+  /** 网格线配置 */
   grid?: IGrid;
-  // timelineHeaderStyle?: ITimelineHeaderStyle;
-  scrollStyle?: IScrollStyle;
 
+  /** 整个外边框及横纵分割线配置。 */
   frame?: {
     outerFrameStyle: IFrameStyle;
     verticalSplitLine?: ILineStyle;
@@ -119,6 +97,32 @@ export interface GanttConstructorOptions {
     //列调整宽度的直线
     verticalSplitLineHighlight?: ILineStyle;
   };
+  /** 指定整个甘特图的最小日期 */
+  minDate?: string;
+  /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
+  maxDate?: string;
+
+  /** 顶部表头部分默认行高。如果想按表头层级依次配置，请配置到timelineHeader.scale中 */
+  headerRowHeight?: number;
+
+  /** 数据默认行高 */
+  rowHeight?: number;
+
+  /** 行号配置 */
+  rowSeriesNumber?: IRowSeriesNumber;
+
+  /**
+   * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
+   *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
+   * */
+  overscrollBehavior?: 'auto' | 'none';
+
+  /** 标记线配置 如果配置为true 会自动给今天做标记 */
+  markLine?: boolean | IMarkLine | IMarkLine[];
+
+  // timelineHeaderStyle?: ITimelineHeaderStyle;
+  scrollStyle?: IScrollStyle;
+
   pixelRatio?: number;
 }
 /**

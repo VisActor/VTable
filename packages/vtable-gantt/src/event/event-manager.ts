@@ -164,16 +164,16 @@ function bindContainerDomListener(eventManager: EventManager) {
   }
   if (gantt.parsedOptions.verticalSplitLineHighlight) {
     // 添加鼠标悬停时的高亮效果
-    handler.on(gantt.verticalSplitResizeLine, 'mouseover', (e: MouseEvent) => {
-      console.log('resizeLine mouseover');
-      (gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement).style.opacity = '1';
-    });
+    gantt.verticalSplitResizeLine &&
+      handler.on(gantt.verticalSplitResizeLine, 'mouseover', (e: MouseEvent) => {
+        (gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement).style.opacity = '1';
+      });
 
     // 添加鼠标移出时恢复初始样式
-    handler.on(gantt.verticalSplitResizeLine, 'mouseout', (e: MouseEvent) => {
-      console.log('resizeLine mouseout');
-      (gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement).style.opacity = '0';
-    });
+    gantt.verticalSplitResizeLine &&
+      handler.on(gantt.verticalSplitResizeLine, 'mouseout', (e: MouseEvent) => {
+        (gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement).style.opacity = '0';
+      });
   }
   VRender.vglobal.addEventListener('mousedown', (e: VRender.FederatedPointerEvent) => {
     gantt.eventManager.lastDragPointerXYOnWindow = { x: e.x, y: e.y };

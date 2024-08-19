@@ -9,6 +9,14 @@
 
 非必填
 
+## taskListTable(Object)
+
+左侧任务列表表格的相关配置。
+
+非必填
+
+{{ use: common-gantt-task-list-table(prefix = '###') }}
+
 ## timelineHeader(Object)
 
 时间刻度配置。
@@ -48,6 +56,32 @@
 时间刻度配置数组。
 
 {{ use: common-gantt-timeline-scale( prefix = '####') }}
+
+## taskBar(Object)
+
+设置任务条样式
+
+非必填
+
+{{ use: common-gantt-task-bar(prefix = '###')}}
+
+
+
+## grid(IGrid)
+
+网格样式。
+
+非必填
+
+{{ use: common-gantt-grid(prefix = '###') }}
+
+## frame(Object)
+
+整个外边框及横纵分割线配置。
+
+非必填
+
+{{ use: common-gantt-frame(prefix = '###') }}
 
 ## minDate(string)
 
@@ -108,45 +142,13 @@ export interface IMarkLine {
 ```
 {{ use: common-gantt-line-style }}
 
-## taskBar(Object)
-
-设置任务条样式
-
-非必填
-
-{{ use: common-gantt-task-bar(prefix = '###')}}
-
-## taskListTable(Object)
-
-左侧任务列表配置。
-
-非必填
-
-{{ use: common-gantt-task-list-table(prefix = '###') }}
-
-## grid(IGrid)
-
-网格样式。
-
-非必填
-
-{{ use: common-gantt-grid(prefix = '###') }}
-
 ## scrollStyle(IScrollStyle)
 
 滚动条样式。
 
 非必填
 
-具体可以参考ListTable中columns的配置：[具体配置](./ListTable#theme.scrollStyle)
-
-## frame(Object)
-
-整个外边框及横纵分割线配置。
-
-非必填
-
-{{ use: common-gantt-frame(prefix = '###') }}
+具体可以参考ListTable中的配置：[具体配置](./ListTable#theme.scrollStyle)
 
 ## pixelRatio(number)
 

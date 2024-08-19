@@ -986,7 +986,7 @@ export function createTable() {
   tableInstance.listTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
-  // bindDebugTool(tableInstance.scenegraph.stage as any, {
-  //   customGrapicKeys: ['role', '_updateTag']
-  // });
+  bindDebugTool(tableInstance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 }

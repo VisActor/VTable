@@ -58,7 +58,6 @@ export function registerForVrender() {
   registerSymbol();
   registerText();
   // registerWrapText();
-
   loadPoptip();
 }
 

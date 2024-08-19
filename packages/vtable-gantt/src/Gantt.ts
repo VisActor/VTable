@@ -256,7 +256,7 @@ export class Gantt extends EventTarget {
 
       if (this.options?.taskListTable?.width === 'auto') {
         this.taskTableWidth =
-          this.taskListTableInstance.getAllColsWidth() + this.parsedOptions.outerFrameStyle.borderLineWidth * 2;
+          this.taskListTableInstance.getAllColsWidth() + this.parsedOptions.outerFrameStyle.borderLineWidth;
         if (this.options?.taskListTable?.maxWidth) {
           this.taskTableWidth = Math.min(this.options?.taskListTable?.maxWidth, this.taskTableWidth);
         }

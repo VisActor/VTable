@@ -52,12 +52,14 @@ export class Scenegraph {
       autoRender: false,
       context: {
         appName: 'vtable'
-      }
+      },
+      pluginList: ['poptipForText']
       // afterRender: () => {
       // this._gantt.fireListeners('after_render', null);
       // }
     });
     (this.stage as any).gantt = this._gantt;
+    (this.stage as any).table = this._gantt; // 为了使用bindDebugTool
     this.stage.defaultLayer.setTheme({
       group: {
         boundsPadding: 0,

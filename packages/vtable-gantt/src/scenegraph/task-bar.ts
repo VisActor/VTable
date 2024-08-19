@@ -151,7 +151,7 @@ export class TaskBar {
       //创建label 文字
       const label = VRender.createText({
         // visible: false,
-        pickable: false,
+        // pickable: false,
         x: position.x, //extAlign === 'center' ? taskBarSize / 2 : textAlign === 'left' ? 10 : taskBarSize - 10,
         y: position.y, //fontSize / 2,
         fontSize: fontSize, // 10
@@ -168,7 +168,11 @@ export class TaskBar {
             ? '...'
             : isValid(textOverflow)
             ? textOverflow
-            : undefined
+            : undefined,
+        poptip: {
+          position: 'bottom',
+          dx: (taskBarSize - TASKBAR_HOVER_ICON_WIDTH) / 4
+        }
         // dx: 12 + 4,
         // dy: this._scene._gantt.barLabelStyle.fontSize / 2
       });

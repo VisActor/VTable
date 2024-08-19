@@ -143,6 +143,22 @@
       ]
     },
     {
+      "path": "gantt",
+      "title": {
+        "zh": "甘特图教程",
+        "en": "gantt chart"
+      },
+      "children": [
+        {
+          "path": "introduction",
+          "title": {
+            "zh": "甘特图介绍",
+            "en": "gantt introduction"
+          }
+        }
+      ]
+    },
+    {
       "path": "cell_type",
       "title": {
         "zh": "单元格类型",

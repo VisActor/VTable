@@ -16,16 +16,16 @@ export function createTable() {
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
       start: '2024-07-24',
-      end: '2024-07-26',
+      end: '2024-08-15',
       progress: 31,
       priority: 'P0',
       children: [
         {
           id: 2,
-          title: 'Scope',
+          title: 'Project Feature Review',
           developer: 'liufangfang.jane@bytedance.com',
           start: '2024-07-24',
-          end: '2024-08-04',
+          end: '2024-07-24',
           progress: 60,
           priority: 'P0'
         },
@@ -33,9 +33,27 @@ export function createTable() {
           id: 3,
           title: 'Determine project scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024/07/24',
-          end: '2024/08/04',
+          start: '2024/07/25',
+          end: '2024/07/26',
           progress: 100,
+          priority: 'P1'
+        },
+        {
+          id: 3,
+          title: 'Project Create',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024/07/27',
+          end: '2024/07/26',
+          progress: 100,
+          priority: 'P1'
+        },
+        {
+          id: 3,
+          title: 'Develop feature 1',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024/08/01',
+          end: '2024/08/15',
+          progress: 0,
           priority: 'P1'
         }
       ]
@@ -62,8 +80,8 @@ export function createTable() {
           id: 1,
           title: 'Software Development',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-08-04',
-          end: '2024-08-04',
+          start: '2024-08-01',
+          end: '2024-08-01',
           progress: 90,
           priority: 'P0'
         },
@@ -71,7 +89,7 @@ export function createTable() {
           id: 1,
           title: 'Software Development',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-24',
+          start: '2024-07-30',
           end: '2024-08-04',
           progress: 31,
           priority: 'P0'
@@ -80,7 +98,7 @@ export function createTable() {
           id: 2,
           title: 'Scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024.07.06',
+          start: '2024.07.26',
           end: '2024.07.08',
           progress: 60,
           priority: 'P0'
@@ -544,7 +562,7 @@ export function createTable() {
     {
       field: 'title',
       title: 'title',
-      width: 200,
+      width: 'auto',
       sort: true,
       tree: true,
       editor: 'input'
@@ -552,28 +570,28 @@ export function createTable() {
     {
       field: 'start',
       title: 'start',
-      width: 150,
+      width: 'auto',
       sort: true,
       editor: 'date-input'
     },
     {
       field: 'end',
       title: 'end',
-      width: 150,
+      width: 'auto',
       sort: true,
       editor: 'date-input'
     },
     {
       field: 'priority',
       title: 'priority',
-      width: 100,
+      width: 'auto',
       sort: true,
       editor: 'input'
     },
     {
       field: 'progress',
       title: 'progress',
-      width: 80,
+      width: 'auto',
       sort: true,
       headerStyle: {
         borderColor: '#e1e4e8'
@@ -592,7 +610,7 @@ export function createTable() {
       columns,
       width: 'auto',
       minWidth: 100,
-      maxWidth: 600,
+      // maxWidth: 600,
       headerStyle: {
         borderColor: '#e1e4e8',
         borderLineWidth: 1,
@@ -613,12 +631,12 @@ export function createTable() {
     frame: {
       outerFrameStyle: {
         borderLineWidth: 2,
-        borderColor: 'red',
+        borderColor: '#e1e4e8',
         cornerRadius: 8
       },
       verticalSplitLine: {
         lineColor: '#e1e4e8',
-        lineWidth: 10
+        lineWidth: 3
       },
       horizontalSplitLine: {
         lineColor: '#e1e4e8',
@@ -735,7 +753,7 @@ export function createTable() {
     // maxDate: '2024-10-15',
     markLine: [
       {
-        date: '2024-07-17',
+        date: '2024-07-28',
         style: {
           lineWidth: 1,
           lineColor: 'blue',
@@ -764,7 +782,7 @@ export function createTable() {
     },
     scrollStyle: {
       scrollRailColor: 'RGBA(246,246,246,0.5)',
-      visible: 'always',
+      visible: 'scrolling',
       width: 6,
       scrollSliderCornerRadius: 2,
       scrollSliderColor: '#5cb85c'

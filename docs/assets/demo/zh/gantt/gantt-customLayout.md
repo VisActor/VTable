@@ -1,33 +1,43 @@
-import type { ColumnsDefine } from '@visactor/vtable';
-import { register, VRender, CustomLayout } from '@visactor/vtable';
-import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
-import type { GanttConstructorOptions, TYPES } from '../../src/index';
-import { Gantt } from '../../src/index';
-import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
-const CONTAINER_ID = 'vTable';
-const date_input_editor = new DateInputEditor({});
-const input_editor = new InputEditor({});
-register.editor('input', input_editor);
-register.editor('date-input', date_input_editor);
-const barColors0 = ['#aecde6', '#c6a49a', '#ffb582', '#eec1de', '#b3d9b3', '#cccccc', '#e59a9c', '#d9d1a5', '#c9bede'];
-const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#7f7f7f', '#d62728', '#bcbd22', '#9467bd'];
-export function createTable() {
-  const records0 = [
+---
+category: examples
+group: gantt
+title: 甘特图自定义渲染用法
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-customLayout.png
+link: '../guide/gantt/introduction'
+option: Gantt#taskBar
+---
+
+# 甘特图自定义渲染用法
+
+该示例展示了如何自定义渲染甘特图任务条及日期表头。
+
+## 关键配置
+
+-`Gantt`
+-`taskBar`
+-`timelineHeader`
+
+## 代码演示
+
+```javascript livedemo template=vtable
+// import * as VTableGantt from '@visactor/vtable-gantt';
+let  tableInstance;
+  const records = [
     {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-30',
-      end: '2024-08-14',
+      start: '2024-07-24',
+      end: '2024-08-15',
       progress: 31,
       priority: 'P0',
       children: [
         {
           id: 2,
-          title: 'Scope',
+          title: 'Project Feature Review',
           developer: 'liufangfang.jane@bytedance.com',
           start: '2024-07-24',
-          end: '2024-08-04',
+          end: '2024-07-24',
           progress: 60,
           priority: 'P0'
         },
@@ -35,9 +45,27 @@ export function createTable() {
           id: 3,
           title: 'Determine project scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024/07/24',
-          end: '2024/08/04',
+          start: '2024/07/25',
+          end: '2024/07/26',
           progress: 100,
+          priority: 'P1'
+        },
+        {
+          id: 3,
+          title: 'Project Create',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024/07/27',
+          end: '2024/07/26',
+          progress: 100,
+          priority: 'P1'
+        },
+        {
+          id: 3,
+          title: 'Develop feature 1',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024/08/01',
+          end: '2024/08/15',
+          progress: 0,
           priority: 'P1'
         }
       ]
@@ -64,8 +92,8 @@ export function createTable() {
           id: 1,
           title: 'Software Development',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-08-04',
-          end: '2024-08-04',
+          start: '2024-08-01',
+          end: '2024-08-01',
           progress: 90,
           priority: 'P0'
         },
@@ -73,7 +101,7 @@ export function createTable() {
           id: 1,
           title: 'Software Development',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-24',
+          start: '2024-07-30',
           end: '2024-08-04',
           progress: 31,
           priority: 'P0'
@@ -82,7 +110,7 @@ export function createTable() {
           id: 2,
           title: 'Scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024.07.06',
+          start: '2024.07.26',
           end: '2024.07.08',
           progress: 60,
           priority: 'P0'
@@ -91,8 +119,8 @@ export function createTable() {
           id: 3,
           title: 'Determine project scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024/07/09',
-          end: '2024/07/11',
+          start: '2024-07-29',
+          end: '2024-07-31',
           progress: 100,
           priority: 'P1'
         },
@@ -109,8 +137,8 @@ export function createTable() {
           id: 2,
           title: 'Scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-06',
-          end: '2024-07-08',
+          start: '2024-07-16',
+          end: '2024-07-18',
           progress: 60,
           priority: 'P0'
         },
@@ -139,8 +167,8 @@ export function createTable() {
       id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
+      start: '2024-07-26',
+      end: '2024-07-28',
       progress: 60,
       priority: 'P0',
       children: [
@@ -148,8 +176,8 @@ export function createTable() {
           id: 3,
           title: 'Determine project scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-09',
-          end: '2024-07-11',
+          start: '2024-07-29',
+          end: '2024-07-31',
           progress: 100,
           priority: 'P1',
           children: [
@@ -166,8 +194,8 @@ export function createTable() {
               id: 2,
               title: 'Scope',
               developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-06',
-              end: '2024-07-08',
+              start: '2024-07-26',
+              end: '2024-07-28',
               progress: 60,
               priority: 'P0'
             },
@@ -175,8 +203,8 @@ export function createTable() {
               id: 3,
               title: 'Determine project scope',
               developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-09',
-              end: '2024-07-11',
+            start: '2024-07-29',
+            end: '2024-07-31',
               progress: 100,
               priority: 'P1'
             }
@@ -213,8 +241,8 @@ export function createTable() {
               id: 3,
               title: 'Determine project scope',
               developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-09',
-              end: '2024-07-11',
+          start: '2024-07-29',
+          end: '2024-07-31',
               progress: 100,
               priority: 'P1'
             }
@@ -224,8 +252,8 @@ export function createTable() {
           id: 2,
           title: 'Scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-06',
-          end: '2024-07-08',
+          start: '2024-07-26',
+          end: '2024-07-28',
           progress: 60,
           priority: 'P0'
         },
@@ -233,8 +261,8 @@ export function createTable() {
           id: 3,
           title: 'Determine project scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-09',
-          end: '2024-07-11',
+          start: '2024-07-29',
+          end: '2024-07-31',
           progress: 100,
           priority: 'P1',
           children: [
@@ -271,8 +299,8 @@ export function createTable() {
           id: 2,
           title: 'Scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-06',
-          end: '2024-07-08',
+          start: '2024-07-26',
+          end: '2024-07-28',
           progress: 60,
           priority: 'P0'
         },
@@ -280,8 +308,8 @@ export function createTable() {
           id: 3,
           title: 'Determine project scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-09',
-          end: '2024-07-11',
+          start: '2024-07-29',
+          end: '2024-07-31',
           progress: 100,
           priority: 'P1'
         }
@@ -292,8 +320,8 @@ export function createTable() {
       id: 3,
       title: 'Determine project scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
+      start: '2024-07-29',
+      end: '2024-07-31',
       progress: 100,
       priority: 'P1',
       children: [
@@ -310,8 +338,8 @@ export function createTable() {
           id: 2,
           title: 'Scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-06',
-          end: '2024-07-08',
+          start: '2024-07-23',
+          end: '2024-07-28',
           progress: 60,
           priority: 'P0'
         },
@@ -319,8 +347,8 @@ export function createTable() {
           id: 3,
           title: 'Determine project scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-09',
-          end: '2024-07-11',
+          start: '2024-07-29',
+          end: '2024-07-31',
           progress: 100,
           priority: 'P1'
         },
@@ -386,8 +414,8 @@ export function createTable() {
       id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
+      start: '2024-07-27',
+      end: '2024-07-28',
       progress: 60,
       priority: 'P0'
     },
@@ -395,8 +423,8 @@ export function createTable() {
       id: 3,
       title: 'Determine project scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
+          start: '2024-07-29',
+          end: '2024-07-31',
       progress: 100,
       priority: 'P1',
       children: [
@@ -413,8 +441,8 @@ export function createTable() {
           id: 2,
           title: 'Scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-06',
-          end: '2024-07-08',
+          start: '2024-07-26',
+          end: '2024-07-28',
           progress: 60,
           priority: 'P0'
         },
@@ -440,8 +468,8 @@ export function createTable() {
           id: 2,
           title: 'Scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-06',
-          end: '2024-07-08',
+          start: '2024-07-26',
+          end: '2024-07-28',
           progress: 60,
           priority: 'P0'
         },
@@ -449,8 +477,8 @@ export function createTable() {
           id: 3,
           title: 'Determine project scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-09',
-          end: '2024-07-11',
+          start: '2024-07-29',
+          end: '2024-07-31',
           progress: 100,
           priority: 'P1'
         },
@@ -467,8 +495,8 @@ export function createTable() {
           id: 2,
           title: 'Scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-06',
-          end: '2024-07-08',
+          start: '2024-07-26',
+          end: '2024-07-28',
           progress: 60,
           priority: 'P0'
         },
@@ -476,8 +504,8 @@ export function createTable() {
           id: 3,
           title: 'Determine project scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-09',
-          end: '2024-07-11',
+          start: '2024-07-29',
+          end: '2024-07-31',
           progress: 100,
           priority: 'P1'
         }
@@ -523,8 +551,8 @@ export function createTable() {
           id: 3,
           title: 'Determine project scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024/07/09',
-          end: '2024/07/11',
+          start: '2024-07-29',
+          end: '2024-07-31',
           progress: 100,
           priority: 'P1'
         }
@@ -532,21 +560,11 @@ export function createTable() {
     }
   ];
 
-  const records = [];
-  for (let i = 0; i < 100; i++) {
-    records.push(...records0);
-  }
-  const columns: ColumnsDefine = [
-    // {
-    //   field: 'id',
-    //   title: 'ID',
-    //   width: 80,
-    //   sort: true
-    // },
+  const columns = [
     {
       field: 'title',
       title: 'title',
-      width: 200,
+      width: 'auto',
       sort: true,
       tree: true,
       editor: 'input'
@@ -554,28 +572,28 @@ export function createTable() {
     {
       field: 'start',
       title: 'start',
-      width: 150,
+      width: 'auto',
       sort: true,
       editor: 'date-input'
     },
     {
       field: 'end',
       title: 'end',
-      width: 150,
+      width: 'auto',
       sort: true,
       editor: 'date-input'
     },
     {
       field: 'priority',
       title: 'priority',
-      width: 100,
+      width: 'auto',
       sort: true,
       editor: 'input'
     },
     {
       field: 'progress',
       title: 'progress',
-      width: 200,
+      width: 'auto',
       sort: true,
       headerStyle: {
         borderColor: '#e1e4e8'
@@ -587,20 +605,21 @@ export function createTable() {
       editor: 'input'
     }
   ];
-  const option: GanttConstructorOptions = {
+  const option = {
+    overscrollBehavior: 'none',
     records,
     taskListTable: {
-      columns: columns,
-      width: 400,
+      columns,
+      width: 250,
       minWidth: 100,
-      maxWidth: 600,
+      // maxWidth: 600,
       headerStyle: {
         borderColor: '#e1e4e8',
         borderLineWidth: 1,
         fontSize: 18,
         fontWeight: 'bold',
-        color: 'red'
-        // bgColor: '#EEF1F5'
+        color: 'red',
+        bgColor: '#EEF1F5'
       },
       bodyStyle: {
         borderColor: '#e1e4e8',
@@ -609,14 +628,23 @@ export function createTable() {
         color: '#4D4D4D',
         bgColor: '#FFF'
       }
+      //rightFrozenColCount: 1
     },
-
     frame: {
       outerFrameStyle: {
         borderLineWidth: 2,
-        borderColor: 'red',
+        borderColor: '#e1e4e8',
         cornerRadius: 8
       },
+      verticalSplitLine: {
+        lineColor: '#e1e4e8',
+        lineWidth: 3
+      },
+      horizontalSplitLine: {
+        lineColor: '#e1e4e8',
+        lineWidth: 3
+      },
+      verticalSplitLineMoveable: true,
       verticalSplitLineHighlight: {
         lineColor: 'green',
         lineWidth: 3
@@ -624,115 +652,36 @@ export function createTable() {
     },
     grid: {
       // backgroundColor: 'gray',
-      // vertical: {
-      //   lineWidth: 1,
-      //   lineColor: '#e1e4e8'
-      // },
+      verticalLine: {
+        lineWidth: 1,
+        lineColor: '#e1e4e8'
+      },
       horizontalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
       }
     },
-    headerRowHeight: 60,
-    rowHeight: 80,
+    headerRowHeight: 40,
+    rowHeight: 40,
     taskBar: {
       startDateField: 'start',
       endDateField: 'end',
       progressField: 'progress',
-      customLayout: (args: any) => {
-        const colorLength = barColors.length;
-        const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
-        const container = new VRender.Group({
-          width,
-          height,
-          fill: {
-            gradient: 'linear',
-            x0: 0,
-            y0: 0,
-            x1: 1,
-            y1: 0,
-            stops: [
-              {
-                offset: 0,
-                color: barColors0[index % colorLength]
-              },
-              {
-                offset: 0.5,
-                color: barColors[index % colorLength]
-              },
-              {
-                offset: 1,
-                color: barColors0[index % colorLength]
-              }
-            ]
-          },
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'nowrap'
-        });
-        const containerLeft = new VRender.Group({
-          height,
-          width: 60,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-around'
-          // fill: 'red'
-        });
-        container.add(containerLeft);
-
-        const icon0 = new VRender.Image({
-          width: 50,
-          height: 50,
-          image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
-          cornerRadius: 25
-        });
-        containerLeft.add(icon0);
-
-        const containerRight = new VRender.Group({
-          height,
-          width: width - 60,
-          display: 'flex',
-          flexDirection: 'column'
-          // alignItems: 'left'
-        });
-        container.add(containerRight);
-
-        const bloggerName = new VRender.Text({
-          text: taskRecord.title,
-          fontSize: 16,
-          fontFamily: 'sans-serif',
-          fill: 'white',
-          maxLineWidth: width - 60,
-          boundsPadding: [10, 0, 0, 0]
-        });
-        containerRight.add(bloggerName);
-
-        const days = new VRender.Text({
-          text: `${taskDays}天`,
-          fontSize: 13,
-          fontFamily: 'sans-serif',
-          fill: 'white',
-          boundsPadding: [10, 0, 0, 0]
-        });
-        containerRight.add(days);
-        return {
-          rootContainer: container
-          // renderDefaultBar: true
-          // renderDefaultText: true
-        };
+      // resizable: false,
+      moveable: true,
+      hoverBarStyle: {
+        barOverLayColor: 'rgba(99, 144, 0, 0.4)'
       },
       labelText: '{title} {progress}%',
       labelTextStyle: {
+        // padding: 2,
         fontFamily: 'Arial',
         fontSize: 16,
-        textAlign: 'right',
-        textOverflow: 'ellipsis',
-        padding: [0, 20],
-        textBaseline: 'bottom'
+        textAlign: 'left',
+        textOverflow: 'ellipsis'
       },
       barStyle: {
-        width: 60,
+        width: 20,
         /** 任务条的颜色 */
         barColor: '#ee8800',
         /** 已完成部分任务条的颜色 */
@@ -746,53 +695,57 @@ export function createTable() {
       }
     },
     timelineHeader: {
+      colWidth: 100,
       backgroundColor: '#EEF1F5',
-      colWidth: 50,
-      verticalLine: {
-        lineColor: 'red',
-        lineWidth: 1,
-        lineDash: [4, 2]
-      },
       horizontalLine: {
-        lineColor: 'green',
         lineWidth: 1,
-        lineDash: [4, 2]
+        lineColor: '#e1e4e8'
+      },
+      verticalLine: {
+        lineWidth: 1,
+        lineColor: '#e1e4e8'
       },
       scales: [
         {
           unit: 'week',
           step: 1,
           startOfWeek: 'sunday',
-          format(date: TYPES.DateFormatArgumentType) {
+          format(date) {
             return `Week ${date.dateIndex}`;
           },
           style: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'red',
-            backgroundColor: '#EEF1F5'
+            color: 'white',
+            strokeColor: 'black',
+            textAlign: 'right',
+            textBaseline: 'bottom',
+            backgroundColor: '#EEF1F5',
+            textStick: true
+            // padding: [0, 30, 0, 20]
           }
         },
         {
           unit: 'day',
           step: 1,
-          format(date: TYPES.DateFormatArgumentType) {
+          format(date) {
             return date.dateIndex.toString();
           },
           style: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'red',
+            color: 'white',
+            strokeColor: 'black',
+            textAlign: 'right',
+            textBaseline: 'bottom',
             backgroundColor: '#EEF1F5'
           }
         }
       ]
     },
-    minDate: '2024-07-07',
-    maxDate: '2024-10-15',
     markLine: [
       {
-        date: '2024-07-17',
+        date: '2024-07-28',
         style: {
           lineWidth: 1,
           lineColor: 'blue',
@@ -821,22 +774,14 @@ export function createTable() {
     },
     scrollStyle: {
       scrollRailColor: 'RGBA(246,246,246,0.5)',
-      visible: 'focus',
+      visible: 'scrolling',
       width: 6,
       scrollSliderCornerRadius: 2,
       scrollSliderColor: '#5cb85c'
     }
   };
-  const tableInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
-  window.tableInstance = tableInstance;
-  tableInstance.on('scroll', e => {
-    console.log('scroll', e);
-  });
+tableInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID),option);
+window['tableInstance'] = tableInstance;
 
-  tableInstance.taskListTableInstance?.on('scroll', e => {
-    console.log('listTable scroll', e);
-  });
-  bindDebugTool(tableInstance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
-}
+```
+
