@@ -2,7 +2,19 @@
   "name": "@visactor/vtable",
   "entries": [
     {
-      "version": "1.5.7",
+      "version": "1.6.1",
+      "tag": "@visactor/vtable_v1.6.1",
+      "date": "Mon, 19 Aug 2024 08:06:44 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "chore: release 1.6.1"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.6.0",
       "tag": "@visactor/vtable_v1.5.7",
       "date": "Mon, 19 Aug 2024 07:36:42 GMT",
       "comments": {
