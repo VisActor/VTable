@@ -37,7 +37,7 @@ export class Style extends EventTarget implements ColumnStyle {
   private _fontStyle?: FontStylePropertyDefine;
   private _padding?: PaddingsPropertyDefine;
   private _defaultPadding: PaddingsPropertyDefine = [10, 16, 10, 16];
-  private _textStick: boolean;
+  private _textStick: boolean | 'vertical' | 'horizontal';
   private _textStickBaseOnAlign: boolean;
   private _textOverflow?: TextOverflow;
   private _textAlign?: TextAlignType;
@@ -173,10 +173,10 @@ export class Style extends EventTarget implements ColumnStyle {
     this._borderColor = borderColor;
     // this.doChangeStyle();
   }
-  get textStick(): boolean {
+  get textStick(): boolean | 'vertical' | 'horizontal' {
     return this._textStick;
   }
-  set textStick(textStick: boolean) {
+  set textStick(textStick: boolean | 'vertical' | 'horizontal') {
     this._textStick = textStick;
     // this.doChangeStyle();
   }

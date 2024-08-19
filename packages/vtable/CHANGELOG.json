@@ -2,6 +2,62 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.5.7",
+      "tag": "@visactor/vtable_v1.5.7",
+      "date": "Mon, 19 Aug 2024 07:36:42 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: supplement backgroundColor for editor #1518\n\n"
+          },
+          {
+            "comment": "fix: corner header display dimension name in some case #2180\n\n"
+          },
+          {
+            "comment": "feat: add option forceShowHeader\n\n"
+          },
+          {
+            "comment": "fix: frameStyle borrerLineWidth set array, table render positon error #2200\n\n"
+          },
+          {
+            "comment": "feat: frameStyle cornerRadius support array type #2207\n\n"
+          },
+          {
+            "comment": "feat: add table releated components in react-vtable"
+          },
+          {
+            "comment": "feat: add enum in textStick config"
+          },
+          {
+            "comment": "feat: add frozenRowCount in transpose table #2182"
+          },
+          {
+            "comment": "fix: fix icon margin error in update size #2206"
+          },
+          {
+            "comment": "fix: fix react custom layout component container height\n\n"
+          },
+          {
+            "comment": "fix: fix jsx customLayout size compute mode #2192"
+          },
+          {
+            "comment": "fix: add default color in vtable-export"
+          },
+          {
+            "comment": "feat: add excelJSWorksheetCallback config in vtable-export"
+          },
+          {
+            "comment": "fix: fix row-series cell type #2188"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add group function"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.5.6",
       "tag": "@visactor/vtable_v1.5.6",
       "date": "Thu, 08 Aug 2024 02:54:17 GMT",

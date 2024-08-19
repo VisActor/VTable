@@ -79,6 +79,13 @@
                 "zh": "树形结构",
                 "en": "tree list"
               }
+            },
+            {
+              "path": "group_list",
+              "title": {
+                "zh": "分组展示",
+                "en": "group list"
+              }
             }
           ]
         },
@@ -409,6 +416,13 @@
           }
         },
         {
+          "path": "react-custom-component",
+          "title": {
+            "zh": "React自定义组件",
+            "en": "React Custom Component"
+          }
+        },
+        {
           "path": "custom_render",
           "title": {
             "zh": "单元格自定义渲染(CustomRender)",
@@ -600,13 +614,6 @@
           "title": {
             "zh": "React-VTable",
             "en": "React-VTable"
-          }
-        },
-        {
-          "path": "react-custom-component",
-          "title": {
-            "zh": "React自定义组件",
-            "en": "React Custom Component"
           }
         },
         {

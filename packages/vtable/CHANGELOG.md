@@ -1,6 +1,42 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 08 Aug 2024 02:54:17 GMT and should not be manually modified.
+This log was last generated on Mon, 19 Aug 2024 07:36:42 GMT and should not be manually modified.
+
+## 1.5.7
+Mon, 19 Aug 2024 07:36:42 GMT
+
+### Minor changes
+
+- feat: add group function
+
+### Updates
+
+- refactor: supplement backgroundColor for editor #1518
+
+
+- fix: corner header display dimension name in some case #2180
+
+
+- feat: add option forceShowHeader
+
+
+- fix: frameStyle borrerLineWidth set array, table render positon error #2200
+
+
+- feat: frameStyle cornerRadius support array type #2207
+
+
+- feat: add table releated components in react-vtable
+- feat: add enum in textStick config
+- feat: add frozenRowCount in transpose table #2182
+- fix: fix icon margin error in update size #2206
+- fix: fix react custom layout component container height
+
+
+- fix: fix jsx customLayout size compute mode #2192
+- fix: add default color in vtable-export
+- feat: add excelJSWorksheetCallback config in vtable-export
+- fix: fix row-series cell type #2188
 
 ## 1.5.6
 Thu, 08 Aug 2024 02:54:17 GMT

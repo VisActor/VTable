@@ -27,7 +27,7 @@ import type { TooltipOptions } from '../ts-types/tooltip';
 import { computeColWidth, computeColsWidth, getAdaptiveWidth } from './layout/compute-col-width';
 import { moveHeaderPosition } from './layout/move-cell';
 import { updateCell } from './group-creater/cell-helper';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { updateAllSelectComponent, updateCellSelectBorder } from './select/update-select-border';
 import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
@@ -972,49 +972,75 @@ export class Scenegraph {
       )
     } as any);
 
-    if (this.tableGroup.border && this.tableGroup.border.type === 'rect') {
-      if (this.table.theme.frameStyle?.innerBorder) {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
+    if (this.tableGroup.border) {
+      const rectAttributes = this.tableGroup.border?.attribute;
+      let borderTop;
+      let borderRight;
+      let borderBottom;
+      let borderLeft;
+      if ((rectAttributes as any)?.strokeArrayWidth) {
+        borderTop = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[0]
+          : (rectAttributes.lineWidth as number) ?? 0;
+        borderRight = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[1]
+          : (rectAttributes.lineWidth as number) ?? 0;
+        borderBottom = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[2]
+          : (rectAttributes.lineWidth as number) ?? 0;
+        borderLeft = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[3]
+          : (rectAttributes.lineWidth as number) ?? 0;
       } else {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-        });
+        borderTop = (rectAttributes?.lineWidth as number) ?? 0;
+        borderRight = (rectAttributes?.lineWidth as number) ?? 0;
+        borderBottom = (rectAttributes?.lineWidth as number) ?? 0;
+        borderLeft = (rectAttributes?.lineWidth as number) ?? 0;
       }
-    } else if (this.tableGroup.border && this.tableGroup.border.type === 'group') {
-      if (this.table.theme.frameStyle?.innerBorder) {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
-        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-          x: 0,
-          y: 0,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
-      } else {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-        });
-        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-          x: this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width,
-          height: this.tableGroup.attribute.height
-        });
+      if (this.tableGroup.border.type === 'rect') {
+        if (this.table.theme.frameStyle?.innerBorder) {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX + borderLeft / 2,
+            y: this.table.tableY + borderTop / 2,
+            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+          });
+        } else {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX - borderLeft / 2,
+            y: this.table.tableY - borderTop / 2,
+            width: this.tableGroup.attribute.width + borderLeft / 2 + borderRight / 2,
+            height: this.tableGroup.attribute.height + borderTop / 2 + borderBottom / 2
+          });
+        }
+      } else if (this.tableGroup.border.type === 'group') {
+        if (this.table.theme.frameStyle?.innerBorder) {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX + borderLeft / 2,
+            y: this.table.tableY + borderTop / 2,
+            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+          });
+          (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+            x: 0,
+            y: 0,
+            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+          });
+        } else {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX - borderLeft / 2,
+            y: this.table.tableY - borderTop / 2,
+            width: this.tableGroup.attribute.width + borderLeft / 2 + borderRight / 2,
+            height: this.tableGroup.attribute.height + borderTop / 2 + borderBottom / 2
+          });
+          (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+            x: borderLeft / 2,
+            y: borderTop / 2,
+            width: this.tableGroup.attribute.width,
+            height: this.tableGroup.attribute.height
+          });
+        }
       }
     }
 
@@ -1610,7 +1636,9 @@ export class Scenegraph {
   }
 
   updateCellContentWhileResize(col: number, row: number) {
-    const type = this.table.getBodyColumnType(col, row);
+    const type = this.table.isHeader(col, row)
+      ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+      : this.table.getBodyColumnType(col, row);
     const cellGroup = this.getCell(col, row);
     if (type === 'image' || type === 'video') {
       updateImageCellContentWhileResize(cellGroup, col, row, 0, 0, this.table);
@@ -2006,13 +2034,15 @@ export class Scenegraph {
   updateDomContainer() {
     const { headerDomContainer, bodyDomContainer } = this.table.internalProps;
     if (headerDomContainer) {
-      headerDomContainer.style.width = `${headerDomContainer.parentElement?.offsetWidth ?? 1 - 1}px`;
+      headerDomContainer.style.width = `${(headerDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
       headerDomContainer.style.height = `${this.table.getFrozenRowsHeight()}px`;
     }
     if (bodyDomContainer) {
-      bodyDomContainer.style.width = `${bodyDomContainer.parentElement?.offsetWidth ?? 1 - 1}px`;
+      const totalFrozenRowsHeight = this.table.getFrozenRowsHeight() + this.table.getBottomFrozenRowsHeight();
+
+      bodyDomContainer.style.width = `${(bodyDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
       bodyDomContainer.style.height = `${
-        bodyDomContainer.parentElement?.offsetHeight ?? 1 - 1 - this.table.getFrozenRowsHeight()
+        (bodyDomContainer.parentElement?.offsetHeight ?? 1) - 1 - totalFrozenRowsHeight
       }px`;
       bodyDomContainer.style.top = `${this.table.getFrozenRowsHeight()}px`;
     }

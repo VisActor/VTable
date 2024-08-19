@@ -195,7 +195,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.rowExpandLevel = (table as PivotTable).options.rowExpandLevel ?? 1;
     this.rowHierarchyIndent = (table as PivotTable).options.rowHierarchyIndent ?? 20;
     this.rowHierarchyTextStartAlignment = (table as PivotTable).options.rowHierarchyTextStartAlignment;
-    this.cornerSetting = table.options.corner ?? { titleOnDimension: 'column' };
+    this.cornerSetting = Object.assign({ titleOnDimension: 'column', forceShowHeader: false }, table.options.corner);
 
     if (dataset) {
       this.rowTree = dataset.rowHeaderTree;
@@ -415,6 +415,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             title: seriesNumber.title,
             define: seriesNumber,
             cellType: seriesNumber.cellType ?? 'text',
+            headerType: seriesNumber.cellType ?? 'text',
             width: seriesNumber.width,
             style: seriesNumber.style,
             format: seriesNumber.format,
@@ -429,6 +430,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             title: rowSeriesNumber.title,
             define: rowSeriesNumber,
             cellType: rowSeriesNumber.cellType ?? 'text',
+            headerType: rowSeriesNumber.cellType ?? 'text',
             style: rowSeriesNumber.style,
             width: rowSeriesNumber.width,
             format: rowSeriesNumber.format,
@@ -1422,8 +1424,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         count -= 1;
       }
       //#region 处理需求 当没有数据时仍然显示角头维度名称
-      if (count === 0 && this.dataset && !this.dataset.customColTree && !this.dataset.customRowTree) {
-        if (this.cornerSetting.titleOnDimension === 'row') {
+      if (
+        count === 0 &&
+        this.dataset &&
+        !this.dataset.customColTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
+        // && !this.dataset.customRowTree?.length
+      ) {
+        if (this.cornerSetting.titleOnDimension === 'row' && this.cornerSetting.forceShowHeader) {
           count = 1;
         } else if (
           (this.dataset.records?.length ?? 0) === 0 &&
@@ -1489,8 +1496,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       //   count+=1;
       // }
       //#region 处理需求 当没有数据时仍然显示角头维度名称
-      if (count === 0 && this.dataset && !this.dataset.customColTree && !this.dataset.customRowTree) {
-        if (this.cornerSetting.titleOnDimension === 'column') {
+      if (
+        count === 0 &&
+        this.dataset &&
+        // && !this.dataset.customColTree
+        !this.dataset.customRowTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
+      ) {
+        if (this.cornerSetting.titleOnDimension === 'column' && this.cornerSetting.forceShowHeader) {
           count = 1;
         } else if (
           (this.dataset.records?.length ?? 0) === 0 &&

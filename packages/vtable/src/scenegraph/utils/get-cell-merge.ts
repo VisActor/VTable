@@ -16,7 +16,11 @@ export function getCellMergeInfo(table: BaseTableAPI, col: number, row: number):
       return customMerge.range;
     }
   }
-  if (!table.isHeader(col, row) && !(table.getBodyColumnDefine(col, row) as ColumnDefine)?.mergeCell) {
+  if (
+    !table.internalProps.enableTreeNodeMerge &&
+    !table.isHeader(col, row) &&
+    !(table.getBodyColumnDefine(col, row) as ColumnDefine)?.mergeCell
+  ) {
     return false;
   }
   const range = table.getCellRange(col, row);

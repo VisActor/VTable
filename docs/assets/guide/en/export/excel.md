@@ -109,3 +109,18 @@ const excelOption = {
 };
 downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
+
+### excelJSWorksheetCallback
+
+`@visactor/vtable-export` uses the `exceljs` library as a tool for exporting Excel files. If you need to further customize the ExcelJS Worksheet object (such as adding a page footer), you can set `excelJSWorksheetCallback` to a function whose parameter is the ExcelJS Worksheet object. You can operate the ExcelJS Worksheet in the function.For detailed usage of `exceljs`, please refer to [exceljs](https://github.com/exceljs/exceljs/blob/master/README.md)
+
+```js
+const excelOption = {
+  excelJSWorksheetCallback: worksheet => {
+    // Add page and footer
+    worksheet.headerFooter.oddHeader = 'Hello Exceljs';
+    worksheet.headerFooter.oddFooter = 'Hello World';
+  }
+};
+downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+```

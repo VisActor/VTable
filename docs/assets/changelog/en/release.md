@@ -1,3 +1,20 @@
+# v1.5.6
+
+2024-08-08
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add canvas & viewbox config
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix released async problem [#2145](https://github.com/VisActor/VTable/issues/2145)
+
+
+
+[more detail about v1.5.6](https://github.com/VisActor/VTable/releases/tag/v1.5.6)
+
 # v1.5.4
 
 2024-08-02

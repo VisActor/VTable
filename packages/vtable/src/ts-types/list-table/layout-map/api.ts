@@ -188,6 +188,7 @@ export interface SeriesNumberColumnData extends WidthData {
     | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
   cellType: 'text' | 'link' | 'image' | 'video' | 'checkbox';
+  headerType: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style: ColumnStyleOption | null | undefined;
   define: IRowSeriesNumber;
   isChildNode?: false;

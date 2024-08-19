@@ -5,7 +5,7 @@ import { parseFont } from '../scenegraph/utils/font';
 import { getQuadProps } from '../scenegraph/utils/padding';
 import { Rect } from '../tools/Rect';
 import * as calc from '../tools/calc';
-import type { FullExtendStyle, ListTableAPI, SortState } from '../ts-types';
+import type { FullExtendStyle, ListTableAPI, ListTableConstructorOptions, SortState } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { defaultOrderFn } from '../tools/util';
 import type { ListTable } from '../ListTable';
@@ -60,10 +60,19 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
       table.pagination,
       table.internalProps.layoutMap.columnObjects,
       table.internalProps.layoutMap.rowHierarchyType,
-      (table.options as any).hierarchyExpandLevel ?? (table._hasHierarchyTreeHeader?.() ? 1 : undefined)
+      getHierarchyExpandLevel(table)
     ));
     table.addReleaseObj(newDataSource);
   });
+}
+
+function getHierarchyExpandLevel(table: ListTableAPI) {
+  if ((table.options as ListTableConstructorOptions).hierarchyExpandLevel) {
+    return (table.options as ListTableConstructorOptions).hierarchyExpandLevel;
+  } else if (table.options.groupBy) {
+    return Infinity;
+  }
+  return table._hasHierarchyTreeHeader?.() ? 1 : undefined;
 }
 
 export function _setDataSource(table: BaseTableAPI, dataSource: DataSource): void {
@@ -333,32 +342,19 @@ export function getStyleTheme(
   };
 }
 
-export function sortRecords(table: ListTable) {
-  if ((table as any).sortState) {
-    let order: any;
-    let field: any;
-    if (Array.isArray((table as any).sortState)) {
-      if ((table as any).sortState.length !== 0) {
-        ({ order, field } = (table as any).sortState?.[0]);
-      }
-    } else {
-      ({ order, field } = (table as any).sortState as SortState);
-    }
-    // 根据sort规则进行排序
-    if (order && field && order !== 'normal') {
-      const sortFunc = table._getSortFuncFromHeaderOption(undefined, field);
-      // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
-      const hd = table.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
-
-      // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
-      table.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
-    }
-  }
-}
-
 export function getCellCornerRadius(col: number, row: number, table: BaseTableAPI) {
   const tableCornerRadius = table.theme.frameStyle.cornerRadius;
-  if (tableCornerRadius) {
+  if (Array.isArray(tableCornerRadius)) {
+    if (col === 0 && row === 0) {
+      return [tableCornerRadius[0], 0, 0, 0];
+    } else if (col === table.colCount - 1 && row === 0) {
+      return [0, tableCornerRadius[1], 0, 0];
+    } else if (col === 0 && row === table.rowCount - 1) {
+      return [0, 0, 0, tableCornerRadius[3]];
+    } else if (col === table.colCount - 1 && row === table.rowCount - 1) {
+      return [0, 0, tableCornerRadius[2], 0];
+    }
+  } else if (tableCornerRadius) {
     if (col === 0 && row === 0) {
       return [tableCornerRadius, 0, 0, 0];
     } else if (col === table.colCount - 1 && row === 0) {

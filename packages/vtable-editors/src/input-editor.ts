@@ -27,8 +27,8 @@ export class InputEditor implements IEditor {
     input.style.padding = '4px';
     input.style.width = '100%';
     input.style.boxSizing = 'border-box';
+    input.style.backgroundColor = '#FFFFFF';
     this.element = input;
-
     this.container.appendChild(input);
 
     // 监听键盘事件

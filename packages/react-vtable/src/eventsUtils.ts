@@ -1,15 +1,18 @@
-import { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
+// import { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
 import type { IVTable } from './tables/base-table';
 import type { TYPES } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE, PIVOT_CHART_EVENT_TYPE, PIVOT_TABLE_EVENT_TYPE } from '@visactor/vtable';
 
 export type EventCallback<Params> = (params: Params) => void;
 
 const EVENT_TYPE = {
-  ...ListTable.EVENT_TYPE,
-  ...PivotTable.EVENT_TYPE,
-  ...PivotChart.EVENT_TYPE
+  // ...ListTable.EVENT_TYPE,
+  // ...PivotTable.EVENT_TYPE,
+  // ...PivotChart.EVENT_TYPE,
+  ...TABLE_EVENT_TYPE,
+  ...PIVOT_TABLE_EVENT_TYPE,
+  ...PIVOT_CHART_EVENT_TYPE
 };
-
 export interface EventsProps {
   onClickCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['click_cell']>;
   onDblClickCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dblclick_cell']>;
@@ -147,15 +150,15 @@ export const findEventProps = <T extends EventsProps>(
   const result: EventsProps = {};
 
   Object.keys(props).forEach(key => {
-    if (supportedEvents[key] && props[key]) {
-      result[key] = props[key];
+    if (supportedEvents[key] && props[key as keyof EventsProps]) {
+      result[key as keyof EventsProps] = props[key as keyof EventsProps] as any;
     }
   });
 
   return result;
 };
 
-export const bindEventsToTable = <T>(
+export const bindEventsToTable = <T extends EventsProps>(
   table: IVTable,
   newProps?: T | null,
   prevProps?: T | null,
@@ -165,21 +168,32 @@ export const bindEventsToTable = <T>(
     return false;
   }
 
-  const prevEventProps = prevProps ? findEventProps(prevProps, supportedEvents) : null;
-  const newEventProps = newProps ? findEventProps(newProps, supportedEvents) : null;
+  const prevEventProps: EventsProps = prevProps ? findEventProps(prevProps, supportedEvents) : null;
+  const newEventProps: EventsProps = newProps ? findEventProps(newProps, supportedEvents) : null;
 
   if (prevEventProps) {
     Object.keys(prevEventProps).forEach(eventKey => {
-      if (!newEventProps || !newEventProps[eventKey] || newEventProps[eventKey] !== prevEventProps[eventKey]) {
-        table.off(supportedEvents[eventKey], prevProps[eventKey]);
+      if (
+        !newEventProps ||
+        !newEventProps[eventKey as keyof EventsProps] ||
+        newEventProps[eventKey as keyof EventsProps] !== prevEventProps[eventKey as keyof EventsProps]
+      ) {
+        table.off(supportedEvents[eventKey], prevProps[eventKey as keyof EventsProps] as any);
       }
     });
   }
 
   if (newEventProps) {
     Object.keys(newEventProps).forEach(eventKey => {
-      if (!prevEventProps || !prevEventProps[eventKey] || prevEventProps[eventKey] !== newEventProps[eventKey]) {
-        table.on(supportedEvents[eventKey] as keyof TYPES.TableEventHandlersEventArgumentMap, newEventProps[eventKey]);
+      if (
+        !prevEventProps ||
+        !prevEventProps[eventKey as keyof EventsProps] ||
+        prevEventProps[eventKey as keyof EventsProps] !== newEventProps[eventKey as keyof EventsProps]
+      ) {
+        table.on(
+          supportedEvents[eventKey] as keyof TYPES.TableEventHandlersEventArgumentMap,
+          newEventProps[eventKey as keyof EventsProps] as any
+        );
       }
     });
   }

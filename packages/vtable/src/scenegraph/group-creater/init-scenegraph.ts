@@ -1,6 +1,6 @@
+import type { ListTableConstructorOptions } from '../..';
 import { Group } from '../graphic/group';
 import type { Scenegraph } from '../scenegraph';
-import { createCornerCell } from '../style/corner-cell';
 
 export function initSceneGraph(scene: Scenegraph) {
   const width = scene.table.tableNoFrameWidth;
@@ -9,11 +9,19 @@ export function initSceneGraph(scene: Scenegraph) {
   scene.tableGroup = new Group({ x: 0, y: 0, width, height, clip: true, pickable: false });
   scene.tableGroup.role = 'table';
 
-  const colHeaderGroup = createContainerGroup(0, 0, true);
+  const colHeaderGroup = createContainerGroup(
+    0,
+    0,
+    !(scene.table.options as ListTableConstructorOptions).enableTreeStickCell
+  );
   colHeaderGroup.role = 'col-header';
   scene.colHeaderGroup = colHeaderGroup;
 
-  const cornerHeaderGroup = createContainerGroup(0, 0, true);
+  const cornerHeaderGroup = createContainerGroup(
+    0,
+    0,
+    !(scene.table.options as ListTableConstructorOptions).enableTreeStickCell
+  );
   cornerHeaderGroup.role = 'corner-header';
   scene.cornerHeaderGroup = cornerHeaderGroup;
 

@@ -16,7 +16,7 @@ import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { ComputeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Factory } from '../../core/factory';
-import { Group as VGroup } from '@src/vrender';
+import type { Group as VGroup } from '@src/vrender';
 import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { breakString } from '../utils/break-string';
@@ -471,7 +471,7 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
     if (isFunction(customLayout)) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
-      if (customLayoutObj.rootContainer instanceof VGroup) {
+      if (customLayoutObj.rootContainer) {
         customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
         dealPercentCalc(customLayoutObj.rootContainer, 0, table.getRowHeight(row));
         const setedWidth = (customLayoutObj.rootContainer as VGroup).attribute.width;

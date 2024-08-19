@@ -11,7 +11,8 @@ import type {
   ProgressbarColumnDefine,
   IRowSeriesNumber,
   TextColumnDefine,
-  RadioColumnDefine
+  RadioColumnDefine,
+  ListTableConstructorOptions
 } from '../../ts-types';
 import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
@@ -375,7 +376,7 @@ export function createCell(
   return cellGroup;
 }
 
-export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean) {
+export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean, isShadow?: boolean) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
   const cellStyle = table._getCellStyle(col, row);
@@ -439,10 +440,43 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       : table.getBodyColumnDefine(colForDefine, rowForDefine)
   ) as any;
 
-  if (!range && (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)) {
+  let mayHaveIcon =
+    cellLocation !== 'body'
+      ? true
+      : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
+
+  if (
+    !range &&
+    (table.internalProps.enableTreeNodeMerge || cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)
+  ) {
     // 只有表头或者column配置合并单元格后再进行信息获取
     range = table.getCellRange(col, row);
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+  }
+
+  if (table.internalProps.enableTreeNodeMerge && isMerge) {
+    const { vtableMergeName, vTableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
+    if (vTableMerge) {
+      mayHaveIcon = true;
+      if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+        customResult = dealWithCustom(
+          (table.options as ListTableConstructorOptions).groupTitleCustomLayout,
+          undefined,
+          range.start.col,
+          range.start.row,
+          table.getColsWidth(range.start.col, range.end.col),
+          table.getRowsHeight(range.start.row, range.end.row),
+          false,
+          table.isAutoRowHeight(row),
+          [0, 0, 0, 0],
+          range,
+          table
+        );
+      }
+    }
+    if (vtableMergeName) {
+      value = vtableMergeName;
+    }
   }
 
   if (!cellTheme) {
@@ -461,7 +495,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     !addNew &&
     !isMerge &&
     !(define.customLayout || define.customRender || define.headerCustomLayout || define.headerCustomRender) &&
-    canUseFastUpdate(col, row, oldCellGroup, autoWrapText, table)
+    canUseFastUpdate(col, row, oldCellGroup, autoWrapText, mayHaveIcon, table)
   ) {
     // update group
     const cellWidth = table.getColWidth(col);
@@ -553,10 +587,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : table.getBodyColumnType(col, row);
 
-  const mayHaveIcon =
-    cellLocation !== 'body'
-      ? true
-      : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;
   const textBaseline = cellTheme.text.textBaseline;
@@ -651,7 +681,20 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     newCellGroup.contentWidth = contentWidth;
     newCellGroup.contentHeight = contentHeight;
 
-    dealWithMergeCellSize(range, cellWidth, cellHeight, padding, textAlign, textBaseline, table);
+    if (isShadow) {
+      dealWithMergeCellSizeForShadow(
+        range,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        table,
+        newCellGroup
+      );
+    } else {
+      dealWithMergeCellSize(range, cellWidth, cellHeight, padding, textAlign, textBaseline, table);
+    }
   }
 
   return newCellGroup;
@@ -732,10 +775,17 @@ function updateCellContent(
   return newCellGroup;
 }
 
-function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWrapText: boolean, table: BaseTableAPI) {
+function canUseFastUpdate(
+  col: number,
+  row: number,
+  oldCellGroup: Group,
+  autoWrapText: boolean,
+  mayHaveIcon: boolean,
+  table: BaseTableAPI
+) {
   // return false;
-  const define = table.getBodyColumnDefine(col, row);
-  const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
+  // const define = table.getBodyColumnDefine(col, row);
+  // const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
   const cellType = table.getBodyColumnType(col, row);
   // const autoRowHeight = table.heightMode === 'autoHeight';
   const autoRowHeight = table.isAutoRowHeight(row);
@@ -811,6 +861,54 @@ export function dealWithMergeCellSize(
       resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
     }
   }
+}
+
+export function dealWithMergeCellSizeForShadow(
+  range: CellRange,
+  cellWidth: number,
+  cellHeight: number,
+  padding: [number, number, number, number],
+  textAlign: CanvasTextAlign,
+  textBaseline: CanvasTextBaseline,
+  table: BaseTableAPI,
+  cellGroup: Group
+) {
+  const { col, row } = cellGroup;
+  if (range.start.row !== range.end.row && cellGroup.contentHeight !== cellHeight) {
+    updateCellContentHeight(
+      cellGroup,
+      cellHeight,
+      cellHeight,
+      // table.heightMode === 'autoHeight',
+      table.isAutoRowHeight(row),
+      padding,
+      textAlign,
+      textBaseline
+      // 'middle'
+    );
+  }
+  if (range.start.col !== range.end.col && cellGroup.contentWidth !== cellWidth) {
+    updateCellContentWidth(
+      cellGroup,
+      cellWidth,
+      cellHeight,
+      0,
+      // table.heightMode === 'autoHeight',
+      table.isAutoRowHeight(row),
+      padding,
+      textAlign,
+      textBaseline,
+      table.scenegraph
+    );
+  }
+
+  cellGroup.contentWidth = cellWidth;
+  cellGroup.contentHeight = cellHeight;
+
+  const rangeHeight = table.getRowHeight(row);
+  const rangeWidth = table.getColWidth(col);
+
+  resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
 }
 
 export function resizeCellGroup(

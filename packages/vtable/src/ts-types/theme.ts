@@ -37,7 +37,7 @@ export type TableFrameStyle = FrameStyle & {
   shadowOffsetX?: number; //x方向偏移
   shadowOffsetY?: number; //Y方向偏移
   shadowColor?: string; //阴影颜色
-  cornerRadius?: number; //边框圆角半径
+  cornerRadius?: number | [number, number, number, number]; //边框圆角半径
 };
 export type menuStyle = {
   color?: string;
@@ -94,6 +94,7 @@ export interface ITableThemeDefine {
   headerStyle?: ThemeStyle;
   rowHeaderStyle?: ThemeStyle;
   bodyStyle?: ThemeStyle;
+  groupTitleStyle?: ThemeStyle;
   frameStyle?: TableFrameStyle;
   //列调整宽度的直线
   columnResize?: {

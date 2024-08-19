@@ -1,3 +1,20 @@
+# v1.5.6
+
+2024-08-08
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add canvas & viewbox config
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix released async problem [#2145](https://github.com/VisActor/VTable/issues/2145)
+
+
+
+[更多详情请查看 v1.5.6](https://github.com/VisActor/VTable/releases/tag/v1.5.6)
+
 # v1.5.4
 
 2024-08-02

@@ -30,6 +30,7 @@ import {
 } from './layout-helper';
 import type { Aggregator } from '../dataset/statistics-helper';
 import { DimensionTree } from './tree-helper';
+import { getCellRange } from './cell-range/simple-cell-range';
 // import { EmptyDataCache } from './utils';
 
 // let seqId = 0;
@@ -66,7 +67,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   /**层级维度结构显示形式 */
   rowHierarchyType?: 'grid' | 'tree';
   // 缓存行号列号对应的cellRange 需要注意当表头位置拖拽后 这个缓存的行列号已不准确 进行重置
-  private _cellRangeMap: Map<string, CellRange>; //存储单元格的行列号范围 针对解决是否为合并单元格情况
+  _cellRangeMap: Map<string, CellRange>; //存储单元格的行列号范围 针对解决是否为合并单元格情况
   constructor(table: ListTable, columns: ColumnsDefine, showHeader: boolean, hierarchyIndent: number) {
     this._cellRangeMap = new Map();
     this._showHeader = showHeader;
@@ -109,6 +110,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             title: seriesNumber.title,
             define: seriesNumber,
             cellType: seriesNumber.cellType ?? 'text',
+            headerType: rowSeriesNumber.cellType ?? 'text',
             style: seriesNumber.style,
             width: seriesNumber.width,
             format: seriesNumber.format,
@@ -125,6 +127,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             title: rowSeriesNumber.title,
             define: rowSeriesNumber,
             cellType: rowSeriesNumber.cellType ?? 'text',
+            headerType: rowSeriesNumber.cellType ?? 'text',
             style: rowSeriesNumber.style,
             width: rowSeriesNumber.width,
             format: rowSeriesNumber.format,
@@ -902,164 +905,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     throw new Error(`can not found body layout @id=${id as number}`);
   }
   getCellRange(col: number, row: number): CellRange {
-    if (col === -1 || row === -1) {
-      return {
-        start: { col, row },
-        end: { col, row }
-      };
-    }
-    if (this._cellRangeMap.has(`$${col}$${row}`)) {
-      return this._cellRangeMap.get(`$${col}$${row}`);
-    }
-    let cellRange: CellRange = { start: { col, row }, end: { col, row } };
-    if (this.transpose) {
-      cellRange = this.getCellRangeTranspose(col, row);
-    } else {
-      // hover相关的单元格位置是-1,-1，getCellRange计算有误，先进行判断
-      if (this.headerLevelCount <= row) {
-        //如果是body部分 设置了需要合并单元格 这里判断上下是否内容相同 相同的话 将cellRange范围扩大
-        if (
-          this.headerLevelCount <= row &&
-          (this.columnObjects[col - this.leftRowSeriesNumberColumnCount]?.define as TextColumnDefine)?.mergeCell
-        ) {
-          const value = this._table.getCellValue(col, row);
-          for (let r = row - 1; r >= this.headerLevelCount; r--) {
-            const last_Value = this._table.getCellValue(col, r);
-            if (typeof this.columnObjects[col - this.leftRowSeriesNumberColumnCount].define.mergeCell === 'boolean') {
-              if (value !== last_Value) {
-                break;
-              }
-            } else {
-              if (
-                !(this.columnObjects[col - this.leftRowSeriesNumberColumnCount].define.mergeCell as Function)(
-                  value,
-                  last_Value
-                )
-              ) {
-                break;
-              }
-            }
-            cellRange.start.row = r;
-          }
-          for (let r = row + 1; r < this.rowCount; r++) {
-            const next_Value = this._table.getCellValue(col, r);
-            if (typeof this.columnObjects[col - this.leftRowSeriesNumberColumnCount].define.mergeCell === 'boolean') {
-              if (value !== next_Value) {
-                break;
-              }
-            } else {
-              if (
-                !(this.columnObjects[col - this.leftRowSeriesNumberColumnCount].define.mergeCell as Function)(
-                  value,
-                  next_Value
-                )
-              ) {
-                break;
-              }
-            }
-            cellRange.end.row = r;
-          }
-        }
-        // return cellRange;
-      } else {
-        //in header
-        const id = this.getCellId(col, row);
-        for (let c = col - 1; c >= 0; c--) {
-          if (id !== this.getCellId(c, row)) {
-            break;
-          }
-          cellRange.start.col = c;
-        }
-        for (let c = col + 1; c < (this.colCount ?? 0); c++) {
-          if (id !== this.getCellId(c, row)) {
-            break;
-          }
-          cellRange.end.col = c;
-        }
-        for (let r = row - 1; r >= 0; r--) {
-          if (id !== this.getCellId(col, r)) {
-            break;
-          }
-          cellRange.start.row = r;
-        }
-        for (let r = row + 1; r < this.headerLevelCount; r++) {
-          if (id !== this.getCellId(col, r)) {
-            break;
-          }
-          cellRange.end.row = r;
-        }
-        // return cellRange;
-      }
-    }
-    this._cellRangeMap.set(`$${col}$${row}`, cellRange);
-    return cellRange;
-  }
-  private getCellRangeTranspose(col: number, row: number): CellRange {
-    const result: CellRange = { start: { col, row }, end: { col, row } };
-    // hover相关的单元格位置是-1,-1，getCellRange计算有误，先进行判断
-    if (this.headerLevelCount + this.leftRowSeriesNumberColumnCount <= col || (col === -1 && row === -1)) {
-      //如果是body部分 设置了需要合并单元格 这里判断左右是否内容相同 相同的话 将cellRange范围扩大
-      if (
-        this.headerLevelCount + this.leftRowSeriesNumberColumnCount <= col &&
-        this.columnObjects[row]?.define?.mergeCell
-      ) {
-        const value = this._table.getCellValue(col, row);
-        for (let c = col - 1; c >= this.headerLevelCount + this.leftRowSeriesNumberColumnCount; c--) {
-          const last_Value = this._table.getCellValue(c, row);
-          if (typeof this.columnObjects[row].define.mergeCell === 'boolean') {
-            if (value !== last_Value) {
-              break;
-            }
-          } else {
-            if (!(this.columnObjects[row].define.mergeCell as Function)(value, last_Value)) {
-              break;
-            }
-          }
-          result.start.col = c;
-        }
-        for (let c = col + 1; c < (this.colCount ?? 0); c++) {
-          const next_Value = this._table.getCellValue(c, row);
-          if (typeof this.columnObjects[row].define.mergeCell === 'boolean') {
-            if (value !== next_Value) {
-              break;
-            }
-          } else {
-            if (!(this.columnObjects[row].define.mergeCell as Function)(value, next_Value)) {
-              break;
-            }
-          }
-          result.end.col = c;
-        }
-      }
-      return result;
-    }
-    //in header
-    const id = this.getCellId(col, row);
-    for (let r = row - 1; r >= 0; r--) {
-      if (id !== this.getCellId(col, r)) {
-        break;
-      }
-      result.start.row = r;
-    }
-    for (let r = row + 1; r < (this.rowCount ?? 0); r++) {
-      if (id !== this.getCellId(col, r)) {
-        break;
-      }
-      result.end.row = r;
-    }
-    for (let c = col - 1; c >= 0; c--) {
-      if (id !== this.getCellId(c, row)) {
-        break;
-      }
-      result.start.col = c;
-    }
-    for (let c = col + 1; c < this.headerLevelCount + this.leftRowSeriesNumberColumnCount; c++) {
-      if (id !== this.getCellId(c, row)) {
-        break;
-      }
-      result.end.col = c;
-    }
-    return result;
+    return getCellRange(col, row, this);
   }
   isCellRangeEqual(col: number, row: number, targetCol: number, targetRow: number): boolean {
     const range1 = this.getCellRange(col, row);
