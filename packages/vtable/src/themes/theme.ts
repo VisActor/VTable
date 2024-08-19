@@ -895,7 +895,7 @@ export class TableTheme implements ITableThemeDefine {
         return style.cursor;
       },
       get textStick(): boolean | undefined {
-        return style.textStick;
+        return style.textStick as boolean;
       },
       get marked(): MarkedPropertyDefine | undefined {
         return style.marked;
