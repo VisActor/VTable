@@ -2160,6 +2160,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.isReleased = true;
     this.scenegraph = null;
     this.internalProps = null;
+
+    this.reactCustomLayout?.clearCache();
   }
 
   fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(
