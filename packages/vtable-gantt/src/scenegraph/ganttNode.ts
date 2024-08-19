@@ -1,9 +1,11 @@
-import { VRender } from '@visactor/vtable';
-export class GanttTaskBarNode extends VRender.Group {
-  barRect?: VRender.IRect;
-  progressRect?: VRender.IRect;
-  textLabel?: VRender.IText;
-  constructor(attrs: VRender.IGroupGraphicAttribute) {
+import type { IRect, IText, IGroupGraphicAttribute } from '@visactor/vtable/es/vrender';
+import { Group } from '@visactor/vtable/es/vrender';
+
+export class GanttTaskBarNode extends Group {
+  barRect?: IRect;
+  progressRect?: IRect;
+  textLabel?: IText;
+  constructor(attrs: IGroupGraphicAttribute) {
     super(attrs);
   }
 }

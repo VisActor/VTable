@@ -1,4 +1,4 @@
-import { VRender } from '@visactor/vtable';
+import { ScrollBar } from '@visactor/vtable/es/vrender';
 import { isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 /**
@@ -7,8 +7,8 @@ import type { Gantt } from '../Gantt';
  */
 
 export class ScrollBarComponent {
-  hScrollBar: VRender.ScrollBar;
-  vScrollBar: VRender.ScrollBar;
+  hScrollBar: ScrollBar;
+  vScrollBar: ScrollBar;
   _gantt: Gantt;
   _clearHorizontalScrollBar: any;
   _clearVerticalScrollBar: any;
@@ -37,7 +37,7 @@ export class ScrollBarComponent {
     const visible = this._gantt.parsedOptions.scrollStyle?.visible as string;
     const hoverOn = this._gantt.parsedOptions.scrollStyle?.hoverOn as boolean;
 
-    this.hScrollBar = new VRender.ScrollBar({
+    this.hScrollBar = new ScrollBar({
       direction: 'horizontal',
       x: -tableWidth * 2,
       y: -tableHeight * 2,
@@ -56,7 +56,7 @@ export class ScrollBarComponent {
     (this.hScrollBar as any).render();
     this.hScrollBar.hideAll();
 
-    this.vScrollBar = new VRender.ScrollBar({
+    this.vScrollBar = new ScrollBar({
       direction: 'vertical',
       x: -tableWidth * 2,
       y: -tableHeight * 2,

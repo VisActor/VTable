@@ -1,4 +1,4 @@
-import { VRender } from '@visactor/vtable';
+import { Group, createText, createRect, Image } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
 import { parseStringTemplate, toBoxArray } from '../tools/util';
@@ -13,11 +13,11 @@ const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.o
 export const TASKBAR_HOVER_ICON_WIDTH = 10;
 
 export class TaskBar {
-  group: VRender.Group;
-  barContainer: VRender.Group;
-  hoverBarGroup: VRender.Group;
-  hoverBarLeftIcon: VRender.Image;
-  hoverBarRightIcon: VRender.Image;
+  group: Group;
+  barContainer: Group;
+  hoverBarGroup: Group;
+  hoverBarLeftIcon: Image;
+  hoverBarRightIcon: Image;
   _scene: Scenegraph;
   width: number;
   height: number;
@@ -26,7 +26,7 @@ export class TaskBar {
     // const height = Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight);
     this.width = scene._gantt.tableNoFrameWidth;
     this.height = scene._gantt.gridHeight;
-    this.group = new VRender.Group({
+    this.group = new Group({
       x: 0,
       y: scene._gantt.getAllHeaderRowsHeight(),
       width: this.width,
@@ -41,7 +41,7 @@ export class TaskBar {
   }
 
   initBars() {
-    this.barContainer = new VRender.Group({
+    this.barContainer = new Group({
       x: 0,
       y: 0,
       width: this._scene._gantt.getAllColsWidth(),
@@ -118,7 +118,7 @@ export class TaskBar {
 
     if (renderDefaultBar) {
       // 创建整个任务条rect
-      const rect = VRender.createRect({
+      const rect = createRect({
         x: 0,
         y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
         width: taskBarSize,
@@ -130,7 +130,7 @@ export class TaskBar {
       barGroup.appendChild(rect);
       barGroup.barRect = rect;
       // 创建已完成部分任务条rect
-      const progress_rect = VRender.createRect({
+      const progress_rect = createRect({
         x: 0,
         y: 0, //(this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
         width: (taskBarSize * progress) / 100,
@@ -149,7 +149,7 @@ export class TaskBar {
         this._scene._gantt.parsedOptions.taskBarLabelStyle;
       const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, taskBarSize, taskbarHeight);
       //创建label 文字
-      const label = VRender.createText({
+      const label = createText({
         // visible: false,
         // pickable: false,
         x: position.x, //extAlign === 'center' ? taskBarSize / 2 : textAlign === 'left' ? 10 : taskBarSize - 10,
@@ -194,7 +194,7 @@ export class TaskBar {
   initHoverBarIcons() {
     // const target = this._scene._gantt.stateManager.hoverTaskBar.target;
 
-    // const barGroup = new VRender.Group({
+    // const barGroup = new Group({
     //   x: target.attribute.x,
     //   y: target.attribute.y,
     //   width: target.attribute.width,
@@ -203,7 +203,7 @@ export class TaskBar {
     //   clip: true,
     //   cursor: 'grab'
     // });
-    const hoverBarGroup = new VRender.Group({
+    const hoverBarGroup = new Group({
       x: 0,
       y: 0,
       width: 100,
@@ -220,7 +220,7 @@ export class TaskBar {
     // this.barContainer.appendChild(hoverBarGroup);
     // 创建左侧的icon
     if (this._scene._gantt.parsedOptions.taskBarResizable) {
-      const icon = new VRender.Image({
+      const icon = new Image({
         x: 0,
         y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
         width: TASKBAR_HOVER_ICON_WIDTH,
@@ -234,7 +234,7 @@ export class TaskBar {
       hoverBarGroup.appendChild(icon);
 
       // 创建右侧的icon
-      const rightIcon = new VRender.Image({
+      const rightIcon = new Image({
         x: 0,
         y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
         width: TASKBAR_HOVER_ICON_WIDTH,
@@ -274,7 +274,7 @@ export class TaskBar {
     this.group.setAttribute('height', this.height);
   }
 
-  showHoverBar(x: number, y: number, width: number, height: number, target?: VRender.Group) {
+  showHoverBar(x: number, y: number, width: number, height: number, target?: Group) {
     if (target && target.name === 'task-bar') {
       // this.hoverBarGroup.releatedTaskBar = target;
       target.appendChild(this.hoverBarGroup);

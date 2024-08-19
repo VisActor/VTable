@@ -1,5 +1,6 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { register, VRender, CustomLayout } from '@visactor/vtable';
+import { register } from '@visactor/vtable';
+import { Group, Image, Text } from '@visactor/vtable/es/vrender';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import { Gantt } from '../../src/index';
@@ -642,7 +643,7 @@ export function createTable() {
       customLayout: (args: any) => {
         const colorLength = barColors.length;
         const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
-        const container = new VRender.Group({
+        const container = new Group({
           width,
           height,
           fill: {
@@ -670,7 +671,7 @@ export function createTable() {
           flexDirection: 'row',
           flexWrap: 'nowrap'
         });
-        const containerLeft = new VRender.Group({
+        const containerLeft = new Group({
           height,
           width: 60,
           display: 'flex',
@@ -681,7 +682,7 @@ export function createTable() {
         });
         container.add(containerLeft);
 
-        const icon0 = new VRender.Image({
+        const icon0 = new Image({
           width: 50,
           height: 50,
           image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
@@ -689,7 +690,7 @@ export function createTable() {
         });
         containerLeft.add(icon0);
 
-        const containerRight = new VRender.Group({
+        const containerRight = new Group({
           height,
           width: width - 60,
           display: 'flex',
@@ -698,7 +699,7 @@ export function createTable() {
         });
         container.add(containerRight);
 
-        const bloggerName = new VRender.Text({
+        const bloggerName = new Text({
           text: taskRecord.title,
           fontSize: 16,
           fontFamily: 'sans-serif',
@@ -708,7 +709,7 @@ export function createTable() {
         });
         containerRight.add(bloggerName);
 
-        const days = new VRender.Text({
+        const days = new Text({
           text: `${taskDays}天`,
           fontSize: 13,
           fontFamily: 'sans-serif',

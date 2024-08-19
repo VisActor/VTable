@@ -1,13 +1,11 @@
-import { VRender } from '@visactor/vtable';
+import { createRect } from '@visactor/vtable/es/vrender';
+import type { IRect, IGroupGraphicAttribute, IRectGraphicAttribute } from '@visactor/vtable/es/vrender';
 
-import { isArray } from '@visactor/vutils';
-import type { IFrameStyle } from '../ts-types';
-import type { Gantt } from '../Gantt';
 import type { Scenegraph } from './scenegraph';
 
 export class FrameBorder {
   _scene: Scenegraph;
-  border: VRender.IRect;
+  border: IRect;
   constructor(scene: Scenegraph) {
     this._scene = scene;
     this.createFrameBorder();
@@ -23,8 +21,8 @@ export class FrameBorder {
     const { cornerRadius, borderColor, borderLineWidth, borderLineDash } = frameStyle;
 
     // const hasShadow = false;
-    const groupAttributes: VRender.IGroupGraphicAttribute = {};
-    const rectAttributes: VRender.IRectGraphicAttribute = {
+    const groupAttributes: IGroupGraphicAttribute = {};
+    const rectAttributes: IRectGraphicAttribute = {
       pickable: false
     };
 
@@ -74,7 +72,7 @@ export class FrameBorder {
         borderLineWidth +
         (this._scene._gantt.taskListTableInstance ? this._scene._gantt.parsedOptions.verticalSplitLine.lineWidth : 0);
       rectAttributes.height = group.attribute.height + borderLineWidth / 2 + borderLineWidth / 2;
-      const borderRect = VRender.createRect(rectAttributes);
+      const borderRect = createRect(rectAttributes);
       borderRect.name = 'border-rect';
       group.parent.insertAfter(borderRect, group);
       (group as any).border = borderRect;

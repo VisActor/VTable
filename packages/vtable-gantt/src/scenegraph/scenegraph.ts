@@ -1,4 +1,5 @@
-import { VRender } from '@visactor/vtable';
+import type { Stage } from '@visactor/vtable/es/vrender';
+import { container, Group, vglobal, createStage } from '@visactor/vtable/es/vrender';
 import { Grid } from './grid';
 import type { Gantt } from '../Gantt';
 import { Env } from '../env';
@@ -10,7 +11,7 @@ import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
 import { getTaskIndexByY } from '../gantt-helper';
 import graphicContribution from './graphic';
-VRender.container.load(graphicContribution);
+container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
   rowHeight: number;
@@ -19,11 +20,11 @@ export class Scenegraph {
   grid: Grid;
   taskBar: TaskBar;
   _gantt: Gantt;
-  tableGroup: VRender.Group;
+  tableGroup: Group;
   scrollbarComponent: ScrollBarComponent;
   markLine: MarkLine;
   frameBorder: FrameBorder;
-  stage: VRender.Stage;
+  stage: Stage;
   tableGroupWidth: number;
   tableGroupHeight: number;
   constructor(gantt: Gantt) {
@@ -33,15 +34,15 @@ export class Scenegraph {
     let width;
     let height;
     if (Env.mode === 'node') {
-      // VRender.vglobal.setEnv('node', gantt.options.modeParams);
+      // vglobal.setEnv('node', gantt.options.modeParams);
       // width = table.canvasWidth;
       // height = table.canvasHeight;
     } else {
-      VRender.vglobal.setEnv('browser');
+      vglobal.setEnv('browser');
       width = gantt.canvas.width;
       height = gantt.canvas.height;
     }
-    this.stage = VRender.createStage({
+    this.stage = createStage({
       canvas: gantt.canvas,
       width,
       height,
@@ -76,7 +77,7 @@ export class Scenegraph {
   initSceneGraph() {
     const scene = this;
 
-    scene.tableGroup = new VRender.Group({
+    scene.tableGroup = new Group({
       x: scene._gantt.tableX,
       y: scene._gantt.tableY,
       width: this.tableGroupWidth,

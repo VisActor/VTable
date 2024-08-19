@@ -1,7 +1,5 @@
-import { VRender } from '@visactor/vtable';
-import { TYPES } from '@visactor/vtable';
-import type { IGrid } from '../ts-types';
-import { str } from '@visactor/vtable/es/tools/helper';
+import { Group, createLine } from '@visactor/vtable/es/vrender';
+
 import type { Scenegraph } from './scenegraph';
 export class Grid {
   vertical: boolean;
@@ -19,9 +17,9 @@ export class Grid {
   colWidthPerDay: number;
   rowHeight: number;
   rowCount: number;
-  group: VRender.Group;
-  verticalLineGroup: VRender.Group;
-  horizontalLineGroup: VRender.Group;
+  group: Group;
+  verticalLineGroup: Group;
+  horizontalLineGroup: Group;
   allGridHeight: number;
   allGridWidth: number;
   _scene: Scenegraph;
@@ -42,7 +40,7 @@ export class Grid {
     this.rowCount = scene._gantt.itemCount;
     this.allGridWidth = scene._gantt.getAllColsWidth();
     this.allGridHeight = scene._gantt.getAllTaskBarsHeight();
-    this.group = new VRender.Group({
+    this.group = new Group({
       x: this.x,
       y: this.y,
       width: this.width,
@@ -54,7 +52,7 @@ export class Grid {
     scene.tableGroup.addChild(this.group);
     //补充timelineHeader中不好绘制的底部的边线
     const horizontalSplitLineWidth = scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth;
-    const line = VRender.createLine({
+    const line = createLine({
       pickable: false,
       stroke: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineColor,
       lineWidth: horizontalSplitLineWidth,
@@ -73,7 +71,7 @@ export class Grid {
   }
   createVerticalLines() {
     if (this.vertical) {
-      this.verticalLineGroup = new VRender.Group({
+      this.verticalLineGroup = new Group({
         x: 0,
         y: 0,
         width: this.allGridWidth,
@@ -90,7 +88,7 @@ export class Grid {
       for (let i = 0; i < this.timelineDates.length - 1; i++) {
         const dateline = this.timelineDates[i];
         x = x + Math.floor(this.colWidthPerDay * dateline.days);
-        const line = VRender.createLine({
+        const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.verticalLine.lineColor,
           lineWidth: this.gridStyle?.verticalLine.lineWidth,
@@ -106,7 +104,7 @@ export class Grid {
   }
   createHorizontalLines() {
     if (this.horizontal) {
-      this.horizontalLineGroup = new VRender.Group({
+      this.horizontalLineGroup = new Group({
         x: 0,
         y: 0,
         width: this.allGridWidth,
@@ -122,7 +120,7 @@ export class Grid {
       }
       for (let i = 0; i < this.rowCount - 1; i++) {
         y = y + Math.floor(this.rowHeight);
-        const line = VRender.createLine({
+        const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.horizontalLine.lineColor,
           lineWidth: this.gridStyle?.horizontalLine.lineWidth,

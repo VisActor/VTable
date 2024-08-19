@@ -2,9 +2,9 @@ import { isValid } from '@visactor/vutils';
 import { getTextPos } from '../gantt-helper';
 import { toBoxArray } from '../tools/util';
 import type { Scenegraph } from './scenegraph';
-import { VRender } from '@visactor/vtable';
+import { Group, Text, createLine } from '@visactor/vtable/es/vrender';
 export class TimelineHeader {
-  group: VRender.Group;
+  group: Group;
   _scene: Scenegraph;
   constructor(scene: Scenegraph) {
     this._scene = scene;
@@ -12,7 +12,7 @@ export class TimelineHeader {
   }
   initNodes() {
     const { _scene: scene } = this;
-    const dateHeader = new VRender.Group({
+    const dateHeader = new Group({
       x: 0,
       y: 0,
       width: scene._gantt.getAllColsWidth(), //width - 2,
@@ -29,7 +29,7 @@ export class TimelineHeader {
 
     let y = 0;
     for (let i = 0; i < scene._gantt.timeLineHeaderLevel; i++) {
-      const rowHeader = new VRender.Group({
+      const rowHeader = new Group({
         x: 0,
         y,
         width: scene._gantt.getAllColsWidth(),
@@ -44,7 +44,7 @@ export class TimelineHeader {
       let x = 0;
       for (let j = 0; j < timelineDates.length; j++) {
         const { days, endDate, startDate, title, dateIndex } = timelineDates[j];
-        const date = new VRender.Group({
+        const date = new Group({
           x,
           y: 0,
           width: scene._gantt.parsedOptions.colWidthPerDay * days,
@@ -107,7 +107,7 @@ export class TimelineHeader {
           } = scene._gantt.parsedOptions.timelineHeaderStyles[i];
 
           const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, width, height);
-          const text = new VRender.Text({
+          const text = new Text({
             x: position.x,
             y: position.y,
             maxLineWidth: width,
@@ -140,7 +140,7 @@ export class TimelineHeader {
         rowHeader.addChild(date);
 
         if (j > 0) {
-          const line = VRender.createLine({
+          const line = createLine({
             pickable: false,
             stroke: scene._gantt.parsedOptions.timelineHeaderVerticalLineStyle?.lineColor,
             lineWidth: scene._gantt.parsedOptions.timelineHeaderVerticalLineStyle?.lineWidth,
@@ -158,7 +158,7 @@ export class TimelineHeader {
       }
       //创建表头分割线 水平分割线 TODO
       if (i > 0) {
-        const line = VRender.createLine({
+        const line = createLine({
           pickable: false,
           stroke: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineColor,
           lineWidth: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth,

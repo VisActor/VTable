@@ -1,7 +1,7 @@
 import { clone, cloneDeep, isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import { InteractionState, GANTT_EVENT_TYPE } from '../ts-types';
-import type { VRender } from '@visactor/vtable';
+import type { Group, FederatedPointerEvent } from '@visactor/vtable/es/vrender';
 import {
   syncEditCellFromTable,
   syncScrollStateFromTable,
@@ -316,7 +316,7 @@ export class StateManager {
     this.moveTaskBar.deltaX = 0;
     this.moveTaskBar.moveTaskBarXSpeed = 0;
   }
-  dealTaskBarMove(e: VRender.FederatedPointerEvent) {
+  dealTaskBarMove(e: FederatedPointerEvent) {
     const target = this.moveTaskBar.target;
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
     const x2 = e.x;
@@ -361,7 +361,7 @@ export class StateManager {
     //
   }
   //#region 调整拖拽任务条的大小
-  startResizeTaskBar(target: VRender.Group, x: number, y: number, onIconName: string) {
+  startResizeTaskBar(target: Group, x: number, y: number, onIconName: string) {
     // if (target.name === 'task-bar-hover-shadow') {
     // target = target.parent.parent;
     // }
@@ -433,7 +433,7 @@ export class StateManager {
       this._gantt.scenegraph.updateNextFrame();
     }
   }
-  dealTaskBarResize(e: VRender.FederatedPointerEvent) {
+  dealTaskBarResize(e: FederatedPointerEvent) {
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
     const x2 = e.x;
     const dx = x2 - x1;
@@ -524,7 +524,7 @@ export class StateManager {
   }
   //#endregion
 
-  showTaskBarHover(e: VRender.FederatedPointerEvent) {
+  showTaskBarHover(e: FederatedPointerEvent) {
     // const taskBarTarget =
     //   e.target?.name === 'task-bar-hover-shadow-left-icon' || e.target?.name === 'task-bar-hover-shadow-right-icon'
     //     ? e.target.parent //转成父级元素task-bar-hover-shadow  后面逻辑需要宽高值
@@ -553,7 +553,7 @@ export class StateManager {
     }
     //
   }
-  hideTaskBarHover(e: VRender.FederatedPointerEvent) {
+  hideTaskBarHover(e: FederatedPointerEvent) {
     if (this._gantt.stateManager.hoverTaskBar.target) {
       this._gantt.stateManager.hoverTaskBar.target = null;
       this._gantt.scenegraph.taskBar.hideHoverBar();
@@ -571,7 +571,7 @@ export class StateManager {
   }
 }
 
-function reCreateCustomNode(gantt: Gantt, taskBarGroup: VRender.Group, taskIndex: number) {
+function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number) {
   const taskBarCustomLayout = gantt.parsedOptions.taskBarCustomLayout;
   if (taskBarCustomLayout) {
     let customLayoutObj;
@@ -598,7 +598,7 @@ function reCreateCustomNode(gantt: Gantt, taskBarGroup: VRender.Group, taskIndex
       const oldCustomIndex = taskBarGroup.children.findIndex((node: any) => {
         return node.name === 'task-bar-custom-render';
       });
-      const oldCustomNode = taskBarGroup.children[oldCustomIndex] as VRender.Group;
+      const oldCustomNode = taskBarGroup.children[oldCustomIndex] as Group;
       taskBarGroup.removeChild(oldCustomNode);
       taskBarGroup.insertInto(rootContainer, oldCustomIndex);
     }

@@ -1,31 +1,41 @@
-import { VRender } from '@visactor/vtable';
+import type {
+  ITextRenderContribution,
+  IText,
+  IContext2d,
+  ITextGraphicAttribute,
+  IDrawContext,
+  IMarkAttribute,
+  IGraphicAttribute,
+  IThemeAttribute
+} from '@visactor/vtable/es/vrender';
+import { injectable, BaseRenderContributionTime, BaseRenderContributionTime } from '@visactor/vtable/es/vrender';
 
-@VRender.injectable()
-export class TextStickBeforeRenderContribution implements VRender.ITextRenderContribution {
-  time: VRender.BaseRenderContributionTime = VRender.BaseRenderContributionTime.beforeFillStroke;
+@injectable()
+export class TextStickBeforeRenderContribution implements ITextRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle: boolean = true;
   order: number = 0;
   supportedAppName: string = 'vtable';
   drawShape(
-    text: VRender.IText,
-    context: VRender.IContext2d,
+    text: IText,
+    context: IContext2d,
     x: number,
     y: number,
     doFill: boolean,
     doStroke: boolean,
     fVisible: boolean,
     sVisible: boolean,
-    textAttribute: Required<VRender.ITextGraphicAttribute>,
-    drawContext: VRender.IDrawContext,
+    textAttribute: Required<ITextGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
-      ctx: VRender.IContext2d,
-      markAttribute: Partial<VRender.IMarkAttribute & VRender.IGraphicAttribute>,
-      themeAttribute: VRender.IThemeAttribute
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
     ) => boolean,
     strokeCb?: (
-      ctx: VRender.IContext2d,
-      markAttribute: Partial<VRender.IMarkAttribute & VRender.IGraphicAttribute>,
-      themeAttribute: VRender.IThemeAttribute
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
     ) => boolean,
     doFillOrStroke?: { doFill: boolean; doStroke: boolean }
   ) {

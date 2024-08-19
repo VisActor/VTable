@@ -1,4 +1,5 @@
-import { VRender } from '@visactor/vtable';
+import { vglobal } from '@visactor/vtable/es/vrender';
+import type { FederatedPointerEvent } from '@visactor/vtable/es/vrender';
 import type { Gantt } from '../Gantt';
 import { EventHandler } from '../event/EventHandler';
 import { handleWhell } from '../event/scroll';
@@ -37,7 +38,7 @@ function bindTableGroupListener(event: EventManager) {
   const gantt = event._gantt;
   const stateManager = gantt.stateManager;
   let poniterState: 'down' | 'draging' | 'up';
-  scene.tableGroup.addEventListener('pointerdown', (e: VRender.FederatedPointerEvent) => {
+  scene.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     poniterState = 'down';
     if (e.button !== 0) {
       // 只处理左键
@@ -60,7 +61,7 @@ function bindTableGroupListener(event: EventManager) {
     }
   });
 
-  scene.tableGroup.addEventListener('pointermove', (e: VRender.FederatedPointerEvent) => {
+  scene.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     if (poniterState === 'down') {
       const x1 = gantt.eventManager.lastDragPointerXYOnWindow.x;
       const x2 = e.x;
@@ -83,7 +84,7 @@ function bindTableGroupListener(event: EventManager) {
       }
     }
   });
-  scene.tableGroup.addEventListener('pointerup', (e: VRender.FederatedPointerEvent) => {
+  scene.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
     if (poniterState === 'down' && gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
       const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, gantt);
       const record = gantt.getRecordByIndex(taskIndex);
@@ -96,7 +97,7 @@ function bindTableGroupListener(event: EventManager) {
     poniterState = 'up';
   });
 
-  scene.tableGroup.addEventListener('pointerenter', (e: VRender.FederatedPointerEvent) => {
+  scene.tableGroup.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
     if (
       (gantt.parsedOptions.scrollStyle.horizontalVisible &&
         gantt.parsedOptions.scrollStyle.horizontalVisible === 'focus') ||
@@ -113,7 +114,7 @@ function bindTableGroupListener(event: EventManager) {
     }
   });
 
-  scene.tableGroup.addEventListener('pointerleave', (e: VRender.FederatedPointerEvent) => {
+  scene.tableGroup.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
     if (
       (gantt.parsedOptions.scrollStyle.horizontalVisible &&
         gantt.parsedOptions.scrollStyle.horizontalVisible === 'focus') ||
@@ -175,10 +176,10 @@ function bindContainerDomListener(eventManager: EventManager) {
         (gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement).style.opacity = '0';
       });
   }
-  VRender.vglobal.addEventListener('mousedown', (e: VRender.FederatedPointerEvent) => {
+  vglobal.addEventListener('mousedown', (e: FederatedPointerEvent) => {
     gantt.eventManager.lastDragPointerXYOnWindow = { x: e.x, y: e.y };
   });
-  VRender.vglobal.addEventListener('mousemove', (e: VRender.FederatedPointerEvent) => {
+  vglobal.addEventListener('mousemove', (e: FederatedPointerEvent) => {
     if (stateManager.interactionState === InteractionState.grabing) {
       const lastX = gantt.eventManager.lastDragPointerXYOnWindow?.x ?? e.x;
       // const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
@@ -194,7 +195,7 @@ function bindContainerDomListener(eventManager: EventManager) {
       }
     }
   });
-  VRender.vglobal.addEventListener('mouseup', (e: MouseEvent) => {
+  vglobal.addEventListener('mouseup', (e: MouseEvent) => {
     if (stateManager.interactionState === 'grabing') {
       stateManager.updateInteractionState(InteractionState.default);
       if (stateManager.isResizingTableWidth()) {

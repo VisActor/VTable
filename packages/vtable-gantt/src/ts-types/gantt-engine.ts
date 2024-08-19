@@ -1,4 +1,5 @@
-import type { ColumnsDefine, TYPES, VRender } from '@visactor/vtable';
+import type { ColumnsDefine, TYPES } from '@visactor/vtable';
+import type { Group } from '@visactor/vtable/es/vrender';
 import type { Gantt } from '../Gantt';
 export type LayoutObjectId = number | string;
 
@@ -196,7 +197,7 @@ export type TaskBarCustomLayoutArgumentType = {
 };
 export type ITaskBarCustomLayout = (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj; //CustomLayout
 export type ITaskBarCustomLayoutObj = {
-  rootContainer: VRender.Group;
+  rootContainer: Group;
   renderDefaultBar?: boolean; // 默认false
   renderDefaultResizeIcon?: boolean; // 默认false
   renderDefaultText?: boolean; // 默认false
@@ -215,7 +216,7 @@ export type DateCustomLayoutArgumentType = {
 };
 export type IDateCustomLayout = (args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj;
 export type IDateCustomLayoutObj = {
-  rootContainer: VRender.Group;
+  rootContainer: Group;
   renderDefaultText?: boolean; // 默认false
 };
 

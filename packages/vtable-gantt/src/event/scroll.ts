@@ -1,4 +1,5 @@
-import type { VRender } from '@visactor/vtable';
+import type { FederatedPointerEvent } from '@visactor/vtable/es/vrender';
+
 import type { Gantt } from '../Gantt';
 import { InteractionState } from '../ts-types';
 import type { EventManager } from './event-manager';
@@ -187,11 +188,11 @@ export function bindScrollBarListener(eventManager: EventManager) {
     }
     scenegraph.scrollbarComponent.hideHorizontalScrollBar();
   });
-  scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointermove', (e: VRender.FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     // scenegraph._gantt.stateManager.updateCursor('default');
     e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成可拖拽
   });
-  // scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerdown', (e: VRender.FederatedPointerEvent) => {
+  // scenegraph.scrollbarComponent.vScrollBar.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
   //   e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成拖拽状态
   //   if ((scenegraph._gantt as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
   //     scenegraph._gantt.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
@@ -199,7 +200,7 @@ export function bindScrollBarListener(eventManager: EventManager) {
   //     });
   //   }
   // });
-  scenegraph.scrollbarComponent.vScrollBar.addEventListener('scrollDown', (e: VRender.FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
     // scenegraph._gantt.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
     scenegraph._gantt.eventManager.isDown = true;
 
@@ -222,15 +223,15 @@ export function bindScrollBarListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
     }
   });
-  scenegraph.scrollbarComponent.vScrollBar.addEventListener('scrollUp', (e: VRender.FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.vScrollBar.addEventListener('scrollUp', (e: FederatedPointerEvent) => {
     scenegraph._gantt.eventManager.isDraging = false;
   });
 
-  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointermove', (e: VRender.FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     // scenegraph._gantt.stateManager.updateCursor('default');
     e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成可拖拽
   });
-  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerdown', (e: VRender.FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成拖拽状态
     // if ((scenegraph._gantt as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
     //   scenegraph._gantt.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
@@ -238,7 +239,7 @@ export function bindScrollBarListener(eventManager: EventManager) {
     //   });
     // }
   });
-  scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollDown', (e: VRender.FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
     // scenegraph._gantt.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
     scenegraph._gantt.eventManager.isDown = true;
     if (stateManager.interactionState !== InteractionState.scrolling) {
@@ -264,7 +265,7 @@ export function bindScrollBarListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
     }
   });
-  scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollUp', (e: VRender.FederatedPointerEvent) => {
+  scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollUp', (e: FederatedPointerEvent) => {
     scenegraph._gantt.eventManager.isDraging = false;
   });
   const throttleVerticalWheel = throttle(stateManager.updateVerticalScrollBar, 20);

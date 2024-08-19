@@ -1,12 +1,11 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { register, VRender, CustomLayout, jsx } from '@visactor/vtable';
+import { register, CustomLayout, jsx } from '@visactor/vtable';
+import { VGroup, VText, VImage } from '@visactor/vtable/es/vrender';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
-const VGroup = VRender.VGroup;
-const VText = VRender.VText;
-const VImage = VRender.VImage;
+
 const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#7f7f7f', '#d62728', '#bcbd22', '#9467bd'];
 export function createTable() {
   const records = [
