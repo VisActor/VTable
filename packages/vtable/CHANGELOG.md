@@ -7,13 +7,6 @@ Mon, 19 Aug 2024 08:06:44 GMT
 
 ### Minor changes
 
-- chore: release 1.6.1
-
-## 1.6.0
-Mon, 19 Aug 2024 07:36:42 GMT
-
-### Minor changes
-
 - feat: add group function
 
 ### Updates
