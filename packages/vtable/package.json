@@ -40,7 +40,8 @@
     ".": {
       "require": "./cjs/index.js",
       "import": "./es/index.js"
-    }
+    },
+    "./es/*": "./es/*"
   },
   "scripts": {
     "demo": "vite serve examples",
