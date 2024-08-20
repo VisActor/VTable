@@ -564,7 +564,7 @@ function getRange(
     range.max,
     axisOption,
     isZeroAlign,
-    layout._table.getColWidth(col)
+    layout._table.getColWidth(col) || layout._table.tableNoFrameWidth // avoid 0, 0 causes NaN
   );
   range.min = !isNaN(niceRange[0]) ? niceRange[0] : 0;
   range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;

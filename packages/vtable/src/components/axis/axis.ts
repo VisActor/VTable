@@ -46,6 +46,7 @@ export class CartesianAxis {
   tickData: DataView;
   scale: BandAxisScale | LinearAxisScale;
   component: LineAxis;
+  padding: [number, number, number, number];
 
   constructor(
     option: ICellAxisOption,
@@ -54,6 +55,7 @@ export class CartesianAxis {
     padding: [number, number, number, number],
     table: BaseTableAPI
   ) {
+    this.padding = padding;
     this.table = table;
     this.orient = option.orient ?? 'left';
     this.type = option.type ?? 'band';
@@ -72,14 +74,14 @@ export class CartesianAxis {
       const innerOffsetTop = 0;
       const innerOffsetBottom = 0;
       this.width = width;
-      this.height = height - padding[2] - innerOffsetBottom;
+      this.height = height - padding[0] - padding[2] - innerOffsetBottom;
       this.y = padding[0] + innerOffsetTop;
     } else if (this.orient === 'top' || this.orient === 'bottom') {
       // const innerOffsetLeft = this.option.innerOffset?.left ?? 0;
       // const innerOffsetRight = this.option.innerOffset?.right ?? 0;
       const innerOffsetLeft = 0;
       const innerOffsetRight = 0;
-      this.width = width - padding[1] - innerOffsetRight;
+      this.width = width - padding[1] - padding[3] - innerOffsetRight;
       this.height = height;
       this.x = padding[3] + innerOffsetLeft;
     }
@@ -187,20 +189,20 @@ export class CartesianAxis {
         attrs
       )
     );
-    this.component.setAttributes(this.setLayoutStartPosition({ x: 0, y: 0 }));
+    this.component.setAttributes(this.setLayoutStartPosition({ x: this.x, y: this.y }));
     (this.component as any).originAxis = this;
   }
 
   resize(width: number, height: number) {
-    this.width = width;
-    this.height = height;
+    this.width = width - (this.orient === 'top' || this.orient === 'bottom' ? this.padding[1] + this.padding[3] : 0);
+    this.height = height - (this.orient === 'left' || this.orient === 'right' ? this.padding[2] + this.padding[0] : 0);
     this.updateScaleRange();
     this.computeData();
     const axisStylrAttrs = getAxisAttributes(this.option);
     const attrs = this.getUpdateAttribute();
     attrs.verticalFactor = this.orient === 'top' || this.orient === 'right' ? -1 : 1;
     this.component.setAttributes(merge({}, axisStylrAttrs, attrs));
-    this.component.setAttributes(this.setLayoutStartPosition({ x: 0, y: 0 }));
+    this.component.setAttributes(this.setLayoutStartPosition({ x: this.x, y: this.y }));
     this.overlap();
   }
 
@@ -240,7 +242,10 @@ export class CartesianAxis {
     }
     const size = this.orient === 'top' || this.orient === 'bottom' ? height : width;
     const attrs: LineAxisAttributes = {
-      start: { x: this.x, y: this.y },
+      // start: { x: this.x, y: this.y },
+      // x: this.x,
+      // y: this.y,
+      start: { x: 0, y: 0 },
       end,
       // grid: {
       //   type: 'line',
