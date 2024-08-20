@@ -8,6 +8,12 @@
     "paths": {
       "@visactor/vtable-editors": [
         "../vtable-editors/src"
+      ],
+      "@visactor/vtable": [
+        "../vtable/src"
+      ],
+      "@visactor/vtable/es/vrender": [
+        "../vtable/src/vrender.ts"
       ]
     }
   },
