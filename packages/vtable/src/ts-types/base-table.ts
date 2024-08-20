@@ -423,9 +423,6 @@ export interface BaseTableConstructorOptions {
   limitMinWidth?: boolean | number;
   limitMinHeight?: boolean | number;
 
-  // maximum number of data items maintained in table instance
-  maintainedDataCount?: number;
-
   legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
   emptyTip?: true | IEmptyTip;
@@ -482,8 +479,20 @@ export interface BaseTableConstructorOptions {
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
-
   renderOption?: any;
+
+  // professionalConfig
+  // maximum number of data items maintained in table instance
+  maintainedDataCount?: number;
+  // maximum number of columns maintained in table instance
+  maintainedColumnCount?: number;
+  // maximum number of rows maintained in table instance
+  maintainedRowCount?: number;
+
+  rowUpdateBufferCount?: number;
+  columnUpdateBufferCount?: number;
+  progressRowUpdateCount?: number;
+  progressColumnUpdateCount?: number;
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */

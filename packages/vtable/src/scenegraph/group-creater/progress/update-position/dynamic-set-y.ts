@@ -90,8 +90,14 @@ async function moveCell(
       syncTopRow = distStartRow;
       syncBottomRow = distEndRow;
     } else {
-      const topRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
-      const bottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
+      const topRow = Math.max(
+        proxy.bodyTopRow,
+        screenTopRow - proxy.screenRowCount * (proxy.table.options.rowUpdateBufferCount ?? 1)
+      );
+      const bottomRow = Math.min(
+        proxy.bodyBottomRow,
+        screenTopRow + proxy.screenRowCount * (1 + (proxy.table.options.rowUpdateBufferCount ?? 1))
+      );
       // get coincide of distStartRow&distEndRow and topRow&BottomRow
       // syncTopRow = Math.max(distStartRow, topRow);
       // syncBottomRow = Math.min(distEndRow, bottomRow);
@@ -187,8 +193,14 @@ async function moveCell(
       syncTopRow = distStartRow;
       syncBottomRow = distEndRow;
     } else {
-      syncTopRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
-      syncBottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
+      syncTopRow = Math.max(
+        proxy.bodyTopRow,
+        screenTopRow - proxy.screenRowCount * (proxy.table.options.rowUpdateBufferCount ?? 1)
+      );
+      syncBottomRow = Math.min(
+        proxy.bodyBottomRow,
+        screenTopRow + proxy.screenRowCount * (1 + (proxy.table.options.rowUpdateBufferCount ?? 1))
+      );
     }
 
     computeRowsHeight(proxy.table, syncTopRow, syncBottomRow, false);
@@ -394,8 +406,14 @@ export function updateRowContent(syncTopRow: number, syncBottomRow: number, prox
   let sync = true;
   if (async) {
     const screenLeftCol = proxy.screenLeftCol;
-    leftCol = Math.max(proxy.bodyLeftCol, screenLeftCol - proxy.screenColCount * 1);
-    rightCol = Math.min(proxy.bodyRightCol, screenLeftCol + proxy.screenColCount * 2);
+    leftCol = Math.max(
+      proxy.bodyLeftCol,
+      screenLeftCol - proxy.screenColCount * (proxy.table.options.columnUpdateBufferCount ?? 1)
+    );
+    rightCol = Math.min(
+      proxy.bodyRightCol,
+      screenLeftCol + proxy.screenColCount * (1 + (proxy.table.options.columnUpdateBufferCount ?? 1))
+    );
     if (leftCol !== proxy.bodyLeftCol || rightCol !== proxy.bodyRightCol) {
       sync = false;
     }
