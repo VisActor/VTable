@@ -31,13 +31,19 @@ jobs:
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
+
+
+      - name: Build VTable
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+
+        run: node common/scripts/install-run-rush.js build -t @visactor/vtable
+
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
 
-        run: |
-          node common/scripts/install-run-rush.js build -t @visactor/vtable
-          node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger
+        run:  node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger
 
       - name: Run CI
         working-directory: ./tools/bugserver-trigger
