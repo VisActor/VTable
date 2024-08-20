@@ -335,7 +335,7 @@ function updateCellWidth(
         axisConfig,
         cellGroup.attribute.width,
         cellGroup.attribute.height,
-        padding,
+        axisConfig.__vtablePadding ?? padding,
         scene.table
       );
       cellGroup.clear();

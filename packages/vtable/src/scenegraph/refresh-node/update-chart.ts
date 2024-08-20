@@ -386,7 +386,13 @@ function updateTableAxes(containerGroup: Group, table: BaseTableAPI) {
             const cellStyle = table._getCellStyle(cell.col, cell.row);
             const padding = getQuadProps(getProp('padding', cellStyle, cell.col, cell.row, table));
             const CartesianAxis: ICartesianAxis = Factory.getComponent('axis');
-            const axis = new CartesianAxis(axisConfig, cell.attribute.width, cell.attribute.height, padding, table);
+            const axis = new CartesianAxis(
+              axisConfig,
+              cell.attribute.width,
+              cell.attribute.height,
+              axisConfig.__vtablePadding ?? padding,
+              table
+            );
             cell.clear();
             cell.appendChild(axis.component);
             axis.overlap();
