@@ -593,23 +593,25 @@ export function createTable() {
     records,
     taskListTable: {
       columns: columns,
-      width: 400,
-      minWidth: 100,
-      maxWidth: 600,
-      headerStyle: {
-        borderColor: '#e1e4e8',
-        borderLineWidth: 1,
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: 'red',
-        bgColor: '#EEF1F5'
-      },
-      bodyStyle: {
-        borderColor: '#e1e4e8',
-        borderLineWidth: [1, 0, 1, 0],
-        fontSize: 16,
-        color: '#4D4D4D',
-        bgColor: '#FFF'
+      tableWidth: 400,
+      minTableWidth: 100,
+      maxTableWidth: 600,
+      theme: {
+        headerStyle: {
+          borderColor: '#e1e4e8',
+          borderLineWidth: 1,
+          fontSize: 18,
+          fontWeight: 'bold',
+          color: 'red',
+          bgColor: '#EEF1F5'
+        },
+        bodyStyle: {
+          borderColor: '#e1e4e8',
+          borderLineWidth: [1, 0, 1, 0],
+          fontSize: 16,
+          color: '#4D4D4D',
+          bgColor: '#FFF'
+        }
       }
     },
     frame: {

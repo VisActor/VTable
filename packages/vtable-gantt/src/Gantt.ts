@@ -143,8 +143,8 @@ export class Gantt extends EventTarget {
     this.options = options;
 
     this.taskTableWidth =
-      typeof options?.taskListTable?.width === 'number'
-        ? options?.taskListTable?.width
+      typeof options?.taskListTable?.tableWidth === 'number'
+        ? options?.taskListTable?.tableWidth
         : options?.taskListTable
         ? 100
         : 0;
@@ -231,8 +231,8 @@ export class Gantt extends EventTarget {
         canvas.style.height = `${heightP}px`;
       }
     } else if (Env.mode === 'node') {
-      widthP = this.canvasWidth - 1;
-      heightP = this.canvasHeight - 1;
+      // widthP = this.canvasWidth - 1;
+      // heightP = this.canvasHeight - 1;
     }
     const width = Math.floor(widthP - getVerticalScrollBarSize(this.parsedOptions.scrollStyle));
     const height = Math.floor(heightP - getHorizontalScrollBarSize(this.parsedOptions.scrollStyle));
@@ -250,18 +250,18 @@ export class Gantt extends EventTarget {
     }
   }
   _generateListTable() {
-    if (this.taskTableColumns.length >= 1) {
+    if (this.taskTableColumns.length >= 1 || this.options?.rowSeriesNumber) {
       const listTableOption = this._generateListTableOptions();
       this.taskListTableInstance = new ListTableSimple(this.container, listTableOption);
 
-      if (this.options?.taskListTable?.width === 'auto') {
+      if (this.options?.taskListTable?.tableWidth === 'auto') {
         this.taskTableWidth =
           this.taskListTableInstance.getAllColsWidth() + this.parsedOptions.outerFrameStyle.borderLineWidth;
-        if (this.options?.taskListTable?.maxWidth) {
-          this.taskTableWidth = Math.min(this.options?.taskListTable?.maxWidth, this.taskTableWidth);
+        if (this.options?.taskListTable?.maxTableWidth) {
+          this.taskTableWidth = Math.min(this.options?.taskListTable?.maxTableWidth, this.taskTableWidth);
         }
-        if (this.options?.taskListTable?.minWidth) {
-          this.taskTableWidth = Math.max(this.options?.taskListTable?.minWidth, this.taskTableWidth);
+        if (this.options?.taskListTable?.minTableWidth) {
+          this.taskTableWidth = Math.max(this.options?.taskListTable?.minTableWidth, this.taskTableWidth);
         }
         this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
         this.taskListTableInstance.setCanvasSize(
@@ -300,18 +300,24 @@ export class Gantt extends EventTarget {
       }
     }
     // lineWidthArr[1] = 0;
-    listTable_options.theme = {
-      scrollStyle: Object.assign({}, this.parsedOptions.scrollStyle, {
-        verticalVisible: 'none'
-      }),
+    listTable_options.theme = Object.assign({}, this.options.taskListTable?.theme, {
+      scrollStyle: Object.assign(
+        {},
+        this.parsedOptions.scrollStyle,
+        {
+          verticalVisible: 'none'
+        },
+        this.options.taskListTable?.theme?.scrollStyle
+      ),
       headerStyle: Object.assign(
         {},
         themes.DEFAULT.headerStyle,
         {
           bgColor: this.parsedOptions.timelineHeaderBackgroundColor
         },
-        this.options.taskListTable.headerStyle
+        this.options.taskListTable?.theme?.headerStyle
       ),
+      bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable?.theme?.bodyStyle),
       cellInnerBorder: false,
       frameStyle: Object.assign({}, this.parsedOptions.outerFrameStyle, {
         cornerRadius: [
@@ -326,9 +332,8 @@ export class Gantt extends EventTarget {
           this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
           this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0
         ]
-      }),
-      bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable.bodyStyle)
-    };
+      })
+    });
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvas.height;
     listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
