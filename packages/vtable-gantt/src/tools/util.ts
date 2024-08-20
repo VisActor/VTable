@@ -80,6 +80,23 @@ export function throttle2(func: Function, delay: number) {
 //   const day = parseInt(parts[2], 10);
 //   return new Date(year, month, day);
 // }
+export function getTodayNearDay(dayOffset: number, format?: string) {
+  const today = new Date();
+  const todayTime = today.getTime();
+  const oneDayTime = 24 * 60 * 60 * 1000;
+  const targetTime = todayTime + dayOffset * oneDayTime;
+  const date = new Date(targetTime);
+  if (format) {
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    format = format.replace('yyyy', year);
+    format = format.replace('mm', month);
+    format = format.replace('dd', day);
+    return format;
+  }
+  return date;
+}
 
 export function formatDate(date: Date, format: string) {
   const year = date.getFullYear().toString();

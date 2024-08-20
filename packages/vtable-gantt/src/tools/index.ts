@@ -1,3 +1,3 @@
-import { formatDate, getWeekNumber } from './util';
+import { formatDate, getWeekNumber, getTodayNearDay } from './util';
 
-export { formatDate, getWeekNumber };
+export { formatDate, getWeekNumber, getTodayNearDay };

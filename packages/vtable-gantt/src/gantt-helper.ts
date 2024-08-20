@@ -13,7 +13,7 @@ export function getTaskIndexByY(y: number, gantt: Gantt) {
   return taskBarIndex;
 }
 
-export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]) {
+export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): IMarkLine[] {
   if (!markLine) {
     return [];
   }
@@ -21,6 +21,8 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]) {
     return [
       {
         date: new Date().toLocaleDateString(),
+        scrollToMarkLine: true,
+        position: 'left',
         style: {
           lineColor: 'red',
           lineWidth: 1
@@ -28,9 +30,11 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]) {
       }
     ];
   } else if (Array.isArray(markLine)) {
-    return markLine.map(item => {
+    return markLine.map((item, index) => {
       return {
         date: item.date,
+        scrollToMarkLine: item.scrollToMarkLine,
+        position: item.position ?? 'left',
         style: {
           lineColor: item.style?.lineColor || 'red',
           lineWidth: item.style?.lineWidth || 1,
@@ -42,6 +46,8 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]) {
   return [
     {
       date: (markLine as IMarkLine).date,
+      scrollToMarkLine: (markLine as IMarkLine).scrollToMarkLine ?? true,
+      position: (markLine as IMarkLine).position ?? 'left',
       style: {
         lineColor: (markLine as IMarkLine).style?.lineColor || 'red',
         lineWidth: (markLine as IMarkLine).style?.lineWidth || 1,
@@ -199,6 +205,16 @@ export function initOptions(gantt: Gantt) {
     options.frame?.outerFrameStyle
   );
   gantt.parsedOptions.markLine = generateMarkLine(options?.markLine);
+  if (gantt.parsedOptions.markLine?.length ?? 0) {
+    if (gantt.parsedOptions.markLine?.every(item => item.scrollToMarkLine === undefined)) {
+      gantt.parsedOptions.markLine[0].scrollToMarkLine = true;
+    }
+    if (gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine)) {
+      gantt.parsedOptions.scrollToMarkLineDate = new Date(
+        gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine).date
+      );
+    }
+  }
   gantt.parsedOptions.verticalSplitLineHighlight = options.frame?.verticalSplitLineHighlight;
 
   gantt.parsedOptions.verticalSplitLine = Object.assign(

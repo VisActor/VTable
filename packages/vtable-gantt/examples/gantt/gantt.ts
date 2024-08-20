@@ -927,6 +927,8 @@ export function createTable() {
       },
       {
         date: '2024-08-17',
+        position: 'middle',
+        scrollToMarkLine: true,
         style: {
           lineWidth: 2,
           lineColor: 'red',

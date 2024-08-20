@@ -38,6 +38,7 @@ export class StateManager {
     startY: number;
     deltaX: number;
     targetStartX: number;
+    startOffsetY: number;
     moving: boolean;
     target: GanttTaskBarNode;
     moveTaskBarXSpeed: number;
@@ -54,6 +55,7 @@ export class StateManager {
     /** x坐标是相对table内坐标 */
     startX: number;
     startY: number;
+    startOffsetY: number;
     targetStartX: number;
     target: GanttTaskBarNode;
     resizing: boolean;
@@ -78,6 +80,7 @@ export class StateManager {
     this.moveTaskBar = {
       targetStartX: null,
       deltaX: 0,
+      startOffsetY: null,
       startX: null,
       startY: null,
       moving: false,
@@ -92,6 +95,7 @@ export class StateManager {
       target: null
     };
     this.resizeTaskBar = {
+      startOffsetY: null,
       targetStartX: null,
       startX: null,
       startY: null,
@@ -260,7 +264,7 @@ export class StateManager {
     // }
   }
 
-  startMoveTaskBar(target: GanttTaskBarNode, x: number, y: number) {
+  startMoveTaskBar(target: GanttTaskBarNode, x: number, y: number, offsetY: number) {
     if (target.name === 'task-bar-hover-shadow') {
       target = target.parent;
     }
@@ -269,6 +273,7 @@ export class StateManager {
     this.moveTaskBar.targetStartX = target.attribute.x;
     this.moveTaskBar.startX = x;
     this.moveTaskBar.startY = y;
+    this.moveTaskBar.startOffsetY = offsetY;
   }
 
   isMoveingTaskBar() {
@@ -293,7 +298,7 @@ export class StateManager {
 
     // }
     if (Math.abs(days) >= 1) {
-      const taskIndex = getTaskIndexByY(this.moveTaskBar.startY, this._gantt);
+      const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
       const oldRecord = this._gantt.getRecordByIndex(taskIndex);
       const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
       const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
@@ -361,7 +366,7 @@ export class StateManager {
     //
   }
   //#region 调整拖拽任务条的大小
-  startResizeTaskBar(target: Group, x: number, y: number, onIconName: string) {
+  startResizeTaskBar(target: Group, x: number, y: number, startOffsetY: number, onIconName: string) {
     // if (target.name === 'task-bar-hover-shadow') {
     // target = target.parent.parent;
     // }
@@ -371,6 +376,7 @@ export class StateManager {
     this.resizeTaskBar.targetStartX = target.attribute.x;
     this.resizeTaskBar.startX = x;
     this.resizeTaskBar.startY = y;
+    this.resizeTaskBar.startOffsetY = startOffsetY;
   }
   isResizingTaskBar() {
     return this.resizeTaskBar.resizing;
@@ -385,7 +391,7 @@ export class StateManager {
       const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
       const rect = this._gantt.stateManager.resizeTaskBar.target.barRect;
       const progressRect = this._gantt.stateManager.resizeTaskBar.target.progressRect;
-      const taskIndex = getTaskIndexByY(this.resizeTaskBar.startY, this._gantt);
+      const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
       const oldRecord = this._gantt.getRecordByIndex(taskIndex);
       const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
       const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];

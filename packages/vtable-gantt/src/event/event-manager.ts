@@ -49,13 +49,25 @@ function bindTableGroupListener(event: EventManager) {
     }) as any as GanttTaskBarNode;
     if (taskBarTarget) {
       if (e.target.name === 'task-bar-hover-shadow-left-icon') {
-        stateManager.startResizeTaskBar(taskBarTarget, (e.nativeEvent as any).x, (e.nativeEvent as any).y, 'left');
+        stateManager.startResizeTaskBar(
+          taskBarTarget,
+          (e.nativeEvent as any).x,
+          (e.nativeEvent as any).y,
+          e.offset.y,
+          'left'
+        );
         stateManager.updateInteractionState(InteractionState.grabing);
       } else if (e.target.name === 'task-bar-hover-shadow-right-icon') {
-        stateManager.startResizeTaskBar(taskBarTarget, (e.nativeEvent as any).x, (e.nativeEvent as any).y, 'right');
+        stateManager.startResizeTaskBar(
+          taskBarTarget,
+          (e.nativeEvent as any).x,
+          (e.nativeEvent as any).y,
+          e.offset.y,
+          'right'
+        );
         stateManager.updateInteractionState(InteractionState.grabing);
       } else if (gantt.parsedOptions.taskBarMoveable) {
-        stateManager.startMoveTaskBar(taskBarTarget, (e.nativeEvent as any).x, (e.nativeEvent as any).y);
+        stateManager.startMoveTaskBar(taskBarTarget, (e.nativeEvent as any).x, (e.nativeEvent as any).y, e.offset.y);
         stateManager.updateInteractionState(InteractionState.grabing);
       }
     }

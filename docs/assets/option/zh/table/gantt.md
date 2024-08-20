@@ -75,6 +75,14 @@
 
 {{ use: common-gantt-grid(prefix = '###') }}
 
+## markLine(boolean | IMarkLine | Array<IMarkLine>)
+
+标记线配置。如果配置为 true，会自动给今天做标记。
+
+非必填
+
+{{use: common-gantt-mark-line(prefix = '###')}}
+
 ## frame(Object)
 
 整个外边框及横纵分割线配置。
@@ -125,22 +133,6 @@
 - 'none': 表格滚动到顶部/底部时，不再触发父容器滚动。
 
 非必填
-
-## markLine(boolean | IMarkLine | Array<IMarkLine>)
-
-标记线配置。如果配置为 true，会自动给今天做标记。
-
-非必填
-
-IMarkLine具体定义：
-
-```
-export interface IMarkLine {
-  date?: string;
-  style?: ILineStyle;
-}
-```
-{{ use: common-gantt-line-style }}
 
 ## scrollStyle(IScrollStyle)
 

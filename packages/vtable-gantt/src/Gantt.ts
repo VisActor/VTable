@@ -125,6 +125,7 @@ export class Gantt extends EventTarget {
     _minDateTime: number;
     _maxDateTime: number;
     markLine: IMarkLine[];
+    scrollToMarkLineDate: Date;
     horizontalSplitLine: ILineStyle;
     verticalSplitLine: ILineStyle;
     verticalSplitLineHighlight: ILineStyle;
@@ -179,6 +180,7 @@ export class Gantt extends EventTarget {
     this.eventManager = new EventManager(this);
 
     this.scenegraph.afterCreateSceneGraph();
+    this._scrollToMarkLine();
   }
 
   renderTaskBarsTable() {
@@ -613,6 +615,17 @@ export class Gantt extends EventTarget {
           this.taskListTableInstance.setRowHeight(i, newRowHeight);
         }
       }
+    }
+  }
+  /** 滚动到scrollToMarkLineDate所指向的日期 */
+  _scrollToMarkLine() {
+    if (this.parsedOptions.scrollToMarkLineDate) {
+      const minDate = this.parsedOptions.minDate;
+      const targetDayDistance =
+        ((this.parsedOptions.scrollToMarkLineDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) *
+        this.parsedOptions.colWidthPerDay;
+      const left = targetDayDistance - this.tableNoFrameWidth / 2;
+      this.stateManager.setScrollLeft(left);
     }
   }
 }
