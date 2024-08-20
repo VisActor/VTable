@@ -36,13 +36,13 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.18.13",
+    "@visactor/vutils": "~0.18.14",
     "file-saver": "2.0.5",
     "@types/file-saver": "2.0.7",
     "exceljs": "4.4.0"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.11.10",
+    "@visactor/vchart": "1.12.0",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

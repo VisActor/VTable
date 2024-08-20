@@ -1,6 +1,6 @@
 import { loadPoptip } from '@visactor/vrender-components';
 import '@visactor/vrender-core';
-import { container, isBrowserEnv, isNodeEnv, preLoadAllModule } from '@visactor/vrender-core';
+import { container, isBrowserEnv, isNodeEnv, preLoadAllModule, registerFlexLayoutPlugin } from '@visactor/vrender-core';
 import {
   loadBrowserEnv,
   loadNodeEnv,
@@ -60,9 +60,11 @@ export function registerForVrender() {
   // registerWrapText();
 
   loadPoptip();
+
+  registerFlexLayoutPlugin();
 }
 
-export { Direction, Timeline } from '@visactor/vrender-core';
+export type { Direction, Timeline } from '@visactor/vrender-core';
 export { GroupFadeIn } from '@visactor/vrender-core';
 export { GroupFadeOut } from '@visactor/vrender-core';
 
