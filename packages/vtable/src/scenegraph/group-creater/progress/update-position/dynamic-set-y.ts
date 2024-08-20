@@ -92,11 +92,11 @@ async function moveCell(
     } else {
       const topRow = Math.max(
         proxy.bodyTopRow,
-        screenTopRow - proxy.screenRowCount * (proxy.table.options.rowUpdateBufferCount ?? 1)
+        screenTopRow - Math.ceil(proxy.screenRowCount * (proxy.table.options.rowUpdateBufferCount ?? 1))
       );
       const bottomRow = Math.min(
         proxy.bodyBottomRow,
-        screenTopRow + proxy.screenRowCount * (1 + (proxy.table.options.rowUpdateBufferCount ?? 1))
+        screenTopRow + Math.ceil(proxy.screenRowCount * (1 + (proxy.table.options.rowUpdateBufferCount ?? 1)))
       );
       // get coincide of distStartRow&distEndRow and topRow&BottomRow
       // syncTopRow = Math.max(distStartRow, topRow);
@@ -195,11 +195,11 @@ async function moveCell(
     } else {
       syncTopRow = Math.max(
         proxy.bodyTopRow,
-        screenTopRow - proxy.screenRowCount * (proxy.table.options.rowUpdateBufferCount ?? 1)
+        screenTopRow - Math.ceil(proxy.screenRowCount * (proxy.table.options.rowUpdateBufferCount ?? 1))
       );
       syncBottomRow = Math.min(
         proxy.bodyBottomRow,
-        screenTopRow + proxy.screenRowCount * (1 + (proxy.table.options.rowUpdateBufferCount ?? 1))
+        screenTopRow + Math.ceil(proxy.screenRowCount * (1 + (proxy.table.options.rowUpdateBufferCount ?? 1)))
       );
     }
 
@@ -408,11 +408,11 @@ export function updateRowContent(syncTopRow: number, syncBottomRow: number, prox
     const screenLeftCol = proxy.screenLeftCol;
     leftCol = Math.max(
       proxy.bodyLeftCol,
-      screenLeftCol - proxy.screenColCount * (proxy.table.options.columnUpdateBufferCount ?? 1)
+      screenLeftCol - Math.ceil(proxy.screenColCount * (proxy.table.options.columnUpdateBufferCount ?? 1))
     );
     rightCol = Math.min(
       proxy.bodyRightCol,
-      screenLeftCol + proxy.screenColCount * (1 + (proxy.table.options.columnUpdateBufferCount ?? 1))
+      screenLeftCol + Math.ceil(proxy.screenColCount * (1 + (proxy.table.options.columnUpdateBufferCount ?? 1)))
     );
     if (leftCol !== proxy.bodyLeftCol || rightCol !== proxy.bodyRightCol) {
       sync = false;
