@@ -32,6 +32,9 @@
     },
     {
       "path": "../../packages/vtable"
+    },
+    {
+      "path": "../../packages/vtable/src/vrender.ts"
     }
   ],
   "include": ["src", "scripts"]
