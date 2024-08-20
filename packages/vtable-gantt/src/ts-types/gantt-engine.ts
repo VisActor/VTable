@@ -1,4 +1,4 @@
-import type { ColumnsDefine, TYPES } from '@visactor/vtable';
+import type { ColumnsDefine, TYPES, ListTableConstructorOptions } from '@visactor/vtable';
 import type { Group } from '@visactor/vtable/es/vrender';
 import type { Gantt } from '../Gantt';
 export type LayoutObjectId = number | string;
@@ -37,19 +37,25 @@ export interface GanttConstructorOptions {
 
   /** 左侧任务信息表格相关配置 */
   taskListTable?: {
-    /** 定义列 */
-    columns?: ColumnsDefine; // (string | IDimension)[];
     /** 左侧任务列表信息占用的宽度。如果设置为'auto'表示将所有列完全展示 */
-    width?: 'auto' | number;
-    colWidth?: number;
-    headerStyle?: ITableStyle;
-    bodyStyle?: ITableStyle;
+    tableWidth?: 'auto' | number;
     /** 左侧任务列表 最小宽度 */
-    minWidth?: number;
+    minTableWidth?: number;
     /** 左侧任务列表 最大宽度 */
-    maxWidth?: number;
-    rightFrozenColCount?: number;
-  };
+    maxTableWidth?: number;
+  } & Omit<
+    //ListTable表格可配置的属性
+    ListTableConstructorOptions,
+    | 'container'
+    | 'records'
+    | 'defaultHeaderRowHeight'
+    | 'defaultRowHeight'
+    | 'overscrollBehavior'
+    | 'rowSeriesNumber'
+    | 'scrollStyle'
+    | 'pixelRatio'
+    | 'title'
+  >;
   /** 时间刻度 */
   timelineHeader: {
     backgroundColor?: string;
@@ -85,6 +91,13 @@ export interface GanttConstructorOptions {
     hoverBarStyle?: ITaskBarStyle & { barOverLayColor?: string };
     /** 任务条选择时的样式 TODO */
     selectionBarStyle?: ITaskBarStyle & { barOverLayColor?: string };
+    /** 任务条右键菜单 */
+    menu?: {
+      /** 右键菜单。代替原来的option.contextmenu */
+      contextMenuItems?:
+        | TYPES.MenuListItem[]
+        | ((record: string, index: number, dateIndex: number, startDate: Date, endDate: Date) => TYPES.MenuListItem[]);
+    };
   };
   /** 网格线配置 */
   grid?: IGrid;
@@ -98,6 +111,9 @@ export interface GanttConstructorOptions {
     //列调整宽度的直线
     verticalSplitLineHighlight?: ILineStyle;
   };
+
+  /** 标记线配置 如果配置为true 会自动给今天做标记 */
+  markLine?: boolean | IMarkLine | IMarkLine[];
   /** 指定整个甘特图的最小日期 */
   minDate?: string;
   /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
@@ -118,10 +134,6 @@ export interface GanttConstructorOptions {
    * */
   overscrollBehavior?: 'auto' | 'none';
 
-  /** 标记线配置 如果配置为true 会自动给今天做标记 */
-  markLine?: boolean | IMarkLine | IMarkLine[];
-
-  // timelineHeaderStyle?: ITimelineHeaderStyle;
   scrollStyle?: IScrollStyle;
 
   pixelRatio?: number;

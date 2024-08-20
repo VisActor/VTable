@@ -620,9 +620,13 @@ export function createTable() {
     records,
     taskListTable: {
       columns: columns,
-      width: 400,
-      minWidth: 100,
-      maxWidth: 600
+      tableWidth: 400,
+      minTableWidth: 100,
+      maxTableWidth: 600,
+      hierarchyExpandLevel: 5,
+      menu: {
+        contextMenuItems: ['copy', 'paste', 'delete', '...']
+      }
     },
 
     frame: {
