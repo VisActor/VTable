@@ -22,11 +22,11 @@ export function handleWhell(event: WheelEvent, state: StateManager, isWheelEvent
   }
 
   if (optimizedDeltaX) {
-    state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX);
+    state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX, event);
     state.showHorizontalScrollBar(true);
   }
   if (optimizedDeltaY) {
-    state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY);
+    state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY, event);
     state.showVerticalScrollBar(true);
   }
   isWheelEvent && state.resetInteractionState();

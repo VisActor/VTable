@@ -24,7 +24,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
   });
-  handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
+  handler.on(table.canvas, 'wheel', (e: WheelEvent) => {
     table.editorManager?.completeEdit();
     if (table.eventManager._enableTableScroll) {
       handleWhell(e, stateManager);
