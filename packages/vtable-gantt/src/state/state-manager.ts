@@ -450,7 +450,7 @@ export class StateManager {
     const textLabel = taskBarGroup.textLabel;
 
     const progressField = this._gantt.parsedOptions.progressField;
-    const taskIndex = getTaskIndexByY(this.resizeTaskBar.startY, this._gantt);
+    const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
     const taskRecord = this._gantt.getRecordByIndex(taskIndex);
     const progress = taskRecord[progressField];
 
@@ -547,9 +547,9 @@ export class StateManager {
       this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, taskBarTarget);
       this._gantt.scenegraph.updateNextFrame();
       if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR)) {
-        const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, this._gantt);
+        const taskIndex = getTaskIndexByY(e.offset.y, this._gantt);
         const record = this._gantt.getRecordByIndex(taskIndex);
-        this._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
+        this._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
           event: e.nativeEvent,
           index: taskIndex,
           record
@@ -564,7 +564,7 @@ export class StateManager {
       this._gantt.scenegraph.taskBar.hideHoverBar();
       this._gantt.scenegraph.updateNextFrame();
       if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR)) {
-        const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, this._gantt);
+        const taskIndex = getTaskIndexByY(e.offset.y, this._gantt);
         const record = this._gantt.getRecordByIndex(taskIndex);
         this._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
           event: e.nativeEvent,
