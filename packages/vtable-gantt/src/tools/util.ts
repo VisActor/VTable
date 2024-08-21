@@ -227,3 +227,14 @@ export function getWeekNumber(currentDate: Date) {
   const weekNumber = Math.ceil(((currentDate.getTime() - startOfYear.getTime()) / 86400000 + 1) / 7);
   return weekNumber;
 }
+/** 判断对象的属性是否可写 */
+export function isPropertyWritable(obj: any, prop: string | number) {
+  const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+  if (!descriptor) {
+    // 属性不存在
+    return false;
+  }
+
+  // 检查是否有 setter 方法或 writable 属性为 true
+  return !!descriptor.set || descriptor.writable === true;
+}

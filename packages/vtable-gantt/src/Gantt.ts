@@ -39,7 +39,7 @@ import {
   updateSplitLineAndResizeLine
 } from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
-import { formatDate, getWeekNumber, parseDateFormat, toBoxArray } from './tools/util';
+import { formatDate, isPropertyWritable, parseDateFormat } from './tools/util';
 import { DataSource } from './data/DataSource';
 registerCheckboxCell();
 registerProgressBarCell();
@@ -298,40 +298,108 @@ export class Gantt extends EventTarget {
       }
     }
     // lineWidthArr[1] = 0;
-    listTable_options.theme = Object.assign({}, this.options.taskListTable?.theme, {
-      scrollStyle: Object.assign(
-        {},
-        this.parsedOptions.scrollStyle,
-        {
-          verticalVisible: 'none'
-        },
-        this.options.taskListTable?.theme?.scrollStyle
-      ),
-      headerStyle: Object.assign(
-        {},
-        themes.DEFAULT.headerStyle,
-        {
-          bgColor: this.parsedOptions.timelineHeaderBackgroundColor
-        },
-        this.options.taskListTable?.theme?.headerStyle
-      ),
-      bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable?.theme?.bodyStyle),
-      cellInnerBorder: false,
-      frameStyle: Object.assign({}, this.parsedOptions.outerFrameStyle, {
-        cornerRadius: [
-          this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0,
-          0,
-          0,
-          this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
-        ],
-        borderLineWidth: [
-          this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
-          0,
-          this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
-          this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0
-        ]
-      })
-    });
+    if (this.options.taskListTable?.theme) {
+      listTable_options.theme = this.options.taskListTable.theme;
+      if (!isPropertyWritable(listTable_options.theme, 'cellInnerBorder')) {
+        //测试是否使用了主题 使用了主题配置项不可写。需要使用extends方式覆盖配置
+        if (!listTable_options.theme.headerStyle?.bgColor) {
+          (listTable_options.theme as themes.TableTheme).extends({
+            headerStyle: {
+              bgColor: this.parsedOptions.timelineHeaderBackgroundColor
+            }
+          });
+        }
+        (listTable_options.theme as themes.TableTheme).extends({
+          cellInnerBorder: false,
+          frameStyle: Object.assign({}, this.parsedOptions.outerFrameStyle, {
+            cornerRadius: [
+              this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0,
+              0,
+              0,
+              this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
+            ],
+            borderLineWidth: [
+              this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
+              0,
+              this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
+              this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0
+            ]
+          }),
+          scrollStyle: Object.assign(
+            {},
+            this.parsedOptions.scrollStyle,
+            {
+              verticalVisible: 'none'
+            },
+            this.options.taskListTable.theme.scrollStyle
+          )
+        });
+      } else {
+        if (!listTable_options.theme.headerStyle) {
+          listTable_options.theme.headerStyle = { bgColor: this.parsedOptions.timelineHeaderBackgroundColor };
+        } else if (!listTable_options.theme.headerStyle.bgColor) {
+          listTable_options.theme.headerStyle.bgColor = this.parsedOptions.timelineHeaderBackgroundColor;
+        }
+        listTable_options.theme.cellInnerBorder = false;
+        listTable_options.theme.frameStyle = Object.assign({}, this.parsedOptions.outerFrameStyle, {
+          cornerRadius: [
+            this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0,
+            0,
+            0,
+            this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
+          ],
+          borderLineWidth: [
+            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
+            0,
+            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
+            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0
+          ]
+        });
+        listTable_options.theme.scrollStyle = Object.assign(
+          {},
+          this.parsedOptions.scrollStyle,
+          {
+            verticalVisible: 'none'
+          },
+          this.options.taskListTable.theme.scrollStyle
+        );
+      }
+    } else {
+      listTable_options.theme = {
+        scrollStyle: Object.assign(
+          {},
+          this.parsedOptions.scrollStyle,
+          {
+            verticalVisible: 'none'
+          },
+          this.options.taskListTable?.theme?.scrollStyle
+        ),
+        headerStyle: Object.assign(
+          {},
+          themes.DEFAULT.headerStyle,
+          {
+            bgColor: this.parsedOptions.timelineHeaderBackgroundColor
+          },
+          this.options.taskListTable?.theme?.headerStyle
+        ),
+        bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable?.theme?.bodyStyle),
+        cellInnerBorder: false,
+        frameStyle: Object.assign({}, this.parsedOptions.outerFrameStyle, {
+          cornerRadius: [
+            this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0,
+            0,
+            0,
+            this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
+          ],
+          borderLineWidth: [
+            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
+            0,
+            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
+            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0
+          ]
+        })
+      };
+    }
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvas.height;
     listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
