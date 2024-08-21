@@ -36,13 +36,6 @@
     "es",
     "dist"
   ],
-  "exports": {
-    ".": {
-      "require": "./cjs/index.js",
-      "import": "./es/index.js"
-    },
-    "./es/*": "./es/*"
-  },
   "scripts": {
     "demo": "vite serve examples",
     "site-demo": "vite serve site-demo",

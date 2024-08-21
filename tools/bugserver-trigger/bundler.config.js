@@ -12,17 +12,6 @@ module.exports = {
 
   umdOutputFilename: 'index',
   minify: false,
-  rollupOptions: {
-    treeshake: true,
-    plugins: [
-      alias({
-        entries: [
-          { find: '@visactor/vtable/es/vrender', replacement: path.resolve(__dirname, '../../packages/vtable/es/vrender') }
-        ]
-      }),
-      // 其他插件
-    ]
-  },
   output: {
     footer: '/* follow me on Twitter! @rich_harris */'
   }

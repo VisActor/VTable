@@ -12,15 +12,7 @@ module.exports = {
   name: 'VTable.gantt',
   umdOutputFilename: 'vtable-gantt',
   rollupOptions: {
-    treeshake: true,
-    plugins: [
-      alias({
-        entries: [
-          { find: '@visactor/vtable/es/vrender', replacement: path.resolve(__dirname, '../vtable/es/vrender') }
-        ]
-      }),
-      // 其他插件
-    ]
+    treeshake: true
   },
   globals: {
   },
