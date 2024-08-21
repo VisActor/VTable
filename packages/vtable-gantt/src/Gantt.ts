@@ -144,11 +144,7 @@ export class Gantt extends EventTarget {
     this.options = options;
 
     this.taskTableWidth =
-      typeof options?.taskListTable?.tableWidth === 'number'
-        ? options?.taskListTable?.tableWidth
-        : options?.taskListTable
-        ? 100
-        : 0;
+      typeof options?.taskListTable?.tableWidth === 'number' ? options?.taskListTable?.tableWidth : -1; //-1 只是作为标记  后续判断该值进行自动计算宽度
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
 
@@ -256,7 +252,7 @@ export class Gantt extends EventTarget {
       const listTableOption = this._generateListTableOptions();
       this.taskListTableInstance = new ListTableSimple(this.container, listTableOption);
 
-      if (this.options?.taskListTable?.tableWidth === 'auto') {
+      if (this.options?.taskListTable?.tableWidth === 'auto' || this.taskTableWidth === -1) {
         this.taskTableWidth =
           this.taskListTableInstance.getAllColsWidth() + this.parsedOptions.outerFrameStyle.borderLineWidth;
         if (this.options?.taskListTable?.maxTableWidth) {
