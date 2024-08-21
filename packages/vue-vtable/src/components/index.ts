@@ -9,3 +9,5 @@ export { default as PivotCorner } from './pivot/pivot-corner';
 
 export { default as Menu } from './component/menu';
 export { default as Tooltip } from './component/tooltip';
+
+export { default as CustomLayout } from './custom/custom-layout';
