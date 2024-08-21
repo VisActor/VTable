@@ -214,8 +214,14 @@ function updateColGroupContentAsync(colGroup: Group, proxy: SceneProxy) {
     return;
   }
   const screenTopRow = proxy.screenTopRow;
-  const topRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
-  const bottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
+  const topRow = Math.max(
+    proxy.bodyTopRow,
+    screenTopRow - Math.ceil(proxy.screenRowCount * (proxy.table.options.rowUpdateBufferCount ?? 1))
+  );
+  const bottomRow = Math.min(
+    proxy.bodyBottomRow,
+    screenTopRow + Math.ceil(proxy.screenRowCount * (1 + (proxy.table.options.rowUpdateBufferCount ?? 1)))
+  );
 
   for (let row = topRow; row <= bottomRow; row++) {
     // const cellGroup = proxy.table.scenegraph.getCell(col, row);

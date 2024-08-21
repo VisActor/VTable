@@ -423,9 +423,6 @@ export interface BaseTableConstructorOptions {
   limitMinWidth?: boolean | number;
   limitMinHeight?: boolean | number;
 
-  // maximum number of data items maintained in table instance
-  maintainedDataCount?: number;
-
   legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
   emptyTip?: true | IEmptyTip;
@@ -482,8 +479,20 @@ export interface BaseTableConstructorOptions {
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
-
   renderOption?: any;
+
+  // professionalConfig
+  // maximum number of data items maintained in table instance
+  maintainedDataCount?: number;
+  // maximum number of columns maintained in table instance
+  maintainedColumnCount?: number;
+  // maximum number of rows maintained in table instance
+  maintainedRowCount?: number;
+
+  rowUpdateBufferCount?: number; // 行更新时，同步更新范围buffer系数；默认为1，同步更新为三倍屏幕预计行数（上下buffer各为1）
+  columnUpdateBufferCount?: number; // 列更新时，同步更新范围buffer系数；默认为1，同步更新为三倍屏幕预计列数（左右buffer各为1）
+  progressRowUpdateCount?: number; // 渐进更新行时，每个异步任务更新的行数；默认为屏幕预计行数
+  progressColumnUpdateCount?: number; // 渐进更新列时，每个异步任务更新的列数；默认为屏幕预计列数
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */

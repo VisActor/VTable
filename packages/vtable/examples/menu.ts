@@ -750,6 +750,10 @@ export const menus = [
       {
         path: 'custom',
         name: 'custom-render'
+      },
+      {
+        path: 'custom',
+        name: 'custom-perf'
       }
     ]
   },

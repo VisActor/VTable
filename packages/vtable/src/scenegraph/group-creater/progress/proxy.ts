@@ -89,8 +89,12 @@ export class SceneProxy {
     } else if (this.table.isPivotTable()) {
       this.mode = 'pivot';
     }
-    if (this.table.options.maintainedDataCount) {
-      this.rowLimit = this.table.options.maintainedDataCount;
+
+    if (this.table.options.maintainedDataCount || this.table.options.maintainedRowCount) {
+      this.rowLimit = this.table.options.maintainedDataCount || this.table.options.maintainedRowCount;
+    }
+    if (this.table.options.maintainedColumnCount) {
+      this.colLimit = this.table.options.maintainedColumnCount;
     }
   }
 
@@ -110,7 +114,8 @@ export class SceneProxy {
     this.colEnd = this.totalCol; // temp for first screen, will replace in createGroupForFirstScreen()
     const defaultColWidth = this.table.defaultColWidth;
     // const defaultColWidth = getDefaultHeight(this.table);
-    this.taskColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth) * 1;
+    this.taskColCount =
+      this.table.options.progressColumnUpdateCount ?? Math.ceil(this.table.tableNoFrameWidth / defaultColWidth) * 1;
 
     // 确定动态更新限制
     const totalBodyWidth = defaultColWidth * totalActualBodyColCount;
@@ -144,7 +149,8 @@ export class SceneProxy {
     this.rowEnd = this.totalRow; // temp for first screen, will replace in createGroupForFirstScreen()
     const defaultRowHeight = this.table.defaultRowHeight;
     // const defaultRowHeight = getDefaultWidth(this.table);
-    this.taskRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight) * 1;
+    this.taskRowCount =
+      this.table.options.progressRowUpdateCount ?? Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight) * 1;
 
     // 确定动态更新限制
     const totalBodyHeight = defaultRowHeight * totalActualBodyRowCount;
