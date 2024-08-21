@@ -28,7 +28,7 @@ export class MarkLine {
     this.markLIneContainer = new Group({
       x: 0,
       y: 0,
-      width: this._scene._gantt.getAllColsWidth(),
+      width: this._scene._gantt._getAllColsWidth(),
       height: this.height,
       pickable: false,
       clip: true

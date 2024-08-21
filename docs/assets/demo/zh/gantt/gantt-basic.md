@@ -670,7 +670,7 @@ const option = {
     // resizable: false,
     moveable: true,
     hoverBarStyle: {
-      barOverLayColor: 'rgba(99, 144, 0, 0.4)'
+      barOverlayColor: 'rgba(99, 144, 0, 0.4)'
     },
     labelText: '{title} {progress}%',
     labelTextStyle: {

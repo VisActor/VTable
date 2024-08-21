@@ -7,35 +7,40 @@ export interface TableEventHandlersEventArgumentMap {
   scroll: {
     scrollLeft: number;
     scrollTop: number;
-    // scrollWidth: number;
-    // scrollHeight: number;
-    // viewWidth: number;
-    // viewHeight: number;
     scrollDirection: 'horizontal' | 'vertical';
     scrollRatioX?: number;
     scrollRatioY?: number;
   };
   mouseenter_task_bar: {
+    /** 第几条数据 */
     index: number;
     record: any;
     event: Event;
   };
   mouseleave_task_bar: {
+    /** 第几条数据 */
     index: number;
     record: any;
     event: Event;
   };
   click_task_bar: {
+    /** 第几条数据 */
     index: number;
     record: any;
     event: Event;
   };
   change_date_range: {
+    /** 第几条数据 */
     index: number;
+    /** 改变后的起始日期 */
     startDate: Date;
+    /** 改变后的结束日期 */
     endDate: Date;
+    /** 改变前的起始日期 */
     oldStartDate: Date;
+    /** 改变前的结束日期 */
     oldEndDate: Date;
+    /** 改变后的数据条目 */
     record: any;
   };
 }

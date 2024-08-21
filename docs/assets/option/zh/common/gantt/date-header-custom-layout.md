@@ -5,6 +5,7 @@ export type DateCustomLayoutArgumentType = {
   width: number;
   height: number;
   index: number;
+  /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
   dateIndex: number;
   title: string;
   startDate: Date;

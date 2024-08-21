@@ -23,8 +23,12 @@
     | 'title'
   >;
 ```
-所以可以看到除了上述个别配置项不需要再这里定义（可在option外层定义），其他配置项均和ListTable中的配置基本一致，具体可以参考[ListTable](./ListTable)
+这里配置的内容对应左侧任务信息表格，该表格是一个完整的ListTable的实例。所以可以看到除了上述个别配置项外和ListTable中的配置基本一致，具体可以参考[ListTable](./ListTable)
 
+不需要在taskListTable这里定义（在外层option定义）的配置项有： 
+```
+['container', 'records', 'rowSeriesNumber', 'overscrollBehavior', 'pixelRatio'];
+```
 ${prefix} columns(ColumnsDefine)
 
 定义任务信息表格的列信息

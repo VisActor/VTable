@@ -44,3 +44,12 @@ ${prefix} format((date: DateFormatArgumentType) => string)
 非必填
 
 函数参数：
+
+```
+export type DateFormatArgumentType = {
+  /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
+  dateIndex: number;
+  startDate: Date;
+  endDate: Date;
+};
+```

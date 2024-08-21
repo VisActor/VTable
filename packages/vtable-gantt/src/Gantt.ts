@@ -107,8 +107,8 @@ export class Gantt extends EventTarget {
     reverseSortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
     grid: IGrid;
     taskBarStyle: ITaskBarStyle;
-    taskBarHoverStyle: ITaskBarStyle & { barOverLayColor?: string };
-    taskBarSelectionStyle: ITaskBarStyle & { barOverLayColor?: string };
+    taskBarHoverStyle: ITaskBarStyle & { barOverlayColor?: string };
+    taskBarSelectionStyle: ITaskBarStyle & { barOverlayColor?: string };
     taskBarLabelText: ITaskBarLabelText;
     taskBarMoveable: boolean;
     taskBarResizable: boolean;
@@ -423,7 +423,7 @@ export class Gantt extends EventTarget {
     // }
     // return (this.parsedOptions.timeLineHeaderRowHeights as number) * this.timeLineHeaderLevel;
   }
-  getAllColsWidth() {
+  _getAllColsWidth() {
     return (
       this.parsedOptions.colWidthPerDay *
       (Math.ceil(
@@ -445,12 +445,12 @@ export class Gantt extends EventTarget {
     return this.records[index];
   }
 
-  refreshTaskBar(index: number) {
+  _refreshTaskBar(index: number) {
     // this.listTableInstance.updateRecords([record], [index]);
     this.scenegraph.taskBar.updateTaskBarNode(index);
     this.scenegraph.updateNextFrame();
   }
-  updateRecordToListTable(record: any, index: number) {
+  _updateRecordToListTable(record: any, index: number) {
     this.taskListTableInstance.updateRecords([record], [index]);
   }
   /**
@@ -524,13 +524,13 @@ export class Gantt extends EventTarget {
       const newEndDate = formatDate(new Date(days * DayTimes + endDate.getTime()), dateFormat);
       taskRecord[endDateField] = newEndDate;
     }
-    this.updateRecordToListTable(taskRecord, index);
+    this._updateRecordToListTable(taskRecord, index);
   }
-  /** TODO */
+  /** 目前不支持树形tree的情况更新单条数据 需要的话目前可以setRecords。 */
   updateTaskRecord(record: any, index: number) {
     //const taskRecord = this.getRecordByIndex(index);
-    this.updateRecordToListTable(record, index);
-    this.refreshTaskBar(index);
+    this._updateRecordToListTable(record, index);
+    this._refreshTaskBar(index);
   }
 
   /**
@@ -538,6 +538,7 @@ export class Gantt extends EventTarget {
    * @param pixelRatio
    */
   setPixelRatio(pixelRatio: number) {
+    this.taskListTableInstance?.setPixelRatio(pixelRatio);
     this.parsedOptions.pixelRatio = pixelRatio;
     this.scenegraph.setPixelRatio(pixelRatio);
   }

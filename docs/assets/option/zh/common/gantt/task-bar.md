@@ -61,13 +61,13 @@ ${prefix} moveable(boolean) = true
 
 非必填
 
-${prefix} hoverBarStyle(ITaskBarStyle & { barOverLayColor?: string })
+${prefix} hoverBarStyle(ITaskBarStyle & { barOverlayColor?: string })
 
 任务条hover时的样式
 
 非必填
 
-${prefix} selectionBarStyle(ITaskBarStyle & { barOverLayColor?: string })
+${prefix} selectionBarStyle(ITaskBarStyle & { barOverlayColor?: string })
 
 任务条选择时的样式
 

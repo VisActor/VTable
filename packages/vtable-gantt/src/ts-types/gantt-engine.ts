@@ -8,6 +8,7 @@ export interface ITimelineDateInfo {
   endDate: Date;
   startDate: Date;
   title: string;
+  /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
   dateIndex: number;
 }
 
@@ -88,15 +89,22 @@ export interface GanttConstructorOptions {
     /** 任务条是否可移动 */
     moveable?: boolean;
     /** 任务条hover时的样式 */
-    hoverBarStyle?: ITaskBarStyle & { barOverLayColor?: string };
+    hoverBarStyle?: ITaskBarStyle & { barOverlayColor?: string };
     /** 任务条选择时的样式 TODO */
-    selectionBarStyle?: ITaskBarStyle & { barOverLayColor?: string };
+    selectionBarStyle?: ITaskBarStyle & { barOverlayColor?: string };
     /** 任务条右键菜单 */
     menu?: {
       /** 右键菜单。代替原来的option.contextmenu */
       contextMenuItems?:
         | TYPES.MenuListItem[]
-        | ((record: string, index: number, dateIndex: number, startDate: Date, endDate: Date) => TYPES.MenuListItem[]);
+        | ((
+            record: string,
+            index: number,
+            /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
+            dateIndex: number,
+            startDate: Date,
+            endDate: Date
+          ) => TYPES.MenuListItem[]);
     };
   };
   /** 网格线配置 */
@@ -199,7 +207,12 @@ export type IFrameStyle = {
 export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
-export type DateFormatArgumentType = { dateIndex: number; startDate: Date; endDate: Date };
+export type DateFormatArgumentType = {
+  /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
+  dateIndex: number;
+  startDate: Date;
+  endDate: Date;
+};
 export type TaskBarCustomLayoutArgumentType = {
   width: number;
   height: number;
@@ -223,6 +236,7 @@ export type DateCustomLayoutArgumentType = {
   width: number;
   height: number;
   index: number;
+  /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
   dateIndex: number;
   title: string;
   startDate: Date;

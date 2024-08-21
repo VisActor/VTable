@@ -169,14 +169,14 @@ export function initOptions(gantt: Gantt) {
 
   gantt.parsedOptions.taskBarHoverStyle = Object.assign(
     {
-      barOverLayColor: 'rgba(99, 144, 0, 0.4)'
+      barOverlayColor: 'rgba(99, 144, 0, 0.4)'
     },
     options?.taskBar?.hoverBarStyle
   );
 
   gantt.parsedOptions.taskBarSelectionStyle = Object.assign(
     {
-      barOverLayColor: 'rgba(99, 144, 0, 0.4)'
+      barOverlayColor: 'rgba(99, 144, 0, 0.4)'
     },
     options?.taskBar?.selectionBarStyle
   );

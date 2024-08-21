@@ -38,7 +38,7 @@ export class Grid {
     this.colWidthPerDay = scene._gantt.parsedOptions.colWidthPerDay;
     this.rowHeight = scene._gantt.parsedOptions.rowHeight;
     this.rowCount = scene._gantt.itemCount;
-    this.allGridWidth = scene._gantt.getAllColsWidth();
+    this.allGridWidth = scene._gantt._getAllColsWidth();
     this.allGridHeight = scene._gantt.getAllTaskBarsHeight();
     this.group = new Group({
       x: this.x,
@@ -59,7 +59,7 @@ export class Grid {
       points: [
         { x: 0, y: horizontalSplitLineWidth & 1 ? 0.5 : 0 },
         {
-          x: scene._gantt.getAllColsWidth(),
+          x: scene._gantt._getAllColsWidth(),
           y: horizontalSplitLineWidth & 1 ? 0.5 : 0
         }
       ]
@@ -144,7 +144,7 @@ export class Grid {
       y: this._scene._gantt.getAllHeaderRowsHeight()
     });
     this.rowCount = this._scene._gantt.itemCount;
-    this.allGridWidth = this._scene._gantt.getAllColsWidth();
+    this.allGridWidth = this._scene._gantt._getAllColsWidth();
     this.allGridHeight = this._scene._gantt.getAllTaskBarsHeight();
     this.verticalLineGroup?.parent.removeChild(this.verticalLineGroup);
     this.horizontalLineGroup?.parent.removeChild(this.horizontalLineGroup);

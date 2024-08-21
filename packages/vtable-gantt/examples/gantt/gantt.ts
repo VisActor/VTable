@@ -805,12 +805,12 @@ export function createTable() {
   ];
   const option: GanttConstructorOptions = {
     records,
-    // taskListTable: {
-    //   // columns: columns,
-    //   // tableWidth: 400,
-    //   // minTableWidth: 100
-    //   // maxTableWidth: 600
-    // },
+    taskListTable: {
+      columns: columns,
+      tableWidth: 400,
+      minTableWidth: 100,
+      maxTableWidth: 600
+    },
 
     frame: {
       verticalSplitLineMoveable: true,

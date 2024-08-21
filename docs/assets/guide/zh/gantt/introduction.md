@@ -15,8 +15,9 @@
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-structure.png)
 
-##  vtable-gantt能力支持
-在 vtable-gantt 组件中，支持的主要能力包括：
+**注意：左侧的任务信息表在实现中对应的是一个完整的ListTable。挂在ganttInstable.listTableInstance中，所以对应ListTable的接口及事件都是可以通过listTableInstance来直接使用的，同时如果想要排查左侧表格的问题也可以直接将listTableInstance.options取出查看是否符合预期**
+##  vtable-gantt主要配置
+在 vtable-gantt 组件中，支持的主要配置包括：
 
 1. 任务条配置 taskBar
 
@@ -24,6 +25,7 @@
     2. 样式配置: 通过 barStyle 和 hoverBarStyle 等配置项，可以设置任务条的颜色、宽度、圆角、边框等样式。
     3. 文字样式: 通过 labelText 配置显示的文字内容信息， labelTextStyle 配置样式，文字样式包括字体、颜色、对齐方式等。
     4. 交互配置: 通过 resizable 和 moveable 配置项，可以设置任务条是否可调整大小和移动。
+    5. 交互样式: 通过 hoverBarStyle 配置项，可以设置任务条悬浮时的样式。
 2. 日期表头配置 timelineHeader
     1. 自定义渲染: 通过 customLayout 配置项，可以自定义日期表头的渲染方式。
     2. 样式配置: 通过 style 配置项，可以设置表头的文字样式，包括字体大小、颜色、对齐方式等。
@@ -33,19 +35,25 @@
     3. 日期格式化: 通过 format 配置项，可以自定义日期的显示格式。
 4. 网格线配置grid
     1. 样式配置: 通过 verticalLine 和 horizontalLine 配置项，可以设置网格线的颜色、宽度、虚线样式等。
+    2. 背景颜色: 通过 backgroundColor 配置项，可以设置网格线的背景颜色。
 5. 任务列表表格配置 taskListTable
-    1. 左侧表格整体宽度：通过 width 配置项，可以设置任务列表表格的整体宽度。
+    1. 左侧表格整体宽度：通过 tableWidth 配置项，可以设置任务列表表格的整体宽度。
     2. 列信息: 通过 columns，可以定义任务信息表格的列信息和各列宽度。
     3. 样式配置: 通过 headerStyle 和 bodyStyle 配置项，可以设置表头和表体的样式。
-    4. 宽度限制: 通过 minWidth 和 maxWidth 配置项，可以设置任务列表的最小和最大宽度。
+    4. 宽度限制: 通过 minTableWidth 和 maxTableWidth 配置项，可以设置任务列表的最小和最大宽度。
 6. 分割线配置 frame
     1. 外边框配置: 通过 outerFrameStyle 配置项，可以设置外边框的颜色、宽度等。
     2. 分割线样式配置: 通过 verticalSplitLine 和 horizontalSplitLine 配置项，可以设置分割线的颜色、宽度、虚线样式等。
     3. 拖拽左侧表格宽度: 通过verticalSplitLineMoveable 配置项，可以设置分割线是否可拖拽。通过 verticalSplitLineHighlight 配置项，可以设置列调整宽度时的高亮线样式。
-
+7. 标记线配置 markLine
+    1. 日期配置: 通过 date 配置项，可以设置标记线的日期。
+    2. 样式配置: 通过 style 配置项，可以设置标记线的颜色、宽度、虚线样式等。
+    3. 标记线位置: 通过 position 配置项，可以设置标记线的位置。
+    4. 标记线默认显示到中间: 通过 scrollToMarkLine 配置项，可以设置标记线是否默认显示到中间。
 
 这些能力使得 vtable-gantt 组件在任务管理和项目规划中具有高度的可定制性和灵活性，能够满足不同场景下的需求。
 
 ## 总结
 甘特图是项目管理中非常重要的工具，通过直观的图形展示项目的进度和时间安排，帮助项目管理者更好地规划和控制项目。通过合理配置甘特图的各项参数，可以满足不同项目的需求，提高项目管理的效率。
+
 希望这篇教程能帮助你更好地理解和使用甘特图。如果有任何问题或建议，欢迎交流讨论。

@@ -44,7 +44,7 @@ export class TaskBar {
     this.barContainer = new Group({
       x: 0,
       y: 0,
-      width: this._scene._gantt.getAllColsWidth(),
+      width: this._scene._gantt._getAllColsWidth(),
       height: this._scene._gantt.getAllTaskBarsHeight(),
       pickable: false,
       clip: true
@@ -212,7 +212,7 @@ export class TaskBar {
       cursor: this._scene._gantt.parsedOptions.taskBarMoveable ? 'grab' : 'default',
       pickable: false,
       cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
-      fill: this._scene._gantt.parsedOptions.taskBarHoverStyle.barOverLayColor,
+      fill: this._scene._gantt.parsedOptions.taskBarHoverStyle.barOverlayColor,
       visibleAll: false
     });
     this.hoverBarGroup = hoverBarGroup;

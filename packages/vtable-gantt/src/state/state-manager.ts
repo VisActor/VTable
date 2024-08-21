@@ -157,7 +157,7 @@ export class StateManager {
   }
   setScrollLeft(left: number, triggerEvent: boolean = true) {
     // 矫正left值范围
-    const totalWidth = this._gantt.getAllColsWidth();
+    const totalWidth = this._gantt._getAllColsWidth();
 
     left = Math.max(0, Math.min(left, totalWidth - this._gantt.scenegraph.width));
     left = Math.ceil(left);
@@ -228,7 +228,7 @@ export class StateManager {
     });
   }
   updateHorizontalScrollBar(xRatio: number) {
-    const totalWidth = this._gantt.getAllColsWidth();
+    const totalWidth = this._gantt._getAllColsWidth();
     const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this._gantt.scenegraph.width));
     if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {

@@ -523,6 +523,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   setCanvasSize(canvasWidth: number, canvasHeight: number) {
     this.canvasWidth = canvasWidth;
     this.canvasHeight = canvasHeight;
+    this.options.canvasHeight = canvasHeight;
+    this.options.canvasWidth = canvasWidth;
     this.resize();
   }
   resize() {
