@@ -2033,14 +2033,21 @@ export class Scenegraph {
   // }
   updateDomContainer() {
     const { headerDomContainer, bodyDomContainer } = this.table.internalProps;
+    if (this.table.frozenColCount > 0 && (headerDomContainer || bodyDomContainer)) {
+      const frozenColsWidth = this.table.getFrozenColsWidth();
+      headerDomContainer && (headerDomContainer.style.left = `${frozenColsWidth}px`);
+      bodyDomContainer && (bodyDomContainer.style.left = `${frozenColsWidth}px`);
+    }
     if (headerDomContainer) {
-      headerDomContainer.style.width = `${(headerDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
+      // headerDomContainer.style.width = `${(headerDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
+      headerDomContainer.style.width = `${Math.min(this.table.getAllColsWidth(), this.table.tableNoFrameWidth)}px`;
       headerDomContainer.style.height = `${this.table.getFrozenRowsHeight()}px`;
     }
     if (bodyDomContainer) {
       const totalFrozenRowsHeight = this.table.getFrozenRowsHeight() + this.table.getBottomFrozenRowsHeight();
 
-      bodyDomContainer.style.width = `${(bodyDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
+      // bodyDomContainer.style.width = `${(bodyDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
+      bodyDomContainer.style.width = `${Math.min(this.table.getAllColsWidth(), this.table.tableNoFrameWidth)}px`;
       bodyDomContainer.style.height = `${
         (bodyDomContainer.parentElement?.offsetHeight ?? 1) - 1 - totalFrozenRowsHeight
       }px`;
