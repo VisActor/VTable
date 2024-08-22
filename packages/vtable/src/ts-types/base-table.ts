@@ -484,6 +484,8 @@ export interface BaseTableConstructorOptions {
   animationAppear?: boolean | IAnimationAppear;
 
   renderOption?: any;
+
+  formatCopyValue?: (value: string) => string;
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */

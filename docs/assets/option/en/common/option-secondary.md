@@ -522,3 +522,7 @@ You can configure true to enable the default animation, or you can configure the
 - `direction` The direction of the entry animation, currently supports `row` and `column`, and the default is `row`
 - `duration` The duration of a single animation, in milliseconds, for `one-by-one`, it is the duration of one animation, and the default is 500
 - `delay` The delay of the animation, in milliseconds; for `one-by-one`, it is the time difference between the two animations, for `all`, it is the delay of all animations, and the default is 0
+
+#${prefix} formatCopyValue((value: string) => string)
+
+Format the value when copying.
