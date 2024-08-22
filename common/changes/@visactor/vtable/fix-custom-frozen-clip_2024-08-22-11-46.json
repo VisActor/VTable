@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix frozen column custom component clip",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
