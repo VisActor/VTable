@@ -9,7 +9,7 @@ module.exports = {
   formats: ['cjs', 'es', 'umd'],
   noEmitOnError: false,
   copy: ['css'],
-  name: 'VTable.gantt',
+  name: 'VTableGantt',
   umdOutputFilename: 'vtable-gantt',
   rollupOptions: {
     treeshake: true

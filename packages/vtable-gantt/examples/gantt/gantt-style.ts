@@ -1,5 +1,5 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { register } from '@visactor/vtable';
+import { register, themes } from '@visactor/vtable';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import { Gantt } from '../../src/index';
@@ -610,24 +610,15 @@ export function createTable() {
       columns,
       tableWidth: 'auto',
       minTableWidth: 100,
+      select: {
+        highlightMode: 'cross'
+      },
       // maxWidth: 600,
-      theme: {
-        headerStyle: {
-          borderColor: '#e1e4e8',
-          borderLineWidth: 1,
-          fontSize: 18,
-          fontWeight: 'bold',
-          color: 'red',
-          bgColor: '#EEF1F5'
-        },
-        bodyStyle: {
-          borderColor: '#e1e4e8',
-          borderLineWidth: [1, 0, 1, 0],
-          fontSize: 16,
-          color: '#4D4D4D',
-          bgColor: '#FFF'
+      theme: themes.DARK.extends({
+        selectionStyle: {
+          cellBgColor: 'red'
         }
-      }
+      })
       //rightFrozenColCount: 1
     },
     frame: {
@@ -670,7 +661,7 @@ export function createTable() {
       // resizable: false,
       moveable: true,
       hoverBarStyle: {
-        barOverLayColor: 'rgba(99, 144, 0, 0.4)'
+        barOverlayColor: 'rgba(99, 144, 0, 0.4)'
       },
       labelText: '{title} {progress}%',
       labelTextStyle: {

@@ -238,3 +238,15 @@ export function isPropertyWritable(obj: any, prop: string | number) {
   // 检查是否有 setter 方法或 writable 属性为 true
   return !!descriptor.set || descriptor.writable === true;
 }
+
+/** 创建日期 */
+export function createDateAtMidnight(dateStr?: string | number | Date): Date {
+  let date;
+  if (dateStr) {
+    date = new Date(dateStr);
+  } else {
+    date = new Date();
+  }
+  date.setHours(0, 0, 0, 0);
+  return date;
+}

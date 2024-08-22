@@ -1,4 +1,5 @@
 import type { Gantt } from '../Gantt';
+import { createDateAtMidnight } from '../tools/util';
 
 export class DataSource {
   records: any[];
@@ -21,15 +22,18 @@ export class DataSource {
     if (needMinDate || needMaxDate) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
-        needMinDate &&
-          (minDate = Math.min(minDate, new Date(record[this._gantt.parsedOptions.startDateField]).getTime()));
-        needMaxDate &&
-          (maxDate = Math.max(maxDate, new Date(record[this._gantt.parsedOptions.endDateField]).getTime()));
+        if (needMinDate) {
+          const recordMinDate = createDateAtMidnight(record[this._gantt.parsedOptions.startDateField]);
+          minDate = Math.min(minDate, recordMinDate.getTime());
+        }
+        if (needMaxDate) {
+          const recordMaxDate = createDateAtMidnight(record[this._gantt.parsedOptions.endDateField]);
+          maxDate = Math.max(maxDate, recordMaxDate.getTime());
+        }
       }
 
-      needMinDate && (this.minDate = new Date(minDate));
-      needMaxDate && (this.maxDate = new Date(maxDate));
-
+      needMinDate && (this.minDate = createDateAtMidnight(minDate));
+      needMaxDate && (this.maxDate = createDateAtMidnight(maxDate));
       this._gantt.parsedOptions.minDate = this.minDate;
       this._gantt.parsedOptions.maxDate = this.maxDate;
       this._gantt.parsedOptions._minDateTime = this._gantt.parsedOptions.minDate.getTime();

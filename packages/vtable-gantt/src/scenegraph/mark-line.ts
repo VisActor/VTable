@@ -1,3 +1,4 @@
+import { createDateAtMidnight } from '../tools/util';
 import type { IMarkLine } from '../ts-types';
 import type { Scenegraph } from './scenegraph';
 import { Group, createLine } from '@visactor/vtable/es/vrender';
@@ -39,8 +40,8 @@ export class MarkLine {
   initMarkLines() {
     this.markLine.forEach(line => {
       const style = line.style;
-      const date = new Date(line.date);
-      const minDate = new Date(this._scene._gantt.parsedOptions.minDate);
+      const date = createDateAtMidnight(line.date);
+      const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
       const dateX =
         this._scene._gantt.parsedOptions.colWidthPerDay *
         (Math.ceil(Math.abs(date.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) +

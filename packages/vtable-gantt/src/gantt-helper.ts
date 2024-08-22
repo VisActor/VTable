@@ -1,7 +1,7 @@
 import { text } from 'stream/consumers';
 import type { Gantt } from './Gantt';
 import type { IMarkLine, IScrollStyle, ITimelineDateInfo, ITimelineScale } from './ts-types';
-import { getWeekNumber } from './tools/util';
+import { createDateAtMidnight, getWeekNumber } from './tools/util';
 
 const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
 export const DayTimes = 1000 * 60 * 60 * 24;
@@ -20,7 +20,7 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): 
   if (markLine === true) {
     return [
       {
-        date: new Date().toLocaleDateString(),
+        date: createDateAtMidnight().toLocaleDateString(),
         scrollToMarkLine: true,
         position: 'left',
         style: {
@@ -89,8 +89,9 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.startDateField = options.taskBar?.startDateField ?? 'startDate';
   gantt.parsedOptions.endDateField = options.taskBar?.endDateField ?? 'endDate';
   gantt.parsedOptions.progressField = options.taskBar?.progressField ?? 'progress';
-  gantt.parsedOptions.minDate = options?.minDate ? new Date(options?.minDate) : undefined;
-  gantt.parsedOptions.maxDate = options?.maxDate ? new Date(options?.maxDate) : undefined;
+  gantt.parsedOptions.minDate = options?.minDate ? createDateAtMidnight(options?.minDate) : undefined;
+  gantt.parsedOptions.maxDate = options?.maxDate ? createDateAtMidnight(options?.maxDate) : undefined;
+
   gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
   gantt.parsedOptions.overscrollBehavior = options?.overscrollBehavior ?? 'auto';
@@ -210,7 +211,7 @@ export function initOptions(gantt: Gantt) {
       gantt.parsedOptions.markLine[0].scrollToMarkLine = true;
     }
     if (gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine)) {
-      gantt.parsedOptions.scrollToMarkLineDate = new Date(
+      gantt.parsedOptions.scrollToMarkLineDate = createDateAtMidnight(
         gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine).date
       );
     }
@@ -233,8 +234,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
   const timelineDates: ITimelineDateInfo[] = [];
   while (currentDate <= endDate) {
     if (unit === 'day') {
-      const dateEnd = new Date(currentDate.getTime() + step * 24 * 60 * 60 * 1000);
-      const startDate = new Date(currentDate);
+      const dateEnd = createDateAtMidnight(currentDate.getTime() + step * 24 * 60 * 60 * 1000);
+      const startDate = createDateAtMidnight(currentDate);
       const formattedDate = format?.({ dateIndex: currentDate.getDate(), startDate, endDate: dateEnd });
       const columnTitle = formattedDate || currentDate.getDate().toString();
       const dayCellConfig = {
@@ -309,8 +310,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       if (startOfWeekSetting === 'monday') {
         dayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Calculate the difference between the current day and the start of the week
       }
-      const startOfWeek = new Date(currentDate);
-      const endOfWeek = new Date(startOfWeek.getTime() + (6 - dayOfWeek) * 24 * 60 * 60 * 1000); // Calculate the end of the week
+      const startOfWeek = createDateAtMidnight(currentDate);
+      const endOfWeek = createDateAtMidnight(startOfWeek.getTime() + (6 - dayOfWeek) * 24 * 60 * 60 * 1000); // Calculate the end of the week
 
       if (endOfWeek > endDate) {
         endOfWeek.setDate(endDate.getDate());

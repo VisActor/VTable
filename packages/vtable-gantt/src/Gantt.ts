@@ -39,7 +39,7 @@ import {
   updateSplitLineAndResizeLine
 } from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
-import { formatDate, isPropertyWritable, parseDateFormat } from './tools/util';
+import { createDateAtMidnight, formatDate, isPropertyWritable, parseDateFormat } from './tools/util';
 import { DataSource } from './data/DataSource';
 registerCheckboxCell();
 registerProgressBarCell();
@@ -300,7 +300,7 @@ export class Gantt extends EventTarget {
     // lineWidthArr[1] = 0;
     if (this.options.taskListTable?.theme) {
       listTable_options.theme = this.options.taskListTable.theme;
-      if (!isPropertyWritable(listTable_options.theme, 'cellInnerBorder')) {
+      if (listTable_options.theme.bodyStyle && !isPropertyWritable(listTable_options.theme, 'bodyStyle')) {
         //测试是否使用了主题 使用了主题配置项不可写。需要使用extends方式覆盖配置
         if (!listTable_options.theme.headerStyle?.bgColor) {
           (listTable_options.theme as themes.TableTheme).extends({
@@ -454,13 +454,13 @@ export class Gantt extends EventTarget {
   }
 
   _generateTimeLineDateMap() {
-    const startDate = new Date(this.parsedOptions.minDate);
-    const endDate = new Date(this.parsedOptions.maxDate);
+    const startDate = createDateAtMidnight(this.parsedOptions.minDate);
+    const endDate = createDateAtMidnight(this.parsedOptions.maxDate);
     let colWidthIncludeDays = 1000000;
     // Iterate over each scale
     for (const scale of this.parsedOptions.reverseSortedTimelineScales) {
       // Generate the sub-columns for each step within the scale
-      const currentDate = new Date(startDate);
+      const currentDate = createDateAtMidnight(startDate);
       // const timelineDates: any[] = [];
       scale.timelineDates = generateTimeLineDate(currentDate, endDate, scale);
     }
@@ -495,7 +495,10 @@ export class Gantt extends EventTarget {
     return (
       this.parsedOptions.colWidthPerDay *
       (Math.ceil(
-        Math.abs(new Date(this.parsedOptions.maxDate).getTime() - new Date(this.parsedOptions.minDate).getTime()) /
+        Math.abs(
+          createDateAtMidnight(this.parsedOptions.maxDate).getTime() -
+            createDateAtMidnight(this.parsedOptions.minDate).getTime()
+        ) /
           (1000 * 60 * 60 * 24)
       ) +
         1)
@@ -537,8 +540,8 @@ export class Gantt extends EventTarget {
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
     const progressField = this.parsedOptions.progressField;
-    const rawDateStartDateTime = new Date(taskRecord[startDateField]).getTime();
-    const rawDateEndDateTime = new Date(taskRecord[endDateField]).getTime();
+    const rawDateStartDateTime = createDateAtMidnight(taskRecord[startDateField]).getTime();
+    const rawDateEndDateTime = createDateAtMidnight(taskRecord[endDateField]).getTime();
     if (
       rawDateEndDateTime < this.parsedOptions._minDateTime ||
       rawDateStartDateTime > this.parsedOptions._maxDateTime
@@ -551,10 +554,10 @@ export class Gantt extends EventTarget {
         taskRecord
       };
     }
-    const startDate = new Date(
+    const startDate = createDateAtMidnight(
       Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
     );
-    const endDate = new Date(
+    const endDate = createDateAtMidnight(
       Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
     );
     const progress = convertProgress(taskRecord[progressField]);
@@ -578,18 +581,18 @@ export class Gantt extends EventTarget {
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
     const dateFormat = parseDateFormat(taskRecord[startDateField]);
-    const startDate = new Date(taskRecord[startDateField]);
-    const endDate = new Date(taskRecord[endDateField]);
+    const startDate = createDateAtMidnight(taskRecord[startDateField]);
+    const endDate = createDateAtMidnight(taskRecord[endDateField]);
     if (updateDateType === 'move') {
-      const newStartDate = formatDate(new Date(days * DayTimes + startDate.getTime()), dateFormat);
-      const newEndDate = formatDate(new Date(days * DayTimes + endDate.getTime()), dateFormat);
+      const newStartDate = formatDate(createDateAtMidnight(days * DayTimes + startDate.getTime()), dateFormat);
+      const newEndDate = formatDate(createDateAtMidnight(days * DayTimes + endDate.getTime()), dateFormat);
       taskRecord[startDateField] = newStartDate;
       taskRecord[endDateField] = newEndDate;
     } else if (updateDateType === 'start-move') {
-      const newStartDate = formatDate(new Date(days * DayTimes + startDate.getTime()), dateFormat);
+      const newStartDate = formatDate(createDateAtMidnight(days * DayTimes + startDate.getTime()), dateFormat);
       taskRecord[startDateField] = newStartDate;
     } else if (updateDateType === 'end-move') {
-      const newEndDate = formatDate(new Date(days * DayTimes + endDate.getTime()), dateFormat);
+      const newEndDate = formatDate(createDateAtMidnight(days * DayTimes + endDate.getTime()), dateFormat);
       taskRecord[endDateField] = newEndDate;
     }
     this._updateRecordToListTable(taskRecord, index);

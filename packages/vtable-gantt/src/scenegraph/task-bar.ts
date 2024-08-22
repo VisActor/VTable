@@ -1,7 +1,7 @@
 import { Group, createText, createRect, Image } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
-import { parseStringTemplate, toBoxArray } from '../tools/util';
+import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
 import { getTextPos } from '../gantt-helper';
 import { GanttTaskBarNode } from './ganttNode';
@@ -66,7 +66,7 @@ export class TaskBar {
     }
     const taskBarSize = this._scene._gantt.parsedOptions.colWidthPerDay * taskDays;
     const taskbarHeight = this._scene._gantt.parsedOptions.taskBarStyle.width;
-    const minDate = new Date(this._scene._gantt.parsedOptions.minDate);
+    const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
     const barGroup = new GanttTaskBarNode({
       x:
         this._scene._gantt.parsedOptions.colWidthPerDay *
