@@ -163,8 +163,10 @@ function App() {
   return (
     <ListTable
       records={records}
-      height={900}
+      height={500}
+      width={600}
       defaultRowHeight={110}
+      frozenColCount={1}
       onReady={table => {
         // eslint-disable-next-line no-undef
         // (window as any).tableInstance = table;
@@ -172,10 +174,10 @@ function App() {
       ReactDOM={ReactDOM}
     >
       <ListColumn field={'id'} title={'ID'} />
-      <ListColumn field={'name'} title={'Comment'} width={300}>
+      <ListColumn field={'name'} title={'Comment'} width={500}>
         <CommentComponent role={'custom-layout'} />
       </ListColumn>
-      <ListColumn field={''} title={'Operation'} width={160}>
+      <ListColumn field={''} title={'Operation'} width={300}>
         <OperationComponent role={'custom-layout'} />
       </ListColumn>
     </ListTable>
