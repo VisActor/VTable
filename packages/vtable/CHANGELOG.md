@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 19 Aug 2024 08:06:44 GMT and should not be manually modified.
+This log was last generated on Thu, 22 Aug 2024 12:27:03 GMT and should not be manually modified.
+
+## 1.6.2
+Thu, 22 Aug 2024 12:27:03 GMT
+
+### Updates
+
+- feat: add formatCopyValue config
+- fix: fix frozen column custom component clip
+- fix: fix menu auto hide when page crolled #2241
 
 ## 1.6.1
 Mon, 19 Aug 2024 08:06:44 GMT
