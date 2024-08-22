@@ -11,7 +11,8 @@ import type {
   IPagination,
   MaybePromiseOrCallOrUndefined,
   MaybePromiseOrUndefined,
-  SortOrder
+  SortOrder,
+  SortRule
 } from '../ts-types';
 import { AggregationType, HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
@@ -157,9 +158,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   /**
    * 记录最近一次排序规则 当展开树形结构的节点时需要用到
    */
-  private lastOrder: SortOrder;
-  private lastOrderFn: (a: any, b: any, order: string) => number;
-  private lastOrderField: FieldDef;
+  // private lastOrder: SortOrder;
+  // private lastOrderFn: (a: any, b: any, order: string) => number;
+  // private lastOrderField: FieldDef;
+  private lastSortRules:Array<SortRule>;
+  
   /** 每一行对应源数据的索引 */
   currentIndexedData: (number | number[])[] | null = [];
   protected userPagination: IPagination;
@@ -613,26 +616,23 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     const children = nodeData.filteredChildren ? nodeData.filteredChildren : nodeData.children;
     if (children) {
       const subNodeSortedIndexArray: Array<number> = Array.from({ length: children.length }, (_, i) => i);
-      this.lastOrder &&
-        this.lastOrder !== 'normal' &&
-        this.lastOrderField &&
-        sort.sort(
-          index =>
-            isValid(subNodeSortedIndexArray[index])
-              ? subNodeSortedIndexArray[index]
-              : (subNodeSortedIndexArray[index] = index),
-          (index, rel) => {
-            subNodeSortedIndexArray[index] = rel;
-          },
-          children.length,
-          this.lastOrderFn,
-          this.lastOrder,
-          index =>
-            this.getOriginalField(
+      this.lastSortRules.forEach(rule => {
+        if (rule.order !== 'normal') {
+          sort.sort(
+            index => isValid(subNodeSortedIndexArray[index]) ? subNodeSortedIndexArray[index] : (subNodeSortedIndexArray[index] = index),
+            (index, rel) => {
+              subNodeSortedIndexArray[index] = rel;
+            },
+            children.length,
+            rule.orderFn,
+            rule.order,
+            index => this.getOriginalField(
               Array.isArray(indexKey) ? indexKey.concat([index]) : [indexKey, index],
-              this.lastOrderField
+              rule.field
             )
-        );
+          );
+        }
+      });
       for (let i = 0; i < subNodeSortedIndexArray.length; i++) {
         childrenLength += 1;
         const childIndex = Array.isArray(indexKey)
@@ -682,7 +682,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         this.beforeChangedRecordsMap[dataIndex] = cloneDeep(originRecord) ?? {};
       }
       if (typeof field === 'string' || typeof field === 'number') {
-        const beforeChangedValue = this.beforeChangedRecordsMap[dataIndex][field]; // this.getOriginalField(index, field, col, row, table);
+        const beforeChangedValue = this.beforeChangedRecordsMap[dataIndex][field as any]; // this.getOriginalField(index, field, col, row, table);
         const record = this.getOriginalRecord(dataIndex);
         let formatValue = value;
         if (typeof beforeChangedValue === 'number' && isAllDigits(value)) {
@@ -954,21 +954,25 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.sortedIndexMap.clear();
   }
 
-  sort(
-    field: FieldDef,
-    order: SortOrder,
-    orderFn: (v1: any, v2: any, order: SortOrder) => -1 | 0 | 1 = order !== 'desc'
-      ? (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 > v2 ? 1 : -1)
-      : (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 < v2 ? 1 : -1)
-  ): void {
-    this.lastOrderField = field;
-    this.lastOrder = order;
-    this.lastOrderFn = orderFn;
-    let filedMap = this.sortedIndexMap.get(field);
-    let orderedData;
-
-    if (filedMap) {
-      orderedData = filedMap[order];
+  sort(rules: SortRule | Array<SortRule>): void {
+    // Convert rules into an array and filter out unnecessary ones
+    rules = (Array.isArray(rules) ? rules : [rules]).filter(item => item.order !== 'normal');
+    
+    // Save the sorting rules
+    this.lastSortRules = rules;
+  
+    // Get an array of sorting objects for each rule
+    let filedMapArray: Array<ISortedMapItem> = rules.map(rule => this.sortedIndexMap.get(rule?.field) || { asc: [], desc: [], normal: [] });
+  
+    let orderedData: number[] | null = null;
+  
+    // If there is already sorted data in the caches, take it
+    if (filedMapArray.length > 0) {
+      orderedData = rules.reduce((data, rule, index) => {
+        const currentData = (filedMapArray[index] as any)?.[rule.order];
+        return currentData && currentData.length > 0 ? currentData : data;
+      }, null);
+      
       if (orderedData && orderedData.length > 0) {
         this.currentIndexedData = orderedData;
         this.updatePagerData();
@@ -976,49 +980,62 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         return;
       }
     }
-    const sortedIndexArray = [] as number[];
-    if (order === 'normal') {
-      for (let i = 0; i < this._sourceLength; i++) {
-        sortedIndexArray[i] = i;
-      }
-    } else {
-      sort.sort(
-        index => (isValid(sortedIndexArray[index]) ? sortedIndexArray[index] : (sortedIndexArray[index] = index)),
-        (index, rel) => {
-          sortedIndexArray[index] = rel;
-        },
-        this._sourceLength,
-        orderFn,
-        order,
-        index => this.getOriginalField(index, field)
-      );
-    }
+  
+    // If there is no cache, we start sorting
+    const sortedIndexArray: number[] = Array.from({ length: this._sourceLength }, (_, i) => i);
+  
+    // Perform sorting on each rule
+    sortedIndexArray.sort((indexA, indexB) => {
+      return rules.reduce((result, rule) => {
+        if (result !== 0) return result;
+  
+        const orderFn = rule.orderFn || (rule.order !== 'desc'
+          ? (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 > v2 ? 1 : -1)
+          : (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 < v2 ? 1 : -1));
+          
+        return orderFn(
+          this.getOriginalField(indexA, rule.field),
+          this.getOriginalField(indexB, rule.field),
+          rule.order
+        );
+      }, 0);
+    });
+  
     this.currentIndexedData = sortedIndexArray;
-
+  
+    // Process the hierarchy, if any
     if (this.hierarchyExpandLevel) {
       let nodeLength = sortedIndexArray.length;
-      const t0 = window.performance.now();
       for (let i = 0; i < nodeLength; i++) {
         const record = this.getOriginalRecord(sortedIndexArray[i]);
         const subNodeLength = this.pushChildrenNode(
           sortedIndexArray[i],
-          // this.treeDataHierarchyState.get(sortedIndexArray[i]),
           record.hierarchyState,
-          this.getOriginalRecord(sortedIndexArray[i]) // ？sortedIndexArray 在这个过程中不是变化了吗 通过i取id还是对的吗？ 对哦！因为i和nodeLength都+subNodeLength 来动态调整过了！
+          this.getOriginalRecord(sortedIndexArray[i])
         );
         nodeLength += subNodeLength;
         i += subNodeLength;
       }
     }
-    if (!filedMap) {
-      filedMap = { asc: [], desc: [], normal: [] };
-      this.sortedIndexMap.set(field, filedMap);
+  
+    // If there were no caches, initialize them
+    if (!filedMapArray.length) {
+      filedMapArray = rules.map(() => ({ asc: [], desc: [], normal: [] }));
+      for (let index = 0; index < rules.length; index++) {
+        this.sortedIndexMap.set(rules[index].field, filedMapArray[index]);
+      }
     }
-    filedMap[order] = sortedIndexArray;
+  
+    // Save the sorted indexes for each rule to the cache
+    rules.forEach((rule, index) => {
+      const mapItem = filedMapArray[index] as ISortedMapItem;
+      (mapItem as any)[rule.order] = sortedIndexArray.slice(); // Save a copy of the array
+    });
+  
     this.updatePagerData();
     this.fireListeners(EVENT_TYPE.CHANGE_ORDER, null);
   }
-
+  
   setSortedIndexMap(field: FieldDef, filedMap: ISortedMapItem) {
     this.sortedIndexMap.set(field, filedMap);
   }
@@ -1083,19 +1100,24 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * 当节点折叠或者展开时 将排序缓存清空（非当前排序规则的缓存）
    */
   clearSortedIndexMap() {
-    if (this.lastOrderField && this.lastOrder) {
+    if (this.lastSortRules && this.lastSortRules.length > 0) {
       this.sortedIndexMap.forEach((sortMap, key) => {
-        if (key !== this.lastOrderField) {
+        const isFieldInRules = this.lastSortRules.some(rule => rule.field === key);
+        if (!isFieldInRules) {
           this.sortedIndexMap.delete(key);
-        } else if (this.lastOrder === 'asc') {
-          sortMap.desc = [];
-          sortMap.normal = [];
-        } else if (this.lastOrder === 'desc') {
-          sortMap.asc = [];
-          sortMap.normal = [];
         } else {
-          sortMap.desc = [];
-          sortMap.asc = [];
+          this.lastSortRules.forEach(rule => {
+            if (rule.order === 'asc') {
+              sortMap.desc = [];
+              sortMap.normal = [];
+            } else if (rule.order === 'desc') {
+              sortMap.asc = [];
+              sortMap.normal = [];
+            } else {
+              sortMap.asc = [];
+              sortMap.desc = [];
+            }
+          });
         }
       });
     }
@@ -1281,7 +1303,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   // 拖拽调整数据位置 目前对排序过的数据不过处理，因为自动排序和手动排序融合问题目前没有找到好的解决方式
   reorderRecord(sourceIndex: number, targetIndex: number) {
-    if (this.lastOrder === 'asc' || this.lastOrder === 'desc') {
+    if (this.lastSortRules.some(rule => rule.order === 'asc' || rule.order === 'desc')) {
       // const sourceIds = this._currentPagerIndexedData.splice(sourceIndex, 1);
       // sourceIds.unshift(targetIndex, 0);
       // Array.prototype.splice.apply(this._currentPagerIndexedData, sourceIds);

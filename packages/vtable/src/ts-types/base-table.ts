@@ -217,6 +217,7 @@ export interface IBaseTableProtected {
 
   // headerRowHeight: number[] | number;//移到了BaseTable
   sortState: SortState | SortState[];
+  multipleSort?: boolean,
 
   dataSource: DataSource | CachedDataSource;
   records?: any;

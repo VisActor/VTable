@@ -620,7 +620,7 @@ export class Scenegraph {
     setIconHoverStyle(icon, col, row, cellGroup, this);
   }
 
-  updateSortIcon(
+  updateSortIcon(options:{
     col: number,
     row: number,
     iconMark: Icon,
@@ -628,8 +628,9 @@ export class Scenegraph {
     oldSortCol: number,
     oldSortRow: number,
     oldIconMark: Icon | undefined
-  ) {
-    updateSortIcon(col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, this);
+  }) {
+    let {col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark} = options;
+    updateSortIcon({col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, scene:this});
   }
 
   updateFrozenIcon(col: number, oldFrozenCol: number) {
