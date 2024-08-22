@@ -2,6 +2,24 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.6.2",
+      "tag": "@visactor/vtable_v1.6.2",
+      "date": "Thu, 22 Aug 2024 12:27:03 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add formatCopyValue config"
+          },
+          {
+            "comment": "fix: fix frozen column custom component clip"
+          },
+          {
+            "comment": "fix: fix menu auto hide when page crolled #2241"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.6.1",
       "tag": "@visactor/vtable_v1.6.1",
       "date": "Mon, 19 Aug 2024 08:06:44 GMT",
