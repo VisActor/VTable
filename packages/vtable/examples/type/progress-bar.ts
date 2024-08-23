@@ -65,7 +65,8 @@ export function createTable() {
         style: {
           barHeight: 20,
           barBottom: 7,
-          barColor: DEFAULT_BAR_COLOR
+          barColor: DEFAULT_BAR_COLOR,
+          textAlign: 'right'
         }
       },
       {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix progress bar cell textAlign update #2225",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
