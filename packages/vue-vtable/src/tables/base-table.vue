@@ -96,7 +96,8 @@ const createVTable = () => {
     bindEvents(vTableInstance.value);
     props.onReady?.(vTableInstance.value, true);
   } catch (err) {
-    props.onError?.(err as Error);
+    // props.onError?.(err as Error);
+    console.error(err);
   }
 };
 
@@ -132,17 +133,17 @@ onMounted(createVTable);
 onBeforeUnmount(() => vTableInstance.value?.release());
 
 // 监听 options 属性的变化
+// 需要去做细颗粒度的比较
 watch(
   () => props.options,
-  (newOptions, oldOptions) => {
-    if (!isEqual(newOptions, oldOptions)) {
+  (newOptions) => {
       if (vTableInstance.value) {
         updateVTable(newOptions);
       } else {
         createVTable();
       }
-    }
   },
+  { deep: true },
 );
 
 // 监听 records 属性的变化并更新表格
