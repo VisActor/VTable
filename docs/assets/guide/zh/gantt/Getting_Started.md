@@ -25,7 +25,7 @@ yarn add @visactor/vtable-gantt
 
 ### 使用 CDN
 
-你还可以通过 CDN 获取构建好的 VTable 文件。
+你还可以通过 CDN 获取构建好的 vtable-gantt 文件。
 
 ```html
 <script src="https://unpkg.com/@visactor/vtable-gantt/dist/vtable-gantt.min.js"></script>
@@ -48,7 +48,7 @@ const ganttInstance = new Gantt(domContainer, option);
 
 ### 使用 script 标签引入
 
-通过直接在 HTML 文件中添加 `<script>` 标签，引入构建好的 vtable 文件：
+通过直接在 HTML 文件中添加 `<script>` 标签，引入构建好的 vtable-gantt 文件：
 
 ```html
 <script src="https://unpkg.com/@visactor/vtable-gantt/dist/vtable-gantt.min.js"></script>
@@ -77,7 +77,7 @@ const records = [
     title: 'Task 1',
     developer: 'liufangfang.jane@bytedance.com',
     start: '2024-07-24',
-    end: '2024-08-16',
+    end: '2024-07-26',
     progress: 31,
     priority: 'P0',
   },
@@ -94,7 +94,7 @@ const records = [
     id: 3,
     title: 'Task 3',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
+    start: '2024-08-04',
     end: '2024-08-04',
     progress: 100,
     priority: 'P1'
@@ -103,8 +103,8 @@ const records = [
     id: 1,
     title: 'Task 4',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-08-04',
+    start: '2024-07-26',
+    end: '2024-07-28',
     progress: 31,
     priority: 'P0'
   },
@@ -122,7 +122,7 @@ const records = [
     title: 'Task 6',
     developer: 'liufangfang.jane@bytedance.com',
     start: '2024-07-29',
-    end: '2024-07-31',
+    end: '2024-08-11',
     progress: 100,
     priority: 'P1',
   }
@@ -324,6 +324,6 @@ tableInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), opt
 window['tableInstance'] = tableInstance;
 ```
 
-至此，你已经成功绘制出了一个简单的表格！
+至此，你已经成功绘制出了一个简单的甘特图！
 
-希望这篇教程对你学习如何使用 VTable 有所帮助。接下来可以深入了解 VTable 的各种配置选项，定制出更加丰富多样的表格效果。
+希望这篇教程对你学习如何使用 Gantt 有所帮助。接下来可以深入了解 vtable-gantt 的各种配置选项，定制出更加丰富多样的表格效果。

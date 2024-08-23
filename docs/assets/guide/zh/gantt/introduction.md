@@ -36,7 +36,7 @@
 4. 网格线配置grid
     1. 样式配置: 通过 verticalLine 和 horizontalLine 配置项，可以设置网格线的颜色、宽度、虚线样式等。
     2. 背景颜色: 通过 backgroundColor 配置项，可以设置网格线的背景颜色。
-5. 任务列表表格配置 taskListTable
+5. 任务列表表格配置 taskListTable（左侧任务信息列表ListTable的配置，需要可以参考[配置](../../option/Gantt#taskListTable)
     1. 左侧表格整体宽度：通过 tableWidth 配置项，可以设置任务列表表格的整体宽度。
     2. 列信息: 通过 columns，可以定义任务信息表格的列信息和各列宽度。
     3. 样式配置: 通过 headerStyle 和 bodyStyle 配置项，可以设置表头和表体的样式。

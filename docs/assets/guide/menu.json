@@ -150,6 +150,13 @@
       },
       "children": [
         {
+          "path": "Getting_Started",
+          "title": {
+            "zh": "快速上手",
+            "en": "Getting Started"
+          }
+        },
+        {
           "path": "introduction",
           "title": {
             "zh": "甘特图介绍",
@@ -157,10 +164,10 @@
           }
         },
         {
-          "path": "Getting_Started",
+          "path": "gantt_customLayout",
           "title": {
-            "zh": "快速上手",
-            "en": "Getting Started"
+            "zh": "自定义渲染",
+            "en": "Custom Render"
           }
         }
       ]
