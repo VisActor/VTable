@@ -158,7 +158,7 @@ export interface DataSourceAPI {
   get: (index: number) => MaybePromiseOrUndefined;
   getField: <F extends FieldDef>(index: number, field: F, col: number, row: number, table: BaseTableAPI) => FieldData;
   hasField: (index: number, field: FieldDef) => boolean;
-  sort: (rules:SortRule | Array<SortRule>) => void;
+  sort: (rules:SortState | Array<SortState>) => void;
   clearSortedMap: () => void;
   updatePagination: (pagination: IPagination) => void;
   getIndexKey: (index: number) => number | number[];
@@ -173,16 +173,12 @@ export interface SortState {
   field: FieldDef;
   /** 排序规则 */
   order: SortOrder;
+  orderFn?: (a: any, b: any, order: string) => -1 | 0 | 1;
 }
 export interface PivotSortState {
   col: number;
   row: number;
   order: SortOrder;
-}
-export interface SortRule {
-  field: FieldDef;
-  order: SortOrder;
-  orderFn?: (a: any, b: any, order: string) => -1 | 0 | 1;
 }
 
 /**

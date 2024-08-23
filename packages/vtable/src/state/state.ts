@@ -462,7 +462,7 @@ export class StateManager {
   }
 
   setSortState(sortState: SortState | SortState[]) {
-    sortState = Array.isArray(sortState) ? sortState : [sortState];
+    sortState = !sortState || Array.isArray(sortState) ? sortState : [sortState];
     ////this.sort[this.sort.length - 1].field = sortState[sortState.length - 1]?.field as string;
     // this.sort.fieldKey = sortState?.fieldKey as string;
     ////this.sort[this.sort.length - 1].order = sortState[sortState.length - 1]?.order;
@@ -494,8 +494,8 @@ export class StateManager {
       return result;
   }
 
-    let sort = sortState.reduce((prev,item)=>{
-      let column = flattenColumns((this.table.internalProps as any).columns)?.find(column=>column.field == item.field);
+    let sort = sortState && (sortState as SortState[]).reduce((prev,item)=>{
+      let column = flattenColumns((this.table.internalProps as any).columns)?.find(column=>column?.field === item?.field);
       //let path = (item as any)?.event?.path?.findLast((item:any)=>item.col!=undefined);
       prev.push({
         field:item.field, 
@@ -507,7 +507,7 @@ export class StateManager {
       return prev;
     },[]);
 
-    this.sort = sort;
+    this.sort = sort || [];
     
   }
 
@@ -1248,15 +1248,15 @@ export class StateManager {
     }
 
     let previousSort = [...this.sort];
-    let previousSortItem = this.table.internalProps.multipleSort ? null : this.sort[this.sort.length - 1];
+    let previousSortItem = this.table.internalProps.multipleSort || !previousSort.length ? null : this.sort[this.sort.length - 1];
     
     // 执行sort
     dealSort(col, row, this.table as ListTableAPI, event);
 
     let currentSortItem = this.sort.find(item=>item.col == col && item.row == row);
     
-    const oldSortCol = this.table.internalProps.multipleSort ? null : previousSortItem.col;
-    const oldSortRow = this.table.internalProps.multipleSort ? null : previousSortItem.row;
+    const oldSortCol = this.table.internalProps.multipleSort || !previousSortItem ? null : previousSortItem.col;
+    const oldSortRow = this.table.internalProps.multipleSort || !previousSortItem ? null : previousSortItem.row;
     //currentSortItem.col = col;
     //currentSortItem.row = row;
 

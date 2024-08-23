@@ -12,7 +12,7 @@ import type {
   MaybePromiseOrCallOrUndefined,
   MaybePromiseOrUndefined,
   SortOrder,
-  SortRule
+  SortState
 } from '../ts-types';
 import { AggregationType, HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
@@ -161,7 +161,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   // private lastOrder: SortOrder;
   // private lastOrderFn: (a: any, b: any, order: string) => number;
   // private lastOrderField: FieldDef;
-  private lastSortRules:Array<SortRule>;
+  private lastSortStates:Array<SortState>;
   
   /** 每一行对应源数据的索引 */
   currentIndexedData: (number | number[])[] | null = [];
@@ -616,19 +616,19 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     const children = nodeData.filteredChildren ? nodeData.filteredChildren : nodeData.children;
     if (children) {
       const subNodeSortedIndexArray: Array<number> = Array.from({ length: children.length }, (_, i) => i);
-      this.lastSortRules.forEach(rule => {
-        if (rule.order !== 'normal') {
+      this.lastSortStates.forEach(state => {
+        if (state.order !== 'normal') {
           sort.sort(
             index => isValid(subNodeSortedIndexArray[index]) ? subNodeSortedIndexArray[index] : (subNodeSortedIndexArray[index] = index),
             (index, rel) => {
               subNodeSortedIndexArray[index] = rel;
             },
             children.length,
-            rule.orderFn,
-            rule.order,
+            state.orderFn,
+            state.order,
             index => this.getOriginalField(
               Array.isArray(indexKey) ? indexKey.concat([index]) : [indexKey, index],
-              rule.field
+              state.field
             )
           );
         }
@@ -954,22 +954,22 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.sortedIndexMap.clear();
   }
 
-  sort(rules: SortRule | Array<SortRule>): void {
-    // Convert rules into an array and filter out unnecessary ones
-    rules = (Array.isArray(rules) ? rules : [rules]).filter(item => item.order !== 'normal');
+  sort(states: SortState | Array<SortState>): void {
+    // Convert states into an array and filter out unnecessary ones
+    states = (Array.isArray(states) ? states : [states]).filter(item => item.order !== 'normal');
     
-    // Save the sorting rules
-    this.lastSortRules = rules;
+    // Save the sorting states
+    this.lastSortStates = states;
   
-    // Get an array of sorting objects for each rule
-    let filedMapArray: Array<ISortedMapItem> = rules.map(rule => this.sortedIndexMap.get(rule?.field) || { asc: [], desc: [], normal: [] });
+    // Get an array of sorting objects for each state
+    let filedMapArray: Array<ISortedMapItem> = states.map(state => this.sortedIndexMap.get(state?.field) || { asc: [], desc: [], normal: [] });
   
     let orderedData: number[] | null = null;
   
     // If there is already sorted data in the caches, take it
     if (filedMapArray.length > 0) {
-      orderedData = rules.reduce((data, rule, index) => {
-        const currentData = (filedMapArray[index] as any)?.[rule.order];
+      orderedData = states.reduce((data, state, index) => {
+        const currentData = (filedMapArray[index] as any)?.[state.order];
         return currentData && currentData.length > 0 ? currentData : data;
       }, null);
       
@@ -984,19 +984,19 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     // If there is no cache, we start sorting
     const sortedIndexArray: number[] = Array.from({ length: this._sourceLength }, (_, i) => i);
   
-    // Perform sorting on each rule
+    // Perform sorting on each state
     sortedIndexArray.sort((indexA, indexB) => {
-      return rules.reduce((result, rule) => {
+      return states.reduce((result, state) => {
         if (result !== 0) return result;
   
-        const orderFn = rule.orderFn || (rule.order !== 'desc'
+        const orderFn = state.orderFn || (state.order !== 'desc'
           ? (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 > v2 ? 1 : -1)
           : (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 < v2 ? 1 : -1));
           
         return orderFn(
-          this.getOriginalField(indexA, rule.field),
-          this.getOriginalField(indexB, rule.field),
-          rule.order
+          this.getOriginalField(indexA, state.field),
+          this.getOriginalField(indexB, state.field),
+          state.order
         );
       }, 0);
     });
@@ -1020,16 +1020,16 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   
     // If there were no caches, initialize them
     if (!filedMapArray.length) {
-      filedMapArray = rules.map(() => ({ asc: [], desc: [], normal: [] }));
-      for (let index = 0; index < rules.length; index++) {
-        this.sortedIndexMap.set(rules[index].field, filedMapArray[index]);
+      filedMapArray = states.map(() => ({ asc: [], desc: [], normal: [] }));
+      for (let index = 0; index < states.length; index++) {
+        this.sortedIndexMap.set(states[index].field, filedMapArray[index]);
       }
     }
   
-    // Save the sorted indexes for each rule to the cache
-    rules.forEach((rule, index) => {
+    // Save the sorted indexes for each state to the cache
+    states.forEach((state, index) => {
       const mapItem = filedMapArray[index] as ISortedMapItem;
-      (mapItem as any)[rule.order] = sortedIndexArray.slice(); // Save a copy of the array
+      (mapItem as any)[state.order] = sortedIndexArray.slice(); // Save a copy of the array
     });
   
     this.updatePagerData();
@@ -1100,17 +1100,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * 当节点折叠或者展开时 将排序缓存清空（非当前排序规则的缓存）
    */
   clearSortedIndexMap() {
-    if (this.lastSortRules && this.lastSortRules.length > 0) {
+    if (this.lastSortStates && this.lastSortStates.length > 0) {
       this.sortedIndexMap.forEach((sortMap, key) => {
-        const isFieldInRules = this.lastSortRules.some(rule => rule.field === key);
+        const isFieldInRules = this.lastSortStates.some(state => state.field === key);
         if (!isFieldInRules) {
           this.sortedIndexMap.delete(key);
         } else {
-          this.lastSortRules.forEach(rule => {
-            if (rule.order === 'asc') {
+          this.lastSortStates.forEach(state => {
+            if (state.order === 'asc') {
               sortMap.desc = [];
               sortMap.normal = [];
-            } else if (rule.order === 'desc') {
+            } else if (state.order === 'desc') {
               sortMap.asc = [];
               sortMap.normal = [];
             } else {
@@ -1303,7 +1303,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   // 拖拽调整数据位置 目前对排序过的数据不过处理，因为自动排序和手动排序融合问题目前没有找到好的解决方式
   reorderRecord(sourceIndex: number, targetIndex: number) {
-    if (this.lastSortRules.some(rule => rule.order === 'asc' || rule.order === 'desc')) {
+    if (this.lastSortStates.some(state => state.order === 'asc' || state.order === 'desc')) {
       // const sourceIds = this._currentPagerIndexedData.splice(sourceIndex, 1);
       // sourceIds.unshift(targetIndex, 0);
       // Array.prototype.splice.apply(this._currentPagerIndexedData, sourceIds);

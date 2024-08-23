@@ -4,30 +4,82 @@ const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const personsDataSource = [
-    { name: 'Bananas', count: 1 },
-    { name: 'Apples', count: 3 },
-    { name: 'Bananas', count: 3 },
-    { name: 'Bananas', count: 2 },
-];
+    {
+      progress: 100,
+      id: 1,
+      name: 'e'
+    },
+    {
+      progress: 80,
+      id: 2,
+      name: 'd'
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c'
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'b'
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'a'
+    }
+  ];
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     columns: [
       {
-        field: 'name',
-        
-        title: 'Name',
-        description: 'Name',
-        sort:true,
+        field: 'progress',
+        fieldFormat(rec) {
+          return `已完成${rec.progress}%`;
+        },
+        title: 'progress',
+        description: '这是一个标题的详细描述',
         width: 150
       },
       {
-        field: 'count',
-        
-        title: 'Count',
-        description: 'Count',
-        sort:true,
+        field: 'id',
+        title: 'ID',
+        sort: (v1, v2, order) => {
+          if (order === 'desc') {
+            return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
+          }
+          return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
+        },
+        width: 100
+      },
+      {
+        field: 'id',
+        fieldFormat(rec) {
+          return `这是第${rec.id}号`;
+        },
+        title: 'ID说明',
+        description: '这是一个ID详细描述',
+        sort: (v1, v2, order) => {
+          if (order === 'desc') {
+            return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
+          }
+          return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
+        },
         width: 150
       },
+      {
+        title: 'Name',
+        headerStyle: {
+          textAlign: 'center',
+          fontWeight: 'bold',
+          fontSize: 13,
+          fontFamily: 'sans-serif'
+        },
+        sort:true,
+        field: 'name',
+        width: 150
+      }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
     multipleSort: true,
