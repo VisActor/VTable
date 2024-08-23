@@ -1,12 +1,14 @@
 import type { StateManager } from '../state/state';
 import { InteractionState } from '../ts-types';
+import type { FederatedWheelEvent } from '@src/vrender';
+
 /**
  *
  * @param event
  * @param state
  * @param isWheelEvent 是否是由鼠标或者触摸板原生滚动事件触发进入？
  */
-export function handleWhell(event: WheelEvent, state: StateManager, isWheelEvent: boolean = true) {
+export function handleWhell(event: FederatedWheelEvent, state: StateManager, isWheelEvent: boolean = true) {
   let { deltaX, deltaY } = event;
   // 如果按住了shift 则进行横向滚动 纵向不滚动
   if (event.shiftKey && event.deltaY) {
