@@ -52,7 +52,7 @@ export * from './render/jsx';
 export { getTargetCell } from './event/util';
 
 // export * as VRender from './vrender';
-import * as VRender from './vrender';
+// import * as VRender from './vrender';
 
 export const version = __VERSION__;
 /**
@@ -106,8 +106,8 @@ export {
   renderChart,
   graphicUtil,
   setCustomAlphabetCharSet,
-  restoreMeasureText,
-  VRender
+  restoreMeasureText
+  // VRender // should use import {xxx} from '@visactor/vtable/es/vrender'
 };
 
 /** @private */
