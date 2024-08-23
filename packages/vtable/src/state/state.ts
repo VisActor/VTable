@@ -902,7 +902,7 @@ export class StateManager {
       this.checkHorizontalScrollBarEnd();
     }
   }
-  setScrollTop(top: number, event?: WheelEvent) {
+  setScrollTop(top: number, event?: FederatedEvent) {
     // 矫正top值范围
     const totalHeight = this.table.getAllRowsHeight();
     // _disableColumnAndRowSizeRound环境中，可能出现
@@ -931,7 +931,7 @@ export class StateManager {
 
     if (oldVerticalBarPos !== top) {
       this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-        event,
+        event: (event as FederatedEvent).nativeEvent,
         scrollTop: this.scroll.verticalBarPos,
         scrollLeft: this.scroll.horizontalBarPos,
         scrollHeight: this.table.theme.scrollStyle?.width,
@@ -945,7 +945,7 @@ export class StateManager {
       this.checkVerticalScrollBarEnd();
     }
   }
-  setScrollLeft(left: number, wheelEvent?: WheelEvent) {
+  setScrollLeft(left: number, event?: FederatedEvent) {
     const oldScrollLeft = this.table.scrollLeft;
     // 矫正left值范围
     const totalWidth = this.table.getAllColsWidth();
@@ -979,7 +979,7 @@ export class StateManager {
 
     if (oldHorizontalBarPos !== left) {
       this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-        event: wheelEvent,
+        event: (event as FederatedEvent).nativeEvent,
         scrollTop: this.scroll.verticalBarPos,
         scrollLeft: this.scroll.horizontalBarPos,
         scrollHeight: this.table.theme.scrollStyle?.width,
