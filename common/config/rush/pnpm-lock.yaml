@@ -559,6 +559,7 @@ importers:
       '@visactor/vdataset': ~0.18.1
       '@visactor/vscale': ~0.18.1
       '@visactor/vtable': workspace:*
+      '@visactor/vtable-editors': workspace:*
       '@visactor/vutils': ~0.18.13
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
@@ -600,6 +601,7 @@ importers:
       '@visactor/vdataset': 0.18.9
       '@visactor/vscale': 0.18.9
       '@visactor/vtable': link:../vtable
+      '@visactor/vtable-editors': link:../vtable-editors
       '@visactor/vutils': 0.18.13
       cssfontparser: 1.2.1
     devDependencies:
