@@ -353,23 +353,18 @@ export class Gantt extends EventTarget {
         });
         listTable_options.theme.scrollStyle = Object.assign(
           {},
+          this.options.taskListTable.theme.scrollStyle,
           this.parsedOptions.scrollStyle,
           {
             verticalVisible: 'none'
-          },
-          this.options.taskListTable.theme.scrollStyle
+          }
         );
       }
     } else {
       listTable_options.theme = {
-        scrollStyle: Object.assign(
-          {},
-          this.parsedOptions.scrollStyle,
-          {
-            verticalVisible: 'none'
-          },
-          this.options.taskListTable?.theme?.scrollStyle
-        ),
+        scrollStyle: Object.assign({}, this.options.taskListTable.theme.scrollStyle, this.parsedOptions.scrollStyle, {
+          verticalVisible: 'none'
+        }),
         headerStyle: Object.assign(
           {},
           themes.DEFAULT.headerStyle,

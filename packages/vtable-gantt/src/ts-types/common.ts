@@ -12,20 +12,3 @@ export enum InteractionState {
   'grabing' = 'grabing',
   'scrolling' = 'scrolling'
 }
-/**
- * 单元格的高亮效果设置
- * single 单个单元格高亮
- * column 整列高亮
- * row 整行高量
- * cross 十字花 行列均高亮
- * none 无高亮
- */
-export enum HighlightScope {
-  'single' = 'single',
-  'column' = 'column',
-  'row' = 'row',
-  'cross' = 'cross',
-  'none' = 'none'
-}
-
-export type SortOrder = 'asc' | 'desc' | 'normal' | 'ASC' | 'DESC' | 'NORMAL';
