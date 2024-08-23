@@ -375,6 +375,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   getTableIndexByField(field: FieldDef) {
     const colObj = this.internalProps.layoutMap.columnObjects.find((col: any) => col.field === field);
+    if (!colObj) {
+      return -1;
+    }
     const layoutRange = this.internalProps.layoutMap.getBodyLayoutRangeById(colObj.id);
     if (this.transpose) {
       return layoutRange.start.row;
