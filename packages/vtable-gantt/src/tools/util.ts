@@ -224,7 +224,8 @@ export function toBoxArray<T>(obj: T | T[]): [T, T, T, T] {
 export function getWeekNumber(currentDate: Date) {
   // Calculate the week number within the year
   const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
-  const weekNumber = Math.ceil(((currentDate.getTime() - startOfYear.getTime()) / 86400000 + 1) / 7);
+  // 以下代码的第一个 +1 是为了处理currentDate正好是一周当中的第一天0点0分0秒的情况 ；第2个 +1 是天索引从0开始的缘故
+  const weekNumber = Math.ceil(((currentDate.getTime() + 1 - startOfYear.getTime()) / 86400000 + 1) / 7);
   return weekNumber;
 }
 /** 判断对象的属性是否可写 */
