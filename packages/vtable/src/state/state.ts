@@ -931,7 +931,7 @@ export class StateManager {
 
     if (oldVerticalBarPos !== top) {
       this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-        event: (event as FederatedWheelEvent).nativeEvent as WheelEvent,
+        event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
         scrollTop: this.scroll.verticalBarPos,
         scrollLeft: this.scroll.horizontalBarPos,
         scrollHeight: this.table.theme.scrollStyle?.width,
@@ -979,7 +979,7 @@ export class StateManager {
 
     if (oldHorizontalBarPos !== left) {
       this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-        event: (event as FederatedWheelEvent).nativeEvent as WheelEvent,
+        event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
         scrollTop: this.scroll.verticalBarPos,
         scrollLeft: this.scroll.horizontalBarPos,
         scrollHeight: this.table.theme.scrollStyle?.width,
