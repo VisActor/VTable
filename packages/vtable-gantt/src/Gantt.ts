@@ -302,34 +302,38 @@ export class Gantt extends EventTarget {
       listTable_options.theme = this.options.taskListTable.theme;
       if (listTable_options.theme.bodyStyle && !isPropertyWritable(listTable_options.theme, 'bodyStyle')) {
         //测试是否使用了主题 使用了主题配置项不可写。需要使用extends方式覆盖配置
+        const extendThemeOption = (listTable_options.theme as themes.TableTheme).getExtendTheme();
         if (!listTable_options.theme.headerStyle?.bgColor) {
-          listTable_options.theme = (listTable_options.theme as themes.TableTheme).extends({
-            headerStyle: {
-              bgColor: this.parsedOptions.timelineHeaderBackgroundColor
-            }
-          });
+          if (!extendThemeOption.headerStyle) {
+            extendThemeOption.headerStyle = { bgColor: this.parsedOptions.timelineHeaderBackgroundColor };
+          } else if (!extendThemeOption.headerStyle.bgColor) {
+            extendThemeOption.headerStyle.bgColor = this.parsedOptions.timelineHeaderBackgroundColor;
+          }
         }
-        listTable_options.theme = (listTable_options.theme as themes.TableTheme).extends({
-          cellInnerBorder: false,
-          frameStyle: Object.assign({}, this.parsedOptions.outerFrameStyle, {
-            shadowBlur: 0,
-            cornerRadius: [
-              this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0,
-              0,
-              0,
-              this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
-            ],
-            borderLineWidth: [
-              this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
-              0,
-              this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
-              this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0
-            ]
-          }),
-          scrollStyle: Object.assign({}, this.options.taskListTable.theme.scrollStyle, this.parsedOptions.scrollStyle, {
-            verticalVisible: 'none'
-          })
+        extendThemeOption.cellInnerBorder = false;
+        extendThemeOption.frameStyle = Object.assign({}, this.parsedOptions.outerFrameStyle, {
+          shadowBlur: 0,
+          cornerRadius: [
+            this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0,
+            0,
+            0,
+            this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
+          ],
+          borderLineWidth: [
+            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
+            0,
+            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
+            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0
+          ]
         });
+        extendThemeOption.scrollStyle = Object.assign(
+          {},
+          this.options.taskListTable.theme.scrollStyle,
+          this.parsedOptions.scrollStyle,
+          {
+            verticalVisible: 'none'
+          }
+        );
       } else {
         if (!listTable_options.theme.headerStyle) {
           listTable_options.theme.headerStyle = { bgColor: this.parsedOptions.timelineHeaderBackgroundColor };

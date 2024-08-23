@@ -96,6 +96,10 @@ export class TableTheme implements ITableThemeDefine {
       superTheme
     };
   }
+
+  getExtendTheme(): PartialTableThemeDefine | ITableThemeDefine {
+    return this.internalTheme.obj;
+  }
   get font(): string {
     const { obj, superTheme } = this.internalTheme;
     return getProp(obj, superTheme, ['font'], ['bodyStyle', 'font']);
