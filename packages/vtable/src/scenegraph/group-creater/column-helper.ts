@@ -119,6 +119,11 @@ export function createComplexColumn(
       colForDefine = range.start.col;
       rowForDefine = range.start.row;
     }
+
+    // adjust cellLocation for top frozen row
+    if ((cellLocation === 'columnHeader' || cellLocation === 'cornerHeader') && row >= table.columnHeaderLevelCount) {
+      cellLocation = 'body';
+    }
     const define =
       cellLocation !== 'body'
         ? table.getHeaderDefine(colForDefine, rowForDefine)

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix cellLocation in top frozen row #2267",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
