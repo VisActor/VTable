@@ -2,6 +2,10 @@
 
 2024-08-19
 
+**💥 Breaking change**
+
+- **@visactor/react-vtable**: remove `VTable` export in `react-vtable`, if you want to use `VTable`, please add and import it from `@visactor/vtable` in the same version.
+- **@visactor/react-vtable**: remove `VRender` export in `vtable`, if you want to use `VRender`, import it from `@visactor/vtable/es/vrender`.
 
 **🆕 New feature**
 
