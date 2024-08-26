@@ -51,7 +51,7 @@ const barColors0 = ['#aecde6', '#c6a49a', '#ffb582', '#eec1de', '#b3d9b3', '#ccc
 const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#7f7f7f', '#d62728', '#bcbd22', '#9467bd'];
 const tools=VTableGantt.tools;
 
-let tableInstance;
+let ganttInstance;
 
 const records = [
   {
@@ -82,7 +82,7 @@ const records = [
     priority: 'P1'
   },
   {
-    id: 1,
+    id: 4,
     title: 'Task 4',
     developer: 'liufangfang.jane@bytedance.com',
     start: '2024-07-26',
@@ -91,7 +91,7 @@ const records = [
     priority: 'P0'
   },
   {
-    id: 2,
+    id: 5,
     title: 'Task 5',
     developer: 'liufangfang.jane@bytedance.com',
     start: '2024-07-26',
@@ -100,7 +100,7 @@ const records = [
     priority: 'P0'
   },
   {
-    id: 3,
+    id: 6,
     title: 'Task 6',
     developer: 'liufangfang.jane@bytedance.com',
     start: '2024-07-29',
@@ -379,8 +379,8 @@ const option = {
     scrollSliderColor: '#5cb85c'
   }
 };
-tableInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
+window['ganttInstance'] = ganttInstance;
 ```
 
 ## 自定义渲染任务条taskBar
@@ -420,7 +420,7 @@ const barColors0 = ['#aecde6', '#c6a49a', '#ffb582', '#eec1de', '#b3d9b3', '#ccc
 const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#7f7f7f', '#d62728', '#bcbd22', '#9467bd'];
 const tools=VTableGantt.tools;
 
-let tableInstance;
+let ganttInstance;
 
 const records = [
   {
@@ -628,12 +628,18 @@ const option = {
       });
       containerLeft.add(avatar);
 
-      //TODO 鼠标悬浮时，显示tooltip 显示负责人名字
+      // 鼠标悬浮时，显示tooltip 显示负责人名字
       avatar.addEventListener('mouseenter',event => {
         console.log('enter');
+        const containerRect = document.getElementById(CONTAINER_ID).getBoundingClientRect();
+        debugger;
+        const targetX=event.target.globalAABBBounds.x1;
+        const targetY=event.target.globalAABBBounds.y1;
+        showTooltip([taskRecord.developer],ganttInstance.taskTableWidth+ targetX+containerRect.left, targetY+containerRect.top+50);
       });
       avatar.addEventListener('mouseleave',event => {
         console.log('leave');
+        hideTooltip();
       });
       const containerCenter = new VRender.Group({
         height,
@@ -774,6 +780,43 @@ const option = {
     scrollSliderColor: '#5cb85c'
   }
 };
-tableInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
+window['ganttInstance'] = ganttInstance;
+ganttInstance.on('scroll',(event)=>{
+  hideTooltip();
+});
+
+const popup = document.createElement('div');
+Object.assign(popup.style, {
+  position: 'fixed',
+  width: '300px',
+  backgroundColor: '#f1f1f1',
+  border: '1px solid #ccc',
+  padding: '10px',
+  textAlign: 'left'
+});
+function showTooltip(infoList, x, y) {
+  popup.innerHTML = '';
+  popup.id = 'popup';
+  popup.style.left = x + 'px';
+  popup.style.top = y + 'px';
+  const heading = document.createElement('h4');
+  heading.textContent = 'Developer Information:';
+  heading.style.margin = '0px';
+  popup.appendChild(heading);
+  for (let i = 0; i < infoList.length; i++) {
+    const info = infoList[i];
+    const info1 = document.createElement('p');
+    info1.textContent = info;
+    popup.appendChild(info1);
+  }
+  // 将弹出框添加到文档主体中
+  document.body.appendChild(popup);
+}
+
+function hideTooltip() {
+  if (document.body.contains(popup)) {
+    document.body.removeChild(popup);
+  }
+}
 ```

@@ -70,7 +70,7 @@ const ganttInstance = new Gantt(domContainer, option);
 接下来，我们创建一个 `Gantt` 实例，传入甘特图配置项：
 
 ```javascript livedemo template=vtable
-let tableInstance;
+let ganttInstance;
 const records = [
   {
     id: 1,
@@ -100,7 +100,7 @@ const records = [
     priority: 'P1'
   },
   {
-    id: 1,
+    id: 4,
     title: 'Task 4',
     developer: 'liufangfang.jane@bytedance.com',
     start: '2024-07-26',
@@ -109,7 +109,7 @@ const records = [
     priority: 'P0'
   },
   {
-    id: 2,
+    id: 5,
     title: 'Task 5',
     developer: 'liufangfang.jane@bytedance.com',
     start: '2024-07-26',
@@ -118,7 +118,7 @@ const records = [
     priority: 'P0'
   },
   {
-    id: 3,
+    id: 6,
     title: 'Task 6',
     developer: 'liufangfang.jane@bytedance.com',
     start: '2024-07-29',
@@ -320,8 +320,8 @@ const option = {
     scrollSliderColor: '#5cb85c'
   }
 };
-tableInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
+window['ganttInstance'] = ganttInstance;
 ```
 
 至此，你已经成功绘制出了一个简单的甘特图！

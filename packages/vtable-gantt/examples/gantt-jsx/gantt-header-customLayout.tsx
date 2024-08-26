@@ -942,16 +942,16 @@ export function createTable() {
   //   },
   //   ...
   // ]
-  const tableInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
-  window.tableInstance = tableInstance;
-  tableInstance.on('scroll', e => {
+  const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
+  window.ganttInstance = ganttInstance;
+  ganttInstance.on('scroll', e => {
     console.log('scroll', e);
   });
 
-  tableInstance.taskListTableInstance?.on('scroll', e => {
+  ganttInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
-  // bindDebugTool(tableInstance.scenegraph.stage as any, {
+  // bindDebugTool(ganttInstance.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']
   // });
 }

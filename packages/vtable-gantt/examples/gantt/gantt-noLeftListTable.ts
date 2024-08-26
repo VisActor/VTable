@@ -963,27 +963,27 @@ export function createTable() {
   //   },
   //   ...
   // ]
-  const tableInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
-  window.tableInstance = tableInstance;
-  tableInstance.on('scroll', e => {
+  const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
+  window.ganttInstance = ganttInstance;
+  ganttInstance.on('scroll', e => {
     console.log('scroll', e);
   });
-  tableInstance.on('change_date_range', e => {
+  ganttInstance.on('change_date_range', e => {
     console.log('change_date_range', e);
   });
-  tableInstance.on('mouseenter_task_bar', e => {
+  ganttInstance.on('mouseenter_task_bar', e => {
     console.log('mouseenter_taskbar', e);
   });
-  tableInstance.on('mouseleave_task_bar', e => {
+  ganttInstance.on('mouseleave_task_bar', e => {
     console.log('mouseleave_taskbar', e);
   });
-  tableInstance.on('click_task_bar', e => {
+  ganttInstance.on('click_task_bar', e => {
     console.log('click_task_bar', e);
   });
-  tableInstance.listTableInstance?.on('scroll', e => {
+  ganttInstance.listTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
-  // bindDebugTool(tableInstance.scenegraph.stage as any, {
+  // bindDebugTool(ganttInstance.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']
   // });
 }

@@ -52,8 +52,8 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
         localStorage.setItem(LOCAL_STORAGE_KEY, name);
       }
 
-      if (window.tableInstance) {
-        window.tableInstance.release();
+      if (window.ganttInstance) {
+        window.ganttInstance.release();
         document.getElementById('vTable').innerHTML = null;
       }
 

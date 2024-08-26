@@ -31,6 +31,10 @@ export const menus = [
     name: 'gantt-customLayout'
   },
   {
+    path: 'gantt',
+    name: 'gantt-design-custom'
+  },
+  {
     path: 'gantt-jsx',
     name: 'gantt-header-customLayout'
   },

@@ -90,7 +90,7 @@ columns: [
 
 
 ```javascript livedemo template=vtable
-let tableInstance;
+let ganttInstance;
 // 使用时需要引入插件包@visactor/vtable-editors
 // import * as VTable_editors from '@visactor/vtable-editors';
 // 正常使用方式 const input_editor = new VTable.editors.InputEditor();
@@ -128,7 +128,7 @@ const records = [
     priority: 'P1'
   },
   {
-    id: 1,
+    id: 4,
     title: 'Task 4',
     developer: 'liufangfang.jane@bytedance.com',
     start: '2024-07-26',
@@ -137,7 +137,7 @@ const records = [
     priority: 'P0'
   },
   {
-    id: 2,
+    id: 5,
     title: 'Task 5',
     developer: 'liufangfang.jane@bytedance.com',
     start: '2024-07-26',
@@ -146,7 +146,7 @@ const records = [
     priority: 'P0'
   },
   {
-    id: 3,
+    id: 6,
     title: 'Task 6',
     developer: 'liufangfang.jane@bytedance.com',
     start: '2024-07-29',
@@ -348,8 +348,8 @@ const option = {
     scrollSliderColor: '#5cb85c'
   }
 };
-tableInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
+window['ganttInstance'] = ganttInstance;
 ```
 如果有自定义编辑的需求，请参考完整的教程文档：[编辑教程](../edit/edit_cell)。
 

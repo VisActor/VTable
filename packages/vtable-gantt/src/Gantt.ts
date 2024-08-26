@@ -300,7 +300,7 @@ export class Gantt extends EventTarget {
     // lineWidthArr[1] = 0;
     //Object.assign浅拷贝 会直接覆盖第一层属性 。theme.ARCO.extends 其中extends不能连续调用，且赋值也只是第一层
     if (this.options.taskListTable?.theme) {
-      listTable_options.theme = this.options.taskListTable.theme;
+      listTable_options.theme = this.options.taskListTable?.theme;
       if (listTable_options.theme.bodyStyle && !isPropertyWritable(listTable_options.theme, 'bodyStyle')) {
         //测试是否使用了主题 使用了主题配置项不可写。需要使用extends方式覆盖配置
         const extendThemeOption = (listTable_options.theme as themes.TableTheme).getExtendTheme();
@@ -329,7 +329,7 @@ export class Gantt extends EventTarget {
         });
         extendThemeOption.scrollStyle = Object.assign(
           {},
-          this.options.taskListTable.theme?.scrollStyle,
+          this.options.taskListTable?.theme?.scrollStyle,
           this.parsedOptions.scrollStyle,
           {
             verticalVisible: 'none'
@@ -358,7 +358,7 @@ export class Gantt extends EventTarget {
         });
         listTable_options.theme.scrollStyle = Object.assign(
           {},
-          this.options.taskListTable.theme?.scrollStyle,
+          this.options.taskListTable?.theme?.scrollStyle,
           this.parsedOptions.scrollStyle,
           {
             verticalVisible: 'none'
@@ -367,7 +367,7 @@ export class Gantt extends EventTarget {
       }
     } else {
       listTable_options.theme = {
-        scrollStyle: Object.assign({}, this.options.taskListTable.theme?.scrollStyle, this.parsedOptions.scrollStyle, {
+        scrollStyle: Object.assign({}, this.options.taskListTable?.theme?.scrollStyle, this.parsedOptions.scrollStyle, {
           verticalVisible: 'none'
         }),
         headerStyle: Object.assign(

@@ -19,7 +19,7 @@ option: Gantt#taskBar
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';
-let tableInstance;
+let ganttInstance;
 const records = [
   {
     id: 1,
@@ -780,6 +780,6 @@ const option = {
     scrollSliderColor: '#5cb85c'
   }
 };
-tableInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
+window['ganttInstance'] = ganttInstance;
 ```
