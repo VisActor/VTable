@@ -2,7 +2,7 @@
 category: examples
 group: gantt
 title: 甘特图自定义渲染用法
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-customLayout.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-customLayout-preview.png
 link: '../guide/gantt/introduction'
 option: Gantt#taskBar
 ---
@@ -13,7 +13,9 @@ option: Gantt#taskBar
 
 ## 关键配置
 
--`Gantt` -`taskBar` -`timelineHeader`
+-`Gantt`
+-`taskBar` 
+-`timelineHeader`
 
 ## 代码演示
 

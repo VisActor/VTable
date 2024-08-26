@@ -228,6 +228,18 @@ export function getWeekNumber(currentDate: Date) {
   const weekNumber = Math.ceil(((currentDate.getTime() + 1 - startOfYear.getTime()) / 86400000 + 1) / 7);
   return weekNumber;
 }
+
+export function getWeekday(dateString: string | Date, format: 'long' | 'short' = 'long') {
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const date = new Date(dateString);
+
+  if (format === 'short') {
+    return days[date.getDay()].substr(0, 3);
+  } else if (format === 'long') {
+    return days[date.getDay()];
+  }
+  return 'Invalid format specified. Please use "short" or "long".';
+}
 /** 判断对象的属性是否可写 */
 export function isPropertyWritable(obj: any, prop: string | number) {
   const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
