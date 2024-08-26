@@ -10,6 +10,7 @@ import { IContainPointMode, createRect } from '@src/vrender';
 import { dealWithIcon } from '../utils/text-icon-layout';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { getCellMergeRange } from '../../tools/merge-range';
+import { traverseObject } from '../../tools/util';
 
 export function hideHoverIcon(col: number, row: number, scene: Scenegraph) {
   if (col === -1 || row === -1) {
@@ -258,14 +259,6 @@ export function updateIcon(baseIcon: Icon, iconConfig: ColumnIconOption, col: nu
 function resetSortIcon(oldSortCol: number, oldSortRow: number, iconConfig: ColumnIconOption, scene: Scenegraph) {
   const oldSortCell = scene.getCell(oldSortCol, oldSortRow);
 
-  function traverseObject(obj:any, callback:Function) {
-    callback(obj);
-  
-    if (obj.children && Array.isArray(obj.children)) {
-      obj.children.forEach((child:any) => traverseObject(child, callback));
-    }
-  }
-
   if (
     isValid(oldSortCell.mergeStartCol) &&
     isValid(oldSortCell.mergeStartRow) &&
@@ -292,7 +285,7 @@ function resetSortIcon(oldSortCol: number, oldSortRow: number, iconConfig: Colum
     let oldIconMark: Icon;
     
     //oldSortCell.forEachChildren((mark: Icon) => {
-    traverseObject(oldSortCell, (mark: Icon) => {
+    traverseObject(oldSortCell, 'children', (mark: Icon) => {
       if (mark.attribute.funcType === 'sort') {
         oldIconMark = mark;
         return true;

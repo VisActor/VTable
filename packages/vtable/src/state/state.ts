@@ -49,6 +49,7 @@ import {
 import { updateResizeRow } from './resize/update-resize-row';
 import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
 import type { PivotTable } from '../PivotTable';
+import { traverseObject } from '../tools/util';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -1312,7 +1313,16 @@ export class StateManager {
       this.sort[index].col = cellAddress.col;
       this.sort[index].row = cellAddress.row;
       const cellGroup = this.table.scenegraph.getCell(this.sort[index].col, this.sort[index].row);
-      const iconMark = cellGroup.getChildByName(name, true);
+      //const iconMark = cellGroup.getChildByName(name, true);
+      let iconMark: Icon;
+
+      traverseObject(cellGroup, 'children', (mark: Icon) => {
+        if (mark.attribute.funcType === 'sort') {
+          iconMark = mark;
+          return true;
+        }
+        return false;
+      });
 
       // 更新icon
       this.table.scenegraph.updateSortIcon({
@@ -1323,6 +1333,26 @@ export class StateManager {
         oldSortCol,
         oldSortRow,
         oldIconMark: this.sort[index]?.icon
+      });
+    }
+
+    let normalHeaders:Array<any> = [];
+    (this.table.internalProps.layoutMap.columnTree as any).tree.children.forEach((item: any)=>{
+      if(!sortState.some(state=>state.field == item.field)){
+        normalHeaders.push(item);
+      }
+    });
+
+    for (let index = 0; index < normalHeaders.length; index++) {
+      const column = normalHeaders[index];
+      this.table.scenegraph.updateSortIcon({
+        col: null,
+        row: null,
+        iconMark:null,
+        order: null,
+        oldSortCol:column.startInTotal,
+        oldSortRow:column.level,
+        oldIconMark: null
       });
     }
   }
