@@ -198,7 +198,7 @@ export class BubbleTooltipElement {
   ): boolean {
     const rootElement = this._rootElement;
     const rect = table.getCellRangeRelativeRect({ col, row });
-    const element = table.getElement();
+    const element = table.internalProps.tooltip.parentElement;
     const containerWidth = table.internalProps.element.offsetWidth;
     const { width } = rect;
     if (rootElement) {
@@ -268,7 +268,14 @@ export class BubbleTooltipElement {
   ) {
     const rootElement = this._rootElement;
     const rect = table.getCellRangeRelativeRect({ col, row });
-    const { width: containerWidth, height: containerHeight } = table.internalProps.element.getBoundingClientRect();
+    const { x: parentX, y: parentY } = table.internalProps.tooltip.parentElement.getBoundingClientRect();
+    const {
+      width: containerWidth,
+      height: containerHeight,
+      x,
+      y
+    } = table.internalProps.element.getBoundingClientRect();
+    // const { width: containerWidth, height: containerHeight } = document.body.getBoundingClientRect();
     const { width } = rect;
     // 边界碰撞检测
     let tooltipY: number;
@@ -359,8 +366,8 @@ export class BubbleTooltipElement {
       }
     }
     return {
-      x: tooltipX,
-      y: tooltipY
+      x: tooltipX + x - parentX,
+      y: tooltipY + y - parentY
     };
   }
   private removeStyleFromTriangle() {
