@@ -169,6 +169,13 @@
             "zh": "自定义渲染",
             "en": "Custom Render"
           }
+        },
+        {
+          "path": "gantt_edit",
+          "title": {
+            "zh": "甘特图编辑",
+            "en": "Gantt Edit"
+          }
         }
       ]
     },

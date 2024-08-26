@@ -2,7 +2,7 @@
 
 在本教程中，我们将介绍如何使用 @visactor/vtable-gantt 的自定义能力绘制甘特图。
 
-**因为左侧是一个完整的ListTable，所以可直接参照在ListTable中[自定义渲染教程](https://visactor.io/vtable/guide/custom_define/custom_layout)。**
+**因为左侧是一个完整的ListTable，所以可直接参照在ListTable中[自定义渲染教程](../custom_define/custom_layout)。**
 
 ## 准备工作
 
