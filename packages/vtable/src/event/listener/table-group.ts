@@ -294,7 +294,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       setTimeout(() => {
-        if (!table.internalProps.menuHandler.pointInMenuElement(e.page.x, e.page.y)) {
+        // conside page scroll
+        if (!table.internalProps.menuHandler.pointInMenuElement(e.client.x, e.client.y)) {
           stateManager.menu.isShow && stateManager.hideMenu();
         }
       }, 0);

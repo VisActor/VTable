@@ -3580,6 +3580,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           }
         }
       }
+
+      if (this.options?.formatCopyValue) {
+        copyValue = this.options.formatCopyValue(copyValue);
+      }
       return copyValue;
     }
     return '';
