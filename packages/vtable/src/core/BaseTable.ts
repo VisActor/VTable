@@ -2532,11 +2532,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     row: number,
     isShift?: boolean,
     isCtrl?: boolean,
-    isSelectAll?: boolean,
-    isSelectMoving?: boolean
+    makeSelectCellVisible?: boolean
   ) {
     const isHasSelected = !!this.stateManager.select.ranges?.length;
-    this.stateManager.updateSelectPos(col, row, isShift, isCtrl, isSelectAll, isSelectMoving);
+    this.stateManager.updateSelectPos(col, row, isShift, isCtrl, false, makeSelectCellVisible);
     this.stateManager.endSelectCells(true, isHasSelected);
   }
   /**
