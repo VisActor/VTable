@@ -11,6 +11,8 @@ option: Gantt#taskBar
 
 该示例展示了如何自定义渲染甘特图任务条及日期表头。左侧任务信息表格的自定义渲染，是定义在columns中的customLayout实现的，可参考[教程](../../option/ListTable-columns-text#customLayout)。
 
+在本示例中，任务条的自定义渲染，是定义在taskBar中的customLayout实现的；日期表头的自定义渲染，是定义在timelineHeader中的customLayout实现的。可参考[教程](../../guide/gantt/gantt_customLayout)。
+
 ## 关键配置
 
 -`Gantt`

@@ -1,35 +1,29 @@
 ---
 category: examples
 group: gantt
-title: 甘特图编辑数据
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-edit-preview.gif
-link: '../guide/gantt/gantt_edit'
-option: Gantt#taskListTable.columns
+title: 甘特图交互-拖拽任务条
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-interaction-drag-taskBar-preview.gif
+link: '../guide/gantt/introduction'
+option: Gantt#taskBar.moveable
 ---
 
-# 甘特图编辑数据
+# 甘特图交互-拖拽任务条
 
-该示例展示了甘特图的编辑数据用法。目前编辑仅支持左侧任务信息表格，右侧甘特图暂不支持编辑。具体使用可参考教程：[甘特图编辑数据](../../guide/gantt/gantt_edit)
+该示例展示了如何实现甘特图任务条的拖拽功能。移动任务条能力和调整大小能力是默认开启的，可通过配置项关闭。
+配置项分别为`taskBar.moveable`和`taskBar.resizable`。
 
 ## 关键配置
 
-- `Gantt`
-- `taskListTable` 配置左侧任务信息表格
-- `VTable.register.editor` 注册编辑器
-- `editor` 设置了编辑器注册名称
+-`Gantt`
+
+-`Gantt#taskBar.moveable` 任务条是否可移动。默认为true
+
+-`Gantt#taskBar.resizable` 任务条是否可调整大小。默认为true
 
 ## 代码演示
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';
-// 使用时需要引入插件包@visactor/vtable-editors
-// import * as VTable_editors from '@visactor/vtable-editors';
-// 正常使用方式 const input_editor = new VTable.editors.InputEditor();
-// 官网编辑器中将 VTable.editors重命名成了VTable_editors
-const input_editor = new VTable_editors.InputEditor();
-const date_input_editor = new VTable_editors.DateInputEditor();
-VTable.register.editor('input', input_editor);
-VTable.register.editor('date-input', date_input_editor);
 let ganttInstance;
 const records = [
   {
@@ -54,8 +48,8 @@ const records = [
         id: 3,
         title: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-25',
-        end: '2024-07-26',
+        start: '2024/07/25',
+        end: '2024/07/26',
         progress: 100,
         priority: 'P1'
       },
@@ -63,8 +57,8 @@ const records = [
         id: 3,
         title: 'Project Create',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-27',
-        end: '2024-07-26',
+        start: '2024/07/27',
+        end: '2024/07/26',
         progress: 100,
         priority: 'P1'
       },
@@ -72,8 +66,8 @@ const records = [
         id: 3,
         title: 'Develop feature 1',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-08-01',
-        end: '2024-08-15',
+        start: '2024/08/01',
+        end: '2024/08/15',
         progress: 0,
         priority: 'P1'
       }
@@ -83,8 +77,8 @@ const records = [
     id: 2,
     title: 'Scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-08-01',
+    start: '07/24/2024',
+    end: '08/04/2024',
     progress: 60,
     priority: 'P0'
   },
@@ -394,8 +388,8 @@ const records = [
         id: 3,
         title: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-24',
-        end: '2024-08-04',
+        start: '2024/07/24',
+        end: '2024/08/04',
         progress: 100,
         priority: 'P1'
       },

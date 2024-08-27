@@ -267,6 +267,20 @@
             "zh": "甘特图编辑数据",
             "en": "Gantt Edit"
           }
+        },
+        {
+          "path": "gantt-interaction-drag-table-width",
+          "title": {
+            "zh": "甘特图交互——拖拽表格宽度",
+            "en": "Gantt Interaction —— Drag Table Width"
+          }
+        },
+        {
+          "path": "gantt-interaction-drag-taskBar",
+          "title": {
+            "zh": "甘特图交互——拖拽任务条",
+            "en": "Gantt Interaction —— Drag TaskBar"
+          }
         }
       ]
     },

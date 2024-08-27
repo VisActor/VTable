@@ -53,6 +53,21 @@
 
 这些能力使得 vtable-gantt 组件在任务管理和项目规划中具有高度的可定制性和灵活性，能够满足不同场景下的需求。
 
+## 借助表格的能力
+taskListTable 是 vtable-gantt 组件中最重要的配置项之一，它用于配置左侧任务列表表格的布局和样式。实际对应到一个完整的ListTable，所以可以直接获取左侧表格的实例，进行自定义操作。
+获取表格实例的方式如下：
+```javascript
+const ganttInstance =new Gantt(containerDom, options);
+// 获取左侧表格实例
+const tableInstance = ganttInstance.taskListTableInstance;
+```
+那么VTableGantt借助这个tableInstance可以实现哪些能力呢？
+
+1. 借助这个间接获取的tableInstance可以监听事件或者调用ListTable支持接口。具体可以参考ListTable的[文档](../../api)
+2. 借助ListTable的编辑能力，实现了甘特图数据编辑能力。
+3. 借助ListTable的排序能力，实现了甘特图数据排序能力。ListTable的[参考教程](../../guide/basic_function/sort/list_sort)。
+4. 借助ListTable的树形结构能力，实现了甘特图父子关系的数据。ListTable的[参考教程](../../guide/table_type/List_table/tree_list)。
+
 ## 总结
 甘特图是项目管理中非常重要的工具，通过直观的图形展示项目的进度和时间安排，帮助项目管理者更好地规划和控制项目。通过合理配置甘特图的各项参数，可以满足不同项目的需求，提高项目管理的效率。
 

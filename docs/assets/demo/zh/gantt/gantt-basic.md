@@ -643,11 +643,6 @@ const option = {
     horizontalSplitLine: {
       lineColor: '#e1e4e8',
       lineWidth: 3
-    },
-    verticalSplitLineMoveable: true,
-    verticalSplitLineHighlight: {
-      lineColor: 'green',
-      lineWidth: 3
     }
   },
   grid: {
