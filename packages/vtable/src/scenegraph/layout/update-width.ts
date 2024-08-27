@@ -493,7 +493,8 @@ function updateMergeCellContentWidth(
         let changed = false;
         if (renderDefault) {
           // 处理文字
-          const style = table._getCellStyle(col, row);
+          // const style = table._getCellStyle(col, row);
+          const style = table._getCellStyle(colStart, rowStart);
           const padding = getQuadProps(style.padding as number);
           const textAlign = style.textAlign;
           const textBaseline = style.textBaseline;

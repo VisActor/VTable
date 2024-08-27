@@ -379,8 +379,6 @@ export function createCell(
 export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean, isShadow?: boolean) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
-  const cellStyle = table._getCellStyle(col, row);
-  const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const cellLocation = table.getCellLocation(col, row);
   let value = table.getCellValue(col, row);
 
@@ -478,6 +476,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       value = vtableMergeName;
     }
   }
+
+  const cellStyle = table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
+  const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
 
   if (!cellTheme) {
     cellTheme = getStyleTheme(
