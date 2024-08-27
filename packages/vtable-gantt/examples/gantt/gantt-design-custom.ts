@@ -173,8 +173,8 @@ export function createTable() {
       //   lineColor: '#e1e4e8'
       // },
       horizontalLine: {
-        lineWidth: 1,
-        lineColor: '#e1e4e8'
+        lineWidth: 2,
+        lineColor: '#d5d9ee'
       }
     },
     headerRowHeight: 60,
@@ -303,18 +303,8 @@ export function createTable() {
         padding: [0, 20],
         textBaseline: 'bottom'
       },
-      barStyle: {
-        width: 60,
-        /** 任务条的颜色 */
-        barColor: '#ee8800',
-        /** 已完成部分任务条的颜色 */
-        completedBarColor: '#91e8e0',
-        /** 任务条的圆角 */
-        cornerRadius: 8,
-        /** 任务条的边框 */
-        borderWidth: 1,
-        /** 边框颜色 */
-        borderColor: 'black'
+      hoverBarStyle: {
+        cornerRadius: 30
       }
     },
     timelineHeader: {

@@ -211,7 +211,10 @@ export class TaskBar {
       clip: true,
       cursor: this._scene._gantt.parsedOptions.taskBarMoveable ? 'grab' : 'default',
       pickable: false,
-      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
+      cornerRadius:
+        this._scene._gantt.parsedOptions.taskBarHoverStyle.cornerRadius ??
+        this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius ??
+        0,
       fill: this._scene._gantt.parsedOptions.taskBarHoverStyle.barOverlayColor,
       visibleAll: false
     });
