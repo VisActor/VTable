@@ -1840,6 +1840,10 @@ export class Dataset {
       this.changedTree[flatRowKey][flatColKey] = [];
       this.changedTree[flatRowKey][flatColKey][indicatorIndex] = newValue;
     }
+    const cellAggregator = this.tree[flatRowKey][flatColKey][indicatorIndex];
+    if (cellAggregator.records.length === 1) {
+      cellAggregator.records[0][this.indicatorKeys[indicatorIndex]] = newValue;
+    }
   }
 
   changeRecordFieldValue(fieldName: string, oldValue: string | number, value: string | number) {
