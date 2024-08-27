@@ -280,6 +280,11 @@ function updateCellWidth(
     const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
 
     // deal with bar
+    let range;
+    if (columnDefine?.mergeCell) {
+      range = scene.table.getCellRange(col, row);
+    }
+
     const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
     const newBarCell = createProgressBarCell(
       columnDefine,
@@ -291,7 +296,8 @@ function updateCellWidth(
       col,
       row,
       padding,
-      scene.table
+      scene.table,
+      range
     );
 
     const oldBarCell = cellGroup.getChildByName('progress-bar') as Group;
