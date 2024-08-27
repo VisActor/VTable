@@ -52,7 +52,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         } else if (stateManager.isFillHandle()) {
           eventManager.dealFillSelect(eventArgsSet, true);
         } else {
-          eventManager.dealTableSelect(eventArgsSet, true);
+          table.options.select?.disableDragSelect || eventManager.dealTableSelect(eventArgsSet, true);
         }
       }
       return;
