@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: changeCellValue can fix raw record #2305\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
