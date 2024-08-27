@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "refactor: changeCellValue can fix raw record #2305\n\n",
+      "comment": "refactor: changeCellValue can modify raw record #2305\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
