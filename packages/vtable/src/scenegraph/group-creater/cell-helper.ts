@@ -306,7 +306,8 @@ export function createCell(
       col,
       row,
       padding,
-      table
+      table,
+      range
     );
     // 进度图插入到文字前，绘制在文字下
     if (cellGroup.firstChild) {
