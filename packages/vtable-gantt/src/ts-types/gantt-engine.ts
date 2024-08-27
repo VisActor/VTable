@@ -89,9 +89,17 @@ export interface GanttConstructorOptions {
     /** 任务条是否可移动 */
     moveable?: boolean;
     /** 任务条hover时的样式 */
-    hoverBarStyle?: ITaskBarStyle & { barOverlayColor?: string };
+    hoverBarStyle?: {
+      /** 任务条的圆角 */
+      cornerRadius?: number;
+      barOverlayColor?: string;
+    };
     /** 任务条选择时的样式 TODO */
-    selectionBarStyle?: ITaskBarStyle & { barOverlayColor?: string };
+    selectionBarStyle?: {
+      /** 任务条的圆角 */
+      cornerRadius?: number;
+      barOverlayColor?: string;
+    };
     /** 任务条右键菜单 */
     menu?: {
       /** 右键菜单。代替原来的option.contextmenu */
@@ -178,10 +186,10 @@ export interface ITaskBarStyle {
   width?: number;
   /** 任务条的圆角 */
   cornerRadius?: number;
-  /** 任务条的边框 */
-  borderWidth?: number;
-  /** 边框颜色 */
-  borderColor?: string;
+  // /** 任务条的边框 */
+  // borderWidth?: number;
+  // /** 边框颜色 */
+  // borderColor?: string;
 }
 export type ILineStyle = {
   lineColor?: string;
