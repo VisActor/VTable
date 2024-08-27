@@ -260,6 +260,13 @@
             "zh": "甘特图自定义渲染",
             "en": "Gantt Custom Layout"
           }
+        },
+        {
+          "path": "gantt-edit",
+          "title": {
+            "zh": "甘特图编辑数据",
+            "en": "Gantt Edit"
+          }
         }
       ]
     },
