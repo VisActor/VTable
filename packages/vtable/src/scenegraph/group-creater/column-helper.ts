@@ -174,7 +174,7 @@ export function createComplexColumn(
       }
     }
 
-    const cellStyle = customStyle || table._getCellStyle(col, row);
+    const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
     const cellTheme = getStyleTheme(
       cellStyle,
       table,

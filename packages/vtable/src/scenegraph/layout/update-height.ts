@@ -350,7 +350,7 @@ function updateMergeCellContentHeight(
         });
 
         if (renderDefault) {
-          const style = table._getCellStyle(col, row);
+          const style = table._getCellStyle(colStart, rowStart);
           updateCellContentHeight(
             singleCellGroup,
             distHeight,
