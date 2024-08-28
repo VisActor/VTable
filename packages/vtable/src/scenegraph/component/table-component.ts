@@ -1,3 +1,4 @@
+import { theme } from './../../themes';
 import type { ILine, IRect, IGroup, FederatedPointerEvent, Text, IText } from '@src/vrender';
 import { createRect, createLine, createText, createGroup, createSymbol } from '@src/vrender';
 import { ScrollBar } from '@visactor/vrender-components';
@@ -20,7 +21,7 @@ export class TableComponent {
   // selectBorder: IRect; // 表格选择区域边框
   columnResizeLine: ILine; // 表格列宽调整基准线
   columnResizeBgLine: ILine; // 表格列宽调整基准线背景
-  columnResizeLabel?: IGroup; // 表格列宽调整标记
+  columnResizeLabel: IGroup; // 表格列宽调整标记
   rowResizeLine: ILine; // 表格列宽调整基准线
   rowResizeBgLine: ILine; // 表格列宽调整基准线背景
   rowResizeLabel: IGroup; // 表格列宽调整标记
@@ -31,7 +32,7 @@ export class TableComponent {
   rightFrozenShadowLine: IRect; // 表格右侧冻结列左侧阴影块
   drillIcon: DrillIcon; // drill icon
   cellMover: CellMover; // 表格列顺序调整标记
-
+  hiddenLabel: boolean; // 是否隐藏label
   constructor(table: BaseTableAPI) {
     this.table = table;
     const theme = this.table.theme;
@@ -50,6 +51,8 @@ export class TableComponent {
     const labelFontFamily = theme.columnResize?.labelFontFamily;
     const labelBackgroundFill = theme.columnResize?.labelBackgroundFill;
     const labelBackgroundCornerRadius = theme.columnResize?.labelBackgroundCornerRadius;
+
+    this.hiddenLabel = hiddenLabel;
 
     this.columnResizeLine = createLine({
       visible: false,
@@ -76,42 +79,41 @@ export class TableComponent {
         { x: 0, y: 0 }
       ]
     });
-    if (!hiddenLabel) {
-      // 列宽调整文字标签
-      const columnResizeLabelText = createText({
-        visible: false,
-        pickable: false,
-        x: 0,
-        y: 0,
-        fontSize: labelFontSize, // 10
-        fill: labelColor,
-        fontFamily: labelFontFamily,
-        text: '',
-        textBaseline: 'top',
-        dx: 12 + 4,
-        dy: -labelFontSize / 2
-      });
-      const columnResizeLabelBack = createRect({
-        visible: false,
-        pickable: false,
-        fill: labelBackgroundFill,
-        x: 0,
-        y: 0,
-        width: 5 * labelFontSize * 0.8,
-        height: labelFontSize + 8,
-        cornerRadius: labelBackgroundCornerRadius,
-        dx: 12,
-        dy: -labelFontSize / 2 - 4
-      });
-      this.columnResizeLabel = createGroup({
-        visible: false,
-        pickable: false,
-        x: 0,
-        y: 0
-      });
-      this.columnResizeLabel.appendChild(columnResizeLabelBack);
-      this.columnResizeLabel.appendChild(columnResizeLabelText);
-    }
+
+    const columnResizeLabelText = createText({
+      visible: false,
+      pickable: false,
+      x: 0,
+      y: 0,
+      fontSize: labelFontSize, // 10
+      fill: labelColor,
+      fontFamily: labelFontFamily,
+      text: '',
+      textBaseline: 'top',
+      dx: 12 + 4,
+      dy: -labelFontSize / 2
+    });
+    const columnResizeLabelBack = createRect({
+      visible: false,
+      pickable: false,
+      fill: labelBackgroundFill,
+      x: 0,
+      y: 0,
+      width: 5 * labelFontSize * 0.8,
+      height: labelFontSize + 8,
+      cornerRadius: labelBackgroundCornerRadius,
+      dx: 12,
+      dy: -labelFontSize / 2 - 4
+    });
+    this.columnResizeLabel = createGroup({
+      visible: false,
+      pickable: false,
+      x: 0,
+      y: 0
+    });
+    this.columnResizeLabel.appendChild(columnResizeLabelBack);
+    this.columnResizeLabel.appendChild(columnResizeLabelText);
+
     this.rowResizeLine = createLine({
       visible: false,
       pickable: false,
@@ -172,7 +174,6 @@ export class TableComponent {
     });
     this.rowResizeLabel.appendChild(rowResizeLabelBack);
     this.rowResizeLabel.appendChild(rowResizeLabelText);
-
     // 列顺序调整基准线
     this.cellMover = new CellMover(this.table);
 
@@ -244,7 +245,7 @@ export class TableComponent {
     // componentGroup.addChild(this.selectBorder);
     componentGroup.addChild(this.columnResizeBgLine);
     componentGroup.addChild(this.columnResizeLine);
-    this.columnResizeLabel && componentGroup.addChild(this.columnResizeLabel);
+    componentGroup.addChild(this.columnResizeLabel);
     componentGroup.addChild(this.rowResizeBgLine);
     componentGroup.addChild(this.rowResizeLine);
     componentGroup.addChild(this.rowResizeLabel);
@@ -444,8 +445,8 @@ export class TableComponent {
     // this.columnResizeLine.attribute.visible = false;
     this.columnResizeLine.setAttribute('visible', false);
     this.columnResizeBgLine.setAttribute('visible', false);
-    this.columnResizeLabel?.setAttribute('visible', false);
-    this.columnResizeLabel?.hideAll();
+    this.columnResizeLabel.setAttribute('visible', false);
+    this.columnResizeLabel.hideAll();
   }
 
   /**
@@ -477,7 +478,7 @@ export class TableComponent {
 
     // 标签
     // this.columnResizeLabel.setAttribute('visible', true);
-    if (this.columnResizeLabel) {
+    if (!this.hiddenLabel) {
       this.columnResizeLabel.showAll();
       this.columnResizeLabel.setAttributes({
         visible: true,
@@ -514,7 +515,7 @@ export class TableComponent {
     });
 
     // 标签
-    if (this.columnResizeLabel) {
+    if (!this.hiddenLabel) {
       this.columnResizeLabel.setAttributes({
         x: colX,
         y
@@ -561,14 +562,16 @@ export class TableComponent {
       ]
     });
 
-    // 标签
-    this.rowResizeLabel.showAll();
-    this.rowResizeLabel.setAttributes({
-      visible: true,
-      y: rowY,
-      x
-    });
-    (this.rowResizeLabel.lastChild as Text).setAttribute('text', `${this.table.getRowHeight(row)}px`);
+    if (!this.hiddenLabel) {
+      // 标签
+      this.rowResizeLabel.showAll();
+      this.rowResizeLabel.setAttributes({
+        visible: true,
+        y: rowY,
+        x
+      });
+      (this.rowResizeLabel.lastChild as Text).setAttribute('text', `${this.table.getRowHeight(row)}px`);
+    }
   }
 
   /**
@@ -596,12 +599,14 @@ export class TableComponent {
       ]
     });
 
-    // 标签
-    this.rowResizeLabel.setAttributes({
-      y: rowY,
-      x
-    });
-    (this.rowResizeLabel.lastChild as Text).setAttribute('text', `${Math.floor(this.table.getRowHeight(row))}px`);
+    if (!this.hiddenLabel) {
+      // 标签
+      this.rowResizeLabel.setAttributes({
+        y: rowY,
+        x
+      });
+      (this.rowResizeLabel.lastChild as Text).setAttribute('text', `${Math.floor(this.table.getRowHeight(row))}px`);
+    }
   }
 
   /**
@@ -789,24 +794,24 @@ export class TableComponent {
     const labelFontFamily = theme.columnResize?.labelFontFamily;
     const labelBackgroundFill = theme.columnResize?.labelBackgroundFill;
     const labelBackgroundCornerRadius = theme.columnResize?.labelBackgroundCornerRadius;
+    const hiddenLabel = theme.columnResize?.hiddenLabel;
+    this.hiddenLabel = hiddenLabel;
 
-    if (this.columnResizeLabel) {
-      // columnResizeLabelBack
-      (this.columnResizeLabel.lastChild as IText).setAttributes({
-        fontSize: labelFontSize, // 10
-        fill: labelColor,
-        fontFamily: labelFontFamily,
-        dy: -labelFontSize / 2
-      });
-      // columnResizeLabelText
-      (this.columnResizeLabel.firstChild as IRect).setAttributes({
-        fill: labelBackgroundFill,
-        width: 5 * labelFontSize * 0.8,
-        height: labelFontSize + 8,
-        cornerRadius: labelBackgroundCornerRadius,
-        dy: -labelFontSize / 2 - 4
-      });
-    }
+    // columnResizeLabelBack
+    (this.columnResizeLabel.lastChild as IText).setAttributes({
+      fontSize: labelFontSize, // 10
+      fill: labelColor,
+      fontFamily: labelFontFamily,
+      dy: -labelFontSize / 2
+    });
+    // columnResizeLabelText
+    (this.columnResizeLabel.firstChild as IRect).setAttributes({
+      fill: labelBackgroundFill,
+      width: 5 * labelFontSize * 0.8,
+      height: labelFontSize + 8,
+      cornerRadius: labelBackgroundCornerRadius,
+      dy: -labelFontSize / 2 - 4
+    });
 
     // rowResizeLabelBack
     (this.rowResizeLabel.lastChild as IText).setAttributes({
