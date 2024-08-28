@@ -1061,26 +1061,25 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const sortRule = sortRules[i];
       if ((sortRule as SortByIndicatorRule).sortType) {
         const dimensions: IDimensionInfo[] = [];
-        if ((sortRule as SortByIndicatorRule).sortByIndicator) {
-          if (
-            (sortRule as SortByIndicatorRule).sortField ===
+        if (
+          (sortRule as SortByIndicatorRule).sortByIndicator &&
+          (sortRule as SortByIndicatorRule).sortField ===
             (this.dataset.indicatorsAsCol
               ? this.dataset.rows[this.dataset.rows.length - 1]
               : this.dataset.columns[this.dataset.columns.length - 1])
-          ) {
-            for (let j = 0; j < (sortRule as SortByIndicatorRule).query.length; j++) {
-              dimensions.push({
-                dimensionKey: this.dataset.indicatorsAsCol ? this.dataset.columns[j] : this.dataset.rows[j],
-                value: (sortRule as SortByIndicatorRule).query[j]
-              });
-            }
+        ) {
+          for (let j = 0; j < (sortRule as SortByIndicatorRule).query.length; j++) {
             dimensions.push({
-              indicatorKey: (sortRule as SortByIndicatorRule).sortByIndicator,
-              value:
-                this.internalProps.layoutMap.getIndicatorInfo((sortRule as SortByIndicatorRule).sortByIndicator)
-                  ?.title ?? (sortRule as SortByIndicatorRule).sortByIndicator
+              dimensionKey: this.dataset.indicatorsAsCol ? this.dataset.columns[j] : this.dataset.rows[j],
+              value: (sortRule as SortByIndicatorRule).query[j]
             });
           }
+          dimensions.push({
+            indicatorKey: (sortRule as SortByIndicatorRule).sortByIndicator,
+            value:
+              this.internalProps.layoutMap.getIndicatorInfo((sortRule as SortByIndicatorRule).sortByIndicator)?.title ??
+              (sortRule as SortByIndicatorRule).sortByIndicator
+          });
         } else {
           dimensions.push({
             dimensionKey: (sortRule as SortTypeRule).sortField,

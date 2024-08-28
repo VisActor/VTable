@@ -121,4 +121,17 @@ ${prefix} drillUp(boolean)
 Display drill-up icon, clicking it will trigger a corresponding event
 
 ${prefix} showSort(boolean)
-Whether to display the sort icon, no data sorting logic
+Whether the dimension value cell displays the sort icon. Clicking it does not have data sorting logic.
+
+${prefix} sort(boolean)
+Whether the corresponding dimension header cell displays the sort icon.
+
+Sorting rules:
+
+If the sorting rules for this dimension are configured in dataConfig.sortRules, the data is sorted according to the rules in dataConfig.sortRules.
+
+If the sorting rules for the dimension are not configured in dataConfig.sortRules, the default is to use the natural sorting of the dimension value string.
+
+${prefix} showSortInCorner(boolean)
+
+Whether to display sorting in the dimension name cell in the corner header. Clicking it does not have data sorting logic
