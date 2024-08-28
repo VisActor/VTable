@@ -859,7 +859,7 @@ export function createTable() {
         /** 已完成部分任务条的颜色 */
         completedBarColor: '#91e8e0',
         /** 任务条的圆角 */
-        cornerRadius: 8
+        cornerRadius: 10
       }
     },
     timelineHeader: {

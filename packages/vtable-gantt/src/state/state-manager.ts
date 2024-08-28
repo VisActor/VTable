@@ -328,9 +328,8 @@ export class StateManager {
     const dx = x2 - x1;
     this.moveTaskBar.deltaX += dx;
     target.setAttribute('x', target.attribute.x + dx);
-    // if (target.attribute.x < this._gantt.stateManager.scrollLeft - 2) {
-    // this._gantt.stateManager.setScrollLeft(target.attribute.x);
-    // }
+
+    // 处理向左拖拽任务条时，整体向左滚动
     if (target.attribute.x <= this._gantt.stateManager.scrollLeft && dx < 0) {
       this.moveTaskBar.moveTaskBarXSpeed = -this._gantt.parsedOptions.colWidthPerDay / 100;
 
@@ -339,12 +338,16 @@ export class StateManager {
         this.moveTaskBar.deltaX += dx;
         target.setAttribute('x', target.attribute.x + dx);
         this._gantt.stateManager.setScrollLeft(target.attribute.x);
+        if (this._gantt.stateManager.scrollLeft === 0) {
+          this.moveTaskBar.moveTaskBarXInertia.endInertia();
+        }
       });
     } else if (
       target.attribute.x + target.attribute.width >=
         this._gantt.stateManager.scrollLeft + this._gantt.tableNoFrameWidth &&
       dx > 0
     ) {
+      // 处理向右拖拽任务条时，整体向右滚动
       this.moveTaskBar.moveTaskBarXSpeed = this._gantt.parsedOptions.colWidthPerDay / 100;
 
       this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
@@ -354,6 +357,9 @@ export class StateManager {
         this._gantt.stateManager.setScrollLeft(
           target.attribute.x + target.attribute.width - this._gantt.tableNoFrameWidth
         );
+        if (this._gantt.stateManager.scrollLeft === this._gantt._getAllColsWidth() - this._gantt.tableNoFrameWidth) {
+          this.moveTaskBar.moveTaskBarXInertia.endInertia();
+        }
       });
     } else if (this.moveTaskBar.moveTaskBarXInertia.isInertiaScrolling()) {
       this.moveTaskBar.moveTaskBarXInertia.endInertia();

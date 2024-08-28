@@ -3,7 +3,8 @@ export class Inertia {
   lastTime: number;
   speedX: number;
   speedY: number;
-  runingId: number;
+  runing: number;
+  stopped: boolean;
   scrollHandle: (dx: number, dy: number) => void;
   constructor() {
     //
@@ -13,6 +14,7 @@ export class Inertia {
   }
 
   startInertia(speedX: number, speedY: number, friction: number) {
+    this.stopped = false;
     this.lastTime = Date.now();
     this.speedX = speedX;
     this.speedY = speedY;
@@ -22,6 +24,9 @@ export class Inertia {
     }
   }
   inertia() {
+    if (this.stopped) {
+      return;
+    }
     const now = Date.now();
     const dffTime = now - this.lastTime;
     let stopped = true;
@@ -52,6 +57,7 @@ export class Inertia {
   endInertia() {
     cancelAnimationFrame(this.runingId);
     this.runingId = null;
+    this.stopped = true;
   }
   isInertiaScrolling() {
     return !!this.runingId;

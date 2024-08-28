@@ -335,6 +335,14 @@ export class Gantt extends EventTarget {
             verticalVisible: 'none'
           }
         );
+        // 将拖拽列宽旁边的数字标签隐藏掉 VTable后续需要增加这样一个配置 就把这里hack的方式替换掉 TODO
+        extendThemeOption.columnResize = Object.assign(
+          {
+            labelColor: 'rgba(0,0,0,0)',
+            labelBackgroundFill: 'rgba(0,0,0,0)'
+          },
+          extendThemeOption?.columnResize
+        );
       } else {
         if (!listTable_options.theme.headerStyle) {
           listTable_options.theme.headerStyle = { bgColor: this.parsedOptions.timelineHeaderBackgroundColor };
@@ -363,6 +371,13 @@ export class Gantt extends EventTarget {
           {
             verticalVisible: 'none'
           }
+        );
+        listTable_options.theme.columnResize = Object.assign(
+          {
+            labelColor: 'rgba(0,0,0,0)',
+            labelBackgroundFill: 'rgba(0,0,0,0)'
+          },
+          this.options.taskListTable?.theme?.columnResize
         );
       }
     } else {
@@ -393,7 +408,14 @@ export class Gantt extends EventTarget {
             this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
             this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0
           ]
-        })
+        }),
+        columnResize: Object.assign(
+          {
+            labelColor: 'rgba(0,0,0,0)',
+            labelBackgroundFill: 'rgba(0,0,0,0)'
+          },
+          this.options.taskListTable?.theme?.columnResize
+        )
       };
     }
     listTable_options.canvasWidth = this.taskTableWidth as number;
