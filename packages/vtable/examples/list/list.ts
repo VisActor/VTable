@@ -215,6 +215,11 @@ export function createTable() {
         // borderLineWidth: 10,
         borderColor: 'red',
         shadowBlur: 0
+      },
+      columnResize: {
+        lineWidth: 2,
+        lineColor: 'red',
+        hiddenLabel: true
       }
     },
     excelOptions: {
