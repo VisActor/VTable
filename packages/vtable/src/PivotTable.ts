@@ -18,7 +18,8 @@ import type {
   IIndicator,
   ColumnDefine,
   SortByIndicatorRule,
-  SortTypeRule
+  SortTypeRule,
+  SortRule
 } from './ts-types';
 import { HierarchyState, SortType } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
@@ -1089,7 +1090,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }
         this.pivotSortState.push({
           dimensions,
-          order: (sortRule as SortByIndicatorRule).sortType
+          order: SortType[(sortRule as SortByIndicatorRule).sortType.toUpperCase() as 'ASC' | 'DESC']
         });
         // this.changePivotSortState({
         //   dimensions,
@@ -1157,9 +1158,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const headerDefine = this.getHeaderDefine(col, row) as any;
     if (headerDefine.sort) {
       if ((this as PivotTable).dataset.sortRules) {
+        const cacheOldDimensionSortRule: Record<string, SortRule> = {};
         for (let i = (this as PivotTable).dataset.sortRules.length - 1; i >= 0; i--) {
           const sortRule = (this as PivotTable).dataset.sortRules[i];
           if (headerDefine.dimensionKey && sortRule.sortField === headerDefine.dimensionKey) {
+            cacheOldDimensionSortRule[sortRule.sortField] = sortRule;
             (this as PivotTable).dataset.sortRules.splice(i, 1);
           } else if (
             sortIndicator &&
@@ -1188,10 +1191,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             }, [])
           });
         } else {
-          (this as PivotTable).dataset.sortRules.push({
-            sortField: headerDefine.dimensionKey,
-            sortType: SortType[order]
-          });
+          (this as PivotTable).dataset.sortRules.push(
+            Object.assign(cacheOldDimensionSortRule[headerDefine.dimensionKey] ?? {}, {
+              sortField: headerDefine.dimensionKey,
+              sortType: SortType[order as 'ASC' | 'DESC']
+            })
+          );
         }
       } else {
         if (sortIndicator) {
@@ -1200,7 +1205,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               sortField: this.dataset.indicatorsAsCol
                 ? this.dataset.rows[this.dataset.rows.length - 1]
                 : this.dataset.columns[this.dataset.columns.length - 1],
-              sortType: SortType[order],
+              sortType: SortType[order as 'ASC' | 'DESC'],
               sortByIndicator: sortIndicator,
               query: dimensions.reduce((arr, dimension) => {
                 if (dimension.dimensionKey) {
@@ -1214,7 +1219,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this as PivotTable).dataset.sortRules = [
             {
               sortField: headerDefine.dimensionKey,
-              sortType: SortType[order]
+              sortType: SortType[order as 'ASC' | 'DESC']
             }
           ];
         }
