@@ -298,7 +298,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           item => item.dimensionKey === node.dimensionKey && item.value === node.value
         );
         if (beforeRowDimension) {
-          this.syncHierarchyState(beforeRowDimension, node);
+          this._syncHierarchyState(beforeRowDimension, node);
         }
       });
     }
@@ -529,7 +529,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param sourceNode
    * @param targetNode
    */
-  private syncHierarchyState(sourceNode: any, targetNode: IHeaderTreeDefine) {
+  _syncHierarchyState(sourceNode: any, targetNode: IHeaderTreeDefine) {
     if (sourceNode.value === targetNode.value && sourceNode.dimensionKey === targetNode.dimensionKey) {
       targetNode.hierarchyState =
         targetNode.hierarchyState ?? (targetNode?.children ? sourceNode.hierarchyState : undefined);
@@ -539,7 +539,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             (item: any) => item.dimensionKey === targetChildNode.dimensionKey && item.value === targetChildNode.value
           );
           if (beforeRowDimension) {
-            this.syncHierarchyState(beforeRowDimension, targetChildNode);
+            this._syncHierarchyState(beforeRowDimension, targetChildNode);
           }
         }
       });
