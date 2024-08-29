@@ -1,8 +1,5 @@
 import type {
-  ITextRenderContribution,
-  IText,
   IContext2d,
-  ITextGraphicAttribute,
   IDrawContext,
   IMarkAttribute,
   IGraphicAttribute,
@@ -11,7 +8,7 @@ import type {
   IGroup,
   IGroupRenderContribution
 } from '@visactor/vtable/es/vrender';
-import { injectable, BaseRenderContributionTime, BaseRenderContributionTime } from '@visactor/vtable/es/vrender';
+import { injectable, BaseRenderContributionTime } from '@visactor/vtable/es/vrender';
 
 // const highlightDash: number[] = [];
 

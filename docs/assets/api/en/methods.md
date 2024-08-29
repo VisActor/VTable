@@ -219,12 +219,15 @@ Select a cell. If empty is passed, the currently selected highlight state will b
 Select a cell。If empty is passed, the currently selected highlight state will be cleared.
 
 ```
-  /**
+ /**
    * The effect of selecting a cell is the same as that of a cell selected by the mouse.
    * @param col
    * @param row
+   * @param isShift Whether to add the shift key to the selection
+   * @param isCtrl Whether to add the ctrl key to the selection
+   * @param makeSelectCellVisible Whether to make the selected cell visible
    */
-  selectCell(col: number, row: number): void
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean): void
 ```
 
 ## selectCells(Function)

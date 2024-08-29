@@ -3,7 +3,7 @@ export class Inertia {
   lastTime: number;
   speedX: number;
   speedY: number;
-  runing: number;
+  runingId: number;
   stopped: boolean;
   scrollHandle: (dx: number, dy: number) => void;
   constructor() {

@@ -226,6 +226,11 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 点击外部区域是否取消选中。
 
+##${prefix} disableDragSelect(boolean) = true
+
+拖拽选择单元格时是否禁用框选。
+
+
 #${prefix} theme(Object)
 
 {{ use: common-theme(

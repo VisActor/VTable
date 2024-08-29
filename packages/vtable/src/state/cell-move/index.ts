@@ -50,7 +50,6 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
     { col: state.columnMove.colSource, row: state.columnMove.rowSource },
     { col: targetCell.col, row: targetCell.row }
   );
-
   if (!canMove) {
     state.updateCursor('not-allowed');
     state.columnMove.colTarget = state.columnMove.colSource;
@@ -109,7 +108,8 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
   }
 }
 
-export function endMoveCol(state: StateManager) {
+export function endMoveCol(state: StateManager): boolean {
+  let moveColResult = false;
   if (
     'canMoveHeaderPosition' in state.table.internalProps.layoutMap &&
     state.columnMove.moving &&
@@ -121,7 +121,6 @@ export function endMoveCol(state: StateManager) {
     //getCellMergeInfo 一定要在moveHeaderPosition之前调用  否则就不是修改前的range了
     const oldSourceMergeInfo = state.table.getCellRange(state.columnMove.colSource, state.columnMove.rowSource);
     const oldTargetMergeInfo = state.table.getCellRange(state.columnMove.colTarget, state.columnMove.rowTarget);
-
     // 调整列顺序
     const moveContext = state.table._moveHeaderPosition(
       { col: state.columnMove.colSource, row: state.columnMove.rowSource },
@@ -129,7 +128,7 @@ export function endMoveCol(state: StateManager) {
     );
 
     // 更新状态
-    if (moveContext) {
+    if (moveContext && moveContext.targetIndex !== moveContext.sourceIndex) {
       state.table.internalProps.useOneRowHeightFillAll = false;
       state.table.internalProps.layoutMap.clearCellRangeMap();
       const sourceMergeInfo = state.table.getCellRange(state.columnMove.colSource, state.columnMove.rowSource);
@@ -233,9 +232,18 @@ export function endMoveCol(state: StateManager) {
             (sourceMergeInfo as CellRange).end.col - (sourceMergeInfo as CellRange).start.col + 1;
         }
       }
+      moveColResult = true;
+    } else {
+      state.updateCursor();
+      //触发事件 CHANGE_HEADER_POSITION 还需要用到这些值 所以延迟清理
+      state.columnMove.moving = false;
+      delete state.columnMove.colSource;
+      delete state.columnMove.rowSource;
+      delete state.columnMove.colTarget;
+      delete state.columnMove.rowTarget;
+      state.table.scenegraph.component.hideMoveCol();
+      return false;
     }
-
-    state.updateCursor();
   }
   setTimeout(() => {
     //触发事件 CHANGE_HEADER_POSITION 还需要用到这些值 所以延迟清理
@@ -269,6 +277,7 @@ export function endMoveCol(state: StateManager) {
     state.table.scenegraph.component.setRightFrozenColumnShadow(state.table.colCount - state.table.rightFrozenColCount);
   }
   state.table.scenegraph.updateNextFrame();
+  return moveColResult;
 }
 
 function clearWidthsAndHeightsCache(

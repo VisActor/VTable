@@ -1113,7 +1113,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       this.isSeriesNumberInBody(target.col, target.row) &&
       this.isSeriesNumberInBody(source.col, source.row)
     ) {
-      return true;
+      // return true;
+      const sourceIndex = this.getRecordShowIndexByCell(0, source.row);
+      const targetIndex = this.getRecordShowIndexByCell(0, target.row);
+      const canMove = this._table.dataSource.isCanExchangeOrder(sourceIndex, targetIndex);
+      return canMove;
     } else if (
       this.transpose &&
       this.isSeriesNumberInBody(target.col, target.row) &&

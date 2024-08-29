@@ -8,7 +8,7 @@ import type {
   IGraphicAttribute,
   IThemeAttribute
 } from '@visactor/vtable/es/vrender';
-import { injectable, BaseRenderContributionTime, BaseRenderContributionTime } from '@visactor/vtable/es/vrender';
+import { injectable, BaseRenderContributionTime } from '@visactor/vtable/es/vrender';
 
 @injectable()
 export class TextStickBeforeRenderContribution implements ITextRenderContribution {

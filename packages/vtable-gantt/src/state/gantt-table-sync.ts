@@ -3,7 +3,7 @@ import type { Gantt } from '../Gantt';
 export function syncScrollStateToTable(gantt: Gantt) {
   const { scroll } = gantt.stateManager;
   const { verticalBarPos } = scroll;
-  gantt.taskListTableInstance.stateManager.setScrollTop(verticalBarPos, false);
+  gantt.taskListTableInstance.stateManager.setScrollTop(verticalBarPos, undefined, false);
 }
 
 export function syncScrollStateFromTable(gantt: Gantt) {

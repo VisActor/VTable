@@ -47,8 +47,8 @@ export interface TableEventHandlersEventArgumentMap {
 
 export interface TableEventHandlersReturnMap {
   scroll: void;
-  mouseenter_taskbar: void;
-  mouseleave_taskbar: void;
+  mouseenter_task_bar: void;
+  mouseleave_task_bar: void;
   click_task_bar: void;
   change_date_range: void;
 }

@@ -356,6 +356,8 @@ export interface BaseTableConstructorOptions {
     blankAreaClickDeselect?: boolean;
     /** 点击外部区域是否取消选中 */
     outsideClickDeselect?: boolean; //
+    /**  禁止拖拽框选 */
+    disableDragSelect?: boolean;
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
@@ -662,7 +664,7 @@ export interface BaseTableAPI {
   getFrozenColsWidth: () => number;
   getBottomFrozenRowsHeight: () => number;
   getRightFrozenColsWidth: () => number;
-  selectCell: (col: number, row: number, isShift?: boolean, isCtrl?: boolean) => void;
+  selectCell: (col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean) => void;
   selectCells: (cellRanges: CellRange[]) => void;
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;

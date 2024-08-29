@@ -231,6 +231,10 @@ Whether to cancel the selection when clicking the blank area.
 
 Whether to cancel the selection when clicking outside the table.
 
+##${prefix} disableDragSelect(boolean) = true
+
+Whether to disable dragging selection.
+
 #${prefix} theme(Object)
 
 {{ use: common-theme(

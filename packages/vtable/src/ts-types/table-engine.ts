@@ -391,6 +391,9 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+
+  /** 编辑触发时机 双击事件  单击事件 api手动开启编辑 或者 鼠标按下新值即可开启编辑。默认为双击'doubleclick' */
+  editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
   /** 是否需要补充指标节点到对应的自定义表头中如rowTree或者columnTree. 默认为true */
   supplementIndicatorNodes?: boolean;
 }
