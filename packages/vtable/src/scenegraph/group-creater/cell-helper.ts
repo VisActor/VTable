@@ -306,7 +306,8 @@ export function createCell(
       col,
       row,
       padding,
-      table
+      table,
+      range
     );
     // 进度图插入到文字前，绘制在文字下
     if (cellGroup.firstChild) {
@@ -494,7 +495,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   if (
     !addNew &&
     !isMerge &&
-    !(define.customLayout || define.customRender || define.headerCustomLayout || define.headerCustomRender) &&
+    !(define?.customLayout || define?.customRender || define?.headerCustomLayout || define?.headerCustomRender) &&
     canUseFastUpdate(col, row, oldCellGroup, autoWrapText, mayHaveIcon, table)
   ) {
     // update group

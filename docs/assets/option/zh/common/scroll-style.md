@@ -25,3 +25,9 @@
 
 ##${prefix} barToSide(boolean)
 是否显示到容器的边缘 尽管内容没有撑满的情况下. 默认 false
+
+##${prefix} horizontalPadding(number | [number, number, number, number])
+横向滚动条内边距，可配值：`number` | `[number, number, number, number]`
+
+##${prefix} verticalPadding(number | [number, number, number, number])
+竖向滚动条内边距，可配值：`number` | `[number, number, number, number]`

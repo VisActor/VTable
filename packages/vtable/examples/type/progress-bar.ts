@@ -63,10 +63,14 @@ export function createTable() {
         width: 120,
         cellType: 'progressbar',
         style: {
-          barHeight: 20,
-          barBottom: 7,
+          textAlign: 'right',
+          // barHeight: 20,
+          // barBottom: 7,
+          barHeight: '50%',
+          barBottom: '25%',
           barColor: DEFAULT_BAR_COLOR
-        }
+        },
+        mergeCell: true
       },
       {
         field: 'percent',
@@ -124,7 +128,7 @@ export function createTable() {
   //设置表格数据
   instance.setRecords([
     { percent: '100%', value: 20 },
-    { percent: '80%', value: 18 },
+    { percent: '60%', value: 18 },
     { percent: '60%', value: 16 },
     { percent: '40%', value: 14 },
     { percent: '20%', value: 12 },
