@@ -38,6 +38,8 @@ TABLE_EVENT_TYPE = {
   MOUSEDOWN_TABLE: 'mousedown_table',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
+  RESIZE_ROW: 'resize_row',
+  RESIZE_ROW_END: 'resize_row_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
   FREEZE_CLICK: 'freeze_click',
@@ -182,6 +184,36 @@ TABLE_EVENT_TYPE = {
   {
     col: number;
     columns: number[]
+  }
+
+```
+
+## RESIZE_ROW
+
+列宽调整事件。
+
+事件回调函数的参数类型:
+
+```
+
+  {
+    row: number;
+    rowHeight: number
+  }
+
+```
+
+## RESIZE_ROW_END
+
+列宽调整结束事件。
+
+事件回调函数的参数类型:
+
+```
+
+  {
+    row: number;
+    rowHeight: number
   }
 
 ```
