@@ -758,8 +758,8 @@ export class StateManager {
   isMoveCol(): boolean {
     return this.columnMove.moving;
   }
-  endMoveCol() {
-    endMoveCol(this);
+  endMoveCol(): boolean {
+    return endMoveCol(this);
   }
 
   checkFrozen(): boolean {

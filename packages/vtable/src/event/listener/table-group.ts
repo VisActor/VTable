@@ -305,8 +305,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     } else if (stateManager.isResizeRow()) {
       endResizeRow(table);
     } else if (stateManager.isMoveCol()) {
-      table.stateManager.endMoveCol();
+      const endMoveColSuccess = table.stateManager.endMoveCol();
       if (
+        endMoveColSuccess &&
         table.stateManager.columnMove?.colSource !== -1 &&
         table.stateManager.columnMove?.rowSource !== -1 &&
         table.stateManager.columnMove?.colTarget !== -1 &&
@@ -522,8 +523,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
         endResizeRow(table);
       } else if (stateManager.isMoveCol()) {
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-        table.stateManager.endMoveCol();
-        if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
+        const endMoveColSuccess = table.stateManager.endMoveCol();
+        if (
+          endMoveColSuccess &&
+          eventArgsSet.eventArgs &&
+          (table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)
+        ) {
           table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
             target: { col: eventArgsSet.eventArgs.col, row: eventArgsSet.eventArgs.row },
             source: {
@@ -791,6 +796,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       } else {
         stateManager.updateCursor('row-resize');
       }
+    } else if (stateManager.isMoveCol()) {
+      // 拖拽位置已经在updateMoveCol方法中添加了响应的鼠标样式
     } else {
       stateManager.updateCursor();
     }
