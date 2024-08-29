@@ -43,7 +43,7 @@ export interface BaseTableProps extends EventsProps {
   /** 上层container */
   container?: HTMLDivElement;
   /** option */
-  option?: any;
+  option?: IOption;
   /** 数据 */
   records?: Record<string, unknown>[];
   /** 画布宽度 */
@@ -156,7 +156,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
           createReactContainer: true
         }
         // ...tableContext.current?.optionFromChildren
-      } as IOption;
+      };
     },
     [hasOption, hasRecords]
   );
@@ -229,7 +229,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
     if (hasOption) {
       if (!isEqual(eventsBinded.current.option, props.option, { skipFunction: skipFunctionDiff })) {
         // eslint-disable-next-line promise/catch-or-return
-        tableContext.current.table.updateOption(parseOption(props));
+        tableContext.current.table.updateOption(parseOption(props) as any);
         handleTableRender();
         eventsBinded.current = props;
       } else if (
@@ -254,7 +254,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       optionFromChildren.current = newOptionFromChildren;
 
       // eslint-disable-next-line promise/catch-or-return
-      tableContext.current.table.updateOption(parseOption(props));
+      tableContext.current.table.updateOption(parseOption(props) as any);
       handleTableRender();
       eventsBinded.current = props;
     } else if (hasRecords && !isEqual(props.records, prevRecords.current, { skipFunction: skipFunctionDiff })) {
