@@ -1,25 +1,25 @@
 ---
 category: examples
 group: gantt
-title: 甘特图自定义渲染用法
+title: Custom Rendering Usage of Gantt Chart
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-customLayout-preview.png
 link: '../guide/gantt/gantt_customLayout'
 option: Gantt#taskBar
 ---
 
-# 甘特图自定义渲染用法
+# Custom Rendering Usage of Gantt Chart
 
-该示例展示了如何自定义渲染甘特图任务条及日期表头。左侧任务信息表格的自定义渲染，是定义在columns中的customLayout实现的，可参考[教程](../../option/ListTable-columns-text#customLayout)。
+This example demonstrates how to customize the rendering of Gantt chart task bars and date headers. The custom rendering of the left task information table is implemented in the customLayout defined in columns. Refer to [tutorial](../../option/ListTable-columns-text#customLayout).
 
-在本示例中，任务条的自定义渲染，是定义在taskBar中的customLayout实现的；日期表头的自定义渲染，是定义在timelineHeader中的customLayout实现的。可参考[教程](../../guide/gantt/gantt_customLayout)。
+In this example, the custom rendering of the task bar is implemented in the customLayout defined in taskBar; the custom rendering of the date header is implemented in the customLayout defined in timelineHeader. Refer to [tutorial](../../guide/gantt/gantt_customLayout).
 
-## 关键配置
+## Key Configuration
 
 - `Gantt`
 - `taskBar` 
 - `timelineHeader`
 
-## 代码演示
+## Demo
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';

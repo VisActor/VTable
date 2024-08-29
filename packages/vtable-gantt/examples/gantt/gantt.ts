@@ -884,8 +884,7 @@ export function createTable() {
           style: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'red',
-            backgroundColor: '#EEF1F5'
+            color: 'red'
           }
         },
         {
@@ -897,8 +896,7 @@ export function createTable() {
           style: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'red',
-            backgroundColor: '#EEF1F5'
+            color: 'red'
           }
         }
         // {
