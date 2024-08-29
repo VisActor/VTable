@@ -6,7 +6,7 @@ import { getProp } from '../../utils/get-prop';
 import { getQuadProps } from '../../utils/padding';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isNumber } from '@visactor/vutils';
-import type { StylePropertyFunctionArg } from '../../../ts-types';
+import type { CellRange, StylePropertyFunctionArg } from '../../../ts-types';
 
 export function createProgressBarCell(
   progressBarDefine: {
@@ -23,7 +23,8 @@ export function createProgressBarCell(
   col: number,
   row: number,
   padding: [number, number, number, number],
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  range?: CellRange
 ) {
   if (progressBarDefine.dependField) {
     dataValue = (table.getCellOriginRecord(col, row) as any)?.[progressBarDefine.dependField] ?? dataValue;
@@ -48,7 +49,12 @@ export function createProgressBarCell(
       dataValue,
       cellHeaderPaths: undefined
     }) ?? progressBarDefine.min + 100;
-  const height = table.getRowHeight(row);
+  let height = 0;
+  if (range) {
+    height = table.getRowsHeight(range.start.row, range.end.row);
+  } else {
+    height = table.getRowHeight(row);
+  }
   let contentWidth = width;
   let contentHeight = height;
   let _contentOffset = 0;

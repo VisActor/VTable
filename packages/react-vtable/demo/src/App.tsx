@@ -3,6 +3,7 @@ import listOptionRecord from './list-table/list-option-records';
 import listComponent from './list-table/list-component';
 import listCustomLayout from './list-table/list-custom-layout';
 import listEditor from './list-table/list-table-editor';
+import listGroup from './list-table/list-table-group';
 
 import pivotTable from './pivot-table/pivot-table';
 import pivotComponent from './pivot-table/pivot-comonent';
@@ -27,6 +28,7 @@ import customLayoutPivot from './component/custom-layout-pivot';
 // export default listOptionRecord;
 // export default listComponent;
 // export default listCustomLayout;
+export default listGroup;
 
 // export default pivotTable;
 // export default pivotComponent;

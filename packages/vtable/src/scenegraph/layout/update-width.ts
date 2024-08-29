@@ -279,6 +279,12 @@ function updateCellWidth(
     const dataValue = scene.table.getCellOriginValue(col, row);
     const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
 
+    // deal with bar
+    let range;
+    if (columnDefine?.mergeCell) {
+      range = scene.table.getCellRange(col, row);
+    }
+
     const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
     const newBarCell = createProgressBarCell(
       columnDefine,
@@ -290,7 +296,8 @@ function updateCellWidth(
       col,
       row,
       padding,
-      scene.table
+      scene.table,
+      range
     );
 
     const oldBarCell = cellGroup.getChildByName('progress-bar') as Group;
@@ -299,6 +306,10 @@ function updateCellWidth(
     cellGroup.removeChild(oldBarCell);
     oldBarCell.removeAllChild();
     oldBarCell.release();
+
+    // deal width text
+    const cellChange = updateMergeCellContentWidth(cellGroup, distWidth, detaX, autoRowHeight, true, scene.table);
+    isHeightChange = isHeightChange || cellChange;
   } else if (type === 'sparkline') {
     // 目前先采用重新生成节点的方案
     cellGroup.removeAllChild();
@@ -493,7 +504,8 @@ function updateMergeCellContentWidth(
         let changed = false;
         if (renderDefault) {
           // 处理文字
-          const style = table._getCellStyle(col, row);
+          // const style = table._getCellStyle(col, row);
+          const style = table._getCellStyle(colStart, rowStart);
           const padding = getQuadProps(style.padding as number);
           const textAlign = style.textAlign;
           const textBaseline = style.textBaseline;
