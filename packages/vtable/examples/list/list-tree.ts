@@ -180,7 +180,10 @@ export function createTable() {
       order: 'desc'
     },
     theme: VTable.themes.BRIGHT,
-    defaultRowHeight: 32
+    defaultRowHeight: 32,
+    select: {
+      disableDragSelect: true
+    }
   };
 
   const instance = new ListTable(option);
