@@ -219,7 +219,7 @@ export function createTable() {
       columnResize: {
         lineWidth: 2,
         lineColor: 'red',
-        hiddenLabel: true
+        labelVisible: false
       }
     },
     excelOptions: {

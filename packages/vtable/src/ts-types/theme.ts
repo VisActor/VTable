@@ -102,7 +102,7 @@ export interface ITableThemeDefine {
     bgColor?: ColorPropertyDefine; //背景线的颜色
     lineWidth: number; //上面线的宽度
     width?: number; //背景线的宽度
-    hiddenLabel?: boolean; //是否隐藏label
+    labelVisible?: boolean; //是否显示label
     labelColor?: string; //label的颜色
     labelFontSize?: number; //label的字体大小
     labelFontFamily?: string; //label的字体

@@ -20,9 +20,9 @@ The width of the line
 
 The width of the background line
 
-##${prefix} hiddenLabel(boolean)
+##${prefix} labelVisible(boolean)
 
-Whether to hide the label
+Whether the label is visible, default is true
 
 ##${prefix} labelColor(string)
 

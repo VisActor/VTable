@@ -32,7 +32,7 @@ export class TableComponent {
   rightFrozenShadowLine: IRect; // 表格右侧冻结列左侧阴影块
   drillIcon: DrillIcon; // drill icon
   cellMover: CellMover; // 表格列顺序调整标记
-  hiddenLabel: boolean; // 是否隐藏label
+  labelVisible: boolean; // 是否显示label
   constructor(table: BaseTableAPI) {
     this.table = table;
     const theme = this.table.theme;
@@ -45,14 +45,14 @@ export class TableComponent {
     const columnResizeWidth = theme.columnResize?.lineWidth;
     const columnResizeBgColor = theme.columnResize?.bgColor;
     const columnResizeBgWidth = theme.columnResize?.width;
-    const hiddenLabel = theme.columnResize?.hiddenLabel;
+    const labelVisible = theme.columnResize?.labelVisible ?? true;
     const labelColor = theme.columnResize?.labelColor;
     const labelFontSize = theme.columnResize?.labelFontSize;
     const labelFontFamily = theme.columnResize?.labelFontFamily;
     const labelBackgroundFill = theme.columnResize?.labelBackgroundFill;
     const labelBackgroundCornerRadius = theme.columnResize?.labelBackgroundCornerRadius;
 
-    this.hiddenLabel = hiddenLabel;
+    this.labelVisible = labelVisible;
 
     this.columnResizeLine = createLine({
       visible: false,
@@ -478,7 +478,7 @@ export class TableComponent {
 
     // 标签
     // this.columnResizeLabel.setAttribute('visible', true);
-    if (!this.hiddenLabel) {
+    if (this.labelVisible) {
       this.columnResizeLabel.showAll();
       this.columnResizeLabel.setAttributes({
         visible: true,
@@ -515,7 +515,7 @@ export class TableComponent {
     });
 
     // 标签
-    if (!this.hiddenLabel) {
+    if (this.labelVisible) {
       this.columnResizeLabel.setAttributes({
         x: colX,
         y
@@ -562,7 +562,7 @@ export class TableComponent {
       ]
     });
 
-    if (!this.hiddenLabel) {
+    if (this.labelVisible) {
       // 标签
       this.rowResizeLabel.showAll();
       this.rowResizeLabel.setAttributes({
@@ -599,7 +599,7 @@ export class TableComponent {
       ]
     });
 
-    if (!this.hiddenLabel) {
+    if (this.labelVisible) {
       // 标签
       this.rowResizeLabel.setAttributes({
         y: rowY,
@@ -794,8 +794,8 @@ export class TableComponent {
     const labelFontFamily = theme.columnResize?.labelFontFamily;
     const labelBackgroundFill = theme.columnResize?.labelBackgroundFill;
     const labelBackgroundCornerRadius = theme.columnResize?.labelBackgroundCornerRadius;
-    const hiddenLabel = theme.columnResize?.hiddenLabel;
-    this.hiddenLabel = hiddenLabel;
+    const labelVisible = theme.columnResize?.labelVisible ?? true;
+    this.labelVisible = labelVisible;
 
     // columnResizeLabelBack
     (this.columnResizeLabel.lastChild as IText).setAttributes({

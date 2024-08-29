@@ -564,8 +564,8 @@ export class TableTheme implements ITableThemeDefine {
         get labelBackgroundCornerRadius(): number {
           return columnResize.labelBackgroundCornerRadius ?? 5;
         },
-        get hiddenLabel(): boolean {
-          return columnResize.hiddenLabel ?? false;
+        get labelVisible(): boolean {
+          return columnResize.labelVisible ?? true;
         }
       };
     }

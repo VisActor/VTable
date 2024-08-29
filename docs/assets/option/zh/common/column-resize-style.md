@@ -20,9 +20,9 @@
 
 背景线的宽度
 
-##${prefix} hiddenLabel(boolean)
+##${prefix} labelVisible(boolean)
 
-是否隐藏标签
+是否显示标签 默认为true
 
 ##${prefix} labelColor(string)
 
