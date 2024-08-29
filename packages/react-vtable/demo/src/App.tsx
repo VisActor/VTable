@@ -10,6 +10,7 @@ import pivotComponentEmptyTip from './pivot-table/pivot-component-empty-tip';
 
 import pivotChart from './pivot-chart/pivot-chart';
 import pivotChartComponent from './pivot-chart/pivot-chart-component';
+import pivotChartSite from './pivot-chart/pivot-chart-site';
 
 import listTableEvent from './event/list-table';
 import eventRebind from './event/event-rebind';
@@ -33,12 +34,13 @@ import customLayoutPivot from './component/custom-layout-pivot';
 
 // export default pivotChart;
 // export default pivotChartComponent;
+export default pivotChartSite;
 
 // export default listTableEvent;
 // export default eventRebind;
 
 // export default componentContainer;
-export default customLayout;
+// export default customLayout;
 // export default customLayoutDom;
 // export default customLayoutDomSite;
 // export default customLayoutDomSite1;

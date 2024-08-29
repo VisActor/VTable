@@ -23,7 +23,7 @@ PivotTable&PivotChart接受的props属性与option一致，语义化子组件如
 // import * as ReactVTable from '@visactor/react-vtable';
 // import VChart from '@visactor/vchart';
 
-ReactVTable.VTable.register.chartModule('vchart', VChart);
+ReactVTable.register.chartModule('vchart', VChart);
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
     .then((res) => res.json())
     .then((data) => {
