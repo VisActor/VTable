@@ -1,5 +1,5 @@
-import type { IEventTarget } from '@src/vrender';
-import { Gesture, type FederatedPointerEvent } from '@src/vrender';
+import type { IEventTarget, FederatedPointerEvent, FederatedWheelEvent } from '@src/vrender';
+import { Gesture } from '@src/vrender';
 import type {
   ListTableAPI,
   MousePointerCellEvent,
@@ -22,6 +22,7 @@ import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CheckBox, CheckboxAttributes, Radio } from '@visactor/vrender-components';
 import { ResizeColumnHotSpotSize } from '../../tools/global';
+import { handleWhell } from '../scroll';
 export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
@@ -956,6 +957,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
     table.fireListeners(TABLE_EVENT_TYPE.RADIO_STATE_CHANGE, cellsEvent);
 
     table.scenegraph.updateNextFrame();
+  });
+  table.scenegraph.stage.addEventListener('wheel', (e: FederatedWheelEvent) => {
+    table.editorManager?.completeEdit();
+    if (table.eventManager._enableTableScroll) {
+      handleWhell(e, stateManager);
+    }
   });
 }
 export function bindGesture(eventManager: EventManager) {
