@@ -874,7 +874,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   /** 根据field获取表头cell位置 */
   getHeaderCellAddressByField(field: string): CellAddress | undefined {
     const hd = this.headerObjects.find((col: any) => col && col.field === field);
-    return this.getHeaderCellAdressById(hd.id as number);
+    return hd && this.getHeaderCellAdressById(hd.id as number);
   }
   getBody(col: number, _row: number): ColumnData | SeriesNumberColumnData {
     if (this.isSeriesNumber(col, _row)) {
