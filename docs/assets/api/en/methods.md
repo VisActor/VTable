@@ -1145,6 +1145,24 @@ In **PivotTable** get indicatorKey.
   getHeaderField: (col: number, row: number)
 ```
 
+## getColWidth(Function)
+
+get column width.
+
+```
+  /**get column width */
+  getColWidth: (col: number)
+```
+
+## getRowHeight(Function)
+
+get row height.
+
+```
+  /**get row height */
+  getRowHeight: (row: number)
+```
+
 ## setColWidth(Function)
 
 set column width.
