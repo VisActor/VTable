@@ -63,6 +63,10 @@ export type ScrollStyle = {
   hoverOn?: boolean;
   /** 是否显示到容器的边缘 尽管内容没有撑满的情况下 默认false */
   barToSide?: boolean;
+  /** 横向滚动条 padding */
+  horizontalPadding?: number | [number, number, number, number];
+  /** 竖向滚动条 padding */
+  verticalPadding?: number | [number, number, number, number];
 };
 /**
  * 气泡框，按钮的的解释信息
