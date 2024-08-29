@@ -242,6 +242,7 @@ export function endMoveCol(state: StateManager): boolean {
       delete state.columnMove.colTarget;
       delete state.columnMove.rowTarget;
       state.table.scenegraph.component.hideMoveCol();
+      state.table.scenegraph.updateNextFrame();
       return false;
     }
   }
