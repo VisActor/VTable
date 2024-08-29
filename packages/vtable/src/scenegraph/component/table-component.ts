@@ -738,6 +738,8 @@ export class TableComponent {
     const scrollSliderColor = theme.scrollStyle?.scrollSliderColor as string;
     const scrollSliderCornerRadius = theme.scrollStyle?.scrollSliderCornerRadius;
     const width = theme.scrollStyle?.width as number;
+    const horizontalPadding = theme.scrollStyle?.horizontalPadding;
+    const verticalPadding = theme.scrollStyle?.verticalPadding;
 
     let sliderStyle;
     if (isValid(scrollSliderCornerRadius)) {
@@ -752,6 +754,7 @@ export class TableComponent {
     }
     this.hScrollBar.setAttributes({
       height: width,
+      padding: horizontalPadding,
       railStyle: {
         fill: scrollRailColor
       },
@@ -760,6 +763,7 @@ export class TableComponent {
 
     this.vScrollBar.setAttributes({
       width,
+      padding: verticalPadding,
       railStyle: {
         fill: scrollRailColor
       },
