@@ -58,6 +58,8 @@ import { ListTable, PivotTable, TYPES, themes } from '@visactor/vtable';
 
 在绘图前我们需要为 VTable 准备一个具备高宽的 DOM 容器。
 
+**请务必保证容器的宽高值为整数，VTable 内部逻辑中会用到容器的 offsetWidth、offsetHeight、clientWidth、clientHeight 属性，如果容器的 width 和 height 为小数会造成取值有误差，可能产生表格抖动问题。**
+
 ```html
 <body>
   <div id="tableContainer" style="width: 600px;height:400px;"></div>

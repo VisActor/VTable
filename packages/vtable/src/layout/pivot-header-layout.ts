@@ -2780,7 +2780,26 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     });
     if (isCornerCell) {
-      if (this.cornerSetting.titleOnDimension === 'row') {
+      if (this.cornerSetting.titleOnDimension === 'all' && this.indicatorsAsCol && colHeaderPaths.length === 0) {
+        for (let i = 0; i < this.rowDimensionKeys.length; i++) {
+          if (rowHeaderPaths[0]?.dimensionKey === this.rowDimensionKeys[i]) {
+            return { col: i + this.leftRowSeriesNumberColumnCount, row: this.columnHeaderLevelCount - 1 };
+          }
+        }
+      } else if (
+        this.cornerSetting.titleOnDimension === 'all' &&
+        !this.indicatorsAsCol &&
+        rowHeaderPaths.length === 0
+      ) {
+        for (let i = 0; i < this.colDimensionKeys.length; i++) {
+          if (colHeaderPaths[0]?.dimensionKey === this.colDimensionKeys[i]) {
+            return { col: this.rowHeaderLevelCount - 1, row: i };
+          }
+        }
+      } else if (
+        this.cornerSetting.titleOnDimension === 'row' ||
+        (this.cornerSetting.titleOnDimension === 'all' && !this.indicatorsAsCol)
+      ) {
         for (let i = 0; i < this.rowDimensionKeys.length; i++) {
           if (rowHeaderPaths[0]?.dimensionKey === this.rowDimensionKeys[i]) {
             return { col: i + this.leftRowSeriesNumberColumnCount, row: 0 };

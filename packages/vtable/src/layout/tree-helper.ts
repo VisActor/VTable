@@ -595,36 +595,44 @@ export function dealHeaderForTreeMode(
   const dimensionInfo: IDimension = dimensions.find(dimension =>
     typeof dimension === 'string' ? false : dimension.dimensionKey === hd.dimensionKey
   ) as IDimension;
-
+  const indicatorInfo = layoutMap.indicatorsDefine?.find(indicator => {
+    if (typeof indicator === 'string') {
+      return false;
+    }
+    if (hd.indicatorKey) {
+      return indicator.indicatorKey === hd.indicatorKey;
+    }
+    return indicator.title === hd.value;
+  }) as IIndicator;
   const cell: HeaderData = {
     id,
-    title: hd.value,
+    title: hd.value ?? indicatorInfo.title,
     field: hd.dimensionKey as FieldData,
     //如果不是整棵树的叶子节点，都靠左显示
     style:
-      hd.level + 1 === totalLevel || typeof dimensionInfo?.headerStyle === 'function'
-        ? dimensionInfo?.headerStyle
-        : Object.assign({}, dimensionInfo?.headerStyle, { textAlign: 'left' }),
-    headerType: dimensionInfo?.headerType ?? 'text',
-    headerIcon: dimensionInfo?.headerIcon,
+      hd.level + 1 === totalLevel || typeof (indicatorInfo ?? dimensionInfo)?.headerStyle === 'function'
+        ? (indicatorInfo ?? dimensionInfo)?.headerStyle
+        : Object.assign({}, (indicatorInfo ?? dimensionInfo)?.headerStyle, { textAlign: 'left' }),
+    headerType: indicatorInfo?.headerType ?? dimensionInfo?.headerType ?? 'text',
+    headerIcon: indicatorInfo?.headerIcon ?? dimensionInfo?.headerIcon,
     define: Object.assign(<any>hd, {
-      linkJump: (dimensionInfo as ILinkDimension)?.linkJump,
-      linkDetect: (dimensionInfo as ILinkDimension)?.linkDetect,
-      templateLink: (dimensionInfo as ILinkDimension)?.templateLink,
+      linkJump: ((indicatorInfo ?? dimensionInfo) as ILinkDimension)?.linkJump,
+      linkDetect: ((indicatorInfo ?? dimensionInfo) as ILinkDimension)?.linkDetect,
+      templateLink: ((indicatorInfo ?? dimensionInfo) as ILinkDimension)?.templateLink,
 
       // image相关 to be fixed
-      keepAspectRatio: (dimensionInfo as IImageDimension)?.keepAspectRatio ?? false,
-      imageAutoSizing: (dimensionInfo as IImageDimension)?.imageAutoSizing,
+      keepAspectRatio: ((indicatorInfo ?? dimensionInfo) as IImageDimension)?.keepAspectRatio ?? false,
+      imageAutoSizing: ((indicatorInfo ?? dimensionInfo) as IImageDimension)?.imageAutoSizing,
 
-      headerCustomRender: dimensionInfo?.headerCustomRender,
-      headerCustomLayout: dimensionInfo?.headerCustomLayout,
+      headerCustomRender: (indicatorInfo ?? dimensionInfo)?.headerCustomRender,
+      headerCustomLayout: (indicatorInfo ?? dimensionInfo)?.headerCustomLayout,
       dragHeader: dimensionInfo?.dragHeader,
-      disableHeaderHover: !!dimensionInfo?.disableHeaderHover,
-      disableHeaderSelect: !!dimensionInfo?.disableHeaderSelect
+      disableHeaderHover: !!(indicatorInfo ?? dimensionInfo)?.disableHeaderHover,
+      disableHeaderSelect: !!(indicatorInfo ?? dimensionInfo)?.disableHeaderSelect
     }), //这里不能新建对象，要用hd保持引用关系
-    fieldFormat: dimensionInfo?.headerFormat,
+    fieldFormat: indicatorInfo?.headerFormat ?? dimensionInfo?.headerFormat,
     // iconPositionList:[]
-    dropDownMenu: dimensionInfo?.dropDownMenu,
+    dropDownMenu: indicatorInfo?.dropDownMenu ?? dimensionInfo?.dropDownMenu,
     pivotInfo: {
       value: hd.value,
       dimensionKey: hd.dimensionKey as string,
@@ -639,7 +647,45 @@ export function dealHeaderForTreeMode(
     maxWidth: (dimensionInfo as IRowDimension)?.maxWidth,
     parentCellId: roots[roots.length - 1]
   };
-
+  if (indicatorInfo) {
+    //收集indicatorDimensionKey  提到了构造函数中
+    // this.indicatorDimensionKey = dimensionInfo.dimensionKey;
+    if (indicatorInfo.customRender) {
+      hd.customRender = indicatorInfo.customRender;
+    }
+    if (!isValid(layoutMap._indicators?.find(indicator => indicator.indicatorKey === indicatorInfo.indicatorKey))) {
+      layoutMap._indicators?.push({
+        id: ++layoutMap.sharedVar.seqId,
+        indicatorKey: indicatorInfo.indicatorKey,
+        field: indicatorInfo.indicatorKey,
+        fieldFormat: indicatorInfo?.format,
+        cellType: indicatorInfo?.cellType ?? (indicatorInfo as any)?.columnType ?? 'text',
+        chartModule: 'chartModule' in indicatorInfo ? indicatorInfo.chartModule : null,
+        chartSpec: 'chartSpec' in indicatorInfo ? indicatorInfo.chartSpec : null,
+        sparklineSpec: 'sparklineSpec' in indicatorInfo ? indicatorInfo.sparklineSpec : null,
+        style: indicatorInfo?.style,
+        icon: indicatorInfo?.icon,
+        define: Object.assign({}, <any>hd, indicatorInfo, {
+          dragHeader: dimensionInfo?.dragHeader
+        }),
+        width: indicatorInfo?.width,
+        minWidth: indicatorInfo?.minWidth,
+        maxWidth: indicatorInfo?.maxWidth,
+        disableColumnResize: indicatorInfo?.disableColumnResize
+      });
+    }
+  } else if (hd.indicatorKey) {
+    //兼容当某个指标没有设置在dimension.indicators中
+    if (!isValid(layoutMap._indicators?.find(indicator => indicator.indicatorKey === hd.indicatorKey))) {
+      layoutMap._indicators?.push({
+        id: ++layoutMap.sharedVar.seqId,
+        indicatorKey: hd.indicatorKey,
+        field: hd.indicatorKey,
+        cellType: 'text',
+        define: Object.assign({}, <any>hd)
+      });
+    }
+  }
   results[id] = cell;
   // this._cellIdDiemnsionMap.set(id, {
   //   dimensionKey: hd.dimensionKey,

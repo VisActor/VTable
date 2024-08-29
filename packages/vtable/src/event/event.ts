@@ -232,13 +232,7 @@ export class EventManager {
     const { eventArgs } = eventArgsSet;
 
     if (eventArgs) {
-      this.table.stateManager.updateHoverIcon(
-        eventArgs.col,
-        eventArgs.row,
-        eventArgs.target,
-        eventArgs.targetCell,
-        eventArgs.event
-      );
+      this.table.stateManager.updateHoverIcon(eventArgs.col, eventArgs.row, eventArgs.target, eventArgs.targetCell);
     } else {
       this.table.stateManager.updateHoverIcon(-1, -1, undefined, undefined);
     }

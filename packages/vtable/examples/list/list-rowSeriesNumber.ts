@@ -227,8 +227,8 @@ export function createTable() {
     bottomFrozenRowCount: 3
   };
   const tableInstance = new VTable.ListTable(option);
-  tableInstance.on('initialized', args => {
-    console.log('initialized');
+  tableInstance.on('change_header_position', args => {
+    console.log('change_header_position');
   });
   window.tableInstance = tableInstance;
   bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });

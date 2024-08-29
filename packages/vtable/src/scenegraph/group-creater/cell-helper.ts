@@ -494,7 +494,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   if (
     !addNew &&
     !isMerge &&
-    !(define.customLayout || define.customRender || define.headerCustomLayout || define.headerCustomRender) &&
+    !(define?.customLayout || define?.customRender || define?.headerCustomLayout || define?.headerCustomRender) &&
     canUseFastUpdate(col, row, oldCellGroup, autoWrapText, mayHaveIcon, table)
   ) {
     // update group

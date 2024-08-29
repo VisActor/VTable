@@ -75,6 +75,7 @@ export interface TableEventHandlersEventArgumentMap {
   contextmenu_cell: MousePointerMultiCellEvent;
   keydown: KeydownEvent;
   scroll: {
+    event: WheelEvent;
     scrollLeft: number;
     scrollTop: number;
     scrollWidth: number;
