@@ -7,13 +7,29 @@ export function flattenVNodes(vnodes: any[]): any[] {
 // 处理子组件
 // 存在有问题，需要去优化
 export function createCustomLayout(children: any[], args: any, customLayoutConfig: any): any {
-  const components: any[] = [];
   const propsList = customLayoutConfig(args);
 
   function resolvePropValue(value: any): string | number | any[] | ((...args: any[]) => any) | undefined {
     if (typeof value === 'string') {
+      // 检查是否为 URL
+      if (/^https?:\/\/.+/.test(value)) {
+        return value;
+      }
+
       if (value in propsList) {
         return propsList[value];
+      } else if (value.includes('.')) {
+        const parts = value.split('.');
+        let currentValue = propsList[parts[0]];
+        for (let i = 1; i < parts.length; i++) {
+          if (currentValue && typeof currentValue === 'object' && parts[i] in currentValue) {
+            currentValue = currentValue[parts[i]];
+          } else {
+            currentValue = undefined;
+            break;
+          }
+        }
+        return currentValue;
       } else if (/^\d+(\.\d+)?$/.test(value)) {
         return parseFloat(value);
       } else if (/^\w+\((.*)\)$/.test(value)) {
@@ -25,17 +41,22 @@ export function createCustomLayout(children: any[], args: any, customLayoutConfi
         }
       } else if (/^\[.*\]$/.test(value)) {
         return JSON.parse(value);
+      } else {
+        // 如果没有匹配到任何模式，直接返回原始字符串
+        return value;
       }
     }
     return value;
   }
 
-  children.forEach((child: any) => {
+  function createComponent(child: any): any {
     let component: any = null;
     const resolvedProps: any = {};
     Object.keys(child.props).forEach(key => {
       resolvedProps[key] = resolvePropValue(child.props[key]);
+      console.log('Resolved prop:', key, resolvedProps[key]);
     });
+
     switch (child.type) {
       case 'Group':
         component = new VTable.CustomLayout.Group({
@@ -84,17 +105,23 @@ export function createCustomLayout(children: any[], args: any, customLayoutConfi
 
     if (child.children) {
       const subChildren = child.children.default?.() || child.children;
-      const subComponents = createCustomLayout(subChildren, args, customLayoutConfig);
-      if (subComponents && Array.isArray(subComponents)) {
-        subComponents.forEach((subComponent: any) => {
+      subChildren.forEach((subChild: any) => {
+        const subComponent = createComponent(subChild);
+        if (subComponent) {
           component.add(subComponent);
-        });
-      } else if (subComponents) {
-        component.add(subComponents);
-      }
+        }
+      });
     }
-    components.push(component);
-  });
-  // console.log('Created VTable customLayoutConfig:',components);
-  return components.length === 1 ? components[0] : components;
+    // console.log('Created VTable component:', component);
+    return component;
+  }
+
+  const rootComponent = createComponent(children[0]);
+
+  console.log('Created VTable customLayoutConfig:', rootComponent);
+
+  return {
+    rootContainer: rootComponent,
+    renderDefault: false
+  };
 }

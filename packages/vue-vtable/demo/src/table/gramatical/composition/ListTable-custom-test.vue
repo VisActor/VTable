@@ -2,7 +2,7 @@
   <!-- <CustomLayout :customLayout="createCustomLayout"> -->
   <vue-list-table :options="option" :records="records" ref="tableRef">
     <ListColumn :field="customCloum.field" :title="customCloum.title" :width="customCloum.width" :style="customCloum.style" >
-      <CustomLayout :customLayout="createCustomLayout">
+      <CustomLayout :customLayout="createCustomLayouts">
         <Group height="height" width="width" display="flex" flex-direction="row" flex-wrap="nowrap">
           <Group height="percentCalc(100)" width="60" display="flex" flex-direction="column" align-items="center" justify-content="space-around">
             <Image id="icon0" width="50" height="50" image="record.bloggerAvatar" corner-radius="25" />
@@ -10,7 +10,7 @@
           <Group height="height" width="percentCalc(100, -60)" display="flex" flex-direction="column" flex-wrap="nowrap">
             <Group height="percentCalc(50)" width="percentCalc(100)" display="flex" align-items="flex-end">
               <Text text="record.bloggerName" font-size="13" font-family="sans-serif" fill="black" />
-              <Image id="'location'" image="location.svg" width="15" height="15" bounds-padding="[0, 0, 0, 10]" />
+              <Image id="'location'" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg" width="15" height="15" bounds-padding="[0, 0, 0, 10]" />
               <Text text="record.city" font-size="11" font-family="sans-serif" fill="#6f7070" />
             </Group>
             <Group height="percentCalc(50)" width="percentCalc(100)" display="flex" align-items="center">
@@ -26,7 +26,7 @@
 import { ref , onMounted } from 'vue';
 import { ListColumn } from '../../../../../src/components/index';
 import { CustomLayout } from '../../../../../src/components/index';
-import * as VTable from '@visactor/vtable/src';
+import * as VTable from '@visactor/vtable';
 
 
 const createCustomLayouts = (args) => {
@@ -37,6 +37,7 @@ const createCustomLayouts = (args) => {
 
   return { table, rect, record, height, width, percentCalc };
 }
+
 
 
 const createCustomLayout = (args) => {

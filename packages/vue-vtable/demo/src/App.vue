@@ -4,6 +4,7 @@ import listtable from './table/unified/options/list-table/list-table.vue';
 import listtableFetch from './table/unified/options/list-table/list-table-fetch.vue';
 
 import listTableEditor from './table/unified/composition/list-table/list-table-editor.vue';
+import listTableCustom from './table/unified/composition/list-table/list-table-custom.vue';
 import pivotTableTree from './table/unified/composition/pivot-table/pivot-table-lazyTreeload.vue';
 import pivotTableTitleOnDimension from './table/unified/options/pivot-table/pivot-table-titleOnDimension.vue';
 
@@ -14,6 +15,7 @@ import ListTable from './table/gramatical/composition/ListTable.vue';
 import ListTableTree from './table/gramatical/composition/ListTable-tree.vue';
 import ListTableEditor from './table/gramatical/composition/ListTable-editor.vue';
 import ListTableDes from './table/gramatical/composition/ListTable-destruction.vue';
+import ListTableCustom from './table/gramatical/composition/ListTable-custom.vue';
 import ListTableVFor from './table/gramatical/options/ListTable-v-for.vue';
 
 import PivotTable from './table/gramatical/options/PivotTable.vue';  
@@ -29,6 +31,7 @@ import PivotChartPie from './table/gramatical/composition/PivotChartPie.vue';
   <!-- <listtable /> -->
   <!-- <listTableEditor /> -->
   <!-- <listtableFetch /> -->
+  <!-- <listTableCustom /> -->
   
   <!-- <pivotTableTree /> -->
   <!-- <pivotTableTitleOnDimension /> -->
@@ -39,10 +42,11 @@ import PivotChartPie from './table/gramatical/composition/PivotChartPie.vue';
   <!-- gramatical -->
   <!-- ---------- -->
 
-  <ListTable/>
+  <!-- <ListTable/> -->
   <!-- <ListTableEditor /> -->
   <!-- <ListTableDes /> -->
   <!-- <ListTableTree /> -->
+  <ListTableCustom />
 
   <!-- <PivotTable /> -->
   

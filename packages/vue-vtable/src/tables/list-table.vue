@@ -56,13 +56,8 @@ const computedOptions = computed(() => {
     const children = vnode.children?.default?.();
 
     if (optionKey) {
-
+      
       if (optionKey === 'columns' && children) {
-        const childProps = children[0]?.props || {}; 
-        vnode.props = {
-          ...vnode.props,
-          ...childProps.customLayout && { customLayout: childProps.customLayout }, 
-        };
         children.forEach((child: any) => {
           if (child.type?.name === 'CustomLayout') {
             const customLayoutContent = child.children.default();
@@ -87,6 +82,7 @@ const computedOptions = computed(() => {
     menu: options.menu || props.options.menu,
   };
 });
+
 
 // 暴露实例
 defineExpose({
