@@ -1,6 +1,6 @@
 # v1.6.3
 
-2024-08-30
+2024-08-29
 
 
 **🆕 新增功能**
@@ -22,6 +22,8 @@
 - **@visactor/vtable**: fix umd package problem in react-vtable [#2244](https://github.com/VisActor/VTable/issues/2244)
 - **@visactor/vtable**: fix right frozen size in updateContainerAttrWidthAndX() [#2243](https://github.com/VisActor/VTable/issues/2243)
 - **@visactor/vtable**: fix leftRowSeriesNumberColumnCount error in getBodyLayoutRangeById() [#2234](https://github.com/VisActor/VTable/issues/2234)
+- **@visactor/vtable**: fix frozen column custom component clip
+- **@visactor/vtable**: fix menu auto hide when page crolled [#2241](https://github.com/VisActor/VTable/issues/2241)
 
 **🔨 功能重构**
 
@@ -29,6 +31,7 @@
 - **@visactor/vtable**: changeCellValue can modify raw record [#2305](https://github.com/VisActor/VTable/issues/2305)
 
 [更多详情请查看 v1.6.3](https://github.com/VisActor/VTable/releases/tag/v1.6.3)
+
 
 # v1.6.1
 
