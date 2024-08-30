@@ -1043,8 +1043,8 @@ arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: Cel
 ```
 
 - cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
-  - 单个单元格：`{ row: number, column: number }`
-  - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+  - 单个单元格：`{ row: number, col: number }`
+  - 单元格区域：`{ range: { start: { row: number, col: number }, end: { row: number, col: number} } }`
 - customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同
 
 ## getCheckboxState(Function)
