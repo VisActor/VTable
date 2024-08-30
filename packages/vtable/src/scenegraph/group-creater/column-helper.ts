@@ -119,6 +119,11 @@ export function createComplexColumn(
       colForDefine = range.start.col;
       rowForDefine = range.start.row;
     }
+
+    // adjust cellLocation for top frozen row
+    if ((cellLocation === 'columnHeader' || cellLocation === 'cornerHeader') && row >= table.columnHeaderLevelCount) {
+      cellLocation = 'body';
+    }
     const define =
       cellLocation !== 'body'
         ? table.getHeaderDefine(colForDefine, rowForDefine)
@@ -169,7 +174,7 @@ export function createComplexColumn(
       }
     }
 
-    const cellStyle = customStyle || table._getCellStyle(col, row);
+    const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
     const cellTheme = getStyleTheme(
       cellStyle,
       table,

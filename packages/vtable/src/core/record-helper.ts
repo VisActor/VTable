@@ -316,7 +316,7 @@ export function sortRecords(table: ListTable) {
       const hd = table.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
 
       // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
-      table.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
+      hd && table.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
     }
   }
 }

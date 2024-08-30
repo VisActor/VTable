@@ -253,6 +253,8 @@ export function createTable() {
       }, 200);
     }
   });
-
+  instance.on('change_header_position', args => {
+    console.log('change_header_position');
+  });
   window.tableInstance = instance;
 }

@@ -2,6 +2,10 @@
 
 2024-08-19
 
+**💥 Breaking change**
+
+- **@visactor/react-vtable**: 优化打包体积，删除`VTable`的导出，如果需要使用`VTable`，请安装并从相同版本的`@visactor/vtable`中导入。
+- **@visactor/react-vtable**: 优化打包体积，删除`VRender`的导出，如果需要使用`VRender`，请从`@visactor/vtable/es/vrender`中导入。
 
 **🆕 新增功能**
 

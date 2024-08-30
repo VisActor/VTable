@@ -214,12 +214,15 @@ setRecords(records: Array<any>)
 选中某个单元格。如果传空，则清除当前选中高亮状态。
 
 ```
-  /**
+   /**
    * 选中单元格  和鼠标选中单元格效果一致
    * @param col
    * @param row
+   * @param isShift 是否按住 shift 键
+   * @param isCtrl 是否按住 ctrl 键
+   * @param makeSelectCellVisible 是否让选中的单元格可见
    */
-  selectCell(col: number, row: number): void
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean): void
 ```
 
 ## selectCells(Function)
@@ -1138,6 +1141,24 @@ interface ISortedMapItem {
 ```
   /**获取对应header的field  */
   getHeaderField: (col: number, row: number)
+```
+
+## getColWidth(Function)
+
+获取列宽
+
+```
+  /**获取列宽 */
+  getColWidth: (col: number)
+```
+
+## getRowHeight(Function)
+
+获取行高
+
+```
+  /**获取行高 */
+  getRowHeight: (row: number)
 ```
 
 ## setColWidth(Function)

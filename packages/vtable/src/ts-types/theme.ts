@@ -63,6 +63,10 @@ export type ScrollStyle = {
   hoverOn?: boolean;
   /** 是否显示到容器的边缘 尽管内容没有撑满的情况下 默认false */
   barToSide?: boolean;
+  /** 横向滚动条 padding */
+  horizontalPadding?: number | [number, number, number, number];
+  /** 竖向滚动条 padding */
+  verticalPadding?: number | [number, number, number, number];
 };
 /**
  * 气泡框，按钮的的解释信息
@@ -102,6 +106,7 @@ export interface ITableThemeDefine {
     bgColor?: ColorPropertyDefine; //背景线的颜色
     lineWidth: number; //上面线的宽度
     width?: number; //背景线的宽度
+    labelVisible?: boolean; //是否显示label
     labelColor?: string; //label的颜色
     labelFontSize?: number; //label的字体大小
     labelFontFamily?: string; //label的字体
