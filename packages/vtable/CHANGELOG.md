@@ -1,6 +1,21 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 29 Aug 2024 12:00:16 GMT and should not be manually modified.
+This log was last generated on Fri, 30 Aug 2024 11:54:08 GMT and should not be manually modified.
+
+## 1.7.0
+Fri, 30 Aug 2024 11:54:08 GMT
+
+### Minor changes
+
+- feat: add gantt chart
+
+
+
+### Updates
+
+- fix: leftTable just has row series number
+
+
 
 ## 1.6.3
 Thu, 29 Aug 2024 12:00:16 GMT

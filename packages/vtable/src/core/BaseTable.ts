@@ -3698,7 +3698,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   measureTextBounds(attribute: ITextGraphicAttribute): AABBBounds {
-    return measureTextBounds(attribute);
+    return measureTextBounds(attribute) as AABBBounds;
   }
 
   /** 获取单元格上定义的自定义渲染配置 */
