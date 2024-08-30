@@ -1,3 +1,35 @@
+# v1.6.3
+
+2024-08-30
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add formatCopyValue config
+- **@visactor/vtable**: add parentElement config in tooltip [#2290](https://github.com/VisActor/VTable/issues/2290)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: handle with change header postion event [#2299](https://github.com/VisActor/VTable/issues/2299)
+- **@visactor/vtable**: pivot tree can not show value and expand tree occor error [#2306](https://github.com/VisActor/VTable/issues/2306)
+- **@visactor/vtable**: set titleOnDimension all sort can not run [#2278](https://github.com/VisActor/VTable/issues/2278)
+- **@visactor/vtable**: add judgement in array find function [#2289](https://github.com/VisActor/VTable/issues/2289)
+- **@visactor/vtable**: fix frozen column custom component clip
+- **@visactor/vtable**: fix cellLocation in top frozen row [#2267](https://github.com/VisActor/VTable/issues/2267)
+- **@visactor/vtable**: fix list-table group mode style update problem
+- **@visactor/vtable**: fix menu auto hide when page crolled [#2241](https://github.com/VisActor/VTable/issues/2241)
+- **@visactor/vtable**: fix progress bar cell textAlign update [#2225](https://github.com/VisActor/VTable/issues/2225)
+- **@visactor/vtable**: fix umd package problem in react-vtable [#2244](https://github.com/VisActor/VTable/issues/2244)
+- **@visactor/vtable**: fix right frozen size in updateContainerAttrWidthAndX() [#2243](https://github.com/VisActor/VTable/issues/2243)
+- **@visactor/vtable**: fix leftRowSeriesNumberColumnCount error in getBodyLayoutRangeById() [#2234](https://github.com/VisActor/VTable/issues/2234)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: scroll event add argument [#2249](https://github.com/VisActor/VTable/issues/2249)
+- **@visactor/vtable**: changeCellValue can modify raw record [#2305](https://github.com/VisActor/VTable/issues/2305)
+
+[more detail about v1.6.3](https://github.com/VisActor/VTable/releases/tag/v1.6.3)
+
 # v1.6.1
 
 2024-08-19
