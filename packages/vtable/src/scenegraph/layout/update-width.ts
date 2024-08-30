@@ -266,8 +266,11 @@ function updateCellWidth(
     return false;
   }
   const autoRowHeight = scene.table.isAutoRowHeight(row);
+  const isvTableMerge = scene.table.getCellRawRecord(col, row)?.vTableMerge;
   // 更新单元格布局
-  const type = scene.table.isHeader(col, row)
+  const type = isvTableMerge
+    ? 'text'
+    : scene.table.isHeader(col, row)
     ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : scene.table.getBodyColumnType(col, row);
   const customContainer =
