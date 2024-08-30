@@ -2,6 +2,23 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.7.0",
+      "tag": "@visactor/vtable_v1.7.0",
+      "date": "Fri, 30 Aug 2024 11:54:08 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: add gantt chart\n\n"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: leftTable just has row series number\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.6.3",
       "tag": "@visactor/vtable_v1.6.3",
       "date": "Thu, 29 Aug 2024 12:00:16 GMT",

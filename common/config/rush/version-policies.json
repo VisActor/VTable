@@ -1,9 +1,1 @@
-[
-  {
-    "definitionName": "lockStepVersion",
-    "policyName": "vtableMain",
-    "version": "1.6.3",
-    "mainProject": "@visactor/vtable",
-    "nextBump": "patch"
-  }
-]
+[{"definitionName":"lockStepVersion","policyName":"vtableMain","version":"1.7.0","mainProject":"@visactor/vtable","nextBump":"minor"}]
