@@ -1188,21 +1188,26 @@ export class Dataset {
       let sorter;
       for (let i = 0; i < sortersArr.length; i++) {
         sorter = sortersArr[i];
-        if (sorter.sortRule?.sortByIndicator) {
-          let aChanged = a;
-          let bChanged = b;
-          if (sorter.fieldIndex < fieldArr.length - 1) {
-            aChanged = a.slice(0, sorter.fieldIndex + 1);
-            aChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
-            bChanged = b.slice(0, sorter.fieldIndex + 1);
-            bChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
+        if (!(sorter.sortRule?.sortType === SortType.NORMAL || sorter.sortRule?.sortType === SortType.normal)) {
+          if (sorter.sortRule?.sortByIndicator) {
+            let aChanged = a;
+            let bChanged = b;
+            if (sorter.fieldIndex < fieldArr.length - 1) {
+              aChanged = a.slice(0, sorter.fieldIndex + 1);
+              aChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
+              bChanged = b.slice(0, sorter.fieldIndex + 1);
+              bChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
+            }
+            comparison = sorter.func(aChanged, bChanged);
+          } else {
+            comparison = sorter.func?.(a[sorter.fieldIndex], b[sorter.fieldIndex], sorter.sortRule?.sortType);
           }
-          comparison = sorter.func(aChanged, bChanged);
-        } else {
-          comparison = sorter.func?.(a[sorter.fieldIndex], b[sorter.fieldIndex]);
-        }
-        if (comparison !== 0) {
-          return comparison * (sorter.sortRule?.sortType === SortType.DESC ? -1 : 1);
+          if (comparison !== 0) {
+            return (
+              comparison *
+              (sorter.sortRule?.sortType === SortType.DESC || sorter.sortRule?.sortType === SortType.desc ? -1 : 1)
+            );
+          }
         }
       }
       return 0;
@@ -1254,7 +1259,7 @@ export class Dataset {
         );
       };
     } else if ((<SortByRule>sortRule).sortBy) {
-      return sortBy((<SortByRule>sortRule).sortBy!);
+      return sortBy((<SortByRule>sortRule).sortBy);
     }
     if ((<SortTypeRule>sortRule).sortType) {
       return typeSort;

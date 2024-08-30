@@ -23,7 +23,11 @@ export enum AggregationType {
 }
 export enum SortType {
   ASC = 'ASC',
-  DESC = 'DESC'
+  DESC = 'DESC',
+  NORMAL = 'NORMAL',
+  desc = 'desc',
+  asc = 'asc',
+  normal = 'normal'
 }
 export interface CalcTotals {
   aggregationType?: AggregationType; // 聚合方式
@@ -93,6 +97,8 @@ export interface SortTypeRule {
 export interface SortByRule {
   /**排序维度 */
   sortField: string;
+  /**升序降序 ASC or DESC*/
+  sortType?: SortType;
   /**根据指定具体顺序排序 */
   sortBy?: string[];
 }
@@ -111,8 +117,10 @@ export interface SortByIndicatorRule {
 export interface SortFuncRule {
   /**排序维度 */
   sortField: string;
+  /**升序降序 ASC or DESC*/
+  sortType?: SortType;
   /**自定义排序函数 */
-  sortFunc?: (a: any, b: any) => number;
+  sortFunc?: (a: any, b: any, sortType: SortType) => number;
 }
 //自定义排序方法参数
 // export interface SortFuncParam extends SortRule {
