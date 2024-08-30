@@ -188,7 +188,7 @@ export function initOptions(gantt: Gantt) {
   //   options?.taskBar?.hoverColor === null ? 'rgba(0,0,0,0)' : options?.taskBar?.hoverColor ?? 'rgba(0,0,0,0.1)';
   gantt.parsedOptions.taskBarLabelStyle = {
     fontFamily: options?.taskBar?.labelTextStyle?.fontFamily ?? 'Arial',
-    fontSize: options?.taskBar?.labelTextStyle?.fontSize ?? gantt.parsedOptions.rowHeight,
+    fontSize: options?.taskBar?.labelTextStyle?.fontSize ?? gantt.parsedOptions.rowHeight / 2,
     color: options?.taskBar?.labelTextStyle?.color ?? '#F01',
     textAlign: options?.taskBar?.labelTextStyle?.textAlign ?? 'left',
     textBaseline: options?.taskBar?.labelTextStyle?.textBaseline ?? 'middle',

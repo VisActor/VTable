@@ -614,53 +614,10 @@ const option = {
     columns,
     tableWidth: 250,
     minTableWidth: 100,
-    maxTableWidth: 600,
-    theme: {
-      headerStyle: {
-        borderColor: '#e1e4e8',
-        borderLineWidth: 1,
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: 'red',
-        bgColor: '#EEF1F5'
-      },
-      bodyStyle: {
-        borderColor: '#e1e4e8',
-        borderLineWidth: [1, 0, 1, 0],
-        fontSize: 16,
-        color: '#4D4D4D',
-        bgColor: '#FFF'
-      }
-    }
-    //rightFrozenColCount: 1
-  },
-  frame: {
-    outerFrameStyle: {
-      borderLineWidth: 2,
-      borderColor: '#e1e4e8',
-      cornerRadius: 8
-    },
-    verticalSplitLine: {
-      lineColor: '#e1e4e8',
-      lineWidth: 3
-    },
-    horizontalSplitLine: {
-      lineColor: '#e1e4e8',
-      lineWidth: 3
-    },
-    verticalSplitLineMoveable: true,
-    verticalSplitLineHighlight: {
-      lineColor: 'green',
-      lineWidth: 3
-    }
+    maxTableWidth: 600
   },
   grid: {
-    // backgroundColor: 'gray',
     verticalLine: {
-      lineWidth: 1,
-      lineColor: '#e1e4e8'
-    },
-    horizontalLine: {
       lineWidth: 1,
       lineColor: '#e1e4e8'
     }
@@ -676,27 +633,9 @@ const option = {
     hoverBarStyle: {
       barOverlayColor: 'rgba(99, 144, 0, 0.4)'
     },
-    labelText: '{title} {progress}%',
-    labelTextStyle: {
-      // padding: 2,
-      fontFamily: 'Arial',
-      fontSize: 16,
-      textAlign: 'left',
-      textOverflow: 'ellipsis'
-    },
-    barStyle: {
-      width: 20,
-      /** 任务条的颜色 */
-      barColor: '#ee8800',
-      /** 已完成部分任务条的颜色 */
-      completedBarColor: '#91e8e0',
-      /** 任务条的圆角 */
-      cornerRadius: 8,
-      /** 任务条的边框 */
-      borderWidth: 1,
-      /** 边框颜色 */
-      borderColor: 'black'
-    }
+  },
+  frame: {
+  verticalSplitLineMoveable:true
   },
   timelineHeader: {
     colWidth: 100,

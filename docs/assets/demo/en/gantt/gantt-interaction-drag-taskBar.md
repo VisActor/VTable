@@ -1,26 +1,24 @@
 ---
 category: examples
 group: gantt
-title: 甘特图交互-拖拽任务条
+title: Gantt Chart Interaction - Drag Task Bar
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-interaction-drag-taskBar-preview.gif
 link: '../guide/gantt/introduction'
 option: Gantt#taskBar.moveable
 ---
 
-# 甘特图交互-拖拽任务条
+# Gantt Chart Interaction - Drag Task Bar
 
-该示例展示了如何实现甘特图任务条的拖拽功能。移动任务条能力和调整大小能力是默认开启的，可通过配置项关闭。
-配置项分别为`taskBar.moveable`和`taskBar.resizable`。
+This example demonstrates how to implement the drag-and-drop functionality for Gantt chart task bars. The ability to move and resize task bars is enabled by default and can be disabled through configuration options.
+The configuration options are `taskBar.moveable` and `taskBar.resizable`.
 
-## 关键配置
+## Key Configuration
 
--`Gantt`
+- `Gantt`
+- `Gantt#taskBar.moveable` Whether the task bar is moveable. Default is true.
+- `Gantt#taskBar.resizable` Whether the task bar is resizable. Default is true.
 
--`Gantt#taskBar.moveable` 任务条是否可移动。默认为true
-
--`Gantt#taskBar.resizable` 任务条是否可调整大小。默认为true
-
-## 代码演示
+## Demo
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';
@@ -618,52 +616,48 @@ const option = {
     maxTableWidth: 600,
     theme: {
       headerStyle: {
-        borderColor: '#e1e4e8',
-        borderLineWidth: 1,
+        borderColor: '#9fb9c3',
+        borderLineWidth: 0,
         fontSize: 18,
         fontWeight: 'bold',
-        color: 'red',
-        bgColor: '#EEF1F5'
+        color: '#134e35',
+        bgColor: '#a7c2ff'
       },
       bodyStyle: {
-        borderColor: '#e1e4e8',
+        borderColor: '#9fb9c3',
         borderLineWidth: [1, 0, 1, 0],
         fontSize: 16,
-        color: '#4D4D4D',
-        bgColor: '#FFF'
+        color: '#134e35',
+        bgColor: '#e1e7ff'
       }
     }
     //rightFrozenColCount: 1
   },
   frame: {
     outerFrameStyle: {
-      borderLineWidth: 2,
+      borderLineWidth: 1,
       borderColor: '#e1e4e8',
-      cornerRadius: 8
+      cornerRadius: 0
     },
     verticalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 3
+      lineWidth: 1
     },
     horizontalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 3
+      lineWidth: 1
     },
     verticalSplitLineMoveable: true,
     verticalSplitLineHighlight: {
       lineColor: 'green',
-      lineWidth: 3
+      lineWidth: 1
     }
   },
   grid: {
-    // backgroundColor: 'gray',
-    verticalLine: {
-      lineWidth: 1,
-      lineColor: '#e1e4e8'
-    },
+    backgroundColor: '#e1e7ff',
     horizontalLine: {
-      lineWidth: 1,
-      lineColor: '#e1e4e8'
+      lineWidth: 1, 
+      lineColor: '#9fb9c3',
     }
   },
   headerRowHeight: 40,
@@ -677,20 +671,12 @@ const option = {
     hoverBarStyle: {
       barOverlayColor: 'rgba(99, 144, 0, 0.4)'
     },
-    labelText: '{title} {progress}%',
-    labelTextStyle: {
-      // padding: 2,
-      fontFamily: 'Arial',
-      fontSize: 16,
-      textAlign: 'left',
-      textOverflow: 'ellipsis'
-    },
     barStyle: {
-      width: 20,
+      width: 10,
       /** 任务条的颜色 */
-      barColor: '#ee8800',
+      barColor: '#134e35',
       /** 已完成部分任务条的颜色 */
-      completedBarColor: '#91e8e0',
+      completedBarColor: '#b9cdff',
       /** 任务条的圆角 */
       cornerRadius: 8,
       /** 任务条的边框 */
@@ -701,7 +687,7 @@ const option = {
   },
   timelineHeader: {
     colWidth: 100,
-    backgroundColor: '#EEF1F5',
+    backgroundColor: '#a7c2ff',
     horizontalLine: {
       lineWidth: 1,
       lineColor: '#e1e4e8'
@@ -712,25 +698,6 @@ const option = {
     },
     scales: [
       {
-        unit: 'week',
-        step: 1,
-        startOfWeek: 'sunday',
-        format(date) {
-          return `Week ${date.dateIndex}`;
-        },
-        style: {
-          fontSize: 20,
-          fontWeight: 'bold',
-          color: 'white',
-          strokeColor: 'black',
-          textAlign: 'right',
-          textBaseline: 'bottom',
-          backgroundColor: '#EEF1F5',
-          textStick: true
-          // padding: [0, 30, 0, 20]
-        }
-      },
-      {
         unit: 'day',
         step: 1,
         format(date) {
@@ -739,11 +706,10 @@ const option = {
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'white',
-          strokeColor: 'black',
+          color: '#134e35',
           textAlign: 'right',
           textBaseline: 'bottom',
-          backgroundColor: '#EEF1F5'
+          backgroundColor: '#a7c2ff'
         }
       }
     ]
@@ -770,11 +736,14 @@ const option = {
     title: '行号',
     dragOrder: true,
     headerStyle: {
-      bgColor: '#EEF1F5',
-      borderColor: '#e1e4e8'
+      fontWeight: 'bold',
+      color: '#134e35',
+      bgColor: '#a7c2ff'
     },
     style: {
-      borderColor: '#e1e4e8'
+      borderColor: '#e1e4e8',
+      borderColor: '#9fb9c3',
+      borderLineWidth: [1, 0, 1, 0],
     }
   },
   scrollStyle: {
