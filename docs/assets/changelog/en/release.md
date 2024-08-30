@@ -1,3 +1,19 @@
+# v1.6.2
+
+2024-08-30
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add formatCopyValue config
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix frozen column custom component clip
+- **@visactor/vtable**: fix menu auto hide when page crolled [#2241](https://github.com/VisActor/VTable/issues/2241)
+
+[more detail about v1.6.2](https://github.com/VisActor/VTable/releases/tag/v1.6.2)
+
 # v1.6.1
 
 2024-08-19
