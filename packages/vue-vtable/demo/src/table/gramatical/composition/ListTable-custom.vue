@@ -1,15 +1,23 @@
 <template>
+  <!-- <CustomLayout :customLayout="createCustomLayout"> -->
   <vue-list-table :options="option" :records="records" ref="tableRef">
-    <ListColumn v-for="item in columns" 
-      :key="item.field" 
-      :field="item.field" 
-      :title="item.title" 
-      :width="item.width" 
-      :style="item.style" 
-      :customLayout="item.customLayout" 
-      :icon="item.icon" 
-      :fieldFormat="item.fieldFormat" 
-    >
+    <ListColumn :field="customCloum.field" :title="customCloum.title" :width="customCloum.width" :style="customCloum.style" >
+      <CustomLayout :customLayout="createCustomLayouts">
+        <Group height="height" width="width" display="flex" flex-direction="row" flex-wrap="nowrap">
+          <Group height="percentCalc(100)" width="60" display="flex" flex-direction="column" align-items="center" justify-content="space-around">
+            <Image id="icon0" width="50" height="50" image="record.bloggerAvatar" corner-radius="25" />
+          </Group>
+          <Group height="height" width="percentCalc(100, -60)" display="flex" flex-direction="column" flex-wrap="nowrap">
+            <Group height="percentCalc(50)" width="percentCalc(100)" display="flex" align-items="flex-end">
+              <Text text="record.bloggerName" font-size="13" font-family="sans-serif" fill="black" />
+              <Image id="'location'" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg" width="15" height="15" bounds-padding="[0, 0, 0, 10]" />
+              <Text text="record.city" font-size="11" font-family="sans-serif" fill="#6f7070" />
+            </Group>
+            <Group height="percentCalc(50)" width="percentCalc(100)" display="flex" align-items="center">
+            </Group>
+          </Group>
+        </Group>
+      </CustomLayout>
     </ListColumn>
   </vue-list-table>
 </template>
@@ -17,63 +25,21 @@
 <script setup >
 import { ref , onMounted } from 'vue';
 import { ListColumn } from '../../../../../src/components/index';
-import * as VTable from '../../../../../../vtable/src/index';
+import { CustomLayout } from '../../../../../src/components/index';
+import * as VTable from '@visactor/vtable';
 
 
-VTable.register.icon('location', {
-  type: 'svg',
-  name: 'location',
-  positionType: VTable.TYPES.IconPosition.left,
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg'
-});
-VTable.register.icon('favorite', {
-  type: 'svg',
-  name: 'favorite',
-  positionType: VTable.TYPES.IconPosition.left,
-  width: 20,
-  height: 20,
-  cursor: 'pointer',
-  tooltip: {
-    placement: VTable.TYPES.Placement.top,
-    title: 'follow',
-    style: {
-      font: '10px Arial',
-      bgColor: 'white',
-      color: '#333',
-      arrowMark: true
-    }
-  },
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/favorite.svg'
-});
+const createCustomLayouts = (args) => {
+  const { table, row, col, rect } = args;
+  const record = table.getCellOriginRecord(col, row);
+  const { height, width } = rect ?? table.getCellRect(col, row);
+  const percentCalc = VTable.CustomLayout.percentCalc;
 
-VTable.register.icon('message', {
-  type: 'svg',
-  name: 'message',
-  positionType: VTable.TYPES.IconPosition.left,
-  width: 20,
-  height: 20,
-  marginLeft: 10,
-  cursor: 'pointer',
-  tooltip: {
-    placement: VTable.TYPES.Placement.top,
-    title: 'send message',
-    style: {
-      font: '10px Arial',
-      bgColor: 'white',
-      color: '#333',
-      arrowMark: true
-    }
-  },
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/message.svg'
-});
+  return { table, rect, record, height, width, percentCalc };
+}
 
 
-const columns = ref([
-    {
-      field: 'bloggerId',
-      title: 'order number'
-    },
-    {
+const customCloum = {
       field: 'bloggerName',
       title: 'anchor nickname',
       width: 330,
@@ -187,175 +153,55 @@ const columns = ref([
           renderDefault: false
         };
       }
-    },
-    {
-      field: 'fansCount',
-      title: 'fansCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
-      },
-      style: {
-        fontFamily: 'Arial',
-        fontSize: 12,
-        fontWeight: 'bold'
-      }
-    },
-    {
-      field: 'worksCount',
-      title: 'worksCount',
-      style: {
-        fontFamily: 'Arial',
-        fontSize: 12,
-        fontWeight: 'bold'
-      }
-    },
-    {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
-      },
-      style: {
-        fontFamily: 'Arial',
-        fontSize: 12,
-        fontWeight: 'bold'
-      }
-    },
-    {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
-      },
-      style: {
-        fontFamily: 'Arial',
-        fontSize: 12,
-        fontWeight: 'bold'
-      }
-    },
-    {
-      field: '',
-      title: '选项',
-      width: 200,
-      customLayout: args => {
-        const { table, row, col, rect } = args;
-        const { height, width } = rect ?? table.getCellRect(col, row);
+}
 
-        const container = new VTable.CustomLayout.Group({
-          height,
-          width,
-          display: 'flex',
-          flexDirection: 'column',
-          // alignItems: 'center',
-          justifyContent: 'center'
-        });
-
-        const checkboxGroup = new VTable.CustomLayout.Group({
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'no-wrap',
-          boundsPadding: [5, 0, 5, 10],
-          justifyContent: 'center'
-        });
-        container.appendChild(checkboxGroup);
-
-        const checkboxText = new VTable.CustomLayout.Text({
-          text: 'operate: ',
-          fontSize: 12,
-          boundsPadding: [0, 10, 0, 0]
-        });
-        checkboxGroup.appendChild(checkboxText);
-
-        const checkbox1 = new VTable.CustomLayout.CheckBox({
-          text: {
-            text: 'like',
-            fontSize: 12
-          },
-          spaceBetweenTextAndIcon: 2,
-          boundsPadding: [0, 10, 0, 0]
-        });
-        checkbox1.render();
-        checkboxGroup.appendChild(checkbox1);
-        checkbox1.addEventListener('checkbox_state_change', e => {
-          console.log('checkbox_state_change', e);
-        });
-
-        const checkbox2 = new VTable.CustomLayout.CheckBox({
-          text: {
-            text: 'collect',
-            fontSize: 12
-          },
-          spaceBetweenTextAndIcon: 2
-          // boundsPadding: [10, 0, 0, 10]
-        });
-        checkbox2.render();
-        checkboxGroup.appendChild(checkbox2);
-        checkbox2.addEventListener('checkbox_state_change', e => {
-          console.log('checkbox_state_change', e);
-        });
-
-        const radioGroup = new VTable.CustomLayout.Group({
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'no-wrap',
-          boundsPadding: [5, 0, 5, 10]
-        });
-        container.appendChild(radioGroup);
-
-        const radioText = new VTable.CustomLayout.Text({
-          text: 'type: ',
-          fontSize: 12,
-          boundsPadding: [0, 10, 0, 0]
-        });
-        radioGroup.appendChild(radioText);
-
-        const radio1 = new VTable.CustomLayout.Radio({
-          text: {
-            text: 'normal',
-            fontSize: 12
-          },
-          checked: true,
-          spaceBetweenTextAndIcon: 2,
-          boundsPadding: [0, 10, 0, 0]
-        });
-        radio1.render();
-        radioGroup.appendChild(radio1);
-        radio1.addEventListener('radio_checked', () => {
-          if (radio2.attribute.checked) {
-            radio2.setAttribute('checked', false);
-            table.scenegraph.updateNextFrame();
-          }
-        });
-
-        const radio2 = new VTable.CustomLayout.Radio({
-          text: {
-            text: 'special',
-            fontSize: 12
-          },
-          spaceBetweenTextAndIcon: 2
-        });
-        radio2.render();
-        radioGroup.appendChild(radio2);
-        radio2.addEventListener('radio_checked', () => {
-          if (radio1.attribute.checked) {
-            radio1.setAttribute('checked', false);
-            table.scenegraph.updateNextFrame();
-          }
-        });
-
-        return {
-          rootContainer: container,
-          renderDefault: false
-        };
-      }
-    },
-    {
-      field: '',
-      title: 'operation',
-      width: 100,
-      icon: ['favorite', 'message']
+VTable.register.icon('location', {
+  type: 'svg',
+  name: 'location',
+  positionType: VTable.TYPES.IconPosition.left,
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg'
+});
+VTable.register.icon('favorite', {
+  type: 'svg',
+  name: 'favorite',
+  positionType: VTable.TYPES.IconPosition.left,
+  width: 20,
+  height: 20,
+  cursor: 'pointer',
+  tooltip: {
+    placement: VTable.TYPES.Placement.top,
+    title: 'follow',
+    style: {
+      font: '10px Arial',
+      bgColor: 'white',
+      color: '#333',
+      arrowMark: true
     }
-  ],);
+  },
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/favorite.svg'
+});
+
+VTable.register.icon('message', {
+  type: 'svg',
+  name: 'message',
+  positionType: VTable.TYPES.IconPosition.left,
+  width: 20,
+  height: 20,
+  marginLeft: 10,
+  cursor: 'pointer',
+  tooltip: {
+    placement: VTable.TYPES.Placement.top,
+    title: 'send message',
+    style: {
+      font: '10px Arial',
+      bgColor: 'white',
+      color: '#333',
+      arrowMark: true
+    }
+  },
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/message.svg'
+});
+
 
 const records = ref([
     {
