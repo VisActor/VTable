@@ -1,3 +1,19 @@
+# v1.6.2
+
+2024-08-30
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add formatCopyValue config
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix frozen column custom component clip
+- **@visactor/vtable**: fix menu auto hide when page crolled [#2241](https://github.com/VisActor/VTable/issues/2241)
+
+[更多详情请查看 v1.6.2](https://github.com/VisActor/VTable/releases/tag/v1.6.2)
+
 # v1.6.1
 
 2024-08-19
