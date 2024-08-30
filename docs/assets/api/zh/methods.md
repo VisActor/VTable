@@ -1251,3 +1251,12 @@ interface ISortedMapItem {
     this.eventManager.enableScroll();
   }
 ```
+
+## setCanvasSize(Function)
+
+直接设置 canvas 的宽高 不根据容器宽高来决定表格的尺寸
+
+```
+  /** 直接设置canvas的宽高 不根据容器宽高来决定表格的尺寸 */
+  setCanvasSize: (width: number, height: number) => void;
+```

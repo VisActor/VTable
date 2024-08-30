@@ -1253,3 +1253,12 @@ enableScroll() {
 this.eventManager.enableScroll();
 }
 ```
+
+## setCanvasSize(Function)
+
+Directly set the width and height of the canvas instead of determining the size of the table based on the container width and height
+
+```
+/** Directly set the width and height of the canvas instead of determining the size of the table based on the width and height of the container */
+setCanvasSize: (width: number, height: number) => void;
+```

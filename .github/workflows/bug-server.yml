@@ -33,11 +33,12 @@ jobs:
 
       - name: Build
         env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
-        run: node common/scripts/install-run-rush.js build -t @visactor/vtable
+          NODE_OPTIONS: '--max_old_space_size=4096'
+
+        run:  node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger
 
       - name: Run CI
-        working-directory: ./packages/vtable
+        working-directory: ./tools/bugserver-trigger
         env:
           BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
         run: node ../../common/scripts/install-run-rushx.js ci
