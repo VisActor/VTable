@@ -46,7 +46,7 @@ export function of(value: ITableThemeDefine | string | undefined | null): TableT
 export function get(): { [key: string]: TableTheme } {
   return extend(builtin, plugins);
 }
-export { ITableThemeDefine };
+export { ITableThemeDefine, TableTheme };
 export default {
   DARK,
   BRIGHT,

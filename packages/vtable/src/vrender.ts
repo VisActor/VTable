@@ -1,6 +1,6 @@
 import { loadPoptip } from '@visactor/vrender-components';
 import '@visactor/vrender-core';
-import { container, isBrowserEnv, isNodeEnv, preLoadAllModule } from '@visactor/vrender-core';
+import { container, isBrowserEnv, isNodeEnv, preLoadAllModule, registerFlexLayoutPlugin } from '@visactor/vrender-core';
 import {
   loadBrowserEnv,
   loadNodeEnv,
@@ -57,8 +57,8 @@ export function registerForVrender() {
   registerShadowRoot();
   registerSymbol();
   registerText();
+  registerFlexLayoutPlugin();
   // registerWrapText();
-
   loadPoptip();
 }
 

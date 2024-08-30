@@ -507,6 +507,14 @@ Whether to enable line break, the default is false.
 
 Whether to clear the container DOM.
 
+#${prefix} canvasWidth(number)
+
+Directly set the width of the canvas. Do not determine the size of the table based on the container width and height.
+
+#${prefix} canvasHeight(number)
+
+Directly set the height of the canvas. Do not determine the size of the table based on the width and height of the container.
+
 #${prefix} animationAppear(boolean|Object|)
 
 Table entry animation configuration.

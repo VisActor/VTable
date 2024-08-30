@@ -40,6 +40,6 @@ ${prefix} labelBackgroundFill(string)
 
 The background color of the label
 
-##${prefix} labelBackgroundCornerRadius(number)
+${prefix} labelBackgroundCornerRadius(number)
 
 The corner radius of the label background

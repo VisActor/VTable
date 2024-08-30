@@ -7,3 +7,5 @@
 {{import: table-events}}
 
 {{import: table-register}}
+
+{{ import: gantt-api }}
