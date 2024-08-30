@@ -41,9 +41,17 @@ export function createTable() {
     // 表格列宽度的计算模式，可以是 'standard'（标准模式）、'adaptive'（自适应容器宽度模式）或 'autoWidth'（自动宽度模式），默认为 'standard'。
     widthMode: 'autoWidth',
     heightMode: 'autoHeight',
-    defaultColWidth: 120
+    defaultColWidth: 120,
     // 冻结列数
     // frozenColCount: 3,
+    theme: {
+      scrollStyle: {
+        visible: 'always',
+        width: 20,
+        verticalPadding: [0, 2, 0, 2],
+        horizontalPadding: [5, 0, 5, 0]
+      }
+    }
   };
 
   // document.getElementById(CONTAINER_ID).parentElement.style.display = 'none';

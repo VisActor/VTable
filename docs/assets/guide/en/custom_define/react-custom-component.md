@@ -6,6 +6,8 @@ To help react developers quickly implement custom cell content, React-VTable pro
 
 ### Component usage
 
+*To use custom cell component, need to use react 18 version*
+
 Custom cell components are encapsulated based on [custom layout](../custom_define/custom_layout), and their usage is similar to custom layout. To use components in `ListColumn`, custom components need to pass in the `role` attribute to identify the component as a custom cell component; the `custom-layout` component will take effect in the table content part, and the `header-custom-layout` component will take effect in the table header part. There can be at most one `custom-layout` component in each column, and at most one `header-custom-layout` component.
 
 ```tsx

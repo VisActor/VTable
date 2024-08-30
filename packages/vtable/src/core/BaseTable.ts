@@ -456,6 +456,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //原有的toolTip提示框处理，主要在文字绘制不全的时候 出来全文本提示信息 需要加个字段设置是否有效
     internalProps.tooltip = Object.assign(
       {
+        parentElement: this.getElement(),
         renderMode: 'html',
         isShowOverflowTextTooltip: false,
         confine: true
@@ -2374,6 +2375,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // }
     internalProps.tooltip = Object.assign(
       {
+        parentElement: this.getElement(),
         renderMode: 'html',
         isShowOverflowTextTooltip: false,
         confine: true

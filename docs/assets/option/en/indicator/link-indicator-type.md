@@ -23,3 +23,11 @@ Specify the column type as 'link', and the default cellType is 'text' if not spe
 ##${prefix} templateLink(string)
 
 **Exclusive configuration for link type** Template link address, such as: 'https://www.google.com.hk/search?q={name}', where name is the attribute field name in the data source.
+
+##${prefix} linkTarget(string)
+
+**link type exclusive configuration item** Specifying the name of the browsing context the resource is being loaded into, is the second parameter of window.open(), and defaults to '_blank'.
+
+##${prefix} linkWindowFeatures(string)
+
+**link type exclusive configuration item** A string containing a comma-separated list of window features, which is the third parameter of window.open().

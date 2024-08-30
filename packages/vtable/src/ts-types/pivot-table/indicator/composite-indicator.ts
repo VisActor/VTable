@@ -16,6 +16,9 @@ export interface ICompositeColumnIndicator extends IBasicColumnIndicator {
   /** 模板链接地址，如：'https://www.google.com.hk/search?q={name}'，name是数据源属性字段名。 */
   templateLink?: string;
 
+  linkTarget?: string; // window.open的第二个参数
+  linkWindowFeatures?: string; // window.open的第三个参数
+
   // image 特有
   /** 是否保持横纵比 默认false */
   keepAspectRatio?: boolean;

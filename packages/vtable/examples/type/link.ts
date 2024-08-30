@@ -88,7 +88,8 @@ export function createTable() {
         },
         field: 'link',
         width: 300,
-        cellType: 'link'
+        cellType: 'link',
+        linkTarget: '_self'
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
