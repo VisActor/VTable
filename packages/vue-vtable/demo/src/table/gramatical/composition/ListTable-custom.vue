@@ -1,24 +1,80 @@
 <template>
-  <vue-list-table :options="option" :records="records" ref="tableRef">
-    <ListColumn v-for="item in columns" 
-      :key="item.field" 
-      :field="item.field" 
-      :title="item.title" 
-      :width="item.width" 
-      :style="item.style" 
-      :customLayout="item.customLayout" 
-      :icon="item.icon" 
-      :fieldFormat="item.fieldFormat" 
-    >
+  <vue-list-table :options="option" :records="records" ref="tableRef" >
+    
+    <ListColumn :field="'bloggerId'"  :title="'order number'"/>
+
+    <ListColumn :field="'bloggerName'" :title="'anchor nickname'" :width="330" :style=" { fontFamily: 'Arial',fontWeight: 500 }" >
+      <template #customLayout="{ table, row, col, rect, record, height, width  }">
+        <Group :height="height" :width="width" display="flex" flexDirection="row" flexWrap="nowrap">
+          <Group :height="percentCalc(100)" :width="60" display="flex" flexDirection="column" alignItems="center" justifyContent="space-around">
+            <Image id="icon0" :width="50" :height="50" :image="record.bloggerAvatar" :cornerRadius="25" />
+          </Group>
+          <Group :height="height" :width="percentCalc(100, -60)" display="flex" flexDirection="column" flexWrap="nowrap">
+            <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="flex-end">
+              <Text :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" />
+              <Image id="location" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg" :width="15" :height="15" :boundsPadding="[0, 0, 0, 10]" />
+              <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
+            </Group>
+            <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="center">
+              <Tag v-for="tag in record?.tags" :text="tag" :textStyle="{ fontSize: 10, fontFamily: 'sans-serif', fill: 'rgb(51, 101, 238)' }" :panel="{ visible: true, fill: '#f4f4f2', cornerRadius: 5 }" :space="5" :boundsPadding="[0, 0, 0, 5]" />
+            </Group>
+          </Group>
+        </Group>
+        </template> 
     </ListColumn>
+
+
+    <ListColumn :field="'fansCount'" :title="'fansCount'" :fieldFormat="rec => rec.fansCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
+
+    <ListColumn :field="'worksCount'" :title="'worksCount'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
+
+    <ListColumn :field="'viewCount'" :title="'viewCount'" :fieldFormat="rec => rec.fansCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
+
+    <ListColumn :field="'viewCount'" :title="'viewCount'" :fieldFormat="rec => rec.viewCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
+
+    <ListColumn :field="''" :title="'operation'" :width="100" :icon="['favorite', 'message']" />
+
+    <ListColumn :field="''" :title="'选项'" :width="200">
+      <template #customLayout="{ table, record, height, width }">
+        <Group :height="height" :width="width" display="flex" flexDirection="column" justifyContent="center">
+          <Group display="flex" flexDirection="row" flexWrap="nowrap" :boundsPadding="[5, 0, 5, 10]" justifyContent="center" >
+            <Text text="operate: " :fontSize="12" :boundsPadding="[0, 10, 0, 0]" />
+            <CheckBox :text="{ text: 'like', fontSize: 12 }" :spaceBetweenTextAndIcon="2" :boundsPadding="[0, 10, 0, 0]" @checkbox_state_change="handleCheckBoxStateChange($event)" />
+            <CheckBox :text="{ text: 'collect', fontSize: 12 }" :spaceBetweenTextAndIcon="2" @checkbox_state_change="handleCheckBoxStateChange($event)"/>
+          </Group>
+          <Group display="flex" flexDirection="row" flexWrap="nowrap" :boundsPadding="[5, 0, 5, 10]">
+            <Text :text="'type: '" :fontSize="12" :boundsPadding="[0, 10, 0, 0]" />
+              <Radio :text="{ text: 'normal', fontSize: 12 }" :checked="radio_state" :spaceBetweenTextAndIcon="2" :boundsPadding="[0, 10, 0, 0]" @radio_checked="(table) => {console.log(table)}" />
+              <Radio :text="{ text: 'special', fontSize: 12 }" :spaceBetweenTextAndIcon="2" @radio_checked="handleRadioChecked($event)" />
+          </Group>
+        </Group>
+      </template>
+    </ListColumn>
+
   </vue-list-table>
 </template>
 
 <script setup >
 import { ref , onMounted } from 'vue';
 import { ListColumn } from '../../../../../src/components/index';
-import * as VTable from '../../../../../../vtable/src/index';
+import { Group , Text , Image , Radio , CheckBox , Tag } from '../../../../../src/components/index';
+import * as VTable from '@visactor/vtable';
 
+const percentCalc = VTable.CustomLayout.percentCalc;
+
+const tableRef = ref(null);
+const radio_state = ref(false);
+
+
+function handleCheckBoxStateChange(e) {
+
+  console.log('Checkbox state changed:', e);
+}
+
+const handleRadioChecked = (e) => {
+  // radio_state = !radio_state;
+  console.log('Radio state changed:',e);
+} 
 
 VTable.register.icon('location', {
   type: 'svg',
@@ -67,295 +123,6 @@ VTable.register.icon('message', {
   svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/message.svg'
 });
 
-
-const columns = ref([
-    {
-      field: 'bloggerId',
-      title: 'order number'
-    },
-    {
-      field: 'bloggerName',
-      title: 'anchor nickname',
-      width: 330,
-      style: {
-        fontFamily: 'Arial',
-        fontWeight: 500
-      },
-      customLayout: args => {
-        const { table, row, col, rect } = args;
-        const record = table.getCellOriginRecord(col, row);
-        const { height, width } = rect ?? table.getCellRect(col, row);
-        const percentCalc = VTable.CustomLayout.percentCalc;
-
-        const container = new VTable.CustomLayout.Group({
-          height,
-          width,
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'nowrap'
-        });
-        const containerLeft = new VTable.CustomLayout.Group({
-          height: percentCalc(100),
-          width: 60,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-around'
-        });
-        container.add(containerLeft);
-
-        const icon0 = new VTable.CustomLayout.Image({
-          id: 'icon0',
-          width: 50,
-          height: 50,
-          image: record.bloggerAvatar,
-          cornerRadius: 25
-        });
-        containerLeft.add(icon0);
-
-        const containerRight = new VTable.CustomLayout.Group({
-          height: percentCalc(100),
-          width: percentCalc(100, -60),
-          display: 'flex',
-          flexDirection: 'column',
-          flexWrap: 'nowrap'
-        });
-        container.add(containerRight);
-
-        const containerRightTop = new VTable.CustomLayout.Group({
-          height: percentCalc(50),
-          width: percentCalc(100),
-          display: 'flex',
-          alignItems: 'flex-end'
-        });
-
-        const containerRightBottom = new VTable.CustomLayout.Group({
-          height: percentCalc(50),
-          width: percentCalc(100),
-          display: 'flex',
-          alignItems: 'center'
-        });
-
-        containerRight.add(containerRightTop);
-        containerRight.add(containerRightBottom);
-
-        const bloggerName = new VTable.CustomLayout.Text({
-          text: record.bloggerName,
-          fontSize: 13,
-          fontFamily: 'sans-serif',
-          fill: 'black'
-        });
-        containerRightTop.add(bloggerName);
-
-        const location = new VTable.CustomLayout.Image({
-          id: 'location',
-          image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
-          width: 15,
-          height: 15,
-          boundsPadding: [0, 0, 0, 10]
-        });
-        containerRightTop.add(location);
-
-        const locationName = new VTable.CustomLayout.Text({
-          text: record.city,
-          fontSize: 11,
-          fontFamily: 'sans-serif',
-          fill: '#6f7070'
-        });
-        containerRightTop.add(locationName);
-
-        for (let i = 0; i < record?.tags?.length ?? 0; i++) {
-          const tag = new VTable.CustomLayout.Tag({
-            text: record.tags[i],
-            textStyle: {
-              fontSize: 10,
-              fontFamily: 'sans-serif',
-              fill: 'rgb(51, 101, 238)'
-            },
-            panel: {
-              visible: true,
-              fill: '#f4f4f2',
-              cornerRadius: 5
-            },
-            space: 5,
-            boundsPadding: [0, 0, 0, 5]
-          });
-          containerRightBottom.add(tag);
-        }
-        return {
-          rootContainer: container,
-          renderDefault: false
-        };
-      }
-    },
-    {
-      field: 'fansCount',
-      title: 'fansCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
-      },
-      style: {
-        fontFamily: 'Arial',
-        fontSize: 12,
-        fontWeight: 'bold'
-      }
-    },
-    {
-      field: 'worksCount',
-      title: 'worksCount',
-      style: {
-        fontFamily: 'Arial',
-        fontSize: 12,
-        fontWeight: 'bold'
-      }
-    },
-    {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
-      },
-      style: {
-        fontFamily: 'Arial',
-        fontSize: 12,
-        fontWeight: 'bold'
-      }
-    },
-    {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
-      },
-      style: {
-        fontFamily: 'Arial',
-        fontSize: 12,
-        fontWeight: 'bold'
-      }
-    },
-    {
-      field: '',
-      title: '选项',
-      width: 200,
-      customLayout: args => {
-        const { table, row, col, rect } = args;
-        const { height, width } = rect ?? table.getCellRect(col, row);
-
-        const container = new VTable.CustomLayout.Group({
-          height,
-          width,
-          display: 'flex',
-          flexDirection: 'column',
-          // alignItems: 'center',
-          justifyContent: 'center'
-        });
-
-        const checkboxGroup = new VTable.CustomLayout.Group({
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'no-wrap',
-          boundsPadding: [5, 0, 5, 10],
-          justifyContent: 'center'
-        });
-        container.appendChild(checkboxGroup);
-
-        const checkboxText = new VTable.CustomLayout.Text({
-          text: 'operate: ',
-          fontSize: 12,
-          boundsPadding: [0, 10, 0, 0]
-        });
-        checkboxGroup.appendChild(checkboxText);
-
-        const checkbox1 = new VTable.CustomLayout.CheckBox({
-          text: {
-            text: 'like',
-            fontSize: 12
-          },
-          spaceBetweenTextAndIcon: 2,
-          boundsPadding: [0, 10, 0, 0]
-        });
-        checkbox1.render();
-        checkboxGroup.appendChild(checkbox1);
-        checkbox1.addEventListener('checkbox_state_change', e => {
-          console.log('checkbox_state_change', e);
-        });
-
-        const checkbox2 = new VTable.CustomLayout.CheckBox({
-          text: {
-            text: 'collect',
-            fontSize: 12
-          },
-          spaceBetweenTextAndIcon: 2
-          // boundsPadding: [10, 0, 0, 10]
-        });
-        checkbox2.render();
-        checkboxGroup.appendChild(checkbox2);
-        checkbox2.addEventListener('checkbox_state_change', e => {
-          console.log('checkbox_state_change', e);
-        });
-
-        const radioGroup = new VTable.CustomLayout.Group({
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'no-wrap',
-          boundsPadding: [5, 0, 5, 10]
-        });
-        container.appendChild(radioGroup);
-
-        const radioText = new VTable.CustomLayout.Text({
-          text: 'type: ',
-          fontSize: 12,
-          boundsPadding: [0, 10, 0, 0]
-        });
-        radioGroup.appendChild(radioText);
-
-        const radio1 = new VTable.CustomLayout.Radio({
-          text: {
-            text: 'normal',
-            fontSize: 12
-          },
-          checked: true,
-          spaceBetweenTextAndIcon: 2,
-          boundsPadding: [0, 10, 0, 0]
-        });
-        radio1.render();
-        radioGroup.appendChild(radio1);
-        radio1.addEventListener('radio_checked', () => {
-          if (radio2.attribute.checked) {
-            radio2.setAttribute('checked', false);
-            table.scenegraph.updateNextFrame();
-          }
-        });
-
-        const radio2 = new VTable.CustomLayout.Radio({
-          text: {
-            text: 'special',
-            fontSize: 12
-          },
-          spaceBetweenTextAndIcon: 2
-        });
-        radio2.render();
-        radioGroup.appendChild(radio2);
-        radio2.addEventListener('radio_checked', () => {
-          if (radio1.attribute.checked) {
-            radio1.setAttribute('checked', false);
-            table.scenegraph.updateNextFrame();
-          }
-        });
-
-        return {
-          rootContainer: container,
-          renderDefault: false
-        };
-      }
-    },
-    {
-      field: '',
-      title: 'operation',
-      width: 100,
-      icon: ['favorite', 'message']
-    }
-  ],);
 
 const records = ref([
     {
