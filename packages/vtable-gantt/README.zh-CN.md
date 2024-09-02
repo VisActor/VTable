@@ -10,7 +10,7 @@
 
 <div align="center">
 
-VTable-Gantt create an efficient and flexible Gantt chart solution to make project management easier. Through simple configuration and custom layout, you can quickly get started and meet various complex needs. Improve team collaboration efficiency and achieve transparency of project progress.
+VTable-Gantt 打造高效、灵活的甘特图解决方案，让项目管理更轻松。通过简单的配置和自定义布局，快速上手并满足各种复杂需求。提升团队协作效率，实现项目进度透明化。.
 
 <p align="center">
   <a href="https://visactor.io/vtable/guide/gantt/introduction">Introduction</a> •
@@ -27,7 +27,7 @@ VTable-Gantt create an efficient and flexible Gantt chart solution to make proje
 
 <div align="center">
 
-English| [简体中文](./README.zh-CN.md)
+简体中文| [English](./README.md)
 
 </div>
 
@@ -37,31 +37,31 @@ English| [简体中文](./README.zh-CN.md)
 
 </div>
 
-# Introduction
+# 介绍
 
-VTable-Gantt is a Gantt chart component library in the VisActor visualization system, based on the table component VTable and the visualization rendering engine VRender. It is designed specifically for project management and task tracking, providing powerful visualization and interaction features. The core capabilities are as follows:
+VTable-Gantt 是 VisActor 可视化体系中的甘特图组件库，基于表格组件VTabe和可视化渲染引擎 VRender 进行封装。它专为项目管理和任务跟踪设计，提供了强大的可视化和交互功能。核心能力如下：
 
-1. High performance: Supports fast computation and rendering of large-scale project data, ensuring a smooth user experience.
-2. Flexible layout: Supports custom timeline, task bar styles, and layouts to meet different project management needs.
-3. Powerful interaction: Provides drag-and-drop, zoom, and edit functions for tasks, simplifying project management operations.
-4. Rich visualization capabilities: supports custom rendering of information cells and task bars, provides tree structure display, and improves the diversity and intuitiveness of data display.
+1. 高效性能：支持大规模项目数据的快速运算与渲染，确保流畅的用户体验。
+2. 灵活布局：支持自定义时间轴、任务条样式和布局，满足不同项目管理需求。
+3. 强大交互：提供任务的拖拽、缩放和编辑功能，简化项目管理操作。
+4. 丰富的可视化能力：支持信息单元格及任务条的自定义渲染，提供树形结构展示，提升数据展示的多样性和直观性。
 
-# Repo Intro
+# 代码仓库介绍
 
-This repository includes the following packages:
+主要包含以下几个子项目:
 
-1. packages/vtable: The core code repository of VTable
-2. packages/vtable-gantt: Gantt chart component code
-3. packages/vtable-editors: Table editor component code
-4. packages/vtable-export: Table export tool code
-5. packages/vtable-search: Table search tool code
-6. packages/react-vtable: React version of the table component
-7. packages/vue-vtable: Vue version of the table component
-8. docs: Include VTable site tutorials, demos,apis and options, and also contains all Chinese and English documents.
+1. packages/vtable：表格组件代码
+2. packages/vtable-gantt: 甘特图组件代码
+3. packages/vtable-editors: 表格编辑器组件代码
+4. packages/vtable-export: 表格导出工具代码
+5. packages/vtable-search: 表格搜索工具代码
+6. packages/react-vtable: React 版本的表格组件
+7. packages/vue-vtable: Vue 版本的表格组件
+8. docs: 教程文档
 
-# Usage
+# 用法
 
-## Installation
+## 安装
 
 [npm package](https://www.npmjs.com/package/@visactor/vtable)
 
@@ -73,7 +73,7 @@ npm install @visactor/vtable-gantt
 yarn add @visactor/vtable-gantt
 ```
 
-## Quick Start
+## 快速上手
 
 ```javascript
 import {Gantt} from '@visactor/vtable-gantt';
@@ -212,26 +212,26 @@ const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID), option);
 
 ##
 
-[More demos and detailed tutorials](https://visactor.io/vtable)
+[更多 demo 和详细教程](https://visactor.io/vtable)
 
-# Related Links
+# 相关链接
 
-- [Official website](https://visactor.io/vtable)
+- [官网](https://visactor.io/vtable)
 
-# Ecosystem
+# 生态系统
 
 | Project                                                     | Description                                                                            |
 | ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | [AI-generated Components](https://visactor.io/ai-vtable)    | AI-generated table component.                                                          |
 
-# Contribution
+# 参与贡献
 
-If you would like to contribute, please read the [Code of Conduct ](./CODE_OF_CONDUCT.md) 和 [ Guide](./CONTRIBUTING.zh-CN.md) first。
+如想参与贡献，请先阅读 [行为准则](./CODE_OF_CONDUCT.md) 和 [贡献指南](./CONTRIBUTING.zh-CN.md)。
 
-Small streams converge to make great rivers and seas!
+细流成河，终成大海！
 
 <a href="https://github.com/visactor/vtable/graphs/contributors"><img src="https://contrib.rocks/image?repo=visactor/vtable" /></a>
 
-# License
+# 许可证
 
-[MIT License](./LICENSE)
+[MIT 协议](./LICENSE)

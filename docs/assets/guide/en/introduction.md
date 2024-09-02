@@ -14,23 +14,30 @@ VTable is packaged with the visual rendering engine VRender, which provides exce
 VTable provides three main table forms, including basic table, multi-dimensional perspective table and perspective combination diagram. It can meet the needs of different users, help users better display and analyze data, and find valuable information from it.
 
 <div style="display: flex;">
- <div style="width: 33%; text-align: center;">
+ <div style="width: 43%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/5717b050ef81c8b03549af800.png" />
     <p>list table</p>
   </div>
-  <div style="width: 33%; text-align: center;">
+  <div style="width: 43%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/5717b050ef81c8b03549af801.png" />
     <p>pivot table</p>
   </div>
-  <div style="width: 33%; text-align: center;">
+  </div>
+  <div style="display: flex;">
+  <div style="width: 43%; text-align: center;">
  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/5717b050ef81c8b03549af802.png" />
     <p>pivot chart</p>
+  </div>
+  <div style="width: 43%; text-align: center;">
+ <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-basic-preview.png" />
+    <p>gantt chart</p>
   </div>
 </div>
 
 *   The basic table is the simplest form of table, it consists of rows and columns, and each cell contains a data item. Basic tables are suitable for simple arrangement and presentation of data.
 *   Pivot table is a table form for multidimensional data analytics, which can aggregate and summarize data according to multiple Dimensions, providing users with multi-angle data analytics and exploration.
-*   A perspective combination chart is a chart form that combines a multi-dimensional perspective table with other chart forms (such as histograms, line charts, etc.), which can transform the data in the perspective table into a more intuitive and understandable graphical display.
+*   Pivot chart is a chart form that combines a multi-dimensional perspective table with other chart forms (such as histograms, line charts, etc.), which can transform the data in the perspective table into a more intuitive and understandable graphical display.
+*   Gantt chart is a chart used to display project progress and resource allocation. It can help users better understand the progress of the project and resource allocation.
 
 At the same time, the basic table can be transformed into a transposed table, and the hierarchical relationship can also be displayed with a tree structure:
 
