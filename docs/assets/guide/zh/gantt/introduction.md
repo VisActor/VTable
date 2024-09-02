@@ -1,5 +1,8 @@
 # 甘特图 (Gantt Chart) 介绍与使用教程
 甘特图是一种项目管理工具，用于展示项目计划、任务进度和时间安排。它通过条形图的形式直观地展示任务的开始和结束时间，帮助项目管理者有效地跟踪和管理项目进度。其中每个任务在图中显示为一个条形，条形的长度表示任务的持续时间，位置表示任务的开始和结束时间。
+
+VTable-Gantt 是一款基于 VTable表格组件及canvas渲染器VRender 构建的强大甘特图绘制工具，能够帮助开发者轻松创建和管理甘特图
+
 ## 甘特图的组成部分
 左侧任务列表：显示项目的任务列表，通常在图的左侧。
 
@@ -16,6 +19,10 @@
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-structure.png)
 
 **注意：左侧的任务信息表在实现中对应的是一个完整的ListTable。挂在ganttInstable.listTableInstance中，所以对应ListTable的接口及事件都是可以通过listTableInstance来直接使用的，同时如果想要排查左侧表格的问题也可以直接将listTableInstance.options取出查看是否符合预期**
+ <div style="width: 50%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-leftListTable.png" />
+    <p>left table</p>
+  </div>
 
 ## 甘特图的主要能力
 
@@ -38,7 +45,7 @@
 
 ### 支持不同的日期刻度粒度
 
-通过 `timelineHeader.scales.rowHeight` 和 `timelineHeader.scales.unit` 配置项，可以设置日期刻度的行高和时间单位（如天、周、月等）。
+通过 `timelineHeader.scales.unit` 配置项，可以设置日期刻度的行高和时间单位（如天、周、月等）。
 
 ### 日期表头样式
 
