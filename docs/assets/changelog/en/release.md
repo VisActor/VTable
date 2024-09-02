@@ -1,3 +1,14 @@
+# v1.7.1
+
+2024-09-02
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix envs type in react-vtable
+
+[more detail about v1.7.1](https://github.com/VisActor/VTable/releases/tag/v1.7.1)
+
 # v1.6.3
 
 2024-08-29
