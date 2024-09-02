@@ -1,3 +1,14 @@
+# v1.7.1
+
+2024-09-02
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix envs type in react-vtable
+
+[更多详情请查看 v1.7.1](https://github.com/VisActor/VTable/releases/tag/v1.7.1)
+
 # v1.6.3
 
 2024-08-29
