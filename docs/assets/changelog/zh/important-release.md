@@ -5,7 +5,7 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable-gantt**: 新增甘特图gantt chart
+- **@visactor/vtable-gantt**: 新增甘特图 gantt chart
 
 
 # v1.0.0

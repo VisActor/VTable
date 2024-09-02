@@ -5,9 +5,18 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix envs type in react-vtable
+- **@visactor/react-vtable**: fix envs type in react-vtable
 
 [more detail about v1.7.1](https://github.com/VisActor/VTable/releases/tag/v1.7.1)
+
+
+# v1.7.0
+
+2024-08-30
+
+**🆕 New feature**
+
+- **@visactor/vtable-gantt**: add gantt chart
 
 # v1.6.3
 
