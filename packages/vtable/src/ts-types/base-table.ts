@@ -604,7 +604,7 @@ export interface BaseTableAPI {
 
   _rowRangeHeightsMap: Map<string, number>;
   _colRangeWidthsMap: Map<string, number>;
-
+  canvasSizeSeted?: boolean;
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -795,7 +795,8 @@ export interface BaseTableAPI {
   toggleHierarchyState: (col: number, row: number) => void;
 
   resize: () => void;
-
+  /** 直接设置canvas的宽高 不根据容器宽高来决定表格的尺寸 */
+  setCanvasSize: (width: number, height: number) => void;
   getMergeCellRect: (col: number, row: number) => Rect;
 
   getTargetColAt: (absoluteX: number) => ColumnInfo | null;

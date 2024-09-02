@@ -1,0 +1,38 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@visactor/vtable": ["../../packages/vtable/src"],
+      "@visactor/vtable/es/vrender": ["../../packages/vtable/src/vrender.ts"],
+      "@visactor/vtable-gantt": ["../../packages/vtable-gantt/src"],
+      "@visactor/vtable-editors": ["../../packages/vtable-editors/src"]
+    },
+    "target": "ES2016",
+    "useDefineForClassFields": true,
+    "module": "ES2015",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "Node",
+    "strict": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true
+  },
+  "references": [
+    {
+      "path": "../../packages/vtable-editors"
+    },
+    {
+      "path": "../../packages/vtable-gantt"
+    },
+    {
+      "path": "../../packages/vtable"
+    }
+  ],
+  "include": ["src", "scripts"]
+}

@@ -1045,8 +1045,8 @@ arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: Cel
 ```
 
 - cellPosition: cell position information, supports configuration of single cells and cell areas
-  - Single cell: `{ row: number, column: number }`
-  - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+  - Single cell: `{ row: number, col: number }`
+  - Cell range: `{ range: { start: { row: number, col: number }, end: { row: number, col: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
 
 ## getCheckboxState(Function)
@@ -1252,4 +1252,13 @@ Enable scrolling of the table
 enableScroll() {
 this.eventManager.enableScroll();
 }
+```
+
+## setCanvasSize(Function)
+
+Directly set the width and height of the canvas instead of determining the size of the table based on the container width and height
+
+```
+/** Directly set the width and height of the canvas instead of determining the size of the table based on the width and height of the container */
+setCanvasSize: (width: number, height: number) => void;
 ```

@@ -505,6 +505,14 @@ editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' |
 
 是否清空容器 DOM。
 
+#${prefix} canvasWidth(number)
+
+直接设置 canvas 的宽度. 不根据容器宽高来决定表格的尺寸
+
+#${prefix} canvasHeight(number)
+
+直接设置 canvas 的高度. 不根据容器宽高来决定表格的尺寸
+
 #${prefix} animationAppear(boolean|Object|)
 
 表格的入场动画配置。

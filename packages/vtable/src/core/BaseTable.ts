@@ -179,7 +179,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   // bottomFrozenRowCount: number = 0;
   // rightFrozenColCount: number = 0;
-
+  /** 是否设置了canvas的宽高 */
+  canvasSizeSeted?: boolean;
   static get EVENT_TYPE(): typeof TABLE_EVENT_TYPE {
     return TABLE_EVENT_TYPE;
   }
@@ -289,7 +290,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         padding.right && (this.padding.right = padding.right);
       }
     }
-
+    if (isValid(canvasHeight) && isValid(canvasWidth)) {
+      this.canvasSizeSeted = true;
+    }
     this.tableNoFrameWidth = 0;
     this.tableNoFrameHeight = 0;
     this.canvasWidth = canvasWidth;
@@ -518,7 +521,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   get canvas(): HTMLCanvasElement {
     return this.internalProps.canvas;
   }
-
+  setCanvasSize(canvasWidth: number, canvasHeight: number) {
+    this.canvasWidth = canvasWidth;
+    this.canvasHeight = canvasHeight;
+    this.options.canvasHeight = canvasHeight;
+    this.options.canvasWidth = canvasWidth;
+    this.resize();
+  }
   resize() {
     this._updateSize();
     this.internalProps.legends?.forEach(legend => {
@@ -951,16 +960,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       const element = this.getElement();
       let widthWithoutPadding = 0;
       let heightWithoutPadding = 0;
-      if (element.parentElement) {
-        const computedStyle = element.parentElement.style || window.getComputedStyle(element.parentElement); // 兼容性处理
-        widthWithoutPadding =
-          element.parentElement.offsetWidth -
-          parseInt(computedStyle.paddingLeft || '0px', 10) -
-          parseInt(computedStyle.paddingRight || '0px', 10);
-        heightWithoutPadding =
-          element.parentElement.offsetHeight -
-          parseInt(computedStyle.paddingTop || '0px', 10) -
-          parseInt(computedStyle.paddingBottom || '0px', 20);
+      if (this.canvasSizeSeted) {
+        widthWithoutPadding = this.canvasWidth;
+        heightWithoutPadding = this.canvasHeight;
+      } else {
+        if (element.parentElement) {
+          const computedStyle = element.parentElement.style || window.getComputedStyle(element.parentElement); // 兼容性处理
+          widthWithoutPadding =
+            element.parentElement.offsetWidth -
+            parseInt(computedStyle.paddingLeft || '0px', 10) -
+            parseInt(computedStyle.paddingRight || '0px', 10);
+          heightWithoutPadding =
+            element.parentElement.offsetHeight -
+            parseInt(computedStyle.paddingTop || '0px', 10) -
+            parseInt(computedStyle.paddingBottom || '0px', 20);
+        }
       }
       const width1 = widthWithoutPadding ?? 1 - 1;
       const height1 = heightWithoutPadding ?? 1 - 1;
@@ -969,7 +983,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       element.style.height = (height1 && `${height1 - padding.top - padding.bottom}px`) || '0px';
 
       const { canvas } = this.internalProps;
-      widthP = canvas.parentElement?.offsetWidth ?? 1 - 1;
+      widthP = canvas.parentElement?.offsetWidth ?? 1 - 1; //TODO 这里写错了 应该在??前后加上小括号的  但是如果这里改了整个大小也就变了 所以这里先不动
       heightP = canvas.parentElement?.offsetHeight ?? 1 - 1;
 
       //style 与 width，height相同
@@ -998,8 +1012,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightP = this.canvasHeight - 1;
     }
 
-    const width = Math.floor(widthP - style.getScrollBarSize(this.getTheme().scrollStyle));
-    const height = Math.floor(heightP - style.getScrollBarSize(this.getTheme().scrollStyle));
+    const width = Math.floor(widthP - style.getVerticalScrollBarSize(this.getTheme().scrollStyle));
+    const height = Math.floor(heightP - style.getHorizontalScrollBarSize(this.getTheme().scrollStyle));
 
     if (this.internalProps.theme?.frameStyle) {
       //考虑表格整体边框的问题
@@ -3684,7 +3698,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   measureTextBounds(attribute: ITextGraphicAttribute): AABBBounds {
-    return measureTextBounds(attribute);
+    return measureTextBounds(attribute) as AABBBounds;
   }
 
   /** 获取单元格上定义的自定义渲染配置 */
