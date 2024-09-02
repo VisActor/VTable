@@ -127,9 +127,9 @@ export function updateCellHeight(
   cell.needUpdateHeight = false;
 
   cell.setAttribute('height', distHeight);
-  const isvTableMerge = scene.table.getCellRawRecord(col, row)?.vTableMerge;
+  const isvtableMerge = scene.table.getCellRawRecord(col, row)?.vtableMerge;
   // 更新单元格布局
-  const type = isvTableMerge
+  const type = isvtableMerge
     ? 'text'
     : scene.table.isHeader(col, row)
     ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
@@ -236,9 +236,9 @@ export function updateCellHeight(
         let customRender;
         let customLayout;
         const cellLocation = scene.table.getCellLocation(col, row);
-        const { vTableMerge } = scene.table.getCellRawRecord(col, row);
+        const { vtableMerge } = scene.table.getCellRawRecord(col, row);
 
-        if (vTableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+        if (vtableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
           customLayout = (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout;
         } else if (cellLocation !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);

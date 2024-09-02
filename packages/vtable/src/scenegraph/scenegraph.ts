@@ -1639,8 +1639,8 @@ export class Scenegraph {
   }
 
   updateCellContentWhileResize(col: number, row: number) {
-    const isvTableMerge = this.table.getCellRawRecord(col, row)?.vTableMerge;
-    const type = isvTableMerge
+    const isvtableMerge = this.table.getCellRawRecord(col, row)?.vtableMerge;
+    const type = isvtableMerge
       ? 'text'
       : this.table.isHeader(col, row)
       ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType

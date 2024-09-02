@@ -2,8 +2,6 @@
 
 在本教程中，我们将介绍如何使用 @visactor/vtable-gantt 的自定义能力绘制甘特图。
 
-**因为左侧是一个完整的ListTable，所以可直接参照在ListTable中[自定义渲染教程](../custom_define/custom_layout)。**
-
 ## 准备工作
 
 导入自定义图元内容，因为安装的@visactor/vtable已经包含了渲染引擎VRender库的图元类型，我们可以直接从中导入。
@@ -13,6 +11,9 @@ import { Group, Image, Text,Tag } from '@visactor/vtable/es/vrender';
 or
 import * as VRender from '@visactor/vtable/es/vrender';
 ```
+## 左侧任务信息表格单元格自定义渲染
+
+**因为左侧是一个完整的ListTable，所以可直接参照在ListTable中[自定义渲染教程](../custom_define/custom_layout)。**
 
 ## 自定义渲染日期表头
 
@@ -20,9 +21,9 @@ import * as VRender from '@visactor/vtable/es/vrender';
 
 customLayout是一个自定义函数：
 ```
- (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj;
+(args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj;
 ```
-
+### 参数说明
 函数参数由Gantt组件提供，包含了渲染的任务条的尺寸，以及日期信息。具体为：
 ```
 export type DateCustomLayoutArgumentType = {
@@ -38,9 +39,22 @@ export type DateCustomLayoutArgumentType = {
   ganttInstance: Gantt;
 };
 ```
+### 返回值说明
+返回值需要包含一个VRender的Group容器对象，这个rootContainer中要包括你需要在日期表头显示的具体内容结构。
+```
+export type IDateCustomLayoutObj = {
+  rootContainer: Group;
+  renderDefaultText?: boolean; // 是否渲染正常非自定义的文本，默认false
+};
+```
 
-返回值是一个VRender的Group容器。
+VRender的各个图元可以理解成一个dom树形结构，每个图元都有一个父容器，父容器可以包含多个子图元。常用的图元类型及其配置可以具体参考VRender[配置文档](https://visactor.io/vrender/option)：
+ <div style="width: 40%; text-align: center;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-vrender-graphic-overview.png" />
+  <p>VRender Element Type</p>
+</div>
 
+### demo
 具体可以参照demo：
 
 ```javascript livedemo template=vtable
@@ -391,7 +405,7 @@ customLayout是一个自定义函数：
 ```
  (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj;
 ```
-
+### 参数说明
 函数参数由Gantt组件提供，包含了渲染的任务条的尺寸，以及任务条的数据信息。具体为：
 ```
 export type TaskBarCustomLayoutArgumentType = {
@@ -406,10 +420,44 @@ export type TaskBarCustomLayoutArgumentType = {
   ganttInstance: Gantt;
 };
 ```
+### 返回值说明
+返回值需要包含一个VRender的Group容器对象，这个rootContainer中要包括你需要在任务条中显示的具体内容结构。
+```
+export type ITaskBarCustomLayoutObj = {
+  rootContainer: Group;
+  renderDefaultBar?: boolean; // 默认false
+  renderDefaultResizeIcon?: boolean; // 默认false
+  renderDefaultText?: boolean; // 默认false
+};
+```
+VRender的各个图元可以理解成一个dom树形结构，每个图元都有一个父容器，父容器可以包含多个子图元。常用的图元类型及其配置可以具体参考VRender[配置文档](https://visactor.io/vrender/option)：
+ <div style="width: 40%; text-align: center;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-vrender-graphic-overview.png" />
+  <p>VRender Element Type</p>
+</div>
 
-返回值是一个VRender的Group容器。
+### 自定义图元事件监听
 
+VRender的图元支持配置事件监听，如下代码逻辑：
 
+```
+      const avatar = new VRender.Image({
+        width: 50,
+        height: 50,
+        image: taskRecord.avatar,
+        cornerRadius: 25
+      });
+      // 鼠标悬浮到头像上时，显示tooltip 显示负责人名字
+      avatar.addEventListener('mouseenter',event => {
+        console.log('enter');
+        const containerRect = document.getElementById(CONTAINER_ID).getBoundingClientRect();
+        debugger;
+        const targetX=event.target.globalAABBBounds.x1;
+        const targetY=event.target.globalAABBBounds.y1;
+        showTooltip([taskRecord.developer],ganttInstance.taskTableWidth+ targetX+containerRect.left, targetY+containerRect.top+50);
+      });
+```
+### demo
 具体可以参照demo：
 
 ```javascript livedemo template=vtable
