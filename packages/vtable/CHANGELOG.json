@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.7.1",
+      "tag": "@visactor/vtable_v1.7.1",
+      "date": "Mon, 02 Sep 2024 03:26:48 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix envs type in react-vtable"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.7.0",
       "tag": "@visactor/vtable_v1.7.0",
       "date": "Fri, 30 Aug 2024 11:54:08 GMT",
