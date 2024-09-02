@@ -8,7 +8,7 @@ module.exports = {
   name: 'ReactVTable',
   umdOutputFilename: 'react-vtable',
   envs: {
-    'process.env.NODE_ENV': 'production'
+    'process.env.NODE_ENV': '"production"'
   },
   rollupOptions: {
     treeshake: true
