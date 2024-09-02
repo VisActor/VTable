@@ -78,29 +78,6 @@ yarn add @visactor/vtable-gantt
 ```javascript
 import {Gantt} from '@visactor/vtable-gantt';
 
-const columns =[
-    {
-        "field": "Order ID",
-        "caption": "Order ID",
-    },
-    {
-        "field": "Customer ID",
-        "caption": "Customer ID",
-    },
-    {
-        "field": "Product Name",
-        "caption": "Product Name",
-    },
-    {
-        "field": "Sales",
-        "caption": "Sales",
-    },
-    {
-        "field": "Profit",
-        "caption": "Profit",
-    }
-];
-
 const records = [
   {
     id: 1,

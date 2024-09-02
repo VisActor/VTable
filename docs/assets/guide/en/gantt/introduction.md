@@ -1,5 +1,8 @@
 # Gantt Chart Introduction and Usage Guide
 A Gantt chart is a project management tool used to display project plans, task progress, and schedules. It visually represents the start and end times of tasks using bar charts, helping project managers effectively track and manage project progress. Each task is displayed as a bar in the chart, with the length of the bar representing the duration of the task and the position representing the start and end times of the task.
+
+VTable-Gantt is a powerful Gantt chart drawing tool built on the VTable table component and the canvas renderer VRender, enabling developers to easily create and manage Gantt charts.
+
 ## Components of a Gantt Chart
 Task List on the Left: Displays the list of project tasks, usually on the left side of the chart.
 
@@ -16,6 +19,11 @@ Divider Lines: Separate the task list and timeline, making the chart clearer.
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-structure.png)
 
 **Note: The task information table on the left corresponds to a complete ListTable in the implementation. It is attached to ganttInstable.listTableInstance, so the interfaces and events corresponding to ListTable can be directly used through listTableInstance. If you want to troubleshoot issues with the table on the left, you can also directly extract listTableInstance.options to check if they meet expectations.**
+ <div style="width: 40%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-leftListTable-en.png" />
+    <p>left table</p>
+  </div>
+
 
 ## Main Capabilities of the Gantt Chart
 
@@ -34,7 +42,7 @@ You can customize the rendering of date headers through the `timelineHeader.scal
 You can define the custom rendering of each cell in each column through `taskListTable.columns.customLayout` or globally define the custom rendering of each cell through `taskListTable.customLayout`.
 
 ### Support for Different Date Scale Granularities
-You can set the row height and time unit (such as day, week, month, etc.) of the date scale through the `timelineHeader.scales.rowHeight` and `timelineHeader.scales.unit` configuration items.
+You can set the row height and time unit (such as day, week, month, etc.) of the date scale through the `timelineHeader.scales.unit` configuration items.
 
 ### Date Header Style
 You can customize the style of the date header through the `timelineHeader.scales.style` configuration item.
