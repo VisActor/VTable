@@ -102,8 +102,8 @@ function getTreeTitleMerge(col: number, row: number, cellRange: CellRange, layou
   }
 
   const cellRecord = layout._table.getCellRawRecord(col, row);
-  if (cellRecord?.vTableMerge) {
-    // const vTableMergeName = cellRecord.vtableMergeName;
+  if (cellRecord?.vtableMerge) {
+    // const vtableMergeName = cellRecord.vtableMergeName;
     cellRange.start.col = layout.rowHeaderLevelCount;
     cellRange.end.col = layout.colCount - 1;
     cellRange.start.row = cellRange.end.row = row;
