@@ -2,7 +2,6 @@
 
 In this tutorial, we will introduce how to use the custom capabilities of @visactor/vtable-gantt to draw a Gantt chart.
 
-**Since the left side is a complete ListTable, you can directly refer to the [custom rendering tutorial](../custom_define/custom_layout) in ListTable.**
 
 ## Preparation
 
@@ -13,6 +12,8 @@ import { Group, Image, Text, Tag } from '@visactor/vtable/es/vrender';
 or
 import * as VRender from '@visactor/vtable/es/vrender';
 ```
+## Custom Rendering of Left Task Information Table Cells
+**Since the left side is a complete ListTable, you can directly refer to the [custom rendering tutorial](../custom_define/custom_layout) in ListTable.**
 
 ## Custom Rendering of Date Header
 
@@ -22,7 +23,7 @@ customLayout is a custom function:
 ```
  (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj;
 ```
-
+### Parameter description
 The function parameters are provided by the Gantt component and include the dimensions of the rendered task bar and date information. Specifically:
 ```
 export type DateCustomLayoutArgumentType = {
@@ -38,8 +39,21 @@ export type DateCustomLayoutArgumentType = {
   ganttInstance: Gantt;
 };
 ```
+### returned value specification
+The return value needs to include a VRender Group container object. This rootContainer should contain the specific content structure you want to display in the date header.
+```
+export type IDateCustomLayoutObj = {
+  rootContainer: Group;
+  renderDefaultText?: boolean; // 是否渲染正常非自定义的文本，默认false
+};
+```
+Each VRender graphic element can be understood as a DOM tree structure, where each element has a parent container that can contain multiple child elements. Common graphic element types and their configurations can be found in the VRender [configuration documentation](https://visactor.io/vrender/option):
+ <div style="width: 40%; text-align: center;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-vrender-graphic-overview.png" />
+  <p>VRender Element Type</p>
+</div>
 
-The return value is a VRender Group container.
+### demo
 
 You can refer to the demo:
 
@@ -390,7 +404,7 @@ customLayout is a custom function:
 ```
  (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj;
 ```
-
+### Parameter description
 The function parameters are provided by the Gantt component and include the dimensions of the rendered task bar and task bar data information. Specifically:
 ```
 export type TaskBarCustomLayoutArgumentType = {
@@ -405,9 +419,44 @@ export type TaskBarCustomLayoutArgumentType = {
   ganttInstance: Gantt;
 };
 ```
+### Return Value Description
+The return value needs to include a VRender Group container object. This rootContainer should contain the specific content structure you want to display in the task bar.
+```
+export type ITaskBarCustomLayoutObj = {
+  rootContainer: Group;
+  renderDefaultBar?: boolean; // default false
+  renderDefaultResizeIcon?: boolean; // default false
+  renderDefaultText?: boolean; // default false
+};
+```
+Each VRender graphic element can be understood as a DOM tree structure, where each element has a parent container that can contain multiple child elements. Common graphic element types and their configurations can be found in the VRender [configuration documentation](https://visactor.io/vrender/option):
+ <div style="width: 40%; text-align: center;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-vrender-graphic-overview.png" />
+  <p>VRender Element Type</p>
+</div>
 
-The return value is a VRender Group container.
+### Custom Graphic Element Event Listeners
 
+VRender graphic elements support event listeners, as shown in the following code logic:
+
+```
+      const avatar = new VRender.Image({
+        width: 50,
+        height: 50,
+        image: taskRecord.avatar,
+        cornerRadius: 25
+      });
+      // 鼠标悬浮到头像上时，显示tooltip 显示负责人名字
+      avatar.addEventListener('mouseenter',event => {
+        console.log('enter');
+        const containerRect = document.getElementById(CONTAINER_ID).getBoundingClientRect();
+        debugger;
+        const targetX=event.target.globalAABBBounds.x1;
+        const targetY=event.target.globalAABBBounds.y1;
+        showTooltip([taskRecord.developer],ganttInstance.taskTableWidth+ targetX+containerRect.left, targetY+containerRect.top+50);
+      });
+```
+### demo
 You can refer to the demo:
 
 

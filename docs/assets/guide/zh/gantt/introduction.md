@@ -31,6 +31,8 @@ VTable-Gantt 是一款基于 VTable表格组件及canvas渲染器VRender 构建�
 
 ### 自定义渲染
 
+自定义渲染需要了解VRender的图元属性，具体可以参考[自定义渲染教程](../../guide/gantt/gantt_customLayout)
+
 #### 任务条的自定义渲染
 通过 `taskBar.customLayout` 配置项，可以自定义任务条的渲染方式。
 
@@ -45,6 +47,8 @@ VTable-Gantt 是一款基于 VTable表格组件及canvas渲染器VRender 构建�
 
 ### 支持不同的日期刻度粒度
 
+通常的业务场景中，可能需要涉及多层时间刻度的展示，VTable-Gantt支持五种时间粒度：`'day' | 'week' | 'month' | 'quarter' | 'year'`。
+
 通过 `timelineHeader.scales.unit` 配置项，可以设置日期刻度的行高和时间单位（如天、周、月等）。
 
 ### 日期表头样式
@@ -55,19 +59,19 @@ VTable-Gantt 是一款基于 VTable表格组件及canvas渲染器VRender 构建�
 
 ### 外边框
 
-通过 `frame.outerFrameStyle` 配置项，可以自定义甘特图的外边框。
+表格的边框可能与内部的网格线在样式上有一定的不同，可以通过 `frame.outerFrameStyle` 配置项，可以自定义甘特图的外边框。
 
 ### 横纵分割线
 
-通过 `frame.horizontalSplitLine` 配置项，可以自定义水平分割线的样式。`frame.verticalSplitLine` 配置项，可以自定义垂直分割线的样式。
+同时支持表头和body的横向分割线，及左侧信息表和右侧任务列表的分割线。通过 `frame.horizontalSplitLine` 配置项，可以自定义水平分割线的样式。`frame.verticalSplitLine` 配置项，可以自定义垂直分割线的样式。
 
 ### 标记线
 
-通过 `markLine.style` 配置项，可以自定义标记线的样式。
+在gantt甘特图中通常需要标记一些重要的日期，我们通过配置项markLine来配置该效果。通过`markLine.date`来指定重点日期，通过 `markLine.style` 配置项，可以自定义标记线的样式。如果需要将该日期在初始化时一定要展示出来可以设置`markLine.scrollToMarkLine`为`true`。
 
 ### 容器网格线
 
-通过 `grid` 配置项，可以自定义右侧任务条背景网格线的样式。包括背景色、线宽、线型等。
+通过 `grid` 配置项，可以自定义右侧任务条背景网格线的样式。包括背景色、横纵方向的线宽、线型等。
 
 ### 交互
 
@@ -85,11 +89,13 @@ VTable-Gantt 是一款基于 VTable表格组件及canvas渲染器VRender 构建�
 
 #### 编辑任务信息
 
-通过ListTable的编辑能力，可以同步更新数据到任务条。
+通过`ListTable`的编辑能力，可以同步更新数据到任务条。
+
+开启编辑能力需要先提前注册好编辑器到VTable中，因为这里的编辑能力实际是借助的`ListTable`的编辑能力。
 
 #### 调整数据顺序
 
-通过ListTable的排序行序号能力，可以调整数据顺序，并同步到任务条。
+开启拖拽换位能力同`ListTable`的配置需要在配置中添加`rowSeriesNumber`，即有了行序号，用`rowSeriesNumber.style`和`headerStyle`中可以配置该列的样式，开启换位的话将`rowSeriesNumber.dragOrder`设置为true。`VTable-Gantt`在监听有移位事件时将顺序同步到任务条区域显示。
 
 ## 借助表格的能力
 甘特图是基于VTable的ListTable实现的，看上去相当于一个拼接形式，左侧是任务信息表格，右侧是任务条列表。
@@ -109,7 +115,7 @@ VTableGantt内部借助这个表格实例tableInstance实现的能力有：
 3. 借助ListTable的排序能力，实现了甘特图数据排序能力。ListTable的[参考教程](../../guide/basic_function/sort/list_sort)。
 4. 借助ListTable的树形结构能力，实现了甘特图父子关系的数据。ListTable的[参考教程](../../guide/table_type/List_table/tree_list)。
 
-##  vtable-gantt主要配置
+## vtable-gantt主要配置
 在 vtable-gantt 组件中，支持的主要配置包括：
 
 1. 数据配置records
@@ -131,10 +137,10 @@ VTableGantt内部借助这个表格实例tableInstance实现的能力有：
 5. 网格线配置grid
     1. 样式配置: 通过 verticalLine 和 horizontalLine 配置项，可以设置网格线的颜色、宽度、虚线样式等。
     2. 背景颜色: 通过 backgroundColor 配置项，可以设置网格线的背景颜色。
-6. 任务列表表格配置 taskListTable（左侧任务信息列表ListTable的配置，需要可以参考[配置](../../option/Gantt#taskListTable)
+6. 任务列表表格配置 taskListTable (左侧任务信息列表 对应ListTable的配置，需要可以参考[配置](../../option/Gantt#taskListTable))
     1. 左侧表格整体宽度：通过 tableWidth 配置项，可以设置任务列表表格的整体宽度。
     2. 列信息: 通过 columns，可以定义任务信息表格的列信息和各列宽度。
-    3. 样式配置: 通过 headerStyle 和 bodyStyle 配置项，可以设置表头和表体的样式。
+    3. 样式配置: 通过 theme.headerStyle 和 theme.bodyStyle 配置项，可以设置表头和表体的样式。
     4. 宽度限制: 通过 minTableWidth 和 maxTableWidth 配置项，可以设置任务列表的最小和最大宽度。
 7. 分割线配置 frame
     1. 外边框配置: 通过 outerFrameStyle 配置项，可以设置外边框的颜色、宽度等。
@@ -147,7 +153,6 @@ VTableGantt内部借助这个表格实例tableInstance实现的能力有：
     4. 标记线默认显示到中间: 通过 scrollToMarkLine 配置项，可以设置标记线是否默认显示到中间。
 
 这些能力使得 vtable-gantt 组件在任务管理和项目规划中具有高度的可定制性和灵活性，能够满足不同场景下的需求。
-
 
 ## 总结
 甘特图是项目管理中非常重要的工具，通过直观的图形展示项目的进度和时间安排，帮助项目管理者更好地规划和控制项目。通过合理配置甘特图的各项参数，可以满足不同项目的需求，提高项目管理的效率。
