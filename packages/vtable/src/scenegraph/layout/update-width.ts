@@ -270,71 +270,95 @@ function updateCellWidth(
   const type = scene.table.isHeader(col, row)
     ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : scene.table.getBodyColumnType(col, row);
+  const customContainer =
+    (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
+    (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
   let isHeightChange = false;
+  let renderDefault = true;
+  const changeState = {
+    renderDefault,
+    isHeightChange
+  };
   if (type === 'progressbar') {
-    // 目前先采用重新生成节点的方案
-    const columnDefine = scene.table.getBodyColumnDefine(col, row) as IProgressbarColumnBodyDefine;
-    const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
-    const value = scene.table.getCellValue(col, row);
-    const dataValue = scene.table.getCellOriginValue(col, row);
-    const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
+    if (customContainer) {
+      updateCustomContainerWidth(scene, customContainer, cell, col, row, cellGroup, changeState);
+      isHeightChange = changeState.isHeightChange;
+    } else {
+      // 目前先采用重新生成节点的方案
+      const columnDefine = scene.table.getBodyColumnDefine(col, row) as IProgressbarColumnBodyDefine;
+      const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
+      const value = scene.table.getCellValue(col, row);
+      const dataValue = scene.table.getCellOriginValue(col, row);
+      const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
 
-    // deal with bar
-    let range;
-    if (columnDefine?.mergeCell) {
-      range = scene.table.getCellRange(col, row);
+      // deal with bar
+      let range;
+      if (columnDefine?.mergeCell) {
+        range = scene.table.getCellRange(col, row);
+      }
+
+      const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
+      const newBarCell = createProgressBarCell(
+        columnDefine,
+        style,
+        cellGroup.attribute.width,
+        // cellGroup.attribute.height,
+        value,
+        dataValue,
+        col,
+        row,
+        padding,
+        scene.table,
+        range
+      );
+
+      const oldBarCell = cellGroup.getChildByName('progress-bar') as Group;
+      // cell.replaceChild(newBarCell, oldBarCell);
+      cellGroup.insertBefore(newBarCell, oldBarCell);
+      cellGroup.removeChild(oldBarCell);
+      oldBarCell.removeAllChild();
+      oldBarCell.release();
+
+      // deal width text
+      const cellChange = updateMergeCellContentWidth(cellGroup, distWidth, detaX, autoRowHeight, true, scene.table);
+      isHeightChange = isHeightChange || cellChange;
     }
-
-    const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
-    const newBarCell = createProgressBarCell(
-      columnDefine,
-      style,
-      cellGroup.attribute.width,
-      // cellGroup.attribute.height,
-      value,
-      dataValue,
-      col,
-      row,
-      padding,
-      scene.table,
-      range
-    );
-
-    const oldBarCell = cellGroup.getChildByName('progress-bar') as Group;
-    // cell.replaceChild(newBarCell, oldBarCell);
-    cellGroup.insertBefore(newBarCell, oldBarCell);
-    cellGroup.removeChild(oldBarCell);
-    oldBarCell.removeAllChild();
-    oldBarCell.release();
-
-    // deal width text
-    const cellChange = updateMergeCellContentWidth(cellGroup, distWidth, detaX, autoRowHeight, true, scene.table);
-    isHeightChange = isHeightChange || cellChange;
   } else if (type === 'sparkline') {
-    // 目前先采用重新生成节点的方案
-    cellGroup.removeAllChild();
-    const headerStyle = scene.table._getCellStyle(col, row);
-    const padding = getQuadProps(getProp('padding', headerStyle, col, row, scene.table));
-    const createSparkLineCellGroup = Factory.getFunction('createSparkLineCellGroup') as CreateSparkLineCellGroup;
-    createSparkLineCellGroup(
-      cellGroup,
-      cellGroup.parent,
-      cellGroup.attribute.x,
-      cellGroup.attribute.y,
-      col,
-      row,
-      cellGroup.attribute.width,
-      cellGroup.attribute.height,
-      padding,
-      scene.table,
-      getStyleTheme(headerStyle, scene.table, col, row, getProp).theme,
-      false
-    );
+    if (customContainer) {
+      updateCustomContainerWidth(scene, customContainer, cell, col, row, cellGroup, changeState);
+      isHeightChange = changeState.isHeightChange;
+    } else {
+      // 目前先采用重新生成节点的方案
+      cellGroup.removeAllChild();
+      const headerStyle = scene.table._getCellStyle(col, row);
+      const padding = getQuadProps(getProp('padding', headerStyle, col, row, scene.table));
+      const createSparkLineCellGroup = Factory.getFunction('createSparkLineCellGroup') as CreateSparkLineCellGroup;
+      createSparkLineCellGroup(
+        cellGroup,
+        cellGroup.parent,
+        cellGroup.attribute.x,
+        cellGroup.attribute.y,
+        col,
+        row,
+        cellGroup.attribute.width,
+        cellGroup.attribute.height,
+        padding,
+        scene.table,
+        getStyleTheme(headerStyle, scene.table, col, row, getProp).theme,
+        false
+      );
+    }
   } else if (type === 'image' || type === 'video') {
     // // 只更新背景边框
     // const rect = cell.firstChild as Rect;
     // rect.setAttribute('width', cell.attribute.width);
-    updateImageCellContentWhileResize(cellGroup, col, row, detaX, 0, scene.table);
+
+    if (customContainer) {
+      updateCustomContainerWidth(scene, customContainer, cell, col, row, cellGroup, changeState);
+      isHeightChange = changeState.isHeightChange;
+    } else {
+      updateImageCellContentWhileResize(cellGroup, col, row, detaX, 0, scene.table);
+    }
   } else if (cellGroup.firstChild?.name === 'axis') {
     // recreate axis component
     const axisConfig = scene.table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
@@ -356,102 +380,10 @@ function updateCellWidth(
   } else if (cell.firstChild?.name === 'axis') {
     (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {
-    let renderDefault = true;
-    const customContainer =
-      (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
-      (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
     if (customContainer) {
-      if (scene.table.reactCustomLayout) {
-        scene.table.reactCustomLayout.removeCustomCell(col, row);
-      }
-      let customElementsGroup;
-      customContainer.removeAllChild();
-      cell.removeChild(customContainer);
-
-      const customMergeRange = getCustomCellMergeCustom(col, row, cell, scene.table);
-      if (customMergeRange) {
-        for (let mergeCol = customMergeRange.start.col; mergeCol <= customMergeRange.end.col; mergeCol++) {
-          if (mergeCol === col) {
-            continue;
-          }
-          const mergedCell = scene.getCell(mergeCol, row);
-          const customContainer =
-            (mergedCell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
-            (mergedCell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
-          if (customContainer) {
-            customContainer.removeAllChild();
-            mergedCell.removeChild(customContainer);
-            getCustomCellMergeCustom(mergeCol, row, mergedCell, scene.table);
-          }
-        }
-      } else {
-        let customRender;
-        let customLayout;
-        const cellType = scene.table.getCellLocation(col, row);
-        const { vTableMerge } = scene.table.getCellRawRecord(col, row);
-
-        if (vTableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
-          customLayout = (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout;
-        } else if (cellType !== 'body') {
-          const define = scene.table.getHeaderDefine(col, row);
-          customRender = (define as ColumnDefine)?.headerCustomRender;
-          customLayout = (define as ColumnDefine)?.headerCustomLayout;
-        } else {
-          const define = scene.table.getBodyColumnDefine(col, row);
-          customRender = (define as ColumnDefine)?.customRender || scene.table.customRender;
-          customLayout = (define as ColumnDefine)?.customLayout;
-        }
-
-        if ((customRender || customLayout) && isMergeCellGroup(cellGroup)) {
-          for (let mergeCol = cellGroup.mergeStartCol; mergeCol <= cellGroup.mergeEndCol; mergeCol++) {
-            if (mergeCol !== col) {
-              for (let mergeRow = cellGroup.mergeStartRow; mergeRow <= cellGroup.mergeEndRow; mergeRow++) {
-                scene.updateCellContent(mergeCol, mergeRow);
-              }
-            }
-          }
-        }
-
-        if (customLayout || customRender) {
-          // const { autoRowHeight } = table.internalProps;
-          const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
-          const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
-          let width = cellGroup.attribute.width;
-          let height = cellGroup.attribute.height;
-          if (isMergeCellGroup(cellGroup)) {
-            width = scene.table.getColsWidth(cellGroup.mergeStartCol, cellGroup.mergeEndCol);
-            height = scene.table.getRowsHeight(cellGroup.mergeStartRow, cellGroup.mergeEndRow);
-          }
-          const customResult = dealWithCustom(
-            customLayout,
-            customRender,
-            cellGroup.mergeStartCol ?? col,
-            cellGroup.mergeStartRow ?? row,
-            width,
-            height,
-            false,
-            // scene.table.heightMode === 'autoHeight',
-            scene.table.isAutoRowHeight(row),
-            padding,
-            isMergeCellGroup(cellGroup)
-              ? {
-                  start: { col: cellGroup.mergeStartCol, row: cellGroup.mergeStartRow },
-                  end: { col: cellGroup.mergeEndCol, row: cellGroup.mergeEndRow }
-                }
-              : undefined,
-            scene.table
-          );
-          customElementsGroup = customResult.elementsGroup;
-          renderDefault = customResult.renderDefault;
-          isHeightChange = true;
-        }
-
-        if (cell.childrenCount > 0 && customElementsGroup) {
-          cell.insertBefore(customElementsGroup, cell.firstChild);
-        } else if (customElementsGroup) {
-          cell.appendChild(customElementsGroup);
-        }
-      }
+      updateCustomContainerWidth(scene, customContainer, cell, col, row, cellGroup, changeState);
+      isHeightChange = changeState.isHeightChange;
+      renderDefault = changeState.renderDefault;
     }
     const cellChange = updateMergeCellContentWidth(
       cellGroup,
@@ -615,5 +547,112 @@ function resetRowHeight(scene: Scenegraph, row: number) {
       distHeight - cell.attribute.height,
       scene.table.isHeader(col, row)
     );
+  }
+}
+
+function updateCustomContainerWidth(
+  scene: Scenegraph,
+  customContainer: Group,
+  cell: Group,
+  col: number,
+  row: number,
+  cellGroup: Group,
+  changeState: {
+    isHeightChange: boolean;
+    renderDefault: boolean;
+  }
+) {
+  if (customContainer) {
+    if (scene.table.reactCustomLayout) {
+      scene.table.reactCustomLayout.removeCustomCell(col, row);
+    }
+    let customElementsGroup;
+    customContainer.removeAllChild();
+    cell.removeChild(customContainer);
+
+    const customMergeRange = getCustomCellMergeCustom(col, row, cell, scene.table);
+    if (customMergeRange) {
+      for (let mergeCol = customMergeRange.start.col; mergeCol <= customMergeRange.end.col; mergeCol++) {
+        if (mergeCol === col) {
+          continue;
+        }
+        const mergedCell = scene.getCell(mergeCol, row);
+        const customContainer =
+          (mergedCell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
+          (mergedCell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
+        // if (customContainer) {
+        customContainer.removeAllChild();
+        mergedCell.removeChild(customContainer);
+        getCustomCellMergeCustom(mergeCol, row, mergedCell, scene.table);
+        // }
+      }
+    } else {
+      let customRender;
+      let customLayout;
+      const cellType = scene.table.getCellLocation(col, row);
+      const { vTableMerge } = scene.table.getCellRawRecord(col, row);
+
+      if (vTableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+        customLayout = (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout;
+      } else if (cellType !== 'body') {
+        const define = scene.table.getHeaderDefine(col, row);
+        customRender = (define as ColumnDefine)?.headerCustomRender;
+        customLayout = (define as ColumnDefine)?.headerCustomLayout;
+      } else {
+        const define = scene.table.getBodyColumnDefine(col, row);
+        customRender = (define as ColumnDefine)?.customRender || scene.table.customRender;
+        customLayout = (define as ColumnDefine)?.customLayout;
+      }
+
+      if ((customRender || customLayout) && isMergeCellGroup(cellGroup)) {
+        for (let mergeCol = cellGroup.mergeStartCol; mergeCol <= cellGroup.mergeEndCol; mergeCol++) {
+          if (mergeCol !== col) {
+            for (let mergeRow = cellGroup.mergeStartRow; mergeRow <= cellGroup.mergeEndRow; mergeRow++) {
+              scene.updateCellContent(mergeCol, mergeRow);
+            }
+          }
+        }
+      }
+
+      if (customLayout || customRender) {
+        // const { autoRowHeight } = table.internalProps;
+        const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
+        const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
+        let width = cellGroup.attribute.width;
+        let height = cellGroup.attribute.height;
+        if (isMergeCellGroup(cellGroup)) {
+          width = scene.table.getColsWidth(cellGroup.mergeStartCol, cellGroup.mergeEndCol);
+          height = scene.table.getRowsHeight(cellGroup.mergeStartRow, cellGroup.mergeEndRow);
+        }
+        const customResult = dealWithCustom(
+          customLayout,
+          customRender,
+          cellGroup.mergeStartCol ?? col,
+          cellGroup.mergeStartRow ?? row,
+          width,
+          height,
+          false,
+          // scene.table.heightMode === 'autoHeight',
+          scene.table.isAutoRowHeight(row),
+          padding,
+          isMergeCellGroup(cellGroup)
+            ? {
+                start: { col: cellGroup.mergeStartCol, row: cellGroup.mergeStartRow },
+                end: { col: cellGroup.mergeEndCol, row: cellGroup.mergeEndRow }
+              }
+            : undefined,
+          scene.table
+        );
+        customElementsGroup = customResult.elementsGroup;
+        changeState.renderDefault = customResult.renderDefault;
+        changeState.isHeightChange = true;
+      }
+
+      if (cell.childrenCount > 0 && customElementsGroup) {
+        cell.insertBefore(customElementsGroup, cell.firstChild);
+      } else if (customElementsGroup) {
+        cell.appendChild(customElementsGroup);
+      }
+    }
   }
 }
