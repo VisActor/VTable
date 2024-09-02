@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix envs type in react-vtable",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
