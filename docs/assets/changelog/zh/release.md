@@ -5,7 +5,7 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when use groupBy then all merged cells set cellType text [#2331](https://github.com/VisActor/VTable/issues/2331)
+- **@visactor/vtable**: 使用 groupBy 时，所有合并的单元格将 cellType 设置为文本 [#2331](https://github.com/VisActor/VTable/issues/2331)
 
 [更多详情请查看 v1.7.2](https://github.com/VisActor/VTable/releases/tag/v1.7.2)
 
