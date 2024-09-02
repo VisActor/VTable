@@ -1,6 +1,6 @@
 <template>
   <BaseTable
-    type="list" 
+    type="list"
     :options="computedOptions"
     :records="records"
     :width="width"
@@ -8,13 +8,13 @@
     ref="baseTableRef"
     v-bind="$attrs"
   >
-</BaseTable>
+  </BaseTable>
   <slot />
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, useSlots } from 'vue';
-import { flattenVNodes , createCustomLayout } from './utils';
+import { ref, computed, defineProps, useSlots, defineExpose } from 'vue';
+import { flattenVNodes, createCustomLayout } from './utils';
 import BaseTable from './base-table.vue';
 import type { ColumnDefine } from '@visactor/vtable';
 import type { TooltipProps } from '../components/component/tooltip';
@@ -35,41 +35,40 @@ const props = defineProps<Props>();
 const baseTableRef = ref<InstanceType<typeof BaseTable> | null>(null);
 const slots = useSlots();
 
-// 合并props.options和插槽中的配置
+// 合并插槽配置
 const computedOptions = computed(() => {
   const flattenedSlots = flattenVNodes(slots.default?.() || []);
+  const slotOptions = extractSlotOptions(flattenedSlots);
+
+  return {
+    ...props.options,
+    columns: slotOptions.columns.length ? slotOptions.columns : props.options.columns,
+    tooltip: slotOptions.tooltip || props.options.tooltip,
+    menu: slotOptions.menu || props.options.menu,
+  };
+});
+
+// 从插槽中提取配置
+function extractSlotOptions(vnodes: any[]) {
   const options = {
     columns: [] as ColumnDefine[],
-    tooltip: Object as TooltipProps,
-    menu: Object as MenuProps,
+    tooltip: {} as TooltipProps,
+    menu: {} as MenuProps,
   };
 
   const typeMapping: Record<string, keyof typeof options> = {
-    'ListColumn': 'columns',
-    'Tooltip': 'tooltip',
-    'Menu': 'menu',
+    ListColumn: 'columns',
+    Tooltip: 'tooltip',
+    Menu: 'menu',
   };
 
-  flattenedSlots.forEach(vnode => {
+  vnodes.forEach(vnode => {
     const typeName = vnode.type?.name || vnode.type?.__name;
     const optionKey = typeMapping[typeName];
-    const children = vnode.children?.default?.();
 
     if (optionKey) {
-
-      if (optionKey === 'columns' && children) {
-        const childProps = children[0]?.props || {}; 
-        vnode.props = {
-          ...vnode.props,
-          ...childProps.customLayout && { customLayout: childProps.customLayout }, 
-        };
-        children.forEach((child: any) => {
-          if (child.type?.name === 'CustomLayout') {
-            const customLayoutContent = child.children.default();
-            const customLayoutConfig = child.props.customLayout;
-            vnode.props.customLayout = (args: any) => createCustomLayout(customLayoutContent, args ,customLayoutConfig);
-          }
-        });
+      if (optionKey === 'columns' && vnode.children) {
+        vnode.props.customLayout = createCustomLayoutHandler(vnode.children);
       }
 
       if (Array.isArray(options[optionKey])) {
@@ -80,13 +79,25 @@ const computedOptions = computed(() => {
     }
   });
 
-  return {
-    ...props.options,
-    columns: options.columns.length ? options.columns : props.options.columns,
-    tooltip: options.tooltip || props.options.tooltip,
-    menu: options.menu || props.options.menu,
+  return options;
+}
+
+// 创建自定义布局处理器
+function createCustomLayoutHandler(children: any) {
+  return (args: any) => {
+    const { table, row, col, rect } = args;
+    const record = table.getCellOriginRecord(col, row);
+    const { height, width } = rect ?? table.getCellRect(col, row);
+
+    const rootContainer = children.customLayout({ table, row, col, rect, record, height, width })[0];
+    const { rootComponent } = createCustomLayout(rootContainer);
+
+    return {
+      rootContainer: rootComponent,
+      renderDefault: false,
+    };
   };
-});
+}
 
 // 暴露实例
 defineExpose({

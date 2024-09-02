@@ -86,7 +86,5 @@ const computedOptions = computed(() => {
   };
 });
 
-console.log('computedOptions', computedOptions);
-
 defineExpose({ vTableInstance: computed(() => baseTableRef.value?.vTableInstance || null) });
 </script>
