@@ -1,3 +1,14 @@
+# v1.7.2
+
+2024-09-02
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when use groupBy then all merged cells set cellType text [#2331](https://github.com/VisActor/VTable/issues/2331)
+
+[more detail about v1.7.2](https://github.com/VisActor/VTable/releases/tag/v1.7.2)
+
 # v1.7.1
 
 2024-09-02
