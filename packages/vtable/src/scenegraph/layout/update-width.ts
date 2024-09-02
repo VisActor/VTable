@@ -266,9 +266,9 @@ function updateCellWidth(
     return false;
   }
   const autoRowHeight = scene.table.isAutoRowHeight(row);
-  const isvTableMerge = scene.table.getCellRawRecord(col, row)?.vTableMerge;
+  const isvtableMerge = scene.table.getCellRawRecord(col, row)?.vtableMerge;
   // 更新单元格布局
-  const type = isvTableMerge
+  const type = isvtableMerge
     ? 'text'
     : scene.table.isHeader(col, row)
     ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
