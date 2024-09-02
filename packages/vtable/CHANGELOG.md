@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 30 Aug 2024 11:54:08 GMT and should not be manually modified.
+This log was last generated on Mon, 02 Sep 2024 03:26:48 GMT and should not be manually modified.
+
+## 1.7.1
+Mon, 02 Sep 2024 03:26:48 GMT
+
+### Updates
+
+- fix: fix envs type in react-vtable
 
 ## 1.7.0
 Fri, 30 Aug 2024 11:54:08 GMT
