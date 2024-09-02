@@ -148,11 +148,11 @@ export function createComplexColumn(
         cellHeight = mergeSize.cellHeight;
       }
     }
-    let isvTableMerge = false;
+    let isvtableMerge = false;
     if (table.internalProps.enableTreeNodeMerge && isMerge) {
-      const { vtableMergeName, vTableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
-      isvTableMerge = vTableMerge;
-      if (vTableMerge) {
+      const { vtableMergeName, vtableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
+      isvtableMerge = vtableMerge;
+      if (vtableMerge) {
         mayHaveIcon = true;
         if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
           customResult = dealWithCustom(
@@ -202,7 +202,7 @@ export function createComplexColumn(
     }
     // margin = getProp('margin', headerStyle, col, 0, table)
 
-    const type = isvTableMerge
+    const type = isvtableMerge
       ? 'text'
       : (table.isHeader(col, row)
           ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
