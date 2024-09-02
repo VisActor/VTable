@@ -15,6 +15,7 @@ import { isNil, isNumber, isValid, isValidNumber } from '@visactor/vutils';
 import { isMergeCellGroup } from './is-merge-cell-group';
 import { breakString } from './break-string';
 import { CUSTOM_CONTAINER_NAME } from '../component/custom';
+import { getTargetCell } from '../../event/util';
 
 /**
  * @description: 创建单元格内容
@@ -284,6 +285,10 @@ export function createCellContent(
       text.name = 'text';
       textMark = text;
       text.bindIconEvent();
+
+      // if (range && (range.start.col !== range.end.col || range.start.row !== range.end.row)) {
+      //   text.onBeforeAttributeUpdate = onBeforeAttributeUpdate;
+      // }
     }
 
     if (contentLeftIcons.length !== 0 || contentRightIcons.length !== 0) {
@@ -886,4 +891,55 @@ export function dealWithIconLayout(
     absoluteLeftIconWidth,
     absoluteRightIconWidth
   };
+}
+
+function onBeforeAttributeUpdate(val: Record<string, any>, attribute: any) {
+  if (val.hasOwnProperty('hoverIconId')) {
+    // @ts-ignore
+    const graphic = this as any;
+    if (graphic.skipMergeUpdate) {
+      return;
+    }
+
+    const cellGroup = getTargetCell(graphic) as Group;
+    if (!cellGroup || !cellGroup.stage) {
+      return;
+    }
+    const table = ((cellGroup as any).stage as any).table as BaseTableAPI;
+    graphic.skipAttributeUpdate = true;
+    const { mergeStartCol, mergeEndCol, mergeStartRow, mergeEndRow } = cellGroup;
+    if (
+      isValid(mergeStartCol) &&
+      isValid(mergeEndCol) &&
+      isValid(mergeStartRow) &&
+      isValid(mergeEndRow) &&
+      (mergeStartCol !== mergeEndCol || mergeStartRow !== mergeEndRow)
+    ) {
+      for (let col = mergeStartCol; col <= mergeEndCol; col++) {
+        for (let row = mergeStartRow; row <= mergeEndRow; row++) {
+          if (col === cellGroup.col && row === cellGroup.row) {
+            // update icon state
+            if (val.hoverIconId !== graphic.attribute.hoverIconId) {
+              const icon = graphic._frameCache.icons.get(val.hoverIconId);
+              graphic.updateHoverIconState(icon);
+            }
+            continue;
+          }
+          // const cell = table.scenegraph.getCell(col, row);
+          const cell = table.scenegraph.highPerformanceGetCell(col, row);
+          if (cell.role === 'cell') {
+            const target = cell.getChildByName(graphic.name, true);
+            if (!target || target.skipAttributeUpdate) {
+              continue;
+            }
+            if (val.hoverIconId !== target.attribute.hoverIconId) {
+              target.setAttribute('hoverIconId', val.hoverIconId);
+              cell.addUpdateBoundTag();
+            }
+          }
+        }
+      }
+      graphic.skipAttributeUpdate = undefined;
+    }
+  }
 }
