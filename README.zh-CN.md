@@ -56,7 +56,13 @@ VTable 是 VisActor 可视化体系中的表格组件库，基于可视化渲染
 本仓库包含如下 package
 
 1. packages/vtable：表格组件代码
-2. docs: 教程文档
+2. packages/vtable-gantt: 甘特图组件代码
+3. packages/vtable-editors: 表格编辑器组件代码
+4. packages/vtable-export: 表格导出工具代码
+5. packages/vtable-search: 表格搜索工具代码
+6. packages/react-vtable: React 版本的表格组件
+7. packages/vue-vtable: Vue 版本的表格组件
+8. docs: 教程文档
 
 # Usage 使用
 
@@ -169,7 +175,7 @@ $ rush docs
 - [官网](https://visactor.io/vtable)
 - [使用趋势](https://npm-compare.com/@visactor/vtable)
 
-# 💫 Ecosystem
+# 💫 生态系统
 
 | Project                                                                      | Description       |
 | ---------------------------------------------------------------------------- | ----------------- |

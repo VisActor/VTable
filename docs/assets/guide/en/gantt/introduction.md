@@ -1,5 +1,8 @@
 # Gantt Chart Introduction and Usage Guide
 A Gantt chart is a project management tool used to display project plans, task progress, and schedules. It visually represents the start and end times of tasks using bar charts, helping project managers effectively track and manage project progress. Each task is displayed as a bar in the chart, with the length of the bar representing the duration of the task and the position representing the start and end times of the task.
+
+VTable-Gantt is a powerful Gantt chart drawing tool built on the VTable table component and the canvas renderer VRender, enabling developers to easily create and manage Gantt charts.
+
 ## Components of a Gantt Chart
 Task List on the Left: Displays the list of project tasks, usually on the left side of the chart.
 
@@ -16,59 +19,82 @@ Divider Lines: Separate the task list and timeline, making the chart clearer.
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-structure.png)
 
 **Note: The task information table on the left corresponds to a complete ListTable in the implementation. It is attached to ganttInstable.listTableInstance, so the interfaces and events corresponding to ListTable can be directly used through listTableInstance. If you want to troubleshoot issues with the table on the left, you can also directly extract listTableInstance.options to check if they meet expectations.**
+ <div style="width: 40%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-leftListTable-en.png" />
+    <p>left table</p>
+  </div>
 
-## Main Capabilities of the Gantt Chart
+## Main Capabilities of Gantt Chart
 
-### Multi-Column Information Display
-The left side of the entire structure of the Gantt chart is a complete table container, so it supports rich column information display. For specific configuration, refer to [Configuration](../../option/Gantt#taskListTable).
+### Multi-column Information Display
+The left side of the entire structure of the Gantt chart is a complete table container, so it supports rich column information display. For specific configuration, please refer to [Configuration](../../option/Gantt#taskListTable).
 
 ### Custom Rendering
+
+Custom rendering requires understanding the graphic element properties of VRender. For details, please refer to [Custom Rendering Tutorial](../../guide/gantt/gantt_customLayout).
 
 #### Custom Rendering of Task Bars
 You can customize the rendering of task bars through the `taskBar.customLayout` configuration item.
 
 #### Custom Rendering of Date Headers
+
 You can customize the rendering of date headers through the `timelineHeader.scales.customLayout` configuration item.
 
-#### Custom Rendering of the Task Information Table on the Left
+#### Custom Rendering of Task Information Table on the Left
+
 You can define the custom rendering of each cell in each column through `taskListTable.columns.customLayout` or globally define the custom rendering of each cell through `taskListTable.customLayout`.
 
-### Support for Different Date Scale Granularities
-You can set the row height and time unit (such as day, week, month, etc.) of the date scale through the `timelineHeader.scales.rowHeight` and `timelineHeader.scales.unit` configuration items.
+### Support for Different Date Scale Granularity
+
+In common business scenarios, multi-level time scale display may be required. VTable-Gantt supports five time granularities: `'day' | 'week' | 'month' | 'quarter' | 'year'`.
+
+You can set the row height and time unit (such as day, week, month, etc.) of the date scale through the `timelineHeader.scales.unit` configuration item.
 
 ### Date Header Style
+
 You can customize the style of the date header through the `timelineHeader.scales.style` configuration item.
 
 You can set the row height of the date scale through the `timelineHeader.scales.rowHeight` configuration item.
 
 ### Outer Frame
-You can customize the outer frame of the Gantt chart through the `frame.outerFrameStyle` configuration item.
+
+The border of the table may have a different style from the internal grid lines. You can customize the outer frame of the Gantt chart through the `frame.outerFrameStyle` configuration item.
 
 ### Horizontal and Vertical Divider Lines
-You can customize the style of horizontal divider lines through the `frame.horizontalSplitLine` configuration item. You can customize the style of vertical divider lines through the `frame.verticalSplitLine` configuration item.
+
+Supports horizontal divider lines for both the header and body, as well as divider lines between the left information table and the right task list. You can customize the style of horizontal divider lines through the `frame.horizontalSplitLine` configuration item. You can customize the style of vertical divider lines through the `frame.verticalSplitLine` configuration item.
 
 ### Marker Lines
-You can customize the style of marker lines through the `markLine.style` configuration item.
+
+In the Gantt chart, it is often necessary to mark some important dates. We configure this effect through the `markLine` configuration item. You can specify key dates through `markLine.date` and customize the style of marker lines through the `markLine.style` configuration item. If you need to ensure that the date is displayed at initialization, you can set `markLine.scrollToMarkLine` to `true`.
 
 ### Container Grid Lines
-You can customize the style of the background grid lines of the task bars on the right through the `grid` configuration item, including background color, line width, line type, etc.
+
+You can customize the style of the background grid lines of the right task bars through the `grid` configuration item, including background color, line width, line type, etc.
 
 ### Interaction
 
 #### Dragging Task Bars
+
 You can set whether task bars are draggable through the `taskBar.moveable` configuration item.
 
 #### Resizing Task Bars
+
 You can set whether task bars are resizable through the `taskBar.resizable` configuration item.
 
-#### Adjusting the Width of the Table on the Left
+#### Adjusting the Width of the Left Table
+
 You can set the divider line to be draggable by configuring `frame.verticalSplitLineMoveable` to true.
 
 #### Editing Task Information
-You can synchronize data updates to task bars through the editing capabilities of ListTable.
+
+You can synchronize data updates to the task bars through the editing capabilities of `ListTable`.
+
+To enable editing capabilities, you need to register the editor to VTable in advance, as the editing capabilities here actually rely on the editing capabilities of `ListTable`.
 
 #### Adjusting Data Order
-You can adjust the data order and synchronize it to task bars through the sorting row number capability of ListTable.
+
+To enable drag-and-drop reordering capabilities, you need to add `rowSeriesNumber` to the configuration of `ListTable`, which provides a row number. You can configure the style of this column using `rowSeriesNumber.style` and `headerStyle`. To enable reordering, set `rowSeriesNumber.dragOrder` to true. `VTable-Gantt` will synchronize the order to the task bar area display when a reordering event is detected.
 
 ## Leveraging the Capabilities of the Table
 The Gantt chart is implemented based on the ListTable of VTable. It looks like a spliced form, with the task information table on the left and the task bar list on the right.
@@ -113,7 +139,7 @@ In the vtable-gantt component, the main supported configurations include:
 6. Task List Table Configuration `taskListTable` (Configuration of the task information list ListTable on the left, refer to [Configuration](../../option/Gantt#taskListTable))
     1. Overall Width of the Table on the Left: You can set the overall width of the task list table through the `tableWidth` configuration item.
     2. Column Information: You can define the column information and width of each column of the task information table through `columns`.
-    3. Style Configuration: You can set the style of the header and body through the `headerStyle` and `bodyStyle` configuration items.
+    3. Style Configuration: You can set the style of the header and body through the `theme.headerStyle` and `theme.bodyStyle` configuration items.
     4. Width Limit: You can set the minimum and maximum width of the task list through the `minTableWidth` and `maxTableWidth` configuration items.
 7. Divider Line Configuration `frame`
     1. Outer Frame Configuration: You can set the color, width, etc., of the outer frame through the `outerFrameStyle` configuration item.

@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 02 Sep 2024 03:26:48 GMT and should not be manually modified.
+This log was last generated on Mon, 02 Sep 2024 10:09:57 GMT and should not be manually modified.
+
+## 1.7.2
+Mon, 02 Sep 2024 10:09:57 GMT
+
+### Updates
+
+- fix: when use groupBy then all merged cells set cellType text #2331
+
+
 
 ## 1.7.1
 Mon, 02 Sep 2024 03:26:48 GMT

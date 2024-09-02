@@ -1,3 +1,23 @@
+# v1.7.1
+
+2024-09-02
+
+
+**🐛 功能修复**
+
+- **@visactor/react-vtable**: 修复在 react-vtable 项目中的 evns 变量问题
+
+[更多详情请查看 v1.7.1](https://github.com/VisActor/VTable/releases/tag/v1.7.1)
+
+
+# v1.7.0
+
+2024-08-30
+
+**🆕 New feature**
+
+- **@visactor/vtable-gantt**: 新增甘特图 gantt chart
+
 # v1.6.3
 
 2024-08-29

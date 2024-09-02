@@ -452,10 +452,11 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     range = table.getCellRange(col, row);
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
   }
-
+  let isvtableMerge = false;
   if (table.internalProps.enableTreeNodeMerge && isMerge) {
-    const { vtableMergeName, vTableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
-    if (vTableMerge) {
+    const { vtableMergeName, vtableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
+    isvtableMerge = vtableMerge;
+    if (vtableMerge) {
       mayHaveIcon = true;
       if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
         customResult = dealWithCustom(
@@ -585,7 +586,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     return undefined;
   }
 
-  const type = table.isHeader(col, row)
+  const type = isvtableMerge
+    ? 'text'
+    : table.isHeader(col, row)
     ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : table.getBodyColumnType(col, row);
 

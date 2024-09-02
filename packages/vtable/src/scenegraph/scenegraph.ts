@@ -1639,7 +1639,10 @@ export class Scenegraph {
   }
 
   updateCellContentWhileResize(col: number, row: number) {
-    const type = this.table.isHeader(col, row)
+    const isvtableMerge = this.table.getCellRawRecord(col, row)?.vtableMerge;
+    const type = isvtableMerge
+      ? 'text'
+      : this.table.isHeader(col, row)
       ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
       : this.table.getBodyColumnType(col, row);
     const cellGroup = this.getCell(col, row);

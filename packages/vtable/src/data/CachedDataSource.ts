@@ -261,7 +261,7 @@ function dealWithGroup(record: any, children: any[], map: Map<number, any>, grou
     } else {
       map.set(value, children.length);
       children.push({
-        vTableMerge: true,
+        vtableMerge: true,
         vtableMergeName: value,
         children: [] as any,
         map: new Map()
@@ -287,7 +287,7 @@ function syncGroupCollapseState(
     oldGroupMap = new Map();
     for (let i = 0; i < oldSource.length; i++) {
       const record = oldSource[i];
-      if (record.vTableMerge) {
+      if (record.vtableMerge) {
         oldGroupMap.set(record.vtableMergeName, i);
       }
     }
@@ -297,7 +297,7 @@ function syncGroupCollapseState(
     newGroupMap = new Map();
     for (let i = 0; i < newSource.length; i++) {
       const record = newSource[i];
-      if (record.vTableMerge) {
+      if (record.vtableMerge) {
         newGroupMap.set(record.vtableMergeName, i);
       }
     }

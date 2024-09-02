@@ -148,10 +148,11 @@ export function createComplexColumn(
         cellHeight = mergeSize.cellHeight;
       }
     }
-
+    let isvtableMerge = false;
     if (table.internalProps.enableTreeNodeMerge && isMerge) {
-      const { vtableMergeName, vTableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
-      if (vTableMerge) {
+      const { vtableMergeName, vtableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
+      isvtableMerge = vtableMerge;
+      if (vtableMerge) {
         mayHaveIcon = true;
         if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
           customResult = dealWithCustom(
@@ -201,10 +202,11 @@ export function createComplexColumn(
     }
     // margin = getProp('margin', headerStyle, col, 0, table)
 
-    const type =
-      (table.isHeader(col, row)
-        ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-        : table.getBodyColumnType(col, row)) || 'text';
+    const type = isvtableMerge
+      ? 'text'
+      : (table.isHeader(col, row)
+          ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+          : table.getBodyColumnType(col, row)) || 'text';
 
     // deal with promise data
     if (isPromise(value)) {
