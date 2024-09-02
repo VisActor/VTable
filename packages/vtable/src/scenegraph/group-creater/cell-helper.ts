@@ -36,6 +36,7 @@ import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-i
 import { isArray } from '@visactor/vutils';
 import { breakString } from '../utils/break-string';
 import type { CreateRadioCellGroup } from './cell-type/radio-cell';
+import { createCustomCellGroup } from './cell-type/custom-cell';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -81,6 +82,23 @@ export function createCell(
   //   );
   // }
   let cellGroup: Group;
+  const customElementsGroup = customResult?.elementsGroup;
+  if (customElementsGroup) {
+    cellGroup = createCustomCellGroup(
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      cellWidth,
+      cellHeight,
+      customElementsGroup,
+      table,
+      cellTheme,
+      isAsync
+    );
+    return cellGroup;
+  }
   if (type === 'text' || type === 'link') {
     if (type === 'link') {
       //如果是超链接 颜色按照linkColor绘制 TODO：放到方法_getCellStyle中
