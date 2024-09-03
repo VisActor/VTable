@@ -1261,11 +1261,12 @@ export class Dataset {
     } else if ((<SortByRule>sortRule).sortBy) {
       return sortBy((<SortByRule>sortRule).sortBy);
     }
-    if ((<SortTypeRule>sortRule).sortType) {
-      return typeSort;
-    }
+
     if ((<SortFuncRule>sortRule).sortFunc) {
       return (<SortFuncRule>sortRule).sortFunc;
+    }
+    if ((<SortTypeRule>sortRule).sortType) {
+      return typeSort;
     }
     return naturalSort;
   }

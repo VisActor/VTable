@@ -1,4 +1,9 @@
 import * as VTable from '../../src';
+const sumNumberFormat = VTable.DataStatistics.numberFormat();
+const countNumberFormat = VTable.DataStatistics.numberFormat({
+  digitsAfterDecimal: 0,
+  thousandsSep: ''
+});
 function getColor(min: number, max: number, n: any) {
   if (max === min) {
     if (n > 0) {
@@ -45,22 +50,8 @@ export function createTable() {
       sortRules: [
         {
           sortField: 'province',
-          sortType: VTable.TYPES.SortType.normal,
-          sortFunc: (a, b, sortType) => {
-            if (sortType === VTable.TYPES.SortType.DESC || sortType === VTable.TYPES.SortType.desc) {
-              return a.toString().localeCompare(b.toString(), 'zh');
-            } else if (sortType === VTable.TYPES.SortType.ASC || sortType === VTable.TYPES.SortType.asc) {
-              return b.toString().localeCompare(a.toString(), 'zh');
-            }
-            return 0;
-          }
+          sortType: VTable.TYPES.SortType.DESC
         }
-        // {
-        //   sortField: 'city',
-        //   sortByIndicator: 'sales',
-        //   sortType: VTable.TYPES.SortType.DESC,
-        //   query: ['办公用品', '笔']
-        // } as VTable.TYPES.SortByIndicatorRule
       ],
       mappingRules: [
         {
@@ -107,14 +98,7 @@ export function createTable() {
         category: '家具',
         sub_category: '桌子'
       },
-      {
-        sales: 893,
-        number: 3877,
-        province: '浙江省',
-        city: '宁波市',
-        category: '家具',
-        sub_category: '桌子'
-      },
+
       {
         sales: 1094,
         number: 4342,
@@ -354,14 +338,6 @@ export function createTable() {
         city: '天津市',
         category: '家具',
         sub_category: '桌子'
-      },
-      {
-        sales: 9893,
-        number: 3877,
-        province: '天津市',
-        city: '天津市',
-        category: '家具',
-        sub_category: '沙发'
       }
     ],
     widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器

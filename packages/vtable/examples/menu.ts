@@ -527,12 +527,21 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-sortField'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-sortBy'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-sortByIndicator'
       },
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-sortFunc'
       },
+
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-aggregationRules'
