@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix right frozen mark position #2344",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
