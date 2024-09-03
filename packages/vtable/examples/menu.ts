@@ -204,6 +204,10 @@ export const menus = [
     children: [
       {
         path: 'pivot-chart',
+        name: 'bug-fix'
+      },
+      {
+        path: 'pivot-chart',
         name: 'noDimension-updateOption'
       },
       {
