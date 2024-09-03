@@ -1265,14 +1265,16 @@ export class Dataset {
           return (
             naturalSort(
               getValue(a, (<SortByIndicatorRule>sortRule).query),
-              getValue(b, (<SortByIndicatorRule>sortRule).query)
+              getValue(b, (<SortByIndicatorRule>sortRule).query),
+              sortType
             ) * factor
           );
         }
         return (
           naturalSort(
             getValue((<SortByIndicatorRule>sortRule).query, a),
-            getValue((<SortByIndicatorRule>sortRule).query, b)
+            getValue((<SortByIndicatorRule>sortRule).query, b),
+            sortType
           ) * factor
         );
       };
