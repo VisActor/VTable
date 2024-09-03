@@ -81,7 +81,9 @@ export function createCell(
   //   );
   // }
   let cellGroup: Group;
-  if (type === 'text' || type === 'link') {
+
+  // customMerge&customLayout cell as text cell
+  if (type === 'text' || type === 'link' || customResult) {
     if (type === 'link') {
       //如果是超链接 颜色按照linkColor绘制 TODO：放到方法_getCellStyle中
       // const columnDefine = table.getHeaderDefine(col, row);

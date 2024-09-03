@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix no-text cell custom merge #2343",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
