@@ -771,7 +771,7 @@ export class Scenegraph {
       this.bodyGroup.children?.forEach((columnGroup: INode) => {
         columnGroup
           .getChildAt(row)
-          .getChildren()
+          ?.getChildren()
           .forEach((node: INode) => {
             if (node.name === 'checkbox') {
               (node as CheckBox).setAttribute('checked', checked);
@@ -780,7 +780,7 @@ export class Scenegraph {
       });
     } else {
       const columnGroup = this.getColGroup(col);
-      columnGroup.children?.forEach((cellNode: INode) => {
+      columnGroup?.children?.forEach((cellNode: INode) => {
         cellNode.getChildren().find(node => {
           if (node.name === 'checkbox') {
             (node as CheckBox).setAttribute('checked', checked);
@@ -1775,7 +1775,8 @@ export class Scenegraph {
       if (
         cell &&
         this.table.bottomFrozenRowCount > 0 &&
-        cell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
+        // cell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
+        cell.row >= this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
         this.table.tableNoFrameHeight -
           this.table.getFrozenRowsHeight() -
           this.table.getBottomFrozenRowsHeight() +
