@@ -255,8 +255,12 @@ export class TableComponent {
       componentGroup.addChild(this.hScrollBar);
       componentGroup.addChild(this.vScrollBar);
     } else {
-      componentGroup.stage.defaultLayer.addChild(this.hScrollBar);
-      componentGroup.stage.defaultLayer.addChild(this.vScrollBar);
+      // componentGroup.stage.defaultLayer.addChild(this.hScrollBar);
+      // componentGroup.stage.defaultLayer.addChild(this.vScrollBar);
+
+      // add scroll bar before border, avoid scroll hide by border globalCompositeOperation
+      componentGroup.stage.defaultLayer.insertBefore(this.vScrollBar, componentGroup.stage.defaultLayer.firstChild);
+      componentGroup.stage.defaultLayer.insertBefore(this.hScrollBar, componentGroup.stage.defaultLayer.firstChild);
     }
     this.menu.bindTableComponent(componentGroup);
     this.drillIcon.appand(componentGroup);
