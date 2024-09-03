@@ -20,9 +20,10 @@ import type {
   CollectedValue,
   IIndicator,
   IPivotChartDataConfig,
-  CalculateddFieldRules
+  CalculateddFieldRules,
+  SortType
 } from '../ts-types';
-import { AggregationType, SortType } from '../ts-types';
+import { AggregationType } from '../ts-types';
 import type { Aggregator, IAggregator } from './statistics-helper';
 import {
   AvgAggregator,
@@ -1209,9 +1210,7 @@ export class Dataset {
           comparison = sorter.func(aChanged, bChanged, sorter.sortRule?.sortType);
         } else {
           comparison = sorter.func?.(a[sorter.fieldIndex], b[sorter.fieldIndex], sorter.sortRule?.sortType);
-          console.log('comparison', comparison);
         }
-
         if (comparison !== 0) {
           return comparison;
           // return (
@@ -1233,10 +1232,6 @@ export class Dataset {
 
     if ((<SortByIndicatorRule>sortRule).sortByIndicator) {
       return (a: string[], b: string[], sortType?: SortType) => {
-        if (sortType === SortType.NORMAL || sortType === SortType.normal) {
-          return 0;
-        }
-        const factor = sortType === SortType.DESC || sortType === SortType.desc ? -1 : 1;
         /**
          * 根据rowKey和colKey获取tree上对应的聚合值
          * @param rowKey
@@ -1262,20 +1257,16 @@ export class Dataset {
           return that.getAggregator(rowKey, colKey, (<SortByIndicatorRule>sortRule).sortByIndicator!).value();
         };
         if (isSortRow) {
-          return (
-            naturalSort(
-              getValue(a, (<SortByIndicatorRule>sortRule).query),
-              getValue(b, (<SortByIndicatorRule>sortRule).query),
-              sortType
-            ) * factor
+          return naturalSort(
+            getValue(a, (<SortByIndicatorRule>sortRule).query),
+            getValue(b, (<SortByIndicatorRule>sortRule).query),
+            sortType
           );
         }
-        return (
-          naturalSort(
-            getValue((<SortByIndicatorRule>sortRule).query, a),
-            getValue((<SortByIndicatorRule>sortRule).query, b),
-            sortType
-          ) * factor
+        return naturalSort(
+          getValue((<SortByIndicatorRule>sortRule).query, a),
+          getValue((<SortByIndicatorRule>sortRule).query, b),
+          sortType
         );
       };
     } else if ((<SortByRule>sortRule).sortBy) {

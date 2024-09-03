@@ -541,7 +541,10 @@ export const menus = [
         path: 'pivot-analysis',
         name: 'pivot-analysis-sortFunc'
       },
-
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-updateSortRule'
+      },
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-aggregationRules'
