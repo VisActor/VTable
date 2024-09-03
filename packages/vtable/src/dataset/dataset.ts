@@ -1113,39 +1113,39 @@ export class Dataset {
     const that = this;
     if (!this.sorted) {
       this.sorted = true;
-      const getValue = function (rowKey: any, colKey: any) {
-        return that.getAggregator(rowKey, colKey, '').value();
-      };
+      // const getValue = function (rowKey: any, colKey: any) {
+      //   return that.getAggregator(rowKey, colKey, '').value();
+      // };
 
-      switch (this.rowOrder) {
-        case 'value_a_to_z':
-          this.rowKeys.sort(function (a, b) {
-            return naturalSort(getValue(a, []), getValue(b, []));
-          });
-          break;
-        case 'value_z_to_a':
-          this.rowKeys.sort(function (a, b) {
-            return -naturalSort(getValue(a, []), getValue(b, []));
-          });
-          break;
-        default:
-          this.rowKeys.sort(this.arrSort(this.rows, true));
-      }
-      switch (this.colOrder) {
-        case 'value_a_to_z':
-          this.colKeys.sort(function (a, b) {
-            return naturalSort(getValue([], a), getValue([], b));
-          });
-          break;
-        case 'value_z_to_a':
-          this.colKeys.sort(function (a, b) {
-            return -naturalSort(getValue([], a), getValue([], b));
-          });
-          break;
-        default:
-          const sortfun = this.arrSort(this.columns, false);
-          this.colKeys.sort(sortfun);
-      }
+      // switch (this.rowOrder) {
+      //   case 'value_a_to_z':
+      //     this.rowKeys.sort(function (a, b) {
+      //       return naturalSort(getValue(a, []), getValue(b, []));
+      //     });
+      //     break;
+      //   case 'value_z_to_a':
+      //     this.rowKeys.sort(function (a, b) {
+      //       return -naturalSort(getValue(a, []), getValue(b, []));
+      //     });
+      //     break;
+      //   default:
+      this.rowKeys.sort(this.arrSort(this.rows, true));
+      // }
+      // switch (this.colOrder) {
+      //   case 'value_a_to_z':
+      //     this.colKeys.sort(function (a, b) {
+      //       return naturalSort(getValue([], a), getValue([], b));
+      //     });
+      //     break;
+      //   case 'value_z_to_a':
+      //     this.colKeys.sort(function (a, b) {
+      //       return -naturalSort(getValue([], a), getValue([], b));
+      //     });
+      //     break;
+      //   default:
+      const sortfun = this.arrSort(this.columns, false);
+      this.colKeys.sort(sortfun);
+      // }
     }
   }
   /**
