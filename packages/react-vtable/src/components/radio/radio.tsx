@@ -54,6 +54,7 @@ function RadioComponent(baseProps: RadioProps, ref: React.Ref<VRenderRadio>) {
         circle: circleStyle,
         ...rest
       }}
+      {...rest} // for REACT_TO_CANOPUS_EVENTS
     ></VRadio>
   );
 }
