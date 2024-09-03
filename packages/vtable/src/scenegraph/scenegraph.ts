@@ -1735,7 +1735,8 @@ export class Scenegraph {
     if (
       cell &&
       this.table.rightFrozenColCount > 0 &&
-      cell.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
+      // cell.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
+      cell.col >= this.table.colCount - this.table.rightFrozenColCount - 1 &&
       this.table.tableNoFrameWidth -
         this.table.getFrozenColsWidth() -
         this.table.getRightFrozenColsWidth() +
