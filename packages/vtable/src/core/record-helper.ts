@@ -299,25 +299,18 @@ function getCellUpdateType(
 }
 
 export function sortRecords(table: ListTable) {
-  if (table.sortState) {
-    let order: any;
-    let field: any;
-    if (Array.isArray(table.sortState)) {
-      if (table.sortState.length !== 0) {
-        ({ order, field } = table.sortState?.[0]);
-      }
-    } else {
-      ({ order, field } = table.sortState as SortState);
-    }
-    // 根据sort规则进行排序
-    if (order && field && order !== 'normal') {
-      const sortFunc = table._getSortFuncFromHeaderOption(undefined, field);
-      // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
-      const hd = table.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
+  let sortState = table.sortState;
+  let isArray = false;
+  sortState = !sortState || Array.isArray(sortState) ? (isArray = true) && sortState : [sortState];
 
-      // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
-      table.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
-    }
+  if (sortState) {
+    sortState = (sortState as SortState[]).map(item=>{
+      item['orderFn'] = table._getSortFuncFromHeaderOption(undefined, item.field) ?? defaultOrderFn;
+      //const hd = table.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === item.field);
+      return item;
+    });
+    
+    table.dataSource.sort(isArray ? sortState : (sortState as SortState[])[0]);
   }
 }
 

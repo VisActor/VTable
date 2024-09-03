@@ -96,7 +96,7 @@ function executeSort(newState: SortState | SortState[], table: BaseTableAPI, hea
     return {
       field:item.field, 
       order:item.order || 'asc', 
-      orderFn: typeof hd.sort === 'function' ? hd.sort : defaultOrderFn
+      orderFn: typeof hd?.define?.sort === 'function' ? hd?.define?.sort : defaultOrderFn
     }
   }));
   
