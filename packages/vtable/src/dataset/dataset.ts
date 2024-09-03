@@ -67,6 +67,10 @@ export class Dataset {
   colKeys: string[][] = [];
   //行表头的每行对应的表头键值
   rowKeys: string[][] = [];
+
+  // 存储下未排序即初始normal下rowKeys和colKeys
+  colKeys_normal: string[][] = [];
+  rowKeys_normal: string[][] = [];
   // /**
   //  * 对应dataset中的rowKeys，行表头的每行表头键值，包含小计总计
   //  */
@@ -271,6 +275,8 @@ export class Dataset {
       const t5 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('totalStatistics:', t5 - t4);
 
+      this.rowKeys_normal = this.rowKeys.slice();
+      this.colKeys_normal = this.colKeys.slice();
       //对维度排序
       const t2 = typeof window !== 'undefined' ? window.performance.now() : 0;
       this.sortKeys();
@@ -1102,6 +1108,8 @@ export class Dataset {
    * 根据排序规则 对维度keys排序
    */
   sortKeys() {
+    this.colKeys = this.colKeys_normal.slice();
+    this.rowKeys = this.rowKeys_normal.slice();
     const that = this;
     if (!this.sorted) {
       this.sorted = true;
@@ -1188,26 +1196,28 @@ export class Dataset {
       let sorter;
       for (let i = 0; i < sortersArr.length; i++) {
         sorter = sortersArr[i];
-        if (!(sorter.sortRule?.sortType === SortType.NORMAL || sorter.sortRule?.sortType === SortType.normal)) {
-          if (sorter.sortRule?.sortByIndicator) {
-            let aChanged = a;
-            let bChanged = b;
-            if (sorter.fieldIndex < fieldArr.length - 1) {
-              aChanged = a.slice(0, sorter.fieldIndex + 1);
-              aChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
-              bChanged = b.slice(0, sorter.fieldIndex + 1);
-              bChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
-            }
-            comparison = sorter.func(aChanged, bChanged);
-          } else {
-            comparison = sorter.func?.(a[sorter.fieldIndex], b[sorter.fieldIndex], sorter.sortRule?.sortType);
+        // if (!(sorter.sortRule?.sortType === SortType.NORMAL || sorter.sortRule?.sortType === SortType.normal)) {
+        if (sorter.sortRule?.sortByIndicator) {
+          let aChanged = a;
+          let bChanged = b;
+          if (sorter.fieldIndex < fieldArr.length - 1) {
+            aChanged = a.slice(0, sorter.fieldIndex + 1);
+            aChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
+            bChanged = b.slice(0, sorter.fieldIndex + 1);
+            bChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
           }
-          if (comparison !== 0) {
-            return (
-              comparison *
-              (sorter.sortRule?.sortType === SortType.DESC || sorter.sortRule?.sortType === SortType.desc ? -1 : 1)
-            );
-          }
+          comparison = sorter.func(aChanged, bChanged, sorter.sortRule?.sortType);
+        } else {
+          comparison = sorter.func?.(a[sorter.fieldIndex], b[sorter.fieldIndex], sorter.sortRule?.sortType);
+          console.log('comparison', comparison);
+        }
+
+        if (comparison !== 0) {
+          return comparison;
+          // return (
+          //   comparison *
+          //   (sorter.sortRule?.sortType === SortType.DESC || sorter.sortRule?.sortType === SortType.desc ? -1 : 1)
+          // );
         }
       }
       return 0;
@@ -1222,7 +1232,11 @@ export class Dataset {
     const that = this;
 
     if ((<SortByIndicatorRule>sortRule).sortByIndicator) {
-      return (a: string[], b: string[]) => {
+      return (a: string[], b: string[], sortType?: SortType) => {
+        if (sortType === SortType.NORMAL || sortType === SortType.normal) {
+          return 0;
+        }
+        const factor = sortType === SortType.DESC || sortType === SortType.desc ? -1 : 1;
         /**
          * 根据rowKey和colKey获取tree上对应的聚合值
          * @param rowKey
@@ -1248,14 +1262,18 @@ export class Dataset {
           return that.getAggregator(rowKey, colKey, (<SortByIndicatorRule>sortRule).sortByIndicator!).value();
         };
         if (isSortRow) {
-          return naturalSort(
-            getValue(a, (<SortByIndicatorRule>sortRule).query),
-            getValue(b, (<SortByIndicatorRule>sortRule).query)
+          return (
+            naturalSort(
+              getValue(a, (<SortByIndicatorRule>sortRule).query),
+              getValue(b, (<SortByIndicatorRule>sortRule).query)
+            ) * factor
           );
         }
-        return naturalSort(
-          getValue((<SortByIndicatorRule>sortRule).query, a),
-          getValue((<SortByIndicatorRule>sortRule).query, b)
+        return (
+          naturalSort(
+            getValue((<SortByIndicatorRule>sortRule).query, a),
+            getValue((<SortByIndicatorRule>sortRule).query, b)
+          ) * factor
         );
       };
     } else if ((<SortByRule>sortRule).sortBy) {

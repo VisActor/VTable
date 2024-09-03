@@ -35,7 +35,10 @@ const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
-    rows: ['province', 'city'],
+    rows: [
+      { dimensionKey: 'province', title: 'province', sort: true },
+      { dimensionKey: 'city', title: 'city', sort: true }
+    ],
     columns: ['category', 'sub_category'],
     indicators: ['sales', 'number'],
 
@@ -45,22 +48,23 @@ export function createTable() {
       sortRules: [
         {
           sortField: 'province',
-          sortType: VTable.TYPES.SortType.normal,
+          sortType: VTable.TYPES.SortType.ASC,
           sortFunc: (a, b, sortType) => {
             if (sortType === VTable.TYPES.SortType.DESC || sortType === VTable.TYPES.SortType.desc) {
-              return a.toString().localeCompare(b.toString(), 'zh');
-            } else if (sortType === VTable.TYPES.SortType.ASC || sortType === VTable.TYPES.SortType.asc) {
               return b.toString().localeCompare(a.toString(), 'zh');
+            } else if (sortType === VTable.TYPES.SortType.ASC || sortType === VTable.TYPES.SortType.asc) {
+              return a.toString().localeCompare(b.toString(), 'zh');
             }
-            return 0;
+            const indexs = ['天津市', '四川省', '浙江省'];
+            return indexs.indexOf(a) - indexs.indexOf(b);
           }
-        }
-        // {
-        //   sortField: 'city',
-        //   sortByIndicator: 'sales',
-        //   sortType: VTable.TYPES.SortType.DESC,
-        //   query: ['办公用品', '笔']
-        // } as VTable.TYPES.SortByIndicatorRule
+        },
+        {
+          sortField: 'city',
+          sortByIndicator: 'sales',
+          sortType: VTable.TYPES.SortType.DESC,
+          query: ['办公用品', '笔']
+        } as VTable.TYPES.SortByIndicatorRule
       ],
       mappingRules: [
         {

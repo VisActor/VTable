@@ -40,7 +40,10 @@ const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
-    rows: ['province', 'city'],
+    rows: [
+      { dimensionKey: 'province', title: 'province', sort: true },
+      { dimensionKey: 'city', title: 'city', sort: true }
+    ],
     columns: ['category', 'sub_category'],
     indicators: ['sales', 'number'],
 
