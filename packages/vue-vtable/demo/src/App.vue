@@ -1,0 +1,69 @@
+<script setup>
+// unified
+import listtable from './table/unified/options/list-table/list-table.vue';
+import listtableFetch from './table/unified/options/list-table/list-table-fetch.vue';
+
+import listTableEditor from './table/unified/composition/list-table/list-table-editor.vue';
+import listTableCustom from './table/unified/composition/list-table/list-table-custom.vue';
+import pivotTableTree from './table/unified/composition/pivot-table/pivot-table-lazyTreeload.vue';//need to fix
+import pivotTableTitleOnDimension from './table/unified/options/pivot-table/pivot-table-titleOnDimension.vue';
+
+import pivotChart from './table/unified/composition/pivot-chart/pivot-chart.vue';
+
+// gramatical
+import ListTable from './table/gramatical/composition/ListTable.vue';
+import ListTableTree from './table/gramatical/composition/ListTable-tree.vue';
+import ListTableEditor from './table/gramatical/composition/ListTable-editor.vue';
+import ListTableDes from './table/gramatical/composition/ListTable-destruction.vue';
+import ListTableCustom from './table/gramatical/composition/ListTable-custom.vue';
+import ListTableVFor from './table/gramatical/options/ListTable-v-for.vue';
+
+import PivotTable from './table/gramatical/options/PivotTable.vue';  
+
+import PivotChartPie from './table/gramatical/composition/PivotChartPie.vue';
+</script>
+
+<template>
+  <!-- ------- -->
+  <!-- unified -->
+  <!-- ------- -->
+
+  <!-- <listtable /> -->
+  <!-- <listTableEditor /> -->
+  <!-- <listtableFetch /> -->
+  <!-- <listTableCustom /> -->
+
+  <!-- <pivotTableTree /> -->
+  <!-- <pivotTableTitleOnDimension /> -->
+
+  <!-- <pivotChart /> -->
+
+  <!-- ---------- -->
+  <!-- gramatical -->
+  <!-- ---------- -->
+
+  <!-- <ListTable/> -->
+  <!-- <ListTableEditor /> -->
+  <!-- <ListTableDes /> -->
+  <!-- <ListTableTree /> -->
+  <ListTableCustom />
+
+  <!-- <PivotTable /> -->
+
+  <!-- <PivotChartPie /> -->
+
+</template>
+
+<style>
+body,
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+}
+</style>

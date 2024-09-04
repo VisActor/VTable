@@ -93,6 +93,15 @@
       "versionPolicyName": "vtableMain"
     },
     {
+      "packageName": "@visactor/vue-vtable",
+      "projectFolder": "packages/vue-vtable",
+      "tags": [
+        "package"
+      ],
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
+    },
+    {
       "packageName": "@visactor/openinula-vtable",
       "projectFolder": "packages/openinula-vtable",
       "tags": [
