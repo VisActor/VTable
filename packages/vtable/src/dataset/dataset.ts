@@ -1203,9 +1203,17 @@ export class Dataset {
           let bChanged = b;
           if (sorter.fieldIndex < fieldArr.length - 1) {
             aChanged = a.slice(0, sorter.fieldIndex + 1);
-            aChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
+            if (that.rowHierarchyType === 'grid' && isRow) {
+              aChanged.push(that.rowSubTotalLabel);
+            } else if (!isRow) {
+              aChanged.push(that.colSubTotalLabel);
+            }
             bChanged = b.slice(0, sorter.fieldIndex + 1);
-            bChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
+            if (that.rowHierarchyType === 'grid' && isRow) {
+              bChanged.push(that.rowSubTotalLabel);
+            } else if (!isRow) {
+              bChanged.push(that.colSubTotalLabel);
+            }
           }
           comparison = sorter.func(aChanged, bChanged, sorter.sortRule?.sortType);
         } else {
@@ -1241,6 +1249,7 @@ export class Dataset {
         const getValue = function (rowKey: any, colKey: any) {
           //如果rowKey提供的不全 如 [地区,省,城市] 只提供了如[华东,山东] 会补全为[华东,山东,小计]
           if (
+            that.rowHierarchyType === 'grid' &&
             rowKey.length < that.rows.length &&
             rowKey[rowKey.length - 1] !== that.rowSubTotalLabel &&
             rowKey[rowKey.length - 1] !== that.rowGrandTotalLabel
