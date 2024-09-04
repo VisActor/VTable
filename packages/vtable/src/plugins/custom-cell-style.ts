@@ -115,6 +115,8 @@ export class CustomCellStylePlugin {
         },
         customStyleId: customStyleId
       });
+    } else if (this.customCellStyleArrangement[index].customStyleId === customStyleId) {
+      return;
     } else {
       this.customCellStyleArrangement[index].customStyleId = customStyleId;
     }

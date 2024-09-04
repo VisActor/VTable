@@ -113,7 +113,11 @@ export function isCellSelected(state: StateManager, col: number, row: number, ce
   } else if (state.table.theme.selectionStyle.selectionFillMode === 'replace') {
     for (let i = 0; i < ranges.length; i++) {
       const range = ranges[i];
-      if (range.start.col <= col && range.start.row <= row && range.end.col >= col && range.end.row >= row) {
+      const rangeColStart = Math.min(range.start.col, range.end.col);
+      const rangeColEnd = Math.max(range.start.col, range.end.col);
+      const rangeRowStart = Math.min(range.start.row, range.end.row);
+      const rangeRowEnd = Math.max(range.start.row, range.end.row);
+      if (rangeColStart <= col && rangeRowStart <= row && rangeColEnd >= col && rangeRowEnd >= row) {
         selectMode = 'cellBgColor';
         break;
       }
