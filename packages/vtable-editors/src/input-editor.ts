@@ -78,7 +78,9 @@ export class InputEditor implements IEditor {
 
   onEnd() {
     // do nothing
-    this.container.removeChild(this.element);
+    if (this.container.contains(this.element)) {
+      this.container.removeChild(this.element);
+    }
     this.element = undefined;
   }
 
