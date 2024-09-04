@@ -1060,43 +1060,40 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const sortRules = this.internalProps.dataConfig?.sortRules ?? [];
     for (let i = 0; i < sortRules.length; i++) {
       const sortRule = sortRules[i];
-      if ((sortRule as SortByIndicatorRule).sortType) {
-        const dimensions: IDimensionInfo[] = [];
-        if (
-          (sortRule as SortByIndicatorRule).sortByIndicator &&
-          (sortRule as SortByIndicatorRule).sortField ===
-            (this.dataset.indicatorsAsCol
-              ? this.dataset.rows[this.dataset.rows.length - 1]
-              : this.dataset.columns[this.dataset.columns.length - 1])
-        ) {
-          for (let j = 0; j < (sortRule as SortByIndicatorRule).query.length; j++) {
-            dimensions.push({
-              dimensionKey: this.dataset.indicatorsAsCol ? this.dataset.columns[j] : this.dataset.rows[j],
-              value: (sortRule as SortByIndicatorRule).query[j]
-            });
-          }
+      // if ((sortRule as SortByIndicatorRule).sortType) {
+      const dimensions: IDimensionInfo[] = [];
+      if (
+        (sortRule as SortByIndicatorRule).sortByIndicator &&
+        (sortRule as SortByIndicatorRule).sortField ===
+          (this.dataset.indicatorsAsCol
+            ? this.dataset.rows[this.dataset.rows.length - 1]
+            : this.dataset.columns[this.dataset.columns.length - 1])
+      ) {
+        for (let j = 0; j < (sortRule as SortByIndicatorRule).query.length; j++) {
           dimensions.push({
-            indicatorKey: (sortRule as SortByIndicatorRule).sortByIndicator,
-            value:
-              this.internalProps.layoutMap.getIndicatorInfo((sortRule as SortByIndicatorRule).sortByIndicator)?.title ??
-              (sortRule as SortByIndicatorRule).sortByIndicator
-          });
-        } else {
-          dimensions.push({
-            dimensionKey: (sortRule as SortTypeRule).sortField,
-            isPivotCorner: true,
-            value: (sortRule as SortTypeRule).sortField
+            dimensionKey: this.dataset.indicatorsAsCol ? this.dataset.columns[j] : this.dataset.rows[j],
+            value: (sortRule as SortByIndicatorRule).query[j]
           });
         }
-        this.pivotSortState.push({
-          dimensions,
-          order: SortType[(sortRule as SortByIndicatorRule).sortType.toUpperCase() as 'ASC' | 'DESC']
+        dimensions.push({
+          indicatorKey: (sortRule as SortByIndicatorRule).sortByIndicator,
+          value:
+            this.internalProps.layoutMap.getIndicatorInfo((sortRule as SortByIndicatorRule).sortByIndicator)?.title ??
+            (sortRule as SortByIndicatorRule).sortByIndicator
         });
-        // this.changePivotSortState({
-        //   dimensions,
-        //   order: (sortRule as SortByIndicatorRule).sortType
-        // });
+      } else {
+        dimensions.push({
+          dimensionKey: (sortRule as SortTypeRule).sortField,
+          isPivotCorner: true,
+          value: (sortRule as SortTypeRule).sortField
+        });
       }
+      const sortType = sortRule.sortType ? (sortRule.sortType.toUpperCase() as 'ASC' | 'DESC' | 'NORMAL') : 'ASC';
+      this.pivotSortState.push({
+        dimensions,
+        order: SortType[sortType]
+      });
+      // }
     }
   }
   /**
