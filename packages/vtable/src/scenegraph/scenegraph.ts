@@ -1723,10 +1723,17 @@ export class Scenegraph {
       if (abstractY >= drawRange.top && abstractY <= drawRange.bottom) {
         // to do: 处理最后一列外调整列宽
         cell = this.table.getCellAtRelativePosition(abstractX - offset, abstractY);
-        return cell;
+        if (cell.col === this.table.colCount - 1) {
+          return cell;
+        }
       }
       return { col: -1, row: -1 };
     }
+
+    if (!cellGroup.stage) {
+      return { col: -1, row: -1 };
+    }
+
     if (abstractX < cellGroup.globalAABBBounds.x1 + offset) {
       cell = { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
     } else if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
