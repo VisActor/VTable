@@ -1300,13 +1300,13 @@ export class StateManager {
     sortState = Array.isArray(sortState) ? sortState : [sortState];
 
     for (let index = 0; index < sortState.length; index++) {
-      if (sortState[index].field === this.sort[index].field && sortState[sortState.length - 1].order === this.sort[index].order) {
+      if ((sortState[index].field === this.sort[index]?.field) && (sortState[sortState.length - 1].order === this.sort[index]?.order)) {
         return;
       }
-      const oldSortCol = this.table.internalProps.multipleSort ? null : this.sort[index].col;
-      const oldSortRow = this.table.internalProps.multipleSort ? null : this.sort[index].row;
+      const oldSortCol = this.table.internalProps.multipleSort ? null : this.sort[index]?.col || null;
+      const oldSortRow = this.table.internalProps.multipleSort ? null : this.sort[index]?.row || null;
       const name =
-        this.sort[index].order === 'asc' ? 'sort_downward' : this.sort[index].order === 'desc' ? 'sort_upward' : 'sort_normal';
+        this.sort[index]?.order === 'asc' ? 'sort_downward' : this.sort[index]?.order === 'desc' ? 'sort_upward' : 'sort_normal';
       this.setSortState(sortState);
       // 获取sort对应的行列位置
       const cellAddress = this.table.internalProps.layoutMap.getHeaderCellAddressByField(sortState[index].field as string);

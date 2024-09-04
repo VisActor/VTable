@@ -300,8 +300,7 @@ function getCellUpdateType(
 
 export function sortRecords(table: ListTable) {
   let sortState = table.sortState;
-  let isArray = false;
-  sortState = !sortState || Array.isArray(sortState) ? (isArray = true) && sortState : [sortState];
+  sortState = !sortState || Array.isArray(sortState) ? sortState : [sortState];
 
   if (sortState) {
     sortState = (sortState as SortState[]).map(item=>{
@@ -310,7 +309,7 @@ export function sortRecords(table: ListTable) {
       return item;
     });
     
-    table.dataSource.sort(isArray ? sortState : (sortState as SortState[])[0]);
+    table.dataSource.sort(sortState);
   }
 }
 
