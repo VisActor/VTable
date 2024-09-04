@@ -1310,7 +1310,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   // 拖拽调整数据位置 目前对排序过的数据不过处理，因为自动排序和手动排序融合问题目前没有找到好的解决方式
   reorderRecord(sourceIndex: number, targetIndex: number) {
-    if (this.lastSortStates.some(state => state.order === 'asc' || state.order === 'desc')) {
+    if (this.lastSortStates?.some(state => state.order === 'asc' || state.order === 'desc')) {
       // const sourceIds = this._currentPagerIndexedData.splice(sourceIndex, 1);
       // sourceIds.unshift(targetIndex, 0);
       // Array.prototype.splice.apply(this._currentPagerIndexedData, sourceIds);
