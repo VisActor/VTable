@@ -295,7 +295,6 @@ export class TableComponent {
     // const hoverOn = theme.scrollStyle?.hoverOn as boolean;
 
     this.hScrollBar = new ScrollBar({
-      dy: 20,
       direction: 'horizontal',
       x: -this.table.tableNoFrameWidth * 2,
       y: -this.table.tableNoFrameHeight * 2,
@@ -308,9 +307,7 @@ export class TableComponent {
       sliderStyle,
       range: [0, 0.1],
       // scrollRange: [0.4, 0.8]
-      visible: false,
-
-      globalCompositeOperation: 'source-over'
+      visible: false
     });
     // hack方案实现初始化隐藏滚动条，也可以add到stage之后执行hideAll
     (this.hScrollBar as any).render();
@@ -328,9 +325,7 @@ export class TableComponent {
       },
       sliderStyle,
       range: [0, 0.1],
-      visible: false,
-
-      globalCompositeOperation: 'source-over'
+      visible: false
     });
     (this.vScrollBar as any).render();
     this.vScrollBar.hideAll();
