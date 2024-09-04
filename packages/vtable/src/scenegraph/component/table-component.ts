@@ -255,12 +255,12 @@ export class TableComponent {
       componentGroup.addChild(this.hScrollBar);
       componentGroup.addChild(this.vScrollBar);
     } else {
-      // componentGroup.stage.defaultLayer.addChild(this.hScrollBar);
-      // componentGroup.stage.defaultLayer.addChild(this.vScrollBar);
+      componentGroup.stage.defaultLayer.addChild(this.hScrollBar);
+      componentGroup.stage.defaultLayer.addChild(this.vScrollBar);
 
-      // add scroll bar before border, avoid scroll hide by border globalCompositeOperation
-      componentGroup.stage.defaultLayer.insertBefore(this.vScrollBar, componentGroup.stage.defaultLayer.firstChild);
-      componentGroup.stage.defaultLayer.insertBefore(this.hScrollBar, componentGroup.stage.defaultLayer.firstChild);
+      // // add scroll bar before border, avoid scroll hide by border globalCompositeOperation
+      // componentGroup.stage.defaultLayer.insertBefore(this.vScrollBar, componentGroup.stage.defaultLayer.firstChild);
+      // componentGroup.stage.defaultLayer.insertBefore(this.hScrollBar, componentGroup.stage.defaultLayer.firstChild);
     }
     this.menu.bindTableComponent(componentGroup);
     this.drillIcon.appand(componentGroup);
@@ -295,6 +295,7 @@ export class TableComponent {
     // const hoverOn = theme.scrollStyle?.hoverOn as boolean;
 
     this.hScrollBar = new ScrollBar({
+      dy: 20,
       direction: 'horizontal',
       x: -this.table.tableNoFrameWidth * 2,
       y: -this.table.tableNoFrameHeight * 2,
@@ -307,7 +308,9 @@ export class TableComponent {
       sliderStyle,
       range: [0, 0.1],
       // scrollRange: [0.4, 0.8]
-      visible: false
+      visible: false,
+
+      globalCompositeOperation: 'source-over'
     });
     // hack方案实现初始化隐藏滚动条，也可以add到stage之后执行hideAll
     (this.hScrollBar as any).render();
@@ -325,7 +328,9 @@ export class TableComponent {
       },
       sliderStyle,
       range: [0, 0.1],
-      visible: false
+      visible: false,
+
+      globalCompositeOperation: 'source-over'
     });
     (this.vScrollBar as any).render();
     this.vScrollBar.hideAll();
