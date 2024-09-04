@@ -898,7 +898,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     columns: ColumnsDefine | undefined,
     field: FieldDef,
     fieldKey?: FieldKeyDef
-  ): ((v1: any, v2: any, order: SortOrder) => 0 | 1 | -1) | undefined {
+  ): SortState["orderFn"] | undefined {
     if (!columns) {
       columns = this.internalProps.columns;
     }
