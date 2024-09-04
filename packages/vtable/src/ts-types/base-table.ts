@@ -200,6 +200,7 @@ export interface IBaseTableProtected {
   };
   /** 提示弹框的相关配置。消失时机：显示后鼠标移动到指定区域外或者进入新的单元格后自动消失*/
   tooltip: {
+    parentElement: HTMLElement;
     renderMode: 'html' | 'canvas';
     /** 代替原来hover:isShowTooltip配置 */
     isShowOverflowTextTooltip: boolean;
@@ -217,7 +218,7 @@ export interface IBaseTableProtected {
 
   // headerRowHeight: number[] | number;//移到了BaseTable
   sortState: SortState | SortState[];
-  multipleSort?: boolean,
+  multipleSort?: boolean;
 
   dataSource: DataSource | CachedDataSource;
   records?: any;
@@ -357,6 +358,8 @@ export interface BaseTableConstructorOptions {
     blankAreaClickDeselect?: boolean;
     /** 点击外部区域是否取消选中 */
     outsideClickDeselect?: boolean; //
+    /**  禁止拖拽框选 */
+    disableDragSelect?: boolean;
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
@@ -371,6 +374,7 @@ export interface BaseTableConstructorOptions {
   };
   /** tooltip相关配置 */
   tooltip?: {
+    parentElement?: HTMLElement;
     /** html目前实现较完整 先默认html渲染方式 */
     renderMode?: 'html'; // 目前暂不支持canvas方案
     /** 是否显示缩略文字提示框。 代替原来hover:isShowTooltip配置 暂时需要将renderMode配置为html才能显示，canvas的还未开发*/
@@ -601,7 +605,7 @@ export interface BaseTableAPI {
 
   _rowRangeHeightsMap: Map<string, number>;
   _colRangeWidthsMap: Map<string, number>;
-
+  canvasSizeSeted?: boolean;
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -663,7 +667,7 @@ export interface BaseTableAPI {
   getFrozenColsWidth: () => number;
   getBottomFrozenRowsHeight: () => number;
   getRightFrozenColsWidth: () => number;
-  selectCell: (col: number, row: number, isShift?: boolean, isCtrl?: boolean) => void;
+  selectCell: (col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean) => void;
   selectCells: (cellRanges: CellRange[]) => void;
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;
@@ -792,7 +796,8 @@ export interface BaseTableAPI {
   toggleHierarchyState: (col: number, row: number) => void;
 
   resize: () => void;
-
+  /** 直接设置canvas的宽高 不根据容器宽高来决定表格的尺寸 */
+  setCanvasSize: (width: number, height: number) => void;
   getMergeCellRect: (col: number, row: number) => Rect;
 
   getTargetColAt: (absoluteX: number) => ColumnInfo | null;

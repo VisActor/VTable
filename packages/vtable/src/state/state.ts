@@ -30,7 +30,7 @@ import { Bounds, isObject, isString, isValid } from '@visactor/vutils';
 import { updateDrill } from './drill';
 import { clearChartHover, updateChartHover } from './spark-line';
 import { endMoveCol, startMoveCol, updateMoveCol } from './cell-move';
-import type { FederatedEvent } from '@src/vrender';
+import type { FederatedWheelEvent } from '@src/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
@@ -265,11 +265,13 @@ export class StateManager {
       highlightIndex: -1,
       dropDownMenuHighlight: []
     };
-    this.sort = [{
-      col: -1,
-      row: -1,
-      order: 'normal'
-    }];
+    this.sort = [
+      {
+        col: -1,
+        row: -1,
+        order: 'normal'
+      }
+    ];
     this.frozen = {
       col: -1
       // row: -1,
@@ -347,11 +349,13 @@ export class StateManager {
       highlightIndex: -1,
       dropDownMenuHighlight: []
     };
-    this.sort = [{
-      col: -1,
-      row: -1,
-      order: 'normal'
-    }];
+    this.sort = [
+      {
+        col: -1,
+        row: -1,
+        order: 'normal'
+      }
+    ];
     this.frozen = {
       col: -1
       // row: -1,
@@ -474,42 +478,45 @@ export class StateManager {
     //   this.sort.row = range.start.row;
     // }
 
-    function flattenColumns(columns:any) {
-      let result:Array<any> = [];
-  
-      function flatten(cols:any, parentStartIndex = 0) {
-          cols.forEach((col:any) => {
-              const startIndex = col.startInTotal ?? parentStartIndex;
-              if (col.columns) {
-                  flatten(col.columns, startIndex);
-              } else {
-                  result.push({
-                      ...col,
-                      startIndex,
-                  });
-              }
-          });
+    function flattenColumns(columns: any) {
+      const result: Array<any> = [];
+
+      function flatten(cols: any, parentStartIndex = 0) {
+        cols.forEach((col: any) => {
+          const startIndex = col.startInTotal ?? parentStartIndex;
+          if (col.columns) {
+            flatten(col.columns, startIndex);
+          } else {
+            result.push({
+              ...col,
+              startIndex
+            });
+          }
+        });
       }
-  
+
       flatten(columns);
       return result;
-  }
+    }
 
-    let sort = sortState && (sortState as SortState[]).reduce((prev,item)=>{
-      let column = flattenColumns((this.table.internalProps as any).columns)?.find(column=>column?.field === item?.field);
-      //let path = (item as any)?.event?.path?.findLast((item:any)=>item.col!=undefined);
-      prev.push({
-        field:item.field, 
-        order:item.order,
-        col: column.startInTotal,
-        row: column.level
-      } as any)
+    const sort =
+      sortState &&
+      (sortState as SortState[]).reduce((prev, item) => {
+        const column = flattenColumns((this.table.internalProps as any).columns)?.find(
+          column => column?.field === item?.field
+        );
+        //let path = (item as any)?.event?.path?.findLast((item:any)=>item.col!=undefined);
+        prev.push({
+          field: item.field,
+          order: item.order,
+          col: column.startInTotal,
+          row: column.level
+        } as any);
 
-      return prev;
-    },[]);
+        return prev;
+      }, []);
 
     this.sort = sort || [];
-    
   }
 
   setFrozenState() {
@@ -569,7 +576,7 @@ export class StateManager {
     );
   }
 
-  updateHoverIcon(col: number, row: number, target: any, cellGroup: Group, event?: FederatedEvent) {
+  updateHoverIcon(col: number, row: number, target: any, cellGroup: Group) {
     if (this.residentHoverIcon?.icon && target === this.residentHoverIcon?.icon) {
       return; // 常驻hover icon不更新交互
     }
@@ -797,8 +804,8 @@ export class StateManager {
   isMoveCol(): boolean {
     return this.columnMove.moving;
   }
-  endMoveCol() {
-    endMoveCol(this);
+  endMoveCol(): boolean {
+    return endMoveCol(this);
   }
 
   checkFrozen(): boolean {
@@ -891,6 +898,7 @@ export class StateManager {
     // this.updateSelectPos(-1, -1);
 
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      event: undefined,
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
       scrollHeight: this.table.theme.scrollStyle?.width,
@@ -925,6 +933,7 @@ export class StateManager {
     this.updateHoverPos(-1, -1);
     // this.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      event: undefined,
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
       scrollHeight: this.table.theme.scrollStyle?.width,
@@ -939,7 +948,7 @@ export class StateManager {
       this.checkHorizontalScrollBarEnd();
     }
   }
-  setScrollTop(top: number) {
+  setScrollTop(top: number, event?: FederatedWheelEvent, triggerEvent: boolean = true) {
     // 矫正top值范围
     const totalHeight = this.table.getAllRowsHeight();
     // _disableColumnAndRowSizeRound环境中，可能出现
@@ -966,8 +975,9 @@ export class StateManager {
     const yRatio = top / (totalHeight - this.table.scenegraph.height);
     this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
 
-    if (oldVerticalBarPos !== top) {
+    if (oldVerticalBarPos !== top && triggerEvent) {
       this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+        event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
         scrollTop: this.scroll.verticalBarPos,
         scrollLeft: this.scroll.horizontalBarPos,
         scrollHeight: this.table.theme.scrollStyle?.width,
@@ -981,7 +991,7 @@ export class StateManager {
       this.checkVerticalScrollBarEnd();
     }
   }
-  setScrollLeft(left: number) {
+  setScrollLeft(left: number, event?: FederatedWheelEvent, triggerEvent: boolean = true) {
     const oldScrollLeft = this.table.scrollLeft;
     // 矫正left值范围
     const totalWidth = this.table.getAllColsWidth();
@@ -1013,8 +1023,9 @@ export class StateManager {
     const xRatio = left / (totalWidth - this.table.scenegraph.width);
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
 
-    if (oldHorizontalBarPos !== left) {
+    if (oldHorizontalBarPos !== left && triggerEvent) {
       this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+        event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
         scrollTop: this.scroll.verticalBarPos,
         scrollLeft: this.scroll.horizontalBarPos,
         scrollHeight: this.table.theme.scrollStyle?.width,
@@ -1248,21 +1259,22 @@ export class StateManager {
       return;
     }
 
-    let previousSort = [...this.sort];
-    let previousSortItem = this.table.internalProps.multipleSort || !previousSort.length ? null : this.sort[this.sort.length - 1];
-    
+    const previousSort = [...this.sort];
+    const previousSortItem =
+      this.table.internalProps.multipleSort || !previousSort.length ? null : this.sort[this.sort.length - 1];
+
     // 执行sort
     dealSort(col, row, this.table as ListTableAPI, event);
 
-    let currentSortItem = this.sort.find(item=>item.col == col && item.row == row);
-    
+    const currentSortItem = this.sort.find(item => item.col === col && item.row === row);
+
     const oldSortCol = this.table.internalProps.multipleSort || !previousSortItem ? null : previousSortItem.col;
     const oldSortRow = this.table.internalProps.multipleSort || !previousSortItem ? null : previousSortItem.row;
     //currentSortItem.col = col;
     //currentSortItem.row = row;
 
-    let currentSortItemIndex = previousSort.findIndex(item=>item.col == col && item.row == row);
-    if(currentSortItemIndex >= 0){
+    const currentSortItemIndex = previousSort.findIndex(item => item.col === col && item.row === row);
+    if (currentSortItemIndex >= 0) {
       previousSort.splice(currentSortItemIndex, 1);
     }
 
@@ -1276,16 +1288,16 @@ export class StateManager {
       oldSortRow,
       oldIconMark: previousSortItem?.icon
     });
-    if(currentSortItem){
+    if (currentSortItem) {
       currentSortItem.icon = iconMark;
-    } 
+    }
 
-    if(!this.table.internalProps.multipleSort){
-      previousSort.forEach((sortItem:any) => {
+    if (!this.table.internalProps.multipleSort) {
+      previousSort.forEach((sortItem: any) => {
         this.table.scenegraph.updateSortIcon({
           col: null,
           row: null,
-          iconMark:null,
+          iconMark: null,
           order: 'normal',
           oldSortCol: sortItem.col,
           oldSortRow: sortItem.row,
@@ -1293,23 +1305,31 @@ export class StateManager {
         });
       });
     }
-    
   }
 
-  updateSortState(sortState: SortState | SortState[]) {
+  updateSortState(sortState: SortState[]) {
     sortState = Array.isArray(sortState) ? sortState : [sortState];
 
     for (let index = 0; index < sortState.length; index++) {
-      if (sortState[index].field === this.sort[index].field && sortState[sortState.length - 1].order === this.sort[index].order) {
+      if (
+        sortState[index].field === this.sort[index].field &&
+        sortState[sortState.length - 1].order === this.sort[index].order
+      ) {
         return;
       }
       const oldSortCol = this.table.internalProps.multipleSort ? null : this.sort[index].col;
       const oldSortRow = this.table.internalProps.multipleSort ? null : this.sort[index].row;
       const name =
-        this.sort[index].order === 'asc' ? 'sort_downward' : this.sort[index].order === 'desc' ? 'sort_upward' : 'sort_normal';
+        this.sort[index].order === 'asc'
+          ? 'sort_downward'
+          : this.sort[index].order === 'desc'
+          ? 'sort_upward'
+          : 'sort_normal';
       this.setSortState(sortState);
       // 获取sort对应的行列位置
-      const cellAddress = this.table.internalProps.layoutMap.getHeaderCellAddressByField(sortState[index].field as string);
+      const cellAddress = this.table.internalProps.layoutMap.getHeaderCellAddressByField(
+        sortState[index].field as string
+      );
       this.sort[index].col = cellAddress.col;
       this.sort[index].row = cellAddress.row;
       const cellGroup = this.table.scenegraph.getCell(this.sort[index].col, this.sort[index].row);
@@ -1336,9 +1356,9 @@ export class StateManager {
       });
     }
 
-    let normalHeaders:Array<any> = [];
-    (this.table.internalProps.layoutMap.columnTree as any).tree.children.forEach((item: any)=>{
-      if(!sortState.some(state=>state.field == item.field)){
+    const normalHeaders: Array<any> = [];
+    (this.table.internalProps.layoutMap.columnTree as any).tree.children.forEach((item: any) => {
+      if (!sortState.some((state: SortState) => state.field === item.field)) {
         normalHeaders.push(item);
       }
     });
@@ -1348,10 +1368,10 @@ export class StateManager {
       this.table.scenegraph.updateSortIcon({
         col: null,
         row: null,
-        iconMark:null,
+        iconMark: null,
         order: null,
-        oldSortCol:column.startInTotal,
-        oldSortRow:column.level,
+        oldSortCol: column.startInTotal,
+        oldSortRow: column.level,
         oldIconMark: null
       });
     }

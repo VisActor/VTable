@@ -300,17 +300,16 @@ function getCellUpdateType(
 
 export function sortRecords(table: ListTable) {
   let sortState = table.sortState;
-  let isArray = false;
-  sortState = !sortState || Array.isArray(sortState) ? (isArray = true) && sortState : [sortState];
+  sortState = !sortState || Array.isArray(sortState) ? sortState : [sortState];
 
   if (sortState) {
-    sortState = (sortState as SortState[]).map(item=>{
-      item['orderFn'] = table._getSortFuncFromHeaderOption(undefined, item.field) ?? defaultOrderFn;
+    sortState = (sortState as SortState[]).map(item => {
+      item.orderFn = table._getSortFuncFromHeaderOption(undefined, item.field) ?? defaultOrderFn;
       //const hd = table.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === item.field);
       return item;
     });
-    
-    table.dataSource.sort(isArray ? sortState : (sortState as SortState[])[0]);
+
+    table.dataSource.sort(sortState);
   }
 }
 

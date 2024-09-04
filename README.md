@@ -57,7 +57,13 @@ The core capabilities are as follows:
 This repository includes the following packages:
 
 1. packages/vtable: The core code repository of VTable
-2. docs: Include VTable site tutorials, demos,apis and options, and also contains all Chinese and English documents.
+2. packages/vtable-gantt: Gantt chart component code
+3. packages/vtable-editors: Table editor component code
+4. packages/vtable-export: Table export tool code
+5. packages/vtable-search: Table search tool code
+6. packages/react-vtable: React version of the table component
+7. packages/vue-vtable: Vue version of the table component
+8. docs: Include VTable site tutorials, demos,apis and options, and also contains all Chinese and English documents.
 
 # Usage
 

@@ -8,25 +8,32 @@ VTable采用可视化渲染引擎VRender进行封装，提供了卓越的性能�
 ![VTable滚动交互性能展示](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/f7c7048f8d595c464505b5f00.gif)
 
 # 多种表形态
-VTable提供了三种主要的表格形态，包括基本表格、多维透视表格和透视组合图。可以满足不同用户的需求，帮助用户更好地展示和分析数据，并从中发现有价值的信息。
+VTable提供了三种主要的表格形态，包括基本表格、多维透视表格和透视组合图，以及gantt甘特图。可以满足不同用户的需求，帮助用户更好地展示和分析数据，并从中发现有价值的信息。
 <div style="display: flex;">
- <div style="width: 33%; text-align: center;">
+ <div style="width: 43%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/5717b050ef81c8b03549af800.png" />
     <p>list table</p>
   </div>
-  <div style="width: 33%; text-align: center;">
+  <div style="width: 43%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/5717b050ef81c8b03549af801.png" />
     <p>pivot table</p>
   </div>
-  <div style="width: 33%; text-align: center;">
+  </div>
+  <div style="display: flex;">
+  <div style="width: 43%; text-align: center;">
  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/5717b050ef81c8b03549af802.png" />
     <p>pivot chart</p>
+  </div>
+  <div style="width: 43%; text-align: center;">
+ <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-basic-preview.png" />
+    <p>gantt chart</p>
   </div>
 </div>
 
 - 基本表格是最简单的表格形态，它由行和列组成，每个单元格包含一个数据项。基本表格适用于对数据进行简单的排列和展示。
 - 透视表格是一种用于多维数据分析的表格形态，它可以将数据按照多个维度进行聚合和汇总，为用户提供多角度的数据分析和探索。
 - 透视组合图是一种将多维透视表格与其他图表形式（如柱状图、折线图等）结合起来的图表形态，它可以将透视表格中的数据转化为更直观、易懂的图形展示。
+- 甘特图是一种用于展示项目进度和资源分配的图表形态，它可以帮助用户更好地了解项目的进展情况和资源分配情况。
 
 同时基本表格可以形变为转置表格，还可以用树形结构展示层次关系：
 

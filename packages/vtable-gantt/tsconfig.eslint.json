@@ -1,0 +1,22 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["jest", "offscreencanvas", "node"],
+    "lib": ["DOM", "ESNext"],
+    "baseUrl": "./",
+    "rootDir": "./",
+    "paths": {
+      "@visactor/vtable-editors": [
+        "../vtable-editors/src"
+      ],
+      "@visactor/vtable": [
+        "../vtable/src"
+      ],
+      "@visactor/vtable/es/vrender": [
+        "../vtable/src/vrender.ts"
+      ]
+    }
+  },
+  "include": ["src", "__tests__", "examples", "site-demo"],
+  "exclude": ["bugserver-config"]
+}

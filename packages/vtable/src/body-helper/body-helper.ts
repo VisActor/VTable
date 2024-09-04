@@ -144,7 +144,7 @@ export class BodyHelper {
     icons.iconPropKeys.forEach(k => {
       if (typeof iconOpt[k] !== 'undefined') {
         const f = (this._table as ListTableAPI).getFieldData(iconOpt[k], col, row);
-        if (f != null) {
+        if (f !== null) {
           retIcon[k] = f;
         } else if (!this._table._hasField?.(iconOpt[k], col, row)) {
           retIcon[k] = iconOpt[k];

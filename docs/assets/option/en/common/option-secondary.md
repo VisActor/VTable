@@ -231,6 +231,10 @@ Whether to cancel the selection when clicking the blank area.
 
 Whether to cancel the selection when clicking outside the table.
 
+##${prefix} disableDragSelect(boolean) = true
+
+Whether to disable dragging selection.
+
 #${prefix} theme(Object)
 
 {{ use: common-theme(
@@ -502,6 +506,14 @@ Whether to enable line break, the default is false.
 #${prefix} clearDOM(boolean) = true
 
 Whether to clear the container DOM.
+
+#${prefix} canvasWidth(number)
+
+Directly set the width of the canvas. Do not determine the size of the table based on the container width and height.
+
+#${prefix} canvasHeight(number)
+
+Directly set the height of the canvas. Do not determine the size of the table based on the width and height of the container.
 
 #${prefix} animationAppear(boolean|Object|)
 

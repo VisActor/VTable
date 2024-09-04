@@ -1,5 +1,5 @@
-import type { IEventTarget } from '@src/vrender';
-import { Gesture, type FederatedPointerEvent } from '@src/vrender';
+import type { IEventTarget, FederatedPointerEvent, FederatedWheelEvent } from '@src/vrender';
+import { Gesture } from '@src/vrender';
 import type {
   ListTableAPI,
   MousePointerCellEvent,
@@ -22,6 +22,7 @@ import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CheckBox, CheckboxAttributes, Radio } from '@visactor/vrender-components';
 import { ResizeColumnHotSpotSize } from '../../tools/global';
+import { handleWhell } from '../scroll';
 export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
@@ -52,7 +53,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         } else if (stateManager.isFillHandle()) {
           eventManager.dealFillSelect(eventArgsSet, true);
         } else {
-          eventManager.dealTableSelect(eventArgsSet, true);
+          table.options.select?.disableDragSelect || eventManager.dealTableSelect(eventArgsSet, true);
         }
       }
       return;
@@ -239,8 +240,16 @@ export function bindTableGroupListener(eventManager: EventManager) {
   // }
   // });
   table.scenegraph.tableGroup.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
-    if (table.theme.scrollStyle.visible === 'focus') {
+    if (
+      (table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.horizontalVisible === 'focus') ||
+      (!table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.visible === 'focus')
+    ) {
       stateManager.showHorizontalScrollBar();
+    }
+    if (
+      (table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.verticalVisible === 'focus') ||
+      (!table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.visible === 'focus')
+    ) {
       stateManager.showVerticalScrollBar();
     }
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEENTER_TABLE)) {
@@ -255,10 +264,20 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       stateManager.updateCursor();
     }
-    if (table.theme.scrollStyle.visible === 'focus') {
+
+    if (
+      (table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.horizontalVisible === 'focus') ||
+      (!table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.visible === 'focus')
+    ) {
       stateManager.hideHorizontalScrollBar();
+    }
+    if (
+      (table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.verticalVisible === 'focus') ||
+      (!table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.visible === 'focus')
+    ) {
       stateManager.hideVerticalScrollBar();
     }
+
     // 移动到table外部 如移动到表格空白区域 移动到表格浏览器外部
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
       if (table.stateManager.hover.cellPos.col !== -1 && table.stateManager.hover.cellPos.row !== -1) {
@@ -305,8 +324,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     } else if (stateManager.isResizeRow()) {
       endResizeRow(table);
     } else if (stateManager.isMoveCol()) {
-      table.stateManager.endMoveCol();
+      const endMoveColSuccess = table.stateManager.endMoveCol();
       if (
+        endMoveColSuccess &&
         table.stateManager.columnMove?.colSource !== -1 &&
         table.stateManager.columnMove?.rowSource !== -1 &&
         table.stateManager.columnMove?.colTarget !== -1 &&
@@ -522,8 +542,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
         endResizeRow(table);
       } else if (stateManager.isMoveCol()) {
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-        table.stateManager.endMoveCol();
-        if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
+        const endMoveColSuccess = table.stateManager.endMoveCol();
+        if (
+          endMoveColSuccess &&
+          eventArgsSet.eventArgs &&
+          (table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)
+        ) {
           table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
             target: { col: eventArgsSet.eventArgs.col, row: eventArgsSet.eventArgs.row },
             source: {
@@ -791,6 +815,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       } else {
         stateManager.updateCursor('row-resize');
       }
+    } else if (stateManager.isMoveCol()) {
+      // 拖拽位置已经在updateMoveCol方法中添加了响应的鼠标样式
     } else {
       stateManager.updateCursor();
     }
@@ -949,6 +975,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
     table.fireListeners(TABLE_EVENT_TYPE.RADIO_STATE_CHANGE, cellsEvent);
 
     table.scenegraph.updateNextFrame();
+  });
+  table.scenegraph.stage.addEventListener('wheel', (e: FederatedWheelEvent) => {
+    table.editorManager?.completeEdit();
+    if (table.eventManager._enableTableScroll) {
+      handleWhell(e, stateManager);
+    }
   });
 }
 export function bindGesture(eventManager: EventManager) {

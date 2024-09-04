@@ -955,7 +955,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.sortedIndexMap.clear();
   }
 
-  sort(states: SortState | Array<SortState>): void {
+  sort(states: Array<SortState>): void {
     // Convert states into an array and filter out unnecessary ones
     states = (Array.isArray(states) ? states : [states]).filter(item => item.order !== 'normal');
 
@@ -989,7 +989,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
     // Perform sorting on each state
     sortedIndexArray.sort((indexA, indexB) => {
-      return states.reduce((result, state) => {
+      return states.reduce((result: number, state: SortState) => {
         if (result !== 0) {
           return result;
         }

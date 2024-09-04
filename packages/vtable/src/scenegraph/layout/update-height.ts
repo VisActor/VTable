@@ -127,9 +127,11 @@ export function updateCellHeight(
   cell.needUpdateHeight = false;
 
   cell.setAttribute('height', distHeight);
-
+  const isvtableMerge = scene.table.getCellRawRecord(col, row)?.vtableMerge;
   // 更新单元格布局
-  const type = scene.table.isHeader(col, row)
+  const type = isvtableMerge
+    ? 'text'
+    : scene.table.isHeader(col, row)
     ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : scene.table.getBodyColumnType(col, row);
   if (type === 'progressbar') {
@@ -139,6 +141,12 @@ export function updateCellHeight(
     const value = scene.table.getCellValue(col, row);
     const dataValue = scene.table.getCellOriginValue(col, row);
     const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
+
+    // deal with bar
+    let range;
+    if (columnDefine?.mergeCell) {
+      range = scene.table.getCellRange(col, row);
+    }
 
     const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
     const newBarCell = createProgressBarCell(
@@ -151,7 +159,8 @@ export function updateCellHeight(
       col,
       row,
       padding,
-      scene.table
+      scene.table,
+      range
     );
 
     const oldBarCell = cell.getChildByName('progress-bar') as Group;
@@ -160,6 +169,17 @@ export function updateCellHeight(
     cell.removeChild(oldBarCell);
     oldBarCell.removeAllChild();
     oldBarCell.release();
+
+    // deal with text
+    updateMergeCellContentHeight(
+      cell,
+      distHeight,
+      detaY,
+      // scene.table.heightMode === 'autoHeight',
+      scene.table.isAutoRowHeight(row),
+      true,
+      scene.table
+    );
   } else if (type === 'sparkline') {
     // 目前先采用重新生成节点的方案
     cell.removeAllChild();
@@ -216,9 +236,9 @@ export function updateCellHeight(
         let customRender;
         let customLayout;
         const cellLocation = scene.table.getCellLocation(col, row);
-        const { vTableMerge } = scene.table.getCellRawRecord(col, row);
+        const { vtableMerge } = scene.table.getCellRawRecord(col, row);
 
-        if (vTableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+        if (vtableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
           customLayout = (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout;
         } else if (cellLocation !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);
@@ -332,7 +352,7 @@ function updateMergeCellContentHeight(
         });
 
         if (renderDefault) {
-          const style = table._getCellStyle(col, row);
+          const style = table._getCellStyle(colStart, rowStart);
           updateCellContentHeight(
             singleCellGroup,
             distHeight,
