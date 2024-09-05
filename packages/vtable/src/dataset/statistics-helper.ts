@@ -1,5 +1,6 @@
+import { isValid } from '@visactor/vutils';
 import type { SortOrder } from '../ts-types';
-import { AggregationType } from '../ts-types';
+import { AggregationType, SortType } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 
 export interface IAggregator {
@@ -480,17 +481,25 @@ export function indicatorSort(a: any, b: any) {
   }
   return -1;
 }
-export function typeSort(a: any, b: any) {
+export function typeSort(a: any, b: any, sortType: SortType) {
+  if (sortType === SortType.NORMAL || sortType === SortType.normal) {
+    return 0;
+  }
+  const factor = sortType === SortType.DESC || sortType === SortType.desc ? -1 : 1;
   if (a && b) {
     // 数据健全兼容，用户数据不全时，能够展示.
-    return a.toString().localeCompare(b.toString(), 'zh');
+    return a.toString().localeCompare(b.toString(), 'zh') * factor;
   }
   if (a) {
-    return 1;
+    return 1 * factor;
   }
-  return -1;
+  return -1 * factor;
 }
-export function naturalSort(as: any, bs: any) {
+export function naturalSort(as: any, bs: any, sortType: SortType) {
+  if (sortType === SortType.NORMAL || sortType === SortType.normal) {
+    return 0;
+  }
+
   const rx = /(\d+)|(\D+)/g;
   const rd = /\d/;
   const rz = /^0/;
@@ -500,40 +509,41 @@ export function naturalSort(as: any, bs: any) {
   let b1;
   let nas = 0;
   let nbs = 0;
+  const factor = sortType === SortType.DESC || sortType === SortType.desc ? -1 : 1;
   if (bs !== null && as === null) {
-    return -1;
+    return -1 * factor;
   }
   if (as !== null && bs === null) {
-    return 1;
+    return 1 * factor;
   }
   if (typeof as === 'number' && isNaN(as)) {
-    return -1;
+    return -1 * factor;
   }
   if (typeof bs === 'number' && isNaN(bs)) {
-    return 1;
+    return 1 * factor;
   }
   nas = +as;
   nbs = +bs;
   if (nas < nbs) {
-    return -1;
+    return -1 * factor;
   }
   if (nas > nbs) {
-    return 1;
+    return 1 * factor;
   }
   if (typeof as === 'number' && typeof bs !== 'number') {
-    return -1;
+    return -1 * factor;
   }
   if (typeof bs === 'number' && typeof as !== 'number') {
-    return 1;
+    return 1 * factor;
   }
   if (typeof as === 'number' && typeof bs === 'number') {
     return 0;
   }
   if (isNaN(nbs) && !isNaN(nas)) {
-    return -1;
+    return -1 * factor;
   }
   if (isNaN(nas) && !isNaN(nbs)) {
-    return 1;
+    return 1 * factor;
   }
   a = String(as);
   b = String(bs);
@@ -541,7 +551,7 @@ export function naturalSort(as: any, bs: any) {
     return 0;
   }
   if (!(rd.test(a) && rd.test(b))) {
-    return a > b ? 1 : -1;
+    return (a > b ? 1 : -1) * factor;
   }
   a = a.match(rx);
   b = b.match(rx);
@@ -550,12 +560,12 @@ export function naturalSort(as: any, bs: any) {
     b1 = b.shift();
     if (a1 !== b1) {
       if (rd.test(a1) && rd.test(b1)) {
-        return <any>a1.replace(rz, '.0') - <any>b1.replace(rz, '.0');
+        return (<any>a1.replace(rz, '.0') - <any>b1.replace(rz, '.0')) * factor;
       }
-      return a1 > b1 ? 1 : -1;
+      return (a1 > b1 ? 1 : -1) * factor;
     }
   }
-  return a.length - b.length;
+  return (a.length - b.length) * factor;
 }
 export function sortBy(order: string[]) {
   let x;
@@ -570,33 +580,42 @@ export function sortBy(order: string[]) {
       lowercase_mapping[x.toLowerCase()] = i;
     }
   }
-  return function (a: any, b: any) {
+  return function (a: any, b: any, sortType: SortType) {
+    if (sortType === SortType.NORMAL || sortType === SortType.normal) {
+      return 0;
+    }
+    const factor = sortType === SortType.DESC || sortType === SortType.desc ? -1 : 1;
+    let comparison;
     if (mapping[a] !== null && mapping[a] !== undefined && mapping[b] !== null && mapping[b] !== undefined) {
-      return mapping[a] - mapping[b];
+      comparison = mapping[a] - mapping[b];
     } else if (mapping[a] !== null && mapping[a] !== undefined) {
-      return -1;
+      comparison = -1;
     } else if (mapping[b] !== null && mapping[b] !== undefined) {
-      return 1;
+      comparison = 1;
     } else if (
       lowercase_mapping[a] !== null &&
       mapping[a] !== undefined &&
       lowercase_mapping[b] !== null &&
       mapping[b] !== undefined
     ) {
-      return lowercase_mapping[a] - lowercase_mapping[b];
+      comparison = lowercase_mapping[a] - lowercase_mapping[b];
     } else if (
       lowercase_mapping[a] === null ||
       mapping[a] === undefined ||
       lowercase_mapping[b] === null ||
       mapping[b] === undefined
     ) {
-      return 0;
+      comparison = 0;
     } else if (lowercase_mapping[a] !== null && mapping[a] !== undefined) {
-      return -1;
+      comparison = -1;
     } else if (lowercase_mapping[b] !== null && mapping[b] !== undefined) {
-      return 1;
+      comparison = 1;
     }
-    return naturalSort(a, b);
+    if (isValid(comparison)) {
+      return comparison * factor;
+    }
+
+    return naturalSort(a, b, sortType);
   };
 }
 

@@ -2,14 +2,11 @@
 
 透视表的排序能力以下几种实现方式：
 
-1. 透视表自定义表头的树形结构，rowTree 和 columnTree 都自行传入即可按照这个结构进行展示。这个时候即便配置了 sortRule 也不会起作用。
-2. 在维度或者指标配置中添加`sort:true`来开启排序，此时会显示排序按钮，点击按钮会触发排序。
-3. 通过接口的方式进行排序：自行调用接口`updateSortRules`来排序。
-4. 其他特殊需求：仅显示排序状态，不使用 VTable 的排序逻辑
+1. 透视表自定义表头的树形结构，rowTree 和 columnTree 都自行传入即可按照这个结构进行展示。这个时候即便配置了 sortRule 也不会起作用。此方式对于表头有默认顺序或者结构比较特殊，或者排序规则比较复杂的情况下使用，可以参考教程：https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_tree。
+2. 在维度或者指标配置中添加`sort:true`来开启排序，此时会显示排序按钮，点击按钮会触发排序。通过接口的方式进行排序：自行调用接口`updateSortRules`来排序。
+3. 其他特殊需求：仅显示排序状态，不使用 VTable 的排序逻辑
 
-第一种自行组织表头树形结构的方式在介绍透视表时已经讲过，可以参考教程：https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_tree。
-
-**注意几种排序方式不要混用**
+**注意三种排序方式不要混用**
 
 接下来主要介绍后面的几种实现方式和注意事项。
 
@@ -17,7 +14,7 @@
 
 ### 按维度值排序
 
-sort 的配置可以在 rows 或者 columns 中配置，此时显示维度名称的角头单元格会显示排序按钮，点击按钮会触发排序。
+sort 的配置可以在 rows 或者 columns 中配置，此时显示维度名称的角头单元格会显示排序按钮，点击按钮会触发排序。具体触发的排序规则会对应 dataConfig.sortRule 中的配置。如果sortRule中没有匹配的排序规则，则会按照默认规则即按照拼音字母顺序进行排序。
 
 以下是一个在 rows 中配置 sort 开启排序功能的例子：
 
@@ -68,7 +65,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 
 ### 按指标值排序
 
-sort 的配置可以在 indicators 中配置，此时显示指标名称的行表头或者列表头单元格会显示排序按钮，点击按钮会触发排序。
+sort 的配置可以在 indicators 中配置，此时显示指标名称的行表头或者列表头单元格会显示排序按钮，点击按钮会触发排序。具体排序规则按照指标的大小进行排序。
 
 以下是一个在 indicators 中配置 sort 开启排序功能的例子：
 
@@ -110,7 +107,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 
 ### 初始化排序状态
 
-请配置数据分析 dataConfig.sortRule，可以设置初始排序状态。
+请配置数据分析 dataConfig.sortRule，可以设置初始排序状态。如果在相应的指标或者维度上配置了 sort ，则会出现对应的排序图标状态。
 
 如下示例：
 
@@ -162,7 +159,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 
 ### 通过接口更新排序
 
-透视表的更新排序接口为`updateSortRules`，通过调用该接口可以更新排序状态。
+透视表的更新排序接口为`updateSortRules`，通过调用该接口可以更新排序状态。如果在相应的指标或者维度上配置了 sort ，则会出现对应的排序图标状态。
 
 以下是一个通过接口更新排序的例子：
 
@@ -212,13 +209,10 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 
 监听排序图标点击事件为`pivot_sort_click`。
 
-## 通过接口进行排序
-
-如果需要通过接口进行排序，可以通过调用`updateSortRules`接口来更新排序状态。
 
 ## 仅显示排序图标
 
-如果业务场景中有专门的设置面板，有专门的排序选项提供给用户进行操作，但是需要在表格中显示对应的排序状态，那么可以配置`showSort: true`来显示排序状态。如果有监听图标点击需求，可以监听事件`pivot_sort_click`。
+如果业务场景中有专门的设置面板，有专门的排序选项提供给用户进行操作，但是需要在表格中显示对应的排序状态，那么可以配置`showSort: true` 及 `showSortInCorner: true`来显示对应的排序状态。如果有监听图标点击需求，可以监听事件`pivot_sort_click`。
 
 同时，可以设置 option 上的 pivotSortState 来设置初始排序图标的状态。
 
@@ -313,11 +307,4 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 
 ## 其他
 
-这里再强调一下：**几种排序方式不要混用**，例如：sortRule 的方式不要在自定义表头树结构的情况和配置 showSort 的情况下使用；pivotSortState 的配置也不要在配置 sort 的情况下使用。
-
-另外，目前排序的方式并不是非常完善的，例如
-
-1. 配置`sort:true`的排序方式，有时候需要设置自定义排序函数来执行排序逻辑
-2. 缺失`pivotSortState`配置状态的更新接口
-
-这些后续我们都将补充。
+这里再强调一下：**教程开头提到的这三种种排序方式不要混用**，例如：sortRule 的方式不要在自定义表头树结构的情况或者配置 showSort 的情况下使用；pivotSortState 的配置也不要在配置 sort 的情况下使用。

@@ -31,6 +31,6 @@ Whether to display to the edge of the container even though the contents are not
 
 Horizontal padding of the scroll bar.
 
-${prefix} verticalPadding(number | [number, number, number, number])
+##${prefix} verticalPadding(number | [number, number, number, number])
 
 Vertical padding of the scroll bar.

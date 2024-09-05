@@ -113,19 +113,19 @@ export type SortRule = SortTypeRule | SortByRule | SortByIndicatorRule | SortFun
 
 其中排序规则支持四种方式：
 
-1. SortTypeRule: 根据字段排序，如根据年份升序排列:`{"sortField": "Year", "sortType": "ASC"}`。
+1. SortTypeRule: 根据字段排序，如根据年份升序排列:`{"sortField": "Year", "sortType": "ASC"}`。ASC DESC升降序按照拼音字母或数字的自然排序，NORMAL按照records中的顺序进行排列。
 
 ```
 //1. 指定排序类型
 export interface SortTypeRule {
   /**排序维度 */
   sortField: string;
-  /**升序降序 ASC or DESC*/
+  /**升序降序 ASC or DESC NORMAL*/
   sortType?: SortType;
 }
 ```
 
-2. SortByRule:按维度成员指定排序，如根据地区维度值排列:`{"sortField": "Region", "sortBy": ["华南","华中","华北","中南","西南"]}`。
+2. SortByRule:按维度成员指定排序，如根据地区维度值排列:`{"sortField": "Region", "sortBy": ["华南","华中","华北","中南","西南"]}`。ASC DESC升降序按照sortBy给定的顺序进行排序，NORMAL按照records中的顺序进行排列。
 
 ```
 //2. 按维度成员指定排序
@@ -134,17 +134,19 @@ export interface SortByRule {
   sortField: string;
   /**根据指定具体顺序排序 */
   sortBy?: string[];
+  /**升序降序 ASC or DESC NORMAL*/
+  sortType?: SortType;
 }
 ```
 
-3. SortByIndicatorRule:根据指标值排序，如根据类别办公用下销售金额降序来排列地区维度值:`{sortField:'Region',sortByIndicator: "Sales", sortType: "DESC",query:['办公用品']}`。
+3. SortByIndicatorRule:根据指标值排序，如根据类别办公用下销售金额降序来排列地区维度值:`{sortField:'Region',sortByIndicator: "Sales", sortType: "DESC",query:['办公用品']}`。ASC DESC升降序按照sortBy指定的指标值进行排序，NORMAL按照records中的顺序进行排列。
 
 ```
 //3. 按指标值排序
 export interface SortByIndicatorRule {
   /**排序维度 */
   sortField: string;
-  /**升序降序 ASC or DESC*/
+  /**升序降序 ASC or DESC NORMAL*/
   sortType?: SortType;
   /**排序根据某个指标值 */
   sortByIndicator?: string;
@@ -153,7 +155,7 @@ export interface SortByIndicatorRule {
 }
 ```
 
-4. SortFuncRule: 支持通过函数自定义排序规则，如根据计算后的指标值排序:`{"sortField": "Region", sortFunc: (a, b) => a.sales - b.sales}`。
+4. SortFuncRule: 支持通过函数自定义排序规则，如根据计算后的指标值排序:`{"sortField": "Region", sortFunc: (a, b) => a.sales - b.sales}`。ASC DESC NORMAL均按照 sortFunc 中的排序逻辑进行排列。
 
 ```
 //4. 自定义排序方法function
@@ -162,6 +164,8 @@ export interface SortFuncRule {
   sortField: string;
   /**自定义排序函数 */
   sortFunc?: (a: any, b: any) => number;
+  /**升序降序 ASC or DESC NORMAL*/
+  sortType?: SortType;
 }
 ```
 

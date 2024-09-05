@@ -204,6 +204,10 @@ export const menus = [
     children: [
       {
         path: 'pivot-chart',
+        name: 'bug-fix'
+      },
+      {
+        path: 'pivot-chart',
         name: 'noDimension-updateOption'
       },
       {
@@ -524,6 +528,26 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-sort'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-sortField'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-sortBy'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-sortByIndicator'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-sortFunc'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-updateSortRule'
       },
       {
         path: 'pivot-analysis',

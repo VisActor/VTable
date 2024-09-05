@@ -121,4 +121,17 @@ ${prefix} drillUp(boolean)
 显示向上钻取图标 点击后会有对应事件
 
 ${prefix} showSort(boolean)
-是否显示排序 icon，无数据排序逻辑
+维度值单元格是否显示排序 icon，点击并无数据排序逻辑
+
+${prefix} sort(boolean)
+对应的维度角头单元格是否显示排序图标。
+
+排序规则：
+
+如果在dataConfig.sortRules中配置了该维度的排序规则，则按照dataConfig.sortRules中的规则进行排序。
+
+如果没有在dataConfig.sortRules中配置该维度的排序规则，则默认按照维度值字符串的自然排序。
+
+${prefix} showSortInCorner(boolean)
+
+在角头的维度名称单元格中是否显示排序，点击并无数据排序逻辑

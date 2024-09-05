@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when tree pivot table sort then expand tree node render error #2261\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
