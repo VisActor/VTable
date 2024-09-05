@@ -81,7 +81,9 @@ export function createCell(
   //   );
   // }
   let cellGroup: Group;
-  if (type === 'text' || type === 'link') {
+
+  // customMerge&customLayout cell as text cell
+  if (type === 'text' || type === 'link' || customResult) {
     if (type === 'link') {
       //如果是超链接 颜色按照linkColor绘制 TODO：放到方法_getCellStyle中
       // const columnDefine = table.getHeaderDefine(col, row);
@@ -306,7 +308,8 @@ export function createCell(
       col,
       row,
       padding,
-      table
+      table,
+      range
     );
     // 进度图插入到文字前，绘制在文字下
     if (cellGroup.firstChild) {
@@ -379,8 +382,6 @@ export function createCell(
 export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean, isShadow?: boolean) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
-  const cellStyle = table._getCellStyle(col, row);
-  const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const cellLocation = table.getCellLocation(col, row);
   let value = table.getCellValue(col, row);
 
@@ -453,10 +454,11 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     range = table.getCellRange(col, row);
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
   }
-
+  let isvtableMerge = false;
   if (table.internalProps.enableTreeNodeMerge && isMerge) {
-    const { vtableMergeName, vTableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
-    if (vTableMerge) {
+    const { vtableMergeName, vtableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
+    isvtableMerge = vtableMerge;
+    if (vtableMerge) {
       mayHaveIcon = true;
       if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
         customResult = dealWithCustom(
@@ -478,6 +480,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       value = vtableMergeName;
     }
   }
+
+  const cellStyle = table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
+  const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
 
   if (!cellTheme) {
     cellTheme = getStyleTheme(
@@ -583,7 +588,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     return undefined;
   }
 
-  const type = table.isHeader(col, row)
+  const type = isvtableMerge
+    ? 'text'
+    : table.isHeader(col, row)
     ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : table.getBodyColumnType(col, row);
 

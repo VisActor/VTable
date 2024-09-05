@@ -375,6 +375,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   getTableIndexByField(field: FieldDef) {
     const colObj = this.internalProps.layoutMap.columnObjects.find((col: any) => col.field === field);
+    if (!colObj) {
+      return -1;
+    }
     const layoutRange = this.internalProps.layoutMap.getBodyLayoutRangeById(colObj.id);
     if (this.transpose) {
       return layoutRange.start.row;
@@ -463,6 +466,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //     internalProps.columns[index].editor = colDefine.editor;
     //   }
     // });
+    internalProps.enableTreeNodeMerge = options.enableTreeNodeMerge ?? isValid(options.groupBy) ?? false;
+
     this.internalProps.headerHelper.setTableColumnsEditor();
     // 处理转置
     this.transpose = options.transpose ?? false;
@@ -957,7 +962,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const sortFunc = this._getSortFuncFromHeaderOption(this.internalProps.columns, field);
       const hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
 
-      if (hd.define.sort !== false) {
+      if (hd && hd.define.sort !== false) {
         this.dataSource.sort(hd.field, order, sortFunc);
 
         // clear cell range cache
@@ -1074,7 +1079,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
             (col: any) => col && col.field === field
           );
           // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
-          if (hd.define.sort !== false) {
+          if (hd && hd.define.sort !== false) {
             this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
           }
         }

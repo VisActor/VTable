@@ -10,7 +10,7 @@ export function createTable() {
       销售额: '129.696',
       数量: '2',
       利润: '60.704',
-      vTableMerge: true,
+      vtableMerge: true,
       vtableMergeName: '办公用品办公用品办公用品类',
       children: [
         {
@@ -60,7 +60,7 @@ export function createTable() {
       销售额: '229.696',
       数量: '20',
       利润: '90.704',
-      vTableMerge: true,
+      vtableMerge: true,
       vtableMergeName: '技术技术技术技术类',
       children: [
         {
@@ -94,7 +94,7 @@ export function createTable() {
       销售额: '129.696',
       数量: '2',
       利润: '-60.704',
-      vTableMerge: true,
+      vtableMerge: true,
       vtableMergeName: '家具类',
       children: [
         {

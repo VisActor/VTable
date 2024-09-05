@@ -57,6 +57,7 @@ function CheckboxComponent(baseProps: CheckboxProps, ref: React.Ref<VRenderCheck
         icon: iconStyle,
         ...rest
       }}
+      {...rest} // for REACT_TO_CANOPUS_EVENTS
     ></VCheckbox>
   );
 }

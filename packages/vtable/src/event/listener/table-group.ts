@@ -240,8 +240,16 @@ export function bindTableGroupListener(eventManager: EventManager) {
   // }
   // });
   table.scenegraph.tableGroup.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
-    if (table.theme.scrollStyle.visible === 'focus') {
+    if (
+      (table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.horizontalVisible === 'focus') ||
+      (!table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.visible === 'focus')
+    ) {
       stateManager.showHorizontalScrollBar();
+    }
+    if (
+      (table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.verticalVisible === 'focus') ||
+      (!table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.visible === 'focus')
+    ) {
       stateManager.showVerticalScrollBar();
     }
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEENTER_TABLE)) {
@@ -256,10 +264,20 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       stateManager.updateCursor();
     }
-    if (table.theme.scrollStyle.visible === 'focus') {
+
+    if (
+      (table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.horizontalVisible === 'focus') ||
+      (!table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.visible === 'focus')
+    ) {
       stateManager.hideHorizontalScrollBar();
+    }
+    if (
+      (table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.verticalVisible === 'focus') ||
+      (!table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.visible === 'focus')
+    ) {
       stateManager.hideVerticalScrollBar();
     }
+
     // 移动到table外部 如移动到表格空白区域 移动到表格浏览器外部
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
       if (table.stateManager.hover.cellPos.col !== -1 && table.stateManager.hover.cellPos.row !== -1) {

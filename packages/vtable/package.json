@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "1.6.2",
+  "version": "1.7.3",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -36,13 +36,6 @@
     "es",
     "dist"
   ],
-  "exports": {
-    ".": {
-      "require": "./cjs/index.js",
-      "import": "./es/index.js"
-    },
-    "./es/*": "./es/*"
-  },
   "scripts": {
     "demo": "vite serve examples",
     "site-demo": "vite serve site-demo",
@@ -59,9 +52,9 @@
   },
   "dependencies": {
     "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vrender-core": "0.19.25-alpha.2",
-    "@visactor/vrender-kits": "0.19.25-alpha.2",
-    "@visactor/vrender-components": "0.19.25-alpha.2",
+    "@visactor/vrender-core": "0.20.2-alpha.1",
+    "@visactor/vrender-kits": "0.20.2-alpha.1",
+    "@visactor/vrender-components": "0.20.2-alpha.1",
     "@visactor/vutils": "~0.18.13",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",

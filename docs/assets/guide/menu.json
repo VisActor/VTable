@@ -143,6 +143,43 @@
       ]
     },
     {
+      "path": "gantt",
+      "title": {
+        "zh": "甘特图教程",
+        "en": "gantt chart"
+      },
+      "children": [
+        {
+          "path": "Getting_Started",
+          "title": {
+            "zh": "快速上手",
+            "en": "Getting Started"
+          }
+        },
+        {
+          "path": "introduction",
+          "title": {
+            "zh": "甘特图介绍",
+            "en": "gantt introduction"
+          }
+        },
+        {
+          "path": "gantt_customLayout",
+          "title": {
+            "zh": "自定义渲染",
+            "en": "Custom Render"
+          }
+        },
+        {
+          "path": "gantt_edit",
+          "title": {
+            "zh": "甘特图编辑",
+            "en": "Gantt Edit"
+          }
+        }
+      ]
+    },
+    {
       "path": "cell_type",
       "title": {
         "zh": "单元格类型",

@@ -1043,8 +1043,8 @@ arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: Cel
 ```
 
 - cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
-  - 单个单元格：`{ row: number, column: number }`
-  - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+  - 单个单元格：`{ row: number, col: number }`
+  - 单元格区域：`{ range: { start: { row: number, col: number }, end: { row: number, col: number} } }`
 - customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同
 
 ## getCheckboxState(Function)
@@ -1143,6 +1143,24 @@ interface ISortedMapItem {
   getHeaderField: (col: number, row: number)
 ```
 
+## getColWidth(Function)
+
+获取列宽
+
+```
+  /**获取列宽 */
+  getColWidth: (col: number)
+```
+
+## getRowHeight(Function)
+
+获取行高
+
+```
+  /**获取行高 */
+  getRowHeight: (row: number)
+```
+
 ## setColWidth(Function)
 
 设置列宽
@@ -1232,4 +1250,13 @@ interface ISortedMapItem {
   enableScroll() {
     this.eventManager.enableScroll();
   }
+```
+
+## setCanvasSize(Function)
+
+直接设置 canvas 的宽高 不根据容器宽高来决定表格的尺寸
+
+```
+  /** 直接设置canvas的宽高 不根据容器宽高来决定表格的尺寸 */
+  setCanvasSize: (width: number, height: number) => void;
 ```

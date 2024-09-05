@@ -2,6 +2,131 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.7.3",
+      "tag": "@visactor/vtable_v1.7.3",
+      "date": "Thu, 05 Sep 2024 03:09:20 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when keydown with ctrl meta and shift not trigger edit mode # 2372\n\n"
+          },
+          {
+            "comment": "fix: fix custom style arrangement duplicate #2370"
+          },
+          {
+            "comment": "fix: fix no-text cell custom merge #2343"
+          },
+          {
+            "comment": "fix: fix event bind problem in react-vtable"
+          },
+          {
+            "comment": "fix: fix right frozen mark position #2344"
+          },
+          {
+            "comment": "fix: fix select range judgement in cellBgColor #2368"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.2",
+      "tag": "@visactor/vtable_v1.7.2",
+      "date": "Mon, 02 Sep 2024 10:09:57 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when use groupBy then all merged cells set cellType text #2331\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.1",
+      "tag": "@visactor/vtable_v1.7.1",
+      "date": "Mon, 02 Sep 2024 03:26:48 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix envs type in react-vtable"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.0",
+      "tag": "@visactor/vtable_v1.7.0",
+      "date": "Fri, 30 Aug 2024 11:54:08 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: add gantt chart\n\n"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: leftTable just has row series number\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.6.3",
+      "tag": "@visactor/vtable_v1.6.3",
+      "date": "Thu, 29 Aug 2024 12:00:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: scroll event add argument #2249\n\n"
+          },
+          {
+            "comment": "fix: handle with change header postion event #2299\n\n"
+          },
+          {
+            "comment": "refactor: changeCellValue can modify raw record #2305\n\n"
+          },
+          {
+            "comment": "fix: pivot tree can not show value and expand tree occor error #2306\n\n"
+          },
+          {
+            "comment": "fix: set titleOnDimension all sort can not run #2278\n\n"
+          },
+          {
+            "comment": "feat: add formatCopyValue config"
+          },
+          {
+            "comment": "feat: add parentElement config in tooltip #2290"
+          },
+          {
+            "comment": "fix: add judgement in array find function #2289"
+          },
+          {
+            "comment": "fix: fix frozen column custom component clip"
+          },
+          {
+            "comment": "fix: fix cellLocation in top frozen row #2267"
+          },
+          {
+            "comment": "fix: fix list-table group mode style update problem"
+          },
+          {
+            "comment": "fix: fix menu auto hide when page crolled #2241"
+          },
+          {
+            "comment": "fix: fix progress bar cell textAlign update #2225"
+          },
+          {
+            "comment": "fix: fix umd package problem in react-vtable #2244"
+          },
+          {
+            "comment": "fix: fix right frozen size in updateContainerAttrWidthAndX() #2243"
+          },
+          {
+            "comment": "fix: fix leftRowSeriesNumberColumnCount error in getBodyLayoutRangeById() #2234"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.6.2",
       "tag": "@visactor/vtable_v1.6.2",
       "date": "Thu, 22 Aug 2024 12:27:03 GMT",

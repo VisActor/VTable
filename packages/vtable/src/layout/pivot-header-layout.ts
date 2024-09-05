@@ -1730,7 +1730,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   /** 透视表中此函数有问题 应该传入paths */
   getHeaderCellAddressByField(field: string) {
     const hd = this.headerObjects.find((col: any) => col && col.field === field);
-    return this.getHeaderCellAdressById(hd.id as number);
+    return hd && this.getHeaderCellAdressById(hd.id as number);
   }
   //TODO 这里的indicators是否可以改为和真正指标值一样数量 但目前也不会造成太多内存浪费 对象较简单 引用对象
   getBody(_col: number, _row: number): IndicatorData | SeriesNumberColumnData {
