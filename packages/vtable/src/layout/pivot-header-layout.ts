@@ -1413,17 +1413,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           : this.columnDimensionTree.totalLevel
         : this.columnDimensionTree.totalLevel;
 
-      if (this.columnHeaderTitle) {
-        count += 1;
-      }
-      if (
-        this._table.isPivotChart() &&
-        this.indicatorsAsCol &&
-        !this.hasTwoIndicatorAxes &&
-        checkHasCartesianChart(this.indicatorsDefine)
-      ) {
-        count -= 1;
-      }
       //#region 处理需求 当没有数据时仍然显示角头维度名称
       if (
         count === 0 &&
@@ -1437,7 +1426,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           (this.dataset.records?.length ?? 0) === 0 &&
           (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all')
         ) {
-          count += this.columnsDefine.length ?? 0;
+          count = this.columnsDefine.length ?? 0;
         }
       } else if (
         this.dataset &&
@@ -1447,13 +1436,25 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // !this.dataset.customRowTree
       ) {
         if (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all') {
-          count += this.columnsDefine.length ?? 0;
+          count = this.columnsDefine.length ?? 0;
           if (!this.hideIndicatorName && this.indicatorsAsCol) {
             count++;
           }
         }
       }
       //#endregion
+      if (this.columnHeaderTitle) {
+        count += 1;
+      }
+      if (
+        this._table.isPivotChart() &&
+        this.indicatorsAsCol &&
+        !this.hasTwoIndicatorAxes &&
+        checkHasCartesianChart(this.indicatorsDefine)
+      ) {
+        count -= 1;
+      }
+
       this.columnHeaderLevelCount = count;
       return;
     }
@@ -1482,18 +1483,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       //   : rowLevelCount;
 
       let count = rowLevelCount;
-      if (this.indicatorsAsCol) {
-        // count = rowLevelCount;
-      } else if (
-        this.hideIndicatorName &&
-        this.rowDimensionKeys[this.rowDimensionKeys.length - 1] === this.indicatorDimensionKey
-      ) {
-        count = rowLevelCount - 1;
-      }
 
-      if (this.rowHeaderTitle) {
-        count += 1;
-      }
       // if (this._table.isPivotChart()&&this.indicatorsAsCol) {
       //   count+=1;
       // }
@@ -1510,7 +1500,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           (this.dataset.records?.length ?? 0) === 0 &&
           (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all')
         ) {
-          count += this.rowsDefine.length ?? 0;
+          count = this.rowsDefine.length ?? 0;
         }
       } else if (
         this.dataset &&
@@ -1519,13 +1509,25 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         !this.dataset.customRowTree?.length
       ) {
         if (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all') {
-          count += this.rowsDefine.length;
+          count = this.rowsDefine.length;
           if (!this.hideIndicatorName && !this.indicatorsAsCol) {
             count++;
           }
         }
       }
       //#endregion
+      if (
+        !this.indicatorsAsCol &&
+        this.hideIndicatorName &&
+        this.rowDimensionKeys[this.rowDimensionKeys.length - 1] === this.indicatorDimensionKey
+      ) {
+        count = rowLevelCount - 1;
+      }
+
+      if (this.rowHeaderTitle) {
+        count += 1;
+      }
+
       this.rowHeaderLevelCount = count;
       return;
     }
