@@ -1431,7 +1431,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } else if (
         this.dataset &&
         (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree?.length
+        !this.dataset.customColTree // 这里不能改为 !this.dataset.customColTree?.length  否则透视图会出错  透视图case很多rowTree columnTree rows columns都是[]
         //  &&
         // !this.dataset.customRowTree
       ) {
@@ -1506,7 +1506,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.dataset &&
         (this.dataset.records?.length ?? 0) === 0 &&
         // !this.dataset.customColTree &&
-        !this.dataset.customRowTree?.length
+        !this.dataset.customRowTree // 这里不能改为 !this.dataset.customRowTree?.length  否则透视图会出错  透视图case很多rowTree columnTree rows columns都是[]
       ) {
         if (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all') {
           count = this.rowsDefine.length;
