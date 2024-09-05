@@ -1,3 +1,19 @@
+# v1.7.3
+
+2024-09-05
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: when keydown with ctrl meta and shift not trigger edit mode # 2372
+- **@visactor/vtable**: fix custom style arrangement duplicate [#2370](https://github.com/VisActor/VTable/issues/2370)
+- **@visactor/vtable**: fix no-text cell custom merge [#2343](https://github.com/VisActor/VTable/issues/2343)
+- **@visactor/vtable**: fix event bind problem in react-vtable
+- **@visactor/vtable**: fix right frozen mark position [#2344](https://github.com/VisActor/VTable/issues/2344)
+- **@visactor/vtable**: fix select range judgement in cellBgColor [#2368](https://github.com/VisActor/VTable/issues/2368)
+
+[更多详情请查看 v1.7.3](https://github.com/VisActor/VTable/releases/tag/v1.7.3)
+
 # v1.7.2
 
 2024-09-02
