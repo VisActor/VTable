@@ -286,8 +286,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (
       this.dataset &&
       (this.dataset.records?.length ?? 0) === 0 &&
-      !this.dataset.customColTree &&
-      !this.dataset.customRowTree
+      !this.dataset.customColTree
+      // &&
+      // !this.dataset.customRowTree
     ) {
       colDimensionKeys = this.columnsDefine.map(define => {
         if (typeof define === 'string') {
@@ -323,7 +324,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (
         this.dataset &&
         (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree &&
+        // !this.dataset.customColTree &&
         !this.dataset.customRowTree
       ) {
         rowDimensionKeys = this.rowsDefine.map(define => {
@@ -1436,16 +1437,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           (this.dataset.records?.length ?? 0) === 0 &&
           (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all')
         ) {
-          count = this.columnsDefine.length ?? 0;
+          count += this.columnsDefine.length ?? 0;
         }
       } else if (
         this.dataset &&
         (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree &&
-        !this.dataset.customRowTree
+        !this.dataset.customColTree?.length
+        //  &&
+        // !this.dataset.customRowTree
       ) {
         if (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all') {
-          count = this.columnsDefine.length ?? 0;
+          count += this.columnsDefine.length ?? 0;
           if (!this.hideIndicatorName && this.indicatorsAsCol) {
             count++;
           }
@@ -1508,16 +1510,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           (this.dataset.records?.length ?? 0) === 0 &&
           (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all')
         ) {
-          count = this.rowsDefine.length ?? 0;
+          count += this.rowsDefine.length ?? 0;
         }
       } else if (
         this.dataset &&
         (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree &&
-        !this.dataset.customRowTree
+        // !this.dataset.customColTree &&
+        !this.dataset.customRowTree?.length
       ) {
         if (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all') {
-          count = this.rowsDefine.length;
+          count += this.rowsDefine.length;
           if (!this.hideIndicatorName && !this.indicatorsAsCol) {
             count++;
           }
