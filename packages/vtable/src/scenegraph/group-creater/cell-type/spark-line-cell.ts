@@ -1,7 +1,7 @@
 import type { ILine, ISymbol, IThemeSpec } from '@src/vrender';
 import { createLine, createSymbol } from '@src/vrender';
 import { PointScale, LinearScale } from '@visactor/vscale';
-import { isValid } from '@visactor/vutils';
+import { isNumber, isValid } from '@visactor/vutils';
 import { Group } from '../../graphic/group';
 import type { CellInfo, SparklineSpec } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -158,13 +158,15 @@ function createSparkLine(
     yField = sparklineSpec.yField.field;
   } else if (typeof sparklineSpec.yField === 'string') {
     // string类型 自动计算出domain
-    const values = dataValue.map((value: any) => value[sparklineSpec.yField as string]);
+    // const values = dataValue.map((value: any) => value[sparklineSpec.yField as string]);
+    const values = getYNumbers(dataValue, sparklineSpec.yField as string);
     yScale.domain([Math.min(...values), Math.max(...values)]);
     yField = sparklineSpec.yField;
   } else {
     // yField未配置 检查data是否为数值数组
-    if (Array.isArray(dataValue) && dataValue.every((value: any) => typeof value === 'number')) {
-      yScale.domain([Math.min(...dataValue), Math.max(...dataValue)]);
+    if (Array.isArray(dataValue)) {
+      const values = getYNumbers(dataValue);
+      yScale.domain([Math.min(...values), Math.max(...values)]);
       yField = sparklineSpec.yField;
     }
   }
@@ -321,4 +323,19 @@ function createChartGroup(
     (symbolGroup as any).hover = specObj.point?.hover ?? false;
   }
   return group;
+}
+
+function getYNumbers(data: any[], field?: string): number[] {
+  // return data.map((item) => item[field]).filter((item) => isValid(item));
+  const numbers = [];
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    if (isValid(field) && isValid(item[field])) {
+      numbers.push(item[field]);
+    } else if (!isValid(field) && isValid(item)) {
+      numbers.push(item);
+    }
+  }
+
+  return numbers;
 }
