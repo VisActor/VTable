@@ -283,7 +283,7 @@ function resetSortIcon(oldSortCol: number, oldSortRow: number, iconConfig: Colum
     }
   } else {
     let oldIconMark: Icon;
-    
+
     //oldSortCell.forEachChildren((mark: Icon) => {
     traverseObject(oldSortCell, 'children', (mark: Icon) => {
       if (mark.attribute.funcType === 'sort') {
@@ -292,7 +292,7 @@ function resetSortIcon(oldSortCol: number, oldSortRow: number, iconConfig: Colum
       }
       return false;
     });
-    
+
     if (oldIconMark) {
       // updateIcon(oldIconMark, oldIcon);
       dealWithIcon(iconConfig, oldIconMark);
@@ -315,17 +315,17 @@ function checkSameCell(col1: number, row1: number, col2: number, row2: number, t
   return false;
 }
 
-export function updateSortIcon(options:{
-  col: number,
-  row: number,
-  iconMark: Icon,
-  order: SortOrder,
-  oldSortCol: number,
-  oldSortRow: number,
-  oldIconMark: Icon | undefined,
-  scene: Scenegraph
+export function updateSortIcon(options: {
+  col: number;
+  row: number;
+  iconMark: Icon;
+  order: SortOrder;
+  oldSortCol: number;
+  oldSortRow: number;
+  oldIconMark: Icon | undefined;
+  scene: Scenegraph;
 }) {
-  let {col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, scene} = options;
+  const { col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, scene } = options;
   // 更新icon
   const icon = scene.table.internalProps.headerHelper.getSortIcon(order, scene.table, col, row);
   if (iconMark) {

@@ -303,8 +303,8 @@ export function sortRecords(table: ListTable) {
   sortState = !sortState || Array.isArray(sortState) ? sortState : [sortState];
 
   if (sortState) {
-    sortState = (sortState as SortState[]).map(item=>{
-      item['orderFn'] = table._getSortFuncFromHeaderOption(undefined, item.field) ?? defaultOrderFn;
+    sortState = (sortState as SortState[]).map(item => {
+      item.orderFn = table._getSortFuncFromHeaderOption(undefined, item.field) ?? defaultOrderFn;
       //const hd = table.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === item.field);
       return item;
     });

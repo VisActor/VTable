@@ -219,12 +219,15 @@ Select a cell. If empty is passed, the currently selected highlight state will b
 Select a cell。If empty is passed, the currently selected highlight state will be cleared.
 
 ```
-  /**
+ /**
    * The effect of selecting a cell is the same as that of a cell selected by the mouse.
    * @param col
    * @param row
+   * @param isShift Whether to add the shift key to the selection
+   * @param isCtrl Whether to add the ctrl key to the selection
+   * @param makeSelectCellVisible Whether to make the selected cell visible
    */
-  selectCell(col: number, row: number): void
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean): void
 ```
 
 ## selectCells(Function)
@@ -1042,8 +1045,8 @@ arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: Cel
 ```
 
 - cellPosition: cell position information, supports configuration of single cells and cell areas
-  - Single cell: `{ row: number, column: number }`
-  - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+  - Single cell: `{ row: number, col: number }`
+  - Cell range: `{ range: { start: { row: number, col: number }, end: { row: number, col: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
 
 ## getCheckboxState(Function)
@@ -1142,6 +1145,24 @@ In **PivotTable** get indicatorKey.
   getHeaderField: (col: number, row: number)
 ```
 
+## getColWidth(Function)
+
+get column width.
+
+```
+  /**get column width */
+  getColWidth: (col: number)
+```
+
+## getRowHeight(Function)
+
+get row height.
+
+```
+  /**get row height */
+  getRowHeight: (row: number)
+```
+
 ## setColWidth(Function)
 
 set column width.
@@ -1231,4 +1252,13 @@ Enable scrolling of the table
 enableScroll() {
 this.eventManager.enableScroll();
 }
+```
+
+## setCanvasSize(Function)
+
+Directly set the width and height of the canvas instead of determining the size of the table based on the container width and height
+
+```
+/** Directly set the width and height of the canvas instead of determining the size of the table based on the width and height of the container */
+setCanvasSize: (width: number, height: number) => void;
 ```

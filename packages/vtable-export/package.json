@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-export",
-  "version": "1.6.2",
+  "version": "1.7.2",
   "description": "The export util of VTable",
   "author": {
     "name": "VisActor",
@@ -42,7 +42,7 @@
     "exceljs": "4.4.0"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.11.10",
+    "@visactor/vchart": "1.12.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

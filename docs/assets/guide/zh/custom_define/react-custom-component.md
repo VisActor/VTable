@@ -6,6 +6,8 @@
 
 ### 组件用法
 
+*使用自定义单元格组件时，需要使用react 18版本*
+
 自定义单元格组件在[自定义布局](../custom_define/custom_layout)的基础上封装而成，用法类似于自定义布局。在`ListColumn`中使用组件，自定义组件需要传入`role`属性，用于标识该组件为自定义单元格组件；其中`custom-layout`组件会在表格内容部分生效，`header-custom-layout`组件会在表格表头部分生效。每列中最多只能有一个`custom-layout`组件，最多只能有一个`header-custom-layout`组件。
 
 ```tsx

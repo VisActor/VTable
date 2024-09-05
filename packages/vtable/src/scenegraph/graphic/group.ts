@@ -254,7 +254,7 @@ export class Group extends VRenderGroup {
   protected tryUpdateAABBBounds(): AABBBounds {
     if (this.role === 'cell') {
       if (!this.shouldUpdateAABBBounds()) {
-        return this._AABBBounds;
+        return this._AABBBounds as AABBBounds;
       }
       // application.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
       const selfChange = this.shouldSelfChangeUpdateAABBBounds();
@@ -266,7 +266,7 @@ export class Group extends VRenderGroup {
 
       return bounds;
     }
-    return super.tryUpdateAABBBounds();
+    return super.tryUpdateAABBBounds() as AABBBounds;
   }
 
   // 目前优化方案会导致合并单元格无法正常更新列宽（因为合并单元格更新bounds不会触发父节点bounds更新），暂时关闭优化方案

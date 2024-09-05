@@ -1,6 +1,69 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 22 Aug 2024 12:27:03 GMT and should not be manually modified.
+This log was last generated on Mon, 02 Sep 2024 10:09:57 GMT and should not be manually modified.
+
+## 1.7.2
+Mon, 02 Sep 2024 10:09:57 GMT
+
+### Updates
+
+- fix: when use groupBy then all merged cells set cellType text #2331
+
+
+
+## 1.7.1
+Mon, 02 Sep 2024 03:26:48 GMT
+
+### Updates
+
+- fix: fix envs type in react-vtable
+
+## 1.7.0
+Fri, 30 Aug 2024 11:54:08 GMT
+
+### Minor changes
+
+- feat: add gantt chart
+
+
+
+### Updates
+
+- fix: leftTable just has row series number
+
+
+
+## 1.6.3
+Thu, 29 Aug 2024 12:00:16 GMT
+
+### Updates
+
+- refactor: scroll event add argument #2249
+
+
+- fix: handle with change header postion event #2299
+
+
+- refactor: changeCellValue can modify raw record #2305
+
+
+- fix: pivot tree can not show value and expand tree occor error #2306
+
+
+- fix: set titleOnDimension all sort can not run #2278
+
+
+- feat: add formatCopyValue config
+- feat: add parentElement config in tooltip #2290
+- fix: add judgement in array find function #2289
+- fix: fix frozen column custom component clip
+- fix: fix cellLocation in top frozen row #2267
+- fix: fix list-table group mode style update problem
+- fix: fix menu auto hide when page crolled #2241
+- fix: fix progress bar cell textAlign update #2225
+- fix: fix umd package problem in react-vtable #2244
+- fix: fix right frozen size in updateContainerAttrWidthAndX() #2243
+- fix: fix leftRowSeriesNumberColumnCount error in getBodyLayoutRangeById() #2234
 
 ## 1.6.2
 Thu, 22 Aug 2024 12:27:03 GMT

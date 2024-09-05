@@ -161,8 +161,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   // private lastOrder: SortOrder;
   // private lastOrderFn: (a: any, b: any, order: string) => number;
   // private lastOrderField: FieldDef;
-  private lastSortStates:Array<SortState>;
-  
+  private lastSortStates: Array<SortState>;
+
   /** 每一行对应源数据的索引 */
   currentIndexedData: (number | number[])[] | null = [];
   protected userPagination: IPagination;
@@ -616,20 +616,21 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     const children = nodeData.filteredChildren ? nodeData.filteredChildren : nodeData.children;
     if (children) {
       const subNodeSortedIndexArray: Array<number> = Array.from({ length: children.length }, (_, i) => i);
-      this.lastSortStates.forEach(state => {
+      this.lastSortStates?.forEach(state => {
         if (state.order !== 'normal') {
           sort.sort(
-            index => isValid(subNodeSortedIndexArray[index]) ? subNodeSortedIndexArray[index] : (subNodeSortedIndexArray[index] = index),
+            index =>
+              isValid(subNodeSortedIndexArray[index])
+                ? subNodeSortedIndexArray[index]
+                : (subNodeSortedIndexArray[index] = index),
             (index, rel) => {
               subNodeSortedIndexArray[index] = rel;
             },
             children.length,
             state.orderFn,
             state.order,
-            index => this.getOriginalField(
-              Array.isArray(indexKey) ? indexKey.concat([index]) : [indexKey, index],
-              state.field
-            )
+            index =>
+              this.getOriginalField(Array.isArray(indexKey) ? indexKey.concat([index]) : [indexKey, index], state.field)
           );
         }
       });
@@ -954,7 +955,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.sortedIndexMap.clear();
   }
 
-  sort(states: SortState | Array<SortState>): void {
+  sort(states: Array<SortState>): void {
     // Convert states into an array and filter out unnecessary ones
     states = (Array.isArray(states) ? states : [states]).filter(state => {
       let column = this.layoutColumnObjects.find(obj=>obj.field == state.field);
@@ -963,19 +964,21 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     
     // Save the sorting states
     this.lastSortStates = states;
-  
+
     // Get an array of sorting objects for each state
-    let filedMapArray: Array<ISortedMapItem> = states.map(state => this.sortedIndexMap.get(state?.field) || { asc: [], desc: [], normal: [] });
-  
+    let filedMapArray: Array<ISortedMapItem> = states.map(
+      state => this.sortedIndexMap.get(state?.field) || { asc: [], desc: [], normal: [] }
+    );
+
     let orderedData: number[] | null = null;
-  
+
     // If there is already sorted data in the caches, take it
     if (filedMapArray.length > 0) {
       orderedData = states.reduce((data, state, index) => {
         const currentData = (filedMapArray[index] as any)?.[state.order];
         return currentData && currentData.length > 0 ? currentData : data;
       }, null);
-      
+
       if (orderedData && orderedData.length > 0) {
         this.currentIndexedData = orderedData;
         this.updatePagerData();
@@ -983,19 +986,23 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         return;
       }
     }
-  
+
     // If there is no cache, we start sorting
     const sortedIndexArray: number[] = Array.from({ length: this._sourceLength }, (_, i) => i);
-  
+
     // Perform sorting on each state
     sortedIndexArray.sort((indexA, indexB) => {
-      return states.reduce((result, state) => {
-        if (result !== 0) return result;
-  
-        const orderFn = state.orderFn || (state.order !== 'desc'
-          ? (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 > v2 ? 1 : -1)
-          : (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 < v2 ? 1 : -1));
-          
+      return states.reduce((result: number, state: SortState) => {
+        if (result !== 0) {
+          return result;
+        }
+
+        const orderFn =
+          state.orderFn ||
+          (state.order !== 'desc'
+            ? (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 > v2 ? 1 : -1)
+            : (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 < v2 ? 1 : -1));
+
         return orderFn(
           this.getOriginalField(indexA, state.field),
           this.getOriginalField(indexB, state.field),
@@ -1003,9 +1010,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         );
       }, 0);
     });
-  
+
     this.currentIndexedData = sortedIndexArray;
-  
+
     // Process the hierarchy, if any
     if (this.hierarchyExpandLevel) {
       let nodeLength = sortedIndexArray.length;
@@ -1020,7 +1027,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         i += subNodeLength;
       }
     }
-  
+
     // If there were no caches, initialize them
     if (!filedMapArray.length) {
       filedMapArray = states.map(() => ({ asc: [], desc: [], normal: [] }));
@@ -1028,17 +1035,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         this.sortedIndexMap.set(states[index].field, filedMapArray[index]);
       }
     }
-  
+
     // Save the sorted indexes for each state to the cache
     states.forEach((state, index) => {
       const mapItem = filedMapArray[index] as ISortedMapItem;
       (mapItem as any)[state.order] = sortedIndexArray.slice(); // Save a copy of the array
     });
-  
+
     this.updatePagerData();
     this.fireListeners(EVENT_TYPE.CHANGE_ORDER, null);
   }
-  
+
   setSortedIndexMap(field: FieldDef, filedMap: ISortedMapItem) {
     this.sortedIndexMap.set(field, filedMap);
   }
@@ -1306,7 +1313,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   // 拖拽调整数据位置 目前对排序过的数据不过处理，因为自动排序和手动排序融合问题目前没有找到好的解决方式
   reorderRecord(sourceIndex: number, targetIndex: number) {
-    if (this.lastSortStates.some(state => state.order === 'asc' || state.order === 'desc')) {
+    if (this.lastSortStates?.some(state => state.order === 'asc' || state.order === 'desc')) {
       // const sourceIds = this._currentPagerIndexedData.splice(sourceIndex, 1);
       // sourceIds.unshift(targetIndex, 0);
       // Array.prototype.splice.apply(this._currentPagerIndexedData, sourceIds);

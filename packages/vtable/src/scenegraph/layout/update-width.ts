@@ -266,8 +266,11 @@ function updateCellWidth(
     return false;
   }
   const autoRowHeight = scene.table.isAutoRowHeight(row);
+  const isvtableMerge = scene.table.getCellRawRecord(col, row)?.vtableMerge;
   // 更新单元格布局
-  const type = scene.table.isHeader(col, row)
+  const type = isvtableMerge
+    ? 'text'
+    : scene.table.isHeader(col, row)
     ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : scene.table.getBodyColumnType(col, row);
   let isHeightChange = false;
@@ -278,6 +281,12 @@ function updateCellWidth(
     const value = scene.table.getCellValue(col, row);
     const dataValue = scene.table.getCellOriginValue(col, row);
     const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
+
+    // deal with bar
+    let range;
+    if (columnDefine?.mergeCell) {
+      range = scene.table.getCellRange(col, row);
+    }
 
     const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
     const newBarCell = createProgressBarCell(
@@ -290,7 +299,8 @@ function updateCellWidth(
       col,
       row,
       padding,
-      scene.table
+      scene.table,
+      range
     );
 
     const oldBarCell = cellGroup.getChildByName('progress-bar') as Group;
@@ -299,6 +309,10 @@ function updateCellWidth(
     cellGroup.removeChild(oldBarCell);
     oldBarCell.removeAllChild();
     oldBarCell.release();
+
+    // deal width text
+    const cellChange = updateMergeCellContentWidth(cellGroup, distWidth, detaX, autoRowHeight, true, scene.table);
+    isHeightChange = isHeightChange || cellChange;
   } else if (type === 'sparkline') {
     // 目前先采用重新生成节点的方案
     cellGroup.removeAllChild();
@@ -375,9 +389,9 @@ function updateCellWidth(
         let customRender;
         let customLayout;
         const cellType = scene.table.getCellLocation(col, row);
-        const { vTableMerge } = scene.table.getCellRawRecord(col, row);
+        const { vtableMerge } = scene.table.getCellRawRecord(col, row);
 
-        if (vTableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+        if (vtableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
           customLayout = (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout;
         } else if (cellType !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);
@@ -493,7 +507,8 @@ function updateMergeCellContentWidth(
         let changed = false;
         if (renderDefault) {
           // 处理文字
-          const style = table._getCellStyle(col, row);
+          // const style = table._getCellStyle(col, row);
+          const style = table._getCellStyle(colStart, rowStart);
           const padding = getQuadProps(style.padding as number);
           const textAlign = style.textAlign;
           const textBaseline = style.textBaseline;

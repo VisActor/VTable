@@ -620,17 +620,17 @@ export class Scenegraph {
     setIconHoverStyle(icon, col, row, cellGroup, this);
   }
 
-  updateSortIcon(options:{
-    col: number,
-    row: number,
-    iconMark: Icon,
-    order: SortOrder,
-    oldSortCol: number,
-    oldSortRow: number,
-    oldIconMark: Icon | undefined
+  updateSortIcon(options: {
+    col: number;
+    row: number;
+    iconMark: Icon;
+    order: SortOrder;
+    oldSortCol: number;
+    oldSortRow: number;
+    oldIconMark: Icon | undefined;
   }) {
-    let {col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark} = options;
-    updateSortIcon({col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, scene:this});
+    const { col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark } = options;
+    updateSortIcon({ col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, scene: this });
   }
 
   updateFrozenIcon(col: number, oldFrozenCol: number) {
@@ -1577,7 +1577,10 @@ export class Scenegraph {
               : 0
           )
         : 0;
-    const rightX = updateContainerChildrenX(this.rightFrozenGroup, 0);
+    const rightX = updateContainerChildrenX(
+      this.rightFrozenGroup.childrenCount > 0 ? this.rightFrozenGroup : this.rightTopCornerGroup,
+      0
+    );
 
     this.bottomFrozenGroup.hasChildNodes() &&
       this.bottomFrozenGroup.firstChild &&
@@ -1637,7 +1640,10 @@ export class Scenegraph {
   }
 
   updateCellContentWhileResize(col: number, row: number) {
-    const type = this.table.isHeader(col, row)
+    const isvtableMerge = this.table.getCellRawRecord(col, row)?.vtableMerge;
+    const type = isvtableMerge
+      ? 'text'
+      : this.table.isHeader(col, row)
       ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
       : this.table.getBodyColumnType(col, row);
     const cellGroup = this.getCell(col, row);

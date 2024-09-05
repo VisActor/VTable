@@ -376,6 +376,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   getTableIndexByField(field: FieldDef) {
     const colObj = this.internalProps.layoutMap.columnObjects.find((col: any) => col.field === field);
+    if (!colObj) {
+      return -1;
+    }
     const layoutRange = this.internalProps.layoutMap.getBodyLayoutRangeById(colObj.id);
     if (this.transpose) {
       return layoutRange.start.row;
@@ -464,6 +467,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //     internalProps.columns[index].editor = colDefine.editor;
     //   }
     // });
+    internalProps.enableTreeNodeMerge = options.enableTreeNodeMerge ?? isValid(options.groupBy) ?? false;
+
     this.internalProps.headerHelper.setTableColumnsEditor();
     // 处理转置
     this.transpose = options.transpose ?? false;
@@ -898,7 +903,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     columns: ColumnsDefine | undefined,
     field: FieldDef,
     fieldKey?: FieldKeyDef
-  ): SortState["orderFn"] | undefined {
+  ): SortState['orderFn'] | undefined {
     if (!columns) {
       columns = this.internalProps.columns;
     }
@@ -927,7 +932,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param executeSort 是否执行内部排序逻辑，设置false将只更新图标状态
    */
   updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true) {
-
     if (!sortState) {
       // 解除排序状态
       if (this.internalProps.sortState) {
@@ -946,22 +950,20 @@ export class ListTable extends BaseTable implements ListTableAPI {
       // 这里的sortState需要有field属性
       // this.stateManager.setSortState(sortState as SortState);
     }
-    
+
     sortState = Array.isArray(sortState) ? sortState : [sortState];
 
-    if ( sortState.some((item:any)=>(item.field)) && executeSort) {
-        if (this.internalProps.layoutMap.headerObjects.some(item=>item.define.sort !== false)) {
+    if (sortState.some((item: any) => item.field) && executeSort) {
+      if (this.internalProps.layoutMap.headerObjects.some(item => item.define.sort !== false)) {
         this.dataSource.sort(
-          sortState.map((item:any)=>{
+          sortState.map((item: any) => {
             const sortFunc = this._getSortFuncFromHeaderOption(this.internalProps.columns, item.field);
-            const hd = this.internalProps.layoutMap.headerObjects.find(
-              (col: any) => col && col.field === item.field
-            );
+            const hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === item.field);
             return {
-              field:item.field, 
-              order:item.order, 
+              field: item.field,
+              order: item.order,
               orderFn: sortFunc
-            }
+            };
           })
         );
 
@@ -1056,36 +1058,34 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     //重复逻辑抽取updateWidthHeight
     if (sort !== undefined) {
-      this.internalProps.sortState = this.internalProps.multipleSort ? Array.isArray(sort) ? sort : [sort] : sort;
+      this.internalProps.sortState = this.internalProps.multipleSort ? (Array.isArray(sort) ? sort : [sort]) : sort;
       this.stateManager.setSortState((this as any).sortState as SortState);
     }
     if (records) {
       _setRecords(this, records);
       if ((this as any).sortState) {
-        let sortState = Array.isArray((this as any).sortState) ? (this as any).sortState : [(this as any).sortState];
-        
+        const sortState = Array.isArray((this as any).sortState) ? (this as any).sortState : [(this as any).sortState];
+
         // 根据sort规则进行排序
-        if ( sortState.some((item:any)=>(item.order && item.field && item.order !== 'normal'))) {
-          
+        if (sortState.some((item: any) => item.order && item.field && item.order !== 'normal')) {
           // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
-          if (this.internalProps.layoutMap.headerObjectsIncludeHided.some(item=>item.define.sort !== false)) {
+          if (this.internalProps.layoutMap.headerObjectsIncludeHided.some(item => item.define.sort !== false)) {
             this.dataSource.sort(
-              sortState.map((item:any)=>{
+              sortState.map((item: any) => {
                 const sortFunc = this._getSortFuncFromHeaderOption(undefined, item.field);
                 // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
                 const hd = this.internalProps.layoutMap.headerObjectsIncludeHided.find(
                   (col: any) => col && col.field === item.field
                 );
                 return {
-                  field:item.field, 
-                  order:item.order || 'asc', 
+                  field: item.field,
+                  order: item.order || 'asc',
                   orderFn: sortFunc ?? defaultOrderFn
-                }
+                };
               })
             );
           }
         }
-
       }
       this.refreshRowColCount();
     } else {

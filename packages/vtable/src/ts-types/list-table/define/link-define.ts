@@ -18,6 +18,9 @@ export interface ILinkHeaderDefine extends IBasicHeaderDefine {
   linkDetect?: boolean;
   /** 模板链接地址，如：'https://www.google.com.hk/search?q={name}'，name是数据源属性字段名。 */
   templateLink?: string;
+
+  linkTarget?: string; // window.open的第二个参数
+  linkWindowFeatures?: string; // window.open的第三个参数
 }
 
 export interface ILinkColumnBodyDefine extends IBasicColumnBodyDefine {
@@ -34,4 +37,7 @@ export interface ILinkColumnBodyDefine extends IBasicColumnBodyDefine {
   linkDetect?: boolean;
   /** 模板链接地址，如：'https://www.google.com.hk/search?q={name}'，name是数据源属性字段名。 */
   templateLink?: string;
+
+  linkTarget?: string; // window.open的第二个参数
+  linkWindowFeatures?: string; // window.open的第三个参数
 }

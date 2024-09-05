@@ -226,6 +226,11 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 点击外部区域是否取消选中。
 
+##${prefix} disableDragSelect(boolean) = true
+
+拖拽选择单元格时是否禁用框选。
+
+
 #${prefix} theme(Object)
 
 {{ use: common-theme(
@@ -499,6 +504,14 @@ editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' |
 #${prefix} clearDOM(boolean) = true
 
 是否清空容器 DOM。
+
+#${prefix} canvasWidth(number)
+
+直接设置 canvas 的宽度. 不根据容器宽高来决定表格的尺寸
+
+#${prefix} canvasHeight(number)
+
+直接设置 canvas 的高度. 不根据容器宽高来决定表格的尺寸
 
 #${prefix} animationAppear(boolean|Object|)
 

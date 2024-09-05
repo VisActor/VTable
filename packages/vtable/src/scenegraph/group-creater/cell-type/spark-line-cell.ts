@@ -178,7 +178,7 @@ function createSparkLine(
       let valid = false;
       for (let j = 0; j < values.length; j++) {
         // eslint-disable-next-line eqeqeq
-        if (domain[i] == values[j]) {
+        if (domain[i] === values[j]) {
           const data: any = dataValue[j];
           // 无效数据不进行scale，避免null被解析为0
           if (!isValid(data[xField]) || !isValid(data[yField])) {
