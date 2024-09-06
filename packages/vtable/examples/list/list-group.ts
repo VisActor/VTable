@@ -36,7 +36,8 @@ export function createTable() {
         {
           field: 'Customer ID',
           title: 'Customer ID',
-          width: 'auto'
+          width: 'auto',
+          cellType: 'checkbox'
         },
         {
           field: 'Product Name',
