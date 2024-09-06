@@ -159,6 +159,7 @@ export class CachedDataSource extends DataSource {
           const groupResult = [] as any[];
           for (let i = 0; i < records.length; i++) {
             dealWithGroup(records[i], groupResult, groupMap, groupByKeys, 0);
+            records[i].vtableOriginIndex = i;
           }
           return groupResult;
         }
@@ -246,7 +247,7 @@ export class CachedDataSource extends DataSource {
   }
 }
 
-function dealWithGroup(record: any, children: any[], map: Map<number, any>, groupByKeys: string[], level: number) {
+function dealWithGroup(record: any, children: any[], map: Map<number, any>, groupByKeys: string[], level: number): any {
   const groupByKey = groupByKeys[level];
   if (!isValid(groupByKey)) {
     children.push(record);
@@ -257,23 +258,22 @@ function dealWithGroup(record: any, children: any[], map: Map<number, any>, grou
     if (map.has(value)) {
       const index = map.get(value);
       // children[index].children.push(record);
-      dealWithGroup(record, children[index].children, children[index].map, groupByKeys, level + 1);
-    } else {
-      map.set(value, children.length);
-      children.push({
-        vtableMerge: true,
-        vtableMergeName: value,
-        children: [] as any,
-        map: new Map()
-      });
-      dealWithGroup(
-        record,
-        children[children.length - 1].children,
-        children[children.length - 1].map,
-        groupByKeys,
-        level + 1
-      );
+      return dealWithGroup(record, children[index].children, children[index].map, groupByKeys, level + 1);
     }
+    map.set(value, children.length);
+    children.push({
+      vtableMerge: true,
+      vtableMergeName: value,
+      children: [] as any,
+      map: new Map()
+    });
+    return dealWithGroup(
+      record,
+      children[children.length - 1].children,
+      children[children.length - 1].map,
+      groupByKeys,
+      level + 1
+    );
   }
 }
 
