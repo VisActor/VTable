@@ -961,7 +961,7 @@ export class Dataset {
     this.processRecords();
     this.processCollectedValuesWithSumBy();
     this.processCollectedValuesWithSortBy();
-
+    this.totalStatistics();
     if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart) {
       // 处理PivotChart双轴图0值对齐
       // this.dealWithZeroAlign();
@@ -1365,7 +1365,9 @@ export class Dataset {
                       dependIndicatorKeys: calculatedFieldRule?.dependIndicatorKeys
                     });
                   }
-                  this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  if (flatColTotalKey !== flatColKey) {
+                    this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  }
                 } else {
                   if (!this.tree[flatRowKey][flatColTotalKey][i]) {
                     const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
@@ -1386,7 +1388,9 @@ export class Dataset {
                         )?.format
                     });
                   }
-                  this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  if (flatColTotalKey !== flatColKey) {
+                    this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  }
                 }
               }
             }
@@ -1426,7 +1430,9 @@ export class Dataset {
                   dependIndicatorKeys: calculatedFieldRule?.dependIndicatorKeys
                 });
               }
-              this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              if (flatColTotalKey !== flatColKey) {
+                this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              }
             } else {
               if (!this.tree[flatRowKey][flatColTotalKey][i]) {
                 const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
@@ -1447,7 +1453,9 @@ export class Dataset {
                     )?.format
                 });
               }
-              this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              if (flatColTotalKey !== flatColKey) {
+                this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              }
             }
           }
         }
@@ -1520,7 +1528,9 @@ export class Dataset {
                       });
                     }
                   }
-                  this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  if (flatRowTotalKey !== flatRowKey) {
+                    this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  }
                 }
               }
             }
@@ -1578,7 +1588,9 @@ export class Dataset {
                   });
                 }
               }
-              this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              if (flatRowTotalKey !== flatRowKey) {
+                this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              }
             }
           }
           colCompute(flatRowKey, flatColKey);

@@ -219,7 +219,7 @@ export class SumAggregator extends Aggregator {
       }
       if (record.className === 'Aggregator') {
         const value = record.value();
-        this.sum += value;
+        this.sum += value ?? 0;
         if (this.needSplitPositiveAndNegativeForSum) {
           if (value > 0) {
             this.positiveSum += value;
@@ -262,7 +262,7 @@ export class SumAggregator extends Aggregator {
         const record = this.records[i];
         if (record.className === 'Aggregator') {
           const value = record.value();
-          this.sum += value;
+          this.sum += value ?? 0;
           if (this.needSplitPositiveAndNegativeForSum) {
             if (value > 0) {
               this.positiveSum += value;
