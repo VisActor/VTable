@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: split line position fix #2392\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
