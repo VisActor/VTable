@@ -240,7 +240,10 @@ export class Gantt extends EventTarget {
     if (this.parsedOptions.outerFrameStyle) {
       //考虑表格整体边框的问题
       const lineWidth = this.parsedOptions.outerFrameStyle?.borderLineWidth; // toBoxArray(this.parsedOptions.frameStyle?.borderLineWidth ?? [null]);
-      this.tableX = this.taskListTableInstance ? this.parsedOptions.verticalSplitLine.lineWidth ?? 0 : lineWidth;
+      this.tableX =
+        this.taskTableColumns.length >= 1 || this.options?.rowSeriesNumber
+          ? this.parsedOptions.verticalSplitLine.lineWidth ?? 0
+          : lineWidth;
       this.tableY = lineWidth;
       this.tableNoFrameWidth = width - lineWidth - this.parsedOptions.verticalSplitLine.lineWidth;
 

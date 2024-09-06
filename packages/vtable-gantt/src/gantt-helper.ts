@@ -393,7 +393,8 @@ export function createSplitLineAndResizeLine(gantt: Gantt) {
   if (gantt.parsedOptions.horizontalSplitLine) {
     gantt.horizontalSplitLine = document.createElement('div');
     gantt.horizontalSplitLine.style.position = 'absolute';
-    gantt.horizontalSplitLine.style.top = gantt.getAllHeaderRowsHeight() + 'px';
+    gantt.horizontalSplitLine.style.top =
+      gantt.getAllHeaderRowsHeight() + (gantt.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0) + 'px';
     gantt.horizontalSplitLine.style.left = gantt.tableY + 'px';
     gantt.horizontalSplitLine.style.height = (gantt.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
     gantt.horizontalSplitLine.style.width =
@@ -411,10 +412,10 @@ export function createSplitLineAndResizeLine(gantt: Gantt) {
     gantt.verticalSplitResizeLine = document.createElement('div');
     gantt.verticalSplitResizeLine.style.position = 'absolute';
     gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';
-    gantt.verticalSplitResizeLine.style.left = gantt.taskTableWidth
-      ? `${gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2}px`
-      : '0px';
-    gantt.verticalSplitResizeLine.style.width = '14px';
+    gantt.verticalSplitResizeLine.style.left =
+      (gantt.taskTableWidth ? gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2 : 0) +
+      'px';
+    gantt.verticalSplitResizeLine.style.width = '14px'; // 注意下面的14 和7 的地方 都是因为这里的宽度是 14
     gantt.verticalSplitResizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
     gantt.verticalSplitResizeLine.style.backgroundColor = 'rgba(0,0,0,0)';
     gantt.verticalSplitResizeLine.style.zIndex = '100';
