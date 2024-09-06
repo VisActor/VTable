@@ -368,7 +368,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const target = e.target as HTMLElement;
     if (!table.getElement().contains(target)) {
       // 如果点击到表格外部的dom
-      const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+      const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
       getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
         if (isCompleteEdit === false) {
           // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
