@@ -2193,6 +2193,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
+    this.colIndex = 0;
     const oldRowHeaderCellIds = this._rowHeaderCellFullPathIds_FULL.slice(0);
     const oldRowHeaderCellPositons = oldRowHeaderCellIds.map((id, row) => {
       return { col, row: row + this.columnHeaderLevelCount };
@@ -3545,6 +3546,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // if (dataset) {
     this.rowTree = dataset.rowHeaderTree;
     this.columnTree = dataset.colHeaderTree;
+
+    const beforeRowDimensions = this.rowDimensionTree.tree.children;
+    this.rowTree?.forEach((node: IHeaderTreeDefine, index: number) => {
+      const beforeRowDimension = beforeRowDimensions.find(
+        item => item.dimensionKey === node.dimensionKey && item.value === node.value
+      );
+      if (beforeRowDimension) {
+        (this._table as PivotTable)._syncHierarchyState(beforeRowDimension, node);
+      }
+    });
 
     this.columnDimensionTree = new DimensionTree((this.columnTree as ITreeLayoutHeadNode[]) ?? [], this.sharedVar);
     this.rowDimensionTree = new DimensionTree(

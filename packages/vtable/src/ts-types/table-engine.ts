@@ -9,7 +9,8 @@ import type {
   AggregationType,
   CustomAggregation,
   FilterRules,
-  IPivotTableDataConfig
+  IPivotTableDataConfig,
+  SortType
 } from './new-data-set';
 import type { Either } from '../tools/helper';
 import type {
@@ -180,7 +181,7 @@ export interface SortState {
 export interface PivotSortState {
   col: number;
   row: number;
-  order: SortOrder;
+  order: SortType;
 }
 
 /**

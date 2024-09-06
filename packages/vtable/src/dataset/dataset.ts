@@ -20,9 +20,10 @@ import type {
   CollectedValue,
   IIndicator,
   IPivotChartDataConfig,
-  CalculateddFieldRules
+  CalculateddFieldRules,
+  SortType
 } from '../ts-types';
-import { AggregationType, SortType } from '../ts-types';
+import { AggregationType } from '../ts-types';
 import type { Aggregator, IAggregator } from './statistics-helper';
 import {
   AvgAggregator,
@@ -67,6 +68,10 @@ export class Dataset {
   colKeys: string[][] = [];
   //行表头的每行对应的表头键值
   rowKeys: string[][] = [];
+
+  // 存储下未排序即初始normal下rowKeys和colKeys
+  colKeys_normal: string[][] = [];
+  rowKeys_normal: string[][] = [];
   // /**
   //  * 对应dataset中的rowKeys，行表头的每行表头键值，包含小计总计
   //  */
@@ -271,6 +276,8 @@ export class Dataset {
       const t5 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('totalStatistics:', t5 - t4);
 
+      this.rowKeys_normal = this.rowKeys.slice();
+      this.colKeys_normal = this.colKeys.slice();
       //对维度排序
       const t2 = typeof window !== 'undefined' ? window.performance.now() : 0;
       this.sortKeys();
@@ -1102,42 +1109,44 @@ export class Dataset {
    * 根据排序规则 对维度keys排序
    */
   sortKeys() {
+    this.colKeys = this.colKeys_normal.slice();
+    this.rowKeys = this.rowKeys_normal.slice();
     const that = this;
     if (!this.sorted) {
       this.sorted = true;
-      const getValue = function (rowKey: any, colKey: any) {
-        return that.getAggregator(rowKey, colKey, '').value();
-      };
+      // const getValue = function (rowKey: any, colKey: any) {
+      //   return that.getAggregator(rowKey, colKey, '').value();
+      // };
 
-      switch (this.rowOrder) {
-        case 'value_a_to_z':
-          this.rowKeys.sort(function (a, b) {
-            return naturalSort(getValue(a, []), getValue(b, []));
-          });
-          break;
-        case 'value_z_to_a':
-          this.rowKeys.sort(function (a, b) {
-            return -naturalSort(getValue(a, []), getValue(b, []));
-          });
-          break;
-        default:
-          this.rowKeys.sort(this.arrSort(this.rows, true));
-      }
-      switch (this.colOrder) {
-        case 'value_a_to_z':
-          this.colKeys.sort(function (a, b) {
-            return naturalSort(getValue([], a), getValue([], b));
-          });
-          break;
-        case 'value_z_to_a':
-          this.colKeys.sort(function (a, b) {
-            return -naturalSort(getValue([], a), getValue([], b));
-          });
-          break;
-        default:
-          const sortfun = this.arrSort(this.columns, false);
-          this.colKeys.sort(sortfun);
-      }
+      // switch (this.rowOrder) {
+      //   case 'value_a_to_z':
+      //     this.rowKeys.sort(function (a, b) {
+      //       return naturalSort(getValue(a, []), getValue(b, []));
+      //     });
+      //     break;
+      //   case 'value_z_to_a':
+      //     this.rowKeys.sort(function (a, b) {
+      //       return -naturalSort(getValue(a, []), getValue(b, []));
+      //     });
+      //     break;
+      //   default:
+      this.rowKeys.sort(this.arrSort(this.rows, true));
+      // }
+      // switch (this.colOrder) {
+      //   case 'value_a_to_z':
+      //     this.colKeys.sort(function (a, b) {
+      //       return naturalSort(getValue([], a), getValue([], b));
+      //     });
+      //     break;
+      //   case 'value_z_to_a':
+      //     this.colKeys.sort(function (a, b) {
+      //       return -naturalSort(getValue([], a), getValue([], b));
+      //     });
+      //     break;
+      //   default:
+      const sortfun = this.arrSort(this.columns, false);
+      this.colKeys.sort(sortfun);
+      // }
     }
   }
   /**
@@ -1188,21 +1197,34 @@ export class Dataset {
       let sorter;
       for (let i = 0; i < sortersArr.length; i++) {
         sorter = sortersArr[i];
+        // if (!(sorter.sortRule?.sortType === SortType.NORMAL || sorter.sortRule?.sortType === SortType.normal)) {
         if (sorter.sortRule?.sortByIndicator) {
           let aChanged = a;
           let bChanged = b;
           if (sorter.fieldIndex < fieldArr.length - 1) {
             aChanged = a.slice(0, sorter.fieldIndex + 1);
-            aChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
+            if (that.rowHierarchyType === 'grid' && isRow) {
+              aChanged.push(that.rowSubTotalLabel);
+            } else if (!isRow) {
+              aChanged.push(that.colSubTotalLabel);
+            }
             bChanged = b.slice(0, sorter.fieldIndex + 1);
-            bChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
+            if (that.rowHierarchyType === 'grid' && isRow) {
+              bChanged.push(that.rowSubTotalLabel);
+            } else if (!isRow) {
+              bChanged.push(that.colSubTotalLabel);
+            }
           }
-          comparison = sorter.func(aChanged, bChanged);
+          comparison = sorter.func(aChanged, bChanged, sorter.sortRule?.sortType);
         } else {
-          comparison = sorter.func?.(a[sorter.fieldIndex], b[sorter.fieldIndex]);
+          comparison = sorter.func?.(a[sorter.fieldIndex], b[sorter.fieldIndex], sorter.sortRule?.sortType);
         }
         if (comparison !== 0) {
-          return comparison * (sorter.sortRule?.sortType === SortType.DESC ? -1 : 1);
+          return comparison;
+          // return (
+          //   comparison *
+          //   (sorter.sortRule?.sortType === SortType.DESC || sorter.sortRule?.sortType === SortType.desc ? -1 : 1)
+          // );
         }
       }
       return 0;
@@ -1217,7 +1239,7 @@ export class Dataset {
     const that = this;
 
     if ((<SortByIndicatorRule>sortRule).sortByIndicator) {
-      return (a: string[], b: string[]) => {
+      return (a: string[], b: string[], sortType?: SortType) => {
         /**
          * 根据rowKey和colKey获取tree上对应的聚合值
          * @param rowKey
@@ -1227,6 +1249,7 @@ export class Dataset {
         const getValue = function (rowKey: any, colKey: any) {
           //如果rowKey提供的不全 如 [地区,省,城市] 只提供了如[华东,山东] 会补全为[华东,山东,小计]
           if (
+            that.rowHierarchyType === 'grid' &&
             rowKey.length < that.rows.length &&
             rowKey[rowKey.length - 1] !== that.rowSubTotalLabel &&
             rowKey[rowKey.length - 1] !== that.rowGrandTotalLabel
@@ -1245,22 +1268,25 @@ export class Dataset {
         if (isSortRow) {
           return naturalSort(
             getValue(a, (<SortByIndicatorRule>sortRule).query),
-            getValue(b, (<SortByIndicatorRule>sortRule).query)
+            getValue(b, (<SortByIndicatorRule>sortRule).query),
+            sortType
           );
         }
         return naturalSort(
           getValue((<SortByIndicatorRule>sortRule).query, a),
-          getValue((<SortByIndicatorRule>sortRule).query, b)
+          getValue((<SortByIndicatorRule>sortRule).query, b),
+          sortType
         );
       };
     } else if ((<SortByRule>sortRule).sortBy) {
-      return sortBy((<SortByRule>sortRule).sortBy!);
+      return sortBy((<SortByRule>sortRule).sortBy);
+    }
+
+    if ((<SortFuncRule>sortRule).sortFunc) {
+      return (<SortFuncRule>sortRule).sortFunc;
     }
     if ((<SortTypeRule>sortRule).sortType) {
       return typeSort;
-    }
-    if ((<SortFuncRule>sortRule).sortFunc) {
-      return (<SortFuncRule>sortRule).sortFunc;
     }
     return naturalSort;
   }
