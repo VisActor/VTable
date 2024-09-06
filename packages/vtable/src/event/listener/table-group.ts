@@ -363,8 +363,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
     }
   });
-  // 整体全局监听事件
-  vglobal.addEventListener('mouseup', (e: MouseEvent) => {
+
+  const globalPointerupCallback = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
     if (!table.getElement().contains(target)) {
       // 如果点击到表格外部的dom
@@ -384,7 +384,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       });
     }
+  };
+  eventManager.globalEventListeners.push({
+    name: 'pointerup',
+    env: 'document',
+    callback: globalPointerupCallback
   });
+  // 整体全局监听事件
+  vglobal.addEventListener('pointerup', globalPointerupCallback);
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
       table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
