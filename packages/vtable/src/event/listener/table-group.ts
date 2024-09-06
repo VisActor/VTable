@@ -655,34 +655,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
   // 注意和pointerup事件的处理 vrender中的事件系统： 是先触发pointerup 如果是点击到的场景树图元节点则会继续触发pointertap 否则不触发pointertap
   table.scenegraph.tableGroup.addEventListener('pointertap', (e: FederatedPointerEvent) => {
     console.log('tableGroup', 'pointertap');
-    if (table.stateManager.columnResize.resizing || table.stateManager.columnMove.moving) {
-      return;
-    }
-    // if (table.stateManager.fillHandle.isFilling) {
-    //   table.stateManager.endFillSelect();
-    //   return;
-    // }
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-    eventManager.dealIconClick(e, eventArgsSet);
-    if (!eventArgsSet?.eventArgs) {
-      return;
-    }
-    if (eventManager.touchSetTimeout) {
-      // 通过这个变量判断非drag鼠标拖拽状态，就不再增加其他变量isDrag了（touchSetTimeout如果拖拽过会变成undefined pointermove事件有置为undefined）
-      if (e.pointerType === 'touch') {
-        // 移动端事件特殊处理
-        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-        if (eventManager.touchSetTimeout) {
-          clearTimeout(eventManager.touchSetTimeout);
-          const isHasSelected = !!stateManager.select.ranges?.length;
-          eventManager.dealTableSelect(eventArgsSet);
-          stateManager.endSelectCells(true, isHasSelected);
-          eventManager.touchSetTimeout = undefined;
-        }
-      }
-    }
-
-    if (!eventManager.touchMove && e.button === 0 && (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
+    if (
+      !eventManager.touchMove &&
+      e.button === 0 &&
+      eventArgsSet.eventArgs &&
+      (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)
+    ) {
       const { col, row } = eventArgsSet.eventArgs;
       const cellInfo = table.getCellInfo(col, row);
       let icon;
@@ -711,6 +690,32 @@ export function bindTableGroupListener(eventManager: EventManager) {
       };
 
       table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
+    }
+    if (table.stateManager.columnResize.resizing || table.stateManager.columnMove.moving) {
+      return;
+    }
+    // if (table.stateManager.fillHandle.isFilling) {
+    //   table.stateManager.endFillSelect();
+    //   return;
+    // }
+
+    eventManager.dealIconClick(e, eventArgsSet);
+    if (!eventArgsSet?.eventArgs) {
+      return;
+    }
+    if (eventManager.touchSetTimeout) {
+      // 通过这个变量判断非drag鼠标拖拽状态，就不再增加其他变量isDrag了（touchSetTimeout如果拖拽过会变成undefined pointermove事件有置为undefined）
+      if (e.pointerType === 'touch') {
+        // 移动端事件特殊处理
+        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+        if (eventManager.touchSetTimeout) {
+          clearTimeout(eventManager.touchSetTimeout);
+          const isHasSelected = !!stateManager.select.ranges?.length;
+          eventManager.dealTableSelect(eventArgsSet);
+          stateManager.endSelectCells(true, isHasSelected);
+          eventManager.touchSetTimeout = undefined;
+        }
+      }
     }
   });
   // stage 的pointerdown监听
