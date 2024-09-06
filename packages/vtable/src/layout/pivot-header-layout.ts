@@ -285,9 +285,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //#region 处理需求 当没有数据时仍然显示角头维度名称
     if (
       this.dataset &&
+      !this._table.isPivotChart() &&
       (this.dataset.records?.length ?? 0) === 0 &&
-      !this.dataset.customColTree &&
-      !this.dataset.customRowTree
+      !this.dataset.customColTree
+      // &&
+      // !this.dataset.customRowTree
     ) {
       colDimensionKeys = this.columnsDefine.map(define => {
         if (typeof define === 'string') {
@@ -322,8 +324,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
       if (
         this.dataset &&
+        !this._table.isPivotChart() &&
         (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree &&
+        // !this.dataset.customColTree &&
         !this.dataset.customRowTree
       ) {
         rowDimensionKeys = this.rowsDefine.map(define => {
@@ -462,6 +465,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       let startRow = 0;
       if (
         this.dataset &&
+        !this._table.isPivotChart() &&
         (this.dataset.records?.length ?? 0) === 0 &&
         !this.dataset.customColTree &&
         !this.dataset.customRowTree &&
@@ -532,6 +536,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         let startRow = 0;
         if (
           this.dataset &&
+          !this._table.isPivotChart() &&
           (this.dataset.records?.length ?? 0) === 0 &&
           !this.dataset.customColTree &&
           !this.dataset.customRowTree &&
@@ -1412,6 +1417,38 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           : this.columnDimensionTree.totalLevel
         : this.columnDimensionTree.totalLevel;
 
+      //#region 处理需求 当没有数据时仍然显示角头维度名称
+      if (
+        count === 0 &&
+        this.dataset &&
+        !this.dataset.customColTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
+        // && !this.dataset.customRowTree?.length
+      ) {
+        if (this.cornerSetting.titleOnDimension === 'row' && this.cornerSetting.forceShowHeader) {
+          count = 1;
+        } else if (
+          !this._table.isPivotChart() &&
+          (this.dataset.records?.length ?? 0) === 0 &&
+          (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all')
+        ) {
+          count = this.columnsDefine.length ?? 0;
+        }
+      } else if (
+        this.dataset &&
+        !this._table.isPivotChart() &&
+        (this.dataset.records?.length ?? 0) === 0 &&
+        !this.dataset.customColTree // 这里不能改为 !this.dataset.customColTree?.length  否则透视图会出错  透视图case很多rowTree columnTree rows columns都是[]
+        //  &&
+        // !this.dataset.customRowTree
+      ) {
+        if (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all') {
+          count = this.columnsDefine.length ?? 0;
+          if (!this.hideIndicatorName && this.indicatorsAsCol) {
+            count++;
+          }
+        }
+      }
+      //#endregion
       if (this.columnHeaderTitle) {
         count += 1;
       }
@@ -1423,35 +1460,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       ) {
         count -= 1;
       }
-      //#region 处理需求 当没有数据时仍然显示角头维度名称
-      if (
-        count === 0 &&
-        this.dataset &&
-        !this.dataset.customColTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
-        // && !this.dataset.customRowTree?.length
-      ) {
-        if (this.cornerSetting.titleOnDimension === 'row' && this.cornerSetting.forceShowHeader) {
-          count = 1;
-        } else if (
-          (this.dataset.records?.length ?? 0) === 0 &&
-          (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all')
-        ) {
-          count = this.columnsDefine.length ?? 0;
-        }
-      } else if (
-        this.dataset &&
-        (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree &&
-        !this.dataset.customRowTree
-      ) {
-        if (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all') {
-          count = this.columnsDefine.length ?? 0;
-          if (!this.hideIndicatorName && this.indicatorsAsCol) {
-            count++;
-          }
-        }
-      }
-      //#endregion
+
       this.columnHeaderLevelCount = count;
       return;
     }
@@ -1480,18 +1489,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       //   : rowLevelCount;
 
       let count = rowLevelCount;
-      if (this.indicatorsAsCol) {
-        // count = rowLevelCount;
-      } else if (
-        this.hideIndicatorName &&
-        this.rowDimensionKeys[this.rowDimensionKeys.length - 1] === this.indicatorDimensionKey
-      ) {
-        count = rowLevelCount - 1;
-      }
 
-      if (this.rowHeaderTitle) {
-        count += 1;
-      }
       // if (this._table.isPivotChart()&&this.indicatorsAsCol) {
       //   count+=1;
       // }
@@ -1505,6 +1503,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (this.cornerSetting.titleOnDimension === 'column' && this.cornerSetting.forceShowHeader) {
           count = 1;
         } else if (
+          !this._table.isPivotChart() &&
           (this.dataset.records?.length ?? 0) === 0 &&
           (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all')
         ) {
@@ -1512,9 +1511,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
       } else if (
         this.dataset &&
+        !this._table.isPivotChart() &&
         (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree &&
-        !this.dataset.customRowTree
+        // !this.dataset.customColTree &&
+        !this.dataset.customRowTree // 这里不能改为 !this.dataset.customRowTree?.length  否则透视图会出错  透视图case很多rowTree columnTree rows columns都是[]
       ) {
         if (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all') {
           count = this.rowsDefine.length;
@@ -1524,6 +1524,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
       }
       //#endregion
+      if (
+        !this.indicatorsAsCol &&
+        this.hideIndicatorName &&
+        this.rowDimensionKeys[this.rowDimensionKeys.length - 1] === this.indicatorDimensionKey
+      ) {
+        count = rowLevelCount - 1;
+      }
+
+      if (this.rowHeaderTitle) {
+        count += 1;
+      }
+
       this.rowHeaderLevelCount = count;
       return;
     }

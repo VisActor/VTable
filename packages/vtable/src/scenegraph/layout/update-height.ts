@@ -236,7 +236,7 @@ export function updateCellHeight(
         let customRender;
         let customLayout;
         const cellLocation = scene.table.getCellLocation(col, row);
-        const { vtableMerge } = scene.table.getCellRawRecord(col, row);
+        const { vtableMerge } = scene.table.getCellRawRecord(col, row) || {};
 
         if (vtableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
           customLayout = (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout;

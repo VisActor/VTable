@@ -48,6 +48,7 @@ export abstract class Aggregator implements IAggregator {
   }
   reset() {
     this.records = [];
+    this.clearCacheValue();
   }
 }
 export class RecordAggregator extends Aggregator {
@@ -218,7 +219,7 @@ export class SumAggregator extends Aggregator {
       }
       if (record.className === 'Aggregator') {
         const value = record.value();
-        this.sum += value;
+        this.sum += value ?? 0;
         if (this.needSplitPositiveAndNegativeForSum) {
           if (value > 0) {
             this.positiveSum += value;
@@ -240,7 +241,7 @@ export class SumAggregator extends Aggregator {
     }
   }
   value() {
-    return this.sum;
+    return this.records?.length >= 1 ? this.sum : undefined;
   }
   positiveValue() {
     return this.positiveSum;
@@ -249,6 +250,7 @@ export class SumAggregator extends Aggregator {
     return this.nagetiveSum;
   }
   reset() {
+    super.reset();
     this.records = [];
     this.sum = 0;
   }
@@ -260,7 +262,7 @@ export class SumAggregator extends Aggregator {
         const record = this.records[i];
         if (record.className === 'Aggregator') {
           const value = record.value();
-          this.sum += value;
+          this.sum += value ?? 0;
           if (this.needSplitPositiveAndNegativeForSum) {
             if (value > 0) {
               this.positiveSum += value;
@@ -350,7 +352,7 @@ export class AvgAggregator extends Aggregator {
     }
   }
   value() {
-    return this.sum / this.count;
+    return this.records?.length >= 1 ? this.sum / this.count : undefined;
   }
   reset() {
     this.records = [];
@@ -400,7 +402,7 @@ export class MaxAggregator extends Aggregator {
     }
   }
   value() {
-    return this.max;
+    return this.records?.length >= 1 ? this.max : undefined;
   }
   reset() {
     this.records = [];
@@ -448,7 +450,7 @@ export class MinAggregator extends Aggregator {
     }
   }
   value() {
-    return this.min;
+    return this.records?.length >= 1 ? this.min : undefined;
   }
   reset() {
     this.records = [];

@@ -709,7 +709,7 @@ Pivot table update sorting rules, exclusive to PivotTable
 
 ## updatePivotSortState(Function)
 
-Update sort status, PivotTable exclusive
+Update sort status, The vtable itself does not perform sorting logic. PivotTable exclusive
 
 ```
   /**
@@ -721,6 +721,7 @@ Update sort status, PivotTable exclusive
       order: SortOrder;
     }[])
 ```
+The table will not be redrawn automatically after updating, and the interface renderWithRecreateCells needs to be configured to refresh
 
 ## setDropDownMenuHighlight(Function)
 
@@ -785,7 +786,7 @@ Update data filtering rules
 updateFilterRules(filterRules: FilterRules) => void
 ```
 
-use case: After clicking the legend item, update the filter rules to update the chart
+use case: For the PivotChart scene, after clicking the legend item, update the filter rules to update the chart
 
 ## setLegendSelected(Function)
 
