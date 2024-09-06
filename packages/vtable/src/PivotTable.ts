@@ -19,7 +19,8 @@ import type {
   ColumnDefine,
   SortByIndicatorRule,
   SortTypeRule,
-  SortRule
+  SortRule,
+  FilterRules
 } from './ts-types';
 import { HierarchyState, SortType } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
@@ -1956,5 +1957,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.dataset.addRecords(records);
       });
     }
+  }
+
+  /** 更新数据过滤规则 对应dataConfig中filterRules配置格式 */
+  updateFilterRules(filterRules: FilterRules) {
+    this.internalProps.dataConfig.filterRules = filterRules;
+    this.dataset.updateFilterRules(filterRules);
+    this.renderWithRecreateCells();
   }
 }

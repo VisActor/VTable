@@ -162,6 +162,7 @@ export class Dataset {
   ) {
     this.registerAggregators();
     this.dataConfig = dataConfig;
+    this.filterRules = this.dataConfig?.filterRules;
     this.rowHierarchyType = rowHierarchyType ?? 'grid';
     // this.allTotal = new SumAggregator(this.indicators[0]);
     this.sortRules = this.dataConfig?.sortRules;
@@ -491,7 +492,7 @@ export class Dataset {
    */
   private processRecords() {
     let isNeedFilter = false;
-    if ((this.dataConfig?.filterRules?.length ?? 0) >= 1) {
+    if ((this.filterRules?.length ?? 0) >= 1) {
       isNeedFilter = true;
     }
     //常规records是数组的情况
@@ -518,9 +519,9 @@ export class Dataset {
   }
   private filterRecord(record: any) {
     let isReserved = true;
-    if (this.dataConfig?.filterRules) {
-      for (let i = 0; i < this.dataConfig.filterRules.length; i++) {
-        const filterRule = this.dataConfig?.filterRules[i];
+    if (this.filterRules) {
+      for (let i = 0; i < this.filterRules.length; i++) {
+        const filterRule = this.filterRules[i];
         if (filterRule.filterKey) {
           const filterValue = record[filterRule.filterKey];
           if (filterRule.filteredValues?.indexOf(filterValue) === -1) {
