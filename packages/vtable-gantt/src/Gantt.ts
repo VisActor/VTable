@@ -421,6 +421,19 @@ export class Gantt extends EventTarget {
         )
       };
     }
+    if (listTable_options.theme.bodyStyle.frameStyle) {
+      listTable_options.theme.bodyStyle.frameStyle.borderLineWidth = [
+        this.parsedOptions.horizontalSplitLine.lineWidth,
+        0,
+        0,
+        0
+      ];
+    } else {
+      listTable_options.theme.bodyStyle.frameStyle = {
+        borderLineWidth: [this.parsedOptions.horizontalSplitLine.lineWidth, 0, 0, 0],
+        borderColor: this.parsedOptions.horizontalSplitLine.lineColor
+      };
+    }
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvas.height;
     listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
