@@ -234,7 +234,6 @@ export class Gantt extends EventTarget {
     }
     const width = Math.floor(widthP - getVerticalScrollBarSize(this.parsedOptions.scrollStyle));
     const height = Math.floor(heightP - getHorizontalScrollBarSize(this.parsedOptions.scrollStyle));
-
     this.tableNoFrameWidth = widthP;
     this.tableNoFrameHeight = Math.floor(heightP);
     if (this.parsedOptions.outerFrameStyle) {
@@ -245,7 +244,7 @@ export class Gantt extends EventTarget {
           ? this.parsedOptions.verticalSplitLine.lineWidth ?? 0
           : lineWidth;
       this.tableY = lineWidth;
-      this.tableNoFrameWidth = width - lineWidth - this.parsedOptions.verticalSplitLine.lineWidth;
+      this.tableNoFrameWidth = Math.min(width - lineWidth - this.tableX, this._getAllColsWidth());
 
       this.tableNoFrameHeight = height - lineWidth * 2;
     }
@@ -650,7 +649,7 @@ export class Gantt extends EventTarget {
 
   _resize() {
     this._updateSize();
-    this.taskListTableInstance.setCanvasSize(
+    this.taskListTableInstance?.setCanvasSize(
       this.taskTableWidth,
       this.tableNoFrameHeight + this.parsedOptions.outerFrameStyle.borderLineWidth * 2
     );
