@@ -308,7 +308,7 @@ export function sortRecords(table: ListTable) {
       //const hd = table.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === item.field);
       return item;
     });
-
+    
     table.dataSource.sort(sortState);
   }
 }

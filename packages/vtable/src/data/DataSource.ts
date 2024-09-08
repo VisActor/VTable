@@ -957,8 +957,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
   sort(states: Array<SortState>): void {
     // Convert states into an array and filter out unnecessary ones
-    states = (Array.isArray(states) ? states : [states]).filter(item => item.order !== 'normal');
-
+    states = (Array.isArray(states) ? states : [states]).filter(state => {
+      let column = this.layoutColumnObjects.find(obj=>obj.field == state.field);
+      return column?.define?.sort !== false && state.order !== 'normal'
+    });
+    
     // Save the sorting states
     this.lastSortStates = states;
 
