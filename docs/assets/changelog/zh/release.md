@@ -5,16 +5,18 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add updateFilterRules api [#2245](https://github.com/VisActor/VTable/issues/2245)
+- **@visactor/vtable**: 添加updateFilterRules api [#2245](https://github.com/VisActor/VTable/issues/2245)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when tree pivot table sort then expand tree node render error [#2261](https://github.com/VisActor/VTable/issues/2261)
-- **@visactor/vtable**: fix interactive layer dom clear problem
-- **@visactor/vtable**: when no records corner header show dimention title [#2247](https://github.com/VisActor/VTable/issues/2247)
-- **@visactor/vtable**: fix sparkline range when data has null
+- **@visactor/vtable**: 树形pivot表格排序后展开树节点渲染错误 [#2261](https://github.com/VisActor/VTable/issues/2261)
+- **@visactor/vtable**: 修复交互层DOM清除问题
+- **@visactor/vtable**: 修复当无记录时，角头正常显示维度标题 [#2247](https://github.com/VisActor/VTable/issues/2247)
+- **@visactor/vtable**: 修复数据包含null时的sparkline范围问题
 
+**🔨 功能重构**
 
+- **@visactor/vtable**: 优化透视图的坐标轴效果和vchart保持一致
 
 [更多详情请查看 v1.7.4](https://github.com/VisActor/VTable/releases/tag/v1.7.4)
 
@@ -25,12 +27,12 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when keydown with ctrl meta and shift not trigger edit mode # 2372
-- **@visactor/vtable**: fix custom style arrangement duplicate [#2370](https://github.com/VisActor/VTable/issues/2370)
-- **@visactor/vtable**: fix no-text cell custom merge [#2343](https://github.com/VisActor/VTable/issues/2343)
-- **@visactor/vtable**: fix event bind problem in react-vtable
-- **@visactor/vtable**: fix right frozen mark position [#2344](https://github.com/VisActor/VTable/issues/2344)
-- **@visactor/vtable**: fix select range judgement in cellBgColor [#2368](https://github.com/VisActor/VTable/issues/2368)
+- **@visactor/vtable**: 修复当按下ctrl、meta和shift键时，不应触发编辑模式 # 2372
+- **@visactor/vtable**: 修复自定义样式排列重复问题 [#2370](https://github.com/VisActor/VTable/issues/2370)
+- **@visactor/vtable**: 修复无文本单元格自定义合并问题 [#2343](https://github.com/VisActor/VTable/issues/2343)
+- **@visactor/vtable**: 修复react-vtable中的事件绑定问题
+- **@visactor/vtable**: 修复右冻结标记位置问题 [#2344](https://github.com/VisActor/VTable/issues/2344)
+- **@visactor/vtable**: 修复cellBgColor中的选择范围判断问题 [#2368](https://github.com/VisActor/VTable/issues/2368)
 
 [更多详情请查看 v1.7.3](https://github.com/VisActor/VTable/releases/tag/v1.7.3)
 
