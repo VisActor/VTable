@@ -2313,7 +2313,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     for (let i = 0; i < dimensions.length; i++) {
       const highlightDimension = dimensions[i];
       if (
-        (highlightDimension.isPivotCorner || !highlightDimension.value) && //判断角头： isPivotCorner或者 没有维度值
+        (highlightDimension.isPivotCorner || !isValid(highlightDimension.value)) && //判断角头： isPivotCorner或者 没有维度值
         i === dimensions.length - 1
       ) {
         // 判断角表头位置
@@ -2908,7 +2908,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 dimension.value === rowDimension.value) ||
               (isValid(rowDimension.indicatorKey) &&
                 dimension.indicatorKey === rowDimension.indicatorKey &&
-                (!rowDimension.value || dimension.value === rowDimension.value))
+                (!isValid(rowDimension.value) || dimension.value === rowDimension.value))
             ) {
               rowArr = dimension.children as IHeaderTreeDefine[];
               if (needLowestLevel && (!rowArr || rowArr.some(row => row.dimensionKey === 'axis'))) {
@@ -3148,7 +3148,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     for (let i = 0; i < dimensions.length; i++) {
       const highlightDimension = dimensions[i];
       if (
-        (highlightDimension.isPivotCorner || !highlightDimension.value) && //判断角头： isPivotCorner或者 没有维度值
+        (highlightDimension.isPivotCorner || !isValid(highlightDimension.value)) && //判断角头： isPivotCorner或者 没有维度值
         i === dimensions.length - 1
       ) {
         // 判断角表头位置
