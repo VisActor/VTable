@@ -679,6 +679,34 @@ enum HierarchyState {
   getLayoutRowTreeCount() : number
 ```
 
+## getLayoutColumnTree(Function)
+
+**PivotTable 专有**
+
+获取表格列头树形结构
+
+```
+  /**
+   * 获取表格列头树状结构
+   * @returns
+   */
+  getLayoutColumnTree() : LayouTreeNode[]
+```
+
+## getLayoutColumnTreeCount(Function)
+
+**PivotTable 专有**
+
+获取表格列头树形结构的占位的总节点数。
+
+```
+  /**
+   * 获取表格列头树形结构的占位的总节点数。
+   * @returns
+   */
+  getLayoutColumnTreeCount() : number
+```
+
 ## updateSortState(Function)
 
 更新排序状态，ListTable 专有

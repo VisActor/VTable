@@ -681,6 +681,33 @@ Note: The logic distinguishes between flat and tree hierarchies.
    */
   getLayoutRowTreeCount() : number
 ```
+## getLayoutColumnTree(Function)
+
+**PivotTable Exclusive**
+
+Get the table column header tree structure
+
+```
+  /**
+   * Get the table column header tree structure
+   * @returns
+   */
+  getLayoutColumnTree() : LayouTreeNode[]
+```
+
+## getLayoutColumnTreeCount(Function)
+
+**PivotTable Exclusive**
+
+Get the total number of nodes occupying the table column header tree structure.
+
+```
+  /**
+   * Get the total number of nodes occupying the table column header tree structure.
+   * @returns
+   */
+  getLayoutColumnTreeCount() : number
+```
 
 ## updateSortState(Function)
 
