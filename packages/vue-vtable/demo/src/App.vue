@@ -16,6 +16,7 @@ import ListTableTree from './table/gramatical/composition/ListTable-tree.vue';
 import ListTableEditor from './table/gramatical/composition/ListTable-editor.vue';
 import ListTableDes from './table/gramatical/composition/ListTable-destruction.vue';
 import ListTableCustom from './table/gramatical/composition/ListTable-custom.vue';
+import ListTableCustomHover from './table/gramatical/composition/ListTable-custom-hover.vue';
 import ListTableVFor from './table/gramatical/options/ListTable-v-for.vue';
 
 import PivotTable from './table/gramatical/options/PivotTable.vue';  
@@ -46,7 +47,8 @@ import PivotChartPie from './table/gramatical/composition/PivotChartPie.vue';
   <!-- <ListTableEditor /> -->
   <!-- <ListTableDes /> -->
   <!-- <ListTableTree /> -->
-  <ListTableCustom />
+  <ListTableCustom /> 
+  <!-- <ListTableCustomHover /> -->
 
   <!-- <PivotTable /> -->
 

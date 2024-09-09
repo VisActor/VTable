@@ -8,21 +8,19 @@
       <template #customLayout="{ table, row, col, rect, record, height, width }">
         <Group :height="height" :width="width" display="flex" flexDirection="row" flexWrap="nowrap">
           <!-- Avatar Group -->
-          <Group :height="percentCalc(100)" :width="60" display="flex" flexDirection="column" alignItems="center" justifyContent="space-around">
+          <Group :height="percentCalc(100)" :width="60" display="flex" flexDirection="column" alignItems="center" justifyContent="space-around" :fill="'red'" :opacity="0.1">
             <Image id="icon0" :width="50" :height="50" :image="record.bloggerAvatar" :cornerRadius="25" />
           </Group>
           <!-- Blogger Info Group -->
           <Group :height="height" :width="percentCalc(100, -60)" display="flex" flexDirection="column" flexWrap="nowrap">
             <!-- Blogger Name and Location -->
-            <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="flex-end">
-              <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" />
-              <Image id="location" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg"
-                :width="15" :height="15" :boundsPadding="[0, 0, 0, 10]" cursor="pointer"
-                @mouseEnter="handleMoueEnter($event)" @click="handleMouseClick($event)" @mouseLeave="handleMoueLeave($event)" />
+            <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" flexWrap="wrap" :alignItems="'center'" :fill="'orange'" :opacity="0.1">
+              <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" :boundsPadding="[0, 0, 0, 10]" />
+              <Image id="location" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg" :width="15" :height="15" :boundsPadding="[0, 0, 0, 10]" cursor="pointer" @mouseEnter="handleMoueEnter($event)" @click="handleMouseClick($event)" @mouseLeave="handleMoueLeave($event)" />
               <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
             </Group>
             <!-- Tags Group -->
-            <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="center">
+            <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="center" :fill="'yellow'" :opacity="0.1">
               <Tag v-for="tag in record?.tags" :key="tag" :text="tag" :textStyle="{ fontSize: 10, fontFamily: 'sans-serif', fill: 'rgb(51, 101, 238)' }" :panel="{ visible: true, fill: '#f4f4f2', cornerRadius: 5 }" :space="5" :boundsPadding="[0, 0, 0, 5]" />
             </Group>
           </Group>
@@ -30,38 +28,12 @@
       </template>
     </ListColumn>
 
-    <!-- Fans Count Column -->
+    <!-- Other Columns -->
     <ListColumn :field="'fansCount'" :title="'fansCount'" :fieldFormat="rec => rec.fansCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
-
-    <!-- Works Count Column -->
     <ListColumn :field="'worksCount'" :title="'worksCount'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
-
-    <!-- View Count Columns -->
     <ListColumn :field="'viewCount'" :title="'viewCount'" :fieldFormat="rec => rec.fansCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
     <ListColumn :field="'viewCount'" :title="'viewCount'" :fieldFormat="rec => rec.viewCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
-
-    <!-- Operation Column with Icons -->
-    <ListColumn :field="''" :title="'operation'" :width="100" :icon="['favorite', 'message']" />
-
-    <!-- Options Column with Custom Layout -->
-    <ListColumn :field="''" :title="'选项'" :width="200">
-      <template #customLayout="{ table, record, height, width }">
-        <Group :height="height" :width="width" display="flex" flexDirection="column" justifyContent="center">
-          <!-- Checkbox Group -->
-          <Group display="flex" flexDirection="row" flexWrap="nowrap" :boundsPadding="[5, 0, 5, 10]" justifyContent="center">
-            <Text text="operate: " :fontSize="12" :boundsPadding="[0, 10, 0, 0]" />
-            <CheckBox :text="{ text: 'like', fontSize: 12 }" :spaceBetweenTextAndIcon="2" :boundsPadding="[0, 10, 0, 0]" @checkbox_state_change="handleCheckBoxStateChange($event)" />
-            <CheckBox :text="{ text: 'collect', fontSize: 12 }" :spaceBetweenTextAndIcon="2" @checkbox_state_change="handleCheckBoxStateChange($event)" />
-          </Group>
-          <!-- Radio Button Group -->
-          <Group display="flex" flexDirection="row" flexWrap="nowrap" :boundsPadding="[5, 0, 5, 10]">
-            <Text ref="textRef" :text="'type: '" :fontSize="12" :boundsPadding="[0, 10, 0, 0]" />
-            <Radio :text="{ text: 'normal', fontSize: 12 }" :checked="radio_state" :spaceBetweenTextAndIcon="2" :boundsPadding="[0, 10, 0, 0]" @radio_checked="handleRadioChecked($event)" />
-            <Radio :text="{ text: 'special', fontSize: 12 }" :checked="true" :spaceBetweenTextAndIcon="2" @radio_checked="handleRadioChecked($event)" />
-          </Group>
-        </Group>
-      </template>
-    </ListColumn>
+    <ListColumn :field="''" :title="'operation'" :width="100" />
   </vue-list-table>
 </template>
 
@@ -87,14 +59,6 @@ function handleMoueLeave(e) {
 
 function handleMouseClick(e) {
   console.log('Mouse click:', e);
-}
-
-function handleCheckBoxStateChange(e) {
-  console.log('Checkbox state changed:', e);
-}
-
-function handleRadioChecked(e) {
-  console.log('Radio checkeds',e.currentTarget._next);
 } 
 
 VTable.register.icon('location', {
