@@ -1,6 +1,23 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 05 Sep 2024 03:09:20 GMT and should not be manually modified.
+This log was last generated on Mon, 09 Sep 2024 02:02:17 GMT and should not be manually modified.
+
+## 1.7.4
+Mon, 09 Sep 2024 02:02:17 GMT
+
+### Updates
+
+- fix: when tree pivot table sort then expand tree node render error #2261
+
+
+- fix: fix interactive layer dom clear problem
+- fix: when no records corner header show dimention title #2247
+
+
+- feat: add updateFilterRules api #2245
+
+
+- fix: fix sparkline range when data has null
 
 ## 1.7.3
 Thu, 05 Sep 2024 03:09:20 GMT
