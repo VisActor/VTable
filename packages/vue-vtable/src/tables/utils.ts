@@ -1,11 +1,24 @@
 import * as VTable from '@visactor/vtable';
+import { isFunction, merge } from '@visactor/vutils';
+import { application, REACT_TO_CANOPUS_EVENTS } from '@visactor/vtable/es/vrender';
+import type { Graphic, IGraphic, IGraphicCreator } from '@visactor/vtable/es/vrender';
+import { CheckBox, Radio, Tag } from '@visactor/vtable/es/vrender';
+import { reactive, watch } from 'vue';
 
 // 展平嵌套的虚拟节点
 export function flattenVNodes(vnodes: any[]): any[] {
   return vnodes.flatMap(vnode => (Array.isArray(vnode.children) ? flattenVNodes(vnode.children) : vnode));
 }
+
+// 检查属性是否为事件
+function isEventProp(key: string, props: any) {
+  return key.startsWith('on') && isFunction(props[key]);
+}
+
+// 创建自定义布局
 export function createCustomLayout(children: any): any {
   // 组件映射
+  //需要修改成用application.graphicService.creator来创建组件
   const componentMap: Record<string, any> = {
     Group: VTable.CustomLayout.Group,
     Image: VTable.CustomLayout.Image,
@@ -14,9 +27,6 @@ export function createCustomLayout(children: any): any {
     Radio: VTable.CustomLayout.Radio,
     CheckBox: VTable.CustomLayout.CheckBox
   };
-
-  // 存储refs的map
-  const refs: Record<string, any> = {};
 
   // 创建组件的函数
   function createComponent(child: any): any {
@@ -35,15 +45,8 @@ export function createCustomLayout(children: any): any {
     // 创建组件实例
     const component = new ComponentClass({ ...props });
 
-    // // 如果有ref属性，将其添加到refs中
-    // if (props?.ref) {
-    //   // console.log('props.ref', props.ref);
-    //   refs[props.ref] = component;
-    //   // console.log('refs', refs);
-    // }
-
     // 绑定组件事件
-    bindComponentEvents(component, componentName, props);
+    bindComponentEvents(component, props);
 
     // 递归创建子组件
     const subChildren = resolveChildren(childChildren);
@@ -70,22 +73,15 @@ export function createCustomLayout(children: any): any {
   }
 
   // 绑定组件事件
-  function bindComponentEvents(component: any, componentName: string, props: any): void {
-    if (componentName === 'Radio' && props?.onRadio_checked) {
-      component.addEventListener('radio_checked', props.onRadio_checked);
-    }
-    if (componentName === 'CheckBox' && props?.onCheckbox_state_change) {
-      component.addEventListener('checkbox_state_change', props.onCheckbox_state_change);
-    }
-    // if (componentName === 'Text' && props?.onText_click) {
-    //   component.addEventListener('text_click', props.onText_click);
-    // }
-    // if (componentName === 'Image' && props?.onMouseEnter) {
-    //   component.addEventListener('mouseenter', props.onMouseEnter);
-    //   console.log('component', component);
-    // }
+  function bindComponentEvents(component: any, props: any): void {
+    Object.keys(props).forEach(key => {
+      if (isEventProp(key, props)) {
+        const eventName = key.slice(2).toLowerCase(); // 去掉'on'前缀并转换为小写
+        component.addEventListener(eventName, props[key]);
+      }
+    });
   }
 
   // 返回root组件和refs
-  return { rootComponent: createComponent(children), refs };
+  return { rootComponent: createComponent(children) };
 }

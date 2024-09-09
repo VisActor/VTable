@@ -13,5 +13,8 @@ module.exports = {
   globals: {
     '@visactor/vtable': 'VTable'
   },
-  external: ['@visactor/vtable']
+  external: ['@visactor/vtable'],
+  alias: {
+    '@visactor/vtable/es/vrender': '@visactor/vtable/es/vrender.js'
+  }
 };
