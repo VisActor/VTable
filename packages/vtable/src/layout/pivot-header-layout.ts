@@ -1072,7 +1072,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         //     });
         // });
       } else {
-        this.rowDimensionKeys.forEach((objKey, index) => {
+        const rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+        rowDimensionKeys.forEach((objKey, index) => {
           const dimension = this.rowsDefine?.find(dimension =>
             typeof dimension === 'string' ? false : dimension.dimensionKey === objKey
           ) as IRowDimension;
