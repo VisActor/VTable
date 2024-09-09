@@ -2,6 +2,30 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.7.4",
+      "tag": "@visactor/vtable_v1.7.4",
+      "date": "Mon, 09 Sep 2024 02:02:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when tree pivot table sort then expand tree node render error #2261\n\n"
+          },
+          {
+            "comment": "fix: fix interactive layer dom clear problem"
+          },
+          {
+            "comment": "fix: when no records corner header show dimention title #2247\n\n"
+          },
+          {
+            "comment": "feat: add updateFilterRules api #2245\n\n"
+          },
+          {
+            "comment": "fix: fix sparkline range when data has null"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.7.3",
       "tag": "@visactor/vtable_v1.7.3",
       "date": "Thu, 05 Sep 2024 03:09:20 GMT",
