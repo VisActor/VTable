@@ -1196,9 +1196,9 @@ export class StateManager {
       // 透视表不执行sort操作
       const sortState = (this.table as PivotTableAPI).getPivotSortState(col, row);
 
-      const order = sortState ? (sortState.toUpperCase() as SortOrder) : 'DESC';
-      // const new_order = order === 'ASC' ? 'DESC' : order === 'DESC' ? 'NORMAL' : 'ASC';
-      const new_order = order === 'ASC' ? 'DESC' : 'ASC';
+      const order = sortState ? (sortState.toUpperCase() as SortOrder) : 'NORMAL';
+      const new_order = order === 'ASC' ? 'DESC' : order === 'DESC' ? 'NORMAL' : 'ASC';
+      // const new_order = order === 'ASC' ? 'DESC' : 'ASC';
       (this.table as PivotTable).sort(col, row, new_order);
 
       // // 触发透视表排序按钮点击

@@ -2,14 +2,11 @@
 
 The sorting capability of a pivot table can be implemented in the following ways:
 
-1. To customize the tree structure of the pivot table header, you can pass rowTree and columnTree in to display the table according to this structure. In this case, even if sortRule is configured, it will not work.
-2. Add `sort:true` in the dimension or indicator configuration to enable sorting. The sort button will be displayed and clicking the button will trigger sorting.
-3. Sort by interface: Call the interface `updateSortRules` to sort.
-4. Other special requirements: only display the sorting status, do not use the VTable sorting logic
+1. Pivot table customizes the tree structure of the table header. RowTree and columnTree can be passed in and displayed according to this structure. At this time, even if sortRule is configured, it will not work. This method is used when the table header has a default order or a special structure, or the sorting rules are complex. You can refer to the tutorial: https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_tree.
+2. Add `sort:true` in the dimension or indicator configuration to enable sorting. The sort button will be displayed and clicking the button will trigger sorting. Sorting through the interface: Call the interface `updateSortRules` to sort.
+3. Other special requirements: only display the sorting status, do not use the VTable sorting logic
 
-The first way to organize the table header tree structure by yourself has been mentioned when introducing the pivot table. You can refer to the tutorial: https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_tree.
-
-**Note that several sorting methods should not be mixed**
+**Note that the three sorting methods should not be mixed**
 
 Next, we will mainly introduce the following implementation methods and precautions.
 
@@ -17,7 +14,7 @@ Next, we will mainly introduce the following implementation methods and precauti
 
 ### Sort by dimension value
 
-The sort configuration can be configured in rows or columns. In this case, the header cell displaying the dimension name will display a sort button, and clicking the button will trigger the sort.
+The sort configuration can be set in rows or columns, at which point the corner cells displaying the dimension names will display sort buttons, and clicking the buttons will trigger sorting. The specific sorting rules triggered will correspond to the configurations in dataConfig.sortRule. If there is no matching sorting rule in sortRule, it will sort according to the default rule, which is alphabetical order.
 
 The following is an example of configuring sort in rows to enable sorting:
 
@@ -68,7 +65,7 @@ In the above code, `sort` is `true`, which means that the dimension values corre
 
 ### Sort by indicator value
 
-The sort configuration can be configured in indicators. At this time, the row header or column header cell displaying the indicator name will display a sort button, and clicking the button will trigger sorting.
+The configuration of sort can be set in indicators, at which point the row header or column header cells displaying the indicator names will display sort buttons, and clicking the buttons will trigger sorting. The specific sorting rules are sorted by the size of the indicator.
 
 Here is an example of configuring sort in indicators to enable sorting:
 
@@ -110,7 +107,7 @@ In the above code, `sort` is `true`, which means that sorting is supported by in
 
 ### Initialize sorting status
 
-Please configure data analysis dataConfig.sortRule to set the initial sorting state.
+Please configure the data analysis dataConfig.sortRule to set the initial sorting state. If sort is configured on the corresponding indicator or dimension, the corresponding sorting icon state will appear.
 
 The following example:
 
@@ -162,7 +159,7 @@ This example configures the initial sorting rule, which sorts the indicator valu
 
 ### Update sorting through the interface
 
-The update sorting interface of the pivot table is `updateSortRules`, which can be called to update the sorting status.
+The update sorting interface of the pivot table is `updateSortRules`, which can be called to update the sorting status.If sort is configured on the corresponding indicator or dimension, the corresponding sorting icon state will appear.
 
 Here is an example of updating the order through the interface:
 
@@ -218,7 +215,7 @@ If you need to sort through the interface, you can update the sorting status by 
 
 ## Show only sort icons
 
-If there is a special setting panel in the business scenario, and there are special sorting options for users to operate, but the corresponding sorting status needs to be displayed in the table, you can configure `showSort: true` to display the sorting status. If there is a need to monitor icon clicks, you can monitor the event `pivot_sort_click`.
+If there is a special setting panel in the business scenario, and there are special sorting options for users to operate, but the corresponding sorting status needs to be displayed in the table, you can configure `showSort: true` or `showSortInCorner: true` to display the sorting status. If there is a need to monitor icon clicks, you can monitor the event `pivot_sort_click`.
 
 At the same time, you can set pivotSortState on option to set the state of the initial sort icon.
 
@@ -313,11 +310,4 @@ In the above example, pivotSortState is configured with two sorting rules. It wi
 
 ## other
 
-Here I would like to emphasize again: **Do not mix several sorting methods**. For example, do not use the sortRule method when you customize the table header tree structure or configure showSort; do not use the pivotSortState configuration when you configure sort.
-
-In addition, the current sorting method is not very perfect, for example
-
-1. Configure the sorting method of `sort:true`. Sometimes you need to set a custom sorting function to execute the sorting logic
-2. Missing `pivotSortState` configuration state update interface
-
-We will add to these later.
+Here's another emphasis: **the three sorting methods mentioned at the beginning of the tutorial should not be mixed**, for example: the sortRule method should not be used in cases where a custom table header tree structure is defined or showSort is configured; similarly, the pivotSortState configuration should not be used when sort is configured.

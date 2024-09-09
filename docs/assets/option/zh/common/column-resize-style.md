@@ -28,19 +28,19 @@
 
 标签的颜色
 
-${prefix} labelFontSize(string)
+##${prefix} labelFontSize(string)
 
 标签的字体大小
 
-${prefix} labelFontFamily(string)
+##${prefix} labelFontFamily(string)
 
 标签的字体
 
-${prefix} labelBackgroundFill(string)
+##${prefix} labelBackgroundFill(string)
 
 标签的背景颜色
 
-${prefix} labelBackgroundCornerRadius(number)
+##${prefix} labelBackgroundCornerRadius(number)
 
 标签的背景圆角
 
