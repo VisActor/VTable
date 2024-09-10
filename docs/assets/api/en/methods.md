@@ -788,6 +788,11 @@ updateFilterRules(filterRules: FilterRules) => void
 
 use case: For the PivotChart scene, after clicking the legend item, update the filter rules to update the chart
 
+## getFilteredRecords(Function)
+Get filtered data
+
+**Exclusive to PivotTable**
+
 ## setLegendSelected(Function)
 
 Sets the selection state of the legend.
