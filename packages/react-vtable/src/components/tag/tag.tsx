@@ -53,6 +53,7 @@ function TagComponent(baseProps: TagProps, ref: React.Ref<VRenderTag>) {
           ...rest
         }
       }
+      {...rest} // for REACT_TO_CANOPUS_EVENTS
     ></VTag>
   );
 }

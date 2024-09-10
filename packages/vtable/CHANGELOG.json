@@ -2,6 +2,57 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.7.4",
+      "tag": "@visactor/vtable_v1.7.4",
+      "date": "Mon, 09 Sep 2024 02:02:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when tree pivot table sort then expand tree node render error #2261\n\n"
+          },
+          {
+            "comment": "fix: fix interactive layer dom clear problem"
+          },
+          {
+            "comment": "fix: when no records corner header show dimention title #2247\n\n"
+          },
+          {
+            "comment": "feat: add updateFilterRules api #2245\n\n"
+          },
+          {
+            "comment": "fix: fix sparkline range when data has null"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.3",
+      "tag": "@visactor/vtable_v1.7.3",
+      "date": "Thu, 05 Sep 2024 03:09:20 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when keydown with ctrl meta and shift not trigger edit mode # 2372\n\n"
+          },
+          {
+            "comment": "fix: fix custom style arrangement duplicate #2370"
+          },
+          {
+            "comment": "fix: fix no-text cell custom merge #2343"
+          },
+          {
+            "comment": "fix: fix event bind problem in react-vtable"
+          },
+          {
+            "comment": "fix: fix right frozen mark position #2344"
+          },
+          {
+            "comment": "fix: fix select range judgement in cellBgColor #2368"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.7.2",
       "tag": "@visactor/vtable_v1.7.2",
       "date": "Mon, 02 Sep 2024 10:09:57 GMT",

@@ -231,7 +231,8 @@ export class HeaderHelper {
     ) {
       return null;
     }
-    const icon = order === 'ASC' ? this.downIcon : order === 'DESC' ? this.upIcon : this.normalIcon;
+    const icon =
+      order?.toUpperCase() === 'ASC' ? this.downIcon : order?.toUpperCase() === 'DESC' ? this.upIcon : this.normalIcon;
     // const icon = order === 'ASC' ? this.downIcon : this.upIcon;
     return icon;
   }

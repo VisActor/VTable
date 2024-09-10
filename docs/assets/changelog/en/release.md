@@ -1,3 +1,39 @@
+# v1.7.4
+
+2024-09-09
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add updateFilterRules api [#2245](https://github.com/VisActor/VTable/issues/2245)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when tree pivot table sort then expand tree node render error [#2261](https://github.com/VisActor/VTable/issues/2261)
+- **@visactor/vtable**: fix interactive layer dom clear problem
+- **@visactor/vtable**: when no records corner header show dimention title [#2247](https://github.com/VisActor/VTable/issues/2247)
+- **@visactor/vtable**: fix sparkline range when data has null
+
+
+
+[more detail about v1.7.4](https://github.com/VisActor/VTable/releases/tag/v1.7.4)
+
+# v1.7.3
+
+2024-09-05
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when keydown with ctrl meta and shift not trigger edit mode # 2372
+- **@visactor/vtable**: fix custom style arrangement duplicate [#2370](https://github.com/VisActor/VTable/issues/2370)
+- **@visactor/vtable**: fix no-text cell custom merge [#2343](https://github.com/VisActor/VTable/issues/2343)
+- **@visactor/vtable**: fix event bind problem in react-vtable
+- **@visactor/vtable**: fix right frozen mark position [#2344](https://github.com/VisActor/VTable/issues/2344)
+- **@visactor/vtable**: fix select range judgement in cellBgColor [#2368](https://github.com/VisActor/VTable/issues/2368)
+
+[more detail about v1.7.3](https://github.com/VisActor/VTable/releases/tag/v1.7.3)
+
 # v1.7.2
 
 2024-09-02

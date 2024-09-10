@@ -34,7 +34,7 @@ import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
-import { setCellCheckboxState } from './state/checkbox/checkbox';
+import { getGroupCheckboxState, setCellCheckboxState } from './state/checkbox/checkbox';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
@@ -992,7 +992,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.stateManager.initLeftRecordsCheckState(this.records);
     }
     if (isValid(field)) {
-      return this.stateManager.checkedState.map(state => {
+      let stateArr = this.stateManager.checkedState;
+      if (this.options.groupBy) {
+        stateArr = getGroupCheckboxState(this);
+      }
+      return stateArr.map(state => {
         return state[field];
       });
     }

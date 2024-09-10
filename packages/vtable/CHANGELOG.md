@@ -1,6 +1,37 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 02 Sep 2024 10:09:57 GMT and should not be manually modified.
+This log was last generated on Mon, 09 Sep 2024 02:02:17 GMT and should not be manually modified.
+
+## 1.7.4
+Mon, 09 Sep 2024 02:02:17 GMT
+
+### Updates
+
+- fix: when tree pivot table sort then expand tree node render error #2261
+
+
+- fix: fix interactive layer dom clear problem
+- fix: when no records corner header show dimention title #2247
+
+
+- feat: add updateFilterRules api #2245
+
+
+- fix: fix sparkline range when data has null
+
+## 1.7.3
+Thu, 05 Sep 2024 03:09:20 GMT
+
+### Updates
+
+- fix: when keydown with ctrl meta and shift not trigger edit mode # 2372
+
+
+- fix: fix custom style arrangement duplicate #2370
+- fix: fix no-text cell custom merge #2343
+- fix: fix event bind problem in react-vtable
+- fix: fix right frozen mark position #2344
+- fix: fix select range judgement in cellBgColor #2368
 
 ## 1.7.2
 Mon, 02 Sep 2024 10:09:57 GMT

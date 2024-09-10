@@ -32,14 +32,14 @@ The color of the label
 
 The font size of the label
 
-${prefix} labelFontFamily(string)
+##${prefix} labelFontFamily(string)
 
 The font family of the label
 
-${prefix} labelBackgroundFill(string)
+##${prefix} labelBackgroundFill(string)
 
 The background color of the label
 
-${prefix} labelBackgroundCornerRadius(number)
+##${prefix} labelBackgroundCornerRadius(number)
 
 The corner radius of the label background

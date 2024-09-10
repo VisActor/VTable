@@ -18,7 +18,9 @@ import type {
   IIndicator,
   ColumnDefine,
   SortByIndicatorRule,
-  SortTypeRule
+  SortTypeRule,
+  SortRule,
+  FilterRules
 } from './ts-types';
 import { HierarchyState, SortType } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
@@ -298,7 +300,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           item => item.dimensionKey === node.dimensionKey && item.value === node.value
         );
         if (beforeRowDimension) {
-          this.syncHierarchyState(beforeRowDimension, node);
+          this._syncHierarchyState(beforeRowDimension, node);
         }
       });
     }
@@ -529,7 +531,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param sourceNode
    * @param targetNode
    */
-  private syncHierarchyState(sourceNode: any, targetNode: IHeaderTreeDefine) {
+  _syncHierarchyState(sourceNode: any, targetNode: IHeaderTreeDefine) {
     if (sourceNode.value === targetNode.value && sourceNode.dimensionKey === targetNode.dimensionKey) {
       targetNode.hierarchyState =
         targetNode.hierarchyState ?? (targetNode?.children ? sourceNode.hierarchyState : undefined);
@@ -539,7 +541,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             (item: any) => item.dimensionKey === targetChildNode.dimensionKey && item.value === targetChildNode.value
           );
           if (beforeRowDimension) {
-            this.syncHierarchyState(beforeRowDimension, targetChildNode);
+            this._syncHierarchyState(beforeRowDimension, targetChildNode);
           }
         }
       });
@@ -1059,44 +1061,40 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const sortRules = this.internalProps.dataConfig?.sortRules ?? [];
     for (let i = 0; i < sortRules.length; i++) {
       const sortRule = sortRules[i];
-      if ((sortRule as SortByIndicatorRule).sortType) {
-        const dimensions: IDimensionInfo[] = [];
-        if ((sortRule as SortByIndicatorRule).sortByIndicator) {
-          if (
-            (sortRule as SortByIndicatorRule).sortField ===
-            (this.dataset.indicatorsAsCol
-              ? this.dataset.rows[this.dataset.rows.length - 1]
-              : this.dataset.columns[this.dataset.columns.length - 1])
-          ) {
-            for (let j = 0; j < (sortRule as SortByIndicatorRule).query.length; j++) {
-              dimensions.push({
-                dimensionKey: this.dataset.indicatorsAsCol ? this.dataset.columns[j] : this.dataset.rows[j],
-                value: (sortRule as SortByIndicatorRule).query[j]
-              });
-            }
-            dimensions.push({
-              indicatorKey: (sortRule as SortByIndicatorRule).sortByIndicator,
-              value:
-                this.internalProps.layoutMap.getIndicatorInfo((sortRule as SortByIndicatorRule).sortByIndicator)
-                  ?.title ?? (sortRule as SortByIndicatorRule).sortByIndicator
-            });
-          }
-        } else {
+      // if ((sortRule as SortByIndicatorRule).sortType) {
+      const dimensions: IDimensionInfo[] = [];
+      if (
+        (sortRule as SortByIndicatorRule).sortByIndicator &&
+        (sortRule as SortByIndicatorRule).sortField ===
+          (this.dataset.indicatorsAsCol
+            ? this.dataset.rows[this.dataset.rows.length - 1]
+            : this.dataset.columns[this.dataset.columns.length - 1])
+      ) {
+        for (let j = 0; j < (sortRule as SortByIndicatorRule).query.length; j++) {
           dimensions.push({
-            dimensionKey: (sortRule as SortTypeRule).sortField,
-            isPivotCorner: true,
-            value: (sortRule as SortTypeRule).sortField
+            dimensionKey: this.dataset.indicatorsAsCol ? this.dataset.columns[j] : this.dataset.rows[j],
+            value: (sortRule as SortByIndicatorRule).query[j]
           });
         }
-        this.pivotSortState.push({
-          dimensions,
-          order: (sortRule as SortByIndicatorRule).sortType
+        dimensions.push({
+          indicatorKey: (sortRule as SortByIndicatorRule).sortByIndicator,
+          value:
+            this.internalProps.layoutMap.getIndicatorInfo((sortRule as SortByIndicatorRule).sortByIndicator)?.title ??
+            (sortRule as SortByIndicatorRule).sortByIndicator
         });
-        // this.changePivotSortState({
-        //   dimensions,
-        //   order: (sortRule as SortByIndicatorRule).sortType
-        // });
+      } else {
+        dimensions.push({
+          dimensionKey: (sortRule as SortTypeRule).sortField,
+          isPivotCorner: true,
+          value: (sortRule as SortTypeRule).sortField
+        });
       }
+      const sortType = sortRule.sortType ? (sortRule.sortType.toUpperCase() as 'ASC' | 'DESC' | 'NORMAL') : 'ASC';
+      this.pivotSortState.push({
+        dimensions,
+        order: SortType[sortType]
+      });
+      // }
     }
   }
   /**
@@ -1158,9 +1156,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const headerDefine = this.getHeaderDefine(col, row) as any;
     if (headerDefine.sort) {
       if ((this as PivotTable).dataset.sortRules) {
+        const cacheOldDimensionSortRule: Record<string, SortRule> = {};
         for (let i = (this as PivotTable).dataset.sortRules.length - 1; i >= 0; i--) {
           const sortRule = (this as PivotTable).dataset.sortRules[i];
           if (headerDefine.dimensionKey && sortRule.sortField === headerDefine.dimensionKey) {
+            cacheOldDimensionSortRule[sortRule.sortField] = sortRule;
             (this as PivotTable).dataset.sortRules.splice(i, 1);
           } else if (
             sortIndicator &&
@@ -1189,10 +1189,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             }, [])
           });
         } else {
-          (this as PivotTable).dataset.sortRules.push({
-            sortField: headerDefine.dimensionKey,
-            sortType: SortType[order]
-          });
+          (this as PivotTable).dataset.sortRules.push(
+            Object.assign(cacheOldDimensionSortRule[headerDefine.dimensionKey] ?? {}, {
+              sortField: headerDefine.dimensionKey,
+              sortType: SortType[order as 'ASC' | 'DESC']
+            })
+          );
         }
       } else {
         if (sortIndicator) {
@@ -1201,7 +1203,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               sortField: this.dataset.indicatorsAsCol
                 ? this.dataset.rows[this.dataset.rows.length - 1]
                 : this.dataset.columns[this.dataset.columns.length - 1],
-              sortType: SortType[order],
+              sortType: SortType[order as 'ASC' | 'DESC'],
               sortByIndicator: sortIndicator,
               query: dimensions.reduce((arr, dimension) => {
                 if (dimension.dimensionKey) {
@@ -1215,7 +1217,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this as PivotTable).dataset.sortRules = [
             {
               sortField: headerDefine.dimensionKey,
-              sortType: SortType[order]
+              sortType: SortType[order as 'ASC' | 'DESC']
             }
           ];
         }
@@ -1955,5 +1957,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.dataset.addRecords(records);
       });
     }
+  }
+
+  /** 更新数据过滤规则 对应dataConfig中filterRules配置格式 */
+  updateFilterRules(filterRules: FilterRules) {
+    this.internalProps.dataConfig.filterRules = filterRules;
+    this.dataset.updateFilterRules(filterRules);
+    this.renderWithRecreateCells();
   }
 }
