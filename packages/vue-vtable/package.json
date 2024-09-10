@@ -37,7 +37,7 @@
   },
   "scripts": {
     "start": "vite ./demo",
-    "build": "bundle --clean",
+    "build": "cross-env USE_TYPESCRIPT2=true bundle --clean",
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/"
   },
@@ -53,6 +53,8 @@
     "@visactor/vutils": "~0.18.13"
   },
   "devDependencies": {
+    "@arco-design/web-vue": "^2.11.0",
+    "cross-env": "^7.0.3",
     "@visactor/vchart": "1.12.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",

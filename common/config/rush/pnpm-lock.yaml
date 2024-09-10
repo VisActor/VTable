@@ -754,6 +754,7 @@ importers:
 
   ../../packages/vue-vtable:
     specifiers:
+      '@arco-design/web-vue': ^2.11.0
       '@babel/core': 7.20.12
       '@babel/preset-env': 7.20.2
       '@internal/bundler': workspace:*
@@ -771,6 +772,7 @@ importers:
       '@vitejs/plugin-vue': ^5.0.3
       axios: ^1.4.0
       chai: 4.3.4
+      cross-env: ^7.0.3
       eslint: ~8.18.0
       eslint-plugin-vue: ^9.26.0
       form-data: ~4.0.0
@@ -801,6 +803,7 @@ importers:
       '@visactor/vtable': link:../vtable
       '@visactor/vutils': 0.18.15
     devDependencies:
+      '@arco-design/web-vue': 2.56.1_vue@3.5.0
       '@babel/core': 7.20.12
       '@babel/preset-env': 7.20.2_@babel+core@7.20.12
       '@internal/bundler': link:../../tools/bundler
@@ -816,6 +819,7 @@ importers:
       '@vitejs/plugin-vue': 5.1.3_vite@3.2.6+vue@3.5.0
       axios: 1.7.5
       chai: 4.3.4
+      cross-env: 7.0.3
       eslint: 8.18.0
       eslint-plugin-vue: 9.28.0_eslint@8.18.0
       form-data: 4.0.0
@@ -1105,6 +1109,22 @@ packages:
       shallowequal: 1.1.0
     transitivePeerDependencies:
       - '@types/react'
+
+  /@arco-design/web-vue/2.56.1_vue@3.5.0:
+    resolution: {integrity: sha512-RHIG7DXpCJrpxCKXdxZMzsGvMPCUott57soXW3aHJfxOcf+I2rdX8/UTAt2ka5MyRLUZ4B90B1LKyUgLChGklg==}
+    peerDependencies:
+      vue: ^3.1.0
+    dependencies:
+      '@arco-design/color': 0.4.0
+      b-tween: 0.3.3
+      b-validate: 1.5.3
+      compute-scroll-into-view: 1.0.20
+      dayjs: 1.11.13
+      number-precision: 1.6.0
+      resize-observer-polyfill: 1.5.1
+      scroll-into-view-if-needed: 2.2.31
+      vue: 3.5.0_typescript@4.9.5
+    dev: true
 
   /@babel/code-frame/7.24.7:
     resolution: {integrity: sha512-BcYH1CVJBO9tvyIZ2jVeXgSIMvGZ2FDRvDdOIVQyuklNKSsx+eppDEBq/g47Ayw+RqNFE+URvOShmf+f/qwAlA==}
@@ -12355,6 +12375,12 @@ packages:
     resolution: {integrity: sha512-P9kYMrhi9f6dvWwTGpO5I3HgjSU/8Mts7xL3lkoH5xlewK7O9Obdc5WmMCzppln7bCVGNmf3qfoZXrpCeyNJXw==}
     dependencies:
       compute-scroll-into-view: 1.0.11
+
+  /scroll-into-view-if-needed/2.2.31:
+    resolution: {integrity: sha512-dGCXy99wZQivjmjIqihaBQNjryrz5rueJY7eHfTdyWEiR4ttYpsajb14rn9s5d4DY4EcY6+4+U/maARBXJedkA==}
+    dependencies:
+      compute-scroll-into-view: 1.0.20
+    dev: true
 
   /semver-compare/1.0.0:
     resolution: {integrity: sha512-YM3/ITh2MJ5MtzaM429anh+x2jiLVjqILF4m4oyQB18W7Ggea7BfqdH/wGMK7dDiMghv/6WG7znWMwUDzJiXow==}
