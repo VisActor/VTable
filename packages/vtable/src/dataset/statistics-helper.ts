@@ -241,7 +241,7 @@ export class SumAggregator extends Aggregator {
     }
   }
   value() {
-    return this.records?.length >= 1 ? this.sum : 0;
+    return this.records?.length >= 1 ? this.sum : undefined;
   }
   positiveValue() {
     return this.positiveSum;
