@@ -555,7 +555,7 @@ export interface IDimensionHeaderNode {
   hierarchyState?: HierarchyState;
   /** 是否为虚拟节点 在基于records数据做分析时忽略该维度字段 */
   virtual?: boolean;
-  //跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格
+  /** 跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格 */
   levelSpan?: number;
 }
 
