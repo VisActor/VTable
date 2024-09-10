@@ -50,12 +50,15 @@ export function getRollupOptions(
       babel({ ...babelPlugins, babelHelpers: 'bundled' }),
       replace({ ...config.envs, preventAssignment: true }),
       typescript({
-        tsconfig: path.resolve(projectRoot, config.tsconfig),
-        tsconfigOverride: {
-          compilerOptions: {
-            declaration: false
-          }
-        }
+        tsconfig: path.resolve(projectRoot, config.tsconfig)
+        // compilerOptions: {
+        //   declaration: false
+        // }
+        // tsconfigOverride: {
+        //   compilerOptions: {
+        //     declaration: false
+        //   }
+        // }
       }),
       postcss({
         extensions: ['.css']
