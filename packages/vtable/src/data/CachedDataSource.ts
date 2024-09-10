@@ -134,7 +134,7 @@ export class CachedDataSource extends DataSource {
     _setFieldCache(this._fieldCache, index, field, value);
   }
   protected recordPromiseCallBack(index: number, record: MaybePromiseOrUndefined): void {
-    this._recordCache[index] = record;
+    this._recordCache && (this._recordCache[index] = record);
   }
   get records(): any[] {
     return Array.isArray(this._recordCache) && this._recordCache.length > 0 ? this._recordCache : super.records;

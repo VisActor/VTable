@@ -61,7 +61,12 @@ export function createCell(
   }
 ): Group {
   let isAsync = false;
+  let cellGroup: Group;
   if (isPromise(value)) {
+    if (table.scenegraph.highPerformanceGetCell(col, row).role !== 'cell') {
+      // avoid nouse async create cell
+      return cellGroup;
+    }
     value = table.getCellValue(col, row);
     isAsync = true;
   }
@@ -80,7 +85,6 @@ export function createCell(
   //     }
   //   );
   // }
-  let cellGroup: Group;
 
   // customMerge&customLayout cell as text cell
   if (type === 'text' || type === 'link' || customResult) {
