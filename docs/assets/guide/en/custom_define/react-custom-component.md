@@ -127,7 +127,7 @@ Basic graphics:
 * Circle
 * Group
 
-For specific configuration properties, please refer to [`VRender element configuration`](https://visactor.io/vrender/option/Group), and for specific usage and layout, please refer to [custom layout](../custom_define/custom_layout), [reference example](../../demo-react/component/custom-layout).
+For specific configuration properties, please refer to [`VRender element configuration`](https://visactor.io/vrender/option/Group), and for specific usage and layout, please refer to [custom layout](../custom_define/custom_layout), [reference example](../../demo-react/component/cell-custom-layout-dom).
 
 <div style="display: flex; justify-content: center;">
 <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png" style="flex: 0 0 50%; padding: 10px;">
