@@ -287,7 +287,7 @@ In VTable, components such as chart, editor, etc. need to be registered before u
 import { register } from '@visactor/react-vtable';
 import VChart from '@visactor/vchart';
 
-VTable.register.chartModule('vchart', VChart);
+register.chartModule('vchart', VChart);
 
 // ......
 ```
