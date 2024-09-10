@@ -46,9 +46,17 @@ export function getRollupOptions(
       resolve(),
       commonjs(),
       vue(),
-      typescript(),
+      // typescript(),
       babel({ ...babelPlugins, babelHelpers: 'bundled' }),
       replace({ ...config.envs, preventAssignment: true }),
+      typescript({
+        tsconfig: path.resolve(projectRoot, config.tsconfig),
+        tsconfigOverride: {
+          compilerOptions: {
+            declaration: false
+          }
+        }
+      }),
       postcss({
         extensions: ['.css']
       }),
