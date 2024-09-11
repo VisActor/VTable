@@ -204,11 +204,15 @@ export class CachedDataSource extends DataSource {
     this.updatePagerData();
   }
 
-  addRecordsForGroup(recordArr: any) {
+  addRecordsForGroup(recordArr: any[], recordIndex?: number) {
     if (!isArray(recordArr) || recordArr.length === 0) {
       return;
     }
-    this.dataSourceObj.records.push(...recordArr);
+    if (recordIndex === undefined || recordIndex > this.dataSourceObj.records) {
+      recordIndex = this.dataSourceObj.records;
+    }
+    // this.dataSourceObj.records.push(...recordArr);
+    this.dataSourceObj.records.splice(recordIndex, 0, ...recordArr);
 
     this.updateGroup();
   }

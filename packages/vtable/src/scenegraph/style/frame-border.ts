@@ -223,6 +223,9 @@ export function updateFrameBorder(
   frameTheme: TableFrameStyle | undefined,
   strokeArray?: [boolean, boolean, boolean, boolean] // to do 处理成0b001111形式
 ) {
+  if (!frameTheme) {
+    return;
+  }
   const { borderColor } = frameTheme;
   group.border?.setAttribute('stroke', getStroke(borderColor, strokeArray));
 }
