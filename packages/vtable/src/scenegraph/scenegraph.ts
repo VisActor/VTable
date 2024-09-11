@@ -620,16 +620,17 @@ export class Scenegraph {
     setIconHoverStyle(icon, col, row, cellGroup, this);
   }
 
-  updateSortIcon(
-    col: number,
-    row: number,
-    iconMark: Icon,
-    order: SortOrder,
-    oldSortCol: number,
-    oldSortRow: number,
-    oldIconMark: Icon | undefined
-  ) {
-    updateSortIcon(col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, this);
+  updateSortIcon(options: {
+    col: number;
+    row: number;
+    iconMark: Icon;
+    order: SortOrder;
+    oldSortCol: number;
+    oldSortRow: number;
+    oldIconMark: Icon | undefined;
+  }) {
+    const { col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark } = options;
+    updateSortIcon({ col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, scene: this });
   }
 
   updateFrozenIcon(col: number, oldFrozenCol: number) {
