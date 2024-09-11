@@ -736,12 +736,15 @@ export class Dataset {
     // 对path的数组 rowKeys和colKeys 做双重循环
     for (let row_i = 0; row_i < rowKeys.length; row_i++) {
       const rowKey = rowKeys[row_i].rowKey;
-      let assignedIndicatorKey_value = rowKeys[row_i].indicatorKey;
+      let assignedIndicatorKey_value;
+      if (!this.indicatorsAsCol) {
+        assignedIndicatorKey_value = rowKeys[row_i].indicatorKey;
+      }
       for (let col_j = 0; col_j < colKeys.length; col_j++) {
         const colKey = colKeys[col_j].colKey;
-        assignedIndicatorKey_value = isValid(assignedIndicatorKey_value)
-          ? assignedIndicatorKey_value
-          : colKeys[col_j].indicatorKey;
+        if (this.indicatorsAsCol) {
+          assignedIndicatorKey_value = colKeys[col_j].indicatorKey;
+        }
         const flatRowKey = rowKey.join(this.stringJoinChar);
         const flatColKey = colKey.join(this.stringJoinChar);
 
