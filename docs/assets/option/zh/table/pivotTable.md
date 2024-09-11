@@ -283,6 +283,8 @@ export interface IDimensionHeaderNode {
   hierarchyState?: HierarchyState;
   /** 是否为虚拟节点。 如果配置为true，则在基于records数据做分析时会忽略该维度字段 */
   virtual?: boolean;
+  /** 跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格 */
+  levelSpan?: number;
 }
 ```
 
@@ -298,6 +300,8 @@ export interface IIndicatorHeaderNode {
    * 指标名称 如：“销售额”，“例如”， 对应到单元格显示的值。可不填，不填的话 从indicators的对应配置中取值显示
    */
   value?: string;
+  /** 跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格 */
+  levelSpan?: number;
 }
 ```
 

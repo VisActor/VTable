@@ -195,6 +195,14 @@ VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
 
 具体 demo：https://visactor.io/vtable/demo/table-type/pivot-table-virtual-header
 
+# 自定义表头跨列合并
+
+在 rowTree 或者 columnTree 的节点中配置 levelSpan ，默认是1，这个配置可以指定表头单元格合并的范围。如果表头层数最大是3，一共三层维度，中间维度设置了levelSpan为2，那么最末级剩下多大就合并多大层数的单元格，也就没有空间了。如下例子的效果：
+   <div style="width: 80%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/levelSpan-effect.jpeg" />
+    <p>levelSpan</p>
+  </div>
+
 # 自定义树补全指标节点
 
 默认情况下，VTable 会自动补全指标节点，如用户可以传入一个维度树，但是不带又指标节点：

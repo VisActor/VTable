@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: judge value is valid #2402\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

@@ -194,6 +194,14 @@ rowTree: [
 
 Specific demo: https://visactor.io/vtable/demo/table-type/pivot-table-virtual-header
 
+# Custom Header Cross-column Merge
+
+In the nodes of rowTree or columnTree, configure levelSpan, which is 1 by default. This configuration can specify the range of header cell merging. If the maximum number of header levels is 3, there are a total of three dimension levels, and the middle dimension sets levelSpan to 2, then the last level will be merged as large as the number of levels, and there will be no space. The effect of the following example:
+   <div style="width: 80%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/levelSpan-effect.jpeg" />
+    <p>levelSpan</p>
+  </div>
+  
 # Custom tree completion indicator node
 
 By default, VTable will automatically complete the indicator node. For example, the user can pass in a dimension tree without an indicator node:
