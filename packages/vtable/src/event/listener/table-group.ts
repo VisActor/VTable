@@ -429,6 +429,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 点击在menu外，且不是下拉菜单的icon，移除menu
       stateManager.hideMenu();
     }
+    // 如果点击到了图表上  后续的逻辑忽略掉 以免重绘了图表 丢失vchart图表的交互
+    if (eventArgsSet?.eventArgs?.target.type === 'chart') {
+      return;
+    }
+
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
     getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
       if (isCompleteEdit === false) {
