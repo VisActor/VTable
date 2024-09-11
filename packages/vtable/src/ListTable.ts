@@ -294,6 +294,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
         const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
       }
+      if ((this.options as ListTableConstructorOptions).groupBy) {
+        const { vtableMerge } = table.getCellRawRecord(col, row);
+        if (vtableMerge) {
+          return '';
+        }
+        const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
+        return indexs[indexs.length - 1] + 1;
+      }
       const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount + 1;
     } else if (table.internalProps.layoutMap.isHeader(col, row)) {
