@@ -813,6 +813,11 @@ updateFilterRules(filterRules: FilterRules) => void
 
 use case: 对于透视图的场景上，点击图例项后 更新过滤规则 来更新图表
 
+## getFilteredRecords(Function)
+获取过滤后的数据
+
+**PivotTable 专有**
+
 ## setLegendSelected(Function)
 
 设置图例的选择状态。
