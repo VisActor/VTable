@@ -5,12 +5,12 @@
 </div>
 
 <div align="center">
-  <h1>React-VTable</h1>
+  <h1>Vue-VTable</h1>
 </div>
 
 <div align="center">
 
-VTable is not just a high-performance multidimensional data analysis table, but also a grid artist that creates art between rows and columns.React-VTable is a React wrapper of VTable.
+VTable is not just a high-performance multidimensional data analysis table, but also a grid artist that creates art between rows and columns. Vue-VTable is the Vue wrapper of VTable.
 
 [![npm Version](https://img.shields.io/npm/v/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/vue-vtable)
 [![npm Download](https://img.shields.io/npm/dm/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/vue-vtable)
@@ -34,36 +34,87 @@ yarn add @visactor/vue-vtable
 
 ## Quick Start
 
-```jsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { ListTable } from "@visactor/vue-vtable";
+### unified tag
 
-const option = {
-  header: [
-    {
-      field: "0",
-      caption: "name",
-    },
-    {
-      field: "1",
-      caption: "age",
-    },
-    {
-      field: "2",
-      caption: "gender",
-    },
-    {
-      field: "3",
-      caption: "hobby",
-    },
-  ],
-  records: new Array(1000).fill(["John", 18, "male", "🏀"]),
+```html
+<template>
+  <vue-list-table :options="tableOptions"/>
+</template>
+
+<script>
+export default {
+  data() {
+    const option = {
+      header: [
+        {
+          field: '0',
+          caption: '名称'
+        },
+        {
+          field: '1',
+          caption: '年龄'
+        },
+        {
+          field: '2',
+          caption: '性别'
+        },
+        {
+          field: '3',
+          caption: '爱好'
+        }
+      ],
+      records: new Array(1000).fill(['Yelineee', 18, '男', '🏀'])
+    };
+    return {
+      tableOptions: option
+    };
+  }
 };
+</script>
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <ListTable option={option} height={'500px'}/>
-);
+```
+### gramatical tag
+
+```html
+<template>
+  <vue-pivot-chart :options="tableOptions" ref="pivotChartRef" @onLegendItemClick="handleLegendItemClick" :height="800">
+    
+   <PivotRowDimension
+      v-for="row in rows"
+      :dimensionKey="row.dimensionKey"
+      :title="row.title"
+      :headerStyle="row.headerStyle"
+      :objectHandler="row"
+    />
+    
+    
+    <PivotColumnDimension
+      v-for="column in columns"
+      :dimensionKey="column.dimensionKey"
+      :title="column.title"
+      :headerStyle="column.headerStyle"
+      :objectHandler="column"
+    />
+
+    
+    <PivotIndicator
+      v-for="indicator in indicators"
+      :indicatorKey="indicator.indicatorKey"
+      :title="indicator.title"
+      :cellType="indicator.cellType"
+      :chartModule="indicator.chartModule"
+      :chartSpec="indicator.chartSpec"
+      :style="indicator.style"
+    />
+
+    <PivotCorner
+      :titleOnDimension="corner.titleOnDimension"
+      :headerStyle="corner.headerStyle"
+    />
+
+  </vue-pivot-chart>
+</template>
+
 ```
 
 ##

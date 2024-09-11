@@ -1,6 +1,6 @@
 <template>
   <vue-list-table :options="option" :records="records">
-    <ListColumn v-for="column in columns" :key="column.field" :field="column.field" :title="column.title" :width="column.width" :columns="column.columns"/>
+    <ListColumn v-for="column in columns" :key="column.field" :field="column.field" :title="column.title" :width="column.width" :columns="column.columns" :editor="column.editor"/>
   </vue-list-table>
 </template>
 
