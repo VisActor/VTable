@@ -33,7 +33,7 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
   }
   isWheelEvent && state.resetInteractionState();
   if (
-    event.nativeEvent.cancelable &&
+    event.nativeEvent?.cancelable &&
     (state.table.internalProps.overscrollBehavior === 'none' ||
       (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, state)) ||
       (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, state)))

@@ -58,6 +58,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
       return;
     } else if (
+      !table.options.select?.disableDragSelect &&
       table.eventManager.isDraging &&
       stateManager.isSelecting() &&
       !(table as ListTableAPI).editorManager?.editingEditor
