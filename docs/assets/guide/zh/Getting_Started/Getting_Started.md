@@ -62,7 +62,7 @@ import { ListTable, PivotTable, TYPES, themes } from '@visactor/vtable';
 
 ```html
 <body>
-  <div id="tableContainer" style="width: 600px;height:400px;"></div>
+  <div id="tableContainer" style="position: absolute; width: 600px;height:400px;"></div>
 </body>
 ```
 

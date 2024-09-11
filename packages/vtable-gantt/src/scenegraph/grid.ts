@@ -50,24 +50,31 @@ export class Grid {
     });
     this.group.name = 'grid-container';
     scene.tableGroup.addChild(this.group);
+
+    this.createVerticalLines();
+
+    this.createHorizontalLines();
+
     //补充timelineHeader中不好绘制的底部的边线
-    const horizontalSplitLineWidth = scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth;
+    const horizontalSplitLineWidth =
+      scene._gantt.parsedOptions.horizontalSplitLine?.lineWidth ??
+      scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth;
+    const bottomLineY = (horizontalSplitLineWidth & 1 ? -0.5 : 0) + horizontalSplitLineWidth / 2; // 原来是(horizontalSplitLineWidth & 1 ? 0.5 : 0)  这里改成-0.5为了和左侧表格的水平分割线对齐
     const line = createLine({
       pickable: false,
-      stroke: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineColor,
-      lineWidth: horizontalSplitLineWidth,
+      stroke:
+        scene._gantt.parsedOptions.horizontalSplitLine?.lineColor ??
+        scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineColor,
+      lineWidth: horizontalSplitLineWidth + (horizontalSplitLineWidth & 1 ? 1 : 0), // 加上后面这个1是为了和左侧表格的水平分割线对齐
       points: [
-        { x: 0, y: horizontalSplitLineWidth & 1 ? 0.5 : 0 },
+        { x: 0, y: bottomLineY },
         {
           x: scene._gantt._getAllColsWidth(),
-          y: horizontalSplitLineWidth & 1 ? 0.5 : 0
+          y: bottomLineY
         }
       ]
     });
     this.group.addChild(line);
-    this.createVerticalLines();
-
-    this.createHorizontalLines();
   }
   createVerticalLines() {
     if (this.vertical) {

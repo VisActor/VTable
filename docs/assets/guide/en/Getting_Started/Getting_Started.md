@@ -62,7 +62,7 @@ Before drawing we need to prepare a DOM container with height and width for VTab
 
 ```html
 <body>
-  <div id="tableContainer" style="width: 600px;height:400px;"></div>
+  <div id="tableContainer" style="position: absolute; width: 600px;height:400px;"></div>
 </body>
 ```
 
