@@ -330,7 +330,7 @@ export function sortRecords(table: ListTable) {
  */
 export function listTableAddRecord(record: any, recordIndex: number, table: ListTable) {
   if (table.options.groupBy) {
-    (table.dataSource as CachedDataSource).addRecordsForGroup?.([record]);
+    (table.dataSource as CachedDataSource).addRecordsForGroup?.([record], recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
     // 更新整个场景树
@@ -421,7 +421,7 @@ export function listTableAddRecord(record: any, recordIndex: number, table: List
  */
 export function listTableAddRecords(records: any[], recordIndex: number, table: ListTable) {
   if (table.options.groupBy) {
-    (table.dataSource as CachedDataSource).addRecordsForGroup?.(records);
+    (table.dataSource as CachedDataSource).addRecordsForGroup?.(records, recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
     // 更新整个场景树
