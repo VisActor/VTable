@@ -446,7 +446,10 @@ function getRange(
       range.max,
       axisOption,
       isZeroAlign,
-      layout._table.getColWidth(col)
+      // layout._table.getColWidth(col)
+      position === 'bottom' || position === 'top'
+        ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
+        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight // avoid 0, 0 causes NaN
     );
     range.min = axisRange[0];
     range.max = axisRange[1];

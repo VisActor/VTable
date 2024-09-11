@@ -27,7 +27,7 @@
     "react-router-dom": "6.9.0",
     "lodash": "4.17.21",
     "openinula": "~0.1.2-SNAPSHOT",
-    "@visactor/vutils": "~0.18.13"
+    "@visactor/vutils": "~0.18.14"
   },
   "devDependencies": {
     "@internal/eslint-config": "workspace:*",

@@ -194,7 +194,13 @@ export function createCell(
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
     if (axisConfig) {
       const CartesianAxis: ICartesianAxis = Factory.getComponent('axis');
-      const axis = new CartesianAxis(axisConfig, cellGroup.attribute.width, cellGroup.attribute.height, padding, table);
+      const axis = new CartesianAxis(
+        axisConfig,
+        cellGroup.attribute.width,
+        cellGroup.attribute.height,
+        axisConfig.__vtablePadding ?? padding,
+        table
+      );
       cellGroup.clear();
       cellGroup.appendChild(axis.component);
       axis.overlap();

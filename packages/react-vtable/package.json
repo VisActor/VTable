@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.18.13",
+    "@visactor/vutils": "~0.18.14",
     "react-is": "^18.2.0",
     "react-reconciler": "0.29.2"
   },
