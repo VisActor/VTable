@@ -3145,7 +3145,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /** @private */
   _hasField(field: FieldDef, col: number, row: number): boolean {
-    if (field == null) {
+    if (field === null) {
       return false;
     }
     const table = this;
