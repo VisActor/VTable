@@ -681,6 +681,33 @@ Note: The logic distinguishes between flat and tree hierarchies.
    */
   getLayoutRowTreeCount() : number
 ```
+## getLayoutColumnTree(Function)
+
+**PivotTable Exclusive**
+
+Get the table column header tree structure
+
+```
+  /**
+   * Get the table column header tree structure
+   * @returns
+   */
+  getLayoutColumnTree() : LayouTreeNode[]
+```
+
+## getLayoutColumnTreeCount(Function)
+
+**PivotTable Exclusive**
+
+Get the total number of nodes occupying the table column header tree structure.
+
+```
+  /**
+   * Get the total number of nodes occupying the table column header tree structure.
+   * @returns
+   */
+  getLayoutColumnTreeCount() : number
+```
 
 ## updateSortState(Function)
 
@@ -787,6 +814,11 @@ updateFilterRules(filterRules: FilterRules) => void
 ```
 
 use case: For the PivotChart scene, after clicking the legend item, update the filter rules to update the chart
+
+## getFilteredRecords(Function)
+Get filtered data
+
+**Exclusive to PivotTable**
 
 ## setLegendSelected(Function)
 

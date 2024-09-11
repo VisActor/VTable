@@ -1,3 +1,23 @@
+# v1.7.4
+
+2024-09-09
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add updateFilterRules api [#2245](https://github.com/VisActor/VTable/issues/2245)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when tree pivot table sort then expand tree node render error [#2261](https://github.com/VisActor/VTable/issues/2261)
+- **@visactor/vtable**: fix interactive layer dom clear problem
+- **@visactor/vtable**: when no records corner header show dimention title [#2247](https://github.com/VisActor/VTable/issues/2247)
+- **@visactor/vtable**: fix sparkline range when data has null
+
+
+
+[more detail about v1.7.4](https://github.com/VisActor/VTable/releases/tag/v1.7.4)
+
 # v1.7.3
 
 2024-09-05

@@ -56,6 +56,10 @@ IPagination 的具体类型如下：
 
 当前页码。
 
+## multipleSort (boolean)
+
+启用多列排序。
+
 ## sortState(SortState | SortState[])
 
 排序状态。SortState 定义如下：

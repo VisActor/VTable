@@ -266,13 +266,15 @@ function updateCellWidth(
     return false;
   }
   const autoRowHeight = scene.table.isAutoRowHeight(row);
-  const isvtableMerge = scene.table.getCellRawRecord(col, row)?.vtableMerge;
+  const isVtableMerge = scene.table.getCellRawRecord(col, row)?.vtableMerge;
+  const isCustomMerge = !!scene.table.getCustomMerge(col, row);
   // 更新单元格布局
-  const type = isvtableMerge
-    ? 'text'
-    : scene.table.isHeader(col, row)
-    ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-    : scene.table.getBodyColumnType(col, row);
+  const type =
+    isVtableMerge || isCustomMerge
+      ? 'text'
+      : scene.table.isHeader(col, row)
+      ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+      : scene.table.getBodyColumnType(col, row);
   let isHeightChange = false;
   if (type === 'progressbar') {
     // 目前先采用重新生成节点的方案
@@ -349,7 +351,7 @@ function updateCellWidth(
         axisConfig,
         cellGroup.attribute.width,
         cellGroup.attribute.height,
-        padding,
+        axisConfig.__vtablePadding ?? padding,
         scene.table
       );
       cellGroup.clear();

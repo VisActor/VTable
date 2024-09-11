@@ -815,7 +815,7 @@ react中还支持配置以下属性：
   * 'bottom-left'
   * 'center'
 
-我们推荐用户在单元格内展示的内容，使用react-vtable提供的图元标签，单元格内触发的弹窗、菜单等组件，可以使用DOM react组件，这样是性能最优的方案。[参考示例](../../demo-react/component/custom-layout)。
+我们推荐用户在单元格内展示的内容，使用react-vtable提供的图元标签，单元格内触发的弹窗、菜单等组件，可以使用DOM react组件，这样是性能最优的方案。[参考示例](../../demo-react/component/cell-custom-layout-dom)。
 
 如果需要在单元格内展示的内容，使用DOM react组件，需要按照限制组件显示在表格内容区域，指定`react.container`。需要注意，这样的方式需要频繁更新组件相关DOM，会对性能有一定影响，可以参考[自定义布局](../custom_define/custom_layout)。我们强烈推荐将单元格内的内容组件使用react-vtable提供的图元标签，这样是性能最优的方案。
 

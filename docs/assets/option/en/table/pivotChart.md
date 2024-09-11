@@ -67,6 +67,8 @@ export interface IDimensionHeaderNode {
   children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[] ;
   /** The collapsed state is used with the tree structure display. Note: only valid in rowTree */
   hierarchyState?: HierarchyState;
+  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
+  levelSpan?: number;
 }
 ```
 
@@ -82,6 +84,8 @@ export interface IIndicatorHeaderNode {
    * Indicator names such as: "sales", "for example", correspond to the value displayed in the cell. You can leave it blank, if you don’t fill it in, take the value from the corresponding configuration of the indicators and display it
    */
   value?: string;
+  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
+  levelSpan?: number;
 }
 ```
 

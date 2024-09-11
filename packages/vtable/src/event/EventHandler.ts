@@ -173,7 +173,7 @@ export class EventHandler {
     if (Env.mode === 'node') {
       return;
     }
-    if (id == null) {
+    if (id === null) {
       return;
     }
     const obj = this.listeners?.[id];

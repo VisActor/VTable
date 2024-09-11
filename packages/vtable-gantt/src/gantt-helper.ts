@@ -390,31 +390,33 @@ export function convertProgress(progress: number | string) {
 }
 
 export function createSplitLineAndResizeLine(gantt: Gantt) {
-  if (gantt.parsedOptions.horizontalSplitLine) {
-    gantt.horizontalSplitLine = document.createElement('div');
-    gantt.horizontalSplitLine.style.position = 'absolute';
-    gantt.horizontalSplitLine.style.top = gantt.getAllHeaderRowsHeight() + 'px';
-    gantt.horizontalSplitLine.style.left = gantt.tableY + 'px';
-    gantt.horizontalSplitLine.style.height = (gantt.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
-    gantt.horizontalSplitLine.style.width =
-      gantt.tableNoFrameWidth +
-      (gantt.taskListTableInstance?.tableNoFrameWidth ?? 0) +
-      +(gantt.taskListTableInstance ? gantt.parsedOptions.verticalSplitLine.lineWidth : 0) +
-      'px'; //'100%';
-    gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
-    gantt.horizontalSplitLine.style.zIndex = '100';
-    gantt.horizontalSplitLine.style.userSelect = 'none';
-    gantt.horizontalSplitLine.style.opacity = '1';
-    (gantt.container as HTMLElement).appendChild(gantt.horizontalSplitLine);
-  }
+  // 注释掉水平分割线 改成用左侧表格的body frameStyle和右侧的grid绘制的表头底部线做分割线
+  // if (gantt.parsedOptions.horizontalSplitLine) {
+  //   gantt.horizontalSplitLine = document.createElement('div');
+  //   gantt.horizontalSplitLine.style.position = 'absolute';
+  //   gantt.horizontalSplitLine.style.top =
+  //     gantt.getAllHeaderRowsHeight() + (gantt.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0) + 'px';
+  //   gantt.horizontalSplitLine.style.left = gantt.tableY + 'px';
+  //   gantt.horizontalSplitLine.style.height = (gantt.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
+  //   gantt.horizontalSplitLine.style.width =
+  //     gantt.tableNoFrameWidth +
+  //     (gantt.taskListTableInstance?.tableNoFrameWidth ?? 0) +
+  //     +(gantt.taskListTableInstance ? gantt.parsedOptions.verticalSplitLine.lineWidth : 0) +
+  //     'px'; //'100%';
+  //   gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
+  //   gantt.horizontalSplitLine.style.zIndex = '100';
+  //   gantt.horizontalSplitLine.style.userSelect = 'none';
+  //   gantt.horizontalSplitLine.style.opacity = '1';
+  //   (gantt.container as HTMLElement).appendChild(gantt.horizontalSplitLine);
+  // }
   if (gantt.taskListTableInstance) {
     gantt.verticalSplitResizeLine = document.createElement('div');
     gantt.verticalSplitResizeLine.style.position = 'absolute';
     gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';
-    gantt.verticalSplitResizeLine.style.left = gantt.taskTableWidth
-      ? `${gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2}px`
-      : '0px';
-    gantt.verticalSplitResizeLine.style.width = '14px';
+    gantt.verticalSplitResizeLine.style.left =
+      (gantt.taskTableWidth ? gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2 : 0) +
+      'px';
+    gantt.verticalSplitResizeLine.style.width = '14px'; // 注意下面的14 和7 的地方 都是因为这里的宽度是 14
     gantt.verticalSplitResizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
     gantt.verticalSplitResizeLine.style.backgroundColor = 'rgba(0,0,0,0)';
     gantt.verticalSplitResizeLine.style.zIndex = '100';
@@ -457,21 +459,21 @@ export function createSplitLineAndResizeLine(gantt: Gantt) {
 }
 
 export function updateSplitLineAndResizeLine(gantt: Gantt) {
-  if (gantt.horizontalSplitLine) {
-    gantt.horizontalSplitLine.style.position = 'absolute';
-    gantt.horizontalSplitLine.style.top = gantt.getAllHeaderRowsHeight() + 'px';
-    gantt.horizontalSplitLine.style.left = gantt.tableY + 'px';
-    gantt.horizontalSplitLine.style.height = (gantt.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
-    gantt.horizontalSplitLine.style.width =
-      gantt.tableNoFrameWidth +
-      (gantt.taskListTableInstance?.tableNoFrameWidth ?? 0) +
-      (gantt.taskListTableInstance ? gantt.parsedOptions.verticalSplitLine.lineWidth : 0) +
-      'px'; //'100%';
-    gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
-    gantt.horizontalSplitLine.style.zIndex = '100';
-    gantt.horizontalSplitLine.style.userSelect = 'none';
-    gantt.horizontalSplitLine.style.opacity = '1';
-  }
+  // if (gantt.horizontalSplitLine) {
+  //   gantt.horizontalSplitLine.style.position = 'absolute';
+  //   gantt.horizontalSplitLine.style.top = gantt.getAllHeaderRowsHeight() + 'px';
+  //   gantt.horizontalSplitLine.style.left = gantt.tableY + 'px';
+  //   gantt.horizontalSplitLine.style.height = (gantt.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
+  //   gantt.horizontalSplitLine.style.width =
+  //     gantt.tableNoFrameWidth +
+  //     (gantt.taskListTableInstance?.tableNoFrameWidth ?? 0) +
+  //     (gantt.taskListTableInstance ? gantt.parsedOptions.verticalSplitLine.lineWidth : 0) +
+  //     'px'; //'100%';
+  //   gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
+  //   gantt.horizontalSplitLine.style.zIndex = '100';
+  //   gantt.horizontalSplitLine.style.userSelect = 'none';
+  //   gantt.horizontalSplitLine.style.opacity = '1';
+  // }
   if (gantt.verticalSplitResizeLine) {
     gantt.verticalSplitResizeLine.style.position = 'absolute';
     gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';

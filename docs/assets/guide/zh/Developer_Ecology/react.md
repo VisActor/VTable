@@ -289,7 +289,7 @@ function App() {
 import { register } from '@visactor/react-vtable';
 import VChart from '@visactor/vchart';
 
-VTable.register.chartModule('vchart', VChart);
+register.chartModule('vchart', VChart);
 
 // ......
 ```

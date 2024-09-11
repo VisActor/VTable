@@ -56,6 +56,7 @@ export class Dataset {
    * 明细数据
    */
   records?: any[] | Record<string, any[]>;
+  filteredRecords?: any[] | Record<string, any[]>;
   /**
    * 树形节点，最后的子节点对应到body部分的每个单元格 树结构： 行-列-单元格
    */
@@ -497,18 +498,29 @@ export class Dataset {
     }
     //常规records是数组的情况
     if (Array.isArray(this.records)) {
+      if (!this.filteredRecords) {
+        this.filteredRecords = [];
+      }
       for (let i = 0, len = this.records.length; i < len; i++) {
         const record = this.records[i];
         if (!isNeedFilter || this.filterRecord(record)) {
+          (this.filteredRecords as any[]).push(record);
           this.processRecord(record);
         }
       }
     } else {
+      if (!this.filteredRecords) {
+        this.filteredRecords = {};
+      }
       //records是用户传来的按指标分组后的数据
       for (const key in this.records) {
         for (let i = 0, len = this.records[key].length; i < len; i++) {
           const record = this.records[key][i];
           if (!isNeedFilter || this.filterRecord(record)) {
+            if (!(this.filteredRecords as Record<string, any[]>)[key]) {
+              (this.filteredRecords as Record<string, any[]>)[key] = [];
+            }
+            (this.filteredRecords as Record<string, any[]>)[key].push(record);
             this.processRecord(record, key);
           }
         }
@@ -946,6 +958,7 @@ export class Dataset {
   /** 更新过滤规则 修改tree数据及收集的value */
   updateFilterRules(filterRules: FilterRules, isResetTree: boolean = false) {
     this.filterRules = filterRules;
+    this.filteredRecords = undefined;
     if (isResetTree) {
       this.tree = {};
     } else {

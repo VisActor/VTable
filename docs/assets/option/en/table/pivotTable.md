@@ -279,6 +279,8 @@ export interface IDimensionHeaderNode {
   hierarchyState?: HierarchyState;
   /** Whether it is a virtual node. If configured to true, this dimension field will be ignored when analyzing based on records data */
   virtual?: boolean;
+  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
+  levelSpan?: number;
 }
 ```
 
@@ -294,6 +296,8 @@ export interface IIndicatorHeaderNode {
    * Indicator name, such as: "Sales Amount", "example", corresponding to the value displayed in the cell. Optional, if not filled in, the value will be taken from the corresponding configuration in indicators
    */
   value?: string;
+  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
+  levelSpan?: number;
 }
 ```
 

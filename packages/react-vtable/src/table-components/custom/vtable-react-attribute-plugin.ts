@@ -100,7 +100,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
     // 定位wrapGroup
     if (!wrapContainer.style.position) {
       wrapContainer.style.position = 'absolute';
-      nativeContainer.style.position = 'relative';
+      // nativeContainer.style.position = 'relative'; // 'relative' will cause the problem of container position
     }
     let left: number = 0;
     let top: number = 0;

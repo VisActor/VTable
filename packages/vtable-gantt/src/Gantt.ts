@@ -234,15 +234,17 @@ export class Gantt extends EventTarget {
     }
     const width = Math.floor(widthP - getVerticalScrollBarSize(this.parsedOptions.scrollStyle));
     const height = Math.floor(heightP - getHorizontalScrollBarSize(this.parsedOptions.scrollStyle));
-
     this.tableNoFrameWidth = widthP;
     this.tableNoFrameHeight = Math.floor(heightP);
     if (this.parsedOptions.outerFrameStyle) {
       //考虑表格整体边框的问题
       const lineWidth = this.parsedOptions.outerFrameStyle?.borderLineWidth; // toBoxArray(this.parsedOptions.frameStyle?.borderLineWidth ?? [null]);
-      this.tableX = this.taskListTableInstance ? this.parsedOptions.verticalSplitLine.lineWidth ?? 0 : lineWidth;
+      this.tableX =
+        this.taskTableColumns.length >= 1 || this.options?.rowSeriesNumber
+          ? this.parsedOptions.verticalSplitLine.lineWidth ?? 0
+          : lineWidth;
       this.tableY = lineWidth;
-      this.tableNoFrameWidth = width - lineWidth - this.parsedOptions.verticalSplitLine.lineWidth;
+      this.tableNoFrameWidth = Math.min(width - lineWidth - this.tableX, this._getAllColsWidth());
 
       this.tableNoFrameHeight = height - lineWidth * 2;
     }
@@ -416,6 +418,19 @@ export class Gantt extends EventTarget {
           },
           this.options.taskListTable?.theme?.columnResize
         )
+      };
+    }
+    if (listTable_options.theme.bodyStyle.frameStyle) {
+      listTable_options.theme.bodyStyle.frameStyle.borderLineWidth = [
+        this.parsedOptions.horizontalSplitLine?.lineWidth ?? 0,
+        0,
+        0,
+        0
+      ];
+    } else {
+      listTable_options.theme.bodyStyle.frameStyle = {
+        borderLineWidth: [this.parsedOptions.horizontalSplitLine?.lineWidth ?? 0, 0, 0, 0],
+        borderColor: this.parsedOptions.horizontalSplitLine?.lineColor
       };
     }
     listTable_options.canvasWidth = this.taskTableWidth as number;
@@ -634,7 +649,7 @@ export class Gantt extends EventTarget {
 
   _resize() {
     this._updateSize();
-    this.taskListTableInstance.setCanvasSize(
+    this.taskListTableInstance?.setCanvasSize(
       this.taskTableWidth,
       this.tableNoFrameHeight + this.parsedOptions.outerFrameStyle.borderLineWidth * 2
     );
