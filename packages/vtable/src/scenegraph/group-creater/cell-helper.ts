@@ -390,6 +390,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   let cellTheme;
   let customStyle;
   let customResult;
+  let isCustomMerge = false;
   if (table.internalProps.customMergeCell) {
     const customMerge = table.getCustomMerge(col, row);
     if (customMerge) {
@@ -425,6 +426,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
           table
         );
       }
+
+      isCustomMerge = true;
     }
   }
 
@@ -454,10 +457,10 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     range = table.getCellRange(col, row);
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
   }
-  let isvtableMerge = false;
+  let isVtableMerge = false;
   if (table.internalProps.enableTreeNodeMerge && isMerge) {
     const { vtableMergeName, vtableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
-    isvtableMerge = vtableMerge;
+    isVtableMerge = vtableMerge;
     if (vtableMerge) {
       mayHaveIcon = true;
       if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
@@ -588,11 +591,12 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     return undefined;
   }
 
-  const type = isvtableMerge
-    ? 'text'
-    : table.isHeader(col, row)
-    ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-    : table.getBodyColumnType(col, row);
+  const type =
+    isVtableMerge || isCustomMerge
+      ? 'text'
+      : table.isHeader(col, row)
+      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+      : table.getBodyColumnType(col, row);
 
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;
