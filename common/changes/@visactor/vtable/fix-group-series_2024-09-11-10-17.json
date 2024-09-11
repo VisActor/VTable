@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix series number in list-group #2425",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

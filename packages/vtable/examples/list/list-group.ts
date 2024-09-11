@@ -36,8 +36,8 @@ export function createTable() {
         {
           field: 'Customer ID',
           title: 'Customer ID',
-          width: 'auto',
-          cellType: 'checkbox'
+          width: 'auto'
+          // cellType: 'checkbox'
         },
         {
           field: 'Product Name',
@@ -331,7 +331,19 @@ export function createTable() {
         //   };
         // },
         // frozenColCount: 1
-        enableTreeStickCell: true
+        enableTreeStickCell: true,
+        rowSeriesNumber: {
+          dragOrder: true,
+          title: '序号',
+          width: 'auto',
+          headerStyle: {
+            color: 'black',
+            bgColor: 'pink'
+          },
+          style: {
+            color: 'red'
+          }
+        }
       };
       tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;
