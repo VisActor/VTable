@@ -459,21 +459,21 @@ export function createSplitLineAndResizeLine(gantt: Gantt) {
 }
 
 export function updateSplitLineAndResizeLine(gantt: Gantt) {
-  if (gantt.horizontalSplitLine) {
-    gantt.horizontalSplitLine.style.position = 'absolute';
-    gantt.horizontalSplitLine.style.top = gantt.getAllHeaderRowsHeight() + 'px';
-    gantt.horizontalSplitLine.style.left = gantt.tableY + 'px';
-    gantt.horizontalSplitLine.style.height = (gantt.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
-    gantt.horizontalSplitLine.style.width =
-      gantt.tableNoFrameWidth +
-      (gantt.taskListTableInstance?.tableNoFrameWidth ?? 0) +
-      (gantt.taskListTableInstance ? gantt.parsedOptions.verticalSplitLine.lineWidth : 0) +
-      'px'; //'100%';
-    gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
-    gantt.horizontalSplitLine.style.zIndex = '100';
-    gantt.horizontalSplitLine.style.userSelect = 'none';
-    gantt.horizontalSplitLine.style.opacity = '1';
-  }
+  // if (gantt.horizontalSplitLine) {
+  //   gantt.horizontalSplitLine.style.position = 'absolute';
+  //   gantt.horizontalSplitLine.style.top = gantt.getAllHeaderRowsHeight() + 'px';
+  //   gantt.horizontalSplitLine.style.left = gantt.tableY + 'px';
+  //   gantt.horizontalSplitLine.style.height = (gantt.parsedOptions.horizontalSplitLine.lineWidth ?? 2) + 'px';
+  //   gantt.horizontalSplitLine.style.width =
+  //     gantt.tableNoFrameWidth +
+  //     (gantt.taskListTableInstance?.tableNoFrameWidth ?? 0) +
+  //     (gantt.taskListTableInstance ? gantt.parsedOptions.verticalSplitLine.lineWidth : 0) +
+  //     'px'; //'100%';
+  //   gantt.horizontalSplitLine.style.backgroundColor = gantt.parsedOptions.horizontalSplitLine.lineColor;
+  //   gantt.horizontalSplitLine.style.zIndex = '100';
+  //   gantt.horizontalSplitLine.style.userSelect = 'none';
+  //   gantt.horizontalSplitLine.style.opacity = '1';
+  // }
   if (gantt.verticalSplitResizeLine) {
     gantt.verticalSplitResizeLine.style.position = 'absolute';
     gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';

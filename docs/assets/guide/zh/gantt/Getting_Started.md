@@ -59,11 +59,12 @@ const ganttInstance = new Gantt(domContainer, option);
 
 ## 绘制一个简单的甘特图
 
-在绘图前我们需要为 VTableGantt 准备一个具备高宽的 DOM 容器。
+在绘图前我们需要为 VTableGantt 准备一个具备高宽的 DOM 容器，且这个容器可以相对定位，即需要设置position为 'absolute' 或者 'relative'。
 
+**请务必保证容器的宽高值为整数，VTable 内部逻辑中会用到容器的 offsetWidth、offsetHeight、clientWidth、clientHeight 属性，如果容器的 width 和 height 为小数会造成取值有误差，可能产生表格抖动问题。**
 ```html
 <body>
-  <div id="tableContainer" style="width: 600px;height:400px;"></div>
+  <div id="tableContainer" style="position: absolute; width: 600px;height:400px;"></div>
 </body>
 ```
 
