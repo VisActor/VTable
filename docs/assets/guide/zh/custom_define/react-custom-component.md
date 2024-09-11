@@ -6,6 +6,8 @@
 
 ### 组件用法
 
+*使用自定义单元格组件时，需要使用react 18版本*
+
 自定义单元格组件在[自定义布局](../custom_define/custom_layout)的基础上封装而成，用法类似于自定义布局。在`ListColumn`中使用组件，自定义组件需要传入`role`属性，用于标识该组件为自定义单元格组件；其中`custom-layout`组件会在表格内容部分生效，`header-custom-layout`组件会在表格表头部分生效。每列中最多只能有一个`custom-layout`组件，最多只能有一个`header-custom-layout`组件。
 
 ```tsx
@@ -139,7 +141,7 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
 
 文字标签
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState } = React;
 const { ListTable, ListColumn, Group, Tag } = ReactVTable;
 
@@ -236,7 +238,7 @@ API
 
 单选框
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Radio } = ReactVTable;
 
@@ -366,7 +368,7 @@ API
 
 复选框
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Checkbox } = ReactVTable;
 
@@ -456,7 +458,7 @@ API
 
 按钮
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Button } = ReactVTable;
 
@@ -531,7 +533,7 @@ API
 
 链接
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Link } = ReactVTable;
 
@@ -609,7 +611,7 @@ API
 
 头像
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Avatar, Image } = ReactVTable;
 
@@ -688,7 +690,7 @@ API
 
 气泡卡片
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Avatar, Popover } = ReactVTable;
 
@@ -813,7 +815,7 @@ react中还支持配置以下属性：
   * 'bottom-left'
   * 'center'
 
-我们推荐用户在单元格内展示的内容，使用react-vtable提供的图元标签，单元格内触发的弹窗、菜单等组件，可以使用DOM react组件，这样是性能最优的方案。[参考示例](../../demo-react/component/custom-layout)。
+我们推荐用户在单元格内展示的内容，使用react-vtable提供的图元标签，单元格内触发的弹窗、菜单等组件，可以使用DOM react组件，这样是性能最优的方案。[参考示例](../../demo-react/component/cell-custom-layout-dom)。
 
 如果需要在单元格内展示的内容，使用DOM react组件，需要按照限制组件显示在表格内容区域，指定`react.container`。需要注意，这样的方式需要频繁更新组件相关DOM，会对性能有一定影响，可以参考[自定义布局](../custom_define/custom_layout)。我们强烈推荐将单元格内的内容组件使用react-vtable提供的图元标签，这样是性能最优的方案。
 

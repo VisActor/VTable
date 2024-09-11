@@ -241,6 +241,50 @@
       ]
     },
     {
+      "path": "gantt",
+      "title": {
+        "zh": "甘特图",
+        "en": "gantt"
+      },
+      "children": [
+        {
+          "path": "gantt-basic",
+          "title": {
+            "zh": "甘特图基础用法",
+            "en": "Gantt Basic"
+          }
+        },
+        {
+          "path": "gantt-customLayout",
+          "title": {
+            "zh": "甘特图自定义渲染",
+            "en": "Gantt Custom Layout"
+          }
+        },
+        {
+          "path": "gantt-edit",
+          "title": {
+            "zh": "甘特图编辑数据",
+            "en": "Gantt Edit"
+          }
+        },
+        {
+          "path": "gantt-interaction-drag-table-width",
+          "title": {
+            "zh": "甘特图交互——拖拽表格宽度",
+            "en": "Gantt Interaction —— Drag Table Width"
+          }
+        },
+        {
+          "path": "gantt-interaction-drag-taskBar",
+          "title": {
+            "zh": "甘特图交互——拖拽任务条",
+            "en": "Gantt Interaction —— Drag TaskBar"
+          }
+        }
+      ]
+    },
+    {
       "path": "cell-type",
       "title": {
         "zh": "单元格类型",

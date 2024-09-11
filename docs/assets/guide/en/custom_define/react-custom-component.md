@@ -6,6 +6,8 @@ To help react developers quickly implement custom cell content, React-VTable pro
 
 ### Component usage
 
+*To use custom cell component, need to use react 18 version*
+
 Custom cell components are encapsulated based on [custom layout](../custom_define/custom_layout), and their usage is similar to custom layout. To use components in `ListColumn`, custom components need to pass in the `role` attribute to identify the component as a custom cell component; the `custom-layout` component will take effect in the table content part, and the `header-custom-layout` component will take effect in the table header part. There can be at most one `custom-layout` component in each column, and at most one `header-custom-layout` component.
 
 ```tsx
@@ -125,7 +127,7 @@ Basic graphics:
 * Circle
 * Group
 
-For specific configuration properties, please refer to [`VRender element configuration`](https://visactor.io/vrender/option/Group), and for specific usage and layout, please refer to [custom layout](../custom_define/custom_layout), [reference example](../../demo-react/component/custom-layout).
+For specific configuration properties, please refer to [`VRender element configuration`](https://visactor.io/vrender/option/Group), and for specific usage and layout, please refer to [custom layout](../custom_define/custom_layout), [reference example](../../demo-react/component/cell-custom-layout-dom).
 
 <div style="display: flex; justify-content: center;">
 <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png" style="flex: 0 0 50%; padding: 10px;">
@@ -137,7 +139,7 @@ In order to facilitate users to quickly implement customized cell content, React
 
 #### Tag
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState } = React;
 const { ListTable, ListColumn, Group, Tag } = ReactVTable;
 
@@ -232,7 +234,7 @@ API
 
 #### Radio
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Radio } = ReactVTable;
 
@@ -360,7 +362,7 @@ API
 
 #### Checkbox
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Checkbox } = ReactVTable;
 
@@ -443,7 +445,7 @@ API
 
 #### Button
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Button } = ReactVTable;
 
@@ -516,7 +518,7 @@ API
 
 #### Link
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Link } = ReactVTable;
 
@@ -592,7 +594,7 @@ API
 
 #### Avatar
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Avatar, Image } = ReactVTable;
 
@@ -669,7 +671,7 @@ API
 
 #### Popover
 
-```js livedemo template=vtable
+```javascript livedemo template=vtable-react
 const { useCallback, useRef, useState, useEffect } = React;
 const { ListTable, ListColumn, Group, Avatar, Popover } = ReactVTable;
 

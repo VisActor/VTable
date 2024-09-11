@@ -57,8 +57,8 @@ export function registerForVrender() {
   registerShadowRoot();
   registerSymbol();
   registerText();
+  registerFlexLayoutPlugin();
   // registerWrapText();
-
   loadPoptip();
 
   registerFlexLayoutPlugin();

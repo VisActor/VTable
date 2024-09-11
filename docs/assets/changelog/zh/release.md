@@ -1,7 +1,114 @@
+# v1.7.4
+
+2024-09-09
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加updateFilterRules api [#2245](https://github.com/VisActor/VTable/issues/2245)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 树形pivot表格排序后展开树节点渲染错误 [#2261](https://github.com/VisActor/VTable/issues/2261)
+- **@visactor/vtable**: 修复交互层DOM清除问题
+- **@visactor/vtable**: 修复当无记录时，角头正常显示维度标题 [#2247](https://github.com/VisActor/VTable/issues/2247)
+- **@visactor/vtable**: 修复数据包含null时的sparkline范围问题
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 优化透视图的坐标轴效果和vchart保持一致
+
+[更多详情请查看 v1.7.4](https://github.com/VisActor/VTable/releases/tag/v1.7.4)
+
+# v1.7.3
+
+2024-09-05
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复当按下ctrl、meta和shift键时，不应触发编辑模式 # 2372
+- **@visactor/vtable**: 修复自定义样式排列重复问题 [#2370](https://github.com/VisActor/VTable/issues/2370)
+- **@visactor/vtable**: 修复无文本单元格自定义合并问题 [#2343](https://github.com/VisActor/VTable/issues/2343)
+- **@visactor/vtable**: 修复react-vtable中的事件绑定问题
+- **@visactor/vtable**: 修复右冻结标记位置问题 [#2344](https://github.com/VisActor/VTable/issues/2344)
+- **@visactor/vtable**: 修复cellBgColor中的选择范围判断问题 [#2368](https://github.com/VisActor/VTable/issues/2368)
+
+[更多详情请查看 v1.7.3](https://github.com/VisActor/VTable/releases/tag/v1.7.3)
+
+# v1.7.2
+
+2024-09-02
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 使用 groupBy 时，所有合并的单元格将 cellType 设置为文本 [#2331](https://github.com/VisActor/VTable/issues/2331)
+
+[更多详情请查看 v1.7.2](https://github.com/VisActor/VTable/releases/tag/v1.7.2)
+
+# v1.7.1
+
+2024-09-02
+
+
+**🐛 功能修复**
+
+- **@visactor/react-vtable**: 修复在 react-vtable 项目中的 evns 变量问题
+
+[更多详情请查看 v1.7.1](https://github.com/VisActor/VTable/releases/tag/v1.7.1)
+
+
+# v1.7.0
+
+2024-08-30
+
+**🆕 New feature**
+
+- **@visactor/vtable-gantt**: 新增甘特图 gantt chart
+
+# v1.6.3
+
+2024-08-29
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加 formatCopyValue 配置
+- **@visactor/vtable**: 在 tooltip 中添加 parentElement 配置 [#2290](https://github.com/VisActor/VTable/issues/2290)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 处理更改表头位置事件 [#2299](https://github.com/VisActor/VTable/issues/2299)
+- **@visactor/vtable**: 修复 pivot tree 无法显示值和展开树时出现错误的问题 [#2306](https://github.com/VisActor/VTable/issues/2306)
+- **@visactor/vtable**: 修复 titleOnDimension 全部排序无法运行的问题 [#2278](https://github.com/VisActor/VTable/issues/2278)
+- **@visactor/vtable**: 在数组查找函数中添加判断 [#2289](https://github.com/VisActor/VTable/issues/2289)
+- **@visactor/vtable**: 修复冻结列自定义组件裁剪问题
+- **@visactor/vtable**: 修复顶部冻结行中的 cellLocation 问题 [#2267](https://github.com/VisActor/VTable/issues/2267)
+- **@visactor/vtable**: 修复列表表格分组模式样式更新问题
+- **@visactor/vtable**: 修复页面滚动时菜单自动隐藏的问题 [#2241](https://github.com/VisActor/VTable/issues/2241)
+- **@visactor/vtable**: 修复进度条单元格 textAlign 更新问题 [#2225](https://github.com/VisActor/VTable/issues/2225)
+- **@visactor/vtable**: 修复 react-vtable 中的 umd 包问题 [#2244](https://github.com/VisActor/VTable/issues/2244)
+- **@visactor/vtable**: 修复 updateContainerAttrWidthAndX() 中右侧冻结大小问题 [#2243](https://github.com/VisActor/VTable/issues/2243)
+- **@visactor/vtable**: 修复 getBodyLayoutRangeById() 中 leftRowSeriesNumberColumnCount 错误 [#2234](https://github.com/VisActor/VTable/issues/2234)
+- **@visactor/vtable**: 修复冻结列自定义组件裁剪问题
+- **@visactor/vtable**: 修复页面滚动时菜单自动隐藏的问题 [#2241](https://github.com/VisActor/VTable/issues/2241)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 滚动事件添加参数 [#2249](https://github.com/VisActor/VTable/issues/2249)
+- **@visactor/vtable**: changeCellValue 可以修改原始记录 [#2305](https://github.com/VisActor/VTable/issues/2305)
+
+[更多详情请查看 v1.6.3](https://github.com/VisActor/VTable/releases/tag/v1.6.3)
+
+
 # v1.6.1
 
 2024-08-19
 
+**💥 Breaking change**
+
+- **@visactor/react-vtable**: 优化打包体积，删除`VTable`的导出，如果需要使用`VTable`，请安装并从相同版本的`@visactor/vtable`中导入。
+- **@visactor/react-vtable**: 优化打包体积，删除`VRender`的导出，如果需要使用`VRender`，请从`@visactor/vtable/es/vrender`中导入。
 
 **🆕 新增功能**
 

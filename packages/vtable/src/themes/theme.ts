@@ -96,6 +96,10 @@ export class TableTheme implements ITableThemeDefine {
       superTheme
     };
   }
+
+  getExtendTheme(): PartialTableThemeDefine | ITableThemeDefine {
+    return this.internalTheme.obj;
+  }
   get font(): string {
     const { obj, superTheme } = this.internalTheme;
     return getProp(obj, superTheme, ['font'], ['bodyStyle', 'font']);
@@ -479,6 +483,12 @@ export class TableTheme implements ITableThemeDefine {
         get visible(): 'always' | 'scrolling' | 'none' | 'focus' {
           return scroll.visible ?? 'scrolling';
         },
+        get verticalVisible(): 'always' | 'scrolling' | 'none' | 'focus' {
+          return scroll.verticalVisible;
+        },
+        get horizontalVisible(): 'always' | 'scrolling' | 'none' | 'focus' {
+          return scroll.horizontalVisible;
+        },
         get width(): number | undefined {
           return scroll.width ?? 7;
         },
@@ -487,6 +497,12 @@ export class TableTheme implements ITableThemeDefine {
         },
         get barToSide(): boolean | undefined {
           return scroll.barToSide ?? false;
+        },
+        get horizontalPadding(): number | [number, number, number, number] {
+          return scroll.horizontalPadding ?? 0;
+        },
+        get verticalPadding(): number | [number, number, number, number] {
+          return scroll.verticalPadding ?? 0;
         }
       };
     }
@@ -563,6 +579,9 @@ export class TableTheme implements ITableThemeDefine {
         },
         get labelBackgroundCornerRadius(): number {
           return columnResize.labelBackgroundCornerRadius ?? 5;
+        },
+        get labelVisible(): boolean {
+          return columnResize.labelVisible ?? true;
         }
       };
     }

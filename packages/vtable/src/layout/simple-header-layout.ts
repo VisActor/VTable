@@ -874,7 +874,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   /** 根据field获取表头cell位置 */
   getHeaderCellAddressByField(field: string): CellAddress | undefined {
     const hd = this.headerObjects.find((col: any) => col && col.field === field);
-    return this.getHeaderCellAdressById(hd.id as number);
+    return hd && this.getHeaderCellAdressById(hd.id as number);
   }
   getBody(col: number, _row: number): ColumnData | SeriesNumberColumnData {
     if (this.isSeriesNumber(col, _row)) {
@@ -893,7 +893,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         }
       }
     } else {
-      for (let col = 0; col < (this.colCount ?? 0); col++) {
+      for (let col = this.leftRowSeriesNumberColumnCount; col < (this.colCount ?? 0); col++) {
         if (id === this._columns[col - this.leftRowSeriesNumberColumnCount].id) {
           return {
             start: { col, row: 0 },
@@ -902,7 +902,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         }
       }
     }
-    throw new Error(`can not found body layout @id=${id as number}`);
+    return {
+      start: { col: -1, row: -1 },
+      end: { col: -1, row: -1 }
+    };
+    // throw new Error(`can not found body layout @id=${id as number}`);
   }
   getCellRange(col: number, row: number): CellRange {
     return getCellRange(col, row, this);
@@ -1113,7 +1117,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       this.isSeriesNumberInBody(target.col, target.row) &&
       this.isSeriesNumberInBody(source.col, source.row)
     ) {
-      return true;
+      // return true;
+      const sourceIndex = this.getRecordShowIndexByCell(0, source.row);
+      const targetIndex = this.getRecordShowIndexByCell(0, target.row);
+      const canMove = this._table.dataSource.isCanExchangeOrder(sourceIndex, targetIndex);
+      return canMove;
     } else if (
       this.transpose &&
       this.isSeriesNumberInBody(target.col, target.row) &&

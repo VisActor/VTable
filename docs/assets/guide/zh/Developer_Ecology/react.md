@@ -280,3 +280,16 @@ function App() {
 ```
 
 事件详细描述参考：[事件介绍](../../guide/Event/event_list)
+
+### register
+
+在VTable中，图表、编辑器等组件需要通过resigister方法注册，才能正常使用；在React-VTable中，暴露了相应的register方法，可以直接使用。
+
+```jsx
+import { register } from '@visactor/react-vtable';
+import VChart from '@visactor/vchart';
+
+register.chartModule('vchart', VChart);
+
+// ......
+```

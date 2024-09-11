@@ -316,7 +316,7 @@ export function sortRecords(table: ListTable) {
       const hd = table.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
 
       // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
-      table.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
+      hd && table.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
     }
   }
 }
@@ -330,7 +330,7 @@ export function sortRecords(table: ListTable) {
  */
 export function listTableAddRecord(record: any, recordIndex: number, table: ListTable) {
   if (table.options.groupBy) {
-    (table.dataSource as CachedDataSource).addRecordsForGroup?.([record]);
+    (table.dataSource as CachedDataSource).addRecordsForGroup?.([record], recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
     // 更新整个场景树
@@ -421,7 +421,7 @@ export function listTableAddRecord(record: any, recordIndex: number, table: List
  */
 export function listTableAddRecords(records: any[], recordIndex: number, table: ListTable) {
   if (table.options.groupBy) {
-    (table.dataSource as CachedDataSource).addRecordsForGroup?.(records);
+    (table.dataSource as CachedDataSource).addRecordsForGroup?.(records, recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
     // 更新整个场景树

@@ -199,6 +199,13 @@ export function createTable() {
     },
     autoWrapText: true,
     editor: '',
+    // theme: {
+    //   cellInnerBorder: false,
+    //   frameStyle: {
+    //     borderLineWidth: 2,
+    //     borderColor: 'red'
+    //   }
+    // },
     // theme: VTable.themes.ARCO,
     // hover: {
     //   highlightMode: 'cross'
@@ -215,6 +222,11 @@ export function createTable() {
         // borderLineWidth: 10,
         borderColor: 'red',
         shadowBlur: 0
+      },
+      columnResize: {
+        lineWidth: 2,
+        lineColor: 'red',
+        labelVisible: false
       }
     },
     excelOptions: {

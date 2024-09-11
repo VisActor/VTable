@@ -24,8 +24,8 @@ import {
   AdjustPosGroupAfterRenderContribution,
   AdjustColorGroupBeforeRenderContribution,
   AdjustColorGroupAfterRenderContribution,
-  ClipBodyGroupBeforeRenderContribution,
-  ClipBodyGroupAfterRenderContribution
+  ClipBodyGroupBeforeRenderContribution
+  // ClipBodyGroupAfterRenderContribution
 } from './group-contribution-render';
 import { VTableDrawItemInterceptorContribution } from './draw-interceptor';
 import { SuffixTextBeforeRenderContribution } from './text-contribution-render';
@@ -79,8 +79,8 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
 
   bind(ClipBodyGroupBeforeRenderContribution).toSelf().inSingletonScope();
   bind(GroupRenderContribution).toService(ClipBodyGroupBeforeRenderContribution);
-  bind(ClipBodyGroupAfterRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(ClipBodyGroupAfterRenderContribution);
+  // bind(ClipBodyGroupAfterRenderContribution).toSelf().inSingletonScope();
+  // bind(GroupRenderContribution).toService(ClipBodyGroupAfterRenderContribution);
 
   // interceptor
   bind(VTableDrawItemInterceptorContribution).toSelf().inSingletonScope();

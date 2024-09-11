@@ -61,7 +61,12 @@ export function createCell(
   }
 ): Group {
   let isAsync = false;
+  let cellGroup: Group;
   if (isPromise(value)) {
+    if (table.scenegraph.highPerformanceGetCell(col, row).role !== 'cell') {
+      // avoid nouse async create cell
+      return cellGroup;
+    }
     value = table.getCellValue(col, row);
     isAsync = true;
   }
@@ -80,8 +85,9 @@ export function createCell(
   //     }
   //   );
   // }
-  let cellGroup: Group;
-  if (type === 'text' || type === 'link') {
+
+  // customMerge&customLayout cell as text cell
+  if (type === 'text' || type === 'link' || customResult) {
     if (type === 'link') {
       //如果是超链接 颜色按照linkColor绘制 TODO：放到方法_getCellStyle中
       // const columnDefine = table.getHeaderDefine(col, row);
@@ -312,7 +318,8 @@ export function createCell(
       col,
       row,
       padding,
-      table
+      table,
+      range
     );
     // 进度图插入到文字前，绘制在文字下
     if (cellGroup.firstChild) {
@@ -385,8 +392,6 @@ export function createCell(
 export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean, isShadow?: boolean) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
-  const cellStyle = table._getCellStyle(col, row);
-  const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const cellLocation = table.getCellLocation(col, row);
   let value = table.getCellValue(col, row);
 
@@ -395,6 +400,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   let cellTheme;
   let customStyle;
   let customResult;
+  let isCustomMerge = false;
   if (table.internalProps.customMergeCell) {
     const customMerge = table.getCustomMerge(col, row);
     if (customMerge) {
@@ -430,6 +436,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
           table
         );
       }
+
+      isCustomMerge = true;
     }
   }
 
@@ -459,10 +467,11 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     range = table.getCellRange(col, row);
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
   }
-
+  let isVtableMerge = false;
   if (table.internalProps.enableTreeNodeMerge && isMerge) {
-    const { vtableMergeName, vTableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
-    if (vTableMerge) {
+    const { vtableMergeName, vtableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
+    isVtableMerge = vtableMerge;
+    if (vtableMerge) {
       mayHaveIcon = true;
       if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
         customResult = dealWithCustom(
@@ -485,6 +494,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     }
   }
 
+  const cellStyle = table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
+  const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
+
   if (!cellTheme) {
     cellTheme = getStyleTheme(
       cellStyle,
@@ -500,7 +512,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   if (
     !addNew &&
     !isMerge &&
-    !(define.customLayout || define.customRender || define.headerCustomLayout || define.headerCustomRender) &&
+    !(define?.customLayout || define?.customRender || define?.headerCustomLayout || define?.headerCustomRender) &&
     canUseFastUpdate(col, row, oldCellGroup, autoWrapText, mayHaveIcon, table)
   ) {
     // update group
@@ -589,9 +601,12 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     return undefined;
   }
 
-  const type = table.isHeader(col, row)
-    ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-    : table.getBodyColumnType(col, row);
+  const type =
+    isVtableMerge || isCustomMerge
+      ? 'text'
+      : table.isHeader(col, row)
+      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+      : table.getBodyColumnType(col, row);
 
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;

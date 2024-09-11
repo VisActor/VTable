@@ -56,11 +56,13 @@ By adding directly in the HTML file `<script>` Tag, import the built vtable file
 
 ## Draw a simple table
 
-Before drawing we need to prepare a DOM container with height and width for VChart.
+Before drawing we need to prepare a DOM container with height and width for VTable.
+
+**Please make sure that the width and height of the container are integers. The offsetWidth, offsetHeight, clientWidth, and clientHeight properties of the container will be used in the internal logic of VTable. If the width and height of the container are decimals, the values will be inaccurate, which may cause table jitter problems.**
 
 ```html
 <body>
-  <div id="tableContainer" style="width: 600px;height:400px;"></div>
+  <div id="tableContainer" style="position: absolute; width: 600px;height:400px;"></div>
 </body>
 ```
 
@@ -382,7 +384,7 @@ const option = {
   widthMode: 'standard'
 };
 
-// 创建 vchart 实例
+// 创建 vtable 实例
 const tableInstance = new VTable.ListTable(option);
 ```
 

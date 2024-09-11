@@ -19,3 +19,28 @@
 ##${prefix} width(number)
 
 背景线的宽度
+
+##${prefix} labelVisible(boolean)
+
+是否显示标签 默认为true
+
+##${prefix} labelColor(string)
+
+标签的颜色
+
+##${prefix} labelFontSize(string)
+
+标签的字体大小
+
+##${prefix} labelFontFamily(string)
+
+标签的字体
+
+##${prefix} labelBackgroundFill(string)
+
+标签的背景颜色
+
+##${prefix} labelBackgroundCornerRadius(number)
+
+标签的背景圆角
+

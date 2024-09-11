@@ -36,6 +36,8 @@ Supported event types:
   MOUSEDOWN_TABLE: 'mousedown_table',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
+  RESIZE_ROW: 'resize_row',
+  RESIZE_ROW_END: 'resize_row_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
   FREEZE_CLICK: 'freeze_click',
@@ -177,6 +179,34 @@ Event callback function parameter types.
 {
 col: number.
 columns: number[]
+}
+
+``
+
+## RESIZE_ROW
+
+Row height adjustment events.
+
+Event callback function parameter types.
+``
+
+{
+row: number;
+rowHeight: number
+}
+
+``
+
+## RESIZE_ROW_END
+
+Row height adjustment end event.
+
+Event callback function parameter types.
+``
+
+{
+row: number;
+rowHeight: number
 }
 
 ``

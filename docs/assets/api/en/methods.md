@@ -219,12 +219,15 @@ Select a cell. If empty is passed, the currently selected highlight state will b
 Select a cell。If empty is passed, the currently selected highlight state will be cleared.
 
 ```
-  /**
+ /**
    * The effect of selecting a cell is the same as that of a cell selected by the mouse.
    * @param col
    * @param row
+   * @param isShift Whether to add the shift key to the selection
+   * @param isCtrl Whether to add the ctrl key to the selection
+   * @param makeSelectCellVisible Whether to make the selected cell visible
    */
-  selectCell(col: number, row: number): void
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean): void
 ```
 
 ## selectCells(Function)
@@ -678,6 +681,33 @@ Note: The logic distinguishes between flat and tree hierarchies.
    */
   getLayoutRowTreeCount() : number
 ```
+## getLayoutColumnTree(Function)
+
+**PivotTable Exclusive**
+
+Get the table column header tree structure
+
+```
+  /**
+   * Get the table column header tree structure
+   * @returns
+   */
+  getLayoutColumnTree() : LayouTreeNode[]
+```
+
+## getLayoutColumnTreeCount(Function)
+
+**PivotTable Exclusive**
+
+Get the total number of nodes occupying the table column header tree structure.
+
+```
+  /**
+   * Get the total number of nodes occupying the table column header tree structure.
+   * @returns
+   */
+  getLayoutColumnTreeCount() : number
+```
 
 ## updateSortState(Function)
 
@@ -706,7 +736,7 @@ Pivot table update sorting rules, exclusive to PivotTable
 
 ## updatePivotSortState(Function)
 
-Update sort status, PivotTable exclusive
+Update sort status, The vtable itself does not perform sorting logic. PivotTable exclusive
 
 ```
   /**
@@ -718,6 +748,7 @@ Update sort status, PivotTable exclusive
       order: SortOrder;
     }[])
 ```
+The table will not be redrawn automatically after updating, and the interface renderWithRecreateCells needs to be configured to refresh
 
 ## setDropDownMenuHighlight(Function)
 
@@ -782,7 +813,12 @@ Update data filtering rules
 updateFilterRules(filterRules: FilterRules) => void
 ```
 
-use case: After clicking the legend item, update the filter rules to update the chart
+use case: For the PivotChart scene, after clicking the legend item, update the filter rules to update the chart
+
+## getFilteredRecords(Function)
+Get filtered data
+
+**Exclusive to PivotTable**
 
 ## setLegendSelected(Function)
 
@@ -1042,8 +1078,8 @@ arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: Cel
 ```
 
 - cellPosition: cell position information, supports configuration of single cells and cell areas
-  - Single cell: `{ row: number, column: number }`
-  - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+  - Single cell: `{ row: number, col: number }`
+  - Cell range: `{ range: { start: { row: number, col: number }, end: { row: number, col: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
 
 ## getCheckboxState(Function)
@@ -1142,6 +1178,24 @@ In **PivotTable** get indicatorKey.
   getHeaderField: (col: number, row: number)
 ```
 
+## getColWidth(Function)
+
+get column width.
+
+```
+  /**get column width */
+  getColWidth: (col: number)
+```
+
+## getRowHeight(Function)
+
+get row height.
+
+```
+  /**get row height */
+  getRowHeight: (row: number)
+```
+
 ## setColWidth(Function)
 
 set column width.
@@ -1231,4 +1285,13 @@ Enable scrolling of the table
 enableScroll() {
 this.eventManager.enableScroll();
 }
+```
+
+## setCanvasSize(Function)
+
+Directly set the width and height of the canvas instead of determining the size of the table based on the container width and height
+
+```
+/** Directly set the width and height of the canvas instead of determining the size of the table based on the width and height of the container */
+setCanvasSize: (width: number, height: number) => void;
 ```

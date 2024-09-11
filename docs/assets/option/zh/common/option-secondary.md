@@ -226,6 +226,11 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 点击外部区域是否取消选中。
 
+##${prefix} disableDragSelect(boolean) = true
+
+拖拽选择单元格时是否禁用框选。
+
+
 #${prefix} theme(Object)
 
 {{ use: common-theme(
@@ -500,6 +505,14 @@ editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' |
 
 是否清空容器 DOM。
 
+#${prefix} canvasWidth(number)
+
+直接设置 canvas 的宽度. 不根据容器宽高来决定表格的尺寸
+
+#${prefix} canvasHeight(number)
+
+直接设置 canvas 的高度. 不根据容器宽高来决定表格的尺寸
+
 #${prefix} animationAppear(boolean|Object|)
 
 表格的入场动画配置。
@@ -519,3 +532,7 @@ animationAppear?: boolean | {
 - `direction` 入场动画的方向，目前支持 `row` 和 `column`两种，默认为 `row`
 - `duration` 单个动画的时长，单位为毫秒，`one-by-one` 时，为一次动画的时长，默认为 500
 - `delay` 动画的延迟，单位为毫秒；`one-by-one` 时为两次动画直接的时间差，`all` 时为所有动画的延迟，默认为 0
+
+#${prefix} formatCopyValue((value: string) => string)
+
+设置复制内容格式化函数。

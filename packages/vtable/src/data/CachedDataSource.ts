@@ -134,7 +134,7 @@ export class CachedDataSource extends DataSource {
     _setFieldCache(this._fieldCache, index, field, value);
   }
   protected recordPromiseCallBack(index: number, record: MaybePromiseOrUndefined): void {
-    this._recordCache[index] = record;
+    this._recordCache && (this._recordCache[index] = record);
   }
   get records(): any[] {
     return Array.isArray(this._recordCache) && this._recordCache.length > 0 ? this._recordCache : super.records;
@@ -159,6 +159,7 @@ export class CachedDataSource extends DataSource {
           const groupResult = [] as any[];
           for (let i = 0; i < records.length; i++) {
             dealWithGroup(records[i], groupResult, groupMap, groupByKeys, 0);
+            records[i].vtableOriginIndex = i;
           }
           return groupResult;
         }
@@ -203,11 +204,15 @@ export class CachedDataSource extends DataSource {
     this.updatePagerData();
   }
 
-  addRecordsForGroup(recordArr: any) {
+  addRecordsForGroup(recordArr: any[], recordIndex?: number) {
     if (!isArray(recordArr) || recordArr.length === 0) {
       return;
     }
-    this.dataSourceObj.records.push(...recordArr);
+    if (recordIndex === undefined || recordIndex > this.dataSourceObj.records) {
+      recordIndex = this.dataSourceObj.records;
+    }
+    // this.dataSourceObj.records.push(...recordArr);
+    this.dataSourceObj.records.splice(recordIndex, 0, ...recordArr);
 
     this.updateGroup();
   }
@@ -246,7 +251,7 @@ export class CachedDataSource extends DataSource {
   }
 }
 
-function dealWithGroup(record: any, children: any[], map: Map<number, any>, groupByKeys: string[], level: number) {
+function dealWithGroup(record: any, children: any[], map: Map<number, any>, groupByKeys: string[], level: number): any {
   const groupByKey = groupByKeys[level];
   if (!isValid(groupByKey)) {
     children.push(record);
@@ -257,23 +262,22 @@ function dealWithGroup(record: any, children: any[], map: Map<number, any>, grou
     if (map.has(value)) {
       const index = map.get(value);
       // children[index].children.push(record);
-      dealWithGroup(record, children[index].children, children[index].map, groupByKeys, level + 1);
-    } else {
-      map.set(value, children.length);
-      children.push({
-        vTableMerge: true,
-        vtableMergeName: value,
-        children: [] as any,
-        map: new Map()
-      });
-      dealWithGroup(
-        record,
-        children[children.length - 1].children,
-        children[children.length - 1].map,
-        groupByKeys,
-        level + 1
-      );
+      return dealWithGroup(record, children[index].children, children[index].map, groupByKeys, level + 1);
     }
+    map.set(value, children.length);
+    children.push({
+      vtableMerge: true,
+      vtableMergeName: value,
+      children: [] as any,
+      map: new Map()
+    });
+    return dealWithGroup(
+      record,
+      children[children.length - 1].children,
+      children[children.length - 1].map,
+      groupByKeys,
+      level + 1
+    );
   }
 }
 
@@ -287,7 +291,7 @@ function syncGroupCollapseState(
     oldGroupMap = new Map();
     for (let i = 0; i < oldSource.length; i++) {
       const record = oldSource[i];
-      if (record.vTableMerge) {
+      if (record.vtableMerge) {
         oldGroupMap.set(record.vtableMergeName, i);
       }
     }
@@ -297,7 +301,7 @@ function syncGroupCollapseState(
     newGroupMap = new Map();
     for (let i = 0; i < newSource.length; i++) {
       const record = newSource[i];
-      if (record.vTableMerge) {
+      if (record.vtableMerge) {
         newGroupMap.set(record.vtableMergeName, i);
       }
     }

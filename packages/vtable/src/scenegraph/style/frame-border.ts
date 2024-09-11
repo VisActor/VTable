@@ -177,10 +177,13 @@ export function createFrameBorder(
 
         // hack for vrender globalCompositeOperation&clip render problem
         const hackRect = createRect({
-          width: 1,
-          height: 1,
+          x: borderLeft / 2,
+          y: borderTop / 2,
+          width: group.attribute.width,
+          height: group.attribute.height,
           fill: 'transparent',
-          pickable: false
+          pickable: false,
+          globalCompositeOperation: 'source-over'
         });
         borderRect.addChild(hackRect);
       } else {
@@ -220,6 +223,9 @@ export function updateFrameBorder(
   frameTheme: TableFrameStyle | undefined,
   strokeArray?: [boolean, boolean, boolean, boolean] // to do 处理成0b001111形式
 ) {
+  if (!frameTheme) {
+    return;
+  }
   const { borderColor } = frameTheme;
   group.border?.setAttribute('stroke', getStroke(borderColor, strokeArray));
 }

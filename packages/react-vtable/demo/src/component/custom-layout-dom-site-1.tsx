@@ -151,6 +151,31 @@ function generateRandomString(length: number) {
   return result;
 }
 
+const HeaderCustomLayoutComponent = props => {
+  const { table, row, col, rect, dataValue } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const record = table.getRecordByCell(col, row);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        fill: 'red',
+        react: {
+          pointerEvents: true,
+          container: table.headerDomContainer, // table.headerDomContainer
+          // anchorType: 'bottom-right',
+          element: <span>自定义</span>
+        }
+      }}
+    ></Group>
+  );
+};
+
 function App() {
   const records = [];
   for (let i = 0; i < 50; i++) {
@@ -163,8 +188,10 @@ function App() {
   return (
     <ListTable
       records={records}
-      height={900}
+      height={500}
+      width={600}
       defaultRowHeight={110}
+      frozenColCount={1}
       onReady={table => {
         // eslint-disable-next-line no-undef
         // (window as any).tableInstance = table;
@@ -172,10 +199,11 @@ function App() {
       ReactDOM={ReactDOM}
     >
       <ListColumn field={'id'} title={'ID'} />
-      <ListColumn field={'name'} title={'Comment'} width={300}>
+      <ListColumn field={'name'} title={'Comment'} width={500}>
+        <HeaderCustomLayoutComponent role={'header-custom-layout'} />
         <CommentComponent role={'custom-layout'} />
       </ListColumn>
-      <ListColumn field={''} title={'Operation'} width={160}>
+      <ListColumn field={''} title={'Operation'} width={300}>
         <OperationComponent role={'custom-layout'} />
       </ListColumn>
     </ListTable>

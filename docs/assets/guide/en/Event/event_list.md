@@ -26,6 +26,8 @@ For a more comprehensive list of events, please refer to: https://visactor.io/vt
 | mouse leave                                | MOUSELEAVE_CELL                                     | mouse leave cell event                                                                                                 |
 | Drag Column Width                          | RESIZE_COLUMN                                       | Column Width Adjustment Event                                                                                          |
 | Drag and drop column width end             | RESIZE_COLUMN_END                                   | column width adjustment end event                                                                                      |
+| Drag Row Height                          | RESIZE_ROW                                       | Row Height Adjustment Event                                                                                          |
+| Drag and drop row height end             | RESIZE_ROW_END                                   | row height adjustment end event                                                                                      |
 | Drag header                                | CHANGE_HEADER_POSITION                              | Drag header to move position event                                                                                     |
 | Click to sort                              | SORT_CLICK                                          | Click to sort icon event                                                                                               |
 | Click Fixed Column                         | FREEZE_CLICK                                        | Click Fixed Column Icon Event                                                                                          |
@@ -64,6 +66,7 @@ For a more comprehensive list of events, please refer to: https://visactor.io/vt
         INPUT_CELL,
         PASTE_CELL,
         RESIZE_COLUMN,
+        RESIZE_ROW,
         SCROLL,
         SCROLL_VERTICAL_END,
         SCROLL_HORIZONTAL_END,

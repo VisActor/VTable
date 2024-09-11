@@ -9,11 +9,12 @@ import type { FullExtendStyle, ListTableAPI, ListTableConstructorOptions, SortSt
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { defaultOrderFn } from '../tools/util';
 import type { ListTable } from '../ListTable';
+import { isValid } from '@visactor/vutils';
 
-export function createRootElement(padding: any): HTMLElement {
+export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
   const element = document.createElement('div');
   element.setAttribute('tabindex', '0');
-  element.classList.add('vtable');
+  element.classList.add(className);
   element.style.outline = 'none';
   element.style.margin = `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`;
 
@@ -311,7 +312,13 @@ export function getStyleTheme(
       underlineOffset,
       lineThrough: lineThrough ? textDecorationWidth : undefined,
       ellipsis:
-        !textOverflow || textOverflow === 'clip' ? undefined : textOverflow === 'ellipsis' ? '...' : textOverflow
+        textOverflow === 'clip'
+          ? ''
+          : textOverflow === 'ellipsis'
+          ? '...'
+          : isValid(textOverflow)
+          ? textOverflow
+          : undefined
     },
     group: {
       fill: bgColor,

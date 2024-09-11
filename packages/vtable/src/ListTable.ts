@@ -34,7 +34,7 @@ import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
-import { setCellCheckboxState } from './state/checkbox/checkbox';
+import { getGroupCheckboxState, setCellCheckboxState } from './state/checkbox/checkbox';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
@@ -294,6 +294,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
         const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
       }
+      if ((this.options as ListTableConstructorOptions).groupBy) {
+        const { vtableMerge } = table.getCellRawRecord(col, row);
+        if (vtableMerge) {
+          return '';
+        }
+        const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
+        return indexs[indexs.length - 1] + 1;
+      }
       const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount + 1;
     } else if (table.internalProps.layoutMap.isHeader(col, row)) {
@@ -375,6 +383,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   getTableIndexByField(field: FieldDef) {
     const colObj = this.internalProps.layoutMap.columnObjects.find((col: any) => col.field === field);
+    if (!colObj) {
+      return -1;
+    }
     const layoutRange = this.internalProps.layoutMap.getBodyLayoutRangeById(colObj.id);
     if (this.transpose) {
       return layoutRange.start.row;
@@ -463,6 +474,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //     internalProps.columns[index].editor = colDefine.editor;
     //   }
     // });
+    internalProps.enableTreeNodeMerge = options.enableTreeNodeMerge ?? isValid(options.groupBy) ?? false;
+
     this.internalProps.headerHelper.setTableColumnsEditor();
     // 处理转置
     this.transpose = options.transpose ?? false;
@@ -957,7 +970,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const sortFunc = this._getSortFuncFromHeaderOption(this.internalProps.columns, field);
       const hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
 
-      if (hd.define.sort !== false) {
+      if (hd && hd.define.sort !== false) {
         this.dataSource.sort(hd.field, order, sortFunc);
 
         // clear cell range cache
@@ -987,7 +1000,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.stateManager.initLeftRecordsCheckState(this.records);
     }
     if (isValid(field)) {
-      return this.stateManager.checkedState.map(state => {
+      let stateArr = this.stateManager.checkedState;
+      if (this.options.groupBy) {
+        stateArr = getGroupCheckboxState(this);
+      }
+      return stateArr.map(state => {
         return state[field];
       });
     }
@@ -1074,7 +1091,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
             (col: any) => col && col.field === field
           );
           // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
-          if (hd.define.sort !== false) {
+          if (hd && hd.define.sort !== false) {
             this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
           }
         }

@@ -233,7 +233,7 @@ const option = {
     },
     {
       field: '',
-      title: 'options',
+      title: 'Operation options',
       width: 200,
       customLayout: args => {
         const { table, row, col, rect } = args;

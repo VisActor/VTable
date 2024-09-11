@@ -278,3 +278,16 @@ function App() {
 ```
 
 For detailed description of the event, please refer to: [Event Introduction](../../guide/Event/event_list)
+
+### register
+
+In VTable, components such as chart, editor, etc. need to be registered before use; React-VTable also provides the register method, which is used to register components. The usage is as follows:
+
+```jsx
+import { register } from '@visactor/react-vtable';
+import VChart from '@visactor/vchart';
+
+register.chartModule('vchart', VChart);
+
+// ......
+```

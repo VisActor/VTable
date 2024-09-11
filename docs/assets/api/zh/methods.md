@@ -214,12 +214,15 @@ setRecords(records: Array<any>)
 选中某个单元格。如果传空，则清除当前选中高亮状态。
 
 ```
-  /**
+   /**
    * 选中单元格  和鼠标选中单元格效果一致
    * @param col
    * @param row
+   * @param isShift 是否按住 shift 键
+   * @param isCtrl 是否按住 ctrl 键
+   * @param makeSelectCellVisible 是否让选中的单元格可见
    */
-  selectCell(col: number, row: number): void
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean): void
 ```
 
 ## selectCells(Function)
@@ -676,6 +679,34 @@ enum HierarchyState {
   getLayoutRowTreeCount() : number
 ```
 
+## getLayoutColumnTree(Function)
+
+**PivotTable 专有**
+
+获取表格列头树形结构
+
+```
+  /**
+   * 获取表格列头树状结构
+   * @returns
+   */
+  getLayoutColumnTree() : LayouTreeNode[]
+```
+
+## getLayoutColumnTreeCount(Function)
+
+**PivotTable 专有**
+
+获取表格列头树形结构的占位的总节点数。
+
+```
+  /**
+   * 获取表格列头树形结构的占位的总节点数。
+   * @returns
+   */
+  getLayoutColumnTreeCount() : number
+```
+
 ## updateSortState(Function)
 
 更新排序状态，ListTable 专有
@@ -703,7 +734,7 @@ enum HierarchyState {
 
 ## updatePivotSortState(Function)
 
-更新排序状态，PivotTable 专有
+更新排序状态，vtable本身不执行排序逻辑。PivotTable 专有。
 
 ```
   /**
@@ -715,6 +746,7 @@ enum HierarchyState {
       order: SortOrder;
     }[])
 ```
+更新后不会主动重绘表格，需要配置接口renderWithRecreateCells刷新
 
 ## setDropDownMenuHighlight(Function)
 
@@ -779,7 +811,12 @@ export type TooltipOptions = {
 updateFilterRules(filterRules: FilterRules) => void
 ```
 
-use case: 点击图例项后 更新过滤规则 来更新图表
+use case: 对于透视图的场景上，点击图例项后 更新过滤规则 来更新图表
+
+## getFilteredRecords(Function)
+获取过滤后的数据
+
+**PivotTable 专有**
 
 ## setLegendSelected(Function)
 
@@ -1040,8 +1077,8 @@ arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: Cel
 ```
 
 - cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
-  - 单个单元格：`{ row: number, column: number }`
-  - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+  - 单个单元格：`{ row: number, col: number }`
+  - 单元格区域：`{ range: { start: { row: number, col: number }, end: { row: number, col: number} } }`
 - customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同
 
 ## getCheckboxState(Function)
@@ -1140,6 +1177,24 @@ interface ISortedMapItem {
   getHeaderField: (col: number, row: number)
 ```
 
+## getColWidth(Function)
+
+获取列宽
+
+```
+  /**获取列宽 */
+  getColWidth: (col: number)
+```
+
+## getRowHeight(Function)
+
+获取行高
+
+```
+  /**获取行高 */
+  getRowHeight: (row: number)
+```
+
 ## setColWidth(Function)
 
 设置列宽
@@ -1229,4 +1284,13 @@ interface ISortedMapItem {
   enableScroll() {
     this.eventManager.enableScroll();
   }
+```
+
+## setCanvasSize(Function)
+
+直接设置 canvas 的宽高 不根据容器宽高来决定表格的尺寸
+
+```
+  /** 直接设置canvas的宽高 不根据容器宽高来决定表格的尺寸 */
+  setCanvasSize: (width: number, height: number) => void;
 ```

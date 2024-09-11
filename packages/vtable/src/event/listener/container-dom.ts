@@ -24,12 +24,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
   });
-  handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
-    table.editorManager?.completeEdit();
-    if (table.eventManager._enableTableScroll) {
-      handleWhell(e, stateManager);
-    }
-  });
 
   // 监听键盘事件
   handler.on(table.getElement(), 'keydown', (e: KeyboardEvent) => {
@@ -201,7 +195,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
           }
         }
       }
-    } else {
+    } else if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
       const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
       if (
         (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
