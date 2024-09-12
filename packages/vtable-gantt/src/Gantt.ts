@@ -314,10 +314,19 @@ export class Gantt extends EventTarget {
             extendThemeOption.headerStyle.bgColor = this.parsedOptions.timelineHeaderBackgroundColor;
           }
         }
-        extendThemeOption.bodyStyle.frameStyle = {
-          borderLineWidth: [this.parsedOptions.horizontalSplitLine?.lineWidth ?? 0, 0, 0, 0],
-          borderColor: this.parsedOptions.horizontalSplitLine?.lineColor
-        };
+        if (extendThemeOption.bodyStyle) {
+          extendThemeOption.bodyStyle.frameStyle = {
+            borderLineWidth: [this.parsedOptions.horizontalSplitLine?.lineWidth ?? 0, 0, 0, 0],
+            borderColor: this.parsedOptions.horizontalSplitLine?.lineColor
+          };
+        } else {
+          extendThemeOption.bodyStyle = {
+            frameStyle: {
+              borderLineWidth: [this.parsedOptions.horizontalSplitLine?.lineWidth ?? 0, 0, 0, 0],
+              borderColor: this.parsedOptions.horizontalSplitLine?.lineColor
+            }
+          };
+        }
         extendThemeOption.cellInnerBorder = false;
         extendThemeOption.frameStyle = Object.assign({}, this.parsedOptions.outerFrameStyle, {
           shadowBlur: 0,
