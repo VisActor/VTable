@@ -85,11 +85,14 @@ export class FrameBorder {
     this.border.setAttributes({
       // x: -borderLineWidth / 2,
       // y: borderLineWidth / 2,
-      width: this._scene._gantt.tableNoFrameWidth + borderLineWidth,
+      width:
+        this._scene.tableGroup.attribute.width +
+        borderLineWidth +
+        (this._scene._gantt.taskListTableInstance ? this._scene._gantt.parsedOptions.verticalSplitLine.lineWidth : 0),
       // this._scene.tableGroup.attribute.width +
       // this.border.attribute.lineWidth +
       // this._scene._gantt.parsedOptions.verticalSplitLine.lineWidth,
-      height: this._scene._gantt.tableNoFrameHeight + borderLineWidth
+      height: this._scene._gantt.drawHeight + borderLineWidth
       // height: this._scene.tableGroup.attribute.height + this.border.attribute.lineWidth
     });
   }
