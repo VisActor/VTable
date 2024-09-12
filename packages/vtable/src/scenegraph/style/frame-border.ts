@@ -63,7 +63,7 @@ export function createFrameBorder(
   if (borderLineWidth) {
     rectAttributes.stroke = true;
     rectAttributes.fill = false;
-    rectAttributes.stroke = getStroke(borderColor, strokeArray, borderLineWidth);
+    rectAttributes.stroke = getStroke(borderColor ?? '#E1E4E8', strokeArray, borderLineWidth);
     rectAttributes.lineWidth = borderLineWidth as number;
     borderLineDash && (rectAttributes.lineDash = borderLineDash as number[]);
     rectAttributes.lineCap = 'butt';

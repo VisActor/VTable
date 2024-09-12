@@ -306,12 +306,26 @@ export class Gantt extends EventTarget {
       if (listTable_options.theme.bodyStyle && !isPropertyWritable(listTable_options.theme, 'bodyStyle')) {
         //测试是否使用了主题 使用了主题配置项不可写。需要使用extends方式覆盖配置
         const extendThemeOption = (listTable_options.theme as themes.TableTheme).getExtendTheme();
+        (listTable_options.theme as themes.TableTheme).clearBodyStyleCache(); // listTable_options.theme.bodyStyle  获取过需要清除缓存
         if (!listTable_options.theme.headerStyle?.bgColor) {
           if (!extendThemeOption.headerStyle) {
             extendThemeOption.headerStyle = { bgColor: this.parsedOptions.timelineHeaderBackgroundColor };
           } else if (!extendThemeOption.headerStyle.bgColor) {
             extendThemeOption.headerStyle.bgColor = this.parsedOptions.timelineHeaderBackgroundColor;
           }
+        }
+        if (extendThemeOption.bodyStyle) {
+          extendThemeOption.bodyStyle.frameStyle = {
+            borderLineWidth: [this.parsedOptions.horizontalSplitLine?.lineWidth ?? 0, 0, 0, 0],
+            borderColor: this.parsedOptions.horizontalSplitLine?.lineColor
+          };
+        } else {
+          extendThemeOption.bodyStyle = {
+            frameStyle: {
+              borderLineWidth: [this.parsedOptions.horizontalSplitLine?.lineWidth ?? 0, 0, 0, 0],
+              borderColor: this.parsedOptions.horizontalSplitLine?.lineColor
+            }
+          };
         }
         extendThemeOption.cellInnerBorder = false;
         extendThemeOption.frameStyle = Object.assign({}, this.parsedOptions.outerFrameStyle, {
@@ -351,6 +365,23 @@ export class Gantt extends EventTarget {
         } else if (!listTable_options.theme.headerStyle.bgColor) {
           listTable_options.theme.headerStyle.bgColor = this.parsedOptions.timelineHeaderBackgroundColor;
         }
+        listTable_options.theme.headerStyle = Object.assign(
+          {},
+          themes.DEFAULT.headerStyle,
+          { bgColor: this.parsedOptions.timelineHeaderBackgroundColor },
+          this.options.taskListTable?.theme?.headerStyle
+        );
+        listTable_options.theme.bodyStyle = Object.assign(
+          {},
+          themes.DEFAULT.bodyStyle,
+          this.options.taskListTable?.theme?.bodyStyle,
+          {
+            frameStyle: {
+              borderLineWidth: [this.parsedOptions.horizontalSplitLine?.lineWidth ?? 0, 0, 0, 0],
+              borderColor: this.parsedOptions.horizontalSplitLine?.lineColor
+            }
+          }
+        );
         listTable_options.theme.cellInnerBorder = false;
         listTable_options.theme.frameStyle = Object.assign({}, this.parsedOptions.outerFrameStyle, {
           cornerRadius: [
@@ -395,7 +426,12 @@ export class Gantt extends EventTarget {
           },
           this.options.taskListTable?.theme?.headerStyle
         ),
-        bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable?.theme?.bodyStyle),
+        bodyStyle: Object.assign({}, themes.DEFAULT.bodyStyle, this.options.taskListTable?.theme?.bodyStyle, {
+          frameStyle: {
+            borderLineWidth: [this.parsedOptions.horizontalSplitLine?.lineWidth ?? 0, 0, 0, 0],
+            borderColor: this.parsedOptions.horizontalSplitLine?.lineColor
+          }
+        }),
         cellInnerBorder: false,
         frameStyle: Object.assign({}, this.parsedOptions.outerFrameStyle, {
           cornerRadius: [
@@ -420,19 +456,7 @@ export class Gantt extends EventTarget {
         )
       };
     }
-    if (listTable_options.theme.bodyStyle.frameStyle) {
-      listTable_options.theme.bodyStyle.frameStyle.borderLineWidth = [
-        this.parsedOptions.horizontalSplitLine?.lineWidth ?? 0,
-        0,
-        0,
-        0
-      ];
-    } else {
-      listTable_options.theme.bodyStyle.frameStyle = {
-        borderLineWidth: [this.parsedOptions.horizontalSplitLine?.lineWidth ?? 0, 0, 0, 0],
-        borderColor: this.parsedOptions.horizontalSplitLine?.lineColor
-      };
-    }
+
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvas.height;
     listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
