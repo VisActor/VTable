@@ -286,9 +286,9 @@ export function createCellContent(
       textMark = text;
       text.bindIconEvent();
 
-      // if (range && (range.start.col !== range.end.col || range.start.row !== range.end.row)) {
-      //   text.onBeforeAttributeUpdate = onBeforeAttributeUpdate;
-      // }
+      if (range && (range.start.col !== range.end.col || range.start.row !== range.end.row)) {
+        text.onBeforeAttributeUpdate = onBeforeAttributeUpdate as any;
+      }
     }
 
     if (contentLeftIcons.length !== 0 || contentRightIcons.length !== 0) {
