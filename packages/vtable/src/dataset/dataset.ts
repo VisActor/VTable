@@ -1046,7 +1046,7 @@ export class Dataset {
       for (const treeRowKey in this.tree) {
         for (const treeColKey in this.tree[treeRowKey]) {
           for (let i = 0; i < this.tree[treeRowKey][treeColKey].length; i++) {
-            this.tree[treeRowKey][treeColKey][i].reset();
+            this.tree[treeRowKey][treeColKey][i]?.reset();
           }
         }
       }

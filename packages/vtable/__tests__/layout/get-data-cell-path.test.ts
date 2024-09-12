@@ -7171,17 +7171,17 @@ describe('get-data-cell-path test', () => {
       cellLocation: 'body'
     });
   });
-  // test('get-data-cell-path no tree result', () => {
-  //   const path = getDataCellPath(optionNoTree, datumNoTree);
-  //   expect(path).toEqual({
-  //     colHeaderPaths: [],
-  //     rowHeaderPaths: [
-  //       {
-  //         indicatorKey: '0',
-  //         value: ''
-  //       }
-  //     ],
-  //     cellLocation: 'body'
-  //   });
-  // });
+  test('get-data-cell-path no tree result', () => {
+    const path = getDataCellPath(optionNoTree, datumNoTree);
+    expect(path).toEqual({
+      colHeaderPaths: [],
+      rowHeaderPaths: [
+        {
+          indicatorKey: '0',
+          value: ''
+        }
+      ],
+      cellLocation: 'body'
+    });
+  });
 });
