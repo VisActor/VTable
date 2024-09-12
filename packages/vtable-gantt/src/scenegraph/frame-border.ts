@@ -89,7 +89,7 @@ export class FrameBorder {
       // this._scene.tableGroup.attribute.width +
       // this.border.attribute.lineWidth +
       // this._scene._gantt.parsedOptions.verticalSplitLine.lineWidth,
-      height: this._scene._gantt.tableNoFrameHeight + borderLineWidth
+      height: this._scene._gantt.drawHeight + borderLineWidth
       // height: this._scene.tableGroup.attribute.height + this.border.attribute.lineWidth
     });
   }
