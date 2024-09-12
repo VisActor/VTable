@@ -734,10 +734,12 @@ export class Dataset {
     //#endregion
     //#region 对path的数组 rowKeys和colKeys 做双重循环
     //#region 兼容当透视图的应用场景 colTree rowTree 都设置成空数组 只展示一个图表的情况
-    if (rowKeys.length === 0) {
+    if (!this.customRowTree?.length) {
+      //rowKeys.length === 0) {
       rowKeys.push({ rowKey: [], indicatorKey: undefined });
     }
-    if (colKeys.length === 0) {
+    if (!this.customColTree?.length) {
+      //colKeys.length === 0) {
       colKeys.push({ colKey: [], indicatorKey: undefined });
     }
     //#endregion
@@ -2031,7 +2033,7 @@ export class Dataset {
     ) {
       if (!node.virtual) {
         arr.push({
-          dimensionKey: node.dimensionKey,
+          dimensionKey: isValid(node.indicatorKey) ? undefined : node.dimensionKey,
           value: node.value,
           indicatorKey: node.indicatorKey,
           virtual: node.virtual
