@@ -627,7 +627,7 @@ export class Dataset {
     const colKeys: { colKey: string[]; indicatorKey: string | number }[] = [];
     const rowKeys: { rowKey: string[]; indicatorKey: string | number }[] = [];
 
-    if (this.customRowTree) {
+    if (this.customRowTree && !assignedIndicatorKey) {
       const rowTreePath = this.getFieldMatchRowDimensionPaths(record);
       if (rowTreePath.length > 0) {
         for (let i = 0, len = rowTreePath.length; i < len; i++) {
@@ -681,7 +681,7 @@ export class Dataset {
       }
     }
 
-    if (this.customColTree) {
+    if (this.customColTree && !assignedIndicatorKey) {
       const colTreePath = this.getFieldMatchColDimensionPaths(record);
       if (colTreePath.length > 0) {
         for (let i = 0, len = colTreePath.length; i < len; i++) {
@@ -731,9 +731,16 @@ export class Dataset {
         }
       }
     }
-
     //#endregion
-    // 对path的数组 rowKeys和colKeys 做双重循环
+    //#region 对path的数组 rowKeys和colKeys 做双重循环
+    //#region 兼容当透视图的应用场景 colTree rowTree 都设置成空数组 只展示一个图表的情况
+    if (rowKeys.length === 0) {
+      rowKeys.push({ rowKey: [], indicatorKey: undefined });
+    }
+    if (colKeys.length === 0) {
+      colKeys.push({ colKey: [], indicatorKey: undefined });
+    }
+    //#endregion
     for (let row_i = 0; row_i < rowKeys.length; row_i++) {
       const rowKey = rowKeys[row_i].rowKey;
       let assignedIndicatorKey_value;
@@ -864,9 +871,14 @@ export class Dataset {
             const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
             let needAddToAggregator = false;
             if (assignedIndicatorKey_value) {
-              toComputeIndicatorKeys[i] === assignedIndicatorKey_value &&
-                toComputeIndicatorKeys[i] in record &&
-                (needAddToAggregator = true);
+              if (assignedIndicatorKey === assignedIndicatorKey_value) {
+                // 参数传入的assignedIndicatorKey 表示records是指标已经分好组的 组里一定要加入指标聚合对象中
+                toComputeIndicatorKeys[i] === assignedIndicatorKey_value && (needAddToAggregator = true);
+              } else {
+                toComputeIndicatorKeys[i] === assignedIndicatorKey_value &&
+                  toComputeIndicatorKeys[i] in record &&
+                  (needAddToAggregator = true);
+              }
             }
             //加入聚合结果 考虑field为数组的情况
             else if (aggRule?.field) {
@@ -945,6 +957,7 @@ export class Dataset {
         }
       }
     }
+    //#endregion
   }
   /**
    *  TODO 需要完善TreeToArr这里的逻辑
