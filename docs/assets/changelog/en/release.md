@@ -1,3 +1,20 @@
+# v1.7.6
+
+2024-09-12
+
+
+**What's Changed**
+
+* Merge main into develop by @Rui-Sun in https://github.com/VisActor/VTable/pull/2434
+* [Auto changelog] changlog of v1.7.5 by @github-actions in https://github.com/VisActor/VTable/pull/2437
+* fix: set table theme error in gantt chart by @fangsmile in https://github.com/VisActor/VTable/pull/2439
+* [Auto release] release 1.7.6 by @github-actions in https://github.com/VisActor/VTable/pull/2441
+
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.7.5...v1.7.6
+
+[more detail about v1.7.6](https://github.com/VisActor/VTable/releases/tag/v1.7.6)
+
 # v1.7.5
 
 2024-09-12
