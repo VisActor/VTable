@@ -2,11 +2,12 @@ import type {
   CommonDomOptions,
   CreateDOMParamsType,
   IGraphic,
+  IGroup,
   IStage,
   IText,
   SimpleDomStyleOptions
 } from '@visactor/vtable/es/vrender';
-import { ReactAttributePlugin, application } from '@visactor/vtable/es/vrender';
+import { DefaultAttribute, ReactAttributePlugin, application } from '@visactor/vtable/es/vrender';
 import { calculateAnchorOfBounds, isFunction, isNil, isObject, isString, styleStringToObject } from '@visactor/vutils';
 import type { CreateDOMParamsTypeForVTable } from './vtable-browser-env-contribution';
 
@@ -99,7 +100,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
     // 定位wrapGroup
     if (!wrapContainer.style.position) {
       wrapContainer.style.position = 'absolute';
-      nativeContainer.style.position = 'relative';
+      // nativeContainer.style.position = 'relative'; // 'relative' will cause the problem of container position
     }
     let left: number = 0;
     let top: number = 0;
@@ -166,5 +167,19 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
       style: calculateStyle,
       graphic
     } as CreateDOMParamsTypeForVTable);
+  }
+
+  protected drawHTML() {
+    if (application.global.env === 'browser') {
+      (this.pluginService.stage as any).children // fix interactive layer problem
+        .sort((a: IGraphic, b: IGraphic) => {
+          return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);
+        })
+        .forEach((group: IGroup) => {
+          this.renderGroupHTML(group);
+        });
+
+      this.clearCacheContainer();
+    }
   }
 }

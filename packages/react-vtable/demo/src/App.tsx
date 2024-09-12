@@ -28,7 +28,7 @@ import customLayoutPivot from './component/custom-layout-pivot';
 // export default listOptionRecord;
 // export default listComponent;
 // export default listCustomLayout;
-export default listGroup;
+// export default listGroup;
 
 // export default pivotTable;
 // export default pivotComponent;
@@ -36,7 +36,7 @@ export default listGroup;
 
 // export default pivotChart;
 // export default pivotChartComponent;
-export default pivotChartSite;
+// export default pivotChartSite;
 
 // export default listTableEvent;
 // export default eventRebind;
@@ -45,5 +45,5 @@ export default pivotChartSite;
 // export default customLayout;
 // export default customLayoutDom;
 // export default customLayoutDomSite;
-// export default customLayoutDomSite1;
+export default customLayoutDomSite1;
 // export default customLayoutPivot;

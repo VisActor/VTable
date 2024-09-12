@@ -1,3 +1,12 @@
+
+# v1.7.0
+
+2024-08-30
+
+**🆕 New feature**
+
+- **@visactor/vtable-gantt**: add gantt chart
+
 # v1.0.0
 
 2024-05-21

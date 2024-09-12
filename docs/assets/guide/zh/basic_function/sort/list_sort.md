@@ -66,6 +66,66 @@ const listTable = new ListTable(document.getElementById(CONTAINER_ID), {
 
 在上述代码中，`姓名` 列使用 `localeCompare` 函数进行排序，以保证中文字符的正确排序结果；`年龄` 列根据数字大小进行排序。
 
+## 多列排序
+
+当启用 `multipleSort` 选项时，VTable 允许按多列排序。此功能允许用户按多列对表中的数据进行排序，从而根据多个条件提供更详细的数据视图。要启用多列排序，请在 `ListTable` 配置中配置 `multipleSort` 选项。
+
+`multipleSort` 选项是布尔类型，可以按如下方式设置：
+
+```ts
+ListTable({
+  // ...其他配置项
+  columns: [
+    // ...色谱柱配置
+  ],
+  multipleSort: true
+});
+```
+如果启用，用户在单击列标题中的排序图标时，可以添加其他排序条件，而无需删除之前的排序。
+
+例子：
+
+```javascript livedemo template=vtable
+const records = [
+  { name: 'Bill', age: 18 },
+  { name: 'Alex', age: 31 },
+  { name: 'Bob', age: 31 },
+  { name: 'Bruce', age: 22 },
+  { name: 'Anna', age: 22 },
+  { name: 'Martha', age: 45 },
+  { name: 'Steve', age: 29 },
+  { name: 'John', age: 31 },
+  { name: 'Kate', age: 18 },
+  { name: 'Lisa', age: 22 }
+];
+
+const columns = [
+  {
+    field: 'name',
+    title: '姓名',
+    width: 'auto',
+    sort:true,
+  },
+  {
+    field: 'age',
+    title: '年龄',
+    width: 'auto',
+    sort:true,
+  }
+];
+
+const option = {
+  records,
+  columns,
+  widthMode: 'standard',
+  multipleSort: true
+};
+
+// 创建 VTable 实例
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window.tableInstance = tableInstance;
+```
+
 ## 初始排序状态
 
 VTable 支持为表格设定初始排序状态。要设置初始排序状态，可以在 `ListTable` 配置项中使用 `sortState` 配置。`sortState` 类型为 `SortState` 或 `SortState[]`。其中，`SortState` 定义如下：

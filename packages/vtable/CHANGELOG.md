@@ -1,6 +1,73 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 02 Sep 2024 03:26:48 GMT and should not be manually modified.
+This log was last generated on Wed, 11 Sep 2024 12:33:19 GMT and should not be manually modified.
+
+## 1.7.5
+Wed, 11 Sep 2024 12:33:19 GMT
+
+### Updates
+
+- feat: add getFilteredRecords api #2255
+
+
+- fix: select range click outside not cancel select #2355
+
+
+- fix: split line position fix #2392
+
+
+- fix: levelSpan case front columnNode merge range error #2359
+
+
+- fix: judge value is valid #2402
+
+
+- fix: mousedown chart go dealSelectCell and rerender it #2419
+
+
+- fix: fix axis size and layout #2256
+- fix: fix series number in list-group #2425
+- fix: fix recordIndex config of addRecord in list-group #2426
+
+## 1.7.4
+Mon, 09 Sep 2024 02:02:17 GMT
+
+### Updates
+
+- fix: when tree pivot table sort then expand tree node render error #2261
+
+
+- fix: fix interactive layer dom clear problem
+- fix: when no records corner header show dimention title #2247
+
+
+- feat: add updateFilterRules api #2245
+
+
+- fix: fix sparkline range when data has null
+
+## 1.7.3
+Thu, 05 Sep 2024 03:09:20 GMT
+
+### Updates
+
+- fix: when keydown with ctrl meta and shift not trigger edit mode # 2372
+
+
+- fix: fix custom style arrangement duplicate #2370
+- fix: fix no-text cell custom merge #2343
+- fix: fix event bind problem in react-vtable
+- fix: fix right frozen mark position #2344
+- fix: fix select range judgement in cellBgColor #2368
+
+## 1.7.2
+Mon, 02 Sep 2024 10:09:57 GMT
+
+### Updates
+
+- fix: when use groupBy then all merged cells set cellType text #2331
+
+
 
 ## 1.7.1
 Mon, 02 Sep 2024 03:26:48 GMT

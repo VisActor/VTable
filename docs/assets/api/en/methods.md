@@ -681,6 +681,33 @@ Note: The logic distinguishes between flat and tree hierarchies.
    */
   getLayoutRowTreeCount() : number
 ```
+## getLayoutColumnTree(Function)
+
+**PivotTable Exclusive**
+
+Get the table column header tree structure
+
+```
+  /**
+   * Get the table column header tree structure
+   * @returns
+   */
+  getLayoutColumnTree() : LayouTreeNode[]
+```
+
+## getLayoutColumnTreeCount(Function)
+
+**PivotTable Exclusive**
+
+Get the total number of nodes occupying the table column header tree structure.
+
+```
+  /**
+   * Get the total number of nodes occupying the table column header tree structure.
+   * @returns
+   */
+  getLayoutColumnTreeCount() : number
+```
 
 ## updateSortState(Function)
 
@@ -709,7 +736,7 @@ Pivot table update sorting rules, exclusive to PivotTable
 
 ## updatePivotSortState(Function)
 
-Update sort status, PivotTable exclusive
+Update sort status, The vtable itself does not perform sorting logic. PivotTable exclusive
 
 ```
   /**
@@ -721,6 +748,7 @@ Update sort status, PivotTable exclusive
       order: SortOrder;
     }[])
 ```
+The table will not be redrawn automatically after updating, and the interface renderWithRecreateCells needs to be configured to refresh
 
 ## setDropDownMenuHighlight(Function)
 
@@ -785,7 +813,12 @@ Update data filtering rules
 updateFilterRules(filterRules: FilterRules) => void
 ```
 
-use case: After clicking the legend item, update the filter rules to update the chart
+use case: For the PivotChart scene, after clicking the legend item, update the filter rules to update the chart
+
+## getFilteredRecords(Function)
+Get filtered data
+
+**Exclusive to PivotTable**
 
 ## setLegendSelected(Function)
 

@@ -620,16 +620,17 @@ export class Scenegraph {
     setIconHoverStyle(icon, col, row, cellGroup, this);
   }
 
-  updateSortIcon(
-    col: number,
-    row: number,
-    iconMark: Icon,
-    order: SortOrder,
-    oldSortCol: number,
-    oldSortRow: number,
-    oldIconMark: Icon | undefined
-  ) {
-    updateSortIcon(col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, this);
+  updateSortIcon(options: {
+    col: number;
+    row: number;
+    iconMark: Icon;
+    order: SortOrder;
+    oldSortCol: number;
+    oldSortRow: number;
+    oldIconMark: Icon | undefined;
+  }) {
+    const { col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark } = options;
+    updateSortIcon({ col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, scene: this });
   }
 
   updateFrozenIcon(col: number, oldFrozenCol: number) {
@@ -771,7 +772,7 @@ export class Scenegraph {
       this.bodyGroup.children?.forEach((columnGroup: INode) => {
         columnGroup
           .getChildAt(row)
-          .getChildren()
+          ?.getChildren()
           .forEach((node: INode) => {
             if (node.name === 'checkbox') {
               (node as CheckBox).setAttribute('checked', checked);
@@ -780,7 +781,7 @@ export class Scenegraph {
       });
     } else {
       const columnGroup = this.getColGroup(col);
-      columnGroup.children?.forEach((cellNode: INode) => {
+      columnGroup?.children?.forEach((cellNode: INode) => {
         cellNode.getChildren().find(node => {
           if (node.name === 'checkbox') {
             (node as CheckBox).setAttribute('checked', checked);
@@ -1639,7 +1640,10 @@ export class Scenegraph {
   }
 
   updateCellContentWhileResize(col: number, row: number) {
-    const type = this.table.isHeader(col, row)
+    const isVtableMerge = this.table.getCellRawRecord(col, row)?.vtableMerge;
+    const type = isVtableMerge
+      ? 'text'
+      : this.table.isHeader(col, row)
       ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
       : this.table.getBodyColumnType(col, row);
     const cellGroup = this.getCell(col, row);
@@ -1720,10 +1724,17 @@ export class Scenegraph {
       if (abstractY >= drawRange.top && abstractY <= drawRange.bottom) {
         // to do: 处理最后一列外调整列宽
         cell = this.table.getCellAtRelativePosition(abstractX - offset, abstractY);
-        return cell;
+        if (cell.col === this.table.colCount - 1) {
+          return cell;
+        }
       }
       return { col: -1, row: -1 };
     }
+
+    if (!cellGroup.stage) {
+      return { col: -1, row: -1 };
+    }
+
     if (abstractX < cellGroup.globalAABBBounds.x1 + offset) {
       cell = { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
     } else if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
@@ -1732,7 +1743,8 @@ export class Scenegraph {
     if (
       cell &&
       this.table.rightFrozenColCount > 0 &&
-      cell.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
+      // cell.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
+      cell.col >= this.table.colCount - this.table.rightFrozenColCount - 1 &&
       this.table.tableNoFrameWidth -
         this.table.getFrozenColsWidth() -
         this.table.getRightFrozenColsWidth() +
@@ -1764,7 +1776,8 @@ export class Scenegraph {
       if (
         cell &&
         this.table.bottomFrozenRowCount > 0 &&
-        cell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
+        // cell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
+        cell.row >= this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
         this.table.tableNoFrameHeight -
           this.table.getFrozenRowsHeight() -
           this.table.getBottomFrozenRowsHeight() +

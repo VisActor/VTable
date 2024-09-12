@@ -20,9 +20,10 @@ import type {
   CollectedValue,
   IIndicator,
   IPivotChartDataConfig,
-  CalculateddFieldRules
+  CalculateddFieldRules,
+  SortType
 } from '../ts-types';
-import { AggregationType, SortType } from '../ts-types';
+import { AggregationType } from '../ts-types';
 import type { Aggregator, IAggregator } from './statistics-helper';
 import {
   AvgAggregator,
@@ -55,6 +56,7 @@ export class Dataset {
    * 明细数据
    */
   records?: any[] | Record<string, any[]>;
+  filteredRecords?: any[] | Record<string, any[]>;
   /**
    * 树形节点，最后的子节点对应到body部分的每个单元格 树结构： 行-列-单元格
    */
@@ -67,6 +69,10 @@ export class Dataset {
   colKeys: string[][] = [];
   //行表头的每行对应的表头键值
   rowKeys: string[][] = [];
+
+  // 存储下未排序即初始normal下rowKeys和colKeys
+  colKeys_normal: string[][] = [];
+  rowKeys_normal: string[][] = [];
   // /**
   //  * 对应dataset中的rowKeys，行表头的每行表头键值，包含小计总计
   //  */
@@ -157,6 +163,7 @@ export class Dataset {
   ) {
     this.registerAggregators();
     this.dataConfig = dataConfig;
+    this.filterRules = this.dataConfig?.filterRules;
     this.rowHierarchyType = rowHierarchyType ?? 'grid';
     // this.allTotal = new SumAggregator(this.indicators[0]);
     this.sortRules = this.dataConfig?.sortRules;
@@ -271,6 +278,8 @@ export class Dataset {
       const t5 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('totalStatistics:', t5 - t4);
 
+      this.rowKeys_normal = this.rowKeys.slice();
+      this.colKeys_normal = this.colKeys.slice();
       //对维度排序
       const t2 = typeof window !== 'undefined' ? window.performance.now() : 0;
       this.sortKeys();
@@ -484,23 +493,34 @@ export class Dataset {
    */
   private processRecords() {
     let isNeedFilter = false;
-    if ((this.dataConfig?.filterRules?.length ?? 0) >= 1) {
+    if ((this.filterRules?.length ?? 0) >= 1) {
       isNeedFilter = true;
     }
     //常规records是数组的情况
     if (Array.isArray(this.records)) {
+      if (!this.filteredRecords) {
+        this.filteredRecords = [];
+      }
       for (let i = 0, len = this.records.length; i < len; i++) {
         const record = this.records[i];
         if (!isNeedFilter || this.filterRecord(record)) {
+          (this.filteredRecords as any[]).push(record);
           this.processRecord(record);
         }
       }
     } else {
+      if (!this.filteredRecords) {
+        this.filteredRecords = {};
+      }
       //records是用户传来的按指标分组后的数据
       for (const key in this.records) {
         for (let i = 0, len = this.records[key].length; i < len; i++) {
           const record = this.records[key][i];
           if (!isNeedFilter || this.filterRecord(record)) {
+            if (!(this.filteredRecords as Record<string, any[]>)[key]) {
+              (this.filteredRecords as Record<string, any[]>)[key] = [];
+            }
+            (this.filteredRecords as Record<string, any[]>)[key].push(record);
             this.processRecord(record, key);
           }
         }
@@ -511,9 +531,9 @@ export class Dataset {
   }
   private filterRecord(record: any) {
     let isReserved = true;
-    if (this.dataConfig?.filterRules) {
-      for (let i = 0; i < this.dataConfig.filterRules.length; i++) {
-        const filterRule = this.dataConfig?.filterRules[i];
+    if (this.filterRules) {
+      for (let i = 0; i < this.filterRules.length; i++) {
+        const filterRule = this.filterRules[i];
         if (filterRule.filterKey) {
           const filterValue = record[filterRule.filterKey];
           if (filterRule.filteredValues?.indexOf(filterValue) === -1) {
@@ -938,6 +958,7 @@ export class Dataset {
   /** 更新过滤规则 修改tree数据及收集的value */
   updateFilterRules(filterRules: FilterRules, isResetTree: boolean = false) {
     this.filterRules = filterRules;
+    this.filteredRecords = undefined;
     if (isResetTree) {
       this.tree = {};
     } else {
@@ -953,7 +974,7 @@ export class Dataset {
     this.processRecords();
     this.processCollectedValuesWithSumBy();
     this.processCollectedValuesWithSortBy();
-
+    this.totalStatistics();
     if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart) {
       // 处理PivotChart双轴图0值对齐
       // this.dealWithZeroAlign();
@@ -1102,42 +1123,44 @@ export class Dataset {
    * 根据排序规则 对维度keys排序
    */
   sortKeys() {
+    this.colKeys = this.colKeys_normal.slice();
+    this.rowKeys = this.rowKeys_normal.slice();
     const that = this;
     if (!this.sorted) {
       this.sorted = true;
-      const getValue = function (rowKey: any, colKey: any) {
-        return that.getAggregator(rowKey, colKey, '').value();
-      };
+      // const getValue = function (rowKey: any, colKey: any) {
+      //   return that.getAggregator(rowKey, colKey, '').value();
+      // };
 
-      switch (this.rowOrder) {
-        case 'value_a_to_z':
-          this.rowKeys.sort(function (a, b) {
-            return naturalSort(getValue(a, []), getValue(b, []));
-          });
-          break;
-        case 'value_z_to_a':
-          this.rowKeys.sort(function (a, b) {
-            return -naturalSort(getValue(a, []), getValue(b, []));
-          });
-          break;
-        default:
-          this.rowKeys.sort(this.arrSort(this.rows, true));
-      }
-      switch (this.colOrder) {
-        case 'value_a_to_z':
-          this.colKeys.sort(function (a, b) {
-            return naturalSort(getValue([], a), getValue([], b));
-          });
-          break;
-        case 'value_z_to_a':
-          this.colKeys.sort(function (a, b) {
-            return -naturalSort(getValue([], a), getValue([], b));
-          });
-          break;
-        default:
-          const sortfun = this.arrSort(this.columns, false);
-          this.colKeys.sort(sortfun);
-      }
+      // switch (this.rowOrder) {
+      //   case 'value_a_to_z':
+      //     this.rowKeys.sort(function (a, b) {
+      //       return naturalSort(getValue(a, []), getValue(b, []));
+      //     });
+      //     break;
+      //   case 'value_z_to_a':
+      //     this.rowKeys.sort(function (a, b) {
+      //       return -naturalSort(getValue(a, []), getValue(b, []));
+      //     });
+      //     break;
+      //   default:
+      this.rowKeys.sort(this.arrSort(this.rows, true));
+      // }
+      // switch (this.colOrder) {
+      //   case 'value_a_to_z':
+      //     this.colKeys.sort(function (a, b) {
+      //       return naturalSort(getValue([], a), getValue([], b));
+      //     });
+      //     break;
+      //   case 'value_z_to_a':
+      //     this.colKeys.sort(function (a, b) {
+      //       return -naturalSort(getValue([], a), getValue([], b));
+      //     });
+      //     break;
+      //   default:
+      const sortfun = this.arrSort(this.columns, false);
+      this.colKeys.sort(sortfun);
+      // }
     }
   }
   /**
@@ -1188,21 +1211,34 @@ export class Dataset {
       let sorter;
       for (let i = 0; i < sortersArr.length; i++) {
         sorter = sortersArr[i];
+        // if (!(sorter.sortRule?.sortType === SortType.NORMAL || sorter.sortRule?.sortType === SortType.normal)) {
         if (sorter.sortRule?.sortByIndicator) {
           let aChanged = a;
           let bChanged = b;
           if (sorter.fieldIndex < fieldArr.length - 1) {
             aChanged = a.slice(0, sorter.fieldIndex + 1);
-            aChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
+            if (that.rowHierarchyType === 'grid' && isRow) {
+              aChanged.push(that.rowSubTotalLabel);
+            } else if (!isRow) {
+              aChanged.push(that.colSubTotalLabel);
+            }
             bChanged = b.slice(0, sorter.fieldIndex + 1);
-            bChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
+            if (that.rowHierarchyType === 'grid' && isRow) {
+              bChanged.push(that.rowSubTotalLabel);
+            } else if (!isRow) {
+              bChanged.push(that.colSubTotalLabel);
+            }
           }
-          comparison = sorter.func(aChanged, bChanged);
+          comparison = sorter.func(aChanged, bChanged, sorter.sortRule?.sortType);
         } else {
-          comparison = sorter.func?.(a[sorter.fieldIndex], b[sorter.fieldIndex]);
+          comparison = sorter.func?.(a[sorter.fieldIndex], b[sorter.fieldIndex], sorter.sortRule?.sortType);
         }
         if (comparison !== 0) {
-          return comparison * (sorter.sortRule?.sortType === SortType.DESC ? -1 : 1);
+          return comparison;
+          // return (
+          //   comparison *
+          //   (sorter.sortRule?.sortType === SortType.DESC || sorter.sortRule?.sortType === SortType.desc ? -1 : 1)
+          // );
         }
       }
       return 0;
@@ -1217,7 +1253,7 @@ export class Dataset {
     const that = this;
 
     if ((<SortByIndicatorRule>sortRule).sortByIndicator) {
-      return (a: string[], b: string[]) => {
+      return (a: string[], b: string[], sortType?: SortType) => {
         /**
          * 根据rowKey和colKey获取tree上对应的聚合值
          * @param rowKey
@@ -1227,6 +1263,7 @@ export class Dataset {
         const getValue = function (rowKey: any, colKey: any) {
           //如果rowKey提供的不全 如 [地区,省,城市] 只提供了如[华东,山东] 会补全为[华东,山东,小计]
           if (
+            that.rowHierarchyType === 'grid' &&
             rowKey.length < that.rows.length &&
             rowKey[rowKey.length - 1] !== that.rowSubTotalLabel &&
             rowKey[rowKey.length - 1] !== that.rowGrandTotalLabel
@@ -1245,22 +1282,25 @@ export class Dataset {
         if (isSortRow) {
           return naturalSort(
             getValue(a, (<SortByIndicatorRule>sortRule).query),
-            getValue(b, (<SortByIndicatorRule>sortRule).query)
+            getValue(b, (<SortByIndicatorRule>sortRule).query),
+            sortType
           );
         }
         return naturalSort(
           getValue((<SortByIndicatorRule>sortRule).query, a),
-          getValue((<SortByIndicatorRule>sortRule).query, b)
+          getValue((<SortByIndicatorRule>sortRule).query, b),
+          sortType
         );
       };
     } else if ((<SortByRule>sortRule).sortBy) {
-      return sortBy((<SortByRule>sortRule).sortBy!);
+      return sortBy((<SortByRule>sortRule).sortBy);
+    }
+
+    if ((<SortFuncRule>sortRule).sortFunc) {
+      return (<SortFuncRule>sortRule).sortFunc;
     }
     if ((<SortTypeRule>sortRule).sortType) {
       return typeSort;
-    }
-    if ((<SortFuncRule>sortRule).sortFunc) {
-      return (<SortFuncRule>sortRule).sortFunc;
     }
     return naturalSort;
   }
@@ -1338,7 +1378,9 @@ export class Dataset {
                       dependIndicatorKeys: calculatedFieldRule?.dependIndicatorKeys
                     });
                   }
-                  this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  if (flatColTotalKey !== flatColKey) {
+                    this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  }
                 } else {
                   if (!this.tree[flatRowKey][flatColTotalKey][i]) {
                     const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
@@ -1359,7 +1401,9 @@ export class Dataset {
                         )?.format
                     });
                   }
-                  this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  if (flatColTotalKey !== flatColKey) {
+                    this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  }
                 }
               }
             }
@@ -1399,7 +1443,9 @@ export class Dataset {
                   dependIndicatorKeys: calculatedFieldRule?.dependIndicatorKeys
                 });
               }
-              this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              if (flatColTotalKey !== flatColKey) {
+                this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              }
             } else {
               if (!this.tree[flatRowKey][flatColTotalKey][i]) {
                 const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
@@ -1420,7 +1466,9 @@ export class Dataset {
                     )?.format
                 });
               }
-              this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              if (flatColTotalKey !== flatColKey) {
+                this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              }
             }
           }
         }
@@ -1493,7 +1541,9 @@ export class Dataset {
                       });
                     }
                   }
-                  this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  if (flatRowTotalKey !== flatRowKey) {
+                    this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  }
                 }
               }
             }
@@ -1551,7 +1601,9 @@ export class Dataset {
                   });
                 }
               }
-              this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              if (flatRowTotalKey !== flatRowKey) {
+                this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              }
             }
           }
           colCompute(flatRowKey, flatColKey);

@@ -127,11 +127,15 @@ export function updateCellHeight(
   cell.needUpdateHeight = false;
 
   cell.setAttribute('height', distHeight);
-
+  const isVtableMerge = scene.table.getCellRawRecord(col, row)?.vtableMerge;
+  const isCustomMerge = !!scene.table.getCustomMerge(col, row);
   // 更新单元格布局
-  const type = scene.table.isHeader(col, row)
-    ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-    : scene.table.getBodyColumnType(col, row);
+  const type =
+    isVtableMerge || isCustomMerge
+      ? 'text'
+      : scene.table.isHeader(col, row)
+      ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+      : scene.table.getBodyColumnType(col, row);
   if (type === 'progressbar') {
     // 目前先采用重新生成节点的方案
     const columnDefine = scene.table.getBodyColumnDefine(col, row) as IProgressbarColumnBodyDefine;
@@ -234,9 +238,9 @@ export function updateCellHeight(
         let customRender;
         let customLayout;
         const cellLocation = scene.table.getCellLocation(col, row);
-        const { vTableMerge } = scene.table.getCellRawRecord(col, row);
+        const { vtableMerge } = scene.table.getCellRawRecord(col, row) || {};
 
-        if (vTableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+        if (vtableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
           customLayout = (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout;
         } else if (cellLocation !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);

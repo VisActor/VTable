@@ -75,6 +75,7 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
+    frozenColCount: 2,
     rightFrozenColCount: 2,
     allowFrozenColCount: 10,
     hover: {

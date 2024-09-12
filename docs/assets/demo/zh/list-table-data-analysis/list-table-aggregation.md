@@ -48,6 +48,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/olympic-winner
       {
         field: 'athlete',
         title: 'athlete',
+        width:120,
         aggregation: {
           aggregationType: VTable.TYPES.AggregationType.NONE,
           formatFun(value) {
@@ -68,6 +69,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/olympic-winner
       {
         field: 'country',
         title: 'country',
+        width:240,
         headerIcon: 'filter',
         aggregation: {
           aggregationType: VTable.TYPES.AggregationType.CUSTOM,

@@ -1,9 +1,10 @@
-import { isObject, isValid } from '@visactor/vutils';
+import { isArray, isObject, isValid } from '@visactor/vutils';
 import type { StateManager } from '../state';
 import type { CheckboxColumnDefine } from '../../ts-types';
 import { getOrApply } from '../../tools/helper';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { CheckBox } from '@visactor/vrender-components';
+import type { CachedDataSource } from '../../data';
 
 export function setCheckedState(
   col: number,
@@ -240,4 +241,19 @@ export function changeCheckboxOrder(sourceIndex: number, targetIndex: number, st
     checkedState[sourceIndex] = checkedState[targetIndex];
     checkedState[targetIndex] = sourceRecord;
   }
+}
+
+export function getGroupCheckboxState(table: BaseTableAPI) {
+  const result: any[] = [];
+  const dataSource = table.dataSource as CachedDataSource;
+  const groupKeyLength = dataSource.dataConfig.groupByRules.length + 1;
+  dataSource.currentIndexedData.forEach((indexArr: number, index) => {
+    if (isArray(indexArr) && indexArr.length === groupKeyLength) {
+      // get record by index
+      const { vtableOriginIndex } = (dataSource as any).getRawRecord(indexArr);
+      result[vtableOriginIndex] = table.stateManager.checkedState[indexArr];
+    }
+  });
+
+  return result;
 }

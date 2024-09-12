@@ -195,7 +195,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
           }
         }
       }
-    } else {
+    } else if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
       const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
       if (
         (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&

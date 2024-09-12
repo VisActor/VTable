@@ -180,7 +180,7 @@ export function getCellStyle(col: number, row: number, table: BaseTableAPI): Ful
   const rawRecord = table.getCellOriginRecord(col, row);
 
   //如果是主体部分，获取相应的style
-  if (rawRecord?.vTableMerge) {
+  if (rawRecord?.vtableMerge) {
     cacheKey = 'merge-title';
   } else if (table.isSeriesNumberInBody(col, row)) {
     // 如果是行序号
@@ -195,7 +195,7 @@ export function getCellStyle(col: number, row: number, table: BaseTableAPI): Ful
   }
   let cacheStyle;
 
-  if (rawRecord?.vTableMerge) {
+  if (rawRecord?.vtableMerge) {
     cacheStyle = table.bodyMergeTitleCache.get(cacheKey);
   } else if (layoutMap.isBottomFrozenRow(row)) {
     cacheStyle = table.bodyBottomStyleCache.get(cacheKey);
@@ -214,7 +214,7 @@ export function getCellStyle(col: number, row: number, table: BaseTableAPI): Ful
   const style = column?.style;
   cacheStyle = <FullExtendStyle>columnStyleContents.of(
     style,
-    rawRecord?.vTableMerge && table.theme.groupTitleStyle
+    rawRecord?.vtableMerge && table.theme.groupTitleStyle
       ? table.theme.groupTitleStyle
       : layoutMap.isBottomFrozenRow(row) && table.theme.bottomFrozenStyle
       ? table.theme.bottomFrozenStyle

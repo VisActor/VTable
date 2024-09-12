@@ -368,14 +368,16 @@ export function generateLayoutTree(tree: LayouTreeNode[], children: ITreeLayoutH
       value: string;
       virtual?: boolean;
       hierarchyState: HierarchyState;
-      children: any;
+      children: ITreeLayoutHeadNode[];
+      levelSpan: number;
     } = {
       dimensionKey: node.dimensionKey,
       indicatorKey: node.indicatorKey,
       value: node.value,
       hierarchyState: node.hierarchyState,
       children: undefined,
-      virtual: node.virtual ?? false
+      virtual: node.virtual ?? false,
+      levelSpan: node.levelSpan ?? 1
     };
     tree.push(diemnsonNode);
     if (node.children) {
@@ -542,6 +544,10 @@ export function dealHeader(
     for (let i = 1; i < (hd as any).levelSpan; i++) {
       if (!_headerCellIds[row + i]) {
         _headerCellIds[row + i] = [];
+        // 当行前几个没有赋值的id 赋值
+        for (let col = 0; col < layoutMap.colIndex; col++) {
+          _headerCellIds[row + i][col] = _headerCellIds[row][col];
+        }
       }
       _headerCellIds[row + i][layoutMap.colIndex] = id;
     }

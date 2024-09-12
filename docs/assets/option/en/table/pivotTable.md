@@ -113,55 +113,59 @@ export type SortRule = SortTypeRule | SortByRule | SortByIndicatorRule | SortFun
 
 The sorting rules support four methods:
 
-1. SortTypeRule: Sort by field, such as ascending order by year: `{"sortField": "Year", "sortType": "ASC"}`.
+1. SortTypeRule: Sorts by field, such as sorting by year in ascending order: `{"sortField": "Year", "sortType": "ASC"}`. ASC DESC sorts in ascending or descending order according to the natural order of pinyin or numbers, and NORMAL sorts according to the order in records.
 
 ```
-//1. Specify the sorting type
+//1. Specify the sort type
 export interface SortTypeRule {
-  /**Sort dimensions */
+  /**Sorting dimension */
   sortField: string;
-  /**Ascending order Descending order ASC or DESC*/
+  /**Ascending or descending order ASC or DESC NORMAL*/
   sortType?: SortType;
 }
 ```
 
-2. SortByRule: Sort by dimension members specified, such as sorting by region dimension value: `{"sortField": "Region", "sortBy": ["South China", "Central China", "North China", "Central South", "Southwest China" "]}`.
+2. SortByRule: Sorts by specifying the order of dimension members, such as sorting by region dimension values: `{"sortField": "Region", "sortBy": ["华南","华中","华北","中南","西南"]}`. ASC DESC sorts in ascending or descending order according to the order specified by sortBy, and NORMAL sorts according to the order in records.
 
 ```
-//2. Sort by dimension member specification
+//2. Sort by specifying the order of dimension members
 export interface SortByRule {
-  /**Sort dimensions */
+  /**Sorting dimension */
   sortField: string;
-  /** Sort according to the specified order */
+  /**Sort by specifying a specific order */
   sortBy?: string[];
+  /**Ascending or descending order ASC or DESC NORMAL*/
+  sortType?: SortType;
 }
 ```
 
-3. SortByIndicatorRule: Sort according to the indicator value, such as sorting the regional dimension values in descending order according to the sales amount under the category office supplies: `{sortField:'Region',sortByIndicator: "Sales", sortType: "DESC",query:['Office supplies ']}`.
+3. SortByIndicatorRule: Sorts by indicator values, such as sorting by the sales amount of the office category in descending order to sort the region dimension values: `{sortField:'Region', sortByIndicator: "Sales", sortType: "DESC", query:['办公用品']}`. ASC DESC sorts in ascending or descending order according to the indicator value specified by sortBy, and NORMAL sorts according to the order in records.
 
 ```
-//3. Sort by indicator value
+//3. Sort by indicator values
 export interface SortByIndicatorRule {
-  /**Sort dimensions */
+  /**Sorting dimension */
   sortField: string;
-  /**Ascending order Descending order ASC or DESC*/
+  /**Ascending or descending order ASC or DESC NORMAL*/
   sortType?: SortType;
-  /** Sort according to a certain indicator value */
+  /**Sort by a specific indicator value */
   sortByIndicator?: string;
-  /**If you sort by indicator value, you also need to specify the specific value of the underlying dimension member in another (row or column) direction. For example, according to the paper under office supplies ['office supplies', 'paper'] */
+  /**If sorting by indicator values, another dimension member value (row or column) needs to be specified. For example, sorting by office supplies ['办公用品', '纸张'] */
   query?: string[];
 }
 ```
 
-4. SortFuncRule: supports custom sorting rules through functions, such as sorting based on calculated indicator values: `{"sortField": "Region", sortFunc: (a, b) => a.sales - b.sales}`.
+4. SortFuncRule: Supports custom sorting rules through functions, such as sorting by calculated indicator values: `{"sortField": "Region", sortFunc: (a, b) => a.sales - b.sales}`. ASC DESC NORMAL all follow the sorting logic in sortFunc.
 
 ```
-//4. Custom sorting method function
+//4. Custom sorting function
 export interface SortFuncRule {
-  /**Sort dimensions */
+  /**Sorting dimension */
   sortField: string;
   /**Custom sorting function */
   sortFunc?: (a: any, b: any) => number;
+  /**Ascending or descending order ASC or DESC NORMAL*/
+  sortType?: SortType;
 }
 ```
 
@@ -275,6 +279,8 @@ export interface IDimensionHeaderNode {
   hierarchyState?: HierarchyState;
   /** Whether it is a virtual node. If configured to true, this dimension field will be ignored when analyzing based on records data */
   virtual?: boolean;
+  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
+  levelSpan?: number;
 }
 ```
 
@@ -290,6 +296,8 @@ export interface IIndicatorHeaderNode {
    * Indicator name, such as: "Sales Amount", "example", corresponding to the value displayed in the cell. Optional, if not filled in, the value will be taken from the corresponding configuration in indicators
    */
   value?: string;
+  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
+  levelSpan?: number;
 }
 ```
 

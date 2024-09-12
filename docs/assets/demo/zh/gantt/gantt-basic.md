@@ -636,6 +636,7 @@ const option = {
       borderColor: '#e1e4e8',
       cornerRadius: 8
     },
+    verticalSplitLineMoveable: true,
     verticalSplitLine: {
       lineColor: '#e1e4e8',
       lineWidth: 3

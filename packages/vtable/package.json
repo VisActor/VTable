@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "1.7.1",
+  "version": "1.7.5",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -55,7 +55,7 @@
     "@visactor/vrender-core": "0.20.2-alpha.1",
     "@visactor/vrender-kits": "0.20.2-alpha.1",
     "@visactor/vrender-components": "0.20.2-alpha.1",
-    "@visactor/vutils": "~0.18.13",
+    "@visactor/vutils": "~0.18.14",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
     "@visactor/vutils-extension": "~1.11.5",

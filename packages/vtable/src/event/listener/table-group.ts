@@ -1,5 +1,5 @@
 import type { IEventTarget, FederatedPointerEvent, FederatedWheelEvent } from '@src/vrender';
-import { Gesture } from '@src/vrender';
+import { Gesture, vglobal } from '@src/vrender';
 import type {
   ListTableAPI,
   MousePointerCellEvent,
@@ -58,6 +58,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
       return;
     } else if (
+      !table.options.select?.disableDragSelect &&
       table.eventManager.isDraging &&
       stateManager.isSelecting() &&
       !(table as ListTableAPI).editorManager?.editingEditor
@@ -303,7 +304,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     }
   });
   /**
-   * 两种场景会触发这里的pointerupoutside
+   * 两种场景会触发这里的pointerupoutside TODO 第二种并不应该触发，待vrender修改后再整理这里的逻辑
    * 1. 鼠标down和up的场景树节点不一样
    * 2. 点击到非stage的（非canvas）  其他dom节点
    */
@@ -362,23 +363,36 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
     }
-    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
-    getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
-      if (isCompleteEdit === false) {
-        // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
-        return;
-      }
-      stateManager.updateInteractionState(InteractionState.default);
-      eventManager.dealTableHover();
-      //点击到表格外部不需要取消选中状态
-      if (table.options.select?.outsideClickDeselect) {
-        const isHasSelected = !!stateManager.select.ranges?.length;
-        eventManager.dealTableSelect();
-        stateManager.endSelectCells(true, isHasSelected);
-      }
-    });
   });
 
+  const globalPointerupCallback = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (!table.getElement().contains(target)) {
+      // 如果点击到表格外部的dom
+      const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
+      getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
+        if (isCompleteEdit === false) {
+          // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+          return;
+        }
+        stateManager.updateInteractionState(InteractionState.default);
+        eventManager.dealTableHover();
+        //点击到表格外部不需要取消选中状态
+        if (table.options.select?.outsideClickDeselect) {
+          const isHasSelected = !!stateManager.select.ranges?.length;
+          eventManager.dealTableSelect();
+          stateManager.endSelectCells(true, isHasSelected);
+        }
+      });
+    }
+  };
+  eventManager.globalEventListeners.push({
+    name: 'pointerup',
+    env: 'document',
+    callback: globalPointerupCallback
+  });
+  // 整体全局监听事件
+  vglobal.addEventListener('pointerup', globalPointerupCallback);
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
       table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
@@ -415,6 +429,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 点击在menu外，且不是下拉菜单的icon，移除menu
       stateManager.hideMenu();
     }
+    // 如果点击到了图表上  后续的逻辑忽略掉 以免重绘了图表 丢失vchart图表的交互
+    if (eventArgsSet?.eventArgs?.target.type === 'chart') {
+      return;
+    }
+
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
     getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
       if (isCompleteEdit === false) {
@@ -655,34 +674,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
   // 注意和pointerup事件的处理 vrender中的事件系统： 是先触发pointerup 如果是点击到的场景树图元节点则会继续触发pointertap 否则不触发pointertap
   table.scenegraph.tableGroup.addEventListener('pointertap', (e: FederatedPointerEvent) => {
     console.log('tableGroup', 'pointertap');
-    if (table.stateManager.columnResize.resizing || table.stateManager.columnMove.moving) {
-      return;
-    }
-    // if (table.stateManager.fillHandle.isFilling) {
-    //   table.stateManager.endFillSelect();
-    //   return;
-    // }
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-    eventManager.dealIconClick(e, eventArgsSet);
-    if (!eventArgsSet?.eventArgs) {
-      return;
-    }
-    if (eventManager.touchSetTimeout) {
-      // 通过这个变量判断非drag鼠标拖拽状态，就不再增加其他变量isDrag了（touchSetTimeout如果拖拽过会变成undefined pointermove事件有置为undefined）
-      if (e.pointerType === 'touch') {
-        // 移动端事件特殊处理
-        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-        if (eventManager.touchSetTimeout) {
-          clearTimeout(eventManager.touchSetTimeout);
-          const isHasSelected = !!stateManager.select.ranges?.length;
-          eventManager.dealTableSelect(eventArgsSet);
-          stateManager.endSelectCells(true, isHasSelected);
-          eventManager.touchSetTimeout = undefined;
-        }
-      }
-    }
-
-    if (!eventManager.touchMove && e.button === 0 && (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
+    if (
+      !eventManager.touchMove &&
+      e.button === 0 &&
+      eventArgsSet.eventArgs &&
+      (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)
+    ) {
       const { col, row } = eventArgsSet.eventArgs;
       const cellInfo = table.getCellInfo(col, row);
       let icon;
@@ -711,6 +709,32 @@ export function bindTableGroupListener(eventManager: EventManager) {
       };
 
       table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
+    }
+    if (table.stateManager.columnResize.resizing || table.stateManager.columnMove.moving) {
+      return;
+    }
+    // if (table.stateManager.fillHandle.isFilling) {
+    //   table.stateManager.endFillSelect();
+    //   return;
+    // }
+
+    eventManager.dealIconClick(e, eventArgsSet);
+    if (!eventArgsSet?.eventArgs) {
+      return;
+    }
+    if (eventManager.touchSetTimeout) {
+      // 通过这个变量判断非drag鼠标拖拽状态，就不再增加其他变量isDrag了（touchSetTimeout如果拖拽过会变成undefined pointermove事件有置为undefined）
+      if (e.pointerType === 'touch') {
+        // 移动端事件特殊处理
+        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+        if (eventManager.touchSetTimeout) {
+          clearTimeout(eventManager.touchSetTimeout);
+          const isHasSelected = !!stateManager.select.ranges?.length;
+          eventManager.dealTableSelect(eventArgsSet);
+          stateManager.endSelectCells(true, isHasSelected);
+          eventManager.touchSetTimeout = undefined;
+        }
+      }
     }
   });
   // stage 的pointerdown监听

@@ -49,6 +49,7 @@ import {
 import { updateResizeRow } from './resize/update-resize-row';
 import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
 import type { PivotTable } from '../PivotTable';
+import { traverseObject } from '../tools/util';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -134,14 +135,14 @@ export class StateManager {
     highlightIndex: number;
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
   };
-  sort: {
+  sort: Array<{
     col: number;
     row: number;
     field?: string;
     // fieldKey?: string;
     order: SortOrder;
     icon?: Icon;
-  };
+  }>;
   frozen: {
     col: number;
     // row: number;
@@ -264,11 +265,13 @@ export class StateManager {
       highlightIndex: -1,
       dropDownMenuHighlight: []
     };
-    this.sort = {
-      col: -1,
-      row: -1,
-      order: 'normal'
-    };
+    this.sort = [
+      {
+        col: -1,
+        row: -1,
+        order: 'normal'
+      }
+    ];
     this.frozen = {
       col: -1
       // row: -1,
@@ -346,11 +349,13 @@ export class StateManager {
       highlightIndex: -1,
       dropDownMenuHighlight: []
     };
-    this.sort = {
-      col: -1,
-      row: -1,
-      order: 'normal'
-    };
+    this.sort = [
+      {
+        col: -1,
+        row: -1,
+        order: 'normal'
+      }
+    ];
     this.frozen = {
       col: -1
       // row: -1,
@@ -461,16 +466,57 @@ export class StateManager {
     return seled;
   }
 
-  setSortState(sortState: SortState) {
-    this.sort.field = sortState?.field as string;
+  setSortState(sortState: SortState | SortState[]) {
+    sortState = !sortState || Array.isArray(sortState) ? sortState : [sortState];
+    ////this.sort[this.sort.length - 1].field = sortState[sortState.length - 1]?.field as string;
     // this.sort.fieldKey = sortState?.fieldKey as string;
-    this.sort.order = sortState?.order;
+    ////this.sort[this.sort.length - 1].order = sortState[sortState.length - 1]?.order;
     // // 这里有一个问题，目前sortState中一般只传入了fieldKey，但是getCellRangeByField需要field
     // const range = this.table.getCellRangeByField(this.sort.field, 0);
     // if (range) {
     //   this.sort.col = range.start.col;
     //   this.sort.row = range.start.row;
     // }
+
+    function flattenColumns(columns: any) {
+      const result: Array<any> = [];
+
+      function flatten(cols: any, parentStartIndex = 0) {
+        cols.forEach((col: any) => {
+          const startIndex = col.startInTotal ?? parentStartIndex;
+          if (col.columns) {
+            flatten(col.columns, startIndex);
+          } else {
+            result.push({
+              ...col,
+              startIndex
+            });
+          }
+        });
+      }
+
+      flatten(columns);
+      return result;
+    }
+
+    const sort =
+      sortState &&
+      (sortState as SortState[]).reduce((prev, item) => {
+        const column = flattenColumns((this.table.internalProps as any).columns)?.find(
+          column => column?.field === item?.field
+        );
+        //let path = (item as any)?.event?.path?.findLast((item:any)=>item.col!=undefined);
+        prev.push({
+          field: item.field,
+          order: item.order,
+          col: column.startInTotal,
+          row: column.level
+        } as any);
+
+        return prev;
+      }, []);
+
+    this.sort = sort || [];
   }
 
   setFrozenState() {
@@ -1196,9 +1242,9 @@ export class StateManager {
       // 透视表不执行sort操作
       const sortState = (this.table as PivotTableAPI).getPivotSortState(col, row);
 
-      const order = sortState ? (sortState.toUpperCase() as SortOrder) : 'DESC';
-      // const new_order = order === 'ASC' ? 'DESC' : order === 'DESC' ? 'NORMAL' : 'ASC';
-      const new_order = order === 'ASC' ? 'DESC' : 'ASC';
+      const order = sortState ? (sortState.toUpperCase() as SortOrder) : 'NORMAL';
+      const new_order = order === 'ASC' ? 'DESC' : order === 'DESC' ? 'NORMAL' : 'ASC';
+      // const new_order = order === 'ASC' ? 'DESC' : 'ASC';
       (this.table as PivotTable).sort(col, row, new_order);
 
       // // 触发透视表排序按钮点击
@@ -1213,52 +1259,115 @@ export class StateManager {
       return;
     }
 
-    const oldSortCol = this.sort.col;
-    const oldSortRow = this.sort.row;
+    const previousSort = [...this.sort];
+    const previousSortItem =
+      this.table.internalProps.multipleSort || !previousSort.length ? null : this.sort[this.sort.length - 1];
+
     // 执行sort
     dealSort(col, row, this.table as ListTableAPI, event);
-    this.sort.col = col;
-    this.sort.row = row;
+
+    const currentSortItem = this.sort.find(item => item.col === col && item.row === row);
+
+    const oldSortCol = this.table.internalProps.multipleSort || !previousSortItem ? null : previousSortItem.col;
+    const oldSortRow = this.table.internalProps.multipleSort || !previousSortItem ? null : previousSortItem.row;
+    //currentSortItem.col = col;
+    //currentSortItem.row = row;
+
+    const currentSortItemIndex = previousSort.findIndex(item => item.col === col && item.row === row);
+    if (currentSortItemIndex >= 0) {
+      previousSort.splice(currentSortItemIndex, 1);
+    }
 
     // 更新icon
-    this.table.scenegraph.updateSortIcon(
-      this.sort.col,
-      this.sort.row,
+    this.table.scenegraph.updateSortIcon({
+      col: col,
+      row: row,
       iconMark,
-      this.sort.order,
+      order: currentSortItem?.order,
       oldSortCol,
       oldSortRow,
-      this.sort.icon
-    );
-    this.sort.icon = iconMark;
+      oldIconMark: previousSortItem?.icon
+    });
+    if (currentSortItem) {
+      currentSortItem.icon = iconMark;
+    }
+
+    if (!this.table.internalProps.multipleSort) {
+      previousSort.forEach((sortItem: any) => {
+        this.table.scenegraph.updateSortIcon({
+          col: null,
+          row: null,
+          iconMark: null,
+          order: 'normal',
+          oldSortCol: sortItem.col,
+          oldSortRow: sortItem.row,
+          oldIconMark: null
+        });
+      });
+    }
   }
 
-  updateSortState(sortState: SortState) {
-    if (sortState.field === this.sort.field && sortState.order === this.sort.order) {
-      return;
-    }
-    const oldSortCol = this.sort.col;
-    const oldSortRow = this.sort.row;
-    const name =
-      this.sort.order === 'asc' ? 'sort_downward' : this.sort.order === 'desc' ? 'sort_upward' : 'sort_normal';
-    this.setSortState(sortState);
-    // 获取sort对应的行列位置
-    const cellAddress = this.table.internalProps.layoutMap.getHeaderCellAddressByField(sortState.field as string);
-    this.sort.col = cellAddress.col;
-    this.sort.row = cellAddress.row;
-    const cellGroup = this.table.scenegraph.getCell(this.sort.col, this.sort.row);
-    const iconMark = cellGroup.getChildByName(name, true);
+  updateSortState(sortState: SortState[]) {
+    sortState = Array.isArray(sortState) ? sortState : [sortState];
 
-    // 更新icon
-    this.table.scenegraph.updateSortIcon(
-      this.sort.col,
-      this.sort.row,
-      iconMark,
-      this.sort.order,
-      oldSortCol,
-      oldSortRow,
-      this.sort.icon
-    );
+    for (let index = 0; index < sortState.length; index++) {
+      if ((sortState[index].field === this.sort[index]?.field) && (sortState[sortState.length - 1].order === this.sort[index]?.order)) {
+        return;
+      }
+      const oldSortCol = this.table.internalProps.multipleSort ? null : this.sort[index]?.col || null;
+      const oldSortRow = this.table.internalProps.multipleSort ? null : this.sort[index]?.row || null;
+      const name =
+        this.sort[index]?.order === 'asc' ? 'sort_downward' : this.sort[index]?.order === 'desc' ? 'sort_upward' : 'sort_normal';
+      this.setSortState(sortState);
+      // 获取sort对应的行列位置
+      const cellAddress = this.table.internalProps.layoutMap.getHeaderCellAddressByField(
+        sortState[index].field as string
+      );
+      this.sort[index].col = cellAddress.col;
+      this.sort[index].row = cellAddress.row;
+      const cellGroup = this.table.scenegraph.getCell(this.sort[index].col, this.sort[index].row);
+      //const iconMark = cellGroup.getChildByName(name, true);
+      let iconMark: Icon;
+
+      traverseObject(cellGroup, 'children', (mark: Icon) => {
+        if (mark.attribute.funcType === 'sort') {
+          iconMark = mark;
+          return true;
+        }
+        return false;
+      });
+
+      // 更新icon
+      this.table.scenegraph.updateSortIcon({
+        col: this.sort[index].col,
+        row: this.sort[index].row,
+        iconMark,
+        order: this.sort[index].order,
+        oldSortCol,
+        oldSortRow,
+        oldIconMark: this.sort[index]?.icon
+      });
+    }
+
+    const normalHeaders: Array<any> = [];
+    (this.table.internalProps.layoutMap.columnTree as any).tree.children.forEach((item: any) => {
+      if (!sortState.some((state: SortState) => state.field === item.field)) {
+        normalHeaders.push(item);
+      }
+    });
+
+    for (let index = 0; index < normalHeaders.length; index++) {
+      const column = normalHeaders[index];
+      this.table.scenegraph.updateSortIcon({
+        col: null,
+        row: null,
+        iconMark: null,
+        order: null,
+        oldSortCol: column.startInTotal,
+        oldSortRow: column.level,
+        oldIconMark: null
+      });
+    }
   }
 
   triggerFreeze(col: number, row: number, iconMark: Icon) {

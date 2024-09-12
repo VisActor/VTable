@@ -59,11 +59,12 @@ By directly adding a `<script>` tag in the HTML file, import the built vtable-ga
 
 ## Drawing a Simple Gantt Chart
 
-Before drawing, we need to prepare a DOM container with width and height for VTableGantt.
+Before drawing, we need to prepare a DOM container with width and height for VTableGantt, and this container must be relatively positioned, i.e., its position must be set to 'absolute' or 'relative'.
 
+**Please ensure that the container's width and height values are integers, as VTable's internal logic uses the container's offsetWidth, offsetHeight, clientWidth, and clientHeight properties. If the container's width and height are decimals, it may cause errors in the values taken, potentially leading to table jitter issues.**
 ```html
 <body>
-  <div id="tableContainer" style="width: 600px;height:400px;"></div>
+  <div id="tableContainer" style="position: absolute; width: 600px;height:400px;"></div>
 </body>
 ```
 
