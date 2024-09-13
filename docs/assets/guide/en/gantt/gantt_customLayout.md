@@ -259,7 +259,7 @@ const option = {
           const colorLength = barColors.length;
           const { width, height, index, startDate, endDate, days, dateIndex, title, ganttInstance } = args;
           console.log('week', index);
-          const container = new VRender.Group({
+          const container = new VTableGantt.VRender.Group({
             width,
             height,
             fill: {
@@ -287,7 +287,7 @@ const option = {
             flexDirection: 'row',
             flexWrap: 'nowrap'
           });
-          const containerLeft = new VRender.Group({
+          const containerLeft = new VTableGantt.VRender.Group({
             height,
             width: 60,
             display: 'flex',
@@ -298,7 +298,7 @@ const option = {
           });
           container.add(containerLeft);
 
-          const avatar = new VRender.Image({
+          const avatar = new VTableGantt.VRender.Image({
             width: 50,
             height: 50,
             image:
@@ -307,7 +307,7 @@ const option = {
           });
           containerLeft.add(avatar);
 
-          const containerCenter = new VRender.Group({
+          const containerCenter = new VTableGantt.VRender.Group({
             height,
             width: width - 60,
             display: 'flex',
@@ -316,7 +316,7 @@ const option = {
           });
           container.add(containerCenter);
 
-          const weekNumber = new VRender.Text({
+          const weekNumber = new VTableGantt.VRender.Text({
             text: `Week ${title}`,
             fontSize: 20,
             fontWeight: 'bold',
@@ -328,7 +328,7 @@ const option = {
           });
           containerCenter.add(weekNumber);
 
-          const daysFromText = new VRender.Text({
+          const daysFromText = new VTableGantt.VRender.Text({
             text: `${tools.formatDate(startDate, 'mm/dd')}-${tools.formatDate(endDate, 'mm/dd')}`,
             fontSize: 13,
             fontFamily: 'sans-serif',
@@ -440,7 +440,7 @@ Each VRender graphic element can be understood as a DOM tree structure, where ea
 VRender graphic elements support event listeners, as shown in the following code logic:
 
 ```
-      const avatar = new VRender.Image({
+      const avatar = new VTableGantt.VRender.Image({
         width: 50,
         height: 50,
         image: taskRecord.avatar,
@@ -629,7 +629,7 @@ const option = {
     customLayout: (args) => {
       const colorLength = barColors.length;
       const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
-      const container = new VRender.Group({
+      const container = new VTableGantt.VRender.Group({
         width,
         height,
         fill: {
@@ -657,7 +657,7 @@ const option = {
         flexDirection: 'row',
         flexWrap: 'nowrap'
       });
-      const containerLeft = new VRender.Group({
+      const containerLeft = new VTableGantt.VRender.Group({
         height,
         width: 60,
         display: 'flex',
@@ -668,7 +668,7 @@ const option = {
       });
       container.add(containerLeft);
 
-      const avatar = new VRender.Image({
+      const avatar = new VTableGantt.VRender.Image({
         width: 50,
         height: 50,
         image: taskRecord.avatar,
@@ -689,7 +689,7 @@ const option = {
         console.log('leave');
         hideTooltip();
       });
-      const containerCenter = new VRender.Group({
+      const containerCenter = new VTableGantt.VRender.Group({
         height,
         width: (width - 60)/2,
         display: 'flex',
@@ -698,7 +698,7 @@ const option = {
       });
       container.add(containerCenter);
 
-      const title = new VRender.Text({
+      const title = new VTableGantt.VRender.Text({
         text: taskRecord.title,
         fontSize: 16,
         fontFamily: 'sans-serif',
@@ -708,7 +708,7 @@ const option = {
       });
       containerCenter.add(title);
 
-      const days = new VRender.Text({
+      const days = new VTableGantt.VRender.Text({
         text: `${taskDays}天`,
         fontSize: 13,
         fontFamily: 'sans-serif',
@@ -718,7 +718,7 @@ const option = {
       containerCenter.add(days);
 
       if(width>=120){
-        const containerRight = new VRender.Group({
+        const containerRight = new VTableGantt.VRender.Group({
           height,
           width: (width - 60)/2,
           display: 'flex',
@@ -728,7 +728,7 @@ const option = {
         });
         container.add(containerRight);
 
-        const dateRange = new VRender.Text({
+        const dateRange = new VTableGantt.VRender.Text({
           text: `${tools.formatDate( new Date(taskRecord.start), 'mm/dd')}-${tools.formatDate( new Date(taskRecord.end), 'mm/dd')}`,
           fontSize: 16,
           fontFamily: 'sans-serif',

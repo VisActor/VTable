@@ -33,6 +33,23 @@ You can also get the built vtable-gantt file through CDN.
   const ganttInstance = new VTableGantt.Gantt(domContainer, option);
 </script>
 ```
+If you need to use the related functions of VTable or VRender, such as editing cells or custom rendering, please note that you should use VTableGantt.VTable and VTableGantt.VRender.
+
+To introduce the ability of VTable, such as:
+```
+// Register icon or editor
+VTableGantt.VTable.register.***
+// Reference the theme of VTable
+VTableGantt.VTable.themes.***
+// Reference the custom rendering element of VTable
+VTableGantt.VTable.CustomLayout.***
+```
+
+To introduce the ability of VRender to achieve custom rendering, such as:
+```
+// Use the Group element
+VTableGantt.VRender.Group()
+```
 
 ## Importing VTableGantt
 

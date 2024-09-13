@@ -34,6 +34,24 @@ yarn add @visactor/vtable-gantt
 </script>
 ```
 
+如果需要用到 VTable 或者 VRender 的相关功能如编辑单元格或者自定义渲染，需要注意请使用 VTableGantt.VTable 和VTableGantt.VRender。
+
+ 引入 VTable 的能力，如：
+```
+// 注册图标或编辑器
+VTableGantt.VTable.register.***
+// 引用VTable的主题
+VTableGantt.VTable.themes.***
+// 引用VTable的自定义渲染元素
+VTableGantt.VTable.CustomLayout.***
+```
+
+引入 VRender 的图元来实现自定义渲染，如：
+```
+// 使用图元Group
+VTableGantt.VRender.Group()
+```
+
 ## 引入 VTableGantt
 
 ### 通过 NPM 包引入

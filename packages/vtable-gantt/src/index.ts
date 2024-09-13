@@ -15,6 +15,8 @@ import type {
 } from '@visactor/vtable';
 import { Gantt } from './Gantt';
 import * as tools from './tools';
+import * as VRender from './vrender';
+import * as VTable from './vtable';
 export const version = __VERSION__;
 /**
  * @namespace VTable
@@ -34,5 +36,7 @@ export {
   GroupColumnDefine,
   TextAlignType,
   TextBaselineType,
-  tools
+  tools,
+  VRender,
+  VTable
 };
