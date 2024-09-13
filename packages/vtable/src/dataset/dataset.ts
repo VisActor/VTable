@@ -734,11 +734,11 @@ export class Dataset {
     //#endregion
     //#region 对path的数组 rowKeys和colKeys 做双重循环
     //#region 兼容当透视图的应用场景 colTree rowTree 都设置成空数组 只展示一个图表的情况
-    if (!this.customRowTree?.length) {
+    if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart && !this.customRowTree?.length) {
       //rowKeys.length === 0) {
       rowKeys.push({ rowKey: [], indicatorKey: undefined });
     }
-    if (!this.customColTree?.length) {
+    if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart && !this.customColTree?.length) {
       //colKeys.length === 0) {
       colKeys.push({ colKey: [], indicatorKey: undefined });
     }
