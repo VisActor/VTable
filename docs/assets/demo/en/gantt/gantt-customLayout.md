@@ -108,7 +108,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
         const { table, row, col, rect } = args;
         const taskRecord = table.getCellOriginRecord(col, row);
         const { height, width } = rect ?? table.getCellRect(col, row);
-        const container = new VRender.Group({
+        const container = new VTableGantt.VRender.Group({
           y: 10,
           x: 20,
           height: height - 20,
@@ -119,7 +119,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
           cornerRadius: 30
         });
 
-        const developer = new VRender.Text({
+        const developer = new VTableGantt.VRender.Text({
           text: taskRecord.developer,
           fontSize: 16,
           fontFamily: 'sans-serif',
@@ -131,7 +131,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
         });
         container.add(developer);
 
-        const days = new VRender.Text({
+        const days = new VTableGantt.VRender.Text({
           text: `${VTableGantt.tools.formatDate(new Date(taskRecord.start), 'mm/dd')}-${VTableGantt.tools.formatDate(
             new Date(taskRecord.end),
             'mm/dd'
@@ -206,7 +206,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
       customLayout: args => {
         const colorLength = barColors.length;
         const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
-        const container = new VRender.Group({
+        const container = new VTableGantt.VRender.Group({
           width,
           height,
           cornerRadius: 30,
@@ -235,7 +235,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
           flexDirection: 'row',
           flexWrap: 'nowrap'
         });
-        const containerLeft = new VRender.Group({
+        const containerLeft = new VTableGantt.VRender.Group({
           height,
           width: 60,
           display: 'flex',
@@ -246,14 +246,14 @@ In this example, the custom rendering of the task bar is implemented in the cust
         });
         container.add(containerLeft);
 
-        const avatar = new VRender.Image({
+        const avatar = new VTableGantt.VRender.Image({
           width: 50,
           height: 50,
           image: taskRecord.avatar,
           cornerRadius: 25
         });
         containerLeft.add(avatar);
-        const containerCenter = new VRender.Group({
+        const containerCenter = new VTableGantt.VRender.Group({
           height,
           width: width - 120,
           display: 'flex',
@@ -262,7 +262,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
         });
         container.add(containerCenter);
 
-        const developer = new VRender.Text({
+        const developer = new VTableGantt.VRender.Text({
           text: taskRecord.developer,
           fontSize: 16,
           fontFamily: 'sans-serif',
@@ -273,7 +273,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
         });
         containerCenter.add(developer);
 
-        const days = new VRender.Text({
+        const days = new VTableGantt.VRender.Text({
           text: `${taskDays}天`,
           fontSize: 13,
           fontFamily: 'sans-serif',
@@ -283,7 +283,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
         containerCenter.add(days);
 
         if (width >= 120) {
-          const containerRight = new VRender.Group({
+          const containerRight = new VTableGantt.VRender.Group({
             cornerRadius: 20,
             fill: 'white',
             height: 40,
@@ -296,7 +296,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
           });
           container.add(containerRight);
 
-          const progressText = new VRender.Text({
+          const progressText = new VTableGantt.VRender.Text({
             text: `${progress}%`,
             fontSize: 12,
             fontFamily: 'sans-serif',
@@ -341,7 +341,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
           customLayout: args => {
             const colorLength = barColors.length;
             const { width, height, index, startDate, endDate, days, dateIndex, title, ganttInstance } = args;
-            const container = new VRender.Group({
+            const container = new VTableGantt.VRender.Group({
               width,
               height,
               fill: '#f0f0fb',
@@ -349,7 +349,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
               flexDirection: 'row',
               flexWrap: 'nowrap'
             });
-            const containerLeft = new VRender.Group({
+            const containerLeft = new VTableGantt.VRender.Group({
               height,
               width: 30,
               display: 'flex',
@@ -360,7 +360,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
             });
             container.add(containerLeft);
 
-            const avatar = new VRender.Image({
+            const avatar = new VTableGantt.VRender.Image({
               width: 20,
               height: 30,
               image:
@@ -368,7 +368,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
             });
             containerLeft.add(avatar);
 
-            const containerCenter = new VRender.Group({
+            const containerCenter = new VTableGantt.VRender.Group({
               height,
               width: width - 30,
               display: 'flex',
@@ -376,7 +376,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
               // alignItems: 'left'
             });
             container.add(containerCenter);
-            const dayNumber = new VRender.Text({
+            const dayNumber = new VTableGantt.VRender.Text({
               text: String(dateIndex).padStart(2, '0'),
               fontSize: 20,
               fontWeight: 'bold',
@@ -388,7 +388,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
             });
             containerCenter.add(dayNumber);
 
-            const weekDay = new VRender.Text({
+            const weekDay = new VTableGantt.VRender.Text({
               text: VTableGantt.tools.getWeekday(startDate, 'short').toLocaleUpperCase(),
               fontSize: 12,
               fontFamily: 'sans-serif',
