@@ -18,7 +18,7 @@ This example demonstrates the usage of data editing in the Gantt chart. Currentl
 - `VTable.register.editor` registers the editor
 - `editor` sets the registered editor name
 
-## Demo
+## Code Demo
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';

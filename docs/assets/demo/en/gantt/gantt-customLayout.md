@@ -19,7 +19,7 @@ In this example, the custom rendering of the task bar is implemented in the cust
 - `taskBar` 
 - `timelineHeader`
 
-## Demo
+## Code Demo
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';

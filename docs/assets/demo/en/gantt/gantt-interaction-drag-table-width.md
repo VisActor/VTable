@@ -19,7 +19,7 @@ This example demonstrates how to make the width of the left task information tab
 
 -`frame.verticalSplitLineHighlight` Highlight line style when adjusting column width
 
-## Demo
+## Code Demo
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';
