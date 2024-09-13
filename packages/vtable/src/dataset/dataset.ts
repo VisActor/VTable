@@ -1614,6 +1614,13 @@ export class Dataset {
         Object.keys(that.tree[flatRowKey]).forEach(flatColKey => {
           colCompute(flatRowKey, flatColKey);
         });
+        //处理 row-total  中没有col-total的情况
+        if (that.totals?.column?.showGrandTotals || this.rows.length === 0) {
+          const flatColTotalKey = that.colGrandTotalLabel;
+          if (!this.tree[flatRowKey][flatColTotalKey]) {
+            colCompute(flatRowKey, flatColTotalKey);
+          }
+        }
       });
     }
   }
