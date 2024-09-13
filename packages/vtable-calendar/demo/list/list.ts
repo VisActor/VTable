@@ -3,4 +3,6 @@ import { VTableCalendar } from '../../src';
 
 export function createTable() {
   const calendar = new VTableCalendar(document.getElementById(CONTAINER_ID));
+
+  window.calendar = calendar;
 }
