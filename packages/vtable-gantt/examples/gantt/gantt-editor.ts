@@ -1,14 +1,13 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { register } from '@visactor/vtable';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
-import { Gantt } from '../../src/index';
+import { Gantt, VTable } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 const date_input_editor = new DateInputEditor({});
 const input_editor = new InputEditor({});
-register.editor('input', input_editor);
-register.editor('date-input', date_input_editor);
+VTable.register.editor('input', input_editor);
+VTable.register.editor('date-input', date_input_editor);
 export function createTable() {
   const records = [
     {

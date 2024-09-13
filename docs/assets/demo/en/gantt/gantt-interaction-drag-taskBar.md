@@ -18,7 +18,7 @@ The configuration options are `taskBar.moveable` and `taskBar.resizable`.
 - `Gantt#taskBar.moveable` Whether the task bar is moveable. Default is true.
 - `Gantt#taskBar.resizable` Whether the task bar is resizable. Default is true.
 
-## Demo
+## Code Demo
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';

@@ -15,7 +15,7 @@ This example demonstrates the basic usage of the Gantt chart.
 
 - `Gantt`
 
-## Demo
+## Code Demo
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';
