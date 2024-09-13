@@ -1,3 +1,16 @@
+# v1.7.7
+
+2024-09-13
+
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: gantt project export vtable and vrender
+
+
+
+[更多详情请查看 v1.7.7](https://github.com/VisActor/VTable/releases/tag/v1.7.7)
+
 # v1.7.6
 
 2024-09-12
