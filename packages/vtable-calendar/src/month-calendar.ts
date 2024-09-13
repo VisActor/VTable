@@ -1,19 +1,64 @@
 import type { TYPES } from '@visactor/vtable';
 import { ListTable, themes, CustomLayout } from '@visactor/vtable';
 import { getRecords, getStartAndEndDate } from './date-util';
+import { bindDebugTool } from '../../vtable/src/scenegraph/debug-tool';
 
+interface VTableCalendarConstructorOptions {
+  startDate?: Date;
+  endDate?: Date;
+  currentDate?: Date;
+  rangeDays?: number;
+
+  columnWidth?: number;
+  rowHeight?: number;
+  headerRowHeight?: number;
+  dayTitles?: [string, string, string, string, string, string, string];
+}
+
+const defaultDayTitles = ['year', 'month', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export class VTableCalendar {
-  constructor(container: any) {
-    const { startDate, endDate } = getStartAndEndDate(new Date(), 90);
-    const records = getRecords(startDate, endDate);
+  container: HTMLElement;
+  options: VTableCalendarConstructorOptions;
+  table: ListTable;
+  startDate: Date;
+  endDate: Date;
+  currentDate: Date;
+  rangeDays: number;
 
-    const columnWidth = 140;
-    const week = ['year', 'month', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  constructor(container: HTMLElement, options?: VTableCalendarConstructorOptions) {
+    this.container = container;
+    this.options = options ?? {};
+    const { startDate, endDate, currentDate, rangeDays } = this.options;
+
+    this.currentDate = currentDate ?? new Date();
+    this.rangeDays = rangeDays ?? 90;
+    if (startDate && endDate) {
+      this.startDate = startDate;
+      this.endDate = endDate;
+    } else {
+      const { startDate: computedStartDate, endDate: computedEndDate } = getStartAndEndDate(
+        this.currentDate,
+        this.rangeDays
+      );
+      this.startDate = startDate ?? computedStartDate;
+      this.endDate = endDate ?? computedEndDate;
+    }
+
+    this.createTable();
+  }
+
+  createTable() {
+    const { columnWidth, rowHeight, headerRowHeight, dayTitles } = this.options;
+
+    const records = getRecords(this.startDate, this.endDate);
+
+    // const columnWidth = 140;
+    const week = dayTitles ?? defaultDayTitles;
     const columns = week.map((item, index) => {
       return {
-        field: item,
+        field: defaultDayTitles[index],
         title: item,
-        width: columnWidth,
+        width: columnWidth ?? 140,
         customLayout: args => {
           const { table, row, col, rect, value } = args;
           const record = table.getRecordByCell(col, row);
@@ -100,11 +145,11 @@ export class VTableCalendar {
       };
     });
     const option: TYPES.ListTableConstructorOptions = {
-      container,
+      container: this.container,
       records,
       columns,
-      defaultRowHeight: 120,
-      defaultHeaderRowHeight: 40,
+      defaultRowHeight: rowHeight ?? 120,
+      defaultHeaderRowHeight: headerRowHeight ?? 40,
       theme: themes.DEFAULT.extends({
         headerStyle: {
           textAlign: 'center'
@@ -137,5 +182,16 @@ export class VTableCalendar {
     const tableInstance = new ListTable(option);
     window.tableInstance = tableInstance;
     this.table = tableInstance;
+
+    bindDebugTool(tableInstance.scenegraph.stage as any, {
+      customGrapicKeys: ['col', 'row']
+    });
+  }
+
+  getYearAndMonth() {
+    const topRow = this.table.getCellAtRelativePosition(10, this.table.getFrozenRowsHeight() + 180);
+    const { row } = topRow;
+    const record = this.table.getCellRawRecord(0, row);
+    return record;
   }
 }
