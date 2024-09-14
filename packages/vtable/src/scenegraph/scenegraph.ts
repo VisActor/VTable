@@ -2048,26 +2048,49 @@ export class Scenegraph {
   //   updateCell(col, row, this.table);
   // }
   updateDomContainer() {
-    const { headerDomContainer, bodyDomContainer } = this.table.internalProps;
-    if (this.table.frozenColCount > 0 && (headerDomContainer || bodyDomContainer)) {
-      const frozenColsWidth = this.table.getFrozenColsWidth();
-      headerDomContainer && (headerDomContainer.style.left = `${frozenColsWidth}px`);
-      bodyDomContainer && (bodyDomContainer.style.left = `${frozenColsWidth}px`);
+    const { headerDomContainer, bodyDomContainer, frozenBodyDomContainer } = this.table.internalProps;
+    if (!headerDomContainer && !bodyDomContainer && !frozenBodyDomContainer) {
+      return;
     }
-    if (headerDomContainer) {
-      // headerDomContainer.style.width = `${(headerDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
-      headerDomContainer.style.width = `${Math.min(this.table.getAllColsWidth(), this.table.tableNoFrameWidth)}px`;
-      headerDomContainer.style.height = `${this.table.getFrozenRowsHeight()}px`;
-    }
-    if (bodyDomContainer) {
-      const totalFrozenRowsHeight = this.table.getFrozenRowsHeight() + this.table.getBottomFrozenRowsHeight();
+    const allColsWidth = this.table.getAllColsWidth();
+    const frozenColsWidth = this.table.getFrozenColsWidth();
+    const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
+    const totalFrozenColsWidth = frozenColsWidth + rightFrozenColsWidth;
+    const bodyWidth = Math.min(
+      allColsWidth - totalFrozenColsWidth,
+      this.table.tableNoFrameWidth - totalFrozenColsWidth
+    );
 
-      // bodyDomContainer.style.width = `${(bodyDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
-      bodyDomContainer.style.width = `${Math.min(this.table.getAllColsWidth(), this.table.tableNoFrameWidth)}px`;
-      bodyDomContainer.style.height = `${
-        (bodyDomContainer.parentElement?.offsetHeight ?? 1) - 1 - totalFrozenRowsHeight
-      }px`;
-      bodyDomContainer.style.top = `${this.table.getFrozenRowsHeight()}px`;
+    const allRowsHeight = this.table.getAllRowsHeight();
+    const frozenRowsHeight = this.table.getFrozenRowsHeight();
+    const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
+    const totalFrozenRowsHeight = frozenRowsHeight + bottomFrozenRowsHeight;
+    const bodyHeight = Math.min(
+      allRowsHeight - totalFrozenRowsHeight,
+      this.table.tableNoFrameHeight - totalFrozenRowsHeight
+    );
+
+    if (this.table.frozenColCount > 0) {
+      headerDomContainer.style.left = `${this.table.tableX + frozenColsWidth}px`;
+      bodyDomContainer.style.left = `${this.table.tableX + frozenColsWidth}px`;
+    } else if (this.table.frozenColCount === 0) {
+      headerDomContainer.style.left = `${this.table.tableX}px`;
+      bodyDomContainer.style.left = `${this.table.tableX}px`;
     }
+    frozenBodyDomContainer.style.left = `${this.table.tableX}px`;
+
+    // headerDomContainer.style.width = `${(headerDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
+    headerDomContainer.style.width = `${bodyWidth}px`;
+    headerDomContainer.style.height = `${frozenRowsHeight}px`;
+    bodyDomContainer.style.top = `${this.table.tableY}px`;
+
+    // bodyDomContainer.style.width = `${(bodyDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
+    bodyDomContainer.style.width = `${bodyWidth}px`;
+    bodyDomContainer.style.height = `${bodyHeight}px`;
+    bodyDomContainer.style.top = `${this.table.tableY + frozenRowsHeight}px`;
+
+    frozenBodyDomContainer.style.width = `${frozenColsWidth}px`;
+    frozenBodyDomContainer.style.height = `${bodyHeight}px`;
+    frozenBodyDomContainer.style.top = `${this.table.tableY + frozenRowsHeight}px`;
   }
 }
