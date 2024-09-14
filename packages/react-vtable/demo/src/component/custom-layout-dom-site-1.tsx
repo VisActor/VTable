@@ -189,20 +189,25 @@ function App() {
     <ListTable
       records={records}
       height={500}
-      width={600}
+      width={1200}
       defaultRowHeight={110}
+      allowFrozenColCount={4}
       frozenColCount={1}
       onReady={table => {
         // eslint-disable-next-line no-undef
-        // (window as any).tableInstance = table;
+        (window as any).tableInstance = table;
       }}
       ReactDOM={ReactDOM}
     >
       <ListColumn field={'id'} title={'ID'} />
       <ListColumn field={'name'} title={'Comment'} width={500}>
-        <HeaderCustomLayoutComponent role={'header-custom-layout'} />
+        {/* <HeaderCustomLayoutComponent role={'header-custom-layout'} /> */}
         <CommentComponent role={'custom-layout'} />
       </ListColumn>
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
       <ListColumn field={''} title={'Operation'} width={300}>
         <OperationComponent role={'custom-layout'} />
       </ListColumn>

@@ -332,6 +332,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         internalProps.headerDomContainer = document.createElement('div');
         internalProps.headerDomContainer.classList.add('table-component-container');
         internalProps.element.appendChild(internalProps.headerDomContainer);
+
+        internalProps.frozenBodyDomContainer = document.createElement('div');
+        internalProps.frozenBodyDomContainer.classList.add('table-component-container');
+        internalProps.element.appendChild(internalProps.frozenBodyDomContainer);
       }
     }
 
@@ -1007,6 +1011,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (this.internalProps.headerDomContainer) {
         this.internalProps.headerDomContainer.style.width = `${widthP}px`;
         this.internalProps.headerDomContainer.style.height = `${heightP}px`;
+      }
+      if (this.internalProps.frozenBodyDomContainer) {
+        this.internalProps.frozenBodyDomContainer.style.left = `0px`;
+        this.internalProps.frozenBodyDomContainer.style.width = `0px`;
+        this.internalProps.frozenBodyDomContainer.style.height = `${heightP}px`;
       }
     } else if (Env.mode === 'node') {
       widthP = this.canvasWidth - 1;
@@ -4153,6 +4162,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   get headerDomContainer() {
     return this.internalProps.headerDomContainer;
+  }
+  get frozenBodyDomContainer() {
+    return this.internalProps.frozenBodyDomContainer;
   }
   /**
    * 显示移动列或移动行的高亮线  如果(col，row)单元格是列头 则显示高亮列线；  如果(col，row)单元格是行头 则显示高亮行线

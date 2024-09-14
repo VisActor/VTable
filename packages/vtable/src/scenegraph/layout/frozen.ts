@@ -1,8 +1,11 @@
+import type { ReactAttributePlugin } from '@visactor/vrender-core';
 import { getStyleTheme } from '../../core/tableHelper';
+import { getTargetCell } from '../../event/util';
 import { Group } from '../graphic/group';
 import { createColGroup } from '../group-creater/column';
 import type { Scenegraph } from '../scenegraph';
 import { getProp } from '../utils/get-prop';
+import { table } from 'console';
 
 export function dealFrozen(scene: Scenegraph) {
   if (scene.table.frozenColCount > scene.table.rowHeaderLevelCount) {
@@ -69,6 +72,8 @@ export function resetFrozen(scene: Scenegraph) {
       moveColumnFromBottomToLeftBottomCorner(scene);
     }
   }
+
+  updateReactComponentContainer(scene);
 
   scene.deleteAllSelectBorder();
   scene.table.stateManager.select.ranges.forEach(range => {
@@ -490,5 +495,43 @@ function insertBefore(container: Group, newNode: Group, targetGroup: Group) {
     container.insertBefore(newNode, targetGroup);
   } else {
     container.appendChild(newNode);
+  }
+}
+
+function updateReactComponentContainer(scene: Scenegraph) {
+  if (!scene.table.reactCustomLayout) {
+    return;
+  }
+  const plugin = scene.stage.pluginService.findPluginsByName('ReactAttributePlugin')[0] as ReactAttributePlugin;
+  const { htmlMap } = plugin;
+
+  for (const key in htmlMap) {
+    const item = htmlMap[key];
+    const { graphic, wrapContainer } = item;
+    if (scene.frozenColCount > scene.table.frozenColCount) {
+      // move columnGroup from rowHeaderGroup into bodyGroup(from cornerHeaderGroup into colHeaderGroup)
+      const { col, row } = getTargetCell(graphic);
+      if (col < scene.frozenColCount && col >= scene.table.frozenColCount) {
+        plugin.updateStyleOfWrapContainer(
+          graphic,
+          scene.stage,
+          wrapContainer,
+          scene.table.bodyDomContainer,
+          graphic.attribute.react
+        );
+      }
+    } else if (scene.frozenColCount < scene.table.frozenColCount) {
+      // move columnGroup from bodyGroup into rowHeaderGroup(from colHeaderGroup into cornerHeaderGroup)
+      const { col, row } = getTargetCell(graphic);
+      if (col < scene.table.frozenColCount && col >= scene.frozenColCount) {
+        plugin.updateStyleOfWrapContainer(
+          graphic,
+          scene.stage,
+          wrapContainer,
+          scene.table.frozenBodyDomContainer,
+          graphic.attribute.react
+        );
+      }
+    }
   }
 }

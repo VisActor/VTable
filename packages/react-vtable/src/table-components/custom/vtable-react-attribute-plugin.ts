@@ -12,6 +12,18 @@ import { calculateAnchorOfBounds, isFunction, isNil, isObject, isString, styleSt
 import type { CreateDOMParamsTypeForVTable } from './vtable-browser-env-contribution';
 
 export class VTableReactAttributePlugin extends ReactAttributePlugin {
+  declare htmlMap: Record<
+    string,
+    {
+      root?: any;
+      unmount?: () => void;
+      wrapContainer: HTMLElement;
+      nativeContainer: HTMLElement;
+      container: string | HTMLElement | null;
+      renderId: number;
+      graphic: IGraphic;
+    }
+  >;
   removeElement(id: string) {
     super.removeElement(id);
     delete this.htmlMap[id];
@@ -49,7 +61,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
           this.htmlMap = {};
         }
 
-        this.htmlMap[id] = { root, wrapContainer, nativeContainer, container, renderId: this.renderId };
+        this.htmlMap[id] = { root, wrapContainer, nativeContainer, container, renderId: this.renderId, graphic };
       }
     } else {
       // update react element
