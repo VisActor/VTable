@@ -639,7 +639,7 @@ export class Dataset {
     const colKeys: { colKey: string[]; indicatorKey: string | number }[] = [];
     const rowKeys: { rowKey: string[]; indicatorKey: string | number }[] = [];
 
-    if (this.customRowTree && !assignedIndicatorKey) {
+    if (!(this.dataConfig as IPivotChartDataConfig)?.isPivotChart && this.customRowTree && !assignedIndicatorKey) {
       const rowTreePath = this.getFieldMatchRowDimensionPaths(record);
       if (rowTreePath.length > 0) {
         for (let i = 0, len = rowTreePath.length; i < len; i++) {
@@ -693,7 +693,7 @@ export class Dataset {
       }
     }
 
-    if (this.customColTree && !assignedIndicatorKey) {
+    if (!(this.dataConfig as IPivotChartDataConfig)?.isPivotChart && this.customColTree && !assignedIndicatorKey) {
       const colTreePath = this.getFieldMatchColDimensionPaths(record);
       if (colTreePath.length > 0) {
         for (let i = 0, len = colTreePath.length; i < len; i++) {
@@ -745,16 +745,16 @@ export class Dataset {
     }
     //#endregion
     //#region 对path的数组 rowKeys和colKeys 做双重循环
-    //#region 兼容当透视图的应用场景 colTree rowTree 都设置成空数组 只展示一个图表的情况
-    if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart && !this.customRowTree?.length) {
-      //rowKeys.length === 0) {
-      rowKeys.push({ rowKey: [], indicatorKey: undefined });
-    }
-    if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart && !this.customColTree?.length) {
-      //colKeys.length === 0) {
-      colKeys.push({ colKey: [], indicatorKey: undefined });
-    }
-    //#endregion
+    // //#region 兼容当透视图的应用场景 colTree rowTree 都设置成空数组 只展示一个图表的情况
+    // if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart && !this.customRowTree?.length) {
+    //   //rowKeys.length === 0) {
+    //   rowKeys.push({ rowKey: [], indicatorKey: undefined });
+    // }
+    // if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart && !this.customColTree?.length) {
+    //   //colKeys.length === 0) {
+    //   colKeys.push({ colKey: [], indicatorKey: undefined });
+    // }
+    // //#endregion
     for (let row_i = 0; row_i < rowKeys.length; row_i++) {
       const rowKey = rowKeys[row_i].rowKey;
       let assignedIndicatorKey_value;
