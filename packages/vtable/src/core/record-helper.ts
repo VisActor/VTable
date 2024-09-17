@@ -299,25 +299,17 @@ function getCellUpdateType(
 }
 
 export function sortRecords(table: ListTable) {
-  if (table.sortState) {
-    let order: any;
-    let field: any;
-    if (Array.isArray(table.sortState)) {
-      if (table.sortState.length !== 0) {
-        ({ order, field } = table.sortState?.[0]);
-      }
-    } else {
-      ({ order, field } = table.sortState as SortState);
-    }
-    // 根据sort规则进行排序
-    if (order && field && order !== 'normal') {
-      const sortFunc = table._getSortFuncFromHeaderOption(undefined, field);
-      // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
-      const hd = table.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
+  let sortState = table.sortState;
+  sortState = !sortState || Array.isArray(sortState) ? sortState : [sortState];
 
-      // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
-      hd && table.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
-    }
+  if (sortState) {
+    sortState = (sortState as SortState[]).map(item => {
+      item.orderFn = table._getSortFuncFromHeaderOption(undefined, item.field) ?? defaultOrderFn;
+      //const hd = table.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === item.field);
+      return item;
+    });
+    
+    table.dataSource.sort(sortState);
   }
 }
 
@@ -330,7 +322,7 @@ export function sortRecords(table: ListTable) {
  */
 export function listTableAddRecord(record: any, recordIndex: number, table: ListTable) {
   if (table.options.groupBy) {
-    (table.dataSource as CachedDataSource).addRecordsForGroup?.([record]);
+    (table.dataSource as CachedDataSource).addRecordsForGroup?.([record], recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
     // 更新整个场景树
@@ -421,7 +413,7 @@ export function listTableAddRecord(record: any, recordIndex: number, table: List
  */
 export function listTableAddRecords(records: any[], recordIndex: number, table: ListTable) {
   if (table.options.groupBy) {
-    (table.dataSource as CachedDataSource).addRecordsForGroup?.(records);
+    (table.dataSource as CachedDataSource).addRecordsForGroup?.(records, recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
     // 更新整个场景树

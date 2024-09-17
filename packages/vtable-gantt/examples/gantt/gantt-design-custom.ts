@@ -1,7 +1,7 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { Group, Image, Text, Circle } from '@visactor/vtable/es/vrender';
+// import { VRender.Group, VRender.Image, VRender.Text, Circle } from '@visactor/vtable/es/vrender';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
-import { Gantt, tools } from '../../src/index';
+import { Gantt, tools, VRender } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 const barColors0 = ['#aecde6', '#c6a49a', '#ffb582', '#eec1de', '#b3d9b3', '#cccccc', '#e59a9c', '#d9d1a5', '#c9bede'];
@@ -88,7 +88,7 @@ export function createTable() {
         const { table, row, col, rect } = args;
         const taskRecord = table.getCellOriginRecord(col, row);
         const { height, width } = rect ?? table.getCellRect(col, row);
-        const container = new Group({
+        const container = new VRender.Group({
           y: 10,
           x: 20,
           height: height - 20,
@@ -99,7 +99,7 @@ export function createTable() {
           cornerRadius: 30
         });
 
-        const developer = new Text({
+        const developer = new VRender.Text({
           text: taskRecord.developer,
           fontSize: 16,
           fontFamily: 'sans-serif',
@@ -111,7 +111,7 @@ export function createTable() {
         });
         container.add(developer);
 
-        const days = new Text({
+        const days = new VRender.Text({
           text: `${tools.formatDate(new Date(taskRecord.start), 'mm/dd')}-${tools.formatDate(
             new Date(taskRecord.end),
             'mm/dd'
@@ -186,7 +186,7 @@ export function createTable() {
       customLayout: args => {
         const colorLength = barColors.length;
         const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
-        const container = new Group({
+        const container = new VRender.Group({
           width,
           height,
           cornerRadius: 30,
@@ -215,7 +215,7 @@ export function createTable() {
           flexDirection: 'row',
           flexWrap: 'nowrap'
         });
-        const containerLeft = new Group({
+        const containerLeft = new VRender.Group({
           height,
           width: 60,
           display: 'flex',
@@ -226,14 +226,14 @@ export function createTable() {
         });
         container.add(containerLeft);
 
-        const avatar = new Image({
+        const avatar = new VRender.Image({
           width: 50,
           height: 50,
           image: taskRecord.avatar,
           cornerRadius: 25
         });
         containerLeft.add(avatar);
-        const containerCenter = new Group({
+        const containerCenter = new VRender.Group({
           height,
           width: width - 120,
           display: 'flex',
@@ -242,7 +242,7 @@ export function createTable() {
         });
         container.add(containerCenter);
 
-        const developer = new Text({
+        const developer = new VRender.Text({
           text: taskRecord.developer,
           fontSize: 16,
           fontFamily: 'sans-serif',
@@ -253,7 +253,7 @@ export function createTable() {
         });
         containerCenter.add(developer);
 
-        const days = new Text({
+        const days = new VRender.Text({
           text: `${taskDays}天`,
           fontSize: 13,
           fontFamily: 'sans-serif',
@@ -263,7 +263,7 @@ export function createTable() {
         containerCenter.add(days);
 
         if (width >= 120) {
-          const containerRight = new Group({
+          const containerRight = new VRender.Group({
             cornerRadius: 20,
             fill: 'white',
             height: 40,
@@ -276,7 +276,7 @@ export function createTable() {
           });
           container.add(containerRight);
 
-          const progressText = new Text({
+          const progressText = new VRender.Text({
             text: `${progress}%`,
             fontSize: 12,
             fontFamily: 'sans-serif',
@@ -330,7 +330,7 @@ export function createTable() {
           customLayout: args => {
             const colorLength = barColors.length;
             const { width, height, index, startDate, endDate, days, dateIndex, title, ganttInstance } = args;
-            const container = new Group({
+            const container = new VRender.Group({
               width,
               height,
               fill: '#f0f0fb',
@@ -338,7 +338,7 @@ export function createTable() {
               flexDirection: 'row',
               flexWrap: 'nowrap'
             });
-            const containerLeft = new Group({
+            const containerLeft = new VRender.Group({
               height,
               width: 30,
               display: 'flex',
@@ -349,7 +349,7 @@ export function createTable() {
             });
             container.add(containerLeft);
 
-            const avatar = new Image({
+            const avatar = new VRender.Image({
               width: 20,
               height: 30,
               image:
@@ -357,7 +357,7 @@ export function createTable() {
             });
             containerLeft.add(avatar);
 
-            const containerCenter = new Group({
+            const containerCenter = new VRender.Group({
               height,
               width: width - 30,
               display: 'flex',
@@ -365,7 +365,7 @@ export function createTable() {
               // alignItems: 'left'
             });
             container.add(containerCenter);
-            const dayNumber = new Text({
+            const dayNumber = new VRender.Text({
               text: String(dateIndex).padStart(2, '0'),
               fontSize: 20,
               fontWeight: 'bold',
@@ -377,7 +377,7 @@ export function createTable() {
             });
             containerCenter.add(dayNumber);
 
-            const weekDay = new Text({
+            const weekDay = new VRender.Text({
               text: tools.getWeekday(startDate, 'short').toLocaleUpperCase(),
               fontSize: 12,
               fontFamily: 'sans-serif',

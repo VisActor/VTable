@@ -61,7 +61,12 @@ export function createCell(
   }
 ): Group {
   let isAsync = false;
+  let cellGroup: Group;
   if (isPromise(value)) {
+    if (table.scenegraph.highPerformanceGetCell(col, row).role !== 'cell') {
+      // avoid nouse async create cell
+      return cellGroup;
+    }
     value = table.getCellValue(col, row);
     isAsync = true;
   }
@@ -80,7 +85,6 @@ export function createCell(
   //     }
   //   );
   // }
-  let cellGroup: Group;
 
   // customMerge&customLayout cell as text cell
   if (type === 'text' || type === 'link' || customResult) {
@@ -190,7 +194,13 @@ export function createCell(
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
     if (axisConfig) {
       const CartesianAxis: ICartesianAxis = Factory.getComponent('axis');
-      const axis = new CartesianAxis(axisConfig, cellGroup.attribute.width, cellGroup.attribute.height, padding, table);
+      const axis = new CartesianAxis(
+        axisConfig,
+        cellGroup.attribute.width,
+        cellGroup.attribute.height,
+        axisConfig.__vtablePadding ?? padding,
+        table
+      );
       cellGroup.clear();
       cellGroup.appendChild(axis.component);
       axis.overlap();
@@ -390,6 +400,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   let cellTheme;
   let customStyle;
   let customResult;
+  let isCustomMerge = false;
   if (table.internalProps.customMergeCell) {
     const customMerge = table.getCustomMerge(col, row);
     if (customMerge) {
@@ -425,6 +436,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
           table
         );
       }
+
+      isCustomMerge = true;
     }
   }
 
@@ -454,10 +467,10 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     range = table.getCellRange(col, row);
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
   }
-  let isvtableMerge = false;
+  let isVtableMerge = false;
   if (table.internalProps.enableTreeNodeMerge && isMerge) {
     const { vtableMergeName, vtableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
-    isvtableMerge = vtableMerge;
+    isVtableMerge = vtableMerge;
     if (vtableMerge) {
       mayHaveIcon = true;
       if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
@@ -588,11 +601,12 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     return undefined;
   }
 
-  const type = isvtableMerge
-    ? 'text'
-    : table.isHeader(col, row)
-    ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-    : table.getBodyColumnType(col, row);
+  const type =
+    isVtableMerge || isCustomMerge
+      ? 'text'
+      : table.isHeader(col, row)
+      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+      : table.getBodyColumnType(col, row);
 
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;

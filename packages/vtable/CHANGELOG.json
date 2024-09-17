@@ -2,6 +2,60 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.7.7",
+      "tag": "@visactor/vtable_v1.7.7",
+      "date": "Fri, 13 Sep 2024 08:37:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: gantt project export vtable and vrender\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.6",
+      "tag": "@visactor/vtable_v1.7.6",
+      "date": "Thu, 12 Sep 2024 06:18:44 GMT",
+      "comments": {}
+    },
+    {
+      "version": "1.7.5",
+      "tag": "@visactor/vtable_v1.7.5",
+      "date": "Wed, 11 Sep 2024 12:33:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add getFilteredRecords api #2255\n\n"
+          },
+          {
+            "comment": "fix: select range click outside not cancel select #2355\n\n"
+          },
+          {
+            "comment": "fix: split line position fix #2392\n\n"
+          },
+          {
+            "comment": "fix: levelSpan case front columnNode merge range error #2359\n\n"
+          },
+          {
+            "comment": "fix: judge value is valid #2402\n\n"
+          },
+          {
+            "comment": "fix: mousedown chart go dealSelectCell and rerender it #2419\n\n"
+          },
+          {
+            "comment": "fix: fix axis size and layout #2256"
+          },
+          {
+            "comment": "fix: fix series number in list-group #2425"
+          },
+          {
+            "comment": "fix: fix recordIndex config of addRecord in list-group #2426"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.7.4",
       "tag": "@visactor/vtable_v1.7.4",
       "date": "Mon, 09 Sep 2024 02:02:17 GMT",

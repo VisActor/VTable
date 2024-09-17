@@ -134,7 +134,7 @@ export class CachedDataSource extends DataSource {
     _setFieldCache(this._fieldCache, index, field, value);
   }
   protected recordPromiseCallBack(index: number, record: MaybePromiseOrUndefined): void {
-    this._recordCache[index] = record;
+    this._recordCache && (this._recordCache[index] = record);
   }
   get records(): any[] {
     return Array.isArray(this._recordCache) && this._recordCache.length > 0 ? this._recordCache : super.records;
@@ -204,11 +204,15 @@ export class CachedDataSource extends DataSource {
     this.updatePagerData();
   }
 
-  addRecordsForGroup(recordArr: any) {
+  addRecordsForGroup(recordArr: any[], recordIndex?: number) {
     if (!isArray(recordArr) || recordArr.length === 0) {
       return;
     }
-    this.dataSourceObj.records.push(...recordArr);
+    if (recordIndex === undefined || recordIndex > this.dataSourceObj.records) {
+      recordIndex = this.dataSourceObj.records;
+    }
+    // this.dataSourceObj.records.push(...recordArr);
+    this.dataSourceObj.records.splice(recordIndex, 0, ...recordArr);
 
     this.updateGroup();
   }

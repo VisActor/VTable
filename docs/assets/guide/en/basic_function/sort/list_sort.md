@@ -12,16 +12,16 @@ Here is an example of enabling sorting:
 
 ```js
 const listTable = new ListTable({
-  // ...其它配置项
+  // ...other configuration items
   columns: [
     {
-      title: '姓名',
+      title: 'Name',
       field: 'name',
       cellType: 'text',
       sort: true
     },
     {
-      title: '年龄',
+      title: 'Age',
       field: 'age',
       cellType: 'text',
       sort: (v1, v2, order) => {
@@ -45,16 +45,16 @@ Here is an example of a custom collation:
 
 ```js
 const listTable = new ListTable({
-  // ...其它配置项
+  // ...other configuration items
   columns: [
     {
-      title: '姓名',
+      title: 'Name',
       field: 'name',
       cellType: 'text',
       sort: (a, b) => a.localeCompare(b)
     },
     {
-      title: '年龄',
+      title: 'Age',
       field: 'age',
       cellType: 'text',
       sort: (a, b) => parseInt(a) - parseInt(b)
@@ -63,7 +63,67 @@ const listTable = new ListTable({
 });
 ```
 
-In the above code,`姓名` Column usage `localeCompare` The function sorts to ensure the correct sorting result of Chinese characters;`年龄` Columns are sorted by number size.
+In the above code,`Name` Column usage `localeCompare` The function sorts to ensure the correct sorting result of Chinese characters;`Age` Columns are sorted by number size.
+
+## Multiple column sorting
+
+VTable allows sorting by multiple columns when the `multipleSort` option is enabled. This feature allows users to sort data in the table by more than one column, providing a more detailed view of data based on multiple criteria. To enable multi-column sorting, configure the `multipleSort` option in the `ListTable` configuration.
+
+The `multipleSort` option is a boolean type and can be set as follows:
+
+```ts
+ListTable({
+  // ...other configuration items
+  columns: [
+    // ...column configurations
+  ],
+  multipleSort: true
+});
+```
+If enabled, users, when clicking on the sort icon in the column headers, can add additional sort criteria without removing the previous sort.
+
+Example:
+
+```javascript livedemo template=vtable
+const records = [
+  { name: 'Bill', age: 18 },
+  { name: 'Alex', age: 31 },
+  { name: 'Bob', age: 31 },
+  { name: 'Bruce', age: 22 },
+  { name: 'Anna', age: 22 },
+  { name: 'Martha', age: 45 },
+  { name: 'Steve', age: 29 },
+  { name: 'John', age: 31 },
+  { name: 'Kate', age: 18 },
+  { name: 'Lisa', age: 22 }
+];
+
+const columns = [
+  {
+    field: 'name',
+    title: 'Name',
+    width: 'auto',
+    sort:true,
+  },
+  {
+    field: 'age',
+    title: 'Age',
+    width: 'auto',
+    sort:true,
+  }
+];
+
+const option = {
+  records,
+  columns,
+  widthMode: 'standard',
+  multipleSort: true
+};
+
+// 创建 VTable 实例
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window.tableInstance = tableInstance;
+```
 
 ## Initial sorting state
 
@@ -71,9 +131,9 @@ VTable supports setting the initial sorting state for the table. To set the init
 
 ```ts
 SortState {
-  /** 排序依据字段 */
+  /** Sort By Field */
   field: string;
-  /** 排序规则 */
+  /** Sorting rules */
   order: 'desc' | 'asc' | 'normal';
 }
 ```
@@ -82,9 +142,9 @@ Here is an example of setting the initial sort state:
 
 ```js
 const listTable = new ListTable({
-  // ...其它配置项
+  // ...other configuration items
   columns: [
-    // ...列配置
+    // ...column configuration
   ],
   sortState: [
     {
@@ -452,7 +512,7 @@ const listTable = new ListTable({
   // ...Other configuration items
   columns: [
     {
-      title: 'name',
+      title: 'Name',
       field: 'name',
       cellType: 'text',
       showSort: false,

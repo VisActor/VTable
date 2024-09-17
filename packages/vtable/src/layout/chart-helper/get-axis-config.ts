@@ -6,6 +6,8 @@ import type { CollectedValue } from '../../ts-types';
 import { getNewRangeToAlign } from './zero-align';
 import { Factory } from '../../core/factory';
 import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
+import { getQuadProps } from '../../scenegraph/utils/padding';
+import { getProp } from '../../scenegraph/utils/get-prop';
 
 export type GetAxisConfigInPivotChart = (col: number, row: number, layout: PivotHeaderLayoutMap) => any;
 export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotHeaderLayoutMap): any {
@@ -25,6 +27,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (!axisRange) {
         return;
       }
+
+      const chartCellStyle = layout._table._getCellStyle(col, row + 1);
+      const padding = getQuadProps(getProp('padding', chartCellStyle, col, row + 1, layout._table));
+
       // range for top axis
       const { range, ticks, axisOption, isZeroAlign, theme } = axisRange;
 
@@ -79,7 +85,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             flush: true
           },
           __ticksForVTable: ticks,
-          __vtableChartTheme: theme
+          __vtableChartTheme: theme,
+          __vtablePadding: padding
         }
       );
     } else if (
@@ -100,6 +107,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (!axisRange) {
         return;
       }
+
+      const chartCellStyle = layout._table._getCellStyle(col, row - 1);
+      const padding = getQuadProps(getProp('padding', chartCellStyle, col, row - 1, layout._table));
+
       // range for bottom axis
       const { range, ticks, axisOption, isZeroAlign, theme } = axisRange;
 
@@ -149,7 +160,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             flush: true
           },
           __ticksForVTable: ticks,
-          __vtableChartTheme: theme
+          __vtableChartTheme: theme,
+          __vtablePadding: padding
         }
       );
     } else if (
@@ -170,6 +182,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (axisOption?.visible === false) {
         return;
       }
+
+      const chartCellStyle = layout._table._getCellStyle(col + 1, row);
+      const padding = getQuadProps(getProp('padding', chartCellStyle, col + 1, row, layout._table));
+
       const spec = layout.getRawChartSpec(col + 1, row);
       // 左侧维度轴
       return merge(
@@ -193,7 +209,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           inverse: transformInverse(
             axisOption,
             (spec?.direction ?? (chartType === 'scatter' ? 'vertical' : 'horizontal')) === Direction.horizontal
-          )
+          ),
+          __vtablePadding: padding
         }
       );
     }
@@ -216,6 +233,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (!axisRange) {
         return;
       }
+
+      const chartCellStyle = layout._table._getCellStyle(col + 1, row);
+      const padding = getQuadProps(getProp('padding', chartCellStyle, col + 1, row, layout._table));
+
       // range for left axis
       const { range, ticks, axisOption, isZeroAlign, theme } = axisRange;
 
@@ -265,7 +286,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             flush: true
           },
           __ticksForVTable: ticks,
-          __vtableChartTheme: theme
+          __vtableChartTheme: theme,
+          __vtablePadding: padding
         }
       );
     } else if (
@@ -277,6 +299,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (!axisRange) {
         return;
       }
+
+      const chartCellStyle = layout._table._getCellStyle(col - 1, row);
+      const padding = getQuadProps(getProp('padding', chartCellStyle, col - 1, row, layout._table));
+
       // range for right axis
       const { range, ticks, axisOption, isZeroAlign, theme } = axisRange;
 
@@ -324,7 +350,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             flush: true
           },
           __ticksForVTable: ticks,
-          __vtableChartTheme: theme
+          __vtableChartTheme: theme,
+          __vtablePadding: padding
         }
       );
     } else if (
@@ -347,6 +374,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (axisOption?.visible === false) {
         return;
       }
+
+      const chartCellStyle = layout._table._getCellStyle(col, row - 1);
+      const padding = getQuadProps(getProp('padding', chartCellStyle, col, row - 1, layout._table));
+
       // 底部维度轴
       return merge(
         {
@@ -360,7 +391,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           orient: 'bottom',
           // type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
           type: axisOption?.type ?? 'band',
-          __vtableChartTheme: theme
+          __vtableChartTheme: theme,
+          __vtablePadding: padding
         }
       );
     }
@@ -564,7 +596,9 @@ function getRange(
     range.max,
     axisOption,
     isZeroAlign,
-    layout._table.getColWidth(col)
+    position === 'bottom' || position === 'top'
+      ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
+      : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight // avoid 0, 0 causes NaN
   );
   range.min = !isNaN(niceRange[0]) ? niceRange[0] : 0;
   range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;

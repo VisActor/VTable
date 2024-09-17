@@ -56,6 +56,7 @@ export class Dataset {
    * 明细数据
    */
   records?: any[] | Record<string, any[]>;
+  filteredRecords?: any[] | Record<string, any[]>;
   /**
    * 树形节点，最后的子节点对应到body部分的每个单元格 树结构： 行-列-单元格
    */
@@ -514,18 +515,29 @@ export class Dataset {
     }
     //常规records是数组的情况
     if (Array.isArray(this.records)) {
+      if (!this.filteredRecords) {
+        this.filteredRecords = [];
+      }
       for (let i = 0, len = this.records.length; i < len; i++) {
         const record = this.records[i];
         if (!isNeedFilter || this.filterRecord(record)) {
+          (this.filteredRecords as any[]).push(record);
           this.processRecord(record);
         }
       }
     } else {
+      if (!this.filteredRecords) {
+        this.filteredRecords = {};
+      }
       //records是用户传来的按指标分组后的数据
       for (const key in this.records) {
         for (let i = 0, len = this.records[key].length; i < len; i++) {
           const record = this.records[key][i];
           if (!isNeedFilter || this.filterRecord(record)) {
+            if (!(this.filteredRecords as Record<string, any[]>)[key]) {
+              (this.filteredRecords as Record<string, any[]>)[key] = [];
+            }
+            (this.filteredRecords as Record<string, any[]>)[key].push(record);
             this.processRecord(record, key);
           }
         }
@@ -1042,6 +1054,7 @@ export class Dataset {
   /** 更新过滤规则 修改tree数据及收集的value */
   updateFilterRules(filterRules: FilterRules, isResetTree: boolean = false) {
     this.filterRules = filterRules;
+    this.filteredRecords = undefined;
     if (isResetTree) {
       this.tree = {};
     } else {
@@ -1696,7 +1709,35 @@ export class Dataset {
       rowTotalKeys.forEach(flatRowKey => {
         Object.keys(that.tree[flatRowKey]).forEach(flatColKey => {
           colCompute(flatRowKey, flatColKey);
+
+          //处理 row-sub-total  中没有col-sub-total的情况
+          if (
+            that.totals?.column?.subTotalsDimensions &&
+            that.totals?.column?.subTotalsDimensions?.length > 0 &&
+            that.totals.column.showSubTotals !== false
+          ) {
+            const colKey = flatColKey.split(this.stringJoinChar);
+            for (let i = 0, len = that.totals?.column?.subTotalsDimensions?.length; i < len; i++) {
+              const dimension = that.totals.column.subTotalsDimensions[i];
+              const dimensionIndex = that.columns.indexOf(dimension);
+              if (dimensionIndex >= 0) {
+                const colTotalKey = colKey.slice(0, dimensionIndex + 1);
+                colTotalKey.push(that.colSubTotalLabel);
+                const flatColTotalKey = colTotalKey.join(this.stringJoinChar);
+                if (!this.tree[flatRowKey][flatColTotalKey]) {
+                  colCompute(flatRowKey, flatColTotalKey);
+                }
+              }
+            }
+          }
         });
+        //处理 row-total  中没有col-total的情况
+        if (that.totals?.column?.showGrandTotals || this.rows.length === 0) {
+          const flatColTotalKey = that.colGrandTotalLabel;
+          if (!this.tree[flatRowKey][flatColTotalKey]) {
+            colCompute(flatRowKey, flatColTotalKey);
+          }
+        }
       });
     }
   }

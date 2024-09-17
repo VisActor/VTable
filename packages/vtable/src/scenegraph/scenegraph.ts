@@ -620,16 +620,17 @@ export class Scenegraph {
     setIconHoverStyle(icon, col, row, cellGroup, this);
   }
 
-  updateSortIcon(
-    col: number,
-    row: number,
-    iconMark: Icon,
-    order: SortOrder,
-    oldSortCol: number,
-    oldSortRow: number,
-    oldIconMark: Icon | undefined
-  ) {
-    updateSortIcon(col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, this);
+  updateSortIcon(options: {
+    col: number;
+    row: number;
+    iconMark: Icon;
+    order: SortOrder;
+    oldSortCol: number;
+    oldSortRow: number;
+    oldIconMark: Icon | undefined;
+  }) {
+    const { col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark } = options;
+    updateSortIcon({ col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, scene: this });
   }
 
   updateFrozenIcon(col: number, oldFrozenCol: number) {
@@ -1639,8 +1640,8 @@ export class Scenegraph {
   }
 
   updateCellContentWhileResize(col: number, row: number) {
-    const isvtableMerge = this.table.getCellRawRecord(col, row)?.vtableMerge;
-    const type = isvtableMerge
+    const isVtableMerge = this.table.getCellRawRecord(col, row)?.vtableMerge;
+    const type = isVtableMerge
       ? 'text'
       : this.table.isHeader(col, row)
       ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType

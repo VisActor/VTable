@@ -28,8 +28,8 @@ option: Gantt#taskListTable.columns
 // 官网编辑器中将 VTable.editors重命名成了VTable_editors
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();
-VTable.register.editor('input', input_editor);
-VTable.register.editor('date-input', date_input_editor);
+VTableGantt.VTable.register.editor('input', input_editor);
+VTableGantt.VTable.register.editor('date-input', date_input_editor);
 let ganttInstance;
 const records = [
   {

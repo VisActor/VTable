@@ -1965,4 +1965,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.dataset.updateFilterRules(filterRules);
     this.renderWithRecreateCells();
   }
+  /** 获取过滤后的数据 */
+  getFilteredRecords() {
+    return this.dataset?.filterRules;
+  }
 }

@@ -1,3 +1,49 @@
+# v1.7.7
+
+2024-09-13
+
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: gantt包导出依赖的VTable和VRender的类型
+
+
+[更多详情请查看 v1.7.7](https://github.com/VisActor/VTable/releases/tag/v1.7.7)
+
+# v1.7.6
+
+2024-09-12
+
+**🐛 修复问题**
+
+- **@visactor/vtable-gantt**: 修复甘特图中设置表格主题错误的问题  [#2439](https://github.com/VisActor/VTable/pull/2439)
+
+
+[查看 v1.7.6 的更多详情](https://github.com/VisActor/VTable/releases/tag/v1.7.6)
+
+# v1.7.5
+
+2024-09-12
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加了 getFilteredRecords API [#2255](https://github.com/VisActor/VTable/issues/2255)
+
+**🐛 修复问题**
+
+- **@visactor/vtable**: 修复了在选择范围点击外部时不取消选择的问题 [#2355](https://github.com/VisActor/VTable/issues/2355)
+- **@visactor/vtable**: 修复了分割线位置的问题 [#2392](https://github.com/VisActor/VTable/issues/2392)
+- **@visactor/vtable**: 修复了级别跨度情况下前列节点合并范围错误的问题 [#2359](https://github.com/VisActor/VTable/issues/2359)
+- **@visactor/vtable**: 修复了判断值是否有效的问题 [#2402](https://github.com/VisActor/VTable/issues/2402)
+- **@visactor/vtable**: 修复了在图表上mousedown时会去处理选择单元格并重新渲染的问题 [#2419](https://github.com/VisActor/VTable/issues/2419)
+- **@visactor/vtable**: 修复了轴大小和布局的问题 [#2256](https://github.com/VisActor/VTable/issues/2256)
+- **@visactor/vtable**: 修复了列表分组中的系列编号问题 [#2425](https://github.com/VisActor/VTable/issues/2425)
+- **@visactor/vtable**: 修复了列表分组中addRecord的recordIndex配置问题 [#2426](https://github.com/VisActor/VTable/issues/2426)
+
+
+
+[更多详情请查看 v1.7.5](https://github.com/VisActor/VTable/releases/tag/v1.7.5)
+
 # v1.7.4
 
 2024-09-09
