@@ -639,7 +639,11 @@ export class Dataset {
     const colKeys: { colKey: string[]; indicatorKey: string | number }[] = [];
     const rowKeys: { rowKey: string[]; indicatorKey: string | number }[] = [];
 
-    if (!(this.dataConfig as IPivotChartDataConfig)?.isPivotChart && this.customRowTree && !assignedIndicatorKey) {
+    if (
+      !(this.dataConfig as IPivotChartDataConfig)?.isPivotChart &&
+      this.customRowTree?.length &&
+      !assignedIndicatorKey
+    ) {
       const rowTreePath = this.getFieldMatchRowDimensionPaths(record);
       if (rowTreePath.length > 0) {
         for (let i = 0, len = rowTreePath.length; i < len; i++) {
@@ -693,7 +697,11 @@ export class Dataset {
       }
     }
 
-    if (!(this.dataConfig as IPivotChartDataConfig)?.isPivotChart && this.customColTree && !assignedIndicatorKey) {
+    if (
+      !(this.dataConfig as IPivotChartDataConfig)?.isPivotChart &&
+      this.customColTree?.length &&
+      !assignedIndicatorKey
+    ) {
       const colTreePath = this.getFieldMatchColDimensionPaths(record);
       if (colTreePath.length > 0) {
         for (let i = 0, len = colTreePath.length; i < len; i++) {
