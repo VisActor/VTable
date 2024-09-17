@@ -215,8 +215,8 @@ export class Dataset {
     this.indicators = indicators;
     this.customColTree = customColTree;
     this.customRowTree = customRowTree;
-    this.customColTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customColTree);
-    this.customRowTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customRowTree);
+    this.customColTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customColTree, 'col');
+    this.customRowTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customRowTree, 'row');
     this.colGrandTotalLabel = this.totals?.column?.grandTotalLabel ?? '总计';
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
@@ -765,6 +765,17 @@ export class Dataset {
     // //#endregion
     for (let row_i = 0; row_i < rowKeys.length; row_i++) {
       const rowKey = rowKeys[row_i].rowKey;
+      if (record.vtable_isTotalRecord) {
+        // 如果是’tree‘模式用户传入的自定义汇总数据
+        if (
+          record.vtable_treePath.length !== rowKey.length ||
+          !record.vtable_treePath.every((path: any, index: number) => {
+            return path.value === rowKey[index];
+          })
+        ) {
+          continue;
+        }
+      }
       let assignedIndicatorKey_value;
       if (!this.indicatorsAsCol) {
         assignedIndicatorKey_value = rowKeys[row_i].indicatorKey;
@@ -779,12 +790,12 @@ export class Dataset {
 
         //#region 收集用户传入的汇总数据到totalRecordsTree
         //该条数据为汇总数据
-        if (isToTalRecord) {
-          if (!this.totalRecordsTree[flatRowKey]) {
-            this.totalRecordsTree[flatRowKey] = {};
+        if (isToTalRecord || record.vtable_isTotalRecord) {
+          if (!this.tree[flatRowKey]) {
+            this.tree[flatRowKey] = {};
           }
-          if (!this.totalRecordsTree[flatRowKey][flatColKey]) {
-            this.totalRecordsTree[flatRowKey][flatColKey] = [];
+          if (!this.tree[flatRowKey][flatColKey]) {
+            this.tree[flatRowKey][flatColKey] = [];
           }
           const toComputeIndicatorKeys = this.indicatorKeysIncludeCalculatedFieldDependIndicatorKeys;
           for (let i = 0; i < toComputeIndicatorKeys.length; i++) {
@@ -792,11 +803,12 @@ export class Dataset {
               const calculatedFieldRule = this.calculatedFieldRules?.find(
                 rule => rule.key === toComputeIndicatorKeys[i]
               );
-              if (!this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i]) {
-                this.totalRecordsTree[flatRowKey][flatColKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
+              if (!this.tree[flatRowKey]?.[flatColKey]?.[i]) {
+                this.tree[flatRowKey][flatColKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
                   key: toComputeIndicatorKeys[i],
                   dimension: toComputeIndicatorKeys[i],
                   isRecord: true,
+                  // single: true,
                   formatFun: (
                     this.indicators?.find((indicator: string | IIndicator) => {
                       if (typeof indicator !== 'string') {
@@ -806,17 +818,18 @@ export class Dataset {
                     }) as IIndicator
                   )?.format,
                   calculateFun: calculatedFieldRule?.calculateFun,
-                  dependAggregators: this.totalRecordsTree[flatRowKey][flatColKey],
+                  dependAggregators: this.tree[flatRowKey][flatColKey],
                   dependIndicatorKeys: calculatedFieldRule?.dependIndicatorKeys
                 });
               }
-              toComputeIndicatorKeys[i] in record && this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i].push(record);
+              toComputeIndicatorKeys[i] in record && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
             } else {
               const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
-              if (!this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i]) {
-                this.totalRecordsTree[flatRowKey][flatColKey][i] = new this.aggregators[
+              if (!this.tree[flatRowKey]?.[flatColKey]?.[i]) {
+                this.tree[flatRowKey][flatColKey][i] = new this.aggregators[
                   aggRule?.aggregationType ?? AggregationType.SUM
                 ]({
+                  // single: true,
                   key: toComputeIndicatorKeys[i],
                   dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
                   formatFun:
@@ -833,7 +846,7 @@ export class Dataset {
               }
 
               //push融合了计算过程
-              toComputeIndicatorKeys[i] in record && this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i].push(record);
+              toComputeIndicatorKeys[i] in record && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
             }
           }
           return;
@@ -2069,16 +2082,22 @@ export class Dataset {
   }
 
   //将树形结构转为二维数组
-  private customTreeToDimensionPathArr(tree: IHeaderTreeDefine[]) {
+  private customTreeToDimensionPathArr(tree: IHeaderTreeDefine[], type: 'col' | 'row') {
     const result: {
       dimensionKey?: string | number;
       value: string;
       indicatorKey?: string | number;
       isVirtual?: boolean;
     }[][] = []; // 结果
+    const that = this;
     function getPath(
       node: IHeaderTreeDefine,
-      arr: { dimensionKey?: string | number; value: string; indicatorKey?: string | number; virtual?: boolean }[]
+      arr: {
+        dimensionKey?: string | number;
+        value: string;
+        indicatorKey?: string | number;
+        virtual?: boolean;
+      }[]
     ) {
       if (!node.virtual) {
         arr.push({
@@ -2089,6 +2108,9 @@ export class Dataset {
         });
       }
       if ((node.children as [])?.length > 0) {
+        if (that.rowHierarchyType === 'tree' && type === 'row') {
+          result.push([...arr]);
+        }
         // 存在多个节点就递归
         (node.children as [])?.forEach((childItem: IHeaderTreeDefine) => getPath(childItem, [...arr]));
       } else {
@@ -2128,6 +2150,7 @@ export class Dataset {
 
   private getFieldMatchRowDimensionPaths(record: any) {
     const fieldMatchDimensionPaths = [];
+    let lastIsMatch = false;
     for (let i = 0; i < this.customRowTreeDimensionPaths?.length ?? 0; i++) {
       const dimensionPath: {
         dimensionKey?: string | number;
@@ -2148,7 +2171,20 @@ export class Dataset {
       }
       if (isMatch) {
         fieldMatchDimensionPaths.push(dimensionPath);
+        if (
+          record.vtable_treePath &&
+          dimensionPath.length > record.vtable_treePath.length &&
+          this.rowHierarchyType === 'tree'
+        ) {
+          record.vtable_treePath = dimensionPath;
+        }
+      } else if (lastIsMatch) {
+        if (dimensionPath.length > this.customRowTreeDimensionPaths[i - 1].length && this.rowHierarchyType === 'tree') {
+          record.vtable_isTotalRecord = true;
+          record.vtable_treePath = this.customRowTreeDimensionPaths[i - 1];
+        }
       }
+      lastIsMatch = isMatch;
     }
     return fieldMatchDimensionPaths;
   }
