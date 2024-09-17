@@ -791,11 +791,11 @@ export class Dataset {
         //#region 收集用户传入的汇总数据到totalRecordsTree
         //该条数据为汇总数据
         if (isToTalRecord || record.vtable_isTotalRecord) {
-          if (!this.tree[flatRowKey]) {
-            this.tree[flatRowKey] = {};
+          if (!this.totalRecordsTree[flatRowKey]) {
+            this.totalRecordsTree[flatRowKey] = {};
           }
-          if (!this.tree[flatRowKey][flatColKey]) {
-            this.tree[flatRowKey][flatColKey] = [];
+          if (!this.totalRecordsTree[flatRowKey][flatColKey]) {
+            this.totalRecordsTree[flatRowKey][flatColKey] = [];
           }
           const toComputeIndicatorKeys = this.indicatorKeysIncludeCalculatedFieldDependIndicatorKeys;
           for (let i = 0; i < toComputeIndicatorKeys.length; i++) {
@@ -803,8 +803,8 @@ export class Dataset {
               const calculatedFieldRule = this.calculatedFieldRules?.find(
                 rule => rule.key === toComputeIndicatorKeys[i]
               );
-              if (!this.tree[flatRowKey]?.[flatColKey]?.[i]) {
-                this.tree[flatRowKey][flatColKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
+              if (!this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i]) {
+                this.totalRecordsTree[flatRowKey][flatColKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
                   key: toComputeIndicatorKeys[i],
                   dimension: toComputeIndicatorKeys[i],
                   isRecord: true,
@@ -818,15 +818,15 @@ export class Dataset {
                     }) as IIndicator
                   )?.format,
                   calculateFun: calculatedFieldRule?.calculateFun,
-                  dependAggregators: this.tree[flatRowKey][flatColKey],
+                  dependAggregators: this.totalRecordsTree[flatRowKey][flatColKey],
                   dependIndicatorKeys: calculatedFieldRule?.dependIndicatorKeys
                 });
               }
-              toComputeIndicatorKeys[i] in record && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+              toComputeIndicatorKeys[i] in record && this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i].push(record);
             } else {
               const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
-              if (!this.tree[flatRowKey]?.[flatColKey]?.[i]) {
-                this.tree[flatRowKey][flatColKey][i] = new this.aggregators[
+              if (!this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i]) {
+                this.totalRecordsTree[flatRowKey][flatColKey][i] = new this.aggregators[
                   aggRule?.aggregationType ?? AggregationType.SUM
                 ]({
                   // single: true,
@@ -846,7 +846,7 @@ export class Dataset {
               }
 
               //push融合了计算过程
-              toComputeIndicatorKeys[i] in record && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+              toComputeIndicatorKeys[i] in record && this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i].push(record);
             }
           }
           return;
@@ -1426,6 +1426,161 @@ export class Dataset {
    */
   totalStatistics() {
     const that = this;
+    /**
+     * 计算每一行的所有列的汇总值
+     * @param flatRowKey
+     * @param flatColKey
+     */
+    const colCompute = (flatRowKey: string, flatColKey: string) => {
+      if (this.totalRecordsTree?.[flatRowKey]?.[flatColKey]) {
+        // 利用汇总数据替换
+        if (!this.tree[flatRowKey]) {
+          this.tree[flatRowKey] = {};
+        }
+        this.tree[flatRowKey][flatColKey] = this.totalRecordsTree?.[flatRowKey]?.[flatColKey];
+        return;
+      }
+      const colKey = flatColKey.split(this.stringJoinChar);
+      if (
+        that.totals?.column?.subTotalsDimensions &&
+        that.totals?.column?.subTotalsDimensions?.length > 0 &&
+        that.totals.column.showSubTotals !== false
+      ) {
+        for (let i = 0, len = that.totals?.column?.subTotalsDimensions?.length; i < len; i++) {
+          const dimension = that.totals.column.subTotalsDimensions[i];
+          const dimensionIndex = that.columns.indexOf(dimension);
+          if (dimensionIndex >= 0) {
+            const colTotalKey = colKey.slice(0, dimensionIndex + 1);
+            // if (this.rowHierarchyType === 'grid') {
+            colTotalKey.push(that.colSubTotalLabel);
+            // }
+            const flatColTotalKey = colTotalKey.join(this.stringJoinChar);
+            if (this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey]) {
+              // 利用汇总数据替换
+              this.tree[flatRowKey][flatColTotalKey] = this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey];
+              return;
+            }
+            if (!this.tree[flatRowKey][flatColTotalKey]) {
+              this.tree[flatRowKey][flatColTotalKey] = [];
+            }
+            const toComputeIndicatorKeys = this.indicatorKeysIncludeCalculatedFieldDependIndicatorKeys;
+
+            for (let i = 0; i < toComputeIndicatorKeys.length; i++) {
+              if (this.calculatedFiledKeys.indexOf(toComputeIndicatorKeys[i]) >= 0) {
+                const calculatedFieldRule = this.calculatedFieldRules?.find(
+                  rule => rule.key === toComputeIndicatorKeys[i]
+                );
+                if (!this.tree[flatRowKey]?.[flatColTotalKey]?.[i]) {
+                  this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
+                    key: toComputeIndicatorKeys[i],
+                    dimension: toComputeIndicatorKeys[i],
+                    isRecord: true,
+                    formatFun: (
+                      this.indicators?.find((indicator: string | IIndicator) => {
+                        if (typeof indicator !== 'string') {
+                          return indicator.indicatorKey === toComputeIndicatorKeys[i];
+                        }
+                        return false;
+                      }) as IIndicator
+                    )?.format,
+                    calculateFun: calculatedFieldRule?.calculateFun,
+                    dependAggregators: this.tree[flatRowKey][flatColTotalKey],
+                    dependIndicatorKeys: calculatedFieldRule?.dependIndicatorKeys
+                  });
+                }
+                if (flatColTotalKey !== flatColKey) {
+                  this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                }
+              } else {
+                if (!this.tree[flatRowKey][flatColTotalKey][i]) {
+                  const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
+                  this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
+                    aggRule?.aggregationType ?? AggregationType.SUM
+                  ]({
+                    key: toComputeIndicatorKeys[i],
+                    dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+                    formatFun:
+                      aggRule?.formatFun ??
+                      (
+                        this.indicators?.find((indicator: string | IIndicator) => {
+                          if (typeof indicator !== 'string') {
+                            return indicator.indicatorKey === toComputeIndicatorKeys[i];
+                          }
+                          return false;
+                        }) as IIndicator
+                      )?.format
+                  });
+                }
+                if (flatColTotalKey !== flatColKey) {
+                  this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                }
+              }
+            }
+          }
+        }
+      }
+      if (that.totals?.column?.showGrandTotals || this.rows.length === 0) {
+        const flatColTotalKey = that.colGrandTotalLabel;
+        if (this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey]) {
+          // 利用汇总数据替换
+          this.tree[flatRowKey][flatColTotalKey] = this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey];
+          return;
+        }
+        if (!this.tree[flatRowKey][flatColTotalKey]) {
+          this.tree[flatRowKey][flatColTotalKey] = [];
+        }
+        const toComputeIndicatorKeys = this.indicatorKeysIncludeCalculatedFieldDependIndicatorKeys;
+        for (let i = 0; i < toComputeIndicatorKeys.length; i++) {
+          if (this.calculatedFiledKeys.indexOf(toComputeIndicatorKeys[i]) >= 0) {
+            const calculatedFieldRule = this.calculatedFieldRules?.find(rule => rule.key === toComputeIndicatorKeys[i]);
+            if (!this.tree[flatRowKey]?.[flatColTotalKey]?.[i]) {
+              this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
+                key: toComputeIndicatorKeys[i],
+                dimension: toComputeIndicatorKeys[i],
+                isRecord: true,
+                formatFun: (
+                  this.indicators?.find((indicator: string | IIndicator) => {
+                    if (typeof indicator !== 'string') {
+                      return indicator.indicatorKey === toComputeIndicatorKeys[i];
+                    }
+                    return false;
+                  }) as IIndicator
+                )?.format,
+                calculateFun: calculatedFieldRule?.calculateFun,
+                dependAggregators: this.tree[flatRowKey][flatColTotalKey],
+                dependIndicatorKeys: calculatedFieldRule?.dependIndicatorKeys
+              });
+            }
+            if (flatColTotalKey !== flatColKey) {
+              this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+            }
+          } else {
+            if (!this.tree[flatRowKey][flatColTotalKey][i]) {
+              const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
+              this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
+                aggRule?.aggregationType ?? AggregationType.SUM
+              ]({
+                key: toComputeIndicatorKeys[i],
+                dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+                formatFun:
+                  aggRule?.formatFun ??
+                  (
+                    this.indicators?.find((indicator: string | IIndicator) => {
+                      if (typeof indicator !== 'string') {
+                        return indicator.indicatorKey === toComputeIndicatorKeys[i];
+                      }
+                      return false;
+                    }) as IIndicator
+                  )?.format
+              });
+            }
+            if (flatColTotalKey !== flatColKey) {
+              this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+            }
+          }
+        }
+      }
+    };
     if (
       (that?.totals?.column?.subTotalsDimensions && that?.totals?.column?.subTotalsDimensions?.length >= 1) ||
       (that?.totals?.row?.subTotalsDimensions && that?.totals?.row?.subTotalsDimensions?.length >= 1) ||
@@ -1436,160 +1591,7 @@ export class Dataset {
       // that.columns.length === 0
     ) {
       const rowTotalKeys: string[] = [];
-      /**
-       * 计算每一行的所有列的汇总值
-       * @param flatRowKey
-       * @param flatColKey
-       */
-      const colCompute = (flatRowKey: string, flatColKey: string) => {
-        if (this.totalRecordsTree?.[flatRowKey]?.[flatColKey]) {
-          // 利用汇总数据替换
-          this.tree[flatRowKey][flatColKey] = this.totalRecordsTree?.[flatRowKey]?.[flatColKey];
-          return;
-        }
-        const colKey = flatColKey.split(this.stringJoinChar);
-        if (
-          that.totals?.column?.subTotalsDimensions &&
-          that.totals?.column?.subTotalsDimensions?.length > 0 &&
-          that.totals.column.showSubTotals !== false
-        ) {
-          for (let i = 0, len = that.totals?.column?.subTotalsDimensions?.length; i < len; i++) {
-            const dimension = that.totals.column.subTotalsDimensions[i];
-            const dimensionIndex = that.columns.indexOf(dimension);
-            if (dimensionIndex >= 0) {
-              const colTotalKey = colKey.slice(0, dimensionIndex + 1);
-              // if (this.rowHierarchyType === 'grid') {
-              colTotalKey.push(that.colSubTotalLabel);
-              // }
-              const flatColTotalKey = colTotalKey.join(this.stringJoinChar);
-              if (this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey]) {
-                // 利用汇总数据替换
-                this.tree[flatRowKey][flatColTotalKey] = this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey];
-                return;
-              }
-              if (!this.tree[flatRowKey][flatColTotalKey]) {
-                this.tree[flatRowKey][flatColTotalKey] = [];
-              }
-              const toComputeIndicatorKeys = this.indicatorKeysIncludeCalculatedFieldDependIndicatorKeys;
 
-              for (let i = 0; i < toComputeIndicatorKeys.length; i++) {
-                if (this.calculatedFiledKeys.indexOf(toComputeIndicatorKeys[i]) >= 0) {
-                  const calculatedFieldRule = this.calculatedFieldRules?.find(
-                    rule => rule.key === toComputeIndicatorKeys[i]
-                  );
-                  if (!this.tree[flatRowKey]?.[flatColTotalKey]?.[i]) {
-                    this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
-                      key: toComputeIndicatorKeys[i],
-                      dimension: toComputeIndicatorKeys[i],
-                      isRecord: true,
-                      formatFun: (
-                        this.indicators?.find((indicator: string | IIndicator) => {
-                          if (typeof indicator !== 'string') {
-                            return indicator.indicatorKey === toComputeIndicatorKeys[i];
-                          }
-                          return false;
-                        }) as IIndicator
-                      )?.format,
-                      calculateFun: calculatedFieldRule?.calculateFun,
-                      dependAggregators: this.tree[flatRowKey][flatColTotalKey],
-                      dependIndicatorKeys: calculatedFieldRule?.dependIndicatorKeys
-                    });
-                  }
-                  if (flatColTotalKey !== flatColKey) {
-                    this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
-                  }
-                } else {
-                  if (!this.tree[flatRowKey][flatColTotalKey][i]) {
-                    const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
-                    this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
-                      aggRule?.aggregationType ?? AggregationType.SUM
-                    ]({
-                      key: toComputeIndicatorKeys[i],
-                      dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
-                      formatFun:
-                        aggRule?.formatFun ??
-                        (
-                          this.indicators?.find((indicator: string | IIndicator) => {
-                            if (typeof indicator !== 'string') {
-                              return indicator.indicatorKey === toComputeIndicatorKeys[i];
-                            }
-                            return false;
-                          }) as IIndicator
-                        )?.format
-                    });
-                  }
-                  if (flatColTotalKey !== flatColKey) {
-                    this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
-                  }
-                }
-              }
-            }
-          }
-        }
-        if (that.totals?.column?.showGrandTotals || this.rows.length === 0) {
-          const flatColTotalKey = that.colGrandTotalLabel;
-          if (this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey]) {
-            // 利用汇总数据替换
-            this.tree[flatRowKey][flatColTotalKey] = this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey];
-            return;
-          }
-          if (!this.tree[flatRowKey][flatColTotalKey]) {
-            this.tree[flatRowKey][flatColTotalKey] = [];
-          }
-          const toComputeIndicatorKeys = this.indicatorKeysIncludeCalculatedFieldDependIndicatorKeys;
-          for (let i = 0; i < toComputeIndicatorKeys.length; i++) {
-            if (this.calculatedFiledKeys.indexOf(toComputeIndicatorKeys[i]) >= 0) {
-              const calculatedFieldRule = this.calculatedFieldRules?.find(
-                rule => rule.key === toComputeIndicatorKeys[i]
-              );
-              if (!this.tree[flatRowKey]?.[flatColTotalKey]?.[i]) {
-                this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
-                  key: toComputeIndicatorKeys[i],
-                  dimension: toComputeIndicatorKeys[i],
-                  isRecord: true,
-                  formatFun: (
-                    this.indicators?.find((indicator: string | IIndicator) => {
-                      if (typeof indicator !== 'string') {
-                        return indicator.indicatorKey === toComputeIndicatorKeys[i];
-                      }
-                      return false;
-                    }) as IIndicator
-                  )?.format,
-                  calculateFun: calculatedFieldRule?.calculateFun,
-                  dependAggregators: this.tree[flatRowKey][flatColTotalKey],
-                  dependIndicatorKeys: calculatedFieldRule?.dependIndicatorKeys
-                });
-              }
-              if (flatColTotalKey !== flatColKey) {
-                this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
-              }
-            } else {
-              if (!this.tree[flatRowKey][flatColTotalKey][i]) {
-                const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
-                this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
-                  aggRule?.aggregationType ?? AggregationType.SUM
-                ]({
-                  key: toComputeIndicatorKeys[i],
-                  dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
-                  formatFun:
-                    aggRule?.formatFun ??
-                    (
-                      this.indicators?.find((indicator: string | IIndicator) => {
-                        if (typeof indicator !== 'string') {
-                          return indicator.indicatorKey === toComputeIndicatorKeys[i];
-                        }
-                        return false;
-                      }) as IIndicator
-                    )?.format
-                });
-              }
-              if (flatColTotalKey !== flatColKey) {
-                this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
-              }
-            }
-          }
-        }
-      };
       Object.keys(that.tree).forEach(flatRowKey => {
         const rowKey = flatRowKey.split(this.stringJoinChar);
         Object.keys(that.tree[flatRowKey]).forEach(flatColKey => {
@@ -1760,6 +1762,12 @@ export class Dataset {
           }
         }
       });
+    } else if (that.rowHierarchyType === 'tree') {
+      for (const flatRowKey in that.totalRecordsTree) {
+        for (const flatColKey in that.totalRecordsTree[flatRowKey]) {
+          colCompute(flatRowKey, flatColKey);
+        }
+      }
     }
   }
   /**
