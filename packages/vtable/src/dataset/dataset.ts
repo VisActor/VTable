@@ -163,6 +163,7 @@ export class Dataset {
   indicatorsAsCol: boolean;
   // 记录用户传入的汇总数据
   totalRecordsTree: Record<string, Record<string, Aggregator[]>> = {};
+  hasExtensionRowTree?: boolean;
   constructor(
     dataConfig: IPivotTableDataConfig | IPivotChartDataConfig | undefined,
     // pagination: IPagination,
@@ -175,7 +176,8 @@ export class Dataset {
     rowHierarchyType?: 'grid' | 'tree',
     customColTree?: IHeaderTreeDefine[],
     customRowTree?: IHeaderTreeDefine[],
-    needSplitPositiveAndNegative?: boolean
+    needSplitPositiveAndNegative?: boolean,
+    hasExtensionRowTree?: boolean
   ) {
     this.registerAggregators();
     this.dataConfig = dataConfig;
@@ -216,8 +218,11 @@ export class Dataset {
     this.indicators = indicators;
     this.customColTree = customColTree;
     this.customRowTree = customRowTree;
+    this.hasExtensionRowTree = hasExtensionRowTree;
     this.customColTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customColTree, 'col');
-    this.customRowTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customRowTree, 'row');
+    if (!this.hasExtensionRowTree) {
+      this.customRowTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customRowTree, 'row');
+    }
     this.colGrandTotalLabel = this.totals?.column?.grandTotalLabel ?? '总计';
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
@@ -643,7 +648,8 @@ export class Dataset {
     if (
       !(this.dataConfig as IPivotChartDataConfig)?.isPivotChart &&
       this.customRowTree?.length &&
-      !assignedIndicatorKey
+      !assignedIndicatorKey &&
+      !this.hasExtensionRowTree
     ) {
       const rowTreePath = this.getFieldMatchRowDimensionPaths(record);
       if (rowTreePath.length > 0) {
@@ -2081,7 +2087,9 @@ export class Dataset {
   }
   /** 主要是树形结构懒加载使用 */
   _rowTreeHasChanged() {
-    this.customRowTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customRowTree, 'row');
+    if (!this.hasExtensionRowTree) {
+      this.customRowTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customRowTree, 'row');
+    }
   }
   changeDataConfig(dataConfig: {
     rows: string[]; //行维度字段数组；
