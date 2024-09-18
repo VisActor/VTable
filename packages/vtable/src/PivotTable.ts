@@ -1950,6 +1950,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       );
       headerTreeNode.children = children;
       this._refreshHierarchyState(col, row, () => {
+        this.dataset._rowTreeHasChanged();
         this.dataset.changeDataConfig({
           rows: this.internalProps.layoutMap.fullRowDimensionKeys,
           columns: this.internalProps.layoutMap.colDimensionKeys

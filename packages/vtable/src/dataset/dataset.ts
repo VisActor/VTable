@@ -2079,6 +2079,10 @@ export class Dataset {
       this.processRecords();
     }
   }
+  /** 主要是树形结构懒加载使用 */
+  _rowTreeHasChanged() {
+    this.customRowTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customRowTree, 'row');
+  }
   changeDataConfig(dataConfig: {
     rows: string[]; //行维度字段数组；
     columns: string[]; //列维度字段数组；
