@@ -144,6 +144,7 @@ import {
 } from './utils/get-cell-position';
 import { getCellStyle } from './style-helper';
 import type { EditManeger } from '../edit/edit-manager';
+import { createReactContainer } from '../scenegraph/layout/frozen-react';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -326,16 +327,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       internalProps.context = internalProps.canvas.getContext('2d')!;
 
       if (options.customConfig?.createReactContainer) {
-        internalProps.bodyDomContainer = document.createElement('div');
-        internalProps.bodyDomContainer.classList.add('table-component-container');
-        internalProps.element.appendChild(internalProps.bodyDomContainer);
-        internalProps.headerDomContainer = document.createElement('div');
-        internalProps.headerDomContainer.classList.add('table-component-container');
-        internalProps.element.appendChild(internalProps.headerDomContainer);
-
-        internalProps.frozenBodyDomContainer = document.createElement('div');
-        internalProps.frozenBodyDomContainer.classList.add('table-component-container');
-        internalProps.element.appendChild(internalProps.frozenBodyDomContainer);
+        createReactContainer(this);
       }
     }
 
@@ -1002,20 +994,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
         canvas.style.width = `${widthP}px`;
         canvas.style.height = `${heightP}px`;
-      }
-
-      if (this.internalProps.bodyDomContainer) {
-        this.internalProps.bodyDomContainer.style.width = `${widthP}px`;
-        this.internalProps.bodyDomContainer.style.height = `${heightP}px`;
-      }
-      if (this.internalProps.headerDomContainer) {
-        this.internalProps.headerDomContainer.style.width = `${widthP}px`;
-        this.internalProps.headerDomContainer.style.height = `${heightP}px`;
-      }
-      if (this.internalProps.frozenBodyDomContainer) {
-        this.internalProps.frozenBodyDomContainer.style.left = `0px`;
-        this.internalProps.frozenBodyDomContainer.style.width = `0px`;
-        this.internalProps.frozenBodyDomContainer.style.height = `${heightP}px`;
       }
     } else if (Env.mode === 'node') {
       widthP = this.canvasWidth - 1;
@@ -4165,6 +4143,24 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   get frozenBodyDomContainer() {
     return this.internalProps.frozenBodyDomContainer;
+  }
+  get frozenHeaderDomContainer() {
+    return this.internalProps.frozenHeaderDomContainer;
+  }
+  get rightFrozenBodyDomContainer() {
+    return this.internalProps.rightFrozenBodyDomContainer;
+  }
+  get rightFrozenHeaderDomContainer() {
+    return this.internalProps.rightFrozenHeaderDomContainer;
+  }
+  get frozenBottomDomContainer() {
+    return this.internalProps.frozenBottomDomContainer;
+  }
+  get bottomDomContainer() {
+    return this.internalProps.bottomDomContainer;
+  }
+  get rightFrozenBottomDomContainer() {
+    return this.internalProps.rightFrozenBottomDomContainer;
   }
   /**
    * 显示移动列或移动行的高亮线  如果(col，row)单元格是列头 则显示高亮列线；  如果(col，row)单元格是行头 则显示高亮行线

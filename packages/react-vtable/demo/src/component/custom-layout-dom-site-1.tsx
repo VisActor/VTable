@@ -178,7 +178,7 @@ const HeaderCustomLayoutComponent = props => {
 
 function App() {
   const records = [];
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 20; i++) {
     records.push({
       id: i,
       name: generateRandomString(8)
@@ -192,7 +192,9 @@ function App() {
       width={1200}
       defaultRowHeight={110}
       allowFrozenColCount={4}
-      frozenColCount={1}
+      frozenColCount={2}
+      rightFrozenColCount={1}
+      bottomFrozenRowCount={1}
       onReady={table => {
         // eslint-disable-next-line no-undef
         (window as any).tableInstance = table;
@@ -204,13 +206,13 @@ function App() {
         {/* <HeaderCustomLayoutComponent role={'header-custom-layout'} /> */}
         <CommentComponent role={'custom-layout'} />
       </ListColumn>
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
       <ListColumn field={''} title={'Operation'} width={300}>
         <OperationComponent role={'custom-layout'} />
       </ListColumn>
-      <ListColumn field={'name'} title={'name'} width={200} />
-      <ListColumn field={'name'} title={'name'} width={200} />
-      <ListColumn field={'name'} title={'name'} width={200} />
-      <ListColumn field={'name'} title={'name'} width={200} />
     </ListTable>
   );
 }

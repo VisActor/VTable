@@ -39,7 +39,8 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
       return;
     }
     const ReactDOM = stage.params.ReactDOM;
-    const { element, container } = react;
+    const { element } = react;
+    let { container } = react;
     if (!(element && ReactDOM && ReactDOM.createRoot)) {
       return;
     }
@@ -50,6 +51,11 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
     }
 
     if (!this.htmlMap || !this.htmlMap[id]) {
+      // deal with frozen container
+      if (container) {
+        container = checkFrozenContainer(graphic);
+      }
+
       // createa a wrapper contianer to be the root of react element
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, container);
 
@@ -194,4 +200,37 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
       this.clearCacheContainer();
     }
   }
+}
+
+function checkFrozenContainer(graphic: IGraphic) {
+  const { col, row, stage } = graphic.parent;
+  let { container } = graphic.attribute.react;
+  const { table } = stage as any;
+  // deal with react dom container
+  if (
+    container === table.bodyDomContainer &&
+    col < table.frozenColCount &&
+    row >= table.rowCount - table.bottomFrozenRowCount
+  ) {
+    container = table.bottomFrozenBodyDomContainer;
+  } else if (
+    container === table.bodyDomContainer &&
+    col >= table.colCount - table.rightFrozenColCount &&
+    row >= table.rowCount - table.bottomFrozenRowCount
+  ) {
+    container = table.rightFrozenBottomDomContainer;
+  } else if (container === table.bodyDomContainer && row >= table.rowCount - table.bottomFrozenRowCount) {
+    container = table.bottomFrozenBodyDomContainer;
+  } else if (container === table.bodyDomContainer && col < table.frozenColCount) {
+    container = table.frozenBodyDomContainer;
+  } else if (container === table.bodyDomContainer && col >= table.colCount - table.rightFrozenColCount) {
+    container = table.rightFrozenBodyDomContainer;
+  } else if (container === table.headerDomContainer && col < table.frozenColCount) {
+    container = table.frozenHeaderDomContainer;
+  } else if (container === table.headerDomContainer && col >= table.colCount - table.rightFrozenColCount) {
+    container = table.rightFrozenHeaderDomContainer;
+  }
+
+  graphic.attribute.react.container = container;
+  return container;
 }
