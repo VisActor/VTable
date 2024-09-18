@@ -2164,7 +2164,7 @@ export class Dataset {
         const dimension = dimensionPath[j];
         if (
           (dimension.dimensionKey && record[dimension.dimensionKey] !== dimension.value) ||
-          (dimension.indicatorKey && !isValid(record[dimension.indicatorKey]))
+          (dimension.indicatorKey && record[dimension.indicatorKey] === undefined)
         ) {
           isMatch = false;
           break;
@@ -2193,7 +2193,7 @@ export class Dataset {
         const dimension = dimensionPath[j];
         if (
           (dimension.dimensionKey && record[dimension.dimensionKey] !== dimension.value) ||
-          (dimension.indicatorKey && !isValid(record[dimension.indicatorKey]))
+          (dimension.indicatorKey && record[dimension.indicatorKey] === undefined)
         ) {
           isMatch = false;
           break;
