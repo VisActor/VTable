@@ -145,6 +145,7 @@ export class Dataset {
     value: string;
     indicatorKey?: string | number;
     isVirtual?: boolean;
+    childKeys?: (string | number)[];
   }[][];
   // 存储自定义表头树 对应每一行的 key path
   customColTreeDimensionPaths: {
@@ -765,17 +766,17 @@ export class Dataset {
     // //#endregion
     for (let row_i = 0; row_i < rowKeys.length; row_i++) {
       const rowKey = rowKeys[row_i].rowKey;
-      if (record.vtable_isTotalRecord) {
-        // 如果是’tree‘模式用户传入的自定义汇总数据
-        if (
-          record.vtable_treePath.length !== rowKey.length ||
-          !record.vtable_treePath.every((path: any, index: number) => {
-            return path.value === rowKey[index];
-          })
-        ) {
-          continue;
-        }
-      }
+      // if (record.vtable_isTotalRecord) {
+      //   // 如果是’tree‘模式用户传入的自定义汇总数据
+      //   if (
+      //     record.vtable_treePath.length !== rowKey.length ||
+      //     !record.vtable_treePath.every((path: any, index: number) => {
+      //       return path.value === rowKey[index];
+      //     })
+      //   ) {
+      //     continue;
+      //   }
+      // }
       let assignedIndicatorKey_value;
       if (!this.indicatorsAsCol) {
         assignedIndicatorKey_value = rowKeys[row_i].indicatorKey;
@@ -790,7 +791,7 @@ export class Dataset {
 
         //#region 收集用户传入的汇总数据到totalRecordsTree
         //该条数据为汇总数据
-        if (isToTalRecord || record.vtable_isTotalRecord) {
+        if (isToTalRecord) {
           if (!this.totalRecordsTree[flatRowKey]) {
             this.totalRecordsTree[flatRowKey] = {};
           }
@@ -2111,9 +2112,17 @@ export class Dataset {
         value: string;
         indicatorKey?: string | number;
         virtual?: boolean;
+        childKeys?: (string | number)[];
       }[]
     ) {
       if (!node.virtual) {
+        if (
+          arr[arr.length - 1]?.childKeys &&
+          node.dimensionKey &&
+          arr[arr.length - 1].childKeys.indexOf(node.dimensionKey) === -1
+        ) {
+          arr[arr.length - 1].childKeys.push(node.dimensionKey);
+        }
         arr.push({
           dimensionKey: isValid(node.indicatorKey) ? undefined : node.dimensionKey,
           value: node.value,
@@ -2123,6 +2132,7 @@ export class Dataset {
       }
       if ((node.children as [])?.length > 0) {
         if (that.rowHierarchyType === 'tree' && type === 'row') {
+          arr[arr.length - 1].childKeys = [];
           result.push([...arr]);
         }
         // 存在多个节点就递归
@@ -2171,6 +2181,7 @@ export class Dataset {
         value: string;
         indicatorKey?: string | number;
         isVirtual?: boolean;
+        childKeys?: (string | number)[];
       }[] = this.customRowTreeDimensionPaths[i];
       let isMatch = true;
       for (let j = 0; j < dimensionPath.length; j++) {
@@ -2181,6 +2192,12 @@ export class Dataset {
         ) {
           isMatch = false;
           break;
+        }
+        if (dimension.childKeys && j === dimensionPath.length - 1) {
+          if (dimension.childKeys.length > 0 && dimension.childKeys.find(key => isValid(record[key]))) {
+            isMatch = false;
+            break;
+          }
         }
       }
       //上面条件符合 在进一步判断 如果有是指标在行的情况 且展示为树形结构，除了有指标的节点外 其他节点都不需要统计指标值
@@ -2197,22 +2214,28 @@ export class Dataset {
       }
       if (isMatch) {
         fieldMatchDimensionPaths.push(dimensionPath);
-        if (
-          record.vtable_treePath &&
-          dimensionPath.length > record.vtable_treePath.length &&
-          this.rowHierarchyType === 'tree'
-        ) {
-          record.vtable_treePath = dimensionPath;
-        }
+
+        // if (
+        //   record.vtable_treePath &&
+        //   dimensionPath.length > record.vtable_treePath.length &&
+        //   this.rowHierarchyType === 'tree'
+        // ) {
+        //   record.vtable_treePath = dimensionPath;
+        // }
       } else if (lastIsMatch) {
-        if (
-          dimensionPath.length > this.customRowTreeDimensionPaths[i - 1].length &&
-          this.rowHierarchyType === 'tree' &&
-          this.indicatorsAsCol
-        ) {
-          record.vtable_isTotalRecord = true;
-          record.vtable_treePath = this.customRowTreeDimensionPaths[i - 1];
-        }
+        // if (
+        //   dimensionPath.length > this.customRowTreeDimensionPaths[i - 1].length &&
+        //   this.rowHierarchyType === 'tree' &&
+        //   this.indicatorsAsCol &&
+        //   this.customRowTreeDimensionPaths[i - 1][this.customRowTreeDimensionPaths[i - 1].length - 1].childKeys?.every(
+        //     key => {
+        //       return !isValid(record[key]);
+        //     }
+        //   )
+        // ) {
+        //   record.vtable_isTotalRecord = true;
+        //   record.vtable_treePath = this.customRowTreeDimensionPaths[i - 1];
+        // }
       }
       lastIsMatch = isMatch;
     }
