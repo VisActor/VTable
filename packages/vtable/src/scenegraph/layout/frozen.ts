@@ -1,4 +1,3 @@
-import type { IGraphic, ReactAttributePlugin } from '@src/vrender';
 import { getStyleTheme } from '../../core/tableHelper';
 import { getTargetCell } from '../../event/util';
 import { Group } from '../graphic/group';
@@ -6,6 +5,7 @@ import { createColGroup } from '../group-creater/column';
 import type { Scenegraph } from '../scenegraph';
 import { getProp } from '../utils/get-prop';
 import { table } from 'console';
+import { updateReactComponentContainer } from './frozen-react';
 
 export function dealFrozen(scene: Scenegraph) {
   if (scene.table.frozenColCount > scene.table.rowHeaderLevelCount) {
@@ -495,59 +495,5 @@ function insertBefore(container: Group, newNode: Group, targetGroup: Group) {
     container.insertBefore(newNode, targetGroup);
   } else {
     container.appendChild(newNode);
-  }
-}
-
-function updateReactComponentContainer(scene: Scenegraph) {
-  if (!scene.table.reactCustomLayout) {
-    return;
-  }
-  const plugin = scene.stage.pluginService.findPluginsByName('ReactAttributePlugin')[0] as ReactAttributePlugin;
-  const { htmlMap } = plugin;
-
-  for (const key in htmlMap) {
-    const item = htmlMap[key];
-    const { graphic, wrapContainer } = item as typeof item & { graphic: IGraphic };
-    if (scene.frozenColCount > scene.table.frozenColCount) {
-      // move columnGroup from rowHeaderGroup into bodyGroup(from cornerHeaderGroup into colHeaderGroup)
-      const { col, row } = getTargetCell(graphic);
-      if (
-        col < scene.frozenColCount &&
-        col >= scene.table.frozenColCount &&
-        graphic.attribute.react.container === scene.table.frozenBodyDomContainer
-      ) {
-        scene.table.bodyDomContainer.appendChild(wrapContainer);
-        item.nativeContainer = scene.table.bodyDomContainer;
-        item.container = scene.table.bodyDomContainer;
-        graphic.attribute.react.container = scene.table.bodyDomContainer;
-        plugin.updateStyleOfWrapContainer(
-          graphic,
-          scene.stage,
-          wrapContainer,
-          scene.table.bodyDomContainer,
-          graphic.attribute.react
-        );
-      }
-    } else if (scene.frozenColCount < scene.table.frozenColCount) {
-      // move columnGroup from bodyGroup into rowHeaderGroup(from colHeaderGroup into cornerHeaderGroup)
-      const { col, row } = getTargetCell(graphic);
-      if (
-        col < scene.table.frozenColCount &&
-        col >= scene.frozenColCount &&
-        graphic.attribute.react.container === scene.table.bodyDomContainer
-      ) {
-        scene.table.frozenBodyDomContainer.appendChild(wrapContainer);
-        item.nativeContainer = scene.table.frozenBodyDomContainer;
-        item.container = scene.table.frozenBodyDomContainer;
-        graphic.attribute.react.container = scene.table.frozenBodyDomContainer;
-        plugin.updateStyleOfWrapContainer(
-          graphic,
-          scene.stage,
-          wrapContainer,
-          scene.table.frozenBodyDomContainer,
-          graphic.attribute.react
-        );
-      }
-    }
   }
 }
