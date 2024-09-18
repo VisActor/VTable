@@ -778,7 +778,11 @@ export class Dataset {
       }
       let assignedIndicatorKey_value;
       if (!this.indicatorsAsCol) {
-        assignedIndicatorKey_value = rowKeys[row_i].indicatorKey;
+        if (rowKeys[row_i].indicatorKey) {
+          assignedIndicatorKey_value = rowKeys[row_i].indicatorKey;
+        } else {
+          continue;
+        }
       }
       for (let col_j = 0; col_j < colKeys.length; col_j++) {
         const colKey = colKeys[col_j].colKey;
@@ -2194,7 +2198,11 @@ export class Dataset {
           record.vtable_treePath = dimensionPath;
         }
       } else if (lastIsMatch) {
-        if (dimensionPath.length > this.customRowTreeDimensionPaths[i - 1].length && this.rowHierarchyType === 'tree') {
+        if (
+          dimensionPath.length > this.customRowTreeDimensionPaths[i - 1].length &&
+          this.rowHierarchyType === 'tree' &&
+          this.indicatorsAsCol
+        ) {
           record.vtable_isTotalRecord = true;
           record.vtable_treePath = this.customRowTreeDimensionPaths[i - 1];
         }
