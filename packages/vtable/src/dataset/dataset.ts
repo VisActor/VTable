@@ -778,11 +778,7 @@ export class Dataset {
       }
       let assignedIndicatorKey_value;
       if (!this.indicatorsAsCol) {
-        if (rowKeys[row_i].indicatorKey) {
-          assignedIndicatorKey_value = rowKeys[row_i].indicatorKey;
-        } else {
-          continue;
-        }
+        assignedIndicatorKey_value = rowKeys[row_i].indicatorKey;
       }
       for (let col_j = 0; col_j < colKeys.length; col_j++) {
         const colKey = colKeys[col_j].colKey;
@@ -957,7 +953,6 @@ export class Dataset {
             }
           }
         }
-
         //统计整体的最大最小值和总计值 共mapping使用
         if (this.mappingRules) {
           for (let i = 0; i < this.indicatorKeys.length; i++) {
@@ -2186,6 +2181,18 @@ export class Dataset {
         ) {
           isMatch = false;
           break;
+        }
+      }
+      //上面条件符合 在进一步判断 如果有是指标在行的情况 且展示为树形结构，除了有指标的节点外 其他节点都不需要统计指标值
+      if (isMatch) {
+        if (!this.indicatorsAsCol && this.rowHierarchyType === 'tree') {
+          if (
+            !dimensionPath.find(path => {
+              return path.indicatorKey;
+            })
+          ) {
+            isMatch = false;
+          }
         }
       }
       if (isMatch) {
