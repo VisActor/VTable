@@ -178,7 +178,7 @@ const HeaderCustomLayoutComponent = props => {
 
 function App() {
   const records = [];
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 2; i++) {
     records.push({
       id: i,
       name: generateRandomString(8)
@@ -204,13 +204,13 @@ function App() {
         {/* <HeaderCustomLayoutComponent role={'header-custom-layout'} /> */}
         <CommentComponent role={'custom-layout'} />
       </ListColumn>
-      <ListColumn field={'name'} title={'name'} width={200} />
-      <ListColumn field={'name'} title={'name'} width={200} />
-      <ListColumn field={'name'} title={'name'} width={200} />
-      <ListColumn field={'name'} title={'name'} width={200} />
       <ListColumn field={''} title={'Operation'} width={300}>
         <OperationComponent role={'custom-layout'} />
       </ListColumn>
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
     </ListTable>
   );
 }
