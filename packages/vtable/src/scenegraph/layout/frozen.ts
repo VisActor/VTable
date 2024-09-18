@@ -1,4 +1,4 @@
-import type { ReactAttributePlugin } from '@visactor/vrender-core';
+import type { IGraphic, ReactAttributePlugin } from '@src/vrender';
 import { getStyleTheme } from '../../core/tableHelper';
 import { getTargetCell } from '../../event/util';
 import { Group } from '../graphic/group';
@@ -507,11 +507,19 @@ function updateReactComponentContainer(scene: Scenegraph) {
 
   for (const key in htmlMap) {
     const item = htmlMap[key];
-    const { graphic, wrapContainer } = item;
+    const { graphic, wrapContainer } = item as typeof item & { graphic: IGraphic };
     if (scene.frozenColCount > scene.table.frozenColCount) {
       // move columnGroup from rowHeaderGroup into bodyGroup(from cornerHeaderGroup into colHeaderGroup)
       const { col, row } = getTargetCell(graphic);
-      if (col < scene.frozenColCount && col >= scene.table.frozenColCount) {
+      if (
+        col < scene.frozenColCount &&
+        col >= scene.table.frozenColCount &&
+        graphic.attribute.react.container === scene.table.frozenBodyDomContainer
+      ) {
+        scene.table.bodyDomContainer.appendChild(wrapContainer);
+        item.nativeContainer = scene.table.bodyDomContainer;
+        item.container = scene.table.bodyDomContainer;
+        graphic.attribute.react.container = scene.table.bodyDomContainer;
         plugin.updateStyleOfWrapContainer(
           graphic,
           scene.stage,
@@ -523,7 +531,15 @@ function updateReactComponentContainer(scene: Scenegraph) {
     } else if (scene.frozenColCount < scene.table.frozenColCount) {
       // move columnGroup from bodyGroup into rowHeaderGroup(from colHeaderGroup into cornerHeaderGroup)
       const { col, row } = getTargetCell(graphic);
-      if (col < scene.table.frozenColCount && col >= scene.frozenColCount) {
+      if (
+        col < scene.table.frozenColCount &&
+        col >= scene.frozenColCount &&
+        graphic.attribute.react.container === scene.table.bodyDomContainer
+      ) {
+        scene.table.frozenBodyDomContainer.appendChild(wrapContainer);
+        item.nativeContainer = scene.table.frozenBodyDomContainer;
+        item.container = scene.table.frozenBodyDomContainer;
+        graphic.attribute.react.container = scene.table.frozenBodyDomContainer;
         plugin.updateStyleOfWrapContainer(
           graphic,
           scene.stage,
