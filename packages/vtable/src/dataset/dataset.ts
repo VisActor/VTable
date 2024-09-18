@@ -2123,7 +2123,8 @@ export class Dataset {
         if (
           arr[arr.length - 1]?.childKeys &&
           node.dimensionKey &&
-          arr[arr.length - 1].childKeys.indexOf(node.dimensionKey) === -1
+          arr[arr.length - 1].childKeys.indexOf(node.dimensionKey) === -1 &&
+          node.dimensionKey !== arr[arr.length - 1].dimensionKey
         ) {
           arr[arr.length - 1].childKeys.push(node.dimensionKey);
         }
