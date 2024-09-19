@@ -648,8 +648,8 @@ export class Dataset {
     if (
       !(this.dataConfig as IPivotChartDataConfig)?.isPivotChart &&
       this.customRowTree?.length &&
-      !assignedIndicatorKey &&
-      !this.hasExtensionRowTree
+      !assignedIndicatorKey && // 目前应该透视图才有可能传入assignedIndicatorKey  所以前面判断了isPivotChart 这个应该也没用了
+      !this.hasExtensionRowTree // 有扩展树的情况不走新处理逻辑 走旧的即可
     ) {
       const rowTreePath = this.getFieldMatchRowDimensionPaths(record);
       if (rowTreePath.length > 0) {
@@ -707,7 +707,8 @@ export class Dataset {
     if (
       !(this.dataConfig as IPivotChartDataConfig)?.isPivotChart &&
       this.customColTree?.length &&
-      !assignedIndicatorKey
+      !assignedIndicatorKey &&
+      !this.hasExtensionRowTree
     ) {
       const colTreePath = this.getFieldMatchColDimensionPaths(record);
       if (colTreePath.length > 0) {
@@ -760,29 +761,8 @@ export class Dataset {
     }
     //#endregion
     //#region 对path的数组 rowKeys和colKeys 做双重循环
-    // //#region 兼容当透视图的应用场景 colTree rowTree 都设置成空数组 只展示一个图表的情况
-    // if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart && !this.customRowTree?.length) {
-    //   //rowKeys.length === 0) {
-    //   rowKeys.push({ rowKey: [], indicatorKey: undefined });
-    // }
-    // if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart && !this.customColTree?.length) {
-    //   //colKeys.length === 0) {
-    //   colKeys.push({ colKey: [], indicatorKey: undefined });
-    // }
-    // //#endregion
     for (let row_i = 0; row_i < rowKeys.length; row_i++) {
       const rowKey = rowKeys[row_i].rowKey;
-      // if (record.vtable_isTotalRecord) {
-      //   // 如果是’tree‘模式用户传入的自定义汇总数据
-      //   if (
-      //     record.vtable_treePath.length !== rowKey.length ||
-      //     !record.vtable_treePath.every((path: any, index: number) => {
-      //       return path.value === rowKey[index];
-      //     })
-      //   ) {
-      //     continue;
-      //   }
-      // }
       let assignedIndicatorKey_value;
       if (!this.indicatorsAsCol) {
         assignedIndicatorKey_value = rowKeys[row_i].indicatorKey;
@@ -2187,7 +2167,6 @@ export class Dataset {
 
   private getFieldMatchRowDimensionPaths(record: any) {
     const fieldMatchDimensionPaths = [];
-    let lastIsMatch = false;
     for (let i = 0; i < this.customRowTreeDimensionPaths?.length ?? 0; i++) {
       const dimensionPath: {
         dimensionKey?: string | number;
@@ -2227,30 +2206,7 @@ export class Dataset {
       }
       if (isMatch) {
         fieldMatchDimensionPaths.push(dimensionPath);
-
-        // if (
-        //   record.vtable_treePath &&
-        //   dimensionPath.length > record.vtable_treePath.length &&
-        //   this.rowHierarchyType === 'tree'
-        // ) {
-        //   record.vtable_treePath = dimensionPath;
-        // }
-      } else if (lastIsMatch) {
-        // if (
-        //   dimensionPath.length > this.customRowTreeDimensionPaths[i - 1].length &&
-        //   this.rowHierarchyType === 'tree' &&
-        //   this.indicatorsAsCol &&
-        //   this.customRowTreeDimensionPaths[i - 1][this.customRowTreeDimensionPaths[i - 1].length - 1].childKeys?.every(
-        //     key => {
-        //       return !isValid(record[key]);
-        //     }
-        //   )
-        // ) {
-        //   record.vtable_isTotalRecord = true;
-        //   record.vtable_treePath = this.customRowTreeDimensionPaths[i - 1];
-        // }
       }
-      lastIsMatch = isMatch;
     }
     return fieldMatchDimensionPaths;
   }
