@@ -78,9 +78,8 @@ export function resetFrozen(scene: Scenegraph) {
   // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
   scene.frozenColCount = scene.table.frozenColCount;
   scene.frozenRowCount = scene.colHeaderGroup.firstChild?.childrenCount ?? 0;
-  if (scene.proxy.colStart < scene.table.frozenColCount) {
-    scene.proxy.colStart = scene.table.frozenColCount;
-  }
+  //   scene.proxy.colStart = scene.table.frozenColCount;
+  scene.proxy.colStart = (scene.bodyGroup.firstChild as any)?.col ?? scene.table.frozenColCount;
 
   scene.bodyGroup.setAttribute('x', scene.rowHeaderGroup.attribute.width);
   scene.colHeaderGroup.setAttribute('x', scene.cornerHeaderGroup.attribute.width);
