@@ -181,7 +181,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
     // 更新样式
     application.global.updateDom(wrapContainer, {
       width: options.width,
-      height: options.width,
+      height: options.height,
       style: calculateStyle,
       graphic
     } as CreateDOMParamsTypeForVTable);
