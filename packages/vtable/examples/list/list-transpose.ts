@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -98,21 +99,24 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
-  tableInstance.on(VTable.ListTable.EVENT_TYPE.MOUSEENTER_TABLE, arg => {
-    console.log('MOUSEENTER_TABLE', arg);
-  });
-  tableInstance.on(VTable.ListTable.EVENT_TYPE.MOUSELEAVE_TABLE, arg => {
-    console.log('MOUSELEAVE_TABLE', arg);
-  });
 
-  tableInstance.on(VTable.ListTable.EVENT_TYPE.MOUSEDOWN_TABLE, arg => {
-    console.log('mousedown_table', arg);
-  });
-  tableInstance.on(VTable.ListTable.EVENT_TYPE.CHANGE_HEADER_POSITION, arg => {
-    console.log('CHANGE_HEADER_POSITION', arg);
-  });
+  bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 
-  tableInstance.on(VTable.ListTable.EVENT_TYPE.DRAG_SELECT_END, arg => {
-    console.log('DRAG_SELECT_END', arg);
-  });
+  // tableInstance.on(VTable.ListTable.EVENT_TYPE.MOUSEENTER_TABLE, arg => {
+  //   console.log('MOUSEENTER_TABLE', arg);
+  // });
+  // tableInstance.on(VTable.ListTable.EVENT_TYPE.MOUSELEAVE_TABLE, arg => {
+  //   console.log('MOUSELEAVE_TABLE', arg);
+  // });
+
+  // tableInstance.on(VTable.ListTable.EVENT_TYPE.MOUSEDOWN_TABLE, arg => {
+  //   console.log('mousedown_table', arg);
+  // });
+  // tableInstance.on(VTable.ListTable.EVENT_TYPE.CHANGE_HEADER_POSITION, arg => {
+  //   console.log('CHANGE_HEADER_POSITION', arg);
+  // });
+
+  // tableInstance.on(VTable.ListTable.EVENT_TYPE.DRAG_SELECT_END, arg => {
+  //   console.log('DRAG_SELECT_END', arg);
+  // });
 }
