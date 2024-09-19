@@ -53,7 +53,7 @@ export const initTextMeasure = (
         fontSize: DefaultTextStyle.fontSize
       },
       getTextBounds: useNaiveCanvas ? undefined : getTextBounds,
-      specialCharSet: `{}()//&-/: .,@%'"~…=${
+      specialCharSet: `{}()//&-/: .,@%'"~…=——${
         TextMeasure.ALPHABET_CHAR_SET
       }${TextMeasure.ALPHABET_CHAR_SET.toUpperCase()}0123456789${customAlphabetCharSet}`,
       ...(option ?? {})
