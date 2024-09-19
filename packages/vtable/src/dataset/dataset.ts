@@ -164,6 +164,7 @@ export class Dataset {
   // 记录用户传入的汇总数据
   totalRecordsTree: Record<string, Record<string, Aggregator[]>> = {};
   hasExtensionRowTree?: boolean;
+  parseCustomTreeToMatchRecords?: boolean;
   constructor(
     dataConfig: IPivotTableDataConfig | IPivotChartDataConfig | undefined,
     // pagination: IPagination,
@@ -177,7 +178,8 @@ export class Dataset {
     customColTree?: IHeaderTreeDefine[],
     customRowTree?: IHeaderTreeDefine[],
     needSplitPositiveAndNegative?: boolean,
-    hasExtensionRowTree?: boolean
+    hasExtensionRowTree?: boolean,
+    parseCustomTreeToMatchRecords?: boolean
   ) {
     this.registerAggregators();
     this.dataConfig = dataConfig;
@@ -219,9 +221,12 @@ export class Dataset {
     this.customColTree = customColTree;
     this.customRowTree = customRowTree;
     this.hasExtensionRowTree = hasExtensionRowTree;
-    this.customColTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customColTree, 'col');
-    if (!this.hasExtensionRowTree) {
-      this.customRowTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customRowTree, 'row');
+    this.parseCustomTreeToMatchRecords = parseCustomTreeToMatchRecords;
+    if (this.parseCustomTreeToMatchRecords) {
+      this.customColTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customColTree, 'col');
+      if (!this.hasExtensionRowTree) {
+        this.customRowTreeDimensionPaths = this.customTreeToDimensionPathArr(this.customRowTree, 'row');
+      }
     }
     this.colGrandTotalLabel = this.totals?.column?.grandTotalLabel ?? '总计';
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
@@ -646,6 +651,7 @@ export class Dataset {
     const rowKeys: { rowKey: string[]; indicatorKey: string | number }[] = [];
 
     if (
+      this.parseCustomTreeToMatchRecords &&
       !(this.dataConfig as IPivotChartDataConfig)?.isPivotChart &&
       this.customRowTree?.length &&
       !assignedIndicatorKey && // 目前应该透视图才有可能传入assignedIndicatorKey  所以前面判断了isPivotChart 这个应该也没用了
@@ -705,6 +711,7 @@ export class Dataset {
     }
 
     if (
+      this.parseCustomTreeToMatchRecords &&
       !(this.dataConfig as IPivotChartDataConfig)?.isPivotChart &&
       this.customColTree?.length &&
       !assignedIndicatorKey &&

@@ -399,6 +399,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
   /** 是否需要补充指标节点到对应的自定义表头中如rowTree或者columnTree. 默认为true */
   supplementIndicatorNodes?: boolean;
+  /** 如果配置了rowTree 或者 columnTree 且是非规则的树结构，即树的同一层存在不同维度的维度值时，为了去匹配对应的数据，需要开启该配置 */
+  parseCustomTreeToMatchRecords?: boolean;
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**

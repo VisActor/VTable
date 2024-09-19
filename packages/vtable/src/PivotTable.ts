@@ -157,7 +157,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
           this.internalProps.rowTree,
           false,
-          !!options.extensionRows
+          !!options.extensionRows,
+          !!options.parseCustomTreeToMatchRecords
         );
         if (!options.columnTree) {
           if (options.indicatorsAsCol !== false) {
@@ -362,7 +363,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
         this.internalProps.rowTree,
         false,
-        !!options.extensionRows
+        !!options.extensionRows,
+        !!options.parseCustomTreeToMatchRecords
       );
       if (!options.columnTree) {
         if (options.indicatorsAsCol !== false) {
