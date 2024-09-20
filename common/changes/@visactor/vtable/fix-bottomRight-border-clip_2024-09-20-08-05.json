@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix cell border clip in 'bottom-right' borde mode #2442",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
