@@ -278,7 +278,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   _generateFieldAggragations() {
     const columnObjs = this.columns;
     for (let i = 0; i < columnObjs?.length; i++) {
-      (columnObjs[i] as any).vtable_aggregator = null; //重置聚合器 如更新了过滤条件都需要重新计算
+      delete (columnObjs[i] as any).vtable_aggregator; //重置聚合器 如更新了过滤条件都需要重新计算
       const field = columnObjs[i].field;
       const aggragation = columnObjs[i].aggregation;
       if (!aggragation) {

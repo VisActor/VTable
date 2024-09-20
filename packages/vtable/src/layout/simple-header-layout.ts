@@ -379,9 +379,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return [];
   }
   getAggregatorOnTop(col: number, row: number) {
-    const column = this.getColumnDefine(col, row) as any;
-    const aggregators = column.vtable_aggregator;
-    const aggregation = column.aggregation;
+    const column = this.getColumnDefine(col, row);
+    const aggregators = (column as any).vtable_aggregator;
+    const aggregation = (column as ColumnDefine).aggregation;
     if (Array.isArray(aggregation)) {
       const topAggregationIndexs = aggregation.reduce((indexs, agg, index) => {
         if (agg.showOnTop) {
@@ -404,9 +404,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
 
   getAggregatorOnBottom(col: number, row: number) {
-    const column = this.getColumnDefine(col, row) as any;
-    const aggregators = column.vtable_aggregator;
-    const aggregation = column.aggregation;
+    const column = this.getColumnDefine(col, row);
+    const aggregators = (column as any).vtable_aggregator;
+    const aggregation = (column as ColumnDefine).aggregation;
     if (Array.isArray(aggregation)) {
       const bottomAggregationIndexs = aggregation.reduce((indexs, agg, index) => {
         if (agg.showOnTop === false) {
@@ -1438,5 +1438,6 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
 
       return this._columns[col - this.leftRowSeriesNumberColumnCount].define;
     }
+    return undefined;
   }
 }
