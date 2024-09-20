@@ -41,6 +41,10 @@ export const menus = [
       {
         path: 'list',
         name: 'csv'
+      },
+      {
+        path: 'list',
+        name: 'list-async'
       }
     ]
   },
