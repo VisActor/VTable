@@ -663,8 +663,8 @@
         {
           "path": "vue",
           "title": {
-            "zh": "Vue VTable",
-            "en": "Vue VTable"
+            "zh": "Vue-VTable",
+            "en": "Vue-VTable"
           }
         }
       ]

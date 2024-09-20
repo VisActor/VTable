@@ -1,0 +1,157 @@
+{
+  "menu": "example",
+  "children": [
+    {
+      "path": "usage",
+      "title": {
+        "zh": "用法",
+        "en": "usage"
+      },
+      "children": [
+        {
+          "path": "option",
+          "title": {
+            "zh": "使用完整option",
+            "en": "usage-1"
+          }
+        },
+        {
+          "path": "option-record",
+          "title": {
+            "zh": "使用option&record",
+            "en": "usage-2"
+          }
+        },
+        {
+          "path": "grammatical-tag",
+          "title": {
+            "zh": "使用语义化标签",
+            "en": "usage-3"
+          }
+        }
+      ]
+    },
+    {
+      "path": "grammatical-tag",
+      "title": {
+        "zh": "语义化标签",
+        "en": "grammatical tag"
+      },
+      "children": [
+        {
+          "path": "pivot-table",
+          "title": {
+            "zh": "透视表",
+            "en": "pivot table"
+          }
+        },
+        {
+          "path": "pivot-chart",
+          "title": {
+            "zh": "透视图",
+            "en": "pivot chart"
+          }
+        }
+      ]
+    },
+    {
+      "path": "component",
+      "title": {
+        "zh": "组件",
+        "en": "component"
+      },
+      "children": [
+        {
+          "path": "menu",
+          "title": {
+            "zh": "菜单",
+            "en": "menu"
+          }
+        },
+        {
+          "path": "tooltip",
+          "title": {
+            "zh": "提示信息",
+            "en": "tooltip"
+          }
+        },
+        {
+          "path": "custom-component",
+          "title": {
+            "zh": "自定义组件",
+            "en": "custom component"
+          }
+        }
+      ]
+    },
+    {
+      "path": "event",
+      "title": {
+        "zh": "事件监听",
+        "en": "event"
+      },
+      "children": [
+        {
+          "path": "ready",
+          "title": {
+            "zh": "onReady",
+            "en": "onReady"
+          }
+        },
+        {
+          "path": "event",
+          "title": {
+            "zh": "事件监听",
+            "en": "event listener"
+          }
+        }
+      ]
+    },
+    {
+      "path": "custom-layout",
+      "title": {
+        "zh": "自定义布局",
+        "en": "custom layout"
+      },
+      "children": [
+        {
+          "path": "cell-custom-component",
+          "title": {
+            "zh": "单元格自定义组件",
+            "en": "cell custom component"
+          }
+        },
+        {
+          "path": "cell-custom-layout-dom",
+          "title": {
+            "zh": "单元格自定义组件+dom组件",
+            "en": "cell custom component + dom component"
+          }
+        },
+        {
+          "path": "cell-custom-dom",
+          "title": {
+            "zh": "单元格内dom组件",
+            "en": "cell custom dom component"
+          }
+        }
+      ]
+    },
+    {
+      "path": "functional-components",
+      "title": {
+        "zh": "功能性组件",
+        "en": "functional components"
+      },
+      "children": [
+        {
+          "path": "arco-select-editor",
+          "title": {
+            "zh": "ArcoDesign列表选择器",
+            "en": "Arco Design select editor"
+          }
+        }
+      ]
+    }
+  ]
+}
