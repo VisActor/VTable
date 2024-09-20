@@ -308,7 +308,7 @@ export function sortRecords(table: ListTable) {
       //const hd = table.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === item.field);
       return item;
     });
-    
+
     table.dataSource.sort(sortState);
   }
 }
@@ -396,6 +396,23 @@ export function listTableAddRecord(record: any, recordIndex: number, table: List
           addRows.push({ col: row, row: 0 });
         } else {
           addRows.push({ col: 0, row });
+        }
+      }
+      const updateRows = [];
+      const topAggregationCount = table.internalProps.layoutMap.hasAggregationOnTopCount;
+      const bottomAggregationCount = table.internalProps.layoutMap.hasAggregationOnBottomCount;
+      for (let row = headerCount; row < headerCount + topAggregationCount; row++) {
+        if (table.transpose) {
+          updateRows.push({ col: row, row: 0 });
+        } else {
+          updateRows.push({ col: 0, row });
+        }
+      }
+      for (let row = table.rowCount - bottomAggregationCount; row < table.rowCount; row++) {
+        if (table.transpose) {
+          updateRows.push({ col: row, row: 0 });
+        } else {
+          updateRows.push({ col: 0, row });
         }
       }
       table.transpose ? table.scenegraph.updateCol([], addRows, []) : table.scenegraph.updateRow([], addRows, []);
@@ -500,7 +517,26 @@ export function listTableAddRecords(records: any[], recordIndex: number, table: 
           addRows.push({ col: 0, row });
         }
       }
-      table.transpose ? table.scenegraph.updateCol([], addRows, []) : table.scenegraph.updateRow([], addRows, []);
+      const topAggregationCount = table.internalProps.layoutMap.hasAggregationOnTopCount;
+      const bottomAggregationCount = table.internalProps.layoutMap.hasAggregationOnBottomCount;
+      const updateRows = [];
+      for (let row = headerCount; row < headerCount + topAggregationCount; row++) {
+        if (table.transpose) {
+          updateRows.push({ col: row, row: 0 });
+        } else {
+          updateRows.push({ col: 0, row });
+        }
+      }
+      for (let row = table.rowCount - bottomAggregationCount; row < table.rowCount; row++) {
+        if (table.transpose) {
+          updateRows.push({ col: row, row: 0 });
+        } else {
+          updateRows.push({ col: 0, row });
+        }
+      }
+      table.transpose
+        ? table.scenegraph.updateCol([], addRows, updateRows)
+        : table.scenegraph.updateRow([], addRows, updateRows);
     }
   }
   // table.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
@@ -590,6 +626,24 @@ export function listTableDeleteRecords(recordIndexs: number[], table: ListTable)
             delRows.push({ col: 0, row: rowNum });
           }
         }
+        const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
+        const topAggregationCount = table.internalProps.layoutMap.hasAggregationOnTopCount;
+        const bottomAggregationCount = table.internalProps.layoutMap.hasAggregationOnBottomCount;
+        const updateRows = [];
+        for (let row = headerCount; row < headerCount + topAggregationCount; row++) {
+          if (table.transpose) {
+            updateRows.push({ col: row, row: 0 });
+          } else {
+            updateRows.push({ col: 0, row });
+          }
+        }
+        for (let row = table.rowCount - bottomAggregationCount; row < table.rowCount; row++) {
+          if (table.transpose) {
+            updateRows.push({ col: row, row: 0 });
+          } else {
+            updateRows.push({ col: 0, row });
+          }
+        }
         table.transpose ? table.scenegraph.updateCol(delRows, [], []) : table.scenegraph.updateRow(delRows, [], []);
       }
     }
@@ -663,6 +717,23 @@ export function listTableUpdateRecords(records: any[], recordIndexs: number[], t
             updateRows.push({ col: rowNum, row: 0 });
           } else {
             updateRows.push({ col: 0, row: rowNum });
+          }
+        }
+        const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
+        const topAggregationCount = table.internalProps.layoutMap.hasAggregationOnTopCount;
+        const bottomAggregationCount = table.internalProps.layoutMap.hasAggregationOnBottomCount;
+        for (let row = headerCount; row < headerCount + topAggregationCount; row++) {
+          if (table.transpose) {
+            updateRows.push({ col: row, row: 0 });
+          } else {
+            updateRows.push({ col: 0, row });
+          }
+        }
+        for (let row = table.rowCount - bottomAggregationCount; row < table.rowCount; row++) {
+          if (table.transpose) {
+            updateRows.push({ col: row, row: 0 });
+          } else {
+            updateRows.push({ col: 0, row });
           }
         }
         table.transpose

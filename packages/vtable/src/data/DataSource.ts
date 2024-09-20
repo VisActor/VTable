@@ -32,7 +32,7 @@ import {
   NoneAggregator,
   CustomAggregator
 } from '../dataset/statistics-helper';
-import type { ColumnData } from '../ts-types/list-table/layout-map/api';
+import type { ColumnsDefine } from '../ts-types/list-table/layout-map/api';
 
 /**
  * 判断字段数据是否为访问器的格式
@@ -192,13 +192,13 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   rowHierarchyType: 'grid' | 'tree';
   // columns对应各个字段的聚合类对象
   fieldAggregators: Aggregator[] = [];
-  layoutColumnObjects: ColumnData[] = [];
+  columns: ColumnsDefine;
   lastFilterRules: FilterRules;
   constructor(
     dataSourceObj?: DataSourceParam,
     dataConfig?: IListTableDataConfig,
     pagination?: IPagination,
-    columnObjs?: ColumnData[],
+    columns?: ColumnsDefine,
     rowHierarchyType?: 'grid' | 'tree',
     hierarchyExpandLevel?: number
   ) {
@@ -207,7 +207,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.dataSourceObj = dataSourceObj;
     this.dataConfig = dataConfig;
     this._get = dataSourceObj?.get;
-    this.layoutColumnObjects = columnObjs;
+    this.columns = columns;
     this._source = dataSourceObj?.records ? this.processRecords(dataSourceObj?.records) : dataSourceObj;
     this._sourceLength = this._source?.length || 0;
     this.sortedIndexMap = new Map<string, ISortedMapItem>();
@@ -276,9 +276,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.registerAggregator(AggregationType.CUSTOM, CustomAggregator);
   }
   _generateFieldAggragations() {
-    const columnObjs = this.layoutColumnObjects;
+    const columnObjs = this.columns;
     for (let i = 0; i < columnObjs?.length; i++) {
-      columnObjs[i].aggregator = null; //重置聚合器 如更新了过滤条件都需要重新计算
+      (columnObjs[i] as any).vtable_aggregator = null; //重置聚合器 如更新了过滤条件都需要重新计算
       const field = columnObjs[i].field;
       const aggragation = columnObjs[i].aggregation;
       if (!aggragation) {
@@ -294,10 +294,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
             aggregationFun: (item as CustomAggregation).aggregationFun
           });
           this.fieldAggregators.push(aggregator);
-          if (!columnObjs[i].aggregator) {
-            columnObjs[i].aggregator = [];
+          if (!(columnObjs[i] as any).vtable_aggregator) {
+            (columnObjs[i] as any).vtable_aggregator = [];
           }
-          columnObjs[i].aggregator.push(aggregator);
+          (columnObjs[i] as any).vtable_aggregator.push(aggregator);
         }
       } else {
         const aggregator = new this.registedAggregators[aggragation.aggregationType]({
@@ -307,7 +307,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           aggregationFun: (aggragation as CustomAggregation).aggregationFun
         });
         this.fieldAggregators.push(aggregator);
-        columnObjs[i].aggregator = aggregator;
+        (columnObjs[i] as any).vtable_aggregator = aggregator;
       }
     }
   }
@@ -747,6 +747,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.adjustBeforeChangedRecordsMap(index, 1);
       this.currentIndexedData.push(this.currentIndexedData.length);
       this._sourceLength += 1;
+      for (let i = 0; i < this.fieldAggregators.length; i++) {
+        this.fieldAggregators[i].push(record);
+      }
       if (this.rowHierarchyType === 'tree') {
         this.initTreeHierarchyState();
       }
@@ -784,6 +787,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           this.currentIndexedData.push(this.currentIndexedData.length);
         }
         this._sourceLength += recordArr.length;
+
+        for (let i = 0; i < this.fieldAggregators.length; i++) {
+          for (let j = 0; j < recordArr.length; j++) {
+            this.fieldAggregators[i].push(recordArr[j]);
+          }
+        }
       }
 
       if (this.userPagination) {
@@ -958,10 +967,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   sort(states: Array<SortState>): void {
     // Convert states into an array and filter out unnecessary ones
     states = (Array.isArray(states) ? states : [states]).filter(state => {
-      let column = this.layoutColumnObjects.find(obj=>obj.field == state.field);
-      return column?.define?.sort !== false && state.order !== 'normal'
+      const column = this.columns.find(obj => obj.field === state.field);
+      return column?.sort !== false && state.order !== 'normal';
     });
-    
+
     // Save the sorting states
     this.lastSortStates = states;
 
