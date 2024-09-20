@@ -6,6 +6,7 @@ import { updateCell, renderChart, graphicUtil } from '@visactor/vtable';
 import { isArray } from '@visactor/vutils';
 import type { ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/src/ts-types';
 import { getHierarchyOffset } from '../util/indent';
+import { isPromise } from '../util/promise';
 
 export type CellInfo = {
   cellType: string;
@@ -46,7 +47,7 @@ export async function exportVTableToExcel(tableInstance: IVTable, options?: Expo
         worksheetRow.height = rowHeight;
       }
 
-      addCell(col, row, tableInstance, worksheet, workbook, options);
+      await addCell(col, row, tableInstance, worksheet, workbook, options);
 
       const cellRange = tableInstance.getCellRange(col, row);
       if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
@@ -100,7 +101,7 @@ export async function exportVTableToExcel(tableInstance: IVTable, options?: Expo
   return buffer;
 }
 
-function addCell(
+async function addCell(
   col: number,
   row: number,
   tableInstance: IVTable,
@@ -110,7 +111,11 @@ function addCell(
 ) {
   const { layoutMap } = tableInstance.internalProps;
   const cellType = tableInstance.getCellType(col, row);
-  const cellValue = tableInstance.getCellValue(col, row);
+  let cellValue = tableInstance.getCellValue(col, row);
+  if (isPromise(cellValue)) {
+    cellValue = await cellValue;
+  }
+
   const cellStyle = tableInstance.getCellStyle(col, row);
 
   const cellLocation = tableInstance.getCellLocation(col, row);
@@ -230,6 +235,9 @@ function exportCellImg(col: number, row: number, tableInstance: IVTable) {
     cellGroup = updateCell(col, row, tableInstance as any, true);
     cellGroup.setStage(tableInstance.scenegraph.stage);
     needRemove = true;
+
+    // fix dirtyBounds auto update error in drawGraphicToCanvas()
+    cellGroup.stage.dirtyBounds.set(-Infinity, -Infinity, Infinity, Infinity);
   }
   const oldStroke = cellGroup.attribute.stroke;
   cellGroup.attribute.stroke = false;

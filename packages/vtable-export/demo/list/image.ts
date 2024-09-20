@@ -8,7 +8,8 @@ export function createTable() {
     {
       progress: 100,
       id: 1,
-      name: 'a'
+      name: 'a',
+      link: animal1ImageUrl
     },
     {
       progress: 80,
@@ -33,7 +34,13 @@ export function createTable() {
       id: 5,
       name: 'e',
       link: animal4ImageUrl
-    }
+    },
+    ...new Array(200).fill({
+      progress: 28,
+      id: 5,
+      name: 'e',
+      link: animal4ImageUrl
+    })
   ];
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
@@ -50,12 +57,12 @@ export function createTable() {
       {
         field: 'id',
         title: 'ID',
-        sort: (v1, v2, order) => {
-          if (order === 'desc') {
-            return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
-          }
-          return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
-        },
+        // sort: (v1, v2, order) => {
+        //   if (order === 'desc') {
+        //     return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
+        //   }
+        //   return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
+        // },
         width: 100
       },
       {
@@ -65,12 +72,12 @@ export function createTable() {
         },
         title: 'ID说明',
         description: '这是一个ID详细描述',
-        sort: (v1, v2, order) => {
-          if (order === 'desc') {
-            return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
-          }
-          return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
-        },
+        // sort: (v1, v2, order) => {
+        //   if (order === 'desc') {
+        //     return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
+        //   }
+        //   return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
+        // },
         width: 150
       },
       {
@@ -82,19 +89,19 @@ export function createTable() {
           fontFamily: 'sans-serif'
         },
         field: 'link',
-        // cellType: 'image',
-        cellType(args) {
-          if (args.row % 2 === 1) {
-            return 'image';
-          }
-          return 'link';
-        },
+        cellType: 'image',
+        // cellType(args) {
+        //   if (args.row % 2 === 1) {
+        //     return 'image';
+        //   }
+        //   return 'link';
+        // },
         width: 200,
         style: {
           padding: 1
-        },
-        keepAspectRatio: true,
-        imageAutoSizing: true
+        }
+        // keepAspectRatio: true,
+        // imageAutoSizing: true
       },
       {
         field: 'progress',
@@ -106,7 +113,7 @@ export function createTable() {
         width: 150
       }
     ],
-    showFrozenIcon: true, //显示VTable内置冻结列图标
+    showFrozenIcon: false, //显示VTable内置冻结列图标
     widthMode: 'standard',
     allowFrozenColCount: 2
   };
@@ -115,8 +122,8 @@ export function createTable() {
 
   //设置表格数据
   instance.setRecords(personsDataSource, {
-    field: 'progress',
-    order: 'desc'
+    field: 'progress'
+    // order: 'desc'
   });
 
   // VTable.bindDebugTool(instance.scenegraph.stage as any, {
