@@ -1,17 +1,17 @@
 ---
 category: examples
 group: usage
-title: 使用option+record
+title: Using option+record
 cover: 
 order: 1-1
 link: '../guide/Developer_Ecology/vue'
 ---
 
-# 使用 option+record
+# Using option+record
 
-可以将 records 从 option 中分离出来，单独作为一个 prop 传入表格组件。
+You can separate records from options and pass them as a standalone prop to the table component.
 
-## 代码演示
+## Code Demonstration
 
 ```javascript livedemo template=vtable-vue
 

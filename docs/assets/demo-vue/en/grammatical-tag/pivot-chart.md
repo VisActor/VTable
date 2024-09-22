@@ -1,24 +1,24 @@
 ---
 category: examples
 group: grammatical-tag
-title: 透视组合图
+title: Pivot Combination Chart
 cover: 
 order: 1-1
 link: '../guide/Developer_Ecology/vue'
 ---
 
-# 透视组合图
+# Pivot Combination Chart
 
-PivotTable&PivotChart接受的props属性与option一致，语义化子组件如下：
+The props attributes accepted by PivotTable&PivotChart are consistent with the options, and the semantic subcomponents are as follows:
 
-- PivotColumnDimension: 列上的维度配置，同option中的columns的定义一致 [api](../../option/PivotTable-columns-text#headerType)
-- PivotRowDimension: 行上的维度配置，同option中的rows的定义一致 [api](../../option/PivotTable-rows-text#headerType)
-- PivotIndicator: 指标配置，同option中的indicators的定义一致 [api](../../option/PivotTable-indicators-text#cellType)
-- PivotColumnHeaderTitle: 列表头标题配置，同option中的columnHeaderTitle的定义一致 [api](../../option/PivotTable#rowHeaderTitle)
-- PivotRowHeaderTitle: 行头标题配置，同option中的rowHeaderTitle的定义一致 [api](../../option/PivotTable#columnHeaderTitle)
-- PivotCorner: 角头配置，同option中的corner的定义一致 [api](../../option/PivotTable#corner)
+- PivotColumnDimension: Configuration of dimensions on the columns, consistent with the definition of columns in options [api](../../option/PivotTable-columns-text#headerType)
+- PivotRowDimension: Configuration of dimensions on the rows, consistent with the definition of rows in options [api](../../option/PivotTable-rows-text#headerType)
+- PivotIndicator: Indicator configuration, consistent with the definition of indicators in options [api](../../option/PivotTable-indicators-text#cellType)
+- PivotColumnHeaderTitle: Column header title configuration, consistent with the definition of columnHeaderTitle in options [api](../../option/PivotTable#rowHeaderTitle)
+- PivotRowHeaderTitle: Row header title configuration, consistent with the definition of rowHeaderTitle in options [api](../../option/PivotTable#columnHeaderTitle)
+- PivotCorner: Corner configuration, consistent with the definition of corner in options [api](../../option/PivotTable#corner)
 
-## 代码演示
+## Code Demonstration
 ```javascript livedemo template=vtable-vue
 
 const app = createApp({
@@ -128,7 +128,7 @@ const app = createApp({
           defaultHeaderRowHeight: 50,
           defaultColWidth: 280,
           defaultHeaderColWidth: 100,
-          indicatorTitle: '指标',
+          indicatorTitle: 'Indicator',
           autoWrapText: true,
           widthMode: 'adaptive',
           heightMode: 'adaptive',

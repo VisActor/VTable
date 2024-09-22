@@ -1,27 +1,27 @@
 ---
 category: examples
 group: component
-title: 单元格自定义组件
+title: Custom Cell Component
 cover: 
 order: 1-1
 link: '../guide/Developer_Ecology/vue'
 ---
 
-# 单元格自定义组件
+# Custom Cell Component
 
-同customLayout一样，可以使用vue组件进行自定义布局，具体可以参考[自定义组件](../guide/Developer_Ecology/react-custom-component)
+Similar to customLayout, you can use Vue components for custom layouts. For more details, refer to [Custom Component](../guide/Developer_Ecology/react-custom-component).
 
-## 代码演示
+## Code Demonstration
 
 ```javascript livedemo template=vtable-vue
 const app = createApp({
    template: `
       <vue-list-table :options="option" :records="records" ref="tableRef">
          <!-- Order Number Column -->
-         <ListColumn :field="'bloggerId'" :title="'order number'" />
+         <ListColumn :field="'bloggerId'" :title="'Order Number'" />
 
          <!-- Anchor Nickname Column with Custom Layout -->
-         <ListColumn :field="'bloggerName'" :title="'anchor nickname'" :width="330" :style="{ fontFamily: 'Arial', fontWeight: 500 }">
+         <ListColumn :field="'bloggerName'" :title="'Anchor Nickname'" :width="330" :style="{ fontFamily: 'Arial', fontWeight: 500 }">
             <template #customLayout="{ table, row, col, rect, record, height, width }">
                <Group :height="height" :width="width" display="flex" flexDirection="row" flexWrap="nowrap">
                   <!-- Avatar Group -->
@@ -32,7 +32,7 @@ const app = createApp({
                   <Group :height="height" :width="percentCalc(100, -60)" display="flex" flexDirection="column" flexWrap="nowrap">
                      <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" flexWrap="wrap" :alignItems="'center'" :fill="'orange'" :opacity="0.1">
                         <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" :boundsPadding="[0, 0, 0, 10]" />
-                        <Image id="location" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg" :width="15" :height="15" :boundsPadding="[0, 0, 0, 10]" cursor="pointer" @mouseEnter="handleMoueEnter($event)" @click="handleMouseClick($event)" @mouseLeave="handleMoueLeave($event)" />
+                        <Image id="location" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg" :width="15" :height="15" :boundsPadding="[0, 0, 0, 10]" cursor="pointer" @mouseEnter="handleMouseEnter($event)" @click="handleMouseClick($event)" @mouseLeave="handleMouseLeave($event)" />
                         <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
                      </Group>
                      <!-- Tags Group -->
@@ -45,10 +45,10 @@ const app = createApp({
          </ListColumn>
 
          <!-- Other Columns -->
-         <ListColumn :field="'fansCount'" :title="'fansCount'" :fieldFormat="rec => rec.fansCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
-         <ListColumn :field="'worksCount'" :title="'worksCount'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
-         <ListColumn :field="'viewCount'" :title="'viewCount'" :fieldFormat="rec => rec.fansCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
-         <ListColumn :field="'viewCount'" :title="'viewCount'" :fieldFormat="rec => rec.viewCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
+         <ListColumn :field="'fansCount'" :title="'Fans Count'" :fieldFormat="rec => rec.fansCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
+         <ListColumn :field="'worksCount'" :title="'Works Count'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
+         <ListColumn :field="'viewCount'" :title="'View Count'" :fieldFormat="rec => rec.viewCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
+         <ListColumn :field="'viewCount'" :title="'View Count'" :fieldFormat="rec => rec.viewCount + 'w'" :style="{ fontFamily: 'Arial', fontSize: 12, fontWeight: 'bold' }" />
       </vue-list-table>
    `,
    data() {
@@ -68,7 +68,7 @@ const app = createApp({
             },
             {
                bloggerId: 2,
-               bloggerName: 'Virtual anchor little wolf',
+               bloggerName: 'Virtual Anchor Little Wolf',
                bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg',
                introduction: 'Hello everyone, I am the virtual anchor Little Wolf. I like music, travel and photography, and I hope to explore the beauty of the world with you through live broadcast.',
                fansCount: 800,
@@ -79,7 +79,7 @@ const app = createApp({
             },
             {
                bloggerId: 3,
-               bloggerName: 'Virtual anchor bunny',
+               bloggerName: 'Virtual Anchor Bunny',
                bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg',
                introduction: 'Hello everyone, I am the virtual anchor Xiaotu. I like painting, handicrafts and beauty makeup. I hope to share creativity and fashion with you through live broadcast.',
                fansCount: 600,
@@ -90,7 +90,7 @@ const app = createApp({
             },
             {
                bloggerId: 4,
-               bloggerName: 'Virtual anchor kitten',
+               bloggerName: 'Virtual Anchor Kitten',
                bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg',
                introduction: 'Hello everyone, I am the virtual host Kitty. I am a lazy cat who likes dancing, fitness and cooking. I hope to live a healthy and happy life with everyone through the live broadcast.',
                fansCount: 1000,
@@ -101,18 +101,18 @@ const app = createApp({
             },
             {
                bloggerId: 5,
-               bloggerName: 'Virtual anchor Bear',
+               bloggerName: 'Virtual Anchor Bear',
                bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
                introduction: 'Hello everyone, I am the virtual host Xiaoxiong. A little wise man who likes movies, reading and philosophy, I hope to explore the meaning of life with you through live broadcast.',
                fansCount: 1200,
                worksCount: 25,
                viewCount: 18,
                city: 'City of Wisdom',
-               tags: ['Movie', 'Literature']
+               tags: ['movie', 'literature']
             },
             {
                bloggerId: 6,
-               bloggerName: 'Virtual anchor bird',
+               bloggerName: 'Virtual Anchor Bird',
                bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bird.jpeg',
                introduction: 'Hello everyone, I am the virtual anchor Xiaoniao. I like singing, acting and variety shows. I hope to be happy with everyone through the live broadcast.',
                fansCount: 900,
@@ -132,11 +132,11 @@ const app = createApp({
       };
    },
    methods: {
-      handleMoueEnter(e) {
+      handleMouseEnter(e) {
          e.currentTarget.attribute.background = { fill: '#ccc', cornerRadius: 5, expandX: 1, expandY: 1 };
          e.currentTarget.stage.renderNextFrame();
       },
-      handleMoueLeave(e) {
+      handleMouseLeave(e) {
          e.currentTarget.attribute.background = null;
          e.currentTarget.stage.renderNextFrame();
       },
@@ -160,7 +160,7 @@ const app = createApp({
          cursor: 'pointer',
          tooltip: {
             placement: VTable.TYPES.Placement.top,
-            title: 'follow',
+            title: 'Follow',
             style: {
                font: '10px Arial',
                bgColor: 'white',
@@ -180,7 +180,7 @@ const app = createApp({
          cursor: 'pointer',
          tooltip: {
             placement: VTable.TYPES.Placement.top,
-            title: 'send message',
+            title: 'Send Message',
             style: {
                font: '10px Arial',
                bgColor: 'white',
