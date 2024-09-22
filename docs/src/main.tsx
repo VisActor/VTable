@@ -9,11 +9,13 @@ import * as VTableEditors from '@visactor/vtable-editors';
 import { downloadCsv, exportVTableToCsv, downloadExcel, exportVTableToExcel } from '@visactor/vtable-export';
 import { SearchComponent } from '@visactor/vtable-search';
 import * as ReactVTable from '@visactor/react-vtable';
+import * as VueVTable from '@visactor/vue-vtable';
 import * as InulaVTable from '@visactor/openinula-vtable';
 import { App } from './app';
 import * as ArcoDesign from '@arco-design/web-react';
 import * as ArcoDesignIcon from '@arco-design/web-react/icon';
 import '@arco-design/web-react/dist/css/arco.css';
+import { createApp, ref, onMounted, h } from 'vue';
 
 (window as any).ArcoDesign = ArcoDesign;
 (window as any).ArcoDesignIcon = ArcoDesignIcon;
@@ -34,8 +36,15 @@ import '@arco-design/web-react/dist/css/arco.css';
 (window as any).ReactDom = ReactDOM;
 (window as any).ReactVTable = ReactVTable;
 
+(window as any).VueVTable = VueVTable;
+(window as any).createApp = createApp;
+(window as any).ref = ref;
+(window as any).onMounted = onMounted;
+(window as any).h = h;
+
 (window as any).Inula = Inula;
 (window as any).InulaVTable = InulaVTable;
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>
