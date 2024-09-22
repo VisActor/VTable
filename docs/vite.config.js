@@ -1,6 +1,7 @@
 import pkg from '../packages/vtable/package.json';
 import * as path from 'path';
 import react from '@vitejs/plugin-react';
+import vue from '@vitejs/plugin-vue';
 
 export default {
   optimizeDeps: {},
@@ -28,10 +29,12 @@ export default {
       '@vutils-extension': path.resolve(__dirname, '../packages/vtable/src/vutil-extension-temp'),
       '@src': path.resolve(__dirname, '../packages/vtable/src/'),
 
+      'vue': 'vue/dist/vue.esm-bundler.js' 
+
       // react: 'openinula', // 新增
       // 'react-dom': 'openinula', // 新增
       // 'react/jsx-dev-runtime': 'openinula/jsx-dev-runtime'
     }
   },
-  plugins: [react()]
+  plugins: [react(), vue()]
 };
