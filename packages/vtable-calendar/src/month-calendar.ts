@@ -1,7 +1,11 @@
 import type { TYPES } from '@visactor/vtable';
 import { ListTable, themes, CustomLayout } from '@visactor/vtable';
-import { getRecords, getStartAndEndDate } from './date-util';
+import type { DateRecord, DateRecordKeys } from './date-util';
+import { defaultDayTitles, getMonthString, getRecords, getStartAndEndDate, getWeekdayString } from './date-util';
 import { bindDebugTool } from '../../vtable/src/scenegraph/debug-tool';
+import { add, differenceInDays, lastDayOfMonth, previousSunday } from 'date-fns';
+import { getMonthCustomStyleRange } from './style';
+import type { CellRange, CustomRenderFunctionArg } from '@visactor/vtable/es/ts-types';
 
 interface VTableCalendarConstructorOptions {
   startDate?: Date;
@@ -15,7 +19,6 @@ interface VTableCalendarConstructorOptions {
   dayTitles?: [string, string, string, string, string, string, string];
 }
 
-const defaultDayTitles = ['year', 'month', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export class VTableCalendar {
   container: HTMLElement;
   options: VTableCalendarConstructorOptions;
@@ -24,6 +27,11 @@ export class VTableCalendar {
   endDate: Date;
   currentDate: Date;
   rangeDays: number;
+  tableStartDate: Date;
+  records: DateRecord[];
+  currentMonthCellRanges: { range: CellRange }[];
+  currentMonth: number;
+  currentYear: number;
 
   constructor(container: HTMLElement, options?: VTableCalendarConstructorOptions) {
     this.container = container;
@@ -43,6 +51,7 @@ export class VTableCalendar {
       this.startDate = startDate ?? computedStartDate;
       this.endDate = endDate ?? computedEndDate;
     }
+    this.tableStartDate = this.startDate.getDay() === 0 ? this.startDate : previousSunday(this.startDate);
 
     this.createTable();
   }
@@ -51,15 +60,30 @@ export class VTableCalendar {
     const { columnWidth, rowHeight, headerRowHeight, dayTitles } = this.options;
 
     const records = getRecords(this.startDate, this.endDate);
+    this.records = records;
 
     // const columnWidth = 140;
-    const week = dayTitles ?? defaultDayTitles;
-    const columns = week.map((item, index) => {
+    const week = (dayTitles ?? defaultDayTitles) as DateRecordKeys[];
+    const columns = week.map((item: DateRecordKeys, index) => {
       return {
         field: defaultDayTitles[index],
         title: item,
         width: columnWidth ?? 140,
-        customLayout: args => {
+        fieldFormat: (record: DateRecord) => {
+          if (
+            record.year === this.currentDate.getFullYear() &&
+            record.month === this.currentDate.getMonth() &&
+            record[item] === this.currentDate.getDate()
+          ) {
+            return `${record[item]}\nToday`;
+          } else if (record[item] === 1) {
+            const monthIndex = item === 'Sun' ? record.month : record.month + 1;
+            const mouthStr = getMonthString(monthIndex);
+            return `${record[item]}\n${mouthStr}`;
+          }
+          return record[item];
+        },
+        customLayout: (args: CustomRenderFunctionArg) => {
           const { table, row, col, rect, value } = args;
           const record = table.getRecordByCell(col, row);
           const { height, width } = rect ?? table.getCellRect(col, row);
@@ -156,32 +180,65 @@ export class VTableCalendar {
         },
         bodyStyle: {
           bgColor: args => {
-            const { col, row } = args;
-            if (col === 4 && row === 2) {
+            const { col, row, dataValue, table } = args;
+            const record = table.getCellRawRecord(col, row);
+            if (
+              record.year === this.currentDate.getFullYear() &&
+              record.month === this.currentDate.getMonth() &&
+              dataValue === this.currentDate.getDate()
+            ) {
               return '#f0f0f0';
             }
             return '#fff';
           },
           textAlign: 'right',
           textBaseline: 'top',
-          color: args => {
-            const { col, row } = args;
-            if (col >= 3 && row === 5) {
-              return '#999';
-            }
-            return '#000';
-          }
+          color: '#999'
         }
       }),
       title: {
         orient: 'top',
-        text: 'Thu, Aug 22nd',
-        subtext: '2024'
-      }
+        // text: 'Thu, Aug 22',
+        text: `${getWeekdayString(this.currentDate.getDay())}, ${getMonthString(
+          this.currentDate.getMonth()
+        )} ${this.currentDate.getDate()}`,
+        subtext: this.currentDate.getFullYear()
+      },
+      enableLineBreak: true,
+      customCellStyle: [
+        {
+          id: 'current-month',
+          style: {
+            color: '#000'
+          }
+        }
+      ]
     };
     const tableInstance = new ListTable(option);
-    window.tableInstance = tableInstance;
     this.table = tableInstance;
+
+    tableInstance.addEventListener('scroll', () => {
+      const record: DateRecord = this.getYearAndMonth();
+      if (!record.Sun) {
+        // top
+        this._updateMonthCustomStyle(this.startDate.getFullYear(), this.startDate.getMonth());
+        return;
+      }
+      const firstDateInWeek = new Date(record.year, record.month, record.Sun);
+      const lastDateInNextWeek = add(firstDateInWeek, {
+        days: 13
+      });
+      this._updateMonthCustomStyle(lastDateInNextWeek.getFullYear(), lastDateInNextWeek.getMonth());
+    });
+
+    tableInstance.addEventListener('scroll_vertical_end', () => {
+      this._updateMonthCustomStyle(this.endDate.getFullYear(), this.endDate.getMonth());
+    });
+
+    // scroll to current month
+    const topDate = new Date(this.currentDate.getTime());
+    topDate.setDate(1);
+    this.jumpToDate(topDate);
 
     bindDebugTool(tableInstance.scenegraph.stage as any, {
       customGrapicKeys: ['col', 'row']
@@ -189,9 +246,39 @@ export class VTableCalendar {
   }
 
   getYearAndMonth() {
-    const topRow = this.table.getCellAtRelativePosition(10, this.table.getFrozenRowsHeight() + 180);
+    const x = this.table.tableX + 10; // buffer
+    const y = this.table.tableY + this.table.getFrozenRowsHeight() + 10; // buffer
+    const topRow = this.table.getCellAtRelativePosition(x, y);
     const { row } = topRow;
     const record = this.table.getCellRawRecord(0, row);
     return record;
+  }
+
+  jumpToDate(date: Date) {
+    const dataIndex = Math.floor((differenceInDays(date, this.tableStartDate) + 1) / 7);
+    this.table.scrollToCell({
+      col: 0,
+      row: dataIndex + 1
+    });
+
+    this._updateMonthCustomStyle(date.getFullYear(), date.getMonth());
+  }
+
+  _updateMonthCustomStyle(year: number, month: number) {
+    if (this.currentMonth === month && this.currentYear === year) {
+      return;
+    }
+
+    // clear current
+    this.currentMonthCellRanges?.forEach(range => {
+      this.table.arrangeCustomCellStyle(range, null);
+    });
+
+    this.currentMonth = month;
+    this.currentYear = year;
+    this.currentMonthCellRanges = getMonthCustomStyleRange(year, month, this.tableStartDate, this.records);
+    this.currentMonthCellRanges.forEach(range => {
+      this.table.arrangeCustomCellStyle(range, 'current-month');
+    });
   }
 }
