@@ -349,8 +349,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
 
   getAggregatorsByCell(col: number, row: number) {
-    const column = this.getBody(col, row);
-    const aggregators = (column as ColumnData).aggregator;
+    const column = this.getColumnDefine(col, row);
+    const aggregators = (column as any).vtable_aggregator;
     return aggregators;
   }
 
@@ -358,16 +358,20 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     let aggregators: Aggregator[] = [];
     if (this.transpose) {
       for (let i = startRow; i <= endRow; i++) {
-        const column = this.getBody(startCol, i) as ColumnData;
-        if (column.aggregator) {
-          aggregators = aggregators.concat(Array.isArray(column.aggregator) ? column.aggregator : [column.aggregator]);
+        const column = this.getColumnDefine(startCol, i) as any;
+        if (column.vtable_aggregator) {
+          aggregators = aggregators.concat(
+            Array.isArray(column.vtable_aggregator) ? column.vtable_aggregator : [column.vtable_aggregator]
+          );
         }
       }
     } else {
       for (let i = startCol; i <= endCol; i++) {
-        const column = this.getBody(i, startRow) as ColumnData;
-        if (column.aggregator) {
-          aggregators = aggregators.concat(Array.isArray(column.aggregator) ? column.aggregator : [column.aggregator]);
+        const column = this.getColumnDefine(i, startRow) as any;
+        if (column.vtable_aggregator) {
+          aggregators = aggregators.concat(
+            Array.isArray(column.vtable_aggregator) ? column.vtable_aggregator : [column.vtable_aggregator]
+          );
         }
       }
       return aggregators;
@@ -375,9 +379,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return [];
   }
   getAggregatorOnTop(col: number, row: number) {
-    const column = this.getBody(col, row);
-    const aggregators = (column as ColumnData).aggregator;
-    const aggregation = (column as ColumnData).aggregation;
+    const column = this.getColumnDefine(col, row);
+    const aggregators = (column as any).vtable_aggregator;
+    const aggregation = (column as ColumnDefine).aggregation;
     if (Array.isArray(aggregation)) {
       const topAggregationIndexs = aggregation.reduce((indexs, agg, index) => {
         if (agg.showOnTop) {
@@ -400,9 +404,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
 
   getAggregatorOnBottom(col: number, row: number) {
-    const column = this.getBody(col, row);
-    const aggregators = (column as ColumnData).aggregator;
-    const aggregation = (column as ColumnData).aggregation;
+    const column = this.getColumnDefine(col, row);
+    const aggregators = (column as any).vtable_aggregator;
+    const aggregation = (column as ColumnDefine).aggregation;
     if (Array.isArray(aggregation)) {
       const bottomAggregationIndexs = aggregation.reduce((indexs, agg, index) => {
         if (agg.showOnTop === false) {
@@ -417,9 +421,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       return (bottomAggregators as Aggregator[])[row - (this.rowCount - this.hasAggregationOnBottomCount)];
     }
     if (this.transpose && col - (this.colCount - this.hasAggregationOnBottomCount) === 0) {
-      return (aggregation as Aggregation)?.showOnTop === false ? (aggregators as Aggregator) : null;
+      return !(aggregation as Aggregation)?.showOnTop ? (aggregators as Aggregator) : null;
     } else if (!this.transpose && row - (this.rowCount - this.hasAggregationOnBottomCount) === 0) {
-      return (aggregation as Aggregation)?.showOnTop === false ? (aggregators as Aggregator) : null;
+      return !(aggregation as Aggregation)?.showOnTop ? (aggregators as Aggregator) : null;
     }
     return null;
   }
@@ -435,8 +439,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     const bottomCount = this.hasAggregationOnBottomCount;
     if (this.transpose) {
       for (let row = startRow; row <= endRow; row++) {
-        const column = this.getBody(startCol, row);
-        if ((column as ColumnData).aggregator) {
+        const column = this.getColumnDefine(startCol, row) as any;
+        if (column.vtable_aggregator) {
           for (let i = 0; i < topCount; i++) {
             cellAddrs.push({ col: this.headerLevelCount + i, row });
           }
@@ -447,8 +451,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       }
     } else {
       for (let col = startCol; col <= endCol; col++) {
-        const column = this.getBody(col, startRow);
-        if ((column as ColumnData).aggregator) {
+        const column = this.getColumnDefine(col, startRow) as any;
+        if (column.vtable_aggregator) {
           for (let i = 0; i < topCount; i++) {
             cellAddrs.push({ col, row: this.headerLevelCount + i });
           }
@@ -1129,8 +1133,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     ) {
       // 如果是子节点之间相互换位置  则匹配表头最后一级
       if (
-        this._getColumnDefine(source.col + this.leftRowSeriesNumberColumnCount, source.row).isChildNode &&
-        this._getColumnDefine(target.col + this.leftRowSeriesNumberColumnCount, target.row).isChildNode
+        this.getBody(source.col + this.leftRowSeriesNumberColumnCount, source.row).isChildNode &&
+        this.getBody(target.col + this.leftRowSeriesNumberColumnCount, target.row).isChildNode
       ) {
         source.col = source.col + this.leftRowSeriesNumberColumnCount + this.rowHeaderLevelCount - 1;
         target.col = target.col + this.leftRowSeriesNumberColumnCount + this.rowHeaderLevelCount - 1;
@@ -1422,16 +1426,17 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     }, []);
     return result;
   }
-  _getColumnDefine(col: number, row: number) {
+
+  getColumnDefine(col: number, row: number) {
     if (col >= 0) {
       if (col < this.leftRowSeriesNumberColumnCount) {
-        return this.leftRowSeriesNumberColumn[col];
+        return this.leftRowSeriesNumberColumn[col].define;
       }
       if (this.transpose) {
-        return this._columns[row];
+        return this._columns[row].define;
       }
 
-      return this._columns[col - this.leftRowSeriesNumberColumnCount];
+      return this._columns[col - this.leftRowSeriesNumberColumnCount].define;
     }
     return undefined;
   }

@@ -411,3 +411,11 @@ Set the sorting state, only corresponding to the display effect of the button wi
 ## supplementIndicatorNodes(boolean) = true
 
 Whether to add index nodes to the corresponding custom table headers such as rowTree or columnTree. Default is true
+
+## parseCustomTreeToMatchRecords(boolean) = true
+
+If you have configured rowTree or columnTree and it is a non-regular tree structure, you need to turn on this configuration to match the corresponding data record.
+
+The regular tree structure refers to: the nodes on the same layer have the same dimension keys.
+
+The non-regular tree structure is the tree where nodes on the same layer exist with different dimension values.
