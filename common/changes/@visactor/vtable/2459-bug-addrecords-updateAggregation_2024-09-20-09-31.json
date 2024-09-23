@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: update aggregator when update records #2459\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

@@ -59,7 +59,7 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
       records,
       table.internalProps.dataConfig,
       table.pagination,
-      table.internalProps.layoutMap.columnObjects,
+      table.internalProps.columns,
       table.internalProps.layoutMap.rowHierarchyType,
       getHierarchyExpandLevel(table)
     ));
