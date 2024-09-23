@@ -65,7 +65,7 @@ export class HeaderHelper {
         if (order) {
           order = order.toUpperCase();
         }
-        const sortIcon = order === 'ASC' ? this.downIcon : order === 'DESC' ? this.upIcon : this.normalIcon;
+        const sortIcon = order === 'ASC' ? this.upIcon : order === 'DESC' ? this.downIcon : this.normalIcon;
 
         if (sortIcon) {
           icons.push(sortIcon);
@@ -202,7 +202,7 @@ export class HeaderHelper {
 
   getSortIcon(order: SortOrder | undefined, _table: BaseTableAPI, col: number, row: number): ColumnIconOption | null {
     // this.showSortIcon = undefined;
-    const icon = order === 'asc' ? this.downIcon : order === 'desc' ? this.upIcon : this.normalIcon;
+    const icon = order === 'asc' ? this.upIcon : order === 'desc' ? this.downIcon : this.normalIcon;
 
     const headerC = _table.getHeaderDefine(col, row) as any;
     if (
@@ -232,7 +232,7 @@ export class HeaderHelper {
       return null;
     }
     const icon =
-      order?.toUpperCase() === 'ASC' ? this.downIcon : order?.toUpperCase() === 'DESC' ? this.upIcon : this.normalIcon;
+      order?.toUpperCase() === 'ASC' ? this.upIcon : order?.toUpperCase() === 'DESC' ? this.downIcon : this.normalIcon;
     // const icon = order === 'ASC' ? this.downIcon : this.upIcon;
     return icon;
   }
