@@ -19,13 +19,7 @@ import type {
   ILineStyle
 } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
-import {
-  ListTableSimple,
-  themes,
-  registerCheckboxCell,
-  registerProgressBarCell,
-  registerRadioCell
-} from '@visactor/vtable';
+import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
 import {
@@ -41,9 +35,6 @@ import {
 import { EventTarget } from './event/EventTarget';
 import { createDateAtMidnight, formatDate, isPropertyWritable, parseDateFormat } from './tools/util';
 import { DataSource } from './data/DataSource';
-registerCheckboxCell();
-registerProgressBarCell();
-registerRadioCell();
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
@@ -77,7 +68,7 @@ export class Gantt extends EventTarget {
   stateManager: StateManager;
   eventManager: EventManager;
 
-  taskListTableInstance?: ListTableSimple;
+  taskListTableInstance?: ListTable;
 
   canvas: HTMLCanvasElement;
   element: HTMLElement;
@@ -252,7 +243,7 @@ export class Gantt extends EventTarget {
   _generateListTable() {
     if (this.taskTableColumns.length >= 1 || this.options?.rowSeriesNumber) {
       const listTableOption = this._generateListTableOptions();
-      this.taskListTableInstance = new ListTableSimple(this.container, listTableOption);
+      this.taskListTableInstance = new ListTable(this.container, listTableOption);
 
       if (this.options?.taskListTable?.tableWidth === 'auto' || this.taskTableWidth === -1) {
         this.taskTableWidth =

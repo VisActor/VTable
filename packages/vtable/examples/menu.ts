@@ -503,6 +503,14 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-columnTree'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-columnTree2'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-total'
       },
       {

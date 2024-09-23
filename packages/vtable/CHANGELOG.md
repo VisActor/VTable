@@ -1,6 +1,20 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 11 Sep 2024 12:33:19 GMT and should not be manually modified.
+This log was last generated on Fri, 13 Sep 2024 08:37:37 GMT and should not be manually modified.
+
+## 1.7.7
+Fri, 13 Sep 2024 08:37:37 GMT
+
+### Updates
+
+- refactor: gantt project export vtable and vrender
+
+
+
+## 1.7.6
+Thu, 12 Sep 2024 06:18:44 GMT
+
+_Version update only_
 
 ## 1.7.5
 Wed, 11 Sep 2024 12:33:19 GMT

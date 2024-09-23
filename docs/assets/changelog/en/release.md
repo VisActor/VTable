@@ -1,3 +1,28 @@
+# v1.7.7
+
+2024-09-13
+
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: gantt project export vtable and vrender
+
+
+
+[更多详情请查看 v1.7.7](https://github.com/VisActor/VTable/releases/tag/v1.7.7)
+
+# v1.7.6
+
+2024-09-12
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable-gantt**: fix: set table theme error in gantt chart   [#2439](https://github.com/VisActor/VTable/pull/2439)
+
+
+[more detail about v1.7.6](https://github.com/VisActor/VTable/releases/tag/v1.7.6)
+
 # v1.7.5
 
 2024-09-12

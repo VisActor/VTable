@@ -62,6 +62,9 @@ export class EditManeger {
   }
 
   startEditCell(col: number, row: number, value?: string | number) {
+    if (this.editingEditor) {
+      return;
+    }
     const editor = (this.table as ListTableAPI).getEditor(col, row);
     if (editor) {
       // //自定义内容单元格不允许编辑

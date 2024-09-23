@@ -2,6 +2,24 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.7.7",
+      "tag": "@visactor/vtable_v1.7.7",
+      "date": "Fri, 13 Sep 2024 08:37:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: gantt project export vtable and vrender\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.6",
+      "tag": "@visactor/vtable_v1.7.6",
+      "date": "Thu, 12 Sep 2024 06:18:44 GMT",
+      "comments": {}
+    },
+    {
       "version": "1.7.5",
       "tag": "@visactor/vtable_v1.7.5",
       "date": "Wed, 11 Sep 2024 12:33:19 GMT",

@@ -1,8 +1,11 @@
 import { getStyleTheme } from '../../core/tableHelper';
+import { getTargetCell } from '../../event/util';
 import { Group } from '../graphic/group';
 import { createColGroup } from '../group-creater/column';
 import type { Scenegraph } from '../scenegraph';
 import { getProp } from '../utils/get-prop';
+import { table } from 'console';
+import { updateReactComponentContainer } from './frozen-react';
 
 export function dealFrozen(scene: Scenegraph) {
   if (scene.table.frozenColCount > scene.table.rowHeaderLevelCount) {
@@ -70,6 +73,8 @@ export function resetFrozen(scene: Scenegraph) {
     }
   }
 
+  updateReactComponentContainer(scene);
+
   scene.deleteAllSelectBorder();
   scene.table.stateManager.select.ranges.forEach(range => {
     scene.updateCellSelectBorder(range);
@@ -78,7 +83,8 @@ export function resetFrozen(scene: Scenegraph) {
   // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
   scene.frozenColCount = scene.table.frozenColCount;
   scene.frozenRowCount = scene.colHeaderGroup.firstChild?.childrenCount ?? 0;
-  scene.proxy.colStart = scene.table.frozenColCount;
+  //   scene.proxy.colStart = scene.table.frozenColCount;
+  scene.proxy.colStart = (scene.bodyGroup.firstChild as any)?.col ?? scene.table.frozenColCount;
 
   scene.bodyGroup.setAttribute('x', scene.rowHeaderGroup.attribute.width);
   scene.colHeaderGroup.setAttribute('x', scene.cornerHeaderGroup.attribute.width);

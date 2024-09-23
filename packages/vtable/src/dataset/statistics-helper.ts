@@ -62,6 +62,7 @@ export class RecordAggregator extends Aggregator {
         this.records.push(record);
       }
     }
+    this.clearCacheValue();
   }
   value() {
     return this.records;
@@ -88,6 +89,7 @@ export class NoneAggregator extends Aggregator {
         this.fieldValue = record[this.field];
       }
     }
+    this.clearCacheValue();
   }
   value() {
     return this.fieldValue;
@@ -130,6 +132,7 @@ export class CustomAggregator extends Aggregator {
         this.values.push(record[this.field]);
       }
     }
+    this.clearCacheValue();
   }
   value() {
     if (!this.fieldValue) {
@@ -175,6 +178,7 @@ export class RecalculateAggregator extends Aggregator {
         this.records.push(record);
       }
     }
+    this.clearCacheValue();
   }
   value() {
     if (!this.fieldValue) {
@@ -239,6 +243,7 @@ export class SumAggregator extends Aggregator {
         }
       }
     }
+    this.clearCacheValue();
   }
   value() {
     return this.records?.length >= 1 ? this.sum : undefined;
@@ -305,6 +310,7 @@ export class CountAggregator extends Aggregator {
         this.count++;
       }
     }
+    this.clearCacheValue();
   }
   value() {
     return this.count;
@@ -350,6 +356,7 @@ export class AvgAggregator extends Aggregator {
         this.count++;
       }
     }
+    this.clearCacheValue();
   }
   value() {
     return this.records?.length >= 1 ? this.sum / this.count : undefined;
@@ -400,6 +407,7 @@ export class MaxAggregator extends Aggregator {
         this.max = parseFloat(record[this.field]) > this.max ? parseFloat(record[this.field]) : this.max;
       }
     }
+    this.clearCacheValue();
   }
   value() {
     return this.records?.length >= 1 ? this.max : undefined;
@@ -448,6 +456,7 @@ export class MinAggregator extends Aggregator {
         this.min = record[this.field] < this.min ? record[this.field] : this.min;
       }
     }
+    this.clearCacheValue();
   }
   value() {
     return this.records?.length >= 1 ? this.min : undefined;
