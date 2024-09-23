@@ -422,6 +422,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           childNodeData
         );
       }
+      if ((childNodeData as any).children === true) {
+        !childNodeData.hierarchyState && (childNodeData.hierarchyState = HierarchyState.collapse);
+      }
     }
     return childTotalLength;
   }
