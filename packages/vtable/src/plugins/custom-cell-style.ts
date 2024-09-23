@@ -107,6 +107,9 @@ export class CustomCellStylePlugin {
     });
 
     if (index === -1) {
+      if (!customStyleId) {
+        return;
+      }
       this.customCellStyleArrangement.push({
         cellPosition: {
           col: cellPos.col,
@@ -130,6 +133,11 @@ export class CustomCellStylePlugin {
       }
     } else {
       this.table.scenegraph.updateCellContent(cellPos.col, cellPos.row);
+    }
+
+    if (!customStyleId) {
+      // remove from customCellStyleArrangement array
+      this.customCellStyleArrangement.splice(index, 1);
     }
     this.table.scenegraph.updateNextFrame();
   }
