@@ -1,23 +1,23 @@
 ---
 category: examples
 group: usage
-title: 使用option+record
+title: Using Full Option
 cover: 
 order: 1-1
 link: '../guide/Developer_Ecology/vue'
 ---
 
-# 使用 option+record
+# Using Full Option
 
-可以将 records 从 option 中分离出来，单独作为一个 prop 传入表格组件。
+You can directly use the full option of VTable by passing the option as a prop to the table component.
 
-## 代码演示
+## Code Demonstration
 
 ```javascript livedemo template=vtable-vue
 
 const app = createApp({
   template: `
-    <ListTable :options="tableOptions" :records="tableRecords"/>
+    <ListTable :options="tableOptions"/>
   `,
   data() {
     return {
@@ -28,8 +28,8 @@ const app = createApp({
           { field: '2', title: 'gender' },
           { field: '3', title: 'hobby' },
         ],
+        records: new Array(1000).fill(['John', 18, 'male', '🏀']),
       },
-      tableRecords: new Array(1000).fill(['John', 18, 'male', '🏀']),
     };
   },
 });
@@ -37,3 +37,4 @@ const app = createApp({
 app.component('ListTable', VueVTable.ListTable);
 
 app.mount(`#${CONTAINER_ID}`);
+```

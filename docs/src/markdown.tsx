@@ -217,7 +217,7 @@ export function Markdown() {
         .then(text => {
           let processedText = text;
           // remove meta info for examples
-          if (assetDirectory === 'demo' || assetDirectory === 'demo-react' || assetDirectory === 'demo-openinula') {
+          if (assetDirectory === 'demo' || assetDirectory === 'demo-react' || assetDirectory === 'demo-openinula' || assetDirectory === 'demo-vue') {
             processedText = processedText.replace(/---(.|\n)*---/, '').trim();
           }
           // Hack: process all livedemo code to livedemo language and replace these after

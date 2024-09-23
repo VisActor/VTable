@@ -1,21 +1,21 @@
 ---
 category: examples
-group: usage
-title: 使用语法化标签
+group: grammatical-tag
+title: 基本表格
 cover: 
 order: 1-1
 link: '../guide/Developer_Ecology/vue'
 ---
 
-# 使用语法化标签
+# 透视分析表
 
-使用语法化标签，组合出一个完整的表格配置，以子组件的形式生成表格。
+ListTable语义化子组件如下：
 
-- ListColumn: 列表列，同 option 中的 columns 的定义一致 [api](../../option/ListTable-columns-text#cellType)
-- 同时可以结合语法糖使用，以简化代码并提高可读性
+- PivotColumnDimension: 列上的维度配置，同option中的columns的定义一致 [api](../../option/PivotTable-columns-text#headerType)
+- ListColumn: 列上的维度配置，同option中的columns的定义一致 
+
 
 ## 代码演示
-
 ```javascript livedemo template=vtable-vue
 
 const app = createApp({
@@ -49,3 +49,5 @@ app.component('ListColumn', VueVTable.ListColumn);
 app.mount(`#${CONTAINER_ID}`);
 
 ```
+
+

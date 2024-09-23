@@ -12,21 +12,28 @@
           "path": "option",
           "title": {
             "zh": "使用完整option",
-            "en": "usage-1"
+            "en": "Using Complete Option"
           }
         },
         {
           "path": "option-record",
           "title": {
             "zh": "使用option&record",
-            "en": "usage-2"
+            "en": "Using Option & Record"
           }
         },
         {
           "path": "grammatical-tag",
           "title": {
             "zh": "使用语义化标签",
-            "en": "usage-3"
+            "en": "Using Semantic Tags"
+          }
+        },
+        {
+          "path": "event",
+          "title": {
+            "zh": "使用事件监听",
+            "en": "Using Event Listeners"
           }
         }
       ]
@@ -38,6 +45,13 @@
         "en": "grammatical tag"
       },
       "children": [
+        {
+          "path": "list-table",
+          "title": {
+            "zh": "基础表格",
+            "en": "list table"
+          }
+        },
         {
           "path": "pivot-table",
           "title": {
@@ -74,36 +88,6 @@
             "zh": "提示信息",
             "en": "tooltip"
           }
-        },
-        {
-          "path": "custom-component",
-          "title": {
-            "zh": "自定义组件",
-            "en": "custom component"
-          }
-        }
-      ]
-    },
-    {
-      "path": "event",
-      "title": {
-        "zh": "事件监听",
-        "en": "event"
-      },
-      "children": [
-        {
-          "path": "ready",
-          "title": {
-            "zh": "onReady",
-            "en": "onReady"
-          }
-        },
-        {
-          "path": "event",
-          "title": {
-            "zh": "事件监听",
-            "en": "event listener"
-          }
         }
       ]
     },
@@ -120,30 +104,23 @@
             "zh": "单元格自定义组件",
             "en": "cell custom component"
           }
-        },
-        {
-          "path": "cell-custom-layout-dom",
-          "title": {
-            "zh": "单元格自定义组件+dom组件",
-            "en": "cell custom component + dom component"
-          }
-        },
-        {
-          "path": "cell-custom-dom",
-          "title": {
-            "zh": "单元格内dom组件",
-            "en": "cell custom dom component"
-          }
         }
       ]
     },
     {
-      "path": "functional-components",
+      "path": "edit-data",
       "title": {
-        "zh": "功能性组件",
-        "en": "functional components"
+        "zh": "编辑",
+        "en": "edit data"
       },
       "children": [
+        {
+          "path": "edit-cell",
+          "title": {
+            "zh": "单元格编辑",
+            "en": "edit cell"
+          }
+        },
         {
           "path": "arco-select-editor",
           "title": {

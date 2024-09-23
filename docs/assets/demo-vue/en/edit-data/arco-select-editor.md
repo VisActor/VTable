@@ -14,6 +14,8 @@ link: '../guide/Developer_Ecology/vue'
 
 https://visactor.io/vtable/guide/edit/edit_cell
 
-https://arco.design/react/components/select
+https://arco.design/vue/components/select
 
 ## 代码演示
+
+```javascript livedemo template=vtable-vue
