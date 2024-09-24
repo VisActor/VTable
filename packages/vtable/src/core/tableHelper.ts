@@ -453,7 +453,7 @@ export function generateAggregationForColumn(table: ListTable) {
 
       if (aggregation) {
         if (Array.isArray(aggregation)) {
-          return aggregation.map(item => {
+          aggregation.map(item => {
             if (!isValid(item.showOnTop)) {
               item.showOnTop = false;
             }
