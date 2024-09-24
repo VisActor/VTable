@@ -5,7 +5,14 @@ import { parseFont } from '../scenegraph/utils/font';
 import { getQuadProps } from '../scenegraph/utils/padding';
 import { Rect } from '../tools/Rect';
 import * as calc from '../tools/calc';
-import type { FullExtendStyle, ListTableAPI, ListTableConstructorOptions, SortState } from '../ts-types';
+import type {
+  Aggregation,
+  CustomAggregation,
+  FullExtendStyle,
+  ListTableAPI,
+  ListTableConstructorOptions,
+  SortState
+} from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { defaultOrderFn } from '../tools/util';
 import type { ListTable } from '../ListTable';
@@ -453,14 +460,14 @@ export function generateAggregationForColumn(table: ListTable) {
 
       if (aggregation) {
         if (Array.isArray(aggregation)) {
-          aggregation.map(item => {
-            if (!isValid(item.showOnTop)) {
-              item.showOnTop = false;
-            }
-            return item;
+          const aggregations: (Aggregation | CustomAggregation)[] = [];
+          aggregation.forEach(item => {
+            aggregations.push(Object.assign({ showOnTop: false }, item));
           });
+          colDef.aggregation = aggregations;
+        } else {
+          colDef.aggregation = Object.assign({ showOnTop: false }, aggregation);
         }
-        colDef.aggregation = Object.assign({ showOnTop: false }, aggregation);
       }
     }
   }
