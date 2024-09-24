@@ -408,7 +408,11 @@ export function listTableAddRecord(record: any, recordIndex: number, table: List
           updateRows.push({ col: 0, row });
         }
       }
-      for (let row = table.rowCount - bottomAggregationCount; row < table.rowCount; row++) {
+      for (
+        let row = (table.transpose ? table.colCount : table.rowCount) - bottomAggregationCount;
+        row < (table.transpose ? table.colCount : table.rowCount);
+        row++
+      ) {
         if (table.transpose) {
           updateRows.push({ col: row, row: 0 });
         } else {
@@ -527,7 +531,11 @@ export function listTableAddRecords(records: any[], recordIndex: number, table: 
           updateRows.push({ col: 0, row });
         }
       }
-      for (let row = table.rowCount - bottomAggregationCount; row < table.rowCount; row++) {
+      for (
+        let row = (table.transpose ? table.colCount : table.rowCount) - bottomAggregationCount;
+        row < (table.transpose ? table.colCount : table.rowCount);
+        row++
+      ) {
         if (table.transpose) {
           updateRows.push({ col: row, row: 0 });
         } else {
@@ -648,7 +656,11 @@ export function listTableDeleteRecords(recordIndexs: number[], table: ListTable)
             updateRows.push({ col: 0, row });
           }
         }
-        for (let row = table.rowCount - bottomAggregationCount; row < table.rowCount; row++) {
+        for (
+          let row = (table.transpose ? table.colCount : table.rowCount) - bottomAggregationCount;
+          row < (table.transpose ? table.colCount : table.rowCount);
+          row++
+        ) {
           if (table.transpose) {
             updateRows.push({ col: row, row: 0 });
           } else {
@@ -756,7 +768,11 @@ export function listTableUpdateRecords(records: any[], recordIndexs: number[], t
             updateRows.push({ col: 0, row });
           }
         }
-        for (let row = table.rowCount - bottomAggregationCount; row < table.rowCount; row++) {
+        for (
+          let row = (table.transpose ? table.colCount : table.rowCount) - bottomAggregationCount;
+          row < (table.transpose ? table.colCount : table.rowCount);
+          row++
+        ) {
           if (table.transpose) {
             updateRows.push({ col: row, row: 0 });
           } else {
