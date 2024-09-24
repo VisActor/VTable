@@ -153,7 +153,9 @@ export function createComplexColumn(
     }
     let isVtableMerge = false;
     if (table.internalProps.enableTreeNodeMerge && isMerge) {
-      const { vtableMergeName, vtableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
+      const rawRecord = table.getCellRawRecord(range.start.col, range.start.row);
+      const { vtableMergeName, vtableMerge } = rawRecord ?? {};
+
       isVtableMerge = vtableMerge;
       if (vtableMerge) {
         mayHaveIcon = true;
