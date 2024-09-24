@@ -39,9 +39,9 @@ export function checkHasAggregationOnTop(layoutMap: SimpleHeaderLayoutMap) {
       if (Array.isArray((column as ColumnData)?.aggregation)) {
         count = Math.max(
           count,
-          ((column as ColumnData).aggregation as Array<Aggregation>).filter(item => item.showOnTop === true).length
+          ((column as ColumnData).aggregation as Array<Aggregation>).filter(item => item.showOnTop).length
         );
-      } else if (((column as ColumnData).aggregation as Aggregation).showOnTop === true) {
+      } else if (((column as ColumnData).aggregation as Aggregation).showOnTop) {
         count = Math.max(count, 1);
       }
     }
@@ -58,9 +58,9 @@ export function checkHasAggregationOnBottom(layoutMap: SimpleHeaderLayoutMap) {
       if (Array.isArray((column as ColumnData)?.aggregation)) {
         count = Math.max(
           count,
-          ((column as ColumnData).aggregation as Array<Aggregation>).filter(item => item.showOnTop === false).length
+          ((column as ColumnData).aggregation as Array<Aggregation>).filter(item => !item.showOnTop).length
         );
-      } else if (((column as ColumnData).aggregation as Aggregation).showOnTop === false) {
+      } else if (!((column as ColumnData).aggregation as Aggregation).showOnTop) {
         count = Math.max(count, 1);
       }
     }

@@ -19,7 +19,7 @@ import type {
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
 import { isArray, isValid } from '@visactor/vutils';
-import { _setDataSource, _setRecords } from './core/tableHelper';
+import { _setDataSource, _setRecords, generateAggregationForColumn } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
@@ -121,6 +121,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       : options.header
       ? cloneDeepSpec(options.header, ['children'])
       : [];
+    generateAggregationForColumn(this);
     // options.columns?.forEach((colDefine, index) => {
     //   //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
     //   if (colDefine.editor) {
@@ -213,6 +214,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   updateColumns(columns: ColumnsDefine) {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.columns = cloneDeepSpec(columns, ['children']);
+    generateAggregationForColumn(this);
     // columns.forEach((colDefine, index) => {
     //   if (colDefine.editor) {
     //     this.internalProps.columns[index].editor = colDefine.editor;
@@ -247,6 +249,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   set header(header: ColumnsDefine) {
     this.internalProps.columns = header;
+    generateAggregationForColumn(this);
     this.options.header = header;
     this.refreshHeader();
     this.internalProps.useOneRowHeightFillAll = false;
@@ -470,6 +473,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       : options.header
       ? cloneDeepSpec(options.header, ['children'])
       : [];
+    generateAggregationForColumn(this);
     // options.columns.forEach((colDefine, index) => {
     //   if (colDefine.editor) {
     //     internalProps.columns[index].editor = colDefine.editor;

@@ -150,6 +150,10 @@ export const menus = [
       },
       {
         path: 'list-analysis',
+        name: 'list-aggregation-deleteRecord'
+      },
+      {
+        path: 'list-analysis',
         name: 'list-aggregation-global'
       },
       {

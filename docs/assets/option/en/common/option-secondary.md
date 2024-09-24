@@ -152,7 +152,7 @@ Switching the selected cells with the up, down, left and right arrow keys is not
 Issue settings related to event triggering, specific configuration items:
 
 ##${prefix} preventDefaultContextMenu(boolean) = true
-Organizing the default behavior of the right mouse button
+prevent the default behavior of the right mouse button
 
 #${prefix} excelOptions(Object)
 
