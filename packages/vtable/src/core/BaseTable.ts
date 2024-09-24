@@ -51,7 +51,8 @@ import type {
   HeightAdaptiveModeDef,
   ListTableAPI,
   ColumnInfo,
-  RowInfo
+  RowInfo,
+  ListTableConstructorOptions
 } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
 
@@ -143,6 +144,7 @@ import {
 } from './utils/get-cell-position';
 import { getCellStyle } from './style-helper';
 import type { EditManeger } from '../edit/edit-manager';
+import { createReactContainer } from '../scenegraph/layout/frozen-react';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -325,12 +327,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       internalProps.context = internalProps.canvas.getContext('2d')!;
 
       if (options.customConfig?.createReactContainer) {
-        internalProps.bodyDomContainer = document.createElement('div');
-        internalProps.bodyDomContainer.classList.add('table-component-container');
-        internalProps.element.appendChild(internalProps.bodyDomContainer);
-        internalProps.headerDomContainer = document.createElement('div');
-        internalProps.headerDomContainer.classList.add('table-component-container');
-        internalProps.element.appendChild(internalProps.headerDomContainer);
+        createReactContainer(this);
       }
     }
 
@@ -997,15 +994,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
         canvas.style.width = `${widthP}px`;
         canvas.style.height = `${heightP}px`;
-      }
-
-      if (this.internalProps.bodyDomContainer) {
-        this.internalProps.bodyDomContainer.style.width = `${widthP}px`;
-        this.internalProps.bodyDomContainer.style.height = `${heightP}px`;
-      }
-      if (this.internalProps.headerDomContainer) {
-        this.internalProps.headerDomContainer.style.width = `${widthP}px`;
-        this.internalProps.headerDomContainer.style.height = `${heightP}px`;
       }
     } else if (Env.mode === 'node') {
       widthP = this.canvasWidth - 1;
@@ -3144,7 +3132,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /** @private */
   _hasField(field: FieldDef, col: number, row: number): boolean {
-    if (field == null) {
+    if (field === null) {
       return false;
     }
     const table = this;
@@ -3316,17 +3304,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.isHeader(col, row)) {
       icons = this.internalProps.headerHelper.getIcons(col, row);
     } else if ((this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumber(col, row)) {
-      const dragOrder = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberBody(col, row)?.define
-        ?.dragOrder;
-      if (dragOrder) {
-        icons = this.internalProps.rowSeriesNumberHelper.getIcons(col, row);
+      if (!(this.options as ListTableConstructorOptions).groupBy || !this.getCellRawRecord(col, row)?.vtableMerge) {
+        const dragOrder = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberBody(col, row)?.define
+          ?.dragOrder;
+        if (dragOrder) {
+          icons = this.internalProps.rowSeriesNumberHelper.getIcons(col, row);
+        }
       }
       const cellValue = this.getCellValue(col, row);
       const dataValue = this.getCellOriginValue(col, row);
+
       const ctx = this.internalProps.context;
       const cellIcon = this.internalProps.bodyHelper.getIcons(col, row, cellValue, dataValue, ctx);
       if (icons?.length > 0) {
-        icons = icons.concat();
+        icons = icons.concat(cellIcon);
       } else if (cellIcon?.length > 0) {
         icons = cellIcon;
       }
@@ -4149,6 +4140,27 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   get headerDomContainer() {
     return this.internalProps.headerDomContainer;
+  }
+  get frozenBodyDomContainer() {
+    return this.internalProps.frozenBodyDomContainer;
+  }
+  get frozenHeaderDomContainer() {
+    return this.internalProps.frozenHeaderDomContainer;
+  }
+  get rightFrozenBodyDomContainer() {
+    return this.internalProps.rightFrozenBodyDomContainer;
+  }
+  get rightFrozenHeaderDomContainer() {
+    return this.internalProps.rightFrozenHeaderDomContainer;
+  }
+  get frozenBottomDomContainer() {
+    return this.internalProps.frozenBottomDomContainer;
+  }
+  get bottomDomContainer() {
+    return this.internalProps.bottomDomContainer;
+  }
+  get rightFrozenBottomDomContainer() {
+    return this.internalProps.rightFrozenBottomDomContainer;
   }
   /**
    * 显示移动列或移动行的高亮线  如果(col，row)单元格是列头 则显示高亮列线；  如果(col，row)单元格是行头 则显示高亮行线

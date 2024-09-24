@@ -56,6 +56,9 @@ Note! The perPageCount in the pivot table will be automatically corrected to an 
 ### currentPage (number)
 Current page number.
 
+## multipleSort (boolean)
+Enables sorting by multiple columns.
+
 ## sortState(SortState | SortState[])
 
 Sorting state. SortState is defined as follows:

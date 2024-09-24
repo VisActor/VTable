@@ -279,6 +279,8 @@ export interface IDimensionHeaderNode {
   hierarchyState?: HierarchyState;
   /** Whether it is a virtual node. If configured to true, this dimension field will be ignored when analyzing based on records data */
   virtual?: boolean;
+  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
+  levelSpan?: number;
 }
 ```
 
@@ -294,6 +296,8 @@ export interface IIndicatorHeaderNode {
    * Indicator name, such as: "Sales Amount", "example", corresponding to the value displayed in the cell. Optional, if not filled in, the value will be taken from the corresponding configuration in indicators
    */
   value?: string;
+  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
+  levelSpan?: number;
 }
 ```
 
@@ -407,3 +411,11 @@ Set the sorting state, only corresponding to the display effect of the button wi
 ## supplementIndicatorNodes(boolean) = true
 
 Whether to add index nodes to the corresponding custom table headers such as rowTree or columnTree. Default is true
+
+## parseCustomTreeToMatchRecords(boolean) = true
+
+If you have configured rowTree or columnTree and it is a non-regular tree structure, you need to turn on this configuration to match the corresponding data record.
+
+The regular tree structure refers to: the nodes on the same layer have the same dimension keys.
+
+The non-regular tree structure is the tree where nodes on the same layer exist with different dimension values.

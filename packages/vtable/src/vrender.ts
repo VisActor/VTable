@@ -60,6 +60,8 @@ export function registerForVrender() {
   registerFlexLayoutPlugin();
   // registerWrapText();
   loadPoptip();
+
+  registerFlexLayoutPlugin();
 }
 
 export type { Direction, Timeline } from '@visactor/vrender-core';

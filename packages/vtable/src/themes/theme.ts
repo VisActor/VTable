@@ -96,9 +96,13 @@ export class TableTheme implements ITableThemeDefine {
       superTheme
     };
   }
-
+  /** gantt _generateListTableOptions 使用更方法 */
   getExtendTheme(): PartialTableThemeDefine | ITableThemeDefine {
     return this.internalTheme.obj;
+  }
+  /** gantt _generateListTableOptions 使用更方法 */
+  clearBodyStyleCache() {
+    this._body = null;
   }
   get font(): string {
     const { obj, superTheme } = this.internalTheme;
@@ -277,15 +281,7 @@ export class TableTheme implements ITableThemeDefine {
     }
     return this._defaultStyle;
   }
-  get headerStyle(): ITableThemeDefine['headerStyle'] {
-    if (!this._header) {
-      const { obj, superTheme } = this.internalTheme;
-      // const header = getProp(obj, superTheme, ["header"]);
-      const header: ThemeStyle = ingoreNoneValueMerge({}, this.defaultStyle, superTheme.headerStyle, obj.headerStyle);
-      this._header = this.getStyle(header);
-    }
-    return this._header;
-  }
+
   get cornerHeaderStyle(): ITableThemeDefine['cornerHeaderStyle'] {
     if (!this._cornerHeader) {
       const { obj, superTheme } = this.internalTheme;
@@ -400,6 +396,15 @@ export class TableTheme implements ITableThemeDefine {
       this._rowHeader = this.getStyle(header);
     }
     return this._rowHeader;
+  }
+  get headerStyle(): ITableThemeDefine['headerStyle'] {
+    if (!this._header) {
+      const { obj, superTheme } = this.internalTheme;
+      // const header = getProp(obj, superTheme, ["header"]);
+      const header: ThemeStyle = ingoreNoneValueMerge({}, this.defaultStyle, superTheme.headerStyle, obj.headerStyle);
+      this._header = this.getStyle(header);
+    }
+    return this._header;
   }
   get bodyStyle(): ITableThemeDefine['bodyStyle'] {
     if (!this._body) {

@@ -151,9 +151,34 @@ function generateRandomString(length: number) {
   return result;
 }
 
+const HeaderCustomLayoutComponent = props => {
+  const { table, row, col, rect, dataValue } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const record = table.getRecordByCell(col, row);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        fill: 'red',
+        react: {
+          pointerEvents: true,
+          container: table.headerDomContainer, // table.headerDomContainer
+          // anchorType: 'bottom-right',
+          element: <span>自定义</span>
+        }
+      }}
+    ></Group>
+  );
+};
+
 function App() {
   const records = [];
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 20; i++) {
     records.push({
       id: i,
       name: generateRandomString(8)
@@ -164,19 +189,27 @@ function App() {
     <ListTable
       records={records}
       height={500}
-      width={600}
+      width={1200}
       defaultRowHeight={110}
-      frozenColCount={1}
+      allowFrozenColCount={4}
+      frozenColCount={2}
+      rightFrozenColCount={1}
+      bottomFrozenRowCount={1}
       onReady={table => {
         // eslint-disable-next-line no-undef
-        // (window as any).tableInstance = table;
+        (window as any).tableInstance = table;
       }}
       ReactDOM={ReactDOM}
     >
       <ListColumn field={'id'} title={'ID'} />
       <ListColumn field={'name'} title={'Comment'} width={500}>
+        {/* <HeaderCustomLayoutComponent role={'header-custom-layout'} /> */}
         <CommentComponent role={'custom-layout'} />
       </ListColumn>
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'name'} title={'name'} width={200} />
       <ListColumn field={''} title={'Operation'} width={300}>
         <OperationComponent role={'custom-layout'} />
       </ListColumn>

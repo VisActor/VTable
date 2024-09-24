@@ -218,6 +218,7 @@ export interface IBaseTableProtected {
 
   // headerRowHeight: number[] | number;//移到了BaseTable
   sortState: SortState | SortState[];
+  multipleSort?: boolean;
 
   dataSource: DataSource | CachedDataSource;
   records?: any;
@@ -263,6 +264,14 @@ export interface IBaseTableProtected {
   // react component container
   bodyDomContainer?: HTMLElement;
   headerDomContainer?: HTMLElement;
+  frozenBodyDomContainer?: HTMLElement;
+  frozenHeaderDomContainer?: HTMLElement;
+  rightFrozenBodyDomContainer?: HTMLElement;
+  rightFrozenHeaderDomContainer?: HTMLElement;
+  frozenBottomDomContainer?: HTMLElement;
+  bottomDomContainer?: HTMLElement;
+  rightFrozenBottomDomContainer?: HTMLElement;
+
   // 已使用一行的高度填充所有行
   useOneRowHeightFillAll?: boolean;
 
@@ -869,6 +878,13 @@ export interface BaseTableAPI {
 
   bodyDomContainer?: HTMLElement;
   headerDomContainer?: HTMLElement;
+  frozenBodyDomContainer?: HTMLElement;
+  frozenHeaderDomContainer?: HTMLElement;
+  rightFrozenBodyDomContainer?: HTMLElement;
+  rightFrozenHeaderDomContainer?: HTMLElement;
+  frozenBottomDomContainer?: HTMLElement;
+  bottomDomContainer?: HTMLElement;
+  rightFrozenBottomDomContainer?: HTMLElement;
 
   showMoverLine: (col: number, row: number) => void;
   hideMoverLine: (col: number, row: number) => void;

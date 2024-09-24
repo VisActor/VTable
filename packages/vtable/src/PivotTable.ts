@@ -155,7 +155,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           options.records,
           options.rowHierarchyType,
           this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
-          this.internalProps.rowTree
+          this.internalProps.rowTree,
+          false,
+          !!options.extensionRows,
+          !!options.parseCustomTreeToMatchRecords
         );
         if (!options.columnTree) {
           if (options.indicatorsAsCol !== false) {
@@ -358,7 +361,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         records,
         options.rowHierarchyType,
         this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
-        this.internalProps.rowTree
+        this.internalProps.rowTree,
+        false,
+        !!options.extensionRows,
+        !!options.parseCustomTreeToMatchRecords
       );
       if (!options.columnTree) {
         if (options.indicatorsAsCol !== false) {
@@ -1950,6 +1956,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       );
       headerTreeNode.children = children;
       this._refreshHierarchyState(col, row, () => {
+        this.dataset._rowTreeHasChanged();
         this.dataset.changeDataConfig({
           rows: this.internalProps.layoutMap.fullRowDimensionKeys,
           columns: this.internalProps.layoutMap.colDimensionKeys
@@ -1964,5 +1971,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.dataConfig.filterRules = filterRules;
     this.dataset.updateFilterRules(filterRules);
     this.renderWithRecreateCells();
+  }
+  /** 获取过滤后的数据 */
+  getFilteredRecords() {
+    return this.dataset?.filterRules;
   }
 }

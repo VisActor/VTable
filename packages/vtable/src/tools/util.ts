@@ -432,3 +432,11 @@ export function isDivSelected(div: HTMLDivElement) {
   }
   return false;
 }
+
+export function traverseObject(obj: any, childrenProperty: string, callback: Function) {
+  callback(obj);
+
+  if (obj?.[childrenProperty] && Array.isArray(obj?.[childrenProperty])) {
+    obj[childrenProperty].forEach((child: any) => traverseObject(child, childrenProperty, callback));
+  }
+}

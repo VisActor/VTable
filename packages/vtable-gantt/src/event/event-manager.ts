@@ -16,7 +16,8 @@ export class EventManager {
   isDown: boolean = false;
   isDraging: boolean = false;
   lastDragPointerXYOnWindow: { x: number; y: number };
-
+  //报错已绑定过的事件 后续清除绑定
+  globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
   // lastDragPointerXYOnResizeLine: { x: number; y: number };
   constructor(gantt: Gantt) {
     this._gantt = gantt;
@@ -25,6 +26,17 @@ export class EventManager {
   }
   release() {
     this._eventHandler.release();
+    // remove global event listerner
+    this.globalEventListeners.forEach(item => {
+      if (item.env === 'document') {
+        document.removeEventListener(item.name, item.callback);
+      } else if (item.env === 'body') {
+        document.body.removeEventListener(item.name, item.callback);
+      } else if (item.env === 'window') {
+        window.removeEventListener(item.name, item.callback);
+      }
+    });
+    this.globalEventListeners = [];
   }
   // 绑定DOM事件
   bindEvent() {
@@ -188,10 +200,16 @@ function bindContainerDomListener(eventManager: EventManager) {
         (gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement).style.opacity = '0';
       });
   }
-  vglobal.addEventListener('mousedown', (e: FederatedPointerEvent) => {
+  const globalMousedownCallback = (e: FederatedPointerEvent) => {
     gantt.eventManager.lastDragPointerXYOnWindow = { x: e.x, y: e.y };
+  };
+  eventManager.globalEventListeners.push({
+    name: 'mousedown',
+    env: 'document',
+    callback: globalMousedownCallback
   });
-  vglobal.addEventListener('mousemove', (e: FederatedPointerEvent) => {
+  vglobal.addEventListener('mousedown', globalMousedownCallback);
+  const globalMousemoveCallback = (e: FederatedPointerEvent) => {
     if (stateManager.interactionState === InteractionState.grabing) {
       const lastX = gantt.eventManager.lastDragPointerXYOnWindow?.x ?? e.x;
       // const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
@@ -206,8 +224,14 @@ function bindContainerDomListener(eventManager: EventManager) {
         gantt.eventManager.lastDragPointerXYOnWindow = { x: e.x, y: e.y };
       }
     }
+  };
+  eventManager.globalEventListeners.push({
+    name: 'mousemove',
+    env: 'document',
+    callback: globalMousemoveCallback
   });
-  vglobal.addEventListener('mouseup', (e: MouseEvent) => {
+  vglobal.addEventListener('mousemove', globalMousemoveCallback);
+  const globalMouseupCallback = (e: MouseEvent) => {
     if (stateManager.interactionState === 'grabing') {
       stateManager.updateInteractionState(InteractionState.default);
       if (stateManager.isResizingTableWidth()) {
@@ -218,5 +242,11 @@ function bindContainerDomListener(eventManager: EventManager) {
         stateManager.endResizeTaskBar(e.x);
       }
     }
+  };
+  eventManager.globalEventListeners.push({
+    name: 'mouseup',
+    env: 'document',
+    callback: globalMouseupCallback
   });
+  vglobal.addEventListener('mouseup', globalMouseupCallback);
 }

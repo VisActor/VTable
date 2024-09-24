@@ -72,6 +72,7 @@ import { updateCol } from './layout/update-col';
 import { deduplication } from '../tools/util';
 import { getDefaultHeight, getDefaultWidth } from './group-creater/progress/default-width-height';
 import { dealWithAnimationAppear } from './animation/appear';
+import { updateReactContainer } from './layout/frozen-react';
 // import { contextModule } from './context/module';
 
 registerForVrender();
@@ -620,16 +621,17 @@ export class Scenegraph {
     setIconHoverStyle(icon, col, row, cellGroup, this);
   }
 
-  updateSortIcon(
-    col: number,
-    row: number,
-    iconMark: Icon,
-    order: SortOrder,
-    oldSortCol: number,
-    oldSortRow: number,
-    oldIconMark: Icon | undefined
-  ) {
-    updateSortIcon(col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, this);
+  updateSortIcon(options: {
+    col: number;
+    row: number;
+    iconMark: Icon;
+    order: SortOrder;
+    oldSortCol: number;
+    oldSortRow: number;
+    oldIconMark: Icon | undefined;
+  }) {
+    const { col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark } = options;
+    updateSortIcon({ col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, scene: this });
   }
 
   updateFrozenIcon(col: number, oldFrozenCol: number) {
@@ -1639,8 +1641,8 @@ export class Scenegraph {
   }
 
   updateCellContentWhileResize(col: number, row: number) {
-    const isvtableMerge = this.table.getCellRawRecord(col, row)?.vtableMerge;
-    const type = isvtableMerge
+    const isVtableMerge = this.table.getCellRawRecord(col, row)?.vtableMerge;
+    const type = isVtableMerge
       ? 'text'
       : this.table.isHeader(col, row)
       ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
@@ -2047,26 +2049,6 @@ export class Scenegraph {
   //   updateCell(col, row, this.table);
   // }
   updateDomContainer() {
-    const { headerDomContainer, bodyDomContainer } = this.table.internalProps;
-    if (this.table.frozenColCount > 0 && (headerDomContainer || bodyDomContainer)) {
-      const frozenColsWidth = this.table.getFrozenColsWidth();
-      headerDomContainer && (headerDomContainer.style.left = `${frozenColsWidth}px`);
-      bodyDomContainer && (bodyDomContainer.style.left = `${frozenColsWidth}px`);
-    }
-    if (headerDomContainer) {
-      // headerDomContainer.style.width = `${(headerDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
-      headerDomContainer.style.width = `${Math.min(this.table.getAllColsWidth(), this.table.tableNoFrameWidth)}px`;
-      headerDomContainer.style.height = `${this.table.getFrozenRowsHeight()}px`;
-    }
-    if (bodyDomContainer) {
-      const totalFrozenRowsHeight = this.table.getFrozenRowsHeight() + this.table.getBottomFrozenRowsHeight();
-
-      // bodyDomContainer.style.width = `${(bodyDomContainer.parentElement?.offsetWidth ?? 1) - 1}px`;
-      bodyDomContainer.style.width = `${Math.min(this.table.getAllColsWidth(), this.table.tableNoFrameWidth)}px`;
-      bodyDomContainer.style.height = `${
-        (bodyDomContainer.parentElement?.offsetHeight ?? 1) - 1 - totalFrozenRowsHeight
-      }px`;
-      bodyDomContainer.style.top = `${this.table.getFrozenRowsHeight()}px`;
-    }
+    updateReactContainer(this.table);
   }
 }

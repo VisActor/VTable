@@ -162,7 +162,7 @@ export interface DataSourceAPI {
   get: (index: number) => MaybePromiseOrUndefined;
   getField: <F extends FieldDef>(index: number, field: F, col: number, row: number, table: BaseTableAPI) => FieldData;
   hasField: (index: number, field: FieldDef) => boolean;
-  sort: (field: FieldDef, order: SortOrder, orderFn: (v1: any, v2: any, order: SortOrder) => -1 | 0 | 1) => void;
+  sort: (rules: Array<SortState>) => void;
   clearSortedMap: () => void;
   updatePagination: (pagination: IPagination) => void;
   getIndexKey: (index: number) => number | number[];
@@ -177,6 +177,7 @@ export interface SortState {
   field: FieldDef;
   /** 排序规则 */
   order: SortOrder;
+  orderFn?: (a: any, b: any, order: string) => -1 | 0 | 1;
 }
 export interface PivotSortState {
   col: number;
@@ -234,6 +235,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 排序状态
    */
   sortState?: SortState | SortState[];
+  multipleSort?: boolean;
 
   /** 全局设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
@@ -397,6 +399,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
   /** 是否需要补充指标节点到对应的自定义表头中如rowTree或者columnTree. 默认为true */
   supplementIndicatorNodes?: boolean;
+  /** 如果配置了rowTree 或者 columnTree 且是非规则的树结构，即树的同一层存在不同维度的维度值时，为了去匹配对应的数据，需要开启该配置 */
+  parseCustomTreeToMatchRecords?: boolean;
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**
@@ -539,6 +543,8 @@ export interface IIndicatorHeaderNode {
   value?: string;
   /** 维度成员下的子维度树结构 */
   children?: IHeaderTreeDefine[] | null;
+  //跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格
+  levelSpan?: number;
 }
 export interface IDimensionHeaderNode {
   /**
@@ -553,6 +559,8 @@ export interface IDimensionHeaderNode {
   hierarchyState?: HierarchyState;
   /** 是否为虚拟节点 在基于records数据做分析时忽略该维度字段 */
   virtual?: boolean;
+  /** 跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格 */
+  levelSpan?: number;
 }
 
 export interface IExtensionRowDefine {

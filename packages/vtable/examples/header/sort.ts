@@ -7,12 +7,12 @@ export function createTable() {
     {
       progress: 100,
       id: 1,
-      name: 'a'
+      name: 'e'
     },
     {
       progress: 80,
       id: 2,
-      name: 'b'
+      name: 'd'
     },
     {
       progress: 1,
@@ -22,12 +22,12 @@ export function createTable() {
     {
       progress: 55,
       id: 4,
-      name: 'd'
+      name: 'b'
     },
     {
       progress: 28,
       id: 5,
-      name: 'e'
+      name: 'a'
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
@@ -76,11 +76,13 @@ export function createTable() {
           fontSize: 13,
           fontFamily: 'sans-serif'
         },
+        sort: true,
         field: 'name',
         width: 150
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
+    multipleSort: true,
     widthMode: 'standard',
     allowFrozenColCount: 2
   };
@@ -89,8 +91,10 @@ export function createTable() {
 
   //设置表格数据
   instance.setRecords(personsDataSource, {
-    field: 'id',
-    order: 'desc'
+    sortState: {
+      field: 'name',
+      order: 'desc'
+    }
   });
   // instance.setRecords(personsDataSource);
 

@@ -67,6 +67,8 @@ export interface IDimensionHeaderNode {
   children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[];
   /** 折叠状态 配合树形结构展示使用。注意：仅在rowTree中有效 */
   hierarchyState?: HierarchyState;
+  /** 跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格 */
+  levelSpan?: number;
 }
 ```
 
@@ -82,6 +84,8 @@ export interface IIndicatorHeaderNode {
    * 指标名称 如：“销售额”，“例如”， 对应到单元格显示的值。可不填，不填的话 从indicators的对应配置中取值显示
    */
   value?: string;
+  /** 跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格 */
+  levelSpan?: number;
 }
 ```
 

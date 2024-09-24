@@ -59,12 +59,12 @@ Before using the editors, you need to register the editor instances to VTable:
 ```javascript
 // import * as VTable from '@visactor/vtable';
 // Register editors to VTable
-VTable.register.editor('name-editor', inputEditor);
-VTable.register.editor('name-editor2', inputEditor2);
-VTable.register.editor('textArea-editor', textAreaEditor);
-VTable.register.editor('number-editor', numberEditor);
-VTable.register.editor('date-editor', dateInputEditor);
-VTable.register.editor('list-editor', listEditor);
+ VTableGantt.VTable.register.editor('name-editor', inputEditor);
+ VTableGantt.VTable.register.editor('name-editor2', inputEditor2);
+ VTableGantt.VTable.register.editor('textArea-editor', textAreaEditor);
+ VTableGantt.VTable.register.editor('number-editor', numberEditor);
+ VTableGantt.VTable.register.editor('date-editor', dateInputEditor);
+ VTableGantt.VTable.register.editor('list-editor', listEditor);
 ```
 
 Next, specify the editor to be used in the columns configuration:
@@ -95,8 +95,8 @@ let ganttInstance;
 // In the official editor, VTable.editors is renamed to VTable_editors
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();
-VTable.register.editor('inputEditor', input_editor);
-VTable.register.editor('dateEditor', date_input_editor);
+ VTableGantt.VTable.register.editor('inputEditor', input_editor);
+ VTableGantt.VTable.register.editor('dateEditor', date_input_editor);
 const records = [
   {
     id: 1,

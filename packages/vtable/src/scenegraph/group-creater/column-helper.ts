@@ -73,6 +73,7 @@ export function createComplexColumn(
     let isMerge;
     let customStyle;
     let customResult;
+    let isCustomMerge = false;
     if (table.internalProps.customMergeCell) {
       const customMerge = table.getCustomMerge(col, row);
       if (customMerge) {
@@ -110,6 +111,8 @@ export function createComplexColumn(
             table
           );
         }
+
+        isCustomMerge = true;
       }
     }
 
@@ -148,10 +151,10 @@ export function createComplexColumn(
         cellHeight = mergeSize.cellHeight;
       }
     }
-    let isvtableMerge = false;
+    let isVtableMerge = false;
     if (table.internalProps.enableTreeNodeMerge && isMerge) {
       const { vtableMergeName, vtableMerge } = table.getCellRawRecord(range.start.col, range.start.row);
-      isvtableMerge = vtableMerge;
+      isVtableMerge = vtableMerge;
       if (vtableMerge) {
         mayHaveIcon = true;
         if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
@@ -202,11 +205,12 @@ export function createComplexColumn(
     }
     // margin = getProp('margin', headerStyle, col, 0, table)
 
-    const type = isvtableMerge
-      ? 'text'
-      : (table.isHeader(col, row)
-          ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-          : table.getBodyColumnType(col, row)) || 'text';
+    const type =
+      isVtableMerge || isCustomMerge
+        ? 'text'
+        : (table.isHeader(col, row)
+            ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+            : table.getBodyColumnType(col, row)) || 'text';
 
     // deal with promise data
     if (isPromise(value)) {
