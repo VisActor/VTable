@@ -42,6 +42,13 @@ export function getRollupOptions(
   config: Config,
   tsconfigOverride?: Record<string, unknown>
 ): RollupOptions {
+  const tsOption = {
+    tsconfig: path.resolve(projectRoot, config.tsconfig)
+  };
+
+  if (useTypescriptPlugin2 && tsconfigOverride) {
+    (tsOption as any).tsconfigOverride = tsconfigOverride;
+  }
   return {
     input: entry,
     external: getExternal(rawPackageJson, config.external),
@@ -53,10 +60,7 @@ export function getRollupOptions(
       // typescript(),
       babel({ ...babelPlugins, babelHelpers: 'bundled' }),
       replace({ ...config.envs, preventAssignment: true }),
-      typescript({
-        tsconfig: path.resolve(projectRoot, config.tsconfig),
-        tsconfigOverride
-      }),
+      typescript(tsOption),
       postcss({
         extensions: ['.css']
       }),
