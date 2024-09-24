@@ -435,3 +435,33 @@ export function parseMarkLineGetExtendRange(markLine: any): number | 'sum' | 'ma
   }
   return undefined;
 }
+
+export function generateAggregationForColumn(table: ListTable) {
+  for (let col = 0; col < table.internalProps.columns.length; col++) {
+    const colDef = table.internalProps.columns[col];
+    if (colDef.aggregation) {
+    } else if (table.options.aggregation) {
+      let aggregation;
+      if (typeof table.options.aggregation === 'function') {
+        aggregation = table.options.aggregation({
+          col: col,
+          field: colDef.field as string
+        });
+      } else {
+        aggregation = table.options.aggregation;
+      }
+
+      if (aggregation) {
+        if (Array.isArray(aggregation)) {
+          return aggregation.map(item => {
+            if (!isValid(item.showOnTop)) {
+              item.showOnTop = false;
+            }
+            return item;
+          });
+        }
+        colDef.aggregation = Object.assign({ showOnTop: false }, aggregation);
+      }
+    }
+  }
+}
