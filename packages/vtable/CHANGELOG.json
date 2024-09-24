@@ -2,6 +2,57 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.7.8",
+      "tag": "@visactor/vtable_v1.7.8",
+      "date": "Tue, 24 Sep 2024 10:22:40 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: handle with customTree in dataset file to refactor processRecord function #2279\n\n"
+          },
+          {
+            "comment": "fix: custom total value not work #2455\n\n"
+          },
+          {
+            "comment": "refactor: update aggregator when update records #2459\n\n"
+          },
+          {
+            "comment": "fix: adjust sort icon up and down #2465\n\n"
+          },
+          {
+            "comment": "fix: when current edit not exit, could not trigger new edit cell #2469\n\n"
+          },
+          {
+            "comment": "fix: when no records edit cell value occor error #2474\n\n"
+          },
+          {
+            "comment": "feat: add async support in vtable-export #2460"
+          },
+          {
+            "comment": "fix: set aggregation on option not work #2459\n\n"
+          },
+          {
+            "comment": "fix: fix cell border clip in 'bottom-right' borde mode #2442"
+          },
+          {
+            "comment": "fix: add children === true hierarchyState in initChildrenNodeHierarchy()"
+          },
+          {
+            "comment": "fix: fix custom component frozen update #2432"
+          },
+          {
+            "comment": "fix: when resize trigger click_cell event\n\n"
+          },
+          {
+            "comment": "fix: fix proxy.colStart update in resetFrozen() #2464"
+          },
+          {
+            "comment": "fix: add '——' in specialCharSet #2470"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.7.7",
       "tag": "@visactor/vtable_v1.7.7",
       "date": "Fri, 13 Sep 2024 08:37:37 GMT",
