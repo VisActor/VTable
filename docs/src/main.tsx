@@ -13,11 +13,14 @@ import * as VueVTable from '@visactor/vue-vtable';
 import * as InulaVTable from '@visactor/openinula-vtable';
 import { App } from './app';
 import * as ArcoDesign from '@arco-design/web-react';
+import * as ArcoDesignVue from '@arco-design/web-vue';
 import * as ArcoDesignIcon from '@arco-design/web-react/icon';
 import '@arco-design/web-react/dist/css/arco.css';
+import '@arco-design/web-vue/dist/arco.css';
 import { createApp, ref, onMounted, h } from 'vue';
 
 (window as any).ArcoDesign = ArcoDesign;
+(window as any).ArcoDesignVue = ArcoDesignVue;
 (window as any).ArcoDesignIcon = ArcoDesignIcon;
 (window as any).VTable = VTable;
 (window as any).VRender = VRender;
