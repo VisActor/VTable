@@ -409,7 +409,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     const aggregation = (column as ColumnDefine).aggregation;
     if (Array.isArray(aggregation)) {
       const bottomAggregationIndexs = aggregation.reduce((indexs, agg, index) => {
-        if (agg.showOnTop === false) {
+        if (!agg.showOnTop) {
           indexs.push(index);
         }
         return indexs;
