@@ -774,7 +774,7 @@ importers:
       '@types/offscreencanvas': 2019.6.4
       '@visactor/vchart': 1.12.1
       '@visactor/vtable': workspace:*
-      '@visactor/vutils': ~0.18.13
+      '@visactor/vutils': ~0.18.14
       '@vitejs/plugin-vue': ^5.0.3
       axios: ^1.4.0
       chai: 4.3.4
