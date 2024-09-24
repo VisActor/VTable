@@ -1,6 +1,42 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 13 Sep 2024 08:37:37 GMT and should not be manually modified.
+This log was last generated on Tue, 24 Sep 2024 10:22:40 GMT and should not be manually modified.
+
+## 1.7.8
+Tue, 24 Sep 2024 10:22:40 GMT
+
+### Updates
+
+- feat: handle with customTree in dataset file to refactor processRecord function #2279
+
+
+- fix: custom total value not work #2455
+
+
+- refactor: update aggregator when update records #2459
+
+
+- fix: adjust sort icon up and down #2465
+
+
+- fix: when current edit not exit, could not trigger new edit cell #2469
+
+
+- fix: when no records edit cell value occor error #2474
+
+
+- feat: add async support in vtable-export #2460
+- fix: set aggregation on option not work #2459
+
+
+- fix: fix cell border clip in 'bottom-right' borde mode #2442
+- fix: add children === true hierarchyState in initChildrenNodeHierarchy()
+- fix: fix custom component frozen update #2432
+- fix: when resize trigger click_cell event
+
+
+- fix: fix proxy.colStart update in resetFrozen() #2464
+- fix: add '——' in specialCharSet #2470
 
 ## 1.7.7
 Fri, 13 Sep 2024 08:37:37 GMT
