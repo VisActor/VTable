@@ -882,6 +882,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         }
         delete this.beforeChangedRecordsMap[recordIndex];
         realDeletedRecordIndexs.push(recordIndex);
+        const deletedRecord = this.records[recordIndex];
+        for (let i = 0; i < this.fieldAggregators.length; i++) {
+          this.fieldAggregators[i].deleteRecord(deletedRecord);
+        }
         this.records.splice(recordIndex, 1);
         this.currentIndexedData.pop();
         this._sourceLength -= 1;
@@ -937,6 +941,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       }
       delete this.beforeChangedRecordsMap[recordIndex];
       realDeletedRecordIndexs.push(recordIndex);
+      for (let i = 0; i < this.fieldAggregators.length; i++) {
+        this.fieldAggregators[i].updateRecord(this.records[recordIndex], records[index]);
+      }
       this.records[recordIndex] = records[index];
     }
     if (this.userPagination) {
