@@ -667,10 +667,7 @@ export function listTableDeleteRecords(recordIndexs: number[], table: ListTable)
             updateRows.push({ col: 0, row });
           }
         }
-        updateRows.push({
-          col: 0,
-          row: table.rowCount - 1
-        });
+
         table.transpose
           ? table.scenegraph.updateCol(delRows, [], updateRows)
           : table.scenegraph.updateRow(delRows, [], updateRows);
