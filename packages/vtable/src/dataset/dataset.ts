@@ -1172,6 +1172,12 @@ export class Dataset {
           push() {
             // do nothing
           },
+          deleteRecord() {
+            // do nothing
+          },
+          updateRecord() {
+            // do nothing
+          },
           clearCacheValue() {
             // do nothing
           },
@@ -1190,6 +1196,12 @@ export class Dataset {
         },
         className: '',
         push() {
+          // do nothing
+        },
+        deleteRecord() {
+          // do nothing
+        },
+        updateRecord() {
           // do nothing
         },
         recalculate() {
@@ -1213,6 +1225,12 @@ export class Dataset {
       : {
           className: '',
           push() {
+            // do nothing
+          },
+          deleteRecord() {
+            // do nothing
+          },
+          updateRecord() {
             // do nothing
           },
           recalculate() {
