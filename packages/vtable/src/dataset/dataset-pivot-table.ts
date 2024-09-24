@@ -416,6 +416,12 @@ export class DatasetForPivotTable {
           push() {
             // do nothing
           },
+          deleteRecord() {
+            // do nothing
+          },
+          updateRecord() {
+            // do nothing
+          },
           recalculate() {
             // do nothing
           },
