@@ -45,6 +45,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-async'
+      },
+      {
+        path: 'list',
+        name: 'list-group'
       }
     ]
   },

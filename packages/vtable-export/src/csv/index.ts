@@ -45,9 +45,11 @@ function getCopyCellValue(
   tableInstance: IVTable,
   option?: ExportVTableToCsvOptions
 ): string | Promise<string> | void {
+  const rawRecord = tableInstance.getCellRawRecord(col, row);
+  const cellValue = (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row);
+
   if (option?.formatExportOutput) {
     const cellType = tableInstance.getCellType(col, row);
-    const cellValue = tableInstance.getCellValue(col, row);
     const cellInfo = { cellType, cellValue, table: tableInstance, col, row };
     const formattedValue = option.formatExportOutput(cellInfo);
     if (formattedValue !== undefined) {
@@ -65,7 +67,7 @@ function getCopyCellValue(
     return '';
   }
 
-  let value = tableInstance.getCellValue(col, row);
+  let value = cellValue;
   if (option?.escape) {
     value = escapeForCSV(value);
   } else if (typeof value === 'string') {
