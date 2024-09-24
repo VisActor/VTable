@@ -5,7 +5,14 @@ import { parseFont } from '../scenegraph/utils/font';
 import { getQuadProps } from '../scenegraph/utils/padding';
 import { Rect } from '../tools/Rect';
 import * as calc from '../tools/calc';
-import type { FullExtendStyle, ListTableAPI, ListTableConstructorOptions, SortState } from '../ts-types';
+import type {
+  Aggregation,
+  CustomAggregation,
+  FullExtendStyle,
+  ListTableAPI,
+  ListTableConstructorOptions,
+  SortState
+} from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { defaultOrderFn } from '../tools/util';
 import type { ListTable } from '../ListTable';
@@ -59,7 +66,7 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
       records,
       table.internalProps.dataConfig,
       table.pagination,
-      table.internalProps.layoutMap.columnObjects,
+      table.internalProps.columns,
       table.internalProps.layoutMap.rowHierarchyType,
       getHierarchyExpandLevel(table)
     ));
@@ -434,4 +441,34 @@ export function parseMarkLineGetExtendRange(markLine: any): number | 'sum' | 'ma
     }
   }
   return undefined;
+}
+
+export function generateAggregationForColumn(table: ListTable) {
+  for (let col = 0; col < table.internalProps.columns.length; col++) {
+    const colDef = table.internalProps.columns[col];
+    if (colDef.aggregation) {
+    } else if (table.options.aggregation) {
+      let aggregation;
+      if (typeof table.options.aggregation === 'function') {
+        aggregation = table.options.aggregation({
+          col: col,
+          field: colDef.field as string
+        });
+      } else {
+        aggregation = table.options.aggregation;
+      }
+
+      if (aggregation) {
+        if (Array.isArray(aggregation)) {
+          const aggregations: (Aggregation | CustomAggregation)[] = [];
+          aggregation.forEach(item => {
+            aggregations.push(Object.assign({ showOnTop: false }, item));
+          });
+          colDef.aggregation = aggregations;
+        } else {
+          colDef.aggregation = Object.assign({ showOnTop: false }, aggregation);
+        }
+      }
+    }
+  }
 }

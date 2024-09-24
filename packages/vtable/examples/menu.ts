@@ -150,6 +150,10 @@ export const menus = [
       },
       {
         path: 'list-analysis',
+        name: 'list-aggregation-deleteRecord'
+      },
+      {
+        path: 'list-analysis',
         name: 'list-aggregation-global'
       },
       {
@@ -500,6 +504,14 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-tree'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-columnTree'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-columnTree2'
       },
       {
         path: 'pivot-analysis',

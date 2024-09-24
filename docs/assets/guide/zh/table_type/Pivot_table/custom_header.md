@@ -197,7 +197,8 @@ VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
 
 # 自定义表头跨列合并
 
-在 rowTree 或者 columnTree 的节点中配置 levelSpan ，默认是1，这个配置可以指定表头单元格合并的范围。如果表头层数最大是3，一共三层维度，中间维度设置了levelSpan为2，那么最末级剩下多大就合并多大层数的单元格，也就没有空间了。如下例子的效果：
+在 rowTree 或者 columnTree 的节点中配置 levelSpan ，默认是 1，这个配置可以指定表头单元格合并的范围。如果表头层数最大是 3，一共三层维度，中间维度设置了 levelSpan 为 2，那么最末级剩下多大就合并多大层数的单元格，也就没有空间了。如下例子的效果：
+
    <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/levelSpan-effect.jpeg" />
     <p>levelSpan</p>
@@ -245,3 +246,11 @@ VTable 会自动补全指标节点到行维度表头树中：
 ```
 
 如果不需要自动补全指标节点，可通过设置 `supplementIndicatorNodes: false` 来关闭自动补全。
+
+# 自定义树不规则情况
+
+如果配置了 rowTree 或者 columnTree 且是非规则的树结构，为了去匹配对应的数据 record，需要开启配置 parseCustomTreeToMatchRecords。
+
+规则的树结构指的是：同一层的节点它们的维度 key 是相同的。
+
+非规则的树结构即树的同一层存在不同维度的维度值时。

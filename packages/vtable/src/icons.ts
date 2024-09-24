@@ -12,9 +12,9 @@ const builtins = {
       type: 'svg',
       svg:
         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-        ' <path d="M4.6665 9H11.3332L7.99984 13.1667L4.6665 9Z" fill="#282F38" fill-opacity="0.35"/>' +
-        '<path d="M11.3335 7L4.66683 7L8.00016 2.83333L11.3335 7Z" fill="#416EFF"/>' +
-        ' </svg>',
+        ' <path d="M4.6665 9H11.3332L7.99984 13.1667L4.6665 9Z" fill="#416EFF"/>' +
+        '<path d="M11.3335 7L4.66683 7L8.00016 2.83333L11.3335 7Z" fill="#282F38" fill-opacity="0.35"/>' +
+        '</svg> ',
       width: 16, //其实指定的是svg图片绘制多大，实际下面的阴影是box，margin也是相对阴影范围指定的
       height: 16,
       funcType: IconFuncTypeEnum.sort,
@@ -35,9 +35,9 @@ const builtins = {
       type: 'svg',
       svg:
         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-        ' <path d="M4.6665 9H11.3332L7.99984 13.1667L4.6665 9Z" fill="#416EFF"/>' +
-        '<path d="M11.3335 7L4.66683 7L8.00016 2.83333L11.3335 7Z" fill="#282F38" fill-opacity="0.35"/>' +
-        '</svg> ',
+        ' <path d="M4.6665 9H11.3332L7.99984 13.1667L4.6665 9Z" fill="#282F38" fill-opacity="0.35"/>' +
+        '<path d="M11.3335 7L4.66683 7L8.00016 2.83333L11.3335 7Z" fill="#416EFF"/>' +
+        ' </svg>',
       width: 16,
       height: 16,
       funcType: IconFuncTypeEnum.sort,

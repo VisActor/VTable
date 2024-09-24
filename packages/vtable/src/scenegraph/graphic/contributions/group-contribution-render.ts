@@ -164,16 +164,16 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
         if (bottomRight) {
           x = Math.floor(x) - 0.5;
           y = Math.floor(y) - 0.5;
-          // if (group.role === 'cell') {
-          //   const col = (group as any).col as number;
-          //   const row = (group as any).row as number;
-          //   if (table && col === table.colCount - 1) {
-          //     deltaWidth = 1;
-          //   }
-          //   if (table && row === table.rowCount - 1) {
-          //     deltaHeight = 1;
-          //   }
-          // }
+          if (group.role === 'cell') {
+            const col = (group as any).col as number;
+            const row = (group as any).row as number;
+            if (col === 0) {
+              x += 1;
+            }
+            if (row === 0) {
+              y += 1;
+            }
+          }
         } else {
           x = Math.floor(x) + 0.5;
           y = Math.floor(y) + 0.5;
@@ -593,16 +593,16 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
       if (bottomRight) {
         x = Math.floor(x) - 0.5;
         y = Math.floor(y) - 0.5;
-        // if (group.role === 'cell') {
-        //   const col = (group as any).col as number;
-        //   const row = (group as any).row as number;
-        //   if (table && col === table.colCount - 1) {
-        //     deltaWidth = 1;
-        //   }
-        //   if (table && row === table.rowCount - 1) {
-        //     deltaHeight = 1;
-        //   }
-        // }
+        if (group.role === 'cell') {
+          const col = (group as any).col as number;
+          const row = (group as any).row as number;
+          if (col === 0) {
+            x += 1;
+          }
+          if (row === 0) {
+            y += 1;
+          }
+        }
       } else {
         x = Math.floor(x) + 0.5;
         y = Math.floor(y) + 0.5;
@@ -803,16 +803,16 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       if (bottomRight) {
         x = Math.floor(x) - 0.5;
         y = Math.floor(y) - 0.5;
-        // if (group.role === 'cell') {
-        //   const col = (group as any).col as number;
-        //   const row = (group as any).row as number;
-        //   if (table && col === table.colCount - 1) {
-        //     deltaWidth = 1;
-        //   }
-        //   if (table && row === table.rowCount - 1) {
-        //     deltaHeight = 1;
-        //   }
-        // }
+        if (group.role === 'cell') {
+          const col = (group as any).col as number;
+          const row = (group as any).row as number;
+          if (col === 0) {
+            x += 1;
+          }
+          if (row === 0) {
+            y += 1;
+          }
+        }
       } else {
         x = Math.floor(x) + 0.5;
         y = Math.floor(y) + 0.5;
@@ -1070,6 +1070,9 @@ function drawClipRect(context: IContext2d, x: number, y: number, width: number, 
 
 function getCellSizeForDraw(group: any, width: number, height: number, bottomRight: boolean) {
   const table = group.stage.table as BaseTableAPI;
+  if (!table) {
+    return { width, height };
+  }
   if (group.role === 'cell') {
     let col = group.col as number;
     let row = group.row as number;
@@ -1079,21 +1082,25 @@ function getCellSizeForDraw(group: any, width: number, height: number, bottomRig
       row = mergeInfo.end.row;
     }
 
-    if (table && col === table.colCount - 1 && !bottomRight) {
+    if (col === table.colCount - 1 && !bottomRight) {
       width -= 1;
-    } else if (table && col === table.frozenColCount - 1 && table.scrollLeft && !bottomRight) {
+    } else if (col === table.frozenColCount - 1 && table.scrollLeft && !bottomRight) {
+      width -= 1;
+    } else if (col === 0 && bottomRight) {
       width -= 1;
     }
-    if (table && row === table.rowCount - 1 && !bottomRight) {
+    if (row === table.rowCount - 1 && !bottomRight) {
       height -= 1;
-    } else if (table && row === table.frozenRowCount - 1 && table.scrollTop && !bottomRight) {
+    } else if (row === table.frozenRowCount - 1 && table.scrollTop && !bottomRight) {
+      height -= 1;
+    } else if (row === 0 && bottomRight) {
       height -= 1;
     }
   } else if (group.role === 'corner-frozen') {
-    if (table && table.scrollLeft && !bottomRight) {
+    if (table.scrollLeft && !bottomRight) {
       width -= 1;
     }
-    if (table && table.scrollTop && !bottomRight) {
+    if (table.scrollTop && !bottomRight) {
       height -= 1;
     }
   }

@@ -10,7 +10,7 @@ import {
   type MaybePromiseOrUndefined
 } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
-import type { ColumnData } from '../ts-types/list-table/layout-map/api';
+import type { ColumnData, ColumnsDefine } from '../ts-types/list-table/layout-map/api';
 import type { DataSourceParam } from './DataSource';
 import { DataSource } from './DataSource';
 
@@ -50,7 +50,7 @@ export class CachedDataSource extends DataSource {
     array: any[],
     dataConfig?: IListTableDataConfig,
     pagination?: IPagination,
-    columnObjs?: ColumnData[],
+    columns?: ColumnsDefine,
     rowHierarchyType?: 'grid' | 'tree',
     hierarchyExpandLevel?: number
   ): CachedDataSource {
@@ -67,7 +67,7 @@ export class CachedDataSource extends DataSource {
       },
       dataConfig,
       pagination,
-      columnObjs,
+      columns,
       rowHierarchyType,
       hierarchyExpandLevel
     );
@@ -78,14 +78,14 @@ export class CachedDataSource extends DataSource {
     opt?: DataSourceParam,
     dataConfig?: IListTableDataConfig,
     pagination?: IPagination,
-    columnObjs?: ColumnData[],
+    columns?: ColumnsDefine,
     rowHierarchyType?: 'grid' | 'tree',
     hierarchyExpandLevel?: number
   ) {
     if (isArray(dataConfig?.groupByRules)) {
       rowHierarchyType = 'tree';
     }
-    super(opt, dataConfig, pagination, columnObjs, rowHierarchyType, hierarchyExpandLevel);
+    super(opt, dataConfig, pagination, columns, rowHierarchyType, hierarchyExpandLevel);
     this._recordCache = [];
     this._fieldCache = {};
   }
