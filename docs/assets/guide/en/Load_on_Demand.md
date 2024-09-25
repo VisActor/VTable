@@ -59,7 +59,7 @@ function App() {
 It should be noted that if react-vtable needs to register components, it is necessary to first introduce the registration function in the vtable package for on-demand registration. The versions of `'@visactor/vtable'` and `'@visactor/react-vtable'` used in the project need to be consistent.
 
 ```tsx
-import {ListTableSimple} form '@visactor/vtable';
+import {ListTableSimple} form '@visactor/react-vtable';
 import {registerTitle, registerTooltip} from '@visactor/vtable';
 
 registerTitle();
