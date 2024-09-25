@@ -9,8 +9,9 @@ import { TimelineHeader } from './timeline-header';
 import { TaskBar } from './task-bar';
 import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
-import { getTaskIndexByY } from '../gantt-helper';
+import { getDateByX, getTaskIndexByY } from '../gantt-helper';
 import graphicContribution from './graphic';
+import { AddTaskButton } from './add-task-button';
 container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
@@ -24,6 +25,7 @@ export class Scenegraph {
   scrollbarComponent: ScrollBarComponent;
   markLine: MarkLine;
   frameBorder: FrameBorder;
+  addTaskButton: AddTaskButton;
   stage: Stage;
   tableGroupWidth: number;
   tableGroupHeight: number;
@@ -239,5 +241,24 @@ export class Scenegraph {
   }
   getTaskBarNodeByY(y: number) {
     const taskIndex = getTaskIndexByY(y, this._gantt);
+  }
+
+  showAddTaskButton(x: number, y: number, taskIndex: number, record: any) {
+    if (!this.addTaskButton) {
+      this.addTaskButton = new AddTaskButton(this._gantt.scenegraph);
+    }
+    const date = getDateByX(x, this._gantt);
+    this.addTaskButton.show(
+      x + this._gantt.stateManager.scroll.horizontalBarPos,
+      y + this._gantt.stateManager.scroll.verticalBarPos,
+      this._gantt.parsedOptions.colWidthPerDay,
+      this._gantt.parsedOptions.rowHeight
+    );
+  }
+
+  hideAddTaskButton() {
+    if (this.addTaskButton) {
+      this.addTaskButton.hide();
+    }
   }
 }

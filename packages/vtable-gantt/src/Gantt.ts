@@ -105,6 +105,10 @@ export class Gantt extends EventTarget {
     taskBarResizable: boolean;
     taskBarLabelStyle: ITaskBarLabelTextStyle;
     taskBarCustomLayout: ITaskBarCustomLayout;
+    taskBarCreationButtonStyle: ILineStyle & {
+      cornerRadius?: number;
+    };
+
     outerFrameStyle: IFrameStyle;
     pixelRatio: number;
 
@@ -592,7 +596,9 @@ export class Gantt extends EventTarget {
     const rawDateEndDateTime = createDateAtMidnight(taskRecord[endDateField]).getTime();
     if (
       rawDateEndDateTime < this.parsedOptions._minDateTime ||
-      rawDateStartDateTime > this.parsedOptions._maxDateTime
+      rawDateStartDateTime > this.parsedOptions._maxDateTime ||
+      !taskRecord[startDateField] ||
+      !taskRecord[endDateField]
     ) {
       return {
         taskDays: 0,

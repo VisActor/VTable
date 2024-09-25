@@ -114,6 +114,12 @@ export interface GanttConstructorOptions {
             endDate: Date
           ) => TYPES.MenuListItem[]);
     };
+    /** 针对没有分配日期的任务，可以显示出创建按钮 */
+    creation?: {
+      buttonStyle: ILineStyle & {
+        cornerRadius?: number;
+      };
+    };
   };
   /** 网格线配置 */
   grid?: IGrid;
@@ -130,6 +136,7 @@ export interface GanttConstructorOptions {
 
   /** 标记线配置 如果配置为true 会自动给今天做标记 */
   markLine?: boolean | IMarkLine | IMarkLine[];
+
   /** 指定整个甘特图的最小日期 */
   minDate?: string;
   /** 指定整个甘特图的最大日期 不设置的话用默认规则*/

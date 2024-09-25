@@ -7,7 +7,7 @@ import { throttle } from '../tools/util';
 import { GANTT_EVENT_TYPE, InteractionState } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
-import type { GanttTaskBarNode } from '../scenegraph/ganttNode';
+import type { GanttTaskBarNode } from '../scenegraph/GanttNode';
 import { getTaskIndexByY } from '../gantt-helper';
 
 export class EventManager {
@@ -105,6 +105,12 @@ function bindTableGroupListener(event: EventManager) {
         stateManager.showTaskBarHover(e);
       } else {
         stateManager.hideTaskBarHover(e);
+        //#region hover到某一个任务 检查有没有日期安排，没有的话显示创建按钮
+        const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, gantt);
+        const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
+        if (!recordTaskInfo.taskDays) {
+          gantt.scenegraph.showAddTaskButton(e.offset.x, e.offset.y, taskIndex, recordTaskInfo.taskRecord);
+        }
       }
     }
   });

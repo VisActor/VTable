@@ -12,6 +12,13 @@ export function getTaskIndexByY(y: number, gantt: Gantt) {
   const taskBarIndex = Math.floor(taskBarHeight / gantt.parsedOptions.rowHeight);
   return taskBarIndex;
 }
+export function getDateByX(x: number, gantt: Gantt) {
+  const { colWidthPerDay, minDate } = gantt.parsedOptions;
+  const totalX = x + gantt.stateManager.scroll.horizontalBarPos;
+  const days = Math.floor((totalX - gantt.stateManager.scroll.horizontalBarPos) / colWidthPerDay);
+  const date = new Date(minDate.getTime() + days * DayTimes);
+  return date;
+}
 
 export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): IMarkLine[] {
   if (!markLine) {
@@ -196,6 +203,14 @@ export function initOptions(gantt: Gantt) {
     textOverflow: options?.taskBar?.labelTextStyle?.textOverflow
   };
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
+  gantt.parsedOptions.taskBarCreationButtonStyle = Object.assign(
+    {
+      lineColor: 'rgba(99, 144, 0, 0.4)',
+      lineWidth: 1,
+      cornerRadius: 4
+    },
+    options?.taskBar?.creation?.buttonStyle
+  );
 
   gantt.parsedOptions.outerFrameStyle = Object.assign(
     {

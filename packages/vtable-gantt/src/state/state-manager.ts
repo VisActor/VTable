@@ -11,7 +11,7 @@ import {
 } from './gantt-table-sync';
 import { getTaskIndexByY } from '../gantt-helper';
 import { debounce } from '../tools/debounce';
-import type { GanttTaskBarNode } from '../scenegraph/ganttNode';
+import type { GanttTaskBarNode } from '../scenegraph/GanttNode';
 import { TASKBAR_HOVER_ICON_WIDTH } from '../scenegraph/task-bar';
 import { Inertia } from '../tools/inertia';
 export class StateManager {
