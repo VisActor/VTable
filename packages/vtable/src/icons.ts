@@ -20,7 +20,7 @@ let expand_color: string;
 let expand_color_opacity: string;
 let dragReorder_color: string;
 let dragReorder_color_opacity: string;
-export function setIconColor(themeIconsColor: ITableThemeDefine['iconsColor']) {
+export function setIconColor(themeIconsColor: ITableThemeDefine['internalIconsStyle']) {
   sort_color = themeIconsColor?.sort_color ?? '#282F38';
   sort_color_opacity = themeIconsColor?.sort_color_opacity ?? '0.35';
   sort_color_2 = themeIconsColor?.sort_color_2 ?? '#416EFF';
