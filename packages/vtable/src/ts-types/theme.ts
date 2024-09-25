@@ -176,6 +176,22 @@ export interface ITableThemeDefine {
   cellBorderClipDirection?: 'top-left' | 'bottom-right'; // default is 'top-left'
   // text offset, hack for fs
   _contentOffset?: number;
+  internalIconsStyle?: {
+    sort_color?: string;
+    sort_color_opacity?: string;
+    sort_color_2?: string;
+    sort_color_2_opacity?: string;
+    frozen_color?: string;
+    frozen_color_opacity?: string;
+    frozen_color_2?: string;
+    frozen_color_2_opacity?: string;
+    collapse_color?: string;
+    collapse_color_opacity?: string;
+    expand_color?: string;
+    expand_color_opacity?: string;
+    dragReorder_color?: string;
+    dragReorder_color_opacity?: string;
+  };
 }
 
 export type RequiredTableThemeDefine = Required<ITableThemeDefine>;

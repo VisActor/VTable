@@ -58,7 +58,6 @@ function getProp(obj: PartialTableThemeDefine, superObj: ITableThemeDefine, name
     (defNames && getChainSafe(superObj, ...defNames))
   );
 }
-
 export class TableTheme implements ITableThemeDefine {
   private internalTheme: {
     obj: PartialTableThemeDefine;
@@ -87,14 +86,15 @@ export class TableTheme implements ITableThemeDefine {
   private _checkboxStyle: RequiredTableThemeDefine['checkboxStyle'] | null = null;
   private _radioStyle: RequiredTableThemeDefine['radioStyle'] | null = null;
   private _textPopTipStyle: RequiredTableThemeDefine['textPopTipStyle'] | null = null;
-
+  private _internalIconsStyle: RequiredTableThemeDefine['internalIconsStyle'] | null = null;
   isPivot: boolean = false;
-
+  name: string = '';
   constructor(obj: PartialTableThemeDefine | ITableThemeDefine, superTheme: ITableThemeDefine) {
     this.internalTheme = {
       obj,
       superTheme
     };
+    this.name = getProp(obj, superTheme, ['name']);
   }
   /** gantt _generateListTableOptions 使用更方法 */
   getExtendTheme(): PartialTableThemeDefine | ITableThemeDefine {
@@ -768,6 +768,19 @@ export class TableTheme implements ITableThemeDefine {
       this._textPopTipStyle = textPopTipStyle;
     }
     return this._textPopTipStyle;
+  }
+
+  get internalIconsStyle(): RequiredTableThemeDefine['internalIconsStyle'] {
+    if (!this._internalIconsStyle) {
+      const { obj, superTheme } = this.internalTheme;
+      const internalIconsStyle: RequiredTableThemeDefine['internalIconsStyle'] = ingoreNoneValueMerge(
+        {},
+        superTheme.internalIconsStyle,
+        obj.internalIconsStyle
+      );
+      this._internalIconsStyle = internalIconsStyle;
+    }
+    return this._internalIconsStyle;
   }
 
   hasProperty(names: string[]): boolean {
