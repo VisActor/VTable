@@ -154,6 +154,310 @@
         "zh": "22.怎么处理换行符？",
         "en": "22.How to deal with line-break?"
       }
+    },
+    {
+      "Index": 23,
+      "path": "23-How to edit a table\u0027s cell with VTable",
+      "title": {
+        "zh": "23. VTable编辑表格如何修改触发时机？",
+        "en": "23.How to edit a table\u0027s cell with VTable?"
+      }
+    },
+    {
+      "Index": 24,
+      "path": "24-VTable usage problem: How to display table row numbers",
+      "title": {
+        "zh": "24. VTable使用问题：如何显示表格行号",
+        "en": "24.VTable usage problem: How to display table row numbers"
+      }
+    },
+    {
+      "Index": 25,
+      "path": "25-How to automatically calculate and display the aggregate values of the VTable\u0027s pivot table",
+      "title": {
+        "zh": "25. VTable透视分析表聚合值怎么自动计算并显示？",
+        "en": "25.How to automatically calculate and display the aggregate values of the VTable\u0027s pivot table?"
+      }
+    },
+    {
+      "Index": 26,
+      "path": "26-  How to use the right-click menu to copy, paste and delete cells in VTable",
+      "title": {
+        "zh": "26.  VTable怎么通过右键菜单来实现复制粘贴删除单元格能力？",
+        "en": "26.  How to use the right-click menu to copy, paste and delete cells in VTable?"
+      }
+    },
+    {
+      "Index": 27,
+      "path": "27-VTable usage problem: How to set the expanded and collapsed state of the tree structure",
+      "title": {
+        "zh": "27. VTable使用问题：如何设置树形结构展开收起状态",
+        "en": "27.VTable usage problem: How to set the expanded and collapsed state of the tree structure"
+      }
+    },
+    {
+      "Index": 28,
+      "path": "28- How can VTable implement a capability similar to the Excel fill handle to batch modify cells",
+      "title": {
+        "zh": "28. VTable如何实现类似Excel填充柄能力来批量修改单元格？",
+        "en": "28. How can VTable implement a capability similar to the Excel fill handle to batch modify cells?"
+      }
+    },
+    {
+      "Index": 29,
+      "path": "29- VTable usage issue: How to obtain the total number of rows in a table and the actual height of the content",
+      "title": {
+        "zh": "29. VTable使用问题：如何获取表格总行数和内容实际高度",
+        "en": "29. VTable usage issue: How to obtain the total number of rows in a table and the actual height of the content"
+      }
+    },
+    {
+      "Index": 30,
+      "path": "30-  In the VTable integrated VChart chart scene, how to deal with the truncation of dots at the edge",
+      "title": {
+        "zh": "30.  VTable集成VChart图表场景下，边缘处的圆点被截断怎么处理？",
+        "en": "30.  In the VTable integrated VChart chart scene, how to deal with the truncation of dots at the edge?"
+      }
+    },
+    {
+      "Index": 31,
+      "path": "31-VTable usage issue: How to implement hover to a cell to show or hide part of the content",
+      "title": {
+        "zh": "31. VTable使用问题：如何实现hover到单元格显示或隐藏部分内容",
+        "en": "31.VTable usage issue: How to implement hover to a cell to show or hide part of the content"
+      }
+    },
+    {
+      "Index": 32,
+      "path": "32-VTable usage issue: How to implement scrollbar DOM container boundary display",
+      "title": {
+        "zh": "32. VTable使用问题：如何实现滚动条贴DOM容器边界展示",
+        "en": "32.VTable usage issue: How to implement scrollbar DOM container boundary display"
+      }
+    },
+    {
+      "Index": 33,
+      "path": "33-VTable usage issue: How to implement drag-and-drop adjustment of line-height",
+      "title": {
+        "zh": "33. VTable使用问题：如何实现拖拽调整行高",
+        "en": "33.VTable usage issue: How to implement drag-and-drop adjustment of line-height"
+      }
+    },
+    {
+      "Index": 34,
+      "path": "34-VTable usage issue: How to implement text type buttons",
+      "title": {
+        "zh": "34. VTable使用问题：如何实现文本类型的按钮",
+        "en": "34.VTable usage issue: How to implement text type buttons"
+      }
+    },
+    {
+      "Index": 35,
+      "path": "35-VTable usage issue: How to set the border style around cells separately",
+      "title": {
+        "zh": "35. VTable使用问题：如何分别设置单元格四周边框样式",
+        "en": "35.VTable usage issue: How to set the border style around cells separately"
+      }
+    },
+    {
+      "Index": 36,
+      "path": "36-VTable usage issue: How to make the table automatically calculate column width based only on the content width of the table header",
+      "title": {
+        "zh": "36. VTable使用问题：如何让表格只根据表头的内容宽度自动计算列宽",
+        "en": "36.VTable usage issue: How to make the table automatically calculate column width based only on the content width of the table header"
+      }
+    },
+    {
+      "Index": 37,
+      "path": "37- What should I do if the bottom and right borders of VTable are not displayed when it is scrolled",
+      "title": {
+        "zh": "37. VTable有滚动情况下底部和右侧边框不显示怎么办？",
+        "en": "37. What should I do if the bottom and right borders of VTable are not displayed when it is scrolled?"
+      }
+    },
+    {
+      "Index": 38,
+      "path": "38- Can the VTable component be drag-and-drop to swap rows",
+      "title": {
+        "zh": "38. VTable表格组件是否可以拖拽整行调换位置？",
+        "en": "38. Can the VTable component be drag-and-drop to swap rows"
+      }
+    },
+    {
+      "Index": 39,
+      "path": "39- How to dynamically set the min and max values of the progressBar type in the VTable component based on the data items of the current row",
+      "title": {
+        "zh": "39. VTable表格组件中，progressbar进度条类型中min和max如何结合当前行的数据来计算展示呢",
+        "en": "39. How to dynamically set the min and max values of the progressBar type in the VTable component based on the data items of the current row?"
+      }
+    },
+    {
+      "Index": 40,
+      "path": "40- Can the VTable component achieve different hover colors for different cells",
+      "title": {
+        "zh": "40. VTable表格组件是否可以实现不同单元格hover颜色不一样？",
+        "en": "40. Can the VTable component achieve different hover colors for different cells?"
+      }
+    },
+    {
+      "Index": 41,
+      "path": "41- How can I increase the gap between adjacent sparklines in the VTable component",
+      "title": {
+        "zh": "41. VTable表格组件如何让相邻迷你折线图的直接的间隔变大？",
+        "en": "41. How can I increase the gap between adjacent sparklines in the VTable component?"
+      }
+    },
+    {
+      "Index": 42,
+      "path": "42-VTable usage issue: How to add column total information to the list",
+      "title": {
+        "zh": "42. VTable使用问题：如何在列表中加入列总计信息",
+        "en": "42.VTable usage issue: How to add column total information to the list"
+      }
+    },
+    {
+      "Index": 43,
+      "path": "43-VTable usage issue: How to listen to table area selection and cancellation events",
+      "title": {
+        "zh": "43. VTable使用问题：如何监听表格区域选中取消事件",
+        "en": "43.VTable usage issue: How to listen to table area selection and cancellation events"
+      }
+    },
+    {
+      "Index": 44,
+      "path": "44-VTable usage issue: How to set only one column to not be selected for operation",
+      "title": {
+        "zh": "44. VTable使用问题：如何何设置只有一列不能选中操作",
+        "en": "44.VTable usage issue: How to set only one column to not be selected for operation"
+      }
+    },
+    {
+      "Index": 45,
+      "path": "45-VTable usage issue: How to manually control the tooltip display",
+      "title": {
+        "zh": "45. VTable使用问题：如何手动控制tooltip展示",
+        "en": "45.VTable usage issue: How to manually control the tooltip display"
+      }
+    },
+    {
+      "Index": 46,
+      "path": "46-VTable usage issue: How to set multi-level table headers",
+      "title": {
+        "zh": "46. VTable使用问题：如何设置多级表头",
+        "en": "46.VTable usage issue: How to set multi-level table headers"
+      }
+    },
+    {
+      "Index": 47,
+      "path": "47- How to make text automatically omitted based on cell width when using custom rendering with VTable components",
+      "title": {
+        "zh": "47. 使用VTable表格组件的自定义渲染写法时，怎么让文本根据单元格宽度自动省略？",
+        "en": "47. How to make text automatically omitted based on cell width when using custom rendering with VTable components?"
+      }
+    },
+    {
+      "Index": 48,
+      "path": "48- When using the pivot table of the VTable component, how to display the calculated indicator results in a separate column",
+      "title": {
+        "zh": "48. 使用VTable表格组件的透视表时，怎么将指标结果再计算后显示到单独的一列当中？",
+        "en": "48. When using the pivot table of the VTable component, how to display the calculated indicator results in a separate column?"
+      }
+    },
+    {
+      "Index": 49,
+      "path": "49- How to implement dimension drill-down function when using VTable pivot table component",
+      "title": {
+        "zh": "49. 使用VTable表格组件的透视表时，怎么做维度下钻的功能",
+        "en": "49. How to implement dimension drill-down function when using VTable pivot table component?"
+      }
+    },
+    {
+      "Index": 50,
+      "path": "50- How to manually update the state when using the Checkbox in the VTable component",
+      "title": {
+        "zh": "50. 使用VTable表格组件用到了复选框Checkbox，怎么手动更新状态？",
+        "en": "50. How to manually update the state when using the Checkbox in the VTable component?"
+      }
+    },
+    {
+      "Index": 51,
+      "path": "51-  How to delete the content of the selected cell using hotkeys in VTable",
+      "title": {
+        "zh": "51.  VTable怎么通过快捷键将选中单元格的内容删除掉？",
+        "en": "51.  How to delete the content of the selected cell using hotkeys in VTable?"
+      }
+    },
+    {
+      "Index": 52,
+      "path": "52- Usage issues of the editing cell ability of the VTable component: How to configure the editor and whether it can be reused",
+      "title": {
+        "zh": "52. VTable表格组件的编辑单元格能力使用问题：编辑器怎么配置，是否可以复用？",
+        "en": "52. Usage issues of the editing cell ability of the VTable component: How to configure the editor and whether it can be reused?"
+      }
+    },
+    {
+      "Index": 53,
+      "path": "53- How to control the timing of exiting edit mode after implementing editable cells in VTable components",
+      "title": {
+        "zh": "53. VTable表格组件实现单元格可编辑后，怎么控制退出编辑的时机？",
+        "en": "53. How to control the timing of exiting edit mode after implementing editable cells in VTable components?"
+      }
+    },
+    {
+      "Index": 54,
+      "path": "54- Does the tooltip of the VTable component support selecting text and having a scrolling effect for overflowing content",
+      "title": {
+        "zh": "54.VTable表格组件的溢出文字弹框tooltip是否支持选中文本及内容超长滚动效果？",
+        "en": "54. Does the tooltip of the VTable component support selecting text and having a scrolling effect for overflowing content?"
+      }
+    },
+    {
+      "Index": 55,
+      "path": "55- After custom rendering in the column configuration of the VTable component, the icon configuration fails- How to solve this",
+      "title": {
+        "zh": "55. VTable表格组件的column的列配置中自定义渲染customRender后导致icon配置失效，应该怎么解决？",
+        "en": "55. After custom rendering in the column configuration of the VTable component, the icon configuration fails. How to solve this?"
+      }
+    },
+    {
+      "Index": 56,
+      "path": "56-VTable table component, using customLayout to customize the drawing elements, how to listen for mouse hover events on the elements, similar to the DOM\u0027s mouseenter event",
+      "title": {
+        "zh": "56. VTable表格组件，使用customLayout自定义了绘制图元怎么监听鼠标hover到图元的事件，类似dom的mouseenter事件？",
+        "en": "56.VTable table component, using customLayout to customize the drawing elements, how to listen for mouse hover events on the elements, similar to the DOM\u0027s mouseenter event?"
+      }
+    },
+    {
+      "Index": 57,
+      "path": "57-How to set the text style of the VTable table component",
+      "title": {
+        "zh": "57. VTable表格组件如何设置文字样式？",
+        "en": "57.How to set the text style of the VTable table component?"
+      }
+    },
+    {
+      "Index": 58,
+      "path": "58-How to customize highlighted cells in the VTable component",
+      "title": {
+        "zh": "58. VTable表格组件如何自定义高亮部分单元格",
+        "en": "58.How to customize highlighted cells in the VTable component"
+      }
+    },
+    {
+      "Index": 59,
+      "path": "59-How the VTable component progressively loads sub-nodes in a list",
+      "title": {
+        "zh": "59. VTable表格组件如何在列表中渐进加载子节点",
+        "en": "59.How the VTable component progressively loads sub-nodes in a list"
+      }
+    },
+    {
+      "Index": 60,
+      "path": "60-How the VTable component progressively loads sub-nodes in pivot tables",
+      "title": {
+        "zh": "60. VTable表格组件如何在透视表中渐进加载子节点",
+        "en": "60.How the VTable component progressively loads sub-nodes in pivot tables"
+      }
     }
   ]
 }
