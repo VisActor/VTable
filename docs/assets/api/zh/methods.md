@@ -91,7 +91,7 @@ export interface IPagination {
   totalCount?: number;
   /** 每页显示数据条数  */
   perPageCount: number;
-  /** 每页显示条数 */
+  /** 当前页码 */
   currentPage?: number;
 }
 ```

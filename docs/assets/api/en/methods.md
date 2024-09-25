@@ -91,7 +91,7 @@ export interface IPagination {
   totalCount?: number;
   /** Display number of data items per page */
   perPageCount: number;
-  /** Display number of items per page */
+  /** Display current page number */
   currentPage?: number;
 }
 ```
