@@ -42,6 +42,7 @@ function getBorderColor(args: StylePropertyFunctionArg): (string | null)[] {
  * @memberof VTable.themes.choices
  */
 export default {
+  name: 'SIMPLIFY',
   // selectionBgColor: '#CCE0FF',
   underlayBackgroundColor: '#FFF',
 
