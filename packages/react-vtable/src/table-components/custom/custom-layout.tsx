@@ -102,6 +102,12 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
       table.reactCustomLayout?.setReactRemoveGraphic(componentId, removeContainer, isHeaderCustomLayout); // set customLayout function
       table.reactCustomLayout?.updateCustomCell(componentId, isHeaderCustomLayout); // update cell content
     } else if (table) {
+      table.reactCustomLayout?.setReactCreateGraphic(
+        componentId,
+        createGraphic,
+        // container.current,
+        isHeaderCustomLayout
+      ); // update customLayout function
       // update all container
       container.current.forEach((value, key) => {
         const [col, row] = key.split('-').map(Number);
