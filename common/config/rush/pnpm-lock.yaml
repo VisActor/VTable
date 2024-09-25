@@ -8,6 +8,7 @@ importers:
   ../../docs:
     specifiers:
       '@arco-design/web-react': 2.60.2
+      '@arco-design/web-vue': ^2.11.0
       '@internal/eslint-config': workspace:*
       '@internal/ts-config': workspace:*
       '@types/buble': ^0.20.5
@@ -47,6 +48,7 @@ importers:
       yargs: ^17.1.1
     dependencies:
       '@arco-design/web-react': 2.60.2_52ux7kpa62vlx2is4pxiuz7b44
+      '@arco-design/web-vue': 2.56.1_vue@3.5.0
       '@visactor/openinula-vtable': link:../packages/openinula-vtable
       '@visactor/react-vtable': link:../packages/react-vtable
       '@visactor/vchart': 1.12.1
@@ -1130,7 +1132,6 @@ packages:
       resize-observer-polyfill: 1.5.1
       scroll-into-view-if-needed: 2.2.31
       vue: 3.5.0_typescript@4.9.5
-    dev: true
 
   /@babel/code-frame/7.24.7:
     resolution: {integrity: sha512-BcYH1CVJBO9tvyIZ2jVeXgSIMvGZ2FDRvDdOIVQyuklNKSsx+eppDEBq/g47Ayw+RqNFE+URvOShmf+f/qwAlA==}
@@ -12374,7 +12375,6 @@ packages:
     resolution: {integrity: sha512-dGCXy99wZQivjmjIqihaBQNjryrz5rueJY7eHfTdyWEiR4ttYpsajb14rn9s5d4DY4EcY6+4+U/maARBXJedkA==}
     dependencies:
       compute-scroll-into-view: 1.0.20
-    dev: true
 
   /semver-compare/1.0.0:
     resolution: {integrity: sha512-YM3/ITh2MJ5MtzaM429anh+x2jiLVjqILF4m4oyQB18W7Ggea7BfqdH/wGMK7dDiMghv/6WG7znWMwUDzJiXow==}
