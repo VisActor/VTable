@@ -180,17 +180,26 @@ export interface ITableThemeDefine {
     sort_color?: string;
     sort_color_opacity?: string;
     sort_color_2?: string;
-    sort_color_2_opacity?: string;
+    sort_color_opacity_2?: string;
+    sort_icon_size?: number;
+    sort_icon_size_2?: number;
     frozen_color?: string;
     frozen_color_opacity?: string;
     frozen_color_2?: string;
-    frozen_color_2_opacity?: string;
+    frozen_color_opacity_2?: string;
+    frozen_icon_size?: number;
+    frozen_icon_size_2?: number;
     collapse_color?: string;
     collapse_color_opacity?: string;
+    collapse_icon_size?: number;
+    collapse_icon_size_2?: number;
     expand_color?: string;
     expand_color_opacity?: string;
+    expand_icon_size?: number;
+    expand_icon_size_2?: number;
     dragReorder_color?: string;
     dragReorder_color_opacity?: string;
+    dragReorder_icon_size?: number;
   };
 }
 

@@ -125,7 +125,7 @@ export default {
     sort_color: '#FFFFFF',
     sort_color_opacity: '0.75',
     sort_color_2: '#416EFF',
-    sort_color_2_opacity: '1',
+    sort_color_opacity_2: '1',
     frozen_color: '#FFFFFF',
     frozen_color_opacity: '0.75',
     collapse_color: '#FFF',
