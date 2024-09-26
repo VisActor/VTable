@@ -8,6 +8,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-createButton'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-noLeftListTable'
   },
   {

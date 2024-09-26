@@ -10,8 +10,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-30',
-      end: '2024-08-14',
+      // start: '2024-07-30',
+      // end: '2024-08-14',
       progress: 31,
       priority: 'P0'
     },
@@ -860,6 +860,14 @@ export function createTable() {
         completedBarColor: '#91e8e0',
         /** 任务条的圆角 */
         cornerRadius: 10
+      },
+      creation: {
+        buttonStyle: {
+          backgroundColor: 'gray',
+          lineColor: 'black',
+          lineWidth: 1,
+          lineDash: [5, 5]
+        }
       }
     },
     timelineHeader: {
@@ -910,26 +918,26 @@ export function createTable() {
     },
     minDate: '2024-07-01',
     maxDate: '2024-10-15',
-    markLine: [
-      {
-        date: '2024-07-17',
-        style: {
-          lineWidth: 1,
-          lineColor: 'blue',
-          lineDash: [8, 4]
-        }
-      },
-      {
-        date: '2024-08-17',
-        position: 'middle',
-        scrollToMarkLine: true,
-        style: {
-          lineWidth: 2,
-          lineColor: 'red',
-          lineDash: [8, 4]
-        }
-      }
-    ],
+    // markLine: [
+    //   {
+    //     date: '2024-07-17',
+    //     style: {
+    //       lineWidth: 1,
+    //       lineColor: 'blue',
+    //       lineDash: [8, 4]
+    //     }
+    //   },
+    //   {
+    //     date: '2024-08-17',
+    //     position: 'middle',
+    //     scrollToMarkLine: true,
+    //     style: {
+    //       lineWidth: 2,
+    //       lineColor: 'red',
+    //       lineDash: [8, 4]
+    //     }
+    //   }
+    // ],
     rowSeriesNumber: {
       title: '行号',
       dragOrder: true,
@@ -979,7 +987,7 @@ export function createTable() {
   ganttInstance.on('click_task_bar', e => {
     console.log('click_task_bar', e);
   });
-  ganttInstance.listTableInstance?.on('scroll', e => {
+  ganttInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
   bindDebugTool(ganttInstance.scenegraph.stage as any, {

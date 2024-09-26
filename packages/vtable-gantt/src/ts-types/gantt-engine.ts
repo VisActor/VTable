@@ -118,6 +118,7 @@ export interface GanttConstructorOptions {
     creation?: {
       buttonStyle: ILineStyle & {
         cornerRadius?: number;
+        backgroundColor?: string;
       };
     };
   };

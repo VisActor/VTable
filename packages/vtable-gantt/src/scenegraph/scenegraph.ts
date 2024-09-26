@@ -11,7 +11,7 @@ import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
 import { getDateByX, getTaskIndexByY } from '../gantt-helper';
 import graphicContribution from './graphic';
-import { AddTaskButton } from './add-task-button';
+import { TaskCreationButton } from './add-task-button';
 container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
@@ -25,7 +25,7 @@ export class Scenegraph {
   scrollbarComponent: ScrollBarComponent;
   markLine: MarkLine;
   frameBorder: FrameBorder;
-  addTaskButton: AddTaskButton;
+  taskCreationButton: TaskCreationButton;
   stage: Stage;
   tableGroupWidth: number;
   tableGroupHeight: number;
@@ -243,22 +243,23 @@ export class Scenegraph {
     const taskIndex = getTaskIndexByY(y, this._gantt);
   }
 
-  showAddTaskButton(x: number, y: number, taskIndex: number, record: any) {
-    if (!this.addTaskButton) {
-      this.addTaskButton = new AddTaskButton(this._gantt.scenegraph);
+  showTaskCreationButton(x: number, y: number, taskIndex: number, record: any) {
+    if (!this.taskCreationButton) {
+      this.taskCreationButton = new TaskCreationButton(this._gantt.scenegraph);
     }
     const date = getDateByX(x, this._gantt);
-    this.addTaskButton.show(
+    this.taskCreationButton.show(
       x + this._gantt.stateManager.scroll.horizontalBarPos,
       y + this._gantt.stateManager.scroll.verticalBarPos,
       this._gantt.parsedOptions.colWidthPerDay,
       this._gantt.parsedOptions.rowHeight
     );
+    this.updateNextFrame();
   }
 
-  hideAddTaskButton() {
-    if (this.addTaskButton) {
-      this.addTaskButton.hide();
+  hideTaskCreationButton() {
+    if (this.taskCreationButton) {
+      this.taskCreationButton.hide();
     }
   }
 }

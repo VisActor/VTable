@@ -205,9 +205,10 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
   gantt.parsedOptions.taskBarCreationButtonStyle = Object.assign(
     {
-      lineColor: 'rgba(99, 144, 0, 0.4)',
+      lineColor: 'rgb(99, 144, 0)',
       lineWidth: 1,
-      cornerRadius: 4
+      cornerRadius: 4,
+      backgroundColor: '#FFF'
     },
     options?.taskBar?.creation?.buttonStyle
   );

@@ -109,7 +109,7 @@ function bindTableGroupListener(event: EventManager) {
         const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, gantt);
         const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
         if (!recordTaskInfo.taskDays) {
-          gantt.scenegraph.showAddTaskButton(e.offset.x, e.offset.y, taskIndex, recordTaskInfo.taskRecord);
+          gantt.scenegraph.showTaskCreationButton(e.offset.x, e.offset.y, taskIndex, recordTaskInfo.taskRecord);
         }
       }
     }
