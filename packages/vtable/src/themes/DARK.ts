@@ -121,7 +121,7 @@ export default {
     fontSize: 12,
     fontFamily: 'Arial,sans-serif'
   },
-  internalIconsStyle: {
+  functionalIconsStyle: {
     sort_color: '#FFFFFF',
     sort_color_opacity: '0.75',
     sort_color_2: '#416EFF',
