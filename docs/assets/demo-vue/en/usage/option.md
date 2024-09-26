@@ -2,7 +2,7 @@
 category: examples
 group: usage
 title: Using Full Option
-cover: 
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-default.png
 order: 1-1
 link: '../guide/Developer_Ecology/vue'
 ---

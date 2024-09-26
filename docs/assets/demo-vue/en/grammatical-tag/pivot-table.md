@@ -2,7 +2,7 @@
 category: examples
 group: grammatical-tag
 title: Pivot Analysis Table
-cover: 
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-pivot-table.png
 order: 1-1
 link: '../guide/Developer_Ecology/vue'
 ---
