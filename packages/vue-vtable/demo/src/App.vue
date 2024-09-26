@@ -23,6 +23,11 @@ import ListTableVFor from './table/gramatical/options/ListTable-v-for.vue';
 import PivotTable from './table/gramatical/options/PivotTable.vue';  
 
 import PivotChartPie from './table/gramatical/composition/PivotChartPie.vue';
+
+// single custom component
+import singleTag from './table/single/single-tag.vue';
+import singleCheckbox from './table/single/single-checkbox.vue';
+import singleRadio from './table/single/single-radio.vue';
 </script>
 
 <template>
@@ -46,7 +51,7 @@ import PivotChartPie from './table/gramatical/composition/PivotChartPie.vue';
 
   <ListTable/>
   <!-- <ListTableEditor /> -->
-   <!-- <ListTableEditorArco /> -->
+  <!-- <ListTableEditorArco /> -->
   <!-- <ListTableDes /> -->
   <!-- <ListTableTree /> -->
   <!-- <ListTableCustom />  -->
@@ -55,6 +60,14 @@ import PivotChartPie from './table/gramatical/composition/PivotChartPie.vue';
   <!-- <PivotTable /> -->
 
   <!-- <PivotChartPie /> -->
+
+  <!-- ----------------------- -->
+  <!-- single custom component -->
+  <!-- ----------------------- -->
+
+  <!-- <singleTag /> -->
+  <!-- <singleCheckbox /> -->
+  <!-- <singleRadio /> -->
 
 </template>
 
