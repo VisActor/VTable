@@ -166,8 +166,40 @@ prefix = ${prefix}
 
 ##${prefix} selectionFillMode(boolean)
 Fill color rules for the selected area
+
 - `overlay`: The fill color of the selected area will cover the background color of the cell (usually a color value with transparency)
 - `replace`: The fill color of the selected area will replace the background color of the cell
-{{ use: common-color(
-  prefix = ${prefix}
-  ) }}
+  {{ use: common-color(
+    prefix = ${prefix}
+    ) }}
+
+##${prefix} functionalIconsStyle(Object)
+VTable internal functional button icon color and size configuration. If the icon is not clear, it can be adjusted according to the actual situation. If the size is not suitable, it can be adjusted appropriately.
+
+```
+  functionalIconsStyle?: {
+    sort_color?: string;
+    sort_color_opacity?: string;
+    sort_color_2?: string;
+    sort_color_opacity_2?: string;
+    sort_size?: number;
+    sort_size_2?: number;
+    frozen_color?: string;
+    frozen_color_opacity?: string;
+    frozen_color_2?: string;
+    frozen_color_opacity_2?: string;
+    frozen_size?: number;
+    frozen_size_2?: number;
+    collapse_color?: string;
+    collapse_color_opacity?: string;
+    collapse_size?: number;
+    collapse_size_2?: number;
+    expand_color?: string;
+    expand_color_opacity?: string;
+    expand_size?: number;
+    expand_size_2?: number;
+    dragReorder_color?: string;
+    dragReorder_color_opacity?: string;
+    dragReorder_size?: number;
+  };
+```

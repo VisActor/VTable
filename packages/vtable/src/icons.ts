@@ -10,51 +10,51 @@ let sort_color: string;
 let sort_color_opacity: string;
 let sort_color_2: string;
 let sort_color_opacity_2: string;
-let sort_icon_size: number;
-let sort_icon_size_2: number;
+let sort_size: number;
+let sort_size_2: number;
 let frozen_color: string;
 let frozen_color_opacity: string;
 let freeze_color_opacity: string;
 let frozen_color_2: string;
 let frozen_color_opacity_2: string;
-let frozen_icon_size: number;
-let frozen_icon_size_2: number;
+let frozen_size: number;
+let frozen_size_2: number;
 let collapse_color: string;
 let collapse_color_opacity: string;
-let collapse_icon_size: number;
-let collapse_icon_size_2: number;
+let collapse_size: number;
+let collapse_size_2: number;
 let expand_color: string;
 let expand_color_opacity: string;
-let expand_icon_size: number;
-let expand_icon_size_2: number;
+let expand_size: number;
+let expand_size_2: number;
 let dragReorder_color: string;
 let dragReorder_color_opacity: string;
-let dragReorder_icon_size: number;
-export function setIconColor(themeIconsColor: ITableThemeDefine['internalIconsStyle']) {
+let dragReorder_size: number;
+export function setIconColor(themeIconsColor: ITableThemeDefine['functionalIconsStyle']) {
   sort_color = themeIconsColor?.sort_color ?? '#282F38';
   sort_color_opacity = themeIconsColor?.sort_color_opacity ?? '0.35';
   sort_color_2 = themeIconsColor?.sort_color_2 ?? '#416EFF';
   sort_color_opacity_2 = themeIconsColor?.sort_color_opacity_2 ?? '1';
-  sort_icon_size = themeIconsColor?.sort_icon_size ?? 16;
-  sort_icon_size_2 = themeIconsColor?.sort_icon_size_2 ?? 22;
+  sort_size = themeIconsColor?.sort_size ?? 16;
+  sort_size_2 = themeIconsColor?.sort_size_2 ?? 22;
   frozen_color = themeIconsColor?.frozen_color ?? '#282F38';
   frozen_color_opacity = themeIconsColor?.frozen_color_opacity ?? '0.35';
   freeze_color_opacity = themeIconsColor?.frozen_color_opacity ?? '0.2'; //之前是个0.2  为了不让bugServer错误太多
   frozen_color_2 = themeIconsColor?.frozen_color_2 ?? '#416EFF';
   frozen_color_opacity_2 = themeIconsColor?.frozen_color_opacity_2 ?? '1';
-  frozen_icon_size = themeIconsColor?.frozen_icon_size ?? 22;
-  frozen_icon_size_2 = themeIconsColor?.frozen_icon_size_2 ?? 22;
+  frozen_size = themeIconsColor?.frozen_size ?? 22;
+  frozen_size_2 = themeIconsColor?.frozen_size_2 ?? 22;
   collapse_color = themeIconsColor?.collapse_color ?? '#141414';
   collapse_color_opacity = themeIconsColor?.collapse_color_opacity ?? '0.65';
-  collapse_icon_size = themeIconsColor?.collapse_icon_size ?? 16;
-  collapse_icon_size_2 = themeIconsColor?.frozen_icon_size_2 ?? 22;
+  collapse_size = themeIconsColor?.collapse_size ?? 16;
+  collapse_size_2 = themeIconsColor?.frozen_size_2 ?? 22;
   expand_color = themeIconsColor?.expand_color ?? '#141414';
   expand_color_opacity = themeIconsColor?.expand_color_opacity ?? '0.65';
-  expand_icon_size = themeIconsColor?.expand_icon_size ?? 16;
-  expand_icon_size_2 = themeIconsColor?.expand_icon_size_2 ?? 22;
+  expand_size = themeIconsColor?.expand_size ?? 16;
+  expand_size_2 = themeIconsColor?.expand_size_2 ?? 22;
   dragReorder_color = themeIconsColor?.dragReorder_color ?? '#666666';
   dragReorder_color_opacity = themeIconsColor?.dragReorder_color_opacity ?? '1';
-  dragReorder_icon_size = themeIconsColor?.dragReorder_icon_size ?? 20;
+  dragReorder_size = themeIconsColor?.dragReorder_size ?? 20;
 }
 const builtins = {
   get sort_downward(): SvgIcon {
@@ -65,16 +65,16 @@ const builtins = {
         ` <path d="M4.6665 9H11.3332L7.99984 13.1667L4.6665 9Z" fill="${sort_color_2}"  fill-opacity="${sort_color_opacity_2}"/>` +
         `<path d="M11.3335 7L4.66683 7L8.00016 2.83333L11.3335 7Z" fill="${sort_color}" fill-opacity="${sort_color_opacity}"/>` +
         '</svg> ',
-      width: sort_icon_size, //其实指定的是svg图片绘制多大，实际下面的阴影是box，margin也是相对阴影范围指定的
-      height: sort_icon_size,
+      width: sort_size, //其实指定的是svg图片绘制多大，实际下面的阴影是box，margin也是相对阴影范围指定的
+      height: sort_size,
       funcType: IconFuncTypeEnum.sort,
       name: 'sort_downward',
       // positionType: IconPosition.inlineEnd,
       positionType: IconPosition.contentRight,
       marginLeft: 3, //设计要求的是距离8px，这个些5是基于外面的box而言的
       hover: {
-        width: sort_icon_size_2,
-        height: sort_icon_size_2,
+        width: sort_size_2,
+        height: sort_size_2,
         bgColor: 'rgba(101, 117, 168, 0.1)'
       },
       cursor: 'pointer'
@@ -88,16 +88,16 @@ const builtins = {
         `<path d="M4.6665 9H11.3332L7.99984 13.1667L4.6665 9Z" fill="${sort_color}"  fill-opacity="${sort_color_opacity}"/>` +
         `<path d="M11.3335 7L4.66683 7L8.00016 2.83333L11.3335 7Z" fill="${sort_color_2}"  fill-opacity="${sort_color_opacity_2}"/>` +
         ' </svg>',
-      width: sort_icon_size,
-      height: sort_icon_size,
+      width: sort_size,
+      height: sort_size,
       funcType: IconFuncTypeEnum.sort,
       // positionType: IconPosition.inlineEnd,
       positionType: IconPosition.contentRight,
       name: 'sort_upward',
       marginLeft: 3,
       hover: {
-        width: sort_icon_size_2,
-        height: sort_icon_size_2,
+        width: sort_size_2,
+        height: sort_size_2,
         bgColor: 'rgba(101, 117, 168, 0.1)'
       },
       cursor: 'pointer'
@@ -111,16 +111,16 @@ const builtins = {
         `<path d="M4.6665 9H11.3332L7.99984 13.1667L4.6665 9Z" fill="${sort_color}" fill-opacity="${sort_color_opacity}"/>` +
         `<path d="M11.3335 7L4.66683 7L8.00016 2.83333L11.3335 7Z" fill="${sort_color}" fill-opacity="${sort_color_opacity}"/>` +
         '</svg> ',
-      width: sort_icon_size,
-      height: sort_icon_size,
+      width: sort_size,
+      height: sort_size,
       funcType: IconFuncTypeEnum.sort,
       // positionType: IconPosition.inlineEnd,
       positionType: IconPosition.contentRight,
       name: 'sort_normal',
       marginLeft: 3,
       hover: {
-        width: sort_icon_size_2,
-        height: sort_icon_size_2,
+        width: sort_size_2,
+        height: sort_size_2,
         bgColor: 'rgba(101, 117, 168, 0.1)'
       },
       cursor: 'pointer'
@@ -141,15 +141,15 @@ const builtins = {
         '</clipPath>' +
         '</defs>' +
         '</svg>',
-      width: frozen_icon_size,
-      height: frozen_icon_size,
+      width: frozen_size,
+      height: frozen_size,
       name: 'freeze',
       funcType: IconFuncTypeEnum.frozen,
       positionType: IconPosition.right,
       marginRight: 0,
       hover: {
-        width: frozen_icon_size_2,
-        height: frozen_icon_size_2,
+        width: frozen_size_2,
+        height: frozen_size_2,
         bgColor: 'rgba(101, 117, 168, 0.1)'
       },
       cursor: 'pointer'
@@ -162,15 +162,15 @@ const builtins = {
         '<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">' +
         `<path d="M8.49975 3.66663C8.32294 3.66663 8.15337 3.73686 8.02835 3.86189C7.90332 3.98691 7.83309 4.15648 7.83309 4.33329V9.63246C6.76475 10.2533 6.07942 11.1795 6.00625 12.2308C5.99892 12.2786 5.99692 12.3268 6.00009 12.3741L5.99975 12.4166C5.99975 12.5934 6.06999 12.763 6.19501 12.888C6.32004 13.0131 6.48961 13.0833 6.66642 13.0833H10.3333L10.3331 17.5L10.8611 18.292C10.8763 18.3148 10.8969 18.3335 10.9211 18.3464C10.9453 18.3594 10.9723 18.3662 10.9998 18.3662C11.0272 18.3662 11.0542 18.3594 11.0784 18.3464C11.1026 18.3335 11.1232 18.3148 11.1384 18.292L11.6664 17.5L11.6666 13.0833H15.3331C15.5099 13.0833 15.6795 13.0131 15.8045 12.888C15.9295 12.763 15.9998 12.5934 15.9998 12.4166C15.9998 12.4025 15.9998 12.3883 15.9994 12.3741C16.0028 12.3263 16.0008 12.2776 15.9933 12.2295C15.9196 11.1786 15.2343 10.2528 14.1664 9.63229V4.33329C14.1664 4.15648 14.0962 3.98691 13.9712 3.86189C13.8461 3.73686 13.6766 3.66663 13.4998 3.66663H8.49975Z" fill="${frozen_color}" fill-opacity="${frozen_color_opacity}"/>` +
         '</svg>',
-      width: frozen_icon_size,
-      height: frozen_icon_size,
+      width: frozen_size,
+      height: frozen_size,
       name: 'frozen',
       funcType: IconFuncTypeEnum.frozen,
       positionType: IconPosition.right,
       marginRight: 0,
       hover: {
-        width: frozen_icon_size_2,
-        height: frozen_icon_size_2,
+        width: frozen_size_2,
+        height: frozen_size_2,
         bgColor: 'rgba(101, 117, 168, 0.1)'
       },
       cursor: 'pointer'
@@ -183,16 +183,16 @@ const builtins = {
         '<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">' +
         `<path d="M8.49975 3.66663C8.32294 3.66663 8.15337 3.73686 8.02835 3.86189C7.90332 3.98691 7.83309 4.15648 7.83309 4.33329V9.63246C6.76475 10.2533 6.07942 11.1795 6.00625 12.2308C5.99892 12.2786 5.99692 12.3268 6.00009 12.3741L5.99975 12.4166C5.99975 12.5934 6.06999 12.763 6.19501 12.888C6.32004 13.0131 6.48961 13.0833 6.66642 13.0833H10.3333L10.3331 17.5L10.8611 18.292C10.8763 18.3148 10.8969 18.3335 10.9211 18.3464C10.9453 18.3594 10.9723 18.3662 10.9998 18.3662C11.0272 18.3662 11.0542 18.3594 11.0784 18.3464C11.1026 18.3335 11.1232 18.3148 11.1384 18.292L11.6664 17.5L11.6666 13.0833H15.3331C15.5099 13.0833 15.6795 13.0131 15.8045 12.888C15.9295 12.763 15.9998 12.5934 15.9998 12.4166C15.9998 12.4025 15.9998 12.3883 15.9994 12.3741C16.0028 12.3263 16.0008 12.2776 15.9933 12.2295C15.9196 11.1786 15.2343 10.2528 14.1664 9.63229V4.33329C14.1664 4.15648 14.0962 3.98691 13.9712 3.86189C13.8461 3.73686 13.6766 3.66663 13.4998 3.66663H8.49975Z"  fill="${frozen_color_2}" fill-opacity="${frozen_color_opacity_2}"/>` +
         '</svg>',
-      width: frozen_icon_size,
-      height: frozen_icon_size,
+      width: frozen_size,
+      height: frozen_size,
       funcType: IconFuncTypeEnum.frozen,
       positionType: IconPosition.right,
       name: 'frozenCurrent',
       marginRight: 0,
       // marginLeft: 6,
       hover: {
-        width: frozen_icon_size_2,
-        height: frozen_icon_size_2,
+        width: frozen_size_2,
+        height: frozen_size_2,
         bgColor: 'rgba(101, 117, 168, 0.1)'
       },
       cursor: 'pointer'
@@ -295,16 +295,16 @@ const builtins = {
       svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 6.81235Z" fill="${expand_color}" fill-opacity="${expand_color_opacity}"/>
       </svg>`,
-      width: expand_icon_size, //其实指定的是svg图片绘制多大，实际占位是box，margin也是相对阴影范围指定的
-      height: expand_icon_size,
+      width: expand_size, //其实指定的是svg图片绘制多大，实际占位是box，margin也是相对阴影范围指定的
+      height: expand_size,
       funcType: IconFuncTypeEnum.expand,
       name: 'expand',
       positionType: IconPosition.contentLeft,
       marginLeft: 0,
       marginRight: 4,
       hover: {
-        width: expand_icon_size_2,
-        height: expand_icon_size_2,
+        width: expand_size_2,
+        height: expand_size_2,
         bgColor: 'rgba(101, 117, 168, 0.1)'
       },
       cursor: 'pointer'
@@ -317,16 +317,16 @@ const builtins = {
       svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 11.3501Z"  fill="${collapse_color}" fill-opacity="${collapse_color_opacity}"/>
       </svg>`,
-      width: collapse_icon_size, //其实指定的是svg图片绘制多大，实际占位是box，margin也是相对阴影范围指定的
-      height: collapse_icon_size,
+      width: collapse_size, //其实指定的是svg图片绘制多大，实际占位是box，margin也是相对阴影范围指定的
+      height: collapse_size,
       funcType: IconFuncTypeEnum.collapse,
       name: 'collapse',
       positionType: IconPosition.contentLeft,
       marginLeft: 0,
       marginRight: 4,
       hover: {
-        width: collapse_icon_size_2,
-        height: collapse_icon_size_2,
+        width: collapse_size_2,
+        height: collapse_size_2,
         bgColor: 'rgba(101, 117, 168, 0.1)'
       },
       cursor: 'pointer'
@@ -362,8 +362,8 @@ const builtins = {
     return {
       type: 'svg',
       svg: `<svg t="1710129136961" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5166" width="200" height="200"><path d="M362.666667 192m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="${dragReorder_color}"  fill-opacity="${dragReorder_color_opacity}" p-id="5167"></path><path d="M661.333333 192m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="${dragReorder_color}"  fill-opacity="${dragReorder_color_opacity}" p-id="5168"></path><path d="M362.666667 512m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="${dragReorder_color}"  fill-opacity="${dragReorder_color_opacity}" p-id="5169"></path><path d="M661.333333 512m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="${dragReorder_color}"  fill-opacity="${dragReorder_color_opacity}" p-id="5170"></path><path d="M362.666667 832m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="${dragReorder_color}"  fill-opacity="${dragReorder_color_opacity}" p-id="5171"></path><path d="M661.333333 832m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="${dragReorder_color}"  fill-opacity="${dragReorder_color_opacity}" p-id="5172"></path></svg>`,
-      width: dragReorder_icon_size, //其实指定的是svg图片绘制多大，实际下面的阴影是box，margin也是相对阴影范围指定的
-      height: dragReorder_icon_size,
+      width: dragReorder_size, //其实指定的是svg图片绘制多大，实际下面的阴影是box，margin也是相对阴影范围指定的
+      height: dragReorder_size,
       funcType: IconFuncTypeEnum.dragReorder,
       positionType: IconPosition.left,
       name: 'dragReorder',

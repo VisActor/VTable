@@ -86,7 +86,7 @@ export class TableTheme implements ITableThemeDefine {
   private _checkboxStyle: RequiredTableThemeDefine['checkboxStyle'] | null = null;
   private _radioStyle: RequiredTableThemeDefine['radioStyle'] | null = null;
   private _textPopTipStyle: RequiredTableThemeDefine['textPopTipStyle'] | null = null;
-  private _internalIconsStyle: RequiredTableThemeDefine['internalIconsStyle'] | null = null;
+  private _internalIconsStyle: RequiredTableThemeDefine['functionalIconsStyle'] | null = null;
   isPivot: boolean = false;
   name: string = '';
   constructor(obj: PartialTableThemeDefine | ITableThemeDefine, superTheme: ITableThemeDefine) {
@@ -770,15 +770,15 @@ export class TableTheme implements ITableThemeDefine {
     return this._textPopTipStyle;
   }
 
-  get internalIconsStyle(): RequiredTableThemeDefine['internalIconsStyle'] {
+  get functionalIconsStyle(): RequiredTableThemeDefine['functionalIconsStyle'] {
     if (!this._internalIconsStyle) {
       const { obj, superTheme } = this.internalTheme;
-      const internalIconsStyle: RequiredTableThemeDefine['internalIconsStyle'] = ingoreNoneValueMerge(
+      const functionalIconsStyle: RequiredTableThemeDefine['functionalIconsStyle'] = ingoreNoneValueMerge(
         {},
-        superTheme.internalIconsStyle,
-        obj.internalIconsStyle
+        superTheme.functionalIconsStyle,
+        obj.functionalIconsStyle
       );
-      this._internalIconsStyle = internalIconsStyle;
+      this._internalIconsStyle = functionalIconsStyle;
     }
     return this._internalIconsStyle;
   }

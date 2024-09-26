@@ -176,30 +176,31 @@ export interface ITableThemeDefine {
   cellBorderClipDirection?: 'top-left' | 'bottom-right'; // default is 'top-left'
   // text offset, hack for fs
   _contentOffset?: number;
-  internalIconsStyle?: {
+  /** 内部功能性按钮图标颜色及尺寸配置 */
+  functionalIconsStyle?: {
     sort_color?: string;
     sort_color_opacity?: string;
     sort_color_2?: string;
     sort_color_opacity_2?: string;
-    sort_icon_size?: number;
-    sort_icon_size_2?: number;
+    sort_size?: number;
+    sort_size_2?: number;
     frozen_color?: string;
     frozen_color_opacity?: string;
     frozen_color_2?: string;
     frozen_color_opacity_2?: string;
-    frozen_icon_size?: number;
-    frozen_icon_size_2?: number;
+    frozen_size?: number;
+    frozen_size_2?: number;
     collapse_color?: string;
     collapse_color_opacity?: string;
-    collapse_icon_size?: number;
-    collapse_icon_size_2?: number;
+    collapse_size?: number;
+    collapse_size_2?: number;
     expand_color?: string;
     expand_color_opacity?: string;
-    expand_icon_size?: number;
-    expand_icon_size_2?: number;
+    expand_size?: number;
+    expand_size_2?: number;
     dragReorder_color?: string;
     dragReorder_color_opacity?: string;
-    dragReorder_icon_size?: number;
+    dragReorder_size?: number;
   };
 }
 
