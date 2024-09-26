@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "feat: add icon_size config in theme\n\n",
+      "comment": "docs: add functionalIconsStyle on theme #1308\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
