@@ -129,6 +129,36 @@
           }
         }
       ]
+    },
+    {
+      "path": "compilation",
+      "title": {
+        "zh": "更多示例",
+        "en": "compilation"
+      },
+      "children": [
+        {
+          "path": "list-table-integrated-chart",
+          "title": {
+            "zh": "基本表格集成图表",
+            "en": "List table integrated chart"
+          }
+        },
+        {
+          "path": "pivot-table-dimension",
+          "title": {
+            "zh": "透视表角头显示维度名称",
+            "en": "Display dimension names in pivot table headers"
+          }
+        },
+        {
+          "path": "pivot-chart-pie",
+          "title": {
+            "zh": "透视组合图(饼图)",
+            "en": "List table integrated chart"
+          }
+        }
+      ]
     }
   ]
 }
