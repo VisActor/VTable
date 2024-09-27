@@ -98,10 +98,10 @@ function bindTableGroupListener(event: EventManager) {
       }
     }
     if (stateManager.interactionState === InteractionState.default) {
-      const taksIndex = e.detailPath.find((pathNode: any) => {
+      const taskBarTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
       });
-      if (taksIndex) {
+      if (taskBarTarget) {
         stateManager.showTaskBarHover(e);
       } else {
         stateManager.hideTaskBarHover(e);
@@ -116,13 +116,18 @@ function bindTableGroupListener(event: EventManager) {
   });
   scene.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
     if (poniterState === 'down' && gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
-      const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, gantt);
-      const record = gantt.getRecordByIndex(taskIndex);
-      gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
-        event: e.nativeEvent,
-        index: taskIndex,
-        record
+      const taskBarTarget = e.detailPath.find((pathNode: any) => {
+        return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
       });
+      if (taskBarTarget) {
+        const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, gantt);
+        const record = gantt.getRecordByIndex(taskIndex);
+        gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
+          event: e.nativeEvent,
+          index: taskIndex,
+          record
+        });
+      }
     }
     poniterState = 'up';
   });

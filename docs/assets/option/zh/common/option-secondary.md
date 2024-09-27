@@ -150,7 +150,7 @@ export interface SelectAllOnCtrlAOption {
 事件触发相关问题设置，具体配置项：
 
 ##${prefix} preventDefaultContextMenu(boolean) = true
-组织鼠标右键的默认行为
+阻止鼠标右键的默认行为
 
 #${prefix} excelOptions(Object)
 
@@ -229,7 +229,6 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 ##${prefix} disableDragSelect(boolean) = true
 
 拖拽选择单元格时是否禁用框选。
-
 
 #${prefix} theme(Object)
 

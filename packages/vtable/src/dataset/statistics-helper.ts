@@ -8,6 +8,8 @@ export interface IAggregator {
   value: () => any;
   className: string;
   push: (record: any) => void;
+  deleteRecord: (record: any) => void;
+  updateRecord: (oldRecord: any, newRecord: any) => void;
   recalculate: () => any;
   formatValue?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   formatFun?: () => any;
@@ -31,6 +33,8 @@ export abstract class Aggregator implements IAggregator {
     this.isRecord = config.isRecord ?? this.isRecord;
   }
   abstract push(record: any): void;
+  abstract deleteRecord(record: any): void;
+  abstract updateRecord(oldRecord: any, newRecord: any): void;
   abstract value(): any;
   abstract recalculate(): any;
   clearCacheValue() {
@@ -62,6 +66,28 @@ export class RecordAggregator extends Aggregator {
         this.records.push(record);
       }
     }
+    this.clearCacheValue();
+  }
+  deleteRecord(record: any) {
+    if (record) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.filter(item => item !== record);
+      }
+    }
+    this.clearCacheValue();
+  }
+  updateRecord(oldRecord: any, newRecord: any): void {
+    if (oldRecord && newRecord) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.map(item => {
+          if (item === oldRecord) {
+            return newRecord;
+          }
+          return item;
+        });
+      }
+      this.clearCacheValue();
+    }
   }
   value() {
     return this.records;
@@ -87,6 +113,34 @@ export class NoneAggregator extends Aggregator {
       if (this.field) {
         this.fieldValue = record[this.field];
       }
+    }
+    this.clearCacheValue();
+  }
+  deleteRecord(record: any) {
+    if (record) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.filter(item => item !== record);
+      }
+      if (this.field && this.records.length) {
+        this.fieldValue = this.records[this.records.length - 1][this.field];
+      }
+    }
+    this.clearCacheValue();
+  }
+  updateRecord(oldRecord: any, newRecord: any): void {
+    if (oldRecord && newRecord) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.map(item => {
+          if (item === oldRecord) {
+            return newRecord;
+          }
+          return item;
+        });
+      }
+      if (this.field && this.records.length) {
+        this.fieldValue = this.records[this.records.length - 1][this.field];
+      }
+      this.clearCacheValue();
     }
   }
   value() {
@@ -130,6 +184,34 @@ export class CustomAggregator extends Aggregator {
         this.values.push(record[this.field]);
       }
     }
+    this.clearCacheValue();
+  }
+  updateRecord(oldRecord: any, newRecord: any): void {
+    if (oldRecord && newRecord) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.map(item => {
+          if (item === oldRecord) {
+            return newRecord;
+          }
+          return item;
+        });
+      }
+      if (this.field && this.records.length) {
+        this.values = this.records.map(item => item[this.field]);
+      }
+      this.clearCacheValue();
+    }
+  }
+  deleteRecord(record: any): void {
+    if (record) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.filter(item => item !== record);
+      }
+      if (this.field && this.records.length) {
+        this.values = this.records.map(item => item[this.field]);
+      }
+    }
+    this.clearCacheValue();
   }
   value() {
     if (!this.fieldValue) {
@@ -174,6 +256,28 @@ export class RecalculateAggregator extends Aggregator {
       } else {
         this.records.push(record);
       }
+    }
+    this.clearCacheValue();
+  }
+  deleteRecord(record: any): void {
+    if (record) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.filter(item => item !== record);
+      }
+    }
+    this.clearCacheValue();
+  }
+  updateRecord(oldRecord: any, newRecord: any): void {
+    if (oldRecord && newRecord) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.map(item => {
+          if (item === oldRecord) {
+            return newRecord;
+          }
+          return item;
+        });
+      }
+      this.clearCacheValue();
     }
   }
   value() {
@@ -238,6 +342,82 @@ export class SumAggregator extends Aggregator {
           }
         }
       }
+    }
+    this.clearCacheValue();
+  }
+  deleteRecord(record: any) {
+    if (record) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.filter(item => item !== record);
+      }
+      if (record.className === 'Aggregator') {
+        const value = record.value();
+        this.sum -= value ?? 0;
+        if (this.needSplitPositiveAndNegativeForSum) {
+          if (value > 0) {
+            this.positiveSum -= value;
+          } else if (value < 0) {
+            this.nagetiveSum -= value;
+          }
+        }
+      } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
+        const value = parseFloat(record[this.field]);
+        this.sum -= value;
+        if (this.needSplitPositiveAndNegativeForSum) {
+          if (value > 0) {
+            this.positiveSum -= value;
+          } else if (value < 0) {
+            this.nagetiveSum -= value;
+          }
+        }
+      }
+    }
+    this.clearCacheValue();
+  }
+  updateRecord(oldRecord: any, newRecord: any): void {
+    if (oldRecord && newRecord) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.map(item => {
+          if (item === oldRecord) {
+            return newRecord;
+          }
+          return item;
+        });
+      }
+      if (oldRecord.className === 'Aggregator') {
+        const oldValue = oldRecord.value();
+        const newValue = newRecord.value();
+        this.sum += newValue - oldValue;
+        if (this.needSplitPositiveAndNegativeForSum) {
+          if (oldValue > 0) {
+            this.positiveSum -= oldValue;
+          } else if (oldValue < 0) {
+            this.nagetiveSum -= oldValue;
+          }
+          if (newValue > 0) {
+            this.positiveSum += newValue;
+          } else if (newValue < 0) {
+            this.nagetiveSum += newValue;
+          }
+        }
+      } else if (this.field && !isNaN(parseFloat(oldRecord[this.field]))) {
+        const oldValue = parseFloat(oldRecord[this.field]);
+        const newValue = parseFloat(newRecord[this.field]);
+        this.sum += newValue - oldValue;
+        if (this.needSplitPositiveAndNegativeForSum) {
+          if (oldValue > 0) {
+            this.positiveSum -= oldValue;
+          } else if (oldValue < 0) {
+            this.nagetiveSum -= oldValue;
+          }
+          if (newValue > 0) {
+            this.positiveSum += newValue;
+          } else if (newValue < 0) {
+            this.nagetiveSum += newValue;
+          }
+        }
+      }
+      this.clearCacheValue();
     }
   }
   value() {
@@ -305,6 +485,37 @@ export class CountAggregator extends Aggregator {
         this.count++;
       }
     }
+    this.clearCacheValue();
+  }
+  deleteRecord(record: any) {
+    if (record) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.filter(item => item !== record);
+      }
+      if (record.className === 'Aggregator') {
+        this.count -= record.value();
+      } else {
+        this.count--;
+      }
+    }
+    this.clearCacheValue();
+  }
+  updateRecord(oldRecord: any, newRecord: any): void {
+    if (oldRecord && newRecord) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.map(item => {
+          if (item === oldRecord) {
+            return newRecord;
+          }
+          return item;
+        });
+      }
+      if (oldRecord.className === 'Aggregator') {
+        this.count += newRecord.value() - oldRecord.value();
+      } else {
+        //this.count++;
+      }
+    }
   }
   value() {
     return this.count;
@@ -349,6 +560,42 @@ export class AvgAggregator extends Aggregator {
         this.sum += parseFloat(record[this.field]);
         this.count++;
       }
+    }
+    this.clearCacheValue();
+  }
+  deleteRecord(record: any) {
+    if (record) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.filter(item => item !== record);
+      }
+      if (record.className === 'Aggregator' && record.type === AggregationType.AVG) {
+        this.sum -= record.sum;
+        this.count -= record.count;
+      } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
+        this.sum -= parseFloat(record[this.field]);
+        this.count--;
+      }
+    }
+    this.clearCacheValue();
+  }
+  updateRecord(oldRecord: any, newRecord: any): void {
+    if (oldRecord && newRecord) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.map(item => {
+          if (item === oldRecord) {
+            return newRecord;
+          }
+          return item;
+        });
+      }
+      if (oldRecord.className === 'Aggregator' && oldRecord.type === AggregationType.AVG) {
+        this.sum += newRecord.sum - oldRecord.sum;
+        this.count += newRecord.count - oldRecord.count;
+      } else if (this.field && !isNaN(parseFloat(oldRecord[this.field]))) {
+        this.sum += parseFloat(newRecord[this.field]) - parseFloat(oldRecord[this.field]);
+        // this.count++;
+      }
+      this.clearCacheValue();
     }
   }
   value() {
@@ -400,6 +647,28 @@ export class MaxAggregator extends Aggregator {
         this.max = parseFloat(record[this.field]) > this.max ? parseFloat(record[this.field]) : this.max;
       }
     }
+    this.clearCacheValue();
+  }
+  deleteRecord(record: any) {
+    if (record) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.filter(item => item !== record);
+      }
+      this.recalculate();
+    }
+  }
+  updateRecord(oldRecord: any, newRecord: any): void {
+    if (oldRecord && newRecord) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.map(item => {
+          if (item === oldRecord) {
+            return newRecord;
+          }
+          return item;
+        });
+      }
+      this.recalculate();
+    }
   }
   value() {
     return this.records?.length >= 1 ? this.max : undefined;
@@ -447,6 +716,28 @@ export class MinAggregator extends Aggregator {
       } else if (this.field && typeof record[this.field] === 'number') {
         this.min = record[this.field] < this.min ? record[this.field] : this.min;
       }
+    }
+    this.clearCacheValue();
+  }
+  deleteRecord(record: any) {
+    if (record) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.filter(item => item !== record);
+      }
+      this.recalculate();
+    }
+  }
+  updateRecord(oldRecord: any, newRecord: any): void {
+    if (oldRecord && newRecord) {
+      if (this.isRecord && this.records) {
+        this.records = this.records.map(item => {
+          if (item === oldRecord) {
+            return newRecord;
+          }
+          return item;
+        });
+      }
+      this.recalculate();
     }
   }
   value() {
