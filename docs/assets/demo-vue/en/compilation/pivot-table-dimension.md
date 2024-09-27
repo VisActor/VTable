@@ -1,32 +1,32 @@
 ---
 category: examples
 group: compilation
-title: 透视表角头显示维度名称
+title: Display Dimension Names in Pivot Table Corner
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-corner-title.png
 link: '../guide/table_type/Pivot_table/pivot_table_useage'
 option: PivotTable#corner
 ---
 
-# 透视表角头显示维度名称
+# Display Dimension Names in Pivot Table Corner
 
-将角头标题显示内容依据设置为`'all'`，则角头单元格内容为行维度名称和列维度名称的拼接。
+Set the corner title display content basis to `'all'`, and the corner cell content will be a concatenation of row dimension names and column dimension names.
 
-titleOnDimension 角头标题显示内容依据：
+`titleOnDimension` corner title display content basis:
 
-- 'column' 列维度名称作为角头单元格内容
-- 'row' 行维度名称作为角头单元格内容
-- 'none' 角头单元格内容为空
-- 'all' 角头单元格内容为行维度名称和列维度名称的拼接
+- `'column'` Column dimension name as corner cell content
+- `'row'` Row dimension name as corner cell content
+- `'none'` Corner cell content is empty
+- `'all'` Corner cell content is a concatenation of row dimension names and column dimension names
 
-## 关键配置
+## Key Configuration
 
 - `PivotTable`
 - `columns`
 - `rows`
 - `indicators`
-- `corner.titleOnDimension` 角头标题显示内容依据
+- `corner.titleOnDimension` Corner title display content basis
 
-## 代码演示
+## Code Demonstration
 
 ```javascript livedemo template=vtable-vue
 const app = createApp({

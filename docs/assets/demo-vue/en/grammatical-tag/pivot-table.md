@@ -140,4 +140,9 @@ app.component('PivotCorner', VueVTable.PivotCorner);
 app.component('Menu', VueVTable.Menu);
 
 app.mount(`#${CONTAINER_ID}`);
+
+// release Vue instance, do not copy
+window.customRelease = () => {
+  app.unmount();
+};
 ```

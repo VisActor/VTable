@@ -48,6 +48,10 @@ app.component('ListColumn', VueVTable.ListColumn);
 
 app.mount(`#${CONTAINER_ID}`);
 
+// release Vue instance, do not copy
+window.customRelease = () => {
+  app.unmount();
+};
 ```
 
 
