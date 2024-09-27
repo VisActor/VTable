@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { createApp, h } from 'vue'; 
 import { ListColumn } from '../../../../../src/components/index';
+import { register } from '../../../../../src/index';
 import * as VTable from '../../../../../../vtable/src/index';
 import * as VTable_editors from '../../../../../../vtable-editors/src/index';
 import { Select as ASelect, Option as AOption } from '@arco-design/web-vue';
@@ -120,7 +121,7 @@ class ArcoListEditor {
 
   isClickPopUp(target: HTMLElement) {
     while (target) {
-      if (target.classList && target.classList.contains('arco-select')) {
+      if (target.classList && target.classList.contains('arco-select-option')) {
         return true;
       }
       target = target.parentNode as HTMLElement;
@@ -131,10 +132,9 @@ class ArcoListEditor {
 
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();
-VTable.register.editor('input-editor', input_editor);
-VTable.register.editor('date-input-editor', date_input_editor);
-VTable.register.editor('arcoVue-editor', new ArcoListEditor());
-
+register.editor('input-editor', input_editor);
+register.editor('date-input-editor', date_input_editor);
+register.editor('arcoVue-editor', new ArcoListEditor());
 
 function generateRandomString(length: number) {
   let result = '';

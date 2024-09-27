@@ -69,6 +69,9 @@ const computedOptions = computed(() => {
     }
   });
 
+  console.log('sadasddsa',props.options.corner);
+  console.log('sadasddsa',options.corner);
+
   return {
     ...props.options,
     columns: options.columns.length ? options.columns : props.options.columns,
@@ -76,9 +79,9 @@ const computedOptions = computed(() => {
     rows: options.rows.length ? options.rows : props.options.rows,
     rowHeaderTitle: options.rowHeaderTitle.length ? options.rowHeaderTitle : props.options.rowHeaderTitle,
     indicators: options.indicators.length ? options.indicators : props.options.indicators,
-    corner: options.corner || props.options.corner,
-    tooltip: options.tooltip || props.options.tooltip,
-    menu: options.menu || props.options.menu,
+    corner: props.options.corner || options.corner,
+    tooltip: props.options.tooltip || options.tooltip,
+    menu: props.options.menu|| options.menu,
   };
 });
 

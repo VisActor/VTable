@@ -124,9 +124,9 @@ class ArcoListEditor {
 
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();
-VTable.register.editor('input-editor', input_editor);
-VTable.register.editor('date-input-editor', date_input_editor);
-VTable.register.editor('arcoVue-editor', new ArcoListEditor());
+VueVTable.register.editor('input-editor', input_editor);
+VueVTable.register.editor('date-input-editor', date_input_editor);
+VueVTable.register.editor('arcoVue-editor', new ArcoListEditor());
 
 function generateRandomString(length) {
   let result = '';

@@ -145,13 +145,13 @@ const app = createApp({
       },
    },
    mounted() {
-      VTable.register.icon('location', {
+      VueVTable.register.icon('location', {
          type: 'svg',
          name: 'location',
          positionType: VTable.TYPES.IconPosition.left,
          svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
       });
-      VTable.register.icon('favorite', {
+      VueVTable.register.icon('favorite', {
          type: 'svg',
          name: 'favorite',
          positionType: VTable.TYPES.IconPosition.left,
@@ -170,7 +170,7 @@ const app = createApp({
          },
          svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/favorite.svg',
       });
-      VTable.register.icon('message', {
+      VueVTable.register.icon('message', {
          type: 'svg',
          name: 'message',
          positionType: VTable.TYPES.IconPosition.left,
