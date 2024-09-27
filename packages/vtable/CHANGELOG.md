@@ -1,6 +1,19 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 24 Sep 2024 10:22:40 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Sep 2024 09:40:51 GMT and should not be manually modified.
+
+## 1.7.9
+Fri, 27 Sep 2024 09:40:51 GMT
+
+### Updates
+
+- docs: add functionalIconsStyle on theme #1308
+
+
+- fix: fix estimate position in updateAutoRow() #2494
+- fix: fix drag check state update #2518
+- fix: fix group cell in vtable-export #2487
+- fix: fix react component update problem when resize column
 
 ## 1.7.8
 Tue, 24 Sep 2024 10:22:40 GMT

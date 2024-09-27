@@ -18,6 +18,7 @@ function getBackgroundColor(args: StylePropertyFunctionArg): string {
  * @memberof VTable.themes.choices
  */
 export default {
+  name: 'BRIGHT',
   underlayBackgroundColor: '#FFF',
   // selectionBgColor: '#CCE0FF',
   defaultStyle: {

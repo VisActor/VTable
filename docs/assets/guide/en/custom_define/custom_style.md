@@ -96,4 +96,4 @@ instance.registerCustomCellStyle(id, newStyle)
 
 * For the assigned custom style cell area, you can update the style assignment to the cell area through the `arrangeCustomCellStyle` method. After the update, the cell style will be updated; if `customStyleId` is `undefined` | `null `, it means restoring the cell style to the default style
 
-For specific usage, please refer to [demo](../demo/custom-render/custom-style)
+For specific usage, please refer to [demo](../../demo/custom-render/custom-style)

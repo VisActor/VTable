@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 import { AggregationType } from '../../src/ts-types';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
@@ -156,7 +157,7 @@ export function createTable() {
       isShowOverflowTextTooltip: true
     },
     frozenColCount: 1,
-    // bottomFrozenRowCount: 2,
+    bottomFrozenRowCount: 2,
     rightFrozenColCount: 1,
     overscrollBehavior: 'none',
     autoWrapText: true,
@@ -221,25 +222,29 @@ export function createTable() {
     // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-  // tableInstance.deleteRecords([0]);
-  tableInstance.updateRecords(
-    [
-      {
-        id: 10,
-        email1: '10@xxx.com',
-        name: '小明10',
-        lastName: '王',
-        date1: '2022年9月1日',
-        tel: '000-0000-0000',
-        sex: 'girl',
-        work: 'front-end engineer10',
-        city: 'beijing',
-        salary: 60
-      }
-    ],
-    [0]
-  );
+  tableInstance.deleteRecords([0]);
+  // tableInstance.updateRecords(
+  //   [
+  //     {
+  //       id: 10,
+  //       email1: '10@xxx.com',
+  //       name: '小明10',
+  //       lastName: '王',
+  //       date1: '2022年9月1日',
+  //       tel: '000-0000-0000',
+  //       sex: 'girl',
+  //       work: 'front-end engineer10',
+  //       city: 'beijing',
+  //       salary: 60
+  //     }
+  //   ],
+  //   [0]
+  // );
   window.tableInstance = tableInstance;
+
+  bindDebugTool(tableInstance.scenegraph.stage, {
+    customGrapicKeys: ['col', 'row']
+  });
   tableInstance.on('change_cell_value', arg => {
     console.log(arg);
   });

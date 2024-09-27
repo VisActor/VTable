@@ -236,9 +236,22 @@ export function changeCheckboxOrder(sourceIndex: number, targetIndex: number, st
     sourceIndex = table.getRecordShowIndexByCell(0, sourceIndex);
     targetIndex = table.getRecordShowIndexByCell(0, targetIndex);
   }
-  if (sourceIndex !== targetIndex) {
+  // if (sourceIndex !== targetIndex) {
+  //   const sourceRecord = checkedState[sourceIndex];
+  //   checkedState[sourceIndex] = checkedState[targetIndex];
+  //   checkedState[targetIndex] = sourceRecord;
+  // }
+  if (sourceIndex > targetIndex) {
     const sourceRecord = checkedState[sourceIndex];
-    checkedState[sourceIndex] = checkedState[targetIndex];
+    for (let i = sourceIndex; i > targetIndex; i--) {
+      checkedState[i] = checkedState[i - 1];
+    }
+    checkedState[targetIndex] = sourceRecord;
+  } else if (sourceIndex < targetIndex) {
+    const sourceRecord = checkedState[sourceIndex];
+    for (let i = sourceIndex; i < targetIndex; i++) {
+      checkedState[i] = checkedState[i + 1];
+    }
     checkedState[targetIndex] = sourceRecord;
   }
 }

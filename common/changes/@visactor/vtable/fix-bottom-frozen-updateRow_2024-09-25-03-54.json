@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix estimate position in updateAutoRow() #2494",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

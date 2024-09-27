@@ -59,7 +59,7 @@ function App() {
 需要注意的是，react-vtable 如果需要注册组件，需要先 vtable 包中引入注册函数，进行按需注册。项目中使用的`'@visactor/vtable'`和`'@visactor/react-vtable'`的版本需要保持一致。
 
 ```tsx
-import {ListTableSimple} form '@visactor/vtable';
+import {ListTableSimple} form '@visactor/react-vtable';
 import {registerTitle, registerTooltip} from '@visactor/vtable';
 
 registerTitle();
