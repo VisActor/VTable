@@ -37,3 +37,4 @@ const app = createApp({
 app.component('ListTable', VueVTable.ListTable);
 
 app.mount(`#${CONTAINER_ID}`);
+```

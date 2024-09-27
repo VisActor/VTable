@@ -227,3 +227,4 @@ app.component('ListTable', VueVTable.ListTable);
 app.component('ListColumn', VueVTable.ListColumn);
 
 app.mount(`#${CONTAINER_ID}`);
+```
