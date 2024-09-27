@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix react component update problem when resize column",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

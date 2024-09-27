@@ -166,8 +166,41 @@ body 单元格的样式配置
 
 ##${prefix} selectionFillMode(boolean)
 选中区域的填充色规则
-  - `overlay`: 选中区域的填充色会覆盖单元格的背景色（常用带透明度的颜色值）
-  - `replace`: 选中区域的填充色会替换单元格的背景色
-{{ use: common-color(
-  prefix = ${prefix}
-  ) }}
+
+- `overlay`: 选中区域的填充色会覆盖单元格的背景色（常用带透明度的颜色值）
+- `replace`: 选中区域的填充色会替换单元格的背景色
+  {{ use: common-color(
+    prefix = ${prefix}
+    ) }}
+
+##${prefix} functionalIconsStyle(Object)
+VTable 内部功能性按钮图标颜色及尺寸配置。如果图标不明显可以根据实际情况调整，如果尺寸不合适，可以适当调整尺寸
+
+```
+ /** 内部功能性按钮图标颜色及尺寸配置 */
+  functionalIconsStyle?: {
+    sort_color?: string;
+    sort_color_opacity?: string;
+    sort_color_2?: string;
+    sort_color_opacity_2?: string;
+    sort_size?: number;
+    sort_size_2?: number;
+    frozen_color?: string;
+    frozen_color_opacity?: string;
+    frozen_color_2?: string;
+    frozen_color_opacity_2?: string;
+    frozen_size?: number;
+    frozen_size_2?: number;
+    collapse_color?: string;
+    collapse_color_opacity?: string;
+    collapse_size?: number;
+    collapse_size_2?: number;
+    expand_color?: string;
+    expand_color_opacity?: string;
+    expand_size?: number;
+    expand_size_2?: number;
+    dragReorder_color?: string;
+    dragReorder_color_opacity?: string;
+    dragReorder_size?: number;
+  };
+```
