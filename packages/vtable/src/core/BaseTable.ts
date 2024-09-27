@@ -146,6 +146,7 @@ import { getCellStyle } from './style-helper';
 import type { EditManeger } from '../edit/edit-manager';
 import { createReactContainer } from '../scenegraph/layout/frozen-react';
 import { setIconColor } from '../icons';
+import { TableAnimationManager } from './animation';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -430,6 +431,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
+    this.animationManager = new TableAnimationManager(this);
 
     if (options.legends) {
       internalProps.legends = [];
