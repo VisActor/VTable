@@ -147,3 +147,4 @@ app.component('vue-list-table', VueVTable.ListTable);
 app.component('ListColumn', VueVTable.ListColumn);
 
 app.mount(`#${CONTAINER_ID}`);
+```

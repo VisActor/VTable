@@ -49,3 +49,4 @@ app.component('ListColumn', VueVTable.ListColumn);
 app.component('Menu', VueVTable.Menu);
 
 app.mount(`#${CONTAINER_ID}`);
+```

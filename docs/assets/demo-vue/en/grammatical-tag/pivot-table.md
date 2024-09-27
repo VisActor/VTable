@@ -140,3 +140,4 @@ app.component('PivotCorner', VueVTable.PivotCorner);
 app.component('Menu', VueVTable.Menu);
 
 app.mount(`#${CONTAINER_ID}`);
+```
