@@ -1,3 +1,35 @@
+# v1.7.8
+
+2024-09-24
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: handle with customTree in dataset file to refactor processRecord function [#2279](https://github.com/VisActor/VTable/issues/2279)
+- **@visactor/vtable**: add async support in vtable-export [#2460](https://github.com/VisActor/VTable/issues/2460)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: custom total value not work [#2455](https://github.com/VisActor/VTable/issues/2455)
+- **@visactor/vtable**: adjust sort icon up and down [#2465](https://github.com/VisActor/VTable/issues/2465)
+- **@visactor/vtable**: when current edit not exit, could not trigger new edit cell [#2469](https://github.com/VisActor/VTable/issues/2469)
+- **@visactor/vtable**: when no records edit cell value occor error [#2474](https://github.com/VisActor/VTable/issues/2474)
+- **@visactor/vtable**: set aggregation on option not work [#2459](https://github.com/VisActor/VTable/issues/2459)
+- **@visactor/vtable**: fix cell border clip in 'bottom-right' borde mode [#2442](https://github.com/VisActor/VTable/issues/2442)
+- **@visactor/vtable**: add children === true hierarchyState in initChildrenNodeHierarchy()
+- **@visactor/vtable**: fix custom component frozen update [#2432](https://github.com/VisActor/VTable/issues/2432)
+- **@visactor/vtable**: when resize trigger click_cell event
+- **@visactor/vtable**: fix proxy.colStart update in resetFrozen() [#2464](https://github.com/VisActor/VTable/issues/2464)
+- **@visactor/vtable**: add '——' in specialCharSet [#2470](https://github.com/VisActor/VTable/issues/2470)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: update aggregator when update records [#2459](https://github.com/VisActor/VTable/issues/2459)
+
+
+
+[more detail about v1.7.8](https://github.com/VisActor/VTable/releases/tag/v1.7.8)
+
 # v1.7.7
 
 2024-09-13
