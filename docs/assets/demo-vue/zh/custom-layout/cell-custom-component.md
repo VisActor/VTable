@@ -201,4 +201,9 @@ app.component('Image', VueVTable.Image);
 app.component('Tag', VueVTable.Tag);
 
 app.mount(`#${CONTAINER_ID}`);
+
+// release Vue instance, do not copy
+window.customRelease = () => {
+  app.unmount();
+};
 ```

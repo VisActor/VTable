@@ -1,25 +1,24 @@
 ---
 category: examples
 group: compilation
-title: 透视组合图
+title: Pivot Combination Chart
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart-pie.png
 order: 1-1
 link: '../guide/table_type/pivot_chart'
 option: PivotChart-indicators-chart#cellType
 ---
 
-# 透视组合图(饼图)
+# Pivot Combination Chart (Pie Chart)
 
-透视组合图将vchart图表库结合渲染到表格中，丰富可视化展示形式，提升渲染性能。
+The pivot combination chart integrates the VChart library into the table, enriching visualization forms and enhancing rendering performance.
 
-## 关键配置
+## Key Configuration
 
-- `PivotChart` 初始化表格类型使用PivotChart。
-- `VTable.register.chartModule('vchart', VChart)` 注册绘制图表的图表库 目前支持VChart
-- `cellType: 'chart'` 指定类型chart
-- `chartModule: 'vchart'` 指定注册的图表库名称
-- `chartSpec: {}` 图表spec
-
+- `PivotChart` initializes the table type using PivotChart.
+- `VTable.register.chartModule('vchart', VChart)` registers the chart library for rendering charts. Currently supports VChart.
+- `cellType: 'chart'` specifies the type as chart.
+- `chartModule: 'vchart'` specifies the registered chart library name.
+- `chartSpec: {}` chart specification.
 
 ## 代码演示
 ```javascript livedemo template=vtable-vue

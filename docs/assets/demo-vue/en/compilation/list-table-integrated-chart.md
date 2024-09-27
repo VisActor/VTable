@@ -1,18 +1,18 @@
 ---
 category: examples
 group: compilation
-title: 基本表格集成图表
+title: Basic Table Integrated with Charts
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-chart.png
 order: 1-1
 link: '../guide/cell_type/chart'
 option: ListTable-columns-chart#cellType
 ---
 
-# 基本表格集成图表
+# Basic Table Integrated with Charts
 
-将 vchart 图表库结合渲染到表格中，丰富可视化展示形式，提升多图表渲染性能。该示例引用了 vchart 的条形进度条。
+Integrate the vchart library into the table to enrich visualization forms and enhance multi-chart rendering performance. This example references the bar progress chart from vchart.
 
-## 代码演示
+## Code Demonstration
 
 ```javascript livedemo template=vtable-vue
 const app = createApp({
@@ -152,7 +152,7 @@ const app = createApp({
                            fill: '#32a645'
                         }
                      },
-                     maxWidth: '60%' // 配置坐标轴的最大空间
+                     maxWidth: '60%' // Configure the maximum space for the axis
                   },
                   {
                      orient: 'bottom',
@@ -262,3 +262,4 @@ window.customRelease = () => {
   app.unmount();
 };
 ```
+

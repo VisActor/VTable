@@ -68,10 +68,7 @@ const computedOptions = computed(() => {
       }
     }
   });
-
-  console.log('sadasddsa',props.options.corner);
-  console.log('sadasddsa',options.corner);
-
+  
   return {
     ...props.options,
     columns: options.columns.length ? options.columns : props.options.columns,
