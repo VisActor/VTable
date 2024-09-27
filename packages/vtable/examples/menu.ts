@@ -920,6 +920,15 @@ export const menus = [
     ]
   },
   {
+    menu: 'animation',
+    children: [
+      {
+        path: 'animation',
+        name: 'scroll-to'
+      }
+    ]
+  },
+  {
     menu: '业务方',
     children: [
       {
