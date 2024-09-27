@@ -145,6 +145,7 @@ import {
 import { getCellStyle } from './style-helper';
 import type { EditManeger } from '../edit/edit-manager';
 import { createReactContainer } from '../scenegraph/layout/frozen-react';
+import { setIconColor } from '../icons';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -384,7 +385,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.focusedTable = false;
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT); //原来在listTable文件中
     internalProps.theme.isPivot = this.isPivotTable();
-
+    setIconColor(internalProps.theme.functionalIconsStyle);
     if (container) {
       // 先清空
       if (clearDOM) {
@@ -396,9 +397,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this._updateSize();
     }
 
-    this.options = options;
-    internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
-    internalProps.theme.isPivot = this.isPivotTable();
+    // this.options = options;
+    // internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
+    // internalProps.theme.isPivot = this.isPivotTable();
     internalProps.bodyHelper = new BodyHelper(this);
     internalProps.headerHelper = new HeaderHelper(this);
     internalProps.rowSeriesNumberHelper = new RowSeriesNumberHelper(this);
@@ -2292,6 +2293,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
     internalProps.theme.isPivot = this.isPivotTable();
+    setIconColor(internalProps.theme.functionalIconsStyle);
     this.scenegraph.updateStageBackground();
     // this._updateSize();
     //设置是否自动撑开的配置
@@ -2762,6 +2764,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.internalProps.theme.isPivot = this.isPivotTable();
     this.options.theme = theme;
+    setIconColor(this.internalProps.theme.functionalIconsStyle);
   }
   /**
    * 设置主题
@@ -2770,6 +2773,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.internalProps.theme.isPivot = this.isPivotTable();
+    setIconColor(this.internalProps.theme.functionalIconsStyle);
     this.options.theme = theme;
     this.scenegraph.updateComponent();
     this.scenegraph.updateStageBackground();
