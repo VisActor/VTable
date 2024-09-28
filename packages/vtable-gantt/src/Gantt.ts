@@ -127,6 +127,15 @@ export class Gantt extends EventTarget {
     verticalSplitLineHighlight: ILineStyle;
     verticalSplitLineMoveable?: boolean;
     overscrollBehavior: 'auto' | 'none';
+    dateFormat?:
+      | 'yyyy-mm-dd'
+      | 'dd-mm-yyyy'
+      | 'mm/dd/yyyy'
+      | 'yyyy/mm/dd'
+      | 'dd/mm/yyyy'
+      | 'yyyy.mm.dd'
+      | 'dd.mm.yyyy'
+      | 'mm.dd.yyyy';
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
@@ -635,7 +644,7 @@ export class Gantt extends EventTarget {
     const taskRecord = this.getRecordByIndex(index);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
-    const dateFormat = parseDateFormat(taskRecord[startDateField]);
+    const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[startDateField]);
     const startDate = createDateAtMidnight(taskRecord[startDateField]);
     const endDate = createDateAtMidnight(taskRecord[endDateField]);
     if (updateDateType === 'move') {

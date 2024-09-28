@@ -161,6 +161,15 @@ export interface GanttConstructorOptions {
   scrollStyle?: IScrollStyle;
 
   pixelRatio?: number;
+  dateFormat?:
+    | 'yyyy-mm-dd'
+    | 'dd-mm-yyyy'
+    | 'mm/dd/yyyy'
+    | 'yyyy/mm/dd'
+    | 'dd/mm/yyyy'
+    | 'yyyy.mm.dd'
+    | 'dd.mm.yyyy'
+    | 'mm.dd.yyyy';
 }
 /**
  * IBarLabelText

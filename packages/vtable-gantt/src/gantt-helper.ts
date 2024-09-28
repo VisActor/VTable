@@ -14,7 +14,7 @@ export function getTaskIndexByY(y: number, gantt: Gantt) {
 }
 export function getDateByX(x: number, gantt: Gantt) {
   const { colWidthPerDay, minDate } = gantt.parsedOptions;
-  const totalX = x + gantt.stateManager.scroll.horizontalBarPos;
+  const totalX = x; //+ gantt.stateManager.scroll.horizontalBarPos;
   const days = Math.floor((totalX - gantt.stateManager.scroll.horizontalBarPos) / colWidthPerDay);
   const date = new Date(minDate.getTime() + days * DayTimes);
   return date;
@@ -115,6 +115,7 @@ export function initOptions(gantt: Gantt) {
     },
     options?.scrollStyle
   );
+
   gantt.parsedOptions.timelineHeaderHorizontalLineStyle = options?.timelineHeader?.horizontalLine;
   gantt.parsedOptions.timelineHeaderVerticalLineStyle = options?.timelineHeader?.verticalLine;
   gantt.parsedOptions.timelineHeaderBackgroundColor = options?.timelineHeader?.backgroundColor;
@@ -175,6 +176,7 @@ export function initOptions(gantt: Gantt) {
     options?.taskBar?.barStyle
   );
 
+  gantt.parsedOptions.dateFormat = options?.dateFormat;
   gantt.parsedOptions.taskBarHoverStyle = Object.assign(
     {
       barOverlayColor: 'rgba(99, 144, 0, 0.4)'

@@ -25,7 +25,7 @@ export class TaskCreationButton {
       cornerRadius: this._scene._gantt.parsedOptions.taskBarCreationButtonStyle.cornerRadius ?? 0,
       fill: this._scene._gantt.parsedOptions.taskBarCreationButtonStyle.backgroundColor
     });
-    this.group.name = 'add-task-button-group';
+    this.group.name = 'task-creation-button';
     this._scene.tableGroup.addChild(this.group);
     this.lineVertical = createLine({
       pickable: false,
@@ -66,6 +66,6 @@ export class TaskCreationButton {
     ]);
   }
   hide() {
-    // this.group.setAttribute('visibleAll', false);
+    this.group.setAttribute('visibleAll', false);
   }
 }

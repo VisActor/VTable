@@ -19,8 +19,8 @@ export function createTable() {
       id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
+      // start: '2024-07-24',
+      // end: '2024-08-04',
       progress: 60,
       priority: 'P0'
     },
@@ -863,8 +863,8 @@ export function createTable() {
       },
       creation: {
         buttonStyle: {
-          backgroundColor: 'gray',
-          lineColor: 'black',
+          backgroundColor: '#f7f7f5',
+          lineColor: '#808080',
           lineWidth: 1,
           lineDash: [5, 5]
         }
@@ -882,6 +882,16 @@ export function createTable() {
       backgroundColor: '#EEF1F5',
       colWidth: 60,
       scales: [
+        {
+          unit: 'month',
+          step: 1,
+          style: {
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: 'red',
+            textStick: true
+          }
+        },
         {
           unit: 'week',
           step: 1,
@@ -990,7 +1000,7 @@ export function createTable() {
   ganttInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
-  bindDebugTool(ganttInstance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
+  // bindDebugTool(ganttInstance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', '_updateTag']
+  // });
 }

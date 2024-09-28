@@ -11,7 +11,7 @@ import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
 import { getDateByX, getTaskIndexByY } from '../gantt-helper';
 import graphicContribution from './graphic';
-import { TaskCreationButton } from './add-task-button';
+import { TaskCreationButton } from './task-creation-button';
 container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
@@ -247,19 +247,14 @@ export class Scenegraph {
     if (!this.taskCreationButton) {
       this.taskCreationButton = new TaskCreationButton(this._gantt.scenegraph);
     }
-    const date = getDateByX(x, this._gantt);
-    this.taskCreationButton.show(
-      x + this._gantt.stateManager.scroll.horizontalBarPos,
-      y + this._gantt.stateManager.scroll.verticalBarPos,
-      this._gantt.parsedOptions.colWidthPerDay,
-      this._gantt.parsedOptions.rowHeight
-    );
+    this.taskCreationButton.show(x, y, this._gantt.parsedOptions.colWidthPerDay, this._gantt.parsedOptions.rowHeight);
     this.updateNextFrame();
   }
 
   hideTaskCreationButton() {
     if (this.taskCreationButton) {
       this.taskCreationButton.hide();
+      this.updateNextFrame();
     }
   }
 }
