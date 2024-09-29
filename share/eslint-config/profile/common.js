@@ -12,6 +12,11 @@ var reactExtends = [
   "plugin:react-hooks/recommended",
 ];
 
+var vueExtends = [
+  "plugin:vue/vue3-recommended",
+  // 其他需要的插件和配置
+];
+
 /**
  *
  * @param {'react' | 'lib'} type
@@ -21,6 +26,7 @@ module.exports = function buildConfig(type) {
   var isJsx = false;
   var settings = {};
   var reactRules = {};
+  var vueRules={};
 
   var _extends = baseExtends;
 
@@ -42,6 +48,23 @@ module.exports = function buildConfig(type) {
       "react/prop-types": "off",
       "react-hooks/rules-of-hooks": "warn",
       "react/react-in-jsx-scope": "off"
+    };
+  } else if (type === "vue") {  // 处理Vue的情况
+    baseFiles.push("*.vue");
+
+    _extends = baseExtends.concat(vueExtends);
+
+    isJsx = true;
+
+    settings.vue = {  // Vue的设置
+      version: "detect",
+    };
+
+    vueRules = {
+      // 添加Vue相关的规则
+      "vue/require-v-for-key": "warn",
+      "vue/no-unused-components": "warn",
+      // 其他Vue规则...
     };
   }
 
@@ -91,6 +114,7 @@ module.exports = function buildConfig(type) {
           "promise/always-return": "off",
           "promise/no-callback-in-promise": "off",
           ...reactRules,
+          ...vueRules,
         },
       },
     ],

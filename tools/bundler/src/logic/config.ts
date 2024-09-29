@@ -55,7 +55,8 @@ export function parserCLIArgs(argv: string | string[]): Partial<CLIArgs> {
 export enum ModuleKind {
   es = 'es',
   cjs = 'cjs',
-  umd = 'umd'
+  umd = 'umd',
+  vue = 'vue'
 }
 export type _ModuleKind = keyof typeof ModuleKind;
 
