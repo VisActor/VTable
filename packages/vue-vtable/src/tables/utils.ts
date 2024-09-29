@@ -35,7 +35,7 @@ export function createCustomLayout(children: any): any {
     }
 
     const { type, props, children: childChildren } = child;
-    const componentName = type?.name || type;
+    const componentName = type?.symbol || type?.name;
     const ComponentClass = componentMap[componentName];
 
     if (!ComponentClass) {
