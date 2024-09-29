@@ -152,10 +152,12 @@ function bindTableGroupListener(event: EventManager) {
             gantt.parsedOptions.endDateField
           ] = formatDate(
             new Date(
-              gantt.parsedOptions._maxDateTime + Math.floor(e.offset.x / gantt.parsedOptions.colWidthPerDay) * DayTimes
+              gantt.parsedOptions._minDateTime + Math.floor(e.offset.x / gantt.parsedOptions.colWidthPerDay) * DayTimes
             ),
             dateFormat
           );
+          gantt.scenegraph.hideTaskCreationButton();
+          gantt.updateTaskRecord(recordTaskInfo.taskRecord, taskIndex);
         }
       }
     }

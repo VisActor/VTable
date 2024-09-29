@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "feat: adjust creation buttom position\n\n",
+      "comment": "feat: add creation buttom for not schedualed task record\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
