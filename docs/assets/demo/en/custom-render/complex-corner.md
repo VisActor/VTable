@@ -104,17 +104,17 @@ const option = {
         width,
       });
 
-      // 定义文本内容的数组
+      // define the corner text
       const texts = [
-        {text: '省', fontSize: 18, x: 30, y: rect.height - 25},
-        {text: '市', fontSize: 18, x: 105, y: rect.height - 25},
-        {text: '数据', fontSize: 18, x: rect.width - 50, y: rect.height - 35},
-        {text: '物品', fontSize: 18, x: rect.width - 50, y: rect.height - 85},
-        {text: '种类', fontSize: 18, x: rect.width - 50, y: 18},
-        {text: '类型', fontSize: 16, x: 176, y: rect.height - 20},
+        {text: 'State', fontSize: 18, x: 30, y: rect.height - 25},
+        {text: 'City', fontSize: 18, x: 105, y: rect.height - 25},
+        {text: 'Data', fontSize: 18, x: rect.width - 50, y: rect.height - 35},
+        {text: 'Goods', fontSize: 18, x: rect.width - 50, y: rect.height - 85},
+        {text: 'Ca', fontSize: 18, x: rect.width - 50, y: 18},
+        {text: 'Type', fontSize: 16, x: 176, y: rect.height - 20},
       ];
 
-      // 循环添加文本
+      // add text
       texts.forEach(({text, fontSize, x, y}) => {
         container.addChild(
           new VTable.CustomLayout.Text({
@@ -128,7 +128,7 @@ const option = {
         );
       });
 
-      // 定义线段的点
+      // define the point
       const linePoints = [
         {x: rect.left, y: rect.top},
         {x: rect.width - 40, y: rect.height},
@@ -142,7 +142,7 @@ const option = {
         {x: 0, y: 0},
       ];
 
-      // 添加线段
+      // add lines
       container.addChild(
         new VTable.CustomLayout.Line({
           points: linePoints,
