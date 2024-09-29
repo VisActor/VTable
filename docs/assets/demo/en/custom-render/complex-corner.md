@@ -1,12 +1,12 @@
 ---
 category: examples
 group: Custom
-title: 自定义复杂斜线表头
+title: Complex Corner Sample
 option: ListTable-columns-text#customRender.elements
 ---
 
 
-## 代码演示
+## Come Sample
 
 ```javascript livedemo template=vtable
 
