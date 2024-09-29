@@ -5,6 +5,34 @@ title: 自定义简单斜线表头
 option: ListTable-columns-text#customRender.elements
 ---
 
+在透视表中，有时候需要实现斜线表头的功能，可以通过在 `corner` 自定义 `customRender` 来实现。
+
+```js
+option = {
+  // ...其他配置...
+  corner: {
+    titleOnDimension: 'row',
+      headerStyle: {
+      textStick: true
+    },
+    customLayout: (args) => {
+      const {table, row, col, rect} = args;
+      const {height, width} = rect ?? table.getCellRect(col, row);
+      const container = new VTable.CustomLayout.Group({
+        height,
+        width,
+      });
+      // .... 其他函数调用
+
+      return {
+        rootContainer: container,
+        renderDefault: false,
+        enableCellPadding: false,
+      };
+    }
+  }
+}
+```
 
 ## 代码演示
 

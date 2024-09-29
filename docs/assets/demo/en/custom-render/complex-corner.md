@@ -5,8 +5,42 @@ title: Complex Corner Sample
 option: ListTable-columns-text#customRender.elements
 ---
 
+In a pivot table, sometimes multiple dimensions are used to analyze data, and the corner area in the top-left needs to be custom drawn. This can be achieved by defining `customMergeCell` and `customLayout`. It will first perform cell merging, followed by custom drawing.
 
-## Come Sample
+```js
+option = {
+  // ...other config...
+  customMergeCell: (col, row, table) => {
+    if (col >= 0 && col < 3 && row <= 1) {
+      return {
+        text: 'merge corner',
+        range: {
+          start: {
+            col: 0,
+            row: 0
+          },
+          end: {
+            col: 2,
+            row: 1
+          }
+        },
+        style: {
+          bgColor: '#ccc'
+        }
+      };
+    }
+  },
+  corner: {
+    customLayout: (args) => {
+      // draw corner area
+      return {}
+    }
+  }
+}
+
+```
+
+## Code Sample
 
 ```javascript livedemo template=vtable
 

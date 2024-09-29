@@ -5,8 +5,36 @@ title: Custom simple corner
 option: ListTable-columns-text#customRender.elements
 ---
 
+In a pivot table, sometimes it is necessary to implement a slanted header. This can be achieved by customizing `customRender` or `customLayout` in the `corner` area.
 
-## 代码演示
+```js
+option = {
+  // ...other config...
+  corner: {
+    titleOnDimension: 'row',
+      headerStyle: {
+      textStick: true
+    },
+    customLayout: (args) => {
+      const {table, row, col, rect} = args;
+      const {height, width} = rect ?? table.getCellRect(col, row);
+      const container = new VTable.CustomLayout.Group({
+        height,
+        width,
+      });
+      // .... other fun call
+
+      return {
+        rootContainer: container,
+        renderDefault: false,
+        enableCellPadding: false,
+      };
+    }
+  }
+}
+```
+
+## Code Sample
 
 ```javascript livedemo template=vtable
 
