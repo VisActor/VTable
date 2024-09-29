@@ -42,6 +42,10 @@ export interface TableEvents {
    */
   MOUSEDOWN_TABLE: 'mousedown_table';
   /**
+   * 鼠标在表格上移动事件
+   */
+  MOUSEMOVE_TABLE: 'mousemove_table';
+  /**
    * 鼠标在某个单元格上移动事件
    */
   MOUSEMOVE_CELL: 'mousemove_cell';
@@ -77,6 +81,7 @@ export interface TableEvents {
    * 拖拽表头移动位置的事件
    */
   CHANGE_HEADER_POSITION: 'change_header_position';
+  CHANGE_HEADER_POSITION_START: 'change_header_position_start';
   /**
    * 点击排序图标事件
    */
@@ -180,6 +185,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
   MOUSEDOWN_TABLE: 'mousedown_table',
+  MOUSEMOVE_TABLE: 'mousemove_table',
   MOUSEMOVE_CELL: 'mousemove_cell',
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
@@ -188,6 +194,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   RESIZE_COLUMN_END: 'resize_column_end',
   RESIZE_ROW: 'resize_row',
   RESIZE_ROW_END: 'resize_row_end',
+  CHANGE_HEADER_POSITION_START: 'change_header_position_start',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
   FREEZE_CLICK: 'freeze_click',

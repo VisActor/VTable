@@ -41,6 +41,20 @@ export function bindTableGroupListener(eventManager: EventManager) {
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }
+
+    // 触发MOUSEMOVE_TABLE
+    if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEMOVE_TABLE)) {
+      table.fireListeners(TABLE_EVENT_TYPE.MOUSEMOVE_TABLE, {
+        col: eventArgsSet.eventArgs.col,
+        row: eventArgsSet.eventArgs.row,
+        x: eventArgsSet.abstractPos.x,
+        y: eventArgsSet.abstractPos.y,
+        event: e.nativeEvent,
+        target: eventArgsSet?.eventArgs?.target,
+        mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
+      });
+    }
+
     if (
       stateManager.interactionState === InteractionState.grabing &&
       !(table as ListTableAPI).editorManager?.editingEditor
