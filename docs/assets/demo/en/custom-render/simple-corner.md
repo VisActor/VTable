@@ -1,7 +1,7 @@
 ---
 category: examples
 group: Custom
-title: 自定义简单斜线表头
+title: Custom simple corner
 option: ListTable-columns-text#customRender.elements
 ---
 

@@ -7,7 +7,7 @@
     "serve": "vite --host",
     "build": "vite build && cp -r ./assets ./dist",
     "watch": "node ./libs/template-parse/build.js --env dev --watch",
-    "start": "npx concurrently --kill-others \"npm:watch\" \"npm:serve\""
+    "start": "vite --host"
   },
   "dependencies": {
     "@arco-design/web-react": "2.60.2",
