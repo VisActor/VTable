@@ -116,7 +116,8 @@ export function endMoveCol(state: StateManager): boolean {
     state.columnMove.colSource >= 0 &&
     state.columnMove.rowSource >= 0 &&
     state.columnMove.colTarget >= 0 &&
-    state.columnMove.rowTarget >= 0
+    state.columnMove.rowTarget >= 0 &&
+    state.table.options.customConfig?.notUpdateInColumnRowMove !== true
   ) {
     //getCellMergeInfo 一定要在moveHeaderPosition之前调用  否则就不是修改前的range了
     const oldSourceMergeInfo = state.table.getCellRange(state.columnMove.colSource, state.columnMove.rowSource);

@@ -62,6 +62,7 @@ export class StateManager {
    * Scrolling 滚动中
    */
   interactionState: InteractionState;
+  interactionStateBeforeScroll?: InteractionState;
   // select记录两个位置，第二个位置只在range模式生效
   select: {
     ranges: (CellRange & { skipBodyMerge?: boolean })[];
@@ -189,8 +190,8 @@ export class StateManager {
 
   radioState: Record<string | number, boolean | number | Record<number, number>> = {};
   // 供滚动重置为default使用
-  resetInteractionState = debounce(() => {
-    this.updateInteractionState(InteractionState.default);
+  resetInteractionState = debounce((state?: InteractionState) => {
+    this.updateInteractionState(state ?? InteractionState.default);
   }, 100);
   // _x: number = 0;
   constructor(table: BaseTableAPI) {
@@ -528,6 +529,12 @@ export class StateManager {
     if (this.interactionState === mode) {
       return;
     }
+
+    if (mode === InteractionState.scrolling) {
+      this.interactionStateBeforeScroll = this.interactionState;
+    }
+
+    // console.log('updateInteractionState', mode);
     const oldState = this.interactionState;
     this.interactionState = mode;
     // 处理mode 更新后逻辑
@@ -797,6 +804,7 @@ export class StateManager {
 
   startMoveCol(col: number, row: number, x: number, y: number) {
     startMoveCol(col, row, x, y, this);
+    this.table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, { col, row, x, y });
   }
   updateMoveCol(col: number, row: number, x: number, y: number) {
     updateMoveCol(col, row, x, y, this);
