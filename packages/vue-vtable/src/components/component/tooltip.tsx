@@ -9,3 +9,5 @@ export type TooltipProps = {
 export default function Tooltip(props: TooltipProps): VNode {
   return null;
 }
+
+Tooltip.symbol = 'Tooltip';

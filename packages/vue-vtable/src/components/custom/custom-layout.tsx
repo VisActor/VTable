@@ -25,3 +25,5 @@ export interface CustomComponentProps {
 export default function CustomLayout(props: CustomComponentProps): VNode {
   return null;
 }
+
+CustomLayout.symbol = 'CustomLayout';

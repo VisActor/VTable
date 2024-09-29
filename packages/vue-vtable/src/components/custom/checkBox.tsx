@@ -19,3 +19,5 @@ export interface CheckboxProps {
 export default function CheckBox(props: CheckboxProps): VNode {
   return null;
 }
+
+CheckBox.symbol = 'CheckBox';

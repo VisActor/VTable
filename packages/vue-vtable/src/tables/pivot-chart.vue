@@ -57,7 +57,7 @@ const computedOptions = computed(() => {
   };
 
   flattenedSlots.forEach(vnode => {
-    const typeName = vnode.type?.name || vnode.type?.__name;
+    const typeName = vnode.type?.symbol || vnode.type?.name ;
     const optionKey = typeMapping[typeName];
 
     if (optionKey) {

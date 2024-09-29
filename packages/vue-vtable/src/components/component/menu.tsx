@@ -11,3 +11,5 @@ export type MenuProps = {
 export default function Menu(props: MenuProps): VNode {
   return null;
 }
+
+Menu.symbol = 'Menu';

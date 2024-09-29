@@ -10,3 +10,5 @@ export type PivotColumnDimensionProps = IDimension & ObjectHandler;
 export default function PivotColumnDimension(props: PivotColumnDimensionProps): VNode {
   return null;
 }
+
+PivotColumnDimension.symbol = 'PivotColumnDimension';
