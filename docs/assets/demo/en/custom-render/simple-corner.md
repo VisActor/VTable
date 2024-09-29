@@ -79,7 +79,128 @@ const option = {
   dropDownMenu: {
     renderMode: 'html'
   },
-  records: [],
+  records: [
+    {
+      '10001': '销售额',
+      '10002': '16068954.125',
+      '10003': '231211225612017-day-measureValue',
+      '231211225612017': '16068954.125',
+      '231211225612017-day-measureValue': '16068954.125',
+      '231211225612024': '2147538.925',
+      OKR_TABLE_COLUMN_KEY: 'day-measureValue',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612017'
+    },
+    {
+      '10001': '销售额',
+      '10002': '0',
+      '10003': '231211225612017-day-period-lastweekRatio',
+      '231211225612017': '16068954.125',
+      '231211225612017-day-period-lastweekRatio': '0',
+      '231211225612024': '2147538.925',
+      OKR_TABLE_COLUMN_KEY: 'day-period-lastweekRatio',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612017'
+    },
+    {
+      '10001': '销售额',
+      '10002': '16068954.125',
+      '10003': '231211225612017-week-measureValue',
+      '231211225612017': '16068954.125',
+      '231211225612017-week-measureValue': '16068954.125',
+      '231211225612024': '2147538.925',
+      OKR_TABLE_COLUMN_KEY: 'week-measureValue',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612017'
+    },
+    {
+      '10001': '销售额',
+      '10002': '1156964697',
+      '10003': '231211225612017-quarter-measureValue',
+      '231211225612017': '1156964697',
+      '231211225612017-quarter-measureValue': '1156964697',
+      '231211225612024': '154622802.60000002',
+      OKR_TABLE_COLUMN_KEY: 'quarter-measureValue',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612017'
+    },
+    {
+      '10001': '销售额',
+      '10002': '1',
+      '10003': '231211225612017-quarter-goalValue',
+      '231211225612017': '1156964697',
+      '231211225612017-quarter-goalValue': '1',
+      '231211225612024': '154622802.60000002',
+      OKR_TABLE_COLUMN_KEY: 'quarter-goalValue',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612017'
+    },
+    {
+      '10001': '销售额',
+      '10002': '482068623.75',
+      '10003': '231211225612017-quarter-goalProgress',
+      '231211225612017': '1156964697',
+      '231211225612017-quarter-goalProgress': '482068623.75',
+      '231211225612024': '154622802.60000002',
+      OKR_TABLE_COLUMN_KEY: 'quarter-goalProgress',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612017'
+    },
+    {
+      '10001': '利润',
+      '10002': '2147538.925',
+      '10003': '231211225612024-day-measureValue',
+      '231211225612017': '16068954.125',
+      '231211225612024': '2147538.925',
+      '231211225612024-day-measureValue': '2147538.925',
+      OKR_TABLE_COLUMN_KEY: 'day-measureValue',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612024'
+    },
+    {
+      '10001': '利润',
+      '10002': '-4.3366970618028645e-16',
+      '10003': '231211225612024-day-period-lastweekRatio',
+      '231211225612017': '16068954.125',
+      '231211225612024': '2147538.925',
+      '231211225612024-day-period-lastweekRatio': '-4.3366970618028645e-16',
+      OKR_TABLE_COLUMN_KEY: 'day-period-lastweekRatio',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612024'
+    },
+    {
+      '10001': '利润',
+      '10002': '2147538.925',
+      '10003': '231211225612024-week-measureValue',
+      '231211225612017': '16068954.125',
+      '231211225612024': '2147538.925',
+      '231211225612024-week-measureValue': '2147538.925',
+      OKR_TABLE_COLUMN_KEY: 'week-measureValue',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612024'
+    },
+    {
+      '10001': '利润',
+      '10002': '154622802.60000002',
+      '10003': '231211225612024-quarter-measureValue',
+      '231211225612017': '1156964697',
+      '231211225612024': '154622802.60000002',
+      '231211225612024-quarter-measureValue': '154622802.60000002',
+      OKR_TABLE_COLUMN_KEY: 'quarter-measureValue',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612024'
+    },
+    {
+      '10001': '利润',
+      '10002': null,
+      '10003': '231211225612024-quarter-goalValue',
+      '231211225612017': '1156964697',
+      '231211225612024': '154622802.60000002',
+      '231211225612024-quarter-goalValue': null,
+      OKR_TABLE_COLUMN_KEY: 'quarter-goalValue',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612024'
+    },
+    {
+      '10001': '利润',
+      '10002': null,
+      '10003': '231211225612024-quarter-goalProgress',
+      '231211225612017': '1156964697',
+      '231211225612024': '154622802.60000002',
+      '231211225612024-quarter-goalProgress': null,
+      OKR_TABLE_COLUMN_KEY: 'quarter-goalProgress',
+      OKR_TABLE_COLUMN_UNIQUE_ID: '231211225612024'
+    }
+  ],
   rows: [
     {
       dimensionKey: '10001',
