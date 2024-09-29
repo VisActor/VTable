@@ -58,11 +58,11 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 
           // 定义文本内容的数组
           const texts = [
-            {text: '类型', fontSize: 18, x: 40, y: rect.height - 30},
-            {text: '数据', fontSize: 18, x: rect.width - 60, y: 20},
+            {text: 'Type', fontSize: 18, x: 40, y: rect.height - 30},
+            {text: 'Data', fontSize: 18, x: rect.width - 60, y: 20},
           ];
 
-          // 循环添加文本
+          // add corner text
           texts.forEach(({text, fontSize, x, y}) => {
             container.addChild(
               new VTable.CustomLayout.Text({
@@ -76,13 +76,13 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
             );
           });
 
-          // 定义线段的点
+          // define the point
           const linePoints = [
             {x: 0, y: 0},
             {x: rect.width, y: rect.height}
           ];
 
-          // 添加线段
+          // add line
           container.addChild(
             new VTable.CustomLayout.Line({
               points: linePoints,
