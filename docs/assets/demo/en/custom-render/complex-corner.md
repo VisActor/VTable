@@ -147,7 +147,7 @@ const option = {
         new VTable.CustomLayout.Line({
           points: linePoints,
           lineWidth: 1,
-          stroke: 'black',
+          stroke: '#ccc',
         })
       );
 

@@ -25,7 +25,7 @@ option = {
           }
         },
         style: {
-          bgColor: '#ccc'
+          bgColor: ''
         }
       };
     }
@@ -71,7 +71,7 @@ const option = {
           }
         },
         style: {
-          bgColor: '#ccc'
+          bgColor: '#ECF1F5'
         }
       };
     }
@@ -131,7 +131,9 @@ const option = {
       // 定义线段的点
       const linePoints = [
         {x: rect.left, y: rect.top},
+        {x: 0, y: 0},
         {x: rect.width - 40, y: rect.height},
+        {x: 0, y: 0},
         {x: 173, y: rect.height},
         {x: 0, y: 0},
         {x: 84, y: rect.height},
@@ -147,7 +149,7 @@ const option = {
         new VTable.CustomLayout.Line({
           points: linePoints,
           lineWidth: 1,
-          stroke: 'black',
+          stroke: '#ccc',
         })
       );
 

@@ -1,12 +1,6 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const BUGSERVER_CONTAINER_ID = 'vTable';
-window.BUGSERVER_SCREENSHOT = () => {
-  // do nothing
-};
-window.BUGSERVER_RELEASE = () => {
-  // do nothing
-};
 
 const VCHART_NPM_CDN = 'https://unpkg.com/@visactor/vchart@latest/build/index.min.js';
 
@@ -41,7 +35,7 @@ import('https://unpkg.com/@visactor/vchart@latest/build/index.min.js')
               }
             },
             style: {
-              bgColor: '#ccc'
+              bgColor: '#ECF1F5'
             }
           };
         }
@@ -65,6 +59,7 @@ import('https://unpkg.com/@visactor/vchart@latest/build/index.min.js')
         }
       },
       corner: {
+        merge: true,
         titleOnDimension: 'row',
         customLayout: (args: any) => {
           const {table, row, col, rect} = args;
@@ -117,7 +112,7 @@ import('https://unpkg.com/@visactor/vchart@latest/build/index.min.js')
             new VTable.CustomLayout.Line({
               points: linePoints,
               lineWidth: 1,
-              stroke: 'black',
+              stroke: '#ccc',
             })
           );
 
@@ -395,15 +390,8 @@ import('https://unpkg.com/@visactor/vchart@latest/build/index.min.js')
     option.container = dom;
     const instance = new VTable.PivotTable(option);
     bindDebugTool(instance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
-
-    window.BUGSERVER_SCREENSHOT();
-
-    // do some unmount operation
-    window.BUGSERVER_RELEASE(() => {
-      instance.dispose();
-    });
+    window['tableInstance'] = instance;
   })
   .catch(err => {
     console.error('Failed import CDN resource: ', err);
-    window.BUGSERVER_SCREENSHOT && window.BUGSERVER_SCREENSHOT();
   });

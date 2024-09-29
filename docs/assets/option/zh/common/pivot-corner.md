@@ -9,6 +9,19 @@ ${prefix} titleOnDimension(string) ='row'
 - 'none' 角头单元格内容为空
 - 'all' 角头单元格内容为行维度名称和列维度名称的拼接
 
+${prefix} customRender(Function|Object)
+Custom rendering for body corner header cell, in function or object form. The type is: `ICustomRenderFuc | ICustomRenderObj`.
+
+[demo link](../demo/custom-render/simple-corner)
+
+${prefix} customLayout(Function)
+
+Custom layout element definition for body cell, suitable for complex layout content.
+
+```
+(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+```
+
 ${prefix} headerType(string)
 
 表头类型，可指为`'text'|'image'|'link'`。
