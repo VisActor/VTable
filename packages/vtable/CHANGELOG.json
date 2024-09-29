@@ -2,6 +2,35 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.8.0",
+      "tag": "@visactor/vtable_v1.8.0",
+      "date": "Sun, 29 Sep 2024 02:17:55 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "docs: add functionalIconsStyle on theme #1308\n\n"
+          },
+          {
+            "comment": "fix: fix estimate position in updateAutoRow() #2494"
+          },
+          {
+            "comment": "fix: fix drag check state update #2518"
+          },
+          {
+            "comment": "fix: fix group cell in vtable-export #2487"
+          },
+          {
+            "comment": "fix: fix react component update problem when resize column"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add vue-vtable\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.7.9",
       "tag": "@visactor/vtable_v1.7.9",
       "date": "Fri, 27 Sep 2024 09:40:51 GMT",
