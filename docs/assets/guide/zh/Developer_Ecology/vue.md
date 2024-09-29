@@ -40,40 +40,39 @@ import { ListColumn } from '@visactor/vue-vtable';
 
 ```html
 <template>
-  <ListColumn :options="tableOptions"/>
+  <ListColumn :options="tableOptions" />
 </template>
 
 <script>
-export default {
-  data() {
-    const option = {
-      header: [
-        {
-          field: '0',
-          caption: '名称'
-        },
-        {
-          field: '1',
-          caption: '年龄'
-        },
-        {
-          field: '2',
-          caption: '性别'
-        },
-        {
-          field: '3',
-          caption: '爱好'
-        }
-      ],
-      records: new Array(1000).fill(['张三', 18, '男', '🏀'])
-    };
-    return {
-      tableOptions: option
-    };
-  }
-};
+  export default {
+    data() {
+      const option = {
+        header: [
+          {
+            field: '0',
+            caption: '名称'
+          },
+          {
+            field: '1',
+            caption: '年龄'
+          },
+          {
+            field: '2',
+            caption: '性别'
+          },
+          {
+            field: '3',
+            caption: '爱好'
+          }
+        ],
+        records: new Array(1000).fill(['张三', 18, '男', '🏀'])
+      };
+      return {
+        tableOptions: option
+      };
+    }
+  };
 </script>
-
 ```
 
 ## 使用方式
@@ -127,7 +126,6 @@ import { ListTable, ListColumn } from '@visactor/vue-vtable';
   </ListTable>
 ```
 
-
 当然，也可以充分利用 Vue 的语法糖，使代码更加简洁和易读。
 
 ```html
@@ -138,7 +136,6 @@ import { ListTable, ListColumn } from '@visactor/vue-vtable';
     </template>
   </ListColumn>
 </template>
-
 ```
 
 语法化标签 demo：[demo](../../demo-vue/usage/grammatical-tag)
@@ -185,7 +182,6 @@ PivotTable&PivotChart 接受的 props 属性与 option 一致，子组件如下�
     />
   </PivotTable>
 </template>
-
 ```
 
 语法化标签 demo：[PivotTable demo](../../demo-vue/grammatical-tag/pivot-table) [PivotChart demo](../../demo-vue/grammatical-tag/pivot-chart)
@@ -282,10 +278,10 @@ interface EventsProps {
 
 ### register
 
-在VTable中，图表、编辑器等组件需要通过resigister方法注册，才能正常使用；在React-VTable中，暴露了相应的register方法，可以直接使用。
+在 VTable 中，图表、编辑器等组件需要通过 resigister 方法注册，才能正常使用；在 React-VTable 中，暴露了相应的 register 方法，可以直接使用。
 
 ```jsx
-import { registerChartModule }  from '@visactor/vue-vtable';
+import { registerChartModule } from '@visactor/vue-vtable';
 import VChart from '@visactor/vchart';
 
 registerChartModule('vchart', VChart);
@@ -295,33 +291,66 @@ registerChartModule('vchart', VChart);
 
 ### 自定义组件
 
-为了方便Vue开发者快速实现自定义单元格内容，Vue-VTable 提供了封装组件并在单元格中使用的能力。
+为了方便 Vue 开发者快速实现自定义单元格内容，Vue-VTable 提供了封装组件并在单元格中使用的能力。
 
 ```html
-    <ListColumn :field="'bloggerName'" :title="'anchor nickname'" :width="330" :style="{ fontFamily: 'Arial', fontWeight: 500 }">
-      <template #customLayout="{ table, row, col, rect, record, height, width }">
-        <Group :height="height" :width="width" display="flex" flexDirection="row" flexWrap="nowrap">
-          <!-- Avatar Group -->
-          <Group :height="percentCalc(100)" :width="60" display="flex" flexDirection="column" alignItems="center" justifyContent="space-around">
-            <Image id="icon0" :width="50" :height="50" :image="record.bloggerAvatar" :cornerRadius="25" />
-          </Group>
-          <!-- Blogger Info Group -->
-          <Group :height="height" :width="percentCalc(100, -60)" display="flex" flexDirection="column" flexWrap="nowrap">
-            <!-- Blogger Name and Location -->
-            <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="flex-end">
-              <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" />
-              <Image id="location" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg"
-                :width="15" :height="15" :boundsPadding="[0, 0, 0, 10]" cursor="pointer"
-                @mouseEnter="handleMoueEnter($event)" @click="handleMouseClick($event)" @mouseLeave="handleMoueLeave($event)" />
-              <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
-            </Group>
-            <!-- Tags Group -->
-            <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="center">
-              <Tag v-for="tag in record?.tags" :key="tag" :text="tag" :textStyle="{ fontSize: 10, fontFamily: 'sans-serif', fill: 'rgb(51, 101, 238)' }" :panel="{ visible: true, fill: '#f4f4f2', cornerRadius: 5 }" :space="5" :boundsPadding="[0, 0, 0, 5]" />
-            </Group>
-          </Group>
+<ListColumn
+  :field="'bloggerName'"
+  :title="'anchor nickname'"
+  :width="330"
+  :style="{ fontFamily: 'Arial', fontWeight: 500 }"
+>
+  <template #customLayout="{ table, row, col, rect, record, height, width }">
+    <Group :height="height" :width="width" display="flex" flexDirection="row" flexWrap="nowrap">
+      <!-- Avatar Group -->
+      <Group
+        :height="percentCalc(100)"
+        :width="60"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="space-around"
+      >
+        <image id="icon0" :width="50" :height="50" :image="record.bloggerAvatar" :cornerRadius="25" />
+      </Group>
+      <!-- Blogger Info Group -->
+      <Group :height="height" :width="percentCalc(100, -60)" display="flex" flexDirection="column" flexWrap="nowrap">
+        <!-- Blogger Name and Location -->
+        <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="flex-end">
+          <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" />
+          <image
+            id="location"
+            image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg"
+            :width="15"
+            :height="15"
+            :boundsPadding="[0, 0, 0, 10]"
+            cursor="pointer"
+            @mouseEnter="handleMoueEnter($event)"
+            @click="handleMouseClick($event)"
+            @mouseLeave="handleMoueLeave($event)"
+          />
+          <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
         </Group>
-      </template>
-    </ListColumn>
-
+        <!-- Tags Group -->
+        <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="center">
+          <Tag
+            v-for="tag in record?.tags"
+            :key="tag"
+            :text="tag"
+            :textStyle="{ fontSize: 10, fontFamily: 'sans-serif', fill: 'rgb(51, 101, 238)' }"
+            :panel="{ visible: true, fill: '#f4f4f2', cornerRadius: 5 }"
+            :space="5"
+            :boundsPadding="[0, 0, 0, 5]"
+          />
+        </Group>
+      </Group>
+    </Group>
+  </template>
+</ListColumn>
 ```
+
+更多自定义介绍请详情参考[教程](../custom_define/vue-custom-component)
+
+### codesanbox 示例
+
+请转至：https://codesandbox.io/p/sandbox/viscator-vtable-vue-demo-compilation-wgh37n

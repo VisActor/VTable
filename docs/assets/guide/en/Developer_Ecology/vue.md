@@ -1,4 +1,5 @@
 # Vue-VTable
+
 The `@visactor/vue-vtable` package is a Vue wrapper designed to facilitate the use of VTable in a Vue 3.x environment. This component mainly encapsulates the VTable table into a Vue component, and the related configuration items are consistent with VTable.
 
 ## Quick Start
@@ -39,38 +40,38 @@ Here is a simple list example code (refer to [demo](../../demo-vue/usage/option)
 
 ```html
 <template>
-  <ListColumn :options="tableOptions"/>
+  <ListColumn :options="tableOptions" />
 </template>
 
 <script>
-export default {
-  data() {
-    const option = {
-      header: [
-        {
-          field: '0',
-          caption: 'Name'
-        },
-        {
-          field: '1',
-          caption: 'Age'
-        },
-        {
-          field: '2',
-          caption: 'Gender'
-        },
-        {
-          field: '3',
-          caption: 'Hobby'
-        }
-      ],
-      records: new Array(1000).fill(['Zhang San', 18, 'Male', '🏀'])
-    };
-    return {
-      tableOptions: option
-    };
-  }
-};
+  export default {
+    data() {
+      const option = {
+        header: [
+          {
+            field: '0',
+            caption: 'Name'
+          },
+          {
+            field: '1',
+            caption: 'Age'
+          },
+          {
+            field: '2',
+            caption: 'Gender'
+          },
+          {
+            field: '3',
+            caption: 'Hobby'
+          }
+        ],
+        records: new Array(1000).fill(['Zhang San', 18, 'Male', '🏀'])
+      };
+      return {
+        tableOptions: option
+      };
+    }
+  };
 </script>
 ```
 
@@ -280,7 +281,7 @@ For detailed event descriptions, refer to: [Event Introduction](../../guide/Even
 In VTable, components such as charts and editors need to be registered through the register method to be used normally; in React-VTable, the corresponding register method is exposed and can be used directly.
 
 ```jsx
-import { registerChartModule }  from '@visactor/vue-vtable';
+import { registerChartModule } from '@visactor/vue-vtable';
 import VChart from '@visactor/vchart';
 
 registerChartModule('vchart', VChart);
@@ -293,30 +294,63 @@ registerChartModule('vchart', VChart);
 To facilitate Vue developers in quickly implementing custom cell content, Vue-VTable provides the capability to encapsulate components and use them within cells.
 
 ```html
-    <ListColumn :field="'bloggerName'" :title="'anchor nickname'" :width="330" :style="{ fontFamily: 'Arial', fontWeight: 500 }">
-      <template #customLayout="{ table, row, col, rect, record, height, width }">
-        <Group :height="height" :width="width" display="flex" flexDirection="row" flexWrap="nowrap">
-          <!-- Avatar Group -->
-          <Group :height="percentCalc(100)" :width="60" display="flex" flexDirection="column" alignItems="center" justifyContent="space-around">
-            <Image id="icon0" :width="50" :height="50" :image="record.bloggerAvatar" :cornerRadius="25" />
-          </Group>
-          <!-- Blogger Info Group -->
-          <Group :height="height" :width="percentCalc(100, -60)" display="flex" flexDirection="column" flexWrap="nowrap">
-            <!-- Blogger Name and Location -->
-            <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="flex-end">
-              <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" />
-              <Image id="location" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg"
-                :width="15" :height="15" :boundsPadding="[0, 0, 0, 10]" cursor="pointer"
-                @mouseEnter="handleMoueEnter($event)" @click="handleMouseClick($event)" @mouseLeave="handleMoueLeave($event)" />
-              <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
-            </Group>
-            <!-- Tags Group -->
-            <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="center">
-              <Tag v-for="tag in record?.tags" :key="tag" :text="tag" :textStyle="{ fontSize: 10, fontFamily: 'sans-serif', fill: 'rgb(51, 101, 238)' }" :panel="{ visible: true, fill: '#f4f4f2', cornerRadius: 5 }" :space="5" :boundsPadding="[0, 0, 0, 5]" />
-            </Group>
-          </Group>
+<ListColumn
+  :field="'bloggerName'"
+  :title="'anchor nickname'"
+  :width="330"
+  :style="{ fontFamily: 'Arial', fontWeight: 500 }"
+>
+  <template #customLayout="{ table, row, col, rect, record, height, width }">
+    <Group :height="height" :width="width" display="flex" flexDirection="row" flexWrap="nowrap">
+      <!-- Avatar Group -->
+      <Group
+        :height="percentCalc(100)"
+        :width="60"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="space-around"
+      >
+        <image id="icon0" :width="50" :height="50" :image="record.bloggerAvatar" :cornerRadius="25" />
+      </Group>
+      <!-- Blogger Info Group -->
+      <Group :height="height" :width="percentCalc(100, -60)" display="flex" flexDirection="column" flexWrap="nowrap">
+        <!-- Blogger Name and Location -->
+        <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="flex-end">
+          <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" />
+          <image
+            id="location"
+            image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg"
+            :width="15"
+            :height="15"
+            :boundsPadding="[0, 0, 0, 10]"
+            cursor="pointer"
+            @mouseEnter="handleMoueEnter($event)"
+            @click="handleMouseClick($event)"
+            @mouseLeave="handleMoueLeave($event)"
+          />
+          <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
         </Group>
-      </template>
-    </ListColumn>
-
+        <!-- Tags Group -->
+        <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="center">
+          <Tag
+            v-for="tag in record?.tags"
+            :key="tag"
+            :text="tag"
+            :textStyle="{ fontSize: 10, fontFamily: 'sans-serif', fill: 'rgb(51, 101, 238)' }"
+            :panel="{ visible: true, fill: '#f4f4f2', cornerRadius: 5 }"
+            :space="5"
+            :boundsPadding="[0, 0, 0, 5]"
+          />
+        </Group>
+      </Group>
+    </Group>
+  </template>
+</ListColumn>
 ```
+
+More custom introduction please refer to [Tutorial](../custom_define/vue-custom-component)
+
+### codesanbox demos
+
+jump to：https://codesandbox.io/p/sandbox/viscator-vtable-vue-demo-compilation-wgh37n
