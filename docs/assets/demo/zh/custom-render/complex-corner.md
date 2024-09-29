@@ -5,8 +5,42 @@ title: 自定义复杂斜线表头
 option: ListTable-columns-text#customRender.elements
 ---
 
+在透视表中，有时候有多个维度分析数据，需要把左上角的角落区自定义绘制，可以通过定义 `customMergeCell` 和 `customLayout` 来实现，它会先执行单元格合并，再执行自定义绘制：
 
-## 代码演示
+```js
+option = {
+  // ...其他配置...
+  customMergeCell: (col, row, table) => {
+    if (col >= 0 && col < 3 && row <= 1) {
+      return {
+        text: 'merge corner',
+        range: {
+          start: {
+            col: 0,
+            row: 0
+          },
+          end: {
+            col: 2,
+            row: 1
+          }
+        },
+        style: {
+          bgColor: '#ccc'
+        }
+      };
+    }
+  },
+  corner: {
+    customLayout: (args) => {
+      // 根据参数绘制 corner 区域
+      return {}
+    }
+  }
+}
+
+```
+
+## 示例代码如下:
 
 ```javascript livedemo template=vtable
 
