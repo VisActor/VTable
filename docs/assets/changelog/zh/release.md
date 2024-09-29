@@ -1,3 +1,27 @@
+# v1.8.0
+
+2024-09-29
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add vue-vtable
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix estimate position in updateAutoRow() [#2494](https://github.com/VisActor/VTable/issues/2494)
+- **@visactor/vtable**: fix drag check state update [#2518](https://github.com/VisActor/VTable/issues/2518)
+- **@visactor/vtable**: fix group cell in vtable-export [#2487](https://github.com/VisActor/VTable/issues/2487)
+- **@visactor/vtable**: fix react component update problem when resize column
+
+**📖 文档更新**
+
+- **@visactor/vtable**: add functionalIconsStyle on theme [#1308](https://github.com/VisActor/VTable/issues/1308)
+
+
+
+[更多详情请查看 v1.8.0](https://github.com/VisActor/VTable/releases/tag/v1.8.0)
+
 # v1.7.9
 
 2024-09-28
