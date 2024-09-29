@@ -15,3 +15,5 @@ export interface TagProps {
 export default function Tag(props: TagProps): VNode {
   return null;
 }
+
+Tag.symbol = 'Tag';

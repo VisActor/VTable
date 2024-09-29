@@ -17,3 +17,5 @@ export interface RadioProps {
 export default function Radio(props: RadioProps): any {
   return null;
 }
+
+Radio.symbol = 'Radio';
