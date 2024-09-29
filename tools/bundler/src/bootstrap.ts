@@ -13,6 +13,7 @@ import { compile, getTSCompilerOptions, readUserTsconfig } from './tasks/modules
 import { buildUmd } from './tasks/umd';
 import { buildStyle } from './tasks/style';
 import { copyFiles } from './tasks/copy';
+import { buildVue } from './tasks/vue-modules';
 
 function getSources(root: string, allowJs: boolean) {
   const sources = [`${root}/**/*.tsx`, `${root}/**/*.ts`, `!${root}/**/stories/**`];
@@ -100,6 +101,19 @@ async function bootstrap() {
           _task(`${taskName}_min`, () => buildUmd(config, PROJECT_ROOT, rawPackageJson, true));
         }
         _task(`${taskName}`, () => buildUmd(config, PROJECT_ROOT, rawPackageJson, false));
+        return;
+      }
+
+      if (format === 'vue') {
+        _task(taskName, () =>
+          buildVue(
+            config,
+            PROJECT_ROOT,
+            rawPackageJson,
+            false,
+            getTSCompilerOptions('esnext', userTsConfig.compilerOptions, config.noEmitOnError)
+          )
+        );
         return;
       }
 
