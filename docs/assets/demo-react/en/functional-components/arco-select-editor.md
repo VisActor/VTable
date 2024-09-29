@@ -92,7 +92,7 @@ class ArcoListEditor {
 
   isClickPopUp(target) {
     while (target) {
-      if (target.classList && target.classList.find(item => item.startsWith('arco-select-vtable'))) {
+      if (target.classList && target.classList.contains('arco-select-vtable')) {
         return true;
       }
       // 如果到达了DOM树的顶部，则停止搜索
