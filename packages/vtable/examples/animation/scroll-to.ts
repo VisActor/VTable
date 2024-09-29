@@ -94,7 +94,8 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     emptyTip: true,
     records,
-    columns
+    columns: [...columns, ...columns],
+    frozenColCount: 2
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;

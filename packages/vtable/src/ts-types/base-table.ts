@@ -100,6 +100,7 @@ import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { EditManeger } from '../edit/edit-manager';
+import type { TableAnimationManager } from '../core/animation';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -599,6 +600,8 @@ export interface BaseTableAPI {
   stateManager: StateManager;
   /** 事件管理模块 */
   eventManager: EventManager;
+  /** 动画管理模块 */
+  animationManager: TableAnimationManager;
 
   editorManager: EditManeger;
   /** 行表头的层数 */
