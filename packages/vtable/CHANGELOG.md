@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Sun, 29 Sep 2024 02:17:55 GMT and should not be manually modified.
+This log was last generated on Sun, 29 Sep 2024 07:41:11 GMT and should not be manually modified.
+
+## 1.8.1
+Sun, 29 Sep 2024 07:41:11 GMT
+
+### Updates
+
+- refactor: rename vue component name
+
+
 
 ## 1.8.0
 Sun, 29 Sep 2024 02:17:55 GMT
