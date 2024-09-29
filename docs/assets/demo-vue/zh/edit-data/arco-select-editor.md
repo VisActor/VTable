@@ -19,8 +19,6 @@ https://arco.design/vue/components/select
 ## 代码演示
 
 ```javascript livedemo template=vtable-vue
-
-
 class ArcoListEditor {
   root = null;
   element = null;
@@ -55,27 +53,31 @@ class ArcoListEditor {
       data() {
         return {
           currentValue: defaultValue,
-          options: ['Beijing', 'Shanghai', 'Guangzhou'],
+          options: ['Beijing', 'Shanghai', 'Guangzhou']
         };
       },
       render() {
         return h('div', {}, [
-          h(ArcoDesignVue.Select, {
-            style: { height: '32px' },
-            placeholder: 'Select city',
-            modelValue: this.currentValue,
-            'onUpdate:modelValue': (value) => {
-              this.currentValue = value;
-              self.setValue(value);
+          h(
+            ArcoDesignVue.Select,
+            {
+              style: { height: '32px' },
+              placeholder: 'Select city',
+              modelValue: this.currentValue,
+              'onUpdate:modelValue': value => {
+                this.currentValue = value;
+                self.setValue(value);
+              }
             },
-          }, {
-            default: () =>
-              this.options.map((option) =>
-                h(ArcoDesignVue.Option, { key: option, value: option }, { default: () => option })
-              ),
-          }),
+            {
+              default: () =>
+                this.options.map(option =>
+                  h(ArcoDesignVue.Option, { key: option, value: option }, { default: () => option })
+                )
+            }
+          )
         ]);
-      },
+      }
     });
   }
 
@@ -113,7 +115,7 @@ class ArcoListEditor {
 
   isClickPopUp(target) {
     while (target) {
-      if (target.classList && target.classList.contains('arco-select')) {
+      if (target.classList && target.classList.contains('arco-select-option')) {
         return true;
       }
       target = target.parentNode;
@@ -137,7 +139,7 @@ function generateRandomString(length) {
   return result;
 }
 
-const generatePersons = (count) => {
+const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => {
     const first = generateRandomString(10);
     const last = generateRandomString(4);
@@ -149,7 +151,7 @@ const generatePersons = (count) => {
       address: `No.${i + 100} ${generateRandomString(10)} ${generateRandomString(5)} ${generateRandomString(5)}`,
       sex: i % 2 === 0 ? 'boy' : 'girl',
       work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
-      city: 'beijing',
+      city: 'beijing'
     };
   });
 };
@@ -160,7 +162,7 @@ const columns = [
     field: 'id',
     title: 'ID',
     width: 80,
-    sort: true,
+    sort: true
   },
   {
     field: 'full name',
@@ -170,22 +172,22 @@ const columns = [
         field: 'name',
         title: 'First Name\n(input editor)',
         width: 140,
-        editor: 'input-editor',
+        editor: 'input-editor'
       },
       {
         field: 'lastName',
         title: 'Last Name\n(input editor)',
         width: 100,
-        editor: 'input-editor',
-      },
-    ],
+        editor: 'input-editor'
+      }
+    ]
   },
   {
     field: 'address',
     title: 'location\n(arcoVue-editor)',
     width: 400,
-    editor: 'arcoVue-editor',
-  },
+    editor: 'arcoVue-editor'
+  }
 ];
 
 const option = {
@@ -197,8 +199,8 @@ const option = {
   keyboardOptions: {
     copySelected: true,
     pasteValueToCell: true,
-    selectAllOnCtrlA: true,
-  },
+    selectAllOnCtrlA: true
+  }
 };
 
 const app = createApp({
@@ -219,11 +221,10 @@ const app = createApp({
     return {
       records,
       columns,
-      option,
+      option
     };
-  },
+  }
 });
-
 
 app.component('ListTable', VueVTable.ListTable);
 app.component('ListColumn', VueVTable.ListColumn);
