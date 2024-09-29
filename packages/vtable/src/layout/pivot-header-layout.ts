@@ -917,6 +917,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
               dimensionKey: dimensionKey, // '维度名称',
               id,
               value: dimensionKey,
+              headerCustomRender: this.cornerSetting.customRender,
+              headerCustomLayout: this.cornerSetting.customLayout,
               headerEditor: this.cornerSetting.headerEditor,
               disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
               disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
@@ -961,7 +963,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         define: <any>{
           dimensionKey: '维度名称',
           id,
-          value: '',
+          headerCustomRender: this.cornerSetting.customRender,
+          headerCustomLayout: this.cornerSetting.customLayout,
           disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
           disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
         }
