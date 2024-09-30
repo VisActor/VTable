@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix richtext icon update #2281",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
