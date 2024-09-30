@@ -354,7 +354,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
             source: {
               col: table.stateManager.columnMove.colSource,
               row: table.stateManager.columnMove.rowSource
-            }
+            },
+            event: e.nativeEvent
           });
         }
       }
@@ -605,7 +606,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
             source: {
               col: table.stateManager.columnMove.colSource,
               row: table.stateManager.columnMove.rowSource
-            }
+            },
+            event: e.nativeEvent
           });
         }
       } else if (stateManager.isSelecting()) {

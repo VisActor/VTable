@@ -107,8 +107,8 @@ export interface TableEventHandlersEventArgumentMap {
   resize_column_end: { col: number; colWidths: number[] };
   resize_row: { row: number; rowHeight: number };
   resize_row_end: { row: number; rowHeight: number };
-  change_header_position: { source: CellAddress; target: CellAddress };
-  change_header_position_start: { col: number; row: number; x: number; y: number };
+  change_header_position: { source: CellAddress; target: CellAddress; event: Event };
+  change_header_position_start: { col: number; row: number; x: number; y: number; event: Event };
   sort_click: {
     field: FieldDef;
     order: SortOrder;
