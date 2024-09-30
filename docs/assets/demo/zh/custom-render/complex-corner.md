@@ -2,6 +2,7 @@
 category: examples
 group: Custom
 title: 自定义复杂斜线表头
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/complex-corner.jpeg
 option: ListTable-columns-text#customRender.elements
 ---
 
