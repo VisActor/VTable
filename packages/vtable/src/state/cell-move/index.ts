@@ -279,6 +279,10 @@ export function endMoveCol(state: StateManager): boolean {
     state.table.scenegraph.component.setRightFrozenColumnShadow(state.table.colCount - state.table.rightFrozenColCount);
   }
   state.table.scenegraph.updateNextFrame();
+
+  if (state.table.options.customConfig?.notUpdateInColumnRowMove === true) {
+    return true;
+  }
   return moveColResult;
 }
 
