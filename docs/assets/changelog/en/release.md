@@ -1,3 +1,14 @@
+# v1.8.1
+
+2024-09-30
+
+
+**🔨 Refactor**
+
+- **@visactor/vue-vtable**: rename vue component name
+
+[more detail about v1.8.1](https://github.com/VisActor/VTable/releases/tag/v1.8.1)
+
 # v1.8.0
 
 2024-09-29
