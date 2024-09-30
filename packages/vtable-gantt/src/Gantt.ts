@@ -16,7 +16,8 @@ import type {
   ITaskBarCustomLayout,
   ITimelineDateInfo,
   ITimelineScale,
-  ILineStyle
+  ILineStyle,
+  ITaskCreationCustomLayout
 } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
@@ -105,10 +106,12 @@ export class Gantt extends EventTarget {
     taskBarResizable: boolean;
     taskBarLabelStyle: ITaskBarLabelTextStyle;
     taskBarCustomLayout: ITaskBarCustomLayout;
+    taskBarCreatable: boolean;
     taskBarCreationButtonStyle: ILineStyle & {
       cornerRadius?: number;
       backgroundColor?: string;
     };
+    taskBarCreationCustomLayout: ITaskCreationCustomLayout;
 
     outerFrameStyle: IFrameStyle;
     pixelRatio: number;

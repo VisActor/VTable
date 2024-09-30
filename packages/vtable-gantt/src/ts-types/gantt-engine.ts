@@ -114,12 +114,16 @@ export interface GanttConstructorOptions {
             endDate: Date
           ) => TYPES.MenuListItem[]);
     };
+    /** 数据没有排期时，可通过创建任务条排期。默认为true */
+    scheduleCreatable?: boolean;
     /** 针对没有分配日期的任务，可以显示出创建按钮 */
-    creation?: {
+    scheduleCreation?: {
       buttonStyle: ILineStyle & {
         cornerRadius?: number;
         backgroundColor?: string;
       };
+      /** 任务条创建按钮的自定义渲染 */
+      customLayout?: ITaskCreationCustomLayout;
     };
   };
   /** 网格线配置 */
@@ -249,13 +253,13 @@ export type TaskBarCustomLayoutArgumentType = {
   taskRecord: any;
   ganttInstance: Gantt;
 };
-export type ITaskBarCustomLayout = (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj; //CustomLayout
 export type ITaskBarCustomLayoutObj = {
   rootContainer: Group;
   renderDefaultBar?: boolean; // 默认false
   renderDefaultResizeIcon?: boolean; // 默认false
   renderDefaultText?: boolean; // 默认false
 };
+export type ITaskBarCustomLayout = (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj; //CustomLayout
 
 export type DateCustomLayoutArgumentType = {
   width: number;
@@ -269,10 +273,20 @@ export type DateCustomLayoutArgumentType = {
   days: number;
   ganttInstance: Gantt;
 };
-export type IDateCustomLayout = (args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj;
 export type IDateCustomLayoutObj = {
   rootContainer: Group;
   renderDefaultText?: boolean; // 默认false
 };
+export type IDateCustomLayout = (args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj;
 
+export type TaskCreationCustomLayoutArgumentType = {
+  width: number;
+  height: number;
+  // index: number;
+  ganttInstance: Gantt;
+};
+export type ITaskCreationCustomLayoutObj = {
+  rootContainer: Group;
+};
+export type ITaskCreationCustomLayout = (args: TaskCreationCustomLayoutArgumentType) => ITaskCreationCustomLayoutObj;
 //#endregion

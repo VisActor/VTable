@@ -43,6 +43,17 @@ export interface TableEventHandlersEventArgumentMap {
     /** 改变后的数据条目 */
     record: any;
   };
+  create_task_schedule: {
+    event: Event;
+    /** 第几条数据 */
+    index: number;
+    /** 改变后的起始日期 */
+    startDate: Date;
+    /** 改变后的结束日期 */
+    endDate: Date;
+    /** 改变后的数据条目 */
+    record: any;
+  };
 }
 
 export interface TableEventHandlersReturnMap {
@@ -51,4 +62,5 @@ export interface TableEventHandlersReturnMap {
   mouseleave_task_bar: void;
   click_task_bar: void;
   change_date_range: void;
+  create_task_schedule: void;
 }

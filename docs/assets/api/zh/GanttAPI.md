@@ -1,10 +1,14 @@
 {{ target: gantt-api }}
+
 # Gantt API
+
 ## Methods
+
 甘特图目前支持的方法如下：
+
 ### 左侧任务信息表格接口调用
 
-因为左侧信息列表是一个完整的ListTable，所以可直接获取左侧表格的实例，进行自定义操作。
+因为左侧信息列表是一个完整的 ListTable，所以可直接获取左侧表格的实例，进行自定义操作。
 
 如下为获取表格选中状态的例子：
 
@@ -13,7 +17,8 @@
   const selectedCells = tableInstance.taskListTableInstance.getSelectedCellInfos();
   console.log(selectedCells);
 ```
-具体ListTable的接口参考：https://visactor.io/vtable/api/Methods
+
+具体 ListTable 的接口参考：https://visactor.io/vtable/api/Methods
 
 ### setRecords(Function)
 
@@ -30,6 +35,7 @@
 ```
   updateScales: (scales: ITimelineScale[]) => void
 ```
+
 {{ use: common-gantt-timeline-scale }}
 
 ### updateTaskRecord(Function)
@@ -42,7 +48,7 @@
 
 ### release(Function)
 
-释放Gantt实例
+释放 Gantt 实例
 
 ```
   release: () => void
@@ -88,13 +94,16 @@ export interface EVENT_TYPES {
    * 鼠标移出任务条事件
    */
   MOUSELEAVE_TASK_BAR: 'mouseleave_task_bar';
+  /**
+   * 创建任务排期事件
+   */
+  CREATE_TASK_SCHEDULE: 'create_task_schedule';
 }
 ```
 
-
 ### 左侧任务信息表格事件监听
 
-因为左侧信息列表是一个完整的ListTable，所以可直接获取左侧表格的实例，进行监听事件。
+因为左侧信息列表是一个完整的 ListTable，所以可直接获取左侧表格的实例，进行监听事件。
 
 如下为监听表格单元格选中事件的例子：
 
@@ -102,7 +111,8 @@ export interface EVENT_TYPES {
   const tableInstance =new Gantt(containerDom, options);
   tableInstance.taskListTableInstance.on('click_cell', (args)=>{});
 ```
-具体ListTable的事件参考：https://visactor.io/vtable/api/events
+
+具体 ListTable 的事件参考：https://visactor.io/vtable/api/events
 
 ### SCROLL
 
@@ -120,7 +130,7 @@ export interface EVENT_TYPES {
   }
 ```
 
- ### CHANGE_DATE_RANGE
+### CHANGE_DATE_RANGE
 
 改变日期范围事件
 
@@ -158,7 +168,7 @@ export interface EVENT_TYPES {
 ```
 
 MOUSEENTER_TASK_BAR
- MOUSEENTER_TASK_BAR
+MOUSEENTER_TASK_BAR
 
 鼠标移入任务条事件
 
@@ -184,4 +194,24 @@ MOUSEENTER_TASK_BAR
     record: any;
     event: Event;
   }
+```
+
+### CREATE_TASK_SCHEDULE
+
+给排期的任务排期的事件
+
+事件回传参数：
+
+```
+{
+    event: Event;
+    /** 第几条数据 */
+    index: number;
+    /** 改变后的起始日期 */
+    startDate: Date;
+    /** 改变后的结束日期 */
+    endDate: Date;
+    /** 改变后的数据条目 */
+    record: any;
+  };
 ```

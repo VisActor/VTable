@@ -8,7 +8,7 @@ import { GANTT_EVENT_TYPE, InteractionState } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
 import type { GanttTaskBarNode } from '../scenegraph/GanttNode';
-import { DayTimes, getTaskIndexByY } from '../gantt-helper';
+import { DayTimes, getDateIndexByX, getTaskIndexByY } from '../gantt-helper';
 
 export class EventManager {
   _gantt: Gantt;
@@ -106,19 +106,21 @@ function bindTableGroupListener(event: EventManager) {
       } else {
         stateManager.hideTaskBarHover(e);
         //#region hover到某一个任务 检查有没有日期安排，没有的话显示创建按钮
-        const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, gantt);
-        const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
-        if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord) {
-          const showX =
-            Math.floor(e.offset.x / gantt.parsedOptions.colWidthPerDay) * gantt.parsedOptions.colWidthPerDay;
-          const showY =
-            Math.floor((e.offset.y - gantt.getAllHeaderRowsHeight()) / gantt.parsedOptions.rowHeight) *
-              gantt.parsedOptions.rowHeight +
-            +gantt.getAllHeaderRowsHeight();
-          // const date = getDateByX(e.offset.x, gantt);
-          gantt.scenegraph.showTaskCreationButton(showX, showY, taskIndex, recordTaskInfo.taskRecord);
-          return;
+        if (gantt.parsedOptions.taskBarCreatable) {
+          const taskIndex = getTaskIndexByY(e.offset.y, gantt);
+          const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
+          if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord) {
+            const dateIndex = getDateIndexByX(e.offset.x, gantt);
+            const showX = dateIndex * gantt.parsedOptions.timelineColWidth - gantt.stateManager.scroll.horizontalBarPos;
+            const showY = taskIndex * gantt.parsedOptions.rowHeight - gantt.stateManager.scroll.verticalBarPos;
+            //    -
+            // (gantt.stateManager.scroll.horizontalBarPos % gantt.parsedOptions.rowHeight);
+            // const date = getDateByX(e.offset.x, gantt);
+            gantt.scenegraph.showTaskCreationButton(showX, showY, taskIndex, recordTaskInfo.taskRecord);
+            return;
+          }
         }
+        //#endregion
       }
       gantt.scenegraph.hideTaskCreationButton();
     }
@@ -127,7 +129,7 @@ function bindTableGroupListener(event: EventManager) {
     if (poniterState === 'down' && gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
       let isClickBar = false;
       let isClickCreationButtom = false;
-      const taskBarTarget = e.detailPath.find((pathNode: any) => {
+      e.detailPath.find((pathNode: any) => {
         if (pathNode.name === 'task-bar') {
           // || pathNode.name === 'task-bar-hover-shadow';
           isClickBar = true;
@@ -136,7 +138,7 @@ function bindTableGroupListener(event: EventManager) {
         }
       });
       if (isClickBar) {
-        const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, gantt);
+        const taskIndex = getTaskIndexByY(e.offset.y, gantt);
         const record = gantt.getRecordByIndex(taskIndex);
         gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
           event: e.nativeEvent,
@@ -144,7 +146,7 @@ function bindTableGroupListener(event: EventManager) {
           record
         });
       } else if (isClickCreationButtom) {
-        const taskIndex = getTaskIndexByY((e.nativeEvent as any).y, gantt);
+        const taskIndex = getTaskIndexByY(e.offset.y, gantt);
         const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
         if (recordTaskInfo.taskRecord) {
           const dateFormat = gantt.parsedOptions.dateFormat ?? 'yyyy-mm-dd';
@@ -152,12 +154,25 @@ function bindTableGroupListener(event: EventManager) {
             gantt.parsedOptions.endDateField
           ] = formatDate(
             new Date(
-              gantt.parsedOptions._minDateTime + Math.floor(e.offset.x / gantt.parsedOptions.colWidthPerDay) * DayTimes
+              gantt.parsedOptions._minDateTime +
+                Math.floor(
+                  (e.offset.x + gantt.stateManager.scroll.horizontalBarPos) / gantt.parsedOptions.colWidthPerDay
+                ) *
+                  DayTimes
             ),
             dateFormat
           );
           gantt.scenegraph.hideTaskCreationButton();
           gantt.updateTaskRecord(recordTaskInfo.taskRecord, taskIndex);
+          if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE)) {
+            gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE, {
+              event: e.nativeEvent,
+              index: taskIndex,
+              startDate: recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField],
+              endDate: recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField],
+              record: recordTaskInfo.taskRecord
+            });
+          }
         }
       }
     }

@@ -1,4 +1,5 @@
 {{ target: gantt-api }}
+
 # Gantt API
 
 ## Methods
@@ -16,6 +17,7 @@ The following is an example of obtaining the selected state of the table:
   const selectedCells = tableInstance.taskListTableInstance.getSelectedCellInfos();
   console.log(selectedCells);
 ```
+
 For specific ListTable interfaces, refer to: https://visactor.io/vtable/api/Methods
 
 ### setRecords(Function)
@@ -33,6 +35,7 @@ Update timeline scales
 ```
   updateScales: (scales: ITimelineScale[]) => void
 ```
+
 {{ use: common-gantt-timeline-scale }}
 
 ### updateTaskRecord(Function)
@@ -91,6 +94,11 @@ export interface EVENT_TYPES {
    * Mouse leave task bar event
    */
   MOUSELEAVE_TASK_BAR: 'mouseleave_task_bar';
+
+  /**
+   * Create task schedule event
+   */
+  CREATE_TASK_SCHEDULE: 'create_task_schedule';
 }
 ```
 
@@ -104,6 +112,7 @@ The following is an example of listening to the table cell selection event:
   const tableInstance = new Gantt(containerDom, options);
   tableInstance.taskListTableInstance.on('click_cell', (args) => {});
 ```
+
 For specific ListTable events, refer to: https://visactor.io/vtable/api/events
 
 ### SCROLL
@@ -185,4 +194,24 @@ Event callback parameters:
     record: any;
     event: Event;
   }
+```
+
+### CREATE_TASK_SCHEDULE
+
+Events that schedule scheduled tasks
+
+Event return parameters:
+
+```
+{
+event: Event;
+/** The first data */
+index: number;
+/** The starting date after the change */
+startDate: Date;
+/** The changed end date */
+endDate: Date;
+/** The changed data entry */
+record: any;
+};
 ```

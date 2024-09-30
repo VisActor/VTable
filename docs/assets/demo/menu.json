@@ -281,6 +281,13 @@
             "zh": "甘特图交互——拖拽任务条",
             "en": "Gantt Interaction —— Drag TaskBar"
           }
+        },
+        {
+          "path": "gantt-interaction-creation-button",
+          "title": {
+            "zh": "甘特图交互——创建排期",
+            "en": "Gantt Interaction —— Task Creation"
+          }
         }
       ]
     },

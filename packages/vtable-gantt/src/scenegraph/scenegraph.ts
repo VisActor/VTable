@@ -9,7 +9,7 @@ import { TimelineHeader } from './timeline-header';
 import { TaskBar } from './task-bar';
 import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
-import { getDateByX, getTaskIndexByY } from '../gantt-helper';
+import { getTaskIndexByY } from '../gantt-helper';
 import graphicContribution from './graphic';
 import { TaskCreationButton } from './task-creation-button';
 container.load(graphicContribution);

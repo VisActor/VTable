@@ -1,9 +1,8 @@
 import type { ColumnsDefine } from '@visactor/vtable';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
-import { Gantt } from '../../src/index';
+import { Gantt, VRender } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
-
 export function createTable() {
   const records = [
     {
@@ -861,13 +860,40 @@ export function createTable() {
         /** 任务条的圆角 */
         cornerRadius: 10
       },
-      creation: {
+      // scheduleCreatable: false,
+      scheduleCreation: {
         buttonStyle: {
           backgroundColor: '#f7f7f5',
           lineColor: '#808080',
           lineWidth: 1,
           lineDash: [5, 5]
         }
+        // customLayout(args: TYPES.TaskCreationCustomLayoutArgumentType) {
+        //   const { width, height } = args;
+        //   const container = new VRender.Group({
+        //     height,
+        //     width,
+        //     fill: 'white'
+        //     // display: 'flex',
+        //     // flexDirection: 'column',
+        //     // alignItems: 'center',
+        //     // justifyContent: 'space-around'
+        //     // fill: 'red'
+        //   });
+        //   const size = Math.min(width, height);
+        //   const avatar = new VRender.Image({
+        //     width: size,
+        //     height: size,
+        //     x: (width - size) / 2,
+        //     y: (height - size) / 2,
+        //     image:
+        //       '<svg t="1727678161896" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5988" width="200" height="200"><path d="M725.577143 86.820571h-431.542857c-25.965714 0-43.154286-17.115429-43.154286-42.788571s17.188571-42.788571 43.154286-42.788571h431.542857c25.892571 0 43.154286 17.115429 43.154286 42.788571s-17.261714 42.788571-43.154286 42.788571z" fill="#2C85FF" p-id="5989"></path><path d="M900.022857 1.609143h-71.460571v68.754286c0 47.030857-53.686857 85.577143-101.156572 85.577142h-431.542857c-47.542857 0-102.4-38.546286-102.4-85.577142v-68.754286h-70.217143C75.629714 1.609143 36.790857 40.228571 36.790857 87.186286v850.358857c0 47.104 38.838857 85.577143 86.308572 85.577143h776.777142c47.542857 0 86.308571-38.473143 86.308572-85.577143V87.259429c0-47.104-38.765714-85.577143-86.308572-85.577143zM727.771429 632.978286H554.642286v171.739428c0 25.746286-17.188571 42.934857-43.008 42.934857s-43.008-17.188571-43.008-42.934857V632.978286H296.228571c-25.892571 0-43.154286-17.115429-43.154285-42.788572s17.261714-42.788571 43.154285-42.788571h172.397715V375.149714c0-25.746286 17.188571-42.934857 43.008-42.934857s43.008 17.188571 43.008 42.934857v172.251429H727.771429c25.892571 0 43.154286 17.115429 43.154285 42.788571s-17.261714 42.788571-43.154285 42.788572z" fill="#2C85FF" p-id="5990"></path></svg>'
+        //   });
+        //   container.add(avatar);
+        //   return {
+        //     rootContainer: container
+        //   };
+        // }
       }
     },
     timelineHeader: {
