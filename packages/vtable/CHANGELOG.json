@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.8.1",
+      "tag": "@visactor/vtable_v1.8.1",
+      "date": "Sun, 29 Sep 2024 07:41:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: rename vue component name\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.8.0",
       "tag": "@visactor/vtable_v1.8.0",
       "date": "Sun, 29 Sep 2024 02:17:55 GMT",
