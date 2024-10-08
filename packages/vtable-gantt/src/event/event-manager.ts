@@ -8,7 +8,7 @@ import { GANTT_EVENT_TYPE, InteractionState } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
 import { DayTimes, getDateIndexByX, getTaskIndexByY } from '../gantt-helper';
-import type { GanttTaskBarNode } from '../scenegraph/GanttNode';
+import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 
 export class EventManager {
   _gantt: Gantt;

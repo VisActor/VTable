@@ -4,7 +4,7 @@ import type { Scenegraph } from './scenegraph';
 import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
 import { getTextPos } from '../gantt-helper';
-import { GanttTaskBarNode } from './GanttNode';
+import { GanttTaskBarNode } from './gantt-node';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
