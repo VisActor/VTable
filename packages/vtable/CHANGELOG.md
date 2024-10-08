@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Sun, 29 Sep 2024 07:41:11 GMT and should not be manually modified.
+This log was last generated on Mon, 30 Sep 2024 09:38:25 GMT and should not be manually modified.
+
+## 1.8.2
+Mon, 30 Sep 2024 09:38:25 GMT
+
+### Updates
+
+- fix: fix richtext icon update #2281
 
 ## 1.8.1
 Sun, 29 Sep 2024 07:41:11 GMT
