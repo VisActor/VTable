@@ -1,3 +1,16 @@
+# v1.8.2
+
+2024-10-08
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix richtext icon update [#2281](https://github.com/VisActor/VTable/issues/2281)
+
+
+
+[更多详情请查看 v1.8.2](https://github.com/VisActor/VTable/releases/tag/v1.8.2)
+
 # v1.8.1
 
 2024-09-30
