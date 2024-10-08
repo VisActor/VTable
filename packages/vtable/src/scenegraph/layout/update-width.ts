@@ -366,11 +366,12 @@ function updateCellWidth(
       (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
       (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
     if (customContainer) {
-      if (scene.table.reactCustomLayout) {
-        scene.table.reactCustomLayout.removeCustomCell(col, row);
-      }
+      // fix for custom component flash
+      // if (scene.table.reactCustomLayout) {
+      //   scene.table.reactCustomLayout.removeCustomCell(col, row);
+      // }
+      // customContainer.removeAllChild();
       let customElementsGroup;
-      customContainer.removeAllChild();
       cell.removeChild(customContainer);
 
       const customMergeRange = getCustomCellMergeCustom(col, row, cell, scene.table);
@@ -428,8 +429,8 @@ function updateCellWidth(
           const customResult = dealWithCustom(
             customLayout,
             customRender,
-            cellGroup.mergeStartCol ?? col,
-            cellGroup.mergeStartRow ?? row,
+            col,
+            row,
             width,
             height,
             false,
