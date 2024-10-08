@@ -54,8 +54,8 @@ export function dealWithCustom(
   }
   if (typeof customLayout === 'function') {
     const arg = {
-      col,
-      row,
+      col: range?.start.col ?? col,
+      row: range?.start.row ?? row,
       dataValue: table.getCellOriginValue(col, row),
       value: table.getCellValue(col, row) || '',
       rect: {
@@ -66,7 +66,9 @@ export function dealWithCustom(
         width,
         height
       },
-      table
+      table,
+      originCol: col,
+      originRow: row
     };
     const customRenderObj = customLayout(arg);
     if (customRenderObj.rootContainer) {
