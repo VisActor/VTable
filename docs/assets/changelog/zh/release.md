@@ -1,3 +1,14 @@
+# v1.8.1
+
+2024-09-30
+
+
+**🔨 功能重构**
+
+- **@visactor/vue-vtable**: rename vue component name
+
+[更多详情请查看 v1.8.1](https://github.com/VisActor/VTable/releases/tag/v1.8.1)
+
 # v1.8.0
 
 2024-09-29
