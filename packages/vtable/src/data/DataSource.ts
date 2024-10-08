@@ -275,8 +275,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.registerAggregator(AggregationType.NONE, NoneAggregator);
     this.registerAggregator(AggregationType.CUSTOM, CustomAggregator);
   }
+  updateColumns(columns: ColumnsDefine) {
+    this.columns = columns;
+  }
   _generateFieldAggragations() {
     const columnObjs = this.columns;
+    this.fieldAggregators = [];
     for (let i = 0; i < columnObjs?.length; i++) {
       delete (columnObjs[i] as any).vtable_aggregator; //重置聚合器 如更新了过滤条件都需要重新计算
       const field = columnObjs[i].field;
