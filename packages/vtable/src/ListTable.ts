@@ -19,7 +19,12 @@ import type {
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
 import { isArray, isValid } from '@visactor/vutils';
-import { _setDataSource, _setRecords, generateAggregationForColumn } from './core/tableHelper';
+import {
+  _setDataSource,
+  _setRecords,
+  checkHasAggregationOnColumnDefine,
+  generateAggregationForColumn
+} from './core/tableHelper';
 import { BaseTable } from './core';
 import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
@@ -224,6 +229,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.headerHelper.setTableColumnsEditor();
     this._hasAutoImageColumn = undefined;
     this.refreshHeader();
+    this.dataSource.updateColumns?.(this.internalProps.columns);
+    if (this.records && checkHasAggregationOnColumnDefine(columns)) {
+      this.dataSource.processRecords(this.dataSource.dataSourceObj?.records ?? this.dataSource.dataSourceObj);
+    }
     this.internalProps.useOneRowHeightFillAll = false;
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
