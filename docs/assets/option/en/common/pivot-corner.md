@@ -12,7 +12,7 @@ Corner header content display based on:
 ${prefix} customRender(Function|Object)
 Custom rendering for body corner header cell, in function or object form. The type is: `ICustomRenderFuc | ICustomRenderObj`.
 
-[demo link](../demo/custom-render/simple-corner)
+[demo link](../demo/custom-render/complex-corner)
 
 ${prefix} customLayout(Function)
 
