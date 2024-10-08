@@ -1,53 +1,22 @@
 ---
 category: examples
 group: Custom
-title: 自定义复杂斜线表头
+title: 自定义角头单元格
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/complex-corner.jpeg
-option: ListTable-columns-text#customRender.elements
+option: PivotTable#corner.customLayout
 ---
 
-在透视表中，有时候有多个维度分析数据，需要把左上角的角落区自定义绘制，可以通过定义 `customMergeCell` 和 `customLayout` 来实现，它会先执行单元格合并，再执行自定义绘制：
+# 自定义角头单元格
 
-```js
-option = {
-  // ...其他配置...
-  customMergeCell: (col, row, table) => {
-    if (col >= 0 && col < 3 && row <= 1) {
-      return {
-        text: 'merge corner',
-        range: {
-          start: {
-            col: 0,
-            row: 0
-          },
-          end: {
-            col: 2,
-            row: 1
-          }
-        },
-        style: {
-          bgColor: ''
-        }
-      };
-    }
-  },
-  corner: {
-    customLayout: (args) => {
-      // 根据参数绘制 corner 区域
-      return {}
-    }
-  }
-}
+在透视表中，有时候有多个维度分析数据，需要把左上角的角落区自定义绘制，可以通过定义 `customMergeCell` 和 `customLayout`。如没有合并整个角头需求，可以不配置 `customMergeCell`。
 
-```
+## 关键配置
 
-## 示例代码如下:
+- `corner.customLayout` 配置该 API 返回需要渲染的内容
+
+## 代码演示
 
 ```javascript livedemo template=vtable
-
-const dom = document.getElementById(CONTAINER_ID);
-dom.style.width = '800px';
-dom.style.height = '800px';
 const option = {
   autoFillHeight: true,
   rows: ['province', 'city'],
@@ -97,26 +66,26 @@ const option = {
   },
   corner: {
     titleOnDimension: 'row',
-    customLayout: (args) => {
-      const {table, row, col, rect} = args;
-      const {height, width} = rect ?? table.getCellRect(col, row);
+    customLayout: args => {
+      const { table, row, col, rect } = args;
+      const { height, width } = rect ?? table.getCellRect(col, row);
       const container = new VTable.CustomLayout.Group({
         height,
-        width,
+        width
       });
 
       // 定义文本内容的数组
       const texts = [
-        {text: '省', fontSize: 18, x: 30, y: rect.height - 25},
-        {text: '市', fontSize: 18, x: 105, y: rect.height - 25},
-        {text: '数据', fontSize: 18, x: rect.width - 50, y: rect.height - 35},
-        {text: '物品', fontSize: 18, x: rect.width - 50, y: rect.height - 85},
-        {text: '种类', fontSize: 18, x: rect.width - 50, y: 18},
-        {text: '类型', fontSize: 16, x: 176, y: rect.height - 20},
+        { text: '省份', fontSize: 18, x: 30, y: rect.height - 25 },
+        { text: '城市', fontSize: 18, x: 105, y: rect.height - 25 },
+        { text: '数据', fontSize: 18, x: rect.width - 50, y: rect.height - 35 },
+        { text: '子类别', fontSize: 18, x: rect.width - 50, y: rect.height - 85 },
+        { text: '类别', fontSize: 18, x: rect.width - 50, y: 18 },
+        { text: '指标', fontSize: 16, x: 176, y: rect.height - 20 }
       ];
 
       // 循环添加文本
-      texts.forEach(({text, fontSize, x, y}) => {
+      texts.forEach(({ text, fontSize, x, y }) => {
         container.addChild(
           new VTable.CustomLayout.Text({
             text,
@@ -124,25 +93,25 @@ const option = {
             fontFamily: 'sans-serif',
             fill: 'black',
             x,
-            y,
+            y
           })
         );
       });
 
       // 定义线段的点
       const linePoints = [
-        {x: rect.left, y: rect.top},
-        {x: 0, y: 0},
-        {x: rect.width - 40, y: rect.height},
-        {x: 0, y: 0},
-        {x: 173, y: rect.height},
-        {x: 0, y: 0},
-        {x: 84, y: rect.height},
-        {x: 0, y: 0},
-        {x: rect.width, y: rect.height - 90},
-        {x: 0, y: 0},
-        {x: rect.width, y: rect.height - 38},
-        {x: 0, y: 0},
+        { x: rect.left, y: rect.top },
+        { x: 0, y: 0 },
+        { x: rect.width - 40, y: rect.height },
+        { x: 0, y: 0 },
+        { x: 173, y: rect.height },
+        { x: 0, y: 0 },
+        { x: 84, y: rect.height },
+        { x: 0, y: 0 },
+        { x: rect.width, y: rect.height - 90 },
+        { x: 0, y: 0 },
+        { x: rect.width, y: rect.height - 38 },
+        { x: 0, y: 0 }
       ];
 
       // 添加线段
@@ -150,14 +119,14 @@ const option = {
         new VTable.CustomLayout.Line({
           points: linePoints,
           lineWidth: 1,
-          stroke: '#ccc',
+          stroke: '#ccc'
         })
       );
 
       return {
         rootContainer: container,
         renderDefault: false,
-        enableCellPadding: false,
+        enableCellPadding: false
       };
     }
   },
@@ -425,7 +394,5 @@ const option = {
   dragHeaderMode: 'all'
 };
 
-option.container = dom;
-const instance = new VTable.PivotTable(option);
-
+const instance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
 ```

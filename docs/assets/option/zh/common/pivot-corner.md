@@ -12,7 +12,7 @@ ${prefix} titleOnDimension(string) ='row'
 ${prefix} customRender(Function|Object)
 自定义表格左上角区域的单元格, 参数: `ICustomRenderFuc | ICustomRenderObj`.
 
-[demo](../demo/custom-render/simple-corner)
+[demo](../demo/custom-render/complex-corner)
 
 ${prefix} customLayout(Function)
 
