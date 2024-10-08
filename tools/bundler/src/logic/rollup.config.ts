@@ -6,15 +6,20 @@ import type { BabelPlugins } from './babel.config';
 import resolve from '@rollup/plugin-node-resolve';
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript';
+// import typescript from '@rollup/plugin-typescript';
+// import typescript2 from 'rollup-plugin-typescript2';
 import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import url from '@rollup/plugin-url';
 import Alias from '@rollup/plugin-alias';
 import postcss from 'rollup-plugin-postcss';
 import strip from '@rollup/plugin-strip';
+import vue from '@vitejs/plugin-vue';
 import * as path from 'path';
 import { Config } from './config';
+
+const useTypescriptPlugin2 = process.env.USE_TYPESCRIPT2 === 'true';
+const typescript = useTypescriptPlugin2 ? require('rollup-plugin-typescript2') : require('@rollup/plugin-typescript');
 
 function getExternal(
   rawPackageJson: RawPackageJson,
@@ -34,8 +39,16 @@ export function getRollupOptions(
   entry: string,
   rawPackageJson: RawPackageJson,
   babelPlugins: BabelPlugins,
-  config: Config
+  config: Config,
+  tsconfigOverride?: Record<string, unknown>
 ): RollupOptions {
+  const tsOption = {
+    tsconfig: path.resolve(projectRoot, config.tsconfig)
+  };
+
+  if (useTypescriptPlugin2 && tsconfigOverride) {
+    (tsOption as any).tsconfigOverride = tsconfigOverride;
+  }
   return {
     input: entry,
     external: getExternal(rawPackageJson, config.external),
@@ -43,14 +56,11 @@ export function getRollupOptions(
     plugins: [
       resolve(),
       commonjs(),
+      vue(),
+      // typescript(),
       babel({ ...babelPlugins, babelHelpers: 'bundled' }),
       replace({ ...config.envs, preventAssignment: true }),
-      typescript({
-        tsconfig: path.resolve(projectRoot, config.tsconfig),
-        compilerOptions: {
-          declaration: false
-        }
-      }),
+      typescript(tsOption),
       postcss({
         extensions: ['.css']
       }),

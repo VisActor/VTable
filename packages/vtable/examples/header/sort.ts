@@ -76,7 +76,7 @@ export function createTable() {
           fontSize: 13,
           fontFamily: 'sans-serif'
         },
-        sort:true,
+        sort: true,
         field: 'name',
         width: 150
       }
@@ -91,7 +91,7 @@ export function createTable() {
 
   //设置表格数据
   instance.setRecords(personsDataSource, {
-    sortState:{
+    sortState: {
       field: 'name',
       order: 'desc'
     }

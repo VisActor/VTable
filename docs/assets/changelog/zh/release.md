@@ -1,3 +1,47 @@
+# v1.8.2
+
+2024-10-08
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix richtext icon update [#2281](https://github.com/VisActor/VTable/issues/2281)
+
+
+
+[更多详情请查看 v1.8.2](https://github.com/VisActor/VTable/releases/tag/v1.8.2)
+
+# v1.8.1
+
+2024-09-30
+
+
+**🔨 功能重构**
+
+- **@visactor/vue-vtable**: rename vue component name
+
+[更多详情请查看 v1.8.1](https://github.com/VisActor/VTable/releases/tag/v1.8.1)
+
+# v1.8.0
+
+2024-09-29
+
+**🆕 新增功能**
+
+- **@visactor/vue-vtable**: 添加了 vue-vtable 组件
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复了位置计算问题针对接口 updateAutoRow() [#2494](https://github.com/VisActor/VTable/issues/2494)
+- **@visactor/vtable**: 修复了拖动检查状态更新 [#2518](https://github.com/VisActor/VTable/issues/2518)
+- **@visactor/vtable**: 修复了 vtable-export 中分组单元格的问题 [#2487](https://github.com/VisActor/VTable/issues/2487)
+- **@visactor/vtable**: 修复了在调整列宽时，React 组件更新的问题
+- **@visactor/vtable**: theme 主题中添加了 functionalIconsStyle 配置[#1308](https://github.com/VisActor/VTable/issues/1308)
+
+[更多详情请查看 v1.8.0](https://github.com/VisActor/VTable/releases/tag/v1.8.0)
+
+[更多详情请查看 v1.7.9](https://github.com/VisActor/VTable/releases/tag/v1.7.9)
+
 # v1.7.8
 
 2024-09-24

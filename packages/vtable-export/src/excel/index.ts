@@ -111,7 +111,8 @@ async function addCell(
 ) {
   const { layoutMap } = tableInstance.internalProps;
   const cellType = tableInstance.getCellType(col, row);
-  let cellValue = tableInstance.getCellValue(col, row);
+  const rawRecord = tableInstance.getCellRawRecord(col, row);
+  let cellValue = (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row);
   if (isPromise(cellValue)) {
     cellValue = await cellValue;
   }

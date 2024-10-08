@@ -96,4 +96,4 @@ instance.registerCustomCellStyle(id, newStyle)
 
 * 已分配的自定义样式的单元格区域，可以通过`arrangeCustomCellStyle`方法，对单元格区域进行更新样式分配，更新后，单元格的样式会被更新；如果`customStyleId`为`undefined` | `null`，则表示还原单元格的样式为默认样式
 
-具体使用参考[demo](../demo/custom-render/custom-style)
+具体使用参考[demo](../../demo/custom-render/custom-style)

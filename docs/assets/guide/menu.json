@@ -460,6 +460,13 @@
           }
         },
         {
+          "path": "vue-custom-component",
+          "title": {
+            "zh": "Vue自定义组件",
+            "en": "Vue Custom Component"
+          }
+        },
+        {
           "path": "custom_render",
           "title": {
             "zh": "单元格自定义渲染(CustomRender)",
@@ -663,8 +670,8 @@
         {
           "path": "vue",
           "title": {
-            "zh": "Vue VTable",
-            "en": "Vue VTable"
+            "zh": "Vue-VTable",
+            "en": "Vue-VTable"
           }
         }
       ]

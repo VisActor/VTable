@@ -148,9 +148,22 @@ export function changeRadioOrder(sourceIndex: number, targetIndex: number, state
     sourceIndex = table.getRecordShowIndexByCell(0, sourceIndex);
     targetIndex = table.getRecordShowIndexByCell(0, targetIndex);
   }
-  if (sourceIndex !== targetIndex) {
+  // if (sourceIndex !== targetIndex) {
+  //   const sourceRecord = radioState[sourceIndex];
+  //   radioState[sourceIndex] = radioState[targetIndex];
+  //   radioState[targetIndex] = sourceRecord;
+  // }
+  if (sourceIndex > targetIndex) {
     const sourceRecord = radioState[sourceIndex];
-    radioState[sourceIndex] = radioState[targetIndex];
+    for (let i = sourceIndex; i > targetIndex; i--) {
+      radioState[i] = radioState[i - 1];
+    }
+    radioState[targetIndex] = sourceRecord;
+  } else if (sourceIndex < targetIndex) {
+    const sourceRecord = radioState[sourceIndex];
+    for (let i = sourceIndex; i < targetIndex; i++) {
+      radioState[i] = radioState[i + 1];
+    }
     radioState[targetIndex] = sourceRecord;
   }
 }

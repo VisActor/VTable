@@ -34,7 +34,7 @@ export function updateAutoRow(
           }
         } else {
           // 估计位置
-          y = table.getRowsHeight(table.frozenRowCount, cellGroup.row - 1);
+          y = getEstimatePosition(cellGroup.row, table);
         }
         if (isValid(y)) {
           cellGroup.setAttribute('y', y);
@@ -61,7 +61,7 @@ export function updateAutoRow(
           }
         } else {
           // 估计位置
-          y = table.getRowsHeight(table.frozenRowCount, cellGroup.row - 1);
+          y = getEstimatePosition(cellGroup.row, table);
           // console.log('估计位置', table.getRowsHeight(table.frozenRowCount, cellGroup.row));
         }
         if (isValid(y)) {
@@ -93,4 +93,18 @@ export function updateAutoRow(
   //   }
   //   y = child.attribute.y + child.attribute.height;
   // });
+}
+
+// 获取预估位置
+function getEstimatePosition(row: number, table: BaseTableAPI) {
+  let y;
+  if (row < table.frozenRowCount) {
+    y = table.getRowsHeight(0, row - 1);
+  } else if (row >= table.rowCount - table.bottomFrozenRowCount) {
+    y = table.getRowsHeight(table.rowCount - table.bottomFrozenRowCount, row - 1);
+  } else {
+    y = table.getRowsHeight(table.frozenRowCount, row - 1);
+  }
+
+  return y;
 }
