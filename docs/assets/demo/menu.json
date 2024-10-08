@@ -932,6 +932,38 @@
           }
         },
         {
+          "path": "simple-corner",
+          "title": {
+            "zh": "简单斜线表头",
+            "en": "Simple Corner"
+          },
+          "meta": {
+            "title": "Custom Simple Corner",
+            "keywords": "",
+            "category": "demo",
+            "group": "Custom",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png",
+            "link": "'../../guide/custom_define/custom_layout'",
+            "option": ""
+          }
+        },
+        {
+          "path": "complex-corner",
+          "title": {
+            "zh": "复杂斜线表头",
+            "en": "Complex Corner"
+          },
+          "meta": {
+            "title": "Custom Complex Corner",
+            "keywords": "",
+            "category": "demo",
+            "group": "Custom",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png",
+            "link": "'../../guide/custom_define/custom_layout'",
+            "option": ""
+          }
+        },
+        {
           "path": "custom-cell-layout-jsx",
           "title": {
             "zh": "单元格自定义布局(JSX)",
