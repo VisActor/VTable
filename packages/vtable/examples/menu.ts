@@ -777,6 +777,14 @@ export const menus = [
     children: [
       {
         path: 'custom',
+        name: 'complex-corner'
+      },
+      {
+        path: 'custom',
+        name: 'simple-corner'
+      },
+      {
+        path: 'custom',
         name: 'custom-layout'
       },
       {
