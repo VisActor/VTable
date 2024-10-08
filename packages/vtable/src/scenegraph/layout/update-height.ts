@@ -212,12 +212,11 @@ export function updateCellHeight(
       (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
       (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
     if (customContainer) {
-      if (scene.table.reactCustomLayout) {
-        scene.table.reactCustomLayout.removeCustomCell(col, row);
-      }
-
+      // if (scene.table.reactCustomLayout) {
+      //   scene.table.reactCustomLayout.removeCustomCell(col, row);
+      // }
+      // customContainer.removeAllChild();
       let customElementsGroup;
-      customContainer.removeAllChild();
       cell.removeChild(customContainer);
 
       const customMergeRange = getCustomCellMergeCustom(col, row, cell, scene.table);
