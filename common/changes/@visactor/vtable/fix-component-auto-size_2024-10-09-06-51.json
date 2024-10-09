@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix auto size in react custom component",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
