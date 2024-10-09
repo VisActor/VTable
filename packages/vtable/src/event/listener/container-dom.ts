@@ -646,7 +646,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         if (
           y > drawRange.bottom - bottomFrozenRowHeight &&
           canScrollY &&
-          table.scrollTop + table.tableNoFrameWidth < table.getAllRowsHeight()
+          table.scrollTop + table.tableNoFrameHeight < table.getAllRowsHeight()
         ) {
           bottom = true;
           table.eventManager.scrollYSpeed = -(y - drawRange.bottom + bottomFrozenRowHeight) / 50;
