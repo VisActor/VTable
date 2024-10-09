@@ -124,7 +124,11 @@ export function createComplexColumn(
     }
 
     // adjust cellLocation for top frozen row
-    if ((cellLocation === 'columnHeader' || cellLocation === 'cornerHeader') && row >= table.columnHeaderLevelCount) {
+    if (
+      !table.isPivotTable() &&
+      (cellLocation === 'columnHeader' || cellLocation === 'cornerHeader') &&
+      row >= table.columnHeaderLevelCount
+    ) {
       cellLocation = 'body';
     }
     const define =
