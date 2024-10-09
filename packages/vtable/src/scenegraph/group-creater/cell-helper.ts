@@ -397,7 +397,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
   let isMerge;
   let range;
-  let cellTheme;
   let customStyle;
   let customResult;
   let isCustomMerge = false;
@@ -415,10 +414,10 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
       value = customMergeText;
       customStyle = customMergeStyle;
-      if (customStyle) {
-        cellTheme = getStyleTheme(customStyle, table, range.start.col, range.start.row, getProp).theme;
-        cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
-      }
+      // if (customStyle) {
+      //   cellTheme = getStyleTheme(customStyle, table, range.start.col, range.start.row, getProp).theme;
+      //   cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
+      // }
 
       if (customLayout || customRender) {
         customResult = dealWithCustom(
@@ -496,18 +495,16 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     }
   }
 
-  const cellStyle = table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
+  const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
+  const cellTheme = getStyleTheme(
+    cellStyle,
+    table,
+    isMerge ? range.start.col : col,
+    isMerge ? range.start.row : row,
+    getProp
+  ).theme;
 
-  if (!cellTheme) {
-    cellTheme = getStyleTheme(
-      cellStyle,
-      table,
-      isMerge ? range.start.col : col,
-      isMerge ? range.start.row : row,
-      getProp
-    ).theme;
-  }
   cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
 
   // fast method for text
@@ -650,8 +647,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     dealPromiseData(
       value,
       table,
-      updateCellContent.bind(
-        null,
+      callUpdateCellContentForPromiseValue.bind(null, {
         type,
         value,
         define,
@@ -667,10 +663,10 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         textBaseline,
         mayHaveIcon,
         addNew,
-        cellTheme,
         range,
-        customResult
-      )
+        customResult,
+        customStyle
+      })
     );
   } else {
     newCellGroup = updateCellContent(
@@ -828,7 +824,57 @@ function canUseFastUpdate(
   }
   return false;
 }
+function callUpdateCellContentForPromiseValue(updateCellArgs: any) {
+  const {
+    type,
+    value,
+    define,
+    table,
+    col,
+    row,
+    cellWidth,
+    cellHeight,
+    oldCellGroup,
+    padding,
+    textAlign,
+    textBaseline,
+    mayHaveIcon,
+    addNew,
+    range,
+    customResult,
+    customStyle
+  } = updateCellArgs;
+  const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
+  const cellTheme = getStyleTheme(
+    cellStyle,
+    table,
+    range ? range.start.col : col,
+    range ? range.start.row : row,
+    getProp
+  ).theme;
 
+  cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
+  updateCellContent(
+    type,
+    value,
+    define,
+    table,
+    col,
+    row,
+    // bgColorFunc,
+    cellWidth,
+    cellHeight,
+    oldCellGroup,
+    padding,
+    textAlign,
+    textBaseline,
+    mayHaveIcon,
+    addNew,
+    cellTheme,
+    range,
+    customResult
+  );
+}
 export function dealWithMergeCellSize(
   range: CellRange,
   cellWidth: number,
