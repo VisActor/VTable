@@ -20,6 +20,7 @@ import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { computeCheckboxCellHeight, computeRadioCellHeight } from './height-util';
 import { measureTextBounds } from '../utils/text-measure';
 import { breakString } from '../utils/break-string';
+import { emptyCustomLayout } from '../../components/react/react-custom-layout';
 
 const utilRichTextMark = new RichText({
   width: 0,
@@ -542,7 +543,7 @@ function fillRowsHeight(
  */
 function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI) {
   const customRender = table.getCustomRender(col, row);
-  const customLayout = table.getCustomLayout(col, row);
+  let customLayout = table.getCustomLayout(col, row);
   if (customRender || customLayout) {
     let spanRow = 1;
     let height = 0;
@@ -564,6 +565,10 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       rect: getCellRect(col, row, table),
       table
     };
+    if (customLayout === 'react-custom-layout') {
+      // customLayout = table._reactCreateGraphic;
+      customLayout = table.reactCustomLayout?.getCustomLayoutFunc(col, row) || emptyCustomLayout;
+    }
     if (isFunction(customLayout)) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);

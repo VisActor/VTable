@@ -20,6 +20,7 @@ import type { Group as VGroup } from '@src/vrender';
 import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { breakString } from '../utils/break-string';
+import { emptyCustomLayout } from '../../components/react/react-custom-layout';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
@@ -446,7 +447,7 @@ function computeAutoColWidth(
  */
 function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI) {
   const customRender = table.getCustomRender(col, row);
-  const customLayout = table.getCustomLayout(col, row);
+  let customLayout = table.getCustomLayout(col, row);
   if (customRender || customLayout) {
     let spanCol = 1;
     let width = 0;
@@ -468,6 +469,10 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       rect: getCellRect(col, row, table),
       table
     };
+    if (customLayout === 'react-custom-layout') {
+      // customLayout = table._reactCreateGraphic;
+      customLayout = table.reactCustomLayout?.getCustomLayoutFunc(col, row) || emptyCustomLayout;
+    }
     if (isFunction(customLayout)) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
