@@ -492,6 +492,9 @@ export interface BaseTableConstructorOptions {
     createReactContainer?: boolean;
     // adaptive 模式下优先缩小迷你图
     shrinkSparklineFirst?: boolean;
+
+    // 行列移动不更新表格
+    notUpdateInColumnRowMove?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
