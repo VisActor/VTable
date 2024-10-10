@@ -147,13 +147,15 @@ export class DiscreteTableLegend {
 
   getLegendAttributes(rect: any) {
     const layout = this.orient === 'bottom' || this.orient === 'top' ? 'horizontal' : 'vertical';
+    const legendAttrs = getLegendAttributes(this.option, rect);
+    const padding = getQuadProps(legendAttrs.padding ?? this.option.padding ?? 10);
     const attrs = {
       layout,
       items: this.getLegendItems(),
       // zIndex: this.layoutZIndex,
-      maxWidth: rect.width,
-      maxHeight: rect.height,
-      ...getLegendAttributes(this.option, rect)
+      maxWidth: rect.width - padding[1] - padding[3],
+      maxHeight: rect.height - padding[0] - padding[2],
+      ...legendAttrs
     };
     return attrs;
   }
