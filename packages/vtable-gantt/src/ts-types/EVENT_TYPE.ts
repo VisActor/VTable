@@ -19,6 +19,10 @@ export interface EVENT_TYPES {
    * 鼠标移出任务条事件
    */
   MOUSELEAVE_TASK_BAR: 'mouseleave_task_bar';
+  /**
+   * 创建任务排期事件
+   */
+  CREATE_TASK_SCHEDULE: 'create_task_schedule';
 }
 /**
  * Table event types
@@ -28,5 +32,6 @@ export const GANTT_EVENT_TYPE: EVENT_TYPES = {
   CHANGE_DATE_RANGE: 'change_date_range',
   CLICK_TASK_BAR: 'click_task_bar',
   MOUSEENTER_TASK_BAR: 'mouseenter_task_bar',
-  MOUSELEAVE_TASK_BAR: 'mouseleave_task_bar'
+  MOUSELEAVE_TASK_BAR: 'mouseleave_task_bar',
+  CREATE_TASK_SCHEDULE: 'create_task_schedule'
 } as EVENT_TYPES;

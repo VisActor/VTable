@@ -5,12 +5,17 @@ import { createDateAtMidnight, getWeekNumber } from './tools/util';
 
 const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
 export const DayTimes = 1000 * 60 * 60 * 24;
-/** 通过事件坐标y计算鼠标当前所在所几条任务条上 */
+/** 通过事件坐标y计算鼠标当前所在所几条任务条上。y是相对于canvas的坐标值，vrender事件返回的e.offset.y */
 export function getTaskIndexByY(y: number, gantt: Gantt) {
   const gridY = y - gantt.headerHeight;
   const taskBarHeight = gantt.stateManager.scroll.verticalBarPos + gridY;
   const taskBarIndex = Math.floor(taskBarHeight / gantt.parsedOptions.rowHeight);
   return taskBarIndex;
+}
+export function getDateIndexByX(x: number, gantt: Gantt) {
+  const totalX = x + gantt.stateManager.scroll.horizontalBarPos;
+  const dateIndex = Math.floor(totalX / gantt.parsedOptions.timelineColWidth);
+  return dateIndex;
 }
 
 export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): IMarkLine[] {
@@ -108,6 +113,7 @@ export function initOptions(gantt: Gantt) {
     },
     options?.scrollStyle
   );
+
   gantt.parsedOptions.timelineHeaderHorizontalLineStyle = options?.timelineHeader?.horizontalLine;
   gantt.parsedOptions.timelineHeaderVerticalLineStyle = options?.timelineHeader?.verticalLine;
   gantt.parsedOptions.timelineHeaderBackgroundColor = options?.timelineHeader?.backgroundColor;
@@ -168,6 +174,7 @@ export function initOptions(gantt: Gantt) {
     options?.taskBar?.barStyle
   );
 
+  gantt.parsedOptions.dateFormat = options?.dateFormat;
   gantt.parsedOptions.taskBarHoverStyle = Object.assign(
     {
       barOverlayColor: 'rgba(99, 144, 0, 0.4)'
@@ -196,6 +203,18 @@ export function initOptions(gantt: Gantt) {
     textOverflow: options?.taskBar?.labelTextStyle?.textOverflow
   };
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
+  gantt.parsedOptions.taskBarCreatable = options?.taskBar?.scheduleCreatable ?? true;
+  gantt.parsedOptions.taskBarCreationButtonStyle = Object.assign(
+    {
+      lineColor: 'rgb(99, 144, 0)',
+      lineWidth: 1,
+      lineDash: [5, 5],
+      cornerRadius: 4,
+      backgroundColor: '#FFF'
+    },
+    options?.taskBar?.scheduleCreation?.buttonStyle
+  );
+  gantt.parsedOptions.taskBarCreationCustomLayout = options?.taskBar?.scheduleCreation?.customLayout;
 
   gantt.parsedOptions.outerFrameStyle = Object.assign(
     {
@@ -227,6 +246,17 @@ export function initOptions(gantt: Gantt) {
   );
   gantt.parsedOptions.horizontalSplitLine = options.frame?.horizontalSplitLine;
   gantt.parsedOptions.verticalSplitLineMoveable = options.frame?.verticalSplitLineMoveable;
+
+  gantt.parsedOptions.taskKeyField = options.taskKeyField ?? 'id';
+  gantt.parsedOptions.dependencyLinks = options.dependencies?.links;
+  gantt.parsedOptions.dependencyLinkCreatable = options.dependencies?.linkCreatable ?? false;
+  gantt.parsedOptions.dependencyLinkLineStyle = Object.assign(
+    {
+      lineColor: 'red',
+      lineWidth: 1
+    },
+    options.dependencies?.linkLineStyle
+  );
 }
 
 export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: ITimelineScale) {
@@ -515,6 +545,14 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
       highlightLine.style.pointerEvents = 'none';
       highlightLine.style.opacity = '0';
       highlightLine.style.transition = 'background-color 0.3s';
+    }
+  }
+}
+
+export function findRecordByTaskKey(records: any[], taskKeyField: string, taskKey: string | number) {
+  for (let i = 0; i < records.length; i++) {
+    if (records[i][taskKeyField] === taskKey) {
+      return { record: records[i], index: i };
     }
   }
 }

@@ -74,6 +74,7 @@ export class Grid {
         }
       ]
     });
+    line.name = 'timeLine-header-bottom-line';
     this.group.addChild(line);
   }
   createVerticalLines() {

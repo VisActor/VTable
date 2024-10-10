@@ -71,3 +71,39 @@ ${prefix} selectionBarStyle(ITaskBarStyle & { barOverlayColor?: string })
 The style of the task bar when selected.
 
 Optional
+
+${prefix} scheduleCreatable(boolean) = true
+
+When there is no schedule, you can create a task bar schedule by clicking on the create button. The default is true.
+
+Optional
+
+${prefix} scheduleCreation(Object)
+
+For tasks without assigned dates, you can display the create button.
+
+Optional
+
+#${prefix} buttonStyle(Object)
+
+The style of the new task bar button can be configured, and the styles that can be configured are:
+
+```
+{
+  lineColor?: string;
+  lineWidth?: number;
+  lineDash?: number[];
+  cornerRadius?: number;
+  backgroundColor?: string;
+};
+```
+
+Optional
+
+#${prefix} customLayout(ICreationCustomLayout)
+
+Custom rendering of the task bar creation button.
+
+Optional
+
+{{ use: common-gantt-task-creation-custom-layout }}

@@ -114,6 +114,25 @@ export interface GanttConstructorOptions {
             endDate: Date
           ) => TYPES.MenuListItem[]);
     };
+    /** 数据没有排期时，可通过创建任务条排期。默认为true */
+    scheduleCreatable?: boolean;
+    /** 针对没有分配日期的任务，可以显示出创建按钮 */
+    scheduleCreation?: {
+      buttonStyle: ILineStyle & {
+        cornerRadius?: number;
+        backgroundColor?: string;
+      };
+      /** 任务条创建按钮的自定义渲染 */
+      customLayout?: ITaskCreationCustomLayout;
+    };
+  };
+  /** 数据条目可唯一标识的字段名,默认为'id' */
+  taskKeyField?: string;
+  /** 任务之间的依赖关系 */
+  dependencies?: {
+    links: ITaskLink[];
+    linkLineStyle?: ILineStyle;
+    linkCreatable?: boolean;
   };
   /** 网格线配置 */
   grid?: IGrid;
@@ -130,6 +149,7 @@ export interface GanttConstructorOptions {
 
   /** 标记线配置 如果配置为true 会自动给今天做标记 */
   markLine?: boolean | IMarkLine | IMarkLine[];
+
   /** 指定整个甘特图的最小日期 */
   minDate?: string;
   /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
@@ -153,6 +173,15 @@ export interface GanttConstructorOptions {
   scrollStyle?: IScrollStyle;
 
   pixelRatio?: number;
+  dateFormat?:
+    | 'yyyy-mm-dd'
+    | 'dd-mm-yyyy'
+    | 'mm/dd/yyyy'
+    | 'yyyy/mm/dd'
+    | 'dd/mm/yyyy'
+    | 'yyyy.mm.dd'
+    | 'dd.mm.yyyy'
+    | 'mm.dd.yyyy';
 }
 /**
  * IBarLabelText
@@ -232,13 +261,13 @@ export type TaskBarCustomLayoutArgumentType = {
   taskRecord: any;
   ganttInstance: Gantt;
 };
-export type ITaskBarCustomLayout = (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj; //CustomLayout
 export type ITaskBarCustomLayoutObj = {
   rootContainer: Group;
   renderDefaultBar?: boolean; // 默认false
   renderDefaultResizeIcon?: boolean; // 默认false
   renderDefaultText?: boolean; // 默认false
 };
+export type ITaskBarCustomLayout = (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj; //CustomLayout
 
 export type DateCustomLayoutArgumentType = {
   width: number;
@@ -252,10 +281,33 @@ export type DateCustomLayoutArgumentType = {
   days: number;
   ganttInstance: Gantt;
 };
-export type IDateCustomLayout = (args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj;
 export type IDateCustomLayoutObj = {
   rootContainer: Group;
   renderDefaultText?: boolean; // 默认false
 };
+export type IDateCustomLayout = (args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj;
 
+export type TaskCreationCustomLayoutArgumentType = {
+  width: number;
+  height: number;
+  // index: number;
+  ganttInstance: Gantt;
+};
+export type ITaskCreationCustomLayoutObj = {
+  rootContainer: Group;
+};
+export type ITaskCreationCustomLayout = (args: TaskCreationCustomLayoutArgumentType) => ITaskCreationCustomLayoutObj;
+
+export type ITaskLink = {
+  /** 依赖的类型 */
+  type: DependencyType;
+  linkedFromTaskKey?: string | number;
+  linkedToTaskKey?: string | number;
+};
+export enum DependencyType {
+  FinishToStart = 'finish_to_start',
+  StartToStart = 'start_to_start',
+  FinishToFinish = 'finish_to_finish',
+  StartToFinish = 'start_to_finish'
+}
 //#endregion
