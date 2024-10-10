@@ -17,7 +17,8 @@ import type {
   ITimelineDateInfo,
   ITimelineScale,
   ILineStyle,
-  ITaskCreationCustomLayout
+  ITaskCreationCustomLayout,
+  ITaskLink
 } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
@@ -139,6 +140,11 @@ export class Gantt extends EventTarget {
       | 'yyyy.mm.dd'
       | 'dd.mm.yyyy'
       | 'mm.dd.yyyy';
+
+    taskKeyField: string;
+    dependencyLinks?: ITaskLink[];
+    dependencyLinkCreatable: boolean;
+    dependencyLinkLineStyle: ILineStyle;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;

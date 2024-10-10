@@ -12,6 +12,7 @@ import { FrameBorder } from './frame-border';
 import { getTaskIndexByY } from '../gantt-helper';
 import graphicContribution from './graphic';
 import { TaskCreationButton } from './task-creation-button';
+import { DependencyLink } from './dependency-link';
 container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
@@ -19,6 +20,7 @@ export class Scenegraph {
   _scales: {}[];
   timelineHeader: TimelineHeader;
   grid: Grid;
+  dependencyLink: DependencyLink;
   taskBar: TaskBar;
   _gantt: Gantt;
   tableGroup: Group;
@@ -94,7 +96,8 @@ export class Scenegraph {
 
     // 初始化网格线组件
     scene.grid = new Grid(scene);
-
+    // 初始化任务条线组件
+    scene.dependencyLink = new DependencyLink(scene);
     // 初始化任务条线组件
     scene.taskBar = new TaskBar(scene);
 
@@ -203,6 +206,7 @@ export class Scenegraph {
     this.timelineHeader.setX(x);
     this.grid.setX(x);
     this.taskBar.setX(x);
+    this.dependencyLink.setX(x);
     this.markLine.setX(x);
     this.updateNextFrame();
     // this._gantt.scenegraph.proxy.setX(-x, isEnd);
@@ -217,6 +221,7 @@ export class Scenegraph {
     // this._gantt.scenegraph.proxy.setY(-y, isEnd);
     this.grid.setY(y);
     this.taskBar.setY(y);
+    this.dependencyLink.setY(y);
     this.updateNextFrame();
   }
 

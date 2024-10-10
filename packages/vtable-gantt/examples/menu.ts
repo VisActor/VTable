@@ -53,6 +53,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-splitLine'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-dependency'
   }
   //   ]
   // }

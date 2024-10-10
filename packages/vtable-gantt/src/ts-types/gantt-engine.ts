@@ -126,6 +126,14 @@ export interface GanttConstructorOptions {
       customLayout?: ITaskCreationCustomLayout;
     };
   };
+  /** 数据条目可唯一标识的字段名,默认为'id' */
+  taskKeyField?: string;
+  /** 任务之间的依赖关系 */
+  dependencies?: {
+    links: ITaskLink[];
+    linkLineStyle?: ILineStyle;
+    linkCreatable?: boolean;
+  };
   /** 网格线配置 */
   grid?: IGrid;
 
@@ -289,4 +297,17 @@ export type ITaskCreationCustomLayoutObj = {
   rootContainer: Group;
 };
 export type ITaskCreationCustomLayout = (args: TaskCreationCustomLayoutArgumentType) => ITaskCreationCustomLayoutObj;
+
+export type ITaskLink = {
+  /** 依赖的类型 */
+  type: DependencyType;
+  linkedFromTaskKey?: string | number;
+  linkedToTaskKey?: string | number;
+};
+export enum DependencyType {
+  FinishToStart = 'finish_to_start',
+  StartToStart = 'start_to_start',
+  FinishToFinish = 'finish_to_finish',
+  StartToFinish = 'start_to_finish'
+}
 //#endregion

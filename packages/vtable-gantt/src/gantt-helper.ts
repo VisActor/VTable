@@ -246,6 +246,17 @@ export function initOptions(gantt: Gantt) {
   );
   gantt.parsedOptions.horizontalSplitLine = options.frame?.horizontalSplitLine;
   gantt.parsedOptions.verticalSplitLineMoveable = options.frame?.verticalSplitLineMoveable;
+
+  gantt.parsedOptions.taskKeyField = options.taskKeyField ?? 'id';
+  gantt.parsedOptions.dependencyLinks = options.dependencies?.links;
+  gantt.parsedOptions.dependencyLinkCreatable = options.dependencies?.linkCreatable ?? false;
+  gantt.parsedOptions.dependencyLinkLineStyle = Object.assign(
+    {
+      lineColor: 'red',
+      lineWidth: 1
+    },
+    options.dependencies?.linkLineStyle
+  );
 }
 
 export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: ITimelineScale) {
@@ -534,6 +545,14 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
       highlightLine.style.pointerEvents = 'none';
       highlightLine.style.opacity = '0';
       highlightLine.style.transition = 'background-color 0.3s';
+    }
+  }
+}
+
+export function findRecordByTaskKey(records: any[], taskKeyField: string, taskKey: string | number) {
+  for (let i = 0; i < records.length; i++) {
+    if (records[i][taskKeyField] === taskKey) {
+      return { record: records[i], index: i };
     }
   }
 }
