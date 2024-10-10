@@ -126,7 +126,7 @@ function bindTableGroupListener(event: EventManager) {
     }
   });
   scene.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
-    if (poniterState === 'down' && gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
+    if (poniterState === 'down') {
       let isClickBar = false;
       let isClickCreationButtom = false;
       e.detailPath.find((pathNode: any) => {
@@ -137,7 +137,7 @@ function bindTableGroupListener(event: EventManager) {
           isClickCreationButtom = true;
         }
       });
-      if (isClickBar) {
+      if (isClickBar && gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
         const taskIndex = getTaskIndexByY(e.offset.y, gantt);
         const record = gantt.getRecordByIndex(taskIndex);
         gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
