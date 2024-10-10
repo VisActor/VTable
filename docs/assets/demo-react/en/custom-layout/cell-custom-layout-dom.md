@@ -4,12 +4,12 @@ group: component
 title: cell custom component + dom component
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-vtable-dom-component.gif
 order: 1-1
-link: '../guide/Developer_Ecology/react'
+link: '../guide/custom_define/react-custom-component'
 ---
 
 # cell custom component + dom component
 
-Use ArcoDesign in the cell pop-up window. For details, please refer to [Custom Components](../guide/Developer_Ecology/react-custom-component)
+Use ArcoDesign in the cell pop-up window. For details, please refer to [Custom Components](../guide/custom_define/react-custom-component)
 
 ## code demo
 
