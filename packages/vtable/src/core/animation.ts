@@ -45,8 +45,9 @@ export class TableAnimationManager {
       x: isNumber(position.col) ? cellRect.left - this.table.getFrozenColsWidth() : this.table.scrollLeft,
       y: isNumber(position.row) ? cellRect.top - this.table.getFrozenRowsHeight() : this.table.scrollTop
     };
-    const duration = (!isBoolean(animationOption) && animationOption?.duration) ?? 3000;
-    const easing = (!isBoolean(animationOption) && animationOption?.easing) ?? 'linear';
+    const duration = !isBoolean(animationOption) ? animationOption?.duration ?? 3000 : animationOption ? 3000 : 0;
+    const easing = !isBoolean(animationOption) ? animationOption?.easing ?? 'linear' : animationOption ? 'linear' : '';
+
     const animation = new Animate().bind(this.tempGraphic).play(
       new Animateaaa(from, to, duration, easing, {
         graphic: this.tempGraphic,
