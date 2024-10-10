@@ -405,6 +405,13 @@
             "zh": "入场动画",
             "en": "appear animationt"
           }
+        },
+        {
+          "path": "scroll_animation",
+          "title": {
+            "zh": "滚动动画",
+            "en": "scroll animationt"
+          }
         }
       ]
     },

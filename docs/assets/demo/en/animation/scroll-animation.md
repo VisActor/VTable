@@ -1,22 +1,23 @@
 ---
 category: examples
 group: Animation
-title: Appear Animation
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/appear-animation.gif
-option: ListTable-columns-text#animationAppear
+title: Scroll Animation
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scroll-animation.gif
+link: '../guide/animation/scroll_animation'
 ---
 
-# Entry animation
+# Scroll animation
 
-Initialize the table with an entrance animation.
+Scroll to the specified area of ​​the table through animation.
 
 ## Key configuration
 
-- `animationAppear` Entry animation configuration
-  - `type` Entry animation type, currently supports `all` and `one-by-one`
-  - `direction` Entry animation direction, currently supports `row` and `column`
-  - `duration` The duration of a single animation, in milliseconds, `one-by-one`, the duration of one animation
-  - `delay` Animation delay, in milliseconds; `one-by-one` is the time difference between two animations, `all` is the delay of all animations
+- `animationOption`  scroll animation configuration
+  - `duration`   animation duration, unit ms
+  - `easing`  animation easing function, defalut `linear`, support `linear`, `quadIn`, `quadOut`, `quadInOut`, `quadInOut`, `cubicIn`, `cubicOut`, `cubicInOut`, `quartIn`, `quartOut`, `quartInOut`, `quintIn`, `quintOut`, `quintInOut`, `backIn`, `backOut`, `backInOut`, `circIn`, `circOut`, `circInOut`, `bounceOut`, `bounceIn`, `bounceInOut`, `elasticIn`, `elasticOut`, `elasticInOut`, `sineIn`, `sineOut`, `sineInOut`, `expoIn`, `expoOut`, `expoInOut`
+- `scrollToCell({col, row}, animationOption)`  scroll to specified cell
+- `scrollToRow(row, animationOption)`  scroll to specified row
+- `scrollToCol(col, animationOption)`  scroll to specified column
 
 ## Code demonstration
 
@@ -89,14 +90,12 @@ const option = {
   records:data.slice(0,20),
   columns,
   widthMode:'standard',
-  animationAppear: {
-      duration: 300,
-      delay: 100,
-      type: 'one-by-one', // all
-      direction: 'row' // colunm
-    }
 };
 tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
+
+setTimeout(()=>{
+  tableInstance.scrollToCell({col: 4, row: 5}, {duration: 500, easing: 'quadIn'})
+}, 2000)
     })
 ```

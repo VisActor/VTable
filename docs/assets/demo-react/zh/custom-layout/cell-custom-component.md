@@ -4,12 +4,12 @@ group: component
 title: 单元格自定义组件
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png
 order: 1-1
-link: '../guide/Developer_Ecology/react'
+link: '../guide/custom_define/react-custom-component'
 ---
 
 # 单元格自定义组件
 
-同customLayout一样，可以使用react组件进行自定义布局，具体可以参考[自定义组件](../guide/Developer_Ecology/react-custom-component)
+同customLayout一样，可以使用react组件进行自定义布局，具体可以参考[自定义组件](../guide/custom_define/react-custom-component)
 
 ## 代码演示
 

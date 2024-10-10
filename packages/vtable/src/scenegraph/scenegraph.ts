@@ -243,6 +243,7 @@ export class Scenegraph {
    * @return {*}
    */
   clearCells() {
+    this.table.animationManager.clear();
     // unbind AutoPoptip
     if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart

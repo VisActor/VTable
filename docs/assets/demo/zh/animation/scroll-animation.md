@@ -1,24 +1,25 @@
 ---
 category: examples
 group: Animation
-title: Appear Animation
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/appear-animation.gif
-option: ListTable-columns-text#animationAppear
+title: 滚动动画
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scroll-animation.gif
+link: '../guide/animation/scroll_animation'
 ---
 
-# Entry animation
+# 滚动动画
 
-Initialize the table with an entrance animation.
+通过动画滚动到表格指定区域
 
-## Key configuration
+## 关键配置
 
-- `animationAppear` Entry animation configuration
-  - `type` Entry animation type, currently supports `all` and `one-by-one`
-  - `direction` Entry animation direction, currently supports `row` and `column`
-  - `duration` The duration of a single animation, in milliseconds, `one-by-one`, the duration of one animation
-  - `delay` Animation delay, in milliseconds; `one-by-one` is the time difference between two animations, `all` is the delay of all animations
+- `animationOption`  滚动动画配置
+  - `duration`   动画时长，单位 ms
+  - `easing`  动画缓动函数，默认为 `linear`，支持 `linear`, `quadIn`, `quadOut`, `quadInOut`, `quadInOut`, `cubicIn`, `cubicOut`, `cubicInOut`, `quartIn`, `quartOut`, `quartInOut`, `quintIn`, `quintOut`, `quintInOut`, `backIn`, `backOut`, `backInOut`, `circIn`, `circOut`, `circInOut`, `bounceOut`, `bounceIn`, `bounceInOut`, `elasticIn`, `elasticOut`, `elasticInOut`, `sineIn`, `sineOut`, `sineInOut`, `expoIn`, `expoOut`, `expoInOut`
+- `scrollToCell({col, row}, animationOption)`  滚动到指定单元格
+- `scrollToRow(row, animationOption)`  滚动到指定行
+- `scrollToCol(col, animationOption)`  滚动到指定列
 
-## Code demonstration
+## 代码演示
 
 ```javascript livedemo template=vtable
 
@@ -89,14 +90,12 @@ const option = {
   records:data.slice(0,20),
   columns,
   widthMode:'standard',
-  animationAppear: {
-      duration: 300,
-      delay: 100,
-      type: 'one-by-one', // all
-      direction: 'row' // colunm
-    }
 };
 tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
+
+setTimeout(()=>{
+  tableInstance.scrollToCell({col: 4, row: 5}, {duration: 500, easing: 'quadIn'})
+}, 2000)
     })
 ```
