@@ -3,12 +3,12 @@ category: examples
 group: Animation
 title: 入场动画
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/appear-animation.gif
-option: ListTable-columns-text#mergeCell
+option: ListTable#animationAppear
 ---
 
 # 入场动画
 
-通过配置将内容相同的单元格进行自动合并
+初始化表格时显示入场动画
 
 ## 关键配置
 
