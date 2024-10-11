@@ -462,7 +462,7 @@ export function createTable() {
     console.log('copy_data', e);
   });
 
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
+  // VTable.bindDebugTool(instance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', '_updateTag']
+  // });
 }
