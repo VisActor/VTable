@@ -210,15 +210,22 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isSeriesNumber(col: number, row: number): boolean {
-    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
-      return true;
-    }
-    if (
-      this.rightRowSeriesNumberColumnCount > 0 &&
-      row >= 0 &&
-      col >= this.colCount - this.rightRowSeriesNumberColumnCount
-    ) {
-      return true;
+    if (isValid(col) && isValid(row)) {
+      if (
+        this.leftRowSeriesNumberColumnCount > 0 &&
+        col >= 0 &&
+        row >= 0 &&
+        col < this.leftRowSeriesNumberColumnCount
+      ) {
+        return true;
+      }
+      if (
+        this.rightRowSeriesNumberColumnCount > 0 &&
+        row >= 0 &&
+        col >= this.colCount - this.rightRowSeriesNumberColumnCount
+      ) {
+        return true;
+      }
     }
     return false;
   }
