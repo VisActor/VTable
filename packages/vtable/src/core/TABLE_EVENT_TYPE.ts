@@ -82,6 +82,10 @@ export interface TableEvents {
    */
   SORT_CLICK: 'sort_click';
   /**
+   * 执行完排序
+   */
+  AFTER_SORT: 'after_sort';
+  /**
    * 点击固定列图标 冻结或者解冻事件
    */
   FREEZE_CLICK: 'freeze_click';
@@ -190,6 +194,10 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   RESIZE_ROW_END: 'resize_row_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
+  /**
+   * 执行完排序
+   */
+  AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
   SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',

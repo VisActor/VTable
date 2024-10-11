@@ -112,6 +112,11 @@ export interface TableEventHandlersEventArgumentMap {
     order: SortOrder;
     event: Event;
   };
+  after_sort: {
+    field: FieldDef;
+    order: SortOrder;
+    event: Event;
+  };
   freeze_click: { col: number; row: number; fields: FieldDef[]; colCount: number };
   dropdown_menu_click: DropDownMenuEventArgs;
 
@@ -229,6 +234,7 @@ export interface TableEventHandlersReturnMap {
   resize_row_end: void;
   change_header_position: void;
   sort_click: boolean;
+  after_sort: void;
   freeze_click: void;
   dropdown_menu_click: void;
 

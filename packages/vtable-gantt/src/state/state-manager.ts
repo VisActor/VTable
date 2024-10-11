@@ -7,7 +7,8 @@ import {
   syncScrollStateFromTable,
   syncScrollStateToTable,
   syncDragOrderFromTable,
-  syncTreeChangeFromTable
+  syncTreeChangeFromTable,
+  syncSortFromTable
 } from './gantt-table-sync';
 import { findRecordByTaskKey, getTaskIndexByY } from '../gantt-helper';
 import { debounce } from '../tools/debounce';
@@ -116,6 +117,7 @@ export class StateManager {
     syncEditCellFromTable(this._gantt);
     syncDragOrderFromTable(this._gantt);
     syncTreeChangeFromTable(this._gantt);
+    syncSortFromTable(this._gantt);
   }
 
   setScrollTop(top: number, triggerEvent: boolean = true) {
