@@ -133,6 +133,7 @@ export class Scenegraph {
   refreshTaskBars() {
     // this.timelineHeader.refresh();
     // this.grid.refresh();
+    this.dependencyLink.refresh();
     this.taskBar.refresh();
     // this.markLine.refresh();
     // this.frameBorder.refresh();
