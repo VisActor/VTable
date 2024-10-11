@@ -77,16 +77,18 @@ export function updateReactContainer(table: BaseTableAPI) {
     return;
   }
   const allColsWidth = table.getAllColsWidth();
+  const tableNoFrameWidth = Math.min(allColsWidth, table.tableNoFrameWidth);
   const frozenColsWidth = table.getFrozenColsWidth();
   const rightFrozenColsWidth = table.getRightFrozenColsWidth();
   const totalFrozenColsWidth = frozenColsWidth + rightFrozenColsWidth;
-  const bodyWidth = Math.min(allColsWidth - totalFrozenColsWidth, table.tableNoFrameWidth - totalFrozenColsWidth);
+  const bodyWidth = Math.min(allColsWidth - totalFrozenColsWidth, tableNoFrameWidth - totalFrozenColsWidth);
 
   const allRowsHeight = table.getAllRowsHeight();
+  const tableNoFrameHeight = Math.min(allRowsHeight, table.tableNoFrameHeight);
   const frozenRowsHeight = table.getFrozenRowsHeight();
   const bottomFrozenRowsHeight = table.getBottomFrozenRowsHeight();
   const totalFrozenRowsHeight = frozenRowsHeight + bottomFrozenRowsHeight;
-  const bodyHeight = Math.min(allRowsHeight - totalFrozenRowsHeight, table.tableNoFrameHeight - totalFrozenRowsHeight);
+  const bodyHeight = Math.min(allRowsHeight - totalFrozenRowsHeight, tableNoFrameHeight - totalFrozenRowsHeight);
 
   if (table.frozenColCount > 0) {
     headerDomContainer.style.left = `${table.tableX + frozenColsWidth}px`;
@@ -121,25 +123,25 @@ export function updateReactContainer(table: BaseTableAPI) {
   rightFrozenBodyDomContainer.style.width = `${rightFrozenColsWidth}px`;
   rightFrozenBodyDomContainer.style.height = `${bodyHeight}px`;
   rightFrozenBodyDomContainer.style.top = `${table.tableY + frozenRowsHeight}px`;
-  rightFrozenBodyDomContainer.style.left = `${table.tableX + table.tableNoFrameWidth - rightFrozenColsWidth}px`;
+  rightFrozenBodyDomContainer.style.left = `${table.tableX + tableNoFrameWidth - rightFrozenColsWidth}px`;
 
   rightFrozenHeaderDomContainer.style.width = `${rightFrozenColsWidth}px`;
   rightFrozenHeaderDomContainer.style.height = `${frozenRowsHeight}px`;
   rightFrozenHeaderDomContainer.style.top = `${table.tableY}px`;
-  rightFrozenHeaderDomContainer.style.left = `${table.tableX + table.tableNoFrameWidth - rightFrozenColsWidth}px`;
+  rightFrozenHeaderDomContainer.style.left = `${table.tableX + tableNoFrameWidth - rightFrozenColsWidth}px`;
 
   bottomDomContainer.style.width = `${bodyWidth}px`;
   bottomDomContainer.style.height = `${bottomFrozenRowsHeight}px`;
-  bottomDomContainer.style.top = `${table.tableY + table.tableNoFrameHeight - bottomFrozenRowsHeight}px`;
+  bottomDomContainer.style.top = `${table.tableY + tableNoFrameHeight - bottomFrozenRowsHeight}px`;
 
   frozenBottomDomContainer.style.width = `${frozenColsWidth}px`;
   frozenBottomDomContainer.style.height = `${bottomFrozenRowsHeight}px`;
-  frozenBottomDomContainer.style.top = `${table.tableY + table.tableNoFrameHeight - bottomFrozenRowsHeight}px`;
+  frozenBottomDomContainer.style.top = `${table.tableY + tableNoFrameHeight - bottomFrozenRowsHeight}px`;
 
   rightFrozenBottomDomContainer.style.width = `${rightFrozenColsWidth}px`;
   rightFrozenBottomDomContainer.style.height = `${bottomFrozenRowsHeight}px`;
-  rightFrozenBottomDomContainer.style.top = `${table.tableY + table.tableNoFrameHeight - bottomFrozenRowsHeight}px`;
-  rightFrozenBottomDomContainer.style.left = `${table.tableX + table.tableNoFrameWidth - rightFrozenColsWidth}px`;
+  rightFrozenBottomDomContainer.style.top = `${table.tableY + tableNoFrameHeight - bottomFrozenRowsHeight}px`;
+  rightFrozenBottomDomContainer.style.left = `${table.tableX + tableNoFrameWidth - rightFrozenColsWidth}px`;
 }
 
 export function updateReactComponentContainer(scene: Scenegraph) {

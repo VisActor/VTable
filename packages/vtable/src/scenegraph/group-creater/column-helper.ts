@@ -124,7 +124,11 @@ export function createComplexColumn(
     }
 
     // adjust cellLocation for top frozen row
-    if ((cellLocation === 'columnHeader' || cellLocation === 'cornerHeader') && row >= table.columnHeaderLevelCount) {
+    if (
+      !table.isPivotTable() &&
+      (cellLocation === 'columnHeader' || cellLocation === 'cornerHeader') &&
+      row >= table.columnHeaderLevelCount
+    ) {
       cellLocation = 'body';
     }
     const define =
@@ -180,33 +184,6 @@ export function createComplexColumn(
       }
     }
 
-    const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
-    const cellTheme = getStyleTheme(
-      cellStyle,
-      table,
-      range ? range.start.col : col,
-      range ? range.start.row : row,
-      getProp
-    ).theme;
-    cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
-    cellTheme.group.width = colWidth;
-    cellTheme.group.height = Array.isArray(defaultRowHeight) ? defaultRowHeight[row] : defaultRowHeight;
-    if (cellTheme._vtable.padding) {
-      padding = cellTheme._vtable.padding;
-    }
-    if (cellTheme.text.textAlign) {
-      textAlign = cellTheme.text.textAlign;
-    }
-    if (cellTheme.text.textBaseline) {
-      textBaseline = cellTheme.text.textBaseline;
-    }
-
-    // enable clip body
-    if (cellLocation !== 'body' && !cellTheme.group.fill) {
-      cellTheme.group.fill = '#fff';
-    }
-    // margin = getProp('margin', headerStyle, col, 0, table)
-
     const type =
       isVtableMerge || isCustomMerge
         ? 'text'
@@ -220,8 +197,7 @@ export function createComplexColumn(
       dealPromiseData(
         value,
         table,
-        createCell.bind(
-          null,
+        callCreateCellForPromiseValue.bind(null, {
           type,
           value,
           define,
@@ -233,20 +209,45 @@ export function createComplexColumn(
           cellHeight,
           columnGroup,
           y,
-          padding,
-          textAlign,
-          textBaseline,
+          customStyle,
           mayHaveIcon,
-          cellTheme,
+          cellLocation,
           range,
-          customResult
-        )
+          customResult,
+          defaultRowHeight
+        })
       );
       columnGroup.updateColumnRowNumber(row);
       const height = table.getRowHeight(row);
       columnGroup.updateColumnHeight(height);
       y += height;
     } else {
+      const cellStyle =
+        customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
+      const cellTheme = getStyleTheme(
+        cellStyle,
+        table,
+        range ? range.start.col : col,
+        range ? range.start.row : row,
+        getProp
+      ).theme;
+      cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
+      cellTheme.group.width = colWidth;
+      cellTheme.group.height = Array.isArray(defaultRowHeight) ? defaultRowHeight[row] : defaultRowHeight;
+      if (cellTheme._vtable.padding) {
+        padding = cellTheme._vtable.padding;
+      }
+      if (cellTheme.text.textAlign) {
+        textAlign = cellTheme.text.textAlign;
+      }
+      if (cellTheme.text.textBaseline) {
+        textBaseline = cellTheme.text.textBaseline;
+      }
+
+      // enable clip body
+      if (cellLocation !== 'body' && !cellTheme.group.fill) {
+        cellTheme.group.fill = '#fff';
+      }
       const cellGroup = createCell(
         type,
         value,
@@ -326,7 +327,75 @@ export function getColumnGroupTheme(
   columnTheme.group.height = 0;
   return { theme: columnTheme, hasFunctionPros };
 }
+function callCreateCellForPromiseValue(createCellArgs: any) {
+  let padding;
+  let textAlign;
+  let textBaseline;
+  const {
+    type,
+    value,
+    define,
+    table,
+    col,
+    row,
+    colWidth,
+    cellWidth,
+    cellHeight,
+    columnGroup,
+    y,
+    cellLocation,
+    mayHaveIcon,
+    customStyle,
+    range,
+    customResult,
+    defaultRowHeight
+  } = createCellArgs;
+  const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
+  const cellTheme = getStyleTheme(
+    cellStyle,
+    table,
+    range ? range.start.col : col,
+    range ? range.start.row : row,
+    getProp
+  ).theme;
+  cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
+  cellTheme.group.width = colWidth;
+  cellTheme.group.height = Array.isArray(defaultRowHeight) ? defaultRowHeight[row] : defaultRowHeight;
+  if (cellTheme._vtable.padding) {
+    padding = cellTheme._vtable.padding;
+  }
+  if (cellTheme.text.textAlign) {
+    textAlign = cellTheme.text.textAlign;
+  }
+  if (cellTheme.text.textBaseline) {
+    textBaseline = cellTheme.text.textBaseline;
+  }
 
+  // enable clip body
+  if (cellLocation !== 'body' && !cellTheme.group.fill) {
+    cellTheme.group.fill = '#fff';
+  }
+  createCell(
+    type,
+    value,
+    define,
+    table,
+    col,
+    row,
+    colWidth,
+    cellWidth,
+    cellHeight,
+    columnGroup,
+    y,
+    padding,
+    textAlign,
+    textBaseline,
+    mayHaveIcon,
+    cellTheme,
+    range,
+    customResult
+  );
+}
 function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI, forceUpdate: boolean) {
   let cellWidth = 0;
   let cellHeight = 0;

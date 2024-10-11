@@ -96,6 +96,12 @@ export class ReactCustomLayout {
         }
       }
     }
+    if (table.widthMode === 'autoWidth') {
+      table.scenegraph.recalculateColWidths();
+    }
+    if (table.heightMode === 'autoHeight') {
+      table.scenegraph.recalculateRowHeights();
+    }
     // table.scenegraph.updateNextFrame();
     table.scenegraph.renderSceneGraph(); // use sync render for faster update
   }

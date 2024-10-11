@@ -917,6 +917,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
               dimensionKey: dimensionKey, // '维度名称',
               id,
               value: dimensionKey,
+              headerCustomRender: this.cornerSetting.customRender,
+              headerCustomLayout: this.cornerSetting.customLayout,
               headerEditor: this.cornerSetting.headerEditor,
               disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
               disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
@@ -961,7 +963,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         define: <any>{
           dimensionKey: '维度名称',
           id,
-          value: '',
+          headerCustomRender: this.cornerSetting.customRender,
+          headerCustomLayout: this.cornerSetting.customLayout,
           disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
           disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
         }
@@ -1072,7 +1075,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         //     });
         // });
       } else {
-        const rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+        const rowDimensionKeys =
+          this.rowDimensionTree.totalLevel > 0
+            ? this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr()
+            : this.rowsDefine.map(dimension => {
+                if (typeof dimension === 'string') {
+                  return dimension;
+                }
+                return dimension.dimensionKey;
+              });
         rowDimensionKeys.forEach((objKey, index) => {
           const dimension = this.rowsDefine?.find(dimension =>
             typeof dimension === 'string' ? false : dimension.dimensionKey === objKey
@@ -3629,15 +3640,22 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isSeriesNumber(col: number, row: number): boolean {
-    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
-      return true;
-    }
-    if (
-      this.rightRowSeriesNumberColumnCount > 0 &&
-      row >= 0 &&
-      col >= this.colCount - this.rightRowSeriesNumberColumnCount
-    ) {
-      return true;
+    if (isValid(col) && isValid(row)) {
+      if (
+        this.leftRowSeriesNumberColumnCount > 0 &&
+        col >= 0 &&
+        row >= 0 &&
+        col < this.leftRowSeriesNumberColumnCount
+      ) {
+        return true;
+      }
+      if (
+        this.rightRowSeriesNumberColumnCount > 0 &&
+        row >= 0 &&
+        col >= this.colCount - this.rightRowSeriesNumberColumnCount
+      ) {
+        return true;
+      }
     }
     return false;
   }

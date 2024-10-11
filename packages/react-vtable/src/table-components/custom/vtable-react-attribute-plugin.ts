@@ -41,6 +41,11 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
     const ReactDOM = stage.params.ReactDOM;
     const { element } = react;
     let { container } = react;
+    // deal with frozen container
+    if (container) {
+      container = checkFrozenContainer(graphic);
+    }
+
     if (!(element && ReactDOM && ReactDOM.createRoot)) {
       return;
     }
@@ -51,11 +56,6 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
     }
 
     if (!this.htmlMap || !this.htmlMap[id]) {
-      // deal with frozen container
-      if (container) {
-        container = checkFrozenContainer(graphic);
-      }
-
       // createa a wrapper contianer to be the root of react element
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, container);
 
@@ -231,6 +231,6 @@ function checkFrozenContainer(graphic: IGraphic) {
     container = table.rightFrozenHeaderDomContainer;
   }
 
-  graphic.attribute.react.container = container;
+  // graphic.attribute.react.container = container;
   return container;
 }

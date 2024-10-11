@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix merge cell select range #2521",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

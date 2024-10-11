@@ -7,6 +7,7 @@ import { Rect } from '../tools/Rect';
 import * as calc from '../tools/calc';
 import type {
   Aggregation,
+  ColumnsDefine,
   CustomAggregation,
   FullExtendStyle,
   ListTableAPI,
@@ -471,4 +472,14 @@ export function generateAggregationForColumn(table: ListTable) {
       }
     }
   }
+}
+
+export function checkHasAggregationOnColumnDefine(colDefs: ColumnsDefine) {
+  for (let i = 0; i < colDefs.length; i++) {
+    const colDef = colDefs[i];
+    if (colDef.aggregation) {
+      return true;
+    }
+  }
+  return false;
 }

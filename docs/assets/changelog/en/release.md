@@ -1,3 +1,27 @@
+# v1.8.2
+
+2024-10-08
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix richtext icon update [#2281](https://github.com/VisActor/VTable/issues/2281)
+
+
+
+[more detail about v1.8.2](https://github.com/VisActor/VTable/releases/tag/v1.8.2)
+
+# v1.8.1
+
+2024-09-30
+
+
+**🔨 Refactor**
+
+- **@visactor/vue-vtable**: rename vue component name
+
+[more detail about v1.8.1](https://github.com/VisActor/VTable/releases/tag/v1.8.1)
+
 # v1.8.0
 
 2024-09-29

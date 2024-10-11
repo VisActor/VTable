@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "refactor: rename vue component name\n\n",
+      "comment": "fix: when sort with row series number occor error #2558\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

@@ -9,6 +9,19 @@ ${prefix} titleOnDimension(string) ='row'
 - 'none' 角头单元格内容为空
 - 'all' 角头单元格内容为行维度名称和列维度名称的拼接
 
+${prefix} customRender(Function|Object)
+自定义表格左上角区域的单元格, 参数: `ICustomRenderFuc | ICustomRenderObj`.
+
+[demo](../demo/custom-render/complex-corner)
+
+${prefix} customLayout(Function)
+
+自定义表格左上角布局元素定义，适用于复杂布局内容，可实现斜线表头等需求。
+
+```
+(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+```
+
 ${prefix} headerType(string)
 
 表头类型，可指为`'text'|'image'|'link'`。
