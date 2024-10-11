@@ -1010,6 +1010,13 @@
             "link": "'../../guide/custom_define/custom_style'",
             "option": ""
           }
+        },
+        {
+          "path": "complex-corner",
+          "title": {
+            "zh": "自定义角头单元格",
+            "en": "Custom Corner Cell"
+          }
         }
       ]
     },
