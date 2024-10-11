@@ -1,6 +1,66 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 30 Sep 2024 09:38:25 GMT and should not be manually modified.
+This log was last generated on Fri, 11 Oct 2024 11:35:17 GMT and should not be manually modified.
+
+## 1.9.0
+Fri, 11 Oct 2024 11:35:17 GMT
+
+### Minor changes
+
+- feat: add scrollTo animation function
+
+### Updates
+
+- fix: when dimension set width auto but no records, the col width not compute #2515
+
+
+- fix: when call updateColumns should update aggregation #2519
+
+
+- refactor: when value is promise cell style function should await #2549
+
+
+- fix: change outsideClickDeselect trigger time when pointerdown #2553
+
+
+- fix: when sort with row series number occor error #2558
+
+
+- fix: fix select auto-scroll in bottom #2546
+- fix: fix auto size in react custom component
+- fix: fix custom component flash when cell resizes #2516
+- fix: fix custom component in forzen cell #2568
+- fix: fix legend with padding layout size
+- fix: fix cellLocation in createComplexColumn #2517
+- fix: fix merge cell select range #2521
+
+## 1.8.3
+Fri, 11 Oct 2024 10:52:03 GMT
+
+### Updates
+
+- fix: when dimension set width auto but no records, the col width not compute #2515
+
+
+- fix: when call updateColumns should update aggregation #2519
+
+
+- refactor: when value is promise cell style function should await #2549
+
+
+- fix: change outsideClickDeselect trigger time when pointerdown #2553
+
+
+- fix: when sort with row series number occor error #2558
+
+
+- fix: fix select auto-scroll in bottom #2546
+- fix: fix auto size in react custom component
+- fix: fix custom component flash when cell resizes #2516
+- fix: fix custom component in forzen cell #2568
+- fix: fix legend with padding layout size
+- fix: fix cellLocation in createComplexColumn #2517
+- fix: fix merge cell select range #2521
 
 ## 1.8.2
 Mon, 30 Sep 2024 09:38:25 GMT

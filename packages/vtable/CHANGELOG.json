@@ -2,6 +2,101 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.9.0",
+      "tag": "@visactor/vtable_v1.9.0",
+      "date": "Fri, 11 Oct 2024 11:35:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when dimension set width auto but no records, the col width not compute #2515\n\n"
+          },
+          {
+            "comment": "fix: when call updateColumns should update aggregation #2519\n\n"
+          },
+          {
+            "comment": "refactor: when value is promise cell style function should await #2549\n\n"
+          },
+          {
+            "comment": "fix: change outsideClickDeselect trigger time when pointerdown #2553\n\n"
+          },
+          {
+            "comment": "fix: when sort with row series number occor error #2558\n\n"
+          },
+          {
+            "comment": "fix: fix select auto-scroll in bottom #2546"
+          },
+          {
+            "comment": "fix: fix auto size in react custom component"
+          },
+          {
+            "comment": "fix: fix custom component flash when cell resizes #2516"
+          },
+          {
+            "comment": "fix: fix custom component in forzen cell #2568"
+          },
+          {
+            "comment": "fix: fix legend with padding layout size"
+          },
+          {
+            "comment": "fix: fix cellLocation in createComplexColumn #2517"
+          },
+          {
+            "comment": "fix: fix merge cell select range #2521"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add scrollTo animation function"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.8.3",
+      "tag": "@visactor/vtable_v1.8.3",
+      "date": "Fri, 11 Oct 2024 10:52:03 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when dimension set width auto but no records, the col width not compute #2515\n\n"
+          },
+          {
+            "comment": "fix: when call updateColumns should update aggregation #2519\n\n"
+          },
+          {
+            "comment": "refactor: when value is promise cell style function should await #2549\n\n"
+          },
+          {
+            "comment": "fix: change outsideClickDeselect trigger time when pointerdown #2553\n\n"
+          },
+          {
+            "comment": "fix: when sort with row series number occor error #2558\n\n"
+          },
+          {
+            "comment": "fix: fix select auto-scroll in bottom #2546"
+          },
+          {
+            "comment": "fix: fix auto size in react custom component"
+          },
+          {
+            "comment": "fix: fix custom component flash when cell resizes #2516"
+          },
+          {
+            "comment": "fix: fix custom component in forzen cell #2568"
+          },
+          {
+            "comment": "fix: fix legend with padding layout size"
+          },
+          {
+            "comment": "fix: fix cellLocation in createComplexColumn #2517"
+          },
+          {
+            "comment": "fix: fix merge cell select range #2521"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.8.2",
       "tag": "@visactor/vtable_v1.8.2",
       "date": "Mon, 30 Sep 2024 09:38:25 GMT",

@@ -67,6 +67,7 @@ export interface TableEventHandlersEventArgumentMap {
   mouseenter_table: { event?: MouseEvent | PointerEvent | TouchEvent };
   mouseleave_table: { event?: MouseEvent | PointerEvent | TouchEvent };
   mousedown_table: { event?: MouseEvent | PointerEvent | TouchEvent };
+  mousemove_table: MousePointerCellEvent;
   mouseenter_cell: MousePointerCellEvent;
   mouseleave_cell: MousePointerCellEvent;
   mousemove_cell: MousePointerCellEvent;
@@ -106,7 +107,8 @@ export interface TableEventHandlersEventArgumentMap {
   resize_column_end: { col: number; colWidths: number[] };
   resize_row: { row: number; rowHeight: number };
   resize_row_end: { row: number; rowHeight: number };
-  change_header_position: { source: CellAddress; target: CellAddress };
+  change_header_position: { source: CellAddress; target: CellAddress; event: Event };
+  change_header_position_start: { col: number; row: number; x: number; y: number; event: Event };
   sort_click: {
     field: FieldDef;
     order: SortOrder;
@@ -211,6 +213,7 @@ export interface TableEventHandlersReturnMap {
   mouseenter_table: void;
   mouseleave_table: void;
   mousedown_table: void;
+  mousemove_table: void;
   mouseenter_cell: void;
   mouseleave_cell: void;
   // mouseover_cell: void;
@@ -228,6 +231,7 @@ export interface TableEventHandlersReturnMap {
   resize_row: void;
   resize_row_end: void;
   change_header_position: void;
+  change_header_position_start: void;
   sort_click: boolean;
   freeze_click: void;
   dropdown_menu_click: void;

@@ -438,6 +438,7 @@ export function createTable(el: any, v: any) {
   ];
   //初始化表格
   const tableInstance = new PivotTable({
+    dragHeaderMode: 'all',
     container: document.getElementById(CONTAINER_ID),
     rowTree,
     columnTree,

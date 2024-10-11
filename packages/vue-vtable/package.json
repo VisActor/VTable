@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vue-vtable",
-  "version": "1.8.2",
+  "version": "1.9.0",
   "description": "The vue version of VTable",
   "keywords": [
     "vue",
