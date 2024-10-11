@@ -63,16 +63,19 @@ export class DependencyLink {
     }
     linkedFromTaskRecord.record.vtable_gantt_linkedFrom.push(link);
 
+    const linkedFromTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+    const linkedToTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+
     const {
       startDate: linkedToTaskStartDate,
       endDate: linkedToTaskEndDate,
       taskDays: linkedToTaskTaskDays
-    } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedToTaskRecord.index);
+    } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex);
     const {
       startDate: linkedFromTaskStartDate,
       endDate: linkedFromTaskEndDate,
       taskDays: linkedFromTaskTaskDays
-    } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index);
+    } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex);
     if (!linkedFromTaskTaskDays || !linkedToTaskTaskDays) {
       return;
     }
@@ -82,10 +85,10 @@ export class DependencyLink {
       type,
       linkedFromTaskStartDate,
       linkedFromTaskEndDate,
-      linkedFromTaskRecord.index,
+      linkedFromTaskShowIndex,
       linkedToTaskStartDate,
       linkedToTaskEndDate,
-      linkedToTaskRecord.index,
+      linkedToTaskShowIndex,
       minDate,
       this._scene._gantt.parsedOptions.rowHeight,
       this._scene._gantt.parsedOptions.colWidthPerDay

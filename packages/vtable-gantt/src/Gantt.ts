@@ -579,17 +579,22 @@ export class Gantt extends EventTarget {
   getAllTaskBarsHeight() {
     return this.itemCount * this.parsedOptions.rowHeight;
   }
-
-  getRecordByIndex(index: number) {
+  getTaskShowIndexByRecordIndex(index: number) {
+    return this.taskListTableInstance.getBodyRowIndexByRecordIndex(index);
+  }
+  getRecordByIndex(taskShowIndex: number) {
     if (this.taskListTableInstance) {
-      return this.taskListTableInstance.getRecordByRowCol(0, index + this.taskListTableInstance.columnHeaderLevelCount);
+      return this.taskListTableInstance.getRecordByRowCol(
+        0,
+        taskShowIndex + this.taskListTableInstance.columnHeaderLevelCount
+      );
     }
-    return this.records[index];
+    return this.records[taskShowIndex];
   }
 
-  _refreshTaskBar(index: number) {
+  _refreshTaskBar(taskShowIndex: number) {
     // this.listTableInstance.updateRecords([record], [index]);
-    this.scenegraph.taskBar.updateTaskBarNode(index);
+    this.scenegraph.taskBar.updateTaskBarNode(taskShowIndex);
     this.scenegraph.updateNextFrame();
   }
   _updateRecordToListTable(record: any, index: number) {
@@ -600,14 +605,14 @@ export class Gantt extends EventTarget {
    * @param index
    * @returns 当前任务信息
    */
-  getTaskInfoByTaskListIndex(index: number): {
+  getTaskInfoByTaskListIndex(taskShowIndex: number): {
     taskRecord: any;
     taskDays: number;
     startDate: Date;
     endDate: Date;
     progress: number;
   } {
-    const taskRecord = this.getRecordByIndex(index);
+    const taskRecord = this.getRecordByIndex(taskShowIndex);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
     const progressField = this.parsedOptions.progressField;
