@@ -504,6 +504,7 @@ export interface BaseTableConstructorOptions {
   formatCopyValue?: (value: string) => string;
 }
 export interface BaseTableAPI {
+  id: string;
   /** 数据总条目数 */
   recordsCount: number;
   /** 表格的行数 */
