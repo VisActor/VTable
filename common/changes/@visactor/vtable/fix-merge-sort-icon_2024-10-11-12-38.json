@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix sort icon update in merge cell",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
