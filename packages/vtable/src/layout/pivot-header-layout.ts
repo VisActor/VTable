@@ -1075,7 +1075,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         //     });
         // });
       } else {
-        const rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+        const rowDimensionKeys =
+          this.rowDimensionTree.totalLevel > 0
+            ? this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr()
+            : this.rowsDefine.map(dimension => {
+                if (typeof dimension === 'string') {
+                  return dimension;
+                }
+                return dimension.dimensionKey;
+              });
         rowDimensionKeys.forEach((objKey, index) => {
           const dimension = this.rowsDefine?.find(dimension =>
             typeof dimension === 'string' ? false : dimension.dimensionKey === objKey
