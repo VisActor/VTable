@@ -31,7 +31,7 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
     state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY, event);
     state.showVerticalScrollBar(true);
   }
-  isWheelEvent && state.resetInteractionState();
+  isWheelEvent && state.resetInteractionState(state.interactionStateBeforeScroll);
   if (
     event.nativeEvent?.cancelable &&
     (state.table.internalProps.overscrollBehavior === 'none' ||

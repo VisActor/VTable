@@ -41,6 +41,20 @@ export function bindTableGroupListener(eventManager: EventManager) {
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }
+
+    // 触发MOUSEMOVE_TABLE
+    if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEMOVE_TABLE)) {
+      table.fireListeners(TABLE_EVENT_TYPE.MOUSEMOVE_TABLE, {
+        col: eventArgsSet.eventArgs.col,
+        row: eventArgsSet.eventArgs.row,
+        x: eventArgsSet.abstractPos.x,
+        y: eventArgsSet.abstractPos.y,
+        event: e.nativeEvent,
+        target: eventArgsSet?.eventArgs?.target,
+        mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
+      });
+    }
+
     if (
       stateManager.interactionState === InteractionState.grabing &&
       !(table as ListTableAPI).editorManager?.editingEditor
@@ -340,7 +354,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
             source: {
               col: table.stateManager.columnMove.colSource,
               row: table.stateManager.columnMove.rowSource
-            }
+            },
+            event: e.nativeEvent
           });
         }
       }
@@ -377,6 +392,19 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
         stateManager.updateInteractionState(InteractionState.default);
         eventManager.dealTableHover();
+      });
+    }
+  };
+  const globalPointerdownCallback = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (!table.getElement().contains(target)) {
+      // 如果点击到表格外部的dom
+      const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
+      getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
+        if (isCompleteEdit === false) {
+          // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+          return;
+        }
         //点击到表格外部不需要取消选中状态
         if (table.options.select?.outsideClickDeselect) {
           const isHasSelected = !!stateManager.select.ranges?.length;
@@ -391,8 +419,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
     env: 'document',
     callback: globalPointerupCallback
   });
+  eventManager.globalEventListeners.push({
+    name: 'pointerdown',
+    env: 'document',
+    callback: globalPointerdownCallback
+  });
   // 整体全局监听事件
   vglobal.addEventListener('pointerup', globalPointerupCallback);
+  vglobal.addEventListener('pointerdown', globalPointerdownCallback);
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
       table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
@@ -526,7 +560,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
           eventArgsSet.eventArgs.col,
           eventArgsSet.eventArgs.row,
           eventArgsSet.abstractPos.x,
-          eventArgsSet.abstractPos.y
+          eventArgsSet.abstractPos.y,
+          eventArgsSet.eventArgs?.event?.nativeEvent
         );
         stateManager.updateInteractionState(InteractionState.grabing);
       }
@@ -572,7 +607,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
             source: {
               col: table.stateManager.columnMove.colSource,
               row: table.stateManager.columnMove.rowSource
-            }
+            },
+            event: e.nativeEvent
           });
         }
       } else if (stateManager.isSelecting()) {

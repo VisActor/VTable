@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add scrollTo animation function",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

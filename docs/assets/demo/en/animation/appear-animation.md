@@ -1,14 +1,14 @@
 ---
 category: examples
 group: Animation
-title: 入场动画
+title: Appear Animation
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/appear-animation.gif
-option: ListTable-columns-text#mergeCell
+option: ListTable-columns-text#animationAppear
 ---
 
 # Entry animation
 
-Automatically merge cells with the same content through configuration
+Initialize the table with an entrance animation.
 
 ## Key configuration
 

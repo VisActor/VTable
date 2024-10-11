@@ -100,6 +100,7 @@ import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { EditManeger } from '../edit/edit-manager';
+import type { TableAnimationManager } from '../core/animation';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -492,6 +493,9 @@ export interface BaseTableConstructorOptions {
     createReactContainer?: boolean;
     // adaptive 模式下优先缩小迷你图
     shrinkSparklineFirst?: boolean;
+
+    // 行列移动不更新表格
+    notUpdateInColumnRowMove?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -501,6 +505,7 @@ export interface BaseTableConstructorOptions {
   formatCopyValue?: (value: string) => string;
 }
 export interface BaseTableAPI {
+  id: string;
   /** 数据总条目数 */
   recordsCount: number;
   /** 表格的行数 */
@@ -599,6 +604,8 @@ export interface BaseTableAPI {
   stateManager: StateManager;
   /** 事件管理模块 */
   eventManager: EventManager;
+  /** 动画管理模块 */
+  animationManager: TableAnimationManager;
 
   editorManager: EditManeger;
   /** 行表头的层数 */

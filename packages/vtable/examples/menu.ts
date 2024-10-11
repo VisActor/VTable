@@ -777,6 +777,14 @@ export const menus = [
     children: [
       {
         path: 'custom',
+        name: 'complex-corner'
+      },
+      {
+        path: 'custom',
+        name: 'simple-corner'
+      },
+      {
+        path: 'custom',
         name: 'custom-layout'
       },
       {
@@ -916,6 +924,15 @@ export const menus = [
       {
         path: 'updateOption',
         name: 'update-heightMode'
+      }
+    ]
+  },
+  {
+    menu: 'animation',
+    children: [
+      {
+        path: 'animation',
+        name: 'scroll-to'
       }
     ]
   },

@@ -146,6 +146,8 @@ import { getCellStyle } from './style-helper';
 import type { EditManeger } from '../edit/edit-manager';
 import { createReactContainer } from '../scenegraph/layout/frozen-react';
 import { setIconColor } from '../icons';
+import type { ITableAnimationOption } from './animation';
+import { TableAnimationManager } from './animation';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -178,6 +180,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   stateManager: StateManager;
   eventManager: EventManager;
   editorManager: EditManeger;
+  animationManager: TableAnimationManager;
   _pixelRatio: number;
 
   // bottomFrozenRowCount: number = 0;
@@ -430,6 +433,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
+    this.animationManager = new TableAnimationManager(this);
 
     if (options.legends) {
       internalProps.legends = [];
@@ -3468,24 +3472,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           .map((_, j) => this.getCellInfo(j + start.col, i + start.row))
       );
   }
-  /**
-   * 滚动到具体某个单元格位置
-   * @param cellAddr 要滚动到的单元格位置
-   */
-  scrollToCell(cellAddr: { col?: number; row?: number }) {
-    const drawRange = this.getDrawRange();
-    if (isValid(cellAddr.col) && cellAddr.col >= this.frozenColCount) {
-      const frozenWidth = this.getFrozenColsWidth();
-      const left = this.getColsWidth(0, cellAddr.col - 1);
-      this.scrollLeft = Math.min(left - frozenWidth, this.getAllColsWidth() - drawRange.width);
-    }
-    if (isValid(cellAddr.row) && cellAddr.row >= this.frozenRowCount) {
-      const frozenHeight = this.getFrozenRowsHeight();
-      const top = this.getRowsHeight(0, cellAddr.row - 1);
-      this.scrollTop = Math.min(top - frozenHeight, this.getAllRowsHeight() - drawRange.height);
-    }
-    this.render();
-  }
 
   /**获取选中区域的内容 作为复制内容 */
   getCopyValue(): string | null {
@@ -4195,5 +4181,44 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   getGroupTitleLevel(col: number, row: number): number | undefined {
     return undefined;
+  }
+
+  // anmiation
+  scrollToRow(row: number, animationOption?: ITableAnimationOption | boolean) {
+    if (!animationOption) {
+      this.scrollToCell({ row });
+      return;
+    }
+    this.animationManager.scrollTo({ row }, animationOption);
+  }
+  scrollToCol(col: number, animationOption?: ITableAnimationOption | boolean) {
+    if (!animationOption) {
+      this.scrollToCell({ col });
+      return;
+    }
+    this.animationManager.scrollTo({ col }, animationOption);
+  }
+  /**
+   * 滚动到具体某个单元格位置
+   * @param cellAddr 要滚动到的单元格位置
+   * @param animationOption 动画配置
+   */
+  scrollToCell(cellAddr: { col?: number; row?: number }, animationOption?: ITableAnimationOption | boolean) {
+    if (animationOption) {
+      this.animationManager.scrollTo(cellAddr, animationOption);
+      return;
+    }
+    const drawRange = this.getDrawRange();
+    if (isValid(cellAddr.col) && cellAddr.col >= this.frozenColCount) {
+      const frozenWidth = this.getFrozenColsWidth();
+      const left = this.getColsWidth(0, cellAddr.col - 1);
+      this.scrollLeft = Math.min(left - frozenWidth, this.getAllColsWidth() - drawRange.width);
+    }
+    if (isValid(cellAddr.row) && cellAddr.row >= this.frozenRowCount) {
+      const frozenHeight = this.getFrozenRowsHeight();
+      const top = this.getRowsHeight(0, cellAddr.row - 1);
+      this.scrollTop = Math.min(top - frozenHeight, this.getAllRowsHeight() - drawRange.height);
+    }
+    this.render();
   }
 }

@@ -279,6 +279,20 @@ export function updateSelectPosition(
             col,
             row
           };
+
+          const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
+          if (currentRange.start.col < cellRange.end.col) {
+            currentRange.end.col = cellRange.end.col;
+          } else if (currentRange.start.col > cellRange.start.col) {
+            currentRange.end.col = cellRange.start.col;
+          }
+
+          if (currentRange.start.row < cellRange.end.row) {
+            currentRange.end.row = cellRange.end.row;
+          } else if (currentRange.start.row > cellRange.start.row) {
+            currentRange.end.row = cellRange.start.row;
+          }
+
           if (skipBodyMerge) {
             currentRange.skipBodyMerge = true;
           }

@@ -597,7 +597,8 @@ export class EventManager {
         eventArgs.col,
         eventArgs.row,
         eventArgsSet.abstractPos.x,
-        eventArgsSet.abstractPos.y
+        eventArgsSet.abstractPos.y,
+        eventArgs?.event?.nativeEvent
       );
       return true;
     }

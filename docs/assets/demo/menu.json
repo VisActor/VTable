@@ -896,6 +896,22 @@
             "link": "'../../guide/custom_define/custom_icon'",
             "option": ""
           }
+        },
+        {
+          "path": "scroll-animation",
+          "title": {
+            "zh": "滚动动画",
+            "en": "Scroll Animation"
+          },
+          "meta": {
+            "title": "Scroll Animation",
+            "keywords": "",
+            "category": "demo",
+            "group": "Animation",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scroll-animation.gif",
+            "link": "'../../guide/custom_define/custom_icon'",
+            "option": ""
+          }
         }
       ]
     },
@@ -1016,6 +1032,13 @@
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-style.png",
             "link": "'../../guide/custom_define/custom_style'",
             "option": ""
+          }
+        },
+        {
+          "path": "complex-corner",
+          "title": {
+            "zh": "自定义角头单元格",
+            "en": "Custom Corner Cell"
           }
         }
       ]
