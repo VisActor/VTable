@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/vtable",
       "comment": "feat: add scrollTo animation function",
-      "type": "none"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vtable"
