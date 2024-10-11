@@ -802,9 +802,9 @@ export class StateManager {
     this.fillHandle.beforeFillMinRow = undefined;
   }
 
-  startMoveCol(col: number, row: number, x: number, y: number) {
+  startMoveCol(event: MouseEvent | PointerEvent | TouchEvent, col: number, row: number, x: number, y: number) {
     startMoveCol(col, row, x, y, this);
-    this.table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, { col, row, x, y });
+    this.table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, { col, row, x, y, event });
   }
   updateMoveCol(col: number, row: number, x: number, y: number) {
     updateMoveCol(col, row, x, y, this);
