@@ -538,11 +538,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       } else if ((hitIcon.attribute as any).funcType === IconFuncTypeEnum.dragReorder) {
         stateManager.startMoveCol(
-          e.nativeEvent,
           eventArgsSet.eventArgs.col,
           eventArgsSet.eventArgs.row,
           eventArgsSet.abstractPos.x,
-          eventArgsSet.abstractPos.y
+          eventArgsSet.abstractPos.y,
+          eventArgsSet.eventArgs?.event?.nativeEvent
         );
         stateManager.updateInteractionState(InteractionState.grabing);
       }
