@@ -78,7 +78,7 @@ describe('listTable-cellType-function init test', () => {
   const listTable = new ListTable(containerDom, option);
   test('listTable dragHeader interaction', () => {
     listTable.selectCell(4, 1);
-    listTable.stateManager.startMoveCol(4, 1, 342, 60);
+    listTable.stateManager.startMoveCol(4, 1, 342, 60, null);
     listTable.stateManager.updateMoveCol(1, 1, 100, 60);
     listTable.stateManager.endMoveCol();
     expect(listTable.columns).toEqual([

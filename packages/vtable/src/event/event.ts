@@ -594,11 +594,11 @@ export class EventManager {
       this.table._canDragHeaderPosition(eventArgs.col, eventArgs.row)
     ) {
       this.table.stateManager.startMoveCol(
-        eventArgs.event.nativeEvent,
         eventArgs.col,
         eventArgs.row,
         eventArgsSet.abstractPos.x,
-        eventArgsSet.abstractPos.y
+        eventArgsSet.abstractPos.y,
+        eventArgs?.event?.nativeEvent
       );
       return true;
     }
