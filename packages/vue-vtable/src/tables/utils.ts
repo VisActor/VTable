@@ -10,6 +10,22 @@ export function flattenVNodes(vnodes: any[]): any[] {
   return vnodes.flatMap(vnode => (Array.isArray(vnode.children) ? flattenVNodes(vnode.children) : vnode));
 }
 
+// 将连字符形式的字符串转换为驼峰形式
+export function toCamelCase(str: string): string {
+  return str.replace(/-([a-z])/g, g => g[1].toUpperCase());
+}
+
+// 将 vnode.props 中的所有属性名转换为驼峰形式
+export function convertPropsToCamelCase(props: Record<string, any>): Record<string, any> {
+  const newProps: Record<string, any> = {};
+  for (const key in props) {
+    if (props.hasOwnProperty(key)) {
+      const camelCaseKey = toCamelCase(key);
+      newProps[camelCaseKey] = props[key];
+    }
+  }
+  return newProps;
+}
 // 检查属性是否为事件
 function isEventProp(key: string, props: any) {
   return key.startsWith('on') && isFunction(props[key]);
@@ -34,7 +50,8 @@ export function createCustomLayout(children: any): any {
       return null;
     }
 
-    const { type, props, children: childChildren } = child;
+    const { type, children: childChildren } = child;
+    const props = convertPropsToCamelCase(child.props);
     const componentName = type?.symbol || type?.name;
     const ComponentClass = componentMap[componentName];
 
@@ -76,7 +93,17 @@ export function createCustomLayout(children: any): any {
   function bindComponentEvents(component: any, props: any): void {
     Object.keys(props).forEach(key => {
       if (isEventProp(key, props)) {
-        const eventName = key.slice(2).toLowerCase(); // 去掉'on'前缀并转换为小写
+        let eventName: string;
+        // key 如果是on开头的事件，去掉on前缀并转换为小写，如果是kebab-case转换为camelCase
+        if (key.startsWith('on')) {
+          eventName = key.slice(2).toLowerCase(); // 去掉'on'前缀并转换为小写
+          console.log('eventNames:', eventName);
+        } else {
+          eventName = toCamelCase(key.slice(2)).toLowerCase(); // 转换为camelCase
+          console.log('eventNamesssss:', eventName);
+        }
+
+        // const eventName = toCamelCase(key.slice(2)); // 去掉'on'前缀并转换为camelCase
         component.addEventListener(eventName, props[key]);
       }
     });
