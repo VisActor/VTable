@@ -189,6 +189,10 @@ The switch of dragging the header to move the position. After selecting a cell, 
 - 'column' Only the column header can be swapped
 - 'row' Only the row header can be swapped
 
+#${prefix} dragSortRow(boolean) = false
+
+Whether to enable row drag sorting.
+
 #${prefix} hover(Object)
 
 Hover interaction configuration, specific configuration items as follows:

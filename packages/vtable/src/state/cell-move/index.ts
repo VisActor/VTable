@@ -22,7 +22,7 @@ export function startMoveCol(col: number, row: number, x: number, y: number, sta
     cellLocation === 'columnHeader'
       ? state.columnMove.x
       : cellLocation === 'rowHeader' ||
-        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).canDragSortRow(col, row)
       ? state.columnMove.y
       : 0;
 
@@ -83,7 +83,7 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
       }
     } else if (
       cellLocation === 'rowHeader' ||
-      (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+      (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).canDragSortRow(col, row)
     ) {
       backY = state.columnMove.y;
       if (state.table.isFrozenRow(row)) {
@@ -171,7 +171,7 @@ export function endMoveCol(state: StateManager): boolean {
       }
       if (
         !(state.table as ListTable).transpose &&
-        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
+        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).canDragSortRow(
           state.columnMove.colSource,
           state.columnMove.rowSource
         )
