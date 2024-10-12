@@ -1,3 +1,32 @@
+# v1.9.0
+
+2024-10-11
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add scrollTo animation function
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when dimension set width auto but no records, the col width not compute [#2515](https://github.com/VisActor/VTable/issues/2515)
+- **@visactor/vtable**: when call updateColumns should update aggregation [#2519](https://github.com/VisActor/VTable/issues/2519)
+- **@visactor/vtable**: change outsideClickDeselect trigger time when pointerdown [#2553](https://github.com/VisActor/VTable/issues/2553)
+- **@visactor/vtable**: when sort with row series number occor error [#2558](https://github.com/VisActor/VTable/issues/2558)
+- **@visactor/vtable**: fix select auto-scroll in bottom [#2546](https://github.com/VisActor/VTable/issues/2546)
+- **@visactor/vtable**: fix auto size in react custom component
+- **@visactor/vtable**: fix custom component flash when cell resizes [#2516](https://github.com/VisActor/VTable/issues/2516)
+- **@visactor/vtable**: fix custom component in forzen cell [#2568](https://github.com/VisActor/VTable/issues/2568)
+- **@visactor/vtable**: fix legend with padding layout size
+- **@visactor/vtable**: fix cellLocation in createComplexColumn [#2517](https://github.com/VisActor/VTable/issues/2517)
+- **@visactor/vtable**: fix merge cell select range [#2521](https://github.com/VisActor/VTable/issues/2521)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: when value is promise cell style function should await [#2549](https://github.com/VisActor/VTable/issues/2549)
+
+[more detail about v1.9.0](https://github.com/VisActor/VTable/releases/tag/v1.9.0)
+
 # v1.8.2
 
 2024-10-08
