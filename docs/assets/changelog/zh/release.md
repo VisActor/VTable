@@ -1,3 +1,32 @@
+# v1.9.0
+
+2024-10-11
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 增加scrollTo动画功能
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复无数据时维度列宽计算 [#2515](https://github.com/VisActor/VTable/issues/2515)
+- **@visactor/vtable**: 修复updateColumns调用时的聚合更新 [#2519](https://github.com/VisActor/VTable/issues/2519)
+- **@visactor/vtable**: 修复pointerdown事件中outsideClickDeselect判断时机 [#2553](https://github.com/VisActor/VTable/issues/2553)
+- **@visactor/vtable**: 修复序号列排序问题 [#2558](https://github.com/VisActor/VTable/issues/2558)
+- **@visactor/vtable**: 修复底部单元格选中无法自动滚动问题 [#2546](https://github.com/VisActor/VTable/issues/2546)
+- **@visactor/vtable**: 修复自定义组件自动行高列宽的计算问题
+- **@visactor/vtable**: 修复拖拽行列时自定义组件的闪烁问题 [#2516](https://github.com/VisActor/VTable/issues/2516)
+- **@visactor/vtable**: 修复冻结单元格中自定义组件的更新问题 [#2568](https://github.com/VisActor/VTable/issues/2568)
+- **@visactor/vtable**: 修复带有padding的图例布局计算
+- **@visactor/vtable**: 修复创建单元格时的cellLocation计算问题 [#2517](https://github.com/VisActor/VTable/issues/2517)
+- **@visactor/vtable**: 修复合并单元格选中区域记录 [#2521](https://github.com/VisActor/VTable/issues/2521)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 异步单元格样式获取增加等待 [#2549](https://github.com/VisActor/VTable/issues/2549)
+
+[更多详情请查看 v1.9.0](https://github.com/VisActor/VTable/releases/tag/v1.9.0)
+
 # v1.8.2
 
 2024-10-08
@@ -5,7 +34,7 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix richtext icon update [#2281](https://github.com/VisActor/VTable/issues/2281)
+- **@visactor/vtable**: 修复富文本图标状态更新问题 [#2281](https://github.com/VisActor/VTable/issues/2281)
 
 
 
@@ -18,7 +47,7 @@
 
 **🔨 功能重构**
 
-- **@visactor/vue-vtable**: rename vue component name
+- **@visactor/vue-vtable**: 重命名vue组件
 
 [更多详情请查看 v1.8.1](https://github.com/VisActor/VTable/releases/tag/v1.8.1)
 

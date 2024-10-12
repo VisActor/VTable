@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.9.1",
+      "tag": "@visactor/vtable_v1.9.1",
+      "date": "Sat, 12 Oct 2024 07:07:25 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix sort icon update in merge cell"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.9.0",
       "tag": "@visactor/vtable_v1.9.0",
       "date": "Fri, 11 Oct 2024 11:35:17 GMT",

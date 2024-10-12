@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 11 Oct 2024 11:35:17 GMT and should not be manually modified.
+This log was last generated on Sat, 12 Oct 2024 07:07:25 GMT and should not be manually modified.
+
+## 1.9.1
+Sat, 12 Oct 2024 07:07:25 GMT
+
+### Updates
+
+- fix: fix sort icon update in merge cell
 
 ## 1.9.0
 Fri, 11 Oct 2024 11:35:17 GMT
