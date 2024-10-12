@@ -1,6 +1,6 @@
 ---
 category: examples
-group: functional-components
+group: edit-cell
 title: Using Arco List Selector in Custom Editor
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-editor-basic.png
 link: '../guide/Developer_Ecology/vue'
