@@ -94,16 +94,12 @@ export function createCustomLayout(children: any): any {
     Object.keys(props).forEach(key => {
       if (isEventProp(key, props)) {
         let eventName: string;
-        // key 如果是on开头的事件，去掉on前缀并转换为小写，如果是kebab-case转换为camelCase
+        // 后续需要去优化这个逻辑
         if (key.startsWith('on')) {
           eventName = key.slice(2).toLowerCase(); // 去掉'on'前缀并转换为小写
-          console.log('eventNames:', eventName);
         } else {
           eventName = toCamelCase(key.slice(2)).toLowerCase(); // 转换为camelCase
-          console.log('eventNamesssss:', eventName);
         }
-
-        // const eventName = toCamelCase(key.slice(2)); // 去掉'on'前缀并转换为camelCase
         component.addEventListener(eventName, props[key]);
       }
     });
