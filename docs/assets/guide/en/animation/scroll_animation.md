@@ -12,7 +12,7 @@ The `ScrollAnimationOption` is a configuration item for the scrolling animation.
   - `duration`: The duration of the animation in milliseconds.
   - `easing`: The easing function of the animation. Default is `linear`. Supports `linear`, `quadIn`, `quadOut`, `quadInOut`, `quadInOut`, `cubicIn`, `cubicOut`, `cubicInOut`, `quartIn`, `quartOut`, `quartInOut`, `quintIn`, `quintOut`, `quintInOut`, `backIn`, `backOut`, `backInOut`, `circIn`, `circOut`, `circInOut`, `bounceOut`, `bounceIn`, `bounceInOut`, `elasticIn`, `elasticOut`, `elasticInOut`, `sineIn`, `sineOut`, `sineInOut`, `expoIn`, `expoOut`, `expoInOut`.
 
-For detailed usage, refer to the [demo](../demo/animation/scroll-animation)
+For detailed usage, refer to the [demo](../../demo/animation/scroll-animation)
 
 ## Scrolling APIs
 
