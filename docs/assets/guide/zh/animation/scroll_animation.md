@@ -12,7 +12,7 @@ VTable 提供滚动动画功能，滚动到指定表格区域，支持配置动�
   - `duration`   动画时长，单位 ms
   - `easing`  动画缓动函数，默认为 `linear`，支持 `linear`, `quadIn`, `quadOut`, `quadInOut`, `quadInOut`, `cubicIn`, `cubicOut`, `cubicInOut`, `quartIn`, `quartOut`, `quartInOut`, `quintIn`, `quintOut`, `quintInOut`, `backIn`, `backOut`, `backInOut`, `circIn`, `circOut`, `circInOut`, `bounceOut`, `bounceIn`, `bounceInOut`, `elasticIn`, `elasticOut`, `elasticInOut`, `sineIn`, `sineOut`, `sineInOut`, `expoIn`, `expoOut`, `expoInOut`
 
-具体使用参考[demo](../demo/animation/scroll-animation)
+具体使用参考[demo](../../demo/animation/scroll-animation)
 
 ## 滚动API
 
