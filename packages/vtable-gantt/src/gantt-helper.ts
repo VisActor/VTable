@@ -182,11 +182,16 @@ export function initOptions(gantt: Gantt) {
     options?.taskBar?.hoverBarStyle
   );
 
-  gantt.parsedOptions.taskBarSelectionStyle = Object.assign(
+  gantt.parsedOptions.taskBarSelectedStyle = Object.assign(
     {
-      barOverlayColor: 'rgba(99, 144, 0, 0.4)'
+      shadowBlur: 10, //阴影宽度
+      shadowOffsetX: 0, //x方向偏移
+      shadowOffsetY: 0, //Y方向偏移
+      shadowColor: gantt.parsedOptions.taskBarStyle.barColor, //阴影颜色
+      borderColor: gantt.parsedOptions.taskBarStyle.barColor, //边框颜色
+      borderLineWidth: 1 //边框宽度
     },
-    options?.taskBar?.selectionBarStyle
+    options?.taskBar?.selectedBarStyle
   );
   gantt.parsedOptions.taskBarLabelText = options?.taskBar?.labelText ?? '';
   gantt.parsedOptions.taskBarMoveable = options?.taskBar?.moveable ?? true;

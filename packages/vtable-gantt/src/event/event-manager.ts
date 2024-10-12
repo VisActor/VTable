@@ -102,9 +102,32 @@ function bindTableGroupListener(event: EventManager) {
         return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
       });
       if (taskBarTarget) {
-        stateManager.showTaskBarHover(e);
+        if (scene._gantt.stateManager.hoverTaskBar.target !== taskBarTarget) {
+          scene._gantt.stateManager.hoverTaskBar.target = taskBarTarget;
+          stateManager.showTaskBarHover();
+          if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR)) {
+            const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
+            const record = scene._gantt.getRecordByIndex(taskIndex);
+            scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
+              event: e.nativeEvent,
+              index: taskIndex,
+              record
+            });
+          }
+        }
       } else {
-        stateManager.hideTaskBarHover(e);
+        if (scene._gantt.stateManager.hoverTaskBar.target) {
+          stateManager.hideTaskBarHover(e);
+          if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR)) {
+            const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
+            const record = scene._gantt.getRecordByIndex(taskIndex);
+            scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
+              event: e.nativeEvent,
+              index: taskIndex,
+              record
+            });
+          }
+        }
         //#region hover到某一个任务 检查有没有日期安排，没有的话显示创建按钮
         if (gantt.parsedOptions.taskBarCreatable) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);
@@ -129,23 +152,30 @@ function bindTableGroupListener(event: EventManager) {
     if (poniterState === 'down') {
       let isClickBar = false;
       let isClickCreationButtom = false;
-      e.detailPath.find((pathNode: any) => {
+      const taskBarTarget = e.detailPath.find((pathNode: any) => {
         if (pathNode.name === 'task-bar') {
           // || pathNode.name === 'task-bar-hover-shadow';
           isClickBar = true;
+          return true;
         } else if (pathNode.name === 'task-creation-button') {
           isClickCreationButtom = true;
         }
+        return false;
       });
-      if (isClickBar && gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
-        const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-        const record = gantt.getRecordByIndex(taskIndex);
-        gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
-          event: e.nativeEvent,
-          index: taskIndex,
-          record
-        });
+      if (isClickBar) {
+        scene._gantt.stateManager.selectedTaskBar.target = taskBarTarget;
+        stateManager.showTaskBarSelectedBorder();
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
+          const taskIndex = getTaskIndexByY(e.offset.y, gantt);
+          const record = gantt.getRecordByIndex(taskIndex);
+          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
+            event: e.nativeEvent,
+            index: taskIndex,
+            record
+          });
+        }
       } else if (isClickCreationButtom) {
+        stateManager.hideTaskBarSelectedBorder();
         const taskIndex = getTaskIndexByY(e.offset.y, gantt);
         const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
         if (recordTaskInfo.taskRecord) {
@@ -174,6 +204,8 @@ function bindTableGroupListener(event: EventManager) {
             });
           }
         }
+      } else {
+        stateManager.hideTaskBarSelectedBorder();
       }
     }
     poniterState = 'up';

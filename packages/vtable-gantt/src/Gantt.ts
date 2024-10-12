@@ -18,7 +18,9 @@ import type {
   ITimelineScale,
   ILineStyle,
   ITaskCreationCustomLayout,
-  ITaskLink
+  ITaskLink,
+  ITaskBarSelectedStyle,
+  ITaskBarHoverStyle
 } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
@@ -100,8 +102,8 @@ export class Gantt extends EventTarget {
     reverseSortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
     grid: IGrid;
     taskBarStyle: ITaskBarStyle;
-    taskBarHoverStyle: ITaskBarStyle & { barOverlayColor?: string };
-    taskBarSelectionStyle: ITaskBarStyle & { barOverlayColor?: string };
+    taskBarHoverStyle: ITaskBarHoverStyle;
+    taskBarSelectedStyle: ITaskBarSelectedStyle;
     taskBarLabelText: ITaskBarLabelText;
     taskBarMoveable: boolean;
     taskBarResizable: boolean;

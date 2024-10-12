@@ -246,6 +246,14 @@ export function createTable() {
         completedBarColor: '#91e8e0',
         /** 任务条的圆角 */
         cornerRadius: 10
+      },
+      selectedBarStyle: {
+        shadowBlur: 10, //阴影宽度
+        shadowOffsetX: 0, //x方向偏移
+        shadowOffsetY: 0, //Y方向偏移
+        shadowColor: 'red', //阴影颜色
+        borderColor: 'red', //边框颜色
+        borderLineWidth: 1 //边框宽度
       }
     },
     timelineHeader: {

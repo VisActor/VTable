@@ -63,6 +63,12 @@ export class StateManager {
     resizing: boolean;
     onIconName: string;
   };
+  selectedTaskBar: {
+    /** x坐标是相对table内坐标 */
+    startX: number;
+    targetStartX: number;
+    target: GanttTaskBarNode;
+  };
   resizeTableWidth: {
     /** x坐标是相对table内坐标 */
     lastX: number;
@@ -92,6 +98,12 @@ export class StateManager {
     };
 
     this.hoverTaskBar = {
+      targetStartX: null,
+      startX: null,
+      target: null
+    };
+
+    this.selectedTaskBar = {
       targetStartX: null,
       startX: null,
       target: null
@@ -432,12 +444,7 @@ export class StateManager {
         progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
         this._gantt._updateDateToTaskRecord('end-move', diff_days, taskIndex);
       }
-      this._gantt.scenegraph.taskBar.showHoverBar(
-        taskBarGroup.attribute.x,
-        taskBarGroup.attribute.y,
-        taskBarGroup.attribute.width,
-        taskBarGroup.attribute.height
-      );
+      this.showTaskBarHover();
       reCreateCustomNode(this._gantt, taskBarGroup, taskIndex);
       this.resizeTaskBar.resizing = false;
       this.resizeTaskBar.target = null;
@@ -494,11 +501,7 @@ export class StateManager {
 
     textLabel?.setAttribute('maxLineWidth', taskBarSize - TASKBAR_HOVER_ICON_WIDTH * 2);
 
-    const x = taskBarGroup.attribute.x;
-    const y = taskBarGroup.attribute.y;
-    const width = taskBarGroup.attribute.width;
-    const height = taskBarGroup.attribute.height;
-    this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, this.resizeTaskBar.target);
+    this.showTaskBarHover();
 
     reCreateCustomNode(this._gantt, taskBarGroup, taskIndex);
     this._gantt.scenegraph.updateNextFrame();
@@ -552,50 +555,34 @@ export class StateManager {
   }
   //#endregion
 
-  showTaskBarHover(e: FederatedPointerEvent) {
-    // const taskBarTarget =
-    //   e.target?.name === 'task-bar-hover-shadow-left-icon' || e.target?.name === 'task-bar-hover-shadow-right-icon'
-    //     ? e.target.parent //转成父级元素task-bar-hover-shadow  后面逻辑需要宽高值
-    //     : e.target;
-    const taskBarTarget = e.detailPath.find((pathNode: any) => {
-      return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
-    }) as any;
-    if (this._gantt.stateManager.hoverTaskBar.target !== taskBarTarget) {
-      this._gantt.stateManager.hoverTaskBar.target = taskBarTarget;
-      const target = this._gantt.stateManager.hoverTaskBar.target;
-      const x = target.attribute.x;
-      const y = target.attribute.y;
-      const width = target.attribute.width;
-      const height = target.attribute.height;
-      this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, taskBarTarget);
-      this._gantt.scenegraph.updateNextFrame();
-      if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR)) {
-        const taskIndex = getTaskIndexByY(e.offset.y, this._gantt);
-        const record = this._gantt.getRecordByIndex(taskIndex);
-        this._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
-          event: e.nativeEvent,
-          index: taskIndex,
-          record
-        });
-      }
-    }
-    //
+  showTaskBarHover() {
+    const target = this._gantt.stateManager.hoverTaskBar.target;
+    const x = target.attribute.x;
+    const y = target.attribute.y;
+    const width = target.attribute.width;
+    const height = target.attribute.height;
+    this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, target);
+    this._gantt.scenegraph.updateNextFrame();
   }
   hideTaskBarHover(e: FederatedPointerEvent) {
-    if (this._gantt.stateManager.hoverTaskBar.target) {
-      this._gantt.stateManager.hoverTaskBar.target = null;
-      this._gantt.scenegraph.taskBar.hideHoverBar();
-      this._gantt.scenegraph.updateNextFrame();
-      if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR)) {
-        const taskIndex = getTaskIndexByY(e.offset.y, this._gantt);
-        const record = this._gantt.getRecordByIndex(taskIndex);
-        this._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
-          event: e.nativeEvent,
-          index: taskIndex,
-          record
-        });
-      }
-    }
+    this._gantt.stateManager.hoverTaskBar.target = null;
+    this._gantt.scenegraph.taskBar.hideHoverBar();
+    this._gantt.scenegraph.updateNextFrame();
+  }
+
+  showTaskBarSelectedBorder() {
+    const target = this._gantt.stateManager.hoverTaskBar.target;
+    const x = target.attribute.x;
+    const y = target.attribute.y;
+    const width = target.attribute.width;
+    const height = target.attribute.height;
+    this._gantt.scenegraph.taskBar.showSelectedBorder(x, y, width, height, target);
+    this._gantt.scenegraph.updateNextFrame();
+  }
+  hideTaskBarSelectedBorder() {
+    this._gantt.stateManager.hoverTaskBar.target = null;
+    this._gantt.scenegraph.taskBar.hideSelectedBorder();
+    this._gantt.scenegraph.updateNextFrame();
   }
 }
 

@@ -16,6 +16,7 @@ export class TaskBar {
   group: Group;
   barContainer: Group;
   hoverBarGroup: Group;
+  selectedBorder: Group;
   hoverBarLeftIcon: Image;
   hoverBarRightIcon: Image;
   _scene: Scenegraph;
@@ -38,6 +39,7 @@ export class TaskBar {
     scene.tableGroup.addChild(this.group);
     this.initBars();
     this.initHoverBarIcons();
+    this.initSelectedBorder();
   }
 
   initBars() {
@@ -192,17 +194,6 @@ export class TaskBar {
     }
   }
   initHoverBarIcons() {
-    // const target = this._scene._gantt.stateManager.hoverTaskBar.target;
-
-    // const barGroup = new Group({
-    //   x: target.attribute.x,
-    //   y: target.attribute.y,
-    //   width: target.attribute.width,
-    //   height: target.attribute.height,
-    //   cornerRadius: target.attribute.cornerRadius,
-    //   clip: true,
-    //   cursor: 'grab'
-    // });
     const hoverBarGroup = new Group({
       x: 0,
       y: 0,
@@ -250,6 +241,27 @@ export class TaskBar {
       this.hoverBarRightIcon = rightIcon;
       hoverBarGroup.appendChild(rightIcon);
     }
+  }
+  initSelectedBorder() {
+    const selectedBorder = new Group({
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+      lineWidth: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderLineWidth,
+      pickable: false,
+      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius ?? 0,
+      fill: false,
+      stroke: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
+      shadowColor: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
+      shadowOffsetX: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetX,
+      shadowOffsetY: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetY,
+      shadowBlur: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowBlur,
+      visibleAll: false
+    });
+    this.selectedBorder = selectedBorder;
+    selectedBorder.name = 'task-bar-hover-shadow';
+    this.barContainer.appendChild(selectedBorder);
   }
   setX(x: number) {
     this.barContainer.setAttribute('x', x);
@@ -300,5 +312,16 @@ export class TaskBar {
   }
   hideHoverBar() {
     this.hoverBarGroup.setAttribute('visibleAll', false);
+  }
+
+  showSelectedBorder(x: number, y: number, width: number, height: number, target?: Group) {
+    this.selectedBorder.setAttribute('x', x);
+    this.selectedBorder.setAttribute('y', y);
+    this.selectedBorder.setAttribute('width', width);
+    this.selectedBorder.setAttribute('height', height);
+    this.selectedBorder.setAttribute('visibleAll', true);
+  }
+  hideSelectedBorder() {
+    this.selectedBorder.setAttribute('visibleAll', false);
   }
 }

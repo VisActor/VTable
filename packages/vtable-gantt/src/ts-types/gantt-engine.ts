@@ -89,17 +89,9 @@ export interface GanttConstructorOptions {
     /** 任务条是否可移动 */
     moveable?: boolean;
     /** 任务条hover时的样式 */
-    hoverBarStyle?: {
-      /** 任务条的圆角 */
-      cornerRadius?: number;
-      barOverlayColor?: string;
-    };
+    hoverBarStyle?: ITaskBarHoverStyle;
     /** 任务条选择时的样式 TODO */
-    selectionBarStyle?: {
-      /** 任务条的圆角 */
-      cornerRadius?: number;
-      barOverlayColor?: string;
-    };
+    selectedBarStyle?: ITaskBarSelectedStyle;
     /** 任务条右键菜单 */
     menu?: {
       /** 右键菜单。代替原来的option.contextmenu */
@@ -133,6 +125,11 @@ export interface GanttConstructorOptions {
     links: ITaskLink[];
     linkLineStyle?: ILineStyle;
     linkCreatable?: boolean;
+    selectedLineStyle?: ILineStyle & {
+      shadowBlur?: number; //阴影宽度
+      shadowOffset?: number; //偏移
+      shadowColor?: string; //阴影颜色
+    };
   };
   /** 网格线配置 */
   grid?: IGrid;
@@ -310,4 +307,17 @@ export enum DependencyType {
   FinishToFinish = 'finish_to_finish',
   StartToFinish = 'start_to_finish'
 }
+export type ITaskBarSelectedStyle = {
+  shadowBlur?: number; //阴影宽度
+  shadowOffsetX?: number; //x方向偏移
+  shadowOffsetY?: number; //Y方向偏移
+  shadowColor?: string; //阴影颜色
+  borderColor?: string; //边框颜色
+  borderLineWidth?: number;
+};
+export type ITaskBarHoverStyle = {
+  /** 任务条的圆角 */
+  cornerRadius?: number;
+  barOverlayColor?: string;
+};
 //#endregion
