@@ -2492,6 +2492,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return undefined;
   }
+
+  /**
+   * 判断表格行是否可拖拽
+   * dragSortRow === true 表格行可拖拽
+   */
+  canDragSortRow(col: number, row: number): boolean {
+    return this._table.options.dragSortRow || this.isSeriesNumberInBody(col, row);
+  }
   /**
    * 判断从source地址是否可以移动到target地址
    * @param source
@@ -2499,7 +2507,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @returns boolean 是否可以移动
    */
   canMoveHeaderPosition(source: CellAddress, target: CellAddress): boolean {
-    if (this.isSeriesNumberInHeader(target.col, target.row) || this.isSeriesNumberInHeader(source.col, source.row)) {
+    if (this.canDragSortRow(target.col, target.row) || this.canDragSortRow(source.col, source.row)) {
       return false;
     }
     if (this.isCornerHeader(target.col, target.row)) {
@@ -2508,7 +2516,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (source.col < 0 || source.row < 0 || target.col < 0 || target.row < 0) {
       return false;
     }
-    if (this.isSeriesNumberInBody(target.col, target.row) && this.isSeriesNumberInBody(source.col, source.row)) {
+    if (this.canDragSortRow(target.col, target.row) && this.canDragSortRow(source.col, source.row)) {
       // 如果是子节点之间相互换位置  则匹配表头最后一级
       // if (
       //   this.getColumnDefine(source.col + this.leftRowSeriesNumberColumnCount, source.row).isChildNode &&

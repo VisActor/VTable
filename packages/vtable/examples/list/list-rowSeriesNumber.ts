@@ -207,6 +207,7 @@ export function createTable() {
     //   perPageCount: 20,
     //   currentPage: 1
     // },
+    dragSortRow: true,
     rowSeriesNumber: {
       title: '',
       // field: 'sex',
@@ -228,7 +229,7 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.on('change_header_position', args => {
-    console.log('change_header_position');
+    console.log('change_header_position', args);
   });
   window.tableInstance = tableInstance;
   bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
