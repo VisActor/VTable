@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { shallowRef, computed, defineProps, useSlots } from 'vue';
-import { flattenVNodes } from './utils';
+import { flattenVNodes , convertPropsToCamelCase } from './utils';
 import BaseTable from './base-table.vue';
 import type { ICornerDefine as PivotCornerProps, IIndicator as PivotIndicatorsProps, IDimension as PivotColumnDimensionProps, IDimension as PivotRowDimensionProps, ITitleDefine } from '@visactor/vtable';
 import type { TooltipProps } from '../components/component/tooltip';
@@ -57,6 +57,7 @@ const computedOptions = computed(() => {
   };
 
   flattenedSlots.forEach(vnode => {
+    vnode.props = convertPropsToCamelCase(vnode.props);
     const typeName = vnode.type?.symbol || vnode.type?.name ;
     const optionKey = typeMapping[typeName];
 
