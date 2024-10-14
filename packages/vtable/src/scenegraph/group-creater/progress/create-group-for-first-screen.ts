@@ -31,6 +31,7 @@ export function createGroupForFirstScreen(
     (table.options.autoWrapText && (table.heightMode === 'adaptive' || table.heightMode === 'autoHeight'))
   ) {
     distCol = table.colCount - 1;
+    proxy.colEnd = distCol;
   } else {
     distCol = Math.min(proxy.firstScreenColLimit, table.colCount - 1);
   }
@@ -38,6 +39,7 @@ export function createGroupForFirstScreen(
     distRow = table.rowCount - 1;
   } else {
     distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1);
+    proxy.rowEnd = distRow;
   }
   if (table.internalProps._widthResizedColMap.size === 0) {
     // compute colums width in first screen
