@@ -18,6 +18,7 @@ export class EventManager {
   lastDragPointerXYOnWindow: { x: number; y: number };
   //报错已绑定过的事件 后续清除绑定
   globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
+  poniterState: 'down' | 'draging' | 'up';
   // lastDragPointerXYOnResizeLine: { x: number; y: number };
   constructor(gantt: Gantt) {
     this._gantt = gantt;
@@ -49,9 +50,9 @@ function bindTableGroupListener(event: EventManager) {
   const scene = event._gantt.scenegraph;
   const gantt = event._gantt;
   const stateManager = gantt.stateManager;
-  let poniterState: 'down' | 'draging' | 'up';
+
   scene.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
-    poniterState = 'down';
+    event.poniterState = 'down';
     if (e.button !== 0) {
       // 只处理左键
       return;
@@ -86,15 +87,15 @@ function bindTableGroupListener(event: EventManager) {
   });
 
   scene.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    if (poniterState === 'down') {
-      const x1 = gantt.eventManager.lastDragPointerXYOnWindow.x;
-      const x2 = e.x;
+    if (event.poniterState === 'down') {
+      const x1 = gantt.eventManager.lastDragPointerXYOnWindow.x ?? e.pageX;
+      const x2 = e.pageX;
       const dx = x2 - x1;
-      const y1 = gantt.eventManager.lastDragPointerXYOnWindow.y;
-      const y2 = e.y;
+      const y1 = gantt.eventManager.lastDragPointerXYOnWindow.y ?? e.pageY;
+      const y2 = e.pageY;
       const dy = y2 - y1;
-      if (dx >= 1 || dy >= 1) {
-        poniterState = 'draging';
+      if (Math.abs(dx) >= 1 || Math.abs(dy) >= 1) {
+        event.poniterState = 'draging';
       }
     }
     if (stateManager.interactionState === InteractionState.default) {
@@ -102,8 +103,8 @@ function bindTableGroupListener(event: EventManager) {
         return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
       });
       if (taskBarTarget) {
-        if (scene._gantt.stateManager.hoverTaskBar.target !== taskBarTarget) {
-          scene._gantt.stateManager.hoverTaskBar.target = taskBarTarget;
+        if (scene._gantt.stateManager.hoverTaskBar.target !== (taskBarTarget as any as GanttTaskBarNode)) {
+          scene._gantt.stateManager.hoverTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
           stateManager.showTaskBarHover();
           if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR)) {
             const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
@@ -149,9 +150,14 @@ function bindTableGroupListener(event: EventManager) {
     }
   });
   scene.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
-    if (poniterState === 'down') {
+    stateManager.hideDependencyLinkSelectedLine();
+    stateManager.hideTaskBarSelectedBorder();
+    if (event.poniterState === 'down') {
       let isClickBar = false;
       let isClickCreationButtom = false;
+      let isClickDependencyLine = false;
+      let depedencyLink;
+
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         if (pathNode.name === 'task-bar') {
           // || pathNode.name === 'task-bar-hover-shadow';
@@ -159,11 +165,16 @@ function bindTableGroupListener(event: EventManager) {
           return true;
         } else if (pathNode.name === 'task-creation-button') {
           isClickCreationButtom = true;
+          return false;
+        } else if (pathNode.attribute.vtable_link) {
+          isClickDependencyLine = true;
+          depedencyLink = pathNode.attribute.vtable_link;
+          return false;
         }
         return false;
       });
       if (isClickBar) {
-        scene._gantt.stateManager.selectedTaskBar.target = taskBarTarget;
+        scene._gantt.stateManager.selectedTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
         stateManager.showTaskBarSelectedBorder();
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);
@@ -175,7 +186,7 @@ function bindTableGroupListener(event: EventManager) {
           });
         }
       } else if (isClickCreationButtom) {
-        stateManager.hideTaskBarSelectedBorder();
+        // stateManager.hideTaskBarSelectedBorder();
         const taskIndex = getTaskIndexByY(e.offset.y, gantt);
         const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
         if (recordTaskInfo.taskRecord) {
@@ -204,11 +215,13 @@ function bindTableGroupListener(event: EventManager) {
             });
           }
         }
+      } else if (isClickDependencyLine) {
+        scene._gantt.stateManager.selectedDenpendencyLink.link = depedencyLink;
+        stateManager.showDependencyLinkSelectedLine();
       } else {
-        stateManager.hideTaskBarSelectedBorder();
       }
     }
-    poniterState = 'up';
+    event.poniterState = 'up';
   });
 
   scene.tableGroup.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
@@ -300,15 +313,21 @@ function bindContainerDomListener(eventManager: EventManager) {
   });
   vglobal.addEventListener('mousedown', globalMousedownCallback);
   const globalMousemoveCallback = (e: FederatedPointerEvent) => {
-    if (stateManager.interactionState === InteractionState.grabing) {
+    if (stateManager.interactionState === InteractionState.grabing && gantt.eventManager.poniterState === 'draging') {
       const lastX = gantt.eventManager.lastDragPointerXYOnWindow?.x ?? e.x;
       // const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
       if (Math.abs(lastX - e.x) >= 1) {
         if (stateManager.isResizingTableWidth()) {
+          stateManager.hideDependencyLinkSelectedLine();
+          stateManager.hideTaskBarSelectedBorder();
           stateManager.dealResizeTableWidth(e);
         } else if (stateManager.isMoveingTaskBar()) {
+          stateManager.hideDependencyLinkSelectedLine();
+          stateManager.hideTaskBarSelectedBorder();
           stateManager.dealTaskBarMove(e);
         } else if (stateManager.isResizingTaskBar()) {
+          stateManager.hideDependencyLinkSelectedLine();
+          stateManager.hideTaskBarSelectedBorder();
           stateManager.dealTaskBarResize(e);
         }
         gantt.eventManager.lastDragPointerXYOnWindow = { x: e.x, y: e.y };
@@ -332,6 +351,7 @@ function bindContainerDomListener(eventManager: EventManager) {
         stateManager.endResizeTaskBar(e.x);
       }
     }
+    gantt.eventManager.lastDragPointerXYOnWindow = undefined;
   };
   eventManager.globalEventListeners.push({
     name: 'mouseup',

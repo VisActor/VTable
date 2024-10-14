@@ -185,7 +185,7 @@ export function initOptions(gantt: Gantt) {
 
   gantt.parsedOptions.taskBarSelectedStyle = Object.assign(
     {
-      shadowBlur: 10, //阴影宽度
+      shadowBlur: 6, //阴影宽度
       shadowOffsetX: 0, //x方向偏移
       shadowOffsetY: 0, //Y方向偏移
       shadowColor: gantt.parsedOptions.taskBarStyle.barColor, //阴影颜色
@@ -262,6 +262,17 @@ export function initOptions(gantt: Gantt) {
       lineWidth: 1
     },
     options.dependencies?.linkLineStyle
+  );
+
+  gantt.parsedOptions.dependencyLinkSelectedLineStyle = Object.assign(
+    {
+      shadowBlur: 4, //阴影宽度
+      shadowOffset: 0, //方向偏移
+      shadowColor: gantt.parsedOptions.dependencyLinkLineStyle.lineColor, //阴影颜色
+      lineColor: gantt.parsedOptions.dependencyLinkLineStyle.lineColor,
+      lineWidth: gantt.parsedOptions.dependencyLinkLineStyle.lineWidth
+    },
+    options?.dependencies?.selectedLineStyle
   );
 }
 

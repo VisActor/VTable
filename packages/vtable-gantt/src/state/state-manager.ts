@@ -1,7 +1,8 @@
 import { clone, cloneDeep, isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
+import type { ITaskLink } from '../ts-types';
 import { InteractionState, GANTT_EVENT_TYPE } from '../ts-types';
-import type { Group, FederatedPointerEvent } from '@visactor/vtable/es/vrender';
+import type { Group, FederatedPointerEvent, Polygon, Line } from '@visactor/vtable/es/vrender';
 import {
   syncEditCellFromTable,
   syncScrollStateFromTable,
@@ -64,15 +65,16 @@ export class StateManager {
     onIconName: string;
   };
   selectedTaskBar: {
-    /** x坐标是相对table内坐标 */
-    startX: number;
-    targetStartX: number;
     target: GanttTaskBarNode;
   };
   resizeTableWidth: {
     /** x坐标是相对table内坐标 */
     lastX: number;
     resizing: boolean;
+  };
+
+  selectedDenpendencyLink: {
+    link: ITaskLink & { vtable_gantt_linkArrowNode: Polygon; vtable_gantt_linkLineNode: Line };
   };
 
   // 供滚动重置为default使用
@@ -104,8 +106,6 @@ export class StateManager {
     };
 
     this.selectedTaskBar = {
-      targetStartX: null,
-      startX: null,
       target: null
     };
     this.resizeTaskBar = {
@@ -120,6 +120,9 @@ export class StateManager {
     this.resizeTableWidth = {
       lastX: null,
       resizing: false
+    };
+    this.selectedDenpendencyLink = {
+      link: null
     };
 
     this.updateVerticalScrollBar = this.updateVerticalScrollBar.bind(this);
@@ -571,7 +574,7 @@ export class StateManager {
   }
 
   showTaskBarSelectedBorder() {
-    const target = this._gantt.stateManager.hoverTaskBar.target;
+    const target = this._gantt.stateManager.selectedTaskBar.target;
     const x = target.attribute.x;
     const y = target.attribute.y;
     const width = target.attribute.width;
@@ -580,8 +583,20 @@ export class StateManager {
     this._gantt.scenegraph.updateNextFrame();
   }
   hideTaskBarSelectedBorder() {
-    this._gantt.stateManager.hoverTaskBar.target = null;
+    this._gantt.stateManager.selectedTaskBar.target = null;
     this._gantt.scenegraph.taskBar.hideSelectedBorder();
+    this._gantt.scenegraph.updateNextFrame();
+  }
+
+  showDependencyLinkSelectedLine() {
+    const link = this._gantt.stateManager.selectedDenpendencyLink.link;
+
+    this._gantt.scenegraph.dependencyLink.createSelectedLinkLine(link);
+    this._gantt.scenegraph.updateNextFrame();
+  }
+  hideDependencyLinkSelectedLine() {
+    this._gantt.stateManager.selectedDenpendencyLink.link = null;
+    this._gantt.scenegraph.dependencyLink.removeSelectedLinkLine();
     this._gantt.scenegraph.updateNextFrame();
   }
 }

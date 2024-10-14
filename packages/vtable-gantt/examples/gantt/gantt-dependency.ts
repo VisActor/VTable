@@ -196,7 +196,13 @@ export function createTable() {
           linkedFromTaskKey: 4,
           linkedToTaskKey: 5
         }
-      ]
+      ],
+      selectedLineStyle: {
+        shadowBlur: 5, //阴影宽度
+        shadowColor: 'red',
+        lineColor: 'red',
+        lineWidth: 1
+      }
     },
     frame: {
       verticalSplitLineMoveable: true,
@@ -248,10 +254,10 @@ export function createTable() {
         cornerRadius: 10
       },
       selectedBarStyle: {
-        shadowBlur: 10, //阴影宽度
+        shadowBlur: 5, //阴影宽度
         shadowOffsetX: 0, //x方向偏移
         shadowOffsetY: 0, //Y方向偏移
-        shadowColor: 'red', //阴影颜色
+        shadowColor: 'black', //阴影颜色
         borderColor: 'red', //边框颜色
         borderLineWidth: 1 //边框宽度
       }
@@ -333,7 +339,9 @@ export function createTable() {
         borderColor: '#e1e4e8'
       },
       style: {
-        borderColor: '#e1e4e8'
+        bgColor: 'gray',
+        color: '#FFF',
+        fontSize: 14
       }
     },
     scrollStyle: {

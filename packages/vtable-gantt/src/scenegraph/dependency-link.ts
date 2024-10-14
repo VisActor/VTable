@@ -1,3 +1,4 @@
+import type { Line } from '@visactor/vtable/es/vrender';
 import { Group, createLine, createRect, Polygon } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
@@ -5,6 +6,7 @@ import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/
 import { isValid } from '@visactor/vutils';
 import { findRecordByTaskKey, getTextPos } from '../gantt-helper';
 import type { GanttTaskBarNode } from './gantt-node';
+import type { ITaskLink } from '../ts-types';
 import { DependencyType } from '../ts-types';
 
 export class DependencyLink {
@@ -14,7 +16,7 @@ export class DependencyLink {
   _scene: Scenegraph;
   width: number;
   height: number;
-
+  selectedNodes: (Line | Polygon)[];
   constructor(scene: Scenegraph) {
     this._scene = scene;
     // const height = Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight);
@@ -100,7 +102,9 @@ export class DependencyLink {
       stroke: lineStyle.lineColor,
       lineWidth: lineStyle.lineWidth,
       lineDash: lineStyle.lineDash,
-      points: linePoints
+      points: linePoints,
+      pickStrokeBuffer: 3,
+      vtable_link: link
     });
     this.linkLinesContainer.appendChild(lineObj);
     (link as any).vtable_gantt_linkLineNode = lineObj;
@@ -137,6 +141,51 @@ export class DependencyLink {
     this.height = this._scene._gantt.gridHeight;
     this.group.setAttribute('width', this.width);
     this.group.setAttribute('height', this.height);
+  }
+  createSelectedLinkLine(
+    selectedLink: ITaskLink & { vtable_gantt_linkArrowNode: Polygon; vtable_gantt_linkLineNode: Line }
+  ) {
+    const lineNode = selectedLink.vtable_gantt_linkLineNode;
+    const arrowNode = selectedLink.vtable_gantt_linkArrowNode;
+    const selectedLineNodelineNode = lineNode.clone();
+    const selectedLinkArrowNode = arrowNode.clone();
+    selectedLineNodelineNode.setAttribute(
+      'stroke',
+      this._scene._gantt.parsedOptions.dependencyLinkSelectedLineStyle.lineColor
+    );
+    selectedLineNodelineNode.setAttribute(
+      'lineWidth',
+      this._scene._gantt.parsedOptions.dependencyLinkSelectedLineStyle.lineWidth
+    );
+    selectedLineNodelineNode.setAttribute(
+      'shadowColor',
+      this._scene._gantt.parsedOptions.dependencyLinkSelectedLineStyle.shadowColor
+    );
+    selectedLineNodelineNode.setAttribute(
+      'shadowOffsetX',
+      this._scene._gantt.parsedOptions.dependencyLinkSelectedLineStyle.shadowOffset
+    );
+    selectedLineNodelineNode.setAttribute(
+      'shadowOffsetY',
+      this._scene._gantt.parsedOptions.dependencyLinkSelectedLineStyle.shadowOffset
+    );
+    selectedLineNodelineNode.setAttribute(
+      'shadowBlur',
+      this._scene._gantt.parsedOptions.dependencyLinkSelectedLineStyle.shadowBlur
+    );
+    this.linkLinesContainer.appendChild(selectedLineNodelineNode);
+    selectedLinkArrowNode.setAttribute(
+      'fill',
+      this._scene._gantt.parsedOptions.dependencyLinkSelectedLineStyle.lineColor
+    );
+    this.linkLinesContainer.appendChild(selectedLinkArrowNode);
+    this.selectedNodes = [selectedLineNodelineNode, selectedLinkArrowNode];
+  }
+  removeSelectedLinkLine() {
+    this.selectedNodes?.forEach(node => {
+      node.delete();
+    });
+    this.selectedNodes = [];
   }
 }
 

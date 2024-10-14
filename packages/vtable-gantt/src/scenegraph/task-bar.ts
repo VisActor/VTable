@@ -253,7 +253,7 @@ export class TaskBar {
       cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius ?? 0,
       fill: false,
       stroke: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
-      shadowColor: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
+      shadowColor: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowColor,
       shadowOffsetX: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetX,
       shadowOffsetY: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetY,
       shadowBlur: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowBlur,
