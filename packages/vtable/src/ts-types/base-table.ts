@@ -136,6 +136,8 @@ export interface IBaseTableProtected {
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
+  /** 拖拽表格行调整顺序*/
+  dragSortRow?: boolean;
   /** 拖拽表头移动位置 针对冻结部分的规则
    * "disabled"（禁止调整冻结列位置）：不允许其他列的表头移入冻结列，也不允许冻结列移出，冻结列保持不变。
    * "adjustFrozenCount"（根据交互结果调整冻结数量）：允许其他列的表头移入冻结列，及冻结列移出，并根据拖拽的动作调整冻结列的数量。当其他列的表头被拖拽进入冻结列位置时，冻结列数量增加；当其他列的表头被拖拽移出冻结列位置时，冻结列数量减少。
@@ -227,6 +229,10 @@ export interface IBaseTableProtected {
   //重新思考逻辑：如果为false，行高按设置的rowHeight；如果设置为true，则按lineHeight及是否自动换行综合计算行高 2021.11.19 by：lff
 
   autoWrapText?: boolean;
+
+  // 支持拖拽排序
+  dragSort?: boolean | 'row' | 'col';
+
   enableLineBreak?: boolean;
 
   menuHandler: MenuHandler;
@@ -328,6 +334,8 @@ export interface BaseTableConstructorOptions {
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
+  /** 拖拽表格行调整顺序*/
+  dragSortRow?: boolean;
 
   /**
    * 是否显示固定列图钉 基本表格生效

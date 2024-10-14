@@ -1081,12 +1081,20 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (this.isColumnHeader(col, row)) {
       return this.getCellId(col, row - 1);
     } else if (this.isRowHeader(col, row)) {
-      if (this.isSeriesNumberInBody(col - 1, row)) {
+      if (this.canDragSortRow(col - 1, row)) {
         return undefined;
       }
       return this.getCellId(col - 1, row);
     }
     return undefined;
+  }
+
+  /**
+   * 判断表格行是否可拖拽
+   * dragSortRow === true 表格行可拖拽
+   */
+  canDragSortRow(col: number, row: number): boolean {
+    return this._table.options.dragSortRow || this.isSeriesNumberInBody(col, row);
   }
   /**
    * 判断从source地址是否可以移动到target地址
@@ -1099,8 +1107,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       return false;
     } else if (
       !this.transpose &&
-      this.isSeriesNumberInBody(target.col, target.row) &&
-      this.isSeriesNumberInBody(source.col, source.row)
+      this.canDragSortRow(target.col, target.row) &&
+      this.canDragSortRow(source.col, source.row)
     ) {
       // return true;
       const sourceIndex = this.getRecordShowIndexByCell(0, source.row);
@@ -1109,8 +1117,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       return canMove;
     } else if (
       this.transpose &&
-      this.isSeriesNumberInBody(target.col, target.row) &&
-      this.isSeriesNumberInBody(source.col, source.row)
+      this.canDragSortRow(target.col, target.row) &&
+      this.canDragSortRow(source.col, source.row)
     ) {
       // 如果是子节点之间相互换位置  则匹配表头最后一级
       if (
@@ -1220,9 +1228,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         };
       } else if (
         this.isRowHeader(source.col, source.row) ||
-        (this.isSeriesNumberInBody(source.col, source.row) && this.transpose)
+        (this.canDragSortRow(source.col, source.row) && this.transpose)
       ) {
-        if (this.isSeriesNumberInBody(source.col, source.row)) {
+        if (this.canDragSortRow(source.col, source.row)) {
           sourceCellRange = this.getCellRange(source.col + this.leftRowSeriesNumberColumnCount, source.row); // 把拖拽转移到拖拽表头节点
         }
         // source单元格包含的列数
@@ -1268,7 +1276,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           targetSize: targetCellRange.end.row - targetCellRange.start.row + 1,
           moveType: 'row'
         };
-      } else if (this.isSeriesNumberInBody(source.col, source.row)) {
+      } else if (this.canDragSortRow(source.col, source.row)) {
         return {
           sourceIndex: source.row,
           targetIndex: target.row,
