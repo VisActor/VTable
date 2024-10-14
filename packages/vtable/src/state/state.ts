@@ -1274,7 +1274,8 @@ export class StateManager {
     // 执行sort
     dealSort(col, row, this.table as ListTableAPI, event);
 
-    const currentSortItem = this.sort.find(item => item.col === col && item.row === row);
+    const range = this.table.getCellRange(col, row);
+    const currentSortItem = this.sort.find(item => item.col === range.start.col && item.row === range.start.row);
 
     const oldSortCol = this.table.internalProps.multipleSort || !previousSortItem ? null : previousSortItem.col;
     const oldSortRow = this.table.internalProps.multipleSort || !previousSortItem ? null : previousSortItem.row;

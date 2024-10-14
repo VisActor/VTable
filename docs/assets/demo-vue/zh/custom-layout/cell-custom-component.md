@@ -1,6 +1,6 @@
 ---
 category: examples
-group: custom
+group: custom-layout
 title: 单元格自定义组件
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-custom-basic.png
 order: 1-1

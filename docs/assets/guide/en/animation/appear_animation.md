@@ -16,4 +16,4 @@ You can configure true to enable the default animation, or you can configure the
 - `duration` The duration of a single animation, in milliseconds, for `one-by-one`, it is the duration of one animation, and the default is 500
 - `delay` The delay of the animation, in milliseconds; for `one-by-one`, it is the time difference between the two animations, for `all`, it is the delay of all animations, and the default is 0
 
-For specific usage, please refer to [demo](../demo/animation/appear-animation)
+For specific usage, please refer to [demo](../../demo/animation/appear-animation)

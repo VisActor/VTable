@@ -179,6 +179,9 @@ export interface GanttConstructorOptions {
     | 'yyyy.mm.dd'
     | 'dd.mm.yyyy'
     | 'mm.dd.yyyy';
+
+  /** 表格绘制范围外的canvas上填充的颜色 */
+  underlayBackgroundColor?: string;
 }
 /**
  * IBarLabelText

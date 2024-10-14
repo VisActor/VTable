@@ -51,7 +51,7 @@ export class Scenegraph {
       width,
       height,
       disableDirtyBounds: false,
-      // background: gantt.theme.underlayBackgroundColor,
+      background: gantt.parsedOptions.underlayBackgroundColor,
       // dpr: gantt.internalProps.pixelRatio,
       enableLayout: true,
       autoRender: false,
