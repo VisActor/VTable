@@ -779,7 +779,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
   // stage 的pointerdown监听
   table.scenegraph.stage.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-    if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
+    if (
+      !eventArgsSet.eventArgs?.target ||
+      (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon
+    ) {
       stateManager.hideMenu();
     }
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
