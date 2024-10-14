@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix border rect missing when borderLineWidth is 0",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
