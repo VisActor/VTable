@@ -22,6 +22,7 @@ export class TaskBar {
   _scene: Scenegraph;
   width: number;
   height: number;
+  selectedBorders: Group[] = [];
   constructor(scene: Scenegraph) {
     this._scene = scene;
     // const height = Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight);
@@ -39,7 +40,6 @@ export class TaskBar {
     scene.tableGroup.addChild(this.group);
     this.initBars();
     this.initHoverBarIcons();
-    this.initSelectedBorder();
   }
 
   initBars() {
@@ -242,27 +242,7 @@ export class TaskBar {
       hoverBarGroup.appendChild(rightIcon);
     }
   }
-  initSelectedBorder() {
-    const selectedBorder = new Group({
-      x: 0,
-      y: 0,
-      width: 100,
-      height: 100,
-      lineWidth: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderLineWidth,
-      pickable: false,
-      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius ?? 0,
-      fill: false,
-      stroke: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
-      shadowColor: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowColor,
-      shadowOffsetX: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetX,
-      shadowOffsetY: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetY,
-      shadowBlur: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowBlur,
-      visibleAll: false
-    });
-    this.selectedBorder = selectedBorder;
-    selectedBorder.name = 'task-bar-hover-shadow';
-    this.barContainer.appendChild(selectedBorder);
-  }
+
   setX(x: number) {
     this.barContainer.setAttribute('x', x);
   }
@@ -314,14 +294,30 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('visibleAll', false);
   }
 
-  showSelectedBorder(x: number, y: number, width: number, height: number, target?: Group) {
-    this.selectedBorder.setAttribute('x', x);
-    this.selectedBorder.setAttribute('y', y);
-    this.selectedBorder.setAttribute('width', width);
-    this.selectedBorder.setAttribute('height', height);
-    this.selectedBorder.setAttribute('visibleAll', true);
+  createSelectedBorder(x: number, y: number, width: number, height: number, target?: Group) {
+    const selectedBorder = new Group({
+      x,
+      y,
+      width,
+      height,
+      lineWidth: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderLineWidth,
+      pickable: false,
+      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius ?? 0,
+      fill: false,
+      stroke: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
+      shadowColor: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowColor,
+      shadowOffsetX: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetX,
+      shadowOffsetY: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetY,
+      shadowBlur: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowBlur
+    });
+    this.selectedBorder = selectedBorder;
+    selectedBorder.name = 'task-bar-hover-shadow';
+    this.barContainer.appendChild(selectedBorder);
+    this.selectedBorders.push(selectedBorder);
   }
-  hideSelectedBorder() {
-    this.selectedBorder.setAttribute('visibleAll', false);
+  removeSelectedBorder() {
+    this.selectedBorders.forEach(border => {
+      border.delete();
+    });
   }
 }

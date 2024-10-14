@@ -579,24 +579,50 @@ export class StateManager {
     const y = target.attribute.y;
     const width = target.attribute.width;
     const height = target.attribute.height;
-    this._gantt.scenegraph.taskBar.showSelectedBorder(x, y, width, height, target);
+    this._gantt.scenegraph.taskBar.createSelectedBorder(x, y, width, height, target);
     this._gantt.scenegraph.updateNextFrame();
   }
   hideTaskBarSelectedBorder() {
     this._gantt.stateManager.selectedTaskBar.target = null;
-    this._gantt.scenegraph.taskBar.hideSelectedBorder();
+    this._gantt.scenegraph.taskBar.removeSelectedBorder();
     this._gantt.scenegraph.updateNextFrame();
   }
 
   showDependencyLinkSelectedLine() {
     const link = this._gantt.stateManager.selectedDenpendencyLink.link;
-
     this._gantt.scenegraph.dependencyLink.createSelectedLinkLine(link);
+
+    const { taskKeyField, dependencyLinks } = this._gantt.parsedOptions;
+    const { linkedToTaskKey, linkedFromTaskKey, type } = link;
+    const linkedToTaskRecord = findRecordByTaskKey(this._gantt.records, taskKeyField, linkedToTaskKey);
+    const linkedFromTaskRecord = findRecordByTaskKey(this._gantt.records, taskKeyField, linkedFromTaskKey);
+    const linkedFromTaskShowIndex = this._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+    const linkedToTaskShowIndex = this._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+    const fromTaskNode = this._gantt.scenegraph.taskBar.barContainer.children[
+      linkedFromTaskShowIndex
+    ] as GanttTaskBarNode;
+    this._gantt.scenegraph.taskBar.createSelectedBorder(
+      fromTaskNode.attribute.x,
+      fromTaskNode.attribute.y,
+      fromTaskNode.attribute.width,
+      fromTaskNode.attribute.height,
+      fromTaskNode
+    );
+    const toTaskNode = this._gantt.scenegraph.taskBar.barContainer.children[linkedToTaskShowIndex] as GanttTaskBarNode;
+    this._gantt.scenegraph.taskBar.createSelectedBorder(
+      toTaskNode.attribute.x,
+      toTaskNode.attribute.y,
+      toTaskNode.attribute.width,
+      toTaskNode.attribute.height,
+      toTaskNode
+    );
+
     this._gantt.scenegraph.updateNextFrame();
   }
   hideDependencyLinkSelectedLine() {
     this._gantt.stateManager.selectedDenpendencyLink.link = null;
     this._gantt.scenegraph.dependencyLink.removeSelectedLinkLine();
+    this._gantt.scenegraph.taskBar.removeSelectedBorder();
     this._gantt.scenegraph.updateNextFrame();
   }
 }

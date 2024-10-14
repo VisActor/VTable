@@ -16,7 +16,7 @@ export class DependencyLink {
   _scene: Scenegraph;
   width: number;
   height: number;
-  selectedNodes: (Line | Polygon)[];
+  selectedEffectNodes: (Line | Polygon)[];
   constructor(scene: Scenegraph) {
     this._scene = scene;
     // const height = Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight);
@@ -179,13 +179,13 @@ export class DependencyLink {
       this._scene._gantt.parsedOptions.dependencyLinkSelectedLineStyle.lineColor
     );
     this.linkLinesContainer.appendChild(selectedLinkArrowNode);
-    this.selectedNodes = [selectedLineNodelineNode, selectedLinkArrowNode];
+    this.selectedEffectNodes = [selectedLineNodelineNode, selectedLinkArrowNode];
   }
   removeSelectedLinkLine() {
-    this.selectedNodes?.forEach(node => {
+    this.selectedEffectNodes?.forEach(node => {
       node.delete();
     });
-    this.selectedNodes = [];
+    this.selectedEffectNodes = [];
   }
 }
 
