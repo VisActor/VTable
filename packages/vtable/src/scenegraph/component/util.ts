@@ -17,7 +17,7 @@ export function getRowY(row: number, table: BaseTableAPI, isBottomFrozen?: boole
   }
   let rowY = table.getRowsHeight(0, row);
   if (row >= table.frozenRowCount) {
-    rowY -= table.scrollLeft;
+    rowY -= table.scrollTop;
   }
   return rowY;
 }
