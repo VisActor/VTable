@@ -488,8 +488,8 @@ export class MenuElement {
       const maxWidth = containerWidth * 0.8;
       rootElement.style.maxWidth = `${maxWidth}px`;
       //计算弹出框的宽度
-      const rootElementWidth = rootElement.clientWidth;
-      const rootElementHeight = rootElement.clientHeight;
+      const rootElementWidth = rootElement.offsetWidth;
+      const rootElementHeight = rootElement.offsetHeight;
       let rootElementLeft;
       let rootElementTop;
       if (position) {
