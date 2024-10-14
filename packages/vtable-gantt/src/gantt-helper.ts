@@ -95,6 +95,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
   gantt.parsedOptions.overscrollBehavior = options?.overscrollBehavior ?? 'auto';
+  gantt.parsedOptions.underlayBackgroundColor = options?.underlayBackgroundColor ?? '#FFF';
   gantt.parsedOptions.scrollStyle = Object.assign(
     {},
     {

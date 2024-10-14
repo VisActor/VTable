@@ -122,6 +122,7 @@ export class Gantt extends EventTarget {
     verticalSplitLineHighlight: ILineStyle;
     verticalSplitLineMoveable?: boolean;
     overscrollBehavior: 'auto' | 'none';
+    underlayBackgroundColor: string;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
@@ -350,6 +351,9 @@ export class Gantt extends EventTarget {
           },
           extendThemeOption?.columnResize
         );
+        if (!extendThemeOption.underlayBackgroundColor) {
+          extendThemeOption.underlayBackgroundColor = this.parsedOptions.underlayBackgroundColor;
+        }
       } else {
         if (!listTable_options.theme.headerStyle) {
           listTable_options.theme.headerStyle = { bgColor: this.parsedOptions.timelineHeaderBackgroundColor };
@@ -403,6 +407,9 @@ export class Gantt extends EventTarget {
           },
           this.options.taskListTable?.theme?.columnResize
         );
+        if (!listTable_options.theme.underlayBackgroundColor) {
+          listTable_options.theme.underlayBackgroundColor = this.parsedOptions.underlayBackgroundColor;
+        }
       }
     } else {
       listTable_options.theme = {
@@ -444,7 +451,8 @@ export class Gantt extends EventTarget {
             labelBackgroundFill: 'rgba(0,0,0,0)'
           },
           this.options.taskListTable?.theme?.columnResize
-        )
+        ),
+        underlayBackgroundColor: this.parsedOptions.underlayBackgroundColor
       };
     }
 

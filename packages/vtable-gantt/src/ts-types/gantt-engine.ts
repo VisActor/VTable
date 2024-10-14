@@ -153,6 +153,9 @@ export interface GanttConstructorOptions {
   scrollStyle?: IScrollStyle;
 
   pixelRatio?: number;
+
+  /** 表格绘制范围外的canvas上填充的颜色 */
+  underlayBackgroundColor?: string;
 }
 /**
  * IBarLabelText
