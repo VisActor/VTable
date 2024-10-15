@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix multi-sort icon update in updateSortState() #2614",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
