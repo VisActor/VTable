@@ -1,4 +1,4 @@
-import { Group, createText, createRect, Image } from '@visactor/vtable/es/vrender';
+import { Group, createText, createRect, Image, Circle } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
 import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
@@ -294,7 +294,7 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('visibleAll', false);
   }
 
-  createSelectedBorder(x: number, y: number, width: number, height: number, target?: Group) {
+  createSelectedBorder(x: number, y: number, width: number, height: number, showLinkPoint: boolean = true) {
     const selectedBorder = new Group({
       x,
       y,
@@ -314,6 +314,31 @@ export class TaskBar {
     selectedBorder.name = 'task-bar-hover-shadow';
     this.barContainer.appendChild(selectedBorder);
     this.selectedBorders.push(selectedBorder);
+
+    if (showLinkPoint) {
+      const linkPoint = new Circle({
+        x: -5,
+        y: height / 2,
+        radius: 5,
+        fill: 'white',
+        stroke: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
+        lineWidth: 1,
+        pickable: true
+      });
+      linkPoint.name = 'task-bar-link-point-left';
+      selectedBorder.appendChild(linkPoint);
+      const linkPoint1 = new Circle({
+        x: width + 5,
+        y: height / 2,
+        radius: 5,
+        fill: 'white',
+        stroke: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
+        lineWidth: 1,
+        pickable: true
+      });
+      linkPoint1.name = 'task-bar-link-point-rigth';
+      selectedBorder.appendChild(linkPoint1);
+    }
   }
   removeSelectedBorder() {
     this.selectedBorders.forEach(border => {
