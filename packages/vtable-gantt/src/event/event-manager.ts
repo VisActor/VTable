@@ -52,7 +52,6 @@ function bindTableGroupListener(event: EventManager) {
   const stateManager = gantt.stateManager;
 
   scene.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
-    event.poniterState = 'down';
     if (e.button !== 0) {
       // 只处理左键
       return;
@@ -87,17 +86,6 @@ function bindTableGroupListener(event: EventManager) {
   });
 
   scene.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    if (event.poniterState === 'down') {
-      const x1 = gantt.eventManager.lastDragPointerXYOnWindow.x ?? e.pageX;
-      const x2 = e.pageX;
-      const dx = x2 - x1;
-      const y1 = gantt.eventManager.lastDragPointerXYOnWindow.y ?? e.pageY;
-      const y2 = e.pageY;
-      const dy = y2 - y1;
-      if (Math.abs(dx) >= 1 || Math.abs(dy) >= 1) {
-        event.poniterState = 'draging';
-      }
-    }
     if (stateManager.interactionState === InteractionState.default) {
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
@@ -221,7 +209,6 @@ function bindTableGroupListener(event: EventManager) {
       } else {
       }
     }
-    event.poniterState = 'up';
   });
 
   scene.tableGroup.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
@@ -305,6 +292,7 @@ function bindContainerDomListener(eventManager: EventManager) {
   }
   const globalMousedownCallback = (e: FederatedPointerEvent) => {
     gantt.eventManager.lastDragPointerXYOnWindow = { x: e.x, y: e.y };
+    gantt.eventManager.poniterState = 'down';
   };
   eventManager.globalEventListeners.push({
     name: 'mousedown',
@@ -313,6 +301,17 @@ function bindContainerDomListener(eventManager: EventManager) {
   });
   vglobal.addEventListener('mousedown', globalMousedownCallback);
   const globalMousemoveCallback = (e: FederatedPointerEvent) => {
+    if (gantt.eventManager.poniterState === 'down') {
+      const x1 = gantt.eventManager.lastDragPointerXYOnWindow.x ?? e.x;
+      const x2 = e.x;
+      const dx = x2 - x1;
+      const y1 = gantt.eventManager.lastDragPointerXYOnWindow.y ?? e.y;
+      const y2 = e.y;
+      const dy = y2 - y1;
+      if (Math.abs(dx) >= 1 || Math.abs(dy) >= 1) {
+        gantt.eventManager.poniterState = 'draging';
+      }
+    }
     if (stateManager.interactionState === InteractionState.grabing && gantt.eventManager.poniterState === 'draging') {
       const lastX = gantt.eventManager.lastDragPointerXYOnWindow?.x ?? e.x;
       // const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
@@ -352,6 +351,7 @@ function bindContainerDomListener(eventManager: EventManager) {
       }
     }
     gantt.eventManager.lastDragPointerXYOnWindow = undefined;
+    gantt.eventManager.poniterState = 'up';
   };
   eventManager.globalEventListeners.push({
     name: 'mouseup',
