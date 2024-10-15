@@ -269,6 +269,13 @@
           }
         },
         {
+          "path": "gantt-dependency-link-line",
+          "title": {
+            "zh": "甘特图依赖线（关联线）",
+            "en": "Gantt Dependency Link Line"
+          }
+        },
+        {
           "path": "gantt-interaction-drag-table-width",
           "title": {
             "zh": "甘特图交互——拖拽表格宽度",
@@ -286,7 +293,7 @@
           "path": "gantt-interaction-creation-button",
           "title": {
             "zh": "甘特图交互——创建排期",
-            "en": "Gantt Interaction —— Task Creation"
+            "en": "Gantt Interaction —— Create Schedule"
           }
         }
       ]

@@ -174,7 +174,7 @@ export function createTable() {
       minTableWidth: 100,
       maxTableWidth: 600
     },
-    dependencies: {
+    dependency: {
       links: [
         {
           type: DependencyType.FinishToStart,
@@ -197,7 +197,8 @@ export function createTable() {
           linkedToTaskKey: 5
         }
       ],
-      selectedLineStyle: {
+      // linkLineSelectable: false,
+      linkLineSelectedStyle: {
         shadowBlur: 5, //阴影宽度
         shadowColor: 'red',
         lineColor: 'red',
@@ -384,7 +385,7 @@ export function createTable() {
   ganttInstance.listTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
-  bindDebugTool(ganttInstance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
+  // bindDebugTool(ganttInstance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', '_updateTag']
+  // });
 }

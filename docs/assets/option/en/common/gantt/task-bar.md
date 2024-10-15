@@ -60,17 +60,42 @@ Whether the task bar can be moved. The default is true.
 
 Optional
 
-${prefix} hoverBarStyle(ITaskBarStyle & { barOverlayColor?: string })
+${prefix} hoverBarStyle(ITaskBarHoverStyle)
 
-The style of the task bar when hovered.
+Taskbar hover style
 
-Optional
+Not required
 
-${prefix} selectionBarStyle(ITaskBarStyle & { barOverlayColor?: string })
+```
+export type ITaskBarHoverStyle = {
+/** Rounded corners of the task bar */
+cornerRadius?: number;
+barOverlayColor?: string;
+};
+```
 
-The style of the task bar when selected.
+${prefix} selectedBarStyle(ITaskBarSelectedStyle)
 
-Optional
+The style of the taskbar when selected
+
+Not required
+
+```
+export type ITaskBarSelectedStyle = {
+shadowBlur?: number; //Shadow width
+shadowOffsetX?: number; //Offset in x direction
+shadowOffsetY?: number; //Y direction offset
+shadowColor?: string; //shadow color
+borderColor?: string; //Border color
+borderLineWidth?: number;
+};
+```
+
+${prefix} selectable(boolean)
+
+Whether the service clause is optional, the default is true
+
+Not required
 
 ${prefix} scheduleCreatable(boolean) = true
 

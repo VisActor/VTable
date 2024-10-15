@@ -843,6 +843,7 @@ export function createTable() {
     rowHeight: 40,
 
     taskBar: {
+      selectable: false,
       startDateField: 'start',
       endDateField: 'end',
       progressField: 'progress',

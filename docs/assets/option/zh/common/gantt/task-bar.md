@@ -60,15 +60,40 @@ ${prefix} moveable(boolean) = true
 
 非必填
 
-${prefix} hoverBarStyle(ITaskBarStyle & { barOverlayColor?: string })
+${prefix} hoverBarStyle(ITaskBarHoverStyle)
 
 任务条 hover 时的样式
 
 非必填
 
-${prefix} selectionBarStyle(ITaskBarStyle & { barOverlayColor?: string })
+```
+export type ITaskBarHoverStyle = {
+  /** 任务条的圆角 */
+  cornerRadius?: number;
+  barOverlayColor?: string;
+};
+```
+
+${prefix} selectedBarStyle(ITaskBarSelectedStyle)
 
 任务条选择时的样式
+
+非必填
+
+```
+export type ITaskBarSelectedStyle = {
+  shadowBlur?: number; //阴影宽度
+  shadowOffsetX?: number; //x方向偏移
+  shadowOffsetY?: number; //Y方向偏移
+  shadowColor?: string; //阴影颜色
+  borderColor?: string; //边框颜色
+  borderLineWidth?: number;
+};
+```
+
+${prefix} selectable(boolean)
+
+务条是否可选择，默认为 true
 
 非必填
 

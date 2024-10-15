@@ -182,7 +182,7 @@ export function initOptions(gantt: Gantt) {
     },
     options?.taskBar?.hoverBarStyle
   );
-
+  gantt.parsedOptions.taskBarSelectable = options?.taskBar?.selectable ?? true;
   gantt.parsedOptions.taskBarSelectedStyle = Object.assign(
     {
       shadowBlur: 6, //阴影宽度
@@ -254,14 +254,15 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.verticalSplitLineMoveable = options.frame?.verticalSplitLineMoveable;
 
   gantt.parsedOptions.taskKeyField = options.taskKeyField ?? 'id';
-  gantt.parsedOptions.dependencyLinks = options.dependencies?.links;
-  gantt.parsedOptions.dependencyLinkCreatable = options.dependencies?.linkCreatable ?? false;
+  gantt.parsedOptions.dependencyLinks = options.dependency?.links;
+  gantt.parsedOptions.dependencyLinkCreatable = options.dependency?.linkLineCreatable ?? false;
+  gantt.parsedOptions.dependencyLinkSelectable = options.dependency?.linkLineSelectable ?? true;
   gantt.parsedOptions.dependencyLinkLineStyle = Object.assign(
     {
       lineColor: 'red',
       lineWidth: 1
     },
-    options.dependencies?.linkLineStyle
+    options.dependency?.linkLineStyle
   );
 
   gantt.parsedOptions.dependencyLinkSelectedLineStyle = Object.assign(
@@ -272,7 +273,7 @@ export function initOptions(gantt: Gantt) {
       lineColor: gantt.parsedOptions.dependencyLinkLineStyle.lineColor,
       lineWidth: gantt.parsedOptions.dependencyLinkLineStyle.lineWidth
     },
-    options?.dependencies?.selectedLineStyle
+    options?.dependency?.linkLineSelectedStyle
   );
 }
 

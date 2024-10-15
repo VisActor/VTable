@@ -161,7 +161,7 @@ function bindTableGroupListener(event: EventManager) {
         }
         return false;
       });
-      if (isClickBar) {
+      if (isClickBar && scene._gantt.parsedOptions.taskBarSelectable) {
         scene._gantt.stateManager.selectedTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
         stateManager.showTaskBarSelectedBorder();
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
@@ -203,7 +203,7 @@ function bindTableGroupListener(event: EventManager) {
             });
           }
         }
-      } else if (isClickDependencyLine) {
+      } else if (isClickDependencyLine && scene._gantt.parsedOptions.dependencyLinkSelectable) {
         scene._gantt.stateManager.selectedDenpendencyLink.link = depedencyLink;
         stateManager.showDependencyLinkSelectedLine();
       } else {

@@ -139,10 +139,10 @@ In the vtable-gantt component, the main supported configurations include:
 2. Task Bar Configuration `taskBar`
 
    1. Custom Rendering: You can customize the rendering of task bars through the `customLayout` configuration item.
-   2. Style Configuration: You can set the style of task bars, including color, width, border radius, border, etc., through configuration items such as `barStyle` and `hoverBarStyle`.
+   2. Style Configuration: You can set the style of task bars, including color, width, border radius, border, etc., through configuration items `barStyle`.
    3. Text Style: You can configure the displayed text content information through `labelText` and configure the text style through `labelTextStyle`, including font, color, alignment, etc.
    4. Interaction Configuration: You can set whether task bars are resizable and movable through the `resizable` and `moveable` configuration items.
-   5. Interaction Style: You can set the style of task bars when hovering through the `hoverBarStyle` configuration item.
+   5. Interaction Style: You can set the style of task bars when hovering and when selected through the `hoverBarStyle` and `selectedBarStyle` configuration item.
 
 3. Date Header Configuration `timelineHeader`
    1. Custom Rendering: You can customize the rendering of date headers through the `customLayout` configuration item.

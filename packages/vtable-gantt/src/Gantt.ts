@@ -20,7 +20,8 @@ import type {
   ITaskCreationCustomLayout,
   ITaskLink,
   ITaskBarSelectedStyle,
-  ITaskBarHoverStyle
+  ITaskBarHoverStyle,
+  ITaskLinkSelectedStyle
 } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
@@ -104,6 +105,7 @@ export class Gantt extends EventTarget {
     taskBarStyle: ITaskBarStyle;
     taskBarHoverStyle: ITaskBarHoverStyle;
     taskBarSelectedStyle: ITaskBarSelectedStyle;
+    taskBarSelectable: boolean;
     taskBarLabelText: ITaskBarLabelText;
     taskBarMoveable: boolean;
     taskBarResizable: boolean;
@@ -146,12 +148,9 @@ export class Gantt extends EventTarget {
     taskKeyField: string;
     dependencyLinks?: ITaskLink[];
     dependencyLinkCreatable: boolean;
+    dependencyLinkSelectable: boolean;
     dependencyLinkLineStyle: ILineStyle;
-    dependencyLinkSelectedLineStyle: ILineStyle & {
-      shadowBlur?: number; //阴影宽度
-      shadowOffset?: number; //偏移
-      shadowColor?: string; //阴影颜色
-    };
+    dependencyLinkSelectedLineStyle: ITaskLinkSelectedStyle;
     underlayBackgroundColor: string;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */

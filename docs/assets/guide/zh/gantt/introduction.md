@@ -139,10 +139,10 @@ VTableGantt 内部借助这个表格实例 tableInstance 实现的能力有：
 2. 任务条配置 taskBar
 
    1. 自定义渲染: 通过 customLayout 配置项，可以自定义任务条的渲染方式。
-   2. 样式配置: 通过 barStyle 和 hoverBarStyle 等配置项，可以设置任务条的颜色、宽度、圆角、边框等样式。
+   2. 样式配置: 通过 barStyle 可以设置任务条的颜色、宽度、圆角、边框等样式。
    3. 文字样式: 通过 labelText 配置显示的文字内容信息， labelTextStyle 配置样式，文字样式包括字体、颜色、对齐方式等。
    4. 交互配置: 通过 resizable 和 moveable 配置项，可以设置任务条是否可调整大小和移动。
-   5. 交互样式: 通过 hoverBarStyle 配置项，可以设置任务条悬浮时的样式。
+   5. 交互样式: 通过 hoverBarStyle 和 selectedBarStyle 配置项，可以设置任务条悬浮时以及选中时的样式。
 
 3. 日期表头配置 timelineHeader
    1. 自定义渲染: 通过 customLayout 配置项，可以自定义日期表头的渲染方式。

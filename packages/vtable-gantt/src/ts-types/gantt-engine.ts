@@ -92,6 +92,8 @@ export interface GanttConstructorOptions {
     hoverBarStyle?: ITaskBarHoverStyle;
     /** 任务条选择时的样式 TODO */
     selectedBarStyle?: ITaskBarSelectedStyle;
+    /** 任务条是否可选择，默认为true */
+    selectable?: boolean;
     /** 任务条右键菜单 */
     menu?: {
       /** 右键菜单。代替原来的option.contextmenu */
@@ -121,15 +123,12 @@ export interface GanttConstructorOptions {
   /** 数据条目可唯一标识的字段名,默认为'id' */
   taskKeyField?: string;
   /** 任务之间的依赖关系 */
-  dependencies?: {
+  dependency?: {
     links: ITaskLink[];
     linkLineStyle?: ILineStyle;
-    linkCreatable?: boolean;
-    selectedLineStyle?: ILineStyle & {
-      shadowBlur?: number; //阴影宽度
-      shadowOffset?: number; //偏移
-      shadowColor?: string; //阴影颜色
-    };
+    linkLineCreatable?: boolean;
+    linkLineSelectable?: boolean;
+    linkLineSelectedStyle?: ITaskLinkSelectedStyle;
   };
   /** 网格线配置 */
   grid?: IGrid;
@@ -303,6 +302,12 @@ export type ITaskLink = {
   type: DependencyType;
   linkedFromTaskKey?: string | number;
   linkedToTaskKey?: string | number;
+};
+
+export type ITaskLinkSelectedStyle = ILineStyle & {
+  shadowBlur?: number; //阴影宽度
+  shadowOffset?: number; //偏移
+  shadowColor?: string; //阴影颜色
 };
 export enum DependencyType {
   FinishToStart = 'finish_to_start',
