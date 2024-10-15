@@ -32,7 +32,7 @@ VTable，不只是一款高性能的多维数据分析表格，更是一个在�
 
 <div align="center">
 
-[English](./README.md) | 简体中文
+[English](./README.md) | 简体中文 | [日本語](./README.ja-JP.md)
 
 </div>
 
