@@ -5,7 +5,7 @@ import { defaultDayTitles, getMonthString, getRecords, getStartAndEndDate, getWe
 import { bindDebugTool } from '../../vtable/src/scenegraph/debug-tool';
 import { add, differenceInDays, lastDayOfMonth, previousSunday } from 'date-fns';
 import { getMonthCustomStyleRange } from './style';
-import type { CellRange, CustomRenderFunctionArg } from '@visactor/vtable/es/ts-types';
+import type { CellRange, CustomRenderFunctionArg, ITableAnimationOption } from '@visactor/vtable/es/ts-types';
 
 interface VTableCalendarConstructorOptions {
   startDate?: Date;
@@ -254,12 +254,15 @@ export class VTableCalendar {
     return record;
   }
 
-  jumpToDate(date: Date) {
+  jumpToDate(date: Date, animation?: boolean | ITableAnimationOption) {
     const dataIndex = Math.floor((differenceInDays(date, this.tableStartDate) + 1) / 7);
-    this.table.scrollToCell({
-      col: 0,
-      row: dataIndex + 1
-    });
+    this.table.scrollToCell(
+      {
+        col: 0,
+        row: dataIndex + 1
+      },
+      animation
+    );
 
     this._updateMonthCustomStyle(date.getFullYear(), date.getMonth());
   }

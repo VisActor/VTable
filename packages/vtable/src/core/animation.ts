@@ -2,11 +2,7 @@ import type { EasingType, IRect } from '@src/vrender';
 import { DefaultTimeline, DefaultTicker, Animate, ACustomAnimate, createRect } from '@src/vrender';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { isBoolean, isNumber } from '@visactor/vutils';
-
-export type ITableAnimationOption = {
-  duration?: number;
-  easing?: EasingType;
-};
+import type { ITableAnimationOption } from '../ts-types/animation/appear';
 
 class Animateaaa extends ACustomAnimate<any> {
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
