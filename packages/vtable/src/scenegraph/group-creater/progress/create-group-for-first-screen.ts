@@ -26,27 +26,37 @@ export function createGroupForFirstScreen(
 
   let distCol;
   let distRow;
+  let distColForCompute;
+  let distRowForCompute;
   if (
     table.widthMode === 'adaptive' ||
     (table.options.autoWrapText && (table.heightMode === 'adaptive' || table.heightMode === 'autoHeight'))
   ) {
-    distCol = table.colCount - 1;
+    // distCol = table.colCount - 1;
+    // proxy.colEnd = distCol;
+
+    distColForCompute = table.colCount - 1;
+    distCol = Math.min(proxy.firstScreenColLimit, table.colCount - 1);
   } else {
     distCol = Math.min(proxy.firstScreenColLimit, table.colCount - 1);
   }
   if (table.heightMode === 'adaptive') {
-    distRow = table.rowCount - 1;
+    // distRow = table.rowCount - 1;
+    // proxy.rowEnd = distRow;
+
+    distColForCompute = table.rowCount - 1;
+    distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1);
   } else {
     distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1);
   }
   if (table.internalProps._widthResizedColMap.size === 0) {
     // compute colums width in first screen
-    computeColsWidth(table, 0, distCol);
+    computeColsWidth(table, 0, distColForCompute ?? distCol);
   }
 
   if (table.internalProps._heightResizedRowMap.size === 0) {
     // compute rows height in first screen
-    computeRowsHeight(table, 0, distRow);
+    computeRowsHeight(table, 0, distRowForCompute ?? distRow);
   }
 
   if (distCol < table.colCount - table.rightFrozenColCount) {

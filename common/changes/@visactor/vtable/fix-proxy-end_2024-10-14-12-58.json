@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix col/row end in createGroupForFirstScreen() #2585",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
