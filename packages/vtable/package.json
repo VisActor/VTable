@@ -52,9 +52,9 @@
   },
   "dependencies": {
     "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vrender-core": "0.21.0-alpha.1",
-    "@visactor/vrender-kits": "0.21.0-alpha.1",
-    "@visactor/vrender-components": "0.21.0-alpha.1",
+    "@visactor/vrender-core": "0.20.10-alpha.1",
+    "@visactor/vrender-kits": "0.20.10-alpha.1",
+    "@visactor/vrender-components": "0.20.10-alpha.1",
     "@visactor/vutils": "~0.18.14",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
@@ -111,7 +111,8 @@
     "d3-hexbin": "^0.2.2",
     "d3-hierarchy": "^3.1.1",
     "@resvg/resvg-js": "^2.5.0",
-    "pikaday": "1.8.2"
+    "pikaday": "1.8.2",
+    "canvas": "2.11.2"
   },
   "unpkg": "latest",
   "unpkgFiles": [
