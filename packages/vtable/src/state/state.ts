@@ -1343,7 +1343,7 @@ export class StateManager {
           : this.sort[index]?.order === 'desc'
           ? 'sort_upward'
           : 'sort_normal';
-      this.setSortState(sortState);
+      this.setSortState(sortState.slice(0, index + 1));
       // 获取sort对应的行列位置
       const cellAddress = this.table.internalProps.layoutMap.getHeaderCellAddressByField(
         sortState[index].field as string
