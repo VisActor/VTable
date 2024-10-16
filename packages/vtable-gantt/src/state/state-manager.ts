@@ -1,8 +1,8 @@
 import { clone, cloneDeep, isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import type { ITaskLink } from '../ts-types';
-import { InteractionState, GANTT_EVENT_TYPE } from '../ts-types';
-import type { Group, FederatedPointerEvent, Polygon, Line } from '@visactor/vtable/es/vrender';
+import { InteractionState, GANTT_EVENT_TYPE, DependencyType } from '../ts-types';
+import type { Group, FederatedPointerEvent, Polygon, Line, Circle } from '@visactor/vtable/es/vrender';
 import {
   syncEditCellFromTable,
   syncScrollStateFromTable,
@@ -58,6 +58,7 @@ export class StateManager {
     /** x坐标是相对table内坐标 */
     startX: number;
     startY: number;
+    /** 刚开始时 任务条节点的offsetX */
     startOffsetY: number;
     targetStartX: number;
     target: GanttTaskBarNode;
@@ -76,7 +77,19 @@ export class StateManager {
   selectedDenpendencyLink: {
     link: ITaskLink & { vtable_gantt_linkArrowNode: Polygon; vtable_gantt_linkLineNode: Line };
   };
-
+  creatingDenpendencyLink: {
+    /** x坐标是相对table内坐标 */
+    startX: number;
+    startY: number;
+    startOffsetY: number;
+    targetStartX: number;
+    startClickedPoint: Group;
+    creating: boolean;
+    firstTaskBarPosition: 'left' | 'right';
+    secondTaskBarPosition: 'left' | 'right';
+    secondTaskBarNode: GanttTaskBarNode;
+    lastHighLightLinkPoint: Group;
+  };
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
@@ -123,6 +136,15 @@ export class StateManager {
     };
     this.selectedDenpendencyLink = {
       link: null
+    };
+    this.creatingDenpendencyLink = {
+      startClickedPoint: null,
+      startX: null,
+      startY: null,
+      startOffsetY: null,
+      targetStartX: null,
+      creating: false,
+      secondTaskBarNode: null
     };
 
     this.updateVerticalScrollBar = this.updateVerticalScrollBar.bind(this);
@@ -511,7 +533,67 @@ export class StateManager {
     //
   }
   //#endregion
-
+  //#region 生成关联线的交互处理
+  startCreateDependencyLine(target: Group, x: number, y: number, startOffsetY: number, position: 'left' | 'right') {
+    // if (target.name === 'task-bar-hover-shadow') {
+    // target = target.parent.parent;
+    // }
+    this.creatingDenpendencyLink.creating = true;
+    this.creatingDenpendencyLink.startClickedPoint = target;
+    this.creatingDenpendencyLink.startX = x;
+    this.creatingDenpendencyLink.startY = y;
+    this.creatingDenpendencyLink.startOffsetY = startOffsetY;
+    this.creatingDenpendencyLink.firstTaskBarPosition = position;
+    this.highlightLinkPointNode(target);
+  }
+  isCreatingDependencyLine() {
+    return this.creatingDenpendencyLink.creating;
+  }
+  endCreateDependencyLine(offsetY: number) {
+    const taskKeyField = this._gantt.parsedOptions.taskKeyField;
+    const fromTaskIndex = getTaskIndexByY(this.creatingDenpendencyLink.startOffsetY, this._gantt);
+    const toTaskIndex = getTaskIndexByY(offsetY, this._gantt);
+    const fromRecord = this._gantt.getRecordByIndex(fromTaskIndex);
+    const linkedFromTaskKey = fromRecord[taskKeyField];
+    const toRecord = this._gantt.getRecordByIndex(toTaskIndex);
+    const linkedToTaskKey = toRecord[taskKeyField];
+    this._gantt.addLinkData({
+      linkedFromTaskKey,
+      linkedToTaskKey,
+      type:
+        this.creatingDenpendencyLink.firstTaskBarPosition === 'left' &&
+        this.creatingDenpendencyLink.secondTaskBarPosition === 'left'
+          ? DependencyType.StartToStart
+          : this.creatingDenpendencyLink.firstTaskBarPosition === 'right' &&
+            this.creatingDenpendencyLink.secondTaskBarPosition === 'left'
+          ? DependencyType.FinishToStart
+          : this.creatingDenpendencyLink.firstTaskBarPosition === 'right' &&
+            this.creatingDenpendencyLink.secondTaskBarPosition === 'right'
+          ? DependencyType.FinishToFinish
+          : DependencyType.StartToFinish
+    });
+    // const oldRecord = this._gantt.getRecordByIndex(fromTaskIndex);
+    this._gantt.scenegraph.dependencyLink.initLinkLine(this._gantt.parsedOptions.dependencyLinks.length - 1);
+    this.hideTaskBarSelectedBorder();
+    this._gantt.scenegraph.updateNextFrame();
+    this.creatingDenpendencyLink.creating = false;
+  }
+  dealCreateDependencyLine(e: FederatedPointerEvent) {
+    const x1 = this.creatingDenpendencyLink.startX;
+    const y1 = this.creatingDenpendencyLink.startY;
+    const x2 = e.x;
+    const y2 = e.y;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    // debugger;
+    const startClickedPoint = this.creatingDenpendencyLink.startClickedPoint;
+    const x = startClickedPoint.attribute.x + startClickedPoint.attribute.width / 2;
+    const y = startClickedPoint.attribute.y + startClickedPoint.attribute.height / 2;
+    this._gantt.scenegraph.taskBar.updateCreatingDependencyLine(x, y, x + dx, y + dy);
+    this._gantt.scenegraph.updateNextFrame();
+    //
+  }
+  //#endregion
   //#region 调整左侧任务列表表格整体的宽度
   startResizeTableWidth(e: MouseEvent) {
     this.resizeTableWidth.resizing = true;
@@ -574,20 +656,35 @@ export class StateManager {
   }
 
   showTaskBarSelectedBorder() {
+    const linkCreatable = this._gantt.parsedOptions.dependencyLinkCreatable;
     const target = this._gantt.stateManager.selectedTaskBar.target;
     const x = target.attribute.x;
     const y = target.attribute.y;
     const width = target.attribute.width;
     const height = target.attribute.height;
-    this._gantt.scenegraph.taskBar.createSelectedBorder(x, y, width, height, target);
+    this._gantt.scenegraph.taskBar.createSelectedBorder(x, y, width, height, target, linkCreatable);
     this._gantt.scenegraph.updateNextFrame();
   }
+
   hideTaskBarSelectedBorder() {
     this._gantt.stateManager.selectedTaskBar.target = null;
     this._gantt.scenegraph.taskBar.removeSelectedBorder();
     this._gantt.scenegraph.updateNextFrame();
   }
-
+  showSecondTaskBarSelectedBorder() {
+    const target = this._gantt.stateManager.creatingDenpendencyLink.secondTaskBarNode;
+    const x = target.attribute.x;
+    const y = target.attribute.y;
+    const width = target.attribute.width;
+    const height = target.attribute.height;
+    this._gantt.scenegraph.taskBar.createSelectedBorder(x, y, width, height, target, true);
+    this._gantt.scenegraph.updateNextFrame();
+  }
+  hideSecondTaskBarSelectedBorder() {
+    this._gantt.stateManager.creatingDenpendencyLink.secondTaskBarNode = null;
+    this._gantt.scenegraph.taskBar.removeSecondSelectedBorder();
+    this._gantt.scenegraph.updateNextFrame();
+  }
   showDependencyLinkSelectedLine() {
     const link = this._gantt.stateManager.selectedDenpendencyLink.link;
     this._gantt.scenegraph.dependencyLink.createSelectedLinkLine(link);
@@ -606,7 +703,8 @@ export class StateManager {
       fromTaskNode.attribute.y,
       fromTaskNode.attribute.width,
       fromTaskNode.attribute.height,
-      fromTaskNode
+      fromTaskNode,
+      false
     );
     const toTaskNode = this._gantt.scenegraph.taskBar.barContainer.children[linkedToTaskShowIndex] as GanttTaskBarNode;
     this._gantt.scenegraph.taskBar.createSelectedBorder(
@@ -614,7 +712,8 @@ export class StateManager {
       toTaskNode.attribute.y,
       toTaskNode.attribute.width,
       toTaskNode.attribute.height,
-      toTaskNode
+      toTaskNode,
+      false
     );
 
     this._gantt.scenegraph.updateNextFrame();
@@ -624,6 +723,26 @@ export class StateManager {
     this._gantt.scenegraph.dependencyLink.removeSelectedLinkLine();
     this._gantt.scenegraph.taskBar.removeSelectedBorder();
     this._gantt.scenegraph.updateNextFrame();
+  }
+  highlightLinkPointNode(linkPointGroup: Group) {
+    if (linkPointGroup?.children.length > 0) {
+      const circle = linkPointGroup.children[0];
+      circle.setAttribute('fill', this._gantt.parsedOptions.dependencyLinkLineCreatingPointStyle.fillColor);
+      circle.setAttribute('stroke', this._gantt.parsedOptions.dependencyLinkLineCreatingPointStyle.strokeColor);
+      circle.setAttribute('radius', this._gantt.parsedOptions.dependencyLinkLineCreatingPointStyle.radius);
+      circle.setAttribute('lineWidth', this._gantt.parsedOptions.dependencyLinkLineCreatingPointStyle.strokeWidth);
+      this._gantt.scenegraph.updateNextFrame();
+    }
+  }
+  unhighlightLinkPointNode(linkPointGroup: Group) {
+    if (linkPointGroup?.children.length > 0) {
+      const circle = linkPointGroup.children[0];
+      circle.setAttribute('fill', this._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.fillColor);
+      circle.setAttribute('stroke', this._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeColor);
+      circle.setAttribute('radius', this._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.radius);
+      circle.setAttribute('lineWidth', this._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeWidth);
+      this._gantt.scenegraph.updateNextFrame();
+    }
   }
 }
 

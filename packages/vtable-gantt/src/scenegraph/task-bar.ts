@@ -1,4 +1,4 @@
-import { Group, createText, createRect, Image, Circle } from '@visactor/vtable/es/vrender';
+import { Group, createText, createRect, Image, Circle, Line, Rect } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
 import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
@@ -16,7 +16,7 @@ export class TaskBar {
   group: Group;
   barContainer: Group;
   hoverBarGroup: Group;
-  selectedBorder: Group;
+  creatingDependencyLine: Line;
   hoverBarLeftIcon: Image;
   hoverBarRightIcon: Image;
   _scene: Scenegraph;
@@ -294,7 +294,14 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('visibleAll', false);
   }
 
-  createSelectedBorder(x: number, y: number, width: number, height: number, showLinkPoint: boolean = true) {
+  createSelectedBorder(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    attachedToTaskBarNode: GanttTaskBarNode,
+    showLinkPoint: boolean = false
+  ) {
     const selectedBorder = new Group({
       x,
       y,
@@ -308,41 +315,84 @@ export class TaskBar {
       shadowColor: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowColor,
       shadowOffsetX: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetX,
       shadowOffsetY: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetY,
-      shadowBlur: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowBlur
+      shadowBlur: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowBlur,
+      attachedToTaskBarNode: attachedToTaskBarNode
     });
-    this.selectedBorder = selectedBorder;
-    selectedBorder.name = 'task-bar-hover-shadow';
+    selectedBorder.name = 'task-bar-select-border';
     this.barContainer.appendChild(selectedBorder);
     this.selectedBorders.push(selectedBorder);
 
     if (showLinkPoint) {
+      const linkPointContainer = new Group({
+        x: -10,
+        y: 0,
+        width: 10,
+        height: height,
+        pickable: true
+      });
       const linkPoint = new Circle({
-        x: -5,
+        x: 5,
         y: height / 2,
-        radius: 5,
-        fill: 'white',
-        stroke: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
-        lineWidth: 1,
+        radius: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.radius,
+        fill: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.fillColor,
+        stroke: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeColor,
+        lineWidth: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeWidth,
+        pickable: false
+      });
+      linkPointContainer.appendChild(linkPoint);
+      linkPointContainer.name = 'task-bar-link-point-left';
+      selectedBorder.appendChild(linkPointContainer);
+
+      const linkPointContainer1 = new Group({
+        x: width,
+        y: 0,
+        width: 10,
+        height: height,
         pickable: true
       });
-      linkPoint.name = 'task-bar-link-point-left';
-      selectedBorder.appendChild(linkPoint);
       const linkPoint1 = new Circle({
-        x: width + 5,
+        x: 5,
         y: height / 2,
-        radius: 5,
-        fill: 'white',
-        stroke: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
-        lineWidth: 1,
-        pickable: true
+        radius: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.radius,
+        fill: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.fillColor,
+        stroke: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeColor,
+        lineWidth: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeWidth,
+        pickable: false,
+        pickStrokeBuffer: 10
       });
-      linkPoint1.name = 'task-bar-link-point-rigth';
-      selectedBorder.appendChild(linkPoint1);
+      linkPointContainer1.appendChild(linkPoint1);
+      linkPointContainer1.name = 'task-bar-link-point-right';
+      selectedBorder.appendChild(linkPointContainer1);
     }
   }
   removeSelectedBorder() {
     this.selectedBorders.forEach(border => {
       border.delete();
     });
+    this.selectedBorders = [];
+  }
+  removeSecondSelectedBorder() {
+    if (this.selectedBorders.length === 2) {
+      const secondBorder = this.selectedBorders.pop();
+      secondBorder.delete();
+    }
+  }
+  updateCreatingDependencyLine(x1: number, y1: number, x2: number, y2: number) {
+    if (this.creatingDependencyLine) {
+      this.creatingDependencyLine.delete();
+      this.creatingDependencyLine = undefined;
+    }
+    const line = new Line({
+      points: [
+        { x: x1, y: y1 },
+        { x: x2, y: y2 }
+      ],
+      stroke: this._scene._gantt.parsedOptions.dependencyLinkLineCreatingStyle.lineColor,
+      lineWidth: this._scene._gantt.parsedOptions.dependencyLinkLineCreatingStyle.lineWidth,
+      lineDash: this._scene._gantt.parsedOptions.dependencyLinkLineCreatingStyle.lineDash,
+      pickable: false
+    });
+    this.creatingDependencyLine = line;
+    this.selectedBorders[0].appendChild(line);
   }
 }

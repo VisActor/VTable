@@ -275,6 +275,33 @@ export function initOptions(gantt: Gantt) {
     },
     options?.dependency?.linkLineSelectedStyle
   );
+
+  gantt.parsedOptions.dependencyLinkLineCreatePointStyle = Object.assign(
+    {
+      strokeColor: 'red',
+      fillColor: 'white',
+      radius: 5,
+      strokeWidth: 1
+    },
+    options?.dependency?.linkLineCreatePointStyle
+  );
+  gantt.parsedOptions.dependencyLinkLineCreatingPointStyle = Object.assign(
+    {
+      strokeColor: 'red',
+      fillColor: 'red',
+      radius: 5,
+      strokeWidth: 1
+    },
+    options?.dependency?.linkLineCreatingPointStyle
+  );
+  gantt.parsedOptions.dependencyLinkLineCreatingStyle = Object.assign(
+    {
+      lineColor: 'red',
+      lineWidth: 1,
+      lineDash: [5, 5]
+    },
+    options?.dependency?.linkLineCreatingStyle
+  );
 }
 
 export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: ITimelineScale) {

@@ -129,6 +129,12 @@ export interface GanttConstructorOptions {
     linkLineCreatable?: boolean;
     linkLineSelectable?: boolean;
     linkLineSelectedStyle?: ITaskLinkSelectedStyle;
+    /** 创建关联线的操作点 */
+    linkLineCreatePointStyle: IPointStyle;
+    /** 创建关联线的操作点响应状态效果 */
+    linkLineCreatingPointStyle: IPointStyle;
+    /** 创建关联线的操作线样式 */
+    linkLineCreatingStyle?: ILineStyle;
   };
   /** 网格线配置 */
   grid?: IGrid;
@@ -223,6 +229,12 @@ export type ILineStyle = {
   lineColor?: string;
   lineWidth?: number;
   lineDash?: number[];
+};
+export type IPointStyle = {
+  strokeColor?: string;
+  strokeWidth?: number;
+  fillColor?: string;
+  radius?: number;
 };
 export interface IMarkLine {
   date: string;

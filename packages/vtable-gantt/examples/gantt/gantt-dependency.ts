@@ -203,7 +203,8 @@ export function createTable() {
         shadowColor: 'red',
         lineColor: 'red',
         lineWidth: 1
-      }
+      },
+      linkLineCreatable: true
     },
     frame: {
       verticalSplitLineMoveable: true,
