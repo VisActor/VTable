@@ -37,28 +37,29 @@ import type {
 export type IVTable = ListTable | PivotTable | PivotChart;
 export type IOption = ListTableConstructorOptions | PivotTableConstructorOptions | PivotChartConstructorOptions;
 
-export interface BaseTableProps extends EventsProps {
-  vtableConstrouctor?: any;
-  type?: string;
-  /** 上层container */
-  container?: HTMLDivElement;
-  /** option */
-  option?: IOption;
-  /** 数据 */
-  records?: Record<string, unknown>[];
-  /** 画布宽度 */
-  width?: number;
-  /** 画布高度 */
-  height?: number;
-  skipFunctionDiff?: boolean;
+export type BaseTableProps = EventsProps &
+  IOption & {
+    vtableConstrouctor?: any;
+    type?: string;
+    /** 上层container */
+    container?: HTMLDivElement;
+    /** option */
+    option?: IOption;
+    /** 数据 */
+    records?: Record<string, unknown>[];
+    /** 画布宽度 */
+    width?: number;
+    /** 画布高度 */
+    height?: number;
+    skipFunctionDiff?: boolean;
 
-  ReactDOM?: any;
+    ReactDOM?: any;
 
-  /** 表格渲染完成事件 */
-  onReady?: (instance: IVTable, isInitial: boolean) => void;
-  /** throw error when chart run into an error */
-  onError?: (err: Error) => void;
-}
+    /** 表格渲染完成事件 */
+    onReady?: (instance: IVTable, isInitial: boolean) => void;
+    /** throw error when chart run into an error */
+    onError?: (err: Error) => void;
+  };
 
 // for react-vtable
 if (isBrowserEnv()) {
@@ -153,6 +154,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         ...optionFromChildren.current,
         clearDOM: false,
         customConfig: {
+          ...prevOption.current.customConfig,
           createReactContainer: true
         }
         // ...tableContext.current?.optionFromChildren
