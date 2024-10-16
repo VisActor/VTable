@@ -111,8 +111,7 @@
     "d3-hexbin": "^0.2.2",
     "d3-hierarchy": "^3.1.1",
     "@resvg/resvg-js": "^2.5.0",
-    "pikaday": "1.8.2",
-    "canvas": "2.11.2"
+    "pikaday": "1.8.2"
   },
   "unpkg": "latest",
   "unpkgFiles": [
