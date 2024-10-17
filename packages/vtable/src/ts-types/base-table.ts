@@ -100,7 +100,7 @@ import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { EditManeger } from '../edit/edit-manager';
-import type { TableAnimationManager } from '../core/animation';
+import type { ITableAnimationOption, TableAnimationManager } from '../core/animation';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -849,7 +849,9 @@ export interface BaseTableAPI {
    * 滚动到具体某个单元格位置
    * @param cellAddr 要滚动到的单元格位置
    */
-  scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
+  scrollToCell: (cellAddr: { col?: number; row?: number }, animationOption?: ITableAnimationOption | boolean) => void;
+  scrollToRow: (row: number, animationOption?: ITableAnimationOption | boolean) => void;
+  scrollToCol: (col: number, animationOption?: ITableAnimationOption | boolean) => void;
   registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
   arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
 
