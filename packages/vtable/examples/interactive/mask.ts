@@ -117,4 +117,16 @@ export function createTable() {
       });
     }
   });
+
+  const ca = new VTable.CarouselAnimationPlugin(tableInstance, {
+    rowCount: 2,
+    replaceScrollAction: true
+  });
+
+  // ca.play();
+
+  // setInterval(() => {
+  //   row += 2;
+  //   tableInstance.scrollToRow(row, { duration: 500 });
+  // }, 2000);
 }
