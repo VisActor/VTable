@@ -77,6 +77,10 @@ VTable-Gantt 是一款基于 VTable 表格组件及 canvas 渲染器 VRender 构
 
 通过 `grid` 配置项，可以自定义右侧任务条背景网格线的样式。包括背景色、横纵方向的线宽、线型等。
 
+### 任务之间的依赖关系
+
+通过 `dependency.links` 配置项，可以设置任务之间的依赖关系。通过 `dependency.linkLineStyle` 配置项，可以自定义任务之间的依赖关系的样式。通过 `dependency.linkLineSelectedStyle` 配置项，可以自定义任务之间的依赖关系选中时的样式。另外可以动态创建关联线，通过 `dependency.linkCreatable` 配置项，可以设置是否可以创建关联线。
+
 ### 交互
 
 #### 任务条的拖拽
@@ -100,6 +104,10 @@ VTable-Gantt 是一款基于 VTable 表格组件及 canvas 渲染器 VRender 构
 #### 调整数据顺序
 
 开启拖拽换位能力同`ListTable`的配置需要在配置中添加`rowSeriesNumber`，即有了行序号，用`rowSeriesNumber.style`和`headerStyle`中可以配置该列的样式，开启换位的话将`rowSeriesNumber.dragOrder`设置为 true。`VTable-Gantt`在监听有移位事件时将顺序同步到任务条区域显示。
+
+#### 创建关联线
+
+通过`dependency.linkCreatable`配置项，可以设置是否可以创建关联线。
 
 #### 创建排期
 
@@ -144,26 +152,33 @@ VTableGantt 内部借助这个表格实例 tableInstance 实现的能力有：
    4. 交互配置: 通过 resizable 和 moveable 配置项，可以设置任务条是否可调整大小和移动。
    5. 交互样式: 通过 hoverBarStyle 和 selectedBarStyle 配置项，可以设置任务条悬浮时以及选中时的样式。
 
-3. 日期表头配置 timelineHeader
+3. 依赖关联线 `dependency`
+
+   1. 依赖关系：通过 `links` 配置项，可以设置任务之间的依赖关系。
+   2. 关联线的样式: 通过 `linkLineStyle` 配置项，可以设置关联线的样式，包括颜色、宽度、虚线样式等。
+   3. 关联线创建: 通过 `linkCreatable` 配置项，可以设置是否允许创建关联线。
+   4. 关联线创建过程的操作样式: 通过 `linkSelectedLineStyle` `linkCreatingPointStyle` `linkCreatingLineStyle` 配置项，可以设置关联线选中过程的样式，包括颜色、宽度、虚线样式等。
+
+4. 日期表头配置 timelineHeader
    1. 自定义渲染: 通过 customLayout 配置项，可以自定义日期表头的渲染方式。
    2. 样式配置: 通过 style 配置项，可以设置表头的文字样式，包括字体大小、颜色、对齐方式等。
-4. 时间刻度配置 timelineHeader.scales
+5. 时间刻度配置 timelineHeader.scales
    1. 行高和时间单位: 通过 rowHeight 和 unit 配置项，可以设置时间刻度的行高和时间单位（如天、周、月等）。
    2. 步长和周起始日: 通过 step 和 startOfWeek 配置项，可以设置时间刻度的步长和一周的起始日。
    3. 日期格式化: 通过 format 配置项，可以自定义日期的显示格式。
-5. 网格线配置 grid
+6. 网格线配置 grid
    1. 样式配置: 通过 verticalLine 和 horizontalLine 配置项，可以设置网格线的颜色、宽度、虚线样式等。
    2. 背景颜色: 通过 backgroundColor 配置项，可以设置网格线的背景颜色。
-6. 任务列表表格配置 taskListTable (左侧任务信息列表 对应 ListTable 的配置，需要可以参考[配置](../../option/Gantt#taskListTable))
+7. 任务列表表格配置 taskListTable (左侧任务信息列表 对应 ListTable 的配置，需要可以参考[配置](../../option/Gantt#taskListTable))
    1. 左侧表格整体宽度：通过 tableWidth 配置项，可以设置任务列表表格的整体宽度。
    2. 列信息: 通过 columns，可以定义任务信息表格的列信息和各列宽度。
    3. 样式配置: 通过 theme.headerStyle 和 theme.bodyStyle 配置项，可以设置表头和表体的样式。
    4. 宽度限制: 通过 minTableWidth 和 maxTableWidth 配置项，可以设置任务列表的最小和最大宽度。
-7. 分割线配置 frame
+8. 分割线配置 frame
    1. 外边框配置: 通过 outerFrameStyle 配置项，可以设置外边框的颜色、宽度等。
    2. 分割线样式配置: 通过 verticalSplitLine 和 horizontalSplitLine 配置项，可以设置分割线的颜色、宽度、虚线样式等。
    3. 拖拽左侧表格宽度: 通过 verticalSplitLineMoveable 配置项，可以设置分割线是否可拖拽。通过 verticalSplitLineHighlight 配置项，可以设置列调整宽度时的高亮线样式。
-8. 标记线配置 markLine
+9. 标记线配置 markLine
    1. 日期配置: 通过 date 配置项，可以设置标记线的日期。
    2. 样式配置: 通过 style 配置项，可以设置标记线的颜色、宽度、虚线样式等。
    3. 标记线位置: 通过 position 配置项，可以设置标记线的位置。

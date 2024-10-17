@@ -1,25 +1,28 @@
 ---
 category: examples
 group: gantt
-title: Gantt Dependency Link Line
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-dependency-link-line.gif
+title: Create Gantt Dependency Link Line
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-dependency-link-line-create.gif
 link: '../guide/gantt/introduction'
 option: Gantt#taskBar
 ---
 
-# 甘特图依赖线
+# Create dependency lines between tasks
 
-甘特图依赖线是甘特图中用来表示任务之间的依赖关系的线条，它可以帮助用户更好地理解任务之间的关系，并帮助用户进行任务的排序和调度。
-该示例展示了如何在甘特图中添加依赖线，并配置依赖线的样式。
+In the Gantt chart, arrows are usually used to represent the dependencies between tasks. During initialization, existing dependencies are displayed through `dependency.links`, and dependencies can be dynamically created through interaction. Note that you should set `dependency.linkCreatable` to true to enable the creation of dependency lines. The styles of the operation points and operation lines that are dynamically created during creation can be configured through `dependency.linkCreatePointStyle` `dependency.linkCreatingPointStyle` `dependency.linkCreatingLineStyle`.
 
-## 关键配置
+## Key Configuration
 
 - `Gantt`
-- `Gantt#dependency.links` 配置任务条之间前后依赖关系的数据
-- `Gantt#dependency.linkLineStyle` 配置依赖线的样式
-- `Gantt#dependency.linkLineSelectedStyle` 配置依赖线选中时的样式
+- `Gantt#dependency.links` configures the data of the dependencies between task bars
+- `Gantt#dependency.linkLineStyle` configures the style of the dependency line
+- `Gantt#dependency.linkSelectedLineStyle` configures the style of the dependency line when it is selected
+- `Gantt#dependency.linkCreatable` configures whether dependency lines can be created
+- `Gantt#dependency.linkCreatePointStyle` configures the starting point style of the dependency line creation process
+- `Gantt#dependency.linkCreatingPointStyle` configures the endpoint style of the dependency line creation process
+- `Gantt#dependency.linkCreatingLineStyle` configures the line style of the dependency line creation process
 
-## 代码演示
+## Code Demo
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';
@@ -221,7 +224,8 @@ const option = {
       shadowColor: 'red',
       lineColor: 'red',
       lineWidth: 1
-    }
+    },
+    linkCreatable: true
   },
   frame: {
     verticalSplitLineMoveable: true,

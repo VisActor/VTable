@@ -695,9 +695,9 @@ export class StateManager {
     const linkedFromTaskRecord = findRecordByTaskKey(this._gantt.records, taskKeyField, linkedFromTaskKey);
     const linkedFromTaskShowIndex = this._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
     const linkedToTaskShowIndex = this._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
-    const fromTaskNode = this._gantt.scenegraph.taskBar.barContainer.children[
+    const fromTaskNode = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(
       linkedFromTaskShowIndex
-    ] as GanttTaskBarNode;
+    ) as GanttTaskBarNode;
     this._gantt.scenegraph.taskBar.createSelectedBorder(
       fromTaskNode.attribute.x,
       fromTaskNode.attribute.y,
@@ -706,7 +706,7 @@ export class StateManager {
       fromTaskNode,
       false
     );
-    const toTaskNode = this._gantt.scenegraph.taskBar.barContainer.children[linkedToTaskShowIndex] as GanttTaskBarNode;
+    const toTaskNode = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(linkedToTaskShowIndex) as GanttTaskBarNode;
     this._gantt.scenegraph.taskBar.createSelectedBorder(
       toTaskNode.attribute.x,
       toTaskNode.attribute.y,

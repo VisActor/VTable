@@ -126,15 +126,15 @@ export interface GanttConstructorOptions {
   dependency?: {
     links: ITaskLink[];
     linkLineStyle?: ILineStyle;
-    linkLineCreatable?: boolean;
-    linkLineSelectable?: boolean;
-    linkLineSelectedStyle?: ITaskLinkSelectedStyle;
+    linkCreatable?: boolean;
+    linkSelectable?: boolean;
+    linkSelectedLineStyle?: ITaskLinkSelectedStyle;
     /** 创建关联线的操作点 */
-    linkLineCreatePointStyle: IPointStyle;
+    linkCreatePointStyle?: IPointStyle;
     /** 创建关联线的操作点响应状态效果 */
-    linkLineCreatingPointStyle: IPointStyle;
+    linkCreatingPointStyle?: IPointStyle;
     /** 创建关联线的操作线样式 */
-    linkLineCreatingStyle?: ILineStyle;
+    linkCreatingLineStyle?: ILineStyle;
   };
   /** 网格线配置 */
   grid?: IGrid;

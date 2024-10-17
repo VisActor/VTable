@@ -84,6 +84,7 @@ export class TaskBar {
       clip: true
     });
     barGroup.name = 'task-bar';
+    barGroup.id = index;
     // this.barContainer.appendChild(barGroup);
     let rootContainer;
     let renderDefaultBar = true;
@@ -394,5 +395,19 @@ export class TaskBar {
     });
     this.creatingDependencyLine = line;
     this.selectedBorders[0].appendChild(line);
+  }
+
+  getTaskBarNodeByIndex(index: number) {
+    let c = this.barContainer.firstChild as Group;
+    if (!c) {
+      return null;
+    }
+    for (let i = 0; i < this.barContainer.childrenCount; i++) {
+      if (c.id === index) {
+        return c;
+      }
+      c = c._next as Group;
+    }
+    return null;
   }
 }

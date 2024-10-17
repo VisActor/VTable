@@ -1,23 +1,26 @@
 ---
 category: examples
 group: gantt
-title: Gantt Dependency Link Line
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-dependency-link-line.gif
+title: Create Gantt Dependency Link Line
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-dependency-link-line-create.gif
 link: '../guide/gantt/introduction'
 option: Gantt#taskBar
 ---
 
-# 甘特图依赖线
+# 创建任务之间依赖线
 
-甘特图依赖线是甘特图中用来表示任务之间的依赖关系的线条，它可以帮助用户更好地理解任务之间的关系，并帮助用户进行任务的排序和调度。
-该示例展示了如何在甘特图中添加依赖线，并配置依赖线的样式。
+在 gantt 甘特图中通常可以用箭头来表示任务之间的依赖关系，初始化时通过`dependency.links`显示既有的依赖关系，同时支持通过交互来动态创建依赖关系。注意请将`dependency.linkCreatable` 设置为 true 来开启创建依赖线。创建时动态出来的操作点和操作线的样式，可以通过 `dependency.linkCreatePointStyle` `dependency.linkCreatingPointStyle` `dependency.linkCreatingLineStyle` 配置。
 
 ## 关键配置
 
 - `Gantt`
 - `Gantt#dependency.links` 配置任务条之间前后依赖关系的数据
 - `Gantt#dependency.linkLineStyle` 配置依赖线的样式
-- `Gantt#dependency.linkLineSelectedStyle` 配置依赖线选中时的样式
+- `Gantt#dependency.linkSelectedLineStyle` 配置依赖线选中时的样式
+- `Gantt#dependency.linkCreatable` 配置是否可以创建依赖线
+- `Gantt#dependency.linkCreatePointStyle` 配置依赖线创建过程的起始点样式
+- `Gantt#dependency.linkCreatingPointStyle` 配置依赖线创建过程的终点点样式
+- `Gantt#dependency.linkCreatingLineStyle` 配置依赖线创建过程的连线样式
 
 ## 代码演示
 
@@ -221,7 +224,8 @@ const option = {
       shadowColor: 'red',
       lineColor: 'red',
       lineWidth: 1
-    }
+    },
+    linkCreatable: true
   },
   frame: {
     verticalSplitLineMoveable: true,

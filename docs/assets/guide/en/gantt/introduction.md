@@ -77,6 +77,10 @@ In the Gantt chart, it is often necessary to mark some important dates. We confi
 
 You can customize the style of the background grid lines of the right task bars through the `grid` configuration item, including background color, line width, line type, etc.
 
+### Dependencies between tasks
+
+Through the `dependency.links` configuration item, you can set the dependencies between tasks. Through the `dependency.linkLineStyle` configuration item, you can customize the style of the dependencies between tasks. Through the `dependency.linkLineSelectedStyle` configuration item, you can customize the style of the dependencies between tasks when they are selected. In addition, you can dynamically create association lines. Through the `dependency.linkCreatable` configuration item, you can set whether association lines can be created.
+
 ### Interaction
 
 #### Dragging Task Bars
@@ -100,6 +104,10 @@ To enable editing capabilities, you need to register the editor to VTable in adv
 #### Adjusting Data Order
 
 To enable drag-and-drop reordering capabilities, you need to add `rowSeriesNumber` to the configuration of `ListTable`, which provides a row number. You can configure the style of this column using `rowSeriesNumber.style` and `headerStyle`. To enable reordering, set `rowSeriesNumber.dragOrder` to true. `VTable-Gantt` will synchronize the order to the task bar area display when a reordering event is detected.
+
+#### Create association lines
+
+Through the `dependency.linkCreatable` configuration item, you can set whether the association line can be created.
 
 #### Creation Schedule
 
@@ -144,26 +152,33 @@ In the vtable-gantt component, the main supported configurations include:
    4. Interaction Configuration: You can set whether task bars are resizable and movable through the `resizable` and `moveable` configuration items.
    5. Interaction Style: You can set the style of task bars when hovering and when selected through the `hoverBarStyle` and `selectedBarStyle` configuration item.
 
-3. Date Header Configuration `timelineHeader`
+3. Dependency Line `dependency`
+
+   1. Dependencies: Through the links configuration item, you can set dependencies between tasks.
+   2. Link line style: You can set the link line style, including color, width, dashed line style, etc., through the linkLineStyle configuration item.
+   3. Link creation: Through the linkCreatable configuration item, you can set whether to allow the creation of link lines.
+   4. The operation style of the association line creation process: Through the linkSelectedLineStyle linkCreatingPointStyle linkCreatingLineStyle configuration items, you can set the style of the association line selection process, including color, width, dashed line style, etc.
+
+4. Date Header Configuration `timelineHeader`
    1. Custom Rendering: You can customize the rendering of date headers through the `customLayout` configuration item.
    2. Style Configuration: You can set the text style of the header, including font size, color, alignment, etc., through the `style` configuration item.
-4. Time Scale Configuration `timelineHeader.scales`
+5. Time Scale Configuration `timelineHeader.scales`
    1. Row Height and Time Unit: You can set the row height and time unit (such as day, week, month, etc.) of the time scale through the `rowHeight` and `unit` configuration items.
    2. Step Length and Week Start Day: You can set the step length of the time scale and the start day of the week through the `step` and `startOfWeek` configuration items.
    3. Date Formatting: You can customize the display format of dates through the `format` configuration item.
-5. Grid Line Configuration `grid`
+6. Grid Line Configuration `grid`
    1. Style Configuration: You can set the color, width, dashed style, etc., of grid lines through the `verticalLine` and `horizontalLine` configuration items.
    2. Background Color: You can set the background color of grid lines through the `backgroundColor` configuration item.
-6. Task List Table Configuration `taskListTable` (Configuration of the task information list ListTable on the left, refer to [Configuration](../../option/Gantt#taskListTable))
+7. Task List Table Configuration `taskListTable` (Configuration of the task information list ListTable on the left, refer to [Configuration](../../option/Gantt#taskListTable))
    1. Overall Width of the Table on the Left: You can set the overall width of the task list table through the `tableWidth` configuration item.
    2. Column Information: You can define the column information and width of each column of the task information table through `columns`.
    3. Style Configuration: You can set the style of the header and body through the `theme.headerStyle` and `theme.bodyStyle` configuration items.
    4. Width Limit: You can set the minimum and maximum width of the task list through the `minTableWidth` and `maxTableWidth` configuration items.
-7. Divider Line Configuration `frame`
+8. Divider Line Configuration `frame`
    1. Outer Frame Configuration: You can set the color, width, etc., of the outer frame through the `outerFrameStyle` configuration item.
    2. Divider Line Style Configuration: You can set the color, width, dashed style, etc., of divider lines through the `verticalSplitLine` and `horizontalSplitLine` configuration items.
    3. Dragging the Width of the Table on the Left: You can set whether the divider line is draggable through the `verticalSplitLineMoveable` configuration item. You can set the highlight line style when adjusting the column width through the `verticalSplitLineHighlight` configuration item.
-8. Marker Line Configuration `markLine`
+9. Marker Line Configuration `markLine`
    1. Date Configuration: You can set the date of the marker line through the `date` configuration item.
    2. Style Configuration: You can set the color, width, dashed style, etc., of the marker line through the `style` configuration item.
    3. Marker Line Position: You can set the position of the marker line through the `position` configuration item.

@@ -198,13 +198,13 @@ export function createTable() {
         }
       ],
       // linkLineSelectable: false,
-      linkLineSelectedStyle: {
+      linkSelectedLineStyle: {
         shadowBlur: 5, //阴影宽度
         shadowColor: 'red',
         lineColor: 'red',
         lineWidth: 1
       },
-      linkLineCreatable: true
+      linkCreatable: true
     },
     frame: {
       verticalSplitLineMoveable: true,

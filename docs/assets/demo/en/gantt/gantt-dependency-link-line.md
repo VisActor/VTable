@@ -214,8 +214,8 @@ const option = {
         linkedToTaskKey: 5
       }
     ],
-    // linkLineSelectable: false,
-    linkLineSelectedStyle: {
+    // linkSelectable: false,
+    linkSelectedLineStyle: {
       shadowBlur: 5, //阴影宽度
       shadowColor: 'red',
       lineColor: 'red',

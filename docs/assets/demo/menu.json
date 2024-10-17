@@ -276,6 +276,13 @@
           }
         },
         {
+          "path": "gantt-dependency-link-create",
+          "title": {
+            "zh": "创建依赖线（关联线）",
+            "en": "Create Dependency Link Line"
+          }
+        },
+        {
           "path": "gantt-interaction-drag-table-width",
           "title": {
             "zh": "甘特图交互——拖拽表格宽度",

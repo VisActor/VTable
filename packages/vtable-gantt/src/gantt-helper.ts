@@ -255,8 +255,8 @@ export function initOptions(gantt: Gantt) {
 
   gantt.parsedOptions.taskKeyField = options.taskKeyField ?? 'id';
   gantt.parsedOptions.dependencyLinks = options.dependency?.links;
-  gantt.parsedOptions.dependencyLinkCreatable = options.dependency?.linkLineCreatable ?? false;
-  gantt.parsedOptions.dependencyLinkSelectable = options.dependency?.linkLineSelectable ?? true;
+  gantt.parsedOptions.dependencyLinkCreatable = options.dependency?.linkCreatable ?? false;
+  gantt.parsedOptions.dependencyLinkSelectable = options.dependency?.linkSelectable ?? true;
   gantt.parsedOptions.dependencyLinkLineStyle = Object.assign(
     {
       lineColor: 'red',
@@ -273,7 +273,7 @@ export function initOptions(gantt: Gantt) {
       lineColor: gantt.parsedOptions.dependencyLinkLineStyle.lineColor,
       lineWidth: gantt.parsedOptions.dependencyLinkLineStyle.lineWidth
     },
-    options?.dependency?.linkLineSelectedStyle
+    options?.dependency?.linkSelectedLineStyle
   );
 
   gantt.parsedOptions.dependencyLinkLineCreatePointStyle = Object.assign(
@@ -283,7 +283,7 @@ export function initOptions(gantt: Gantt) {
       radius: 5,
       strokeWidth: 1
     },
-    options?.dependency?.linkLineCreatePointStyle
+    options?.dependency?.linkCreatePointStyle
   );
   gantt.parsedOptions.dependencyLinkLineCreatingPointStyle = Object.assign(
     {
@@ -292,7 +292,7 @@ export function initOptions(gantt: Gantt) {
       radius: 5,
       strokeWidth: 1
     },
-    options?.dependency?.linkLineCreatingPointStyle
+    options?.dependency?.linkCreatingPointStyle
   );
   gantt.parsedOptions.dependencyLinkLineCreatingStyle = Object.assign(
     {
@@ -300,7 +300,7 @@ export function initOptions(gantt: Gantt) {
       lineWidth: 1,
       lineDash: [5, 5]
     },
-    options?.dependency?.linkLineCreatingStyle
+    options?.dependency?.linkCreatingLineStyle
   );
 }
 
