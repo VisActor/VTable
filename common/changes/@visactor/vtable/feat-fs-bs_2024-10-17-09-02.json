@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add CarouselAnimationPlugin",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
