@@ -47,3 +47,12 @@ export function syncTreeChangeFromTable(gantt: Gantt) {
     gantt.scenegraph.setY(-top);
   });
 }
+export function syncSortFromTable(gantt: Gantt) {
+  gantt.taskListTableInstance?.on('after_sort', (args: any) => {
+    gantt.scenegraph.refreshTaskBars();
+    const left = gantt.stateManager.scroll.horizontalBarPos;
+    const top = gantt.stateManager.scroll.verticalBarPos;
+    gantt.scenegraph.setX(-left);
+    gantt.scenegraph.setY(-top);
+  });
+}

@@ -1358,4 +1358,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return indexArrLngth;
   }
+  /**
+   * 根据数据的索引获取应该显示在body的第几行
+   * @param  {number} index The record index.
+   */
+  getBodyRowIndexByRecordIndex(index: number): number {
+    return this.dataSource.getTableIndex(index);
+  }
 }

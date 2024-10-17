@@ -36,6 +36,7 @@ Supported event types（not all）:
   RESIZE_ROW_END: 'resize_row_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
+  AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
   SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
@@ -202,8 +203,19 @@ Click on the sort icon event.
 Parameter types for event callback functions.
 `  {
     field: string;
-    order: 'asc' | 'desc' | 'normal'.
+    order: 'asc' | 'desc' | 'normal';
+    event: Event;
   }`
+
+## AFTER_SORT
+
+After sorting event.
+Parameter types for event callback functions.
+`{
+  order: 'asc' | 'desc' | 'normal';
+  field: string;
+  event: Event;
+}`
 
 ## FREEZE_CLICK
 

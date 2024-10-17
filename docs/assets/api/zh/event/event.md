@@ -42,6 +42,7 @@ TABLE_EVENT_TYPE = {
   RESIZE_ROW_END: 'resize_row_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
+  AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
   SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
@@ -242,9 +243,21 @@ TABLE_EVENT_TYPE = {
   {
     field: string;
     order: 'asc' | 'desc' | 'normal';
+     event: Event;
   }
 ```
 
+## AFTER_SORT
+
+执行完排序事件。
+事件回调函数的参数类型:
+
+```
+  {
+    field: string;
+    order: 'asc' | 'desc' | 'normal';
+    event: Event;
+  }
 ## FREEZE_CLICK
 
 点击固定列图标冻结或者解冻事件。
@@ -252,12 +265,14 @@ TABLE_EVENT_TYPE = {
 事件回调函数的参数类型:
 
 ```
+
 {
-  col: number;
-  row: number;
-  fields: string[];
-  colCount: number
+col: number;
+row: number;
+fields: string[];
+colCount: number
 }
+
 ```
 
 ## SCROLL
@@ -267,6 +282,7 @@ TABLE_EVENT_TYPE = {
 事件回调函数的参数类型:
 
 ```
+
     {
       scrollLeft: number;
       scrollTop: number;
@@ -275,6 +291,7 @@ TABLE_EVENT_TYPE = {
       viewWidth: number;
       viewHeight: number;
     }
+
 ```
 
 ## SCROLL_HORIZONTAL_END
@@ -284,6 +301,7 @@ TABLE_EVENT_TYPE = {
 事件回调函数的参数类型:
 
 ```
+
     {
       scrollLeft: number;
       scrollTop: number;
@@ -292,6 +310,7 @@ TABLE_EVENT_TYPE = {
       viewWidth: number;
       viewHeight: number;
     }
+
 ```
 
 ## SCROLL_VERTICAL_END
@@ -301,6 +320,7 @@ TABLE_EVENT_TYPE = {
 事件回调函数的参数类型:
 
 ```
+
     {
       scrollLeft: number;
       scrollTop: number;
@@ -309,6 +329,7 @@ TABLE_EVENT_TYPE = {
       viewWidth: number;
       viewHeight: number;
     }
+
 ```
 
 ## MOUSEOVER_CHART_SYMBOL
@@ -358,6 +379,7 @@ TABLE_EVENT_TYPE = {
 事件回调函数的参数类型:
 
 ```
+
     {
       x: number;
       y: number;
@@ -365,6 +387,7 @@ TABLE_EVENT_TYPE = {
       row: number;
       type: 'dropDown' | 'contextmenu' | 'custom';
     }
+
 ```
 
 ## HIDE_MENU
@@ -378,6 +401,7 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
+
     {
       name: string;
       col: number;
@@ -387,6 +411,7 @@ icon 图标点击事件。
       funcType?: IconFuncTypeEnum | string;
       icon: Icon;
     }
+
 ```
 
 ## PIVOT_SORT_CLICK
@@ -396,6 +421,7 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
+
     {
       col: number;
       row: number;
@@ -403,6 +429,7 @@ icon 图标点击事件。
       dimensionInfo: IDimensionInfo[];
       cellLocation: CellLocation;
     }
+
 ```
 
 其中：
@@ -416,7 +443,9 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+
+{ model: any; value: any; event: PointerEvent };
+
 ```
 
 ## LEGEND_ITEM_HOVER
@@ -426,7 +455,9 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+
+{ model: any; value: any; event: PointerEvent };
+
 ```
 
 ## LEGEND_ITEM_UNHOVER
@@ -436,7 +467,9 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+
+{ model: any; value: any; event: PointerEvent };
+
 ```
 
 ## LEGEND_CHANGE
@@ -446,7 +479,9 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+
+{ model: any; value: any; event: PointerEvent };
+
 ```
 
 ## MOUSEENTER_AXIS
@@ -456,7 +491,9 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
- MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
+
+MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
+
 ```
 
 {{ use: MousePointerCellEvent() }}
@@ -475,7 +512,9 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
- { cellRange: CellRange[]; copyData: string };
+
+{ cellRange: CellRange[]; copyData: string };
+
 ```
 
 ## CHANGE_CELL_VALUE
@@ -485,7 +524,9 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
-{ col: number; row: number; rawValue: string | number;currentValue: string | number;  changedValue: string | number };
+
+{ col: number; row: number; rawValue: string | number;currentValue: string | number; changedValue: string | number };
+
 ```
 
 ## CHECKBOX_STATE_CHANGE
@@ -495,13 +536,15 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
+
 {
-  col: number;
-  row: number;
-  alue: string | number;
-  dataValue: string | number;
-  checked: boolean;
+col: number;
+row: number;
+alue: string | number;
+dataValue: string | number;
+checked: boolean;
 };
+
 ```
 
 ## RADIO_STATE_CHANGE
@@ -511,13 +554,16 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
+
 {
-  col: number;
-  row: number;
-  alue: string | number;
-  dataValue: string | number;
-  radioIndexInCell: boolean | number;
+col: number;
+row: number;
+alue: string | number;
+dataValue: string | number;
+radioIndexInCell: boolean | number;
 };
+
 ```
 
 如果单元格中只有一个单选框，radioIndexInCell 为 boolean 类型，表示是否选中；如果单元格中有多个单选框，radioIndexInCell 为 number 类型，表示选中的单选框的索引。
+```

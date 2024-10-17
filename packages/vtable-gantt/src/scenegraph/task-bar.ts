@@ -1,10 +1,10 @@
-import { Group, createText, createRect, Image } from '@visactor/vtable/es/vrender';
+import { Group, createText, createRect, Image, Circle, Line, Rect } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
 import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
 import { getTextPos } from '../gantt-helper';
-import { GanttTaskBarNode } from './ganttNode';
+import { GanttTaskBarNode } from './gantt-node';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -16,11 +16,13 @@ export class TaskBar {
   group: Group;
   barContainer: Group;
   hoverBarGroup: Group;
+  creatingDependencyLine: Line;
   hoverBarLeftIcon: Image;
   hoverBarRightIcon: Image;
   _scene: Scenegraph;
   width: number;
   height: number;
+  selectedBorders: Group[] = [];
   constructor(scene: Scenegraph) {
     this._scene = scene;
     // const height = Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight);
@@ -61,7 +63,7 @@ export class TaskBar {
   initBar(index: number) {
     const taskBarCustomLayout = this._scene._gantt.parsedOptions.taskBarCustomLayout;
     const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(index);
-    if (taskDays <= 0) {
+    if (taskDays <= 0 || !startDate || !endDate) {
       return null;
     }
     const taskBarSize = this._scene._gantt.parsedOptions.colWidthPerDay * taskDays;
@@ -82,6 +84,7 @@ export class TaskBar {
       clip: true
     });
     barGroup.name = 'task-bar';
+    barGroup.id = index;
     // this.barContainer.appendChild(barGroup);
     let rootContainer;
     let renderDefaultBar = true;
@@ -192,17 +195,6 @@ export class TaskBar {
     }
   }
   initHoverBarIcons() {
-    // const target = this._scene._gantt.stateManager.hoverTaskBar.target;
-
-    // const barGroup = new Group({
-    //   x: target.attribute.x,
-    //   y: target.attribute.y,
-    //   width: target.attribute.width,
-    //   height: target.attribute.height,
-    //   cornerRadius: target.attribute.cornerRadius,
-    //   clip: true,
-    //   cursor: 'grab'
-    // });
     const hoverBarGroup = new Group({
       x: 0,
       y: 0,
@@ -251,6 +243,7 @@ export class TaskBar {
       hoverBarGroup.appendChild(rightIcon);
     }
   }
+
   setX(x: number) {
     this.barContainer.setAttribute('x', x);
   }
@@ -300,5 +293,121 @@ export class TaskBar {
   }
   hideHoverBar() {
     this.hoverBarGroup.setAttribute('visibleAll', false);
+  }
+
+  createSelectedBorder(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    attachedToTaskBarNode: GanttTaskBarNode,
+    showLinkPoint: boolean = false
+  ) {
+    const selectedBorder = new Group({
+      x,
+      y,
+      width,
+      height,
+      lineWidth: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderLineWidth,
+      pickable: false,
+      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius ?? 0,
+      fill: false,
+      stroke: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
+      shadowColor: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowColor,
+      shadowOffsetX: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetX,
+      shadowOffsetY: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetY,
+      shadowBlur: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowBlur,
+      attachedToTaskBarNode: attachedToTaskBarNode
+    });
+    selectedBorder.name = 'task-bar-select-border';
+    this.barContainer.appendChild(selectedBorder);
+    this.selectedBorders.push(selectedBorder);
+
+    if (showLinkPoint) {
+      const linkPointContainer = new Group({
+        x: -10,
+        y: 0,
+        width: 10,
+        height: height,
+        pickable: true
+      });
+      const linkPoint = new Circle({
+        x: 5,
+        y: height / 2,
+        radius: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.radius,
+        fill: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.fillColor,
+        stroke: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeColor,
+        lineWidth: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeWidth,
+        pickable: false
+      });
+      linkPointContainer.appendChild(linkPoint);
+      linkPointContainer.name = 'task-bar-link-point-left';
+      selectedBorder.appendChild(linkPointContainer);
+
+      const linkPointContainer1 = new Group({
+        x: width,
+        y: 0,
+        width: 10,
+        height: height,
+        pickable: true
+      });
+      const linkPoint1 = new Circle({
+        x: 5,
+        y: height / 2,
+        radius: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.radius,
+        fill: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.fillColor,
+        stroke: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeColor,
+        lineWidth: this._scene._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeWidth,
+        pickable: false,
+        pickStrokeBuffer: 10
+      });
+      linkPointContainer1.appendChild(linkPoint1);
+      linkPointContainer1.name = 'task-bar-link-point-right';
+      selectedBorder.appendChild(linkPointContainer1);
+    }
+  }
+  removeSelectedBorder() {
+    this.selectedBorders.forEach(border => {
+      border.delete();
+    });
+    this.selectedBorders = [];
+  }
+  removeSecondSelectedBorder() {
+    if (this.selectedBorders.length === 2) {
+      const secondBorder = this.selectedBorders.pop();
+      secondBorder.delete();
+    }
+  }
+  updateCreatingDependencyLine(x1: number, y1: number, x2: number, y2: number) {
+    if (this.creatingDependencyLine) {
+      this.creatingDependencyLine.delete();
+      this.creatingDependencyLine = undefined;
+    }
+    const line = new Line({
+      points: [
+        { x: x1, y: y1 },
+        { x: x2, y: y2 }
+      ],
+      stroke: this._scene._gantt.parsedOptions.dependencyLinkLineCreatingStyle.lineColor,
+      lineWidth: this._scene._gantt.parsedOptions.dependencyLinkLineCreatingStyle.lineWidth,
+      lineDash: this._scene._gantt.parsedOptions.dependencyLinkLineCreatingStyle.lineDash,
+      pickable: false
+    });
+    this.creatingDependencyLine = line;
+    this.selectedBorders[0].appendChild(line);
+  }
+
+  getTaskBarNodeByIndex(index: number) {
+    let c = this.barContainer.firstChild as Group;
+    if (!c) {
+      return null;
+    }
+    for (let i = 0; i < this.barContainer.childrenCount; i++) {
+      if (c.id === index) {
+        return c;
+      }
+      c = c._next as Group;
+    }
+    return null;
   }
 }
