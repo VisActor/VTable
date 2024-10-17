@@ -1,4 +1,4 @@
-import type { Cursor, IGraphic, IThemeSpec, Group as VGroup } from '@src/vrender';
+import type { Cursor, IGraphic, IThemeSpec, Rect, Group as VGroup } from '@src/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import { regUrl } from '../../tools/global';
 import type {
@@ -33,9 +33,10 @@ import type { CreateCheckboxCellGroup } from './cell-type/checkbox-cell';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
-import { isArray } from '@visactor/vutils';
+import { isArray, isValid } from '@visactor/vutils';
 import { breakString } from '../utils/break-string';
 import type { CreateRadioCellGroup } from './cell-type/radio-cell';
+import { onBeforeAttributeUpdateForInvertHighlight } from '../../plugins/invert-highlight';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -386,6 +387,7 @@ export function createCell(
     );
   }
 
+  cellGroup.onBeforeAttributeUpdate = onBeforeAttributeUpdateForInvertHighlight as any;
   return cellGroup;
 }
 

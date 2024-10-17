@@ -633,6 +633,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'pre-sort'
+      },
+      {
+        path: 'interactive',
+        name: 'mask'
       }
     ]
   },
