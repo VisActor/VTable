@@ -342,6 +342,7 @@ function bindTableGroupListener(event: EventManager) {
       scene._gantt.parsedOptions.dependencyLinkSelectable &&
       event.poniterState === 'down'
     ) {
+      stateManager.hideDependencyLinkSelectedLine();
       stateManager.hideTaskBarSelectedBorder();
       scene._gantt.stateManager.selectedDenpendencyLink.link = depedencyLink;
       stateManager.showDependencyLinkSelectedLine();
