@@ -572,9 +572,8 @@ export class StateManager {
           ? DependencyType.FinishToFinish
           : DependencyType.StartToFinish
     };
-    this._gantt.addLinkData(link);
+    this._gantt.addLink(link);
     // const oldRecord = this._gantt.getRecordByIndex(fromTaskIndex);
-    this._gantt.scenegraph.dependencyLink.initLinkLine(this._gantt.parsedOptions.dependencyLinks.length - 1);
     this.hideTaskBarSelectedBorder();
     this._gantt.scenegraph.updateNextFrame();
     this.creatingDenpendencyLink.creating = false;

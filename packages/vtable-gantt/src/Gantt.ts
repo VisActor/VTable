@@ -793,7 +793,23 @@ export class Gantt extends EventTarget {
     }
   }
 
-  addLinkData(link: ITaskLink) {
+  addLink(link: ITaskLink) {
     this.parsedOptions.dependencyLinks.push(link);
+    this.scenegraph.dependencyLink.initLinkLine(this.parsedOptions.dependencyLinks.length - 1);
+    this.scenegraph.updateNextFrame();
+  }
+  deleteLink(link: ITaskLink) {
+    const index = this.parsedOptions.dependencyLinks.findIndex(
+      item =>
+        item.type === link.type &&
+        item.linkedFromTaskKey === link.linkedFromTaskKey &&
+        item.linkedToTaskKey === link.linkedToTaskKey
+    );
+    if (index !== -1) {
+      const link = this.parsedOptions.dependencyLinks[index];
+      this.parsedOptions.dependencyLinks.splice(index, 1);
+      this.scenegraph.dependencyLink.deleteLink(link);
+      this.scenegraph.updateNextFrame();
+    }
   }
 }

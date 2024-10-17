@@ -187,6 +187,13 @@ export class DependencyLink {
     });
     this.selectedEffectNodes = [];
   }
+
+  deleteLink(link: ITaskLink) {
+    const linkLineNode = link.vtable_gantt_linkLineNode;
+    const lineArrowNode = link.vtable_gantt_linkArrowNode;
+    linkLineNode.delete();
+    lineArrowNode.delete();
+  }
 }
 
 export function generateLinkLinePoints(
