@@ -348,11 +348,23 @@ function bindTableGroupListener(event: EventManager) {
       stateManager.showDependencyLinkSelectedLine();
     } else if (isClickLeftLinkPoint && event.poniterState === 'draging') {
       if (stateManager.isCreatingDependencyLine()) {
-        stateManager.endCreateDependencyLine(e.offset.y);
+        const link = stateManager.endCreateDependencyLine(e.offset.y);
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK)) {
+          gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK, {
+            event: e.nativeEvent,
+            link
+          });
+        }
       }
     } else if (isClickRightLinkPoint && event.poniterState === 'draging') {
       if (stateManager.isCreatingDependencyLine()) {
-        stateManager.endCreateDependencyLine(e.offset.y);
+        const link = stateManager.endCreateDependencyLine(e.offset.y);
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK)) {
+          gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK, {
+            event: e.nativeEvent,
+            link
+          });
+        }
       }
     } else {
       stateManager.hideDependencyLinkSelectedLine();

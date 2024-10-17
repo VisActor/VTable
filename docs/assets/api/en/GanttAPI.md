@@ -99,6 +99,10 @@ export interface EVENT_TYPES {
    * Create task schedule event
    */
   CREATE_TASK_SCHEDULE: 'create_task_schedule';
+  /**
+   * Create dependency line event
+   */
+  CREATE_DEPENDENCY_LINK: 'create_dependency_link';
 }
 ```
 
@@ -214,4 +218,17 @@ endDate: Date;
 /** The changed data entry */
 record: any;
 };
+```
+
+### CREATE_DEPENDENCY_LINK
+
+Events that create dependency lines
+Event return parameters:
+
+```
+{
+   event: Event;
+    /** dependency link */
+    link: ITaskLink;
+  };
 ```

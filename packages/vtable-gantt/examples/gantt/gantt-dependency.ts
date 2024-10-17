@@ -383,9 +383,17 @@ export function createTable() {
   ganttInstance.on('click_task_bar', e => {
     console.log('click_task_bar', e);
   });
+  ganttInstance.on('create_task_schedule', e => {
+    console.log('create_task_schedule', e);
+  });
+
+  ganttInstance.on('create_dependency_link', e => {
+    console.log('create_dependency_link', e);
+  });
   ganttInstance.listTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
+
   // bindDebugTool(ganttInstance.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']
   // });

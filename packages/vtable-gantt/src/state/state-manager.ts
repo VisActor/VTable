@@ -557,7 +557,7 @@ export class StateManager {
     const linkedFromTaskKey = fromRecord[taskKeyField];
     const toRecord = this._gantt.getRecordByIndex(toTaskIndex);
     const linkedToTaskKey = toRecord[taskKeyField];
-    this._gantt.addLinkData({
+    const link = {
       linkedFromTaskKey,
       linkedToTaskKey,
       type:
@@ -571,12 +571,14 @@ export class StateManager {
             this.creatingDenpendencyLink.secondTaskBarPosition === 'right'
           ? DependencyType.FinishToFinish
           : DependencyType.StartToFinish
-    });
+    };
+    this._gantt.addLinkData(link);
     // const oldRecord = this._gantt.getRecordByIndex(fromTaskIndex);
     this._gantt.scenegraph.dependencyLink.initLinkLine(this._gantt.parsedOptions.dependencyLinks.length - 1);
     this.hideTaskBarSelectedBorder();
     this._gantt.scenegraph.updateNextFrame();
     this.creatingDenpendencyLink.creating = false;
+    return link;
   }
   dealCreateDependencyLine(e: FederatedPointerEvent) {
     const x1 = this.creatingDenpendencyLink.startX;

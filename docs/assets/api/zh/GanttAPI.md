@@ -98,6 +98,11 @@ export interface EVENT_TYPES {
    * 创建任务排期事件
    */
   CREATE_TASK_SCHEDULE: 'create_task_schedule';
+
+  /**
+   * 创建任务依赖关系
+   */
+  CREATE_DEPENDENCY_LINK: 'create_dependency_link';
 }
 ```
 
@@ -213,5 +218,18 @@ MOUSEENTER_TASK_BAR
     endDate: Date;
     /** 改变后的数据条目 */
     record: any;
+  };
+```
+
+### CREATE_DEPENDENCY_LINK
+
+创建任务依赖关系的事件
+事件回传参数：
+
+```
+{
+   event: Event;
+    /** 依赖信息 */
+    link: ITaskLink;
   };
 ```
