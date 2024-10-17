@@ -6,6 +6,7 @@ import { bindDebugTool } from '../../vtable/src/scenegraph/debug-tool';
 import { add, differenceInDays, lastDayOfMonth, previousSunday } from 'date-fns';
 import { getMonthCustomStyleRange } from './style';
 import type { CellRange, CustomRenderFunctionArg, ITableAnimationOption } from '@visactor/vtable/es/ts-types';
+import { createTableOption } from './table/table-option';
 
 interface VTableCalendarConstructorOptions {
   startDate?: Date;
@@ -13,10 +14,13 @@ interface VTableCalendarConstructorOptions {
   currentDate?: Date;
   rangeDays?: number;
 
-  columnWidth?: number;
-  rowHeight?: number;
-  headerRowHeight?: number;
+  // columnWidth?: number;
+  // rowHeight?: number;
   dayTitles?: [string, string, string, string, string, string, string];
+
+  style: {
+    headerRowHeight?: number;
+  };
 }
 
 export class VTableCalendar {
@@ -64,156 +68,165 @@ export class VTableCalendar {
 
     // const columnWidth = 140;
     const week = (dayTitles ?? defaultDayTitles) as DateRecordKeys[];
-    const columns = week.map((item: DateRecordKeys, index) => {
-      return {
-        field: defaultDayTitles[index],
-        title: item,
-        width: columnWidth ?? 140,
-        fieldFormat: (record: DateRecord) => {
-          if (
-            record.year === this.currentDate.getFullYear() &&
-            record.month === this.currentDate.getMonth() &&
-            record[item] === this.currentDate.getDate()
-          ) {
-            return `${record[item]}\nToday`;
-          } else if (record[item] === 1) {
-            const monthIndex = item === 'Sun' ? record.month : record.month + 1;
-            const mouthStr = getMonthString(monthIndex);
-            return `${record[item]}\n${mouthStr}`;
-          }
-          return record[item];
-        },
-        customLayout: (args: CustomRenderFunctionArg) => {
-          const { table, row, col, rect, value } = args;
-          const record = table.getRecordByCell(col, row);
-          const { height, width } = rect ?? table.getCellRect(col, row);
+    // const columns = week.map((item: DateRecordKeys, index) => {
+    //   return {
+    //     field: defaultDayTitles[index],
+    //     title: item,
+    //     width: columnWidth ?? 140,
+    //     fieldFormat: (record: DateRecord) => {
+    //       if (
+    //         record.year === this.currentDate.getFullYear() &&
+    //         record.month === this.currentDate.getMonth() &&
+    //         record[item] === this.currentDate.getDate()
+    //       ) {
+    //         return `${record[item]}\nToday`;
+    //       } else if (record[item] === 1) {
+    //         const monthIndex = item === 'Sun' ? record.month : record.month + 1;
+    //         const mouthStr = getMonthString(monthIndex);
+    //         return `${record[item]}\n${mouthStr}`;
+    //       }
+    //       return record[item];
+    //     }
+    //     // customLayout: (args: CustomRenderFunctionArg) => {
+    //     //   const { table, row, col, rect, value } = args;
+    //     //   const record = table.getRecordByCell(col, row);
+    //     //   const { height, width } = rect ?? table.getCellRect(col, row);
 
-          const container = new CustomLayout.Group({
-            x: 0,
-            y: 0,
-            height,
-            width
-          });
+    //     //   const container = new CustomLayout.Group({
+    //     //     x: 0,
+    //     //     y: 0,
+    //     //     height,
+    //     //     width
+    //     //   });
 
-          // container.onBeforeAttributeUpdate = attr => {
-          //   if (attr.y) {
-          //     debugger;
-          //   }
-          // };
+    //     //   // container.onBeforeAttributeUpdate = attr => {
+    //     //   //   if (attr.y) {
+    //     //   //     debugger;
+    //     //   //   }
+    //     //   // };
 
-          if (value === 12) {
-            const text = new CustomLayout.Text({
-              x: 25,
-              y: 50,
-              text: 'Event A',
-              fontSize: 15,
-              fill: '#f99',
-              textAlign: 'left',
-              textBaseline: 'middle'
-            });
-            const circle = new CustomLayout.Circle({
-              x: 15,
-              y: 50,
-              radius: 5,
-              fill: '#f99'
-            });
-            container.add(text);
-            container.add(circle);
-          } else if (value === 21) {
-            const text = new CustomLayout.Text({
-              x: 20,
-              y: 54 - 20,
-              text: 'Event B',
-              fontSize: 15,
-              fill: '#fff',
-              textAlign: 'left',
-              textBaseline: 'middle'
-            });
-            const rect = new CustomLayout.Rect({
-              x: 5,
-              y: 45 - 20,
-              width: 130,
-              height: 20,
-              fill: '#f99',
-              cornerRadius: 5
-            });
-            container.add(rect);
-            container.add(text);
+    //     //   if (value === 12) {
+    //     //     const text = new CustomLayout.Text({
+    //     //       x: 25,
+    //     //       y: 50,
+    //     //       text: 'Event A',
+    //     //       fontSize: 15,
+    //     //       fill: '#f99',
+    //     //       textAlign: 'left',
+    //     //       textBaseline: 'middle'
+    //     //     });
+    //     //     const circle = new CustomLayout.Circle({
+    //     //       x: 15,
+    //     //       y: 50,
+    //     //       radius: 5,
+    //     //       fill: '#f99'
+    //     //     });
+    //     //     container.add(text);
+    //     //     container.add(circle);
+    //     //   } else if (value === 21) {
+    //     //     const text = new CustomLayout.Text({
+    //     //       x: 20,
+    //     //       y: 54 - 20,
+    //     //       text: 'Event B',
+    //     //       fontSize: 15,
+    //     //       fill: '#fff',
+    //     //       textAlign: 'left',
+    //     //       textBaseline: 'middle'
+    //     //     });
+    //     //     const rect = new CustomLayout.Rect({
+    //     //       x: 5,
+    //     //       y: 45 - 20,
+    //     //       width: 130,
+    //     //       height: 20,
+    //     //       fill: '#f99',
+    //     //       cornerRadius: 5
+    //     //     });
+    //     //     container.add(rect);
+    //     //     container.add(text);
 
-            const text1 = new CustomLayout.Text({
-              x: 20,
-              y: 54 + 10,
-              text: 'Event C',
-              fontSize: 15,
-              fill: '#fff',
-              textAlign: 'left',
-              textBaseline: 'middle'
-            });
-            const rect1 = new CustomLayout.Rect({
-              x: 5,
-              y: 45 + 10,
-              width: 130,
-              height: 20,
-              fill: '#9f9',
-              cornerRadius: 5
-            });
-            container.add(rect1);
-            container.add(text1);
-          }
+    //     //     const text1 = new CustomLayout.Text({
+    //     //       x: 20,
+    //     //       y: 54 + 10,
+    //     //       text: 'Event C',
+    //     //       fontSize: 15,
+    //     //       fill: '#fff',
+    //     //       textAlign: 'left',
+    //     //       textBaseline: 'middle'
+    //     //     });
+    //     //     const rect1 = new CustomLayout.Rect({
+    //     //       x: 5,
+    //     //       y: 45 + 10,
+    //     //       width: 130,
+    //     //       height: 20,
+    //     //       fill: '#9f9',
+    //     //       cornerRadius: 5
+    //     //     });
+    //     //     container.add(rect1);
+    //     //     container.add(text1);
+    //     //   }
 
-          return {
-            rootContainer: container,
-            renderDefault: true
-          };
-        }
-      };
+    //     //   return {
+    //     //     rootContainer: container,
+    //     //     renderDefault: true
+    //     //   };
+    //     // }
+    //   };
+    // });
+    // const option: TYPES.ListTableConstructorOptions = {
+    //   container: this.container,
+    //   records,
+    //   columns,
+    //   defaultRowHeight: rowHeight ?? 120,
+    //   defaultHeaderRowHeight: headerRowHeight ?? 40,
+    //   theme: themes.DEFAULT.extends({
+    //     headerStyle: {
+    //       textAlign: 'center'
+    //     },
+    //     bodyStyle: {
+    //       bgColor: args => {
+    //         const { col, row, dataValue, table } = args;
+    //         const record = table.getCellRawRecord(col, row);
+    //         if (
+    //           record.year === this.currentDate.getFullYear() &&
+    //           record.month === this.currentDate.getMonth() &&
+    //           dataValue === this.currentDate.getDate()
+    //         ) {
+    //           return '#f0f0f0';
+    //         }
+    //         return '#fff';
+    //       },
+    //       textAlign: 'right',
+    //       textBaseline: 'top',
+    //       color: '#999'
+    //     }
+    //   }),
+    //   title: {
+    //     orient: 'top',
+    //     // text: 'Thu, Aug 22',
+    //     text: `${getWeekdayString(this.currentDate.getDay())}, ${getMonthString(
+    //       this.currentDate.getMonth()
+    //     )} ${this.currentDate.getDate()}`,
+    //     subtext: this.currentDate.getFullYear()
+    //   },
+    //   enableLineBreak: true,
+    //   customCellStyle: [
+    //     {
+    //       id: 'current-month',
+    //       style: {
+    //         color: '#000'
+    //       }
+    //     }
+    //   ]
+    // };
+
+    const option = createTableOption(week, this.currentDate, {
+      style: this.options.style,
+      containerWidth: this.container.clientWidth,
+      containerHeight: this.container.clientHeight
     });
-    const option: TYPES.ListTableConstructorOptions = {
-      container: this.container,
-      records,
-      columns,
-      defaultRowHeight: rowHeight ?? 120,
-      defaultHeaderRowHeight: headerRowHeight ?? 40,
-      theme: themes.DEFAULT.extends({
-        headerStyle: {
-          textAlign: 'center'
-        },
-        bodyStyle: {
-          bgColor: args => {
-            const { col, row, dataValue, table } = args;
-            const record = table.getCellRawRecord(col, row);
-            if (
-              record.year === this.currentDate.getFullYear() &&
-              record.month === this.currentDate.getMonth() &&
-              dataValue === this.currentDate.getDate()
-            ) {
-              return '#f0f0f0';
-            }
-            return '#fff';
-          },
-          textAlign: 'right',
-          textBaseline: 'top',
-          color: '#999'
-        }
-      }),
-      title: {
-        orient: 'top',
-        // text: 'Thu, Aug 22',
-        text: `${getWeekdayString(this.currentDate.getDay())}, ${getMonthString(
-          this.currentDate.getMonth()
-        )} ${this.currentDate.getDate()}`,
-        subtext: this.currentDate.getFullYear()
-      },
-      enableLineBreak: true,
-      customCellStyle: [
-        {
-          id: 'current-month',
-          style: {
-            color: '#000'
-          }
-        }
-      ]
-    };
+    option.records = records;
+    option.container = this.container;
+
     const tableInstance = new ListTable(option);
     this.table = tableInstance;
 
@@ -235,10 +248,7 @@ export class VTableCalendar {
       this._updateMonthCustomStyle(this.endDate.getFullYear(), this.endDate.getMonth());
     });
 
-    // scroll to current month
-    const topDate = new Date(this.currentDate.getTime());
-    topDate.setDate(1);
-    this.jumpToDate(topDate);
+    this.jumpToCurrentMonth();
 
     bindDebugTool(tableInstance.scenegraph.stage as any, {
       customGrapicKeys: ['col', 'row']
@@ -265,6 +275,13 @@ export class VTableCalendar {
     );
 
     this._updateMonthCustomStyle(date.getFullYear(), date.getMonth());
+  }
+
+  jumpToCurrentMonth(animation?: boolean | ITableAnimationOption) {
+    // scroll to current month
+    const topDate = new Date(this.currentDate.getTime());
+    topDate.setDate(1);
+    this.jumpToDate(topDate, animation);
   }
 
   _updateMonthCustomStyle(year: number, month: number) {
