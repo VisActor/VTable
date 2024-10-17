@@ -18,7 +18,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(5);
+  const records = generatePersons(20);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'image',
@@ -76,7 +76,10 @@ export function createTable() {
     records,
     columns,
     theme: VTable.themes.DARK,
-    heightMode: 'adaptive'
+    // heightMode: 'adaptive',
+    select: {
+      disableSelect: true
+    }
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
@@ -86,14 +89,32 @@ export function createTable() {
   });
 
   const highlightPlugin = new VTable.InvertHighlightPlugin(tableInstance);
-  highlightPlugin.setInvertHighlightRange({
-    start: {
-      col: 0,
-      row: 6
-    },
-    end: {
-      col: 6,
-      row: 6
+  // highlightPlugin.setInvertHighlightRange({
+  //   start: {
+  //     col: 0,
+  //     row: 6
+  //   },
+  //   end: {
+  //     col: 6,
+  //     row: 6
+  //   }
+  // });
+
+  tableInstance.on('click_cell', event => {
+    const { col, row } = event;
+    if (tableInstance.isHeader(col, row)) {
+      highlightPlugin.setInvertHighlightRange(undefined);
+    } else {
+      highlightPlugin.setInvertHighlightRange({
+        start: {
+          col: 0,
+          row
+        },
+        end: {
+          col: tableInstance.colCount - 1,
+          row
+        }
+      });
     }
   });
 }
