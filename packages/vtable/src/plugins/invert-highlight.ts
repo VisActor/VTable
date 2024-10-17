@@ -72,7 +72,14 @@ export class InvertHighlightPlugin {
           }
           cell.attachShadow(cell.shadowRoot);
           const shadowGroup = cell.shadowRoot;
-          if (range && !shadowGroup.firstChild && !cellInRange(range, cell.col, cell.row)) {
+          if (!range) {
+            // no highlight
+            shadowGroup.removeAllChild();
+          } else if (cellInRange(range, cell.col, cell.row)) {
+            // inside highlight
+            shadowGroup.removeAllChild();
+          } else if (!shadowGroup.firstChild) {
+            // outside highlight
             const shadowRect = createRect({
               x: 0,
               y: 0,
@@ -83,8 +90,6 @@ export class InvertHighlightPlugin {
             });
             shadowRect.name = 'shadow-rect';
             shadowGroup.appendChild(shadowRect);
-          } else {
-            shadowGroup.removeAllChild();
           }
         });
       }
