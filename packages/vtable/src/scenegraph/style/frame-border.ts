@@ -212,7 +212,8 @@ export function createFrameBorder(
     const borderRect = createRect({
       fill: false,
       stroke: false,
-      pickable: false
+      pickable: false,
+      lineWidth: 0
     });
     borderRect.name = 'border-rect';
     group.addChild(borderRect);
