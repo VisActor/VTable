@@ -507,12 +507,21 @@ export class StateManager {
           column => column?.field === item?.field
         );
         //let path = (item as any)?.event?.path?.findLast((item:any)=>item.col!=undefined);
-        prev.push({
-          field: item.field,
-          order: item.order,
-          col: column.startInTotal,
-          row: column.level
-        } as any);
+        if (this.table.internalProps.transpose) {
+          prev.push({
+            field: item.field,
+            order: item.order,
+            row: column.startInTotal,
+            col: column.level
+          } as any);
+        } else {
+          prev.push({
+            field: item.field,
+            order: item.order,
+            col: column.startInTotal,
+            row: column.level
+          } as any);
+        }
 
         return prev;
       }, []);
