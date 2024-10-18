@@ -134,7 +134,7 @@ export function updateRow(
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
 
     updateBottomFrozeCellGroups();
-    scene.proxy.progress();
+    // scene.proxy.progress();
   }
   scene.proxy.progress();
 
@@ -184,7 +184,7 @@ function removeRow(row: number, scene: Scenegraph) {
   // proxy.totalRow--;
   const totalActualBodyRowCount = Math.min(proxy.rowLimit, proxy.bodyBottomRow - proxy.bodyTopRow + 1); // 渐进加载总row数量
   proxy.totalActualBodyRowCount = totalActualBodyRowCount;
-  proxy.totalRow = proxy.rowStart + totalActualBodyRowCount - 1; // 目标渐进完成的row
+  proxy.totalRow = Math.min(proxy.table.rowCount - 1, proxy.rowStart + totalActualBodyRowCount - 1); // 目标渐进完成的row
 }
 
 function addRow(row: number, scene: Scenegraph) {
