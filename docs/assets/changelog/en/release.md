@@ -5,13 +5,13 @@
 
 **🆕 New feature**
 
-- **@visactor/vtable**: add underlayBackgroundColor for gantt chart [#2607](https://github.com/VisActor/VTable/issues/2607)
 - **@visactor/vtable**: add maxHeight in menu container [#2602](https://github.com/VisActor/VTable/issues/2602)
-- **@visactor/vtable**: add creation buttom for not schedualed task record
-- **@visactor/vtable**: add dependency line for gantt chart
 - **@visactor/vtable**: add after_sort event
-- **@visactor/vtable**: add task bar selected style
-- **@visactor/vtable**: add dependency line selected style
+- **@visactor/vtable-gantt**: add creation buttom for not schedualed task record
+- **@visactor/vtable-gantt**: add dependency line for gantt chart
+- **@visactor/vtable-gantt**: add task bar selected style
+- **@visactor/vtable-gantt**: add dependency line selected style
+- **@visactor/vtable-gantt**: add underlayBackgroundColor for gantt chart [#2607](https://github.com/VisActor/VTable/issues/2607)
 
 **🐛 Bug fix**
 
