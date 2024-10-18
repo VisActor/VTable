@@ -1,6 +1,47 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Sat, 12 Oct 2024 07:07:25 GMT and should not be manually modified.
+This log was last generated on Fri, 18 Oct 2024 09:42:47 GMT and should not be manually modified.
+
+## 1.10.0
+Fri, 18 Oct 2024 09:42:47 GMT
+
+### Minor changes
+
+- feat: add creation buttom for not schedualed task record
+
+
+- feat: add dependency line for gantt chart
+
+
+- feat: add after_sort event
+
+
+- feat: add task bar selected style
+
+
+- feat: add dependency line selected style
+
+
+
+### Updates
+
+- fix: when dimension paths has virtual not identify problem #2510
+
+
+- feat: add underlayBackgroundColor for gantt chart #2607
+
+
+- fix: toggleHierarchyState api can not update customlayout cell #2609
+
+
+- feat: add maxHeight in menu container #2602
+- fix: fix legend layout problem
+- fix: fix border rect missing when borderLineWidth is 0
+- fix: fix multi-sort icon update in updateSortState() #2614
+- fix: fix col/row end in createGroupForFirstScreen() #2585
+- fix: fix customConfig in react-vtable
+- fix: fix row resize mark position when scrolled vertically #2606
+- fix: fix sort icon update in transpose list-table
 
 ## 1.9.1
 Sat, 12 Oct 2024 07:07:25 GMT

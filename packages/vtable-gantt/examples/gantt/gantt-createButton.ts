@@ -1,17 +1,14 @@
 import type { ColumnsDefine } from '@visactor/vtable';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
-import { Gantt } from '../../src/index';
+import { Gantt, VRender } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
-
 export function createTable() {
   const records = [
     {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-30',
-      end: '2024-08-14',
       progress: 31,
       priority: 'P0'
     },
@@ -19,8 +16,6 @@ export function createTable() {
       id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
       progress: 60,
       priority: 'P0'
     },
@@ -28,8 +23,6 @@ export function createTable() {
       id: 3,
       title: 'Determine project scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024/07/24',
-      end: '2024/08/04',
       progress: 100,
       priority: 'P1'
     },
@@ -37,8 +30,6 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-08-04',
-      end: '2024-08-04',
       progress: 90,
       priority: 'P0'
     },
@@ -46,8 +37,8 @@ export function createTable() {
       id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '07/24/2024',
-      end: '08/04/2024',
+      start: '07/14/2024',
+      end: '07/24/2024',
       progress: 60,
       priority: 'P0'
     },
@@ -55,8 +46,8 @@ export function createTable() {
       id: 3,
       title: 'Determine project scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
+      start: '2024-07-10',
+      end: '2024-07-14',
       progress: 100,
       priority: 'P1'
     },
@@ -764,7 +755,7 @@ export function createTable() {
     }
   ];
 
-  const columns: ColumnsDefine = [
+  const columns = [
     // {
     //   field: 'id',
     //   title: 'ID',
@@ -803,13 +794,17 @@ export function createTable() {
       sort: true
     }
   ];
-  const option: GanttConstructorOptions = {
+  const option = {
     records,
     taskListTable: {
       columns: columns,
       tableWidth: 400,
       minTableWidth: 100,
       maxTableWidth: 600
+    },
+    resizeLineStyle: {
+      lineColor: 'green',
+      lineWidth: 3
     },
 
     frame: {
@@ -839,11 +834,10 @@ export function createTable() {
         lineColor: '#e1e4e8'
       }
     },
-    headerRowHeight: 60,
-    rowHeight: 40,
-
+    defaultHeaderRowHeight: 60,
+    defaultRowHeight: 40,
     taskBar: {
-      selectable: false,
+      scheduleCreatable: true,
       startDateField: 'start',
       endDateField: 'end',
       progressField: 'progress',
@@ -860,7 +854,11 @@ export function createTable() {
         /** 已完成部分任务条的颜色 */
         completedBarColor: '#91e8e0',
         /** 任务条的圆角 */
-        cornerRadius: 10
+        cornerRadius: 8,
+        /** 任务条的边框 */
+        borderWidth: 1,
+        /** 边框颜色 */
+        borderColor: 'black'
       }
     },
     timelineHeader: {
@@ -879,25 +877,27 @@ export function createTable() {
           unit: 'week',
           step: 1,
           startOfWeek: 'sunday',
-          format(date: TYPES.DateFormatArgumentType) {
+          format(date) {
             return `Week ${date.dateIndex}`;
           },
           style: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'red'
+            color: 'red',
+            backgroundColor: '#EEF1F5'
           }
         },
         {
           unit: 'day',
           step: 1,
-          format(date: TYPES.DateFormatArgumentType) {
+          format(date) {
             return date.dateIndex.toString();
           },
           style: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'red'
+            color: 'red',
+            backgroundColor: '#EEF1F5'
           }
         }
         // {
@@ -909,7 +909,7 @@ export function createTable() {
         // }
       ]
     },
-    minDate: '2024-07-01',
+    minDate: '2024-07-05',
     maxDate: '2024-10-15',
     markLine: [
       {
@@ -922,8 +922,6 @@ export function createTable() {
       },
       {
         date: '2024-08-17',
-        position: 'middle',
-        scrollToMarkLine: true,
         style: {
           lineWidth: 2,
           lineColor: 'red',
@@ -931,38 +929,12 @@ export function createTable() {
         }
       }
     ],
-    rowSeriesNumber: {
-      title: '行号',
-      dragOrder: true,
-      headerStyle: {
-        bgColor: '#EEF1F5',
-
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      }
-    },
     scrollStyle: {
       visible: 'scrolling'
     },
     overscrollBehavior: 'none'
   };
-  // columns:[
-  //   {
-  //     title:'2024-07',
-  //     columns:[
-  //       {
-  //         title:'01'
-  //       },
-  //       {
-  //         title:'02'
-  //       },
-  //       ...
-  //     ]
-  //   },
-  //   ...
-  // ]
+
   const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
   window.ganttInstance = ganttInstance;
   ganttInstance.on('scroll', e => {
@@ -977,13 +949,13 @@ export function createTable() {
   ganttInstance.on('mouseleave_task_bar', e => {
     console.log('mouseleave_taskbar', e);
   });
-  ganttInstance.on('click_task_bar', e => {
-    console.log('click_task_bar', e);
-  });
-  ganttInstance.listTableInstance?.on('scroll', e => {
-    console.log('listTable scroll', e);
-  });
-  bindDebugTool(ganttInstance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
+  // instance.on('click_task_bar', e => {
+  //   console.log('click_task_bar', e);
+  // });
+  // ganttInstance.taskListTableInstance?.on('scroll', e => {
+  //   console.log('listTable scroll', e);
+  // });
+  // bindDebugTool(ganttInstance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', '_updateTag']
+  // });
 }

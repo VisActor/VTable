@@ -8,6 +8,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-createButton'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-noLeftListTable'
   },
   {
@@ -49,6 +53,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-splitLine'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-dependency'
   }
   //   ]
   // }
