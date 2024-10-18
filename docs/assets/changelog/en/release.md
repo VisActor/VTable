@@ -1,3 +1,34 @@
+# v1.10.0
+
+2024-10-18
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add underlayBackgroundColor for gantt chart [#2607](https://github.com/VisActor/VTable/issues/2607)
+- **@visactor/vtable**: add maxHeight in menu container [#2602](https://github.com/VisActor/VTable/issues/2602)
+- **@visactor/vtable**: add creation buttom for not schedualed task record
+- **@visactor/vtable**: add dependency line for gantt chart
+- **@visactor/vtable**: add after_sort event
+- **@visactor/vtable**: add task bar selected style
+- **@visactor/vtable**: add dependency line selected style
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when dimension paths has virtual not identify problem [#2510](https://github.com/VisActor/VTable/issues/2510)
+- **@visactor/vtable**: toggleHierarchyState api can not update customlayout cell [#2609](https://github.com/VisActor/VTable/issues/2609)
+- **@visactor/vtable**: fix legend layout problem
+- **@visactor/vtable**: fix border rect missing when borderLineWidth is 0
+- **@visactor/vtable**: fix multi-sort icon update in updateSortState() [#2614](https://github.com/VisActor/VTable/issues/2614)
+- **@visactor/vtable**: fix col/row end in createGroupForFirstScreen() [#2585](https://github.com/VisActor/VTable/issues/2585)
+- **@visactor/vtable**: fix customConfig in react-vtable
+- **@visactor/vtable**: fix row resize mark position when scrolled vertically [#2606](https://github.com/VisActor/VTable/issues/2606)
+- **@visactor/vtable**: fix sort icon update in transpose list-table
+
+
+
+[more detail about v1.10.0](https://github.com/VisActor/VTable/releases/tag/v1.10.0)
+
 # v1.9.1
 
 2024-10-12
