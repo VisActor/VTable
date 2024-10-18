@@ -680,6 +680,13 @@
             "zh": "Vue-VTable",
             "en": "Vue-VTable"
           }
+        },
+        {
+          "path": "node",
+          "title": {
+            "zh": "NodeJS 服务端渲染",
+            "en": "NodeJS Server-Side Rendering"
+          }
         }
       ]
     },
