@@ -54,6 +54,23 @@ Release the Gantt instance
   release: () => void
 ```
 
+### addLink(Function)
+
+Add Dependencies
+
+```
+addLink: (link: ITaskLink) => void
+```
+
+### removeLink(Function)
+
+Removing Dependencies
+
+```
+removeLink: (link: ITaskLink) => void
+
+```
+
 ## Events
 
 The Gantt chart event list allows you to listen to the required events and implement custom business logic as needed.

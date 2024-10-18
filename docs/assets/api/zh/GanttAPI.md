@@ -54,6 +54,23 @@
   release: () => void
 ```
 
+### addLink(Function)
+
+添加依赖关系
+
+```
+  addLink: (link: ITaskLink)  => void
+```
+
+### removeLink(Function)
+
+删除依赖关系
+
+```
+  removeLink: (link: ITaskLink)  => void
+
+```
+
 ## Events
 
 甘特图事件列表，可以根据实际需要，监听所需事件，实现自定义业务。
