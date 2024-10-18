@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: add task bar selected style\n\n",
-      "type": "none",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],

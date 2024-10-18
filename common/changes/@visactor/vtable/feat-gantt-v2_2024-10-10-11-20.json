@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: add dependency line for gantt chart\n\n",
-      "type": "none",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
