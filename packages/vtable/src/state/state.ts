@@ -1323,6 +1323,11 @@ export class StateManager {
         });
       });
     }
+    this.table.fireListeners(PIVOT_TABLE_EVENT_TYPE.AFTER_SORT, {
+      order: currentSortItem?.order,
+      field: <string>this.table.getHeaderField(col, row),
+      event
+    });
   }
 
   updateSortState(sortState: SortState[]) {

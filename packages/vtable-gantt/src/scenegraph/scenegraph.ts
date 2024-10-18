@@ -11,6 +11,8 @@ import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
 import { getTaskIndexByY } from '../gantt-helper';
 import graphicContribution from './graphic';
+import { TaskCreationButton } from './task-creation-button';
+import { DependencyLink } from './dependency-link';
 container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
@@ -18,12 +20,14 @@ export class Scenegraph {
   _scales: {}[];
   timelineHeader: TimelineHeader;
   grid: Grid;
+  dependencyLink: DependencyLink;
   taskBar: TaskBar;
   _gantt: Gantt;
   tableGroup: Group;
   scrollbarComponent: ScrollBarComponent;
   markLine: MarkLine;
   frameBorder: FrameBorder;
+  taskCreationButton: TaskCreationButton;
   stage: Stage;
   tableGroupWidth: number;
   tableGroupHeight: number;
@@ -92,7 +96,8 @@ export class Scenegraph {
 
     // 初始化网格线组件
     scene.grid = new Grid(scene);
-
+    // 初始化任务条线组件
+    scene.dependencyLink = new DependencyLink(scene);
     // 初始化任务条线组件
     scene.taskBar = new TaskBar(scene);
 
@@ -128,6 +133,7 @@ export class Scenegraph {
   refreshTaskBars() {
     // this.timelineHeader.refresh();
     // this.grid.refresh();
+    this.dependencyLink.refresh();
     this.taskBar.refresh();
     // this.markLine.refresh();
     // this.frameBorder.refresh();
@@ -201,6 +207,7 @@ export class Scenegraph {
     this.timelineHeader.setX(x);
     this.grid.setX(x);
     this.taskBar.setX(x);
+    this.dependencyLink.setX(x);
     this.markLine.setX(x);
     this.updateNextFrame();
     // this._gantt.scenegraph.proxy.setX(-x, isEnd);
@@ -215,6 +222,7 @@ export class Scenegraph {
     // this._gantt.scenegraph.proxy.setY(-y, isEnd);
     this.grid.setY(y);
     this.taskBar.setY(y);
+    this.dependencyLink.setY(y);
     this.updateNextFrame();
   }
 
@@ -239,5 +247,20 @@ export class Scenegraph {
   }
   getTaskBarNodeByY(y: number) {
     const taskIndex = getTaskIndexByY(y, this._gantt);
+  }
+
+  showTaskCreationButton(x: number, y: number, taskIndex: number, record: any) {
+    if (!this.taskCreationButton) {
+      this.taskCreationButton = new TaskCreationButton(this._gantt.scenegraph);
+    }
+    this.taskCreationButton.show(x, y, this._gantt.parsedOptions.colWidthPerDay, this._gantt.parsedOptions.rowHeight);
+    this.updateNextFrame();
+  }
+
+  hideTaskCreationButton() {
+    if (this.taskCreationButton) {
+      this.taskCreationButton.hide();
+      this.updateNextFrame();
+    }
   }
 }

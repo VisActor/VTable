@@ -16,7 +16,13 @@ import type {
   ITaskBarCustomLayout,
   ITimelineDateInfo,
   ITimelineScale,
-  ILineStyle
+  ILineStyle,
+  ITaskCreationCustomLayout,
+  ITaskLink,
+  ITaskBarSelectedStyle,
+  ITaskBarHoverStyle,
+  ITaskLinkSelectedStyle,
+  IPointStyle
 } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
@@ -98,13 +104,21 @@ export class Gantt extends EventTarget {
     reverseSortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
     grid: IGrid;
     taskBarStyle: ITaskBarStyle;
-    taskBarHoverStyle: ITaskBarStyle & { barOverlayColor?: string };
-    taskBarSelectionStyle: ITaskBarStyle & { barOverlayColor?: string };
+    taskBarHoverStyle: ITaskBarHoverStyle;
+    taskBarSelectedStyle: ITaskBarSelectedStyle;
+    taskBarSelectable: boolean;
     taskBarLabelText: ITaskBarLabelText;
     taskBarMoveable: boolean;
     taskBarResizable: boolean;
     taskBarLabelStyle: ITaskBarLabelTextStyle;
     taskBarCustomLayout: ITaskBarCustomLayout;
+    taskBarCreatable: boolean;
+    taskBarCreationButtonStyle: ILineStyle & {
+      cornerRadius?: number;
+      backgroundColor?: string;
+    };
+    taskBarCreationCustomLayout: ITaskCreationCustomLayout;
+
     outerFrameStyle: IFrameStyle;
     pixelRatio: number;
 
@@ -122,6 +136,25 @@ export class Gantt extends EventTarget {
     verticalSplitLineHighlight: ILineStyle;
     verticalSplitLineMoveable?: boolean;
     overscrollBehavior: 'auto' | 'none';
+    dateFormat?:
+      | 'yyyy-mm-dd'
+      | 'dd-mm-yyyy'
+      | 'mm/dd/yyyy'
+      | 'yyyy/mm/dd'
+      | 'dd/mm/yyyy'
+      | 'yyyy.mm.dd'
+      | 'dd.mm.yyyy'
+      | 'mm.dd.yyyy';
+
+    taskKeyField: string;
+    dependencyLinks?: ITaskLink[];
+    dependencyLinkCreatable: boolean;
+    dependencyLinkSelectable: boolean;
+    dependencyLinkLineStyle: ILineStyle;
+    dependencyLinkSelectedLineStyle: ITaskLinkSelectedStyle;
+    dependencyLinkLineCreatePointStyle: IPointStyle;
+    dependencyLinkLineCreatingPointStyle: IPointStyle;
+    dependencyLinkLineCreatingStyle?: ILineStyle;
     underlayBackgroundColor: string;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
@@ -564,17 +597,22 @@ export class Gantt extends EventTarget {
   getAllTaskBarsHeight() {
     return this.itemCount * this.parsedOptions.rowHeight;
   }
-
-  getRecordByIndex(index: number) {
+  getTaskShowIndexByRecordIndex(index: number) {
+    return this.taskListTableInstance.getBodyRowIndexByRecordIndex(index);
+  }
+  getRecordByIndex(taskShowIndex: number) {
     if (this.taskListTableInstance) {
-      return this.taskListTableInstance.getRecordByRowCol(0, index + this.taskListTableInstance.columnHeaderLevelCount);
+      return this.taskListTableInstance.getRecordByRowCol(
+        0,
+        taskShowIndex + this.taskListTableInstance.columnHeaderLevelCount
+      );
     }
-    return this.records[index];
+    return this.records[taskShowIndex];
   }
 
-  _refreshTaskBar(index: number) {
+  _refreshTaskBar(taskShowIndex: number) {
     // this.listTableInstance.updateRecords([record], [index]);
-    this.scenegraph.taskBar.updateTaskBarNode(index);
+    this.scenegraph.taskBar.updateTaskBarNode(taskShowIndex);
     this.scenegraph.updateNextFrame();
   }
   _updateRecordToListTable(record: any, index: number) {
@@ -585,22 +623,24 @@ export class Gantt extends EventTarget {
    * @param index
    * @returns 当前任务信息
    */
-  getTaskInfoByTaskListIndex(index: number): {
+  getTaskInfoByTaskListIndex(taskShowIndex: number): {
     taskRecord: any;
     taskDays: number;
     startDate: Date;
     endDate: Date;
     progress: number;
   } {
-    const taskRecord = this.getRecordByIndex(index);
+    const taskRecord = this.getRecordByIndex(taskShowIndex);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
     const progressField = this.parsedOptions.progressField;
-    const rawDateStartDateTime = createDateAtMidnight(taskRecord[startDateField]).getTime();
-    const rawDateEndDateTime = createDateAtMidnight(taskRecord[endDateField]).getTime();
+    const rawDateStartDateTime = createDateAtMidnight(taskRecord?.[startDateField]).getTime();
+    const rawDateEndDateTime = createDateAtMidnight(taskRecord?.[endDateField]).getTime();
     if (
       rawDateEndDateTime < this.parsedOptions._minDateTime ||
-      rawDateStartDateTime > this.parsedOptions._maxDateTime
+      rawDateStartDateTime > this.parsedOptions._maxDateTime ||
+      !taskRecord?.[startDateField] ||
+      !taskRecord?.[endDateField]
     ) {
       return {
         taskDays: 0,
@@ -636,7 +676,7 @@ export class Gantt extends EventTarget {
     const taskRecord = this.getRecordByIndex(index);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
-    const dateFormat = parseDateFormat(taskRecord[startDateField]);
+    const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[startDateField]);
     const startDate = createDateAtMidnight(taskRecord[startDateField]);
     const endDate = createDateAtMidnight(taskRecord[endDateField]);
     if (updateDateType === 'move') {
@@ -750,6 +790,26 @@ export class Gantt extends EventTarget {
         this.parsedOptions.colWidthPerDay;
       const left = targetDayDistance - this.tableNoFrameWidth / 2;
       this.stateManager.setScrollLeft(left);
+    }
+  }
+
+  addLink(link: ITaskLink) {
+    this.parsedOptions.dependencyLinks.push(link);
+    this.scenegraph.dependencyLink.initLinkLine(this.parsedOptions.dependencyLinks.length - 1);
+    this.scenegraph.updateNextFrame();
+  }
+  deleteLink(link: ITaskLink) {
+    const index = this.parsedOptions.dependencyLinks.findIndex(
+      item =>
+        item.type === link.type &&
+        item.linkedFromTaskKey === link.linkedFromTaskKey &&
+        item.linkedToTaskKey === link.linkedToTaskKey
+    );
+    if (index !== -1) {
+      const link = this.parsedOptions.dependencyLinks[index];
+      this.parsedOptions.dependencyLinks.splice(index, 1);
+      this.scenegraph.dependencyLink.deleteLink(link);
+      this.scenegraph.updateNextFrame();
     }
   }
 }

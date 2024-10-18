@@ -60,14 +60,75 @@ Whether the task bar can be moved. The default is true.
 
 Optional
 
-${prefix} hoverBarStyle(ITaskBarStyle & { barOverlayColor?: string })
+${prefix} hoverBarStyle(ITaskBarHoverStyle)
 
-The style of the task bar when hovered.
+Taskbar hover style
+
+Not required
+
+```
+export type ITaskBarHoverStyle = {
+/** Rounded corners of the task bar */
+cornerRadius?: number;
+barOverlayColor?: string;
+};
+```
+
+${prefix} selectedBarStyle(ITaskBarSelectedStyle)
+
+The style of the taskbar when selected
+
+Not required
+
+```
+export type ITaskBarSelectedStyle = {
+shadowBlur?: number; //Shadow width
+shadowOffsetX?: number; //Offset in x direction
+shadowOffsetY?: number; //Y direction offset
+shadowColor?: string; //shadow color
+borderColor?: string; //Border color
+borderLineWidth?: number;
+};
+```
+
+${prefix} selectable(boolean)
+
+Whether the service clause is optional, the default is true
+
+Not required
+
+${prefix} scheduleCreatable(boolean) = true
+
+When there is no schedule, you can create a task bar schedule by clicking on the create button. The default is true.
 
 Optional
 
-${prefix} selectionBarStyle(ITaskBarStyle & { barOverlayColor?: string })
+${prefix} scheduleCreation(Object)
 
-The style of the task bar when selected.
+For tasks without assigned dates, you can display the create button.
 
 Optional
+
+#${prefix} buttonStyle(Object)
+
+The style of the new task bar button can be configured, and the styles that can be configured are:
+
+```
+{
+  lineColor?: string;
+  lineWidth?: number;
+  lineDash?: number[];
+  cornerRadius?: number;
+  backgroundColor?: string;
+};
+```
+
+Optional
+
+#${prefix} customLayout(ICreationCustomLayout)
+
+Custom rendering of the task bar creation button.
+
+Optional
+
+{{ use: common-gantt-task-creation-custom-layout }}

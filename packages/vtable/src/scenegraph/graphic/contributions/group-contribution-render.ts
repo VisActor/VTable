@@ -158,7 +158,7 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
         if (!table) {
           return;
         }
-        const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
+        const bottomRight = table?.theme?.cellBorderClipDirection === 'bottom-right';
         // let deltaWidth = 0;
         // let deltaHeight = 0;
         if (bottomRight) {
@@ -797,7 +797,7 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
 
       context.beginPath();
 
-      const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
+      const bottomRight = table?.theme?.cellBorderClipDirection === 'bottom-right';
       const deltaWidth = 0;
       const deltaHeight = 0;
       if (bottomRight) {
