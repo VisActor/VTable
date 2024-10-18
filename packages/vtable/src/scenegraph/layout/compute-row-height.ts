@@ -91,7 +91,9 @@ export function computeRowsHeight(
         const height = computeRowHeight(row, startCol, endCol, table);
         newHeights[row] = Math.round(height);
         //表头部分需要马上设置到缓存中 因为adaptive不会调整表头的高度 另外后面adaptive处理过程中有取值 table.getRowsHeight(0, table.columnHeaderLevelCount - 1);
-        table._setRowHeight(row, height);
+        if (table.heightAdaptiveMode === 'only-body') {
+          table._setRowHeight(row, height);
+        }
       }
     }
 
