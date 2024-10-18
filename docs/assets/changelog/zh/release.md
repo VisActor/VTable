@@ -1,3 +1,16 @@
+# v1.9.1
+
+2024-10-12
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix sort icon update in merge cell
+
+
+
+[更多详情请查看 v1.9.1](https://github.com/VisActor/VTable/releases/tag/v1.9.1)
+
 # v1.9.0
 
 2024-10-11

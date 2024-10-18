@@ -507,12 +507,21 @@ export class StateManager {
           column => column?.field === item?.field
         );
         //let path = (item as any)?.event?.path?.findLast((item:any)=>item.col!=undefined);
-        prev.push({
-          field: item.field,
-          order: item.order,
-          col: column.startInTotal,
-          row: column.level
-        } as any);
+        if (this.table.internalProps.transpose) {
+          prev.push({
+            field: item.field,
+            order: item.order,
+            row: column.startInTotal,
+            col: column.level
+          } as any);
+        } else {
+          prev.push({
+            field: item.field,
+            order: item.order,
+            col: column.startInTotal,
+            row: column.level
+          } as any);
+        }
 
         return prev;
       }, []);
@@ -1314,6 +1323,11 @@ export class StateManager {
         });
       });
     }
+    this.table.fireListeners(PIVOT_TABLE_EVENT_TYPE.AFTER_SORT, {
+      order: currentSortItem?.order,
+      field: <string>this.table.getHeaderField(col, row),
+      event
+    });
   }
 
   updateSortState(sortState: SortState[]) {
@@ -1334,7 +1348,7 @@ export class StateManager {
           : this.sort[index]?.order === 'desc'
           ? 'sort_upward'
           : 'sort_normal';
-      this.setSortState(sortState);
+      this.setSortState(sortState.slice(0, index + 1));
       // 获取sort对应的行列位置
       const cellAddress = this.table.internalProps.layoutMap.getHeaderCellAddressByField(
         sortState[index].field as string

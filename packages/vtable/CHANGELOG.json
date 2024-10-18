@@ -2,6 +2,65 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.10.0",
+      "tag": "@visactor/vtable_v1.10.0",
+      "date": "Fri, 18 Oct 2024 09:42:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when dimension paths has virtual not identify problem #2510\n\n"
+          },
+          {
+            "comment": "feat: add underlayBackgroundColor for gantt chart #2607\n\n"
+          },
+          {
+            "comment": "fix: toggleHierarchyState api can not update customlayout cell #2609\n\n"
+          },
+          {
+            "comment": "feat: add maxHeight in menu container #2602"
+          },
+          {
+            "comment": "fix: fix legend layout problem"
+          },
+          {
+            "comment": "fix: fix border rect missing when borderLineWidth is 0"
+          },
+          {
+            "comment": "fix: fix multi-sort icon update in updateSortState() #2614"
+          },
+          {
+            "comment": "fix: fix col/row end in createGroupForFirstScreen() #2585"
+          },
+          {
+            "comment": "fix: fix customConfig in react-vtable"
+          },
+          {
+            "comment": "fix: fix row resize mark position when scrolled vertically #2606"
+          },
+          {
+            "comment": "fix: fix sort icon update in transpose list-table"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add creation buttom for not schedualed task record\n\n"
+          },
+          {
+            "comment": "feat: add dependency line for gantt chart\n\n"
+          },
+          {
+            "comment": "feat: add after_sort event\n\n"
+          },
+          {
+            "comment": "feat: add task bar selected style\n\n"
+          },
+          {
+            "comment": "feat: add dependency line selected style\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.9.1",
       "tag": "@visactor/vtable_v1.9.1",
       "date": "Sat, 12 Oct 2024 07:07:25 GMT",

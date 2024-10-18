@@ -891,8 +891,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.clearCellStyleCache();
     this.internalProps.layoutMap.clearCellRangeMap();
     this.internalProps.useOneRowHeightFillAll = false;
-    this.scenegraph.updateHierarchyIcon(col, row);
-    this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions);
+    // this.scenegraph.updateHierarchyIcon(col, row);// 添加了updateCells:[{ col, row }] 就不需要单独更新图标了（只更新图标针对有自定义元素的情况 会有更新不到问题）
+    this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions, [{ col, row }]);
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
       if (this.autoFillWidth && !notFillWidth) {
@@ -1357,5 +1357,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       indexArrLngth = undefined;
     }
     return indexArrLngth;
+  }
+  /**
+   * 根据数据的索引获取应该显示在body的第几行
+   * @param  {number} index The record index.
+   */
+  getBodyRowIndexByRecordIndex(index: number): number {
+    return this.dataSource.getTableIndex(index);
   }
 }

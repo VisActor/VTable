@@ -1,4 +1,5 @@
 {{ target: gantt }}
+
 # Gantt
 
 Gantt chart configuration, corresponding type is GanttConstructorOptions, specific configuration items are as follows:
@@ -20,6 +21,7 @@ Optional
 ## timelineHeader(Object)
 
 Time scale configuration.
+
 ```
   {
     backgroundColor?: string;
@@ -31,6 +33,7 @@ Time scale configuration.
     scales: ITimelineScale[];
   }
 ```
+
 ### backgroundColor(string)
 
 Time scale background color.
@@ -64,6 +67,20 @@ Set task bar style.
 Optional
 
 {{ use: common-gantt-task-bar(prefix = '###')}}
+
+## taskKeyField(string)
+
+The field name that uniquely identifies the data entry, default is 'id'
+
+Not required
+
+## dependency(Object)
+
+Set dependency line relationship and style
+
+Not required
+
+{{ use: common-gantt-dependency-line(prefix = '###')}}
 
 ## grid(IGrid)
 
@@ -126,6 +143,7 @@ Optional
 ## overscrollBehavior('auto' | 'none') = 'auto'
 
 Scroll behavior configuration.
+
 - 'auto': Consistent with browser scroll behavior, triggers the browser's default behavior when the table scrolls to the top/bottom.
 - 'none': When the table scrolls to the top/bottom, it no longer triggers the parent container to scroll.
 

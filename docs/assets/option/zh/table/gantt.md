@@ -1,4 +1,5 @@
 {{ target: gantt }}
+
 # Gantt
 
 甘特图配置，对应的类型为 GanttConstructorOptions，具体配置项如下：
@@ -20,6 +21,7 @@
 ## timelineHeader(Object)
 
 时间刻度配置。
+
 ```
   {
     backgroundColor?: string;
@@ -31,6 +33,7 @@
     scales: ITimelineScale[];
   }
 ```
+
 ### backgroundColor(string)
 
 时间刻度背景颜色。
@@ -65,7 +68,19 @@
 
 {{ use: common-gantt-task-bar(prefix = '###')}}
 
+## taskKeyField(string)
 
+数据条目可唯一标识的字段名, 默认为'id'
+
+非必填
+
+## dependency(Object)
+
+设置依赖线关系及样式
+
+非必填
+
+{{ use: common-gantt-dependency-line(prefix = '###')}}
 
 ## grid(IGrid)
 
@@ -125,10 +140,10 @@
     prefix = '###',
 ) }}
 
-
 ## overscrollBehavior('auto' | 'none') = 'auto'
 
 滚动行为配置。
+
 - 'auto': 和浏览器滚动行为一致，表格滚动到顶部/底部时触发浏览器默认行为。
 - 'none': 表格滚动到顶部/底部时，不再触发父容器滚动。
 
@@ -140,7 +155,7 @@
 
 非必填
 
-具体可以参考ListTable中的配置：[具体配置](./ListTable#theme.scrollStyle)
+具体可以参考 ListTable 中的配置：[具体配置](./ListTable#theme.scrollStyle)
 
 ## pixelRatio(number)
 
