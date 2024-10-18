@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add maxHeight in menu container #2602",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

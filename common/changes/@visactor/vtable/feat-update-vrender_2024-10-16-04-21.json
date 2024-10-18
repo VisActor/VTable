@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix legend layout problem",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

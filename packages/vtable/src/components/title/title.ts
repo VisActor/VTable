@@ -4,7 +4,7 @@ import type { TitleAttrs } from '@visactor/vrender-components';
 import type { ITitle } from '../../ts-types/component/title';
 import { getQuadProps } from '../../scenegraph/utils/padding';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { isEqual } from '@visactor/vutils';
+import { isEqual, merge } from '@visactor/vutils';
 
 export interface ITitleComponent {
   new (titleOption: ITitle, table: BaseTableAPI): Title;
@@ -17,8 +17,7 @@ export class Title {
   private _cacheAttrs: TitleAttrs;
   constructor(titleOption: ITitle, table: BaseTableAPI) {
     this.table = table;
-    this._titleOption = titleOption;
-    this._titleOption.orient = titleOption.orient ?? 'top';
+    this._titleOption = merge({ orient: 'top' }, titleOption);
     if (titleOption.visible !== false) {
       this._titleComponent = this._createOrUpdateTitleComponent(this._getTitleAttrs());
     }

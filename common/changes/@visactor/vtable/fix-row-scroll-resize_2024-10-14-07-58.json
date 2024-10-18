@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix row resize mark position when scrolled vertically #2606",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
