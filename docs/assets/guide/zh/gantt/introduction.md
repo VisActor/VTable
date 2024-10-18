@@ -79,7 +79,47 @@ VTable-Gantt 是一款基于 VTable 表格组件及 canvas 渲染器 VRender 构
 
 ### 任务之间的依赖关系
 
-通过 `dependency.links` 配置项，可以设置任务之间的依赖关系。通过 `dependency.linkLineStyle` 配置项，可以自定义任务之间的依赖关系的样式。通过 `dependency.linkLineSelectedStyle` 配置项，可以自定义任务之间的依赖关系选中时的样式。另外可以动态创建关联线，通过 `dependency.linkCreatable` 配置项，可以设置是否可以创建关联线。
+通过 `dependency.links` 配置项，可以设置任务之间的依赖关系。注意依赖关系的配置数据格式为：
+
+```
+export type ITaskLink = {
+  /** 依赖的类型 */
+  type: DependencyType;
+  linkedFromTaskKey?: string | number;
+  linkedToTaskKey?: string | number;
+};
+```
+
+例如如下的配置数据：
+
+```
+links:[
+  {
+    type: VTableGantt.TYPES.DependencyType.FinishToStart,
+    linkedFromTaskKey: 1,
+    linkedToTaskKey: 2
+  },
+  {
+    type: VTableGantt.TYPES.DependencyType.StartToFinish,
+    linkedFromTaskKey: 2,
+    linkedToTaskKey: 3
+  },
+  {
+    type: VTableGantt.TYPES.DependencyType.StartToStart,
+    linkedFromTaskKey: 3,
+    linkedToTaskKey: 4
+  },
+  {
+    type: VTableGantt.TYPES.DependencyType.FinishToFinish,
+    linkedFromTaskKey: 4,
+    linkedToTaskKey: 5
+  }
+]
+```
+
+`linkedFromTaskKey` 的值是 records 中的唯一标识字段，唯一表示字段的字段名默认为`id`，如果需要修改可以通过`taskKeyField`配置项来修改。
+
+样式可以通过 `dependency.linkLineStyle` 配置项，可以自定义任务之间的依赖关系的样式。通过 `dependency.linkLineSelectedStyle` 配置项，可以自定义任务之间的依赖关系选中时的样式。另外可以动态创建关联线，通过 `dependency.linkCreatable` 配置项，可以设置是否可以创建关联线。
 
 ### 交互
 

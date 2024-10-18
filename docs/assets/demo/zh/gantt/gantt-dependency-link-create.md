@@ -1,7 +1,7 @@
 ---
 category: examples
 group: gantt
-title: Create Gantt Dependency Link Line
+title: 创建任务之间依赖线
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-dependency-link-line-create.gif
 link: '../guide/gantt/introduction'
 option: Gantt#taskBar
