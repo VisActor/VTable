@@ -893,22 +893,22 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.useOneRowHeightFillAll = false;
     // this.scenegraph.updateHierarchyIcon(col, row);// 添加了updateCells:[{ col, row }] 就不需要单独更新图标了（只更新图标针对有自定义元素的情况 会有更新不到问题）'
     const updateCells = [{ col, row }];
-    // // 如果需要移出的节点超过了当前加载部分最后一行  则转变成更新对应的行
-    // if (
-    //   diffPositions.removeCellPositions?.length > 0 &&
-    //   diffPositions.removeCellPositions[diffPositions.removeCellPositions.length - 1].row >=
-    //     this.scenegraph.proxy.rowEnd
-    // ) {
-    //   for (let i = 0; i <= diffPositions.removeCellPositions.length - 1; i++) {
-    //     if (diffPositions.removeCellPositions[i].row <= this.scenegraph.proxy.rowEnd) {
-    //       updateCells.push({
-    //         col: diffPositions.removeCellPositions[i].col,
-    //         row: diffPositions.removeCellPositions[i].row
-    //       });
-    //     }
-    //   }
-    //   diffPositions.removeCellPositions = [];
-    // }
+    // 如果需要移出的节点超过了当前加载部分最后一行  则转变成更新对应的行
+    if (
+      diffPositions.removeCellPositions?.length > 0 &&
+      diffPositions.removeCellPositions[diffPositions.removeCellPositions.length - 1].row >=
+        this.scenegraph.proxy.rowEnd
+    ) {
+      for (let i = 0; i <= diffPositions.removeCellPositions.length - 1; i++) {
+        if (diffPositions.removeCellPositions[i].row <= this.scenegraph.proxy.rowEnd) {
+          updateCells.push({
+            col: diffPositions.removeCellPositions[i].col,
+            row: diffPositions.removeCellPositions[i].row
+          });
+        }
+      }
+      diffPositions.removeCellPositions = [];
+    }
     this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions, updateCells);
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
