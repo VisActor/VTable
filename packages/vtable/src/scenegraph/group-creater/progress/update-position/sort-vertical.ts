@@ -23,7 +23,11 @@ export async function sortVertical(proxy: SceneProxy) {
     syncBottomRow = proxy.rowEnd;
   } else {
     syncTopRow = Math.max(proxy.bodyTopRow, proxy.screenTopRow - proxy.screenRowCount * 1);
-    syncBottomRow = Math.min(proxy.bodyBottomRow, proxy.screenTopRow + proxy.screenRowCount * 2);
+    syncBottomRow = Math.min(
+      proxy.bodyBottomRow,
+      proxy.screenTopRow + proxy.screenRowCount * 2,
+      proxy.table.rowCount - 1
+    );
   }
   // console.log('sort更新同步范围', syncTopRow, syncBottomRow);
 

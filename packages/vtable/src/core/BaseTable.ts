@@ -2553,7 +2553,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getTargetRowAt(absoluteY: number): RowInfo | null {
-    return getTargetRowAt(absoluteY, this);
+    const targetRow = getTargetRowAt(absoluteY, this);
+    if (targetRow) {
+      targetRow.row = Math.min(targetRow.row, this.rowCount - 1);
+    }
+    return targetRow;
   }
 
   /**

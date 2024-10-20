@@ -91,7 +91,11 @@ async function moveCell(
       syncBottomRow = distEndRow;
     } else {
       const topRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
-      const bottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
+      const bottomRow = Math.min(
+        proxy.bodyBottomRow,
+        screenTopRow + proxy.screenRowCount * 2,
+        proxy.table.rowCount - 1
+      );
       // get coincide of distStartRow&distEndRow and topRow&BottomRow
       // syncTopRow = Math.max(distStartRow, topRow);
       // syncBottomRow = Math.min(distEndRow, bottomRow);
@@ -162,7 +166,11 @@ async function moveCell(
     proxy.currentRow = direction === 'up' ? proxy.currentRow + count : proxy.currentRow - count;
     proxy.totalRow = Math.max(
       0,
-      Math.min(proxy.bodyBottomRow, direction === 'up' ? proxy.totalRow + count : proxy.totalRow - count)
+      Math.min(
+        proxy.bodyBottomRow,
+        direction === 'up' ? proxy.totalRow + count : proxy.totalRow - count,
+        proxy.table.rowCount - 1
+      )
     );
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
     // proxy.referenceRow = screenTopRow;
@@ -178,7 +186,10 @@ async function moveCell(
     await proxy.progress();
   } else {
     const distStartRow = direction === 'up' ? proxy.rowStart + count : proxy.rowStart - count;
-    const distEndRow = direction === 'up' ? proxy.rowEnd + count : proxy.rowEnd - count;
+    const distEndRow = Math.min(
+      proxy.table.rowCount - 1,
+      direction === 'up' ? proxy.rowEnd + count : proxy.rowEnd - count
+    );
     const distStartRowY = proxy.table.getRowsHeight(proxy.bodyTopRow, distStartRow - 1);
 
     let syncTopRow;
@@ -188,7 +199,7 @@ async function moveCell(
       syncBottomRow = distEndRow;
     } else {
       syncTopRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
-      syncBottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
+      syncBottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2, proxy.table.rowCount - 1);
     }
 
     computeRowsHeight(proxy.table, syncTopRow, syncBottomRow, false);
@@ -256,7 +267,11 @@ async function moveCell(
     proxy.currentRow = direction === 'up' ? proxy.currentRow + count : proxy.currentRow - count;
     proxy.totalRow = Math.max(
       0,
-      Math.min(proxy.bodyBottomRow, direction === 'up' ? proxy.totalRow + count : proxy.totalRow - count)
+      Math.min(
+        proxy.bodyBottomRow,
+        direction === 'up' ? proxy.totalRow + count : proxy.totalRow - count,
+        proxy.table.rowCount - 1
+      )
     );
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
     // proxy.referenceRow = screenTopRow;
