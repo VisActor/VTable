@@ -1409,7 +1409,16 @@ export class StateManager {
 
     // 更新frozen
     dealFreeze(col, row, this.table);
-
+    if ((this.table as any).hasListeners(PIVOT_TABLE_EVENT_TYPE.FREEZE_CLICK)) {
+      this.table.fireListeners(PIVOT_TABLE_EVENT_TYPE.FREEZE_CLICK, {
+        col: col,
+        row: row,
+        fields: this.table.internalProps.layoutMap.columnObjects
+          .slice(0, col + 1)
+          .reduce((pre: any, cur: any) => pre.concat(cur.field), []),
+        colCount: this.table.frozenColCount
+      });
+    }
     // // 更新scenegraph，这里因为dealFreeze更新了table里存储的frozen信息，会影响scenegraph里的getCell
     // // 因此先更新scenegraph结构再更新icon
     // this.table.scenegraph.updateFrozen(this.frowzen.col);
