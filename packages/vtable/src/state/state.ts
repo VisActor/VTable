@@ -468,6 +468,7 @@ export class StateManager {
   }
 
   setSortState(sortState: SortState | SortState[]) {
+    const state = this;
     sortState = !sortState || Array.isArray(sortState) ? sortState : [sortState];
     ////this.sort[this.sort.length - 1].field = sortState[sortState.length - 1]?.field as string;
     // this.sort.fieldKey = sortState?.fieldKey as string;
@@ -484,7 +485,9 @@ export class StateManager {
 
       function flatten(cols: any, parentStartIndex = 0) {
         cols.forEach((col: any) => {
-          const startIndex = col.startInTotal ?? parentStartIndex;
+          const startIndex = col.startInTotal
+            ? col.startInTotal + state.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0
+            : parentStartIndex;
           if (col.columns) {
             flatten(col.columns, startIndex);
           } else {
@@ -511,14 +514,14 @@ export class StateManager {
           prev.push({
             field: item.field,
             order: item.order,
-            row: column.startInTotal,
+            row: column.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
             col: column.level
           } as any);
         } else {
           prev.push({
             field: item.field,
             order: item.order,
-            col: column.startInTotal,
+            col: column.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
             row: column.level
           } as any);
         }
@@ -1393,7 +1396,7 @@ export class StateManager {
         row: null,
         iconMark: null,
         order: null,
-        oldSortCol: column.startInTotal,
+        oldSortCol: column.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
         oldSortRow: column.level,
         oldIconMark: null
       });
