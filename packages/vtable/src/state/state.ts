@@ -50,6 +50,7 @@ import { updateResizeRow } from './resize/update-resize-row';
 import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
 import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
+import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -1410,12 +1411,11 @@ export class StateManager {
     // 更新frozen
     dealFreeze(col, row, this.table);
     if ((this.table as any).hasListeners(PIVOT_TABLE_EVENT_TYPE.FREEZE_CLICK)) {
+      const fields: ColumnData[] = (this.table as ListTable).internalProps.layoutMap.columnObjects.slice(0, col + 1);
       this.table.fireListeners(PIVOT_TABLE_EVENT_TYPE.FREEZE_CLICK, {
         col: col,
         row: row,
-        fields: this.table.internalProps.layoutMap.columnObjects
-          .slice(0, col + 1)
-          .reduce((pre: any, cur: any) => pre.concat(cur.field), []),
+        fields: fields.reduce((pre: any, cur: any) => pre.concat(cur.field), []),
         colCount: this.table.frozenColCount
       });
     }
