@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: disable cellInnerBorder when no frame border ",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
