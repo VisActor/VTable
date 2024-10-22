@@ -31,7 +31,7 @@ export function importStyle() {
 	width: max-content;
 	box-shadow: 0px 8px 16px rgba(27, 31, 35, 0.12);
   max-height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .vtable__menu-element--hidden {
 	opacity: 0;
