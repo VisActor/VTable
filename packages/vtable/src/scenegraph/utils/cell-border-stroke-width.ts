@@ -2,11 +2,16 @@ import type { IThemeSpec } from '@visactor/vrender-core';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { style as utilStyle } from '../../tools/helper';
 import { isValid } from '@visactor/vutils';
+import { isValidStyle, isZeroStyle } from '../../tools/style';
 
 export function getCellBorderStrokeWidth(col: number, row: number, cellTheme: IThemeSpec, table: BaseTableAPI) {
   // const frameBorderLineWidths = utilStyle.toBoxArray(table.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
   let strokeArrayWidth = (cellTheme?.group as any)?.strokeArrayWidth ?? undefined;
-  if (table.theme.cellInnerBorder) {
+  if (
+    table.theme.cellInnerBorder ||
+    !isValidStyle(table.theme.frameStyle.borderLineWidth) ||
+    isZeroStyle(table.theme.frameStyle.borderLineWidth)
+  ) {
     return strokeArrayWidth;
   }
   if (col === 0) {
