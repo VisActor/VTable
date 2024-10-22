@@ -204,11 +204,17 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 选择单元格交互配置，具体配置项如下：
 
-##${prefix} headerSelectMode ('inline' | 'cell') = 'inline'
+##${prefix} headerSelectMode ('inline' | 'cell' | 'body') = 'inline'
 
-点击表头单元格时连带 body 整行或整列选中 或仅选中当前单元格，默认或整行或整列选中。
+点击表头单元格时连带 body 是否需要整行或整列选中。
 
-可选值：'inline' | 'cell'。
+可选值：
+
+'inline': 点击行表头则整行选中，选择列表头则整列选中；
+
+'cell': 仅仅选择当前点击的表头单元格；
+
+'body': 不选择表头，点击行表头则选择该行所有 body 单元格，点击列表头则选择该列所有 body 单元格。
 
 ##${prefix} disableSelect (boolean) = false
 
