@@ -131,10 +131,16 @@ export function createComplexColumn(
     ) {
       cellLocation = 'body';
     }
-    const define =
-      cellLocation !== 'body'
-        ? table.getHeaderDefine(colForDefine, rowForDefine)
-        : table.getBodyColumnDefine(colForDefine, rowForDefine);
+    let define;
+    if (!table.isPivotTable() && table.isSeriesNumberInBody(col, row)) {
+      // 序号列 传入的cellLocation是'rowHeader'(不清楚为什么)。这里处理下获取到的define值
+      define = table.getBodyColumnDefine(colForDefine, rowForDefine);
+    } else {
+      define =
+        cellLocation !== 'body'
+          ? table.getHeaderDefine(colForDefine, rowForDefine)
+          : table.getBodyColumnDefine(colForDefine, rowForDefine);
+    }
     let mayHaveIcon =
       cellLocation !== 'body'
         ? true
