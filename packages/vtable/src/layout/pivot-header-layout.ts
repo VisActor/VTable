@@ -1224,7 +1224,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isColumnHeader(col: number, row: number): boolean {
-    if (col >= this.rowHeaderLevelCount && row >= 0 && row < this.columnHeaderLevelCount) {
+    if (
+      col >= this.rowHeaderLevelCount + this.leftRowSeriesNumberColumnCount &&
+      row >= 0 &&
+      row < this.columnHeaderLevelCount
+    ) {
       return true;
     }
     return false;

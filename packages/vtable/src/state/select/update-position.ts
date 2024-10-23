@@ -250,7 +250,7 @@ export function updateSelectPosition(
           });
         } else {
           state.select.ranges.push({
-            start: { col: 0, row: 0 },
+            start: { col: table.leftRowSeriesNumberCount, row: 0 },
             end: { col: table.colCount - 1, row: table.rowCount - 1 },
             skipBodyMerge: true
           });
