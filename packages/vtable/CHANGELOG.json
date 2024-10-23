@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.10.1",
+      "tag": "@visactor/vtable_v1.10.1",
+      "date": "Tue, 22 Oct 2024 09:49:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when set rowSeriesNumber then sort icon not update #2643\n\n"
+          },
+          {
+            "comment": "fix: disable cellInnerBorder when no frame border "
+          }
+        ]
+      }
+    },
+    {
       "version": "1.10.0",
       "tag": "@visactor/vtable_v1.10.0",
       "date": "Fri, 18 Oct 2024 09:42:47 GMT",
