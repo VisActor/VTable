@@ -1,3 +1,17 @@
+# v1.10.1
+
+2024-10-23
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when set rowSeriesNumber then sort icon not update [#2643](https://github.com/VisActor/VTable/issues/2643)
+- **@visactor/vtable**: disable cellInnerBorder when no frame border
+
+
+
+[more detail about v1.10.1](https://github.com/VisActor/VTable/releases/tag/v1.10.1)
+
 # v1.10.0
 
 2024-10-18
