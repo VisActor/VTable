@@ -62,7 +62,9 @@
 // export * from '@visactor/vrender-kits';
 
 // only for vtable-used-in-vrender-bugserver.js
+// export { Direction, version } from '@visactor/vrender';
 export * from '@visactor/vrender';
+export { ticks } from '@visactor/vrender-components';
 
 export function registerForVrender() {
   // do nothing
