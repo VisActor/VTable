@@ -49,17 +49,9 @@
 ]
 ```
 
-## enableDataAnalysis(boolean)
-
-透视表是否开启数据分析。 默认 false
-
-如果传入的数据 records 是明细数据，需要 VTable 做聚合分析则开启该配置将其设置为 true。
-
-如传入数据是经过聚合好的，为了提升性能这里设置为 false，同时呢要求传入自己组织好的行头树结构 columnTree 和 rowTree。
-
 ## dataConfig(IDataConfig)
 
-数据分析相关配置 enableDataAnalysis 开启后该配置才会有效。
+数据分析相关配置
 
 ```
 /**
@@ -121,19 +113,19 @@ export type SortRule = SortTypeRule | SortByRule | SortByIndicatorRule | SortFun
 
 其中排序规则支持四种方式：
 
-1. SortTypeRule: 根据字段排序，如根据年份升序排列:`{"sortField": "Year", "sortType": "ASC"}`。
+1. SortTypeRule: 根据字段排序，如根据年份升序排列:`{"sortField": "Year", "sortType": "ASC"}`。ASC DESC 升降序按照拼音字母或数字的自然排序，NORMAL 按照 records 中的顺序进行排列。
 
 ```
 //1. 指定排序类型
 export interface SortTypeRule {
   /**排序维度 */
   sortField: string;
-  /**升序降序 ASC or DESC*/
+  /**升序降序 ASC or DESC NORMAL*/
   sortType?: SortType;
 }
 ```
 
-2. SortByRule:按维度成员指定排序，如根据地区维度值排列:`{"sortField": "Region", "sortBy": ["华南","华中","华北","中南","西南"]}`。
+2. SortByRule:按维度成员指定排序，如根据地区维度值排列:`{"sortField": "Region", "sortBy": ["华南","华中","华北","中南","西南"]}`。ASC DESC 升降序按照 sortBy 给定的顺序进行排序，NORMAL 按照 records 中的顺序进行排列。
 
 ```
 //2. 按维度成员指定排序
@@ -142,17 +134,19 @@ export interface SortByRule {
   sortField: string;
   /**根据指定具体顺序排序 */
   sortBy?: string[];
+  /**升序降序 ASC or DESC NORMAL*/
+  sortType?: SortType;
 }
 ```
 
-3. SortByIndicatorRule:根据指标值排序，如根据类别办公用下销售金额降序来排列地区维度值:`{sortField:'Region',sortByIndicator: "Sales", sortType: "DESC",query:['办公用品']}`。
+3. SortByIndicatorRule:根据指标值排序，如根据类别办公用下销售金额降序来排列地区维度值:`{sortField:'Region',sortByIndicator: "Sales", sortType: "DESC",query:['办公用品']}`。ASC DESC 升降序按照 sortBy 指定的指标值进行排序，NORMAL 按照 records 中的顺序进行排列。
 
 ```
 //3. 按指标值排序
 export interface SortByIndicatorRule {
   /**排序维度 */
   sortField: string;
-  /**升序降序 ASC or DESC*/
+  /**升序降序 ASC or DESC NORMAL*/
   sortType?: SortType;
   /**排序根据某个指标值 */
   sortByIndicator?: string;
@@ -161,7 +155,7 @@ export interface SortByIndicatorRule {
 }
 ```
 
-4. SortFuncRule: 支持通过函数自定义排序规则，如根据计算后的指标值排序:`{"sortField": "Region", sortFunc: (a, b) => a.sales - b.sales}`。
+4. SortFuncRule: 支持通过函数自定义排序规则，如根据计算后的指标值排序:`{"sortField": "Region", sortFunc: (a, b) => a.sales - b.sales}`。ASC DESC NORMAL 均按照 sortFunc 中的排序逻辑进行排列。
 
 ```
 //4. 自定义排序方法function
@@ -170,6 +164,8 @@ export interface SortFuncRule {
   sortField: string;
   /**自定义排序函数 */
   sortFunc?: (a: any, b: any) => number;
+  /**升序降序 ASC or DESC NORMAL*/
+  sortType?: SortType;
 }
 ```
 
@@ -232,7 +228,7 @@ export interface Total {
 
 ### derivedFieldRules(DerivedFieldRules)
 
-增加派生字段
+增加派生字段，vtable 会基于派生字段定义的规则来生成新的字段，并将新字段加入到数据中。该新的字段可以作为维度项或者指标项。
 
 ```
 export type DerivedFieldRules = DerivedFieldRule[];
@@ -247,9 +243,29 @@ export interface DerivedFieldRule {
 }
 ```
 
+### calculatedFieldRules (CalculateddFieldRules)
+
+计算字段，类 Excel 透视表中的计算字段，可以通过计算字段来计算新的指标值，且都是在汇总结果基础上进行的再计算。注意：不同于派生字段。
+
+```
+export type CalculateddFieldRules = CalculateddFieldRule[];
+```
+
+```
+export interface CalculateddFieldRule {
+  /** 唯一标识，可以当做新指标的key，用于配置在 indicators 中在透视表中展示。 */
+  key: string;
+  /** 计算字段依赖的指标，可以是在 records 中具体对应的指标字段 or 不是数据records 中的字段
+   * 如果依赖的指标不在 records 中，则需要在 aggregationRules 中明确配置，具体指明聚合规则和 indicatorKey 以在 dependIndicatorKeys 所使用。 */
+  dependIndicatorKeys: string[];
+  /** 计算字段的计算函数，依赖的指标值作为参数传入，返回值作为计算字段的值。   */
+  calculateFun?: (dependFieldsValue: any) => any;
+}
+```
+
 ## columnTree(Array)
 
-列表头树，类型为:`IDimensionHeaderNode|IIndicatorHeaderNode[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。
+列表头树，类型为:`(IDimensionHeaderNode|IIndicatorHeaderNode)[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。
 
 ** IDimensionHeaderNode 具体配置项如下：**
 
@@ -261,10 +277,14 @@ export interface IDimensionHeaderNode {
   dimensionKey: string | number;
   /** 维度成员值 */
   value: string;
-  /** 维度成员下的子维度树结构 */
-  children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
+  /** 维度成员下的子维度树结构。 true一般是用在显示折叠展开按钮，进行懒加载获取数据的场景中。 */
+  children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[] | true;
   /** 折叠状态 配合树形结构展示使用。注意：仅在rowTree中有效 */
   hierarchyState?: HierarchyState;
+  /** 是否为虚拟节点。 如果配置为true，则在基于records数据做分析时会忽略该维度字段 */
+  virtual?: boolean;
+  /** 跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格 */
+  levelSpan?: number;
 }
 ```
 
@@ -280,6 +300,8 @@ export interface IIndicatorHeaderNode {
    * 指标名称 如：“销售额”，“例如”， 对应到单元格显示的值。可不填，不填的话 从indicators的对应配置中取值显示
    */
   value?: string;
+  /** 跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格 */
+  levelSpan?: number;
 }
 ```
 
@@ -312,6 +334,10 @@ export interface IIndicatorHeaderNode {
 ## rowHierarchyIndent(number)
 
 如果设置了树形展示，子节点单元格中显示内容相比其父节点内容的缩进距离。
+
+## rowHierarchyTextStartAlignment(boolean) = false
+
+同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认 false
 
 ## indicatorTitle(string)
 
@@ -355,6 +381,15 @@ export interface IIndicatorHeaderNode {
 - `indicatorGroup`: 调整同父级维度下所有指标列的宽度
 - `all`： 所有列宽都被调整
 
+## rowResizeType(string)
+
+调整行高的生效范围，可配置项：
+
+- `row`: 调整行高只调整当前行
+- `indicator`: 调整行高时对应相同指标的行都会被调整
+- `indicatorGroup`: 调整同父级维度下所有指标行的宽度
+- `all`： 所有行高都被调整
+
 ## pivotSortState(Array)
 
 设置排序状态，只对应按钮展示效果 无数据排序逻辑
@@ -377,24 +412,14 @@ export interface IIndicatorHeaderNode {
     tableType = 'pivotTable'
 ) }}
 
-## editor (string|Object|Function)
+## supplementIndicatorNodes(boolean) = true
 
-全局配置单元格编辑器
+是否需要补充指标节点到对应的自定义表头中如 rowTree 或者 columnTree. 默认为 true
 
-```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-```
+## parseCustomTreeToMatchRecords(boolean) = true
 
-其中 IEditor 是@visactor/vtable-editors 中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
+如果配置了 rowTree 或者 columnTree 且是非规则的树结构，为了去匹配对应的数据 record，需要开启该配置。
 
-{{ use: common-option-secondary(
-    prefix = '#',
-    tableType = 'listTable'
-) }}
+规则的树结构指的是：同一层的节点它们的维度 key 是相同的。
 
-## rowSeriesNumber(IRowSeriesNumber)
-
-配置行序号。
-{{ use: row-series-number(
-    prefix = '###',
-) }}
+非规则的树结构即树的同一层存在不同维度的维度值时。

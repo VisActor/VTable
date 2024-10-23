@@ -2,7 +2,10 @@ import * as VTable from '../../src';
 import { AggregationType } from '../../src/ts-types';
 import { InputEditor } from '@visactor/vtable-editors';
 const CONTAINER_ID = 'vTable';
-const input_editor = new InputEditor({});
+const input_editor = new InputEditor({
+  // readonly: true,
+  editorType: 'textArea'
+});
 VTable.register.editor('input', input_editor);
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -171,6 +174,7 @@ export function createTable() {
     }),
     editor: 'input',
     headerEditor: 'input',
+    enableLineBreak: true,
     aggregation(args) {
       if (args.col === 1) {
         return [

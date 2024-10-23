@@ -14,14 +14,13 @@ option: PivotTable#customRender.elements
 ## 关键配置
 
 - `PivotTable`
-- `customRender` 
+- `customRender`
 
-##  示例代码
+## 示例代码
 
 ```javascript livedemo template=vtable
-
- let  tableInstance;
- function getColor(min, max, value, opacity) {
+let tableInstance;
+function getColor(min, max, value, opacity) {
   if (max === min) {
     if (value > 0) {
       return `rgba(255,0,0,${opacity})`;
@@ -86,7 +85,6 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         isShowOverflowTextTooltip: true
       },
       hideIndicatorName: true,
-      enableDataAnalysis: true,
       defaultHeaderRowHeight: 30,
       defaultRowHeight: 40,
       defaultColWidth: 60,

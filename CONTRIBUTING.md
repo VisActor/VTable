@@ -1,72 +1,228 @@
-# Contributing
+# Contribution Guide
 
-## Code of Conduct
+Firstly, I applaud your decision to join the ranks of open source contributors👍🏻. Moreover, we're very thankful you chose to participate in the VisActor community and contribute to this open-source project.
 
-We has adopted [the Contributor Covenant](CODE_OF_CONDUCT.md) as our Code of Conduct, and we expect project participants to adhere to it. Please read the full text so that you can understand what actions will and will not be tolerated.
+## VTable Contribution Guide
 
-## Open Development
+VisActor team usually develops and maintains issues on github. Please open [Github website](https://github.com/), click the `Sign up` button in the upper right corner, and register an account to start your first step in the open source journey.
 
-All work on VTable happens directly on GitHub. Both core team members and external contributors send pull requests which go through the same review process.
+If you can't open the Github site for some reason, you can also develop the project through [Gitee](https://gitee.com/VisActor/VTable).
 
-## Semantic Versioning
+In the [VTable repository](https://github.com/VisActor/VTable), we have a [guide](https://github.com/VisActor/VTable/blob/develop/CONTRIBUTING.zh-CN.md) for all open source contributors, which introduces version management, branch management, and other content. **Please take a few minutes to read and understand it**.
 
-VTable follows [semantic versioning](https://semver.org/). We release patch versions for critical bugfixes, minor versions for new features or non-essential changes, and major versions for any breaking changes. When we make breaking changes, we also introduce deprecation warnings in a minor version so that our users learn about the upcoming changes and migrate their code in advance.
+## Your First PullRequest
 
-Every significant change is documented in the changelog file.
+### Step1: Install Git
 
-## Release Schedule
+Git is a version control system used to track and manage code changes in software development projects. It helps developers record and manage code history, facilitate team collaboration, code version control, merge code, and more. With Git, you can track every version of every file and easily switch and compare between different versions. Git also provides branch management capabilities, allowing for multiple parallel development tasks to be performed simultaneously.
 
-todo
+- Visit the Git official website: <https://git-scm.com/>
+- Download the latest version of Git installer.
+- Run the downloaded installer and follow the prompts in the installation wizard.
+- After installation, you can use the `git version` command through the command line to confirm successful installation.
 
-## Branch Organization
+ <div style="width: 80%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/contribution_1.png" />
+  </div>
 
-Submit all changes directly to the main branch. We don’t use separate branches for development or for upcoming releases. We do our best to keep main in good shape, with all tests passing.
+### Step2: Fork the project
 
-Code that lands in main must be compatible with the latest stable release. It may contain additional features, but no breaking changes. We should be able to release a new minor version from the tip of main at any time.
+- You need to fork this project first, go to the [VTable project page](https://github.com/VisActor/VTable), and click the Fork button in the upper right corner
 
-## Bugs
+<div style="width: 80%; text-align: center;">
+    <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/contribution_2.png" />
+ </div>
 
-We are using [GitHub Issues](todo) for our public bugs. We keep a close eye on this and try to make it clear when we have an internal fix in progress. Before filing a new task, try to make sure your problem doesn’t already exist.
+- You will find the project "xxxx(your github username)/VTable" in your github account.
+- On your local computer, use the following command to get a "VTable" folder.
 
-We have already prepared issue templates for bug reports and feature requests. If you want to fire an issue, just enter the [New issue](todo) page and select either of them to get started. The best way to get your bug fixed is by using our issue template and provide reproduction steps with this [template](todo).
+```
+// ssh
+git clone git@github.com:xxxx(your github user name)/VTable.git
+// https
+git clone https://github.com/xxxx(your github user name)/VTable.git
+```
 
-## Proposing a Change
+### Step3: Get the Project Code
 
-If you intend to change the public API, or make any non-trivial changes to the implementation, we recommend filing an issue, or just enter the [New issue](todo) page and select either of them to get started.
+- Enter the VTable folder and add the remote address of VTable
 
-If you’re only fixing a bug, it’s fine to submit a pull request right away but we still recommend to file an issue detailing what you’re fixing. This is helpful in case we don’t accept that specific fix but want to keep track of the issue.
+```
+git remote add upstram https://github.com/VisActor/VTable.git
+```
 
-## Your First Pull Request
+- Get the latest source code of VTable
 
-Working on your first Pull Request? You can learn how from this free video series:[How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github)
+```
+git pull upstram develop
+```
 
-To help you get your feet wet and get you familiar with our contribution process, we have a list of [good first issues](todo) that contain bugs that have a relatively limited scope. This is a great place to get started.
+### Step4: Create a Branch
 
-If you decide to fix an issue, please be sure to check the comment thread in case somebody is already working on a fix. If nobody is working on it at the moment, please leave a comment stating that you intend to work on it so other people don’t accidentally duplicate your effort.
+- Okay, now we can start contributing our code. The default branch of VTable is the develop branch. Whether it is for feature development, bug fixes, or documentation writing, please create a new branch and merge it into the develop branch. Use the following code to create a branch:
 
-If somebody claims an issue but doesn’t follow up for more than two weeks, it’s fine to take it over but you should still leave a comment.
+```
+// Create a feature development branch
+git checkout -b feat/xxxx
 
-### Sending a Pull Request
+// Create a development branch for issue fixing
+git checkout -b fix/xxxx
 
-The core team is monitoring for pull requests. We will review your pull request and either merge it, request changes to it, or close it with an explanation. We’ll do our best to provide updates and feedback throughout the process.
+// Create document, demo branch
+git checkout -b docs/add-funnel-demo
+```
 
-**Before submitting a pull request**, please make sure the following is done:
+- Now we can make changes to the code on the branch.
+- Let's say we've added some code and committed it to the repository.
+- `git commit -a -m "docs: add custom funnel demo and related docs"`. The commit message for VisActor follows the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification:
 
-1. Fork the [repository](todo) and create your branch from `main`.
-2. (If rush has been install, just go to step 3) global install [@microsoft/rush](https://rushjs.io/pages/intro/get_started/)：`npm i --global @microsoft/rush`.
-3. Run `rush update --full` in the repository root.
-4. If you’ve fixed a bug or added code that should be tested, add tests!
-5. Ensure the test suite passes (`rush test`). Tip: `rush test -- --watch TestName` is helpful in development.
-6. Make sure your code lints (`rush lint`). Tip: Lint runs automatically when you git commit (Use Git Hooks).
-7. Run `rush compile` for typecheck.
+  - `<type>[optional scope]: <description>`.
+  - Common `type` include docs (documentation, log changes), feat (new features), fix (bug fixes), refactor (code refactoring), etc. Please choose according to the actual situation.
+  - Please write the description in English with short and accurate descriptions.
+  - Before committing, we will perform commit lint checks. For details, see [inspection rules](https://github.com/VisActor/VTable/blob/develop/common/autoinstallers/lint/commitlint.config.js).
 
-## Development Workflow
+### Step5: Merge and Modify
 
-After cloning VTable, run `rush update --full` to fetch its dependencies. Then, you can run several commands:
+- A common problem is that the remote upstram (@visactor/VTable) has been updated with new commits, which can cause conflicts when we submit a Pull Request. Therefore, we can merge the commits from other developers on the remote repository with our commits before submitting. To switch to the develop branch, use the following code:
 
-1. `rush start` runs VTable test page locally.
-2. `rush eslint` checks the code style.
-3. `rush test` runs the complete test suite.
-4. `rush run -p <project_name> -s <script>` run the specified script for the specified project, eg. `rush run -p @visactor/vtable -s start`
-5. `rush prettier --dir <project_relative_path> --ext <file_type>` prettier the specified script for the specified project, eg. `rush prettier --dir packages/vtable --ext ts`
+```
+git checkout develop
+```
 
+- Use the following code to pull the latest code from remote:
+
+```
+git pull upstram develop
+```
+
+- Switch back to your development branch.
+
+```
+git checkout docs/add-funnel-demo
+```
+
+- Merge the commit of develop into `add-funnel-demo`:
+
+```
+git rebase develop
+```
+
+- Commit the updated code to your own branch:
+
+```
+git push origin docs/add-funnel-demo
+```
+
+### Step6: Submit a Pull Request
+
+You can click the `Pull requests `button on your GitHub code repository page and then click `New pull request`.
+
+ <div style="width: 80%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/contribution_3.png" />
+  </div>
+
+Choose to submit to the develop branch.
+
+Fill in the changes of this submission according to the template:
+
+- Check what type of change it is.
+
+<div style="display: flex;">
+ <div style="width: 30%; text-align: center; ">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/contribution_4.png" />
+  </div>
+    </div>
+
+- Fill in the associated issue
+
+<div style="display: flex;">
+ <div style="width: 20%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/contribution_5.png" />
+  </div>
+  </div>
+
+- For complex changes, please explain the background and solution.
+
+<div style="display: flex;">
+ <div style="width: 60%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/contribution_6.png" />
+  </div>
+  </div>
+
+After filling in the relevant information, click Create pull request to submit.
+
+## Mini Task Development Guide
+
+"**good first issue**" is a common label in open source communities, and its purpose is to help new contributors find suitable entry-level issues.
+
+For entry-level issues of VTable, you can view them through the [issue list](https://github.com/VisActor/VTable/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22), which currently includes two types:
+
+- Demo writing
+- Bug fixes and simple feature development
+
+If you currently **have the time and willingness** to participate in community contributions, you can look at **good first issue** in the issue and choose one that interests you and suits you.
+
+I believe you must be a person who has a beginning and an end, so when you understand and decide to claim an issue, please leave a message under the issue to let everyone know.
+
+### Demo Task
+
+We have prepared some common cases in practical application scenarios that require you to think about how to utilize the capabilities of VTable to achieve them. You can use these tasks to get started with using VTable. VTable provides rich capabilities, and everyone may have different implementation ideas. **You can leave a comment under the issue and discuss your solution with others**.
+
+After completing the task, you can submit your created case to the official demo on the website, allowing more people in need to learn and use it. All demos are stored in the `docs/assets/demo` directory.
+
+1.  Please base your development on the `develop` branch and create a new `docs/***` branch.
+1.  (Skip this step if you have already installed it) Globally install [@microsoft/rush](https://rushjs.io/pages/intro/get_started/) using `npm i --global @microsoft/rush`
+1.  Run `rush update` from the root directory.
+1.  Run `rush docs` to preview the current demo content locally.
+1.  Under the `docs` directory:
+1.  Add your demo information to the `docs/assets/demo/menu.json` directory file.
+1.  Complete the Chinese and English demo documents in the `zh`/`en` directories, respectively.
+1.  For the cover address cover field, you can contact the VTable team members to assist with uploading.
+1.  Commit all your code and create a Pull Request on Github, inviting others to review it.
+
+### Bug fix/Feature Task
+
+Here are some simple and easy-to-get-started feature development tasks. If you have a certain foundation in JavaScript/TypeScript, you can claim these tasks.
+
+You can learn the VTable code architecture more quickly by developing requirements. **You can leave a message under the issue and discuss your solution with everyone**.
+
+1.  Please base your development on the develop branch and create a new `feat/***` or `fix/***` branch.
+1.  (Skip this step if you have already installed it) Globally install @microsoft/rush: `npm i --global @microsoft/rush`.
+
+```
+# install dependencies
+$ rush update
+# enter vtable package
+$ cd packages/vtable
+# execute in file path: ./packages/vtable
+$ rushx demo
+# start site development server, execute in file path: ./
+$ rush docs
+# after execut git commit, please run the following command to update the change log. Please execute in file path: ./
+$ rush change-all
+```
+
+3.  Submit all code and create a Pull Request on Github, inviting others to review it.
+
+### Promotion Task Contribution Guide
+A promotion task refers to the action of publicly releasing materials related to VisActor, such as articles, demos, videos, etc., across various media channels.
+
+You can create a new issue, select the type others and tag it with promotion. Then, post it along with relevant links, screenshots, summaries, etc.
+
+For example, see https://github.com/VisActor/VChart/issues/2858.
+
+Every quarter, we will select some promotional works for VisActor and provide the authors with material rewards.
+
+## Embrace the VisActor Community
+
+In addition to contributing code to VisActor, we encourage you to participate in other activities that will make the community more prosperous, such as:
+
+1.  Suggesting ideas for project development, functional planning, etc.
+1.  Creating articles, videos, and holding lectures to promote VisActor.
+1.  Writing promotion plans and executing them together with the team.
+
+VisActor is also committed to helping students who participate in community building grow together. We plan (but are not limited to, and we look forward to more suggestions from everyone) to provide the following assistance:
+
+1.  Data visualization research and development training based on VisActor to help participating students grow rapidly in programming skills, visualization theory, architecture design, and other aspects.
+1.  Regularly select "Code Contribution Awards" and "Community Promotion Awards."
+1.  Organize community members to participate in open source activities

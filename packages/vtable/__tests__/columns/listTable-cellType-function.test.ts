@@ -1,6 +1,6 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
-import { ListTable } from '../../src/ListTable';
+import { ListTable } from '../../src';
 import { createDiv } from '../dom';
 global.__VERSION__ = 'none';
 describe('listTable-cellType-function init test', () => {
@@ -270,7 +270,6 @@ fruit and seeds. They are also highly intelligent and social, and are considered
     expect(listTable.getBodyColumnType(2, 1)).toBe('image');
     expect(listTable.getBodyColumnType(2, 2)).toBe('link');
     expect(listTable.getBodyColumnType(2, 3)).toBe('text');
+    listTable.release();
   });
-
-  listTable.release();
 });

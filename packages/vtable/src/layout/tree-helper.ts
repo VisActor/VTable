@@ -9,6 +9,7 @@ import type {
   HeaderData,
   ICustomRender,
   IDimension,
+  IHeaderTreeDefine,
   IIndicator,
   IRowDimension,
   LayoutObjectId
@@ -43,6 +44,7 @@ interface ITreeLayoutBaseHeadNode {
 
 interface ITreeLayoutDimensionHeadNode extends ITreeLayoutBaseHeadNode {
   dimensionKey: string;
+  virtual?: boolean;
 }
 interface ITreeLayoutIndicatorHeadNode extends ITreeLayoutBaseHeadNode {
   indicatorKey: string;
@@ -79,8 +81,8 @@ export class DimensionTree {
   // blockStartIndexMap: Map<number, boolean> = new Map();
   // blockEndIndexMap: Map<number, boolean> = new Map();
   dimensionKeys: NumberMap<string> = new NumberMap<string>();
+  dimensionKeysIncludeVirtual: NumberMap<string> = new NumberMap<string>();
   // dimensions: IDimension[] | undefined;//目前用不到这个
-
   cache: Map<number, any> = new Map();
   constructor(
     tree: ITreeLayoutHeadNode[],
@@ -101,12 +103,13 @@ export class DimensionTree {
     // this.dimensions = dimensions;
     this.cache.clear();
     this.dimensionKeys = new NumberMap<string>();
+    this.dimensionKeysIncludeVirtual = new NumberMap<string>();
     this.tree.children = tree as ITreeLayoutHeadNode[];
     // const re = { totalLevel: 0 };
     // if (updateTreeNode) this.updateTreeNode(this.tree, 0, re, this.tree);
     // else
     this.setTreeNode(this.tree, 0, this.tree);
-    this.totalLevel = this.dimensionKeys.count();
+    // this.totalLevel = this.dimensionKeys.count();
   }
   setTreeNode(node: ITreeLayoutHeadNode, startIndex: number, parent: ITreeLayoutHeadNode): number {
     node.startIndex = startIndex;
@@ -117,8 +120,22 @@ export class DimensionTree {
     //   if (!node.id) node.id = ++seqId;
     // }
     if (node.dimensionKey ?? node.indicatorKey) {
-      !this.dimensionKeys.contain(node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey) &&
+      if (
+        !node.virtual &&
+        !this.dimensionKeys.contain(node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey)
+      ) {
         this.dimensionKeys.put(node.level, node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey);
+      }
+      if (
+        !this.dimensionKeysIncludeVirtual.contain(
+          node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey
+        )
+      ) {
+        this.dimensionKeysIncludeVirtual.put(
+          node.level,
+          node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey
+        );
+      }
       if (!node.id) {
         node.id = ++this.sharedVar.seqId;
       }
@@ -130,6 +147,7 @@ export class DimensionTree {
       if (children?.length >= 1) {
         children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
+          this.totalLevel = Math.max(this.totalLevel, n.level + 1);
           size += this.setTreeNode(n, size, node);
         });
       } else {
@@ -140,28 +158,38 @@ export class DimensionTree {
       //树形展示 有子节点 且下一层需要展开
       children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
+        this.totalLevel = Math.max(this.totalLevel, n.level + 1);
         size += this.setTreeNode(n, size, node);
       });
     } else if (node.hierarchyState === HierarchyState.collapse && children?.length >= 1) {
       //树形展示 有子节点 且下一层不需要展开
       children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
+        this.totalLevel = Math.max(this.totalLevel, n.level + 1);
         this.setTreeNode(n, size, node);
       });
-    } else if (!node.hierarchyState && node.level + 1 < this.rowExpandLevel && children?.length >= 1) {
+    } else if (
+      !node.hierarchyState &&
+      node.level + 1 < this.rowExpandLevel &&
+      (children?.length >= 1 || children === true)
+    ) {
       //树形展示 有子节点 且下一层需要展开
       node.hierarchyState = HierarchyState.expand;
-      children.forEach((n: any) => {
-        n.level = (node.level ?? 0) + 1;
-        size += this.setTreeNode(n, size, node);
-      });
-    } else if (children?.length >= 1) {
+      children?.length >= 1 &&
+        children.forEach((n: any) => {
+          n.level = (node.level ?? 0) + 1;
+          this.totalLevel = Math.max(this.totalLevel, n.level + 1);
+          size += this.setTreeNode(n, size, node);
+        });
+    } else if (children?.length >= 1 || children === true) {
       //树形展示 有子节点 且下一层不需要展开
       node.hierarchyState = HierarchyState.collapse;
-      children.forEach((n: any) => {
-        n.level = (node.level ?? 0) + 1;
-        this.setTreeNode(n, size, node);
-      });
+      children?.length >= 1 &&
+        children.forEach((n: any) => {
+          n.level = (node.level ?? 0) + 1;
+          this.totalLevel = Math.max(this.totalLevel, n.level + 1);
+          this.setTreeNode(n, size, node);
+        });
     } else {
       //树形展示 无children子节点。但不能确定是最后一层的叶子节点 totalLevel还不能确定是计算完整棵树的整体深度
       node.hierarchyState = HierarchyState.none;
@@ -338,14 +366,18 @@ export function generateLayoutTree(tree: LayouTreeNode[], children: ITreeLayoutH
       dimensionKey?: string;
       indicatorKey?: string;
       value: string;
+      virtual?: boolean;
       hierarchyState: HierarchyState;
-      children: any;
+      children: ITreeLayoutHeadNode[];
+      levelSpan: number;
     } = {
       dimensionKey: node.dimensionKey,
       indicatorKey: node.indicatorKey,
       value: node.value,
       hierarchyState: node.hierarchyState,
-      children: undefined
+      children: undefined,
+      virtual: node.virtual ?? false,
+      levelSpan: node.levelSpan ?? 1
     };
     tree.push(diemnsonNode);
     if (node.children) {
@@ -382,6 +414,8 @@ export function dealHeader(
   roots: number[],
   row: number,
   layoutMap: PivotHeaderLayoutMap
+  // totalLevel: number,
+  // indicatorKeys: string[]
 ) {
   // const col = this._columns.length;
   const id = hd.id;
@@ -412,7 +446,7 @@ export function dealHeader(
     headerType: indicatorInfo?.headerType ?? dimensionInfo?.headerType ?? 'text',
     headerIcon: indicatorInfo?.headerIcon ?? dimensionInfo?.headerIcon,
     // define: <any>hd,
-    define: Object.assign({}, <any>hd, indicatorInfo ?? dimensionInfo),
+    define: Object.assign({}, <any>hd, indicatorInfo ?? Object.assign({}, dimensionInfo, { sort: undefined })),
     fieldFormat: indicatorInfo?.headerFormat ?? dimensionInfo?.headerFormat,
     // iconPositionList:[]
     dropDownMenu: indicatorInfo?.dropDownMenu ?? dimensionInfo?.dropDownMenu,
@@ -426,6 +460,7 @@ export function dealHeader(
     minWidth: (dimensionInfo as IRowDimension)?.minWidth,
     maxWidth: (dimensionInfo as IRowDimension)?.maxWidth,
     showSort: indicatorInfo?.showSort ?? dimensionInfo?.showSort,
+    sort: indicatorInfo?.sort,
     description: dimensionInfo?.description
   };
 
@@ -474,28 +509,61 @@ export function dealHeader(
   // }
   results[id] = cell;
   layoutMap._headerObjects[id] = cell;
-  _headerCellIds[row][layoutMap.colIndex] = id;
+  // //这个if判断处理上层维度和指标之间跨级的情况。即表头可能总共有5层，但是有的节点从跟到指标只有三级，那么合并单元格之前是指标单元格跨了三个单元格，现在处理成最后一个维度单元格跨三个单元格
+  // if (
+  //   ((hd as any).levelSpan ?? 0) <= 1 &&
+  //   row < totalLevel - 1 &&
+  //   hd.indicatorKey &&
+  //   indicatorKeys.includes(hd.indicatorKey) &&
+  //   (hd.children?.length ?? 0) === 0
+  // ) {
+  //   const newRoots = [...roots];
+  //   const lastId = newRoots[row - 1] ?? id;
+  //   for (; row < totalLevel - 1; row++) {
+  //     if (!_headerCellIds[row]) {
+  //       _headerCellIds[row] = [];
+  //     }
+  //     _headerCellIds[row][layoutMap.colIndex] = lastId;
+  //     newRoots[row] = lastId;
+  //   }
+  //   for (let r = row - 1; r >= 0; r--) {
+  //     _headerCellIds[r][layoutMap.colIndex] = newRoots[r];
+  //   }
+  //   if (!_headerCellIds[row]) {
+  //     _headerCellIds[row] = [];
+  //   }
+  // } else {
   for (let r = row - 1; r >= 0; r--) {
     _headerCellIds[r][layoutMap.colIndex] = roots[r];
   }
+  // }
+  _headerCellIds[row][layoutMap.colIndex] = id;
 
   // 处理汇总小计跨维度层级的情况
   if ((hd as any).levelSpan > 1) {
     for (let i = 1; i < (hd as any).levelSpan; i++) {
       if (!_headerCellIds[row + i]) {
         _headerCellIds[row + i] = [];
+        // 当行前几个没有赋值的id 赋值
+        for (let col = 0; col < layoutMap.colIndex; col++) {
+          _headerCellIds[row + i][col] = _headerCellIds[row][col];
+        }
       }
       _headerCellIds[row + i][layoutMap.colIndex] = id;
     }
   }
 
   if ((hd as ITreeLayoutHeadNode).children?.length >= 1) {
-    layoutMap
-      ._addHeaders(_headerCellIds, row + ((hd as any).levelSpan ?? 1), (hd as ITreeLayoutHeadNode).children ?? [], [
-        ...roots,
-        ...Array((hd as any).levelSpan ?? 1).fill(id)
-      ])
-      .forEach(c => results.push(c));
+    layoutMap._addHeaders(
+      _headerCellIds,
+      row + ((hd as any).levelSpan ?? 1),
+      (hd as ITreeLayoutHeadNode).children ?? [],
+      [...roots, ...Array((hd as any).levelSpan ?? 1).fill(id)],
+      results
+      // totalLevel,
+      // indicatorKeys
+    );
+    // .forEach(c => results.push(c));
   } else {
     // columns.push([""])//代码一个路径
     for (let r = row + 1; r < _headerCellIds.length; r++) {
@@ -533,36 +601,44 @@ export function dealHeaderForTreeMode(
   const dimensionInfo: IDimension = dimensions.find(dimension =>
     typeof dimension === 'string' ? false : dimension.dimensionKey === hd.dimensionKey
   ) as IDimension;
-
+  const indicatorInfo = layoutMap.indicatorsDefine?.find(indicator => {
+    if (typeof indicator === 'string') {
+      return false;
+    }
+    if (hd.indicatorKey) {
+      return indicator.indicatorKey === hd.indicatorKey;
+    }
+    return indicator.title === hd.value;
+  }) as IIndicator;
   const cell: HeaderData = {
     id,
-    title: hd.value,
+    title: hd.value ?? indicatorInfo.title,
     field: hd.dimensionKey as FieldData,
     //如果不是整棵树的叶子节点，都靠左显示
     style:
-      hd.level + 1 === totalLevel || typeof dimensionInfo?.headerStyle === 'function'
-        ? dimensionInfo?.headerStyle
-        : Object.assign({}, dimensionInfo?.headerStyle, { textAlign: 'left' }),
-    headerType: dimensionInfo?.headerType ?? 'text',
-    headerIcon: dimensionInfo?.headerIcon,
+      hd.level + 1 === totalLevel || typeof (indicatorInfo ?? dimensionInfo)?.headerStyle === 'function'
+        ? (indicatorInfo ?? dimensionInfo)?.headerStyle
+        : Object.assign({}, (indicatorInfo ?? dimensionInfo)?.headerStyle, { textAlign: 'left' }),
+    headerType: indicatorInfo?.headerType ?? dimensionInfo?.headerType ?? 'text',
+    headerIcon: indicatorInfo?.headerIcon ?? dimensionInfo?.headerIcon,
     define: Object.assign(<any>hd, {
-      linkJump: (dimensionInfo as ILinkDimension)?.linkJump,
-      linkDetect: (dimensionInfo as ILinkDimension)?.linkDetect,
-      templateLink: (dimensionInfo as ILinkDimension)?.templateLink,
+      linkJump: ((indicatorInfo ?? dimensionInfo) as ILinkDimension)?.linkJump,
+      linkDetect: ((indicatorInfo ?? dimensionInfo) as ILinkDimension)?.linkDetect,
+      templateLink: ((indicatorInfo ?? dimensionInfo) as ILinkDimension)?.templateLink,
 
       // image相关 to be fixed
-      keepAspectRatio: (dimensionInfo as IImageDimension)?.keepAspectRatio ?? false,
-      imageAutoSizing: (dimensionInfo as IImageDimension)?.imageAutoSizing,
+      keepAspectRatio: ((indicatorInfo ?? dimensionInfo) as IImageDimension)?.keepAspectRatio ?? false,
+      imageAutoSizing: ((indicatorInfo ?? dimensionInfo) as IImageDimension)?.imageAutoSizing,
 
-      headerCustomRender: dimensionInfo?.headerCustomRender,
-      headerCustomLayout: dimensionInfo?.headerCustomLayout,
+      headerCustomRender: (indicatorInfo ?? dimensionInfo)?.headerCustomRender,
+      headerCustomLayout: (indicatorInfo ?? dimensionInfo)?.headerCustomLayout,
       dragHeader: dimensionInfo?.dragHeader,
-      disableHeaderHover: !!dimensionInfo?.disableHeaderHover,
-      disableHeaderSelect: !!dimensionInfo?.disableHeaderSelect
+      disableHeaderHover: !!(indicatorInfo ?? dimensionInfo)?.disableHeaderHover,
+      disableHeaderSelect: !!(indicatorInfo ?? dimensionInfo)?.disableHeaderSelect
     }), //这里不能新建对象，要用hd保持引用关系
-    fieldFormat: dimensionInfo?.headerFormat,
+    fieldFormat: indicatorInfo?.headerFormat ?? dimensionInfo?.headerFormat,
     // iconPositionList:[]
-    dropDownMenu: dimensionInfo?.dropDownMenu,
+    dropDownMenu: indicatorInfo?.dropDownMenu ?? dimensionInfo?.dropDownMenu,
     pivotInfo: {
       value: hd.value,
       dimensionKey: hd.dimensionKey as string,
@@ -571,13 +647,51 @@ export function dealHeaderForTreeMode(
     },
     hierarchyLevel: hd.level,
     dimensionTotalLevel: totalLevel,
-    hierarchyState: hd.level + 1 === totalLevel ? undefined : hd.hierarchyState,
+    hierarchyState: hd.hierarchyState, //hd.level + 1 === totalLevel ? undefined : hd.hierarchyState,
     width: (dimensionInfo as IRowDimension)?.width,
     minWidth: (dimensionInfo as IRowDimension)?.minWidth,
     maxWidth: (dimensionInfo as IRowDimension)?.maxWidth,
     parentCellId: roots[roots.length - 1]
   };
-
+  if (indicatorInfo) {
+    //收集indicatorDimensionKey  提到了构造函数中
+    // this.indicatorDimensionKey = dimensionInfo.dimensionKey;
+    if (indicatorInfo.customRender) {
+      hd.customRender = indicatorInfo.customRender;
+    }
+    if (!isValid(layoutMap._indicators?.find(indicator => indicator.indicatorKey === indicatorInfo.indicatorKey))) {
+      layoutMap._indicators?.push({
+        id: ++layoutMap.sharedVar.seqId,
+        indicatorKey: indicatorInfo.indicatorKey,
+        field: indicatorInfo.indicatorKey,
+        fieldFormat: indicatorInfo?.format,
+        cellType: indicatorInfo?.cellType ?? (indicatorInfo as any)?.columnType ?? 'text',
+        chartModule: 'chartModule' in indicatorInfo ? indicatorInfo.chartModule : null,
+        chartSpec: 'chartSpec' in indicatorInfo ? indicatorInfo.chartSpec : null,
+        sparklineSpec: 'sparklineSpec' in indicatorInfo ? indicatorInfo.sparklineSpec : null,
+        style: indicatorInfo?.style,
+        icon: indicatorInfo?.icon,
+        define: Object.assign({}, <any>hd, indicatorInfo, {
+          dragHeader: dimensionInfo?.dragHeader
+        }),
+        width: indicatorInfo?.width,
+        minWidth: indicatorInfo?.minWidth,
+        maxWidth: indicatorInfo?.maxWidth,
+        disableColumnResize: indicatorInfo?.disableColumnResize
+      });
+    }
+  } else if (hd.indicatorKey) {
+    //兼容当某个指标没有设置在dimension.indicators中
+    if (!isValid(layoutMap._indicators?.find(indicator => indicator.indicatorKey === hd.indicatorKey))) {
+      layoutMap._indicators?.push({
+        id: ++layoutMap.sharedVar.seqId,
+        indicatorKey: hd.indicatorKey,
+        field: hd.indicatorKey,
+        cellType: 'text',
+        define: Object.assign({}, <any>hd)
+      });
+    }
+  }
   results[id] = cell;
   // this._cellIdDiemnsionMap.set(id, {
   //   dimensionKey: hd.dimensionKey,
@@ -591,17 +705,17 @@ export function dealHeaderForTreeMode(
   if (hd.hierarchyState === HierarchyState.expand && (hd as ITreeLayoutHeadNode).children?.length >= 1) {
     //row传值 colIndex++和_addHeaders有区别
     show && layoutMap.colIndex++;
-    layoutMap
-      ._addHeadersForTreeMode(
-        _headerCellIds,
-        row,
-        (hd as ITreeLayoutHeadNode).children ?? [],
-        [...roots, id],
-        totalLevel,
-        show && hd.hierarchyState === HierarchyState.expand, //当前节点show 且当前节点状态为展开 则传给子节点为show：true
-        dimensions
-      )
-      .forEach(c => results.push(c));
+    layoutMap._addHeadersForTreeMode(
+      _headerCellIds,
+      row,
+      (hd as ITreeLayoutHeadNode).children ?? [],
+      [...roots, id],
+      totalLevel,
+      show && hd.hierarchyState === HierarchyState.expand, //当前节点show 且当前节点状态为展开 则传给子节点为show：true
+      dimensions,
+      results
+    );
+    // .forEach(c => results.push(c));
   } else {
     // columns.push([""])//代码一个路径
     show && layoutMap.colIndex++;

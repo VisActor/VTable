@@ -46,7 +46,8 @@ export function createCellGroup(
   customElementsGroup: VGroup,
   renderDefault: boolean,
   cellTheme: IThemeSpec,
-  range: CellRange | undefined
+  range: CellRange | undefined,
+  isAsync: boolean
 ): Group {
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
@@ -59,38 +60,63 @@ export function createCellGroup(
   if (cellTheme?.text?.textBaseline) {
     textBaseline = cellTheme?.text?.textBaseline;
   }
-  const autoRowHeight = table.heightMode === 'autoHeight';
+  // let autoRowHeight = table.heightMode === 'autoHeight';
+  const autoRowHeight = table.isAutoRowHeight(row);
   const autoColWidth = colWidth === 'auto';
   const autoWrapText = headerStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const lineClamp = headerStyle.lineClamp;
 
   // cell
   const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
-  const cellGroup = new Group({
-    x: xOrigin,
-    y: yOrigin,
-    width: cellWidth,
-    height: cellHeight,
-    // 背景相关，cell背景由cellGroup绘制
-    lineWidth: cellTheme?.group?.lineWidth ?? undefined,
-    fill: cellTheme?.group?.fill ?? undefined,
-    stroke: cellTheme?.group?.stroke ?? undefined,
-    strokeArrayWidth: strokeArrayWidth ?? undefined,
-    strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
-    cursor: (cellTheme?.group as any)?.cursor ?? undefined,
-    lineDash: cellTheme?.group?.lineDash ?? undefined,
+  let cellGroup;
+  if (isAsync) {
+    cellGroup = table.scenegraph.getCell(col, row, true);
+    if (cellGroup && cellGroup.role === 'cell') {
+      cellGroup.setAttributes({
+        x: xOrigin,
+        y: yOrigin,
+        width: cellWidth,
+        height: cellHeight,
+        // 背景相关，cell背景由cellGroup绘制
+        lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+        fill: cellTheme?.group?.fill ?? undefined,
+        stroke: cellTheme?.group?.stroke ?? undefined,
+        strokeArrayWidth: strokeArrayWidth ?? undefined,
+        strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+        cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+        lineDash: cellTheme?.group?.lineDash ?? undefined,
+        lineCap: 'butt',
+        clip: true,
+        cornerRadius: cellTheme.group.cornerRadius
+      } as any);
+    }
+  }
+  if (!cellGroup || cellGroup.role !== 'cell') {
+    cellGroup = new Group({
+      x: xOrigin,
+      y: yOrigin,
+      width: cellWidth,
+      height: cellHeight,
+      // 背景相关，cell背景由cellGroup绘制
+      lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+      fill: cellTheme?.group?.fill ?? undefined,
+      stroke: cellTheme?.group?.stroke ?? undefined,
+      strokeArrayWidth: strokeArrayWidth ?? undefined,
+      strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+      cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+      lineDash: cellTheme?.group?.lineDash ?? undefined,
 
-    lineCap: 'square',
+      lineCap: 'butt',
 
-    clip: true,
+      clip: true,
 
-    cornerRadius: cellTheme.group.cornerRadius
-  } as any);
-  cellGroup.role = 'cell';
-  cellGroup.col = col;
-  cellGroup.row = row;
-  // columnGroup?.addChild(cellGroup); // fix promise cell row order in column
-  columnGroup?.addCellGroup(cellGroup);
+      cornerRadius: cellTheme.group.cornerRadius
+    } as any);
+    cellGroup.role = 'cell';
+    cellGroup.col = col;
+    cellGroup.row = row;
+    columnGroup?.addCellGroup(cellGroup);
+  }
   if (customElementsGroup) {
     cellGroup.appendChild(customElementsGroup);
   }
@@ -118,8 +144,10 @@ export function createCellGroup(
       typeof lineClamp === 'number' ? lineClamp : undefined,
       // autoColWidth ? 0 : colWidth,
       // table.getRowHeight(row),
-      cellWidth,
-      cellHeight,
+      // cellWidth,
+      // cellHeight,
+      cellGroup.attribute.width,
+      cellGroup.attribute.height,
       textAlign,
       textBaseline,
       table,
@@ -150,6 +178,8 @@ export function createCellGroup(
   }
   return cellGroup;
 }
+
+export type CreateTextCellGroup = typeof createCellGroup;
 
 // /**
 //  * @description: 获取函数式赋值的样式，记录在cellTheme中

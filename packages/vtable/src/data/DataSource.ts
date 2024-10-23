@@ -11,7 +11,8 @@ import type {
   IPagination,
   MaybePromiseOrCallOrUndefined,
   MaybePromiseOrUndefined,
-  SortOrder
+  SortOrder,
+  SortState
 } from '../ts-types';
 import { AggregationType, HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
@@ -31,7 +32,7 @@ import {
   NoneAggregator,
   CustomAggregator
 } from '../dataset/statistics-helper';
-import type { ColumnData } from '../ts-types/list-table/layout-map/api';
+import type { ColumnsDefine } from '../ts-types/list-table/layout-map/api';
 
 /**
  * 判断字段数据是否为访问器的格式
@@ -131,7 +132,10 @@ function _getIndex(sortedIndexMap: null | (number | number[])[], index: number):
 export interface DataSourceParam {
   get: (index: number) => any;
   length: number;
-  source?: any;
+  /** 需要异步加载的情况 请不要设置records */
+  records?: any;
+  added?: (index: number, count: number) => any;
+  deleted?: (index: number[]) => any;
 }
 export interface ISortedMapItem {
   asc?: (number | number[])[];
@@ -146,7 +150,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   /** 数据条目数 如果是树形结构的数据 则是第一层父节点的数量 */
   private _sourceLength: number;
 
-  private _source: any;
+  private _source: any[] | DataSourceParam | DataSource;
   /**
    * 缓存按字段进行排序的结果
    */
@@ -154,9 +158,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   /**
    * 记录最近一次排序规则 当展开树形结构的节点时需要用到
    */
-  private lastOrder: SortOrder;
-  private lastOrderFn: (a: any, b: any, order: string) => number;
-  private lastOrderField: FieldDef;
+  // private lastOrder: SortOrder;
+  // private lastOrderFn: (a: any, b: any, order: string) => number;
+  // private lastOrderField: FieldDef;
+  private lastSortStates: Array<SortState>;
+
   /** 每一行对应源数据的索引 */
   currentIndexedData: (number | number[])[] | null = [];
   protected userPagination: IPagination;
@@ -170,22 +176,29 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   hasHierarchyStateExpand: boolean = false;
   // treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
-  beforeChangedRecordsMap: Record<number, any>[] = [];
+  beforeChangedRecordsMap: Record<number, any>[] = []; // TODO过滤后 或者排序后的对应关系
 
   // 注册聚合类型
   registedAggregators: {
     [key: string]: {
-      new (dimension: string | string[], formatFun?: any, isRecord?: boolean, aggregationFun?: Function): Aggregator;
+      new (config: {
+        dimension: string | string[];
+        formatFun?: any;
+        isRecord?: boolean;
+        aggregationFun?: Function;
+      }): Aggregator;
     };
   } = {};
+  rowHierarchyType: 'grid' | 'tree';
   // columns对应各个字段的聚合类对象
   fieldAggregators: Aggregator[] = [];
-  layoutColumnObjects: ColumnData[] = [];
+  columns: ColumnsDefine;
+  lastFilterRules: FilterRules;
   constructor(
-    dataSourceObj?: DataSourceParam | DataSource,
+    dataSourceObj?: DataSourceParam,
     dataConfig?: IListTableDataConfig,
     pagination?: IPagination,
-    columnObjs?: ColumnData[],
+    columns?: ColumnsDefine,
     rowHierarchyType?: 'grid' | 'tree',
     hierarchyExpandLevel?: number
   ) {
@@ -193,9 +206,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.registerAggregators();
     this.dataSourceObj = dataSourceObj;
     this.dataConfig = dataConfig;
-    this._get = dataSourceObj?.get.bind(dataSourceObj) || (undefined as any);
-    this.layoutColumnObjects = columnObjs;
-    this._source = this.processRecords(dataSourceObj?.source ?? dataSourceObj);
+    this._get = dataSourceObj?.get;
+    this.columns = columns;
+    this._source = dataSourceObj?.records ? this.processRecords(dataSourceObj?.records) : dataSourceObj;
     this._sourceLength = this._source?.length || 0;
     this.sortedIndexMap = new Map<string, ISortedMapItem>();
 
@@ -214,6 +227,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     if (rowHierarchyType === 'tree') {
       this.initTreeHierarchyState();
     }
+    this.rowHierarchyType = rowHierarchyType;
     this.updatePagerData();
   }
   initTreeHierarchyState() {
@@ -224,7 +238,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     for (let i = 0; i < nodeLength; i++) {
       const indexKey = this.currentIndexedData[i];
       const nodeData = this.getOriginalRecord(indexKey);
-      if ((nodeData as any).children?.length > 0) {
+      const children = (nodeData as any).filteredChildren ?? (nodeData as any).children;
+      if (children?.length > 0) {
         if (this.hierarchyExpandLevel > 1) {
           !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.expand);
         } else {
@@ -260,10 +275,14 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.registerAggregator(AggregationType.NONE, NoneAggregator);
     this.registerAggregator(AggregationType.CUSTOM, CustomAggregator);
   }
+  updateColumns(columns: ColumnsDefine) {
+    this.columns = columns;
+  }
   _generateFieldAggragations() {
-    const columnObjs = this.layoutColumnObjects;
+    const columnObjs = this.columns;
+    this.fieldAggregators = [];
     for (let i = 0; i < columnObjs?.length; i++) {
-      columnObjs[i].aggregator = null; //重置聚合器 如更新了过滤条件都需要重新计算
+      delete (columnObjs[i] as any).vtable_aggregator; //重置聚合器 如更新了过滤条件都需要重新计算
       const field = columnObjs[i].field;
       const aggragation = columnObjs[i].aggregation;
       if (!aggragation) {
@@ -272,27 +291,27 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (Array.isArray(aggragation)) {
         for (let j = 0; j < aggragation.length; j++) {
           const item = aggragation[j];
-          const aggregator = new this.registedAggregators[item.aggregationType](
-            field as string,
-            item.formatFun,
-            true,
-            (item as CustomAggregation).aggregationFun
-          );
+          const aggregator = new this.registedAggregators[item.aggregationType]({
+            dimension: field as string,
+            formatFun: item.formatFun,
+            isRecord: true,
+            aggregationFun: (item as CustomAggregation).aggregationFun
+          });
           this.fieldAggregators.push(aggregator);
-          if (!columnObjs[i].aggregator) {
-            columnObjs[i].aggregator = [];
+          if (!(columnObjs[i] as any).vtable_aggregator) {
+            (columnObjs[i] as any).vtable_aggregator = [];
           }
-          columnObjs[i].aggregator.push(aggregator);
+          (columnObjs[i] as any).vtable_aggregator.push(aggregator);
         }
       } else {
-        const aggregator = new this.registedAggregators[aggragation.aggregationType](
-          field as string,
-          aggragation.formatFun,
-          true,
-          (aggragation as CustomAggregation).aggregationFun
-        );
+        const aggregator = new this.registedAggregators[aggragation.aggregationType]({
+          dimension: field as string,
+          formatFun: aggragation.formatFun,
+          isRecord: true,
+          aggregationFun: (aggragation as CustomAggregation).aggregationFun
+        });
         this.fieldAggregators.push(aggregator);
-        columnObjs[i].aggregator = aggregator;
+        (columnObjs[i] as any).vtable_aggregator = aggregator;
       }
     }
   }
@@ -300,24 +319,45 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this._generateFieldAggragations();
     const filteredRecords = [];
     const isHasAggregation = this.fieldAggregators.length >= 1;
-    const isHasFilterRule = this.dataConfig?.filterRules?.length >= 1;
+    const isHasFilterRule = this.dataConfig?.filterRules?.length >= 1 || this.lastFilterRules?.length >= 1;
     if (isHasFilterRule || isHasAggregation) {
       for (let i = 0, len = records.length; i < len; i++) {
         const record = records[i];
-        if (isHasFilterRule) {
+        if (this.dataConfig?.filterRules?.length >= 1) {
           if (this.filterRecord(record)) {
             filteredRecords.push(record);
+            if (this.rowHierarchyType === 'tree' && record.children) {
+              record.filteredChildren = this.filteredChildren(record.children);
+            }
             isHasAggregation && this.processRecord(record);
           }
+        } else if (this.lastFilterRules?.length >= 1) {
+          //上次做了过滤 本次做清除过滤规则的情况
+          this.clearFilteredChildren(record);
+          isHasAggregation && this.processRecord(record);
         } else if (isHasAggregation) {
           this.processRecord(record);
         }
       }
-      if (isHasFilterRule) {
+      if (this.dataConfig?.filterRules?.length >= 1) {
         return filteredRecords;
       }
     }
     return records;
+  }
+
+  filteredChildren(records: any[]) {
+    const filteredRecords = [];
+    for (let i = 0, len = records.length; i < len; i++) {
+      const record = records[i];
+      if (this.filterRecord(record)) {
+        filteredRecords.push(record);
+        if (record.children) {
+          record.filteredChildren = this.filteredChildren(record.children);
+        }
+      }
+    }
+    return filteredRecords;
   }
 
   processRecord(record: any) {
@@ -345,12 +385,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     //   return 0;
     // }
     let childTotalLength = 0;
-    const nodeLength = nodeData.children?.length ?? 0;
+    const nodeLength = nodeData.filteredChildren ? nodeData.filteredChildren.length : nodeData.children?.length ?? 0;
     for (let j = 0; j < nodeLength; j++) {
       if (currentLevel <= hierarchyExpandLevel || nodeData.hierarchyState === HierarchyState.expand) {
         childTotalLength += 1;
       }
-      const childNodeData = nodeData.children[j];
+      const childNodeData = nodeData.filteredChildren ? nodeData.filteredChildren[j] : nodeData.children[j];
       const childIndexKey = Array.isArray(indexKey) ? indexKey.concat(j) : [indexKey, j];
       if (currentLevel <= hierarchyExpandLevel || nodeData.hierarchyState === HierarchyState.expand) {
         this.currentIndexedData.splice(
@@ -360,7 +400,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           childIndexKey
         );
       }
-      if (childNodeData.children?.length > 0) {
+      if (
+        childNodeData.filteredChildren ? childNodeData.filteredChildren.length > 0 : childNodeData.children?.length > 0
+      ) {
         if (currentLevel < hierarchyExpandLevel || childNodeData.hierarchyState === HierarchyState.expand) {
           // this.treeDataHierarchyState.set(
           //   Array.isArray(childIndexKey) ? childIndexKey.join(',') : childIndexKey,
@@ -383,6 +425,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           currentLevel + 1,
           childNodeData
         );
+      }
+      if ((childNodeData as any).children === true) {
+        !childNodeData.hierarchyState && (childNodeData.hierarchyState = HierarchyState.collapse);
       }
     }
     return childTotalLength;
@@ -423,7 +468,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
   }
 
-  get source(): any {
+  get records(): any[] {
+    return Array.isArray(this._source) ? this._source : [];
+  }
+
+  get source(): any[] | DataSourceParam | DataSource {
     return this._source;
   }
   get(index: number): MaybePromiseOrUndefined {
@@ -480,7 +529,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * 展开或者收起数据index
    * @param index
    */
-  toggleHierarchyState(index: number) {
+  toggleHierarchyState(index: number, bodyStartIndex: number, bodyEndIndex: number) {
     const oldIndexedData = this.currentIndexedData.slice(0);
     const indexed = this.getIndexKey(index);
     const state = this.getHierarchyState(index);
@@ -511,16 +560,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (!hierarchyState || hierarchyState === HierarchyState.collapse || hierarchyState === HierarchyState.none) {
           return;
         }
-        if (nodeData.children) {
-          for (let i = 0; i < nodeData.children.length; i++) {
+        const children = nodeData.filteredChildren ? nodeData.filteredChildren : nodeData.children;
+        if (children) {
+          for (let i = 0; i < children.length; i++) {
             childrenLength += 1;
             const childIndex = Array.isArray(indexKey) ? indexKey.concat([i]) : [indexKey, i];
 
             computeChildrenNodeLength(
               childIndex,
               // this.treeDataHierarchyState.get(childIndex.join(',')),
-              nodeData.children[i].hierarchyState,
-              nodeData.children[i]
+              children[i].hierarchyState,
+              children[i]
             );
           }
         }
@@ -533,12 +583,29 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     // 变更了pagerConfig所以需要更新分页数据  TODO待定 因为只关注根节点的数量的话 可能不会影响到
     this.updatePagerData();
+    const add = [];
+    const remove = [];
+    if (state === HierarchyState.collapse) {
+      const addLength = this.currentIndexedData.length - oldIndexedData.length;
+      for (let i = 0; i < addLength; i++) {
+        add.push(index + i + 1);
+      }
+    } else if (state === HierarchyState.expand) {
+      const removeLength = oldIndexedData.length - this.currentIndexedData.length;
+      for (let i = 0; i < removeLength; i++) {
+        remove.push(index + i + 1);
+      }
+    }
+    // const newDiff = calculateArrayDiff(
+    //   oldIndexedData.slice(bodyStartIndex, bodyEndIndex + 1),
+    //   this.currentIndexedData.slice(bodyStartIndex, bodyEndIndex + 1),
+    //   bodyStartIndex
+    // );
+    // // const oldDiff = diffCellIndices(oldIndexedData, this.currentIndexedData);
 
-    const newDiff = calculateArrayDiff(oldIndexedData, this.currentIndexedData);
-    // const oldDiff = diffCellIndices(oldIndexedData, this.currentIndexedData);
-
-    // return oldDiff;
-    return newDiff;
+    // // return oldDiff;
+    // return newDiff;
+    return { add, remove };
   }
   /**
    * 某个节点状态由折叠变为展开，往this.currentIndexedData中插入展开后的新增节点，注意需要递归，因为展开节点下面的子节点也能是展开状态
@@ -553,28 +620,27 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       return 0;
     }
     let childrenLength = 0;
-    if (nodeData.children) {
-      const subNodeSortedIndexArray: Array<number> = Array.from({ length: nodeData.children.length }, (_, i) => i);
-      this.lastOrder &&
-        this.lastOrder !== 'normal' &&
-        this.lastOrderField &&
-        sort.sort(
-          index =>
-            isValid(subNodeSortedIndexArray[index])
-              ? subNodeSortedIndexArray[index]
-              : (subNodeSortedIndexArray[index] = index),
-          (index, rel) => {
-            subNodeSortedIndexArray[index] = rel;
-          },
-          nodeData.children.length,
-          this.lastOrderFn,
-          this.lastOrder,
-          index =>
-            this.getOriginalField(
-              Array.isArray(indexKey) ? indexKey.concat([index]) : [indexKey, index],
-              this.lastOrderField
-            )
-        );
+    const children = nodeData.filteredChildren ? nodeData.filteredChildren : nodeData.children;
+    if (children) {
+      const subNodeSortedIndexArray: Array<number> = Array.from({ length: children.length }, (_, i) => i);
+      this.lastSortStates?.forEach(state => {
+        if (state.order !== 'normal') {
+          sort.sort(
+            index =>
+              isValid(subNodeSortedIndexArray[index])
+                ? subNodeSortedIndexArray[index]
+                : (subNodeSortedIndexArray[index] = index),
+            (index, rel) => {
+              subNodeSortedIndexArray[index] = rel;
+            },
+            children.length,
+            state.orderFn,
+            state.order,
+            index =>
+              this.getOriginalField(Array.isArray(indexKey) ? indexKey.concat([index]) : [indexKey, index], state.field)
+          );
+        }
+      });
       for (let i = 0; i < subNodeSortedIndexArray.length; i++) {
         childrenLength += 1;
         const childIndex = Array.isArray(indexKey)
@@ -591,15 +657,15 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
         // const preChildState = this.treeDataHierarchyState.get(childIndex.join(','));
         const childData = this.getOriginalRecord(childIndex);
-        if (!nodeData.children[i].hierarchyState && (childData as any).children) {
+        if (!childData.hierarchyState && (childData.filteredChildren ?? childData.children)) {
           // this.treeDataHierarchyState.set(childIndex.join(','), HierarchyState.collapse);
-          nodeData.children[i].hierarchyState = HierarchyState.collapse;
+          childData.hierarchyState = HierarchyState.collapse;
         }
         childrenLength += this.pushChildrenNode(
           childIndex,
           // this.treeDataHierarchyState.get(childIndex.join(',')),
-          nodeData.children[i].hierarchyState,
-          nodeData.children[subNodeSortedIndexArray[i]]
+          childData.hierarchyState,
+          children[subNodeSortedIndexArray[i]]
         );
       }
     }
@@ -621,10 +687,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
       if (!this.beforeChangedRecordsMap[dataIndex]) {
         const originRecord = this.getOriginalRecord(dataIndex);
-        this.beforeChangedRecordsMap[dataIndex] = cloneDeep(originRecord);
+        this.beforeChangedRecordsMap[dataIndex] = cloneDeep(originRecord) ?? {};
       }
       if (typeof field === 'string' || typeof field === 'number') {
-        const beforeChangedValue = this.beforeChangedRecordsMap[dataIndex][field]; // this.getOriginalField(index, field, col, row, table);
+        const beforeChangedValue = this.beforeChangedRecordsMap[dataIndex][field as any]; // this.getOriginalField(index, field, col, row, table);
         const record = this.getOriginalRecord(dataIndex);
         let formatValue = value;
         if (typeof beforeChangedValue === 'number' && isAllDigits(value)) {
@@ -639,7 +705,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
               console.error('VTable Error:', err);
             });
         } else {
-          record[field] = formatValue;
+          if (record) {
+            record[field] = formatValue;
+          } else {
+            this.records[dataIndex] = {};
+            this.records[dataIndex][field] = formatValue;
+          }
         }
       }
     }
@@ -651,13 +722,25 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index
    */
   setRecord(record: any, index: number) {
-    const indexed = this.getIndexKey(index);
-    if (!Array.isArray(indexed)) {
-      this.source.splice(indexed, 1, record);
-    } else {
-      const c_node_index = (indexed as Array<any>)[indexed.length - 1];
-      const p_node = this.getOriginalRecord(indexed.slice(0, indexed.length - 1));
-      (p_node as any).children.splice(c_node_index, 1, record);
+    let isAdd = true;
+    if (this.dataConfig?.filterRules?.length >= 1) {
+      if (this.filterRecord(record)) {
+        if (this.rowHierarchyType === 'tree' && record.children) {
+          record.filteredChildren = this.filteredChildren(record.children);
+        }
+      } else {
+        isAdd = false;
+      }
+    }
+    if (isAdd && Array.isArray(this.records)) {
+      const indexed = this.getIndexKey(index);
+      if (!Array.isArray(indexed)) {
+        this.records.splice(indexed, 1, record);
+      } else {
+        // const c_node_index = (indexed as Array<any>)[indexed.length - 1];
+        // const p_node = this.getOriginalRecord(indexed.slice(0, indexed.length - 1));
+        // (p_node as any).children.splice(c_node_index, 1, record);
+      }
     }
   }
   /**
@@ -666,23 +749,35 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index 代表的数据源中的index
    */
   addRecord(record: any, index: number) {
-    this.source.splice(index, 0, record);
-    this.currentIndexedData.push(this.currentIndexedData.length);
-    this._sourceLength += 1;
-    this.initTreeHierarchyState();
-    if (this.userPagination) {
-      //如果用户配置了分页
-      this.pagination.totalCount = this._sourceLength;
-      const { perPageCount, currentPage } = this.pagination;
-      const startIndex = perPageCount * (currentPage || 0);
-      const endIndex = startIndex + perPageCount;
-      if (index < endIndex) {
+    if (Array.isArray(this.records)) {
+      this.records.splice(index, 0, record);
+      this.adjustBeforeChangedRecordsMap(index, 1);
+      this.currentIndexedData.push(this.currentIndexedData.length);
+      this._sourceLength += 1;
+      for (let i = 0; i < this.fieldAggregators.length; i++) {
+        this.fieldAggregators[i].push(record);
+      }
+      if (this.rowHierarchyType === 'tree') {
+        this.initTreeHierarchyState();
+      }
+      if (this.userPagination) {
+        //如果用户配置了分页
+        this.pagination.totalCount = this._sourceLength;
+        const { perPageCount, currentPage } = this.pagination;
+        const startIndex = perPageCount * (currentPage || 0);
+        const endIndex = startIndex + perPageCount;
+        if (index < endIndex) {
+          this.updatePagerData();
+        }
+      } else {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
         this.updatePagerData();
       }
-    } else {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
-      this.updatePagerData();
+
+      if ((this.dataSourceObj as DataSourceParam)?.added) {
+        (this.dataSourceObj as DataSourceParam).added(index, 1);
+      }
     }
   }
   /**
@@ -691,27 +786,40 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index 代表的数据源中的index
    */
   addRecords(recordArr: any, index: number) {
-    if (Array.isArray(recordArr)) {
-      this.source.splice(index, 0, ...recordArr);
-      for (let i = 0; i < recordArr.length; i++) {
-        this.currentIndexedData.push(this.currentIndexedData.length);
-      }
-      this._sourceLength += recordArr.length;
-    }
+    if (Array.isArray(this.records)) {
+      if (Array.isArray(recordArr)) {
+        this.records.splice(index, 0, ...recordArr);
+        this.adjustBeforeChangedRecordsMap(index, recordArr.length);
+        for (let i = 0; i < recordArr.length; i++) {
+          this.currentIndexedData.push(this.currentIndexedData.length);
+        }
+        this._sourceLength += recordArr.length;
 
-    if (this.userPagination) {
-      //如果用户配置了分页
-      this.pagination.totalCount = this._sourceLength;
-      const { perPageCount, currentPage } = this.pagination;
-      const startIndex = perPageCount * (currentPage || 0);
-      const endIndex = startIndex + perPageCount;
-      if (index < endIndex) {
+        for (let i = 0; i < this.fieldAggregators.length; i++) {
+          for (let j = 0; j < recordArr.length; j++) {
+            this.fieldAggregators[i].push(recordArr[j]);
+          }
+        }
+      }
+
+      if (this.userPagination) {
+        //如果用户配置了分页
+        this.pagination.totalCount = this._sourceLength;
+        const { perPageCount, currentPage } = this.pagination;
+        const startIndex = perPageCount * (currentPage || 0);
+        const endIndex = startIndex + perPageCount;
+        if (index < endIndex) {
+          this.updatePagerData();
+        }
+      } else {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
         this.updatePagerData();
       }
-    } else {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
-      this.updatePagerData();
+
+      if ((this.dataSourceObj as DataSourceParam)?.added) {
+        (this.dataSourceObj as DataSourceParam).added(index, recordArr.length);
+      }
     }
   }
 
@@ -721,13 +829,16 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index 代表的数据源中的index
    */
   addRecordForSorted(record: any) {
-    this.source.push(record);
-    this.currentIndexedData.push(this.currentIndexedData.length);
-    this._sourceLength += 1;
-    this.sortedIndexMap.clear();
-    if (!this.userPagination) {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
+    if (Array.isArray(this.records)) {
+      this.beforeChangedRecordsMap = []; // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
+      this.records.push(record);
+      this.currentIndexedData.push(this.currentIndexedData.length);
+      this._sourceLength += 1;
+      this.sortedIndexMap.clear();
+      if (!this.userPagination) {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
+      }
     }
   }
   /**
@@ -736,64 +847,89 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index 代表的数据源中的index
    */
   addRecordsForSorted(recordArr: any) {
-    if (Array.isArray(recordArr)) {
-      this.source.push(...recordArr);
-      for (let i = 0; i < recordArr.length; i++) {
-        this.currentIndexedData.push(this.currentIndexedData.length);
+    if (Array.isArray(this.records)) {
+      this.beforeChangedRecordsMap = []; // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
+      if (Array.isArray(recordArr)) {
+        this.records.push(...recordArr);
+        for (let i = 0; i < recordArr.length; i++) {
+          this.currentIndexedData.push(this.currentIndexedData.length);
+        }
+        this._sourceLength += recordArr.length;
+        this.sortedIndexMap.clear();
       }
-      this._sourceLength += recordArr.length;
-      this.sortedIndexMap.clear();
-    }
-    if (!this.userPagination) {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
+      if (!this.userPagination) {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
+      }
     }
   }
 
+  adjustBeforeChangedRecordsMap(insertIndex: number, insertCount: number) {
+    const length = this.beforeChangedRecordsMap.length;
+    for (let key = length - 1; key >= insertIndex; key--) {
+      const record = this.beforeChangedRecordsMap[key];
+      delete this.beforeChangedRecordsMap[key];
+      this.beforeChangedRecordsMap[key + insertCount] = record;
+    }
+  }
   /**
    * 删除多条数据recordIndexs
    */
   deleteRecords(recordIndexs: number[]) {
-    const realDeletedRecordIndexs = [];
-    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
-    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
-      const recordIndex = recordIndexsMaxToMin[index];
-      if (recordIndex >= this._sourceLength || recordIndex < 0) {
-        continue;
+    if (Array.isArray(this.records)) {
+      const realDeletedRecordIndexs = [];
+      const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
+      for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
+        const recordIndex = recordIndexsMaxToMin[index];
+        if (recordIndex >= this._sourceLength || recordIndex < 0) {
+          continue;
+        }
+        delete this.beforeChangedRecordsMap[recordIndex];
+        realDeletedRecordIndexs.push(recordIndex);
+        const deletedRecord = this.records[recordIndex];
+        for (let i = 0; i < this.fieldAggregators.length; i++) {
+          this.fieldAggregators[i].deleteRecord(deletedRecord);
+        }
+        this.records.splice(recordIndex, 1);
+        this.currentIndexedData.pop();
+        this._sourceLength -= 1;
       }
-      realDeletedRecordIndexs.push(recordIndex);
-      this.source.splice(recordIndex, 1);
-      this.currentIndexedData.pop();
-      this._sourceLength -= 1;
+      if (this.userPagination) {
+        // 如果用户配置了分页
+        this.updatePagerData();
+      } else {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
+        this.updatePagerData();
+      }
+      if ((this.dataSourceObj as DataSourceParam)?.deleted) {
+        (this.dataSourceObj as DataSourceParam).deleted(realDeletedRecordIndexs);
+      }
+      return realDeletedRecordIndexs;
     }
-    if (this.userPagination) {
-      // 如果用户配置了分页
-      this.updatePagerData();
-    } else {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
-      this.updatePagerData();
-    }
-    return realDeletedRecordIndexs;
+    return [];
   }
   /**
    * 删除多条数据recordIndexs
    */
   deleteRecordsForSorted(recordIndexs: number[]) {
-    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
-    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
-      const recordIndex = recordIndexsMaxToMin[index];
-      if (recordIndex >= this._sourceLength || recordIndex < 0) {
-        continue;
+    if (Array.isArray(this.records)) {
+      const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
+      for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
+        const recordIndex = recordIndexsMaxToMin[index];
+        if (recordIndex >= this._sourceLength || recordIndex < 0) {
+          continue;
+        }
+        const rawIndex = this.currentIndexedData[recordIndex] as number;
+        delete this.beforeChangedRecordsMap[rawIndex];
+        this.records.splice(rawIndex, 1);
+        this._sourceLength -= 1;
       }
-      const rawIndex = this.currentIndexedData[recordIndex];
-      this.source.splice(rawIndex, 1);
-      this._sourceLength -= 1;
-    }
-    this.sortedIndexMap.clear();
-    if (!this.userPagination) {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
+      this.sortedIndexMap.clear();
+      if (!this.userPagination) {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
+      }
     }
   }
 
@@ -807,8 +943,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (recordIndex >= this._sourceLength || recordIndex < 0) {
         continue;
       }
+      delete this.beforeChangedRecordsMap[recordIndex];
       realDeletedRecordIndexs.push(recordIndex);
-      this.source[recordIndex] = records[index];
+      for (let i = 0; i < this.fieldAggregators.length; i++) {
+        this.fieldAggregators[i].updateRecord(this.records[recordIndex], records[index]);
+      }
+      this.records[recordIndex] = records[index];
     }
     if (this.userPagination) {
       // 如果用户配置了分页
@@ -831,27 +971,37 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (typeof rawIndex !== 'number') {
         return;
       }
+      delete this.beforeChangedRecordsMap[rawIndex];
       realDeletedRecordIndexs.push(recordIndex);
-      this.source[rawIndex] = records[index];
+      this.records[rawIndex] = records[index];
     }
     this.sortedIndexMap.clear();
   }
 
-  sort(
-    field: FieldDef,
-    order: SortOrder,
-    orderFn: (v1: any, v2: any, order: SortOrder) => -1 | 0 | 1 = order !== 'desc'
-      ? (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 > v2 ? 1 : -1)
-      : (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 < v2 ? 1 : -1)
-  ): void {
-    this.lastOrderField = field;
-    this.lastOrder = order;
-    this.lastOrderFn = orderFn;
-    let filedMap = this.sortedIndexMap.get(field);
-    let orderedData;
+  sort(states: Array<SortState>): void {
+    // Convert states into an array and filter out unnecessary ones
+    states = (Array.isArray(states) ? states : [states]).filter(state => {
+      const column = this.columns.find(obj => obj.field === state.field);
+      return column?.sort !== false && state.order !== 'normal';
+    });
 
-    if (filedMap) {
-      orderedData = filedMap[order];
+    // Save the sorting states
+    this.lastSortStates = states;
+
+    // Get an array of sorting objects for each state
+    let filedMapArray: Array<ISortedMapItem> = states.map(
+      state => this.sortedIndexMap.get(state?.field) || { asc: [], desc: [], normal: [] }
+    );
+
+    let orderedData: number[] | null = null;
+
+    // If there is already sorted data in the caches, take it
+    if (filedMapArray.length > 0) {
+      orderedData = states.reduce((data, state, index) => {
+        const currentData = (filedMapArray[index] as any)?.[state.order];
+        return currentData && currentData.length > 0 ? currentData : data;
+      }, null);
+
       if (orderedData && orderedData.length > 0) {
         this.currentIndexedData = orderedData;
         this.updatePagerData();
@@ -859,52 +1009,79 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         return;
       }
     }
-    const sortedIndexArray = [] as number[];
-    if (order === 'normal') {
-      for (let i = 0; i < this._sourceLength; i++) {
-        sortedIndexArray[i] = i;
-      }
-    } else {
-      sort.sort(
-        index => (isValid(sortedIndexArray[index]) ? sortedIndexArray[index] : (sortedIndexArray[index] = index)),
-        (index, rel) => {
-          sortedIndexArray[index] = rel;
-        },
-        this._sourceLength,
-        orderFn,
-        order,
-        index => this.getOriginalField(index, field)
-      );
-    }
+
+    // If there is no cache, we start sorting
+    const sortedIndexArray: number[] = Array.from({ length: this._sourceLength }, (_, i) => i);
+
+    // Perform sorting on each state
+    sortedIndexArray.sort((indexA, indexB) => {
+      return states.reduce((result: number, state: SortState) => {
+        if (result !== 0) {
+          return result;
+        }
+
+        const orderFn =
+          state.orderFn ||
+          (state.order !== 'desc'
+            ? (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 > v2 ? 1 : -1)
+            : (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 < v2 ? 1 : -1));
+
+        return orderFn(
+          this.getOriginalField(indexA, state.field),
+          this.getOriginalField(indexB, state.field),
+          state.order
+        );
+      }, 0);
+    });
+
     this.currentIndexedData = sortedIndexArray;
 
+    // Process the hierarchy, if any
     if (this.hierarchyExpandLevel) {
       let nodeLength = sortedIndexArray.length;
-      const t0 = window.performance.now();
       for (let i = 0; i < nodeLength; i++) {
         const record = this.getOriginalRecord(sortedIndexArray[i]);
         const subNodeLength = this.pushChildrenNode(
           sortedIndexArray[i],
-          // this.treeDataHierarchyState.get(sortedIndexArray[i]),
           record.hierarchyState,
-          this.getOriginalRecord(sortedIndexArray[i]) // ？sortedIndexArray 在这个过程中不是变化了吗 通过i取id还是对的吗？ 对哦！因为i和nodeLength都+subNodeLength 来动态调整过了！
+          this.getOriginalRecord(sortedIndexArray[i])
         );
         nodeLength += subNodeLength;
         i += subNodeLength;
       }
     }
-    if (!filedMap) {
-      filedMap = { asc: [], desc: [], normal: [] };
-      this.sortedIndexMap.set(field, filedMap);
+
+    // If there were no caches, initialize them
+    if (!filedMapArray.length) {
+      filedMapArray = states.map(() => ({ asc: [], desc: [], normal: [] }));
+      for (let index = 0; index < states.length; index++) {
+        this.sortedIndexMap.set(states[index].field, filedMapArray[index]);
+      }
     }
-    filedMap[order] = sortedIndexArray;
+
+    // Save the sorted indexes for each state to the cache
+    states.forEach((state, index) => {
+      const mapItem = filedMapArray[index] as ISortedMapItem;
+      (mapItem as any)[state.order] = sortedIndexArray.slice(); // Save a copy of the array
+    });
+
     this.updatePagerData();
     this.fireListeners(EVENT_TYPE.CHANGE_ORDER, null);
   }
 
+  setSortedIndexMap(field: FieldDef, filedMap: ISortedMapItem) {
+    this.sortedIndexMap.set(field, filedMap);
+  }
+
+  private clearFilteredChildren(record: any) {
+    record.filteredChildren = undefined;
+    for (let i = 0; i < record.children?.length ?? 0; i++) {
+      this.clearFilteredChildren(record.children[i]);
+    }
+  }
   private filterRecord(record: any) {
     let isReserved = true;
-    for (let i = 0; i < this.dataConfig.filterRules.length; i++) {
+    for (let i = 0; i < this.dataConfig.filterRules?.length; i++) {
       const filterRule = this.dataConfig?.filterRules[i];
       if (filterRule.filterKey) {
         const filterValue = record[filterRule.filterKey];
@@ -921,8 +1098,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
 
   updateFilterRulesForSorted(filterRules?: FilterRules): void {
+    this.lastFilterRules = this.dataConfig.filterRules;
     this.dataConfig.filterRules = filterRules;
-    this._source = this.processRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
+    this._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
     this._sourceLength = this._source?.length || 0;
     this.sortedIndexMap.clear();
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
@@ -933,8 +1111,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
 
   updateFilterRules(filterRules?: FilterRules): void {
+    this.lastFilterRules = this.dataConfig.filterRules;
     this.dataConfig.filterRules = filterRules;
-    this._source = this.processRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
+    this._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
     this._sourceLength = this._source?.length || 0;
     // 初始化currentIndexedData 正常未排序。设置其状态
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
@@ -944,6 +1123,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     } else {
       this.pagination.perPageCount = this._sourceLength;
       this.pagination.totalCount = this._sourceLength;
+      if (this.rowHierarchyType === 'tree') {
+        this.initTreeHierarchyState();
+      }
       this.updatePagerData();
     }
   }
@@ -951,19 +1133,24 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * 当节点折叠或者展开时 将排序缓存清空（非当前排序规则的缓存）
    */
   clearSortedIndexMap() {
-    if (this.lastOrderField && this.lastOrder) {
+    if (this.lastSortStates && this.lastSortStates.length > 0) {
       this.sortedIndexMap.forEach((sortMap, key) => {
-        if (key !== this.lastOrderField) {
+        const isFieldInRules = this.lastSortStates.some(state => state.field === key);
+        if (!isFieldInRules) {
           this.sortedIndexMap.delete(key);
-        } else if (this.lastOrder === 'asc') {
-          sortMap.desc = [];
-          sortMap.normal = [];
-        } else if (this.lastOrder === 'desc') {
-          sortMap.asc = [];
-          sortMap.normal = [];
         } else {
-          sortMap.desc = [];
-          sortMap.asc = [];
+          this.lastSortStates.forEach(state => {
+            if (state.order === 'asc') {
+              sortMap.desc = [];
+              sortMap.normal = [];
+            } else if (state.order === 'desc') {
+              sortMap.asc = [];
+              sortMap.normal = [];
+            } else {
+              sortMap.asc = [];
+              sortMap.desc = [];
+            }
+          });
         }
       });
     }
@@ -992,6 +1179,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   release(): void {
     super.release?.();
+    this.lastFilterRules = null;
   }
   clearSortedMap() {
     this.currentIndexedData && (this.currentIndexedData.length = 0);
@@ -1007,10 +1195,20 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.currentPagerIndexedData.length = 0;
   }
   protected getOriginalRecord(dataIndex: number | number[]): MaybePromiseOrUndefined {
-    if (this.dataConfig?.filterRules) {
-      return (this.source as Array<any>)[dataIndex as number];
+    // if (this.dataConfig?.filterRules) {
+    //   return (this.records as Array<any>)[dataIndex as number];
+    // }
+    let data;
+    if (!this.dataSourceObj.records) {
+      data = this._get(dataIndex);
+    } else {
+      if (Array.isArray(dataIndex)) {
+        data = getValueFromDeepArray(this.records, dataIndex);
+      } else {
+        data = this.records[dataIndex];
+      }
     }
-    return getValue(this._get(dataIndex), (val: MaybePromiseOrUndefined) => {
+    return getValue(data, (val: MaybePromiseOrUndefined) => {
       this.recordPromiseCallBack(dataIndex, val);
     });
   }
@@ -1018,7 +1216,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     if (this.beforeChangedRecordsMap?.[dataIndex as number]) {
       return this.beforeChangedRecordsMap[dataIndex as number];
     }
-    return getValue(this._get(dataIndex), (val: MaybePromiseOrUndefined) => {
+    let data;
+    if (!this.dataSourceObj.records) {
+      data = this._get(dataIndex);
+    } else {
+      if (Array.isArray(dataIndex)) {
+        data = getValueFromDeepArray(this.records, dataIndex);
+      } else {
+        data = this.records[dataIndex];
+      }
+    }
+    return getValue(data, (val: MaybePromiseOrUndefined) => {
       this.recordPromiseCallBack(dataIndex, val);
     });
   }
@@ -1126,8 +1334,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return true;
   }
+  // 拖拽调整数据位置 目前对排序过的数据不过处理，因为自动排序和手动排序融合问题目前没有找到好的解决方式
   reorderRecord(sourceIndex: number, targetIndex: number) {
-    if (this.lastOrder === 'asc' || this.lastOrder === 'desc') {
+    if (this.lastSortStates?.some(state => state.order === 'asc' || state.order === 'desc')) {
       // const sourceIds = this._currentPagerIndexedData.splice(sourceIndex, 1);
       // sourceIds.unshift(targetIndex, 0);
       // Array.prototype.splice.apply(this._currentPagerIndexedData, sourceIds);
@@ -1170,35 +1379,37 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           targetI = (<number[]>targetIndexs).splice(targetIndexs.length - 1, 1)[0];
           if (sourceIndexs.length >= 1) {
             const parent = this.getOriginalRecord(sourceIndexs);
-            const sourceIds = parent.children.splice(sourceI, 1);
+            const sourceIds = parent.filteredChildren
+              ? parent.filteredChildren.splice(sourceI, 1)
+              : parent.children.splice(sourceI, 1);
             sourceIds.unshift(targetI, 0);
-            Array.prototype.splice.apply(parent.children, sourceIds);
+            Array.prototype.splice.apply(parent.filteredChildren ?? parent.children, sourceIds);
           } else {
-            const sourceIds = this.source.splice(sourceI, 1);
+            const sourceIds = this.records.splice(sourceI, 1);
             // 将records插入到目标地址targetIndex处
             // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
             sourceIds.unshift(targetI, 0);
-            Array.prototype.splice.apply(this.source, sourceIds);
+            Array.prototype.splice.apply(this.records, sourceIds);
           }
         } else {
-          sourceI = this.currentPagerIndexedData[sourceIndex];
+          sourceI = this.currentPagerIndexedData[sourceIndex] as number;
           targetI = this.currentPagerIndexedData[targetIndex];
           // 从source的二维数组中取出需要操作的records
-          const records = this.source.splice(sourceI, 1);
+          const records = this.records.splice(sourceI, 1);
           // 将records插入到目标地址targetIndex处
           // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
           records.unshift(targetI, 0);
-          Array.prototype.splice.apply(this.source, records);
+          Array.prototype.splice.apply(this.records, records);
         }
         this.restoreTreeHierarchyState();
         this.updatePagerData();
       } else {
         // 从source的二维数组中取出需要操作的records
-        const records = this.source.splice(sourceIndex, 1);
+        const records = this.records.splice(sourceIndex, 1);
         // 将records插入到目标地址targetIndex处
         // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
         records.unshift(targetIndex, 0);
-        Array.prototype.splice.apply(this.source, records);
+        Array.prototype.splice.apply(this.records, records);
       }
     }
   }
@@ -1208,7 +1419,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       for (let i = 0; i < this._sourceLength; i++) {
         //expandLevel为有效值即需要按tree分析展示数据
         const nodeData = this.getOriginalRecord(i);
-        (nodeData as any).children && !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
+        const children = (nodeData as any).filteredChildren ?? (nodeData as any).children;
+        children && !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
       }
 
       this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
@@ -1216,7 +1428,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       for (let i = 0; i < nodeLength; i++) {
         const indexKey = this.currentIndexedData[i];
         const nodeData = this.getOriginalRecord(indexKey);
-        if ((nodeData as any).children?.length > 0 && nodeData.hierarchyState === HierarchyState.expand) {
+        const children = (nodeData as any).filteredChildren ?? (nodeData as any).children;
+        if (children?.length > 0 && nodeData.hierarchyState === HierarchyState.expand) {
           this.hasHierarchyStateExpand = true;
           const childrenLength = this.restoreChildrenNodeHierarchy(indexKey, nodeData);
           i += childrenLength;
@@ -1233,12 +1446,13 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     nodeData: any
   ): number {
     let childTotalLength = 0;
-    const nodeLength = nodeData.children?.length ?? 0;
+    const children = (nodeData as any).filteredChildren ?? (nodeData as any).children;
+    const nodeLength = children?.length ?? 0;
     for (let j = 0; j < nodeLength; j++) {
       if (nodeData.hierarchyState === HierarchyState.expand) {
         childTotalLength += 1;
       }
-      const childNodeData = nodeData.children[j];
+      const childNodeData = children[j];
       const childIndexKey = Array.isArray(indexKey) ? indexKey.concat(j) : [indexKey, j];
       if (nodeData.hierarchyState === HierarchyState.expand) {
         this.currentIndexedData.splice(
@@ -1256,4 +1470,28 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return childTotalLength;
   }
+}
+
+/**
+ * 从数组array中获取index的值
+ * 如：给index=[0,0] 则返回 array[0].children[0]；如果给index=[2] 则返回array[2]； 如果给index=[3,0,4] 则返回array[3].children[0].children[4]
+ * @param array
+ * @param index
+ * @returns
+ */
+function getValueFromDeepArray(array: any, index: number[]) {
+  let result = array;
+  for (let i = 0; i < index.length; i++) {
+    const currentIdx = index[i];
+    if (result[currentIdx]) {
+      result = result[currentIdx];
+    } else {
+      return undefined;
+    }
+    const children = result.filteredChildren ?? result?.children;
+    if (children && i + 1 < index.length) {
+      result = children;
+    }
+  }
+  return result;
 }

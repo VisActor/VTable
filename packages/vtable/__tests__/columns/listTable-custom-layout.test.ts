@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
-import { ListTable } from '../../src/ListTable';
+import { ListTable } from '../../src';
 import * as VTable from '../../src/index';
 import { createDiv } from '../dom';
 global.__VERSION__ = 'none';
@@ -318,6 +318,6 @@ describe('listTable-custom-layout init test', () => {
     expect(rectBound.right).toBe(410);
     expect(rectBound.top).toBe(160);
     expect(rectBound.bottom).toBe(240);
+    listTable.release();
   });
-  listTable.release();
 });

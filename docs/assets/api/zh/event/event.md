@@ -25,6 +25,7 @@ TABLE_EVENT_TYPE = {
   MOUSEDOWN_CELL: 'mousedown_cell',
   MOUSEUP_CELL: 'mouseup_cell',
   SELECTED_CELL: 'selected_cell',
+  SELECTED_CLEAR: 'selected_clear',
   KEYDOWN: 'keydown',
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
@@ -32,12 +33,20 @@ TABLE_EVENT_TYPE = {
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
   CONTEXTMENU_CELL: 'contextmenu_cell',
+  MOUSEENTER_TABLE: 'mouseenter_table',
+  MOUSELEAVE_TABLE: 'mouseleave_table',
+  MOUSEDOWN_TABLE: 'mousedown_table',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
+  RESIZE_ROW: 'resize_row',
+  RESIZE_ROW_END: 'resize_row_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
+  AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
+  SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
+  SCROLL_VERTICAL_END: 'scroll_vertical_end',
   DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
   MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
   DRAG_SELECT_END: 'drag_select_end',
@@ -48,13 +57,17 @@ TABLE_EVENT_TYPE = {
   HIDE_MENU: 'hide_menu',
   ICON_CLICK: 'icon_click',
   // 透视表特有事件
-   DRILLMENU_CLICK: 'drillmenu_click',
+  DRILLMENU_CLICK: 'drillmenu_click',
   PIVOT_SORT_CLICK: 'pivot_sort_click'
 }
 ```
+
 ## INITIALIZED
+
 成功初始化完成后触发
-## AFTER_RENDER	
+
+## AFTER_RENDER
+
 每次渲染完成后触发
 
 ## onVChartEvent
@@ -100,23 +113,15 @@ TABLE_EVENT_TYPE = {
 
 {{ use: SelectedCellEvent() }}
 
+## SELECTED_CLEAR
+
+当鼠标点击到表格空白区域，所有选择单元格将被取消，会触发这个事件
+
 ## KEYDOWN
 
 键盘按下事件
 
 {{ use: KeydownEvent() }}
-
-## MOUSEENTER_TABLE
-
-鼠标进入表格事件
-
-事件回调函数的参数类型请参考 CLICK_CELL 事件中介绍的参数类型。
-
-## MOUSELEAVE_TABLE
-
-鼠标离开表格事件
-
-事件回调函数的参数类型请参考 CLICK_CELL 事件中介绍的参数类型。
 
 ## MOUSEMOVE_CELL
 
@@ -141,6 +146,18 @@ TABLE_EVENT_TYPE = {
 单元格右键事件
 
 {{ use: MousePointerMultiCellEvent() }}
+
+## MOUSEENTER_TABLE
+
+鼠标进入表格区域触发该事件
+
+## MOUSELEAVE_TABLE
+
+鼠标离开表格区域触发该事件
+
+## MOUSEDOWN_TABLE
+
+鼠标在表格区域按下触发该事件
 
 ## RESIZE_COLUMN
 
@@ -172,6 +189,36 @@ TABLE_EVENT_TYPE = {
 
 ```
 
+## RESIZE_ROW
+
+列宽调整事件。
+
+事件回调函数的参数类型:
+
+```
+
+  {
+    row: number;
+    rowHeight: number
+  }
+
+```
+
+## RESIZE_ROW_END
+
+列宽调整结束事件。
+
+事件回调函数的参数类型:
+
+```
+
+  {
+    row: number;
+    rowHeight: number
+  }
+
+```
+
 ## CHANGE_HEADER_POSITION
 
 拖拽表头移动位置的事件
@@ -196,9 +243,21 @@ TABLE_EVENT_TYPE = {
   {
     field: string;
     order: 'asc' | 'desc' | 'normal';
+     event: Event;
   }
 ```
 
+## AFTER_SORT
+
+执行完排序事件。
+事件回调函数的参数类型:
+
+```
+  {
+    field: string;
+    order: 'asc' | 'desc' | 'normal';
+    event: Event;
+  }
 ## FREEZE_CLICK
 
 点击固定列图标冻结或者解冻事件。
@@ -206,12 +265,14 @@ TABLE_EVENT_TYPE = {
 事件回调函数的参数类型:
 
 ```
+
 {
-  col: number;
-  row: number;
-  fields: string[];
-  colCount: number
+col: number;
+row: number;
+fields: string[];
+colCount: number
 }
+
 ```
 
 ## SCROLL
@@ -221,6 +282,7 @@ TABLE_EVENT_TYPE = {
 事件回调函数的参数类型:
 
 ```
+
     {
       scrollLeft: number;
       scrollTop: number;
@@ -229,6 +291,45 @@ TABLE_EVENT_TYPE = {
       viewWidth: number;
       viewHeight: number;
     }
+
+```
+
+## SCROLL_HORIZONTAL_END
+
+横向滚动到右侧结束事件
+
+事件回调函数的参数类型:
+
+```
+
+    {
+      scrollLeft: number;
+      scrollTop: number;
+      scrollWidth: number;
+      scrollHeight: number;
+      viewWidth: number;
+      viewHeight: number;
+    }
+
+```
+
+## SCROLL_VERTICAL_END
+
+竖向滚动条滚动到底部事件
+
+事件回调函数的参数类型:
+
+```
+
+    {
+      scrollLeft: number;
+      scrollTop: number;
+      scrollWidth: number;
+      scrollHeight: number;
+      viewWidth: number;
+      viewHeight: number;
+    }
+
 ```
 
 ## MOUSEOVER_CHART_SYMBOL
@@ -278,6 +379,7 @@ TABLE_EVENT_TYPE = {
 事件回调函数的参数类型:
 
 ```
+
     {
       x: number;
       y: number;
@@ -285,6 +387,7 @@ TABLE_EVENT_TYPE = {
       row: number;
       type: 'dropDown' | 'contextmenu' | 'custom';
     }
+
 ```
 
 ## HIDE_MENU
@@ -298,6 +401,7 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
+
     {
       name: string;
       col: number;
@@ -307,6 +411,7 @@ icon 图标点击事件。
       funcType?: IconFuncTypeEnum | string;
       icon: Icon;
     }
+
 ```
 
 ## PIVOT_SORT_CLICK
@@ -316,6 +421,7 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
+
     {
       col: number;
       row: number;
@@ -323,6 +429,7 @@ icon 图标点击事件。
       dimensionInfo: IDimensionInfo[];
       cellLocation: CellLocation;
     }
+
 ```
 
 其中：
@@ -336,7 +443,9 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+
+{ model: any; value: any; event: PointerEvent };
+
 ```
 
 ## LEGEND_ITEM_HOVER
@@ -346,7 +455,9 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+
+{ model: any; value: any; event: PointerEvent };
+
 ```
 
 ## LEGEND_ITEM_UNHOVER
@@ -356,7 +467,9 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+
+{ model: any; value: any; event: PointerEvent };
+
 ```
 
 ## LEGEND_CHANGE
@@ -366,8 +479,11 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+
+{ model: any; value: any; event: PointerEvent };
+
 ```
+
 ## MOUSEENTER_AXIS
 
 鼠标进入到坐标轴上事件。**坐标轴专有事件**
@@ -375,7 +491,9 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
- MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
+
+MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
+
 ```
 
 {{ use: MousePointerCellEvent() }}
@@ -388,34 +506,64 @@ icon 图标点击事件。
 同**MOUSEENTER_AXIS**
 
 ## COPY_DATA
+
 单元格内容复制事件。
 
 事件回调函数的参数类型:
 
 ```
- { cellRange: CellRange[]; copyData: string };
+
+{ cellRange: CellRange[]; copyData: string };
+
 ```
 
 ## CHANGE_CELL_VALUE
+
 更改单元格值的事件。
 
 事件回调函数的参数类型:
 
 ```
-{ col: number; row: number; rawValue: string | number; changedValue: string | number };
+
+{ col: number; row: number; rawValue: string | number;currentValue: string | number; changedValue: string | number };
+
 ```
 
 ## CHECKBOX_STATE_CHANGE
-更改checkbox复选框状态。**ListTable表格专有事件**
+
+更改 checkbox 复选框状态。**ListTable 表格专有事件**
 
 事件回调函数的参数类型:
 
 ```
-{ 
-  col: number; 
-  row: number; 
-  alue: string | number;
-  dataValue: string | number;
-  checked: boolean;
+
+{
+col: number;
+row: number;
+alue: string | number;
+dataValue: string | number;
+checked: boolean;
 };
+
+```
+
+## RADIO_STATE_CHANGE
+
+更改 radio 单选框状态。**ListTable 表格专有事件**
+
+事件回调函数的参数类型:
+
+```
+
+{
+col: number;
+row: number;
+alue: string | number;
+dataValue: string | number;
+radioIndexInCell: boolean | number;
+};
+
+```
+
+如果单元格中只有一个单选框，radioIndexInCell 为 boolean 类型，表示是否选中；如果单元格中有多个单选框，radioIndexInCell 为 number 类型，表示选中的单选框的索引。
 ```

@@ -59,36 +59,52 @@ export function dealSort(col: number, row: number, table: ListTableAPI, event: E
   if (sortEventReturns.includes(false)) {
     return;
   }
-
-  table.internalProps.sortState = tableState; // 目前不支持多级排序 所以这里 直接赋值为单个sortState TODO优化（如果支持多级排序的话）
-  table.stateManager.setSortState(tableState);
+  let isArraySortState = false;
+  let sortState: SortState | SortState[] = table.internalProps.sortState
+    ? Array.isArray(table.internalProps.sortState) && (isArraySortState = true)
+      ? (table.internalProps.sortState as SortState[])
+      : [table.internalProps.sortState as SortState]
+    : [];
+  if (Array.isArray(sortState)) {
+    const index = (sortState as SortState[]).findIndex(item => item.field === tableState.field);
+    if (index >= 0) {
+      sortState[index] = tableState;
+    } else {
+      sortState.push(tableState);
+    }
+  }
+  sortState = (sortState as SortState[]).filter(item => item.order !== 'normal');
+  sortState = table.internalProps.multipleSort && (isArraySortState = true) ? sortState : sortState.splice(-1);
+  sortState = isArraySortState && sortState.length ? (sortState as SortState[]) : (sortState[0] as SortState);
+  table.internalProps.sortState = sortState; // 目前不支持多级排序 所以这里 直接赋值为单个sortState TODO优化（如果支持多级排序的话）
+  table.stateManager.setSortState(sortState);
   if (headerC?.sort) {
-    executeSort(tableState, table, headerC);
+    executeSort(sortState, table, headerC);
   }
 
   // clear cell range cache
+  table.internalProps.useOneRowHeightFillAll = false;
   table.internalProps.layoutMap.clearCellRangeMap();
 
   table.scenegraph.sortCell();
   // 排序后，清除选中效果
+  const isHasSelected = !!table.stateManager.select.ranges?.length;
   table.stateManager.updateSelectPos(-1, -1);
+  table.stateManager.endSelectCells(true, isHasSelected);
 }
 
-function executeSort(newState: SortState, table: BaseTableAPI, headerDefine: HeaderDefine): void {
-  const hd = table.internalProps.layoutMap.headerObjects.find((col: HeaderData) => col && col.field === newState.field);
-
-  if (!hd) {
-    return;
-  }
-  const { field } = hd;
-  if (field === null) {
-    return;
-  }
-  if (typeof headerDefine.sort === 'function') {
-    table.dataSource.sort(field, newState.order || 'asc', headerDefine.sort);
-  } else {
-    table.dataSource.sort(field, newState.order || 'asc', defaultOrderFn);
-  }
+function executeSort(newState: SortState | SortState[], table: BaseTableAPI, headerDefine: HeaderDefine): void {
+  newState = Array.isArray(newState) || !newState ? newState : [newState];
+  table.dataSource.sort(
+    ((newState || []) as Array<any>).map(item => {
+      const hd = table.internalProps.layoutMap.headerObjects.find((col: HeaderData) => col && col.field === item.field);
+      return {
+        field: item.field,
+        order: item.order || 'asc',
+        orderFn: typeof hd?.define?.sort === 'function' ? hd?.define?.sort : defaultOrderFn
+      };
+    })
+  );
 }
 
 function isTarget(col: number, row: number, range1Col: number, range1Row: number, table: BaseTableAPI): boolean {

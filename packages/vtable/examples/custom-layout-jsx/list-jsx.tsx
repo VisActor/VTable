@@ -17,7 +17,7 @@ export function createTable() {
       {
         field: 'bloggerName',
         caption: '主播昵称',
-        width: '260',
+        width: 'auto',
         editor: '',
         customLayout: args => {
           const { table, row, col, rect } = args;
@@ -31,7 +31,7 @@ export function createTable() {
                 width,
                 height,
                 display: 'flex',
-                flexWrap: 'wrap',
+                flexWrap: 'no-wrap',
                 justifyContent: 'flex-start',
                 alignContent: 'center'
               }}
@@ -69,7 +69,8 @@ export function createTable() {
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-around',
-                  alignItems: 'center'
+                  alignItems: 'flex-start',
+                  flexWrap: 'no-wrap'
                 }}
               >
                 <VGroup
@@ -80,7 +81,7 @@ export function createTable() {
                     width: width - 60,
                     height: height / 2,
                     display: 'flex',
-                    flexWrap: 'wrap',
+                    flexWrap: 'no-wrap',
                     justifyContent: 'flex-start',
                     alignItems: 'center'
                   }}
@@ -115,7 +116,8 @@ export function createTable() {
                       fontFamily: 'sans-serif',
                       fill: '#6f7070',
                       textAlign: 'left',
-                      textBaseline: 'top'
+                      textBaseline: 'top',
+                      boundsPadding: [0, 10, 0, 0]
                     }}
                   ></VText>
                 </VGroup>

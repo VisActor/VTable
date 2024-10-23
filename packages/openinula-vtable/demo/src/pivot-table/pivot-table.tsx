@@ -35,7 +35,6 @@ function App() {
         textStick: true
       }
     },
-    // enableDataAnalysis: true,
     columns: [
       {
         dimensionKey: '地区',

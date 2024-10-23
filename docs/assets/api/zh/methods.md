@@ -34,7 +34,7 @@
 tableInstance.updateTheme(newTheme)
 ```
 
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // 调用后不会自动重绘
@@ -44,6 +44,8 @@ tableInstance.theme = newTheme;
 ## updateColumns(Function)
 
 更新表格的 columns 字段配置信息，调用后会自动重绘。
+
+**ListTable 专有**
 
 ```ts
   /**
@@ -59,7 +61,7 @@ tableInstance.theme = newTheme;
 tableInstance.updateColumns(newColumns)
 ```
 
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
 
 ```
 // 调用后不会自动重绘
@@ -89,7 +91,7 @@ export interface IPagination {
   totalCount?: number;
   /** 每页显示数据条数  */
   perPageCount: number;
-  /** 每页显示条数 */
+  /** 当前页码 */
   currentPage?: number;
 }
 ```
@@ -155,6 +157,8 @@ setRecords(records: Array<any>)
 
 ## setRecordChildren(Function)
 
+**ListTable 专有**
+
 基本表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
 
 ```
@@ -164,6 +168,23 @@ setRecords(records: Array<any>)
    * @param row  需要设置子节点的单元格地址
    */
   setRecordChildren(records: any[], col: number, row: number)
+```
+
+## setTreeNodeChildren(Function)
+
+**PivotTable 专有**
+
+透视表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用。节点数据懒加载可以参考 demo：https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load
+
+```
+  /**
+   * 树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
+   * @param children 设置到该单元格的子节点
+   * @param records 该节点展开后新增数据
+   * @param col 需要设置子节点的单元格地址
+   * @param row  需要设置子节点的单元格地址
+   */
+  setTreeNodeChildren(children: IHeaderTreeDefine[], records: any[], col: number, row: number)
 ```
 
 ## getDrawRange(Function)
@@ -193,12 +214,15 @@ setRecords(records: Array<any>)
 选中某个单元格。如果传空，则清除当前选中高亮状态。
 
 ```
-  /**
+   /**
    * 选中单元格  和鼠标选中单元格效果一致
    * @param col
    * @param row
+   * @param isShift 是否按住 shift 键
+   * @param isCtrl 是否按住 ctrl 键
+   * @param makeSelectCellVisible 是否让选中的单元格可见
    */
-  selectCell(col: number, row: number): void
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean): void
 ```
 
 ## selectCells(Function)
@@ -231,15 +255,19 @@ setRecords(records: Array<any>)
 
 清除所有单元格的选中状态。
 
+## getCopyValue(Function)
+
+获取选中区域的内容 作为复制内容。返回值是个字符串，以`\t`分割单元格，以`\n`分割行。
+
 ## getCellValue(Function)
 
-获取单元格展示值
+获取单元格展示值，如果在 customMergeCell 函数中使用，需要传入 skipCustomMerge 参数，否则会导致报错。
 
 ```
   /**
    * 获取单元格展示值
    */
-  getCellValue(col: number, row: number): FieldData;
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData;
 ```
 
 ## getCellOriginValue(Function)
@@ -286,7 +314,7 @@ setRecords(records: Array<any>)
    * 根据行列号获取整条数据记录
    * @param  {number} col col index.
    * @param  {number} row row index.
-   * @return {object} record.
+   * @return {object} record in ListTable. return Array<any> in PivotTable.
    */
   getRecordByCell(col: number, row: number)
 ```
@@ -313,7 +341,7 @@ setRecords(records: Array<any>)
 
 根据数据源的 index 获取显示到表格中的 index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -331,21 +359,21 @@ setRecords(records: Array<any>)
 
 如果是树形模式的表格，将返回数组，如[1,2] 数据源中第 2 条数据中 children 中的第 3 条。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /** 获取当前单元格的数据是数据源中的第几条。
    * 如果是树形模式的表格，将返回数组，如[1,2] 数据源中第2条数据中children中的第3条
    * 注：ListTable特有接口 */
   getRecordIndexByCell(col: number, row: number): number | number[]
-** ListTable 专有 **
+**ListTable 专有**
 ```
 
 ## getTableIndexByField(Function)
 
 根据数据源的 field 获取显示到表格中的 index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -359,7 +387,7 @@ setRecords(records: Array<any>)
 
 获取当前单元格数据在 body 部分的索引，即通过行列号去除表头层级数的索引（与转置相关，非转置获取的是 body 行号，转置表获取的是 body 列号）。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /** 获取当前单元格在body部分的展示索引，即（ row / col ）- headerLevelCount。注：ListTable特有接口 */
@@ -395,7 +423,7 @@ setRecords(records: Array<any>)
    * 根据行列号获取源数据
    * @param  {number} col col index.
    * @param  {number} row row index.
-   * @return {object} record or record array
+   * @return {object} record or record array.  ListTable return one record, PivotTable return an array of records.
    */
   getCellOriginRecord(col: number, row: number)
 ```
@@ -559,22 +587,6 @@ setRecords(records: Array<any>)
   )=> CellAddress
 ```
 
-## getCheckboxState(Function)
-
-获取某个字段下 checkbox 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
-
-```
-getCheckboxState(field?: string | number): Array
-```
-
-## getCellCheckboxState(Function)
-
-获取某个单元格 checkbox 的状态
-
-```
-getCellCheckboxState(col: number, row: number): Array
-```
-
 ## getScrollTop(Function)
 
 获取当前竖向滚动位置
@@ -639,7 +651,7 @@ enum HierarchyState {
 
 ## getLayoutRowTree(Function)
 
-** PivotTable 专有 **
+**PivotTable 专有**
 
 获取表格行头树形结构
 
@@ -653,7 +665,7 @@ enum HierarchyState {
 
 ## getLayoutRowTreeCount(Function)
 
-** PivotTable 专有 **
+**PivotTable 专有**
 
 获取表格行头树形结构的占位的总节点数。
 
@@ -665,6 +677,34 @@ enum HierarchyState {
    * @returns
    */
   getLayoutRowTreeCount() : number
+```
+
+## getLayoutColumnTree(Function)
+
+**PivotTable 专有**
+
+获取表格列头树形结构
+
+```
+  /**
+   * 获取表格列头树状结构
+   * @returns
+   */
+  getLayoutColumnTree() : LayouTreeNode[]
+```
+
+## getLayoutColumnTreeCount(Function)
+
+**PivotTable 专有**
+
+获取表格列头树形结构的占位的总节点数。
+
+```
+  /**
+   * 获取表格列头树形结构的占位的总节点数。
+   * @returns
+   */
+  getLayoutColumnTreeCount() : number
 ```
 
 ## updateSortState(Function)
@@ -694,7 +734,7 @@ enum HierarchyState {
 
 ## updatePivotSortState(Function)
 
-更新排序状态，PivotTable 专有
+更新排序状态，vtable本身不执行排序逻辑。PivotTable 专有。
 
 ```
   /**
@@ -706,6 +746,7 @@ enum HierarchyState {
       order: SortOrder;
     }[])
 ```
+更新后不会主动重绘表格，需要配置接口renderWithRecreateCells刷新
 
 ## setDropDownMenuHighlight(Function)
 
@@ -770,7 +811,12 @@ export type TooltipOptions = {
 updateFilterRules(filterRules: FilterRules) => void
 ```
 
-use case: 点击图例项后 更新过滤规则 来更新图表
+use case: 对于透视图的场景上，点击图例项后 更新过滤规则 来更新图表
+
+## getFilteredRecords(Function)
+获取过滤后的数据
+
+**PivotTable 专有**
 
 ## setLegendSelected(Function)
 
@@ -818,7 +864,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * 导出某个单元格图片
    * @returns base64图片
    */
-  exportCellImg(col: number, row: number): string
+  exportCellImg(col: number, row: number, options?: { disableBackground?: boolean; disableBorder?: boolean }): string
 ```
 
 ## exportCellRangeImg(Function)
@@ -839,7 +885,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 ```
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
-  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
 ```
 
 ## changeCellValues(Function)
@@ -852,8 +898,9 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * @param col 粘贴数据的起始列号
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
+   * @param workOnEditableCell 是否仅更改可编辑单元格
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][])
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false)
 ```
 
 ## getEditor(Function)
@@ -867,11 +914,13 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 ## startEditCell(Function)
 
-开启单元格编辑
+开启单元格编辑。
+
+如果想要改变显示到编辑框中的值 可以配置上 value 来设置改变
 
 ```
   /** 开启单元格编辑 */
-  startEditCell: (col?: number, row?: number) => void;
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
 ```
 
 ## completeEditCell(Function)
@@ -895,7 +944,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 添加数据，支持多条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -912,7 +961,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 添加数据，单条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -929,7 +978,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 删除数据 支持多条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -943,7 +992,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 修改数据 支持多条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -985,6 +1034,27 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 获取聚合汇总的值
 
+```
+  /**
+   * 根据字段获取聚合值
+   * @param field 字段名
+   * 返回数组，包括列号和每一列的聚合值数组
+   */
+  getAggregateValuesByField(field: string | number)
+```
+
+**ListTable 专有**
+
+## isAggregation(Function)
+
+判断是否是聚合指单元格
+
+```
+  isAggregation(col: number, row: number): boolean
+```
+
+**ListTable 专有**
+
 ## registerCustomCellStyle(Function)
 
 注册自定义样式
@@ -998,15 +1068,229 @@ registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption 
 - customStyleId: 自定义样式的唯一 id
 - customStyle: 自定义单元格样式，与`column`中的`style`配置相同，最终呈现效果是单元格原有样式与自定义样式融合
 
-## registerCustomCellStyleArrangement(Function)
+## arrangeCustomCellStyle(Function)
 
 分配自定义样式
 
 ```
-registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
 ```
 
 - cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
-  - 单个单元格：`{ row: number, column: number }`
-  - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+  - 单个单元格：`{ row: number, col: number }`
+  - 单元格区域：`{ range: { start: { row: number, col: number }, end: { row: number, col: number} } }`
 - customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同
+
+## getCheckboxState(Function)
+
+获取某个字段下 checkbox 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
+```
+getCheckboxState(field?: string | number): Array
+```
+
+## getCellCheckboxState(Function)
+
+获取某个单元格 checkbox 的状态
+
+```
+getCellCheckboxState(col: number, row: number): Array
+```
+
+## getRadioState(Function)
+
+获取某个字段下 radio 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
+```
+getRadioState(field?: string | number): number | Record<number, boolean | number>
+```
+
+## getCellRadioState(Function)
+
+获取某个单元格 radio 的状态，如果一个单元格中包含多个单选框，则返回值为 number，指该单元格内选中 radio 的索引，否则返回值为 boolean
+
+```
+getCellRadioState(col: number, row: number): boolean | number
+```
+
+## setCellCheckboxState(Function)
+
+设置单元格的 checkbox 状态
+
+```
+setCellCheckboxState(col: number, row: number, checked: boolean) => void
+```
+
+- col: 列号
+- row: 行号
+- checked: 是否选中
+
+## setCellRadioState(Function)
+
+将单元格的 radio 状态设置为选中状态
+
+```
+setCellRadioState(col: number, row: number, index?: number) => void
+```
+
+- col: 列号
+- row: 行号
+- index: 更新的目标 radio 在单元格中的索引
+
+## getAllRowsHeight(Function)
+
+获取表格所有行的高度
+
+```
+getAllRowsHeight: () => number;
+```
+
+## getAllColsWidth(Function)
+
+获取表格所有列的宽度
+
+```
+getAllColsWidth: () => number;
+```
+
+## setSortedIndexMap(Function)
+
+设置预排序索引，用在大数据量排序的场景下，提升初次排序性能
+
+```
+setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+```
+
+## getHeaderField(Function)
+
+**ListTable**中表示获取对应 header 的 field。
+**PivotTable**中表示获取对应 indicatorKey。
+
+```
+  /**获取对应header的field  */
+  getHeaderField: (col: number, row: number)
+```
+
+## getColWidth(Function)
+
+获取列宽
+
+```
+  /**获取列宽 */
+  getColWidth: (col: number)
+```
+
+## getRowHeight(Function)
+
+获取行高
+
+```
+  /**获取行高 */
+  getRowHeight: (row: number)
+```
+
+## setColWidth(Function)
+
+设置列宽
+
+```
+  /**设置列宽 */
+  setColWidth: (col: number, width: number)
+```
+
+## setRowHeight(Function)
+
+设置行高
+
+```
+  /**设置行高 */
+  setRowHeight: (row: number, height: number)
+```
+
+## cellIsInVisualView(Function)
+
+判断单元格是否在单元格可见区域，如果单元格完全都在可见区域才会返回 true，如果有部分或者完全都在可见区域外就返回 false
+
+```
+  cellIsInVisualView(col: number, row: number)
+```
+
+## getCellAtRelativePosition(Function)
+
+获取相对于表格左上角的坐标对应的单元格位置。
+
+有滚动的情况下，获取的单元格是滚动后的，如当前显示的行是 100-120 行，获取相对于表格左上角（10,100）位置的单元格位置是（第一列，第 103 行），假设行高 40px。
+
+```
+  /**
+   * 获取屏幕坐标对应的单元格信息，考虑滚动
+   * @param this
+   * @param relativeX 左边x值，相对于容器左上角，已考虑格滚动情况
+   * @param relativeY 左边y值，相对于容器左上角，已考虑格滚动情况
+   * @returns
+   */
+  getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound
+```
+
+## showMoverLine(Function)
+
+显示移动列或移动行的高亮标记线
+
+```
+  /**
+   * 显示移动列或移动行的高亮线  如果(col，row)单元格是列头 则显示高亮列线；  如果(col，row)单元格是行头 则显示高亮行线
+   * @param col 在表头哪一列后显示高亮线
+   * @param row 在表头哪一行后显示高亮线
+   */
+  showMoverLine(col: number, row: number)
+```
+
+## hideMoverLine(Function)
+
+隐藏掉移动列或移动行的高亮线
+
+```
+  /**
+   * 隐藏掉移动列或移动行的高亮线
+   * @param col
+   * @param row
+   */
+  hideMoverLine(col: number, row: number)
+```
+
+## disableScroll(Function)
+
+关闭表格的滚动，业务场景中如果有不期望表格内容滚动的话，可以调用该方法。
+
+```
+  /** 关闭表格的滚动 */
+  disableScroll() {
+    this.eventManager.disableScroll();
+  }
+```
+
+## enableScroll(Function)
+
+开启表格的滚动
+
+```
+  /** 开启表格的滚动 */
+  enableScroll() {
+    this.eventManager.enableScroll();
+  }
+```
+
+## setCanvasSize(Function)
+
+直接设置 canvas 的宽高 不根据容器宽高来决定表格的尺寸
+
+```
+  /** 直接设置canvas的宽高 不根据容器宽高来决定表格的尺寸 */
+  setCanvasSize: (width: number, height: number) => void;
+```

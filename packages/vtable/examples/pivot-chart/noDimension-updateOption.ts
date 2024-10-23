@@ -86,7 +86,6 @@ export function createTable() {
 
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID)!, option);
   tableInstance.updateOption({
-    enableDataAnalysis: true,
     indicatorsAsCol: false,
     records: [
       {

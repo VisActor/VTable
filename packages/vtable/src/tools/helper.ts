@@ -198,6 +198,20 @@ export function isPromise(data: any | Promise<any> | undefined): data is Promise
   return Boolean(data && typeof (data as Promise<any>).then === 'function');
 }
 
+export function getPromiseValue<T = any>(value: T | Promise<T>, callback: (value: T) => void) {
+  if (isPromise(value)) {
+    value
+      .then(result => {
+        callback(result);
+      })
+      .catch((err: Error) => {
+        console.error('Error:', err);
+      });
+  } else {
+    callback(value);
+  }
+}
+
 function isTouchEvent(e: TouchEvent | MouseEvent): e is TouchEvent {
   return !!(e as TouchEvent).changedTouches;
 }
@@ -222,7 +236,7 @@ function getIgnoreCase(obj: any, name: string): any {
   return undefined;
 }
 
-function toBoxArray<T>(obj: T | T[]): [T, T, T, T] {
+export function toBoxArray<T>(obj: T | T[]): [T, T, T, T] {
   if (!Array.isArray(obj)) {
     return [obj /*top*/, obj /*right*/, obj /*bottom*/, obj /*left*/];
   }
@@ -248,11 +262,16 @@ export function cellInRange(range: CellRange, col: number, row: number): boolean
   );
 }
 export function cellInRanges(ranges: CellRange[], col: number, row: number): boolean {
+  // cell range may in wrong order
   for (let i = 0; i < ranges.length; i++) {
     const range = ranges[i];
+    const startCol = Math.min(range.start.col, range.end.col);
+    const endCol = Math.max(range.start.col, range.end.col);
+    const startRow = Math.min(range.start.row, range.end.row);
+    const endRow = Math.max(range.start.row, range.end.row);
     if (
-      (range.start.col <= col && col <= range.end.col && range.start.row <= row && row <= range.end.row) ||
-      (range.end.col <= col && col <= range.start.col && range.end.row <= row && row <= range.start.row)
+      (startCol <= col && col <= endCol && startRow <= row && row <= endRow) ||
+      (endCol <= col && col <= startCol && endRow <= row && row <= startRow)
     ) {
       return true;
     }

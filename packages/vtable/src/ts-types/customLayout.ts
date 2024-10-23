@@ -15,4 +15,4 @@ export type ICustomLayoutObj = {
 
 export type ICustomLayoutFuc = (args: CustomRenderFunctionArg) => ICustomLayoutObj;
 
-export type ICustomLayout = ICustomLayoutFuc;
+export type ICustomLayout = ICustomLayoutFuc | 'react-custom-layout';

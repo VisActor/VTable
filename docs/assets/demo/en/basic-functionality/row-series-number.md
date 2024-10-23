@@ -2,9 +2,9 @@
 category: examples
 group: Basic Features
 title: row series number
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/row-series-number.gif
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/row-series-number.png
 link: '../guide/table_type/List_table/list_table_define_and_generate'
-option: ListTable-columns-text#cellType
+option: ListTable#rowSeriesNumber.dragOrder
 ---
 
 # Row Series Number
@@ -86,8 +86,6 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       widthMode: 'standard',
       rowSeriesNumber: {
         title: '序号',
-        field: 'name',
-        dragOrder: true,
         width: 'auto',
         headerStyle: {
           color: 'black',

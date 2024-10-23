@@ -1,20 +1,22 @@
 {{ target: common-theme }}
 
-表格主题，其中内置主题名称有DEFAULT, ARCO, BRIGHT, DARK, SIMPLIFY，具体配置方式可用内置类型或者直接使用字符串名称配置：
+表格主题，其中内置主题名称有 DEFAULT, ARCO, BRIGHT, DARK, SIMPLIFY，具体配置方式可用内置类型或者直接使用字符串名称配置：
+
 - `VTable.themes.DEFAULT`
 - `VTable.themes.ARCO;`
 - `VTable.themes.BRIGHT`
 - `VTable.themes.DARK`
 - `VTable.themes.SIMPLIFY`
-  
+
 or
+
 - `'default'`
 - `'arco'`
 - `'bright'`
 - `'dark'`
 - `'simplify'`
 
-同时可以基于内置主题进行扩展，例如想基于ARCO主题改变字体:
+同时可以基于内置主题进行扩展，例如想基于 ARCO 主题改变字体:
 
 ```
 VTable.themes.ARCO.extend({
@@ -52,11 +54,14 @@ VTable.themes.ARCO.extend({
 ```
 
 #${prefix} underlayBackgroundColor(string)
-表格绘制范围外的canvas上填充的颜色
+表格绘制范围外的 canvas 上填充的颜色
+
+#${prefix} cellInnerBorder(boolean)
+单元格是否绘制内边框，如果为 false，边界单元格靠近边界的边框会被隐藏
 
 #${prefix} bodyStyle(Object)
 
-body单元格的样式配置
+body 单元格的样式配置
 
 {{ use: common-theme-style(
   prefix = '#' + ${prefix},
@@ -86,9 +91,17 @@ body单元格的样式配置
   prefix = '#' + ${prefix},
 ) }}
 
+#${prefix} groupTitleStyle(Object)
+
+分组展示时，分组标题的样式配置
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
 #${prefix} defaultStyle(Object)
 
-公共样式，如果headerStyle，rowHeaderStyle, defaultStyle都没有配置的项，则使用这个里面的配置项
+公共样式，如果 headerStyle，rowHeaderStyle, defaultStyle 都没有配置的项，则使用这个里面的配置项
 
 {{ use: common-theme-style(
   prefix = '#' + ${prefix},
@@ -122,6 +135,10 @@ body单元格的样式配置
   prefix = ${prefix}
   ) }}
 
+{{ use: common-radio-style (
+  prefix = ${prefix}
+  ) }}
+
 #${prefix} selectionStyle(Object)
 
 选择框样式
@@ -135,4 +152,55 @@ body单元格的样式配置
 ##${prefix} cellBorderLineWidth(number)
 选择框边框粗细
 
-#${prefix} 示例：[TODO](xxxx)
+##${prefix} inlineRowBgColor(ColorPropertyDefine)
+选中时整行高亮颜色
+{{ use: common-color(
+  prefix = ${prefix}
+  ) }}
+
+##${prefix} inlineColumnBgColor(ColorPropertyDefine)
+选中时整列高亮颜色
+{{ use: common-color(
+  prefix = ${prefix}
+  ) }}
+
+##${prefix} selectionFillMode(boolean)
+选中区域的填充色规则
+
+- `overlay`: 选中区域的填充色会覆盖单元格的背景色（常用带透明度的颜色值）
+- `replace`: 选中区域的填充色会替换单元格的背景色
+  {{ use: common-color(
+    prefix = ${prefix}
+    ) }}
+
+##${prefix} functionalIconsStyle(Object)
+VTable 内部功能性按钮图标颜色及尺寸配置。如果图标不明显可以根据实际情况调整，如果尺寸不合适，可以适当调整尺寸
+
+```
+ /** 内部功能性按钮图标颜色及尺寸配置 */
+  functionalIconsStyle?: {
+    sort_color?: string;
+    sort_color_opacity?: string;
+    sort_color_2?: string;
+    sort_color_opacity_2?: string;
+    sort_size?: number;
+    sort_size_2?: number;
+    frozen_color?: string;
+    frozen_color_opacity?: string;
+    frozen_color_2?: string;
+    frozen_color_opacity_2?: string;
+    frozen_size?: number;
+    frozen_size_2?: number;
+    collapse_color?: string;
+    collapse_color_opacity?: string;
+    collapse_size?: number;
+    collapse_size_2?: number;
+    expand_color?: string;
+    expand_color_opacity?: string;
+    expand_size?: number;
+    expand_size_2?: number;
+    dragReorder_color?: string;
+    dragReorder_color_opacity?: string;
+    dragReorder_size?: number;
+  };
+```

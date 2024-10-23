@@ -2,18 +2,19 @@
 
 ${prefix} dimensionKey(string)
 
-**Required**  Unique identifier of the dimension, corresponding to the field name of the dataset
+**Required** Unique identifier of the dimension, corresponding to the field name of the dataset
 
 ${prefix} title(string)
 
-**Required**  Dimension name, the angle header can be configured to display the dimension name
+**Required** Dimension name, the angle header can be configured to display the dimension name
 
 ${prefix} headerFormat(FieldFormat)
 
 Format of the dimension value
+
 ```
 type FieldFormat = (title: number|string, col:number, row:number, table:PivotTable) => any;
-  ```
+```
 
 ${prefix} width(number|string)
 
@@ -33,9 +34,11 @@ This property takes effect when the dimension serves as a row header and represe
 ${prefix} headerStyle(IStyleOption|Function)
 
 Header cell style, type declaration:
+
 ```
 headerStyle?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
 ```
+
 {{ use: common-StylePropertyFunctionArg() }}
 
 IStyleOption type structure is as follows:
@@ -57,7 +60,7 @@ Header cell icon configuration
     | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
 ```
 
-ColumnIconOption specific configuration: TODO
+ColumnIconOption specific configuration: https://visactor.io/vtable/option/ListTable-columns-text#icon
 
 ${prefix} description(string|Function)
 Description information for header hover, displayed as a tooltip
@@ -81,6 +84,7 @@ Custom layout element definition for header cells, this customization is suitabl
 ```
 (args: CustomRenderFunctionArg) => ICustomLayoutObj;
 ```
+
 {{ use: common-CustomRenderFunctionArg() }}
 
 {{ use: custom-layout(
@@ -93,6 +97,20 @@ Dropdown menu item configuration. Dropdown menu items can be top-level menu item
 ${prefix} cornerDropDownMenu(Array)
 Angle header cell display drop-down button and drop-down menu item configuration. Dropdown menu items can be top-level menu items or second-level menu items, and only one configuration is required. The specific type is MenuListItem[].
 
+${prefix} cornerHeaderIcon(string|Object|Array|Function)
+
+Pivot table corner cell icon configuration
+
+```
+cornerHeaderIcon?:
+| string
+| ColumnIconOption
+| (string | ColumnIconOption)[]
+| ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+```
+
+For the specific configuration of ColumnIconOption, please refer to: https://visactor.io/vtable/option/ListTable-columns-text#icon
+
 ${prefix} dragHeader(boolean)
 Whether the header can be dragged
 
@@ -103,4 +121,17 @@ ${prefix} drillUp(boolean)
 Display drill-up icon, clicking it will trigger a corresponding event
 
 ${prefix} showSort(boolean)
-Whether to display the sort icon, no data sorting logic
+Whether the dimension value cell displays the sort icon. Clicking it does not have data sorting logic.
+
+${prefix} sort(boolean)
+Whether the corresponding dimension header cell displays the sort icon.
+
+Sorting rules:
+
+If the sorting rules for this dimension are configured in dataConfig.sortRules, the data is sorted according to the rules in dataConfig.sortRules.
+
+If the sorting rules for the dimension are not configured in dataConfig.sortRules, the default is to use the natural sorting of the dimension value string.
+
+${prefix} showSortInCorner(boolean)
+
+Whether to display sorting in the dimension name cell in the corner header. Clicking it does not have data sorting logic

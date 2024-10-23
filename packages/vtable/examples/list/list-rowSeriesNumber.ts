@@ -189,12 +189,15 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
-    heightMode: 'autoHeight',
-    autoWrapText: true,
+    // heightMode: 'autoHeight',
+    autoWrapText: false,
+    defaultHeaderRowHeight: 50,
+    defaultRowHeight: 28,
     frozenColCount: 1,
     keyboardOptions: {
       copySelected: true
     },
+    theme: { headerStyle: { bgColor: 'yellow' } },
     dragHeaderMode: 'all',
     // sortState: {
     //   field: 'email1',
@@ -220,11 +223,12 @@ export function createTable() {
       style: {
         color: 'red'
       }
-    }
+    },
+    bottomFrozenRowCount: 3
   };
   const tableInstance = new VTable.ListTable(option);
-  tableInstance.on('initialized', args => {
-    console.log('initialized');
+  tableInstance.on('change_header_position', args => {
+    console.log('change_header_position');
   });
   window.tableInstance = tableInstance;
   bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });

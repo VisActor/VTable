@@ -7,32 +7,33 @@ order: 1-1
 link: '../guide/Developer_Ecology/react'
 ---
 
-# 使用option+record
+# 使用 option+record
 
-可以将records从option中分离出来，单独作为一个prop传入表格组件。
+可以将 records 从 option 中分离出来，单独作为一个 prop 传入表格组件。
 
 ## 代码演示
+
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
-      caption: 'name',
+      title: 'name'
     },
     {
       field: '1',
-      caption: 'age',
+      title: 'age'
     },
     {
       field: '2',
-      caption: 'gender',
+      title: 'gender'
     },
     {
       field: '3',
-      caption: 'hobby',
-    },
-  ],
+      title: 'hobby'
+    }
+  ]
 };
 const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
 

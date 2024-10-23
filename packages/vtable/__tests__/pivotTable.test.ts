@@ -2,7 +2,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestPivotTable
 import records from './data/marketsales.json';
-import { PivotTable } from '../src/PivotTable';
+import { PivotTable } from '../src';
 import { createDiv } from './dom';
 global.__VERSION__ = 'none';
 describe('pivotTable init test', () => {
@@ -697,29 +697,31 @@ describe('pivotTable init test', () => {
     };
     pivotTable.updateOption(option1);
     expect(pivotTable.getCellValue(6, 6)).toEqual('0元');
-    expect(pivotTable.getCellOriginValue(6, 4)).toEqual('550.2');
-    expect(pivotTable.getCellOriginRecord(6, 4)).toEqual({
-      '行 ID': '5',
-      '订单 ID': 'CN-2018-2975416',
-      订单日期: '2018/5/31',
-      发货日期: '2018/6/2',
-      邮寄方式: '二级',
-      '客户 ID': '万兰-15730',
-      客户名称: '万兰',
-      细分: '消费者',
-      城市: '汕头',
-      '省/自治区': '广东',
-      '国家/地区': '中国',
-      地区: '中南',
-      '产品 ID': '办公用-器具-10003452',
-      类别: '办公用品',
-      子类别: '器具',
-      产品名称: 'KitchenAid 搅拌机, 黑色',
-      销售额: '1375.92',
-      数量: '3',
-      折扣: '0',
-      利润: '550.2'
-    });
+    expect(pivotTable.getCellOriginValue(6, 4)).toEqual(550.2);
+    expect(pivotTable.getCellOriginRecord(6, 4)).toEqual([
+      {
+        '行 ID': '5',
+        '订单 ID': 'CN-2018-2975416',
+        订单日期: '2018/5/31',
+        发货日期: '2018/6/2',
+        邮寄方式: '二级',
+        '客户 ID': '万兰-15730',
+        客户名称: '万兰',
+        细分: '消费者',
+        城市: '汕头',
+        '省/自治区': '广东',
+        '国家/地区': '中国',
+        地区: '中南',
+        '产品 ID': '办公用-器具-10003452',
+        类别: '办公用品',
+        子类别: '器具',
+        产品名称: 'KitchenAid 搅拌机, 黑色',
+        销售额: '1375.92',
+        数量: '3',
+        折扣: '0',
+        利润: '550.2'
+      }
+    ]);
+    pivotTable.release();
   });
-  pivotTable.release();
 });

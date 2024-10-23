@@ -9,7 +9,6 @@ const padding = [10, 20, 10, 20];
 
 export function createTable() {
   const option = {
-    enableDataAnalysis: false,
     autoRowHeight: true,
     widthMode: 'standard',
     heightMode: 'autoHeight',

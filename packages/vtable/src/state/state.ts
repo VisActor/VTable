@@ -6,7 +6,6 @@ import type {
   CellAddress,
   CellPosition,
   CellRange,
-  CheckboxColumnDefine,
   DropDownMenuHighlightInfo,
   IDimensionInfo,
   ListTableAPI,
@@ -15,7 +14,7 @@ import type {
   SortOrder,
   SortState
 } from '../ts-types';
-import { HighlightScope, InteractionState } from '../ts-types';
+import { HighlightScope, InteractionState, SortType } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import { checkMultiCellInSelect } from './common/check-in-select';
 import { updateHoverPosition } from './hover/update-position';
@@ -31,12 +30,26 @@ import { Bounds, isObject, isString, isValid } from '@visactor/vutils';
 import { updateDrill } from './drill';
 import { clearChartHover, updateChartHover } from './spark-line';
 import { endMoveCol, startMoveCol, updateMoveCol } from './cell-move';
-import type { FederatedEvent } from '@src/vrender';
+import type { FederatedWheelEvent } from '@src/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
+import { changeRadioOrder, setRadioState, syncRadioState } from './radio/radio';
+import {
+  changeCheckboxOrder,
+  initCheckedState,
+  initLeftRecordsCheckState,
+  setCheckedState,
+  setHeaderCheckedState,
+  syncCheckedState,
+  updateHeaderCheckedState
+} from './checkbox/checkbox';
+import { updateResizeRow } from './resize/update-resize-row';
+import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
+import type { PivotTable } from '../PivotTable';
+import { traverseObject } from '../tools/util';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -49,9 +62,10 @@ export class StateManager {
    * Scrolling 滚动中
    */
   interactionState: InteractionState;
+  interactionStateBeforeScroll?: InteractionState;
   // select记录两个位置，第二个位置只在range模式生效
   select: {
-    ranges: CellRange[];
+    ranges: (CellRange & { skipBodyMerge?: boolean })[];
     highlightScope: HighlightScope;
     cellPos: CellPosition;
     // cellPosStart: CellPosition;
@@ -61,6 +75,17 @@ export class StateManager {
     /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
     headerSelectMode?: 'inline' | 'cell';
     selecting: boolean;
+  };
+  fillHandle: {
+    direction?: 'top' | 'bottom' | 'left' | 'right';
+    directionRow?: boolean;
+    isFilling: boolean;
+    startX: number;
+    startY: number;
+    beforeFillMinCol?: number;
+    beforeFillMinRow?: number;
+    beforeFillMaxCol?: number;
+    beforeFillMaxRow?: number;
   };
   hover: {
     highlightScope: HighlightScope; // hover模式
@@ -86,6 +111,13 @@ export class StateManager {
     resizing: boolean;
     isRightFrozen?: boolean;
   };
+  rowResize: {
+    row: number;
+    /** x坐标是相对table内坐标 */
+    y: number;
+    resizing: boolean;
+    isBottomFrozen?: boolean;
+  };
   columnMove: {
     colSource: number;
     colTarget: number;
@@ -104,14 +136,14 @@ export class StateManager {
     highlightIndex: number;
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
   };
-  sort: {
+  sort: Array<{
     col: number;
     row: number;
     field?: string;
     // fieldKey?: string;
     order: SortOrder;
     icon?: Icon;
-  };
+  }>;
   frozen: {
     col: number;
     // row: number;
@@ -155,9 +187,11 @@ export class StateManager {
   _checkboxCellTypeFields: (string | number)[] = [];
 
   _headerCheckFuncs: Record<string | number, Function> = {};
+
+  radioState: Record<string | number, boolean | number | Record<number, number>> = {};
   // 供滚动重置为default使用
-  resetInteractionState = debounce(() => {
-    this.updateInteractionState(InteractionState.default);
+  resetInteractionState = debounce((state?: InteractionState) => {
+    this.updateInteractionState(state ?? InteractionState.default);
   }, 100);
   // _x: number = 0;
   constructor(table: BaseTableAPI) {
@@ -209,6 +243,11 @@ export class StateManager {
       x: 0,
       resizing: false
     };
+    this.rowResize = {
+      row: -1,
+      y: 0,
+      resizing: false
+    };
     this.columnMove = {
       colSource: -1,
       colTarget: -1,
@@ -227,11 +266,13 @@ export class StateManager {
       highlightIndex: -1,
       dropDownMenuHighlight: []
     };
-    this.sort = {
-      col: -1,
-      row: -1,
-      order: 'normal'
-    };
+    this.sort = [
+      {
+        col: -1,
+        row: -1,
+        order: 'normal'
+      }
+    ];
     this.frozen = {
       col: -1
       // row: -1,
@@ -264,6 +305,11 @@ export class StateManager {
       },
       selecting: false
     };
+    this.fillHandle = {
+      isFilling: false,
+      startX: undefined,
+      startY: undefined
+    };
     this.hover = {
       highlightScope: HighlightScope.single,
       cellPos: {
@@ -279,6 +325,11 @@ export class StateManager {
     this.columnResize = {
       col: -1,
       x: 0,
+      resizing: false
+    };
+    this.rowResize = {
+      row: -1,
+      y: 0,
       resizing: false
     };
     this.columnMove = {
@@ -299,11 +350,13 @@ export class StateManager {
       highlightIndex: -1,
       dropDownMenuHighlight: []
     };
-    this.sort = {
-      col: -1,
-      row: -1,
-      order: 'normal'
-    };
+    this.sort = [
+      {
+        col: -1,
+        row: -1,
+        order: 'normal'
+      }
+    ];
     this.frozen = {
       col: -1
       // row: -1,
@@ -361,14 +414,16 @@ export class StateManager {
       /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
       headerSelectMode,
       disableSelect,
-      disableHeaderSelect
+      disableHeaderSelect,
+      highlightMode
     } = Object.assign(
       {},
       {
         /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
         headerSelectMode: 'inline',
         disableSelect: false,
-        disableHeaderSelect: false
+        disableHeaderSelect: false,
+        highlightMode: 'cell'
       },
       this.table.options.select
     );
@@ -381,7 +436,15 @@ export class StateManager {
     //   this.select.highlightScope = HighlightScope.column;
     // } else
     if (!disableSelect) {
-      this.select.highlightScope = HighlightScope.single;
+      if (highlightMode === 'cross') {
+        this.select.highlightScope = HighlightScope.cross;
+      } else if (highlightMode === 'row') {
+        this.select.highlightScope = HighlightScope.row;
+      } else if (highlightMode === 'column') {
+        this.select.highlightScope = HighlightScope.column;
+      } else {
+        this.select.highlightScope = HighlightScope.single;
+      }
     } else {
       this.select.highlightScope = HighlightScope.none;
     }
@@ -404,16 +467,69 @@ export class StateManager {
     return seled;
   }
 
-  setSortState(sortState: SortState) {
-    this.sort.field = sortState?.field as string;
+  setSortState(sortState: SortState | SortState[]) {
+    const state = this;
+    sortState = !sortState || Array.isArray(sortState) ? sortState : [sortState];
+    ////this.sort[this.sort.length - 1].field = sortState[sortState.length - 1]?.field as string;
     // this.sort.fieldKey = sortState?.fieldKey as string;
-    this.sort.order = sortState?.order;
+    ////this.sort[this.sort.length - 1].order = sortState[sortState.length - 1]?.order;
     // // 这里有一个问题，目前sortState中一般只传入了fieldKey，但是getCellRangeByField需要field
     // const range = this.table.getCellRangeByField(this.sort.field, 0);
     // if (range) {
     //   this.sort.col = range.start.col;
     //   this.sort.row = range.start.row;
     // }
+
+    function flattenColumns(columns: any) {
+      const result: Array<any> = [];
+
+      function flatten(cols: any, parentStartIndex = 0) {
+        cols.forEach((col: any) => {
+          const startIndex = col.startInTotal
+            ? col.startInTotal + state.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0
+            : parentStartIndex;
+          if (col.columns) {
+            flatten(col.columns, startIndex);
+          } else {
+            result.push({
+              ...col,
+              startIndex
+            });
+          }
+        });
+      }
+
+      flatten(columns);
+      return result;
+    }
+
+    const sort =
+      sortState &&
+      (sortState as SortState[]).reduce((prev, item) => {
+        const column = flattenColumns((this.table.internalProps as any).columns)?.find(
+          column => column?.field === item?.field
+        );
+        //let path = (item as any)?.event?.path?.findLast((item:any)=>item.col!=undefined);
+        if (this.table.internalProps.transpose) {
+          prev.push({
+            field: item.field,
+            order: item.order,
+            row: column.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
+            col: column.level
+          } as any);
+        } else {
+          prev.push({
+            field: item.field,
+            order: item.order,
+            col: column.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
+            row: column.level
+          } as any);
+        }
+
+        return prev;
+      }, []);
+
+    this.sort = sort || [];
   }
 
   setFrozenState() {
@@ -425,6 +541,12 @@ export class StateManager {
     if (this.interactionState === mode) {
       return;
     }
+
+    if (mode === InteractionState.scrolling) {
+      this.interactionStateBeforeScroll = this.interactionState;
+    }
+
+    // console.log('updateInteractionState', mode);
     const oldState = this.interactionState;
     this.interactionState = mode;
     // 处理mode 更新后逻辑
@@ -453,12 +575,14 @@ export class StateManager {
     row: number,
     isShift: boolean = false,
     isCtrl: boolean = false,
-    isSelectAll: boolean = false
+    isSelectAll: boolean = false,
+    isSelectMoving: boolean = false,
+    skipBodyMerge: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll);
+    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving, skipBodyMerge);
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -471,8 +595,8 @@ export class StateManager {
     );
   }
 
-  updateHoverIcon(col: number, row: number, target: any, cellGroup: Group, event?: FederatedEvent) {
-    if (target === this.residentHoverIcon?.icon) {
+  updateHoverIcon(col: number, row: number, target: any, cellGroup: Group) {
+    if (this.residentHoverIcon?.icon && target === this.residentHoverIcon?.icon) {
       return; // 常驻hover icon不更新交互
     }
     const iconInfo = getIconAndPositionFromTarget(target);
@@ -508,7 +632,13 @@ export class StateManager {
             rect: iconInfo.position,
             placement: inlineIcon.attribute.tooltip.placement
           },
-          style: Object.assign({}, this.table.internalProps.theme?.tooltipStyle, inlineIcon.tooltip?.style)
+          style: Object.assign(
+            {},
+            this.table.internalProps.theme?.tooltipStyle,
+            inlineIcon.tooltip?.style,
+            inlineIcon.attribute?.tooltip?.style
+          ),
+          disappearDelay: inlineIcon.attribute.tooltip.disappearDelay
         };
         if (!this.table.internalProps.tooltipHandler.isBinded(tooltipOptions)) {
           this.table.showTooltip(col, row, tooltipOptions);
@@ -536,31 +666,68 @@ export class StateManager {
   isResizeCol(): boolean {
     return this.columnResize.resizing;
   }
+  isResizeRow(): boolean {
+    return this.rowResize.resizing;
+  }
+  isFillHandle(): boolean {
+    return this.fillHandle.isFilling;
+  }
   isSelecting(): boolean {
     return this.select.selecting;
   }
-  endSelectCells(fireListener: boolean = true) {
-    this.select.selecting = false;
-    if (this.select.ranges.length === 0) {
-      return;
-    }
-    selectEnd(this.table.scenegraph);
+  endSelectCells(fireListener: boolean = true, fireClear: boolean = true) {
+    if (this.select.selecting) {
+      this.select.selecting = false;
+      if (this.select.ranges.length === 0) {
+        return;
+      }
 
-    // 触发SELECTED_CELL
-    const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
-    const lastRow = this.select.ranges[this.select.ranges.length - 1].end.row;
-    fireListener &&
-      this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
-        ranges: this.select.ranges,
-        col: lastCol,
-        row: lastRow
-      });
+      // this.select.ranges deduplication
+      const currentRange = this.select.ranges[this.select.ranges.length - 1];
+      let isSame = false;
+      for (let i = 0; i < this.select.ranges.length - 1; i++) {
+        const range = this.select.ranges[i];
+        if (
+          range &&
+          range.start.col === currentRange.start.col &&
+          range.start.row === currentRange.start.row &&
+          range.end.col === currentRange.end.col &&
+          range.end.row === currentRange.end.row
+        ) {
+          isSame = true;
+          break;
+        }
+      }
+      if (isSame) {
+        this.select.ranges.pop();
+        // remove selecting rect
+        deleteAllSelectingBorder(this.table.scenegraph);
+        this.table.scenegraph.selectingRangeComponents.clear();
+      } else {
+        selectEnd(this.table.scenegraph);
+      }
+
+      // 触发SELECTED_CELL
+      const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
+      const lastRow = this.select.ranges[this.select.ranges.length - 1].end.row;
+      fireListener &&
+        this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
+          ranges: this.select.ranges,
+          col: lastCol,
+          row: lastRow
+        });
+    } else if (fireClear) {
+      if (this.select.ranges.length === 0) {
+        this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CLEAR, {});
+      }
+    }
   }
+
   endResizeCol() {
     setTimeout(() => {
       this.columnResize.resizing = false;
     }, 0);
-    this.table.scenegraph.updateChartSize(this.columnResize.col);
+    this.table.scenegraph.updateChartSizeForResizeColWidth(this.columnResize.col);
     this.checkFrozen();
     this.table.scenegraph.component.hideResizeCol();
     this.table.scenegraph.updateNextFrame();
@@ -574,15 +741,82 @@ export class StateManager {
     this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
     // 调整列宽期间清空选中清空
-    this.table.stateManager.updateSelectPos(-1, -1);
-
+    const isHasSelected = !!this.select.ranges?.length;
+    this.updateSelectPos(-1, -1);
+    this.endSelectCells(true, isHasSelected);
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeCol(xInTable: number, yInTable: number) {
     updateResizeColumn(xInTable, yInTable, this);
   }
-  startMoveCol(col: number, row: number, x: number, y: number) {
+
+  endResizeRow() {
+    setTimeout(() => {
+      this.rowResize.resizing = false;
+    }, 0);
+    this.table.scenegraph.updateChartSizeForResizeRowHeight(this.rowResize.row);
+    // this.checkFrozen();
+    this.table.scenegraph.component.hideResizeRow();
+    this.table.scenegraph.updateNextFrame();
+  }
+  startResizeRow(row: number, x: number, y: number, isBottomFrozen?: boolean) {
+    this.rowResize.resizing = true;
+    this.rowResize.row = row;
+    this.rowResize.y = y;
+    this.rowResize.isBottomFrozen = isBottomFrozen;
+
+    this.table.scenegraph.component.showResizeRow(row, x, isBottomFrozen);
+
+    // 调整列宽期间清空选中清空
+    const isHasSelected = !!this.select.ranges?.length;
+    this.updateSelectPos(-1, -1);
+    this.endSelectCells(true, isHasSelected);
+    this.table.scenegraph.updateNextFrame();
+  }
+  updateResizeRow(xInTable: number, yInTable: number) {
+    updateResizeRow(xInTable, yInTable, this);
+  }
+
+  startFillSelect(x: number, y: number) {
+    this.fillHandle.isFilling = true;
+    this.fillHandle.startX = x;
+    this.fillHandle.startY = y;
+    const currentRange = this.select.ranges[this.select.ranges.length - 1];
+    this.fillHandle.beforeFillMinCol = Math.min(currentRange.start.col, currentRange.end.col);
+    this.fillHandle.beforeFillMinRow = Math.min(currentRange.start.row, currentRange.end.row);
+    this.fillHandle.beforeFillMaxCol = Math.max(currentRange.start.col, currentRange.end.col);
+    this.fillHandle.beforeFillMaxRow = Math.max(currentRange.start.row, currentRange.end.row);
+    // this.table.scenegraph.updateNextFrame();
+    this.table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE, {});
+  }
+  endFillSelect() {
+    this.fillHandle.isFilling = false;
+    this.fillHandle.startX = undefined;
+    this.fillHandle.startY = undefined;
+    this.fillHandle.directionRow = undefined;
+    const currentMinCol = Math.min(this.select.ranges[0].start.col, this.select.ranges[0].end.col);
+    const currentMinRow = Math.min(this.select.ranges[0].start.row, this.select.ranges[0].end.row);
+    const currentMaxCol = Math.max(this.select.ranges[0].start.col, this.select.ranges[0].end.col);
+    const currentMaxRow = Math.max(this.select.ranges[0].start.row, this.select.ranges[0].end.row);
+    //如果选中区域没有发生变化 不触发事件
+    if (
+      this.fillHandle.beforeFillMinCol !== currentMinCol ||
+      this.fillHandle.beforeFillMinRow !== currentMinRow ||
+      this.fillHandle.beforeFillMaxCol !== currentMaxCol ||
+      this.fillHandle.beforeFillMaxRow !== currentMaxRow
+    ) {
+      this.table.eventManager.isDraging &&
+        this.table.fireListeners(TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END, { direction: this.fillHandle.direction });
+    }
+    this.fillHandle.beforeFillMaxCol = undefined;
+    this.fillHandle.beforeFillMaxRow = undefined;
+    this.fillHandle.beforeFillMinCol = undefined;
+    this.fillHandle.beforeFillMinRow = undefined;
+  }
+
+  startMoveCol(col: number, row: number, x: number, y: number, event: MouseEvent | PointerEvent | TouchEvent) {
     startMoveCol(col, row, x, y, this);
+    this.table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, { col, row, x, y, event });
   }
   updateMoveCol(col: number, row: number, x: number, y: number) {
     updateMoveCol(col, row, x, y, this);
@@ -590,13 +824,13 @@ export class StateManager {
   isMoveCol(): boolean {
     return this.columnMove.moving;
   }
-  endMoveCol() {
-    endMoveCol(this);
+  endMoveCol(): boolean {
+    return endMoveCol(this);
   }
 
   checkFrozen(): boolean {
     // 判断固定列的总宽度 是否过大
-    const originalFrozenColCount =
+    let originalFrozenColCount =
       this.table.isListTable() && !this.table.internalProps.transpose
         ? this.table.options.frozenColCount
         : this.table.isPivotChart()
@@ -606,6 +840,9 @@ export class StateManager {
             this.table.options.frozenColCount ?? 0
           );
     if (originalFrozenColCount) {
+      if (originalFrozenColCount > this.table.colCount) {
+        originalFrozenColCount = this.table.colCount;
+      }
       if (this.table.tableNoFrameWidth - this.table.getColsWidth(0, originalFrozenColCount - 1) <= 120) {
         this.table._setFrozenColCount(0);
         this.setFrozenCol(-1);
@@ -633,19 +870,55 @@ export class StateManager {
       this.table.scenegraph.updateFrozenIcon(0, this.table.colCount - 1);
     }
   }
+  checkVerticalScrollBarEnd() {
+    const totalHeight = this.table.getAllRowsHeight();
+    const scrollTop = this.scroll.verticalBarPos;
+    const viewHeight = this.table.tableNoFrameHeight;
 
+    if (scrollTop + viewHeight >= totalHeight) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_VERTICAL_END, {
+        scrollTop,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight,
+        viewWidth: this.table.tableNoFrameWidth
+      });
+    }
+  }
+  checkHorizontalScrollBarEnd() {
+    const totalWidth = this.table.getAllColsWidth();
+    const scrollLeft = this.scroll.horizontalBarPos;
+    const viewWidth = this.table.tableNoFrameWidth;
+
+    if (scrollLeft + viewWidth >= totalWidth) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_HORIZONTAL_END, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth
+      });
+    }
+  }
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
+    if (!isValid(this.scroll.verticalBarPos) || isNaN(this.scroll.verticalBarPos)) {
+      this.scroll.verticalBarPos = 0;
+    }
     this.table.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
     this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
     this.table.scenegraph.proxy.deltaY = 0;
 
     // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
+    this.updateHoverPos(-1, -1);
+    // this.updateSelectPos(-1, -1);
 
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      event: undefined,
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
       scrollHeight: this.table.theme.scrollStyle?.width,
@@ -655,10 +928,18 @@ export class StateManager {
       scrollDirection: 'vertical',
       scrollRatioY: yRatio
     });
+
+    if (oldVerticalBarPos !== this.scroll.verticalBarPos) {
+      this.checkVerticalScrollBarEnd();
+    }
   }
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
+    if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
+      this.scroll.horizontalBarPos = 0;
+    }
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
     this.table.scenegraph.proxy.deltaX = 0;
@@ -669,9 +950,10 @@ export class StateManager {
     //   }
     // };
     // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
+    this.updateHoverPos(-1, -1);
+    // this.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      event: undefined,
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
       scrollHeight: this.table.theme.scrollStyle?.width,
@@ -681,49 +963,78 @@ export class StateManager {
       scrollDirection: 'horizontal',
       scrollRatioX: xRatio
     });
+
+    if (oldHorizontalBarPos !== this.scroll.horizontalBarPos) {
+      this.checkHorizontalScrollBarEnd();
+    }
   }
-  setScrollTop(top: number) {
+  setScrollTop(top: number, event?: FederatedWheelEvent, triggerEvent: boolean = true) {
     // 矫正top值范围
     const totalHeight = this.table.getAllRowsHeight();
-    top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height));
+    // _disableColumnAndRowSizeRound环境中，可能出现
+    // getAllColsWidth/getAllRowsHeight(A) + getAllColsWidth/getAllRowsHeight(B) < getAllColsWidth/getAllRowsHeight(A+B)
+    // （由于小数在取数时被省略）
+    // 这里加入tolerance，避免出现无用滚动
+    const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
+    top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height - sizeTolerance));
     top = Math.ceil(top);
     // 滚动期间清空选中清空 如果调用接口hover状态需要保留，但是如果不调用updateHoverPos透视图处于hover状态的图就不能及时更新 所以这里单独判断了isPivotChart
     if (top !== this.scroll.verticalBarPos || this.table.isPivotChart()) {
-      this.table.stateManager.updateHoverPos(-1, -1);
+      this.updateHoverPos(-1, -1);
     }
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
     // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
-
+    if (!isValid(this.scroll.verticalBarPos) || isNaN(this.scroll.verticalBarPos)) {
+      this.scroll.verticalBarPos = 0;
+    }
     // 设置scenegraph坐标
     this.table.scenegraph.setY(-top);
 
     // 更新scrollbar位置
     const yRatio = top / (totalHeight - this.table.scenegraph.height);
     this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
-    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-      scrollTop: this.scroll.verticalBarPos,
-      scrollLeft: this.scroll.horizontalBarPos,
-      scrollHeight: this.table.theme.scrollStyle?.width,
-      scrollWidth: this.table.theme.scrollStyle?.width,
-      viewHeight: this.table.tableNoFrameHeight,
-      viewWidth: this.table.tableNoFrameWidth,
-      scrollDirection: 'vertical',
-      scrollRatioY: yRatio
-    });
+
+    if (oldVerticalBarPos !== top && triggerEvent) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+        event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth: this.table.tableNoFrameWidth,
+        scrollDirection: 'vertical',
+        scrollRatioY: yRatio
+      });
+
+      this.checkVerticalScrollBarEnd();
+    }
   }
-  setScrollLeft(left: number) {
+  setScrollLeft(left: number, event?: FederatedWheelEvent, triggerEvent: boolean = true) {
+    const oldScrollLeft = this.table.scrollLeft;
     // 矫正left值范围
     const totalWidth = this.table.getAllColsWidth();
     const frozenWidth = this.table.getFrozenColsWidth();
 
-    left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width));
+    // _disableColumnAndRowSizeRound环境中，可能出现
+    // getAllColsWidth/getAllRowsHeight(A) + getAllColsWidth/getAllRowsHeight(B) < getAllColsWidth/getAllRowsHeight(A+B)
+    // （由于小数在取数时被省略）
+    // 这里加入tolerance，避免出现无用滚动
+    const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
+
+    left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width - sizeTolerance));
     left = Math.ceil(left);
     // 滚动期间清空选中清空
     if (left !== this.scroll.horizontalBarPos) {
-      this.table.stateManager.updateHoverPos(-1, -1);
+      this.updateHoverPos(-1, -1);
     }
     // this.table.stateManager.updateSelectPos(-1, -1);
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = left;
+    if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
+      this.scroll.horizontalBarPos = 0;
+    }
 
     // 设置scenegraph坐标
     this.table.scenegraph.setX(-left);
@@ -732,16 +1043,21 @@ export class StateManager {
     const xRatio = left / (totalWidth - this.table.scenegraph.width);
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
 
-    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-      scrollTop: this.scroll.verticalBarPos,
-      scrollLeft: this.scroll.horizontalBarPos,
-      scrollHeight: this.table.theme.scrollStyle?.width,
-      scrollWidth: this.table.theme.scrollStyle?.width,
-      viewHeight: this.table.tableNoFrameHeight,
-      viewWidth: this.table.tableNoFrameWidth,
-      scrollDirection: 'horizontal',
-      scrollRatioX: xRatio
-    });
+    if (oldHorizontalBarPos !== left && triggerEvent) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+        event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth: this.table.tableNoFrameWidth,
+        scrollDirection: 'horizontal',
+        scrollRatioX: xRatio
+      });
+
+      this.checkHorizontalScrollBarEnd();
+    }
   }
   hideVerticalScrollBar() {
     this.table.scenegraph.component.hideVerticalScrollBar();
@@ -752,7 +1068,7 @@ export class StateManager {
       // 滚轮触发滚动条显示后，异步隐藏
       clearTimeout(this._clearVerticalScrollBar);
       this._clearVerticalScrollBar = setTimeout(() => {
-        this.table.scenegraph.component.hideVerticalScrollBar();
+        this.table.scenegraph?.component.hideVerticalScrollBar();
       }, 1000);
     }
   }
@@ -765,7 +1081,7 @@ export class StateManager {
       // 滚轮触发滚动条显示后，异步隐藏
       clearTimeout(this._clearHorizontalScrollBar);
       this._clearHorizontalScrollBar = setTimeout(() => {
-        this.table.scenegraph.component.hideHorizontalScrollBar();
+        this.table.scenegraph?.component.hideHorizontalScrollBar();
       }, 1000);
     }
   }
@@ -944,7 +1260,13 @@ export class StateManager {
   triggerSort(col: number, row: number, iconMark: Icon, event: Event) {
     if (this.table.isPivotTable()) {
       // 透视表不执行sort操作
-      const order = (this.table as PivotTableAPI).getPivotSortState(col, row);
+      const sortState = (this.table as PivotTableAPI).getPivotSortState(col, row);
+
+      const order = sortState ? (sortState.toUpperCase() as SortOrder) : 'NORMAL';
+      const new_order = order === 'ASC' ? 'DESC' : order === 'DESC' ? 'NORMAL' : 'ASC';
+      // const new_order = order === 'ASC' ? 'DESC' : 'ASC';
+      (this.table as PivotTable).sort(col, row, new_order);
+
       // // 触发透视表排序按钮点击
       this.table.fireListeners(PIVOT_TABLE_EVENT_TYPE.PIVOT_SORT_CLICK, {
         col: col,
@@ -957,52 +1279,128 @@ export class StateManager {
       return;
     }
 
-    const oldSortCol = this.sort.col;
-    const oldSortRow = this.sort.row;
+    const previousSort = [...this.sort];
+    const previousSortItem =
+      this.table.internalProps.multipleSort || !previousSort.length ? null : this.sort[this.sort.length - 1];
+
     // 执行sort
     dealSort(col, row, this.table as ListTableAPI, event);
-    this.sort.col = col;
-    this.sort.row = row;
+
+    const range = this.table.getCellRange(col, row);
+    const currentSortItem = this.sort.find(item => item.col === range.start.col && item.row === range.start.row);
+
+    const oldSortCol = this.table.internalProps.multipleSort || !previousSortItem ? null : previousSortItem.col;
+    const oldSortRow = this.table.internalProps.multipleSort || !previousSortItem ? null : previousSortItem.row;
+    //currentSortItem.col = col;
+    //currentSortItem.row = row;
+
+    const currentSortItemIndex = previousSort.findIndex(item => item.col === col && item.row === row);
+    if (currentSortItemIndex >= 0) {
+      previousSort.splice(currentSortItemIndex, 1);
+    }
 
     // 更新icon
-    this.table.scenegraph.updateSortIcon(
-      this.sort.col,
-      this.sort.row,
+    this.table.scenegraph.updateSortIcon({
+      col: col,
+      row: row,
       iconMark,
-      this.sort.order,
+      order: currentSortItem?.order,
       oldSortCol,
       oldSortRow,
-      this.sort.icon
-    );
-    this.sort.icon = iconMark;
+      oldIconMark: previousSortItem?.icon
+    });
+    if (currentSortItem) {
+      currentSortItem.icon = iconMark;
+    }
+
+    if (!this.table.internalProps.multipleSort) {
+      previousSort.forEach((sortItem: any) => {
+        this.table.scenegraph.updateSortIcon({
+          col: null,
+          row: null,
+          iconMark: null,
+          order: 'normal',
+          oldSortCol: sortItem.col,
+          oldSortRow: sortItem.row,
+          oldIconMark: null
+        });
+      });
+    }
+    this.table.fireListeners(PIVOT_TABLE_EVENT_TYPE.AFTER_SORT, {
+      order: currentSortItem?.order,
+      field: <string>this.table.getHeaderField(col, row),
+      event
+    });
   }
 
-  updateSortState(sortState: SortState) {
-    if (sortState.field === this.sort.field && sortState.order === this.sort.order) {
-      return;
-    }
-    const oldSortCol = this.sort.col;
-    const oldSortRow = this.sort.row;
-    const name =
-      this.sort.order === 'asc' ? 'sort_downward' : this.sort.order === 'desc' ? 'sort_upward' : 'sort_normal';
-    this.setSortState(sortState);
-    // 获取sort对应的行列位置
-    const cellAddress = this.table.internalProps.layoutMap.getHeaderCellAddressByField(sortState.field as string);
-    this.sort.col = cellAddress.col;
-    this.sort.row = cellAddress.row;
-    const cellGroup = this.table.scenegraph.getCell(this.sort.col, this.sort.row);
-    const iconMark = cellGroup.getChildByName(name, true);
+  updateSortState(sortState: SortState[]) {
+    sortState = Array.isArray(sortState) ? sortState : [sortState];
 
-    // 更新icon
-    this.table.scenegraph.updateSortIcon(
-      this.sort.col,
-      this.sort.row,
-      iconMark,
-      this.sort.order,
-      oldSortCol,
-      oldSortRow,
-      this.sort.icon
-    );
+    for (let index = 0; index < sortState.length; index++) {
+      if (
+        sortState[index].field === this.sort[index]?.field &&
+        sortState[sortState.length - 1].order === this.sort[index]?.order
+      ) {
+        return;
+      }
+      const oldSortCol = this.table.internalProps.multipleSort ? null : this.sort[index]?.col || null;
+      const oldSortRow = this.table.internalProps.multipleSort ? null : this.sort[index]?.row || null;
+      const name =
+        this.sort[index]?.order === 'asc'
+          ? 'sort_downward'
+          : this.sort[index]?.order === 'desc'
+          ? 'sort_upward'
+          : 'sort_normal';
+      this.setSortState(sortState.slice(0, index + 1));
+      // 获取sort对应的行列位置
+      const cellAddress = this.table.internalProps.layoutMap.getHeaderCellAddressByField(
+        sortState[index].field as string
+      );
+      this.sort[index].col = cellAddress.col;
+      this.sort[index].row = cellAddress.row;
+      const cellGroup = this.table.scenegraph.getCell(this.sort[index].col, this.sort[index].row);
+      //const iconMark = cellGroup.getChildByName(name, true);
+      let iconMark: Icon;
+
+      traverseObject(cellGroup, 'children', (mark: Icon) => {
+        if (mark.attribute.funcType === 'sort') {
+          iconMark = mark;
+          return true;
+        }
+        return false;
+      });
+
+      // 更新icon
+      this.table.scenegraph.updateSortIcon({
+        col: this.sort[index].col,
+        row: this.sort[index].row,
+        iconMark,
+        order: this.sort[index].order,
+        oldSortCol,
+        oldSortRow,
+        oldIconMark: this.sort[index]?.icon
+      });
+    }
+
+    const normalHeaders: Array<any> = [];
+    (this.table.internalProps.layoutMap.columnTree as any).tree.children.forEach((item: any) => {
+      if (!sortState.some((state: SortState) => state.field === item.field)) {
+        normalHeaders.push(item);
+      }
+    });
+
+    for (let index = 0; index < normalHeaders.length; index++) {
+      const column = normalHeaders[index];
+      this.table.scenegraph.updateSortIcon({
+        col: null,
+        row: null,
+        iconMark: null,
+        order: null,
+        oldSortCol: column.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
+        oldSortRow: column.level,
+        oldIconMark: null
+      });
+    }
   }
 
   triggerFreeze(col: number, row: number, iconMark: Icon) {
@@ -1063,22 +1461,10 @@ export class StateManager {
     }
   }
   setCheckedState(col: number, row: number, field: string | number, checked: boolean) {
-    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
-    if (recordIndex >= 0) {
-      const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
-      if (this.checkedState[dataIndex]) {
-        this.checkedState[dataIndex][field] = checked;
-      } else {
-        this.checkedState[dataIndex] = {};
-        this.checkedState[dataIndex][field] = checked;
-      }
-    }
+    return setCheckedState(col, row, field, checked, this);
   }
   setHeaderCheckedState(field: string | number, checked: boolean) {
-    this.headerCheckedState[field] = checked;
-    this.checkedState?.forEach(recordCheckState => {
-      recordCheckState[field] = checked;
-    });
+    return setHeaderCheckedState(field, checked, this);
   }
 
   //#region CheckedState 状态维护
@@ -1092,33 +1478,7 @@ export class StateManager {
    * @returns
    */
   syncCheckedState(col: number, row: number, field: string | number, checked: boolean): boolean | 'indeterminate' {
-    if (this.table.isHeader(col, row)) {
-      if (isValid(this.headerCheckedState[field])) {
-        return this.headerCheckedState[field];
-      } else if (typeof checked === 'function') {
-        return undefined;
-      } else if (isValid(checked)) {
-        this.headerCheckedState[field] = checked;
-      } else if (this.checkedState?.length > 0) {
-        const isAllChecked = this.updateHeaderCheckedState(field);
-        return isAllChecked;
-      }
-      return this.headerCheckedState[field];
-    }
-    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
-    if (recordIndex >= 0) {
-      const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
-      if (isValid(this.checkedState[dataIndex]?.[field])) {
-        return this.checkedState[dataIndex][field];
-      }
-      if (this.checkedState[dataIndex]) {
-        this.checkedState[dataIndex][field] = checked;
-      } else {
-        this.checkedState[dataIndex] = {};
-        this.checkedState[dataIndex][field] = checked;
-      }
-    }
-    return checked;
+    return syncCheckedState(col, row, field, checked, this);
   }
   /**
    * 创建表头cell节点时同步状态 如果状态缓存有则用 如果没有则设置缓存
@@ -1146,60 +1506,7 @@ export class StateManager {
    * @param records
    */
   initCheckedState(records: any[]) {
-    let isNeedInitHeaderCheckedStateFromRecord = false;
-    this._checkboxCellTypeFields = [];
-    this._headerCheckFuncs = {};
-    this.table.internalProps.layoutMap.headerObjects.forEach((hd, index) => {
-      if (hd.headerType === 'checkbox') {
-        const headerChecked = (hd.define as CheckboxColumnDefine).checked as boolean;
-
-        if (headerChecked === undefined || headerChecked === null || typeof headerChecked === 'function') {
-          // 如果没有明确指定check的状态 则需要在下面遍历所有数据获取到节点状态 确定这个header的check状态
-          isNeedInitHeaderCheckedStateFromRecord = true;
-          if (typeof headerChecked === 'function') {
-            this._headerCheckFuncs[hd.field as string | number] = headerChecked;
-          }
-        } else {
-          this.headerCheckedState[hd.field as string | number] = headerChecked;
-        }
-        if (hd.define.cellType === 'checkbox' && !hd.fieldFormat) {
-          this._checkboxCellTypeFields.push(hd.field as string | number);
-        }
-      }
-    });
-    //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
-    if (isNeedInitHeaderCheckedStateFromRecord) {
-      records.forEach((record: any, index: number) => {
-        this._checkboxCellTypeFields.forEach(field => {
-          const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
-          let isChecked;
-          if (isObject(value)) {
-            isChecked = value.checked;
-          } else if (typeof value === 'boolean') {
-            isChecked = value;
-          }
-          if (isChecked === undefined || isChecked === null) {
-            const headerCheckFunc = this._headerCheckFuncs[field];
-            if (headerCheckFunc) {
-              //如果定义的checked是个函数 则需要每个都去计算这个值
-              const cellAddr = this.table.getCellAddrByFieldRecord(field, index);
-              const globalChecked = getOrApply(headerCheckFunc as any, {
-                col: cellAddr.col,
-                row: cellAddr.row,
-                table: this.table,
-                context: null,
-                value
-              });
-              isChecked = globalChecked;
-            }
-          }
-          if (!this.checkedState[index]) {
-            this.checkedState[index] = {};
-          }
-          this.checkedState[index][field] = isChecked;
-        });
-      });
-    }
+    return initCheckedState(records, this);
   }
   /**
    * 更新header单元checked的状态，依据当前列每一个数据checked的状态。
@@ -1207,50 +1514,44 @@ export class StateManager {
    * @returns
    */
   updateHeaderCheckedState(field: string | number): boolean | 'indeterminate' {
-    const allChecked = this.checkedState.every((state: Record<string | number, boolean>) => {
-      return state[field] === true;
-    });
-    if (allChecked) {
-      this.headerCheckedState[field] = true;
-      return allChecked;
-    }
-    const allUnChecked = this.checkedState.every((state: Record<string | number, boolean>) => {
-      return state[field] === false;
-    });
-    if (allUnChecked) {
-      this.headerCheckedState[field] = false;
-      return false;
-    }
-    const hasChecked = this.checkedState.find((state: Record<string | number, boolean>) => {
-      return state[field] === true;
-    });
-    if (hasChecked) {
-      this.headerCheckedState[field] = 'indeterminate';
-      return 'indeterminate'; //半选状态
-    }
-    return false;
+    return updateHeaderCheckedState(field, this);
   }
   /**
    * setRecords的时候虽然调用了initCheckedState 进行了初始化 但当每个表头的checked状态都用配置了的话 初始化不会遍历全部数据
    * @param records
    */
   initLeftRecordsCheckState(records: any[]) {
-    for (let index = this.checkedState.length; index < records.length; index++) {
-      const record = records[index];
-      this._checkboxCellTypeFields.forEach(field => {
-        const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
-        let isChecked;
-        if (isObject(value)) {
-          isChecked = value.checked;
-        } else if (typeof value === 'boolean') {
-          isChecked = value;
-        }
-        if (!this.checkedState[index]) {
-          this.checkedState[index] = {};
-        }
-        this.checkedState[index][field] = isChecked;
-      });
-    }
+    return initLeftRecordsCheckState(records, this);
   }
   //#endregion
+
+  setRadioState(
+    col: number,
+    row: number,
+    field: string | number,
+    radioType: 'column' | 'cell',
+    indexInCell: number | undefined
+  ) {
+    setRadioState(col, row, field, radioType, indexInCell, this);
+  }
+
+  syncRadioState(
+    col: number,
+    row: number,
+    field: string | number,
+    radioType: 'column' | 'cell',
+    indexInCell: number | undefined,
+    isChecked: boolean
+  ) {
+    return syncRadioState(col, row, field, radioType, indexInCell, isChecked, this);
+  }
+
+  changeCheckboxAndRadioOrder(sourceIndex: number, targetIndex: number) {
+    if (this.checkedState.length) {
+      changeCheckboxOrder(sourceIndex, targetIndex, this);
+    }
+    if (this.radioState.length) {
+      changeRadioOrder(sourceIndex, targetIndex, this);
+    }
+  }
 }

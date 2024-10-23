@@ -1,7 +1,7 @@
 import type { CellAddress, CellRange, CellLocation, FieldDef, CellAddressWithBound } from './table-engine';
 import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 
-import type { IDimensionInfo, RectProps, SortOrder } from './common';
+import type { IDimensionInfo, MergeCellInfo, RectProps, SortOrder } from './common';
 import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
 import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
@@ -44,6 +44,8 @@ export type MousePointerCellEvent = CellAddressWithBound &
     event?: MouseEvent | PointerEvent | TouchEvent;
     federatedEvent?: FederatedPointerEvent;
     target: IEventTarget | undefined;
+
+    mergeCellInfo?: MergeCellInfo;
   };
 // 多单元格的事件传出参数 需要将当前鼠标处的单元格的信息FocusedCellInfo也带着
 export type MousePointerMultiCellEvent = MousePointerCellEvent & {
@@ -59,10 +61,13 @@ export type MousePointerSparklineEvent = MousePointerCellEvent & {
 
 export interface TableEventHandlersEventArgumentMap {
   selected_cell: SelectedCellEvent;
+  selected_clear: {};
   click_cell: MousePointerCellEvent;
   dblclick_cell: MousePointerCellEvent;
-  mouseenter_table: MousePointerCellEvent;
-  mouseleave_table: MousePointerCellEvent;
+  mouseenter_table: { event?: MouseEvent | PointerEvent | TouchEvent };
+  mouseleave_table: { event?: MouseEvent | PointerEvent | TouchEvent };
+  mousedown_table: { event?: MouseEvent | PointerEvent | TouchEvent };
+  mousemove_table: MousePointerCellEvent;
   mouseenter_cell: MousePointerCellEvent;
   mouseleave_cell: MousePointerCellEvent;
   mousemove_cell: MousePointerCellEvent;
@@ -71,6 +76,7 @@ export interface TableEventHandlersEventArgumentMap {
   contextmenu_cell: MousePointerMultiCellEvent;
   keydown: KeydownEvent;
   scroll: {
+    event: WheelEvent;
     scrollLeft: number;
     scrollTop: number;
     scrollWidth: number;
@@ -81,10 +87,34 @@ export interface TableEventHandlersEventArgumentMap {
     scrollRatioX?: number;
     scrollRatioY?: number;
   };
+  scroll_vertical_end: {
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+  };
+  scroll_horizontal_end: {
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+  };
   resize_column: { col: number; colWidth: number };
   resize_column_end: { col: number; colWidths: number[] };
-  change_header_position: { source: CellAddress; target: CellAddress };
+  resize_row: { row: number; rowHeight: number };
+  resize_row_end: { row: number; rowHeight: number };
+  change_header_position: { source: CellAddress; target: CellAddress; event: Event };
+  change_header_position_start: { col: number; row: number; x: number; y: number; event: Event };
   sort_click: {
+    field: FieldDef;
+    order: SortOrder;
+    event: Event;
+  };
+  after_sort: {
     field: FieldDef;
     order: SortOrder;
     event: Event;
@@ -155,10 +185,21 @@ export interface TableEventHandlersEventArgumentMap {
   mouseleave_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
 
   checkbox_state_change: MousePointerCellEvent & { checked: boolean };
+  radio_state_change: MousePointerCellEvent & { radioIndexInCell: number | undefined };
   after_render: null;
   initialized: null;
 
-  change_cell_value: { col: number; row: number; rawValue: string | number; changedValue: string | number };
+  change_cell_value: {
+    col: number;
+    row: number;
+    rawValue: string | number;
+    currentValue: string | number;
+    changedValue: string | number;
+  };
+
+  mousedown_fill_handle: {};
+  drag_fill_handle_end: { direction?: 'top' | 'bottom' | 'left' | 'right' };
+  dblclick_fill_handle: {};
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -171,10 +212,13 @@ export interface DrillMenuEventInfo {
 }
 export interface TableEventHandlersReturnMap {
   selected_cell: void;
+  selected_clear: void;
   click_cell: void;
   dblclick_cell: void;
   mouseenter_table: void;
   mouseleave_table: void;
+  mousedown_table: void;
+  mousemove_table: void;
   mouseenter_cell: void;
   mouseleave_cell: void;
   // mouseover_cell: void;
@@ -189,8 +233,12 @@ export interface TableEventHandlersReturnMap {
   blur_table: void;
   resize_column: void;
   resize_column_end: void;
+  resize_row: void;
+  resize_row_end: void;
   change_header_position: void;
+  change_header_position_start: void;
   sort_click: boolean;
+  after_sort: void;
   freeze_click: void;
   dropdown_menu_click: void;
 
@@ -223,8 +271,16 @@ export interface TableEventHandlersReturnMap {
   mouseleave_axis: void;
 
   checkbox_state_change: void;
+  radio_state_change: void;
   after_render: void;
   initialized: void;
 
   change_cell_value: void;
+  mousedown_fill_handle: void;
+  drag_fill_handle_end: void;
+  dblclick_fill_handle: void;
+
+  scroll_vertical_end: void;
+
+  scroll_horizontal_end: void;
 }

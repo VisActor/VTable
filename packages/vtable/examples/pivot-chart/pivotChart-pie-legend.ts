@@ -75,8 +75,8 @@ export function createTable() {
         defaultHeaderColWidth: 100,
         indicatorTitle: '指标',
         autoWrapText: true,
-        widthMode: 'adaptive',
-        heightMode: 'adaptive',
+        // widthMode: 'adaptive',
+        // heightMode: 'adaptive',
         corner: {
           titleOnDimension: 'row',
           headerStyle: {
@@ -118,6 +118,7 @@ export function createTable() {
 
       const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;
+      bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
       const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
       tableInstance.on(LEGEND_ITEM_CLICK, args => {
         console.log('LEGEND_ITEM_CLICK', args);

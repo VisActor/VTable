@@ -9,6 +9,7 @@ When using VTable for data analytics, individual cells can be selected with a mo
 As shown above, after clicking on cell (2,3), the cell is selected.
 
 Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set select.headerSelectMode to 'cell'.
+
 ## Mouse box selection
 
 In addition to clicking on a single cell, VTable also supports mouse box selection, which can select multiple cells by dragging the mouse. This feature allows the user to select multiple cells at once (Hold down ctrl or shift to make multiple selections). By default, VTable has mouse box selection turned on.
@@ -18,23 +19,29 @@ In addition to clicking on a single cell, VTable also supports mouse box selecti
 As shown in the image above, the user selects multiple cells by dragging the mouse.
 
 ## Call interface selection
+
 A certain business scenario, such as linkage selection with other modules, is not a manual mouse-triggered selection. The selection can be completed with the help of the interface.
+
 ### Single cell selection
 
 Usage is as follows:
+
 ```
 // Select cells in 4 columns and 5 rows
 tableInstance.selectCell(4,5);
 ```
+
 ### Cell range selected
 
 Call the interface selectCells, the usage is as follows:
+
 ```
 // Two ranges in the table: from column 1, row 2 to column 4, row 2 and from column 3, row 5 to column 7, row 8
 tableInstance.selectCells([{start:{col:1,row:2},end:{col:4,row:2}},{start:{col:3,row:5},end:{col:7 ,row:8}}]);
 ```
 
 ### Clear current selection
+
 call api `clearSelected`.
 
 ## Select style
@@ -59,6 +66,50 @@ const = new VTable.ListTable({
 
 As shown in the image above, the background color of the selected cell is purple.
 
+## Select and highlight the entire row and column
+
+Clicking a cell may require highlighting the entire row or column, which can be achieved through the following configuration:
+
+```
+  select: {
+    highlightMode: 'cross' // can be configured as 'cross' or 'row' or 'column'
+  }
+```
+
+Note: If you select multiple cells, the highlight effect will disappear.
+
+The highlighting style can be configured in the style.
+
+Global configuration: in `theme.selectionStyle`, the specific configuration method is:
+
+```
+theme:{
+  selectionStyle:{
+    inlineRowBgColor: 'rgb(160,207,245)',
+    inlineColumnBgColor: 'rgb(160,207,245)'
+  }
+}
+```
+
+You can also configure headerStyle and bodyStyle separately. The specific configuration method is:
+
+```
+theme:{
+  headerStyle: {
+    select: {
+      inlineRowBgColor: 'rgb(0,207,245)',
+      inlineColumnBgColor: 'rgb(0,207,245)'
+    }
+  },
+  bodyStyle: {
+    select: {
+      inlineRowBgColor: 'rgb(0,207,245)',
+      inlineColumnBgColor: 'rgb(0,207,245)'
+    }
+  }
+}
+```
+
 ## Choose to copy cell contents
 
 VTable provides a copy shortcut function, users can set `keyboardOptions.copySelected` for `true`, to enable the shortcut copy function:
@@ -71,17 +122,36 @@ const table = new VTable.ListTable({
 });
 ```
 
-After turning on the shortcut, the user can use the copy shortcut that comes with the browser (such as: Ctrl + C, Cmd + C) to copy the contents of the selected cell.
+After enabling shortcut keys, users can use the browser's built-in copy shortcut keys (such as Ctrl+C, Cmd+C) to copy the selected cell content. VTable maintains two copy formats:
 
-There is an event called `copy_data` in conjunction with copying content. This event will be triggered during copying and return the content copied to the clipboard.
+```
+new ClipboardItem({
+'text/html': new Blob([dataHTML], { type: 'text/html' }),
+'text/plain': new Blob([data], { type: 'text/plain' })
+})
+```
+
+For specific implementation logic, please refer to the code logic https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/event/listener/container-dom.ts
+
+**Copy other related content:**
+
+1. There is also an event called `copy_data` to match the copying of content. This event will be triggered when copying and return the content copied to the clipboard.
+
+2. If you want to obtain the selected content as the copy content through the interface, you can call the interface `getCopyValue`.
+
+3. In addition, we provide the configuration item `formatCopyValue` to format the copied content. For example, if you want to add a suffix `"Copy content from XXXX"` to the copied content
 
 ## Open Select All
 
 When operating on table data, the user may want to shortcut all the contents of the table. The Open Select All function allows the user to select all the contents of the table at once by holding down the Ctrl key and pressing the A key. It should be noted that this function is turned off by default, and the Select All function is turned on with the following configuration:
 
+```
     keyboardOptions: {
-       selectAllOnCtrlA: false;
+        selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
     }
+```
+
+If you do not want to select the table header or row number column at the same time, you can configure it according to `SelectAllOnCtrlAOption`.
 
 ## Disable Select Interaction
 

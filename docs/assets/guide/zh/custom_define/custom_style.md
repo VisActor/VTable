@@ -40,8 +40,8 @@ instance.registerCustomCellStyle(id, style)
 使用已注册的自定义样式，需要将自定义样式分配到单元格中，分配需要定义`cellPosition`和`customStyleId`两个属性：
 
 * cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
-  * 单个单元格：`{ row: number, column: number }`
-  * 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+  * 单个单元格：`{ row: number, col: number }`
+  * 单元格区域：`{ range: { start: { row: number, col: number }, end: { row: number, col: number} } }`
 * customStyleId: 自定义样式id，与注册自定义样式时定义的id相同
 
 分配方式有两种，`option`中配置和使用API配置：
@@ -96,4 +96,4 @@ instance.registerCustomCellStyle(id, newStyle)
 
 * 已分配的自定义样式的单元格区域，可以通过`arrangeCustomCellStyle`方法，对单元格区域进行更新样式分配，更新后，单元格的样式会被更新；如果`customStyleId`为`undefined` | `null`，则表示还原单元格的样式为默认样式
 
-具体使用参考[demo](../demo/custom-render/custom-style)
+具体使用参考[demo](../../demo/custom-render/custom-style)

@@ -15,7 +15,7 @@ CLICK_CELL
 tableInstance.on(CLICK_CELL, (args) => console.log(CLICK_CELL, args));
 ``
 
-Supported event types:
+Supported event types（not all）:
 
 `TABLE_EVENT_TYPE = {
   CLICK_CELL: 'click_cell',
@@ -32,10 +32,15 @@ Supported event types:
   CONTEXTMENU_CELL: 'contextmenu_cell',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
+  RESIZE_ROW: 'resize_row',
+  RESIZE_ROW_END: 'resize_row_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
+  AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
+  SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
+  SCROLL_VERTICAL_END: 'scroll_vertical_end',
   DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
   MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
   DRAG_SELECT_END: 'drag_select_end',
@@ -130,7 +135,7 @@ Event callback function parameter types.
 ``
 
 {
-col: number.
+col: number;
 colWidth: number
 }
 
@@ -144,8 +149,36 @@ Event callback function parameter types.
 ``
 
 {
-col: number.
+col: number;
 columns: number[]
+}
+
+``
+
+## RESIZE_ROW
+
+Row height adjustment events.
+
+Event callback function parameter types.
+``
+
+{
+row: number;
+rowHeight: number
+}
+
+``
+
+## RESIZE_ROW_END
+
+Row height adjustment end event.
+
+Event callback function parameter types.
+``
+
+{
+row: number;
+rowHeight: number
 }
 
 ``
@@ -170,8 +203,19 @@ Click on the sort icon event.
 Parameter types for event callback functions.
 `  {
     field: string;
-    order: 'asc' | 'desc' | 'normal'.
+    order: 'asc' | 'desc' | 'normal';
+    event: Event;
   }`
+
+## AFTER_SORT
+
+After sorting event.
+Parameter types for event callback functions.
+`{
+  order: 'asc' | 'desc' | 'normal';
+  field: string;
+  event: Event;
+}`
 
 ## FREEZE_CLICK
 
@@ -198,6 +242,34 @@ Event callback function parameter types.
       viewWidth: number;
       viewHeight: number;
     }`
+
+## SCROLL_HORIZONTAL_END
+
+Scroll horizontally to the right to end the event
+
+Event callback function parameter types.
+`    {
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+}`
+
+## SCROLL_VERTICAL_END
+
+Vertical scroll bar scrolls to the end position
+
+Event callback function parameter types.
+`    {
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+}`
 
 ## DROPDOWN_MENU_CLICK
 

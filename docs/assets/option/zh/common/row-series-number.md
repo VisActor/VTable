@@ -27,3 +27,7 @@ ${prefix} headerStyle(IStyleOption|Function)
 ${prefix} style
 
 body 单元格样式，可参考：[style](../option/ListTable-columns-text#style.bgColor)
+
+${prefix} disableColumnResize(boolean)
+
+是否禁止列宽调整，默认为 false

@@ -13,6 +13,18 @@ export const menus = [
       {
         path: 'debug',
         name: 'site'
+      },
+      {
+        path: 'debug',
+        name: 'viewbox'
+      },
+      {
+        path: 'debug',
+        name: 'animation'
+      },
+      {
+        path: 'debug',
+        name: 'scroll'
       }
     ]
   },
@@ -38,6 +50,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-transpose-autoFillHeight'
+      },
+      {
+        path: 'list',
+        name: 'list-transpose-frozen-row'
       },
       {
         path: 'list',
@@ -70,6 +86,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-title'
+      },
+      {
+        path: 'list',
+        name: 'list-empty-tip'
       },
       {
         path: 'list',
@@ -106,6 +126,14 @@ export const menus = [
       {
         path: 'list',
         name: 'list-large-columns'
+      },
+      {
+        path: 'list',
+        name: 'list-tree-group'
+      },
+      {
+        path: 'list',
+        name: 'list-group'
       }
     ]
   },
@@ -119,6 +147,10 @@ export const menus = [
       {
         path: 'list-analysis',
         name: 'list-aggregation'
+      },
+      {
+        path: 'list-analysis',
+        name: 'list-aggregation-deleteRecord'
       },
       {
         path: 'list-analysis',
@@ -147,6 +179,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-tree-lazy-load'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-rowSeriesNumber'
       },
       {
@@ -156,6 +192,14 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-tree-rowSeriesNumber'
+      },
+      {
+        path: 'pivot',
+        name: 'virtual-node'
+      },
+      {
+        path: 'pivot',
+        name: 'virtual-node-2'
       }
     ]
   },
@@ -164,11 +208,39 @@ export const menus = [
     children: [
       {
         path: 'pivot-chart',
+        name: 'bug-fix'
+      },
+      {
+        path: 'pivot-chart',
         name: 'noDimension-updateOption'
       },
       {
         path: 'pivot-chart',
         name: 'pivotChart_site_demo'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-wordCloud'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-radar'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-rose'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-gauge'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-scatter'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-scatter1'
       },
       {
         path: 'pivot-chart',
@@ -185,6 +257,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-markLine'
       },
       {
         path: 'pivot-chart',
@@ -213,6 +289,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-legend'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-two-legends'
       },
       {
         path: 'pivot-chart',
@@ -310,6 +390,10 @@ export const menus = [
       {
         path: 'type',
         name: 'checkbox'
+      },
+      {
+        path: 'type',
+        name: 'radio'
       }
     ]
   },
@@ -423,6 +507,14 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-columnTree'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-columnTree2'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-total'
       },
       {
@@ -451,6 +543,26 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-sortField'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-sortBy'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-sortByIndicator'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-sortFunc'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-updateSortRule'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-aggregationRules'
       },
       {
@@ -464,12 +576,28 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-str'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-empty-tip'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-calculatedField'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-calculatedField2'
       }
     ]
   },
   {
     menu: '交互',
     children: [
+      {
+        path: 'interactive',
+        name: 'fill-handle'
+      },
       {
         path: 'interactive',
         name: 'hover'
@@ -497,6 +625,14 @@ export const menus = [
       {
         path: 'interactive',
         name: 'update-column'
+      },
+      {
+        path: 'interactive',
+        name: 'row-resize'
+      },
+      {
+        path: 'interactive',
+        name: 'pre-sort'
       }
     ]
   },
@@ -639,6 +775,14 @@ export const menus = [
   {
     menu: 'custom',
     children: [
+      {
+        path: 'custom',
+        name: 'complex-corner'
+      },
+      {
+        path: 'custom',
+        name: 'simple-corner'
+      },
       {
         path: 'custom',
         name: 'custom-layout'
@@ -784,6 +928,15 @@ export const menus = [
     ]
   },
   {
+    menu: 'animation',
+    children: [
+      {
+        path: 'animation',
+        name: 'scroll-to'
+      }
+    ]
+  },
+  {
     menu: '业务方',
     children: [
       {
@@ -821,6 +974,10 @@ export const menus = [
       {
         path: 'business',
         name: 'sales-bubble'
+      },
+      {
+        path: 'business',
+        name: 'background-image'
       }
     ]
   },
@@ -858,6 +1015,14 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'pivotTable-size-legend'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unit-listTable-sort'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unit-listTable-frozen'
       }
     ]
   },

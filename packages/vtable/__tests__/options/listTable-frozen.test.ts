@@ -1,7 +1,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
 import records from '../data/marketsales.json';
-import { ListTable } from '../../src/ListTable';
+import { ListTable } from '../../src';
 import { createDiv } from '../dom';
 global.__VERSION__ = 'none';
 describe('listTable-frozen init test', () => {
@@ -89,6 +89,6 @@ describe('listTable-frozen init test', () => {
   test('listTable frozenColCount set', () => {
     listTable.frozenColCount = 4;
     expect(listTable.frozenColCount).toBe(4);
+    listTable.release();
   });
-  listTable.release();
 });

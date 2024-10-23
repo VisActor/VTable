@@ -88,8 +88,10 @@ export function createTable() {
       </svg>`,
     tooltip: {
       // 气泡框，按钮的的解释信息
-      title: '更多操作',
-      style: { bgColor: 'black', arrowMark: true, color: 'white' }
+      title:
+        '更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作更多操作操作 更多操作更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作 更多操作更多操作',
+      style: { bgColor: 'black', arrowMark: true, color: 'white', maxHeight: 100, maxWidth: 100 },
+      disappearDelay: 100
     }
   });
   VTable.register.icon('phone', {
@@ -99,7 +101,7 @@ export function createTable() {
     height: 26,
     // funcType: VTable.TYPES.IconFuncTypeEnum.sort,//对应内部特定功能的图标，目前有sort frozen expand等
     name: 'phone', //定义图标的名称，在内部会作为缓存的key值
-    positionType: VTable.TYPES.IconPosition.left, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
+    positionType: VTable.TYPES.IconPosition.inlineFront, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
     marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
     marginRight: 0, // 右侧内容间隔 在特定位置position中起作用
     visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
@@ -112,7 +114,10 @@ export function createTable() {
     tooltip: {
       // 气泡框，按钮的的解释信息
       title: '打电话',
-      placement: VTable.TYPES.Placement.left
+      placement: VTable.TYPES.Placement.left,
+      style: {
+        arrowMark: true
+      }
     }
   });
   VTable.register.icon('book', {
@@ -315,7 +320,8 @@ export function createTable() {
               style: { arrowMark: true },
               placement: VTable.TYPES.Placement.top,
               // 气泡框，按钮的的解释信息
-              title: '对象定义形式 非注册'
+              title: '对象定义形式 非注册',
+              disappearDelay: 100
             }
           }
         ],
@@ -391,7 +397,8 @@ export function createTable() {
           return `这是第${rec.id}号`;
         },
         title: 'ID说明',
-        description: '这是一个ID详细描述',
+        description: `这是一个ID详细描述\n这是一个ID详细描述
+这是一个ID详细描述`,
         sort: (v1, v2, order) => {
           if (order === 'desc') {
             return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
@@ -418,12 +425,18 @@ export function createTable() {
     allowFrozenColCount: 8,
     tooltip: {
       renderMode: 'html',
-      isShowOverflowTextTooltip: false
+      isShowOverflowTextTooltip: true,
+      overflowTextTooltipDisappearDelay: 100
     },
     heightMode: 'autoHeight',
     title: {
       text: 'title',
       orient: 'top'
+    },
+    theme: {
+      tooltipStyle: {
+        maxWidth: 200
+      }
     }
   };
 

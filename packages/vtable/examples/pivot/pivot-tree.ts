@@ -4,7 +4,7 @@ const PivotTable = VTable.PivotTable;
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
-  fetch(window.location.origin + '/pivot/supermarket-flat.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/test-demo-data/supermarket-flat.json')
     .then(res => res.json())
     .then(data => {
       const option: VTable.PivotTableConstructorOptions = {

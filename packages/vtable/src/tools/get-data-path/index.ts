@@ -3,6 +3,9 @@ import type { PivotChart } from '../../PivotChart';
 import type { IPivotTableCellHeaderPaths, PivotChartConstructorOptions } from '../../ts-types';
 import { createDataset } from './create-dataset';
 import { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
+import type { ITreeLayoutHeadNode } from '../../layout/tree-helper';
+import { DimensionTree } from '../../layout/tree-helper';
+import { IndicatorDimensionKeyPlaceholder } from '../global';
 
 export function getDataCellPath(
   options: PivotChartConstructorOptions,
@@ -10,11 +13,27 @@ export function getDataCellPath(
   compareFunc?: (a: any, b: any) => boolean
 ): IPivotTableCellHeaderPaths | undefined {
   // mock dataset
-  const dataset = createDataset(options);
+  const results = createDataset(options);
+  let columnDimensionTree = results.columnDimensionTree;
+  let rowDimensionTree = results.rowDimensionTree;
 
+  let isNeedResetColumnDimensionTree = false;
+  let isNeedResetRowDimensionTree = false;
+  if (options.columnTree) {
+    if (options.indicatorsAsCol && !columnDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)) {
+      isNeedResetColumnDimensionTree = true;
+    }
+  }
+  if (options.rowTree) {
+    if (!options.indicatorsAsCol && !rowDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)) {
+      isNeedResetRowDimensionTree = true;
+    }
+  }
+  const { dataset, layoutNodeId } = results;
   // mock pivotChart
   const mockTable = {
     options,
+    layoutNodeId,
     internalProps: options,
     isPivotChart: () => true,
     pivotChartAxes: [] as any[],
@@ -27,9 +46,19 @@ export function getDataCellPath(
       };
     }
   };
-
+  if (!options.columnTree || isNeedResetColumnDimensionTree) {
+    columnDimensionTree = new DimensionTree((dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [], layoutNodeId);
+  }
+  if (!options.rowTree || isNeedResetRowDimensionTree) {
+    rowDimensionTree = new DimensionTree((dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [], layoutNodeId);
+  }
   // mock layoutMap
-  const layoutMap = new PivotHeaderLayoutMap(mockTable as unknown as PivotChart, dataset);
+  const layoutMap = new PivotHeaderLayoutMap(
+    mockTable as unknown as PivotChart,
+    dataset,
+    columnDimensionTree,
+    rowDimensionTree
+  );
 
   // compare data
   for (let col = 0; col < layoutMap.colCount; col++) {

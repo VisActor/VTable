@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "0.22.2",
+  "version": "1.10.1",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -19,7 +19,15 @@
     "url": "https://VisActor.io/"
   },
   "license": "MIT",
-  "sideEffects": true,
+  "sideEffects": [
+    "./src/ListTable-all.js",
+    "./src/ListTable-simple.js",
+    "./src/PivotTable-all.js",
+    "./src/PivotTable-simple.js",
+    "./src/PivotChart.js",
+    "./src/index.js",
+    "./src/scenegraph/scenegraph.js"
+  ],
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
@@ -28,12 +36,6 @@
     "es",
     "dist"
   ],
-  "exports": {
-    ".": {
-      "require": "./cjs/index.js",
-      "import": "./es/index.js"
-    }
-  },
   "scripts": {
     "demo": "vite serve examples",
     "site-demo": "vite serve site-demo",
@@ -50,19 +52,18 @@
   },
   "dependencies": {
     "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vrender": "0.18.2-alpha.1",
-    "@visactor/vrender-core": "0.18.2-alpha.1",
-    "@visactor/vrender-kits": "0.18.2-alpha.1",
-    "@visactor/vrender-components": "0.18.2-alpha.1",
-    "@visactor/vutils-extension": "~1.8.5",
-    "@visactor/vutils": "~0.18.1",
+    "@visactor/vrender-core": "0.21.0-alpha.2",
+    "@visactor/vrender-kits": "0.21.0-alpha.2",
+    "@visactor/vrender-components": "0.21.0-alpha.2",
+    "@visactor/vutils": "~0.18.14",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
+    "@visactor/vutils-extension": "~1.11.5",
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
     "luxon": "*",
-    "@visactor/vchart": "1.10.0",
+    "@visactor/vchart": "1.12.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

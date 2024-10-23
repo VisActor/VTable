@@ -4,7 +4,7 @@ const PivotTable = VTable.PivotTable;
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
-  fetch(window.location.origin + '/pivot/supermarket-flat.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/test-demo-data/supermarket-flat.json')
     .then(res => res.json())
     .then(data => {
       const option: VTable.PivotTableConstructorOptions = {
@@ -383,6 +383,8 @@ export function createTable() {
             indicatorKey: '220524114340013',
             title: '销售额',
             width: 'auto',
+            maxWidth: 50,
+            minWidth: 50,
             format(value, col, row, table) {
               // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
               if (!value) {
@@ -460,19 +462,15 @@ export function createTable() {
         autoWrapText: true,
         widthMode: 'standard',
         rowHierarchyType: 'tree',
+        autoFillWidth: true,
         rowExpandLevel: 2,
         rowHierarchyIndent: 20,
         theme: VTable.themes.ARCO,
         dragHeaderMode: 'all',
         rowSeriesNumber: {
-          enable: true,
           title: '行号',
           width: 'auto',
-          field: 'name',
           dragOrder: true,
-          // format: (args: any) => {
-          //   return args.value;
-          // },
           style: {
             color: 'red'
           }

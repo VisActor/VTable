@@ -23,7 +23,8 @@ VTable 支持为文本类型数据设置多样化的样式，以下为文本类�
 - `underlineDash`：下划线的虚线样式。
 - `underlineOffset`：下划线与文字的间隔距离。
 - `lineThrough`：为单元格文本内容设置中划线。
-- `textStick`：设置单元格的文本是否带有吸附效果【当滚动时文本可动态调整位置】
+- `textStick`：设置单元格的文本是否带有吸附效果【当滚动时文本可动态调整位置】，可以设置为 true 开启， 或者设置 'horizontal' 或 'vertical' 指定仅在哪个方向吸附。
+- `textStickBaseOnAlign`：当单元格的文本有吸附效果【当滚动时文本可动态调整位置】时，吸附的基准是单元格的水平对齐方式。例如当`textStickBaseOnAlign`为`true`时，`textAlign`为`'center'`时，文本会吸附在单元格的水平中心位置；否则就会吸附在单元格左边缘或右边缘（依据滚动位置决定）
 - `autoWrapText`：设置单元格是否自动换行。
 - `lineClamp`：设置单元格的最大行数, 可设置 number 或者'auto',如果设置为'auto', 则会自动计算
 

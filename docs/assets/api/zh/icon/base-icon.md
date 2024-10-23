@@ -12,6 +12,34 @@ icon 的高度。
 ${prefix} positionType (IconPosition)
 IconPosition 枚举类型。
 
+```
+/**
+ * icon 的位置
+ * inlineFront:文本内容的前面，
+ * inlineEnd：文本内容后面
+ *
+ */
+export enum IconPosition {
+  /**单元格左侧按钮 且受padding影响 */
+  left = 'left',
+  /**单元格右侧按钮 受padding影响 如pin图表 */
+  right = 'right',
+  /**固定在右侧的图标，不占位，不受padding影响，可能压盖内容 如 dropDown */
+  absoluteRight = 'absoluteRight',
+  /**在单元格内容块的左侧的图标，跟随文本定位，不随文本折行 */
+  contentLeft = 'contentLeft',
+  /**在单元格内容块的右侧的图标,跟随文本定位，不随文本折行 */
+  contentRight = 'contentRight',
+  /**在单元格中自由定位 */
+  absolute = 'absolute',
+
+  /**文本行内容前面的图标，跟随文本定位，随文本折行 */
+  inlineFront = 'inlineFront',
+  /**文本行内容后面的图标，跟随文本定位，随文本折行。如sort图表 放在文本内容的第一行 */
+  inlineEnd = 'inlineEnd',
+}
+```
+
 ${prefix} marginRight (number)
 和右侧元素间隔距离，或者与单元格边界的间隔距离。
 
@@ -23,11 +51,12 @@ icon 的名称，会作为内部缓存的 key。
 
 ${prefix} funcType (IconFuncTypeEnum)
 
-重置VTable内部的icon时需要指定 icon 的功能类型。
+重置 VTable 内部的 icon 时需要指定 icon 的功能类型。
 
-特别是具有切换状态的功能性的图标请务必配置上funcType，例如排序功能 funcType 配置 sort，name 配置 sort_normal 或 sort_downward，或 sort_upward。这样才能准确替换到内部相应的icon图标。
+特别是具有切换状态的功能性的图标请务必配置上 funcType，例如排序功能 funcType 配置 sort，name 配置 sort_normal 或 sort_downward，或 sort_upward。这样才能准确替换到内部相应的 icon 图标。
 
-IconFuncTypeEnum枚举类型定义：
+IconFuncTypeEnum 枚举类型定义：
+
 ```
 enum IconFuncTypeEnum {
   pin = 'pin',
@@ -73,7 +102,8 @@ ${prefix} tooltip (Object)
 
 #${prefix} placement (Placement)
 气泡框位置，可选值为 top、left、right 或 bottom。
-Placement枚举类型定义：
+Placement 枚举类型定义：
+
 ```
  enum Placement {
   top = 'top',

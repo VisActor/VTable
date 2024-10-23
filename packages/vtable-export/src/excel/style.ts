@@ -93,11 +93,12 @@ function getBorderStyle(lineWidth: number, borderLineDash: LineDashsDef): ExcelJ
   return 'thick';
 }
 
-export function getCellAlignment(cellStyle: CellStyle): Partial<ExcelJS.Alignment> {
+export function getCellAlignment(cellStyle: CellStyle, indent: number): Partial<ExcelJS.Alignment> {
   return {
     horizontal: cellStyle.textAlign || 'left',
     vertical: cellStyle.textBaseline || 'middle',
-    wrapText: cellStyle.autoWrapText || false
+    wrapText: cellStyle.autoWrapText || false,
+    indent: indent || 0
   } as any;
 }
 

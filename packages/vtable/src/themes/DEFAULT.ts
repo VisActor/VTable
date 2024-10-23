@@ -20,6 +20,7 @@ function getBackgroundColor(args: StylePropertyFunctionArg): string {
  * @memberof VTable.themes.DEFAULT
  */
 export default {
+  name: 'DEFAULT',
   underlayBackgroundColor: '#FFF',
   // selectionBgColor: '#CCE0FF',
   defaultStyle: {
@@ -118,8 +119,6 @@ export default {
   selectionStyle: {
     cellBgColor: 'rgba(0, 0, 255,0.1)',
     cellBorderLineWidth: 2,
-    inlineColumnBgColor: '#CCE0FF',
-    inlineRowBgColor: '#CCE0FF',
     cellBorderColor: '#0000ff'
   },
   tooltipStyle: {

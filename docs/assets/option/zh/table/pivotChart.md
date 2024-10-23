@@ -51,7 +51,7 @@
 
 ## columnTree(Array)
 
-列表头树，类型为:`IDimensionHeaderNode|IIndicatorHeaderNode[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。
+列表头树，类型为:`(IDimensionHeaderNode|IIndicatorHeaderNode)[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。
 
 ** IDimensionHeaderNode 具体配置项如下：**
 
@@ -64,9 +64,11 @@ export interface IDimensionHeaderNode {
   /** 维度成员值 */
   value: string;
   /** 维度成员下的子维度树结构 */
-  children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
+  children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[];
   /** 折叠状态 配合树形结构展示使用。注意：仅在rowTree中有效 */
   hierarchyState?: HierarchyState;
+  /** 跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格 */
+  levelSpan?: number;
 }
 ```
 
@@ -82,6 +84,8 @@ export interface IIndicatorHeaderNode {
    * 指标名称 如：“销售额”，“例如”， 对应到单元格显示的值。可不填，不填的话 从indicators的对应配置中取值显示
    */
   value?: string;
+  /** 跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格 */
+  levelSpan?: number;
 }
 ```
 
@@ -102,7 +106,7 @@ export interface IIndicatorHeaderNode {
 
 ## indicatorsAsCol(boolean) = true
 
-指标显示在列上，默认是true。如果配置为false，则显示在行，指标以行展示
+指标显示在列上，默认是 true。如果配置为 false，则显示在行，指标以行展示
 
 ## indicatorTitle(string)
 
@@ -146,13 +150,22 @@ export interface IIndicatorHeaderNode {
 - `indicatorGroup`: 调整同父级维度下所有指标列的宽度
 - `all`： 所有列宽都被调整
 
+## rowResizeType(string)
+
+调整行高的生效范围，可配置项：
+
+- `row`: 调整行高只调整当前行
+- `indicator`: 调整行高时对应相同指标的行都会被调整
+- `indicatorGroup`: 调整同父级维度下所有指标行的宽度
+- `all`： 所有行高都被调整
+
 ## renderChartAsync(boolean)
 
 是否开启图表异步渲染
 
 ## renderChartAsyncBatchCount(number)
 
-开启图表异步渲染，每批次渐进渲染图表个数，建议5-10个，具体可以视整体效果调整。默认值5.
+开启图表异步渲染，每批次渐进渲染图表个数，建议 5-10 个，具体可以视整体效果调整。默认值 5.
 
 {{ use: common-option-secondary(
       prefix = '#',

@@ -35,11 +35,23 @@ export class DiscreteTableLegend {
     });
     const legend = new DiscreteLegend(
       merge({}, attrs, {
-        defaultSelected: this.selectedData
+        defaultSelected: this.selectedData,
+        disableTriggerEvent: this.table.options.disableInteraction
       })
     );
     legend.name = 'legend';
     this.legendComponent = legend;
+    if (this.visible === false) {
+      legend.setAttributes({
+        maxWidth: 0,
+        width: 0,
+        maxHeight: 0,
+        height: 0,
+        clip: true
+        // visible: false
+      });
+      legend.hideAll();
+    }
     this.table.scenegraph.stage.defaultLayer.appendChild(legend);
 
     this.adjustTableSize(attrs);
@@ -135,13 +147,15 @@ export class DiscreteTableLegend {
 
   getLegendAttributes(rect: any) {
     const layout = this.orient === 'bottom' || this.orient === 'top' ? 'horizontal' : 'vertical';
+    const legendAttrs = getLegendAttributes(this.option, rect);
+    const padding = getQuadProps(legendAttrs.padding ?? this.option.padding ?? 10);
     const attrs = {
       layout,
       items: this.getLegendItems(),
       // zIndex: this.layoutZIndex,
-      maxWidth: rect.width,
-      maxHeight: rect.height,
-      ...getLegendAttributes(this.option, rect)
+      maxWidth: rect.width - padding[1] - padding[3],
+      maxHeight: rect.height - padding[0] - padding[2],
+      ...legendAttrs
     };
     return attrs;
   }

@@ -1,14 +1,10 @@
-import type React from 'react';
-export { ListColumn } from './list/list-column';
-export { PivotColumnDimension, PivotRowDimension } from './pivot/pivot-dimension';
-export { PivotIndicator } from './pivot/pivot-indicator';
-export { PivotColumnHeaderTitle, PivotRowHeaderTitle } from './pivot/pivot-header-title';
-export { PivotCorner } from './pivot/pivot-corner';
-export { Menu } from './component/menu';
-export { Tooltip } from './component/tooltip';
-
-type Props = { updateId?: number };
-
-export interface IMarkElement extends React.ReactElement<Props, React.JSXElementConstructor<Props>> {
-  id: string | number;
-}
+// export * from './vrender-components/tag';
+// export * from './vrender-components/checkbox';
+// export * from './vrender-components/radio';
+export * from './button/button';
+export * from './link/link';
+export * from './avatar/avatar';
+export * from './popover/popover';
+export * from './tag/tag';
+export * from './radio/radio';
+export * from './checkbox/checkbox';

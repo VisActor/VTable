@@ -1,5 +1,6 @@
 /* eslint-disable react/display-name */
-import * as VTable from '@visactor/vtable';
+// import * as VTable from '@visactor/vtable';
+// import { VTable } from '../vtable';
 import React, { useState, useEffect, useRef, useImperativeHandle, useCallback } from 'react';
 import type { ContainerProps } from '../containers/withContainer';
 import withContainer from '../containers/withContainer';
@@ -8,7 +9,7 @@ import RootTableContext from '../context/table';
 import { isEqual, isNil, pickWithout } from '@visactor/vutils';
 import { toArray } from '../util';
 import { REACT_PRIVATE_PROPS } from '../constants';
-import type { IMarkElement } from '../components';
+import type { IMarkElement } from '../table-components';
 import type {
   EventsProps
   // LegendEventProps,
@@ -21,31 +22,48 @@ import type {
   // TableLifeCycleEventProps
 } from '../eventsUtils';
 import { bindEventsToTable, TABLE_EVENTS_KEYS, TABLE_EVENTS } from '../eventsUtils';
+import { VTableReactAttributePlugin } from '../table-components/custom/vtable-react-attribute-plugin';
+import { reactEnvModule } from '../table-components/custom/vtable-browser-env-contribution';
+import { container, isBrowserEnv } from '@visactor/vtable/es/vrender';
+import type {
+  ListTable,
+  PivotTable,
+  PivotChart,
+  ListTableConstructorOptions,
+  PivotTableConstructorOptions,
+  PivotChartConstructorOptions
+} from '@visactor/vtable';
 
-export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
-export type IOption =
-  | VTable.ListTableConstructorOptions
-  | VTable.PivotTableConstructorOptions
-  | VTable.PivotChartConstructorOptions;
+export type IVTable = ListTable | PivotTable | PivotChart;
+export type IOption = ListTableConstructorOptions | PivotTableConstructorOptions | PivotChartConstructorOptions;
 
-export interface BaseTableProps extends EventsProps {
-  type?: string;
-  /** 上层container */
-  container?: HTMLDivElement;
-  /** option */
-  option?: any;
-  /** 数据 */
-  records?: Record<string, unknown>[];
-  /** 画布宽度 */
-  width?: number;
-  /** 画布高度 */
-  height?: number;
-  skipFunctionDiff?: boolean;
+export type BaseTableProps = EventsProps &
+  IOption & {
+    vtableConstrouctor?: any;
+    type?: string;
+    /** 上层container */
+    container?: HTMLDivElement;
+    /** option */
+    option?: IOption;
+    /** 数据 */
+    records?: Record<string, unknown>[];
+    /** 画布宽度 */
+    width?: number;
+    /** 画布高度 */
+    height?: number;
+    skipFunctionDiff?: boolean;
 
-  /** 表格渲染完成事件 */
-  onReady?: (instance: IVTable, isInitial: boolean) => void;
-  /** throw error when chart run into an error */
-  onError?: (err: Error) => void;
+    ReactDOM?: any;
+
+    /** 表格渲染完成事件 */
+    onReady?: (instance: IVTable, isInitial: boolean) => void;
+    /** throw error when chart run into an error */
+    onError?: (err: Error) => void;
+  };
+
+// for react-vtable
+if (isBrowserEnv()) {
+  container.load(reactEnvModule);
 }
 
 type Props = React.PropsWithChildren<BaseTableProps>;
@@ -58,7 +76,8 @@ const notOptionKeys = [
   'onReady',
   'option',
   'records',
-  'container'
+  'container',
+  'vtableConstrouctor'
 ];
 
 const getComponentId = (child: React.ReactNode, index: number) => {
@@ -67,7 +86,7 @@ const getComponentId = (child: React.ReactNode, index: number) => {
 };
 
 const parseOptionFromChildren = (props: Props) => {
-  const optionFromChildren: Omit<IOption, 'type' | 'data' | 'width' | 'height'> = {};
+  const optionFromChildren: Omit<IOption, 'type' | 'data' | 'width' | 'height'> = {} as any;
 
   toArray(props.children).map((child, index) => {
     const parseOption = child && (child as any).type && (child as any).type.parseOption;
@@ -80,13 +99,17 @@ const parseOptionFromChildren = (props: Props) => {
           }
         : (child as any).props;
 
-      const optionResult = parseOption(childProps);
+      const optionResult = parseOption(childProps) as {
+        optionName: keyof Omit<IOption, 'type' | 'data' | 'width' | 'height'>;
+        isSingle: boolean;
+        option: any;
+      };
 
       if (optionResult.isSingle) {
-        optionFromChildren[optionResult.optionName] = optionResult.option;
+        optionFromChildren[optionResult.optionName] = optionResult.option as never;
       } else {
         if (!optionFromChildren[optionResult.optionName]) {
-          optionFromChildren[optionResult.optionName] = [];
+          optionFromChildren[optionResult.optionName] = [] as never;
         }
 
         optionFromChildren[optionResult.optionName].push(optionResult.option);
@@ -116,31 +139,45 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         if (hasRecords && props.records) {
           return {
             ...props.option,
+            clearDOM: false,
             records: props.records
           };
         }
-        return props.option;
+        return {
+          ...props.option,
+          clearDOM: false
+        };
       }
       return {
         records: props.records,
         ...prevOption.current,
-        ...optionFromChildren.current
+        ...optionFromChildren.current,
+        clearDOM: false,
+        customConfig: {
+          ...prevOption.current.customConfig,
+          createReactContainer: true
+        }
         // ...tableContext.current?.optionFromChildren
-      } as IOption;
+      };
     },
     [hasOption, hasRecords]
   );
 
   const createTable = useCallback(
     (props: Props) => {
-      let vtable;
-      if (props.type === 'pivot-table') {
-        vtable = new VTable.PivotTable(props.container, parseOption(props));
-      } else if (props.type === 'pivot-chart') {
-        vtable = new VTable.PivotChart(props.container, parseOption(props));
-      } else {
-        vtable = new VTable.ListTable(props.container, parseOption(props));
-      }
+      // let vtable;
+      // if (props.type === 'pivot-table') {
+      //   vtable = new VTable.PivotTable(props.container, parseOption(props));
+      // } else if (props.type === 'pivot-chart') {
+      //   vtable = new VTable.PivotChart(props.container, parseOption(props));
+      // } else {
+      //   vtable = new VTable.ListTable(props.container, parseOption(props));
+      // }
+      const vtable = new props.vtableConstrouctor(props.container, parseOption(props));
+      // vtable.scenegraph.stage.enableReactAttribute(ReactDOM);
+      vtable.scenegraph.stage.reactAttribute = props.ReactDOM;
+      vtable.scenegraph.stage.pluginService.register(new VTableReactAttributePlugin());
+      vtable.scenegraph.stage.params.ReactDOM = props.ReactDOM;
       tableContext.current = { ...tableContext.current, table: vtable };
       isUnmount.current = false;
     },
@@ -193,17 +230,17 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
 
     if (hasOption) {
       if (!isEqual(eventsBinded.current.option, props.option, { skipFunction: skipFunctionDiff })) {
-        eventsBinded.current = props;
         // eslint-disable-next-line promise/catch-or-return
-        tableContext.current.table.updateOption(parseOption(props));
+        tableContext.current.table.updateOption(parseOption(props) as any);
         handleTableRender();
+        eventsBinded.current = props;
       } else if (
         hasRecords &&
         !isEqual(eventsBinded.current.records, props.records, { skipFunction: skipFunctionDiff })
       ) {
-        eventsBinded.current = props;
         tableContext.current.table.setRecords(props.records as any[]);
         handleTableRender();
+        eventsBinded.current = props;
       }
       return;
     }
@@ -219,12 +256,14 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       optionFromChildren.current = newOptionFromChildren;
 
       // eslint-disable-next-line promise/catch-or-return
-      tableContext.current.table.updateOption(parseOption(props));
+      tableContext.current.table.updateOption(parseOption(props) as any);
       handleTableRender();
+      eventsBinded.current = props;
     } else if (hasRecords && !isEqual(props.records, prevRecords.current, { skipFunction: skipFunctionDiff })) {
       prevRecords.current = props.records;
       tableContext.current.table.setRecords(props.records);
       handleTableRender();
+      eventsBinded.current = props;
     }
     // tableContext.current = {
     //   ...tableContext.current,
@@ -267,7 +306,8 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
           <React.Fragment key={childId}>
             {React.cloneElement(child as React.ReactElement<any, React.JSXElementConstructor<any>>, {
               updateId: updateId,
-              componentId: childId
+              componentId: childId,
+              componentIndex: index
             })}
           </React.Fragment>
         );
@@ -276,17 +316,25 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   );
 });
 
-export const createTable = <T extends Props>(componentName: string, type?: string, callback?: (props: T) => T) => {
+export const createTable = <T extends Props>(
+  componentName: string,
+  defaultProps?: Partial<T>,
+  callback?: (props: T) => T
+) => {
   const Com = withContainer<ContainerProps, T>(BaseTable as any, componentName, (props: T) => {
-    props.type = type;
+    // props.type = type;
 
-    if (callback) {
-      return callback(props);
+    if (defaultProps) {
+      return Object.assign(props, defaultProps);
     }
 
-    if (type) {
-      return { ...props, type };
-    }
+    // if (callback) {
+    //   return callback(props);
+    // }
+
+    // if (type) {
+    //   return { ...props, type };
+    // }
     return props;
   });
   Com.displayName = componentName;

@@ -171,10 +171,16 @@ export class DebugTool {
     // this._stage.defaultLayer.appendChild(this._rect);
     // this._stage.renderNextFrame();
 
-    this._highlightRect.style.left = `${bounds.x1}px`;
-    this._highlightRect.style.top = `${bounds.y1}px`;
+    const table = (this._stage as any).table;
+    const stage = table.scenegraph.stage;
+    const stageMatrix = stage.window.getViewBoxTransform();
+
+    this._highlightRect.style.left = `${bounds.x1 + (stageMatrix.e ?? 0) + (table.options.viewBox?.x1 ?? 0)}px`;
+    this._highlightRect.style.top = `${bounds.y1 + (stageMatrix.f ?? 0) + (table.options.viewBox?.y1 ?? 0)}px`;
     this._highlightRect.style.width = `${bounds.width()}px`;
     this._highlightRect.style.height = `${bounds.height()}px`;
+
+    // console.log(this._highlightRect.style.left);
   }
 
   // removeHighlightBounds() {

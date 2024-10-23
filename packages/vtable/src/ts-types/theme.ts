@@ -1,15 +1,18 @@
 /* eslint-disable sort-imports */
-import type { ColorsDef, LineDashsDef, LineWidthsDef, LineWidthsPropertyDefine } from '.';
-import type { CheckboxStyle, ITextStyleOption } from './column/style';
+import type { ColorsDef, LineDashsDef, LineWidthsDef, LineWidthsPropertyDefine, LineDashsPropertyDefine } from '.';
+import type { CheckboxStyle, ITextStyleOption, RadioStyle } from './column/style';
 import type { ColorPropertyDefine, ColorsPropertyDefine } from './style-define';
-import type { ColumnIconOption } from './icon';
 import type { ICellAxisOption } from './component/axis';
 import type { PopTipAttributes } from '@visactor/vrender-components';
 // ****** Custom Theme *******
 export type PartialTableThemeDefine = Partial<ITableThemeDefine>;
 export type ThemeStyle = ITextStyleOption & {
   hover?: Omit<InteractionStyle, 'cellBorderColor' | 'cellBorderLineWidth'>; //鼠标hover到某个单元格
-  // click?: Omit<InteractionStyle, 'inlineRowBgColor' | 'inlineColumnBgColor'>; //鼠标点击到某个单元格
+  select?: {
+    inlineRowBgColor?: ColorPropertyDefine; //交互所在整行的背景颜色
+    inlineColumnBgColor?: ColorPropertyDefine; //交互所在整列的背景颜色
+    cellBgColor?: ColorPropertyDefine; //交互所在单元格的背景颜色
+  };
   frameStyle?: FrameStyle;
 };
 export type InteractionStyle = {
@@ -34,7 +37,7 @@ export type TableFrameStyle = FrameStyle & {
   shadowOffsetX?: number; //x方向偏移
   shadowOffsetY?: number; //Y方向偏移
   shadowColor?: string; //阴影颜色
-  cornerRadius?: number; //边框圆角半径
+  cornerRadius?: number | [number, number, number, number]; //边框圆角半径
 };
 export type menuStyle = {
   color?: string;
@@ -50,12 +53,22 @@ export type ScrollStyle = {
   scrollRailColor?: string;
   /**滚动条滑块的颜色 */
   scrollSliderColor?: string;
+  /**滚动条滑块的圆角半径 */
+  scrollSliderCornerRadius?: number;
   /**滚动条宽度大小 */
   width?: number;
   /**滚动条是否可见  'always' | 'scrolling' | 'none' | 'focus',常驻|滚动时|不显示|聚焦在画布上时 */
   visible?: 'always' | 'scrolling' | 'none' | 'focus';
+  horizontalVisible?: 'always' | 'scrolling' | 'none' | 'focus';
+  verticalVisible?: 'always' | 'scrolling' | 'none' | 'focus';
   /*** 悬浮与容器上，还是独立于容器外 */
   hoverOn?: boolean;
+  /** 是否显示到容器的边缘 尽管内容没有撑满的情况下 默认false */
+  barToSide?: boolean;
+  /** 横向滚动条 padding */
+  horizontalPadding?: number | [number, number, number, number];
+  /** 竖向滚动条 padding */
+  verticalPadding?: number | [number, number, number, number];
 };
 /**
  * 气泡框，按钮的的解释信息
@@ -66,6 +79,8 @@ export type TooltipStyle = {
   color?: string;
   padding?: number[];
   bgColor?: string;
+  maxWidth?: number;
+  maxHeight?: number;
   /** !目前未实现该逻辑。触发行为：hover or click */
   // trigger?: string | string[];
   /**气泡框位置，可选 top left right bottom */
@@ -85,6 +100,7 @@ export interface ITableThemeDefine {
   headerStyle?: ThemeStyle;
   rowHeaderStyle?: ThemeStyle;
   bodyStyle?: ThemeStyle;
+  groupTitleStyle?: ThemeStyle;
   frameStyle?: TableFrameStyle;
   //列调整宽度的直线
   columnResize?: {
@@ -92,6 +108,7 @@ export interface ITableThemeDefine {
     bgColor?: ColorPropertyDefine; //背景线的颜色
     lineWidth: number; //上面线的宽度
     width?: number; //背景线的宽度
+    labelVisible?: boolean; //是否显示label
     labelColor?: string; //label的颜色
     labelFontSize?: number; //label的字体大小
     labelFontFamily?: string; //label的字体
@@ -132,6 +149,9 @@ export interface ITableThemeDefine {
     cellBorderColor?: string; //边框颜色
     cellBorderLineWidth?: number; //边框线宽度
     cellBgColor?: string; //选择框背景颜色
+    inlineRowBgColor?: string; //交互所在整行的背景颜色
+    inlineColumnBgColor?: string; //交互所在整列的背景颜色
+    selectionFillMode?: 'overlay' | 'replace'; //选择框填充模式，overlay表示选择框背景色覆盖在表格上（需要配饰透明度），replace表示背景色替换原有单元格的背景色
   };
 
   // style for axis
@@ -144,6 +164,7 @@ export interface ITableThemeDefine {
   };
 
   checkboxStyle?: CheckboxStyle;
+  radioStyle?: RadioStyle;
 
   // style for text pop tip
   textPopTipStyle?: PopTipAttributes;
@@ -155,6 +176,32 @@ export interface ITableThemeDefine {
   cellBorderClipDirection?: 'top-left' | 'bottom-right'; // default is 'top-left'
   // text offset, hack for fs
   _contentOffset?: number;
+  /** 内部功能性按钮图标颜色及尺寸配置 */
+  functionalIconsStyle?: {
+    sort_color?: string;
+    sort_color_opacity?: string;
+    sort_color_2?: string;
+    sort_color_opacity_2?: string;
+    sort_size?: number;
+    sort_size_2?: number;
+    frozen_color?: string;
+    frozen_color_opacity?: string;
+    frozen_color_2?: string;
+    frozen_color_opacity_2?: string;
+    frozen_size?: number;
+    frozen_size_2?: number;
+    collapse_color?: string;
+    collapse_color_opacity?: string;
+    collapse_size?: number;
+    collapse_size_2?: number;
+    expand_color?: string;
+    expand_color_opacity?: string;
+    expand_size?: number;
+    expand_size_2?: number;
+    dragReorder_color?: string;
+    dragReorder_color_opacity?: string;
+    dragReorder_size?: number;
+  };
 }
 
 export type RequiredTableThemeDefine = Required<ITableThemeDefine>;

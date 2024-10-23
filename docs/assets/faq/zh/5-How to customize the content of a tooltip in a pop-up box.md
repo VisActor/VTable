@@ -6,7 +6,7 @@
 
 ## 解决方案
 
-提供一种比较灵活的方式：监听 VTable 实例的事件 `mouseenter_cell` 和 `mouseleave_cell` 事件，将自定义的 dom 展示和隐藏，并依据 VTable 事件参数中的 `cellRange` 计算展示 tooltip 的位置。具体可以参考 demo：https://visactor.io/vtable/demo/example/component/tooltip_custom_content
+提供一种比较灵活的方式：监听 VTable 实例的事件 `mouseenter_cell` 和 `mouseleave_cell` 事件，将自定义的 dom 展示和隐藏，并依据 VTable 事件参数中的 `cellRange` 计算展示 tooltip 的位置。具体可以参考 demo：https://visactor.io/vtable/demo/component/tooltip_custom_content
 
 ## 代码示例
 
@@ -23,12 +23,12 @@ tableInstance.on('mouseleave_cell', args => {
 
 ## 结果展示
 
-[在线效果参考](https://visactor.io/vtable/demo/example/component/tooltip_custom_content)
+[在线效果参考](https://visactor.io/vtable/demo/component/tooltip_custom_content)
 
 ![result](/vtable/faq/5-0.png)
 
 ## 相关文档
 
-- [表格 tooltip demo](https://visactor.io/vtable/demo/example/component/tooltip_custom_content)
+- [表格 tooltip demo](https://visactor.io/vtable/demo/component/tooltip_custom_content)
 - [Tooltip 教程](https://visactor.io/vtable/guide/components/tooltip)
 - [github](https://github.com/VisActor/VTable)

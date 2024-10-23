@@ -1,21 +1,24 @@
 # 透视数据分析
 
 下图中一共有四个业务维度：地区、省份、年份、季度，看数指标：销售额，利润。
+
  <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/pivot-analysis.png" />
     <p>透视表结构说明</p>
   </div>
 针对图中销售数据，位置在单元格[5, 5]，即列5行5的数据：代表了2016年Q2季度下东北地区黑龙江省的销售利润值。也就是对应到行维度值：['东北', '黑龙江']，列维度：['2016', '2016-Q2']，指标：'利润'。接下来将介绍如何用VTable实现这种多维表格。
 
-# VTable实现多维表格
+# VTable 实现多维表格
+
 ## 概念映射到配置项
+
 上图透视表的配置如下：
+
 ```
 const option={
   rows:['region','province'], //行维度
   columns:['year','quarter'], //列维度
-  indicators:['sales','profit'], //指标
-  enableDataAnalysis: true, //是否开启数据分析功能
+  indicators:['sales','profit'], //指标 //是否开启数据分析功能
   records:[ //数据源 如果传入了汇总数据则使用用户传入数据
     {
       region:'东北',
@@ -31,25 +34,29 @@ const option={
 ```
 
 该配置是多维表格最简配置。随着对功能要求的复杂性可以针对各功能点来添加各项配置来满足需求。
-## 数据分析相关配置：
-|配置项|类型|描述|
-|:----|:----|:----|
-|rows|(IRowDimension \| string)[]|行维度字段数组，用于解析出对应的维度成员|
-|columns|(IColumnDimension \| string)[]|列维度字段数组，用于解析出对应的维度成员|
-|indicators|(IIndicator \| string)[]|具体展示指标|
-|dataConfig.aggregationRules|aggregationRule[]|按照行列维度聚合值计算规则|
-|dataConfig.derivedFieldRules|DerivedFieldRule[]|派生字段|
-|dataConfig.sortRules|sortRule[]|排序规则|
-|dataConfig.filterRules|filterRule[]|过滤规则|
-|dataConfig.totals|totalRule[]|小计或总计|
 
-dataConfig配置定义：
+## 数据分析相关配置：
+
+| 配置项                          | 类型                           | 描述                                     |
+| :------------------------------ | :----------------------------- | :--------------------------------------- |
+| rows                            | (IRowDimension \| string)[]    | 行维度字段数组，用于解析出对应的维度成员 |
+| columns                         | (IColumnDimension \| string)[] | 列维度字段数组，用于解析出对应的维度成员 |
+| indicators                      | (IIndicator \| string)[]       | 具体展示指标                             |
+| dataConfig.aggregationRules     | aggregationRule[]              | 按照行列维度聚合值计算规则               |
+| dataConfig.derivedFieldRules    | DerivedFieldRule[]             | 派生字段                                 |
+| dataConfig.sortRules            | sortRule[]                     | 排序规则                                 |
+| dataConfig.filterRules          | filterRule[]                   | 过滤规则                                 |
+| dataConfig.totals               | totalRule[]                    | 小计或总计                               |
+| dataConfig.calculatedFieldRules | CalculateddFieldRule[]         | 计算字段                                 |
+
+dataConfig 配置定义：
+
 ```
 /**
  * 数据处理配置
  */
 export interface IDataConfig {
-  aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；
+  aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；默认所有指标值都会按照加和SUM的方式计算
   sortRules?: SortRules; //排序规则；
   filterRules?: FilterRules; //过滤规则；
   totals?: Totals; //小计或总计；
@@ -57,10 +64,17 @@ export interface IDataConfig {
   ...
 }
 ```
+
 dataConfig 应用举例：
-### 1. 数据汇总规则 
-[option说明](../../../option/PivotTable#dataConfig.totals)
+
+### 1. 数据汇总规则
+
+#### VTable 来计算小计总计配置：
+
+[option 说明](../../option/PivotTable#dataConfig.totals)
+
 配置示例：
+
 ```
 dataConfig: {
       totals: {
@@ -82,11 +96,32 @@ dataConfig: {
       }
     },
 ```
+
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-total
+
+#### 自定义汇总数据
+
+如果需要自定义汇总数据，不期望 VTable 来计算小计总计值。除了需要配置上述配置外，还需要传入 VTable 的数据中需要包含对应的汇总数据。这样 VTable 内部会分析将其作为汇总数据而不使用 VTable 的汇总值来展示
+
+ <div style="width: 50%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-total-demo.png" />
+    <p>自定义小计总计示例代码</p>
+  </div>
+
+具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-custom-total
+
 ### 2. 排序规则
-[option说明](../../../option/PivotTable#dataConfig.sortRules)
-配置示例：
+
+VTable 的透视表支持四种排序方式：维度值自然排序、指定维度值顺序，指标值排序、自定义排序。
+
+定义可以参考：
+
+[option 说明](../../option/PivotTable#dataConfig.sortRules) [使用教程](../../guide/basic_function/sort/pivot_sort)
+
+指标值排序配置示例如下：
+
 ```
+dataConfig: {
     sortRules: [
         {
           sortField: 'city',
@@ -95,29 +130,43 @@ dataConfig: {
           query: ['办公用品', '笔']
         } as VTable.TYPES.SortByIndicatorRule
       ]
-
+}
 ```
 
 如果需要修改排序规则 透视表可以使用接口 `updateSortRules`。
 
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-dimension
+
 ### 3. 过滤规则
-[option说明](../../../option/PivotTable#dataConfig.filterRules)
+
+[option 说明](../../option/PivotTable#dataConfig.filterRules)
+
 配置示例：
+
 ```
-filterRules: [
+dataConfig: {
+  filterRules: [
         {
           filterFunc: (record: Record<string, any>) => {
             return record.province !== '四川省' || record.category !== '家具';
           }
         }
       ]
+}
 ```
+
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-filter
+
 ### 4. 聚合方式
-[option说明](../../../option/PivotTable#dataConfig.aggregationRules)
+
+默认所有指标值都会按照加和 SUM 的方式计算，如果不想这个默认的计算方式，可以通过配置 aggregationRules 来修改。通常情况下如果指标是字符串型，需要配置 NONE 来显示数据源字段原始值。
+
+[option 说明](../../option/PivotTable#dataConfig.aggregationRules)
+
 配置示例：
+
 ```
+dataConfig: {
     aggregationRules: [
         //做聚合计算的依据，如销售额如果没有配置则默认按聚合sum计算结果显示单元格内容
         {
@@ -146,14 +195,54 @@ filterRules: [
           indicatorKey: 'OrderSalesValue', //指标名称
           field: 'Sales', //指标依据字段
           aggregationType: VTable.TYPES.AggregationType.NONE, //不做聚合 匹配到其中对应数据获取其对应field的值
+        },
+        {
+          indicatorKey: 'orderRecords', //指标名称
+          field: 'Sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.RECORD, //不做聚合 匹配到其中对应的全部数据作为单元格的值
         }
       ]
+}
 ```
+
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
-### 5. 派生字段
-[option说明](../../../option/PivotTable#dataConfig.derivedFieldRules)
-配置示例：
+
+**特别提示：**
+
+1. AggregationType.NONE 指标不做聚合的使用场景主要用于根据用户传入数据 record 获取的原始数据进行展示，如：
+
 ```
+records:[{
+  region: '中南',
+  province: '广西',
+  year: '2016',
+  quarter: '2016-Q1',
+  sales: 'NULL',
+  profit: 1546
+}],
+dataConfig:{
+    aggregationRules: [
+        {
+          indicatorKey: 'sales', //指标名称
+          field: 'sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.NONE, //不做聚合 匹配到其中对应数据获取其对应field的值
+        }
+      ]
+}
+```
+
+其中该条 record 中 sales 指标是个非数值型的值，而且需求要将`"NULL"`直接显示到表格单元格中，那么可以设置 NONE，要求 VTable 的内部聚合逻辑不聚合直接取`sales`字段值。
+
+2. AggregationType.RECORD 指标不做聚合的使用场景主要用于根据用户传入数据 record 匹配到所有数据，将其作为单元格的展示数据，用法场景如需要搜集数据集作为迷你图展示，具体 demo 见：https://visactor.io/vtable/demo/cell-type/pivot-sparkline
+
+### 5. 派生字段
+
+[option 说明](../../option/PivotTable#dataConfig.derivedFieldRules)
+
+配置示例：
+
+```
+dataConfig: {
     derivedFieldRules: [
       {
         fieldName: 'Year',
@@ -164,19 +253,56 @@ filterRules: [
         derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%n', true),
       }
     ]
+}
 ```
+
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-derivedField
+
+### 6. 透视表计算字段
+
+[option 说明](../../option/PivotTable#dataConfig.calculatedFieldRules)
+
+配置示例：
+
+```
+     dataConfig: {
+        calculatedFieldRules: [
+          {
+            key: 'AvgPrice',
+            dependIndicatorKeys: ['Quantity', 'Sales'],
+            calculateFun: dependValue => {
+              return dependValue.Sales / dependValue.Quantity;
+            }
+          }
+        ],
+     }
+```
+
+配置解释说明：
+
+- key: 计算字段的 key 唯一标识，可以当做新指标，用于配置在 indicators 中在透视表中展示。
+- dependIndicatorKeys：计算字段依赖的指标，可以是在 records 中具体对应的指标字段。如果依赖的指标不在 records 中，则需要在 aggregationRules 中配置，具体指明聚合规则和 indicatorKey 以在 dependIndicatorKeys 所使用。
+- calculateFun：计算字段的计算函数，依赖的指标值作为参数传入，返回值作为计算字段的值。
+
+具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-calculatedField
+
 ## 数据分析过程
-依赖配置：维度，指标及dataConfig。
+
+依赖配置：维度，指标及 dataConfig。
+
 ### 遍历数据的流程：
-遍历一遍records，解析出行列表头维度值用于展示表头单元格，将records中所有数据分配到对应的行列路径集合中并计算出body部分指标单元格的聚合值。
+
+遍历一遍 records，解析出行列表头维度值用于展示表头单元格，将 records 中所有数据分配到对应的行列路径集合中并计算出 body 部分指标单元格的聚合值。
+
  <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/data-analysis-process.png" />
     <p>数据分析过程</p>
   </div>
 
-### 数据维度tree
+### 数据维度 tree
+
 根据上述遍历的结构，将产生一棵维度树，从这棵树可以查找到单元格的值及值的原始数据条目。
+
  <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/dimension-tree.png" />
     <p>组织维度树聚合数据</p>
@@ -187,9 +313,9 @@ filterRules: [
     <p>数据源条目和单元格的对应关系</p>
   </div>
 
-### 自定义维度树
-虽然具有分析能力的多维表格可以自动分析各个维度的维度值组成行列表头的树形结构，并且可以根据`dataConfig.sortRules`进行排序，但具有复杂业务逻辑的场景还是期望可以能够**自定义行列表头维度值**及顺序。那么可以通过rowTree和columnTree来实现这些业务需求场景。
-- enableDataAnalysis需设置为false来关闭VTable内部聚合数据的分析，提升一定的性能。
+### 自定义表头维度树
+
+虽然具有分析能力的多维表格可以自动分析各个维度的维度值组成行列表头的树形结构，并且可以根据`dataConfig.sortRules`进行排序，但具有复杂业务逻辑的场景还是期望可以能够**自定义行列表头维度值**及顺序。那么可以通过 rowTree 和 columnTree 来实现这些业务需求场景。
 
    <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-tree.png" />
@@ -197,6 +323,7 @@ filterRules: [
   </div>
 
 自定义树的配置：
+
 ```
 const option = {
     rowTree: [{
@@ -262,7 +389,7 @@ const option = {
         ]
     }],
     indicators: ['sales', 'profit'],
-    //enableDataAnalysis:true,
+
     corner: {
         titleOnDimension: 'none'
     },
@@ -332,8 +459,23 @@ const option = {
     ]
 };
 ```
-VTable官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
+
+VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
 
 自定义树的复杂在于组建行列维度树，可酌情根据业务场景来选择使用，如果具有复杂的排序、汇总或分页规则可选择使用自定义方式。
 
-**注意：如果选择自定义树的配置方式将不开启VTable内部的数据聚合能力，即匹配到的数据条目中的某一条作为单元格指标值。**
+## 其他相关配置
+
+### 上钻下钻
+
+我们只提供了上钻下载按钮的展示，如果需要该能力需要结合事件和接口自行实现相关逻辑。
+
+在维度配置 rows 或者 columns 中加上 drillDown 的配置项来显示下载按钮，监听点击图标按钮事件`drillmenu_click`,根据事件参数`drillDown` 或者 `drillUp`来确定是维度下钻还是上卷，根据参数`dimensionKey`确定下钻或上钻的维度，将其添加或者删除到 rows 或者 columns 中，并获取新维度层级对应数据源，并调用接口`updateOption`将新的 option 更新至表格。
+
+具体 demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-table-drill
+
+## 相关接口
+
+### getCellOriginRecord
+
+可以帮助获取单元格聚合值对应的原始数据条目。

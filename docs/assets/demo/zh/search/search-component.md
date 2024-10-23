@@ -1,7 +1,7 @@
 ---
 category: examples
-group: Component
-title: 搜索组件
+group: search
+title: 搜索
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png
 link: '../guide/search'
 ---
@@ -13,74 +13,72 @@ link: '../guide/search'
 ## 代码演示
 
 ```javascript livedemo template=vtable
-
-let  tableInstance;
+let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
-  .then((res) => res.json())
-  .then((data) => {
-
-    const columns =[
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
       {
-          "field": "Order ID",
-          "title": "Order ID",
-          "width": "auto"
+        field: 'Order ID',
+        title: 'Order ID',
+        width: 'auto'
       },
       {
-          "field": "Customer ID",
-          "title": "Customer ID",
-          "width": "auto"
+        field: 'Customer ID',
+        title: 'Customer ID',
+        width: 'auto'
       },
       {
-          "field": "Product Name",
-          "title": "Product Name",
-          "width": "auto"
+        field: 'Product Name',
+        title: 'Product Name',
+        width: 'auto'
       },
       {
-          "field": "Category",
-          "title": "Category",
-          "width": "auto"
+        field: 'Category',
+        title: 'Category',
+        width: 'auto'
       },
       {
-          "field": "Sub-Category",
-          "title": "Sub-Category",
-          "width": "auto"
+        field: 'Sub-Category',
+        title: 'Sub-Category',
+        width: 'auto'
       },
       {
-          "field": "Region",
-          "title": "Region",
-          "width": "auto"
+        field: 'Region',
+        title: 'Region',
+        width: 'auto'
       },
       {
-          "field": "City",
-          "title": "City",
-          "width": "auto"
+        field: 'City',
+        title: 'City',
+        width: 'auto'
       },
       {
-          "field": "Order Date",
-          "title": "Order Date",
-          "width": "auto"
+        field: 'Order Date',
+        title: 'Order Date',
+        width: 'auto'
       },
       {
-          "field": "Quantity",
-          "title": "Quantity",
-          "width": "auto"
+        field: 'Quantity',
+        title: 'Quantity',
+        width: 'auto'
       },
       {
-          "field": "Sales",
-          "title": "Sales",
-          "width": "auto"
+        field: 'Sales',
+        title: 'Sales',
+        width: 'auto'
       },
       {
-          "field": "Profit",
-          "title": "Profit",
-          "width": "auto"
+        field: 'Profit',
+        title: 'Profit',
+        width: 'auto'
       }
     ];
 
     const option = {
-      records:data,
+      records: data,
       columns,
-      widthMode:'standard'
+      widthMode: 'standard'
     };
     const dom = document.getElementById(CONTAINER_ID);
     tableInstance = new VTable.ListTable(dom, option);
@@ -113,17 +111,19 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     searchContainer.appendChild(prevBtn);
     searchBtn.addEventListener('click', () => {
       const searchResult = search.search(input.value);
-      result.innerText = searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
+      result.innerText =
+        searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
     });
     prevBtn.addEventListener('click', () => {
       const searchResult = search.prev();
-      result.innerText = searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
+      result.innerText =
+        searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
     });
     nextBtn.addEventListener('click', () => {
       const searchResult = search.next();
-      result.innerText = searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
+      result.innerText =
+        searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
     });
     dom.appendChild(searchContainer);
   });
 ```
-

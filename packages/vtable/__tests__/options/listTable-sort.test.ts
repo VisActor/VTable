@@ -1,7 +1,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
 import records from '../data/marketsales.json';
-import { ListTable } from '../../src/ListTable';
+import { ListTable } from '../../src';
 import { createDiv } from '../dom';
 global.__VERSION__ = 'none';
 describe('listTable init test', () => {
@@ -88,9 +88,6 @@ describe('listTable init test', () => {
   const listTable = new ListTable(option);
   test('listTable getCellValue', () => {
     expect(listTable.getCellValue(6, 3)).toBe('Sauder 书架, 金属');
+    listTable.release();
   });
-
-  // setTimeout(() => {
-  //   listTable.release();
-  // }, 1000);
 });

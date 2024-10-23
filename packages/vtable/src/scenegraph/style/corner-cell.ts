@@ -19,7 +19,7 @@ export function createCornerCell(cellGroup: Group, frameTheme: ThemeStyle) {
   rectAttributes.stroke = getStroke(borderColor as string, undefined);
   rectAttributes.lineWidth = borderLineWidth as number;
   borderLineDash && (rectAttributes.lineDash = borderLineDash as number[]);
-  rectAttributes.lineCap = 'square';
+  rectAttributes.lineCap = 'butt';
   if (Array.isArray(borderColor)) {
     (rectAttributes as any).strokeArrayColor = getQuadProps(borderColor as any);
   }

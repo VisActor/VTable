@@ -1,4 +1,4 @@
-# checkbox checkbox type
+# checkbox type
 
 Checkbox type cells are suitable for use in tables to provide multiple selection options and allow the user to select or deselect one or more items. Checkbox type cells are widely used in many applications, including task management, data filtering, permission settings, etc.
 

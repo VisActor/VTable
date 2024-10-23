@@ -32,6 +32,7 @@ Whether to transpose, default is false
 
 Whether to display the table header.
 
+
 ## pagination(IPagination)
 
 Pagination configuration.
@@ -55,6 +56,9 @@ Note! The perPageCount in the pivot table will be automatically corrected to an 
 ### currentPage (number)
 Current page number.
 
+## multipleSort (boolean)
+Enables sorting by multiple columns.
+
 ## sortState(SortState | SortState[])
 
 Sorting state. SortState is defined as follows:
@@ -70,24 +74,6 @@ order: 'desc' | 'asc' | 'normal';
 
 ```
 
-## editor (string|Object|Function)
-
-Global configuration cell editor
-```
-
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-
-```
-Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
-
-${prefix} headerEditor (string|Object|Function)
-
-Global configuration for the editor of the display title in the table header
-```
-
-headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-
-```
 
 {{ use: common-option-secondary(
     prefix = '#',
@@ -102,6 +88,10 @@ When displayed as a tree structure, the indentation value of each layer of conte
 ## hierarchyExpandLevel(number)
 
 When displayed as a tree structure, the number of levels is expanded by default. The default value is 1, which only displays the root node. If configured to `Infinity`, all nodes will be expanded.
+
+## hierarchyTextStartAlignment(boolean) = false
+
+Whether nodes at the same level are aligned by text, such as nodes without collapsed expansion icons and nodes with icons. Default is false
 
 ## frozenColDragHeaderMode(string) = 'fixedFrozenCount'
 
@@ -143,9 +133,16 @@ type CustomAggregation = {
 };
 ```
 
-## rowSeriesNumber(IRowSeriesNumber)
+## groupBy(string|string[])
 
-set row serial number.
-{{ use: row-series-number(
-    prefix = '###',
-) }}
+Enable the group display function to display the hierarchical structure of the group fields in the data. The value is the group field name, which can be configured as one field or an array of multiple fields.
+
+## enableTreeStickCell(boolean) = false
+
+Enable the group title sticking function.
+
+## groupTitleCustomLayout(CustomLayout)
+
+Customize the group title layout.
+
+ groupTitleStyle(CustomLayoutStyle)

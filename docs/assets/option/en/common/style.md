@@ -25,6 +25,12 @@ Define the text color of the cell
   prefix = ${prefix},
 ) }}
 
+#${prefix} strokeColor(ColorPropertyDefine)
+Define the text stroke color of the cell
+{{ use: common-color(
+  prefix = ${prefix},
+) }}
+
 #${prefix} fontSize(FontSizePropertyDefine)
 Define the text size of the cell
 {{ use: common-font-size(
@@ -110,8 +116,11 @@ Mouse cursor style when hovering over the cell
   prefix = ${prefix}
   ) }}
 
-#${prefix} textStick(boolean)
-Set whether the text in the cell has a sticking effect 【Text can dynamically adjust its position when scrolling】
+#${prefix} textStick(boolean | 'horizontal' | 'vertical')
+Set whether the text in the cell has a sticking effect 【Text can dynamically adjust its position when scrolling】.Can be set to true to enable, or set to 'horizontal' or 'vertical' to specify in which direction to snap only.
+
+#${prefix} textStickBaseOnAlign(boolean)
+When the cell text has an adsorption effect [the text can dynamically adjust its position when scrolling], the basis for adsorption is the horizontal alignment of the cell. For example, when `textStickBaseOnAlign` is `true` and `textAlign` is `'center'`, the text will be adsorbed to the horizontal center of the cell; otherwise, it will be adsorbed to the left or right edge of the cell (depending on the scroll position)
 
 #${prefix} marked(MarkedPropertyDefine)
 Set whether the cell has a marked style
@@ -231,6 +240,14 @@ Progress bar mark position, can be set to `'right' | 'bottom'`, default is `'rig
 {{ if: ${isCheckbox} }}
 
 {{ use: common-checkbox-style (
+  prefix = ${prefix}
+  ) }}
+
+{{ /if }}
+
+{{ if: ${isRadio} }}
+
+{{ use: common-radio-style (
   prefix = ${prefix}
   ) }}
 

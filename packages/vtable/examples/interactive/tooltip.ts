@@ -39,7 +39,11 @@ export function createTable() {
           return `已完成${rec.progress}%`;
         },
         title: 'progress',
-        description: '这是一个标题的详细描述',
+        description: `这是一个标题的详细描述,这是一个标题的详细描述,
+这是一个标题的详细描述,这是一个标题的详细描述,这是一个标题的详细描述,这是一个标题的详细描述,
+这是一个标题的详细描述,这是一个标题的详细描述, 这是一个标题的详细描述,这是一个标题的详细描述,
+这是一个标题的详细描述,这是一个标题的详细描述,这是一个标题的详细描述,这是一个标题的详细描述,
+这是一个标题的详细描述,这是一个标题的详细描述`,
         width: 150,
         showSort: true //显示VTable内置排序图标
       },
@@ -86,7 +90,8 @@ export function createTable() {
     allowFrozenColCount: 2,
     tooltip: {
       renderMode: 'html',
-      isShowOverflowTextTooltip: true
+      isShowOverflowTextTooltip: true,
+      overflowTextTooltipDisappearDelay: 1000
     }
   };
 

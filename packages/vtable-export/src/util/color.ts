@@ -1,6 +1,9 @@
 import { isNumber } from '@visactor/vutils';
 
 export function colorStringToRGB(colorString: string) {
+  if (!colorString) {
+    return [0, 0, 0];
+  }
   if (colorString.startsWith('#')) {
     // 处理十六进制颜色值（例如：#RRGGBB 或 #RGB）
     let hex = colorString.substring(1);

@@ -60,7 +60,7 @@ export function createTable() {
         field: 'check',
         title: '',
         width: 'auto',
-        headerType: 'checkbox',
+        // headerType: 'checkbox',
         cellType: 'checkbox',
         style: {
           size: 40,
@@ -72,6 +72,7 @@ export function createTable() {
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     heightMode: 'autoHeight',
+    allowFrozenColCount: 3,
     // transpose: true
     theme: VTable.themes.DEFAULT.extends({
       checkboxStyle: {
@@ -110,4 +111,15 @@ export function createTable() {
 
   // 只为了方便控制太调试用，不要拷贝
   window.tableInstance = instance;
+
+  window.updateRecord = () => {
+    instance.setRecords(records);
+  };
+
+  window.updateOption = () => {
+    instance.updateOption({
+      ...option,
+      records: records
+    });
+  };
 }

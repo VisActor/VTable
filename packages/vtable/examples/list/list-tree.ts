@@ -9,7 +9,7 @@ export function createTable() {
       类别: '办公用品',
       销售额: '129.696',
       数量: '2',
-      利润: '-60.704',
+      利润: '60.704',
       children: [
         {
           类别: '信封', // 对应原子类别
@@ -75,7 +75,7 @@ export function createTable() {
           类别: '复印机', // 对应原子类别
           销售额: '425.44',
           数量: '7',
-          利润: '342.56'
+          利润: '34.56'
         },
         {
           类别: '电话', // 对应原子类别
@@ -177,10 +177,13 @@ export function createTable() {
 
     sortState: {
       field: '销售额',
-      order: 'asc'
+      order: 'desc'
     },
     theme: VTable.themes.BRIGHT,
-    defaultRowHeight: 32
+    defaultRowHeight: 32,
+    select: {
+      disableDragSelect: true
+    }
   };
 
   const instance = new ListTable(option);

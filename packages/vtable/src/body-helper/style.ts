@@ -15,6 +15,7 @@ import { NumberStyle } from './style/NumberStyle';
 import { Style } from './style/Style';
 import type { TableTheme } from '../themes/theme';
 import { CheckboxStyle } from './style/CheckboxStyle';
+import { RadioStyle } from './style/RadioStyle';
 
 const { EVENT_TYPE } = Style;
 export {
@@ -50,6 +51,8 @@ export function of(
     }
     if (StyleClassDef === CheckboxStyle) {
       return new CheckboxStyle(columnStyle ?? {}, (bodyStyle ?? {}) as any, (theme.checkboxStyle ?? {}) as any);
+    } else if (StyleClassDef === RadioStyle) {
+      return new RadioStyle(columnStyle ?? {}, (bodyStyle ?? {}) as any, (theme.radioStyle ?? {}) as any);
     }
     return new StyleClassDef((columnStyle ?? {}) as any, (bodyStyle ?? {}) as any);
   }

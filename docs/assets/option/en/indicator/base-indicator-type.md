@@ -1,4 +1,3 @@
-
 {{ target: base-indicator-type }}
 
 ${prefix} indicatorKey(string)
@@ -12,16 +11,18 @@ Indicator name
 ${prefix} format(FieldFormat)
 
 Indicator value formatting
+
 ```
 type FieldFormat = (value: number|string, col:number, row:number, table:PivotTable) => any;
-  ```
+```
 
 ${prefix} headerFormat(FieldFormat)
 
 indicator title format
+
 ```
 type FieldFormat = (title: number|string, col:number, row:number, table:PivotTable) => any;
-  ```
+```
 
 ${prefix} width(number|string)
 
@@ -54,9 +55,11 @@ Header cell style. Configuration items vary slightly depending on the headerType
 ${prefix} style
 
 Body cell style, type declaration:
+
 ```
 style?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => IStyleOption);
 ```
+
 {{ use: common-StylePropertyFunctionArg() }}
 
 IStyleOption type structure is as follows:
@@ -92,14 +95,19 @@ icon?:
     | (string | ColumnIconOption)[]
     | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
 ```
-#${prefix}ColumnIconOption_definition：
+
+#${prefix}ColumnIconOption
+
 ```
 type ColumnIconOption = ImageIcon | SvgIcon;
 ```
+
 #${prefix}ImageIcon(Object)
+type is set to 'image'. The image address needs to be set in src
 {{ use: image-icon(  prefix = '##' + ${prefix}) }}
 
 #${prefix}SvgIcon(Object)
+type is set to 'svg'. You need to configure the svg address or the complete svg file string in svg
 {{ use: svg-icon(  prefix = '##' + ${prefix}) }}
 
 ${prefix} headerCustomRender(Function|Object)
@@ -107,11 +115,12 @@ Custom rendering content definition for the indicator name header. For details, 
 
 ${prefix} headerCustomLayout(Function)
 
-Custom layout elements for the indicator name header cell. 
+Custom layout elements for the indicator name header cell.
 
 ```
 (args: CustomRenderFunctionArg) => ICustomLayoutObj;
 ```
+
 {{ use: common-CustomRenderFunctionArg() }}
 
 {{ use: custom-layout(
@@ -123,9 +132,11 @@ ${prefix} customRender(Function|Object)
 Custom rendering content definition for the indicator value body cell, either in function or object form. The type is `ICustomRenderFuc | ICustomRenderObj`.
 
 The ICustomRenderFuc is defined as follows:
+
 ```
  type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
 ```
+
 {{ use: common-CustomRenderFunctionArg() }}
 
 {{ use: common-custom-render-object(
@@ -139,6 +150,7 @@ Custom layout elements for the indicator value body cell.
 ```
 (args: CustomRenderFunctionArg) => ICustomLayoutObj;
 ```
+
 {{ use: common-CustomRenderFunctionArg() }}
 
 {{ use: custom-layout(
@@ -157,7 +169,9 @@ Whether to disable column width adjustment. If it is a transposed table or the i
 ${prefix} editor (string|Object|Function)
 
 Configure the indicator cell editor
+
 ```
 editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
+
 Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .

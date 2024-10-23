@@ -15,8 +15,26 @@ const generatePersons = count => {
   }));
 };
 
+VTable.register.icon('sort_normal', {
+  type: 'svg',
+  svg: `<svg t="1669210412838" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5700" width="200" height="200"><path d="M420.559974 72.98601l-54.855 0 0 774.336c-52.455014-69.163008-121.619046-123.762995-201.120051-157.052006l0 61.968c85.838029 41.401958 156.537958 111.337984 201.120051 198.221005l0 0.208 54.855 0 0-13.047c0.005018-0.00297 0.010035-0.005018 0.01495-0.007987-0.005018-0.010035-0.010035-0.019968-0.01495-0.030003L420.559974 72.986zM658.264986 73.385984l0-0.4L603.41 72.985984l0 877.68 54.855 0L658.265 176.524c52.457984 69.178982 121.632051 123.790029 201.149952 157.078016l0-61.961C773.560013 230.238003 702.853018 160.287027 658.264986 73.385984z" p-id="5701"></path></svg>`,
+  width: 20, //其实指定的是svg图片绘制多大，实际占位是box，margin也是相对阴影范围指定的
+  height: 20,
+  funcType: VTable.TYPES.IconFuncTypeEnum.sort,
+  name: 'sort_normal',
+  positionType: VTable.TYPES.IconPosition.inlineFront,
+  marginLeft: 0,
+  marginRight: 0,
+  hover: {
+    width: 24,
+    height: 24,
+    bgColor: 'rgba(22,44,66,0.5)'
+  },
+  cursor: 'pointer'
+});
+
 export function createTable() {
-  const records = generatePersons(1000000);
+  const records = generatePersons(2000);
   const columns: VTable.ColumnsDefine = [
     {
       field: '',
@@ -167,8 +185,20 @@ export function createTable() {
   ];
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
+    emptyTip: true,
     records,
-    columns,
+    columns: [
+      ...columns
+      // ...columns,
+      // ...columns,
+      // ...columns,
+      // ...columns,
+      // ...columns,
+      // ...columns,
+      // ...columns,
+      // ...columns,
+      // ...columns
+    ],
     tooltip: {
       isShowOverflowTextTooltip: true
     },
@@ -178,39 +208,45 @@ export function createTable() {
     overscrollBehavior: 'none',
     dragHeaderMode: 'all',
     keyboardOptions: {
-      pasteValueToCell: true
+      pasteValueToCell: true,
+      copySelected: true,
+      selectAllOnCtrlA: true
     },
     eventOptions: {
       preventDefaultContextMenu: false
     },
     autoWrapText: true,
+    editor: '',
+    // theme: VTable.themes.ARCO,
+    // hover: {
+    //   highlightMode: 'cross'
+    // },
+    // select: {
+    //   headerSelectMode: 'cell',
+    //   highlightMode: 'cross'
+    // },
     theme: {
-      headerStyle: {
-        textAlign: 'left',
-        underline: true,
-
-        borderColor: ['#E1E4E8', '#E1E4E8', '#E1E4E8', '#E1E4E8']
-      },
-      scrollStyle: {
-        width: 50,
-        hoverOn: false
+      frameStyle: {
+        cornerRadius: [10, 0, 0, 10],
+        // cornerRadius: 10,
+        borderLineWidth: [10, 0, 10, 10],
+        // borderLineWidth: 10,
+        borderColor: 'red',
+        shadowBlur: 0
       }
+    },
+    excelOptions: {
+      fillHandle: true
     }
     // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
-  tableInstance.on('change_cell_value', arg => {
-    console.log(arg);
+
+  bindDebugTool(tableInstance.scenegraph.stage, {
+    customGrapicKeys: ['col', 'row']
   });
-  let count = 0;
-  const intervalId = setTimeout(() => {
-    count++;
-    tableInstance.updateOption(option);
-    if (count > 100) {
-      clearInterval(intervalId);
-    }
-  }, 3000);
+
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
   //     {

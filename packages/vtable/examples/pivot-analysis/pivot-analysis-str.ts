@@ -15,7 +15,7 @@ export function createTable() {
     rows: ['province', 'city'],
     columns: ['category', 'sub_category'],
     indicators: ['销售总额', '订单数', '订单均价'],
-    enableDataAnalysis: true,
+
     indicatorTitle: '指标名称',
     indicatorsAsCol: false,
     dataConfig: {

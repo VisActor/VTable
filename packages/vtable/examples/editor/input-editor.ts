@@ -134,6 +134,7 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
+    emptyTip: true,
     container: document.getElementById(CONTAINER_ID),
     columns: [
       {
@@ -163,7 +164,8 @@ export function createTable() {
     widthMode: 'standard',
     autoFillWidth: true,
     allowFrozenColCount: 2,
-    editor: 'input'
+    editor: 'input',
+    headerEditor: 'input'
   };
 
   const instance = new ListTable(option);
@@ -185,3 +187,5 @@ export function createTable() {
   // 只为了方便控制太调试用，不要拷贝
   window.tableInstance = instance;
 }
+
+window.createTable = createTable;

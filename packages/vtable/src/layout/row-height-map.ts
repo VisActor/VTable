@@ -67,6 +67,10 @@ export class NumberRangeMap {
   put(position: number, newValue: number) {
     if (this.data.has(position)) {
       const oldValue = this.data.get(position);
+
+      if (oldValue === newValue) {
+        return;
+      }
       this.data.set(position, newValue);
       const difference = newValue - oldValue;
       this.totalSum += difference;
@@ -168,7 +172,7 @@ export class NumberRangeMap {
   }
 
   dealDiffenence() {
-    for (const [sumPos, sum] of this.cumulativeSum) {
+    for (const [sumPos] of this.cumulativeSum) {
       for (const [difPos, difference] of this.difference) {
         if (sumPos >= difPos) {
           const oldSum = this.cumulativeSum.get(sumPos);
@@ -182,6 +186,10 @@ export class NumberRangeMap {
 
   // add and reorder
   insert(position: number, value?: number) {
+    // clear all sum cover position
+    for (let i = position; i <= this.getLastIndex(); i++) {
+      this.cumulativeSum.delete(i);
+    }
     const lastIndex = this.getLastIndex() + 1;
     this.adjustOrder(position, position + 1, lastIndex - position);
     if (isValid(value)) {
@@ -204,6 +212,12 @@ export class NumberRangeMap {
     if (!this.has(position)) {
       return;
     }
+
+    // clear all sum cover position
+    for (let i = position; i <= this.getLastIndex(); i++) {
+      this.cumulativeSum.delete(i);
+    }
+
     const lastIndex = this.getLastIndex();
 
     this.adjustOrder(position + 1, position, lastIndex - position);

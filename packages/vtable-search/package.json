@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-search",
-  "version": "0.22.2",
+  "version": "1.10.1",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -35,10 +35,10 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.18.1"
+    "@visactor/vutils": "~0.18.14"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.10.0",
+    "@visactor/vchart": "1.12.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

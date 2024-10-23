@@ -6,7 +6,7 @@ import { getProp } from '../../utils/get-prop';
 import { getQuadProps } from '../../utils/padding';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isNumber } from '@visactor/vutils';
-import type { StylePropertyFunctionArg } from '../../../ts-types';
+import type { CellRange, StylePropertyFunctionArg } from '../../../ts-types';
 
 export function createProgressBarCell(
   progressBarDefine: {
@@ -23,7 +23,8 @@ export function createProgressBarCell(
   col: number,
   row: number,
   padding: [number, number, number, number],
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  range?: CellRange
 ) {
   if (progressBarDefine.dependField) {
     dataValue = (table.getCellOriginRecord(col, row) as any)?.[progressBarDefine.dependField] ?? dataValue;
@@ -48,7 +49,12 @@ export function createProgressBarCell(
       dataValue,
       cellHeaderPaths: undefined
     }) ?? progressBarDefine.min + 100;
-  const height = table.getRowHeight(row);
+  let height = 0;
+  if (range) {
+    height = table.getRowsHeight(range.start.row, range.end.row);
+  } else {
+    height = table.getRowHeight(row);
+  }
   let contentWidth = width;
   let contentHeight = height;
   let _contentOffset = 0;
@@ -110,6 +116,11 @@ export function createProgressBarCell(
 
   contentWidth -= barPaddingRight + barPaddingLeft;
   contentHeight -= barPaddingBottom + barPaddingTop;
+  if (row === table.rowCount - 1 && [0, '0'].includes(barBottom)) {
+    // 单元格边框在表格边界会向内缩进1px，为了避免进度图矩形覆盖边框，这里在最后一行向内缩进1px
+    // 详见 packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw()
+    contentHeight -= 1;
+  }
 
   // if (barPaddingTop & 1) {
   //   // barPaddingTop += 0.5;
@@ -168,9 +179,13 @@ export function createProgressBarCell(
       const barMaxWidth = contentWidth;
       const barTop = top + contentHeight - (barHeight as number) - (barBottom as number);
       // const barLeft = 0 + barPaddingLeft;
-      const barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
+      let barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
       const barLeft = barRightToLeft ? left + right - barSize : left;
-
+      if (col === table.colCount - 1 && percentile === 1 && !barRightToLeft) {
+        // 单元格边框在表格边界会向内缩进1px，为了避免进度图矩形覆盖边框，这里在最后一行向内缩进1px
+        // 详见 packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw()
+        barSize -= 1;
+      }
       const bgFillColor = getOrApply(barBgColor as any, {
         col,
         row,
@@ -286,7 +301,12 @@ export function createProgressBarCell(
       percentCompleteBarGroup.addChild(barNega);
 
       // 绘制正值区域
-      const barSizePosi = Math.min(barMaxWidth * positiveFactor * positiveRate, barMaxWidth);
+      let barSizePosi = Math.min(barMaxWidth * positiveFactor * positiveRate, barMaxWidth);
+      if (col === table.colCount - 1 && positiveRate === 1 && !barRightToLeft) {
+        // 单元格边框在表格边界会向内缩进1px，为了避免进度图矩形覆盖边框，这里在最后一行向内缩进1px
+        // 详见 packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw()
+        barSizePosi -= 1;
+      }
       const barRectPosi = barRightToLeft
         ? {
             left: barLeft + positiveLeft - barSizePosi,
@@ -321,7 +341,15 @@ export function createProgressBarCell(
 
       // 绘制坐标轴
       const lineLeft = barRightToLeft ? barRectNega.left : barRectPosi.left;
-      const lineStrokeColor = getOrApply(barAxisColor as any);
+      const lineStrokeColor = getOrApply(barAxisColor as any, {
+        col,
+        row,
+        table,
+        context: null,
+        value,
+        dataValue,
+        percentile: positiveRate
+      });
       const line = createLine({
         x: 0,
         y: 0,
@@ -418,7 +446,12 @@ export function createProgressBarCell(
       // 绘制背景
       // const barMaxWidth = width - barPaddingLeft - barPaddingRight - 1; /*罫線*/
       const barMaxWidth = contentWidth;
-      const barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
+      let barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
+      if (col === table.colCount - 1 && percentile === 1 && !barRightToLeft) {
+        // 单元格边框在表格边界会向内缩进1px，为了避免进度图矩形覆盖边框，这里在最后一行向内缩进1px
+        // 详见 packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw()
+        barSize -= 1;
+      }
       // const barTop = bottom - barPaddingBottom - (barHeight as number) - (barBottom as number) - 1; /*罫線*/
       const barTop = top + contentHeight - (barHeight as number) - (barBottom as number);
       // const barLeft = barRightToLeft ? right - barPaddingRight - barSize : left + barPaddingLeft;
@@ -539,6 +572,7 @@ export function createProgressBarCell(
       }
     }
   }
-
   return percentCompleteBarGroup;
 }
+
+export type CreateProgressBarCell = typeof createProgressBarCell;

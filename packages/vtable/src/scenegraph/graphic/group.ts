@@ -1,8 +1,8 @@
-import type { IGraphic, IColor, IRect, INode } from '@src/vrender';
+import type { IGraphic, IColor, IRect, INode, IGroupGraphicAttribute, ISetAttributeContext } from '@src/vrender';
 import { Group as VRenderGroup } from '@src/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { InteractionState } from '../../ts-types';
-import type { AABBBounds } from '@visactor/vutils';
+import { isNumber, type AABBBounds } from '@visactor/vutils';
 
 export class Group extends VRenderGroup {
   role?: string;
@@ -21,6 +21,31 @@ export class Group extends VRenderGroup {
 
   needUpdateWidth?: boolean;
   needUpdateHeight?: boolean;
+
+  // changes for size align for fs
+  // constructor(attribute?: IGroupGraphicAttribute) {
+  //   dealWidthSize(attribute, attribute);
+  //   super(attribute);
+  // }
+
+  // setAttribute(key: string, value: any, forceUpdateTag?: boolean, context?: ISetAttributeContext): void {
+  //   if (key === 'x' || key === 'y' || key === 'width' || key === 'height') {
+  //     this.attribute[`old${key}`];
+  //   }
+  //   const values = {
+  //     [key]: value
+  //   };
+  //   this.setAttributes(values, forceUpdateTag, context);
+  // }
+
+  // setAttributes(
+  //   params: Partial<IGroupGraphicAttribute>,
+  //   forceUpdateTag?: boolean,
+  //   context?: ISetAttributeContext
+  // ): void {
+  //   dealWidthSize(params, this.attribute);
+  //   super.setAttributes(params, forceUpdateTag, context);
+  // }
 
   /**
    * @description: 清空Group下全部子元素
@@ -229,7 +254,7 @@ export class Group extends VRenderGroup {
   protected tryUpdateAABBBounds(): AABBBounds {
     if (this.role === 'cell') {
       if (!this.shouldUpdateAABBBounds()) {
-        return this._AABBBounds;
+        return this._AABBBounds as AABBBounds;
       }
       // application.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
       const selfChange = this.shouldSelfChangeUpdateAABBBounds();
@@ -241,7 +266,7 @@ export class Group extends VRenderGroup {
 
       return bounds;
     }
-    return super.tryUpdateAABBBounds();
+    return super.tryUpdateAABBBounds() as AABBBounds;
   }
 
   // 目前优化方案会导致合并单元格无法正常更新列宽（因为合并单元格更新bounds不会触发父节点bounds更新），暂时关闭优化方案
@@ -299,6 +324,11 @@ export class Group extends VRenderGroup {
       // 更新bounds之后需要设置父节点，否则tag丢失
       this.parent && this.parent.addChildUpdateBoundTag();
       this.clearUpdateBoundTag();
+
+      if (this.shadowRoot) {
+        // this.shadowRoot.clearUpdateBoundTag();
+        this.shadowRoot.tryUpdateAABBBounds();
+      }
       return this._AABBBounds;
     }
     return super.doUpdateAABBBounds();
@@ -339,13 +369,20 @@ export class Group extends VRenderGroup {
       this.colHeight += cellHeight;
     }
   }
+
+  // doUpdateLocalMatrix() {
+  //   const oldX = this.attribute.x;
+  //   const oldY = this.attribute.y;
+  //   this.attribute.x = Math.floor(this.attribute.x);
+  //   this.attribute.y = Math.floor(this.attribute.y);
+  //   super.doUpdateLocalMatrix();
+  //   this.attribute.x = oldX;
+  //   this.attribute.y = oldY;
+  // }
 }
 
 function after(group: Group, selfChange: boolean) {
-  if (!group.stage.dirtyBounds) {
-    return;
-  }
-  if (!(group.stage && group.stage.renderCount)) {
+  if (!group.stage || !group.stage.dirtyBounds || !group.stage.renderCount) {
     return;
   }
   // group的子元素导致的bounds更新不用做dirtyBounds
@@ -354,3 +391,28 @@ function after(group: Group, selfChange: boolean) {
   }
   group.stage.dirty(group.globalAABBBounds);
 }
+
+// function dealWidthSize(values: any, attributes: any) {
+//   const x = values.x ?? attributes.oldx ?? attributes.x ?? 0 + values.dx ?? attributes.dx ?? 0;
+//   const y = values.y ?? attributes.oldy ?? attributes.y ?? 0 + values.dy ?? attributes.dy ?? 0;
+//   const width = values.width ?? attributes.oldwidth ?? attributes.width ?? 0;
+//   const height = values.height ?? attributes.oldheight ?? attributes.height ?? 0;
+//   isNumber(values.width) && (values.oldwidth = values.width);
+//   isNumber(values.height) && (values.oldheight = values.height);
+//   isNumber(values.x) && (values.oldx = values.x);
+//   isNumber(values.y) && (values.oldy = values.y);
+
+//   if (Math.floor(x + width) > Math.floor(width) + Math.floor(x)) {
+//     values.width = Math.ceil(width);
+//   } else {
+//     values.width = Math.floor(width);
+//   }
+
+//   if (Math.floor(y + height) > Math.floor(height) + Math.floor(y)) {
+//     values.height = Math.ceil(height);
+//   } else {
+//     values.height = Math.floor(height);
+//   }
+//   isNumber(values.x) && (values.x = Math.floor(values.x));
+//   isNumber(values.y) && (values.y = Math.floor(values.y));
+// }

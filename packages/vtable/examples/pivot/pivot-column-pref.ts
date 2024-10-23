@@ -194,7 +194,7 @@ export function createTable() {
           }
         },
         records,
-        enableDataAnalysis: false,
+
         autoRowHeight: true,
         widthMode: 'standard',
         disableColumnResize: false,

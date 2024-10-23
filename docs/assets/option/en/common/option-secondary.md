@@ -16,6 +16,28 @@ The calculation mode of table row height, which can be 'standard' (standard mode
 - 'adaptive': Use the height of the container to assign the height of each row.
 - 'autoHeight': Automatically calculate line height based on content, based on fontSize and lineHeight(font height)，include padding. The related collocation setting item `autoWrapText` automatically wraps the line, and the line height can be calculated according to the content of the multi-line text after the line wrap.
 
+#${prefix} widthAdaptiveMode('only-body' | 'all') = 'only-body'
+
+The width adaptation strategy in adaptive mode, the default is 'only-body'.
+
+- 'only-body': Only the columns in the body part participate in the width adaptation calculation, and the width of the header part remains unchanged.
+- 'all': All columns participate in width adaptation calculation.
+
+#${prefix} heightAdaptiveMode('only-body' | 'all') = 'only-body'
+
+The height adaptable strategy in adaptive mode, default is 'only-body'.
+
+- 'only-body': Only the rows in the body part participate in the height adaptation calculation, and the height of the header part remains unchanged.
+- 'all': All columns participate in the height adaptation calculation.
+
+#${prefix} columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
+
+When calculating the content width, the limited area participates in the calculation:
+
+- 'only-header': Only the header content is calculated.
+- 'only-body': Only the body cell content is calculated.
+- 'normal': Normal calculation, that is, calculating the header and body cell contents.
+
 #${prefix} autoWrapText(boolean) = false
 
 Whether to automatically wrap text
@@ -45,6 +67,10 @@ Minimum column width limit. If set to true, the column width will be limited to 
 #${prefix} frozenColCount(number) = 0
 
 The number of frozen columns
+
+#${prefix} frozenRowCount(number) = 0
+
+The number of frozen columns(including the header)
 
 #${prefix} rightFrozenColCount(number) = 0
 
@@ -83,8 +109,15 @@ Default column width for row headers, can be set column by column. If not set, d
 Shortcut key function settings, specific configuration items:
 
 ##${prefix} selectAllOnCtrlA(boolean) = false
+Enable the shortcut key Select All.
+Supports `boolean` or specific configuration type `SelectAllOnCtrlAOption`.
 
-Enable shortcut key to select all.
+```
+export interface SelectAllOnCtrlAOption {
+disableHeaderSelect?: boolean; //Whether to disable header selection when the shortcut key is used to select all.
+disableRowSeriesNumberSelect?: boolean; //Whether to disable the selection of row sequence numbers when the shortcut key is used to select all.
+}
+```
 
 ##${prefix} copySelected(boolean) = false
 
@@ -97,8 +130,14 @@ Enable shortcut key to paste, consistent with the browser's shortcut key.Paste t
 ##${prefix} moveFocusCellOnTab(boolean) = true
 Enable tab key interaction. The default is true. Turn on the tab key to move the selected cell. If you are currently editing a cell, moving to the next cell is also in the editing state.
 
+##${prefix} moveFocusCellOnEnter(boolean) = false
+Enable enter key interaction. Default is false. Press enter key to select next cell. Mutually exclusive with editCellOnEnter. If set to true at the same time, it takes precedence over editCellOnEnter.
+
 ##${prefix} editCellOnEnter(boolean) = true
 Enable enter key interaction. Default is true. If the selected cell is editable, enter cell editing.
+
+##${prefix} moveEditCellOnArrowKeys(boolean) = false
+By default, it is not enabled, that is, false. If this configuration is enabled, if the cell is currently being edited, the arrow keys can move to the next cell and enter the editing state, instead of moving the cursor of the string in the edit text. The up, down, left, and right arrow keys to switch the selected cell are not affected by this configuration.
 
 ##${prefix} moveEditCellOnArrowKeys(boolean) = false
 
@@ -113,7 +152,15 @@ Switching the selected cells with the up, down, left and right arrow keys is not
 Issue settings related to event triggering, specific configuration items:
 
 ##${prefix} preventDefaultContextMenu(boolean) = true
-Organizing the default behavior of the right mouse button
+prevent the default behavior of the right mouse button
+
+#${prefix} excelOptions(Object)
+
+Align excel advanced capabilities
+
+##${prefix} fillHandle(boolean) = false
+
+Fill handle, when set to true, when a cell is selected, the fill handle will be displayed on the lower right side of the cell. You can drag the fill handle to edit the value of the cell. Or double-click the fill handle to change the value of the cell you want to edit.
 
 #${prefix} columnResizeMode(string) = 'all'
 
@@ -124,7 +171,16 @@ Mouse hover over the cell right border can drag and adjust column width. This op
 - 'header' Only adjustable in header cells
 - 'body' Only adjustable in body cells
 
-#${prefix} dragHeaderMode(string) = 'all'
+#${prefix} columnResizeMode(string) = 'all'
+
+Mouse hover over the cell bottom border can drag and adjust row height. This operation can trigger the following range:
+
+- 'all' The entire row, including header and body cells, can adjust row height
+- 'none' Disable adjustment
+- 'header' Only adjustable in header cells
+- 'body' Only adjustable in body cells
+
+#${prefix} dragHeaderMode(string) = 'none'
 
 The switch of dragging the header to move the position. After selecting a cell, drag the cell to trigger the move. The range of replaceable cells is limited:
 
@@ -166,6 +222,18 @@ Do not respond to mouse select interaction.
 ##${prefix} disableHeaderSelect (boolean) = false
 
 Separately set the header not to respond to mouse select interaction.
+
+##${prefix} blankAreaClickDeselect(boolean) = false
+
+Whether to cancel the selection when clicking the blank area.
+
+##${prefix} outsideClickDeselect(boolean) = true
+
+Whether to cancel the selection when clicking outside the table.
+
+##${prefix} disableDragSelect(boolean) = true
+
+Whether to disable dragging selection.
 
 #${prefix} theme(Object)
 
@@ -223,6 +291,18 @@ Set the selected state of the menu. Declaration type is `DropDownMenuHighlightIn
   prefix = '#' + ${prefix},
 ) }}
 
+#${prefix} emptyTip(Object)
+
+Table empty data prompt.
+
+You can directly configure `boolean` or `IEmptyTip` type objects. The default value is false, which means no prompt information is displayed.
+
+The IEmptyTip type is defined as follows:
+
+{{ use: common-emptyTip(
+prefix = '#' + ${prefix},
+) }}
+
 #${prefix} tooltip(Object)
 
 Tooltip related configuration. Specific configuration items are as follows:
@@ -233,7 +313,11 @@ Html is currently more complete, default using html rendering method. Currently 
 
 ##${prefix} isShowOverflowTextTooltip (boolean)
 
-Replace the original hover:isShowTooltip configuration. Temporarily need to set renderMode to html to display, canvas has not been developed yet.
+Whether to display overflow text content tooltip when hovering over the cell. Temporarily, renderMode needs to be configured as html to display, and canvas has not been developed yet.
+
+##${prefix} overflowTextTooltipDisappearDelay (number)
+
+The overflow text tooltip delays disappearance time. If you need to delay disappearance so that the mouse can move to the tooltip content, you can configure this configuration item.
 
 ##${prefix} confine (boolean) = true
 
@@ -307,7 +391,7 @@ Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'
 
 ```
 'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
-'none': triggers the browser's default behavior when the table scrolls to the top or bottom;
+'none': don't triggers the browser's default behavior when the table scrolls to the top or bottom;
 ```
 
 #${prefix} customMergeCell(Function)
@@ -351,19 +435,106 @@ Customize cell merging rules. When the incoming row and column numbers are withi
 ```
 
 Custom cell style
-* id: the unique id of the custom style
-* style: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+
+- id: the unique id of the custom style
+- style: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
 
 #${prefix} customCellStyleArrangement(Array)
 
 ```
 {
-   customCellStyleArrangement: {cellPosition: {row?: number; col?: number; range?: {start: {row: number; col: number}; end: {row: number; col: number}}}; customStyleId: string} []
+  customCellStyleArrangement:
+  {
+    cellPosition: {
+      row?: number;
+      col?: number;
+      range?: {
+        start: {row: number; col: number};
+        end: {row: number; col: number}
+      }
+  };
+  customStyleId: string}[]
 }
 ```
 
 Custom cell style assignment
-* cellPosition: cell position information, supports configuration of single cells and cell areas
-   * Single cell: `{ row: number, column: number }`
-   * Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
-* customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+- cellPosition: cell position information, supports configuration of single cells and cell areas
+  - Single cell: `{ row: number, column: number }`
+  - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+- customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+#${prefix} editor (string|Object|Function)
+
+Global configuration cell editor
+
+```
+editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+
+Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
+
+#${prefix} headerEditor (string|Object|Function)
+
+Global configuration table header display title title editor
+
+```
+headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+
+#${prefix} editCellTrigger('doubleclick' | 'click' | 'api' |'keydown') = 'doubleclick'
+
+The trigger timing for entering the editing state.
+
+```
+
+/** Edit triggering time: double click event | single click event | api to manually start editing | keydown event. Default is double click 'doubleclick' */
+editCellTrigger?:'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
+```
+
+#${prefix} rowSeriesNumber(IRowSeriesNumber)
+
+set row serial number.
+{{ use: row-series-number(
+    prefix = '###',
+) }}
+
+#${prefix} enableLineBreak(boolean) = false
+
+Whether to enable line break, the default is false.
+
+#${prefix} clearDOM(boolean) = true
+
+Whether to clear the container DOM.
+
+#${prefix} canvasWidth(number)
+
+Directly set the width of the canvas. Do not determine the size of the table based on the container width and height.
+
+#${prefix} canvasHeight(number)
+
+Directly set the height of the canvas. Do not determine the size of the table based on the width and height of the container.
+
+#${prefix} animationAppear(boolean|Object|)
+
+Table entry animation configuration.
+
+```
+animationAppear?: boolean | {
+  type?: 'all' | 'one-by-one';
+  direction?: 'row' | 'column';
+  duration?: number;
+  delay?: number;
+};
+```
+
+You can configure true to enable the default animation, or you can configure the animation parameters:
+
+- `type` The type of the entry animation, currently supports `all` and `one-by-one`, and the default is `one-by-one`
+- `direction` The direction of the entry animation, currently supports `row` and `column`, and the default is `row`
+- `duration` The duration of a single animation, in milliseconds, for `one-by-one`, it is the duration of one animation, and the default is 500
+- `delay` The delay of the animation, in milliseconds; for `one-by-one`, it is the time difference between the two animations, for `all`, it is the delay of all animations, and the default is 0
+
+#${prefix} formatCopyValue((value: string) => string)
+
+Format the value when copying.

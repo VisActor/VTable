@@ -8,7 +8,7 @@ VTable 提供了行序号的能力，用户可以轻松地按需开启、自定�
 
 目前支持如下各项配置：
 
-```
+```javascript
 export interface IRowSeriesNumber {
   width?: number | 'auto';
   // align?: 'left' | 'right';
@@ -29,6 +29,8 @@ export interface IRowSeriesNumber {
   // selectRangeInclude?: boolean;
   /** 是否可拖拽顺序 */
   dragOrder?: boolean;
+  /** 是否禁止列宽调整 */
+  disableColumnResize?: boolean;
 }
 ```
 
@@ -43,6 +45,7 @@ export interface IRowSeriesNumber {
 - headerIcon: 行序号 header 单元格图标
 - icon: 行序号 body 单元格图标
 - dragOrder: 是否可拖拽行序号顺序，默认为 false。如果设置为 true，会显示拖拽位置的图标，交互在该图标上可以拖拽来换位。如果需要替换该图标可以自行配置。可参考教程：https://visactor.io/vtable/guide/custom_define/custom_icon 中重置功能图标的章节。
+- disableColumnResize: 是否禁止列宽调整，默认为 false
 
 其他被注释的配置项，后续会逐步完善，着急的同志们可参与共建开发。
 

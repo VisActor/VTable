@@ -2,6 +2,1642 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.10.1",
+      "tag": "@visactor/vtable_v1.10.1",
+      "date": "Tue, 22 Oct 2024 09:49:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when set rowSeriesNumber then sort icon not update #2643\n\n"
+          },
+          {
+            "comment": "fix: disable cellInnerBorder when no frame border "
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.10.0",
+      "tag": "@visactor/vtable_v1.10.0",
+      "date": "Fri, 18 Oct 2024 09:42:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when dimension paths has virtual not identify problem #2510\n\n"
+          },
+          {
+            "comment": "feat: add underlayBackgroundColor for gantt chart #2607\n\n"
+          },
+          {
+            "comment": "fix: toggleHierarchyState api can not update customlayout cell #2609\n\n"
+          },
+          {
+            "comment": "feat: add maxHeight in menu container #2602"
+          },
+          {
+            "comment": "fix: fix legend layout problem"
+          },
+          {
+            "comment": "fix: fix border rect missing when borderLineWidth is 0"
+          },
+          {
+            "comment": "fix: fix multi-sort icon update in updateSortState() #2614"
+          },
+          {
+            "comment": "fix: fix col/row end in createGroupForFirstScreen() #2585"
+          },
+          {
+            "comment": "fix: fix customConfig in react-vtable"
+          },
+          {
+            "comment": "fix: fix row resize mark position when scrolled vertically #2606"
+          },
+          {
+            "comment": "fix: fix sort icon update in transpose list-table"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add creation buttom for not schedualed task record\n\n"
+          },
+          {
+            "comment": "feat: add dependency line for gantt chart\n\n"
+          },
+          {
+            "comment": "feat: add after_sort event\n\n"
+          },
+          {
+            "comment": "feat: add task bar selected style\n\n"
+          },
+          {
+            "comment": "feat: add dependency line selected style\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.9.1",
+      "tag": "@visactor/vtable_v1.9.1",
+      "date": "Sat, 12 Oct 2024 07:07:25 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix sort icon update in merge cell"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.9.0",
+      "tag": "@visactor/vtable_v1.9.0",
+      "date": "Fri, 11 Oct 2024 11:35:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when dimension set width auto but no records, the col width not compute #2515\n\n"
+          },
+          {
+            "comment": "fix: when call updateColumns should update aggregation #2519\n\n"
+          },
+          {
+            "comment": "refactor: when value is promise cell style function should await #2549\n\n"
+          },
+          {
+            "comment": "fix: change outsideClickDeselect trigger time when pointerdown #2553\n\n"
+          },
+          {
+            "comment": "fix: when sort with row series number occor error #2558\n\n"
+          },
+          {
+            "comment": "fix: fix select auto-scroll in bottom #2546"
+          },
+          {
+            "comment": "fix: fix auto size in react custom component"
+          },
+          {
+            "comment": "fix: fix custom component flash when cell resizes #2516"
+          },
+          {
+            "comment": "fix: fix custom component in forzen cell #2568"
+          },
+          {
+            "comment": "fix: fix legend with padding layout size"
+          },
+          {
+            "comment": "fix: fix cellLocation in createComplexColumn #2517"
+          },
+          {
+            "comment": "fix: fix merge cell select range #2521"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add scrollTo animation function"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.8.3",
+      "tag": "@visactor/vtable_v1.8.3",
+      "date": "Fri, 11 Oct 2024 10:52:03 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when dimension set width auto but no records, the col width not compute #2515\n\n"
+          },
+          {
+            "comment": "fix: when call updateColumns should update aggregation #2519\n\n"
+          },
+          {
+            "comment": "refactor: when value is promise cell style function should await #2549\n\n"
+          },
+          {
+            "comment": "fix: change outsideClickDeselect trigger time when pointerdown #2553\n\n"
+          },
+          {
+            "comment": "fix: when sort with row series number occor error #2558\n\n"
+          },
+          {
+            "comment": "fix: fix select auto-scroll in bottom #2546"
+          },
+          {
+            "comment": "fix: fix auto size in react custom component"
+          },
+          {
+            "comment": "fix: fix custom component flash when cell resizes #2516"
+          },
+          {
+            "comment": "fix: fix custom component in forzen cell #2568"
+          },
+          {
+            "comment": "fix: fix legend with padding layout size"
+          },
+          {
+            "comment": "fix: fix cellLocation in createComplexColumn #2517"
+          },
+          {
+            "comment": "fix: fix merge cell select range #2521"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.8.2",
+      "tag": "@visactor/vtable_v1.8.2",
+      "date": "Mon, 30 Sep 2024 09:38:25 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix richtext icon update #2281"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.8.1",
+      "tag": "@visactor/vtable_v1.8.1",
+      "date": "Sun, 29 Sep 2024 07:41:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: rename vue component name\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.8.0",
+      "tag": "@visactor/vtable_v1.8.0",
+      "date": "Sun, 29 Sep 2024 02:17:55 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "docs: add functionalIconsStyle on theme #1308\n\n"
+          },
+          {
+            "comment": "fix: fix estimate position in updateAutoRow() #2494"
+          },
+          {
+            "comment": "fix: fix drag check state update #2518"
+          },
+          {
+            "comment": "fix: fix group cell in vtable-export #2487"
+          },
+          {
+            "comment": "fix: fix react component update problem when resize column"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add vue-vtable\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.9",
+      "tag": "@visactor/vtable_v1.7.9",
+      "date": "Fri, 27 Sep 2024 09:40:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "docs: add functionalIconsStyle on theme #1308\n\n"
+          },
+          {
+            "comment": "fix: fix estimate position in updateAutoRow() #2494"
+          },
+          {
+            "comment": "fix: fix drag check state update #2518"
+          },
+          {
+            "comment": "fix: fix group cell in vtable-export #2487"
+          },
+          {
+            "comment": "fix: fix react component update problem when resize column"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.8",
+      "tag": "@visactor/vtable_v1.7.8",
+      "date": "Tue, 24 Sep 2024 10:22:40 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: handle with customTree in dataset file to refactor processRecord function #2279\n\n"
+          },
+          {
+            "comment": "fix: custom total value not work #2455\n\n"
+          },
+          {
+            "comment": "refactor: update aggregator when update records #2459\n\n"
+          },
+          {
+            "comment": "fix: adjust sort icon up and down #2465\n\n"
+          },
+          {
+            "comment": "fix: when current edit not exit, could not trigger new edit cell #2469\n\n"
+          },
+          {
+            "comment": "fix: when no records edit cell value occor error #2474\n\n"
+          },
+          {
+            "comment": "feat: add async support in vtable-export #2460"
+          },
+          {
+            "comment": "fix: set aggregation on option not work #2459\n\n"
+          },
+          {
+            "comment": "fix: fix cell border clip in 'bottom-right' borde mode #2442"
+          },
+          {
+            "comment": "fix: add children === true hierarchyState in initChildrenNodeHierarchy()"
+          },
+          {
+            "comment": "fix: fix custom component frozen update #2432"
+          },
+          {
+            "comment": "fix: when resize trigger click_cell event\n\n"
+          },
+          {
+            "comment": "fix: fix proxy.colStart update in resetFrozen() #2464"
+          },
+          {
+            "comment": "fix: add '——' in specialCharSet #2470"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.7",
+      "tag": "@visactor/vtable_v1.7.7",
+      "date": "Fri, 13 Sep 2024 08:37:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: gantt project export vtable and vrender\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.6",
+      "tag": "@visactor/vtable_v1.7.6",
+      "date": "Thu, 12 Sep 2024 06:18:44 GMT",
+      "comments": {}
+    },
+    {
+      "version": "1.7.5",
+      "tag": "@visactor/vtable_v1.7.5",
+      "date": "Wed, 11 Sep 2024 12:33:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add getFilteredRecords api #2255\n\n"
+          },
+          {
+            "comment": "fix: select range click outside not cancel select #2355\n\n"
+          },
+          {
+            "comment": "fix: split line position fix #2392\n\n"
+          },
+          {
+            "comment": "fix: levelSpan case front columnNode merge range error #2359\n\n"
+          },
+          {
+            "comment": "fix: judge value is valid #2402\n\n"
+          },
+          {
+            "comment": "fix: mousedown chart go dealSelectCell and rerender it #2419\n\n"
+          },
+          {
+            "comment": "fix: fix axis size and layout #2256"
+          },
+          {
+            "comment": "fix: fix series number in list-group #2425"
+          },
+          {
+            "comment": "fix: fix recordIndex config of addRecord in list-group #2426"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.4",
+      "tag": "@visactor/vtable_v1.7.4",
+      "date": "Mon, 09 Sep 2024 02:02:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when tree pivot table sort then expand tree node render error #2261\n\n"
+          },
+          {
+            "comment": "fix: fix interactive layer dom clear problem"
+          },
+          {
+            "comment": "fix: when no records corner header show dimention title #2247\n\n"
+          },
+          {
+            "comment": "feat: add updateFilterRules api #2245\n\n"
+          },
+          {
+            "comment": "fix: fix sparkline range when data has null"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.3",
+      "tag": "@visactor/vtable_v1.7.3",
+      "date": "Thu, 05 Sep 2024 03:09:20 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when keydown with ctrl meta and shift not trigger edit mode # 2372\n\n"
+          },
+          {
+            "comment": "fix: fix custom style arrangement duplicate #2370"
+          },
+          {
+            "comment": "fix: fix no-text cell custom merge #2343"
+          },
+          {
+            "comment": "fix: fix event bind problem in react-vtable"
+          },
+          {
+            "comment": "fix: fix right frozen mark position #2344"
+          },
+          {
+            "comment": "fix: fix select range judgement in cellBgColor #2368"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.2",
+      "tag": "@visactor/vtable_v1.7.2",
+      "date": "Mon, 02 Sep 2024 10:09:57 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when use groupBy then all merged cells set cellType text #2331\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.1",
+      "tag": "@visactor/vtable_v1.7.1",
+      "date": "Mon, 02 Sep 2024 03:26:48 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix envs type in react-vtable"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.7.0",
+      "tag": "@visactor/vtable_v1.7.0",
+      "date": "Fri, 30 Aug 2024 11:54:08 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: add gantt chart\n\n"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: leftTable just has row series number\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.6.3",
+      "tag": "@visactor/vtable_v1.6.3",
+      "date": "Thu, 29 Aug 2024 12:00:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: scroll event add argument #2249\n\n"
+          },
+          {
+            "comment": "fix: handle with change header postion event #2299\n\n"
+          },
+          {
+            "comment": "refactor: changeCellValue can modify raw record #2305\n\n"
+          },
+          {
+            "comment": "fix: pivot tree can not show value and expand tree occor error #2306\n\n"
+          },
+          {
+            "comment": "fix: set titleOnDimension all sort can not run #2278\n\n"
+          },
+          {
+            "comment": "feat: add formatCopyValue config"
+          },
+          {
+            "comment": "feat: add parentElement config in tooltip #2290"
+          },
+          {
+            "comment": "fix: add judgement in array find function #2289"
+          },
+          {
+            "comment": "fix: fix frozen column custom component clip"
+          },
+          {
+            "comment": "fix: fix cellLocation in top frozen row #2267"
+          },
+          {
+            "comment": "fix: fix list-table group mode style update problem"
+          },
+          {
+            "comment": "fix: fix menu auto hide when page crolled #2241"
+          },
+          {
+            "comment": "fix: fix progress bar cell textAlign update #2225"
+          },
+          {
+            "comment": "fix: fix umd package problem in react-vtable #2244"
+          },
+          {
+            "comment": "fix: fix right frozen size in updateContainerAttrWidthAndX() #2243"
+          },
+          {
+            "comment": "fix: fix leftRowSeriesNumberColumnCount error in getBodyLayoutRangeById() #2234"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.6.2",
+      "tag": "@visactor/vtable_v1.6.2",
+      "date": "Thu, 22 Aug 2024 12:27:03 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add formatCopyValue config"
+          },
+          {
+            "comment": "fix: fix frozen column custom component clip"
+          },
+          {
+            "comment": "fix: fix menu auto hide when page crolled #2241"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.6.1",
+      "tag": "@visactor/vtable_v1.6.1",
+      "date": "Mon, 19 Aug 2024 08:06:44 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: supplement backgroundColor for editor #1518\n\n"
+          },
+          {
+            "comment": "fix: corner header display dimension name in some case #2180\n\n"
+          },
+          {
+            "comment": "feat: add option forceShowHeader\n\n"
+          },
+          {
+            "comment": "fix: frameStyle borrerLineWidth set array, table render positon error #2200\n\n"
+          },
+          {
+            "comment": "feat: frameStyle cornerRadius support array type #2207\n\n"
+          },
+          {
+            "comment": "feat: add table releated components in react-vtable"
+          },
+          {
+            "comment": "feat: add enum in textStick config"
+          },
+          {
+            "comment": "feat: add frozenRowCount in transpose table #2182"
+          },
+          {
+            "comment": "fix: fix icon margin error in update size #2206"
+          },
+          {
+            "comment": "fix: fix react custom layout component container height\n\n"
+          },
+          {
+            "comment": "fix: fix jsx customLayout size compute mode #2192"
+          },
+          {
+            "comment": "fix: add default color in vtable-export"
+          },
+          {
+            "comment": "feat: add excelJSWorksheetCallback config in vtable-export"
+          },
+          {
+            "comment": "fix: fix row-series cell type #2188"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add group function"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.5.6",
+      "tag": "@visactor/vtable_v1.5.6",
+      "date": "Thu, 08 Aug 2024 02:54:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add canvas & viewbox config"
+          },
+          {
+            "comment": "fix: fix released async problem #2145"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.5.5",
+      "tag": "@visactor/vtable_v1.5.5",
+      "date": "Wed, 07 Aug 2024 12:08:17 GMT",
+      "comments": {}
+    },
+    {
+      "version": "1.5.4",
+      "tag": "@visactor/vtable_v1.5.4",
+      "date": "Fri, 02 Aug 2024 11:20:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: set sort rule occor error #2106\n\n"
+          },
+          {
+            "comment": "fix: clearSelected api clear ctrl+a border #2115\n\n"
+          },
+          {
+            "comment": "feat: pivot table corner cell support icon #2120\n\n"
+          },
+          {
+            "comment": "fix: move header position not work not trigger change_header_position event #2129\n\n"
+          },
+          {
+            "comment": "feat: support editCellTrigger set keydown #2136\n\n"
+          },
+          {
+            "comment": "fix: set cellType is function, resize col width chart size render error #2160\n\n"
+          },
+          {
+            "comment": "fix: when call setRowHeight should update chart size #2155\n\n"
+          },
+          {
+            "comment": "feat: add react-component for option-emptyTip\n\n"
+          },
+          {
+            "comment": "feat: add react-component for option-emptyTip - demo\n\n"
+          },
+          {
+            "comment": "feat: add escape config in csv-exporter"
+          },
+          {
+            "comment": "feat: add selectionFillMode config in theme.selectionStyle #2132 #2027"
+          },
+          {
+            "comment": "fix: fix cell range clear in update record"
+          },
+          {
+            "comment": "fix: fix custom-element update problem #2126"
+          },
+          {
+            "comment": "fix: fix customMege cell update"
+          },
+          {
+            "comment": "fix: fix CellContent pickable config #2134"
+          },
+          {
+            "comment": "fix: fix legend visible config #2137"
+          },
+          {
+            "comment": "fix: fix released async problem #2145"
+          },
+          {
+            "comment": "fix: remove resizing update in endResizeCol() #2101"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.5.3",
+      "tag": "@visactor/vtable_v1.5.3",
+      "date": "Thu, 18 Jul 2024 12:13:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add param value for startEditCell api #2089\n\n"
+          },
+          {
+            "comment": "fix: fix option config in vtable-export"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.5.2",
+      "tag": "@visactor/vtable_v1.5.2",
+      "date": "Fri, 12 Jul 2024 10:47:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: edit api validateValue support async\n\n"
+          },
+          {
+            "comment": "feat: add api disableScroll and enableScroll #2073\n\n"
+          },
+          {
+            "comment": "fix: api changeFieldValue occor errow when records has null #2067\n\n"
+          },
+          {
+            "comment": "fix: fix react component error in updateCell() #2038"
+          },
+          {
+            "comment": "feat: add renderDefault prop in react customLayout component"
+          },
+          {
+            "comment": "feat: support multiple columns tag in react-vtable"
+          },
+          {
+            "comment": "fix: fix axes default config in scatter chart #2071"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.5.1",
+      "tag": "@visactor/vtable_v1.5.1",
+      "date": "Wed, 10 Jul 2024 06:19:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: getCellAtRelativePosition api return value #2054\n\n"
+          },
+          {
+            "comment": "fix: add tolerance for scroll in _disableColumnAndRowSizeRound mode"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.5.0",
+      "tag": "@visactor/vtable_v1.5.0",
+      "date": "Fri, 05 Jul 2024 10:43:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add showMoverLine and hideMoverLine api #2009\n\n"
+          },
+          {
+            "comment": "fix: pivot chart select state #2017\n\n"
+          },
+          {
+            "comment": "fix: disable select and edit input should move when input is outside of table #2039\n\n"
+          },
+          {
+            "comment": "fix: last column resize width error #2040\n\n"
+          },
+          {
+            "comment": "fix: fix test judgement in customMergeCell #2031"
+          },
+          {
+            "comment": "fix: fix selected highlight update when scrolling #2028"
+          },
+          {
+            "comment": "fix: fix select-rect update when scroll #2015"
+          },
+          {
+            "comment": "fix: fix frozen cell update problem in sort #1997"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add formatExcelJSCell config in vtable-export #1989"
+          },
+          {
+            "comment": "feat: optimize package size & add load on demand feature"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.4.2",
+      "tag": "@visactor/vtable_v1.4.2",
+      "date": "Tue, 02 Jul 2024 12:48:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: corner title can display row and column diemensionTitle #1926\n\n"
+          },
+          {
+            "comment": "fix: when not exit edit state then can not select other cells #1974\n\n"
+          },
+          {
+            "comment": "fix: selected_clear event trigger #1981\n\n"
+          },
+          {
+            "comment": "feat: add column hide config #1991\n\n"
+          },
+          {
+            "comment": "refactor: sparkline cellType set aggregationType None automatically #1999\n\n"
+          },
+          {
+            "comment": "fix: pivotTable virtual node edit value not work #2002\n\n"
+          },
+          {
+            "comment": "fix: tooltip content can not be selected #2003\n\n"
+          },
+          {
+            "comment": "feat: add getCellAtRelativePosition api"
+          },
+          {
+            "comment": "fix: fix vrender export module"
+          },
+          {
+            "comment": "fix: fix merge cell update performance problem #1972"
+          },
+          {
+            "comment": "fix: fix regexp format for webpack 3 #2005"
+          },
+          {
+            "comment": "fix: fix width computation in shrinkSparklineFirst mode"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.4.1",
+      "tag": "@visactor/vtable_v1.4.1",
+      "date": "Mon, 24 Jun 2024 08:48:40 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix editingEditor missing problem"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.4.0",
+      "tag": "@visactor/vtable_v1.4.0",
+      "date": "Fri, 21 Jun 2024 10:26:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: updateSortState api occor error #1939\n\n"
+          },
+          {
+            "comment": "feat: support corner header cell edit value #1945\n\n"
+          },
+          {
+            "comment": "fix: when setRecords should update emptyTip #1953\n\n"
+          },
+          {
+            "comment": "fix: getCellRect api when cell is frozen get bounds error #1955\n\n"
+          },
+          {
+            "comment": "fix: when drag cell and enter edit state but can not exit edit rightly #1956\n\n"
+          },
+          {
+            "comment": "chore: update vrender version\n\n"
+          },
+          {
+            "comment": "feat: add indent in vtable-export"
+          },
+          {
+            "comment": "feat: add CustomComponent in react-vtable"
+          },
+          {
+            "comment": "feat: add CustomLayout component in react-vtable"
+          },
+          {
+            "comment": "fix: fix custom width problem #1905"
+          },
+          {
+            "comment": "fix: fix content judgement in getCellRange() #1911"
+          },
+          {
+            "comment": "fix: fix size update problem in pivot table sort #1958"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: support calculate field for PivotTable #1941\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.3.3",
+      "tag": "@visactor/vtable_v1.3.3",
+      "date": "Thu, 20 Jun 2024 12:19:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix column update problem #1951"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.3.2",
+      "tag": "@visactor/vtable_v1.3.2",
+      "date": "Mon, 17 Jun 2024 11:51:18 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: cellIsInVisualView api error #1864\n\n"
+          },
+          {
+            "comment": "refactor: tooltip support scroll #1887\n\n"
+          },
+          {
+            "comment": "fix: if set style autoWrapText, this config not wort when resize column width #1892\n\n"
+          },
+          {
+            "comment": "refactor: when not records pivot table can show corner header #1895\n\n"
+          },
+          {
+            "comment": "refactor: when rowTree children not set value can supplement indicators #1924\n\n"
+          },
+          {
+            "comment": "feat: add blankAreaClickDeselect and outsideClickDeselect config\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.3.1",
+      "tag": "@visactor/vtable_v1.3.1",
+      "date": "Thu, 13 Jun 2024 12:35:49 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix frozenColCount large than colCount error #1872\n\n"
+          },
+          {
+            "comment": "docs: update changlog of rush\n\n"
+          },
+          {
+            "comment": "fix: fix merge cell size update #1869"
+          },
+          {
+            "comment": "fix: optimize row height update when useOneRowHeightFillAll"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.3.0",
+      "tag": "@visactor/vtable_v1.3.0",
+      "date": "Wed, 12 Jun 2024 12:30:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: memory release logic optimization #1856\n\n"
+          },
+          {
+            "comment": "refactor: arrow key with shift ctrl key to select cells #1873\n\n"
+          },
+          {
+            "comment": "fix: icon inlineEnd inlineFront x position compute error #1882\n\n"
+          },
+          {
+            "comment": "fix: drill down icon can not be click #1899\n\n"
+          },
+          {
+            "comment": "feat: add ignoreIcon&formatExportOutput config in vtable-export #1813"
+          },
+          {
+            "comment": "feat: add textArea editor\n\n"
+          },
+          {
+            "comment": "feat: add strokeColor style #1847"
+          },
+          {
+            "comment": "feat: add dx&dy in title component #1874"
+          },
+          {
+            "comment": "fix: fix frozenColCount large than colCount error #1872"
+          },
+          {
+            "comment": "feat: add shrinkSparklineFirst config #1862"
+          },
+          {
+            "comment": "fix: fix ellipsis error in _disableColumnAndRowSizeRound mode #1884"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: tooltip disappear delay time #1848\n\n"
+          },
+          {
+            "comment": "feat: add sort config for pivotTable #1865\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.2.0",
+      "tag": "@visactor/vtable_v1.2.0",
+      "date": "Thu, 06 Jun 2024 02:34:10 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support select highlightMode effect #1167\n\n"
+          },
+          {
+            "comment": "feat: add isAggregation api #1803\n\n"
+          },
+          {
+            "comment": "fix: when has no records should not has aggregation row #1804\n\n"
+          },
+          {
+            "comment": "refactor: update pixelRatio when resize #1823\n\n"
+          },
+          {
+            "comment": "fix: updateColumns set editor error #1828\n\n"
+          },
+          {
+            "comment": "chore: update vrender version\n\n"
+          },
+          {
+            "comment": "refactor: selectAllOnCtrlA option\n\n"
+          },
+          {
+            "comment": "feat: optimize large column performance #1840 #1824"
+          },
+          {
+            "comment": "fix: fix maxCharactersNumber effect #1830"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add merge cell custom graphic attribute sync #1718"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.2",
+      "tag": "@visactor/vtable_v1.1.2",
+      "date": "Fri, 31 May 2024 08:56:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "chore: update vrender version\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.1",
+      "tag": "@visactor/vtable_v1.1.1",
+      "date": "Thu, 30 May 2024 08:07:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: dimension value same with indicator key cell value error #1817\n\n"
+          },
+          {
+            "comment": "fix: when set emptyTip interaction not work well with has records #1818\n\n"
+          },
+          {
+            "comment": "fix: fix table frame corner radius display problem #1783"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.0",
+      "tag": "@visactor/vtable_v1.1.0",
+      "date": "Tue, 28 May 2024 12:24:56 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add update delete record api should maintain beforeChangedRecordsMap #1780\n\n"
+          },
+          {
+            "comment": "fix: when set disableSelect table should support drag header #1800\n\n"
+          },
+          {
+            "comment": "fix: fix tree create problem in getDataCellPath()"
+          },
+          {
+            "comment": "fix: fix left axis index in horizontal pivot chart"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add empty tip #1782\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.3",
+      "tag": "@visactor/vtable_v1.0.3",
+      "date": "Fri, 24 May 2024 10:31:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: legends support ser array form #1740\n\n"
+          },
+          {
+            "comment": "fix: first col tree mode compute col width error #1778\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.2",
+      "tag": "@visactor/vtable_v1.0.2",
+      "date": "Fri, 24 May 2024 10:08:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: use table option in hasAutoImageColumn()"
+          },
+          {
+            "comment": "fix: axis size align with vrender-component #1784"
+          },
+          {
+            "comment": "fix: fix lineClamp config in computeRowsHeight() #1772"
+          },
+          {
+            "comment": "fix: fix progress cell create problem in vtable-export #1787"
+          },
+          {
+            "comment": "fix: ignore cell merge in selectCells()"
+          },
+          {
+            "comment": "feat: add setRowHeight&setColWidth api"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.1",
+      "tag": "@visactor/vtable_v1.0.1",
+      "date": "Wed, 22 May 2024 12:21:05 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: tree mode  can set icon #1697\n\n"
+          },
+          {
+            "comment": "fix: ignore cell merge in selectCells()"
+          },
+          {
+            "comment": "feat: add setRowHeight&setColWidth api"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.0",
+      "tag": "@visactor/vtable_v1.0.0",
+      "date": "Tue, 21 May 2024 12:41:50 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: rows and tree can  combined use  #1644\n\n"
+          }
+        ],
+        "major": [
+          {
+            "comment": "feat: add virtual option for rowTree and columnTree #1644\n\n BREAKING CHANGE: getCellOriginRecord will return an array of source data."
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.9",
+      "tag": "@visactor/vtable_v0.25.9",
+      "date": "Tue, 21 May 2024 12:33:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when body cell is blank string,compute row height error #1752\n\n"
+          },
+          {
+            "comment": "fix: fix custom merge cell display problem when select header"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.8",
+      "tag": "@visactor/vtable_v0.25.8",
+      "date": "Tue, 21 May 2024 11:19:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add scrollSliderCornerRadius config #1369\n\n"
+          },
+          {
+            "comment": "fix: when set hideRowHeader, body cell value is blank #1732\n\n"
+          },
+          {
+            "comment": "fix: setTableColumnsEditor occor error when not set columns #1747\n\n"
+          },
+          {
+            "comment": "feat: add disableBackground &  disableBorder in exportCellImg() #1733"
+          },
+          {
+            "comment": "feat: add disableColumnResize for rowSeriesNumber\n\n"
+          },
+          {
+            "comment": "fix: fix col & row order in cellInRanges()"
+          },
+          {
+            "comment": "fix: add string mark in csv-export #1730"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.7",
+      "tag": "@visactor/vtable_v0.25.7",
+      "date": "Fri, 17 May 2024 12:08:43 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.25.6",
+      "tag": "@visactor/vtable_v0.25.6",
+      "date": "Fri, 17 May 2024 10:50:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add selected_clear event #1705\n\n"
+          },
+          {
+            "comment": "fix: mouse down on scroll rail trigger mousedown_table #1706\n\n"
+          },
+          {
+            "comment": "fix: merge cell value can be edited #1711\n\n"
+          },
+          {
+            "comment": "fix: sub colunms can not be edit when set editor instance #1711\n\n"
+          },
+          {
+            "comment": "feat: add mergeCellInfo arg in event #1667"
+          },
+          {
+            "comment": "fix: fix checkbox and radio state update when change row index #1712"
+          },
+          {
+            "comment": "fix: fix veritial offset in text stick"
+          },
+          {
+            "comment": "fix: fix column width may be zero #1708"
+          },
+          {
+            "comment": "fix: fix getCell performance"
+          },
+          {
+            "comment": "fix: fix header hide func in pivot table"
+          },
+          {
+            "comment": "fix: lineDash judgement in group-contribution-render #1696"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.5",
+      "tag": "@visactor/vtable_v0.25.5",
+      "date": "Mon, 13 May 2024 13:47:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: trigger mousedown_table event region need extend #1668\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.4",
+      "tag": "@visactor/vtable_v0.25.4",
+      "date": "Fri, 10 May 2024 03:15:01 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: remove vutil-extension temply"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.3",
+      "tag": "@visactor/vtable_v0.25.3",
+      "date": "Thu, 09 May 2024 11:13:29 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: remove vutil-extension temply"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.2",
+      "tag": "@visactor/vtable_v0.25.2",
+      "date": "Wed, 08 May 2024 10:48:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix veritial offset in text stick"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.1",
+      "tag": "@visactor/vtable_v0.25.1",
+      "date": "Wed, 08 May 2024 08:38:35 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: pivot chart support wordCloud rose radar gauge #1614\n\n"
+          },
+          {
+            "comment": "feat: pivot chart support scatter chart type #1618\n\n"
+          },
+          {
+            "comment": "fix: when copy blank cell paste not work #1646\n\n"
+          },
+          {
+            "comment": "feat: add CustomComponent in react-vtable"
+          },
+          {
+            "comment": "fix: fix custom merge cell size update #1636"
+          },
+          {
+            "comment": "fix: add arg in completeEdit()"
+          },
+          {
+            "comment": "fix: add selecting cell range deduplication #1628"
+          },
+          {
+            "comment": "fix: update @visactor/vutils-extension version"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.25.0",
+      "tag": "@visactor/vtable_v0.25.0",
+      "date": "Sun, 28 Apr 2024 06:22:38 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: pivot table header cell support edit #1583\n\n"
+          },
+          {
+            "comment": "feat: customrender or customlayout support edit #1596\n\n"
+          },
+          {
+            "comment": "fix: editor input value handle with 0value #1590\n\n"
+          },
+          {
+            "comment": "fix: when set textStick init and updateOption text jump #1592\n\n"
+          },
+          {
+            "comment": "fix: clear async contain resize task before render #1593"
+          },
+          {
+            "comment": "fix: hierarchy state icon can not show when only one level\n\n"
+          },
+          {
+            "comment": "refactor: resize last column width can be more  flexibly #1567\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add row resize function"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.24.1",
+      "tag": "@visactor/vtable_v0.24.1",
+      "date": "Tue, 23 Apr 2024 11:19:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "docs: add drill down drill up demo #1556\n\n"
+          },
+          {
+            "comment": "fix: when has rowSeriesNumber minWidth maxWidth error #1572\n\n"
+          },
+          {
+            "comment": "feat: add startEditCell api #1573\n\n"
+          },
+          {
+            "comment": "refactor: pivot lazy load modify setTreeNodeChildren api #1580\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.24.0",
+      "tag": "@visactor/vtable_v0.24.0",
+      "date": "Mon, 22 Apr 2024 10:59:12 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: add lazy load for pivot table tree #1521\n\n"
+          },
+          {
+            "comment": "feat: add radio column type"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: handle with editor input ctrl+a event #1552\n\n"
+          },
+          {
+            "comment": "refactor: optimize performance when row tree node exceed 8000 nodes #1557\n\n"
+          },
+          {
+            "comment": "fix: when resize window size the editor input size not match cell size #1559\n\n"
+          },
+          {
+            "comment": "feat: add setCellCheckboxState & setCellRadioState api #1504"
+          },
+          {
+            "comment": "fix: fix multilines new line style #1531"
+          },
+          {
+            "comment": "fix: fix cell group order in async data #1517"
+          },
+          {
+            "comment": "fix: add skipCustomMerge in getCellValue() #1543"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.23.4",
+      "tag": "@visactor/vtable_v0.23.4",
+      "date": "Thu, 18 Apr 2024 08:13:35 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix right & top axis visible"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.23.3",
+      "tag": "@visactor/vtable_v0.23.3",
+      "date": "Tue, 16 Apr 2024 08:38:10 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: add mousedown_table event #1470\n\n"
+          },
+          {
+            "comment": "refactor: setRecords handle with tooltip overflow #1494\n\n"
+          },
+          {
+            "comment": "fix: release editor when release tableInstance #1495\n\n"
+          },
+          {
+            "comment": "fix: short table drag to out table occor error #1502\n\n"
+          },
+          {
+            "comment": "fix: row move funciton not work on mobile #1503\n\n"
+          },
+          {
+            "comment": "fix: defaultHeaderRowHeight not work with rowSeriesNumber #1520\n\n"
+          },
+          {
+            "comment": "fix: tree hierarchy state icon use rowHierarchyTextStartAlignment children node render error #1525\n\n"
+          },
+          {
+            "comment": "fix: resize col width trigger text stick change #1529\n\n"
+          },
+          {
+            "comment": "fix: fix theme textStick config in checkHaveTextStick() #1490 "
+          },
+          {
+            "comment": "fix: add button jedgement in click_cell event #1484"
+          },
+          {
+            "comment": "feat: add widthAdaptiveMode & heightAdaptiveMode config #1499"
+          },
+          {
+            "comment": "feat: add measureTextBounds api"
+          },
+          {
+            "comment": "fix: fix defalultQueryMethod in vtable-search #1448"
+          },
+          {
+            "comment": "fix: update customMergeCell in updateOption #1493"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.23.2",
+      "tag": "@visactor/vtable_v0.23.2",
+      "date": "Wed, 10 Apr 2024 13:08:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: records api when has merge cell render error #1286\n\n"
+          },
+          {
+            "comment": "refactor: update drilldown drillup svg\n\n"
+          },
+          {
+            "comment": "feat: scrollbar visible focus #1360\n\n"
+          },
+          {
+            "comment": "fix: add isAutoRowHeight to handle width row height compute #1379\n\n"
+          },
+          {
+            "comment": "feat: add rowHierarchyTextStartAlignment for tree mode #1417\n\n"
+          },
+          {
+            "comment": "refactor: handle width chartSpce with markLine #1420\n\n"
+          },
+          {
+            "comment": "fix: chart spec clone filtered dom problem #1422\n\n"
+          },
+          {
+            "comment": "refactor: supplement event type for react table #1434\n\n"
+          },
+          {
+            "comment": "fix: borderlinedash effect error handle with lineCap #1436\n\n"
+          },
+          {
+            "comment": "fix: trigger event selectedCell #1444\n\n"
+          },
+          {
+            "comment": "fix: set disableSelect drag cells occor error #1461\n\n"
+          },
+          {
+            "comment": "fix: left content width error when tree hierarchy state icon back rect showing #1466\n\n"
+          },
+          {
+            "comment": "fix: fix domain order in  horizontal #1453"
+          },
+          {
+            "comment": "fix: add columnWidthComputeMode update in opdateOption #1465"
+          },
+          {
+            "comment": "fix: fix inline icon tooltip config #1456"
+          },
+          {
+            "comment": "fix: 修复进度图部分情况遮挡表格边缘单元格\n\n"
+          },
+          {
+            "comment": "fix: fix transpose border theme #1463"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.23.1",
+      "tag": "@visactor/vtable_v0.23.1",
+      "date": "Sun, 07 Apr 2024 02:48:06 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: maxLineWidth value should consider hierarchyOffset #1224\n\n"
+          },
+          {
+            "comment": "fix: tree leaf node textAlign right render error #1393\n\n"
+          },
+          {
+            "comment": "feat: select range can extends during scroll #1400\n\n"
+          },
+          {
+            "comment": "fix: when copy or paste navigator.clipboard?.write occor undefined error in not https #1421\n\n"
+          },
+          {
+            "comment": "fix: fix header cell imageAutoSizing #1339"
+          },
+          {
+            "comment": "fix: hide icon background when hide icon"
+          },
+          {
+            "comment": "fix: fix nan verticalBarPos #1232"
+          },
+          {
+            "comment": "fix: fix progressbar cover cell border #1425"
+          },
+          {
+            "comment": "fix: remove container in table option"
+          },
+          {
+            "comment": "fix: add sync render in exportCellImg #1398"
+          },
+          {
+            "comment": "refactor: optimize performance when change tree hierarchy state #1406\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.23.0",
+      "tag": "@visactor/vtable_v0.23.0",
+      "date": "Fri, 29 Mar 2024 09:26:36 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: add scroll end event and barToSide option #1304\n\n"
+          },
+          {
+            "comment": "feat: add excel options to support fill handle\n\n"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: transpose with frozenColCount shadowline render #1366\n\n"
+          },
+          {
+            "comment": "feat: list tree mode support filter #1376\n\n"
+          },
+          {
+            "comment": "fix: datasource support promise mode call addRecords and deleteRecords\n\n"
+          },
+          {
+            "comment": "fix: when click cell should not trigger drag_select_end event #1410\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.22.3",
+      "tag": "@visactor/vtable_v0.22.3",
+      "date": "Thu, 28 Mar 2024 07:06:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix legend default selectData"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.2",
       "tag": "@visactor/vtable_v0.22.2",
       "date": "Wed, 27 Mar 2024 06:41:08 GMT",

@@ -27,6 +27,7 @@ const EVENT_TYPE = {
 };
 export class Style extends EventTarget implements ColumnStyle {
   private _color?: ColorPropertyDefine;
+  private _strokeColor?: ColorPropertyDefine;
   private _fontSize?: FontSizePropertyDefine;
   private _fontFamily?: FontFamilyPropertyDefine;
   private _fontWeight?: FontWeightPropertyDefine;
@@ -35,7 +36,7 @@ export class Style extends EventTarget implements ColumnStyle {
   private _textOverflow: TextOverflow;
   private _padding: PaddingsPropertyDefine | undefined;
   private _defaultPadding: PaddingsPropertyDefine = [10, 16, 10, 16];
-  private _textStick: boolean;
+  private _textStick: boolean | 'vertical' | 'horizontal';
   private _textStickBaseOnAlign: boolean;
   private _marked: MarkedPropertyDefine;
   // eslint-disable-next-line no-undef
@@ -72,6 +73,7 @@ export class Style extends EventTarget implements ColumnStyle {
   constructor(style: IStyleOption = {}, headerStyle: IStyleOption = {}) {
     super();
     this._color = style.color ?? headerStyle?.color;
+    this._strokeColor = style?.strokeColor ?? headerStyle?.strokeColor;
     // icon为文字前后可添加的图标
     // this._icon = style.icon;
     this._fontSize = style.fontSize ?? headerStyle?.fontSize;
@@ -120,6 +122,13 @@ export class Style extends EventTarget implements ColumnStyle {
   set color(color: ColorPropertyDefine | undefined) {
     this._color = color;
     //this.doChangeStyle();
+  }
+  get strokeColor(): ColorPropertyDefine | undefined {
+    return this._strokeColor;
+  }
+  set strokeColor(strokeColor: ColorPropertyDefine | undefined) {
+    this._strokeColor = strokeColor;
+    // this.doChangeStyle();
   }
   get fontSize(): FontSizePropertyDefine | undefined {
     return this._fontSize;
@@ -177,10 +186,10 @@ export class Style extends EventTarget implements ColumnStyle {
     this._borderColor = borderColor;
     //this.doChangeStyle();
   }
-  get textStick(): boolean {
+  get textStick(): boolean | 'vertical' | 'horizontal' {
     return this._textStick;
   }
-  set textStick(textStick: boolean) {
+  set textStick(textStick: boolean | 'vertical' | 'horizontal') {
     this._textStick = textStick;
     //this.doChangeStyle();
   }

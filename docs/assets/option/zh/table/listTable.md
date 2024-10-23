@@ -56,6 +56,10 @@ IPagination 的具体类型如下：
 
 当前页码。
 
+## multipleSort (boolean)
+
+启用多列排序。
+
 ## sortState(SortState | SortState[])
 
 排序状态。SortState 定义如下：
@@ -67,24 +71,6 @@ SortState {
   /** 排序规则 */
   order: 'desc' | 'asc' | 'normal';
 }
-```
-
-## editor (string|Object|Function)
-
-全局配置单元格编辑器
-
-```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-```
-
-其中 IEditor 是@visactor/vtable-editors 中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
-
-${prefix} headerEditor (string|Object|Function)
-
-全局配置表头显示标题 title 的编辑器
-
-```
-headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
 
 {{ use: common-option-secondary(
@@ -99,6 +85,10 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 ## hierarchyExpandLevel(number)
 
 展示为树形结构时，默认展开层数。默认为 1 只显示根节点，配置为`Infinity`则全部展开。
+
+## hierarchyTextStartAlignment(boolean) = false
+
+同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认 false
 
 ## frozenColDragHeaderMode(string) = 'fixedFrozenCount'
 
@@ -140,9 +130,14 @@ type CustomAggregation = {
 };
 ```
 
-## rowSeriesNumber(IRowSeriesNumber)
+## groupBy(string|string[])
 
-配置行序号。
-{{ use: row-series-number(
-    prefix = '###',
-) }}
+开启分组展示功能，用于展示数据中分组字段的层级结构。值为分组字段名称，可以配置一个字段，也可以配置多个字段组成的数组。
+
+## enableTreeStickCell(boolean) = false
+
+开启分组标题吸附功能。
+
+## groupTitleCustomLayout(CustomLayout)
+
+分组标题自定义布局。

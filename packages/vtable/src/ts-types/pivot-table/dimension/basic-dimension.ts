@@ -3,7 +3,9 @@ import type { ICustomLayout } from '../../customLayout';
 import type { FieldFormat } from '../../table-engine';
 import type { ColumnIconOption } from '../../icon';
 import type { MenuListItem } from '../../menu';
-import type { CellInfo } from '../../common';
+import type { BaseCellInfo, CellInfo, SortOption } from '../../common';
+import type { IEditor } from '@visactor/vtable-editors';
+import type { BaseTableAPI } from '../../base-table';
 
 export interface IBasicDimension {
   /** 维度的唯一标识 对应数据集的字段名称 */
@@ -35,8 +37,12 @@ export interface IBasicDimension {
   dropDownMenu?: MenuListItem[];
   /** 角头单元格显示下拉按钮及下拉菜单*/
   cornerDropDownMenu?: MenuListItem[];
-  /** 是否显示排序icon */
+  /** sort排序规则 */
+  sort?: SortOption;
+  /** 显示sort排序icon。为了仅仅显示图标，无排序逻辑 */
   showSort?: boolean;
+  /** 在角头的维度名称单元格中是否显示排序 */
+  showSortInCorner?: boolean;
   /** 是否可以拖拽表头换位置 */
   dragHeader?: boolean;
   /** 表头自定义渲染内容定义 */
@@ -59,4 +65,12 @@ export interface IBasicDimension {
   disableHeaderHover?: boolean;
   /** 该维度单元格不支持选中 */
   disableHeaderSelect?: boolean;
+  /** 设置表头编辑器 */
+  headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 定义角头维度名称对应的icon */
+  cornerHeaderIcon?:
+    | string
+    | ColumnIconOption
+    | (string | ColumnIconOption)[]
+    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
 }

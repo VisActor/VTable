@@ -26,7 +26,7 @@ ${prefix} elements (Array)
 ICustomRenderElement 的定义如下：
 
 ```
-type ICustomRenderElement = TextElement | RectElement | CircleElement | IconElement | ImageElement | ArcElement;
+type ICustomRenderElement = TextElement | RectElement | CircleElement | IconElement | ImageElement | ArcElement | LineElement;
 ```
 
 其中依据 type 属性，接下来分别介绍各种类型的具体配置信息。
@@ -68,6 +68,14 @@ ${prefix} elements.image(string)
 占位 TODO 第四级目录
 
 {{ use: image-custom-element(
+  prefix = '#' + ${prefix},
+) }}
+
+${prefix} elements.line(string)
+
+占位 TODO 第四级目录
+
+{{ use: line-custom-element(
   prefix = '#' + ${prefix},
 ) }}
 

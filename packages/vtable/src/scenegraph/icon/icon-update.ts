@@ -10,6 +10,7 @@ import { IContainPointMode, createRect } from '@src/vrender';
 import { dealWithIcon } from '../utils/text-icon-layout';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { getCellMergeRange } from '../../tools/merge-range';
+import { traverseObject } from '../../tools/util';
 
 export function hideHoverIcon(col: number, row: number, scene: Scenegraph) {
   if (col === -1 || row === -1) {
@@ -25,6 +26,11 @@ export function hideHoverIcon(col: number, row: number, scene: Scenegraph) {
     (icon: Icon) => icon.attribute.visibleTime === 'mouseenter_cell',
     (icon: Icon) => {
       icon.setAttribute('opacity', 0);
+
+      const iconBack = icon.parent.getChildByName('icon-back') as IRect;
+      if (iconBack) {
+        iconBack.setAttribute('visible', false);
+      }
     },
     scene
   );
@@ -132,7 +138,7 @@ export function setIconHoverStyle(baseIcon: Icon, col: number, row: number, cell
             iconBack.setAttributes({
               x:
                 (icon.attribute.x ?? 0) +
-                (icon.attribute.dx ?? 0) +
+                // (icon.attribute.dx ?? 0) +
                 (icon.AABBBounds.width() - icon.backgroundWidth) / 2,
               y: (icon.attribute.y ?? 0) + (icon.AABBBounds.height() - icon.backgroundHeight) / 2,
               dx: icon.attribute.dx ?? 0,
@@ -147,7 +153,7 @@ export function setIconHoverStyle(baseIcon: Icon, col: number, row: number, cell
             iconBack = createRect({
               x:
                 (icon.attribute.x ?? 0) +
-                (icon.attribute.dx ?? 0) +
+                // (icon.attribute.dx ?? 0) +
                 (icon.AABBBounds.width() - icon.backgroundWidth) / 2,
               y: (icon.attribute.y ?? 0) + (icon.AABBBounds.height() - icon.backgroundHeight) / 2,
               dx: icon.attribute.dx ?? 0,
@@ -189,6 +195,7 @@ export function setIconHoverStyle(baseIcon: Icon, col: number, row: number, cell
         },
         placement: baseIcon.tooltip.placement
       },
+      disappearDelay: baseIcon.tooltip.disappearDelay,
       style: Object.assign({}, scene.table.internalProps.theme?.tooltipStyle, baseIcon.tooltip?.style)
     };
     if (!scene.table.internalProps.tooltipHandler.isBinded(tooltipOptions)) {
@@ -251,6 +258,7 @@ export function updateIcon(baseIcon: Icon, iconConfig: ColumnIconOption, col: nu
 
 function resetSortIcon(oldSortCol: number, oldSortRow: number, iconConfig: ColumnIconOption, scene: Scenegraph) {
   const oldSortCell = scene.getCell(oldSortCol, oldSortRow);
+
   if (
     isValid(oldSortCell.mergeStartCol) &&
     isValid(oldSortCell.mergeStartRow) &&
@@ -275,13 +283,16 @@ function resetSortIcon(oldSortCol: number, oldSortRow: number, iconConfig: Colum
     }
   } else {
     let oldIconMark: Icon;
-    oldSortCell.forEachChildren((mark: Icon) => {
+
+    //oldSortCell.forEachChildren((mark: Icon) => {
+    traverseObject(oldSortCell, 'children', (mark: Icon) => {
       if (mark.attribute.funcType === 'sort') {
         oldIconMark = mark;
         return true;
       }
       return false;
     });
+
     if (oldIconMark) {
       // updateIcon(oldIconMark, oldIcon);
       dealWithIcon(iconConfig, oldIconMark);
@@ -304,16 +315,17 @@ function checkSameCell(col1: number, row1: number, col2: number, row2: number, t
   return false;
 }
 
-export function updateSortIcon(
-  col: number,
-  row: number,
-  iconMark: Icon,
-  order: SortOrder,
-  oldSortCol: number,
-  oldSortRow: number,
-  oldIconMark: Icon | undefined,
-  scene: Scenegraph
-) {
+export function updateSortIcon(options: {
+  col: number;
+  row: number;
+  iconMark: Icon;
+  order: SortOrder;
+  oldSortCol: number;
+  oldSortRow: number;
+  oldIconMark: Icon | undefined;
+  scene: Scenegraph;
+}) {
+  const { col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, scene } = options;
   // 更新icon
   const icon = scene.table.internalProps.headerHelper.getSortIcon(order, scene.table, col, row);
   if (iconMark) {

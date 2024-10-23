@@ -15,6 +15,7 @@ function getBackgroundColor(args: StylePropertyFunctionArg): string {
  * @memberof VTable.themes.DARK
  */
 export default {
+  name: 'DARK',
   underlayBackgroundColor: 'transparent',
   // selectionBgColor: '#CCE0FF',
   defaultStyle: {
@@ -119,5 +120,19 @@ export default {
     color: '#000',
     fontSize: 12,
     fontFamily: 'Arial,sans-serif'
+  },
+  functionalIconsStyle: {
+    sort_color: '#FFFFFF',
+    sort_color_opacity: '0.75',
+    sort_color_2: '#416EFF',
+    sort_color_opacity_2: '1',
+    frozen_color: '#FFFFFF',
+    frozen_color_opacity: '0.75',
+    collapse_color: '#FFF',
+    collapse_color_opacity: '0.75',
+    expand_color: '#FFF',
+    expand_color_opacity: '0.75',
+    dragReorder_color: '#FFF',
+    dragReorder_color_opacity: '0.75'
   }
 } as ITableThemeDefine;

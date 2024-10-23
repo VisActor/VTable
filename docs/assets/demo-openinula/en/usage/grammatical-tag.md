@@ -14,6 +14,7 @@ Use syntax tags to assemble a complete table configuration and generate tables i
 - ListColumn: List column, consistent with the definition of columns in option [api](../../option/ListTable-columns-text#cellType)
 
 ## code demo
+
 ```javascript livedemo template=vtable-openinula
 // import * as InulaVTable from '@visactor/openinula-vtable';
 const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
@@ -21,10 +22,10 @@ const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
 const root = document.getElementById(CONTAINER_ID);
 Inula.render(
   <InulaVTable.ListTable records={records} height={'500px'}>
-    <InulaVTable.ListColumn field={'0'} caption={'name'} />
-    <InulaVTable.ListColumn field={'1'} caption={'age'} />
-    <InulaVTable.ListColumn field={'2'} caption={'gender'} />
-    <InulaVTable.ListColumn field={'3'} caption={'hobby'} />
+    <InulaVTable.ListColumn field={'0'} title={'name'} />
+    <InulaVTable.ListColumn field={'1'} title={'age'} />
+    <InulaVTable.ListColumn field={'2'} title={'gender'} />
+    <InulaVTable.ListColumn field={'3'} title={'hobby'} />
   </InulaVTable.ListTable>,
   root
 );

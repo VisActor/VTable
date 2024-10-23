@@ -1,7 +1,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
 import records from './data/marketsales.json';
-import { ListTable } from '../src/ListTable';
+import { ListTable } from '../src';
 import { createDiv } from './dom';
 global.__VERSION__ = 'none';
 describe('listTable init test', () => {
@@ -118,6 +118,7 @@ describe('listTable init test', () => {
     expect(listTable.getScrollLeft()).toBe(901);
     expect(listTable.getScrollTop()).toBe(720);
     expect(listTable.getCellStyle(6, 16)).toStrictEqual({
+      strokeColor: undefined,
       textAlign: 'left',
       textBaseline: 'middle',
       bgColor: '#FFF',
@@ -189,9 +190,9 @@ describe('listTable init test', () => {
     ]);
 
     expect(listTable.stateManager?.select.ranges).toEqual([
-      { start: { col: 1, row: 3 }, end: { col: 4, row: 6 } },
-      { start: { col: 0, row: 4 }, end: { col: 7, row: 4 } },
-      { start: { col: 4, row: 36 }, end: { col: 7, row: 36 } }
+      { start: { col: 1, row: 3 }, end: { col: 4, row: 6 }, skipBodyMerge: true },
+      { start: { col: 0, row: 4 }, end: { col: 7, row: 4 }, skipBodyMerge: true },
+      { start: { col: 4, row: 36 }, end: { col: 7, row: 36 }, skipBodyMerge: true }
     ]);
     expect(listTable.getScrollTop()).toBe(scrollTop);
   });

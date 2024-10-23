@@ -1,4 +1,5 @@
 import type * as VTable from '@visactor/vtable';
+import { isValid } from '@visactor/vutils';
 
 type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 
@@ -30,7 +31,7 @@ const defalutFocusHightlightCellStyle: Partial<VTable.TYPES.CellStyle> = {
 };
 
 function defalultQueryMethod(queryStr: string, value: string) {
-  return value.toString().includes(queryStr);
+  return isValid(queryStr) && isValid(value) && value.toString().includes(queryStr);
 }
 
 export class SearchComponent {
@@ -114,6 +115,12 @@ export class SearchComponent {
   updateCellStyle(highlight: boolean = true) {
     if (!this.queryResult) {
       return;
+    }
+    if (!this.table.hasCustomCellStyle('__search_component_highlight')) {
+      this.table.registerCustomCellStyle('__search_component_highlight', this.highlightCellStyle as any);
+    }
+    if (!this.table.hasCustomCellStyle('__search_component_focuse')) {
+      this.table.registerCustomCellStyle('__search_component_focuse', this.focuseHighlightCellStyle as any);
     }
     for (let i = 0; i < this.queryResult.length; i++) {
       const { col, row } = this.queryResult[i];

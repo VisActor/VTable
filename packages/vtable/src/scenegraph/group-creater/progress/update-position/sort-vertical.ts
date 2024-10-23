@@ -15,6 +15,28 @@ export async function sortVertical(proxy: SceneProxy) {
     }
   });
 
+  // 更新同步范围
+  let syncTopRow;
+  let syncBottomRow;
+  if (proxy.table.heightMode === 'autoHeight') {
+    syncTopRow = proxy.rowStart;
+    syncBottomRow = proxy.rowEnd;
+  } else {
+    syncTopRow = Math.max(proxy.bodyTopRow, proxy.screenTopRow - proxy.screenRowCount * 1);
+    syncBottomRow = Math.min(proxy.bodyBottomRow, proxy.screenTopRow + proxy.screenRowCount * 2);
+  }
+  // console.log('sort更新同步范围', syncTopRow, syncBottomRow);
+
+  const oldBodyHeight = proxy.table.getAllRowsHeight();
+
+  computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
+
+  const newBodyHeight = proxy.table.getAllRowsHeight();
+
+  if (oldBodyHeight !== newBodyHeight) {
+    proxy.table.scenegraph.updateContainerHeight(proxy.table.frozenRowCount, newBodyHeight - oldBodyHeight);
+  }
+
   for (let col = 0; col < proxy.table.frozenColCount ?? 0; col++) {
     // 将该列的chartInstance清除掉
     const columnGroup = proxy.table.scenegraph.getColGroup(col);
@@ -44,28 +66,6 @@ export async function sortVertical(proxy: SceneProxy) {
     for (let row = proxy.table.rowCount - proxy.table.bottomFrozenRowCount; row < proxy.table.rowCount; row++) {
       proxy.table.scenegraph.updateCellContent(col, row);
     }
-  }
-
-  // 更新同步范围
-  let syncTopRow;
-  let syncBottomRow;
-  if (proxy.table.heightMode === 'autoHeight') {
-    syncTopRow = proxy.rowStart;
-    syncBottomRow = proxy.rowEnd;
-  } else {
-    syncTopRow = Math.max(proxy.bodyTopRow, proxy.screenTopRow - proxy.screenRowCount * 1);
-    syncBottomRow = Math.min(proxy.bodyBottomRow, proxy.screenTopRow + proxy.screenRowCount * 2);
-  }
-  // console.log('sort更新同步范围', syncTopRow, syncBottomRow);
-
-  const oldBodyHeight = proxy.table.getAllRowsHeight();
-
-  computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
-
-  const newBodyHeight = proxy.table.getAllRowsHeight();
-
-  if (oldBodyHeight !== newBodyHeight) {
-    proxy.table.scenegraph.updateContainerHeight(proxy.table.frozenRowCount, newBodyHeight - oldBodyHeight);
   }
 
   updateRowContent(syncTopRow, syncBottomRow, proxy);

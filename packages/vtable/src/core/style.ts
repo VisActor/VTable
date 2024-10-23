@@ -41,6 +41,27 @@ export function importStyle() {
 	height: 100%;
 	text-align: left;
   -webkit-font-smoothing:auto;
+
+  overflow: hidden; // for react-vtable dom custom element
+}
+
+.vtable-gantt {
+	/* 设置overflow: auto 应该是为了滚动条的某个问题 但设置了auto之后 dom的下拉菜单只能显示在vtable节点中 超出会截断;现在去掉auto 暂时滚动条的问题没有发现 */
+	/* overflow: auto; */
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	text-align: left;
+  -webkit-font-smoothing:auto;
+
+  overflow: hidden; // for react-vtable dom custom element
+}
+.vtable .table-component-container {
+  pointer-events: none;
+  overflow: hidden;
+  position: absolute;
+  top: 0px;
+  left: 0px;
 }
 .vtable > canvas {
 	position: absolute;

@@ -13,29 +13,30 @@ option: ListTable-columns-text#cellType
 The events supported by VTable can be monitored through react props. For details, please refer to [Event List]([../api/event](https://www.visactor.io/vtable/guide/Developer_Ecology/react# %E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A)).
 
 ## code demo
+
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
-      caption: 'name',
+      title: 'name'
     },
     {
       field: '1',
-      caption: 'age',
+      title: 'age'
     },
     {
       field: '2',
-      caption: 'gender',
+      title: 'gender'
     },
     {
       field: '3',
-      caption: 'hobby',
-    },
+      title: 'hobby'
+    }
   ],
-  records: new Array(1000).fill(['John', 18, 'male', '🏀']),
+  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
 };
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
@@ -43,8 +44,8 @@ root.render(
   <ReactVTable.ListTable
     option={option}
     height={'500px'}
-    onMouseMoveCell={(args) => {
-      console.log('onMouseMoveCell', args)
+    onMouseMoveCell={args => {
+      console.log('onMouseMoveCell', args);
     }}
   />
 );

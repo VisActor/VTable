@@ -1,6 +1,6 @@
 {
   "name": "@visactor/react-vtable",
-  "version": "0.22.2",
+  "version": "1.10.1",
   "description": "The react version of VTable",
   "keywords": [
     "react",
@@ -37,7 +37,9 @@
   },
   "scripts": {
     "start": "vite ./demo",
-    "build": "bundle --clean"
+    "build": "bundle --clean",
+    "compile": "tsc --noEmit",
+    "eslint": "eslint --debug --fix src/"
   },
   "unpkg": "latest",
   "unpkgFiles": [
@@ -48,11 +50,12 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.18.1",
-    "react-is": "^18.2.0"
+    "@visactor/vutils": "~0.18.14",
+    "react-is": "^18.2.0",
+    "react-reconciler": "0.29.2"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.10.0",
+    "@visactor/vchart": "1.12.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
@@ -94,6 +97,8 @@
     "node-fetch": "2.6.7",
     "form-data": "~4.0.0",
     "axios": "^1.4.0",
-    "@types/react-is": "^17.0.3"
+    "@types/react-is": "^17.0.3",
+    "@arco-design/web-react": "2.60.2",
+    "@types/react-reconciler": "0.28.8"
   }
 }

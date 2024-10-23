@@ -222,7 +222,8 @@ export function createTable() {
             value: 'Office Supplies',
             children: [
               {
-                indicatorKey: 'Quantity'
+                indicatorKey: 'Quantity',
+                value: 'ddd'
               },
               {
                 indicatorKey: 'Sales'

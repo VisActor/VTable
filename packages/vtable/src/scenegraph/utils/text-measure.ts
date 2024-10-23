@@ -5,7 +5,8 @@ import {
   DefaultTextMeasureContribution,
   TextMeasureContribution,
   ContainerModule,
-  container
+  container,
+  Text
 } from '@src/vrender';
 // eslint-disable-next-line max-len
 // import {
@@ -52,7 +53,7 @@ export const initTextMeasure = (
         fontSize: DefaultTextStyle.fontSize
       },
       getTextBounds: useNaiveCanvas ? undefined : getTextBounds,
-      specialCharSet: `{}()//&-/: .,@%'"~…=${
+      specialCharSet: `{}()//&-/: .,@%'"~…=——${
         TextMeasure.ALPHABET_CHAR_SET
       }${TextMeasure.ALPHABET_CHAR_SET.toUpperCase()}0123456789${customAlphabetCharSet}`,
       ...(option ?? {})
@@ -266,4 +267,17 @@ export function setCustomAlphabetCharSet(str: string) {
 export function restoreMeasureText() {
   textMeasureMode = 'canvas';
   container.load(restoreTextMeasureModule);
+}
+
+const utilTextMark = new Text({
+  ignoreBuf: true
+  // autoWrapText: true
+});
+
+export function measureTextBounds(attribute: ITextGraphicAttribute) {
+  utilTextMark.initAttributes({
+    ...attribute,
+    ignoreBuf: true
+  });
+  return utilTextMark.AABBBounds;
 }

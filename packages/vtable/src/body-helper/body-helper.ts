@@ -9,6 +9,8 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import * as icons from '../tools/icons';
 import { obj } from '../tools/helper';
 import { CheckboxStyle } from './style/CheckboxStyle';
+import { RadioStyle } from './style/RadioStyle';
+import { isValid } from '@visactor/vutils';
 export class BodyHelper {
   expandIcon: SvgIcon;
   collapseIcon: SvgIcon;
@@ -29,6 +31,12 @@ export class BodyHelper {
   ): ColumnIconOption[] {
     //加入固定列图标 排序 文本中元素
     const iconArr: ColumnIconOption[] = [];
+
+    const hierarchyIcon = this.getHierarchyIcon(col, row);
+    if (hierarchyIcon) {
+      iconArr.push(hierarchyIcon);
+    }
+
     const { icon: iconDefine } = this._table.getBodyColumnDefine(col, row);
 
     if (iconDefine) {
@@ -65,10 +73,6 @@ export class BodyHelper {
         addIcon(iconResults);
       }
     }
-    const hierarchyIcon = this.getHierarchyIcon(col, row);
-    if (hierarchyIcon) {
-      iconArr.push(hierarchyIcon);
-    }
 
     context &&
       iconArr.forEach((i, index) => {
@@ -82,7 +86,17 @@ export class BodyHelper {
     return iconArr;
   }
   getStyleClass(
-    cellType: 'text' | 'link' | 'image' | 'video' | 'chart' | 'sparkline' | 'progressbar' | 'chart' | 'checkbox'
+    cellType:
+      | 'text'
+      | 'link'
+      | 'image'
+      | 'video'
+      | 'chart'
+      | 'sparkline'
+      | 'progressbar'
+      | 'chart'
+      | 'checkbox'
+      | 'radio'
   ) {
     switch (cellType) {
       case 'text':
@@ -101,6 +115,8 @@ export class BodyHelper {
         return ProgressBarStyle;
       case 'checkbox':
         return CheckboxStyle;
+      case 'radio':
+        return RadioStyle;
     }
     return TextStyle;
   }
@@ -129,7 +145,7 @@ export class BodyHelper {
     icons.iconPropKeys.forEach(k => {
       if (typeof iconOpt[k] !== 'undefined') {
         const f = (this._table as ListTableAPI).getFieldData(iconOpt[k], col, row);
-        if (f != null) {
+        if (isValid(f)) {
           retIcon[k] = f;
         } else if (!this._table._hasField?.(iconOpt[k], col, row)) {
           retIcon[k] = iconOpt[k];
@@ -149,5 +165,8 @@ export class BodyHelper {
       return this.collapseIcon;
     }
     return undefined;
+  }
+  getHierarchyIconWidth() {
+    return this.expandIcon.width + (this.expandIcon.marginLeft ?? 0) + (this.expandIcon.marginRight ?? 0);
   }
 }

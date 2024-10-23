@@ -1,13 +1,9 @@
+import type { InputEditorConfig } from './input-editor';
 import { InputEditor } from './input-editor';
 import type { IEditor } from './types';
-export interface DateInputEditorConfig {
-  max?: number;
-  min?: number;
-}
-
 export class DateInputEditor extends InputEditor implements IEditor {
   editorType: string = 'DateInput';
-  constructor(editorConfig?: DateInputEditorConfig) {
+  constructor(editorConfig?: InputEditorConfig) {
     super(editorConfig);
     this.editorConfig = editorConfig;
   }
@@ -20,6 +16,8 @@ export class DateInputEditor extends InputEditor implements IEditor {
     input.style.width = '100%';
     input.style.boxSizing = 'border-box';
     input.style.position = 'absolute';
+    input.style.backgroundColor = '#FFFFFF';
+
     this.element = input;
     this.container.appendChild(input);
     // 测试successCallback 调用是否正确
@@ -27,5 +25,13 @@ export class DateInputEditor extends InputEditor implements IEditor {
     //   debugger;
     //   this.successCallback();
     // };
+
+    // 监听键盘事件
+    input.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
+        // 阻止冒泡  防止处理成表格全选事件
+        e.stopPropagation();
+      }
+    });
   }
 }

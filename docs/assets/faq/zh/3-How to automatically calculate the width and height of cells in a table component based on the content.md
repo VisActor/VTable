@@ -2,11 +2,11 @@
 
 ## 问题描述
 
-我有个需求场景是：单元格内容可能会出现换行符，并且同列的单元格内容长度不一样，同行的单元格的样式可能不一样，但是想要内容展示完整，所以要求表格组件可以实现根据内容的宽高来自动撑开单元格，如何在VTable中实现这个效果？
+我有个需求场景是：单元格内容可能会出现换行符，并且同列的单元格内容长度不一样，同行的单元格的样式可能不一样，但是想要内容展示完整，所以要求表格组件可以实现根据内容的宽高来自动撑开单元格，如何在 VTable 中实现这个效果？
 
 ## 解决方案
 
-VTable中可以配置宽度高度的自动计算模式：
+VTable 中可以配置宽度高度的自动计算模式：
 
 ## 代码示例
 
@@ -43,15 +43,15 @@ const records = [
 const columns = [
   {
     field: "230517143221027",
-    caption: "Order ID"
+    title: "Order ID"
   },
   {
     field: "230517143221030",
-    caption: "Customer ID"
+    title: "Customer ID"
   },
   {
     field: "230517143221032",
-    caption: "Product Name",
+    title: "Product Name",
     style: {
       fontSize(args: any) {
         if (args.row % 2 === 1) return 20;

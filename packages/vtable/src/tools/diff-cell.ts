@@ -100,7 +100,11 @@ function checkIndex(oldIndex: number | number[], newIndex: number | number[]): b
   return true;
 }
 
-export function calculateArrayDiff(originalArray: (number | number[])[], targetArray: (number | number[])[]) {
+export function calculateArrayDiff(
+  originalArray: (number | number[])[],
+  targetArray: (number | number[])[],
+  startIndex: number
+) {
   const add = [];
   const remove = [];
 
@@ -119,7 +123,7 @@ export function calculateArrayDiff(originalArray: (number | number[])[], targetA
     const element = targetArray[i];
     const key = JSON.stringify(element);
     if (!originalMap.has(key)) {
-      add.push(i);
+      add.push(i + startIndex);
     } else {
       const indices = originalMap.get(key);
       indices.shift(); // Remove the first index
@@ -132,7 +136,7 @@ export function calculateArrayDiff(originalArray: (number | number[])[], targetA
   for (let i = 0; i < originalArray.length; i++) {
     const element = originalArray[i];
     if (!targetArray.some(item => isEqual(item, element))) {
-      remove.push(i);
+      remove.push(i + startIndex);
     }
   }
 

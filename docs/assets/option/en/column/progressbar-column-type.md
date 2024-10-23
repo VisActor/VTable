@@ -13,17 +13,17 @@ Specify the column type as 'progressbar', cellType can be omitted and defaults t
     isProgressbar = true
 ) }}
 
-##${prefix} min(number) = 0
+##${prefix} min(number|Function) = 0
 
 **Configuration item exclusive to progressbar type**  
 
-The minimum value of the progress bar display range
+The minimum value of the progress bar display range, support dynamic acquisition through functions
 
-##${prefix} max(number) = 100
+##${prefix} max(number|Function) = 100
 
 **Configuration item exclusive to progressbar type**  
 
-The maximum value of the progress bar display range
+The maximum value of the progress bar display range, support dynamic acquisition through functions
 
 ##${prefix} barType(string) = 'default'
 

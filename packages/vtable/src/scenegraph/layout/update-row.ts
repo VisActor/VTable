@@ -22,6 +22,25 @@ export function updateRow(
   const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
   const updateRows = deduplication(updateCells.map(cell => cell.row)).sort((a, b) => a - b);
 
+  let rowUpdatePos;
+  if (updateRows.length) {
+    const beforeRow = updateRows[0] - 1;
+    const afterRow = updateRows[updateRows.length - 1] + 1;
+    rowUpdatePos = _getUpdateRowIndexUseCellNode(beforeRow, afterRow, scene);
+  }
+  if (addRows.length) {
+    const beforeRow = addRows[0] - 1;
+    const afterRow = addRows[addRows.length - 1] + 1;
+    const pos = _getUpdateRowIndexUseCellNode(beforeRow, afterRow, scene);
+    rowUpdatePos = isValid(rowUpdatePos) ? (isValid(pos) ? Math.min(rowUpdatePos, pos) : rowUpdatePos) : pos;
+  }
+  if (removeRows.length) {
+    const beforeRow = removeRows[0] - 1;
+    const afterRow = removeRows[removeRows.length - 1] + 1;
+    const pos = _getUpdateRowIndexUseCellNode(beforeRow, afterRow, scene);
+    rowUpdatePos = isValid(rowUpdatePos) ? (isValid(pos) ? Math.min(rowUpdatePos, pos) : rowUpdatePos) : pos;
+  }
+
   // remove cells
   removeRows.forEach(row => {
     removeRow(row, scene);
@@ -36,8 +55,9 @@ export function updateRow(
     resetRowNumber(scene);
     const beforeRow = removeRows[removeRows.length - 1] - 1;
     const afterRow = removeRows[0] - removeRows.length + 1;
-    const rowUpdatePos = updateMergeCellGroup(beforeRow, afterRow, scene);
-    isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
+    const pos = _getUpdateRowIndex(beforeRow, afterRow, scene);
+    // isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
+    rowUpdatePos = isValid(rowUpdatePos) ? (isValid(pos) ? Math.min(rowUpdatePos, pos) : rowUpdatePos) : pos;
   }
 
   scene.table._clearRowRangeHeightsMap();
@@ -57,8 +77,8 @@ export function updateRow(
   if (addRows.length) {
     const beforeRow = addRows[0] - 1;
     const afterRow = addRows[addRows.length - 1] + 1;
-    const rowUpdatePos = updateMergeCellGroup(beforeRow, afterRow, scene);
-    isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
+    const pos = _getUpdateRowIndex(beforeRow, afterRow, scene);
+    rowUpdatePos = isValid(rowUpdatePos) ? (isValid(pos) ? Math.min(rowUpdatePos, pos) : rowUpdatePos) : pos;
   }
 
   for (let col = 0; col < table.colCount; col++) {
@@ -81,8 +101,8 @@ export function updateRow(
   if (updateRows.length) {
     const beforeRow = updateRows[0] - 1;
     const afterRow = updateRows[updateRows.length - 1] + 1;
-    const rowUpdatePos = updateMergeCellGroup(beforeRow, afterRow, scene);
-    isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
+    const pos = _getUpdateRowIndex(beforeRow, afterRow, scene);
+    rowUpdatePos = isValid(rowUpdatePos) ? (isValid(pos) ? Math.min(rowUpdatePos, pos) : rowUpdatePos) : pos;
   }
 
   if (isNumber(updateAfter)) {
@@ -92,9 +112,14 @@ export function updateRow(
         cellGroup && (cellGroup.needUpdate = true);
       }
     }
-    scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, updateAfter);
+    rowUpdatePos = isValid(rowUpdatePos)
+      ? isValid(updateAfter)
+        ? Math.min(rowUpdatePos, updateAfter)
+        : rowUpdatePos
+      : updateAfter;
+    // scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, updateAfter);
   }
-
+  isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
   if (addRows.length) {
     if (!isNumber(updateAfter)) {
       const minRow = Math.min(...addRows);
@@ -146,12 +171,12 @@ function removeRow(row: number, scene: Scenegraph) {
   //     }
   //   }
   // }
-  removeCellGroup(row, scene);
 
   const proxy = scene.proxy;
 
   // TODO 需要整体更新proxy的状态
   if (row >= proxy.rowStart && row <= proxy.rowEnd) {
+    removeCellGroup(row, scene);
     proxy.rowEnd--;
     proxy.currentRow--;
   }
@@ -461,25 +486,74 @@ function removeCellGroup(row: number, scene: Scenegraph) {
   // return infectCellRange;
 }
 
-function updateMergeCellGroup(beforeRow: number, afterRow: number, scene: Scenegraph) {
+function _getUpdateRowIndex(beforeRow: number, afterRow: number, scene: Scenegraph) {
   let updateRow;
   for (let col = 0; col < scene.table.colCount; col++) {
     const rangeBefore = scene.table.getCellRange(col, beforeRow);
+    let row;
     if (rangeBefore.start.row <= beforeRow + 1 && rangeBefore.end.row >= beforeRow + 1) {
-      updateCellGroup(rangeBefore, scene);
-      updateRow = rangeBefore.start.row;
+      addNeedUpdateTag(rangeBefore, scene);
+      row = rangeBefore.start.row;
     }
 
     const rangeAfter = scene.table.getCellRange(col, afterRow);
-    if (rangeAfter.start.row <= afterRow - 1 && rangeAfter.end.row >= afterRow - 1) {
-      updateCellGroup(rangeAfter, scene);
-      updateRow = rangeBefore.start.row;
+    if (rangeAfter.start.row <= afterRow + 1 && rangeAfter.end.row >= afterRow + 1) {
+      addNeedUpdateTag(rangeAfter, scene);
+      row = rangeAfter.start.row;
+    }
+    if (isValid(row)) {
+      updateRow = isValid(updateRow) ? Math.min(updateRow, row) : row;
+    }
+  }
+  return updateRow;
+}
+function _getUpdateRowIndexUseCellNode(beforeRow: number, afterRow: number, scene: Scenegraph) {
+  let updateRow;
+  for (let col = 0; col < scene.table.colCount; col++) {
+    let row;
+    const beforeCell = scene.highPerformanceGetCell(col, beforeRow);
+    if (beforeCell.mergeStartRow && beforeCell.mergeEndRow && beforeCell.mergeEndRow > beforeRow) {
+      addNeedUpdateTag(
+        {
+          start: {
+            row: beforeCell.mergeStartRow,
+            col: scene.table.heightMode === 'autoHeight' ? 0 : beforeCell.mergeStartCol
+          },
+          end: {
+            row: beforeCell.mergeEndRow,
+            col: scene.table.heightMode === 'autoHeight' ? scene.table.colCount - 1 : beforeCell.mergeEndCol
+          }
+        },
+        scene
+      );
+      row = beforeCell.mergeStartRow;
+    }
+
+    const afterCell = scene.highPerformanceGetCell(col, afterRow);
+    if (afterCell.mergeStartRow && afterCell.mergeEndRow && afterCell.mergeStartRow < afterRow) {
+      addNeedUpdateTag(
+        {
+          start: {
+            row: afterCell.mergeStartRow,
+            col: scene.table.heightMode === 'autoHeight' ? 0 : afterCell.mergeStartCol
+          },
+          end: {
+            row: afterCell.mergeEndRow,
+            col: scene.table.heightMode === 'autoHeight' ? scene.table.colCount - 1 : afterCell.mergeEndCol
+          }
+        },
+        scene
+      );
+      row = afterCell.mergeStartRow;
+    }
+    if (isValid(row)) {
+      updateRow = isValid(updateRow) ? Math.min(updateRow, row) : row;
     }
   }
   return updateRow;
 }
 
-function updateCellGroup(range: CellRange, scene: Scenegraph) {
+function addNeedUpdateTag(range: CellRange, scene: Scenegraph) {
   const { start, end } = range;
   for (let col = start.col; col <= end.col; col++) {
     for (let row = start.row; row <= end.row; row++) {

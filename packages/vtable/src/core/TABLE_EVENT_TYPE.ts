@@ -20,6 +20,11 @@ export interface TableEvents {
    * 单元格选中状态改变事件
    */
   SELECTED_CELL: 'selected_cell';
+
+  /**
+   * 单元格选中状态改变事件
+   */
+  SELECTED_CLEAR: 'selected_clear';
   /**
    * 键盘按下事件
    */
@@ -32,6 +37,14 @@ export interface TableEvents {
    * 鼠标离开表格事件
    */
   MOUSELEAVE_TABLE: 'mouseleave_table';
+  /**
+   * 鼠标点击表格事件
+   */
+  MOUSEDOWN_TABLE: 'mousedown_table';
+  /**
+   * 鼠标在表格上移动事件
+   */
+  MOUSEMOVE_TABLE: 'mousemove_table';
   /**
    * 鼠标在某个单元格上移动事件
    */
@@ -57,13 +70,26 @@ export interface TableEvents {
    */
   RESIZE_COLUMN_END: 'resize_column_end';
   /**
+   * 行高调整事件
+   */
+  RESIZE_ROW: 'resize_row';
+  /**
+   * 行高调整结束事件
+   */
+  RESIZE_ROW_END: 'resize_row_end';
+  /**
    * 拖拽表头移动位置的事件
    */
   CHANGE_HEADER_POSITION: 'change_header_position';
+  CHANGE_HEADER_POSITION_START: 'change_header_position_start';
   /**
    * 点击排序图标事件
    */
   SORT_CLICK: 'sort_click';
+  /**
+   * 执行完排序
+   */
+  AFTER_SORT: 'after_sort';
   /**
    * 点击固定列图标 冻结或者解冻事件
    */
@@ -72,7 +98,14 @@ export interface TableEvents {
    * 滚动表格事件
    */
   SCROLL: 'scroll';
-
+  /**
+   * 横向滚动条滚动到结束位
+   */
+  SCROLL_HORIZONTAL_END: 'scroll_horizontal_end';
+  /**
+   * 竖向滚动条滚动到结束位
+   */
+  SCROLL_VERTICAL_END: 'scroll_vertical_end';
   /**
    * 点击下拉菜单图标事件
    */
@@ -119,6 +152,7 @@ export interface TableEvents {
   MOUSELEAVE_AXIS: 'mouseleave_axis';
 
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change';
+  RADIO_STATE_CHANGE: 'radio_state_change';
   //#region lifecircle
   /** 每次渲染完成触发 */
   AFTER_RENDER: 'after_render';
@@ -127,6 +161,19 @@ export interface TableEvents {
   //#endregion
 
   CHANGE_CELL_VALUE: 'change_cell_value';
+
+  /**
+   * 鼠标按下填充柄事件
+   */
+  MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle';
+  /**
+   * 拖拽填充柄结束事件
+   */
+  DRAG_FILL_HANDLE_END: 'drag_fill_handle_end';
+  /**
+   * 双击填充柄事件
+   */
+  DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle';
 }
 /**
  * Table event types
@@ -137,19 +184,31 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   MOUSEDOWN_CELL: 'mousedown_cell',
   MOUSEUP_CELL: 'mouseup_cell',
   SELECTED_CELL: 'selected_cell',
+  SELECTED_CLEAR: 'selected_clear',
   KEYDOWN: 'keydown',
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
+  MOUSEDOWN_TABLE: 'mousedown_table',
+  MOUSEMOVE_TABLE: 'mousemove_table',
   MOUSEMOVE_CELL: 'mousemove_cell',
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
   CONTEXTMENU_CELL: 'contextmenu_cell',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
+  RESIZE_ROW: 'resize_row',
+  RESIZE_ROW_END: 'resize_row_end',
+  CHANGE_HEADER_POSITION_START: 'change_header_position_start',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
+  /**
+   * 执行完排序
+   */
+  AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
+  SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
+  SCROLL_VERTICAL_END: 'scroll_vertical_end',
   DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
   MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
   DRAG_SELECT_END: 'drag_select_end',
@@ -173,7 +232,11 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   MOUSELEAVE_AXIS: 'mouseleave_axis',
 
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change',
+  RADIO_STATE_CHANGE: 'radio_state_change',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
-  CHANGE_CELL_VALUE: 'change_cell_value'
+  CHANGE_CELL_VALUE: 'change_cell_value',
+  DRAG_FILL_HANDLE_END: 'drag_fill_handle_end',
+  MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle',
+  DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle'
 } as TableEvents;

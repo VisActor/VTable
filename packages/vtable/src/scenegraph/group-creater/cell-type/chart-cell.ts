@@ -23,7 +23,8 @@ export function createChartCellGroup(
   dataId: string | Record<string, string>,
   table: BaseTableAPI,
   cellTheme: IThemeSpec,
-  isShareChartSpec: true
+  isShareChartSpec: true,
+  isAsync: boolean
 ) {
   // 获取注册的chart图表类型
   const registerCharts = registerChartTypes.get();
@@ -36,32 +37,52 @@ export function createChartCellGroup(
   // cell
   if (!cellGroup) {
     const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
-    cellGroup = new Group({
-      x: xOrigin,
-      y: yOrigin,
-      width,
-      height,
 
-      // 背景相关，cell背景由cellGroup绘制
-      lineWidth: cellTheme?.group?.lineWidth ?? undefined,
-      fill: cellTheme?.group?.fill ?? undefined,
-      stroke: cellTheme?.group?.stroke ?? undefined,
-      strokeArrayWidth: strokeArrayWidth,
-      strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
-      cursor: (cellTheme?.group as any)?.cursor ?? undefined,
-      lineDash: cellTheme?.group?.lineDash ?? undefined,
-
-      lineCap: 'square',
-
-      clip: true,
-
-      cornerRadius: cellTheme.group.cornerRadius
-    } as any);
-    cellGroup.role = 'cell';
-    cellGroup.col = col;
-    cellGroup.row = row;
-    // columnGroup?.addChild(cellGroup);
-    columnGroup?.addCellGroup(cellGroup);
+    if (isAsync) {
+      cellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+      if (cellGroup && cellGroup.role === 'cell') {
+        cellGroup.setAttributes({
+          x: xOrigin,
+          y: yOrigin,
+          width,
+          height,
+          // 背景相关，cell背景由cellGroup绘制
+          lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+          fill: cellTheme?.group?.fill ?? undefined,
+          stroke: cellTheme?.group?.stroke ?? undefined,
+          strokeArrayWidth: strokeArrayWidth,
+          strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+          cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+          lineDash: cellTheme?.group?.lineDash ?? undefined,
+          lineCap: 'butt',
+          clip: true,
+          cornerRadius: cellTheme.group.cornerRadius
+        } as any);
+      }
+    }
+    if (!cellGroup || cellGroup.role !== 'cell') {
+      cellGroup = new Group({
+        x: xOrigin,
+        y: yOrigin,
+        width,
+        height,
+        // 背景相关，cell背景由cellGroup绘制
+        lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+        fill: cellTheme?.group?.fill ?? undefined,
+        stroke: cellTheme?.group?.stroke ?? undefined,
+        strokeArrayWidth: strokeArrayWidth,
+        strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+        cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+        lineDash: cellTheme?.group?.lineDash ?? undefined,
+        lineCap: 'butt',
+        clip: true,
+        cornerRadius: cellTheme.group.cornerRadius
+      } as any);
+      cellGroup.role = 'cell';
+      cellGroup.col = col;
+      cellGroup.row = row;
+      columnGroup?.addCellGroup(cellGroup);
+    }
   }
   cellGroup.AABBBounds.width(); // TODO 需要底层VRender修改
   // chart
@@ -88,13 +109,14 @@ export function createChartCellGroup(
     //   y1: Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
     //   y2: Math.ceil(cellGroup.globalAABBBounds.y1 + height - padding[2] + table.scrollTop)
     // },
-    axes: table.isPivotChart() ? table.internalProps.layoutMap.getChartAxes(col, row) : []
+    axes: table.isPivotChart() ? table.internalProps.layoutMap.getChartAxes(col, row) : [],
     // clipRect: {
     //   left: cellGroup.globalAABBBounds.x1 + (table as any).tableX + padding[3],
     //   top: cellGroup.globalAABBBounds.y1 + (table as any).tableY + padding[0],
     //   width: width - padding[1] - padding[3], //cellGroup.globalAABBBounds.width() - padding[1] - padding[3],
     //   height: height - padding[0] - padding[2],
     // },
+    tableChartOption: table.options.chartOption
   });
   cellGroup.appendChild(chartGroup);
   // 将生成的实例存到layoutMap中 共享
@@ -102,3 +124,5 @@ export function createChartCellGroup(
 
   return cellGroup;
 }
+
+export type CreateChartCellGroup = typeof createChartCellGroup;

@@ -6,6 +6,8 @@ When it comes to business scenarios of editing tables, the VTable library provid
 
 ## 1. Reference the editor package of VTable:
 
+### Use the NPM package
+
 First, make sure you have installed the VTable library and related editor packages correctly. You can install them using the following command:
 
 ```shell
@@ -15,22 +17,34 @@ npm install @visactor/vtable-editors
 Introduce the required type of editor module into your code:
 
 ```javascript
-import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
+import { DateInputEditor, InputEditor, TextareaEditor, ListEditor } from '@visactor/vtable-editors';
+```
+
+### use CDN
+
+你还可以通过 CDN 获取构建好的 VTable-Editor 文件。
+
+```html
+<script src="https://unpkg.com/@visactor/vtable-editors@latest/dist/vtable-editors.min.js"></script>
+<script>
+  const inputEditor = new VTable.editors.InputEditor();
+</script>
 ```
 
 ## 2. Create editor:
 
-The VTable-ediotrs library currently provides three editor types, including text input boxes, date pickers, drop-down lists, etc. You can choose the appropriate editor according to your needs.
+The VTable-ediotrs library currently provides four editor types, including text input boxes, textarea input boxes, date pickers, drop-down lists, etc. You can choose the appropriate editor according to your needs.
 
 Here is sample code to create an editor:
 
 ```javascript
 const inputEditor = new InputEditor();
+const textAreaEditor = new TextAreaEditor();
 const dateInputEditor = new DateInputEditor();
 const listEditor = new ListEditor({ values: ['Female', 'Male'] });
 ```
 
-In the above example, we created a text input box editor (`InputEditor`), a date picker editor (`DateInputEditor`) and a drop-down list editor (`ListEditor`). You can choose the appropriate editor type according to your actual needs.
+In the above example, we created a text input box editor (`InputEditor`), a multi-line text area editor (`TextAreaEditor`), a date picker editor (`DateInputEditor`) and a drop-down list editor (`ListEditor`). You can choose the appropriate editor type according to your actual needs.
 
 ## 3. Register and use the editor:
 
@@ -40,6 +54,7 @@ Before using the editor, you need to register the editor instance into VTable:
 //Register editor to VTable
 VTable.register.editor('name-editor', inputEditor);
 VTable.register.editor('name-editor2', inputEditor2);
+VTable.register.editor('textArea-editor', textAreaEditor);
 VTable.register.editor('number-editor', numberEditor);
 VTable.register.editor('date-editor', dateInputEditor);
 VTable.register.editor('list-editor', listEditor);
@@ -57,6 +72,7 @@ columns: [
   } },
   { title: 'age', field: 'age', editor: 'number-editor' },
   { title: 'gender', field: 'gender', editor: 'list-editor' },
+  { title: 'address', field: 'address', editor: 'textArea-editor' },
   { title: 'birthday', field: 'birthDate', editor: 'date-editor' },
 ]
 ```
@@ -246,7 +262,7 @@ Editing trigger timing support: double-click a cell to enter editing, click a ce
 ```ts
 interface ListTableConstructorOptions {
   /** Editing trigger timing Double-click event Click event API manually starts editing. The default is double-click 'doubleclick' */
-  editCellTrigger?: 'doubleclick' | 'click' | 'api';
+  editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
   // ...
 }
 ```
@@ -257,31 +273,44 @@ If verification is required, please customize the editor to implement the verifi
 
 If this interface is not defined, the editing value will not be verified by default, and the interface will return false. If the verification fails, it will remain in the editing state.
 
+If asynchronous verification is needed, you can return a Promise object. This Promise object should resolve to true upon successful verification and false upon verification failure.
+
 ## 9. Related APIs
 
 ```ts
 interface ListTableAPI {
   /** Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly */
-  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
   /**
    * Batch update data of multiple cells
    * @param col The starting column number of pasted data
    * @param row The starting row number of pasted data
    * @param values Data array of multiple cells
+   * @param workOnEditableCell just can change editable cells
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][]);
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false);
   /** Get the editor of cell configuration */
   getEditor: (col: number, row: number) => IEditor;
   /** Enable cell editing */
-  startEditCell: (col?: number, row?: number) => void;
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
   /** End editing */
   completeEditCell: () => void;
   // ...
 }
 ```
 
-## Header Editing
+## ListTable Header Editing Precautions
 
 The basic table supports editing the display title in the header. You can enable this by configuring `headerEditor` globally or within a column. The usage is the same as `editor`.
+
+## PivotTable Editing Precautions
+
+**Editing the header of the pivot table will modify the field name in the records accordingly;**
+
+**In a pivot table, when a cell in the body corresponds to only one source data record, the field value of the record will be modified accordingly after editing. However, when the cell corresponds to an indicator value that aggregates multiple records, it does not support corresponding modifications to the source data.**
+
+The source data corresponding to a specific cell can be obtained through the interface `getCellOriginRecord`
+
+## Summary
 
 Through the above steps, you can create a table with editing functions, select the appropriate editor type according to business needs, customize the editor, listen to editing events, and obtain edited data. In this way, users can easily edit the data in the table, and you can process the edited data accordingly.

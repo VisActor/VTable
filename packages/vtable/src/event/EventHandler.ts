@@ -13,7 +13,15 @@ type EventListenerObject = {
   options: any[];
 };
 
-export type ResizeObserverCallBack = ({ width, height }: { width: number; height: number }) => void;
+export type ResizeObserverCallBack = ({
+  width,
+  height,
+  windowSizeNotChange
+}: {
+  width: number;
+  height: number;
+  windowSizeNotChange: boolean;
+}) => void;
 
 export class ResizeObserver {
   resizeTime = 100;
@@ -69,11 +77,12 @@ export class ResizeObserver {
 
   callBack = () => {
     const newSize = this.getSize();
+    let windowSizeNotChange = false;
     if (newSize.width === this.lastSize.width && newSize.height === this.lastSize.height) {
-      return;
+      windowSizeNotChange = true;
     }
     this.lastSize = newSize;
-    this.cb && this.cb({ ...this.lastSize });
+    this.cb && this.cb({ ...this.lastSize, windowSizeNotChange });
   };
 
   setSize(size: { width: number; height: number }) {
@@ -81,9 +90,9 @@ export class ResizeObserver {
   }
 
   private onResize = () => {
-    if (this.checkSize()) {
-      this.callBackDebounce();
-    }
+    // if (this.checkSize()) {
+    this.callBackDebounce();
+    // }
   };
 
   private checkSize() {
@@ -164,7 +173,7 @@ export class EventHandler {
     if (Env.mode === 'node') {
       return;
     }
-    if (id == null) {
+    if (id === null) {
       return;
     }
     const obj = this.listeners?.[id];

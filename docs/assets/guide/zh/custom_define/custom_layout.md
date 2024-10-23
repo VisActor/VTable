@@ -41,7 +41,7 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
   customLayout: args => {
     const { table, row, col, rect } = args;
     const { height, width } = rect ?? table.getCellRect(col, row);
-    const record = table.getRecordByCell(col, row);
+    const record = table.getCellOriginRecord(col, row);
 
     const container = (
       <VGroup
@@ -246,13 +246,15 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 | text     | text, fontSize, fontFamily, fill...                      |
 | image    | image, width, height                                     |
 
-基础自定义组件，目前支持`VTag`
+基础自定义组件，目前支持`VTag` `VRadio` `VCheckbox`
 |图元类型|基础属性|
 |:----|:----|
 |tag|text, textStyle, shape, padding...|
+|radio|checked, disabled, text, icon...|
+|checkbox|checked, disabled, text, icon...|
 
 图元可以配置`boundsPadding`属性，实现 margin 效果
-`boundsPadding: [marginLeft, marginRight, marginTop, marginBottom]`
+`boundsPadding: [marginTop, marginRight, marginBottom, marginLeft]`
 图元的 margin 会计算在图元所占的空间
 
 ### 图元状态更新及交互事件
@@ -342,6 +344,16 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 | height | number | 图片高度                                          |
 | image  | string | HTMLImageElement \| HTMLCanvasElement \| 图片内容 |
 
+### VLine
+
+线图元
+
+| key       | type                     | description        |
+| :-------- | :----------------------- | :----------------- |
+| points    | {x: number, y: number}[] | 组成 line 的点坐标 |
+| lineWidth | number                   | 描边宽度           |
+| stroke    | string                   | 描边颜色           |
+
 ### VGroup
 
 容器
@@ -356,6 +368,48 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 | justifyContent | 'flex-start' \| 'flex-end' \| 'center' \| 'space-between' \| 'space-around' | 行向轴分配内容元素之间和周围的空间规则 |
 | alignItems     | 'flex-start' \| 'flex-end' \| 'center'                                      | 交叉轴上的对齐规则                     |
 | alignContent   | 'flex-start' \| 'center' \| 'space-between' \| 'space-around'               | 主轴上的对齐规则                       |
+
+### VTag
+
+标签组件
+
+| key       | type                  | description                            |
+| :-------- | :-------------------- | :------------------------------------- |
+| textStyle | ITextGraphicAttribute | 文字样式，同 text 图元属性             |
+| shape     | TagShapeAttributes    | 标签中图表的样式配置                   |
+| space     | number                | 图标与文字之间的距离                   |
+| padding   | number[]              | 内容与边框之间的距离                   |
+| panel     | BackgroundAttributes  | 外部边框及背景的样式，同 rect 图元属性 |
+| minWidth  | number                | 最小宽度                               |
+| maxWidth  | number                | 最大宽度                               |
+
+### VRadio
+
+标签组件
+
+| key                     | type                                                                                                                          | description                |
+| :---------------------- | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------- |
+| interactive             | boolean                                                                                                                       | 是否可交互                 |
+| disabled                | boolean                                                                                                                       | 是否禁用                   |
+| checked                 | boolean                                                                                                                       | 是否选中                   |
+| spaceBetweenTextAndIcon | number                                                                                                                        | 图标与文字间聚             |
+| text                    | ITextGraphicAttribute                                                                                                         | 文字样式，同 text 图元属性 |
+| circle                  | {disableFill?: IColor;checkedFill?: IColor;checkedStroke?: IColor;disableCheckedFill?: IColor;disableCheckedStroke?: IColor;} | 图标样式                   |
+
+### VCheckbox
+
+标签组件
+
+| key                     | type                                                                                                                          | description                |
+| :---------------------- | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------- | ------------------------------------------------- | ---------------- | ------------------- | -------- |
+| interactive             | boolean                                                                                                                       | 是否可交互                 |
+| disabled                | boolean                                                                                                                       | 是否禁用                   |
+| checked                 | boolean                                                                                                                       | 是否选中                   |
+| indeterminate           | boolean                                                                                                                       | 是否处于不确定状态         |
+| spaceBetweenTextAndIcon | number                                                                                                                        | 图标与文字间聚             |
+| text                    | ITextGraphicAttribute                                                                                                         | 文字样式，同 text 图元属性 |
+| icon                    | {checkIconImage?: string                                                                                                      | HTMLImageElement           | HTMLCanvasElement;indeterminateIconImage?: string | HTMLImageElement | HTMLCanvasElement;} | 图标样式 |
+| box                     | {disableFill?: IColor;checkedFill?: IColor;checkedStroke?: IColor;disableCheckedFill?: IColor;disableCheckedStroke?: IColor;} | 图表背景样式               |
 
 ## CustomLayout 创建图元对象用法
 
@@ -387,10 +441,14 @@ return {
 
 CustomLayout 常用图元与 jsx 图元对应如下：
 
-| JSX 图元 | CustomLayout 图元   |
-| :------- | :------------------ |
-| VRect    | CustomLayout.Rect   |
-| VCircle  | CustomLayout.Circle |
-| VText    | CustomLayout.Text   |
-| VImage   | CustomLayout.Image  |
-| VGroup   | CustomLayout.Group  |
+| JSX 图元  | CustomLayout 图元     |
+| :-------- | :-------------------- |
+| VRect     | CustomLayout.Rect     |
+| VCircle   | CustomLayout.Circle   |
+| VText     | CustomLayout.Text     |
+| VImage    | CustomLayout.Image    |
+| VLine     | CustomLayout.Line     |
+| VGroup    | CustomLayout.Group    |
+| VTag      | CustomLayout.Tag      |
+| VRadio    | CustomLayout.Radio    |
+| VCheckbox | CustomLayout.Checkbox |

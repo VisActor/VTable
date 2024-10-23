@@ -2,15 +2,15 @@ import { degreeToRadian, isNil, isValidNumber, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
 import { LineAxis, type LineAxisAttributes } from '@visactor/vrender-components';
-import { commonAxis, getAxisAttributes, getCommonAxis } from './get-axis-attributes';
+import { getAxisAttributes, getCommonAxis } from './get-axis-attributes';
 import { isXAxis, isYAxis } from '../util/orient';
 import type { IOrientType } from '../../ts-types/component/util';
 import { BandAxisScale } from './band-scale';
 import { registerDataSetInstanceParser, registerDataSetInstanceTransform } from '../util/register';
 import type { Parser } from '@visactor/vdataset';
-import { DataView } from '@visactor/vdataset';
+import { DataSet, DataView } from '@visactor/vdataset';
 import type { IBaseScale } from '@visactor/vscale';
-import { ticks } from '@visactor/vutils-extension';
+import { ticks } from '@src/vrender';
 import { LinearAxisScale } from './linear-scale';
 import { doOverlap } from './label-overlap';
 import type { TableTheme } from '../../themes/theme';
@@ -20,6 +20,16 @@ const DEFAULT_BAND_OUTER_PADDING = 0.3;
 const scaleParser: Parser = (scale: IBaseScale) => {
   return scale;
 };
+
+export interface ICartesianAxis {
+  new (
+    option: ICellAxisOption,
+    width: number,
+    height: number,
+    padding: [number, number, number, number],
+    table: BaseTableAPI
+  ): CartesianAxis;
+}
 
 export class CartesianAxis {
   width: number;
@@ -36,6 +46,7 @@ export class CartesianAxis {
   tickData: DataView;
   scale: BandAxisScale | LinearAxisScale;
   component: LineAxis;
+  padding: [number, number, number, number];
 
   constructor(
     option: ICellAxisOption,
@@ -44,6 +55,7 @@ export class CartesianAxis {
     padding: [number, number, number, number],
     table: BaseTableAPI
   ) {
+    this.padding = padding;
     this.table = table;
     this.orient = option.orient ?? 'left';
     this.type = option.type ?? 'band';
@@ -62,14 +74,14 @@ export class CartesianAxis {
       const innerOffsetTop = 0;
       const innerOffsetBottom = 0;
       this.width = width;
-      this.height = height - padding[2] - innerOffsetBottom;
+      this.height = height - padding[0] - padding[2] - innerOffsetBottom;
       this.y = padding[0] + innerOffsetTop;
     } else if (this.orient === 'top' || this.orient === 'bottom') {
       // const innerOffsetLeft = this.option.innerOffset?.left ?? 0;
       // const innerOffsetRight = this.option.innerOffset?.right ?? 0;
       const innerOffsetLeft = 0;
       const innerOffsetRight = 0;
-      this.width = width - padding[1] - innerOffsetRight;
+      this.width = width - padding[1] - padding[3] - innerOffsetRight;
       this.height = height;
       this.x = padding[3] + innerOffsetLeft;
     }
@@ -113,11 +125,16 @@ export class CartesianAxis {
   }
 
   initData() {
+    if (!this.table._vDataSet) {
+      this.table._vDataSet = new DataSet();
+    }
+
     registerDataSetInstanceParser(this.table._vDataSet, 'scale', scaleParser);
     registerDataSetInstanceTransform(this.table._vDataSet, 'ticks', ticks);
 
     const label = this.option.label || {};
     const tick = this.option.tick || {};
+
     const tickData = new DataView(this.table._vDataSet)
       .parse(this.scale._scale, {
         type: 'scale'
@@ -163,21 +180,29 @@ export class CartesianAxis {
     const axisStylrAttrs = getAxisAttributes(this.option);
     const attrs = this.getUpdateAttribute();
     attrs.verticalFactor = this.orient === 'top' || this.orient === 'right' ? -1 : 1;
-    this.component = new LineAxis(merge({}, axisStylrAttrs, attrs));
-    this.component.setAttributes(this.setLayoutStartPosition({ x: 0, y: 0 }));
+    this.component = new LineAxis(
+      merge(
+        {
+          disableTriggerEvent: this.table.options.disableInteraction
+        },
+        axisStylrAttrs,
+        attrs
+      )
+    );
+    this.component.setAttributes(this.setLayoutStartPosition({ x: this.x, y: this.y }));
     (this.component as any).originAxis = this;
   }
 
   resize(width: number, height: number) {
-    this.width = width;
-    this.height = height;
+    this.width = width - (this.orient === 'top' || this.orient === 'bottom' ? this.padding[1] + this.padding[3] : 0);
+    this.height = height - (this.orient === 'left' || this.orient === 'right' ? this.padding[2] + this.padding[0] : 0);
     this.updateScaleRange();
     this.computeData();
     const axisStylrAttrs = getAxisAttributes(this.option);
     const attrs = this.getUpdateAttribute();
     attrs.verticalFactor = this.orient === 'top' || this.orient === 'right' ? -1 : 1;
     this.component.setAttributes(merge({}, axisStylrAttrs, attrs));
-    this.component.setAttributes(this.setLayoutStartPosition({ x: 0, y: 0 }));
+    this.component.setAttributes(this.setLayoutStartPosition({ x: this.x, y: this.y }));
     this.overlap();
   }
 
@@ -217,7 +242,10 @@ export class CartesianAxis {
     }
     const size = this.orient === 'top' || this.orient === 'bottom' ? height : width;
     const attrs: LineAxisAttributes = {
-      start: { x: this.x, y: this.y },
+      // start: { x: this.x, y: this.y },
+      // x: this.x,
+      // y: this.y,
+      start: { x: 0, y: 0 },
       end,
       // grid: {
       //   type: 'line',

@@ -26,6 +26,22 @@ Background color of the entire column in the interaction
   prefix = ${prefix}
   ) }}
 
+#${prefix} select(Object)
+
+Select highlight style
+
+##${prefix} inlineRowBgColor(ColorPropertyDefine)
+The highlight color of the entire row when selected
+{{ use: common-color(
+prefix = ${prefix}
+) }}
+
+##${prefix} inlineColumnBgColor(ColorPropertyDefine)
+The highlight color of the entire column when selected
+{{ use: common-color(
+prefix = ${prefix}
+) }}
+
 #${prefix} frameStyle(FrameStyle)
 
 Outer border style of the current section, such as the overall outer border of the body or the overall outer border of the header

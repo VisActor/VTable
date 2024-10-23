@@ -16,7 +16,7 @@ VTable 组件中配置 columnType: "sparkline"，将单元格类型显示成迷�
 const columns: VTable.ColumnsDefine = [
     {
     field: "trend",
-    caption: "bird count",
+    title: "bird count",
     columnType: "sparkline",
     width: 300,
     sparklineSpec: {

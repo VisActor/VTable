@@ -150,6 +150,29 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 window['tableInstance'] = tableInstance;
 ```
 
+## 指定节点的收起或者展开状态
+
+上述示例中可以设置数据节点的 `hierarchyState` 来指定节点的收起或者展开状态，其值为 `expand` 或者 `collapse`。
+
+例如指定第一个节点为展开状态：`hierarchyState: 'expand'`。
+
+```javascript
+const records = [
+  {
+    group: 'Human Resources Department',
+    total_children: 30,
+    monthly_expense: '$45000',
+    new_hires_this_month: 6,
+    resignations_this_month: 3,
+    complaints_and_suggestions: 2,
+    hierarchyState: 'expand',
+    children: [
+      // ...
+    ]
+  }
+];
+```
+
 ## 懒加载子节点数据场景
 
 在一些场景下，子节点数据可能比较大，鉴于后台数据库性能压力过大，并不想一次性获取到全部数据，需要在点击展开时才进行调用接口来加载数据。那么可以使用如下方式来实现：
@@ -159,3 +182,126 @@ window['tableInstance'] = tableInstance;
 3. 将获取到的数据回传到表格组件中，可调用接口`instance.setRecordChildren(childrenData, col, row)`;
 
 具体示例可以看：https://visactor.io/vtable/demo/table-type/list-table-tree-lazy-load
+
+## 合并父节点
+
+在一些场景中，希望父节点整行作为一个合并单元格显示，可以在数据中，配置`vtableMerge`和`vtableMergeName`，其中`vtableMerge`为 true 时，表示该父节点为合并单元格，`vtableMergeName`为合并单元格中显示的名称；同时，需要在option中加入`enableTreeNodeMerge`配置为 true。
+
+```javascript livedemo template=vtable
+const records = [
+  {
+    group: 'Human Resources Department',
+    total_children: 30,
+    monthly_expense: '$45000',
+    new_hires_this_month: 6,
+    resignations_this_month: 3,
+    complaints_and_suggestions: 2,
+    vtableMerge: true,
+    vtableMergeName: 'Human Resources Department(merge)',
+    children: [
+      {
+        group: 'Recruiting Group',
+        vtableMerge: true,
+        vtableMergeName: 'Recruiting Group(merge)',
+        children: [
+          {
+            group: 'John Smith',
+            position: 'Recruiting Manager',
+            salary: '$8000'
+          },
+          {
+            group: 'Emily Johnson',
+            position: 'Recruiting Supervisor',
+            salary: '$6000'
+          },
+          {
+            group: 'Michael Davis',
+            position: 'Recruiting Specialist',
+            salary: '$4000'
+          }
+        ],
+        total_children: 15,
+        monthly_expense: '$25000',
+        new_hires_this_month: 4,
+        resignations_this_month: 2,
+        complaints_and_suggestions: 1
+      },
+      {
+        group: 'Training Group',
+        vtableMerge: true,
+        vtableMergeName: 'Training Group(merge)',
+        children: [
+          {
+            group: 'Jessica Brown',
+            position: 'Training Manager',
+            salary: '$8000'
+          },
+          {
+            group: 'Andrew Wilson',
+            position: 'Training Supervisor',
+            salary: '$6000'
+          }
+        ],
+        total_children: 15,
+        monthly_expense: '$20000',
+        new_hires_this_month: 2,
+        resignations_this_month: 1,
+        complaints_and_suggestions: 1
+      }
+    ]
+  }
+];
+const columns = [
+  {
+    field: 'group',
+    title: 'department',
+    width: 'auto',
+    tree: true
+  },
+  {
+    field: 'total_children',
+    title: 'memebers count',
+    width: 'auto',
+    fieldFormat(rec) {
+      if (rec?.['position']) {
+        return `position:  ${rec['position']}`;
+      } else return rec?.['total_children'];
+    }
+  },
+  {
+    field: 'monthly_expense',
+    title: 'monthly expense',
+    width: 'auto',
+    fieldFormat(rec) {
+      if (rec?.['salary']) {
+        return `salary:  ${rec['salary']}`;
+      } else return rec?.['monthly_expense'];
+    }
+  },
+  {
+    field: 'new_hires_this_month',
+    title: 'new hires this month',
+    width: 'auto'
+  },
+  {
+    field: 'resignations_this_month',
+    title: 'resignations this month',
+    width: 'auto'
+  },
+  {
+    field: 'complaints_and_suggestions',
+    title: 'recived complaints counts',
+    width: 'auto'
+  }
+];
+
+const option = {
+  records,
+  columns,
+  widthMode: 'standard',
+  enableTreeNodeMerge: true,
+  hierarchyExpandLevel: Infinity
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```

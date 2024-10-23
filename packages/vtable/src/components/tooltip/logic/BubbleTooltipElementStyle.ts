@@ -18,8 +18,8 @@ export function importStyle() {
 .vtable__bubble-tooltip-element {
 	position: absolute;
 	
-	pointer-events: none;
-	user-select: none;
+	// pointer-events: none;
+	//user-select: none;
 	max-width: 300px;
 	z-index: 99999;
 
@@ -33,6 +33,8 @@ export function importStyle() {
 }
 .vtable__bubble-tooltip-element--hidden {
 	opacity: 0;
+  pointer-events: none;
+	user-select: none;
 	/* transform: translate(-50%, -50%); */
 	transition: opacity 75ms linear;
 }
@@ -51,12 +53,30 @@ export function importStyle() {
 	white-space: pre-wrap;
 	margin: 0;
 	box-sizing: border-box;
-	overflow: hidden;
+	overflow: auto;
 	word-wrap: break-word;
 	position: relative;
 	background-color: #FFF;
 	z-index: 2;
-	border-radius: 4px
+	border-radius: 4px;
+}
+/*  WebKit Microsoft Edge（新版）： */
+.vtable__bubble-tooltip-element__content::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background-color: transparent;
+}
+/*  Opera Firefox  */
+.vtable__bubble-tooltip-element__content > scrollbar-track {
+  width: 0;
+  height: 0;
+  background-color: transparent;
+}
+/* Internet Explorer 11 和 Microsoft Edge（旧版） */
+.vtable__bubble-tooltip-element__content > scrollbar {
+  width: 0;
+  height: 0;
+  background-color: transparent;
 }
 .vtable__bubble-tooltip-element__triangle {
 	/* font-size: .75rem; */

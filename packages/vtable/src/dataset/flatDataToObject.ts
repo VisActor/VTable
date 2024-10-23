@@ -31,7 +31,7 @@ export class FlatDataToObjects {
    * 树形节点，最后的子节点对应到body部分的每个单元格 树结构： 行-列-单元格
    */
   tree: Record<string, Record<string, Record<string, any>>> = {};
-  changedTree: Record<string, Record<string, Record<string, any>>> = {};
+  beforeChangedTree: Record<string, Record<string, { record: any; value: string }>> = {};
   private colFlatKeys = {};
   private rowFlatKeys = {};
 
@@ -78,10 +78,18 @@ export class FlatDataToObjects {
       console.log('processRecords:', t1 - t0);
     }
 
-    delete this.rowFlatKeys;
-    delete this.colFlatKeys;
+    // delete this.rowFlatKeys;
+    // delete this.colFlatKeys;
   }
-
+  changeDataConfig(dataConfig: {
+    rows: string[]; //行维度字段数组；
+    columns: string[]; //列维度字段数组；
+    indicators: string[]; //具体展示指标；
+    indicatorsAsCol: boolean;
+    indicatorDimensionKey: string | number;
+  }) {
+    this.dataConfig = dataConfig;
+  }
   setRecords(records: any[]) {
     this.processRecords();
   }
@@ -174,7 +182,7 @@ export class FlatDataToObjects {
     rowKey: string[] | string = [],
     colKey: string[] | string = [],
     indicator: string,
-    considerChangedValue: boolean = true
+    ifChangedValue: boolean = true
   ): Record<string, any> {
     let flatRowKey;
     let flatColKey;
@@ -207,18 +215,20 @@ export class FlatDataToObjects {
       isHasIndicator && colKey.push(indicator);
       flatColKey = colKey.join(this.stringJoinChar);
     }
-    if (considerChangedValue && isValid(this.changedTree[flatRowKey]?.[flatColKey])) {
-      return { value: this.changedTree[flatRowKey][flatColKey], record: this.tree?.[flatRowKey]?.[flatColKey]?.record };
+
+    if (ifChangedValue) {
+      return this.tree?.[flatRowKey]?.[flatColKey] ?? undefined;
     }
-    return this.tree?.[flatRowKey]?.[flatColKey] ?? undefined;
+    if (isValid(this.beforeChangedTree[flatRowKey]?.[flatColKey])) {
+      return {
+        value: this.beforeChangedTree[flatRowKey][flatColKey].value,
+        record: this.beforeChangedTree[flatRowKey][flatColKey].record
+      };
+    }
+    return undefined;
   }
 
-  changeTreeNodeValue(
-    rowKey: string[] | string = [],
-    colKey: string[] | string = [],
-    indicator: string,
-    newValue: any
-  ) {
+  changeTreeNodeValue(rowKey: string[] = [], colKey: string[] = [], indicator: string, newValue: any) {
     let flatRowKey;
     let flatColKey;
     if (typeof rowKey === 'string') {
@@ -250,12 +260,73 @@ export class FlatDataToObjects {
       isHasIndicator && colKey.push(indicator);
       flatColKey = colKey.join(this.stringJoinChar);
     }
-
-    if (this.changedTree[flatRowKey]) {
-      this.changedTree[flatRowKey][flatColKey] = newValue;
+    const oldValue = this.tree[flatRowKey]?.[flatColKey]?.value;
+    const oldRecord = Object.assign({}, this.tree[flatRowKey]?.[flatColKey]?.record);
+    if (this.tree[flatRowKey]?.[flatColKey]?.record) {
+      this.tree[flatRowKey][flatColKey].record[indicator] = newValue;
+      this.tree[flatRowKey][flatColKey].value = newValue;
     } else {
-      this.changedTree[flatRowKey] = {};
-      this.changedTree[flatRowKey][flatColKey] = newValue;
+      if (!this.tree[flatRowKey]) {
+        this.tree[flatRowKey] = {};
+      }
+      // 没有对应数据需要添加进去
+      this.tree[flatRowKey][flatColKey] = {
+        record: this._buildRecord(rowKey, colKey, indicator, newValue),
+        value: newValue
+      };
+    }
+    if (!this.beforeChangedTree[flatRowKey]?.[flatColKey]) {
+      this.beforeChangedTree[flatRowKey] = {};
+      this.beforeChangedTree[flatRowKey][flatColKey] = { record: undefined, value: undefined };
+      this.beforeChangedTree[flatRowKey][flatColKey].record = oldRecord;
+      this.beforeChangedTree[flatRowKey][flatColKey].value = oldValue;
+    }
+  }
+
+  _buildRecord(rowKey: string[] = [], colKey: string[] = [], indicator: string, value: any) {
+    const record = {};
+    const rowDimensions = this.dataConfig.rows;
+    const colDimensions = this.dataConfig.columns;
+    rowDimensions.forEach((dimension, index) => {
+      if (dimension !== this.dataConfig.indicatorDimensionKey) {
+        record[dimension] = rowKey[index];
+      }
+    });
+    colDimensions.forEach((dimension, index) => {
+      if (dimension !== this.dataConfig.indicatorDimensionKey) {
+        record[dimension] = colKey[index];
+      }
+    });
+    record[indicator] = value;
+    this.records.push(record);
+    return record;
+  }
+  addRecords(records: any[]) {
+    for (let i = 0, len = records.length; i < len; i++) {
+      const record = records[i];
+      this.processRecord(record);
+    }
+    this.records.push(records);
+  }
+  changeRecordFieldValue(fieldName: string, oldValue: string | number, value: string | number) {
+    let isIndicatorName = false;
+
+    for (let i = 0; i < this.dataConfig.indicators.length; i++) {
+      if (this.dataConfig.indicators[i] === fieldName) {
+        isIndicatorName = true;
+      }
+    }
+    if (!isIndicatorName) {
+      for (let i = 0, len = this.records.length; i < len; i++) {
+        const record = this.records[i];
+        if (record[fieldName] === oldValue) {
+          record[fieldName] = value;
+        }
+      }
+      this.rowFlatKeys = {};
+      this.colFlatKeys = {};
+      this.tree = {};
+      this.processRecords();
     }
   }
 }

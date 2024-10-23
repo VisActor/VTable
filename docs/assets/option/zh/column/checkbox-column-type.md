@@ -26,15 +26,3 @@ checkbox是否处于checked状态，在这里设置即指定整列的复选框�
 **checkbox 类型专属配置项**
 
 checkbox是否处于禁止交互状态
-
-##${prefix} size(number|Function) = 14
-
-**checkbox 类型专属配置项**
-
-checkbox图形的尺寸
-
-##${prefix} spaceBetweenTextAndIcon(number|Function) = 8
-
-**checkbox 类型专属配置项**
-
-checkbox图形与文字的间距

@@ -1,4 +1,4 @@
-import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@src/vrender';
+import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage } from '@src/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
@@ -18,7 +18,7 @@ import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
 import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateCornerRadius, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
-import { ResizeColumnHotSpotSize } from '../tools/global';
+import { ResizeColumnHotSpotSize, ResizeRowHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
 import { getFunctionalProp, getProp } from './utils/get-prop';
 import { dealWithIcon } from './utils/text-icon-layout';
@@ -27,17 +27,26 @@ import type { TooltipOptions } from '../ts-types/tooltip';
 import { computeColWidth, computeColsWidth, getAdaptiveWidth } from './layout/compute-col-width';
 import { moveHeaderPosition } from './layout/move-cell';
 import { updateCell } from './group-creater/cell-helper';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { updateAllSelectComponent, updateCellSelectBorder } from './select/update-select-border';
 import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
-import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
+import {
+  deleteAllSelectBorder,
+  deleteAllSelectingBorder,
+  deleteLastSelectedRangeComponents,
+  removeFillHandleFromSelectComponents
+} from './select/delete-select-border';
 import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowHeight, computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
 import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
-import { updateChartSize, updateChartState } from './refresh-node/update-chart';
+import {
+  updateChartSizeForResizeColWidth,
+  updateChartSizeForResizeRowHeight,
+  updateChartState
+} from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
 import type { CheckBox } from '@visactor/vrender-components';
@@ -62,12 +71,14 @@ import { createCornerCell } from './style/corner-cell';
 import { updateCol } from './layout/update-col';
 import { deduplication } from '../tools/util';
 import { getDefaultHeight, getDefaultWidth } from './group-creater/progress/default-width-height';
+import { dealWithAnimationAppear } from './animation/appear';
+import { updateReactContainer } from './layout/frozen-react';
 // import { contextModule } from './context/module';
 
 registerForVrender();
 
 // VChart poptip theme
-loadPoptip();
+// loadPoptip();
 container.load(splitModule);
 container.load(textMeasureModule);
 // container.load(renderServiceModule);
@@ -100,9 +111,9 @@ export class Scenegraph {
   rightBottomCornerGroup: Group; // 右下角占位单元格Group,只在有右侧下侧都有冻结行时使用
   componentGroup: Group; // 表格外组件Group
   /** 所有选中区域对应的选框组件 */
-  selectedRangeComponents: Map<string, { rect: IRect; role: CellSubLocation }>;
+  selectedRangeComponents: Map<string, { rect: IRect; fillhandle?: IRect; role: CellSubLocation }>;
   /** 当前正在选择区域对应的选框组件 为什么是map 以为可能一个选中区域会被拆分为多个rect组件 三块表头和body都分别对应不同组件*/
-  selectingRangeComponents: Map<string, { rect: IRect; role: CellSubLocation }>;
+  selectingRangeComponents: Map<string, { rect: IRect; fillhandle?: IRect; role: CellSubLocation }>;
   lastSelectId: string;
   component: TableComponent;
   stage: IStage;
@@ -127,7 +138,11 @@ export class Scenegraph {
     setPoptipTheme(this.table.theme.textPopTipStyle);
     let width;
     let height;
-    if (Env.mode === 'node') {
+    if (table.options.canvas && table.options.viewBox) {
+      vglobal.setEnv('browser');
+      width = table.options.viewBox.x2 - table.options.viewBox.x1;
+      height = table.options.viewBox.y2 - table.options.viewBox.y1;
+    } else if (Env.mode === 'node') {
       vglobal.setEnv('node', table.options.modeParams);
       width = table.canvasWidth;
       height = table.canvasHeight;
@@ -144,13 +159,22 @@ export class Scenegraph {
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
       enableLayout: true,
+      // enableHtmlAttribute: true,
       // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
-      afterRender: () => {
+      beforeRender: (stage: Stage) => {
+        this.table.options.beforeRender && this.table.options.beforeRender(stage);
+      },
+      afterRender: (stage: Stage) => {
+        this.table.options.afterRender && this.table.options.afterRender(stage);
         this.table.fireListeners('after_render', null);
         // console.trace('after_render');
-      }
+      },
       // event: { clickInterval: 400 }
       // autoRender: true
+
+      canvasControled: !table.options.canvas,
+      viewBox: table.options.viewBox,
+      ...table.options.renderOption
     });
 
     this.stage.defaultLayer.setTheme({
@@ -219,6 +243,7 @@ export class Scenegraph {
    * @return {*}
    */
   clearCells() {
+    this.table.animationManager.clear();
     // unbind AutoPoptip
     if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart
@@ -312,6 +337,8 @@ export class Scenegraph {
       delete (this.tableGroup as any).border;
     }
     this.proxy?.release();
+
+    this.table.reactCustomLayout?.clearCache();
   }
 
   updateStageBackground() {
@@ -338,8 +365,11 @@ export class Scenegraph {
    * @description: 依据数据创建表格场景树
    * @return {*}
    */
-  createSceneGraph() {
-    this.table.rowHeightsMap.clear();
+  createSceneGraph(skipRowHeightClear = false) {
+    if (!skipRowHeightClear) {
+      this.table.rowHeightsMap.clear();
+      this.table.internalProps.layoutMap.clearCellRangeMap();
+    }
 
     // if (this.table.heightMode === 'autoHeight') {
     //   this.table.defaultRowHeight = getDefaultHeight(this.table);
@@ -361,7 +391,7 @@ export class Scenegraph {
     this.clear = false;
     // this.frozenColCount = this.table.rowHeaderLevelCount;
     this.frozenColCount = this.table.frozenColCount;
-    this.frozenRowCount = this.table.columnHeaderLevelCount;
+    this.frozenRowCount = this.table.frozenRowCount;
 
     this.proxy = new SceneProxy(this.table);
 
@@ -542,8 +572,7 @@ export class Scenegraph {
    * @return {*}
    */
   updateNextFrame() {
-    // to do
-    // this.table.invalidate();
+    this.updateContainerSync();
     this.resetAllSelectComponent();
 
     this.stage.renderNextFrame();
@@ -593,16 +622,17 @@ export class Scenegraph {
     setIconHoverStyle(icon, col, row, cellGroup, this);
   }
 
-  updateSortIcon(
-    col: number,
-    row: number,
-    iconMark: Icon,
-    order: SortOrder,
-    oldSortCol: number,
-    oldSortRow: number,
-    oldIconMark: Icon | undefined
-  ) {
-    updateSortIcon(col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, this);
+  updateSortIcon(options: {
+    col: number;
+    row: number;
+    iconMark: Icon;
+    order: SortOrder;
+    oldSortCol: number;
+    oldSortRow: number;
+    oldIconMark: Icon | undefined;
+  }) {
+    const { col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark } = options;
+    updateSortIcon({ col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, scene: this });
   }
 
   updateFrozenIcon(col: number, oldFrozenCol: number) {
@@ -684,22 +714,21 @@ export class Scenegraph {
   }
   deleteAllSelectBorder() {
     deleteAllSelectBorder(this);
+    deleteAllSelectingBorder(this);
   }
 
-  updateCellSelectBorder(
-    newStartCol: number,
-    newStartRow: number,
-    newEndCol: number,
-    newEndRow: number,
-    extendSelectRange: boolean = true
-  ) {
-    updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow, extendSelectRange);
+  updateCellSelectBorder(selectRange: CellRange & { skipBodyMerge?: boolean }, extendSelectRange: boolean = true) {
+    updateCellSelectBorder(this, selectRange, extendSelectRange);
+  }
+
+  removeFillHandleFromSelectComponents() {
+    removeFillHandleFromSelectComponents(this);
   }
   /** 根据select状态重新创建选中range节点  目前无调用者 */
   recreateAllSelectRangeComponents() {
     deleteAllSelectBorder(this);
     this.table.stateManager.select.ranges.forEach((cellRange: CellRange) => {
-      updateCellSelectBorder(this, cellRange.start.col, cellRange.start.row, cellRange.end.col, cellRange.end.row);
+      updateCellSelectBorder(this, cellRange);
     });
     moveSelectingRangeComponentsToSelectedRangeComponents(this);
   }
@@ -723,8 +752,17 @@ export class Scenegraph {
    * @param {number} col
    * @return {*}
    */
-  updateChartSize(col: number) {
-    updateChartSize(this, col);
+  updateChartSizeForResizeColWidth(col: number) {
+    updateChartSizeForResizeColWidth(this, col);
+  }
+
+  /**
+   * @description: 行高调整需要修改Chart的尺寸
+   * @param {number} col
+   * @return {*}
+   */
+  updateChartSizeForResizeRowHeight(row: number) {
+    updateChartSizeForResizeRowHeight(this, row);
   }
   /** 更新图表的高亮状态 */
   updateChartState(datum: any) {
@@ -736,7 +774,7 @@ export class Scenegraph {
       this.bodyGroup.children?.forEach((columnGroup: INode) => {
         columnGroup
           .getChildAt(row)
-          .getChildren()
+          ?.getChildren()
           .forEach((node: INode) => {
             if (node.name === 'checkbox') {
               (node as CheckBox).setAttribute('checked', checked);
@@ -745,7 +783,7 @@ export class Scenegraph {
       });
     } else {
       const columnGroup = this.getColGroup(col);
-      columnGroup.children?.forEach((cellNode: INode) => {
+      columnGroup?.children?.forEach((cellNode: INode) => {
         cellNode.getChildren().find(node => {
           if (node.name === 'checkbox') {
             (node as CheckBox).setAttribute('checked', checked);
@@ -802,11 +840,41 @@ export class Scenegraph {
    * recalculates column width in all autowidth columns
    */
   recalculateColWidths() {
-    computeColsWidth(this.table, 0, this.table.colCount - 1, true);
+    const table = this.table;
+
+    if (table.widthMode === 'adaptive' || table.autoFillWidth || table.internalProps.transpose) {
+      computeColsWidth(this.table, 0, this.table.colCount - 1, true);
+    } else {
+      table._clearColRangeWidthsMap();
+      // left frozen
+      if (table.frozenColCount > 0) {
+        computeColsWidth(this.table, 0, table.frozenColCount - 1, true);
+      }
+      // right frozen
+      if (table.rightFrozenColCount > 0) {
+        computeColsWidth(this.table, table.rightFrozenColCount, table.colCount - 1, true);
+      }
+      // body
+      computeColsWidth(table, this.proxy.colStart, this.proxy.colEnd, true);
+    }
   }
 
   recalculateRowHeights() {
-    computeRowsHeight(this.table, 0, this.table.rowCount - 1, true, true);
+    const table = this.table;
+    table.internalProps.useOneRowHeightFillAll = false;
+    if (table.heightMode === 'adaptive' || table.autoFillHeight) {
+      computeRowsHeight(this.table, 0, this.table.rowCount - 1, true, true);
+    } else {
+      // top frozen
+      if (table.frozenRowCount > 0) {
+        computeRowsHeight(this.table, 0, table.frozenRowCount - 1, true, true);
+      }
+      // bottom frozen
+      if (table.bottomFrozenRowCount > 0) {
+        computeRowsHeight(this.table, table.bottomFrozenRowCount, table.rowCount - 1, true, true);
+      }
+      computeRowsHeight(table, this.proxy.rowStart, this.proxy.rowEnd, true, true);
+    }
   }
 
   resize() {
@@ -828,7 +896,11 @@ export class Scenegraph {
       // 1. error amplification（误差放大） in dealHeightMode when multiple resize
       // 2. width update caused height update dose not have enlarge/reduce number,
       // will cause scale error in dealHeightMode()
-      this.recalculateRowHeights();
+      if (this.table.internalProps._heightResizedRowMap.size === 0) {
+        this.recalculateRowHeights();
+      } else {
+        this.dealHeightMode();
+      }
       // this.dealHeightMode();
     } else if (this.table.autoFillHeight) {
       this.dealHeightMode();
@@ -847,7 +919,7 @@ export class Scenegraph {
       this.table.autoFillWidth ||
       this.table.autoFillHeight
     ) {
-      this.updateChartSize(this.table.rowHeaderLevelCount);
+      this.updateChartSizeForResizeColWidth(-1);
     }
 
     this.proxy.progress();
@@ -903,49 +975,75 @@ export class Scenegraph {
       )
     } as any);
 
-    if (this.tableGroup.border && this.tableGroup.border.type === 'rect') {
-      if (this.table.theme.frameStyle?.innerBorder) {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
+    if (this.tableGroup.border) {
+      const rectAttributes = this.tableGroup.border?.attribute;
+      let borderTop;
+      let borderRight;
+      let borderBottom;
+      let borderLeft;
+      if ((rectAttributes as any)?.strokeArrayWidth) {
+        borderTop = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[0]
+          : (rectAttributes.lineWidth as number) ?? 0;
+        borderRight = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[1]
+          : (rectAttributes.lineWidth as number) ?? 0;
+        borderBottom = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[2]
+          : (rectAttributes.lineWidth as number) ?? 0;
+        borderLeft = (rectAttributes as any).strokeArrayWidth
+          ? (rectAttributes as any).strokeArrayWidth[3]
+          : (rectAttributes.lineWidth as number) ?? 0;
       } else {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-        });
+        borderTop = (rectAttributes?.lineWidth as number) ?? 0;
+        borderRight = (rectAttributes?.lineWidth as number) ?? 0;
+        borderBottom = (rectAttributes?.lineWidth as number) ?? 0;
+        borderLeft = (rectAttributes?.lineWidth as number) ?? 0;
       }
-    } else if (this.tableGroup.border && this.tableGroup.border.type === 'group') {
-      if (this.table.theme.frameStyle?.innerBorder) {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
-        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-          x: 0,
-          y: 0,
-          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
-        });
-      } else {
-        this.tableGroup.border.setAttributes({
-          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-        });
-        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-          x: this.tableGroup.border.attribute.lineWidth / 2,
-          y: this.tableGroup.border.attribute.lineWidth / 2,
-          width: this.tableGroup.attribute.width,
-          height: this.tableGroup.attribute.height
-        });
+      if (this.tableGroup.border.type === 'rect') {
+        if (this.table.theme.frameStyle?.innerBorder) {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX + borderLeft / 2,
+            y: this.table.tableY + borderTop / 2,
+            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+          });
+        } else {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX - borderLeft / 2,
+            y: this.table.tableY - borderTop / 2,
+            width: this.tableGroup.attribute.width + borderLeft / 2 + borderRight / 2,
+            height: this.tableGroup.attribute.height + borderTop / 2 + borderBottom / 2
+          });
+        }
+      } else if (this.tableGroup.border.type === 'group') {
+        if (this.table.theme.frameStyle?.innerBorder) {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX + borderLeft / 2,
+            y: this.table.tableY + borderTop / 2,
+            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+          });
+          (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+            x: 0,
+            y: 0,
+            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+          });
+        } else {
+          this.tableGroup.border.setAttributes({
+            x: this.table.tableX - borderLeft / 2,
+            y: this.table.tableY - borderTop / 2,
+            width: this.tableGroup.attribute.width + borderLeft / 2 + borderRight / 2,
+            height: this.tableGroup.attribute.height + borderTop / 2 + borderBottom / 2
+          });
+          (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+            x: borderLeft / 2,
+            y: borderTop / 2,
+            width: this.tableGroup.attribute.width,
+            height: this.tableGroup.attribute.height
+          });
+        }
       }
     }
 
@@ -1030,15 +1128,15 @@ export class Scenegraph {
       this.cornerHeaderGroup.setDeltaHeight(detaY);
       this.rowHeaderGroup.setDeltaY(detaY);
       this.bodyGroup.setDeltaY(detaY);
-      this.rightFrozenGroup.setDeltaY(detaY);
+      this.table.rightFrozenColCount && this.rightFrozenGroup.setDeltaY(detaY);
     } else if (row >= this.table.rowCount - this.table.bottomFrozenRowCount) {
       this.leftBottomCornerGroup.setDeltaHeight(detaY);
       this.bottomFrozenGroup.setDeltaHeight(detaY);
-      this.rightBottomCornerGroup.setDeltaHeight(detaY);
+      this.table.rightFrozenColCount && this.rightBottomCornerGroup.setDeltaHeight(detaY);
     } else {
       this.rowHeaderGroup.setDeltaHeight(detaY);
       this.bodyGroup.setDeltaHeight(detaY);
-      this.rightFrozenGroup.setDeltaHeight(detaY);
+      this.table.rightFrozenColCount && this.rightFrozenGroup.setDeltaHeight(detaY);
     }
   }
   /**
@@ -1068,8 +1166,9 @@ export class Scenegraph {
       return;
     }
     if (
-      (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) ||
-      (row >= this.table.rowCount - this.table.bottomFrozenRowCount && row <= this.table.rowCount - 1)
+      (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) || // body
+      (row >= this.table.rowCount - this.table.bottomFrozenRowCount && row <= this.table.rowCount - 1) || // bottom
+      row < this.table.frozenRowCount
     ) {
       this.updateRowHeight(row, height - oldHeight);
     }
@@ -1186,6 +1285,13 @@ export class Scenegraph {
 
     if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
+    } else if (this.table.options.frozenColCount) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.rightFrozenColCount) {
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
+    } else {
+      this.component.setFrozenColumnShadow(-1);
     }
     this.table.stateManager.checkFrozen();
     // this.updateContainerAttrWidthAndX();
@@ -1197,8 +1303,27 @@ export class Scenegraph {
 
     // 更新滚动条状态
     this.component.updateScrollBar();
-    // 处理单元格内容需要textStick的情况
+
+    // 处理单元格内容需要textStick的情况  入股这里不处理 只依赖异步proxy progress中处理 会有闪烁问题
+
     handleTextStick(this.table);
+
+    // // temp add rect
+    // const rect = createRect({
+    //   x: 200,
+    //   y: 200,
+    //   width: 100,
+    //   height: 100,
+    //   fill: 'red',
+    //   stroke: 'blue',
+    //   lineWidth: 1
+    // });
+    // this.tableGroup.addChild(rect);
+    // deal with animation
+
+    if (this.table.options.animationAppear) {
+      dealWithAnimationAppear(this.table);
+    }
 
     this.updateNextFrame();
   }
@@ -1454,7 +1579,10 @@ export class Scenegraph {
               : 0
           )
         : 0;
-    const rightX = updateContainerChildrenX(this.rightFrozenGroup, 0);
+    const rightX = updateContainerChildrenX(
+      this.rightFrozenGroup.childrenCount > 0 ? this.rightFrozenGroup : this.rightTopCornerGroup,
+      0
+    );
 
     this.bottomFrozenGroup.hasChildNodes() &&
       this.bottomFrozenGroup.firstChild &&
@@ -1490,33 +1618,39 @@ export class Scenegraph {
       if (!this._needUpdateContainer) {
         this._needUpdateContainer = true;
         setTimeout(() => {
-          this.updateContainerAttrWidthAndX();
-
-          this.updateTableSize();
-
-          this.component.updateScrollBar();
-          this.updateNextFrame();
-
-          this._needUpdateContainer = false;
+          this.updateContainerSync();
         }, 0);
       }
     } else {
-      this.updateContainerAttrWidthAndX();
-
-      this.updateTableSize();
-
-      this.component.updateScrollBar();
-      this.updateNextFrame();
-
-      this._needUpdateContainer = false;
+      this._needUpdateContainer = true;
+      this.updateContainerSync();
     }
   }
 
+  updateContainerSync() {
+    if (!this._needUpdateContainer) {
+      return;
+    }
+    this._needUpdateContainer = false;
+    this.updateContainerAttrWidthAndX();
+    this.updateTableSize();
+    this.component.updateScrollBar();
+
+    this.updateDomContainer();
+
+    this.updateNextFrame();
+  }
+
   updateCellContentWhileResize(col: number, row: number) {
-    const type = this.table.getBodyColumnType(col, row);
+    const isVtableMerge = this.table.getCellRawRecord(col, row)?.vtableMerge;
+    const type = isVtableMerge
+      ? 'text'
+      : this.table.isHeader(col, row)
+      ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+      : this.table.getBodyColumnType(col, row);
     const cellGroup = this.getCell(col, row);
     if (type === 'image' || type === 'video') {
-      updateImageCellContentWhileResize(cellGroup, col, row, this.table);
+      updateImageCellContentWhileResize(cellGroup, col, row, 0, 0, this.table);
     }
   }
 
@@ -1538,7 +1672,7 @@ export class Scenegraph {
     //   ),
     // } as any);
 
-    const isListTableWithFrozen = !this.isPivot;
+    const isListTableWithFrozen = !this.isPivot && !this.table.internalProps.transpose;
 
     // 设置border
     createFrameBorder(
@@ -1551,9 +1685,9 @@ export class Scenegraph {
       this.rowHeaderGroup,
       this.isPivot
         ? this.table.theme.rowHeaderStyle.frameStyle
-        : // : this.table.internalProps.transpose
-          // ? this.table.theme.headerStyle.frameStyle
-          this.table.theme.bodyStyle.frameStyle,
+        : this.table.internalProps.transpose
+        ? this.table.theme.rowHeaderStyle.frameStyle
+        : this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );
@@ -1586,28 +1720,75 @@ export class Scenegraph {
     cellGroup?: Group,
     offset = ResizeColumnHotSpotSize / 2
   ): { col: number; row: number; x?: number; rightFrozen?: boolean } {
+    let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
+    if (!cellGroup) {
+      const drawRange = this.table.getDrawRange();
+      if (abstractY >= drawRange.top && abstractY <= drawRange.bottom) {
+        // to do: 处理最后一列外调整列宽
+        cell = this.table.getCellAtRelativePosition(abstractX - offset, abstractY);
+        if (cell.col === this.table.colCount - 1) {
+          return cell;
+        }
+      }
+      return { col: -1, row: -1 };
+    }
+
+    if (!cellGroup.stage) {
+      return { col: -1, row: -1 };
+    }
+
+    if (abstractX < cellGroup.globalAABBBounds.x1 + offset) {
+      cell = { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
+    } else if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
+      cell = { col: cellGroup.col, row: cellGroup.row, x: cellGroup.globalAABBBounds.x2 };
+    }
+    if (
+      cell &&
+      this.table.rightFrozenColCount > 0 &&
+      // cell.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
+      cell.col >= this.table.colCount - this.table.rightFrozenColCount - 1 &&
+      this.table.tableNoFrameWidth -
+        this.table.getFrozenColsWidth() -
+        this.table.getRightFrozenColsWidth() +
+        this.table.scrollLeft <
+        this.bodyGroup.attribute.width
+    ) {
+      // 有右侧冻结列，并且横向没有滚动到最右侧时，右侧冻结列左侧调整对只对右侧冻结列生效
+      cell.col = cell.col + 1;
+      cell.rightFrozen = true;
+    }
+
+    if (cell) {
+      return cell;
+    }
+    // }
+    return { col: -1, row: -1 };
+  }
+
+  getResizeRowAt(abstractX: number, abstractY: number, cellGroup?: Group, offset = ResizeRowHotSpotSize / 2) {
     if (!cellGroup) {
       // to do: 处理最后一列外调整列宽
     } else {
-      let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
-      if (abstractX < cellGroup.globalAABBBounds.x1 + offset) {
-        cell = { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
-      } else if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
-        cell = { col: cellGroup.col, row: cellGroup.row, x: cellGroup.globalAABBBounds.x2 };
+      let cell: { col: number; row: number; y?: number; bottomFrozen?: boolean };
+      if (abstractY < cellGroup.globalAABBBounds.y1 + offset) {
+        cell = { col: cellGroup.col, row: cellGroup.row - 1, y: cellGroup.globalAABBBounds.y1 };
+      } else if (cellGroup.globalAABBBounds.y2 - offset < abstractY) {
+        cell = { col: cellGroup.col, row: cellGroup.row, y: cellGroup.globalAABBBounds.y2 };
       }
       if (
         cell &&
-        this.table.rightFrozenColCount > 0 &&
-        cell.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
-        this.table.tableNoFrameWidth -
-          this.table.getFrozenColsWidth() -
-          this.table.getRightFrozenColsWidth() +
-          this.table.scrollLeft <
-          this.bodyGroup.attribute.width
+        this.table.bottomFrozenRowCount > 0 &&
+        // cell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
+        cell.row >= this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
+        this.table.tableNoFrameHeight -
+          this.table.getFrozenRowsHeight() -
+          this.table.getBottomFrozenRowsHeight() +
+          this.table.scrollTop <
+          this.bodyGroup.attribute.height
       ) {
-        // 有右侧冻结列，并且横向没有滚动到最右侧时，右侧冻结列左侧调整对只对右侧冻结列生效
-        cell.col = cell.col + 1;
-        cell.rightFrozen = true;
+        // 有下侧冻结行，并且纵向没有滚动到最下侧时，下侧冻结行左侧调整对只对下侧冻结行生效
+        cell.row = cell.row + 1;
+        cell.bottomFrozen = true;
       }
       if (cell) {
         return cell;
@@ -1686,6 +1867,9 @@ export class Scenegraph {
     const text = cellGroup.getChildByName('text', true) as unknown as Text | RichText;
 
     if (text && text.type === 'text') {
+      if ((text.attribute as any).moreThanMaxCharacters) {
+        return this.table.getCellValue(col, row);
+      }
       const textAttributeStr = isArray(text.attribute.text)
         ? text.attribute.text.join('')
         : (text.attribute.text as string);
@@ -1698,7 +1882,8 @@ export class Scenegraph {
         });
       }
       if (cacheStr !== textAttributeStr) {
-        return textAttributeStr;
+        // return textAttributeStr;
+        return this.table.getCellValue(col, row);
       }
     } else if (text && text.type === 'richtext') {
       const richtext = text;
@@ -1708,7 +1893,8 @@ export class Scenegraph {
         richtext.attribute.height < richtext._frameCache.actualHeight
       ) {
         const textConfig = richtext.attribute.textConfig.find((item: any) => item.text);
-        return (textConfig as any).text as string;
+        // return (textConfig as any).text as string;
+        return this.table.getCellValue(col, row);
       }
     }
     return null;
@@ -1736,6 +1922,8 @@ export class Scenegraph {
   }
 
   updateRow(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
+    this.table.internalProps.layoutMap.clearCellRangeMap();
+    this.table.internalProps.useOneRowHeightFillAll = false;
     const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
     const updateRows = deduplication(updateCells.map(cell => cell.row)).sort((a, b) => a - b);
     //这个值是后续为了autoFillHeight判断逻辑中用到的 判断是否更新前是未填满的情况
@@ -1778,6 +1966,11 @@ export class Scenegraph {
     // update frozen shadow
     if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
+    } else if (this.table.options.frozenColCount) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.rightFrozenColCount) {
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     }
 
     this.component.updateScrollBar();
@@ -1800,6 +1993,11 @@ export class Scenegraph {
     // update frozen shadow
     if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
+    } else if (this.table.options.frozenColCount) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.rightFrozenColCount) {
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     }
 
     this.component.updateScrollBar();
@@ -1822,12 +2020,12 @@ export class Scenegraph {
   }
 
   getCellGroupY(row: number) {
-    if (row < this.table.columnHeaderLevelCount) {
+    if (row < this.table.frozenRowCount) {
       // column header
       return this.table.getRowsHeight(0, row - 1);
     } else if (row < this.table.rowCount - this.table.bottomFrozenRowCount) {
       // body
-      return this.table.getRowsHeight(this.table.columnHeaderLevelCount, row - 1);
+      return this.table.getRowsHeight(this.table.frozenRowCount, row - 1);
     } else if (row < this.table.rowCount) {
       // bottom frozen
       return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);
@@ -1851,4 +2049,7 @@ export class Scenegraph {
   // updateCellValue(col: number, row: number) {
   //   updateCell(col, row, this.table);
   // }
+  updateDomContainer() {
+    updateReactContainer(this.table);
+  }
 }

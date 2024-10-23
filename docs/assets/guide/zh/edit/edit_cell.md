@@ -6,6 +6,8 @@
 
 ## 1. 引用 VTable 的编辑器包：
 
+### 使用 NPM 包
+
 首先，确保已经正确安装了 VTable 库@visactor/vtable 和相关的编辑器包@visactor/vtable-editors。你可以使用以下命令来安装它们：
 
 ```shell
@@ -20,22 +22,34 @@ yarn add @visactor/vtable-editors
 在代码中引入所需类型的编辑器模块：
 
 ```javascript
-import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
+import { DateInputEditor, InputEditor, ListEditor, TextAreaEditor } from '@visactor/vtable-editors';
+```
+
+### 使用 CDN
+
+你还可以通过 CDN 获取构建好的 VTable-Editor 文件。
+
+```html
+<script src="https://unpkg.com/@visactor/vtable-editors@latest/dist/vtable-editors.min.js"></script>
+<script>
+  const inputEditor = new VTable.editors.InputEditor();
+</script>
 ```
 
 ## 2. 创建编辑器：
 
-VTable-ediotrs 库中目前提供了三种编辑器类型，包括文本输入框、日期选择器、下拉列表等。你可以根据需要选择合适的编辑器。(下拉列表编辑器效果还在优化中，目前比较丑哈)
+VTable-ediotrs 库中目前提供了四种编辑器类型，包括文本输入框、多行文本输入框、日期选择器、下拉列表等。你可以根据需要选择合适的编辑器。(下拉列表编辑器效果还在优化中，目前比较丑哈)
 
 以下是创建编辑器的示例代码：
 
 ```javascript
 const inputEditor = new InputEditor();
+const textAreaEditor = new TextAreaEditor();
 const dateInputEditor = new DateInputEditor();
 const listEditor = new ListEditor({ values: ['女', '男'] });
 ```
 
-在上面的示例中，我们创建了一个文本输入框编辑器(`InputEditor`)、一个日期选择器编辑器(`DateInputEditor`)和一个下拉列表编辑器(`ListEditor`)。你可以根据实际需求选择适合的编辑器类型。
+在上面的示例中，我们创建了一个文本输入框编辑器(`InputEditor`)、一个多行文本框编辑器(`TextAreaEditor`)、 一个日期选择器编辑器(`DateInputEditor`)和一个下拉列表编辑器(`ListEditor`)。你可以根据实际需求选择适合的编辑器类型。
 
 ## 3. 注册并使用编辑器：
 
@@ -45,6 +59,7 @@ const listEditor = new ListEditor({ values: ['女', '男'] });
 // 注册编辑器到VTable
 VTable.register.editor('name-editor', inputEditor);
 VTable.register.editor('name-editor2', inputEditor2);
+VTable.register.editor('textArea-editor', textAreaEditor);
 VTable.register.editor('number-editor', numberEditor);
 VTable.register.editor('date-editor', dateInputEditor);
 VTable.register.editor('list-editor', listEditor);
@@ -62,6 +77,7 @@ columns: [
   } },
   { title: 'age', field: 'age', editor: 'number-editor' },
   { title: 'gender', field: 'gender', editor: 'list-editor' },
+   { title: 'address', field: 'address', editor: 'textArea-editor' },
   { title: 'birthday', field: 'birthDate', editor: 'date-editor' },
 ]
 ```
@@ -250,7 +266,7 @@ tableInstance.records;
 ```ts
 interface ListTableConstructorOptions {
   /** 编辑触发时机 双击事件  单击事件 api手动开启编辑。默认为双击'doubleclick' */
-  editCellTrigger?: 'doubleclick' | 'click' | 'api';
+  editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
   // ...
 }
 ```
@@ -259,33 +275,46 @@ interface ListTableConstructorOptions {
 
 需要校验的情况 请自定义编辑器实现校验函数`validateValue`
 
-如未定义该接口则编辑值值默认不做校验，接口返回 false，校验失败则保留在编辑状态。
+如未定义该接口则编辑值值默认不做校验，接口返回 false，校验失败则保留在编辑状态;
+
+若需要实现异步校验，可以返回一个 Promise 对象，该 Promise 对象在校验成功时以真值解析，校验失败时以假值解析。
 
 ## 9. 相关 api
 
 ```ts
 interface ListTableAPI {
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
-  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
   /**
    * 批量更新多个单元格的数据
    * @param col 粘贴数据的起始列号
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
+   * @param workOnEditableCell 是否仅允许更改可编辑单元格的值，默认为 false
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][]);
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false);
   /** 获取单元格配置的编辑器 */
   getEditor: (col: number, row: number) => IEditor;
   /** 开启单元格编辑 */
-  startEditCell: (col?: number, row?: number) => void;
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
   /** 结束编辑 */
   completeEditCell: () => void;
   // ...
 }
 ```
 
-## 表头编辑
+## 基本表格表头编辑注意事项
 
 基本表格可支持编辑表头显示标题 title，在全局或者在 column 中配置`headerEditor`来开启，具体用法同`editor`。
+
+## 透视表编辑注意事项
+
+**透视表的表头编辑会对应修改 records 中的 field 名称；**
+
+**在透视表中，当body中某个单元格对应的源数据records只有一条的时候当编辑后 会对应修改record的字段值。但是当单元格对应聚合了多条records数据的指标值时，是不支持对应修改到源数据的。**
+
+具体单元格对应的源数据可以通过接口`getCellOriginRecord`来获取。
+
+## 总结
 
 通过以上步骤，你可以创建一个具有编辑功能的表格，并根据业务需求选择合适的编辑器类型、自定义编辑器、监听编辑事件以及获取编辑后的数据。这样，用户就可以方便地编辑表格中的数据，并且你可以对编辑后的数据进行相应的处理。

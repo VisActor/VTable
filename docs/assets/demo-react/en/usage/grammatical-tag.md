@@ -14,6 +14,7 @@ Use syntax tags to assemble a complete table configuration and generate tables i
 - ListColumn: List column, consistent with the definition of columns in option [api](../../option/ListTable-columns-text#cellType)
 
 ## code demo
+
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
@@ -21,10 +22,10 @@ const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(
   <ReactVTable.ListTable records={records} height={'500px'}>
-    <ReactVTable.ListColumn field={'0'} caption={'name'} />
-    <ReactVTable.ListColumn field={'1'} caption={'age'} />
-    <ReactVTable.ListColumn field={'2'} caption={'gender'} />
-    <ReactVTable.ListColumn field={'3'} caption={'hobby'} />
+    <ReactVTable.ListColumn field={'0'} title={'name'} />
+    <ReactVTable.ListColumn field={'1'} title={'age'} />
+    <ReactVTable.ListColumn field={'2'} title={'gender'} />
+    <ReactVTable.ListColumn field={'3'} title={'hobby'} />
   </ReactVTable.ListTable>
 );
 

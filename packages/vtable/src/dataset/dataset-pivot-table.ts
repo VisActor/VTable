@@ -411,8 +411,15 @@ export class DatasetForPivotTable {
     return agg
       ? agg
       : {
+          key: '',
           className: '',
           push() {
+            // do nothing
+          },
+          deleteRecord() {
+            // do nothing
+          },
+          updateRecord() {
             // do nothing
           },
           recalculate() {
@@ -439,39 +446,39 @@ export class DatasetForPivotTable {
     const that = this;
     if (!this.sorted) {
       this.sorted = true;
-      const getValue = function (rowKey: any, colKey: any) {
-        return that.getAggregator(rowKey, colKey, '').value();
-      };
+      // const getValue = function (rowKey: any, colKey: any) {
+      //   return that.getAggregator(rowKey, colKey, '').value();
+      // };
 
-      switch (this.rowOrder) {
-        case 'value_a_to_z':
-          this.rowKeys.sort(function (a, b) {
-            return naturalSort(getValue(a, []), getValue(b, []));
-          });
-          break;
-        case 'value_z_to_a':
-          this.rowKeys.sort(function (a, b) {
-            return -naturalSort(getValue(a, []), getValue(b, []));
-          });
-          break;
-        default:
-          this.rowKeys.sort(this.arrSort(this.rows, true));
-      }
-      switch (this.colOrder) {
-        case 'value_a_to_z':
-          this.colKeys.sort(function (a, b) {
-            return naturalSort(getValue([], a), getValue([], b));
-          });
-          break;
-        case 'value_z_to_a':
-          this.colKeys.sort(function (a, b) {
-            return -naturalSort(getValue([], a), getValue([], b));
-          });
-          break;
-        default:
-          const sortfun = this.arrSort(this.columns, false);
-          this.colKeys.sort(sortfun);
-      }
+      // switch (this.rowOrder) {
+      //   case 'value_a_to_z':
+      //     this.rowKeys.sort(function (a, b) {
+      //       return naturalSort(getValue(a, []), getValue(b, []));
+      //     });
+      //     break;
+      //   case 'value_z_to_a':
+      //     this.rowKeys.sort(function (a, b) {
+      //       return -naturalSort(getValue(a, []), getValue(b, []));
+      //     });
+      //     break;
+      //   default:
+      this.rowKeys.sort(this.arrSort(this.rows, true));
+      // }
+      // switch (this.colOrder) {
+      //   case 'value_a_to_z':
+      //     this.colKeys.sort(function (a, b) {
+      //       return naturalSort(getValue([], a), getValue([], b));
+      //     });
+      //     break;
+      //   case 'value_z_to_a':
+      //     this.colKeys.sort(function (a, b) {
+      //       return -naturalSort(getValue([], a), getValue([], b));
+      //     });
+      //     break;
+      //   default:
+      const sortfun = this.arrSort(this.columns, false);
+      this.colKeys.sort(sortfun);
+      // }
     }
   }
   /**
@@ -530,9 +537,9 @@ export class DatasetForPivotTable {
             bChanged = b.slice(0, sorter.fieldIndex + 1);
             bChanged.push(isRow ? that.totals?.row?.subTotalLabel : that.totals?.column?.subTotalLabel);
           }
-          comparison = sorter.func(aChanged, bChanged);
+          comparison = sorter.func(aChanged, bChanged, sorter.sortRule?.sortType);
         } else {
-          comparison = sorter.func(a[sorter.fieldIndex], b[sorter.fieldIndex]);
+          comparison = sorter.func(a[sorter.fieldIndex], b[sorter.fieldIndex], sorter.sortRule?.sortType);
         }
         if (comparison !== 0) {
           return comparison * (sorter.sortRule?.sortType === SortType.DESC ? -1 : 1);
@@ -550,7 +557,7 @@ export class DatasetForPivotTable {
     const that = this;
 
     if ((<SortByIndicatorRule>sortRule).sortByIndicator) {
-      return (a: string[], b: string[]) => {
+      return (a: string[], b: string[], sortType?: SortType) => {
         /**
          * 根据rowKey和colKey获取tree上对应的聚合值
          * @param rowKey
@@ -578,12 +585,14 @@ export class DatasetForPivotTable {
         if (isSortRow) {
           return naturalSort(
             getValue(a, (<SortByIndicatorRule>sortRule).query),
-            getValue(b, (<SortByIndicatorRule>sortRule).query)
+            getValue(b, (<SortByIndicatorRule>sortRule).query),
+            sortType
           );
         }
         return naturalSort(
           getValue((<SortByIndicatorRule>sortRule).query, a),
-          getValue((<SortByIndicatorRule>sortRule).query, b)
+          getValue((<SortByIndicatorRule>sortRule).query, b),
+          sortType
         );
       };
     } else if ((<SortByRule>sortRule).sortBy) {

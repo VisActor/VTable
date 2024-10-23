@@ -252,6 +252,11 @@ export function createTable() {
               right: 20
             }
           }
+
+          // {
+          //   orient: 'right',
+          //   visible: false,
+          // }
         ],
         theme: {
           // axis: {
@@ -9428,6 +9433,7 @@ export function createTable() {
   };
   const option: VTable.PivotChartConstructorOptions = {
     columnTree,
+    emptyTip: true,
     rowTree,
     rows,
     columns,

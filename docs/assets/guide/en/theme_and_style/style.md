@@ -113,7 +113,8 @@ Contains the following configuration items:
 
 ### Text adsorption effect
 
-`textStick`: Set whether the text of the cell has an adsorption fruit \[Dynamically adjust the position of the cell content when scrolling]
+`textStick`: Set whether the text of the cell has an adsorption fruit \[Dynamically adjust the position of the cell content when scrolling].Can be set to true to enable, or set to 'horizontal' or 'vertical' to specify in which direction to snap only.
+`textStickBaseOnAlign`: When the cell text has an adsorption effect [the text can dynamically adjust its position when scrolling], the basis for adsorption is the horizontal alignment of the cell. For example, when `textStickBaseOnAlign` is `true` and `textAlign` is `'center'`, the text will be adsorbed to the horizontal center of the cell; otherwise, it will be adsorbed to the left or right edge of the cell (depending on the scroll position) )
 
 ### Cell Tag
 
@@ -127,7 +128,13 @@ Contains the following configuration items:
 
 ### Maximum number of rows setting
 
-- `lineamp`: Set the maximum number of rows of the unit, you can set number or'auto ', set it to'auto', it will be automatically calculated
+- `lineClamp`: Set the maximum number of rows of the unit, you can set number or'auto ', set it to'auto', it will be automatically calculated
+
+### Cell padding
+
+- `padding`: defines the padding of the cell
+
+The width and height of a cell consists of two parts: padding and content.
 
 Through the above introduction, you have mastered the use of style in VTable, and then you can create a table with a personalized style according to your needs.
 

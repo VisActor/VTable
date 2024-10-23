@@ -24,7 +24,10 @@ export interface IBasicHeaderIndicator {
   // sparklineSpec?: SparklineSpec | ((arg0: CustomRenderFunctionArg) => SparklineSpec);
 
   dropDownMenu?: MenuListItem[]; // 针对单独指标上配置下拉按钮
-  showSort?: boolean; // 否显示排序icon
+  /** sort排序规则 */
+  sort?: boolean;
+  /** 显示sort排序icon。为了仅仅显示图标，无排序逻辑 */
+  showSort?: boolean;
   disableColumnResize?: boolean; // 是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
 
   /** 指标名称表头自定义渲染内容定义 */
@@ -39,6 +42,8 @@ export interface IBasicHeaderIndicator {
   disableHeaderHover?: boolean;
   /** 该指标表头单元格不支持选中 */
   disableHeaderSelect?: boolean;
+  /** 设置表头编辑器 */
+  headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 }
 
 export interface IBasicColumnIndicator {

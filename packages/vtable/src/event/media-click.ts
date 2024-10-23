@@ -12,6 +12,11 @@ export function bindMediaClick(table: BaseTableAPI): void {
     table.on(TABLE_EVENT_TYPE.CLICK_CELL, (e: MousePointerCellEvent) => {
       //如果目前是在某个icon上，如收起展开按钮 则不进行其他点击逻辑
       const { col, row } = e;
+
+      if (e.target.type === 'image' && (e.target as any).role && (e.target as any).role.startsWith('icon')) {
+        // click icon
+        return;
+      }
       let cellType;
       if (table.internalProps.layoutMap.isHeader(col, row)) {
         cellType = table.isPivotTable()
@@ -58,7 +63,10 @@ export function bindMediaClick(table: BaseTableAPI): void {
         } else {
           return;
         }
-        window.open(url);
+
+        const linkTarget = (columnDefine as LinkColumnDefine).linkTarget;
+        const linkWindowFeatures = (columnDefine as LinkColumnDefine).linkWindowFeatures;
+        window.open(url, linkTarget, linkWindowFeatures);
       } else if (cellType === 'image') {
         // 点击图片，打开放大图片
         const { clickToPreview } = columnDefine as IImageColumnBodyDefine;

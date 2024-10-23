@@ -1,8 +1,11 @@
 import { getStyleTheme } from '../../core/tableHelper';
+import { getTargetCell } from '../../event/util';
 import { Group } from '../graphic/group';
 import { createColGroup } from '../group-creater/column';
 import type { Scenegraph } from '../scenegraph';
 import { getProp } from '../utils/get-prop';
+import { table } from 'console';
+import { updateReactComponentContainer } from './frozen-react';
 
 export function dealFrozen(scene: Scenegraph) {
   if (scene.table.frozenColCount > scene.table.rowHeaderLevelCount) {
@@ -17,6 +20,9 @@ export function dealFrozen(scene: Scenegraph) {
     }
   } else if (scene.table.frozenColCount < scene.table.rowHeaderLevelCount) {
     // move columnGroup from rowHeaderGroup into bodyGroup(from cornerHeaderGroup into colHeaderGroup)
+    scene.bodyGroup.setAttribute('height', scene.rowHeaderGroup.attribute.height);
+    scene.bodyGroup.setAttribute('y', scene.rowHeaderGroup.attribute.y);
+    scene.colHeaderGroup.setAttribute('height', scene.cornerHeaderGroup.attribute.height);
     for (let i = 0; i < scene.table.rowHeaderLevelCount - scene.table.frozenColCount; i++) {
       moveColumnFromRowHeaderToBody(scene);
       moveColumnFromCornerHeaderToColHeader(scene);
@@ -31,6 +37,11 @@ export function dealFrozen(scene: Scenegraph) {
 
   if (!scene.isPivot && !(scene.table as any).transpose) {
     scene.component.setFrozenColumnShadow(scene.table.frozenColCount - 1);
+    scene.component.setRightFrozenColumnShadow(scene.table.colCount - scene.table.rightFrozenColCount);
+  } else if (scene.table.options.frozenColCount) {
+    scene.component.setFrozenColumnShadow(scene.table.frozenColCount - 1);
+  } else if (scene.table.options.frozenColCount) {
+    scene.component.setRightFrozenColumnShadow(scene.table.colCount - scene.table.rightFrozenColCount);
   }
   scene.hasFrozen = true;
 
@@ -42,6 +53,9 @@ export function dealFrozen(scene: Scenegraph) {
 export function resetFrozen(scene: Scenegraph) {
   if (scene.frozenColCount > scene.table.frozenColCount) {
     // move columnGroup from rowHeaderGroup into bodyGroup(from cornerHeaderGroup into colHeaderGroup)
+    scene.bodyGroup.setAttribute('height', scene.rowHeaderGroup.attribute.height);
+    scene.bodyGroup.setAttribute('y', scene.rowHeaderGroup.attribute.y);
+    scene.colHeaderGroup.setAttribute('height', scene.cornerHeaderGroup.attribute.height);
     for (let i = 0; i < scene.frozenColCount - scene.table.frozenColCount; i++) {
       moveColumnFromRowHeaderToBody(scene);
       moveColumnFromCornerHeaderToColHeader(scene);
@@ -59,15 +73,18 @@ export function resetFrozen(scene: Scenegraph) {
     }
   }
 
+  updateReactComponentContainer(scene);
+
   scene.deleteAllSelectBorder();
   scene.table.stateManager.select.ranges.forEach(range => {
-    scene.updateCellSelectBorder(range.start.col, range.start.row, range.end.col, range.end.row);
+    scene.updateCellSelectBorder(range);
   });
 
   // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
   scene.frozenColCount = scene.table.frozenColCount;
   scene.frozenRowCount = scene.colHeaderGroup.firstChild?.childrenCount ?? 0;
-  scene.proxy.colStart = scene.table.frozenColCount;
+  //   scene.proxy.colStart = scene.table.frozenColCount;
+  scene.proxy.colStart = (scene.bodyGroup.firstChild as any)?.col ?? scene.table.frozenColCount;
 
   scene.bodyGroup.setAttribute('x', scene.rowHeaderGroup.attribute.width);
   scene.colHeaderGroup.setAttribute('x', scene.cornerHeaderGroup.attribute.width);
@@ -77,6 +94,11 @@ export function resetFrozen(scene: Scenegraph) {
 
   if (!scene.isPivot && !(scene.table as any).transpose) {
     scene.component.setFrozenColumnShadow(scene.table.frozenColCount - 1);
+    scene.component.setRightFrozenColumnShadow(scene.table.colCount - scene.table.rightFrozenColCount);
+  } else if (scene.table.options.frozenColCount) {
+    scene.component.setFrozenColumnShadow(scene.table.frozenColCount - 1);
+  } else if (scene.table.options.rightFrozenColCount) {
+    scene.component.setRightFrozenColumnShadow(scene.table.colCount - scene.table.rightFrozenColCount);
   }
   scene.hasFrozen = true;
 }

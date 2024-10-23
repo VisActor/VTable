@@ -1,0 +1,164 @@
+{
+  "menu": "example",
+  "children": [
+    {
+      "path": "usage",
+      "title": {
+        "zh": "用法",
+        "en": "usage"
+      },
+      "children": [
+        {
+          "path": "option",
+          "title": {
+            "zh": "使用完整option",
+            "en": "Using Complete Option"
+          }
+        },
+        {
+          "path": "option-record",
+          "title": {
+            "zh": "使用option&record",
+            "en": "Using Option & Record"
+          }
+        },
+        {
+          "path": "grammatical-tag",
+          "title": {
+            "zh": "使用语义化标签",
+            "en": "Using Semantic Tags"
+          }
+        },
+        {
+          "path": "event",
+          "title": {
+            "zh": "使用事件监听",
+            "en": "Using Event Listeners"
+          }
+        }
+      ]
+    },
+    {
+      "path": "grammatical-tag",
+      "title": {
+        "zh": "语义化标签",
+        "en": "grammatical tag"
+      },
+      "children": [
+        {
+          "path": "list-table",
+          "title": {
+            "zh": "基础表格",
+            "en": "list table"
+          }
+        },
+        {
+          "path": "pivot-table",
+          "title": {
+            "zh": "透视表",
+            "en": "pivot table"
+          }
+        },
+        {
+          "path": "pivot-chart",
+          "title": {
+            "zh": "透视图",
+            "en": "pivot chart"
+          }
+        }
+      ]
+    },
+    {
+      "path": "component",
+      "title": {
+        "zh": "组件",
+        "en": "component"
+      },
+      "children": [
+        {
+          "path": "menu",
+          "title": {
+            "zh": "菜单",
+            "en": "menu"
+          }
+        },
+        {
+          "path": "tooltip",
+          "title": {
+            "zh": "提示信息",
+            "en": "tooltip"
+          }
+        }
+      ]
+    },
+    {
+      "path": "custom-layout",
+      "title": {
+        "zh": "自定义布局",
+        "en": "custom layout"
+      },
+      "children": [
+        {
+          "path": "cell-custom-component",
+          "title": {
+            "zh": "单元格自定义组件",
+            "en": "cell custom component"
+          }
+        }
+      ]
+    },
+    {
+      "path": "edit-data",
+      "title": {
+        "zh": "编辑",
+        "en": "edit data"
+      },
+      "children": [
+        {
+          "path": "edit-cell",
+          "title": {
+            "zh": "单元格编辑",
+            "en": "edit cell"
+          }
+        },
+        {
+          "path": "arco-select-editor",
+          "title": {
+            "zh": "ArcoDesign列表选择器",
+            "en": "Arco Design select editor"
+          }
+        }
+      ]
+    },
+    {
+      "path": "compilation",
+      "title": {
+        "zh": "更多示例",
+        "en": "compilation"
+      },
+      "children": [
+        {
+          "path": "list-table-integrated-chart",
+          "title": {
+            "zh": "基本表格集成图表",
+            "en": "List table integrated chart"
+          }
+        },
+        {
+          "path": "pivot-table-dimension",
+          "title": {
+            "zh": "透视表角头显示维度名称",
+            "en": "Display dimension names in pivot table headers"
+          }
+        },
+        {
+          "path": "pivot-chart-pie",
+          "title": {
+            "zh": "透视组合图(饼图)",
+            "en": "pivot chart pie"
+          }
+        }
+      ]
+    }
+  ]
+}

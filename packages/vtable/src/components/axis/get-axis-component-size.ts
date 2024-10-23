@@ -1,8 +1,10 @@
-import { isArray, merge } from '@visactor/vutils';
+import { isArray, isString, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
 import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE, commonAxis } from './get-axis-attributes';
 
+export type ComputeAxisComponentWidth = (config: ICellAxisOption, table: BaseTableAPI) => number;
+export type ComputeAxisComponentHeight = (config: ICellAxisOption, table: BaseTableAPI) => number;
 /**
  * @description: compuational vertical axis width
  * @param {ICellAxisOption} config
@@ -69,7 +71,8 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
 
   // title
   let titleWidth = 0;
-  if (attribute.title.visible && attribute.title.text) {
+  // align with vrender-component, use isString()
+  if (attribute.title.visible && isString(attribute.title.text)) {
     const { width, height } = table.measureText(attribute.title.text, {
       fontSize: attribute.title?.style?.fontSize ?? DEFAULT_TEXT_FONT_SIZE,
       fontWeight: attribute.title?.style?.fontWeight ?? 'normal',

@@ -4,9 +4,26 @@ import type { CellType, IVTable } from '../util/type';
 import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './style';
 import { updateCell, renderChart, graphicUtil } from '@visactor/vtable';
 import { isArray } from '@visactor/vutils';
-import type { IRowSeriesNumber } from '@visactor/vtable/src/ts-types';
+import type { ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/src/ts-types';
+import { getHierarchyOffset } from '../util/indent';
+import { isPromise } from '../util/promise';
 
-export async function exportVTableToExcel(tableInstance: IVTable) {
+export type CellInfo = {
+  cellType: string;
+  cellValue: string;
+  table: IVTable;
+  col: number;
+  row: number;
+};
+
+export type ExportVTableToExcelOptions = {
+  ignoreIcon?: boolean;
+  formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
+  formatExcelJSCell?: (cellInfo: CellInfo, cellInExcelJS: ExcelJS.Cell) => ExcelJS.Cell;
+  excelJSWorksheetCallback?: (worksheet: ExcelJS.Worksheet) => void;
+};
+
+export async function exportVTableToExcel(tableInstance: IVTable, options?: ExportVTableToExcelOptions) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
   worksheet.properties.defaultRowHeight = 40;
@@ -30,7 +47,7 @@ export async function exportVTableToExcel(tableInstance: IVTable) {
         worksheetRow.height = rowHeight;
       }
 
-      addCell(col, row, tableInstance, worksheet, workbook);
+      await addCell(col, row, tableInstance, worksheet, workbook, options);
 
       const cellRange = tableInstance.getCellRange(col, row);
       if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
@@ -76,27 +93,39 @@ export async function exportVTableToExcel(tableInstance: IVTable) {
   // not support bottom&right frozen
   worksheet.views = frozenView;
 
+  if (options?.excelJSWorksheetCallback) {
+    options.excelJSWorksheetCallback(worksheet);
+  }
+
   const buffer = await workbook.xlsx.writeBuffer();
   return buffer;
 }
 
-function addCell(
+async function addCell(
   col: number,
   row: number,
   tableInstance: IVTable,
   worksheet: ExcelJS.Worksheet,
-  workbook: ExcelJS.Workbook
+  workbook: ExcelJS.Workbook,
+  options?: ExportVTableToExcelOptions
 ) {
   const { layoutMap } = tableInstance.internalProps;
   const cellType = tableInstance.getCellType(col, row);
-  const cellValue = tableInstance.getCellValue(col, row);
+  const rawRecord = tableInstance.getCellRawRecord(col, row);
+  let cellValue = (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row);
+  if (isPromise(cellValue)) {
+    cellValue = await cellValue;
+  }
+
   const cellStyle = tableInstance.getCellStyle(col, row);
 
   const cellLocation = tableInstance.getCellLocation(col, row);
   const define =
     cellLocation !== 'body' ? tableInstance.getHeaderDefine(col, row) : tableInstance.getBodyColumnDefine(col, row);
   const mayHaveIcon =
-    cellLocation !== 'body' ? true : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!define?.tree;
+    cellLocation !== 'body'
+      ? true
+      : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
   let icons;
   if (mayHaveIcon) {
     icons = tableInstance.getCellIcons(col, row);
@@ -104,20 +133,43 @@ function addCell(
   let customRender;
   let customLayout;
   if (cellLocation !== 'body') {
-    customRender = define?.headerCustomRender;
-    customLayout = define?.headerCustomLayout;
+    customRender = (define as ColumnDefine)?.headerCustomRender;
+    customLayout = (define as ColumnDefine)?.headerCustomLayout;
   } else {
-    customRender = define?.customRender || tableInstance.customRender;
-    customLayout = define?.customLayout;
+    customRender = (define as ColumnDefine)?.customRender || tableInstance.customRender;
+    customLayout = (define as ColumnDefine)?.customLayout;
   }
 
+  if (options?.formatExportOutput) {
+    const cellInfo = { cellType, cellValue, table: tableInstance, col, row };
+    const formattedValue = options.formatExportOutput(cellInfo);
+    if (formattedValue !== undefined) {
+      let cell = worksheet.getCell(encodeCellAddress(col, row));
+      cell.value = formattedValue;
+      cell.font = getCellFont(cellStyle, cellType);
+      cell.fill = getCellFill(cellStyle);
+      cell.border = getCellBorder(cellStyle);
+      const offset = getHierarchyOffset(col, row, tableInstance as any);
+      cell.alignment = getCellAlignment(cellStyle, Math.ceil(offset / cell.font.size));
+
+      if (cell && options?.formatExcelJSCell) {
+        const formatedCell = options.formatExcelJSCell({ cellType, cellValue, table: tableInstance, col, row }, cell);
+        if (formatedCell) {
+          cell = formatedCell;
+        }
+      }
+      return cell;
+    }
+  }
+
+  let cell;
   if (
     cellType === 'image' ||
     cellType === 'video' ||
     cellType === 'progressbar' ||
     cellType === 'sparkline' ||
     layoutMap.isAxisCell(col, row) ||
-    (isArray(icons) && icons.length) ||
+    (!options?.ignoreIcon && isArray(icons) && icons.length) ||
     customRender ||
     customLayout
   ) {
@@ -133,12 +185,13 @@ function addCell(
       // ext: { width: tableInstance.getColWidth(col), height: tableInstance.getRowHeight(row) }
     });
   } else if (cellType === 'text' || cellType === 'link') {
-    const cell = worksheet.getCell(encodeCellAddress(col, row));
+    cell = worksheet.getCell(encodeCellAddress(col, row));
     cell.value = getCellValue(cellValue, cellType);
     cell.font = getCellFont(cellStyle, cellType);
     cell.fill = getCellFill(cellStyle);
     cell.border = getCellBorder(cellStyle);
-    cell.alignment = getCellAlignment(cellStyle);
+    const offset = getHierarchyOffset(col, row, tableInstance as any);
+    cell.alignment = getCellAlignment(cellStyle, Math.ceil(offset / cell.font.size));
   } else if (cellType === 'chart') {
     const cellGroup = tableInstance.scenegraph.getCell(col, row);
     renderChart(cellGroup.firstChild as any); // render chart first
@@ -155,6 +208,14 @@ function addCell(
     });
     tableInstance.scenegraph.updateNextFrame(); // rerender chart to avoid display error
   }
+
+  if (cell && options?.formatExcelJSCell) {
+    const formatedCell = options.formatExcelJSCell({ cellType, cellValue, table: tableInstance, col, row }, cell);
+    if (formatedCell) {
+      cell = formatedCell;
+    }
+  }
+  return cell;
 }
 
 function getCellValue(cellValue: string, cellType: CellType) {
@@ -173,14 +234,18 @@ function exportCellImg(col: number, row: number, tableInstance: IVTable) {
   let needRemove = false;
   if (cellGroup.role === 'empty') {
     cellGroup = updateCell(col, row, tableInstance as any, true);
+    cellGroup.setStage(tableInstance.scenegraph.stage);
     needRemove = true;
+
+    // fix dirtyBounds auto update error in drawGraphicToCanvas()
+    cellGroup.stage.dirtyBounds.set(-Infinity, -Infinity, Infinity, Infinity);
   }
   const oldStroke = cellGroup.attribute.stroke;
   cellGroup.attribute.stroke = false;
   const canvas = graphicUtil.drawGraphicToCanvas(cellGroup as any, tableInstance.scenegraph.stage) as HTMLCanvasElement;
   cellGroup.attribute.stroke = oldStroke;
   if (needRemove) {
-    cellGroup.parent.removeChild(cellGroup);
+    cellGroup.parent?.removeChild(cellGroup);
   }
   return canvas.toDataURL();
 }

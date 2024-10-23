@@ -51,7 +51,7 @@ The currently supported data formats are, taking the sales of large supermarkets
 
 ## columnTree(Array)
 
-List header tree, type:`IDimensionHeaderNode|IIndicatorHeaderNode[]`. Among them, IDimensionHeaderNode refers to the dimension value node of the dimension non-indicator, and IIndicatorHeaderNode refers to the indicator name node.
+List header tree, type:`(IDimensionHeaderNode|IIndicatorHeaderNode)[]`. Among them, IDimensionHeaderNode refers to the dimension value node of the dimension non-indicator, and IIndicatorHeaderNode refers to the indicator name node.
 
 ** The specific configuration items of IDimensionHeaderNode are as follows:**
 
@@ -63,10 +63,12 @@ export interface IDimensionHeaderNode {
   dimensionKey: string | number;
   /** dimension member value */
   value: string;
-  /** Subdimension tree structure under dimension members */
-  children?: IDimensionHeaderNode|IIndicatorHeaderNode[];
+  /** Subdimension tree structure under dimension members. */
+  children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[] ;
   /** The collapsed state is used with the tree structure display. Note: only valid in rowTree */
   hierarchyState?: HierarchyState;
+  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
+  levelSpan?: number;
 }
 ```
 
@@ -82,6 +84,8 @@ export interface IIndicatorHeaderNode {
    * Indicator names such as: "sales", "for example", correspond to the value displayed in the cell. You can leave it blank, if you don’t fill it in, take the value from the corresponding configuration of the indicators and display it
    */
   value?: string;
+  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
+  levelSpan?: number;
 }
 ```
 
@@ -146,10 +150,21 @@ Adjust the effective range of column width, configurable items:
 - `indicatorGroup`: Adjust the width of all indicator columns under the same parent dimension
 - `all`: All column widths are adjusted
 
+## rowResizeType(string)
+
+Adjust the effective range of row height, configurable items:
+
+- `row`: adjust the row height only adjust the current row
+- `indicator`: rows corresponding to the same indicator will be adjusted when the row height is adjusted
+- `indicatorGroup`: Adjust the height of all indicator rows under the same parent dimension
+- `all`: All row heights are adjusted
+
 ## renderChartAsync(boolean)
+
 Whether to enable asynchronous rendering of charts
 
 ## renderChartAsyncBatchCount(number)
+
 Turn on asynchronous rendering of charts. The number of progressively rendered charts in each batch is recommended to be 5-10. The details can be adjusted depending on the overall effect. Default value is 5.
 
 {{ use: common-option-secondary(

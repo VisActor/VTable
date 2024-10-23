@@ -47,7 +47,7 @@ export function handleTextStick(table: BaseTableAPI) {
     }
     [colStart, colEnd].forEach((col: number) => {
       const style = table._getCellStyle(col, row);
-      if (style?.textStick) {
+      if (style?.textStick && style?.textStick !== 'vertical') {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell Horizontal
         adjustCellContentHorizontalLayout(
@@ -69,7 +69,11 @@ export function handleTextStick(table: BaseTableAPI) {
     }
     [rowStart, rowEnd].forEach((row: number) => {
       const style = table._getCellStyle(col, row);
-      if (style?.textStick && (table.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'tree') {
+      if (
+        style?.textStick &&
+        (table.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'tree' &&
+        style?.textStick !== 'horizontal'
+      ) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
         adjustCellContentVerticalLayout(
@@ -91,7 +95,7 @@ export function handleTextStick(table: BaseTableAPI) {
     }
     [rowStart, rowEnd].forEach((row: number) => {
       const style = table._getCellStyle(col, row);
-      if (style?.textStick) {
+      if (style?.textStick && style?.textStick !== 'horizontal') {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
         adjustCellContentVerticalLayout(
@@ -105,13 +109,13 @@ export function handleTextStick(table: BaseTableAPI) {
       }
     });
   }
-  for (let row = rowStart; row < rowEnd; row++) {
+  for (let row = rowStart; row <= rowEnd; row++) {
     if (colEnd < colStart) {
       break;
     }
     [colStart, colEnd].forEach((col: number) => {
       const style = table._getCellStyle(col, row);
-      if (table._getCellStyle(col, row)?.textStick) {
+      if (style?.textStick && style?.textStick !== 'vertical') {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell Horizontal
         adjustCellContentHorizontalLayout(
@@ -195,7 +199,8 @@ function dealVertical(
     if (cellTop < minTop || cellBottom > maxTop) {
       const visibleCellTop = Math.max(cellTop, minTop);
       const visibleCellBottom = Math.min(cellBottom, maxTop);
-      const delta = graphic.globalTransMatrix.f - (visibleCellBottom + visibleCellTop) / 2;
+      const delta =
+        graphic.globalTransMatrix.f - (visibleCellBottom + visibleCellTop) / 2 + graphic.AABBBounds.height() / 2;
       !changedCells.has(`${cellGroup.col}-${cellGroup.row}`) &&
         changedCells.set(`${cellGroup.col}-${cellGroup.row}`, {
           col: cellGroup.col,
@@ -361,6 +366,11 @@ export function checkHaveTextStick(table: BaseTableAPI) {
     if (column && (column.style as ITextStyleOption)?.textStick) {
       return true;
     }
+  }
+  const themeStick =
+    table.theme.headerStyle.textStick || table.theme.rowHeaderStyle.textStick || table.theme.bodyStyle.textStick;
+  if (themeStick) {
+    return true;
   }
   return false;
 }

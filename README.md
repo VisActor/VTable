@@ -32,7 +32,7 @@ VTable is not just a high-performance multidimensional data analysis table, but 
 
 <div align="center">
 
-English| [简体中文](./README.zh-CN.md)
+English | [简体中文](./README.zh-CN.md) | [日本語](./README.ja-JP.md)
 
 </div>
 
@@ -57,7 +57,13 @@ The core capabilities are as follows:
 This repository includes the following packages:
 
 1. packages/vtable: The core code repository of VTable
-2. docs: Include VTable site tutorials, demos,apis and options, and also contains all Chinese and English documents.
+2. packages/vtable-gantt: Gantt chart component code
+3. packages/vtable-editors: Table editor component code
+4. packages/vtable-export: Table export tool code
+5. packages/vtable-search: Table search tool code
+6. packages/react-vtable: React version of the table component
+7. packages/vue-vtable: Vue version of the table component
+8. docs: Include VTable site tutorials, demos,apis and options, and also contains all Chinese and English documents.
 
 # Usage
 
@@ -182,7 +188,7 @@ $ rush docs
 
 # 🤝 Contribution
 
-If you would like to contribute, please read the [Code of Conduct ](./CODE_OF_CONDUCT.md) and [ Guide](./CONTRIBUTING.zh-CN.md) first。
+If you would like to contribute, please read the [Code of Conduct ](./CODE_OF_CONDUCT.md) and [ Guide](./CONTRIBUTING.md) first。
 
 Small streams converge to make great rivers and seas!
 

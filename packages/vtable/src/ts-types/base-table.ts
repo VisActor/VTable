@@ -1,4 +1,4 @@
-import type { ITextSize } from '@visactor/vutils';
+import type { IBoundsLike, ITextSize } from '@visactor/vutils';
 import type {
   RectProps,
   MaybePromiseOrUndefined,
@@ -65,7 +65,12 @@ import type {
   IListTableDataConfig,
   IRowSeriesNumber,
   ColumnSeriesNumber,
-  ColumnStyleOption
+  ColumnStyleOption,
+  WidthAdaptiveModeDef,
+  HeightAdaptiveModeDef,
+  ColumnInfo,
+  RowInfo,
+  CellAddressWithBound
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -88,6 +93,14 @@ import type { DiscreteTableLegend } from '../components/legend/discrete-legend/d
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
 import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
+import type { ReactCustomLayout } from '../components/react/react-custom-layout';
+import type { ISortedMapItem } from '../data/DataSource';
+import type { IAnimationAppear } from './animation/appear';
+import type { IEmptyTip } from './component/empty-tip';
+import type { EmptyTip } from '../components/empty-tip/empty-tip';
+import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
+import type { EditManeger } from '../edit/edit-manager';
+import type { TableAnimationManager } from '../core/animation';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -118,7 +131,9 @@ export interface IBaseTableProtected {
   // disableRowHeaderColumnResize?: boolean;
   // 列宽调整模式（全列调整；全列不可调整；仅表头单元格可调整；仅内容单元格可调整）
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  rowResizeMode?: 'all' | 'none' | 'header' | 'body';
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+  rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
   /** 拖拽表头移动位置 针对冻结部分的规则
@@ -149,6 +164,7 @@ export interface IBaseTableProtected {
   _colRangeWidthsMap: Map<string, number>; //存储指定列范围的总宽度
 
   _widthResizedColMap: Set<number>; //记录下被手动调整过列宽的列号
+  _heightResizedRowMap: Set<number>; //记录下被手动调整过行高的行号
 
   bodyHelper: BodyHelper;
   headerHelper: HeaderHelper;
@@ -185,9 +201,12 @@ export interface IBaseTableProtected {
   };
   /** 提示弹框的相关配置。消失时机：显示后鼠标移动到指定区域外或者进入新的单元格后自动消失*/
   tooltip: {
+    parentElement: HTMLElement;
     renderMode: 'html' | 'canvas';
     /** 代替原来hover:isShowTooltip配置 */
     isShowOverflowTextTooltip: boolean;
+    /** 缩略文字提示框 延迟消失时间 */
+    overflowTextTooltipDisappearDelay?: number;
     /** 弹框是否需要限定在表格区域内 */
     confine: boolean;
   };
@@ -200,6 +219,7 @@ export interface IBaseTableProtected {
 
   // headerRowHeight: number[] | number;//移到了BaseTable
   sortState: SortState | SortState[];
+  multipleSort?: boolean;
 
   dataSource: DataSource | CachedDataSource;
   records?: any;
@@ -207,6 +227,7 @@ export interface IBaseTableProtected {
   //重新思考逻辑：如果为false，行高按设置的rowHeight；如果设置为true，则按lineHeight及是否自动换行综合计算行高 2021.11.19 by：lff
 
   autoWrapText?: boolean;
+  enableLineBreak?: boolean;
 
   menuHandler: MenuHandler;
 
@@ -220,9 +241,12 @@ export interface IBaseTableProtected {
    */
   limitMinWidth?: number;
 
-  title?: Title;
-  legends?: DiscreteTableLegend | ContinueTableLegend;
+  limitMinHeight?: number;
 
+  title?: Title;
+  legends?: (DiscreteTableLegend | ContinueTableLegend)[];
+
+  emptyTip?: EmptyTip;
   //是否开启图表异步渲染
   renderChartAsync?: boolean;
   // // 开启图表异步渲染 每批次渐进渲染图表个数
@@ -236,6 +260,24 @@ export interface IBaseTableProtected {
    *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
    * */
   overscrollBehavior?: 'auto' | 'none';
+
+  modifiedViewBoxTransform?: boolean;
+  // react component container
+  bodyDomContainer?: HTMLElement;
+  headerDomContainer?: HTMLElement;
+  frozenBodyDomContainer?: HTMLElement;
+  frozenHeaderDomContainer?: HTMLElement;
+  rightFrozenBodyDomContainer?: HTMLElement;
+  rightFrozenHeaderDomContainer?: HTMLElement;
+  frozenBottomDomContainer?: HTMLElement;
+  bottomDomContainer?: HTMLElement;
+  rightFrozenBottomDomContainer?: HTMLElement;
+
+  // 已使用一行的高度填充所有行
+  useOneRowHeightFillAll?: boolean;
+
+  // 启用树形结构数据内的merge配置
+  enableTreeNodeMerge?: boolean;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -247,6 +289,7 @@ export interface BaseTableConstructorOptions {
    * 当前需要冻结的列数 基本表格生效
    */
   frozenColCount?: number;
+  frozenRowCount?: number;
   rightFrozenColCount?: number;
   bottomFrozenRowCount?: number;
 
@@ -268,6 +311,9 @@ export interface BaseTableConstructorOptions {
   defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
   /** 快捷键功能设置 */
   keyboardOptions?: TableKeyboardOptions;
+  excelOptions?: {
+    fillHandle?: boolean;
+  };
   /** 事件触发相关设置 */
   eventOptions?: TableEventOptions;
   /**
@@ -279,6 +325,7 @@ export interface BaseTableConstructorOptions {
    * 调整列宽 可操作范围。'all' | 'none' | 'header' | 'body'; 整列间隔线|禁止调整|只能在表头处间隔线|只能在body间隔线
    */
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  rowResizeMode?: 'all' | 'none' | 'header' | 'body';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
 
@@ -298,7 +345,7 @@ export interface BaseTableConstructorOptions {
   /** hover交互配置 */
   hover?: {
     /** hover交互响应模式：十字交叉 整列 整行 或者单个单元格 */
-    highlightMode: 'cross' | 'column' | 'row' | 'cell';
+    highlightMode?: 'cross' | 'column' | 'row' | 'cell';
     /** 不响应鼠标hover交互 */
     disableHover?: boolean;
     /** 单独设置表头不响应鼠标hover交互 */
@@ -308,12 +355,20 @@ export interface BaseTableConstructorOptions {
   };
   /** 选择单元格交互配置 */
   select?: {
+    /** 高亮范围模式：十字交叉 整列 整行 或者单个单元格。默认`cell` */
+    highlightMode?: 'cross' | 'column' | 'row' | 'cell';
     /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
     headerSelectMode?: 'inline' | 'cell';
     /** 不响应鼠标select交互 */
     disableSelect?: boolean;
     /** 单独设置表头不响应鼠标select交互 */
     disableHeaderSelect?: boolean;
+    /** 点击空白区域是否取消选中 */
+    blankAreaClickDeselect?: boolean;
+    /** 点击外部区域是否取消选中 */
+    outsideClickDeselect?: boolean; //
+    /**  禁止拖拽框选 */
+    disableDragSelect?: boolean;
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
@@ -328,10 +383,13 @@ export interface BaseTableConstructorOptions {
   };
   /** tooltip相关配置 */
   tooltip?: {
+    parentElement?: HTMLElement;
     /** html目前实现较完整 先默认html渲染方式 */
     renderMode?: 'html'; // 目前暂不支持canvas方案
-    /** 代替原来hover:isShowTooltip配置 暂时需要将renderMode配置为html才能显示，canvas的还未开发*/
+    /** 是否显示缩略文字提示框。 代替原来hover:isShowTooltip配置 暂时需要将renderMode配置为html才能显示，canvas的还未开发*/
     isShowOverflowTextTooltip?: boolean;
+    /** 缩略文字提示框 延迟消失时间 */
+    overflowTextTooltipDisappearDelay?: number;
     /** 是否将 tooltip 框限制在画布区域内，默认开启。针对renderMode:"html"有效 */
     confine?: boolean;
   };
@@ -347,6 +405,12 @@ export interface BaseTableConstructorOptions {
   autoFillWidth?: boolean;
   /** 当行高度不能占满容器时，是否需要自动拉高来填充容器的高度。默认false */
   autoFillHeight?: boolean;
+
+  /** adaptive 模式下宽度的适应策略 **/
+  widthAdaptiveMode?: WidthAdaptiveModeDef;
+  /** adaptive 模式下高度的适应策略 **/
+  heightAdaptiveMode?: HeightAdaptiveModeDef;
+
   // /** 行高是否根据内容来计算 */
   // autoRowHeight?: boolean;
   /** 设备的像素比 不配的话默认获取window.devicePixelRatio */
@@ -355,6 +419,8 @@ export interface BaseTableConstructorOptions {
   customRender?: ICustomRender;
   /** 开启自动换行 默认false */
   autoWrapText?: boolean;
+  /** 是否处理换行符 */
+  enableLineBreak?: boolean;
   /** 单元格中可显示最大字符数 默认200 */
   maxCharactersNumber?: number; //
   // /** toolip最大字符数 */
@@ -369,13 +435,14 @@ export interface BaseTableConstructorOptions {
    * 限制列宽最小值。如设置为true 则拖拽改变列宽时限制列宽最小为10px，设置为false则不进行限制。默认为10px
    */
   limitMinWidth?: boolean | number;
+  limitMinHeight?: boolean | number;
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
 
-  legends?: ITableLegendOption;
+  legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
-
+  emptyTip?: true | IEmptyTip;
   /** 是否开启图表异步渲染 */
   renderChartAsync?: boolean;
   /** 开启图表异步渲染 每批次渐进渲染图表个数  默认是5个 */
@@ -384,7 +451,7 @@ export interface BaseTableConstructorOptions {
   customMergeCell?: CustomMergeCell;
 
   // #region for nodejs
-  mode?: 'node' | 'broswer';
+  mode?: 'node' | 'browser';
   modeParams?: any;
   canvasWidth?: number;
   canvasHeight?: number;
@@ -398,14 +465,47 @@ export interface BaseTableConstructorOptions {
   // resize response time
   resizeTime?: number;
 
+  canvas?: HTMLCanvasElement;
+  viewBox?: IBoundsLike;
+  chartOption?: any;
+  disableInteraction?: boolean;
+
+  specFormat?: (spec: any) => { needFormatSpec: boolean; spec?: any };
+
+  beforeRender?: (stage: any) => void;
+  afterRender?: (stage: any) => void;
   rowSeriesNumber?: IRowSeriesNumber;
   // columnSeriesNumber?: ColumnSeriesNumber[];
   customCellStyle?: CustomCellStyle[];
   customCellStyleArrangement?: CustomCellStyleArrangement[];
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+  clearDOM?: boolean;
+  customConfig?: {
+    /** xTable对于没有配置autoWrapText并且有'\n'的文本，在计算行高是会当做一行处理，但是在渲染时会解析'\n'；显示效果就是单元格高度为一行文本高度，只显示第一个'\n'前的文字，后面显示'...'；multilinesForXTable配置实现和该功能对齐的样式 */
+    multilinesForXTable?: boolean;
+    /** 这里可以配置为false 来走flatDataToObject的数据处理逻辑 而不走dataset的分析 */
+    enableDataAnalysis?: boolean;
+    /** 禁用行高列宽计算取整数逻辑 对齐xTable */
+    _disableColumnAndRowSizeRound?: boolean;
+    imageMargin?: number;
+    // 是否创建react custom container
+    createReactContainer?: boolean;
+    // adaptive 模式下优先缩小迷你图
+    shrinkSparklineFirst?: boolean;
+
+    // 行列移动不更新表格
+    notUpdateInColumnRowMove?: boolean;
+  }; // 部分特殊配置，兼容xTable等作用
+
+  animationAppear?: boolean | IAnimationAppear;
+
+  renderOption?: any;
+
+  formatCopyValue?: (value: string) => string;
 }
 export interface BaseTableAPI {
+  id: string;
   /** 数据总条目数 */
   recordsCount: number;
   /** 表格的行数 */
@@ -480,6 +580,11 @@ export interface BaseTableAPI {
   /** 当行高度不能占满容器时，是否需要自动拉高来填充容器的高度。默认false */
   autoFillHeight?: boolean;
 
+  /** adaptive 模式下宽度的适应策略 **/
+  widthAdaptiveMode: WidthAdaptiveModeDef;
+  /** adaptive 模式下高度的适应策略 **/
+  heightAdaptiveMode: HeightAdaptiveModeDef;
+
   isReleased: boolean;
 
   // rowHeightsMap: NumberMap<number>;
@@ -492,13 +597,17 @@ export interface BaseTableAPI {
   ) => EventListenerId;
   // &(<T extends keyof TableEventHandlersEventArgumentMap>(type: string, listener: AnyListener<T>) => EventListenerId);
 
-  _vDataSet: DataSet;
+  _vDataSet?: DataSet;
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */
   stateManager: StateManager;
   /** 事件管理模块 */
   eventManager: EventManager;
+  /** 动画管理模块 */
+  animationManager: TableAnimationManager;
+
+  editorManager: EditManeger;
   /** 行表头的层数 */
   rowHeaderLevelCount: number;
   /** 列表头的层数 */
@@ -509,6 +618,9 @@ export interface BaseTableAPI {
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 
+  _rowRangeHeightsMap: Map<string, number>;
+  _colRangeWidthsMap: Map<string, number>;
+  canvasSizeSeted?: boolean;
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -529,12 +641,14 @@ export interface BaseTableAPI {
   getDefaultRowHeight: (row: number) => number | 'auto';
   getDefaultColumnWidth: (col: number) => number | 'auto';
   _setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
+  setRowHeight: (row: number, height: number) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;
   // setColWidthDefined: (col: number, width: number) => void;
   getColWidthDefinedNumber: (col: number) => number;
   // getColWidthDefine: (col: number) => string | number;
   _setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
+  setColWidth: (col: number, width: number) => void;
   _getColContentWidth: (col: number) => number;
   _setColContentWidth: (col: number, width: number | string, clearCache?: boolean) => void;
   getMaxColWidth: (col: number) => number;
@@ -550,7 +664,8 @@ export interface BaseTableAPI {
   isFrozenCell: (col: number, row: number) => { row: boolean; col: boolean } | null;
   getRowAt: (absoluteY: number) => { top: number; row: number; bottom: number };
   getColAt: (absoluteX: number) => { left: number; col: number; right: number };
-  getCellAt: (absoluteX: number, absoluteY: number) => CellAddress;
+  getCellAt: (absoluteX: number, absoluteY: number) => CellAddressWithBound;
+  getCellAtRelativePosition: (absoluteX: number, absoluteY: number) => CellAddressWithBound;
   _makeVisibleCell: (col: number, row: number) => void;
   // setFocusCursor(col: number, row: number): void;
   // focusCell(col: number, row: number): void;
@@ -567,7 +682,7 @@ export interface BaseTableAPI {
   getFrozenColsWidth: () => number;
   getBottomFrozenRowsHeight: () => number;
   getRightFrozenColsWidth: () => number;
-  selectCell: (col: number, row: number) => void;
+  selectCell: (col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean) => void;
   selectCells: (cellRanges: CellRange[]) => void;
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;
@@ -626,7 +741,7 @@ export interface BaseTableAPI {
 
   getHeaderDescription: (col: number, row: number) => string | undefined;
   /** 获取单元格展示值 */
-  getCellValue: (col: number, row: number) => string | null;
+  getCellValue: (col: number, row: number, skipCustomMerge?: boolean) => string | null;
   /** 获取单元格展示数据的format前的值 */
   getCellOriginValue: (col: number, row: number) => any;
   /** 获取单元格展示数据源最原始值 */
@@ -671,6 +786,7 @@ export interface BaseTableAPI {
   getCopyValue: () => string;
 
   getSelectedCellInfos: () => CellInfo[][];
+  getSelectedCellRanges: () => CellRange[];
   getCellInfo: (col: number, row: number) => Omit<MousePointerCellEvent, 'target'>;
 
   showTooltip: (col: number, row: number, tooltipOptions?: TooltipOptions) => void;
@@ -681,6 +797,7 @@ export interface BaseTableAPI {
   ) => ITextSize;
 
   _canResizeColumn: (col: number, row: number) => boolean;
+  _canResizeRow: (col: number, row: number) => boolean;
 
   getCustomRender: (col: number, row: number) => ICustomRender;
   getCustomLayout: (col: number, row: number) => ICustomLayout;
@@ -694,12 +811,14 @@ export interface BaseTableAPI {
   toggleHierarchyState: (col: number, row: number) => void;
 
   resize: () => void;
-
+  /** 直接设置canvas的宽高 不根据容器宽高来决定表格的尺寸 */
+  setCanvasSize: (width: number, height: number) => void;
   getMergeCellRect: (col: number, row: number) => Rect;
 
-  getTargetColAt: (absoluteX: number) => { col: number; left: number; right: number; width: number } | null;
-  getTargetRowAt: (absoluteY: number) => { row: number; top: number; bottom: number; height: number } | null;
-
+  getTargetColAt: (absoluteX: number) => ColumnInfo | null;
+  getTargetRowAt: (absoluteY: number) => RowInfo | null;
+  getTargetColAtConsiderRightFrozen: (absoluteX: number, isConsider: boolean) => ColumnInfo | null;
+  getTargetRowAtConsiderBottomFrozen: (absoluteY: number, isConsider: boolean) => RowInfo | null;
   renderWithRecreateCells: () => void;
   //#endregion  tableAPI
 
@@ -731,7 +850,6 @@ export interface BaseTableAPI {
    * @param cellAddr 要滚动到的单元格位置
    */
   scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
-
   registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
   arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
 
@@ -749,6 +867,46 @@ export interface BaseTableAPI {
   isSeriesNumber: (col: number, row?: number) => boolean;
   isHasSeriesNumber: () => boolean;
   leftRowSeriesNumberCount: number;
+  isAutoRowHeight: (row: number) => boolean;
+
+  reactCustomLayout?: ReactCustomLayout;
+  checkReactCustomLayout: (removeAllContainer: () => void) => void;
+  setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+  exportImg: () => string;
+  exportCellImg: (
+    col: number,
+    row: number,
+    options?: { disableBackground?: boolean; disableBorder?: boolean }
+  ) => string;
+  exportCellRangeImg: (cellRange: CellRange) => string;
+  exportCanvas: () => HTMLCanvasElement;
+  setPixelRatio: (pixelRatio: number) => void;
+
+  bodyDomContainer?: HTMLElement;
+  headerDomContainer?: HTMLElement;
+  frozenBodyDomContainer?: HTMLElement;
+  frozenHeaderDomContainer?: HTMLElement;
+  rightFrozenBodyDomContainer?: HTMLElement;
+  rightFrozenHeaderDomContainer?: HTMLElement;
+  frozenBottomDomContainer?: HTMLElement;
+  bottomDomContainer?: HTMLElement;
+  rightFrozenBottomDomContainer?: HTMLElement;
+
+  showMoverLine: (col: number, row: number) => void;
+  hideMoverLine: (col: number, row: number) => void;
+  /** 关闭表格的滚动 */
+  disableScroll: () => void;
+  /** 开启表格的滚动 */
+  enableScroll: () => void;
+
+  customCellStylePlugin: CustomCellStylePlugin;
+  headerStyleCache: Map<string, any>;
+  bodyBottomStyleCache: Map<string, any>;
+  bodyStyleCache: Map<string, any>;
+  bodyMergeTitleCache: Map<string, any>;
+  isSeriesNumberInBody: (col: number, row: number) => boolean;
+  getGroupTitleLevel: (col: number, row: number) => number | undefined;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
@@ -760,15 +918,10 @@ export interface ListTableProtected extends IBaseTableProtected {
 
 export interface PivotTableProtected extends IBaseTableProtected {
   /** 表格数据 */
-  records: any[] | null;
+  records: any[] | undefined;
+  recordsIsTwoDimensionalArray?: boolean;
   layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IPivotTableDataConfig;
-  /**
-   * 透视表是否开启数据分析
-   * 如果传入数据是明细数据需要聚合分析则开启
-   * 如传入数据是经过聚合好的为了提升性能这里设置为false，同时需要传入columnTree和rowTree
-   */
-  enableDataAnalysis?: boolean;
 
   /** 列表头树型结构 */
   columnTree?: IHeaderTreeDefine[];

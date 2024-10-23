@@ -1,6 +1,1127 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 27 Mar 2024 06:41:08 GMT and should not be manually modified.
+This log was last generated on Tue, 22 Oct 2024 09:49:27 GMT and should not be manually modified.
+
+## 1.10.1
+Tue, 22 Oct 2024 09:49:27 GMT
+
+### Updates
+
+- fix: when set rowSeriesNumber then sort icon not update #2643
+
+
+- fix: disable cellInnerBorder when no frame border 
+
+## 1.10.0
+Fri, 18 Oct 2024 09:42:47 GMT
+
+### Minor changes
+
+- feat: add creation buttom for not schedualed task record
+
+
+- feat: add dependency line for gantt chart
+
+
+- feat: add after_sort event
+
+
+- feat: add task bar selected style
+
+
+- feat: add dependency line selected style
+
+
+
+### Updates
+
+- fix: when dimension paths has virtual not identify problem #2510
+
+
+- feat: add underlayBackgroundColor for gantt chart #2607
+
+
+- fix: toggleHierarchyState api can not update customlayout cell #2609
+
+
+- feat: add maxHeight in menu container #2602
+- fix: fix legend layout problem
+- fix: fix border rect missing when borderLineWidth is 0
+- fix: fix multi-sort icon update in updateSortState() #2614
+- fix: fix col/row end in createGroupForFirstScreen() #2585
+- fix: fix customConfig in react-vtable
+- fix: fix row resize mark position when scrolled vertically #2606
+- fix: fix sort icon update in transpose list-table
+
+## 1.9.1
+Sat, 12 Oct 2024 07:07:25 GMT
+
+### Updates
+
+- fix: fix sort icon update in merge cell
+
+## 1.9.0
+Fri, 11 Oct 2024 11:35:17 GMT
+
+### Minor changes
+
+- feat: add scrollTo animation function
+
+### Updates
+
+- fix: when dimension set width auto but no records, the col width not compute #2515
+
+
+- fix: when call updateColumns should update aggregation #2519
+
+
+- refactor: when value is promise cell style function should await #2549
+
+
+- fix: change outsideClickDeselect trigger time when pointerdown #2553
+
+
+- fix: when sort with row series number occor error #2558
+
+
+- fix: fix select auto-scroll in bottom #2546
+- fix: fix auto size in react custom component
+- fix: fix custom component flash when cell resizes #2516
+- fix: fix custom component in forzen cell #2568
+- fix: fix legend with padding layout size
+- fix: fix cellLocation in createComplexColumn #2517
+- fix: fix merge cell select range #2521
+
+## 1.8.3
+Fri, 11 Oct 2024 10:52:03 GMT
+
+### Updates
+
+- fix: when dimension set width auto but no records, the col width not compute #2515
+
+
+- fix: when call updateColumns should update aggregation #2519
+
+
+- refactor: when value is promise cell style function should await #2549
+
+
+- fix: change outsideClickDeselect trigger time when pointerdown #2553
+
+
+- fix: when sort with row series number occor error #2558
+
+
+- fix: fix select auto-scroll in bottom #2546
+- fix: fix auto size in react custom component
+- fix: fix custom component flash when cell resizes #2516
+- fix: fix custom component in forzen cell #2568
+- fix: fix legend with padding layout size
+- fix: fix cellLocation in createComplexColumn #2517
+- fix: fix merge cell select range #2521
+
+## 1.8.2
+Mon, 30 Sep 2024 09:38:25 GMT
+
+### Updates
+
+- fix: fix richtext icon update #2281
+
+## 1.8.1
+Sun, 29 Sep 2024 07:41:11 GMT
+
+### Updates
+
+- refactor: rename vue component name
+
+
+
+## 1.8.0
+Sun, 29 Sep 2024 02:17:55 GMT
+
+### Minor changes
+
+- feat: add vue-vtable
+
+
+
+### Updates
+
+- docs: add functionalIconsStyle on theme #1308
+
+
+- fix: fix estimate position in updateAutoRow() #2494
+- fix: fix drag check state update #2518
+- fix: fix group cell in vtable-export #2487
+- fix: fix react component update problem when resize column
+
+## 1.7.9
+Fri, 27 Sep 2024 09:40:51 GMT
+
+### Updates
+
+- docs: add functionalIconsStyle on theme #1308
+
+
+- fix: fix estimate position in updateAutoRow() #2494
+- fix: fix drag check state update #2518
+- fix: fix group cell in vtable-export #2487
+- fix: fix react component update problem when resize column
+
+## 1.7.8
+Tue, 24 Sep 2024 10:22:40 GMT
+
+### Updates
+
+- feat: handle with customTree in dataset file to refactor processRecord function #2279
+
+
+- fix: custom total value not work #2455
+
+
+- refactor: update aggregator when update records #2459
+
+
+- fix: adjust sort icon up and down #2465
+
+
+- fix: when current edit not exit, could not trigger new edit cell #2469
+
+
+- fix: when no records edit cell value occor error #2474
+
+
+- feat: add async support in vtable-export #2460
+- fix: set aggregation on option not work #2459
+
+
+- fix: fix cell border clip in 'bottom-right' borde mode #2442
+- fix: add children === true hierarchyState in initChildrenNodeHierarchy()
+- fix: fix custom component frozen update #2432
+- fix: when resize trigger click_cell event
+
+
+- fix: fix proxy.colStart update in resetFrozen() #2464
+- fix: add '——' in specialCharSet #2470
+
+## 1.7.7
+Fri, 13 Sep 2024 08:37:37 GMT
+
+### Updates
+
+- refactor: gantt project export vtable and vrender
+
+
+
+## 1.7.6
+Thu, 12 Sep 2024 06:18:44 GMT
+
+_Version update only_
+
+## 1.7.5
+Wed, 11 Sep 2024 12:33:19 GMT
+
+### Updates
+
+- feat: add getFilteredRecords api #2255
+
+
+- fix: select range click outside not cancel select #2355
+
+
+- fix: split line position fix #2392
+
+
+- fix: levelSpan case front columnNode merge range error #2359
+
+
+- fix: judge value is valid #2402
+
+
+- fix: mousedown chart go dealSelectCell and rerender it #2419
+
+
+- fix: fix axis size and layout #2256
+- fix: fix series number in list-group #2425
+- fix: fix recordIndex config of addRecord in list-group #2426
+
+## 1.7.4
+Mon, 09 Sep 2024 02:02:17 GMT
+
+### Updates
+
+- fix: when tree pivot table sort then expand tree node render error #2261
+
+
+- fix: fix interactive layer dom clear problem
+- fix: when no records corner header show dimention title #2247
+
+
+- feat: add updateFilterRules api #2245
+
+
+- fix: fix sparkline range when data has null
+
+## 1.7.3
+Thu, 05 Sep 2024 03:09:20 GMT
+
+### Updates
+
+- fix: when keydown with ctrl meta and shift not trigger edit mode # 2372
+
+
+- fix: fix custom style arrangement duplicate #2370
+- fix: fix no-text cell custom merge #2343
+- fix: fix event bind problem in react-vtable
+- fix: fix right frozen mark position #2344
+- fix: fix select range judgement in cellBgColor #2368
+
+## 1.7.2
+Mon, 02 Sep 2024 10:09:57 GMT
+
+### Updates
+
+- fix: when use groupBy then all merged cells set cellType text #2331
+
+
+
+## 1.7.1
+Mon, 02 Sep 2024 03:26:48 GMT
+
+### Updates
+
+- fix: fix envs type in react-vtable
+
+## 1.7.0
+Fri, 30 Aug 2024 11:54:08 GMT
+
+### Minor changes
+
+- feat: add gantt chart
+
+
+
+### Updates
+
+- fix: leftTable just has row series number
+
+
+
+## 1.6.3
+Thu, 29 Aug 2024 12:00:16 GMT
+
+### Updates
+
+- refactor: scroll event add argument #2249
+
+
+- fix: handle with change header postion event #2299
+
+
+- refactor: changeCellValue can modify raw record #2305
+
+
+- fix: pivot tree can not show value and expand tree occor error #2306
+
+
+- fix: set titleOnDimension all sort can not run #2278
+
+
+- feat: add formatCopyValue config
+- feat: add parentElement config in tooltip #2290
+- fix: add judgement in array find function #2289
+- fix: fix frozen column custom component clip
+- fix: fix cellLocation in top frozen row #2267
+- fix: fix list-table group mode style update problem
+- fix: fix menu auto hide when page crolled #2241
+- fix: fix progress bar cell textAlign update #2225
+- fix: fix umd package problem in react-vtable #2244
+- fix: fix right frozen size in updateContainerAttrWidthAndX() #2243
+- fix: fix leftRowSeriesNumberColumnCount error in getBodyLayoutRangeById() #2234
+
+## 1.6.2
+Thu, 22 Aug 2024 12:27:03 GMT
+
+### Updates
+
+- feat: add formatCopyValue config
+- fix: fix frozen column custom component clip
+- fix: fix menu auto hide when page crolled #2241
+
+## 1.6.1
+Mon, 19 Aug 2024 08:06:44 GMT
+
+### Minor changes
+
+- feat: add group function
+
+### Updates
+
+- refactor: supplement backgroundColor for editor #1518
+
+
+- fix: corner header display dimension name in some case #2180
+
+
+- feat: add option forceShowHeader
+
+
+- fix: frameStyle borrerLineWidth set array, table render positon error #2200
+
+
+- feat: frameStyle cornerRadius support array type #2207
+
+
+- feat: add table releated components in react-vtable
+- feat: add enum in textStick config
+- feat: add frozenRowCount in transpose table #2182
+- fix: fix icon margin error in update size #2206
+- fix: fix react custom layout component container height
+
+
+- fix: fix jsx customLayout size compute mode #2192
+- fix: add default color in vtable-export
+- feat: add excelJSWorksheetCallback config in vtable-export
+- fix: fix row-series cell type #2188
+
+## 1.5.6
+Thu, 08 Aug 2024 02:54:17 GMT
+
+### Updates
+
+- feat: add canvas & viewbox config
+- fix: fix released async problem #2145
+
+## 1.5.5
+Wed, 07 Aug 2024 12:08:17 GMT
+
+_Version update only_
+
+## 1.5.4
+Fri, 02 Aug 2024 11:20:11 GMT
+
+### Updates
+
+- fix: set sort rule occor error #2106
+
+
+- fix: clearSelected api clear ctrl+a border #2115
+
+
+- feat: pivot table corner cell support icon #2120
+
+
+- fix: move header position not work not trigger change_header_position event #2129
+
+
+- feat: support editCellTrigger set keydown #2136
+
+
+- fix: set cellType is function, resize col width chart size render error #2160
+
+
+- fix: when call setRowHeight should update chart size #2155
+
+
+- feat: add react-component for option-emptyTip
+
+
+- feat: add react-component for option-emptyTip - demo
+
+
+- feat: add escape config in csv-exporter
+- feat: add selectionFillMode config in theme.selectionStyle #2132 #2027
+- fix: fix cell range clear in update record
+- fix: fix custom-element update problem #2126
+- fix: fix customMege cell update
+- fix: fix CellContent pickable config #2134
+- fix: fix legend visible config #2137
+- fix: fix released async problem #2145
+- fix: remove resizing update in endResizeCol() #2101
+
+## 1.5.3
+Thu, 18 Jul 2024 12:13:07 GMT
+
+### Updates
+
+- feat: add param value for startEditCell api #2089
+
+
+- fix: fix option config in vtable-export
+
+## 1.5.2
+Fri, 12 Jul 2024 10:47:37 GMT
+
+### Updates
+
+- fix: edit api validateValue support async
+
+
+- feat: add api disableScroll and enableScroll #2073
+
+
+- fix: api changeFieldValue occor errow when records has null #2067
+
+
+- fix: fix react component error in updateCell() #2038
+- feat: add renderDefault prop in react customLayout component
+- feat: support multiple columns tag in react-vtable
+- fix: fix axes default config in scatter chart #2071
+
+## 1.5.1
+Wed, 10 Jul 2024 06:19:15 GMT
+
+### Updates
+
+- fix: getCellAtRelativePosition api return value #2054
+
+
+- fix: add tolerance for scroll in _disableColumnAndRowSizeRound mode
+
+## 1.5.0
+Fri, 05 Jul 2024 10:43:51 GMT
+
+### Minor changes
+
+- feat: add formatExcelJSCell config in vtable-export #1989
+- feat: optimize package size & add load on demand feature
+
+### Updates
+
+- feat: add showMoverLine and hideMoverLine api #2009
+
+
+- fix: pivot chart select state #2017
+
+
+- fix: disable select and edit input should move when input is outside of table #2039
+
+
+- fix: last column resize width error #2040
+
+
+- fix: fix test judgement in customMergeCell #2031
+- fix: fix selected highlight update when scrolling #2028
+- fix: fix select-rect update when scroll #2015
+- fix: fix frozen cell update problem in sort #1997
+
+## 1.4.2
+Tue, 02 Jul 2024 12:48:08 GMT
+
+### Updates
+
+- feat: corner title can display row and column diemensionTitle #1926
+
+
+- fix: when not exit edit state then can not select other cells #1974
+
+
+- fix: selected_clear event trigger #1981
+
+
+- feat: add column hide config #1991
+
+
+- refactor: sparkline cellType set aggregationType None automatically #1999
+
+
+- fix: pivotTable virtual node edit value not work #2002
+
+
+- fix: tooltip content can not be selected #2003
+
+
+- feat: add getCellAtRelativePosition api
+- fix: fix vrender export module
+- fix: fix merge cell update performance problem #1972
+- fix: fix regexp format for webpack 3 #2005
+- fix: fix width computation in shrinkSparklineFirst mode
+
+## 1.4.1
+Mon, 24 Jun 2024 08:48:40 GMT
+
+### Updates
+
+- fix: fix editingEditor missing problem
+
+## 1.4.0
+Fri, 21 Jun 2024 10:26:08 GMT
+
+### Minor changes
+
+- feat: support calculate field for PivotTable #1941
+
+
+
+### Updates
+
+- fix: updateSortState api occor error #1939
+
+
+- feat: support corner header cell edit value #1945
+
+
+- fix: when setRecords should update emptyTip #1953
+
+
+- fix: getCellRect api when cell is frozen get bounds error #1955
+
+
+- fix: when drag cell and enter edit state but can not exit edit rightly #1956
+
+
+- chore: update vrender version
+
+
+- feat: add indent in vtable-export
+- feat: add CustomComponent in react-vtable
+- feat: add CustomLayout component in react-vtable
+- fix: fix custom width problem #1905
+- fix: fix content judgement in getCellRange() #1911
+- fix: fix size update problem in pivot table sort #1958
+
+## 1.3.3
+Thu, 20 Jun 2024 12:19:07 GMT
+
+### Updates
+
+- fix: fix column update problem #1951
+
+## 1.3.2
+Mon, 17 Jun 2024 11:51:18 GMT
+
+### Updates
+
+- fix: cellIsInVisualView api error #1864
+
+
+- refactor: tooltip support scroll #1887
+
+
+- fix: if set style autoWrapText, this config not wort when resize column width #1892
+
+
+- refactor: when not records pivot table can show corner header #1895
+
+
+- refactor: when rowTree children not set value can supplement indicators #1924
+
+
+- feat: add blankAreaClickDeselect and outsideClickDeselect config
+
+
+
+## 1.3.1
+Thu, 13 Jun 2024 12:35:49 GMT
+
+### Updates
+
+- fix: fix frozenColCount large than colCount error #1872
+
+
+- docs: update changlog of rush
+
+
+- fix: fix merge cell size update #1869
+- fix: optimize row height update when useOneRowHeightFillAll
+
+## 1.3.0
+Wed, 12 Jun 2024 12:30:16 GMT
+
+### Minor changes
+
+- feat: tooltip disappear delay time #1848
+
+
+- feat: add sort config for pivotTable #1865
+
+
+
+### Updates
+
+- refactor: memory release logic optimization #1856
+
+
+- refactor: arrow key with shift ctrl key to select cells #1873
+
+
+- fix: icon inlineEnd inlineFront x position compute error #1882
+
+
+- fix: drill down icon can not be click #1899
+
+
+- feat: add ignoreIcon&formatExportOutput config in vtable-export #1813
+- feat: add textArea editor
+
+
+- feat: add strokeColor style #1847
+- feat: add dx&dy in title component #1874
+- fix: fix frozenColCount large than colCount error #1872
+- feat: add shrinkSparklineFirst config #1862
+- fix: fix ellipsis error in _disableColumnAndRowSizeRound mode #1884
+
+## 1.2.0
+Thu, 06 Jun 2024 02:34:10 GMT
+
+### Minor changes
+
+- feat: add merge cell custom graphic attribute sync #1718
+
+### Updates
+
+- feat: support select highlightMode effect #1167
+
+
+- feat: add isAggregation api #1803
+
+
+- fix: when has no records should not has aggregation row #1804
+
+
+- refactor: update pixelRatio when resize #1823
+
+
+- fix: updateColumns set editor error #1828
+
+
+- chore: update vrender version
+
+
+- refactor: selectAllOnCtrlA option
+
+
+- feat: optimize large column performance #1840 #1824
+- fix: fix maxCharactersNumber effect #1830
+
+## 1.1.2
+Fri, 31 May 2024 08:56:27 GMT
+
+### Updates
+
+- chore: update vrender version
+
+
+
+## 1.1.1
+Thu, 30 May 2024 08:07:33 GMT
+
+### Updates
+
+- refactor: dimension value same with indicator key cell value error #1817
+
+
+- fix: when set emptyTip interaction not work well with has records #1818
+
+
+- fix: fix table frame corner radius display problem #1783
+
+## 1.1.0
+Tue, 28 May 2024 12:24:56 GMT
+
+### Minor changes
+
+- feat: add empty tip #1782
+
+
+
+### Updates
+
+- fix: add update delete record api should maintain beforeChangedRecordsMap #1780
+
+
+- fix: when set disableSelect table should support drag header #1800
+
+
+- fix: fix tree create problem in getDataCellPath()
+- fix: fix left axis index in horizontal pivot chart
+
+## 1.0.3
+Fri, 24 May 2024 10:31:16 GMT
+
+### Updates
+
+- refactor: legends support ser array form #1740
+
+
+- fix: first col tree mode compute col width error #1778
+
+
+
+## 1.0.2
+Fri, 24 May 2024 10:08:07 GMT
+
+### Updates
+
+- fix: use table option in hasAutoImageColumn()
+- fix: axis size align with vrender-component #1784
+- fix: fix lineClamp config in computeRowsHeight() #1772
+- fix: fix progress cell create problem in vtable-export #1787
+- fix: ignore cell merge in selectCells()
+- feat: add setRowHeight&setColWidth api
+
+## 1.0.1
+Wed, 22 May 2024 12:21:05 GMT
+
+### Updates
+
+- feat: tree mode  can set icon #1697
+
+
+- fix: ignore cell merge in selectCells()
+- feat: add setRowHeight&setColWidth api
+
+## 1.0.0
+Tue, 21 May 2024 12:41:50 GMT
+
+### Breaking changes
+
+- feat: add virtual option for rowTree and columnTree #1644
+
+ BREAKING CHANGE: getCellOriginRecord will return an array of source data.
+
+### Updates
+
+- feat: rows and tree can  combined use  #1644
+
+
+
+## 0.25.9
+Tue, 21 May 2024 12:33:13 GMT
+
+### Updates
+
+- fix: when body cell is blank string,compute row height error #1752
+
+
+- fix: fix custom merge cell display problem when select header
+
+## 0.25.8
+Tue, 21 May 2024 11:19:27 GMT
+
+### Updates
+
+- feat: add scrollSliderCornerRadius config #1369
+
+
+- fix: when set hideRowHeader, body cell value is blank #1732
+
+
+- fix: setTableColumnsEditor occor error when not set columns #1747
+
+
+- feat: add disableBackground &  disableBorder in exportCellImg() #1733
+- feat: add disableColumnResize for rowSeriesNumber
+
+
+- fix: fix col & row order in cellInRanges()
+- fix: add string mark in csv-export #1730
+
+## 0.25.7
+Fri, 17 May 2024 12:08:43 GMT
+
+_Version update only_
+
+## 0.25.6
+Fri, 17 May 2024 10:50:13 GMT
+
+### Updates
+
+- feat: add selected_clear event #1705
+
+
+- fix: mouse down on scroll rail trigger mousedown_table #1706
+
+
+- fix: merge cell value can be edited #1711
+
+
+- fix: sub colunms can not be edit when set editor instance #1711
+
+
+- feat: add mergeCellInfo arg in event #1667
+- fix: fix checkbox and radio state update when change row index #1712
+- fix: fix veritial offset in text stick
+- fix: fix column width may be zero #1708
+- fix: fix getCell performance
+- fix: fix header hide func in pivot table
+- fix: lineDash judgement in group-contribution-render #1696
+
+## 0.25.5
+Mon, 13 May 2024 13:47:37 GMT
+
+### Updates
+
+- fix: trigger mousedown_table event region need extend #1668
+
+
+
+## 0.25.4
+Fri, 10 May 2024 03:15:01 GMT
+
+### Updates
+
+- feat: remove vutil-extension temply
+
+## 0.25.3
+Thu, 09 May 2024 11:13:29 GMT
+
+### Updates
+
+- feat: remove vutil-extension temply
+
+## 0.25.2
+Wed, 08 May 2024 10:48:37 GMT
+
+### Updates
+
+- fix: fix veritial offset in text stick
+
+## 0.25.1
+Wed, 08 May 2024 08:38:35 GMT
+
+### Updates
+
+- feat: pivot chart support wordCloud rose radar gauge #1614
+
+
+- feat: pivot chart support scatter chart type #1618
+
+
+- fix: when copy blank cell paste not work #1646
+
+
+- feat: add CustomComponent in react-vtable
+- fix: fix custom merge cell size update #1636
+- fix: add arg in completeEdit()
+- fix: add selecting cell range deduplication #1628
+- fix: update @visactor/vutils-extension version
+
+## 0.25.0
+Sun, 28 Apr 2024 06:22:38 GMT
+
+### Minor changes
+
+- feat: add row resize function
+
+### Updates
+
+- feat: pivot table header cell support edit #1583
+
+
+- feat: customrender or customlayout support edit #1596
+
+
+- fix: editor input value handle with 0value #1590
+
+
+- fix: when set textStick init and updateOption text jump #1592
+
+
+- fix: clear async contain resize task before render #1593
+- fix: hierarchy state icon can not show when only one level
+
+
+- refactor: resize last column width can be more  flexibly #1567
+
+
+
+## 0.24.1
+Tue, 23 Apr 2024 11:19:00 GMT
+
+### Updates
+
+- docs: add drill down drill up demo #1556
+
+
+- fix: when has rowSeriesNumber minWidth maxWidth error #1572
+
+
+- feat: add startEditCell api #1573
+
+
+- refactor: pivot lazy load modify setTreeNodeChildren api #1580
+
+
+
+## 0.24.0
+Mon, 22 Apr 2024 10:59:12 GMT
+
+### Minor changes
+
+- feat: add lazy load for pivot table tree #1521
+
+
+- feat: add radio column type
+
+### Updates
+
+- fix: handle with editor input ctrl+a event #1552
+
+
+- refactor: optimize performance when row tree node exceed 8000 nodes #1557
+
+
+- fix: when resize window size the editor input size not match cell size #1559
+
+
+- feat: add setCellCheckboxState & setCellRadioState api #1504
+- fix: fix multilines new line style #1531
+- fix: fix cell group order in async data #1517
+- fix: add skipCustomMerge in getCellValue() #1543
+
+## 0.23.4
+Thu, 18 Apr 2024 08:13:35 GMT
+
+### Updates
+
+- fix: fix right & top axis visible
+
+## 0.23.3
+Tue, 16 Apr 2024 08:38:10 GMT
+
+### Updates
+
+- refactor: add mousedown_table event #1470
+
+
+- refactor: setRecords handle with tooltip overflow #1494
+
+
+- fix: release editor when release tableInstance #1495
+
+
+- fix: short table drag to out table occor error #1502
+
+
+- fix: row move funciton not work on mobile #1503
+
+
+- fix: defaultHeaderRowHeight not work with rowSeriesNumber #1520
+
+
+- fix: tree hierarchy state icon use rowHierarchyTextStartAlignment children node render error #1525
+
+
+- fix: resize col width trigger text stick change #1529
+
+
+- fix: fix theme textStick config in checkHaveTextStick() #1490 
+- fix: add button jedgement in click_cell event #1484
+- feat: add widthAdaptiveMode & heightAdaptiveMode config #1499
+- feat: add measureTextBounds api
+- fix: fix defalultQueryMethod in vtable-search #1448
+- fix: update customMergeCell in updateOption #1493
+
+## 0.23.2
+Wed, 10 Apr 2024 13:08:31 GMT
+
+### Updates
+
+- fix: records api when has merge cell render error #1286
+
+
+- refactor: update drilldown drillup svg
+
+
+- feat: scrollbar visible focus #1360
+
+
+- fix: add isAutoRowHeight to handle width row height compute #1379
+
+
+- feat: add rowHierarchyTextStartAlignment for tree mode #1417
+
+
+- refactor: handle width chartSpce with markLine #1420
+
+
+- fix: chart spec clone filtered dom problem #1422
+
+
+- refactor: supplement event type for react table #1434
+
+
+- fix: borderlinedash effect error handle with lineCap #1436
+
+
+- fix: trigger event selectedCell #1444
+
+
+- fix: set disableSelect drag cells occor error #1461
+
+
+- fix: left content width error when tree hierarchy state icon back rect showing #1466
+
+
+- fix: fix domain order in  horizontal #1453
+- fix: add columnWidthComputeMode update in opdateOption #1465
+- fix: fix inline icon tooltip config #1456
+- fix: 修复进度图部分情况遮挡表格边缘单元格
+
+
+- fix: fix transpose border theme #1463
+
+## 0.23.1
+Sun, 07 Apr 2024 02:48:06 GMT
+
+### Updates
+
+- fix: maxLineWidth value should consider hierarchyOffset #1224
+
+
+- fix: tree leaf node textAlign right render error #1393
+
+
+- feat: select range can extends during scroll #1400
+
+
+- fix: when copy or paste navigator.clipboard?.write occor undefined error in not https #1421
+
+
+- fix: fix header cell imageAutoSizing #1339
+- fix: hide icon background when hide icon
+- fix: fix nan verticalBarPos #1232
+- fix: fix progressbar cover cell border #1425
+- fix: remove container in table option
+- fix: add sync render in exportCellImg #1398
+- refactor: optimize performance when change tree hierarchy state #1406
+
+
+
+## 0.23.0
+Fri, 29 Mar 2024 09:26:36 GMT
+
+### Minor changes
+
+- feat: add scroll end event and barToSide option #1304
+
+
+- feat: add excel options to support fill handle
+
+
+
+### Updates
+
+- fix: transpose with frozenColCount shadowline render #1366
+
+
+- feat: list tree mode support filter #1376
+
+
+- fix: datasource support promise mode call addRecords and deleteRecords
+
+
+- fix: when click cell should not trigger drag_select_end event #1410
+
+
+
+## 0.22.3
+Thu, 28 Mar 2024 07:06:46 GMT
+
+### Updates
+
+- fix: fix legend default selectData
 
 ## 0.22.2
 Wed, 27 Mar 2024 06:41:08 GMT

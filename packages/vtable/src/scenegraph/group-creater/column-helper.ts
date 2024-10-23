@@ -1,7 +1,14 @@
 /* eslint-disable no-undef */
 import type { IThemeSpec } from '@src/vrender';
-import type { CellLocation, CellRange, ColumnDefine, IRowSeriesNumber, TextColumnDefine } from '../../ts-types';
-import type { Group } from '../graphic/group';
+import type {
+  CellLocation,
+  CellRange,
+  ColumnDefine,
+  IRowSeriesNumber,
+  ListTableConstructorOptions,
+  TextColumnDefine
+} from '../../ts-types';
+import { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
 import { createCell, dealWithMergeCellSize, resizeCellGroup } from './cell-helper';
@@ -66,6 +73,7 @@ export function createComplexColumn(
     let isMerge;
     let customStyle;
     let customResult;
+    let isCustomMerge = false;
     if (table.internalProps.customMergeCell) {
       const customMerge = table.getCustomMerge(col, row);
       if (customMerge) {
@@ -96,11 +104,15 @@ export function createComplexColumn(
             table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
             table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
             false,
-            table.heightMode === 'autoHeight',
+            // table.heightMode === 'autoHeight',
+            table.isAutoRowHeight(row),
             [0, 0, 0, 0],
+            range,
             table
           );
         }
+
+        isCustomMerge = true;
       }
     }
 
@@ -110,16 +122,28 @@ export function createComplexColumn(
       colForDefine = range.start.col;
       rowForDefine = range.start.row;
     }
+
+    // adjust cellLocation for top frozen row
+    if (
+      !table.isPivotTable() &&
+      (cellLocation === 'columnHeader' || cellLocation === 'cornerHeader') &&
+      row >= table.columnHeaderLevelCount
+    ) {
+      cellLocation = 'body';
+    }
     const define =
       cellLocation !== 'body'
         ? table.getHeaderDefine(colForDefine, rowForDefine)
         : table.getBodyColumnDefine(colForDefine, rowForDefine);
-    const mayHaveIcon =
+    let mayHaveIcon =
       cellLocation !== 'body'
         ? true
         : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
 
-    if (!range && (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)) {
+    if (
+      !range &&
+      (table.internalProps.enableTreeNodeMerge || cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)
+    ) {
       // 只有表头或者column配置合并单元格后再进行信息获取
       range = table.getCellRange(col, row);
       isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
@@ -131,46 +155,49 @@ export function createComplexColumn(
         cellHeight = mergeSize.cellHeight;
       }
     }
+    let isVtableMerge = false;
+    if (table.internalProps.enableTreeNodeMerge && isMerge) {
+      const rawRecord = table.getCellRawRecord(range.start.col, range.start.row);
+      const { vtableMergeName, vtableMerge } = rawRecord ?? {};
 
-    const cellStyle = customStyle || table._getCellStyle(col, row);
-    const cellTheme = getStyleTheme(
-      cellStyle,
-      table,
-      range ? range.start.col : col,
-      range ? range.start.row : row,
-      getProp
-    ).theme;
-    cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
-    cellTheme.group.width = colWidth;
-    cellTheme.group.height = Array.isArray(defaultRowHeight) ? defaultRowHeight[row] : defaultRowHeight;
-    if (cellTheme._vtable.padding) {
-      padding = cellTheme._vtable.padding;
+      isVtableMerge = vtableMerge;
+      if (vtableMerge) {
+        mayHaveIcon = true;
+        if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+          customResult = dealWithCustom(
+            (table.options as ListTableConstructorOptions).groupTitleCustomLayout,
+            undefined,
+            range.start.col,
+            range.start.row,
+            table.getColsWidth(range.start.col, range.end.col),
+            table.getRowsHeight(range.start.row, range.end.row),
+            false,
+            table.isAutoRowHeight(row),
+            [0, 0, 0, 0],
+            range,
+            table
+          );
+        }
+      }
+      if (vtableMergeName) {
+        value = vtableMergeName;
+      }
     }
-    if (cellTheme.text.textAlign) {
-      textAlign = cellTheme.text.textAlign;
-    }
-    if (cellTheme.text.textBaseline) {
-      textBaseline = cellTheme.text.textBaseline;
-    }
-
-    // enable clip body
-    if (cellLocation !== 'body' && !cellTheme.group.fill) {
-      cellTheme.group.fill = '#fff';
-    }
-    // margin = getProp('margin', headerStyle, col, 0, table)
 
     const type =
-      (table.isHeader(col, row)
-        ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-        : table.getBodyColumnType(col, row)) || 'text';
+      isVtableMerge || isCustomMerge
+        ? 'text'
+        : (table.isHeader(col, row)
+            ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+            : table.getBodyColumnType(col, row)) || 'text';
 
     // deal with promise data
     if (isPromise(value)) {
+      createEmptyCellGroup(col, row, 0, y, cellWidth, cellHeight, columnGroup);
       dealPromiseData(
         value,
         table,
-        createCell.bind(
-          null,
+        callCreateCellForPromiseValue.bind(null, {
           type,
           value,
           define,
@@ -182,20 +209,45 @@ export function createComplexColumn(
           cellHeight,
           columnGroup,
           y,
-          padding,
-          textAlign,
-          textBaseline,
+          customStyle,
           mayHaveIcon,
-          cellTheme,
+          cellLocation,
           range,
-          customResult
-        )
+          customResult,
+          defaultRowHeight
+        })
       );
       columnGroup.updateColumnRowNumber(row);
       const height = table.getRowHeight(row);
       columnGroup.updateColumnHeight(height);
       y += height;
     } else {
+      const cellStyle =
+        customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
+      const cellTheme = getStyleTheme(
+        cellStyle,
+        table,
+        range ? range.start.col : col,
+        range ? range.start.row : row,
+        getProp
+      ).theme;
+      cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
+      cellTheme.group.width = colWidth;
+      cellTheme.group.height = Array.isArray(defaultRowHeight) ? defaultRowHeight[row] : defaultRowHeight;
+      if (cellTheme._vtable.padding) {
+        padding = cellTheme._vtable.padding;
+      }
+      if (cellTheme.text.textAlign) {
+        textAlign = cellTheme.text.textAlign;
+      }
+      if (cellTheme.text.textBaseline) {
+        textBaseline = cellTheme.text.textBaseline;
+      }
+
+      // enable clip body
+      if (cellLocation !== 'body' && !cellTheme.group.fill) {
+        cellTheme.group.fill = '#fff';
+      }
       const cellGroup = createCell(
         type,
         value,
@@ -231,8 +283,10 @@ export function createComplexColumn(
         columnGroup.updateColumnHeight(rangeHeight);
         y += rangeHeight;
       } else {
-        columnGroup.updateColumnHeight(cellGroup.attribute.height);
-        y += cellGroup.attribute.height;
+        // columnGroup.updateColumnHeight(cellGroup.attribute.height);
+        // y += cellGroup.attribute.height;
+        columnGroup.updateColumnHeight(cellHeight);
+        y += cellHeight;
       }
     }
     if (rowLimit && row > rowLimit) {
@@ -273,7 +327,75 @@ export function getColumnGroupTheme(
   columnTheme.group.height = 0;
   return { theme: columnTheme, hasFunctionPros };
 }
+function callCreateCellForPromiseValue(createCellArgs: any) {
+  let padding;
+  let textAlign;
+  let textBaseline;
+  const {
+    type,
+    value,
+    define,
+    table,
+    col,
+    row,
+    colWidth,
+    cellWidth,
+    cellHeight,
+    columnGroup,
+    y,
+    cellLocation,
+    mayHaveIcon,
+    customStyle,
+    range,
+    customResult,
+    defaultRowHeight
+  } = createCellArgs;
+  const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
+  const cellTheme = getStyleTheme(
+    cellStyle,
+    table,
+    range ? range.start.col : col,
+    range ? range.start.row : row,
+    getProp
+  ).theme;
+  cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
+  cellTheme.group.width = colWidth;
+  cellTheme.group.height = Array.isArray(defaultRowHeight) ? defaultRowHeight[row] : defaultRowHeight;
+  if (cellTheme._vtable.padding) {
+    padding = cellTheme._vtable.padding;
+  }
+  if (cellTheme.text.textAlign) {
+    textAlign = cellTheme.text.textAlign;
+  }
+  if (cellTheme.text.textBaseline) {
+    textBaseline = cellTheme.text.textBaseline;
+  }
 
+  // enable clip body
+  if (cellLocation !== 'body' && !cellTheme.group.fill) {
+    cellTheme.group.fill = '#fff';
+  }
+  createCell(
+    type,
+    value,
+    define,
+    table,
+    col,
+    row,
+    colWidth,
+    cellWidth,
+    cellHeight,
+    columnGroup,
+    y,
+    padding,
+    textAlign,
+    textBaseline,
+    mayHaveIcon,
+    cellTheme,
+    range,
+    customResult
+  );
+}
 function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI, forceUpdate: boolean) {
   let cellWidth = 0;
   let cellHeight = 0;
@@ -300,4 +422,25 @@ function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI, fo
     cellWidth,
     cellHeight
   };
+}
+
+function createEmptyCellGroup(
+  col: number,
+  row: number,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  columnGroup: Group
+) {
+  const cellGroup = new Group({
+    x,
+    y,
+    width,
+    height
+  });
+  cellGroup.role = 'cell';
+  cellGroup.col = col;
+  cellGroup.row = row;
+  columnGroup.addChild(cellGroup);
 }

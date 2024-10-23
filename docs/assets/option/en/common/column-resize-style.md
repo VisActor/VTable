@@ -19,3 +19,27 @@ The width of the line
 ##${prefix} width(number)
 
 The width of the background line
+
+##${prefix} labelVisible(boolean)
+
+Whether the label is visible, default is true
+
+##${prefix} labelColor(string)
+
+The color of the label
+
+##${prefix} labelFontSize(string)
+
+The font size of the label
+
+##${prefix} labelFontFamily(string)
+
+The font family of the label
+
+##${prefix} labelBackgroundFill(string)
+
+The background color of the label
+
+##${prefix} labelBackgroundCornerRadius(number)
+
+The corner radius of the label background

@@ -271,7 +271,8 @@ export function createTable() {
               bgColor: '#356b9c',
               color: '#00ffff'
             },
-            width: 'auto'
+            width: 'auto',
+            headerEditor: 'input'
           }
         ],
         columns: [
@@ -291,26 +292,26 @@ export function createTable() {
                 return 'gray';
               }
             },
-            width: 'auto'
-          },
-          {
-            dimensionKey: 'Category',
-            title: 'Category',
-            headerStyle: {
-              textStick: true,
-              bgColor: arg => {
-                const cellHeaderPaths = arg.table.getCellHeaderPaths(arg.col, arg.row);
-                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies') {
-                  return '#bd422a';
-                }
-                if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Technology') {
-                  return '#ff9900';
-                }
-                return 'gray';
-              }
-            },
-            width: 'auto'
+            headerEditor: 'input'
           }
+          // {
+          //   dimensionKey: 'Sub-Category',
+          //   title: 'Sub-Category',
+          //   headerStyle: {
+          //     textStick: true,
+          //     bgColor: arg => {
+          //       const cellHeaderPaths = arg.table.getCellHeaderPaths(arg.col, arg.row);
+          //       if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies') {
+          //         return '#bd422a';
+          //       }
+          //       if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Technology') {
+          //         return '#ff9900';
+          //       }
+          //       return 'gray';
+          //     }
+          //   },
+          //   width: 'auto'
+          // }
         ],
         indicators: [
           {
@@ -324,6 +325,9 @@ export function createTable() {
               fontWeight: 'bold',
               bgColor: arg => {
                 const cellHeaderPaths = arg.table.getCellHeaderPaths(arg.col, arg.row);
+                if (arg.value > 3) {
+                  return 'red';
+                }
                 if (cellHeaderPaths.colHeaderPaths && cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies') {
                   return '#bd422a';
                 }
@@ -354,6 +358,8 @@ export function createTable() {
             title: 'Sales',
             width: 'auto',
             showSort: false,
+            editor: 'input',
+            headerEditor: 'input',
             format: value => {
               if (value) {
                 return Number(value).toFixed(2);
@@ -427,13 +433,15 @@ export function createTable() {
           }
         ],
         corner: {
+          // headerEditor: 'input',
           titleOnDimension: 'row',
           headerStyle: {
             bgColor: '#356b9c',
             color: '#00ffff'
           }
         },
-        widthMode: 'adaptive'
+        // widthMode: 'adaptive',
+        headerEditor: 'input'
       };
       const tableInstance = new VTable.PivotTable(option);
       // 只为了方便控制太调试用，不要拷贝

@@ -4,7 +4,7 @@
 
 ## 滚动性能优势
 
-VTable 底层基于canvas进行渲染，每次更新只会绘制可视区域内容，确保即使在处理大数据时仍能流畅地滚动。
+VTable 底层基于 canvas 进行渲染，每次更新只会绘制可视区域内容，确保即使在处理大数据时仍能流畅地滚动。
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d1562627090d.gif)
 
@@ -12,95 +12,96 @@ VTable 底层基于canvas进行渲染，每次更新只会绘制可视区域内�
 
 VTable 提供了丰富的滚动样式配置项，用户可以按照自己的需求来定制现滚动条样式。通过 ListTable.theme.scrollStyle 配置滚动条样式，以下为滚动样式配置的详细内容：
 
-*   scrollRailColor： 配置滚动条轨道的颜色。
-*   scrollSliderColor：配置滚动条滑块的颜色。
-*   width：配置滚动条宽度。
-*   visible：配置滚动条是否可见，可配值：'always' | 'scrolling' | 'none' | 'focus'，分别对应：常驻显示|滚动时显示|显示|聚焦在画布上时。默认为‘scrolling’。
-*   hoverOn ：指定滚动条是悬浮在容器上，还是独立于容器。默认为true即悬浮于容器上。
+- scrollRailColor： 配置滚动条轨道的颜色。
+- scrollSliderColor：配置滚动条滑块的颜色。
+- scrollSliderCornerRadius:滚动条滑块的圆角半径
+- width：配置滚动条宽度。
+- visible：配置滚动条是否可见，可配值：'always' | 'scrolling' | 'none' | 'focus'，分别对应：常驻显示|滚动时显示|显示|聚焦在画布上时。默认为‘scrolling’。
+- hoverOn ：指定滚动条是悬浮在容器上，还是独立于容器。默认为 true 即悬浮于容器上。
+- barToSide ：是否显示到容器的边缘 尽管内容没有撑满的情况下. 默认 false
 
 下面我们通过示例来展示这些配置的效果：
 
 ```javascript livedemo   template=vtable
-let  tableInstance;
+let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
-    .then((res) => res.json())
-    .then((data) => {
-  const columns =[
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
       {
-          "field": "Order ID",
-          "title": "Order ID",
-          "width": "auto"
+        field: 'Order ID',
+        title: 'Order ID',
+        width: 'auto'
       },
       {
-          "field": "Customer ID",
-          "title": "Customer ID",
-          "width": "auto"
+        field: 'Customer ID',
+        title: 'Customer ID',
+        width: 'auto'
       },
       {
-          "field": "Product Name",
-          "title": "Product Name",
-          "width": "auto"
+        field: 'Product Name',
+        title: 'Product Name',
+        width: 'auto'
       },
       {
-          "field": "Category",
-          "title": "Category",
-          "width": "auto"
+        field: 'Category',
+        title: 'Category',
+        width: 'auto'
       },
       {
-          "field": "Sub-Category",
-          "title": "Sub-Category",
-          "width": "auto"
+        field: 'Sub-Category',
+        title: 'Sub-Category',
+        width: 'auto'
       },
       {
-          "field": "Region",
-          "title": "Region",
-          "width": "auto"
+        field: 'Region',
+        title: 'Region',
+        width: 'auto'
       },
       {
-          "field": "City",
-          "title": "City",
-          "width": "auto"
+        field: 'City',
+        title: 'City',
+        width: 'auto'
       },
       {
-          "field": "Order Date",
-          "title": "Order Date",
-          "width": "auto"
+        field: 'Order Date',
+        title: 'Order Date',
+        width: 'auto'
       },
       {
-          "field": "Quantity",
-          "title": "Quantity",
-          "width": "auto"
+        field: 'Quantity',
+        title: 'Quantity',
+        width: 'auto'
       },
       {
-          "field": "Sales",
-          "title": "Sales",
-          "width": "auto"
+        field: 'Sales',
+        title: 'Sales',
+        width: 'auto'
       },
       {
-          "field": "Profit",
-          "title": "Profit",
-          "width": "auto"
+        field: 'Profit',
+        title: 'Profit',
+        width: 'auto'
       }
-  ];
+    ];
 
-  const option = {
-    records:data,
-    columns,
-    widthMode:'standard',
-        theme: {
-      scrollStyle: {
-          visible:'always',
-          scrollSliderColor:'purple',
-          scrollRailColor:'#bac3cc',
-          hoverOn:false
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      theme: {
+        scrollStyle: {
+          visible: 'always',
+          scrollSliderColor: 'purple',
+          scrollRailColor: '#bac3cc',
+          hoverOn: false,
+          barToSide: true
         }
       }
-  };
-  tableInstance =  new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-  window['tableInstance'] = tableInstance;
-})
-
-
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
 ```
 
 ## 横向滚动
@@ -109,16 +110,17 @@ VTable 支持在按住 Shift 键时进行横向滚动，或者直接拖拽横向
 
 ## 滚动接口
 
-VTable 提供了scrollToCell接口，用于滚到指定的单元格位置。该方法接受 cellAddr 参数用于指定要滚动到的单元位置。示例代码如下：
+VTable 提供了 scrollToCell 接口，用于滚到指定的单元格位置。该方法接受 cellAddr 参数用于指定要滚动到的单元位置。示例代码如下：
 
 ```javascript
-table.scrollToCell({ row:20 , col: 10 });
+table.scrollToCell({ row: 20, col: 10 });
 ```
-在上示例中，我们将滚动到行号为20，列号为 10 的单元格位置。
+
+在上示例中，我们将滚动到行号为 20，列号为 10 的单元格位置。
 
 ## 关闭浏览器默认行为
 
-可通过配置项overscrollBehavior属性来关闭浏览器默认行为，如下配置说明：
+可通过配置项 overscrollBehavior 属性来关闭浏览器默认行为，如下配置说明：
 
 ```
   /**
@@ -128,7 +130,8 @@ table.scrollToCell({ row:20 , col: 10 });
   overscrollBehavior?: 'auto' | 'none';
 ```
 
-在mac电脑上 有时候会出现已经设置了'none'，但还是会触发了浏览器的默认滚动（如橡皮筋效果或者触发了页面回退）
+在 mac 电脑上 有时候会出现已经设置了'none'，但还是会触发了浏览器的默认滚动（如橡皮筋效果或者触发了页面回退）
+
 <div style="display: flex;">
  <div style="width: 20%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/scroll-bounce.gif" />
@@ -140,8 +143,10 @@ table.scrollToCell({ row:20 , col: 10 });
   </div>
 </div>
 
-这个问题可能是因为在表格外部触发过了浏览器的橡默认行为，转而到了表格中进行滚动时延续了这个效果，为了避免这个问题的发生可以在页面body设置css滚动条样式（同时配合VTable的overscrollBehavior配置两层进行限制）：
+这个问题可能是因为在表格外部触发过了浏览器的橡默认行为，转而到了表格中进行滚动时延续了这个效果，为了避免这个问题的发生可以在页面 body 设置 css 滚动条样式（同时配合 VTable 的 overscrollBehavior 配置两层进行限制）：
+
 ```
 "overscroll-behavior: none;"
 ```
+
 具体说明可参考：https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior
