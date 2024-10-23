@@ -15,14 +15,14 @@ option: ListTable#keyboardOptions
 
 开启快捷键 selectAllOnCtrlA 配置进行全选。
 
-点击表头单元格的行为默认会选中整行或者整列，如果只想选中当前单元格可以设置 select.headerSelectMode 为'cell'。
+点击表头单元格的行为默认会选中整行或者整列，如果只想选中当前单元格可以设置 `select.headerSelectMode` 为`'cell'`, 或者只想选中 body 主体中的单元格可以设置 `select.headerSelectMode` 为`'body'`。
 
 ## 关键配置
 
 - `  keyboardOptions: {
-      selectAllOnCtrlA: true,
-      copySelected: true
-  }`
+    selectAllOnCtrlA: true,
+    copySelected: true
+}`
   开启 ctrl+A 可选功能，及快捷键复制选中内容。
 
 ## 代码演示

@@ -8,7 +8,7 @@
 
 如上图所示，点击单元格 (2, 3) 后，该单元格被选中。
 
-点击表头单元格的行为默认会选中整行或者整列，如果只想选中当前单元格可以设置 select.headerSelectMode 为'cell'。
+点击表头单元格的行为默认会选中整行或者整列，如果只想选中当前单元格可以设置 `select.headerSelectMode` 为'`cell'`, 或者只想选中 body 主体中的单元格可以设置 `select.headerSelectMode` 为`'body'`。
 
 ## 鼠标框选
 

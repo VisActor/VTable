@@ -15,7 +15,7 @@ Hold down ctrl or shift to make multiple selections.
 
 Turn on the shortcut key selectAllOnCtrlA configuration to select all.
 
-Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set select.headerSelectMode to 'cell'.
+Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set `select.headerSelectMode` to `'cell'`, Or if you only want to select cells in the body, you can set `select.headerSelectMode` to `'body'`..
 
 ## Key Configurations
 

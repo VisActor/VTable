@@ -209,11 +209,17 @@ Separately set the header not to respond to mouse hover interaction.
 
 Cell selection interaction configuration, specific configuration items as follows:
 
-##${prefix} headerSelectMode ('inline' | 'cell') = 'inline'
+##${prefix} headerSelectMode ('inline' | 'cell' | 'body') = 'inline'
 
-When you click on the header cell, the entire row or column of the body will be selected, or only the current cell will be selected. By default, the entire row or column will be selected.
+When clicking on a header cell, whether the entire row or column needs to be selected along with the body.
 
-Optional values: 'inline' | 'cell'.
+Possible values:
+
+'inline': Clicking a row header selects the entire row, and selecting a column header selects the entire column;
+
+'cell': select only the currently clicked header cell;
+
+'body': Do not select the table header. Clicking a row header selects all body cells in the row. Clicking a column header selects all body cells in the column.
 
 ##${prefix} disableSelect (boolean) = false
 

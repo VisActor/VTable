@@ -357,8 +357,12 @@ export interface BaseTableConstructorOptions {
   select?: {
     /** 高亮范围模式：十字交叉 整列 整行 或者单个单元格。默认`cell` */
     highlightMode?: 'cross' | 'column' | 'row' | 'cell';
-    /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
-    headerSelectMode?: 'inline' | 'cell';
+    /** 点击表头单元格效果
+     * 'inline': 点击行表头则整行选中，选择列表头则整列选中；
+     * 'cell': 仅仅选择当前点击的表头单元格；
+     * 'body': 不选择表头，点击行表头则选择该行所有 body 单元格，点击列表头则选择该列所有 body 单元格。
+     */
+    headerSelectMode?: 'inline' | 'cell' | 'body';
     /** 不响应鼠标select交互 */
     disableSelect?: boolean;
     /** 单独设置表头不响应鼠标select交互 */
