@@ -1,6 +1,16 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 18 Oct 2024 09:42:47 GMT and should not be manually modified.
+This log was last generated on Tue, 22 Oct 2024 09:49:27 GMT and should not be manually modified.
+
+## 1.10.1
+Tue, 22 Oct 2024 09:49:27 GMT
+
+### Updates
+
+- fix: when set rowSeriesNumber then sort icon not update #2643
+
+
+- fix: disable cellInnerBorder when no frame border 
 
 ## 1.10.0
 Fri, 18 Oct 2024 09:42:47 GMT

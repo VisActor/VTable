@@ -79,7 +79,47 @@ You can customize the style of the background grid lines of the right task bars 
 
 ### Dependencies between tasks
 
-Through the `dependency.links` configuration item, you can set the dependencies between tasks. Through the `dependency.linkLineStyle` configuration item, you can customize the style of the dependencies between tasks. Through the `dependency.linkLineSelectedStyle` configuration item, you can customize the style of the dependencies between tasks when they are selected. In addition, you can dynamically create association lines. Through the `dependency.linkCreatable` configuration item, you can set whether association lines can be created.
+Through the `dependency.links` configuration item, you can set the dependencies between tasks. Note that the configuration data format of the dependency is:
+
+```
+  export type ITaskLink = {
+    /** Dependency type */
+    type: DependencyType;
+    linkedFromTaskKey?: string | number;
+    linkedToTaskKey?: string | number;
+  };
+```
+
+For example, the following configuration data:
+
+```
+links:[
+  {
+    type: VTableGantt.TYPES.DependencyType.FinishToStart,
+    linkedFromTaskKey: 1,
+    linkedToTaskKey: 2
+  },
+  {
+    type: VTableGantt.TYPES.DependencyType.StartToFinish,
+    linkedFromTaskKey: 2,
+    linkedToTaskKey: 3
+  },
+  {
+    type: VTableGantt.TYPES.DependencyType.StartToStart,
+    linkedFromTaskKey: 3,
+    linkedToTaskKey: 4
+  },
+  {
+    type: VTableGantt.TYPES.DependencyType.FinishToFinish,
+    linkedFromTaskKey: 4,
+    linkedToTaskKey: 5
+  }
+]
+```
+
+The value of `linkedFromTaskKey` is the unique identifier field in records. The field name of the unique identifier field defaults to `id`. If you need to modify it, you can modify it through the `taskKeyField` configuration item.
+
+Through the `dependency.linkLineStyle` configuration item set link line style, you can customize the style of the dependencies between tasks. Through the `dependency.linkLineSelectedStyle` configuration item, you can customize the style of the dependencies between tasks when they are selected. In addition, you can dynamically create association lines. Through the `dependency.linkCreatable` configuration item, you can set whether association lines can be created.
 
 ### Interaction
 
