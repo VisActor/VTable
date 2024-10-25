@@ -6,6 +6,8 @@ import { add, differenceInDays, lastDayOfMonth, previousSunday } from 'date-fns'
 import { getMonthCustomStyleRange } from './style';
 import type { CellRange, ITableAnimationOption } from '@visactor/vtable';
 import { createTableOption } from './table/table-option';
+import type { ICustomEvent } from './custom/custom-handler';
+import { CustomEventHandler } from './custom/custom-handler';
 
 interface VTableCalendarConstructorOptions {
   startDate?: Date;
@@ -38,6 +40,10 @@ export class VTableCalendar {
 
   titleClickHandler: () => void;
 
+  maxCol: number;
+  minCol: number = 0;
+  customHandler: CustomEventHandler;
+
   constructor(container: HTMLElement, options?: VTableCalendarConstructorOptions) {
     this.container = container;
     this.options = options ?? {};
@@ -58,6 +64,8 @@ export class VTableCalendar {
     }
     this.tableStartDate = this.startDate.getDay() === 0 ? this.startDate : previousSunday(this.startDate);
 
+    this.customHandler = new CustomEventHandler(this);
+
     this._createTable();
 
     this._bindEvent();
@@ -70,6 +78,7 @@ export class VTableCalendar {
     this.records = records;
 
     const week = (dayTitles ?? defaultDayTitles) as DateRecordKeys[];
+    this.maxCol = week.length - 1;
     const option = createTableOption(week, this.currentDate, {
       style: this.options.style,
       containerWidth: this.container.clientWidth,
@@ -77,6 +86,7 @@ export class VTableCalendar {
     });
     option.records = records;
     option.container = this.container;
+    (option as any)._calendar = this;
 
     const tableInstance = new ListTable(option);
     this.table = tableInstance;
@@ -177,5 +187,27 @@ export class VTableCalendar {
   release() {
     // unbind event
     this._unbindEvent();
+  }
+
+  getCellLocation(date: Date) {
+    const dataIndex = Math.floor((differenceInDays(date, this.tableStartDate) + 1) / 7);
+    const row = dataIndex + 1;
+    const col = date.getDay() + 2; // to do: delete
+
+    return {
+      row,
+      col
+    };
+  }
+
+  getCellDate(col: number, row: number) {
+    const startDate = add(this.tableStartDate, {
+      days: (row - 1) * 7 + (col - 2)
+    });
+    return startDate;
+  }
+
+  addCustomEvent(event: ICustomEvent) {
+    this.customHandler.addEvent(event);
   }
 }

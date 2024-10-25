@@ -2,6 +2,8 @@ import type { TYPES } from '@visactor/vtable';
 import { ListTable, themes, CustomLayout } from '@visactor/vtable';
 import type { DateRecord, DateRecordKeys } from '../date-util';
 import { defaultDayTitles, getMonthString, getWeekdayString } from '../date-util';
+import type { CustomRenderFunctionArg } from '@visactor/vtable/es/ts-types';
+import type { VTableCalendar } from '../month-calendar';
 
 export function createTableOption(week: DateRecordKeys[], currentDate: Date, config: any) {
   const columns = week.map((item: DateRecordKeys, index: number) => {
@@ -22,7 +24,8 @@ export function createTableOption(week: DateRecordKeys[], currentDate: Date, con
           return `${record[item]}\n${mouthStr}`;
         }
         return record[item];
-      }
+      },
+      customLayout: calendarCustomLayout
     };
   });
 
@@ -77,4 +80,76 @@ export function createTableOption(week: DateRecordKeys[], currentDate: Date, con
   };
 
   return option;
+}
+
+function calendarCustomLayout(args: CustomRenderFunctionArg) {
+  const { table, row, col, rect, value } = args;
+  const calendar = (table as any).options._calendar as VTableCalendar;
+  const record = table.getRecordByCell(col, row);
+  const { height, width } = rect ?? table.getCellRect(col, row);
+
+  const cellDate = calendar.getCellDate(col, row);
+  const customEvents = calendar.customHandler.getCellCustomEvent(col, row);
+
+  if (!customEvents) {
+    return undefined;
+  }
+
+  const container = new CustomLayout.Group({
+    x: 0,
+    y: 30,
+    height: height - 30,
+    width,
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'nowrap'
+  });
+
+  const { keys, values } = customEvents;
+  const lastKey = keys[keys.length - 1];
+
+  for (let i = 0; i <= lastKey; i++) {
+    if (!values[i]) {
+      // add empty rect for ocupy space
+      const rect = new CustomLayout.Rect({
+        width: width,
+        height: 20,
+        fill: false,
+        stroke: false
+      });
+      container.add(rect);
+    } else if (values[i].type === 'list') {
+      const text = new CustomLayout.Text({
+        text: values[i].text,
+        fontSize: 15,
+        fill: values[i].color,
+        textAlign: 'left',
+        textBaseline: 'middle'
+      });
+      container.add(text);
+    } else {
+      // bar
+      const tag = new CustomLayout.Tag({
+        text: values[i].text,
+        textStyle: {
+          fontSize: 15,
+          fill: values[i].color
+          // textAlign: 'left',
+          // textBaseline: 'rop',
+        },
+        panel: {
+          visible: true,
+          fill: values[i].bgColor,
+          cornerRadius: 4
+        },
+        width: 100
+      });
+      container.add(tag);
+    }
+  }
+
+  return {
+    rootContainer: container,
+    renderDefault: true
+  };
 }

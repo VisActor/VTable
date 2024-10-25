@@ -71,6 +71,11 @@ export function dealWithCustom(
       originRow: row
     };
     const customRenderObj = customLayout(arg);
+    if (!customRenderObj) {
+      return {
+        renderDefault: true
+      };
+    }
     if (customRenderObj.rootContainer) {
       customRenderObj.rootContainer = decodeReactDom(customRenderObj.rootContainer);
     }
