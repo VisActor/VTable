@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add selected_cell event in select-all #2664",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
