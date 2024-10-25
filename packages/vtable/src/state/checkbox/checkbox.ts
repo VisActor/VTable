@@ -151,21 +151,21 @@ export function initCheckedState(records: any[], state: StateManager) {
  */
 export function updateHeaderCheckedState(field: string | number, state: StateManager): boolean | 'indeterminate' {
   const allChecked = state.checkedState.every((state: Record<string | number, boolean>) => {
-    return state[field] === true;
+    return state && state[field] === true;
   });
   if (allChecked) {
     state.headerCheckedState[field] = true;
     return allChecked;
   }
   const allUnChecked = state.checkedState.every((state: Record<string | number, boolean>) => {
-    return state[field] === false;
+    return state && state[field] === false;
   });
   if (allUnChecked) {
     state.headerCheckedState[field] = false;
     return false;
   }
   const hasChecked = state.checkedState.find((state: Record<string | number, boolean>) => {
-    return state[field] === true;
+    return state && state[field] === true;
   });
   if (hasChecked) {
     state.headerCheckedState[field] = 'indeterminate';

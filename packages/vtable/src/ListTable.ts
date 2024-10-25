@@ -555,6 +555,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       //数据源缓存数据更新
       this.dataSource.updatePagination(this.pagination);
       this.refreshRowColCount();
+      this.stateManager.initCheckedState(this.records);
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
       this.renderAsync();
@@ -1007,6 +1008,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.dataSource.updateFilterRules(filterRules);
     }
     this.refreshRowColCount();
+    this.stateManager.initCheckedState(this.records);
     this.scenegraph.createSceneGraph();
   }
   /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
