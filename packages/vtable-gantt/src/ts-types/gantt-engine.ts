@@ -94,6 +94,8 @@ export interface GanttConstructorOptions {
     selectedBarStyle?: ITaskBarSelectedStyle;
     /** 任务条是否可选择，默认为true */
     selectable?: boolean;
+    /** 任务条是否可以被拖拽来改变顺序 */
+    dragOrder?: boolean;
     /** 任务条右键菜单 */
     menu?: {
       /** 右键菜单。代替原来的option.contextmenu */

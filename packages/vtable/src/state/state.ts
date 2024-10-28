@@ -815,11 +815,10 @@ export class StateManager {
   }
 
   startMoveCol(col: number, row: number, x: number, y: number, event: MouseEvent | PointerEvent | TouchEvent) {
-    startMoveCol(col, row, x, y, this);
-    this.table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, { col, row, x, y, event });
+    startMoveCol(col, row, x, y, this, event);
   }
-  updateMoveCol(col: number, row: number, x: number, y: number) {
-    updateMoveCol(col, row, x, y, this);
+  updateMoveCol(col: number, row: number, x: number, y: number, event: MouseEvent | PointerEvent | TouchEvent) {
+    updateMoveCol(col, row, x, y, this, event);
   }
   isMoveCol(): boolean {
     return this.columnMove.moving;
