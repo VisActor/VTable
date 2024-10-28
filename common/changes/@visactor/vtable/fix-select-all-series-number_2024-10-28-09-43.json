@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix disableRowSeriesNumberSelect in select-all #2665",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
