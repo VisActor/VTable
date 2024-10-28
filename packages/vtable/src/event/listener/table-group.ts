@@ -947,7 +947,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
       const cellType = table.getCellType(col, row);
       if (cellType === 'checkbox') {
         const oldHeaderCheckedState = table.stateManager.headerCheckedState[cellInfo.field as string | number];
-        const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(cellInfo.field as string | number);
+        const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(
+          cellInfo.field as string | number,
+          col,
+          row
+        );
         if (oldHeaderCheckedState !== newHeaderCheckedState) {
           table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
         }
