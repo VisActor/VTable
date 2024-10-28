@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add event in react-vtable",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
