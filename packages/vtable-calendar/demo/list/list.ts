@@ -5,6 +5,7 @@ export function createTable() {
   const calendar = new VTableCalendar(document.getElementById(CONTAINER_ID));
 
   calendar.addCustomEvent({
+    id: 'Event B',
     startDate: new Date(2024, 9, 21),
     endDate: new Date(2024, 9, 23),
     text: 'Event B',
@@ -14,6 +15,7 @@ export function createTable() {
   });
 
   calendar.addCustomEvent({
+    id: 'Event C',
     startDate: new Date(2024, 9, 22),
     endDate: new Date(2024, 10, 4),
     // eslint-disable-next-line max-len
@@ -26,6 +28,7 @@ export function createTable() {
   calendar.addCustomEvent({
     date: new Date(2024, 9, 23),
     text: 'Event A',
+    id: 'Event A',
     type: 'list',
     color: '#f99'
   });
@@ -33,6 +36,7 @@ export function createTable() {
   calendar.addCustomEvent({
     date: new Date(2024, 9, 24),
     text: 'Event D',
+    id: 'Event D',
     type: 'list',
     color: '#f99'
   });

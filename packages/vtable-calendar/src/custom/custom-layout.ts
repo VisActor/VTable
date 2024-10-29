@@ -19,7 +19,7 @@ export function calendarCustomLayout(args: CustomRenderFunctionArg) {
     return undefined;
   }
 
-  const textHeight = (table.theme.bodyStyle.fontSize as number) * 2;
+  const textHeight = (table.theme.bodyStyle.fontSize as number) * 2 + 10; // padding
 
   const container = new Group({
     x: 0,

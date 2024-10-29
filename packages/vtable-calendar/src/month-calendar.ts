@@ -208,5 +208,31 @@ export class VTableCalendar {
 
   addCustomEvent(event: ICustomEvent) {
     this.customHandler.addEvent(event);
+    this.table.scenegraph.updateNextFrame();
+  }
+
+  removeCustomEvent(id: string) {
+    this.customHandler.removeEvents([id]);
+    this.table.scenegraph.updateNextFrame();
+  }
+
+  updateCustomEvent(event: ICustomEvent) {
+    this.customHandler.updateEvents([event]);
+    this.table.scenegraph.updateNextFrame();
+  }
+
+  addCustomEvents(events: ICustomEvent[]) {
+    this.customHandler.addEvents(events);
+    this.table.scenegraph.updateNextFrame();
+  }
+
+  removeCustomEvents(ids: string[]) {
+    this.customHandler.removeEvents(ids);
+    this.table.scenegraph.updateNextFrame();
+  }
+
+  updateCustomEvents(events: ICustomEvent[]) {
+    this.customHandler.updateEvents(events);
+    this.table.scenegraph.updateNextFrame();
   }
 }

@@ -2,6 +2,8 @@ import { max, min } from 'date-fns';
 import type { VTableCalendar } from '../month-calendar';
 import { merge } from '@visactor/vutils';
 
+const CUSTOM_CONTAINER_NAME = 'custom-container';
+
 export interface ICustomEventOptions {
   contentHeight?: number;
   barHeight?: number;
@@ -47,6 +49,7 @@ interface IEventData extends ICustomEvent {
 export class CustomEventHandler {
   calendar: VTableCalendar;
   cellEvents: Map<string, ICellCustomEvent> = new Map();
+  events: ICustomEvent[] = [];
   customEventOptions: Required<ICustomEventOptions>;
   constructor(calendar: VTableCalendar, customEventOptions?: ICustomEventOptions) {
     this.calendar = calendar;
@@ -186,7 +189,100 @@ export class CustomEventHandler {
         }
       }
     }
+
+    this.events.push(event);
   }
 
-  // removeEvent(id: string) {}
+  addEvents(events: ICustomEvent[]) {
+    events.forEach(event => {
+      this.addEvent(event);
+    });
+  }
+
+  removeEvents(ids: string[]) {
+    ids.forEach(id => {
+      this._removeEvent(id);
+    });
+
+    // readd custom event
+    const newEvents = this.events.filter(event => {
+      if (event.id && ids.includes(event.id)) {
+        return false;
+      }
+      return true;
+    });
+
+    this.events.length = 0;
+    this.cellEvents.clear();
+
+    newEvents.forEach(event => {
+      this.addEvent(event);
+    });
+  }
+
+  _removeEvent(id: string) {
+    if (!id) {
+      return;
+    }
+    const event = this.events.find(event => {
+      if (event.id === id) {
+        return true;
+      }
+      return false;
+    });
+
+    if (!event) {
+      return;
+    }
+
+    // clear custom graphic in this event
+    const { date, startDate, endDate } = event;
+    if (event.type === 'list') {
+      const { col, row } = this.calendar.getCellLocation(date);
+      const cellGroup = this.calendar.table.scenegraph.getCell(col, row);
+      cellGroup.removeChild(cellGroup.getChildByName(CUSTOM_CONTAINER_NAME));
+    } else {
+      // bar
+      const startLocation = this.calendar.getCellLocation(max([startDate, this.calendar.startDate]));
+      const endLocation = this.calendar.getCellLocation(min([endDate, this.calendar.endDate]));
+
+      let col = startLocation.col;
+      let row = startLocation.row;
+      while (row < endLocation.row || (col <= endLocation.col && row === endLocation.row)) {
+        const cellGroup = this.calendar.table.scenegraph.getCell(col, row);
+        cellGroup.removeChild(cellGroup.getChildByName(CUSTOM_CONTAINER_NAME));
+
+        col++;
+        if (col > this.calendar.maxCol) {
+          col = this.calendar.minCol;
+          row++;
+        }
+      }
+    }
+  }
+
+  updateEvents(events: ICustomEvent[]) {
+    events.forEach(event => {
+      this._removeEvent(event.id);
+      // replace event in this.events
+      const oldEvent = this.events.find(e => {
+        if (e.id === event.id) {
+          return true;
+        }
+        return false;
+      });
+      // const newEvent = merge(oldEvent, event);
+      // this.events.splice(this.events.indexOf(oldEvent), 1, newEvent);
+      merge(oldEvent, event);
+    });
+
+    // readd custom event
+    const oldEvents = this.events;
+    this.events = [];
+    this.cellEvents.clear();
+
+    oldEvents.forEach(event => {
+      this.addEvent(event);
+    });
+  }
 }
