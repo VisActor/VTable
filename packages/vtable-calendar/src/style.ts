@@ -1,5 +1,4 @@
 import { differenceInDays, lastDayOfMonth } from 'date-fns';
-import type { VTableCalendar } from './month-calendar';
 import type { DateRecord } from './date-util';
 
 export function getMonthCustomStyleRange(year: number, month: number, tableStartDate: Date, records: DateRecord[]) {
@@ -19,7 +18,7 @@ export function getMonthCustomStyleRange(year: number, month: number, tableStart
           row: startDataIndex + 1 + 1
         },
         end: {
-          col: 8,
+          col: 6,
           row: endDataIndex
         }
       }
@@ -45,11 +44,11 @@ export function getMonthCustomStyleRange(year: number, month: number, tableStart
   customCellRanges.push({
     range: {
       start: {
-        col: startIndex + 2,
+        col: startIndex,
         row: startDataIndex + 1
       },
       end: {
-        col: 8,
+        col: 6,
         row: startDataIndex + 1
       }
     }
@@ -80,7 +79,7 @@ export function getMonthCustomStyleRange(year: number, month: number, tableStart
         row: endDataIndex + 1
       },
       end: {
-        col: endIndex + 2,
+        col: endIndex,
         row: endDataIndex + 1
       }
     }

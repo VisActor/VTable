@@ -192,7 +192,7 @@ export class VTableCalendar {
   getCellLocation(date: Date) {
     const dataIndex = Math.floor((differenceInDays(date, this.tableStartDate) + 1) / 7);
     const row = dataIndex + 1;
-    const col = date.getDay() + 2; // to do: delete
+    const col = date.getDay();
 
     return {
       row,
@@ -202,7 +202,7 @@ export class VTableCalendar {
 
   getCellDate(col: number, row: number) {
     const startDate = add(this.tableStartDate, {
-      days: (row - 1) * 7 + (col - 2)
+      days: (row - 1) * 7 + col
     });
     return startDate;
   }

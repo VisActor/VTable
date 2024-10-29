@@ -7,7 +7,8 @@ export function getStartAndEndDate(today: Date, daltaDays: number) {
   return { startDate, endDate };
 }
 
-export const defaultDayTitles = ['year', 'month', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+// export const defaultDayTitles = ['year', 'month', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+export const defaultDayTitles = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export type DateRecordKeys = 'year' | 'month' | 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat';
 export type DateRecord = Record<DateRecordKeys, number>;
 
