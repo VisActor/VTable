@@ -4,9 +4,9 @@ import { defaultDayTitles, getMonthString, getRecords, getStartAndEndDate, getWe
 import { bindDebugTool } from '../../vtable/src/scenegraph/debug-tool';
 import { add, differenceInDays, lastDayOfMonth, previousSunday } from 'date-fns';
 import { getMonthCustomStyleRange } from './style';
-import type { CellRange, ITableAnimationOption } from '@visactor/vtable';
+import type { CellRange, ITableAnimationOption, ListTableConstructorOptions } from '@visactor/vtable';
 import { createTableOption } from './table/table-option';
-import type { ICustomEvent } from './custom/custom-handler';
+import type { ICustomEvent, ICustomEventOptions } from './custom/custom-handler';
 import { CustomEventHandler } from './custom/custom-handler';
 
 interface VTableCalendarConstructorOptions {
@@ -15,13 +15,12 @@ interface VTableCalendarConstructorOptions {
   currentDate?: Date;
   rangeDays?: number;
 
-  // columnWidth?: number;
-  // rowHeight?: number;
   dayTitles?: [string, string, string, string, string, string, string];
 
-  style?: {
-    headerRowHeight?: number;
-  };
+  tableOptions?: ListTableConstructorOptions;
+
+  customEvents?: ICustomEvent[];
+  customEventOptions?: ICustomEventOptions;
 }
 
 export class VTableCalendar {
@@ -64,7 +63,7 @@ export class VTableCalendar {
     }
     this.tableStartDate = this.startDate.getDay() === 0 ? this.startDate : previousSunday(this.startDate);
 
-    this.customHandler = new CustomEventHandler(this);
+    this.customHandler = new CustomEventHandler(this, options?.customEventOptions);
 
     this._createTable();
 
@@ -80,7 +79,7 @@ export class VTableCalendar {
     const week = (dayTitles ?? defaultDayTitles) as DateRecordKeys[];
     this.maxCol = week.length - 1;
     const option = createTableOption(week, this.currentDate, {
-      style: this.options.style,
+      tableOptions: this.options.tableOptions,
       containerWidth: this.container.clientWidth,
       containerHeight: this.container.clientHeight
     });

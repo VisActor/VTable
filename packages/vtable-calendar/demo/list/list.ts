@@ -9,15 +9,18 @@ export function createTable() {
     endDate: new Date(2024, 9, 23),
     text: 'Event B',
     type: 'bar',
-    bgColor: '#f99'
+    bgColor: '#f99',
+    color: '#fff'
   });
 
   calendar.addCustomEvent({
     startDate: new Date(2024, 9, 22),
-    endDate: new Date(2024, 9, 24),
-    text: 'Event C',
+    endDate: new Date(2024, 10, 4),
+    // eslint-disable-next-line max-len
+    text: 'EventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEventEvent',
     type: 'bar',
-    bgColor: '#9f9'
+    bgColor: '#9f9',
+    color: '#fff'
   });
 
   calendar.addCustomEvent({
