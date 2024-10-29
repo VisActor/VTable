@@ -254,7 +254,7 @@ menu 渲染方式，html 目前实现较完整，先默认使用 html 渲染方�
 右键菜单。声明类型：
 
 ```
-MenuListItem[] | ((field: string, row: number) => MenuListItem[]);
+MenuListItem[] | ((field: string, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
 ```
 
 {{ use: common-menu-list-item() }}

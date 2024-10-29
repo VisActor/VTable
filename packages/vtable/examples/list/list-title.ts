@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import type { BaseTableAPI } from '../../src/ts-types/base-table';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -132,6 +133,20 @@ export function createTable() {
       position: 'start',
       maxRow: 1,
       padding: [50, 0, 0, 0]
+    },
+    menu: {
+      contextMenuItems: (field: string, row: number, col: number, table: BaseTableAPI) => {
+        if (row === 0) {
+          return [];
+        }
+        const data = table.getCellOriginRecord(col, row);
+        if (data.id === 1) {
+          return ['复制', '粘贴', '删除'];
+        } else if (data.id === 3) {
+          return [];
+        }
+        return ['复制', '粘贴'];
+      }
     }
   };
   const tableInstance = new VTable.ListTable(option);
