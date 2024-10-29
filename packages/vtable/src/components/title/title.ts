@@ -48,10 +48,18 @@ export class Title {
     const padding = getQuadProps(this._titleOption.padding ?? 10);
     const realWidth =
       this._titleOption.width ??
-      Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width) - padding[1] - padding[3];
+      (this.table.widthMode === 'adaptive'
+        ? this.table.tableNoFrameWidth
+        : Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width)) -
+        padding[1] -
+        padding[3];
     const realHeight =
       this._titleOption.height ??
-      Math.min(this.table.tableNoFrameHeight, this.table.getDrawRange().height) - padding[0] - padding[2];
+      (this.table.heightMode === 'adaptive'
+        ? this.table.tableNoFrameHeight
+        : Math.min(this.table.tableNoFrameHeight, this.table.getDrawRange().height)) -
+        padding[0] -
+        padding[2];
     this._titleComponent.setAttributes({
       x:
         this._titleOption.x ?? this._titleOption.orient === 'right'

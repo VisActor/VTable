@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix title resize in adaptive mode #2704",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
