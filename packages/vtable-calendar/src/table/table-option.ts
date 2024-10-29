@@ -29,7 +29,7 @@ export function createTableOption(week: DateRecordKeys[], currentDate: Date, con
     };
   });
 
-  const rowHeight = Math.floor((config.containerHeight - (config.style?.headerRowHeight ?? 40)) / 5);
+  const rowHeight = Math.floor((config.containerHeight - (20 + 16 + 1) - (config.style?.headerRowHeight ?? 40)) / 5); // height - title - header
   const option: TYPES.ListTableConstructorOptions = {
     // container: this.container,
     // records,

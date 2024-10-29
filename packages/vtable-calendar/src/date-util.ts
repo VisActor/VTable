@@ -1,10 +1,9 @@
-import { addDays, getDaysInMonth, isAfter } from 'date-fns';
+import { addDays, getDaysInMonth, isAfter, lastDayOfMonth } from 'date-fns';
 
 export function getStartAndEndDate(today: Date, daltaDays: number) {
   const startDate = addDays(today, -daltaDays);
-  const endDate = addDays(today, daltaDays);
   startDate.setDate(1);
-  endDate.setDate(1);
+  const endDate = lastDayOfMonth(addDays(today, daltaDays));
   return { startDate, endDate };
 }
 
@@ -63,7 +62,7 @@ export function getRecords(startDate: Date, endDate: Date) {
     }
 
     month += 1;
-    if (month === 13) {
+    if (month === 12) {
       month = 0;
       year += 1;
     }
@@ -100,10 +99,10 @@ function setDate(record: DateRecord, day: number, date: number) {
 
 const monthStrings = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 export function getMonthString(monthIndex: number) {
-  return monthStrings[monthIndex];
+  return monthStrings[monthIndex % monthStrings.length];
 }
 
 const weekdayStrings = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export function getWeekdayString(weekdayIndex: number) {
-  return weekdayStrings[weekdayIndex];
+  return weekdayStrings[weekdayIndex % weekdayStrings.length];
 }
