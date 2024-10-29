@@ -39,6 +39,8 @@ Supported event types:
   RESIZE_ROW: 'resize_row',
   RESIZE_ROW_END: 'resize_row_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
+  CHANGE_HEADER_POSITION_START: 'change_header_position_start',
+  CHANGING_HEADER_POSITION: 'changing_header_position',
   SORT_CLICK: 'sort_click',
   AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
@@ -214,16 +216,59 @@ rowHeight: number
 
 ## CHANGE_HEADER_POSITION
 
-Events for dragging the table header to move its position
+Events for dragging table headers or rows to move positions
 
-Event callback function parameter types.
-``
+Parameter type of event callback function:
+
+```
 {
-source: CellAddress.
+source: CellAddress;
 target: CellAddress
 }
 
-``
+```
+
+## CHANGE_HEADER_POSITION_START
+
+Drag the header or row to move the position to start the event
+
+Parameter type of event callback function:
+
+```
+{
+col: number;
+row: number;
+x: number;
+y: number;
+backX: number;
+lineX: number;
+backY: number;
+lineY: number;
+event: Event;
+};
+
+```
+
+## CHANGING_HEADER_POSITION
+
+Drag the header or drag the row to move the process event
+
+Parameter type of event callback function:
+
+```
+{
+col: number;
+row: number;
+x: number;
+y: number;
+backX: number;
+lineX: number;
+backY: number;
+lineY: number;
+event: Event;
+};
+
+```
 
 ## SORT_CLICK
 
