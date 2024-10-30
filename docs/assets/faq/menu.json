@@ -165,7 +165,7 @@
     },
     {
       "Index": 24,
-      "path": "24- How to display table row numbers",
+      "path": "24-How to display table row numbers",
       "title": {
         "zh": "24. VTable使用问题：如何显示表格行号",
         "en": "24. How to display table row numbers"
@@ -205,7 +205,7 @@
     },
     {
       "Index": 29,
-      "path": "29- How to obtain the total number of rows in a table and the actual height of the content",
+      "path": "29-How to obtain the total number of rows in a table and the actual height of the content",
       "title": {
         "zh": "29. VTable使用问题：如何获取表格总行数和内容实际高度",
         "en": "29. How to obtain the total number of rows in a table and the actual height of the content"
