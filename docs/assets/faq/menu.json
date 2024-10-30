@@ -389,7 +389,7 @@
     },
     {
       "Index": 52,
-      "path": "52- Usage issues of the editing cell ability of the VTable component: How to configure the editor and whether it can be reused",
+      "path": "52-How to configure the editor and whether it can be reused",
       "title": {
         "zh": "52. VTable表格组件的编辑单元格能力使用问题：编辑器怎么配置，是否可以复用？",
         "en": "52. Usage issues of the editing cell ability of the VTable component: How to configure the editor and whether it can be reused?"
