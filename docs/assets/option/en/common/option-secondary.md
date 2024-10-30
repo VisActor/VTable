@@ -260,7 +260,7 @@ Global settings for built-in drop-down menus, type is `MenuListItem[]`. Currentl
 Right-click menu. Declaration type:
 
 ```
-MenuListItem[] | ((field: string, row: number) => MenuListItem[]);
+MenuListItem[] | ((field: string, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
 ```
 
 {{ use: common-menu-list-item() }}
