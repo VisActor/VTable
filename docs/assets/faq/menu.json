@@ -221,7 +221,7 @@
     },
     {
       "Index": 31,
-      "path": "31-VTable usage issue: How to implement hover to a cell to show or hide part of the content",
+      "path": "31-How to implement hover to a cell to show or hide part of the content",
       "title": {
         "zh": "31. VTable使用问题：如何实现hover到单元格显示或隐藏部分内容",
         "en": "31.VTable usage issue: How to implement hover to a cell to show or hide part of the content"
@@ -229,7 +229,7 @@
     },
     {
       "Index": 32,
-      "path": "32-VTable usage issue: How to implement scrollbar DOM container boundary display",
+      "path": "32-How to implement scrollbar DOM container boundary display",
       "title": {
         "zh": "32. VTable使用问题：如何实现滚动条贴DOM容器边界展示",
         "en": "32.VTable usage issue: How to implement scrollbar DOM container boundary display"
@@ -237,7 +237,7 @@
     },
     {
       "Index": 33,
-      "path": "33-VTable usage issue: How to implement drag-and-drop adjustment of line-height",
+      "path": "33-How to implement drag-and-drop adjustment of line-height",
       "title": {
         "zh": "33. VTable使用问题：如何实现拖拽调整行高",
         "en": "33.VTable usage issue: How to implement drag-and-drop adjustment of line-height"
@@ -245,7 +245,7 @@
     },
     {
       "Index": 34,
-      "path": "34-VTable usage issue: How to implement text type buttons",
+      "path": "34-How to implement text type buttons",
       "title": {
         "zh": "34. VTable使用问题：如何实现文本类型的按钮",
         "en": "34.VTable usage issue: How to implement text type buttons"
@@ -253,7 +253,7 @@
     },
     {
       "Index": 35,
-      "path": "35-VTable usage issue: How to set the border style around cells separately",
+      "path": "35-How to set the border style around cells separately",
       "title": {
         "zh": "35. VTable使用问题：如何分别设置单元格四周边框样式",
         "en": "35.VTable usage issue: How to set the border style around cells separately"
@@ -261,7 +261,7 @@
     },
     {
       "Index": 36,
-      "path": "36-VTable usage issue: How to make the table automatically calculate column width based only on the content width of the table header",
+      "path": "36-How to make the table automatically calculate column width based only on the content width of the table header",
       "title": {
         "zh": "36. VTable使用问题：如何让表格只根据表头的内容宽度自动计算列宽",
         "en": "36.VTable usage issue: How to make the table automatically calculate column width based only on the content width of the table header"
@@ -309,7 +309,7 @@
     },
     {
       "Index": 42,
-      "path": "42-VTable usage issue: How to add column total information to the list",
+      "path": "42-How to add column total information to the list",
       "title": {
         "zh": "42. VTable使用问题：如何在列表中加入列总计信息",
         "en": "42.VTable usage issue: How to add column total information to the list"
@@ -317,7 +317,7 @@
     },
     {
       "Index": 43,
-      "path": "43-VTable usage issue: How to listen to table area selection and cancellation events",
+      "path": "43-How to listen to table area selection and cancellation events",
       "title": {
         "zh": "43. VTable使用问题：如何监听表格区域选中取消事件",
         "en": "43.VTable usage issue: How to listen to table area selection and cancellation events"
@@ -325,7 +325,7 @@
     },
     {
       "Index": 44,
-      "path": "44-VTable usage issue: How to set only one column to not be selected for operation",
+      "path": "44-How to set only one column to not be selected for operation",
       "title": {
         "zh": "44. VTable使用问题：如何何设置只有一列不能选中操作",
         "en": "44.VTable usage issue: How to set only one column to not be selected for operation"
@@ -333,7 +333,7 @@
     },
     {
       "Index": 45,
-      "path": "45-VTable usage issue: How to manually control the tooltip display",
+      "path": "45-How to manually control the tooltip display",
       "title": {
         "zh": "45. VTable使用问题：如何手动控制tooltip展示",
         "en": "45.VTable usage issue: How to manually control the tooltip display"
@@ -341,7 +341,7 @@
     },
     {
       "Index": 46,
-      "path": "46-VTable usage issue: How to set multi-level table headers",
+      "path": "46-How to set multi-level table headers",
       "title": {
         "zh": "46. VTable使用问题：如何设置多级表头",
         "en": "46.VTable usage issue: How to set multi-level table headers"
@@ -389,7 +389,7 @@
     },
     {
       "Index": 52,
-      "path": "52- Usage issues of the editing cell ability of the VTable component: How to configure the editor and whether it can be reused",
+      "path": "52-How to configure the editor and whether it can be reused",
       "title": {
         "zh": "52. VTable表格组件的编辑单元格能力使用问题：编辑器怎么配置，是否可以复用？",
         "en": "52. Usage issues of the editing cell ability of the VTable component: How to configure the editor and whether it can be reused?"
