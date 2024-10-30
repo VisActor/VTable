@@ -91,8 +91,8 @@ export class TableTheme implements ITableThemeDefine {
   name: string = '';
   constructor(obj: PartialTableThemeDefine | ITableThemeDefine, superTheme: ITableThemeDefine) {
     this.internalTheme = {
-      obj,
-      superTheme
+      obj: ingoreNoneValueMerge({}, obj),
+      superTheme: ingoreNoneValueMerge({}, superTheme)
     };
     this.name = getProp(obj, superTheme, ['name']);
   }
