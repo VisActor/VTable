@@ -1,10 +1,10 @@
-import { ListTable, themes, CustomLayout } from '@visactor/vtable';
+import { ListTable } from '@visactor/vtable';
 import type { DateRecord, DateRecordKeys } from './date-util';
-import { defaultDayTitles, getMonthString, getRecords, getStartAndEndDate, getWeekdayString } from './date-util';
+import { defaultDayTitles, getRecords, getStartAndEndDate } from './date-util';
 import { bindDebugTool } from '../../vtable/src/scenegraph/debug-tool';
-import { add, differenceInDays, lastDayOfMonth, previousSunday } from 'date-fns';
+import { add, differenceInDays, previousSunday } from 'date-fns';
 import { getMonthCustomStyleRange } from './style';
-import type { CellRange, ITableAnimationOption, ListTableConstructorOptions } from '@visactor/vtable';
+import type { TYPES, ListTableConstructorOptions } from '@visactor/vtable';
 import { createTableOption } from './table/table-option';
 import type { ICustomEvent, ICustomEventOptions } from './custom/custom-handler';
 import { CustomEventHandler } from './custom/custom-handler';
@@ -33,7 +33,7 @@ export class VTableCalendar {
   rangeDays: number;
   tableStartDate: Date;
   records: DateRecord[];
-  currentMonthCellRanges: { range: CellRange }[];
+  currentMonthCellRanges: { range: TYPES.CellRange }[];
   currentMonth: number;
   currentYear: number;
 
@@ -124,7 +124,7 @@ export class VTableCalendar {
     return record;
   }
 
-  jumpToDate(date: Date, animation?: boolean | ITableAnimationOption) {
+  jumpToDate(date: Date, animation?: boolean | TYPES.ITableAnimationOption) {
     const dataIndex = Math.floor((differenceInDays(date, this.tableStartDate) + 1) / 7);
     this.table.scrollToCell(
       {
@@ -137,7 +137,7 @@ export class VTableCalendar {
     this._updateMonthCustomStyle(date.getFullYear(), date.getMonth());
   }
 
-  jumpToCurrentMonth(animation?: boolean | ITableAnimationOption) {
+  jumpToCurrentMonth(animation?: boolean | TYPES.ITableAnimationOption) {
     // scroll to current month
     const topDate = new Date(this.currentDate.getTime());
     topDate.setDate(1);

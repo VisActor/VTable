@@ -47,7 +47,7 @@ export function calendarCustomLayout(args: CustomRenderFunctionArg) {
         fill: false,
         stroke: false,
         clip: true
-      });
+      }) as any;
       container.add(emptyGroup);
     } else if (event.type === 'list') {
       const listGroup = new Group({
@@ -59,7 +59,7 @@ export function calendarCustomLayout(args: CustomRenderFunctionArg) {
         stroke: false,
         clip: true,
         cursor: 'pointer'
-      });
+      }) as any;
       container.add(listGroup);
       listGroup._role = 'calendar-custom-event';
       listGroup._customEvent = event;
@@ -96,7 +96,7 @@ export function calendarCustomLayout(args: CustomRenderFunctionArg) {
         stroke: false,
         clip: true,
         cursor: 'pointer'
-      });
+      }) as any;
       container.add(barGroup);
       barGroup._role = 'calendar-custom-event';
       barGroup._customEvent = event;
