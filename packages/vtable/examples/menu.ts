@@ -487,6 +487,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-extension-bp'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-column-width'
       }
     ]
   },
