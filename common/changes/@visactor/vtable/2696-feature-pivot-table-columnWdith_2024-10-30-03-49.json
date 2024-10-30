@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add columnWidthConfig to set width by dimensions #2696\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
