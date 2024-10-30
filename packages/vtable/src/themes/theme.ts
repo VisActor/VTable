@@ -91,8 +91,8 @@ export class TableTheme implements ITableThemeDefine {
   name: string = '';
   constructor(obj: PartialTableThemeDefine | ITableThemeDefine, superTheme: ITableThemeDefine) {
     this.internalTheme = {
-      obj: ingoreNoneValueMerge({}, obj),
-      superTheme: ingoreNoneValueMerge({}, superTheme)
+      obj,
+      superTheme
     };
     this.name = getProp(obj, superTheme, ['name']);
   }
@@ -788,7 +788,7 @@ export class TableTheme implements ITableThemeDefine {
     return hasThemeProperty(obj, names) || hasThemeProperty(superTheme, names);
   }
   extends(obj: PartialTableThemeDefine): TableTheme {
-    return new TableTheme(obj, this.internalTheme.superTheme || this.internalTheme.obj);
+    return new TableTheme(ingoreNoneValueMerge({}, this.internalTheme.obj, obj), this.internalTheme.superTheme);
   }
   private getStyle(style: ThemeStyle) {
     const that = this;
