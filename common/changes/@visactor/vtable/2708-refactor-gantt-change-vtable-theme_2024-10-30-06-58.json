@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when has gantt and table same time internal theme should not be changed #2708\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
