@@ -86,6 +86,8 @@ const table = new VTable.ListTable({
 
 透视表列宽配置：
 
+1. 关联指标设置列宽
+
 ```javascript
 const table = new VTable.PivotTable({
   indicators: [
@@ -93,9 +95,58 @@ const table = new VTable.PivotTable({
       // ...其他配置项
       width: 200
     }
-  ]
+  ],
+  ...
 });
 ```
+
+2. 通过维度路径设置列宽
+
+通过`columnWidthConfig`配置项进行设置，该配置项可以设定为一个数组，分别对应各级维度路径的列的宽度。
+
+```javascript
+const table = new VTable.PivotTable({
+      columnWidthConfig: [
+      {
+        dimensions: [
+          {
+            dimensionKey: '地区',
+            value: '东北'
+          },
+          {
+            dimensionKey: '邮寄方式',
+            value: '二级'
+          },
+          {
+            indicatorKey: '2',
+            value: '利润'
+          }
+        ],
+        width: 130
+      },
+      {
+        dimensions: [
+          {
+            dimensionKey: '地区',
+            value: '东北22'
+          },
+          {
+            indicatorKey: '1',
+            value: '销售额'
+          }
+        ],
+        width: 160
+      }
+    ],
+  ...
+});
+```
+
+效果如下：
+
+ <div style="width: 80%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/columnWidthConfig.jpeg" />
+  </div>
 
 ## 默认列宽
 
