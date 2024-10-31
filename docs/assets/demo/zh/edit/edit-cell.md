@@ -39,6 +39,7 @@ const list_editor = new VTable_editors.ListEditor({ values: ['girl', 'boy'] });
 const textArea_editor = new VTable_editors.TextAreaEditor({ readonly: false });
 VTable.register.editor('input-editor', input_editor);
 VTable.register.editor('date-input-editor', date_input_editor);
+VTable.register.editor('list-editor', list_editor);
 VTable.register.editor('textArea-editor', textArea_editor);
 
 function generateRandomString(length) {

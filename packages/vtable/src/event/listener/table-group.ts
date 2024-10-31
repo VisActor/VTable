@@ -317,68 +317,68 @@ export function bindTableGroupListener(eventManager: EventManager) {
       });
     }
   });
-  /**
-   * 两种场景会触发这里的pointerupoutside TODO 第二种并不应该触发，待vrender修改后再整理这里的逻辑
-   * 1. 鼠标down和up的场景树节点不一样
-   * 2. 点击到非stage的（非canvas）  其他dom节点
-   */
-  table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
-    console.log('pointerupoutside');
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-    if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
-      setTimeout(() => {
-        // conside page scroll
-        if (!table.internalProps.menuHandler.pointInMenuElement(e.client.x, e.client.y)) {
-          stateManager.menu.isShow && stateManager.hideMenu();
-        }
-      }, 0);
-    }
-    // 同pointerup中的逻辑
-    if (stateManager.isResizeCol()) {
-      endResizeCol(table);
-    } else if (stateManager.isResizeRow()) {
-      endResizeRow(table);
-    } else if (stateManager.isMoveCol()) {
-      const endMoveColSuccess = table.stateManager.endMoveCol();
-      if (
-        endMoveColSuccess &&
-        table.stateManager.columnMove?.colSource !== -1 &&
-        table.stateManager.columnMove?.rowSource !== -1 &&
-        table.stateManager.columnMove?.colTarget !== -1 &&
-        table.stateManager.columnMove?.rowTarget !== -1
-      ) {
-        // 下面触发CHANGE_HEADER_POSITION 区别于pointerup
-        if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
-          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
-            target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
-            source: {
-              col: table.stateManager.columnMove.colSource,
-              row: table.stateManager.columnMove.rowSource
-            },
-            event: e.nativeEvent
-          });
-        }
-      }
-    } else if (stateManager.isSelecting()) {
-      if (table.stateManager.select?.ranges?.length) {
-        const lastCol = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end.col;
-        const lastRow = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end.row;
-        table.stateManager.endSelectCells();
-        if ((table as any).hasListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END)) {
-          const cellsEvent: MousePointerMultiCellEvent = {
-            event: e.nativeEvent,
-            cells: [],
-            col: lastCol,
-            row: lastRow,
-            scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
-            target: undefined
-          };
-          cellsEvent.cells = table.getSelectedCellInfos();
-          table.fireListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END, cellsEvent);
-        }
-      }
-    }
-  });
+  // /**
+  //  * 两种场景会触发这里的pointerupoutside TODO 第二种并不应该触发，待vrender修改后再整理这里的逻辑
+  //  * 1. 鼠标down和up的场景树节点不一样
+  //  * 2. 点击到非stage的（非canvas）  其他dom节点
+  //  */
+  // table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
+  //   console.log('pointerupoutside');
+  //   const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+  //   if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
+  //     setTimeout(() => {
+  //       // conside page scroll
+  //       if (!table.internalProps.menuHandler.pointInMenuElement(e.client.x, e.client.y)) {
+  //         stateManager.menu.isShow && stateManager.hideMenu();
+  //       }
+  //     }, 0);
+  //   }
+  //   // 同pointerup中的逻辑
+  //   if (stateManager.isResizeCol()) {
+  //     endResizeCol(table);
+  //   } else if (stateManager.isResizeRow()) {
+  //     endResizeRow(table);
+  //   } else if (stateManager.isMoveCol()) {
+  //     const endMoveColSuccess = table.stateManager.endMoveCol();
+  //     if (
+  //       endMoveColSuccess &&
+  //       table.stateManager.columnMove?.colSource !== -1 &&
+  //       table.stateManager.columnMove?.rowSource !== -1 &&
+  //       table.stateManager.columnMove?.colTarget !== -1 &&
+  //       table.stateManager.columnMove?.rowTarget !== -1
+  //     ) {
+  //       // 下面触发CHANGE_HEADER_POSITION 区别于pointerup
+  //       if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
+  //         table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
+  //           target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
+  //           source: {
+  //             col: table.stateManager.columnMove.colSource,
+  //             row: table.stateManager.columnMove.rowSource
+  //           },
+  //           event: e.nativeEvent
+  //         });
+  //       }
+  //     }
+  //   } else if (stateManager.isSelecting()) {
+  //     if (table.stateManager.select?.ranges?.length) {
+  //       const lastCol = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end.col;
+  //       const lastRow = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end.row;
+  //       table.stateManager.endSelectCells();
+  //       if ((table as any).hasListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END)) {
+  //         const cellsEvent: MousePointerMultiCellEvent = {
+  //           event: e.nativeEvent,
+  //           cells: [],
+  //           col: lastCol,
+  //           row: lastRow,
+  //           scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
+  //           target: undefined
+  //         };
+  //         cellsEvent.cells = table.getSelectedCellInfos();
+  //         table.fireListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END, cellsEvent);
+  //       }
+  //     }
+  //   }
+  // });
 
   const globalPointerupCallback = (e: MouseEvent) => {
     const target = e.target as HTMLElement;

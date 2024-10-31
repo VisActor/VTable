@@ -477,6 +477,11 @@ export class EventManager {
 
   deelTableSelectAll() {
     this.table.stateManager.updateSelectPos(-1, -1, false, false, true);
+    this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
+      ranges: this.table.stateManager.select.ranges,
+      col: 0,
+      row: 0
+    });
   }
 
   dealMenuSelect(eventArgsSet: SceneEvent) {

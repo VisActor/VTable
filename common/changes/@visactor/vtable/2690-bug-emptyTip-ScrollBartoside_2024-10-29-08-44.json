@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when has empty tip scrollbar can not be clicked #2690\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

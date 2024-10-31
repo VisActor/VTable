@@ -25,19 +25,27 @@ export interface EventsProps {
   onMouseLeaveTable?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_table']>;
   onMouseDownTable?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousedown_table']>;
   onMouseMoveCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousemove_cell']>;
+  onMousemoveTable?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousemove_table']>;
   onMouseEnterCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseenter_cell']>;
   onMouseLeaveCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_cell']>;
   onContextMenuCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['contextmenu_cell']>;
   onResizeColumn?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column']>;
   onResizeColumnEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column_end']>;
+  onResizeRow?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_row']>;
+  onResizeRowEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_row_end']>;
+  onChangeHeaderPositionStart?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position_start']>;
   onChangeHeaderPosition?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position']>;
   onSortClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['sort_click']>;
+
+  onAfterSort?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_sort']>;
   onFreezeClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['freeze_click']>;
   onScroll?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll']>;
+  onScrollVerticalEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll_vertical_end']>;
+  onScrollHorizontalEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll_horizontal_end']>;
   onDropdownMenuClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dropdown_menu_click']>;
   onMouseOverChartSymbol?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseover_chart_symbol']>;
   onDragSelectEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['drag_select_end']>;
-
+  onCopyData?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['copy_data']>;
   onDropdownIconClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dropdown_icon_click']>;
   onDropdownMenuClear?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dropdown_menu_clear']>;
 
@@ -60,6 +68,10 @@ export interface EventsProps {
   onRadioStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['radio_state_change']>;
   onAfterRender?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_render']>;
   onInitialized?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['initialized']>;
+  onChangeCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
+  onDragFillHandleEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['drag_fill_handle_end']>;
+  onMousedownFillHandle?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousedown_fill_handle']>;
+  onDblclickFillHandle?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dblclick_fill_handle']>;
 
   // pivot table only
   onPivotSortClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['pivot_sort_click']>;
@@ -69,13 +81,6 @@ export interface EventsProps {
   onVChartEventType?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['vchart_event_type']>;
 
   onChangCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
-
-  onMousedownFillHandle?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousedown_fill_handle']>;
-  onDragFillHandleEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['drag_fill_handle_end']>;
-  onDblclickFillHandle?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dblclick_fill_handle']>;
-
-  onScrollVerticalEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll_vertical_end']>;
-  onScrollHorizontalEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll_horizontal_end']>;
 }
 
 export const TABLE_EVENTS = {
@@ -90,19 +95,27 @@ export const TABLE_EVENTS = {
   onMouseLeaveTable: EVENT_TYPE.MOUSELEAVE_TABLE,
   onMouseDownTable: EVENT_TYPE.MOUSEDOWN_TABLE,
   onMouseMoveCell: EVENT_TYPE.MOUSEMOVE_CELL,
+  onMouseMoveTable: EVENT_TYPE.MOUSEMOVE_TABLE,
   onMouseEnterCell: EVENT_TYPE.MOUSEENTER_CELL,
   onMouseLeaveCell: EVENT_TYPE.MOUSELEAVE_CELL,
   onContextMenuCell: EVENT_TYPE.CONTEXTMENU_CELL,
   onResizeColumn: EVENT_TYPE.RESIZE_COLUMN,
   onResizeColumnEnd: EVENT_TYPE.RESIZE_COLUMN_END,
+  onResizeRow: EVENT_TYPE.RESIZE_ROW,
+  onResizeRowEnd: EVENT_TYPE.RESIZE_ROW_END,
+  onChangeHeaderPositionStart: EVENT_TYPE.CHANGE_HEADER_POSITION_START,
   onChangeHeaderPosition: EVENT_TYPE.CHANGE_HEADER_POSITION,
   onSortClick: EVENT_TYPE.SORT_CLICK,
+
+  onAfterSort: EVENT_TYPE.AFTER_SORT,
   onFreezeClick: EVENT_TYPE.FREEZE_CLICK,
   onScroll: EVENT_TYPE.SCROLL,
+  onScrollHorizontalEnd: EVENT_TYPE.SCROLL_HORIZONTAL_END,
+  onScrollVerticalEnd: EVENT_TYPE.SCROLL_VERTICAL_END,
   onDropdownMenuClick: EVENT_TYPE.DROPDOWN_MENU_CLICK,
   onMouseOverChartSymbol: EVENT_TYPE.MOUSEOVER_CHART_SYMBOL,
   onDragSelectEnd: EVENT_TYPE.DRAG_SELECT_END,
-
+  onCopyData: EVENT_TYPE.COPY_DATA,
   onDropdownIconClick: EVENT_TYPE.DROPDOWN_ICON_CLICK,
   onDropdownMenuClear: EVENT_TYPE.DROPDOWN_MENU_CLEAR,
 
@@ -125,6 +138,10 @@ export const TABLE_EVENTS = {
   onRadioStateChange: EVENT_TYPE.RADIO_STATE_CHANGE,
   onAfterRender: EVENT_TYPE.AFTER_RENDER,
   onInitialized: EVENT_TYPE.INITIALIZED,
+  onChangeCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
+  onDragFillHandleEnd: EVENT_TYPE.DRAG_FILL_HANDLE_END,
+  onMousedownFillHandle: EVENT_TYPE.MOUSEDOWN_FILL_HANDLE,
+  onDblclickFillHandle: EVENT_TYPE.DBLCLICK_FILL_HANDLE,
 
   // pivot table only
   onPivotSortClick: EVENT_TYPE.PIVOT_SORT_CLICK,
@@ -133,12 +150,7 @@ export const TABLE_EVENTS = {
   // pivot chart only
   onVChartEventType: EVENT_TYPE.VCHART_EVENT_TYPE,
 
-  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
-  onMousedownFillHandle: EVENT_TYPE.MOUSEDOWN_FILL_HANDLE,
-  onDragFillHandleEnd: EVENT_TYPE.DRAG_FILL_HANDLE_END,
-  onDblclickFillHandle: EVENT_TYPE.DBLCLICK_FILL_HANDLE,
-  onScrollVerticalEnd: EVENT_TYPE.SCROLL_VERTICAL_END,
-  onScrollHorizontalEnd: EVENT_TYPE.SCROLL_HORIZONTAL_END
+  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE
 };
 
 export const TABLE_EVENTS_KEYS = Object.keys(TABLE_EVENTS);

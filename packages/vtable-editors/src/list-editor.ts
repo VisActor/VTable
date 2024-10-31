@@ -32,7 +32,9 @@ export class ListEditor implements IEditor {
     let opsStr = '';
     values.forEach(item => {
       opsStr +=
-        item === value ? `<option value=${item} selected>${item}</option>` : `<option value=${item} >${item}</option>`;
+        item === value
+          ? `<option value="${item}" selected>${item}</option>`
+          : `<option value="${item}" >${item}</option>`;
     });
     select.innerHTML = opsStr;
 

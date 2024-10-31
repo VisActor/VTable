@@ -163,7 +163,7 @@ export function updateHeaderCheckedState(
     if (mergeCell) {
       return true;
     }
-    return check_state[field] === true;
+    return check_state?.[field] === true;
   });
   if (allChecked) {
     state.headerCheckedState[field] = true;
@@ -177,7 +177,7 @@ export function updateHeaderCheckedState(
     if (mergeCell) {
       return true;
     }
-    return check_state[field] === false;
+    return check_state?.[field] === false;
   });
   if (allUnChecked) {
     state.headerCheckedState[field] = false;

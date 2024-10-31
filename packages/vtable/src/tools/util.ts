@@ -356,6 +356,9 @@ export function getValueByPath(obj: any, paths: string[]) {
   let prop;
   while ((prop = paths.shift())) {
     res = res[prop];
+    if (!res) {
+      break;
+    }
   }
   return res;
 }

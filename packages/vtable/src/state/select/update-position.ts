@@ -73,7 +73,7 @@ export function updateSelectPosition(
       _startRow = table.columnHeaderLevelCount;
     }
     // 行号列选中
-    if ((disableRowSeriesNumberSelect || disableHeaderSelect) && table.options.rowSeriesNumber) {
+    if (disableRowSeriesNumberSelect && table.options.rowSeriesNumber) {
       _startCol += 1;
     }
 
@@ -107,16 +107,37 @@ export function updateSelectPosition(
         const endCol = Math.max(currentRange.start.col, currentRange.end.col, col);
         const startRow = Math.min(currentRange.start.row, currentRange.end.row, row);
         const endRow = table.rowCount - 1;
-
-        currentRange.start = { col: startCol, row: startRow };
-        currentRange.end = { col: endCol, row: endRow };
+        if (state.select.headerSelectMode === 'body') {
+          currentRange.start = { col: startCol, row: table.columnHeaderLevelCount };
+          currentRange.end = { col: endCol, row: table.rowCount - 1 };
+        } else {
+          currentRange.start = { col: startCol, row: startRow };
+          currentRange.end = { col: endCol, row: endRow };
+        }
       } else if (state.select.headerSelectMode !== 'cell' && table.isRowHeader(col, row)) {
         const startCol = Math.min(currentRange.start.col, currentRange.end.col, col);
         const endCol = table.colCount - 1;
         const startRow = Math.min(currentRange.start.row, currentRange.end.row, row);
         const endRow = Math.max(currentRange.start.row, currentRange.end.row, row);
-        currentRange.start = { col: startCol, row: startRow };
-        currentRange.end = { col: endCol, row: endRow };
+        if (state.select.headerSelectMode === 'body') {
+          currentRange.start = { col: table.leftRowSeriesNumberCount + table.rowHeaderLevelCount, row: startRow };
+          currentRange.end = { col: table.colCount - 1, row: endRow };
+        } else {
+          currentRange.start = { col: startCol, row: startRow };
+          currentRange.end = { col: endCol, row: endRow };
+        }
+      } else if (state.select.headerSelectMode !== 'cell' && table.isSeriesNumberInBody(col, row)) {
+        const startCol = Math.min(currentRange.start.col, currentRange.end.col, col);
+        const endCol = table.colCount - 1;
+        const startRow = Math.min(currentRange.start.row, currentRange.end.row, row);
+        const endRow = Math.max(currentRange.start.row, currentRange.end.row, row);
+        if (state.select.headerSelectMode === 'body') {
+          currentRange.start = { col: table.leftRowSeriesNumberCount, row: startRow };
+          currentRange.end = { col: table.colCount - 1, row: endRow };
+        } else {
+          currentRange.start = { col: startCol, row: startRow };
+          currentRange.end = { col: endCol, row: endRow };
+        }
       } else {
         currentRange.end = { col, row };
       }
@@ -146,35 +167,94 @@ export function updateSelectPosition(
       if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
         // 选中行表头
         const cellRange = table.getCellRange(col, row);
-        state.select.ranges.push({
-          start: { col: cellRange.start.col, row },
-          end: { col: cellRange.end.col, row: table.rowCount - 1 },
-          skipBodyMerge: true
-        });
+        if (state.select.headerSelectMode === 'body') {
+          state.select.ranges.push({
+            start: { col: cellRange.start.col, row: table.columnHeaderLevelCount },
+            end: { col: cellRange.end.col, row: table.rowCount - 1 },
+            skipBodyMerge: true
+          });
+        } else {
+          state.select.ranges.push({
+            start: { col: cellRange.start.col, row },
+            end: { col: cellRange.end.col, row: table.rowCount - 1 },
+            skipBodyMerge: true
+          });
+        }
       } else if (state.select.headerSelectMode !== 'cell' && table.isRowHeader(col, row)) {
         // 选中列表头
         const cellRange = table.getCellRange(col, row);
-        state.select.ranges.push({
-          start: { col, row: cellRange.start.row },
-          end: { col: table.colCount - 1, row: cellRange.end.row },
-          skipBodyMerge: true
-        });
+        if (state.select.headerSelectMode === 'body') {
+          state.select.ranges.push({
+            start: { col: table.rowHeaderLevelCount + table.leftRowSeriesNumberCount, row: cellRange.start.row },
+            end: { col: table.colCount - 1, row: cellRange.end.row },
+            skipBodyMerge: true
+          });
+        } else {
+          state.select.ranges.push({
+            start: { col, row: cellRange.start.row },
+            end: { col: table.colCount - 1, row: cellRange.end.row },
+            skipBodyMerge: true
+          });
+        }
       } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInHeader(col, row)) {
         // 选中表头行号单元格
         extendSelectRange = false;
-        state.select.ranges.push({
-          start: { col: 0, row: 0 },
-          end: { col: table.colCount - 1, row: table.rowCount - 1 },
-          skipBodyMerge: true
-        });
+
+        if (state.select.headerSelectMode === 'body') {
+          state.select.ranges.push({
+            start: {
+              col: table.leftRowSeriesNumberCount,
+              row: table.columnHeaderLevelCount
+            },
+            end: { col: table.colCount - 1, row: table.rowCount - 1 },
+            skipBodyMerge: true
+          });
+        } else {
+          state.select.ranges.push({
+            start: { col: 0, row: 0 },
+            end: { col: table.colCount - 1, row: table.rowCount - 1 },
+            skipBodyMerge: true
+          });
+        }
       } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)) {
         // 选中内容行号单元格
         extendSelectRange = false;
-        state.select.ranges.push({
-          start: { col, row: row },
-          end: { col: table.colCount - 1, row: row },
-          skipBodyMerge: true
-        });
+        if (state.select.headerSelectMode === 'body') {
+          state.select.ranges.push({
+            start: {
+              col: table.leftRowSeriesNumberCount,
+              row
+            },
+            end: { col: table.colCount - 1, row: row },
+            skipBodyMerge: true
+          });
+        } else {
+          state.select.ranges.push({
+            start: { col, row },
+            end: { col: table.colCount - 1, row: row },
+            skipBodyMerge: true
+          });
+        }
+      } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isCornerHeader(col, row)) {
+        // 选中表头行号单元格
+        extendSelectRange = false;
+
+        if (state.select.headerSelectMode === 'body') {
+          state.select.ranges.push({
+            start: {
+              col: table.rowHeaderLevelCount + table.leftRowSeriesNumberCount,
+              row: table.columnHeaderLevelCount
+            },
+            end: { col: table.colCount - 1, row: table.rowCount - 1 },
+            skipBodyMerge: true
+          });
+        } else {
+          state.select.ranges.push({
+            start: { col: table.leftRowSeriesNumberCount, row: 0 },
+            end: { col: table.colCount - 1, row: table.rowCount - 1 },
+            skipBodyMerge: true
+          });
+        }
       } else if (col >= 0 && row >= 0) {
         // 选中普通单元格
         const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
@@ -279,7 +359,6 @@ export function updateSelectPosition(
             col,
             row
           };
-
           const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
           if (currentRange.start.col < cellRange.end.col) {
             currentRange.end.col = cellRange.end.col;
@@ -293,6 +372,28 @@ export function updateSelectPosition(
             currentRange.end.row = cellRange.start.row;
           }
 
+          if (state.select.headerSelectMode === 'body') {
+            if (table.isRowHeader(col, row)) {
+              currentRange.start.col = table.rowHeaderLevelCount + table.leftRowSeriesNumberCount;
+              currentRange.end.col = table.colCount - 1;
+            } else if (table.isColumnHeader(col, row)) {
+              currentRange.start.row = table.columnHeaderLevelCount;
+              currentRange.end.row = table.rowCount - 1;
+            } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)) {
+              currentRange.start.col = table.leftRowSeriesNumberCount;
+              currentRange.end.col = table.colCount - 1;
+            } else if (table.isCornerHeader(col, row)) {
+              currentRange.start.col = table.rowHeaderLevelCount + table.leftRowSeriesNumberCount;
+              currentRange.start.row = table.columnHeaderLevelCount;
+              currentRange.end.col = table.colCount - 1;
+              currentRange.end.row = table.rowCount - 1;
+            } else if (table.isSeriesNumber(col, row)) {
+              currentRange.start.col = table.leftRowSeriesNumberCount;
+              currentRange.start.row = table.columnHeaderLevelCount;
+              currentRange.end.col = table.colCount - 1;
+              currentRange.end.row = table.rowCount - 1;
+            }
+          }
           if (skipBodyMerge) {
             currentRange.skipBodyMerge = true;
           }
