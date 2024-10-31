@@ -625,6 +625,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
+    // this.scenegraph.proxy?.refreshRowColCount();
   }
   /**
    * 获取records数据源中 字段对应的value 值是format之后的
@@ -888,6 +889,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //影响行数
     this.refreshRowColCount();
 
+    // for bottom frozen row height map
+    for (let row = this.rowCount - this.frozenRowCount; row < this.rowCount; row++) {
+      const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
+      this._setRowHeight(row, newHeight);
+    }
+
     this.clearCellStyleCache();
     this.internalProps.layoutMap.clearCellRangeMap();
     this.internalProps.useOneRowHeightFillAll = false;
@@ -908,6 +915,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         }
       }
       diffPositions.removeCellPositions = [];
+
+      // reset proxy row config
+      this.scenegraph.proxy.refreshRowCount();
     }
     this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions, updateCells);
     if (checkHasChart) {

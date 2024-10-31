@@ -1948,9 +1948,9 @@ export class Scenegraph {
     ) {
       this.table.scenegraph.recalculateRowHeights();
     } else if (this.table.heightMode === 'autoHeight') {
-      if (updateCells.length > 0) {
-        this.table.scenegraph.recalculateRowHeights();
-      }
+      // if (updateCells.length > 0) {
+      //   this.table.scenegraph.recalculateRowHeights();
+      // }
       for (let i = 0; i < updateRows.length; i++) {
         const row = updateRows[i];
         const oldHeight = this.table.getRowHeight(row);
