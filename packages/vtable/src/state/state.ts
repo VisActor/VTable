@@ -50,6 +50,7 @@ import { updateResizeRow } from './resize/update-resize-row';
 import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
 import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
+import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -1412,7 +1413,15 @@ export class StateManager {
 
     // 更新frozen
     dealFreeze(col, row, this.table);
-
+    if ((this.table as any).hasListeners(PIVOT_TABLE_EVENT_TYPE.FREEZE_CLICK)) {
+      const fields: ColumnData[] = (this.table as ListTable).internalProps.layoutMap.columnObjects.slice(0, col + 1);
+      this.table.fireListeners(PIVOT_TABLE_EVENT_TYPE.FREEZE_CLICK, {
+        col: col,
+        row: row,
+        fields: fields.reduce((pre: any, cur: any) => pre.concat(cur.field), []),
+        colCount: this.table.frozenColCount
+      });
+    }
     // // 更新scenegraph，这里因为dealFreeze更新了table里存储的frozen信息，会影响scenegraph里的getCell
     // // 因此先更新scenegraph结构再更新icon
     // this.table.scenegraph.updateFrozen(this.frowzen.col);
