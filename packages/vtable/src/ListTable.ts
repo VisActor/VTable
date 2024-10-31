@@ -890,7 +890,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.refreshRowColCount();
 
     // for bottom frozen row height map
-    for (let row = this.rowCount - this.frozenRowCount; row < this.rowCount; row++) {
+    for (let row = this.rowCount - this.bottomFrozenRowCount; row < this.rowCount; row++) {
       const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
       this._setRowHeight(row, newHeight);
     }
