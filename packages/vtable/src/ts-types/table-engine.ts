@@ -273,6 +273,7 @@ export type GroupConfig = {
 };
 
 export interface ListTableAPI extends BaseTableAPI {
+  transpose: boolean;
   options: ListTableConstructorOptions;
   editorManager: EditManeger;
   sortState: SortState[] | SortState | null;

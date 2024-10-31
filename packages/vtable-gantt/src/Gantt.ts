@@ -330,7 +330,9 @@ export class Gantt extends EventTarget {
       listTable_options.theme = this.options.taskListTable?.theme;
       if (listTable_options.theme.bodyStyle && !isPropertyWritable(listTable_options.theme, 'bodyStyle')) {
         //测试是否使用了主题 使用了主题配置项不可写。
-        listTable_options.theme = this.options.taskListTable?.theme.extends({}); //防止将原主题如DARK ARCO的属性改掉
+        listTable_options.theme = (this.options.taskListTable?.theme as themes.TableTheme).extends(
+          (this.options.taskListTable?.theme as themes.TableTheme).getExtendTheme()
+        ); //防止将原主题如DARK ARCO的属性改掉
         const extendThemeOption = (listTable_options.theme as themes.TableTheme).getExtendTheme();
         (listTable_options.theme as themes.TableTheme).clearBodyStyleCache(); // listTable_options.theme.bodyStyle  获取过需要清除缓存
         if (!listTable_options.theme.headerStyle?.bgColor) {

@@ -1526,8 +1526,8 @@ export class StateManager {
    * @param field
    * @returns
    */
-  updateHeaderCheckedState(field: string | number): boolean | 'indeterminate' {
-    return updateHeaderCheckedState(field, this);
+  updateHeaderCheckedState(field: string | number, col: number, row: number): boolean | 'indeterminate' {
+    return updateHeaderCheckedState(field, this, col, row);
   }
   /**
    * setRecords的时候虽然调用了initCheckedState 进行了初始化 但当每个表头的checked状态都用配置了的话 初始化不会遍历全部数据

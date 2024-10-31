@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: custom merge cell ignore check state jude #2683\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
