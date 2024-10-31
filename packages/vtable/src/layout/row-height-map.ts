@@ -38,6 +38,9 @@ export class NumberRangeMap {
   }
 
   add(position: number, value: number) {
+    if (!isValid(value)) {
+      return;
+    }
     const defaultValue = this.table.getRowHeight(position);
     if (!this.data.has(position)) {
       this._keys.push(position);
@@ -65,6 +68,9 @@ export class NumberRangeMap {
   }
 
   put(position: number, newValue: number) {
+    if (!isValid(newValue)) {
+      return;
+    }
     if (this.data.has(position)) {
       const oldValue = this.data.get(position);
 

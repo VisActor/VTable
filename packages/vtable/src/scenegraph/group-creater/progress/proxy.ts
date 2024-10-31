@@ -165,6 +165,21 @@ export class SceneProxy {
     this.rowUpdatePos = this.bodyBottomRow;
   }
 
+  refreshRowCount() {
+    this.bodyTopRow = this.table.frozenRowCount;
+    this.bodyBottomRow = this.table.rowCount - 1 - this.table.bottomFrozenRowCount;
+    const totalActualBodyRowCount = Math.min(this.rowLimit, this.bodyBottomRow - this.bodyTopRow + 1); // 渐进加载总row数量
+    this.totalActualBodyRowCount = totalActualBodyRowCount;
+    this.totalRow = this.rowStart + totalActualBodyRowCount - 1; // 目标渐进完成的row
+  }
+
+  refreshColCount() {
+    this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
+    const totalActualBodyColCount = Math.min(this.colLimit, this.bodyRightCol - this.bodyLeftCol + 1);
+    this.totalActualBodyColCount = totalActualBodyColCount;
+    this.totalCol = this.bodyLeftCol + totalActualBodyColCount - 1; // 目标渐进完成的col
+  }
+
   resize() {
     const defaultColWidth = this.table.defaultColWidth;
     this.taskColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth) * 1;
