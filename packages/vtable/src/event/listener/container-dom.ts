@@ -688,6 +688,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
       const leftFrozenColsWidth = table.getFrozenColsWidth();
       const rightFrozenColsWidth = table.getRightFrozenColsWidth();
       const startCell = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].start;
+      if (table.isSeriesNumber(startCell.col, startCell.row)) {
+        //如果是鼠标落到了序号列 不自动滚动
+        return;
+      }
       const endCell = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end;
       const canScrollY =
         (table.isFrozenRow(startCell.row) === false || table.isFrozenRow(endCell.row) === false) &&
