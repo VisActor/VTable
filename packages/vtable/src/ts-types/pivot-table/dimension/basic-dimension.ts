@@ -59,8 +59,6 @@ export interface IBasicDimension {
    */
   cornerDescription?: string;
 
-  // /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
-  // headerSelectMode?: 'inline' | 'cell';
   /** 该维度单元格不支持hover交互行为 */
   disableHeaderHover?: boolean;
   /** 该维度单元格不支持选中 */

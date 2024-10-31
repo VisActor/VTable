@@ -1,3 +1,45 @@
+# v1.10.1
+
+2024-10-23
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: when set rowSeriesNumber then sort icon not update [#2643](https://github.com/VisActor/VTable/issues/2643)
+- **@visactor/vtable**: disable cellInnerBorder when no frame border
+
+
+
+[更多详情请查看 v1.10.1](https://github.com/VisActor/VTable/releases/tag/v1.10.1)
+
+# v1.10.0
+
+2024-10-18
+
+
+**🆕 新增功能**
+- **@visactor/vtable**: 在菜单容器中添加maxHeight [#2602](https://github.com/VisActor/VTable/issues/2602)
+- **@visactor/vtable**: 添加after_sort事件
+- **@visactor/vtable-gantt**: 添加未计划任务记录的创建按钮
+- **@visactor/vtable-gantt**: 为甘特图添加依赖线
+- **@visactor/vtable-gantt**: 添加任务条选中样式
+- **@visactor/vtable-gantt**: 添加依赖线选中样式
+- **@visactor/vtable-gantt**: 为甘特图添加underlayBackgroundColor [#2607](https://github.com/VisActor/VTable/issues/2607)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 当维度路径包含虚拟时无法识别问题 [#2510](https://github.com/VisActor/VTable/issues/2510)
+- **@visactor/vtable**: toggleHierarchyState api无法更新自定义布局单元格 [#2609](https://github.com/VisActor/VTable/issues/2609)
+- **@visactor/vtable**: 修复图例布局问题
+- **@visactor/vtable**: 修复borderLineWidth为0时边框矩形缺失的问题
+- **@visactor/vtable**: 修复updateSortState()中的多排序图标更新问题 [#2614](https://github.com/VisActor/VTable/issues/2614)
+- **@visactor/vtable**: 修复createGroupForFirstScreen()中的列/行结束问题 [#2585](https://github.com/VisActor/VTable/issues/2585)
+- **@visactor/vtable**: 修复react-vtable中的customConfig
+- **@visactor/vtable**: 修复当垂直滚动时行调整标记位置的问题 [#2606](https://github.com/VisActor/VTable/issues/2606)
+- **@visactor/vtable**: 修复列表-表格转置中的排序图标更新问题
+
+[更多详情请查看 v1.10.0](https://github.com/VisActor/VTable/releases/tag/v1.10.0)
+
 # v1.9.1
 
 2024-10-12
@@ -5,7 +47,7 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix sort icon update in merge cell
+- **@visactor/vtable**: 修复合并单元格中的排序图标更新问题
 
 
 

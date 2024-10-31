@@ -5,7 +5,8 @@ import type {
   ICellHeaderPaths,
   CellInfo,
   CustomCellStyle,
-  CustomCellStyleArrangement
+  CustomCellStyleArrangement,
+  IDimensionInfo
 } from './common';
 import type {
   TableEventListener,
@@ -134,6 +135,10 @@ export interface IBaseTableProtected {
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
+  columnWidthConfig?: {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
   /** 拖拽表头移动位置 针对冻结部分的规则
@@ -163,7 +168,7 @@ export interface IBaseTableProtected {
   _rowRangeHeightsMap: Map<string, number>; //存储指定行范围的总高度
   _colRangeWidthsMap: Map<string, number>; //存储指定列范围的总宽度
 
-  _widthResizedColMap: Set<number>; //记录下被手动调整过列宽的列号
+  _widthResizedColMap: Set<number | string>; //记录下被手动调整过列宽的列号
   _heightResizedRowMap: Set<number>; //记录下被手动调整过行高的行号
 
   bodyHelper: BodyHelper;
@@ -174,11 +179,6 @@ export interface IBaseTableProtected {
   // headerDescriptions: { [at: string]: string };
   focusedTable: boolean;
 
-  config:
-    | {
-        [name: string]: any;
-      }
-    | undefined;
   // scroll: {
   //   left: number;
   //   top: number;
@@ -195,7 +195,9 @@ export interface IBaseTableProtected {
     /** 内置下拉菜单的全局设置项 目前只针对基本表格有效 会对每个表头单元格开启默认的下拉菜单功能。代替原来的option.dropDownMenu*/
     defaultHeaderMenuItems?: MenuListItem[];
     /** 右键菜单。代替原来的option.contextmenu */
-    contextMenuItems?: MenuListItem[] | ((field: FieldDef, row: number, col: number) => MenuListItem[]);
+    contextMenuItems?:
+      | MenuListItem[]
+      | ((field: FieldDef, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
   };
@@ -357,8 +359,12 @@ export interface BaseTableConstructorOptions {
   select?: {
     /** 高亮范围模式：十字交叉 整列 整行 或者单个单元格。默认`cell` */
     highlightMode?: 'cross' | 'column' | 'row' | 'cell';
-    /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
-    headerSelectMode?: 'inline' | 'cell';
+    /** 点击表头单元格效果
+     * 'inline': 点击行表头则整行选中，选择列表头则整列选中；
+     * 'cell': 仅仅选择当前点击的表头单元格；
+     * 'body': 不选择表头，点击行表头则选择该行所有 body 单元格，点击列表头则选择该列所有 body 单元格。
+     */
+    headerSelectMode?: 'inline' | 'cell' | 'body';
     /** 不响应鼠标select交互 */
     disableSelect?: boolean;
     /** 单独设置表头不响应鼠标select交互 */
@@ -377,7 +383,9 @@ export interface BaseTableConstructorOptions {
     /** 内置下拉菜单的全局设置项 目前只针对基本表格有效 会对每个表头单元格开启默认的下拉菜单功能。代替原来的option.dropDownMenu*/
     defaultHeaderMenuItems?: MenuListItem[];
     /** 右键菜单。代替原来的option.contextmenu */
-    contextMenuItems?: MenuListItem[] | ((field: string, row: number, col: number) => MenuListItem[]);
+    contextMenuItems?:
+      | MenuListItem[]
+      | ((field: string, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
   };

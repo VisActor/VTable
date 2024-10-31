@@ -134,6 +134,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-group'
+      },
+      {
+        path: 'list',
+        name: 'list-group-manyChild'
       }
     ]
   },
@@ -487,6 +491,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-extension-bp'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-column-width'
       }
     ]
   },

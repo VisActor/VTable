@@ -8,7 +8,7 @@ When using VTable for data analytics, individual cells can be selected with a mo
 
 As shown above, after clicking on cell (2,3), the cell is selected.
 
-Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set select.headerSelectMode to 'cell'.
+Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set `select.headerSelectMode` to `'cell'`, Or if you only want to select cells in the body, you can set `select.headerSelectMode` to `'body'`.
 
 ## Mouse box selection
 
@@ -122,9 +122,24 @@ const table = new VTable.ListTable({
 });
 ```
 
-After turning on the shortcut, the user can use the copy shortcut that comes with the browser (such as: Ctrl + C, Cmd + C) to copy the contents of the selected cell.
+After enabling shortcut keys, users can use the browser's built-in copy shortcut keys (such as Ctrl+C, Cmd+C) to copy the selected cell content. VTable maintains two copy formats:
 
-There is an event called `copy_data` in conjunction with copying content. This event will be triggered during copying and return the content copied to the clipboard.
+```
+new ClipboardItem({
+'text/html': new Blob([dataHTML], { type: 'text/html' }),
+'text/plain': new Blob([data], { type: 'text/plain' })
+})
+```
+
+For specific implementation logic, please refer to the code logic https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/event/listener/container-dom.ts
+
+**Copy other related content:**
+
+1. There is also an event called `copy_data` to match the copying of content. This event will be triggered when copying and return the content copied to the clipboard.
+
+2. If you want to obtain the selected content as the copy content through the interface, you can call the interface `getCopyValue`.
+
+3. In addition, we provide the configuration item `formatCopyValue` to format the copied content. For example, if you want to add a suffix `"Copy content from XXXX"` to the copied content
 
 ## Open Select All
 

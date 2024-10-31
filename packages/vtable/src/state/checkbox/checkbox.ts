@@ -1,6 +1,6 @@
 import { isArray, isObject, isValid } from '@visactor/vutils';
 import type { StateManager } from '../state';
-import type { CheckboxColumnDefine } from '../../ts-types';
+import type { CheckboxColumnDefine, ListTableAPI } from '../../ts-types';
 import { getOrApply } from '../../tools/helper';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { CheckBox } from '@visactor/vrender-components';
@@ -57,7 +57,7 @@ export function syncCheckedState(
     } else if (isValid(checked)) {
       state.headerCheckedState[field] = checked;
     } else if (state.checkedState?.length > 0) {
-      const isAllChecked = state.updateHeaderCheckedState(field);
+      const isAllChecked = state.updateHeaderCheckedState(field, col, row);
       return isAllChecked;
     }
     return state.headerCheckedState[field];
@@ -149,23 +149,42 @@ export function initCheckedState(records: any[], state: StateManager) {
  * @param field
  * @returns
  */
-export function updateHeaderCheckedState(field: string | number, state: StateManager): boolean | 'indeterminate' {
-  const allChecked = state.checkedState.every((state: Record<string | number, boolean>) => {
-    return state[field] === true;
+export function updateHeaderCheckedState(
+  field: string | number,
+  state: StateManager,
+  col: number,
+  row: number
+): boolean | 'indeterminate' {
+  const allChecked = state.checkedState.every((check_state: Record<string | number, boolean>, index: number) => {
+    const tableIndex = state.table.getTableIndexByRecordIndex(index);
+    const mergeCell = (state.table as ListTableAPI).transpose
+      ? state.table.getCustomMerge(tableIndex, row)
+      : state.table.getCustomMerge(col, tableIndex);
+    if (mergeCell) {
+      return true;
+    }
+    return check_state?.[field] === true;
   });
   if (allChecked) {
     state.headerCheckedState[field] = true;
     return allChecked;
   }
-  const allUnChecked = state.checkedState.every((state: Record<string | number, boolean>) => {
-    return state[field] === false;
+  const allUnChecked = state.checkedState.every((check_state: Record<string | number, boolean>, index: number) => {
+    const tableIndex = state.table.getTableIndexByRecordIndex(index);
+    const mergeCell = (state.table as ListTableAPI).transpose
+      ? state.table.getCustomMerge(tableIndex, row)
+      : state.table.getCustomMerge(col, tableIndex);
+    if (mergeCell) {
+      return true;
+    }
+    return check_state?.[field] === false;
   });
   if (allUnChecked) {
     state.headerCheckedState[field] = false;
     return false;
   }
-  const hasChecked = state.checkedState.find((state: Record<string | number, boolean>) => {
-    return state[field] === true;
+  const hasChecked = state.checkedState.find((check_state: Record<string | number, boolean>) => {
+    return check_state?.[field] === true;
   });
   if (hasChecked) {
     state.headerCheckedState[field] = 'indeterminate';

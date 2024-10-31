@@ -100,6 +100,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
       this.internalProps.rowResizeType = options.rowResizeType ?? 'row';
       this.internalProps.dataConfig = cloneDeep(options.dataConfig);
+      this.internalProps.columnWidthConfig = options.columnWidthConfig;
 
       const records = this.internalProps.records;
       this.internalProps.recordsIsTwoDimensionalArray = false;
@@ -290,6 +291,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.rowResizeType = options.rowResizeType ?? 'row';
     internalProps.dataConfig = cloneDeep(options.dataConfig);
+    this.internalProps.columnWidthConfig = options.columnWidthConfig;
 
     //维护tree树形结构的展开状态
     if (
@@ -1101,6 +1103,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         order: SortType[sortType]
       });
       // }
+    }
+  }
+  /** 解析配置columnWidthConfig传入的列宽配置 */
+  _parseColumnWidthConfig(columnWidthConfig: { dimensions: IDimensionInfo[]; width: number }[]) {
+    for (let i = 0; i < columnWidthConfig?.length; i++) {
+      const item = columnWidthConfig[i];
+      const dimensions = item.dimensions;
+      const width = item.width;
+      const cell = this.getCellAddressByHeaderPaths(dimensions);
+      if (cell && !this.internalProps._widthResizedColMap.has(cell.col)) {
+        this._setColWidth(cell.col, width);
+        this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+      }
     }
   }
   /**

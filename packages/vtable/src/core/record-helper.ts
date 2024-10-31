@@ -3,6 +3,7 @@ import type { ListTable } from '../ListTable';
 import type { CachedDataSource } from '../data';
 import { computeColWidth } from '../scenegraph/layout/compute-col-width';
 import { computeRowHeight } from '../scenegraph/layout/compute-row-height';
+import { isPromise } from '../tools/helper';
 import { defaultOrderFn } from '../tools/util';
 import type { SortState } from '../ts-types';
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
@@ -154,7 +155,25 @@ export function listTableChangeCellValues(
         break;
       }
       thisRowPasteColEnd = startCol + j;
-      if ((workOnEditableCell && table.isHasEditorDefine(startCol + j, startRow + i)) || workOnEditableCell === false) {
+      let isCanChange = false;
+      if (workOnEditableCell === false) {
+        isCanChange = true;
+      } else {
+        if (table.isHasEditorDefine(startCol + j, startRow + i)) {
+          const editor = table.getEditor(startCol + j, startRow + i);
+          const oldValue = oldValues[i][j];
+          const value = rowValues[j];
+          const maybePromiseOrValue = editor?.validateValue?.(value, oldValue) ?? true;
+          if (isPromise(maybePromiseOrValue)) {
+            //TODO 处理promise的情况
+            isCanChange = true;
+          } else {
+            isCanChange = maybePromiseOrValue;
+          }
+        }
+      }
+      // if ((workOnEditableCell && table.isHasEditorDefine(startCol + j, startRow + i)) || workOnEditableCell === false) {
+      if (isCanChange) {
         const value = rowValues[j];
         const recordIndex = table.getRecordShowIndexByCell(startCol + j, startRow + i);
         const { field } = table.internalProps.layoutMap.getBody(startCol + j, startRow + i);

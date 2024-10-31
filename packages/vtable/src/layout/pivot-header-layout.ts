@@ -218,8 +218,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //   this.rowHierarchyType,
     //   this.rowHierarchyType === 'tree' ? this.rowExpandLevel : undefined
     // );
-    this.colDimensionKeys = this.columnDimensionTree.dimensionKeys.valueArr();
-    this.rowDimensionKeys = this.rowDimensionTree.dimensionKeys.valueArr();
+    this.colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+    this.rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
     this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
 
     this.resetRowHeaderLevelCount();
@@ -1224,7 +1224,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isColumnHeader(col: number, row: number): boolean {
-    if (col >= this.rowHeaderLevelCount && row >= 0 && row < this.columnHeaderLevelCount) {
+    if (
+      col >= this.rowHeaderLevelCount + this.leftRowSeriesNumberColumnCount &&
+      row >= 0 &&
+      row < this.columnHeaderLevelCount
+    ) {
       return true;
     }
     return false;
@@ -2228,7 +2232,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //过程类似构造函数处理过程
     this.rowDimensionTree.reset(this.rowDimensionTree.tree.children, true);
     this._rowHeaderCellFullPathIds_FULL = [];
-    this.rowDimensionKeys = this.rowDimensionTree.dimensionKeys.valueArr();
+    this.rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
     this.fullRowDimensionKeys = [];
     this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
     this._addHeadersForTreeMode(

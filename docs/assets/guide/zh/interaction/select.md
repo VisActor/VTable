@@ -8,7 +8,7 @@
 
 如上图所示，点击单元格 (2, 3) 后，该单元格被选中。
 
-点击表头单元格的行为默认会选中整行或者整列，如果只想选中当前单元格可以设置 select.headerSelectMode 为'cell'。
+点击表头单元格的行为默认会选中整行或者整列，如果只想选中当前单元格可以设置 `select.headerSelectMode` 为'`cell'`, 或者只想选中 body 主体中的单元格可以设置 `select.headerSelectMode` 为`'body'`。
 
 ## 鼠标框选
 
@@ -122,9 +122,24 @@ const table = new VTable.ListTable({
 });
 ```
 
-开启快捷键后，用户可以使用浏览器自带的复制快捷键（如：Ctrl+C，Cmd+C）来复制选中的单元格内容。
+开启快捷键后，用户可以使用浏览器自带的复制快捷键（如：Ctrl+C，Cmd+C）来复制选中的单元格内容。VTable 内部会维护两种复制格式：
 
-配合复制内容还有个事件叫做`copy_data`，在复制时会触发这个事件，返回已复制到剪切板的内容。
+```
+new ClipboardItem({
+  'text/html': new Blob([dataHTML], { type: 'text/html' }),
+  'text/plain': new Blob([data], { type: 'text/plain' })
+})
+```
+
+具体实现逻辑可以参考代码逻辑 https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/event/listener/container-dom.ts
+
+**复制其他相关内容：**
+
+1.  配合复制内容还有个事件叫做`copy_data`，在复制时会触发这个事件，返回已复制到剪切板的内容。
+
+2.  如果想要通过接口获取选中内容作为复制内容，可调用接口`getCopyValue`。
+
+3.  另外我们提供了配置项 `formatCopyValue` 来格式化复制的内容，例如：想要在复制的内容后面加个后缀 `“从 XXXX 复制内容”`
 
 ## 开启全选
 

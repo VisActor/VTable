@@ -215,7 +215,7 @@ function updateColGroupContentAsync(colGroup: Group, proxy: SceneProxy) {
   }
   const screenTopRow = proxy.screenTopRow;
   const topRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
-  const bottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
+  const bottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2, proxy.table.rowCount - 1);
 
   for (let row = topRow; row <= bottomRow; row++) {
     // const cellGroup = proxy.table.scenegraph.getCell(col, row);
