@@ -421,6 +421,8 @@ export interface BaseTableConstructorOptions {
   /** adaptive 模式下高度的适应策略 **/
   heightAdaptiveMode?: HeightAdaptiveModeDef;
 
+  autoHeightInAdaptiveMode?: boolean;
+
   // /** 行高是否根据内容来计算 */
   // autoRowHeight?: boolean;
   /** 设备的像素比 不配的话默认获取window.devicePixelRatio */
