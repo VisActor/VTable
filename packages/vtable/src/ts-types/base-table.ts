@@ -5,7 +5,8 @@ import type {
   ICellHeaderPaths,
   CellInfo,
   CustomCellStyle,
-  CustomCellStyleArrangement
+  CustomCellStyleArrangement,
+  IDimensionInfo
 } from './common';
 import type {
   TableEventListener,
@@ -134,6 +135,10 @@ export interface IBaseTableProtected {
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
+  columnWidthConfig?: {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
   /** 拖拽表头移动位置 针对冻结部分的规则
@@ -163,7 +168,7 @@ export interface IBaseTableProtected {
   _rowRangeHeightsMap: Map<string, number>; //存储指定行范围的总高度
   _colRangeWidthsMap: Map<string, number>; //存储指定列范围的总宽度
 
-  _widthResizedColMap: Set<number>; //记录下被手动调整过列宽的列号
+  _widthResizedColMap: Set<number | string>; //记录下被手动调整过列宽的列号
   _heightResizedRowMap: Set<number>; //记录下被手动调整过行高的行号
 
   bodyHelper: BodyHelper;
@@ -174,11 +179,6 @@ export interface IBaseTableProtected {
   // headerDescriptions: { [at: string]: string };
   focusedTable: boolean;
 
-  config:
-    | {
-        [name: string]: any;
-      }
-    | undefined;
   // scroll: {
   //   left: number;
   //   top: number;
