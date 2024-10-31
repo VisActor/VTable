@@ -1,3 +1,4 @@
+import type { ListTable } from '../..';
 import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { Scenegraph } from '../../scenegraph/scenegraph';
 import type { SelectAllOnCtrlAOption } from '../../ts-types';
@@ -73,7 +74,10 @@ export function updateSelectPosition(
       _startRow = table.columnHeaderLevelCount;
     }
     // 行号列选中
-    if (disableRowSeriesNumberSelect && table.options.rowSeriesNumber) {
+    if (
+      (disableRowSeriesNumberSelect || (disableHeaderSelect && (table as ListTable).transpose)) &&
+      table.options.rowSeriesNumber
+    ) {
       _startCol += 1;
     }
 
