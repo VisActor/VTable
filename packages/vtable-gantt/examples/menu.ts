@@ -57,6 +57,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-dependency'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-listTable'
   }
   //   ]
   // }
