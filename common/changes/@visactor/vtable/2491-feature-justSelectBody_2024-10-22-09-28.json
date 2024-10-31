@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: headerSelectMode option add body setting #2491\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
