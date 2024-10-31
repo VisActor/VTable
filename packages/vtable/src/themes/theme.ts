@@ -788,8 +788,7 @@ export class TableTheme implements ITableThemeDefine {
     return hasThemeProperty(obj, names) || hasThemeProperty(superTheme, names);
   }
   extends(obj: PartialTableThemeDefine): TableTheme {
-    const cloneObj = ingoreNoneValueMerge({}, this.internalTheme.obj);
-    return new TableTheme(ingoreNoneValueMerge(cloneObj, obj), this.internalTheme.superTheme);
+    return new TableTheme(obj, ingoreNoneValueMerge(this.internalTheme.superTheme, this.internalTheme.obj));
   }
   private getStyle(style: ThemeStyle) {
     const that = this;
