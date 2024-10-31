@@ -8,7 +8,7 @@ When using VTable for data analytics, individual cells can be selected with a mo
 
 As shown above, after clicking on cell (2,3), the cell is selected.
 
-Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set select.headerSelectMode to 'cell'.
+Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set `select.headerSelectMode` to `'cell'`, Or if you only want to select cells in the body, you can set `select.headerSelectMode` to `'body'`.
 
 ## Mouse box selection
 

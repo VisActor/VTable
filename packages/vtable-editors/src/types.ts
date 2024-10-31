@@ -27,8 +27,10 @@ export interface IEditor<V = any> {
   /**
    * Before set new value to table, use it to validate value.
    * If the interface returns true, the value takes effect; otherwise, it does not take effect.
+   * @param newValue new value to be set. If not provided, the current input element value will be used.
+   * @param oldValue old value of the cell.
    */
-  validateValue?: () => boolean | Promise<boolean>;
+  validateValue?: (newValue?: V, oldValue?: V) => boolean | Promise<boolean>;
   /**
    * Called when editor mode is exited by any means.
    * Expected to return the current value of the cell.

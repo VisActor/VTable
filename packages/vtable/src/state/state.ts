@@ -50,6 +50,7 @@ import { updateResizeRow } from './resize/update-resize-row';
 import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
 import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
+import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -72,8 +73,12 @@ export class StateManager {
     // cellPosEnd: CellPosition;
     singleStyle?: boolean; // select当前单元格是否使用单独样式
     disableHeader?: boolean; // 是否禁用表头select
-    /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
-    headerSelectMode?: 'inline' | 'cell';
+    /** 点击表头单元格效果
+     * 'inline': 点击行表头则整行选中，选择列表头则整列选中；
+     * 'cell': 仅仅选择当前点击的表头单元格；
+     * 'body': 不选择表头，点击行表头则选择该行所有 body 单元格，点击列表头则选择该列所有 body 单元格。
+     */
+    headerSelectMode?: 'inline' | 'cell' | 'body';
     selecting: boolean;
   };
   fillHandle: {
@@ -1412,7 +1417,15 @@ export class StateManager {
 
     // 更新frozen
     dealFreeze(col, row, this.table);
-
+    if ((this.table as any).hasListeners(PIVOT_TABLE_EVENT_TYPE.FREEZE_CLICK)) {
+      const fields: ColumnData[] = (this.table as ListTable).internalProps.layoutMap.columnObjects.slice(0, col + 1);
+      this.table.fireListeners(PIVOT_TABLE_EVENT_TYPE.FREEZE_CLICK, {
+        col: col,
+        row: row,
+        fields: fields.reduce((pre: any, cur: any) => pre.concat(cur.field), []),
+        colCount: this.table.frozenColCount
+      });
+    }
     // // 更新scenegraph，这里因为dealFreeze更新了table里存储的frozen信息，会影响scenegraph里的getCell
     // // 因此先更新scenegraph结构再更新icon
     // this.table.scenegraph.updateFrozen(this.frowzen.col);
@@ -1513,8 +1526,8 @@ export class StateManager {
    * @param field
    * @returns
    */
-  updateHeaderCheckedState(field: string | number): boolean | 'indeterminate' {
-    return updateHeaderCheckedState(field, this);
+  updateHeaderCheckedState(field: string | number, col: number, row: number): boolean | 'indeterminate' {
+    return updateHeaderCheckedState(field, this, col, row);
   }
   /**
    * setRecords的时候虽然调用了initCheckedState 进行了初始化 但当每个表头的checked状态都用配置了的话 初始化不会遍历全部数据
