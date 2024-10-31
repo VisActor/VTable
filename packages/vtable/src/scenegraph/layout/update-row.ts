@@ -83,17 +83,26 @@ export function updateRow(
 
   for (let col = 0; col < table.colCount; col++) {
     // add cells
-    updateRows.forEach(r => {
-      // updateRowAttr(row, scene);
-      const mergeInfo = getCellMergeInfo(scene.table, col, r);
-      if (mergeInfo) {
-        for (let col = mergeInfo.start.col; col <= mergeInfo.end.col; col++) {
-          for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
-            updateCell(col, row, scene.table, false);
-          }
-        }
+    updateRows.forEach(row => {
+      if (
+        row < table.frozenRowCount || // not top frozen
+        row > table.rowCount - 1 || // greater than rowCount - 1
+        (row < scene.table.rowCount - scene.table.bottomFrozenRowCount && // not bottom frozen
+          (row < scene.proxy.rowStart || row > scene.proxy.rowEnd)) // not in row range
+      ) {
+        removeCellGroup(row, scene);
       } else {
-        updateCell(col, r, scene.table, false);
+        // updateRowAttr(row, scene);
+        const mergeInfo = getCellMergeInfo(scene.table, col, row);
+        if (mergeInfo) {
+          for (let col = mergeInfo.start.col; col <= mergeInfo.end.col; col++) {
+            for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
+              updateCell(col, row, scene.table, false);
+            }
+          }
+        } else {
+          updateCell(col, row, scene.table, false);
+        }
       }
     });
   }

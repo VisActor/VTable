@@ -171,6 +171,9 @@ export class SceneProxy {
     const totalActualBodyRowCount = Math.min(this.rowLimit, this.bodyBottomRow - this.bodyTopRow + 1); // 渐进加载总row数量
     this.totalActualBodyRowCount = totalActualBodyRowCount;
     this.totalRow = this.rowStart + totalActualBodyRowCount - 1; // 目标渐进完成的row
+
+    this.rowStart = this.bodyTopRow;
+    this.rowEnd = this.totalRow; // temp for first screen, will replace in createGroupForFirstScreen()
   }
 
   refreshColCount() {
@@ -178,6 +181,9 @@ export class SceneProxy {
     const totalActualBodyColCount = Math.min(this.colLimit, this.bodyRightCol - this.bodyLeftCol + 1);
     this.totalActualBodyColCount = totalActualBodyColCount;
     this.totalCol = this.bodyLeftCol + totalActualBodyColCount - 1; // 目标渐进完成的col
+
+    this.colStart = this.bodyLeftCol;
+    this.colEnd = this.totalCol; // temp for first screen, will replace in createGroupForFirstScreen()
   }
 
   resize() {
