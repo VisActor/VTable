@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 31 Oct 2024 12:52:23 GMT and should not be manually modified.
+This log was last generated on Fri, 01 Nov 2024 03:33:15 GMT and should not be manually modified.
+
+## 1.10.3
+Fri, 01 Nov 2024 03:33:15 GMT
+
+### Updates
+
+- fix: type define columnWidthConfig
+
+
 
 ## 1.10.2
 Thu, 31 Oct 2024 12:52:23 GMT
