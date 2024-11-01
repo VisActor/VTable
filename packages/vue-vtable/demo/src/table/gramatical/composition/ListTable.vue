@@ -11,6 +11,7 @@
 import { ref } from 'vue';
 import { ListColumn } from '../../../../../src/components/index';
 
+//优先级：records > tableOptions.records
 const records = ref([
   ['张三', 18, '男', '篮球'],
   ['李四', 20, '女', '足球'],
