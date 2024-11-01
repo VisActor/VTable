@@ -130,6 +130,7 @@ export interface TableEventHandlersEventArgumentMap {
     lineY: number;
     event: Event;
   };
+  change_header_position_fail: { source: CellAddress; target: CellAddress; event: Event };
   sort_click: {
     field: FieldDef;
     order: SortOrder;
@@ -259,6 +260,7 @@ export interface TableEventHandlersReturnMap {
   change_header_position: void;
   change_header_position_start: void;
   changing_header_position: void;
+  change_header_position_fail: void;
   sort_click: boolean;
   after_sort: void;
   freeze_click: void;

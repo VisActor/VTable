@@ -66,4 +66,8 @@ export function syncDragOrderFromTable(gantt: Gantt) {
     gantt.scenegraph.dragOrderLine.showDragLine(lineY);
     gantt.scenegraph.updateNextFrame();
   });
+  gantt.taskListTableInstance?.on('change_header_position_fail', (args: any) => {
+    gantt.scenegraph.dragOrderLine.hideDragLine();
+    gantt.scenegraph.updateNextFrame();
+  });
 }

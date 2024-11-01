@@ -41,6 +41,7 @@ Supported event types:
   CHANGE_HEADER_POSITION: 'change_header_position',
   CHANGE_HEADER_POSITION_START: 'change_header_position_start',
   CHANGING_HEADER_POSITION: 'changing_header_position',
+  CHANGE_HEADER_POSITION_FAIL: 'changing_header_position_fail',
   SORT_CLICK: 'sort_click',
   AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
@@ -222,8 +223,22 @@ Parameter type of event callback function:
 
 ```
 {
-source: CellAddress;
-target: CellAddress
+  source: CellAddress;
+  target: CellAddress
+}
+
+```
+
+## CHANGE_HEADER_POSITION_FAIL
+
+Events for dragging table headers or rows to move positions when failed
+
+Parameter type of event callback function:
+
+```
+{
+  source: CellAddress;
+  target: CellAddress
 }
 
 ```
@@ -236,15 +251,15 @@ Parameter type of event callback function:
 
 ```
 {
-col: number;
-row: number;
-x: number;
-y: number;
-backX: number;
-lineX: number;
-backY: number;
-lineY: number;
-event: Event;
+  col: number;
+  row: number;
+  x: number;
+  y: number;
+  backX: number;
+  lineX: number;
+  backY: number;
+  lineY: number;
+  event: Event;
 };
 
 ```
@@ -257,15 +272,15 @@ Parameter type of event callback function:
 
 ```
 {
-col: number;
-row: number;
-x: number;
-y: number;
-backX: number;
-lineX: number;
-backY: number;
-lineY: number;
-event: Event;
+  col: number;
+  row: number;
+  x: number;
+  y: number;
+  backX: number;
+  lineX: number;
+  backY: number;
+  lineY: number;
+  event: Event;
 };
 
 ```

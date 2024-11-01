@@ -83,6 +83,7 @@ export interface TableEvents {
   CHANGE_HEADER_POSITION: 'change_header_position';
   CHANGE_HEADER_POSITION_START: 'change_header_position_start';
   CHANGING_HEADER_POSITION: 'changing_header_position';
+  CHANGE_HEADER_POSITION_FAIL: 'change_header_position_fail';
   /**
    * 点击排序图标事件
    */
@@ -202,6 +203,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   CHANGE_HEADER_POSITION_START: 'change_header_position_start',
   CHANGE_HEADER_POSITION: 'change_header_position',
   CHANGING_HEADER_POSITION: 'changing_header_position',
+  CHANGE_HEADER_POSITION_FAIL: 'change_header_position_fail',
   SORT_CLICK: 'sort_click',
   /**
    * 执行完排序
