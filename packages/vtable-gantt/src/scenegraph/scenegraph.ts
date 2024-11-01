@@ -13,6 +13,7 @@ import { getTaskIndexByY } from '../gantt-helper';
 import graphicContribution from './graphic';
 import { TaskCreationButton } from './task-creation-button';
 import { DependencyLink } from './dependency-link';
+import { DragOrderLine } from './drag-order-line';
 container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
@@ -26,6 +27,7 @@ export class Scenegraph {
   tableGroup: Group;
   scrollbarComponent: ScrollBarComponent;
   markLine: MarkLine;
+  dragOrderLine: DragOrderLine;
   frameBorder: FrameBorder;
   taskCreationButton: TaskCreationButton;
   stage: Stage;
@@ -111,6 +113,9 @@ export class Scenegraph {
     scene.scrollbarComponent = new ScrollBarComponent(scene._gantt);
     scene.stage.defaultLayer.addChild(scene.scrollbarComponent.hScrollBar);
     scene.stage.defaultLayer.addChild(scene.scrollbarComponent.vScrollBar);
+
+    //初始化换位交互标记线
+    scene.dragOrderLine = new DragOrderLine(scene);
   }
 
   afterCreateSceneGraph() {

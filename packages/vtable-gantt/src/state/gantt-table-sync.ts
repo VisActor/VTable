@@ -26,16 +26,6 @@ export function syncEditCellFromTable(gantt: Gantt) {
   });
 }
 
-export function syncDragOrderFromTable(gantt: Gantt) {
-  gantt.taskListTableInstance?.on('change_header_position', (args: any) => {
-    gantt.scenegraph.refreshTaskBars();
-    const left = gantt.stateManager.scroll.horizontalBarPos;
-    const top = gantt.stateManager.scroll.verticalBarPos;
-    gantt.scenegraph.setX(-left);
-    gantt.scenegraph.setY(-top);
-  });
-}
-
 export function syncTreeChangeFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('tree_hierarchy_state_change', (args: any) => {
     gantt._syncPropsFromTable();
@@ -54,5 +44,26 @@ export function syncSortFromTable(gantt: Gantt) {
     const top = gantt.stateManager.scroll.verticalBarPos;
     gantt.scenegraph.setX(-left);
     gantt.scenegraph.setY(-top);
+  });
+}
+export function syncDragOrderFromTable(gantt: Gantt) {
+  gantt.taskListTableInstance?.on('change_header_position', (args: any) => {
+    gantt.scenegraph.refreshTaskBars();
+    gantt.scenegraph.dragOrderLine.hideDragLine();
+    const left = gantt.stateManager.scroll.horizontalBarPos;
+    const top = gantt.stateManager.scroll.verticalBarPos;
+    gantt.scenegraph.setX(-left);
+    gantt.scenegraph.setY(-top);
+  });
+  gantt.taskListTableInstance?.on('change_header_position_start', (args: any) => {
+    const { col, row, x, y, backX, lineX, backY, lineY, event } = args;
+
+    gantt.scenegraph.dragOrderLine.showDragLine(lineY);
+    gantt.scenegraph.updateNextFrame();
+  });
+  gantt.taskListTableInstance?.on('changing_header_position', (args: any) => {
+    const { col, row, x, y, backX, lineX, backY, lineY, event } = args;
+    gantt.scenegraph.dragOrderLine.showDragLine(lineY);
+    gantt.scenegraph.updateNextFrame();
   });
 }
