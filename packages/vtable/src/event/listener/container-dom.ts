@@ -1,6 +1,6 @@
 import { isValid } from '@visactor/vutils';
 import type { EventHandler } from '../EventHandler';
-import type { ListTableConstructorOptions } from '../../ts-types';
+import type { ListTableConstructorOptions, MousePointerMultiCellEvent } from '../../ts-types';
 import { InteractionState, type KeydownEvent, type ListTableAPI } from '../../ts-types';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
@@ -547,7 +547,69 @@ export function bindContainerDomListener(eventManager: EventManager) {
   });
   document.body.addEventListener('pointerdown', globalPointerdownCallback);
 
+  const globalPointerupOutsideCallback = (e: MouseEvent) => {
+    // console.log('pointerupoutside');
+    // const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    if (stateManager.menu.isShow) {
+      setTimeout(() => {
+        // conside page scroll
+        if (!table.internalProps.menuHandler.pointInMenuElement(e.clientX, e.clientY)) {
+          stateManager.menu.isShow && stateManager.hideMenu();
+        }
+      }, 0);
+    }
+    // 同pointerup中的逻辑
+    if (stateManager.isResizeCol()) {
+      endResizeCol(table);
+    } else if (stateManager.isResizeRow()) {
+      endResizeRow(table);
+    } else if (stateManager.isMoveCol()) {
+      const endMoveColSuccess = table.stateManager.endMoveCol();
+      if (
+        endMoveColSuccess &&
+        table.stateManager.columnMove?.colSource !== -1 &&
+        table.stateManager.columnMove?.rowSource !== -1 &&
+        table.stateManager.columnMove?.colTarget !== -1 &&
+        table.stateManager.columnMove?.rowTarget !== -1
+      ) {
+        // 下面触发CHANGE_HEADER_POSITION 区别于pointerup
+        if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
+          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
+            target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
+            source: {
+              col: table.stateManager.columnMove.colSource,
+              row: table.stateManager.columnMove.rowSource
+            },
+            event: e
+          });
+        }
+      }
+    } else if (stateManager.isSelecting()) {
+      if (table.stateManager.select?.ranges?.length) {
+        const lastCol = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end.col;
+        const lastRow = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end.row;
+        table.stateManager.endSelectCells();
+        if ((table as any).hasListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END)) {
+          const cellsEvent: MousePointerMultiCellEvent = {
+            event: e,
+            cells: [],
+            col: lastCol,
+            row: lastRow,
+            scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
+            target: undefined
+          };
+          cellsEvent.cells = table.getSelectedCellInfos();
+          table.fireListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END, cellsEvent);
+        }
+      }
+    }
+  };
+
   const globalPointerupCallback = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target !== table.canvas) {
+      globalPointerupOutsideCallback(e);
+    }
     table.eventManager.LastBodyPointerXY = null;
     // console.log('body pointerup', table.eventManager.isDown, table.eventManager.isDraging);
     table.eventManager.isDown = false;
@@ -626,6 +688,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
       const leftFrozenColsWidth = table.getFrozenColsWidth();
       const rightFrozenColsWidth = table.getRightFrozenColsWidth();
       const startCell = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].start;
+      if (table.isSeriesNumber(startCell.col, startCell.row)) {
+        //如果是鼠标落到了序号列 不自动滚动
+        return;
+      }
       const endCell = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end;
       const canScrollY =
         (table.isFrozenRow(startCell.row) === false || table.isFrozenRow(endCell.row) === false) &&

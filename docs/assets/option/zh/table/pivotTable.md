@@ -423,3 +423,19 @@ export interface IIndicatorHeaderNode {
 规则的树结构指的是：同一层的节点它们的维度 key 是相同的。
 
 非规则的树结构即树的同一层存在不同维度的维度值时。
+
+## columnWidthConfig(Array)
+
+依据维度信息设置列宽
+
+```
+ {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
+```
+
+- dimensions 维度各层级的维度信息，是一个 IDimensionInfo 类型的数组，vtable 会根据这个路径来定位到具体的列。
+  {{ use: common-IDimensionInfo()}}
+
+- width 指定列宽。

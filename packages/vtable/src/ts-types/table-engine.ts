@@ -273,6 +273,7 @@ export type GroupConfig = {
 };
 
 export interface ListTableAPI extends BaseTableAPI {
+  transpose: boolean;
   options: ListTableConstructorOptions;
   editorManager: EditManeger;
   sortState: SortState[] | SortState | null;
@@ -330,6 +331,10 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   pivotSortState?: {
     dimensions: IDimensionInfo[];
     order: SortOrder;
+  }[];
+  columnWidthConfig?: {
+    dimensions: IDimensionInfo[];
+    width: number;
   }[];
 
   //#region layout中挪到外层的属性
@@ -475,6 +480,7 @@ export interface PivotTableAPI extends BaseTableAPI {
    * @param values 多个单元格的数据数组
    */
   changeCellValues: (col: number, row: number, values: (string | number)[][], workOnEditableCell: boolean) => void;
+  _parseColumnWidthConfig: (columnWidthConfig: { dimensions: IDimensionInfo[]; width: string | number }[]) => void;
 }
 export interface PivotChartAPI extends BaseTableAPI {
   records?: any | Record<string, any[]>;

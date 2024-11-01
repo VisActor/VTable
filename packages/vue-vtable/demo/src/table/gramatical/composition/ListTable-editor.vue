@@ -152,15 +152,13 @@ const columns = [
   },
   {
     field: 'sex',
-    title: 'sex\n(list editor)',
+    title: 'sex',
     width: 100,
-    editor: 'list-editor'
   },
   {
     field: 'address',
-    title: 'address\n(textArea editor)',
+    title: 'address',
     width: 300,
-    editor: 'textArea-editor'
   },
   {
     field: 'tel',

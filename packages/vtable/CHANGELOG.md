@@ -1,6 +1,70 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 22 Oct 2024 09:49:27 GMT and should not be manually modified.
+This log was last generated on Fri, 01 Nov 2024 03:33:15 GMT and should not be manually modified.
+
+## 1.10.3
+Fri, 01 Nov 2024 03:33:15 GMT
+
+### Updates
+
+- fix: type define columnWidthConfig
+
+
+
+## 1.10.2
+Thu, 31 Oct 2024 12:52:23 GMT
+
+### Updates
+
+- feat: headerSelectMode option add body setting #2491
+
+
+- fix: isColumnHeader api judement logic #2491
+
+
+- fix: when collapse last group occor error #2600
+
+
+- fix: when collapse tree node occor error #2600
+
+
+- fix: min aggregator type handle with NaN value #2627
+
+
+- feat: add freeze_click event #2641
+
+
+- fix: when drag row series number cells not scroll #2647
+
+
+- fix: rowSeriesNumber when be frozen can render customlayout #2653
+
+
+- refactor: custom merge cell ignore check state jude #2683
+
+
+- fix: when has empty tip scrollbar can not be clicked #2690
+
+
+- refactor: paste cell value should use editor validateValidate api #2691
+
+
+- feat: add columnWidthConfig to set width by dimensions #2696
+
+
+- fix: when field set array，record no corresponding field，occur error #2702
+
+
+- fix: when has gantt and table same time internal theme should not be changed #2708
+
+
+- fix: fix check state update #2667
+- fix: fix list-editor space problem
+- fix: change pointerupoutside event callback #2674 #2659
+- fix: add event in react-vtable
+- fix: add selected_cell event in select-all #2664
+- fix: fix disableRowSeriesNumberSelect in select-all #2665
+- fix: fix title resize in adaptive mode #2704
 
 ## 1.10.1
 Tue, 22 Oct 2024 09:49:27 GMT

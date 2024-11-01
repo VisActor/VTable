@@ -83,17 +83,26 @@ export function updateRow(
 
   for (let col = 0; col < table.colCount; col++) {
     // add cells
-    updateRows.forEach(r => {
-      // updateRowAttr(row, scene);
-      const mergeInfo = getCellMergeInfo(scene.table, col, r);
-      if (mergeInfo) {
-        for (let col = mergeInfo.start.col; col <= mergeInfo.end.col; col++) {
-          for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
-            updateCell(col, row, scene.table, false);
-          }
-        }
+    updateRows.forEach(row => {
+      if (
+        row < table.frozenRowCount || // not top frozen
+        row > table.rowCount - 1 || // greater than rowCount - 1
+        (row < scene.table.rowCount - scene.table.bottomFrozenRowCount && // not bottom frozen
+          (row < scene.proxy.rowStart || row > scene.proxy.rowEnd)) // not in row range
+      ) {
+        removeCellGroup(row, scene);
       } else {
-        updateCell(col, r, scene.table, false);
+        // updateRowAttr(row, scene);
+        const mergeInfo = getCellMergeInfo(scene.table, col, row);
+        if (mergeInfo) {
+          for (let col = mergeInfo.start.col; col <= mergeInfo.end.col; col++) {
+            for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
+              updateCell(col, row, scene.table, false);
+            }
+          }
+        } else {
+          updateCell(col, row, scene.table, false);
+        }
       }
     });
   }
@@ -134,7 +143,7 @@ export function updateRow(
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
 
     updateBottomFrozeCellGroups();
-    scene.proxy.progress();
+    // scene.proxy.progress();
   }
   scene.proxy.progress();
 
@@ -184,7 +193,7 @@ function removeRow(row: number, scene: Scenegraph) {
   // proxy.totalRow--;
   const totalActualBodyRowCount = Math.min(proxy.rowLimit, proxy.bodyBottomRow - proxy.bodyTopRow + 1); // 渐进加载总row数量
   proxy.totalActualBodyRowCount = totalActualBodyRowCount;
-  proxy.totalRow = proxy.rowStart + totalActualBodyRowCount - 1; // 目标渐进完成的row
+  proxy.totalRow = Math.min(proxy.table.rowCount - 1, proxy.rowStart + totalActualBodyRowCount - 1); // 目标渐进完成的row
 }
 
 function addRow(row: number, scene: Scenegraph) {

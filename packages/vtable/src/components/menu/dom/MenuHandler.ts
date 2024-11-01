@@ -206,10 +206,16 @@ export class MenuHandler {
         const abstractPos = table._getMouseAbstractPoint(e.event, false);
         let menu = null;
         if (abstractPos.inTable && typeof table.internalProps.menu?.contextMenuItems === 'function') {
-          menu = table.internalProps.menu.contextMenuItems(table.getHeaderField(e.col, e.row) as string, e.row, e.col);
+          menu = table.internalProps.menu.contextMenuItems(
+            table.getHeaderField(e.col, e.row) as string,
+            e.row,
+            e.col,
+            table
+          );
         } else if (abstractPos.inTable && Array.isArray(table.internalProps.menu?.contextMenuItems)) {
           menu = table.internalProps.menu?.contextMenuItems;
         }
+
         this._bindToCell(e.col, e.row, 'context-menu', {
           content: menu,
           position: { x: abstractPos.x, y: abstractPos.y }
