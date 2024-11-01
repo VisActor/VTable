@@ -1,9 +1,19 @@
+// 已经被废弃，不再使用，后续会删除 :)
+// was deprecated, no longer used, will be deleted later
+
+// 已经被废弃，不再使用，后续会删除 :)
+// was deprecated, no longer used, will be deleted later
+
 import * as VTable from '@visactor/vtable';
 import { isFunction, merge } from '@visactor/vutils';
-import { application, REACT_TO_CANOPUS_EVENTS } from '@visactor/vtable/es/vrender';
-import type { Graphic, IGraphic, IGraphicCreator } from '@visactor/vtable/es/vrender';
-import { CheckBox, Radio, Tag } from '@visactor/vtable/es/vrender';
-import { reactive, watch } from 'vue';
+import type { ColumnDefine, ICornerDefine, IIndicator, IDimension, ITitleDefine } from '@visactor/vtable';
+import type { TooltipProps } from '../components/component/tooltip';
+import type { MenuProps } from '../components/component/menu';
+
+// import { application, REACT_TO_CANOPUS_EVENTS } from '@visactor/vtable/es/vrender';
+// import type { Graphic, IGraphic, IGraphicCreator } from '@visactor/vtable/es/vrender';
+// import { CheckBox, Radio, Tag } from '@visactor/vtable/es/vrender';
+// import { reactive, watch } from 'vue';
 
 // 展平嵌套的虚拟节点
 export function flattenVNodes(vnodes: any[]): any[] {
@@ -107,4 +117,98 @@ export function createCustomLayout(children: any): any {
 
   // 返回root组件和refs
   return { rootComponent: createComponent(children) };
+}
+
+// 创建自定义布局
+export function extractPivotSlotOptions(vnodes: any[]) {
+  const options = {
+    columns: [] as ColumnDefine[],
+    columnHeaderTitle: [] as ITitleDefine[],
+    rows: [] as IDimension[],
+    rowHeaderTitle: [] as ITitleDefine[],
+    indicators: [] as IIndicator[],
+    corner: {} as ICornerDefine | null,
+    tooltip: {} as TooltipProps | null,
+    menu: {} as MenuProps | null
+  };
+
+  const typeMapping: Record<string, keyof typeof options> = {
+    PivotColumnDimension: 'columns',
+    PivotColumnHeaderTitle: 'columnHeaderTitle',
+    PivotRowDimension: 'rows',
+    PivotRowHeaderTitle: 'rowHeaderTitle',
+    PivotCorner: 'corner',
+    PivotIndicator: 'indicators',
+    Tooltip: 'tooltip',
+    Menu: 'menu'
+  };
+
+  vnodes.forEach(vnode => {
+    vnode.props = convertPropsToCamelCase(vnode.props);
+    const typeName = vnode.type?.symbol || vnode.type?.name;
+    const optionKey = typeMapping[typeName];
+
+    if (optionKey) {
+      if (Array.isArray(options[optionKey])) {
+        if (vnode.props.hasOwnProperty('objectHandler')) {
+          (options[optionKey] as any[]).push(vnode.props.objectHandler);
+        } else {
+          (options[optionKey] as any[]).push(vnode.props);
+        }
+      } else {
+        options[optionKey] = vnode.props;
+      }
+    }
+  });
+  return options;
+}
+
+function createCustomLayoutHandler(children: any) {
+  return (args: any) => {
+    const { table, row, col, rect } = args;
+    const record = table.getCellOriginRecord(col, row);
+    const { height, width } = rect ?? table.getCellRect(col, row);
+
+    const rootContainer = children.customLayout({ table, row, col, rect, record, height, width })[0];
+    const { rootComponent } = createCustomLayout(rootContainer);
+
+    return {
+      rootContainer: rootComponent,
+      renderDefault: false
+    };
+  };
+}
+
+export function extractListSlotOptions(vnodes: any[]) {
+  const options = {
+    columns: [] as ColumnDefine[],
+    tooltip: {} as TooltipProps,
+    menu: {} as MenuProps
+  };
+
+  const typeMapping: Record<string, keyof typeof options> = {
+    ListColumn: 'columns',
+    Tooltip: 'tooltip',
+    Menu: 'menu'
+  };
+
+  vnodes.forEach(vnode => {
+    vnode.props = convertPropsToCamelCase(vnode.props);
+    const typeName = vnode.type?.symbol || vnode.type?.name;
+    const optionKey = typeMapping[typeName];
+
+    if (optionKey) {
+      if (optionKey === 'columns' && vnode.children) {
+        vnode.props.customLayout = createCustomLayoutHandler(vnode.children);
+      }
+
+      if (Array.isArray(options[optionKey])) {
+        (options[optionKey] as any[]).push(vnode.props);
+      } else {
+        options[optionKey] = vnode.props;
+      }
+    }
+  });
+
+  return options;
 }
