@@ -433,7 +433,7 @@ export function dealHeader(
     if (hd.indicatorKey) {
       return indicator.indicatorKey === hd.indicatorKey;
     }
-    return indicator.title === hd.value;
+    return indicator.title === hd.value && !hd.dimensionKey;
   }) as IIndicator;
   const cell: HeaderData = {
     id,
