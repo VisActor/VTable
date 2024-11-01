@@ -7,7 +7,7 @@ module.exports = {
   formats: ['cjs', 'es', 'umd'],
   noEmitOnError: false,
   copy: ['css'],
-  name: 'VTable.calendar',
+  name: 'VTable.Calendar',
   umdOutputFilename: 'vtable-calendar',
   rollupOptions: {
     treeshake: true,

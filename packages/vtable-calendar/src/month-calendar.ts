@@ -1,4 +1,4 @@
-import { ListTable } from '@visactor/vtable';
+import { ListTable, EventTarget } from '@visactor/vtable';
 import type { DateRecord, DateRecordKeys } from './date-util';
 import { defaultDayTitles, getRecords, getStartAndEndDate } from './date-util';
 import { bindDebugTool } from '../../vtable/src/scenegraph/debug-tool';
@@ -8,7 +8,6 @@ import type { TYPES, ListTableConstructorOptions } from '@visactor/vtable';
 import { createTableOption } from './table/table-option';
 import type { ICustomEvent, ICustomEventOptions, IEventData } from './custom/custom-handler';
 import { CustomEventHandler } from './custom/custom-handler';
-import { EventTarget } from '@visactor/vtable/es/event/EventTarget';
 import type {
   CalendarEventHandlersEventArgumentMap,
   CalendarEventHandlersReturnMap,

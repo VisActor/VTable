@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-  <h1>VTable-Export</h1>
+  <h1>VTable-Calendar</h1>
 </div>
 
 <div align="center">
@@ -22,52 +22,22 @@ VTable is not just a high-performance multidimensional data analysis table, but 
 
 ## Installation
 
-[npm package](https://www.npmjs.com/package/@visactor/vtable-export)
+[npm package](https://www.npmjs.com/package/@visactor/vtable-calendar)
 
 ```bash
 // npm
-npm install @visactor/vtable-export
+npm install @visactor/vtable-calendar
 
 // yarn
-yarn add @visactor/vtable-export
+yarn add @visactor/vtable-calendar
 ```
 
 ## Quick Start
 
 ```jsx
-import * as VTable from '@visactor/vtable';
-import { downloadCsv, exportVTableToCsv, downloadExcel, exportVTableToExcel } from '@visactor/vtable-export';
+import { VTableCalendar } from '@visactor/vtable-calendar';
 
-const option = {
-  header: [
-    {
-      field: "0",
-      caption: "name",
-    },
-    {
-      field: "1",
-      caption: "age",
-    },
-    {
-      field: "2",
-      caption: "gender",
-    },
-    {
-      field: "3",
-      caption: "hobby",
-    },
-  ],
-  records: new Array(1000).fill(["John", 18, "male", "🏀"]),
-};
-
-const tableInstance = new VTable.ListTable(option);
-
-// donload csv file
-downloadCsv(exportVTableToCsv(tableInstance), 'export-csv');
-
-// donload excel file
-downloadExcel(await exportVTableToExcel(tableInstance), 'export-excel');
-
+const calendar = new VTableCalendar(document.getElementById(CONTAINER_ID));
 ```
 
 ##
