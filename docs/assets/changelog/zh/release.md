@@ -4,36 +4,38 @@
 
 
 **🆕 新增功能**
+# v1.10.2
 
-- **@visactor/vtable**: headerSelectMode option add body setting [#2491](https://github.com/VisActor/VTable/issues/2491)
-- **@visactor/vtable**: add freeze_click event [#2641](https://github.com/VisActor/VTable/issues/2641)
-- **@visactor/vtable**: add columnWidthConfig to set width by dimensions [#2696](https://github.com/VisActor/VTable/issues/2696)
+2024-11-01
+
+
+**🆕 新增功能**
+- **@visactor/vtable**: 添加headerSelectMode选项的可设置body [#2491](https://github.com/VisActor/VTable/issues/2491)
+- **@visactor/vtable**: 添加freeze_click事件 [#2641](https://github.com/VisActor/VTable/issues/2641)
+- **@visactor/vtable**: 透视表添加columnWidthConfig以根据维度设置宽度 [#2696](https://github.com/VisActor/VTable/issues/2696)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: isColumnHeader api judement logic [#2491](https://github.com/VisActor/VTable/issues/2491)
-- **@visactor/vtable**: when collapse last group occor error [#2600](https://github.com/VisActor/VTable/issues/2600)
-- **@visactor/vtable**: when collapse tree node occor error [#2600](https://github.com/VisActor/VTable/issues/2600)
-- **@visactor/vtable**: min aggregator type handle with NaN value [#2627](https://github.com/VisActor/VTable/issues/2627)
-- **@visactor/vtable**: when drag row series number cells not scroll [#2647](https://github.com/VisActor/VTable/issues/2647)
-- **@visactor/vtable**: rowSeriesNumber when be frozen can render customlayout [#2653](https://github.com/VisActor/VTable/issues/2653)
-- **@visactor/vtable**: when has empty tip scrollbar can not be clicked [#2690](https://github.com/VisActor/VTable/issues/2690)
-- **@visactor/vtable**: when field set array，record no corresponding field，occur error [#2702](https://github.com/VisActor/VTable/issues/2702)
-- **@visactor/vtable**: when has gantt and table same time internal theme should not be changed [#2708](https://github.com/VisActor/VTable/issues/2708)
-- **@visactor/vtable**: fix check state update [#2667](https://github.com/VisActor/VTable/issues/2667)
-- **@visactor/vtable**: fix list-editor space problem
-- **@visactor/vtable**: change pointerupoutside event callback [#2674](https://github.com/VisActor/VTable/issues/2674) [#2659](https://github.com/VisActor/VTable/issues/2659)
-- **@visactor/vtable**: add event in react-vtable
-- **@visactor/vtable**: add selected_cell event in select-all [#2664](https://github.com/VisActor/VTable/issues/2664)
-- **@visactor/vtable**: fix disableRowSeriesNumberSelect in select-all [#2665](https://github.com/VisActor/VTable/issues/2665)
-- **@visactor/vtable**: fix title resize in adaptive mode [#2704](https://github.com/VisActor/VTable/issues/2704)
+- **@visactor/vtable**: 修正isColumnHeader api判断逻辑 [#2491](https://github.com/VisActor/VTable/issues/2491)
+- **@visactor/vtable**: 修复当折叠最后一个分组时发生错误 [#2600](https://github.com/VisActor/VTable/issues/2600)
+- **@visactor/vtable**: 修复最小聚合器类型处理NaN值 [#2627](https://github.com/VisActor/VTable/issues/2627)
+- **@visactor/vtable**: 修复当拖拽行系列编号单元格时不滚动问题 [#2647](https://github.com/VisActor/VTable/issues/2647)
+- **@visactor/vtable**: 修复当行系列编号被冻结时可以渲染自定义布局问题 [#2653](https://github.com/VisActor/VTable/issues/2653)
+- **@visactor/vtable**: 修复当有空提示时滚动条不能被点击的问题 [#2690](https://github.com/VisActor/VTable/issues/2690)
+- **@visactor/vtable**: 修复当字段设置为数组时，记录没有对应的字段，发生错误的问题 [#2702](https://github.com/VisActor/VTable/issues/2702)
+- **@visactor/vtable**: 修复当同时有甘特图和表格时，内部主题不应该被更改的问题 [#2708](https://github.com/VisActor/VTable/issues/2708)
+- **@visactor/vtable**: 修复检查状态更新 [#2667](https://github.com/VisActor/VTable/issues/2667)
+- **@visactor/vtable**: 修复列表编辑器空间问题
+- **@visactor/vtable**: 更改pointerupoutside事件回调 [#2674](https://github.com/VisActor/VTable/issues/2674) [#2659](https://github.com/VisActor/VTable/issues/2659)
+- **@visactor/vtable**: 在react-vtable中补充vtable中事件
+- **@visactor/vtable**: 在选择所有中添加selected_cell事件 [#2664](https://github.com/VisActor/VTable/issues/2664)
+- **@visactor/vtable**: 修复选择所有中的disableRowSeriesNumberSelect [#2665](https://github.com/VisActor/VTable/issues/2665)
+- **@visactor/vtable**: 修复自适应模式下的标题调整大小问题 [#2704](https://github.com/VisActor/VTable/issues/2704)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: custom merge cell ignore check state jude [#2683](https://github.com/VisActor/VTable/issues/2683)
-- **@visactor/vtable**: paste cell value should use editor validateValidate api [#2691](https://github.com/VisActor/VTable/issues/2691)
-
-
+- **@visactor/vtable**: 自定义合并单元格忽略检查状态判断 [#2683](https://github.com/VisActor/VTable/issues/2683)
+- **@visactor/vtable**: 粘贴单元格值应该使用编辑器验证api [#2691](https://github.com/VisActor/VTable/issues/2691)
 
 [更多详情请查看 v1.10.2](https://github.com/VisActor/VTable/releases/tag/v1.10.2)
 
@@ -44,8 +46,8 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when set rowSeriesNumber then sort icon not update [#2643](https://github.com/VisActor/VTable/issues/2643)
-- **@visactor/vtable**: disable cellInnerBorder when no frame border
+- **@visactor/vtable**: 当设置行系列编号时排序图标不更新 [#2643](https://github.com/VisActor/VTable/issues/2643)
+- **@visactor/vtable**: 当没有边框时禁用cellInnerBorder
 
 
 
