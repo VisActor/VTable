@@ -146,7 +146,7 @@ style 提供了一系列的单元格配置式，简要介绍如下。
 style: (args)=>{
   if(args.value>10)
     return {color: 'red'};
-  return {colore: 'green'};
+  return {color: 'green'};
 }
 
 ```
