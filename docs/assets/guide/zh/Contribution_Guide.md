@@ -76,7 +76,7 @@ git checkout -b docs/add-funnel-demo
 
 - 现在我们可以在分支上更改代码了
 - 假设我们已经添加了一些代码，提交到代码库
-- git commit -a -m "docs: add custom funnel demo and related docs" 。VisActor 的 commit 提交信息遵循 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) 规范
+- `git commit -a -m "docs: add custom funnel demo and related docs" / "fix: solve which problem #xxxx_issue_id"`。VisActor 的 commit 提交信息遵循 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) 规范
 
   - `<type>[optional scope]: <description>`
   - 其中常用 `type`包括 docs（文档、日志修改）、feat（新功能）、fix（问题修复）、refactor（代码重构）等，请根据实际情况选择。
