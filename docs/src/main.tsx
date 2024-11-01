@@ -4,6 +4,7 @@ import Inula from 'openinula';
 import * as VTable from '@visactor/vtable';
 import * as VRender from '@visactor/vtable/es/vrender';
 import * as VTableGantt from '@visactor/vtable-gantt';
+import { VTableCalendar } from '@visactor/vtable-calendar';
 import * as VChart from '@visactor/vchart';
 import * as VTableEditors from '@visactor/vtable-editors';
 import { downloadCsv, exportVTableToCsv, downloadExcel, exportVTableToExcel } from '@visactor/vtable-export';
@@ -25,6 +26,7 @@ import { createApp, ref, onMounted, h } from 'vue';
 (window as any).VTable = VTable;
 (window as any).VRender = VRender;
 (window as any).VTableGantt = VTableGantt;
+(window as any).VTableCalendar = VTableCalendar;
 (window as any).VTable_editors = VTableEditors;
 (window as any).VChart = VChart.VChart;
 

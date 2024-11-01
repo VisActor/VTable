@@ -180,6 +180,29 @@
       ]
     },
     {
+      "path": "calendar",
+      "title": {
+        "zh": "日历图",
+        "en": "calendar"
+      },
+      "children": [
+        {
+          "path": "Getting_Started",
+          "title": {
+            "zh": "快速上手",
+            "en": "Getting Started"
+          }
+        },
+        {
+          "path": "introduction",
+          "title": {
+            "zh": "日历图介绍",
+            "en": "calendar introduction"
+          }
+        }
+      ]
+    },
+    {
       "path": "cell_type",
       "title": {
         "zh": "单元格类型",
