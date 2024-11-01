@@ -42,4 +42,24 @@ export function createTable() {
   });
 
   window.calendar = calendar;
+
+  calendar.on('calendar_date_click', e => {
+    console.log('calendar_date_click', e);
+  });
+
+  calendar.on('selected_date', e => {
+    console.log('selected_date', e);
+  });
+
+  calendar.on('selected_date_clear', e => {
+    console.log('selected_date_clear', e);
+  });
+
+  calendar.on('drag_select_date_end', e => {
+    console.log('drag_select_date_end', e);
+  });
+
+  calendar.on('calendar_custom_event_click', e => {
+    console.log('calendar_custom_event_click', e);
+  });
 }

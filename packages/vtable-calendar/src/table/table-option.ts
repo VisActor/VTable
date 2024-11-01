@@ -56,10 +56,13 @@ export function createTableOption(
         bgColor: args => {
           const { col, row, dataValue, table } = args;
           const record = table.getCellRawRecord(col, row);
+          const date = dataValue;
+          const month = record.Sun > dataValue ? record.month + 1 : record.month;
+          const year = record.month === 11 && record.Sun > dataValue ? record.year + 1 : record.year;
           if (
-            record.year === currentDate.getFullYear() &&
-            record.month === currentDate.getMonth() &&
-            dataValue === currentDate.getDate()
+            year === currentDate.getFullYear() &&
+            month === currentDate.getMonth() &&
+            date === currentDate.getDate()
           ) {
             return '#f0f0f0';
           }

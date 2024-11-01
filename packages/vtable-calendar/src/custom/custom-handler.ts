@@ -40,7 +40,7 @@ export interface ICustomEvent {
   customInfo?: any; // user custom data
 }
 
-interface IEventData extends ICustomEvent {
+export interface IEventData extends ICustomEvent {
   col: number;
   row: number;
   index: number; // event content index in all cells about this event

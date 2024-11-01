@@ -8,8 +8,16 @@ import type { TYPES, ListTableConstructorOptions } from '@visactor/vtable';
 import { createTableOption } from './table/table-option';
 import type { ICustomEvent, ICustomEventOptions } from './custom/custom-handler';
 import { CustomEventHandler } from './custom/custom-handler';
+import { EventTarget } from '@visactor/vtable/es/event/EventTarget';
+import type {
+  CalendarEventHandlersEventArgumentMap,
+  CalendarEventHandlersReturnMap,
+  CalendarEventListener
+} from './event/type';
+import { CALENDAR_EVENT_TYPE } from './event/type';
+import type { EventListenerId } from '@visactor/vtable/src/ts-types';
 
-interface VTableCalendarConstructorOptions {
+export interface VTableCalendarConstructorOptions {
   startDate?: Date;
   endDate?: Date;
   currentDate?: Date;
@@ -23,7 +31,7 @@ interface VTableCalendarConstructorOptions {
   customEventOptions?: ICustomEventOptions;
 }
 
-export class VTableCalendar {
+export class VTableCalendar extends EventTarget {
   container: HTMLElement;
   options: VTableCalendarConstructorOptions;
   table: ListTable;
@@ -44,6 +52,7 @@ export class VTableCalendar {
   customHandler: CustomEventHandler;
 
   constructor(container: HTMLElement, options?: VTableCalendarConstructorOptions) {
+    super();
     this.container = container;
     this.options = options ?? {};
     const { startDate, endDate, currentDate, rangeDays } = this.options;
@@ -162,6 +171,24 @@ export class VTableCalendar {
     });
   }
 
+  // @ts-ignore
+  fireListeners<TYPE extends keyof CalendarEventHandlersEventArgumentMap>(
+    type: TYPE,
+    event: CalendarEventHandlersEventArgumentMap[TYPE]
+  ): CalendarEventHandlersReturnMap[TYPE][] {
+    // 调用父类的方法
+    return super.fireListeners(type as any, event as any);
+  }
+
+  // @ts-ignore
+  on<TYPE extends keyof CalendarEventHandlersEventArgumentMap>(
+    type: TYPE,
+    listener: CalendarEventListener<TYPE>
+  ): EventListenerId {
+    // 调用父类的方法
+    return super.on(type as any, listener as any);
+  }
+
   _bindEvent() {
     // click title jump to current month
     const titleComponent = this.table.internalProps.title.getComponentGraphic();
@@ -176,16 +203,57 @@ export class VTableCalendar {
       });
     }).bind(this);
     titleComponent.addEventListener('click', this.titleClickHandler);
-  }
 
-  _unbindEvent() {
-    const titleComponent = this.table.internalProps.title.getComponentGraphic();
-    titleComponent.removeEventListener('click', this.titleClickHandler);
+    this.table.on('click_cell', e => {
+      const { target } = e;
+      if ((target as any)._role === 'calendar-custom-event') {
+        this.fireListeners(CALENDAR_EVENT_TYPE.CALENDAR_CUSTOM_EVENT_CLICK, {
+          tableEvent: e,
+          date: this.getCellDate(e.col, e.row),
+          customEvent: (target as any)._customEvent
+        });
+      } else if (!this.table.isHeader(e.col, e.row)) {
+        this.fireListeners(CALENDAR_EVENT_TYPE.CALENDAR_DATE_CLICK, {
+          tableEvent: e,
+          date: this.getCellDate(e.col, e.row)
+        });
+      }
+    });
+
+    this.table.on('selected_cell', e => {
+      if (!this.table.isHeader(e.col, e.row)) {
+        this.fireListeners(CALENDAR_EVENT_TYPE.SELECTED_DATE, {
+          tableEvent: e,
+          date: this.getCellDate(e.col, e.row)
+        });
+      }
+    });
+
+    this.table.on('selected_clear', () => {
+      this.fireListeners(CALENDAR_EVENT_TYPE.SELECTED_DATE_CLEAR, undefined);
+    });
+
+    this.table.on('drag_select_end', e => {
+      const { cells } = e;
+      const dates: Date[][] = [];
+      cells.map(row => {
+        const rowDates: Date[] = [];
+        row.map(cell => {
+          if (!this.table.isHeader(cell.col, cell.row)) {
+            rowDates.push(this.getCellDate(cell.col, cell.row));
+          }
+        });
+        dates.push(rowDates);
+      });
+      this.fireListeners(CALENDAR_EVENT_TYPE.DRAG_SELECT_DATE_END, {
+        tableEvent: e,
+        dates
+      });
+    });
   }
 
   release() {
-    // unbind event
-    this._unbindEvent();
+    this.table.release();
   }
 
   getCellLocation(date: Date) {

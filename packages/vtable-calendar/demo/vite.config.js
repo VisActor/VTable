@@ -14,6 +14,7 @@ module.exports = {
   resolve: {
     alias: {
       '@visactor/vtable/es/vrender': path.resolve(__dirname, '../../vtable/src/vrender.ts'),
+      '@visactor/vtable/es/event/EventTarget': path.resolve(__dirname, '../../vtable/src/event/EventTarget'),
       '@visactor/vtable': path.resolve(__dirname, '../../vtable/src/index.ts'),
       '@src': path.resolve(__dirname, '../../vtable/src/'),
       '@vutils-extension': path.resolve(__dirname, '../../vtable/src/vutil-extension-temp')
