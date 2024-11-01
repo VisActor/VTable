@@ -120,6 +120,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     } else if (e.key === 'Escape') {
       (table as ListTableAPI).editorManager?.cancelEdit();
+      table.getElement().focus();
     } else if (e.key === 'Enter') {
       // 如果按enter键 可以结束当前的编辑 或开启编辑选中的单元格（仅限单选）
       if ((table as ListTableAPI).editorManager?.editingEditor) {
