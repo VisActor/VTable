@@ -55,9 +55,9 @@ export class CustomEventHandler {
     this.calendar = calendar;
     this.customEventOptions = merge(
       {
-        contentHeight: 30,
-        barHeight: 20,
-        fontSize: 15,
+        contentHeight: 24,
+        barHeight: 18,
+        fontSize: 14,
         contentPadding: 5,
         barCornerRadius: 5,
         circleRadius: 5
@@ -96,6 +96,7 @@ export class CustomEventHandler {
         };
         this.setCellCustomEvent(col, row, events);
         this.calendar.table.scenegraph.updateCellContent(col, row);
+        this.events.push(event);
         return;
       }
 
@@ -104,6 +105,7 @@ export class CustomEventHandler {
         cellCustomEvent.keys.push(0);
         cellCustomEvent.values[0] = eventData;
         this.calendar.table.scenegraph.updateCellContent(col, row);
+        this.events.push(event);
         return;
       }
 
@@ -240,7 +242,8 @@ export class CustomEventHandler {
     if (event.type === 'list') {
       const { col, row } = this.calendar.getCellLocation(date);
       const cellGroup = this.calendar.table.scenegraph.getCell(col, row);
-      cellGroup.removeChild(cellGroup.getChildByName(CUSTOM_CONTAINER_NAME));
+      const customGroup = cellGroup.getChildByName(CUSTOM_CONTAINER_NAME);
+      customGroup && cellGroup.removeChild(customGroup);
     } else {
       // bar
       const startLocation = this.calendar.getCellLocation(max([startDate, this.calendar.startDate]));
@@ -250,7 +253,8 @@ export class CustomEventHandler {
       let row = startLocation.row;
       while (row < endLocation.row || (col <= endLocation.col && row === endLocation.row)) {
         const cellGroup = this.calendar.table.scenegraph.getCell(col, row);
-        cellGroup.removeChild(cellGroup.getChildByName(CUSTOM_CONTAINER_NAME));
+        const customGroup = cellGroup.getChildByName(CUSTOM_CONTAINER_NAME);
+        customGroup && cellGroup.removeChild(customGroup);
 
         col++;
         if (col > this.calendar.maxCol) {

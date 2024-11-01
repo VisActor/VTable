@@ -40,7 +40,7 @@ export interface CalendarEventHandlersEventArgumentMap {
   calendar_date_click: { date: Date; tableEvent: MousePointerCellEvent };
   selected_date: { date: Date; tableEvent: SelectedCellEvent };
   selected_date_clear: void;
-  drag_select_date_end: { dates: Date[][]; tableEvent: MousePointerCellEvent };
+  drag_select_date_end: { dates: Date[]; tableEvent: MousePointerCellEvent };
   calendar_custom_event_click: { date: Date; tableEvent: MousePointerCellEvent; customEvent: IEventData };
 }
 

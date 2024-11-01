@@ -1,7 +1,7 @@
 import type { CustomRenderFunctionArg } from '@visactor/vtable/es/ts-types';
 import { Group, Text, Rect, Circle } from '@visactor/vtable/es/vrender';
 import type { VTableCalendar } from '../month-calendar';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, startOfDay } from 'date-fns';
 
 export function calendarCustomLayout(args: CustomRenderFunctionArg) {
   const { table, row, col, rect } = args;
@@ -19,7 +19,7 @@ export function calendarCustomLayout(args: CustomRenderFunctionArg) {
     return undefined;
   }
 
-  const textHeight = (table.theme.bodyStyle.fontSize as number) * 2 + 10; // padding
+  const textHeight = (table.theme.bodyStyle.fontSize as number) + 10; // padding
 
   const container = new Group({
     x: 0,
@@ -112,7 +112,7 @@ export function calendarCustomLayout(args: CustomRenderFunctionArg) {
       });
       barGroup.add(rect);
 
-      const days = differenceInDays(startDate, cellDate);
+      const days = differenceInDays(startOfDay(startDate), startOfDay(cellDate));
       const text = new Text({
         x: contentPadding,
         y: contentHeight / 2,

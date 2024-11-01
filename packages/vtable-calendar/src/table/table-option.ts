@@ -3,6 +3,7 @@ import { themes } from '@visactor/vtable';
 import type { DateRecord, DateRecordKeys } from '../date-util';
 import { defaultDayTitles, getMonthString, getWeekdayString } from '../date-util';
 import { calendarCustomLayout } from '../custom/custom-layout';
+import { merge } from '@visactor/vutils';
 
 export function createTableOption(
   week: DateRecordKeys[],
@@ -48,31 +49,36 @@ export function createTableOption(
     defaultHeaderRowHeight: config.tableOptions?.defaultHeaderRowHeight ?? 40,
     widthMode: 'adaptive',
     columnResizeMode: 'none',
-    theme: themes.DEFAULT.extends({
-      headerStyle: {
-        textAlign: 'center'
-      },
-      bodyStyle: {
-        bgColor: args => {
-          const { col, row, dataValue, table } = args;
-          const record = table.getCellRawRecord(col, row);
-          const date = dataValue;
-          const month = record.Sun > dataValue ? record.month + 1 : record.month;
-          const year = record.month === 11 && record.Sun > dataValue ? record.year + 1 : record.year;
-          if (
-            year === currentDate.getFullYear() &&
-            month === currentDate.getMonth() &&
-            date === currentDate.getDate()
-          ) {
-            return '#f0f0f0';
+    theme: themes.DEFAULT.extends(
+      merge(
+        {
+          headerStyle: {
+            textAlign: 'center'
+          },
+          bodyStyle: {
+            bgColor: args => {
+              const { col, row, dataValue, table } = args;
+              const record = table.getCellRawRecord(col, row);
+              const date = dataValue;
+              const month = record.Sun > dataValue ? record.month + 1 : record.month;
+              const year = record.month === 11 && record.Sun > dataValue ? record.year + 1 : record.year;
+              if (
+                year === currentDate.getFullYear() &&
+                month === currentDate.getMonth() &&
+                date === currentDate.getDate()
+              ) {
+                return '#f0f0f0';
+              }
+              return '#fff';
+            },
+            textAlign: 'right',
+            textBaseline: 'top',
+            color: '#999'
           }
-          return '#fff';
         },
-        textAlign: 'right',
-        textBaseline: 'top',
-        color: '#999'
-      }
-    }),
+        config.tableOptions?.theme
+      )
+    ),
     title: {
       ...(config.tableOptions?.title ?? {}),
 

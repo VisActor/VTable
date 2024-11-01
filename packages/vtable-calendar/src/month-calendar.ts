@@ -2,11 +2,11 @@ import { ListTable } from '@visactor/vtable';
 import type { DateRecord, DateRecordKeys } from './date-util';
 import { defaultDayTitles, getRecords, getStartAndEndDate } from './date-util';
 import { bindDebugTool } from '../../vtable/src/scenegraph/debug-tool';
-import { add, differenceInDays, previousSunday } from 'date-fns';
+import { add, differenceInDays, previousSunday, startOfDay } from 'date-fns';
 import { getMonthCustomStyleRange } from './style';
 import type { TYPES, ListTableConstructorOptions } from '@visactor/vtable';
 import { createTableOption } from './table/table-option';
-import type { ICustomEvent, ICustomEventOptions } from './custom/custom-handler';
+import type { ICustomEvent, ICustomEventOptions, IEventData } from './custom/custom-handler';
 import { CustomEventHandler } from './custom/custom-handler';
 import { EventTarget } from '@visactor/vtable/es/event/EventTarget';
 import type {
@@ -16,6 +16,7 @@ import type {
 } from './event/type';
 import { CALENDAR_EVENT_TYPE } from './event/type';
 import type { EventListenerId } from '@visactor/vtable/src/ts-types';
+import { isArray } from '@visactor/vutils';
 
 export interface VTableCalendarConstructorOptions {
   startDate?: Date;
@@ -77,6 +78,10 @@ export class VTableCalendar extends EventTarget {
     this._createTable();
 
     this._bindEvent();
+
+    if (this.options.customEvents) {
+      this.addCustomEvents(this.options.customEvents);
+    }
   }
 
   _createTable() {
@@ -119,9 +124,9 @@ export class VTableCalendar extends EventTarget {
 
     this.jumpToCurrentMonth();
 
-    bindDebugTool(tableInstance.scenegraph.stage as any, {
-      customGrapicKeys: ['col', 'row']
-    });
+    // bindDebugTool(tableInstance.scenegraph.stage as any, {
+    //   customGrapicKeys: ['col', 'row']
+    // });
   }
 
   getYearAndMonth() {
@@ -134,6 +139,7 @@ export class VTableCalendar extends EventTarget {
   }
 
   jumpToDate(date: Date, animation?: boolean | TYPES.ITableAnimationOption) {
+    date = startOfDay(date);
     const dataIndex = Math.floor((differenceInDays(date, this.tableStartDate) + 1) / 7);
     this.table.scrollToCell(
       {
@@ -235,15 +241,13 @@ export class VTableCalendar extends EventTarget {
 
     this.table.on('drag_select_end', e => {
       const { cells } = e;
-      const dates: Date[][] = [];
+      const dates: Date[] = [];
       cells.map(row => {
-        const rowDates: Date[] = [];
         row.map(cell => {
           if (!this.table.isHeader(cell.col, cell.row)) {
-            rowDates.push(this.getCellDate(cell.col, cell.row));
+            dates.push(this.getCellDate(cell.col, cell.row));
           }
         });
-        dates.push(rowDates);
       });
       this.fireListeners(CALENDAR_EVENT_TYPE.DRAG_SELECT_DATE_END, {
         tableEvent: e,
@@ -257,6 +261,7 @@ export class VTableCalendar extends EventTarget {
   }
 
   getCellLocation(date: Date) {
+    date = startOfDay(date);
     const dataIndex = Math.floor((differenceInDays(date, this.tableStartDate) + 1) / 7);
     const row = dataIndex + 1;
     const col = date.getDay();
@@ -272,6 +277,27 @@ export class VTableCalendar extends EventTarget {
       days: (row - 1) * 7 + col
     });
     return startDate;
+  }
+
+  get selectedDate(): { date: Date; col: number; row: number }[] {
+    const cells = this.table.getSelectedCellInfos();
+    if (!isArray(cells) || cells.length === 0) {
+      return [];
+    }
+    const dates: { date: Date; col: number; row: number }[] = [];
+    cells.map(row => {
+      row.map(cell => {
+        if (!this.table.isHeader(cell.col, cell.row)) {
+          dates.push({
+            date: this.getCellDate(cell.col, cell.row),
+            col: cell.col,
+            row: cell.row
+          });
+        }
+      });
+    });
+
+    return dates;
   }
 
   addCustomEvent(event: ICustomEvent) {
@@ -302,5 +328,19 @@ export class VTableCalendar extends EventTarget {
   updateCustomEvents(events: ICustomEvent[]) {
     this.customHandler.updateEvents(events);
     this.table.scenegraph.updateNextFrame();
+  }
+
+  getCellCustomEventByDate(date: Date) {
+    const location = this.getCellLocation(date);
+    return this.getCellCustomEventByLocation(location.col, location.row);
+  }
+
+  getCellCustomEventByLocation(col: number, row: number) {
+    const cellEvent = this.customHandler.getCellCustomEvent(col, row);
+    const events: IEventData[] = [];
+    cellEvent?.keys.forEach(key => {
+      events.push(cellEvent.values[key]);
+    });
+    return events;
   }
 }

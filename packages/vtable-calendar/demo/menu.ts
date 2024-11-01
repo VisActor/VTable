@@ -5,6 +5,14 @@ export const menus = [
       {
         path: 'list',
         name: 'list'
+      },
+      {
+        path: 'list',
+        name: 'site-demo'
+      },
+      {
+        path: 'list',
+        name: 'edit-demo'
       }
     ]
   }
