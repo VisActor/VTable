@@ -4,20 +4,20 @@
       <ListColumn :field="column.field" :title="column.title" />
     </template>
     <ListColumn field="4" title="邮件" maxWidth="300"/>
-    <ListColumn field="5" title="地址" dragHeader="true"/>
-    <ListColumn field="6" title="手机" dragHeader="true"/>
-    <ListColumn field="7" title="状态" dragHeader="true"/>
-    <!-- <Menu menuType="html" :contextMenuItems="['copy', 'paste', 'delete', '...']" /> -->
+    <ListColumn field="5" title="地址" drag-header="true"/>
+    <ListColumn field="6" title="手机" drag-header="true"/>
+    <ListColumn field="7" title="状态" drag-header="true"/>
+    <Menu menuType="html" :contextMenuItems="['copy', 'paste', 'delete', '...']" />
   </vue-list-table>
 </template>
 
 <script>
-// import ListColumn from '../../../../../src/components/list-column.vue';
+import { ListColumn } from '../../../../../src/components/index';
 
 export default {
-  // components: {
-  //   ListColumn
-  // },
+  components: {
+    ListColumn
+  },
   data() {
     const columns = [
       { field: '0', title: '名字' },

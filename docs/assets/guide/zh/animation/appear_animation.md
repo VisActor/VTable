@@ -16,4 +16,4 @@ option中`animationAppear`为入场动画的配置项，目前支持如下各项
 - `duration` 单个动画的时长，单位为毫秒，`one-by-one` 时，为一次动画的时长，默认为 500
 - `delay` 动画的延迟，单位为毫秒；`one-by-one` 时为两次动画直接的时间差，`all` 时为所有动画的延迟，默认为 0
 
-具体使用参考[demo](../demo/animation/appear-animation)
+具体使用参考[demo](../../demo/animation/appear-animation)

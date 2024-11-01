@@ -1,24 +1,107 @@
+# v1.10.2
+
+2024-11-01
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加 headerSelectMode 选项的可设置 body [#2491](https://github.com/VisActor/VTable/issues/2491)
+- **@visactor/vtable**: 添加 freeze_click 事件 [#2641](https://github.com/VisActor/VTable/issues/2641)
+- **@visactor/vtable**: 透视表添加 columnWidthConfig 以根据维度设置宽度 [#2696](https://github.com/VisActor/VTable/issues/2696)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修正 isColumnHeader api 判断逻辑 [#2491](https://github.com/VisActor/VTable/issues/2491)
+- **@visactor/vtable**: 修复当折叠最后一个分组时发生错误 [#2600](https://github.com/VisActor/VTable/issues/2600)
+- **@visactor/vtable**: 修复最小聚合器类型处理 NaN 值 [#2627](https://github.com/VisActor/VTable/issues/2627)
+- **@visactor/vtable**: 修复当拖拽行系列编号单元格时不滚动问题 [#2647](https://github.com/VisActor/VTable/issues/2647)
+- **@visactor/vtable**: 修复当行系列编号被冻结时可以渲染自定义布局问题 [#2653](https://github.com/VisActor/VTable/issues/2653)
+- **@visactor/vtable**: 修复当有空提示时滚动条不能被点击的问题 [#2690](https://github.com/VisActor/VTable/issues/2690)
+- **@visactor/vtable**: 修复当字段设置为数组时，记录没有对应的字段，发生错误的问题 [#2702](https://github.com/VisActor/VTable/issues/2702)
+- **@visactor/vtable**: 修复当同时有甘特图和表格时，内部主题不应该被更改的问题 [#2708](https://github.com/VisActor/VTable/issues/2708)
+- **@visactor/vtable**: 修复检查状态更新 [#2667](https://github.com/VisActor/VTable/issues/2667)
+- **@visactor/vtable**: 修复列表编辑器空间问题
+- **@visactor/vtable**: 更改 pointerupoutside 事件回调 [#2674](https://github.com/VisActor/VTable/issues/2674) [#2659](https://github.com/VisActor/VTable/issues/2659)
+- **@visactor/vtable**: 在 react-vtable 中补充 vtable 中事件
+- **@visactor/vtable**: 在选择所有中添加 selected_cell 事件 [#2664](https://github.com/VisActor/VTable/issues/2664)
+- **@visactor/vtable**: 修复选择所有中的 disableRowSeriesNumberSelect [#2665](https://github.com/VisActor/VTable/issues/2665)
+- **@visactor/vtable**: 修复自适应模式下的标题调整大小问题 [#2704](https://github.com/VisActor/VTable/issues/2704)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 自定义合并单元格忽略检查状态判断 [#2683](https://github.com/VisActor/VTable/issues/2683)
+- **@visactor/vtable**: 粘贴单元格值应该使用编辑器验证 api [#2691](https://github.com/VisActor/VTable/issues/2691)
+
+[更多详情请查看 v1.10.2](https://github.com/VisActor/VTable/releases/tag/v1.10.2)
+
+# v1.10.1
+
+2024-10-23
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 当设置行系列编号时排序图标不更新 [#2643](https://github.com/VisActor/VTable/issues/2643)
+- **@visactor/vtable**: 当没有边框时禁用 cellInnerBorder
+
+[更多详情请查看 v1.10.1](https://github.com/VisActor/VTable/releases/tag/v1.10.1)
+
+# v1.10.0
+
+2024-10-18
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 在菜单容器中添加 maxHeight [#2602](https://github.com/VisActor/VTable/issues/2602)
+- **@visactor/vtable**: 添加 after_sort 事件
+- **@visactor/vtable-gantt**: 添加未计划任务记录的创建按钮
+- **@visactor/vtable-gantt**: 为甘特图添加依赖线
+- **@visactor/vtable-gantt**: 添加任务条选中样式
+- **@visactor/vtable-gantt**: 添加依赖线选中样式
+- **@visactor/vtable-gantt**: 为甘特图添加 underlayBackgroundColor [#2607](https://github.com/VisActor/VTable/issues/2607)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 当维度路径包含虚拟时无法识别问题 [#2510](https://github.com/VisActor/VTable/issues/2510)
+- **@visactor/vtable**: toggleHierarchyState api 无法更新自定义布局单元格 [#2609](https://github.com/VisActor/VTable/issues/2609)
+- **@visactor/vtable**: 修复图例布局问题
+- **@visactor/vtable**: 修复 borderLineWidth 为 0 时边框矩形缺失的问题
+- **@visactor/vtable**: 修复 updateSortState()中的多排序图标更新问题 [#2614](https://github.com/VisActor/VTable/issues/2614)
+- **@visactor/vtable**: 修复 createGroupForFirstScreen()中的列/行结束问题 [#2585](https://github.com/VisActor/VTable/issues/2585)
+- **@visactor/vtable**: 修复 react-vtable 中的 customConfig
+- **@visactor/vtable**: 修复当垂直滚动时行调整标记位置的问题 [#2606](https://github.com/VisActor/VTable/issues/2606)
+- **@visactor/vtable**: 修复列表-表格转置中的排序图标更新问题
+
+[更多详情请查看 v1.10.0](https://github.com/VisActor/VTable/releases/tag/v1.10.0)
+
+# v1.9.1
+
+2024-10-12
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复合并单元格中的排序图标更新问题
+
+[更多详情请查看 v1.9.1](https://github.com/VisActor/VTable/releases/tag/v1.9.1)
+
 # v1.9.0
 
 2024-10-11
 
-
 **🆕 新增功能**
 
-- **@visactor/vtable**: 增加scrollTo动画功能
+- **@visactor/vtable**: 增加 scrollTo 动画功能
 
 **🐛 功能修复**
 
 - **@visactor/vtable**: 修复无数据时维度列宽计算 [#2515](https://github.com/VisActor/VTable/issues/2515)
-- **@visactor/vtable**: 修复updateColumns调用时的聚合更新 [#2519](https://github.com/VisActor/VTable/issues/2519)
-- **@visactor/vtable**: 修复pointerdown事件中outsideClickDeselect判断时机 [#2553](https://github.com/VisActor/VTable/issues/2553)
+- **@visactor/vtable**: 修复 updateColumns 调用时的聚合更新 [#2519](https://github.com/VisActor/VTable/issues/2519)
+- **@visactor/vtable**: 修复 pointerdown 事件中 outsideClickDeselect 判断时机 [#2553](https://github.com/VisActor/VTable/issues/2553)
 - **@visactor/vtable**: 修复序号列排序问题 [#2558](https://github.com/VisActor/VTable/issues/2558)
 - **@visactor/vtable**: 修复底部单元格选中无法自动滚动问题 [#2546](https://github.com/VisActor/VTable/issues/2546)
 - **@visactor/vtable**: 修复自定义组件自动行高列宽的计算问题
 - **@visactor/vtable**: 修复拖拽行列时自定义组件的闪烁问题 [#2516](https://github.com/VisActor/VTable/issues/2516)
 - **@visactor/vtable**: 修复冻结单元格中自定义组件的更新问题 [#2568](https://github.com/VisActor/VTable/issues/2568)
-- **@visactor/vtable**: 修复带有padding的图例布局计算
-- **@visactor/vtable**: 修复创建单元格时的cellLocation计算问题 [#2517](https://github.com/VisActor/VTable/issues/2517)
+- **@visactor/vtable**: 修复带有 padding 的图例布局计算
+- **@visactor/vtable**: 修复创建单元格时的 cellLocation 计算问题 [#2517](https://github.com/VisActor/VTable/issues/2517)
 - **@visactor/vtable**: 修复合并单元格选中区域记录 [#2521](https://github.com/VisActor/VTable/issues/2521)
 
 **🔨 功能重构**
@@ -31,12 +114,9 @@
 
 2024-10-08
 
-
 **🐛 功能修复**
 
 - **@visactor/vtable**: 修复富文本图标状态更新问题 [#2281](https://github.com/VisActor/VTable/issues/2281)
-
-
 
 [更多详情请查看 v1.8.2](https://github.com/VisActor/VTable/releases/tag/v1.8.2)
 
@@ -44,10 +124,9 @@
 
 2024-09-30
 
-
 **🔨 功能重构**
 
-- **@visactor/vue-vtable**: 重命名vue组件
+- **@visactor/vue-vtable**: 重命名 vue 组件
 
 [更多详情请查看 v1.8.1](https://github.com/VisActor/VTable/releases/tag/v1.8.1)
 

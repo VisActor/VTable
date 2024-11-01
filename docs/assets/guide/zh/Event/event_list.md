@@ -26,10 +26,11 @@
 | 鼠标离开                 | MOUSELEAVE_CELL             | 鼠标离开单元格事件                                                        |
 | 拖拽列宽                 | RESIZE_COLUMN               | 列宽调整事件                                                              |
 | 拖拽列宽结束             | RESIZE_COLUMN_END           | 列宽调整结束事件                                                          |
-| 拖拽行高                 | RESIZE_ROW               | 行高调整事件                                                              |
-| 拖拽行高结束             | RESIZE_ROW_END           | 行高调整结束事件                                                          |
+| 拖拽行高                 | RESIZE_ROW                  | 行高调整事件                                                              |
+| 拖拽行高结束             | RESIZE_ROW_END              | 行高调整结束事件                                                          |
 | 拖拽表头                 | CHANGE_HEADER_POSITION      | 拖拽表头移动位置的事件                                                    |
 | 点击排序                 | SORT_CLICK                  | 点击排序图标事件                                                          |
+| 执行完排序               | AFTER_SORT                  | 执行完排序事件                                                            |
 | 点击固定列               | FREEZE_CLICK                | 点击固定列图标事件                                                        |
 | 滚动                     | SCROLL                      | 滚动表格事件                                                              |
 | 滚动                     | SCROLL_HORIZONTAL_END       | 横向滚动右侧事件                                                          |
@@ -76,6 +77,7 @@ const {
     CHANGED_VALUE,
     FREEZE_CLICK,
     SORT_CLICK,
+    AFTER_SORT,
     DROPDOWN_MENU_CLICK,
     CONTEXTMENU_CELL,
   } = VTable.ListTable.EVENT_TYPE;

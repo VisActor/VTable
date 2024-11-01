@@ -419,3 +419,19 @@ If you have configured rowTree or columnTree and it is a non-regular tree struct
 The regular tree structure refers to: the nodes on the same layer have the same dimension keys.
 
 The non-regular tree structure is the tree where nodes on the same layer exist with different dimension values.
+
+## columnWidthConfig(Array)
+
+Set column width based on dimension information
+
+```
+{
+  dimensions: IDimensionInfo[];
+  width: number;
+}[];
+```
+
+- dimensions The dimension information of each level of the dimension is an array of IDimensionInfo type. The vtable will locate the specific column according to this path.
+  {{ use: common-IDimensionInfo()}}
+
+-width specifies the column width.

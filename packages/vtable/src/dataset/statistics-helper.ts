@@ -715,6 +715,8 @@ export class MinAggregator extends Aggregator {
         this.min = record < this.min ? record : this.min;
       } else if (this.field && typeof record[this.field] === 'number') {
         this.min = record[this.field] < this.min ? record[this.field] : this.min;
+      } else if (this.field && !isNaN(record[this.field])) {
+        this.min = parseFloat(record[this.field]) < this.min ? parseFloat(record[this.field]) : this.min;
       }
     }
     this.clearCacheValue();
@@ -759,6 +761,8 @@ export class MinAggregator extends Aggregator {
           this.min = record < this.min ? record : this.min;
         } else if (this.field && typeof record[this.field] === 'number') {
           this.min = record[this.field] < this.min ? record[this.field] : this.min;
+        } else if (this.field && !isNaN(record[this.field])) {
+          this.min = parseFloat(record[this.field]) < this.min ? parseFloat(record[this.field]) : this.min;
         }
       }
     }

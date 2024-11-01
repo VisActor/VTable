@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { ref, computed, defineProps, useSlots, defineExpose } from 'vue';
-import { flattenVNodes, createCustomLayout } from './utils';
+import { flattenVNodes, createCustomLayout , convertPropsToCamelCase  } from './utils';
 import BaseTable from './base-table.vue';
 import type { ColumnDefine } from '@visactor/vtable';
 import type { TooltipProps } from '../components/component/tooltip';
@@ -63,6 +63,7 @@ function extractSlotOptions(vnodes: any[]) {
   };
 
   vnodes.forEach(vnode => {
+    vnode.props = convertPropsToCamelCase(vnode.props);
     const typeName =  vnode.type?.symbol || vnode.type?.name;
     const optionKey = typeMapping[typeName];
 

@@ -555,6 +555,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       //数据源缓存数据更新
       this.dataSource.updatePagination(this.pagination);
       this.refreshRowColCount();
+      this.stateManager.initCheckedState(this.records);
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
       this.renderAsync();
@@ -625,6 +626,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
+    // this.scenegraph.proxy?.refreshRowColCount();
   }
   /**
    * 获取records数据源中 字段对应的value 值是format之后的
@@ -888,11 +890,37 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //影响行数
     this.refreshRowColCount();
 
+    // for bottom frozen row height map
+    for (let row = this.rowCount - this.bottomFrozenRowCount; row < this.rowCount; row++) {
+      const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
+      this._setRowHeight(row, newHeight);
+    }
+
     this.clearCellStyleCache();
     this.internalProps.layoutMap.clearCellRangeMap();
     this.internalProps.useOneRowHeightFillAll = false;
-    this.scenegraph.updateHierarchyIcon(col, row);
-    this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions);
+    // this.scenegraph.updateHierarchyIcon(col, row);// 添加了updateCells:[{ col, row }] 就不需要单独更新图标了（只更新图标针对有自定义元素的情况 会有更新不到问题）'
+    const updateCells = [{ col, row }];
+    // 如果需要移出的节点超过了当前加载部分最后一行  则转变成更新对应的行
+    if (
+      diffPositions.removeCellPositions?.length > 0 &&
+      diffPositions.removeCellPositions[diffPositions.removeCellPositions.length - 1].row >=
+        this.scenegraph.proxy.rowEnd
+    ) {
+      for (let i = 0; i <= diffPositions.removeCellPositions.length - 1; i++) {
+        if (diffPositions.removeCellPositions[i].row <= this.scenegraph.proxy.rowEnd) {
+          updateCells.push({
+            col: diffPositions.removeCellPositions[i].col,
+            row: diffPositions.removeCellPositions[i].row
+          });
+        }
+      }
+      diffPositions.removeCellPositions = [];
+
+      // reset proxy row config
+      this.scenegraph.proxy.refreshRowCount();
+    }
+    this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions, updateCells);
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
       if (this.autoFillWidth && !notFillWidth) {
@@ -1007,6 +1035,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.dataSource.updateFilterRules(filterRules);
     }
     this.refreshRowColCount();
+    this.stateManager.initCheckedState(this.records);
     this.scenegraph.createSceneGraph();
   }
   /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
@@ -1357,5 +1386,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       indexArrLngth = undefined;
     }
     return indexArrLngth;
+  }
+  /**
+   * 根据数据的索引获取应该显示在body的第几行
+   * @param  {number} index The record index.
+   */
+  getBodyRowIndexByRecordIndex(index: number): number {
+    return this.dataSource.getTableIndex(index);
   }
 }

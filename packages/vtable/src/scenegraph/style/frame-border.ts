@@ -208,6 +208,16 @@ export function createFrameBorder(
       group.addChild(borderRect);
       (group as any).border = borderRect;
     }
+  } else {
+    const borderRect = createRect({
+      fill: false,
+      stroke: false,
+      pickable: false,
+      lineWidth: 0
+    });
+    borderRect.name = 'border-rect';
+    group.addChild(borderRect);
+    (group as any).border = borderRect;
   }
 }
 

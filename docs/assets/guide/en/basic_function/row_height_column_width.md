@@ -86,6 +86,8 @@ const table = new VTable.ListTable({
 
 Pivot table column width configuration:
 
+1. Set column width for associated indicators
+
 ```javascript
 const table = new VTable.PivotTable({
   indicators: [
@@ -97,7 +99,55 @@ const table = new VTable.PivotTable({
 });
 ```
 
-##Default column width
+2. Set column width via dimension path
+
+This is set via the `columnWidthConfig` configuration item, which can be set to an array corresponding to the column widths of each level of the dimension path.
+
+```javascript
+const table = new VTable.PivotTable({
+      columnWidthConfig: [
+      {
+        dimensions: [
+          {
+            dimensionKey: '地区',
+            value: '东北'
+          },
+          {
+            dimensionKey: '邮寄方式',
+            value: '二级'
+          },
+          {
+            indicatorKey: '2',
+            value: '利润'
+          }
+        ],
+        width: 130
+      },
+      {
+        dimensions: [
+          {
+            dimensionKey: '地区',
+            value: '东北22'
+          },
+          {
+            indicatorKey: '1',
+            value: '销售额'
+          }
+        ],
+        width: 160
+      }
+    ],
+  ...
+});
+```
+
+The effect is as follows:
+
+<div style="width: 80%; text-align: center;">
+<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/columnWidthConfig.jpeg" />
+</div>
+
+## Default column width
 
 In a VTable, you can set a uniform default column width value. The default column width can be set through the `defaultColWidth` configuration item. The following code example shows how to set the column width to 100:
 

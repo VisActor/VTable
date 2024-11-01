@@ -1,3 +1,100 @@
+# v1.10.2
+
+2024-11-01
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: headerSelectMode option add body setting [#2491](https://github.com/VisActor/VTable/issues/2491)
+- **@visactor/vtable**: add freeze_click event [#2641](https://github.com/VisActor/VTable/issues/2641)
+- **@visactor/vtable**: add columnWidthConfig to set width by dimensions [#2696](https://github.com/VisActor/VTable/issues/2696)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: isColumnHeader api judement logic [#2491](https://github.com/VisActor/VTable/issues/2491)
+- **@visactor/vtable**: when collapse last group occor error [#2600](https://github.com/VisActor/VTable/issues/2600)
+- **@visactor/vtable**: when collapse tree node occor error [#2600](https://github.com/VisActor/VTable/issues/2600)
+- **@visactor/vtable**: min aggregator type handle with NaN value [#2627](https://github.com/VisActor/VTable/issues/2627)
+- **@visactor/vtable**: when drag row series number cells not scroll [#2647](https://github.com/VisActor/VTable/issues/2647)
+- **@visactor/vtable**: rowSeriesNumber when be frozen can render customlayout [#2653](https://github.com/VisActor/VTable/issues/2653)
+- **@visactor/vtable**: when has empty tip scrollbar can not be clicked [#2690](https://github.com/VisActor/VTable/issues/2690)
+- **@visactor/vtable**: when field set array，record no corresponding field，occur error [#2702](https://github.com/VisActor/VTable/issues/2702)
+- **@visactor/vtable**: when has gantt and table same time internal theme should not be changed [#2708](https://github.com/VisActor/VTable/issues/2708)
+- **@visactor/vtable**: fix check state update [#2667](https://github.com/VisActor/VTable/issues/2667)
+- **@visactor/vtable**: fix list-editor space problem
+- **@visactor/vtable**: change pointerupoutside event callback [#2674](https://github.com/VisActor/VTable/issues/2674) [#2659](https://github.com/VisActor/VTable/issues/2659)
+- **@visactor/vtable**: add event in react-vtable
+- **@visactor/vtable**: add selected_cell event in select-all [#2664](https://github.com/VisActor/VTable/issues/2664)
+- **@visactor/vtable**: fix disableRowSeriesNumberSelect in select-all [#2665](https://github.com/VisActor/VTable/issues/2665)
+- **@visactor/vtable**: fix title resize in adaptive mode [#2704](https://github.com/VisActor/VTable/issues/2704)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: custom merge cell ignore check state jude [#2683](https://github.com/VisActor/VTable/issues/2683)
+- **@visactor/vtable**: paste cell value should use editor validateValidate api [#2691](https://github.com/VisActor/VTable/issues/2691)
+
+
+
+[more detail about v1.10.2](https://github.com/VisActor/VTable/releases/tag/v1.10.2)
+
+# v1.10.1
+
+2024-10-23
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when set rowSeriesNumber then sort icon not update [#2643](https://github.com/VisActor/VTable/issues/2643)
+- **@visactor/vtable**: disable cellInnerBorder when no frame border
+
+
+
+[more detail about v1.10.1](https://github.com/VisActor/VTable/releases/tag/v1.10.1)
+
+# v1.10.0
+
+2024-10-18
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add maxHeight in menu container [#2602](https://github.com/VisActor/VTable/issues/2602)
+- **@visactor/vtable**: add after_sort event
+- **@visactor/vtable-gantt**: add creation buttom for not schedualed task record
+- **@visactor/vtable-gantt**: add dependency line for gantt chart
+- **@visactor/vtable-gantt**: add task bar selected style
+- **@visactor/vtable-gantt**: add dependency line selected style
+- **@visactor/vtable-gantt**: add underlayBackgroundColor for gantt chart [#2607](https://github.com/VisActor/VTable/issues/2607)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when dimension paths has virtual not identify problem [#2510](https://github.com/VisActor/VTable/issues/2510)
+- **@visactor/vtable**: toggleHierarchyState api can not update customlayout cell [#2609](https://github.com/VisActor/VTable/issues/2609)
+- **@visactor/vtable**: fix legend layout problem
+- **@visactor/vtable**: fix border rect missing when borderLineWidth is 0
+- **@visactor/vtable**: fix multi-sort icon update in updateSortState() [#2614](https://github.com/VisActor/VTable/issues/2614)
+- **@visactor/vtable**: fix col/row end in createGroupForFirstScreen() [#2585](https://github.com/VisActor/VTable/issues/2585)
+- **@visactor/vtable**: fix customConfig in react-vtable
+- **@visactor/vtable**: fix row resize mark position when scrolled vertically [#2606](https://github.com/VisActor/VTable/issues/2606)
+- **@visactor/vtable**: fix sort icon update in transpose list-table
+
+
+
+[more detail about v1.10.0](https://github.com/VisActor/VTable/releases/tag/v1.10.0)
+
+# v1.9.1
+
+2024-10-12
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix sort icon update in merge cell
+
+
+
+[more detail about v1.9.1](https://github.com/VisActor/VTable/releases/tag/v1.9.1)
+
 # v1.9.0
 
 2024-10-11
