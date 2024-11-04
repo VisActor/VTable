@@ -414,11 +414,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
       });
     }
   };
+  //释放时最好是通过vglobal.removeEventListener TODO
   eventManager.globalEventListeners.push({
     name: 'pointerup',
     env: 'document',
     callback: globalPointerupCallback
   });
+  //释放时最好是通过vglobal.removeEventListener TODO
   eventManager.globalEventListeners.push({
     name: 'pointerdown',
     env: 'document',

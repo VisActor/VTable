@@ -371,6 +371,20 @@ If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd
 **ListTable proprietary**
 ```
 
+## getTaskShowIndexByRecordIndex(Function)
+
+Get the row number that should be displayed in the body according to the index of the data. Both the parameter and the return value start from 0. If it is a table in tree mode, the parameter supports arrays, such as [1,2]
+
+**ListTable Proprietary**
+
+```
+/**
+* Get the row number of the body that should be displayed according to the index of the data. Both the parameter and the return value start from 0.
+* @param {number} index The record index.
+*/
+getBodyRowIndexByRecordIndex: (index: number | number[]) => number;
+```
+
 ## getTableIndexByField(Function)
 
 Get the index row number or column number displayed in the table according to the field of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number).
@@ -681,6 +695,7 @@ Note: The logic distinguishes between flat and tree hierarchies.
    */
   getLayoutRowTreeCount() : number
 ```
+
 ## getLayoutColumnTree(Function)
 
 **PivotTable Exclusive**
@@ -748,6 +763,7 @@ Update sort status, The vtable itself does not perform sorting logic. PivotTable
       order: SortOrder;
     }[])
 ```
+
 The table will not be redrawn automatically after updating, and the interface renderWithRecreateCells needs to be configured to refresh
 
 ## setDropDownMenuHighlight(Function)
@@ -816,6 +832,7 @@ updateFilterRules(filterRules: FilterRules) => void
 use case: For the PivotChart scene, after clicking the legend item, update the filter rules to update the chart
 
 ## getFilteredRecords(Function)
+
 Get filtered data
 
 **Exclusive to PivotTable**

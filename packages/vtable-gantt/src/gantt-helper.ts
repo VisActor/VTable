@@ -594,10 +594,39 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
   }
 }
 
-export function findRecordByTaskKey(records: any[], taskKeyField: string, taskKey: string | number) {
+export function findRecordByTaskKey(
+  records: any[],
+  taskKeyField: string,
+  taskKey: string | number | (string | number)[]
+): { record: any; index: number[] } | undefined {
   for (let i = 0; i < records.length; i++) {
-    if (records[i][taskKeyField] === taskKey) {
-      return { record: records[i], index: i };
+    if (
+      (Array.isArray(taskKey) && taskKey.length === 1 && records[i][taskKeyField] === taskKey[0]) ||
+      records[i][taskKeyField] === taskKey
+    ) {
+      return { record: records[i], index: [i] };
+    } else if (records[i].children?.length) {
+      if (Array.isArray(taskKey) && taskKey[0] === records[i][taskKeyField]) {
+        const result: { record: any; index: number[] } | undefined = findRecordByTaskKey(
+          records[i].children,
+          taskKeyField,
+          taskKey.slice(1)
+        );
+        if (result) {
+          result.index.unshift(i);
+          return result;
+        }
+      } else if (!Array.isArray(taskKey)) {
+        const result: { record: any; index: number[] } | undefined = findRecordByTaskKey(
+          records[i].children,
+          taskKeyField,
+          taskKey
+        );
+        if (result) {
+          result.index.unshift(i);
+          return result;
+        }
+      }
     }
   }
 }

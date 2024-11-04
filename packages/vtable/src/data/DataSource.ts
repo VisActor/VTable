@@ -176,7 +176,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   hasHierarchyStateExpand: boolean = false;
   // treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
-  beforeChangedRecordsMap: Record<number, any>[] = []; // TODO过滤后 或者排序后的对应关系
+  beforeChangedRecordsMap: Record<number | string, any> = {}; // TODO过滤后 或者排序后的对应关系
 
   // 注册聚合类型
   registedAggregators: {
@@ -936,19 +936,35 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   /**
    * 修改多条数据recordIndexs
    */
-  updateRecords(records: any[], recordIndexs: number[]) {
+  updateRecords(records: any[], recordIndexs: number[] | number[][]) {
     const realDeletedRecordIndexs = [];
     for (let index = 0; index < recordIndexs.length; index++) {
       const recordIndex = recordIndexs[index];
-      if (recordIndex >= this._sourceLength || recordIndex < 0) {
-        continue;
+      if (Array.isArray(recordIndex)) {
+        delete this.beforeChangedRecordsMap[recordIndex.join(',')];
+        realDeletedRecordIndexs.push(recordIndex);
+        // for (let i = 0; i < this.fieldAggregators.length; i++) {
+        //   this.fieldAggregators[i].updateRecord(this.records[recordIndex], records[index]);
+        // }
+
+        // this.records[recordIndex[0]][recordIndex[1]][recordIndex[2]] = records[index];
+        recordIndex.slice(0, -1).reduce((acc, key) => {
+          if (acc[key] === undefined) {
+            acc[key] = {};
+          }
+          return acc[key].children;
+        }, this.records)[recordIndex[recordIndex.length - 1]] = records[index];
+      } else {
+        if (recordIndex >= this._sourceLength || recordIndex < 0) {
+          continue;
+        }
+        delete this.beforeChangedRecordsMap[recordIndex];
+        realDeletedRecordIndexs.push(recordIndex);
+        for (let i = 0; i < this.fieldAggregators.length; i++) {
+          this.fieldAggregators[i].updateRecord(this.records[recordIndex], records[index]);
+        }
+        this.records[recordIndex] = records[index];
       }
-      delete this.beforeChangedRecordsMap[recordIndex];
-      realDeletedRecordIndexs.push(recordIndex);
-      for (let i = 0; i < this.fieldAggregators.length; i++) {
-        this.fieldAggregators[i].updateRecord(this.records[recordIndex], records[index]);
-      }
-      this.records[recordIndex] = records[index];
     }
     if (this.userPagination) {
       // 如果用户配置了分页
