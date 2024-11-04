@@ -235,6 +235,11 @@ export function createTable() {
         shadowBlur: 0
       }
     },
+    select: {
+      headerSelectMode: 'inline',
+      highlightMode: 'row',
+      highlightInRange: false
+    },
     excelOptions: {
       fillHandle: true
     }

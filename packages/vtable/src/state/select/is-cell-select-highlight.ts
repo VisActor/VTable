@@ -2,10 +2,11 @@ import type { StateManager } from '../state';
 import type { Group } from '../../scenegraph/graphic/group';
 import { getProp } from '../../scenegraph/utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { ColumnDefine } from '../../ts-types';
+import type { CellPosition, ColumnDefine, CellRange } from '../../ts-types';
 import { HighlightScope } from '../../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getCellMergeRange } from '../../tools/merge-range';
+import { cellInRange } from '../../tools/helper';
 
 export function getCellSelectColor(cellGroup: Group, table: BaseTableAPI): string | undefined {
   let colorKey;
@@ -56,11 +57,82 @@ export function getCellSelectColor(cellGroup: Group, table: BaseTableAPI): strin
   return fillColor;
 }
 
+function getSelectModeRange(state: StateManager, col: number, row: number) {
+  let selectMode;
+  const { highlightScope, cellPos, ranges } = state.select;
+  const table = state.table;
+  const range = ranges[0];
+  const isHeader = table.isHeader(col, row);
+  const rangeColStart = Math.min(range.start.col, range.end.col);
+  const rangeColEnd = Math.max(range.start.col, range.end.col);
+  const rangeRowStart = Math.min(range.start.row, range.end.row);
+  const rangeRowEnd = Math.max(range.start.row, range.end.row);
+
+  if (highlightScope === HighlightScope.single && cellPos.col === col && cellPos.row === row) {
+    selectMode = 'cellBgColor';
+  } else if (highlightScope === HighlightScope.column && col >= rangeColStart && col <= rangeColEnd) {
+    if (cellInRange(ranges[0], row, col)) {
+      selectMode = 'cellBgColor';
+    } else if (!isHeader) {
+      selectMode = 'inlineColumnBgColor';
+    }
+  } else if (highlightScope === HighlightScope.row && row >= rangeRowStart && row <= rangeRowEnd) {
+    if (cellInRange(ranges[0], row, col)) {
+      selectMode = 'cellBgColor';
+    } else if (!isHeader) {
+      selectMode = 'inlineRowBgColor';
+    }
+  } else if (highlightScope === HighlightScope.cross && !isHeader) {
+    if (cellInRange(ranges[0], row, col)) {
+      selectMode = 'cellBgColor';
+    } else if (col >= rangeColStart && col <= rangeColEnd) {
+      selectMode = 'inlineColumnBgColor';
+    } else if (row >= rangeRowStart && row <= rangeRowEnd) {
+      selectMode = 'inlineRowBgColor';
+    }
+  }
+  return selectMode;
+}
+
+function getSelectMode(state: StateManager, col: number, row: number) {
+  let selectMode;
+  const { highlightScope, cellPos } = state.select;
+
+  if (highlightScope === HighlightScope.single && cellPos.col === col && cellPos.row === row) {
+    selectMode = 'cellBgColor';
+  } else if (highlightScope === HighlightScope.column && cellPos.col === col) {
+    if (cellPos.col === col && cellPos.row === row) {
+      selectMode = 'cellBgColor';
+    } else {
+      selectMode = 'inlineColumnBgColor';
+    }
+  } else if (highlightScope === HighlightScope.row && cellPos.row === row) {
+    if (cellPos.col === col && cellPos.row === row) {
+      selectMode = 'cellBgColor';
+    } else {
+      selectMode = 'inlineRowBgColor';
+    }
+  } else if (highlightScope === HighlightScope.cross) {
+    if (cellPos.col === col && cellPos.row === row) {
+      selectMode = 'cellBgColor';
+    } else if (cellPos.col === col) {
+      selectMode = 'inlineColumnBgColor';
+    } else if (cellPos.row === row) {
+      selectMode = 'inlineRowBgColor';
+    }
+  }
+  return selectMode;
+}
+
 export function isCellSelected(state: StateManager, col: number, row: number, cellGroup: Group): string | undefined {
-  const { highlightScope, disableHeader, cellPos, ranges } = state.select;
+  const { highlightInRange, disableHeader, ranges } = state.select;
 
   let selectMode;
-  if (ranges?.length === 1 && ranges[0].end.col === ranges[0].start.col && ranges[0].end.row === ranges[0].start.row) {
+  if (
+    highlightInRange
+      ? ranges?.length === 1 && ranges[0].start && ranges[0].end
+      : ranges?.length === 1 && ranges[0].end.col === ranges[0].start.col && ranges[0].end.row === ranges[0].start.row
+  ) {
     const table = state.table;
 
     const isHeader = table.isHeader(col, row);
@@ -68,29 +140,7 @@ export function isCellSelected(state: StateManager, col: number, row: number, ce
       return undefined;
     }
 
-    if (highlightScope === HighlightScope.single && cellPos.col === col && cellPos.row === row) {
-      selectMode = 'cellBgColor';
-    } else if (highlightScope === HighlightScope.column && cellPos.col === col) {
-      if (cellPos.col === col && cellPos.row === row) {
-        selectMode = 'cellBgColor';
-      } else {
-        selectMode = 'inlineColumnBgColor';
-      }
-    } else if (highlightScope === HighlightScope.row && cellPos.row === row) {
-      if (cellPos.col === col && cellPos.row === row) {
-        selectMode = 'cellBgColor';
-      } else {
-        selectMode = 'inlineRowBgColor';
-      }
-    } else if (highlightScope === HighlightScope.cross) {
-      if (cellPos.col === col && cellPos.row === row) {
-        selectMode = 'cellBgColor';
-      } else if (cellPos.col === col) {
-        selectMode = 'inlineColumnBgColor';
-      } else if (cellPos.row === row) {
-        selectMode = 'inlineRowBgColor';
-      }
-    }
+    selectMode = highlightInRange ? getSelectModeRange(state, col, row) : getSelectMode(state, col, row);
 
     if (selectMode) {
       let cellDisable;
