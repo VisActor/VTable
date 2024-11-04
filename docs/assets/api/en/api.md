@@ -10,3 +10,4 @@
 
 {{ import: gantt-api }}
 
+{{ import: calendar-api }}

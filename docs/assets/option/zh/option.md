@@ -7,3 +7,5 @@
 {{import: table-pivotChart}}
 
 {{import: gantt}}
+
+{{import: calendar}}
