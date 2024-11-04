@@ -276,7 +276,9 @@ export class EventManager {
         if (!isSelectMoving) {
           const isHasSelected = !!this.table.stateManager.select.ranges?.length;
           this.table.stateManager.updateSelectPos(-1, -1);
-          this.table.stateManager.endSelectCells(true, isHasSelected);
+          if (isHasSelected) {
+            this.table.stateManager.endSelectCells(true, isHasSelected);
+          }
         }
         return false;
       }
