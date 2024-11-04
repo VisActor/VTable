@@ -274,7 +274,9 @@ export class EventManager {
         return false;
       } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && (define as ColumnDefine)?.disableSelect) {
         if (!isSelectMoving) {
+          const isHasSelected = !!this.table.stateManager.select.ranges?.length;
           this.table.stateManager.updateSelectPos(-1, -1);
+          this.table.stateManager.endSelectCells(true, isHasSelected);
         }
         return false;
       }
