@@ -238,7 +238,7 @@ export function createTable() {
     select: {
       headerSelectMode: 'inline',
       highlightMode: 'row',
-      highlightInRange: false
+      highlightInRange: true
     },
     excelOptions: {
       fillHandle: true
@@ -248,9 +248,9 @@ export function createTable() {
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
 
-  bindDebugTool(tableInstance.scenegraph.stage, {
-    customGrapicKeys: ['col', 'row']
-  });
+  // bindDebugTool(tableInstance.scenegraph.stage, {
+  //   customGrapicKeys: ['col', 'row']
+  // });
 
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
