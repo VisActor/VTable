@@ -506,6 +506,9 @@ export interface BaseTableConstructorOptions {
 
     // 行列移动不更新表格
     notUpdateInColumnRowMove?: boolean;
+
+    // 表格是否限制内容高度
+    limitContentHeight?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
