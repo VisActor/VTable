@@ -297,7 +297,10 @@ export function computeRowsHeight(
   if (update) {
     for (let row = rowStart; row <= rowEnd; row++) {
       const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
-      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
+      // if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
+      //   table._setRowHeight(row, newRowHeight);
+      // }
+      if (isValid(newRowHeight)) {
         table._setRowHeight(row, newRowHeight);
       }
     }

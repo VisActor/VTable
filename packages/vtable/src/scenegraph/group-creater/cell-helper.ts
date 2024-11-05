@@ -905,7 +905,8 @@ export function dealWithMergeCellSize(
           table.isAutoRowHeight(row),
           padding,
           textAlign,
-          textBaseline
+          textBaseline,
+          table
           // 'middle'
         );
       }
@@ -955,7 +956,8 @@ export function dealWithMergeCellSizeForShadow(
       table.isAutoRowHeight(row),
       padding,
       textAlign,
-      textBaseline
+      textBaseline,
+      table
       // 'middle'
     );
   }
