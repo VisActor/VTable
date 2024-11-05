@@ -258,7 +258,9 @@ export { isNode, getChainSafe, applyChainSafe, getOrApply, getIgnoreCase, array 
 export function cellInRange(range: CellRange, col: number, row: number): boolean {
   return (
     (range.start.col <= col && col <= range.end.col && range.start.row <= row && row <= range.end.row) ||
-    (range.end.col <= col && col <= range.start.col && range.end.row <= row && row <= range.start.row)
+    (range.end.col <= col && col <= range.start.col && range.end.row <= row && row <= range.start.row) ||
+    (range.end.col <= col && col <= range.start.col && range.start.row <= row && row <= range.end.row) ||
+    (range.start.col <= col && col <= range.end.col && range.end.row <= row && row <= range.start.row)
   );
 }
 export function cellInRanges(ranges: CellRange[], col: number, row: number): boolean {
