@@ -1307,10 +1307,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     //   }
     // });
     const addCellPositions = diffDataIndices.add.map(index => {
-      return { col: 0, row: this._table.frozenRowCount + index };
+      return { col: 0, row: this._table.columnHeaderLevelCount + index };
     });
     const removeCellPositions = diffDataIndices.remove.map(index => {
-      return { col: 0, row: this._table.frozenRowCount + index };
+      return { col: 0, row: this._table.columnHeaderLevelCount + index };
     });
     return {
       addCellPositions,
