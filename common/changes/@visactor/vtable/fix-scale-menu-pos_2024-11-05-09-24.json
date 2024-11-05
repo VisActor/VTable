@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix menu scale pos problem #2734",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
