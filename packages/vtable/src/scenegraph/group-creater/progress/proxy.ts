@@ -314,8 +314,8 @@ export class SceneProxy {
           endRow,
           this.table.scenegraph.mergeMap,
           this.table.internalProps.defaultRowHeight,
-          this.table,
-          cellLocation
+          this.table
+          // cellLocation
         );
         maxHeight = Math.max(maxHeight, height);
         this.table.scenegraph.rowHeaderGroup.setAttribute('height', maxHeight);
@@ -336,8 +336,8 @@ export class SceneProxy {
           endRow,
           this.table.scenegraph.mergeMap,
           this.table.internalProps.defaultRowHeight,
-          this.table,
-          cellLocation
+          this.table
+          // cellLocation
         );
         maxHeight = Math.max(maxHeight, height);
         this.table.scenegraph.rightFrozenGroup.setAttribute('height', maxHeight);
@@ -360,8 +360,8 @@ export class SceneProxy {
         endRow,
         this.table.scenegraph.mergeMap,
         this.table.internalProps.defaultRowHeight,
-        this.table,
-        cellLocation
+        this.table
+        // cellLocation
       );
       maxHeight = Math.max(maxHeight, height);
     }

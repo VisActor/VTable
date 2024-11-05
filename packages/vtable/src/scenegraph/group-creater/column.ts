@@ -152,7 +152,7 @@ export function createColGroup(
       table.scenegraph.mergeMap,
       cellLocation === 'columnHeader' && isNumber(defaultHeaderRowHeight) ? defaultHeaderRowHeight : defaultRowHeight,
       table,
-      cellLocation,
+      // cellLocation,
       rowLimit
     );
     x += default2Width;
