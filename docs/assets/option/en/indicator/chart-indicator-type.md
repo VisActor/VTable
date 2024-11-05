@@ -23,3 +23,7 @@ Set the spec of the chart, or set it to a function that returns a different spec
 {{ use: base-indicator-type(
     prefix = '##'+${prefix}
 ) }}
+
+##${prefix} noDataRenderNothing(boolean) = false
+
+Do not render the chart when there is no data. Defaults to false
