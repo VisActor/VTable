@@ -278,7 +278,8 @@ export function createCell(
       table,
       cellTheme,
       table.internalProps.layoutMap.isShareChartSpec(col, row),
-      isAsync
+      isAsync,
+      table.internalProps.layoutMap.isNoChartDataRenderNothing(col, row)
     );
   } else if (type === 'progressbar') {
     const style = table._getCellStyle(col, row) as ProgressBarStyle;

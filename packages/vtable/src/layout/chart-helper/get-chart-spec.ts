@@ -54,6 +54,20 @@ export function isShareChartSpec(col: number, row: number, layout: PivotHeaderLa
   }
   return true;
 }
+export function isNoChartDataRenderNothing(col: number, row: number, layout: PivotHeaderLayoutMap): any {
+  const paths = layout.getCellHeaderPaths(col, row);
+  let indicatorObj;
+  if (layout.indicatorsAsCol) {
+    const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+  } else {
+    const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+  }
+  const noDataRenderNothing = indicatorObj?.noDataRenderNothing;
+
+  return noDataRenderNothing;
+}
 /** 检查是否有直角坐标系的图表 */
 export function checkHasCartesianChart(indicatorsDefine: (IIndicator | IChartIndicator | string)[]) {
   let isHasCartesianChart = false;

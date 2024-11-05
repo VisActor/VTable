@@ -154,6 +154,7 @@ export interface IndicatorData extends WidthData {
   chartModule?: string;
   chartSpec?: any | ((arg0: CustomRenderFunctionArg) => any);
   chartInstance?: any;
+  noDataRenderNothing?: boolean;
   style?: ColumnStyleOption | null | undefined;
   define: ColumnDefine;
   // headerIcon?:
