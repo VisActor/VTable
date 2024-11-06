@@ -649,6 +649,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'mask'
+      },
+      {
+        path: 'interactive',
+        name: 'highlight-color'
       }
     ]
   },
