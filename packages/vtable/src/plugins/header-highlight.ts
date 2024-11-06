@@ -119,11 +119,11 @@ export class HeaderHighlightPlugin {
         rowHeaderRange = {
           start: {
             col: 0,
-            row: rowSelectRange[0] + 1
+            row: rowSelectRange[0]
           },
           end: {
             col: 0,
-            row: rowSelectRange[1] + 1
+            row: rowSelectRange[1]
           }
         };
       }
