@@ -67,21 +67,21 @@ export function createTable() {
         underlineOffset: 3
       }
     },
-    {
-      title: 'full name',
-      columns: [
-        {
-          field: 'name',
-          title: 'First Name',
-          width: 200
-        },
-        {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
-        }
-      ]
-    },
+    // {
+    //   title: 'full name',
+    //   columns: [
+    //     {
+    //       field: 'name',
+    //       title: 'First Name',
+    //       width: 200
+    //     },
+    //     {
+    //       field: 'name',
+    //       title: 'Last Name',
+    //       width: 200
+    //     }
+    //   ]
+    // },
     {
       field: 'date1',
       title: 'birthday',
@@ -206,7 +206,7 @@ export function createTable() {
     bottomFrozenRowCount: 2,
     rightFrozenColCount: 2,
     overscrollBehavior: 'none',
-    dragHeaderMode: 'all',
+    // dragHeaderMode: 'all',
     keyboardOptions: {
       pasteValueToCell: true,
       copySelected: true,
@@ -233,11 +233,25 @@ export function createTable() {
         // borderLineWidth: 10,
         borderColor: 'red',
         shadowBlur: 0
+      },
+      bodyStyle: {
+        select: {
+          cellBgColor: 'red',
+          inlineRowBgColor: 'pink',
+          inlineColumnBgColor: 'purple'
+        }
       }
     },
-    excelOptions: {
-      fillHandle: true
+
+    // transpose: true,
+    select: {
+      headerSelectMode: 'inline',
+      highlightMode: 'cross',
+      highlightInRange: true
     }
+    // excelOptions: {
+    //   fillHandle: true
+    // }
     // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
