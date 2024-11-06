@@ -1047,9 +1047,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
     table.scenegraph.updateNextFrame();
   });
   table.scenegraph.stage.addEventListener('wheel', (e: FederatedWheelEvent) => {
-    table.editorManager?.completeEdit();
-    if (table.eventManager._enableTableScroll) {
-      handleWhell(e, stateManager);
+    const tableGroup: any = e.path.find(node => (node as any).role === 'table');
+    if (tableGroup) {
+      table.editorManager?.completeEdit();
+      if (table.eventManager._enableTableScroll) {
+        handleWhell(e, stateManager);
+      }
     }
   });
 }
