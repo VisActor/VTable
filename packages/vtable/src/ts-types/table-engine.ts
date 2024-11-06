@@ -332,7 +332,7 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
     dimensions: IDimensionInfo[];
     order: SortOrder;
   }[];
-  columnWidthConfig: {
+  columnWidthConfig?: {
     dimensions: IDimensionInfo[];
     width: number;
   }[];

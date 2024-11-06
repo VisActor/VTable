@@ -57,6 +57,10 @@ const bindEvents = (instance: IVTable) => {
 };
 
 // 创建表格实例
+const createTableInstance = (Type: new (container: HTMLElement, options: IOption) => IVTable, options: IOption) => {
+  vTableInstance.value = new Type(vTableContainer.value!, options);
+};
+
 const createVTable = () => {
   if (!vTableContainer.value) return;
 
@@ -66,10 +70,6 @@ const createVTable = () => {
 
   const getRecords = () => {
     return props.records !== undefined && props.records !== null && props.records.length > 0 ? props.records : props.options.records;
-  };
-
-  const createTableInstance = (Type: any, options: any) => {
-    vTableInstance.value = new Type(vTableContainer.value, options);
   };
 
   try {
@@ -96,8 +96,8 @@ const createVTable = () => {
     bindEvents(vTableInstance.value);
     props.onReady?.(vTableInstance.value, true);
   } catch (err) {
-    // props.onError?.(err as Error);
-    console.error(err);
+    console.error('Error creating table instance:', err);
+    props.onError?.(err as Error);
   }
 };
 
@@ -134,6 +134,7 @@ onBeforeUnmount(() => vTableInstance.value?.release());
 
 // 监听 options 属性的变化
 // 需要去做细颗粒度的比较
+// deep 选中会导致tree失效
 watch(
   () => props.options,
   (newOptions) => {
@@ -143,7 +144,7 @@ watch(
         createVTable();
       }
   },
-  { deep: true },
+  // { deep: true },
 );
 
 // 监听 records 属性的变化并更新表格
