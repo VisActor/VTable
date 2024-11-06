@@ -29,7 +29,7 @@ yarn add @visactor/vue-vtable
 推荐使用 npm 包引入
 
 ```js
-import { ListColumn } from '@visactor/vue-vtable';
+import { ListTable } from '@visactor/vue-vtable';
 ```
 
 ## 绘制一个简单的列表
@@ -40,7 +40,7 @@ import { ListColumn } from '@visactor/vue-vtable';
 
 ```html
 <template>
-  <ListColumn :options="tableOptions" />
+  <ListTable :options="tableOptions" />
 </template>
 
 <script>
