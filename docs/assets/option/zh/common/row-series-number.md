@@ -31,3 +31,68 @@ body 单元格样式，可参考：[style](../option/ListTable-columns-text#styl
 ${prefix} disableColumnResize(boolean)
 
 是否禁止列宽调整，默认为 false
+
+${prefix} headerIcon(string|Object|Array)
+
+表头单元格图标配置。可配置类型有：
+
+```
+string | ColumnIconOption | (string | ColumnIconOption)[];
+```
+
+ColumnIconOption 具体配置可参考[定义](/zh/option.html#ListTable-columns-text.icon.ColumnIconOption定义：)
+
+${prefix} icon(string|Object|Array|Funciton)
+
+body 单元格图标配置。
+
+```
+icon?:
+    | string
+    | ColumnIconOption
+    | (string | ColumnIconOption)[]
+    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+```
+
+#${prefix}ColumnIconOption
+
+```
+type ColumnIconOption = ImageIcon | SvgIcon;
+```
+
+#${prefix}ImageIcon(Object)
+type 配置成 'image'。需要配置图片地址在 src 中
+{{ use: image-icon(  prefix = '##' + ${prefix}) }}
+
+#${prefix}SvgIcon(Object)
+type 配置成 'svg'。需要配置 svg 地址或者 svg 完整文件字符串在 svg 中
+{{ use: svg-icon(  prefix = '##' + ${prefix}) }}
+
+${prefix} headerCustomLayout(Function)
+表头单元格自定义布局元素定义，该自定义形式适合内容复杂布局的单元格。
+
+```
+(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+```
+
+{{ use: common-CustomRenderFunctionArg() }}
+
+{{ use: custom-layout(
+    prefix =  '#'+${prefix},
+) }}
+
+${prefix} customLayout(Function)
+
+body 单元格自定义布局元素定义，该自定义形式适合内容复杂布局的单元格。
+
+定义为如下函数：
+
+```
+(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+```
+
+{{ use: common-CustomRenderFunctionArg() }}
+
+{{ use: custom-layout(
+    prefix =  '#'+${prefix},
+) }}
