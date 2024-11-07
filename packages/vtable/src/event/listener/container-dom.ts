@@ -120,6 +120,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     } else if (e.key === 'Escape') {
       (table as ListTableAPI).editorManager?.cancelEdit();
+      table.getElement().focus();
     } else if (e.key === 'Enter') {
       // 如果按enter键 可以结束当前的编辑 或开启编辑选中的单元格（仅限单选）
       if ((table as ListTableAPI).editorManager?.editingEditor) {
@@ -167,15 +168,21 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     } else if (e.key === 'Tab') {
       if (table.options.keyboardOptions?.moveFocusCellOnTab ?? true) {
-        e.preventDefault();
         if (stateManager.select.cellPos.col >= 0 && stateManager.select.cellPos.row >= 0) {
+          const isLastCell =
+            stateManager.select.cellPos.col === table.colCount - 1 &&
+            stateManager.select.cellPos.row === table.rowCount - 1;
+
+          if (isLastCell) {
+            return;
+          }
+
+          e.preventDefault();
+
           let targetCol;
           let targetRow;
           if (stateManager.select.cellPos.col === table.colCount - 1) {
             targetRow = Math.min(table.rowCount - 1, stateManager.select.cellPos.row + 1);
-            targetCol = table.rowHeaderLevelCount;
-          } else if (stateManager.select.cellPos.row === table.rowCount - 1) {
-            targetRow = table.rowCount - 1;
             targetCol = table.rowHeaderLevelCount;
           } else {
             targetRow = stateManager.select.cellPos.row;
