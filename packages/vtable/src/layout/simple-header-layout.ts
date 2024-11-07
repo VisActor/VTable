@@ -12,7 +12,7 @@ import type {
   Aggregation,
   IRowSeriesNumber
 } from '../ts-types';
-import type { ColumnsDefine, TextColumnDefine } from '../ts-types/list-table/define';
+import type { ChartColumnDefine, ColumnsDefine } from '../ts-types/list-table/define';
 import type {
   ColumnData,
   ColumnDefine,
@@ -1353,6 +1353,12 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       return false;
     }
     return true;
+  }
+  /** 是否当chart没有数据时 图表单元格不绘制chart的任何内容 如网格线 */
+  isNoChartDataRenderNothing(col: number, row: number): boolean {
+    const body = this.getBody(col, row);
+    const noDataRenderNothing = ((body as ColumnData)?.define as ChartColumnDefine).noDataRenderNothing;
+    return noDataRenderNothing;
   }
   getChartSpec(col: number, row: number) {
     return this.getRawChartSpec(col, row);

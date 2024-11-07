@@ -24,7 +24,8 @@ export function createChartCellGroup(
   table: BaseTableAPI,
   cellTheme: IThemeSpec,
   isShareChartSpec: true,
-  isAsync: boolean
+  isAsync: boolean,
+  isNoChartDataRenderNothing: boolean
 ) {
   // 获取注册的chart图表类型
   const registerCharts = registerChartTypes.get();
@@ -86,42 +87,43 @@ export function createChartCellGroup(
   }
   cellGroup.AABBBounds.width(); // TODO 需要底层VRender修改
   // chart
-  const chartGroup = new Chart(isShareChartSpec, {
-    stroke: false,
-    x: padding[3],
-    y: padding[0],
-    // canvas: table.canvas,
-    canvas: table.canvas ?? (table.scenegraph.stage.window.getContext().canvas as unknown as HTMLCanvasElement),
-    mode: table.options.mode,
-    modeParams: table.options.modeParams,
-    spec: chartSpec,
-    ClassType,
-    width: width - padding[3] - padding[1],
-    height: height - padding[2] - padding[0],
-    chartInstance,
-    dataId,
-    data: table.getCellValue(col, row),
-    cellPadding: padding,
-    dpr: table.internalProps.pixelRatio,
-    // viewBox: {
-    //   x1: Math.ceil(cellGroup.globalAABBBounds.x1 + padding[3] + table.scrollLeft),
-    //   x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width - padding[1] + table.scrollLeft),
-    //   y1: Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
-    //   y2: Math.ceil(cellGroup.globalAABBBounds.y1 + height - padding[2] + table.scrollTop)
-    // },
-    axes: table.isPivotChart() ? table.internalProps.layoutMap.getChartAxes(col, row) : [],
-    // clipRect: {
-    //   left: cellGroup.globalAABBBounds.x1 + (table as any).tableX + padding[3],
-    //   top: cellGroup.globalAABBBounds.y1 + (table as any).tableY + padding[0],
-    //   width: width - padding[1] - padding[3], //cellGroup.globalAABBBounds.width() - padding[1] - padding[3],
-    //   height: height - padding[0] - padding[2],
-    // },
-    tableChartOption: table.options.chartOption
-  });
-  cellGroup.appendChild(chartGroup);
-  // 将生成的实例存到layoutMap中 共享
-  table.internalProps.layoutMap.setChartInstance(col, row, chartGroup.chartInstance);
-
+  if ((isNoChartDataRenderNothing && Array.isArray(table.getCellValue(col, row))) || !isNoChartDataRenderNothing) {
+    const chartGroup = new Chart(isShareChartSpec, {
+      stroke: false,
+      x: padding[3],
+      y: padding[0],
+      // canvas: table.canvas,
+      canvas: table.canvas ?? (table.scenegraph.stage.window.getContext().canvas as unknown as HTMLCanvasElement),
+      mode: table.options.mode,
+      modeParams: table.options.modeParams,
+      spec: chartSpec,
+      ClassType,
+      width: width - padding[3] - padding[1],
+      height: height - padding[2] - padding[0],
+      chartInstance,
+      dataId,
+      data: table.getCellValue(col, row) || [],
+      cellPadding: padding,
+      dpr: table.internalProps.pixelRatio,
+      // viewBox: {
+      //   x1: Math.ceil(cellGroup.globalAABBBounds.x1 + padding[3] + table.scrollLeft),
+      //   x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width - padding[1] + table.scrollLeft),
+      //   y1: Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
+      //   y2: Math.ceil(cellGroup.globalAABBBounds.y1 + height - padding[2] + table.scrollTop)
+      // },
+      axes: table.isPivotChart() ? table.internalProps.layoutMap.getChartAxes(col, row) : [],
+      // clipRect: {
+      //   left: cellGroup.globalAABBBounds.x1 + (table as any).tableX + padding[3],
+      //   top: cellGroup.globalAABBBounds.y1 + (table as any).tableY + padding[0],
+      //   width: width - padding[1] - padding[3], //cellGroup.globalAABBBounds.width() - padding[1] - padding[3],
+      //   height: height - padding[0] - padding[2],
+      // },
+      tableChartOption: table.options.chartOption
+    });
+    cellGroup.appendChild(chartGroup);
+    // 将生成的实例存到layoutMap中 共享
+    table.internalProps.layoutMap.setChartInstance(col, row, chartGroup.chartInstance);
+  }
   return cellGroup;
 }
 
