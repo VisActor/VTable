@@ -63,8 +63,8 @@ export class DiscreteTableLegend {
     }
 
     this.legendComponent.setAttributes({
-      width: this.table.tableNoFrameWidth,
-      height: this.table.tableNoFrameHeight
+      maxWidth: this.table.tableNoFrameWidth,
+      maxHeight: this.table.tableNoFrameHeight
     });
 
     this.adjustTableSize(this.legendComponent.attribute);

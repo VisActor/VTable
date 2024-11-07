@@ -204,6 +204,10 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 选择单元格交互配置，具体配置项如下：
 
+##${prefix} highlightMode ('cross' | 'column' | 'row' | 'cell') = 'cell'
+
+高亮范围模式：十字交叉 整列 整行 或者单个单元格。默认`cell`
+
 ##${prefix} headerSelectMode ('inline' | 'cell' | 'body') = 'inline'
 
 点击表头单元格时连带 body 是否需要整行或整列选中。

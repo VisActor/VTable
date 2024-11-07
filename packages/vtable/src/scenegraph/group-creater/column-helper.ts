@@ -42,7 +42,7 @@ export function createComplexColumn(
   mergeMap: MergeMap,
   defaultRowHeight: number | number[],
   table: BaseTableAPI,
-  cellLocation: CellLocation,
+  // cellLocation: CellLocation,
   rowLimit?: number
 ) {
   let padding;
@@ -63,6 +63,7 @@ export function createComplexColumn(
 
   for (let j = rowStart; j <= rowEnd; j++) {
     const row = j;
+    let cellLocation = table.getCellLocation(col, row);
     let value = table.getCellValue(col, row);
 
     // 处理单元格合并
@@ -194,8 +195,8 @@ export function createComplexColumn(
       isVtableMerge || isCustomMerge
         ? 'text'
         : (table.isHeader(col, row)
-            ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-            : table.getBodyColumnType(col, row)) || 'text';
+            ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
+            : table.getBodyColumnType(col, row)) ?? 'text';
 
     // deal with promise data
     if (isPromise(value)) {

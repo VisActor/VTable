@@ -387,7 +387,7 @@ const onTreeHierarchyStateChange = (args) => {
   const tableInstance = pivotTableRef.value.vTableInstance;
 
   // if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && args.originData.children === true) {// bug 
-  if (true) {
+  if (args.originData.children === true) {
     setTimeout(async () => {
       let children;
       let newData;

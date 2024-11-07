@@ -10,4 +10,5 @@ export interface IChartColumnBodyDefine extends IBasicColumnBodyDefine {
   chartModule?: string;
   /** 对应图表库的spec 其中value对应在records中提供 */
   chartSpec?: any | ((arg0: CellInfo) => any);
+  noDataRenderNothing?: boolean; // 没有数据时不渲染图表 默认为false
 }
