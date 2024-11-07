@@ -1,6 +1,42 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 01 Nov 2024 03:33:15 GMT and should not be manually modified.
+This log was last generated on Thu, 07 Nov 2024 13:33:17 GMT and should not be manually modified.
+
+## 1.10.4
+Thu, 07 Nov 2024 13:33:17 GMT
+
+### Updates
+
+- fix: when markline date less then minDate should not show #2689
+
+
+- feat: gantt dependency line support tree node #2701
+
+
+- fix: pivot table header icon display incorrect #2735
+
+
+- fix: parse axes config error when user set axes #2749
+
+
+- feat: when drag on header can select cells continuous #2751
+
+
+- fix: cellType set funciton occor error #2754
+
+
+- fix: when pivot cell type set chart not data cell render error #2758
+
+
+- fix: legend problems #2764 #2755
+
+
+- fix: create task shedule date error #2771
+
+
+- fix: fix cellLocation in pivot-table #2694
+- fix: fix menu scale pos problem #2734
+- fix: fix tree frozen row problem #2619
 
 ## 1.10.3
 Fri, 01 Nov 2024 03:33:15 GMT
