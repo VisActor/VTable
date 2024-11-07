@@ -809,13 +809,14 @@ function resizeOrMoveTaskBar(
 
     const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
       state._gantt.getTaskInfoByTaskListIndex(taskIndex);
+    const taskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
     const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index);
+      state._gantt.getTaskInfoByTaskListIndex(taskShowIndex);
     const { linePoints, arrowPoints } = updateLinkLinePoints(
       type,
       linkedFromTaskStartDate,
       linkedFromTaskEndDate,
-      linkedFromTaskRecord.index,
+      taskShowIndex,
       linkedToTaskStartDate,
       linkedToTaskEndDate,
       taskIndex,
@@ -840,9 +841,9 @@ function resizeOrMoveTaskBar(
 
     const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
       state._gantt.getTaskInfoByTaskListIndex(taskIndex);
-    const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } = state._gantt.getTaskInfoByTaskListIndex(
-      linkedToTaskRecord.index
-    );
+    const taskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+    const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
+      state._gantt.getTaskInfoByTaskListIndex(taskShowIndex);
     const { linePoints, arrowPoints } = updateLinkLinePoints(
       type,
       linkedFromTaskStartDate,
@@ -850,7 +851,7 @@ function resizeOrMoveTaskBar(
       taskIndex,
       linkedToTaskStartDate,
       linkedToTaskEndDate,
-      linkedToTaskRecord.index,
+      taskShowIndex,
       minDate,
       state._gantt.parsedOptions.rowHeight,
       state._gantt.parsedOptions.colWidthPerDay,
