@@ -209,6 +209,10 @@ Separately set the header not to respond to mouse hover interaction.
 
 Cell selection interaction configuration, specific configuration items as follows:
 
+##${prefix} highlightMode ('cross' | 'column' | 'row' | 'cell') = 'cell'
+
+Highlight range mode: cross, whole column, whole row or single cell. Default is `cell`
+
 ##${prefix} headerSelectMode ('inline' | 'cell' | 'body') = 'inline'
 
 When clicking on a header cell, whether the entire row or column needs to be selected along with the body.

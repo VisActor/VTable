@@ -44,7 +44,7 @@ export class MarkLine {
       const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
       const dateX =
         this._scene._gantt.parsedOptions.colWidthPerDay *
-        (Math.ceil(Math.abs(date.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) +
+        (Math.ceil((date.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) +
           (line.position === 'right' ? 1 : line.position === 'middle' ? 0.5 : 0));
       const markLineGroup = new Group({
         pickable: false,

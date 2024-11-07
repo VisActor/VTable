@@ -18,8 +18,12 @@
 
 **chart 类型专属配置项**
 
-设置图表的 spec，或者设置成函数返回不同的spec。其中显示在图表的数据由 records 提供。
+设置图表的 spec，或者设置成函数返回不同的 spec。其中显示在图表的数据由 records 提供。
 
 {{ use: base-indicator-type(
     prefix = '##'+${prefix}
 ) }}
+
+##${prefix} noDataRenderNothing(boolean) = false
+
+没有数据时不渲染图表 默认为 false

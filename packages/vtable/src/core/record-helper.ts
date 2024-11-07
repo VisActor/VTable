@@ -722,8 +722,8 @@ export function listTableUpdateRecords(records: any[], recordIndexs: number[], t
       if (updateRecordIndexs.length === 0) {
         return;
       }
-
-      const recordIndexsMinToMax = updateRecordIndexs.sort((a, b) => a - b);
+      const bodyRowIndex = updateRecordIndexs.map(index => table.getBodyRowIndexByRecordIndex(index));
+      const recordIndexsMinToMax = bodyRowIndex.sort((a, b) => a - b);
       if (table.pagination) {
         const { perPageCount, currentPage } = table.pagination;
         const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;

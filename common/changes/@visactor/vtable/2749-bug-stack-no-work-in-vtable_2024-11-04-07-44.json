@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: parse axes config error when user set axes #2749\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

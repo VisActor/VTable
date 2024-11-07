@@ -74,7 +74,7 @@ git checkout -b docs/add-funnel-demo
 
 - Now we can make changes to the code on the branch.
 - Let's say we've added some code and committed it to the repository.
-- `git commit -a -m "docs: add custom funnel demo and related docs"`. The commit message for VisActor follows the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification:
+- `git commit -a -m "docs: add custom funnel demo and related docs"  / "fix: solve which problem #xxxx_issue_id" `. The commit message for VisActor follows the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification:
 
   - `<type>[optional scope]: <description>`.
   - Common `type` include docs (documentation, log changes), feat (new features), fix (bug fixes), refactor (code refactoring), etc. Please choose according to the actual situation.

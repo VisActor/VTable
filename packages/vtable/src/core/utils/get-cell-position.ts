@@ -260,6 +260,7 @@ export function getTargetColAtConsiderRightFrozen(
  * 根据y获取底部冻结该位置所处行值
  * @param table
  * @param absoluteX 屏幕坐标y值
+ * @param isConsider 是否考Y值是否在底部冻结区域内
  * @returns
  */
 export function getTargetRowAtConsiderBottomFrozen(
@@ -270,6 +271,7 @@ export function getTargetRowAtConsiderBottomFrozen(
   if (absoluteY === 0) {
     return { top: 0, row: 0, bottom: 0, height: 0 };
   }
+  absoluteY = absoluteY - _this.tableY;
   if (
     isConsider &&
     absoluteY > _this.tableNoFrameHeight - _this.getBottomFrozenRowsHeight() &&
