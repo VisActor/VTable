@@ -3313,22 +3313,28 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return state;
   }
   updateDataStateToChartInstance(activeChartInstance?: any): void {
-    if (!activeChartInstance) {
-      activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+    if (activeChartInstance?.getSpec().select?.enable !== false) {
+      if (!activeChartInstance) {
+        activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+      }
+      const state = this._generateChartState();
+      this._indicators.forEach((_indicatorObject: IndicatorData) => {
+        const chartInstance = _indicatorObject.chartInstance;
+        if (_indicatorObject.chartSpec.select?.enable !== false) {
+          chartInstance.updateState(state);
+        }
+      });
+      activeChartInstance?.updateState(state);
     }
-    const state = this._generateChartState();
-    this._indicators.forEach((_indicatorObject: IndicatorData) => {
-      const chartInstance = _indicatorObject.chartInstance;
-      chartInstance.updateState(state);
-    });
-    activeChartInstance?.updateState(state);
   }
   updateDataStateToActiveChartInstance(activeChartInstance?: any): void {
-    if (!activeChartInstance) {
-      activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+    if (activeChartInstance?.getSpec().select?.enable !== false) {
+      if (!activeChartInstance) {
+        activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+      }
+      const state = this._generateChartState();
+      activeChartInstance?.updateState(state);
     }
-    const state = this._generateChartState();
-    activeChartInstance?.updateState(state);
   }
 
   /**

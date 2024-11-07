@@ -179,7 +179,9 @@ export class Chart extends Group {
 
     (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(this.activeChartInstance);
     this.activeChartInstance.on('click', (params: any) => {
-      if (Chart.temp) {
+      if (this.attribute.spec.select?.enable === false) {
+        table.scenegraph.updateChartState(null);
+      } else if (Chart.temp) {
         table.scenegraph.updateChartState(params?.datum);
       }
     });
