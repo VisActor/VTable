@@ -605,8 +605,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     isVtableMerge || isCustomMerge
       ? 'text'
       : table.isHeader(col, row)
-      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-      : table.getBodyColumnType(col, row);
+      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
+      : table.getBodyColumnType(col, row) ?? 'text';
 
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;

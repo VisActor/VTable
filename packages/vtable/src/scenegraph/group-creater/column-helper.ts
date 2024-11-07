@@ -194,8 +194,8 @@ export function createComplexColumn(
       isVtableMerge || isCustomMerge
         ? 'text'
         : (table.isHeader(col, row)
-            ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-            : table.getBodyColumnType(col, row)) || 'text';
+            ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
+            : table.getBodyColumnType(col, row)) ?? 'text';
 
     // deal with promise data
     if (isPromise(value)) {
