@@ -2,7 +2,7 @@ import type { StateManager } from '../state';
 import type { Group } from '../../scenegraph/graphic/group';
 import { getProp } from '../../scenegraph/utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { CellPosition, ColumnDefine, CellRange } from '../../ts-types';
+import type { CellRange, ColumnDefine } from '../../ts-types';
 import { HighlightScope } from '../../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getCellMergeRange } from '../../tools/merge-range';
@@ -57,32 +57,34 @@ export function getCellSelectColor(cellGroup: Group, table: BaseTableAPI): strin
   return fillColor;
 }
 
+// 选中多列
+function isSelectMultipleRange(range: CellRange) {
+  return range.start.col !== range.end.col || range.start.row !== range.end.row;
+}
+
 function getSelectModeRange(state: StateManager, col: number, row: number) {
   let selectMode;
   const { highlightScope, cellPos, ranges } = state.select;
-  const table = state.table;
   const range = ranges[0];
-  const isHeader = table.isHeader(col, row);
   const rangeColStart = Math.min(range.start.col, range.end.col);
   const rangeColEnd = Math.max(range.start.col, range.end.col);
   const rangeRowStart = Math.min(range.start.row, range.end.row);
   const rangeRowEnd = Math.max(range.start.row, range.end.row);
-
   if (highlightScope === HighlightScope.single && cellPos.col === col && cellPos.row === row) {
     selectMode = 'cellBgColor';
   } else if (highlightScope === HighlightScope.column && col >= rangeColStart && col <= rangeColEnd) {
     if (cellInRange(ranges[0], col, row)) {
       selectMode = 'cellBgColor';
-    } else if (!isHeader) {
+    } else {
       selectMode = 'inlineColumnBgColor';
     }
   } else if (highlightScope === HighlightScope.row && row >= rangeRowStart && row <= rangeRowEnd) {
     if (cellInRange(ranges[0], col, row)) {
       selectMode = 'cellBgColor';
-    } else if (!isHeader) {
+    } else {
       selectMode = 'inlineRowBgColor';
     }
-  } else if (highlightScope === HighlightScope.cross && !isHeader) {
+  } else if (highlightScope === HighlightScope.cross) {
     if (cellInRange(ranges[0], col, row)) {
       selectMode = 'cellBgColor';
     } else if (col >= rangeColStart && col <= rangeColEnd) {
@@ -126,14 +128,12 @@ function getSelectMode(state: StateManager, col: number, row: number) {
 
 export function isCellSelected(state: StateManager, col: number, row: number, cellGroup: Group): string | undefined {
   const { highlightInRange, disableHeader, ranges } = state.select;
-
   let selectMode;
+  const isSelectRange = ranges.length === 1 && isSelectMultipleRange(ranges?.[0]) && highlightInRange;
   if (
-    // highlightInRange
-    ranges?.length === 1 &&
-    ranges[0].start &&
-    ranges[0].end
-    // : ranges?.length === 1 && ranges[0].end.col === ranges[0].start.col && ranges[0].end.row === ranges[0].start.row
+    isSelectRange
+      ? ranges?.length === 1 && ranges[0].start && ranges[0].end
+      : ranges?.length === 1 && ranges[0].end.col === ranges[0].start.col && ranges[0].end.row === ranges[0].start.row
   ) {
     const table = state.table;
 
@@ -142,7 +142,7 @@ export function isCellSelected(state: StateManager, col: number, row: number, ce
       return undefined;
     }
 
-    selectMode = highlightInRange ? getSelectModeRange(state, col, row) : getSelectMode(state, col, row);
+    selectMode = isSelectRange ? getSelectModeRange(state, col, row) : getSelectMode(state, col, row);
 
     if (selectMode) {
       let cellDisable;
