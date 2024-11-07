@@ -278,7 +278,8 @@ export function createCell(
       table,
       cellTheme,
       table.internalProps.layoutMap.isShareChartSpec(col, row),
-      isAsync
+      isAsync,
+      table.internalProps.layoutMap.isNoChartDataRenderNothing(col, row)
     );
   } else if (type === 'progressbar') {
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
@@ -604,8 +605,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     isVtableMerge || isCustomMerge
       ? 'text'
       : table.isHeader(col, row)
-      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-      : table.getBodyColumnType(col, row);
+      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
+      : table.getBodyColumnType(col, row) ?? 'text';
 
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;

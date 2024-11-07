@@ -1,3 +1,16 @@
+# v1.10.3
+
+2024-11-01
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: type define columnWidthConfig
+
+
+
+[more detail about v1.10.3](https://github.com/VisActor/VTable/releases/tag/v1.10.3)
+
 # v1.10.2
 
 2024-11-01

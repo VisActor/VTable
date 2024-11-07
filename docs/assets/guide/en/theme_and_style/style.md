@@ -146,7 +146,7 @@ If you need different styles for different cells, you can use the style function
 style: (args)=>{
   if(args.value>10)
     return {color: 'red'};
-  return {colore: 'green'};
+  return {color: 'green'};
 }
 
 ```

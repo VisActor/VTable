@@ -499,11 +499,19 @@ export class MenuElement {
         rootElementLeft = referencePosition.rect.right - rootElementWidth;
         rootElementTop = referencePosition.rect.bottom;
       }
+
+      // 获取元素的边界矩形
+      const rect = element.getBoundingClientRect();
+
+      // 计算缩放比例
+      const scaleX = rect.width / element.offsetWidth;
+      const scaleY = rect.height / element.offsetHeight;
+
       //  rootElementLeft = position.x - rootElementWidth;
       // let leftStyle = rootElementLeft;
       // 检测下方能否容纳，不能容纳向上偏移
-      if (rootElementTop + rootElementHeight > containerHeight) {
-        rootElementTop = containerHeight - rootElementHeight;
+      if (rootElementTop * scaleY + rootElementHeight > containerHeight) {
+        rootElementTop = (containerHeight - rootElementHeight) / scaleY;
         // rootElementLeft += rootElementWidth - 2;
       }
       // 偏移后上方超出canvas范围，居中显示
@@ -515,8 +523,8 @@ export class MenuElement {
       // 判断如果超出左右范围则靠边显示
       if (rootElementLeft < 0) {
         rootElementLeft = 0;
-      } else if (rootElementLeft + rootElementWidth > containerWidth) {
-        rootElementLeft = containerWidth - rootElementWidth;
+      } else if (rootElementLeft * scaleX + rootElementWidth > containerWidth) {
+        rootElementLeft = (containerWidth - rootElementWidth) / scaleX;
       }
       rootElement.style.left = `${rootElementLeft}px`;
 

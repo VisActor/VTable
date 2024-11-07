@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: gantt dependency line support tree node #2701\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
