@@ -1,5 +1,6 @@
 <template>
-  <div ref="vTableContainer" :style="{ width: containerWidth, height: containerHeight }" style="position: relative"></div>
+  <div ref="vTableContainer"
+:style="{ width: containerWidth, height: containerHeight }" style="position: relative" />
 </template>
 
 <script setup lang="ts">
@@ -12,7 +13,7 @@ import type { EventsProps } from '../eventsUtils';
 
 // 定义表格实例和选项的类型
 export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
-export type IOption = 
+export type IOption =
   | VTable.ListTableConstructorOptions
   | VTable.PivotTableConstructorOptions
   | VTable.PivotChartConstructorOptions;
@@ -31,7 +32,7 @@ export interface BaseTableProps extends EventsProps {
 // 设置默认属性
 const props = withDefaults(defineProps<BaseTableProps>(), {
   width: '100%',
-  height: '100%',
+  height: '100%'
 });
 
 // 创建用于引用 DOM 元素和表格实例的 ref
@@ -56,20 +57,27 @@ const bindEvents = (instance: IVTable) => {
   });
 };
 
+type Constructor<T> = new (dom: HTMLElement, options: IOption) => T;
+
 // 创建表格实例
-const createTableInstance = (Type: new (container: HTMLElement, options: IOption) => IVTable, options: IOption) => {
+// use Constructor<T> will cause error in rollup-plugin-typescript2, use any temporarily
+const createTableInstance = (Type: any, options: IOption) => {
   vTableInstance.value = new Type(vTableContainer.value!, options);
 };
 
 const createVTable = () => {
-  if (!vTableContainer.value) return;
+  if (!vTableContainer.value) {
+    return;
+  }
 
   if (vTableInstance.value) {
     vTableInstance.value.release();
   }
 
   const getRecords = () => {
-    return props.records !== undefined && props.records !== null && props.records.length > 0 ? props.records : props.options.records;
+    return props.records !== undefined && props.records !== null && props.records.length > 0
+      ? props.records
+      : props.options.records;
   };
 
   try {
@@ -103,7 +111,9 @@ const createVTable = () => {
 
 // 更新表格实例
 const updateVTable = (newOptions: IOption) => {
-  if (!vTableInstance.value) return;
+  if (!vTableInstance.value) {
+    return;
+  }
 
   try {
     switch (props.type) {
@@ -137,13 +147,13 @@ onBeforeUnmount(() => vTableInstance.value?.release());
 // deep 选中会导致tree失效
 watch(
   () => props.options,
-  (newOptions) => {
-      if (vTableInstance.value) {
-        updateVTable(newOptions);
-      } else {
-        createVTable();
-      }
-  },
+  newOptions => {
+    if (vTableInstance.value) {
+      updateVTable(newOptions);
+    } else {
+      createVTable();
+    }
+  }
   // { deep: true },
 );
 
@@ -151,16 +161,15 @@ watch(
 // 需要去做细颗粒度的比较
 watch(
   () => props.records,
-  (newRecords, oldRecords) => { 
+  (newRecords, oldRecords) => {
     // if (!isEqual(newRecords, oldRecords)) {
-      if (vTableInstance.value) {
-        updateVTable({ ...props.options, records: newRecords });
-      } else {
-        createVTable();
-      }
+    if (vTableInstance.value) {
+      updateVTable({ ...props.options, records: newRecords });
+    } else {
+      createVTable();
+    }
     // }
   },
-  { deep: true },
+  { deep: true }
 );
-
 </script>
