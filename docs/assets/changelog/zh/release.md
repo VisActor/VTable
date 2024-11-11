@@ -1,3 +1,17 @@
+# v1.10.5
+
+2024-11-11
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: pivot chart spec enable select not work [#2210](https://github.com/VisActor/VTable/issues/2210)
+- **@visactor/vtable**: sortState field undefined occor error
+
+
+
+[更多详情请查看 v1.10.5](https://github.com/VisActor/VTable/releases/tag/v1.10.5)
+
 # v1.10.4
 
 2024-11-07
