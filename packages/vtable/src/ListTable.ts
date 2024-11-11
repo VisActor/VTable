@@ -1112,8 +1112,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     //重复逻辑抽取updateWidthHeight
     if (sort !== undefined) {
-      this.internalProps.sortState = this.internalProps.multipleSort ? (Array.isArray(sort) ? sort : [sort]) : sort;
-      this.stateManager.setSortState((this as any).sortState as SortState);
+      if ((!Array.isArray(sort) && isValid(sort.field)) || Array.isArray(sort)) {
+        this.internalProps.sortState = this.internalProps.multipleSort ? (Array.isArray(sort) ? sort : [sort]) : sort;
+        this.stateManager.setSortState((this as any).sortState as SortState);
+      }
     }
     if (records) {
       _setRecords(this, records);
