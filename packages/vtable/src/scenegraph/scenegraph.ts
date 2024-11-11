@@ -163,6 +163,7 @@ export class Scenegraph {
       // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
       beforeRender: (stage: Stage) => {
         this.table.options.beforeRender && this.table.options.beforeRender(stage);
+        this.table.animationManager.ticker.start();
       },
       afterRender: (stage: Stage) => {
         this.table.options.afterRender && this.table.options.afterRender(stage);

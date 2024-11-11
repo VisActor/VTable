@@ -89,18 +89,32 @@ export function createTable() {
             alignItems: 'center',
             justifyContent: 'space-around',
             fill: 'blue'
+            // clip: true
           });
           container.add(containerLeft);
+
+          const iconGroup = new VTable.CustomLayout.Group({
+            width: 50,
+            height: 50,
+            clip: true
+          });
+          containerLeft.add(iconGroup);
 
           const icon0 = new VTable.CustomLayout.Image({
             id: 'icon0',
             width: 50,
             height: 50,
             src: record.bloggerAvatar,
-            shape: 'circle'
+            shape: 'circle',
+            anchor: [25, 25]
             // marginLeft: 10
           });
-          containerLeft.add(icon0);
+          iconGroup.add(icon0);
+
+          const animation = icon0.animate();
+          animation.setTimeline(table.animationManager.timeline);
+          animation.to({ angle: 2 * Math.PI }, 1000, 'linear').loop(Infinity);
+          // setTimeline
 
           const containerRight = new VTable.CustomLayout.Group({
             height: percentCalc(100),
@@ -513,112 +527,112 @@ export function createTable() {
       }
     ],
     editor: 'input',
-    defaultRowHeight: 80,
-    customMergeCell: (col, row, table) => {
-      if (col >= 0 && col < table.colCount && row === table.rowCount - 2) {
-        return {
-          range: {
-            start: {
-              col: 0,
-              row: table.rowCount - 2
-            },
-            end: {
-              col: table.colCount - 1,
-              row: table.rowCount - 2
-            }
-          },
-          customLayout: args => {
-            const { table, row, col, rect } = args;
-            const { height, width } = rect || table.getCellRect(col, row);
-            const percentCalc = VTable.CustomLayout.percentCalc;
-            const container = new VTable.CustomLayout.Group({
-              height,
-              width,
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'nowrap'
-            });
-            const containerLeft = new VTable.CustomLayout.Group({
-              height: percentCalc(100),
-              width: 160,
-              display: 'flex',
-              direction: 'column',
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'space-around',
-              fill: 'blue',
-              // dx: 200
-              x: 200
-            });
-            container.add(containerLeft);
+    defaultRowHeight: 80
+    // customMergeCell: (col, row, table) => {
+    //   if (col >= 0 && col < table.colCount && row === table.rowCount - 2) {
+    //     return {
+    //       range: {
+    //         start: {
+    //           col: 0,
+    //           row: table.rowCount - 2
+    //         },
+    //         end: {
+    //           col: table.colCount - 1,
+    //           row: table.rowCount - 2
+    //         }
+    //       },
+    //       customLayout: args => {
+    //         const { table, row, col, rect } = args;
+    //         const { height, width } = rect || table.getCellRect(col, row);
+    //         const percentCalc = VTable.CustomLayout.percentCalc;
+    //         const container = new VTable.CustomLayout.Group({
+    //           height,
+    //           width,
+    //           display: 'flex',
+    //           flexDirection: 'row',
+    //           flexWrap: 'nowrap'
+    //         });
+    //         const containerLeft = new VTable.CustomLayout.Group({
+    //           height: percentCalc(100),
+    //           width: 160,
+    //           display: 'flex',
+    //           direction: 'column',
+    //           alignContent: 'center',
+    //           alignItems: 'center',
+    //           justifyContent: 'space-around',
+    //           fill: 'blue',
+    //           // dx: 200
+    //           x: 200
+    //         });
+    //         container.add(containerLeft);
 
-            containerLeft.addEventListener('click', () => {
-              containerLeft.setAttributes({ fill: 'red' });
-            });
+    //         containerLeft.addEventListener('click', () => {
+    //           containerLeft.setAttributes({ fill: 'red' });
+    //         });
 
-            const containerRight = new VTable.CustomLayout.Group({
-              height: percentCalc(100),
-              width: percentCalc(100, -50),
-              display: 'flex',
-              direction: 'column'
-              // justifyContent: 'center'
-            });
-            container.add(containerRight);
+    //         const containerRight = new VTable.CustomLayout.Group({
+    //           height: percentCalc(100),
+    //           width: percentCalc(100, -50),
+    //           display: 'flex',
+    //           direction: 'column'
+    //           // justifyContent: 'center'
+    //         });
+    //         container.add(containerRight);
 
-            const containerRightTop = new VTable.CustomLayout.Group({
-              id: 'containerRightTop',
-              height: percentCalc(50),
-              width: percentCalc(100),
-              display: 'flex',
-              alignItems: 'center',
-              flexWrap: 'nowrap'
-            });
+    //         const containerRightTop = new VTable.CustomLayout.Group({
+    //           id: 'containerRightTop',
+    //           height: percentCalc(50),
+    //           width: percentCalc(100),
+    //           display: 'flex',
+    //           alignItems: 'center',
+    //           flexWrap: 'nowrap'
+    //         });
 
-            const containerRightBottom = new VTable.CustomLayout.Group({
-              height: percentCalc(50),
-              width: percentCalc(100),
-              display: 'flex',
-              alignItems: 'center'
-            });
+    //         const containerRightBottom = new VTable.CustomLayout.Group({
+    //           height: percentCalc(50),
+    //           width: percentCalc(100),
+    //           display: 'flex',
+    //           alignItems: 'center'
+    //         });
 
-            containerRight.add(containerRightTop);
-            containerRight.add(containerRightBottom);
+    //         containerRight.add(containerRightTop);
+    //         containerRight.add(containerRightBottom);
 
-            const bloggerName = new VTable.CustomLayout.Text({
-              text: 'record.bloggerName',
-              fontSize: 13,
-              fontFamily: 'sans-serif',
-              fill: 'black',
-              marginLeft: 10
-            });
-            containerRightTop.add(bloggerName);
+    //         const bloggerName = new VTable.CustomLayout.Text({
+    //           text: 'record.bloggerName',
+    //           fontSize: 13,
+    //           fontFamily: 'sans-serif',
+    //           fill: 'black',
+    //           marginLeft: 10
+    //         });
+    //         containerRightTop.add(bloggerName);
 
-            const location = new VTable.CustomLayout.Icon({
-              id: 'location',
-              iconName: 'location',
-              width: 15,
-              height: 15,
-              marginLeft: 10
-            });
-            containerRightTop.add(location);
+    //         const location = new VTable.CustomLayout.Icon({
+    //           id: 'location',
+    //           iconName: 'location',
+    //           width: 15,
+    //           height: 15,
+    //           marginLeft: 10
+    //         });
+    //         containerRightTop.add(location);
 
-            const locationName = new VTable.CustomLayout.Text({
-              text: 'record.city',
-              fontSize: 11,
-              fontFamily: 'sans-serif',
-              fill: '#6f7070',
-              boundsPadding: [0, 10, 0, 0]
-            });
-            containerRightTop.add(locationName);
+    //         const locationName = new VTable.CustomLayout.Text({
+    //           text: 'record.city',
+    //           fontSize: 11,
+    //           fontFamily: 'sans-serif',
+    //           fill: '#6f7070',
+    //           boundsPadding: [0, 10, 0, 0]
+    //         });
+    //         containerRightTop.add(locationName);
 
-            return {
-              rootContainer: container,
-              renderDefault: false
-            };
-          }
-        };
-      }
-    }
+    //         return {
+    //           rootContainer: container,
+    //           renderDefault: false
+    //         };
+    //       }
+    //     };
+    //   }
+    // }
   };
 
   const instance = new ListTable(option);
