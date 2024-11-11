@@ -519,15 +519,15 @@ export class StateManager {
           prev.push({
             field: item.field,
             order: item.order,
-            row: column.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
-            col: column.level
+            row: column?.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
+            col: column?.level
           } as any);
         } else {
           prev.push({
             field: item.field,
             order: item.order,
-            col: column.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
-            row: column.level
+            col: column?.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
+            row: column?.level
           } as any);
         }
 
