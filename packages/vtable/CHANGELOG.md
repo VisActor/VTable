@@ -1,6 +1,18 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 07 Nov 2024 13:33:17 GMT and should not be manually modified.
+This log was last generated on Mon, 11 Nov 2024 07:50:58 GMT and should not be manually modified.
+
+## 1.10.5
+Mon, 11 Nov 2024 07:50:58 GMT
+
+### Updates
+
+- fix: pivot chart spec enable select not work #2210
+
+
+- fix: sortState field undefined occor error
+
+
 
 ## 1.10.4
 Thu, 07 Nov 2024 13:33:17 GMT
