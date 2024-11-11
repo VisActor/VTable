@@ -19,13 +19,14 @@ export function updateSelectPosition(
   isCtrl: boolean,
   isSelectAll: boolean,
   isSelectMoving: boolean = false,
-  skipBodyMerge: boolean = false
+  skipBodyMerge: boolean = false,
+  forceSelect: boolean = false
 ) {
   const { table, interactionState } = state;
   const { scenegraph } = table;
   const { highlightScope, disableHeader, cellPos } = state.select;
 
-  if ((disableHeader && table.isHeader(col, row)) || highlightScope === 'none') {
+  if (((disableHeader && table.isHeader(col, row)) || highlightScope === 'none') && forceSelect === false) {
     if (col !== -1 && row !== -1 && !isSelectMoving) {
       table._makeVisibleCell(col, row);
     }
