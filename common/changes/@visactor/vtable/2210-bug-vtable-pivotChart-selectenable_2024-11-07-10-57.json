@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: pivot chart spec enable select not work #2210\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
