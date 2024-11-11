@@ -57,7 +57,9 @@ export function computeRowsHeight(
   const isDefaultHeaderHasAuto =
     table.defaultHeaderRowHeight === 'auto' ||
     (isArray(table.defaultHeaderRowHeight) && table.defaultHeaderRowHeight.some(item => item === 'auto'));
-  const isAllRowsAuto = table.heightMode === 'autoHeight' || table.heightMode === 'adaptive';
+  const isAllRowsAuto =
+    table.heightMode === 'autoHeight' ||
+    (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
 
   if (isAllRowsAuto || isDefaultHeaderHasAuto) {
     rowStart = rowStart ?? 0;
@@ -91,7 +93,9 @@ export function computeRowsHeight(
         const height = computeRowHeight(row, startCol, endCol, table);
         newHeights[row] = Math.round(height);
         //表头部分需要马上设置到缓存中 因为adaptive不会调整表头的高度 另外后面adaptive处理过程中有取值 table.getRowsHeight(0, table.columnHeaderLevelCount - 1);
-        table._setRowHeight(row, height);
+        if (table.heightAdaptiveMode === 'only-body' || !update) {
+          table._setRowHeight(row, height);
+        }
       }
     }
 
@@ -293,7 +297,10 @@ export function computeRowsHeight(
   if (update) {
     for (let row = rowStart; row <= rowEnd; row++) {
       const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
-      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
+      // if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
+      //   table._setRowHeight(row, newRowHeight);
+      // }
+      if (isValid(newRowHeight)) {
         table._setRowHeight(row, newRowHeight);
       }
     }

@@ -103,12 +103,19 @@ export function createCellContent(
         wordBreak: 'break-word',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit:
-          autoRowHeight && !table.options.customConfig?.multilinesForXTable
+          table.options.customConfig?.limitContentHeight === false
+            ? -1
+            : autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
             : cellHeight - Math.floor(padding[0] + padding[2]),
         pickable: false,
         dx: (textAlign === 'left' ? hierarchyOffset : 0) + _contentOffset,
-        whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
+        whiteSpace:
+          table.options.customConfig?.limitContentHeight === false
+            ? 'normal'
+            : text.length === 1 && !autoWrapText
+            ? 'no-wrap'
+            : 'normal'
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
@@ -241,14 +248,21 @@ export function createCellContent(
         textBaseline: 'top',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit:
-          autoRowHeight && !table.options.customConfig?.multilinesForXTable
+          table.options.customConfig?.limitContentHeight === false
+            ? -1
+            : autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
             : cellHeight - Math.floor(padding[0] + padding[2]),
         pickable: false,
         autoWrapText,
         lineClamp,
         wordBreak: 'break-word',
-        whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
+        whiteSpace:
+          table.options.customConfig?.limitContentHeight === false
+            ? 'normal'
+            : text.length === 1 && !autoWrapText
+            ? 'no-wrap'
+            : 'normal',
         dx: (textAlign === 'left' ? (!contentLeftIcons.length ? hierarchyOffset : 0) : 0) + _contentOffset
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
@@ -702,7 +716,8 @@ export function updateCellContentHeight(
   autoRowHeight: boolean,
   padding: [number, number, number, number],
   textAlign: CanvasTextAlign,
-  textBaseline: CanvasTextBaseline
+  textBaseline: CanvasTextBaseline,
+  table: BaseTableAPI
 ) {
   const newHeight = distHeight - Math.floor(padding[0] + padding[2]);
 
@@ -710,7 +725,7 @@ export function updateCellContentHeight(
 
   if (textMark instanceof Text && !autoRowHeight) {
     textMark.setAttributes({
-      heightLimit: newHeight
+      heightLimit: table.options.customConfig?.limitContentHeight === false ? -1 : newHeight
     } as any);
   } else if (textMark instanceof RichText && !autoRowHeight) {
     textMark.setAttributes({
