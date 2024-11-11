@@ -43,6 +43,7 @@ import {
   getRawChartSpec,
   isCartesianChart,
   isHasCartesianChartInline,
+  isNoChartDataRenderNothing,
   isShareChartSpec
 } from './chart-helper/get-chart-spec';
 import type { ITreeLayoutHeadNode, LayouTreeNode } from './tree-helper';
@@ -3085,7 +3086,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getChartDataId(col: number, row: number): any {
     return getChartDataId(col, row, this);
   }
-
+  /** 是否当chart没有数据时 图表单元格不绘制chart的任何内容 如网格线 */
+  isNoChartDataRenderNothing(col: number, row: number): boolean {
+    return isNoChartDataRenderNothing(col, row, this);
+  }
   setPagination(pagination: IPagination): void {
     this.clearCellRangeMap();
     this._table.internalProps.useOneRowHeightFillAll = false;

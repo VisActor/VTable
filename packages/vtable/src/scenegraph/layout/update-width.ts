@@ -273,8 +273,8 @@ function updateCellWidth(
     isVtableMerge || isCustomMerge
       ? 'text'
       : scene.table.isHeader(col, row)
-      ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-      : scene.table.getBodyColumnType(col, row);
+      ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
+      : scene.table.getBodyColumnType(col, row) ?? 'text';
   let isHeightChange = false;
   if (type === 'progressbar') {
     // 目前先采用重新生成节点的方案
