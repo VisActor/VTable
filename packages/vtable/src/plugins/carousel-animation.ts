@@ -88,30 +88,48 @@ export class CarouselAnimationPlugin {
     if (!this.playing) {
       return;
     }
+
+    let animation = true;
     if (this.table.scenegraph.proxy.screenTopRow !== this.row) {
       this.row = this.table.frozenRowCount;
+      animation = false;
     } else {
       this.row += this.rowCount;
     }
-    this.table.scrollToRow(this.row, { duration: this.animationDuration, easing: this.animationEasing });
-    setTimeout(() => {
-      this.updateRow();
-    }, this.animationDuration + this.animationDelay);
+    this.table.scrollToRow(
+      this.row,
+      animation ? { duration: this.animationDuration, easing: this.animationEasing } : undefined
+    );
+    setTimeout(
+      () => {
+        this.updateRow();
+      },
+      animation ? this.animationDuration + this.animationDelay : 0
+    );
   }
 
   updateCol() {
     if (!this.playing) {
       return;
     }
+
+    let animation = true;
     if (this.table.scenegraph.proxy.screenLeftCol !== this.col) {
       this.col = this.table.frozenColCount;
+      animation = false;
     } else {
       this.col += this.colCount;
     }
 
-    this.table.scrollToCol(this.col, { duration: this.animationDuration, easing: this.animationEasing });
-    setTimeout(() => {
-      this.updateCol();
-    }, this.animationDuration + 50);
+    this.table.scrollToCol(
+      this.col,
+      animation ? { duration: this.animationDuration, easing: this.animationEasing } : undefined
+    );
+    setTimeout(
+      () => {
+        this.updateCol();
+      },
+      animation ? this.animationDuration + this.animationDelay : 0
+    );
   }
 }
