@@ -839,11 +839,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param col
    * @param row
    */
-  toggleHierarchyState(col: number, row: number) {
+  toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
-      this._refreshHierarchyState(col, row);
+      this._refreshHierarchyState(col, row, recalculateColWidths);
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
         row: row,
@@ -853,7 +853,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const record = this.getCellOriginRecord(col, row);
       if (Array.isArray(record.children)) {
         //children 是数组 表示已经有子树节点信息
-        this._refreshHierarchyState(col, row);
+        this._refreshHierarchyState(col, row, recalculateColWidths);
       }
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
@@ -864,7 +864,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
   /** 刷新当前节点收起展开状态，如手动更改过 */
-  _refreshHierarchyState(col: number, row: number) {
+  _refreshHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     let notFillWidth = false;
     let notFillHeight = false;
     const checkHasChart = this.internalProps.layoutMap.checkHasChart();
@@ -920,7 +920,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       // reset proxy row config
       this.scenegraph.proxy.refreshRowCount();
     }
-    this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions, updateCells);
+    this.scenegraph.updateRow(
+      diffPositions.removeCellPositions,
+      diffPositions.addCellPositions,
+      updateCells,
+      recalculateColWidths
+    );
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
       if (this.autoFillWidth && !notFillWidth) {

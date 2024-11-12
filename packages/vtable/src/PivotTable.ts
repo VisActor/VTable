@@ -1340,10 +1340,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param col
    * @param row
    */
-  toggleHierarchyState(col: number, row: number) {
+  toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
-      this._refreshHierarchyState(col, row);
+      this._refreshHierarchyState(col, row, recalculateColWidths);
       this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
         row: row,
@@ -1358,7 +1358,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       );
       if (Array.isArray(headerTreeNode.children)) {
         //children 是数组 表示已经有子树节点信息
-        this._refreshHierarchyState(col, row);
+        this._refreshHierarchyState(col, row, recalculateColWidths);
       }
       this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
@@ -1370,7 +1370,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   }
 
   // beforeUpdateCell主要用于setTreeNodeChildren方法
-  _refreshHierarchyState(col: number, row: number, beforeUpdateCell?: Function) {
+  _refreshHierarchyState(col: number, row: number, recalculateColWidths: boolean = true, beforeUpdateCell?: Function) {
     let notFillWidth = false;
     let notFillHeight = false;
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
@@ -1393,7 +1393,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // this.invalidate();
     this.clearCellStyleCache();
     this.scenegraph.updateHierarchyIcon(col, row);
-    this.scenegraph.updateRow(result.removeCellPositions, result.addCellPositions, result.updateCellPositions);
+    this.scenegraph.updateRow(
+      result.removeCellPositions,
+      result.addCellPositions,
+      result.updateCellPositions,
+      recalculateColWidths
+    );
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
       if (this.autoFillWidth && !notFillWidth) {
@@ -1952,7 +1957,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         row
       );
       headerTreeNode.children = children;
-      this._refreshHierarchyState(col, row, () => {
+      this._refreshHierarchyState(col, row, true, () => {
         this.flatDataToObjects.changeDataConfig({
           rows: this.internalProps.layoutMap.fullRowDimensionKeys,
           columns: this.internalProps.layoutMap.colDimensionKeys,
@@ -1970,7 +1975,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         row
       );
       headerTreeNode.children = children;
-      this._refreshHierarchyState(col, row, () => {
+      this._refreshHierarchyState(col, row, true, () => {
         this.dataset._rowTreeHasChanged();
         this.dataset.changeDataConfig({
           rows: this.internalProps.layoutMap.fullRowDimensionKeys,
