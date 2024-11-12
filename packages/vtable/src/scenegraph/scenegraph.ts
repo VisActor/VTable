@@ -729,8 +729,8 @@ export class Scenegraph {
     deleteAllSelectBorder(this);
     this.table.stateManager.select.ranges.forEach((cellRange: CellRange) => {
       updateCellSelectBorder(this, cellRange);
+      moveSelectingRangeComponentsToSelectedRangeComponents(this);
     });
-    moveSelectingRangeComponentsToSelectedRangeComponents(this);
   }
   /**
    * @description: 列宽调整结果更新列宽
