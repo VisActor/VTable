@@ -86,6 +86,8 @@ export interface ImageIcon extends IIconBase {
   src: string;
   /** 图片裁切形状 */
   shape?: 'circle' | 'square';
+
+  isGif?: boolean;
 }
 
 export interface PathIcon extends IIconBase {

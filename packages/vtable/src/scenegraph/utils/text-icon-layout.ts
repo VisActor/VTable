@@ -445,7 +445,12 @@ export function dealWithIcon(
 
   // 图片内容
   if (icon.type === 'image') {
-    iconAttribute.image = icon.src;
+    if (icon.isGif) {
+      iconAttribute.gif = icon.src;
+      iconAttribute.image = icon.src;
+    } else {
+      iconAttribute.image = icon.src;
+    }
   } else if (icon.type === 'svg' || 'svg' in icon) {
     iconAttribute.image = icon.svg;
     // } else if (icon.type === 'path') {
@@ -461,6 +466,7 @@ export function dealWithIcon(
   iconAttribute.visibleTime = icon.visibleTime ?? 'always';
   iconAttribute.funcType = icon.funcType;
   iconAttribute.interactive = icon.interactive;
+  iconAttribute.isGif = icon.isGif;
 
   let hierarchyOffset = 0;
   if (

@@ -1,6 +1,8 @@
 import type { IImageGraphicAttribute } from '@src/vrender';
-import { Image } from '@src/vrender';
+import { Image, ResourceLoader } from '@src/vrender';
 import type { IIconBase } from '../../ts-types';
+import type { ParsedFrame } from 'gifuct-js';
+import { decompressFrames, parseGIF } from 'gifuct-js';
 
 export interface IIconGraphicAttribute extends IImageGraphicAttribute {
   backgroundWidth?: number;
@@ -21,6 +23,15 @@ export class Icon extends Image {
   declare attribute: IIconGraphicAttribute;
   role?: string;
   tooltip?: IIconBase['tooltip'];
+  frameImageData?: ImageData;
+  tempCanvas?: HTMLCanvasElement;
+  tempCtx?: CanvasRenderingContext2D;
+  gifCanvas?: HTMLCanvasElement;
+  gifCtx?: CanvasRenderingContext2D;
+  loadedFrames?: ParsedFrame[];
+  frameIndex?: number;
+  playing?: boolean;
+  lastTime?: number;
 
   // eslint-disable-next-line no-useless-constructor
   constructor(params: IIconGraphicAttribute) {
@@ -32,6 +43,14 @@ export class Icon extends Image {
 
     if (this.attribute.hoverImage) {
       this.attribute.originImage = this.attribute.image;
+    }
+
+    if (this.attribute.isGif && this.attribute.gif) {
+      ResourceLoader.GetFile(this.attribute.gif + `?radom=${Math.random()}`, 'arrayBuffer').then(res => {
+        const gif = parseGIF(res);
+        const frames = decompressFrames(gif, true);
+        this.renderGIF(frames);
+      });
     }
 
     // if (this.attribute.margin) {
@@ -59,4 +78,92 @@ export class Icon extends Image {
 
   //   return this._AABBBounds;
   // }
+
+  renderGIF(frames: ParsedFrame[]) {
+    this.loadedFrames = frames;
+    this.frameIndex = 0;
+
+    if (!this.tempCanvas) {
+      this.tempCanvas = document.createElement('canvas');
+      this.tempCtx = this.tempCanvas.getContext('2d');
+    }
+
+    if (!this.gifCanvas) {
+      this.gifCanvas = document.createElement('canvas');
+      this.gifCtx = this.gifCanvas.getContext('2d');
+    }
+
+    this.gifCanvas.width = frames[0].dims.width;
+    this.gifCanvas.height = frames[0].dims.height;
+
+    this.playing = true;
+    this.lastTime = new Date().getTime();
+    this.animate().to({}, 1000, 'linear').loop(Infinity);
+  }
+
+  renderFrame(context: CanvasRenderingContext2D, x: number, y: number) {
+    // get the frame
+    const frame = this.loadedFrames[this.frameIndex || 0];
+
+    if (frame.disposalType === 2) {
+      this.gifCtx.clearRect(0, 0, this.attribute.width, this.attribute.height);
+    }
+
+    // draw the patch
+    this.drawPatch(frame);
+
+    // perform manipulation
+    this.manipulate(context, x, y);
+
+    // update the frame index
+    // this.frameIndex++;
+    const diff = new Date().getTime() - this.lastTime;
+    if (frame.delay < diff) {
+      // return;
+      this.frameIndex++;
+      this.lastTime = new Date().getTime();
+    }
+    if (this.frameIndex >= this.loadedFrames.length) {
+      this.frameIndex = 0;
+    }
+  }
+
+  drawPatch(frame: ParsedFrame) {
+    const dims = frame.dims;
+
+    if (
+      !this.frameImageData ||
+      dims.width !== this.frameImageData.width ||
+      dims.height !== this.frameImageData.height
+    ) {
+      this.tempCanvas.width = dims.width;
+      this.tempCanvas.height = dims.height;
+      this.frameImageData = this.tempCtx.createImageData(dims.width, dims.height);
+    }
+
+    // set the patch data as an override
+    this.frameImageData.data.set(frame.patch);
+
+    // draw the patch back over the canvas
+    this.tempCtx.putImageData(this.frameImageData, 0, 0);
+
+    // gifCtx.drawImage(tempCanvas, dims.left, dims.top)
+    // this.attribute.image = this.tempCanvas;
+
+    this.gifCtx.drawImage(this.tempCanvas, dims.left, dims.top);
+  }
+
+  manipulate(context: CanvasRenderingContext2D, x: number, y: number) {
+    context.drawImage(
+      this.gifCanvas,
+      0,
+      0,
+      this.gifCanvas.width,
+      this.gifCanvas.height,
+      x,
+      y,
+      this.attribute.width,
+      this.attribute.height
+    );
+  }
 }

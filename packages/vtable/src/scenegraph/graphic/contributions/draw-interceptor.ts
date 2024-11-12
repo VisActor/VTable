@@ -93,7 +93,7 @@ export class ImageDrawItemInterceptorContribution implements IDrawItemIntercepto
       return false;
     }
     const res = graphic.resources.get(url);
-    if (res.state !== 'loading') {
+    if (!res || res.state !== 'loading') {
       return false;
     }
 

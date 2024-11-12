@@ -59,7 +59,8 @@
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
     "@visactor/vutils-extension": "~1.11.5",
-    "cssfontparser": "^1.2.1"
+    "cssfontparser": "^1.2.1",
+    "gifuct-js": "2.1.2"
   },
   "devDependencies": {
     "luxon": "*",
