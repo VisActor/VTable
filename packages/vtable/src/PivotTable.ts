@@ -1339,7 +1339,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * 表头切换层级状态
    * @param col
    * @param row
-   * @param recalculateColWidths  是否重新计算列宽 默认为true
+   * @param recalculateColWidths  是否重新计算列宽 默认为true.（设置width:auto或者 autoWidth 情况下才有必要考虑该参数）
    */
   toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     const hierarchyState = this.getHierarchyState(col, row);

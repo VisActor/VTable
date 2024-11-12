@@ -838,7 +838,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 表头切换层级状态
    * @param col
    * @param row
-   * @param recalculateColWidths  是否重新计算列宽 默认为true
+   * @param recalculateColWidths  是否重新计算列宽 默认为true.（设置width:auto或者 autoWidth 情况下才有必要考虑该参数）
    */
   toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
@@ -1188,13 +1188,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param records 设置到单元格其子节点的数据
    * @param col 需要设置子节点的单元格地址
    * @param row  需要设置子节点的单元格地址
+   * @param recalculateColWidths  是否重新计算列宽 默认为true.（设置width:auto或者 autoWidth 情况下才有必要考虑该参数）
    */
-  setRecordChildren(records: any[], col: number, row: number) {
+  setRecordChildren(records: any[], col: number, row: number, recalculateColWidths: boolean = true) {
     const record = this.getCellOriginRecord(col, row);
     record.children = records;
     const index = this.getRecordShowIndexByCell(col, row);
     this.dataSource.setRecord(record, index);
-    this._refreshHierarchyState(col, row);
+    this._refreshHierarchyState(col, row, recalculateColWidths);
   }
 
   startEditCell(col?: number, row?: number, value?: string | number) {
