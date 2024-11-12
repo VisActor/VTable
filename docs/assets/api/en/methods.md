@@ -642,8 +642,9 @@ Tree expand and collapse state switch
    * Header switches level status
    * @param col
    * @param row
+   * @param recalculateColWidths Whether to recalculate the column width. Default is true.
    */
-  toggleHierarchyState(col: number, row: number)
+  toggleHierarchyState(col: number, row: number,recalculateColWidths: boolean = true)
 ```
 
 ## getHierarchyState(Function)

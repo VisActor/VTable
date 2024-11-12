@@ -639,8 +639,9 @@ col 或者 row 可以为空，为空的话也就是只移动 x 方向或者 y �
    * 表头切换层级状态
    * @param col
    * @param row
+   * @param recalculateColWidths  是否重新计算列宽 默认为true
    */
-  toggleHierarchyState(col: number, row: number)
+  toggleHierarchyState(col: number, row: number,recalculateColWidths: boolean = true)
 ```
 
 ## getHierarchyState(Function)

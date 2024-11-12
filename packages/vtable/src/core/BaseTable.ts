@@ -2646,7 +2646,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract refreshHeader(): void;
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;
-  abstract toggleHierarchyState(col: number, row: number): void;
+  abstract toggleHierarchyState(col: number, row: number, recalculateColWidths?: boolean): void;
   abstract _hasHierarchyTreeHeader(): boolean;
   abstract getMenuInfo(col: number, row: number, type: string): DropDownMenuEventInfo;
   abstract _moveHeaderPosition(

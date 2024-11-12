@@ -838,6 +838,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 表头切换层级状态
    * @param col
    * @param row
+   * @param recalculateColWidths  是否重新计算列宽 默认为true
    */
   toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);

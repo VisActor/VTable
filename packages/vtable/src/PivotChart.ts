@@ -856,7 +856,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param col
    * @param row
    */
-  toggleHierarchyState(col: number, row: number) {
+  toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     //nothing
   }
   /**
