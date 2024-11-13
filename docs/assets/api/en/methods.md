@@ -797,6 +797,8 @@ Where the TooltipOptions type is:
 export type TooltipOptions = {
   /** tooltip content */
   content: string;
+  /** support html renderer */
+  dangerouslySetInnerHTML?:boolean;
   /** The position of the tooltip box has priority over referencePosition */
   position?: { x: number; y: number };
   /** The reference position of the tooltip box If the position is set, the configuration will not take effect */

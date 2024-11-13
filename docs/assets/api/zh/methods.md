@@ -794,6 +794,8 @@ enum HierarchyState {
 export type TooltipOptions = {
   /** tooltip内容 */
   content: string;
+  /** 是否支持 html 渲染 */
+  dangerouslySetInnerHTML?:boolean;
   /** tooltip框的位置 优先级高于referencePosition */
   position?: { x: number; y: number };
   /** tooltip框的参考位置 如果设置了position则该配置不生效 */

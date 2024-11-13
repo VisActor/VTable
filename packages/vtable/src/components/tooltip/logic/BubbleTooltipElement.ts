@@ -83,7 +83,11 @@ export class BubbleTooltipElement {
         (messageElement.style.maxHeight = `${tooltipInstanceInfo?.style?.maxHeight}px`);
       tooltipInstanceInfo?.style?.maxWidth &&
         (messageElement.style.maxWidth = `${tooltipInstanceInfo?.style?.maxWidth}px`);
-      messageElement && (messageElement.textContent = tooltipInstanceInfo?.content);
+      if (tooltipInstanceInfo?.dangerouslySetInnerHTML) {
+        messageElement.innerHTML = tooltipInstanceInfo?.content
+      } else {
+        messageElement.textContent = tooltipInstanceInfo?.content
+      }
       const binded = this._bindToCell(
         table,
         col,
