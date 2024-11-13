@@ -785,7 +785,9 @@ enum HierarchyState {
   showTooltip(col: number, row: number, tooltipOptions?: TooltipOptions) => void
 ```
 
-注意：暂时只支持全局设置了 tooltip.renderMode='html'，调用该接口才有效
+注意：暂时只支持全局设置了 tooltip.renderMode='html'，调用该接口才有效。
+
+如果想要 tooltip 可以被鼠标 hover 上去，需要配置接口 tooltip.disappearDelay，让其不立即消失。
 
 其中 TooltipOptions 类型为：
 
@@ -813,6 +815,8 @@ export type TooltipOptions = {
     padding?: number[];
     arrowMark?: boolean;
   };
+  /** 设置tooltip的消失时间 */
+  disappearDelay?: number;
 };
 
 ```

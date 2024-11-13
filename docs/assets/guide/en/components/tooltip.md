@@ -111,6 +111,7 @@ The interface showTooltip can actively display tooltip information, which is use
                   font: 'normal bold normal 14px/1 STKaiti',
                   arrowMark: true,
                 },
+                disappearDelay: 100,
               });
             }
         });
