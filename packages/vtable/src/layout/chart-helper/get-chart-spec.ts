@@ -54,6 +54,20 @@ export function isShareChartSpec(col: number, row: number, layout: PivotHeaderLa
   }
   return true;
 }
+export function isNoChartDataRenderNothing(col: number, row: number, layout: PivotHeaderLayoutMap): any {
+  const paths = layout.getCellHeaderPaths(col, row);
+  let indicatorObj;
+  if (layout.indicatorsAsCol) {
+    const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+  } else {
+    const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+  }
+  const noDataRenderNothing = indicatorObj?.noDataRenderNothing;
+
+  return noDataRenderNothing;
+}
 /** 检查是否有直角坐标系的图表 */
 export function checkHasCartesianChart(indicatorsDefine: (IIndicator | IChartIndicator | string)[]) {
   let isHasCartesianChart = false;
@@ -170,7 +184,7 @@ export function getChartSpec(col: number, row: number, layout: PivotHeaderLayout
 export function getChartAxes(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   const axes = [];
   if (layout.indicatorsAsCol) {
-    const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
+    const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
     // const colIndex = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath(col, row);
     indicatorKeys.forEach((key, index) => {
@@ -225,7 +239,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
             // label: { flush: true },
             title: { visible: false },
             domainLine: { visible: false },
-            seriesIndex: index,
+            seriesIndex: axisOption?.seriesId ? undefined : index,
             // height: -1,
 
             sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
@@ -273,7 +287,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       )
     );
   } else {
-    const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
+    const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
     const rowPath = layout.getRowKeysPath(col, row);
     indicatorKeys.forEach((key, index) => {
       const { range, isZeroAlign, axisOption } = getRange(
@@ -328,7 +342,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
             // label: { flush: true },
             title: { visible: false },
             domainLine: { visible: false },
-            seriesIndex: index,
+            seriesIndex: axisOption?.seriesId ? undefined : index,
             // width: -1,
             // grid: index === 0 ? undefined : { visible: false }
 

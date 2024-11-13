@@ -31,3 +31,68 @@ Body cell style, please refer to: [style](../option/ListTable-columns-text#style
 ${prefix} disableColumnResize(boolean)
 
 Whether to disable row serial number width adjustment.The default is false.
+
+${prefix} headerIcon(string|Object|Array)
+
+Table header cell icon configuration. The configurable types are:
+
+```
+string | ColumnIconOption | (string | ColumnIconOption)[];
+```
+
+For detailed configuration of ColumnIconOption, please refer to [Definition](/zh/option.html#ListTable-columns-text.icon.ColumnIconOptionDefinition:)
+
+${prefix} icon(string|Object|Array|Funciton)
+
+Body cell icon configuration.
+
+```
+icon?:
+| string
+| ColumnIconOption
+| (string | ColumnIconOption)[]
+| ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+```
+
+#${prefix}ColumnIconOption
+
+```
+type ColumnIconOption = ImageIcon | SvgIcon;
+```
+
+#${prefix}ImageIcon(Object)
+type is set to 'image'. The image address needs to be set in src
+{{ use: image-icon( prefix = '##' + ${prefix}) }}
+
+#${prefix}SvgIcon(Object)
+type is set to 'svg'. You need to configure the svg address or the complete svg file string in svg
+{{ use: svg-icon( prefix = '##' + ${prefix}) }}
+
+${prefix} headerCustomLayout(Function)
+The header cell custom layout element definition, this custom form is suitable for cells with complex content layout.
+
+```
+(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+```
+
+{{ use: common-CustomRenderFunctionArg() }}
+
+{{ use: custom-layout(
+prefix = '#'+${prefix},
+) }}
+
+${prefix} customLayout(Function)
+
+The body cell custom layout element definition is suitable for cells with complex content layout.
+
+Defined as the following function:
+
+```
+(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+```
+
+{{ use: common-CustomRenderFunctionArg() }}
+
+{{ use: custom-layout(
+prefix = '#'+${prefix},
+) }}

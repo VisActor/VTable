@@ -32,6 +32,7 @@ import {
   convertProgress,
   createSplitLineAndResizeLine,
   DayTimes,
+  findRecordByTaskKey,
   generateTimeLineDate,
   getHorizontalScrollBarSize,
   getVerticalScrollBarSize,
@@ -600,7 +601,7 @@ export class Gantt extends EventTarget {
   getAllTaskBarsHeight() {
     return this.itemCount * this.parsedOptions.rowHeight;
   }
-  getTaskShowIndexByRecordIndex(index: number) {
+  getTaskShowIndexByRecordIndex(index: number | number[]) {
     return this.taskListTableInstance.getBodyRowIndexByRecordIndex(index);
   }
   getRecordByIndex(taskShowIndex: number) {
@@ -619,7 +620,11 @@ export class Gantt extends EventTarget {
     this.scenegraph.updateNextFrame();
   }
   _updateRecordToListTable(record: any, index: number) {
-    this.taskListTableInstance.updateRecords([record], [index]);
+    const indexs = this.taskListTableInstance.getRecordIndexByCell(
+      0,
+      index + this.taskListTableInstance.columnHeaderLevelCount
+    );
+    this.taskListTableInstance.updateRecords([record], [indexs]);
   }
   /**
    * 获取指定index处任务数据的具体信息

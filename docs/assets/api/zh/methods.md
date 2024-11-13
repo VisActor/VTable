@@ -369,6 +369,20 @@ setRecords(records: Array<any>)
 **ListTable 专有**
 ```
 
+## getTaskShowIndexByRecordIndex(Function)
+
+根据数据的索引获取应该显示在 body 的第几行, 参数和返回值的碎银均从 0 开始。如果是树形模式的表格，参数支持数组，如[1,2]
+
+**ListTable 专有**
+
+```
+  /**
+   * 根据数据的索引获取应该显示在body的第几行  参数和返回值的碎银均从0开始
+   * @param  {number} index The record index.
+   */
+  getBodyRowIndexByRecordIndex: (index: number | number[]) => number;
+```
+
 ## getTableIndexByField(Function)
 
 根据数据源的 field 获取显示到表格中的 index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
@@ -734,7 +748,7 @@ enum HierarchyState {
 
 ## updatePivotSortState(Function)
 
-更新排序状态，vtable本身不执行排序逻辑。PivotTable 专有。
+更新排序状态，vtable 本身不执行排序逻辑。PivotTable 专有。
 
 ```
   /**
@@ -746,7 +760,8 @@ enum HierarchyState {
       order: SortOrder;
     }[])
 ```
-更新后不会主动重绘表格，需要配置接口renderWithRecreateCells刷新
+
+更新后不会主动重绘表格，需要配置接口 renderWithRecreateCells 刷新
 
 ## setDropDownMenuHighlight(Function)
 
@@ -814,6 +829,7 @@ updateFilterRules(filterRules: FilterRules) => void
 use case: 对于透视图的场景上，点击图例项后 更新过滤规则 来更新图表
 
 ## getFilteredRecords(Function)
+
 获取过滤后的数据
 
 **PivotTable 专有**

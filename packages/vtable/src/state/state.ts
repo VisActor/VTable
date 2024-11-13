@@ -79,6 +79,7 @@ export class StateManager {
      * 'body': 不选择表头，点击行表头则选择该行所有 body 单元格，点击列表头则选择该列所有 body 单元格。
      */
     headerSelectMode?: 'inline' | 'cell' | 'body';
+    highlightInRange?: boolean;
     selecting: boolean;
   };
   fillHandle: {
@@ -420,7 +421,8 @@ export class StateManager {
       headerSelectMode,
       disableSelect,
       disableHeaderSelect,
-      highlightMode
+      highlightMode,
+      highlightInRange
     } = Object.assign(
       {},
       {
@@ -428,7 +430,8 @@ export class StateManager {
         headerSelectMode: 'inline',
         disableSelect: false,
         disableHeaderSelect: false,
-        highlightMode: 'cell'
+        highlightMode: 'cell',
+        highlightInRange: false
       },
       this.table.options.select
     );
@@ -457,6 +460,7 @@ export class StateManager {
     this.select.singleStyle = !disableSelect;
     this.select.disableHeader = disableHeaderSelect;
     this.select.headerSelectMode = headerSelectMode;
+    this.select.highlightInRange = highlightInRange;
   }
 
   isSelected(col: number, row: number): boolean {
@@ -519,15 +523,15 @@ export class StateManager {
           prev.push({
             field: item.field,
             order: item.order,
-            row: column.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
-            col: column.level
+            row: column?.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
+            col: column?.level
           } as any);
         } else {
           prev.push({
             field: item.field,
             order: item.order,
-            col: column.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
-            row: column.level
+            col: column?.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
+            row: column?.level
           } as any);
         }
 

@@ -314,8 +314,10 @@ export type ITaskCreationCustomLayout = (args: TaskCreationCustomLayoutArgumentT
 export type ITaskLink = {
   /** 依赖的类型 */
   type: DependencyType;
-  linkedFromTaskKey?: string | number;
-  linkedToTaskKey?: string | number;
+  /** 依赖线的起始任务唯一标识。如果是tree树形结构的数据 设置数组的话 查找性能会更高 */
+  linkedFromTaskKey?: string | number | (string | number)[];
+  /** 依赖的终止目标任务唯一标识。如果是tree树形结构的数据 设置数组的话 查找性能会更高 */
+  linkedToTaskKey?: string | number | (string | number)[];
 };
 
 export type ITaskLinkSelectedStyle = ILineStyle & {

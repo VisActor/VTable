@@ -1112,8 +1112,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     //重复逻辑抽取updateWidthHeight
     if (sort !== undefined) {
-      this.internalProps.sortState = this.internalProps.multipleSort ? (Array.isArray(sort) ? sort : [sort]) : sort;
-      this.stateManager.setSortState((this as any).sortState as SortState);
+      if ((!Array.isArray(sort) && isValid(sort.field)) || Array.isArray(sort)) {
+        this.internalProps.sortState = this.internalProps.multipleSort ? (Array.isArray(sort) ? sort : [sort]) : sort;
+        this.stateManager.setSortState((this as any).sortState as SortState);
+      }
     }
     if (records) {
       _setRecords(this, records);
@@ -1391,7 +1393,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 根据数据的索引获取应该显示在body的第几行
    * @param  {number} index The record index.
    */
-  getBodyRowIndexByRecordIndex(index: number): number {
+  getBodyRowIndexByRecordIndex(index: number | number[]): number {
+    if (Array.isArray(index) && index.length === 1) {
+      index = index[0];
+    }
     return this.dataSource.getTableIndex(index);
   }
 }

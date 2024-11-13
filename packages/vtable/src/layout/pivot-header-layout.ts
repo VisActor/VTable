@@ -43,6 +43,7 @@ import {
   getRawChartSpec,
   isCartesianChart,
   isHasCartesianChartInline,
+  isNoChartDataRenderNothing,
   isShareChartSpec
 } from './chart-helper/get-chart-spec';
 import type { ITreeLayoutHeadNode, LayouTreeNode } from './tree-helper';
@@ -3085,7 +3086,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getChartDataId(col: number, row: number): any {
     return getChartDataId(col, row, this);
   }
-
+  /** 是否当chart没有数据时 图表单元格不绘制chart的任何内容 如网格线 */
+  isNoChartDataRenderNothing(col: number, row: number): boolean {
+    return isNoChartDataRenderNothing(col, row, this);
+  }
   setPagination(pagination: IPagination): void {
     this.clearCellRangeMap();
     this._table.internalProps.useOneRowHeightFillAll = false;
@@ -3313,22 +3317,28 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return state;
   }
   updateDataStateToChartInstance(activeChartInstance?: any): void {
-    if (!activeChartInstance) {
-      activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+    if (activeChartInstance?.getSpec().select?.enable !== false) {
+      if (!activeChartInstance) {
+        activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+      }
+      const state = this._generateChartState();
+      this._indicators.forEach((_indicatorObject: IndicatorData) => {
+        const chartInstance = _indicatorObject.chartInstance;
+        if (_indicatorObject.chartSpec.select?.enable !== false) {
+          chartInstance.updateState(state);
+        }
+      });
+      activeChartInstance?.updateState(state);
     }
-    const state = this._generateChartState();
-    this._indicators.forEach((_indicatorObject: IndicatorData) => {
-      const chartInstance = _indicatorObject.chartInstance;
-      chartInstance.updateState(state);
-    });
-    activeChartInstance?.updateState(state);
   }
   updateDataStateToActiveChartInstance(activeChartInstance?: any): void {
-    if (!activeChartInstance) {
-      activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+    if (activeChartInstance?.getSpec().select?.enable !== false) {
+      if (!activeChartInstance) {
+        activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+      }
+      const state = this._generateChartState();
+      activeChartInstance?.updateState(state);
     }
-    const state = this._generateChartState();
-    activeChartInstance?.updateState(state);
   }
 
   /**

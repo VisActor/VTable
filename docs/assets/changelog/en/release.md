@@ -1,3 +1,44 @@
+# v1.10.5
+
+2024-11-11
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: pivot chart spec enable select not work [#2210](https://github.com/VisActor/VTable/issues/2210)
+- **@visactor/vtable**: sortState field undefined occor error
+
+
+
+[more detail about v1.10.5](https://github.com/VisActor/VTable/releases/tag/v1.10.5)
+
+# v1.10.4
+
+2024-11-07
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: gantt dependency line support tree node [#2701](https://github.com/VisActor/VTable/issues/2701)
+- **@visactor/vtable**: when drag on header can select cells continuous [#2751](https://github.com/VisActor/VTable/issues/2751)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when markline date less then minDate should not show [#2689](https://github.com/VisActor/VTable/issues/2689)
+- **@visactor/vtable**: pivot table header icon display incorrect [#2735](https://github.com/VisActor/VTable/issues/2735)
+- **@visactor/vtable**: parse axes config error when user set axes [#2749](https://github.com/VisActor/VTable/issues/2749)
+- **@visactor/vtable**: cellType set funciton occor error [#2754](https://github.com/VisActor/VTable/issues/2754)
+- **@visactor/vtable**: when pivot cell type set chart not data cell render error [#2758](https://github.com/VisActor/VTable/issues/2758)
+- **@visactor/vtable**: legend problems [#2764](https://github.com/VisActor/VTable/issues/2764) [#2755](https://github.com/VisActor/VTable/issues/2755)
+- **@visactor/vtable**: create task shedule date error [#2771](https://github.com/VisActor/VTable/issues/2771)
+- **@visactor/vtable**: fix cellLocation in pivot-table [#2694](https://github.com/VisActor/VTable/issues/2694)
+- **@visactor/vtable**: fix menu scale pos problem [#2734](https://github.com/VisActor/VTable/issues/2734)
+- **@visactor/vtable**: fix tree frozen row problem [#2619](https://github.com/VisActor/VTable/issues/2619)
+
+
+
+[more detail about v1.10.4](https://github.com/VisActor/VTable/releases/tag/v1.10.4)
+
 # v1.10.3
 
 2024-11-01

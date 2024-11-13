@@ -151,6 +151,7 @@ export class Scenegraph {
     // this.timelineHeader.refresh();
     this.grid.refresh();
     this.taskBar.refresh();
+    this.dependencyLink.refresh();
     this.markLine.refresh();
     this.frameBorder.resize();
     this.scrollbarComponent.updateScrollBar();

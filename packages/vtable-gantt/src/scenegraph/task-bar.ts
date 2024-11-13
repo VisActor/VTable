@@ -185,13 +185,13 @@ export class TaskBar {
     return barGroup;
   }
   updateTaskBarNode(index: number) {
-    const taskbarGroup = this.barContainer.getChildren()?.[index] as GanttTaskBarNode;
+    const taskbarGroup = this.getTaskBarNodeByIndex(index);
     if (taskbarGroup) {
       this.barContainer.removeChild(taskbarGroup);
-      const barGroup = this.initBar(index);
-      if (barGroup) {
-        this.barContainer.insertInto(barGroup, index); //TODO
-      }
+    }
+    const barGroup = this.initBar(index);
+    if (barGroup) {
+      this.barContainer.insertInto(barGroup, index); //TODO
     }
   }
   initHoverBarIcons() {
