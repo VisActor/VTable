@@ -104,7 +104,8 @@ export class CarouselAnimationPlugin {
       () => {
         this.updateRow();
       },
-      animation ? this.animationDuration + this.animationDelay : 0
+      // animation ? this.animationDuration + this.animationDelay : 0
+      this.animationDuration + this.animationDelay
     );
   }
 
@@ -129,7 +130,8 @@ export class CarouselAnimationPlugin {
       () => {
         this.updateCol();
       },
-      animation ? this.animationDuration + this.animationDelay : 0
+      // animation ? this.animationDuration + this.animationDelay : 0
+      this.animationDuration + this.animationDelay
     );
   }
 }
