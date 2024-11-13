@@ -178,7 +178,8 @@ In some scenarios, the child node data may be relatively large. In view of the e
 
 1. Set the children of the corresponding data to true instead of a specific data collection so that the cell can display the folded icon;
 2. When the user clicks the status icon, the event `VTable.ListTable.EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE` will be triggered. The front-end code needs to listen to this event to request children data.
-3. Pass the obtained data back to the table component, you can call the interface `instance.setRecordChildren(childrenData, col, row)`;
+3. (Optional) Before loading the data, call the `instance.setLoadingHierarchyState(col, row)` method to display the loading icon;
+4. Pass the obtained data back to the table component, you can call the interface `instance.setRecordChildren(childrenData, col, row)`;
 
 For specific examples, please see: https://visactor.io/vtable/demo/table-type/list-table-tree-lazy-load
 
