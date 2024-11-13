@@ -863,6 +863,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       });
     }
   }
+  setLoadingHierarchyState(col: number, row: number) {
+    this.scenegraph.setLoadingHierarchyState(col, row);
+  }
   /** 刷新当前节点收起展开状态，如手动更改过 */
   _refreshHierarchyState(col: number, row: number) {
     let notFillWidth = false;

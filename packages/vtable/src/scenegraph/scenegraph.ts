@@ -6,7 +6,8 @@ import {
   type CellLocation,
   type ColumnIconOption,
   type SortOrder,
-  IconFuncTypeEnum
+  IconFuncTypeEnum,
+  InternalIconName
 } from '../ts-types';
 import { isArray, isString, isValid } from '@visactor/vutils';
 import type { Group } from './graphic/group';
@@ -73,6 +74,8 @@ import { deduplication } from '../tools/util';
 import { getDefaultHeight, getDefaultWidth } from './group-creater/progress/default-width-height';
 import { dealWithAnimationAppear } from './animation/appear';
 import { updateReactContainer } from './layout/frozen-react';
+
+import * as registerIcons from '../icons';
 // import { contextModule } from './context/module';
 
 registerForVrender();
@@ -2055,5 +2058,16 @@ export class Scenegraph {
   // }
   updateDomContainer() {
     updateReactContainer(this.table);
+  }
+
+  setLoadingHierarchyState(col: number, row: number) {
+    const cellGroup = this.getCell(col, row);
+    const iconGraphic = cellGroup.getChildByName('collapse', true);
+    if (iconGraphic) {
+      const regedIcons = registerIcons.get();
+      const loadingIcon = regedIcons[InternalIconName.loadingIconName];
+
+      dealWithIcon(loadingIcon, iconGraphic, col, row);
+    }
   }
 }

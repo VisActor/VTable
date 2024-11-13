@@ -466,7 +466,7 @@ export function dealWithIcon(
   iconAttribute.visibleTime = icon.visibleTime ?? 'always';
   iconAttribute.funcType = icon.funcType;
   iconAttribute.interactive = icon.interactive;
-  iconAttribute.isGif = icon.isGif;
+  iconAttribute.isGif = (icon as any).isGif;
 
   let hierarchyOffset = 0;
   if (
@@ -514,11 +514,14 @@ export function dealWithIcon(
   if (mark) {
     mark.setAttributes(iconAttribute);
     mark.loadImage(iconAttribute.image);
+    mark.tooltip = icon.tooltip;
+    mark.name = icon.name;
     return mark;
   }
   // funcType, cursor, tooltip, hover在事件响应阶段处理
   const iconMark = new Icon(iconAttribute);
   iconMark.tooltip = icon.tooltip;
+  iconMark.name = icon.name;
 
   return iconMark;
 }

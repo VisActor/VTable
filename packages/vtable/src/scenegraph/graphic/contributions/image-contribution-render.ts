@@ -128,8 +128,7 @@ export class BeforeGifImageRenderContribution implements IImageRenderContributio
     const { isGif } = image.attribute as any;
 
     if (isGif && image.playing) {
-      // image.renderFrame();
-      // image.attribute.opacity = 0;
+      image.attribute.opacity = 0; // hack for static image
     }
   }
 }
@@ -165,7 +164,8 @@ export class AfterGifImageRenderContribution implements IImageRenderContribution
     const { isGif } = image.attribute as any;
 
     if (isGif && image.playing) {
-      // image.attribute.opacity = 1;
+      image.attribute.opacity = 1; // hack for static image
+      context.globalAlpha = image.attribute.opacity;
       image.renderFrame(context, x, y);
     }
   }

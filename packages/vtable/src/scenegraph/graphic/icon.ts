@@ -1,4 +1,4 @@
-import type { IImageGraphicAttribute } from '@src/vrender';
+import type { IImageGraphicAttribute, ISetAttributeContext } from '@src/vrender';
 import { Image, ResourceLoader } from '@src/vrender';
 import type { IIconBase } from '../../ts-types';
 import type { ParsedFrame } from 'gifuct-js';
@@ -45,18 +45,27 @@ export class Icon extends Image {
       this.attribute.originImage = this.attribute.image;
     }
 
-    if (this.attribute.isGif && this.attribute.gif) {
-      ResourceLoader.GetFile(this.attribute.gif + `?radom=${Math.random()}`, 'arrayBuffer').then(res => {
-        const gif = parseGIF(res);
-        const frames = decompressFrames(gif, true);
-        this.renderGIF(frames);
-      });
+    if ((this.attribute as any).isGif && (this.attribute as any).gif) {
+      this.loadGif();
     }
 
     // if (this.attribute.margin) {
     //   this.attribute.boundsPadding = this.attribute.margin;
     //   this.attribute.dx = this.attribute.margin[3] ?? 0;
     // }
+  }
+
+  loadGif() {
+    this.playing = false;
+    ResourceLoader.GetFile((this.attribute as any).gif + `?radom=${Math.random()}`, 'arrayBuffer') // hack for ResourceLoader.GetFile
+      .then((res: ArrayBuffer) => {
+        const gif = parseGIF(res);
+        const frames = decompressFrames(gif, true);
+        this.renderGIF(frames);
+      })
+      .catch(e => {
+        console.error('Gif load error: ', e);
+      });
   }
 
   get backgroundWidth(): number {
@@ -106,7 +115,7 @@ export class Icon extends Image {
     const frame = this.loadedFrames[this.frameIndex || 0];
 
     if (frame.disposalType === 2) {
-      this.gifCtx.clearRect(0, 0, this.attribute.width, this.attribute.height);
+      this.gifCtx.clearRect(0, 0, this.gifCanvas.width, this.gifCanvas.height);
     }
 
     // draw the patch
@@ -165,5 +174,23 @@ export class Icon extends Image {
       this.attribute.width,
       this.attribute.height
     );
+  }
+
+  setAttribute(key: string, value: any, forceUpdateTag?: boolean, context?: ISetAttributeContext): void {
+    super.setAttribute(key, value, forceUpdateTag, context);
+    if (key === 'gif') {
+      this.loadGif();
+    }
+  }
+
+  setAttributes(
+    params: Partial<IIconGraphicAttribute>,
+    forceUpdateTag?: boolean,
+    context?: ISetAttributeContext
+  ): void {
+    super.setAttributes(params, forceUpdateTag, context);
+    if ((params as any).gif) {
+      this.loadGif();
+    }
   }
 }

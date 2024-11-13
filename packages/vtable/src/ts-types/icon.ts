@@ -167,7 +167,9 @@ export enum InternalIconName {
   // dropdownHoverIconName = 'dropdownIcon_hover',
   expandIconName = 'expand',
   collapseIconName = 'collapse',
-  dragReorderIconName = 'dragReorder'
+  dragReorderIconName = 'dragReorder',
+
+  loadingIconName = 'loading'
 }
 // 目前暂不支持FontIcon&PathIcon
 export type ColumnIconOption = ImageIcon | SvgIcon;
