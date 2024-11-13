@@ -26,13 +26,13 @@ export class DragOrderLine {
     this.initDragLine();
   }
   initDragLine() {
-    const style = this._scene._gantt.parsedOptions.grid.horizontalLine;
+    const style = this._scene._gantt.taskListTableInstance.theme.dragHeaderSplitLine;
     // 创建拖拽位置高亮线条
     const lineObj = createLine({
       pickable: false,
-      stroke: 'blue',
-      lineWidth: 2,
-      lineDash: style.lineDash,
+      stroke: style.lineColor,
+      lineWidth: style.lineWidth,
+      // lineDash: style.lineDash,
       points: []
     });
     this.dragLine = lineObj;
