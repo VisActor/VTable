@@ -26,6 +26,8 @@ export interface EventsProps {
   onResizeColumn?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column']>;
   onResizeColumnEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column_end']>;
   onChangeHeaderPosition?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position']>;
+  onChangeHeaderPositionStart?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position_start']>;
+  onChangeHeaderPositionFail?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position_fail']>;
   onSortClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['sort_click']>;
   onFreezeClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['freeze_click']>;
   onScroll?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll']>;
@@ -90,6 +92,8 @@ export const TABLE_EVENTS = {
   onResizeColumn: EVENT_TYPE.RESIZE_COLUMN,
   onResizeColumnEnd: EVENT_TYPE.RESIZE_COLUMN_END,
   onChangeHeaderPosition: EVENT_TYPE.CHANGE_HEADER_POSITION,
+  onChangeHeaderPositionStart: EVENT_TYPE.CHANGE_HEADER_POSITION_START,
+  onChangeHeaderPositionFail: EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL,
   onSortClick: EVENT_TYPE.SORT_CLICK,
   onFreezeClick: EVENT_TYPE.FREEZE_CLICK,
   onScroll: EVENT_TYPE.SCROLL,

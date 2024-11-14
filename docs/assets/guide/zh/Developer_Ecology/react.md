@@ -222,6 +222,8 @@ interface EventsProps {
   onResizeColumn?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column']>;
   onResizeColumnEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column_end']>;
   onChangeHeaderPosition?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position']>;
+  onChangeHeaderPositionStart?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position_start']>;
+  onChangeHeaderPositionFail?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position_fail']>;
   onSortClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['sort_click']>;
   onFreezeClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['freeze_click']>;
   onScroll?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll']>;
@@ -283,7 +285,7 @@ function App() {
 
 ### register
 
-在VTable中，图表、编辑器等组件需要通过resigister方法注册，才能正常使用；在React-VTable中，暴露了相应的register方法，可以直接使用。
+在 VTable 中，图表、编辑器等组件需要通过 resigister 方法注册，才能正常使用；在 React-VTable 中，暴露了相应的 register 方法，可以直接使用。
 
 ```jsx
 import { register } from '@visactor/react-vtable';

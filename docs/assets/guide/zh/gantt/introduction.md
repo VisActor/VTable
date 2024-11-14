@@ -20,7 +20,7 @@ VTable-Gantt 是一款基于 VTable 表格组件及 canvas 渲染器 VRender 构
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-structure.png)
 
-**注意：左侧的任务信息表在实现中对应的是一个完整的 ListTable。挂在 ganttInstable.listTableInstance 中，所以对应 ListTable 的接口及事件都是可以通过 listTableInstance 来直接使用的，同时如果想要排查左侧表格的问题也可以直接将 listTableInstance.options 取出查看是否符合预期**
+**注意：左侧的任务信息表在实现中对应的是一个完整的 ListTable。挂在 ganttInstable.taskListTableInstance 中，所以对应 ListTable 的接口及事件都是可以通过 taskListTableInstance 来直接使用的，同时如果想要排查左侧表格的问题也可以直接将 taskListTableInstance.options 取出查看是否符合预期**
 
  <div style="width: 50%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-leftListTable.png" />

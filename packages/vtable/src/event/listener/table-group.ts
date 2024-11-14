@@ -612,6 +612,17 @@ export function bindTableGroupListener(eventManager: EventManager) {
             },
             event: e.nativeEvent
           });
+        } else if (!endMoveColSuccess) {
+          if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL)) {
+            table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL, {
+              target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
+              source: {
+                col: table.stateManager.columnMove.colSource,
+                row: table.stateManager.columnMove.rowSource
+              },
+              event: e
+            });
+          }
         }
       } else if (stateManager.isSelecting()) {
         table.stateManager.endSelectCells();
