@@ -1347,14 +1347,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
+  isLeftTopCorner(col: number, row: number): boolean {
+    if (col >= 0 && col < this.frozenColCount && row >= 0 && row < this.frozenRowCount) {
+      return true;
+    }
+    return false;
+  }
   isLeftBottomCorner(col: number, row: number): boolean {
-    if (col >= 0 && col < this.rowHeaderLevelCount && row >= this.rowCount - this.bottomFrozenRowCount) {
+    if (col >= 0 && col < this.frozenColCount && row >= this.rowCount - this.bottomFrozenRowCount) {
       return true;
     }
     return false;
   }
   isRightTopCorner(col: number, row: number): boolean {
-    if (col >= this.colCount - this.rightFrozenColCount && row >= 0 && row < this.columnHeaderLevelCount) {
+    if (col >= this.colCount - this.rightFrozenColCount && row >= 0 && row < this.frozenRowCount) {
       return true;
     }
     return false;
