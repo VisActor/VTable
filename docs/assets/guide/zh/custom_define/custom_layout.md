@@ -222,7 +222,7 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 
 ## JSX 图元
 
-详细说明请参考 VRender 提供的教程：[TODO]
+详细说明请参考 VRender 提供的教程：[`VRender图元配置`](https://visactor.io/vrender/option/Group)
 
 ### 容器图元
 
@@ -415,19 +415,21 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 
 _- customLayout 支持对象创建的写法_
 
-CustomLayout 创建图元对象的写法，需要通过`new VTable.CustomLayout.XXX`创建图元，具体创建时配置属性可以参考[`VRender图元配置`](https://visactor.io/vrender/option/Group)
+CustomLayout 创建图元对象的写法，需要通过`createXXX`创建图元，具体创建时配置属性可以参考[`VRender图元配置`](https://visactor.io/vrender/option/Group)
 
 例如：
 
 ```ts
-const text1 = new VTable.CustomLayout.Text({
+import { createText, createGroup } from '@visactor/vtable/es/vrender';
+
+const text1 = new createText({
   text: 'text',
   fontSize: 28,
   fontFamily: 'sans-serif',
   fill: 'black'
 });
 
-const container = new VTable.CustomLayout.Container({
+const container = new createGroup({
   height,
   width
 });
@@ -439,16 +441,42 @@ return {
 };
 ```
 
-CustomLayout 常用图元与 jsx 图元对应如下：
+## 动画
 
-| JSX 图元  | CustomLayout 图元     |
-| :-------- | :-------------------- |
-| VRect     | CustomLayout.Rect     |
-| VCircle   | CustomLayout.Circle   |
-| VText     | CustomLayout.Text     |
-| VImage    | CustomLayout.Image    |
-| VLine     | CustomLayout.Line     |
-| VGroup    | CustomLayout.Group    |
-| VTag      | CustomLayout.Tag      |
-| VRadio    | CustomLayout.Radio    |
-| VCheckbox | CustomLayout.Checkbox |
+VTable支持在自定义布局中，使用VRender提供的动画能力，具体使用方法请参考[VRender动画](https://visactor.io/vrender/guide/asd/Basic_Tutorial/Animate)。需要注意的是动画需要配置为VTable实例上的timeline，以保证动画的一致性。
+
+如果以JSX方式创建图元，需要在图元标签上添加`animation`属性和`timeline`。`animation`属性为一个数组，内是VRender动画中的操作，会在实例化对象后进行链式调用，例如：
+```tsx
+<VImage
+  attribute={{
+    id: 'icon',
+    width: 50,
+    height: 50,
+    src: record.bloggerAvatar,
+    shape: 'circle',
+    anchor: [25, 25]
+  }}
+  animation={[
+    ['to', { angle: 2 * Math.PI }, 1000, 'linear'],
+    ['loop', Infinity]
+  ]}
+  timeline={table.animationManager.timeline}
+></VImage>
+```
+
+如果以实例化的方式创建图元，需要注意需要调用一次`animation.setTimeline(table.animationManager.timeline);`，例如：
+```ts
+const icon = new VTable.CustomLayout.Image({
+  id: 'icon',
+  width: 50,
+  height: 50,
+  src: record.bloggerAvatar,
+  shape: 'circle',
+  anchor: [25, 25]
+});
+iconGroup.add(icon);
+
+const animation = icon.animate();
+animation.setTimeline(table.animationManager.timeline);
+animation.to({ angle: 2 * Math.PI }, 1000, 'linear').loop(Infinity);
+```

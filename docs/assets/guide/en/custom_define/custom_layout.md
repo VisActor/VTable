@@ -222,7 +222,7 @@ Using the percentCalc method to specify the width and height of a container in p
 
 ## JSX Primitives
 
-For detailed instructions, please refer to the tutorial provided by VRender: [TODO]
+For detailed instructions, please refer to the tutorial provided by VRender: [`VRender Primitive Configuration`](https://visactor.io/vrender/option/Group)
 
 ### Container Primitives
 
@@ -415,19 +415,21 @@ label component
 
 _- customLayout supports object creation syntax_
 
-To create primitive objects using CustomLayout, you need to use `new VTable.CustomLayout.XXX` to create primitives. For specific configuration properties, refer to [`VRender Primitive Configuration`](https://visactor.io/vrender/option/Group)
+To create primitive objects using CustomLayout, you need to use `createXXX` to create primitives. For specific configuration properties, refer to [`VRender Primitive Configuration`](https://visactor.io/vrender/option/Group)
 
 For example:
 
 ```ts
-const text1 = new VTable.CustomLayout.Text({
+import { createText, createGroup } from '@visactor/vtable/es/vrender';
+
+const text1 = new createText({
   text: 'text',
   fontSize: 28,
   fontFamily: 'sans-serif',
   fill: 'black'
 });
 
-const container = new VTable.CustomLayout.Container({
+const container = new createGroup({
   height,
   width
 });
@@ -439,16 +441,43 @@ return {
 };
 ```
 
-The correspondence between CustomLayout common graphics elements and jsx graphics elements is as follows:
+## Animation
 
-| JSX graphic | CustomLayout graphic  |
-| :---------- | :-------------------- |
-| VRect       | CustomLayout.Rect     |
-| VCircle     | CustomLayout.Circle   |
-| VText       | CustomLayout.Text     |
-| VImage      | CustomLayout.Image    |
-| VLine       | CustomLayout.Line     |
-| VGroup      | CustomLayout.Group    |
-| VTag        | CustomLayout.Tag      |
-| VRadio      | CustomLayout.Radio    |
-| VCheckbox   | CustomLayout.Checkbox |
+VTable provides animation support for custom layouts, you can refer to the [VRender animation tutorial](https://visactor.io/vrender/guide/asd/Basic_Tutorial/Animate) for details. It should be noted that the animation needs to be configured as a timeline on the VTable instance to ensure the consistency of the animation.
+
+If you create a primitive in JSX, you need to add the `animation` attribute and `timeline` to the primitive tag. The `animation` attribute is an array containing the operations in the VRender animation, which will be chained after the object is instantiated, for example:
+```tsx
+<VImage
+  attribute={{
+    id: 'icon',
+    width: 50,
+    height: 50,
+    src: record.bloggerAvatar,
+    shape: 'circle',
+    anchor: [25, 25]
+  }}
+  animation={[
+    ['to', { angle: 2 * Math.PI }, 1000, 'linear'],
+    ['loop', Infinity]
+  ]}
+  timeline={table.animationManager.timeline}
+></VImage>
+```
+
+If you create a primitive in an instantiated way, you need to call `animation.setTimeline(table.animationManager.timeline);` once, for example:
+
+```ts
+const icon = new VTable.CustomLayout.Image({
+  id: 'icon',
+  width: 50,
+  height: 50,
+  src: record.bloggerAvatar,
+  shape: 'circle',
+  anchor: [25, 25]
+});
+iconGroup.add(icon);
+
+const animation = icon.animate();
+animation.setTimeline(table.animationManager.timeline);
+animation.to({ angle: 2 * Math.PI }, 1000, 'linear').loop(Infinity);
+```
