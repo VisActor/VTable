@@ -7,6 +7,11 @@
 `TextAutoPoptip`组件是`VRender`提供的一个交互组件，它的功能是在文本过长被省略时，hover到文本上，会自动弹出一个poptip，展示文本的全部内容。
 
 ``` javascript livedemo  template=vtable
+// only use for website
+const {createGroup, createText} = VRender;
+// use this for project
+// import {createGroup, createText} from '@visactor/vtable/es/vrender';
+
   const option = {
     columns:[
       {
@@ -45,7 +50,7 @@
         let top=30;
         const left=15;
 
-        const container = new VTable.CustomLayout.Group({
+        const container = createGroup({
           height,
           width,
           display: 'flex',
@@ -55,7 +60,7 @@
           justifyContent: 'space-around',
         });
 
-        const text = new VTable.CustomLayout.Text({
+        const text = createText({
           fill: '#000',
           fontSize: 20,
           fontWeight: 500, 

@@ -31,6 +31,11 @@ ListTable的option中，配置`groupBy`字段，值为分组字段名称，可�
 ## 示例
 
 ```javascript livedemo template=vtable
+// only use for website
+const {createGroup, createText, createImage} = VRender;
+// use this for project
+// import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
+
 const records = [
    {
       name: 'John Smith',
@@ -202,7 +207,7 @@ const option = {
     const collapseDown = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
     <path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 6.81235Z" fill="#141414" fill-opacity="0.65"/>
     </svg>`;
-    const container = new VTable.CustomLayout.Group({
+    const container = createGroup({
       height,
       width,
       display: 'flex',
@@ -211,7 +216,7 @@ const option = {
       cursor: 'pointer',
       alignItems: 'center'
     });
-    const icon = new VTable.CustomLayout.Image({
+    const icon = createImage({
       // id: 'hierarchy',
       image: hierarchyState === 'collapse' ? collapseRight : collapseDown,
       width: 18,
@@ -240,7 +245,7 @@ const option = {
       event.currentTarget.stage.renderNextFrame();
     });
     container.add(icon);
-    const taskGroup = new VTable.CustomLayout.Group({
+    const taskGroup = createGroup({
       height,
       width: 340,
       display: 'flex',
@@ -250,7 +255,7 @@ const option = {
       alignItems: 'center',
       justifyContent: 'space-between'
     });
-    const leftGroup = new VTable.CustomLayout.Group({
+    const leftGroup = createGroup({
       height,
       display: 'flex',
       flexDirection: 'row',
@@ -258,7 +263,7 @@ const option = {
       cursor: 'pointer',
       alignItems: 'center'
     });
-    const avatar = new VTable.CustomLayout.Image({
+    const avatar = createImage({
       image: bloggerAvatar,
       width: 24,
       height: 24,
@@ -266,7 +271,7 @@ const option = {
       cursor: 'pointer',
       cornerRadius: 12
     });
-    const bloggerName = new VTable.CustomLayout.Text({
+    const bloggerName = createText({
       text: record.vtableMergeName,
       fontSize: 14,
       fill: 'black'
@@ -274,7 +279,7 @@ const option = {
     leftGroup.add(avatar);
     leftGroup.add(bloggerName);
     taskGroup.add(leftGroup);
-    const info = new VTable.CustomLayout.Text({
+    const info = createText({
       text: `${record.children.length} 条记录`,
       fontSize: 12
     });

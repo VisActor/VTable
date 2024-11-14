@@ -400,8 +400,8 @@ label component
 
 label component
 
-| key                     | type                                                                                                                          | description                                  |
-| :---------------------- | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | ------------------------------------------------- | ---------------- | ------------------- | ---------- |
+| key| type| description|
+| :--- | :--- | :------ |
 | interactive             | boolean                                                                                                                       | whether interactive                          |
 | disabled                | boolean                                                                                                                       | Whether to disable                           |
 | checked                 | boolean                                                                                                                       | Whether to check                             |
@@ -467,7 +467,9 @@ If you create a primitive in JSX, you need to add the `animation` attribute and 
 If you create a primitive in an instantiated way, you need to call `animation.setTimeline(table.animationManager.timeline);` once, for example:
 
 ```ts
-const icon = new VTable.CustomLayout.Image({
+import {createImage} from '@visactor/vtable/es/vrender';
+
+const icon = createImage({
   id: 'icon',
   width: 50,
   height: 50,

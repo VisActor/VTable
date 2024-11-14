@@ -18,6 +18,11 @@ Customize cell content to achieve image and text mixing effects
 ## Code demo
 
 ```javascript livedemo template=vtable
+// only use for website
+const {createGroup, createText, createImage, Tag, CheckBox, Radio} = VRender;
+// use this for project
+// import {createGroup, createText, createImage, Tag, CheckBox, Radio} from '@visactor/vtable/es/vrender';
+
 VTable.register.icon('location', {
   type: 'svg',
   name: 'location',
@@ -85,14 +90,14 @@ const option = {
         const { height, width } = rect ?? table.getCellRect(col, row);
         const percentCalc = VTable.CustomLayout.percentCalc;
 
-        const container = new VTable.CustomLayout.Group({
+        const container = createGroup({
           height,
           width,
           display: 'flex',
           flexDirection: 'row',
           flexWrap: 'nowrap'
         });
-        const containerLeft = new VTable.CustomLayout.Group({
+        const containerLeft = createGroup({
           height: percentCalc(100),
           width: 60,
           display: 'flex',
@@ -102,7 +107,7 @@ const option = {
         });
         container.add(containerLeft);
 
-        const icon0 = new VTable.CustomLayout.Image({
+        const icon0 = createImage({
           id: 'icon0',
           width: 50,
           height: 50,
@@ -111,7 +116,7 @@ const option = {
         });
         containerLeft.add(icon0);
 
-        const containerRight = new VTable.CustomLayout.Group({
+        const containerRight = createGroup({
           height: percentCalc(100),
           width: percentCalc(100, -60),
           display: 'flex',
@@ -120,14 +125,14 @@ const option = {
         });
         container.add(containerRight);
 
-        const containerRightTop = new VTable.CustomLayout.Group({
+        const containerRightTop = createGroup({
           height: percentCalc(50),
           width: percentCalc(100),
           display: 'flex',
           alignItems: 'flex-end'
         });
 
-        const containerRightBottom = new VTable.CustomLayout.Group({
+        const containerRightBottom = createGroup({
           height: percentCalc(50),
           width: percentCalc(100),
           display: 'flex',
@@ -137,7 +142,7 @@ const option = {
         containerRight.add(containerRightTop);
         containerRight.add(containerRightBottom);
 
-        const bloggerName = new VTable.CustomLayout.Text({
+        const bloggerName = createText({
           text: record.bloggerName,
           fontSize: 13,
           fontFamily: 'sans-serif',
@@ -145,7 +150,7 @@ const option = {
         });
         containerRightTop.add(bloggerName);
 
-        const location = new VTable.CustomLayout.Image({
+        const location = createImage({
           id: 'location',
           image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
           width: 15,
@@ -154,7 +159,7 @@ const option = {
         });
         containerRightTop.add(location);
 
-        const locationName = new VTable.CustomLayout.Text({
+        const locationName = createText({
           text: record.city,
           fontSize: 11,
           fontFamily: 'sans-serif',
@@ -163,7 +168,7 @@ const option = {
         containerRightTop.add(locationName);
 
         for (let i = 0; i < record?.tags?.length ?? 0; i++) {
-          const tag = new VTable.CustomLayout.Tag({
+          const tag = new Tag({
             text: record.tags[i],
             textStyle: {
               fontSize: 10,
@@ -239,7 +244,7 @@ const option = {
         const { table, row, col, rect } = args;
         const { height, width } = rect ?? table.getCellRect(col, row);
 
-        const container = new VTable.CustomLayout.Group({
+        const container = createGroup({
           height,
           width,
           display: 'flex',
@@ -248,7 +253,7 @@ const option = {
           justifyContent: 'center'
         });
 
-        const checkboxGroup = new VTable.CustomLayout.Group({
+        const checkboxGroup = createGroup({
           display: 'flex',
           flexDirection: 'row',
           flexWrap: 'no-wrap',
@@ -257,14 +262,14 @@ const option = {
         });
         container.appendChild(checkboxGroup);
 
-        const checkboxText = new VTable.CustomLayout.Text({
+        const checkboxText = createText({
           text: 'operate: ',
           fontSize: 12,
           boundsPadding: [0, 10, 0, 0]
         });
         checkboxGroup.appendChild(checkboxText);
 
-        const checkbox1 = new VTable.CustomLayout.CheckBox({
+        const checkbox1 = new CheckBox({
           text: {
             text: 'like',
             fontSize: 12
@@ -278,7 +283,7 @@ const option = {
           console.log('checkbox_state_change', e);
         });
 
-        const checkbox2 = new VTable.CustomLayout.CheckBox({
+        const checkbox2 = new CheckBox({
           text: {
             text: 'collect',
             fontSize: 12
@@ -292,7 +297,7 @@ const option = {
           console.log('checkbox_state_change', e);
         });
 
-        const radioGroup = new VTable.CustomLayout.Group({
+        const radioGroup = createGroup({
           display: 'flex',
           flexDirection: 'row',
           flexWrap: 'no-wrap',
@@ -300,14 +305,14 @@ const option = {
         });
         container.appendChild(radioGroup);
 
-        const radioText = new VTable.CustomLayout.Text({
+        const radioText = createText({
           text: 'type: ',
           fontSize: 12,
           boundsPadding: [0, 10, 0, 0]
         });
         radioGroup.appendChild(radioText);
 
-        const radio1 = new VTable.CustomLayout.Radio({
+        const radio1 = new Radio({
           text: {
             text: 'normal',
             fontSize: 12
@@ -325,7 +330,7 @@ const option = {
           }
         });
 
-        const radio2 = new VTable.CustomLayout.Radio({
+        const radio2 = new Radio({
           text: {
             text: 'special',
             fontSize: 12

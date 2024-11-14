@@ -19,7 +19,7 @@ option = {
     customLayout: (args) => {
       const {table, row, col, rect} = args;
       const {height, width} = rect ?? table.getCellRect(col, row);
-      const container = new VTable.CustomLayout.Group({
+      const container = createGroup({
         height,
         width,
       });
@@ -38,6 +38,11 @@ option = {
 ## Code Sample
 
 ```javascript livedemo template=vtable
+// only use for website
+const {createGroup, createText, createLine} = VRender;
+// use this for project
+// import {createGroup, createText, createLine} from '@visactor/vtable/es/vrender';
+
 let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
   .then(res => res.json())
@@ -52,7 +57,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         customLayout: (args) => {
           const {table, row, col, rect} = args;
           const {height, width} = rect ?? table.getCellRect(col, row);
-          const container = new VTable.CustomLayout.Group({
+          const container = createGroup({
             height,
             width,
           });
@@ -66,7 +71,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           // add corner text
           texts.forEach(({text, fontSize, x, y}) => {
             container.addChild(
-              new VTable.CustomLayout.Text({
+              createText({
                 text,
                 fontSize,
                 fontFamily: 'sans-serif',
@@ -85,7 +90,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 
           // add line
           container.addChild(
-            new VTable.CustomLayout.Line({
+            createLine({
               points: linePoints,
               lineWidth: 1,
               stroke: '#ccc',

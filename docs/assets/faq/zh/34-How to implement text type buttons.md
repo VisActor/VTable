@@ -20,6 +20,8 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,C
 ## 代码示例  
 
 ```
+import {createGroup, createText} from '@visactor/vtable/es/vrender';
+
   const option: VTable.ListTableConstructorOptions = {
     columns: [
       // ......
@@ -31,7 +33,7 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,C
           const { table, row, col, rect } = args;
           const { height, width } = rect ?? table.getCellRect(col, row);
 
-          const container = new VTable.CustomLayout.Group({
+          const container = createGroup({
             height,
             width,
             display: 'flex',
@@ -39,7 +41,7 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,C
             flexWrap: 'nowrap'
           });
 
-          const editText = new VTable.CustomLayout.Text({
+          const editText = createText({
             text: '编辑',
             fontSize: 13,
             fontFamily: 'sans-serif',
@@ -87,6 +89,8 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,C
 
 完整示例代码（可以粘贴到 [编辑器](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Fdemo%2Ftable-type%2Flist-table-tree) 上尝试一下）：</br>
 ```
+import {createGroup, createText} from '@visactor/vtable/es/vrender';
+
   const option = {
     container: document.getElementById(CONTAINER_ID),
     columns: [
@@ -107,7 +111,7 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,C
           const { table, row, col, rect } = args;
           const { height, width } = rect ?? table.getCellRect(col, row);
 
-          const container = new VTable.CustomLayout.Group({
+          const container = createGroup({
             height,
             width,
             display: 'flex',
@@ -115,7 +119,7 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,C
             flexWrap: 'nowrap'
           });
 
-          const editText = new VTable.CustomLayout.Text({
+          const editText = createText({
             text: '编辑',
             fontSize: 13,
             fontFamily: 'sans-serif',
@@ -145,7 +149,7 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,C
           });
           container.add(editText);
 
-          const deleteText = new VTable.CustomLayout.Text({
+          const deleteText = createText({
             text: '删除',
             fontSize: 13,
             fontFamily: 'sans-serif',

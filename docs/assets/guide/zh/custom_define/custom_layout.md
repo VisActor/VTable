@@ -400,8 +400,8 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 
 标签组件
 
-| key                     | type                                                                                                                          | description                |
-| :---------------------- | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------- | ------------------------------------------------- | ---------------- | ------------------- | -------- |
+| key| type| description|
+| :--- | :--- | :------ |
 | interactive             | boolean                                                                                                                       | 是否可交互                 |
 | disabled                | boolean                                                                                                                       | 是否禁用                   |
 | checked                 | boolean                                                                                                                       | 是否选中                   |
@@ -466,7 +466,9 @@ VTable支持在自定义布局中，使用VRender提供的动画能力，具体�
 
 如果以实例化的方式创建图元，需要注意需要调用一次`animation.setTimeline(table.animationManager.timeline);`，例如：
 ```ts
-const icon = new VTable.CustomLayout.Image({
+import {createImage} from '@visactor/vtable/es/vrender';
+
+const icon = createImage({
   id: 'icon',
   width: 50,
   height: 50,
