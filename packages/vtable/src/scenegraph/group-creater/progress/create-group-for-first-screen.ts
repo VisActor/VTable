@@ -44,7 +44,7 @@ export function createGroupForFirstScreen(
     // distRow = table.rowCount - 1;
     // proxy.rowEnd = distRow;
 
-    distColForCompute = table.rowCount - 1;
+    distRowForCompute = table.rowCount - 1;
     distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1);
   } else {
     distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1);
