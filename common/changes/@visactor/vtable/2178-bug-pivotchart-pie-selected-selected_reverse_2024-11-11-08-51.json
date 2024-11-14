@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: pivot chart pie type selected state not work #2178\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

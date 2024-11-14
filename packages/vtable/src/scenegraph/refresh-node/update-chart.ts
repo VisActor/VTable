@@ -297,10 +297,13 @@ export function updateChartData(scenegraph: Scenegraph) {
       cellNode.children.forEach((node: Chart) => {
         if ((node as any).type === 'chart') {
           node.updateData(table.getCellValue(col, row));
-          const newAxes = table.internalProps.layoutMap.getChartAxes(col, row);
-          node.setAttribute('axes', newAxes);
           const chartSpec = node.attribute.spec;
-          chartSpec.axes = newAxes;
+          const chartType = chartSpec.type;
+          if (chartType !== 'gauge' && chartType !== 'rose' && chartType !== 'radar') {
+            const newAxes = table.internalProps.layoutMap.getChartAxes(col, row);
+            node.setAttribute('axes', newAxes);
+            chartSpec.axes = newAxes;
+          }
           node.setAttribute('spec', chartSpec);
           // node.addUpdateBoundTag();
         }

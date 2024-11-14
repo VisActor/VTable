@@ -1181,6 +1181,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         delete spec.area.state.selected;
         delete spec.area.state.selected_reverse;
       }
+      if (spec.pie?.state?.selected) {
+        spec.pie.state.vtable_selected = spec.pie.state.selected;
+        spec.pie.state.vtable_selected_reverse = spec.pie.state.selected_reverse;
+        delete spec.pie.state.selected;
+        delete spec.pie.state.selected_reverse;
+      }
     };
     this.internalProps.indicators?.forEach((indicator: string | IIndicator) => {
       if ((indicator as IChartColumnIndicator).chartSpec) {
