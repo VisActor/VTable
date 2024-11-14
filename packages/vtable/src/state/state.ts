@@ -586,12 +586,13 @@ export class StateManager {
     isCtrl: boolean = false,
     isSelectAll: boolean = false,
     isSelectMoving: boolean = false,
-    skipBodyMerge: boolean = false
+    skipBodyMerge: boolean = false,
+    forceSelect: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving, skipBodyMerge);
+    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving, skipBodyMerge, forceSelect);
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
