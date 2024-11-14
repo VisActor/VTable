@@ -167,8 +167,9 @@ In the list table tree display scenario, if you need to dynamically insert data 
 * @param records Set the data of the child nodes of this cell
 * @param col needs to set the cell address of the child node
 * @param row needs to set the cell address of the child node
+* @param recalculateColWidths Whether to automatically recalculate the width of the column after adding data, default value is true. (Case when has set width:auto or autoWidth is necessary to consider this parameter)
 */
-setRecordChildren(records: any[], col: number, row: number)
+setRecordChildren(records: any[], col: number, row: number, recalculateColWidths: boolean = true)
 ```
 
 ## setTreeNodeChildren(Function)
@@ -642,8 +643,9 @@ Tree expand and collapse state switch
    * Header switches level status
    * @param col
    * @param row
+   * @param recalculateColWidths Whether to recalculate the column width. Default is true. (Case when has set width:auto or autoWidth is necessary to consider this parameter)
    */
-  toggleHierarchyState(col: number, row: number)
+  toggleHierarchyState(col: number, row: number,recalculateColWidths: boolean = true)
 ```
 
 ## getHierarchyState(Function)
