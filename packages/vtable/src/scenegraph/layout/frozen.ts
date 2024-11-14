@@ -74,12 +74,7 @@ export function resetFrozen(scene: Scenegraph) {
   }
 
   updateReactComponentContainer(scene);
-
-  scene.deleteAllSelectBorder();
-  scene.table.stateManager.select.ranges.forEach(range => {
-    scene.updateCellSelectBorder(range);
-  });
-
+  scene.recreateAllSelectRangeComponents();
   // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
   scene.frozenColCount = scene.table.frozenColCount;
   scene.frozenRowCount = scene.colHeaderGroup.firstChild?.childrenCount ?? 0;
