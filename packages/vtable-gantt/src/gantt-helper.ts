@@ -1,6 +1,12 @@
 import { text } from 'stream/consumers';
 import type { Gantt } from './Gantt';
-import type { IMarkLine, IScrollStyle, ITimelineDateInfo, ITimelineScale } from './ts-types';
+import {
+  ShowHierarchyMode,
+  type IMarkLine,
+  type IScrollStyle,
+  type ITimelineDateInfo,
+  type ITimelineScale
+} from './ts-types';
 import { createDateAtMidnight, getWeekNumber } from './tools/util';
 
 const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
@@ -88,6 +94,7 @@ export { isNode };
 
 export function initOptions(gantt: Gantt) {
   const options = gantt.options;
+  gantt.parsedOptions.showHierarchyMode = options?.showHierarchyMode ?? ShowHierarchyMode.Full;
   gantt.parsedOptions.pixelRatio = options?.pixelRatio ?? 1;
   gantt.parsedOptions.rowHeight = options?.rowHeight ?? 40;
   gantt.parsedOptions.timelineColWidth = options?.timelineHeader?.colWidth ?? 60;
@@ -597,7 +604,8 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
 export function findRecordByTaskKey(
   records: any[],
   taskKeyField: string,
-  taskKey: string | number | (string | number)[]
+  taskKey: string | number | (string | number)[],
+  childrenField: string = 'children'
 ): { record: any; index: number[] } | undefined {
   for (let i = 0; i < records.length; i++) {
     if (
@@ -605,10 +613,10 @@ export function findRecordByTaskKey(
       records[i][taskKeyField] === taskKey
     ) {
       return { record: records[i], index: [i] };
-    } else if (records[i].children?.length) {
+    } else if (records[i][childrenField]?.length) {
       if (Array.isArray(taskKey) && taskKey[0] === records[i][taskKeyField]) {
         const result: { record: any; index: number[] } | undefined = findRecordByTaskKey(
-          records[i].children,
+          records[i][childrenField],
           taskKeyField,
           taskKey.slice(1)
         );
@@ -618,7 +626,7 @@ export function findRecordByTaskKey(
         }
       } else if (!Array.isArray(taskKey)) {
         const result: { record: any; index: number[] } | undefined = findRecordByTaskKey(
-          records[i].children,
+          records[i][childrenField],
           taskKeyField,
           taskKey
         );

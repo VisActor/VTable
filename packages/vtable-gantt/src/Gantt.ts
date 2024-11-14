@@ -24,6 +24,7 @@ import type {
   ITaskLinkSelectedStyle,
   IPointStyle
 } from './ts-types';
+import { ShowHierarchyMode } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
@@ -42,6 +43,7 @@ import {
 import { EventTarget } from './event/EventTarget';
 import { createDateAtMidnight, formatDate, isPropertyWritable, parseDateFormat } from './tools/util';
 import { DataSource } from './data/DataSource';
+import { isValid } from '@visactor/vutils';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
@@ -122,6 +124,7 @@ export class Gantt extends EventTarget {
 
     outerFrameStyle: IFrameStyle;
     pixelRatio: number;
+    showHierarchyMode: ShowHierarchyMode;
 
     startDateField: string;
     endDateField: string;
@@ -323,6 +326,19 @@ export class Gantt extends EventTarget {
       listTable_options[key] = this.options.taskListTable[key];
       if (key === 'columns') {
         listTable_options[key][listTable_options[key].length - 1].disableColumnResize = true;
+        if (this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline) {
+          for (let i = 0; i < listTable_options.columns.length; i++) {
+            if (listTable_options.columns[i].tree) {
+              listTable_options.columns[i].tree = false;
+            }
+          }
+        }
+      }
+      if (
+        key === 'hierarchyExpandLevel' &&
+        this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline
+      ) {
+        delete listTable_options[key];
       }
     }
     // lineWidthArr[1] = 0;
@@ -604,7 +620,10 @@ export class Gantt extends EventTarget {
   getTaskShowIndexByRecordIndex(index: number | number[]) {
     return this.taskListTableInstance.getBodyRowIndexByRecordIndex(index);
   }
-  getRecordByIndex(taskShowIndex: number) {
+  getRecordByIndex(taskShowIndex: number, sub_task_id?: number) {
+    if (isValid(sub_task_id)) {
+      return this.records[taskShowIndex]?.children?.[sub_task_id];
+    }
     if (this.taskListTableInstance) {
       return this.taskListTableInstance.getRecordByRowCol(
         0,
@@ -675,13 +694,79 @@ export class Gantt extends EventTarget {
     };
   }
   /**
+   * 获取指定index处任务数据的具体信息
+   * @param index
+   * @returns 当前任务信息
+   */
+  getTaskInfoByTaskListIndexs(
+    taskShowIndex: number,
+    subTaskIndex: number
+  ): {
+    taskRecord: any;
+    taskDays: number;
+    startDate: Date;
+    endDate: Date;
+    progress: number;
+  } {
+    const taskParentRecord = this.getRecordByIndex(taskShowIndex);
+    if (taskParentRecord.children?.length) {
+      const taskRecord = taskParentRecord.children[subTaskIndex];
+      const startDateField = this.parsedOptions.startDateField;
+      const endDateField = this.parsedOptions.endDateField;
+      const progressField = this.parsedOptions.progressField;
+      const rawDateStartDateTime = createDateAtMidnight(taskRecord?.[startDateField]).getTime();
+      const rawDateEndDateTime = createDateAtMidnight(taskRecord?.[endDateField]).getTime();
+      if (
+        rawDateEndDateTime < this.parsedOptions._minDateTime ||
+        rawDateStartDateTime > this.parsedOptions._maxDateTime ||
+        !taskRecord?.[startDateField] ||
+        !taskRecord?.[endDateField]
+      ) {
+        return {
+          taskDays: 0,
+          progress: 0,
+          startDate: null,
+          endDate: null,
+          taskRecord
+        };
+      }
+      const startDate = createDateAtMidnight(
+        Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
+      );
+      const endDate = createDateAtMidnight(
+        Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
+      );
+      const progress = convertProgress(taskRecord[progressField]);
+      const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      return {
+        taskRecord,
+        taskDays,
+        startDate,
+        endDate,
+        progress
+      };
+    }
+    return {
+      taskDays: 0,
+      progress: 0,
+      startDate: null,
+      endDate: null,
+      taskRecord: null
+    };
+  }
+  /**
    * 拖拽任务条或者调整任务条尺寸修改日期更新到数据中
    * @param updateDateType
    * @param days
    * @param index
    */
-  _updateDateToTaskRecord(updateDateType: 'move' | 'start-move' | 'end-move', days: number, index: number) {
-    const taskRecord = this.getRecordByIndex(index);
+  _updateDateToTaskRecord(
+    updateDateType: 'move' | 'start-move' | 'end-move',
+    days: number,
+    index: number,
+    sub_task_id?: number
+  ) {
+    const taskRecord = this.getRecordByIndex(index, sub_task_id);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
     const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[startDateField]);

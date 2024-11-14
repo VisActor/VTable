@@ -1,7 +1,7 @@
 import { clone, cloneDeep, isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import type { ITaskLink } from '../ts-types';
-import { InteractionState, GANTT_EVENT_TYPE, DependencyType } from '../ts-types';
+import { InteractionState, GANTT_EVENT_TYPE, DependencyType, ShowHierarchyMode } from '../ts-types';
 import type { Group, FederatedPointerEvent, Polygon, Line, Circle } from '@visactor/vtable/es/vrender';
 import {
   syncEditCellFromTable,
@@ -319,7 +319,7 @@ export class StateManager {
   isMoveingTaskBar() {
     return this.moveTaskBar.moving;
   }
-  endMoveTaskBar(x: number) {
+  endMoveTaskBar() {
     if (this.moveTaskBar.moveTaskBarXInertia.isInertiaScrolling()) {
       this.moveTaskBar.moveTaskBarXInertia.endInertia();
     }
@@ -340,11 +340,13 @@ export class StateManager {
 
     // }
     if (Math.abs(days) >= 1) {
-      const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
-      const oldRecord = this._gantt.getRecordByIndex(taskIndex);
+      // const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
+      const taskIndex = this.moveTaskBar.target.id;
+      const sub_task_id = this.moveTaskBar.target.sub_task_id;
+      const oldRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_id);
       const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
       const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
-      this._gantt._updateDateToTaskRecord('move', days, taskIndex);
+      this._gantt._updateDateToTaskRecord('move', days, taskIndex, sub_task_id);
       if (this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
         const newRecord = this._gantt.getRecordByIndex(taskIndex);
         this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
@@ -692,12 +694,24 @@ export class StateManager {
 
     const { taskKeyField, dependencyLinks } = this._gantt.parsedOptions;
     const { linkedToTaskKey, linkedFromTaskKey, type } = link;
+    let linkFrom_index;
+    let linkFrom_sub_task_index;
+    let linkTo_index;
+    let linkTo_sub_task_index;
     const linkedToTaskRecord = findRecordByTaskKey(this._gantt.records, taskKeyField, linkedToTaskKey);
     const linkedFromTaskRecord = findRecordByTaskKey(this._gantt.records, taskKeyField, linkedFromTaskKey);
-    const linkedFromTaskShowIndex = this._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
-    const linkedToTaskShowIndex = this._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+    if (this._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline) {
+      linkFrom_index = linkedFromTaskRecord.index[0];
+      linkFrom_sub_task_index = linkedFromTaskRecord.index[1];
+      linkTo_index = linkedToTaskRecord.index[0];
+      linkTo_sub_task_index = linkedToTaskRecord.index[1];
+    } else {
+      linkFrom_index = this._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+      linkTo_index = this._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+    }
     const fromTaskNode = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(
-      linkedFromTaskShowIndex
+      linkFrom_index,
+      linkFrom_sub_task_index
     ) as GanttTaskBarNode;
     this._gantt.scenegraph.taskBar.createSelectedBorder(
       fromTaskNode.attribute.x,
@@ -707,7 +721,10 @@ export class StateManager {
       fromTaskNode,
       false
     );
-    const toTaskNode = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(linkedToTaskShowIndex) as GanttTaskBarNode;
+    const toTaskNode = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(
+      linkTo_index,
+      linkTo_sub_task_index
+    ) as GanttTaskBarNode;
     this._gantt.scenegraph.taskBar.createSelectedBorder(
       toTaskNode.attribute.x,
       toTaskNode.attribute.y,

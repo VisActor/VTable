@@ -5,6 +5,7 @@ import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/
 import { isValid } from '@visactor/vutils';
 import { getTextPos } from '../gantt-helper';
 import { GanttTaskBarNode } from './gantt-node';
+import { ShowHierarchyMode } from '../ts-types';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -54,15 +55,40 @@ export class TaskBar {
     this.group.appendChild(this.barContainer);
 
     for (let i = 0; i < this._scene._gantt.itemCount; i++) {
-      const barGroup = this.initBar(i);
-      if (barGroup) {
-        this.barContainer.appendChild(barGroup);
+      if (this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline) {
+        const record = this._scene._gantt.getRecordByIndex(i);
+        if (record.children?.length > 0) {
+          for (let j = 0; j < record.children.length; j++) {
+            const barGroup = this.initBar(i, j);
+            if (barGroup) {
+              this.barContainer.appendChild(barGroup);
+            }
+          }
+        }
+        continue;
+      } else {
+        const barGroup = this.initBar(i);
+        if (barGroup) {
+          this.barContainer.appendChild(barGroup);
+        }
       }
     }
   }
-  initBar(index: number) {
+  initBar(index: number, childIndex?: number) {
     const taskBarCustomLayout = this._scene._gantt.parsedOptions.taskBarCustomLayout;
-    const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(index);
+    let startDate;
+    let endDate;
+    let taskDays;
+    let progress;
+    let taskRecord;
+    if (isValid(childIndex)) {
+      ({ startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndexs(
+        index,
+        childIndex
+      ));
+    } else {
+      ({ startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(index));
+    }
     if (taskDays <= 0 || !startDate || !endDate) {
       return null;
     }
@@ -85,6 +111,8 @@ export class TaskBar {
     });
     barGroup.name = 'task-bar';
     barGroup.id = index;
+    barGroup.sub_task_id = childIndex;
+    barGroup.record = taskRecord;
     // this.barContainer.appendChild(barGroup);
     let rootContainer;
     let renderDefaultBar = true;
@@ -397,13 +425,13 @@ export class TaskBar {
     this.selectedBorders[0].appendChild(line);
   }
 
-  getTaskBarNodeByIndex(index: number) {
+  getTaskBarNodeByIndex(index: number, sub_task_id?: number) {
     let c = this.barContainer.firstChild as Group;
     if (!c) {
       return null;
     }
     for (let i = 0; i < this.barContainer.childrenCount; i++) {
-      if (c.id === index) {
+      if (c.id === index && (!isValid(sub_task_id) || (isValid(sub_task_id) && c.sub_task_id === sub_task_id))) {
         return c;
       }
       c = c._next as Group;

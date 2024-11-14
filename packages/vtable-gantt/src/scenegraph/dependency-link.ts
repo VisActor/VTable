@@ -7,7 +7,7 @@ import { isValid } from '@visactor/vutils';
 import { findRecordByTaskKey, getTextPos } from '../gantt-helper';
 import type { GanttTaskBarNode } from './gantt-node';
 import type { ITaskLink } from '../ts-types';
-import { DependencyType } from '../ts-types';
+import { DependencyType, ShowHierarchyMode } from '../ts-types';
 
 export class DependencyLink {
   group: Group;
@@ -65,19 +65,44 @@ export class DependencyLink {
     }
     linkedFromTaskRecord.record.vtable_gantt_linkedFrom.push(link);
 
-    const linkedFromTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
-    const linkedToTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+    let linkedToTaskStartDate;
+    let linkedToTaskEndDate;
+    let linkedToTaskTaskDays;
+    let linkedFromTaskStartDate;
+    let linkedFromTaskEndDate;
+    let linkedFromTaskTaskDays;
 
-    const {
-      startDate: linkedToTaskStartDate,
-      endDate: linkedToTaskEndDate,
-      taskDays: linkedToTaskTaskDays
-    } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex);
-    const {
-      startDate: linkedFromTaskStartDate,
-      endDate: linkedFromTaskEndDate,
-      taskDays: linkedFromTaskTaskDays
-    } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex);
+    let linkedToTaskShowIndex;
+    let linkedFromTaskShowIndex;
+
+    if (this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline) {
+      linkedFromTaskShowIndex = linkedFromTaskRecord.index[0];
+      linkedToTaskShowIndex = linkedToTaskRecord.index[0];
+      ({
+        startDate: linkedToTaskStartDate,
+        endDate: linkedToTaskEndDate,
+        taskDays: linkedToTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndexs(linkedToTaskRecord.index[0], linkedToTaskRecord.index[1]));
+      ({
+        startDate: linkedFromTaskStartDate,
+        endDate: linkedFromTaskEndDate,
+        taskDays: linkedFromTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndexs(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
+    } else {
+      linkedFromTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+      linkedToTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+
+      ({
+        startDate: linkedToTaskStartDate,
+        endDate: linkedToTaskEndDate,
+        taskDays: linkedToTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex));
+      ({
+        startDate: linkedFromTaskStartDate,
+        endDate: linkedFromTaskEndDate,
+        taskDays: linkedFromTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex));
+    }
     if (!linkedFromTaskTaskDays || !linkedToTaskTaskDays) {
       return;
     }

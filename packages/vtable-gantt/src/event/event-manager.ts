@@ -4,7 +4,7 @@ import type { Gantt } from '../Gantt';
 import { EventHandler } from '../event/EventHandler';
 import { handleWhell } from '../event/scroll';
 import { formatDate, parseDateFormat, throttle } from '../tools/util';
-import { GANTT_EVENT_TYPE, InteractionState } from '../ts-types';
+import { GANTT_EVENT_TYPE, InteractionState, ShowHierarchyMode } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
 import { DayTimes, getDateIndexByX, getTaskIndexByY } from '../gantt-helper';
@@ -163,10 +163,13 @@ function bindTableGroupListener(event: EventManager) {
           }
         }
         //#region hover到某一个任务 检查有没有日期安排，没有的话显示创建按钮
-        if (gantt.parsedOptions.taskBarCreatable) {
+        if (
+          gantt.parsedOptions.showHierarchyMode !== ShowHierarchyMode.Sub_Tasks_Inline &&
+          gantt.parsedOptions.taskBarCreatable
+        ) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);
           const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
-          if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord) {
+          if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord && !recordTaskInfo.taskRecord.vtableMerge) {
             const dateIndex = getDateIndexByX(e.offset.x, gantt);
             const showX = dateIndex * gantt.parsedOptions.timelineColWidth - gantt.stateManager.scroll.horizontalBarPos;
             const showY = taskIndex * gantt.parsedOptions.rowHeight - gantt.stateManager.scroll.verticalBarPos;
@@ -509,7 +512,7 @@ function bindContainerDomListener(eventManager: EventManager) {
       if (stateManager.isResizingTableWidth()) {
         stateManager.endResizeTableWidth();
       } else if (stateManager.isMoveingTaskBar()) {
-        stateManager.endMoveTaskBar(e.x);
+        stateManager.endMoveTaskBar();
       } else if (stateManager.isResizingTaskBar()) {
         stateManager.endResizeTaskBar(e.x);
       }

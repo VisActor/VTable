@@ -187,6 +187,9 @@ export interface GanttConstructorOptions {
 
   /** 表格绘制范围外的canvas上填充的颜色 */
   underlayBackgroundColor?: string;
+  groupBy?: true | string | string[];
+  /** 展示嵌套结构数据时的模式，默认为full。*/
+  showHierarchyMode?: ShowHierarchyMode;
 }
 /**
  * IBarLabelText
@@ -328,6 +331,14 @@ export enum DependencyType {
   StartToStart = 'start_to_start',
   FinishToFinish = 'finish_to_finish',
   StartToFinish = 'start_to_finish'
+}
+export enum ShowHierarchyMode {
+  /** 每一个节点用单独一行来展示，也就是父子任务的节点都占用一行 */
+  Full = 'full',
+  /** 省去父节点，把所有子任务的节点都放到同一行来展示。 */
+  Sub_Tasks_Inline = 'sub_tasks_inline',
+  /** 所有子任务的节点分别用一行展示。*/
+  Sub_Tasks = 'sub_tasks'
 }
 export type ITaskBarSelectedStyle = {
   shadowBlur?: number; //阴影宽度

@@ -65,6 +65,14 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-listTable'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-table-groupBy'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Sub_Tasks_Inline'
   }
   //   ]
   // }
