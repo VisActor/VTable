@@ -790,6 +790,8 @@ Show tooltip information prompt box
 
 Note: For the time being, it only supports setting tooltip.renderMode='html' globally, and calling this interface is valid
 
+If you want the tooltip to be hover by the mouse, you need to configure the interface tooltip.disappearDelay so that it does not disappear immediately.
+
 Where the TooltipOptions type is:
 
 ```
@@ -816,6 +818,8 @@ export type TooltipOptions = {
     padding?: number[];
     arrowMark?: boolean;
   };
+  /** set tooltip's  vanishing time */
+  disappearDelay?: number;
 };
 
 ```
