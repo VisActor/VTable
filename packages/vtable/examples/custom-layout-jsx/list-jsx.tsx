@@ -17,7 +17,7 @@ export function createTable() {
       {
         field: 'bloggerName',
         caption: '主播昵称',
-        width: 'auto',
+        // width: 'auto',
         editor: '',
         customLayout: args => {
           const { table, row, col, rect } = args;
@@ -56,6 +56,11 @@ export function createTable() {
                     image: record.bloggerAvatar,
                     cornerRadius: 25
                   }}
+                  // animation={[
+                  //   ['to', { angle: 2 * Math.PI }, 1000, 'linear'],
+                  //   ['loop', Infinity]
+                  // ]}
+                  // timeline={table.animationManager.timeline}
                 ></VImage>
               </VGroup>
               <VGroup
