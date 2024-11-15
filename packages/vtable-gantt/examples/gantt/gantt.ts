@@ -980,8 +980,14 @@ export function createTable() {
   ganttInstance.on('click_task_bar', e => {
     console.log('click_task_bar', e);
   });
-  ganttInstance.listTableInstance?.on('scroll', e => {
+  ganttInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
+  });
+  ganttInstance.taskListTableInstance?.on('change_header_position_start', e => {
+    console.log('change_header_position_start ', e);
+  });
+  ganttInstance.taskListTableInstance?.on('changing_header_position', e => {
+    console.log('changing_header_position ', e);
   });
   bindDebugTool(ganttInstance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']

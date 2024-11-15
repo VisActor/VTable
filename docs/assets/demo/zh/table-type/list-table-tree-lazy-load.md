@@ -206,6 +206,7 @@ instance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
   // TODO 调用接口插入设置子节点的数据
   if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && !Array.isArray(args.originData.children)) {
     const record = args.originData;
+    instance.setLoadingHierarchyState(args.col, args.row);
     setTimeout(() => {
       const children = [
         {
@@ -235,7 +236,7 @@ instance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
         }
       ];
       instance.setRecordChildren(children, args.col, args.row);
-    }, 200);
+    }, 2000);
   }
 });
 window['tableInstance'] = tableInstance;

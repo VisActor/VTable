@@ -167,8 +167,9 @@ In the list table tree display scenario, if you need to dynamically insert data 
 * @param records Set the data of the child nodes of this cell
 * @param col needs to set the cell address of the child node
 * @param row needs to set the cell address of the child node
+* @param recalculateColWidths Whether to automatically recalculate the width of the column after adding data, default value is true. (Case when has set width:auto or autoWidth is necessary to consider this parameter)
 */
-setRecordChildren(records: any[], col: number, row: number)
+setRecordChildren(records: any[], col: number, row: number, recalculateColWidths: boolean = true)
 ```
 
 ## setTreeNodeChildren(Function)
@@ -642,8 +643,9 @@ Tree expand and collapse state switch
    * Header switches level status
    * @param col
    * @param row
+   * @param recalculateColWidths Whether to recalculate the column width. Default is true. (Case when has set width:auto or autoWidth is necessary to consider this parameter)
    */
-  toggleHierarchyState(col: number, row: number)
+  toggleHierarchyState(col: number, row: number,recalculateColWidths: boolean = true)
 ```
 
 ## getHierarchyState(Function)
@@ -790,6 +792,8 @@ Show tooltip information prompt box
 
 Note: For the time being, it only supports setting tooltip.renderMode='html' globally, and calling this interface is valid
 
+If you want the tooltip to be hover by the mouse, you need to configure the interface tooltip.disappearDelay so that it does not disappear immediately.
+
 Where the TooltipOptions type is:
 
 ```
@@ -816,6 +820,8 @@ export type TooltipOptions = {
     padding?: number[];
     arrowMark?: boolean;
   };
+  /** set tooltip's  vanishing time */
+  disappearDelay?: number;
 };
 
 ```
@@ -1311,4 +1317,12 @@ Directly set the width and height of the canvas instead of determining the size 
 ```
 /** Directly set the width and height of the canvas instead of determining the size of the table based on the width and height of the container */
 setCanvasSize: (width: number, height: number) => void;
+```
+
+## setLoadingHierarchyState(Function)
+
+Set the loading state of the tree expansion and collapse of the cell
+```
+  /** Set the loading state of the tree expansion and collapse of the cell */
+  setLoadingHierarchyState: (col: number, row: number) => void;
 ```

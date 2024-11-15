@@ -275,9 +275,13 @@ interface ListTableConstructorOptions {
 
 需要校验的情况 请自定义编辑器实现校验函数`validateValue`
 
-如未定义该接口则编辑值值默认不做校验，接口返回 false，校验失败则保留在编辑状态;
+如未定义该接口则编辑值值默认不做校验；
+
+接口返回 false，校验失败则保留在编辑状态; 返回 true，校验成功则提交编辑值。
 
 若需要实现异步校验，可以返回一个 Promise 对象，该 Promise 对象在校验成功时以真值解析，校验失败时以假值解析。
+
+同时粘贴单元格数据时，也会调用校验函数`validateValue`。
 
 ## 9. 相关 api
 
@@ -311,7 +315,7 @@ interface ListTableAPI {
 
 **透视表的表头编辑会对应修改 records 中的 field 名称；**
 
-**在透视表中，当body中某个单元格对应的源数据records只有一条的时候当编辑后 会对应修改record的字段值。但是当单元格对应聚合了多条records数据的指标值时，是不支持对应修改到源数据的。**
+**在透视表中，当 body 中某个单元格对应的源数据 records 只有一条的时候当编辑后 会对应修改 record 的字段值。但是当单元格对应聚合了多条 records 数据的指标值时，是不支持对应修改到源数据的。**
 
 具体单元格对应的源数据可以通过接口`getCellOriginRecord`来获取。
 

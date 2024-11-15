@@ -101,7 +101,7 @@ import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { EditManeger } from '../edit/edit-manager';
-import type { TableAnimationManager } from '../core/animation';
+import type { ITableAnimationOption, TableAnimationManager } from '../core/animation';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -375,6 +375,8 @@ export interface BaseTableConstructorOptions {
     outsideClickDeselect?: boolean; //
     /**  禁止拖拽框选 */
     disableDragSelect?: boolean;
+    /** 是否在选择多行或多列时高亮范围 */
+    highlightInRange?: boolean;
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
@@ -418,6 +420,8 @@ export interface BaseTableConstructorOptions {
   widthAdaptiveMode?: WidthAdaptiveModeDef;
   /** adaptive 模式下高度的适应策略 **/
   heightAdaptiveMode?: HeightAdaptiveModeDef;
+
+  autoHeightInAdaptiveMode?: boolean;
 
   // /** 行高是否根据内容来计算 */
   // autoRowHeight?: boolean;
@@ -504,6 +508,9 @@ export interface BaseTableConstructorOptions {
 
     // 行列移动不更新表格
     notUpdateInColumnRowMove?: boolean;
+
+    // 表格是否限制内容高度
+    limitContentHeight?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -857,7 +864,9 @@ export interface BaseTableAPI {
    * 滚动到具体某个单元格位置
    * @param cellAddr 要滚动到的单元格位置
    */
-  scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
+  scrollToCell: (cellAddr: { col?: number; row?: number }, animationOption?: ITableAnimationOption | boolean) => void;
+  scrollToRow: (row: number, animationOption?: ITableAnimationOption | boolean) => void;
+  scrollToCol: (col: number, animationOption?: ITableAnimationOption | boolean) => void;
   registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
   arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
 

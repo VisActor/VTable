@@ -167,7 +167,7 @@ export function createTable() {
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
-    autoFillHeight: true,
+    // autoFillHeight: true,
     // heightMode: 'adaptive',
     allowFrozenColCount: 2,
     records: data,
@@ -175,10 +175,10 @@ export function createTable() {
     hierarchyIndent: 20,
     hierarchyExpandLevel: 2,
 
-    sortState: {
-      field: '销售额',
-      order: 'desc'
-    },
+    // sortState: {
+    //   field: '销售额',
+    //   order: 'desc'
+    // },
     theme: VTable.themes.BRIGHT,
     defaultRowHeight: 32,
     select: {
@@ -195,6 +195,7 @@ export function createTable() {
     // TODO 调用接口插入设置子节点的数据
     if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && !Array.isArray(args.originData.children)) {
       const record = args.originData;
+      instance.setLoadingHierarchyState(args.col, args.row);
       setTimeout(() => {
         const children = [
           {
@@ -224,7 +225,7 @@ export function createTable() {
           }
         ];
         instance.setRecordChildren(children, args.col, args.row);
-      }, 200);
+      }, 2000);
     }
   });
 

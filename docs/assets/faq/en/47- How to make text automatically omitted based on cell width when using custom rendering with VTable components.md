@@ -14,11 +14,13 @@ When using custom rendering with VTable in the product, the cell contains icon a
 
 We use the customLayout provided by VTable, which can automatically layout and automatically measure the width to adapt to the cell width. The specific writing method is as follows:</br>
 ```
+import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
+
   customLayout: (args) => {
         const { table,row,col,rect } = args;
         const record = table.getRecordByCell(col,row);
         const  {height, width } = rect ?? table.getCellRect(col,row);
-        const container = new VTable.CustomLayout.Group({
+        const container = createGroup({
           height,
           width,
           display: 'flex',
@@ -26,7 +28,7 @@ We use the customLayout provided by VTable, which can automatically layout and a
           alignItems: 'center',
           justifyContent: 'flex-front'
        });
-        const bloggerAvatar = new VTable.CustomLayout.Image({
+        const bloggerAvatar = createImage({
           id: 'icon0',
           width: 20,
           height: 20,
@@ -34,7 +36,7 @@ We use the customLayout provided by VTable, which can automatically layout and a
           cornerRadius: 10,
         });
         container.add(bloggerAvatar);
-        const bloggerName = new VTable.CustomLayout.Text({
+        const bloggerName = createText({
           text:record.bloggerName,
           fontSize: 13,
           x:20,
@@ -53,6 +55,7 @@ CustomLayout needs to return a rootContainer, usually a Group object, to serve a
 ## Code Examples
 
 ```
+import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
 
   const option = {
     columns:[
@@ -72,7 +75,7 @@ CustomLayout needs to return a rootContainer, usually a Group object, to serve a
         const { table,row,col,rect } = args;
         const record = table.getRecordByCell(col,row);
         const  {height, width } = rect ?? table.getCellRect(col,row);
-        const container = new VTable.CustomLayout.Group({
+        const container = createGroup({
           height,
           width,
           display: 'flex',
@@ -80,7 +83,7 @@ CustomLayout needs to return a rootContainer, usually a Group object, to serve a
           alignItems: 'center',
           justifyContent: 'flex-front'
        });
-        const bloggerAvatar = new VTable.CustomLayout.Image({
+        const bloggerAvatar = createImage({
           id: 'icon0',
           width: 20,
           height: 20,
@@ -88,7 +91,7 @@ CustomLayout needs to return a rootContainer, usually a Group object, to serve a
           cornerRadius: 10,
         });
         container.add(bloggerAvatar);
-        const bloggerName = new VTable.CustomLayout.Text({
+        const bloggerName = createText({
           text:record.bloggerName,
           fontSize: 13,
           x:20,

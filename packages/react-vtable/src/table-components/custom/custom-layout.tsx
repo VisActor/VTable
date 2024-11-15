@@ -31,7 +31,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
   // customLayout function for vtable
   const createGraphic: ICustomLayoutFuc = useCallback(
     args => {
-      const key = `${(args as any).originCol}-${(args as any).originRow}`;
+      const key = `${args.originCol ?? args.col}-${args.originRow ?? args.row}`;
       let group;
       if (container.current.has(key)) {
         const currentContainer = container.current.get(key);

@@ -86,6 +86,8 @@ export interface ImageIcon extends IIconBase {
   src: string;
   /** 图片裁切形状 */
   shape?: 'circle' | 'square';
+
+  isGif?: boolean;
 }
 
 export interface PathIcon extends IIconBase {
@@ -165,7 +167,9 @@ export enum InternalIconName {
   // dropdownHoverIconName = 'dropdownIcon_hover',
   expandIconName = 'expand',
   collapseIconName = 'collapse',
-  dragReorderIconName = 'dragReorder'
+  dragReorderIconName = 'dragReorder',
+
+  loadingIconName = 'loading'
 }
 // 目前暂不支持FontIcon&PathIcon
 export type ColumnIconOption = ImageIcon | SvgIcon;

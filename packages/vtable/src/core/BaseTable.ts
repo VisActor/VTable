@@ -146,8 +146,8 @@ import { getCellStyle } from './style-helper';
 import type { EditManeger } from '../edit/edit-manager';
 import { createReactContainer } from '../scenegraph/layout/frozen-react';
 import { setIconColor } from '../icons';
-import type { ITableAnimationOption } from './animation';
 import { TableAnimationManager } from './animation';
+import type { ITableAnimationOption } from '../ts-types/animation/appear';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -2134,6 +2134,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   release(): void {
     const internalProps = this.internalProps;
+    if (this.isReleased) {
+      return;
+    }
     internalProps.tooltipHandler?.release?.();
     internalProps.menuHandler?.release?.();
     IconCache.clearAll();
@@ -2591,9 +2594,26 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param col
    * @param row
    */
-  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible: boolean = true) {
+  selectCell(
+    col: number,
+    row: number,
+    isShift?: boolean,
+    isCtrl?: boolean,
+    makeSelectCellVisible: boolean = true,
+    skipBodyMerge: boolean = false,
+    forceSelect: boolean = false
+  ) {
     const isHasSelected = !!this.stateManager.select.ranges?.length;
-    this.stateManager.updateSelectPos(col, row, isShift, isCtrl, false, !makeSelectCellVisible);
+    this.stateManager.updateSelectPos(
+      col,
+      row,
+      isShift,
+      isCtrl,
+      false,
+      !makeSelectCellVisible,
+      skipBodyMerge,
+      forceSelect
+    );
     this.stateManager.endSelectCells(true, isHasSelected);
   }
   /**
@@ -2646,7 +2666,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract refreshHeader(): void;
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;
-  abstract toggleHierarchyState(col: number, row: number): void;
+  abstract toggleHierarchyState(col: number, row: number, recalculateColWidths?: boolean): void;
   abstract _hasHierarchyTreeHeader(): boolean;
   abstract getMenuInfo(col: number, row: number, type: string): DropDownMenuEventInfo;
   abstract _moveHeaderPosition(

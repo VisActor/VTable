@@ -99,7 +99,7 @@ const tableInstance = new VTable.ListTable({
 ## 通过接口显示 tooltip 自定义信息
 
 接口 showTooltip 可主动显示 tooltip 信息，如下使用方式：（监听单元格 hover 事件，调用接口）
-[参考接口说明](https://visactor.io/vtable/option/Methods#showTooltip)
+[参考接口说明](../api/Methods#showTooltip)
 
 ```
   tableInstance.on('mouseenter_cell', (args) => {
@@ -116,6 +116,7 @@ const tableInstance = new VTable.ListTable({
               font: 'normal bold normal 14px/1 STKaiti',
               arrowMark: true,
             },
+            disappearDelay: 100,
           });
         }
     });

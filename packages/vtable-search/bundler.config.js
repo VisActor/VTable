@@ -9,10 +9,7 @@ module.exports = {
   copy: ['css'],
   name: 'VTable.export',
   umdOutputFilename: 'vtable-export',
-  rollupOptions: {
-    treeshake: true,
-    plugins: [resolve({ browser: true })]
-  },
+  rollupOptions: {},
   globals: {
     '@visactor/vtable': 'VTable'
   },

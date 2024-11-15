@@ -25,18 +25,18 @@ const app = createApp({
             <template #customLayout="{ table, row, col, rect, record, height, width }">
                <Group :height="height" :width="width" display="flex" flexDirection="row" flexWrap="nowrap">
                   <!-- Avatar Group -->
-                  <Group :height="percentCalc(100)" :width="60" display="flex" flexDirection="column" alignItems="center" justifyContent="space-around" :fill="'red'" :opacity="0.1">
+                  <Group :height="height" :width="60" display="flex" flexDirection="column" alignItems="center" justifyContent="space-around" :fill="'red'" :opacity="0.1">
                      <Image id="icon0" :width="50" :height="50" :image="record.bloggerAvatar" :cornerRadius="25" />
                   </Group>
                   <!-- Blogger Info Group -->
-                  <Group :height="height" :width="percentCalc(100, -60)" display="flex" flexDirection="column" flexWrap="nowrap">
-                     <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" flexWrap="wrap" :alignItems="'center'" :fill="'orange'" :opacity="0.1">
+                  <Group :height="height" :width="width - 60" display="flex" flexDirection="column" flexWrap="nowrap">
+                     <Group :height="height / 2" :width="width" display="flex" flexWrap="wrap" :alignItems="'center'" :fill="'orange'" :opacity="0.1">
                         <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" :boundsPadding="[0, 0, 0, 10]" />
                         <Image id="location" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg" :width="15" :height="15" :boundsPadding="[0, 0, 0, 10]" cursor="pointer" @mouseEnter="handleMouseEnter($event)" @click="handleMouseClick($event)" @mouseLeave="handleMouseLeave($event)" />
                         <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
                      </Group>
                      <!-- Tags Group -->
-                     <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="center" :fill="'yellow'" :opacity="0.1">
+                     <Group :height="height / 2" :width="width" display="flex" alignItems="center" :fill="'yellow'" :opacity="0.1">
                         <Tag v-for="tag in record?.tags" :key="tag" :text="tag" :textStyle="{ fontSize: 10, fontFamily: 'sans-serif', fill: 'rgb(51, 101, 238)' }" :panel="{ visible: true, fill: '#f4f4f2', cornerRadius: 5 }" :space="5" :boundsPadding="[0, 0, 0, 5]" />
                      </Group>
                   </Group>
@@ -128,7 +128,6 @@ const app = createApp({
                disableSelect: true,
             },
          },
-         percentCalc: VTable.CustomLayout.percentCalc,
       };
    },
    methods: {

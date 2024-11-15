@@ -135,6 +135,12 @@ export class CellMover {
       y: symbolY,
       angle: symbolRotate
     });
+    return {
+      backX: rectX - rectDx,
+      lineX: symbolX,
+      backY: rectY - rectDy,
+      lineY: symbolY
+    };
   }
 
   hide() {

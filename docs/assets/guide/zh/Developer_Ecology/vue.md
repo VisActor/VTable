@@ -229,6 +229,8 @@ interface EventsProps {
   onResizeColumn?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column']>;
   onResizeColumnEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column_end']>;
   onChangeHeaderPosition?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position']>;
+  onChangeHeaderPositionStart?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position_start']>;
+  onChangeHeaderPositionFail?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position_fail']>;
   onSortClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['sort_click']>;
   onFreezeClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['freeze_click']>;
   onScroll?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll']>;
@@ -304,7 +306,7 @@ registerChartModule('vchart', VChart);
     <Group :height="height" :width="width" display="flex" flexDirection="row" flexWrap="nowrap">
       <!-- Avatar Group -->
       <Group
-        :height="percentCalc(100)"
+        :height="height"
         :width="60"
         display="flex"
         flexDirection="column"
@@ -314,9 +316,9 @@ registerChartModule('vchart', VChart);
         <image id="icon0" :width="50" :height="50" :image="record.bloggerAvatar" :cornerRadius="25" />
       </Group>
       <!-- Blogger Info Group -->
-      <Group :height="height" :width="percentCalc(100, -60)" display="flex" flexDirection="column" flexWrap="nowrap">
+      <Group :height="height" :width="width - 60" display="flex" flexDirection="column" flexWrap="nowrap">
         <!-- Blogger Name and Location -->
-        <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="flex-end">
+        <Group :height="height / 2" :width="width" display="flex" alignItems="flex-end">
           <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" />
           <image
             id="location"
@@ -332,7 +334,7 @@ registerChartModule('vchart', VChart);
           <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
         </Group>
         <!-- Tags Group -->
-        <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="center">
+        <Group :height="height / 2" :width="width" display="flex" alignItems="center">
           <Tag
             v-for="tag in record?.tags"
             :key="tag"

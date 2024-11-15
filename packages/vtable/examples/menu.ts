@@ -37,6 +37,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-highlightInRange'
+      },
+      {
+        path: 'list',
         name: 'list-transpose'
       },
       {
@@ -641,6 +645,14 @@ export const menus = [
       {
         path: 'interactive',
         name: 'pre-sort'
+      },
+      {
+        path: 'interactive',
+        name: 'mask'
+      },
+      {
+        path: 'interactive',
+        name: 'highlight-color'
       }
     ]
   },

@@ -9,6 +9,9 @@ ${prefix} src (string)
 ${prefix} shape ('circle' | 'square')
 图片裁切形状
 
+${prefix} isGif (boolean)
+是否是gif图片
+
 {{ use: base-icon(
     prefix = ${prefix}
 ) }}
