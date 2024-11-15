@@ -20,6 +20,8 @@ You can use the `customLayout `feature to customize button elements and bind cor
 ## Code example
 
 ```
+import {createGroup, createText} from '@visactor/vtable/es/vrender';
+
   const option: VTable.ListTableConstructorOptions = {
     columns: [
       // ......
@@ -31,7 +33,7 @@ You can use the `customLayout `feature to customize button elements and bind cor
           const { table, row, col, rect } = args;
           const { height, width } = rect ?? table.getCellRect(col, row);
 
-          const container = new VTable.CustomLayout.Group({
+          const container = createGroup({
             height,
             width,
             display: 'flex',
@@ -39,7 +41,7 @@ You can use the `customLayout `feature to customize button elements and bind cor
             flexWrap: 'nowrap'
           });
 
-          const editText = new VTable.CustomLayout.Text({
+          const editText = createText({
             text: '编辑',
             fontSize: 13,
             fontFamily: 'sans-serif',
@@ -87,6 +89,8 @@ You can use the `customLayout `feature to customize button elements and bind cor
 
 Complete sample code (you can try pasting it into the [editor ](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Fdemo%2Ftable-type%2Flist-table-tree)):</br>
 ```
+import {createGroup, createText} from '@visactor/vtable/es/vrender';
+
   const option = {
     container: document.getElementById(CONTAINER_ID),
     columns: [
@@ -107,7 +111,7 @@ Complete sample code (you can try pasting it into the [editor ](https%3A%2F%2Fww
           const { table, row, col, rect } = args;
           const { height, width } = rect ?? table.getCellRect(col, row);
 
-          const container = new VTable.CustomLayout.Group({
+          const container = createGroup({
             height,
             width,
             display: 'flex',
@@ -115,7 +119,7 @@ Complete sample code (you can try pasting it into the [editor ](https%3A%2F%2Fww
             flexWrap: 'nowrap'
           });
 
-          const editText = new VTable.CustomLayout.Text({
+          const editText = createText({
             text: '编辑',
             fontSize: 13,
             fontFamily: 'sans-serif',
@@ -145,7 +149,7 @@ Complete sample code (you can try pasting it into the [editor ](https%3A%2F%2Fww
           });
           container.add(editText);
 
-          const deleteText = new VTable.CustomLayout.Text({
+          const deleteText = createText({
             text: '删除',
             fontSize: 13,
             fontFamily: 'sans-serif',

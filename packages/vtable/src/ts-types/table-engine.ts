@@ -540,7 +540,8 @@ export enum Placement {
 export enum HierarchyState {
   expand = 'expand',
   collapse = 'collapse',
-  none = 'none'
+  none = 'none',
+  loading = 'loading'
 }
 export type IHeaderTreeDefine = Either<IDimensionHeaderNode, IIndicatorHeaderNode>;
 export interface IIndicatorHeaderNode {

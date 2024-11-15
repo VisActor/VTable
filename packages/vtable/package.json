@@ -52,14 +52,15 @@
   },
   "dependencies": {
     "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vrender-core": "0.21.0-alpha.2",
-    "@visactor/vrender-kits": "0.21.0-alpha.2",
-    "@visactor/vrender-components": "0.21.0-alpha.2",
+    "@visactor/vrender-core": "0.21.0-alpha.4",
+    "@visactor/vrender-kits": "0.21.0-alpha.4",
+    "@visactor/vrender-components": "0.21.0-alpha.4",
     "@visactor/vutils": "~0.18.14",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
     "@visactor/vutils-extension": "~1.11.5",
-    "cssfontparser": "^1.2.1"
+    "cssfontparser": "^1.2.1",
+    "gifuct-js": "2.1.2"
   },
   "devDependencies": {
     "luxon": "*",

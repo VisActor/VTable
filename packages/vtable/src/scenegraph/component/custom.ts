@@ -1,4 +1,4 @@
-import type { Cursor } from '@src/vrender';
+import type { Cursor, ITimeline, Timeline } from '@src/vrender';
 import {
   createArc,
   createCircle,
@@ -72,7 +72,7 @@ export function dealWithCustom(
     };
     const customRenderObj = customLayout(arg);
     if (customRenderObj.rootContainer) {
-      customRenderObj.rootContainer = decodeReactDom(customRenderObj.rootContainer);
+      customRenderObj.rootContainer = decodeReactDom(customRenderObj.rootContainer, table.animationManager.timeline);
     }
     // expectedWidth = customRenderObj.expectedWidth;
     // expectedHeight = customRenderObj.expectedHeight;
@@ -440,7 +440,7 @@ export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight
 }
 
 // temp devode for react jsx customLayout
-export function decodeReactDom(dom: any) {
+export function decodeReactDom(dom: any, timeline?: ITimeline) {
   if (
     !dom ||
     (!isValid(dom.$$typeof) && // for react
@@ -450,7 +450,7 @@ export function decodeReactDom(dom: any) {
     return dom;
   }
   const type = dom.type;
-  const { attribute, children, stateProxy } = dom.props;
+  const { attribute, children, stateProxy, animation } = dom.props;
   const g = type({ attribute });
   parseToGraphic(g, dom.props);
   if (stateProxy) {
@@ -461,11 +461,19 @@ export function decodeReactDom(dom: any) {
   g.name = attribute.name;
   if (isArray(children)) {
     children.forEach((item: any) => {
-      const c = decodeReactDom(item);
+      const c = decodeReactDom(item, timeline);
       c && c.type && g.add(c);
     });
   } else if (children) {
-    g.add(decodeReactDom(children));
+    g.add(decodeReactDom(children, timeline));
+  }
+
+  if (isArray(animation) && timeline) {
+    const animate = g.animate();
+    animate.setTimeline(timeline);
+    animation.forEach((item: any[]) => {
+      animate[item[0]](...item.slice(1));
+    });
   }
   return g;
 }

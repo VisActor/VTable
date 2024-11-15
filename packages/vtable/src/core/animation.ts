@@ -30,7 +30,11 @@ export class TableAnimationManager {
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.timeline = new DefaultTimeline();
-    this.ticker = new DefaultTicker([this.timeline]);
+    // this.ticker = new DefaultTicker([this.timeline]);
+    this.ticker = new DefaultTicker();
+    this.ticker.addTimeline(this.timeline);
+    const TICKER_FPS = 60;
+    this.ticker.setFPS(TICKER_FPS);
     // no use, for avoid error in vrender animation
     this.tempGraphic = createRect({});
   }

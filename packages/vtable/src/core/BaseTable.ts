@@ -2134,6 +2134,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   release(): void {
     const internalProps = this.internalProps;
+    if (this.isReleased) {
+      return;
+    }
     internalProps.tooltipHandler?.release?.();
     internalProps.menuHandler?.release?.();
     IconCache.clearAll();

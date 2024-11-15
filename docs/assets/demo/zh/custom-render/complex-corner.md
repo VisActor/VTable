@@ -17,6 +17,11 @@ option: PivotTable#corner.customLayout
 ## 代码演示
 
 ```javascript livedemo template=vtable
+// only use for website
+const {createGroup, createText, createLine} = VRender;
+// use this for project
+// import {createGroup, createText, createLine} from '@visactor/vtable/es/vrender';
+
 const option = {
   autoFillHeight: true,
   rows: ['province', 'city'],
@@ -69,7 +74,7 @@ const option = {
     customLayout: args => {
       const { table, row, col, rect } = args;
       const { height, width } = rect ?? table.getCellRect(col, row);
-      const container = new VTable.CustomLayout.Group({
+      const container = createGroup({
         height,
         width
       });
@@ -87,7 +92,7 @@ const option = {
       // 循环添加文本
       texts.forEach(({ text, fontSize, x, y }) => {
         container.addChild(
-          new VTable.CustomLayout.Text({
+          createText({
             text,
             fontSize,
             fontFamily: 'sans-serif',
@@ -116,7 +121,7 @@ const option = {
 
       // 添加线段
       container.addChild(
-        new VTable.CustomLayout.Line({
+        createLine({
           points: linePoints,
           lineWidth: 1,
           stroke: '#ccc'

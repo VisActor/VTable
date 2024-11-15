@@ -4,13 +4,13 @@
     prefix = ${prefix},
 ) }}
 
-${prefix} width (number | percentCalcObj)
+${prefix} width (number)
 
-容器的宽度，可以是数字或百分比计算对象。
+容器的宽度。
 
-${prefix} height (number | percentCalcObj)
+${prefix} height (number)
 
-容器的高度，可以是数字或百分比计算对象。
+容器的高度。
 
 ${prefix} direction ('row' | 'column') = 'row'
 
