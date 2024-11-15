@@ -246,9 +246,6 @@ export class Scenegraph {
   release() {
     this.stage.release();
   }
-  getTaskBarNodeByY(y: number) {
-    const taskIndex = getTaskIndexByY(y, this._gantt);
-  }
 
   showTaskCreationButton(x: number, y: number, taskIndex: number, record: any) {
     if (!this.taskCreationButton) {

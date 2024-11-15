@@ -323,7 +323,7 @@ export class StateManager {
     if (this.moveTaskBar.moveTaskBarXInertia.isInertiaScrolling()) {
       this.moveTaskBar.moveTaskBarXInertia.endInertia();
     }
-    const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
+    // const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
     // const deltaX = x - this.moveTaskBar.startX;
     const deltaX = this.moveTaskBar.deltaX;
     const days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
@@ -332,7 +332,7 @@ export class StateManager {
     const targetEndX = this.moveTaskBar.targetStartX + correctX;
     const target = this._gantt.stateManager.moveTaskBar.target;
     // target.setAttribute('x', targetEndX);
-    resizeOrMoveTaskBar(taskIndex, target, targetEndX - target.attribute.x, null, this);
+    resizeOrMoveTaskBar(target, targetEndX - target.attribute.x, null, this);
     // if (target.attribute.x < this._gantt.stateManager.scrollLeft - 2) {
     //   this._gantt.stateManager.setScrollLeft(target.attribute.x);
     // }
@@ -341,14 +341,14 @@ export class StateManager {
     // }
     if (Math.abs(days) >= 1) {
       // const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
-      const taskIndex = this.moveTaskBar.target.id;
-      const sub_task_id = this.moveTaskBar.target.sub_task_id;
-      const oldRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_id);
+      const taskIndex = this.moveTaskBar.target.task_index;
+      const sub_task_index = this.moveTaskBar.target.sub_task_index;
+      const oldRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
       const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
       const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
-      this._gantt._updateDateToTaskRecord('move', days, taskIndex, sub_task_id);
+      this._gantt._updateDateToTaskRecord('move', days, taskIndex, sub_task_index);
       if (this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
-        const newRecord = this._gantt.getRecordByIndex(taskIndex);
+        const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
         this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
           startDate: newRecord[this._gantt.parsedOptions.startDateField],
           endDate: newRecord[this._gantt.parsedOptions.endDateField],
@@ -367,13 +367,13 @@ export class StateManager {
   }
   dealTaskBarMove(e: FederatedPointerEvent) {
     const target = this.moveTaskBar.target;
-    const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
+    // const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
     const x2 = e.x;
     const dx = x2 - x1;
     this.moveTaskBar.deltaX += dx;
     // target.setAttribute('x', target.attribute.x + dx);
-    resizeOrMoveTaskBar(taskIndex, target, dx, null, this);
+    resizeOrMoveTaskBar(target, dx, null, this);
 
     // 处理向左拖拽任务条时，整体向左滚动
     if (target.attribute.x <= this._gantt.stateManager.scrollLeft && dx < 0) {
@@ -382,7 +382,7 @@ export class StateManager {
       this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
       this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
         this.moveTaskBar.deltaX += dx;
-        resizeOrMoveTaskBar(taskIndex, target, dx, null, this);
+        resizeOrMoveTaskBar(target, dx, null, this);
 
         this._gantt.stateManager.setScrollLeft(target.attribute.x);
         if (this._gantt.stateManager.scrollLeft === 0) {
@@ -400,7 +400,7 @@ export class StateManager {
       this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
       this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
         this.moveTaskBar.deltaX += dx;
-        resizeOrMoveTaskBar(taskIndex, target, dx, null, this);
+        resizeOrMoveTaskBar(target, dx, null, this);
 
         this._gantt.stateManager.setScrollLeft(
           target.attribute.x + target.attribute.width - this._gantt.tableNoFrameWidth
@@ -442,14 +442,16 @@ export class StateManager {
       let diff_days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
       diff_days = direction === 'left' ? -diff_days : diff_days;
 
-      const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
-      const rect = this._gantt.stateManager.resizeTaskBar.target.barRect;
-      const progressRect = this._gantt.stateManager.resizeTaskBar.target.progressRect;
-      const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
-      const oldRecord = this._gantt.getRecordByIndex(taskIndex);
+      const taskBarGroup = this.resizeTaskBar.target;
+      const rect = this.resizeTaskBar.target.barRect;
+      const progressRect = this.resizeTaskBar.target.progressRect;
+      // const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
+      const taskIndex = this.resizeTaskBar.target.task_index;
+      const sub_task_index = this.resizeTaskBar.target.sub_task_index;
+      const oldRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
       const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
       const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
-      const { taskDays, progress } = this._gantt.getTaskInfoByTaskListIndex(taskIndex);
+      const { taskDays, progress } = this._gantt.getTaskInfoByTaskListIndex(taskIndex, sub_task_index);
       if (diff_days < 0 && taskDays + diff_days <= 0) {
         diff_days = 1 - taskDays;
       }
@@ -460,16 +462,16 @@ export class StateManager {
       if (direction === 'left') {
         // taskBarGroup.setAttribute('x', targetEndX);
         // taskBarGroup.setAttribute('width', taskBarSize);
-        resizeOrMoveTaskBar(taskIndex, taskBarGroup, targetEndX - taskBarGroup.attribute.x, taskBarSize, this);
+        resizeOrMoveTaskBar(taskBarGroup, targetEndX - taskBarGroup.attribute.x, taskBarSize, this);
         rect?.setAttribute('width', taskBarGroup.attribute.width);
         progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-        this._gantt._updateDateToTaskRecord('start-move', -diff_days, taskIndex);
+        this._gantt._updateDateToTaskRecord('start-move', -diff_days, taskIndex, sub_task_index);
       } else if (direction === 'right') {
         // taskBarGroup.setAttribute('width', taskBarSize);
-        resizeOrMoveTaskBar(taskIndex, taskBarGroup, 0, taskBarSize, this);
+        resizeOrMoveTaskBar(taskBarGroup, 0, taskBarSize, this);
         rect?.setAttribute('width', taskBarGroup.attribute.width);
         progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-        this._gantt._updateDateToTaskRecord('end-move', diff_days, taskIndex);
+        this._gantt._updateDateToTaskRecord('end-move', diff_days, taskIndex, sub_task_index);
       }
       this.showTaskBarHover();
       reCreateCustomNode(this._gantt, taskBarGroup, taskIndex);
@@ -477,7 +479,7 @@ export class StateManager {
       this.resizeTaskBar.target = null;
 
       if (Math.abs(diff_days) >= 1 && this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
-        const newRecord = this._gantt.getRecordByIndex(taskIndex);
+        const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
         this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
           startDate: newRecord[this._gantt.parsedOptions.startDateField],
           endDate: newRecord[this._gantt.parsedOptions.endDateField],
@@ -501,8 +503,10 @@ export class StateManager {
     const textLabel = taskBarGroup.textLabel;
 
     const progressField = this._gantt.parsedOptions.progressField;
-    const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
-    const taskRecord = this._gantt.getRecordByIndex(taskIndex);
+    // const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
+    const taskIndex = taskBarGroup.task_index;
+    const sub_task_index = taskBarGroup.sub_task_index;
+    const taskRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
     const progress = taskRecord[progressField];
 
     let diffWidth = this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx;
@@ -517,7 +521,6 @@ export class StateManager {
     //   taskBarGroup.setAttribute('x', taskBarGroup.attribute.x - diffWidth);
     // }
     resizeOrMoveTaskBar(
-      taskIndex,
       taskBarGroup,
       this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -diffWidth : 0,
       taskBarSize,
@@ -553,11 +556,15 @@ export class StateManager {
   }
   endCreateDependencyLine(offsetY: number) {
     const taskKeyField = this._gantt.parsedOptions.taskKeyField;
-    const fromTaskIndex = getTaskIndexByY(this.creatingDenpendencyLink.startOffsetY, this._gantt);
-    const toTaskIndex = getTaskIndexByY(offsetY, this._gantt);
-    const fromRecord = this._gantt.getRecordByIndex(fromTaskIndex);
+    // const fromTaskIndex = getTaskIndexByY(this.creatingDenpendencyLink.startOffsetY, this._gantt);
+    const fromTaskIndex = this.selectedTaskBar.target.task_index;
+    const from_sub_task_id = this.selectedTaskBar.target.sub_task_index;
+    // const toTaskIndex = getTaskIndexByY(offsetY, this._gantt);
+    const toTaskIndex = this.creatingDenpendencyLink.secondTaskBarNode.task_index;
+    const to_sub_task_id = this.creatingDenpendencyLink.secondTaskBarNode.sub_task_index;
+    const fromRecord = this._gantt.getRecordByIndex(fromTaskIndex, from_sub_task_id);
     const linkedFromTaskKey = fromRecord[taskKeyField];
-    const toRecord = this._gantt.getRecordByIndex(toTaskIndex);
+    const toRecord = this._gantt.getRecordByIndex(toTaskIndex, to_sub_task_id);
     const linkedToTaskKey = toRecord[taskKeyField];
     const link = {
       linkedFromTaskKey,
@@ -798,15 +805,11 @@ function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number
   }
 }
 
-function resizeOrMoveTaskBar(
-  taskIndex: number,
-  target: GanttTaskBarNode,
-  dx: number,
-  newWidth: number,
-  state: StateManager
-) {
+function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, state: StateManager) {
   // const taskIndex = getTaskIndexByY(state.moveTaskBar.startOffsetY, state._gantt);
-  const record = state._gantt.getRecordByIndex(taskIndex);
+  const taskIndex = target.task_index;
+  const sub_task_index = target.sub_task_index;
+  const record = state._gantt.getRecordByIndex(taskIndex, sub_task_index);
   if (dx) {
     target.setAttribute('x', target.attribute.x + dx);
   }
@@ -823,17 +826,56 @@ function resizeOrMoveTaskBar(
     const { linkedToTaskKey, linkedFromTaskKey, type } = link;
     const { taskKeyField, minDate } = state._gantt.parsedOptions;
     const linkedFromTaskRecord = findRecordByTaskKey(state._gantt.records, taskKeyField, linkedFromTaskKey);
+    const linkedToTaskRecord = findRecordByTaskKey(state._gantt.records, taskKeyField, linkedToTaskKey);
+    // const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
+    //   state._gantt.getTaskInfoByTaskListIndex(taskIndex);
+    // const taskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+    // const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
+    //   state._gantt.getTaskInfoByTaskListIndex(taskShowIndex);
 
-    const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskIndex);
-    const taskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
-    const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskShowIndex);
+    let linkedToTaskStartDate;
+    let linkedToTaskEndDate;
+    let linkedToTaskTaskDays;
+    let linkedFromTaskStartDate;
+    let linkedFromTaskEndDate;
+    let linkedFromTaskTaskDays;
+
+    let linkedToTaskShowIndex;
+    let linkedFromTaskShowIndex;
+
+    if (state._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline) {
+      linkedFromTaskShowIndex = linkedFromTaskRecord.index[0];
+      linkedToTaskShowIndex = linkedToTaskRecord.index[0];
+      ({
+        startDate: linkedToTaskStartDate,
+        endDate: linkedToTaskEndDate,
+        taskDays: linkedToTaskTaskDays
+      } = state._gantt.getTaskInfoByTaskListIndex(linkedToTaskRecord.index[0], linkedToTaskRecord.index[1]));
+      ({
+        startDate: linkedFromTaskStartDate,
+        endDate: linkedFromTaskEndDate,
+        taskDays: linkedFromTaskTaskDays
+      } = state._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
+    } else {
+      linkedFromTaskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+      linkedToTaskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+
+      ({
+        startDate: linkedToTaskStartDate,
+        endDate: linkedToTaskEndDate,
+        taskDays: linkedToTaskTaskDays
+      } = state._gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex));
+      ({
+        startDate: linkedFromTaskStartDate,
+        endDate: linkedFromTaskEndDate,
+        taskDays: linkedFromTaskTaskDays
+      } = state._gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex));
+    }
     const { linePoints, arrowPoints } = updateLinkLinePoints(
       type,
       linkedFromTaskStartDate,
       linkedFromTaskEndDate,
-      taskShowIndex,
+      linkedFromTaskShowIndex,
       linkedToTaskStartDate,
       linkedToTaskEndDate,
       taskIndex,
@@ -855,12 +897,51 @@ function resizeOrMoveTaskBar(
     const { linkedToTaskKey, linkedFromTaskKey, type } = link;
     const { taskKeyField, minDate } = state._gantt.parsedOptions;
     const linkedToTaskRecord = findRecordByTaskKey(state._gantt.records, taskKeyField, linkedToTaskKey);
+    const linkedFromTaskRecord = findRecordByTaskKey(state._gantt.records, taskKeyField, linkedFromTaskKey);
+    // const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
+    //   state._gantt.getTaskInfoByTaskListIndex(taskIndex);
+    // const taskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+    // const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
+    //   state._gantt.getTaskInfoByTaskListIndex(taskShowIndex);
 
-    const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskIndex);
-    const taskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
-    const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskShowIndex);
+    let linkedToTaskStartDate;
+    let linkedToTaskEndDate;
+    let linkedToTaskTaskDays;
+    let linkedFromTaskStartDate;
+    let linkedFromTaskEndDate;
+    let linkedFromTaskTaskDays;
+
+    let linkedToTaskShowIndex;
+    let linkedFromTaskShowIndex;
+
+    if (state._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline) {
+      linkedFromTaskShowIndex = linkedFromTaskRecord.index[0];
+      linkedToTaskShowIndex = linkedToTaskRecord.index[0];
+      ({
+        startDate: linkedToTaskStartDate,
+        endDate: linkedToTaskEndDate,
+        taskDays: linkedToTaskTaskDays
+      } = state._gantt.getTaskInfoByTaskListIndex(linkedToTaskRecord.index[0], linkedToTaskRecord.index[1]));
+      ({
+        startDate: linkedFromTaskStartDate,
+        endDate: linkedFromTaskEndDate,
+        taskDays: linkedFromTaskTaskDays
+      } = state._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
+    } else {
+      linkedFromTaskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+      linkedToTaskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+
+      ({
+        startDate: linkedToTaskStartDate,
+        endDate: linkedToTaskEndDate,
+        taskDays: linkedToTaskTaskDays
+      } = state._gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex));
+      ({
+        startDate: linkedFromTaskStartDate,
+        endDate: linkedFromTaskEndDate,
+        taskDays: linkedFromTaskTaskDays
+      } = state._gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex));
+    }
     const { linePoints, arrowPoints } = updateLinkLinePoints(
       type,
       linkedFromTaskStartDate,
@@ -868,7 +949,7 @@ function resizeOrMoveTaskBar(
       taskIndex,
       linkedToTaskStartDate,
       linkedToTaskEndDate,
-      taskShowIndex,
+      linkedToTaskShowIndex,
       minDate,
       state._gantt.parsedOptions.rowHeight,
       state._gantt.parsedOptions.colWidthPerDay,

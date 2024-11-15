@@ -82,7 +82,7 @@ export class TaskBar {
     let progress;
     let taskRecord;
     if (isValid(childIndex)) {
-      ({ startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndexs(
+      ({ startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
         index,
         childIndex
       ));
@@ -110,8 +110,8 @@ export class TaskBar {
       clip: true
     });
     barGroup.name = 'task-bar';
-    barGroup.id = index;
-    barGroup.sub_task_id = childIndex;
+    barGroup.task_index = index;
+    barGroup.sub_task_index = childIndex;
     barGroup.record = taskRecord;
     // this.barContainer.appendChild(barGroup);
     let rootContainer;
@@ -425,13 +425,16 @@ export class TaskBar {
     this.selectedBorders[0].appendChild(line);
   }
 
-  getTaskBarNodeByIndex(index: number, sub_task_id?: number) {
+  getTaskBarNodeByIndex(index: number, sub_task_index?: number) {
     let c = this.barContainer.firstChild as Group;
     if (!c) {
       return null;
     }
     for (let i = 0; i < this.barContainer.childrenCount; i++) {
-      if (c.id === index && (!isValid(sub_task_id) || (isValid(sub_task_id) && c.sub_task_id === sub_task_id))) {
+      if (
+        c.task_index === index &&
+        (!isValid(sub_task_index) || (isValid(sub_task_index) && c.sub_task_index === sub_task_index))
+      ) {
         return c;
       }
       c = c._next as Group;

@@ -140,11 +140,14 @@ function bindTableGroupListener(event: EventManager) {
           scene._gantt.stateManager.hoverTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
           stateManager.showTaskBarHover();
           if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR)) {
-            const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
-            const record = scene._gantt.getRecordByIndex(taskIndex);
+            // const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
+            const taskIndex = taskBarTarget.task_index;
+            const sub_task_index = taskBarTarget.sub_task_index;
+            const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
               event: e.nativeEvent,
               index: taskIndex,
+              sub_task_index,
               record
             });
           }
@@ -153,11 +156,14 @@ function bindTableGroupListener(event: EventManager) {
         if (scene._gantt.stateManager.hoverTaskBar.target) {
           stateManager.hideTaskBarHover(e);
           if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR)) {
-            const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
-            const record = scene._gantt.getRecordByIndex(taskIndex);
+            // const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
+            const taskIndex = taskBarTarget.task_index;
+            const sub_task_index = taskBarTarget.sub_task_index;
+            const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
               event: e.nativeEvent,
               index: taskIndex,
+              sub_task_index,
               record
             });
           }
@@ -301,11 +307,14 @@ function bindTableGroupListener(event: EventManager) {
       scene._gantt.stateManager.selectedTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
       stateManager.showTaskBarSelectedBorder();
       if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
-        const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-        const record = gantt.getRecordByIndex(taskIndex);
+        // const taskIndex = getTaskIndexByY(e.offset.y, gantt);
+        const taskIndex = taskBarTarget.task_index;
+        const sub_task_index = taskBarTarget.sub_task_index;
+        const record = gantt.getRecordByIndex(taskIndex, sub_task_index);
         gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
           event: e.nativeEvent,
           index: taskIndex,
+          sub_task_index,
           record
         });
       }

@@ -5,6 +5,10 @@ export class GanttTaskBarNode extends Group {
   barRect?: IRect;
   progressRect?: IRect;
   textLabel?: IText;
+  name: string;
+  task_index: number;
+  sub_task_index?: number;
+  record?: any;
   constructor(attrs: IGroupGraphicAttribute) {
     super(attrs);
   }

@@ -620,9 +620,9 @@ export class Gantt extends EventTarget {
   getTaskShowIndexByRecordIndex(index: number | number[]) {
     return this.taskListTableInstance.getBodyRowIndexByRecordIndex(index);
   }
-  getRecordByIndex(taskShowIndex: number, sub_task_id?: number) {
-    if (isValid(sub_task_id)) {
-      return this.records[taskShowIndex]?.children?.[sub_task_id];
+  getRecordByIndex(taskShowIndex: number, sub_task_index?: number) {
+    if (isValid(sub_task_index)) {
+      return this.records[taskShowIndex]?.children?.[sub_task_index];
     }
     if (this.taskListTableInstance) {
       return this.taskListTableInstance.getRecordByRowCol(
@@ -650,14 +650,17 @@ export class Gantt extends EventTarget {
    * @param index
    * @returns 当前任务信息
    */
-  getTaskInfoByTaskListIndex(taskShowIndex: number): {
+  getTaskInfoByTaskListIndex(
+    taskShowIndex: number,
+    sub_task_index?: number
+  ): {
     taskRecord: any;
     taskDays: number;
     startDate: Date;
     endDate: Date;
     progress: number;
   } {
-    const taskRecord = this.getRecordByIndex(taskShowIndex);
+    const taskRecord = this.getRecordByIndex(taskShowIndex, sub_task_index);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
     const progressField = this.parsedOptions.progressField;
@@ -693,67 +696,67 @@ export class Gantt extends EventTarget {
       progress
     };
   }
-  /**
-   * 获取指定index处任务数据的具体信息
-   * @param index
-   * @returns 当前任务信息
-   */
-  getTaskInfoByTaskListIndexs(
-    taskShowIndex: number,
-    subTaskIndex: number
-  ): {
-    taskRecord: any;
-    taskDays: number;
-    startDate: Date;
-    endDate: Date;
-    progress: number;
-  } {
-    const taskParentRecord = this.getRecordByIndex(taskShowIndex);
-    if (taskParentRecord.children?.length) {
-      const taskRecord = taskParentRecord.children[subTaskIndex];
-      const startDateField = this.parsedOptions.startDateField;
-      const endDateField = this.parsedOptions.endDateField;
-      const progressField = this.parsedOptions.progressField;
-      const rawDateStartDateTime = createDateAtMidnight(taskRecord?.[startDateField]).getTime();
-      const rawDateEndDateTime = createDateAtMidnight(taskRecord?.[endDateField]).getTime();
-      if (
-        rawDateEndDateTime < this.parsedOptions._minDateTime ||
-        rawDateStartDateTime > this.parsedOptions._maxDateTime ||
-        !taskRecord?.[startDateField] ||
-        !taskRecord?.[endDateField]
-      ) {
-        return {
-          taskDays: 0,
-          progress: 0,
-          startDate: null,
-          endDate: null,
-          taskRecord
-        };
-      }
-      const startDate = createDateAtMidnight(
-        Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
-      );
-      const endDate = createDateAtMidnight(
-        Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
-      );
-      const progress = convertProgress(taskRecord[progressField]);
-      const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-      return {
-        taskRecord,
-        taskDays,
-        startDate,
-        endDate,
-        progress
-      };
-    }
-    return {
-      taskDays: 0,
-      progress: 0,
-      startDate: null,
-      endDate: null,
-      taskRecord: null
-    };
-  }
+  // /**
+  //  * 获取指定index处任务数据的具体信息
+  //  * @param index
+  //  * @returns 当前任务信息
+  //  */
+  // getTaskInfoByTaskListIndexs(
+  //   taskShowIndex: number,
+  //   subTaskIndex: number
+  // ): {
+  //   taskRecord: any;
+  //   taskDays: number;
+  //   startDate: Date;
+  //   endDate: Date;
+  //   progress: number;
+  // } {
+  //   const taskParentRecord = this.getRecordByIndex(taskShowIndex);
+  //   if (taskParentRecord.children?.length) {
+  //     const taskRecord = taskParentRecord.children[subTaskIndex];
+  //     const startDateField = this.parsedOptions.startDateField;
+  //     const endDateField = this.parsedOptions.endDateField;
+  //     const progressField = this.parsedOptions.progressField;
+  //     const rawDateStartDateTime = createDateAtMidnight(taskRecord?.[startDateField]).getTime();
+  //     const rawDateEndDateTime = createDateAtMidnight(taskRecord?.[endDateField]).getTime();
+  //     if (
+  //       rawDateEndDateTime < this.parsedOptions._minDateTime ||
+  //       rawDateStartDateTime > this.parsedOptions._maxDateTime ||
+  //       !taskRecord?.[startDateField] ||
+  //       !taskRecord?.[endDateField]
+  //     ) {
+  //       return {
+  //         taskDays: 0,
+  //         progress: 0,
+  //         startDate: null,
+  //         endDate: null,
+  //         taskRecord
+  //       };
+  //     }
+  //     const startDate = createDateAtMidnight(
+  //       Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
+  //     );
+  //     const endDate = createDateAtMidnight(
+  //       Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
+  //     );
+  //     const progress = convertProgress(taskRecord[progressField]);
+  //     const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  //     return {
+  //       taskRecord,
+  //       taskDays,
+  //       startDate,
+  //       endDate,
+  //       progress
+  //     };
+  //   }
+  //   return {
+  //     taskDays: 0,
+  //     progress: 0,
+  //     startDate: null,
+  //     endDate: null,
+  //     taskRecord: null
+  //   };
+  // }
   /**
    * 拖拽任务条或者调整任务条尺寸修改日期更新到数据中
    * @param updateDateType
@@ -764,9 +767,9 @@ export class Gantt extends EventTarget {
     updateDateType: 'move' | 'start-move' | 'end-move',
     days: number,
     index: number,
-    sub_task_id?: number
+    sub_task_index?: number
   ) {
-    const taskRecord = this.getRecordByIndex(index, sub_task_id);
+    const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
     const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[startDateField]);
@@ -784,7 +787,10 @@ export class Gantt extends EventTarget {
       const newEndDate = formatDate(createDateAtMidnight(days * DayTimes + endDate.getTime()), dateFormat);
       taskRecord[endDateField] = newEndDate;
     }
-    this._updateRecordToListTable(taskRecord, index);
+    if (!isValid(sub_task_index)) {
+      //子任务不是独占左侧表格一行的情况
+      this._updateRecordToListTable(taskRecord, index);
+    }
   }
   /** 目前不支持树形tree的情况更新单条数据 需要的话目前可以setRecords。 */
   updateTaskRecord(record: any, index: number) {

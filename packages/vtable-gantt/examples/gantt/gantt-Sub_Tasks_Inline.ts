@@ -109,36 +109,7 @@ export function createTable() {
           start: '2024-07-09',
           end: '2024-07-11',
           progress: 100,
-          priority: 'P1',
-          children: [
-            {
-              id: 1,
-              title: 'Software Development',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-24',
-              end: '2024-08-04',
-              progress: 31,
-              priority: 'P0'
-            },
-            {
-              id: 2,
-              title: 'Scope',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-06',
-              end: '2024-07-08',
-              progress: 60,
-              priority: 'P0'
-            },
-            {
-              id: 3,
-              title: 'Determine project scope',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-09',
-              end: '2024-07-11',
-              progress: 100,
-              priority: 'P1'
-            }
-          ]
+          priority: 'P1'
         },
         {
           id: 9,
@@ -147,36 +118,7 @@ export function createTable() {
           start: '2024-07-24',
           end: '2024-08-04',
           progress: 31,
-          priority: 'P0',
-          children: [
-            {
-              id: 1,
-              title: 'Software Development',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-24',
-              end: '2024-08-04',
-              progress: 31,
-              priority: 'P0'
-            },
-            {
-              id: 2,
-              title: 'Scope',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-06',
-              end: '2024-07-08',
-              progress: 60,
-              priority: 'P0'
-            },
-            {
-              id: 3,
-              title: 'Determine project scope',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-09',
-              end: '2024-07-11',
-              progress: 100,
-              priority: 'P1'
-            }
-          ]
+          priority: 'P0'
         },
         {
           id: 10,
@@ -375,10 +317,11 @@ export function createTable() {
       }
     },
     dependency: {
+      linkCreatable: true,
       links: [
         {
-          type: DependencyType.FinishToStart,
-          linkedFromTaskKey: 1,
+          type: DependencyType.StartToFinish,
+          linkedFromTaskKey: 3,
           linkedToTaskKey: 2
         }
         // {
