@@ -521,7 +521,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    */
   getHierarchyState(index: number): HierarchyState {
     // const indexed = this.getIndexKey(index);
-    const record = this.getOriginalRecord(this.currentIndexedData[index]);
+    const record = this.getOriginalRecord(this.currentPagerIndexedData[index]);
     return record?.hierarchyState ?? null;
     // return this.treeDataHierarchyState.get(Array.isArray(indexed) ? indexed.join(',') : indexed) ?? null;
   }
