@@ -1,3 +1,33 @@
+# v1.11.0
+
+2024-11-15
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 增加日历图
+- **@visactor/vtable**: 增加反选高亮插件
+- **@visactor/vtable**: 增加轮播动画插件
+- **@visactor/vtable**: 增加表头高亮插件
+- **@visactor/vtable**: 增加 changing_header_position 事件
+- **@visactor/vtable**: 增加 change_header_position_fail 事件
+- **@visactor/vtable**: 增加拖拽高亮标记线
+- **@visactor/vtable**: 增加树形结构 recalculateColWidths api 参数 [#2817](https://github.com/VisActor/VTable/issues/2817)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**：修复透视图饼图类型选定状态不起作用 [#2178](https://github.com/VisActor/VTable/issues/2178)
+- **@visactor/vtable**：修复透视图玫瑰图单击图例然后悬停图表渲染错误 [#2209](https://github.com/VisActor/VTable/issues/2209)
+- **@visactor/vtable**：修复当图表行冻结时渲染错误 [#2800](https://github.com/VisActor/VTable/issues/2800)
+- **@visactor/vtable**：修复选择范围后不存在问题 [#2804](https://github.com/VisActor/VTable/issues/2804)
+- **@visactor/vtable**：修复当 widthMode 为自适应时，调用 renderWithRecreateCells 不应影响 colWidth [#2835]（https://github.com/VisActor/VTable/issues/2835）
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 设置 disableSelect 时，selectCell api可调用 [#2799](https://github.com/VisActor/VTable/issues/2799)
+
+[更多详情请查看 v1.11.0](https://github.com/VisActor/VTable/releases/tag/v1.11.0)
+
 # v1.10.5
 
 2024-11-11
@@ -5,8 +35,10 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: pivot chart spec enable select not work [#2210](https://github.com/VisActor/VTable/issues/2210)
-- **@visactor/vtable**: sortState field undefined occor error
+
+181 / 5,000
+- **@visactor/vtable**: 修复数据透视图规范启用选择不起作用 [#2210](https://github.com/VisActor/VTable/issues/2210)
+- **@visactor/vtable**: 修复sortState 字段未定义发生错误
 
 
 
@@ -19,22 +51,21 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: gantt dependency line support tree node [#2701](https://github.com/VisActor/VTable/issues/2701)
-- **@visactor/vtable**: when drag on header can select cells continuous [#2751](https://github.com/VisActor/VTable/issues/2751)
+- **@visactor/vtable**：甘特图依赖关系线支持树节点 [#2701](https://github.com/VisActor/VTable/issues/2701)
+- **@visactor/vtable**：在标题上拖动时可以连续选择单元格 [#2751](https://github.com/VisActor/VTable/issues/2751)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when markline date less then minDate should not show [#2689](https://github.com/VisActor/VTable/issues/2689)
-- **@visactor/vtable**: pivot table header icon display incorrect [#2735](https://github.com/VisActor/VTable/issues/2735)
-- **@visactor/vtable**: parse axes config error when user set axes [#2749](https://github.com/VisActor/VTable/issues/2749)
-- **@visactor/vtable**: cellType set funciton occor error [#2754](https://github.com/VisActor/VTable/issues/2754)
-- **@visactor/vtable**: when pivot cell type set chart not data cell render error [#2758](https://github.com/VisActor/VTable/issues/2758)
-- **@visactor/vtable**: legend problems [#2764](https://github.com/VisActor/VTable/issues/2764) [#2755](https://github.com/VisActor/VTable/issues/2755)
-- **@visactor/vtable**: create task shedule date error [#2771](https://github.com/VisActor/VTable/issues/2771)
-- **@visactor/vtable**: fix cellLocation in pivot-table [#2694](https://github.com/VisActor/VTable/issues/2694)
-- **@visactor/vtable**: fix menu scale pos problem [#2734](https://github.com/VisActor/VTable/issues/2734)
-- **@visactor/vtable**: fix tree frozen row problem [#2619](https://github.com/VisActor/VTable/issues/2619)
-
+- **@visactor/vtable**: 修复当标记线日期小于 minDate 时不应显示 [#2689](https://github.com/VisActor/VTable/issues/2689)
+- **@visactor/vtable**: 修复数据透视表标题图标显示不正确 [#2735](https://github.com/VisActor/VTable/issues/2735)
+- **@visactor/vtable**: 修复当用户设置轴时解析轴配置错误 [#2749](https://github.com/VisActor/VTable/issues/2749)
+- **@visactor/vtable**: 修复cellType 设置函数发生错误 [#2754](https://github.com/VisActor/VTable/issues/2754)
+- **@visactor/vtable**: 修复当数据透视表单元格类型设置为图表而非数据单元格时渲染错误[#2758](https://github.com/VisActor/VTable/issues/2758)
+- **@visactor/vtable**: 修复图例问题 [#2764](https://github.com/VisActor/VTable/issues/2764) [#2755](https://github.com/VisActor/VTable/issues/2755)
+- **@visactor/vtable**: 修复创建任务计划日期错误 [#2771](https://github.com/VisActor/VTable/issues/2771)
+- **@visactor/vtable**: 修复数据透视表中的单元格位置 [#2694](https://github.com/VisActor/VTable/issues/2694)
+- **@visactor/vtable**: 修复菜单比例位置问题[#2734](https://github.com/VisActor/VTable/issues/2734)
+- **@visactor/vtable**：修复树冻结行问题 [#2619](https://github.com/VisActor/VTable/issues/2619)
 
 
 [更多详情请查看 v1.10.4](https://github.com/VisActor/VTable/releases/tag/v1.10.4)
@@ -46,8 +77,7 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: type define columnWidthConfig
-
+- **@visactor/vtable**: 修复类型columnWidthConfig定义
 
 
 [更多详情请查看 v1.10.3](https://github.com/VisActor/VTable/releases/tag/v1.10.3)
