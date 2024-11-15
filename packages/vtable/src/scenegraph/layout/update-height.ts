@@ -361,7 +361,8 @@ function updateMergeCellContentHeight(
             autoRowHeight,
             getQuadProps(style.padding as number),
             style.textAlign,
-            style.textBaseline
+            style.textBaseline,
+            table
           );
         }
 
@@ -402,7 +403,8 @@ function updateMergeCellContentHeight(
       autoRowHeight,
       getQuadProps(style.padding as number),
       style.textAlign,
-      style.textBaseline
+      style.textBaseline,
+      table
     );
   }
 }

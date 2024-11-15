@@ -34,20 +34,28 @@ export class CustomCellStylePlugin {
 
   getCustomCellStyleId(col: number, row: number) {
     let customStyleId;
-    this.customCellStyleArrangement.forEach(style => {
-      if (style.cellPosition.range) {
-        if (
-          style.cellPosition.range.start.col <= col &&
-          style.cellPosition.range.end.col >= col &&
-          style.cellPosition.range.start.row <= row &&
-          style.cellPosition.range.end.row >= row
-        ) {
-          customStyleId = style.customStyleId;
-        }
-      } else if (style.cellPosition.col === col && style.cellPosition.row === row) {
-        customStyleId = style.customStyleId;
+
+    const range = this.table.getCellRange(col, row);
+    for (let c = range.start.col; c <= range.end.col; c++) {
+      for (let r = range.start.row; r <= range.end.row; r++) {
+        // eslint-disable-next-line no-loop-func
+        this.customCellStyleArrangement.forEach(style => {
+          if (style.cellPosition.range) {
+            if (
+              style.cellPosition.range.start.col <= c &&
+              style.cellPosition.range.end.col >= c &&
+              style.cellPosition.range.start.row <= r &&
+              style.cellPosition.range.end.row >= r
+            ) {
+              customStyleId = style.customStyleId;
+            }
+          } else if (style.cellPosition.col === c && style.cellPosition.row === r) {
+            customStyleId = style.customStyleId;
+          }
+        });
       }
-    });
+    }
+
     return customStyleId;
   }
 
@@ -106,10 +114,11 @@ export class CustomCellStylePlugin {
       return style.cellPosition.col === cellPos.col && style.cellPosition.row === cellPos.row;
     });
 
-    if (index === -1) {
-      if (!customStyleId) {
-        return;
-      }
+    if (index === -1 && !customStyleId) {
+      // do nothing
+      return;
+    } else if (index === -1 && customStyleId) {
+      // add new style
       this.customCellStyleArrangement.push({
         cellPosition: {
           col: cellPos.col,
@@ -119,16 +128,27 @@ export class CustomCellStylePlugin {
         customStyleId: customStyleId
       });
     } else if (this.customCellStyleArrangement[index].customStyleId === customStyleId) {
+      // same style
       return;
-    } else {
+    } else if (customStyleId) {
+      // update style
       this.customCellStyleArrangement[index].customStyleId = customStyleId;
+    } else {
+      // delete useless style
+      this.customCellStyleArrangement.splice(index, 1);
     }
 
     // update cell group
     if (cellPos.range) {
       for (let col = cellPos.range.start.col; col <= cellPos.range.end.col; col++) {
         for (let row = cellPos.range.start.row; row <= cellPos.range.end.row; row++) {
-          this.table.scenegraph.updateCellContent(col, row);
+          const range = this.table.getCellRange(col, row);
+          for (let c = range.start.col; c <= range.end.col; c++) {
+            for (let r = range.start.row; r <= range.end.row; r++) {
+              this.table.scenegraph.updateCellContent(c, r);
+            }
+          }
+          // this.table.scenegraph.updateCellContent(col, row);
         }
       }
     } else {
@@ -162,9 +182,9 @@ export function mergeStyle(cacheStyle: Style, customCellStyle: ColumnStyleOption
   cacheStyle = cacheStyle.clone();
 
   for (const key in customCellStyle) {
-    const value = customCellStyle[key];
+    const value = (customCellStyle as any)[key];
     if (value) {
-      cacheStyle[`_${key}`] = value;
+      (cacheStyle as any)[`_${key}`] = value;
     }
   }
 

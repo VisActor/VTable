@@ -57,7 +57,9 @@ export function computeRowsHeight(
   const isDefaultHeaderHasAuto =
     table.defaultHeaderRowHeight === 'auto' ||
     (isArray(table.defaultHeaderRowHeight) && table.defaultHeaderRowHeight.some(item => item === 'auto'));
-  const isAllRowsAuto = table.heightMode === 'autoHeight' || table.heightMode === 'adaptive';
+  const isAllRowsAuto =
+    table.heightMode === 'autoHeight' ||
+    (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
 
   if (isAllRowsAuto || isDefaultHeaderHasAuto) {
     rowStart = rowStart ?? 0;
@@ -91,7 +93,9 @@ export function computeRowsHeight(
         const height = computeRowHeight(row, startCol, endCol, table);
         newHeights[row] = Math.round(height);
         //表头部分需要马上设置到缓存中 因为adaptive不会调整表头的高度 另外后面adaptive处理过程中有取值 table.getRowsHeight(0, table.columnHeaderLevelCount - 1);
-        table._setRowHeight(row, height);
+        if (table.heightAdaptiveMode === 'only-body' || !update) {
+          table._setRowHeight(row, height);
+        }
       }
     }
 
@@ -293,7 +297,10 @@ export function computeRowsHeight(
   if (update) {
     for (let row = rowStart; row <= rowEnd; row++) {
       const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
-      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
+      // if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
+      //   table._setRowHeight(row, newRowHeight);
+      // }
+      if (isValid(newRowHeight)) {
         table._setRowHeight(row, newRowHeight);
       }
     }
@@ -549,21 +556,24 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     let height = 0;
     let renderDefault = false;
     let enableCellPadding = false;
+    let cellRange;
     if (
       table.isHeader(col, row) ||
       (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell ||
       table.hasCustomMerge()
     ) {
-      const cellRange = table.getCellRange(col, row);
+      cellRange = table.getCellRange(col, row);
       spanRow = cellRange.end.row - cellRange.start.row + 1;
     }
     const arg = {
-      col,
-      row,
+      col: cellRange?.start.col ?? col,
+      row: cellRange?.start.row ?? row,
       dataValue: table.getCellOriginValue(col, row),
       value: table.getCellValue(col, row) || '',
       rect: getCellRect(col, row, table),
-      table
+      table,
+      originCol: col,
+      originRow: row
     };
     if (customLayout === 'react-custom-layout') {
       // customLayout = table._reactCreateGraphic;
