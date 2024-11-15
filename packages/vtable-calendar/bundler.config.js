@@ -10,11 +10,10 @@ module.exports = {
   name: 'VTableCalendar',
   umdOutputFilename: 'vtable-calendar',
   rollupOptions: {
-    treeshake: true,
-    plugins: [resolve({ browser: true })]
+    treeshake: true
   },
   globals: {
     '@visactor/vtable': 'VTable'
-  },
-  // external: ['@visactor/vtable']
+  }
+  // external: ['roughjs']
 };
