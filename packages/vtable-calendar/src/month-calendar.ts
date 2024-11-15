@@ -17,7 +17,7 @@ import { CALENDAR_EVENT_TYPE } from './event/type';
 import type { EventListenerId } from '@visactor/vtable/src/ts-types';
 import { isArray } from '@visactor/vutils';
 
-export interface VTableCalendarConstructorOptions {
+export interface CalendarConstructorOptions {
   startDate?: Date;
   endDate?: Date;
   currentDate?: Date;
@@ -31,9 +31,9 @@ export interface VTableCalendarConstructorOptions {
   customEventOptions?: ICustomEventOptions;
 }
 
-export class VTableCalendar extends EventTarget {
+export class Calendar extends EventTarget {
   container: HTMLElement;
-  options: VTableCalendarConstructorOptions;
+  options: CalendarConstructorOptions;
   table: ListTable;
   startDate: Date;
   endDate: Date;
@@ -51,7 +51,7 @@ export class VTableCalendar extends EventTarget {
   minCol: number = 0;
   customHandler: CustomEventHandler;
 
-  constructor(container: HTMLElement, options?: VTableCalendarConstructorOptions) {
+  constructor(container: HTMLElement, options?: CalendarConstructorOptions) {
     super();
     this.container = container;
     this.options = options ?? {};

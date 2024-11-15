@@ -1,11 +1,11 @@
 import type { CustomRenderFunctionArg } from '@visactor/vtable/es/ts-types';
 import { Group, Text, Rect, Circle } from '@visactor/vtable/es/vrender';
-import type { VTableCalendar } from '../month-calendar';
+import type { Calendar } from '../month-calendar';
 import { differenceInDays, startOfDay } from 'date-fns';
 
 export function calendarCustomLayout(args: CustomRenderFunctionArg) {
   const { table, row, col, rect } = args;
-  const calendar = (table as any).options._calendar as VTableCalendar;
+  const calendar = (table as any).options._calendar as Calendar;
   // const record = table.getRecordByCell(col, row);
   const { height, width } = rect ?? table.getCellRect(col, row);
 

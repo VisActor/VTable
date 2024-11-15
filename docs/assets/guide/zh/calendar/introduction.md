@@ -10,9 +10,9 @@
 在创建日历图时，可以传入日历日对应的配置：
 
 ```js
-import { VTableCalendar } from '@visactor/vtable-calendar';
+import { Calendar } from '@visactor/vtable-calendar';
 
-const calendar = new VTableCalendar(domContainer, options);
+const calendar = new Calendar(domContainer, options);
 ```
 
 其中，option支持下列属性
@@ -31,7 +31,7 @@ const calendar = new VTableCalendar(domContainer, options);
 `tableOptions` 配置的属性可以参考 [VTable的配置](../../option/ListTable)，用于表格的进一步配置。例如，如果希望日历图标题中周六显示为蓝色，周日显示为红色，可以使用以下配置：
 
 ```javascript livedemo template=vtable
-const calendarInstance = new VTableCalendar(document.getElementById(CONTAINER_ID), {
+const calendarInstance = new Calendar(document.getElementById(CONTAINER_ID), {
   tableOptions: {
     theme: {
       headerStyle: {
@@ -52,7 +52,7 @@ window['calendarInstance'] = calendarInstance;
 
 ## 日历图的自定义日程
 
-VTableCalendar支持两种自定义日程的方式，一种为单日内的日程，一种为跨多天的日程。自定义日程的配置如下：
+Calendar支持两种自定义日程的方式，一种为单日内的日程，一种为跨多天的日程。自定义日程的配置如下：
 
 ```ts
 export interface ICustomEvent {
@@ -75,7 +75,7 @@ export interface ICustomEvent {
 
 初始化时配置：
 ```ts
-const calendar = new VTableCalendar(document.getElementById(CONTAINER_ID), {
+const calendar = new Calendar(document.getElementById(CONTAINER_ID), {
   customEvents: [
     {
       date: new Date(2024, 9, 23),
@@ -133,7 +133,7 @@ calendar.updateCustomEvent({
 
 ## 日历图的事件
 
-VTableCalendar支持以下事件：
+Calendar支持以下事件：
 
 | 事件名 | 说明 |
 | --- | --- |

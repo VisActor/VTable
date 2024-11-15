@@ -11,9 +11,9 @@ A calendar is a common table used to display dates and corresponding schedules. 
 When creating a calendar, you can pass in the configuration corresponding to the calendar day:
 
 ```js
-import { VTableCalendar } from '@visactor/vtable-calendar';
+import { Calendar } from '@visactor/vtable-calendar';
 
-const calendar = new VTableCalendar(domContainer, options);
+const calendar = new Calendar(domContainer, options);
 ```
 
 Among them, option supports the following attributes
@@ -32,7 +32,7 @@ Among them, option supports the following attributes
 The properties configured in `tableOptions` can be referred to [VTable configuration](../../option/ListTable) for further configuration of the table. For example, if you want Saturday to be displayed in blue and Sunday in red in the calendar title, you can use the following configuration:
 
 ```javascript livedemo template=vtable
-const calendarInstance = new VTableCalendar(document.getElementById(CONTAINER_ID), {
+const calendarInstance = new Calendar(document.getElementById(CONTAINER_ID), {
   tableOptions: {
     theme: {
       headerStyle: {
@@ -53,7 +53,7 @@ window['calendarInstance'] = calendarInstance;
 
 ## Customized calendar
 
-VTableCalendar supports two ways to customize the calendar, one for a single day and one for a multi-day schedule. The configuration of custom schedule is as follows:
+Calendar supports two ways to customize the calendar, one for a single day and one for a multi-day schedule. The configuration of custom schedule is as follows:
 
 ```ts
 export interface ICustomEvent {
@@ -76,7 +76,7 @@ Custom schedules can be configured during initialization, or dynamically added, 
 
 Initialization configuration:
 ```ts
-const calendar = new VTableCalendar(document.getElementById(CONTAINER_ID), {
+const calendar = new Calendar(document.getElementById(CONTAINER_ID), {
   customEvents: [
     {
       date: new Date(2024, 9, 23),
@@ -134,7 +134,7 @@ Customized schedule APIs
 
 ## Calendar events
 
-VTableCalendar supports the following events:
+Calendar supports the following events:
 
 | Event name | Description |
 | --- | --- |

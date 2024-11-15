@@ -26,19 +26,19 @@ yarn add @visactor/vtable-calendar
 ```html
 <script src="https://unpkg.com/@visactor/vtable-calendar/dist/vtable-calendar.min.js"></script>
 <script>
-  const calendarInstance = new VTable.Calendar.VTableCalendar(domContainer, option);
+  const calendarInstance = new VTableCalendar.Calendar(domContainer, option);
 </script>
 
-## 引入 VTableCalendar
+## 引入 Calendar
 
 ### 通过 NPM 包引入
 
 在 JavaScript 文件顶部使用 `import` 引入 vtable-calendar：
 
 ```js
-import {VTableCalendar} from '@visactor/vtable-calendar';
+import {Calendar} from '@visactor/vtable-calendar';
 
-const calendarInstance = new VTableCalendar(domContainer, option);
+const calendarInstance = new Calendar(domContainer, option);
 ```
 
 ### 使用 script 标签引入
@@ -48,13 +48,13 @@ const calendarInstance = new VTableCalendar(domContainer, option);
 ```html
 <script src="https://unpkg.com/@visactor/vtable-calendar/dist/vtable-calendar.min.js"></script>
 <script>
-  const calendarInstance = new VTable.Calendar.VTableCalendar(domContainer, option);
+  const calendarInstance = new VTableCalendar.Calendar(domContainer, option);
 </script>
 ```
 
 ## 绘制一个简单的日历图
 
-在绘图前我们需要为 VTableCalendar 准备一个具备高宽的 DOM 容器，且这个容器可以相对定位，即需要设置position为 'absolute' 或者 'relative'。
+在绘图前我们需要为 Calendar 准备一个具备高宽的 DOM 容器，且这个容器可以相对定位，即需要设置position为 'absolute' 或者 'relative'。
 
 **请务必保证容器的宽高值为整数，VTable 内部逻辑中会用到容器的 offsetWidth、offsetHeight、clientWidth、clientHeight 属性，如果容器的 width 和 height 为小数会造成取值有误差，可能产生表格抖动问题。**
 ```html
@@ -66,7 +66,7 @@ const calendarInstance = new VTableCalendar(domContainer, option);
 接下来，我们创建一个 `Calendar` 实例，传入日历图配置项：
 
 ```javascript livedemo template=vtable
-const calendarInstance = new VTableCalendar(document.getElementById(CONTAINER_ID));
+const calendarInstance = new Calendar(document.getElementById(CONTAINER_ID));
 window['calendarInstance'] = calendarInstance;
 ```
 

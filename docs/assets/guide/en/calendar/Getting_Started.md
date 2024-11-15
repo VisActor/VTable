@@ -26,19 +26,19 @@ You can also get the built vtable-calendar file through CDN.
 ```html
 <script src="https://unpkg.com/@visactor/vtable-calendar/dist/vtable-calendar.min.js"></script>
 <script>
-const calendarInstance = new VTable.Calendar.VTableCalendar(domContainer, option);
+const calendarInstance = new VTableCalendar.Calendar(domContainer, option);
 </script>
 
-## Import VTableCalendar
+## Import Calendar
 
 ### Import via NPM package
 
 Use `import` at the top of the JavaScript file to import vtable-calendar:
 
 ```js
-import {VTableCalendar} from '@visactor/vtable-calendar';
+import {Calendar} from '@visactor/vtable-calendar';
 
-const calendarInstance = new VTableCalendar(domContainer, option);
+const calendarInstance = new Calendar(domContainer, option);
 ```
 
 ### Import using script tag
@@ -48,13 +48,13 @@ Introduce the built vtable-calendar file by adding `<script>` tag directly in th
 ```html
 <script> src="https://unpkg.com/@visactor/vtable-calendar/dist/vtable-calendar.min.js"></script>
 <script>
-const calendarInstance = new VTable.Calendar.VTableCalendar(domContainer, option);
+const calendarInstance = new VTableCalendar.Calendar(domContainer, option);
 </script>
 ```
 
 ## Draw a simple calendar
 
-Before drawing, we need to prepare a DOM container with height and width for VTableCalendar, and this container can be relatively positioned, that is, position needs to be set to 'absolute' or 'relative'.
+Before drawing, we need to prepare a DOM container with height and width for Calendar, and this container can be relatively positioned, that is, position needs to be set to 'absolute' or 'relative'.
 
 **Please make sure that the width and height of the container are integers. The offsetWidth, offsetHeight, clientWidth, and clientHeight properties of the container will be used in the internal logic of VTable. If the width and height of the container are decimals, it will cause errors in the value, which may cause table jitter problems. **
 ```html
@@ -66,7 +66,7 @@ Before drawing, we need to prepare a DOM container with height and width for VTa
 Next, we create a `Calendar` instance and pass in the calendar configuration items:
 
 ```javascript livedemo template=vtable
-const calendarInstance = new VTableCalendar(document.getElementById(CONTAINER_ID));
+const calendarInstance = new Calendar(document.getElementById(CONTAINER_ID));
 window['calendarInstance'] = calendarInstance;
 ```
 

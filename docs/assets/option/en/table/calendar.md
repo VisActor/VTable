@@ -2,7 +2,7 @@
 
 # Calendar
 
-Gantt chart configuration, the corresponding type is VTableCalendarConstructorOptions, the specific configuration items are as follows:
+Gantt chart configuration, the corresponding type is CalendarConstructorOptions, the specific configuration items are as follows:
 
 ## startDate(Date)
 

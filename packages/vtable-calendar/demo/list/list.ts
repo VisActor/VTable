@@ -1,8 +1,8 @@
 const CONTAINER_ID = 'vTable';
-import { VTableCalendar } from '../../src';
+import { Calendar } from '../../src';
 
 export function createTable() {
-  const calendar = new VTableCalendar(document.getElementById(CONTAINER_ID));
+  const calendar = new Calendar(document.getElementById(CONTAINER_ID));
 
   // calendar.addCustomEvent({
   //   id: 'Event B',

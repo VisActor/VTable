@@ -7,7 +7,7 @@ module.exports = {
   formats: ['cjs', 'es', 'umd'],
   noEmitOnError: false,
   copy: ['css'],
-  name: 'VTable.Calendar',
+  name: 'VTableCalendar',
   umdOutputFilename: 'vtable-calendar',
   rollupOptions: {
     treeshake: true,
@@ -16,5 +16,5 @@ module.exports = {
   globals: {
     '@visactor/vtable': 'VTable'
   },
-  external: ['@visactor/vtable']
+  // external: ['@visactor/vtable']
 };

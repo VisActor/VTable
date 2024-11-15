@@ -1,5 +1,5 @@
 const CONTAINER_ID = 'vTable';
-import { VTableCalendar } from '../../src';
+import { Calendar } from '../../src';
 import type { ICustomEvent } from '../../src/custom/custom-handler';
 
 const unicColorPool = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown', 'gray'];
@@ -31,7 +31,7 @@ export function createTable() {
     });
   }
 
-  const calendar = new VTableCalendar(document.getElementById(CONTAINER_ID), {
+  const calendar = new Calendar(document.getElementById(CONTAINER_ID), {
     tableOptions: {
       theme: {
         headerStyle: {

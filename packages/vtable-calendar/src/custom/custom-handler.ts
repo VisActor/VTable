@@ -1,5 +1,5 @@
 import { max, min } from 'date-fns';
-import type { VTableCalendar } from '../month-calendar';
+import type { Calendar } from '../month-calendar';
 import { merge } from '@visactor/vutils';
 
 const CUSTOM_CONTAINER_NAME = 'custom-container';
@@ -47,11 +47,11 @@ export interface IEventData extends ICustomEvent {
 }
 
 export class CustomEventHandler {
-  calendar: VTableCalendar;
+  calendar: Calendar;
   cellEvents: Map<string, ICellCustomEvent> = new Map();
   events: ICustomEvent[] = [];
   customEventOptions: Required<ICustomEventOptions>;
-  constructor(calendar: VTableCalendar, customEventOptions?: ICustomEventOptions) {
+  constructor(calendar: Calendar, customEventOptions?: ICustomEventOptions) {
     this.calendar = calendar;
     this.customEventOptions = merge(
       {

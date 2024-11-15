@@ -2,7 +2,7 @@
 
 # Calendar
 
-甘特图配置，对应的类型为 VTableCalendarConstructorOptions，具体配置项如下：
+甘特图配置，对应的类型为 CalendarConstructorOptions，具体配置项如下：
 
 ## startDate(Date)
 
