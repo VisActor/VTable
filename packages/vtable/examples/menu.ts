@@ -37,6 +37,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-highlightInRange'
+      },
+      {
+        path: 'list',
         name: 'list-transpose'
       },
       {

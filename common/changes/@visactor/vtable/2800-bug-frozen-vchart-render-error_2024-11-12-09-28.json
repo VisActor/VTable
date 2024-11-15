@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: sortState field undefined occor error\n\n",
+      "comment": "fix: when chart row is frozen render error #2800\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

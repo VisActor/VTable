@@ -733,8 +733,8 @@ export class Scenegraph {
     deleteAllSelectBorder(this);
     this.table.stateManager.select.ranges.forEach((cellRange: CellRange) => {
       updateCellSelectBorder(this, cellRange);
+      moveSelectingRangeComponentsToSelectedRangeComponents(this);
     });
-    moveSelectingRangeComponentsToSelectedRangeComponents(this);
   }
   /**
    * @description: 列宽调整结果更新列宽
@@ -1925,7 +1925,12 @@ export class Scenegraph {
     this.stage.enableDirtyBounds();
   }
 
-  updateRow(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
+  updateRow(
+    removeCells: CellAddress[],
+    addCells: CellAddress[],
+    updateCells: CellAddress[] = [],
+    recalculateColWidths: boolean = true
+  ) {
     this.table.internalProps.layoutMap.clearCellRangeMap();
     this.table.internalProps.useOneRowHeightFillAll = false;
     const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
@@ -1942,7 +1947,8 @@ export class Scenegraph {
     updateRow(removeCells, addCells, updateCells, this.table);
 
     // update column width and row height
-    this.recalculateColWidths();
+
+    recalculateColWidths && this.recalculateColWidths();
 
     // this.recalculateRowHeights();
 

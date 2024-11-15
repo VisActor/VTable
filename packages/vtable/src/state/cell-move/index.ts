@@ -1,4 +1,5 @@
 import type { ListTable } from '../../ListTable';
+import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
@@ -7,7 +8,14 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { StateManager } from '../state';
 import { adjustMoveHeaderTarget } from './adjust-header';
 
-export function startMoveCol(col: number, row: number, x: number, y: number, state: StateManager) {
+export function startMoveCol(
+  col: number,
+  row: number,
+  x: number,
+  y: number,
+  state: StateManager,
+  event: MouseEvent | PointerEvent | TouchEvent
+) {
   if (!('canMoveHeaderPosition' in state.table.internalProps.layoutMap)) {
     return;
   }
@@ -26,8 +34,19 @@ export function startMoveCol(col: number, row: number, x: number, y: number, sta
       ? state.columnMove.y
       : 0;
 
-  state.table.scenegraph.component.showMoveCol(col, row, delta);
+  const { backX, lineX, backY, lineY } = state.table.scenegraph.component.showMoveCol(col, row, delta);
 
+  state.table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, {
+    col,
+    row,
+    x,
+    y,
+    backX,
+    lineX,
+    backY,
+    lineY,
+    event
+  });
   // 调整列顺序期间清空选中清空
   const isHasSelected = !!state.select.ranges?.length;
   state.table.stateManager.updateSelectPos(-1, -1);
@@ -35,7 +54,14 @@ export function startMoveCol(col: number, row: number, x: number, y: number, sta
   state.table.scenegraph.updateNextFrame();
 }
 
-export function updateMoveCol(col: number, row: number, x: number, y: number, state: StateManager) {
+export function updateMoveCol(
+  col: number,
+  row: number,
+  x: number,
+  y: number,
+  state: StateManager,
+  event: MouseEvent | PointerEvent | TouchEvent
+) {
   if (!('canMoveHeaderPosition' in state.table.internalProps.layoutMap)) {
     return;
   }
@@ -45,7 +71,6 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
     { col, row },
     state.table
   );
-
   const canMove = state.table.internalProps.layoutMap.canMoveHeaderPosition(
     { col: state.columnMove.colSource, row: state.columnMove.rowSource },
     { col: targetCell.col, row: targetCell.row }
@@ -102,8 +127,18 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
           state.table.stateManager.scroll.verticalBarPos;
       }
     }
-
     state.table.scenegraph.component.updateMoveCol(backX, lineX, backY, lineY);
+    state.table.fireListeners(TABLE_EVENT_TYPE.CHANGING_HEADER_POSITION, {
+      col,
+      row,
+      x,
+      y,
+      backX,
+      lineX,
+      backY,
+      lineY,
+      event
+    });
     state.table.scenegraph.updateNextFrame();
   }
 }

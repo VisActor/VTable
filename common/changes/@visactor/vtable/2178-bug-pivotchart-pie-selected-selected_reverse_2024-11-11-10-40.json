@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: pivot chart spec enable select not work #2210\n\n",
+      "comment": "fix: rose pivotchart click legend then hover chart render error #2209\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

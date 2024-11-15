@@ -642,7 +642,7 @@ export function createTable() {
       }
     },
     grid: {
-      // backgroundColor: 'gray',
+      backgroundColor: '#282a2e',
       verticalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
@@ -678,16 +678,12 @@ export function createTable() {
         /** 已完成部分任务条的颜色 */
         completedBarColor: '#91e8e0',
         /** 任务条的圆角 */
-        cornerRadius: 8,
-        /** 任务条的边框 */
-        borderWidth: 1,
-        /** 边框颜色 */
-        borderColor: 'black'
+        cornerRadius: 8
       }
     },
     timelineHeader: {
       colWidth: 100,
-      backgroundColor: '#EEF1F5',
+      backgroundColor: '#282a2e',
       horizontalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
@@ -711,7 +707,6 @@ export function createTable() {
             strokeColor: 'black',
             textAlign: 'right',
             textBaseline: 'bottom',
-            backgroundColor: '#EEF1F5',
             textStick: true
             // padding: [0, 30, 0, 20]
           }
@@ -728,8 +723,7 @@ export function createTable() {
             color: 'white',
             strokeColor: 'black',
             textAlign: 'right',
-            textBaseline: 'bottom',
-            backgroundColor: '#EEF1F5'
+            textBaseline: 'bottom'
           }
         }
         // {
@@ -764,14 +758,7 @@ export function createTable() {
     ],
     rowSeriesNumber: {
       title: '行号',
-      dragOrder: true,
-      headerStyle: {
-        bgColor: '#EEF1F5',
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      }
+      dragOrder: true
     },
     scrollStyle: {
       scrollRailColor: 'RGBA(246,246,246,0.5)',
