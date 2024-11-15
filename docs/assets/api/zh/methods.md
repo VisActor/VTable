@@ -1316,3 +1316,12 @@ interface ISortedMapItem {
   /** 直接设置canvas的宽高 不根据容器宽高来决定表格的尺寸 */
   setCanvasSize: (width: number, height: number) => void;
 ```
+
+## setLoadingHierarchyState(Function)
+
+设置单元格的树形展开收起状态为 loading 
+
+```
+  /** 设置单元格的树形展开收起状态为 loading */
+  setLoadingHierarchyState: (col: number, row: number) => void;
+```

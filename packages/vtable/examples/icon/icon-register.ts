@@ -208,6 +208,32 @@ export function createTable() {
       title: '下拉菜单'
     }
   });
+
+  VTable.register.icon('loading', {
+    type: 'image', //指定svg格式图标，其他还支持path，image，font
+    width: 22,
+    height: 22,
+    // src: './icons8.gif',
+    src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+    // funcType: VTable.TYPES.IconFuncTypeEnum.sort,//对应内部特定功能的图标，目前有sort frozen expand等
+    name: 'loading', //定义图标的名称，在内部会作为缓存的key值
+    positionType: VTable.TYPES.IconPosition.absoluteRight, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
+    marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
+    marginRight: 0, // 右侧内容间隔 在特定位置position中起作用
+    visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
+    hover: {
+      // 热区大小
+      width: 32,
+      height: 32,
+      bgColor: 'rgba(22,44,66,0.2)'
+    },
+    tooltip: {
+      // 气泡框，按钮的的解释信息
+      title: '下拉菜单'
+    },
+    isGif: true
+  });
+
   const personsDataSource = [
     {
       progress: 100,
@@ -371,7 +397,7 @@ export function createTable() {
         },
         width: 100,
         icon: [
-          'filter'
+          'loading'
           // {
           //   type: 'font',
           //   name: 'icon-define',
@@ -436,8 +462,12 @@ export function createTable() {
     theme: {
       tooltipStyle: {
         maxWidth: 200
+      },
+      bodyStyle: {
+        bgColor: '#ccc'
       }
     }
+    // pixelRatio: 1
   };
 
   const instance = new ListTable(option);

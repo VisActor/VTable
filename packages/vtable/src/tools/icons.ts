@@ -27,7 +27,8 @@ const ICON_PROP_KEYS: IconPropKey[] = [
   'hover',
   'cursor',
   'shape',
-  'interactive'
+  'interactive',
+  'isGif'
 ];
 
 export const iconPropKeys = ICON_PROP_KEYS;

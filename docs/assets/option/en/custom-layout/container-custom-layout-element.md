@@ -4,13 +4,13 @@
     prefix = ${prefix},
 ) }}
 
-${prefix} width (number | percentCalcObj)
+${prefix} width (number)
 
-The width of the container, which can be a number or a percentage calculation object.
+The width of the container.
 
-${prefix} height (number | percentCalcObj)
+${prefix} height (number)
 
-The height of the container, which can be a number or a percentage calculation object.
+The height of the container.
 
 ${prefix} direction ('row' | 'column') = 'row'
 

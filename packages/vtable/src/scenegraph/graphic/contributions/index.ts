@@ -10,7 +10,12 @@ import {
   TextRenderContribution
 } from '@src/vrender';
 import { ChartRender, DefaultCanvasChartRender } from './chart-render';
-import { AfterImageRenderContribution, BeforeImageRenderContribution } from './image-contribution-render';
+import {
+  AfterImageRenderContribution,
+  BeforeImageRenderContribution,
+  BeforeGifImageRenderContribution,
+  AfterGifImageRenderContribution
+} from './image-contribution-render';
 import {
   SplitRectBeforeRenderContribution as VTableSplitRectBeforeRenderContribution,
   SplitRectAfterRenderContribution as VTableSplitRectAfterRenderContribution
@@ -55,6 +60,11 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(ImageRenderContribution).toService(BeforeImageRenderContribution);
   bind(AfterImageRenderContribution).toSelf().inSingletonScope();
   bind(ImageRenderContribution).toService(AfterImageRenderContribution);
+
+  bind(BeforeGifImageRenderContribution).toSelf().inSingletonScope();
+  bind(ImageRenderContribution).toService(BeforeGifImageRenderContribution);
+  bind(AfterGifImageRenderContribution).toSelf().inSingletonScope();
+  bind(ImageRenderContribution).toService(AfterGifImageRenderContribution);
 
   // group 渲染器注入contributions
   bind(AdjustColorGroupBeforeRenderContribution).toSelf().inSingletonScope();

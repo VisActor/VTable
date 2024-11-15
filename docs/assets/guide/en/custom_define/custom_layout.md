@@ -216,13 +216,9 @@ The lower middle part (D) is laid out horizontally, with three elements: group t
 
 The province and city buttons are composed of multiple elements, and the height of the entire container is determined by the layout wrap result. The minimum height is when it is displayed in one line without wrapping; the maximum height is when all three elements are wrapped and displayed in three lines.
 
-## Automatic Row Height and Column Width Calculation
-
-Using the percentCalc method to specify the width and height of a container in percentage, when specifying adaptive width and height in the table, it will automatically calculate the cell width and height that can accommodate all content based on the content's width and height, as the actual content width and height of this cell.
-
 ## JSX Primitives
 
-For detailed instructions, please refer to the tutorial provided by VRender: [TODO]
+For detailed instructions, please refer to the tutorial provided by VRender: [`VRender Primitive Configuration`](https://visactor.io/vrender/option/Group)
 
 ### Container Primitives
 
@@ -360,8 +356,8 @@ Container
 
 | key            | type                                                                        | description                                                                        |
 | :------------- | :-------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| width          | number                                                                      | percentCalcObj\|Container width                                                    |
-| height         | number                                                                      | percentCalcObj\|Container height                                                   |
+| width          | number                                                                      | Container width                                                    |
+| height         | number                                                                      | Container height                                                   |
 | display        | 'relative' \| 'flex'                                                        | Layout mode (`flex` enables flex layout mode)                                      |
 | flexDirection  | 'row' \| 'row-reverse' \| 'column' \| 'column-reverse'                      | Direction of the main axis                                                         |
 | flexWrap       | 'nowrap' \| 'wrap'                                                          | Whether to display in a single line or multiple lines                              |
@@ -400,8 +396,8 @@ label component
 
 label component
 
-| key                     | type                                                                                                                          | description                                  |
-| :---------------------- | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | ------------------------------------------------- | ---------------- | ------------------- | ---------- |
+| key| type| description|
+| :--- | :--- | :------ |
 | interactive             | boolean                                                                                                                       | whether interactive                          |
 | disabled                | boolean                                                                                                                       | Whether to disable                           |
 | checked                 | boolean                                                                                                                       | Whether to check                             |
@@ -415,19 +411,21 @@ label component
 
 _- customLayout supports object creation syntax_
 
-To create primitive objects using CustomLayout, you need to use `new VTable.CustomLayout.XXX` to create primitives. For specific configuration properties, refer to [`VRender Primitive Configuration`](https://visactor.io/vrender/option/Group)
+To create primitive objects using CustomLayout, you need to use `createXXX` to create primitives. For specific configuration properties, refer to [`VRender Primitive Configuration`](https://visactor.io/vrender/option/Group)
 
 For example:
 
 ```ts
-const text1 = new VTable.CustomLayout.Text({
+import { createText, createGroup } from '@visactor/vtable/es/vrender';
+
+const text1 = new createText({
   text: 'text',
   fontSize: 28,
   fontFamily: 'sans-serif',
   fill: 'black'
 });
 
-const container = new VTable.CustomLayout.Container({
+const container = new createGroup({
   height,
   width
 });
@@ -439,16 +437,45 @@ return {
 };
 ```
 
-The correspondence between CustomLayout common graphics elements and jsx graphics elements is as follows:
+## Animation
 
-| JSX graphic | CustomLayout graphic  |
-| :---------- | :-------------------- |
-| VRect       | CustomLayout.Rect     |
-| VCircle     | CustomLayout.Circle   |
-| VText       | CustomLayout.Text     |
-| VImage      | CustomLayout.Image    |
-| VLine       | CustomLayout.Line     |
-| VGroup      | CustomLayout.Group    |
-| VTag        | CustomLayout.Tag      |
-| VRadio      | CustomLayout.Radio    |
-| VCheckbox   | CustomLayout.Checkbox |
+VTable provides animation support for custom layouts, you can refer to the [VRender animation tutorial](https://visactor.io/vrender/guide/asd/Basic_Tutorial/Animate) for details. It should be noted that the animation needs to be configured as a timeline on the VTable instance to ensure the consistency of the animation.
+
+If you create a primitive in JSX, you need to add the `animation` attribute and `timeline` to the primitive tag. The `animation` attribute is an array containing the operations in the VRender animation, which will be chained after the object is instantiated, for example:
+```tsx
+<VImage
+  attribute={{
+    id: 'icon',
+    width: 50,
+    height: 50,
+    src: record.bloggerAvatar,
+    shape: 'circle',
+    anchor: [25, 25]
+  }}
+  animation={[
+    ['to', { angle: 2 * Math.PI }, 1000, 'linear'],
+    ['loop', Infinity]
+  ]}
+  timeline={table.animationManager.timeline}
+></VImage>
+```
+
+If you create a primitive in an instantiated way, you need to call `animation.setTimeline(table.animationManager.timeline);` once, for example:
+
+```ts
+import {createImage} from '@visactor/vtable/es/vrender';
+
+const icon = createImage({
+  id: 'icon',
+  width: 50,
+  height: 50,
+  src: record.bloggerAvatar,
+  shape: 'circle',
+  anchor: [25, 25]
+});
+iconGroup.add(icon);
+
+const animation = icon.animate();
+animation.setTimeline(table.animationManager.timeline);
+animation.to({ angle: 2 * Math.PI }, 1000, 'linear').loop(Infinity);
+```

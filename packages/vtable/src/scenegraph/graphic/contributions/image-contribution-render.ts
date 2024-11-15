@@ -92,3 +92,81 @@ export class AfterImageRenderContribution implements IImageRenderContribution {
     }
   }
 }
+
+/**
+ * @description: image支持gif动态图片
+ * @return {*}
+ */
+@injectable()
+export class BeforeGifImageRenderContribution implements IImageRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
+  useStyle = true;
+  order = 0;
+  drawShape(
+    image: IImage,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    imageAttribute: Required<IImageGraphicAttribute>,
+    drawContext: IDrawContext,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    doFillOrStroke?: { doFill: boolean; doStroke: boolean }
+  ) {
+    const { isGif } = image.attribute as any;
+
+    if (isGif && image.playing) {
+      image.attribute.opacity = 0; // hack for static image
+    }
+  }
+}
+
+@injectable()
+export class AfterGifImageRenderContribution implements IImageRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
+  useStyle = true;
+  order = 0;
+  drawShape(
+    image: IImage,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    imageAttribute: Required<IImageGraphicAttribute>,
+    drawContext: IDrawContext,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    doFillOrStroke?: { doFill: boolean; doStroke: boolean }
+  ) {
+    const { isGif } = image.attribute as any;
+
+    if (isGif && image.playing) {
+      image.attribute.opacity = 1; // hack for static image
+      context.globalAlpha = image.attribute.opacity;
+      image.renderFrame(context, x, y);
+    }
+  }
+}

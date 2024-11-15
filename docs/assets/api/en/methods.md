@@ -1318,3 +1318,11 @@ Directly set the width and height of the canvas instead of determining the size 
 /** Directly set the width and height of the canvas instead of determining the size of the table based on the width and height of the container */
 setCanvasSize: (width: number, height: number) => void;
 ```
+
+## setLoadingHierarchyState(Function)
+
+Set the loading state of the tree expansion and collapse of the cell
+```
+  /** Set the loading state of the tree expansion and collapse of the cell */
+  setLoadingHierarchyState: (col: number, row: number) => void;
+```
