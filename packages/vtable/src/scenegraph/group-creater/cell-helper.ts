@@ -57,7 +57,7 @@ export function createCell(
   cellTheme: IThemeSpec,
   range: CellRange | undefined,
   customResult?: {
-    elementsGroup: VGroup;
+    elementsGroup?: VGroup;
     renderDefault: boolean;
   }
 ): Group {
@@ -741,7 +741,7 @@ function updateCellContent(
   cellTheme: IThemeSpec,
   range: CellRange | undefined,
   customResult?: {
-    elementsGroup: VGroup;
+    elementsGroup?: VGroup;
     renderDefault: boolean;
   }
 ) {

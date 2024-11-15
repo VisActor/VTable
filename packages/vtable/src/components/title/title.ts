@@ -195,4 +195,8 @@ export class Title {
       dy: this._titleOption.dy ?? 0
     } as TitleAttrs;
   }
+
+  getComponentGraphic() {
+    return this._titleComponent;
+  }
 }

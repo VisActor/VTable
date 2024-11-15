@@ -408,6 +408,9 @@ export function createCellContent(
 
   // 更新各个部分纵向位置
   cellGroup.forEachChildren((child: any) => {
+    if (child.name === CUSTOM_CONTAINER_NAME) {
+      return;
+    }
     if (textBaseline === 'middle') {
       child.setAttribute('y', padding[0] + (height - child.AABBBounds.height()) / 2);
     } else if (textBaseline === 'bottom') {

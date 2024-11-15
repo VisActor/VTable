@@ -103,7 +103,7 @@
       "name": "sync-bnpm",
       "summary": "Sync bnpm",
       "description": "Sync bnpm",
-      "shellCommand": "bnpm sync @visactor/vtable && bnpm sync @visactor/vtable-editors && bnpm sync @visactor/react-vtable && bnpm sync @visactor/openinula-vtable && bnpm sync @visactor/vtable-export && bnpm sync @visactor/vtable-search && bnpm sync @visactor/vtable-gantt && bnpm sync @visactor/vue-vtable"
+      "shellCommand": "bnpm sync @visactor/vtable && bnpm sync @visactor/vtable-editors && bnpm sync @visactor/react-vtable && bnpm sync @visactor/openinula-vtable && bnpm sync @visactor/vtable-export && bnpm sync @visactor/vtable-search && bnpm sync @visactor/vtable-gantt && bnpm sync @visactor/vue-vtable && bnpm sync @visactor/vtable-calendar"
     }
   ],
   "parameters": [

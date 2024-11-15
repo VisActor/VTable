@@ -146,8 +146,8 @@ import { getCellStyle } from './style-helper';
 import type { EditManeger } from '../edit/edit-manager';
 import { createReactContainer } from '../scenegraph/layout/frozen-react';
 import { setIconColor } from '../icons';
-import type { ITableAnimationOption } from './animation';
 import { TableAnimationManager } from './animation';
+import type { ITableAnimationOption } from '../ts-types/animation/appear';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;

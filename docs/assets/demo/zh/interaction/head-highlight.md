@@ -92,7 +92,7 @@ const option = {
   columns,
   rowSeriesNumber: {}
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 
 const highlightPlugin = new VTable.HeaderHighlightPlugin(tableInstance, {});
