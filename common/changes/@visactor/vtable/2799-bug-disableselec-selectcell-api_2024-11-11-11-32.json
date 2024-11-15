@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "feat: when drag on header can select cells continuous #2751\n\n",
+      "comment": "refactor: when set disableSelect but api selectCell can work #2799\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

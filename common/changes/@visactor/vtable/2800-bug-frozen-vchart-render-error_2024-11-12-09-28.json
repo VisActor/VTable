@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: parse axes config error when user set axes #2749\n\n",
+      "comment": "fix: when chart row is frozen render error #2800\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

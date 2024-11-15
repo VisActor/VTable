@@ -856,7 +856,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param col
    * @param row
    */
-  toggleHierarchyState(col: number, row: number) {
+  toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     //nothing
   }
   /**
@@ -1180,6 +1180,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         spec.area.state.vtable_selected_reverse = spec.area.state.selected_reverse;
         delete spec.area.state.selected;
         delete spec.area.state.selected_reverse;
+      }
+      if (spec.pie?.state?.selected) {
+        spec.pie.state.vtable_selected = spec.pie.state.selected;
+        spec.pie.state.vtable_selected_reverse = spec.pie.state.selected_reverse;
+        delete spec.pie.state.selected;
+        delete spec.pie.state.selected_reverse;
       }
     };
     this.internalProps.indicators?.forEach((indicator: string | IIndicator) => {

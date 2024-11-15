@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: when markline date less then minDate should not show #2689\n\n",
+      "comment": "feat: drag order highlight line render\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

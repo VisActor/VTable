@@ -2591,9 +2591,26 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param col
    * @param row
    */
-  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible: boolean = true) {
+  selectCell(
+    col: number,
+    row: number,
+    isShift?: boolean,
+    isCtrl?: boolean,
+    makeSelectCellVisible: boolean = true,
+    skipBodyMerge: boolean = false,
+    forceSelect: boolean = false
+  ) {
     const isHasSelected = !!this.stateManager.select.ranges?.length;
-    this.stateManager.updateSelectPos(col, row, isShift, isCtrl, false, !makeSelectCellVisible);
+    this.stateManager.updateSelectPos(
+      col,
+      row,
+      isShift,
+      isCtrl,
+      false,
+      !makeSelectCellVisible,
+      skipBodyMerge,
+      forceSelect
+    );
     this.stateManager.endSelectCells(true, isHasSelected);
   }
   /**
@@ -2646,7 +2663,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract refreshHeader(): void;
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;
-  abstract toggleHierarchyState(col: number, row: number): void;
+  abstract toggleHierarchyState(col: number, row: number, recalculateColWidths?: boolean): void;
   abstract _hasHierarchyTreeHeader(): boolean;
   abstract getMenuInfo(col: number, row: number, type: string): DropDownMenuEventInfo;
   abstract _moveHeaderPosition(

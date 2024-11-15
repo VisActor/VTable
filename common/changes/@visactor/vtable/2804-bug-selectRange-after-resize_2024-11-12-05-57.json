@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: cellType set funciton occor error #2754\n\n",
+      "comment": "fix: when after select range not exist #2804\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: when pivot cell type set chart not data cell render error #2758\n\n",
+      "comment": "feat: add argument recalculateColWidths for api toggleHierarchyState #2817\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

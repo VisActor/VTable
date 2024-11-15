@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "feat: gantt dependency line support tree node #2701\n\n",
+      "comment": "feat: add change_header_position_fail event\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

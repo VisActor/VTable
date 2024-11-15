@@ -838,12 +838,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 表头切换层级状态
    * @param col
    * @param row
+   * @param recalculateColWidths  是否重新计算列宽 默认为true.（设置width:auto或者 autoWidth 情况下才有必要考虑该参数）
    */
-  toggleHierarchyState(col: number, row: number) {
+  toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
-      this._refreshHierarchyState(col, row);
+      this._refreshHierarchyState(col, row, recalculateColWidths);
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
         row: row,
@@ -853,7 +854,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const record = this.getCellOriginRecord(col, row);
       if (Array.isArray(record.children)) {
         //children 是数组 表示已经有子树节点信息
-        this._refreshHierarchyState(col, row);
+        this._refreshHierarchyState(col, row, recalculateColWidths);
       }
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
@@ -864,7 +865,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
   /** 刷新当前节点收起展开状态，如手动更改过 */
-  _refreshHierarchyState(col: number, row: number) {
+  _refreshHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     let notFillWidth = false;
     let notFillHeight = false;
     const checkHasChart = this.internalProps.layoutMap.checkHasChart();
@@ -920,7 +921,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       // reset proxy row config
       this.scenegraph.proxy.refreshRowCount();
     }
-    this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions, updateCells);
+    this.scenegraph.updateRow(
+      diffPositions.removeCellPositions,
+      diffPositions.addCellPositions,
+      updateCells,
+      recalculateColWidths
+    );
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
       if (this.autoFillWidth && !notFillWidth) {
@@ -1112,8 +1118,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     //重复逻辑抽取updateWidthHeight
     if (sort !== undefined) {
-      this.internalProps.sortState = this.internalProps.multipleSort ? (Array.isArray(sort) ? sort : [sort]) : sort;
-      this.stateManager.setSortState((this as any).sortState as SortState);
+      if (sort === null || (!Array.isArray(sort) && isValid(sort.field)) || Array.isArray(sort)) {
+        this.internalProps.sortState = this.internalProps.multipleSort ? (Array.isArray(sort) ? sort : [sort]) : sort;
+        this.stateManager.setSortState((this as any).sortState as SortState);
+      }
     }
     if (records) {
       _setRecords(this, records);
@@ -1180,13 +1188,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param records 设置到单元格其子节点的数据
    * @param col 需要设置子节点的单元格地址
    * @param row  需要设置子节点的单元格地址
+   * @param recalculateColWidths  是否重新计算列宽 默认为true.（设置width:auto或者 autoWidth 情况下才有必要考虑该参数）
    */
-  setRecordChildren(records: any[], col: number, row: number) {
+  setRecordChildren(records: any[], col: number, row: number, recalculateColWidths: boolean = true) {
     const record = this.getCellOriginRecord(col, row);
     record.children = records;
     const index = this.getRecordShowIndexByCell(col, row);
     this.dataSource.setRecord(record, index);
-    this._refreshHierarchyState(col, row);
+    this._refreshHierarchyState(col, row, recalculateColWidths);
   }
 
   startEditCell(col?: number, row?: number, value?: string | number) {

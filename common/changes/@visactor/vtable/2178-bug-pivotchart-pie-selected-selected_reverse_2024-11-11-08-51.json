@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: create task shedule date error #2771\n\n",
+      "comment": "fix: pivot chart pie type selected state not work #2178\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

@@ -179,7 +179,9 @@ export class Chart extends Group {
 
     (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(this.activeChartInstance);
     this.activeChartInstance.on('click', (params: any) => {
-      if (Chart.temp) {
+      if (this.attribute.spec.select?.enable === false) {
+        table.scenegraph.updateChartState(null);
+      } else if (Chart.temp) {
         table.scenegraph.updateChartState(params?.datum);
       }
     });
@@ -248,19 +250,21 @@ function getTableBounds(col: number, row: number, table: BaseTableAPI) {
   bodyBound.x2 = tableBound.x2;
   bodyBound.y1 = tableBound.y1;
   bodyBound.y2 = tableBound.y2;
-
-  if (!layoutMap.isFrozenColumn(col, row) && !layoutMap.isRightFrozenColumn(col, row)) {
-    // no frozen body
-    bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
-    bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
-    bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
-    bodyBound.y2 = tableBound.y2 - table.getBottomFrozenRowsHeight();
-  } else if (layoutMap.isLeftBottomCorner(col, row) || layoutMap.isRightTopCorner(col, row)) {
+  if (
+    layoutMap.isLeftBottomCorner(col, row) ||
+    layoutMap.isRightTopCorner(col, row) ||
+    layoutMap.isLeftTopCorner(col, row) ||
+    layoutMap.isRightBottomCorner(col, row)
+  ) {
     // frozen cornor
   } else if (layoutMap.isFrozenColumn(col, row)) {
     // left frozen
     bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
     bodyBound.y2 = tableBound.y2 - table.getBottomFrozenRowsHeight();
+  } else if (layoutMap.isFrozenRow(col, row)) {
+    // top frozen
+    bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
+    bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
   } else if (layoutMap.isRightFrozenColumn(col, row)) {
     // right frozen
     bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
@@ -269,6 +273,12 @@ function getTableBounds(col: number, row: number, table: BaseTableAPI) {
     // bottom frozen
     bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
     bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
+  } else if (!layoutMap.isFrozenColumn(col, row) && !layoutMap.isRightFrozenColumn(col, row)) {
+    // no frozen body
+    bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
+    bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
+    bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
+    bodyBound.y2 = tableBound.y2 - table.getBottomFrozenRowsHeight();
   }
 
   bodyBound.x1 = bodyBound.x1 + (table.options.viewBox?.x1 ?? 0);

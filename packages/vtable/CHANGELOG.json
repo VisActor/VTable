@@ -2,6 +2,66 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.10.5",
+      "tag": "@visactor/vtable_v1.10.5",
+      "date": "Mon, 11 Nov 2024 07:50:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: pivot chart spec enable select not work #2210\n\n"
+          },
+          {
+            "comment": "fix: sortState field undefined occor error\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.10.4",
+      "tag": "@visactor/vtable_v1.10.4",
+      "date": "Thu, 07 Nov 2024 13:33:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when markline date less then minDate should not show #2689\n\n"
+          },
+          {
+            "comment": "feat: gantt dependency line support tree node #2701\n\n"
+          },
+          {
+            "comment": "fix: pivot table header icon display incorrect #2735\n\n"
+          },
+          {
+            "comment": "fix: parse axes config error when user set axes #2749\n\n"
+          },
+          {
+            "comment": "feat: when drag on header can select cells continuous #2751\n\n"
+          },
+          {
+            "comment": "fix: cellType set funciton occor error #2754\n\n"
+          },
+          {
+            "comment": "fix: when pivot cell type set chart not data cell render error #2758\n\n"
+          },
+          {
+            "comment": "fix: legend problems #2764 #2755\n\n"
+          },
+          {
+            "comment": "fix: create task shedule date error #2771\n\n"
+          },
+          {
+            "comment": "fix: fix cellLocation in pivot-table #2694"
+          },
+          {
+            "comment": "fix: fix menu scale pos problem #2734"
+          },
+          {
+            "comment": "fix: fix tree frozen row problem #2619"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.10.3",
       "tag": "@visactor/vtable_v1.10.3",
       "date": "Fri, 01 Nov 2024 03:33:15 GMT",

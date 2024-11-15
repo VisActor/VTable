@@ -166,8 +166,9 @@ setRecords(records: Array<any>)
    * @param records 设置到单元格其子节点的数据
    * @param col 需要设置子节点的单元格地址
    * @param row  需要设置子节点的单元格地址
+   * @param recalculateColWidths  添加数据后是否重新计算列宽 默认为true.（设置width:auto或者 autoWidth 情况下才有必要考虑该参数）
    */
-  setRecordChildren(records: any[], col: number, row: number)
+  setRecordChildren(records: any[], col: number, row: number, recalculateColWidths: boolean = true)
 ```
 
 ## setTreeNodeChildren(Function)
@@ -639,8 +640,9 @@ col 或者 row 可以为空，为空的话也就是只移动 x 方向或者 y �
    * 表头切换层级状态
    * @param col
    * @param row
+   * @param recalculateColWidths  是否重新计算列宽 默认为true.（设置width:auto或者 autoWidth 情况下才有必要考虑该参数）
    */
-  toggleHierarchyState(col: number, row: number)
+  toggleHierarchyState(col: number, row: number,recalculateColWidths: boolean = true)
 ```
 
 ## getHierarchyState(Function)
@@ -785,7 +787,9 @@ enum HierarchyState {
   showTooltip(col: number, row: number, tooltipOptions?: TooltipOptions) => void
 ```
 
-注意：暂时只支持全局设置了 tooltip.renderMode='html'，调用该接口才有效
+注意：暂时只支持全局设置了 tooltip.renderMode='html'，调用该接口才有效。
+
+如果想要 tooltip 可以被鼠标 hover 上去，需要配置接口 tooltip.disappearDelay，让其不立即消失。
 
 其中 TooltipOptions 类型为：
 
@@ -813,6 +817,8 @@ export type TooltipOptions = {
     padding?: number[];
     arrowMark?: boolean;
   };
+  /** 设置tooltip的消失时间 */
+  disappearDelay?: number;
 };
 
 ```
