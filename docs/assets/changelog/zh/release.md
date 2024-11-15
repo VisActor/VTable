@@ -1,3 +1,33 @@
+# v1.11.0
+
+2024-11-15
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add event changing_header_position
+- **@visactor/vtable**: drag order highlight line render
+- **@visactor/vtable**: add change_header_position_fail event
+- **@visactor/vtable**: add argument recalculateColWidths for api toggleHierarchyState [#2817](https://github.com/VisActor/VTable/issues/2817)
+- **@visactor/vtable**: add InvertHighlightPlugin
+- **@visactor/vtable**: add vtable-calendar
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: pivot chart pie type selected state not work [#2178](https://github.com/VisActor/VTable/issues/2178)
+- **@visactor/vtable**: rose pivotchart click legend then hover chart render error [#2209](https://github.com/VisActor/VTable/issues/2209)
+- **@visactor/vtable**: when chart row is frozen render error [#2800](https://github.com/VisActor/VTable/issues/2800)
+- **@visactor/vtable**: when after select range not exist [#2804](https://github.com/VisActor/VTable/issues/2804)
+- **@visactor/vtable**: call renderWithRecreateCells should not effect colWidth when widthMode is adaptive [#2835](https://github.com/VisActor/VTable/issues/2835)
+- **@visactor/vtable**: add CarouselAnimationPlugin
+- **@visactor/vtable**: add HeaderHighlightPlugin
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: when set disableSelect but api selectCell can work [#2799](https://github.com/VisActor/VTable/issues/2799)
+
+[更多详情请查看 v1.11.0](https://github.com/VisActor/VTable/releases/tag/v1.11.0)
+
 # v1.10.5
 
 2024-11-11
