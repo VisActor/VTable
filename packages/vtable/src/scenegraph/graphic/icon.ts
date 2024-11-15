@@ -57,13 +57,19 @@ export class Icon extends Image {
 
   loadGif() {
     this.playing = false;
-    ResourceLoader.GetFile((this.attribute as any).gif + `?radom=${Math.random()}`, 'arrayBuffer') // hack for ResourceLoader.GetFile
+    ResourceLoader.GetFile((this.attribute as any).gif, 'arrayBuffer')
       .then((res: ArrayBuffer) => {
         const gif = parseGIF(res);
         const frames = decompressFrames(gif, true);
         this.renderGIF(frames);
+
+        // hack for image resource
+        (this as any).resources.set((this.attribute as any).image, {
+          state: 'success',
+          data: this.gifCanvas
+        });
       })
-      .catch(e => {
+      .catch((e: any) => {
         console.error('Gif load error: ', e);
       });
   }

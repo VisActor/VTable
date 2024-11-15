@@ -88,7 +88,11 @@ export class ImageDrawItemInterceptorContribution implements IDrawItemIntercepto
     drawContribution: IDrawContribution,
     params?: IGraphicRenderDrawParams
   ): boolean {
-    const { image: url } = graphic.attribute;
+    const { image: url, gif } = graphic.attribute as any;
+
+    if (gif && graphic.playing) {
+      return false;
+    }
     if (!url || !graphic.resources) {
       return false;
     }
