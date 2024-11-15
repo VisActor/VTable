@@ -216,10 +216,6 @@ The lower middle part (D) is laid out horizontally, with three elements: group t
 
 The province and city buttons are composed of multiple elements, and the height of the entire container is determined by the layout wrap result. The minimum height is when it is displayed in one line without wrapping; the maximum height is when all three elements are wrapped and displayed in three lines.
 
-## Automatic Row Height and Column Width Calculation
-
-Using the percentCalc method to specify the width and height of a container in percentage, when specifying adaptive width and height in the table, it will automatically calculate the cell width and height that can accommodate all content based on the content's width and height, as the actual content width and height of this cell.
-
 ## JSX Primitives
 
 For detailed instructions, please refer to the tutorial provided by VRender: [`VRender Primitive Configuration`](https://visactor.io/vrender/option/Group)
@@ -360,8 +356,8 @@ Container
 
 | key            | type                                                                        | description                                                                        |
 | :------------- | :-------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| width          | number                                                                      | percentCalcObj\|Container width                                                    |
-| height         | number                                                                      | percentCalcObj\|Container height                                                   |
+| width          | number                                                                      | Container width                                                    |
+| height         | number                                                                      | Container height                                                   |
 | display        | 'relative' \| 'flex'                                                        | Layout mode (`flex` enables flex layout mode)                                      |
 | flexDirection  | 'row' \| 'row-reverse' \| 'column' \| 'column-reverse'                      | Direction of the main axis                                                         |
 | flexWrap       | 'nowrap' \| 'wrap'                                                          | Whether to display in a single line or multiple lines                              |

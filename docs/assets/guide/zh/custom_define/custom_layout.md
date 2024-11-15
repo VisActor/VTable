@@ -216,10 +216,6 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 
 其中省份按钮和城市按钮是多个 element 组合而成，整个容器的高度由布局折行结果决定，最小高度为不换行显示为一行；最大高度为三个 element 都折行显示，显示为三行
 
-## 自动行高列宽计算
-
-使用 percentCalc 方法指定百分比宽高的 container，在表格指定自适应宽高时，会依据内容的宽高自动计算出可以容纳所有内容的单元格宽高，作为本单元格实际内容宽高
-
 ## JSX 图元
 
 详细说明请参考 VRender 提供的教程：[`VRender图元配置`](https://visactor.io/vrender/option/Group)
@@ -360,8 +356,8 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 
 | key            | type                                                                        | description                            |
 | :------------- | :-------------------------------------------------------------------------- | :------------------------------------- |
-| width          | number                                                                      | percentCalcObj\|容器宽度               |
-| height         | number                                                                      | percentCalcObj\|容器高度               |
+| width          | number                                                                      | 容器宽度               |
+| height         | number                                                                      | 容器高度               |
 | display        | 'relative' \| 'flex'                                                        | 布局模式（`flex`开启 flex 布局模式）   |
 | flexDirection  | 'row' \| 'row-reverse' \| 'column' \| 'column-reverse'                      | 主轴的方向                             |
 | flexWrap       | 'nowrap' \| 'wrap'                                                          | 单行显示还是多行显示                   |

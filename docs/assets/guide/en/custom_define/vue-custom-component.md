@@ -25,8 +25,6 @@ import { ListTable, ListColumn } from '@visactor/vue-vtable';
 import { Group, Text, Image, Radio, CheckBox, Tag } from '@visactor/vue-vtable';
 import * as VTable from '@visactor/vtable';
 
-const percentCalc = VTable.CustomLayout.percentCalc;
-
 <ListTable>
   <ListColumn :field="'bloggerName'" :title="'anchor nickname'" :width="330" :style="{ fontFamily: 'Arial', fontWeight: 500 }">
 
@@ -34,13 +32,13 @@ const percentCalc = VTable.CustomLayout.percentCalc;
 
       <Group :height="height" :width="width" display="flex" flexDirection="row" flexWrap="nowrap">
         <!-- Avatar Group -->
-        <Group :height="percentCalc(100)" :width="60" display="flex" flexDirection="column" alignItems="center" justifyContent="space-around">
+        <Group :height="height" :width="60" display="flex" flexDirection="column" alignItems="center" justifyContent="space-around">
           <Image id="icon0" :width="50" :height="50" :image="record.bloggerAvatar" :cornerRadius="25" />
         </Group>
         <!-- Blogger Info Group -->
-        <Group :height="height" :width="percentCalc(100, -60)" display="flex" flexDirection="column" flexWrap="nowrap">
+        <Group :height="height" :width="width - 60" display="flex" flexDirection="column" flexWrap="nowrap">
           <!-- Blogger Name and Location -->
-          <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="flex-end">
+          <Group :height="height / 2" :width="width" display="flex" alignItems="flex-end">
             <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" />
             <Image id="location" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg"
               :width="15" :height="15" :boundsPadding="[0, 0, 0, 10]" cursor="pointer"
@@ -48,7 +46,7 @@ const percentCalc = VTable.CustomLayout.percentCalc;
             <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
           </Group>
           <!-- Tags Group -->
-          <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="center">
+          <Group :height="height / 2" :width="width" display="flex" alignItems="center">
             <Tag v-for="tag in record?.tags" :key="tag" :text="tag" :textStyle="{ fontSize: 10, fontFamily: 'sans-serif', fill: 'rgb(51, 101, 238)' }" :panel="{ visible: true, fill: '#f4f4f2', cornerRadius: 5 }" :space="5" :boundsPadding="[0, 0, 0, 5]" />
           </Group>
         </Group>
@@ -71,15 +69,13 @@ import { ListTable, ListColumn } from '@visactor/vue-vtable';
 import { Group, Text, Image, Radio, CheckBox, Tag } from '@visactor/vue-vtable';
 import * as VTable from '@visactor/vtable';
 
-const percentCalc = VTable.CustomLayout.percentCalc;
-
 <ListTable>
   <ListColumn :field="'bloggerName'" :title="'anchor nickname'" :width="330" :style="{ fontFamily: 'Arial', fontWeight: 500 }">
 
     <template #customLayout="{ table, row, col, rect, record, height, width }">
 
       <!-- Blogger Name and Location -->
-      <Group :height="percentCalc(50)" :width="percentCalc(100)" display="flex" alignItems="flex-end">
+      <Group :height="height / 2" :width="width" display="flex" alignItems="flex-end">
         <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" />
         <Image
           id="location"

@@ -88,7 +88,6 @@ const option = {
         const { table, row, col, rect } = args;
         const record = table.getCellOriginRecord(col, row);
         const { height, width } = rect ?? table.getCellRect(col, row);
-        const percentCalc = VTable.CustomLayout.percentCalc;
 
         const container = createGroup({
           height,
@@ -98,7 +97,7 @@ const option = {
           flexWrap: 'nowrap'
         });
         const containerLeft = createGroup({
-          height: percentCalc(100),
+          height,
           width: 60,
           display: 'flex',
           flexDirection: 'column',
@@ -117,8 +116,8 @@ const option = {
         containerLeft.add(icon0);
 
         const containerRight = createGroup({
-          height: percentCalc(100),
-          width: percentCalc(100, -60),
+          height,
+          width: width -60,
           display: 'flex',
           flexDirection: 'column',
           flexWrap: 'nowrap'
@@ -126,15 +125,15 @@ const option = {
         container.add(containerRight);
 
         const containerRightTop = createGroup({
-          height: percentCalc(50),
-          width: percentCalc(100),
+          height: height / 2,
+          width,
           display: 'flex',
           alignItems: 'flex-end'
         });
 
         const containerRightBottom = createGroup({
-          height: percentCalc(50),
-          width: percentCalc(100),
+          height: height / 2,
+          width,
           display: 'flex',
           alignItems: 'center'
         });
