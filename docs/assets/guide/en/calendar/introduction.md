@@ -13,7 +13,7 @@ When creating a calendar, you can pass in the configuration corresponding to the
 ```js
 import { Calendar } from '@visactor/vtable-calendar';
 
-const calendar = new Calendar(domContainer, options);
+const calendar = new VTableCalendar.Calendar(domContainer, options);
 ```
 
 Among them, option supports the following attributes
@@ -32,7 +32,7 @@ Among them, option supports the following attributes
 The properties configured in `tableOptions` can be referred to [VTable configuration](../../option/ListTable) for further configuration of the table. For example, if you want Saturday to be displayed in blue and Sunday in red in the calendar title, you can use the following configuration:
 
 ```javascript livedemo template=vtable
-const calendarInstance = new Calendar(document.getElementById(CONTAINER_ID), {
+const calendarInstance = new VTableCalendar.Calendar(document.getElementById(CONTAINER_ID), {
   tableOptions: {
     theme: {
       headerStyle: {

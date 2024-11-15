@@ -47,7 +47,7 @@ const unicColorPool = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pi
     });
   }
 
-  const calendar = new Calendar(document.getElementById(CONTAINER_ID), {
+  const calendar = new VTableCalendar.Calendar(document.getElementById(CONTAINER_ID), {
     tableOptions: {
       theme: {
         headerStyle: {

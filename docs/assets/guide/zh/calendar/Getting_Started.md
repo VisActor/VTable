@@ -66,7 +66,7 @@ const calendarInstance = new Calendar(domContainer, option);
 接下来，我们创建一个 `Calendar` 实例，传入日历图配置项：
 
 ```javascript livedemo template=vtable
-const calendarInstance = new Calendar(document.getElementById(CONTAINER_ID));
+const calendarInstance = new VTableCalendar.Calendar(document.getElementById(CONTAINER_ID));
 window['calendarInstance'] = calendarInstance;
 ```
 

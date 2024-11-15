@@ -23,7 +23,7 @@ const unicColorPool = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pi
 
   const customEvents = [];
   const container = document.getElementById(CONTAINER_ID);
-  const calendar = new Calendar(container, {
+  const calendar = new VTableCalendar.Calendar(container, {
     tableOptions: {
       theme: {
         headerStyle: {

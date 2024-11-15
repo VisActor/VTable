@@ -66,7 +66,7 @@ Before drawing, we need to prepare a DOM container with height and width for Cal
 Next, we create a `Calendar` instance and pass in the calendar configuration items:
 
 ```javascript livedemo template=vtable
-const calendarInstance = new Calendar(document.getElementById(CONTAINER_ID));
+const calendarInstance = new VTableCalendar.Calendar(document.getElementById(CONTAINER_ID));
 window['calendarInstance'] = calendarInstance;
 ```
 

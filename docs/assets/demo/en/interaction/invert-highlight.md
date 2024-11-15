@@ -89,7 +89,7 @@ const option = {
   columns,
   theme: VTable.themes.DARK
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 
 const highlightPlugin = new VTable.InvertHighlightPlugin(tableInstance, {});

@@ -31,7 +31,7 @@ const calendar = new Calendar(domContainer, options);
 `tableOptions` 配置的属性可以参考 [VTable的配置](../../option/ListTable)，用于表格的进一步配置。例如，如果希望日历图标题中周六显示为蓝色，周日显示为红色，可以使用以下配置：
 
 ```javascript livedemo template=vtable
-const calendarInstance = new Calendar(document.getElementById(CONTAINER_ID), {
+const calendarInstance = new VTableCalendar.Calendar(document.getElementById(CONTAINER_ID), {
   tableOptions: {
     theme: {
       headerStyle: {
