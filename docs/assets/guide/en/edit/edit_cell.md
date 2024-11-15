@@ -269,11 +269,15 @@ interface ListTableConstructorOptions {
 
 ## 8. Edit value verification
 
-If verification is required, please customize the editor to implement the verification function `validateValue`
+If validation is required, please customize the editor to implement the validation function `validateValue`
 
-If this interface is not defined, the editing value will not be verified by default, and the interface will return false. If the verification fails, it will remain in the editing state.
+If this interface is not defined, the edit value will not be checked by default;
 
-If asynchronous verification is needed, you can return a Promise object. This Promise object should resolve to true upon successful verification and false upon verification failure.
+If the interface returns false, the value will remain in the editing state if the verification fails; if it returns true, the edited value will be submitted if the verification succeeds.
+
+If you need to implement asynchronous verification, you can return a Promise object, which is resolved with a true value when the verification succeeds and a false value when the verification fails.
+
+At the same time, when pasting cell data, the validation function `validateValue` will also be called.
 
 ## 9. Related APIs
 
