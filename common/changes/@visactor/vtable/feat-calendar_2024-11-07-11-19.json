@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/vtable",
       "comment": "feat: add vtable-calendar",
-      "type": "none"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vtable"
