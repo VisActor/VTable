@@ -2,6 +2,59 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.11.0",
+      "tag": "@visactor/vtable_v1.11.0",
+      "date": "Fri, 15 Nov 2024 11:58:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: pivot chart pie type selected state not work #2178\n\n"
+          },
+          {
+            "comment": "fix: rose pivotchart click legend then hover chart render error #2209\n\n"
+          },
+          {
+            "comment": "feat: add event changing_header_position\n\n"
+          },
+          {
+            "comment": "feat: drag order highlight line render\n\n"
+          },
+          {
+            "comment": "feat: add change_header_position_fail event\n\n"
+          },
+          {
+            "comment": "refactor: when set disableSelect but api selectCell can work #2799\n\n"
+          },
+          {
+            "comment": "fix: when chart row is frozen render error #2800\n\n"
+          },
+          {
+            "comment": "fix: when after select range not exist #2804\n\n"
+          },
+          {
+            "comment": "feat: add argument recalculateColWidths for api toggleHierarchyState #2817\n\n"
+          },
+          {
+            "comment": "fix: call renderWithRecreateCells should not effect colWidth when widthMode is adaptive #2835\n\n"
+          },
+          {
+            "comment": "feat: add InvertHighlightPlugin "
+          },
+          {
+            "comment": "fix: add CarouselAnimationPlugin"
+          },
+          {
+            "comment": "fix: add HeaderHighlightPlugin"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add vtable-calendar"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.10.5",
       "tag": "@visactor/vtable_v1.10.5",
       "date": "Mon, 11 Nov 2024 07:50:58 GMT",

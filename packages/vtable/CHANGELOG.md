@@ -1,6 +1,49 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 11 Nov 2024 07:50:58 GMT and should not be manually modified.
+This log was last generated on Fri, 15 Nov 2024 11:58:31 GMT and should not be manually modified.
+
+## 1.11.0
+Fri, 15 Nov 2024 11:58:31 GMT
+
+### Minor changes
+
+- feat: add vtable-calendar
+
+### Updates
+
+- fix: pivot chart pie type selected state not work #2178
+
+
+- fix: rose pivotchart click legend then hover chart render error #2209
+
+
+- feat: add event changing_header_position
+
+
+- feat: drag order highlight line render
+
+
+- feat: add change_header_position_fail event
+
+
+- refactor: when set disableSelect but api selectCell can work #2799
+
+
+- fix: when chart row is frozen render error #2800
+
+
+- fix: when after select range not exist #2804
+
+
+- feat: add argument recalculateColWidths for api toggleHierarchyState #2817
+
+
+- fix: call renderWithRecreateCells should not effect colWidth when widthMode is adaptive #2835
+
+
+- feat: add InvertHighlightPlugin 
+- fix: add CarouselAnimationPlugin
+- fix: add HeaderHighlightPlugin
 
 ## 1.10.5
 Mon, 11 Nov 2024 07:50:58 GMT
