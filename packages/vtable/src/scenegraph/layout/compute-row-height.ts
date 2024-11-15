@@ -556,21 +556,24 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     let height = 0;
     let renderDefault = false;
     let enableCellPadding = false;
+    let cellRange;
     if (
       table.isHeader(col, row) ||
       (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell ||
       table.hasCustomMerge()
     ) {
-      const cellRange = table.getCellRange(col, row);
+      cellRange = table.getCellRange(col, row);
       spanRow = cellRange.end.row - cellRange.start.row + 1;
     }
     const arg = {
-      col,
-      row,
+      col: cellRange?.start.col ?? col,
+      row: cellRange?.start.row ?? row,
       dataValue: table.getCellOriginValue(col, row),
       value: table.getCellValue(col, row) || '',
       rect: getCellRect(col, row, table),
-      table
+      table,
+      originCol: col,
+      originRow: row
     };
     if (customLayout === 'react-custom-layout') {
       // customLayout = table._reactCreateGraphic;

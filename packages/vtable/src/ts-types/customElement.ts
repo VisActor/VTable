@@ -11,6 +11,8 @@ export interface CustomRenderFunctionArg {
   /**原始值 */
   dataValue: FieldData;
   rect?: RectProps;
+  originCol?: number;
+  originRow?: number;
 }
 interface baseElement {
   elementKey?: string;

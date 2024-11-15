@@ -23,6 +23,8 @@ export class CarouselAnimationPlugin {
   playing: boolean;
   row: number;
   col: number;
+  willUpdateRow: boolean = false;
+  willUpdateCol: boolean = false;
   constructor(table: BaseTableAPI, options?: ICarouselAnimationPluginOptions) {
     this.table = table;
 
@@ -33,10 +35,7 @@ export class CarouselAnimationPlugin {
     this.animationEasing = options?.animationEasing ?? 'linear';
     this.replaceScrollAction = options?.replaceScrollAction ?? false;
 
-    this.playing = false;
-    this.row = table.frozenRowCount;
-    this.col = table.frozenColCount;
-
+    this.reset();
     this.init();
   }
 
@@ -46,6 +45,12 @@ export class CarouselAnimationPlugin {
 
       this.table.scenegraph.stage.addEventListener('wheel', this.onScrollEnd.bind(this));
     }
+  }
+
+  reset() {
+    this.playing = false;
+    this.row = this.table.frozenRowCount;
+    this.col = this.table.frozenColCount;
   }
 
   onScrollEnd(e: Event) {
@@ -73,9 +78,9 @@ export class CarouselAnimationPlugin {
   play() {
     this.playing = true;
 
-    if (this.rowCount) {
+    if (this.rowCount && !this.willUpdateRow) {
       this.updateRow();
-    } else if (this.colCount) {
+    } else if (this.colCount && !this.willUpdateCol) {
       this.updateCol();
     }
   }
@@ -88,30 +93,55 @@ export class CarouselAnimationPlugin {
     if (!this.playing) {
       return;
     }
+
+    let animation = true;
     if (this.table.scenegraph.proxy.screenTopRow !== this.row) {
       this.row = this.table.frozenRowCount;
+      animation = false;
     } else {
       this.row += this.rowCount;
     }
-    this.table.scrollToRow(this.row, { duration: this.animationDuration, easing: this.animationEasing });
-    setTimeout(() => {
-      this.updateRow();
-    }, this.animationDuration + this.animationDelay);
+    this.table.scrollToRow(
+      this.row,
+      animation ? { duration: this.animationDuration, easing: this.animationEasing } : undefined
+    );
+    this.willUpdateRow = true;
+    setTimeout(
+      () => {
+        this.willUpdateRow = false;
+        this.updateRow();
+      },
+      // animation ? this.animationDuration + this.animationDelay : 0
+      this.animationDuration + this.animationDelay
+    );
   }
 
   updateCol() {
     if (!this.playing) {
       return;
     }
+
+    let animation = true;
     if (this.table.scenegraph.proxy.screenLeftCol !== this.col) {
       this.col = this.table.frozenColCount;
+      animation = false;
     } else {
       this.col += this.colCount;
     }
 
-    this.table.scrollToCol(this.col, { duration: this.animationDuration, easing: this.animationEasing });
-    setTimeout(() => {
-      this.updateCol();
-    }, this.animationDuration + 50);
+    this.table.scrollToCol(
+      this.col,
+      animation ? { duration: this.animationDuration, easing: this.animationEasing } : undefined
+    );
+
+    this.willUpdateCol = true;
+    setTimeout(
+      () => {
+        this.willUpdateCol = false;
+        this.updateCol();
+      },
+      // animation ? this.animationDuration + this.animationDelay : 0
+      this.animationDuration + this.animationDelay
+    );
   }
 }
