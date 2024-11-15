@@ -282,9 +282,9 @@ export function endMoveCol(state: StateManager): boolean {
       return false;
     }
   }
+  state.columnMove.moving = false;
   setTimeout(() => {
     //触发事件 CHANGE_HEADER_POSITION 还需要用到这些值 所以延迟清理
-    state.columnMove.moving = false;
     delete state.columnMove.colSource;
     delete state.columnMove.rowSource;
     delete state.columnMove.colTarget;

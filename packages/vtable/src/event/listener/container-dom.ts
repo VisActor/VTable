@@ -9,6 +9,7 @@ import type { EventManager } from '../event';
 import { getPixelRatio } from '../../tools/pixel-ratio';
 import { endResizeCol, endResizeRow } from './table-group';
 import { isCellDisableSelect } from '../../state/select/is-cell-select-highlight';
+import { fireMoveColEventListeners } from '../helper';
 export function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
@@ -572,36 +573,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       endResizeRow(table);
     } else if (stateManager.isMoveCol()) {
       const endMoveColSuccess = table.stateManager.endMoveCol();
-      if (
-        endMoveColSuccess &&
-        table.stateManager.columnMove?.colSource !== -1 &&
-        table.stateManager.columnMove?.rowSource !== -1 &&
-        table.stateManager.columnMove?.colTarget !== -1 &&
-        table.stateManager.columnMove?.rowTarget !== -1
-      ) {
-        // 下面触发CHANGE_HEADER_POSITION 区别于pointerup
-        if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
-          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
-            target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
-            source: {
-              col: table.stateManager.columnMove.colSource,
-              row: table.stateManager.columnMove.rowSource
-            },
-            event: e
-          });
-        }
-      } else if (!endMoveColSuccess) {
-        if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL)) {
-          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL, {
-            target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
-            source: {
-              col: table.stateManager.columnMove.colSource,
-              row: table.stateManager.columnMove.rowSource
-            },
-            event: e
-          });
-        }
-      }
+      fireMoveColEventListeners(table, endMoveColSuccess, e);
     } else if (stateManager.isSelecting()) {
       if (table.stateManager.select?.ranges?.length) {
         const lastCol = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end.col;
@@ -637,6 +609,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
       endResizeCol(table);
     } else if (stateManager.interactionState === 'grabing' && stateManager.isResizeRow()) {
       endResizeRow(table);
+    } else if (stateManager.isMoveCol()) {
+      const endMoveColSuccess = table.stateManager.endMoveCol();
+      fireMoveColEventListeners(table, endMoveColSuccess, e);
     }
   };
   eventManager.globalEventListeners.push({
