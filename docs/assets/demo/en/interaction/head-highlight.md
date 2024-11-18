@@ -3,7 +3,7 @@ category: examples
 group: Interaction
 title: Highlight Header
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/head-highlight.png
-option: ListTable#hover.highlightMode('cross'%7C'column'%7C'row'%7C'cell')%20=%20'cross'
+link: '../guide/plugin/header-highlight'
 ---
 
 # Highlight Header

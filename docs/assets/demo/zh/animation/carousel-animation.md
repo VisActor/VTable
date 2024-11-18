@@ -3,7 +3,7 @@ category: examples
 group: Animation
 title: 轮播动画
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/carousel-animation.gif
-option: ListTable#animationAppear
+link: '../guide/animation/carousel_animation'
 ---
 
 # 轮播动画
