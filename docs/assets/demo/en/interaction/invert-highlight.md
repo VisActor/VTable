@@ -3,7 +3,7 @@ category: examples
 group: Interaction
 title: invert highlight
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/invert-highlight.png
-option: ListTable#hover.highlightMode('cross'%7C'column'%7C'row'%7C'cell')%20=%20'cross'
+link: '../guide/plugin/invert-highlight'
 ---
 
 # Invert highlight
