@@ -46,18 +46,18 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**：甘特图依赖关系线支持树节点 [#2701](https://github.com/VisActor/VTable/issues/2701)
+- **@visactor/vtable-gantt**：甘特图依赖关系线支持树节点 [#2701](https://github.com/VisActor/VTable/issues/2701)
 - **@visactor/vtable**：在标题上拖动时可以连续选择单元格 [#2751](https://github.com/VisActor/VTable/issues/2751)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: 修复当标记线日期小于 minDate 时不应显示 [#2689](https://github.com/VisActor/VTable/issues/2689)
+- **@visactor/vtable-gantt**: 修复当标记线日期小于 minDate 时不应显示 [#2689](https://github.com/VisActor/VTable/issues/2689)
 - **@visactor/vtable**: 修复数据透视表标题图标显示不正确 [#2735](https://github.com/VisActor/VTable/issues/2735)
 - **@visactor/vtable**: 修复当用户设置轴时解析轴配置错误 [#2749](https://github.com/VisActor/VTable/issues/2749)
 - **@visactor/vtable**: 修复 cellType 设置函数发生错误 [#2754](https://github.com/VisActor/VTable/issues/2754)
 - **@visactor/vtable**: 修复当数据透视表单元格类型设置为图表而非数据单元格时渲染错误[#2758](https://github.com/VisActor/VTable/issues/2758)
 - **@visactor/vtable**: 修复图例问题 [#2764](https://github.com/VisActor/VTable/issues/2764) [#2755](https://github.com/VisActor/VTable/issues/2755)
-- **@visactor/vtable**: 修复创建任务计划日期错误 [#2771](https://github.com/VisActor/VTable/issues/2771)
+- **@visactor/vtable-gantt**: 修复创建任务计划日期错误 [#2771](https://github.com/VisActor/VTable/issues/2771)
 - **@visactor/vtable**: 修复数据透视表中的单元格位置 [#2694](https://github.com/VisActor/VTable/issues/2694)
 - **@visactor/vtable**: 修复菜单比例位置问题[#2734](https://github.com/VisActor/VTable/issues/2734)
 - **@visactor/vtable**：修复树冻结行问题 [#2619](https://github.com/VisActor/VTable/issues/2619)
