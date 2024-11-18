@@ -10,6 +10,7 @@ import { isValid } from '@visactor/vutils';
 export class EditManeger {
   table: BaseTableAPI;
   editingEditor: IEditor;
+  isValidatingValue: boolean = false;
   editCell: { col: number; row: number };
 
   constructor(table: BaseTableAPI) {
@@ -121,7 +122,9 @@ export class EditManeger {
     if (!this.editingEditor) {
       return true;
     }
-
+    if (this.isValidatingValue) {
+      return false;
+    }
     const target = e?.target as HTMLElement | undefined;
     const { editingEditor: editor } = this;
 
@@ -141,6 +144,7 @@ export class EditManeger {
       console.warn('VTable Warn: `getValue` is not provided, did you forget to implement it?');
     }
     if (this.editingEditor.validateValue) {
+      this.isValidatingValue = true;
       const maybePromiseOrValue = this.editingEditor.validateValue?.();
       if (isPromise(maybePromiseOrValue)) {
         return new Promise((resolve, reject) => {
@@ -150,10 +154,12 @@ export class EditManeger {
                 this.doExit();
                 resolve(true);
               } else {
+                this.isValidatingValue = false;
                 resolve(false);
               }
             })
             .catch((err: Error) => {
+              this.isValidatingValue = false;
               console.error('VTable Error:', err);
               reject(err);
             });
@@ -184,6 +190,7 @@ export class EditManeger {
     this.editingEditor.exit?.();
     this.editingEditor.onEnd?.();
     this.editingEditor = null;
+    this.isValidatingValue = false;
   }
 
   cancelEdit() {
