@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: isShowOverflowTextTooltip support function",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
