@@ -162,3 +162,27 @@ For specific reference, see the configuration in ListTable: [Specific configurat
 Pixel ratio.
 
 Optional
+
+## dateFormat(string)
+
+The date format of the new schedule. The date data will be added to the date field value in the data record. The default value is 'yyyy-mm-dd'.
+
+Not required
+
+```
+dateFormat?:
+| 'yyyy-mm-dd'
+| 'dd-mm-yyyy'
+| 'mm/dd/yyyy'
+| 'yyyy/mm/dd'
+| 'dd/mm/yyyy'
+| 'yyyy.mm.dd'
+| 'dd.mm.yyyy'
+| 'mm.dd.yyyy';
+```
+
+## underlayBackgroundColor(string)
+
+The fill color of the canvas outside the drawing range is '#fff' by default, and it also matches the background color of the table on the left.
+
+Not required

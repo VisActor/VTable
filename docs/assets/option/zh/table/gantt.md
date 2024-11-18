@@ -162,3 +162,27 @@
 像素比率。
 
 非必填
+
+## dateFormat(string)
+
+新建排期的日期格式，日期数据将被添加到数据 record 中日期字段值中，默认为'yyyy-mm-dd'。
+
+非必填
+
+```
+  dateFormat?:
+    | 'yyyy-mm-dd'
+    | 'dd-mm-yyyy'
+    | 'mm/dd/yyyy'
+    | 'yyyy/mm/dd'
+    | 'dd/mm/yyyy'
+    | 'yyyy.mm.dd'
+    | 'dd.mm.yyyy'
+    | 'mm.dd.yyyy';
+```
+
+## underlayBackgroundColor(string)
+
+绘制范围外的 canvas 上填充的颜色，默认为'#fff'，同时也适配到左侧表格的背景色。
+
+非必填
