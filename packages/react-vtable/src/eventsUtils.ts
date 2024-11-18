@@ -35,6 +35,7 @@ export interface EventsProps {
   onResizeRowEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_row_end']>;
   onChangeHeaderPositionStart?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position_start']>;
   onChangeHeaderPosition?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position']>;
+  onChangeHeaderPositionFail?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position_fail']>;
   onSortClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['sort_click']>;
 
   onAfterSort?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_sort']>;
@@ -105,6 +106,7 @@ export const TABLE_EVENTS = {
   onResizeRowEnd: EVENT_TYPE.RESIZE_ROW_END,
   onChangeHeaderPositionStart: EVENT_TYPE.CHANGE_HEADER_POSITION_START,
   onChangeHeaderPosition: EVENT_TYPE.CHANGE_HEADER_POSITION,
+  onChangeHeaderPositionFail: EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL,
   onSortClick: EVENT_TYPE.SORT_CLICK,
 
   onAfterSort: EVENT_TYPE.AFTER_SORT,

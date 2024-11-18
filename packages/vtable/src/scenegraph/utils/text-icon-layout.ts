@@ -103,12 +103,19 @@ export function createCellContent(
         wordBreak: 'break-word',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit:
-          autoRowHeight && !table.options.customConfig?.multilinesForXTable
+          table.options.customConfig?.limitContentHeight === false
+            ? -1
+            : autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
             : cellHeight - Math.floor(padding[0] + padding[2]),
         pickable: false,
         dx: (textAlign === 'left' ? hierarchyOffset : 0) + _contentOffset,
-        whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
+        whiteSpace:
+          table.options.customConfig?.limitContentHeight === false
+            ? 'normal'
+            : text.length === 1 && !autoWrapText
+            ? 'no-wrap'
+            : 'normal'
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
@@ -241,14 +248,21 @@ export function createCellContent(
         textBaseline: 'top',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit:
-          autoRowHeight && !table.options.customConfig?.multilinesForXTable
+          table.options.customConfig?.limitContentHeight === false
+            ? -1
+            : autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
             : cellHeight - Math.floor(padding[0] + padding[2]),
         pickable: false,
         autoWrapText,
         lineClamp,
         wordBreak: 'break-word',
-        whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
+        whiteSpace:
+          table.options.customConfig?.limitContentHeight === false
+            ? 'normal'
+            : text.length === 1 && !autoWrapText
+            ? 'no-wrap'
+            : 'normal',
         dx: (textAlign === 'left' ? (!contentLeftIcons.length ? hierarchyOffset : 0) : 0) + _contentOffset
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
@@ -394,6 +408,9 @@ export function createCellContent(
 
   // 更新各个部分纵向位置
   cellGroup.forEachChildren((child: any) => {
+    if (child.name === CUSTOM_CONTAINER_NAME) {
+      return;
+    }
     if (textBaseline === 'middle') {
       child.setAttribute('y', padding[0] + (height - child.AABBBounds.height()) / 2);
     } else if (textBaseline === 'bottom') {
@@ -431,7 +448,12 @@ export function dealWithIcon(
 
   // 图片内容
   if (icon.type === 'image') {
-    iconAttribute.image = icon.src;
+    if (icon.isGif) {
+      iconAttribute.gif = icon.src;
+      iconAttribute.image = icon.src;
+    } else {
+      iconAttribute.image = icon.src;
+    }
   } else if (icon.type === 'svg' || 'svg' in icon) {
     iconAttribute.image = icon.svg;
     // } else if (icon.type === 'path') {
@@ -447,6 +469,7 @@ export function dealWithIcon(
   iconAttribute.visibleTime = icon.visibleTime ?? 'always';
   iconAttribute.funcType = icon.funcType;
   iconAttribute.interactive = icon.interactive;
+  iconAttribute.isGif = (icon as any).isGif;
 
   let hierarchyOffset = 0;
   if (
@@ -494,11 +517,14 @@ export function dealWithIcon(
   if (mark) {
     mark.setAttributes(iconAttribute);
     mark.loadImage(iconAttribute.image);
+    mark.tooltip = icon.tooltip;
+    mark.name = icon.name;
     return mark;
   }
   // funcType, cursor, tooltip, hover在事件响应阶段处理
   const iconMark = new Icon(iconAttribute);
   iconMark.tooltip = icon.tooltip;
+  iconMark.name = icon.name;
 
   return iconMark;
 }
@@ -702,7 +728,8 @@ export function updateCellContentHeight(
   autoRowHeight: boolean,
   padding: [number, number, number, number],
   textAlign: CanvasTextAlign,
-  textBaseline: CanvasTextBaseline
+  textBaseline: CanvasTextBaseline,
+  table: BaseTableAPI
 ) {
   const newHeight = distHeight - Math.floor(padding[0] + padding[2]);
 
@@ -710,7 +737,7 @@ export function updateCellContentHeight(
 
   if (textMark instanceof Text && !autoRowHeight) {
     textMark.setAttributes({
-      heightLimit: newHeight
+      heightLimit: table.options.customConfig?.limitContentHeight === false ? -1 : newHeight
     } as any);
   } else if (textMark instanceof RichText && !autoRowHeight) {
     textMark.setAttributes({

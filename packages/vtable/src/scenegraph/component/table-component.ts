@@ -632,7 +632,7 @@ export class TableComponent {
    * @return {*}
    */
   showMoveCol(col: number, row: number, delta: number) {
-    this.cellMover.show(col, row, delta);
+    return this.cellMover.show(col, row, delta);
   }
 
   /**

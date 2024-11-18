@@ -21,18 +21,8 @@ export function syncEditCellFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('change_cell_value', (args: any) => {
     const { col, row, rawValue, changedValue } = args;
     gantt._refreshTaskBar(row - gantt.taskListTableInstance.columnHeaderLevelCount);
-    // const record = gantt.getRecordByIndex(row - gantt.listTableInstance.columnHeaderLevelCount);
+    // const record = gantt.getRecordByIndex(row - gantt.taskListTableInstance.columnHeaderLevelCount);
     // debugger;
-  });
-}
-
-export function syncDragOrderFromTable(gantt: Gantt) {
-  gantt.taskListTableInstance?.on('change_header_position', (args: any) => {
-    gantt.scenegraph.refreshTaskBars();
-    const left = gantt.stateManager.scroll.horizontalBarPos;
-    const top = gantt.stateManager.scroll.verticalBarPos;
-    gantt.scenegraph.setX(-left);
-    gantt.scenegraph.setY(-top);
   });
 }
 
@@ -54,5 +44,30 @@ export function syncSortFromTable(gantt: Gantt) {
     const top = gantt.stateManager.scroll.verticalBarPos;
     gantt.scenegraph.setX(-left);
     gantt.scenegraph.setY(-top);
+  });
+}
+export function syncDragOrderFromTable(gantt: Gantt) {
+  gantt.taskListTableInstance?.on('change_header_position', (args: any) => {
+    gantt.scenegraph.refreshTaskBars();
+    gantt.scenegraph.dragOrderLine.hideDragLine();
+    const left = gantt.stateManager.scroll.horizontalBarPos;
+    const top = gantt.stateManager.scroll.verticalBarPos;
+    gantt.scenegraph.setX(-left);
+    gantt.scenegraph.setY(-top);
+  });
+  gantt.taskListTableInstance?.on('change_header_position_start', (args: any) => {
+    const { col, row, x, y, backX, lineX, backY, lineY, event } = args;
+
+    gantt.scenegraph.dragOrderLine.showDragLine(lineY);
+    gantt.scenegraph.updateNextFrame();
+  });
+  gantt.taskListTableInstance?.on('changing_header_position', (args: any) => {
+    const { col, row, x, y, backX, lineX, backY, lineY, event } = args;
+    gantt.scenegraph.dragOrderLine.showDragLine(lineY);
+    gantt.scenegraph.updateNextFrame();
+  });
+  gantt.taskListTableInstance?.on('change_header_position_fail', (args: any) => {
+    gantt.scenegraph.dragOrderLine.hideDragLine();
+    gantt.scenegraph.updateNextFrame();
   });
 }

@@ -7,6 +7,11 @@ Custom primitives in custom rendering and custom layout can use the components p
 The `TextAutoPoptip` component is an interactive component provided by `VRender`. Its function is that when the text is too long and is omitted, hover over the text and a poptip will automatically pop up to display the entire content of the text.
 
 ``` javascript livedemo  template=vtable
+// only use for website
+const {createGroup, createText} = VRender;
+// use this for project
+// import {createGroup, createText} from '@visactor/vtable/es/vrender';
+
   const option = {
     columns:[
       {
@@ -45,7 +50,7 @@ The `TextAutoPoptip` component is an interactive component provided by `VRender`
         let top=30;
         const left=15;
 
-        const container = new VTable.CustomLayout.Group({
+        const container = createGroup({
           height,
           width,
           display: 'flex',
@@ -55,7 +60,7 @@ The `TextAutoPoptip` component is an interactive component provided by `VRender`
           justifyContent: 'space-around',
         });
 
-        const text = new VTable.CustomLayout.Text({
+        const text = createText({
           fill: '#000',
           fontSize: 20,
           fontWeight: 500, 

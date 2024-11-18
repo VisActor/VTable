@@ -9,3 +9,5 @@
 {{import: table-register}}
 
 {{ import: gantt-api }}
+
+{{ import: calendar-api }}

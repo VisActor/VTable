@@ -2,11 +2,7 @@ import type { EasingType, IRect } from '@src/vrender';
 import { DefaultTimeline, DefaultTicker, Animate, ACustomAnimate, createRect, Generator } from '@src/vrender';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { isBoolean, isNumber } from '@visactor/vutils';
-
-export type ITableAnimationOption = {
-  duration?: number;
-  easing?: EasingType;
-};
+import type { ITableAnimationOption } from '../ts-types/animation/appear';
 
 class Animateaaa extends ACustomAnimate<any> {
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
@@ -30,7 +26,11 @@ export class TableAnimationManager {
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.timeline = new DefaultTimeline();
-    this.ticker = new DefaultTicker([this.timeline]);
+    // this.ticker = new DefaultTicker([this.timeline]);
+    this.ticker = new DefaultTicker();
+    this.ticker.addTimeline(this.timeline);
+    const TICKER_FPS = 60;
+    this.ticker.setFPS(TICKER_FPS);
     // no use, for avoid error in vrender animation
     this.tempGraphic = createRect({});
   }

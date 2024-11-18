@@ -20,7 +20,7 @@ Divider Lines: Separate the task list and timeline, making the chart clearer.
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-structure.png)
 
-**Note: The task information table on the left corresponds to a complete ListTable in the implementation. It is attached to ganttInstable.listTableInstance, so the interfaces and events corresponding to ListTable can be directly used through listTableInstance. If you want to troubleshoot issues with the table on the left, you can also directly extract listTableInstance.options to check if they meet expectations.**
+**Note: The task information table on the left corresponds to a complete ListTable in the implementation. It is attached to ganttInstable.taskListTableInstance, so the interfaces and events corresponding to ListTable can be directly used through taskListTableInstance. If you want to troubleshoot issues with the table on the left, you can also directly extract taskListTableInstance.options to check if they meet expectations.**
 
  <div style="width: 40%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-leftListTable-en.png" />

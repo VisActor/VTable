@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /*eslint-disable camelcase*/
 
-import type { ColumnIconOption, ITableThemeDefine, SvgIcon } from './ts-types';
+import type { ColumnIconOption, ImageIcon, ITableThemeDefine, SvgIcon } from './ts-types';
 import { IconPosition, IconFuncTypeEnum } from './ts-types';
 import { extend } from './tools/helper';
 import { icons as plugins } from './plugins/icons';
@@ -330,6 +330,27 @@ const builtins = {
         bgColor: 'rgba(101, 117, 168, 0.1)'
       },
       cursor: 'pointer'
+    };
+  },
+  //loading状态按钮
+  get loading(): ImageIcon {
+    return {
+      type: 'image',
+      src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+      width: collapse_size,
+      height: collapse_size,
+      name: 'loading',
+      positionType: IconPosition.contentLeft,
+      marginLeft: 0,
+      marginRight: 4,
+      hover: {
+        width: collapse_size_2,
+        height: collapse_size_2,
+        bgColor: 'rgba(101, 117, 168, 0.1)'
+      },
+      // cursor: 'pointer',
+
+      isGif: true
     };
   },
 

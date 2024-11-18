@@ -14,3 +14,4 @@ export * from './icon';
 export * from './list-table';
 export * from './pivot-table';
 export * from './component';
+export * from './animation';

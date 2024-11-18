@@ -179,7 +179,8 @@ const records = [
 
 1. 将对应数据的 children 设置为 true 而非具体的数据集合，以使该单元格可以显示折叠状态的图标；
 2. 当用户点击状态图标时，会触发事件`VTable.ListTable.EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE`，前端代码需要监听该事件，来请求 children 数据
-3. 将获取到的数据回传到表格组件中，可调用接口`instance.setRecordChildren(childrenData, col, row)`;
+3. （可选）在请求数据前，可以调用接口`instance.setLoadingHierarchyState(col, row);` 可以将该节点的图标设置为`loading`，表示该节点正在加载数据；
+4. 将获取到的数据回传到表格组件中，可调用接口`instance.setRecordChildren(childrenData, col, row)`;
 
 具体示例可以看：https://visactor.io/vtable/demo/table-type/list-table-tree-lazy-load
 

@@ -974,7 +974,7 @@ export function createTable() {
     console.log('scroll', e);
   });
 
-  ganttInstance.listTableInstance?.on('scroll', e => {
+  ganttInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
   // bindDebugTool(ganttInstance.scenegraph.stage as any, {

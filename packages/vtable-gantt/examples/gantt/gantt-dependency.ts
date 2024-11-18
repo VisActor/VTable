@@ -390,7 +390,7 @@ export function createTable() {
   ganttInstance.on('create_dependency_link', e => {
     console.log('create_dependency_link', e);
   });
-  ganttInstance.listTableInstance?.on('scroll', e => {
+  ganttInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
 

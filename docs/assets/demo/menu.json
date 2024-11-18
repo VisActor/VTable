@@ -306,6 +306,29 @@
       ]
     },
     {
+      "path": "calendar",
+      "title": {
+        "zh": "日历图",
+        "en": "calendar"
+      },
+      "children": [
+        {
+          "path": "calendar-basic",
+          "title": {
+            "zh": "日历图基础用法",
+            "en": "Calendar Basic"
+          }
+        },
+        {
+          "path": "calendar-custom-event",
+          "title": {
+            "zh": "日历图自定义日程",
+            "en": "Calendar Custom Event"
+          }
+        }
+      ]
+    },
+    {
       "path": "cell-type",
       "title": {
         "zh": "单元格类型",
@@ -723,6 +746,20 @@
             "zh": "复制粘贴",
             "en": "copy paste cell value"
           }
+        },
+        {
+          "path": "head-highlight",
+          "title": {
+            "zh": "高亮表头",
+            "en": "head highlight"
+          }
+        },
+        {
+          "path": "invert-highlight",
+          "title": {
+            "zh": "反选高亮",
+            "en": "invert highlight"
+          }
         }
       ]
     },
@@ -919,6 +956,22 @@
           },
           "meta": {
             "title": "Scroll Animation",
+            "keywords": "",
+            "category": "demo",
+            "group": "Animation",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scroll-animation.gif",
+            "link": "'../../guide/custom_define/custom_icon'",
+            "option": ""
+          }
+        },
+        {
+          "path": "carousel-animation",
+          "title": {
+            "zh": "轮播动画",
+            "en": "Carousel Animation"
+          },
+          "meta": {
+            "title": "Carousel Animation",
             "keywords": "",
             "category": "demo",
             "group": "Animation",

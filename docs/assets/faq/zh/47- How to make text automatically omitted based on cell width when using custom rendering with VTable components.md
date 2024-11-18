@@ -14,11 +14,13 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,C
 
 我们使用VTable提供的customLayout写法，这种自定义写法可以自动布局，且有自动测量宽度使适应单元格宽度的效果。具体写法如下：</br>
 ```
+import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
+
   customLayout: (args) => {
         const { table,row,col,rect } = args;
         const record = table.getRecordByCell(col,row);
         const  {height, width } = rect ?? table.getCellRect(col,row);
-        const container = new VTable.CustomLayout.Group({
+        const container = createGroup({
           height,
           width,
           display: 'flex',
@@ -26,7 +28,7 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,C
           alignItems: 'center',
           justifyContent: 'flex-front'
        });
-        const bloggerAvatar = new VTable.CustomLayout.Image({
+        const bloggerAvatar = createImage({
           id: 'icon0',
           width: 20,
           height: 20,
@@ -34,7 +36,7 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,C
           cornerRadius: 10,
         });
         container.add(bloggerAvatar);
-        const bloggerName = new VTable.CustomLayout.Text({
+        const bloggerName = createText({
           text:record.bloggerName,
           fontSize: 13,
           x:20,
@@ -53,6 +55,7 @@ customLayout需要返回一个rootContainer，通常是一个Group类型的对�
 ## 代码示例  
 
 ```
+import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
 
   const option = {
     columns:[
@@ -72,7 +75,7 @@ customLayout需要返回一个rootContainer，通常是一个Group类型的对�
         const { table,row,col,rect } = args;
         const record = table.getRecordByCell(col,row);
         const  {height, width } = rect ?? table.getCellRect(col,row);
-        const container = new VTable.CustomLayout.Group({
+        const container = createGroup({
           height,
           width,
           display: 'flex',
@@ -80,7 +83,7 @@ customLayout需要返回一个rootContainer，通常是一个Group类型的对�
           alignItems: 'center',
           justifyContent: 'flex-front'
        });
-        const bloggerAvatar = new VTable.CustomLayout.Image({
+        const bloggerAvatar = createImage({
           id: 'icon0',
           width: 20,
           height: 20,
@@ -88,7 +91,7 @@ customLayout需要返回一个rootContainer，通常是一个Group类型的对�
           cornerRadius: 10,
         });
         container.add(bloggerAvatar);
-        const bloggerName = new VTable.CustomLayout.Text({
+        const bloggerName = createText({
           text:record.bloggerName,
           fontSize: 13,
           x:20,

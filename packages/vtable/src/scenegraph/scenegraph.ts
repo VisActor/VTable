@@ -6,7 +6,8 @@ import {
   type CellLocation,
   type ColumnIconOption,
   type SortOrder,
-  IconFuncTypeEnum
+  IconFuncTypeEnum,
+  InternalIconName
 } from '../ts-types';
 import { isArray, isString, isValid } from '@visactor/vutils';
 import type { Group } from './graphic/group';
@@ -73,6 +74,8 @@ import { deduplication } from '../tools/util';
 import { getDefaultHeight, getDefaultWidth } from './group-creater/progress/default-width-height';
 import { dealWithAnimationAppear } from './animation/appear';
 import { updateReactContainer } from './layout/frozen-react';
+
+import * as registerIcons from '../icons';
 // import { contextModule } from './context/module';
 
 registerForVrender();
@@ -163,6 +166,7 @@ export class Scenegraph {
       // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
       beforeRender: (stage: Stage) => {
         this.table.options.beforeRender && this.table.options.beforeRender(stage);
+        this.table.animationManager.ticker.start();
       },
       afterRender: (stage: Stage) => {
         this.table.options.afterRender && this.table.options.afterRender(stage);
@@ -729,8 +733,8 @@ export class Scenegraph {
     deleteAllSelectBorder(this);
     this.table.stateManager.select.ranges.forEach((cellRange: CellRange) => {
       updateCellSelectBorder(this, cellRange);
+      moveSelectingRangeComponentsToSelectedRangeComponents(this);
     });
-    moveSelectingRangeComponentsToSelectedRangeComponents(this);
   }
   /**
    * @description: 列宽调整结果更新列宽
@@ -1921,7 +1925,12 @@ export class Scenegraph {
     this.stage.enableDirtyBounds();
   }
 
-  updateRow(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
+  updateRow(
+    removeCells: CellAddress[],
+    addCells: CellAddress[],
+    updateCells: CellAddress[] = [],
+    recalculateColWidths: boolean = true
+  ) {
     this.table.internalProps.layoutMap.clearCellRangeMap();
     this.table.internalProps.useOneRowHeightFillAll = false;
     const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
@@ -1938,7 +1947,8 @@ export class Scenegraph {
     updateRow(removeCells, addCells, updateCells, this.table);
 
     // update column width and row height
-    this.recalculateColWidths();
+
+    recalculateColWidths && this.recalculateColWidths();
 
     // this.recalculateRowHeights();
 
@@ -2054,5 +2064,16 @@ export class Scenegraph {
   // }
   updateDomContainer() {
     updateReactContainer(this.table);
+  }
+
+  setLoadingHierarchyState(col: number, row: number) {
+    const cellGroup = this.getCell(col, row);
+    const iconGraphic = cellGroup.getChildByName('collapse', true);
+    if (iconGraphic) {
+      const regedIcons = registerIcons.get();
+      const loadingIcon = regedIcons[InternalIconName.loadingIconName];
+
+      dealWithIcon(loadingIcon, iconGraphic, col, row);
+    }
   }
 }

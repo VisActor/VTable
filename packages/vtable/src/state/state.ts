@@ -586,12 +586,13 @@ export class StateManager {
     isCtrl: boolean = false,
     isSelectAll: boolean = false,
     isSelectMoving: boolean = false,
-    skipBodyMerge: boolean = false
+    skipBodyMerge: boolean = false,
+    forceSelect: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving, skipBodyMerge);
+    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving, skipBodyMerge, forceSelect);
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -824,11 +825,10 @@ export class StateManager {
   }
 
   startMoveCol(col: number, row: number, x: number, y: number, event: MouseEvent | PointerEvent | TouchEvent) {
-    startMoveCol(col, row, x, y, this);
-    this.table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, { col, row, x, y, event });
+    startMoveCol(col, row, x, y, this, event);
   }
-  updateMoveCol(col: number, row: number, x: number, y: number) {
-    updateMoveCol(col, row, x, y, this);
+  updateMoveCol(col: number, row: number, x: number, y: number, event: MouseEvent | PointerEvent | TouchEvent) {
+    updateMoveCol(col, row, x, y, this, event);
   }
   isMoveCol(): boolean {
     return this.columnMove.moving;
