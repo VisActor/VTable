@@ -73,6 +73,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-Sub_Tasks_Inline'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Sub_Tasks'
   }
   //   ]
   // }

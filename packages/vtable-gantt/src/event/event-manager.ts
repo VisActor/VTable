@@ -171,6 +171,7 @@ function bindTableGroupListener(event: EventManager) {
         //#region hover到某一个任务 检查有没有日期安排，没有的话显示创建按钮
         if (
           gantt.parsedOptions.showHierarchyMode !== ShowHierarchyMode.Sub_Tasks_Inline &&
+          gantt.parsedOptions.showHierarchyMode !== ShowHierarchyMode.Sub_Tasks &&
           gantt.parsedOptions.taskBarCreatable
         ) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);

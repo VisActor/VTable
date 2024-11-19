@@ -336,7 +336,7 @@ export enum DependencyType {
 }
 export enum ShowHierarchyMode {
   /** 每一个节点用单独一行来展示，也就是父子任务的节点都占用一行 */
-  Full = 'full',
+  All = 'all',
   /** 省去父节点，把所有子任务的节点都放到同一行来展示。 */
   Sub_Tasks_Inline = 'sub_tasks_inline',
   /** 所有子任务的节点分别用一行展示。*/

@@ -326,7 +326,10 @@ export class Gantt extends EventTarget {
       listTable_options[key] = this.options.taskListTable[key];
       if (key === 'columns') {
         listTable_options[key][listTable_options[key].length - 1].disableColumnResize = true;
-        if (this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline) {
+        if (
+          this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline ||
+          this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks
+        ) {
           for (let i = 0; i < listTable_options.columns.length; i++) {
             if (listTable_options.columns[i].tree) {
               listTable_options.columns[i].tree = false;
@@ -336,11 +339,13 @@ export class Gantt extends EventTarget {
       }
       if (
         key === 'hierarchyExpandLevel' &&
-        this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline
+        (this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline ||
+          this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks)
       ) {
         delete listTable_options[key];
       }
     }
+
     // lineWidthArr[1] = 0;
     //Object.assign浅拷贝 会直接覆盖第一层属性 。theme.ARCO.extends 其中extends不能连续调用，且赋值也只是第一层
     if (this.options.taskListTable?.theme) {
@@ -512,7 +517,16 @@ export class Gantt extends EventTarget {
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvas.height;
     listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
-    listTable_options.defaultRowHeight = this.parsedOptions.rowHeight;
+    if (this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks) {
+      listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
+        const { row, table } = args;
+        const record = table.getRecordByRowCol(0, row);
+        return (record.children?.length ?? 1) * this.parsedOptions.rowHeight;
+      };
+      listTable_options.defaultRowHeight = 'auto';
+    } else {
+      listTable_options.defaultRowHeight = this.options.rowHeight ?? 40;
+    }
     listTable_options.clearDOM = false;
     return listTable_options;
   }
@@ -589,8 +603,18 @@ export class Gantt extends EventTarget {
     }
     this.parsedOptions.colWidthPerDay = this.parsedOptions.timelineColWidth / colWidthIncludeDays;
   }
+  getRowHeightByIndex(index: number) {
+    return this.taskListTableInstance.getRowHeight(index + this.taskListTableInstance.columnHeaderLevelCount);
+  }
+  getRowsHeightByIndex(startIndex: number, endIndex: number) {
+    return this.taskListTableInstance.getRowsHeight(
+      startIndex + this.taskListTableInstance.columnHeaderLevelCount,
+      endIndex + this.taskListTableInstance.columnHeaderLevelCount
+    );
+  }
   getAllRowsHeight() {
-    return this.getAllHeaderRowsHeight() + this.itemCount * this.parsedOptions.rowHeight;
+    // return this.getAllHeaderRowsHeight() + this.itemCount * this.parsedOptions.rowHeight;
+    return this.taskListTableInstance.getAllRowsHeight();
   }
   getAllHeaderRowsHeight() {
     // if (Array.isArray(this.parsedOptions.timeLineHeaderRowHeights)) {
@@ -615,7 +639,11 @@ export class Gantt extends EventTarget {
   }
 
   getAllTaskBarsHeight() {
-    return this.itemCount * this.parsedOptions.rowHeight;
+    // return this.itemCount * this.parsedOptions.rowHeight;
+    return this.taskListTableInstance.getRowsHeight(
+      this.taskListTableInstance.columnHeaderLevelCount,
+      this.taskListTableInstance.rowCount - 1
+    );
   }
   getTaskShowIndexByRecordIndex(index: number | number[]) {
     return this.taskListTableInstance.getBodyRowIndexByRecordIndex(index);
@@ -824,10 +852,7 @@ export class Gantt extends EventTarget {
       ? this.taskListTableInstance.rowCount - this.taskListTableInstance.columnHeaderLevelCount
       : this.records.length;
     this.headerHeight = this.getAllHeaderRowsHeight();
-    this.drawHeight = Math.min(
-      this.headerHeight + this.parsedOptions.rowHeight * this.itemCount,
-      this.tableNoFrameHeight
-    );
+    this.drawHeight = Math.min(this.getAllRowsHeight(), this.tableNoFrameHeight);
     this.gridHeight = this.drawHeight - this.headerHeight;
   }
   /** 获取绘制画布的canvas上下文 */

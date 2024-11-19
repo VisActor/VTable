@@ -94,7 +94,7 @@ export { isNode };
 
 export function initOptions(gantt: Gantt) {
   const options = gantt.options;
-  gantt.parsedOptions.showHierarchyMode = options?.showHierarchyMode ?? ShowHierarchyMode.Full;
+  gantt.parsedOptions.showHierarchyMode = options?.showHierarchyMode ?? ShowHierarchyMode.All;
   gantt.parsedOptions.pixelRatio = options?.pixelRatio ?? 1;
   gantt.parsedOptions.rowHeight = options?.rowHeight ?? 40;
   gantt.parsedOptions.timelineColWidth = options?.timelineHeader?.colWidth ?? 60;
@@ -208,7 +208,7 @@ export function initOptions(gantt: Gantt) {
   //   options?.taskBar?.hoverColor === null ? 'rgba(0,0,0,0)' : options?.taskBar?.hoverColor ?? 'rgba(0,0,0,0.1)';
   gantt.parsedOptions.taskBarLabelStyle = {
     fontFamily: options?.taskBar?.labelTextStyle?.fontFamily ?? 'Arial',
-    fontSize: options?.taskBar?.labelTextStyle?.fontSize ?? gantt.parsedOptions.rowHeight / 2,
+    fontSize: options?.taskBar?.labelTextStyle?.fontSize ?? 20,
     color: options?.taskBar?.labelTextStyle?.color ?? '#F01',
     textAlign: options?.taskBar?.labelTextStyle?.textAlign ?? 'left',
     textBaseline: options?.taskBar?.labelTextStyle?.textBaseline ?? 'middle',

@@ -55,11 +55,14 @@ export class TaskBar {
     this.group.appendChild(this.barContainer);
 
     for (let i = 0; i < this._scene._gantt.itemCount; i++) {
-      if (this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline) {
+      if (
+        this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline ||
+        this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks
+      ) {
         const record = this._scene._gantt.getRecordByIndex(i);
         if (record.children?.length > 0) {
           for (let j = 0; j < record.children.length; j++) {
-            const barGroup = this.initBar(i, j);
+            const barGroup = this.initBar(i, j, record.children.length);
             if (barGroup) {
               this.barContainer.appendChild(barGroup);
             }
@@ -74,7 +77,7 @@ export class TaskBar {
       }
     }
   }
-  initBar(index: number, childIndex?: number) {
+  initBar(index: number, childIndex?: number, childrenLength?: number) {
     const taskBarCustomLayout = this._scene._gantt.parsedOptions.taskBarCustomLayout;
     let startDate;
     let endDate;
@@ -95,14 +98,20 @@ export class TaskBar {
     const taskBarSize = this._scene._gantt.parsedOptions.colWidthPerDay * taskDays;
     const taskbarHeight = this._scene._gantt.parsedOptions.taskBarStyle.width;
     const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
+    const oneTaskHeigth =
+      this._scene._gantt.getRowHeightByIndex(index) /
+      (this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks ? childrenLength : 1);
     const barGroup = new GanttTaskBarNode({
       x:
         this._scene._gantt.parsedOptions.colWidthPerDay *
         Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)),
       // y: this._scene._gantt.parsedOptions.rowHeight * i,
       y:
-        this._scene._gantt.parsedOptions.rowHeight * index +
-        (this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
+        this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
+        (this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks
+          ? childIndex * oneTaskHeigth
+          : 0) +
+        (oneTaskHeigth - taskbarHeight) / 2,
       width: taskBarSize,
       // height: this._scene._gantt.parsedOptions.rowHeight,
       height: taskbarHeight,
