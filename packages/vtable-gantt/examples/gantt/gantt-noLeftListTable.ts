@@ -931,18 +931,18 @@ export function createTable() {
         }
       }
     ],
-    rowSeriesNumber: {
-      title: '行号',
-      dragOrder: true,
-      headerStyle: {
-        bgColor: '#EEF1F5',
+    // rowSeriesNumber: {
+    //   title: '行号',
+    //   dragOrder: true,
+    //   headerStyle: {
+    //     bgColor: '#EEF1F5',
 
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      }
-    },
+    //     borderColor: '#e1e4e8'
+    //   },
+    //   style: {
+    //     borderColor: '#e1e4e8'
+    //   }
+    // },
     scrollStyle: {
       visible: 'scrolling'
     },

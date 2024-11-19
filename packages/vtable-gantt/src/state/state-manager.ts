@@ -40,6 +40,7 @@ export class StateManager {
     startX: number;
     startY: number;
     deltaX: number;
+    deltaY: number;
     targetStartX: number;
     startOffsetY: number;
     moving: boolean;
@@ -103,6 +104,7 @@ export class StateManager {
     this.moveTaskBar = {
       targetStartX: null,
       deltaX: 0,
+      deltaY: 0,
       startOffsetY: null,
       startX: null,
       startY: null,
@@ -371,9 +373,14 @@ export class StateManager {
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
     const x2 = e.x;
     const dx = x2 - x1;
+    const y1 = this._gantt.eventManager.lastDragPointerXYOnWindow.y;
+    const y2 = e.y;
+    const dy = y2 - y1;
+
     this.moveTaskBar.deltaX += dx;
+    this.moveTaskBar.deltaY += dy;
     // target.setAttribute('x', target.attribute.x + dx);
-    resizeOrMoveTaskBar(target, dx, null, this);
+    resizeOrMoveTaskBar(target, dx, dy, null, this);
 
     // 处理向左拖拽任务条时，整体向左滚动
     if (target.attribute.x <= this._gantt.stateManager.scrollLeft && dx < 0) {
@@ -382,7 +389,8 @@ export class StateManager {
       this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
       this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
         this.moveTaskBar.deltaX += dx;
-        resizeOrMoveTaskBar(target, dx, null, this);
+        this.moveTaskBar.deltaY += dy;
+        resizeOrMoveTaskBar(target, dx, dy, null, this);
 
         this._gantt.stateManager.setScrollLeft(target.attribute.x);
         if (this._gantt.stateManager.scrollLeft === 0) {
@@ -400,7 +408,8 @@ export class StateManager {
       this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
       this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
         this.moveTaskBar.deltaX += dx;
-        resizeOrMoveTaskBar(target, dx, null, this);
+        this.moveTaskBar.deltaY += dy;
+        resizeOrMoveTaskBar(target, dx, dy, null, this);
 
         this._gantt.stateManager.setScrollLeft(
           target.attribute.x + target.attribute.width - this._gantt.tableNoFrameWidth
@@ -462,13 +471,13 @@ export class StateManager {
       if (direction === 'left') {
         // taskBarGroup.setAttribute('x', targetEndX);
         // taskBarGroup.setAttribute('width', taskBarSize);
-        resizeOrMoveTaskBar(taskBarGroup, targetEndX - taskBarGroup.attribute.x, taskBarSize, this);
+        resizeOrMoveTaskBar(taskBarGroup, targetEndX - taskBarGroup.attribute.x, 0, taskBarSize, this);
         rect?.setAttribute('width', taskBarGroup.attribute.width);
         progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
         this._gantt._updateDateToTaskRecord('start-move', -diff_days, taskIndex, sub_task_index);
       } else if (direction === 'right') {
         // taskBarGroup.setAttribute('width', taskBarSize);
-        resizeOrMoveTaskBar(taskBarGroup, 0, taskBarSize, this);
+        resizeOrMoveTaskBar(taskBarGroup, 0, 0, taskBarSize, this);
         rect?.setAttribute('width', taskBarGroup.attribute.width);
         progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
         this._gantt._updateDateToTaskRecord('end-move', diff_days, taskIndex, sub_task_index);
@@ -523,6 +532,7 @@ export class StateManager {
     resizeOrMoveTaskBar(
       taskBarGroup,
       this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -diffWidth : 0,
+      0,
       taskBarSize,
       this
     );
@@ -810,13 +820,16 @@ function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number
   }
 }
 
-function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, state: StateManager) {
+function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, newWidth: number, state: StateManager) {
   // const taskIndex = getTaskIndexByY(state.moveTaskBar.startOffsetY, state._gantt);
   const taskIndex = target.task_index;
   const sub_task_index = target.sub_task_index;
   const record = state._gantt.getRecordByIndex(taskIndex, sub_task_index);
   if (dx) {
     target.setAttribute('x', target.attribute.x + dx);
+  }
+  if (dy) {
+    target.setAttribute('y', target.attribute.y + dy);
   }
   if (newWidth) {
     target.setAttribute('width', newWidth);

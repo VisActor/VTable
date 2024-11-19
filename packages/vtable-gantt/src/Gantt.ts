@@ -280,40 +280,40 @@ export class Gantt extends EventTarget {
     }
   }
   _generateListTable() {
-    // if (this.taskTableColumns.length >= 1 || this.options?.rowSeriesNumber) {
-    const listTableOption = this._generateListTableOptions();
-    this.taskListTableInstance = new ListTable(this.container, listTableOption);
+    if (this.taskTableColumns.length >= 1 || this.options?.rowSeriesNumber) {
+      const listTableOption = this._generateListTableOptions();
+      this.taskListTableInstance = new ListTable(this.container, listTableOption);
 
-    if (this.options?.taskListTable?.tableWidth === 'auto' || this.taskTableWidth === -1) {
-      this.taskTableWidth =
-        this.taskListTableInstance.getAllColsWidth() + this.parsedOptions.outerFrameStyle.borderLineWidth;
-      if (this.options?.taskListTable?.maxTableWidth) {
-        this.taskTableWidth = Math.min(this.options?.taskListTable?.maxTableWidth, this.taskTableWidth);
+      if (this.options?.taskListTable?.tableWidth === 'auto' || this.taskTableWidth === -1) {
+        this.taskTableWidth =
+          this.taskListTableInstance.getAllColsWidth() + this.parsedOptions.outerFrameStyle.borderLineWidth;
+        if (this.options?.taskListTable?.maxTableWidth) {
+          this.taskTableWidth = Math.min(this.options?.taskListTable?.maxTableWidth, this.taskTableWidth);
+        }
+        if (this.options?.taskListTable?.minTableWidth) {
+          this.taskTableWidth = Math.max(this.options?.taskListTable?.minTableWidth, this.taskTableWidth);
+        }
+        this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
+        this.taskListTableInstance.setCanvasSize(
+          this.taskTableWidth,
+          this.tableNoFrameHeight + this.parsedOptions.outerFrameStyle.borderLineWidth * 2
+        );
+        this._updateSize();
       }
-      if (this.options?.taskListTable?.minTableWidth) {
-        this.taskTableWidth = Math.max(this.options?.taskListTable?.minTableWidth, this.taskTableWidth);
-      }
-      this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
-      this.taskListTableInstance.setCanvasSize(
-        this.taskTableWidth,
-        this.tableNoFrameHeight + this.parsedOptions.outerFrameStyle.borderLineWidth * 2
-      );
-      this._updateSize();
-    }
 
-    if (this.taskListTableInstance.columnHeaderLevelCount > 1) {
-      if (this.taskListTableInstance.columnHeaderLevelCount === this.parsedOptions.timeLineHeaderRowHeights.length) {
-        for (let i = 0; i < this.taskListTableInstance.columnHeaderLevelCount; i++) {
-          this.taskListTableInstance.setRowHeight(i, this.parsedOptions.timeLineHeaderRowHeights[i]);
-        }
-      } else {
-        const newRowHeight = this.getAllHeaderRowsHeight() / this.taskListTableInstance.columnHeaderLevelCount;
-        for (let i = 0; i < this.taskListTableInstance.columnHeaderLevelCount; i++) {
-          this.taskListTableInstance.setRowHeight(i, newRowHeight);
+      if (this.taskListTableInstance.columnHeaderLevelCount > 1) {
+        if (this.taskListTableInstance.columnHeaderLevelCount === this.parsedOptions.timeLineHeaderRowHeights.length) {
+          for (let i = 0; i < this.taskListTableInstance.columnHeaderLevelCount; i++) {
+            this.taskListTableInstance.setRowHeight(i, this.parsedOptions.timeLineHeaderRowHeights[i]);
+          }
+        } else {
+          const newRowHeight = this.getAllHeaderRowsHeight() / this.taskListTableInstance.columnHeaderLevelCount;
+          for (let i = 0; i < this.taskListTableInstance.columnHeaderLevelCount; i++) {
+            this.taskListTableInstance.setRowHeight(i, newRowHeight);
+          }
         }
       }
     }
-    // }
   }
   _generateListTableOptions() {
     const listTable_options: ListTableConstructorOptions = {};
@@ -529,14 +529,6 @@ export class Gantt extends EventTarget {
       listTable_options.defaultRowHeight = this.options.rowHeight ?? 40;
     }
     listTable_options.clearDOM = false;
-    if (!listTable_options.rowSeriesNumber && !listTable_options.columns) {
-      // 左侧表格没有内容的时候 为了正常初始化ListTable 这里强制设置了序号列
-      listTable_options.rowSeriesNumber = {
-        width: 0
-      };
-      this.parsedOptions.verticalSplitLineMoveable = false;
-      delete this.parsedOptions.verticalSplitLineHighlight;
-    }
     return listTable_options;
   }
 
@@ -613,17 +605,25 @@ export class Gantt extends EventTarget {
     this.parsedOptions.colWidthPerDay = this.parsedOptions.timelineColWidth / colWidthIncludeDays;
   }
   getRowHeightByIndex(index: number) {
-    return this.taskListTableInstance.getRowHeight(index + this.taskListTableInstance.columnHeaderLevelCount);
+    if (this.taskListTableInstance) {
+      return this.taskListTableInstance.getRowHeight(index + this.taskListTableInstance.columnHeaderLevelCount);
+    }
+    return this.parsedOptions.rowHeight;
   }
   getRowsHeightByIndex(startIndex: number, endIndex: number) {
-    return this.taskListTableInstance.getRowsHeight(
-      startIndex + this.taskListTableInstance.columnHeaderLevelCount,
-      endIndex + this.taskListTableInstance.columnHeaderLevelCount
-    );
+    if (this.taskListTableInstance) {
+      return this.taskListTableInstance.getRowsHeight(
+        startIndex + this.taskListTableInstance.columnHeaderLevelCount,
+        endIndex + this.taskListTableInstance.columnHeaderLevelCount
+      );
+    }
+    return this.parsedOptions.rowHeight * (endIndex - startIndex + 1);
   }
   getAllRowsHeight() {
-    // return this.getAllHeaderRowsHeight() + this.itemCount * this.parsedOptions.rowHeight;
-    return this.taskListTableInstance.getAllRowsHeight();
+    if (this.taskListTableInstance) {
+      return this.taskListTableInstance.getAllRowsHeight();
+    }
+    return this.getAllHeaderRowsHeight() + this.itemCount * this.parsedOptions.rowHeight;
   }
   getAllHeaderRowsHeight() {
     // if (Array.isArray(this.parsedOptions.timeLineHeaderRowHeights)) {
@@ -648,11 +648,13 @@ export class Gantt extends EventTarget {
   }
 
   getAllTaskBarsHeight() {
-    // return this.itemCount * this.parsedOptions.rowHeight;
-    return this.taskListTableInstance.getRowsHeight(
-      this.taskListTableInstance.columnHeaderLevelCount,
-      this.taskListTableInstance.rowCount - 1
-    );
+    if (this.taskListTableInstance) {
+      return this.taskListTableInstance.getRowsHeight(
+        this.taskListTableInstance.columnHeaderLevelCount,
+        this.taskListTableInstance.rowCount - 1
+      );
+    }
+    return this.itemCount * this.parsedOptions.rowHeight;
   }
   getTaskShowIndexByRecordIndex(index: number | number[]) {
     return this.taskListTableInstance.getBodyRowIndexByRecordIndex(index);
