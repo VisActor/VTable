@@ -88,14 +88,14 @@ export interface GanttConstructorOptions {
     resizable?: boolean;
     /** 任务条是否可移动 */
     moveable?: boolean;
+    /** 任务条是否可以被拖拽来改变顺序 */
+    dragOrder?: boolean;
     /** 任务条hover时的样式 */
     hoverBarStyle?: ITaskBarHoverStyle;
     /** 任务条选择时的样式 TODO */
     selectedBarStyle?: ITaskBarSelectedStyle;
     /** 任务条是否可选择，默认为true */
     selectable?: boolean;
-    /** 任务条是否可以被拖拽来改变顺序 */
-    dragOrder?: boolean;
     /** 任务条右键菜单 */
     menu?: {
       /** 右键菜单。代替原来的option.contextmenu */

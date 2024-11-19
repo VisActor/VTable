@@ -204,6 +204,8 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.taskBarLabelText = options?.taskBar?.labelText ?? '';
   gantt.parsedOptions.taskBarMoveable = options?.taskBar?.moveable ?? true;
   gantt.parsedOptions.taskBarResizable = options?.taskBar?.resizable ?? true;
+  gantt.parsedOptions.taskBarDragOrder = options?.taskBar?.dragOrder ?? true;
+
   // gantt.parsedOptions.taskBarHoverColor =
   //   options?.taskBar?.hoverColor === null ? 'rgba(0,0,0,0)' : options?.taskBar?.hoverColor ?? 'rgba(0,0,0,0.1)';
   gantt.parsedOptions.taskBarLabelStyle = {
