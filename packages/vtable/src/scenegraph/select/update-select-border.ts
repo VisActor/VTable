@@ -1,9 +1,13 @@
-import type { IRect } from '@src/vrender';
+import { createRect, type IRect } from '@src/vrender';
 import type { Scenegraph } from '../scenegraph';
 import type { CellRange, CellSubLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 
 export function updateAllSelectComponent(scene: Scenegraph) {
+  scene.customSelectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
+    updateComponent(selectComp, key, scene);
+  });
+
   scene.selectingRangeComponents.forEach(
     (selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation }, key: string) => {
       updateComponent(selectComp, key, scene);

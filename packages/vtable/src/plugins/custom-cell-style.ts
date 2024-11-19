@@ -155,10 +155,6 @@ export class CustomCellStylePlugin {
       this.table.scenegraph.updateCellContent(cellPos.col, cellPos.row);
     }
 
-    if (!customStyleId) {
-      // remove from customCellStyleArrangement array
-      this.customCellStyleArrangement.splice(index, 1);
-    }
     this.table.scenegraph.updateNextFrame();
   }
 

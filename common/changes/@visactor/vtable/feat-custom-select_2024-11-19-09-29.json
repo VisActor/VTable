@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add setCustomSelectRanges in stateManager #2750 #2845",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
