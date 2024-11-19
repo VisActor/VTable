@@ -203,9 +203,9 @@ export class TooltipHandler {
         style: table.theme.tooltipStyle
       };
     } else if (
-      (isFunction(table.internalProps.tooltip?.isShowOverflowTextTooltip) &&
-        table.internalProps.tooltip.isShowOverflowTextTooltip(col, row, table)) ??
-      table.internalProps.tooltip.isShowOverflowTextTooltip
+      isFunction(table.internalProps.tooltip?.isShowOverflowTextTooltip)
+        ? table.internalProps.tooltip.isShowOverflowTextTooltip(col, row, table)
+        : table.internalProps.tooltip.isShowOverflowTextTooltip
     ) {
       const overflowText = table.getCellOverflowText(col, row);
       const rect = table.getCellRangeRelativeRect({ col, row });
