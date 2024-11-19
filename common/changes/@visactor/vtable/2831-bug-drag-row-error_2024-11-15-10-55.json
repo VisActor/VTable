@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when up on canvas blank area not drag position rightly #2831\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
