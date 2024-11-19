@@ -541,7 +541,7 @@ export interface BaseTableAPI {
   /** 当前表格默认表头行高 */
   defaultHeaderRowHeight: (number | 'auto') | (number | 'auto')[];
   /** 当前表格默认行高 */
-  defaultRowHeight: number | 'auto';
+  defaultRowHeight: number;
   /** 当前表格默认列宽 */
   defaultColWidth: number;
   /** 当前表格默认表头列宽 */

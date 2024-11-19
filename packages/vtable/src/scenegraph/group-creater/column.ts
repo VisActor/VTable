@@ -125,21 +125,15 @@ export function createColGroup(
   if (colStart > colEnd || rowStart > rowEnd) {
     return;
   }
-  const { layoutMap, defaultRowHeight, defaultHeaderRowHeight, defaultColWidth } = table.internalProps;
+  const { layoutMap, defaultHeaderRowHeight, defaultColWidth } = table.internalProps;
+  const defaultRowHeight = table.defaultRowHeight;
   let x = 0;
   let heightMax = 0;
   for (let i = colStart; i <= colEnd; i++) {
     const col = i;
     const colWidth = table.getColWidth(col);
 
-    const columnGroup = new Group({
-      x: xOrigin + x,
-      y: yOrigin,
-      width: colWidth,
-      height: 0,
-      clip: false,
-      pickable: false
-    });
+    const columnGroup = new Group();
     columnGroup.role = 'column';
     columnGroup.col = i;
     containerGroup.addChild(columnGroup);
@@ -150,7 +144,9 @@ export function createColGroup(
       rowStart,
       rowEnd,
       table.scenegraph.mergeMap,
-      cellLocation === 'columnHeader' && isNumber(defaultHeaderRowHeight) ? defaultHeaderRowHeight : defaultRowHeight,
+      cellLocation === 'columnHeader' && isNumber(defaultHeaderRowHeight)
+        ? (defaultHeaderRowHeight as number)
+        : defaultRowHeight,
       table,
       // cellLocation,
       rowLimit
