@@ -43,6 +43,12 @@ export class HeaderHighlightPlugin {
     this.table.on('selected_clear', () => {
       this.clearHighlight();
     });
+
+    this.table.on('mousemove_table', () => {
+      if (this.table.stateManager.select.selecting) {
+        this.updateHighlight();
+      }
+    });
   }
 
   clearHighlight() {
