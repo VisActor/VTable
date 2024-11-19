@@ -145,4 +145,10 @@ Enable the group title sticking function.
 
 Customize the group title layout.
 
- groupTitleStyle(CustomLayoutStyle)
+## customComputeRowHeight(Function)
+
+Code VTable internally calculates the row height. Users can customize the method for calculating row height.
+
+```
+customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => number;
+```

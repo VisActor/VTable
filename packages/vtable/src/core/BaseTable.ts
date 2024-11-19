@@ -664,12 +664,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    *
    */
   get defaultRowHeight(): number {
-    return this.internalProps.defaultRowHeight;
+    if (isNumber(this.internalProps.defaultRowHeight)) {
+      return this.internalProps.defaultRowHeight as number;
+    }
+    return 40;
   }
   /**
    * Set the default row height.
    */
-  set defaultRowHeight(defaultRowHeight: number) {
+  set defaultRowHeight(defaultRowHeight: number | 'auto') {
     this.internalProps.defaultRowHeight = defaultRowHeight;
     this.options.defaultRowHeight = defaultRowHeight;
   }
@@ -1238,6 +1241,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     endRow = Math.min(endRow, (this.rowCount ?? Infinity) - 1);
 
     let h = 0;
+    const isDefaultRowHeightIsAuto = this.options.defaultRowHeight === 'auto';
     // autoRowHeight || all rows in header, use accumulation
     if (
       this.heightMode === 'standard' &&
@@ -1246,6 +1250,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // endRow >= this.columnHeaderLevelCount &&
       // !this.bottomFrozenRowCount &&
       !this.hasAutoImageColumn() &&
+      !isDefaultRowHeightIsAuto &&
       this.internalProps._heightResizedRowMap.size === 0
     ) {
       // part in header

@@ -2,7 +2,13 @@ import type { Group as VGroup } from '@src/vrender';
 import { RichText, Text } from '@src/vrender';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { validToString } from '../../tools/util';
-import type { ColumnIconOption, ColumnTypeOption, IRowSeriesNumber } from '../../ts-types';
+import type {
+  ColumnIconOption,
+  ColumnTypeOption,
+  IRowSeriesNumber,
+  ListTableAPI,
+  ListTableConstructorOptions
+} from '../../ts-types';
 import { IconPosition } from '../../ts-types';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { ColumnData, ColumnDefine, TextColumnDefine } from '../../ts-types/list-table/layout-map/api';
@@ -60,8 +66,9 @@ export function computeRowsHeight(
   const isAllRowsAuto =
     table.heightMode === 'autoHeight' ||
     (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
+  const isDefaultRowHeightIsAuto = table.options.defaultRowHeight === 'auto';
 
-  if (isAllRowsAuto || isDefaultHeaderHasAuto) {
+  if (isAllRowsAuto || isDefaultHeaderHasAuto || isDefaultRowHeightIsAuto) {
     rowStart = rowStart ?? 0;
     rowEnd = rowEnd ?? table.rowCount - 1;
 
@@ -111,7 +118,7 @@ export function computeRowsHeight(
       }
     }
 
-    if (rowEnd < table.columnHeaderLevelCount || !isAllRowsAuto) {
+    if (rowEnd < table.columnHeaderLevelCount || (!isAllRowsAuto && !isDefaultRowHeightIsAuto)) {
       // do nothing
     } else {
       // compute body row
@@ -121,6 +128,7 @@ export function computeRowsHeight(
           table.internalProps.transpose ||
           (table.isPivotTable() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)
         ) &&
+        !(table.options as ListTableConstructorOptions).customComputeRowHeight &&
         checkFixedStyleAndNoWrap(table)
       ) {
         // check fixed style and no wrap situation, fill all row width single compute
@@ -342,6 +350,9 @@ export function computeRowsHeight(
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
   let maxHeight;
+  if ((table.options as ListTableConstructorOptions).customComputeRowHeight) {
+    return (table.options as ListTableConstructorOptions).customComputeRowHeight({ row, table: table as ListTableAPI });
+  }
   // 如果是透视图
   if (
     table.isPivotChart() &&

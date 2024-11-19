@@ -61,6 +61,10 @@ const table = new VTable.ListTable({
 });
 ```
 
+## 自定义计算行高
+
+如果需要自定义计算行高的逻辑，可以配置`customComputeRowHeight`函数来代理 VTable 内部计算行高的逻辑。
+
 # 列宽相关配置
 
 ## 列宽 width

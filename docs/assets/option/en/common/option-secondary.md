@@ -88,21 +88,37 @@ Allow the number of frozen columns, indicating how many columns will show the fr
 
 Whether to show the fixed column pin icon, effective for basic tables
 
-#${prefix} defaultRowHeight(number) = 40
+#${prefix} defaultRowHeight(number|'auto') = 40
 
-Default row height
+Default row height.
+
+- 'auto': The default row height calculated based on the row height. Combined with defaultHeaderRowHeight, it can achieve the effect of automatic row height calculation for the header or body part.
+- Specific value: Set a specific row height.
 
 #${prefix} defaultHeaderRowHeight(Array|number)
 
-Default row height for list header, can be set row by row. If not set, defaultRowHeight is used.
+The default row height of the column header can be set row by row. If not set, the defaultRowHeight value will be used as the row height of the table header.
+
+Specific definition:
+
+```
+defaultHeaderRowHeight?: (number | 'auto') | (number | 'auto')[];
+```
 
 #${prefix} defaultColWidth(number) = 80
 
-Default column width value
+Column width default value
 
 #${prefix} defaultHeaderColWidth(Array|number)
 
-Default column width for row headers, can be set column by column. If not set, defaultColWidth is used.
+The default column width of the row header can be set column by column. If not set, the value of defaultColWidth will be used as the column width and height of the header.
+
+Specific definition:
+
+```
+/** The default column width of the row header can be set column by column. If not, defaultColWidth is used */
+defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
+```
 
 #${prefix} keyboardOptions(Object)
 
