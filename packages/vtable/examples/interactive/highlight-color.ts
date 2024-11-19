@@ -77,6 +77,28 @@ export function createTable() {
     customGrapicKeys: ['col', 'row']
   });
 
+  tableInstance.stateManager.setCustomSelectRanges([
+    {
+      range: {
+        start: {
+          col: 0,
+          row: 4
+        },
+        end: {
+          col: 5,
+          row: 4
+        }
+      },
+      style: {
+        cellBorderColor: 'blue',
+        cellBorderLineWidth: 2,
+        cellBorderLineDash: [5, 5]
+      }
+    }
+  ]);
+
   const highlightPlugin = new VTable.HeaderHighlightPlugin(tableInstance);
   window.highlightPlugin = highlightPlugin;
+
+  // tableInstance.scenegraph.temporarilyUpdateSelectRectStyle({stroke: false})
 }
