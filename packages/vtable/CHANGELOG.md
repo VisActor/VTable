@@ -1,6 +1,23 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 15 Nov 2024 11:58:31 GMT and should not be manually modified.
+This log was last generated on Tue, 19 Nov 2024 12:21:58 GMT and should not be manually modified.
+
+## 1.11.1
+Tue, 19 Nov 2024 12:21:58 GMT
+
+### Updates
+
+- fix: add isValidatingValue state to fix call validateValue api repeatedly #2830
+
+
+- fix: when up on canvas blank area not drag position rightly #2831
+
+
+- feat: add setCustomSelectRanges in stateManager #2750 #2845
+- feat: optimize range select in HeaderHighlightPlugin
+- feat: isShowOverflowTextTooltip support function
+- fix: fix cell border dash update #2818
+- fix: fix merge cell text position #2858
 
 ## 1.11.0
 Fri, 15 Nov 2024 11:58:31 GMT
