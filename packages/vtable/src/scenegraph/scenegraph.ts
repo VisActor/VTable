@@ -1,4 +1,4 @@
-import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage } from '@src/vrender';
+import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage, IRectGraphicAttribute } from '@src/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
@@ -76,6 +76,7 @@ import { dealWithAnimationAppear } from './animation/appear';
 import { updateReactContainer } from './layout/frozen-react';
 
 import * as registerIcons from '../icons';
+import { temporarilyUpdateSelectRectStyle } from './select/update-select-style';
 // import { contextModule } from './context/module';
 
 registerForVrender();
@@ -117,6 +118,7 @@ export class Scenegraph {
   selectedRangeComponents: Map<string, { rect: IRect; fillhandle?: IRect; role: CellSubLocation }>;
   /** 当前正在选择区域对应的选框组件 为什么是map 以为可能一个选中区域会被拆分为多个rect组件 三块表头和body都分别对应不同组件*/
   selectingRangeComponents: Map<string, { rect: IRect; fillhandle?: IRect; role: CellSubLocation }>;
+  customSelectedRangeComponents: Map<string, { rect: IRect; role: CellSubLocation }>;
   lastSelectId: string;
   component: TableComponent;
   stage: IStage;
@@ -359,6 +361,7 @@ export class Scenegraph {
     this.component.addToGroup(this.componentGroup);
     this.selectedRangeComponents = new Map();
     this.selectingRangeComponents = new Map();
+    this.customSelectedRangeComponents = new Map();
   }
 
   updateComponent() {
@@ -582,7 +585,10 @@ export class Scenegraph {
     this.stage.renderNextFrame();
   }
   resetAllSelectComponent() {
-    if (this.table.stateManager.select?.ranges?.length > 0) {
+    if (
+      this.table.stateManager.select?.ranges?.length > 0 ||
+      this.table.stateManager.select?.customSelectRanges?.length > 0
+    ) {
       updateAllSelectComponent(this);
     }
   }
@@ -728,7 +734,7 @@ export class Scenegraph {
   removeFillHandleFromSelectComponents() {
     removeFillHandleFromSelectComponents(this);
   }
-  /** 根据select状态重新创建选中range节点  目前无调用者 */
+  /** 根据select状态重新创建选中range节点 */
   recreateAllSelectRangeComponents() {
     deleteAllSelectBorder(this);
     this.table.stateManager.select.ranges.forEach((cellRange: CellRange) => {
@@ -2075,5 +2081,13 @@ export class Scenegraph {
 
       dealWithIcon(loadingIcon, iconGraphic, col, row);
     }
+  }
+
+  temporarilyUpdateSelectRectStyle(rectAttribute: IRectGraphicAttribute) {
+    temporarilyUpdateSelectRectStyle(rectAttribute, this);
+  }
+
+  resetSelectRectStyle() {
+    this.recreateAllSelectRangeComponents();
   }
 }

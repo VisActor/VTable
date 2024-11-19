@@ -30,7 +30,7 @@ import { Bounds, isObject, isString, isValid } from '@visactor/vutils';
 import { updateDrill } from './drill';
 import { clearChartHover, updateChartHover } from './spark-line';
 import { endMoveCol, startMoveCol, updateMoveCol } from './cell-move';
-import type { FederatedWheelEvent } from '@src/vrender';
+import type { FederatedWheelEvent, IRectGraphicAttribute } from '@src/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
@@ -51,6 +51,14 @@ import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-bor
 import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
+import { addCustomSelectRanges, deletaCustomSelectRanges } from './select/custom-select';
+
+export type CustomSelectionStyle = {
+  cellBorderColor?: string; //边框颜色
+  cellBorderLineWidth?: number; //边框线宽度
+  cellBorderLineDash?: number[]; //边框线虚线
+  cellBgColor?: string; //选择框背景颜色
+};
 
 export class StateManager {
   table: BaseTableAPI;
@@ -81,6 +89,10 @@ export class StateManager {
     headerSelectMode?: 'inline' | 'cell' | 'body';
     highlightInRange?: boolean;
     selecting: boolean;
+    customSelectRanges?: {
+      range: CellRange;
+      style: CustomSelectionStyle;
+    }[];
   };
   fillHandle: {
     direction?: 'top' | 'bottom' | 'left' | 'right';
@@ -1570,5 +1582,15 @@ export class StateManager {
     if (this.radioState.length) {
       changeRadioOrder(sourceIndex, targetIndex, this);
     }
+  }
+
+  setCustomSelectRanges(
+    customSelectRanges: {
+      range: CellRange;
+      style: CustomSelectionStyle;
+    }[]
+  ) {
+    deletaCustomSelectRanges(this);
+    addCustomSelectRanges(customSelectRanges, this);
   }
 }
