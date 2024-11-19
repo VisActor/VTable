@@ -133,7 +133,14 @@ export function createColGroup(
     const col = i;
     const colWidth = table.getColWidth(col);
 
-    const columnGroup = new Group();
+    const columnGroup = new Group({
+      x: xOrigin + x,
+      y: yOrigin,
+      width: colWidth,
+      height: 0,
+      clip: false,
+      pickable: false
+    });
     columnGroup.role = 'column';
     columnGroup.col = i;
     containerGroup.addChild(columnGroup);
