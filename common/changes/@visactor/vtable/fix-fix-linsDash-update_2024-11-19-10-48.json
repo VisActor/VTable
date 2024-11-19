@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix cell border dash update #2818",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
