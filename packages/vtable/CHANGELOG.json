@@ -2,6 +2,36 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.11.1",
+      "tag": "@visactor/vtable_v1.11.1",
+      "date": "Tue, 19 Nov 2024 12:21:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add isValidatingValue state to fix call validateValue api repeatedly #2830\n\n"
+          },
+          {
+            "comment": "fix: when up on canvas blank area not drag position rightly #2831\n\n"
+          },
+          {
+            "comment": "feat: add setCustomSelectRanges in stateManager #2750 #2845"
+          },
+          {
+            "comment": "feat: optimize range select in HeaderHighlightPlugin"
+          },
+          {
+            "comment": "feat: isShowOverflowTextTooltip support function"
+          },
+          {
+            "comment": "fix: fix cell border dash update #2818"
+          },
+          {
+            "comment": "fix: fix merge cell text position #2858"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.11.0",
       "tag": "@visactor/vtable_v1.11.0",
       "date": "Fri, 15 Nov 2024 11:58:31 GMT",
