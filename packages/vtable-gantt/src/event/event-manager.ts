@@ -305,8 +305,7 @@ function bindTableGroupListener(event: EventManager) {
     });
     if (isClickBar && scene._gantt.parsedOptions.taskBarSelectable && event.poniterState === 'down') {
       stateManager.hideDependencyLinkSelectedLine();
-      scene._gantt.stateManager.selectedTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
-      stateManager.showTaskBarSelectedBorder();
+      stateManager.showTaskBarSelectedBorder(taskBarTarget);
       if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
         // const taskIndex = getTaskIndexByY(e.offset.y, gantt);
         const taskIndex = taskBarTarget.task_index;
@@ -488,8 +487,8 @@ function bindContainerDomListener(eventManager: EventManager) {
     }
     if (stateManager.interactionState === InteractionState.grabing && gantt.eventManager.poniterState === 'draging') {
       const lastX = gantt.eventManager.lastDragPointerXYOnWindow?.x ?? e.x;
-      // const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
-      if (Math.abs(lastX - e.x) >= 1) {
+      const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
+      if (Math.abs(lastX - e.x) >= 1 || Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizingTableWidth()) {
           stateManager.hideDependencyLinkSelectedLine();
           stateManager.hideTaskBarSelectedBorder();

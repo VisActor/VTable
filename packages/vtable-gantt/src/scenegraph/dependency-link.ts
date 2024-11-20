@@ -514,14 +514,34 @@ export function generateLinkLinePoints(
   return { linePoints, arrowPoints };
 }
 
+/**
+ *
+ * @param type 依赖关联类型
+ * @param linkedFromTaskStartDate 关联源任务的开始时间
+ * @param linkedFromTaskEndDate 关联源任务的结束时间
+ * @param linkedFromTaskRecordRowIndex  关联源任务所在的行索引
+ * @param fromNodeDiffY 关联源任务的偏移量，如果在拖拽过程中，会有偏移量
+ * @param linkedToTaskStartDate   关联目标任务的开始时间
+ * @param linkedToTaskEndDate    关联目标任务的结束时间
+ * @param linkedToTaskRecordRowIndex  关联目标任务所在的行索引
+ * @param toNodeDiffY    关联目标任务的偏移量，如果在拖拽过程中，会有偏移量
+ * @param minDate 甘特图设置的最开始时间
+ * @param rowHeight   单个任务条占用的行高
+ * @param colWidthPerDay   单个日期占用的列宽
+ * @param linkedFromMovedTaskBarNode  关联源任务的任务场景树节点
+ * @param linkedToMovedTaskBarNode   关联目标任务的任务场景树节点
+ * @returns
+ */
 export function updateLinkLinePoints(
   type: DependencyType,
   linkedFromTaskStartDate: Date,
   linkedFromTaskEndDate: Date,
   linkedFromTaskRecordRowIndex: number,
+  fromNodeDiffY: number,
   linkedToTaskStartDate: Date,
   linkedToTaskEndDate: Date,
   linkedToTaskRecordRowIndex: number,
+  toNodeDiffY: number,
   minDate: Date,
   rowHeight: number,
   colWidthPerDay: number,
@@ -548,37 +568,39 @@ export function updateLinkLinePoints(
     linePoints = [
       {
         x: linkFromPointX,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x: linkFromPointX + distanceToTaskBar,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x: linkFromPointX + distanceToTaskBar,
         y:
           rowHeight *
-          (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1))
+            (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1)) +
+          fromNodeDiffY
       },
       {
         x: linkToPointX - distanceToTaskBar,
         y:
           rowHeight *
-          (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1))
+            (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1)) +
+          fromNodeDiffY
       },
       {
         x: linkToPointX - distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       },
       {
         x: linkToPointX,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       }
     ];
     if (linkFromPointX + distanceToTaskBar <= linkToPointX - distanceToTaskBar) {
       linePoints.splice(2, 3, {
         x: linkFromPointX + distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       });
     }
     const lastPoint = linePoints[linePoints.length - 1];
@@ -613,37 +635,39 @@ export function updateLinkLinePoints(
     linePoints = [
       {
         x: linkFromPointX,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x: linkFromPointX - distanceToTaskBar,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x: linkFromPointX - distanceToTaskBar,
         y:
           rowHeight *
-          (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1))
+            (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1)) +
+          fromNodeDiffY
       },
       {
         x: linkToPointX + distanceToTaskBar,
         y:
           rowHeight *
-          (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1))
+            (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1)) +
+          fromNodeDiffY
       },
       {
         x: linkToPointX + distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       },
       {
         x: linkToPointX,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       }
     ];
     if (linkFromPointX - distanceToTaskBar >= linkToPointX + distanceToTaskBar) {
       linePoints.splice(2, 3, {
         x: linkFromPointX - distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       });
     }
     const lastPoint = linePoints[linePoints.length - 1];
@@ -677,14 +701,14 @@ export function updateLinkLinePoints(
     linePoints = [
       {
         x: linkFromPointX,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x:
           (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
             ? linkFromPointX
             : Math.min(linkFromPointX, linkToPointX)) - distanceToTaskBar,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x:
@@ -693,24 +717,26 @@ export function updateLinkLinePoints(
             : Math.min(linkFromPointX, linkToPointX)) - distanceToTaskBar,
         y:
           rowHeight *
-          (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5))
+            (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5)) +
+          toNodeDiffY
       },
       {
         x: linkToPointX - distanceToTaskBar,
         y:
           rowHeight *
-          (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5))
+            (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5)) +
+          toNodeDiffY
       },
       {
         x:
           (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
             ? linkToPointX
             : Math.min(linkFromPointX, linkToPointX)) - distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       },
       {
         x: linkToPointX,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       }
     ];
     const lastPoint = linePoints[linePoints.length - 1];
@@ -744,14 +770,14 @@ export function updateLinkLinePoints(
     linePoints = [
       {
         x: linkFromPointX,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x:
           (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
             ? linkFromPointX
             : Math.max(linkFromPointX, linkToPointX)) + distanceToTaskBar,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x:
@@ -760,21 +786,23 @@ export function updateLinkLinePoints(
             : Math.max(linkFromPointX, linkToPointX)) + distanceToTaskBar,
         y:
           rowHeight *
-          (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5))
+            (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5)) +
+          toNodeDiffY
       },
       {
         x: linkToPointX + distanceToTaskBar,
         y:
           rowHeight *
-          (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5))
+            (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5)) +
+          toNodeDiffY
       },
       {
         x: linkToPointX + distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       },
       {
         x: linkToPointX,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       }
     ];
     const lastPoint = linePoints[linePoints.length - 1];

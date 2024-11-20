@@ -640,3 +640,17 @@ export function findRecordByTaskKey(
     }
   }
 }
+
+export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
+  let task_index;
+  let sub_task_index;
+  if (gantt.taskListTableInstance) {
+    const { row } = gantt.taskListTableInstance.getTargetRowAt(y + gantt.headerHeight);
+    task_index = row - gantt.taskListTableInstance.columnHeaderLevelCount;
+    const beforeRowsHeight = gantt.getRowsHeightByIndex(0, task_index - 1); // 耦合了listTableOption的customComputeRowHeight
+    sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+  } else {
+    task_index = Math.floor(y / gantt.parsedOptions.rowHeight);
+  }
+  return { task_index, sub_task_index };
+}

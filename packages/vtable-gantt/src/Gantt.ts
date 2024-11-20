@@ -522,7 +522,7 @@ export class Gantt extends EventTarget {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
         const record = table.getRecordByRowCol(0, row);
-        return (record.children?.length ?? 1) * this.parsedOptions.rowHeight;
+        return (record.children?.length || 1) * this.parsedOptions.rowHeight;
       };
       listTable_options.defaultRowHeight = 'auto';
     } else {
@@ -829,6 +829,29 @@ export class Gantt extends EventTarget {
     if (!isValid(sub_task_index)) {
       //子任务不是独占左侧表格一行的情况
       this._updateRecordToListTable(taskRecord, index);
+    }
+  }
+
+  /**
+   * 拖拽任务条或者调整任务条尺寸修改日期更新到数据中
+   * @param updateDateType
+   * @param days
+   * @param index
+   */
+  _dragOrderTaskRecord(
+    source_index: number,
+    source_sub_task_index: number,
+    target_index: number,
+    target_sub_task_index: number
+  ) {
+    // const source_taskRecord = this.getRecordByIndex(source_index, source_sub_task_index);
+    if (isValid(source_sub_task_index) && isValid(target_sub_task_index)) {
+      const sub_task_record = this.records[source_index].children[source_sub_task_index];
+      this.records[source_index].children.splice(source_sub_task_index, 1);
+      if (!this.records[target_index].children) {
+        this.records[target_index].children = [];
+      }
+      this.records[target_index].children.splice(target_sub_task_index, 0, sub_task_record);
     }
   }
   /** 目前不支持树形tree的情况更新单条数据 需要的话目前可以setRecords。 */

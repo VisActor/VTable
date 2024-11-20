@@ -324,7 +324,7 @@ export function createTable() {
       linkCreatable: true,
       links: [
         {
-          type: DependencyType.StartToFinish,
+          type: DependencyType.FinishToFinish,
           linkedFromTaskKey: 3,
           linkedToTaskKey: 2
         }

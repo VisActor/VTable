@@ -79,20 +79,13 @@ export class TaskBar {
   }
   initBar(index: number, childIndex?: number, childrenLength?: number) {
     const taskBarCustomLayout = this._scene._gantt.parsedOptions.taskBarCustomLayout;
-    let startDate;
-    let endDate;
-    let taskDays;
-    let progress;
-    let taskRecord;
-    if (isValid(childIndex)) {
-      ({ startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
-        index,
-        childIndex
-      ));
-    } else {
-      ({ startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(index));
-    }
-    if (taskDays <= 0 || !startDate || !endDate) {
+
+    const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
+      index,
+      childIndex
+    );
+
+    if (taskDays <= 0 || !startDate || !endDate || startDate.getTime() > endDate.getTime()) {
       return null;
     }
     const taskBarSize = this._scene._gantt.parsedOptions.colWidthPerDay * taskDays;
