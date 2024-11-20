@@ -354,12 +354,13 @@ function updateMergeCellContentHeight(
 
         if (renderDefault) {
           const style = table._getCellStyle(colStart, rowStart);
+          const padding = getQuadProps(getProp('padding', style, col, row, table));
           updateCellContentHeight(
             singleCellGroup,
             distHeight,
             detaY,
             autoRowHeight,
-            getQuadProps(style.padding as number),
+            padding,
             style.textAlign,
             style.textBaseline,
             table
@@ -396,12 +397,13 @@ function updateMergeCellContentHeight(
     }
   } else {
     const style = table._getCellStyle(cellGroup.col, cellGroup.row);
+    const padding = getQuadProps(getProp('padding', style, cellGroup.col, cellGroup.row, table));
     updateCellContentHeight(
       cellGroup,
       distHeight,
       detaY,
       autoRowHeight,
-      getQuadProps(style.padding as number),
+      padding,
       style.textAlign,
       style.textBaseline,
       table
