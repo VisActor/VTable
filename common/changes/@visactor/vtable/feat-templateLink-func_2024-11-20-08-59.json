@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: templateLink support function #2847",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

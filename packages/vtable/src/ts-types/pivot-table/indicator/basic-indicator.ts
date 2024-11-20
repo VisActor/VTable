@@ -17,7 +17,7 @@ export interface IBasicHeaderIndicator {
 
   // linkJump?: boolean;
   // linkDetect?: boolean;
-  // templateLink?: string;
+  // templateLink?: string | FieldGetter;
 
   // chartSpec?: any | ((arg0: CustomRenderFunctionArg) => any);
   // chartModule?: string; // 如果配置了columnType未chart，chartType来指定图表组件类型 如'vchart' 需要从预先register的图表类型获取

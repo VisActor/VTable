@@ -21,7 +21,8 @@ import type {
   HierarchyState,
   Aggregation,
   IRowSeriesNumber,
-  SortOption
+  SortOption,
+  FieldGetter
 } from '../../';
 import type { Aggregator } from '../../../dataset/statistics-helper';
 import type { BaseTableAPI } from '../../base-table';
@@ -127,7 +128,7 @@ export interface ColumnData extends WidthData {
   sparklineSpec?: SparklineSpec | ((arg0: CellInfo) => SparklineSpec);
   style: ColumnStyleOption | null | undefined;
   define: ColumnDefine;
-  templateLink?: string;
+  templateLink?: string | FieldGetter;
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
   /**存储图标的位置 坐标及宽高 是包括了boxWidth boxWidth 共getHitIcon方法使用 计算是否命中图标*/
   // iconPositionList?: { [key in IconFuncTypeEnum]?: RectProps & { icon: ColumnIconOption } };
