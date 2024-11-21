@@ -173,6 +173,22 @@ const records = [
 ];
 ```
 
+## 树形结构的默认展开层级
+
+在树形结构中，默认展开的层级可以通过`hierarchyExpandLevel`配置项来指定。
+
+例如指定默认展开到第三层级：`hierarchyExpandLevel: 3`。
+
+```javascript
+const option = {
+  records,
+  columns,
+  widthMode: 'standard',
+  hierarchyExpandLevel: 3
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+```
+
 ## 懒加载子节点数据场景
 
 在一些场景下，子节点数据可能比较大，鉴于后台数据库性能压力过大，并不想一次性获取到全部数据，需要在点击展开时才进行调用接口来加载数据。那么可以使用如下方式来实现：
@@ -186,7 +202,7 @@ const records = [
 
 ## 合并父节点
 
-在一些场景中，希望父节点整行作为一个合并单元格显示，可以在数据中，配置`vtableMerge`和`vtableMergeName`，其中`vtableMerge`为 true 时，表示该父节点为合并单元格，`vtableMergeName`为合并单元格中显示的名称；同时，需要在option中加入`enableTreeNodeMerge`配置为 true。
+在一些场景中，希望父节点整行作为一个合并单元格显示，可以在数据中，配置`vtableMerge`和`vtableMergeName`，其中`vtableMerge`为 true 时，表示该父节点为合并单元格，`vtableMergeName`为合并单元格中显示的名称；同时，需要在 option 中加入`enableTreeNodeMerge`配置为 true。
 
 ```javascript livedemo template=vtable
 const records = [
