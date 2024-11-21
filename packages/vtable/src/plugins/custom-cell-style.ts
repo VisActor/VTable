@@ -1,3 +1,4 @@
+import { merge } from '@visactor/vutils';
 import type { Style } from '../body-helper/style';
 import type {
   CellRange,
@@ -24,16 +25,27 @@ export class CustomCellStylePlugin {
   }
 
   getCustomCellStyle(col: number, row: number) {
-    const customStyleId = this.getCustomCellStyleId(col, row);
-    if (customStyleId) {
-      const styleOption = this.getCustomCellStyleOption(customStyleId);
-      return styleOption?.style;
+    const customStyleIds = this.getCustomCellStyleIds(col, row);
+    if (customStyleIds.length) {
+      const styles: ColumnStyleOption[] = [];
+
+      customStyleIds.forEach(customStyleId => {
+        const styleOption = this.getCustomCellStyleOption(customStyleId);
+        if (styleOption?.style) {
+          styles.push(styleOption.style);
+        }
+      });
+
+      return merge({}, ...styles);
+      // const styleOption = this.getCustomCellStyleOption(customStyleId);
+      // return styleOption?.style;
     }
     return undefined;
   }
 
-  getCustomCellStyleId(col: number, row: number) {
-    let customStyleId;
+  getCustomCellStyleIds(col: number, row: number) {
+    // let customStyleId;
+    const customStyleIds: string[] = [];
 
     const range = this.table.getCellRange(col, row);
     for (let c = range.start.col; c <= range.end.col; c++) {
@@ -47,16 +59,18 @@ export class CustomCellStylePlugin {
               style.cellPosition.range.start.row <= r &&
               style.cellPosition.range.end.row >= r
             ) {
-              customStyleId = style.customStyleId;
+              // customStyleId = style.customStyleId;
+              customStyleIds.push(style.customStyleId);
             }
           } else if (style.cellPosition.col === c && style.cellPosition.row === r) {
-            customStyleId = style.customStyleId;
+            // customStyleId = style.customStyleId;
+            customStyleIds.push(style.customStyleId);
           }
         });
       }
     }
 
-    return customStyleId;
+    return customStyleIds;
   }
 
   getCustomCellStyleOption(customStyleId: string) {
