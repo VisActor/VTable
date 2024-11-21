@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: cell support multi-custom-style #2841",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
