@@ -319,7 +319,7 @@ export class StateManager {
     this.moveTaskBar.startX = x;
     this.moveTaskBar.startY = y;
     this.moveTaskBar.startOffsetY = offsetY;
-    target.setAttribute('zIndex', 100000);
+    target.setAttribute('zIndex', 10000);
   }
 
   isMoveingTaskBar() {
@@ -429,6 +429,7 @@ export class StateManager {
   }
   dealTaskBarMove(e: FederatedPointerEvent) {
     const target = this.moveTaskBar.target;
+    target.setAttribute('zIndex', 10000);
     // const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
     const x2 = e.x;
@@ -544,6 +545,9 @@ export class StateManager {
       }
       this.showTaskBarHover();
       reCreateCustomNode(this._gantt, taskBarGroup, taskIndex, sub_task_index);
+
+      taskBarGroup.setAttribute('zIndex', 0);
+
       this.resizeTaskBar.resizing = false;
       this.resizeTaskBar.target = null;
 
@@ -567,6 +571,7 @@ export class StateManager {
     const dx = x2 - x1;
     // debugger;
     const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
+    taskBarGroup.setAttribute('zIndex', 10000);
     const rect = taskBarGroup.barRect;
     const progressRect = taskBarGroup.progressRect;
     const textLabel = taskBarGroup.textLabel;
@@ -738,7 +743,7 @@ export class StateManager {
   }
 
   showTaskBarSelectedBorder(target: GanttTaskBarNode) {
-    this._gantt.stateManager.selectedTaskBar.target?.setAttribute('zIndex', undefined);
+    this._gantt.stateManager.selectedTaskBar.target?.setAttribute('zIndex', 0);
     this._gantt.stateManager.selectedTaskBar.target = target as any as GanttTaskBarNode;
     const linkCreatable = this._gantt.parsedOptions.dependencyLinkCreatable;
     target.setAttribute('zIndex', 10000);
@@ -751,7 +756,7 @@ export class StateManager {
   }
 
   hideTaskBarSelectedBorder() {
-    this._gantt.stateManager.selectedTaskBar.target?.setAttribute('zIndex', undefined);
+    this._gantt.stateManager.selectedTaskBar.target?.setAttribute('zIndex', 0);
     this._gantt.stateManager.selectedTaskBar.target = null;
     this._gantt.scenegraph.taskBar.removeSelectedBorder();
     this._gantt.scenegraph.updateNextFrame();
