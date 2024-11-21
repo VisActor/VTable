@@ -377,6 +377,8 @@ export interface BaseTableConstructorOptions {
     disableDragSelect?: boolean;
     /** 是否在选择多行或多列时高亮范围 */
     highlightInRange?: boolean;
+    /** 是否将选中的单元格自动滚动到视口内 默认为true */
+    makeSelectCellVisible?: boolean;
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {

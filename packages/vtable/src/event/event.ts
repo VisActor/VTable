@@ -298,7 +298,7 @@ export class EventManager {
         eventArgs.event.shiftKey,
         eventArgs.event.ctrlKey || eventArgs.event.metaKey,
         false,
-        isSelectMoving
+        this.table.options.select?.makeSelectCellVisible ?? true
       );
 
       return true;
@@ -357,7 +357,7 @@ export class EventManager {
           true,
           eventArgs.event.ctrlKey || eventArgs.event.metaKey,
           false,
-          isSelectMoving
+          !isSelectMoving
         );
       } else {
         this.table.stateManager.updateSelectPos(
@@ -366,7 +366,7 @@ export class EventManager {
           eventArgs.event.shiftKey,
           eventArgs.event.ctrlKey || eventArgs.event.metaKey,
           false,
-          isSelectMoving
+          !isSelectMoving
         );
       }
       return true;
