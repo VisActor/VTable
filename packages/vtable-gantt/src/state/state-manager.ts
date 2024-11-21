@@ -1,7 +1,7 @@
 import { clone, cloneDeep, isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import type { ITaskLink } from '../ts-types';
-import { InteractionState, GANTT_EVENT_TYPE, DependencyType, ShowHierarchyMode } from '../ts-types';
+import { InteractionState, GANTT_EVENT_TYPE, DependencyType, TasksShowMode } from '../ts-types';
 import type { Group, FederatedPointerEvent, Polygon, Line, Circle } from '@visactor/vtable/es/vrender';
 import {
   syncEditCellFromTable,
@@ -16,7 +16,7 @@ import { debounce } from '../tools/debounce';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 import { TASKBAR_HOVER_ICON_WIDTH } from '../scenegraph/task-bar';
 import { Inertia } from '../tools/inertia';
-import { generateLinkLinePoints, updateLinkLinePoints } from '../scenegraph/dependency-link';
+import { updateLinkLinePoints } from '../scenegraph/dependency-link';
 export class StateManager {
   _gantt: Gantt;
 
@@ -362,7 +362,6 @@ export class StateManager {
     }
     // 判断纵向拖动 处理数据的位置
     if (Math.abs(Math.round(deltaY / this._gantt.parsedOptions.rowHeight)) >= 1) {
-      // if (this._gantt.parsedOptions.showHierarchyMode !== ShowHierarchyMode.Sub_Tasks_Inline) {
       //TODO 移动位置的数据更新到record中
       const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
       this._gantt._dragOrderTaskRecord(
@@ -371,17 +370,57 @@ export class StateManager {
         indexs.task_index,
         indexs.sub_task_index
       );
-      this._gantt.taskListTableInstance.renderWithRecreateCells();
-      this._gantt.scenegraph.refreshTaskBarsAndGrid();
+      if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
+        this._gantt.taskListTableInstance.renderWithRecreateCells();
+        this._gantt.scenegraph.refreshTaskBarsAndGrid();
+      } else {
+        this._gantt.scenegraph.taskBar.refresh();
+        this._gantt.scenegraph.dependencyLink.refresh();
+      }
       // target = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(indexs.task_index, indexs.sub_task_index);
     } else {
-      resizeOrMoveTaskBar(target, targetEndX - target.attribute.x, targetEndY - target.attribute.y, null, this);
+      resizeOrMoveTaskBar(
+        target,
+        targetEndX - (target as Group).attribute.x,
+        targetEndY - (target as Group).attribute.y,
+        null,
+        this
+      );
+
+      // 为了确保拖拽后 保持startDate日期晚的显示在上层不被盖住 这里需要重新排序一下
+      if (days > 0) {
+        let insertAfterNode = target;
+        while (
+          (insertAfterNode as Group).nextSibling &&
+          (insertAfterNode as Group).nextSibling.attribute.y === (target as Group).attribute.y &&
+          (insertAfterNode as Group).nextSibling.record[this._gantt.parsedOptions.startDateField] <=
+            target.record[this._gantt.parsedOptions.startDateField]
+        ) {
+          insertAfterNode = (insertAfterNode as Group).nextSibling;
+        }
+        if (insertAfterNode !== target) {
+          (insertAfterNode as Group).parent.insertAfter(target, insertAfterNode);
+        }
+      } else if (days < 0) {
+        let insertBeforeNode = target;
+        while (
+          (insertBeforeNode as Group).previousSibling &&
+          (insertBeforeNode as Group).previousSibling.attribute.y === (target as Group).attribute.y &&
+          (insertBeforeNode as Group).previousSibling.record[this._gantt.parsedOptions.startDateField] >=
+            target.record[this._gantt.parsedOptions.startDateField]
+        ) {
+          insertBeforeNode = (insertBeforeNode as Group).previousSibling;
+        }
+        if (insertBeforeNode !== target) {
+          (insertBeforeNode as Group).parent.insertBefore(target, insertBeforeNode);
+        }
+      }
     }
 
     this._gantt.scenegraph.updateNextFrame();
     this.moveTaskBar.moving = false;
     if (this.selectedTaskBar.target !== target) {
-      target.setAttribute('zIndex', undefined);
+      target.setAttribute('zIndex', 0);
     }
     this.moveTaskBar.target = null;
     this.moveTaskBar.deltaX = 0;
@@ -744,8 +783,8 @@ export class StateManager {
     const linkedToTaskRecord = findRecordByTaskKey(this._gantt.records, taskKeyField, linkedToTaskKey);
     const linkedFromTaskRecord = findRecordByTaskKey(this._gantt.records, taskKeyField, linkedFromTaskKey);
     if (
-      this._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline ||
-      this._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks
+      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
     ) {
       linkFrom_index = linkedFromTaskRecord.index[0];
       linkFrom_sub_task_index = linkedFromTaskRecord.index[1];
@@ -861,7 +900,6 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
   if (newWidth) {
     target.setAttribute('width', newWidth);
   }
-
   const vtable_gantt_linkedTo = record.vtable_gantt_linkedTo;
   const vtable_gantt_linkedFrom = record.vtable_gantt_linkedFrom;
   for (let i = 0; i < vtable_gantt_linkedTo?.length; i++) {
@@ -889,7 +927,7 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
     let linkedToTaskShowIndex;
     let linkedFromTaskShowIndex;
     let diffY: number;
-    if (state._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline) {
+    if (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline) {
       const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, state._gantt);
       linkedFromTaskShowIndex = linkedFromTaskRecord.index[0];
       // linkedToTaskShowIndex = linkedToTaskRecord.index[0];
@@ -910,8 +948,7 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
       const taskbarHeight = state._gantt.parsedOptions.taskBarStyle.width;
       diffY =
         target.attribute.y + taskbarHeight / 2 - (linkedToTaskShowIndex + 0.5) * state._gantt.parsedOptions.rowHeight;
-      console.log('diffY', diffY);
-    } else if (state._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks) {
+    } else if (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
       const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, state._gantt);
       const beforeRowCountLinkedFrom =
         state._gantt.getRowsHeightByIndex(0, linkedFromTaskRecord.index[0] - 1) / state._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
@@ -997,7 +1034,7 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
     let linkedToTaskShowIndex;
     let linkedFromTaskShowIndex;
     let diffY: number;
-    if (state._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline) {
+    if (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline) {
       const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, state._gantt);
       const beforeRowCountLinkedFrom =
         state._gantt.getRowsHeightByIndex(0, new_indexs.task_index - 1) / state._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
@@ -1018,7 +1055,7 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
       const taskbarHeight = state._gantt.parsedOptions.taskBarStyle.width;
       diffY =
         target.attribute.y + taskbarHeight / 2 - (linkedFromTaskShowIndex + 0.5) * state._gantt.parsedOptions.rowHeight;
-    } else if (state._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks) {
+    } else if (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
       const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, state._gantt);
       // const beforeRowCountLinkedFrom =
       //   state._gantt.getRowsHeightByIndex(0, linkedFromTaskRecord.index[0] - 1) / state._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight

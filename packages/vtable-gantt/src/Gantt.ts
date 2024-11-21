@@ -24,7 +24,7 @@ import type {
   ITaskLinkSelectedStyle,
   IPointStyle
 } from './ts-types';
-import { ShowHierarchyMode } from './ts-types';
+import { TasksShowMode } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
@@ -125,7 +125,7 @@ export class Gantt extends EventTarget {
 
     outerFrameStyle: IFrameStyle;
     pixelRatio: number;
-    showHierarchyMode: ShowHierarchyMode;
+    tasksShowMode: TasksShowMode;
 
     startDateField: string;
     endDateField: string;
@@ -328,8 +328,8 @@ export class Gantt extends EventTarget {
       if (key === 'columns') {
         listTable_options[key][listTable_options[key].length - 1].disableColumnResize = true;
         if (
-          this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline ||
-          this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
         ) {
           for (let i = 0; i < listTable_options.columns.length; i++) {
             if (listTable_options.columns[i].tree) {
@@ -340,8 +340,8 @@ export class Gantt extends EventTarget {
       }
       if (
         key === 'hierarchyExpandLevel' &&
-        (this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline ||
-          this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks)
+        (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate)
       ) {
         delete listTable_options[key];
       }
@@ -518,7 +518,7 @@ export class Gantt extends EventTarget {
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvas.height;
     listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
-    if (this.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks) {
+    if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
         const record = table.getRecordByRowCol(0, row);
@@ -845,14 +845,7 @@ export class Gantt extends EventTarget {
     target_sub_task_index: number
   ) {
     // const source_taskRecord = this.getRecordByIndex(source_index, source_sub_task_index);
-    if (isValid(source_sub_task_index) && isValid(target_sub_task_index)) {
-      const sub_task_record = this.records[source_index].children[source_sub_task_index];
-      this.records[source_index].children.splice(source_sub_task_index, 1);
-      if (!this.records[target_index].children) {
-        this.records[target_index].children = [];
-      }
-      this.records[target_index].children.splice(target_sub_task_index, 0, sub_task_record);
-    }
+    this.data.adjustOrder(source_index, source_sub_task_index, target_index, target_sub_task_index);
   }
   /** 目前不支持树形tree的情况更新单条数据 需要的话目前可以setRecords。 */
   updateTaskRecord(record: any, index: number) {

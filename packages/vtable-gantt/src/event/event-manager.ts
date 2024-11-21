@@ -4,7 +4,7 @@ import type { Gantt } from '../Gantt';
 import { EventHandler } from '../event/EventHandler';
 import { handleWhell } from '../event/scroll';
 import { formatDate, parseDateFormat, throttle } from '../tools/util';
-import { GANTT_EVENT_TYPE, InteractionState, ShowHierarchyMode } from '../ts-types';
+import { GANTT_EVENT_TYPE, InteractionState, TasksShowMode } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
 import { DayTimes, getDateIndexByX, getTaskIndexByY } from '../gantt-helper';
@@ -170,8 +170,8 @@ function bindTableGroupListener(event: EventManager) {
         }
         //#region hover到某一个任务 检查有没有日期安排，没有的话显示创建按钮
         if (
-          gantt.parsedOptions.showHierarchyMode !== ShowHierarchyMode.Sub_Tasks_Inline &&
-          gantt.parsedOptions.showHierarchyMode !== ShowHierarchyMode.Sub_Tasks &&
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Inline &&
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
           gantt.parsedOptions.taskBarCreatable
         ) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);

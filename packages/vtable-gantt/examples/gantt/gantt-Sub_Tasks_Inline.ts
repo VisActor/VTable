@@ -5,7 +5,7 @@ import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 import { scale } from '@visactor/vutils';
-import { DependencyType, ShowHierarchyMode } from '../../src/ts-types';
+import { DependencyType, TasksShowMode } from '../../src/ts-types';
 const CONTAINER_ID = 'vTable';
 const date_input_editor = new DateInputEditor({});
 const input_editor = new InputEditor({});
@@ -274,7 +274,7 @@ export function createTable() {
       }
     },
     groupBy: true,
-    showHierarchyMode: ShowHierarchyMode.Sub_Tasks_Inline,
+    tasksShowMode: TasksShowMode.Sub_Tasks_Inline,
     frame: {
       outerFrameStyle: {
         borderLineWidth: 2,

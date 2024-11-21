@@ -7,7 +7,7 @@ import { isValid } from '@visactor/vutils';
 import { findRecordByTaskKey, getTextPos } from '../gantt-helper';
 import type { GanttTaskBarNode } from './gantt-node';
 import type { ITaskLink } from '../ts-types';
-import { DependencyType, ShowHierarchyMode } from '../ts-types';
+import { DependencyType, TasksShowMode } from '../ts-types';
 
 export class DependencyLink {
   group: Group;
@@ -75,7 +75,7 @@ export class DependencyLink {
     let linkedToTaskShowIndex;
     let linkedFromTaskShowIndex;
 
-    if (this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline) {
+    if (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline) {
       linkedFromTaskShowIndex = linkedFromTaskRecord.index[0];
       linkedToTaskShowIndex = linkedToTaskRecord.index[0];
       ({
@@ -88,7 +88,7 @@ export class DependencyLink {
         endDate: linkedFromTaskEndDate,
         taskDays: linkedFromTaskTaskDays
       } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
-    } else if (this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks) {
+    } else if (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
       const beforeRowCountLinkedFrom =
         this._scene._gantt.getRowsHeightByIndex(0, linkedFromTaskRecord.index[0] - 1) /
         this._scene._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight

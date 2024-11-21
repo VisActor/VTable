@@ -6,7 +6,7 @@ import { Group, Image, Text } from '@visactor/vtable/es/vrender';
 import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 import { scale } from '@visactor/vutils';
-import { DependencyType, ShowHierarchyMode } from '../../src/ts-types';
+import { DependencyType, TasksShowMode } from '../../src/ts-types';
 const CONTAINER_ID = 'vTable';
 
 const barColors0 = ['#aecde6', '#c6a49a', '#ffb582', '#eec1de', '#b3d9b3', '#d9d1a5', '#cccccc', '#e59a9c', '#c9bede'];
@@ -181,7 +181,7 @@ export function createTable() {
       }
     },
     groupBy: true,
-    showHierarchyMode: ShowHierarchyMode.Sub_Tasks_Inline,
+    tasksShowMode: TasksShowMode.Sub_Tasks_Inline,
     frame: {
       outerFrameStyle: {
         borderLineWidth: 1,

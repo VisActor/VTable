@@ -5,7 +5,7 @@ import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/
 import { isValid } from '@visactor/vutils';
 import { getTextPos } from '../gantt-helper';
 import { GanttTaskBarNode } from './gantt-node';
-import { ShowHierarchyMode } from '../ts-types';
+import { TasksShowMode } from '../ts-types';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -56,8 +56,8 @@ export class TaskBar {
 
     for (let i = 0; i < this._scene._gantt.itemCount; i++) {
       if (
-        this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks_Inline ||
-        this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
       ) {
         const record = this._scene._gantt.getRecordByIndex(i);
         if (record.children?.length > 0) {
@@ -93,7 +93,7 @@ export class TaskBar {
     const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
     const oneTaskHeigth =
       this._scene._gantt.getRowHeightByIndex(index) /
-      (this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks ? childrenLength : 1);
+      (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ? childrenLength : 1);
     const barGroup = new GanttTaskBarNode({
       x:
         this._scene._gantt.parsedOptions.colWidthPerDay *
@@ -101,7 +101,7 @@ export class TaskBar {
       // y: this._scene._gantt.parsedOptions.rowHeight * i,
       y:
         this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
-        (this._scene._gantt.parsedOptions.showHierarchyMode === ShowHierarchyMode.Sub_Tasks
+        (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
           ? childIndex * oneTaskHeigth
           : 0) +
         (oneTaskHeigth - taskbarHeight) / 2,
