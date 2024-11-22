@@ -109,6 +109,20 @@ export function initCheckedState(records: any[], state: StateManager) {
       }
     }
   });
+
+  // for row series number
+  if (state.table.leftRowSeriesNumberCount === 1) {
+    state.headerCheckedState._vtable_rowSeries_number = false;
+    state._checkboxCellTypeFields.push('_vtable_rowSeries_number');
+    isNeedInitHeaderCheckedStateFromRecord = true;
+  } else if (state.table.leftRowSeriesNumberCount > 1) {
+    for (let i = 0; i < state.table.leftRowSeriesNumberCount; i++) {
+      state.headerCheckedState[`_vtable_rowSeries_number_${i}`] = false;
+      state._checkboxCellTypeFields.push(`_vtable_rowSeries_number_${i}`);
+    }
+    isNeedInitHeaderCheckedStateFromRecord = true;
+  }
+
   //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
   if (isNeedInitHeaderCheckedStateFromRecord) {
     records.forEach((record: any, index: number) => {
