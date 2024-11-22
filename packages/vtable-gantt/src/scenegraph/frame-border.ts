@@ -82,7 +82,7 @@ export class FrameBorder {
   resize() {
     const { cornerRadius, borderColor, borderLineWidth, borderLineDash } =
       this._scene._gantt.parsedOptions.outerFrameStyle;
-    this.border.setAttributes({
+    this.border?.setAttributes({
       // x: -borderLineWidth / 2,
       // y: borderLineWidth / 2,
       width:
