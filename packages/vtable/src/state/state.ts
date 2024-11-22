@@ -597,14 +597,24 @@ export class StateManager {
     isShift: boolean = false,
     isCtrl: boolean = false,
     isSelectAll: boolean = false,
-    isSelectMoving: boolean = false,
+    makeSelectCellVisible: boolean = true,
     skipBodyMerge: boolean = false,
     forceSelect: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving, skipBodyMerge, forceSelect);
+    updateSelectPosition(
+      this,
+      col,
+      row,
+      isShift,
+      isCtrl,
+      isSelectAll,
+      makeSelectCellVisible,
+      skipBodyMerge,
+      forceSelect
+    );
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {

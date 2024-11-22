@@ -776,7 +776,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
           const targetCol = table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX);
           const targetRow = table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY);
           if (isValid(targetCol) && isValid(targetRow)) {
-            table.stateManager.updateSelectPos(targetCol.col, targetRow.row, false, false, false, true);
+            table.stateManager.updateSelectPos(targetCol.col, targetRow.row, false, false, false, false);
           }
         });
       } else if (table.eventManager.inertiaScroll.isInertiaScrolling()) {
