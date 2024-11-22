@@ -71,7 +71,8 @@ import type {
   HeightAdaptiveModeDef,
   ColumnInfo,
   RowInfo,
-  CellAddressWithBound
+  CellAddressWithBound,
+  Placement
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -211,6 +212,7 @@ export interface IBaseTableProtected {
     overflowTextTooltipDisappearDelay?: number;
     /** 弹框是否需要限定在表格区域内 */
     confine: boolean;
+    position: Placement;
   };
 
   dataSourceEventIds?: EventListenerId[];
@@ -404,6 +406,7 @@ export interface BaseTableConstructorOptions {
     overflowTextTooltipDisappearDelay?: number;
     /** 是否将 tooltip 框限制在画布区域内，默认开启。针对renderMode:"html"有效 */
     confine?: boolean;
+    position?: Placement;
   };
   /**
    * Theme

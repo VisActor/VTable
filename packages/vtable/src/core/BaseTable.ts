@@ -35,7 +35,8 @@ import {
   type LayoutObjectId,
   type HeightModeDef,
   type ITableThemeDefine,
-  InteractionState
+  InteractionState,
+  Placement
 } from '../ts-types';
 import type {
   AnyFunction,
@@ -462,7 +463,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         parentElement: this.getElement(),
         renderMode: 'html',
         isShowOverflowTextTooltip: false,
-        confine: true
+        confine: true,
+        position: Placement.bottom
       },
       options.tooltip
     );
@@ -2376,7 +2378,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         parentElement: this.getElement(),
         renderMode: 'html',
         isShowOverflowTextTooltip: false,
-        confine: true
+        confine: true,
+        position: Placement.bottom
       },
       options.tooltip
     );
