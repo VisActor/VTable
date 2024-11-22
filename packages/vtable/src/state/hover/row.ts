@@ -1,7 +1,5 @@
 import type { Scenegraph } from '../../scenegraph/scenegraph';
 import type { CellRange, HighlightScope } from '../../ts-types';
-import { CellPosition } from '../../ts-types';
-import { checkCellInSelect, checkRowInlineInSelect } from '../common/check-in-select';
 import { updateCell } from './update-cell';
 
 export function clearRowHover(
