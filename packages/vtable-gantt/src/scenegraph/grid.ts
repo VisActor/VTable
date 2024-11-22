@@ -93,7 +93,7 @@ export class Grid {
       if (this.gridStyle?.verticalLine.lineWidth & 1) {
         x = 0.5;
       }
-      for (let i = 0; i < this.timelineDates.length - 1; i++) {
+      for (let i = 0; i < this.timelineDates?.length - 1; i++) {
         const dateline = this.timelineDates[i];
         x = x + Math.floor(this.colWidthPerDay * dateline.days);
         const line = createLine({

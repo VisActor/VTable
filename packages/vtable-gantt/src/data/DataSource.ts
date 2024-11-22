@@ -19,7 +19,7 @@ export class DataSource {
 
     let minDate = Number.MAX_SAFE_INTEGER;
     let maxDate = Number.MIN_SAFE_INTEGER;
-    if (needMinDate || needMaxDate) {
+    if ((needMinDate || needMaxDate) && this.records.length) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
         if (needMinDate) {
@@ -39,5 +39,9 @@ export class DataSource {
       this._gantt.parsedOptions._minDateTime = this._gantt.parsedOptions.minDate.getTime();
       this._gantt.parsedOptions._maxDateTime = this._gantt.parsedOptions.maxDate.getTime();
     }
+  }
+  setRecords(records: any[]) {
+    this.records = records;
+    this.processRecords();
   }
 }

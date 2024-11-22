@@ -547,31 +547,35 @@ export class Gantt extends EventTarget {
   }
 
   _generateTimeLineDateMap() {
-    const startDate = createDateAtMidnight(this.parsedOptions.minDate);
-    const endDate = createDateAtMidnight(this.parsedOptions.maxDate);
-    let colWidthIncludeDays = 1000000;
-    // Iterate over each scale
-    for (const scale of this.parsedOptions.reverseSortedTimelineScales) {
-      // Generate the sub-columns for each step within the scale
-      const currentDate = createDateAtMidnight(startDate);
-      // const timelineDates: any[] = [];
-      scale.timelineDates = generateTimeLineDate(currentDate, endDate, scale);
-    }
+    if (this.parsedOptions.minDate && this.parsedOptions.maxDate) {
+      const startDate = createDateAtMidnight(this.parsedOptions.minDate);
+      const endDate = createDateAtMidnight(this.parsedOptions.maxDate);
+      let colWidthIncludeDays = 1000000;
+      // Iterate over each scale
+      for (const scale of this.parsedOptions.reverseSortedTimelineScales) {
+        // Generate the sub-columns for each step within the scale
+        const currentDate = createDateAtMidnight(startDate);
+        // const timelineDates: any[] = [];
+        scale.timelineDates = generateTimeLineDate(currentDate, endDate, scale);
+      }
 
-    const firstScale = this.parsedOptions.reverseSortedTimelineScales[0];
-    const { unit, step } = firstScale;
-    if (unit === 'day') {
-      colWidthIncludeDays = step;
-    } else if (unit === 'month') {
-      colWidthIncludeDays = 30;
-    } else if (unit === 'week') {
-      colWidthIncludeDays = 7;
-    } else if (unit === 'quarter') {
-      colWidthIncludeDays = 90;
-    } else if (unit === 'year') {
-      colWidthIncludeDays = 365;
+      const firstScale = this.parsedOptions.reverseSortedTimelineScales[0];
+      const { unit, step } = firstScale;
+      if (unit === 'day') {
+        colWidthIncludeDays = step;
+      } else if (unit === 'month') {
+        colWidthIncludeDays = 30;
+      } else if (unit === 'week') {
+        colWidthIncludeDays = 7;
+      } else if (unit === 'quarter') {
+        colWidthIncludeDays = 90;
+      } else if (unit === 'year') {
+        colWidthIncludeDays = 365;
+      }
+      this.parsedOptions.colWidthPerDay = this.parsedOptions.timelineColWidth / colWidthIncludeDays;
+    } else {
+      this.parsedOptions.colWidthPerDay = 0;
     }
-    this.parsedOptions.colWidthPerDay = this.parsedOptions.timelineColWidth / colWidthIncludeDays;
   }
   getAllRowsHeight() {
     return this.getAllHeaderRowsHeight() + this.itemCount * this.parsedOptions.rowHeight;
@@ -758,10 +762,14 @@ export class Gantt extends EventTarget {
   }
   setRecords(records: any[]) {
     this.records = records;
+    this.data.setRecords(records);
     this.taskListTableInstance.setRecords(records);
     this._syncPropsFromTable();
+    this._generateTimeLineDateMap();
+    this.timeLineHeaderLevel = this.parsedOptions.sortedTimelineScales.length;
+    this._updateSize();
+    this.scenegraph.refreshAll();
     this.verticalSplitResizeLine.style.height = this.drawHeight + 'px'; //'100%';
-    this.scenegraph.refreshTaskBarsAndGrid();
     const left = this.stateManager.scroll.horizontalBarPos;
     const top = this.stateManager.scroll.verticalBarPos;
     this.scenegraph.setX(-left);
@@ -791,7 +799,7 @@ export class Gantt extends EventTarget {
   }
   /** 滚动到scrollToMarkLineDate所指向的日期 */
   _scrollToMarkLine() {
-    if (this.parsedOptions.scrollToMarkLineDate) {
+    if (this.parsedOptions.scrollToMarkLineDate && this.parsedOptions.minDate) {
       const minDate = this.parsedOptions.minDate;
       const targetDayDistance =
         ((this.parsedOptions.scrollToMarkLineDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) *
