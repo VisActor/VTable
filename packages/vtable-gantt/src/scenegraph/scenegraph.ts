@@ -129,6 +129,7 @@ export class Scenegraph {
     this.timelineHeader.refresh();
     this.grid.refresh();
     this.taskBar.refresh();
+    this.dependencyLink.refresh();
     this.markLine.refresh();
     this.frameBorder.resize();
     this.scrollbarComponent.updateScrollBar();
@@ -146,6 +147,7 @@ export class Scenegraph {
     this.updateNextFrame();
   }
   refreshTaskBarsAndGrid() {
+    this._gantt.verticalSplitResizeLine.style.height = this._gantt.drawHeight + 'px'; //'100%';
     this.tableGroupHeight = Math.min(this._gantt.tableNoFrameHeight, this._gantt.drawHeight);
     this.tableGroup.setAttribute('height', this.tableGroupHeight);
     // this.timelineHeader.refresh();

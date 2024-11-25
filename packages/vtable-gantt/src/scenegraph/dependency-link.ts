@@ -4,7 +4,7 @@ import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
 import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
-import { findRecordByTaskKey, getTextPos } from '../gantt-helper';
+import { findRecordByTaskKey, getSubTaskRowIndexByRecordDate, getTextPos } from '../gantt-helper';
 import type { GanttTaskBarNode } from './gantt-node';
 import type { ITaskLink } from '../ts-types';
 import { DependencyType, TasksShowMode } from '../ts-types';
@@ -88,15 +88,36 @@ export class DependencyLink {
         endDate: linkedFromTaskEndDate,
         taskDays: linkedFromTaskTaskDays
       } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
-    } else if (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
+    } else if (
+      this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+      this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+    ) {
       const beforeRowCountLinkedFrom =
         this._scene._gantt.getRowsHeightByIndex(0, linkedFromTaskRecord.index[0] - 1) /
         this._scene._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
-      linkedFromTaskShowIndex = beforeRowCountLinkedFrom + linkedFromTaskRecord.index[1];
+      linkedFromTaskShowIndex =
+        beforeRowCountLinkedFrom +
+        (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+          ? getSubTaskRowIndexByRecordDate(
+              this._scene._gantt.records[linkedFromTaskRecord.index[0]],
+              linkedFromTaskRecord.index[1],
+              this._scene._gantt.parsedOptions.startDateField,
+              this._scene._gantt.parsedOptions.endDateField
+            )
+          : linkedFromTaskRecord.index[1]);
       const beforeRowCountLinkedTo =
         this._scene._gantt.getRowsHeightByIndex(0, linkedToTaskRecord.index[0] - 1) /
         this._scene._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
-      linkedToTaskShowIndex = beforeRowCountLinkedTo + linkedToTaskRecord.index[1];
+      linkedToTaskShowIndex =
+        beforeRowCountLinkedTo +
+        (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+          ? getSubTaskRowIndexByRecordDate(
+              this._scene._gantt.records[linkedToTaskRecord.index[0]],
+              linkedToTaskRecord.index[1],
+              this._scene._gantt.parsedOptions.startDateField,
+              this._scene._gantt.parsedOptions.endDateField
+            )
+          : linkedToTaskRecord.index[1]);
       ({
         startDate: linkedToTaskStartDate,
         endDate: linkedToTaskEndDate,

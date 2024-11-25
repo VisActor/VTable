@@ -81,11 +81,15 @@ export const menus = [
 
   {
     path: 'gantt',
-    name: 'gantt-Sub_Tasks'
+    name: 'gantt-Sub_Tasks_Separate'
   },
   {
     path: 'gantt',
     name: 'gantt-customLayout-Sub_Tasks'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Sub_Tasks_Arrange'
   }
   //   ]
   // }

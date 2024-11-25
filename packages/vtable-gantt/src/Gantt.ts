@@ -30,6 +30,7 @@ import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCel
 import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
 import {
+  computeRowsCountByRecordDate,
   convertProgress,
   createSplitLineAndResizeLine,
   DayTimes,
@@ -329,7 +330,8 @@ export class Gantt extends EventTarget {
         listTable_options[key][listTable_options[key].length - 1].disableColumnResize = true;
         if (
           this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
-          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
         ) {
           for (let i = 0; i < listTable_options.columns.length; i++) {
             if (listTable_options.columns[i].tree) {
@@ -341,7 +343,8 @@ export class Gantt extends EventTarget {
       if (
         key === 'hierarchyExpandLevel' &&
         (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
-          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate)
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange)
       ) {
         delete listTable_options[key];
       }
@@ -523,6 +526,16 @@ export class Gantt extends EventTarget {
         const { row, table } = args;
         const record = table.getRecordByRowCol(0, row);
         return (record.children?.length || 1) * this.parsedOptions.rowHeight;
+      };
+      listTable_options.defaultRowHeight = 'auto';
+    } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {
+      listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
+        const { row, table } = args;
+        const record = table.getRecordByRowCol(0, row);
+        return (
+          computeRowsCountByRecordDate(record, this.parsedOptions.startDateField, this.parsedOptions.endDateField) *
+          this.parsedOptions.rowHeight
+        );
       };
       listTable_options.defaultRowHeight = 'auto';
     } else {
@@ -903,7 +916,6 @@ export class Gantt extends EventTarget {
     this.records = records;
     this.taskListTableInstance.setRecords(records);
     this._syncPropsFromTable();
-    this.verticalSplitResizeLine.style.height = this.drawHeight + 'px'; //'100%';
     this.scenegraph.refreshTaskBarsAndGrid();
     const left = this.stateManager.scroll.horizontalBarPos;
     const top = this.stateManager.scroll.verticalBarPos;

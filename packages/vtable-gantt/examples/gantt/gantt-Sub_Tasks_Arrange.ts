@@ -265,6 +265,7 @@ export function createTable() {
   ];
   const option: GanttConstructorOptions = {
     records,
+    rowHeight: 30,
     taskListTable: {
       columns: columns,
       minTableWidth: 100,
@@ -274,7 +275,7 @@ export function createTable() {
       }
     },
     groupBy: true,
-    tasksShowMode: TasksShowMode.Sub_Tasks_Inline,
+    tasksShowMode: TasksShowMode.Sub_Tasks_Arrange,
     frame: {
       outerFrameStyle: {
         borderLineWidth: 2,
@@ -288,19 +289,22 @@ export function createTable() {
       verticalSplitLineMoveable: true
     },
     grid: {
-      backgroundColor: 'gray',
+      // backgroundColor: 'gray',
       verticalLine: {
+        lineWidth: 1,
+        lineColor: '#e1e4e8'
+      },
+      horizontalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
       }
     },
     headerRowHeight: 60,
-    rowHeight: 40,
     taskBar: {
       startDateField: 'start',
       endDateField: 'end',
       progressField: 'progress',
-      labelText: '{title} {progress}%',
+      labelText: '{title}_{id}  {progress}%',
       labelTextStyle: {
         fontFamily: 'Arial',
         fontSize: 16,
@@ -323,26 +327,30 @@ export function createTable() {
           type: DependencyType.FinishToFinish,
           linkedFromTaskKey: 3,
           linkedToTaskKey: 2
+        },
+        {
+          type: DependencyType.StartToFinish,
+          linkedFromTaskKey: 2,
+          linkedToTaskKey: 3
+        },
+        {
+          type: DependencyType.StartToStart,
+          linkedFromTaskKey: 3,
+          linkedToTaskKey: 4
+        },
+        {
+          type: DependencyType.FinishToFinish,
+          linkedFromTaskKey: 6,
+          linkedToTaskKey: 5
         }
-        // {
-        //   type: DependencyType.StartToFinish,
-        //   linkedFromTaskKey: 2,
-        //   linkedToTaskKey: 3
-        // },
-        // {
-        //   type: DependencyType.StartToStart,
-        //   linkedFromTaskKey: 3,
-        //   linkedToTaskKey: 4
-        // },
-        // {
-        //   type: DependencyType.FinishToFinish,
-        //   linkedFromTaskKey: 4,
-        //   linkedToTaskKey: 5
-        // }
       ]
     },
     timelineHeader: {
       verticalLine: {
+        lineColor: '#e1e4e8',
+        lineWidth: 1
+      },
+      horizontalLine: {
         lineColor: '#e1e4e8',
         lineWidth: 1
       },
@@ -383,7 +391,7 @@ export function createTable() {
         // }
       ]
     },
-    minDate: '2024-07-07',
+    minDate: '2024-07-01',
     maxDate: '2024-10-15',
     markLine: [
       {

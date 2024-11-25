@@ -172,6 +172,7 @@ function bindTableGroupListener(event: EventManager) {
         if (
           gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Inline &&
           gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
           gantt.parsedOptions.taskBarCreatable
         ) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);

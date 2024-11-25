@@ -645,12 +645,103 @@ export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
   let task_index;
   let sub_task_index;
   if (gantt.taskListTableInstance) {
-    const { row } = gantt.taskListTableInstance.getTargetRowAt(y + gantt.headerHeight);
-    task_index = row - gantt.taskListTableInstance.columnHeaderLevelCount;
-    const beforeRowsHeight = gantt.getRowsHeightByIndex(0, task_index - 1); // 耦合了listTableOption的customComputeRowHeight
-    sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+    const rowInfo = gantt.taskListTableInstance.getTargetRowAt(y + gantt.headerHeight);
+    if (rowInfo) {
+      const { row } = rowInfo;
+      task_index = row - gantt.taskListTableInstance.columnHeaderLevelCount;
+      const beforeRowsHeight = gantt.getRowsHeightByIndex(0, task_index - 1); // 耦合了listTableOption的customComputeRowHeight
+      sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+    }
   } else {
     task_index = Math.floor(y / gantt.parsedOptions.rowHeight);
   }
   return { task_index, sub_task_index };
+}
+
+export function computeRowsCountByRecordDate(record: any, startDateField: string, endDateField: string) {
+  if (!record.children || record.children.length === 1) {
+    return 1;
+  }
+  // 排序在datasource中已经排过了
+  // // 创建一个浅拷贝并排序子任务，根据开始日期排序
+  // const sortedChildren = record.children.slice().sort((a: any, b: any) => {
+  //   return createDateAtMidnight(a[startDateField]).getTime() - createDateAtMidnight(b[startDateField]).getTime();
+  // });
+  const count = 0;
+  // 用于存储每一行的结束日期
+  const rows = [];
+  for (let i = 0; i <= record.children.length - 1; i++) {
+    const newRecord = record.children[i];
+    const startDate = createDateAtMidnight(newRecord[startDateField]).getTime();
+    const endDate = createDateAtMidnight(newRecord[endDateField]).getTime();
+
+    let placed = false;
+
+    // 尝试将当前任务放入已有的行中
+    for (let j = 0; j < rows.length; j++) {
+      if (startDate > rows[j]) {
+        // 如果当前任务的开始日期在该行的结束日期之后，则可以放在这一行
+        rows[j] = endDate;
+        placed = true;
+        break;
+      }
+    }
+
+    // 如果不能放在已有的行中，则需要新开一行
+    if (!placed) {
+      rows.push(endDate);
+    }
+  }
+
+  return rows.length;
+}
+
+export function getSubTaskRowIndexByRecordDate(
+  record: any,
+  childIndex: number,
+  startDateField: string,
+  endDateField: string
+) {
+  if (childIndex === 0) {
+    return 0;
+  }
+  // 排序在datasource中已经排过了
+  //  创建一个浅拷贝并排序子任务，根据开始日期排序
+  // const sortedChildren = record.children.slice().sort((a: any, b: any) => {
+  //   return createDateAtMidnight(a[startDateField]).getTime() - createDateAtMidnight(b[startDateField]).getTime();
+  // });
+
+  // 用于存储每一行的结束日期
+  const rows = [];
+  if (record?.children) {
+    for (let i = 0; i <= record.children.length - 1; i++) {
+      const newRecord = record.children[i];
+      const startDate = createDateAtMidnight(newRecord[startDateField]).getTime();
+      const endDate = createDateAtMidnight(newRecord[endDateField]).getTime();
+
+      let placed = false;
+
+      // 尝试将当前任务放入已有的行中
+      for (let j = 0; j < rows.length; j++) {
+        if (startDate > rows[j]) {
+          // 如果当前任务的开始日期在该行的结束日期之后，则可以放在这一行
+          rows[j] = endDate;
+          placed = true;
+          if (i === childIndex) {
+            return j;
+          }
+          break;
+        }
+      }
+      // 如果不能放在已有的行中，则需要新开一行
+      if (!placed) {
+        rows.push(endDate);
+      }
+      if (i === childIndex) {
+        return rows.length - 1;
+      }
+    }
+  }
+
+  return 0;
 }
