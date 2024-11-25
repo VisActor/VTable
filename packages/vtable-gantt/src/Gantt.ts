@@ -824,7 +824,7 @@ export class Gantt extends EventTarget {
     const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
-    const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[startDateField]);
+    const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[endDateField]);
     const startDate = createDateAtMidnight(taskRecord[startDateField]);
     const endDate = createDateAtMidnight(taskRecord[endDateField]);
     if (updateDateType === 'move') {

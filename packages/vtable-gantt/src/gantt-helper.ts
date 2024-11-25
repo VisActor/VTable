@@ -641,6 +641,17 @@ export function findRecordByTaskKey(
   }
 }
 
+export function clearRecordLinkInfos(records: any[], childrenField: string = 'children') {
+  for (let i = 0; i < records.length; i++) {
+    if (records[i][childrenField]?.length) {
+      clearRecordLinkInfos(records[i][childrenField], childrenField);
+    } else {
+      delete records[i].vtable_gantt_linkedTo;
+      delete records[i].vtable_gantt_linkedFrom;
+    }
+  }
+}
+
 export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
   let task_index;
   let sub_task_index;

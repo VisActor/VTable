@@ -4,7 +4,7 @@ import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
 import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
-import { findRecordByTaskKey, getSubTaskRowIndexByRecordDate, getTextPos } from '../gantt-helper';
+import { clearRecordLinkInfos, findRecordByTaskKey, getSubTaskRowIndexByRecordDate, getTextPos } from '../gantt-helper';
 import type { GanttTaskBarNode } from './gantt-node';
 import type { ITaskLink } from '../ts-types';
 import { DependencyType, TasksShowMode } from '../ts-types';
@@ -36,6 +36,7 @@ export class DependencyLink {
   }
 
   initLinkLines() {
+    clearRecordLinkInfos(this._scene._gantt.records, 'children');
     this.linkLinesContainer = new Group({
       x: 0,
       y: 0,

@@ -332,6 +332,9 @@ export class StateManager {
 
     const deltaX = this.moveTaskBar.deltaX;
     const deltaY = this.moveTaskBar.deltaY;
+    if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) {
+      return;
+    }
     const days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
 
     const correctX = days * this._gantt.parsedOptions.colWidthPerDay;
@@ -536,29 +539,35 @@ export class StateManager {
       if (diff_days < 0 && taskDays + diff_days <= 0) {
         diff_days = 1 - taskDays;
       }
-      const correctX = (direction === 'left' ? -diff_days : diff_days) * this._gantt.parsedOptions.colWidthPerDay;
-      const targetEndX = this.resizeTaskBar.targetStartX + correctX;
+      this._gantt._updateDateToTaskRecord(
+        direction === 'left' ? 'start-move' : 'end-move',
+        direction === 'left' ? -diff_days : diff_days,
+        taskIndex,
+        sub_task_index
+      );
+      if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {
+        this._gantt.taskListTableInstance.renderWithRecreateCells();
+        this._gantt._syncPropsFromTable();
+        this._gantt.scenegraph.refreshTaskBarsAndGrid();
+      } else {
+        const correctX = (direction === 'left' ? -diff_days : diff_days) * this._gantt.parsedOptions.colWidthPerDay;
+        const targetEndX = this.resizeTaskBar.targetStartX + correctX;
 
-      const taskBarSize = this._gantt.parsedOptions.colWidthPerDay * (taskDays + diff_days);
-      if (direction === 'left') {
-        // taskBarGroup.setAttribute('x', targetEndX);
-        // taskBarGroup.setAttribute('width', taskBarSize);
-        resizeOrMoveTaskBar(taskBarGroup, targetEndX - taskBarGroup.attribute.x, 0, taskBarSize, this);
-        rect?.setAttribute('width', taskBarGroup.attribute.width);
-        progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-        this._gantt._updateDateToTaskRecord('start-move', -diff_days, taskIndex, sub_task_index);
-      } else if (direction === 'right') {
-        // taskBarGroup.setAttribute('width', taskBarSize);
-        resizeOrMoveTaskBar(taskBarGroup, 0, 0, taskBarSize, this);
-        rect?.setAttribute('width', taskBarGroup.attribute.width);
-        progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-        this._gantt._updateDateToTaskRecord('end-move', diff_days, taskIndex, sub_task_index);
+        const taskBarSize = this._gantt.parsedOptions.colWidthPerDay * (taskDays + diff_days);
+        if (direction === 'left') {
+          resizeOrMoveTaskBar(taskBarGroup, targetEndX - taskBarGroup.attribute.x, 0, taskBarSize, this);
+          rect?.setAttribute('width', taskBarGroup.attribute.width);
+          progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
+        } else if (direction === 'right') {
+          resizeOrMoveTaskBar(taskBarGroup, 0, 0, taskBarSize, this);
+          rect?.setAttribute('width', taskBarGroup.attribute.width);
+          progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
+        }
+        this.showTaskBarHover();
+        reCreateCustomNode(this._gantt, taskBarGroup, taskIndex, sub_task_index);
+
+        taskBarGroup.setAttribute('zIndex', 0);
       }
-      this.showTaskBarHover();
-      reCreateCustomNode(this._gantt, taskBarGroup, taskIndex, sub_task_index);
-
-      taskBarGroup.setAttribute('zIndex', 0);
-
       this.resizeTaskBar.resizing = false;
       this.resizeTaskBar.target = null;
 
@@ -991,8 +1000,8 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
         beforeRowCountLinkedTo +
         (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
           ? getSubTaskRowIndexByRecordDate(
-              state._gantt.records[new_indexs.task_index],
-              new_indexs.sub_task_index,
+              state._gantt.records[linkedToTaskRecord.index[0]],
+              linkedToTaskRecord.index[1],
               state._gantt.parsedOptions.startDateField,
               state._gantt.parsedOptions.endDateField
             )
@@ -1107,8 +1116,8 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
         beforeRowCountLinkedFrom +
         (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
           ? getSubTaskRowIndexByRecordDate(
-              state._gantt.records[new_indexs.task_index],
-              new_indexs.sub_task_index,
+              state._gantt.records[linkedFromTaskRecord.index[0]],
+              linkedFromTaskRecord.index[1],
               state._gantt.parsedOptions.startDateField,
               state._gantt.parsedOptions.endDateField
             )
