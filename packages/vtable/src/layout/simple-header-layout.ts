@@ -867,6 +867,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   getHeaderField(col: number, row: number) {
     if (this.isSeriesNumberInHeader(col, row)) {
       return this.getSeriesNumberHeader(col, row)?.field;
+    } else if (this.isSeriesNumberInBody(col, row)) {
+      return this.getSeriesNumberBody(col, row)?.field;
     }
     const id = this.getCellId(col, row);
     return (
