@@ -298,7 +298,7 @@ export class EventManager {
         eventArgs.event.shiftKey,
         eventArgs.event.ctrlKey || eventArgs.event.metaKey,
         false,
-        isSelectMoving
+        this.table.options.select?.makeSelectCellVisible ?? true
       );
 
       return true;
@@ -357,7 +357,7 @@ export class EventManager {
           true,
           eventArgs.event.ctrlKey || eventArgs.event.metaKey,
           false,
-          isSelectMoving
+          !isSelectMoving
         );
       } else {
         this.table.stateManager.updateSelectPos(
@@ -366,7 +366,7 @@ export class EventManager {
           eventArgs.event.shiftKey,
           eventArgs.event.ctrlKey || eventArgs.event.metaKey,
           false,
-          isSelectMoving
+          !isSelectMoving
         );
       }
       return true;
@@ -594,10 +594,10 @@ export class EventManager {
     const { eventArgs } = eventArgsSet;
     if (
       eventArgs &&
-      this.table.isHeader(eventArgs.col, eventArgs.row) &&
-      (checkCellInSelect(eventArgs.col, eventArgs.row, this.table.stateManager.select.ranges) ||
-        this.table.options.select?.disableHeaderSelect ||
-        this.table.options.select?.disableSelect) &&
+      // this.table.isHeader(eventArgs.col, eventArgs.row) &&
+      // (checkCellInSelect(eventArgs.col, eventArgs.row, this.table.stateManager.select.ranges) ||
+      //   this.table.options.select?.disableHeaderSelect ||
+      //   this.table.options.select?.disableSelect) &&
       // this.table.stateManager.select.cellPosStart.col === eventArgs.col &&
       // this.table.stateManager.select.cellPosStart.row === eventArgs.row &&
       this.table._canDragHeaderPosition(eventArgs.col, eventArgs.row)

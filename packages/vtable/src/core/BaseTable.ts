@@ -148,6 +148,7 @@ import { createReactContainer } from '../scenegraph/layout/frozen-react';
 import { setIconColor } from '../icons';
 import { TableAnimationManager } from './animation';
 import type { ITableAnimationOption } from '../ts-types/animation/appear';
+import { checkCellInSelect } from '../state/common/check-in-select';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -2599,7 +2600,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     row: number,
     isShift?: boolean,
     isCtrl?: boolean,
-    makeSelectCellVisible: boolean = true,
+    makeSelectCellVisible?: boolean,
     skipBodyMerge: boolean = false,
     forceSelect: boolean = false
   ) {
@@ -2610,7 +2611,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       isShift,
       isCtrl,
       false,
-      !makeSelectCellVisible,
+      makeSelectCellVisible ?? this.options.select?.makeSelectCellVisible ?? true,
       skipBodyMerge,
       forceSelect
     );
@@ -2630,7 +2631,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           false,
           index >= 1,
           false,
-          false,
+          this.options.select?.makeSelectCellVisible ?? true,
           true
         );
       } else {
@@ -2640,11 +2641,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           false,
           index >= 1,
           false,
-          false,
+          this.options.select?.makeSelectCellVisible ?? true,
           true
         );
         this.stateManager.updateInteractionState(InteractionState.grabing);
-        this.stateManager.updateSelectPos(cellRange.end.col, cellRange.end.row, false, index >= 1, false, false, true);
+        this.stateManager.updateSelectPos(
+          cellRange.end.col,
+          cellRange.end.row,
+          false,
+          index >= 1,
+          false,
+          this.options.select?.makeSelectCellVisible ?? true,
+          true
+        );
       }
       this.stateManager.endSelectCells(false, false);
       this.stateManager.updateInteractionState(InteractionState.default);
@@ -3284,6 +3293,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (
       this.isHeader(col, row) &&
       (this.stateManager.isSelected(col, row) ||
+        (this.options.select?.headerSelectMode === 'body' &&
+          checkCellInSelect(col, row, [
+            this.getCellRange(this.stateManager.select.cellPos.col, this.stateManager.select.cellPos.row)
+          ])) ||
         this.options.select?.disableHeaderSelect ||
         this.options.select?.disableSelect)
     ) {
