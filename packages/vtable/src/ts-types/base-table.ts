@@ -201,6 +201,7 @@ export interface IBaseTableProtected {
       | ((field: FieldDef, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+    parentElement?: HTMLElement;
   };
   /** 提示弹框的相关配置。消失时机：显示后鼠标移动到指定区域外或者进入新的单元格后自动消失*/
   tooltip: {
@@ -394,6 +395,7 @@ export interface BaseTableConstructorOptions {
       | ((field: string, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+    parentElement?: HTMLElement;
   };
   /** tooltip相关配置 */
   tooltip?: {
