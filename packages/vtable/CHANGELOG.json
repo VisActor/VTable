@@ -2,6 +2,69 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.11.2",
+      "tag": "@visactor/vtable_v1.11.2",
+      "date": "Tue, 26 Nov 2024 09:13:29 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add isValidatingValue state to fix call validateValue api repeatedly #2830\n\n"
+          },
+          {
+            "comment": "fix: when up on canvas blank area not drag position rightly #2831\n\n"
+          },
+          {
+            "comment": "feat: add select makeSelectCellVisible #2840\n\n"
+          },
+          {
+            "comment": "refactor: when set headerSelectMode body drag column order should work #2860\n\n"
+          },
+          {
+            "comment": "fix: when resize column width the select state be cleared #2861\n\n"
+          },
+          {
+            "comment": "fix: when container resize trigger mark line resize #2883\n\n"
+          },
+          {
+            "comment": "fix: when not set minDate maxDate call setRecords render error #2892\n\n"
+          },
+          {
+            "comment": "feat: add setCustomSelectRanges in stateManager #2750 #2845"
+          },
+          {
+            "comment": "feat: optimize range select in HeaderHighlightPlugin"
+          },
+          {
+            "comment": "feat: isShowOverflowTextTooltip support function"
+          },
+          {
+            "comment": "feat: cell support multi-custom-style #2841"
+          },
+          {
+            "comment": "feat: templateLink support function #2847"
+          },
+          {
+            "comment": "feat: add position in tooltip config #2869"
+          },
+          {
+            "comment": "feat: add parentElement in menu option"
+          },
+          {
+            "comment": "fix: fix cell border dash update #2818"
+          },
+          {
+            "comment": "fix: fix merge cell text position #2858"
+          },
+          {
+            "comment": "fix: fix functional padding update #2774"
+          },
+          {
+            "comment": "fix: fix select all in row-series-number checkbox #2880"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.11.1",
       "tag": "@visactor/vtable_v1.11.1",
       "date": "Tue, 19 Nov 2024 12:21:58 GMT",
