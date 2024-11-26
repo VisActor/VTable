@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix select all in row-series-number checkbox #2880",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
