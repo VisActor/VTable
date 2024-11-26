@@ -10,7 +10,7 @@ Next, we will explain the configuration items unique to the link type one by one
 
 *   `linkDetect` The default value is `true`When set to `true` The program will check the links regularly, and only links that meet the URL rules will be displayed as clickable hyperlinkes. For template link types, this configuration item does not take effect.
 
-*   `templateLink` Used to define template link addresses. For example, configure to `'https://www.google.com.hk/search?q={name}`, in which `name` Is the field name of the data source property. This makes it easier to quickly generate link addresses.
+*   `templateLink` Used to define template link addresses. For example, configure to `'https://www.google.com.hk/search?q={name}`, in which `name` Is the field name of the data source property. This makes it easier to quickly generate link addresses. `templateLink` can also be a function `(record, col, row, table) => string`, `record` is the data record, `col` is the column index, `row` is the row index, `table` is the table instance. 
 
 # Example of hyperlinke in table display
 

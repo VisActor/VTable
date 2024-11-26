@@ -71,7 +71,8 @@ import type {
   HeightAdaptiveModeDef,
   ColumnInfo,
   RowInfo,
-  CellAddressWithBound
+  CellAddressWithBound,
+  Placement
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -200,6 +201,7 @@ export interface IBaseTableProtected {
       | ((field: FieldDef, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+    parentElement?: HTMLElement;
   };
   /** 提示弹框的相关配置。消失时机：显示后鼠标移动到指定区域外或者进入新的单元格后自动消失*/
   tooltip: {
@@ -211,6 +213,7 @@ export interface IBaseTableProtected {
     overflowTextTooltipDisappearDelay?: number;
     /** 弹框是否需要限定在表格区域内 */
     confine: boolean;
+    position: Placement;
   };
 
   dataSourceEventIds?: EventListenerId[];
@@ -377,6 +380,8 @@ export interface BaseTableConstructorOptions {
     disableDragSelect?: boolean;
     /** 是否在选择多行或多列时高亮范围 */
     highlightInRange?: boolean;
+    /** 是否将选中的单元格自动滚动到视口内 默认为true */
+    makeSelectCellVisible?: boolean;
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
@@ -390,6 +395,7 @@ export interface BaseTableConstructorOptions {
       | ((field: string, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+    parentElement?: HTMLElement;
   };
   /** tooltip相关配置 */
   tooltip?: {
@@ -402,6 +408,7 @@ export interface BaseTableConstructorOptions {
     overflowTextTooltipDisappearDelay?: number;
     /** 是否将 tooltip 框限制在画布区域内，默认开启。针对renderMode:"html"有效 */
     confine?: boolean;
+    position?: Placement;
   };
   /**
    * Theme

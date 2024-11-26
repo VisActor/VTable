@@ -597,14 +597,24 @@ export class StateManager {
     isShift: boolean = false,
     isCtrl: boolean = false,
     isSelectAll: boolean = false,
-    isSelectMoving: boolean = false,
+    makeSelectCellVisible: boolean = true,
     skipBodyMerge: boolean = false,
     forceSelect: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving, skipBodyMerge, forceSelect);
+    updateSelectPosition(
+      this,
+      col,
+      row,
+      isShift,
+      isCtrl,
+      isSelectAll,
+      makeSelectCellVisible,
+      skipBodyMerge,
+      forceSelect
+    );
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -789,10 +799,10 @@ export class StateManager {
 
     this.table.scenegraph.component.showResizeRow(row, x, isBottomFrozen);
 
-    // 调整列宽期间清空选中清空
-    const isHasSelected = !!this.select.ranges?.length;
-    this.updateSelectPos(-1, -1);
-    this.endSelectCells(true, isHasSelected);
+    // // 调整列宽期间清空选中清空
+    // const isHasSelected = !!this.select.ranges?.length;
+    // this.updateSelectPos(-1, -1);
+    // this.endSelectCells(true, isHasSelected);
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeRow(xInTable: number, yInTable: number) {

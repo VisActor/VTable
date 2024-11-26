@@ -20,7 +20,7 @@
 
 **link 类型专属配置项** 链接是否进行正则检测，如果链接符合 url 规则才展示成为 link。如果配置了模板链接该配置不生效。
 
-##${prefix} templateLink(string)
+##${prefix} templateLink(string | (record: any, col: number, row: number, table: BaseTableAPI) => string)
 
 **link 类型专属配置项** 模板链接地址，如：'https://www.google.com.hk/search?q={name}'，name是数据源属性字段名。
 

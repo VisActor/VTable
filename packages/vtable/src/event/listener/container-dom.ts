@@ -41,8 +41,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
       (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')
     ) {
       if (
-        !(table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
-        (table as ListTableAPI).editorManager?.editingEditor
+        (!(table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
+          (table as ListTableAPI).editorManager?.editingEditor) ||
+        table.options.keyboardOptions?.moveSelectedCellOnArrowKeys === false
       ) {
         // 编辑单元格状态下 如果没有开启方向键切换cell 则退出 。方向键可以在编辑input内移动光标
         return;
@@ -776,7 +777,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
           const targetCol = table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX);
           const targetRow = table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY);
           if (isValid(targetCol) && isValid(targetRow)) {
-            table.stateManager.updateSelectPos(targetCol.col, targetRow.row, false, false, false, true);
+            table.stateManager.updateSelectPos(targetCol.col, targetRow.row, false, false, false, false);
           }
         });
       } else if (table.eventManager.inertiaScroll.isInertiaScrolling()) {

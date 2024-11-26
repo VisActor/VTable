@@ -42,7 +42,7 @@ export class TimelineHeader {
 
       const { unit, timelineDates, customLayout } = scene._gantt.parsedOptions.sortedTimelineScales[i];
       let x = 0;
-      for (let j = 0; j < timelineDates.length; j++) {
+      for (let j = 0; j < timelineDates?.length; j++) {
         const { days, endDate, startDate, title, dateIndex } = timelineDates[j];
         const date = new Group({
           x,

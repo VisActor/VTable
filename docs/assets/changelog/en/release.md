@@ -1,3 +1,25 @@
+# v1.11.1
+
+2024-11-21
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add setCustomSelectRanges in stateManager [#2750](https://github.com/VisActor/VTable/issues/2750) [#2845](https://github.com/VisActor/VTable/issues/2845)
+- **@visactor/vtable**: optimize range select in HeaderHighlightPlugin
+- **@visactor/vtable**: isShowOverflowTextTooltip support function
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: add isValidatingValue state to fix call validateValue api repeatedly [#2830](https://github.com/VisActor/VTable/issues/2830)
+- **@visactor/vtable**: when up on canvas blank area not drag position rightly [#2831](https://github.com/VisActor/VTable/issues/2831)
+- **@visactor/vtable**: fix cell border dash update [#2818](https://github.com/VisActor/VTable/issues/2818)
+- **@visactor/vtable**: fix merge cell text position [#2858](https://github.com/VisActor/VTable/issues/2858)
+
+
+
+[more detail about v1.11.1](https://github.com/VisActor/VTable/releases/tag/v1.11.1)
+
 # v1.11.0
 
 2024-11-15

@@ -1,6 +1,44 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 19 Nov 2024 12:21:58 GMT and should not be manually modified.
+This log was last generated on Tue, 26 Nov 2024 09:13:29 GMT and should not be manually modified.
+
+## 1.11.2
+Tue, 26 Nov 2024 09:13:29 GMT
+
+### Updates
+
+- fix: add isValidatingValue state to fix call validateValue api repeatedly #2830
+
+
+- fix: when up on canvas blank area not drag position rightly #2831
+
+
+- feat: add select makeSelectCellVisible #2840
+
+
+- refactor: when set headerSelectMode body drag column order should work #2860
+
+
+- fix: when resize column width the select state be cleared #2861
+
+
+- fix: when container resize trigger mark line resize #2883
+
+
+- fix: when not set minDate maxDate call setRecords render error #2892
+
+
+- feat: add setCustomSelectRanges in stateManager #2750 #2845
+- feat: optimize range select in HeaderHighlightPlugin
+- feat: isShowOverflowTextTooltip support function
+- feat: cell support multi-custom-style #2841
+- feat: templateLink support function #2847
+- feat: add position in tooltip config #2869
+- feat: add parentElement in menu option
+- fix: fix cell border dash update #2818
+- fix: fix merge cell text position #2858
+- fix: fix functional padding update #2774
+- fix: fix select all in row-series-number checkbox #2880
 
 ## 1.11.1
 Tue, 19 Nov 2024 12:21:58 GMT
