@@ -1,3 +1,4 @@
+import { isFunction } from '@visactor/vutils';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { Env } from '../tools/env';
 import { regUrl } from '../tools/global';
@@ -50,11 +51,15 @@ export function bindMediaClick(table: BaseTableAPI): void {
             },
             rowData
           );
-          const re = /\{\s*(\S+?)\s*\}/g;
-          url = templateLink.replace(re, (matchs: string, key: string) => {
-            matchs;
-            return (data as any)[key];
-          });
+          if (isFunction(templateLink)) {
+            url = templateLink(data, col, row, table);
+          } else {
+            const re = /\{\s*(\S+?)\s*\}/g;
+            url = templateLink.replace(re, (matchs: string, key: string) => {
+              matchs;
+              return (data as any)[key];
+            });
+          }
         } else if (!linkDetect) {
           url = cellValue;
         } else if (regUrl.test(cellValue)) {

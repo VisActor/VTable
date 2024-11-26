@@ -10,7 +10,7 @@
 
 - `linkDetect` 默认值为 `true`。当设置为 `true` 时，程序会对链接进行正则检测，只有符合 URL 规则的链接才会被展示成可点击的超链接。为模板链接类型，此配置项不生效。
 
-- `templateLink` 用于定义模板链接地址。例如，配置为 `'https://www.google.com.hk/search?q={name}`，其中 `name` 是数据源属性字段名。这样可以更方便地快速生成链接地址。
+- `templateLink` 用于定义模板链接地址。例如，配置为 `'https://www.google.com.hk/search?q={name}`，其中 `name` 是数据源属性字段名。这样可以更方便地快速生成链接地址。也可以配置为函数：`(record, col, row, table) => string`，其中 `record` 是当前行数据，`col` 是当前列索引，`row` 是当前行索引，`table` 是当前表格实例。
 
 # 超链接在表格展示的示例
 

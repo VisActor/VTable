@@ -168,6 +168,7 @@ export class Scenegraph {
     } as any);
     this.grid.resize();
     this.taskBar.resize();
+    this.markLine.refresh();
     this.frameBorder.resize();
   }
 

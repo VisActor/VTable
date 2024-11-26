@@ -1,5 +1,5 @@
 import type { CellRange, RectProps } from '../../ts-types';
-import { Placement } from '../../ts-types';
+import type { Placement } from '../../ts-types';
 import type { BaseTooltip } from './BaseTooltip';
 import { BubbleTooltip } from './Tooltip';
 import { cellInRange } from '../../tools/helper';
@@ -196,7 +196,7 @@ export class TooltipHandler {
       tooltipOption = {
         content: headerDescription,
         referencePosition: {
-          placement: Placement.bottom,
+          placement: table.internalProps.tooltip.position,
           rect
         },
         disappearDelay: table.internalProps.tooltip.overflowTextTooltipDisappearDelay ?? 0,
@@ -216,7 +216,7 @@ export class TooltipHandler {
   ${overflowText}`
             : overflowText,
           referencePosition: {
-            placement: Placement.bottom,
+            placement: table.internalProps.tooltip.position,
             rect
           },
           disappearDelay: table.internalProps.tooltip.overflowTextTooltipDisappearDelay ?? 0,
