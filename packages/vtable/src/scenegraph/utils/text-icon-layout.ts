@@ -16,6 +16,7 @@ import { isMergeCellGroup } from './is-merge-cell-group';
 import { breakString } from './break-string';
 import { CUSTOM_CONTAINER_NAME } from '../component/custom';
 import { getTargetCell } from '../../event/util';
+// import { createLine } from '@src/vrender';
 
 /**
  * @description: 创建单元格内容
@@ -108,20 +109,62 @@ export function createCellContent(
             : autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
             : cellHeight - Math.floor(padding[0] + padding[2]),
-        pickable: false,
+        // pickable: false,
         dx: (textAlign === 'left' ? hierarchyOffset : 0) + _contentOffset,
+        // dy: -1,
         whiteSpace:
           table.options.customConfig?.limitContentHeight === false
             ? 'normal'
             : text.length === 1 && !autoWrapText
             ? 'no-wrap'
-            : 'normal'
+            : 'normal',
+        keepCenterInLine: true
+        // _debug_bounds: true
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
       (wrapText as any).textBaseline = textBaseline;
 
+      // const height = cellHeight - (padding[0] + padding[2]);
+      // const line = createLine({
+      //   x: 0,
+      //   // y: 0,
+      //   y: padding[0] + (height - 18) / 2,
+      //   points: [
+      //     {
+      //       x: 0,
+      //       y: 0
+      //     },
+      //     {
+      //       x: 100,
+      //       y: 0
+      //     }
+      //   ],
+      //   stroke: 'red'
+      // });
+      // line.name = 'line';
+
+      // const line1 = createLine({
+      //   x: 0,
+      //   // y: 0,
+      //   y: padding[0] + (height - 18) / 2 + 18,
+      //   points: [
+      //     {
+      //       x: 0,
+      //       y: 0
+      //     },
+      //     {
+      //       x: 100,
+      //       y: 0
+      //     }
+      //   ],
+      //   stroke: 'red'
+      // });
+      // line1.name = 'line';
+
       cellGroup.appendChild(wrapText);
+      // cellGroup.appendChild(line);
+      // cellGroup.appendChild(line1);
 
       contentWidth = wrapText.AABBBounds.width();
       contentHeight = wrapText.AABBBounds.height();
@@ -263,7 +306,8 @@ export function createCellContent(
             : text.length === 1 && !autoWrapText
             ? 'no-wrap'
             : 'normal',
-        dx: (textAlign === 'left' ? (!contentLeftIcons.length ? hierarchyOffset : 0) : 0) + _contentOffset
+        dx: (textAlign === 'left' ? (!contentLeftIcons.length ? hierarchyOffset : 0) : 0) + _contentOffset,
+        keepCenterInLine: true
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';

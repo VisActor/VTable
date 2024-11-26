@@ -8,6 +8,7 @@ import {
   container,
   Text
 } from '@src/vrender';
+import { MeasureModeEnum } from '@visactor/vrender-core';
 // eslint-disable-next-line max-len
 // import {
 //   DefaultTextMeasureContribution,
@@ -87,6 +88,12 @@ function getFastTextMeasure(
 }
 
 export class FastTextMeasureContribution extends DefaultTextMeasureContribution {
+  _fastMeasure(text: string, options: TextOptionsType) {
+    const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
+    const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
+    const textMeasure = fastTextMeasure.measure(text, textMeasureMode);
+    return textMeasure;
+  }
   /**
    * 获取text宽度，measureText.width
    * @param text
@@ -100,10 +107,7 @@ export class FastTextMeasureContribution extends DefaultTextMeasureContribution 
     // const textMeasure = this.context.measureText(text);
     // return textMeasure.width;
 
-    const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
-    const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
-    const textMeasure = fastTextMeasure.measure(text, textMeasureMode);
-    return textMeasure.width;
+    return this._fastMeasure(text, options).width;
   }
 
   /**
@@ -118,10 +122,19 @@ export class FastTextMeasureContribution extends DefaultTextMeasureContribution 
     // this.context.setTextStyleWithoutAlignBaseline(options);
     // return this.context.measureText(text);
 
-    const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
-    const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
-    const textMeasure = fastTextMeasure.measure(text, textMeasureMode);
-    return textMeasure;
+    return this._fastMeasure(text, options);
+  }
+
+  protected _measureTextWithoutAlignBaseline(
+    text: string,
+    options: TextOptionsType,
+    compatible?: boolean
+  ): { width: number } | TextMetrics {
+    return this._fastMeasure(text, options);
+  }
+
+  protected _measureTextWithAlignBaseline(text: string, options: TextOptionsType, compatible?: boolean) {
+    return this._fastMeasure(text, options);
   }
 }
 
