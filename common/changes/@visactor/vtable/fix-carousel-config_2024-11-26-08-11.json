@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add parentElement in menu option",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

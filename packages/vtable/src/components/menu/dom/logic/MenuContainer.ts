@@ -141,7 +141,8 @@ export class MenuContainer {
   }
   _canBindToCell(table: BaseTableAPI, col: number, row: number): boolean {
     const rect = table.getCellRangeRelativeRect({ col, row });
-    const element = table.getElement();
+    // const element = table.getElement();
+    const element = table.internalProps.menu.parentElement ?? table.getElement();
     const { top, bottom, left, right } = rect;
     if (table.isFrozenCell(col, row)) {
       return true;
@@ -172,8 +173,14 @@ export class MenuContainer {
     referencePosition: { rect: RectProps; placement?: Placement }
   ): boolean {
     const rootElement = this._rootElement;
-    const element = table.getElement();
-    const { width: containerWidth, height: containerHeight } = table.internalProps.element.getBoundingClientRect();
+    // const element = table.getElement(); // container element
+    const element = table.internalProps.menu.parentElement ?? table.getElement();
+    const {
+      width: containerWidth,
+      height: containerHeight,
+      left: containerLeft,
+      top: containerTop
+    } = element.getBoundingClientRect();
     if (rootElement) {
       if (rootElement.parentElement !== element) {
         element.appendChild(rootElement); // 之前在做dom边缘躲避的时候放到了table.getParentElement()上，但发现不是相对定位导致位置错位
@@ -206,7 +213,16 @@ export class MenuContainer {
       if (rootElementTop < 0) {
         rootElementTop = rootElementTop / 2;
       }
-      rootElement.style.top = `${rootElementTop}px`;
+
+      let deltaTop = 0;
+      let deltaLeft = 0;
+      if (table.getElement() !== element) {
+        const { left, top } = table.getElement().getBoundingClientRect();
+        deltaTop = top - containerTop;
+        deltaLeft = left - containerLeft;
+      }
+
+      rootElement.style.top = `${rootElementTop + deltaTop}px`;
 
       // 判断如果超出左右范围则靠边显示
       if (rootElementLeft < 0) {
@@ -214,7 +230,7 @@ export class MenuContainer {
       } else if (rootElementLeft + rootElementWidth > containerWidth) {
         rootElementLeft = containerWidth - rootElementWidth;
       }
-      rootElement.style.left = `${rootElementLeft}px`;
+      rootElement.style.left = `${rootElementLeft + deltaLeft}px`;
 
       return true;
     }
