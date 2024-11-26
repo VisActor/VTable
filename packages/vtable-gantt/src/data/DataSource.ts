@@ -24,7 +24,7 @@ export class DataSource {
       needMinDate ||
       needMaxDate ||
       this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
-      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
     ) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
@@ -39,7 +39,7 @@ export class DataSource {
 
         if (
           this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
-          this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+          this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
         ) {
           // 将子任务按开始时间升序排列
           record.children &&
@@ -67,9 +67,26 @@ export class DataSource {
     target_sub_task_index: number
   ) {
     if (
-      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
-      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+      (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact) &&
+      source_index === target_index
     ) {
+      return;
+    }
+    if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline) {
+      if (
+        isValid(source_sub_task_index) &&
+        isValid(target_sub_task_index) &&
+        isValid(source_index) &&
+        isValid(target_index)
+      ) {
+        const sub_task_record = this.records[source_index].children[source_sub_task_index];
+        this.records[source_index].children.splice(source_sub_task_index, 1);
+        if (!this.records[target_index].children) {
+          this.records[target_index].children = [];
+        }
+        this.records[target_index].children.splice(target_sub_task_index, 0, sub_task_record);
+      }
       this.records[target_index]?.children?.sort((a: any, b: any) => {
         return (
           createDateAtMidnight(a[this._gantt.parsedOptions.startDateField]).getTime() -
@@ -77,7 +94,12 @@ export class DataSource {
         );
       });
     } else {
-      if (isValid(source_sub_task_index) && isValid(target_sub_task_index) && isValid(target_index)) {
+      if (
+        isValid(source_sub_task_index) &&
+        isValid(target_sub_task_index) &&
+        isValid(source_index) &&
+        isValid(target_index)
+      ) {
         const sub_task_record = this.records[source_index].children[source_sub_task_index];
         this.records[source_index].children.splice(source_sub_task_index, 1);
         if (!this.records[target_index].children) {

@@ -274,7 +274,7 @@ export function createTable() {
         contextMenuItems: ['copy', 'paste', 'delete', '...']
       }
     },
-    groupBy: true,
+
     tasksShowMode: TasksShowMode.Sub_Tasks_Separate,
     frame: {
       outerFrameStyle: {

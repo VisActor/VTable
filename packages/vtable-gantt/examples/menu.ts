@@ -74,10 +74,6 @@ export const menus = [
     path: 'gantt',
     name: 'gantt-Sub_Tasks_Inline'
   },
-  {
-    path: 'gantt',
-    name: 'gantt-customLayout-Sub_Tasks_Inline'
-  },
 
   {
     path: 'gantt',
@@ -85,11 +81,23 @@ export const menus = [
   },
   {
     path: 'gantt',
-    name: 'gantt-customLayout-Sub_Tasks'
+    name: 'gantt-Sub_Tasks_Arrange'
   },
   {
     path: 'gantt',
-    name: 'gantt-Sub_Tasks_Arrange'
+    name: 'gantt-Inline-customLayout'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Separate-customLayout'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Arrange-customLayout'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Compact-customLayout'
   }
   //   ]
   // }

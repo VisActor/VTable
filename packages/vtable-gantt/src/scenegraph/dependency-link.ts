@@ -36,7 +36,7 @@ export class DependencyLink {
   }
 
   initLinkLines() {
-    clearRecordLinkInfos(this._scene._gantt.records, 'children');
+    clearRecordLinkInfos(this._scene._gantt.records);
     this.linkLinesContainer = new Group({
       x: 0,
       y: 0,
@@ -91,33 +91,38 @@ export class DependencyLink {
       } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
     } else if (
       this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
-      this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+      this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+      this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
     ) {
       const beforeRowCountLinkedFrom =
         this._scene._gantt.getRowsHeightByIndex(0, linkedFromTaskRecord.index[0] - 1) /
         this._scene._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
       linkedFromTaskShowIndex =
         beforeRowCountLinkedFrom +
-        (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
-          ? getSubTaskRowIndexByRecordDate(
-              this._scene._gantt.records[linkedFromTaskRecord.index[0]],
-              linkedFromTaskRecord.index[1],
-              this._scene._gantt.parsedOptions.startDateField,
-              this._scene._gantt.parsedOptions.endDateField
-            )
+        (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+          ? //  getSubTaskRowIndexByRecordDate(
+            //     this._scene._gantt.records[linkedFromTaskRecord.index[0]],
+            //     linkedFromTaskRecord.index[1],
+            //     this._scene._gantt.parsedOptions.startDateField,
+            //     this._scene._gantt.parsedOptions.endDateField
+            //   )
+            linkedFromTaskRecord.record.vtable_gantt_showIndex
           : linkedFromTaskRecord.index[1]);
       const beforeRowCountLinkedTo =
         this._scene._gantt.getRowsHeightByIndex(0, linkedToTaskRecord.index[0] - 1) /
         this._scene._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
       linkedToTaskShowIndex =
         beforeRowCountLinkedTo +
-        (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
-          ? getSubTaskRowIndexByRecordDate(
-              this._scene._gantt.records[linkedToTaskRecord.index[0]],
-              linkedToTaskRecord.index[1],
-              this._scene._gantt.parsedOptions.startDateField,
-              this._scene._gantt.parsedOptions.endDateField
-            )
+        (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+          ? //getSubTaskRowIndexByRecordDate(
+            //   this._scene._gantt.records[linkedToTaskRecord.index[0]],
+            //   linkedToTaskRecord.index[1],
+            //   this._scene._gantt.parsedOptions.startDateField,
+            //   this._scene._gantt.parsedOptions.endDateField
+            // )
+            linkedToTaskRecord.record.vtable_gantt_showIndex
           : linkedToTaskRecord.index[1]);
       ({
         startDate: linkedToTaskStartDate,

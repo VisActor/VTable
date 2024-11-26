@@ -11,7 +11,12 @@ import {
   syncTreeChangeFromTable,
   syncSortFromTable
 } from './gantt-table-sync';
-import { findRecordByTaskKey, getSubTaskRowIndexByRecordDate, getTaskIndexsByTaskY } from '../gantt-helper';
+import {
+  clearRecordShowIndex,
+  findRecordByTaskKey,
+  getSubTaskRowIndexByRecordDate,
+  getTaskIndexsByTaskY
+} from '../gantt-helper';
 import { debounce } from '../tools/debounce';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 import { TASKBAR_HOVER_ICON_WIDTH } from '../scenegraph/task-bar';
@@ -332,106 +337,116 @@ export class StateManager {
 
     const deltaX = this.moveTaskBar.deltaX;
     const deltaY = this.moveTaskBar.deltaY;
-    if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) {
-      return;
-    }
-    const days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
-
-    const correctX = days * this._gantt.parsedOptions.colWidthPerDay;
-    const targetEndX = this.moveTaskBar.targetStartX + correctX;
-    const targetEndY =
-      this.moveTaskBar.targetStartY +
-      this._gantt.parsedOptions.rowHeight * Math.round(deltaY / this._gantt.parsedOptions.rowHeight);
     const target = this.moveTaskBar.target;
-    // 判断横向拖动 更新数据的date
-    if (Math.abs(days) >= 1) {
-      const taskIndex = target.task_index;
-      const sub_task_index = target.sub_task_index;
-      const oldRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
-      const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
-      const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
-      this._gantt._updateDateToTaskRecord('move', days, taskIndex, sub_task_index);
-      const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
-      if (this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
-        this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
-          startDate: newRecord[this._gantt.parsedOptions.startDateField],
-          endDate: newRecord[this._gantt.parsedOptions.endDateField],
-          oldStartDate,
-          oldEndDate,
-          index: taskIndex,
-          record: newRecord
-        });
+    if (Math.abs(deltaX) >= 1 || Math.abs(deltaY) >= 1) {
+      const days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
+
+      const correctX = days * this._gantt.parsedOptions.colWidthPerDay;
+      const targetEndX = this.moveTaskBar.targetStartX + correctX;
+      const targetEndY =
+        this.moveTaskBar.targetStartY +
+        this._gantt.parsedOptions.rowHeight * Math.round(deltaY / this._gantt.parsedOptions.rowHeight);
+      // 判断横向拖动 更新数据的date
+      if (Math.abs(days) >= 1) {
+        const taskIndex = target.task_index;
+        const sub_task_index = target.sub_task_index;
+        const oldRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
+        const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
+        const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
+        this._gantt._updateDateToTaskRecord('move', days, taskIndex, sub_task_index);
+        const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
+        if (this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
+          this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
+            startDate: newRecord[this._gantt.parsedOptions.startDateField],
+            endDate: newRecord[this._gantt.parsedOptions.endDateField],
+            oldStartDate,
+            oldEndDate,
+            index: taskIndex,
+            record: newRecord
+          });
+        }
       }
-    }
-    if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {
-      const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
-      this._gantt._dragOrderTaskRecord(
-        target.task_index,
-        target.sub_task_index,
-        indexs.task_index,
-        indexs.sub_task_index
-      );
-      this._gantt.taskListTableInstance.renderWithRecreateCells();
-      this._gantt._syncPropsFromTable();
-      this._gantt.scenegraph.refreshTaskBarsAndGrid();
-    } else {
-      // 判断纵向拖动 处理数据的位置
-      if (Math.abs(Math.round(deltaY / this._gantt.parsedOptions.rowHeight)) >= 1) {
+      if (
+        this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+      ) {
         const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
+        console.log(
+          'source target',
+          target.task_index,
+          target.sub_task_index,
+          indexs.task_index,
+          indexs.sub_task_index
+        );
         this._gantt._dragOrderTaskRecord(
           target.task_index,
           target.sub_task_index,
           indexs.task_index,
           indexs.sub_task_index
         );
-        if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
-          this._gantt.taskListTableInstance.renderWithRecreateCells();
-          this._gantt.scenegraph.refreshTaskBarsAndGrid();
-        } else {
-          this._gantt.scenegraph.taskBar.refresh();
-          this._gantt.scenegraph.dependencyLink.refresh();
-        }
-        // target = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(indexs.task_index, indexs.sub_task_index);
+        clearRecordShowIndex(this._gantt.records);
+        this._gantt.taskListTableInstance.renderWithRecreateCells();
+        this._gantt._syncPropsFromTable();
+        this._gantt.scenegraph.refreshTaskBarsAndGrid();
       } else {
-        resizeOrMoveTaskBar(
-          target,
-          targetEndX - (target as Group).attribute.x,
-          targetEndY - (target as Group).attribute.y,
-          null,
-          this
-        );
+        // 判断纵向拖动 处理数据的位置
+        if (Math.abs(Math.round(deltaY / this._gantt.parsedOptions.rowHeight)) >= 1) {
+          const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
+          this._gantt._dragOrderTaskRecord(
+            target.task_index,
+            target.sub_task_index,
+            indexs.task_index,
+            indexs.sub_task_index
+          );
+          if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
+            this._gantt.taskListTableInstance.renderWithRecreateCells();
+            this._gantt.scenegraph.refreshTaskBarsAndGrid();
+          } else {
+            this._gantt.scenegraph.taskBar.refresh();
+            this._gantt.scenegraph.dependencyLink.refresh();
+          }
+          // target = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(indexs.task_index, indexs.sub_task_index);
+        } else {
+          resizeOrMoveTaskBar(
+            target,
+            targetEndX - (target as Group).attribute.x,
+            targetEndY - (target as Group).attribute.y,
+            null,
+            this
+          );
 
-        // 为了确保拖拽后 保持startDate日期晚的显示在上层不被盖住 这里需要重新排序一下
-        if (days > 0) {
-          let insertAfterNode = target;
-          while (
-            (insertAfterNode as Group).nextSibling &&
-            (insertAfterNode as Group).nextSibling.attribute.y === (target as Group).attribute.y &&
-            (insertAfterNode as Group).nextSibling.record[this._gantt.parsedOptions.startDateField] <=
-              target.record[this._gantt.parsedOptions.startDateField]
-          ) {
-            insertAfterNode = (insertAfterNode as Group).nextSibling;
-          }
-          if (insertAfterNode !== target) {
-            (insertAfterNode as Group).parent.insertAfter(target, insertAfterNode);
-          }
-        } else if (days < 0) {
-          let insertBeforeNode = target;
-          while (
-            (insertBeforeNode as Group).previousSibling &&
-            (insertBeforeNode as Group).previousSibling.attribute.y === (target as Group).attribute.y &&
-            (insertBeforeNode as Group).previousSibling.record[this._gantt.parsedOptions.startDateField] >=
-              target.record[this._gantt.parsedOptions.startDateField]
-          ) {
-            insertBeforeNode = (insertBeforeNode as Group).previousSibling;
-          }
-          if (insertBeforeNode !== target) {
-            (insertBeforeNode as Group).parent.insertBefore(target, insertBeforeNode);
+          // 为了确保拖拽后 保持startDate日期晚的显示在上层不被盖住 这里需要重新排序一下
+          if (days > 0) {
+            let insertAfterNode = target;
+            while (
+              (insertAfterNode as Group).nextSibling &&
+              (insertAfterNode as Group).nextSibling.attribute.y === (target as Group).attribute.y &&
+              (insertAfterNode as Group).nextSibling.record[this._gantt.parsedOptions.startDateField] <=
+                target.record[this._gantt.parsedOptions.startDateField]
+            ) {
+              insertAfterNode = (insertAfterNode as Group).nextSibling;
+            }
+            if (insertAfterNode !== target) {
+              (insertAfterNode as Group).parent.insertAfter(target, insertAfterNode);
+            }
+          } else if (days < 0) {
+            let insertBeforeNode = target;
+            while (
+              (insertBeforeNode as Group).previousSibling &&
+              (insertBeforeNode as Group).previousSibling.attribute.y === (target as Group).attribute.y &&
+              (insertBeforeNode as Group).previousSibling.record[this._gantt.parsedOptions.startDateField] >=
+                target.record[this._gantt.parsedOptions.startDateField]
+            ) {
+              insertBeforeNode = (insertBeforeNode as Group).previousSibling;
+            }
+            if (insertBeforeNode !== target) {
+              (insertBeforeNode as Group).parent.insertBefore(target, insertBeforeNode);
+            }
           }
         }
       }
+      this._gantt.scenegraph.updateNextFrame();
     }
-    this._gantt.scenegraph.updateNextFrame();
     this.moveTaskBar.moving = false;
     if (this.selectedTaskBar.target !== target) {
       target.setAttribute('zIndex', 0);
@@ -545,7 +560,10 @@ export class StateManager {
         taskIndex,
         sub_task_index
       );
-      if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {
+      if (
+        this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+      ) {
         this._gantt.taskListTableInstance.renderWithRecreateCells();
         this._gantt._syncPropsFromTable();
         this._gantt.scenegraph.refreshTaskBarsAndGrid();
@@ -810,7 +828,8 @@ export class StateManager {
     if (
       this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
       this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
-      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
     ) {
       linkFrom_index = linkedFromTaskRecord.index[0];
       linkFrom_sub_task_index = linkedFromTaskRecord.index[1];
@@ -946,9 +965,11 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
     let linkedToTaskStartDate;
     let linkedToTaskEndDate;
     let linkedToTaskTaskDays;
+    // let linkedToTaskTaskRecord;
     let linkedFromTaskStartDate;
     let linkedFromTaskEndDate;
     let linkedFromTaskTaskDays;
+    // let linkedFromTaskTaskRecord;
 
     let linkedToTaskShowIndex;
     let linkedFromTaskShowIndex;
@@ -976,20 +997,23 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
         target.attribute.y + taskbarHeight / 2 - (linkedToTaskShowIndex + 0.5) * state._gantt.parsedOptions.rowHeight;
     } else if (
       state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
-      state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+      state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+      state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
     ) {
       const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, state._gantt);
       const beforeRowCountLinkedFrom =
         state._gantt.getRowsHeightByIndex(0, linkedFromTaskRecord.index[0] - 1) / state._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
       linkedFromTaskShowIndex =
         beforeRowCountLinkedFrom +
-        (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
-          ? getSubTaskRowIndexByRecordDate(
-              state._gantt.records[linkedFromTaskRecord.index[0]],
-              linkedFromTaskRecord.index[1],
-              state._gantt.parsedOptions.startDateField,
-              state._gantt.parsedOptions.endDateField
-            )
+        (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+          ? // getSubTaskRowIndexByRecordDate(
+            //     state._gantt.records[linkedFromTaskRecord.index[0]],
+            //     linkedFromTaskRecord.index[1],
+            //     state._gantt.parsedOptions.startDateField,
+            //     state._gantt.parsedOptions.endDateField
+            //   )
+            linkedFromTaskRecord.record.vtable_gantt_showIndex
           : linkedFromTaskRecord.index[1]);
       // const beforeRowCountLinkedTo =
       //   state._gantt.getRowsHeightByIndex(0, linkedToTaskRecord.index[0] - 1) / state._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
@@ -998,13 +1022,15 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
         state._gantt.getRowsHeightByIndex(0, new_indexs.task_index - 1) / state._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
       linkedToTaskShowIndex =
         beforeRowCountLinkedTo +
-        (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
-          ? getSubTaskRowIndexByRecordDate(
-              state._gantt.records[linkedToTaskRecord.index[0]],
-              linkedToTaskRecord.index[1],
-              state._gantt.parsedOptions.startDateField,
-              state._gantt.parsedOptions.endDateField
-            )
+        (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+          ? // ? getSubTaskRowIndexByRecordDate(
+            //     state._gantt.records[linkedToTaskRecord.index[0]],
+            //     linkedToTaskRecord.index[1],
+            //     state._gantt.parsedOptions.startDateField,
+            //     state._gantt.parsedOptions.endDateField
+            //   )
+            linkedToTaskRecord.record.vtable_gantt_showIndex
           : new_indexs.sub_task_index);
 
       ({
@@ -1104,7 +1130,8 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
         target.attribute.y + taskbarHeight / 2 - (linkedFromTaskShowIndex + 0.5) * state._gantt.parsedOptions.rowHeight;
     } else if (
       state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
-      state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+      state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+      state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
     ) {
       const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, state._gantt);
       // const beforeRowCountLinkedFrom =
@@ -1114,26 +1141,30 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
         state._gantt.getRowsHeightByIndex(0, new_indexs.task_index - 1) / state._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
       linkedFromTaskShowIndex =
         beforeRowCountLinkedFrom +
-        (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
-          ? getSubTaskRowIndexByRecordDate(
-              state._gantt.records[linkedFromTaskRecord.index[0]],
-              linkedFromTaskRecord.index[1],
-              state._gantt.parsedOptions.startDateField,
-              state._gantt.parsedOptions.endDateField
-            )
+        (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+          ? // ? getSubTaskRowIndexByRecordDate(
+            //     state._gantt.records[linkedFromTaskRecord.index[0]],
+            //     linkedFromTaskRecord.index[1],
+            //     state._gantt.parsedOptions.startDateField,
+            //     state._gantt.parsedOptions.endDateField
+            //   )
+            linkedFromTaskRecord.record.vtable_gantt_showIndex
           : new_indexs.sub_task_index);
 
       const beforeRowCountLinkedTo =
         state._gantt.getRowsHeightByIndex(0, linkedToTaskRecord.index[0] - 1) / state._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
       linkedToTaskShowIndex =
         beforeRowCountLinkedTo +
-        (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
-          ? getSubTaskRowIndexByRecordDate(
-              state._gantt.records[linkedToTaskRecord.index[0]],
-              linkedToTaskRecord.index[1],
-              state._gantt.parsedOptions.startDateField,
-              state._gantt.parsedOptions.endDateField
-            )
+        (state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        state._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+          ? // ? getSubTaskRowIndexByRecordDate(
+            //     state._gantt.records[linkedToTaskRecord.index[0]],
+            //     linkedToTaskRecord.index[1],
+            //     state._gantt.parsedOptions.startDateField,
+            //     state._gantt.parsedOptions.endDateField
+            //   )
+            linkedToTaskRecord.record.vtable_gantt_showIndex
           : linkedToTaskRecord.index[1]);
       ({
         startDate: linkedToTaskStartDate,

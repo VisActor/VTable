@@ -31,6 +31,7 @@ import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
 import {
   computeRowsCountByRecordDate,
+  computeRowsCountByRecordDateForCompact,
   convertProgress,
   createSplitLineAndResizeLine,
   DayTimes,
@@ -331,7 +332,8 @@ export class Gantt extends EventTarget {
         if (
           this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
           this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
-          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
         ) {
           for (let i = 0; i < listTable_options.columns.length; i++) {
             if (listTable_options.columns[i].tree) {
@@ -344,7 +346,8 @@ export class Gantt extends EventTarget {
         key === 'hierarchyExpandLevel' &&
         (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
           this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
-          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange)
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact)
       ) {
         delete listTable_options[key];
       }
@@ -526,6 +529,19 @@ export class Gantt extends EventTarget {
         const { row, table } = args;
         const record = table.getRecordByRowCol(0, row);
         return (record.children?.length || 1) * this.parsedOptions.rowHeight;
+      };
+      listTable_options.defaultRowHeight = 'auto';
+    } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact) {
+      listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
+        const { row, table } = args;
+        const record = table.getRecordByRowCol(0, row);
+        return (
+          computeRowsCountByRecordDateForCompact(
+            record,
+            this.parsedOptions.startDateField,
+            this.parsedOptions.endDateField
+          ) * this.parsedOptions.rowHeight
+        );
       };
       listTable_options.defaultRowHeight = 'auto';
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {

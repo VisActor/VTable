@@ -154,11 +154,10 @@ function bindTableGroupListener(event: EventManager) {
         }
       } else {
         if (scene._gantt.stateManager.hoverTaskBar.target) {
-          stateManager.hideTaskBarHover(e);
           if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR)) {
             // const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
-            const taskIndex = taskBarTarget.task_index;
-            const sub_task_index = taskBarTarget.sub_task_index;
+            const taskIndex = scene._gantt.stateManager.hoverTaskBar.target.task_index;
+            const sub_task_index = scene._gantt.stateManager.hoverTaskBar.target.sub_task_index;
             const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
               event: e.nativeEvent,
@@ -167,12 +166,14 @@ function bindTableGroupListener(event: EventManager) {
               record
             });
           }
+          stateManager.hideTaskBarHover(e);
         }
         //#region hover到某一个任务 检查有没有日期安排，没有的话显示创建按钮
         if (
           gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Inline &&
           gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
           gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact &&
           gantt.parsedOptions.taskBarCreatable
         ) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);

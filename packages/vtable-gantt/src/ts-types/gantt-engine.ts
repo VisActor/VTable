@@ -341,8 +341,10 @@ export enum TasksShowMode {
   Sub_Tasks_Inline = 'sub_tasks_inline',
   /** 省去父任务节点不展示，且所有子任务的节点分别用一行展示。*/
   Sub_Tasks_Separate = 'sub_tasks_separate',
-  /** 省去父任务节点不展示，且所有子任务的节点均不重叠展示 */
-  Sub_Tasks_Arrange = 'sub_tasks_arrange'
+  /** 省去父任务节点不展示，且所有子任务会维持records中的数据顺序布局，并保证节点不重叠展示 */
+  Sub_Tasks_Arrange = 'sub_tasks_arrange',
+  /** 省去父任务节点不展示，且所有子任务会按照日期早晚的属性来布局，并保证节点不重叠的紧凑型展示 */
+  Sub_Tasks_Compact = 'sub_tasks_compact'
 }
 export type ITaskBarSelectedStyle = {
   shadowBlur?: number; //阴影宽度

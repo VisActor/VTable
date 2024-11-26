@@ -652,6 +652,15 @@ export function clearRecordLinkInfos(records: any[], childrenField: string = 'ch
   }
 }
 
+export function clearRecordShowIndex(records: any[], childrenField: string = 'children') {
+  for (let i = 0; i < records.length; i++) {
+    if (records[i][childrenField]?.length) {
+      clearRecordShowIndex(records[i][childrenField], childrenField);
+    } else {
+      delete records[i].vtable_gantt_showIndex;
+    }
+  }
+}
 export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
   let task_index;
   let sub_task_index;
@@ -669,15 +678,65 @@ export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
   return { task_index, sub_task_index };
 }
 
-export function computeRowsCountByRecordDate(record: any, startDateField: string, endDateField: string) {
+export function computeRowsCountByRecordDateForCompact(record: any, startDateField: string, endDateField: string) {
   if (!record.children || record.children.length === 1) {
+    if (record.children.length === 1) {
+      record.children[0].vtable_gantt_showIndex = 0;
+    }
     return 1;
   }
-  // 排序在datasource中已经排过了
-  // // 创建一个浅拷贝并排序子任务，根据开始日期排序
-  // const sortedChildren = record.children.slice().sort((a: any, b: any) => {
-  //   return createDateAtMidnight(a[startDateField]).getTime() - createDateAtMidnight(b[startDateField]).getTime();
-  // });
+  // 创建一个浅拷贝并排序子任务，根据开始日期排序
+  const sortedChildren = record.children.slice().sort((a: any, b: any) => {
+    return createDateAtMidnight(a[startDateField]).getTime() - createDateAtMidnight(b[startDateField]).getTime();
+  });
+  const count = 0;
+  // 用于存储每一行的结束日期
+  const rows = [];
+  for (let i = 0; i <= sortedChildren.length - 1; i++) {
+    const newRecord = sortedChildren[i];
+    const startDate = createDateAtMidnight(newRecord[startDateField]).getTime();
+    const endDate = createDateAtMidnight(newRecord[endDateField]).getTime();
+
+    let placed = false;
+
+    // 尝试将当前任务放入已有的行中
+    for (let j = 0; j < rows.length; j++) {
+      if (startDate > rows[j]) {
+        // 如果当前任务的开始日期在该行的结束日期之后，则可以放在这一行
+        rows[j] = endDate;
+        placed = true;
+        newRecord.vtable_gantt_showIndex = j;
+        break;
+      }
+    }
+
+    // 如果不能放在已有的行中，则需要新开一行
+    if (!placed) {
+      rows.push(endDate);
+      newRecord.vtable_gantt_showIndex = rows.length - 1;
+    }
+  }
+
+  return rows.length;
+}
+// 检查两个日期范围是否重叠
+function isOverlapping(task: any, rowTasks: any[], startDateField: string, endDateField: string) {
+  const start1 = createDateAtMidnight(task[startDateField]).getTime();
+  const end1 = createDateAtMidnight(task[endDateField]).getTime();
+  return rowTasks.some(rowTask => {
+    const start2 = createDateAtMidnight(rowTask[startDateField]).getTime();
+    const end2 = createDateAtMidnight(rowTask[endDateField]).getTime();
+    return start1 <= end2 && start2 <= end1;
+  });
+}
+export function computeRowsCountByRecordDate(record: any, startDateField: string, endDateField: string) {
+  if (!record.children || record.children.length === 1) {
+    if (record.children.length === 1) {
+      record.children[0].vtable_gantt_showIndex = 0;
+    }
+    return 1;
+  }
+
   const count = 0;
   // 用于存储每一行的结束日期
   const rows = [];
@@ -690,10 +749,12 @@ export function computeRowsCountByRecordDate(record: any, startDateField: string
 
     // 尝试将当前任务放入已有的行中
     for (let j = 0; j < rows.length; j++) {
-      if (startDate > rows[j]) {
+      const rowTasks = record.children.filter((t: any) => t !== newRecord && t.vtable_gantt_showIndex === j);
+      if (!isOverlapping(newRecord, rowTasks, startDateField, endDateField)) {
         // 如果当前任务的开始日期在该行的结束日期之后，则可以放在这一行
         rows[j] = endDate;
         placed = true;
+        newRecord.vtable_gantt_showIndex = j;
         break;
       }
     }
@@ -701,12 +762,12 @@ export function computeRowsCountByRecordDate(record: any, startDateField: string
     // 如果不能放在已有的行中，则需要新开一行
     if (!placed) {
       rows.push(endDate);
+      newRecord.vtable_gantt_showIndex = rows.length - 1;
     }
   }
 
   return rows.length;
 }
-
 export function getSubTaskRowIndexByRecordDate(
   record: any,
   childIndex: number,

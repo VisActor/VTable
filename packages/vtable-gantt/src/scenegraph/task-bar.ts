@@ -3,7 +3,12 @@ import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
 import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
-import { computeRowsCountByRecordDate, getSubTaskRowIndexByRecordDate, getTextPos } from '../gantt-helper';
+import {
+  computeRowsCountByRecordDate,
+  computeRowsCountByRecordDateForCompact,
+  getSubTaskRowIndexByRecordDate,
+  getTextPos
+} from '../gantt-helper';
 import { GanttTaskBarNode } from './gantt-node';
 import { TasksShowMode } from '../ts-types';
 
@@ -58,7 +63,8 @@ export class TaskBar {
       if (
         this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
         this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
-        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
       ) {
         const record = this._scene._gantt.getRecordByIndex(i);
         if (record.children?.length > 0) {
@@ -92,9 +98,9 @@ export class TaskBar {
     const taskBarSize = this._scene._gantt.parsedOptions.colWidthPerDay * taskDays;
     const taskbarHeight = this._scene._gantt.parsedOptions.taskBarStyle.width;
     const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
-    const oneTaskHeigth =
-      this._scene._gantt.getRowHeightByIndex(index) /
-      (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
+
+    const subTaskShowRowCount =
+      this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
         ? childrenLength
         : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
         ? computeRowsCountByRecordDate(
@@ -102,7 +108,14 @@ export class TaskBar {
             this._scene._gantt.parsedOptions.startDateField,
             this._scene._gantt.parsedOptions.endDateField
           )
-        : 1);
+        : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+        ? computeRowsCountByRecordDateForCompact(
+            this._scene._gantt.records[index],
+            this._scene._gantt.parsedOptions.startDateField,
+            this._scene._gantt.parsedOptions.endDateField
+          )
+        : 1;
+    const oneTaskHeigth = this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
     const barGroup = new GanttTaskBarNode({
       x:
         this._scene._gantt.parsedOptions.colWidthPerDay *
@@ -112,13 +125,15 @@ export class TaskBar {
         this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
         (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
           ? childIndex * oneTaskHeigth
-          : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
-          ? getSubTaskRowIndexByRecordDate(
-              this._scene._gantt.records[index],
-              childIndex,
-              this._scene._gantt.parsedOptions.startDateField,
-              this._scene._gantt.parsedOptions.endDateField
-            ) * oneTaskHeigth
+          : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+            this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+          ? // getSubTaskRowIndexByRecordDate(
+            //   this._scene._gantt.records[index],
+            //   childIndex,
+            //   this._scene._gantt.parsedOptions.startDateField,
+            //   this._scene._gantt.parsedOptions.endDateField
+            // )
+            taskRecord.vtable_gantt_showIndex * oneTaskHeigth
           : 0) +
         (oneTaskHeigth - taskbarHeight) / 2,
       width: taskBarSize,
