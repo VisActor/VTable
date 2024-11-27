@@ -181,9 +181,9 @@ export function updateChartSizeForResizeRowHeight(scenegraph: Scenegraph, row: n
 
   let startRow = table.columnHeaderLevelCount;
   let endRow = table.rowCount - 1;
-  let resizeIndicatorKey;
-  let resizeDimensionKey;
-  let resizeDimensionValue;
+  let resizeIndicatorKey: string;
+  let resizeDimensionKey: string;
+  let resizeDimensionValue: string;
   if (rowResizeType === 'indicator') {
     if (!layout.indicatorsAsCol) {
       resizeIndicatorKey = layout.getIndicatorKey(table.rowHeaderLevelCount, row);
