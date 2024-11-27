@@ -358,6 +358,16 @@ function bindTableGroupListener(event: EventManager) {
         });
       }
       stateManager.hideTaskBarSelectedBorder();
+    } else if (isClickLeftLinkPoint && event.poniterState === 'draging') {
+      if (stateManager.isCreatingDependencyLine()) {
+        const link = stateManager.endCreateDependencyLine(e.offset.y);
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK)) {
+          gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK, {
+            event: e.nativeEvent,
+            link
+          });
+        }
+      }
     } else if (isClickRightLinkPoint && event.poniterState === 'draging') {
       if (stateManager.isCreatingDependencyLine()) {
         const link = stateManager.endCreateDependencyLine(e.offset.y);
