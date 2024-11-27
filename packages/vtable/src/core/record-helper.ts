@@ -648,9 +648,11 @@ export function listTableDeleteRecords(recordIndexs: number[], table: ListTable)
                 }
               }
             }
+            table.reactCustomLayout?.clearCache();
             table.transpose
               ? table.scenegraph.updateCol(delRows, [], updateRows)
               : table.scenegraph.updateRow(delRows, [], updateRows);
+            table.reactCustomLayout?.updateAllCustomCell();
           }
         }
       } else {
@@ -687,9 +689,11 @@ export function listTableDeleteRecords(recordIndexs: number[], table: ListTable)
           }
         }
 
+        table.reactCustomLayout?.clearCache();
         table.transpose
           ? table.scenegraph.updateCol(delRows, [], updateRows)
           : table.scenegraph.updateRow(delRows, [], updateRows);
+        table.reactCustomLayout?.updateAllCustomCell();
       }
     }
     // table.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });

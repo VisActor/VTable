@@ -1288,6 +1288,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   addRecord(record: any, recordIndex?: number) {
     listTableAddRecord(record, recordIndex, this);
+    this.internalProps.emptyTip.resetVisible();
   }
 
   /**
@@ -1299,6 +1300,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   addRecords(records: any[], recordIndex?: number) {
     listTableAddRecords(records, recordIndex, this);
+    this.internalProps.emptyTip.resetVisible();
   }
 
   /**
@@ -1307,6 +1309,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   deleteRecords(recordIndexs: number[]) {
     listTableDeleteRecords(recordIndexs, this);
+    this.internalProps.emptyTip.resetVisible();
   }
 
   /**
