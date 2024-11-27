@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-  <h1>VTable-Search</h1>
+  <h1>VTable-Plugins</h1>
 </div>
 
 <div align="center">
@@ -26,29 +26,10 @@ VTable is not just a high-performance multidimensional data analysis table, but 
 
 ```bash
 // npm
-npm install @visactor/vtable-search
+npm install @visactor/vtable-plugins
 
 // yarn
-yarn add @visactor/vtable-search
-```
-
-## Quick Start
-
-```jsx
-const option = {
-  container: document.getElementById(CONTAINER_ID),
-  records,
-  columns,
-};
-const tableInstance = new VTable.ListTable(option);
-window.tableInstance = tableInstance;
-
-const search = new SearchComponent({
-  table: tableInstance,
-  autoJump: true
-});
-window.search = search;
-
+yarn add @visactor/vtable-plugins
 ```
 
 ##

@@ -1,10 +1,10 @@
 import { isArray, isValid } from '@visactor/vutils';
-import type { ListTable } from '../ListTable';
-import { Factory } from '../core/factory';
-import { Group } from '../scenegraph/graphic/group';
-import { createRect, type Graphic } from '../vrender';
-import { updateCell } from '../scenegraph/group-creater/cell-helper';
-import { getTargetCell } from '../event/util';
+import type { ListTable } from '@visactor/vtable/es/ListTable';
+import { Factory } from '@visactor/vtable/es/core/factory';
+import { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
+import { createRect, type Graphic } from '@visactor/vtable/es/vrender';
+import { updateCell } from '@visactor/vtable/es/scenegraph/group-creater/cell-helper';
+import { getTargetCell } from '@visactor/vtable/es/event/util';
 
 export class ListTreeStickCellPlugin {
   table: ListTable;

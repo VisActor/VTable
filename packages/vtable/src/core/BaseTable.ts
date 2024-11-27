@@ -126,7 +126,8 @@ import { NumberRangeMap } from '../layout/row-height-map';
 import { ListTable } from '../ListTable';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { RowSeriesNumberHelper } from './row-series-number-helper';
-import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
+import type { ICustomCellStylePlugin } from '@visactor/vtable-plugins';
+import { mergeStyle } from '@visactor/vtable-plugins';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 import type { ITextGraphicAttribute } from '@src/vrender';
 import { ReactCustomLayout } from '../components/react/react-custom-layout';
@@ -218,7 +219,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   isReleased: boolean = false;
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
 
-  customCellStylePlugin: CustomCellStylePlugin;
+  customCellStylePlugin?: ICustomCellStylePlugin;
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 
@@ -499,11 +500,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.customMergeCell = options.customMergeCell;
 
-    this.customCellStylePlugin = new CustomCellStylePlugin(
-      this,
-      options.customCellStyle ?? [],
-      options.customCellStyleArrangement ?? []
-    );
+    const CustomCellStylePlugin = Factory.getComponent('customCellStylePlugin') as ICustomCellStylePlugin;
+    if (CustomCellStylePlugin) {
+      this.customCellStylePlugin = new CustomCellStylePlugin(
+        this,
+        options.customCellStyle ?? [],
+        options.customCellStyleArrangement ?? []
+      );
+    }
   }
   /** 节流绘制 */
   throttleInvalidate = throttle2(this.render.bind(this), 200);
@@ -2412,7 +2416,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.customMergeCell = options.customMergeCell;
 
-    this.customCellStylePlugin.updateCustomCell(
+    this.customCellStylePlugin?.updateCustomCell(
       options.customCellStyle ?? [],
       options.customCellStyleArrangement ?? []
     );
@@ -4110,14 +4114,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //
   }
   hasCustomCellStyle(customStyleId: string): boolean {
-    return this.customCellStylePlugin.hasCustomCellStyle(customStyleId);
+    return this.customCellStylePlugin?.hasCustomCellStyle(customStyleId);
   }
   registerCustomCellStyle(customStyleId: string, customStyle: ColumnStyleOption | undefined | null) {
-    this.customCellStylePlugin.registerCustomCellStyle(customStyleId, customStyle);
+    this.customCellStylePlugin?.registerCustomCellStyle(customStyleId, customStyle);
   }
 
   arrangeCustomCellStyle(cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) {
-    this.customCellStylePlugin.arrangeCustomCellStyle(cellPos, customStyleId);
+    this.customCellStylePlugin?.arrangeCustomCellStyle(cellPos, customStyleId);
   }
   isSeriesNumber(col: number, row: number): boolean {
     return this.internalProps.layoutMap.isSeriesNumber(col, row);

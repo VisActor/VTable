@@ -1,10 +1,10 @@
-import type { Rect } from '@src/vrender';
-import { createRect } from '@src/vrender';
-import type { Group } from '../scenegraph/graphic/group';
-import { isSameRange } from '../tools/cell-range';
-import type { CellRange } from '../ts-types';
-import type { BaseTableAPI } from '../ts-types/base-table';
-import { cellInRange } from '../tools/helper';
+import type { Rect } from '@visactor/vtable/es/vrender';
+import { createRect } from '@visactor/vtable/es/vrender';
+import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
+import { isSameRange } from '@visactor/vtable/es/tools/cell-range';
+import type { CellRange } from '@visactor/vtable/es/ts-types';
+import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
+import { cellInRange } from '@visactor/vtable/es/tools/helper';
 import { isValid } from '@visactor/vutils';
 
 export interface InvertHighlightPluginOptions {

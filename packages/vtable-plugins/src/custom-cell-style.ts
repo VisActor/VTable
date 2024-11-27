@@ -1,13 +1,14 @@
 import { merge } from '@visactor/vutils';
-import type { Style } from '../body-helper/style';
 import type {
   CellRange,
   ColumnStyleOption,
   CustomCellStyle,
   CustomCellStyleArrangement,
   FullExtendStyle
-} from '../ts-types';
-import type { BaseTableAPI } from '../ts-types/base-table';
+} from '@visactor/vtable/es/ts-types';
+import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
+import type { Style } from '@visactor/vtable/src/body-helper/style';
+import { Factory } from '@visactor/vtable/src/core/factory';
 
 export class CustomCellStylePlugin {
   table: BaseTableAPI;
@@ -200,3 +201,9 @@ export function mergeStyle(cacheStyle: Style, customCellStyle: ColumnStyleOption
 
   return cacheStyle;
 }
+
+export const registerCustomCellStylePlugin = () => {
+  Factory.registerComponent('customCellStylePlugin', CustomCellStylePlugin);
+};
+
+export type ICustomCellStylePlugin = typeof CustomCellStylePlugin;

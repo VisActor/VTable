@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
   server: {
     host: '0.0.0.0',
-    port: 3003,
+    port: 3013,
     https: !!process.env.HTTPS
   },
   define: {
@@ -13,10 +13,9 @@ module.exports = {
   },
   resolve: {
     alias: {
-      '@visactor/vtable-editors': path.resolve(__dirname, '../../vtable-editors/src/index.ts'),
-      '@visactor/vtable-plugins': path.resolve(__dirname, '../../vtable-plugins/src/index.ts'),
-      '@src': path.resolve(__dirname, '../src/'),
-      '@vutils-extension': path.resolve(__dirname, '../src/vutil-extension-temp')
+      '@visactor/vtable/es/': path.resolve(__dirname, '../../vtable/src/es/'),
+      '@visactor/vtable': path.resolve(__dirname, '../../vtable/src/index.ts'),
+      '@vutils-extension': path.resolve(__dirname, '../../vtable/src/vutil-extension-temp')
     }
   },
   plugins: [

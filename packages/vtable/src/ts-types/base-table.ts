@@ -100,7 +100,7 @@ import type { ISortedMapItem } from '../data/DataSource';
 import type { IAnimationAppear } from './animation/appear';
 import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
-import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
+import type { ICustomCellStylePlugin } from '@visactor/vtable-plugins';
 import type { EditManeger } from '../edit/edit-manager';
 import type { ITableAnimationOption, TableAnimationManager } from '../core/animation';
 
@@ -924,7 +924,7 @@ export interface BaseTableAPI {
   /** 开启表格的滚动 */
   enableScroll: () => void;
 
-  customCellStylePlugin: CustomCellStylePlugin;
+  customCellStylePlugin: ICustomCellStylePlugin;
   headerStyleCache: Map<string, any>;
   bodyBottomStyleCache: Map<string, any>;
   bodyStyleCache: Map<string, any>;
