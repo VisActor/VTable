@@ -4159,9 +4159,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   //   startInertia(0, -1, 1, this.stateManager);
   // }
 
-  checkReactCustomLayout(removeAllContainer: () => void) {
+  checkReactCustomLayout() {
     if (!this.reactCustomLayout) {
-      this.reactCustomLayout = new ReactCustomLayout(removeAllContainer, this);
+      this.reactCustomLayout = new ReactCustomLayout(this);
     }
   }
 
