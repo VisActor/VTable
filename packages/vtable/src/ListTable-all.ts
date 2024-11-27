@@ -7,7 +7,7 @@ import {
   registerTitle,
   registerTooltip
 } from './components';
-import { registerListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
+import { registerListTreeStickCellPlugin, registerCustomCellStylePlugin } from '@visactor/vtable-plugins';
 import {
   registerChartCell,
   registerCheckboxCell,
@@ -26,6 +26,7 @@ registerMenu();
 registerTitle();
 registerTooltip();
 registerListTreeStickCellPlugin();
+registerCustomCellStylePlugin();
 
 registerChartCell();
 registerCheckboxCell();

@@ -53,7 +53,7 @@ import {
   listTableUpdateRecords,
   sortRecords
 } from './core/record-helper';
-import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
+import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from '@visactor/vtable-plugins';
 // import {
 //   registerAxis,
 //   registerEmptyTip,

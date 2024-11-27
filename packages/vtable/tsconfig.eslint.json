@@ -8,6 +8,9 @@
     "paths": {
       "@visactor/vtable-editors": [
         "../vtable-editors/src"
+      ],
+      "@visactor/vtable-plugins": [
+        "../vtable-plugins/src"
       ]
     }
   },

@@ -1,4 +1,4 @@
-import { mergeStyle } from '../plugins/custom-cell-style';
+import { mergeStyle } from '@visactor/vtable-plugins';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get-axis-config';
 import { isFunction } from '@visactor/vutils';
@@ -16,7 +16,7 @@ const EMPTY_STYLE = {};
  * @returns
  */
 export function getCellStyle(col: number, row: number, table: BaseTableAPI): FullExtendStyle {
-  const customCellStyle = table.customCellStylePlugin.getCustomCellStyle(col, row);
+  const customCellStyle = table.customCellStylePlugin?.getCustomCellStyle(col, row);
   const { layoutMap } = table.internalProps;
   const isHeader = layoutMap.isHeader(col, row);
   if (isHeader) {
