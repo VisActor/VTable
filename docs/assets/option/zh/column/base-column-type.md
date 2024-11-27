@@ -110,7 +110,7 @@ ${prefix} showSort(boolean)
 ${prefix} disableHover(bolean)
 该列不支持 hover 交互行为
 
-${prefix} disableSelect(boolean)
+${prefix} disableSelect(boolean | ((col: number, row: number, table: BaseTableAPI) => boolean))
 该列不支持选中
 
 ${prefix} disableHeaderHover(bolean)

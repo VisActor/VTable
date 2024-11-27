@@ -26,7 +26,7 @@ export interface IBasicHeaderDefine {
   /** 该列不支持hover交互行为 */
   disableHover?: boolean;
   /** 该列不支持选中 */
-  disableSelect?: boolean;
+  disableSelect?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
   /** 该列表头不支持hover交互行为 */
   disableHeaderHover?: boolean;
   /** 该列表头不支持选中 */

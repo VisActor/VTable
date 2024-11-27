@@ -455,7 +455,9 @@ export class StateManager {
     // } else if (enableColumnHighlight) {
     //   this.select.highlightScope = HighlightScope.column;
     // } else
-    if (!disableSelect) {
+    if (disableSelect === true) {
+      this.select.highlightScope = HighlightScope.none;
+    } else {
       if (highlightMode === 'cross') {
         this.select.highlightScope = HighlightScope.cross;
       } else if (highlightMode === 'row') {
@@ -465,8 +467,6 @@ export class StateManager {
       } else {
         this.select.highlightScope = HighlightScope.single;
       }
-    } else {
-      this.select.highlightScope = HighlightScope.none;
     }
 
     this.select.singleStyle = !disableSelect;
