@@ -61,6 +61,14 @@ export interface TableEventHandlersEventArgumentMap {
     /** 依赖信息 */
     link: ITaskLink;
   };
+  click_dependency_link_point: {
+    event: Event;
+    /** 点击的是起始点还是结束点 */
+    point: 'start' | 'end';
+    /** 第几条数据 */
+    index: number;
+    record: any;
+  };
 }
 
 export interface TableEventHandlersReturnMap {
