@@ -15,17 +15,40 @@ export function updateChartSizeForResizeColWidth(scenegraph: Scenegraph, col: nu
   const { table } = scenegraph;
   const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
   const columnResizeType = col === -1 ? 'all' : table.internalProps.columnResizeType;
-
   if (columnResizeType === 'column') {
     const columnGroup = scenegraph.getColGroup(col);
+    const columnHeaderGroup = scenegraph.getColGroup(col, true);
+    const columnBottomGroup = scenegraph.getColGroupInBottom(col, true);
     columnGroup?.forEachChildren((cellNode: Group) => {
+      const width = table.getColWidth(cellNode.col);
+      const height = table.getRowHeight(cellNode.row);
+      updateChartGraphicSize(cellNode, width, height);
+    });
+    columnHeaderGroup?.forEachChildren((cellNode: Group) => {
+      const width = table.getColWidth(cellNode.col);
+      const height = table.getRowHeight(cellNode.row);
+      updateChartGraphicSize(cellNode, width, height);
+    });
+    columnBottomGroup?.forEachChildren((cellNode: Group) => {
       const width = table.getColWidth(cellNode.col);
       const height = table.getRowHeight(cellNode.row);
       updateChartGraphicSize(cellNode, width, height);
     });
     if (table.widthMode === 'adaptive' && col < table.colCount - 1) {
       const columnGroup = scenegraph.getColGroup(col + 1);
+      const columnHeaderGroup = scenegraph.getColGroup(col + 1, true);
+      const columnBottomGroup = scenegraph.getColGroupInBottom(col + 1, true);
       columnGroup?.forEachChildren((cellNode: Group) => {
+        const width = table.getColWidth(cellNode.col);
+        const height = table.getRowHeight(cellNode.row);
+        updateChartGraphicSize(cellNode, width, height);
+      });
+      columnHeaderGroup?.forEachChildren((cellNode: Group) => {
+        const width = table.getColWidth(cellNode.col);
+        const height = table.getRowHeight(cellNode.row);
+        updateChartGraphicSize(cellNode, width, height);
+      });
+      columnBottomGroup?.forEachChildren((cellNode: Group) => {
         const width = table.getColWidth(cellNode.col);
         const height = table.getRowHeight(cellNode.row);
         updateChartGraphicSize(cellNode, width, height);
@@ -60,6 +83,8 @@ export function updateChartSizeForResizeColWidth(scenegraph: Scenegraph, col: nu
 
     for (let c = startCol; c <= endCol; c++) {
       const columnGroup = scenegraph.getColGroup(c);
+      const columnHeaderGroup = scenegraph.getColGroup(c, true);
+      const columnBottomGroup = scenegraph.getColGroupInBottom(c, true);
       if (columnGroup) {
         if (columnResizeType === 'indicator') {
           const indicatorKey = layout.getIndicatorKey(c, table.columnHeaderLevelCount);
@@ -78,6 +103,16 @@ export function updateChartSizeForResizeColWidth(scenegraph: Scenegraph, col: nu
           }
         }
         columnGroup.forEachChildren((cellNode: Group) => {
+          const width = table.getColWidth(cellNode.col);
+          const height = table.getRowHeight(cellNode.row);
+          updateChartGraphicSize(cellNode, width, height);
+        });
+        columnHeaderGroup?.forEachChildren((cellNode: Group) => {
+          const width = table.getColWidth(cellNode.col);
+          const height = table.getRowHeight(cellNode.row);
+          updateChartGraphicSize(cellNode, width, height);
+        });
+        columnBottomGroup?.forEachChildren((cellNode: Group) => {
           const width = table.getColWidth(cellNode.col);
           const height = table.getRowHeight(cellNode.row);
           updateChartGraphicSize(cellNode, width, height);
@@ -170,50 +205,59 @@ export function updateChartSizeForResizeRowHeight(scenegraph: Scenegraph, row: n
     endRow = node.startInTotal + table.frozenRowCount + node.size - 1;
   }
 
-  for (let col = scenegraph.proxy.colStart; col <= scenegraph.proxy.colEnd; col++) {
-    if (rowResizeType === 'row') {
-      const cellNode = scenegraph.highPerformanceGetCell(col, row);
-      if (cellNode.role !== 'cell') {
-        continue;
-      }
-      const width = table.getColWidth(cellNode.col);
-      const height = table.getRowHeight(cellNode.row);
-      updateChartGraphicSize(cellNode, width, height);
-
-      if (table.heightMode === 'adaptive' && row < table.rowCount - 1) {
-        const cellNode = scenegraph.highPerformanceGetCell(col, row + 1);
-        const width = table.getColWidth(cellNode.col);
-        const height = table.getRowHeight(cellNode.row);
-        updateChartGraphicSize(cellNode, width, height);
-      }
-    } else {
-      for (let r = startRow; r <= endRow; r++) {
-        if (rowResizeType === 'indicator') {
-          const indicatorKey = layout.getIndicatorKey(state.table.rowHeaderLevelCount, r);
-          if (!layout.indicatorsAsCol && indicatorKey !== resizeIndicatorKey) {
-            continue;
-          } else if (layout.indicatorsAsCol) {
-            const headerPaths = layout.getCellHeaderPaths(state.table.rowHeaderLevelCount - 1, r);
-            const headerPath = headerPaths?.rowHeaderPaths[headerPaths.rowHeaderPaths.length - 1];
-            if (
-              !headerPath ||
-              resizeDimensionKey !== headerPath.dimensionKey ||
-              resizeDimensionValue !== headerPath.value
-            ) {
-              continue;
-            }
-          }
-        }
-        const cellNode = scenegraph.highPerformanceGetCell(col, r);
+  const colsRange = [{ startCol: scenegraph.proxy.colStart, endCol: scenegraph.proxy.colEnd }];
+  if (table.frozenColCount) {
+    colsRange.push({ startCol: 0, endCol: table.frozenColCount - 1 });
+  }
+  if (table.rightFrozenColCount) {
+    colsRange.push({ startCol: table.colCount - table.rightFrozenColCount, endCol: table.colCount - 1 });
+  }
+  colsRange.forEach(({ startCol, endCol }) => {
+    for (let col = startCol; col <= endCol; col++) {
+      if (rowResizeType === 'row') {
+        const cellNode = scenegraph.highPerformanceGetCell(col, row);
         if (cellNode.role !== 'cell') {
           continue;
         }
         const width = table.getColWidth(cellNode.col);
         const height = table.getRowHeight(cellNode.row);
         updateChartGraphicSize(cellNode, width, height);
+
+        if (table.heightMode === 'adaptive' && row < table.rowCount - 1) {
+          const cellNode = scenegraph.highPerformanceGetCell(col, row + 1);
+          const width = table.getColWidth(cellNode.col);
+          const height = table.getRowHeight(cellNode.row);
+          updateChartGraphicSize(cellNode, width, height);
+        }
+      } else {
+        for (let r = startRow; r <= endRow; r++) {
+          if (rowResizeType === 'indicator') {
+            const indicatorKey = layout.getIndicatorKey(state.table.rowHeaderLevelCount, r);
+            if (!layout.indicatorsAsCol && indicatorKey !== resizeIndicatorKey) {
+              continue;
+            } else if (layout.indicatorsAsCol) {
+              const headerPaths = layout.getCellHeaderPaths(state.table.rowHeaderLevelCount - 1, r);
+              const headerPath = headerPaths?.rowHeaderPaths[headerPaths.rowHeaderPaths.length - 1];
+              if (
+                !headerPath ||
+                resizeDimensionKey !== headerPath.dimensionKey ||
+                resizeDimensionValue !== headerPath.value
+              ) {
+                continue;
+              }
+            }
+          }
+          const cellNode = scenegraph.highPerformanceGetCell(col, r);
+          if (cellNode.role !== 'cell') {
+            continue;
+          }
+          const width = table.getColWidth(cellNode.col);
+          const height = table.getRowHeight(cellNode.row);
+          updateChartGraphicSize(cellNode, width, height);
+        }
       }
     }
-  }
+  });
 
   // const updateCellNode = (c: number, r: number) => {
   //   const cellNode = scenegraph.getCell(c, r);
