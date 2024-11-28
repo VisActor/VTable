@@ -3,6 +3,7 @@ import type { ColumnStyleOption, ColumnTypeOption } from './column';
 import type { ColumnData } from './list-table/layout-map/api';
 import type { CellLocation, CellRange, FieldData, FieldDef } from './table-engine';
 import type { Rect } from '../tools/Rect';
+import type { BaseTable } from '../core';
 
 export type MaybePromise<T> = T | Promise<T>;
 
@@ -33,7 +34,17 @@ export type LineDashsDef = number[] | (number[] | null)[];
 export type shadowColorsDef = { from: string; to: string } | ({ from: string; to: string } | null)[];
 export type PaddingsDef = number | (number | null)[];
 export type SortOption = boolean | ((v1: any, v2: any, order: SortOrder) => -1 | 0 | 1);
-export type MergeCellOption = boolean | ((v1: any, v2: any) => boolean);
+export type MergeCellOption =
+  | boolean
+  | ((
+      v1: any,
+      v2: any,
+      extraArgs: {
+        source: CellPosition;
+        target: CellPosition;
+        table: BaseTable;
+      }
+    ) => boolean);
 export type BaseCellInfo = {
   row: number;
   col: number;
