@@ -1,19 +1,28 @@
 export const menus = [
   {
-    menu: 'listTable',
+    menu: 'carousel-animation',
     children: [
       {
-        path: 'list',
-        name: 'list'
+        path: 'carousel-animation',
+        name: 'carousel-animation'
       }
     ]
   },
   {
-    menu: 'pivotTable',
+    menu: 'header-highlight',
     children: [
       {
-        path: 'pivot',
-        name: 'pivot-basic'
+        path: 'header-highlight',
+        name: 'header-highlight'
+      }
+    ]
+  },
+  {
+    menu: 'invert-highlight',
+    children: [
+      {
+        path: 'invert-highlight',
+        name: 'invert-highlight'
       }
     ]
   }
