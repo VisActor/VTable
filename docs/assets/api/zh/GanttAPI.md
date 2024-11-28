@@ -186,6 +186,7 @@ export interface EVENT_TYPES {
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -201,7 +202,7 @@ MOUSEENTER_TASK_BAR
     index: number;
     record: any;
     event: Event;
-    target: GanttTaskBarNode; // 触发事件的任务条节点
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -216,7 +217,7 @@ MOUSEENTER_TASK_BAR
     index: number;
     record: any;
     event: Event;
-    target: GanttTaskBarNode; // 触发事件的任务条节点
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -228,6 +229,7 @@ MOUSEENTER_TASK_BAR
 
 ```
 {
+    federatedEvent: FederatedPointerEvent;
     event: Event;
     /** 第几条数据 */
     index: number;
@@ -247,7 +249,8 @@ MOUSEENTER_TASK_BAR
 
 ```
 {
-   event: Event;
+    federatedEvent: FederatedPointerEvent;
+    event: Event;
     /** 依赖信息 */
     link: ITaskLink;
   };
