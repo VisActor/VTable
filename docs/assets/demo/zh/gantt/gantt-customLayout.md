@@ -256,7 +256,7 @@ const option = {
       containerLeft.add(avatar);
       const containerCenter = new VTableGantt.VRender.Group({
         height,
-        width: width - 120,
+        width: width - (width >= 120 ? 120 : 60),
         display: 'flex',
         flexDirection: 'column'
         // alignItems: 'left'
@@ -269,7 +269,7 @@ const option = {
         fontFamily: 'sans-serif',
         fill: 'white',
         fontWeight: 'bold',
-        maxLineWidth: width - 120,
+        maxLineWidth: width - (width >= 120 ? 120 : 60),
         boundsPadding: [10, 0, 0, 0]
       });
       containerCenter.add(developer);

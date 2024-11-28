@@ -54,4 +54,10 @@ export interface IRowSeriesNumber {
 - 设置过排序的表格不支持拖拽行序号来更换数据顺序；
 - 透视图目前不支持行序号。
 
-demo 示例可参考：https://visactor.io/vtable/demo/basic-functionality/row-series-number
+[demo 示例](../../demo/basic-functionality/row-series-number)
+
+## 通过行序号可以完成的交互能力
+
+- 拖拽行序号来换位: 需要设置 `dragOrder` 为 true。如果需要监听拖拽换位事件，可以监听 [`VTable.EVENT_TYPE.CHANGE_HEADER_POSITION` 事件](../../api/events#CHANGE_HEADER_POSITION)。
+
+- 选中整行: 点击行序号，会选中整行。

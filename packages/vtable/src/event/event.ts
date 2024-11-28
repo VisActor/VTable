@@ -263,6 +263,9 @@ export class EventManager {
       //   this.table.stateManager.updateHoverPos(-1, -1);
       // }
       const define = this.table.getBodyColumnDefine(eventArgs.col, eventArgs.row);
+      const disableSelect = (define as ColumnDefine)?.disableSelect;
+      const cellDisable =
+        typeof disableSelect === 'function' ? disableSelect(eventArgs.col, eventArgs.row, this.table) : disableSelect;
       if (
         this.table.isHeader(eventArgs.col, eventArgs.row) &&
         ((define as ColumnDefine)?.disableHeaderSelect || this.table.stateManager.select?.disableHeader)
@@ -272,7 +275,7 @@ export class EventManager {
           this.table.stateManager.updateSelectPos(-1, -1);
         }
         return false;
-      } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && (define as ColumnDefine)?.disableSelect) {
+      } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && cellDisable) {
         if (!isSelectMoving) {
           const isHasSelected = !!this.table.stateManager.select.ranges?.length;
           this.table.stateManager.updateSelectPos(-1, -1);
@@ -298,7 +301,7 @@ export class EventManager {
         eventArgs.event.shiftKey,
         eventArgs.event.ctrlKey || eventArgs.event.metaKey,
         false,
-        this.table.options.select?.makeSelectCellVisible ?? true
+        isSelectMoving ? false : this.table.options.select?.makeSelectCellVisible ?? true
       );
 
       return true;

@@ -25,8 +25,13 @@ export function updateSelectPosition(
   const { table, interactionState } = state;
   const { scenegraph } = table;
   const { highlightScope, disableHeader, cellPos } = state.select;
+  const disableSelect = table.options?.select?.disableSelect;
+  const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
 
-  if (((disableHeader && table.isHeader(col, row)) || highlightScope === 'none') && forceSelect === false) {
+  if (
+    ((disableHeader && table.isHeader(col, row)) || highlightScope === 'none' || cellDisable) &&
+    forceSelect === false
+  ) {
     if (col !== -1 && row !== -1 && makeSelectCellVisible) {
       table._makeVisibleCell(col, row);
     }

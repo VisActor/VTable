@@ -346,6 +346,18 @@ function bindTableGroupListener(event: EventManager) {
       stateManager.hideTaskBarSelectedBorder();
       scene._gantt.stateManager.selectedDenpendencyLink.link = depedencyLink;
       stateManager.showDependencyLinkSelectedLine();
+    } else if ((isClickLeftLinkPoint || isClickRightLinkPoint) && event.poniterState === 'down') {
+      if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_DEPENDENCY_LINK_POINT)) {
+        const taskIndex = getTaskIndexByY(e.offset.y, gantt);
+        const record = gantt.getRecordByIndex(taskIndex);
+        gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_DEPENDENCY_LINK_POINT, {
+          event: e.nativeEvent,
+          index: taskIndex,
+          point: isClickLeftLinkPoint ? 'start' : 'end',
+          record
+        });
+      }
+      stateManager.hideTaskBarSelectedBorder();
     } else if (isClickLeftLinkPoint && event.poniterState === 'draging') {
       if (stateManager.isCreatingDependencyLine()) {
         const link = stateManager.endCreateDependencyLine(e.offset.y);
