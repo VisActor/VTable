@@ -1112,9 +1112,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const dimensions = item.dimensions;
       const width = item.width;
       const cell = this.getCellAddressByHeaderPaths(dimensions);
-      if (cell && !this.internalProps._widthResizedColMap.has(cell.col)) {
-        this._setColWidth(cell.col, width);
-        this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+      if (cell.row >= this.columnHeaderLevelCount - 1) {
+        if (cell && !this.internalProps._widthResizedColMap.has(cell.col)) {
+          this._setColWidth(cell.col, width);
+          this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+        }
       }
     }
   }
