@@ -1,3 +1,4 @@
+import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 import type { ITaskLink } from './gantt-engine';
 
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
@@ -18,12 +19,16 @@ export interface TableEventHandlersEventArgumentMap {
     index: number;
     record: any;
     event: Event;
+    /** 进入的taskbar节点信息 */
+    target: GanttTaskBarNode;
   };
   mouseleave_task_bar: {
     /** 第几条数据 */
     index: number;
     record: any;
     event: Event;
+    /** 离开的taskbar节点信息 */
+    target: GanttTaskBarNode;
   };
   click_task_bar: {
     /** 第几条数据 */

@@ -143,6 +143,7 @@ function bindTableGroupListener(event: EventManager) {
             const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
             const record = scene._gantt.getRecordByIndex(taskIndex);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
+              target: taskBarTarget,
               event: e.nativeEvent,
               index: taskIndex,
               record
@@ -156,6 +157,7 @@ function bindTableGroupListener(event: EventManager) {
             const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
             const record = scene._gantt.getRecordByIndex(taskIndex);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
+              target: scene._gantt.stateManager.hoverTaskBar.target,
               event: e.nativeEvent,
               index: taskIndex,
               record
