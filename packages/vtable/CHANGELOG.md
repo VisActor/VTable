@@ -1,6 +1,19 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 26 Nov 2024 09:13:29 GMT and should not be manually modified.
+This log was last generated on Thu, 28 Nov 2024 12:26:11 GMT and should not be manually modified.
+
+## 1.11.3
+Thu, 28 Nov 2024 12:26:11 GMT
+
+### Updates
+
+- fix: frozen chart not update when resize row or column width #2876
+
+
+- refactor: when columnWidthConfig set wrong dimensions should judge this case #2948
+
+
+- fix: fix custom-component update in deleteRecords api
 
 ## 1.11.2
 Tue, 26 Nov 2024 09:13:29 GMT
