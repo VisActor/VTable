@@ -106,3 +106,5 @@ packages/vtable/nodejs/*.png
 # build
 .rollup.cache/
 tsconfig.tsbuildinfo
+
+.history

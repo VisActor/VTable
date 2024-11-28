@@ -3293,6 +3293,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   _canDragHeaderPosition(col: number, row: number): boolean {
+    const disableSelect = this.options.select?.disableSelect;
+    const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, this) : disableSelect;
     if (
       this.isHeader(col, row) &&
       (this.stateManager.isSelected(col, row) ||
@@ -3301,7 +3303,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             this.getCellRange(this.stateManager.select.cellPos.col, this.stateManager.select.cellPos.row)
           ])) ||
         this.options.select?.disableHeaderSelect ||
-        this.options.select?.disableSelect)
+        cellDisable)
     ) {
       if (this.internalProps.frozenColDragHeaderMode === 'disabled' && this.isFrozenColumn(col)) {
         return false;
