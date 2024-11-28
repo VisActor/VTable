@@ -220,11 +220,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
       if (this.options.emptyTip) {
         if (this.internalProps.emptyTip) {
-          this.internalProps.emptyTip.resetVisible();
+          this.internalProps.emptyTip?.resetVisible();
         } else {
           const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
           this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-          this.internalProps.emptyTip.resetVisible();
+          this.internalProps.emptyTip?.resetVisible();
         }
       }
       //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
@@ -436,11 +436,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       } else {
         const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       }
     }
     // this.render();
@@ -1597,11 +1597,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.eventManager.updateEventBinder();
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       } else {
         const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       }
     }
   }

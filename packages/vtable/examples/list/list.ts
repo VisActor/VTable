@@ -54,7 +54,8 @@ export function createTable() {
       title: 'ID',
       width: 'auto',
       minWidth: 50,
-      sort: true
+      sort: true,
+      disableSelect: true
     },
     {
       field: 'email1',
@@ -65,6 +66,9 @@ export function createTable() {
         underline: true,
         underlineDash: [2, 0],
         underlineOffset: 3
+      },
+      disableSelect: (col, row, table) => {
+        return row === 3;
       }
     },
     {
@@ -207,6 +211,12 @@ export function createTable() {
     rightFrozenColCount: 2,
     overscrollBehavior: 'none',
     dragHeaderMode: 'all',
+    select: {
+      disableSelect: (row, col, table) => {
+        return row === 2 && col === 2;
+      }
+      // disableSelect: true
+    },
     keyboardOptions: {
       pasteValueToCell: true,
       copySelected: true,

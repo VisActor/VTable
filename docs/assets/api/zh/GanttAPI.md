@@ -250,3 +250,20 @@ MOUSEENTER_TASK_BAR
     link: ITaskLink;
   };
 ```
+
+### CLICK_DEPENDENCY_LINK_POINT
+
+点击依赖关系点的事件
+事件回传参数：
+
+```
+{
+   event: Event;
+    /** 点击的是起始点还是结束点 */
+    point: 'start' | 'end';
+    /** 第几条数据 */
+    index: number;
+    /** 点击连接点的数据信息 */
+    record: any;
+  };
+```

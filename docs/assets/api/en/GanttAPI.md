@@ -249,3 +249,20 @@ Event return parameters:
     link: ITaskLink;
   };
 ```
+
+### CLICK_DEPENDENCY_LINK_POINT
+
+Events that click dependency line point
+Event return parameters:
+
+```
+{
+   event: Event;
+    /** click start or end link point */
+    point: 'start' | 'end';
+    /** the data order */
+    index: number;
+    /** the data info */
+    record: any;
+  };
+```
