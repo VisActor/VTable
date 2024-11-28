@@ -125,7 +125,7 @@ export function initCheckedState(records: any[], state: StateManager) {
 
   //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
   if (isNeedInitHeaderCheckedStateFromRecord) {
-    records.forEach((record: any, index: number) => {
+    records?.forEach((record: any, index: number) => {
       state._checkboxCellTypeFields.forEach(field => {
         const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
         let isChecked;
