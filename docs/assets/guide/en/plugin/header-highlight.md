@@ -8,7 +8,7 @@ VTable provides Header Highlight plugin, which can highlight the corresponding h
 
 ## Header Highlight Plugin Configuration
 
-- `VTable.HeaderHighlightPlugin`  Header Highlight, can configure the following parameters:
+- `HeaderHighlightPlugin`  Header Highlight, can configure the following parameters:
   - `columnHighlight` whether highlight the column
   - `rowHighlight` whether highlight the row
   - `colHighlightBGColor` the background color of the column highlight
@@ -17,7 +17,7 @@ VTable provides Header Highlight plugin, which can highlight the corresponding h
   - `rowHighlightColor` the color of the row highlight
 
 ```js
-const highlightPlugin = new VTable.HeaderHighlightPlugin(tableInstance, {});
+const highlightPlugin = new HeaderHighlightPlugin(tableInstance, {});
 ```
 
 For specific usage, please refer to [demo](../../demo/interaction/head-highlight)
