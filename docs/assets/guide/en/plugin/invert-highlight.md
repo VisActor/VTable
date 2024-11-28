@@ -8,13 +8,13 @@ VTable provides Invert Highlight plugin, which can highlight the specified area 
 
 ## Invert Highlight Plugin Configuration
 
-- `VTable.InvertHighlightPlugin`  Invert Highlight Plugin, can configure the following parameters:
+- `InvertHighlightPlugin`  Invert Highlight Plugin, can configure the following parameters:
   - `fill` invert highlight background color
   - `opacity` invert highlight opacity
 - `setInvertHighlightRange` set highlight range
 
 ```js
-const highlightPlugin = new VTable.InvertHighlightPlugin(tableInstance, {});
+const highlightPlugin = new InvertHighlightPlugin(tableInstance, {});
 
 highlightPlugin.setInvertHighlightRange({
   start: {

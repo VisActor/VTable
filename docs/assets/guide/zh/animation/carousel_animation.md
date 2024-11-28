@@ -8,7 +8,7 @@ VTable 提供轮播动画插件，可以实现表格的轮播滚动动画效果�
 
 ## 轮播动画配置项
 
-- `VTable.CarouselAnimationPlugin`  轮播动画插件，可以配置以下参数：
+- `CarouselAnimationPlugin`  轮播动画插件，可以配置以下参数：
   - `rowCount` 一次动画滚动的行数
   - `colCount` 一次动画滚动的列数
   - `animationDuration` 一次滚动动画的时间
@@ -17,7 +17,7 @@ VTable 提供轮播动画插件，可以实现表格的轮播滚动动画效果�
   - `replaceScrollAction` 是否替换滚动行为，如果为 true ，每次滚动操作会移动对于的行数/列数
 
 ```js
-const carouselAnimationPlugin = new VTable.CarouselAnimationPlugin(tableInstance, {
+const carouselAnimationPlugin = new CarouselAnimationPlugin(tableInstance, {
   rowCount: 2,
   replaceScrollAction: true
 });

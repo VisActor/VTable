@@ -8,7 +8,7 @@ VTable 提供表头高亮插件，支持选中单元格后，高亮对应的表�
 
 ## 表头高亮插件配置项
 
-- `VTable.HeaderHighlightPlugin`  表头高亮插件，可以配置以下参数：
+- `HeaderHighlightPlugin`  表头高亮插件，可以配置以下参数：
   - `columnHighlight` 是否高亮列头
   - `rowHighlight` 是否高亮行头
   - `colHighlightBGColor` 列头高亮背景色
@@ -17,7 +17,7 @@ VTable 提供表头高亮插件，支持选中单元格后，高亮对应的表�
   - `rowHighlightColor` 行头高亮字体色
 
 ```js
-const highlightPlugin = new VTable.HeaderHighlightPlugin(tableInstance, {});
+const highlightPlugin = new HeaderHighlightPlugin(tableInstance, {});
 ```
 
 具体使用参考[demo](../../demo/interaction/head-highlight)
