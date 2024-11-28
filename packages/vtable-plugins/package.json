@@ -34,8 +34,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:*",
     "@visactor/vutils": "~0.18.14"
+  },
+  "peerDependencies": {
+    "@visactor/vtable": "workspace:*"
   },
   "devDependencies": {
     "@visactor/vchart": "1.12.12",
