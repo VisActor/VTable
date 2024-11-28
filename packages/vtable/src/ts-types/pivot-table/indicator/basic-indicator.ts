@@ -66,5 +66,5 @@ export interface IBasicColumnIndicator {
   /** 该指标内容不支持hover交互行为 */
   disableHover?: boolean;
   /** 该指标内容不支持选中 */
-  disableSelect?: boolean;
+  disableSelect?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
 }

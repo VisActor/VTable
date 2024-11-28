@@ -369,7 +369,7 @@ export interface BaseTableConstructorOptions {
      */
     headerSelectMode?: 'inline' | 'cell' | 'body';
     /** 不响应鼠标select交互 */
-    disableSelect?: boolean;
+    disableSelect?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
     /** 单独设置表头不响应鼠标select交互 */
     disableHeaderSelect?: boolean;
     /** 点击空白区域是否取消选中 */

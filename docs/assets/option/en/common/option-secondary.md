@@ -225,7 +225,7 @@ Possible values:
 
 'body': Do not select the table header. Clicking a row header selects all body cells in the row. Clicking a column header selects all body cells in the column.
 
-##${prefix} disableSelect (boolean) = false
+##${prefix} disableSelect (boolean | ((col: number, row: number, table: BaseTableAPI) => boolean)) = false
 
 Do not respond to mouse select interaction.
 
