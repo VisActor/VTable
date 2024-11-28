@@ -200,6 +200,7 @@ Event callback parameters:
     index: number;
     record: any;
     event: Event;
+    target: GanttTaskBarNode; // The task bar node that triggered the event
   }
 ```
 
@@ -214,6 +215,7 @@ Event callback parameters:
     index: number;
     record: any;
     event: Event;
+    target: GanttTaskBarNode; // The task bar node that triggered the event
   }
 ```
 

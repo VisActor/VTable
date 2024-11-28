@@ -201,6 +201,7 @@ MOUSEENTER_TASK_BAR
     index: number;
     record: any;
     event: Event;
+    target: GanttTaskBarNode; // 触发事件的任务条节点
   }
 ```
 
@@ -215,6 +216,7 @@ MOUSEENTER_TASK_BAR
     index: number;
     record: any;
     event: Event;
+    target: GanttTaskBarNode; // 触发事件的任务条节点
   }
 ```
 
