@@ -1,11 +1,10 @@
-import type { Rect } from '@visactor/vtable/es/vrender';
+import type { INode } from '@visactor/vtable/es/vrender';
 import { createRect } from '@visactor/vtable/es/vrender';
 import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
 import { isSameRange } from '@visactor/vtable/es/tools/cell-range';
 import type { CellRange } from '@visactor/vtable/es/ts-types';
 import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
 import { cellInRange } from '@visactor/vtable/es/tools/helper';
-import { isValid } from '@visactor/vutils';
 
 export interface InvertHighlightPluginOptions {
   fill?: string;
@@ -64,9 +63,11 @@ export class InvertHighlightPlugin {
     this.updateCellGroupShadowInContainer(this.table.scenegraph.rightBottomCornerGroup, this.range);
   }
   updateCellGroupShadowInContainer(container: Group, range?: CellRange) {
-    container.forEachChildrenSkipChild((column: Group) => {
+    container.forEachChildrenSkipChild((item: INode) => {
+      const column = item as unknown as Group;
       if (column.role === 'column') {
-        column.forEachChildrenSkipChild((cell: Group) => {
+        column.forEachChildrenSkipChild((item: INode) => {
+          const cell = item as unknown as Group;
           if (cell.role !== 'cell') {
             return;
           }
@@ -94,19 +95,5 @@ export class InvertHighlightPlugin {
         });
       }
     });
-  }
-}
-
-export function onBeforeAttributeUpdateForInvertHighlight(val: Record<string, any>, attribute: any) {
-  // @ts-ignore
-  const graphic = this as any;
-  if (graphic.shadowRoot && graphic.shadowRoot.childrenCount && (isValid(val.width) || isValid(val.height))) {
-    const shadowRect = (graphic.shadowRoot as Group).findChildrenByName('shadow-rect')[0] as Rect;
-    if (shadowRect) {
-      shadowRect.setAttributes({
-        width: val.width ?? shadowRect.attribute.width,
-        height: val.height ?? shadowRect.attribute.height
-      });
-    }
   }
 }

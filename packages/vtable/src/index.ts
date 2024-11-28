@@ -131,17 +131,3 @@ export { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 export { PIVOT_CHART_EVENT_TYPE, PIVOT_TABLE_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 
 export { EventTarget } from './event/EventTarget';
-
-export type {
-  ICarouselAnimationPluginOptions,
-  IHeaderHighlightPluginOptions,
-  InvertHighlightPluginOptions
-} from '@visactor/vtable-plugins';
-
-export {
-  CarouselAnimationPlugin,
-  HeaderHighlightPlugin,
-  InvertHighlightPlugin,
-  registerListTreeStickCellPlugin,
-  registerCustomCellStylePlugin
-} from '@visactor/vtable-plugins';

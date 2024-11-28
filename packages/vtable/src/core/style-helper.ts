@@ -1,4 +1,3 @@
-import { mergeStyle } from '@visactor/vtable-plugins';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get-axis-config';
 import { isFunction } from '@visactor/vutils';
@@ -6,6 +5,7 @@ import * as headerStyleContents from '../header-helper/style';
 import * as columnStyleContents from '../body-helper/style';
 import type { BaseTableAPI, HeaderData, PivotTableProtected } from '../ts-types/base-table';
 import type { ColorPropertyDefine, FullExtendStyle, MappingRule } from '../ts-types';
+import { mergeStyle } from '../plugins/custom-cell-style';
 
 const EMPTY_STYLE = {};
 

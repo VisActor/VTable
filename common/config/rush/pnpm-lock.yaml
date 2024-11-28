@@ -299,7 +299,6 @@ importers:
       '@visactor/vrender-kits': 0.21.0-alpha.4
       '@visactor/vscale': ~0.18.1
       '@visactor/vtable-editors': workspace:*
-      '@visactor/vtable-plugins': workspace:*
       '@visactor/vutils': ~0.18.14
       '@visactor/vutils-extension': ~1.11.5
       '@vitejs/plugin-react': 3.1.0
@@ -346,7 +345,6 @@ importers:
       '@visactor/vrender-kits': 0.21.0-alpha.4
       '@visactor/vscale': 0.18.18
       '@visactor/vtable-editors': link:../vtable-editors
-      '@visactor/vtable-plugins': link:../vtable-plugins
       '@visactor/vutils': 0.18.18
       '@visactor/vutils-extension': 1.11.14
       cssfontparser: 1.2.1
@@ -4316,7 +4314,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.25.9_@babel+core@7.20.12
       magic-string: 0.27.0
       react-refresh: 0.14.2
-      vite: 3.2.6_3fcrixghlk5j7efp7olgstdjb4
+      vite: 3.2.6
     transitivePeerDependencies:
       - supports-color
     dev: true

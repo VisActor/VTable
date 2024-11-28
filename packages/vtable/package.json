@@ -52,7 +52,6 @@
   },
   "dependencies": {
     "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vtable-plugins": "workspace:*",
     "@visactor/vrender-core": "0.21.0-alpha.4",
     "@visactor/vrender-kits": "0.21.0-alpha.4",
     "@visactor/vrender-components": "0.21.0-alpha.4",

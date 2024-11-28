@@ -126,8 +126,6 @@ import { NumberRangeMap } from '../layout/row-height-map';
 import { ListTable } from '../ListTable';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { RowSeriesNumberHelper } from './row-series-number-helper';
-import type { ICustomCellStylePlugin } from '@visactor/vtable-plugins';
-import { mergeStyle } from '@visactor/vtable-plugins';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 import type { ITextGraphicAttribute } from '@src/vrender';
 import { ReactCustomLayout } from '../components/react/react-custom-layout';
@@ -151,6 +149,7 @@ import { setIconColor } from '../icons';
 import { TableAnimationManager } from './animation';
 import type { ITableAnimationOption } from '../ts-types/animation/appear';
 import { checkCellInSelect } from '../state/common/check-in-select';
+import type { CustomCellStylePlugin, ICustomCellStylePlugin } from '../plugins/custom-cell-style';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -219,7 +218,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   isReleased: boolean = false;
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
 
-  customCellStylePlugin?: ICustomCellStylePlugin;
+  customCellStylePlugin?: CustomCellStylePlugin;
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 

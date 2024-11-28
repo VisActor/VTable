@@ -1,14 +1,16 @@
 import { merge } from '@visactor/vutils';
-import type {
-  CellRange,
-  ColumnStyleOption,
-  CustomCellStyle,
-  CustomCellStyleArrangement,
-  FullExtendStyle
-} from '@visactor/vtable/es/ts-types';
-import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
-import type { Style } from '@visactor/vtable/es/body-helper/style';
-import { Factory } from '@visactor/vtable/es/core/factory';
+import type { BaseTableAPI } from '../ts-types/base-table';
+import type { CellRange, ColumnStyleOption, CustomCellStyle, CustomCellStyleArrangement } from '../ts-types';
+import type { Style } from '../body-helper/style';
+import { Factory } from '../core/factory';
+
+export interface ICustomCellStylePlugin {
+  new (
+    table: BaseTableAPI,
+    customCellStyle: CustomCellStyle[],
+    customCellStyleArrangement: CustomCellStyleArrangement[]
+  ): CustomCellStylePlugin;
+}
 
 export class CustomCellStylePlugin {
   table: BaseTableAPI;
@@ -222,4 +224,4 @@ export const registerCustomCellStylePlugin = () => {
   Factory.registerComponent('customCellStylePlugin', CustomCellStylePlugin);
 };
 
-export type ICustomCellStylePlugin = typeof CustomCellStylePlugin;
+// export type ICustomCellStylePlugin = typeof CustomCellStylePlugin;

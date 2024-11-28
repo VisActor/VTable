@@ -36,7 +36,7 @@ import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-i
 import { isArray, isValid } from '@visactor/vutils';
 import { breakString } from '../utils/break-string';
 import type { CreateRadioCellGroup } from './cell-type/radio-cell';
-import { onBeforeAttributeUpdateForInvertHighlight } from '@visactor/vtable-plugins';
+import { onBeforeAttributeUpdateForInvertHighlight } from '../../plugins/invert-highlight';
 
 export function createCell(
   type: ColumnTypeOption,
