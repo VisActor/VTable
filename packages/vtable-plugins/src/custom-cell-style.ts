@@ -7,8 +7,8 @@ import type {
   FullExtendStyle
 } from '@visactor/vtable/es/ts-types';
 import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
-import type { Style } from '@visactor/vtable/src/body-helper/style';
-import { Factory } from '@visactor/vtable/src/core/factory';
+import type { Style } from '@visactor/vtable/es/body-helper/style';
+import { Factory } from '@visactor/vtable/es/core/factory';
 
 export class CustomCellStylePlugin {
   table: BaseTableAPI;

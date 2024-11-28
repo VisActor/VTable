@@ -1,4 +1,4 @@
-import type { BaseTable } from '@visactor/vtable/src/core';
+import type { BaseTable } from '@visactor/vtable/es/core';
 import type { BaseComponentProps } from '../base-component';
 import { createComponent } from '../base-component';
 import type { TYPES } from '@visactor/vtable';
