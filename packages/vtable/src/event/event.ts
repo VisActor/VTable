@@ -301,7 +301,7 @@ export class EventManager {
         eventArgs.event.shiftKey,
         eventArgs.event.ctrlKey || eventArgs.event.metaKey,
         false,
-        this.table.options.select?.makeSelectCellVisible ?? true
+        isSelectMoving ? false : this.table.options.select?.makeSelectCellVisible ?? true
       );
 
       return true;
