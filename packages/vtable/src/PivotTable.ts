@@ -1112,7 +1112,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const dimensions = item.dimensions;
       const width = item.width;
       const cell = this.getCellAddressByHeaderPaths(dimensions);
-      if (cell.col >= this.rowHeaderLevelCount) {
+      if (cell && cell.col >= this.rowHeaderLevelCount) {
         const cellPath = this.getCellHeaderPaths(cell.col, this.columnHeaderLevelCount); //如单指标隐藏指标情况，从body行去取headerPath才会包括指标维度
         if (cellPath.colHeaderPaths.length === dimensions.length) {
           let match = true;
