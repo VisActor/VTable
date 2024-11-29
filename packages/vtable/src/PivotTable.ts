@@ -1113,9 +1113,26 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const width = item.width;
       const cell = this.getCellAddressByHeaderPaths(dimensions);
       if (cell.col >= this.rowHeaderLevelCount) {
-        const cellPath = this.getCellHeaderPaths(cell.col, this.columnHeaderLevelCount - 1);
+        const cellPath = this.getCellHeaderPaths(cell.col, this.columnHeaderLevelCount); //如单指标隐藏指标情况，从body行去取headerPath才会包括指标维度
         if (cellPath.colHeaderPaths.length === dimensions.length) {
-          if (cell && !this.internalProps._widthResizedColMap.has(cell.col)) {
+          let match = true;
+          for (let i = 0; i < dimensions.length; i++) {
+            const dimension = dimensions[i];
+            const finded = (cellPath.colHeaderPaths as IDimensionInfo[]).findIndex((colPath: IDimensionInfo, index) => {
+              if (colPath.indicatorKey === dimension.indicatorKey) {
+                return true;
+              }
+              if (colPath.dimensionKey === dimension.dimensionKey && colPath.value === dimension.value) {
+                return true;
+              }
+              return false;
+            });
+            if (finded < 0) {
+              match = false;
+              break;
+            }
+          }
+          if (match && !this.internalProps._widthResizedColMap.has(cell.col)) {
             this._setColWidth(cell.col, width);
             this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
           }
