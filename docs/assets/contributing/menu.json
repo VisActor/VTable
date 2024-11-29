@@ -1,0 +1,40 @@
+{
+  "menu": "contributing",
+  "children": [
+    {
+      "path": "1-Setting-Up-the-Development-Environment",
+      "title": {
+        "zh": "1.搭建开发环境",
+        "en": "1-Setting-Up-the-Development-Environment"
+      }
+    },
+    {
+      "path": "2-Howto Submit an Issue",
+      "title": {
+        "zh": "2.如何提issue",
+        "en": "2-Howto Submit an Issue"
+      }
+    },
+    {
+      "path": "3-How to Contribute Documentation",
+      "title": {
+        "zh": "3.如何贡献文档",
+        "en": "3-How to Contribute Documentation"
+      }
+    },
+    {
+      "path": "4-How to Contribute to a Demo",
+      "title": {
+        "zh": "4.如何贡献demo",
+        "en": "4-How to Contribute to a Demo"
+      }
+    },
+    {
+      "path": "5-How to Contribute Code",
+      "title": {
+        "zh": "5.如何贡献代码",
+        "en": "5-How to Contribute Code"
+      }
+    }
+  ]
+}

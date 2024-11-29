@@ -512,7 +512,8 @@ function updateMergeCellContentWidth(
           // 处理文字
           // const style = table._getCellStyle(col, row);
           const style = table._getCellStyle(colStart, rowStart);
-          const padding = getQuadProps(style.padding as number);
+          const padding = getQuadProps(getProp('padding', style, col, row, table));
+
           const textAlign = style.textAlign;
           const textBaseline = style.textBaseline;
           changed = updateCellContentWidth(
@@ -574,7 +575,7 @@ function updateMergeCellContentWidth(
 
   // 处理文字
   const style = table._getCellStyle(cellGroup.col, cellGroup.row);
-  const padding = getQuadProps(style.padding as number);
+  const padding = getQuadProps(getProp('padding', style, cellGroup.col, cellGroup.row, table));
   const textAlign = style.textAlign;
   const textBaseline = style.textBaseline;
   return updateCellContentWidth(

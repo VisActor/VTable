@@ -3,7 +3,7 @@ category: examples
 group: Interaction
 title: 高亮表头
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/head-highlight.png
-option: ListTable#hover.highlightMode('cross'%7C'column'%7C'row'%7C'cell')%20=%20'cross'
+link: '../guide/plugin/header-highlight'
 ---
 
 # 高亮表头
@@ -12,7 +12,7 @@ option: ListTable#hover.highlightMode('cross'%7C'column'%7C'row'%7C'cell')%20=%2
 
 ## 关键配置
 
-- `VTable.HeaderHighlightPlugin`  高亮表头插件
+- `HeaderHighlightPlugin`  高亮表头插件
   - `columnHighlight` 是否高亮列头
   - `rowHighlight` 是否高亮行头
   - `colHighlightBGColor` 列头高亮背景色
@@ -23,6 +23,10 @@ option: ListTable#hover.highlightMode('cross'%7C'column'%7C'row'%7C'cell')%20=%2
 ## 代码演示
 
 ```javascript livedemo template=vtable
+// use this for project
+// import * as VTable from '@visactor/vtable';
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
     id: i + 1,
@@ -95,6 +99,6 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 
-const highlightPlugin = new VTable.HeaderHighlightPlugin(tableInstance, {});
+const highlightPlugin = new VTablePlugins.HeaderHighlightPlugin(tableInstance, {});
 
 ```

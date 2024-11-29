@@ -155,7 +155,8 @@ export function isCellSelected(state: StateManager, col: number, row: number, ce
         // }
       } else {
         const define = table.getBodyColumnDefine(col, row);
-        cellDisable = (define as ColumnDefine)?.disableSelect;
+        const disableSelect = (define as ColumnDefine)?.disableSelect;
+        cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
       }
 
       if (cellDisable) {
@@ -181,7 +182,9 @@ export function isCellSelected(state: StateManager, col: number, row: number, ce
 export function isCellDisableSelect(table: BaseTableAPI, col: number, row: number) {
   const columnDefine = table.getBodyColumnDefine(col, row);
   const isHeader = table.isHeader(col, row);
-  if ((columnDefine as ColumnDefine)?.disableSelect && !isHeader) {
+  const disableSelect = (columnDefine as ColumnDefine)?.disableSelect;
+  const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
+  if (cellDisable && !isHeader) {
     return true;
   }
   if (isHeader && (columnDefine as ColumnDefine)?.disableHeaderSelect) {

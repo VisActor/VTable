@@ -1,5 +1,6 @@
-import * as VTable from '../../src';
-import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+import * as VTable from '@visactor/vtable';
+import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
+import { HeaderHighlightPlugin } from '../../src';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -77,6 +78,28 @@ export function createTable() {
     customGrapicKeys: ['col', 'row']
   });
 
-  const highlightPlugin = new VTable.HeaderHighlightPlugin(tableInstance);
+  tableInstance.stateManager.setCustomSelectRanges([
+    {
+      range: {
+        start: {
+          col: 0,
+          row: 4
+        },
+        end: {
+          col: 5,
+          row: 4
+        }
+      },
+      style: {
+        cellBorderColor: 'blue',
+        cellBorderLineWidth: 2,
+        cellBorderLineDash: [5, 5]
+      }
+    }
+  ]);
+
+  const highlightPlugin = new HeaderHighlightPlugin(tableInstance);
   window.highlightPlugin = highlightPlugin;
+
+  // tableInstance.scenegraph.temporarilyUpdateSelectRectStyle({stroke: false})
 }

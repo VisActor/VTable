@@ -172,6 +172,22 @@ const records = [
 ];
 ```
 
+## Default expansion level of tree structure
+
+In a tree structure, the default expansion level can be specified through the `hierarchyExpandLevel` configuration item.
+
+For example, to specify the default expansion to the third level: `hierarchyExpandLevel: 3`。
+
+```javascript
+const option = {
+  records,
+  columns,
+  widthMode: 'standard',
+  hierarchyExpandLevel: 3
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+```
+
 ## Lazy loading of child node data scenarios
 
 In some scenarios, the child node data may be relatively large. In view of the excessive performance pressure on the backend database, and you do not want to obtain all the data at once, you need to call the interface to load the data when you click to expand. Then you can use the following method to achieve:

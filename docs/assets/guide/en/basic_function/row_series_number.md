@@ -54,4 +54,10 @@ Other annotated configuration items will be gradually improved in the future, an
 - Sorted tables do not support dragging row numbers to change the order of data;
 - Perspectives currently do not support row numbers.
 
-For demo examples, please refer to: https://visactor.io/vtable/demo/basic-functionality/row-series-number
+[Demo Example](../../demo/basic-functionality/row-series-number)
+
+## Interactive Capabilities Achieved Through Row Numbers
+
+- Drag and drop row numbers to change positions: Set `dragOrder` to `true`. If you need to listen to the drag-and-drop event, you can listen to the [`VTable.EVENT_TYPE.CHANGE_HEADER_POSITION` event](../../api/events#CHANGE_HEADER_POSITION).
+
+- Select entire rows: Click on the row number to select the entire row.

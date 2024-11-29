@@ -20,7 +20,7 @@ Specify the column type as 'link', headerType can be omitted and defaults to 'te
 
 **Link type exclusive configuration item** Whether the link undetrrgoes regular expression detection, and only if the link complies with the URL rules it will be displayed as a link. This configuration does not take effect if a template link is configured.
 
-##${prefix} templateLink(string)
+##${prefix} templateLink(string | (record: any, col: number, row: number, table: BaseTableAPI) => string)
 
 **Link type exclusive configuration item** Template link address, such as: 'https://www.google.com.hk/search?q={name}', where name is the data source attribute field name.
 

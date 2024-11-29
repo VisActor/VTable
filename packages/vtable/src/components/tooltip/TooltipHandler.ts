@@ -1,5 +1,5 @@
 import type { CellRange, RectProps } from '../../ts-types';
-import { Placement } from '../../ts-types';
+import type { Placement } from '../../ts-types';
 import type { BaseTooltip } from './BaseTooltip';
 import { BubbleTooltip } from './Tooltip';
 import { cellInRange } from '../../tools/helper';
@@ -8,6 +8,7 @@ import { isMobile } from '../../tools/util';
 import type { TooltipOptions } from '../../ts-types/tooltip';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import { isFunction } from '@visactor/vutils';
 const TOOLTIP_INSTANCE_FACTORY = {
   // tooltip(table: BaseTableAPI): BaseTooltip {
   //   return new Tooltip(table);
@@ -195,13 +196,17 @@ export class TooltipHandler {
       tooltipOption = {
         content: headerDescription,
         referencePosition: {
-          placement: Placement.bottom,
+          placement: table.internalProps.tooltip.position,
           rect
         },
         disappearDelay: table.internalProps.tooltip.overflowTextTooltipDisappearDelay ?? 0,
         style: table.theme.tooltipStyle
       };
-    } else if (table.internalProps.tooltip?.isShowOverflowTextTooltip) {
+    } else if (
+      isFunction(table.internalProps.tooltip?.isShowOverflowTextTooltip)
+        ? table.internalProps.tooltip.isShowOverflowTextTooltip(col, row, table)
+        : table.internalProps.tooltip.isShowOverflowTextTooltip
+    ) {
       const overflowText = table.getCellOverflowText(col, row);
       const rect = table.getCellRangeRelativeRect({ col, row });
       if (overflowText) {
@@ -211,7 +216,7 @@ export class TooltipHandler {
   ${overflowText}`
             : overflowText,
           referencePosition: {
-            placement: Placement.bottom,
+            placement: table.internalProps.tooltip.position,
             rect
           },
           disappearDelay: table.internalProps.tooltip.overflowTextTooltipDisappearDelay ?? 0,

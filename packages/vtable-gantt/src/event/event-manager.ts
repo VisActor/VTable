@@ -145,6 +145,7 @@ function bindTableGroupListener(event: EventManager) {
             const sub_task_index = taskBarTarget.sub_task_index;
             const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
+              federatedEvent: e,
               event: e.nativeEvent,
               index: taskIndex,
               sub_task_index,
@@ -160,6 +161,7 @@ function bindTableGroupListener(event: EventManager) {
             const sub_task_index = scene._gantt.stateManager.hoverTaskBar.target.sub_task_index;
             const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
+              federatedEvent: e,
               event: e.nativeEvent,
               index: taskIndex,
               sub_task_index,
@@ -314,6 +316,7 @@ function bindTableGroupListener(event: EventManager) {
         const sub_task_index = taskBarTarget.sub_task_index;
         const record = gantt.getRecordByIndex(taskIndex, sub_task_index);
         gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
+          federatedEvent: e,
           event: e.nativeEvent,
           index: taskIndex,
           sub_task_index,
@@ -343,6 +346,7 @@ function bindTableGroupListener(event: EventManager) {
         gantt.updateTaskRecord(recordTaskInfo.taskRecord, taskIndex);
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE)) {
           gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE, {
+            federatedEvent: e,
             event: e.nativeEvent,
             index: taskIndex,
             startDate: recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField],
@@ -360,11 +364,24 @@ function bindTableGroupListener(event: EventManager) {
       stateManager.hideTaskBarSelectedBorder();
       scene._gantt.stateManager.selectedDenpendencyLink.link = depedencyLink;
       stateManager.showDependencyLinkSelectedLine();
+    } else if ((isClickLeftLinkPoint || isClickRightLinkPoint) && event.poniterState === 'down') {
+      if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_DEPENDENCY_LINK_POINT)) {
+        const taskIndex = getTaskIndexByY(e.offset.y, gantt);
+        const record = gantt.getRecordByIndex(taskIndex);
+        gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_DEPENDENCY_LINK_POINT, {
+          event: e.nativeEvent,
+          index: taskIndex,
+          point: isClickLeftLinkPoint ? 'start' : 'end',
+          record
+        });
+      }
+      stateManager.hideTaskBarSelectedBorder();
     } else if (isClickLeftLinkPoint && event.poniterState === 'draging') {
       if (stateManager.isCreatingDependencyLine()) {
         const link = stateManager.endCreateDependencyLine(e.offset.y);
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK)) {
           gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK, {
+            federatedEvent: e,
             event: e.nativeEvent,
             link
           });
@@ -375,6 +392,7 @@ function bindTableGroupListener(event: EventManager) {
         const link = stateManager.endCreateDependencyLine(e.offset.y);
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK)) {
           gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK, {
+            federatedEvent: e,
             event: e.nativeEvent,
             link
           });

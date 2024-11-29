@@ -1,0 +1,25 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "compilerOptions": {
+    "types": [
+      "jest",
+      "offscreencanvas",
+      "node"
+    ],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
+    "baseUrl": "./",
+    "rootDir": "./",
+    "paths": {
+      "@visactor/vtable/es": [
+        "../vtable/src"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "demo"
+  ]
+}

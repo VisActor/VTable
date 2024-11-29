@@ -71,7 +71,8 @@ import type {
   HeightAdaptiveModeDef,
   ColumnInfo,
   RowInfo,
-  CellAddressWithBound
+  CellAddressWithBound,
+  Placement
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -96,12 +97,12 @@ import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 import type { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
-import type { IAnimationAppear } from './animation/appear';
+import type { IAnimationAppear, ITableAnimationOption } from './animation/appear';
 import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
-import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { EditManeger } from '../edit/edit-manager';
-import type { ITableAnimationOption, TableAnimationManager } from '../core/animation';
+import type { TableAnimationManager } from '../core/animation';
+import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -200,17 +201,19 @@ export interface IBaseTableProtected {
       | ((field: FieldDef, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+    parentElement?: HTMLElement;
   };
   /** 提示弹框的相关配置。消失时机：显示后鼠标移动到指定区域外或者进入新的单元格后自动消失*/
   tooltip: {
     parentElement: HTMLElement;
     renderMode: 'html' | 'canvas';
     /** 代替原来hover:isShowTooltip配置 */
-    isShowOverflowTextTooltip: boolean;
+    isShowOverflowTextTooltip: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
     /** 缩略文字提示框 延迟消失时间 */
     overflowTextTooltipDisappearDelay?: number;
     /** 弹框是否需要限定在表格区域内 */
     confine: boolean;
+    position: Placement;
   };
 
   dataSourceEventIds?: EventListenerId[];
@@ -366,7 +369,7 @@ export interface BaseTableConstructorOptions {
      */
     headerSelectMode?: 'inline' | 'cell' | 'body';
     /** 不响应鼠标select交互 */
-    disableSelect?: boolean;
+    disableSelect?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
     /** 单独设置表头不响应鼠标select交互 */
     disableHeaderSelect?: boolean;
     /** 点击空白区域是否取消选中 */
@@ -377,6 +380,8 @@ export interface BaseTableConstructorOptions {
     disableDragSelect?: boolean;
     /** 是否在选择多行或多列时高亮范围 */
     highlightInRange?: boolean;
+    /** 是否将选中的单元格自动滚动到视口内 默认为true */
+    makeSelectCellVisible?: boolean;
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
@@ -390,6 +395,7 @@ export interface BaseTableConstructorOptions {
       | ((field: string, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+    parentElement?: HTMLElement;
   };
   /** tooltip相关配置 */
   tooltip?: {
@@ -397,11 +403,12 @@ export interface BaseTableConstructorOptions {
     /** html目前实现较完整 先默认html渲染方式 */
     renderMode?: 'html'; // 目前暂不支持canvas方案
     /** 是否显示缩略文字提示框。 代替原来hover:isShowTooltip配置 暂时需要将renderMode配置为html才能显示，canvas的还未开发*/
-    isShowOverflowTextTooltip?: boolean;
+    isShowOverflowTextTooltip?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
     /** 缩略文字提示框 延迟消失时间 */
     overflowTextTooltipDisappearDelay?: number;
     /** 是否将 tooltip 框限制在画布区域内，默认开启。针对renderMode:"html"有效 */
     confine?: boolean;
+    position?: Placement;
   };
   /**
    * Theme
@@ -636,6 +643,7 @@ export interface BaseTableAPI {
   _rowRangeHeightsMap: Map<string, number>;
   _colRangeWidthsMap: Map<string, number>;
   canvasSizeSeted?: boolean;
+
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -917,7 +925,7 @@ export interface BaseTableAPI {
   /** 开启表格的滚动 */
   enableScroll: () => void;
 
-  customCellStylePlugin: CustomCellStylePlugin;
+  customCellStylePlugin?: CustomCellStylePlugin;
   headerStyleCache: Map<string, any>;
   bodyBottomStyleCache: Map<string, any>;
   bodyStyleCache: Map<string, any>;

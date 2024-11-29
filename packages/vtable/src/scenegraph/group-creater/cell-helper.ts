@@ -531,6 +531,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
       cornerRadius: cellTheme?.group?.cornerRadius ?? 0,
+      lineDash: cellTheme?.group?.lineDash ?? undefined,
 
       y: table.scenegraph.getCellGroupY(row)
     } as any);
@@ -994,7 +995,15 @@ export function resizeCellGroup(
 ) {
   const { col, row } = cellGroup;
   const dx = -table.getColsWidth(range.start.col, col - 1);
-  const dy = -table.getRowsHeight(range.start.row, row - 1);
+  let dy = 0;
+  if (table.options.customConfig?._disableColumnAndRowSizeRound) {
+    // temply fix for fs merge position; bugserverId: 673af513801d3000b3cd9e8f
+    for (let i = range.start.row; i <= row - 1; i++) {
+      dy -= table.getRowHeight(i);
+    }
+  } else {
+    dy = -table.getRowsHeight(range.start.row, row - 1);
+  }
 
   cellGroup.forEachChildren((child: IGraphic) => {
     // 利用_dx hack解决掉 合并单元格的范围内的格子依次执行该方法 如果挨个调用updateCell的话 执行多次后dx累计问题

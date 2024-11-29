@@ -18,16 +18,21 @@ export function updateSelectPosition(
   isShift: boolean,
   isCtrl: boolean,
   isSelectAll: boolean,
-  isSelectMoving: boolean = false,
+  makeSelectCellVisible: boolean = true,
   skipBodyMerge: boolean = false,
   forceSelect: boolean = false
 ) {
   const { table, interactionState } = state;
   const { scenegraph } = table;
   const { highlightScope, disableHeader, cellPos } = state.select;
+  const disableSelect = table.options?.select?.disableSelect;
+  const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
 
-  if (((disableHeader && table.isHeader(col, row)) || highlightScope === 'none') && forceSelect === false) {
-    if (col !== -1 && row !== -1 && !isSelectMoving) {
+  if (
+    ((disableHeader && table.isHeader(col, row)) || highlightScope === 'none' || cellDisable) &&
+    forceSelect === false
+  ) {
+    if (col !== -1 && row !== -1 && makeSelectCellVisible) {
       table._makeVisibleCell(col, row);
     }
     col = -1;
@@ -38,7 +43,7 @@ export function updateSelectPosition(
   //   return;
   // }
   /** 完整显示选中单元格 自动滚动效果*/
-  if (col !== -1 && row !== -1 && !isSelectMoving) {
+  if (col !== -1 && row !== -1 && makeSelectCellVisible) {
     if (interactionState === InteractionState.grabing && state.select.ranges.length > 0) {
       const currentRange = state.select.ranges[state.select.ranges.length - 1];
       if (col > currentRange.start.col && col > currentRange.end.col) {

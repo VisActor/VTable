@@ -84,11 +84,13 @@ const tableInstance = new VTable.ListTable({
 
 这个示例中，我们为单元格配置了一个名为 `Avatar` 的图标。该图标的作用是用来显示头像图片，图片 src 的值是从 records 的 avator 的字段中获取到的。
 
-在线 demo：https://visactor.io/vtable/demo/custom-render/custom-icon
+在线 [demo](../../demo/custom-render/custom-icon)
 
 ## 如何注册 icon 及注册后的使用
 
 在 VTable 中，通过 `register.icon` 方法，我们可以注册自定义图标，并在表格中使用。如果想替换内置的功能图标，也可以通过注册来实现。
+
+[注册接口方法使用介绍](../../api/register#icon)
 
 ### 示例：注册一个名为 order 的图标
 

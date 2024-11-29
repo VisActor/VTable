@@ -1,5 +1,5 @@
-import type { CellRange } from '../ts-types';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { CellRange } from '@visactor/vtable/es/ts-types';
+import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
 
 export interface IHeaderHighlightPluginOptions {
   rowHighlight?: boolean;
@@ -42,6 +42,12 @@ export class HeaderHighlightPlugin {
 
     this.table.on('selected_clear', () => {
       this.clearHighlight();
+    });
+
+    this.table.on('mousemove_table', () => {
+      if (this.table.stateManager.select.selecting) {
+        this.updateHighlight();
+      }
     });
   }
 

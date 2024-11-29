@@ -17,7 +17,7 @@ export interface IBasicHeaderIndicator {
 
   // linkJump?: boolean;
   // linkDetect?: boolean;
-  // templateLink?: string;
+  // templateLink?: string | FieldGetter;
 
   // chartSpec?: any | ((arg0: CustomRenderFunctionArg) => any);
   // chartModule?: string; // 如果配置了columnType未chart，chartType来指定图表组件类型 如'vchart' 需要从预先register的图表类型获取
@@ -66,5 +66,5 @@ export interface IBasicColumnIndicator {
   /** 该指标内容不支持hover交互行为 */
   disableHover?: boolean;
   /** 该指标内容不支持选中 */
-  disableSelect?: boolean;
+  disableSelect?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
 }

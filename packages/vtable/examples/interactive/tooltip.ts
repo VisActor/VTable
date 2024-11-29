@@ -91,7 +91,8 @@ export function createTable() {
     tooltip: {
       renderMode: 'html',
       isShowOverflowTextTooltip: true,
-      overflowTextTooltipDisappearDelay: 1000
+      overflowTextTooltipDisappearDelay: 1000,
+      position: VTable.TYPES.Placement.top
     }
   };
 

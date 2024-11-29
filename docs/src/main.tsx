@@ -12,6 +12,7 @@ import { SearchComponent } from '@visactor/vtable-search';
 import * as ReactVTable from '@visactor/react-vtable';
 import * as VueVTable from '@visactor/vue-vtable';
 import * as InulaVTable from '@visactor/openinula-vtable';
+import * as VTablePlugins from '@visactor/vtable-plugins';
 import { App } from './app';
 import * as ArcoDesign from '@arco-design/web-react';
 import * as ArcoDesignVue from '@arco-design/web-vue';
@@ -28,6 +29,7 @@ import { createApp, ref, onMounted, h } from 'vue';
 (window as any).VTableGantt = VTableGantt;
 (window as any).VTableCalendar = VTableCalendar;
 (window as any).VTable_editors = VTableEditors;
+(window as any).VTablePlugins = VTablePlugins;
 (window as any).VChart = VChart.VChart;
 
 (window as any).downloadCsv = downloadCsv;

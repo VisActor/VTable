@@ -236,7 +236,7 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 'body': 不选择表头，点击行表头则选择该行所有 body 单元格，点击列表头则选择该列所有 body 单元格。
 
-##${prefix} disableSelect (boolean) = false
+##${prefix} disableSelect (boolean | ((col: number, row: number, table: BaseTableAPI) => boolean)) = false
 
 不响应鼠标 select 交互。
 

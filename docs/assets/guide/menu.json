@@ -435,6 +435,13 @@
             "zh": "滚动动画",
             "en": "scroll animationt"
           }
+        },
+        {
+          "path": "carousel_animation",
+          "title": {
+            "zh": "轮播动画",
+            "en": "carousel animationt"
+          }
         }
       ]
     },
@@ -672,6 +679,29 @@
           "title": {
             "zh": "excel",
             "en": "excel"
+          }
+        }
+      ]
+    },
+    {
+      "path": "plugin",
+      "title": {
+        "zh": "插件",
+        "en": "plugin"
+      },
+      "children": [
+        {
+          "path": "invert-highlight",
+          "title": {
+            "zh": "反选高亮",
+            "en": "Invert Highlight"
+          }
+        },
+        {
+          "path": "header-highlight",
+          "title": {
+            "zh": "表头高亮",
+            "en": "Header Highlight"
           }
         }
       ]

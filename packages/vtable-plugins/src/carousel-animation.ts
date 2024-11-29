@@ -1,5 +1,5 @@
-import type { EasingType } from '@src/vrender';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { EasingType } from '@visactor/vtable/es/vrender';
+import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
 
 export interface ICarouselAnimationPluginOptions {
   rowCount?: number;
@@ -8,6 +8,9 @@ export interface ICarouselAnimationPluginOptions {
   animationDelay?: number;
   animationEasing?: EasingType;
   replaceScrollAction?: boolean;
+
+  customDistRowFunction?: (row: number, table: BaseTableAPI) => { distRow: number; animation?: boolean } | undefined;
+  customDistColFunction?: (col: number, table: BaseTableAPI) => { distCol: number; animation?: boolean } | undefined;
 }
 
 export class CarouselAnimationPlugin {
@@ -25,6 +28,9 @@ export class CarouselAnimationPlugin {
   col: number;
   willUpdateRow: boolean = false;
   willUpdateCol: boolean = false;
+
+  customDistRowFunction?: (row: number, table: BaseTableAPI) => { distRow: number; animation?: boolean } | undefined;
+  customDistColFunction?: (col: number, table: BaseTableAPI) => { distCol: number; animation?: boolean } | undefined;
   constructor(table: BaseTableAPI, options?: ICarouselAnimationPluginOptions) {
     this.table = table;
 
@@ -34,6 +40,9 @@ export class CarouselAnimationPlugin {
     this.animationDelay = options?.animationDelay ?? 1000;
     this.animationEasing = options?.animationEasing ?? 'linear';
     this.replaceScrollAction = options?.replaceScrollAction ?? false;
+
+    this.customDistColFunction = options.customDistColFunction;
+    this.customDistRowFunction = options.customDistRowFunction;
 
     this.reset();
     this.init();
@@ -90,12 +99,16 @@ export class CarouselAnimationPlugin {
   }
 
   updateRow() {
-    if (!this.playing) {
+    if (!this.playing || this.table.isReleased) {
       return;
     }
 
     let animation = true;
-    if (this.table.scenegraph.proxy.screenTopRow !== this.row) {
+    const customRow = this.customDistRowFunction && this.customDistRowFunction(this.row, this.table);
+    if (customRow) {
+      this.row = customRow.distRow;
+      animation = customRow.animation ?? true;
+    } else if (this.table.scenegraph.proxy.screenTopRow !== this.row) {
       this.row = this.table.frozenRowCount;
       animation = false;
     } else {
@@ -117,12 +130,16 @@ export class CarouselAnimationPlugin {
   }
 
   updateCol() {
-    if (!this.playing) {
+    if (!this.playing || this.table.isReleased) {
       return;
     }
 
     let animation = true;
-    if (this.table.scenegraph.proxy.screenLeftCol !== this.col) {
+    const customCol = this.customDistColFunction && this.customDistColFunction(this.col, this.table);
+    if (customCol) {
+      this.col = customCol.distCol;
+      animation = customCol.animation ?? true;
+    } else if (this.table.scenegraph.proxy.screenLeftCol !== this.col) {
       this.col = this.table.frozenColCount;
       animation = false;
     } else {

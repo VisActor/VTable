@@ -21,10 +21,11 @@ export class DataSource {
     let minDate = Number.MAX_SAFE_INTEGER;
     let maxDate = Number.MIN_SAFE_INTEGER;
     if (
-      needMinDate ||
-      needMaxDate ||
-      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
-      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+      (needMinDate ||
+        needMaxDate ||
+        this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+        this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact) &&
+      this.records.length
     ) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
@@ -108,5 +109,9 @@ export class DataSource {
         this.records[target_index].children.splice(target_sub_task_index, 0, sub_task_record);
       }
     }
+  }
+  setRecords(records: any[]) {
+    this.records = records;
+    this.processRecords();
   }
 }

@@ -35,7 +35,8 @@ import {
   type LayoutObjectId,
   type HeightModeDef,
   type ITableThemeDefine,
-  InteractionState
+  InteractionState,
+  Placement
 } from '../ts-types';
 import type {
   AnyFunction,
@@ -125,7 +126,6 @@ import { NumberRangeMap } from '../layout/row-height-map';
 import { ListTable } from '../ListTable';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { RowSeriesNumberHelper } from './row-series-number-helper';
-import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 import type { ITextGraphicAttribute } from '@src/vrender';
 import { ReactCustomLayout } from '../components/react/react-custom-layout';
@@ -148,6 +148,8 @@ import { createReactContainer } from '../scenegraph/layout/frozen-react';
 import { setIconColor } from '../icons';
 import { TableAnimationManager } from './animation';
 import type { ITableAnimationOption } from '../ts-types/animation/appear';
+import { checkCellInSelect } from '../state/common/check-in-select';
+import type { CustomCellStylePlugin, ICustomCellStylePlugin } from '../plugins/custom-cell-style';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -216,7 +218,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   isReleased: boolean = false;
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
 
-  customCellStylePlugin: CustomCellStylePlugin;
+  customCellStylePlugin?: CustomCellStylePlugin;
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 
@@ -461,7 +463,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         parentElement: this.getElement(),
         renderMode: 'html',
         isShowOverflowTextTooltip: false,
-        confine: true
+        confine: true,
+        position: Placement.bottom
       },
       options.tooltip
     );
@@ -496,11 +499,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.customMergeCell = options.customMergeCell;
 
-    this.customCellStylePlugin = new CustomCellStylePlugin(
-      this,
-      options.customCellStyle ?? [],
-      options.customCellStyleArrangement ?? []
-    );
+    const CustomCellStylePlugin = Factory.getComponent('customCellStylePlugin') as ICustomCellStylePlugin;
+    if (CustomCellStylePlugin) {
+      this.customCellStylePlugin = new CustomCellStylePlugin(
+        this,
+        options.customCellStyle ?? [],
+        options.customCellStyleArrangement ?? []
+      );
+    }
   }
   /** 节流绘制 */
   throttleInvalidate = throttle2(this.render.bind(this), 200);
@@ -2380,7 +2386,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         parentElement: this.getElement(),
         renderMode: 'html',
         isShowOverflowTextTooltip: false,
-        confine: true
+        confine: true,
+        position: Placement.bottom
       },
       options.tooltip
     );
@@ -2413,7 +2420,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.customMergeCell = options.customMergeCell;
 
-    this.customCellStylePlugin.updateCustomCell(
+    this.customCellStylePlugin?.updateCustomCell(
       options.customCellStyle ?? [],
       options.customCellStyleArrangement ?? []
     );
@@ -2604,7 +2611,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     row: number,
     isShift?: boolean,
     isCtrl?: boolean,
-    makeSelectCellVisible: boolean = true,
+    makeSelectCellVisible?: boolean,
     skipBodyMerge: boolean = false,
     forceSelect: boolean = false
   ) {
@@ -2615,7 +2622,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       isShift,
       isCtrl,
       false,
-      !makeSelectCellVisible,
+      makeSelectCellVisible ?? this.options.select?.makeSelectCellVisible ?? true,
       skipBodyMerge,
       forceSelect
     );
@@ -2635,7 +2642,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           false,
           index >= 1,
           false,
-          false,
+          this.options.select?.makeSelectCellVisible ?? true,
           true
         );
       } else {
@@ -2645,11 +2652,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           false,
           index >= 1,
           false,
-          false,
+          this.options.select?.makeSelectCellVisible ?? true,
           true
         );
         this.stateManager.updateInteractionState(InteractionState.grabing);
-        this.stateManager.updateSelectPos(cellRange.end.col, cellRange.end.row, false, index >= 1, false, false, true);
+        this.stateManager.updateSelectPos(
+          cellRange.end.col,
+          cellRange.end.row,
+          false,
+          index >= 1,
+          false,
+          this.options.select?.makeSelectCellVisible ?? true,
+          true
+        );
       }
       this.stateManager.endSelectCells(false, false);
       this.stateManager.updateInteractionState(InteractionState.default);
@@ -3286,11 +3301,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   _canDragHeaderPosition(col: number, row: number): boolean {
+    const disableSelect = this.options.select?.disableSelect;
+    const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, this) : disableSelect;
     if (
       this.isHeader(col, row) &&
       (this.stateManager.isSelected(col, row) ||
+        (this.options.select?.headerSelectMode === 'body' &&
+          checkCellInSelect(col, row, [
+            this.getCellRange(this.stateManager.select.cellPos.col, this.stateManager.select.cellPos.row)
+          ])) ||
         this.options.select?.disableHeaderSelect ||
-        this.options.select?.disableSelect)
+        cellDisable)
     ) {
       if (this.internalProps.frozenColDragHeaderMode === 'disabled' && this.isFrozenColumn(col)) {
         return false;
@@ -4099,14 +4120,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //
   }
   hasCustomCellStyle(customStyleId: string): boolean {
-    return this.customCellStylePlugin.hasCustomCellStyle(customStyleId);
+    return this.customCellStylePlugin?.hasCustomCellStyle(customStyleId);
   }
   registerCustomCellStyle(customStyleId: string, customStyle: ColumnStyleOption | undefined | null) {
-    this.customCellStylePlugin.registerCustomCellStyle(customStyleId, customStyle);
+    this.customCellStylePlugin?.registerCustomCellStyle(customStyleId, customStyle);
   }
 
   arrangeCustomCellStyle(cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) {
-    this.customCellStylePlugin.arrangeCustomCellStyle(cellPos, customStyleId);
+    this.customCellStylePlugin?.arrangeCustomCellStyle(cellPos, customStyleId);
   }
   isSeriesNumber(col: number, row: number): boolean {
     return this.internalProps.layoutMap.isSeriesNumber(col, row);
@@ -4148,9 +4169,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   //   startInertia(0, -1, 1, this.stateManager);
   // }
 
-  checkReactCustomLayout(removeAllContainer: () => void) {
+  checkReactCustomLayout() {
     if (!this.reactCustomLayout) {
-      this.reactCustomLayout = new ReactCustomLayout(removeAllContainer, this);
+      this.reactCustomLayout = new ReactCustomLayout(this);
     }
   }
 

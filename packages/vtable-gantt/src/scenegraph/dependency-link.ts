@@ -46,9 +46,10 @@ export class DependencyLink {
       clip: true
     });
     this.group.appendChild(this.linkLinesContainer);
-
-    for (let i = 0; i < this._scene._gantt.parsedOptions.dependencyLinks?.length ?? 0; i++) {
-      this.initLinkLine(i);
+    if (this._scene._gantt.records?.length) {
+      for (let i = 0; i < this._scene._gantt.parsedOptions.dependencyLinks?.length ?? 0; i++) {
+        this.initLinkLine(i);
+      }
     }
   }
   initLinkLine(index: number) {

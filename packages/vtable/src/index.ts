@@ -129,6 +129,3 @@ export { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 export { PIVOT_CHART_EVENT_TYPE, PIVOT_TABLE_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 
 export { EventTarget } from './event/EventTarget';
-export * from './plugins/invert-highlight';
-export * from './plugins/carousel-animation';
-export * from './plugins/header-highlight';

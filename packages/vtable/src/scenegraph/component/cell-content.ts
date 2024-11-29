@@ -242,6 +242,11 @@ export class CellContent extends Group {
   updateHeight(height: number) {
     this._cellHeight = height;
     this._cellWidth = this._originCellWidth;
+    const textMark = this.getChildByName('text', true);
+    if (textMark) {
+      textMark.setAttribute('heightLimit', height);
+    }
+
     this.layout();
   }
 }

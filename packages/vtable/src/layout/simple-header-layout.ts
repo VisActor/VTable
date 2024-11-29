@@ -1,5 +1,5 @@
 /* eslint-disable sort-imports */
-import { isValid } from '@visactor/vutils';
+import { isValid, merge } from '@visactor/vutils';
 import type { ListTable } from '../ListTable';
 import { DefaultSparklineSpec } from '../tools/global';
 import type {
@@ -104,17 +104,17 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   handleRowSeriesNumber(rowSeriesNumber: IRowSeriesNumber) {
     if (rowSeriesNumber) {
       if (Array.isArray(rowSeriesNumber)) {
-        this.rowSeriesNumberColumn = rowSeriesNumber.map(seriesNumber => {
+        this.rowSeriesNumberColumn = rowSeriesNumber.map((seriesNumber, index) => {
           return {
             id: this.seqId++,
             title: seriesNumber.title,
-            define: seriesNumber,
+            define: merge({ field: '_vtable_rowSeries_number_' + index }, seriesNumber),
             cellType: seriesNumber.cellType ?? 'text',
             headerType: rowSeriesNumber.cellType ?? 'text',
             style: seriesNumber.style,
             width: seriesNumber.width,
             format: seriesNumber.format,
-            field: seriesNumber.field,
+            field: seriesNumber.field ?? '_vtable_rowSeries_number_' + index,
             icon: seriesNumber.icon,
             headerIcon: seriesNumber.headerIcon,
             isChildNode: false
@@ -125,13 +125,13 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           {
             id: this.seqId++,
             title: rowSeriesNumber.title,
-            define: rowSeriesNumber,
+            define: merge({ field: '_vtable_rowSeries_number' }, rowSeriesNumber),
             cellType: rowSeriesNumber.cellType ?? 'text',
             headerType: rowSeriesNumber.cellType ?? 'text',
             style: rowSeriesNumber.style,
             width: rowSeriesNumber.width,
             format: rowSeriesNumber.format,
-            field: '', //rowSeriesNumber.field,
+            field: '_vtable_rowSeries_number', //rowSeriesNumber.field,
             icon: rowSeriesNumber.icon,
             headerIcon: rowSeriesNumber.headerIcon,
             isChildNode: false
@@ -865,6 +865,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return this._headerObjectMap[id as number]!;
   }
   getHeaderField(col: number, row: number) {
+    if (this.isSeriesNumberInHeader(col, row)) {
+      return this.getSeriesNumberHeader(col, row)?.field;
+    } else if (this.isSeriesNumberInBody(col, row)) {
+      return this.getSeriesNumberBody(col, row)?.field;
+    }
     const id = this.getCellId(col, row);
     return (
       this._headerObjectMap[id as number]?.field ||

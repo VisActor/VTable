@@ -30,7 +30,7 @@ import { Bounds, isObject, isString, isValid } from '@visactor/vutils';
 import { updateDrill } from './drill';
 import { clearChartHover, updateChartHover } from './spark-line';
 import { endMoveCol, startMoveCol, updateMoveCol } from './cell-move';
-import type { FederatedWheelEvent } from '@src/vrender';
+import type { FederatedWheelEvent, IRectGraphicAttribute } from '@src/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
@@ -51,6 +51,14 @@ import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-bor
 import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
+import { addCustomSelectRanges, deletaCustomSelectRanges } from './select/custom-select';
+
+export type CustomSelectionStyle = {
+  cellBorderColor?: string; //边框颜色
+  cellBorderLineWidth?: number; //边框线宽度
+  cellBorderLineDash?: number[]; //边框线虚线
+  cellBgColor?: string; //选择框背景颜色
+};
 
 export class StateManager {
   table: BaseTableAPI;
@@ -81,6 +89,10 @@ export class StateManager {
     headerSelectMode?: 'inline' | 'cell' | 'body';
     highlightInRange?: boolean;
     selecting: boolean;
+    customSelectRanges?: {
+      range: CellRange;
+      style: CustomSelectionStyle;
+    }[];
   };
   fillHandle: {
     direction?: 'top' | 'bottom' | 'left' | 'right';
@@ -443,7 +455,9 @@ export class StateManager {
     // } else if (enableColumnHighlight) {
     //   this.select.highlightScope = HighlightScope.column;
     // } else
-    if (!disableSelect) {
+    if (disableSelect === true) {
+      this.select.highlightScope = HighlightScope.none;
+    } else {
       if (highlightMode === 'cross') {
         this.select.highlightScope = HighlightScope.cross;
       } else if (highlightMode === 'row') {
@@ -453,8 +467,6 @@ export class StateManager {
       } else {
         this.select.highlightScope = HighlightScope.single;
       }
-    } else {
-      this.select.highlightScope = HighlightScope.none;
     }
 
     this.select.singleStyle = !disableSelect;
@@ -585,14 +597,24 @@ export class StateManager {
     isShift: boolean = false,
     isCtrl: boolean = false,
     isSelectAll: boolean = false,
-    isSelectMoving: boolean = false,
+    makeSelectCellVisible: boolean = true,
     skipBodyMerge: boolean = false,
     forceSelect: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving, skipBodyMerge, forceSelect);
+    updateSelectPosition(
+      this,
+      col,
+      row,
+      isShift,
+      isCtrl,
+      isSelectAll,
+      makeSelectCellVisible,
+      skipBodyMerge,
+      forceSelect
+    );
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -777,10 +799,10 @@ export class StateManager {
 
     this.table.scenegraph.component.showResizeRow(row, x, isBottomFrozen);
 
-    // 调整列宽期间清空选中清空
-    const isHasSelected = !!this.select.ranges?.length;
-    this.updateSelectPos(-1, -1);
-    this.endSelectCells(true, isHasSelected);
+    // // 调整列宽期间清空选中清空
+    // const isHasSelected = !!this.select.ranges?.length;
+    // this.updateSelectPos(-1, -1);
+    // this.endSelectCells(true, isHasSelected);
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeRow(xInTable: number, yInTable: number) {
@@ -1570,5 +1592,15 @@ export class StateManager {
     if (this.radioState.length) {
       changeRadioOrder(sourceIndex, targetIndex, this);
     }
+  }
+
+  setCustomSelectRanges(
+    customSelectRanges: {
+      range: CellRange;
+      style: CustomSelectionStyle;
+    }[]
+  ) {
+    deletaCustomSelectRanges(this);
+    addCustomSelectRanges(customSelectRanges, this);
   }
 }

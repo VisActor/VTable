@@ -125,12 +125,15 @@ export class Scenegraph {
 
   refreshAll() {
     this.tableGroupHeight = Math.min(this._gantt.tableNoFrameHeight, this._gantt.drawHeight);
+    this.tableGroupWidth = this._gantt.tableNoFrameWidth;
     this.tableGroup.setAttribute('height', this.tableGroupHeight);
+    this.tableGroup.setAttribute('width', this.tableGroupWidth);
     this.timelineHeader.refresh();
     this.grid.refresh();
     this.taskBar.refresh();
     this.dependencyLink.refresh();
     this.markLine.refresh();
+    this.dependencyLink.refresh();
     this.frameBorder.resize();
     this.scrollbarComponent.updateScrollBar();
     this.updateNextFrame();
@@ -162,6 +165,7 @@ export class Scenegraph {
 
   updateTableSize() {
     this.tableGroupHeight = Math.min(this._gantt.tableNoFrameHeight, this._gantt.drawHeight);
+    this.tableGroupWidth = this._gantt.tableNoFrameWidth;
     this.tableGroup.setAttributes({
       x: this._gantt.tableX,
       y: this._gantt.tableY,
@@ -170,6 +174,7 @@ export class Scenegraph {
     } as any);
     this.grid.resize();
     this.taskBar.resize();
+    this.markLine.refresh();
     this.frameBorder.resize();
   }
 

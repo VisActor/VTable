@@ -3,7 +3,7 @@ category: examples
 group: Interaction
 title: 反选高亮
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/invert-highlight.png
-option: ListTable#hover.highlightMode('cross'%7C'column'%7C'row'%7C'cell')%20=%20'cross'
+link: '../guide/plugin/invert-highlight'
 ---
 
 # 反选高亮
@@ -12,7 +12,7 @@ option: ListTable#hover.highlightMode('cross'%7C'column'%7C'row'%7C'cell')%20=%2
 
 ## 关键配置
 
-- `VTable.InvertHighlightPlugin`  反选高亮插件
+- `InvertHighlightPlugin`  反选高亮插件
   - `fill` 反选高亮背景色
   - `opacity` 反选高亮透明度
 - `setInvertHighlightRange` 设置反选高亮范围
@@ -20,6 +20,10 @@ option: ListTable#hover.highlightMode('cross'%7C'column'%7C'row'%7C'cell')%20=%2
 ## 代码演示
 
 ```javascript livedemo template=vtable
+// use this for project
+// import * as VTable from '@visactor/vtable';
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
     id: i + 1,
@@ -92,7 +96,7 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 
-const highlightPlugin = new VTable.InvertHighlightPlugin(tableInstance, {});
+const highlightPlugin = new VTablePlugins.InvertHighlightPlugin(tableInstance, {});
 
 highlightPlugin.setInvertHighlightRange({
   start: {

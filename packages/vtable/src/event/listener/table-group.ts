@@ -23,6 +23,7 @@ import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CheckBox, CheckboxAttributes, Radio } from '@visactor/vrender-components';
 import { ResizeColumnHotSpotSize } from '../../tools/global';
 import { handleWhell } from '../scroll';
+import { fireMoveColEventListeners } from '../helper';
 export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
@@ -597,33 +598,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
       } else if (stateManager.isResizeRow()) {
         endResizeRow(table);
       } else if (stateManager.isMoveCol()) {
-        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+        // const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
         const endMoveColSuccess = table.stateManager.endMoveCol();
-        if (
-          endMoveColSuccess &&
-          eventArgsSet.eventArgs &&
-          (table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)
-        ) {
-          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
-            target: { col: eventArgsSet.eventArgs.col, row: eventArgsSet.eventArgs.row },
-            source: {
-              col: table.stateManager.columnMove.colSource,
-              row: table.stateManager.columnMove.rowSource
-            },
-            event: e.nativeEvent
-          });
-        } else if (!endMoveColSuccess) {
-          if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL)) {
-            table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL, {
-              target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
-              source: {
-                col: table.stateManager.columnMove.colSource,
-                row: table.stateManager.columnMove.rowSource
-              },
-              event: e
-            });
-          }
-        }
+        fireMoveColEventListeners(table, endMoveColSuccess, e.nativeEvent);
       } else if (stateManager.isSelecting()) {
         table.stateManager.endSelectCells();
         if (table.stateManager.isFillHandle()) {

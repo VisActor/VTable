@@ -1,12 +1,16 @@
-import type { Style } from '../body-helper/style';
-import type {
-  CellRange,
-  ColumnStyleOption,
-  CustomCellStyle,
-  CustomCellStyleArrangement,
-  FullExtendStyle
-} from '../ts-types';
+import { merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
+import type { CellRange, ColumnStyleOption, CustomCellStyle, CustomCellStyleArrangement } from '../ts-types';
+import type { Style } from '../body-helper/style';
+import { Factory } from '../core/factory';
+
+export interface ICustomCellStylePlugin {
+  new (
+    table: BaseTableAPI,
+    customCellStyle: CustomCellStyle[],
+    customCellStyleArrangement: CustomCellStyleArrangement[]
+  ): CustomCellStylePlugin;
+}
 
 export class CustomCellStylePlugin {
   table: BaseTableAPI;
@@ -24,16 +28,27 @@ export class CustomCellStylePlugin {
   }
 
   getCustomCellStyle(col: number, row: number) {
-    const customStyleId = this.getCustomCellStyleId(col, row);
-    if (customStyleId) {
-      const styleOption = this.getCustomCellStyleOption(customStyleId);
-      return styleOption?.style;
+    const customStyleIds = this.getCustomCellStyleIds(col, row);
+    if (customStyleIds.length) {
+      const styles: ColumnStyleOption[] = [];
+
+      customStyleIds.forEach(customStyleId => {
+        const styleOption = this.getCustomCellStyleOption(customStyleId);
+        if (styleOption?.style) {
+          styles.push(styleOption.style);
+        }
+      });
+
+      return merge({}, ...styles);
+      // const styleOption = this.getCustomCellStyleOption(customStyleId);
+      // return styleOption?.style;
     }
     return undefined;
   }
 
-  getCustomCellStyleId(col: number, row: number) {
-    let customStyleId;
+  getCustomCellStyleIds(col: number, row: number) {
+    // let customStyleId;
+    const customStyleIds: string[] = [];
 
     const range = this.table.getCellRange(col, row);
     for (let c = range.start.col; c <= range.end.col; c++) {
@@ -47,16 +62,18 @@ export class CustomCellStylePlugin {
               style.cellPosition.range.start.row <= r &&
               style.cellPosition.range.end.row >= r
             ) {
-              customStyleId = style.customStyleId;
+              // customStyleId = style.customStyleId;
+              customStyleIds.push(style.customStyleId);
             }
           } else if (style.cellPosition.col === c && style.cellPosition.row === r) {
-            customStyleId = style.customStyleId;
+            // customStyleId = style.customStyleId;
+            customStyleIds.push(style.customStyleId);
           }
         });
       }
     }
 
-    return customStyleId;
+    return customStyleIds;
   }
 
   getCustomCellStyleOption(customStyleId: string) {
@@ -81,8 +98,16 @@ export class CustomCellStylePlugin {
       const cellPos = cellStyle.cellPosition;
       if (cellStyle.customStyleId === customStyleId) {
         if (cellPos.range) {
-          for (let col = cellPos.range.start.col; col <= cellPos.range.end.col; col++) {
-            for (let row = cellPos.range.start.row; row <= cellPos.range.end.row; row++) {
+          for (
+            let col = Math.max(0, cellPos.range.start.col);
+            col <= Math.min(this.table.colCount - 1, cellPos.range.end.col);
+            col++
+          ) {
+            for (
+              let row = Math.max(0, cellPos.range.start.row);
+              row <= Math.min(this.table.rowCount - 1, cellPos.range.end.row);
+              row++
+            ) {
               this.table.scenegraph.updateCellContent(col, row);
             }
           }
@@ -140,8 +165,16 @@ export class CustomCellStylePlugin {
 
     // update cell group
     if (cellPos.range) {
-      for (let col = cellPos.range.start.col; col <= cellPos.range.end.col; col++) {
-        for (let row = cellPos.range.start.row; row <= cellPos.range.end.row; row++) {
+      for (
+        let col = Math.max(0, cellPos.range.start.col);
+        col <= Math.min(this.table.colCount - 1, cellPos.range.end.col);
+        col++
+      ) {
+        for (
+          let row = Math.max(0, cellPos.range.start.row);
+          row <= Math.min(this.table.rowCount - 1, cellPos.range.end.row);
+          row++
+        ) {
           const range = this.table.getCellRange(col, row);
           for (let c = range.start.col; c <= range.end.col; c++) {
             for (let r = range.start.row; r <= range.end.row; r++) {
@@ -155,10 +188,6 @@ export class CustomCellStylePlugin {
       this.table.scenegraph.updateCellContent(cellPos.col, cellPos.row);
     }
 
-    if (!customStyleId) {
-      // remove from customCellStyleArrangement array
-      this.customCellStyleArrangement.splice(index, 1);
-    }
     this.table.scenegraph.updateNextFrame();
   }
 
@@ -190,3 +219,9 @@ export function mergeStyle(cacheStyle: Style, customCellStyle: ColumnStyleOption
 
   return cacheStyle;
 }
+
+export const registerCustomCellStylePlugin = () => {
+  Factory.registerComponent('customCellStylePlugin', CustomCellStylePlugin);
+};
+
+// export type ICustomCellStylePlugin = typeof CustomCellStylePlugin;

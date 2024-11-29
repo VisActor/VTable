@@ -109,9 +109,23 @@ export function initCheckedState(records: any[], state: StateManager) {
       }
     }
   });
+
+  // for row series number
+  if (state.table.leftRowSeriesNumberCount === 1) {
+    state.headerCheckedState._vtable_rowSeries_number = false;
+    state._checkboxCellTypeFields.push('_vtable_rowSeries_number');
+    isNeedInitHeaderCheckedStateFromRecord = true;
+  } else if (state.table.leftRowSeriesNumberCount > 1) {
+    for (let i = 0; i < state.table.leftRowSeriesNumberCount; i++) {
+      state.headerCheckedState[`_vtable_rowSeries_number_${i}`] = false;
+      state._checkboxCellTypeFields.push(`_vtable_rowSeries_number_${i}`);
+    }
+    isNeedInitHeaderCheckedStateFromRecord = true;
+  }
+
   //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
   if (isNeedInitHeaderCheckedStateFromRecord) {
-    records.forEach((record: any, index: number) => {
+    records?.forEach((record: any, index: number) => {
       state._checkboxCellTypeFields.forEach(field => {
         const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
         let isChecked;
@@ -217,29 +231,50 @@ export function initLeftRecordsCheckState(records: any[], state: StateManager) {
 }
 
 export function setCellCheckboxState(col: number, row: number, checked: boolean, table: BaseTableAPI) {
-  const cellGoup = table.scenegraph.getCell(col, row);
-  const chechbox = cellGoup?.getChildByName('checkbox') as any;
-  if (!chechbox) {
+  const cellGroup = table.scenegraph.getCell(col, row);
+  const checkbox = cellGroup?.getChildByName('checkbox') as any;
+  if (!checkbox) {
+    // update state
+    const field = table.getHeaderField(col, row);
+    if (table.isHeader(col, row)) {
+      //点击的表头部分的checkbox 需要同时处理表头和body单元格的状态
+      table.stateManager.setHeaderCheckedState(field, checked);
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
+        table.scenegraph.updateCheckboxCellState(col, row, checked);
+      }
+    } else {
+      //点击的是body单元格的checkbox  处理本单元格的状态维护 同时需要检查表头是否改变状态
+      table.stateManager.setCheckedState(col, row, field, checked);
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
+        const oldHeaderCheckedState = table.stateManager.headerCheckedState[field];
+        const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(field, col, row);
+        if (oldHeaderCheckedState !== newHeaderCheckedState) {
+          table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
+        }
+      }
+    }
     return;
   }
-  const { checked: oldChecked, indeterminate } = chechbox.attribute;
+  const { checked: oldChecked, indeterminate } = checkbox.attribute;
 
   if (indeterminate) {
     if (checked) {
-      chechbox._handlePointerUp();
+      checkbox._handlePointerUp();
     } else {
-      chechbox._handlePointerUp();
-      chechbox._handlePointerUp();
+      checkbox._handlePointerUp();
+      checkbox._handlePointerUp();
     }
   } else if (oldChecked) {
     if (checked) {
       // do nothing
     } else {
-      chechbox._handlePointerUp();
+      checkbox._handlePointerUp();
     }
   } else {
     if (checked) {
-      chechbox._handlePointerUp();
+      checkbox._handlePointerUp();
     } else {
       // do nothing
     }

@@ -3,7 +3,7 @@ category: examples
 group: Animation
 title: 轮播动画
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/carousel-animation.gif
-option: ListTable#animationAppear
+link: '../guide/animation/carousel_animation'
 ---
 
 # 轮播动画
@@ -12,7 +12,7 @@ option: ListTable#animationAppear
 
 ## 关键配置
 
-- `VTable.CarouselAnimationPlugin`  轮播动画插件
+- `CarouselAnimationPlugin`  轮播动画插件
   - `rowCount` 一次动画滚动的行数
   - `colCount` 一次动画滚动的列数
   - `animationDuration` 一次滚动动画的时间
@@ -23,6 +23,9 @@ option: ListTable#animationAppear
 ## 代码演示
 
 ```javascript livedemo template=vtable
+// use this for project
+// import * as VTable from '@visactor/vtable';
+// import * as VTablePlugins from '@visactor/vtable-plugins';
 
 let  tableInstance;
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data100.json')
@@ -95,7 +98,7 @@ const option = {
 tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 
-const ca = new VTable.CarouselAnimationPlugin(tableInstance, {
+const ca = new VTablePlugins.CarouselAnimationPlugin(tableInstance, {
   rowCount: 2,
   replaceScrollAction: true
 });

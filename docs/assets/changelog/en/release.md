@@ -1,3 +1,95 @@
+# v1.11.5
+
+2024-11-29
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add @visactor/vtable-plugins package
+
+**📖 Site / documentation update**
+
+- **@visactor/vtable**: 更新进入或离开节点时的事件文档
+- **@visactor/vtable**: 更新甘特图事件文档，暴露整个e的信息
+
+[more detail about v1.11.5](https://github.com/VisActor/VTable/releases/tag/v1.11.5)
+
+# v1.11.3
+
+2024-11-28
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: frozen chart not update when resize row or column width [#2876](https://github.com/VisActor/VTable/issues/2876)
+- **@visactor/vtable**: fix custom-component update in deleteRecords api
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: when columnWidthConfig set wrong dimensions should judge this case [#2948](https://github.com/VisActor/VTable/issues/2948)
+
+
+
+[more detail about v1.11.3](https://github.com/VisActor/VTable/releases/tag/v1.11.3)
+
+# v1.11.2
+
+2024-11-26
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add select makeSelectCellVisible [#2840](https://github.com/VisActor/VTable/issues/2840)
+- **@visactor/vtable**: add setCustomSelectRanges in stateManager [#2750](https://github.com/VisActor/VTable/issues/2750) [#2845](https://github.com/VisActor/VTable/issues/2845)
+- **@visactor/vtable**: optimize range select in HeaderHighlightPlugin
+- **@visactor/vtable**: isShowOverflowTextTooltip support function
+- **@visactor/vtable**: cell support multi-custom-style [#2841](https://github.com/VisActor/VTable/issues/2841)
+- **@visactor/vtable**: templateLink support function [#2847](https://github.com/VisActor/VTable/issues/2847)
+- **@visactor/vtable**: add position in tooltip config [#2869](https://github.com/VisActor/VTable/issues/2869)
+- **@visactor/vtable**: add parentElement in menu option
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: add isValidatingValue state to fix call validateValue api repeatedly [#2830](https://github.com/VisActor/VTable/issues/2830)
+- **@visactor/vtable**: when up on canvas blank area not drag position rightly [#2831](https://github.com/VisActor/VTable/issues/2831)
+- **@visactor/vtable**: when resize column width the select state be cleared [#2861](https://github.com/VisActor/VTable/issues/2861)
+- **@visactor/vtable**: when container resize trigger mark line resize [#2883](https://github.com/VisActor/VTable/issues/2883)
+- **@visactor/vtable**: when not set minDate maxDate call setRecords render error [#2892](https://github.com/VisActor/VTable/issues/2892)
+- **@visactor/vtable**: fix cell border dash update [#2818](https://github.com/VisActor/VTable/issues/2818)
+- **@visactor/vtable**: fix merge cell text position [#2858](https://github.com/VisActor/VTable/issues/2858)
+- **@visactor/vtable**: fix functional padding update [#2774](https://github.com/VisActor/VTable/issues/2774)
+- **@visactor/vtable**: fix select all in row-series-number checkbox [#2880](https://github.com/VisActor/VTable/issues/2880)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: when set headerSelectMode body drag column order should work [#2860](https://github.com/VisActor/VTable/issues/2860)
+
+
+
+[more detail about v1.11.2](https://github.com/VisActor/VTable/releases/tag/v1.11.2)
+
+# v1.11.1
+
+2024-11-21
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add setCustomSelectRanges in stateManager [#2750](https://github.com/VisActor/VTable/issues/2750) [#2845](https://github.com/VisActor/VTable/issues/2845)
+- **@visactor/vtable**: optimize range select in HeaderHighlightPlugin
+- **@visactor/vtable**: isShowOverflowTextTooltip support function
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: add isValidatingValue state to fix call validateValue api repeatedly [#2830](https://github.com/VisActor/VTable/issues/2830)
+- **@visactor/vtable**: when up on canvas blank area not drag position rightly [#2831](https://github.com/VisActor/VTable/issues/2831)
+- **@visactor/vtable**: fix cell border dash update [#2818](https://github.com/VisActor/VTable/issues/2818)
+- **@visactor/vtable**: fix merge cell text position [#2858](https://github.com/VisActor/VTable/issues/2858)
+
+
+
+[more detail about v1.11.1](https://github.com/VisActor/VTable/releases/tag/v1.11.1)
+
 # v1.11.0
 
 2024-11-15
