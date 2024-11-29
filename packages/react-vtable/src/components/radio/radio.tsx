@@ -37,7 +37,7 @@ function RadioComponent(baseProps: RadioProps, ref: React.Ref<VRenderRadio>) {
   }, []);
 
   useEffect(() => {
-    radioRef.current.addEventListener('radio_checked', handleChange);
+    radioRef.current?.addEventListener('radio_checked', handleChange);
     return () => {
       radioRef.current?.removeEventListener('radio_checked', handleChange);
     };

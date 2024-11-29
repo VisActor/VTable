@@ -2,6 +2,36 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.11.4",
+      "tag": "@visactor/vtable_v1.11.4",
+      "date": "Fri, 29 Nov 2024 03:38:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: columnWidthConfig match problem #2957\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.11.3",
+      "tag": "@visactor/vtable_v1.11.3",
+      "date": "Thu, 28 Nov 2024 12:26:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: frozen chart not update when resize row or column width #2876\n\n"
+          },
+          {
+            "comment": "refactor: when columnWidthConfig set wrong dimensions should judge this case #2948\n\n"
+          },
+          {
+            "comment": "fix: fix custom-component update in deleteRecords api"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.11.2",
       "tag": "@visactor/vtable_v1.11.2",
       "date": "Tue, 26 Nov 2024 09:13:29 GMT",

@@ -28,6 +28,11 @@ export interface EVENT_TYPES {
    * 创建任务依赖关系
    */
   CREATE_DEPENDENCY_LINK: 'create_dependency_link';
+
+  /**
+   * 点击依赖关系连接点
+   */
+  CLICK_DEPENDENCY_LINK_POINT: 'click_dependency_link_point';
 }
 /**
  * Table event types
@@ -39,5 +44,6 @@ export const GANTT_EVENT_TYPE: EVENT_TYPES = {
   MOUSEENTER_TASK_BAR: 'mouseenter_task_bar',
   MOUSELEAVE_TASK_BAR: 'mouseleave_task_bar',
   CREATE_TASK_SCHEDULE: 'create_task_schedule',
-  CREATE_DEPENDENCY_LINK: 'create_dependency_link'
+  CREATE_DEPENDENCY_LINK: 'create_dependency_link',
+  CLICK_DEPENDENCY_LINK_POINT: 'click_dependency_link_point'
 } as EVENT_TYPES;

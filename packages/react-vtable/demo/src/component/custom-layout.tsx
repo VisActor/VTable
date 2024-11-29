@@ -26,6 +26,7 @@ const CustomLayoutButton = (props: CustomLayoutFunctionArg & { text: string }) =
   }
   const { height, width } = rect || table.getCellRect(col, row);
   const groupRef = useRef(null);
+  const record = table.getCellOriginRecord(col, row);
 
   return (
     <Group
@@ -47,14 +48,14 @@ const CustomLayoutButton = (props: CustomLayoutFunctionArg & { text: string }) =
           // console.log('button click');
         }}
       >
-        {'button-' + text}
+        {'button-' + (record ? record[0] : 'undefined')}
       </Button>
       <Button
         onClick={e => {
           // console.log('button click');
         }}
       >
-        {'button-' + text}
+        {'button-' + row}
       </Button>
     </Group>
   );
@@ -323,17 +324,35 @@ const HeaderCustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: st
 };
 
 function App() {
-  const records = new Array(1).fill(['John', 18, 'male', '🏀']);
+  const [records, setRecords] = useState<any[]>([]);
+  // const records = );
   const [preStr, setPreStr] = useState('vt');
+  const tableRef = useRef<any>(null);
 
   useEffect(() => {
+    const records1 = [];
+    for (let i = 0; i < 300; i++) {
+      records1.push(['John' + i, i, 'male', '🏀']);
+    }
+    setRecords([...records1]);
     // eslint-disable-next-line no-undef
-    setTimeout(() => {
-      setPreStr(preStr + '1');
-    }, 1000);
+    // setTimeout(() => {
+    //   // setPreStr(preStr + '1');
+    //   // const records2 = records1.splice(298, 1);
+    //   // // const records2 = [];
+    //   // // for (let i = 0; i < 10; i++) {
+    //   // //   records2.push(['John' + i, i, 'male', '🏀']);
+    //   // // }
+    //   // setRecords([...records1]);
+
+    // }, 1000);
+    // window.update = () => {
+    //   console.log('tableRef', tableRef.current);
+    //   setPreStr(preStr + '1');
+    //   tableRef.current?.deleteRecords([298]);
+    // };
   }, []);
 
-  const tableRef = useRef<any>(null);
   // eslint-disable-next-line no-undef
   window.tableRef = tableRef;
 
@@ -341,10 +360,13 @@ function App() {
     <ListTable
       ref={tableRef}
       records={records}
-      height={500}
+      height={900}
       defaultRowHeight={200}
       defaultHeaderRowHeight={80}
       ReactDOM={ReactDOM}
+      // bottomFrozenRowCount={1}
+      rowSeriesNumber={{ cellType: 'checkbox' }}
+      emptyTip={true}
     >
       <ListColumn field={'0'} title={'name'} />
       <ListColumn field={'1'} title={'age'} />

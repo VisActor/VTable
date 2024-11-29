@@ -528,7 +528,13 @@ export class Scenegraph {
     return element || undefined;
   }
 
-  getColGroupInBottom(col: number): Group | undefined {
+  getColGroupInBottom(col: number, isCornerOrColHeader = false): Group | undefined {
+    if (isCornerOrColHeader) {
+      const element = this.getColGroupInLeftBottomCorner(col) ?? this.getColGroupInRightBottomCorner(col);
+      if (element) {
+        return element;
+      }
+    }
     if (this.table.bottomFrozenRowCount > 0) {
       return this.bottomFrozenGroup.getColGroup(col) as Group;
     }
