@@ -1118,7 +1118,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           let match = true;
           for (let i = 0; i < dimensions.length; i++) {
             const dimension = dimensions[i];
-            const finded = cellPath.colHeaderPaths.findIndex((colPath: IDimensionInfo, index) => {
+            const finded = (cellPath.colHeaderPaths as IDimensionInfo[]).findIndex((colPath: IDimensionInfo, index) => {
               if (colPath.indicatorKey === dimension.indicatorKey) {
                 return true;
               }
