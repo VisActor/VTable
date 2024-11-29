@@ -40,6 +40,7 @@
     "@visactor/vtable": "workspace:*"
   },
   "devDependencies": {
+    "@visactor/vtable": "workspace:*",
     "@visactor/vchart": "1.12.12",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
