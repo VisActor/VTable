@@ -1096,9 +1096,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /**
    * 设置表格数据 及排序状态
    * @param records
-   * @param sort
+   * @param option 附近参数，其中的sortState为排序状态，如果设置null 将清除目前的排序状态
    */
-  setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] }): void {
+  setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] | null }): void {
     // 释放事件 及 对象
     this.internalProps.dataSource?.release();
     // 过滤掉dataSource的引用

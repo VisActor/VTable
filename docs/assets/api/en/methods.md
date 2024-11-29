@@ -140,12 +140,12 @@ Set the table data interface, which can be called as an update interface.
 
 Basic table updates:
 
-The basic table can also set the sorting status to sort the table data. Set sortState to null to clear the sorting status. If not set, the incoming data will be sorted according to the current sorting status.
+The basic table can also set the sorting status to sort the table data. Set sortState to null to clear the sorting status. If not set, the incoming data will be sorted according to the current sorting status.In a scenario where internal sorting is disabled, be sure to clear the current sorting state before invoking the interface.
 
 ```
 setRecords(
     records: Array<any>,
-    option?: { sortState?: SortState | SortState[]}
+    option?: { sortState?: SortState | SortState[] | null }
   ): void;
 ```
 
@@ -1322,6 +1322,7 @@ setCanvasSize: (width: number, height: number) => void;
 ## setLoadingHierarchyState(Function)
 
 Set the loading state of the tree expansion and collapse of the cell
+
 ```
   /** Set the loading state of the tree expansion and collapse of the cell */
   setLoadingHierarchyState: (col: number, row: number) => void;
