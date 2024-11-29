@@ -779,6 +779,7 @@ importers:
       '@types/react-dom': ^18.0.0
       '@types/react-is': ^17.0.3
       '@visactor/vchart': 1.12.12
+      '@visactor/vtable': workspace:*
       '@visactor/vutils': ~0.18.14
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
@@ -827,6 +828,7 @@ importers:
       '@types/react-dom': 18.3.1
       '@types/react-is': 17.0.7
       '@visactor/vchart': 1.12.12
+      '@visactor/vtable': link:../vtable
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.7.8
       chai: 4.3.4
