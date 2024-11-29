@@ -1,5 +1,6 @@
-import * as VTable from '../../src';
-import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+import * as VTable from '@visactor/vtable';
+import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
+import { InvertHighlightPlugin, CarouselAnimationPlugin } from '../../src';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -88,45 +89,10 @@ export function createTable() {
     customGrapicKeys: ['col', 'row']
   });
 
-  const highlightPlugin = new VTable.InvertHighlightPlugin(tableInstance);
-  // highlightPlugin.setInvertHighlightRange({
-  //   start: {
-  //     col: 0,
-  //     row: 6
-  //   },
-  //   end: {
-  //     col: 6,
-  //     row: 6
-  //   }
-  // });
-
-  tableInstance.on('click_cell', event => {
-    const { col, row } = event;
-    if (tableInstance.isHeader(col, row)) {
-      highlightPlugin.setInvertHighlightRange(undefined);
-    } else {
-      highlightPlugin.setInvertHighlightRange({
-        start: {
-          col: 0,
-          row
-        },
-        end: {
-          col: tableInstance.colCount - 1,
-          row
-        }
-      });
-    }
-  });
-
-  const ca = new VTable.CarouselAnimationPlugin(tableInstance, {
+  const ca = new CarouselAnimationPlugin(tableInstance, {
     rowCount: 2,
     replaceScrollAction: true
   });
 
-  // ca.play();
-
-  // setInterval(() => {
-  //   row += 2;
-  //   tableInstance.scrollToRow(row, { duration: 500 });
-  // }, 2000);
+  ca.play();
 }

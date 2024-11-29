@@ -12,7 +12,7 @@ Show the highlight effect when set highlight range.
 
 ## Key Configurations
 
-- `VTable.InvertHighlightPlugin` invert highlight plugin
+- `InvertHighlightPlugin` invert highlight plugin
   - `fill` invert highlight background color
   - `opacity` invert highlight opacity
 - `setInvertHighlightRange` set highlight range
@@ -20,6 +20,10 @@ Show the highlight effect when set highlight range.
 ## Code demo
 
 ```javascript livedemo template=vtable
+// use this for project
+// import * as VTable from '@visactor/vtable';
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
     id: i + 1,
@@ -92,7 +96,7 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 
-const highlightPlugin = new VTable.InvertHighlightPlugin(tableInstance, {});
+const highlightPlugin = new VTablePlugins.InvertHighlightPlugin(tableInstance, {});
 
 highlightPlugin.setInvertHighlightRange({
   start: {

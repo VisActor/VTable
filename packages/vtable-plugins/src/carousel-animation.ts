@@ -1,5 +1,5 @@
-import type { EasingType } from '@src/vrender';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { EasingType } from '@visactor/vtable/es/vrender';
+import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
 
 export interface ICarouselAnimationPluginOptions {
   rowCount?: number;

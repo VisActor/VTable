@@ -8,12 +8,12 @@ VTable 提供反选高亮插件，支持反选高亮指定区域。
 
 ## 反选高亮插件配置项
 
-- `VTable.InvertHighlightPlugin`  反选高亮插件，可以配置以下参数：
+- `InvertHighlightPlugin`  反选高亮插件，可以配置以下参数：
   - `fill` 反选高亮背景色
   - `opacity` 反选高亮透明度
 
 ```js
-const highlightPlugin = new VTable.InvertHighlightPlugin(tableInstance, {});
+const highlightPlugin = new InvertHighlightPlugin(tableInstance, {});
 
 highlightPlugin.setInvertHighlightRange({
   start: {

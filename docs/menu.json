@@ -20,6 +20,10 @@
     "type": "markdown"
   },
   {
+    "menu": "contributing",
+    "type": "markdown"
+  },
+  {
     "menu": "option",
     "type": "markdown-template",
     "entry": "option",

@@ -4,7 +4,7 @@ import type { CellType, IVTable } from '../util/type';
 import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './style';
 import { updateCell, renderChart, graphicUtil } from '@visactor/vtable';
 import { isArray } from '@visactor/vutils';
-import type { ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/src/ts-types';
+import type { ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/es/ts-types';
 import { getHierarchyOffset } from '../util/indent';
 import { isPromise } from '../util/promise';
 

@@ -12,7 +12,7 @@ Highlight the header when selecting the cell.
 
 ## Key Configurations
 
-- `VTable.HeaderHighlightPlugin` highlight plugin
+- `HeaderHighlightPlugin` highlight plugin
   - `columnHighlight` whether highlight the column
   - `rowHighlight` whether highlight the row
   - `colHighlightBGColor` the background color of the column highlight
@@ -23,6 +23,10 @@ Highlight the header when selecting the cell.
 ## Code demo
 
 ```javascript livedemo template=vtable
+// use this for project
+// import * as VTable from '@visactor/vtable';
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
     id: i + 1,
@@ -95,6 +99,6 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 
-const highlightPlugin = new VTable.HeaderHighlightPlugin(tableInstance, {});
+const highlightPlugin = new VTablePlugins.HeaderHighlightPlugin(tableInstance, {});
 
 ```

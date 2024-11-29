@@ -1,3 +1,4 @@
+import type { FederatedPointerEvent } from '@visactor/vtable/es/vrender';
 import type { ITaskLink } from './gantt-engine';
 
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
@@ -18,18 +19,21 @@ export interface TableEventHandlersEventArgumentMap {
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   };
   mouseleave_task_bar: {
     /** 第几条数据 */
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   };
   click_task_bar: {
     /** 第几条数据 */
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   };
   change_date_range: {
     /** 第几条数据 */
@@ -46,6 +50,7 @@ export interface TableEventHandlersEventArgumentMap {
     record: any;
   };
   create_task_schedule: {
+    federatedEvent: FederatedPointerEvent;
     event: Event;
     /** 第几条数据 */
     index: number;
@@ -57,6 +62,7 @@ export interface TableEventHandlersEventArgumentMap {
     record: any;
   };
   create_dependency_link: {
+    federatedEvent: FederatedPointerEvent;
     event: Event;
     /** 依赖信息 */
     link: ITaskLink;

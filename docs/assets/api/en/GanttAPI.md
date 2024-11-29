@@ -62,12 +62,12 @@ Add Dependencies
 addLink: (link: ITaskLink) => void
 ```
 
-### removeLink(Function)
+### deleteLink(Function)
 
 Removing Dependencies
 
 ```
-removeLink: (link: ITaskLink) => void
+deleteLink: (link: ITaskLink) => void
 
 ```
 
@@ -207,6 +207,7 @@ Event callback parameters:
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -221,6 +222,7 @@ Event callback parameters:
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -235,6 +237,7 @@ Event callback parameters:
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -246,6 +249,7 @@ Event return parameters:
 
 ```
 {
+federatedEvent: FederatedPointerEvent;
 event: Event;
 /** The first data */
 index: number;
@@ -265,7 +269,8 @@ Event return parameters:
 
 ```
 {
-   event: Event;
+    federatedEvent: FederatedPointerEvent;
+    event: Event;
     /** dependency link */
     link: ITaskLink;
   };

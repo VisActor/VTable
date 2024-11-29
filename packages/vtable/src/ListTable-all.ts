@@ -7,6 +7,7 @@ import {
   registerTitle,
   registerTooltip
 } from './components';
+import { registerCustomCellStylePlugin } from './plugins/custom-cell-style';
 import { registerListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import {
   registerChartCell,
@@ -26,6 +27,7 @@ registerMenu();
 registerTitle();
 registerTooltip();
 registerListTreeStickCellPlugin();
+registerCustomCellStylePlugin();
 
 registerChartCell();
 registerCheckboxCell();
