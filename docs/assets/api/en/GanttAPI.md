@@ -62,12 +62,12 @@ Add Dependencies
 addLink: (link: ITaskLink) => void
 ```
 
-### removeLink(Function)
+### deleteLink(Function)
 
 Removing Dependencies
 
 ```
-removeLink: (link: ITaskLink) => void
+deleteLink: (link: ITaskLink) => void
 
 ```
 

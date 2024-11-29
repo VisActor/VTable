@@ -62,12 +62,12 @@
   addLink: (link: ITaskLink)  => void
 ```
 
-### removeLink(Function)
+### deleteLink(Function)
 
 删除依赖关系
 
 ```
-  removeLink: (link: ITaskLink)  => void
+  deleteLink: (link: ITaskLink)  => void
 
 ```
 
@@ -189,8 +189,7 @@ export interface EVENT_TYPES {
   }
 ```
 
-MOUSEENTER_TASK_BAR
-MOUSEENTER_TASK_BAR
+### MOUSEENTER_TASK_BAR
 
 鼠标移入任务条事件
 
