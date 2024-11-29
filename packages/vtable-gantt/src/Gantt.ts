@@ -708,6 +708,7 @@ export class Gantt extends EventTarget {
   _refreshTaskBar(taskShowIndex: number) {
     // this.taskListTableInstance.updateRecords([record], [index]);
     this.scenegraph.taskBar.updateTaskBarNode(taskShowIndex);
+    this.scenegraph.refreshRecordLinkNodes(taskShowIndex, this.scenegraph.taskBar.getTaskBarNodeByIndex(taskShowIndex));
     this.scenegraph.updateNextFrame();
   }
   _updateRecordToListTable(record: any, index: number) {

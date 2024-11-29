@@ -1,11 +1,15 @@
 import type { ColumnsDefine } from '@visactor/vtable';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
-import { Gantt } from '../../src/index';
+import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
+import { Gantt, VTable } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 import { DependencyType } from '../../src/ts-types';
 import { HierarchyState } from '../../../vtable/src/ts-types';
 const CONTAINER_ID = 'vTable';
-
+const date_input_editor = new DateInputEditor({});
+const input_editor = new InputEditor({});
+VTable.register.editor('input', input_editor);
+VTable.register.editor('date-input', date_input_editor);
 export function createTable() {
   const records = [
     {
@@ -179,12 +183,14 @@ export function createTable() {
       field: 'start',
       title: 'start',
       width: 150,
+      editor: 'date-input',
       sort: true
     },
     {
       field: 'end',
       title: 'end',
       width: 150,
+      editor: 'date-input',
       sort: true
     },
     {
