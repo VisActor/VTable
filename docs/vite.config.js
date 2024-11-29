@@ -18,12 +18,14 @@ export default {
   resolve: {
     alias: {
       '@visactor/vtable/es/vrender': path.resolve('../packages/vtable/src/vrender.ts'),
+      '@visactor/vtable/es': path.resolve(__dirname, '../packages/vtable/src/'),
       '@visactor/vtable': path.resolve('../packages/vtable/src/index.ts'),
       '@visactor/vtable-gantt': path.resolve('../packages/vtable-gantt/src/index.ts'),
       '@visactor/vtable-calendar': path.resolve('../packages/vtable-calendar/src/index.ts'),
       '@visactor/vtable-editors': path.resolve('../packages/vtable-editors/src/index.ts'),
       '@visactor/vtable-export': path.resolve('../packages/vtable-export/src/index.ts'),
       '@visactor/vtable-search': path.resolve('../packages/vtable-search/src/index.ts'),
+      '@visactor/vtable-plugins': path.resolve('../packages/vtable-plugins/src/index.ts'),
       '@visactor/react-vtable': path.resolve('../packages/react-vtable/src/index.ts'),
       '@visactor/vue-vtable': path.resolve('../packages/vue-vtable/src/index.ts'),
       '@visactor/openinula-vtable': path.resolve('../packages/openinula-vtable/src/index.ts'),

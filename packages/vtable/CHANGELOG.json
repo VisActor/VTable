@@ -2,6 +2,24 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.11.5",
+      "tag": "@visactor/vtable_v1.11.5",
+      "date": "Fri, 29 Nov 2024 07:59:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "docs: 更新进入或离开节点时的事件文档\n\n"
+          },
+          {
+            "comment": "docs: 更新甘特图事件文档，暴露整个e的信息\n\n"
+          },
+          {
+            "comment": "feat: add @visactor/vtable-plugins package"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.11.4",
       "tag": "@visactor/vtable_v1.11.4",
       "date": "Fri, 29 Nov 2024 03:38:27 GMT",

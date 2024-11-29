@@ -1,6 +1,6 @@
 import type { MousePointerCellEvent } from '@visactor/vtable';
 import type { IEventData } from '../custom/custom-handler';
-import type { SelectedCellEvent } from '@visactor/vtable/src/ts-types';
+import type { SelectedCellEvent } from '@visactor/vtable/es/ts-types';
 
 export interface CalendarEvents {
   /**

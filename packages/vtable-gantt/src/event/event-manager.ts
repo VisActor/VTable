@@ -143,6 +143,7 @@ function bindTableGroupListener(event: EventManager) {
             const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
             const record = scene._gantt.getRecordByIndex(taskIndex);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
+              federatedEvent: e,
               event: e.nativeEvent,
               index: taskIndex,
               record
@@ -156,6 +157,7 @@ function bindTableGroupListener(event: EventManager) {
             const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
             const record = scene._gantt.getRecordByIndex(taskIndex);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
+              federatedEvent: e,
               event: e.nativeEvent,
               index: taskIndex,
               record
@@ -301,6 +303,7 @@ function bindTableGroupListener(event: EventManager) {
         const taskIndex = getTaskIndexByY(e.offset.y, gantt);
         const record = gantt.getRecordByIndex(taskIndex);
         gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
+          federatedEvent: e,
           event: e.nativeEvent,
           index: taskIndex,
           record
@@ -329,6 +332,7 @@ function bindTableGroupListener(event: EventManager) {
         gantt.updateTaskRecord(recordTaskInfo.taskRecord, taskIndex);
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE)) {
           gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE, {
+            federatedEvent: e,
             event: e.nativeEvent,
             index: taskIndex,
             startDate: recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField],
@@ -363,6 +367,7 @@ function bindTableGroupListener(event: EventManager) {
         const link = stateManager.endCreateDependencyLine(e.offset.y);
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK)) {
           gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK, {
+            federatedEvent: e,
             event: e.nativeEvent,
             link
           });
@@ -373,6 +378,7 @@ function bindTableGroupListener(event: EventManager) {
         const link = stateManager.endCreateDependencyLine(e.offset.y);
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK)) {
           gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK, {
+            federatedEvent: e,
             event: e.nativeEvent,
             link
           });
