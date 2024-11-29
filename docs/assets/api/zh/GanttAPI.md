@@ -71,6 +71,27 @@
 
 ```
 
+### scrollTop
+
+竖向滚动到指定位置的滚动值获取或者设置
+
+### scrollLeft
+
+横向滚动到指定位置的滚动值获取或者设置
+
+### getTaskBarRelativeRect(Function)
+
+获取任务条的位置。相对应甘特图表左上角的位置。
+
+```
+  getTaskBarRelativeRect:(index: number) =>{
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }
+```
+
 ## Events
 
 甘特图事件列表，可以根据实际需要，监听所需事件，实现自定义业务。

@@ -828,4 +828,35 @@ export class Gantt extends EventTarget {
       this.scenegraph.updateNextFrame();
     }
   }
+  get scrollTop(): number {
+    return this.stateManager.scrollTop;
+  }
+  set scrollTop(value: number) {
+    this.stateManager.setScrollTop(value);
+  }
+  get scrollLeft(): number {
+    return this.stateManager.scrollLeft;
+  }
+  set scrollLeft(value: number) {
+    this.stateManager.setScrollLeft(value);
+  }
+  /** 获取任务条的位置。相对应甘特图表左上角的位置。 */
+  getTaskBarRelativeRect(index: number) {
+    const taskBarNode = this.scenegraph.taskBar.getTaskBarNodeByIndex(index);
+    const left =
+      taskBarNode.attribute.x +
+      this.taskListTableInstance.tableNoFrameWidth +
+      this.taskListTableInstance.tableX +
+      this.tableX -
+      this.scrollLeft;
+    const top = taskBarNode.attribute.y + this.tableY + this.headerHeight - this.scrollTop;
+    const width = taskBarNode.attribute.width;
+    const height = taskBarNode.attribute.height;
+    return {
+      left,
+      top,
+      width,
+      height
+    };
+  }
 }
