@@ -381,7 +381,9 @@ export class Scenegraph {
       } else {
         linkedFromTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
         linkedToTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
-
+        if (linkedFromTaskShowIndex === -1 || linkedToTaskShowIndex === -1) {
+          continue;
+        }
         ({
           startDate: linkedToTaskStartDate,
           endDate: linkedToTaskEndDate,
@@ -513,7 +515,9 @@ export class Scenegraph {
       } else {
         linkedFromTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
         linkedToTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
-
+        if (linkedFromTaskShowIndex === -1 || linkedToTaskShowIndex === -1) {
+          continue;
+        }
         ({
           startDate: linkedToTaskStartDate,
           endDate: linkedToTaskEndDate,
