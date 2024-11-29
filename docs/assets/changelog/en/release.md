@@ -1,3 +1,21 @@
+# v1.11.3
+
+2024-11-28
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: frozen chart not update when resize row or column width [#2876](https://github.com/VisActor/VTable/issues/2876)
+- **@visactor/vtable**: fix custom-component update in deleteRecords api
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: when columnWidthConfig set wrong dimensions should judge this case [#2948](https://github.com/VisActor/VTable/issues/2948)
+
+
+
+[more detail about v1.11.3](https://github.com/VisActor/VTable/releases/tag/v1.11.3)
+
 # v1.11.2
 
 2024-11-26
