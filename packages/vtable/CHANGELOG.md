@@ -1,6 +1,19 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 29 Nov 2024 03:38:27 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Nov 2024 07:59:16 GMT and should not be manually modified.
+
+## 1.11.5
+Fri, 29 Nov 2024 07:59:16 GMT
+
+### Updates
+
+- docs: 更新进入或离开节点时的事件文档
+
+
+- docs: 更新甘特图事件文档，暴露整个e的信息
+
+
+- feat: add @visactor/vtable-plugins package
 
 ## 1.11.4
 Fri, 29 Nov 2024 03:38:27 GMT
