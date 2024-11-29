@@ -17,14 +17,14 @@ export function createTable() {
       title: 'Planning',
       children: [
         {
-          id: 2,
+          id: 1,
           name: 'Michael Smith',
           start: '2024-11-15',
           end: '2024-11-17',
           avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
         },
         {
-          id: 1,
+          id: 2,
           name: 'Emily',
           start: '2024-11-17',
           end: '2024-11-18',

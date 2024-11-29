@@ -371,13 +371,6 @@ export class StateManager {
         this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
       ) {
         const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
-        console.log(
-          'source target',
-          target.task_index,
-          target.sub_task_index,
-          indexs.task_index,
-          indexs.sub_task_index
-        );
         this._gantt._dragOrderTaskRecord(
           target.task_index,
           target.sub_task_index,
