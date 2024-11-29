@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "docs: 更新进入或离开节点时的事件文档\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "lou@trip.com"
+}

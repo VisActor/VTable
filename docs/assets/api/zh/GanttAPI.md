@@ -186,6 +186,7 @@ export interface EVENT_TYPES {
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -200,6 +201,7 @@ export interface EVENT_TYPES {
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -214,6 +216,7 @@ export interface EVENT_TYPES {
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -225,6 +228,7 @@ export interface EVENT_TYPES {
 
 ```
 {
+    federatedEvent: FederatedPointerEvent;
     event: Event;
     /** 第几条数据 */
     index: number;
@@ -244,7 +248,8 @@ export interface EVENT_TYPES {
 
 ```
 {
-   event: Event;
+    federatedEvent: FederatedPointerEvent;
+    event: Event;
     /** 依赖信息 */
     link: ITaskLink;
   };
