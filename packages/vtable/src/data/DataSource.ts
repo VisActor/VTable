@@ -687,7 +687,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
       if (!this.beforeChangedRecordsMap[dataIndex]) {
         const originRecord = this.getOriginalRecord(dataIndex);
-        this.beforeChangedRecordsMap[dataIndex] = cloneDeep(originRecord) ?? {};
+        this.beforeChangedRecordsMap[dataIndex] =
+          cloneDeep(originRecord, undefined, ['vtable_gantt_linkedFrom', 'vtable_gantt_linkedTo']) ?? {};
       }
       if (typeof field === 'string' || typeof field === 'number') {
         const beforeChangedValue = this.beforeChangedRecordsMap[dataIndex][field as any]; // this.getOriginalField(index, field, col, row, table);

@@ -9,11 +9,12 @@ import { TimelineHeader } from './timeline-header';
 import { TaskBar } from './task-bar';
 import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
-import { getTaskIndexByY } from '../gantt-helper';
+import { findRecordByTaskKey, getTaskIndexByY } from '../gantt-helper';
 import graphicContribution from './graphic';
 import { TaskCreationButton } from './task-creation-button';
-import { DependencyLink } from './dependency-link';
+import { DependencyLink, updateLinkLinePoints } from './dependency-link';
 import { DragOrderLine } from './drag-order-line';
+import type { GanttTaskBarNode } from './gantt-node';
 container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
@@ -272,6 +273,76 @@ export class Scenegraph {
     if (this.taskCreationButton) {
       this.taskCreationButton.hide();
       this.updateNextFrame();
+    }
+  }
+  refreshRecordLinkNodes(taskIndex: number, target: GanttTaskBarNode) {
+    const gantt: Gantt = this._gantt;
+    const record = gantt.getRecordByIndex(taskIndex);
+    const vtable_gantt_linkedTo = record.vtable_gantt_linkedTo;
+    const vtable_gantt_linkedFrom = record.vtable_gantt_linkedFrom;
+    for (let i = 0; i < vtable_gantt_linkedTo?.length; i++) {
+      const link = vtable_gantt_linkedTo[i];
+      const linkLineNode = link.vtable_gantt_linkLineNode;
+      const lineArrowNode = link.vtable_gantt_linkArrowNode;
+
+      const { linkedToTaskKey, linkedFromTaskKey, type } = link;
+      const { taskKeyField, minDate } = gantt.parsedOptions;
+      const linkedFromTaskRecord = findRecordByTaskKey(gantt.records, taskKeyField, linkedFromTaskKey);
+
+      const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
+        gantt.getTaskInfoByTaskListIndex(taskIndex);
+      const taskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+      const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
+        gantt.getTaskInfoByTaskListIndex(taskShowIndex);
+      const { linePoints, arrowPoints } = updateLinkLinePoints(
+        type,
+        linkedFromTaskStartDate,
+        linkedFromTaskEndDate,
+        taskShowIndex,
+        linkedToTaskStartDate,
+        linkedToTaskEndDate,
+        taskIndex,
+        minDate,
+        gantt.parsedOptions.rowHeight,
+        gantt.parsedOptions.colWidthPerDay,
+        null,
+        target
+      );
+      linkLineNode.setAttribute('points', linePoints);
+      lineArrowNode.setAttribute('points', arrowPoints);
+    }
+
+    for (let i = 0; i < vtable_gantt_linkedFrom?.length; i++) {
+      const link = vtable_gantt_linkedFrom[i];
+      const linkLineNode = link.vtable_gantt_linkLineNode;
+      const lineArrowNode = link.vtable_gantt_linkArrowNode;
+
+      const { linkedToTaskKey, linkedFromTaskKey, type } = link;
+      const { taskKeyField, minDate } = gantt.parsedOptions;
+      const linkedToTaskRecord = findRecordByTaskKey(gantt.records, taskKeyField, linkedToTaskKey);
+
+      const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
+        gantt.getTaskInfoByTaskListIndex(taskIndex);
+      const taskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+      const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
+        gantt.getTaskInfoByTaskListIndex(taskShowIndex);
+      const { linePoints, arrowPoints } = updateLinkLinePoints(
+        type,
+        linkedFromTaskStartDate,
+        linkedFromTaskEndDate,
+        taskIndex,
+        linkedToTaskStartDate,
+        linkedToTaskEndDate,
+        taskShowIndex,
+        minDate,
+        gantt.parsedOptions.rowHeight,
+        gantt.parsedOptions.colWidthPerDay,
+        target,
+        null
+      );
+
+      linkLineNode.setAttribute('points', linePoints);
+      lineArrowNode.setAttribute('points', arrowPoints);
     }
   }
 }

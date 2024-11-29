@@ -789,77 +789,11 @@ function resizeOrMoveTaskBar(
   state: StateManager
 ) {
   // const taskIndex = getTaskIndexByY(state.moveTaskBar.startOffsetY, state._gantt);
-  const record = state._gantt.getRecordByIndex(taskIndex);
   if (dx) {
     target.setAttribute('x', target.attribute.x + dx);
   }
   if (newWidth) {
     target.setAttribute('width', newWidth);
   }
-  const vtable_gantt_linkedTo = record.vtable_gantt_linkedTo;
-  const vtable_gantt_linkedFrom = record.vtable_gantt_linkedFrom;
-  for (let i = 0; i < vtable_gantt_linkedTo?.length; i++) {
-    const link = vtable_gantt_linkedTo[i];
-    const linkLineNode = link.vtable_gantt_linkLineNode;
-    const lineArrowNode = link.vtable_gantt_linkArrowNode;
-
-    const { linkedToTaskKey, linkedFromTaskKey, type } = link;
-    const { taskKeyField, minDate } = state._gantt.parsedOptions;
-    const linkedFromTaskRecord = findRecordByTaskKey(state._gantt.records, taskKeyField, linkedFromTaskKey);
-
-    const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskIndex);
-    const taskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
-    const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskShowIndex);
-    const { linePoints, arrowPoints } = updateLinkLinePoints(
-      type,
-      linkedFromTaskStartDate,
-      linkedFromTaskEndDate,
-      taskShowIndex,
-      linkedToTaskStartDate,
-      linkedToTaskEndDate,
-      taskIndex,
-      minDate,
-      state._gantt.parsedOptions.rowHeight,
-      state._gantt.parsedOptions.colWidthPerDay,
-      null,
-      target
-    );
-    linkLineNode.setAttribute('points', linePoints);
-    lineArrowNode.setAttribute('points', arrowPoints);
-  }
-
-  for (let i = 0; i < vtable_gantt_linkedFrom?.length; i++) {
-    const link = vtable_gantt_linkedFrom[i];
-    const linkLineNode = link.vtable_gantt_linkLineNode;
-    const lineArrowNode = link.vtable_gantt_linkArrowNode;
-
-    const { linkedToTaskKey, linkedFromTaskKey, type } = link;
-    const { taskKeyField, minDate } = state._gantt.parsedOptions;
-    const linkedToTaskRecord = findRecordByTaskKey(state._gantt.records, taskKeyField, linkedToTaskKey);
-
-    const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskIndex);
-    const taskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
-    const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskShowIndex);
-    const { linePoints, arrowPoints } = updateLinkLinePoints(
-      type,
-      linkedFromTaskStartDate,
-      linkedFromTaskEndDate,
-      taskIndex,
-      linkedToTaskStartDate,
-      linkedToTaskEndDate,
-      taskShowIndex,
-      minDate,
-      state._gantt.parsedOptions.rowHeight,
-      state._gantt.parsedOptions.colWidthPerDay,
-      target,
-      null
-    );
-
-    linkLineNode.setAttribute('points', linePoints);
-    lineArrowNode.setAttribute('points', arrowPoints);
-  }
+  state._gantt.scenegraph.refreshRecordLinkNodes(taskIndex, target);
 }
