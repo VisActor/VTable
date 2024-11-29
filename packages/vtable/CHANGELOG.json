@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.11.4",
+      "tag": "@visactor/vtable_v1.11.4",
+      "date": "Fri, 29 Nov 2024 03:38:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: columnWidthConfig match problem #2957\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.11.3",
       "tag": "@visactor/vtable_v1.11.3",
       "date": "Thu, 28 Nov 2024 12:26:11 GMT",
