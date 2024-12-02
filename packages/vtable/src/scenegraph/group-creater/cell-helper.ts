@@ -392,7 +392,14 @@ export function createCell(
   return cellGroup;
 }
 
-export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean, isShadow?: boolean) {
+export function updateCell(
+  col: number,
+  row: number,
+  table: BaseTableAPI,
+  addNew?: boolean,
+  isShadow?: boolean,
+  forceFastUpdate?: boolean
+) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
   const cellLocation = table.getCellLocation(col, row);
@@ -515,7 +522,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     !addNew &&
     !isMerge &&
     !(define?.customLayout || define?.customRender || define?.headerCustomLayout || define?.headerCustomRender) &&
-    canUseFastUpdate(col, row, oldCellGroup, autoWrapText, mayHaveIcon, table)
+    (forceFastUpdate || canUseFastUpdate(col, row, oldCellGroup, autoWrapText, mayHaveIcon, table))
   ) {
     // update group
     const cellWidth = table.getColWidth(col);

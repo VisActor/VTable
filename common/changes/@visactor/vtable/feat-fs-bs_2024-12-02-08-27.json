@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix cell update event problem in CustomCellStylePlugin #2927",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
