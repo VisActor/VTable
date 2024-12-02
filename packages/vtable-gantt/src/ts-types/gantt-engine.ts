@@ -335,7 +335,7 @@ export enum DependencyType {
   StartToFinish = 'start_to_finish'
 }
 export enum TasksShowMode {
-  /** 每一个任务节点用单独一行来展示，父任务占用一行，子任务分别占用一行 */
+  /** 每一个任务节点用单独一行来展示，父任务占用一行，子任务分别占用一行。这是默认的显示效果 */
   Tasks_Separate = 'tasks_separate',
   /** 省去父任务节点不展示，并把所有子任务的节点都放到同一行来展示。 */
   Sub_Tasks_Inline = 'sub_tasks_inline',

@@ -277,7 +277,7 @@ export class Scenegraph {
   }
   refreshRecordLinkNodes(taskIndex: number, sub_task_index: number, target: GanttTaskBarNode, dy: number = 0) {
     const gantt: Gantt = this._gantt;
-    const record = gantt.getRecordByIndex(taskIndex);
+    const record = gantt.getRecordByIndex(taskIndex, sub_task_index);
     const vtable_gantt_linkedTo = record.vtable_gantt_linkedTo;
     const vtable_gantt_linkedFrom = record.vtable_gantt_linkedFrom;
     for (let i = 0; i < vtable_gantt_linkedTo?.length; i++) {

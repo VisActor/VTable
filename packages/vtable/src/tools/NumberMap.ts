@@ -107,7 +107,7 @@ export class NumberMap<T> {
       //先将target部分的值存起来
       const targetVals = [];
       const sourceVals = [];
-      for (let i = indexFirst(keys, targetIndex); i < sourceIndex + sourceCount; i++) {
+      for (let i = indexFirst(keys, targetIndex); i < indexFirst(keys, sourceIndex) + sourceCount; i++) {
         const key = keys[i];
         if (key >= sourceIndex && key < sourceIndex + sourceCount) {
           sourceVals.push(this.get(key));
@@ -126,7 +126,7 @@ export class NumberMap<T> {
       //先将target部分的值存起来
       const targetVals = [];
       const sourceVals = [];
-      for (let i = indexFirst(keys, sourceIndex); i < targetIndex + targetCount; i++) {
+      for (let i = indexFirst(keys, sourceIndex); i < indexFirst(keys, targetIndex) + targetCount; i++) {
         const key = keys[i];
         if (key >= sourceIndex && key < sourceIndex + sourceCount) {
           sourceVals.push(this.get(key));
