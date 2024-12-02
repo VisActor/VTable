@@ -731,7 +731,7 @@ function isOverlapping(task: any, rowTasks: any[], startDateField: string, endDa
 }
 export function computeRowsCountByRecordDate(record: any, startDateField: string, endDateField: string) {
   if (!record.children || record.children.length === 1) {
-    if (record.children.length === 1) {
+    if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
     }
     return 1;

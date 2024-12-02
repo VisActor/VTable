@@ -378,7 +378,8 @@ export class TaskBar {
       shadowOffsetX: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetX,
       shadowOffsetY: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetY,
       shadowBlur: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowBlur,
-      attachedToTaskBarNode: attachedToTaskBarNode
+      attachedToTaskBarNode: attachedToTaskBarNode,
+      zIndex: 10000
     });
     selectedBorder.name = 'task-bar-select-border';
     this.barContainer.appendChild(selectedBorder);
