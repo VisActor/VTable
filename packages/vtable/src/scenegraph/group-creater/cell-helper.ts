@@ -37,6 +37,7 @@ import { isArray, isValid } from '@visactor/vutils';
 import { breakString } from '../utils/break-string';
 import type { CreateRadioCellGroup } from './cell-type/radio-cell';
 import { onBeforeAttributeUpdateForInvertHighlight } from '../../plugins/invert-highlight';
+import { getCellBorderStrokeWidth } from '../utils/cell-border-stroke-width';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -520,6 +521,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     // update group
     const cellWidth = table.getColWidth(col);
     const cellHeight = table.getRowHeight(row);
+    const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
+
     oldCellGroup.setAttributes({
       width: cellWidth,
       height: cellHeight,
@@ -527,7 +530,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       lineWidth: cellTheme?.group?.lineWidth ?? undefined,
       fill: cellTheme?.group?.fill ?? undefined,
       stroke: cellTheme?.group?.stroke ?? undefined,
-      strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
+      strokeArrayWidth: strokeArrayWidth ?? undefined,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
       cornerRadius: cellTheme?.group?.cornerRadius ?? 0,
