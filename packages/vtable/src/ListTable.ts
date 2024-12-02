@@ -924,12 +924,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
       // reset proxy row config
       this.scenegraph.proxy.refreshRowCount();
     }
+    this.reactCustomLayout?.clearCache();
     this.scenegraph.updateRow(
       diffPositions.removeCellPositions,
       diffPositions.addCellPositions,
       updateCells,
       recalculateColWidths
     );
+    this.reactCustomLayout?.updateAllCustomCell();
+
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
       if (this.autoFillWidth && !notFillWidth) {

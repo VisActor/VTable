@@ -1416,12 +1416,15 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // this.invalidate();
     this.clearCellStyleCache();
     this.scenegraph.updateHierarchyIcon(col, row);
+    this.reactCustomLayout?.clearCache();
     this.scenegraph.updateRow(
       result.removeCellPositions,
       result.addCellPositions,
       result.updateCellPositions,
       recalculateColWidths
     );
+    this.reactCustomLayout?.updateAllCustomCell();
+
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
       if (this.autoFillWidth && !notFillWidth) {
