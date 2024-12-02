@@ -3,7 +3,7 @@ import type { ColumnStyleOption, ColumnTypeOption } from './column';
 import type { ColumnData } from './list-table/layout-map/api';
 import type { CellLocation, CellRange, FieldData, FieldDef } from './table-engine';
 import type { Rect } from '../tools/Rect';
-import type { BaseTable } from '../core';
+import type { BaseTableAPI } from './base-table';
 
 export type MaybePromise<T> = T | Promise<T>;
 
@@ -42,7 +42,7 @@ export type MergeCellOption =
       extraArgs: {
         source: CellPosition;
         target: CellPosition;
-        table: BaseTable;
+        table: BaseTableAPI;
       }
     ) => boolean);
 export type BaseCellInfo = {

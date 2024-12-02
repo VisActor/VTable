@@ -46,20 +46,14 @@ const dataSource = new VTable.data.CachedDataSource({
 });
 
 export function createTable() {
-  const records = new Array(10).fill('').map((_, i) => generatePersons(i));
+  const records = new Array(1000).fill(generatePersons(1000));
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
       title: 'ID ff',
       width: '1%',
       minWidth: 200,
-      sort: true,
-      mergeCell: (v1, v2, { source, target, table }) => {
-        const sourceValue = table.getRecordByCell(source.col, source.row);
-        const targetValue = table.getRecordByCell(target.col, target.row);
-        console.log(v1, v2, sourceValue, targetValue);
-        return sourceValue.id === targetValue.id;
-      }
+      sort: true
     },
     {
       field: 'email1',
@@ -118,157 +112,157 @@ export function createTable() {
     allowFrozenColCount: 3,
     // frozenColCount: 2,
     autoWrapText: true,
-    heightMode: 'autoHeight'
+    heightMode: 'autoHeight',
     // widthMode: 'adaptive',
-    // customMergeCell: (col, row, table) => {
-    //   if (col > 0 && col < 8 && row > 7 && row < 11) {
-    //     return {
-    //       text: 'long long long long long long long long long long long long long long long long long long text!',
-    //       range: {
-    //         start: {
-    //           col: 1,
-    //           row: 8
-    //         },
-    //         end: {
-    //           col: 7,
-    //           row: 10
-    //         }
-    //       },
-    //       style: {
-    //         bgColor: '#fff'
-    //       }
-    //     };
-    //   }
-    //   // else if (col > 0 && col < 3 && row > 1 && row < 4) {
-    //   //   return {
-    //   //     range: {
-    //   //       start: {
-    //   //         col: 1,
-    //   //         row: 2
-    //   //       },
-    //   //       end: {
-    //   //         col: 2,
-    //   //         row: 3
-    //   //       }
-    //   //     },
-    //   //     customLayout: args => {
-    //   //       const { table, row, col, rect } = args;
-    //   //       const record = {
-    //   //         bloggerId: 1,
-    //   //         bloggerName: 'Virtual Anchor Xiaohua',
-    //   //         bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
-    //   //         fansCount: 400,
-    //   //         worksCount: 10,
-    //   //         viewCount: 5,
-    //   //         city: 'Dream City',
-    //   //         tags: ['game', 'anime', 'food']
-    //   //       };
-    //   //       const { height, width } = rect ?? table.getCellRect(col, row);
-    //   //       const percentCalc = VTable.CustomLayout.percentCalc;
+    customMergeCell: (col, row, table) => {
+      if (col > 0 && col < 8 && row > 7 && row < 11) {
+        return {
+          text: 'long long long long long long long long long long long long long long long long long long text!',
+          range: {
+            start: {
+              col: 1,
+              row: 8
+            },
+            end: {
+              col: 7,
+              row: 10
+            }
+          },
+          style: {
+            bgColor: '#fff'
+          }
+        };
+      }
+      // else if (col > 0 && col < 3 && row > 1 && row < 4) {
+      //   return {
+      //     range: {
+      //       start: {
+      //         col: 1,
+      //         row: 2
+      //       },
+      //       end: {
+      //         col: 2,
+      //         row: 3
+      //       }
+      //     },
+      //     customLayout: args => {
+      //       const { table, row, col, rect } = args;
+      //       const record = {
+      //         bloggerId: 1,
+      //         bloggerName: 'Virtual Anchor Xiaohua',
+      //         bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
+      //         fansCount: 400,
+      //         worksCount: 10,
+      //         viewCount: 5,
+      //         city: 'Dream City',
+      //         tags: ['game', 'anime', 'food']
+      //       };
+      //       const { height, width } = rect ?? table.getCellRect(col, row);
+      //       const percentCalc = VTable.CustomLayout.percentCalc;
 
-    //   //       const container = new VTable.CustomLayout.Group({
-    //   //         height,
-    //   //         width,
-    //   //         display: 'flex',
-    //   //         flexDirection: 'row',
-    //   //         flexWrap: 'nowrap'
-    //   //       });
-    //   //       const containerLeft = new VTable.CustomLayout.Group({
-    //   //         height: percentCalc(100),
-    //   //         width: 60,
-    //   //         display: 'flex',
-    //   //         flexDirection: 'column',
-    //   //         alignItems: 'center',
-    //   //         justifyContent: 'space-around'
-    //   //       });
-    //   //       container.add(containerLeft);
+      //       const container = new VTable.CustomLayout.Group({
+      //         height,
+      //         width,
+      //         display: 'flex',
+      //         flexDirection: 'row',
+      //         flexWrap: 'nowrap'
+      //       });
+      //       const containerLeft = new VTable.CustomLayout.Group({
+      //         height: percentCalc(100),
+      //         width: 60,
+      //         display: 'flex',
+      //         flexDirection: 'column',
+      //         alignItems: 'center',
+      //         justifyContent: 'space-around'
+      //       });
+      //       container.add(containerLeft);
 
-    //   //       const icon0 = new VTable.CustomLayout.Image({
-    //   //         id: 'icon0',
-    //   //         width: 50,
-    //   //         height: 50,
-    //   //         image: record.bloggerAvatar,
-    //   //         cornerRadius: 25
-    //   //       });
-    //   //       containerLeft.add(icon0);
+      //       const icon0 = new VTable.CustomLayout.Image({
+      //         id: 'icon0',
+      //         width: 50,
+      //         height: 50,
+      //         image: record.bloggerAvatar,
+      //         cornerRadius: 25
+      //       });
+      //       containerLeft.add(icon0);
 
-    //   //       const containerRight = new VTable.CustomLayout.Group({
-    //   //         height: percentCalc(100),
-    //   //         width: percentCalc(100, -60),
-    //   //         display: 'flex',
-    //   //         flexDirection: 'column',
-    //   //         flexWrap: 'nowrap'
-    //   //       });
-    //   //       container.add(containerRight);
+      //       const containerRight = new VTable.CustomLayout.Group({
+      //         height: percentCalc(100),
+      //         width: percentCalc(100, -60),
+      //         display: 'flex',
+      //         flexDirection: 'column',
+      //         flexWrap: 'nowrap'
+      //       });
+      //       container.add(containerRight);
 
-    //   //       const containerRightTop = new VTable.CustomLayout.Group({
-    //   //         height: percentCalc(50),
-    //   //         width: percentCalc(100),
-    //   //         display: 'flex',
-    //   //         alignItems: 'flex-end'
-    //   //       });
+      //       const containerRightTop = new VTable.CustomLayout.Group({
+      //         height: percentCalc(50),
+      //         width: percentCalc(100),
+      //         display: 'flex',
+      //         alignItems: 'flex-end'
+      //       });
 
-    //   //       const containerRightBottom = new VTable.CustomLayout.Group({
-    //   //         height: percentCalc(50),
-    //   //         width: percentCalc(100),
-    //   //         display: 'flex',
-    //   //         alignItems: 'center'
-    //   //       });
+      //       const containerRightBottom = new VTable.CustomLayout.Group({
+      //         height: percentCalc(50),
+      //         width: percentCalc(100),
+      //         display: 'flex',
+      //         alignItems: 'center'
+      //       });
 
-    //   //       containerRight.add(containerRightTop);
-    //   //       containerRight.add(containerRightBottom);
+      //       containerRight.add(containerRightTop);
+      //       containerRight.add(containerRightBottom);
 
-    //   //       const bloggerName = new VTable.CustomLayout.Text({
-    //   //         text: record.bloggerName,
-    //   //         fontSize: 13,
-    //   //         fontFamily: 'sans-serif',
-    //   //         fill: 'black'
-    //   //       });
-    //   //       containerRightTop.add(bloggerName);
+      //       const bloggerName = new VTable.CustomLayout.Text({
+      //         text: record.bloggerName,
+      //         fontSize: 13,
+      //         fontFamily: 'sans-serif',
+      //         fill: 'black'
+      //       });
+      //       containerRightTop.add(bloggerName);
 
-    //   //       const location = new VTable.CustomLayout.Image({
-    //   //         id: 'location',
-    //   //         image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
-    //   //         width: 15,
-    //   //         height: 15,
-    //   //         boundsPadding: [0, 0, 0, 10]
-    //   //       });
-    //   //       containerRightTop.add(location);
+      //       const location = new VTable.CustomLayout.Image({
+      //         id: 'location',
+      //         image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
+      //         width: 15,
+      //         height: 15,
+      //         boundsPadding: [0, 0, 0, 10]
+      //       });
+      //       containerRightTop.add(location);
 
-    //   //       const locationName = new VTable.CustomLayout.Text({
-    //   //         text: record.city,
-    //   //         fontSize: 11,
-    //   //         fontFamily: 'sans-serif',
-    //   //         fill: '#6f7070'
-    //   //       });
-    //   //       containerRightTop.add(locationName);
+      //       const locationName = new VTable.CustomLayout.Text({
+      //         text: record.city,
+      //         fontSize: 11,
+      //         fontFamily: 'sans-serif',
+      //         fill: '#6f7070'
+      //       });
+      //       containerRightTop.add(locationName);
 
-    //   //       for (let i = 0; i < record?.tags?.length ?? 0; i++) {
-    //   //         const tag = new VTable.CustomLayout.Tag({
-    //   //           text: record.tags[i],
-    //   //           textStyle: {
-    //   //             fontSize: 10,
-    //   //             fontFamily: 'sans-serif',
-    //   //             fill: 'rgb(51, 101, 238)'
-    //   //           },
-    //   //           panel: {
-    //   //             visible: true,
-    //   //             fill: '#f4f4f2',
-    //   //             cornerRadius: 5
-    //   //           },
-    //   //           space: 5,
-    //   //           boundsPadding: [0, 0, 0, 5]
-    //   //         });
-    //   //         containerRightBottom.add(tag);
-    //   //       }
-    //   //       return {
-    //   //         rootContainer: container,
-    //   //         renderDefault: false
-    //   //       };
-    //   //     }
-    //   //   };
-    //   // }
-    // }
+      //       for (let i = 0; i < record?.tags?.length ?? 0; i++) {
+      //         const tag = new VTable.CustomLayout.Tag({
+      //           text: record.tags[i],
+      //           textStyle: {
+      //             fontSize: 10,
+      //             fontFamily: 'sans-serif',
+      //             fill: 'rgb(51, 101, 238)'
+      //           },
+      //           panel: {
+      //             visible: true,
+      //             fill: '#f4f4f2',
+      //             cornerRadius: 5
+      //           },
+      //           space: 5,
+      //           boundsPadding: [0, 0, 0, 5]
+      //         });
+      //         containerRightBottom.add(tag);
+      //       }
+      //       return {
+      //         rootContainer: container,
+      //         renderDefault: false
+      //       };
+      //     }
+      //   };
+      // }
+    }
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
