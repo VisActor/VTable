@@ -14,7 +14,10 @@ const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#bcbd
 export function createTable() {
   const records = [
     {
-      title: 'Planning',
+      id: 0,
+      name: 'Planning',
+      start: '2024-11-15',
+      end: '2024-11-21',
       children: [
         {
           id: 1,
@@ -30,7 +33,6 @@ export function createTable() {
           end: '2024-11-18',
           avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
         },
-
         {
           id: 3,
           name: 'Rramily',
@@ -49,7 +51,7 @@ export function createTable() {
     },
     {
       id: 300,
-      title: 'Research',
+      name: 'Research',
       children: [
         {
           id: 5,
@@ -61,7 +63,7 @@ export function createTable() {
       ]
     },
     {
-      title: 'Goal Setting',
+      name: 'Goal Setting',
       children: [
         {
           id: 6,
@@ -81,7 +83,7 @@ export function createTable() {
     },
 
     {
-      title: 'Strategy',
+      name: 'Strategy',
       children: [
         {
           id: 8,
@@ -121,7 +123,7 @@ export function createTable() {
       ]
     },
     {
-      title: 'Execution',
+      name: 'Execution',
       children: [
         {
           id: 13,
@@ -148,7 +150,7 @@ export function createTable() {
       ]
     },
     {
-      title: 'Monitoring',
+      name: 'Monitoring',
       children: [
         {
           id: 16,
@@ -179,7 +181,7 @@ export function createTable() {
       ]
     },
     {
-      title: 'Process review',
+      name: 'Process review',
       children: [
         {
           id: 19,
@@ -201,19 +203,24 @@ export function createTable() {
 
   const columns: ColumnsDefine = [
     {
-      field: 'title',
+      field: 'name',
       title: 'PROCESS',
-      width: 150
+      width: 150,
+      tree: true
     }
   ];
   const option: GanttConstructorOptions = {
     records,
     taskListTable: {
       columns: columns,
-      minTableWidth: 100,
-      hierarchyExpandLevel: 5,
-      menu: {
-        contextMenuItems: ['copy', 'paste', 'delete', '...']
+      theme: {
+        bodyStyle: {
+          bgColor: 'white',
+          color: 'rgb(115 115 115)'
+        },
+        headerStyle: {
+          color: 'white'
+        }
       }
     },
     groupBy: true,
@@ -237,7 +244,7 @@ export function createTable() {
       }
     },
     headerRowHeight: 60,
-    rowHeight: 80,
+    rowHeight: 40,
     taskBar: {
       startDateField: 'start',
       endDateField: 'end',
@@ -245,100 +252,20 @@ export function createTable() {
       labelText: '{name}',
       labelTextStyle: {
         fontFamily: 'Arial',
-        fontSize: 16,
-        textAlign: 'left'
+        fontSize: 14,
+        textAlign: 'center',
+        color: 'white'
       },
       barStyle: {
-        width: 50,
+        width: 22,
         /** 任务条的颜色 */
-        barColor: '#ee8800',
+        barColor: 'rgb(68 99 244)',
         /** 已完成部分任务条的颜色 */
         completedBarColor: '#91e8e0',
         /** 任务条的圆角 */
-        cornerRadius: 25
-      },
-      customLayout: (args: any) => {
-        const colorLength = barColors.length;
-        const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
-        const container = new Group({
-          width,
-          height,
-          fill: {
-            gradient: 'linear',
-            x0: 0,
-            y0: 0,
-            x1: 1,
-            y1: 0,
-            stops: [
-              {
-                offset: 0,
-                color: barColors0[index % colorLength]
-              },
-              {
-                offset: 0.5,
-                color: barColors[index % colorLength]
-              },
-              {
-                offset: 1,
-                color: barColors0[index % colorLength]
-              }
-            ]
-          },
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'nowrap'
-        });
-        const containerLeft = new Group({
-          height,
-          width: 60,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-around'
-          // fill: 'red'
-        });
-        container.add(containerLeft);
-
-        const icon0 = new Image({
-          width: 40,
-          height: 40,
-          image: taskRecord.avatar,
-          cornerRadius: 20
-        });
-        containerLeft.add(icon0);
-
-        const containerRight = new Group({
-          height,
-          width: width - 60,
-          display: 'flex',
-          flexDirection: 'column'
-          // alignItems: 'left'
-        });
-        container.add(containerRight);
-
-        const bloggerName = new Text({
-          text: taskRecord.name + ' ' + taskRecord.id,
-          fontSize: 16,
-          fontFamily: 'sans-serif',
-          fill: 'white',
-          maxLineWidth: width - 60,
-          boundsPadding: [10, 0, 0, 0]
-        });
-        containerRight.add(bloggerName);
-
-        const days = new Text({
-          text: `${taskDays}天`,
-          fontSize: 13,
-          fontFamily: 'sans-serif',
-          fill: 'white',
-          boundsPadding: [10, 0, 0, 0]
-        });
-        containerRight.add(days);
-        return {
-          rootContainer: container
-          // renderDefaultBar: true
-          // renderDefaultText: true
-        };
+        cornerRadius: 15,
+        borderColor: 'black',
+        borderWidth: 1
       }
     },
     dependency: {
@@ -396,7 +323,7 @@ export function createTable() {
           style: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'red'
+            color: 'white'
           }
         }
       ]

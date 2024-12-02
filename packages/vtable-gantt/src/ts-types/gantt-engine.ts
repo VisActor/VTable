@@ -225,10 +225,10 @@ export interface ITaskBarStyle {
   width?: number;
   /** 任务条的圆角 */
   cornerRadius?: number;
-  // /** 任务条的边框 */
-  // borderWidth?: number;
-  // /** 边框颜色 */
-  // borderColor?: string;
+  /** 任务条的边框 */
+  borderWidth?: number;
+  /** 边框颜色 */
+  borderColor?: string;
 }
 export type ILineStyle = {
   lineColor?: string;

@@ -68,6 +68,18 @@ Optional
 
 {{ use: common-gantt-task-bar(prefix = '###')}}
 
+## taskShowMode(TaskShowMode)
+
+Task bar display mode. It is configured using the enumeration type `TaskShowMode`.
+
+Optional
+
+- `TaskShowMode.Tasks_Separate`: Each task node is displayed in a separate row, with the parent task occupying one row and child tasks occupying one row each. This is the default display effect!
+- `TaskShowMode.Sub_Tasks_Separate`: The parent task node is omitted and not displayed, and all child task nodes are displayed in separate rows.
+- `TaskShowMode.Sub_Tasks_Inline`: The parent task node is omitted and not displayed, and all child task nodes are placed in the same row for display.
+- `TaskShowMode.Sub_Tasks_Arrange`: The parent task node is omitted and not displayed, and all child tasks will maintain the data order in the records and ensure that the nodes are displayed without overlapping.
+- `TaskShowMode.Sub_Tasks_Compact`: The parent task node is omitted and not displayed, and all child tasks will be arranged according to the date attribute and ensure a compact display without overlapping nodes.
+
 ## taskKeyField(string)
 
 The field name that uniquely identifies the data entry, default is 'id'

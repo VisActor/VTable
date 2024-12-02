@@ -302,6 +302,20 @@
             "zh": "甘特图交互——创建排期",
             "en": "Gantt Interaction —— Create Schedule"
           }
+        },
+        {
+          "path": "gantt-taskShowMode",
+          "title": {
+            "zh": "甘特图子任务布局模式",
+            "en": "Gantt Subtask Show Mode"
+          }
+        },
+        {
+          "path": "gantt-table-mergeCell",
+          "title": {
+            "zh": "任务名称单元格合并",
+            "en": "Gantt Task Merge Cell"
+          }
         }
       ]
     },

@@ -173,9 +173,9 @@ export function initOptions(gantt: Gantt) {
       /** 任务条的圆角 */
       cornerRadius: 3,
       /** 任务条的边框 */
-      borderWidth: 1,
+      borderWidth: 0,
       /** 边框颜色 */
-      borderColor: 'red',
+      // borderColor: 'red',
       fontFamily: 'Arial',
       fontSize: 14
     },

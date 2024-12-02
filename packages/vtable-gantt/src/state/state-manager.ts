@@ -383,7 +383,10 @@ export class StateManager {
         this._gantt.scenegraph.refreshTaskBarsAndGrid();
       } else {
         // 判断纵向拖动 处理数据的位置
-        if (Math.abs(Math.round(deltaY / this._gantt.parsedOptions.rowHeight)) >= 1) {
+        if (
+          this._gantt.parsedOptions.tasksShowMode !== TasksShowMode.Tasks_Separate &&
+          Math.abs(Math.round(deltaY / this._gantt.parsedOptions.rowHeight)) >= 1
+        ) {
           const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
           this._gantt._dragOrderTaskRecord(
             target.task_index,
@@ -931,8 +934,12 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
   if (dx) {
     target.setAttribute('x', target.attribute.x + dx);
   }
-  if (dy) {
-    target.setAttribute('y', target.attribute.y + dy);
+  if (state._gantt.parsedOptions.tasksShowMode !== TasksShowMode.Tasks_Separate) {
+    if (dy) {
+      target.setAttribute('y', target.attribute.y + dy);
+    }
+  } else {
+    dy = 0;
   }
   if (newWidth) {
     target.setAttribute('width', newWidth);

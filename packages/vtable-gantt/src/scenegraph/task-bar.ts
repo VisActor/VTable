@@ -116,7 +116,7 @@ export class TaskBar {
           )
         : 1;
     const oneTaskHeigth = this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
-    const barGroup = new GanttTaskBarNode({
+    const barGroupBox = new GanttTaskBarNode({
       x:
         this._scene._gantt.parsedOptions.colWidthPerDay *
         Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)),
@@ -127,26 +127,31 @@ export class TaskBar {
           ? childIndex * oneTaskHeigth
           : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
             this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
-          ? // getSubTaskRowIndexByRecordDate(
-            //   this._scene._gantt.records[index],
-            //   childIndex,
-            //   this._scene._gantt.parsedOptions.startDateField,
-            //   this._scene._gantt.parsedOptions.endDateField
-            // )
-            taskRecord.vtable_gantt_showIndex * oneTaskHeigth
+          ? taskRecord.vtable_gantt_showIndex * oneTaskHeigth
           : 0) +
         (oneTaskHeigth - taskbarHeight) / 2,
       width: taskBarSize,
       // height: this._scene._gantt.parsedOptions.rowHeight,
       height: taskbarHeight,
       cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
+      lineWidth: this._scene._gantt.parsedOptions.taskBarStyle.borderWidth * 2,
+      stroke: this._scene._gantt.parsedOptions.taskBarStyle.borderColor
+      // clip: true
+    });
+    barGroupBox.name = 'task-bar';
+    barGroupBox.task_index = index;
+    barGroupBox.sub_task_index = childIndex;
+    barGroupBox.record = taskRecord;
+
+    const barGroup = new Group({
+      x: 0,
+      y: 0,
+      width: taskBarSize,
+      height: taskbarHeight,
+      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
       clip: true
     });
-    barGroup.name = 'task-bar';
-    barGroup.task_index = index;
-    barGroup.sub_task_index = childIndex;
-    barGroup.record = taskRecord;
-    // this.barContainer.appendChild(barGroup);
+    barGroupBox.appendChild(barGroup);
     let rootContainer;
     let renderDefaultBar = true;
     let renderDefaultText = true;
@@ -243,7 +248,7 @@ export class TaskBar {
       barGroup.appendChild(label);
       barGroup.textLabel = label;
     }
-    return barGroup;
+    return barGroupBox;
   }
   updateTaskBarNode(index: number) {
     const taskbarGroup = this.getTaskBarNodeByIndex(index);

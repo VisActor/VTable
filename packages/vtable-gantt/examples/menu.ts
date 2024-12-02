@@ -98,6 +98,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-Compact-customLayout'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-taskMerge-customLayout'
   }
   //   ]
   // }
