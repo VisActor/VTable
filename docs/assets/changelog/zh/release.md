@@ -1,3 +1,37 @@
+# v1.11.5
+
+2024-11-29
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add @visactor/vtable-plugins package
+
+**📖 文档更新**
+
+- **@visactor/vtable**: 更新进入或离开节点时的事件文档
+- **@visactor/vtable**: 更新甘特图事件文档，暴露整个e的信息
+
+[更多详情请查看 v1.11.5](https://github.com/VisActor/VTable/releases/tag/v1.11.5)
+
+# v1.11.3
+
+2024-11-28
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: frozen chart not update when resize row or column width [#2876](https://github.com/VisActor/VTable/issues/2876)
+- **@visactor/vtable**: fix custom-component update in deleteRecords api
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: when columnWidthConfig set wrong dimensions should judge this case [#2948](https://github.com/VisActor/VTable/issues/2948)
+
+
+
+[更多详情请查看 v1.11.3](https://github.com/VisActor/VTable/releases/tag/v1.11.3)
+
 # v1.11.2
 
 2024-11-26

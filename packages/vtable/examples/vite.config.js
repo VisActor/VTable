@@ -14,8 +14,10 @@ module.exports = {
   resolve: {
     alias: {
       '@visactor/vtable-editors': path.resolve(__dirname, '../../vtable-editors/src/index.ts'),
+      '@visactor/vtable-plugins': path.resolve(__dirname, '../../vtable-plugins/src/index.ts'),
       '@src': path.resolve(__dirname, '../src/'),
-      '@vutils-extension': path.resolve(__dirname, '../src/vutil-extension-temp')
+      '@vutils-extension': path.resolve(__dirname, '../src/vutil-extension-temp'),
+      '@visactor/vtable/es': path.resolve(__dirname, '../src/')
     }
   },
   plugins: [

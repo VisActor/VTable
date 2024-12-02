@@ -1,13 +1,16 @@
 import { merge } from '@visactor/vutils';
-import type { Style } from '../body-helper/style';
-import type {
-  CellRange,
-  ColumnStyleOption,
-  CustomCellStyle,
-  CustomCellStyleArrangement,
-  FullExtendStyle
-} from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
+import type { CellRange, ColumnStyleOption, CustomCellStyle, CustomCellStyleArrangement } from '../ts-types';
+import type { Style } from '../body-helper/style';
+import { Factory } from '../core/factory';
+
+export interface ICustomCellStylePlugin {
+  new (
+    table: BaseTableAPI,
+    customCellStyle: CustomCellStyle[],
+    customCellStyleArrangement: CustomCellStyleArrangement[]
+  ): CustomCellStylePlugin;
+}
 
 export class CustomCellStylePlugin {
   table: BaseTableAPI;
@@ -95,8 +98,16 @@ export class CustomCellStylePlugin {
       const cellPos = cellStyle.cellPosition;
       if (cellStyle.customStyleId === customStyleId) {
         if (cellPos.range) {
-          for (let col = cellPos.range.start.col; col <= cellPos.range.end.col; col++) {
-            for (let row = cellPos.range.start.row; row <= cellPos.range.end.row; row++) {
+          for (
+            let col = Math.max(0, cellPos.range.start.col);
+            col <= Math.min(this.table.colCount - 1, cellPos.range.end.col);
+            col++
+          ) {
+            for (
+              let row = Math.max(0, cellPos.range.start.row);
+              row <= Math.min(this.table.rowCount - 1, cellPos.range.end.row);
+              row++
+            ) {
               this.table.scenegraph.updateCellContent(col, row);
             }
           }
@@ -154,8 +165,16 @@ export class CustomCellStylePlugin {
 
     // update cell group
     if (cellPos.range) {
-      for (let col = cellPos.range.start.col; col <= cellPos.range.end.col; col++) {
-        for (let row = cellPos.range.start.row; row <= cellPos.range.end.row; row++) {
+      for (
+        let col = Math.max(0, cellPos.range.start.col);
+        col <= Math.min(this.table.colCount - 1, cellPos.range.end.col);
+        col++
+      ) {
+        for (
+          let row = Math.max(0, cellPos.range.start.row);
+          row <= Math.min(this.table.rowCount - 1, cellPos.range.end.row);
+          row++
+        ) {
           const range = this.table.getCellRange(col, row);
           for (let c = range.start.col; c <= range.end.col; c++) {
             for (let r = range.start.row; r <= range.end.row; r++) {
@@ -200,3 +219,9 @@ export function mergeStyle(cacheStyle: Style, customCellStyle: ColumnStyleOption
 
   return cacheStyle;
 }
+
+export const registerCustomCellStylePlugin = () => {
+  Factory.registerComponent('customCellStylePlugin', CustomCellStylePlugin);
+};
+
+// export type ICustomCellStylePlugin = typeof CustomCellStylePlugin;

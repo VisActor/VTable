@@ -17,18 +17,22 @@ export class ReactCustomLayout {
   table: BaseTableAPI;
   customLayoutFuncCache: Map<string, ICustomLayoutFuc>;
   reactRemoveGraphicCache: Map<string, (col: number, row: number) => void>;
+  reactRemoveAllGraphicCache: Map<string, () => void>;
   headerCustomLayoutFuncCache: Map<string, ICustomLayoutFuc>;
   headerReactRemoveGraphicCache: Map<string, (col: number, row: number) => void>;
+  headerReactRemoveAllGraphicCache: Map<string, () => void>;
   // reactContainerCache: Map<number, Map<string, any>>;
-  constructor(removeAllContainer: () => void, table: BaseTableAPI) {
-    this.removeAllContainer = removeAllContainer;
+  constructor(table: BaseTableAPI) {
+    // this.removeAllContainer = removeAllContainer;
     this.table = table;
     this.customLayoutFuncCache = new Map();
     // this.reactContainerCache = new Map();
     this.reactRemoveGraphicCache = new Map();
+    this.reactRemoveAllGraphicCache = new Map();
     this.headerCustomLayoutFuncCache = new Map();
     // this.headerCeactContainerCache = new Map();
     this.headerReactRemoveGraphicCache = new Map();
+    this.headerReactRemoveAllGraphicCache = new Map();
   }
 
   hasReactCreateGraphic(componentId: string, isHeaderCustomLayout?: boolean) {
@@ -61,6 +65,14 @@ export class ReactCustomLayout {
       this.headerReactRemoveGraphicCache.set(componentId, removeGraphic);
     } else {
       this.reactRemoveGraphicCache.set(componentId, removeGraphic);
+    }
+  }
+
+  setReactRemoveAllGraphic(componentId: string, removeGraphic: () => void, isHeaderCustomLayout?: boolean) {
+    if (isHeaderCustomLayout) {
+      this.headerReactRemoveAllGraphicCache.set(componentId, removeGraphic);
+    } else {
+      this.reactRemoveAllGraphicCache.set(componentId, removeGraphic);
     }
   }
 
@@ -135,7 +147,21 @@ export class ReactCustomLayout {
   }
 
   clearCache() {
-    this.removeAllContainer();
+    this.reactRemoveAllGraphicCache.forEach(removeFun => {
+      removeFun();
+    });
+    this.headerReactRemoveAllGraphicCache.forEach(removeFun => {
+      removeFun();
+    });
+  }
+
+  updateAllCustomCell() {
+    this.customLayoutFuncCache.forEach((createFun, componentId) => {
+      this.updateCustomCell(componentId);
+    });
+    this.headerCustomLayoutFuncCache.forEach((createFun, componentId) => {
+      this.updateCustomCell(componentId, true);
+    });
   }
 }
 

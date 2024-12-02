@@ -97,12 +97,12 @@ import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 import type { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
-import type { IAnimationAppear } from './animation/appear';
+import type { IAnimationAppear, ITableAnimationOption } from './animation/appear';
 import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
-import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { EditManeger } from '../edit/edit-manager';
-import type { ITableAnimationOption, TableAnimationManager } from '../core/animation';
+import type { TableAnimationManager } from '../core/animation';
+import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -369,7 +369,7 @@ export interface BaseTableConstructorOptions {
      */
     headerSelectMode?: 'inline' | 'cell' | 'body';
     /** 不响应鼠标select交互 */
-    disableSelect?: boolean;
+    disableSelect?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
     /** 单独设置表头不响应鼠标select交互 */
     disableHeaderSelect?: boolean;
     /** 点击空白区域是否取消选中 */
@@ -643,6 +643,7 @@ export interface BaseTableAPI {
   _rowRangeHeightsMap: Map<string, number>;
   _colRangeWidthsMap: Map<string, number>;
   canvasSizeSeted?: boolean;
+
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -924,7 +925,7 @@ export interface BaseTableAPI {
   /** 开启表格的滚动 */
   enableScroll: () => void;
 
-  customCellStylePlugin: CustomCellStylePlugin;
+  customCellStylePlugin?: CustomCellStylePlugin;
   headerStyleCache: Map<string, any>;
   bodyBottomStyleCache: Map<string, any>;
   bodyStyleCache: Map<string, any>;

@@ -1,10 +1,15 @@
 import { isArray, isValid } from '@visactor/vutils';
 import type { ListTable } from '../ListTable';
-import { Factory } from '../core/factory';
 import { Group } from '../scenegraph/graphic/group';
-import { createRect, type Graphic } from '../vrender';
 import { updateCell } from '../scenegraph/group-creater/cell-helper';
+import type { Graphic } from '@src/vrender';
+import { createRect } from '@src/vrender';
+import { Factory } from '../core/factory';
 import { getTargetCell } from '../event/util';
+
+export interface IListTreeStickCellPlugin {
+  new (table: ListTable): ListTreeStickCellPlugin;
+}
 
 export class ListTreeStickCellPlugin {
   table: ListTable;
@@ -292,4 +297,4 @@ export const registerListTreeStickCellPlugin = () => {
   Factory.registerComponent('listTreeStickCellPlugin', ListTreeStickCellPlugin);
 };
 
-export type IListTreeStickCellPlugin = typeof ListTreeStickCellPlugin;
+// export type IListTreeStickCellPlugin = typeof ListTreeStickCellPlugin;

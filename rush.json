@@ -138,6 +138,15 @@
       "versionPolicyName": "vtableMain"
     },
     {
+      "packageName": "@visactor/vtable-plugins",
+      "projectFolder": "packages/vtable-plugins",
+      "tags": [
+        "package"
+      ],
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
+    },
+    {
       "packageName": "@internal/bugserver-trigger",
       "projectFolder": "tools/bugserver-trigger",
       "tags": [

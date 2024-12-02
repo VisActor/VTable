@@ -14,7 +14,7 @@ import type {
   CalendarEventListener
 } from './event/type';
 import { CALENDAR_EVENT_TYPE } from './event/type';
-import type { EventListenerId } from '@visactor/vtable/src/ts-types';
+import type { EventListenerId } from '@visactor/vtable/es/ts-types';
 import { isArray } from '@visactor/vutils';
 
 export interface CalendarConstructorOptions {

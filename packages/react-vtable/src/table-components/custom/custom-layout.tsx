@@ -91,7 +91,9 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     // eslint-disable-next-line no-undef
     console.log('update props', props, table);
 
-    table?.checkReactCustomLayout(removeAllContainer); // init reactCustomLayout component
+    table?.checkReactCustomLayout(); // init reactCustomLayout component
+    table?.reactCustomLayout?.setReactRemoveAllGraphic(componentId, removeAllContainer, isHeaderCustomLayout); // set customLayout function
+
     if (table && !table.reactCustomLayout?.hasReactCreateGraphic(componentId, isHeaderCustomLayout)) {
       table.reactCustomLayout?.setReactCreateGraphic(
         componentId,
