@@ -71,6 +71,27 @@ deleteLink: (link: ITaskLink) => void
 
 ```
 
+### scrollTop
+
+Get or set the vertical scroll value to a specified position.
+
+### scrollLeft
+
+Get or set the horizontal scroll value to a specified position.
+
+### getTaskBarRelativeRect(Function)
+
+Get the position of the task bar. The position relative to the top-left corner of the Gantt chart.
+
+```
+  getTaskBarRelativeRect:(index: number) =>{
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }
+```
+
 ## Events
 
 The Gantt chart event list allows you to listen to the required events and implement custom business logic as needed.
