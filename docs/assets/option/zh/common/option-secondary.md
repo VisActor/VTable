@@ -187,6 +187,11 @@ export interface SelectAllOnCtrlAOption {
 - 'column' 只有换列表头可换位
 - 'row' 只有换行表头可换位
 
+
+#${prefix} dragSortRow(boolean) = false
+
+控制拖拽行移动位置的开关。点击某个单元格后，鼠标拖拽该单元格可触发移动。
+
 #${prefix} hover(Object)
 
 hover 交互配置，具体配置项如下：
