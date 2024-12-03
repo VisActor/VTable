@@ -119,7 +119,7 @@ export interface IBaseTableProtected {
   frozenRowCount: number;
   rightFrozenColCount: number;
   bottomFrozenRowCount: number;
-  defaultRowHeight: number;
+  defaultRowHeight: number | 'auto';
   /**表头默认行高 可以按逐行设置 如果没有就取defaultRowHeight */
   defaultHeaderRowHeight: (number | 'auto') | (number | 'auto')[];
   defaultColWidth: number;
@@ -305,7 +305,7 @@ export interface BaseTableConstructorOptions {
   /**
    * 默认行高. 默认 40
    */
-  defaultRowHeight?: number;
+  defaultRowHeight?: number | 'auto';
   /** 列表头默认行高 可以按逐行设置 如果没有就取defaultRowHeight */
   defaultHeaderRowHeight?: (number | 'auto') | (number | 'auto')[];
   /**

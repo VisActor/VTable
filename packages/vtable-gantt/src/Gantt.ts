@@ -24,11 +24,14 @@ import type {
   ITaskLinkSelectedStyle,
   IPointStyle
 } from './ts-types';
+import { TasksShowMode } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
 import { StateManager } from './state/state-manager';
 import {
+  computeRowsCountByRecordDate,
+  computeRowsCountByRecordDateForCompact,
   convertProgress,
   createSplitLineAndResizeLine,
   DayTimes,
@@ -42,6 +45,7 @@ import {
 import { EventTarget } from './event/EventTarget';
 import { createDateAtMidnight, formatDate, isPropertyWritable, parseDateFormat } from './tools/util';
 import { DataSource } from './data/DataSource';
+import { isValid } from '@visactor/vutils';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
@@ -111,6 +115,7 @@ export class Gantt extends EventTarget {
     taskBarLabelText: ITaskBarLabelText;
     taskBarMoveable: boolean;
     taskBarResizable: boolean;
+    taskBarDragOrder: boolean;
     taskBarLabelStyle: ITaskBarLabelTextStyle;
     taskBarCustomLayout: ITaskBarCustomLayout;
     taskBarCreatable: boolean;
@@ -122,6 +127,7 @@ export class Gantt extends EventTarget {
 
     outerFrameStyle: IFrameStyle;
     pixelRatio: number;
+    tasksShowMode: TasksShowMode;
 
     startDateField: string;
     endDateField: string;
@@ -323,8 +329,30 @@ export class Gantt extends EventTarget {
       listTable_options[key] = this.options.taskListTable[key];
       if (key === 'columns') {
         listTable_options[key][listTable_options[key].length - 1].disableColumnResize = true;
+        if (
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+        ) {
+          for (let i = 0; i < listTable_options.columns.length; i++) {
+            if (listTable_options.columns[i].tree) {
+              listTable_options.columns[i].tree = false;
+            }
+          }
+        }
+      }
+      if (
+        key === 'hierarchyExpandLevel' &&
+        (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact)
+      ) {
+        delete listTable_options[key];
       }
     }
+
     // lineWidthArr[1] = 0;
     //Object.assign浅拷贝 会直接覆盖第一层属性 。theme.ARCO.extends 其中extends不能连续调用，且赋值也只是第一层
     if (this.options.taskListTable?.theme) {
@@ -496,7 +524,39 @@ export class Gantt extends EventTarget {
     listTable_options.canvasWidth = this.taskTableWidth as number;
     listTable_options.canvasHeight = this.canvas.height;
     listTable_options.defaultHeaderRowHeight = this.getAllHeaderRowsHeight();
-    listTable_options.defaultRowHeight = this.parsedOptions.rowHeight;
+    if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
+      listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
+        const { row, table } = args;
+        const record = table.getRecordByRowCol(0, row);
+        return (record.children?.length || 1) * this.parsedOptions.rowHeight;
+      };
+      listTable_options.defaultRowHeight = 'auto';
+    } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact) {
+      listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
+        const { row, table } = args;
+        const record = table.getRecordByRowCol(0, row);
+        return (
+          computeRowsCountByRecordDateForCompact(
+            record,
+            this.parsedOptions.startDateField,
+            this.parsedOptions.endDateField
+          ) * this.parsedOptions.rowHeight
+        );
+      };
+      listTable_options.defaultRowHeight = 'auto';
+    } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {
+      listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
+        const { row, table } = args;
+        const record = table.getRecordByRowCol(0, row);
+        return (
+          computeRowsCountByRecordDate(record, this.parsedOptions.startDateField, this.parsedOptions.endDateField) *
+          this.parsedOptions.rowHeight
+        );
+      };
+      listTable_options.defaultRowHeight = 'auto';
+    } else {
+      listTable_options.defaultRowHeight = this.options.rowHeight ?? 40;
+    }
     listTable_options.clearDOM = false;
     return listTable_options;
   }
@@ -577,7 +637,25 @@ export class Gantt extends EventTarget {
       this.parsedOptions.colWidthPerDay = 0;
     }
   }
+  getRowHeightByIndex(index: number) {
+    if (this.taskListTableInstance) {
+      return this.taskListTableInstance.getRowHeight(index + this.taskListTableInstance.columnHeaderLevelCount);
+    }
+    return this.parsedOptions.rowHeight;
+  }
+  getRowsHeightByIndex(startIndex: number, endIndex: number) {
+    if (this.taskListTableInstance) {
+      return this.taskListTableInstance.getRowsHeight(
+        startIndex + this.taskListTableInstance.columnHeaderLevelCount,
+        endIndex + this.taskListTableInstance.columnHeaderLevelCount
+      );
+    }
+    return this.parsedOptions.rowHeight * (endIndex - startIndex + 1);
+  }
   getAllRowsHeight() {
+    if (this.taskListTableInstance) {
+      return this.taskListTableInstance.getAllRowsHeight();
+    }
     return this.getAllHeaderRowsHeight() + this.itemCount * this.parsedOptions.rowHeight;
   }
   getAllHeaderRowsHeight() {
@@ -603,12 +681,21 @@ export class Gantt extends EventTarget {
   }
 
   getAllTaskBarsHeight() {
+    if (this.taskListTableInstance) {
+      return this.taskListTableInstance.getRowsHeight(
+        this.taskListTableInstance.columnHeaderLevelCount,
+        this.taskListTableInstance.rowCount - 1
+      );
+    }
     return this.itemCount * this.parsedOptions.rowHeight;
   }
   getTaskShowIndexByRecordIndex(index: number | number[]) {
     return this.taskListTableInstance.getBodyRowIndexByRecordIndex(index);
   }
-  getRecordByIndex(taskShowIndex: number) {
+  getRecordByIndex(taskShowIndex: number, sub_task_index?: number) {
+    if (isValid(sub_task_index)) {
+      return this.records[taskShowIndex]?.children?.[sub_task_index];
+    }
     if (this.taskListTableInstance) {
       return this.taskListTableInstance.getRecordByRowCol(
         0,
@@ -621,6 +708,11 @@ export class Gantt extends EventTarget {
   _refreshTaskBar(taskShowIndex: number) {
     // this.taskListTableInstance.updateRecords([record], [index]);
     this.scenegraph.taskBar.updateTaskBarNode(taskShowIndex);
+    this.scenegraph.refreshRecordLinkNodes(
+      taskShowIndex,
+      undefined,
+      this.scenegraph.taskBar.getTaskBarNodeByIndex(taskShowIndex)
+    );
     this.scenegraph.updateNextFrame();
   }
   _updateRecordToListTable(record: any, index: number) {
@@ -635,14 +727,17 @@ export class Gantt extends EventTarget {
    * @param index
    * @returns 当前任务信息
    */
-  getTaskInfoByTaskListIndex(taskShowIndex: number): {
+  getTaskInfoByTaskListIndex(
+    taskShowIndex: number,
+    sub_task_index?: number
+  ): {
     taskRecord: any;
     taskDays: number;
     startDate: Date;
     endDate: Date;
     progress: number;
   } {
-    const taskRecord = this.getRecordByIndex(taskShowIndex);
+    const taskRecord = this.getRecordByIndex(taskShowIndex, sub_task_index);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
     const progressField = this.parsedOptions.progressField;
@@ -678,17 +773,83 @@ export class Gantt extends EventTarget {
       progress
     };
   }
+  // /**
+  //  * 获取指定index处任务数据的具体信息
+  //  * @param index
+  //  * @returns 当前任务信息
+  //  */
+  // getTaskInfoByTaskListIndexs(
+  //   taskShowIndex: number,
+  //   subTaskIndex: number
+  // ): {
+  //   taskRecord: any;
+  //   taskDays: number;
+  //   startDate: Date;
+  //   endDate: Date;
+  //   progress: number;
+  // } {
+  //   const taskParentRecord = this.getRecordByIndex(taskShowIndex);
+  //   if (taskParentRecord.children?.length) {
+  //     const taskRecord = taskParentRecord.children[subTaskIndex];
+  //     const startDateField = this.parsedOptions.startDateField;
+  //     const endDateField = this.parsedOptions.endDateField;
+  //     const progressField = this.parsedOptions.progressField;
+  //     const rawDateStartDateTime = createDateAtMidnight(taskRecord?.[startDateField]).getTime();
+  //     const rawDateEndDateTime = createDateAtMidnight(taskRecord?.[endDateField]).getTime();
+  //     if (
+  //       rawDateEndDateTime < this.parsedOptions._minDateTime ||
+  //       rawDateStartDateTime > this.parsedOptions._maxDateTime ||
+  //       !taskRecord?.[startDateField] ||
+  //       !taskRecord?.[endDateField]
+  //     ) {
+  //       return {
+  //         taskDays: 0,
+  //         progress: 0,
+  //         startDate: null,
+  //         endDate: null,
+  //         taskRecord
+  //       };
+  //     }
+  //     const startDate = createDateAtMidnight(
+  //       Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
+  //     );
+  //     const endDate = createDateAtMidnight(
+  //       Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
+  //     );
+  //     const progress = convertProgress(taskRecord[progressField]);
+  //     const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  //     return {
+  //       taskRecord,
+  //       taskDays,
+  //       startDate,
+  //       endDate,
+  //       progress
+  //     };
+  //   }
+  //   return {
+  //     taskDays: 0,
+  //     progress: 0,
+  //     startDate: null,
+  //     endDate: null,
+  //     taskRecord: null
+  //   };
+  // }
   /**
    * 拖拽任务条或者调整任务条尺寸修改日期更新到数据中
    * @param updateDateType
    * @param days
    * @param index
    */
-  _updateDateToTaskRecord(updateDateType: 'move' | 'start-move' | 'end-move', days: number, index: number) {
-    const taskRecord = this.getRecordByIndex(index);
+  _updateDateToTaskRecord(
+    updateDateType: 'move' | 'start-move' | 'end-move',
+    days: number,
+    index: number,
+    sub_task_index?: number
+  ) {
+    const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
-    const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[startDateField]);
+    const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[endDateField]);
     const startDate = createDateAtMidnight(taskRecord[startDateField]);
     const endDate = createDateAtMidnight(taskRecord[endDateField]);
     if (updateDateType === 'move') {
@@ -703,7 +864,26 @@ export class Gantt extends EventTarget {
       const newEndDate = formatDate(createDateAtMidnight(days * DayTimes + endDate.getTime()), dateFormat);
       taskRecord[endDateField] = newEndDate;
     }
-    this._updateRecordToListTable(taskRecord, index);
+    if (!isValid(sub_task_index)) {
+      //子任务不是独占左侧表格一行的情况
+      this._updateRecordToListTable(taskRecord, index);
+    }
+  }
+
+  /**
+   * 拖拽任务条或者调整任务条尺寸修改日期更新到数据中
+   * @param updateDateType
+   * @param days
+   * @param index
+   */
+  _dragOrderTaskRecord(
+    source_index: number,
+    source_sub_task_index: number,
+    target_index: number,
+    target_sub_task_index: number
+  ) {
+    // const source_taskRecord = this.getRecordByIndex(source_index, source_sub_task_index);
+    this.data.adjustOrder(source_index, source_sub_task_index, target_index, target_sub_task_index);
   }
   /** 目前不支持树形tree的情况更新单条数据 需要的话目前可以setRecords。 */
   updateTaskRecord(record: any, index: number) {
@@ -737,10 +917,7 @@ export class Gantt extends EventTarget {
       ? this.taskListTableInstance.rowCount - this.taskListTableInstance.columnHeaderLevelCount
       : this.records.length;
     this.headerHeight = this.getAllHeaderRowsHeight();
-    this.drawHeight = Math.min(
-      this.headerHeight + this.parsedOptions.rowHeight * this.itemCount,
-      this.tableNoFrameHeight
-    );
+    this.drawHeight = Math.min(this.getAllRowsHeight(), this.tableNoFrameHeight);
     this.gridHeight = this.drawHeight - this.headerHeight;
   }
   /** 获取绘制画布的canvas上下文 */

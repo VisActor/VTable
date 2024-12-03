@@ -65,6 +65,43 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-listTable'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-table-groupBy'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Sub_Tasks_Inline'
+  },
+
+  {
+    path: 'gantt',
+    name: 'gantt-Sub_Tasks_Separate'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Sub_Tasks_Arrange'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Inline-customLayout'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Separate-customLayout'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Arrange-customLayout'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-Compact-customLayout'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-taskMerge-customLayout'
   }
   //   ]
   // }

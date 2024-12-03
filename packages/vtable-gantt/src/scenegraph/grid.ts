@@ -127,7 +127,7 @@ export class Grid {
         y += 0.5;
       }
       for (let i = 0; i < this.rowCount - 1; i++) {
-        y = y + Math.floor(this.rowHeight);
+        y = y + this._scene._gantt.getRowHeightByIndex(i); // Math.floor(this.rowHeight);
         const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.horizontalLine.lineColor,

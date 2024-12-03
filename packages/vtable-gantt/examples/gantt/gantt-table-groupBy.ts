@@ -1,21 +1,15 @@
 import type { ColumnsDefine } from '@visactor/vtable';
-import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
-import type { GanttConstructorOptions } from '../../src/index';
-import { Gantt, VTable, TYPES } from '../../src/index';
+import type { GanttConstructorOptions, TYPES } from '../../src/index';
+import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
-const date_input_editor = new DateInputEditor({});
-const input_editor = new InputEditor({});
-VTable.register.editor('input', input_editor);
-VTable.register.editor('date-input', date_input_editor);
+
 export function createTable() {
   const records = [
     {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-30',
-      end: '2024-08-14',
       progress: 31,
       priority: 'P0'
     },
@@ -32,13 +26,11 @@ export function createTable() {
       id: 3,
       title: 'Determine project scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024/07/24',
-      end: '2024/08/04',
       progress: 100,
       priority: 'P1'
     },
     {
-      id: 4,
+      id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
       start: '2024-08-04',
@@ -47,7 +39,7 @@ export function createTable() {
       priority: 'P0'
     },
     {
-      id: 5,
+      id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
       start: '07/24/2024',
@@ -779,37 +771,32 @@ export function createTable() {
       field: 'title',
       title: 'title',
       width: 200,
-      sort: true,
-      editor: 'input'
+      sort: true
     },
     {
       field: 'start',
       title: 'start',
       width: 150,
-      sort: true,
-      editor: 'date-input'
+      sort: true
     },
     {
       field: 'end',
       title: 'end',
       width: 150,
-      sort: true,
-      editor: 'date-input'
+      sort: true
     },
     {
       field: 'priority',
       title: 'priority',
       width: 100,
-      sort: true,
-      editor: 'input'
+      sort: true
     },
 
     {
       field: 'progress',
       title: 'progress',
       width: 200,
-      sort: true,
-      editor: 'input'
+      sort: true
     }
   ];
   const option: GanttConstructorOptions = {
@@ -818,14 +805,20 @@ export function createTable() {
       columns: columns,
       tableWidth: 400,
       minTableWidth: 100,
-      maxTableWidth: 600
+      maxTableWidth: 600,
+      groupBy: 'priority'
     },
 
     frame: {
+      verticalSplitLineMoveable: true,
       outerFrameStyle: {
         borderLineWidth: 2,
         borderColor: 'red',
         cornerRadius: 8
+      },
+      verticalSplitLine: {
+        lineWidth: 3,
+        lineColor: '#e1e4e8'
       },
       verticalSplitLineHighlight: {
         lineColor: 'green',
@@ -845,7 +838,9 @@ export function createTable() {
     },
     headerRowHeight: 60,
     rowHeight: 40,
+
     taskBar: {
+      selectable: false,
       startDateField: 'start',
       endDateField: 'end',
       progressField: 'progress',
@@ -862,15 +857,10 @@ export function createTable() {
         /** 已完成部分任务条的颜色 */
         completedBarColor: '#91e8e0',
         /** 任务条的圆角 */
-        cornerRadius: 8,
-        /** 任务条的边框 */
-        borderWidth: 1,
-        /** 边框颜色 */
-        borderColor: 'black'
+        cornerRadius: 10
       }
     },
     timelineHeader: {
-      backgroundColor: '#F6F8FA',
       verticalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
@@ -879,22 +869,9 @@ export function createTable() {
         lineWidth: 1,
         lineColor: '#e1e4e8'
       },
+      backgroundColor: '#EEF1F5',
+      colWidth: 60,
       scales: [
-        // {
-        //   unit: 'year',
-        //   step: 1,
-        //   format(date: TYPES.DateFormatArgumentType) {
-        //     return `${date.index}`;
-        //   }
-        // },
-
-        // {
-        //   unit: 'month',
-        //   step: 1,
-        //   format(date: TYPES.DateFormatArgumentType) {
-        //     return date.index + '月';
-        //   }
-        // },
         {
           unit: 'week',
           step: 1,
@@ -905,8 +882,7 @@ export function createTable() {
           style: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'red',
-            backgroundColor: '#EEF1F5'
+            color: 'red'
           }
         },
         {
@@ -918,13 +894,19 @@ export function createTable() {
           style: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'red',
-            backgroundColor: '#EEF1F5'
+            color: 'red'
           }
         }
+        // {
+        //   unit: 'quarter',
+        //   step: 1,
+        //   format(date: TYPES.DateFormatArgumentType) {
+        //     return '第' + date.index + '季度';
+        //   }
+        // }
       ]
     },
-    minDate: '2024-07-07',
+    minDate: '2024-07-01',
     maxDate: '2024-10-15',
     markLine: [
       {
@@ -937,6 +919,8 @@ export function createTable() {
       },
       {
         date: '2024-08-17',
+        position: 'middle',
+        scrollToMarkLine: true,
         style: {
           lineWidth: 2,
           lineColor: 'red',
@@ -944,39 +928,6 @@ export function createTable() {
         }
       }
     ],
-
-    dependency: {
-      links: [
-        {
-          type: TYPES.DependencyType.FinishToStart,
-          linkedFromTaskKey: 1,
-          linkedToTaskKey: 2
-        },
-        {
-          type: TYPES.DependencyType.StartToFinish,
-          linkedFromTaskKey: 2,
-          linkedToTaskKey: 3
-        },
-        {
-          type: TYPES.DependencyType.StartToStart,
-          linkedFromTaskKey: 3,
-          linkedToTaskKey: 4
-        },
-        {
-          type: TYPES.DependencyType.FinishToFinish,
-          linkedFromTaskKey: 4,
-          linkedToTaskKey: 5
-        }
-      ],
-      // linkLineSelectable: false,
-      linkSelectedLineStyle: {
-        shadowBlur: 5, //阴影宽度
-        shadowColor: 'red',
-        lineColor: 'red',
-        lineWidth: 1
-      },
-      linkCreatable: true
-    },
     rowSeriesNumber: {
       title: '行号',
       dragOrder: true,
@@ -988,7 +939,11 @@ export function createTable() {
       style: {
         borderColor: '#e1e4e8'
       }
-    }
+    },
+    scrollStyle: {
+      visible: 'scrolling'
+    },
+    overscrollBehavior: 'none'
   };
   // columns:[
   //   {
@@ -1010,11 +965,22 @@ export function createTable() {
   ganttInstance.on('scroll', e => {
     console.log('scroll', e);
   });
-
-  ganttInstance.taskListTableInstance?.on('scroll', e => {
+  ganttInstance.on('change_date_range', e => {
+    console.log('change_date_range', e);
+  });
+  ganttInstance.on('mouseenter_task_bar', e => {
+    console.log('mouseenter_taskbar', e);
+  });
+  ganttInstance.on('mouseleave_task_bar', e => {
+    console.log('mouseleave_taskbar', e);
+  });
+  ganttInstance.on('click_task_bar', e => {
+    console.log('click_task_bar', e);
+  });
+  ganttInstance.listTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
-  // bindDebugTool(ganttInstance.scenegraph.stage as any, {
-  //   customGrapicKeys: ['role', '_updateTag']
-  // });
+  bindDebugTool(ganttInstance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 }

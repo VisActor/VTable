@@ -298,7 +298,7 @@ export function getTargetRowAtConsiderBottomFrozen(
  * @returns
  */
 export function computeTargetRowByY(absoluteY: number, _this: BaseTableAPI): number {
-  let defaultRowHeight = _this.internalProps.defaultRowHeight;
+  let defaultRowHeight = _this.defaultRowHeight;
 
   //使用二分法计算出row
   if (_this._rowRangeHeightsMap.get(`$0$${_this.rowCount - 1}`)) {

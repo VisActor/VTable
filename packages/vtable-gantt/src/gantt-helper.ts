@@ -1,6 +1,12 @@
 import { text } from 'stream/consumers';
 import type { Gantt } from './Gantt';
-import type { IMarkLine, IScrollStyle, ITimelineDateInfo, ITimelineScale } from './ts-types';
+import {
+  TasksShowMode,
+  type IMarkLine,
+  type IScrollStyle,
+  type ITimelineDateInfo,
+  type ITimelineScale
+} from './ts-types';
 import { createDateAtMidnight, getWeekNumber } from './tools/util';
 
 const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
@@ -88,6 +94,7 @@ export { isNode };
 
 export function initOptions(gantt: Gantt) {
   const options = gantt.options;
+  gantt.parsedOptions.tasksShowMode = options?.tasksShowMode ?? TasksShowMode.Tasks_Separate;
   gantt.parsedOptions.pixelRatio = options?.pixelRatio ?? 1;
   gantt.parsedOptions.rowHeight = options?.rowHeight ?? 40;
   gantt.parsedOptions.timelineColWidth = options?.timelineHeader?.colWidth ?? 60;
@@ -166,9 +173,9 @@ export function initOptions(gantt: Gantt) {
       /** 任务条的圆角 */
       cornerRadius: 3,
       /** 任务条的边框 */
-      borderWidth: 1,
+      borderWidth: 0,
       /** 边框颜色 */
-      borderColor: 'red',
+      // borderColor: 'red',
       fontFamily: 'Arial',
       fontSize: 14
     },
@@ -197,11 +204,13 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.taskBarLabelText = options?.taskBar?.labelText ?? '';
   gantt.parsedOptions.taskBarMoveable = options?.taskBar?.moveable ?? true;
   gantt.parsedOptions.taskBarResizable = options?.taskBar?.resizable ?? true;
+  gantt.parsedOptions.taskBarDragOrder = options?.taskBar?.dragOrder ?? true;
+
   // gantt.parsedOptions.taskBarHoverColor =
   //   options?.taskBar?.hoverColor === null ? 'rgba(0,0,0,0)' : options?.taskBar?.hoverColor ?? 'rgba(0,0,0,0.1)';
   gantt.parsedOptions.taskBarLabelStyle = {
     fontFamily: options?.taskBar?.labelTextStyle?.fontFamily ?? 'Arial',
-    fontSize: options?.taskBar?.labelTextStyle?.fontSize ?? gantt.parsedOptions.rowHeight / 2,
+    fontSize: options?.taskBar?.labelTextStyle?.fontSize ?? 20,
     color: options?.taskBar?.labelTextStyle?.color ?? '#F01',
     textAlign: options?.taskBar?.labelTextStyle?.textAlign ?? 'left',
     textBaseline: options?.taskBar?.labelTextStyle?.textBaseline ?? 'middle',
@@ -597,7 +606,8 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
 export function findRecordByTaskKey(
   records: any[],
   taskKeyField: string,
-  taskKey: string | number | (string | number)[]
+  taskKey: string | number | (string | number)[],
+  childrenField: string = 'children'
 ): { record: any; index: number[] } | undefined {
   for (let i = 0; i < records.length; i++) {
     if (
@@ -605,10 +615,10 @@ export function findRecordByTaskKey(
       records[i][taskKeyField] === taskKey
     ) {
       return { record: records[i], index: [i] };
-    } else if (records[i].children?.length) {
+    } else if (records[i][childrenField]?.length) {
       if (Array.isArray(taskKey) && taskKey[0] === records[i][taskKeyField]) {
         const result: { record: any; index: number[] } | undefined = findRecordByTaskKey(
-          records[i].children,
+          records[i][childrenField],
           taskKeyField,
           taskKey.slice(1)
         );
@@ -618,7 +628,7 @@ export function findRecordByTaskKey(
         }
       } else if (!Array.isArray(taskKey)) {
         const result: { record: any; index: number[] } | undefined = findRecordByTaskKey(
-          records[i].children,
+          records[i][childrenField],
           taskKeyField,
           taskKey
         );
@@ -629,4 +639,181 @@ export function findRecordByTaskKey(
       }
     }
   }
+}
+
+export function clearRecordLinkInfos(records: any[], childrenField: string = 'children') {
+  for (let i = 0; i < records.length; i++) {
+    if (records[i][childrenField]?.length) {
+      clearRecordLinkInfos(records[i][childrenField], childrenField);
+    } else {
+      delete records[i].vtable_gantt_linkedTo;
+      delete records[i].vtable_gantt_linkedFrom;
+    }
+  }
+}
+
+export function clearRecordShowIndex(records: any[], childrenField: string = 'children') {
+  for (let i = 0; i < records.length; i++) {
+    if (records[i][childrenField]?.length) {
+      clearRecordShowIndex(records[i][childrenField], childrenField);
+    } else {
+      delete records[i].vtable_gantt_showIndex;
+    }
+  }
+}
+export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
+  let task_index;
+  let sub_task_index;
+  if (gantt.taskListTableInstance) {
+    const rowInfo = gantt.taskListTableInstance.getTargetRowAt(y + gantt.headerHeight);
+    if (rowInfo) {
+      const { row } = rowInfo;
+      task_index = row - gantt.taskListTableInstance.columnHeaderLevelCount;
+      const beforeRowsHeight = gantt.getRowsHeightByIndex(0, task_index - 1); // 耦合了listTableOption的customComputeRowHeight
+      sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+    }
+  } else {
+    task_index = Math.floor(y / gantt.parsedOptions.rowHeight);
+  }
+  return { task_index, sub_task_index };
+}
+
+export function computeRowsCountByRecordDateForCompact(record: any, startDateField: string, endDateField: string) {
+  if (!record.children || record.children.length === 1) {
+    if (record.children?.length === 1) {
+      record.children[0].vtable_gantt_showIndex = 0;
+    }
+    return 1;
+  }
+  // 创建一个浅拷贝并排序子任务，根据开始日期排序
+  const sortedChildren = record.children.slice().sort((a: any, b: any) => {
+    return createDateAtMidnight(a[startDateField]).getTime() - createDateAtMidnight(b[startDateField]).getTime();
+  });
+  const count = 0;
+  // 用于存储每一行的结束日期
+  const rows = [];
+  for (let i = 0; i <= sortedChildren.length - 1; i++) {
+    const newRecord = sortedChildren[i];
+    const startDate = createDateAtMidnight(newRecord[startDateField]).getTime();
+    const endDate = createDateAtMidnight(newRecord[endDateField]).getTime();
+
+    let placed = false;
+
+    // 尝试将当前任务放入已有的行中
+    for (let j = 0; j < rows.length; j++) {
+      if (startDate > rows[j]) {
+        // 如果当前任务的开始日期在该行的结束日期之后，则可以放在这一行
+        rows[j] = endDate;
+        placed = true;
+        newRecord.vtable_gantt_showIndex = j;
+        break;
+      }
+    }
+
+    // 如果不能放在已有的行中，则需要新开一行
+    if (!placed) {
+      rows.push(endDate);
+      newRecord.vtable_gantt_showIndex = rows.length - 1;
+    }
+  }
+
+  return rows.length;
+}
+// 检查两个日期范围是否重叠
+function isOverlapping(task: any, rowTasks: any[], startDateField: string, endDateField: string) {
+  const start1 = createDateAtMidnight(task[startDateField]).getTime();
+  const end1 = createDateAtMidnight(task[endDateField]).getTime();
+  return rowTasks.some(rowTask => {
+    const start2 = createDateAtMidnight(rowTask[startDateField]).getTime();
+    const end2 = createDateAtMidnight(rowTask[endDateField]).getTime();
+    return start1 <= end2 && start2 <= end1;
+  });
+}
+export function computeRowsCountByRecordDate(record: any, startDateField: string, endDateField: string) {
+  if (!record.children || record.children.length === 1) {
+    if (record.children?.length === 1) {
+      record.children[0].vtable_gantt_showIndex = 0;
+    }
+    return 1;
+  }
+
+  const count = 0;
+  // 用于存储每一行的结束日期
+  const rows = [];
+  for (let i = 0; i <= record.children.length - 1; i++) {
+    const newRecord = record.children[i];
+    const startDate = createDateAtMidnight(newRecord[startDateField]).getTime();
+    const endDate = createDateAtMidnight(newRecord[endDateField]).getTime();
+
+    let placed = false;
+
+    // 尝试将当前任务放入已有的行中
+    for (let j = 0; j < rows.length; j++) {
+      const rowTasks = record.children.filter((t: any) => t !== newRecord && t.vtable_gantt_showIndex === j);
+      if (!isOverlapping(newRecord, rowTasks, startDateField, endDateField)) {
+        // 如果当前任务的开始日期在该行的结束日期之后，则可以放在这一行
+        rows[j] = endDate;
+        placed = true;
+        newRecord.vtable_gantt_showIndex = j;
+        break;
+      }
+    }
+
+    // 如果不能放在已有的行中，则需要新开一行
+    if (!placed) {
+      rows.push(endDate);
+      newRecord.vtable_gantt_showIndex = rows.length - 1;
+    }
+  }
+
+  return rows.length;
+}
+export function getSubTaskRowIndexByRecordDate(
+  record: any,
+  childIndex: number,
+  startDateField: string,
+  endDateField: string
+) {
+  if (childIndex === 0) {
+    return 0;
+  }
+  // 排序在datasource中已经排过了
+  //  创建一个浅拷贝并排序子任务，根据开始日期排序
+  // const sortedChildren = record.children.slice().sort((a: any, b: any) => {
+  //   return createDateAtMidnight(a[startDateField]).getTime() - createDateAtMidnight(b[startDateField]).getTime();
+  // });
+
+  // 用于存储每一行的结束日期
+  const rows = [];
+  if (record?.children) {
+    for (let i = 0; i <= record.children.length - 1; i++) {
+      const newRecord = record.children[i];
+      const startDate = createDateAtMidnight(newRecord[startDateField]).getTime();
+      const endDate = createDateAtMidnight(newRecord[endDateField]).getTime();
+
+      let placed = false;
+
+      // 尝试将当前任务放入已有的行中
+      for (let j = 0; j < rows.length; j++) {
+        if (startDate > rows[j]) {
+          // 如果当前任务的开始日期在该行的结束日期之后，则可以放在这一行
+          rows[j] = endDate;
+          placed = true;
+          if (i === childIndex) {
+            return j;
+          }
+          break;
+        }
+      }
+      // 如果不能放在已有的行中，则需要新开一行
+      if (!placed) {
+        rows.push(endDate);
+      }
+      if (i === childIndex) {
+        return rows.length - 1;
+      }
+    }
+  }
+
+  return 0;
 }

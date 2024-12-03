@@ -176,6 +176,13 @@
             "zh": "甘特图编辑",
             "en": "Gantt Edit"
           }
+        },
+        {
+          "path": "subtask_layout",
+          "title": {
+            "zh": "子任务布局",
+            "en": "Subtask Layout"
+          }
         }
       ]
     },
