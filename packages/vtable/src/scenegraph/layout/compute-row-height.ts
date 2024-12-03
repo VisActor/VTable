@@ -349,6 +349,13 @@ export function computeRowsHeight(
 }
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
+  const isAllRowsAuto =
+    table.heightMode === 'autoHeight' ||
+    (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
+  if (!isAllRowsAuto && table.getDefaultRowHeight(row) !== 'auto') {
+    return table.getDefaultRowHeight(row) as number;
+  }
+
   let maxHeight;
   if ((table.options as ListTableConstructorOptions).customComputeRowHeight) {
     return (table.options as ListTableConstructorOptions).customComputeRowHeight({ row, table: table as ListTableAPI });
