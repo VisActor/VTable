@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix default row height in computeRowHeight() #2903",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

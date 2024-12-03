@@ -341,6 +341,13 @@ export function computeRowsHeight(
 }
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
+  const isAllRowsAuto =
+    table.heightMode === 'autoHeight' ||
+    (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
+  if (!isAllRowsAuto && table.getDefaultRowHeight(row) !== 'auto') {
+    return table.getDefaultRowHeight(row) as number;
+  }
+
   let maxHeight;
   // 如果是透视图
   if (
