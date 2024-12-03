@@ -680,7 +680,7 @@ export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
 
 export function computeRowsCountByRecordDateForCompact(record: any, startDateField: string, endDateField: string) {
   if (!record.children || record.children.length === 1) {
-    if (record.children.length === 1) {
+    if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
     }
     return 1;
