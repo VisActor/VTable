@@ -1,6 +1,35 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 29 Nov 2024 07:59:16 GMT and should not be manually modified.
+This log was last generated on Tue, 03 Dec 2024 11:06:35 GMT and should not be manually modified.
+
+## 1.12.0
+Tue, 03 Dec 2024 11:06:35 GMT
+
+### Minor changes
+
+- feat: add taskShowMode for gantt chart #2849
+
+
+
+### Updates
+
+- feat: add option customComputeRowHeight and defaultRowHeight can set "auto"
+
+
+- docs: add getTaskBarRelativeRect api #2920
+
+
+- fix: when edit record task date update taskbar occor error #2938
+
+
+- fix: fix last col&row editor size #2926
+- fix: fix cell update event problem in CustomCellStylePlugin #2927
+- fix: fix react-component in tree mode update
+- fix: fix default row height in computeRowHeight() #2903
+- fix: fix legend visible problem when reize table
+- fix: fix cache problem in Icon.loadGif() #2905
+- fix: fix merge radio cell check update #2881
+- fix: fix strokeArrayWidth update in updateCell() #2811
 
 ## 1.11.5
 Fri, 29 Nov 2024 07:59:16 GMT
