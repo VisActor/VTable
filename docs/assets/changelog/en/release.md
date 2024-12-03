@@ -1,3 +1,33 @@
+# v1.12.0
+
+2024-12-03
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add option customComputeRowHeight and defaultRowHeight can set "auto"
+- **@visactor/vtable**: add taskShowMode for gantt chart [#2849](https://github.com/VisActor/VTable/issues/2849)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when edit record task date update taskbar occor error [#2938](https://github.com/VisActor/VTable/issues/2938)
+- **@visactor/vtable**: fix last col&row editor size [#2926](https://github.com/VisActor/VTable/issues/2926)
+- **@visactor/vtable**: fix cell update event problem in CustomCellStylePlugin [#2927](https://github.com/VisActor/VTable/issues/2927)
+- **@visactor/vtable**: fix react-component in tree mode update
+- **@visactor/vtable**: fix default row height in computeRowHeight() [#2903](https://github.com/VisActor/VTable/issues/2903)
+- **@visactor/vtable**: fix legend visible problem when reize table
+- **@visactor/vtable**: fix cache problem in Icon.loadGif() [#2905](https://github.com/VisActor/VTable/issues/2905)
+- **@visactor/vtable**: fix merge radio cell check update [#2881](https://github.com/VisActor/VTable/issues/2881)
+- **@visactor/vtable**: fix strokeArrayWidth update in updateCell() [#2811](https://github.com/VisActor/VTable/issues/2811)
+
+**📖 Site / documentation update**
+
+- **@visactor/vtable**: add getTaskBarRelativeRect api [#2920](https://github.com/VisActor/VTable/issues/2920)
+
+
+
+[more detail about v1.12.0](https://github.com/VisActor/VTable/releases/tag/v1.12.0)
+
 # v1.11.5
 
 2024-11-29
