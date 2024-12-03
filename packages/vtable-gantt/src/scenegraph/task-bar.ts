@@ -152,6 +152,7 @@ export class TaskBar {
       clip: true
     });
     barGroupBox.appendChild(barGroup);
+    barGroupBox.clipGroupBox = barGroup;
     let rootContainer;
     let renderDefaultBar = true;
     let renderDefaultText = true;
@@ -197,7 +198,7 @@ export class TaskBar {
       });
       rect.name = 'task-bar-rect';
       barGroup.appendChild(rect);
-      barGroup.barRect = rect;
+      barGroupBox.barRect = rect;
       // 创建已完成部分任务条rect
       const progress_rect = createRect({
         x: 0,
@@ -209,7 +210,7 @@ export class TaskBar {
       });
       progress_rect.name = 'task-bar-progress-rect';
       barGroup.appendChild(progress_rect);
-      barGroup.progressRect = progress_rect;
+      barGroupBox.progressRect = progress_rect;
     }
 
     rootContainer && barGroup.appendChild(rootContainer);
@@ -246,7 +247,7 @@ export class TaskBar {
         // dy: this._scene._gantt.barLabelStyle.fontSize / 2
       });
       barGroup.appendChild(label);
-      barGroup.textLabel = label;
+      barGroupBox.textLabel = label;
     }
     return barGroupBox;
   }

@@ -538,6 +538,7 @@ export class StateManager {
       diff_days = direction === 'left' ? -diff_days : diff_days;
 
       const taskBarGroup = this.resizeTaskBar.target;
+      const clipGroupBox = taskBarGroup.clipGroupBox;
       const rect = this.resizeTaskBar.target.barRect;
       const progressRect = this.resizeTaskBar.target.progressRect;
       // const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
@@ -570,10 +571,12 @@ export class StateManager {
         const taskBarSize = this._gantt.parsedOptions.colWidthPerDay * (taskDays + diff_days);
         if (direction === 'left') {
           resizeOrMoveTaskBar(taskBarGroup, targetEndX - taskBarGroup.attribute.x, 0, taskBarSize, this);
+          clipGroupBox.setAttribute('width', taskBarGroup.attribute.width);
           rect?.setAttribute('width', taskBarGroup.attribute.width);
           progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
         } else if (direction === 'right') {
           resizeOrMoveTaskBar(taskBarGroup, 0, 0, taskBarSize, this);
+          clipGroupBox.setAttribute('width', taskBarGroup.attribute.width);
           rect?.setAttribute('width', taskBarGroup.attribute.width);
           progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
         }
@@ -606,6 +609,7 @@ export class StateManager {
     // debugger;
     const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
     taskBarGroup.setAttribute('zIndex', 10000);
+    const clipGroupBox = taskBarGroup.clipGroupBox;
     const rect = taskBarGroup.barRect;
     const progressRect = taskBarGroup.progressRect;
     const textLabel = taskBarGroup.textLabel;
@@ -635,6 +639,7 @@ export class StateManager {
       taskBarSize,
       this
     );
+    clipGroupBox.setAttribute('width', taskBarGroup.attribute.width);
     rect?.setAttribute('width', taskBarGroup.attribute.width);
     progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
 
