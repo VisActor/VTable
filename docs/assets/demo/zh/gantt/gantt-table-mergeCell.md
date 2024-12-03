@@ -296,7 +296,7 @@ const option = {
     customLayout: args => {
       const colorLength = barColors.length;
       const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
-      const container = new VRender.Group({
+      const container = new VTableGantt.VRender.Group({
         width,
         height,
         fill: {
@@ -324,7 +324,7 @@ const option = {
         flexDirection: 'row',
         flexWrap: 'nowrap'
       });
-      const containerLeft = new VRender.Group({
+      const containerLeft = new VTableGantt.VRender.Group({
         height,
         width: 60,
         display: 'flex',
@@ -335,7 +335,7 @@ const option = {
       });
       container.add(containerLeft);
 
-      const icon0 = new VRender.Image({
+      const icon0 = new VTableGantt.VRender.Image({
         width: 40,
         height: 40,
         image: taskRecord.avatar,
@@ -343,7 +343,7 @@ const option = {
       });
       containerLeft.add(icon0);
 
-      const containerRight = new VRender.Group({
+      const containerRight = new VTableGantt.VRender.Group({
         height,
         width: width - 60,
         display: 'flex',
@@ -352,7 +352,7 @@ const option = {
       });
       container.add(containerRight);
 
-      const bloggerName = new VRender.Text({
+      const bloggerName = new VTableGantt.VRender.Text({
         text: taskRecord.name + ' ' + taskRecord.id,
         fontSize: 16,
         fontFamily: 'sans-serif',
@@ -362,7 +362,7 @@ const option = {
       });
       containerRight.add(bloggerName);
 
-      const days = new VRender.Text({
+      const days = new VTableGantt.VRender.Text({
         text: `${taskDays}天`,
         fontSize: 13,
         fontFamily: 'sans-serif',
