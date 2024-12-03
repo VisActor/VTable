@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix cache problem in Icon.loadGif() #2905",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
