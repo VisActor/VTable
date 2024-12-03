@@ -141,3 +141,11 @@ type CustomAggregation = {
 ## groupTitleCustomLayout(CustomLayout)
 
 分组标题自定义布局。
+
+## customComputeRowHeight(Function)
+
+代码 VTable 内部计算行高的方法，用户可以自定义计算行高的方法。
+
+```
+customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => number;
+```

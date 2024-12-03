@@ -94,6 +94,14 @@ export class EditManeger {
       const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
       const referencePosition = { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } };
 
+      // adjust last col&row, same as packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw
+      if (col === this.table.colCount - 1) {
+        referencePosition.rect.width = rect.width - 1;
+      }
+      if (row === this.table.rowCount - 1) {
+        referencePosition.rect.height = rect.height - 1;
+      }
+
       editor.beginEditing && console.warn('VTable Warn: `beginEditing` is deprecated, please use `onStart` instead.');
       editor.beginEditing?.(this.table.getElement(), referencePosition, dataValue);
 

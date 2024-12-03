@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix last col&row editor size #2926",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

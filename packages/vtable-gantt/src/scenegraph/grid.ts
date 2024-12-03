@@ -13,8 +13,6 @@ export class Grid {
   y: number;
   width: number;
   height: number;
-  timelineDates: any;
-  colWidthPerDay: number;
   rowHeight: number;
   rowCount: number;
   group: Group;
@@ -34,8 +32,6 @@ export class Grid {
     this.y = scene._gantt.getAllHeaderRowsHeight();
     this.width = scene.tableGroup.attribute.width;
     this.height = scene.tableGroup.attribute.height - scene.timelineHeader.group.attribute.height;
-    this.timelineDates = scene._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
-    this.colWidthPerDay = scene._gantt.parsedOptions.colWidthPerDay;
     this.rowHeight = scene._gantt.parsedOptions.rowHeight;
     this.rowCount = scene._gantt.itemCount;
     this.allGridWidth = scene._gantt._getAllColsWidth();
@@ -93,9 +89,11 @@ export class Grid {
       if (this.gridStyle?.verticalLine.lineWidth & 1) {
         x = 0.5;
       }
-      for (let i = 0; i < this.timelineDates?.length - 1; i++) {
-        const dateline = this.timelineDates[i];
-        x = x + Math.floor(this.colWidthPerDay * dateline.days);
+      const timelineDates = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
+      const colWidthPerDay = this._scene._gantt.parsedOptions.colWidthPerDay;
+      for (let i = 0; i < timelineDates?.length - 1; i++) {
+        const dateline = timelineDates[i];
+        x = x + Math.floor(colWidthPerDay * dateline.days);
         const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.verticalLine.lineColor,
@@ -127,7 +125,7 @@ export class Grid {
         y += 0.5;
       }
       for (let i = 0; i < this.rowCount - 1; i++) {
-        y = y + Math.floor(this.rowHeight);
+        y = y + this._scene._gantt.getRowHeightByIndex(i); // Math.floor(this.rowHeight);
         const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.horizontalLine.lineColor,

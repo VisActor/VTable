@@ -1,6 +1,12 @@
 import { merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
-import type { CellRange, ColumnStyleOption, CustomCellStyle, CustomCellStyleArrangement } from '../ts-types';
+import {
+  cellStyleKeys,
+  type CellRange,
+  type ColumnStyleOption,
+  type CustomCellStyle,
+  type CustomCellStyleArrangement
+} from '../ts-types';
 import type { Style } from '../body-helper/style';
 import { Factory } from '../core/factory';
 
@@ -163,6 +169,18 @@ export class CustomCellStylePlugin {
       this.customCellStyleArrangement.splice(index, 1);
     }
 
+    const style = this.getCustomCellStyleOption(customStyleId)?.style;
+    let forceFastUpdate;
+    if (style) {
+      forceFastUpdate = true;
+      for (const key in style) {
+        if (cellStyleKeys.indexOf(key) === -1) {
+          forceFastUpdate = false;
+          break;
+        }
+      }
+    }
+
     // update cell group
     if (cellPos.range) {
       for (
@@ -178,14 +196,14 @@ export class CustomCellStylePlugin {
           const range = this.table.getCellRange(col, row);
           for (let c = range.start.col; c <= range.end.col; c++) {
             for (let r = range.start.row; r <= range.end.row; r++) {
-              this.table.scenegraph.updateCellContent(c, r);
+              this.table.scenegraph.updateCellContent(c, r, forceFastUpdate);
             }
           }
           // this.table.scenegraph.updateCellContent(col, row);
         }
       }
     } else {
-      this.table.scenegraph.updateCellContent(cellPos.col, cellPos.row);
+      this.table.scenegraph.updateCellContent(cellPos.col, cellPos.row, forceFastUpdate);
     }
 
     this.table.scenegraph.updateNextFrame();

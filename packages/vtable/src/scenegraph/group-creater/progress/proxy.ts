@@ -313,7 +313,7 @@ export class SceneProxy {
           this.currentRow + 1,
           endRow,
           this.table.scenegraph.mergeMap,
-          this.table.internalProps.defaultRowHeight,
+          this.table.defaultRowHeight,
           this.table
           // cellLocation
         );
@@ -335,7 +335,7 @@ export class SceneProxy {
           this.currentRow + 1,
           endRow,
           this.table.scenegraph.mergeMap,
-          this.table.internalProps.defaultRowHeight,
+          this.table.defaultRowHeight,
           this.table
           // cellLocation
         );
@@ -359,7 +359,7 @@ export class SceneProxy {
         this.currentRow + 1,
         endRow,
         this.table.scenegraph.mergeMap,
-        this.table.internalProps.defaultRowHeight,
+        this.table.defaultRowHeight,
         this.table
         // cellLocation
       );

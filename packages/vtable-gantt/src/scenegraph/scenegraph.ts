@@ -9,11 +9,13 @@ import { TimelineHeader } from './timeline-header';
 import { TaskBar } from './task-bar';
 import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
-import { getTaskIndexByY } from '../gantt-helper';
+import { findRecordByTaskKey, getTaskIndexByY, getTaskIndexsByTaskY } from '../gantt-helper';
 import graphicContribution from './graphic';
 import { TaskCreationButton } from './task-creation-button';
-import { DependencyLink } from './dependency-link';
+import { DependencyLink, updateLinkLinePoints } from './dependency-link';
 import { DragOrderLine } from './drag-order-line';
+import type { GanttTaskBarNode } from './gantt-node';
+import { TasksShowMode } from '../ts-types';
 container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
@@ -131,6 +133,7 @@ export class Scenegraph {
     this.timelineHeader.refresh();
     this.grid.refresh();
     this.taskBar.refresh();
+    this.dependencyLink.refresh();
     this.markLine.refresh();
     this.dependencyLink.refresh();
     this.frameBorder.resize();
@@ -149,6 +152,7 @@ export class Scenegraph {
     this.updateNextFrame();
   }
   refreshTaskBarsAndGrid() {
+    this._gantt.verticalSplitResizeLine.style.height = this._gantt.drawHeight + 'px'; //'100%';
     this.tableGroupHeight = Math.min(this._gantt.tableNoFrameHeight, this._gantt.drawHeight);
     this.tableGroup.setAttribute('height', this.tableGroupHeight);
     // this.timelineHeader.refresh();
@@ -256,9 +260,6 @@ export class Scenegraph {
   release() {
     this.stage.release();
   }
-  getTaskBarNodeByY(y: number) {
-    const taskIndex = getTaskIndexByY(y, this._gantt);
-  }
 
   showTaskCreationButton(x: number, y: number, taskIndex: number, record: any) {
     if (!this.taskCreationButton) {
@@ -272,6 +273,281 @@ export class Scenegraph {
     if (this.taskCreationButton) {
       this.taskCreationButton.hide();
       this.updateNextFrame();
+    }
+  }
+  refreshRecordLinkNodes(taskIndex: number, sub_task_index: number, target: GanttTaskBarNode, dy: number = 0) {
+    const gantt: Gantt = this._gantt;
+    const record = gantt.getRecordByIndex(taskIndex, sub_task_index);
+    const vtable_gantt_linkedTo = record.vtable_gantt_linkedTo;
+    const vtable_gantt_linkedFrom = record.vtable_gantt_linkedFrom;
+    for (let i = 0; i < vtable_gantt_linkedTo?.length; i++) {
+      const link = vtable_gantt_linkedTo[i];
+      const linkLineNode = link.vtable_gantt_linkLineNode;
+      const lineArrowNode = link.vtable_gantt_linkArrowNode;
+
+      const { linkedToTaskKey, linkedFromTaskKey, type } = link;
+      const { taskKeyField, minDate } = gantt.parsedOptions;
+      const linkedFromTaskRecord = findRecordByTaskKey(gantt.records, taskKeyField, linkedFromTaskKey);
+      const linkedToTaskRecord = findRecordByTaskKey(gantt.records, taskKeyField, linkedToTaskKey);
+      // const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
+      //   gantt.getTaskInfoByTaskListIndex(taskIndex);
+      // const taskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+      // const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
+      //   gantt.getTaskInfoByTaskListIndex(taskShowIndex);
+
+      let linkedToTaskStartDate;
+      let linkedToTaskEndDate;
+      let linkedToTaskTaskDays;
+      // let linkedToTaskTaskRecord;
+      let linkedFromTaskStartDate;
+      let linkedFromTaskEndDate;
+      let linkedFromTaskTaskDays;
+      // let linkedFromTaskTaskRecord;
+
+      let linkedToTaskShowIndex;
+      let linkedFromTaskShowIndex;
+      let diffY: number;
+      if (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline) {
+        const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, gantt);
+        linkedFromTaskShowIndex = linkedFromTaskRecord.index[0];
+        // linkedToTaskShowIndex = linkedToTaskRecord.index[0];
+        const beforeRowCountLinkedTo =
+          gantt.getRowsHeightByIndex(0, new_indexs.task_index - 1) / gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
+        linkedToTaskShowIndex = beforeRowCountLinkedTo;
+        ({
+          startDate: linkedToTaskStartDate,
+          endDate: linkedToTaskEndDate,
+          taskDays: linkedToTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedToTaskRecord.index[0], linkedToTaskRecord.index[1]));
+        ({
+          startDate: linkedFromTaskStartDate,
+          endDate: linkedFromTaskEndDate,
+          taskDays: linkedFromTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
+
+        const taskbarHeight = gantt.parsedOptions.taskBarStyle.width;
+        diffY = target.attribute.y + taskbarHeight / 2 - (linkedToTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
+      } else if (
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+      ) {
+        const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, gantt);
+        const beforeRowCountLinkedFrom =
+          gantt.getRowsHeightByIndex(0, linkedFromTaskRecord.index[0] - 1) / gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
+        linkedFromTaskShowIndex =
+          beforeRowCountLinkedFrom +
+          (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+          gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+            ? // getSubTaskRowIndexByRecordDate(
+              //     gantt.records[linkedFromTaskRecord.index[0]],
+              //     linkedFromTaskRecord.index[1],
+              //     gantt.parsedOptions.startDateField,
+              //     gantt.parsedOptions.endDateField
+              //   )
+              linkedFromTaskRecord.record.vtable_gantt_showIndex
+            : linkedFromTaskRecord.index[1]);
+        // const beforeRowCountLinkedTo =
+        //   gantt.getRowsHeightByIndex(0, linkedToTaskRecord.index[0] - 1) / gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
+        // linkedToTaskShowIndex = beforeRowCountLinkedTo + linkedToTaskRecord.index[1];
+        const beforeRowCountLinkedTo =
+          gantt.getRowsHeightByIndex(0, new_indexs.task_index - 1) / gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
+        linkedToTaskShowIndex =
+          beforeRowCountLinkedTo +
+          (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+          gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+            ? // ? getSubTaskRowIndexByRecordDate(
+              //     gantt.records[linkedToTaskRecord.index[0]],
+              //     linkedToTaskRecord.index[1],
+              //     gantt.parsedOptions.startDateField,
+              //     gantt.parsedOptions.endDateField
+              //   )
+              linkedToTaskRecord.record.vtable_gantt_showIndex
+            : new_indexs.sub_task_index);
+
+        ({
+          startDate: linkedToTaskStartDate,
+          endDate: linkedToTaskEndDate,
+          taskDays: linkedToTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedToTaskRecord.index[0], linkedToTaskRecord.index[1]));
+        ({
+          startDate: linkedFromTaskStartDate,
+          endDate: linkedFromTaskEndDate,
+          taskDays: linkedFromTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
+
+        const taskbarHeight = gantt.parsedOptions.taskBarStyle.width;
+        diffY = target.attribute.y + taskbarHeight / 2 - (linkedToTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
+      } else {
+        linkedFromTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+        linkedToTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+        if (linkedFromTaskShowIndex === -1 || linkedToTaskShowIndex === -1) {
+          continue;
+        }
+        ({
+          startDate: linkedToTaskStartDate,
+          endDate: linkedToTaskEndDate,
+          taskDays: linkedToTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex));
+        ({
+          startDate: linkedFromTaskStartDate,
+          endDate: linkedFromTaskEndDate,
+          taskDays: linkedFromTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex));
+      }
+      const { linePoints, arrowPoints } = updateLinkLinePoints(
+        type,
+        linkedFromTaskStartDate,
+        linkedFromTaskEndDate,
+        linkedFromTaskShowIndex,
+        0,
+        linkedToTaskStartDate,
+        linkedToTaskEndDate,
+        linkedToTaskShowIndex,
+        diffY ?? 0,
+        minDate,
+        gantt.parsedOptions.rowHeight,
+        gantt.parsedOptions.colWidthPerDay,
+        null,
+        target
+      );
+      linkLineNode.setAttribute('points', linePoints);
+      lineArrowNode.setAttribute('points', arrowPoints);
+    }
+
+    for (let i = 0; i < vtable_gantt_linkedFrom?.length; i++) {
+      const link = vtable_gantt_linkedFrom[i];
+      const linkLineNode = link.vtable_gantt_linkLineNode;
+      const lineArrowNode = link.vtable_gantt_linkArrowNode;
+
+      const { linkedToTaskKey, linkedFromTaskKey, type } = link;
+      const { taskKeyField, minDate } = gantt.parsedOptions;
+      const linkedToTaskRecord = findRecordByTaskKey(gantt.records, taskKeyField, linkedToTaskKey);
+      const linkedFromTaskRecord = findRecordByTaskKey(gantt.records, taskKeyField, linkedFromTaskKey);
+      // const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
+      //   gantt.getTaskInfoByTaskListIndex(taskIndex);
+      // const taskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+      // const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
+      //   gantt.getTaskInfoByTaskListIndex(taskShowIndex);
+
+      let linkedToTaskStartDate;
+      let linkedToTaskEndDate;
+      let linkedToTaskTaskDays;
+      let linkedFromTaskStartDate;
+      let linkedFromTaskEndDate;
+      let linkedFromTaskTaskDays;
+
+      let linkedToTaskShowIndex;
+      let linkedFromTaskShowIndex;
+      let diffY: number;
+      if (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline) {
+        const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, gantt);
+        const beforeRowCountLinkedFrom =
+          gantt.getRowsHeightByIndex(0, new_indexs.task_index - 1) / gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
+        linkedFromTaskShowIndex = beforeRowCountLinkedFrom;
+
+        // linkedFromTaskShowIndex = linkedFromTaskRecord.index[0];
+        linkedToTaskShowIndex = linkedToTaskRecord.index[0];
+        ({
+          startDate: linkedToTaskStartDate,
+          endDate: linkedToTaskEndDate,
+          taskDays: linkedToTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedToTaskRecord.index[0], linkedToTaskRecord.index[1]));
+        ({
+          startDate: linkedFromTaskStartDate,
+          endDate: linkedFromTaskEndDate,
+          taskDays: linkedFromTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
+        const taskbarHeight = gantt.parsedOptions.taskBarStyle.width;
+        diffY =
+          target.attribute.y + taskbarHeight / 2 - (linkedFromTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
+      } else if (
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+      ) {
+        const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, gantt);
+        // const beforeRowCountLinkedFrom =
+        //   gantt.getRowsHeightByIndex(0, linkedFromTaskRecord.index[0] - 1) / gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
+        // linkedFromTaskShowIndex = beforeRowCountLinkedFrom + linkedFromTaskRecord.index[1];
+        const beforeRowCountLinkedFrom =
+          gantt.getRowsHeightByIndex(0, new_indexs.task_index - 1) / gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
+        linkedFromTaskShowIndex =
+          beforeRowCountLinkedFrom +
+          (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+          gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+            ? // ? getSubTaskRowIndexByRecordDate(
+              //     gantt.records[linkedFromTaskRecord.index[0]],
+              //     linkedFromTaskRecord.index[1],
+              //     gantt.parsedOptions.startDateField,
+              //     gantt.parsedOptions.endDateField
+              //   )
+              linkedFromTaskRecord.record.vtable_gantt_showIndex
+            : new_indexs.sub_task_index);
+
+        const beforeRowCountLinkedTo =
+          gantt.getRowsHeightByIndex(0, linkedToTaskRecord.index[0] - 1) / gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
+        linkedToTaskShowIndex =
+          beforeRowCountLinkedTo +
+          (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+          gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+            ? // ? getSubTaskRowIndexByRecordDate(
+              //     gantt.records[linkedToTaskRecord.index[0]],
+              //     linkedToTaskRecord.index[1],
+              //     gantt.parsedOptions.startDateField,
+              //     gantt.parsedOptions.endDateField
+              //   )
+              linkedToTaskRecord.record.vtable_gantt_showIndex
+            : linkedToTaskRecord.index[1]);
+        ({
+          startDate: linkedToTaskStartDate,
+          endDate: linkedToTaskEndDate,
+          taskDays: linkedToTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedToTaskRecord.index[0], linkedToTaskRecord.index[1]));
+        ({
+          startDate: linkedFromTaskStartDate,
+          endDate: linkedFromTaskEndDate,
+          taskDays: linkedFromTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
+        const taskbarHeight = gantt.parsedOptions.taskBarStyle.width;
+        diffY =
+          target.attribute.y + taskbarHeight / 2 - (linkedFromTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
+      } else {
+        linkedFromTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+        linkedToTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+        if (linkedFromTaskShowIndex === -1 || linkedToTaskShowIndex === -1) {
+          continue;
+        }
+        ({
+          startDate: linkedToTaskStartDate,
+          endDate: linkedToTaskEndDate,
+          taskDays: linkedToTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex));
+        ({
+          startDate: linkedFromTaskStartDate,
+          endDate: linkedFromTaskEndDate,
+          taskDays: linkedFromTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex));
+      }
+      const { linePoints, arrowPoints } = updateLinkLinePoints(
+        type,
+        linkedFromTaskStartDate,
+        linkedFromTaskEndDate,
+        linkedFromTaskShowIndex,
+        diffY ?? 0,
+        linkedToTaskStartDate,
+        linkedToTaskEndDate,
+        linkedToTaskShowIndex,
+        0,
+        minDate,
+        gantt.parsedOptions.rowHeight,
+        gantt.parsedOptions.colWidthPerDay,
+        target,
+        null
+      );
+
+      linkLineNode.setAttribute('points', linePoints);
+      lineArrowNode.setAttribute('points', arrowPoints);
     }
   }
 }

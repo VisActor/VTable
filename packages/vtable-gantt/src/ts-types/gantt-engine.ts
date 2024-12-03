@@ -88,14 +88,14 @@ export interface GanttConstructorOptions {
     resizable?: boolean;
     /** 任务条是否可移动 */
     moveable?: boolean;
+    /** 任务条是否可以被拖拽来改变顺序 */
+    dragOrder?: boolean;
     /** 任务条hover时的样式 */
     hoverBarStyle?: ITaskBarHoverStyle;
     /** 任务条选择时的样式 TODO */
     selectedBarStyle?: ITaskBarSelectedStyle;
     /** 任务条是否可选择，默认为true */
     selectable?: boolean;
-    /** 任务条是否可以被拖拽来改变顺序 */
-    dragOrder?: boolean;
     /** 任务条右键菜单 */
     menu?: {
       /** 右键菜单。代替原来的option.contextmenu */
@@ -189,6 +189,9 @@ export interface GanttConstructorOptions {
 
   /** 表格绘制范围外的canvas上填充的颜色 */
   underlayBackgroundColor?: string;
+  groupBy?: true | string | string[];
+  /** 展示嵌套结构数据时的模式，默认为full。*/
+  tasksShowMode?: TasksShowMode;
 }
 /**
  * IBarLabelText
@@ -222,10 +225,10 @@ export interface ITaskBarStyle {
   width?: number;
   /** 任务条的圆角 */
   cornerRadius?: number;
-  // /** 任务条的边框 */
-  // borderWidth?: number;
-  // /** 边框颜色 */
-  // borderColor?: string;
+  /** 任务条的边框 */
+  borderWidth?: number;
+  /** 边框颜色 */
+  borderColor?: string;
 }
 export type ILineStyle = {
   lineColor?: string;
@@ -330,6 +333,18 @@ export enum DependencyType {
   StartToStart = 'start_to_start',
   FinishToFinish = 'finish_to_finish',
   StartToFinish = 'start_to_finish'
+}
+export enum TasksShowMode {
+  /** 每一个任务节点用单独一行来展示，父任务占用一行，子任务分别占用一行。这是默认的显示效果 */
+  Tasks_Separate = 'tasks_separate',
+  /** 省去父任务节点不展示，并把所有子任务的节点都放到同一行来展示。 */
+  Sub_Tasks_Inline = 'sub_tasks_inline',
+  /** 省去父任务节点不展示，且所有子任务的节点分别用一行展示。*/
+  Sub_Tasks_Separate = 'sub_tasks_separate',
+  /** 省去父任务节点不展示，且所有子任务会维持records中的数据顺序布局，并保证节点不重叠展示 */
+  Sub_Tasks_Arrange = 'sub_tasks_arrange',
+  /** 省去父任务节点不展示，且所有子任务会按照日期早晚的属性来布局，并保证节点不重叠的紧凑型展示 */
+  Sub_Tasks_Compact = 'sub_tasks_compact'
 }
 export type ITaskBarSelectedStyle = {
   shadowBlur?: number; //阴影宽度

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix react-component in tree mode update",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
