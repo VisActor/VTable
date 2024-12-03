@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-plugins",
-  "version": "1.11.5",
+  "version": "1.12.0",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "@visactor/vtable": "workspace:*",
+    "@visactor/vtable-editors": "workspace:*",
     "@visactor/vchart": "1.12.12",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",

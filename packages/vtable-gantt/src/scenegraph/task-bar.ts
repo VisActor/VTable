@@ -3,8 +3,14 @@ import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
 import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
-import { getTextPos } from '../gantt-helper';
+import {
+  computeRowsCountByRecordDate,
+  computeRowsCountByRecordDateForCompact,
+  getSubTaskRowIndexByRecordDate,
+  getTextPos
+} from '../gantt-helper';
 import { GanttTaskBarNode } from './gantt-node';
+import { TasksShowMode } from '../ts-types';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -54,38 +60,99 @@ export class TaskBar {
     this.group.appendChild(this.barContainer);
 
     for (let i = 0; i < this._scene._gantt.itemCount; i++) {
-      const barGroup = this.initBar(i);
-      if (barGroup) {
-        this.barContainer.appendChild(barGroup);
+      if (
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+      ) {
+        const record = this._scene._gantt.getRecordByIndex(i);
+        if (record.children?.length > 0) {
+          for (let j = 0; j < record.children.length; j++) {
+            const barGroup = this.initBar(i, j, record.children.length);
+            if (barGroup) {
+              this.barContainer.appendChild(barGroup);
+            }
+          }
+        }
+        continue;
+      } else {
+        const barGroup = this.initBar(i);
+        if (barGroup) {
+          this.barContainer.appendChild(barGroup);
+        }
       }
     }
   }
-  initBar(index: number) {
+  initBar(index: number, childIndex?: number, childrenLength?: number) {
     const taskBarCustomLayout = this._scene._gantt.parsedOptions.taskBarCustomLayout;
-    const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(index);
-    if (taskDays <= 0 || !startDate || !endDate) {
+
+    const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
+      index,
+      childIndex
+    );
+
+    if (taskDays <= 0 || !startDate || !endDate || startDate.getTime() > endDate.getTime()) {
       return null;
     }
     const taskBarSize = this._scene._gantt.parsedOptions.colWidthPerDay * taskDays;
     const taskbarHeight = this._scene._gantt.parsedOptions.taskBarStyle.width;
     const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
-    const barGroup = new GanttTaskBarNode({
+
+    const subTaskShowRowCount =
+      this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
+        ? childrenLength
+        : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+        ? computeRowsCountByRecordDate(
+            this._scene._gantt.records[index],
+            this._scene._gantt.parsedOptions.startDateField,
+            this._scene._gantt.parsedOptions.endDateField
+          )
+        : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+        ? computeRowsCountByRecordDateForCompact(
+            this._scene._gantt.records[index],
+            this._scene._gantt.parsedOptions.startDateField,
+            this._scene._gantt.parsedOptions.endDateField
+          )
+        : 1;
+    const oneTaskHeigth = this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
+    const barGroupBox = new GanttTaskBarNode({
       x:
         this._scene._gantt.parsedOptions.colWidthPerDay *
         Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)),
       // y: this._scene._gantt.parsedOptions.rowHeight * i,
       y:
-        this._scene._gantt.parsedOptions.rowHeight * index +
-        (this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
+        this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
+        (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
+          ? childIndex * oneTaskHeigth
+          : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+            this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+          ? taskRecord.vtable_gantt_showIndex * oneTaskHeigth
+          : 0) +
+        (oneTaskHeigth - taskbarHeight) / 2,
       width: taskBarSize,
       // height: this._scene._gantt.parsedOptions.rowHeight,
       height: taskbarHeight,
       cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
+      lineWidth: this._scene._gantt.parsedOptions.taskBarStyle.borderWidth * 2,
+      stroke: this._scene._gantt.parsedOptions.taskBarStyle.borderColor
+      // clip: true
+    });
+    barGroupBox.name = 'task-bar';
+    barGroupBox.task_index = index;
+    barGroupBox.sub_task_index = childIndex;
+    barGroupBox.record = taskRecord;
+
+    const barGroup = new Group({
+      x: 0,
+      y: 0,
+      width: taskBarSize,
+      height: taskbarHeight,
+      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
       clip: true
     });
-    barGroup.name = 'task-bar';
-    barGroup.id = index;
-    // this.barContainer.appendChild(barGroup);
+    barGroupBox.appendChild(barGroup);
+    barGroupBox.clipGroupBox = barGroup;
     let rootContainer;
     let renderDefaultBar = true;
     let renderDefaultText = true;
@@ -131,7 +198,7 @@ export class TaskBar {
       });
       rect.name = 'task-bar-rect';
       barGroup.appendChild(rect);
-      barGroup.barRect = rect;
+      barGroupBox.barRect = rect;
       // 创建已完成部分任务条rect
       const progress_rect = createRect({
         x: 0,
@@ -143,7 +210,7 @@ export class TaskBar {
       });
       progress_rect.name = 'task-bar-progress-rect';
       barGroup.appendChild(progress_rect);
-      barGroup.progressRect = progress_rect;
+      barGroupBox.progressRect = progress_rect;
     }
 
     rootContainer && barGroup.appendChild(rootContainer);
@@ -180,9 +247,9 @@ export class TaskBar {
         // dy: this._scene._gantt.barLabelStyle.fontSize / 2
       });
       barGroup.appendChild(label);
-      barGroup.textLabel = label;
+      barGroupBox.textLabel = label;
     }
-    return barGroup;
+    return barGroupBox;
   }
   updateTaskBarNode(index: number) {
     const taskbarGroup = this.getTaskBarNodeByIndex(index);
@@ -317,7 +384,8 @@ export class TaskBar {
       shadowOffsetX: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetX,
       shadowOffsetY: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetY,
       shadowBlur: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowBlur,
-      attachedToTaskBarNode: attachedToTaskBarNode
+      attachedToTaskBarNode: attachedToTaskBarNode,
+      zIndex: 10000
     });
     selectedBorder.name = 'task-bar-select-border';
     this.barContainer.appendChild(selectedBorder);
@@ -397,13 +465,16 @@ export class TaskBar {
     this.selectedBorders[0].appendChild(line);
   }
 
-  getTaskBarNodeByIndex(index: number) {
+  getTaskBarNodeByIndex(index: number, sub_task_index?: number) {
     let c = this.barContainer.firstChild as Group;
     if (!c) {
       return null;
     }
     for (let i = 0; i < this.barContainer.childrenCount; i++) {
-      if (c.id === index) {
+      if (
+        c.task_index === index &&
+        (!isValid(sub_task_index) || (isValid(sub_task_index) && c.sub_task_index === sub_task_index))
+      ) {
         return c;
       }
       c = c._next as Group;

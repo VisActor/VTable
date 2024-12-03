@@ -99,6 +99,8 @@ export interface IStyleOption {
   marked?: MarkedPropertyDefine;
 }
 
+export const cellStyleKeys = ['bgColor', 'color', 'strokeColor', 'borderColor', 'linkColor']; //  keys of style not change cell layout
+
 export interface ITextStyleOption extends IStyleOption {
   // lineHeight?: string | number;//移入IStyleOption中 单行文本类型也可以有
   autoWrapText?: boolean;

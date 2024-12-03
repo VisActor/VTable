@@ -140,12 +140,12 @@ tableInstance.renderWithRecreateCells();
 
 基本表格更新：
 
-基本表格可同时设置排序状态对表格数据排序，sortState 设置为 null 清空排序状态，如果不设置则按当前排序状态对传入数据排序。
+基本表格可同时设置排序状态对表格数据排序，sortState 设置为 null 清空当前的排序状态，如果不设置则按当前排序状态对传入数据排序。如果是禁用内部排序的场景，请务必在调用该接口前清空当前的排序状态。
 
 ```
 setRecords(
     records: Array<any>,
-    option?: { sortState?: SortState | SortState[] }
+    option?: { sortState?: SortState | SortState[] | null }
   ): void;
 ```
 
@@ -1319,7 +1319,7 @@ interface ISortedMapItem {
 
 ## setLoadingHierarchyState(Function)
 
-设置单元格的树形展开收起状态为 loading 
+设置单元格的树形展开收起状态为 loading
 
 ```
   /** 设置单元格的树形展开收起状态为 loading */

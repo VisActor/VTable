@@ -158,8 +158,8 @@ export function parseDateFormat(dateString: string) {
     'yyyy/mm/dd',
     'dd/mm/yyyy',
     'yyyy.mm.dd',
-    'dd.mm.yyyy',
-    'mm.dd.yyyy'
+    'mm.dd.yyyy',
+    'dd.mm.yyyy'
   ];
   dateString = dateString.replace(/\s+/g, ''); // 移除空格
   for (let i = 0; i < formats.length; i++) {

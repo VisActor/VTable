@@ -1,5 +1,7 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
+import * as VTable_editors from '@visactor/vtable-editors';
+
 import { HeaderHighlightPlugin } from '../../src';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
@@ -19,6 +21,9 @@ const generatePersons = count => {
 };
 
 export function createTable() {
+  const input_editor = new VTable_editors.InputEditor();
+  VTable.register.editor('input-editor', input_editor);
+
   const records = generatePersons(20);
   const columns: VTable.ColumnsDefine = [
     {
@@ -26,7 +31,9 @@ export function createTable() {
       title: 'ID',
       width: 'auto',
       minWidth: 50,
-      sort: true
+      sort: true,
+      headerEditor: 'input-editor',
+      editor: 'input-editor'
     },
     {
       field: 'email1',
@@ -38,21 +45,6 @@ export function createTable() {
         underlineDash: [2, 0],
         underlineOffset: 3
       }
-    },
-    {
-      title: 'full name',
-      columns: [
-        {
-          field: 'name',
-          title: 'First Name',
-          width: 200
-        },
-        {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
-        }
-      ]
     },
     {
       field: 'date1',
@@ -69,7 +61,16 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
-    rowSeriesNumber: {}
+    rowSeriesNumber: {},
+    select: {
+      outsideClickDeselect: true,
+      headerSelectMode: 'body'
+    },
+    autoWrapText: true,
+    editor: 'input-editor',
+    menu: {
+      contextMenuItems: ['copy', 'paste', 'delete', '...']
+    }
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
@@ -100,6 +101,20 @@ export function createTable() {
 
   const highlightPlugin = new HeaderHighlightPlugin(tableInstance);
   window.highlightPlugin = highlightPlugin;
+
+  const onShowMenu = () => {
+    console.log('show_menu');
+    // 菜单dom位置 及 层级处理
+    const menuElement = document.getElementsByClassName('vtable__menu-element')[0];
+    if (menuElement) {
+      console.log('find_menu');
+      // menuElement.setAttribute('style', `top: -${menuElement.clientHeight}px !important`)
+      menuElement.setAttribute('style', `top: -${0}px !important`);
+      menuElement.setAttribute('style', `z-index: 9999`);
+    }
+  };
+
+  tableInstance.on('show_menu', onShowMenu);
 
   // tableInstance.scenegraph.temporarilyUpdateSelectRectStyle({stroke: false})
 }

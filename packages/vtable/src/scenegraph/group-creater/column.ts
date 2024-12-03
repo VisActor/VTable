@@ -125,7 +125,8 @@ export function createColGroup(
   if (colStart > colEnd || rowStart > rowEnd) {
     return;
   }
-  const { layoutMap, defaultRowHeight, defaultHeaderRowHeight, defaultColWidth } = table.internalProps;
+  const { layoutMap, defaultHeaderRowHeight, defaultColWidth } = table.internalProps;
+  const defaultRowHeight = table.defaultRowHeight;
   let x = 0;
   let heightMax = 0;
   for (let i = colStart; i <= colEnd; i++) {
@@ -150,7 +151,9 @@ export function createColGroup(
       rowStart,
       rowEnd,
       table.scenegraph.mergeMap,
-      cellLocation === 'columnHeader' && isNumber(defaultHeaderRowHeight) ? defaultHeaderRowHeight : defaultRowHeight,
+      cellLocation === 'columnHeader' && isNumber(defaultHeaderRowHeight)
+        ? (defaultHeaderRowHeight as number)
+        : defaultRowHeight,
       table,
       // cellLocation,
       rowLimit

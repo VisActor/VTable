@@ -61,6 +61,10 @@ const table = new VTable.ListTable({
 });
 ```
 
+## Custom calculated row height
+
+If you need to customize the logic for calculating row height, you can configure the `customComputeRowHeight` function to proxy the logic for calculating row height inside VTable.
+
 # Column width related configuration
 
 ## Column width width

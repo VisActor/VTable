@@ -17,6 +17,7 @@ export interface TableEventHandlersEventArgumentMap {
   mouseenter_task_bar: {
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     record: any;
     event: Event;
     federatedEvent: FederatedPointerEvent;
@@ -24,6 +25,7 @@ export interface TableEventHandlersEventArgumentMap {
   mouseleave_task_bar: {
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     record: any;
     event: Event;
     federatedEvent: FederatedPointerEvent;
@@ -31,6 +33,7 @@ export interface TableEventHandlersEventArgumentMap {
   click_task_bar: {
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     record: any;
     event: Event;
     federatedEvent: FederatedPointerEvent;
@@ -38,6 +41,7 @@ export interface TableEventHandlersEventArgumentMap {
   change_date_range: {
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     /** 改变后的起始日期 */
     startDate: Date;
     /** 改变后的结束日期 */
@@ -54,6 +58,7 @@ export interface TableEventHandlersEventArgumentMap {
     event: Event;
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     /** 改变后的起始日期 */
     startDate: Date;
     /** 改变后的结束日期 */
