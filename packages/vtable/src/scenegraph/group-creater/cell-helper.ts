@@ -385,7 +385,8 @@ export function createCell(
       textBaseline,
       table,
       cellTheme,
-      define as RadioColumnDefine
+      define as RadioColumnDefine,
+      range
     );
   }
 

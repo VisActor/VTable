@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix merge radio cell check update #2881",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
