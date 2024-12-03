@@ -222,8 +222,9 @@ setRecords(records: Array<any>)
    * @param isShift 是否按住 shift 键
    * @param isCtrl 是否按住 ctrl 键
    * @param makeSelectCellVisible 是否让选中的单元格可见
+   * @param skipBodyMerge 是否忽略合并单元格，默认 false针对合并单元自动扩大选取范围
    */
-  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean): void
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean,skipBodyMerge?: boolean): void
 ```
 
 ## selectCells(Function)
@@ -1319,7 +1320,7 @@ interface ISortedMapItem {
 
 ## setLoadingHierarchyState(Function)
 
-设置单元格的树形展开收起状态为 loading 
+设置单元格的树形展开收起状态为 loading
 
 ```
   /** 设置单元格的树形展开收起状态为 loading */
