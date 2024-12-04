@@ -8,6 +8,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-hour'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-createButton'
   },
   {

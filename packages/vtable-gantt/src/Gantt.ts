@@ -107,6 +107,7 @@ export class Gantt extends EventTarget {
     timelineHeaderStyles: ITimelineHeaderStyle[];
     sortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
     reverseSortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
+    timeScaleIncludeHour: boolean;
     grid: IGrid;
     taskBarStyle: ITaskBarStyle;
     taskBarHoverStyle: ITaskBarHoverStyle;
@@ -579,8 +580,11 @@ export class Gantt extends EventTarget {
     const { timelineHeader } = this.options;
     if (timelineHeader) {
       const timelineScales = timelineHeader.scales;
-      const sortOrder = ['year', 'quarter', 'month', 'week', 'day'];
+      const sortOrder = ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second'];
       const orderedScales = timelineScales.slice().sort((a, b) => {
+        if (a.unit === 'hour' || b.unit === 'hour') {
+          this.parsedOptions.timeScaleIncludeHour = true;
+        }
         const indexA = sortOrder.indexOf(a.unit);
         const indexB = sortOrder.indexOf(b.unit);
         if (indexA === -1) {
@@ -608,15 +612,19 @@ export class Gantt extends EventTarget {
 
   _generateTimeLineDateMap() {
     if (this.parsedOptions.minDate && this.parsedOptions.maxDate) {
-      const startDate = createDateAtMidnight(this.parsedOptions.minDate);
-      const endDate = createDateAtMidnight(this.parsedOptions.maxDate);
+      // const startDate = createDateAtMidnight(this.parsedOptions.minDate);
+      // const endDate = createDateAtMidnight(this.parsedOptions.maxDate);
+
       let colWidthIncludeDays = 1000000;
       // Iterate over each scale
       for (const scale of this.parsedOptions.reverseSortedTimelineScales) {
         // Generate the sub-columns for each step within the scale
-        const currentDate = createDateAtMidnight(startDate);
         // const timelineDates: any[] = [];
-        scale.timelineDates = generateTimeLineDate(currentDate, endDate, scale);
+        scale.timelineDates = generateTimeLineDate(
+          new Date(this.parsedOptions.minDate),
+          this.parsedOptions.maxDate,
+          scale
+        );
       }
 
       const firstScale = this.parsedOptions.reverseSortedTimelineScales[0];
@@ -631,6 +639,8 @@ export class Gantt extends EventTarget {
         colWidthIncludeDays = 90;
       } else if (unit === 'year') {
         colWidthIncludeDays = 365;
+      } else if (unit === 'hour') {
+        colWidthIncludeDays = 1 / 24;
       }
       this.parsedOptions.colWidthPerDay = this.parsedOptions.timelineColWidth / colWidthIncludeDays;
     } else {
@@ -668,15 +678,12 @@ export class Gantt extends EventTarget {
   }
   _getAllColsWidth() {
     return (
-      this.parsedOptions.colWidthPerDay *
-      (Math.ceil(
+      (this.parsedOptions.colWidthPerDay *
         Math.abs(
           createDateAtMidnight(this.parsedOptions.maxDate).getTime() -
             createDateAtMidnight(this.parsedOptions.minDate).getTime()
-        ) /
-          (1000 * 60 * 60 * 24)
-      ) +
-        1)
+        )) /
+      (1000 * 60 * 60 * 24)
     );
   }
 
@@ -764,7 +771,12 @@ export class Gantt extends EventTarget {
       Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
     );
     const progress = convertProgress(taskRecord[progressField]);
-    const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    let taskDays;
+    if (this.parsedOptions.timeScaleIncludeHour) {
+      taskDays = Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+    } else {
+      taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    }
     return {
       taskRecord,
       taskDays,

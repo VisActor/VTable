@@ -253,13 +253,70 @@ export function isPropertyWritable(obj: any, prop: string | number) {
 }
 
 /** 创建日期 */
-export function createDateAtMidnight(dateStr?: string | number | Date): Date {
+export function createDateAtMidnight(dateStr?: string | number | Date, forceMidnight: boolean = false): Date {
   let date;
   if (dateStr) {
     date = new Date(dateStr);
+    if (typeof dateStr === 'string') {
+      if (dateStr.includes('T')) {
+        if (forceMidnight) {
+          date.setHours(0, 0, 0, 0);
+        }
+        // 如果 dateStr 是字符串类型且包含时分秒，不需要设置为午夜
+        return date;
+      }
+      date.setHours(0, 0, 0, 0);
+    }
   } else {
     date = new Date();
   }
-  date.setHours(0, 0, 0, 0);
+  if (forceMidnight) {
+    date.setHours(0, 0, 0, 0);
+  }
+  return date;
+}
+export function createDateAtLastMinute(dateStr?: string | number | Date, forceSetMinute: boolean = false): Date {
+  let date;
+  if (dateStr) {
+    date = new Date(dateStr);
+    if (typeof dateStr === 'string') {
+      if (dateStr.includes('T')) {
+        if (forceSetMinute) {
+          date.setMinutes(59, 59, 999);
+        }
+        // 如果 dateStr 是字符串类型且包含时分秒，不需要设置为午夜
+        return date;
+      }
+      date.setMinutes(59, 59, 999);
+    }
+  } else {
+    date = new Date();
+  }
+  if (forceSetMinute) {
+    date.setMinutes(59, 59, 999);
+  }
+  return date;
+}
+/** 创建日期 */
+export function createDateAtLastHour(dateStr?: string | number | Date, forceLastHour: boolean = false): Date {
+  let date;
+  if (dateStr) {
+    date = new Date(dateStr);
+    if (typeof dateStr === 'string') {
+      if (dateStr.includes('T')) {
+        if (forceLastHour) {
+          date.setHours(23, 59, 59, 999);
+        }
+        // 如果 dateStr 是字符串类型且包含时分秒，不需要设置为午夜
+        return date;
+      }
+      date.setHours(23, 59, 59, 999);
+    }
+  } else {
+    date = new Date();
+  }
+  if (forceLastHour) {
+    date.setHours(23, 59, 59, 999);
+  }
   return date;
 }

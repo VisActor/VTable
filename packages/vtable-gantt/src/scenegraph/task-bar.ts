@@ -86,7 +86,6 @@ export class TaskBar {
   }
   initBar(index: number, childIndex?: number, childrenLength?: number) {
     const taskBarCustomLayout = this._scene._gantt.parsedOptions.taskBarCustomLayout;
-
     const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
       index,
       childIndex
@@ -118,8 +117,8 @@ export class TaskBar {
     const oneTaskHeigth = this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
     const barGroupBox = new GanttTaskBarNode({
       x:
-        this._scene._gantt.parsedOptions.colWidthPerDay *
-        Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)),
+        (this._scene._gantt.parsedOptions.colWidthPerDay * Math.abs(startDate.getTime() - minDate.getTime())) /
+        (1000 * 60 * 60 * 24),
       // y: this._scene._gantt.parsedOptions.rowHeight * i,
       y:
         this._scene._gantt.getRowsHeightByIndex(0, index - 1) +

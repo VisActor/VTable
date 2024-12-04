@@ -200,7 +200,7 @@ export interface GanttConstructorOptions {
 export type ITaskBarLabelText = string; //| string[] | ((args: any) => string | string[]);
 export interface ITimelineScale {
   rowHeight?: number;
-  unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
+  unit: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour';
   step: number;
   startOfWeek?: 'sunday' | 'monday';
   customLayout?: IDateCustomLayout;
