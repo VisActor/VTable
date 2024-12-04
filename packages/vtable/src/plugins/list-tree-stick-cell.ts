@@ -29,6 +29,10 @@ export class ListTreeStickCellPlugin {
       this.updateGroupTitle();
     });
 
+    this.table.on('tree_hierarchy_state_change', e => {
+      this.updateGroupTitle();
+    });
+
     this.table.on('resize_column', e => {
       this.updateGroupTitle();
     });
