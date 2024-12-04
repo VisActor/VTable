@@ -33,7 +33,18 @@ export function getCellRange(col: number, row: number, layout: SimpleHeaderLayou
             if (
               !(layout.columnObjects[col - layout.leftRowSeriesNumberColumnCount].define.mergeCell as Function)(
                 value,
-                last_Value
+                last_Value,
+                {
+                  source: {
+                    col,
+                    row
+                  },
+                  target: {
+                    col,
+                    row: r
+                  },
+                  table: layout._table
+                }
               )
             ) {
               break;
@@ -51,7 +62,18 @@ export function getCellRange(col: number, row: number, layout: SimpleHeaderLayou
             if (
               !(layout.columnObjects[col - layout.leftRowSeriesNumberColumnCount].define.mergeCell as Function)(
                 value,
-                next_Value
+                next_Value,
+                {
+                  source: {
+                    col,
+                    row
+                  },
+                  target: {
+                    col,
+                    row: r
+                  },
+                  table: layout._table
+                }
               )
             ) {
               break;
@@ -127,7 +149,19 @@ export function getCellRangeTranspose(col: number, row: number, layout: SimpleHe
             break;
           }
         } else {
-          if (!(layout.columnObjects[row].define.mergeCell as Function)(value, last_Value)) {
+          if (
+            !(layout.columnObjects[row].define.mergeCell as Function)(value, last_Value, {
+              source: {
+                col,
+                row
+              },
+              target: {
+                col: c,
+                row
+              },
+              table: layout._table
+            })
+          ) {
             break;
           }
         }
@@ -140,7 +174,19 @@ export function getCellRangeTranspose(col: number, row: number, layout: SimpleHe
             break;
           }
         } else {
-          if (!(layout.columnObjects[row].define.mergeCell as Function)(value, next_Value)) {
+          if (
+            !(layout.columnObjects[row].define.mergeCell as Function)(value, next_Value, {
+              source: {
+                col,
+                row
+              },
+              target: {
+                col: c,
+                row
+              },
+              table: layout._table
+            })
+          ) {
             break;
           }
         }

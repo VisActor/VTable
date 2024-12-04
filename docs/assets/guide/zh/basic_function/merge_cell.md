@@ -102,7 +102,7 @@ window['tableInstance'] = tableInstance;
     })
 ```
 
-配置了`mergeCell`的咧，会将同一列中内容相同的相邻单元格进行合并显示
+配置了`mergeCell`的列，会将同一列中内容相同的相邻单元格进行合并显示
 
 ## 自定义单元格合并
 
