@@ -18,10 +18,44 @@ export function getTaskIndexByY(y: number, gantt: Gantt) {
   const taskBarIndex = Math.floor(taskBarHeight / gantt.parsedOptions.rowHeight);
   return taskBarIndex;
 }
+// 当scales为非day时，第一个单元格的宽度可能小于timelineColWidth
 export function getDateIndexByX(x: number, gantt: Gantt) {
   const totalX = x + gantt.stateManager.scroll.horizontalBarPos;
-  const dateIndex = Math.floor(totalX / gantt.parsedOptions.timelineColWidth);
+  const timelineDates = gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
+  const colWidthPerDay = gantt.parsedOptions.colWidthPerDay;
+  let dateIndex = 0;
+  let totalDays = 0;
+  for (let i = 0; i < timelineDates.length; i++) {
+    const date = timelineDates[i];
+    totalDays += date.days;
+    const totalWidth = Math.floor(colWidthPerDay * totalDays);
+    if (totalX <= totalWidth) {
+      dateIndex = i;
+      break;
+    }
+  }
   return dateIndex;
+}
+// 根据当前鼠标位置获取当前所在的日期信息
+export function getDateInfoByX(x: number, gantt: Gantt) {
+  const totalX = x + gantt.stateManager.scroll.horizontalBarPos;
+  const timelineDates = gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
+  const colWidthPerDay = gantt.parsedOptions.colWidthPerDay;
+  let totalDays = 0;
+  let index = 0;
+  for (let i = 0; i < timelineDates.length; i++) {
+    const date = timelineDates[i];
+    const totalWidth = Math.floor(colWidthPerDay * (totalDays + date.days));
+    if (totalX <= totalWidth) {
+      index = i;
+      break;
+    }
+    totalDays += date.days;
+  }
+  return {
+    ...timelineDates[index],
+    totalDays
+  };
 }
 
 export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): IMarkLine[] {
