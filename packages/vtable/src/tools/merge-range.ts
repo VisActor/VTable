@@ -1,5 +1,7 @@
 import type { Group } from '../scenegraph/graphic/group';
 import type { Scenegraph } from '../scenegraph/scenegraph';
+import type { CellRange } from '../ts-types';
+import type { BaseTableAPI } from '../ts-types/base-table';
 
 export function getCellMergeRange(cellGroup: Group, scene: Scenegraph) {
   if (!scene || !scene.proxy) {
@@ -34,4 +36,34 @@ export function getCellMergeRange(cellGroup: Group, scene: Scenegraph) {
     rowStart: cellRangeRowStart,
     rowEnd: cellRangeRowEnd
   };
+}
+
+export function expendCellRange(cellRange: CellRange, table: BaseTableAPI): CellRange {
+  const colStart = cellRange.start.col;
+  const colEnd = cellRange.end.col;
+  const rowStart = cellRange.start.row;
+  const rowEnd = cellRange.end.row;
+
+  let newColStart = colStart;
+  let newColEnd = colEnd;
+  let newRowStart = rowStart;
+  let newRowEnd = rowEnd;
+  for (let col = colStart; col <= colEnd; col++) {
+    for (let row = rowStart; row <= rowEnd; row++) {
+      const mergeRange = table.getCellRange(col, row);
+      if (mergeRange) {
+        newColStart = Math.min(newColStart, mergeRange.start.col);
+        newColEnd = Math.max(newColEnd, mergeRange.end.col);
+        newRowStart = Math.min(newRowStart, mergeRange.start.row);
+        newRowEnd = Math.max(newRowEnd, mergeRange.end.row);
+      }
+    }
+  }
+
+  cellRange.start.col = newColStart;
+  cellRange.end.col = newColEnd;
+  cellRange.start.row = newRowStart;
+  cellRange.end.row = newRowEnd;
+
+  return cellRange;
 }
