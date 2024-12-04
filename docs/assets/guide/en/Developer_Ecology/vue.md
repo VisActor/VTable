@@ -130,11 +130,11 @@ Of course, you can also make full use of Vue's syntactic sugar to make the code 
 
 ```html
 <template>
-  <ListColumn :options="tableOptions" :records="records" @onMouseEnterCell="handleMouseEnterCell">
+  <ListTable :options="tableOptions" :records="records" @onMouseEnterCell="handleMouseEnterCell">
     <template v-for="(column, index) in columns" :key="index">
       <ListColumn :field="column.field" :title="column.title" />
     </template>
-  </ListColumn>
+  </ListTable>
 </template>
 ```
 
