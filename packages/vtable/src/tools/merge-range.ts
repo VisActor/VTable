@@ -11,22 +11,22 @@ export function getCellMergeRange(cellGroup: Group, scene: Scenegraph) {
     };
   }
   const { mergeStartCol, mergeEndCol, mergeStartRow, mergeEndRow, col, row } = cellGroup;
-  const { colStart, colEnd, rowStart, rowEnd, bodyLeftCol, bodyRightCol, bodyTopRow, bodyBottomRow } = scene.proxy;
+  // const { colStart, colEnd, rowStart, rowEnd, bodyLeftCol, bodyRightCol, bodyTopRow, bodyBottomRow } = scene.proxy;
 
-  let cellRangeColStart = mergeStartCol;
-  let cellRangeColEnd = mergeEndCol;
-  let cellRangeRowStart = mergeStartRow;
-  let cellRangeRowEnd = mergeEndRow;
+  const cellRangeColStart = mergeStartCol;
+  const cellRangeColEnd = mergeEndCol;
+  const cellRangeRowStart = mergeStartRow;
+  const cellRangeRowEnd = mergeEndRow;
 
-  if (col >= bodyLeftCol && col <= bodyRightCol) {
-    cellRangeColStart = Math.max(cellGroup.mergeStartCol, colStart);
-    cellRangeColEnd = Math.min(cellGroup.mergeEndCol, colEnd);
-  }
+  // if (col >= bodyLeftCol && col <= bodyRightCol) {
+  //   cellRangeColStart = Math.max(cellGroup.mergeStartCol, colStart);
+  //   cellRangeColEnd = Math.min(cellGroup.mergeEndCol, colEnd);
+  // }
 
-  if (row >= bodyTopRow && row <= bodyBottomRow) {
-    cellRangeRowStart = Math.max(cellGroup.mergeStartRow, rowStart);
-    cellRangeRowEnd = Math.min(cellGroup.mergeEndRow, rowEnd);
-  }
+  // if (row >= bodyTopRow && row <= bodyBottomRow) {
+  //   cellRangeRowStart = Math.max(cellGroup.mergeStartRow, rowStart);
+  //   cellRangeRowEnd = Math.min(cellGroup.mergeEndRow, rowEnd);
+  // }
 
   return {
     colStart: cellRangeColStart,

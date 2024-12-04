@@ -500,6 +500,9 @@ function updateMergeCellContentWidth(
           continue;
         }
         const singleCellGroup = table.scenegraph.getCell(col, row);
+        if (singleCellGroup.role !== 'cell') {
+          continue;
+        }
         singleCellGroup.forEachChildren((child: IGraphic) => {
           child.setAttributes({
             dx: 0,
