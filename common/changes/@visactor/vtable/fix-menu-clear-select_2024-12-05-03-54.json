@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: outsideClickDeselect event in menu element",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
