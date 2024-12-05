@@ -106,6 +106,15 @@ export function formatDate(date: Date, format: string) {
   format = format.replace('yyyy', year);
   format = format.replace('mm', month);
   format = format.replace('dd', day);
+  if (format.length > 10) {
+    const hour = date.getHours().toString().padStart(2, '0');
+    const minute = date.getMinutes().toString().padStart(2, '0');
+    const second = date.getSeconds().toString().padStart(2, '0');
+
+    format = format.replace('hh', hour);
+    format = format.replace('mm', minute);
+    format = format.replace('ss', second);
+  }
 
   return format;
 }
@@ -143,12 +152,60 @@ function validateDate(dateParts: string[], format: string) {
 
   return true;
 }
+// 修正后的 validateDate 函数
+function validateTime(dateParts: string[], format: string) {
+  // 如果格式包含时分秒，则进一步解析和验证
+  if (format.includes('hh') || format.includes('mm') || format.includes('ss')) {
+    const timeIndex = format.indexOf('hh') > -1 ? format.indexOf('hh') : format.indexOf('HH');
+    const hour = parseInt(dateParts[timeIndex], 10);
+    const minute = parseInt(dateParts[timeIndex + 1], 10);
+    const second = dateParts.length > timeIndex + 2 ? parseInt(dateParts[timeIndex + 2], 10) : 0;
 
+    if (isNaN(hour) || hour < 0 || hour > 23) {
+      return false;
+    }
+
+    if (isNaN(minute) || minute < 0 || minute > 59) {
+      return false;
+    }
+
+    if (isNaN(second) || second < 0 || second > 59) {
+      return false;
+    }
+  }
+
+  return true;
+}
 // 辅助函数，用于判断是否为闰年
 function isLeapYear(year: number) {
   // 能被4整除且不能被100整除，或者能被400整除的年份是闰年
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }
+
+// // 修正后的 parseDateFormat 函数
+// export function parseDateFormat(dateString: string) {
+//   const formats = [
+//     'yyyy-mm-dd',
+//     'dd-mm-yyyy',
+//     'mm/dd/yyyy',
+//     'yyyy/mm/dd',
+//     'dd/mm/yyyy',
+//     'yyyy.mm.dd',
+//     'mm.dd.yyyy',
+//     'dd.mm.yyyy'
+//   ];
+//   dateString = dateString.replace(/\s+/g, ''); // 移除空格
+//   for (let i = 0; i < formats.length; i++) {
+//     const format = formats[i];
+//     const dateParts = dateString.split(getSeparator(format));
+//     const isValid = validateDate(dateParts, format);
+//     if (dateParts.length === 3 && isValid) {
+//       return format;
+//     }
+//   }
+//   return null;
+// }
+
 // 修正后的 parseDateFormat 函数
 export function parseDateFormat(dateString: string) {
   const formats = [
@@ -161,14 +218,36 @@ export function parseDateFormat(dateString: string) {
     'mm.dd.yyyy',
     'dd.mm.yyyy'
   ];
-  dateString = dateString.replace(/\s+/g, ''); // 移除空格
+  const timeFormat = 'hh:mm:ss';
+  dateString = dateString.trim(); // 移除空格
+  const dates = dateString.split(' ');
+  const date = dates[0];
+  const time = dates[1];
+  let dateFormatMatched;
+  let timeFormatMatched;
   for (let i = 0; i < formats.length; i++) {
     const format = formats[i];
-    const dateParts = dateString.split(getSeparator(format));
+    const dateParts = date.split(getSeparator(format));
     const isValid = validateDate(dateParts, format);
     if (dateParts.length === 3 && isValid) {
-      return format;
+      dateFormatMatched = format;
+      break;
     }
+  }
+  if (dateFormatMatched) {
+    if (time) {
+      const timeParts = time.split(getSeparator(timeFormat));
+      const isValid = validateTime(timeParts, timeFormat);
+      if (timeParts.length === 3 && isValid) {
+        timeFormatMatched = timeFormat;
+      }
+    }
+  }
+  if (date && time && dateFormatMatched && timeFormatMatched) {
+    return dateFormatMatched + ' ' + timeFormatMatched;
+  }
+  if (date && !time) {
+    return dateFormatMatched;
   }
   return null;
 }
@@ -258,7 +337,7 @@ export function createDateAtMidnight(dateStr?: string | number | Date, forceMidn
   if (dateStr) {
     date = new Date(dateStr);
     if (typeof dateStr === 'string') {
-      if (dateStr.includes('T')) {
+      if (dateStr.length > 10) {
         if (forceMidnight) {
           date.setHours(0, 0, 0, 0);
         }
@@ -280,7 +359,7 @@ export function createDateAtLastMinute(dateStr?: string | number | Date, forceSe
   if (dateStr) {
     date = new Date(dateStr);
     if (typeof dateStr === 'string') {
-      if (dateStr.includes('T')) {
+      if (dateStr.length > 10) {
         if (forceSetMinute) {
           date.setMinutes(59, 59, 999);
         }
@@ -303,7 +382,7 @@ export function createDateAtLastHour(dateStr?: string | number | Date, forceLast
   if (dateStr) {
     date = new Date(dateStr);
     if (typeof dateStr === 'string') {
-      if (dateStr.includes('T')) {
+      if (dateStr.length > 10) {
         if (forceLastHour) {
           date.setHours(23, 59, 59, 999);
         }

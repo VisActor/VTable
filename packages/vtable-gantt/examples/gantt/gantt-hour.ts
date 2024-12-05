@@ -10,8 +10,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-04T08:00:00',
-      end: '2024-07-04T17:00:00',
+      start: '2024-07-04 08:00:00',
+      end: '2024-07-04 17:00:00',
       progress: 31,
       priority: 'P0'
     },
@@ -19,8 +19,8 @@ export function createTable() {
       id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-04T00:00:00',
-      end: '2024-07-04T17:00:00',
+      start: '2024-07-04 00:00:00',
+      end: '2024-07-04 17:00:00',
       progress: 60,
       priority: 'P0'
     },
@@ -28,8 +28,8 @@ export function createTable() {
       id: 3,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-04T18:00:00',
-      end: '2024-07-05T07:00:00',
+      start: '2024-07-04 18:00:00',
+      end: '2024-07-05 07:00:00',
       progress: 31,
       priority: 'P0'
     },
@@ -37,8 +37,15 @@ export function createTable() {
       id: 4,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06T10:00:00',
-      end: '2024-07-06T17:30:00',
+      start: '2024-07-06 10:00:00',
+      end: '2024-07-06 17:30:00',
+      progress: 60,
+      priority: 'P0'
+    },
+    {
+      id: 5,
+      title: 'Scope',
+      developer: 'liufangfang.jane@bytedance.com',
       progress: 60,
       priority: 'P0'
     }
@@ -153,11 +160,11 @@ export function createTable() {
         lineColor: '#e1e4e8'
       },
       backgroundColor: '#EEF1F5',
-      colWidth: 40,
+      colWidth: 30,
       scales: [
         {
           unit: 'year',
-          step: 1,
+          step: 3,
           style: {
             textStick: true
           }
@@ -171,14 +178,14 @@ export function createTable() {
         },
         {
           unit: 'quarter',
-          step: 1,
+          step: 2,
           style: {
             textStick: true
           }
         },
         {
           unit: 'week',
-          step: 1,
+          step: 2,
           startOfWeek: 'sunday',
           format(date: TYPES.DateFormatArgumentType) {
             return `Week ${date.dateIndex}`;
@@ -214,19 +221,12 @@ export function createTable() {
             color: 'red'
           }
         }
-        // {
-        //   unit: 'quarter',
-        //   step: 1,
-        //   format(date: TYPES.DateFormatArgumentType) {
-        //     return '第' + date.index + '季度';
-        //   }
-        // }
       ]
     },
     // minDate: '2024-07-03',
     // maxDate: '2024-07-10',
-    minDate: '2024-07-03T05:00:00',
-    maxDate: '2024-07-10T20:00:00',
+    minDate: '2024-07-03 10:00:00',
+    maxDate: '2024-09-25 20:00:00',
     rowSeriesNumber: {
       title: '行号',
       dragOrder: true,

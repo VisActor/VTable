@@ -76,7 +76,7 @@ export function isVerticalScrollable(deltaY: number, state: StateManager) {
 }
 
 export function isHorizontalScrollable(deltaX: number, state: StateManager) {
-  const totalWidth = state._gantt._getAllColsWidth() - state._gantt.scenegraph.width;
+  const totalWidth = state._gantt.getAllDateColsWidth() - state._gantt.scenegraph.width;
   if (totalWidth === 0) {
     return false;
   }
@@ -94,12 +94,12 @@ function isScrollToBottom(deltaY: number, state: StateManager) {
 }
 
 function isScrollToLeft(deltaX: number, state: StateManager) {
-  const totalWidth = state._gantt._getAllColsWidth() - state._gantt.scenegraph.width;
+  const totalWidth = state._gantt.getAllDateColsWidth() - state._gantt.scenegraph.width;
   return totalWidth !== 0 && deltaX <= 0 && state.scroll.horizontalBarPos < 1;
 }
 
 function isScrollToRight(deltaX: number, state: StateManager) {
-  const totalWidth = state._gantt._getAllColsWidth() - state._gantt.scenegraph.width;
+  const totalWidth = state._gantt.getAllDateColsWidth() - state._gantt.scenegraph.width;
   return totalWidth !== 0 && deltaX >= 0 && Math.abs(state.scroll.horizontalBarPos - totalWidth) < 1;
 }
 

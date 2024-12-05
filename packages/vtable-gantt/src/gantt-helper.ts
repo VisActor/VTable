@@ -20,7 +20,8 @@ export function getTaskIndexByY(y: number, gantt: Gantt) {
 }
 export function getDateIndexByX(x: number, gantt: Gantt) {
   const totalX = x + gantt.stateManager.scroll.horizontalBarPos;
-  const dateIndex = Math.floor(totalX / gantt.parsedOptions.timelineColWidth);
+  const firstDateColWidth = gantt.getDateColWidth(0);
+  const dateIndex = Math.floor((totalX - firstDateColWidth) / gantt.parsedOptions.timelineColWidth) + 1;
   return dateIndex;
 }
 
@@ -104,7 +105,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.minDate = options?.minDate
     ? gantt.parsedOptions.timeScaleIncludeHour
       ? new Date(options.minDate)
-      : createDateAtMidnight(options.minDate)
+      : createDateAtMidnight(options.minDate, true)
     : undefined;
   gantt.parsedOptions.maxDate = options?.maxDate
     ? gantt.parsedOptions.timeScaleIncludeHour
@@ -326,7 +327,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
   const timelineDates: ITimelineDateInfo[] = [];
   while (currentDate < endDate) {
     if (unit === 'day') {
-      let dateEnd = createDateAtMidnight(currentDate.getTime() + step * 24 * 60 * 60 * 1000, true);
+      let dateEnd = createDateAtLastHour(currentDate.getTime() + step * 24 * 60 * 60 * 1000 - 1, true);
       if (dateEnd > endDate) {
         dateEnd = endDate;
       }
@@ -334,7 +335,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const formattedDate = format?.({ dateIndex: currentDate.getDate(), startDate, endDate: dateEnd });
       const columnTitle = formattedDate || currentDate.getDate().toString();
       const dayCellConfig = {
-        days: Math.abs(dateEnd.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24),
+        days: Math.abs(dateEnd.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate,
         endDate: dateEnd,
         title: columnTitle,
@@ -383,7 +384,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       currentDate = new Date(year, (quarter + step - 1) * 3, 1);
     } else if (unit === 'year') {
       const year = currentDate.getFullYear();
-      const end = createDateAtLastHour(new Date(year, 11, 31), true);
+      const end = createDateAtLastHour(new Date(year + step - 1, 11, 31), true);
       if (end.getTime() > endDate.getTime()) {
         end.setTime(endDate.getTime());
       }
@@ -406,10 +407,13 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         dayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Calculate the difference between the current day and the start of the week
       }
       const startOfWeek = createDateAtMidnight(currentDate);
-      const endOfWeek = createDateAtLastHour(startOfWeek.getTime() + (6 - dayOfWeek) * 24 * 60 * 60 * 1000, true); // Calculate the end of the week
-
-      if (endOfWeek > endDate) {
-        endOfWeek.setTime(endDate.getTime());
+      // const endOfWeek = createDateAtLastHour(startOfWeek.getTime() + (6 - dayOfWeek) * 24 * 60 * 60 * 1000, true); // Calculate the end of the week
+      const dateEnd = createDateAtLastHour(
+        currentDate.getTime() + (7 * step - dayOfWeek) * 24 * 60 * 60 * 1000 - 1,
+        true
+      );
+      if (dateEnd > endDate) {
+        dateEnd.setTime(endDate.getTime());
       }
 
       // Calculate the week number within the year
@@ -418,13 +422,13 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const weekNumber = getWeekNumber(startOfWeek);
 
       const columnTitle =
-        format?.({ dateIndex: weekNumber, startDate: startOfWeek, endDate: endOfWeek }) || weekNumber.toString();
+        format?.({ dateIndex: weekNumber, startDate: startOfWeek, endDate: dateEnd }) || weekNumber.toString();
 
       const dayCellConfig = {
-        days: (endOfWeek.getTime() - startOfWeek.getTime() + 1) / (24 * 60 * 60 * 1000),
+        days: (dateEnd.getTime() - startOfWeek.getTime() + 1) / DayTimes,
         // days: Math.abs(dateEnd.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24),
         startDate: startOfWeek,
-        endDate: endOfWeek,
+        endDate: dateEnd,
         title: columnTitle,
         dateIndex: weekNumber
       };
@@ -434,7 +438,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       // Move currentDate to the next week
       // currentDate.setDate(currentDate.getDate() + (7 - dayOfWeek));
       currentDate.setTime(
-        createDateAtMidnight(currentDate.getTime() + (7 - dayOfWeek) * 24 * 60 * 60 * 1000, true).getTime()
+        createDateAtMidnight(currentDate.getTime() + (7 * step - dayOfWeek) * 24 * 60 * 60 * 1000, true).getTime()
       );
     } else if (unit === 'hour') {
       const dateEndTimespan = currentDate.getTime() + step * 60 * 60 * 1000;
@@ -444,7 +448,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const columnTitle = formattedDate || currentDate.getDate().toString();
       const dayCellConfig = {
         days: Math.abs(dateEndTimespan - startDate.getTime()) / (1000 * 60 * 60 * 24),
-        startDate,
+        startDate: new Date(startDate),
         endDate: dateEnd,
         title: columnTitle,
         dateIndex: currentDate.getHours()

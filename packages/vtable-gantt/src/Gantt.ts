@@ -43,7 +43,14 @@ import {
   updateSplitLineAndResizeLine
 } from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
-import { createDateAtMidnight, formatDate, isPropertyWritable, parseDateFormat } from './tools/util';
+import {
+  createDateAtLastHour,
+  createDateAtLastMinute,
+  createDateAtMidnight,
+  formatDate,
+  isPropertyWritable,
+  parseDateFormat
+} from './tools/util';
 import { DataSource } from './data/DataSource';
 import { isValid } from '@visactor/vutils';
 // import { generateGanttChartColumns } from './gantt-helper';
@@ -277,7 +284,7 @@ export class Gantt extends EventTarget {
           ? this.parsedOptions.verticalSplitLine.lineWidth ?? 0
           : lineWidth;
       this.tableY = lineWidth;
-      this.tableNoFrameWidth = Math.min(width - lineWidth - this.tableX, this._getAllColsWidth());
+      this.tableNoFrameWidth = Math.min(width - lineWidth - this.tableX, this.getAllDateColsWidth());
 
       this.tableNoFrameHeight = height - lineWidth * 2;
     }
@@ -615,34 +622,40 @@ export class Gantt extends EventTarget {
       // const startDate = createDateAtMidnight(this.parsedOptions.minDate);
       // const endDate = createDateAtMidnight(this.parsedOptions.maxDate);
 
-      let colWidthIncludeDays = 1000000;
+      // const colWidthIncludeDays = 1000000;
       // Iterate over each scale
       for (const scale of this.parsedOptions.reverseSortedTimelineScales) {
         // Generate the sub-columns for each step within the scale
         // const timelineDates: any[] = [];
         scale.timelineDates = generateTimeLineDate(
+          // this.parsedOptions.timeScaleIncludeHour
+          //   ? new Date(this.parsedOptions.minDate)
+          //   : createDateAtMidnight(this.parsedOptions.minDate, true),
+          // this.parsedOptions.timeScaleIncludeHour
+          //   ? this.parsedOptions.maxDate
+          //   : createDateAtLastHour(this.parsedOptions.maxDate, true),
           new Date(this.parsedOptions.minDate),
           this.parsedOptions.maxDate,
           scale
         );
       }
 
-      const firstScale = this.parsedOptions.reverseSortedTimelineScales[0];
-      const { unit, step } = firstScale;
-      if (unit === 'day') {
-        colWidthIncludeDays = step;
-      } else if (unit === 'month') {
-        colWidthIncludeDays = 30;
-      } else if (unit === 'week') {
-        colWidthIncludeDays = 7;
-      } else if (unit === 'quarter') {
-        colWidthIncludeDays = 90;
-      } else if (unit === 'year') {
-        colWidthIncludeDays = 365;
-      } else if (unit === 'hour') {
-        colWidthIncludeDays = 1 / 24;
-      }
-      this.parsedOptions.colWidthPerDay = this.parsedOptions.timelineColWidth / colWidthIncludeDays;
+      // const firstScale = this.parsedOptions.reverseSortedTimelineScales[0];
+      // const { unit, step } = firstScale;
+      // if (unit === 'day') {
+      //   colWidthIncludeDays = step;
+      // } else if (unit === 'month') {
+      //   colWidthIncludeDays = 30;
+      // } else if (unit === 'week') {
+      //   colWidthIncludeDays = 7;
+      // } else if (unit === 'quarter') {
+      //   colWidthIncludeDays = 90;
+      // } else if (unit === 'year') {
+      //   colWidthIncludeDays = 365;
+      // } else if (unit === 'hour') {
+      //   colWidthIncludeDays = 1 / 24;
+      // }
+      this.parsedOptions.colWidthPerDay = this.parsedOptions.timelineColWidth / this.getMinScaleUnitToDays();
     } else {
       this.parsedOptions.colWidthPerDay = 0;
     }
@@ -676,7 +689,7 @@ export class Gantt extends EventTarget {
     // }
     // return (this.parsedOptions.timeLineHeaderRowHeights as number) * this.timeLineHeaderLevel;
   }
-  _getAllColsWidth() {
+  getAllDateColsWidth() {
     return (
       (this.parsedOptions.colWidthPerDay *
         Math.abs(
@@ -764,17 +777,28 @@ export class Gantt extends EventTarget {
         taskRecord
       };
     }
-    const startDate = createDateAtMidnight(
-      Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
-    );
-    const endDate = createDateAtMidnight(
-      Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
-    );
+
     const progress = convertProgress(taskRecord[progressField]);
     let taskDays;
+    let startDate;
+    let endDate;
     if (this.parsedOptions.timeScaleIncludeHour) {
+      startDate = createDateAtMidnight(
+        Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
+      );
+      endDate = createDateAtMidnight(
+        Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
+      );
       taskDays = Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
     } else {
+      startDate = createDateAtMidnight(
+        Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime),
+        true
+      );
+      endDate = createDateAtMidnight(
+        Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime),
+        true
+      );
       taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     }
     return {
@@ -1047,5 +1071,57 @@ export class Gantt extends EventTarget {
       width,
       height
     };
+  }
+  getMinScaleUnitToDays() {
+    const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
+    const minScaleUnit = minScale.unit;
+    const minScaleStep = minScale.step ?? 1;
+    if (minScaleUnit === 'day') {
+      return minScaleStep;
+    } else if (minScaleUnit === 'week') {
+      return 7 * minScaleStep;
+    } else if (minScaleUnit === 'month') {
+      return 30 * minScaleStep;
+    } else if (minScaleUnit === 'quarter') {
+      return 90 * minScaleStep;
+    } else if (minScaleUnit === 'year') {
+      return 365 * minScaleStep;
+    } else if (minScaleUnit === 'hour') {
+      return (1 / 24) * minScaleStep;
+      // } else if (minScaleUnit === 'minute') {
+      //   return 1 / 60;
+      // }else if (minScaleUnit === 'second') {
+      //   return 1 / 24 / 60;
+    }
+    return 1;
+  }
+
+  getDateColWidth(dateIndex: number) {
+    const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
+    return this.parsedOptions.colWidthPerDay * minScale.timelineDates[dateIndex].days;
+  }
+  getDateColsWidth(startDateIndex: number, endDateIndex: number) {
+    const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
+    const startDate = minScale.timelineDates[startDateIndex].startDate;
+    const endDate = minScale.timelineDates[endDateIndex].endDate;
+    return (
+      (this.parsedOptions.colWidthPerDay *
+        Math.abs(createDateAtMidnight(endDate).getTime() - createDateAtMidnight(startDate).getTime())) /
+      (1000 * 60 * 60 * 24)
+    );
+  }
+
+  getDateRangeByIndex(index: number) {
+    const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
+    const startDate = minScale.timelineDates[index].startDate;
+    const endDate = minScale.timelineDates[index].endDate;
+    return {
+      startDate,
+      endDate
+    };
+  }
+
+  parseTimeFormat(date: string) {
+    return parseDateFormat(date);
   }
 }

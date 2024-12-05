@@ -52,7 +52,7 @@ export class TaskBar {
     this.barContainer = new Group({
       x: 0,
       y: 0,
-      width: this._scene._gantt._getAllColsWidth(),
+      width: this._scene._gantt.getAllDateColsWidth(),
       height: this._scene._gantt.getAllTaskBarsHeight(),
       pickable: false,
       clip: true

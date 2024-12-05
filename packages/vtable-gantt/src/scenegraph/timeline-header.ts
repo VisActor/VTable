@@ -15,7 +15,7 @@ export class TimelineHeader {
     const dateHeader = new Group({
       x: 0,
       y: 0,
-      width: scene._gantt._getAllColsWidth(), //width - 2,
+      width: scene._gantt.getAllDateColsWidth(), //width - 2,
       height: scene._gantt.getAllHeaderRowsHeight(),
       clip: true,
       pickable: false
@@ -32,7 +32,7 @@ export class TimelineHeader {
       const rowHeader = new Group({
         x: 0,
         y,
-        width: scene._gantt._getAllColsWidth(),
+        width: scene._gantt.getAllDateColsWidth(),
         height: scene._gantt.parsedOptions.timeLineHeaderRowHeights[i],
         clip: false
       });
@@ -165,7 +165,7 @@ export class TimelineHeader {
           points: [
             { x: 0, y: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth & 1 ? 0.5 : 0 },
             {
-              x: scene._gantt._getAllColsWidth(),
+              x: scene._gantt.getAllDateColsWidth(),
               y: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth & 1 ? 0.5 : 0
             }
           ]

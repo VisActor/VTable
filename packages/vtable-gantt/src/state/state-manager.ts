@@ -206,7 +206,7 @@ export class StateManager {
   }
   setScrollLeft(left: number, triggerEvent: boolean = true) {
     // 矫正left值范围
-    const totalWidth = this._gantt._getAllColsWidth();
+    const totalWidth = this._gantt.getAllDateColsWidth();
 
     left = Math.max(0, Math.min(left, totalWidth - this._gantt.scenegraph.width));
     left = Math.ceil(left);
@@ -277,7 +277,7 @@ export class StateManager {
     });
   }
   updateHorizontalScrollBar(xRatio: number) {
-    const totalWidth = this._gantt._getAllColsWidth();
+    const totalWidth = this._gantt.getAllDateColsWidth();
     const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this._gantt.scenegraph.width));
     if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
@@ -339,7 +339,8 @@ export class StateManager {
     const deltaY = this.moveTaskBar.deltaY;
     const target = this.moveTaskBar.target;
     if (Math.abs(deltaX) >= 1 || Math.abs(deltaY) >= 1) {
-      const days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
+      const days =
+        Math.round(deltaX / this._gantt.parsedOptions.timelineColWidth) * this._gantt.getMinScaleUnitToDays();
 
       const correctX = days * this._gantt.parsedOptions.colWidthPerDay;
       const targetEndX = this.moveTaskBar.targetStartX + correctX;
@@ -347,7 +348,8 @@ export class StateManager {
         this.moveTaskBar.targetStartY +
         this._gantt.parsedOptions.rowHeight * Math.round(deltaY / this._gantt.parsedOptions.rowHeight);
       // 判断横向拖动 更新数据的date
-      if (Math.abs(days) >= 1) {
+      const _minDateUnit = this._gantt.parsedOptions.timeScaleIncludeHour ? 1 / 24 : 1;
+      if (Math.abs(days) >= _minDateUnit) {
         const taskIndex = target.task_index;
         const sub_task_index = target.sub_task_index;
         const oldRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
@@ -500,7 +502,7 @@ export class StateManager {
         this._gantt.stateManager.setScrollLeft(
           target.attribute.x + target.attribute.width - this._gantt.tableNoFrameWidth
         );
-        if (this._gantt.stateManager.scrollLeft === this._gantt._getAllColsWidth() - this._gantt.tableNoFrameWidth) {
+        if (this._gantt.stateManager.scrollLeft === this._gantt.getAllDateColsWidth() - this._gantt.tableNoFrameWidth) {
           this.moveTaskBar.moveTaskBarXInertia.endInertia();
         }
       });
@@ -534,7 +536,9 @@ export class StateManager {
     const direction = this._gantt.stateManager.resizeTaskBar.onIconName;
     const deltaX = x - this.resizeTaskBar.startX;
     if (Math.abs(deltaX) >= 1) {
-      let diff_days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
+      let diff_days =
+        Math.round(deltaX / this._gantt.parsedOptions.timelineColWidth) * this._gantt.getMinScaleUnitToDays();
+
       diff_days = direction === 'left' ? -diff_days : diff_days;
 
       const taskBarGroup = this.resizeTaskBar.target;
