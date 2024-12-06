@@ -25,6 +25,7 @@ import { Env } from '../tools/env';
 import type { ListTable } from '../ListTable';
 import { isValid } from '@visactor/vutils';
 import { InertiaScroll } from './scroll';
+import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -262,20 +263,20 @@ export class EventManager {
       // ) {
       //   this.table.stateManager.updateHoverPos(-1, -1);
       // }
-      const define = this.table.getBodyColumnDefine(eventArgs.col, eventArgs.row);
-      const disableSelect = (define as ColumnDefine)?.disableSelect;
-      const cellDisable =
-        typeof disableSelect === 'function' ? disableSelect(eventArgs.col, eventArgs.row, this.table) : disableSelect;
+
       if (
         this.table.isHeader(eventArgs.col, eventArgs.row) &&
-        ((define as ColumnDefine)?.disableHeaderSelect || this.table.stateManager.select?.disableHeader)
+        isCellDisableSelect(this.table, eventArgs.col, eventArgs.row)
       ) {
         if (!isSelectMoving) {
           // 如果是点击点表头 取消单元格选中状态
           this.table.stateManager.updateSelectPos(-1, -1);
         }
         return false;
-      } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && cellDisable) {
+      } else if (
+        !this.table.isHeader(eventArgs.col, eventArgs.row) &&
+        isCellDisableSelect(this.table, eventArgs.col, eventArgs.row)
+      ) {
         if (!isSelectMoving) {
           const isHasSelected = !!this.table.stateManager.select.ranges?.length;
           this.table.stateManager.updateSelectPos(-1, -1);

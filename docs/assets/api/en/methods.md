@@ -227,8 +227,9 @@ Select a cell。If empty is passed, the currently selected highlight state will 
    * @param isShift Whether to add the shift key to the selection
    * @param isCtrl Whether to add the ctrl key to the selection
    * @param makeSelectCellVisible Whether to make the selected cell visible
+   * @param skipBodyMerge Whether to ignore merge cells, the default false automatically expands the selection for merge cells
    */
-  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean): void
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean,skipBodyMerge?: boolean): void
 ```
 
 ## selectCells(Function)
