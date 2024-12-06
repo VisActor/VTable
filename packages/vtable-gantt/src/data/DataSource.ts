@@ -1,5 +1,5 @@
 import type { Gantt } from '../Gantt';
-import { createDateAtMidnight } from '../tools/util';
+import { createDateAtLastHour, createDateAtLastMinute, createDateAtMidnight } from '../tools/util';
 import { TasksShowMode } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 export class DataSource {
@@ -55,8 +55,12 @@ export class DataSource {
 
       needMinDate && (this.minDate = createDateAtMidnight(minDate));
       needMaxDate && (this.maxDate = createDateAtMidnight(maxDate));
-      this._gantt.parsedOptions.minDate = this.minDate;
-      this._gantt.parsedOptions.maxDate = this.maxDate;
+      this._gantt.parsedOptions.minDate = this._gantt.parsedOptions.timeScaleIncludeHour
+        ? new Date(this.minDate)
+        : createDateAtMidnight(this.minDate);
+      this._gantt.parsedOptions.maxDate = this._gantt.parsedOptions.timeScaleIncludeHour
+        ? createDateAtLastMinute(this.maxDate, true)
+        : createDateAtLastHour(this.maxDate, true);
       this._gantt.parsedOptions._minDateTime = this._gantt.parsedOptions.minDate.getTime();
       this._gantt.parsedOptions._maxDateTime = this._gantt.parsedOptions.maxDate.getTime();
     }

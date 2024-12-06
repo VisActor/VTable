@@ -34,7 +34,7 @@ export class Grid {
     this.height = scene.tableGroup.attribute.height - scene.timelineHeader.group.attribute.height;
     this.rowHeight = scene._gantt.parsedOptions.rowHeight;
     this.rowCount = scene._gantt.itemCount;
-    this.allGridWidth = scene._gantt._getAllColsWidth();
+    this.allGridWidth = scene._gantt.getAllDateColsWidth();
     this.allGridHeight = scene._gantt.getAllTaskBarsHeight();
     this.group = new Group({
       x: this.x,
@@ -65,7 +65,7 @@ export class Grid {
       points: [
         { x: 0, y: bottomLineY },
         {
-          x: scene._gantt._getAllColsWidth(),
+          x: scene._gantt.getAllDateColsWidth(),
           y: bottomLineY
         }
       ]
@@ -150,7 +150,7 @@ export class Grid {
       y: this._scene._gantt.getAllHeaderRowsHeight()
     });
     this.rowCount = this._scene._gantt.itemCount;
-    this.allGridWidth = this._scene._gantt._getAllColsWidth();
+    this.allGridWidth = this._scene._gantt.getAllDateColsWidth();
     this.allGridHeight = this._scene._gantt.getAllTaskBarsHeight();
     this.verticalLineGroup?.parent.removeChild(this.verticalLineGroup);
     this.horizontalLineGroup?.parent.removeChild(this.horizontalLineGroup);
