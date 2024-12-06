@@ -260,6 +260,14 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 是否在多行或者多列时展示整行或整列高亮效果。
 
+##${prefix} makeSelectCellVisible(boolean) = true
+
+是否将选中的单元格自动滚动到视口内 默认为true。
+
+##${prefix} disableMultiSelect(boolean) = false
+
+是否禁用shift多选框。
+
 #${prefix} theme(Object)
 
 {{ use: common-theme(

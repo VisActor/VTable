@@ -382,6 +382,8 @@ export interface BaseTableConstructorOptions {
     highlightInRange?: boolean;
     /** 是否将选中的单元格自动滚动到视口内 默认为true */
     makeSelectCellVisible?: boolean;
+    /**  是否禁用shift多选框 */
+    disableMultiSelect?: boolean;
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
