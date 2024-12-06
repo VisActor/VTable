@@ -1942,7 +1942,8 @@ export class Scenegraph {
     removeCells: CellAddress[],
     addCells: CellAddress[],
     updateCells: CellAddress[] = [],
-    recalculateColWidths: boolean = true
+    recalculateColWidths: boolean = true,
+    skipUpdateProxy?: boolean
   ) {
     this.table.internalProps.layoutMap.clearCellRangeMap();
     this.table.internalProps.useOneRowHeightFillAll = false;
@@ -1957,7 +1958,7 @@ export class Scenegraph {
       this.table.tableNoFrameHeight;
 
     // add or move rows
-    updateRow(removeCells, addCells, updateCells, this.table);
+    updateRow(removeCells, addCells, updateCells, this.table, skipUpdateProxy);
 
     // update column width and row height
 
