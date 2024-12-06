@@ -52,6 +52,7 @@ import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import { addCustomSelectRanges, deletaCustomSelectRanges } from './select/custom-select';
+import { expendCellRange } from '../tools/merge-range';
 
 export type CustomSelectionStyle = {
   cellBorderColor?: string; //边框颜色
@@ -600,23 +601,12 @@ export class StateManager {
     isCtrl: boolean = false,
     isSelectAll: boolean = false,
     makeSelectCellVisible: boolean = true,
-    skipBodyMerge: boolean = false,
-    forceSelect: boolean = false
+    skipBodyMerge: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(
-      this,
-      col,
-      row,
-      isShift,
-      isCtrl,
-      isSelectAll,
-      makeSelectCellVisible,
-      skipBodyMerge,
-      forceSelect
-    );
+    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -718,6 +708,10 @@ export class StateManager {
 
       // this.select.ranges deduplication
       const currentRange = this.select.ranges[this.select.ranges.length - 1];
+
+      // deal with merge cell
+      expendCellRange(currentRange, this.table);
+
       let isSame = false;
       for (let i = 0; i < this.select.ranges.length - 1; i++) {
         const range = this.select.ranges[i];

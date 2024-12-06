@@ -705,7 +705,14 @@ export interface BaseTableAPI {
   getFrozenColsWidth: () => number;
   getBottomFrozenRowsHeight: () => number;
   getRightFrozenColsWidth: () => number;
-  selectCell: (col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean) => void;
+  selectCell: (
+    col: number,
+    row: number,
+    isShift?: boolean,
+    isCtrl?: boolean,
+    makeSelectCellVisible?: boolean,
+    skipBodyMerge?: boolean
+  ) => void;
   selectCells: (cellRanges: CellRange[]) => void;
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;

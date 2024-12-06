@@ -40,4 +40,7 @@ export abstract class BaseMenu {
     const menuElement = this._getMenuElement();
     return menuElement.pointInMenuElement(x, y);
   }
+  getRootElement(): HTMLElement {
+    return this._getMenuElement().rootElement;
+  }
 }

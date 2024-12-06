@@ -65,7 +65,7 @@ export interface EventsProps {
   // pivot chart only
   onVChartEventType?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['vchart_event_type']>;
 
-  onChangCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
+  onChangeCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
 
   onMousedownFillHandle?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousedown_fill_handle']>;
   onDragFillHandleEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['drag_fill_handle_end']>;
