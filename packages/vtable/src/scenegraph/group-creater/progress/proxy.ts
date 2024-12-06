@@ -172,8 +172,8 @@ export class SceneProxy {
     this.totalActualBodyRowCount = totalActualBodyRowCount;
     this.totalRow = this.rowStart + totalActualBodyRowCount - 1; // 目标渐进完成的row
 
-    this.rowStart = this.bodyTopRow;
-    this.rowEnd = this.totalRow; // temp for first screen, will replace in createGroupForFirstScreen()
+    // this.rowStart = this.bodyTopRow;
+    // this.rowEnd = this.totalRow; // temp for first screen, will replace in createGroupForFirstScreen()
   }
 
   refreshColCount() {
