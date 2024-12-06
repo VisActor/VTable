@@ -36,34 +36,34 @@ export function fixUpdateRowRange(
   let updateRow = Infinity;
 
   for (let i = 0; i < addCellPositions.length; i++) {
-    const { row } = addCellPositions[i];
+    const { row: cellRow } = addCellPositions[i];
 
     if (rowEnd - rowStart + 1 === rowLimit) {
       // current row cell is full
-      if (row >= rowStart && row <= rowEnd) {
-        updateRow = Math.min(updateRow, row);
+      if (cellRow >= rowStart && cellRow <= rowEnd) {
+        updateRow = Math.min(updateRow, cellRow);
       }
     } else {
       // row cell is not full
       addCells.push({
         col,
-        row
+        row: cellRow
       });
       rowEnd++;
     }
   }
 
   for (let i = 0; i < removeCellPositions.length; i++) {
-    const { row } = removeCellPositions[i];
-    if (row < rowStart || row > rowEnd) {
+    const { row: cellRow } = removeCellPositions[i];
+    if (cellRow < rowStart || cellRow > rowEnd) {
       continue;
     } else if (rowEnd === bodyBottomRow) {
       removeCells.push({
         col,
-        row
+        row: cellRow
       });
     } else {
-      updateRow = Math.min(updateRow, row);
+      updateRow = Math.min(updateRow, cellRow);
     }
   }
 

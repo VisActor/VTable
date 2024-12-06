@@ -200,9 +200,7 @@ function removeRow(row: number, scene: Scenegraph, skipUpdateProxy?: boolean) {
   if (row >= proxy.rowStart && row <= proxy.rowEnd) {
     removeCellGroup(row, scene);
     proxy.rowEnd--;
-    if (!skipUpdateProxy) {
-      proxy.currentRow--;
-    }
+    proxy.currentRow--;
   }
   if (!skipUpdateProxy) {
     proxy.bodyBottomRow--;
@@ -229,9 +227,7 @@ function addRow(row: number, scene: Scenegraph, skipUpdateProxy?: boolean) {
     if (proxy.rowEnd - proxy.rowStart + 1 < proxy.rowLimit) {
       // can add row
       proxy.rowEnd++;
-      if (!skipUpdateProxy) {
-        proxy.currentRow++;
-      }
+      proxy.currentRow++;
 
       addRowCellGroup(row, scene);
       return row;
@@ -241,9 +237,7 @@ function addRow(row: number, scene: Scenegraph, skipUpdateProxy?: boolean) {
   if (proxy.rowEnd - proxy.rowStart + 1 < proxy.rowLimit) {
     // can add row
     proxy.rowEnd++;
-    if (!skipUpdateProxy) {
-      proxy.currentRow++;
-    }
+    proxy.currentRow++;
 
     addRowCellGroup(row, scene);
     return row;
