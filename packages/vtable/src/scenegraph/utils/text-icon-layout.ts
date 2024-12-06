@@ -115,7 +115,8 @@ export function createCellContent(
             ? 'normal'
             : text.length === 1 && !autoWrapText
             ? 'no-wrap'
-            : 'normal'
+            : 'normal',
+        keepCenterInLine: true
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
@@ -263,7 +264,8 @@ export function createCellContent(
             : text.length === 1 && !autoWrapText
             ? 'no-wrap'
             : 'normal',
-        dx: (textAlign === 'left' ? (!contentLeftIcons.length ? hierarchyOffset : 0) : 0) + _contentOffset
+        dx: (textAlign === 'left' ? (!contentLeftIcons.length ? hierarchyOffset : 0) : 0) + _contentOffset,
+        keepCenterInLine: true
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
