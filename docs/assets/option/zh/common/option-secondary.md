@@ -161,6 +161,10 @@ export interface SelectAllOnCtrlAOption {
 
 上下左右方向键切换选中单元格不受该配置影响，
 
+##${prefix} ctrlMultiSelect(boolean) = true
+
+是否开启ctrl多选框，默认开启。
+
 #${prefix} eventOptions(Object)
 
 事件触发相关问题设置，具体配置项：
@@ -259,6 +263,10 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 ##${prefix} highlightInRange(boolean) = false
 
 是否在多行或者多列时展示整行或整列高亮效果。
+
+##${prefix} makeSelectCellVisible(boolean) = true
+
+是否将选中的单元格自动滚动到视口内 默认为true。
 
 #${prefix} theme(Object)
 

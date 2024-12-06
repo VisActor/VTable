@@ -220,7 +220,8 @@ export function createTable() {
     keyboardOptions: {
       pasteValueToCell: true,
       copySelected: true,
-      selectAllOnCtrlA: true
+      selectAllOnCtrlA: true,
+      ctrlMultiSelect: false
     },
     eventOptions: {
       preventDefaultContextMenu: false

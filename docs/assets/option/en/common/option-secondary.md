@@ -163,6 +163,10 @@ If this configuration is turned on, if you are currently editing a cell, the arr
 
 Switching the selected cells with the up, down, left and right arrow keys is not affected by this configuration.
 
+##${prefix} ctrlMultiSelect(boolean) = true
+
+Whether to enable ctrl multi-select. Default is true.
+
 #${prefix} eventOptions(Object)
 
 Issue settings related to event triggering, specific configuration items:
@@ -263,7 +267,11 @@ Whether to disable dragging selection.
 
 ##${prefix} highlightInRange(boolean) = false
 
-Will the entire row or column be highlighted when select in multiple rows or columns?
+Will the entire row or column be highlighted when select in multiple rows or columns.
+
+##${prefix} makeSelectCellVisible(boolean) = true
+
+Whether to make the selected cell visible, default is true.
 
 #${prefix} theme(Object)
 
