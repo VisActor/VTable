@@ -104,12 +104,12 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.progressField = options.taskBar?.progressField ?? 'progress';
   gantt.parsedOptions.minDate = options?.minDate
     ? gantt.parsedOptions.timeScaleIncludeHour
-      ? new Date(options.minDate)
+      ? createDateAtMidnight(options.minDate)
       : createDateAtMidnight(options.minDate, true)
     : undefined;
   gantt.parsedOptions.maxDate = options?.maxDate
     ? gantt.parsedOptions.timeScaleIncludeHour
-      ? createDateAtLastMinute(options.maxDate, true)
+      ? createDateAtLastHour(options.maxDate)
       : createDateAtLastHour(options.maxDate, true)
     : undefined;
 

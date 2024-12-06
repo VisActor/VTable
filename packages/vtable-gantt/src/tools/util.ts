@@ -399,3 +399,92 @@ export function createDateAtLastHour(dateStr?: string | number | Date, forceLast
   }
   return date;
 }
+
+/** 暂时没有用上  函数为了解析日期的余数 */
+export function parseDateToTimeUnit(
+  date: Date,
+  timeUnit: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second'
+): number {
+  const millisecondsInSecond = 1000;
+  const secondsInMinute = 60;
+  const minutesInHour = 60;
+  const hoursInDay = 24;
+  const daysInWeek = 7;
+  const monthsInYear = 12;
+  const quartersInYear = 4;
+
+  const millisecondsInMinute = millisecondsInSecond * secondsInMinute;
+  const millisecondsInHour = millisecondsInMinute * minutesInHour;
+  const millisecondsInDay = millisecondsInHour * hoursInDay;
+  const millisecondsInWeek = millisecondsInDay * daysInWeek;
+  const millisecondsInMonth = millisecondsInDay * (365.25 / monthsInYear); // 近似值
+  const millisecondsInQuarter = millisecondsInMonth * (monthsInYear / quartersInYear); // 近似值
+  const millisecondsInYear = millisecondsInDay * 365.25; // 近似值
+  const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  switch (timeUnit) {
+    case 'second':
+      return date.getMilliseconds() / millisecondsInSecond;
+    case 'minute':
+      return (date.getSeconds() + date.getMilliseconds() / millisecondsInSecond) / secondsInMinute;
+    case 'hour':
+      return (
+        (date.getMinutes() * secondsInMinute + date.getSeconds() + date.getMilliseconds() / millisecondsInSecond) /
+        (minutesInHour * secondsInMinute)
+      );
+    case 'day':
+      return (
+        (date.getHours() * minutesInHour * secondsInMinute +
+          date.getMinutes() * secondsInMinute +
+          date.getSeconds() +
+          date.getMilliseconds() / millisecondsInSecond) /
+        (hoursInDay * minutesInHour * secondsInMinute)
+      );
+    case 'week':
+      return (
+        (date.getDay() * hoursInDay * minutesInHour * secondsInMinute +
+          date.getHours() * minutesInHour * secondsInMinute +
+          date.getMinutes() * secondsInMinute +
+          date.getSeconds() +
+          date.getMilliseconds() / millisecondsInSecond) /
+        (daysInWeek * hoursInDay * minutesInHour * secondsInMinute)
+      );
+    case 'month':
+      return (
+        ((date.getDate() - 1) * hoursInDay * minutesInHour * secondsInMinute +
+          date.getHours() * minutesInHour * secondsInMinute +
+          date.getMinutes() * secondsInMinute +
+          date.getSeconds() +
+          date.getMilliseconds() / millisecondsInSecond) /
+        (daysInMonth * hoursInDay * minutesInHour * secondsInMinute)
+      );
+    case 'quarter':
+      const monthInQuarter = date.getMonth() % 3;
+      const daysInQuarter = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate() * 3;
+      return (
+        ((monthInQuarter * daysInMonth + date.getDate() - 1) * hoursInDay * minutesInHour * secondsInMinute +
+          date.getHours() * minutesInHour * secondsInMinute +
+          date.getMinutes() * secondsInMinute +
+          date.getSeconds() +
+          date.getMilliseconds() / millisecondsInSecond) /
+        (daysInQuarter * hoursInDay * minutesInHour * secondsInMinute)
+      );
+    case 'year':
+      const daysInYear = isLeapYear(date.getFullYear()) ? 366 : 365;
+      return (
+        ((date.getMonth() * daysInMonth + date.getDate() - 1) * hoursInDay * minutesInHour * secondsInMinute +
+          date.getHours() * minutesInHour * secondsInMinute +
+          date.getMinutes() * secondsInMinute +
+          date.getSeconds() +
+          date.getMilliseconds() / millisecondsInSecond) /
+        (daysInYear * hoursInDay * minutesInHour * secondsInMinute)
+      );
+    default:
+      throw new Error('Invalid time unit');
+  }
+}
+
+// // 示例用法
+// const date = new Date('2024-07-04T17:20:30');
+// const timeUnit = 'hour';
+// const result = parseDateToTimeUnit(date, timeUnit);
+// console.log(result); // 输出相对于小时的时间差值

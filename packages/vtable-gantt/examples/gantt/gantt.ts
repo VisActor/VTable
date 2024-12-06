@@ -10,8 +10,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-30',
-      end: '2024-08-14',
+      start: '2024-07-30 10:00:00',
+      end: '2024-07-30 20:00:00',
       progress: 31,
       priority: 'P0'
     },

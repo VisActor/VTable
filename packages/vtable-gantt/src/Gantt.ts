@@ -906,6 +906,48 @@ export class Gantt extends EventTarget {
     }
   }
 
+  _updateStartDateToTaskRecord(startDate: Date, index: number, sub_task_index?: number) {
+    const taskRecord = this.getRecordByIndex(index, sub_task_index);
+    const startDateField = this.parsedOptions.startDateField;
+    const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[startDateField]);
+    const newStartDate = formatDate(startDate, dateFormat);
+    taskRecord[startDateField] = newStartDate;
+
+    if (!isValid(sub_task_index)) {
+      //子任务不是独占左侧表格一行的情况
+      this._updateRecordToListTable(taskRecord, index);
+    }
+  }
+
+  _updateEndDateToTaskRecord(endDate: Date, index: number, sub_task_index?: number) {
+    const taskRecord = this.getRecordByIndex(index, sub_task_index);
+    const endDateField = this.parsedOptions.endDateField;
+    const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[endDateField]);
+
+    const newEndDate = formatDate(endDate, dateFormat);
+    taskRecord[endDateField] = newEndDate;
+
+    if (!isValid(sub_task_index)) {
+      //子任务不是独占左侧表格一行的情况
+      this._updateRecordToListTable(taskRecord, index);
+    }
+  }
+
+  _updateStartEndDateToTaskRecord(startDate: Date, endDate: Date, index: number, sub_task_index?: number) {
+    const taskRecord = this.getRecordByIndex(index, sub_task_index);
+    const startDateField = this.parsedOptions.startDateField;
+    const endDateField = this.parsedOptions.endDateField;
+    const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[startDateField]);
+    const newStartDate = formatDate(startDate, dateFormat);
+    taskRecord[startDateField] = newStartDate;
+    const newEndDate = formatDate(endDate, dateFormat);
+    taskRecord[endDateField] = newEndDate;
+    if (!isValid(sub_task_index)) {
+      //子任务不是独占左侧表格一行的情况
+      this._updateRecordToListTable(taskRecord, index);
+    }
+  }
+
   /**
    * 拖拽任务条或者调整任务条尺寸修改日期更新到数据中
    * @param updateDateType
