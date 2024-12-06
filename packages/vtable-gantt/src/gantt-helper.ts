@@ -327,61 +327,65 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
   const timelineDates: ITimelineDateInfo[] = [];
   while (currentDate < endDate) {
     if (unit === 'day') {
-      let dateEnd = createDateAtLastHour(currentDate.getTime() + step * 24 * 60 * 60 * 1000 - 1, true);
-      if (dateEnd > endDate) {
-        dateEnd = endDate;
-      }
-      const startDate = createDateAtMidnight(currentDate);
-      const formattedDate = format?.({ dateIndex: currentDate.getDate(), startDate, endDate: dateEnd });
-      const columnTitle = formattedDate || currentDate.getDate().toString();
-      const dayCellConfig = {
-        days: Math.abs(dateEnd.getTime() - currentDate.getTime() + 1) / DayTimes,
-        startDate,
-        endDate: dateEnd,
-        title: columnTitle,
-        dateIndex: currentDate.getDate()
-      };
-      timelineDates.push(dayCellConfig);
-      currentDate.setTime(createDateAtMidnight(currentDate.getTime() + step * 24 * 60 * 60 * 1000, true).getTime());
-    } else if (unit === 'month') {
       const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
-      const end = createDateAtLastHour(new Date(year, month + step - 1, 0), true);
+      const month = currentDate.getMonth();
+      const day = currentDate.getDate();
+      const end = createDateAtLastHour(new Date(year, month, day + step - 1), true);
       if (end.getTime() > endDate.getTime()) {
         end.setTime(endDate.getTime());
       }
       const start = currentDate;
-      const formattedDate = format?.({ dateIndex: month, startDate: start, endDate: end });
-      const columnTitle = formattedDate || month.toString();
+      const formattedDate = format?.({ dateIndex: day, startDate: start, endDate: end });
+      const columnTitle = formattedDate || day.toString();
       const dayCellConfig = {
-        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / (1000 * 60 * 60 * 24),
+        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
         title: columnTitle,
-        dateIndex: month
+        dateIndex: day
+      };
+      timelineDates.push(dayCellConfig);
+      // currentDate.setTime(createDateAtMidnight(currentDate.getTime() + step * 24 * 60 * 60 * 1000, true).getTime());
+      currentDate = new Date(year, month, day + step);
+    } else if (unit === 'month') {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth(); //index 从0 开始
+      const end = createDateAtLastHour(new Date(year, month + step, 0), true);
+      if (end.getTime() > endDate.getTime()) {
+        end.setTime(endDate.getTime());
+      }
+      const start = currentDate;
+      const formattedDate = format?.({ dateIndex: month + 1, startDate: start, endDate: end });
+      const columnTitle = formattedDate || (month + 1).toString();
+      const dayCellConfig = {
+        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
+        startDate: start,
+        endDate: end,
+        title: columnTitle,
+        dateIndex: month + 1
       };
 
       timelineDates.push(dayCellConfig);
-      currentDate = new Date(year, currentDate.getMonth() + step, 1);
+      currentDate = new Date(year, month + step, 1);
     } else if (unit === 'quarter') {
       const year = currentDate.getFullYear();
-      const quarter = Math.floor(currentDate.getMonth() / 3 + 1);
-      const end = createDateAtLastHour(new Date(year, (quarter + step - 1) * 3, 0), true);
+      const quarter = Math.floor(currentDate.getMonth() / 3); //quarter 从0 开始
+      const end = createDateAtLastHour(new Date(year, (quarter + step) * 3, 0), true);
       if (end.getTime() > endDate.getTime()) {
         end.setTime(endDate.getTime());
       }
       const start = currentDate;
-      const formattedDate = format?.({ dateIndex: quarter, startDate: start, endDate: end });
-      const columnTitle = formattedDate || quarter.toString();
+      const formattedDate = format?.({ dateIndex: quarter + 1, startDate: start, endDate: end });
+      const columnTitle = formattedDate || (quarter + 1).toString();
       const dayCellConfig = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / (1000 * 60 * 60 * 24),
         startDate: start,
         endDate: end,
         title: columnTitle,
-        dateIndex: quarter
+        dateIndex: quarter + 1
       };
       timelineDates.push(dayCellConfig);
-      currentDate = new Date(year, (quarter + step - 1) * 3, 1);
+      currentDate = new Date(year, (quarter + step) * 3, 1);
     } else if (unit === 'year') {
       const year = currentDate.getFullYear();
       const end = createDateAtLastHour(new Date(year + step - 1, 11, 31), true);
@@ -392,7 +396,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const formattedDate = format?.({ dateIndex: year, startDate: start, endDate: end });
       const columnTitle = formattedDate || year.toString();
       const dayCellConfig = {
-        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / (1000 * 60 * 60 * 24),
+        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
         title: columnTitle,
@@ -441,21 +445,33 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         createDateAtMidnight(currentDate.getTime() + (7 * step - dayOfWeek) * 24 * 60 * 60 * 1000, true).getTime()
       );
     } else if (unit === 'hour') {
-      const dateEndTimespan = currentDate.getTime() + step * 60 * 60 * 1000;
-      const dateEnd = new Date(dateEndTimespan);
-      const startDate = currentDate;
-      const formattedDate = format?.({ dateIndex: currentDate.getHours(), startDate, endDate: dateEnd });
-      const columnTitle = formattedDate || currentDate.getDate().toString();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const day = currentDate.getDate();
+      const hour = currentDate.getHours();
+      const end = createDateAtLastMinute(new Date(year, month, day, hour + step - 1), true);
+      if (end.getTime() > endDate.getTime()) {
+        end.setTime(endDate.getTime());
+      }
+      const start = currentDate;
+      const formattedDate = format?.({ dateIndex: hour, startDate: start, endDate: end });
+      const columnTitle = formattedDate || hour.toString();
+
+      // const dateEndTimespan = currentDate.getTime() + step * 60 * 60 * 1000;
+      // const dateEnd = new Date(dateEndTimespan);
+      // const startDate = currentDate;
+      // const formattedDate = format?.({ dateIndex: currentDate.getHours(), startDate, endDate: dateEnd });
+      // const columnTitle = formattedDate || currentDate.getDate().toString();
       const dayCellConfig = {
-        days: Math.abs(dateEndTimespan - startDate.getTime()) / (1000 * 60 * 60 * 24),
-        startDate: new Date(startDate),
-        endDate: dateEnd,
+        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
+        startDate: start,
+        endDate: end,
         title: columnTitle,
         dateIndex: currentDate.getHours()
       };
       timelineDates.push(dayCellConfig);
-
-      currentDate.setTime(dateEnd.getTime());
+      currentDate = new Date(year, month, day, hour + step);
+      // currentDate.setTime(dateEnd.getTime());
     }
   }
   return timelineDates;
