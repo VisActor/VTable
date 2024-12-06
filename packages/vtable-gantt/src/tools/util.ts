@@ -376,6 +376,55 @@ export function createDateAtLastMinute(dateStr?: string | number | Date, forceSe
   }
   return date;
 }
+
+export function createDateAtLastSecond(dateStr?: string | number | Date, forceSetSecond: boolean = false): Date {
+  let date;
+  if (dateStr) {
+    date = new Date(dateStr);
+    if (typeof dateStr === 'string') {
+      if (dateStr.length > 10) {
+        if (forceSetSecond) {
+          date.setSeconds(59, 999);
+        }
+        // 如果 dateStr 是字符串类型且包含时分秒，不需要设置为午夜
+        return date;
+      }
+      date.setSeconds(59, 999);
+    }
+  } else {
+    date = new Date();
+  }
+  if (forceSetSecond) {
+    date.setSeconds(59, 999);
+  }
+  return date;
+}
+
+export function createDateAtLastMillisecond(
+  dateStr?: string | number | Date,
+  forceSetMillisecond: boolean = false
+): Date {
+  let date;
+  if (dateStr) {
+    date = new Date(dateStr);
+    if (typeof dateStr === 'string') {
+      if (dateStr.length > 10) {
+        if (forceSetMillisecond) {
+          date.setMilliseconds(999);
+        }
+        // 如果 dateStr 是字符串类型且包含时分秒，不需要设置为午夜
+        return date;
+      }
+      date.setMilliseconds(999);
+    }
+  } else {
+    date = new Date();
+  }
+  if (forceSetMillisecond) {
+    date.setMilliseconds(999);
+  }
+  return date;
+}
 /** 创建日期 */
 export function createDateAtLastHour(dateStr?: string | number | Date, forceLastHour: boolean = false): Date {
   let date;

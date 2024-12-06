@@ -331,9 +331,10 @@ function bindTableGroupListener(event: EventManager) {
       const taskIndex = getTaskIndexByY(e.offset.y, gantt);
       const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
       if (recordTaskInfo.taskRecord) {
-        const minTimeUnit = gantt.parsedOptions.reverseSortedTimelineScales[0].unit;
+        // const minTimeUnit = gantt.parsedOptions.reverseSortedTimelineScales[0].unit;
         const dateFormat =
-          gantt.parsedOptions.dateFormat ?? (minTimeUnit === 'hour' ? 'yyyy-mm-dd hh:mm:ss' : 'yyyy-mm-dd');
+          gantt.parsedOptions.dateFormat ??
+          (gantt.parsedOptions.timeScaleIncludeHour ? 'yyyy-mm-dd hh:mm:ss' : 'yyyy-mm-dd');
         const dateIndex = getDateIndexByX(e.offset.x, gantt);
         const dateRange = gantt.getDateRangeByIndex(dateIndex);
         recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField] = formatDate(dateRange.startDate, dateFormat);

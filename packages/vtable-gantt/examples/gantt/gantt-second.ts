@@ -10,8 +10,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-04 08:30:00',
-      end: '2024-07-04 12:29:59',
+      start: '2024-07-04 00:30:00',
+      end: '2024-07-04 00:30:09',
       progress: 31,
       priority: 'P0'
     },
@@ -19,8 +19,8 @@ export function createTable() {
       id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-04 00:30:00',
-      end: '2024-07-04 17:59:59',
+      start: '2024-07-04 00:31:30',
+      end: '2024-07-04 00:31:50',
       progress: 60,
       priority: 'P0'
     },
@@ -28,20 +28,12 @@ export function createTable() {
       id: 3,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-04 18:00:00',
-      end: '2024-07-05 07:59:59',
+      start: '2024-07-04 00:30:00',
+      end: '2024-07-04 00:31:59',
       progress: 31,
       priority: 'P0'
     },
-    {
-      id: 4,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06 10:00:00',
-      end: '2024-07-06 17:30:00',
-      progress: 60,
-      priority: 'P0'
-    },
+
     {
       id: 5,
       title: 'Scope',
@@ -61,19 +53,19 @@ export function createTable() {
     {
       field: 'title',
       title: 'title',
-      width: 200,
+      width: 100,
       sort: true
     },
     {
       field: 'start',
       title: 'start',
-      width: 150,
+      width: 200,
       sort: true
     },
     {
       field: 'end',
       title: 'end',
-      width: 150,
+      width: 200,
       sort: true
     },
     {
@@ -163,54 +155,7 @@ export function createTable() {
       colWidth: 30,
       scales: [
         {
-          unit: 'year',
-          step: 3,
-          style: {
-            textStick: true
-          }
-        },
-        {
-          unit: 'month',
-          step: 1,
-          style: {
-            textStick: true
-          }
-        },
-        {
-          unit: 'quarter',
-          step: 1,
-          style: {
-            textStick: true
-          }
-        },
-        {
-          unit: 'week',
-          step: 2,
-          startOfWeek: 'sunday',
-          format(date: TYPES.DateFormatArgumentType) {
-            return `Week ${date.dateIndex}`;
-          },
-          style: {
-            fontSize: 20,
-            fontWeight: 'bold',
-            color: 'red',
-            textStick: true
-          }
-        },
-        {
-          unit: 'day',
-          step: 2,
-          format(date: TYPES.DateFormatArgumentType) {
-            return date.dateIndex.toString();
-          },
-          style: {
-            fontSize: 20,
-            fontWeight: 'bold',
-            color: 'red'
-          }
-        },
-        {
-          unit: 'hour',
+          unit: 'second',
           step: 1,
           format(date: TYPES.DateFormatArgumentType) {
             return date.dateIndex.toString();
@@ -220,13 +165,17 @@ export function createTable() {
             fontWeight: 'bold',
             color: 'red'
           }
+        },
+        {
+          unit: 'minute',
+          step: 1
         }
       ]
     },
     // minDate: '2024-07-03',
     // maxDate: '2024-07-10',
-    minDate: '2024-07-03 08:30:00',
-    maxDate: '2024-07-25',
+    minDate: '2024-07-04 00:30:00',
+    maxDate: '2024-07-04 00:40:00',
     rowSeriesNumber: {
       title: '行号',
       dragOrder: true,

@@ -588,8 +588,17 @@ export class Gantt extends EventTarget {
     if (timelineHeader) {
       const timelineScales = timelineHeader.scales;
       const sortOrder = ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second'];
+      if (timelineScales.length === 1) {
+        if (
+          timelineScales[0].unit === 'hour' ||
+          timelineScales[0].unit === 'minute' ||
+          timelineScales[0].unit === 'second'
+        ) {
+          this.parsedOptions.timeScaleIncludeHour = true;
+        }
+      }
       const orderedScales = timelineScales.slice().sort((a, b) => {
-        if (a.unit === 'hour' || b.unit === 'hour') {
+        if (a.unit === 'hour' || a.unit === 'minute' || a.unit === 'second') {
           this.parsedOptions.timeScaleIncludeHour = true;
         }
         const indexA = sortOrder.indexOf(a.unit);
@@ -789,7 +798,9 @@ export class Gantt extends EventTarget {
       endDate = createDateAtMidnight(
         Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
       );
-      taskDays = Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+      const minTimeSaleIsSecond = this.parsedOptions.reverseSortedTimelineScales[0].unit === 'second';
+      taskDays =
+        Math.abs(endDate.getTime() - startDate.getTime() + (minTimeSaleIsSecond ? 1000 : 0)) / (1000 * 60 * 60 * 24);
     } else {
       startDate = createDateAtMidnight(
         Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime),
@@ -1130,10 +1141,10 @@ export class Gantt extends EventTarget {
       return 365 * minScaleStep;
     } else if (minScaleUnit === 'hour') {
       return (1 / 24) * minScaleStep;
-      // } else if (minScaleUnit === 'minute') {
-      //   return 1 / 60;
-      // }else if (minScaleUnit === 'second') {
-      //   return 1 / 24 / 60;
+    } else if (minScaleUnit === 'minute') {
+      return (1 / 24 / 60) * minScaleStep;
+    } else if (minScaleUnit === 'second') {
+      return (1 / 24 / 60 / 60) * minScaleStep;
     }
     return 1;
   }
