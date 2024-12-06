@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix text baseline align problem",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
