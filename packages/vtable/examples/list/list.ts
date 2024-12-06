@@ -214,14 +214,14 @@ export function createTable() {
     select: {
       disableSelect: (row, col, table) => {
         return row === 2 && col === 2;
-      },
-      disableMultiSelect: true
+      }
       // disableSelect: true
     },
     keyboardOptions: {
       pasteValueToCell: true,
       copySelected: true,
-      selectAllOnCtrlA: true
+      selectAllOnCtrlA: true,
+      ctrlMultiSelect: false
     },
     eventOptions: {
       preventDefaultContextMenu: false

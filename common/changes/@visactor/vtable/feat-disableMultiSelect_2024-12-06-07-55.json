@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "feat: add disableMultiSelect config #2995",
+      "comment": "feat: add keybord ctrlMultiSelect config #2995",
       "type": "none"
     }
   ],
