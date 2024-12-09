@@ -29,11 +29,11 @@ export class DataSource {
     ) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
-        if (needMinDate) {
+        if (needMinDate && record[this._gantt.parsedOptions.startDateField]) {
           const recordMinDate = createDateAtMidnight(record[this._gantt.parsedOptions.startDateField]);
           minDate = Math.min(minDate, recordMinDate.getTime());
         }
-        if (needMaxDate) {
+        if (needMaxDate && record[this._gantt.parsedOptions.endDateField]) {
           const recordMaxDate = createDateAtMidnight(record[this._gantt.parsedOptions.endDateField]);
           maxDate = Math.max(maxDate, recordMaxDate.getTime());
         }
