@@ -2,6 +2,47 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.13.0",
+      "tag": "@visactor/vtable_v1.13.0",
+      "date": "Mon, 09 Dec 2024 08:20:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: select not work when select set disableSelect #2981\n\n"
+          },
+          {
+            "comment": "feat: add keybord ctrlMultiSelect config #2995"
+          },
+          {
+            "comment": "fix: fix textAlign in checkbox/radio #2908"
+          },
+          {
+            "comment": "fix: outsideClickDeselect event in menu element"
+          },
+          {
+            "comment": "fix: fix col&row range in getCellMergeRange() #2906"
+          },
+          {
+            "comment": "feat: add panelStyle&arrowStyle config in Popover #2988"
+          },
+          {
+            "comment": "fix: fix merge cell select range update #2944"
+          },
+          {
+            "comment": "fix: fix ListTreeStickCellPlugin update in tree_hierarchy_state_change event #2914"
+          },
+          {
+            "comment": "fix: fix row update range in _refreshHierarchyState() #2987"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "fix: fix text baseline align problem"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.12.0",
       "tag": "@visactor/vtable_v1.12.0",
       "date": "Tue, 03 Dec 2024 11:06:35 GMT",

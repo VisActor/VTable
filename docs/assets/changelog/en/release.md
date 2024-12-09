@@ -1,7 +1,33 @@
+# v1.12.0
+
+2024-12-03
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add option customComputeRowHeight and defaultRowHeight can set "auto"
+- **@visactor/vtable-gantt**: add taskShowMode for gantt chart [#2849](https://github.com/VisActor/VTable/issues/2849)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable-gantt**: when edit record task date update taskbar occor error [#2938](https://github.com/VisActor/VTable/issues/2938)
+- **@visactor/vtable**: fix last col&row editor size [#2926](https://github.com/VisActor/VTable/issues/2926)
+- **@visactor/vtable**: fix cell update event problem in CustomCellStylePlugin [#2927](https://github.com/VisActor/VTable/issues/2927)
+- **@visactor/vtable**: fix react-component in tree mode update
+- **@visactor/vtable**: fix default row height in computeRowHeight() [#2903](https://github.com/VisActor/VTable/issues/2903)
+- **@visactor/vtable**: fix legend visible problem when reize table
+- **@visactor/vtable**: fix cache problem in Icon.loadGif() [#2905](https://github.com/VisActor/VTable/issues/2905)
+- **@visactor/vtable**: fix merge radio cell check update [#2881](https://github.com/VisActor/VTable/issues/2881)
+- **@visactor/vtable**: fix strokeArrayWidth update in updateCell() [#2811](https://github.com/VisActor/VTable/issues/2811)
+
+**📖 Site / documentation update**
+
+- **@visactor/vtable-gantt**: add getTaskBarRelativeRect api [#2920](https://github.com/VisActor/VTable/issues/2920)
+
+[more detail about v1.12.0](https://github.com/VisActor/VTable/releases/tag/v1.12.0)
+
 # v1.11.5
 
 2024-11-29
-
 
 **🆕 New feature**
 
@@ -10,14 +36,13 @@
 **📖 Site / documentation update**
 
 - **@visactor/vtable**: 更新进入或离开节点时的事件文档
-- **@visactor/vtable**: 更新甘特图事件文档，暴露整个e的信息
+- **@visactor/vtable**: 更新甘特图事件文档，暴露整个 e 的信息
 
 [more detail about v1.11.5](https://github.com/VisActor/VTable/releases/tag/v1.11.5)
 
 # v1.11.3
 
 2024-11-28
-
 
 **🐛 Bug fix**
 
@@ -28,14 +53,11 @@
 
 - **@visactor/vtable**: when columnWidthConfig set wrong dimensions should judge this case [#2948](https://github.com/VisActor/VTable/issues/2948)
 
-
-
 [more detail about v1.11.3](https://github.com/VisActor/VTable/releases/tag/v1.11.3)
 
 # v1.11.2
 
 2024-11-26
-
 
 **🆕 New feature**
 
@@ -64,14 +86,11 @@
 
 - **@visactor/vtable**: when set headerSelectMode body drag column order should work [#2860](https://github.com/VisActor/VTable/issues/2860)
 
-
-
 [more detail about v1.11.2](https://github.com/VisActor/VTable/releases/tag/v1.11.2)
 
 # v1.11.1
 
 2024-11-21
-
 
 **🆕 New feature**
 
@@ -85,8 +104,6 @@
 - **@visactor/vtable**: when up on canvas blank area not drag position rightly [#2831](https://github.com/VisActor/VTable/issues/2831)
 - **@visactor/vtable**: fix cell border dash update [#2818](https://github.com/VisActor/VTable/issues/2818)
 - **@visactor/vtable**: fix merge cell text position [#2858](https://github.com/VisActor/VTable/issues/2858)
-
-
 
 [more detail about v1.11.1](https://github.com/VisActor/VTable/releases/tag/v1.11.1)
 

@@ -154,6 +154,9 @@ function adjustCellContentVerticalLayout(
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
+        if (singleCellGroup.role !== 'cell') {
+          continue;
+        }
         dealVertical(singleCellGroup, minTop, maxTop, changedCells, textStickBaseOnAlign);
       }
     }
@@ -264,6 +267,9 @@ function adjustCellContentHorizontalLayout(
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
+        if (singleCellGroup.role !== 'cell') {
+          continue;
+        }
         dealHorizontal(singleCellGroup, minLeft, maxLeft, changedCells, textStickBaseOnAlign);
       }
     }

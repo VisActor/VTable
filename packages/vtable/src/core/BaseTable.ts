@@ -150,6 +150,7 @@ import { TableAnimationManager } from './animation';
 import type { ITableAnimationOption } from '../ts-types/animation/appear';
 import { checkCellInSelect } from '../state/common/check-in-select';
 import type { CustomCellStylePlugin, ICustomCellStylePlugin } from '../plugins/custom-cell-style';
+import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -2605,6 +2606,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 选中单元格  和鼠标选中单元格效果一致
    * @param col
    * @param row
+   * @param isShift 是否按住 shift 键
+   * @param isCtrl 是否按住 ctrl 键
+   * @param makeSelectCellVisible 是否让选中的单元格可见
+   * @param skipBodyMerge 是否忽略合并单元格，默认 false针对合并单元自动扩大选取范围
    */
   selectCell(
     col: number,
@@ -2612,8 +2617,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     isShift?: boolean,
     isCtrl?: boolean,
     makeSelectCellVisible?: boolean,
-    skipBodyMerge: boolean = false,
-    forceSelect: boolean = false
+    skipBodyMerge: boolean = false
   ) {
     const isHasSelected = !!this.stateManager.select.ranges?.length;
     this.stateManager.updateSelectPos(
@@ -2623,8 +2627,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       isCtrl,
       false,
       makeSelectCellVisible ?? this.options.select?.makeSelectCellVisible ?? true,
-      skipBodyMerge,
-      forceSelect
+      skipBodyMerge
     );
     this.stateManager.endSelectCells(true, isHasSelected);
   }
@@ -3301,8 +3304,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   _canDragHeaderPosition(col: number, row: number): boolean {
-    const disableSelect = this.options.select?.disableSelect;
-    const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, this) : disableSelect;
     if (
       this.isHeader(col, row) &&
       (this.stateManager.isSelected(col, row) ||
@@ -3310,8 +3311,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           checkCellInSelect(col, row, [
             this.getCellRange(this.stateManager.select.cellPos.col, this.stateManager.select.cellPos.row)
           ])) ||
-        this.options.select?.disableHeaderSelect ||
-        cellDisable)
+        isCellDisableSelect(this, col, row))
     ) {
       if (this.internalProps.frozenColDragHeaderMode === 'disabled' && this.isFrozenColumn(col)) {
         return false;

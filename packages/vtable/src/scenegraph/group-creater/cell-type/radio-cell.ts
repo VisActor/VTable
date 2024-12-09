@@ -159,7 +159,7 @@ function createRadio(
       ? Infinity
       : cellWidth - (padding[1] + padding[3] + hierarchyOffset) - size - spaceBetweenTextAndIcon,
     // fill: true,
-    // textAlign: 'left',
+    textAlign: 'left',
     textBaseline: 'top',
     autoWrapText,
     lineClamp,
