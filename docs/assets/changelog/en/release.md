@@ -1,3 +1,26 @@
+# v1.13.0
+
+2024-12-09
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add keybord ctrlMultiSelect config [#2995](https://github.com/VisActor/VTable/issues/2995)
+- **@visactor/vtable**: add panelStyle&arrowStyle config in Popover [#2988](https://github.com/VisActor/VTable/issues/2988)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: select not work when select set disableSelect [#2981](https://github.com/VisActor/VTable/issues/2981)
+- **@visactor/vtable**: fix textAlign in checkbox/radio [#2908](https://github.com/VisActor/VTable/issues/2908)
+- **@visactor/vtable**: outsideClickDeselect event in menu element
+- **@visactor/vtable**: fix col&row range in getCellMergeRange() [#2906](https://github.com/VisActor/VTable/issues/2906)
+- **@visactor/vtable**: fix merge cell select range update [#2944](https://github.com/VisActor/VTable/issues/2944)
+- **@visactor/vtable**: fix ListTreeStickCellPlugin update in tree_hierarchy_state_change event [#2914](https://github.com/VisActor/VTable/issues/2914)
+- **@visactor/vtable**: fix row update range in _refreshHierarchyState() [#2987](https://github.com/VisActor/VTable/issues/2987)
+- **@visactor/vtable**: fix text baseline align problem
+
+[more detail about v1.13.0](https://github.com/VisActor/VTable/releases/tag/v1.13.0)
+
 # v1.12.0
 
 2024-12-03
