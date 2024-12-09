@@ -89,6 +89,8 @@ export class EditManeger {
       if (!this.editingEditor) {
         this.editCell = { col, row };
       }
+
+      this.table._makeVisibleCell(col, row);
       this.editingEditor = editor;
       const dataValue = isValid(value) ? value : this.table.getCellOriginValue(col, row);
       const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
