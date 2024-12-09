@@ -93,7 +93,7 @@ export class Grid {
       const colWidthPerDay = this._scene._gantt.parsedOptions.colWidthPerDay;
       for (let i = 0; i < timelineDates?.length - 1; i++) {
         const dateline = timelineDates[i];
-        x = x + Math.floor(colWidthPerDay * dateline.days);
+        x = x + colWidthPerDay * dateline.days;
         const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.verticalLine.lineColor,
