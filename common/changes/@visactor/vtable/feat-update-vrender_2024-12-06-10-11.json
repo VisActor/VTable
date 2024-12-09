@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/vtable",
       "comment": "fix: fix text baseline align problem",
-      "type": "none"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vtable"
