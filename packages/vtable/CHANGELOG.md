@@ -1,6 +1,27 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 03 Dec 2024 11:06:35 GMT and should not be manually modified.
+This log was last generated on Mon, 09 Dec 2024 08:20:54 GMT and should not be manually modified.
+
+## 1.13.0
+Mon, 09 Dec 2024 08:20:54 GMT
+
+### Minor changes
+
+- fix: fix text baseline align problem
+
+### Updates
+
+- fix: select not work when select set disableSelect #2981
+
+
+- feat: add keybord ctrlMultiSelect config #2995
+- fix: fix textAlign in checkbox/radio #2908
+- fix: outsideClickDeselect event in menu element
+- fix: fix col&row range in getCellMergeRange() #2906
+- feat: add panelStyle&arrowStyle config in Popover #2988
+- fix: fix merge cell select range update #2944
+- fix: fix ListTreeStickCellPlugin update in tree_hierarchy_state_change event #2914
+- fix: fix row update range in _refreshHierarchyState() #2987
 
 ## 1.12.0
 Tue, 03 Dec 2024 11:06:35 GMT
