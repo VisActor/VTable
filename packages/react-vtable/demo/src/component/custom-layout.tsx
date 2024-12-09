@@ -130,6 +130,12 @@ const CustomLayoutAvatar = (props: CustomLayoutFunctionArg & { text: string }) =
             <p>Here is the text content</p>
           </span>
         }
+        panelStyle={{
+          backgroundColor: 'rgba(255, 0, 255, 1)'
+        }}
+        arrowStyle={{
+          backgroundColor: 'rgba(255, 0, 255, 1)'
+        }}
         // popupVisible={popupVisible}
       >
         <Avatar>{'A-' + text}</Avatar>

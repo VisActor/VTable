@@ -150,6 +150,7 @@ export class TaskBar {
       cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
       clip: true
     });
+    barGroup.name = 'task-bar-group';
     barGroupBox.appendChild(barGroup);
     barGroupBox.clipGroupBox = barGroup;
     let rootContainer;

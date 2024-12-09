@@ -145,20 +145,7 @@ export function isCellSelected(state: StateManager, col: number, row: number, ce
     selectMode = isSelectRange ? getSelectModeRange(state, col, row) : getSelectMode(state, col, row);
 
     if (selectMode) {
-      let cellDisable;
-      if (isHeader) {
-        const define = table.getHeaderDefine(col, row);
-        cellDisable = (define as ColumnDefine)?.disableHeaderSelect;
-
-        // if (cellGroup.firstChild && cellGroup.firstChild.name === 'axis' && table.options.select?.disableAxisHover) {
-        //   cellDisable = true;
-        // }
-      } else {
-        const define = table.getBodyColumnDefine(col, row);
-        const disableSelect = (define as ColumnDefine)?.disableSelect;
-        cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
-      }
-
+      const cellDisable = isCellDisableSelect(state.table, col, row);
       if (cellDisable) {
         selectMode = undefined;
       }
@@ -178,17 +165,35 @@ export function isCellSelected(state: StateManager, col: number, row: number, ce
   }
   return selectMode;
 }
-
+/**
+ * 判断单元格是否禁用选择。先判断高优配置select.disableSelect。
+ * 然后在根据如果是表头的话依次去判断select.disableHeaderSelect和column.disableHeaderSelect。
+ * 不是表头的话去判断column.disableSelect。
+ */
 export function isCellDisableSelect(table: BaseTableAPI, col: number, row: number) {
-  const columnDefine = table.getBodyColumnDefine(col, row);
-  const isHeader = table.isHeader(col, row);
-  const disableSelect = (columnDefine as ColumnDefine)?.disableSelect;
-  const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
-  if (cellDisable && !isHeader) {
+  const globalDisableSelect = table.options.select?.disableSelect;
+  const cellDisable =
+    typeof globalDisableSelect === 'function' ? globalDisableSelect(col, row, table) : globalDisableSelect;
+  if (cellDisable) {
     return true;
   }
-  if (isHeader && (columnDefine as ColumnDefine)?.disableHeaderSelect) {
-    return true;
+  if (table.isHeader(col, row)) {
+    let cellDisable = table.options.select?.disableHeaderSelect;
+    if (cellDisable) {
+      return true;
+    }
+    const columnDefine = table.getHeaderDefine(col, row);
+    cellDisable = (columnDefine as ColumnDefine)?.disableHeaderSelect;
+    if (cellDisable) {
+      return true;
+    }
+  } else {
+    const columnDefine = table.getBodyColumnDefine(col, row);
+    const disableSelect = (columnDefine as ColumnDefine)?.disableSelect;
+    const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
+    if (cellDisable) {
+      return true;
+    }
   }
   return false;
 }

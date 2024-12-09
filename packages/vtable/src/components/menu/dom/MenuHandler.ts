@@ -252,4 +252,14 @@ export class MenuHandler {
       info
     };
   }
+
+  containElement(el: HTMLElement): boolean {
+    for (const k in this._menuInstances) {
+      const contain = this._menuInstances[k].getRootElement()?.contains(el);
+      if (contain) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

@@ -973,12 +973,17 @@ function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number
     if (customLayoutObj) {
       const rootContainer = customLayoutObj.rootContainer;
       rootContainer.name = 'task-bar-custom-render';
-      const oldCustomIndex = taskBarGroup.children.findIndex((node: any) => {
-        return node.name === 'task-bar-custom-render';
-      });
-      const oldCustomNode = taskBarGroup.children[oldCustomIndex] as Group;
-      taskBarGroup.removeChild(oldCustomNode);
-      taskBarGroup.insertInto(rootContainer, oldCustomIndex);
+      const barGroup = taskBarGroup.children.find((node: any) => node.name === 'task-bar-group');
+      if (barGroup) {
+        const oldCustomIndex = barGroup.children.findIndex((node: any) => {
+          return node.name === 'task-bar-custom-render';
+        });
+        const oldCustomNode = barGroup.children[oldCustomIndex] as Group;
+        if (oldCustomNode) {
+          barGroup.removeChild(oldCustomNode);
+          barGroup.insertInto(rootContainer, oldCustomIndex);
+        }
+      }
     }
   }
 }

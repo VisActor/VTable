@@ -106,6 +106,8 @@ export interface TableKeyboardOptions {
   pasteValueToCell?: boolean; //paste是和浏览器的快捷键一致的
   /** 方向键是否可以更改选中单元格位置，默认：true */
   moveSelectedCellOnArrowKeys?: boolean;
+  /** 是否启用ctrl多选框 */
+  ctrlMultiSelect?: boolean;
 }
 export interface TableEventOptions {
   /** 是否阻止右键的默认行为， 默认为true。*/

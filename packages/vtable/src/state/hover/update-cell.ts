@@ -15,6 +15,9 @@ export function updateCell(scenegraph: Scenegraph, col: number, row: number) {
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const mergeCell = scenegraph.highPerformanceGetCell(col, row);
+        if (mergeCell.role !== 'cell') {
+          continue;
+        }
         mergeCell.addUpdateBoundTag();
       }
     }
