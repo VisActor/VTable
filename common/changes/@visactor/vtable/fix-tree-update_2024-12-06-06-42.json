@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix row update range in _refreshHierarchyState() #2987",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

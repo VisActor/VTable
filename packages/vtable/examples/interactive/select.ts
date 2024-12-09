@@ -41,6 +41,13 @@ export function createTable() {
         title: 'progress',
         description: '这是一个标题的详细描述',
         width: 150,
+        disableSelect(col, row, table) {
+          if (row === 1) {
+            return true;
+          }
+          return false;
+        },
+        disableHeaderSelect: false,
         showSort: true //显示VTable内置排序图标
       },
       {
@@ -90,6 +97,15 @@ export function createTable() {
         cellBorderLineWidth: 2,
         cellBorderColor: '#0000ff'
       }
+    },
+    select: {
+      disableSelect(col, row, table) {
+        if (col === 1) {
+          return true;
+        }
+        return false;
+      },
+      disableHeaderSelect: true
     },
     hover: {
       highlightMode: 'cross',

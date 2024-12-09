@@ -345,6 +345,9 @@ function updateMergeCellContentHeight(
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
+        if (singleCellGroup.role !== 'cell') {
+          continue;
+        }
         singleCellGroup.forEachChildren((child: IGraphic) => {
           child.setAttributes({
             dx: 0,

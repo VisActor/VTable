@@ -556,7 +556,12 @@ export function updateCell(
 
     // update text
     const textMark = oldCellGroup.getChildByName('text');
-    if (textMark) {
+    if (forceFastUpdate && textMark) {
+      const attribute = {
+        textBaseline: 'top'
+      };
+      textMark.setAttributes(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
+    } else if (textMark) {
       const text = table.getCellValue(col, row);
       const { text: textArr, moreThanMaxCharacters } = breakString(text, table);
 
