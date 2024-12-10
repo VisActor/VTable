@@ -31,8 +31,8 @@ export function fixUpdateRowRange(
 
   const { addCellPositions, removeCellPositions } = diffPositions;
   const proxy = table.scenegraph.proxy;
-  const { rowStart, rowLimit, bodyBottomRow } = proxy;
-  let { rowEnd } = proxy;
+  const { rowStart, rowLimit } = proxy;
+  let { rowEnd, bodyBottomRow } = proxy;
   let updateRow = Infinity;
 
   for (let i = 0; i < addCellPositions.length; i++) {
@@ -54,16 +54,19 @@ export function fixUpdateRowRange(
   }
 
   for (let i = 0; i < removeCellPositions.length; i++) {
-    const { row: cellRow } = removeCellPositions[i];
+    const { row: cellRow } = removeCellPositions[removeCellPositions.length - i - 1];
     if (cellRow < rowStart || cellRow > rowEnd) {
-      continue;
+      // continue;
+      bodyBottomRow--;
     } else if (rowEnd === bodyBottomRow) {
       removeCells.push({
         col,
         row: cellRow
       });
+      updateRow--;
     } else {
       updateRow = Math.min(updateRow, cellRow);
+      bodyBottomRow--;
     }
   }
 
