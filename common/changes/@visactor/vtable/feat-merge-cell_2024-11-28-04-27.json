@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: enhance mergeCell functionality to support more detailed conditions\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "leif.xie@buttontech.com"
+}
