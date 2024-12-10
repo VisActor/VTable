@@ -131,7 +131,8 @@ export class CustomCellStylePlugin {
       row?: number;
       range?: CellRange;
     },
-    customStyleId: string | undefined | null
+    customStyleId: string | undefined | null,
+    forceFastUpdate?: boolean
   ) {
     const index = this.customCellStyleArrangement.findIndex(style => {
       if (style.cellPosition.range && cellPos.range) {
@@ -170,7 +171,7 @@ export class CustomCellStylePlugin {
     }
 
     const style = this.getCustomCellStyleOption(customStyleId)?.style;
-    let forceFastUpdate;
+    // let forceFastUpdate;
     if (style) {
       forceFastUpdate = true;
       for (const key in style) {
