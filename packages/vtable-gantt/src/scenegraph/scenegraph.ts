@@ -261,11 +261,11 @@ export class Scenegraph {
     this.stage.release();
   }
 
-  showTaskCreationButton(x: number, y: number, taskIndex: number, record: any) {
+  showTaskCreationButton(x: number, y: number, dateIndex: number) {
     if (!this.taskCreationButton) {
       this.taskCreationButton = new TaskCreationButton(this._gantt.scenegraph);
     }
-    this.taskCreationButton.show(x, y, this._gantt.parsedOptions.colWidthPerDay, this._gantt.parsedOptions.rowHeight);
+    this.taskCreationButton.show(x, y, this._gantt.getDateColWidth(dateIndex), this._gantt.parsedOptions.rowHeight);
     this.updateNextFrame();
   }
 
@@ -400,16 +400,16 @@ export class Scenegraph {
         linkedFromTaskStartDate,
         linkedFromTaskEndDate,
         linkedFromTaskShowIndex,
+        linkedFromTaskTaskDays,
+        null,
         0,
         linkedToTaskStartDate,
         linkedToTaskEndDate,
         linkedToTaskShowIndex,
+        linkedToTaskTaskDays,
+        target,
         diffY ?? 0,
-        minDate,
-        gantt.parsedOptions.rowHeight,
-        gantt.parsedOptions.colWidthPerDay,
-        null,
-        target
+        this._gantt
       );
       linkLineNode.setAttribute('points', linePoints);
       lineArrowNode.setAttribute('points', arrowPoints);
@@ -534,16 +534,17 @@ export class Scenegraph {
         linkedFromTaskStartDate,
         linkedFromTaskEndDate,
         linkedFromTaskShowIndex,
+        linkedFromTaskTaskDays,
+
+        target,
         diffY ?? 0,
         linkedToTaskStartDate,
         linkedToTaskEndDate,
         linkedToTaskShowIndex,
+        linkedToTaskTaskDays,
+        null,
         0,
-        minDate,
-        gantt.parsedOptions.rowHeight,
-        gantt.parsedOptions.colWidthPerDay,
-        target,
-        null
+        this._gantt
       );
 
       linkLineNode.setAttribute('points', linePoints);
