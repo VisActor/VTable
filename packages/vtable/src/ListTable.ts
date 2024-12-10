@@ -31,7 +31,7 @@ import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import type { ITitleComponent } from './components/title/title';
 import { Env } from './tools/env';
 import * as editors from './edit/editors';
-import { EditManeger } from './edit/edit-manager';
+import { EditManager } from './edit/edit-manager';
 import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
@@ -142,7 +142,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     this.transpose = options.transpose ?? false;
     if (Env.mode !== 'node') {
-      this.editorManager = new EditManeger(this);
+      this.editorManager = new EditManager(this);
     }
     this.refreshHeader();
     this.internalProps.useOneRowHeightFillAll = false;
