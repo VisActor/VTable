@@ -632,7 +632,7 @@ export class StateManager {
         clipGroupBox.setAttribute('width', taskBarGroup.attribute.width);
         rect?.setAttribute('width', taskBarGroup.attribute.width);
         progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-
+        this._gantt.scenegraph.refreshRecordLinkNodes(taskIndex, sub_task_index, taskBarGroup, 0); //更新关联线
         this.showTaskBarHover();
         reCreateCustomNode(this._gantt, taskBarGroup, taskIndex, sub_task_index);
         taskBarGroup.setAttribute('zIndex', 0);

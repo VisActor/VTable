@@ -400,16 +400,16 @@ export class Scenegraph {
         linkedFromTaskStartDate,
         linkedFromTaskEndDate,
         linkedFromTaskShowIndex,
+        linkedFromTaskTaskDays,
+        null,
         0,
         linkedToTaskStartDate,
         linkedToTaskEndDate,
         linkedToTaskShowIndex,
+        linkedToTaskTaskDays,
+        target,
         diffY ?? 0,
-        minDate,
-        gantt.parsedOptions.rowHeight,
-        gantt.parsedOptions.colWidthPerDay,
-        null,
-        target
+        this._gantt
       );
       linkLineNode.setAttribute('points', linePoints);
       lineArrowNode.setAttribute('points', arrowPoints);
@@ -534,16 +534,17 @@ export class Scenegraph {
         linkedFromTaskStartDate,
         linkedFromTaskEndDate,
         linkedFromTaskShowIndex,
+        linkedFromTaskTaskDays,
+
+        target,
         diffY ?? 0,
         linkedToTaskStartDate,
         linkedToTaskEndDate,
         linkedToTaskShowIndex,
+        linkedToTaskTaskDays,
+        null,
         0,
-        minDate,
-        gantt.parsedOptions.rowHeight,
-        gantt.parsedOptions.colWidthPerDay,
-        target,
-        null
+        this._gantt
       );
 
       linkLineNode.setAttribute('points', linePoints);

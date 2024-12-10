@@ -565,17 +565,18 @@ export function updateLinkLinePoints(
   linkedFromTaskStartDate: Date,
   linkedFromTaskEndDate: Date,
   linkedFromTaskRecordRowIndex: number,
+  linkedFromTaskTaskDays: number,
+  linkedFromMovedTaskBarNode: GanttTaskBarNode,
   fromNodeDiffY: number,
   linkedToTaskStartDate: Date,
   linkedToTaskEndDate: Date,
   linkedToTaskRecordRowIndex: number,
+  linkedToTaskTaskDays: number,
+  linkedToMovedTaskBarNode: GanttTaskBarNode,
   toNodeDiffY: number,
-  minDate: Date,
-  rowHeight: number,
-  colWidthPerDay: number,
-  linkedFromMovedTaskBarNode: GanttTaskBarNode,
-  linkedToMovedTaskBarNode: GanttTaskBarNode
+  gantt: Gantt
 ) {
+  const { minDate, rowHeight, colWidthPerDay } = gantt.parsedOptions;
   const distanceToTaskBar: number = 20;
   const arrowWidth: number = 10;
   const arrowHeight: number = 5;
@@ -584,14 +585,15 @@ export function updateLinkLinePoints(
   let linePoints: { x: number; y: number }[] = [];
   let arrowPoints: { x: number; y: number }[] = [];
   if (type === DependencyType.FinishToStart) {
-    startDate = linkedFromTaskEndDate;
+    startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
     const linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x + linkedFromMovedTaskBarNode.attribute.width
-      : colWidthPerDay * (Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+      : colWidthPerDay *
+        (Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedFromTaskTaskDays);
     const linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x
-      : colWidthPerDay * Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+      : colWidthPerDay * (Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
 
     linePoints = [
       {
@@ -652,14 +654,15 @@ export function updateLinkLinePoints(
     ];
   } else if (type === DependencyType.StartToFinish) {
     startDate = linkedFromTaskStartDate;
-    endDate = linkedToTaskEndDate;
+    endDate = linkedToTaskStartDate;
 
     const linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x
-      : colWidthPerDay * Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+      : colWidthPerDay * (Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
     const linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x + linkedToMovedTaskBarNode.attribute.width
-      : colWidthPerDay * (Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+      : colWidthPerDay *
+        (Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedToTaskTaskDays);
     linePoints = [
       {
         x: linkFromPointX,
@@ -722,10 +725,10 @@ export function updateLinkLinePoints(
     endDate = linkedToTaskStartDate;
     const linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x
-      : colWidthPerDay * Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+      : colWidthPerDay * (Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
     const linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x
-      : colWidthPerDay * Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+      : colWidthPerDay * (Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
     linePoints = [
       {
         x: linkFromPointX,
@@ -787,14 +790,16 @@ export function updateLinkLinePoints(
       }
     ];
   } else if (type === DependencyType.FinishToFinish) {
-    startDate = linkedFromTaskEndDate;
-    endDate = linkedToTaskEndDate;
+    startDate = linkedFromTaskStartDate;
+    endDate = linkedToTaskStartDate;
     const linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x + linkedFromMovedTaskBarNode.attribute.width
-      : colWidthPerDay * (Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+      : colWidthPerDay *
+        (Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedFromTaskTaskDays);
     const linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x + linkedToMovedTaskBarNode.attribute.width
-      : colWidthPerDay * (Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+      : colWidthPerDay *
+        (Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedToTaskTaskDays);
     linePoints = [
       {
         x: linkFromPointX,
