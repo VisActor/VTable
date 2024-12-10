@@ -1053,6 +1053,7 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 - bgColor: 背景线的颜色
 - lineWidth: 直线的线宽
 - width: 背景线的宽度
+- resizeHotSpotSize: 调整列宽手柄的宽度
 
 ```javascript
 {
@@ -1062,7 +1063,8 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
             lineColor: 'blue',
             bgColor: 'red',
             lineWidth: 1,
-            width: 5
+            width: 5,
+            resizeHotSpotSize: 8,
         }
     }
 }
@@ -1124,7 +1126,8 @@ const myVTable = new VTable.ListTable(document.getElementById(CONTAINER_ID), {
       lineColor: 'blue',
       bgColor: 'lightgray',
       lineWidth: 2,
-      width: 10
+      width: 10,
+      resizeHotSpotSize: 8,
     }
   })
 });
