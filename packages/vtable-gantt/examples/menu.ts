@@ -20,6 +20,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-week'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-createButton'
   },
   {

@@ -798,9 +798,10 @@ export class Gantt extends EventTarget {
       endDate = createDateAtMidnight(
         Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
       );
-      const minTimeSaleIsSecond = this.parsedOptions.reverseSortedTimelineScales[0].unit === 'second';
+      // const minTimeSaleIsSecond = this.parsedOptions.reverseSortedTimelineScales[0].unit === 'second';
       taskDays =
-        Math.abs(endDate.getTime() - startDate.getTime() + (minTimeSaleIsSecond ? 1000 : 0)) / (1000 * 60 * 60 * 24);
+        Math.abs(endDate.getTime() - startDate.getTime() + (this.parsedOptions.timeScaleIncludeHour ? 1000 : 0)) /
+        (1000 * 60 * 60 * 24);
     } else {
       startDate = createDateAtMidnight(
         Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime),

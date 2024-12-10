@@ -1,6 +1,7 @@
 import type { ColumnsDefine } from '@visactor/vtable';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import { Gantt } from '../../src/index';
+import { DependencyType } from '../../src/ts-types';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 
@@ -99,6 +100,33 @@ export function createTable() {
       maxTableWidth: 600
     },
 
+    dependency: {
+      links: [
+        {
+          type: DependencyType.FinishToStart,
+          linkedFromTaskKey: 1,
+          linkedToTaskKey: 2
+        },
+        {
+          type: DependencyType.StartToFinish,
+          linkedFromTaskKey: 2,
+          linkedToTaskKey: 3
+        },
+        {
+          type: DependencyType.StartToStart,
+          linkedFromTaskKey: 3,
+          linkedToTaskKey: 4
+        }
+      ],
+      // linkLineSelectable: false,
+      linkSelectedLineStyle: {
+        shadowBlur: 5, //阴影宽度
+        shadowColor: 'red',
+        lineColor: 'red',
+        lineWidth: 1
+      },
+      linkCreatable: true
+    },
     frame: {
       verticalSplitLineMoveable: true,
       outerFrameStyle: {
@@ -130,7 +158,7 @@ export function createTable() {
     rowHeight: 40,
 
     taskBar: {
-      selectable: false,
+      // selectable: false,
       startDateField: 'start',
       endDateField: 'end',
       progressField: 'progress',
