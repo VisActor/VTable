@@ -143,7 +143,7 @@ import {
   getTargetRowAtConsiderBottomFrozen
 } from './utils/get-cell-position';
 import { getCellStyle } from './style-helper';
-import type { EditManeger } from '../edit/edit-manager';
+import type { EditManager } from '../edit/edit-manager';
 import { createReactContainer } from '../scenegraph/layout/frozen-react';
 import { setIconColor } from '../icons';
 import { TableAnimationManager } from './animation';
@@ -182,7 +182,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   scenegraph: Scenegraph;
   stateManager: StateManager;
   eventManager: EventManager;
-  editorManager: EditManeger;
+  editorManager: EditManager;
   animationManager: TableAnimationManager;
   _pixelRatio: number;
 
