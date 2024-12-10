@@ -1,5 +1,5 @@
 import type { CellAddress, EditContext, IEditor, RectProps } from './types';
-import { ValidateEnum } from './types';
+import type { ValidateEnum } from './types';
 
 export interface InputEditorConfig {
   readonly?: boolean;
@@ -90,6 +90,6 @@ export class InputEditor implements IEditor {
   }
 
   validateValue(newValue?: any, oldValue?: any, position?: CellAddress, table?: any): boolean | ValidateEnum {
-    return ValidateEnum.invalidateReturn;
+    return true;
   }
 }
