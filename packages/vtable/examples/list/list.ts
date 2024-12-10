@@ -243,6 +243,12 @@ export function createTable() {
         // borderLineWidth: 10,
         borderColor: 'red',
         shadowBlur: 0
+      },
+      columnResize: {
+        lineColor: 'red',
+        lineWidth: 1,
+        width: 2,
+        resizeHotSpotSize: 4
       }
     },
     excelOptions: {

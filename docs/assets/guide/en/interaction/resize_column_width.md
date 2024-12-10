@@ -1055,6 +1055,7 @@ When adjusting the column width and row height, we can customize the style of th
 - bgColor: background line color
 - lineWidth: line width of the straight line
 - width: width of background line
+- resizeHotSpotSize: adjust the width of the column width handle
 
 ```javascript
 {
@@ -1064,7 +1065,8 @@ When adjusting the column width and row height, we can customize the style of th
             lineColor: 'blue',
             bgColor: 'red',
             lineWidth: 1,
-            width: 5
+            width: 5,
+            resizeHotSpotSize: 8
         }
     }
 }
@@ -1126,7 +1128,8 @@ const myVTable = new VTable.ListTable(document.getElementById(CONTAINER_ID), {
       lineColor: 'blue',
       bgColor: 'lightgray',
       lineWidth: 2,
-      width: 10
+      width: 10,
+      resizeHotSpotSize: 8,
     }
   })
 });

@@ -193,11 +193,11 @@ const theme = {
     shadowColor: 'rgba(00, 24, 47, 0.06)'
   },
   //拖拽列宽分割线样式
-  columnResizer: {
+  columnResize: {
     lineWidth: 1,
     lineColor: '#416EFF',
     bgColor: '#D9E2FF',
-    width: 3
+    width: 3,
   },
   //冻结列分割线样式
   frozenColumnLine: {
