@@ -44,6 +44,7 @@ import {
 } from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
 import {
+  computeCountToTimeScale,
   createDateAtLastHour,
   createDateAtLastMinute,
   createDateAtMidnight,
@@ -104,7 +105,6 @@ export class Gantt extends EventTarget {
     timeLineHeaderRowHeights: number[];
     rowHeight: number;
     timelineColWidth: number;
-    colWidthPerDay: number; //分配给每日的宽度
 
     scrollStyle: IScrollStyle;
     // timelineHeaderStyle: ITimelineHeaderStyle;
@@ -648,25 +648,6 @@ export class Gantt extends EventTarget {
           scale
         );
       }
-
-      // const firstScale = this.parsedOptions.reverseSortedTimelineScales[0];
-      // const { unit, step } = firstScale;
-      // if (unit === 'day') {
-      //   colWidthIncludeDays = step;
-      // } else if (unit === 'month') {
-      //   colWidthIncludeDays = 30;
-      // } else if (unit === 'week') {
-      //   colWidthIncludeDays = 7;
-      // } else if (unit === 'quarter') {
-      //   colWidthIncludeDays = 90;
-      // } else if (unit === 'year') {
-      //   colWidthIncludeDays = 365;
-      // } else if (unit === 'hour') {
-      //   colWidthIncludeDays = 1 / 24;
-      // }
-      this.parsedOptions.colWidthPerDay = this.parsedOptions.timelineColWidth / this.getMinScaleUnitToDays();
-    } else {
-      this.parsedOptions.colWidthPerDay = 0;
     }
   }
   getRowHeightByIndex(index: number) {
@@ -699,14 +680,7 @@ export class Gantt extends EventTarget {
     // return (this.parsedOptions.timeLineHeaderRowHeights as number) * this.timeLineHeaderLevel;
   }
   getAllDateColsWidth() {
-    return (
-      (this.parsedOptions.colWidthPerDay *
-        Math.abs(
-          createDateAtMidnight(this.parsedOptions.maxDate).getTime() -
-            createDateAtMidnight(this.parsedOptions.minDate).getTime()
-        )) /
-      (1000 * 60 * 60 * 24)
-    );
+    return this.parsedOptions.timelineColWidth * this.parsedOptions.reverseSortedTimelineScales[0].timelineDates.length;
   }
 
   getAllTaskBarsHeight() {
@@ -795,7 +769,7 @@ export class Gantt extends EventTarget {
       startDate = createDateAtMidnight(
         Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
       );
-      endDate = createDateAtMidnight(
+      endDate = createDateAtLastHour(
         Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
       );
       // const minTimeSaleIsSecond = this.parsedOptions.reverseSortedTimelineScales[0].unit === 'second';
@@ -807,7 +781,7 @@ export class Gantt extends EventTarget {
         Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime),
         true
       );
-      endDate = createDateAtMidnight(
+      endDate = createDateAtLastHour(
         Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime),
         true
       );
@@ -1068,9 +1042,9 @@ export class Gantt extends EventTarget {
   _scrollToMarkLine() {
     if (this.parsedOptions.scrollToMarkLineDate && this.parsedOptions.minDate) {
       const minDate = this.parsedOptions.minDate;
-      const targetDayDistance =
-        ((this.parsedOptions.scrollToMarkLineDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) *
-        this.parsedOptions.colWidthPerDay;
+      const { unit, step } = this.parsedOptions.reverseSortedTimelineScales[0];
+      const count = computeCountToTimeScale(this.parsedOptions.scrollToMarkLineDate, minDate, unit, step);
+      const targetDayDistance = count * this.parsedOptions.timelineColWidth;
       const left = targetDayDistance - this.tableNoFrameWidth / 2;
       this.stateManager.setScrollLeft(left);
     }
@@ -1151,18 +1125,10 @@ export class Gantt extends EventTarget {
   }
 
   getDateColWidth(dateIndex: number) {
-    const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
-    return this.parsedOptions.colWidthPerDay * minScale.timelineDates[dateIndex].days;
+    return this.parsedOptions.timelineColWidth;
   }
   getDateColsWidth(startDateIndex: number, endDateIndex: number) {
-    const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
-    const startDate = minScale.timelineDates[startDateIndex].startDate;
-    const endDate = minScale.timelineDates[endDateIndex].endDate;
-    return (
-      (this.parsedOptions.colWidthPerDay *
-        Math.abs(createDateAtMidnight(endDate).getTime() - createDateAtMidnight(startDate).getTime())) /
-      (1000 * 60 * 60 * 24)
-    );
+    return (endDateIndex - startDateIndex + 1) * this.parsedOptions.timelineColWidth;
   }
 
   getDateRangeByIndex(index: number) {

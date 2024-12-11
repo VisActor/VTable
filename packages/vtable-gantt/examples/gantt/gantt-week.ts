@@ -213,7 +213,7 @@ export function createTable() {
         },
         {
           unit: 'week',
-          step: 2,
+          step: 1,
           startOfWeek: 'sunday',
           format(date: TYPES.DateFormatArgumentType) {
             return `Week ${date.dateIndex}`;

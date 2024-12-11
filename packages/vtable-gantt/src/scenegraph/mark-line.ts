@@ -1,4 +1,4 @@
-import { createDateAtMidnight } from '../tools/util';
+import { computeCountToTimeScale, createDateAtMidnight } from '../tools/util';
 import type { IMarkLine } from '../ts-types';
 import type { Scenegraph } from './scenegraph';
 import { Group, createLine } from '@visactor/vtable/es/vrender';
@@ -40,12 +40,13 @@ export class MarkLine {
   initMarkLines() {
     this.markLine.forEach(line => {
       const style = line.style;
-      const date = createDateAtMidnight(line.date);
-      const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
+      const date = createDateAtMidnight(line.date, true);
+      const minDate = this._scene._gantt.parsedOptions.minDate;
+      const { unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
+      const unitCount = computeCountToTimeScale(date, minDate, unit, step);
       const dateX =
-        this._scene._gantt.parsedOptions.colWidthPerDay *
-        (Math.ceil((date.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) +
-          (line.position === 'right' ? 1 : line.position === 'middle' ? 0.5 : 0));
+        this._scene._gantt.parsedOptions.timelineColWidth *
+        (Math.floor(unitCount) + (line.position === 'right' ? 1 : line.position === 'middle' ? 0.5 : 0));
       const markLineGroup = new Group({
         pickable: false,
         x: dateX - this.markLineContainerWidth / 2,

@@ -85,15 +85,11 @@ export class Grid {
       this.group.appendChild(this.verticalLineGroup);
 
       const vLines = [];
-      let x = 0;
-      if (this.gridStyle?.verticalLine.lineWidth & 1) {
-        x = 0.5;
-      }
+
       const timelineDates = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
-      const colWidthPerDay = this._scene._gantt.parsedOptions.colWidthPerDay;
+      const timelineColWidth = this._scene._gantt.parsedOptions.timelineColWidth;
       for (let i = 0; i < timelineDates?.length - 1; i++) {
-        const dateline = timelineDates[i];
-        x = x + Math.floor(colWidthPerDay * dateline.days);
+        const x = Math.ceil(timelineColWidth * (i + 1)) + (this.gridStyle?.verticalLine.lineWidth & 1 ? 0.5 : 0);
         const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.verticalLine.lineColor,

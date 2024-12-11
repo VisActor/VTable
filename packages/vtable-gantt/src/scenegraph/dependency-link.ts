@@ -2,7 +2,7 @@ import type { Line } from '@visactor/vtable/es/vrender';
 import { Group, createLine, createRect, Polygon } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
-import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
+import { computeCountToTimeScale, createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
 import { clearRecordLinkInfos, findRecordByTaskKey, getSubTaskRowIndexByRecordDate, getTextPos } from '../gantt-helper';
 import type { GanttTaskBarNode } from './gantt-node';
@@ -281,7 +281,8 @@ export function generateLinkLinePoints(
   linkedToTaskTaskDays: number,
   gantt: Gantt
 ) {
-  const { minDate, rowHeight, colWidthPerDay } = gantt.parsedOptions;
+  const { unit, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+  const { minDate, rowHeight, timelineColWidth } = gantt.parsedOptions;
   const distanceToTaskBar: number = 20;
   const arrowWidth: number = 10;
   const arrowHeight: number = 5;
@@ -292,10 +293,8 @@ export function generateLinkLinePoints(
   if (type === DependencyType.FinishToStart) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    const linkFromPointX =
-      colWidthPerDay *
-      (Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedFromTaskTaskDays);
-    const linkToPointX = (colWidthPerDay * Math.abs(endDate.getTime() - minDate.getTime())) / (1000 * 60 * 60 * 24);
+    const linkFromPointX = computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    const linkToPointX = computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
     linePoints = [
       {
         x: linkFromPointX,
@@ -354,9 +353,8 @@ export function generateLinkLinePoints(
   } else if (type === DependencyType.StartToFinish) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    const linkFromPointX = (colWidthPerDay * Math.abs(startDate.getTime() - minDate.getTime())) / (1000 * 60 * 60 * 24);
-    const linkToPointX =
-      colWidthPerDay * (Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedToTaskTaskDays);
+    const linkFromPointX = computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+    const linkToPointX = computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
     linePoints = [
       {
         x: linkFromPointX,
@@ -415,8 +413,8 @@ export function generateLinkLinePoints(
   } else if (type === DependencyType.StartToStart) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    const linkFromPointX = colWidthPerDay * (Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
-    const linkToPointX = colWidthPerDay * (Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+    const linkFromPointX = computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+    const linkToPointX = computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
     linePoints = [
       {
         x: linkFromPointX,
@@ -478,11 +476,8 @@ export function generateLinkLinePoints(
   } else if (type === DependencyType.FinishToFinish) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    const linkFromPointX =
-      colWidthPerDay *
-      (Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedFromTaskTaskDays);
-    const linkToPointX =
-      colWidthPerDay * (Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedToTaskTaskDays);
+    const linkFromPointX = computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    const linkToPointX = computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
     linePoints = [
       {
         x: linkFromPointX,
@@ -553,9 +548,6 @@ export function generateLinkLinePoints(
  * @param linkedToTaskEndDate    关联目标任务的结束时间
  * @param linkedToTaskRecordRowIndex  关联目标任务所在的行索引
  * @param toNodeDiffY    关联目标任务的偏移量，如果在拖拽过程中，会有偏移量
- * @param minDate 甘特图设置的最开始时间
- * @param rowHeight   单个任务条占用的行高
- * @param colWidthPerDay   单个日期占用的列宽
  * @param linkedFromMovedTaskBarNode  关联源任务的任务场景树节点
  * @param linkedToMovedTaskBarNode   关联目标任务的任务场景树节点
  * @returns
@@ -576,7 +568,8 @@ export function updateLinkLinePoints(
   toNodeDiffY: number,
   gantt: Gantt
 ) {
-  const { minDate, rowHeight, colWidthPerDay } = gantt.parsedOptions;
+  const { unit, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+  const { minDate, rowHeight, timelineColWidth } = gantt.parsedOptions;
   const distanceToTaskBar: number = 20;
   const arrowWidth: number = 10;
   const arrowHeight: number = 5;
@@ -587,13 +580,8 @@ export function updateLinkLinePoints(
   if (type === DependencyType.FinishToStart) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    const linkFromPointX = linkedFromMovedTaskBarNode
-      ? linkedFromMovedTaskBarNode.attribute.x + linkedFromMovedTaskBarNode.attribute.width
-      : colWidthPerDay *
-        (Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedFromTaskTaskDays);
-    const linkToPointX = linkedToMovedTaskBarNode
-      ? linkedToMovedTaskBarNode.attribute.x
-      : colWidthPerDay * (Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+    const linkFromPointX = computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    const linkToPointX = computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
 
     linePoints = [
       {
@@ -656,13 +644,8 @@ export function updateLinkLinePoints(
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
 
-    const linkFromPointX = linkedFromMovedTaskBarNode
-      ? linkedFromMovedTaskBarNode.attribute.x
-      : colWidthPerDay * (Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
-    const linkToPointX = linkedToMovedTaskBarNode
-      ? linkedToMovedTaskBarNode.attribute.x + linkedToMovedTaskBarNode.attribute.width
-      : colWidthPerDay *
-        (Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedToTaskTaskDays);
+    const linkFromPointX = computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+    const linkToPointX = computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
     linePoints = [
       {
         x: linkFromPointX,
@@ -723,12 +706,8 @@ export function updateLinkLinePoints(
   } else if (type === DependencyType.StartToStart) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    const linkFromPointX = linkedFromMovedTaskBarNode
-      ? linkedFromMovedTaskBarNode.attribute.x
-      : colWidthPerDay * (Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
-    const linkToPointX = linkedToMovedTaskBarNode
-      ? linkedToMovedTaskBarNode.attribute.x
-      : colWidthPerDay * (Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+    const linkFromPointX = computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+    const linkToPointX = computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
     linePoints = [
       {
         x: linkFromPointX,
@@ -792,14 +771,8 @@ export function updateLinkLinePoints(
   } else if (type === DependencyType.FinishToFinish) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    const linkFromPointX = linkedFromMovedTaskBarNode
-      ? linkedFromMovedTaskBarNode.attribute.x + linkedFromMovedTaskBarNode.attribute.width
-      : colWidthPerDay *
-        (Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedFromTaskTaskDays);
-    const linkToPointX = linkedToMovedTaskBarNode
-      ? linkedToMovedTaskBarNode.attribute.x + linkedToMovedTaskBarNode.attribute.width
-      : colWidthPerDay *
-        (Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + linkedToTaskTaskDays);
+    const linkFromPointX = computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    const linkToPointX = computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
     linePoints = [
       {
         x: linkFromPointX,

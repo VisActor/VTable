@@ -13,6 +13,8 @@ import {
   createDateAtLastMinute,
   createDateAtLastSecond,
   createDateAtMidnight,
+  getEndDateByTimeUnit,
+  getStartDateByTimeUnit,
   getWeekNumber
 } from './tools/util';
 
@@ -109,17 +111,23 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.startDateField = options.taskBar?.startDateField ?? 'startDate';
   gantt.parsedOptions.endDateField = options.taskBar?.endDateField ?? 'endDate';
   gantt.parsedOptions.progressField = options.taskBar?.progressField ?? 'progress';
+  // gantt.parsedOptions.minDate = options?.minDate
+  //   ? gantt.parsedOptions.timeScaleIncludeHour
+  //     ? createDateAtMidnight(options.minDate)
+  //     : createDateAtMidnight(options.minDate, true)
+  //   : undefined;
+  // gantt.parsedOptions.maxDate = options?.maxDate
+  //   ? gantt.parsedOptions.timeScaleIncludeHour
+  //     ? createDateAtLastHour(options.maxDate)
+  //     : createDateAtLastHour(options.maxDate, true)
+  //   : undefined;
+  const { unit: minTimeUnit, startOfWeek, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
   gantt.parsedOptions.minDate = options?.minDate
-    ? gantt.parsedOptions.timeScaleIncludeHour
-      ? createDateAtMidnight(options.minDate)
-      : createDateAtMidnight(options.minDate, true)
+    ? getStartDateByTimeUnit(new Date(options.minDate), minTimeUnit, startOfWeek)
     : undefined;
   gantt.parsedOptions.maxDate = options?.maxDate
-    ? gantt.parsedOptions.timeScaleIncludeHour
-      ? createDateAtLastHour(options.maxDate)
-      : createDateAtLastHour(options.maxDate, true)
+    ? getEndDateByTimeUnit(gantt.parsedOptions.minDate, new Date(options.maxDate), minTimeUnit, step)
     : undefined;
-
   gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
   gantt.parsedOptions.overscrollBehavior = options?.overscrollBehavior ?? 'auto';
@@ -261,8 +269,10 @@ export function initOptions(gantt: Gantt) {
       gantt.parsedOptions.markLine[0].scrollToMarkLine = true;
     }
     if (gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine)) {
-      gantt.parsedOptions.scrollToMarkLineDate = createDateAtMidnight(
-        gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine).date
+      gantt.parsedOptions.scrollToMarkLineDate = getStartDateByTimeUnit(
+        new Date(gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine).date),
+        minTimeUnit,
+        startOfWeek
       );
     }
   }
@@ -348,6 +358,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
+        step,
+        unit: 'day',
         title: columnTitle,
         dateIndex: day
       };
@@ -367,6 +379,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const dayCellConfig = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
+        step,
+        unit: 'month',
         endDate: end,
         title: columnTitle,
         dateIndex: month + 1
@@ -387,6 +401,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const dayCellConfig = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / (1000 * 60 * 60 * 24),
         startDate: start,
+        step,
+        unit: 'quarter',
         endDate: end,
         title: columnTitle,
         dateIndex: quarter + 1
@@ -406,6 +422,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
+        step,
+        unit: 'year',
         title: columnTitle,
         dateIndex: year
       };
@@ -440,6 +458,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         // days: Math.abs(dateEnd.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24),
         startDate: startOfWeek,
         endDate: dateEnd,
+        step,
+        unit: 'week',
         title: columnTitle,
         dateIndex: weekNumber
       };
@@ -467,6 +487,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
+        step,
+        unit: 'hour',
         title: columnTitle,
         dateIndex: currentDate.getHours()
       };
@@ -489,6 +511,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
+        step,
+        unit: 'minute',
         title: columnTitle,
         dateIndex: currentDate.getMinutes()
       };
@@ -512,6 +536,8 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
+        step,
+        unit: 'second',
         title: columnTitle,
         dateIndex: currentDate.getSeconds()
       };

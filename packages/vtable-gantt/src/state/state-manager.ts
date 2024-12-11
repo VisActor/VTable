@@ -491,7 +491,7 @@ export class StateManager {
 
     // 处理向左拖拽任务条时，整体向左滚动
     if (target.attribute.x <= this._gantt.stateManager.scrollLeft && dx < 0) {
-      this.moveTaskBar.moveTaskBarXSpeed = -this._gantt.parsedOptions.colWidthPerDay / 100;
+      this.moveTaskBar.moveTaskBarXSpeed = -this._gantt.parsedOptions.timelineColWidth / 100;
 
       this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
       this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
@@ -510,7 +510,7 @@ export class StateManager {
       dx > 0
     ) {
       // 处理向右拖拽任务条时，整体向右滚动
-      this.moveTaskBar.moveTaskBarXSpeed = this._gantt.parsedOptions.colWidthPerDay / 100;
+      this.moveTaskBar.moveTaskBarXSpeed = this._gantt.parsedOptions.timelineColWidth / 100;
 
       this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
       this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {

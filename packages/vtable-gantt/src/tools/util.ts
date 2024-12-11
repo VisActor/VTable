@@ -449,6 +449,270 @@ export function createDateAtLastHour(dateStr?: string | number | Date, forceLast
   return date;
 }
 
+export function getEndDateByTimeUnit(
+  startDate: Date,
+  date: Date,
+  timeScale: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second',
+  step: number
+) {
+  let endDate = new Date(date);
+
+  switch (timeScale) {
+    case 'second':
+      endDate.setMilliseconds(999);
+      break;
+    case 'minute':
+      endDate.setSeconds(59, 999);
+      break;
+    case 'hour':
+      endDate.setMinutes(59, 59, 999);
+      break;
+    case 'day':
+      endDate.setHours(23, 59, 59, 999);
+      break;
+    case 'week':
+      const day = endDate.getDay();
+      const diffToEndOfWeek = 6 - day;
+      endDate.setDate(endDate.getDate() + diffToEndOfWeek);
+      endDate.setHours(23, 59, 59, 999);
+      break;
+    case 'month':
+      const lastDayOfMonth = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0).getDate();
+      endDate.setDate(lastDayOfMonth);
+      endDate.setHours(23, 59, 59, 999);
+      break;
+    case 'quarter':
+      const currentMonth = endDate.getMonth();
+      const endMonthOfQuarter = currentMonth - (currentMonth % 3) + 2;
+      const lastDayOfQuarter = new Date(endDate.getFullYear(), endMonthOfQuarter + 1, 0).getDate();
+      endDate.setMonth(endMonthOfQuarter, lastDayOfQuarter);
+      endDate.setHours(23, 59, 59, 999);
+      break;
+    case 'year':
+      endDate.setMonth(11, 31);
+      endDate.setHours(23, 59, 59, 999);
+      break;
+    default:
+      throw new Error('Invalid time scale');
+  }
+
+  const count = computeCountToTimeScale(endDate, startDate, timeScale, step, 1);
+  const targetCount = Math.ceil(count);
+  if (targetCount > count) {
+    const dif = (targetCount - count) * step;
+    const msInSecond = 1000;
+    const msInMinute = msInSecond * 60;
+    const msInHour = msInMinute * 60;
+    const msInDay = msInHour * 24;
+    const msInWeek = msInDay * 7;
+    const adjusted_date = new Date(endDate.getTime() + 1);
+    switch (timeScale) {
+      case 'second':
+        endDate.setTime(endDate.getTime() + dif * msInSecond);
+        break;
+      case 'minute':
+        endDate.setTime(endDate.getTime() + dif * msInMinute);
+        break;
+      case 'hour':
+        endDate.setTime(endDate.getTime() + dif * msInHour);
+        break;
+      case 'day':
+        endDate.setTime(endDate.getTime() + dif * msInDay);
+        break;
+      case 'week':
+        endDate.setTime(endDate.getTime() + dif * msInWeek);
+        break;
+      case 'month':
+        endDate = new Date(endDate.getFullYear(), endDate.getMonth() + 1 + Math.round(dif), 0);
+        // endDate.setTime(lastDayOfMonth);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case 'quarter':
+        const currentMonth = endDate.getMonth();
+        const endMonthOfQuarter = currentMonth - (currentMonth % 3) + 2;
+        endDate = new Date(endDate.getFullYear(), endMonthOfQuarter + Math.round(dif * 3) + 1, 0);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case 'year':
+        endDate.setFullYear(endDate.getFullYear() + Math.floor(dif));
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      default:
+        throw new Error('Invalid time scale');
+    }
+  }
+
+  return endDate;
+}
+
+// export function getEndDateByTimeUnit(
+//   startDate: Date,
+//   date: Date,
+//   timeScale: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second',
+//   step: number
+// ): Date {
+//   const count = computeCountToTimeScale(date, startDate, timeScale, step);
+//   const targetCount = Math.ceil(count);
+//   debugger;
+//   const endDate = new Date(startDate);
+
+//   switch (timeScale) {
+//     case 'second':
+//       endDate.setSeconds(endDate.getSeconds() + targetCount * step);
+//       endDate.setMilliseconds(999);
+//       break;
+//     case 'minute':
+//       endDate.setMinutes(endDate.getMinutes() + targetCount * step);
+//       endDate.setSeconds(59, 999);
+//       break;
+//     case 'hour':
+//       endDate.setHours(endDate.getHours() + targetCount * step);
+//       endDate.setMinutes(59, 59, 999);
+//       break;
+//     case 'day':
+//       endDate.setDate(endDate.getDate() + targetCount * step);
+//       endDate.setHours(23, 59, 59, 999);
+//       break;
+//     case 'week':
+//       endDate.setDate(endDate.getDate() + targetCount * step * 7);
+//       endDate.setHours(23, 59, 59, 999);
+//       break;
+//     case 'month':
+//       endDate.setMonth(endDate.getMonth() + targetCount * step);
+//       const lastDayOfMonth = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0).getDate();
+//       endDate.setDate(lastDayOfMonth);
+//       endDate.setHours(23, 59, 59, 999);
+//       break;
+//     case 'quarter':
+//       endDate.setMonth(endDate.getMonth() + targetCount * step * 3);
+//       const lastDayOfQuarter = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0).getDate();
+//       endDate.setDate(lastDayOfQuarter);
+//       endDate.setHours(23, 59, 59, 999);
+//       break;
+//     case 'year':
+//       endDate.setFullYear(endDate.getFullYear() + targetCount * step);
+//       endDate.setMonth(11, 31);
+//       endDate.setHours(23, 59, 59, 999);
+//       break;
+//     default:
+//       throw new Error('Invalid time scale');
+//   }
+
+//   return endDate;
+// }
+
+export function getStartDateByTimeUnit(
+  date: Date,
+  timeScale: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second',
+  startOfWeekSetting = 'monday'
+): Date {
+  const startDate = new Date(date);
+
+  switch (timeScale) {
+    case 'second':
+      startDate.setMilliseconds(0);
+      break;
+    case 'minute':
+      startDate.setSeconds(0, 0);
+      break;
+    case 'hour':
+      startDate.setMinutes(0, 0, 0);
+      break;
+    case 'day':
+      startDate.setHours(0, 0, 0, 0);
+      break;
+    case 'week':
+      const day = startDate.getDay();
+      let diffToStartOfWeek = day;
+      if (startOfWeekSetting === 'monday') {
+        diffToStartOfWeek = day === 0 ? -6 : 1 - day; // Adjusting for Sunday as the start of the week
+      } else {
+        diffToStartOfWeek = -day;
+      }
+
+      startDate.setDate(startDate.getDate() + diffToStartOfWeek);
+      startDate.setHours(0, 0, 0, 0);
+      break;
+    case 'month':
+      startDate.setDate(1);
+      startDate.setHours(0, 0, 0, 0);
+      break;
+    case 'quarter':
+      const currentMonth = startDate.getMonth();
+      const startMonthOfQuarter = currentMonth - (currentMonth % 3);
+      startDate.setMonth(startMonthOfQuarter, 1);
+      startDate.setHours(0, 0, 0, 0);
+      break;
+    case 'year':
+      startDate.setMonth(0, 1);
+      startDate.setHours(0, 0, 0, 0);
+      break;
+    default:
+      throw new Error('Invalid time scale');
+  }
+
+  return startDate;
+}
+
+export function computeCountToTimeScale(
+  date: Date,
+  startDate: Date,
+  timeScale: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second',
+  step: number,
+  diffMS: number = 0
+): number {
+  const msInSecond = 1000;
+  const msInMinute = msInSecond * 60;
+  const msInHour = msInMinute * 60;
+  const msInDay = msInHour * 24;
+  const msInWeek = msInDay * 7;
+
+  let difference: number;
+  const adjusted_date = new Date(date.getTime() + diffMS);
+  switch (timeScale) {
+    case 'second':
+      difference = (adjusted_date.getTime() - startDate.getTime()) / msInSecond;
+      break;
+    case 'minute':
+      difference = (adjusted_date.getTime() - startDate.getTime()) / msInMinute;
+      break;
+    case 'hour':
+      difference = (adjusted_date.getTime() - startDate.getTime()) / msInHour;
+      break;
+    case 'day':
+      difference = (adjusted_date.getTime() - startDate.getTime()) / msInDay;
+      break;
+    case 'week':
+      difference = (adjusted_date.getTime() - startDate.getTime()) / msInWeek;
+      break;
+    case 'month':
+      difference =
+        (adjusted_date.getFullYear() - startDate.getFullYear()) * 12 +
+        (adjusted_date.getMonth() - startDate.getMonth());
+      difference +=
+        (adjusted_date.getDate() - startDate.getDate()) /
+        new Date(adjusted_date.getFullYear(), adjusted_date.getMonth() + 1, 0).getDate();
+      break;
+    case 'quarter':
+      difference =
+        (adjusted_date.getFullYear() - startDate.getFullYear()) * 4 +
+        Math.floor(adjusted_date.getMonth() / 3) -
+        Math.floor(startDate.getMonth() / 3);
+      difference +=
+        (adjusted_date.getDate() - startDate.getDate()) /
+        (3 * new Date(adjusted_date.getFullYear(), adjusted_date.getMonth() + 1, 0).getDate());
+      break;
+    case 'year':
+      difference = adjusted_date.getFullYear() - startDate.getFullYear();
+      difference += (adjusted_date.getMonth() - startDate.getMonth()) / 12;
+      break;
+    default:
+      throw new Error('Invalid time scale');
+  }
+
+  return difference / step;
+}
+
 /** 暂时没有用上  函数为了解析日期的余数 */
 export function parseDateToTimeUnit(
   date: Date,

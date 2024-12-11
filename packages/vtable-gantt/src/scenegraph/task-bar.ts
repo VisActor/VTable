@@ -1,7 +1,13 @@
 import { Group, createText, createRect, Image, Circle, Line, Rect } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
-import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
+import {
+  computeCountToTimeScale,
+  createDateAtLastHour,
+  createDateAtMidnight,
+  parseStringTemplate,
+  toBoxArray
+} from '../tools/util';
 import { isValid } from '@visactor/vutils';
 import {
   computeRowsCountByRecordDate,
@@ -94,7 +100,9 @@ export class TaskBar {
     if (taskDays <= 0 || !startDate || !endDate || startDate.getTime() > endDate.getTime()) {
       return null;
     }
-    const taskBarSize = this._scene._gantt.parsedOptions.colWidthPerDay * taskDays;
+    const { unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
+    const taskBarSize =
+      computeCountToTimeScale(endDate, startDate, unit, step, 1) * this._scene._gantt.parsedOptions.timelineColWidth;
     const taskbarHeight = this._scene._gantt.parsedOptions.taskBarStyle.width;
     const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
 
@@ -115,11 +123,11 @@ export class TaskBar {
           )
         : 1;
     const oneTaskHeigth = this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
+    const x =
+      computeCountToTimeScale(startDate, this._scene._gantt.parsedOptions.minDate, unit, step) *
+      this._scene._gantt.parsedOptions.timelineColWidth;
     const barGroupBox = new GanttTaskBarNode({
-      x:
-        (this._scene._gantt.parsedOptions.colWidthPerDay * Math.abs(startDate.getTime() - minDate.getTime())) /
-        (1000 * 60 * 60 * 24),
-      // y: this._scene._gantt.parsedOptions.rowHeight * i,
+      x,
       y:
         this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
         (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate

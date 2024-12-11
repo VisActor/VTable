@@ -24,6 +24,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-month'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-createButton'
   },
   {
