@@ -12,6 +12,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-hour-day'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-minute'
   },
   {
