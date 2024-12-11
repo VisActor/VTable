@@ -47,6 +47,7 @@ import { EventTarget } from './event/EventTarget';
 import {
   computeCountToTimeScale,
   createDateAtLastHour,
+  createDateAtLastMillisecond,
   createDateAtLastMinute,
   createDateAtMidnight,
   formatDate,
@@ -672,7 +673,10 @@ export class Gantt extends EventTarget {
     // return (this.parsedOptions.timeLineHeaderRowHeights as number) * this.timeLineHeaderLevel;
   }
   getAllDateColsWidth() {
-    return this.parsedOptions.timelineColWidth * this.parsedOptions.reverseSortedTimelineScales[0].timelineDates.length;
+    return (
+      this.parsedOptions.timelineColWidth *
+      (this.parsedOptions.reverseSortedTimelineScales[0].timelineDates?.length ?? 0)
+    );
   }
 
   getAllTaskBarsHeight() {
@@ -761,8 +765,9 @@ export class Gantt extends EventTarget {
       startDate = createDateAtMidnight(
         Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
       );
-      endDate = createDateAtLastHour(
-        Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
+      endDate = createDateAtLastMillisecond(
+        Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime),
+        true
       );
       // const minTimeSaleIsSecond = this.parsedOptions.reverseSortedTimelineScales[0].unit === 'second';
     } else {
