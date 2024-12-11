@@ -339,34 +339,7 @@ function bindTableGroupListener(event: EventManager) {
         const dateRange = gantt.getDateRangeByIndex(dateIndex);
         recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField] = formatDate(dateRange.startDate, dateFormat);
         recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField] = formatDate(dateRange.endDate, dateFormat);
-        // recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField] = formatDate(
-        //   new Date(
-        //     gantt.parsedOptions._minDateTime +
-        //       Math.floor(
-        //         (e.offset.x + gantt.stateManager.scroll.horizontalBarPos) / gantt.parsedOptions.timelineColWidth
-        //       ) *
-        //         DayTimes *
-        //         gantt.getMinScaleUnitToDays()
-        //   ),
-        //   dateFormat
-        // );
-        // if (minTimeUnit === 'hour') {
-        //   recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField] = formatDate(
-        //     new Date(
-        //       gantt.parsedOptions._minDateTime +
-        //         Math.floor(
-        //           (e.offset.x + gantt.stateManager.scroll.horizontalBarPos + gantt.parsedOptions.timelineColWidth) /
-        //             gantt.parsedOptions.timelineColWidth
-        //         ) *
-        //           DayTimes *
-        //           gantt.getMinScaleUnitToDays()
-        //     ),
-        //     dateFormat
-        //   );
-        // } else {
-        //   recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField] =
-        //     recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField];
-        // }
+
         gantt.scenegraph.hideTaskCreationButton();
         gantt.updateTaskRecord(recordTaskInfo.taskRecord, taskIndex);
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE)) {

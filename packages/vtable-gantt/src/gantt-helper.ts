@@ -338,6 +338,42 @@ export function initOptions(gantt: Gantt) {
     options?.dependency?.linkCreatingLineStyle
   );
 }
+export function updateOptionsWhenScaleChanged(gantt: Gantt) {
+  const options = gantt.options;
+
+  const { unit: minTimeUnit, startOfWeek, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+  gantt.parsedOptions.minDate = getStartDateByTimeUnit(new Date(gantt.parsedOptions.minDate), minTimeUnit, startOfWeek);
+  gantt.parsedOptions.maxDate = getEndDateByTimeUnit(
+    gantt.parsedOptions.minDate,
+    new Date(gantt.parsedOptions.maxDate),
+    minTimeUnit,
+    step
+  );
+  gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
+  gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
+  gantt.parsedOptions.timeLineHeaderRowHeights = [];
+  gantt.parsedOptions.timelineHeaderStyles = [];
+  for (let i = 0; i < gantt.parsedOptions.sortedTimelineScales.length ?? 0; i++) {
+    const style = gantt.parsedOptions.sortedTimelineScales[i].style;
+    gantt.parsedOptions.timelineHeaderStyles.push(
+      Object.assign(
+        {
+          fontSize: 20,
+          fontWeight: 'bold',
+          textAlign: 'center',
+          textBaseline: 'middle',
+          color: '#000',
+          backgroundColor: '#fff'
+        },
+        style
+      )
+    );
+
+    gantt.parsedOptions.timeLineHeaderRowHeights.push(
+      gantt.parsedOptions.sortedTimelineScales[i].rowHeight ?? options?.headerRowHeight ?? 40
+    );
+  }
+}
 
 export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: ITimelineScale) {
   const { unit, step, format } = scale;
@@ -800,7 +836,7 @@ export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
   return { task_index, sub_task_index };
 }
 
-export function computeRowsCountByRecordDateForCompact(record: any, startDateField: string, endDateField: string) {
+export function computeRowsCountByRecordDateForCompact(gantt: Gantt, record: any) {
   if (!record.children || record.children.length === 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
@@ -809,23 +845,23 @@ export function computeRowsCountByRecordDateForCompact(record: any, startDateFie
   }
   // 创建一个浅拷贝并排序子任务，根据开始日期排序
   const sortedChildren = record.children.slice().sort((a: any, b: any) => {
-    return createDateAtMidnight(a[startDateField]).getTime() - createDateAtMidnight(b[startDateField]).getTime();
+    const { startDate: aStartDate } = formatRecordDateConsiderHasHour(gantt, a);
+    const { startDate: bStartDate } = formatRecordDateConsiderHasHour(gantt, b);
+    return aStartDate.getTime() - bStartDate.getTime();
   });
-  const count = 0;
   // 用于存储每一行的结束日期
   const rows = [];
   for (let i = 0; i <= sortedChildren.length - 1; i++) {
     const newRecord = sortedChildren[i];
-    const startDate = createDateAtMidnight(newRecord[startDateField]).getTime();
-    const endDate = createDateAtMidnight(newRecord[endDateField]).getTime();
+    const { startDate, endDate } = formatRecordDateConsiderHasHour(gantt, newRecord);
 
     let placed = false;
 
     // 尝试将当前任务放入已有的行中
     for (let j = 0; j < rows.length; j++) {
-      if (startDate > rows[j]) {
+      if (startDate.getTime() > rows[j]) {
         // 如果当前任务的开始日期在该行的结束日期之后，则可以放在这一行
-        rows[j] = endDate;
+        rows[j] = endDate.getTime();
         placed = true;
         newRecord.vtable_gantt_showIndex = j;
         break;
@@ -834,7 +870,7 @@ export function computeRowsCountByRecordDateForCompact(record: any, startDateFie
 
     // 如果不能放在已有的行中，则需要新开一行
     if (!placed) {
-      rows.push(endDate);
+      rows.push(endDate.getTime());
       newRecord.vtable_gantt_showIndex = rows.length - 1;
     }
   }
@@ -842,16 +878,13 @@ export function computeRowsCountByRecordDateForCompact(record: any, startDateFie
   return rows.length;
 }
 // 检查两个日期范围是否重叠
-function isOverlapping(task: any, rowTasks: any[], startDateField: string, endDateField: string) {
-  const start1 = createDateAtMidnight(task[startDateField]).getTime();
-  const end1 = createDateAtMidnight(task[endDateField]).getTime();
+function isOverlapping(startDate: Date, endDate: Date, rowTasks: any[], gantt: Gantt) {
   return rowTasks.some(rowTask => {
-    const start2 = createDateAtMidnight(rowTask[startDateField]).getTime();
-    const end2 = createDateAtMidnight(rowTask[endDateField]).getTime();
-    return start1 <= end2 && start2 <= end1;
+    const { startDate: startDate2, endDate: endDate2 } = formatRecordDateConsiderHasHour(gantt, rowTask);
+    return startDate <= endDate2 && startDate2 <= endDate;
   });
 }
-export function computeRowsCountByRecordDate(record: any, startDateField: string, endDateField: string) {
+export function computeRowsCountByRecordDate(gantt: Gantt, record: any) {
   if (!record.children || record.children.length === 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
@@ -859,22 +892,18 @@ export function computeRowsCountByRecordDate(record: any, startDateField: string
     return 1;
   }
 
-  const count = 0;
   // 用于存储每一行的结束日期
   const rows = [];
   for (let i = 0; i <= record.children.length - 1; i++) {
     const newRecord = record.children[i];
-    const startDate = createDateAtMidnight(newRecord[startDateField]).getTime();
-    const endDate = createDateAtMidnight(newRecord[endDateField]).getTime();
-
+    const { startDate, endDate } = formatRecordDateConsiderHasHour(gantt, newRecord);
     let placed = false;
-
     // 尝试将当前任务放入已有的行中
     for (let j = 0; j < rows.length; j++) {
       const rowTasks = record.children.filter((t: any) => t !== newRecord && t.vtable_gantt_showIndex === j);
-      if (!isOverlapping(newRecord, rowTasks, startDateField, endDateField)) {
+      if (!isOverlapping(startDate, endDate, rowTasks, gantt)) {
         // 如果当前任务的开始日期在该行的结束日期之后，则可以放在这一行
-        rows[j] = endDate;
+        rows[j] = endDate.getTime();
         placed = true;
         newRecord.vtable_gantt_showIndex = j;
         break;
@@ -883,7 +912,7 @@ export function computeRowsCountByRecordDate(record: any, startDateField: string
 
     // 如果不能放在已有的行中，则需要新开一行
     if (!placed) {
-      rows.push(endDate);
+      rows.push(endDate.getTime());
       newRecord.vtable_gantt_showIndex = rows.length - 1;
     }
   }
@@ -938,4 +967,25 @@ export function getSubTaskRowIndexByRecordDate(
   }
 
   return 0;
+}
+
+/**
+ * 获取指定index处任务数据的具体信息
+ * @param index
+ * @returns 当前任务信息
+ */
+export function formatRecordDateConsiderHasHour(
+  gantt: Gantt,
+  record: any
+): {
+  startDate: Date;
+  endDate: Date;
+} {
+  const { timeScaleIncludeHour, startDateField, endDateField } = gantt.parsedOptions;
+  const startDate = record[startDateField];
+  const endDate = record[endDateField];
+  if (timeScaleIncludeHour) {
+    return { startDate: createDateAtMidnight(startDate), endDate: createDateAtLastHour(endDate) };
+  }
+  return { startDate: createDateAtMidnight(startDate, true), endDate: createDateAtLastHour(endDate, true) };
 }

@@ -338,14 +338,11 @@ export class StateManager {
     if (Math.abs(deltaX) >= 1 || Math.abs(deltaY) >= 1) {
       const taskIndex = target.task_index;
       const sub_task_index = target.sub_task_index;
-      const oldRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
-      const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
-      const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
-      // const days =
-      //   Math.round(deltaX / this._gantt.parsedOptions.timelineColWidth) * this._gantt.getMinScaleUnitToDays();
+      const { startDate: oldStartDate, endDate: oldEndDate } = this._gantt.getTaskInfoByTaskListIndex(
+        taskIndex,
+        sub_task_index
+      );
 
-      // const correctX = days * this._gantt.parsedOptions.colWidthPerDay;
-      // const targetEndX = this.moveTaskBar.targetStartX + correctX;
       const targetEndY =
         this.moveTaskBar.targetStartY +
         this._gantt.parsedOptions.rowHeight * Math.round(deltaY / this._gantt.parsedOptions.rowHeight);
@@ -375,6 +372,7 @@ export class StateManager {
         // this._gantt._updateDateToTaskRecord('move', days, taskIndex, sub_task_index);
         this._gantt._updateStartEndDateToTaskRecord(newStartDate, newEndDate, taskIndex, sub_task_index);
         const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
+
         if (this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
           this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
             startDate: newRecord[this._gantt.parsedOptions.startDateField],
@@ -574,22 +572,16 @@ export class StateManager {
       const clipGroupBox = taskBarGroup.clipGroupBox;
       const rect = this.resizeTaskBar.target.barRect;
       const progressRect = this.resizeTaskBar.target.progressRect;
-      // const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
       const taskIndex = this.resizeTaskBar.target.task_index;
       const sub_task_index = this.resizeTaskBar.target.sub_task_index;
-      const oldRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
-      const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
-      const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
-      const { taskDays, progress } = this._gantt.getTaskInfoByTaskListIndex(taskIndex, sub_task_index);
-      // if (diff_days < 0 && taskDays + diff_days <= 0) {
-      //   diff_days = 1 - taskDays;
-      // }
-      // this._gantt._updateDateToTaskRecord(
-      //   direction === 'left' ? 'start-move' : 'end-move',
-      //   direction === 'left' ? -diff_days : diff_days,
-      //   taskIndex,
-      //   sub_task_index
-      // );
+
+      const {
+        taskDays,
+        progress,
+        startDate: oldStartDate,
+        endDate: oldEndDate
+      } = this._gantt.getTaskInfoByTaskListIndex(taskIndex, sub_task_index);
+
       let dateChanged = false;
       if (direction === 'left') {
         this._gantt._updateStartDateToTaskRecord(targetDate, taskIndex, sub_task_index);
@@ -606,21 +598,6 @@ export class StateManager {
         this._gantt._syncPropsFromTable();
         this._gantt.scenegraph.refreshTaskBarsAndGrid();
       } else {
-        // const correctX = (direction === 'left' ? -diff_days : diff_days) * this._gantt.parsedOptions.colWidthPerDay;
-        // const targetEndX = this.resizeTaskBar.targetStartX + correctX;
-
-        // const taskBarSize = this._gantt.parsedOptions.colWidthPerDay * (taskDays + diff_days);
-        // if (direction === 'left') {
-        //   resizeOrMoveTaskBar(taskBarGroup, targetEndX - taskBarGroup.attribute.x, 0, taskBarSize, this);
-        //   clipGroupBox.setAttribute('width', taskBarGroup.attribute.width);
-        //   rect?.setAttribute('width', taskBarGroup.attribute.width);
-        //   progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-        // } else if (direction === 'right') {
-        //   resizeOrMoveTaskBar(taskBarGroup, 0, 0, taskBarSize, this);
-        //   clipGroupBox.setAttribute('width', taskBarGroup.attribute.width);
-        //   rect?.setAttribute('width', taskBarGroup.attribute.width);
-        //   progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-        // }
         if (direction === 'left') {
           const newX = colIndex >= 1 ? this._gantt.getDateColsWidth(0, colIndex - 1) : 0;
           taskBarGroup.setAttribute('x', newX);
@@ -1005,6 +982,5 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
   if (newWidth) {
     target.setAttribute('width', newWidth);
   }
-
   state._gantt.scenegraph.refreshRecordLinkNodes(taskIndex, sub_task_index, target, dy);
 }

@@ -339,13 +339,7 @@ export class Scenegraph {
           beforeRowCountLinkedFrom +
           (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
           gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
-            ? // getSubTaskRowIndexByRecordDate(
-              //     gantt.records[linkedFromTaskRecord.index[0]],
-              //     linkedFromTaskRecord.index[1],
-              //     gantt.parsedOptions.startDateField,
-              //     gantt.parsedOptions.endDateField
-              //   )
-              linkedFromTaskRecord.record.vtable_gantt_showIndex
+            ? linkedFromTaskRecord.record.vtable_gantt_showIndex
             : linkedFromTaskRecord.index[1]);
         // const beforeRowCountLinkedTo =
         //   gantt.getRowsHeightByIndex(0, linkedToTaskRecord.index[0] - 1) / gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
@@ -356,13 +350,7 @@ export class Scenegraph {
           beforeRowCountLinkedTo +
           (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
           gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
-            ? // ? getSubTaskRowIndexByRecordDate(
-              //     gantt.records[linkedToTaskRecord.index[0]],
-              //     linkedToTaskRecord.index[1],
-              //     gantt.parsedOptions.startDateField,
-              //     gantt.parsedOptions.endDateField
-              //   )
-              linkedToTaskRecord.record.vtable_gantt_showIndex
+            ? linkedToTaskRecord.record.vtable_gantt_showIndex
             : new_indexs.sub_task_index);
 
         ({
@@ -476,13 +464,7 @@ export class Scenegraph {
           beforeRowCountLinkedFrom +
           (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
           gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
-            ? // ? getSubTaskRowIndexByRecordDate(
-              //     gantt.records[linkedFromTaskRecord.index[0]],
-              //     linkedFromTaskRecord.index[1],
-              //     gantt.parsedOptions.startDateField,
-              //     gantt.parsedOptions.endDateField
-              //   )
-              linkedFromTaskRecord.record.vtable_gantt_showIndex
+            ? linkedFromTaskRecord.record.vtable_gantt_showIndex
             : new_indexs.sub_task_index);
 
         const beforeRowCountLinkedTo =
@@ -491,13 +473,7 @@ export class Scenegraph {
           beforeRowCountLinkedTo +
           (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
           gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
-            ? // ? getSubTaskRowIndexByRecordDate(
-              //     gantt.records[linkedToTaskRecord.index[0]],
-              //     linkedToTaskRecord.index[1],
-              //     gantt.parsedOptions.startDateField,
-              //     gantt.parsedOptions.endDateField
-              //   )
-              linkedToTaskRecord.record.vtable_gantt_showIndex
+            ? linkedToTaskRecord.record.vtable_gantt_showIndex
             : linkedToTaskRecord.index[1]);
         ({
           startDate: linkedToTaskStartDate,

@@ -40,6 +40,7 @@ import {
   getHorizontalScrollBarSize,
   getVerticalScrollBarSize,
   initOptions,
+  updateOptionsWhenScaleChanged,
   updateSplitLineAndResizeLine
 } from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
@@ -543,23 +544,14 @@ export class Gantt extends EventTarget {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
         const record = table.getRecordByRowCol(0, row);
-        return (
-          computeRowsCountByRecordDateForCompact(
-            record,
-            this.parsedOptions.startDateField,
-            this.parsedOptions.endDateField
-          ) * this.parsedOptions.rowHeight
-        );
+        return computeRowsCountByRecordDateForCompact(this, record) * this.parsedOptions.rowHeight;
       };
       listTable_options.defaultRowHeight = 'auto';
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
         const record = table.getRecordByRowCol(0, row);
-        return (
-          computeRowsCountByRecordDate(record, this.parsedOptions.startDateField, this.parsedOptions.endDateField) *
-          this.parsedOptions.rowHeight
-        );
+        return computeRowsCountByRecordDate(this, record) * this.parsedOptions.rowHeight;
       };
       listTable_options.defaultRowHeight = 'auto';
     } else {
@@ -735,6 +727,7 @@ export class Gantt extends EventTarget {
     sub_task_index?: number
   ): {
     taskRecord: any;
+    /** 废弃，请直接使用startDate和endDate来计算 */
     taskDays: number;
     startDate: Date;
     endDate: Date;
@@ -762,7 +755,6 @@ export class Gantt extends EventTarget {
     }
 
     const progress = convertProgress(taskRecord[progressField]);
-    let taskDays;
     let startDate;
     let endDate;
     if (this.parsedOptions.timeScaleIncludeHour) {
@@ -773,9 +765,6 @@ export class Gantt extends EventTarget {
         Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
       );
       // const minTimeSaleIsSecond = this.parsedOptions.reverseSortedTimelineScales[0].unit === 'second';
-      taskDays =
-        Math.abs(endDate.getTime() - startDate.getTime() + (this.parsedOptions.timeScaleIncludeHour ? 1000 : 0)) /
-        (1000 * 60 * 60 * 24);
     } else {
       startDate = createDateAtMidnight(
         Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime),
@@ -785,8 +774,8 @@ export class Gantt extends EventTarget {
         Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime),
         true
       );
-      taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     }
+    const taskDays = (endDate.getTime() - startDate.getTime() + 1) / (1000 * 60 * 60 * 24);
     return {
       taskRecord,
       taskDays,
@@ -794,102 +783,6 @@ export class Gantt extends EventTarget {
       endDate,
       progress
     };
-  }
-  // /**
-  //  * 获取指定index处任务数据的具体信息
-  //  * @param index
-  //  * @returns 当前任务信息
-  //  */
-  // getTaskInfoByTaskListIndexs(
-  //   taskShowIndex: number,
-  //   subTaskIndex: number
-  // ): {
-  //   taskRecord: any;
-  //   taskDays: number;
-  //   startDate: Date;
-  //   endDate: Date;
-  //   progress: number;
-  // } {
-  //   const taskParentRecord = this.getRecordByIndex(taskShowIndex);
-  //   if (taskParentRecord.children?.length) {
-  //     const taskRecord = taskParentRecord.children[subTaskIndex];
-  //     const startDateField = this.parsedOptions.startDateField;
-  //     const endDateField = this.parsedOptions.endDateField;
-  //     const progressField = this.parsedOptions.progressField;
-  //     const rawDateStartDateTime = createDateAtMidnight(taskRecord?.[startDateField]).getTime();
-  //     const rawDateEndDateTime = createDateAtMidnight(taskRecord?.[endDateField]).getTime();
-  //     if (
-  //       rawDateEndDateTime < this.parsedOptions._minDateTime ||
-  //       rawDateStartDateTime > this.parsedOptions._maxDateTime ||
-  //       !taskRecord?.[startDateField] ||
-  //       !taskRecord?.[endDateField]
-  //     ) {
-  //       return {
-  //         taskDays: 0,
-  //         progress: 0,
-  //         startDate: null,
-  //         endDate: null,
-  //         taskRecord
-  //       };
-  //     }
-  //     const startDate = createDateAtMidnight(
-  //       Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
-  //     );
-  //     const endDate = createDateAtMidnight(
-  //       Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime)
-  //     );
-  //     const progress = convertProgress(taskRecord[progressField]);
-  //     const taskDays = Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-  //     return {
-  //       taskRecord,
-  //       taskDays,
-  //       startDate,
-  //       endDate,
-  //       progress
-  //     };
-  //   }
-  //   return {
-  //     taskDays: 0,
-  //     progress: 0,
-  //     startDate: null,
-  //     endDate: null,
-  //     taskRecord: null
-  //   };
-  // }
-  /**
-   * 拖拽任务条或者调整任务条尺寸修改日期更新到数据中
-   * @param updateDateType
-   * @param days
-   * @param index
-   */
-  _updateDateToTaskRecord(
-    updateDateType: 'move' | 'start-move' | 'end-move',
-    days: number,
-    index: number,
-    sub_task_index?: number
-  ) {
-    const taskRecord = this.getRecordByIndex(index, sub_task_index);
-    const startDateField = this.parsedOptions.startDateField;
-    const endDateField = this.parsedOptions.endDateField;
-    const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[endDateField]);
-    const startDate = createDateAtMidnight(taskRecord[startDateField]);
-    const endDate = createDateAtMidnight(taskRecord[endDateField]);
-    if (updateDateType === 'move') {
-      const newStartDate = formatDate(createDateAtMidnight(days * DayTimes + startDate.getTime()), dateFormat);
-      const newEndDate = formatDate(createDateAtMidnight(days * DayTimes + endDate.getTime()), dateFormat);
-      taskRecord[startDateField] = newStartDate;
-      taskRecord[endDateField] = newEndDate;
-    } else if (updateDateType === 'start-move') {
-      const newStartDate = formatDate(createDateAtMidnight(days * DayTimes + startDate.getTime()), dateFormat);
-      taskRecord[startDateField] = newStartDate;
-    } else if (updateDateType === 'end-move') {
-      const newEndDate = formatDate(createDateAtMidnight(days * DayTimes + endDate.getTime()), dateFormat);
-      taskRecord[endDateField] = newEndDate;
-    }
-    if (!isValid(sub_task_index)) {
-      //子任务不是独占左侧表格一行的情况
-      this._updateRecordToListTable(taskRecord, index);
-    }
   }
 
   _updateStartDateToTaskRecord(startDate: Date, index: number, sub_task_index?: number) {
@@ -1020,7 +913,7 @@ export class Gantt extends EventTarget {
     const gantt = this;
     this.options.timelineHeader.scales = scales;
     this._sortScales();
-    initOptions(gantt);
+    updateOptionsWhenScaleChanged(gantt);
     this._generateTimeLineDateMap();
     this.timeLineHeaderLevel = this.parsedOptions.sortedTimelineScales.length;
     this.scenegraph.refreshAll();

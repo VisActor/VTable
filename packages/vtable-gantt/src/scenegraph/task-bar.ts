@@ -110,17 +110,9 @@ export class TaskBar {
       this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
         ? childrenLength
         : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
-        ? computeRowsCountByRecordDate(
-            this._scene._gantt.records[index],
-            this._scene._gantt.parsedOptions.startDateField,
-            this._scene._gantt.parsedOptions.endDateField
-          )
+        ? computeRowsCountByRecordDate(this._scene._gantt, this._scene._gantt.records[index])
         : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
-        ? computeRowsCountByRecordDateForCompact(
-            this._scene._gantt.records[index],
-            this._scene._gantt.parsedOptions.startDateField,
-            this._scene._gantt.parsedOptions.endDateField
-          )
+        ? computeRowsCountByRecordDateForCompact(this._scene._gantt, this._scene._gantt.records[index])
         : 1;
     const oneTaskHeigth = this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
     const x =
