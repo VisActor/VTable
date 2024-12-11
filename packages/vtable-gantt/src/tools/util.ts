@@ -218,28 +218,35 @@ export function parseDateFormat(dateString: string) {
     'mm.dd.yyyy',
     'dd.mm.yyyy'
   ];
-  const timeFormat = 'hh:mm:ss';
+  const timeFormat = ['hh:mm:ss', 'hh:mm'];
   dateString = dateString.trim(); // 移除空格
   const dates = dateString.split(' ');
   const date = dates[0];
   const time = dates[1];
   let dateFormatMatched;
   let timeFormatMatched;
-  for (let i = 0; i < formats.length; i++) {
-    const format = formats[i];
-    const dateParts = date.split(getSeparator(format));
-    const isValid = validateDate(dateParts, format);
-    if (dateParts.length === 3 && isValid) {
-      dateFormatMatched = format;
-      break;
+  if (date) {
+    for (let i = 0; i < formats.length; i++) {
+      const format = formats[i];
+      const dateParts = date.split(getSeparator(format));
+      const isValid = validateDate(dateParts, format);
+      if (dateParts.length === 3 && isValid) {
+        dateFormatMatched = format;
+        break;
+      }
     }
   }
   if (dateFormatMatched) {
     if (time) {
-      const timeParts = time.split(getSeparator(timeFormat));
-      const isValid = validateTime(timeParts, timeFormat);
-      if (timeParts.length === 3 && isValid) {
-        timeFormatMatched = timeFormat;
+      for (let i = 0; i < timeFormat.length; i++) {
+        const format = timeFormat[i];
+        const timeParts = time.split(getSeparator(format));
+        const formatParts = format.split(getSeparator(format));
+        const isValid = validateTime(timeParts, format);
+        if (isValid && timeParts.length === formatParts.length) {
+          timeFormatMatched = format;
+          break;
+        }
       }
     }
   }
@@ -249,7 +256,7 @@ export function parseDateFormat(dateString: string) {
   if (date && !time) {
     return dateFormatMatched;
   }
-  return null;
+  return 'yyyy-mm-dd hh:mm:ss';
 }
 
 // 根据日期格式获取分隔符正则表达式
