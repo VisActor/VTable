@@ -94,7 +94,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       col >= layout.rowHeaderLevelCount &&
       col < layout.colCount - layout.rightFrozenColCount
     ) {
-      const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+      // const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+      const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
       let indicatorInfo = null;
       indicatorKeys?.forEach(key => {
         const info = layout.getIndicatorInfo(key);
@@ -220,7 +221,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row >= layout.columnHeaderLevelCount &&
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
-      const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+      // const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+      const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
       let indicatorInfo = null;
       indicatorKeys?.forEach(key => {
         const info = layout.getIndicatorInfo(key);
@@ -567,7 +569,8 @@ function getRange(
   if (axisOption?.visible === false) {
     return undefined;
   }
-  const indicatorKeys = layout.getIndicatorKeyInChartSpec(colForIndicatorKey, rowForIndicatorKey).slice(0, 2);
+  // const indicatorKeys = layout.getIndicatorKeyInChartSpec(colForIndicatorKey, rowForIndicatorKey).slice(0, 2);
+  const indicatorKeys = layout.getIndicatorKeyInChartSpec(colForIndicatorKey, rowForIndicatorKey);
   let path;
   if (position === 'top' || position === 'bottom') {
     path = layout.getColKeysPath(col, row);

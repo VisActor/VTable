@@ -184,7 +184,8 @@ export function getChartSpec(col: number, row: number, layout: PivotHeaderLayout
 export function getChartAxes(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   const axes = [];
   if (layout.indicatorsAsCol) {
-    const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+    // const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+    const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
     // const colIndex = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath(col, row);
     indicatorKeys.forEach((key, index) => {
@@ -287,7 +288,8 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       )
     );
   } else {
-    const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+    // const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+    const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
     const rowPath = layout.getRowKeysPath(col, row);
     indicatorKeys.forEach((key, index) => {
       const { range, isZeroAlign, axisOption } = getRange(
