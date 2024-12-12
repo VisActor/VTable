@@ -53,7 +53,7 @@ You can define the custom rendering of each cell in each column through `taskLis
 
 In common business scenarios, multi-level time scale display may be required. VTable-Gantt supports five time granularities: `'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second'`.
 
-You can set the row height and time unit (such as day, week, month, etc.) of the date scale through the `timelineHeader.scales.unit` configuration item.
+You can set the row height and time unit (such as day, week, month, etc.) of the date scale through the `timelineHeader.scale` configuration item.
 
 ### Date Header Style
 

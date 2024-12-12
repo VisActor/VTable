@@ -40,7 +40,9 @@ export class MarkLine {
   initMarkLines() {
     this.markLine.forEach(line => {
       const style = line.style;
-      const date = createDateAtMidnight(line.date, true);
+      const date = this._scene._gantt.parsedOptions.timeScaleIncludeHour
+        ? createDateAtMidnight(line.date)
+        : createDateAtMidnight(line.date, true);
       const minDate = this._scene._gantt.parsedOptions.minDate;
       const { unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
       const unitCount = computeCountToTimeScale(date, minDate, unit, step);
