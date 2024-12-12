@@ -1,13 +1,15 @@
 import { cloneDeep, isArray, isNumber, merge } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
-import { getAxisOption, getAxisRange } from './get-axis-config';
+import { getAxisOption, getAxisRange, getAxisRangeAndTicks } from './get-axis-config';
 import { getNewRangeToAlign } from './zero-align';
 import type { IChartIndicator, IIndicator } from '../../ts-types';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { Factory } from '../../core/factory';
 import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
 import { DEFAULT_TEXT_FONT_SIZE } from '../../components/axis/get-axis-attributes';
+import { convertDomainToTickData } from '@visactor/vrender-components';
+import { getTickModeFunction, getZeroAlignTickAlignTicks } from './tick-align';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
 
@@ -189,36 +191,16 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     // const colIndex = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath(col, row);
     indicatorKeys.forEach((key, index) => {
-      const { range, isZeroAlign, axisOption } = getRange(
+      const { range, targetTicks, targetRange, axisOption } = getAxisRangeAndTicks(
         col,
         row,
         index,
         index === 0 ? 'bottom' : 'top',
+        index === 0 ? 'top' : 'bottom',
         indicatorKeys,
         colPath,
         layout
       );
-      if (isZeroAlign) {
-        const subAxisRange = getRange(
-          col,
-          row,
-          indicatorKeys.length - 1 - index,
-          index === 0 ? 'top' : 'bottom',
-          indicatorKeys,
-          colPath,
-          layout
-        );
-
-        if (subAxisRange) {
-          const { range: subRange } = subAxisRange;
-
-          const align = getNewRangeToAlign(range, subRange);
-          if (align) {
-            range.min = align.range1[0];
-            range.max = align.range1[1];
-          }
-        }
-      }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
       }
@@ -242,7 +224,9 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
             domainLine: { visible: false },
             seriesIndex: axisOption?.seriesId ? undefined : index,
             // height: -1,
-
+            tick: {
+              tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
+            },
             sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
           }
         )
@@ -258,7 +242,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       layout.dataset.collectedValues[rowDimensionKey] ||
       ([] as string[]);
     const rowPath = layout.getRowKeysPath(col, row);
-    const domain = data[rowPath ?? ''] as Set<string>;
+    const domain = (data as any)[rowPath ?? ''] as Set<string>;
     const { axisOption, isPercent, chartType } = getAxisOption(col, row, 'left', layout);
     axes.push(
       // 左侧维度轴
@@ -292,36 +276,16 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
     const rowPath = layout.getRowKeysPath(col, row);
     indicatorKeys.forEach((key, index) => {
-      const { range, isZeroAlign, axisOption } = getRange(
+      const { range, targetTicks, targetRange, axisOption } = getAxisRangeAndTicks(
         col,
         row,
         index,
         index === 0 ? 'left' : 'right',
+        index === 0 ? 'right' : 'left',
         indicatorKeys,
         rowPath,
         layout
       );
-      if (isZeroAlign) {
-        const subAxisRange = getRange(
-          col,
-          row,
-          indicatorKeys.length - 1 - index,
-          index === 0 ? 'right' : 'left',
-          indicatorKeys,
-          rowPath,
-          layout
-        );
-
-        if (subAxisRange) {
-          const { range: subRange } = subAxisRange;
-
-          const align = getNewRangeToAlign(range, subRange);
-          if (align) {
-            range.min = align.range1[0];
-            range.max = align.range1[1];
-          }
-        }
-      }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
       }
@@ -340,14 +304,16 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
             type: axisOption?.type || 'linear',
             orient: index === 0 ? 'left' : 'right',
             // visible: true,
-            label: { visible: false, flush: true },
-            // label: { flush: true },
+            // label: { visible: false, flush: true },
+            label: { flush: true },
             title: { visible: false },
             domainLine: { visible: false },
             seriesIndex: axisOption?.seriesId ? undefined : index,
             // width: -1,
             // grid: index === 0 ? undefined : { visible: false }
-
+            tick: {
+              tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
+            },
             sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
           }
         )
@@ -363,7 +329,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       layout.dataset.collectedValues[columnDimensionKey] ||
       ([] as string[]);
     const colPath = layout.getColKeysPath(col, row);
-    const domain: string[] | Set<string> = (data?.[colPath ?? ''] as Set<string>) ?? [];
+    const domain: string[] | Set<string> = ((data as any)?.[colPath ?? ''] as Set<string>) ?? [];
 
     const { axisOption, isPercent, chartType } = getAxisOption(col, row, 'bottom', layout);
     axes.push(
@@ -433,56 +399,6 @@ export function getChartDataId(
   return chartSpec.data.id;
 }
 
-function getRange(
-  col: number,
-  row: number,
-  index: number,
-  position: 'bottom' | 'top' | 'left' | 'right',
-  indicatorKeys: string[],
-  path: string,
-  layout: PivotHeaderLayoutMap
-) {
-  const { axisOption, isPercent, isZeroAlign, seriesIndice } = getAxisOption(col, row, position, layout);
-  const range = getAxisRange(layout.dataset.collectedValues, indicatorKeys, isZeroAlign, path, seriesIndice ?? index);
-
-  if (isPercent) {
-    (range as any).min = (range as any).min < 0 ? -1 : 0;
-    (range as any).max = (range as any).max > 0 ? 1 : 0;
-  }
-  if (axisOption?.zero || range.min === range.max) {
-    range.min = Math.min(range.min, 0);
-    range.max = Math.max(range.max, 0);
-  }
-  if (axisOption?.nice) {
-    const getAxisDomainRangeAndLabels = Factory.getFunction(
-      'getAxisDomainRangeAndLabels'
-    ) as GetAxisDomainRangeAndLabels;
-    const { range: axisRange } = getAxisDomainRangeAndLabels(
-      range.min,
-      range.max,
-      axisOption,
-      isZeroAlign,
-      // layout._table.getColWidth(col)
-      position === 'bottom' || position === 'top'
-        ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
-        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight // avoid 0, 0 causes NaN
-    );
-    range.min = axisRange[0];
-    range.max = axisRange[1];
-  }
-  if (isNumber(axisOption?.min)) {
-    (range as any).min = axisOption.min;
-  }
-  if (isNumber(axisOption?.max)) {
-    (range as any).max = axisOption.max;
-  }
-
-  return {
-    range,
-    isZeroAlign,
-    axisOption
-  };
-}
 /** 检查是否有直角坐标系的图表 */
 export function checkHasChart(layout: PivotHeaderLayoutMap | SimpleHeaderLayoutMap) {
   let isHasChart = false;
