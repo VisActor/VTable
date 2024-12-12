@@ -1317,7 +1317,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             // };
             chartInstance.updateModelSpecSync(
               { type: 'axes', index },
-              { min: axis.range?.min ?? 0, max: axis.range?.max ?? 0 },
+              {
+                min: axis.range?.min ?? 0,
+                max: axis.range?.max ?? 0,
+                tick: {
+                  tickMode: axis.tick?.tickMode
+                }
+              },
               true
             );
           } else if (axis.type === 'band') {

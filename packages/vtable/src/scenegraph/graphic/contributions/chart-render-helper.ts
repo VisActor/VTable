@@ -104,7 +104,13 @@ export function renderChart(chart: Chart) {
         // };
         chartInstance.updateModelSpecSync(
           { type: 'axes', index },
-          { min: axis.range?.min ?? 0, max: axis.range?.max ?? 0 },
+          {
+            min: axis.range?.min ?? 0,
+            max: axis.range?.max ?? 0,
+            tick: {
+              tickMode: axis.tick?.tickMode
+            }
+          },
           true
         );
       }
