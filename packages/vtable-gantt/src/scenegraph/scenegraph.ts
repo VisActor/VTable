@@ -261,11 +261,11 @@ export class Scenegraph {
     this.stage.release();
   }
 
-  showTaskCreationButton(x: number, y: number, taskIndex: number, record: any) {
+  showTaskCreationButton(x: number, y: number, cellWidth: number, taskIndex: number, record: any) {
     if (!this.taskCreationButton) {
       this.taskCreationButton = new TaskCreationButton(this._gantt.scenegraph);
     }
-    this.taskCreationButton.show(x, y, this._gantt.parsedOptions.colWidthPerDay, this._gantt.parsedOptions.rowHeight);
+    this.taskCreationButton.show(x, y, cellWidth, this._gantt.parsedOptions.rowHeight);
     this.updateNextFrame();
   }
 

@@ -7,7 +7,7 @@ import { formatDate, parseDateFormat, throttle } from '../tools/util';
 import { GANTT_EVENT_TYPE, InteractionState, TasksShowMode } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
-import { DayTimes, getDateIndexByX, getTaskIndexByY } from '../gantt-helper';
+import { DayTimes, getDateInfoByX, getTaskIndexByY } from '../gantt-helper';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 
 export class EventManager {
@@ -181,13 +181,16 @@ function bindTableGroupListener(event: EventManager) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);
           const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
           if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord && !recordTaskInfo.taskRecord.vtableMerge) {
-            const dateIndex = getDateIndexByX(e.offset.x, gantt);
-            const showX = dateIndex * gantt.parsedOptions.timelineColWidth - gantt.stateManager.scroll.horizontalBarPos;
+            const dateInfo = getDateInfoByX(e.offset.x, gantt);
+
+            const showX =
+              dateInfo.totalDays * gantt.parsedOptions.colWidthPerDay - gantt.stateManager.scroll.horizontalBarPos;
             const showY = taskIndex * gantt.parsedOptions.rowHeight - gantt.stateManager.scroll.verticalBarPos;
+            const cellWidth = dateInfo.days * gantt.parsedOptions.colWidthPerDay;
             //    -
             // (gantt.stateManager.scroll.horizontalBarPos % gantt.parsedOptions.rowHeight);
             // const date = getDateByX(e.offset.x, gantt);
-            gantt.scenegraph.showTaskCreationButton(showX, showY, taskIndex, recordTaskInfo.taskRecord);
+            gantt.scenegraph.showTaskCreationButton(showX, showY, cellWidth, taskIndex, recordTaskInfo.taskRecord);
             return;
           }
         }
