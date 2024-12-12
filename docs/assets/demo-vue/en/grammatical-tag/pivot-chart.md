@@ -2,9 +2,9 @@
 category: examples
 group: grammatical-tag
 title: Pivot Combination Chart
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-pivot-chart.png 
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-pivot-chart.png
 order: 1-1
-link: '../guide/Developer_Ecology/vue'
+link: Developer_Ecology/vue
 ---
 
 # Pivot Combination Chart
@@ -19,8 +19,8 @@ The props attributes accepted by PivotTable&PivotChart are consistent with the o
 - PivotCorner: Corner configuration, consistent with the definition of corner in options [api](../../option/PivotTable#corner)
 
 ## Code Demonstration
-```javascript livedemo template=vtable-vue
 
+```javascript livedemo template=vtable-vue
 const app = createApp({
   template: `
     <vue-pivot-chart :options="tableOptions" ref="pivotChartRef" @onLegendItemClick="handleLegendItemClick" :height="800">
@@ -60,14 +60,8 @@ const app = createApp({
     return {
       pivotChartRef: ref(null),
       tableOptions: ref({}),
-      rows: [
-        { dimensionKey: 'Order Year', title: 'Order Year', headerStyle: { textStick: true } },
-        'Ship Mode'
-      ],
-      columns: [
-        { dimensionKey: 'Region', title: 'Region', headerStyle: { textStick: true } },
-        'Category'
-      ],
+      rows: [{ dimensionKey: 'Order Year', title: 'Order Year', headerStyle: { textStick: true } }, 'Ship Mode'],
+      columns: [{ dimensionKey: 'Region', title: 'Region', headerStyle: { textStick: true } }, 'Category'],
       indicators: [
         {
           indicatorKey: 'Quantity',
@@ -150,10 +144,10 @@ const app = createApp({
 VueVTable.registerChartModule('vchart', VChart);
 
 app.component('vue-pivot-chart', VueVTable.PivotChart);
-app.component('PivotRowDimension',  VueVTable.PivotRowDimension);
-app.component('PivotColumnDimension',  VueVTable.PivotColumnDimension);
-app.component('PivotIndicator',  VueVTable.PivotIndicator);
-app.component('PivotCorner',  VueVTable.PivotCorner);
+app.component('PivotRowDimension', VueVTable.PivotRowDimension);
+app.component('PivotColumnDimension', VueVTable.PivotColumnDimension);
+app.component('PivotIndicator', VueVTable.PivotIndicator);
+app.component('PivotCorner', VueVTable.PivotCorner);
 
 app.mount(`#${CONTAINER_ID}`);
 

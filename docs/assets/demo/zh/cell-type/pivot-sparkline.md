@@ -3,7 +3,7 @@ category: examples
 group: Cell Type
 title: 透视表展示迷你图
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-sparkline.png
-link: '../guide/cell_type/chart'
+link: cell_type/chart
 option: PivotTable-indicators-chart#cellType
 ---
 

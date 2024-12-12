@@ -3,7 +3,7 @@ category: examples
 group: edit-cell
 title: 自定义编辑器中使用arco列表选择器
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-editor-arco-select.png
-link: '../guide/Developer_Ecology/vue'
+link: Developer_Ecology/vue
 ---
 
 # 自定义编辑器中使用 arco 列表选择器

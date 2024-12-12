@@ -4,20 +4,19 @@ group: grammatical-tag
 title: 基本表格
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-list-table.png
 order: 1-1
-link: '../guide/Developer_Ecology/vue'
+link: Developer_Ecology/vue
 ---
 
 # 透视分析表
 
-ListTable语义化子组件如下：
+ListTable 语义化子组件如下：
 
-- PivotColumnDimension: 列上的维度配置，同option中的columns的定义一致 [api](../../option/PivotTable-columns-text#headerType)
-- ListColumn: 列上的维度配置，同option中的columns的定义一致 
-
+- PivotColumnDimension: 列上的维度配置，同 option 中的 columns 的定义一致 [api](../../option/PivotTable-columns-text#headerType)
+- ListColumn: 列上的维度配置，同 option 中的 columns 的定义一致
 
 ## 代码演示
-```javascript livedemo template=vtable-vue
 
+```javascript livedemo template=vtable-vue
 const app = createApp({
   template: `
     <ListTable :options="tableOptions" >
@@ -34,13 +33,13 @@ const app = createApp({
         { field: '0', title: '名字' },
         { field: '1', title: '年龄' },
         { field: '2', title: '性别' },
-        { field: '3', title: '爱好' },
+        { field: '3', title: '爱好' }
       ],
       tableOptions: {
-         records: new Array(1000).fill(['张三', 18, '男', '🏀', '@example', 'xxx.xxx.xxx.xxx', '12345678901', '正常']),
-      },
+        records: new Array(1000).fill(['张三', 18, '男', '🏀', '@example', 'xxx.xxx.xxx.xxx', '12345678901', '正常'])
+      }
     };
-  },
+  }
 });
 
 app.component('ListTable', VueVTable.ListTable);
@@ -53,5 +52,3 @@ window.customRelease = () => {
   app.unmount();
 };
 ```
-
-

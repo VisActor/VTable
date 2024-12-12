@@ -4,7 +4,7 @@ group: component
 title: custom layout
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png
 order: 1-1
-link: '../guide/custom_define/custom_layout'
+link: custom_define/custom_layout
 option: ListTable-columns-text#customLayout
 ---
 

@@ -3,7 +3,7 @@ category: examples
 group: data-analysis
 title: Sort Indicator
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-sort-indicator.png
-link: '../guide/data_analysis/pivot_table_dataAnalysis'
+link: data_analysis/pivot_table_dataAnalysis
 option: PivotTable#dataConfig.sortRules
 ---
 
