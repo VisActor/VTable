@@ -3,7 +3,7 @@ category: examples
 group: list-table-data-analysis
 title: List Table data aggregation summary
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-aggregation.png
-link: '../guide/data_analysis/list_table_dataAnalysis'
+link: data_analysis/list_table_dataAnalysis
 option: ListTable-columns-text#aggregation(Aggregation%20%7C%20CustomAggregation%20%7C%20Array)
 ---
 
@@ -48,7 +48,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/olympic-winner
       {
         field: 'athlete',
         title: 'athlete',
-        width:120,
+        width: 120,
         aggregation: {
           aggregationType: VTable.TYPES.AggregationType.NONE,
           formatFun(value) {
@@ -69,7 +69,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/olympic-winner
       {
         field: 'country',
         title: 'country',
-        width:240,
+        width: 240,
         headerIcon: 'filter',
         aggregation: {
           aggregationType: VTable.TYPES.AggregationType.CUSTOM,

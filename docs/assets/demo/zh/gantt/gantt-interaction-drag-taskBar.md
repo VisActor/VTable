@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: 甘特图交互-拖拽任务条
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-interaction-drag-taskBar-preview.gif
-link: '../guide/gantt/introduction'
+link: gantt/introduction
 option: Gantt#taskBar.moveable
 ---
 
@@ -15,8 +15,8 @@ option: Gantt#taskBar.moveable
 ## 关键配置
 
 - `Gantt`
-- `Gantt#taskBar.moveable` 任务条是否可移动。默认为true
-- `Gantt#taskBar.resizable` 任务条是否可调整大小。默认为true
+- `Gantt#taskBar.moveable` 任务条是否可移动。默认为 true
+- `Gantt#taskBar.resizable` 任务条是否可调整大小。默认为 true
 
 ## 代码演示
 
@@ -656,8 +656,8 @@ const option = {
   grid: {
     backgroundColor: '#e1e7ff',
     horizontalLine: {
-      lineWidth: 1, 
-      lineColor: '#9fb9c3',
+      lineWidth: 1,
+      lineColor: '#9fb9c3'
     }
   },
   headerRowHeight: 40,
@@ -743,7 +743,7 @@ const option = {
     style: {
       borderColor: '#e1e4e8',
       borderColor: '#9fb9c3',
-      borderLineWidth: [1, 0, 1, 0],
+      borderLineWidth: [1, 0, 1, 0]
     }
   },
   scrollStyle: {

@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: Gantt Chart Interaction - Drag Table Width
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-interaction-drag-table-width-preview.gif
-link: '../guide/gantt/introduction'
+link: gantt/introduction
 option: Gantt#frame.verticalSplitLineMoveable
 ---
 
@@ -632,10 +632,10 @@ const option = {
     moveable: true,
     hoverBarStyle: {
       barOverlayColor: 'rgba(99, 144, 0, 0.4)'
-    },
+    }
   },
   frame: {
-  verticalSplitLineMoveable:true
+    verticalSplitLineMoveable: true
   },
   timelineHeader: {
     colWidth: 100,

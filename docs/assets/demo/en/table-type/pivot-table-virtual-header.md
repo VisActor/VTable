@@ -3,7 +3,7 @@ category: examples
 group: table-type
 title: pivot table with virtual header node
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-virtual-header.png
-link: '../guide/table_type/Pivot_table/custom_header'
+link: table_type/Pivot_table/custom_header
 option: PivotTable#columnTree
 ---
 

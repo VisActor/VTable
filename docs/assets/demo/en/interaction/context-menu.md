@@ -4,7 +4,7 @@ group: Interaction
 title: Right click menu
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.gif
 order: 4-6
-link: '../guide/components/dropdown'
+link: components/dropdown
 option: ListTable#menu.contextMenuItems
 ---
 

@@ -3,7 +3,7 @@ category: examples
 group: edit
 title: 编辑单元格内容
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/input-editor.gif
-link: '../guide/edit/edit_cell'
+link: edit/edit_cell
 option: ListTable-columns-text#editor
 ---
 

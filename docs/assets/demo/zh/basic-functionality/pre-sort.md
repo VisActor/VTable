@@ -4,7 +4,7 @@ group: Basic Features
 title: 预排序
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pre-sort.png
 order: 3-2
-link: '../guide/basic_function/sort/list_sort'
+link: basic_function/sort/list_sort
 ---
 
 # 预排序

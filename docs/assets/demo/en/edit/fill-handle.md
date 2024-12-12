@@ -3,7 +3,7 @@ category: examples
 group: edit
 title: fill handle
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/fill-handle.gif
-link: '../guide/edit/fill-handle'
+link: edit/fill-handle
 option: ListTable#excelOptions.fillHandle
 ---
 

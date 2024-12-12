@@ -4,7 +4,7 @@ group: component
 title: Menu Component
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-menu.png
 order: 1-1
-link: '../guide/table_type/List_table/list_table_define_and_generate'
+link: table_type/List_table/list_table_define_and_generate
 option: ListTable#menu
 ---
 
@@ -13,8 +13,8 @@ option: ListTable#menu
 You can directly use the `Menu` to configure the menu component, which is consistent with the option.menu configuration.
 
 ## Code Demonstration
-```javascript livedemo template=vtable-vue
 
+```javascript livedemo template=vtable-vue
 const app = createApp({
   template: `
    <ListTable :options="tableOptions" @onDropdownMenuClick="handleDropdownMenuClick">
@@ -26,21 +26,21 @@ const app = createApp({
    </ListTable>
   `,
   data() {
-   return {
-    columns: [
-      { field: '0', title: 'Name' },        
-      { field: '1', title: 'Address' },
-      { field: '2', title: 'Phone' },
-    ],
-    tableOptions: {
-      records: new Array(1000).fill(['John Doe', 'xxx.xxx.xxx.xxx', '12345678901']),
-    },
-   };
+    return {
+      columns: [
+        { field: '0', title: 'Name' },
+        { field: '1', title: 'Address' },
+        { field: '2', title: 'Phone' }
+      ],
+      tableOptions: {
+        records: new Array(1000).fill(['John Doe', 'xxx.xxx.xxx.xxx', '12345678901'])
+      }
+    };
   },
   methods: {
     handleDropdownMenuClick(args) {
-     console.log('menu click', args);
-   }
+      console.log('menu click', args);
+    }
   }
 });
 

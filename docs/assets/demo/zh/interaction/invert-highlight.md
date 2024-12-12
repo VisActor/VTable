@@ -3,7 +3,7 @@ category: examples
 group: Interaction
 title: 反选高亮
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/invert-highlight.png
-link: '../guide/plugin/invert-highlight'
+link: plugin/invert-highlight
 ---
 
 # 反选高亮
@@ -12,7 +12,7 @@ link: '../guide/plugin/invert-highlight'
 
 ## 关键配置
 
-- `InvertHighlightPlugin`  反选高亮插件
+- `InvertHighlightPlugin` 反选高亮插件
   - `fill` 反选高亮背景色
   - `opacity` 反选高亮透明度
 - `setInvertHighlightRange` 设置反选高亮范围
@@ -42,50 +42,50 @@ const generatePersons = count => {
 
 const records = generatePersons(20);
 
-const columns =[
-    {
-      field: 'id',
-      title: 'ID',
-      width: 'auto',
-      minWidth: 50,
-      sort: true
-    },
-    {
-      field: 'email1',
-      title: 'email',
-      width: 200,
-      sort: true,
-      style: {
-        underline: true,
-        underlineDash: [2, 0],
-        underlineOffset: 3
-      }
-    },
-    {
-      title: 'full name',
-      columns: [
-        {
-          field: 'name',
-          title: 'First Name',
-          width: 200
-        },
-        {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
-        }
-      ]
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
+const columns = [
+  {
+    field: 'id',
+    title: 'ID',
+    width: 'auto',
+    minWidth: 50,
+    sort: true
+  },
+  {
+    field: 'email1',
+    title: 'email',
+    width: 200,
+    sort: true,
+    style: {
+      underline: true,
+      underlineDash: [2, 0],
+      underlineOffset: 3
     }
+  },
+  {
+    title: 'full name',
+    columns: [
+      {
+        field: 'name',
+        title: 'First Name',
+        width: 200
+      },
+      {
+        field: 'name',
+        title: 'Last Name',
+        width: 200
+      }
+    ]
+  },
+  {
+    field: 'date1',
+    title: 'birthday',
+    width: 200
+  },
+  {
+    field: 'sex',
+    title: 'sex',
+    width: 100
+  }
 ];
 
 const option = {
@@ -93,7 +93,7 @@ const option = {
   columns,
   theme: VTable.themes.DARK
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 
 const highlightPlugin = new VTablePlugins.InvertHighlightPlugin(tableInstance, {});

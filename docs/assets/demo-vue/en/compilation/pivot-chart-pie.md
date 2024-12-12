@@ -4,7 +4,7 @@ group: compilation
 title: Pivot Combination Chart
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart-pie.png
 order: 1-1
-link: '../guide/table_type/pivot_chart'
+link: table_type/pivot_chart
 option: PivotChart-indicators-chart#cellType
 ---
 
@@ -21,8 +21,8 @@ The pivot combination chart integrates the VChart library into the table, enrich
 - `chartSpec: {}` chart specification.
 
 ## 代码演示
-```javascript livedemo template=vtable-vue
 
+```javascript livedemo template=vtable-vue
 const app = createApp({
   template: `
     <vue-pivot-chart :options="tableOptions" ref="pivotChartRef" @onLegendItemClick="handleLegendItemClick" :height="800">
@@ -62,14 +62,8 @@ const app = createApp({
     return {
       pivotChartRef: ref(null),
       tableOptions: ref({}),
-      rows: [
-        { dimensionKey: 'Order Year', title: 'Order Year', headerStyle: { textStick: true } },
-        'Ship Mode'
-      ],
-      columns: [
-        { dimensionKey: 'Region', title: 'Region', headerStyle: { textStick: true } },
-        'Category'
-      ],
+      rows: [{ dimensionKey: 'Order Year', title: 'Order Year', headerStyle: { textStick: true } }, 'Ship Mode'],
+      columns: [{ dimensionKey: 'Region', title: 'Region', headerStyle: { textStick: true } }, 'Category'],
       indicators: [
         {
           indicatorKey: 'Quantity',
@@ -152,10 +146,10 @@ const app = createApp({
 VueVTable.registerChartModule('vchart', VChart);
 
 app.component('vue-pivot-chart', VueVTable.PivotChart);
-app.component('PivotRowDimension',  VueVTable.PivotRowDimension);
-app.component('PivotColumnDimension',  VueVTable.PivotColumnDimension);
-app.component('PivotIndicator',  VueVTable.PivotIndicator);
-app.component('PivotCorner',  VueVTable.PivotCorner);
+app.component('PivotRowDimension', VueVTable.PivotRowDimension);
+app.component('PivotColumnDimension', VueVTable.PivotColumnDimension);
+app.component('PivotIndicator', VueVTable.PivotIndicator);
+app.component('PivotCorner', VueVTable.PivotCorner);
 
 app.mount(`#${CONTAINER_ID}`);
 

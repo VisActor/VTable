@@ -3,7 +3,7 @@ category: examples
 group: Cell Type
 title: Radio Type
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/radio.png
-link: '../guide/cell_type/radio'
+link: cell_type/radio
 option: ListTable-columns-checkbox#cellType
 ---
 
@@ -18,7 +18,6 @@ cellType: 'radio';
 ## Code demo
 
 ```javascript livedemo template=vtable
-
 const records = [
   {
     productName: 'aaaa',
@@ -139,9 +138,9 @@ const columns = [
     field: 'isCheck',
     title: '',
     width: 50,
-    cellType: 'radio',
+    cellType: 'radio'
   },
- {
+  {
     field: 'productName',
     title: 'product name',
     width: 160
@@ -149,7 +148,7 @@ const columns = [
   {
     field: 'price',
     title: 'price',
-    width: 120,
+    width: 120
   },
   {
     field: 'radio1',
@@ -157,7 +156,9 @@ const columns = [
     width: 200,
     cellType: 'radio',
     disable: true,
-    checked: (args) => { if (args.row === 3) return true }
+    checked: args => {
+      if (args.row === 3) return true;
+    }
   },
   {
     field: 'radio3',
@@ -182,7 +183,7 @@ const columns = [
     radioCheckType: 'cell',
     cellType: 'radio',
     style: {
-      spaceBetweenRadio: 8,
+      spaceBetweenRadio: 8
     }
   }
 ];
@@ -191,6 +192,6 @@ const option = {
   columns,
   heightMode: 'autoHeight'
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 ```

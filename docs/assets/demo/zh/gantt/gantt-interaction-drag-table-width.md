@@ -3,13 +3,13 @@ category: examples
 group: gantt
 title: 甘特图交互-拖拽表格宽度
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-interaction-drag-table-width-preview.gif
-link: '../guide/gantt/introduction'
+link: gantt/introduction
 option: Gantt#frame.verticalSplitLineMoveable
 ---
 
 # 甘特图交互-拖拽表格宽度
 
-该示例展示了如何实现甘特图左侧任务信息表格的宽度可拖拽。配置项 `frame.verticalSplitLineMoveable` 为 `true` 时，左侧任务信息表格的垂直分割线可拖拽。如果想在hover时高亮垂直分割线时的颜色，可以配置 `frame.verticalSplitLineHighlight` 。限制拖拽宽度的范围，可以配置`listTable.minWidth` 和 `listTable.maxWidth` 。
+该示例展示了如何实现甘特图左侧任务信息表格的宽度可拖拽。配置项 `frame.verticalSplitLineMoveable` 为 `true` 时，左侧任务信息表格的垂直分割线可拖拽。如果想在 hover 时高亮垂直分割线时的颜色，可以配置 `frame.verticalSplitLineHighlight` 。限制拖拽宽度的范围，可以配置`listTable.minWidth` 和 `listTable.maxWidth` 。
 
 ## 关键配置
 
@@ -632,10 +632,10 @@ const option = {
     moveable: true,
     hoverBarStyle: {
       barOverlayColor: 'rgba(99, 144, 0, 0.4)'
-    },
+    }
   },
   frame: {
-  verticalSplitLineMoveable:true
+    verticalSplitLineMoveable: true
   },
   timelineHeader: {
     colWidth: 100,

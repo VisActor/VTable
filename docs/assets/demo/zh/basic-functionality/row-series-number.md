@@ -3,7 +3,7 @@ category: examples
 group: Basic Features
 title: 行序号
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/row-series-number.png
-link: '../guide/table_type/List_table/list_table_define_and_generate'
+link: table_type/List_table/list_table_define_and_generate
 option: ListTable#rowSeriesNumber.dragOrder
 ---
 

@@ -3,7 +3,7 @@ category: examples
 group: Interaction
 title: Copy and paste cell value
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/copy-paste-cell-value.gif
-link: '../guide/interaction/keyboard'
+link: interaction/keyboard
 option: ListTable#keyboardOptions.pasteValueToCell
 ---
 

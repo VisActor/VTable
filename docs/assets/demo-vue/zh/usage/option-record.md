@@ -4,7 +4,7 @@ group: usage
 title: 使用option+record
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-default.png
 order: 1-1
-link: '../guide/Developer_Ecology/vue'
+link: Developer_Ecology/vue
 ---
 
 # 使用 option+record
@@ -14,7 +14,6 @@ link: '../guide/Developer_Ecology/vue'
 ## 代码演示
 
 ```javascript livedemo template=vtable-vue
-
 const app = createApp({
   template: `
     <ListTable :options="tableOptions" :records="tableRecords"/>
@@ -26,12 +25,12 @@ const app = createApp({
           { field: '0', title: 'name' },
           { field: '1', title: 'age' },
           { field: '2', title: 'gender' },
-          { field: '3', title: 'hobby' },
-        ],
+          { field: '3', title: 'hobby' }
+        ]
       },
-      tableRecords: new Array(1000).fill(['John', 18, 'male', '🏀']),
+      tableRecords: new Array(1000).fill(['John', 18, 'male', '🏀'])
     };
-  },
+  }
 });
 
 app.component('ListTable', VueVTable.ListTable);

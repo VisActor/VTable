@@ -3,7 +3,7 @@ category: examples
 group: Component
 title: legend
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/legend.png
-link: '../guide/components/legend'
+link: components/legend
 option: ListTable-legends-discrete#type
 ---
 

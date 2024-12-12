@@ -3,7 +3,7 @@ category: examples
 group: Custom
 title: Custom Icon
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-icon.png
-link: '../guide/custom_define/custom_icon'
+link: custom_define/custom_icon
 ---
 
 # Custom Icon

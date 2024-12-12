@@ -3,7 +3,7 @@ category: examples
 group: table-type
 title: Pivot Table Multiple Tree
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-multi-tree.png
-link: '../guide/table_type/Pivot_table/pivot_table_multi_tree'
+link: table_type/Pivot_table/pivot_table_multi_tree
 option: PivotTable#extensionRows(IExtensionRowDefine%5B%5D)
 ---
 

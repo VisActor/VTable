@@ -3,7 +3,7 @@ category: examples
 group: Component
 title: tooltip custom content
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip-custom-content.png
-link: '../guide/components/tooltip'
+link: components/tooltip
 ---
 
 # Tooltip

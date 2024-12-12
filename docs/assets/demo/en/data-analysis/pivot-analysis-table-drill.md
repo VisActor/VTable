@@ -3,7 +3,7 @@ category: examples
 group: data-analysis
 title: Pivot analysis table drill down and drill up
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-drill.gif
-link: '../guide/data_analysis/pivot_table_dataAnalysis'
+link: data_analysis/pivot_table_dataAnalysis
 option: PivotTable-columns-text#drillDown
 ---
 

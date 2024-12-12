@@ -4,7 +4,7 @@ group: component
 title: Custom Component
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-component.png
 order: 1-1
-link: '../guide/Developer_Ecology/react'
+link: Developer_Ecology/react
 ---
 
 # Custom Component
@@ -12,6 +12,7 @@ link: '../guide/Developer_Ecology/react'
 The `CustomComponent` component facilitates overlaying external components on React-VTable components.
 
 ## Code Example
+
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 

@@ -3,7 +3,7 @@ category: examples
 group: table-type
 title: 透视表格树形节点懒加载
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-tree-lazy-load.gif
-link: '../guide/table_type/Pivot_table/pivot_table_tree'
+link: table_type/Pivot_table/pivot_table_tree
 option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
 ---
 

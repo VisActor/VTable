@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: 任务名称单元格合并
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-table-mergeCell.png
-link: '../guide/basic_function/merge_cell'
+link: basic_function/merge_cell
 option: ListTable-columns-text#mergeCell
 ---
 

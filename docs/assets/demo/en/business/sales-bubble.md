@@ -3,7 +3,7 @@ category: examples
 group: Business
 title: Sales bubble chart
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sales-bubble.png
-link: '../guide/custom_define/custom_render'
+link: custom_define/custom_render
 option: PivotTable#customRender.elements
 ---
 

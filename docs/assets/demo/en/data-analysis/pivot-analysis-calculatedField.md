@@ -3,7 +3,7 @@ category: examples
 group: data-analysis
 title: Pivot Table - Calculated Field
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/calculatedField.jpeg
-link: '../guide/data_analysis/pivot_table_dataAnalysis'
+link: data_analysis/pivot_table_dataAnalysis
 option: PivotTable#dataConfig.totals
 ---
 

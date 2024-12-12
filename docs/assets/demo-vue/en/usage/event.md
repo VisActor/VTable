@@ -4,7 +4,7 @@ group: usage
 title: Event Listening
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-list-table.png
 order: 1-1
-link: '../guide/table_type/List_table/list_table_define_and_generate'
+link: table_type/List_table/list_table_define_and_generate
 option: ListTable-columns-text#cellType
 ---
 
@@ -15,7 +15,6 @@ All events supported by VTable can be listened to through Vue's props. For more 
 ## Code Demonstration
 
 ```javascript livedemo template=vtable-vue
-
 const app = createApp({
   template: `
     <ListTable :options="tableOptions" @onMouseEnterCell="handleMouseEnterCell">
@@ -28,15 +27,15 @@ const app = createApp({
         { field: '0', title: 'Name' },
         { field: '1', title: 'Age' },
         { field: '2', title: 'Gender' },
-        { field: '3', title: 'Hobby' },
+        { field: '3', title: 'Hobby' }
       ],
       tableOptions: {
-         records: new Array(1000).fill(['John Doe', 18, 'Male', '🏀' ]),
-      },
+        records: new Array(1000).fill(['John Doe', 18, 'Male', '🏀'])
+      }
     };
   },
   methods: {
-    handleMouseEnterCell(arg){
+    handleMouseEnterCell(arg) {
       console.log('Mouse entered cell:', arg);
     }
   }
