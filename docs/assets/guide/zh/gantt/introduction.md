@@ -51,9 +51,9 @@ VTable-Gantt 是一款基于 VTable 表格组件及 canvas 渲染器 VRender 构
 
 ### 支持不同的日期刻度粒度
 
-通常的业务场景中，可能需要涉及多层时间刻度的展示，VTable-Gantt 支持五种时间粒度：`'day' | 'week' | 'month' | 'quarter' | 'year'`。
+通常的业务场景中，可能需要涉及多层时间刻度的展示，VTable-Gantt 支持五种时间粒度：`'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second'`。
 
-通过 `timelineHeader.scales.unit` 配置项，可以设置日期刻度的行高和时间单位（如天、周、月等）。
+通过 `timelineHeader.scales` 配置项，可以设置日期刻度的行高和时间单位（如天、周、月等）。
 
 ### 日期表头样式
 

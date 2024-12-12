@@ -165,7 +165,7 @@ export class ScrollBarComponent {
     const tableHeight = Math.ceil(this._gantt.scenegraph.tableGroup.attribute.height);
 
     const totalHeight = this._gantt.getAllRowsHeight();
-    const totalWidth = this._gantt._getAllColsWidth();
+    const totalWidth = this._gantt.getAllDateColsWidth();
     const frozenRowsHeight = this._gantt.getAllHeaderRowsHeight();
     // const frozenColsWidth = this._gantt.getFrozenColsWidth();
     // const bottomFrozenRowsHeight = this._gantt.getBottomFrozenRowsHeight();

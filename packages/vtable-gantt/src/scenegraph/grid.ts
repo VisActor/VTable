@@ -34,7 +34,7 @@ export class Grid {
     this.height = scene.tableGroup.attribute.height - scene.timelineHeader.group.attribute.height;
     this.rowHeight = scene._gantt.parsedOptions.rowHeight;
     this.rowCount = scene._gantt.itemCount;
-    this.allGridWidth = scene._gantt._getAllColsWidth();
+    this.allGridWidth = scene._gantt.getAllDateColsWidth();
     this.allGridHeight = scene._gantt.getAllTaskBarsHeight();
     this.group = new Group({
       x: this.x,
@@ -65,7 +65,7 @@ export class Grid {
       points: [
         { x: 0, y: bottomLineY },
         {
-          x: scene._gantt._getAllColsWidth(),
+          x: scene._gantt.getAllDateColsWidth(),
           y: bottomLineY
         }
       ]
@@ -85,15 +85,11 @@ export class Grid {
       this.group.appendChild(this.verticalLineGroup);
 
       const vLines = [];
-      let x = 0;
-      if (this.gridStyle?.verticalLine.lineWidth & 1) {
-        x = 0.5;
-      }
+
       const timelineDates = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
-      const colWidthPerDay = this._scene._gantt.parsedOptions.colWidthPerDay;
+      const timelineColWidth = this._scene._gantt.parsedOptions.timelineColWidth;
       for (let i = 0; i < timelineDates?.length - 1; i++) {
-        const dateline = timelineDates[i];
-        x = x + Math.floor(colWidthPerDay * dateline.days);
+        const x = Math.ceil(timelineColWidth * (i + 1)) + (this.gridStyle?.verticalLine.lineWidth & 1 ? 0.5 : 0);
         const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.verticalLine.lineColor,
@@ -150,7 +146,7 @@ export class Grid {
       y: this._scene._gantt.getAllHeaderRowsHeight()
     });
     this.rowCount = this._scene._gantt.itemCount;
-    this.allGridWidth = this._scene._gantt._getAllColsWidth();
+    this.allGridWidth = this._scene._gantt.getAllDateColsWidth();
     this.allGridHeight = this._scene._gantt.getAllTaskBarsHeight();
     this.verticalLineGroup?.parent.removeChild(this.verticalLineGroup);
     this.horizontalLineGroup?.parent.removeChild(this.horizontalLineGroup);
