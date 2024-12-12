@@ -1,4 +1,4 @@
-import { isArray, isString, merge } from '@visactor/vutils';
+import { isArray, isFunction, isString, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
 import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE, commonAxis } from './get-axis-attributes';
@@ -39,7 +39,9 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
       });
     } else {
       let ticks: string[];
-      if (isArray((config as any).__ticksForVTable)) {
+      if (config.sync?.tickAlign && isFunction(config.tick?.tickMode)) {
+        ticks = config.tick.tickMode();
+      } else if (isArray((config as any).__ticksForVTable)) {
         ticks = (config as any).__ticksForVTable;
       } else {
         const range = attribute.range;
@@ -125,7 +127,9 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
       });
     } else {
       let ticks: string[];
-      if (isArray((config as any).__ticksForVTable)) {
+      if (config.sync?.tickAlign && isFunction(config.tick?.tickMode)) {
+        ticks = config.tick.tickMode();
+      } else if (isArray((config as any).__ticksForVTable)) {
         ticks = (config as any).__ticksForVTable;
       } else {
         const range = attribute.range;
