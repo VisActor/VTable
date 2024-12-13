@@ -1070,7 +1070,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return state[field];
       });
     }
-    return this.stateManager.checkedState;
+    return new Array(...this.stateManager.checkedState.values());
   }
   /** 获取某个单元格checkbox的状态 */
   getCellCheckboxState(col: number, row: number) {
