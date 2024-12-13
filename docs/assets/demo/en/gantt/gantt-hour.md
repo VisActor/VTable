@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: Gantt Task Hour Unit
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-hour.png
-link: '../guide/gantt/subtask_layout'
+link: gantt/introduction
 option: Gantt#timelineHeader.scales
 ---
 

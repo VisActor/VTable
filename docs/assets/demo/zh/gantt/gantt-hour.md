@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: 甘特图任务以小时为单元
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-hour.png
-link: '../guide/gantt/subtask_layout'
+link: gantt/introduction
 option: Gantt#timelineHeader.scales
 ---
 
