@@ -791,9 +791,9 @@ function getChartAxisRange(
     layout
   );
 
-  if (axisOption?.visible === false) {
-    return undefined;
-  }
+  // if (axisOption?.visible === false) {
+  //   return undefined;
+  // }
 
   const range = getAxisRange(layout.dataset.collectedValues, indicatorKeys, isZeroAlign, path, seriesIndice ?? index);
 
@@ -828,9 +828,9 @@ function getChartAxisRange(
       range.min = axisRange[0];
       range.max = axisRange[1];
     }
-    if (isTickAlign) {
-      ticks = selfTicks;
-    }
+    // if (isTickAlign) {
+    // }
+    ticks = selfTicks;
   }
   if (isNumber(axisOption?.min)) {
     range.min = axisOption.min;
