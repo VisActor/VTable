@@ -268,7 +268,6 @@ export class TaskBar {
       width: 100,
       height: 100,
       clip: true,
-      cursor: this._scene._gantt.parsedOptions.taskBarMoveable ? 'grab' : 'default',
       pickable: false,
       cornerRadius:
         this._scene._gantt.parsedOptions.taskBarHoverStyle.cornerRadius ??
@@ -347,6 +346,43 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('width', width);
     this.hoverBarGroup.setAttribute('height', height);
     this.hoverBarGroup.setAttribute('visibleAll', true);
+    this.hoverBarLeftIcon.setAttribute('visible', false);
+    this.hoverBarRightIcon.setAttribute('visible', false);
+
+    const { startDate, endDate, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
+      target.task_index,
+      target.sub_task_index
+    );
+
+    let leftResizable = true;
+    let rightResizable = true;
+    if (typeof this._scene._gantt.parsedOptions.taskBarResizable === 'function') {
+      const arg = {
+        index: target.task_index,
+        startDate,
+        endDate,
+        taskRecord,
+        ganttInstance: this._scene._gantt
+      };
+      const resizableResult = this._scene._gantt.parsedOptions.taskBarResizable(arg);
+      if (Array.isArray(resizableResult)) {
+        [leftResizable, rightResizable] = resizableResult;
+      } else {
+        leftResizable = resizableResult;
+        rightResizable = resizableResult;
+      }
+    } else if (Array.isArray(this._scene._gantt.parsedOptions.taskBarResizable)) {
+      [leftResizable, rightResizable] = this._scene._gantt.parsedOptions.taskBarResizable;
+    } else {
+      leftResizable = this._scene._gantt.parsedOptions.taskBarResizable;
+      rightResizable = this._scene._gantt.parsedOptions.taskBarResizable;
+    }
+    if (leftResizable) {
+      this.hoverBarLeftIcon.setAttribute('visible', true);
+    }
+    if (rightResizable) {
+      this.hoverBarRightIcon.setAttribute('visible', true);
+    }
     if (this.hoverBarLeftIcon) {
       this.hoverBarLeftIcon.setAttribute('x', 0);
       this.hoverBarLeftIcon.setAttribute('y', Math.ceil(height / 10));

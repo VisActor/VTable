@@ -106,8 +106,28 @@ function bindTableGroupListener(event: EventManager) {
         );
         stateManager.updateInteractionState(InteractionState.grabing);
       } else if (gantt.parsedOptions.taskBarMoveable) {
-        stateManager.startMoveTaskBar(downBarNode, (e.nativeEvent as any).x, (e.nativeEvent as any).y, e.offset.y);
-        stateManager.updateInteractionState(InteractionState.grabing);
+        let moveable: boolean = true;
+        if (typeof gantt.parsedOptions.taskBarMoveable === 'function') {
+          const { startDate, endDate, taskRecord } = scene._gantt.getTaskInfoByTaskListIndex(
+            (downBarNode as GanttTaskBarNode).task_index,
+            (downBarNode as GanttTaskBarNode).sub_task_index
+          );
+
+          const args = {
+            index: (downBarNode as GanttTaskBarNode).task_index,
+            startDate,
+            endDate,
+            taskRecord,
+            ganttInstance: scene._gantt
+          };
+          moveable = gantt.parsedOptions.taskBarMoveable(args);
+        } else {
+          moveable = gantt.parsedOptions.taskBarMoveable;
+        }
+        if (moveable) {
+          stateManager.startMoveTaskBar(downBarNode, (e.nativeEvent as any).x, (e.nativeEvent as any).y, e.offset.y);
+          stateManager.updateInteractionState(InteractionState.grabing);
+        }
       }
     } else if (downLeftLinkPointNode) {
       stateManager.startCreateDependencyLine(
