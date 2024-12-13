@@ -1,6 +1,18 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 09 Dec 2024 08:20:54 GMT and should not be manually modified.
+This log was last generated on Fri, 13 Dec 2024 08:48:53 GMT and should not be manually modified.
+
+## 1.13.1
+Fri, 13 Dec 2024 08:48:53 GMT
+
+### Updates
+
+- feat: add time scale unit hour #2976
+
+
+- fix: left table width handle with tableWidth set auto #3033
+
+
 
 ## 1.13.0
 Mon, 09 Dec 2024 08:20:54 GMT
