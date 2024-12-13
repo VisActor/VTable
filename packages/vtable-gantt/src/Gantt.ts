@@ -40,6 +40,7 @@ import {
   getHorizontalScrollBarSize,
   getVerticalScrollBarSize,
   initOptions,
+  updateOptionsWhenRecordChanged,
   updateOptionsWhenScaleChanged,
   updateSplitLineAndResizeLine
 } from './gantt-helper';
@@ -901,6 +902,7 @@ export class Gantt extends EventTarget {
   }
   setRecords(records: any[]) {
     this.records = records;
+    updateOptionsWhenRecordChanged(this);
     this.data.setRecords(records);
     this.taskListTableInstance.setRecords(records);
     this._syncPropsFromTable();

@@ -989,3 +989,22 @@ export function formatRecordDateConsiderHasHour(
   }
   return { startDate: createDateAtMidnight(startDate, true), endDate: createDateAtLastHour(endDate, true) };
 }
+
+export function updateOptionsWhenRecordChanged(gantt: Gantt) {
+  const options = gantt.options;
+  const { unit: minTimeUnit, startOfWeek } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+  gantt.parsedOptions.markLine = generateMarkLine(options?.markLine);
+  if (gantt.parsedOptions.markLine?.length ?? 0) {
+    if (gantt.parsedOptions.markLine?.every(item => item.scrollToMarkLine === undefined)) {
+      gantt.parsedOptions.markLine[0].scrollToMarkLine = true;
+    }
+    if (gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine)) {
+      gantt.parsedOptions.scrollToMarkLineDate = getStartDateByTimeUnit(
+        new Date(gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine).date),
+        minTimeUnit,
+        startOfWeek
+      );
+    }
+  }
+  gantt.parsedOptions.dependencyLinks = options.dependency?.links;
+}
