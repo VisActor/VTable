@@ -9,7 +9,8 @@ import {
   syncScrollStateToTable,
   syncDragOrderFromTable,
   syncTreeChangeFromTable,
-  syncSortFromTable
+  syncSortFromTable,
+  syncTableWidthFromTable
 } from './gantt-table-sync';
 import { clearRecordShowIndex, findRecordByTaskKey, getDateIndexByX, getTaskIndexsByTaskY } from '../gantt-helper';
 import { debounce } from '../tools/debounce';
@@ -161,6 +162,9 @@ export class StateManager {
     syncDragOrderFromTable(this._gantt);
     syncTreeChangeFromTable(this._gantt);
     syncSortFromTable(this._gantt);
+    if (this._gantt.options.taskListTable?.tableWidth === 'auto' || this._gantt.taskTableWidth === -1) {
+      syncTableWidthFromTable(this._gantt);
+    }
   }
 
   setScrollTop(top: number, triggerEvent: boolean = true) {
