@@ -1,3 +1,26 @@
+# v1.13.0
+
+2024-12-09
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**：添加键盘 ctrlMultiSelect 配置 [#2995](https://github.com/VisActor/VTable/issues/2995)
+- **@visactor/vtable**：在 Popover 中添加 panelStyle 和 arrowStyle 配置 [#2988](https://github.com/VisActor/VTable/issues/2988)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**：当 select 设置为 disableSelect 时，选择不起作用 [#2981](https://github.com/VisActor/VTable/issues/2981)
+- **@visactor/vtable**：修复 checkbox/radio 中的 textAlign 问题 [#2908](https://github.com/VisActor/VTable/issues/2908)
+- **@visactor/vtable**：菜单元素中的 outsideClickDeselect 事件
+- **@visactor/vtable**：修复 getCellMergeRange() 中的列和行范围问题 [#2906](https://github.com/VisActor/VTable/issues/2906)
+- **@visactor/vtable**：修复合并单元格选择范围更新问题 [#2944](https://github.com/VisActor/VTable/issues/2944)
+- **@visactor/vtable**：修复 tree_hierarchy_state_change 事件中 ListTreeStickCellPlugin 的更新问题 [#2914](https://github.com/VisActor/VTable/issues/2914)
+- **@visactor/vtable**：修复 _refreshHierarchyState() 中的行更新范围问题 [#2987](https://github.com/VisActor/VTable/issues/2987)
+- **@visactor/vtable**: 修复文字baseline对齐问题
+
+[更多详情请查看 v1.13.0](https://github.com/VisActor/VTable/releases/tag/v1.13.0)
+
 # v1.12.0
 
 2024-12-03

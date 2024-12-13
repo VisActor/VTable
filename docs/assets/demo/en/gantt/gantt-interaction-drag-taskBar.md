@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: Gantt Chart Interaction - Drag Task Bar
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-interaction-drag-taskBar-preview.gif
-link: '../guide/gantt/introduction'
+link: gantt/introduction
 option: Gantt#taskBar.moveable
 ---
 
@@ -656,8 +656,8 @@ const option = {
   grid: {
     backgroundColor: '#e1e7ff',
     horizontalLine: {
-      lineWidth: 1, 
-      lineColor: '#9fb9c3',
+      lineWidth: 1,
+      lineColor: '#9fb9c3'
     }
   },
   headerRowHeight: 40,
@@ -743,7 +743,7 @@ const option = {
     style: {
       borderColor: '#e1e4e8',
       borderColor: '#9fb9c3',
-      borderLineWidth: [1, 0, 1, 0],
+      borderLineWidth: [1, 0, 1, 0]
     }
   },
   scrollStyle: {

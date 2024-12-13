@@ -3,7 +3,7 @@ category: examples
 group: Custom
 title: 单元格自定义合并
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-merge-custom.png
-link: '../guide/custom_define/custom_merge'
+link: custom_define/custom_merge
 option: ListTable-columns-text#customLayout
 ---
 

@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: Gantt Chart Data Editing
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-edit-preview.gif
-link: '../guide/gantt/gantt_edit'
+link: gantt/gantt_edit
 option: Gantt#taskListTable.columns
 ---
 

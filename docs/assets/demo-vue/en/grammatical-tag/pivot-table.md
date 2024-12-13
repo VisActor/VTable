@@ -4,7 +4,7 @@ group: grammatical-tag
 title: Pivot Analysis Table
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-pivot-table.png
 order: 1-1
-link: '../guide/Developer_Ecology/vue'
+link: Developer_Ecology/vue
 ---
 
 # Pivot Analysis Table
@@ -19,10 +19,10 @@ The props accepted by PivotTable&PivotChart are consistent with the options, and
 - PivotCorner: Configuration of corner headers, consistent with the definition of corner in options [api](../../option/PivotTable#corner)
 
 ## Code Demonstration
-```javascript livedemo template=vtable-vue
 
+```javascript livedemo template=vtable-vue
 const app = createApp({
-template: `
+  template: `
   <PivotTable :options="tableOptions" :records="data" ref="pivotTableRef">
     <PivotColumnDimension title="Category" dimensionKey="Category" :headerStyle="{ textStick: true }" width="auto" />
 
@@ -53,83 +53,83 @@ template: `
   </PivotTable>
   `,
   data() {
-  return {
-    pivotTableRef: ref(null),
-    data: ref([]),
-    tableOptions: {
-    tooltip: {
-      isShowOverflowTextTooltip: true,
-    },
-    dataConfig: {
-      sortRules: [
-      {
-        sortField: 'Category',
-        sortBy: ['Office Supplies', 'Technology', 'Furniture'],
+    return {
+      pivotTableRef: ref(null),
+      data: ref([]),
+      tableOptions: {
+        tooltip: {
+          isShowOverflowTextTooltip: true
+        },
+        dataConfig: {
+          sortRules: [
+            {
+              sortField: 'Category',
+              sortBy: ['Office Supplies', 'Technology', 'Furniture']
+            }
+          ]
+        },
+        widthMode: 'standard'
       },
+      indicators: [
+        {
+          indicatorKey: 'Quantity',
+          title: 'Quantity',
+          width: 'auto',
+          showSort: false,
+          headerStyle: { fontWeight: 'normal' },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              return args.dataValue >= 0 ? 'black' : 'red';
+            }
+          }
+        },
+        {
+          indicatorKey: 'Sales',
+          title: 'Sales',
+          width: 'auto',
+          showSort: false,
+          headerStyle: { fontWeight: 'normal' },
+          format: rec => '$' + Number(rec).toFixed(2),
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              return args.dataValue >= 0 ? 'black' : 'red';
+            }
+          }
+        },
+        {
+          indicatorKey: 'Profit',
+          title: 'Profit',
+          width: 'auto',
+          showSort: false,
+          headerStyle: { fontWeight: 'normal' },
+          format: rec => '$' + Number(rec).toFixed(2),
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              return args.dataValue >= 0 ? 'black' : 'red';
+            }
+          }
+        }
       ],
-    },
-    widthMode: 'standard',
-    },
-    indicators: [
-    {
-      indicatorKey: 'Quantity',
-      title: 'Quantity',
-      width: 'auto',
-      showSort: false,
-      headerStyle: { fontWeight: 'normal' },
-      style: {
-      padding: [16, 28, 16, 28],
-      color(args) {
-        return args.dataValue >= 0 ? 'black' : 'red';
-      },
-      },
-    },
-    {
-      indicatorKey: 'Sales',
-      title: 'Sales',
-      width: 'auto',
-      showSort: false,
-      headerStyle: { fontWeight: 'normal' },
-      format: rec => '$' + Number(rec).toFixed(2),
-      style: {
-      padding: [16, 28, 16, 28],
-      color(args) {
-        return args.dataValue >= 0 ? 'black' : 'red';
-      },
-      },
-    },
-    {
-      indicatorKey: 'Profit',
-      title: 'Profit',
-      width: 'auto',
-      showSort: false,
-      headerStyle: { fontWeight: 'normal' },
-      format: rec => '$' + Number(rec).toFixed(2),
-      style: {
-      padding: [16, 28, 16, 28],
-      color(args) {
-        return args.dataValue >= 0 ? 'black' : 'red';
-      },
-      },
-    },
-    ],
-    rows: [
-    {
-      dimensionKey: 'City',
-      title: 'City',
-      headerStyle: { textStick: true },
-      width: 'auto',
-    },
-    ],
-  };
+      rows: [
+        {
+          dimensionKey: 'City',
+          title: 'City',
+          headerStyle: { textStick: true },
+          width: 'auto'
+        }
+      ]
+    };
   },
   mounted() {
-   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
-    .then(res => res.json())
-    .then(jsonData => {
-     this.data = jsonData;
-    });
-  },
+    fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+      .then(res => res.json())
+      .then(jsonData => {
+        this.data = jsonData;
+      });
+  }
 });
 
 app.component('PivotTable', VueVTable.PivotTable);

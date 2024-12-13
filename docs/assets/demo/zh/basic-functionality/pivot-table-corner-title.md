@@ -3,7 +3,7 @@ category: examples
 group: Basic Features
 title: 透视表角头显示维度名称
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-corner-title.png
-link: '../guide/table_type/Pivot_table/pivot_table_useage'
+link: table_type/Pivot_table/pivot_table_useage
 option: PivotTable#corner
 ---
 

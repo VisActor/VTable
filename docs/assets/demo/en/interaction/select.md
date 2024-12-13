@@ -3,7 +3,7 @@ category: examples
 group: Interaction
 title: Select cell
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png
-link: '../guide/interaction/select'
+link: interaction/select
 option: ListTable#keyboardOptions
 ---
 

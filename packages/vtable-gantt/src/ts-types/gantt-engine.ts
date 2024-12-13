@@ -5,11 +5,14 @@ export type LayoutObjectId = number | string;
 
 export interface ITimelineDateInfo {
   days: number;
+  timeScaleCount: number;
   endDate: Date;
   startDate: Date;
   title: string;
   /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
   dateIndex: number;
+  unit: 'year' | 'month' | 'quarter' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+  step: number;
 }
 
 export interface ITimelineHeaderStyle {
@@ -200,7 +203,7 @@ export interface GanttConstructorOptions {
 export type ITaskBarLabelText = string; //| string[] | ((args: any) => string | string[]);
 export interface ITimelineScale {
   rowHeight?: number;
-  unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
+  unit: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second';
   step: number;
   startOfWeek?: 'sunday' | 'monday';
   customLayout?: IDateCustomLayout;

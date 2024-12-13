@@ -3,7 +3,7 @@ category: examples
 group: table-type
 title: Pivot analysis table (indicators are displayed in rows)
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-indicator-row.png
-link: '../guide/data_analysis/pivot_table_dataAnalysis'
+link: data_analysis/pivot_table_dataAnalysis
 option: PivotTable#indicatorsAsCol
 ---
 

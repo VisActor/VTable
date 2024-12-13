@@ -3,7 +3,7 @@ category: examples
 group: Component
 title: 空数据提示
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/empty-tip.png
-link: '../guide/components/empty-tip'
+link: components/empty-tip
 option: ListTable#emptyTip
 ---
 
