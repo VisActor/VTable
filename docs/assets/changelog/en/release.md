@@ -2,23 +2,19 @@
 
 2024-12-13
 
-
 **🆕 New feature**
 
-- **@visactor/vtable**: add time scale unit hour [#2976](https://github.com/VisActor/VTable/issues/2976)
+- **@visactor/vtable-gantt**: add time scale unit hour [#2976](https://github.com/VisActor/VTable/issues/2976)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: left table width handle with tableWidth set auto [#3033](https://github.com/VisActor/VTable/issues/3033)
-
-
+- **@visactor/vtable-gantt**: left table width handle with tableWidth set auto [#3033](https://github.com/VisActor/VTable/issues/3033)
 
 [more detail about v1.13.1](https://github.com/VisActor/VTable/releases/tag/v1.13.1)
 
 # v1.13.0
 
 2024-12-09
-
 
 **🆕 New feature**
 
@@ -33,7 +29,7 @@
 - **@visactor/vtable**: fix col&row range in getCellMergeRange() [#2906](https://github.com/VisActor/VTable/issues/2906)
 - **@visactor/vtable**: fix merge cell select range update [#2944](https://github.com/VisActor/VTable/issues/2944)
 - **@visactor/vtable**: fix ListTreeStickCellPlugin update in tree_hierarchy_state_change event [#2914](https://github.com/VisActor/VTable/issues/2914)
-- **@visactor/vtable**: fix row update range in _refreshHierarchyState() [#2987](https://github.com/VisActor/VTable/issues/2987)
+- **@visactor/vtable**: fix row update range in \_refreshHierarchyState() [#2987](https://github.com/VisActor/VTable/issues/2987)
 - **@visactor/vtable**: fix text baseline align problem
 
 [more detail about v1.13.0](https://github.com/VisActor/VTable/releases/tag/v1.13.0)

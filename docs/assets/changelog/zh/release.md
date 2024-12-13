@@ -2,23 +2,19 @@
 
 2024-12-13
 
-
 **🆕 新增功能**
 
-- **@visactor/vtable**: add time scale unit hour [#2976](https://github.com/VisActor/VTable/issues/2976)
+- **@visactor/vtable-gantt**: 甘特图时间单位支持时分秒级别 [#2976](https://github.com/VisActor/VTable/issues/2976)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: left table width handle with tableWidth set auto [#3033](https://github.com/VisActor/VTable/issues/3033)
-
-
+- **@visactor/vtable-gantt**: 处理 tableWidth 设置为 'auto' 情况下的表格整体宽度自动适应问题 [#3033](https://github.com/VisActor/VTable/issues/3033)
 
 [更多详情请查看 v1.13.1](https://github.com/VisActor/VTable/releases/tag/v1.13.1)
 
 # v1.13.0
 
 2024-12-09
-
 
 **🆕 新增功能**
 
@@ -33,8 +29,8 @@
 - **@visactor/vtable**：修复 getCellMergeRange() 中的列和行范围问题 [#2906](https://github.com/VisActor/VTable/issues/2906)
 - **@visactor/vtable**：修复合并单元格选择范围更新问题 [#2944](https://github.com/VisActor/VTable/issues/2944)
 - **@visactor/vtable**：修复 tree_hierarchy_state_change 事件中 ListTreeStickCellPlugin 的更新问题 [#2914](https://github.com/VisActor/VTable/issues/2914)
-- **@visactor/vtable**：修复 _refreshHierarchyState() 中的行更新范围问题 [#2987](https://github.com/VisActor/VTable/issues/2987)
-- **@visactor/vtable**: 修复文字baseline对齐问题
+- **@visactor/vtable**：修复 \_refreshHierarchyState() 中的行更新范围问题 [#2987](https://github.com/VisActor/VTable/issues/2987)
+- **@visactor/vtable**: 修复文字 baseline 对齐问题
 
 [更多详情请查看 v1.13.0](https://github.com/VisActor/VTable/releases/tag/v1.13.0)
 
