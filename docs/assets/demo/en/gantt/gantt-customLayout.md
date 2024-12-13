@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: Custom Rendering Usage of Gantt Chart
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-customLayout-preview.png
-link: '../guide/gantt/gantt_customLayout'
+link: gantt/gantt_customLayout
 option: Gantt#taskBar
 ---
 

@@ -4,7 +4,7 @@ group: Component
 title: tooltip custom content
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip-custom-content.png
 order: 8-2
-link: '../guide/components/tooltip'
+link: components/tooltip
 ---
 
 # tooltip
