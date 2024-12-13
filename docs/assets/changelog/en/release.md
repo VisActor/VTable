@@ -1,3 +1,20 @@
+# v1.13.1
+
+2024-12-13
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add time scale unit hour [#2976](https://github.com/VisActor/VTable/issues/2976)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: left table width handle with tableWidth set auto [#3033](https://github.com/VisActor/VTable/issues/3033)
+
+
+
+[more detail about v1.13.1](https://github.com/VisActor/VTable/releases/tag/v1.13.1)
+
 # v1.13.0
 
 2024-12-09
