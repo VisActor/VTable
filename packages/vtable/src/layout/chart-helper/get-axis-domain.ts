@@ -78,9 +78,13 @@ export function getAxisDomainRangeAndLabels(
   delete (scale as any)._niceType; // ensure scaleTicks consistent in `measurement`, `component label` and `chart`
   let scaleTicks;
   if (!skipTick) {
-    scaleTicks = scale.ticks(isNumber(axisOption?.tickCount) ? axisOption?.tickCount : DEFAULT_CONTINUOUS_TICK_COUNT, {
-      noDecimals: axisOption?.tick?.noDecimals
-    });
+    if (axisOption?.tick?.forceTickCount) {
+      scaleTicks = scale.forceTicks(axisOption?.tick?.forceTickCount);
+    } else {
+      scaleTicks = scale.ticks(axisOption?.tick?.tickCount ?? DEFAULT_CONTINUOUS_TICK_COUNT, {
+        noDecimals: axisOption?.tick?.noDecimals
+      });
+    }
     // console.log(scaleTicks);
   }
 

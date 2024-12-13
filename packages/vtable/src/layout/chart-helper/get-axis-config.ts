@@ -769,6 +769,26 @@ function getRange(
     layout
   );
 
+  if (rangeConfig.index !== 0 && targetTicks) {
+    // reset range
+    const getAxisDomainRangeAndLabels = Factory.getFunction(
+      'getAxisDomainRangeAndLabels'
+    ) as GetAxisDomainRangeAndLabels;
+    const { range: newRange, ticks: newTicks } = getAxisDomainRangeAndLabels(
+      rangeConfig.range.min,
+      rangeConfig.range.max,
+      merge({}, rangeConfig.axisOption, { nice: true, tick: { forceTickCount: targetTicks.length } }),
+      rangeConfig.isZeroAlign,
+      // layout._table.getColWidth(col)
+      position === 'bottom' || position === 'top'
+        ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
+        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight // avoid 0, 0 causes NaN
+    );
+    rangeConfig.range.min = newRange[0];
+    rangeConfig.range.max = newRange[1];
+    rangeConfig.ticks = newTicks;
+  }
+
   (rangeConfig as any).targetRange = targetRange;
   (rangeConfig as any).targetTicks = targetTicks;
 
@@ -882,6 +902,26 @@ export function getAxisRangeAndTicks(
     path,
     layout
   );
+
+  if (index !== 0 && targetTicks) {
+    // reset range
+    const getAxisDomainRangeAndLabels = Factory.getFunction(
+      'getAxisDomainRangeAndLabels'
+    ) as GetAxisDomainRangeAndLabels;
+    const { range: newRange, ticks: newTicks } = getAxisDomainRangeAndLabels(
+      range.min,
+      range.max,
+      merge({}, axisOption, { nice: true, tick: { forceTickCount: targetTicks.length } }),
+      isZeroAlign,
+      // layout._table.getColWidth(col)
+      position === 'bottom' || position === 'top'
+        ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
+        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight // avoid 0, 0 causes NaN
+    );
+    range.min = newRange[0];
+    range.max = newRange[1];
+    // axisOption.ticks = newTicks;
+  }
 
   return {
     axisOption,
