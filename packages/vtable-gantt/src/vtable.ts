@@ -1,1 +1,1 @@
-export { register, themes, CustomLayout } from '@visactor/vtable';
+export { register, themes, CustomLayout, TYPES } from '@visactor/vtable';

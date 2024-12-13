@@ -1,8 +1,8 @@
 import type { ColumnsDefine } from '@visactor/vtable';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import { Gantt } from '../../src/index';
-import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 import { DependencyType } from '../../src/ts-types';
+import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
@@ -11,8 +11,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-15',
-      end: '2024-07-16 23:59:59',
+      start: '2024-07-04 08:30:00',
+      end: '2024-07-09 12:29:59',
       progress: 31,
       priority: 'P0'
     },
@@ -20,8 +20,8 @@ export function createTable() {
       id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-16',
-      end: '2024-07-17',
+      start: '2024-07-14 00:30:00',
+      end: '2024-07-24 17:59:59',
       progress: 60,
       priority: 'P0'
     },
@@ -29,111 +29,36 @@ export function createTable() {
       id: 3,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-18',
-      end: '2024-07-19',
-      progress: 90,
+      start: '2024-07-08 18:00:00',
+      end: '2024-07-15 07:59:59',
+      progress: 31,
       priority: 'P0'
     },
     {
       id: 4,
-      title: 'Determine project scope',
+      title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024/07/17',
-      end: '2024/07/18',
-      progress: 100,
-      priority: 'P1'
+      start: '2024-07-06 10:00:00',
+      end: '2024-07-26 17:30:00',
+      progress: 60,
+      priority: 'P0'
     },
     {
       id: 5,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '07/19/2024',
-      end: '07/20/2024',
       progress: 60,
       priority: 'P0'
-    },
-    {
-      id: 6,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 7,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 8,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024.07.06',
-      end: '2024.07.08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 9,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024/07/09',
-      end: '2024/07/11',
-      progress: 100,
-      priority: 'P1'
-    },
-    {
-      id: 10,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '07.24.2024',
-      end: '08.04.2024',
-      progress: 31,
-      priority: 'P0'
-    },
-
-    {
-      id: 11,
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
-      progress: 31,
-      priority: 'P0'
-    },
-    {
-      id: 12,
-      title: 'Scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0'
-    },
-    {
-      id: 13,
-      title: 'Determine project scope',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-09',
-      end: '2024-07-11',
-      progress: 100,
-      priority: 'P1'
     }
   ];
 
   const columns: ColumnsDefine = [
-    {
-      field: 'id',
-      title: 'ID',
-      width: 80,
-      sort: true
-    },
+    // {
+    //   field: 'id',
+    //   title: 'ID',
+    //   width: 80,
+    //   sort: true
+    // },
     {
       field: 'title',
       title: 'title',
@@ -174,6 +99,7 @@ export function createTable() {
       minTableWidth: 100,
       maxTableWidth: 600
     },
+
     dependency: {
       links: [
         {
@@ -190,11 +116,6 @@ export function createTable() {
           type: DependencyType.StartToStart,
           linkedFromTaskKey: 3,
           linkedToTaskKey: 4
-        },
-        {
-          type: DependencyType.FinishToFinish,
-          linkedFromTaskKey: 4,
-          linkedToTaskKey: 5
         }
       ],
       // linkLineSelectable: false,
@@ -237,6 +158,7 @@ export function createTable() {
     rowHeight: 40,
 
     taskBar: {
+      // selectable: false,
       startDateField: 'start',
       endDateField: 'end',
       progressField: 'progress',
@@ -254,28 +176,41 @@ export function createTable() {
         completedBarColor: '#91e8e0',
         /** 任务条的圆角 */
         cornerRadius: 10
-      },
-      selectedBarStyle: {
-        shadowBlur: 5, //阴影宽度
-        shadowOffsetX: 0, //x方向偏移
-        shadowOffsetY: 0, //Y方向偏移
-        shadowColor: 'black', //阴影颜色
-        borderColor: 'red', //边框颜色
-        borderLineWidth: 1 //边框宽度
       }
     },
     timelineHeader: {
       verticalLine: {
-        lineWidth: 1,
-        lineColor: '#e1e4e8'
+        lineWidth: 2,
+        lineColor: 'red'
       },
       horizontalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
       },
       backgroundColor: '#EEF1F5',
-      colWidth: 60,
+      colWidth: 120,
       scales: [
+        {
+          unit: 'year',
+          step: 3,
+          style: {
+            textStick: true
+          }
+        },
+        {
+          unit: 'month',
+          step: 1,
+          style: {
+            textStick: true
+          }
+        },
+        {
+          unit: 'quarter',
+          step: 1,
+          style: {
+            textStick: true
+          }
+        },
         {
           unit: 'week',
           step: 1,
@@ -286,52 +221,16 @@ export function createTable() {
           style: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'red'
-          }
-        },
-        {
-          unit: 'day',
-          step: 1,
-          format(date: TYPES.DateFormatArgumentType) {
-            return date.dateIndex.toString();
-          },
-          style: {
-            fontSize: 20,
-            fontWeight: 'bold',
-            color: 'red'
+            color: 'red',
+            textStick: true
           }
         }
-        // {
-        //   unit: 'quarter',
-        //   step: 1,
-        //   format(date: TYPES.DateFormatArgumentType) {
-        //     return '第' + date.index + '季度';
-        //   }
-        // }
       ]
     },
-    minDate: '2024-07-01',
-    maxDate: '2024-10-15',
-    // markLine: [
-    //   {
-    //     date: '2024-07-17',
-    //     style: {
-    //       lineWidth: 1,
-    //       lineColor: 'blue',
-    //       lineDash: [8, 4]
-    //     }
-    //   },
-    //   {
-    //     date: '2024-08-17',
-    //     position: 'middle',
-    //     // scrollToMarkLine: true,
-    //     style: {
-    //       lineWidth: 2,
-    //       lineColor: 'red',
-    //       lineDash: [8, 4]
-    //     }
-    //   }
-    // ],
+    // minDate: '2024-07-03',
+    // maxDate: '2024-07-10',
+    minDate: '2024-07-03 08:30:00',
+    maxDate: '2024-08-25',
     rowSeriesNumber: {
       title: '行号',
       dragOrder: true,
@@ -341,9 +240,7 @@ export function createTable() {
         borderColor: '#e1e4e8'
       },
       style: {
-        bgColor: 'gray',
-        color: '#FFF',
-        fontSize: 14
+        borderColor: '#e1e4e8'
       }
     },
     scrollStyle: {
@@ -383,18 +280,16 @@ export function createTable() {
   ganttInstance.on('click_task_bar', e => {
     console.log('click_task_bar', e);
   });
-  ganttInstance.on('create_task_schedule', e => {
-    console.log('create_task_schedule', e);
-  });
-
-  ganttInstance.on('create_dependency_link', e => {
-    console.log('create_dependency_link', e);
-  });
   ganttInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
-
-  // bindDebugTool(ganttInstance.scenegraph.stage as any, {
-  //   customGrapicKeys: ['role', '_updateTag']
-  // });
+  ganttInstance.taskListTableInstance?.on('change_header_position_start', e => {
+    console.log('change_header_position_start ', e);
+  });
+  ganttInstance.taskListTableInstance?.on('changing_header_position', e => {
+    console.log('changing_header_position ', e);
+  });
+  bindDebugTool(ganttInstance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 }

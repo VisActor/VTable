@@ -7,9 +7,19 @@ ${prefix} rowHeight(number)
 
 非必填
 
-${prefix} unit('day' | 'week' | 'month' | 'quarter' | 'year')
+${prefix} unit('day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second')
 
 时间单位
+
+如果配置的最小的时间单位是`'day' | 'week' | 'month' | 'quarter' | 'year'`，record 中比较规范的是日期格式为`YYYY-MM-DD`，如果是`'hour' |'minute' |'second'`，则规范日期格式为`YYYY-MM-DD HH:mm:ss`。
+
+举例：
+
+如最小的时间单位是`'hour' `，record 中的任务开始时间配置为：`'2024-11-09 05:00:00'`，结束时间为：`'2024-11-09 06:59:59'`，则该条任务的进行时间应该在`'2024-11-09'`这一天当中的 5 点到 6 点。
+
+如最小时间单位是`'minute'`, 则 record 中的任务开始时间配置为：`'2024-11-09 05:10:00'`，结束时间为：`'2024-11-09 05:09:59'`，则该条任务的进行时间是有 10 分钟时间。
+
+需要注意的是：如最小的时间单位是`'hour' |'minute' |'second'`，record 中规范的结束时间是 59 分或者 59 秒。
 
 ${prefix} step(number)
 

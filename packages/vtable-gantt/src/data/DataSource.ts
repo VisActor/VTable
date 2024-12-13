@@ -1,5 +1,11 @@
 import type { Gantt } from '../Gantt';
-import { createDateAtMidnight } from '../tools/util';
+import {
+  createDateAtLastHour,
+  createDateAtLastMinute,
+  createDateAtMidnight,
+  getEndDateByTimeUnit,
+  getStartDateByTimeUnit
+} from '../tools/util';
 import { TasksShowMode } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 export class DataSource {
@@ -29,11 +35,11 @@ export class DataSource {
     ) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
-        if (needMinDate) {
+        if (needMinDate && record[this._gantt.parsedOptions.startDateField]) {
           const recordMinDate = createDateAtMidnight(record[this._gantt.parsedOptions.startDateField]);
           minDate = Math.min(minDate, recordMinDate.getTime());
         }
-        if (needMaxDate) {
+        if (needMaxDate && record[this._gantt.parsedOptions.endDateField]) {
           const recordMaxDate = createDateAtMidnight(record[this._gantt.parsedOptions.endDateField]);
           maxDate = Math.max(maxDate, recordMaxDate.getTime());
         }
@@ -55,10 +61,21 @@ export class DataSource {
 
       needMinDate && (this.minDate = createDateAtMidnight(minDate));
       needMaxDate && (this.maxDate = createDateAtMidnight(maxDate));
-      this._gantt.parsedOptions.minDate = this.minDate;
-      this._gantt.parsedOptions.maxDate = this.maxDate;
-      this._gantt.parsedOptions._minDateTime = this._gantt.parsedOptions.minDate.getTime();
-      this._gantt.parsedOptions._maxDateTime = this._gantt.parsedOptions.maxDate.getTime();
+
+      const { unit: minTimeUnit, startOfWeek, step } = this._gantt.parsedOptions.reverseSortedTimelineScales[0];
+      if (needMinDate) {
+        this._gantt.parsedOptions.minDate = getStartDateByTimeUnit(new Date(minDate), minTimeUnit, startOfWeek);
+        this._gantt.parsedOptions._minDateTime = this._gantt.parsedOptions.minDate.getTime();
+      }
+      if (needMaxDate) {
+        this._gantt.parsedOptions.maxDate = getEndDateByTimeUnit(
+          this._gantt.parsedOptions.minDate,
+          new Date(maxDate),
+          minTimeUnit,
+          step
+        );
+        this._gantt.parsedOptions._maxDateTime = this._gantt.parsedOptions.maxDate.getTime();
+      }
     }
   }
   adjustOrder(
