@@ -19,7 +19,6 @@ import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
 import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateCornerRadius, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
-import { ResizeColumnHotSpotSize, ResizeRowHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
 import { getFunctionalProp, getProp } from './utils/get-prop';
 import { dealWithIcon } from './utils/text-icon-layout';
@@ -1733,9 +1732,9 @@ export class Scenegraph {
   getResizeColAt(
     abstractX: number,
     abstractY: number,
-    cellGroup?: Group,
-    offset = ResizeColumnHotSpotSize / 2
+    cellGroup?: Group
   ): { col: number; row: number; x?: number; rightFrozen?: boolean } {
+    const offset = this.table.theme.columnResize.resizeHotSpotSize / 2;
     let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
     if (!cellGroup) {
       const drawRange = this.table.getDrawRange();
@@ -1781,7 +1780,8 @@ export class Scenegraph {
     return { col: -1, row: -1 };
   }
 
-  getResizeRowAt(abstractX: number, abstractY: number, cellGroup?: Group, offset = ResizeRowHotSpotSize / 2) {
+  getResizeRowAt(abstractX: number, abstractY: number, cellGroup?: Group) {
+    const offset = this.table.theme.columnResize.resizeHotSpotSize / 2;
     if (!cellGroup) {
       // to do: 处理最后一列外调整列宽
     } else {

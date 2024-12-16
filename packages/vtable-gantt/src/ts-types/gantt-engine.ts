@@ -88,9 +88,12 @@ export interface GanttConstructorOptions {
     /** 自定义布局渲染 */
     customLayout?: ITaskBarCustomLayout;
     /** 任务条是否可调整大小 */
-    resizable?: boolean;
+    resizable?:
+      | boolean
+      | [boolean, boolean]
+      | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
     /** 任务条是否可移动 */
-    moveable?: boolean;
+    moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
     /** 任务条是否可以被拖拽来改变顺序 */
     dragOrder?: boolean;
     /** 任务条hover时的样式 */

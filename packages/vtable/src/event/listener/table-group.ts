@@ -21,7 +21,6 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CheckBox, CheckboxAttributes, Radio } from '@visactor/vrender-components';
-import { ResizeColumnHotSpotSize } from '../../tools/global';
 import { handleWhell } from '../scroll';
 import { fireMoveColEventListeners } from '../helper';
 export function bindTableGroupListener(eventManager: EventManager) {
@@ -804,7 +803,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         const { eventArgs } = eventArgsSet;
         if (!eventArgs?.targetCell) {
           const cell = table.getCellAt(
-            eventArgsSet.abstractPos.x - ResizeColumnHotSpotSize / 2,
+            eventArgsSet.abstractPos.x - table.theme.columnResize.resizeHotSpotSize / 2,
             eventArgsSet.abstractPos.y
           );
           if (cell) {

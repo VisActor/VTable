@@ -108,6 +108,7 @@ export interface ITableThemeDefine {
     bgColor?: ColorPropertyDefine; //背景线的颜色
     lineWidth: number; //上面线的宽度
     width?: number; //背景线的宽度
+    resizeHotSpotSize?: number; //响应调整行高列宽交互行为热区的大小
     labelVisible?: boolean; //是否显示label
     labelColor?: string; //label的颜色
     labelFontSize?: number; //label的字体大小

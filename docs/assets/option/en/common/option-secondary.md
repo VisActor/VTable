@@ -191,7 +191,7 @@ Mouse hover over the cell right border can drag and adjust column width. This op
 - 'header' Only adjustable in header cells
 - 'body' Only adjustable in body cells
 
-#${prefix} columnResizeMode(string) = 'all'
+#${prefix} rowResizeMode(string) = 'none'
 
 Mouse hover over the cell bottom border can drag and adjust row height. This operation can trigger the following range:
 
