@@ -235,12 +235,14 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
   }
 
-  handler.on(table.getElement(), 'copy', (e: KeyboardEvent) => {
+  handler.on(table.getElement(), 'copy', async (e: KeyboardEvent) => {
     if (table.keyboardOptions?.copySelected) {
       const data = table.getCopyValue();
       if (isValid(data)) {
         e.preventDefault();
-        if (navigator.clipboard?.write) {
+        //检查是否有权限
+        const permissionState = await navigator.permissions.query({ name: 'clipboard-write' as PermissionName });
+        if (navigator.clipboard?.write && permissionState.state === 'granted') {
           // 将复制的数据转为html格式
           const setDataToHTML = (data: string) => {
             const result = ['<table>'];

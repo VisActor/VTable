@@ -1,7 +1,13 @@
 import { Group, createText, createRect, Image, Circle, Line, Rect } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
-import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
+import {
+  computeCountToTimeScale,
+  createDateAtLastHour,
+  createDateAtMidnight,
+  parseStringTemplate,
+  toBoxArray
+} from '../tools/util';
 import { isValid } from '@visactor/vutils';
 import {
   computeRowsCountByRecordDate,
@@ -52,7 +58,7 @@ export class TaskBar {
     this.barContainer = new Group({
       x: 0,
       y: 0,
-      width: this._scene._gantt._getAllColsWidth(),
+      width: this._scene._gantt.getAllDateColsWidth(),
       height: this._scene._gantt.getAllTaskBarsHeight(),
       pickable: false,
       clip: true
@@ -86,7 +92,6 @@ export class TaskBar {
   }
   initBar(index: number, childIndex?: number, childrenLength?: number) {
     const taskBarCustomLayout = this._scene._gantt.parsedOptions.taskBarCustomLayout;
-
     const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
       index,
       childIndex
@@ -95,7 +100,9 @@ export class TaskBar {
     if (taskDays <= 0 || !startDate || !endDate || startDate.getTime() > endDate.getTime()) {
       return null;
     }
-    const taskBarSize = this._scene._gantt.parsedOptions.colWidthPerDay * taskDays;
+    const { unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
+    const taskBarSize =
+      computeCountToTimeScale(endDate, startDate, unit, step, 1) * this._scene._gantt.parsedOptions.timelineColWidth;
     const taskbarHeight = this._scene._gantt.parsedOptions.taskBarStyle.width;
     const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
 
@@ -103,24 +110,16 @@ export class TaskBar {
       this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
         ? childrenLength
         : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
-        ? computeRowsCountByRecordDate(
-            this._scene._gantt.records[index],
-            this._scene._gantt.parsedOptions.startDateField,
-            this._scene._gantt.parsedOptions.endDateField
-          )
+        ? computeRowsCountByRecordDate(this._scene._gantt, this._scene._gantt.records[index])
         : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
-        ? computeRowsCountByRecordDateForCompact(
-            this._scene._gantt.records[index],
-            this._scene._gantt.parsedOptions.startDateField,
-            this._scene._gantt.parsedOptions.endDateField
-          )
+        ? computeRowsCountByRecordDateForCompact(this._scene._gantt, this._scene._gantt.records[index])
         : 1;
     const oneTaskHeigth = this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
+    const x =
+      computeCountToTimeScale(startDate, this._scene._gantt.parsedOptions.minDate, unit, step) *
+      this._scene._gantt.parsedOptions.timelineColWidth;
     const barGroupBox = new GanttTaskBarNode({
-      x:
-        this._scene._gantt.parsedOptions.colWidthPerDay *
-        Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)),
-      // y: this._scene._gantt.parsedOptions.rowHeight * i,
+      x,
       y:
         this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
         (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
@@ -269,7 +268,6 @@ export class TaskBar {
       width: 100,
       height: 100,
       clip: true,
-      cursor: this._scene._gantt.parsedOptions.taskBarMoveable ? 'grab' : 'default',
       pickable: false,
       cornerRadius:
         this._scene._gantt.parsedOptions.taskBarHoverStyle.cornerRadius ??
@@ -348,6 +346,43 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('width', width);
     this.hoverBarGroup.setAttribute('height', height);
     this.hoverBarGroup.setAttribute('visibleAll', true);
+    this.hoverBarLeftIcon.setAttribute('visible', false);
+    this.hoverBarRightIcon.setAttribute('visible', false);
+
+    const { startDate, endDate, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
+      target.task_index,
+      target.sub_task_index
+    );
+
+    let leftResizable = true;
+    let rightResizable = true;
+    if (typeof this._scene._gantt.parsedOptions.taskBarResizable === 'function') {
+      const arg = {
+        index: target.task_index,
+        startDate,
+        endDate,
+        taskRecord,
+        ganttInstance: this._scene._gantt
+      };
+      const resizableResult = this._scene._gantt.parsedOptions.taskBarResizable(arg);
+      if (Array.isArray(resizableResult)) {
+        [leftResizable, rightResizable] = resizableResult;
+      } else {
+        leftResizable = resizableResult;
+        rightResizable = resizableResult;
+      }
+    } else if (Array.isArray(this._scene._gantt.parsedOptions.taskBarResizable)) {
+      [leftResizable, rightResizable] = this._scene._gantt.parsedOptions.taskBarResizable;
+    } else {
+      leftResizable = this._scene._gantt.parsedOptions.taskBarResizable;
+      rightResizable = this._scene._gantt.parsedOptions.taskBarResizable;
+    }
+    if (leftResizable) {
+      this.hoverBarLeftIcon.setAttribute('visible', true);
+    }
+    if (rightResizable) {
+      this.hoverBarRightIcon.setAttribute('visible', true);
+    }
     if (this.hoverBarLeftIcon) {
       this.hoverBarLeftIcon.setAttribute('x', 0);
       this.hoverBarLeftIcon.setAttribute('y', Math.ceil(height / 10));

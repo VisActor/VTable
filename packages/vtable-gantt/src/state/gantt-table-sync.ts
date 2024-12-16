@@ -1,4 +1,5 @@
 import type { Gantt } from '../Gantt';
+import { updateSplitLineAndResizeLine } from '../gantt-helper';
 import { TasksShowMode } from '../ts-types';
 
 export function syncScrollStateToTable(gantt: Gantt) {
@@ -78,5 +79,30 @@ export function syncDragOrderFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('change_header_position_fail', (args: any) => {
     gantt.scenegraph.dragOrderLine.hideDragLine();
     gantt.scenegraph.updateNextFrame();
+  });
+}
+
+export function syncTableWidthFromTable(gantt: Gantt) {
+  gantt.taskListTableInstance?.on('resize_column', (args: any) => {
+    const oldTaskTableWidth: number = gantt.taskTableWidth;
+
+    gantt.taskTableWidth =
+      gantt.taskListTableInstance.getAllColsWidth() + gantt.parsedOptions.outerFrameStyle.borderLineWidth;
+    if (gantt.options?.taskListTable?.maxTableWidth) {
+      gantt.taskTableWidth = Math.min(gantt.options?.taskListTable?.maxTableWidth, gantt.taskTableWidth);
+    }
+    if (gantt.options?.taskListTable?.minTableWidth) {
+      gantt.taskTableWidth = Math.max(gantt.options?.taskListTable?.minTableWidth, gantt.taskTableWidth);
+    }
+    if (oldTaskTableWidth === gantt.taskTableWidth) {
+      return;
+    }
+    gantt.element.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth}px` : '0px';
+    gantt.taskListTableInstance.setCanvasSize(
+      gantt.taskTableWidth,
+      gantt.tableNoFrameHeight + gantt.parsedOptions.outerFrameStyle.borderLineWidth * 2
+    );
+    gantt._updateSize();
+    updateSplitLineAndResizeLine(gantt);
   });
 }

@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: Create Gantt Dependency Link Line
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-dependency-link-line-create.gif
-link: '../guide/gantt/introduction'
+link: gantt/introduction
 option: Gantt#taskBar
 ---
 

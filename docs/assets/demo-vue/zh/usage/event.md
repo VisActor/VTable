@@ -4,7 +4,7 @@ group: usage
 title: 事件监听
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-list-table.png
 order: 1-1
-link: '../guide/table_type/List_table/list_table_define_and_generate'
+link: table_type/List_table/list_table_define_and_generate
 option: ListTable-columns-text#cellType
 ---
 
@@ -15,7 +15,6 @@ VTable 支持的事件都可以通过 vue 的 props 传入进行监听，具体�
 ## 代码演示
 
 ```javascript livedemo template=vtable-vue
-
 const app = createApp({
   template: `
     <ListTable :options="tableOptions" @onMouseEnterCell="handleMouseEnterCell">
@@ -28,15 +27,15 @@ const app = createApp({
         { field: '0', title: '名字' },
         { field: '1', title: '年龄' },
         { field: '2', title: '性别' },
-        { field: '3', title: '爱好' },
+        { field: '3', title: '爱好' }
       ],
       tableOptions: {
-         records: new Array(1000).fill(['张三', 18, '男', '🏀' ]),
-      },
+        records: new Array(1000).fill(['张三', 18, '男', '🏀'])
+      }
     };
   },
   methods: {
-    handleMouseEnterCell(arg){
+    handleMouseEnterCell(arg) {
       console.log('Mouse entered cell:', arg);
     }
   }
@@ -51,5 +50,4 @@ app.mount(`#${CONTAINER_ID}`);
 window.customRelease = () => {
   app.unmount();
 };
-
 ```

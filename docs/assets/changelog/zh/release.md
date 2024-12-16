@@ -1,7 +1,37 @@
+# v1.13.2
+
+2024-12-16
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: 任务条调整大小和可移动支持函数配置 [#3074](https://github.com/VisActor/VTable/issues/3074)
+- **@visactor/vtable-gantt**: 添加 updateOption 和 updateScales API
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 在 iframe 中进行复制权限检查 [#3077](https://github.com/VisActor/VTable/issues/3077)
+- **@visactor/vtable**: 当有选中单元格时调整列宽或行高出错 [#3085](https://github.com/VisActor/VTable/issues/3085)
+- **@visactor/vtable-gantt**: 考虑未设置 minDate 和 maxDate 时调用 setRecords API
+
+[更多详情请查看 v1.13.2](https://github.com/VisActor/VTable/releases/tag/v1.13.2)
+
+# v1.13.1
+
+2024-12-13
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: 甘特图时间单位支持时分秒级别 [#2976](https://github.com/VisActor/VTable/issues/2976)
+
+**🐛 功能修复**
+
+- **@visactor/vtable-gantt**: 处理 tableWidth 设置为 'auto' 情况下的表格整体宽度自动适应问题 [#3033](https://github.com/VisActor/VTable/issues/3033)
+
+[更多详情请查看 v1.13.1](https://github.com/VisActor/VTable/releases/tag/v1.13.1)
+
 # v1.13.0
 
 2024-12-09
-
 
 **🆕 新增功能**
 
@@ -16,8 +46,8 @@
 - **@visactor/vtable**：修复 getCellMergeRange() 中的列和行范围问题 [#2906](https://github.com/VisActor/VTable/issues/2906)
 - **@visactor/vtable**：修复合并单元格选择范围更新问题 [#2944](https://github.com/VisActor/VTable/issues/2944)
 - **@visactor/vtable**：修复 tree_hierarchy_state_change 事件中 ListTreeStickCellPlugin 的更新问题 [#2914](https://github.com/VisActor/VTable/issues/2914)
-- **@visactor/vtable**：修复 _refreshHierarchyState() 中的行更新范围问题 [#2987](https://github.com/VisActor/VTable/issues/2987)
-- **@visactor/vtable**: 修复文字baseline对齐问题
+- **@visactor/vtable**：修复 \_refreshHierarchyState() 中的行更新范围问题 [#2987](https://github.com/VisActor/VTable/issues/2987)
+- **@visactor/vtable**: 修复文字 baseline 对齐问题
 
 [更多详情请查看 v1.13.0](https://github.com/VisActor/VTable/releases/tag/v1.13.0)
 
