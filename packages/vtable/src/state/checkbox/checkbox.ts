@@ -127,37 +127,7 @@ export function initCheckedState(records: any[], state: StateManager) {
 
   //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
   if (isNeedInitHeaderCheckedStateFromRecord) {
-    records?.forEach((record: any, index: number) => {
-      state._checkboxCellTypeFields.forEach(field => {
-        const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
-        let isChecked;
-        if (isObject(value)) {
-          isChecked = value.checked;
-        } else if (typeof value === 'boolean') {
-          isChecked = value;
-        }
-        if (isChecked === undefined || isChecked === null) {
-          const headerCheckFunc = state._headerCheckFuncs[field];
-          if (headerCheckFunc) {
-            //如果定义的checked是个函数 则需要每个都去计算这个值
-            const cellAddr = state.table.getCellAddrByFieldRecord(field, index);
-            const globalChecked = getOrApply(headerCheckFunc as any, {
-              col: cellAddr.col,
-              row: cellAddr.row,
-              table: state.table,
-              context: null,
-              value
-            });
-            isChecked = globalChecked;
-          }
-        }
-        const dataIndex = state.table.dataSource.getIndexKey(index).toString();
-        if (!state.checkedState.get(dataIndex)) {
-          state.checkedState.set(dataIndex, {});
-        }
-        state.checkedState.get(dataIndex)[field] = isChecked;
-      });
-    });
+    initRecordCheckState(state);
   }
 }
 
@@ -368,4 +338,43 @@ export function getGroupCheckboxState(table: BaseTableAPI) {
   });
 
   return result;
+}
+
+function initRecordCheckState(state: StateManager) {
+  const table = state.table;
+  const start = table.internalProps.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
+  const end = table.internalProps.transpose ? table.colCount : table.rowCount;
+  for (let index = 0; index + start < end; index++) {
+    const record = table.dataSource.get(index);
+    // eslint-disable-next-line no-loop-func
+    state._checkboxCellTypeFields.forEach(field => {
+      const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
+      let isChecked;
+      if (isObject(value)) {
+        isChecked = value.checked;
+      } else if (typeof value === 'boolean') {
+        isChecked = value;
+      }
+      if (isChecked === undefined || isChecked === null) {
+        const headerCheckFunc = state._headerCheckFuncs[field];
+        if (headerCheckFunc) {
+          //如果定义的checked是个函数 则需要每个都去计算这个值
+          const cellAddr = state.table.getCellAddrByFieldRecord(field, index);
+          const globalChecked = getOrApply(headerCheckFunc as any, {
+            col: cellAddr.col,
+            row: cellAddr.row,
+            table: state.table,
+            context: null,
+            value
+          });
+          isChecked = globalChecked;
+        }
+      }
+      const dataIndex = state.table.dataSource.getIndexKey(index).toString();
+      if (!state.checkedState.get(dataIndex)) {
+        state.checkedState.set(dataIndex, {});
+      }
+      state.checkedState.get(dataIndex)[field] = isChecked;
+    });
+  }
 }
