@@ -4,7 +4,7 @@ group: grammatical-tag
 title: Basic Table
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-list-table.png
 order: 1-1
-link: '../guide/Developer_Ecology/vue'
+link: Developer_Ecology/vue
 ---
 
 # Perspective Analysis Table
@@ -15,8 +15,8 @@ The semantic subcomponents of ListTable are as follows:
 - ListColumn: Configuration of dimensions on the column, consistent with the definition of columns in the option
 
 ## Code Demonstration
-```javascript livedemo template=vtable-vue
 
+```javascript livedemo template=vtable-vue
 const app = createApp({
   template: `
     <ListTable :options="tableOptions" >
@@ -33,13 +33,22 @@ const app = createApp({
         { field: '0', title: 'Name' },
         { field: '1', title: 'Age' },
         { field: '2', title: 'Gender' },
-        { field: '3', title: 'Hobby' },
+        { field: '3', title: 'Hobby' }
       ],
       tableOptions: {
-         records: new Array(1000).fill(['Zhang San', 18, 'Male', '🏀', '@example', 'xxx.xxx.xxx.xxx', '12345678901', 'Normal']),
-      },
+        records: new Array(1000).fill([
+          'Zhang San',
+          18,
+          'Male',
+          '🏀',
+          '@example',
+          'xxx.xxx.xxx.xxx',
+          '12345678901',
+          'Normal'
+        ])
+      }
     };
-  },
+  }
 });
 
 app.component('ListTable', VueVTable.ListTable);

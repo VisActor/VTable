@@ -12,7 +12,7 @@ export function createTable() {
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
       start: '2024-07-15',
-      end: '2024-07-16',
+      end: '2024-07-16 23:59:59',
       progress: 31,
       priority: 'P0'
     },

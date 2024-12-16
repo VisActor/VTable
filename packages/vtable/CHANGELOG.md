@@ -1,6 +1,68 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 29 Nov 2024 07:59:16 GMT and should not be manually modified.
+This log was last generated on Fri, 13 Dec 2024 08:48:53 GMT and should not be manually modified.
+
+## 1.13.1
+Fri, 13 Dec 2024 08:48:53 GMT
+
+### Updates
+
+- feat: add time scale unit hour #2976
+
+
+- fix: left table width handle with tableWidth set auto #3033
+
+
+
+## 1.13.0
+Mon, 09 Dec 2024 08:20:54 GMT
+
+### Minor changes
+
+- fix: fix text baseline align problem
+
+### Updates
+
+- fix: select not work when select set disableSelect #2981
+
+
+- feat: add keybord ctrlMultiSelect config #2995
+- fix: fix textAlign in checkbox/radio #2908
+- fix: outsideClickDeselect event in menu element
+- fix: fix col&row range in getCellMergeRange() #2906
+- feat: add panelStyle&arrowStyle config in Popover #2988
+- fix: fix merge cell select range update #2944
+- fix: fix ListTreeStickCellPlugin update in tree_hierarchy_state_change event #2914
+- fix: fix row update range in _refreshHierarchyState() #2987
+
+## 1.12.0
+Tue, 03 Dec 2024 11:06:35 GMT
+
+### Minor changes
+
+- feat: add taskShowMode for gantt chart #2849
+
+
+
+### Updates
+
+- feat: add option customComputeRowHeight and defaultRowHeight can set "auto"
+
+
+- docs: add getTaskBarRelativeRect api #2920
+
+
+- fix: when edit record task date update taskbar occor error #2938
+
+
+- fix: fix last col&row editor size #2926
+- fix: fix cell update event problem in CustomCellStylePlugin #2927
+- fix: fix react-component in tree mode update
+- fix: fix default row height in computeRowHeight() #2903
+- fix: fix legend visible problem when reize table
+- fix: fix cache problem in Icon.loadGif() #2905
+- fix: fix merge radio cell check update #2881
+- fix: fix strokeArrayWidth update in updateCell() #2811
 
 ## 1.11.5
 Fri, 29 Nov 2024 07:59:16 GMT

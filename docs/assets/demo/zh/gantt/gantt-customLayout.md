@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: 甘特图自定义渲染用法
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-customLayout-preview.png
-link: '../guide/gantt/gantt_customLayout'
+link: gantt/gantt_customLayout
 option: Gantt#taskBar
 ---
 

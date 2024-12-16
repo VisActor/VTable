@@ -4,7 +4,7 @@ group: Basic Features
 title: Line Wrapping
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/auto-wrap-text.gif
 order: 3-1
-link: '../guide/basic_function/auto_wrap_text'
+link: basic_function/auto_wrap_text
 option: ListTable#autoWrapText
 ---
 

@@ -3,7 +3,7 @@ category: examples
 group: edit-cell
 title: 自定义编辑器中使用arco列表选择器
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-editor-basic.png
-link: '../guide/Developer_Ecology/vue'
+link: Developer_Ecology/vue
 ---
 
 # 编辑单元格
@@ -20,7 +20,6 @@ link: '../guide/Developer_Ecology/vue'
 ## 代码演示
 
 ```javascript livedemo template=vtable-vue
-
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();
 VueVTable.register.editor('input-editor', input_editor);
@@ -37,8 +36,18 @@ function generateRandomString(length) {
 
 function generateRandomHobbies() {
   const hobbies = [
-    'Reading books', 'Playing video games', 'Watching movies', 'Cooking', 'Hiking', 'Traveling', 'Photography',
-    'Playing musical instruments', 'Gardening', 'Painting', 'Writing', 'Swimming'
+    'Reading books',
+    'Playing video games',
+    'Watching movies',
+    'Cooking',
+    'Hiking',
+    'Traveling',
+    'Photography',
+    'Playing musical instruments',
+    'Gardening',
+    'Painting',
+    'Writing',
+    'Swimming'
   ];
 
   const numHobbies = Math.floor(Math.random() * 3) + 1;
@@ -70,7 +79,7 @@ function generateRandomPhoneNumber() {
   return prefix + suffix;
 }
 
-const generatePersons = (count) => {
+const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => {
     const first = generateRandomString(10);
     const last = generateRandomString(4);
@@ -85,7 +94,7 @@ const generatePersons = (count) => {
       address: `No.${i + 100} ${generateRandomString(10)} ${generateRandomString(5)}`,
       sex: i % 2 === 0 ? 'boy' : 'girl',
       work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
-      city: 'beijing',
+      city: 'beijing'
     };
   });
 };
@@ -94,7 +103,9 @@ const records = generatePersons(10);
 const columns = [
   { field: 'id', title: 'ID', width: 80, sort: true },
   {
-    field: 'full name', title: 'Full name', columns: [
+    field: 'full name',
+    title: 'Full name',
+    columns: [
       { field: 'name', title: 'First Name\n(input editor)', width: 120, editor: 'input-editor' },
       { field: 'lastName', title: 'Last Name\n(input editor)', width: 100, editor: 'input-editor' }
     ]
@@ -104,7 +115,7 @@ const columns = [
   { field: 'address', title: 'address\n(textArea editor)', width: 300, editor: 'textArea-editor' },
   { field: 'tel', title: 'telephone', width: 150 },
   { field: 'work', title: 'job', width: 200 },
-  { field: 'city', title: 'city', width: 150 },
+  { field: 'city', title: 'city', width: 150 }
 ];
 
 const option = {
@@ -116,8 +127,8 @@ const option = {
   keyboardOptions: {
     copySelected: true,
     pasteValueToCell: true,
-    selectAllOnCtrlA: true,
-  },
+    selectAllOnCtrlA: true
+  }
 };
 
 const app = createApp({
@@ -138,9 +149,9 @@ const app = createApp({
     return {
       records,
       columns,
-      option,
+      option
     };
-  },
+  }
 });
 
 app.component('vue-list-table', VueVTable.ListTable);

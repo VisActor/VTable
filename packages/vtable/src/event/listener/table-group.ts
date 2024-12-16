@@ -398,7 +398,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   };
   const globalPointerdownCallback = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (!table.getElement().contains(target)) {
+    if (!table.getElement().contains(target) && !table.internalProps.menuHandler.containElement(target)) {
       // 如果点击到表格外部的dom
       const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
       getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {

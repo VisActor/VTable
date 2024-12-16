@@ -88,13 +88,22 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 
 是否显示固定列图钉（基本表格生效）
 
-#${prefix} defaultRowHeight(number) = 40
+#${prefix} defaultRowHeight(number|'auto') = 40
 
-默认行高
+默认行高。
+
+- 'auto'：根据行高计算出的默认行高。结合 defaultHeaderRowHeight 使用可以实现表头或者 body 部分的行自动行高计算的效果。
+- 具体数值：设置具体的行高。
 
 #${prefix} defaultHeaderRowHeight(Array|number)
 
-列表头默认行高 可以按逐行设置 如果没有就取 defaultRowHeight
+列表头默认行高 可以按逐行设置, 如果没有设置的话会取 defaultRowHeight 的值作为表头的行高。
+
+具体定义：
+
+```
+  defaultHeaderRowHeight?: (number | 'auto') | (number | 'auto')[];
+```
 
 #${prefix} defaultColWidth(number) = 80
 
@@ -102,7 +111,14 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 
 #${prefix} defaultHeaderColWidth(Array|number)
 
-行表头默认列宽 可以按逐列设置 如果没有就取 defaultColWidth
+行表头默认列宽 可以按逐列设置, 如果没有设置的话会取 defaultColWidth 的值作为表头的列宽高。
+
+具体定义：
+
+```
+  /** 行表头默认列宽 可以按逐列设置 如果没有就取defaultColWidth */
+  defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
+```
 
 #${prefix} keyboardOptions(Object)
 
@@ -144,6 +160,10 @@ export interface SelectAllOnCtrlAOption {
 开启这个配置的话，如果当前是在编辑中的单元格，方向键可以移动到下个单元格并进入编辑状态，而不是编辑文本内字符串的光标移动 。
 
 上下左右方向键切换选中单元格不受该配置影响，
+
+##${prefix} ctrlMultiSelect(boolean) = true
+
+是否开启ctrl多选框，默认开启。
 
 #${prefix} eventOptions(Object)
 
@@ -243,6 +263,10 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 ##${prefix} highlightInRange(boolean) = false
 
 是否在多行或者多列时展示整行或整列高亮效果。
+
+##${prefix} makeSelectCellVisible(boolean) = true
+
+是否将选中的单元格自动滚动到视口内 默认为true。
 
 #${prefix} theme(Object)
 

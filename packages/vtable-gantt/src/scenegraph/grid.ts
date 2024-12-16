@@ -13,8 +13,6 @@ export class Grid {
   y: number;
   width: number;
   height: number;
-  timelineDates: any;
-  colWidthPerDay: number;
   rowHeight: number;
   rowCount: number;
   group: Group;
@@ -34,11 +32,9 @@ export class Grid {
     this.y = scene._gantt.getAllHeaderRowsHeight();
     this.width = scene.tableGroup.attribute.width;
     this.height = scene.tableGroup.attribute.height - scene.timelineHeader.group.attribute.height;
-    this.timelineDates = scene._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
-    this.colWidthPerDay = scene._gantt.parsedOptions.colWidthPerDay;
     this.rowHeight = scene._gantt.parsedOptions.rowHeight;
     this.rowCount = scene._gantt.itemCount;
-    this.allGridWidth = scene._gantt._getAllColsWidth();
+    this.allGridWidth = scene._gantt.getAllDateColsWidth();
     this.allGridHeight = scene._gantt.getAllTaskBarsHeight();
     this.group = new Group({
       x: this.x,
@@ -69,7 +65,7 @@ export class Grid {
       points: [
         { x: 0, y: bottomLineY },
         {
-          x: scene._gantt._getAllColsWidth(),
+          x: scene._gantt.getAllDateColsWidth(),
           y: bottomLineY
         }
       ]
@@ -89,13 +85,11 @@ export class Grid {
       this.group.appendChild(this.verticalLineGroup);
 
       const vLines = [];
-      let x = 0;
-      if (this.gridStyle?.verticalLine.lineWidth & 1) {
-        x = 0.5;
-      }
-      for (let i = 0; i < this.timelineDates?.length - 1; i++) {
-        const dateline = this.timelineDates[i];
-        x = x + Math.floor(this.colWidthPerDay * dateline.days);
+
+      const timelineDates = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
+      const timelineColWidth = this._scene._gantt.parsedOptions.timelineColWidth;
+      for (let i = 0; i < timelineDates?.length - 1; i++) {
+        const x = Math.ceil(timelineColWidth * (i + 1)) + (this.gridStyle?.verticalLine.lineWidth & 1 ? 0.5 : 0);
         const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.verticalLine.lineColor,
@@ -127,7 +121,7 @@ export class Grid {
         y += 0.5;
       }
       for (let i = 0; i < this.rowCount - 1; i++) {
-        y = y + Math.floor(this.rowHeight);
+        y = y + this._scene._gantt.getRowHeightByIndex(i); // Math.floor(this.rowHeight);
         const line = createLine({
           pickable: false,
           stroke: this.gridStyle?.horizontalLine.lineColor,
@@ -152,7 +146,7 @@ export class Grid {
       y: this._scene._gantt.getAllHeaderRowsHeight()
     });
     this.rowCount = this._scene._gantt.itemCount;
-    this.allGridWidth = this._scene._gantt._getAllColsWidth();
+    this.allGridWidth = this._scene._gantt.getAllDateColsWidth();
     this.allGridHeight = this._scene._gantt.getAllTaskBarsHeight();
     this.verticalLineGroup?.parent.removeChild(this.verticalLineGroup);
     this.horizontalLineGroup?.parent.removeChild(this.horizontalLineGroup);

@@ -1920,11 +1920,11 @@ export class Scenegraph {
     this.component.drillIcon.update(visible, x, y, drillDown, drillUp, this);
   }
 
-  updateCellContent(col: number, row: number) {
+  updateCellContent(col: number, row: number, forceFastUpdate: boolean = false) {
     if (this.clear) {
       return undefined;
     }
-    return updateCell(col, row, this.table);
+    return updateCell(col, row, this.table, undefined, undefined, forceFastUpdate);
   }
 
   setPixelRatio(pixelRatio: number) {
@@ -1941,7 +1941,8 @@ export class Scenegraph {
     removeCells: CellAddress[],
     addCells: CellAddress[],
     updateCells: CellAddress[] = [],
-    recalculateColWidths: boolean = true
+    recalculateColWidths: boolean = true,
+    skipUpdateProxy?: boolean
   ) {
     this.table.internalProps.layoutMap.clearCellRangeMap();
     this.table.internalProps.useOneRowHeightFillAll = false;
@@ -1956,7 +1957,7 @@ export class Scenegraph {
       this.table.tableNoFrameHeight;
 
     // add or move rows
-    updateRow(removeCells, addCells, updateCells, this.table);
+    updateRow(removeCells, addCells, updateCells, this.table, skipUpdateProxy);
 
     // update column width and row height
 

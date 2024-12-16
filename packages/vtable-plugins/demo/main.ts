@@ -130,35 +130,4 @@ const run = () => {
   );
 };
 
-function bindSearch() {
-  const searchInput = document.getElementById('search-component-input') as HTMLInputElement;
-  const searchBtn = document.getElementById('search-component-search') as HTMLButtonElement;
-  const searchResult = document.getElementById('search-component-result') as HTMLSpanElement;
-  const searchPrevBtn = document.getElementById('search-component-prev') as HTMLButtonElement;
-  const searchNextBtn = document.getElementById('search-component-next') as HTMLButtonElement;
-
-  searchBtn.addEventListener('click', () => {
-    if (window.search) {
-      const result = window.search.search(searchInput.value);
-      searchResult.innerText = `${result.index + 1}/${result.results.length}`;
-    }
-  });
-
-  searchPrevBtn.addEventListener('click', () => {
-    if (window.search) {
-      const result = window.search.prev();
-      searchResult.innerText = `${result.index + 1}/${result.results.length}`;
-    }
-  });
-
-  searchNextBtn.addEventListener('click', () => {
-    if (window.search) {
-      const result = window.search.next();
-      searchResult.innerText = `${result.index + 1}/${result.results.length}`;
-    }
-  });
-}
-
 run();
-
-bindSearch();

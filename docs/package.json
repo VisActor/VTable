@@ -13,6 +13,7 @@
     "@arco-design/web-react": "2.60.2",
     "@arco-design/web-vue": "^2.11.0",
     "@visactor/vtable": "workspace:*",
+    "@visactor/vtable-gantt": "workspace:*",
     "@visactor/react-vtable": "workspace:*",
     "@visactor/vue-vtable": "workspace:*",
     "@visactor/openinula-vtable": "workspace:*",

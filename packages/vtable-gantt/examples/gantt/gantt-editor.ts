@@ -1,7 +1,7 @@
 import type { ColumnsDefine } from '@visactor/vtable';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
-import type { GanttConstructorOptions, TYPES } from '../../src/index';
-import { Gantt, VTable } from '../../src/index';
+import type { GanttConstructorOptions } from '../../src/index';
+import { Gantt, VTable, TYPES } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 const date_input_editor = new DateInputEditor({});
@@ -38,7 +38,7 @@ export function createTable() {
       priority: 'P1'
     },
     {
-      id: 1,
+      id: 4,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
       start: '2024-08-04',
@@ -47,7 +47,7 @@ export function createTable() {
       priority: 'P0'
     },
     {
-      id: 2,
+      id: 5,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
       start: '07/24/2024',
@@ -944,6 +944,39 @@ export function createTable() {
         }
       }
     ],
+
+    dependency: {
+      links: [
+        {
+          type: TYPES.DependencyType.FinishToStart,
+          linkedFromTaskKey: 1,
+          linkedToTaskKey: 2
+        },
+        {
+          type: TYPES.DependencyType.StartToFinish,
+          linkedFromTaskKey: 2,
+          linkedToTaskKey: 3
+        },
+        {
+          type: TYPES.DependencyType.StartToStart,
+          linkedFromTaskKey: 3,
+          linkedToTaskKey: 4
+        },
+        {
+          type: TYPES.DependencyType.FinishToFinish,
+          linkedFromTaskKey: 4,
+          linkedToTaskKey: 5
+        }
+      ],
+      // linkLineSelectable: false,
+      linkSelectedLineStyle: {
+        shadowBlur: 5, //阴影宽度
+        shadowColor: 'red',
+        lineColor: 'red',
+        lineWidth: 1
+      },
+      linkCreatable: true
+    },
     rowSeriesNumber: {
       title: '行号',
       dragOrder: true,

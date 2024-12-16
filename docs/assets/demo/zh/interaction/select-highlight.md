@@ -3,7 +3,7 @@ category: examples
 group: Interaction
 title: 选择单元格整行高亮
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select-highlight.png
-link: '../guide/interaction/select'
+link: interaction/select
 option: ListTable#select
 ---
 

@@ -27,6 +27,9 @@ export interface PopoverProps {
   position?: Anchor;
   content?: ReactNode;
   // onVisibleChange?: (visible: boolean) => void;
+
+  panelStyle?: CSSProperties;
+  arrowStyle?: CSSProperties;
 }
 
 const defaultProps: PopoverProps = {
@@ -36,7 +39,7 @@ const defaultProps: PopoverProps = {
   position: 'top'
 };
 
-const poptipPanalStyle: CSSProperties = {
+const defaultPoptipPanelStyle: CSSProperties = {
   backgroundColor: 'rgb(255, 255, 255)',
   boxShadow: '0 4px 10px rgba(0, 0, 0, .1)',
   fontSize: '14px',
@@ -48,7 +51,13 @@ const poptipPanalStyle: CSSProperties = {
   padding: '12px 16px'
 };
 
-const Tooltip = (props: { visible: boolean; content: ReactNode; position: Anchor }) => {
+const Tooltip = (props: {
+  visible: boolean;
+  content: ReactNode;
+  position: Anchor;
+  panelStyle?: CSSProperties;
+  arrowStyle?: CSSProperties;
+}) => {
   const arrowStyle: CSSProperties = {
     content: '',
     height: '8px',
@@ -60,12 +69,14 @@ const Tooltip = (props: { visible: boolean; content: ReactNode; position: Anchor
     transformOrigin: '50% 50% 0',
     backgroundColor: 'rgb(255, 255, 255)',
     border: '1px solid rgb(229, 230, 235)',
-    ...getArrowStyle(props.position)
+    ...getArrowStyle(props.position),
+
+    ...props.arrowStyle
   };
 
   return props.visible ? (
     <>
-      <div style={poptipPanalStyle}>{props.content}</div>
+      <div style={merge({}, defaultPoptipPanelStyle, props.panelStyle)}>{props.content}</div>
       <div style={arrowStyle}></div>
     </>
   ) : (
@@ -75,7 +86,7 @@ const Tooltip = (props: { visible: boolean; content: ReactNode; position: Anchor
 
 function PopoverComponent(baseProps: PopoverProps, ref: React.Ref<IGroup>) {
   const props: PopoverProps = merge({}, defaultProps, baseProps);
-  const { content, position, popupVisible, defaultPopupVisible, children } = props;
+  const { content, position, popupVisible, defaultPopupVisible, panelStyle, arrowStyle, children } = props;
   let popoverRef = React.useRef<IGroup>(null);
   popoverRef = ref ? (ref as React.RefObject<IGroup>) : popoverRef;
 
@@ -105,7 +116,15 @@ function PopoverComponent(baseProps: PopoverProps, ref: React.Ref<IGroup>) {
       // width: 100,
       // height: 100,
       style: poptipContainerStyle,
-      element: <Tooltip visible={popupOpen} content={content} position={position} />,
+      element: (
+        <Tooltip
+          visible={popupOpen}
+          content={content}
+          position={position}
+          panelStyle={panelStyle}
+          arrowStyle={arrowStyle}
+        />
+      ),
       container: null,
       visible: true,
       pointerEvents: false,

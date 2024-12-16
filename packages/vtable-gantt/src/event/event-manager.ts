@@ -4,7 +4,7 @@ import type { Gantt } from '../Gantt';
 import { EventHandler } from '../event/EventHandler';
 import { handleWhell } from '../event/scroll';
 import { formatDate, parseDateFormat, throttle } from '../tools/util';
-import { GANTT_EVENT_TYPE, InteractionState } from '../ts-types';
+import { GANTT_EVENT_TYPE, InteractionState, TasksShowMode } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
 import { DayTimes, getDateIndexByX, getTaskIndexByY } from '../gantt-helper';
@@ -140,42 +140,56 @@ function bindTableGroupListener(event: EventManager) {
           scene._gantt.stateManager.hoverTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
           stateManager.showTaskBarHover();
           if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR)) {
-            const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
-            const record = scene._gantt.getRecordByIndex(taskIndex);
+            // const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
+            const taskIndex = taskBarTarget.task_index;
+            const sub_task_index = taskBarTarget.sub_task_index;
+            const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
               federatedEvent: e,
               event: e.nativeEvent,
               index: taskIndex,
+              sub_task_index,
               record
             });
           }
         }
       } else {
         if (scene._gantt.stateManager.hoverTaskBar.target) {
-          stateManager.hideTaskBarHover(e);
           if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR)) {
-            const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
-            const record = scene._gantt.getRecordByIndex(taskIndex);
+            // const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
+            const taskIndex = scene._gantt.stateManager.hoverTaskBar.target.task_index;
+            const sub_task_index = scene._gantt.stateManager.hoverTaskBar.target.sub_task_index;
+            const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
               federatedEvent: e,
               event: e.nativeEvent,
               index: taskIndex,
+              sub_task_index,
               record
             });
           }
+          stateManager.hideTaskBarHover(e);
         }
         //#region hover到某一个任务 检查有没有日期安排，没有的话显示创建按钮
-        if (gantt.parsedOptions.taskBarCreatable) {
+        if (
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Inline &&
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact &&
+          gantt.parsedOptions.taskBarCreatable
+        ) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);
           const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
-          if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord) {
+          if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord && !recordTaskInfo.taskRecord.vtableMerge) {
             const dateIndex = getDateIndexByX(e.offset.x, gantt);
-            const showX = dateIndex * gantt.parsedOptions.timelineColWidth - gantt.stateManager.scroll.horizontalBarPos;
+            const showX =
+              (dateIndex >= 1 ? gantt.getDateColsWidth(0, dateIndex - 1) : 0) -
+              gantt.stateManager.scroll.horizontalBarPos;
             const showY = taskIndex * gantt.parsedOptions.rowHeight - gantt.stateManager.scroll.verticalBarPos;
             //    -
             // (gantt.stateManager.scroll.horizontalBarPos % gantt.parsedOptions.rowHeight);
             // const date = getDateByX(e.offset.x, gantt);
-            gantt.scenegraph.showTaskCreationButton(showX, showY, taskIndex, recordTaskInfo.taskRecord);
+            gantt.scenegraph.showTaskCreationButton(showX, showY, dateIndex);
             return;
           }
         }
@@ -297,15 +311,17 @@ function bindTableGroupListener(event: EventManager) {
     });
     if (isClickBar && scene._gantt.parsedOptions.taskBarSelectable && event.poniterState === 'down') {
       stateManager.hideDependencyLinkSelectedLine();
-      scene._gantt.stateManager.selectedTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
-      stateManager.showTaskBarSelectedBorder();
+      stateManager.showTaskBarSelectedBorder(taskBarTarget);
       if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
-        const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-        const record = gantt.getRecordByIndex(taskIndex);
+        // const taskIndex = getTaskIndexByY(e.offset.y, gantt);
+        const taskIndex = taskBarTarget.task_index;
+        const sub_task_index = taskBarTarget.sub_task_index;
+        const record = gantt.getRecordByIndex(taskIndex, sub_task_index);
         gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
           federatedEvent: e,
           event: e.nativeEvent,
           index: taskIndex,
+          sub_task_index,
           record
         });
       }
@@ -315,19 +331,15 @@ function bindTableGroupListener(event: EventManager) {
       const taskIndex = getTaskIndexByY(e.offset.y, gantt);
       const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
       if (recordTaskInfo.taskRecord) {
-        const dateFormat = gantt.parsedOptions.dateFormat ?? 'yyyy-mm-dd';
-        recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField] = recordTaskInfo.taskRecord[
-          gantt.parsedOptions.endDateField
-        ] = formatDate(
-          new Date(
-            gantt.parsedOptions._minDateTime +
-              Math.floor(
-                (e.offset.x + gantt.stateManager.scroll.horizontalBarPos) / gantt.parsedOptions.colWidthPerDay
-              ) *
-                DayTimes
-          ),
-          dateFormat
-        );
+        // const minTimeUnit = gantt.parsedOptions.reverseSortedTimelineScales[0].unit;
+        const dateFormat =
+          gantt.parsedOptions.dateFormat ??
+          (gantt.parsedOptions.timeScaleIncludeHour ? 'yyyy-mm-dd hh:mm:ss' : 'yyyy-mm-dd');
+        const dateIndex = getDateIndexByX(e.offset.x, gantt);
+        const dateRange = gantt.getDateRangeByIndex(dateIndex);
+        recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField] = formatDate(dateRange.startDate, dateFormat);
+        recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField] = formatDate(dateRange.endDate, dateFormat);
+
         gantt.scenegraph.hideTaskCreationButton();
         gantt.updateTaskRecord(recordTaskInfo.taskRecord, taskIndex);
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE)) {
@@ -493,8 +505,8 @@ function bindContainerDomListener(eventManager: EventManager) {
     }
     if (stateManager.interactionState === InteractionState.grabing && gantt.eventManager.poniterState === 'draging') {
       const lastX = gantt.eventManager.lastDragPointerXYOnWindow?.x ?? e.x;
-      // const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
-      if (Math.abs(lastX - e.x) >= 1) {
+      const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
+      if (Math.abs(lastX - e.x) >= 1 || Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizingTableWidth()) {
           stateManager.hideDependencyLinkSelectedLine();
           stateManager.hideTaskBarSelectedBorder();
@@ -527,7 +539,7 @@ function bindContainerDomListener(eventManager: EventManager) {
       if (stateManager.isResizingTableWidth()) {
         stateManager.endResizeTableWidth();
       } else if (stateManager.isMoveingTaskBar()) {
-        stateManager.endMoveTaskBar(e.x);
+        stateManager.endMoveTaskBar();
       } else if (stateManager.isResizingTaskBar()) {
         stateManager.endResizeTaskBar(e.x);
       }

@@ -88,21 +88,37 @@ Allow the number of frozen columns, indicating how many columns will show the fr
 
 Whether to show the fixed column pin icon, effective for basic tables
 
-#${prefix} defaultRowHeight(number) = 40
+#${prefix} defaultRowHeight(number|'auto') = 40
 
-Default row height
+Default row height.
+
+- 'auto': The default row height calculated based on the row height. Combined with defaultHeaderRowHeight, it can achieve the effect of automatic row height calculation for the header or body part.
+- Specific value: Set a specific row height.
 
 #${prefix} defaultHeaderRowHeight(Array|number)
 
-Default row height for list header, can be set row by row. If not set, defaultRowHeight is used.
+The default row height of the column header can be set row by row. If not set, the defaultRowHeight value will be used as the row height of the table header.
+
+Specific definition:
+
+```
+defaultHeaderRowHeight?: (number | 'auto') | (number | 'auto')[];
+```
 
 #${prefix} defaultColWidth(number) = 80
 
-Default column width value
+Column width default value
 
 #${prefix} defaultHeaderColWidth(Array|number)
 
-Default column width for row headers, can be set column by column. If not set, defaultColWidth is used.
+The default column width of the row header can be set column by column. If not set, the value of defaultColWidth will be used as the column width and height of the header.
+
+Specific definition:
+
+```
+/** The default column width of the row header can be set column by column. If not, defaultColWidth is used */
+defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
+```
 
 #${prefix} keyboardOptions(Object)
 
@@ -146,6 +162,10 @@ The default is not enabled, which is false.
 If this configuration is turned on, if you are currently editing a cell, the arrow keys can move to the next cell and enter the editing state, instead of moving the cursor to edit the string within the text.
 
 Switching the selected cells with the up, down, left and right arrow keys is not affected by this configuration.
+
+##${prefix} ctrlMultiSelect(boolean) = true
+
+Whether to enable ctrl multi-select. Default is true.
 
 #${prefix} eventOptions(Object)
 
@@ -247,7 +267,11 @@ Whether to disable dragging selection.
 
 ##${prefix} highlightInRange(boolean) = false
 
-Will the entire row or column be highlighted when select in multiple rows or columns?
+Will the entire row or column be highlighted when select in multiple rows or columns.
+
+##${prefix} makeSelectCellVisible(boolean) = true
+
+Whether to make the selected cell visible, default is true.
 
 #${prefix} theme(Object)
 

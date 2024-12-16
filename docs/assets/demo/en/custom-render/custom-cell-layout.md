@@ -3,7 +3,7 @@ category: examples
 group: Custom
 title: Cell custom layout
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png
-link: '../guide/custom_define/custom_layout'
+link: custom_define/custom_layout
 option: ListTable-columns-text#customLayout
 ---
 
@@ -19,7 +19,7 @@ Customize cell content to achieve image and text mixing effects
 
 ```javascript livedemo template=vtable
 // only use for website
-const {createGroup, createText, createImage, Tag, CheckBox, Radio} = VRender;
+const { createGroup, createText, createImage, Tag, CheckBox, Radio } = VRender;
 // use this for project
 // import {createGroup, createText, createImage, Tag, CheckBox, Radio} from '@visactor/vtable/es/vrender';
 
@@ -117,7 +117,7 @@ const option = {
 
         const containerRight = createGroup({
           height,
-          width: width -60,
+          width: width - 60,
           display: 'flex',
           flexDirection: 'column',
           flexWrap: 'nowrap'

@@ -54,6 +54,7 @@ import {
   sortRecords
 } from './core/record-helper';
 import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
+import { fixUpdateRowRange } from './tools/update-row';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -904,32 +905,40 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.layoutMap.clearCellRangeMap();
     this.internalProps.useOneRowHeightFillAll = false;
     // this.scenegraph.updateHierarchyIcon(col, row);// 添加了updateCells:[{ col, row }] 就不需要单独更新图标了（只更新图标针对有自定义元素的情况 会有更新不到问题）'
-    const updateCells = [{ col, row }];
-    // 如果需要移出的节点超过了当前加载部分最后一行  则转变成更新对应的行
-    if (
-      diffPositions.removeCellPositions?.length > 0 &&
-      diffPositions.removeCellPositions[diffPositions.removeCellPositions.length - 1].row >=
-        this.scenegraph.proxy.rowEnd
-    ) {
-      for (let i = 0; i <= diffPositions.removeCellPositions.length - 1; i++) {
-        if (diffPositions.removeCellPositions[i].row <= this.scenegraph.proxy.rowEnd) {
-          updateCells.push({
-            col: diffPositions.removeCellPositions[i].col,
-            row: diffPositions.removeCellPositions[i].row
-          });
-        }
-      }
-      diffPositions.removeCellPositions = [];
+    // const updateCells = [{ col, row }];
+    // // 如果需要移出的节点超过了当前加载部分最后一行  则转变成更新对应的行
+    // if (
+    //   diffPositions.removeCellPositions?.length > 0 &&
+    //   diffPositions.removeCellPositions[diffPositions.removeCellPositions.length - 1].row >=
+    //     this.scenegraph.proxy.rowEnd
+    // ) {
+    //   for (let i = 0; i <= diffPositions.removeCellPositions.length - 1; i++) {
+    //     if (diffPositions.removeCellPositions[i].row <= this.scenegraph.proxy.rowEnd) {
+    //       updateCells.push({
+    //         col: diffPositions.removeCellPositions[i].col,
+    //         row: diffPositions.removeCellPositions[i].row
+    //       });
+    //     }
+    //   }
+    //   diffPositions.removeCellPositions = [];
 
-      // reset proxy row config
-      this.scenegraph.proxy.refreshRowCount();
-    }
+    //   // reset proxy row config
+    //   this.scenegraph.proxy.refreshRowCount();
+    // }
+
+    const { updateCells, addCells, removeCells } = fixUpdateRowRange(diffPositions, col, row, this);
+    this.reactCustomLayout?.clearCache();
     this.scenegraph.updateRow(
-      diffPositions.removeCellPositions,
-      diffPositions.addCellPositions,
+      // diffPositions.removeCellPositions,
+      // diffPositions.addCellPositions,
+      removeCells,
+      addCells,
       updateCells,
-      recalculateColWidths
+      recalculateColWidths,
+      true
     );
+    this.reactCustomLayout?.updateAllCustomCell();
+
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
       if (this.autoFillWidth && !notFillWidth) {
@@ -1096,9 +1105,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /**
    * 设置表格数据 及排序状态
    * @param records
-   * @param sort
+   * @param option 附近参数，其中的sortState为排序状态，如果设置null 将清除目前的排序状态
    */
-  setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] }): void {
+  setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] | null }): void {
     // 释放事件 及 对象
     this.internalProps.dataSource?.release();
     // 过滤掉dataSource的引用

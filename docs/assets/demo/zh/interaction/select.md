@@ -3,7 +3,7 @@ category: examples
 group: Interaction
 title: 选择单元格
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png
-link: '../guide/interaction/select'
+link: interaction/select
 option: ListTable#keyboardOptions
 ---
 

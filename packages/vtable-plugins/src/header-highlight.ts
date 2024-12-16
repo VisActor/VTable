@@ -36,7 +36,7 @@ export class HeaderHighlightPlugin {
   }
 
   bindEvent() {
-    this.table.on('selected_cell', e => {
+    this.table.on('selected_cell', () => {
       this.updateHighlight();
     });
 

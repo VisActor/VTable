@@ -388,6 +388,9 @@ export function updateHierarchyIcon(col: number, row: number, scene: Scenegraph)
 }
 
 export function updateCellGroupIcon(cellGroup: Group, filter: (icon: Icon) => boolean, dealer: (icon: Icon) => void) {
+  if (!cellGroup || cellGroup.role === 'empty') {
+    return;
+  }
   cellGroup.forEachChildren((child: any) => {
     if (child.type === 'group') {
       updateCellGroupIcon(child, filter, dealer);
