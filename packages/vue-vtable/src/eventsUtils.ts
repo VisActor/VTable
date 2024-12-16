@@ -136,7 +136,9 @@ export const TABLE_EVENTS = {
   onDragFillHandleEnd: EVENT_TYPE.DRAG_FILL_HANDLE_END,
   onDblclickFillHandle: EVENT_TYPE.DBLCLICK_FILL_HANDLE,
   onScrollVerticalEnd: EVENT_TYPE.SCROLL_VERTICAL_END,
-  onScrollHorizontalEnd: EVENT_TYPE.SCROLL_HORIZONTAL_END
+  onScrollHorizontalEnd: EVENT_TYPE.SCROLL_HORIZONTAL_END,
+
+  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE //will remove this typo in upcoming release
 };
 
 export const TABLE_EVENTS_KEYS = Object.keys(TABLE_EVENTS);
