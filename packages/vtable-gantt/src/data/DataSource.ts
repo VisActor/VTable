@@ -10,19 +10,15 @@ import { TasksShowMode } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 export class DataSource {
   records: any[];
-  minDate: Date;
-  maxDate: Date;
   _gantt: Gantt;
   constructor(_gantt: Gantt) {
     this._gantt = _gantt;
     this.records = _gantt.records;
-    this.minDate = _gantt.parsedOptions.minDate;
-    this.maxDate = _gantt.parsedOptions.maxDate;
     this.processRecords();
   }
   processRecords() {
-    const needMinDate = !this.minDate;
-    const needMaxDate = !this.maxDate;
+    const needMinDate = !this._gantt.options.minDate;
+    const needMaxDate = !this._gantt.options.maxDate;
 
     let minDate = Number.MAX_SAFE_INTEGER;
     let maxDate = Number.MIN_SAFE_INTEGER;
@@ -58,9 +54,6 @@ export class DataSource {
             });
         }
       }
-
-      needMinDate && (this.minDate = createDateAtMidnight(minDate));
-      needMaxDate && (this.maxDate = createDateAtMidnight(maxDate));
 
       const { unit: minTimeUnit, startOfWeek, step } = this._gantt.parsedOptions.reverseSortedTimelineScales[0];
       if (needMinDate) {
