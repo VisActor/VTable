@@ -40,6 +40,7 @@ import {
   getHorizontalScrollBarSize,
   getVerticalScrollBarSize,
   initOptions,
+  updateOptionsWhenDateRangeChanged,
   updateOptionsWhenRecordChanged,
   updateOptionsWhenScaleChanged,
   updateSplitLineAndResizeLine
@@ -900,6 +901,36 @@ export class Gantt extends EventTarget {
     }
     this.scenegraph = null;
   }
+
+  updateOption(options: GanttConstructorOptions) {
+    this.taskListTableInstance?.release(); //这里省事用了先释放再重新创建的方式  也可以考虑调用listTable的updateOption
+    (this.parsedOptions as any) = {};
+    this.options = options;
+
+    this.taskTableWidth =
+      typeof options?.taskListTable?.tableWidth === 'number' ? options?.taskListTable?.tableWidth : -1; //-1 只是作为标记  后续判断该值进行自动计算宽度
+    this.taskTableColumns = options?.taskListTable?.columns ?? [];
+    this.records = options?.records ?? [];
+
+    this._sortScales();
+    initOptions(this);
+    this.data.setRecords(this.records);
+    this._generateTimeLineDateMap();
+
+    this.timeLineHeaderLevel = this.parsedOptions.sortedTimelineScales.length;
+    this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
+
+    this._updateSize();
+
+    this._generateListTable();
+    this._syncPropsFromTable();
+
+    updateSplitLineAndResizeLine(this);
+    this.scenegraph.updateSceneGraph();
+
+    this.scenegraph.afterCreateSceneGraph();
+    this._scrollToMarkLine();
+  }
   setRecords(records: any[]) {
     this.records = records;
     this.data.setRecords(records);
@@ -937,6 +968,16 @@ export class Gantt extends EventTarget {
         }
       }
     }
+  }
+  /** 更新日期范围 */
+  updateDateRange(minDate: string, maxDate: string) {
+    this.options.minDate = minDate;
+    this.options.maxDate = maxDate;
+    updateOptionsWhenDateRangeChanged(this);
+    this._generateTimeLineDateMap();
+    this._updateSize();
+    this.scenegraph.refreshAll();
+    this._scrollToMarkLine();
   }
   /** 滚动到scrollToMarkLineDate所指向的日期 */
   _scrollToMarkLine() {
