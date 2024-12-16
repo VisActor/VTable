@@ -768,10 +768,10 @@ export class StateManager {
 
     this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
-    // 调整列宽期间清空选中清空
-    const isHasSelected = !!this.select.ranges?.length;
-    this.updateSelectPos(-1, -1);
-    this.endSelectCells(true, isHasSelected);
+    // // 调整列宽期间清空选中清空
+    // const isHasSelected = !!this.select.ranges?.length;
+    // this.updateSelectPos(-1, -1);
+    // this.endSelectCells(true, isHasSelected);
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeCol(xInTable: number, yInTable: number) {
