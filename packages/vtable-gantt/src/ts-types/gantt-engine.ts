@@ -29,8 +29,8 @@ export interface ITimelineHeaderStyle {
 }
 export interface IGrid {
   backgroundColor?: string;
-  verticalLine?: ILineStyle;
-  horizontalLine?: ILineStyle;
+  verticalLine?: ILineStyle | ((args: GridVerticalLineStyleArgumentType) => ILineStyle);
+  horizontalLine?: ILineStyle | ((args: GridHorizontalLineStyleArgumentType) => ILineStyle);
 }
 //#region gantt
 export interface GanttConstructorOptions {
@@ -269,6 +269,14 @@ export type DateFormatArgumentType = {
   startDate: Date;
   endDate: Date;
 };
+export type TaskBarInteractionArgumentType = {
+  taskRecord: string;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+
 export type TaskBarCustomLayoutArgumentType = {
   width: number;
   height: number;
@@ -305,6 +313,22 @@ export type IDateCustomLayoutObj = {
   renderDefaultText?: boolean; // 默认false
 };
 export type IDateCustomLayout = (args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj;
+
+export type GridVerticalLineStyleArgumentType = {
+  /** 竖线是第几条线*/
+  index: number;
+  /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
+  dateIndex: number;
+  /** 如果是竖线，date代表分割线指向的具体时间点 */
+  date?: Date;
+  ganttInstance: Gantt;
+};
+
+export type GridHorizontalLineStyleArgumentType = {
+  /** 横线是第几条线 也代表了左侧表格的body行号 */
+  index: number;
+  ganttInstance: Gantt;
+};
 
 export type TaskCreationCustomLayoutArgumentType = {
   width: number;
