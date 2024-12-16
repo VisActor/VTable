@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "column.text.mergeCell以函数调用时添加了当前单元格/对比单元格的定位和表格实例参数，方便在函数中使用:vtable/src/layout/cell-range/simple-cell-range.ts \n更新mergeCell的类型定义vtable/src/ts-types/common.ts,\n更新中英教程文档column/text-column-type.md,\n新增demo文档list/list-merge-cell-function.md",
+      "comment": "Added the current cell/compared cell location and table instance parameters to column.text.mergeCell when invoked as a function, making them accessible within the function: vtable/src/layout/cell-range/simple-cell-range.ts\nUpdated the type definition of mergeCell: vtable/src/ts-types/common.ts\nUpdated both English and Chinese documentation: column/text-column-type.md\nAdded a new demo document: list/list-merge-cell-function.md",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
