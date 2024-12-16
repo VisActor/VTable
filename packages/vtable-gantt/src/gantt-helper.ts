@@ -1008,3 +1008,16 @@ export function updateOptionsWhenRecordChanged(gantt: Gantt) {
   }
   gantt.parsedOptions.dependencyLinks = options.dependency?.links;
 }
+
+export function updateOptionsWhenDateRangeChanged(gantt: Gantt) {
+  const options = gantt.options;
+  const { unit: minTimeUnit, startOfWeek, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+  gantt.parsedOptions.minDate = options?.minDate
+    ? getStartDateByTimeUnit(new Date(options.minDate), minTimeUnit, startOfWeek)
+    : undefined;
+  gantt.parsedOptions.maxDate = options?.maxDate
+    ? getEndDateByTimeUnit(gantt.parsedOptions.minDate, new Date(options.maxDate), minTimeUnit, step)
+    : undefined;
+  gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
+  gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
+}
