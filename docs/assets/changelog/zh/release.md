@@ -1,3 +1,20 @@
+# v1.13.2
+
+2024-12-16
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: 任务条调整大小和可移动支持函数配置 [#3074](https://github.com/VisActor/VTable/issues/3074)
+- **@visactor/vtable-gantt**: 添加 updateOption 和 updateScales API
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 在 iframe 中进行复制权限检查 [#3077](https://github.com/VisActor/VTable/issues/3077)
+- **@visactor/vtable**: 当有选中单元格时调整列宽或行高出错 [#3085](https://github.com/VisActor/VTable/issues/3085)
+- **@visactor/vtable-gantt**: 考虑未设置 minDate 和 maxDate 时调用 setRecords API
+
+[更多详情请查看 v1.13.2](https://github.com/VisActor/VTable/releases/tag/v1.13.2)
+
 # v1.13.1
 
 2024-12-13
