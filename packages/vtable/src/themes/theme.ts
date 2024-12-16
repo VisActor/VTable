@@ -570,6 +570,9 @@ export class TableTheme implements ITableThemeDefine {
         get width(): number {
           return columnResize.width ?? columnResize.lineWidth + 2;
         },
+        get resizeHotSpotSize(): number {
+          return columnResize.resizeHotSpotSize ?? 16;
+        },
         get labelColor(): string {
           return columnResize.labelColor ?? '#FFF';
         },
