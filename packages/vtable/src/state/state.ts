@@ -198,7 +198,8 @@ export class StateManager {
   /**
    * 对应原始数据列表顺序的checked状态
    */
-  checkedState: Record<string | number, boolean>[] = [];
+  // checkedState: Record<string | number, boolean>[] = [];
+  checkedState: Map<string | number, Record<string | number, boolean>> = new Map();
   /**
    * 对应表头checked状态
    */
@@ -1582,7 +1583,7 @@ export class StateManager {
   }
 
   changeCheckboxAndRadioOrder(sourceIndex: number, targetIndex: number) {
-    if (this.checkedState.length) {
+    if (this.checkedState.size) {
       changeCheckboxOrder(sourceIndex, targetIndex, this);
     }
     if (this.radioState.length) {
