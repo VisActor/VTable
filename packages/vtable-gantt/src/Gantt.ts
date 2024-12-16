@@ -22,7 +22,8 @@ import type {
   ITaskBarSelectedStyle,
   ITaskBarHoverStyle,
   ITaskLinkSelectedStyle,
-  IPointStyle
+  IPointStyle,
+  TaskBarInteractionArgumentType
 } from './ts-types';
 import { TasksShowMode } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
@@ -123,8 +124,11 @@ export class Gantt extends EventTarget {
     taskBarSelectedStyle: ITaskBarSelectedStyle;
     taskBarSelectable: boolean;
     taskBarLabelText: ITaskBarLabelText;
-    taskBarMoveable: boolean;
-    taskBarResizable: boolean;
+    taskBarMoveable: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+    taskBarResizable:
+      | boolean
+      | [boolean, boolean]
+      | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
     taskBarDragOrder: boolean;
     taskBarLabelStyle: ITaskBarLabelTextStyle;
     taskBarCustomLayout: ITaskBarCustomLayout;
