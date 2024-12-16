@@ -16,7 +16,11 @@ export function getAxisDomainRangeAndLabels(
   axisOption: any,
   isZeroAlign: boolean,
   axisLength: number,
-  skipTick?: boolean
+  // skipTick?: boolean,
+  target?: {
+    targetTicks: number[];
+    targetRange: { min: number; max: number };
+  }
 ) {
   if (axisOption?.zero) {
     min = Math.min(min, 0);
@@ -51,7 +55,9 @@ export function getAxisDomainRangeAndLabels(
   }
   scale.domain([min, max], !!axisOption?.nice);
 
-  if (axisOption?.nice) {
+  if (target) {
+    forceTickCountNice(scale as LinearScale, target);
+  } else if (axisOption?.nice) {
     let tickCount = axisOption.tick?.forceTickCount ?? axisOption.tick?.tickCount ?? 10;
     if (isFunction(tickCount)) {
       tickCount = tickCount({
@@ -77,21 +83,31 @@ export function getAxisDomainRangeAndLabels(
 
   delete (scale as any)._niceType; // ensure scaleTicks consistent in `measurement`, `component label` and `chart`
   let scaleTicks;
-  if (!skipTick) {
-    if (axisOption?.tick?.forceTickCount) {
-      scaleTicks = scale.forceTicks(axisOption?.tick?.forceTickCount);
-    } else {
-      scaleTicks = scale.ticks(axisOption?.tick?.tickCount ?? DEFAULT_CONTINUOUS_TICK_COUNT, {
-        noDecimals: axisOption?.tick?.noDecimals
-      });
-    }
-    // console.log(scaleTicks);
+
+  if (target?.targetTicks?.length ?? axisOption?.tick?.forceTickCount) {
+    scaleTicks = scale.forceTicks(target?.targetTicks?.length ?? axisOption?.tick?.forceTickCount);
+  } else {
+    scaleTicks = scale.ticks(axisOption?.tick?.tickCount ?? DEFAULT_CONTINUOUS_TICK_COUNT, {
+      noDecimals: axisOption?.tick?.noDecimals
+    });
   }
 
   return {
     range: scale.domain(),
     ticks: scaleTicks
   };
+}
+
+function forceTickCountNice(
+  scale: LinearScale,
+  target: {
+    targetTicks: number[];
+    targetRange: { min: number; max: number };
+  }
+) {
+  scale.niceMax(target.targetTicks.length);
+
+  // to do: nice new ticks
 }
 
 export type GetAxisDomainRangeAndLabels = typeof getAxisDomainRangeAndLabels;

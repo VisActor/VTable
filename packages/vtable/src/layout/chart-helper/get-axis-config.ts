@@ -777,12 +777,17 @@ function getRange(
     const { range: newRange, ticks: newTicks } = getAxisDomainRangeAndLabels(
       rangeConfig.range.min,
       rangeConfig.range.max,
-      merge({}, rangeConfig.axisOption, { nice: true, tick: { forceTickCount: targetTicks.length } }),
+      // merge({}, rangeConfig.axisOption, { nice: true, tick: { forceTickCount: targetTicks.length } }),
+      rangeConfig.axisOption,
       rangeConfig.isZeroAlign,
       // layout._table.getColWidth(col)
       position === 'bottom' || position === 'top'
         ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
-        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight // avoid 0, 0 causes NaN
+        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight, // avoid 0, 0 causes NaN
+      {
+        targetTicks,
+        targetRange
+      }
     );
     rangeConfig.range.min = newRange[0];
     rangeConfig.range.max = newRange[1];
@@ -911,12 +916,16 @@ export function getAxisRangeAndTicks(
     const { range: newRange, ticks: newTicks } = getAxisDomainRangeAndLabels(
       range.min,
       range.max,
-      merge({}, axisOption, { nice: true, tick: { forceTickCount: targetTicks.length } }),
+      // merge({}, axisOption, { nice: true, tick: { forceTickCount: targetTicks.length } }),
       isZeroAlign,
       // layout._table.getColWidth(col)
       position === 'bottom' || position === 'top'
         ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
-        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight // avoid 0, 0 causes NaN
+        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight, // avoid 0, 0 causes NaN
+      {
+        targetTicks,
+        targetRange
+      }
     );
     range.min = newRange[0];
     range.max = newRange[1];

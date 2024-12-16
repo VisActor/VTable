@@ -37,7 +37,10 @@ export function getTickModeFunction(
     ? () => {
         const newTicks: number[] = targetTicks.map((value: number) => {
           const percent = (value - targetRange.min) / (targetRange.max - targetRange.min);
-          return (range.max - range.min) * percent + range.min;
+          const tick = (range.max - range.min) * percent + range.min;
+          // TO BE FIXED: 保留2位有效数字，避免出现过长的数字
+          return Math.round(tick * 100) / 100;
+          // return tick;
         });
         return newTicks;
       }
