@@ -20,6 +20,14 @@
 
 具体 ListTable 的接口参考：https://visactor.io/vtable/api/Methods
 
+### updateOptions(Function)
+
+更新 options
+
+```
+  updateOptions: (options: GanttConstructorOptions) => void
+```
+
 ### setRecords(Function)
 
 设置数据
@@ -37,6 +45,14 @@
 ```
 
 {{ use: common-gantt-timeline-scale }}
+
+### updateDateRange(Function)
+
+更新甘特图日期范围
+
+```
+  updateDateRange: (minDate: string, maxDate: string) => void
+```
 
 ### updateTaskRecord(Function)
 

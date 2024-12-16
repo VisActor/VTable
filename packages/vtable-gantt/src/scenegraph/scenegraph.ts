@@ -119,6 +119,21 @@ export class Scenegraph {
     //初始化换位交互标记线
     scene.dragOrderLine = new DragOrderLine(scene);
   }
+  updateSceneGraph() {
+    const gantt = this._gantt;
+    this.tableGroupWidth = gantt.tableNoFrameWidth;
+    this.tableGroupHeight = Math.min(gantt.tableNoFrameHeight, gantt.drawHeight);
+    let width;
+    let height;
+    if (Env.mode === 'node') {
+    } else {
+      vglobal.setEnv('browser');
+      width = gantt.canvas.width;
+      height = gantt.canvas.height;
+    }
+    this.stage.resize(width, height);
+    this.refreshAll();
+  }
 
   afterCreateSceneGraph() {
     this.scrollbarComponent.updateScrollBar();

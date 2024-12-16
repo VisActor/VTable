@@ -48,17 +48,48 @@ ${prefix} customLayout(ITaskBarCustomLayout)
 
 {{ use: common-gantt-task-bar-custom-layout }}
 
-${prefix} resizable(boolean) = true
+${prefix} resizable(boolean | [ boolean, boolean ] | Function) = true
 
 任务条是否可调整大小。默认为 true
 
 非必填
 
-${prefix} moveable(boolean) = true
+```
+ /** 任务条是否可调整大小。 配置函数可以 根据情况来返回是否可调整大小 */
+    resizable?:
+      | boolean
+      | [boolean, boolean]
+      | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
+
+
+//其中：
+export type TaskBarInteractionArgumentType = {
+  taskRecord: string;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+```
+
+${prefix} moveable(boolean | Function) = true
 
 任务条是否可移动。默认为 true
 
 非必填
+
+```
+moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+
+//其中：
+export type TaskBarInteractionArgumentType = {
+  taskRecord: string;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+```
 
 ${prefix} hoverBarStyle(ITaskBarHoverStyle)
 
