@@ -131,7 +131,7 @@ export const TABLE_EVENTS = {
   // pivot chart only
   onVChartEventType: EVENT_TYPE.VCHART_EVENT_TYPE,
 
-  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
+  onChangeCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
   onMousedownFillHandle: EVENT_TYPE.MOUSEDOWN_FILL_HANDLE,
   onDragFillHandleEnd: EVENT_TYPE.DRAG_FILL_HANDLE_END,
   onDblclickFillHandle: EVENT_TYPE.DBLCLICK_FILL_HANDLE,
