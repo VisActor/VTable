@@ -6,11 +6,22 @@ export function getCellFont(cellStyle: CellStyle, cellType: CellType): Partial<E
   return {
     name: getFirstFontFromFontFamily(cellStyle.fontFamily as string) || 'Arial', // only one font family name
     size: cellStyle.fontSize || 10,
-    bold: cellStyle.fontWeight === 'bold', // only bold or not
+    // bold: cellStyle.fontWeight === 'bold', // only bold or not
+    bold: isFontBold(cellStyle.fontWeight), // only bold or not
     italic: cellStyle.fontStyle === 'italic', // only italic or not
     color: getColor(cellType === 'link' ? (cellStyle._linkColor as string) : (cellStyle.color as string)),
     underline: cellStyle.underline
   };
+}
+
+function isFontBold(fontWeight: string | number) {
+  if (typeof fontWeight === 'number') {
+    return fontWeight >= 600;
+  }
+  if (Number(fontWeight) >= 600) {
+    return true;
+  }
+  return fontWeight === 'bold';
 }
 
 function getFirstFontFromFontFamily(fontFamily: string) {
