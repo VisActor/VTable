@@ -525,7 +525,7 @@ export interface BaseTableConstructorOptions {
   renderOption?: any;
 
   formatCopyValue?: (value: string) => string;
-  customComputeRowHeight?: (computeArgs: { row: number; table: BaseTableAPI }) => number;
+  customComputeRowHeight?: (computeArgs: { row: number; table: BaseTableAPI }) => number | 'auto' | undefined;
 }
 export interface BaseTableAPI {
   id: string;
@@ -900,7 +900,7 @@ export interface BaseTableAPI {
   isSeriesNumber: (col: number, row?: number) => boolean;
   isHasSeriesNumber: () => boolean;
   leftRowSeriesNumberCount: number;
-  isAutoRowHeight: (row: number) => boolean;
+  isAutoRowHeight: (row?: number) => boolean;
 
   reactCustomLayout?: ReactCustomLayout;
   checkReactCustomLayout: (removeAllContainer: () => void) => void;

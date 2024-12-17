@@ -1353,8 +1353,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this._adjustColWidth(col, this._colWidthDefineToPxWidth(width));
   }
   /** 判断某行是否应该计算行高 */
-  isAutoRowHeight(row: number): boolean {
+  isAutoRowHeight(row?: number): boolean {
     if (this.heightMode === 'autoHeight') {
+      return true;
+    } else if (this.options.customComputeRowHeight) {
       return true;
     } else if (row >= 0 && row < this.columnHeaderLevelCount) {
       return this.getDefaultRowHeight(row) === 'auto';
@@ -2797,7 +2799,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     this.internalProps.autoWrapText = autoWrapText;
     this.options.autoWrapText = autoWrapText;
-    // if (this.heightMode === 'autoHeight' || this.heightMode === 'adaptive') {
     this.scenegraph.clearCells();
     this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
