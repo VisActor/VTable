@@ -558,7 +558,9 @@ export class Gantt extends EventTarget {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
         const record = table.getRecordByRowCol(0, row);
-        return computeRowsCountByRecordDate(this, record) * this.parsedOptions.rowHeight;
+        if (record) {
+          return computeRowsCountByRecordDate(this, record) * this.parsedOptions.rowHeight;
+        }
       };
       listTable_options.defaultRowHeight = 'auto';
     } else {
