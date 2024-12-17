@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix customStyle update not work #3068",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
