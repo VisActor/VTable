@@ -552,7 +552,7 @@ export class SceneProxy {
   updateCellGroups(count: number) {
     const distRow = Math.min(this.bodyBottomRow, this.rowUpdatePos + count);
     // console.log('updateCellGroups', this.rowUpdatePos, distRow);
-    if (this.table.heightMode === 'autoHeight') {
+    if (this.table.heightMode === 'autoHeight' || this.table.options.customComputeRowHeight) {
       computeRowsHeight(this.table, this.rowUpdatePos, distRow, false);
     }
 
@@ -597,7 +597,7 @@ export class SceneProxy {
   updateBottomFrozenCellGroups() {
     const startRow = this.table.rowCount - this.table.bottomFrozenRowCount;
     const endRow = this.table.rowCount - 1;
-    if (this.table.heightMode === 'autoHeight') {
+    if (this.table.heightMode === 'autoHeight' || this.table.options.customComputeRowHeight) {
       computeRowsHeight(this.table, startRow, endRow, false);
     }
     console.log('updateBottomFrozenCellGroups', startRow, endRow);

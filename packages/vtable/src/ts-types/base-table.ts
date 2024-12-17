@@ -427,7 +427,7 @@ export interface BaseTableConstructorOptions {
   widthAdaptiveMode?: WidthAdaptiveModeDef;
   /** adaptive 模式下高度的适应策略 **/
   heightAdaptiveMode?: HeightAdaptiveModeDef;
-
+  /** 当配置adaptive模式时，默认true，即在计算每行行高的基础上去等比拉伸行高撑满容器宽度的。如果不需要计算行高用默认行高撑满的话请配置为false */
   autoHeightInAdaptiveMode?: boolean;
 
   // /** 行高是否根据内容来计算 */
@@ -525,6 +525,7 @@ export interface BaseTableConstructorOptions {
   renderOption?: any;
 
   formatCopyValue?: (value: string) => string;
+  customComputeRowHeight?: (computeArgs: { row: number; table: BaseTableAPI }) => number;
 }
 export interface BaseTableAPI {
   id: string;

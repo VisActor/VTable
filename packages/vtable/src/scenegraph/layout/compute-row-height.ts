@@ -351,14 +351,23 @@ export function computeRowsHeight(
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
   const isAllRowsAuto =
     table.heightMode === 'autoHeight' ||
+    table.options.customComputeRowHeight ||
     (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
   if (!isAllRowsAuto && table.getDefaultRowHeight(row) !== 'auto') {
     return table.getDefaultRowHeight(row) as number;
   }
 
   let maxHeight;
-  if ((table.options as ListTableConstructorOptions).customComputeRowHeight) {
-    return (table.options as ListTableConstructorOptions).customComputeRowHeight({ row, table: table as ListTableAPI });
+  if (table.options.customComputeRowHeight) {
+    const customRowHeight = table.options.customComputeRowHeight({
+      row,
+      table
+    });
+    if (typeof customRowHeight === 'number') {
+      return customRowHeight;
+    } else if (customRowHeight !== 'auto') {
+      return table.getDefaultRowHeight(row) as number;
+    }
   }
   // 如果是透视图
   if (
