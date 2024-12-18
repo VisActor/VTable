@@ -74,11 +74,16 @@ export class TaskBar {
       ) {
         const record = this._scene._gantt.getRecordByIndex(i);
         if (record.children?.length > 0) {
-          for (let j = 0; j < record.children.length; j++) {
+          for (let j = 0; j < record.children?.length; j++) {
             const barGroup = this.initBar(i, j, record.children.length);
             if (barGroup) {
               this.barContainer.appendChild(barGroup);
             }
+          }
+        } else {
+          const barGroup = this.initBar(i);
+          if (barGroup) {
+            this.barContainer.appendChild(barGroup);
           }
         }
         continue;
@@ -96,8 +101,11 @@ export class TaskBar {
       index,
       childIndex
     );
-
-    if (taskDays <= 0 || !startDate || !endDate || startDate.getTime() > endDate.getTime()) {
+    const isMilestone = taskRecord.type === 'milestone';
+    if (
+      (isMilestone && !startDate) ||
+      (!isMilestone && (taskDays <= 0 || !startDate || !endDate || startDate.getTime() > endDate.getTime()))
+    ) {
       return null;
     }
     const { unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
@@ -108,7 +116,7 @@ export class TaskBar {
 
     const subTaskShowRowCount =
       this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
-        ? childrenLength
+        ? childrenLength || 1
         : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
         ? computeRowsCountByRecordDate(this._scene._gantt, this._scene._gantt.records[index])
         : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
@@ -117,24 +125,28 @@ export class TaskBar {
     const oneTaskHeigth = this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
     const x =
       computeCountToTimeScale(startDate, this._scene._gantt.parsedOptions.minDate, unit, step) *
-      this._scene._gantt.parsedOptions.timelineColWidth;
+        this._scene._gantt.parsedOptions.timelineColWidth -
+      (isMilestone ? taskbarHeight / 2 : 0);
+    const y =
+      this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
+      (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
+        ? (childIndex ?? 0) * oneTaskHeigth
+        : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+          this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+        ? taskRecord.vtable_gantt_showIndex * oneTaskHeigth
+        : 0) +
+      (oneTaskHeigth - taskbarHeight) / 2;
     const barGroupBox = new GanttTaskBarNode({
       x,
-      y:
-        this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
-        (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
-          ? childIndex * oneTaskHeigth
-          : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
-            this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
-          ? taskRecord.vtable_gantt_showIndex * oneTaskHeigth
-          : 0) +
-        (oneTaskHeigth - taskbarHeight) / 2,
-      width: taskBarSize,
+      y,
+      width: isMilestone ? taskbarHeight : taskBarSize,
       // height: this._scene._gantt.parsedOptions.rowHeight,
       height: taskbarHeight,
-      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
+      cornerRadius: isMilestone ? 0 : this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
       lineWidth: this._scene._gantt.parsedOptions.taskBarStyle.borderWidth * 2,
-      stroke: this._scene._gantt.parsedOptions.taskBarStyle.borderColor
+      stroke: this._scene._gantt.parsedOptions.taskBarStyle.borderColor,
+      angle: isMilestone ? (45 / 180) * Math.PI : 0,
+      anchor: isMilestone ? [x + taskbarHeight / 2, y + taskbarHeight / 2] : undefined
       // clip: true
     });
     barGroupBox.name = 'task-bar';
@@ -145,9 +157,9 @@ export class TaskBar {
     const barGroup = new Group({
       x: 0,
       y: 0,
-      width: taskBarSize,
-      height: taskbarHeight,
-      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
+      width: barGroupBox.attribute.width,
+      height: barGroupBox.attribute.height,
+      cornerRadius: isMilestone ? 0 : this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
       clip: true
     });
     barGroup.name = 'task-bar-group';
@@ -191,30 +203,32 @@ export class TaskBar {
       const rect = createRect({
         x: 0,
         y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
-        width: taskBarSize,
-        height: taskbarHeight,
+        width: barGroupBox.attribute.width,
+        height: barGroupBox.attribute.height,
         fill: this._scene._gantt.parsedOptions.taskBarStyle.barColor,
         pickable: false
       });
       rect.name = 'task-bar-rect';
       barGroup.appendChild(rect);
       barGroupBox.barRect = rect;
-      // 创建已完成部分任务条rect
-      const progress_rect = createRect({
-        x: 0,
-        y: 0, //(this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
-        width: (taskBarSize * progress) / 100,
-        height: taskbarHeight,
-        fill: this._scene._gantt.parsedOptions.taskBarStyle.completedBarColor,
-        pickable: false
-      });
-      progress_rect.name = 'task-bar-progress-rect';
-      barGroup.appendChild(progress_rect);
-      barGroupBox.progressRect = progress_rect;
+      if (taskRecord.type !== 'milestone') {
+        // 创建已完成部分任务条rect
+        const progress_rect = createRect({
+          x: 0,
+          y: 0, //(this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
+          width: (taskBarSize * progress) / 100,
+          height: taskbarHeight,
+          fill: this._scene._gantt.parsedOptions.taskBarStyle.completedBarColor,
+          pickable: false
+        });
+        progress_rect.name = 'task-bar-progress-rect';
+        barGroup.appendChild(progress_rect);
+        barGroupBox.progressRect = progress_rect;
+      }
     }
 
     rootContainer && barGroup.appendChild(rootContainer);
-    if (renderDefaultText) {
+    if (renderDefaultText && taskRecord.type !== 'milestone') {
       const { textAlign, textBaseline, fontSize, fontFamily, textOverflow, color, padding } =
         this._scene._gantt.parsedOptions.taskBarLabelStyle;
       const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, taskBarSize, taskbarHeight);
@@ -325,9 +339,13 @@ export class TaskBar {
       width: this.width,
       y: this._scene._gantt.getAllHeaderRowsHeight()
     });
+    const x = this.barContainer.attribute.x;
+    const y = this.barContainer.attribute.y;
     this.barContainer.removeAllChild();
     this.group.removeChild(this.barContainer);
     this.initBars();
+    this.setX(x);
+    this.setY(y);
   }
   resize() {
     this.width = this._scene._gantt.tableNoFrameWidth;
@@ -346,6 +364,7 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('width', width);
     this.hoverBarGroup.setAttribute('height', height);
     this.hoverBarGroup.setAttribute('visibleAll', true);
+    this.hoverBarGroup.setAttribute('cornerRadius', target.attribute.cornerRadius);
     this.hoverBarLeftIcon.setAttribute('visible', false);
     this.hoverBarRightIcon.setAttribute('visible', false);
 
@@ -356,7 +375,10 @@ export class TaskBar {
 
     let leftResizable = true;
     let rightResizable = true;
-    if (typeof this._scene._gantt.parsedOptions.taskBarResizable === 'function') {
+    if (taskRecord.type === 'milestone') {
+      leftResizable = false;
+      rightResizable = false;
+    } else if (typeof this._scene._gantt.parsedOptions.taskBarResizable === 'function') {
       const arg = {
         index: target.task_index,
         startDate,
@@ -406,30 +428,56 @@ export class TaskBar {
     attachedToTaskBarNode: GanttTaskBarNode,
     showLinkPoint: boolean = false
   ) {
+    const record = attachedToTaskBarNode.record;
     const selectedBorder = new Group({
       x,
       y,
       width,
       height,
+      // lineWidth: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderLineWidth,
+      pickable: false,
+      // cornerRadius: attachedToTaskBarNode.attribute.cornerRadius,
+      // fill: false,
+      // stroke: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
+      // shadowColor: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowColor,
+      // shadowOffsetX: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetX,
+      // shadowOffsetY: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetY,
+      // shadowBlur: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowBlur,
+      attachedToTaskBarNode: attachedToTaskBarNode,
+      zIndex: 10000
+      // angle: attachedToTaskBarNode.attribute.angle,
+      // anchor: attachedToTaskBarNode.attribute.anchor
+    });
+    selectedBorder.name = 'task-bar-select-border';
+    this.barContainer.appendChild(selectedBorder);
+    this.selectedBorders.push(selectedBorder);
+
+    const selectRectBorder = new Group({
+      x: 0,
+      y: 0,
+      width,
+      height,
       lineWidth: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderLineWidth,
       pickable: false,
-      cornerRadius: this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius ?? 0,
+      cornerRadius: attachedToTaskBarNode.attribute.cornerRadius,
       fill: false,
       stroke: this._scene._gantt.parsedOptions.taskBarSelectedStyle.borderColor,
       shadowColor: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowColor,
       shadowOffsetX: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetX,
       shadowOffsetY: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowOffsetY,
       shadowBlur: this._scene._gantt.parsedOptions.taskBarSelectedStyle.shadowBlur,
-      attachedToTaskBarNode: attachedToTaskBarNode,
-      zIndex: 10000
+      // attachedToTaskBarNode: attachedToTaskBarNode,
+      angle: attachedToTaskBarNode.attribute.angle,
+      anchor: [width / 2, height / 2]
     });
-    selectedBorder.name = 'task-bar-select-border';
-    this.barContainer.appendChild(selectedBorder);
-    this.selectedBorders.push(selectedBorder);
+    // selectRectBorder.name = 'task-bar-select-border';
+    selectedBorder.appendChild(selectRectBorder);
 
     if (showLinkPoint) {
+      const isMilestone = record.type === 'milestone';
+      const linePointPadding = isMilestone ? 15 : 10;
       const linkPointContainer = new Group({
-        x: -10,
+        x: -linePointPadding,
         y: 0,
         width: 10,
         height: height,
@@ -449,7 +497,7 @@ export class TaskBar {
       selectedBorder.appendChild(linkPointContainer);
 
       const linkPointContainer1 = new Group({
-        x: width,
+        x: width + (linePointPadding - 10),
         y: 0,
         width: 10,
         height: height,

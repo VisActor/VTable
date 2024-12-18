@@ -205,6 +205,7 @@ export function initOptions(gantt: Gantt) {
     },
     options?.taskBar?.barStyle
   );
+  gantt.parsedOptions.taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarStyle.width * Math.sqrt(2);
 
   gantt.parsedOptions.dateFormat = options?.dateFormat;
   gantt.parsedOptions.taskBarHoverStyle = Object.assign(
@@ -840,6 +841,8 @@ export function computeRowsCountByRecordDateForCompact(gantt: Gantt, record: any
   if (!record.children || record.children.length === 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
+    } else {
+      record.vtable_gantt_showIndex = 0;
     }
     return 1;
   }
@@ -888,6 +891,8 @@ export function computeRowsCountByRecordDate(gantt: Gantt, record: any) {
   if (!record.children || record.children.length === 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
+    } else {
+      record.vtable_gantt_showIndex = 0;
     }
     return 1;
   }

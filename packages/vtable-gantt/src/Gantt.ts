@@ -122,6 +122,8 @@ export class Gantt extends EventTarget {
     timeScaleIncludeHour: boolean;
     grid: IGrid;
     taskBarStyle: ITaskBarStyle;
+    /** 里程碑是旋转后的矩形，所以需要计算里程碑的对角线长度 */
+    taskBarMilestoneHypotenuse: number;
     taskBarHoverStyle: ITaskBarHoverStyle;
     taskBarSelectedStyle: ITaskBarSelectedStyle;
     taskBarSelectable: boolean;
@@ -744,16 +746,19 @@ export class Gantt extends EventTarget {
     progress: number;
   } {
     const taskRecord = this.getRecordByIndex(taskShowIndex, sub_task_index);
+    const isMilestone = taskRecord?.type;
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
     const progressField = this.parsedOptions.progressField;
     const rawDateStartDateTime = createDateAtMidnight(taskRecord?.[startDateField]).getTime();
     const rawDateEndDateTime = createDateAtMidnight(taskRecord?.[endDateField]).getTime();
     if (
-      rawDateEndDateTime < this.parsedOptions._minDateTime ||
-      rawDateStartDateTime > this.parsedOptions._maxDateTime ||
-      !taskRecord?.[startDateField] ||
-      !taskRecord?.[endDateField]
+      (isMilestone && !taskRecord?.[startDateField]) ||
+      (!isMilestone &&
+        (rawDateEndDateTime < this.parsedOptions._minDateTime ||
+          rawDateStartDateTime > this.parsedOptions._maxDateTime ||
+          !taskRecord?.[startDateField] ||
+          !taskRecord?.[endDateField]))
     ) {
       return {
         taskDays: 0,

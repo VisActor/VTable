@@ -350,9 +350,11 @@ export class StateManager {
       const targetEndY =
         this.moveTaskBar.targetStartY +
         this._gantt.parsedOptions.rowHeight * Math.round(deltaY / this._gantt.parsedOptions.rowHeight);
-
+      const taskbarHeight = this._gantt.parsedOptions.taskBarStyle.width;
+      const testDateX =
+        this.moveTaskBar.target.attribute.x + (target.record.type === 'milestone' ? taskbarHeight / 2 : 0);
       const startDateColIndex = getDateIndexByX(
-        this.moveTaskBar.target.attribute.x - this._gantt.stateManager.scroll.horizontalBarPos,
+        testDateX - this._gantt.stateManager.scroll.horizontalBarPos,
         this._gantt
       );
       const timelineStartDate =
@@ -425,7 +427,11 @@ export class StateManager {
           }
           // target = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(indexs.task_index, indexs.sub_task_index);
         } else {
-          const newX = startDateColIndex >= 1 ? this._gantt.getDateColsWidth(0, startDateColIndex - 1) : 0;
+          let newX = startDateColIndex >= 1 ? this._gantt.getDateColsWidth(0, startDateColIndex - 1) : 0;
+          if (target.record.type === 'milestone') {
+            const taskbarHeight = this._gantt.parsedOptions.taskBarStyle.width;
+            newX -= taskbarHeight / 2;
+          }
           resizeOrMoveTaskBar(
             target,
             newX - (target as Group).attribute.x,
@@ -973,6 +979,8 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
   // const taskIndex = getTaskIndexByY(state.moveTaskBar.startOffsetY, state._gantt);
   const taskIndex = target.task_index;
   const sub_task_index = target.sub_task_index;
+  const record = target.record;
+  const isMilestone = record.type === 'milestone';
   if (dx) {
     target.setAttribute('x', target.attribute.x + dx);
   }
@@ -983,6 +991,13 @@ function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, n
   } else {
     dy = 0;
   }
+  if (isMilestone) {
+    target.setAttribute('anchor', [
+      target.attribute.x + target.attribute.width / 2,
+      target.attribute.y + target.attribute.height / 2
+    ]);
+  }
+
   if (newWidth) {
     target.setAttribute('width', newWidth);
   }
