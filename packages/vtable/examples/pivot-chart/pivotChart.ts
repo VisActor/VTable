@@ -2,7 +2,11 @@
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+import { LinearScale } from '@visactor/vscale';
+
+window.LinearScale = LinearScale;
 const CONTAINER_ID = 'vTable';
+
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const rowTree = [
@@ -89,90 +93,90 @@ export function createTable() {
     }
   ];
   const indicators: VTable.TYPES.IChartIndicator[] = [
-    {
-      indicatorKey: '230417171050011',
-      title: '数量',
-      width: 'auto',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      headerStyle: {
-        color: 'red',
-        borderLineWidth: [1, 0, 1, 0],
-        autoWrapText: true
-      },
-      style: {
-        padding: 1
-      },
-      chartSpec: {
-        // type: 'common',
-        stack: true,
-        type: 'bar',
-        data: {
-          id: 'data'
-        },
-        // brush: {
-        //   brushType: 'rect',
-        //   brushLinkSeriesIndex: [1, 2],
-        //   inBrush: {
-        //     colorAlpha: 1
-        //   },
-        //   outOfBrush: {
-        //     colorAlpha: 0.2
-        //   }
-        // },
-        xField: ['230417170554008'],
-        yField: '230417171050011',
-        seriesField: '230417171050030',
-        axes: [
-          {
-            orient: 'left',
-            visible: true,
-            label: {
-              visible: true
-            },
-            innerOffset: {
-              top: 20,
-              bottom: 20
-            }
-          },
-          {
-            orient: 'bottom',
-            visible: true,
-            innerOffset: {
-              left: 20,
-              right: 20
-            }
-          }
-        ],
-        bar: {
-          state: {
-            selected: {
-              fill: 'yellow'
-            },
-            selected_reverse: {
-              // fill: '#ddd'
-              opacity: 0.2
-            }
-          }
-        },
-        theme: {
-          // axis: {
-          //   label: {
-          //     style: {
-          //       fill: 'green'
-          //     }
-          //   }
-          // }
-          colorScheme: {
-            default: {
-              palette: {
-                axisLabelFontColor: 'red'
-              }
-            }
-          }
-        }
-      }
-    },
+    // {
+    //   indicatorKey: '230417171050011',
+    //   title: '数量',
+    //   width: 'auto',
+    //   cellType: 'chart',
+    //   chartModule: 'vchart',
+    //   headerStyle: {
+    //     color: 'red',
+    //     borderLineWidth: [1, 0, 1, 0],
+    //     autoWrapText: true
+    //   },
+    //   style: {
+    //     padding: 1
+    //   },
+    //   chartSpec: {
+    //     // type: 'common',
+    //     stack: true,
+    //     type: 'bar',
+    //     data: {
+    //       id: 'data'
+    //     },
+    //     // brush: {
+    //     //   brushType: 'rect',
+    //     //   brushLinkSeriesIndex: [1, 2],
+    //     //   inBrush: {
+    //     //     colorAlpha: 1
+    //     //   },
+    //     //   outOfBrush: {
+    //     //     colorAlpha: 0.2
+    //     //   }
+    //     // },
+    //     xField: ['230417170554008'],
+    //     yField: '230417171050011',
+    //     seriesField: '230417171050030',
+    //     axes: [
+    //       {
+    //         orient: 'left',
+    //         visible: true,
+    //         label: {
+    //           visible: true
+    //         },
+    //         innerOffset: {
+    //           top: 20,
+    //           bottom: 20
+    //         }
+    //       },
+    //       {
+    //         orient: 'bottom',
+    //         visible: true,
+    //         innerOffset: {
+    //           left: 20,
+    //           right: 20
+    //         }
+    //       }
+    //     ],
+    //     bar: {
+    //       state: {
+    //         selected: {
+    //           fill: 'yellow'
+    //         },
+    //         selected_reverse: {
+    //           // fill: '#ddd'
+    //           opacity: 0.2
+    //         }
+    //       }
+    //     },
+    //     theme: {
+    //       // axis: {
+    //       //   label: {
+    //       //     style: {
+    //       //       fill: 'green'
+    //       //     }
+    //       //   }
+    //       // }
+    //       colorScheme: {
+    //         default: {
+    //           palette: {
+    //             axisLabelFontColor: 'red'
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // },
     {
       indicatorKey: '230417171050025',
       title: '销售额 & 利润',
@@ -242,7 +246,13 @@ export function createTable() {
           }
         ],
         axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
+          {
+            id: 'left',
+            orient: 'left',
+            visible: true,
+            nice: true,
+            label: { visible: true }
+          },
 
           {
             orient: 'bottom',
@@ -251,96 +261,19 @@ export function createTable() {
               left: 20,
               right: 20
             }
-          }
+          },
 
-          // {
-          //   orient: 'right',
-          //   visible: false,
-          // }
-        ],
-        theme: {
-          // axis: {
-          //   label: {
-          //     style: {
-          //       fill: 'green'
-          //     }
-          //   }
-          // }
-          colorScheme: {
-            default: {
-              palette: {
-                axisLabelFontColor: 'red'
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      indicatorKey: '230707112948009',
-      title: '折扣',
-      width: 'auto',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      headerStyle: {
-        color: 'red',
-        borderLineWidth: [1, 0, 1, 0],
-        autoWrapText: true
-      },
-      style: {
-        padding: 1
-      },
-      chartSpec: {
-        // type: 'common',
-        stack: false,
-        type: 'area',
-        data: {
-          id: 'data'
-        },
-        xField: ['230417170554008'],
-        yField: '230707112948009',
-        seriesField: '230417171050030',
-        axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
           {
-            orient: 'bottom',
-            visible: true,
-            innerOffset: {
-              left: 20,
-              right: 20
+            id: 'right',
+            orient: 'right',
+            nice: true,
+            sync: {
+              axisId: 'left',
+              tickAlign: true
             }
+            // visible: false,
           }
         ],
-        line: {
-          state: {
-            selected: {
-              lineWidth: 3
-            },
-            selected_reverse: {
-              lineWidth: 1
-            }
-          }
-        },
-        point: {
-          state: {
-            selected: {
-              fill: 'yellow'
-            },
-            selected_reverse: {
-              fill: '#ddd'
-            }
-          }
-        },
-        area: {
-          state: {
-            selected: {
-              opacity: 1
-            },
-            selected_reverse: {
-              opacity: 0.2
-            }
-          }
-        },
         theme: {
           // axis: {
           //   label: {
@@ -359,6 +292,89 @@ export function createTable() {
         }
       }
     }
+    // {
+    //   indicatorKey: '230707112948009',
+    //   title: '折扣',
+    //   width: 'auto',
+    //   cellType: 'chart',
+    //   chartModule: 'vchart',
+    //   headerStyle: {
+    //     color: 'red',
+    //     borderLineWidth: [1, 0, 1, 0],
+    //     autoWrapText: true
+    //   },
+    //   style: {
+    //     padding: 1
+    //   },
+    //   chartSpec: {
+    //     // type: 'common',
+    //     stack: false,
+    //     type: 'area',
+    //     data: {
+    //       id: 'data'
+    //     },
+    //     xField: ['230417170554008'],
+    //     yField: '230707112948009',
+    //     seriesField: '230417171050030',
+    //     axes: [
+    //       { orient: 'left', visible: true, label: { visible: true } },
+    //       {
+    //         orient: 'bottom',
+    //         visible: true,
+    //         innerOffset: {
+    //           left: 20,
+    //           right: 20
+    //         }
+    //       }
+    //     ],
+    //     line: {
+    //       state: {
+    //         selected: {
+    //           lineWidth: 3
+    //         },
+    //         selected_reverse: {
+    //           lineWidth: 1
+    //         }
+    //       }
+    //     },
+    //     point: {
+    //       state: {
+    //         selected: {
+    //           fill: 'yellow'
+    //         },
+    //         selected_reverse: {
+    //           fill: '#ddd'
+    //         }
+    //       }
+    //     },
+    //     area: {
+    //       state: {
+    //         selected: {
+    //           opacity: 1
+    //         },
+    //         selected_reverse: {
+    //           opacity: 0.2
+    //         }
+    //       }
+    //     },
+    //     theme: {
+    //       // axis: {
+    //       //   label: {
+    //       //     style: {
+    //       //       fill: 'green'
+    //       //     }
+    //       //   }
+    //       // }
+    //       colorScheme: {
+    //         default: {
+    //           palette: {
+    //             axisLabelFontColor: 'red'
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   ];
   const records = [
     {
@@ -9432,9 +9448,9 @@ export function createTable() {
     // }
   };
   const option: VTable.PivotChartConstructorOptions = {
-    columnTree,
+    // columnTree,
     emptyTip: true,
-    rowTree,
+    // rowTree,
     rows,
     columns,
     indicators,
