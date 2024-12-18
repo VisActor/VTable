@@ -62,6 +62,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
       const currentContainer = container.current.get(key);
       reconcilor.updateContainer(null, currentContainer, null);
       // group = currentContainer.containerInfo;
+      currentContainer.containerInfo.delete();
       container.current.delete(key);
     }
   }, []);
@@ -70,6 +71,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     container.current.forEach((value, key) => {
       const currentContainer = value;
       reconcilor.updateContainer(null, currentContainer, null);
+      currentContainer.containerInfo.delete();
     });
     container.current.clear();
   }, []);
