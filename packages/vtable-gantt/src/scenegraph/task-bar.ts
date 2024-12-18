@@ -123,10 +123,11 @@ export class TaskBar {
         ? computeRowsCountByRecordDateForCompact(this._scene._gantt, this._scene._gantt.records[index])
         : 1;
     const oneTaskHeigth = this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
+    const milestoneTaskBarHeight = this._scene._gantt.parsedOptions.taskBarMilestoneStyle.width;
     const x =
       computeCountToTimeScale(startDate, this._scene._gantt.parsedOptions.minDate, unit, step) *
         this._scene._gantt.parsedOptions.timelineColWidth -
-      (isMilestone ? taskbarHeight / 2 : 0);
+      (isMilestone ? milestoneTaskBarHeight / 2 : 0);
     const y =
       this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
       (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
@@ -135,18 +136,24 @@ export class TaskBar {
           this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
         ? taskRecord.vtable_gantt_showIndex * oneTaskHeigth
         : 0) +
-      (oneTaskHeigth - taskbarHeight) / 2;
+      (oneTaskHeigth - (isMilestone ? milestoneTaskBarHeight : taskbarHeight)) / 2;
     const barGroupBox = new GanttTaskBarNode({
       x,
       y,
-      width: isMilestone ? taskbarHeight : taskBarSize,
+      width: isMilestone ? milestoneTaskBarHeight : taskBarSize,
       // height: this._scene._gantt.parsedOptions.rowHeight,
-      height: taskbarHeight,
-      cornerRadius: isMilestone ? 0 : this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
-      lineWidth: this._scene._gantt.parsedOptions.taskBarStyle.borderWidth * 2,
-      stroke: this._scene._gantt.parsedOptions.taskBarStyle.borderColor,
+      height: isMilestone ? milestoneTaskBarHeight : taskbarHeight,
+      cornerRadius: isMilestone
+        ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.cornerRadius
+        : this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
+      lineWidth: isMilestone
+        ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.borderWidth * 2
+        : this._scene._gantt.parsedOptions.taskBarStyle.borderWidth * 2,
+      stroke: isMilestone
+        ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.borderColor
+        : this._scene._gantt.parsedOptions.taskBarStyle.borderColor,
       angle: isMilestone ? (45 / 180) * Math.PI : 0,
-      anchor: isMilestone ? [x + taskbarHeight / 2, y + taskbarHeight / 2] : undefined
+      anchor: isMilestone ? [x + milestoneTaskBarHeight / 2, y + milestoneTaskBarHeight / 2] : undefined
       // clip: true
     });
     barGroupBox.name = 'task-bar';
@@ -159,7 +166,9 @@ export class TaskBar {
       y: 0,
       width: barGroupBox.attribute.width,
       height: barGroupBox.attribute.height,
-      cornerRadius: isMilestone ? 0 : this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
+      cornerRadius: isMilestone
+        ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.cornerRadius
+        : this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
       clip: true
     });
     barGroup.name = 'task-bar-group';
@@ -205,7 +214,9 @@ export class TaskBar {
         y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
         width: barGroupBox.attribute.width,
         height: barGroupBox.attribute.height,
-        fill: this._scene._gantt.parsedOptions.taskBarStyle.barColor,
+        fill: isMilestone
+          ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.fillColor
+          : this._scene._gantt.parsedOptions.taskBarStyle.barColor,
         pickable: false
       });
       rect.name = 'task-bar-rect';
@@ -355,6 +366,10 @@ export class TaskBar {
   }
 
   showHoverBar(x: number, y: number, width: number, height: number, target?: Group) {
+    const { startDate, endDate, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
+      target.task_index,
+      target.sub_task_index
+    );
     if (target && target.name === 'task-bar') {
       // this.hoverBarGroup.releatedTaskBar = target;
       target.appendChild(this.hoverBarGroup);
@@ -364,14 +379,17 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('width', width);
     this.hoverBarGroup.setAttribute('height', height);
     this.hoverBarGroup.setAttribute('visibleAll', true);
-    this.hoverBarGroup.setAttribute('cornerRadius', target.attribute.cornerRadius);
+    if (taskRecord.type === 'milestone') {
+      this.hoverBarGroup.setAttribute('cornerRadius', target.attribute.cornerRadius);
+    } else {
+      const cornerRadius =
+        this._scene._gantt.parsedOptions.taskBarHoverStyle.cornerRadius ??
+        this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius ??
+        0;
+      this.hoverBarGroup.setAttribute('cornerRadius', cornerRadius);
+    }
     this.hoverBarLeftIcon.setAttribute('visible', false);
     this.hoverBarRightIcon.setAttribute('visible', false);
-
-    const { startDate, endDate, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
-      target.task_index,
-      target.sub_task_index
-    );
 
     let leftResizable = true;
     let rightResizable = true;

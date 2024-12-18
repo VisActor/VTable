@@ -85,6 +85,7 @@ export interface GanttConstructorOptions {
     labelTextStyle?: ITaskBarLabelTextStyle;
     /** 任务条样式 */
     barStyle?: ITaskBarStyle;
+    milestoneStyle?: IMilestoneStyle;
     /** 自定义布局渲染 */
     customLayout?: ITaskBarCustomLayout;
     /** 任务条是否可调整大小 */
@@ -235,6 +236,14 @@ export interface ITaskBarStyle {
   borderWidth?: number;
   /** 边框颜色 */
   borderColor?: string;
+}
+export interface IMilestoneStyle {
+  borderColor?: string;
+  borderWidth?: number;
+  fillColor?: string;
+  cornerRadius?: number;
+  /** 里程碑默认是个正方形，这个width配置正方形的边长 */
+  width?: number;
 }
 export type ILineStyle = {
   lineColor?: string;

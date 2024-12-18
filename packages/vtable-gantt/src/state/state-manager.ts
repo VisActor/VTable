@@ -350,9 +350,9 @@ export class StateManager {
       const targetEndY =
         this.moveTaskBar.targetStartY +
         this._gantt.parsedOptions.rowHeight * Math.round(deltaY / this._gantt.parsedOptions.rowHeight);
-      const taskbarHeight = this._gantt.parsedOptions.taskBarStyle.width;
+      const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
       const testDateX =
-        this.moveTaskBar.target.attribute.x + (target.record.type === 'milestone' ? taskbarHeight / 2 : 0);
+        this.moveTaskBar.target.attribute.x + (target.record.type === 'milestone' ? milestoneTaskbarHeight / 2 : 0);
       const startDateColIndex = getDateIndexByX(
         testDateX - this._gantt.stateManager.scroll.horizontalBarPos,
         this._gantt
@@ -429,8 +429,8 @@ export class StateManager {
         } else {
           let newX = startDateColIndex >= 1 ? this._gantt.getDateColsWidth(0, startDateColIndex - 1) : 0;
           if (target.record.type === 'milestone') {
-            const taskbarHeight = this._gantt.parsedOptions.taskBarStyle.width;
-            newX -= taskbarHeight / 2;
+            const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
+            newX -= milestoneTaskbarHeight / 2;
           }
           resizeOrMoveTaskBar(
             target,

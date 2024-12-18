@@ -205,7 +205,17 @@ export function initOptions(gantt: Gantt) {
     },
     options?.taskBar?.barStyle
   );
-  gantt.parsedOptions.taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarStyle.width * Math.sqrt(2);
+  gantt.parsedOptions.taskBarMilestoneStyle = Object.assign(
+    {
+      width: gantt.parsedOptions.taskBarStyle.width,
+      borderColor: gantt.parsedOptions.taskBarStyle.borderColor,
+      borderWidth: gantt.parsedOptions.taskBarStyle.borderWidth ?? 1,
+      fillColor: gantt.parsedOptions.taskBarStyle.barColor,
+      cornerRadius: 0
+    },
+    options?.taskBar?.milestoneStyle
+  );
+  gantt.parsedOptions.taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneStyle.width * Math.sqrt(2);
 
   gantt.parsedOptions.dateFormat = options?.dateFormat;
   gantt.parsedOptions.taskBarHoverStyle = Object.assign(

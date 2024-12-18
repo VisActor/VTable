@@ -345,6 +345,13 @@ export function createTable() {
         borderColor: 'purple',
         borderWidth: 2
       },
+      milestoneStyle: {
+        borderColor: 'red',
+        borderWidth: 1,
+        fillColor: 'green',
+        cornerRadius: 0,
+        width: 15
+      },
       selectedBarStyle: {
         shadowBlur: 5, //阴影宽度
         shadowOffsetX: 0, //x方向偏移

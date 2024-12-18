@@ -23,7 +23,8 @@ import type {
   ITaskBarHoverStyle,
   ITaskLinkSelectedStyle,
   IPointStyle,
-  TaskBarInteractionArgumentType
+  TaskBarInteractionArgumentType,
+  IMilestoneStyle
 } from './ts-types';
 import { TasksShowMode } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
@@ -122,6 +123,7 @@ export class Gantt extends EventTarget {
     timeScaleIncludeHour: boolean;
     grid: IGrid;
     taskBarStyle: ITaskBarStyle;
+    taskBarMilestoneStyle: IMilestoneStyle;
     /** 里程碑是旋转后的矩形，所以需要计算里程碑的对角线长度 */
     taskBarMilestoneHypotenuse: number;
     taskBarHoverStyle: ITaskBarHoverStyle;

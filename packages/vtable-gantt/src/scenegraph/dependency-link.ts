@@ -608,7 +608,7 @@ export function updateLinkLinePoints(
   const { unit, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
   const { minDate, rowHeight, timelineColWidth } = gantt.parsedOptions;
   const taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneHypotenuse;
-  const taskbarHeight = gantt.parsedOptions.taskBarStyle.width;
+  const milestoneTaskbarHeight = gantt.parsedOptions.taskBarMilestoneStyle.width;
   const distanceToTaskBar: number = 20;
   const arrowWidth: number = 10;
   const arrowHeight: number = 5;
@@ -626,7 +626,7 @@ export function updateLinkLinePoints(
       linkFromPointX = linkedFromMovedTaskBarNode
         ? linkedFromMovedTaskBarNode.attribute.x +
           linkedFromMovedTaskBarNode.attribute.width +
-          (taskBarMilestoneHypotenuse - taskbarHeight) / 2
+          (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
         : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
           taskBarMilestoneHypotenuse / 2;
     }
@@ -634,7 +634,7 @@ export function updateLinkLinePoints(
       ? linkedToMovedTaskBarNode.attribute.x
       : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
     if (linkedToTaskIsMilestone) {
-      linkToPointX -= (taskBarMilestoneHypotenuse - taskbarHeight) / 2;
+      linkToPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
     }
     linePoints = [
       {
@@ -701,7 +701,7 @@ export function updateLinkLinePoints(
       ? linkedFromMovedTaskBarNode.attribute.x
       : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
     if (linkedFromTaskIsMilestone) {
-      linkFromPointX -= (taskBarMilestoneHypotenuse - taskbarHeight) / 2;
+      linkFromPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
     }
     let linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x + linkedToMovedTaskBarNode.attribute.width
@@ -710,7 +710,7 @@ export function updateLinkLinePoints(
       linkToPointX = linkedToMovedTaskBarNode
         ? linkedToMovedTaskBarNode.attribute.x +
           linkedToMovedTaskBarNode.attribute.width +
-          (taskBarMilestoneHypotenuse - taskbarHeight) / 2
+          (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
         : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
           taskBarMilestoneHypotenuse / 2;
     }
@@ -778,13 +778,13 @@ export function updateLinkLinePoints(
       ? linkedFromMovedTaskBarNode.attribute.x
       : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
     if (linkedFromTaskIsMilestone) {
-      linkFromPointX -= (taskBarMilestoneHypotenuse - taskbarHeight) / 2;
+      linkFromPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
     }
     let linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x
       : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
     if (linkedToTaskIsMilestone) {
-      linkToPointX -= (taskBarMilestoneHypotenuse - taskbarHeight) / 2;
+      linkToPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
     }
     linePoints = [
       {
@@ -856,7 +856,7 @@ export function updateLinkLinePoints(
       linkFromPointX = linkedFromMovedTaskBarNode
         ? linkedFromMovedTaskBarNode.attribute.x +
           linkedFromMovedTaskBarNode.attribute.width +
-          (taskBarMilestoneHypotenuse - taskbarHeight) / 2
+          (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
         : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
           taskBarMilestoneHypotenuse / 2;
     }
@@ -867,7 +867,7 @@ export function updateLinkLinePoints(
       linkToPointX = linkedToMovedTaskBarNode
         ? linkedToMovedTaskBarNode.attribute.x +
           linkedToMovedTaskBarNode.attribute.width +
-          (taskBarMilestoneHypotenuse - taskbarHeight) / 2
+          (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
         : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
           taskBarMilestoneHypotenuse / 2;
     }
