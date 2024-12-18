@@ -163,7 +163,7 @@ export interface SelectAllOnCtrlAOption {
 
 ##${prefix} ctrlMultiSelect(boolean) = true
 
-是否开启ctrl多选框，默认开启。
+是否开启 ctrl 多选框，默认开启。
 
 #${prefix} eventOptions(Object)
 
@@ -189,7 +189,7 @@ export interface SelectAllOnCtrlAOption {
 - 'header' 只能在表头处单元格调整
 - 'body' 只能在 body 单元格调整
 
-#${prefix} rowResizeMode(string) = 'all'
+#${prefix} rowResizeMode(string) = 'none'
 
 鼠标 hover 到单元格下边界可拖拽调整行高。该操作可触发的范围：
 
@@ -266,7 +266,7 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 ##${prefix} makeSelectCellVisible(boolean) = true
 
-是否将选中的单元格自动滚动到视口内 默认为true。
+是否将选中的单元格自动滚动到视口内 默认为 true。
 
 #${prefix} theme(Object)
 

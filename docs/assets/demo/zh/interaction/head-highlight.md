@@ -3,7 +3,7 @@ category: examples
 group: Interaction
 title: 高亮表头
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/head-highlight.png
-link: '../guide/plugin/header-highlight'
+link: plugin/header-highlight
 ---
 
 # 高亮表头
@@ -12,7 +12,7 @@ link: '../guide/plugin/header-highlight'
 
 ## 关键配置
 
-- `HeaderHighlightPlugin`  高亮表头插件
+- `HeaderHighlightPlugin` 高亮表头插件
   - `columnHighlight` 是否高亮列头
   - `rowHighlight` 是否高亮行头
   - `colHighlightBGColor` 列头高亮背景色
@@ -45,50 +45,50 @@ const generatePersons = count => {
 
 const records = generatePersons(20);
 
-const columns =[
-    {
-      field: 'id',
-      title: 'ID',
-      width: 'auto',
-      minWidth: 50,
-      sort: true
-    },
-    {
-      field: 'email1',
-      title: 'email',
-      width: 200,
-      sort: true,
-      style: {
-        underline: true,
-        underlineDash: [2, 0],
-        underlineOffset: 3
-      }
-    },
-    {
-      title: 'full name',
-      columns: [
-        {
-          field: 'name',
-          title: 'First Name',
-          width: 200
-        },
-        {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
-        }
-      ]
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
+const columns = [
+  {
+    field: 'id',
+    title: 'ID',
+    width: 'auto',
+    minWidth: 50,
+    sort: true
+  },
+  {
+    field: 'email1',
+    title: 'email',
+    width: 200,
+    sort: true,
+    style: {
+      underline: true,
+      underlineDash: [2, 0],
+      underlineOffset: 3
     }
+  },
+  {
+    title: 'full name',
+    columns: [
+      {
+        field: 'name',
+        title: 'First Name',
+        width: 200
+      },
+      {
+        field: 'name',
+        title: 'Last Name',
+        width: 200
+      }
+    ]
+  },
+  {
+    field: 'date1',
+    title: 'birthday',
+    width: 200
+  },
+  {
+    field: 'sex',
+    title: 'sex',
+    width: 100
+  }
 ];
 
 const option = {
@@ -96,9 +96,8 @@ const option = {
   columns,
   rowSeriesNumber: {}
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 
 const highlightPlugin = new VTablePlugins.HeaderHighlightPlugin(tableInstance, {});
-
 ```
