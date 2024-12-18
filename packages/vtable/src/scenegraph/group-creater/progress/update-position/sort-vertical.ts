@@ -101,7 +101,7 @@ export async function sortVertical(proxy: SceneProxy) {
   // }
 
   proxy.table.scenegraph.updateNextFrame();
-  if (proxy.table.heightMode !== 'autoHeight') {
+  if (!proxy.table.isAutoRowHeight()) {
     await proxy.progress();
   }
 }
