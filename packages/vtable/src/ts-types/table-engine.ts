@@ -267,8 +267,6 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   groupTitleCustomLayout?: ICustomLayout;
 
   enableTreeStickCell?: boolean;
-
-  customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => number;
 }
 
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];

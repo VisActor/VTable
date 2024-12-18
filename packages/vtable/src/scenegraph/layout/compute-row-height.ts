@@ -64,8 +64,7 @@ export function computeRowsHeight(
     table.defaultHeaderRowHeight === 'auto' ||
     (isArray(table.defaultHeaderRowHeight) && table.defaultHeaderRowHeight.some(item => item === 'auto'));
   const isAllRowsAuto =
-    table.heightMode === 'autoHeight' ||
-    (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
+    table.isAutoRowHeight() || (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
   const isDefaultRowHeightIsAuto = table.options.defaultRowHeight === 'auto';
 
   if (isAllRowsAuto || isDefaultHeaderHasAuto || isDefaultRowHeightIsAuto) {
@@ -350,15 +349,22 @@ export function computeRowsHeight(
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
   const isAllRowsAuto =
-    table.heightMode === 'autoHeight' ||
-    (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
+    table.isAutoRowHeight() || (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
   if (!isAllRowsAuto && table.getDefaultRowHeight(row) !== 'auto') {
     return table.getDefaultRowHeight(row) as number;
   }
 
   let maxHeight;
-  if ((table.options as ListTableConstructorOptions).customComputeRowHeight) {
-    return (table.options as ListTableConstructorOptions).customComputeRowHeight({ row, table: table as ListTableAPI });
+  if (table.options.customComputeRowHeight) {
+    const customRowHeight = table.options.customComputeRowHeight({
+      row,
+      table
+    });
+    if (typeof customRowHeight === 'number') {
+      return customRowHeight;
+    } else if (customRowHeight !== 'auto') {
+      return table.getDefaultRowHeight(row) as number;
+    }
   }
   // 如果是透视图
   if (
@@ -441,7 +447,7 @@ function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
   //设置了全局自动换行的话 不能复用高度计算
   if (
     (table.internalProps.autoWrapText || table.internalProps.enableLineBreak || table.isPivotChart()) &&
-    (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
+    (table.isAutoRowHeight() || table.options.heightMode === 'adaptive')
   ) {
     return false;
   }
@@ -478,7 +484,7 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
   //设置了全局自动换行的话 不能复用高度计算
   if (
     (table.internalProps.autoWrapText || table.internalProps.enableLineBreak) &&
-    (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
+    (table.isAutoRowHeight() || table.options.heightMode === 'adaptive')
   ) {
     return false;
   }
@@ -509,10 +515,7 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
 function checkPivotFixedStyleAndNoWrap(table: BaseTableAPI, row: number) {
   const { layoutMap } = table.internalProps;
   //设置了全局自动换行的话 不能复用高度计算
-  if (
-    table.internalProps.autoWrapText &&
-    (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
-  ) {
+  if (table.internalProps.autoWrapText && (table.isAutoRowHeight() || table.options.heightMode === 'adaptive')) {
     return false;
   }
 

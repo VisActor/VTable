@@ -30,6 +30,10 @@ The height adaptable strategy in adaptive mode, default is 'only-body'.
 - 'only-body': Only the rows in the body part participate in the height adaptation calculation, and the height of the header part remains unchanged.
 - 'all': All columns participate in the height adaptation calculation.
 
+#${prefix} autoHeightInAdaptiveMode(boolean) = true
+
+When the adaptive mode is configured, the default value is true, that is, the length of the container is equal to the height of the stretched row based on the calculation of the height of each row. If you do not need to calculate the row height, set it to false if the default row height is used
+
 #${prefix} columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
 
 When calculating the content width, the limited area participates in the calculation:

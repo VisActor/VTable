@@ -105,7 +105,6 @@ export function createComplexColumn(
             table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
             table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
             false,
-            // table.heightMode === 'autoHeight',
             table.isAutoRowHeight(row),
             [0, 0, 0, 0],
             range,

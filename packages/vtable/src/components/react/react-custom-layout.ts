@@ -111,7 +111,7 @@ export class ReactCustomLayout {
     if (table.widthMode === 'autoWidth') {
       table.scenegraph.recalculateColWidths();
     }
-    if (table.heightMode === 'autoHeight') {
+    if (table.isAutoRowHeight()) {
       table.scenegraph.recalculateRowHeights();
     }
     // table.scenegraph.updateNextFrame();

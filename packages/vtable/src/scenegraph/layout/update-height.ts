@@ -173,15 +173,7 @@ export function updateCellHeight(
     oldBarCell.release();
 
     // deal with text
-    updateMergeCellContentHeight(
-      cell,
-      distHeight,
-      detaY,
-      // scene.table.heightMode === 'autoHeight',
-      scene.table.isAutoRowHeight(row),
-      true,
-      scene.table
-    );
+    updateMergeCellContentHeight(cell, distHeight, detaY, scene.table.isAutoRowHeight(row), true, scene.table);
   } else if (type === 'sparkline') {
     // 目前先采用重新生成节点的方案
     cell.removeAllChild();
@@ -279,7 +271,6 @@ export function updateCellHeight(
             width,
             height,
             false,
-            // scene.table.heightMode === 'autoHeight',
             scene.table.isAutoRowHeight(row),
             padding,
             isMergeCellGroup(cell)
@@ -309,22 +300,13 @@ export function updateCellHeight(
     //     distHeight,
     //     detaY,
     //     // scene.table.internalProps.autoRowHeight,
-    //     scene.table.heightMode === 'autoHeight',
     //     getQuadProps(style.padding as number),
     //     style.textAlign,
     //     style.textBaseline,
     //     scene.table
     //   );
     // }
-    updateMergeCellContentHeight(
-      cell,
-      distHeight,
-      detaY,
-      // scene.table.heightMode === 'autoHeight',
-      scene.table.isAutoRowHeight(row),
-      renderDefault,
-      scene.table
-    );
+    updateMergeCellContentHeight(cell, distHeight, detaY, scene.table.isAutoRowHeight(row), renderDefault, scene.table);
   }
 }
 

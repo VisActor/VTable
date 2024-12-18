@@ -15,7 +15,7 @@
 表格行高度的计算模式`heightMode`也可以配置为 `standard`（标准模式）、`adaptive`（自适应容器宽度模式）或 `autoHeight`（自动行高模式）。
 
 - 标准模式（standard）：采用 `defaultRowHeight` 及 `defaultHeaderRowHeight` 作为行高。
-- 自适应容器高度模式（adaptive）：使用容器的高度分配每行高度，基于每行内容计算后的高度比例来分配。
+- 自适应容器高度模式（adaptive）：使用容器的高度分配每行高度，默认逻辑是基于每行内容计算后的高度比例来分配（可通过 autoHeightInAdaptiveMode 来改变）。
 - 自动行高模式（autoHeight）：根据内容自动计算行高，计算依据 fontSize 和 lineHeight(文字行高)，以及 padding。相关搭配设置项`autoWrapText`自动换行，可以根据换行后的多行文本内容来计算行高。
 
 # 行高相关配置

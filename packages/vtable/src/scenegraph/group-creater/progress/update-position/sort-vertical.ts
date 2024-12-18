@@ -18,7 +18,7 @@ export async function sortVertical(proxy: SceneProxy) {
   // 更新同步范围
   let syncTopRow;
   let syncBottomRow;
-  if (proxy.table.heightMode === 'autoHeight') {
+  if (proxy.table.isAutoRowHeight()) {
     syncTopRow = proxy.rowStart;
     syncBottomRow = proxy.rowEnd;
   } else {
@@ -74,7 +74,7 @@ export async function sortVertical(proxy: SceneProxy) {
 
   updateRowContent(syncTopRow, syncBottomRow, proxy);
 
-  if (proxy.table.heightMode === 'autoHeight') {
+  if (proxy.table.isAutoRowHeight()) {
     updateAutoRow(
       proxy.bodyLeftCol, // colStart
       proxy.bodyRightCol, // colEnd
@@ -101,7 +101,7 @@ export async function sortVertical(proxy: SceneProxy) {
   // }
 
   proxy.table.scenegraph.updateNextFrame();
-  if (proxy.table.heightMode !== 'autoHeight') {
+  if (!proxy.table.isAutoRowHeight()) {
     await proxy.progress();
   }
 }

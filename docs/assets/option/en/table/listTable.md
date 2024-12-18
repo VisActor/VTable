@@ -147,8 +147,8 @@ Customize the group title layout.
 
 ## customComputeRowHeight(Function)
 
-Code VTable internally calculates the row height. Users can customize the method for calculating row height.
+Code VTable internally calculates the row height. Users can customize the method for calculating row height.If number is returned, it is the line height, if auto is returned, it is the automatic line height, and undefined is the default line height.
 
 ```
-customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => number;
+customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => number|'auto'|undefined;
 ```

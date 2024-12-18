@@ -144,8 +144,8 @@ type CustomAggregation = {
 
 ## customComputeRowHeight(Function)
 
-代码 VTable 内部计算行高的方法，用户可以自定义计算行高的方法。
+代码 VTable 内部计算行高的方法，用户可以自定义计算行高的方法。如果返回 number 则是行高，如果返回 auto 则是自动行高，返回 undefined 则是默认行高。
 
 ```
-customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => number;
+customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => number|'auto'|undefined;
 ```

@@ -30,6 +30,10 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 - 'only-body'：只有 body 部分的行参与高度适应计算，表头部分高度不变。
 - 'all'：所有列参与高度适应计算。
 
+#${prefix} autoHeightInAdaptiveMode(boolean) = true
+
+当配置 adaptive 模式时，默认 true，即在计算每行行高的基础上去等比拉伸行高撑满容器宽度的。如果不需要计算行高用默认行高撑满的话请配置为 false
+
 #${prefix} columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
 
 计算内容宽度时限定区域参与计算：
