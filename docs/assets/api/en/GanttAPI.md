@@ -54,6 +54,14 @@ update gantt chart date range
   updateDateRange: (minDate: string, maxDate: string) => void
 ```
 
+### updateMarkLine(Function)
+
+update markLine
+
+```
+  updateMarkLine: (markLine: IMarkLine[]) => void
+```
+
 ### updateTaskRecord(Function)
 
 Update a specific data record
