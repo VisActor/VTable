@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { ref, computed, defineProps, useSlots, defineExpose } from 'vue';
-import { flattenVNodes, extractListSlotOptions } from '../utils';
+import { flattenVNodes, extractListSlotOptions, mergeSlotOptions } from '../utils';
 import BaseTable from './base-table.vue';
 
 
@@ -37,13 +37,7 @@ const slots = useSlots();
 const computedOptions = computed(() => {
   const flattenedSlots = flattenVNodes(slots.default?.() || []);
   const slotOptions = extractListSlotOptions(flattenedSlots);
-
-  return {
-    ...props.options,
-    columns: slotOptions.columns.length ? slotOptions.columns : props.options.columns,
-    tooltip: slotOptions.tooltip || props.options.tooltip,
-    menu: slotOptions.menu || props.options.menu,
-  };
+  return mergeSlotOptions(props.options, slotOptions);
 });
 
 // 暴露实例
