@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "Added the current cell/compared cell location and table instance parameters to column.text.mergeCell when invoked as a function, making them accessible within the function: vtable/src/layout/cell-range/simple-cell-range.ts\nUpdated the type definition of mergeCell: vtable/src/ts-types/common.ts\nUpdated both English and Chinese documentation: column/text-column-type.md\nAdded a new demo document: list/list-merge-cell-function.md",
+      "comment": "feat: add mergeCell function to support more detailed conditions",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
