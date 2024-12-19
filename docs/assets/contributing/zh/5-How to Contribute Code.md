@@ -3,6 +3,7 @@ title: 5.如何贡献代码
 
 key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
 ---
+
 # 创建分支
 
 VTable 默认分支为 develop 分支。无论是功能开发、bug 修复、文档编写，都请新建立一个分支，再合并到 develop 分支上。使用以下代码创建分支：
@@ -13,20 +14,19 @@ git checkout -b docs/add-funnel-demo
 
 ```
 
+# 寻找或者创建 issue
 
-# 寻找或者创建issue
-
-原则上，我们规定每一个pr都要有对应的issue。在开始开发之前，请确认是否有对应的issue，且issue没有被认领。
+原则上，我们规定每一个 pr 都要有对应的 issue。在开始开发之前，请确认是否有对应的 issue，且 issue 没有被认领。
 
 ## 搜索 issue
 
-可以通过如下方式搜索 bug 或者 feature 相关的issue：
+可以通过如下方式搜索 bug 或者 feature 相关的 issue：
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/TPy4bTm01o9MSgxiwZvcTz66nug.gif' alt='' width='487' height='auto'>
 
 ## 创建代码相关 issue
 
-点击 “NEW ISSUE”，打开issue 选择页面，选择“**Bug Report” 或者 “Feature Request”。**
+点击 “NEW ISSUE”，打开 issue 选择页面，选择“**Bug Report” 或者 “Feature Request”。**
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/AhNvbxd1uoZZMHxuKxscjErrnDe.gif' alt='' width='611' height='auto'>
 
@@ -34,15 +34,13 @@ git checkout -b docs/add-funnel-demo
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Odonb0WssownV3xTSQDcEudhnOi.gif' alt='' width='828' height='auto'>
 
-# 认领issue
+# 认领 issue
 
-如果你想贡献代码，可以在该issue下留言认领。管理员会联系你，确认后将issue assign 给你。
+如果你想贡献代码，可以在该 issue 下留言认领。管理员会联系你，确认后将 issue assign 给你。
 
 例如：
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/MMCpb9MvEomle4xYIe1cauFUnCe.gif' alt='' width='988' height='auto'>
-
-
 
 # 编写代码
 
@@ -50,15 +48,13 @@ VTable 源码在项目的中的位置如下：
 
 <img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/code-dir.png' alt='' width='952' height='auto'>
 
-VTable 生态所有的组件都在同一目录下，按包名进行拆分，开发者需要在自己的代码分支上开发代码，然后进行提交。 
+VTable 生态所有的组件都在同一目录下，按包名进行拆分，开发者需要在自己的代码分支上开发代码，然后进行提交。
 
-# 借助豆包 Marscode AI编程助手 进行代码编写
+# 借助豆包 Marscode AI 编程助手 进行代码编写
 
-借助豆包[Marscode AI编程助手](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a)，可以在代码编写的整个流程中提供全方面的帮助。
+借助豆包[Marscode AI 编程助手](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a)，可以在代码编写的整个流程中提供全方面的帮助。
 
-如果你还没有安装[Marscode AI编程助手](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a)，请从该链接进入下载页面：https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a
-
-
+如果你还没有安装[Marscode AI 编程助手](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a)，请从该链接进入下载页面：https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a
 
 在代码编写中，合理使用 context 指令，可以提升内容的准确性。
 
@@ -80,9 +76,7 @@ VTable 生态所有的组件都在同一目录下，按包名进行拆分，开�
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/FDTHbZ2Hko9WrSx2JqWcJRRnnUf.gif' alt='' width='1000' height='auto'>
 
-
-
-下面举例说明，如何使用[Marscode AI编程助手](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a) 进行代码编写。
+下面举例说明，如何使用[Marscode AI 编程助手](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a) 进行代码编写。
 
 ## 5.1 快速熟悉整个仓库
 
@@ -96,35 +90,29 @@ VTable 生态所有的组件都在同一目录下，按包名进行拆分，开�
 
 ## 5.2 解释代码
 
-### 5.2.1  生成代码说明
+### 5.2.1 生成代码说明
 
 当我们在文件中选择一段代码，可以从悬浮菜单中选择 Explain 命令，[Marscode](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a) 会为我们生成详细的代码解释。我们可以在此基础上，进行校对和改编。
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/K2RVbq5broy4rpxSStYcA4J7ndf.gif' alt='' width='1000' height='auto'>
 
-也可以直接在对话框中输入Explain 命令。
+也可以直接在对话框中输入 Explain 命令。
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/TH9ybov7JomacGxBX2QcccwFnvc.gif' alt='' width='1000' height='auto'>
 
-这里也可以直接使用上面提到的 #Code  context 来结合Explain 和你的指令来进行更细节的任务。
+这里也可以直接使用上面提到的 #Code context 来结合 Explain 和你的指令来进行更细节的任务。
 
 ### 5.2.2 生成针对整个文件的说明
 
 Explain 可以和 Context 或者 Files 命令搭配使用，用来生成针对整个文件的说明文档。
 
-
-
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HyeabsSvjoHYZ9xAbLRc55j8nDg.gif' alt='' width='1000' height='auto'>
-
-
 
 ## 5.3 内容检索
 
-通常我们的每个问答，[Marscode](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a)  都会给出参考文档，这些文档可以给我们提供更多参考上下文，供进一步分析。
+通常我们的每个问答，[Marscode](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a) 都会给出参考文档，这些文档可以给我们提供更多参考上下文，供进一步分析。
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/OeF0bP4jPoUZWGxqDqScyHzhnvf.gif' alt='' width='1000' height='auto'>
-
-
 
 也可以直接进行文件检索：
 
@@ -142,11 +130,9 @@ Explain 可以和 Context 或者 Files 命令搭配使用，用来生成针对�
 
 <img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/marscode-create-commit.png' alt='' width='1000' height='auto'>
 
-
-
 ## 5.6 生成单测
 
-VTable 单元测试代码在每个 package 的 “__**tests**__” 目录下。
+VTable 单元测试代码在每个 package 的 “\***\*tests\*\***” 目录下。
 
 <img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/code-unit-test.png' alt='' width='1000' height='auto'>
 
@@ -154,25 +140,20 @@ VTable 单元测试代码在每个 package 的 “__**tests**__” 目录下。
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/OnTDbxBAzoQ9h7xEk6vcpYjAnNd.gif' alt='' width='1000' height='auto'>
 
-
-
 ## 5.7 智能提示
 
 编写过程中，智能生成可选代码是编程助手的标配功能，大家自行体验吧。
 
-
-
 # 提交代码
 
-文档完成之后，先把代码push到你的远程分支。例如：
+文档完成之后，先把代码 push 到你的远程分支。例如：
 
 ```
-git commit -a -m "docs: add custom funnel demo and related docs" 
+git commit -a -m "docs: add custom funnel demo and related docs"
 
 ```
 
-
-VisActor 的 commit 提交信息遵循 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) 规范，**demo  使用docs**
+VisActor 的 commit 提交信息遵循 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) 规范，**demo 使用 docs**
 
 `<type>[optional scope]: <description>`
 
@@ -182,37 +163,65 @@ VisActor 的 commit 提交信息遵循 [Conventional Commits](https://www.conven
 
 提交 commit 之前，我们会进行 commit lint 检查，具体可以查看[检查规则](https://github.com/VisActor/VTable/blob/develop/common/autoinstallers/lint/commitlint.config.js)。
 
+## Writing Documents and Demos
+
+If you have added an API or a new feature, please modify the relevant configuration documents. If necessary, please add the corresponding official website demo. To start the tutorial, run:
+
+```
+# Comment: Start the official website page in the outer directory. start site development server, execute in file path: ./
+$ rush docs
+```
+
+## Generating Changelog
+
+If it is a bug fix or a new feature submission, please generate the changelog before pushing. After running the following command, the commit information of the last submission will be used to generate the changelog:
+
+```
+# Comment: Generate changelog after submitting code. after executing git commit, please run the following command to update the change log. Please execute in file path: ./
+
+rush change-all
+```
+
+The following files are generated in common:
+
+<img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/contribute-changelog.png' alt='' width='400' height='auto'>
+
+## Resolving Code Conflicts
+
 一个常见的问题是远程的 upstream (@visactor/vtable) 有了新的更新， 从而会导致我们提交的 Pull Request 时会导致冲突。 因此我们可以在提交前先把远程其他开发者的 commit 和我们的 commit 合并。使用以下代码切换到 develop 分支:
 
 ```
 git checkout develop
 
 ```
+
 使用以下代码拉出远程的最新代码:
 
 ```
 git pull upstream develop
 
 ```
+
 切换回自己的开发分支:
 
 ```
 git checkout docs/add-funnel-demo
 
 ```
+
 把 develop 的 commit 合并到自己分支：
 
 ```
 git rebase develop
-
 ```
+
 把更新代码提交到自己的分支中:
 
 ```
 git push origin docs/add-funnel-demo
-
 ```
-# 提交PR
+
+# 提交 PR
 
 你可以在你的 github 代码仓库页面点击 `Compare & pull request` 按钮。
 
@@ -222,29 +231,27 @@ git push origin docs/add-funnel-demo
 
 按照模板填写本次提交的修改内容：
 
-*  勾选这是什么类型的修改
+- 勾选这是什么类型的修改
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/AgIOb5bRAo7UUVxS52AcNZCanad.gif' alt='' width='692' height='auto'>
 
-*  填写关联的 issue
+- 填写关联的 issue
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/VGonbJeFJoc68XxDzkOc7j8Lnjd.gif' alt='' width='470' height='auto'>
 
-*  若有复杂变更，请说明背景和解决方案
+- 若有复杂变更，请说明背景和解决方案
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HYy2bLtuCopGfxxdeKkc2pt0n4e.gif' alt='' width='1000' height='auto'>
 
 相关信息填写完成后，点击 Create pull request 提交。
 
-管理员会review pr 决定是否通过，如果不通过需要进行修改然后重新提交。
+管理员会 review pr 决定是否通过，如果不通过需要进行修改然后重新提交。
 
 # 下一步
 
 接下来你可以阅读每一个模块的实现原理及源码详解，也可以加入贡献这些文档。
 
-请加入VisActor 大家庭，贡献你的力量吧！
-
-
+请加入 VisActor 大家庭，贡献你的力量吧！
 
 github ：[github.com/VisActor](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FVisActor)
 
@@ -260,11 +267,7 @@ VisActor 官网：[www.visactor.io/](https://link.juejin.cn/?target=https%3A%2F%
 
 discord：https://discord.com/invite/3wPyxVyH6m
 
-
-# 本文档由由以下人员贡献
-
-[玄魂](https://github.com/xuanhun)
-
-# 本文档由由以下人员贡献
+# 本文档由以下人员贡献
 
 [玄魂](https://github.com/xuanhun)
+[方帅](https://github.com/fangsmile)

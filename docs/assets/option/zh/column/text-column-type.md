@@ -12,7 +12,21 @@
     prefix = '##'+${prefix}
 ) }}
 
-##${prefix} mergeCell(boolean) = false
+##${prefix} mergeCell(Boolean|Function)
+
+```
+type MergeCellOption = Boolean | ((v1: unknown, v2: unknown, {
+    source: {
+      col: number;
+      row: number;
+    };
+    target: {
+      col: number;
+      row: number;
+    };
+    table: Table;
+  }) => boolean);
+```
 
 **text 类型专属配置项** 是否对相同内容合并单元格
 

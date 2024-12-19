@@ -121,6 +121,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-merge-cell-function'
+      },
+      {
+        path: 'list',
         name: 'list-more-columns'
       },
       {
