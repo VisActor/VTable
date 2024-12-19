@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: application define in react-vtable umd file #3093",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
