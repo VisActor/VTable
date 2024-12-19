@@ -42,6 +42,7 @@ import {
   getVerticalScrollBarSize,
   initOptions,
   updateOptionsWhenDateRangeChanged,
+  updateOptionsWhenMarkLineChanged,
   updateOptionsWhenRecordChanged,
   updateOptionsWhenScaleChanged,
   updateSplitLineAndResizeLine
@@ -982,6 +983,13 @@ export class Gantt extends EventTarget {
     this._updateSize();
     this.scenegraph.refreshAll();
     this._scrollToMarkLine();
+  }
+  /** 更新markLine标记线 */
+  updateMarkLine(markLine: IMarkLine[]) {
+    this.options.markLine = markLine;
+    updateOptionsWhenMarkLineChanged(this);
+    this.scenegraph.markLine.refresh();
+    this.scenegraph.renderSceneGraph();
   }
   /** 滚动到scrollToMarkLineDate所指向的日期 */
   _scrollToMarkLine() {
