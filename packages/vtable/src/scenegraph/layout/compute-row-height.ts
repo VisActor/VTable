@@ -712,7 +712,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
 
   // underline
   const underline = getProp('underline', actStyle, col, row, table); // boolean
-  const underlineOffset = getProp('underlineOffset', actStyle, col, row, table);
+  const underlineOffset = getProp('underlineOffset', actStyle, col, row, table) ?? 0;
 
   let text;
   if (
