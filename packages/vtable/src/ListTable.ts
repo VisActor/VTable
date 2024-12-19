@@ -309,8 +309,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return title;
       }
       if ((this.options as ListTableConstructorOptions).groupBy) {
-        const { vtableMerge } = table.getCellRawRecord(col, row);
-        if (vtableMerge) {
+        const record = table.getCellRawRecord(col, row);
+        if (record?.vtableMerge) {
           return '';
         }
         const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
