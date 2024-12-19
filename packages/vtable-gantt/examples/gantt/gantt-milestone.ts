@@ -21,7 +21,6 @@ export function createTable() {
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
       start: '2024-07-05',
-      end: '2024-07-05',
       progress: 60,
       priority: 'P0',
       type: 'milestone'
@@ -347,7 +346,7 @@ export function createTable() {
       },
       milestoneStyle: {
         borderColor: 'red',
-        borderWidth: 1,
+        borderLineWidth: 1,
         fillColor: 'green',
         cornerRadius: 0,
         width: 15
@@ -358,7 +357,7 @@ export function createTable() {
         shadowOffsetY: 0, //Y方向偏移
         shadowColor: 'black', //阴影颜色
         borderColor: 'red', //边框颜色
-        borderLineWidth: 1 //边框宽度
+        borderLineWidth: 2 //边框宽度
       }
     },
     timelineHeader: {

@@ -147,8 +147,9 @@ export class TaskBar {
         ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.cornerRadius
         : this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
       lineWidth: isMilestone
-        ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.borderWidth * 2
-        : this._scene._gantt.parsedOptions.taskBarStyle.borderWidth * 2,
+        ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.borderLineWidth * 2
+        : (this._scene._gantt.parsedOptions.taskBarStyle.borderLineWidth ??
+            this._scene._gantt.parsedOptions.taskBarStyle.borderWidth) * 2,
       stroke: isMilestone
         ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.borderColor
         : this._scene._gantt.parsedOptions.taskBarStyle.borderColor,
@@ -203,7 +204,7 @@ export class TaskBar {
         rootContainer = customLayoutObj.rootContainer;
         renderDefaultBar = customLayoutObj.renderDefaultBar ?? false;
         renderDefaultText = customLayoutObj.renderDefaultText ?? false;
-        rootContainer.name = 'task-bar-custom-render';
+        rootContainer && (rootContainer.name = 'task-bar-custom-render');
       }
     }
 

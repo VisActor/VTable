@@ -198,6 +198,7 @@ export function initOptions(gantt: Gantt) {
       cornerRadius: 3,
       /** 任务条的边框 */
       borderWidth: 0,
+
       /** 边框颜色 */
       // borderColor: 'red',
       fontFamily: 'Arial',
@@ -209,7 +210,7 @@ export function initOptions(gantt: Gantt) {
     {
       width: gantt.parsedOptions.taskBarStyle.width,
       borderColor: gantt.parsedOptions.taskBarStyle.borderColor,
-      borderWidth: gantt.parsedOptions.taskBarStyle.borderWidth ?? 1,
+      borderLineWidth: gantt.parsedOptions.taskBarStyle.borderLineWidth ?? 1,
       fillColor: gantt.parsedOptions.taskBarStyle.barColor,
       cornerRadius: 0
     },
@@ -300,7 +301,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.verticalSplitLineMoveable = options.frame?.verticalSplitLineMoveable;
 
   gantt.parsedOptions.taskKeyField = options.taskKeyField ?? 'id';
-  gantt.parsedOptions.dependencyLinks = options.dependency?.links;
+  gantt.parsedOptions.dependencyLinks = options.dependency?.links ?? [];
   gantt.parsedOptions.dependencyLinkCreatable = options.dependency?.linkCreatable ?? false;
   gantt.parsedOptions.dependencyLinkSelectable = options.dependency?.linkSelectable ?? true;
   gantt.parsedOptions.dependencyLinkLineStyle = Object.assign(

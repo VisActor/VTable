@@ -33,9 +33,11 @@ You can also get the built vtable-gantt file through CDN.
   const ganttInstance = new VTableGantt.Gantt(domContainer, option);
 </script>
 ```
+
 If you need to use the related functions of VTable or VRender, such as editing cells or custom rendering, please note that you should use VTableGantt.VTable and VTableGantt.VRender.
 
 To introduce the ability of VTable, such as:
+
 ```
 // Register icon or editor
 VTableGantt.VTable.register.***
@@ -46,6 +48,7 @@ VTableGantt.VTable.CustomLayout.***
 ```
 
 To introduce the ability of VRender to achieve custom rendering, such as:
+
 ```
 // Use the Group element
 VTableGantt.VRender.Group()
@@ -58,7 +61,7 @@ VTableGantt.VRender.Group()
 At the top of your JavaScript file, use `import` to bring in vtable-gantt:
 
 ```js
-import {Gantt} from '@visactor/vtable-gantt';
+import { Gantt } from '@visactor/vtable-gantt';
 
 const ganttInstance = new Gantt(domContainer, option);
 ```
@@ -79,6 +82,7 @@ By directly adding a `<script>` tag in the HTML file, import the built vtable-ga
 Before drawing, we need to prepare a DOM container with width and height for VTableGantt, and this container must be relatively positioned, i.e., its position must be set to 'absolute' or 'relative'.
 
 **Please ensure that the container's width and height values are integers, as VTable's internal logic uses the container's offsetWidth, offsetHeight, clientWidth, and clientHeight properties. If the container's width and height are decimals, it may cause errors in the values taken, potentially leading to table jitter issues.**
+
 ```html
 <body>
   <div id="tableContainer" style="position: absolute; width: 600px;height:400px;"></div>
@@ -97,7 +101,7 @@ const records = [
     start: '2024-07-24',
     end: '2024-07-26',
     progress: 31,
-    priority: 'P0',
+    priority: 'P0'
   },
   {
     id: 2,
@@ -142,7 +146,7 @@ const records = [
     start: '2024-07-29',
     end: '2024-08-11',
     progress: 100,
-    priority: 'P1',
+    priority: 'P1'
   }
 ];
 
@@ -254,7 +258,7 @@ const option = {
       /** Task bar corner radius */
       cornerRadius: 8,
       /** Task bar border */
-      borderWidth: 1,
+      borderLineWidth: 1,
       /** Border color */
       borderColor: 'black'
     }
@@ -310,12 +314,12 @@ const option = {
   },
   markLine: [
     {
-      "date": "2024/8/02",
-      "scrollToMarkLine": true,
-      "position": "left",
-      "style": {
-          "lineColor": "red",
-          "lineWidth": 1
+      date: '2024/8/02',
+      scrollToMarkLine: true,
+      position: 'left',
+      style: {
+        lineColor: 'red',
+        lineWidth: 1
       }
     }
   ],
