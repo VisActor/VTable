@@ -26,7 +26,6 @@ export class Grid {
     this._scene = scene;
     this.vertical = !!scene._gantt.parsedOptions.grid.verticalLine;
     this.horizontal = !!scene._gantt.parsedOptions.grid.horizontalLine;
-    this.gridStyle = scene._gantt.parsedOptions.grid;
     this.scrollLeft = 0;
     this.scrollTop = 0;
     this.x = 0;
@@ -43,30 +42,30 @@ export class Grid {
       width: this.width,
       height: this.height,
       clip: true,
-      fill: this.gridStyle?.backgroundColor
+      fill: scene._gantt.parsedOptions.grid?.backgroundColor
     });
     this.group.name = 'grid-container';
     scene.tableGroup.addChild(this.group);
 
     this.createVerticalLines();
-
     this.createHorizontalLines();
+    this.createTimeLineHeaderBottomLine();
+  }
 
+  createTimeLineHeaderBottomLine() {
+    const options = this._scene._gantt.parsedOptions;
     //补充timelineHeader中不好绘制的底部的边线
     const horizontalSplitLineWidth =
-      scene._gantt.parsedOptions.horizontalSplitLine?.lineWidth ??
-      scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth;
+      options.horizontalSplitLine?.lineWidth ?? options.timelineHeaderHorizontalLineStyle?.lineWidth;
     const bottomLineY = (horizontalSplitLineWidth & 1 ? -0.5 : 0) + horizontalSplitLineWidth / 2; // 原来是(horizontalSplitLineWidth & 1 ? 0.5 : 0)  这里改成-0.5为了和左侧表格的水平分割线对齐
     const line = createLine({
       pickable: false,
-      stroke:
-        scene._gantt.parsedOptions.horizontalSplitLine?.lineColor ??
-        scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineColor,
+      stroke: options.horizontalSplitLine?.lineColor ?? options.timelineHeaderHorizontalLineStyle?.lineColor,
       lineWidth: horizontalSplitLineWidth + (horizontalSplitLineWidth & 1 ? 1 : 0), // 加上后面这个1是为了和左侧表格的水平分割线对齐
       points: [
         { x: 0, y: bottomLineY },
         {
-          x: scene._gantt.getAllDateColsWidth(),
+          x: this._scene._gantt.getAllDateColsWidth(),
           y: bottomLineY
         }
       ]
@@ -74,7 +73,9 @@ export class Grid {
     line.name = 'timeLine-header-bottom-line';
     this.group.addChild(line);
   }
+
   createVerticalLines() {
+    const gridStyle = this._scene._gantt.parsedOptions.grid;
     if (this.vertical) {
       this.verticalLineGroup = new Group({
         x: 0,
@@ -88,9 +89,9 @@ export class Grid {
       const timelineDates = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
       const timelineColWidth = this._scene._gantt.parsedOptions.timelineColWidth;
 
-      if (typeof this.gridStyle.verticalLine === 'function') {
+      if (typeof gridStyle.verticalLine === 'function') {
         for (let i = 0; i < timelineDates?.length - 1; i++) {
-          const verticalLine_style = this.gridStyle.verticalLine({
+          const verticalLine_style = gridStyle.verticalLine({
             index: i,
             dateIndex: timelineDates[i].dateIndex,
             date: timelineDates[i].endDate,
@@ -109,7 +110,7 @@ export class Grid {
           this.verticalLineGroup.appendChild(line);
         }
       } else {
-        const verticalLine_style = this.gridStyle.verticalLine;
+        const verticalLine_style = gridStyle.verticalLine;
         for (let i = 0; i < timelineDates?.length - 1; i++) {
           const x = Math.ceil(timelineColWidth * (i + 1)) + (verticalLine_style.lineWidth & 1 ? 0.5 : 0);
           const line = createLine({
@@ -127,6 +128,7 @@ export class Grid {
     }
   }
   createHorizontalLines() {
+    const gridStyle = this._scene._gantt.parsedOptions.grid;
     if (this.horizontal) {
       this.horizontalLineGroup = new Group({
         x: 0,
@@ -136,10 +138,10 @@ export class Grid {
       });
       this.horizontalLineGroup.name = 'grid-horizontal';
       this.group.appendChild(this.horizontalLineGroup);
-      if (typeof this.gridStyle.horizontalLine === 'function') {
+      if (typeof gridStyle.horizontalLine === 'function') {
         let y = 0.5; //确保大多数情况 LineWidth为1时是准确的
         for (let i = 0; i < this.rowCount - 1; i++) {
-          const horizontalLine_style = this.gridStyle.horizontalLine({
+          const horizontalLine_style = gridStyle.horizontalLine({
             index: i,
             ganttInstance: this._scene._gantt
           });
@@ -156,7 +158,7 @@ export class Grid {
           this.horizontalLineGroup.appendChild(line);
         }
       } else {
-        const horizontalLine_style = this.gridStyle.horizontalLine;
+        const horizontalLine_style = gridStyle.horizontalLine;
         let y = 0;
         if (horizontalLine_style.lineWidth & 1) {
           y += 0.5;
@@ -193,6 +195,7 @@ export class Grid {
     this.horizontalLineGroup?.parent.removeChild(this.horizontalLineGroup);
     this.createVerticalLines();
     this.createHorizontalLines();
+    this.createTimeLineHeaderBottomLine();
   }
   setX(x: number) {
     this.verticalLineGroup?.setAttribute('x', x);

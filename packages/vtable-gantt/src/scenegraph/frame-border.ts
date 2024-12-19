@@ -79,6 +79,12 @@ export class FrameBorder {
       this.border = borderRect;
     }
   }
+  refresh() {
+    if (this.border && this.border.parent) {
+      this.border.parent.removeChild(this.border);
+    }
+    this.createFrameBorder();
+  }
   resize() {
     const { cornerRadius, borderColor, borderLineWidth, borderLineDash } =
       this._scene._gantt.parsedOptions.outerFrameStyle;

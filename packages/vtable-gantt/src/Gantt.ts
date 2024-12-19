@@ -918,6 +918,7 @@ export class Gantt extends EventTarget {
 
     this._sortScales();
     initOptions(this);
+    this.scenegraph.updateStageBackground();
     this.data.setRecords(this.records);
     this._generateTimeLineDateMap();
 
