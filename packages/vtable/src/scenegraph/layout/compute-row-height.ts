@@ -709,6 +709,11 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const autoWrapText = getProp('autoWrapText', actStyle, col, row, table);
   const lineClamp = getProp('lineClamp', actStyle, col, row, table);
+
+  // underline
+  const underline = getProp('underline', actStyle, col, row, table); // boolean
+  const underlineOffset = getProp('underlineOffset', actStyle, col, row, table) ?? 0;
+
   let text;
   if (
     cellType !== 'text' &&
@@ -812,7 +817,9 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
         whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
         lineClamp
       });
-      maxHeight = bounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
+      maxHeight =
+        (bounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize)) +
+        (underline ? underlineOffset : 0);
     } else {
       // autoWrapText = false
       if (table.options.customConfig?.multilinesForXTable) {
