@@ -69,9 +69,7 @@ const records = [
     title: 'Scope',
     developer: 'liufangfang.jane@bytedance.com',
     start: '07/19/2024',
-    end: '07/20/2024',
-    progress: 60,
-    priority: 'P0'
+    type: 'milestone'
   },
   {
     id: 6,

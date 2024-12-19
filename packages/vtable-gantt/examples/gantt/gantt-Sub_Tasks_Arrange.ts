@@ -39,7 +39,11 @@ export function createTable() {
     },
     {
       id: 200,
-      title: 'Scope'
+      title: 'Scope',
+      start: '2024.07.06',
+      end: '2024.07.08',
+      progress: 100,
+      type: 'milestone'
     },
     {
       id: 300,
@@ -53,6 +57,7 @@ export function createTable() {
           end: '2024-08-04',
           progress: 90,
           priority: 'P0'
+          // type: 'milestone'
         },
 
         {
@@ -71,7 +76,8 @@ export function createTable() {
           start: '07.24.2024',
           end: '08.02.2024',
           progress: 31,
-          priority: 'P0'
+          priority: 'P0',
+          type: 'milestone'
         },
         {
           id: 6,

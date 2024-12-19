@@ -1,6 +1,7 @@
 {{ target: common-gantt-task-bar-style }}
 
 The definition of ITaskBarStyle is:
+
 ```
 export interface ITaskBarStyle {
   /** The color of the task bar */
@@ -12,7 +13,7 @@ export interface ITaskBarStyle {
   /** The corner radius of the task bar */
   cornerRadius?: number;
   /** The border width of the task bar */
-  borderWidth?: number;
+  borderLineWidth?: number;
   /** The border color of the task bar */
   borderColor?: string;
 }

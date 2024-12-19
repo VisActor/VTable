@@ -50,7 +50,8 @@ export function createTable() {
       start: '07/24/2024',
       end: '08/04/2024',
       progress: 60,
-      priority: 'P0'
+      priority: 'P0',
+      type: 'milestone'
     },
     {
       id: 3,
@@ -645,6 +646,7 @@ export function createTable() {
       customLayout: (args: any) => {
         const colorLength = barColors.length;
         const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
+
         const container = new Group({
           width,
           height,
@@ -673,6 +675,12 @@ export function createTable() {
           flexDirection: 'row',
           flexWrap: 'nowrap'
         });
+        if (taskRecord.type === 'milestone') {
+          return {
+            rootContainer: undefined,
+            renderDefaultBar: true
+          };
+        }
         const containerLeft = new Group({
           height,
           width: 60,
@@ -746,6 +754,9 @@ export function createTable() {
         borderWidth: 1,
         /** 边框颜色 */
         borderColor: 'black'
+      },
+      milestoneStyle: {
+        width: 20
       }
     },
     timelineHeader: {

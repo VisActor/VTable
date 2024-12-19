@@ -55,7 +55,8 @@ const records = [
         start: '2024/07/27',
         end: '2024/07/26',
         progress: 100,
-        priority: 'P1'
+        priority: 'P1',
+        type: 'milestone'
       },
       {
         id: 3,
@@ -154,12 +155,10 @@ const records = [
 
   {
     id: 1,
-    title: 'Software Development',
+    title: 'milestone',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-08-04',
-    progress: 31,
-    priority: 'P0'
+    start: '2024-07-29',
+    type: 'milestone'
   },
   {
     id: 2,
@@ -685,9 +684,15 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 8,
       /** 任务条的边框 */
-      borderWidth: 1,
+      borderLineWidth: 1,
       /** 边框颜色 */
       borderColor: 'black'
+    },
+    milestoneStyle: {
+      borderColor: 'red',
+      borderLineWidth: 1,
+      fillColor: 'green',
+      width: 15
     }
   },
   timelineHeader: {

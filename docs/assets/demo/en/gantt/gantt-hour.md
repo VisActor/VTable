@@ -464,7 +464,7 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 10,
       /** 任务条的边框 */
-      borderWidth: 0,
+      borderLineWidth: 0,
       /** 边框颜色 */
       borderColor: 'black'
     },

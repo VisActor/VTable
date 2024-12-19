@@ -59,12 +59,12 @@ Before using the editors, you need to register the editor instances to VTable:
 ```javascript
 // import * as VTable from '@visactor/vtable';
 // Register editors to VTable
- VTableGantt.VTable.register.editor('name-editor', inputEditor);
- VTableGantt.VTable.register.editor('name-editor2', inputEditor2);
- VTableGantt.VTable.register.editor('textArea-editor', textAreaEditor);
- VTableGantt.VTable.register.editor('number-editor', numberEditor);
- VTableGantt.VTable.register.editor('date-editor', dateInputEditor);
- VTableGantt.VTable.register.editor('list-editor', listEditor);
+VTableGantt.VTable.register.editor('name-editor', inputEditor);
+VTableGantt.VTable.register.editor('name-editor2', inputEditor2);
+VTableGantt.VTable.register.editor('textArea-editor', textAreaEditor);
+VTableGantt.VTable.register.editor('number-editor', numberEditor);
+VTableGantt.VTable.register.editor('date-editor', dateInputEditor);
+VTableGantt.VTable.register.editor('list-editor', listEditor);
 ```
 
 Next, specify the editor to be used in the columns configuration:
@@ -83,6 +83,7 @@ columns: [
   { title: 'birthday', field: 'birthDate', editor: 'date-editor' },
 ]
 ```
+
 In the left task list table, users can start editing by `double-clicking` (or other interaction methods) the cell.
 
 # Example
@@ -95,8 +96,8 @@ let ganttInstance;
 // In the official editor, VTable.editors is renamed to VTable_editors
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();
- VTableGantt.VTable.register.editor('inputEditor', input_editor);
- VTableGantt.VTable.register.editor('dateEditor', date_input_editor);
+VTableGantt.VTable.register.editor('inputEditor', input_editor);
+VTableGantt.VTable.register.editor('dateEditor', date_input_editor);
 const records = [
   {
     id: 1,
@@ -105,7 +106,7 @@ const records = [
     start: '2024-07-24',
     end: '2024-07-26',
     progress: 31,
-    priority: 'P0',
+    priority: 'P0'
   },
   {
     id: 2,
@@ -150,7 +151,7 @@ const records = [
     start: '2024-07-29',
     end: '2024-08-11',
     progress: 100,
-    priority: 'P1',
+    priority: 'P1'
   }
 ];
 
@@ -262,7 +263,7 @@ const option = {
       /** Corner radius of the task bar */
       cornerRadius: 8,
       /** Border of the task bar */
-      borderWidth: 1,
+      borderLineWidth: 1,
       /** Border color */
       borderColor: 'black'
     }
@@ -318,12 +319,12 @@ const option = {
   },
   markLine: [
     {
-      "date": "2024/8/02",
-      "scrollToMarkLine": true,
-      "position": "left",
-      "style": {
-          "lineColor": "red",
-          "lineWidth": 1
+      date: '2024/8/02',
+      scrollToMarkLine: true,
+      position: 'left',
+      style: {
+        lineColor: 'red',
+        lineWidth: 1
       }
     }
   ],
@@ -349,6 +350,7 @@ const option = {
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
 ```
+
 If you have custom editing needs, please refer to the complete tutorial documentation: [Editing Tutorial](../edit/edit_cell).
 
 Currently, editing is only supported in the task list table. The editing capabilities of the task bar only support dragging the width and position, and direct editing on the task bar is not yet supported.

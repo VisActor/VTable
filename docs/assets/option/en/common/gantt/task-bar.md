@@ -40,6 +40,14 @@ Optional
 
 {{ use: common-gantt-task-bar-style }}
 
+${prefix} milestoneStyle(ITaskBarStyle)
+
+milestone style
+
+Optional
+
+{{ use: common-gantt-task-bar-milestone-style }}
+
 ${prefix} customLayout(ITaskBarCustomLayout)
 
 Custom layout rendering.

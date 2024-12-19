@@ -6,7 +6,7 @@
 
 **需要注意的是 @visactor/vtable-gantt 是基于 @visactor/vtable 构建的，所以你需要先安装 @visactor/vtable 才能使用 @visactor/vtable-gantt。**
 
-你可以通过以下几种方式获取 
+你可以通过以下几种方式获取
 
 ### 使用 NPM 包
 
@@ -34,9 +34,10 @@ yarn add @visactor/vtable-gantt
 </script>
 ```
 
-如果需要用到 VTable 或者 VRender 的相关功能如编辑单元格或者自定义渲染，需要注意请使用 VTableGantt.VTable 和VTableGantt.VRender。
+如果需要用到 VTable 或者 VRender 的相关功能如编辑单元格或者自定义渲染，需要注意请使用 VTableGantt.VTable 和 VTableGantt.VRender。
 
- 引入 VTable 的能力，如：
+引入 VTable 的能力，如：
+
 ```
 // 注册图标或编辑器
 VTableGantt.VTable.register.***
@@ -47,6 +48,7 @@ VTableGantt.VTable.CustomLayout.***
 ```
 
 引入 VRender 的图元来实现自定义渲染，如：
+
 ```
 // 使用图元Group
 VTableGantt.VRender.Group()
@@ -59,7 +61,7 @@ VTableGantt.VRender.Group()
 在 JavaScript 文件顶部使用 `import` 引入 vtable-gantt：
 
 ```js
-import {Gantt} from '@visactor/vtable-gantt';
+import { Gantt } from '@visactor/vtable-gantt';
 
 const ganttInstance = new Gantt(domContainer, option);
 ```
@@ -77,9 +79,10 @@ const ganttInstance = new Gantt(domContainer, option);
 
 ## 绘制一个简单的甘特图
 
-在绘图前我们需要为 VTableGantt 准备一个具备高宽的 DOM 容器，且这个容器可以相对定位，即需要设置position为 'absolute' 或者 'relative'。
+在绘图前我们需要为 VTableGantt 准备一个具备高宽的 DOM 容器，且这个容器可以相对定位，即需要设置 position 为 'absolute' 或者 'relative'。
 
 **请务必保证容器的宽高值为整数，VTable 内部逻辑中会用到容器的 offsetWidth、offsetHeight、clientWidth、clientHeight 属性，如果容器的 width 和 height 为小数会造成取值有误差，可能产生表格抖动问题。**
+
 ```html
 <body>
   <div id="tableContainer" style="position: absolute; width: 600px;height:400px;"></div>
@@ -98,7 +101,7 @@ const records = [
     start: '2024-07-24',
     end: '2024-07-26',
     progress: 31,
-    priority: 'P0',
+    priority: 'P0'
   },
   {
     id: 2,
@@ -143,7 +146,7 @@ const records = [
     start: '2024-07-29',
     end: '2024-08-11',
     progress: 100,
-    priority: 'P1',
+    priority: 'P1'
   }
 ];
 
@@ -255,7 +258,7 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 8,
       /** 任务条的边框 */
-      borderWidth: 1,
+      borderLineWidth: 1,
       /** 边框颜色 */
       borderColor: 'black'
     }
@@ -311,12 +314,12 @@ const option = {
   },
   markLine: [
     {
-      "date": "2024/8/02",
-      "scrollToMarkLine": true,
-      "position": "left",
-      "style": {
-          "lineColor": "red",
-          "lineWidth": 1
+      date: '2024/8/02',
+      scrollToMarkLine: true,
+      position: 'left',
+      style: {
+        lineColor: 'red',
+        lineWidth: 1
       }
     }
   ],

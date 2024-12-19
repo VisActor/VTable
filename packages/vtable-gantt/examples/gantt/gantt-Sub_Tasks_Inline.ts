@@ -33,7 +33,8 @@ export function createTable() {
           start: '2024/08/01',
           end: '2024/08/04',
           progress: 100,
-          priority: 'P1'
+          priority: 'P1',
+          type: 'milestone'
         }
       ]
     },

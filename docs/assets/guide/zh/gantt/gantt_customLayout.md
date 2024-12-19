@@ -4,27 +4,32 @@
 
 ## 准备工作
 
-导入自定义图元内容，因为安装的@visactor/vtable已经包含了渲染引擎VRender库的图元类型，我们可以直接从中导入。
+导入自定义图元内容，因为安装的@visactor/vtable 已经包含了渲染引擎 VRender 库的图元类型，我们可以直接从中导入。
 
 ```javascript
-import { Group, Image, Text,Tag } from '@visactor/vtable/es/vrender';
-or
+import { Group, Image, Text, Tag } from '@visactor/vtable/es/vrender';
+or;
 import * as VRender from '@visactor/vtable/es/vrender';
 ```
+
 ## 左侧任务信息表格单元格自定义渲染
 
-**因为左侧是一个完整的ListTable，所以可直接参照在ListTable中[自定义渲染教程](../custom_define/custom_layout)。**
+**因为左侧是一个完整的 ListTable，所以可直接参照在 ListTable 中[自定义渲染教程](../custom_define/custom_layout)。**
 
 ## 自定义渲染日期表头
 
-具体配置对应的字段[timelineHeader.scales.customLayout](../../option/Gantt#timelineHeader.scales(Array<ITimelineScale>).customLayout)
+具体配置对应的字段[timelineHeader.scales.customLayout](<../../option/Gantt#timelineHeader.scales(Array<ITimelineScale>).customLayout>)
 
-customLayout是一个自定义函数：
+customLayout 是一个自定义函数：
+
 ```
 (args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj;
 ```
+
 ### 参数说明
-函数参数由Gantt组件提供，包含了渲染的任务条的尺寸，以及日期信息。具体为：
+
+函数参数由 Gantt 组件提供，包含了渲染的任务条的尺寸，以及日期信息。具体为：
+
 ```
 export type DateCustomLayoutArgumentType = {
   width: number;
@@ -39,8 +44,11 @@ export type DateCustomLayoutArgumentType = {
   ganttInstance: Gantt;
 };
 ```
+
 ### 返回值说明
-返回值需要包含一个VRender的Group容器对象，这个rootContainer中要包括你需要在日期表头显示的具体内容结构。
+
+返回值需要包含一个 VRender 的 Group 容器对象，这个 rootContainer 中要包括你需要在日期表头显示的具体内容结构。
+
 ```
 export type IDateCustomLayoutObj = {
   rootContainer: Group;
@@ -48,22 +56,23 @@ export type IDateCustomLayoutObj = {
 };
 ```
 
-VRender的各个图元可以理解成一个dom树形结构，每个图元都有一个父容器，父容器可以包含多个子图元。常用的图元类型及其配置可以具体参考VRender[配置文档](https://visactor.io/vrender/option)：
+VRender 的各个图元可以理解成一个 dom 树形结构，每个图元都有一个父容器，父容器可以包含多个子图元。常用的图元类型及其配置可以具体参考 VRender[配置文档](https://visactor.io/vrender/option)：
+
  <div style="width: 40%; text-align: center;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-vrender-graphic-overview.png" />
   <p>VRender Element Type</p>
 </div>
 
 ### demo
-具体可以参照demo：
+
+具体可以参照 demo：
 
 ```javascript livedemo template=vtable
-
 // import * as VRender from '@visactor/vtable/es/vrender';
 
 const barColors0 = ['#aecde6', '#c6a49a', '#ffb582', '#eec1de', '#b3d9b3', '#cccccc', '#e59a9c', '#d9d1a5', '#c9bede'];
 const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#7f7f7f', '#d62728', '#bcbd22', '#9467bd'];
-const tools=VTableGantt.tools;
+const tools = VTableGantt.tools;
 
 let ganttInstance;
 
@@ -75,7 +84,7 @@ const records = [
     start: '2024-07-24',
     end: '2024-07-26',
     progress: 31,
-    priority: 'P0',
+    priority: 'P0'
   },
   {
     id: 2,
@@ -120,7 +129,7 @@ const records = [
     start: '2024-07-29',
     end: '2024-08-11',
     progress: 100,
-    priority: 'P1',
+    priority: 'P1'
   }
 ];
 
@@ -230,7 +239,7 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 8,
       /** 任务条的边框 */
-      borderWidth: 1,
+      borderLineWidth: 1,
       /** 边框颜色 */
       borderColor: 'black'
     }
@@ -251,108 +260,107 @@ const option = {
         unit: 'week',
         step: 1,
         startOfWeek: 'sunday',
-        rowHeight:60,
+        rowHeight: 60,
         format(date) {
           return `Week ${date.dateIndex}`;
         },
-        customLayout:(args)=>{
-            const colorLength = barColors.length;
-            const { width, height, index, startDate, endDate, days, dateIndex, title, ganttInstance } = args;
-            console.log('week', index);
-            const container = new VTableGantt.VRender.Group({
-              width,
-              height,
-              fill: {
-                gradient: 'linear',
-                x0: 0,
-                y0: 0,
-                x1: 1,
-                y1: 0,
-                stops: [
-                  {
-                    offset: 0,
-                    color: barColors0[dateIndex % colorLength]
-                  },
-                  {
-                    offset: 0.5,
-                    color: barColors[dateIndex % colorLength]
-                  },
-                  {
-                    offset: 1,
-                    color: barColors0[dateIndex % colorLength]
-                  }
-                ]
-              },
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'nowrap'
-            });
-            const containerLeft = new VTableGantt.VRender.Group({
-              height,
-              width: 60,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'space-around'
-              // fill: 'red'
-            });
-            container.add(containerLeft);
+        customLayout: args => {
+          const colorLength = barColors.length;
+          const { width, height, index, startDate, endDate, days, dateIndex, title, ganttInstance } = args;
+          console.log('week', index);
+          const container = new VTableGantt.VRender.Group({
+            width,
+            height,
+            fill: {
+              gradient: 'linear',
+              x0: 0,
+              y0: 0,
+              x1: 1,
+              y1: 0,
+              stops: [
+                {
+                  offset: 0,
+                  color: barColors0[dateIndex % colorLength]
+                },
+                {
+                  offset: 0.5,
+                  color: barColors[dateIndex % colorLength]
+                },
+                {
+                  offset: 1,
+                  color: barColors0[dateIndex % colorLength]
+                }
+              ]
+            },
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'nowrap'
+          });
+          const containerLeft = new VTableGantt.VRender.Group({
+            height,
+            width: 60,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-around'
+            // fill: 'red'
+          });
+          container.add(containerLeft);
 
-            const avatar = new VTableGantt.VRender.Image({
-              width: 50,
-              height: 50,
-              image:
-                '<svg t="1722943462248" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5107" width="200" height="200"><path d="M866.462 137.846H768V98.462c0-31.508-25.6-59.077-59.077-59.077-31.508 0-59.077 25.6-59.077 59.077v39.384H374.154V98.462c0-31.508-25.6-59.077-59.077-59.077-31.508 0-59.077 25.6-59.077 59.077v39.384h-98.462c-43.323 0-78.769 35.446-78.769 78.77v49.23c0 15.754 13.785 29.539 29.539 29.539h807.384c15.754 0 29.539-13.785 29.539-29.539v-49.23c0-43.324-35.446-78.77-78.77-78.77z m49.23 256H108.308c-15.754 0-29.539 13.785-29.539 29.539v482.461c0 43.323 35.446 78.77 78.77 78.77h708.923c43.323 0 78.769-35.447 78.769-78.77V423.385c0-15.754-13.785-29.539-29.539-29.539zM645.908 580.923L521.846 844.8c-5.908 13.785-19.692 21.662-35.446 21.662-21.662 0-37.415-17.724-37.415-35.447 0-3.938 1.969-9.846 3.938-15.753l104.37-224.493H407.63c-17.723 0-33.477-11.815-33.477-29.538 0-15.754 15.754-29.539 33.477-29.539h204.8c19.692 0 37.415 15.754 37.415 35.446 0 5.908-1.97 9.847-3.938 13.785z" fill="#1296db" p-id="5108"></path></svg>',
-              cornerRadius: 25
-            });
-            containerLeft.add(avatar);
+          const avatar = new VTableGantt.VRender.Image({
+            width: 50,
+            height: 50,
+            image:
+              '<svg t="1722943462248" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5107" width="200" height="200"><path d="M866.462 137.846H768V98.462c0-31.508-25.6-59.077-59.077-59.077-31.508 0-59.077 25.6-59.077 59.077v39.384H374.154V98.462c0-31.508-25.6-59.077-59.077-59.077-31.508 0-59.077 25.6-59.077 59.077v39.384h-98.462c-43.323 0-78.769 35.446-78.769 78.77v49.23c0 15.754 13.785 29.539 29.539 29.539h807.384c15.754 0 29.539-13.785 29.539-29.539v-49.23c0-43.324-35.446-78.77-78.77-78.77z m49.23 256H108.308c-15.754 0-29.539 13.785-29.539 29.539v482.461c0 43.323 35.446 78.77 78.77 78.77h708.923c43.323 0 78.769-35.447 78.769-78.77V423.385c0-15.754-13.785-29.539-29.539-29.539zM645.908 580.923L521.846 844.8c-5.908 13.785-19.692 21.662-35.446 21.662-21.662 0-37.415-17.724-37.415-35.447 0-3.938 1.969-9.846 3.938-15.753l104.37-224.493H407.63c-17.723 0-33.477-11.815-33.477-29.538 0-15.754 15.754-29.539 33.477-29.539h204.8c19.692 0 37.415 15.754 37.415 35.446 0 5.908-1.97 9.847-3.938 13.785z" fill="#1296db" p-id="5108"></path></svg>',
+            cornerRadius: 25
+          });
+          containerLeft.add(avatar);
 
-            const containerCenter = new VTableGantt.VRender.Group({
-              height,
-              width: width - 60,
-              display: 'flex',
-              flexDirection: 'column'
-              // alignItems: 'left'
-            });
-            container.add(containerCenter);
+          const containerCenter = new VTableGantt.VRender.Group({
+            height,
+            width: width - 60,
+            display: 'flex',
+            flexDirection: 'column'
+            // alignItems: 'left'
+          });
+          container.add(containerCenter);
 
-            const weekNumber = new VTableGantt.VRender.Text({
-              text: `Week ${title}`,
-              fontSize: 20,
-              fontWeight: 'bold',
-              fontFamily: 'sans-serif',
-              fill: 'white',
-              textAlign: 'right',
-              maxLineWidth: width - 60,
-              boundsPadding: [10, 0, 0, 0]
-            });
-            containerCenter.add(weekNumber);
+          const weekNumber = new VTableGantt.VRender.Text({
+            text: `Week ${title}`,
+            fontSize: 20,
+            fontWeight: 'bold',
+            fontFamily: 'sans-serif',
+            fill: 'white',
+            textAlign: 'right',
+            maxLineWidth: width - 60,
+            boundsPadding: [10, 0, 0, 0]
+          });
+          containerCenter.add(weekNumber);
 
-            const daysFromText = new VTableGantt.VRender.Text({
-              text: `${tools.formatDate(startDate, 'mm/dd')}-${tools.formatDate(endDate, 'mm/dd')}`,
-              fontSize: 13,
-              fontFamily: 'sans-serif',
-              fill: 'white',
-              boundsPadding: [10, 0, 0, 0]
-            });
-            containerCenter.add(daysFromText);
-            return {
-              rootContainer: container
-              //renderDefaultText: true
-            };
-          
+          const daysFromText = new VTableGantt.VRender.Text({
+            text: `${tools.formatDate(startDate, 'mm/dd')}-${tools.formatDate(endDate, 'mm/dd')}`,
+            fontSize: 13,
+            fontFamily: 'sans-serif',
+            fill: 'white',
+            boundsPadding: [10, 0, 0, 0]
+          });
+          containerCenter.add(daysFromText);
+          return {
+            rootContainer: container
+            //renderDefaultText: true
+          };
         }
       },
       {
         unit: 'day',
         step: 1,
-        rowHeight:30,
+        rowHeight: 30,
         format(date) {
           return date.dateIndex.toString();
         },
         style: {
           fontSize: 20,
-          padding:5,
+          padding: 5,
           fontWeight: 'bold',
           color: 'white',
           strokeColor: 'black',
@@ -365,12 +373,12 @@ const option = {
   },
   markLine: [
     {
-      "date": "2024/8/02",
-      "scrollToMarkLine": true,
-      "position": "left",
-      "style": {
-          "lineColor": "red",
-          "lineWidth": 1
+      date: '2024/8/02',
+      scrollToMarkLine: true,
+      position: 'left',
+      style: {
+        lineColor: 'red',
+        lineWidth: 1
       }
     }
   ],
@@ -397,16 +405,20 @@ ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), opt
 window['ganttInstance'] = ganttInstance;
 ```
 
-## 自定义渲染任务条taskBar
+## 自定义渲染任务条 taskBar
 
 具体配置对应的字段[taskBar.customLayout](../../option/Gantt#taskBar.customLayout)
 
-customLayout是一个自定义函数：
+customLayout 是一个自定义函数：
+
 ```
  (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj;
 ```
+
 ### 参数说明
-函数参数由Gantt组件提供，包含了渲染的任务条的尺寸，以及任务条的数据信息。具体为：
+
+函数参数由 Gantt 组件提供，包含了渲染的任务条的尺寸，以及任务条的数据信息。具体为：
+
 ```
 export type TaskBarCustomLayoutArgumentType = {
   width: number;
@@ -420,8 +432,11 @@ export type TaskBarCustomLayoutArgumentType = {
   ganttInstance: Gantt;
 };
 ```
+
 ### 返回值说明
-返回值需要包含一个VRender的Group容器对象，这个rootContainer中要包括你需要在任务条中显示的具体内容结构。
+
+返回值需要包含一个 VRender 的 Group 容器对象，这个 rootContainer 中要包括你需要在任务条中显示的具体内容结构。
+
 ```
 export type ITaskBarCustomLayoutObj = {
   rootContainer: Group;
@@ -430,7 +445,9 @@ export type ITaskBarCustomLayoutObj = {
   renderDefaultText?: boolean; // 默认false
 };
 ```
-VRender的各个图元可以理解成一个dom树形结构，每个图元都有一个父容器，父容器可以包含多个子图元。常用的图元类型及其配置可以具体参考VRender[配置文档](https://visactor.io/vrender/option)：
+
+VRender 的各个图元可以理解成一个 dom 树形结构，每个图元都有一个父容器，父容器可以包含多个子图元。常用的图元类型及其配置可以具体参考 VRender[配置文档](https://visactor.io/vrender/option)：
+
  <div style="width: 40%; text-align: center;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-vrender-graphic-overview.png" />
   <p>VRender Element Type</p>
@@ -438,7 +455,7 @@ VRender的各个图元可以理解成一个dom树形结构，每个图元都有�
 
 ### 自定义图元事件监听
 
-VRender的图元支持配置事件监听，如下代码逻辑：
+VRender 的图元支持配置事件监听，如下代码逻辑：
 
 ```
       const avatar = new VTableGantt.VRender.Image({
@@ -457,16 +474,17 @@ VRender的图元支持配置事件监听，如下代码逻辑：
         showTooltip([taskRecord.developer],ganttInstance.taskTableWidth+ targetX+containerRect.left, targetY+containerRect.top+50);
       });
 ```
+
 ### demo
-具体可以参照demo：
+
+具体可以参照 demo：
 
 ```javascript livedemo template=vtable
-
 // import * as VRender from '@visactor/vtable/es/vrender';
 
 const barColors0 = ['#aecde6', '#c6a49a', '#ffb582', '#eec1de', '#b3d9b3', '#cccccc', '#e59a9c', '#d9d1a5', '#c9bede'];
 const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#7f7f7f', '#d62728', '#bcbd22', '#9467bd'];
-const tools=VTableGantt.tools;
+const tools = VTableGantt.tools;
 
 let ganttInstance;
 
@@ -479,7 +497,7 @@ const records = [
     start: '2024-07-24',
     end: '2024-07-26',
     progress: 31,
-    priority: 'P0',
+    priority: 'P0'
   },
   {
     id: 2,
@@ -529,7 +547,7 @@ const records = [
     start: '2024-07-29',
     end: '2024-08-11',
     progress: 100,
-    priority: 'P1',
+    priority: 'P1'
   }
 ];
 
@@ -624,9 +642,9 @@ const option = {
       barOverlayColor: 'rgba(99, 144, 0, 0.4)'
     },
     barStyle: {
-      cornerRadius: 20,
+      cornerRadius: 20
     },
-    customLayout: (args) => {
+    customLayout: args => {
       const colorLength = barColors.length;
       const { width, height, index, startDate, endDate, taskDays, progress, taskRecord, ganttInstance } = args;
       const container = new VTableGantt.VRender.Group({
@@ -677,21 +695,25 @@ const option = {
       containerLeft.add(avatar);
 
       // 鼠标悬浮时，显示tooltip 显示负责人名字
-      avatar.addEventListener('mouseenter',event => {
+      avatar.addEventListener('mouseenter', event => {
         console.log('enter');
         const containerRect = document.getElementById(CONTAINER_ID).getBoundingClientRect();
         debugger;
-        const targetX=event.target.globalAABBBounds.x1;
-        const targetY=event.target.globalAABBBounds.y1;
-        showTooltip([taskRecord.developer],ganttInstance.taskTableWidth+ targetX+containerRect.left, targetY+containerRect.top+50);
+        const targetX = event.target.globalAABBBounds.x1;
+        const targetY = event.target.globalAABBBounds.y1;
+        showTooltip(
+          [taskRecord.developer],
+          ganttInstance.taskTableWidth + targetX + containerRect.left,
+          targetY + containerRect.top + 50
+        );
       });
-      avatar.addEventListener('mouseleave',event => {
+      avatar.addEventListener('mouseleave', event => {
         console.log('leave');
         hideTooltip();
       });
       const containerCenter = new VTableGantt.VRender.Group({
         height,
-        width: (width - 60)/2,
+        width: (width - 60) / 2,
         display: 'flex',
         flexDirection: 'column'
         // alignItems: 'left'
@@ -703,7 +725,7 @@ const option = {
         fontSize: 16,
         fontFamily: 'sans-serif',
         fill: 'white',
-        maxLineWidth: (width - 60)/2,
+        maxLineWidth: (width - 60) / 2,
         boundsPadding: [10, 0, 0, 0]
       });
       containerCenter.add(title);
@@ -717,24 +739,27 @@ const option = {
       });
       containerCenter.add(days);
 
-      if(width>=120){
+      if (width >= 120) {
         const containerRight = new VTableGantt.VRender.Group({
           height,
-          width: (width - 60)/2,
+          width: (width - 60) / 2,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-           justifyContent: 'center' // 垂直方向居中对齐
+          justifyContent: 'center' // 垂直方向居中对齐
         });
         container.add(containerRight);
 
         const dateRange = new VTableGantt.VRender.Text({
-          text: `${tools.formatDate( new Date(taskRecord.start), 'mm/dd')}-${tools.formatDate( new Date(taskRecord.end), 'mm/dd')}`,
+          text: `${tools.formatDate(new Date(taskRecord.start), 'mm/dd')}-${tools.formatDate(
+            new Date(taskRecord.end),
+            'mm/dd'
+          )}`,
           fontSize: 16,
           fontFamily: 'sans-serif',
           fill: 'white',
-          alignSelf:'flex-end',
-          maxLineWidth: (width - 60)/2,
+          alignSelf: 'flex-end',
+          maxLineWidth: (width - 60) / 2,
           boundsPadding: [0, 10, 0, 0]
         });
         containerRight.add(dateRange);
@@ -744,7 +769,7 @@ const option = {
         // renderDefaultBar: true
         // renderDefaultText: true
       };
-    },
+    }
   },
   timelineHeader: {
     colWidth: 100,
@@ -762,14 +787,14 @@ const option = {
         unit: 'week',
         step: 1,
         startOfWeek: 'sunday',
-        rowHeight:40,
+        rowHeight: 40,
         format(date) {
           return `Week ${date.dateIndex}`;
         },
         style: {
-          textStick:true,
+          textStick: true,
           fontSize: 20,
-          padding:5,
+          padding: 5,
           fontWeight: 'bold',
           color: 'white',
           strokeColor: 'black',
@@ -781,13 +806,13 @@ const option = {
       {
         unit: 'day',
         step: 1,
-        rowHeight:40,
+        rowHeight: 40,
         format(date) {
           return date.dateIndex.toString();
         },
         style: {
           fontSize: 20,
-          padding:5,
+          padding: 5,
           fontWeight: 'bold',
           color: 'white',
           strokeColor: 'black',
@@ -800,12 +825,12 @@ const option = {
   },
   markLine: [
     {
-      "date": "2024/8/02",
-      "scrollToMarkLine": true,
-      "position": "left",
-      "style": {
-          "lineColor": "red",
-          "lineWidth": 1
+      date: '2024/8/02',
+      scrollToMarkLine: true,
+      position: 'left',
+      style: {
+        lineColor: 'red',
+        lineWidth: 1
       }
     }
   ],
@@ -830,7 +855,7 @@ const option = {
 };
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
-ganttInstance.on('scroll',(event)=>{
+ganttInstance.on('scroll', event => {
   hideTooltip();
 });
 

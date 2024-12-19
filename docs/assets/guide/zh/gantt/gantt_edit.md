@@ -2,7 +2,7 @@
 
 在本教程中，我们将介绍如何使用 @visactor/vtable-gantt 的编辑能力。
 
-**因为左侧是一个完整的ListTable，所以可直接参照在ListTable中[编辑教程](../edit/edit_cell)。**
+**因为左侧是一个完整的 ListTable，所以可直接参照在 ListTable 中[编辑教程](../edit/edit_cell)。**
 
 # 使用步骤
 
@@ -60,12 +60,12 @@ const listEditor = new ListEditor({ values: ['女', '男'] });
 ```javascript
 // import * as VTable from '@visactor/vtable';
 // 注册编辑器到VTable
- VTableGantt.VTable.register.editor('name-editor', inputEditor);
- VTableGantt.VTable.register.editor('name-editor2', inputEditor2);
- VTableGantt.VTable.register.editor('textArea-editor', textAreaEditor);
- VTableGantt.VTable.register.editor('number-editor', numberEditor);
- VTableGantt.VTable.register.editor('date-editor', dateInputEditor);
- VTableGantt.VTable.register.editor('list-editor', listEditor);
+VTableGantt.VTable.register.editor('name-editor', inputEditor);
+VTableGantt.VTable.register.editor('name-editor2', inputEditor2);
+VTableGantt.VTable.register.editor('textArea-editor', textAreaEditor);
+VTableGantt.VTable.register.editor('number-editor', numberEditor);
+VTableGantt.VTable.register.editor('date-editor', dateInputEditor);
+VTableGantt.VTable.register.editor('list-editor', listEditor);
 ```
 
 接下来需要再 columns 配置中指定使用的编辑器：
@@ -84,10 +84,10 @@ columns: [
   { title: 'birthday', field: 'birthDate', editor: 'date-editor' },
 ]
 ```
+
 在左侧任务列表表格中，用户可以通过`双击`（或者其他交互方式）单元格来开始编辑。
 
 # 示例
-
 
 ```javascript livedemo template=vtable
 let ganttInstance;
@@ -97,8 +97,8 @@ let ganttInstance;
 // 官网编辑器中将 VTable.editors重命名成了VTable_editors
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();
- VTableGantt.VTable.register.editor('inputEditor', input_editor);
- VTableGantt.VTable.register.editor('dateEditor', date_input_editor);
+VTableGantt.VTable.register.editor('inputEditor', input_editor);
+VTableGantt.VTable.register.editor('dateEditor', date_input_editor);
 const records = [
   {
     id: 1,
@@ -107,7 +107,7 @@ const records = [
     start: '2024-07-24',
     end: '2024-07-26',
     progress: 31,
-    priority: 'P0',
+    priority: 'P0'
   },
   {
     id: 2,
@@ -152,7 +152,7 @@ const records = [
     start: '2024-07-29',
     end: '2024-08-11',
     progress: 100,
-    priority: 'P1',
+    priority: 'P1'
   }
 ];
 
@@ -264,7 +264,7 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 8,
       /** 任务条的边框 */
-      borderWidth: 1,
+      borderLineWidth: 1,
       /** 边框颜色 */
       borderColor: 'black'
     }
@@ -320,12 +320,12 @@ const option = {
   },
   markLine: [
     {
-      "date": "2024/8/02",
-      "scrollToMarkLine": true,
-      "position": "left",
-      "style": {
-          "lineColor": "red",
-          "lineWidth": 1
+      date: '2024/8/02',
+      scrollToMarkLine: true,
+      position: 'left',
+      style: {
+        lineColor: 'red',
+        lineWidth: 1
       }
     }
   ],
@@ -351,6 +351,7 @@ const option = {
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
 ```
+
 如果有自定义编辑的需求，请参考完整的教程文档：[编辑教程](../edit/edit_cell)。
 
 目前，编辑只支持在任务列表表格中进行。任务条的编辑能力只支持拖拽宽度和拖拽位置，目前还不支持直接在任务条上进行编辑。

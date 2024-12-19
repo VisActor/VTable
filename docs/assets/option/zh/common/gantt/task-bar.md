@@ -40,6 +40,14 @@ ${prefix} barStyle(ITaskBarStyle)
 
 {{ use: common-gantt-task-bar-style }}
 
+${prefix} milestoneStyle(ITaskBarStyle)
+
+里程碑样式
+
+非必填
+
+{{ use: common-gantt-task-bar-milestone-style }}
+
 ${prefix} customLayout(ITaskBarCustomLayout)
 
 自定义布局渲染
