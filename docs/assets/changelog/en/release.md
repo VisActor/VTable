@@ -1,3 +1,38 @@
+# v1.14.0
+
+2024-12-20
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add contextmenu_task_bar event [#3013](https://github.com/VisActor/VTable/issues/3013)
+- **@visactor/vtable**: add milestone type [#3097](https://github.com/VisActor/VTable/issues/3097)
+- **@visactor/vtable**: add mergeCell function to support more detailed conditions
+- **@visactor/vtable**: support tickAlign in PivotChart
+- **@visactor/vtable**: add updateMarkLine
+- **@visactor/vtable**: add enums in validateValue of vtable-editor [#3039](https://github.com/VisActor/VTable/issues/3039)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: validateValue not promise case can not be recalled [#3144](https://github.com/VisActor/VTable/issues/3144)
+- **@visactor/vtable**: adjust scroll hot area limited on table group [#3152](https://github.com/VisActor/VTable/issues/3152)
+- **@visactor/vtable**: fix react-component update in tree table
+- **@visactor/vtable**: fix customStyle update not work [#3068](https://github.com/VisActor/VTable/issues/3068)
+- **@visactor/vtable**: fix font-weight in vtable-export [#3005](https://github.com/VisActor/VTable/issues/3005)
+- **@visactor/vtable**: fix graphic html attribute error
+- **@visactor/vtable**: application define in react-vtable umd file [#3093](https://github.com/VisActor/VTable/issues/3093)
+- **@visactor/vtable**: fix customRender error in react-vtable [#3142](https://github.com/VisActor/VTable/issues/3142)
+- **@visactor/vtable**: fix group title link click [#3022](https://github.com/VisActor/VTable/issues/3022)
+- **@visactor/vtable**: fix cell group judgement when scroll [#3149](https://github.com/VisActor/VTable/issues/3149)
+- **@visactor/vtable**: fix undeline height in text measurement [#3112](https://github.com/VisActor/VTable/issues/3112)
+- **@visactor/vtable**: change checkboxState into Map
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: customComputeRowHeight logic
+
+[more detail about v1.14.0](https://github.com/VisActor/VTable/releases/tag/v1.14.0)
+
 # v1.13.2
 
 2024-12-16
