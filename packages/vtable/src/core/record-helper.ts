@@ -85,7 +85,7 @@ export function listTableChangeCellValue(
       if (table.internalProps._heightResizedRowMap.size === 0) {
         table.scenegraph.recalculateRowHeights();
       }
-    } else if (table.heightMode === 'autoHeight' && !table.internalProps._heightResizedRowMap.has(row)) {
+    } else if (table.isAutoRowHeight() && !table.internalProps._heightResizedRowMap.has(row)) {
       const oldHeight = table.getRowHeight(row);
       const newHeight = computeRowHeight(row, 0, table.colCount - 1, table);
       table.scenegraph.updateRowHeight(row, newHeight - oldHeight);
@@ -277,7 +277,7 @@ export function listTableChangeCellValues(
     (table.autoFillHeight && table.getAllRowsHeight() <= table.tableNoFrameHeight)
   ) {
     table.scenegraph.recalculateRowHeights();
-  } else if (table.heightMode === 'autoHeight') {
+  } else if (table.isAutoRowHeight()) {
     const rows: number[] = [];
     const deltaYs: number[] = [];
     for (let sRow = startRow; sRow <= range.end.row; sRow++) {

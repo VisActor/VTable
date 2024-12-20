@@ -39,10 +39,14 @@ export function createTable() {
     },
     {
       id: 200,
-      title: 'Scope'
+      title: 'Scope',
+      start: '2024-07-24',
+      end: '2024-08-04'
     },
     {
       id: 300,
+      start: '2024-07-24',
+      end: '2024-08-04',
       title: 'Determine project scope',
       children: [
         {
@@ -52,7 +56,8 @@ export function createTable() {
           start: '2024-08-04',
           end: '2024-08-04',
           progress: 90,
-          priority: 'P0'
+          priority: 'P0',
+          type: 'milestone'
         },
 
         {

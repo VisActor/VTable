@@ -159,7 +159,6 @@ export function createCell(
           cellWidth,
           cellHeight,
           false,
-          // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           padding,
           range,
@@ -440,7 +439,6 @@ export function updateCell(
           table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
           table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
           false,
-          // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           [0, 0, 0, 0],
           range,
@@ -826,7 +824,6 @@ function canUseFastUpdate(
   // const define = table.getBodyColumnDefine(col, row);
   // const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
   const cellType = table.getBodyColumnType(col, row);
-  // const autoRowHeight = table.heightMode === 'autoHeight';
   const autoRowHeight = table.isAutoRowHeight(row);
   const value = table.getCellValue(col, row);
 
@@ -918,7 +915,6 @@ export function dealWithMergeCellSize(
           cellGroup,
           cellHeight,
           cellHeight,
-          // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           padding,
           textAlign,
@@ -933,7 +929,6 @@ export function dealWithMergeCellSize(
           cellWidth,
           cellHeight,
           0,
-          // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           padding,
           textAlign,
@@ -969,7 +964,6 @@ export function dealWithMergeCellSizeForShadow(
       cellGroup,
       cellHeight,
       cellHeight,
-      // table.heightMode === 'autoHeight',
       table.isAutoRowHeight(row),
       padding,
       textAlign,
@@ -984,7 +978,6 @@ export function dealWithMergeCellSizeForShadow(
       cellWidth,
       cellHeight,
       0,
-      // table.heightMode === 'autoHeight',
       table.isAutoRowHeight(row),
       padding,
       textAlign,
@@ -1114,7 +1107,6 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
           table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
           table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
           false,
-          // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           [0, 0, 0, 0],
           customMergeRange,

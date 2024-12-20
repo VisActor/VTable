@@ -280,7 +280,7 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 15,
       borderColor: 'black',
-      borderWidth: 1
+      borderLineWidth: 1
     }
   },
   dependency: {

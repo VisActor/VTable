@@ -161,6 +161,7 @@ export class EditManager {
       const maybePromiseOrValue = this.editingEditor.validateValue?.(newValue, oldValue, this.editCell, this.table);
 
       if (isPromise(maybePromiseOrValue)) {
+        this.isValidatingValue = true;
         return new Promise((resolve, reject) => {
           maybePromiseOrValue
             .then(result => {
