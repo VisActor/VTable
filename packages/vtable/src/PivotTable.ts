@@ -36,7 +36,7 @@ import { Env } from './tools/env';
 import type { ITreeLayoutHeadNode } from './layout/tree-helper';
 import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
-import { EditManeger } from './edit/edit-manager';
+import { EditManager } from './edit/edit-manager';
 import * as editors from './edit/editors';
 import type { IEditor } from '@visactor/vtable-editors';
 import { computeColWidth } from './scenegraph/layout/compute-col-width';
@@ -201,7 +201,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         // this.updatePivotSortState(options.pivotSortState);
       }
       if (Env.mode !== 'node') {
-        this.editorManager = new EditManeger(this);
+        this.editorManager = new EditManager(this);
       }
 
       this.refreshHeader();

@@ -30,7 +30,13 @@ export interface IEditor<V = any> {
    * @param newValue new value to be set. If not provided, the current input element value will be used.
    * @param oldValue old value of the cell.
    */
-  validateValue?: (newValue?: V, oldValue?: V) => boolean | Promise<boolean>;
+  // validateValue?: (newValue?: V, oldValue?: V) => boolean | Promise<boolean>;
+  validateValue?: (
+    newValue?: any,
+    oldValue?: any,
+    position?: CellAddress,
+    table?: any
+  ) => boolean | ValidateEnum | Promise<boolean | ValidateEnum>;
   /**
    * Called when editor mode is exited by any means.
    * Expected to return the current value of the cell.
@@ -103,3 +109,15 @@ export interface ReferencePosition {
   rect: RectProps;
   placement?: Placement;
 }
+
+export enum ValidateEnum {
+  validateExit = 'validate-exit',
+  invalidateExit = 'invalidate-exit',
+  validateNotExit = 'validate-not-exit',
+  invalidateNotExit = 'invalidate-not-exit'
+}
+
+export type CellAddress = {
+  col: number;
+  row: number;
+};

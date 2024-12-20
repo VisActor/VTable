@@ -1,4 +1,5 @@
-import type { EditContext, IEditor, RectProps } from './types';
+import type { CellAddress, EditContext, IEditor, RectProps } from './types';
+import type { ValidateEnum } from './types';
 
 export interface InputEditorConfig {
   readonly?: boolean;
@@ -86,5 +87,9 @@ export class InputEditor implements IEditor {
 
   isEditorElement(target: HTMLElement) {
     return target === this.element;
+  }
+
+  validateValue(newValue?: any, oldValue?: any, position?: CellAddress, table?: any): boolean | ValidateEnum {
+    return true;
   }
 }

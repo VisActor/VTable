@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "fix: change checkboxState into Map",
-      "type": "minor"
+      "comment": "feat: add enums in validateValue of vtable-editor #3039",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vtable"

@@ -198,3 +198,13 @@
 绘制范围外的 canvas 上填充的颜色，默认为'#fff'，同时也适配到左侧表格的背景色。
 
 非必填
+
+## eventOptions(Object)
+
+事件触发相关问题设置，具体配置项：
+
+### preventDefaultContextMenu(boolean) = true
+
+阻止鼠标右键的默认行为
+
+非必填

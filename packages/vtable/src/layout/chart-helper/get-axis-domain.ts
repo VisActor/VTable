@@ -87,9 +87,12 @@ export function getAxisDomainRangeAndLabels(
   if (target?.targetTicks?.length ?? axisOption?.tick?.forceTickCount) {
     scaleTicks = scale.forceTicks(target?.targetTicks?.length ?? axisOption?.tick?.forceTickCount);
   } else {
-    scaleTicks = scale.ticks(axisOption?.tick?.tickCount ?? DEFAULT_CONTINUOUS_TICK_COUNT, {
-      noDecimals: axisOption?.tick?.noDecimals
-    });
+    scaleTicks = scale.ticks(
+      isNumber(axisOption?.tick?.tickCount) ? axisOption.tick.tickCount : DEFAULT_CONTINUOUS_TICK_COUNT,
+      {
+        noDecimals: axisOption?.tick?.noDecimals
+      }
+    );
   }
 
   return {
