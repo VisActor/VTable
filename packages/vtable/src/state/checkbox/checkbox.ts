@@ -347,7 +347,13 @@ function initRecordCheckState(records: any[], state: StateManager) {
     : table.internalProps.transpose
     ? table.rowHeaderLevelCount
     : table.columnHeaderLevelCount;
-  const end = table.isPivotTable() ? records.length : table.internalProps.transpose ? table.colCount : table.rowCount;
+  const end = table.isPivotTable()
+    ? isArray(records)
+      ? records.length
+      : 0
+    : table.internalProps.transpose
+    ? table.colCount
+    : table.rowCount;
   for (let index = 0; index + start < end; index++) {
     const record = table.isPivotTable() ? records[index] : table.dataSource.get(index);
     // eslint-disable-next-line no-loop-func
