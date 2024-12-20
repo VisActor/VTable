@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add grid rowBackgroundColor and columnBackgroundColor weekendBackgroundColor #3155\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
