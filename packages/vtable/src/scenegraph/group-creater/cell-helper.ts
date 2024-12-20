@@ -33,7 +33,7 @@ import type { CreateCheckboxCellGroup } from './cell-type/checkbox-cell';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
-import { isArray, isValid } from '@visactor/vutils';
+import { isArray, isNumber, isValid } from '@visactor/vutils';
 import { breakString } from '../utils/break-string';
 import type { CreateRadioCellGroup } from './cell-type/radio-cell';
 import { onBeforeAttributeUpdateForInvertHighlight } from '../../plugins/invert-highlight';
@@ -775,7 +775,9 @@ function updateCellContent(
       const reactGroup = oldCellGroup.getChildByName('custom-container');
       if (reactGroup) {
         const { col, row } = reactGroup;
-        table.reactCustomLayout.removeCustomCell(col, row);
+        if (isNumber(col) && isNumber(row)) {
+          table.reactCustomLayout.removeCustomCell(col, row);
+        }
       }
     }
   }
