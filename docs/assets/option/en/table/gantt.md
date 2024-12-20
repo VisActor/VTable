@@ -198,3 +198,13 @@ dateFormat?:
 The fill color of the canvas outside the drawing range is '#fff' by default, and it also matches the background color of the table on the left.
 
 Not required
+
+## eventOptions(IEventOptions)
+
+Settings related to event triggering, specific configuration items:
+
+### preventDefaultContextMenu(boolean) = true
+
+Prevent the default behavior of the right mouse button
+
+Optional
