@@ -2,34 +2,31 @@
 
 2024-12-20
 
-
 **🆕 新增功能**
 
-- **@visactor/vtable**: add contextmenu_task_bar event [#3013](https://github.com/VisActor/VTable/issues/3013)
-- **@visactor/vtable**: add milestone type [#3097](https://github.com/VisActor/VTable/issues/3097)
-- **@visactor/vtable**: add mergeCell function to support more detailed conditions
-- **@visactor/vtable**: support tickAlign in PivotChart
-- **@visactor/vtable**: add updateMarkLine
-- **@visactor/vtable**: add enums in validateValue of vtable-editor [#3039](https://github.com/VisActor/VTable/issues/3039)
+- **@visactor/vtable**：甘特图添加contextmenu_task_bar事件 #3013
+- **@visactor/vtable**：甘特图添加里程碑类型 #3097
+- **@visactor/vtable**：添加合并单元格功能以支持更详细的条件
+- **@visactor/vtable**：在数据透视表中支持刻度对齐
+- **@visactor/vtable**：添加更新标记线功能
+- **@visactor/vtable**：在vtable编辑器的validateValue中添加枚举类型 #3039
 
-**🐛 功能修复**
+**🐛 修复**
+- **@visactor/vtable**：validateValue非Promise情况无法被回调 #3144
+- **@visactor/vtable**：调整表格组上的滚动热区限制 #3152
+- **@visactor/vtable**：修复树状表格中React组件的更新问题
+- **@visactor/vtable**：修复自定义样式更新不生效的问题 #3068
+- **@visactor/vtable**：修复vtable导出中的字体粗细问题 #3005
+- **@visactor/vtable**：修复图形HTML属性错误
+- **@visactor/vtable**：在react-vtable的UMD文件中定义应用程序 #3093
+- **@visactor/vtable**：修复react-vtable中的自定义渲染错误 #3142
+- **@visactor/vtable**：修复组标题链接点击问题 #3022
+- **@visactor/vtable**：修复滚动时单元格组判断问题 #3149
+- **@visactor/vtable**：修复文本测量中的下划线高度问题 #3112
+- **@visactor/vtable**：将checkboxState改为Map类型
 
-- **@visactor/vtable**: validateValue not promise case can not be recalled [#3144](https://github.com/VisActor/VTable/issues/3144)
-- **@visactor/vtable**: adjust scroll hot area limited on table group [#3152](https://github.com/VisActor/VTable/issues/3152)
-- **@visactor/vtable**: fix react-component update in tree table
-- **@visactor/vtable**: fix customStyle update not work [#3068](https://github.com/VisActor/VTable/issues/3068)
-- **@visactor/vtable**: fix font-weight in vtable-export [#3005](https://github.com/VisActor/VTable/issues/3005)
-- **@visactor/vtable**: fix graphic html attribute error
-- **@visactor/vtable**: application define in react-vtable umd file [#3093](https://github.com/VisActor/VTable/issues/3093)
-- **@visactor/vtable**: fix customRender error in react-vtable [#3142](https://github.com/VisActor/VTable/issues/3142)
-- **@visactor/vtable**: fix group title link click [#3022](https://github.com/VisActor/VTable/issues/3022)
-- **@visactor/vtable**: fix cell group judgement when scroll [#3149](https://github.com/VisActor/VTable/issues/3149)
-- **@visactor/vtable**: fix undeline height in text measurement [#3112](https://github.com/VisActor/VTable/issues/3112)
-- **@visactor/vtable**: change checkboxState into Map
-
-**🔨 功能重构**
-
-- **@visactor/vtable**: customComputeRowHeight logic
+**🔨 重构**
+- **@visactor/vtable**：自定义计算行高逻辑
 
 [更多详情请查看 v1.14.0](https://github.com/VisActor/VTable/releases/tag/v1.14.0)
 
