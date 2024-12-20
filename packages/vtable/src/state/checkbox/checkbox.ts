@@ -127,7 +127,7 @@ export function initCheckedState(records: any[], state: StateManager) {
 
   //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
   if (isNeedInitHeaderCheckedStateFromRecord) {
-    initRecordCheckState(state);
+    initRecordCheckState(records, state);
   }
 }
 
@@ -158,7 +158,7 @@ export function updateHeaderCheckedState(
       ? state.table.getCustomMerge(tableIndex, row)
       : state.table.getCustomMerge(col, tableIndex);
 
-    const data = state.table.dataSource.get(index as number);
+    const data = state.table.dataSource?.get(index as number);
     if (mergeCell || data.vtableMerge) {
       // 不参与check状态的计算
       return;
@@ -340,12 +340,16 @@ export function getGroupCheckboxState(table: BaseTableAPI) {
   return result;
 }
 
-function initRecordCheckState(state: StateManager) {
+function initRecordCheckState(records: any[], state: StateManager) {
   const table = state.table;
-  const start = table.internalProps.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
-  const end = table.internalProps.transpose ? table.colCount : table.rowCount;
+  const start = table.isPivotTable()
+    ? 0
+    : table.internalProps.transpose
+    ? table.rowHeaderLevelCount
+    : table.columnHeaderLevelCount;
+  const end = table.isPivotTable() ? records.length : table.internalProps.transpose ? table.colCount : table.rowCount;
   for (let index = 0; index + start < end; index++) {
-    const record = table.dataSource.get(index);
+    const record = table.isPivotTable() ? records[index] : table.dataSource.get(index);
     // eslint-disable-next-line no-loop-func
     state._checkboxCellTypeFields.forEach(field => {
       const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
@@ -370,7 +374,7 @@ function initRecordCheckState(state: StateManager) {
           isChecked = globalChecked;
         }
       }
-      const dataIndex = state.table.dataSource.getIndexKey(index).toString();
+      const dataIndex = table.isPivotTable() ? index.toString() : state.table.dataSource.getIndexKey(index).toString();
       if (!state.checkedState.get(dataIndex)) {
         state.checkedState.set(dataIndex, {});
       }
