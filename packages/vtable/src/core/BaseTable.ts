@@ -986,16 +986,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             element.parentElement.offsetHeight -
             parseInt(computedStyle.paddingTop || '0px', 10) -
             parseInt(computedStyle.paddingBottom || '0px', 20);
+          widthWithoutPadding = (widthWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
+          heightWithoutPadding = (heightWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
         }
       }
-      const width1 = (widthWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
-      const height1 = (heightWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
 
-      element.style.width = (width1 && `${width1 - padding.left - padding.right}px`) || '0px';
-      element.style.height = (height1 && `${height1 - padding.top - padding.bottom}px`) || '0px';
+      element.style.width = (widthWithoutPadding && `${widthWithoutPadding - padding.left - padding.right}px`) || '0px';
+      element.style.height =
+        (heightWithoutPadding && `${heightWithoutPadding - padding.top - padding.bottom}px`) || '0px';
 
       const { canvas } = this.internalProps;
-      widthP = (canvas.parentElement?.offsetWidth ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0); //TODO 这里写错了 应该在??前后加上小括号的  但是如果这里改了整个大小也就变了 所以这里先不动
+      widthP = (canvas.parentElement?.offsetWidth ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
       heightP = (canvas.parentElement?.offsetHeight ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
 
       //style 与 width，height相同
