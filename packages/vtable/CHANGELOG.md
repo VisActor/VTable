@@ -1,6 +1,46 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 16 Dec 2024 11:33:07 GMT and should not be manually modified.
+This log was last generated on Fri, 20 Dec 2024 10:12:51 GMT and should not be manually modified.
+
+## 1.14.0
+Fri, 20 Dec 2024 10:12:51 GMT
+
+### Minor changes
+
+- fix: change checkboxState into Map
+
+### Updates
+
+- feat: add contextmenu_task_bar event #3013
+
+
+- feat: add milestone type #3097
+
+
+- fix: validateValue not promise case can not be recalled #3144
+
+
+- fix: adjust scroll hot area limited on table group #3152
+
+
+- feat: add mergeCell function to support more detailed conditions
+- feat: support tickAlign in PivotChart
+- feat: add updateMarkLine
+
+
+- fix: fix react-component update in tree table
+- fix: fix customStyle update not work #3068
+- fix: fix font-weight in vtable-export #3005
+- feat: add enums in validateValue of vtable-editor #3039
+- fix: fix graphic html attribute error
+- fix: application define in react-vtable umd file #3093
+- fix: fix customRender error in react-vtable #3142
+- fix: fix group title link click #3022
+- fix: fix cell group judgement when scroll #3149
+- fix: fix undeline height in text measurement #3112
+- refactor: customComputeRowHeight logic
+
+
 
 ## 1.13.2
 Mon, 16 Dec 2024 11:33:07 GMT
