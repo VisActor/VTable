@@ -4,7 +4,7 @@ group: usage
 title: 使用语法化标签
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-list-table.png
 order: 1-1
-link: '../guide/Developer_Ecology/vue'
+link: Developer_Ecology/vue
 ---
 
 # 使用语法化标签
@@ -17,7 +17,6 @@ link: '../guide/Developer_Ecology/vue'
 ## 代码演示
 
 ```javascript livedemo template=vtable-vue
-
 const app = createApp({
   template: `
     <ListTable :options="tableOptions" >
@@ -34,13 +33,13 @@ const app = createApp({
         { field: '0', title: '名字' },
         { field: '1', title: '年龄' },
         { field: '2', title: '性别' },
-        { field: '3', title: '爱好' },
+        { field: '3', title: '爱好' }
       ],
       tableOptions: {
-         records: new Array(1000).fill(['张三', 18, '男', '🏀', '@example', 'xxx.xxx.xxx.xxx', '12345678901', '正常']),
-      },
+        records: new Array(1000).fill(['张三', 18, '男', '🏀', '@example', 'xxx.xxx.xxx.xxx', '12345678901', '正常'])
+      }
     };
-  },
+  }
 });
 
 app.component('ListTable', VueVTable.ListTable);
@@ -52,5 +51,4 @@ app.mount(`#${CONTAINER_ID}`);
 window.customRelease = () => {
   app.unmount();
 };
-
 ```

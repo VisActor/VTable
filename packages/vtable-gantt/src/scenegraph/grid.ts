@@ -1,12 +1,13 @@
 import { Group, createLine } from '@visactor/vtable/es/vrender';
 
 import type { Scenegraph } from './scenegraph';
+import type { IGrid } from '../ts-types';
 export class Grid {
   vertical: boolean;
   horizontal: boolean;
   // verticalLineSpace: number;
   // horizontalLineSpace: number;
-  gridStyle: any;
+  gridStyle: IGrid;
   scrollLeft: number;
   scrollTop: number;
   x: number;
@@ -34,7 +35,7 @@ export class Grid {
     this.height = scene.tableGroup.attribute.height - scene.timelineHeader.group.attribute.height;
     this.rowHeight = scene._gantt.parsedOptions.rowHeight;
     this.rowCount = scene._gantt.itemCount;
-    this.allGridWidth = scene._gantt._getAllColsWidth();
+    this.allGridWidth = scene._gantt.getAllDateColsWidth();
     this.allGridHeight = scene._gantt.getAllTaskBarsHeight();
     this.group = new Group({
       x: this.x,
@@ -65,7 +66,7 @@ export class Grid {
       points: [
         { x: 0, y: bottomLineY },
         {
-          x: scene._gantt._getAllColsWidth(),
+          x: scene._gantt.getAllDateColsWidth(),
           y: bottomLineY
         }
       ]
@@ -84,27 +85,44 @@ export class Grid {
       this.verticalLineGroup.name = 'grid-vertical';
       this.group.appendChild(this.verticalLineGroup);
 
-      const vLines = [];
-      let x = 0;
-      if (this.gridStyle?.verticalLine.lineWidth & 1) {
-        x = 0.5;
-      }
       const timelineDates = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
-      const colWidthPerDay = this._scene._gantt.parsedOptions.colWidthPerDay;
-      for (let i = 0; i < timelineDates?.length - 1; i++) {
-        const dateline = timelineDates[i];
-        x = x + Math.floor(colWidthPerDay * dateline.days);
-        const line = createLine({
-          pickable: false,
-          stroke: this.gridStyle?.verticalLine.lineColor,
-          lineWidth: this.gridStyle?.verticalLine.lineWidth,
-          points: [
-            { x, y: 0 },
-            { x, y: this.allGridHeight }
-          ]
-        });
-        vLines.push(line);
-        this.verticalLineGroup.appendChild(line);
+      const timelineColWidth = this._scene._gantt.parsedOptions.timelineColWidth;
+
+      if (typeof this.gridStyle.verticalLine === 'function') {
+        for (let i = 0; i < timelineDates?.length - 1; i++) {
+          const verticalLine_style = this.gridStyle.verticalLine({
+            index: i,
+            dateIndex: timelineDates[i].dateIndex,
+            date: timelineDates[i].endDate,
+            ganttInstance: this._scene._gantt
+          });
+          const x = Math.ceil(timelineColWidth * (i + 1)) + (verticalLine_style.lineWidth & 1 ? 0.5 : 0);
+          const line = createLine({
+            pickable: false,
+            stroke: verticalLine_style.lineColor,
+            lineWidth: verticalLine_style.lineWidth,
+            points: [
+              { x, y: 0 },
+              { x, y: this.allGridHeight }
+            ]
+          });
+          this.verticalLineGroup.appendChild(line);
+        }
+      } else {
+        const verticalLine_style = this.gridStyle.verticalLine;
+        for (let i = 0; i < timelineDates?.length - 1; i++) {
+          const x = Math.ceil(timelineColWidth * (i + 1)) + (verticalLine_style.lineWidth & 1 ? 0.5 : 0);
+          const line = createLine({
+            pickable: false,
+            stroke: verticalLine_style.lineColor,
+            lineWidth: verticalLine_style.lineWidth,
+            points: [
+              { x, y: 0 },
+              { x, y: this.allGridHeight }
+            ]
+          });
+          this.verticalLineGroup.appendChild(line);
+        }
       }
     }
   }
@@ -118,25 +136,44 @@ export class Grid {
       });
       this.horizontalLineGroup.name = 'grid-horizontal';
       this.group.appendChild(this.horizontalLineGroup);
-
-      const hLines = [];
-      let y = 0;
-      if (this.gridStyle?.horizontalLine.lineWidth & 1) {
-        y += 0.5;
-      }
-      for (let i = 0; i < this.rowCount - 1; i++) {
-        y = y + this._scene._gantt.getRowHeightByIndex(i); // Math.floor(this.rowHeight);
-        const line = createLine({
-          pickable: false,
-          stroke: this.gridStyle?.horizontalLine.lineColor,
-          lineWidth: this.gridStyle?.horizontalLine.lineWidth,
-          points: [
-            { x: 0, y },
-            { x: this.allGridWidth, y }
-          ]
-        });
-        hLines.push(line);
-        this.horizontalLineGroup.appendChild(line);
+      if (typeof this.gridStyle.horizontalLine === 'function') {
+        let y = 0.5; //确保大多数情况 LineWidth为1时是准确的
+        for (let i = 0; i < this.rowCount - 1; i++) {
+          const horizontalLine_style = this.gridStyle.horizontalLine({
+            index: i,
+            ganttInstance: this._scene._gantt
+          });
+          y = y + this._scene._gantt.getRowHeightByIndex(i); // Math.floor(this.rowHeight);
+          const line = createLine({
+            pickable: false,
+            stroke: horizontalLine_style.lineColor,
+            lineWidth: horizontalLine_style.lineWidth,
+            points: [
+              { x: 0, y },
+              { x: this.allGridWidth, y }
+            ]
+          });
+          this.horizontalLineGroup.appendChild(line);
+        }
+      } else {
+        const horizontalLine_style = this.gridStyle.horizontalLine;
+        let y = 0;
+        if (horizontalLine_style.lineWidth & 1) {
+          y += 0.5;
+        }
+        for (let i = 0; i < this.rowCount - 1; i++) {
+          y = y + this._scene._gantt.getRowHeightByIndex(i); // Math.floor(this.rowHeight);
+          const line = createLine({
+            pickable: false,
+            stroke: horizontalLine_style.lineColor,
+            lineWidth: horizontalLine_style.lineWidth,
+            points: [
+              { x: 0, y },
+              { x: this.allGridWidth, y }
+            ]
+          });
+          this.horizontalLineGroup.appendChild(line);
+        }
       }
     }
   }
@@ -150,7 +187,7 @@ export class Grid {
       y: this._scene._gantt.getAllHeaderRowsHeight()
     });
     this.rowCount = this._scene._gantt.itemCount;
-    this.allGridWidth = this._scene._gantt._getAllColsWidth();
+    this.allGridWidth = this._scene._gantt.getAllDateColsWidth();
     this.allGridHeight = this._scene._gantt.getAllTaskBarsHeight();
     this.verticalLineGroup?.parent.removeChild(this.verticalLineGroup);
     this.horizontalLineGroup?.parent.removeChild(this.horizontalLineGroup);

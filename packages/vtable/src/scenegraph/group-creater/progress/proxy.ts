@@ -490,8 +490,11 @@ export class SceneProxy {
       this.updateDeltaY(y);
       this.updateBody(y - this.deltaY);
     } else if (
-      (!this.table.scenegraph.bodyGroup.firstChild || this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0) &&
+      (!this.table.scenegraph.bodyGroup.firstChild ||
+        this.table.scenegraph.bodyGroup.firstChild.type !== 'group' ||
+        this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0) &&
       (!this.table.scenegraph.rowHeaderGroup.firstChild ||
+        this.table.scenegraph.rowHeaderGroup.firstChild.type !== 'group' ||
         this.table.scenegraph.rowHeaderGroup.firstChild.childrenCount === 0)
     ) {
       this.updateDeltaY(y);
@@ -522,7 +525,9 @@ export class SceneProxy {
       this.updateDeltaX(x);
       this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else if (
-      this.table.scenegraph.bodyGroup.firstChild && //注意判断关系 这里不是 || 而是 &&
+      // 注意判断关系 这里不是 || 而是 &&
+      this.table.scenegraph.bodyGroup.firstChild &&
+      this.table.scenegraph.bodyGroup.firstChild.type === 'group' &&
       this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
     ) {
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollLeft执行dynamicSetX会出错

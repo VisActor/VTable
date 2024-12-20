@@ -3,7 +3,7 @@ category: examples
 group: Component
 title: tooltip
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip.png
-link: '../guide/components/tooltip'
+link: components/tooltip
 option: ListTable#tooltip.isShowOverflowTextTooltip
 ---
 

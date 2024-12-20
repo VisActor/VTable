@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: 甘特图交互-创建排期
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-task-creation-button.gif
-link: '../guide/gantt/introduction'
+link: gantt/introduction
 option: Gantt#taskBar
 ---
 

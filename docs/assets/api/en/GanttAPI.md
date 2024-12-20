@@ -20,6 +20,14 @@ The following is an example of obtaining the selected state of the table:
 
 For specific ListTable interfaces, refer to: https://visactor.io/vtable/api/Methods
 
+### updateOption(Function)
+
+Update options
+
+```
+  updateOption: (options: GanttConstructorOptions) => void
+```
+
 ### setRecords(Function)
 
 Set data
@@ -37,6 +45,14 @@ Update timeline scales
 ```
 
 {{ use: common-gantt-timeline-scale }}
+
+### updateDateRange(Function)
+
+update gantt chart date range
+
+```
+  updateDateRange: (minDate: string, maxDate: string) => void
+```
 
 ### updateTaskRecord(Function)
 

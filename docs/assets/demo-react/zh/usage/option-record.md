@@ -4,7 +4,7 @@ group: usage
 title: 使用option+record
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default.png
 order: 1-1
-link: '../guide/Developer_Ecology/react'
+link: Developer_Ecology/react
 ---
 
 # 使用 option+record

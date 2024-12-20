@@ -40,7 +40,7 @@ Configuration items (pivot table and perspective chart support):
   /**
    * The effective range of adjusting column width: 'column' | 'indicator' | 'all' | 'indicatorGroup', single column | by indicator | all columns | multiple indicators belonging to the same dimension value
    */
- columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';  
+ columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
  /**
    * The effective range of adjusting row height: 'row' | 'indicator' | 'all' | 'indicatorGroup', single row | by indicator | all rows | multiple indicators belonging to the same dimension value
    */
@@ -1055,6 +1055,7 @@ When adjusting the column width and row height, we can customize the style of th
 - bgColor: background line color
 - lineWidth: line width of the straight line
 - width: width of background line
+- resizeHotSpotSize: response Adjust the size of the interactive behavior hot zone in row height and column width
 
 ```javascript
 {
@@ -1064,7 +1065,8 @@ When adjusting the column width and row height, we can customize the style of th
             lineColor: 'blue',
             bgColor: 'red',
             lineWidth: 1,
-            width: 5
+            width: 5,
+            resizeHotSpotSize: 8
         }
     }
 }
@@ -1126,7 +1128,8 @@ const myVTable = new VTable.ListTable(document.getElementById(CONTAINER_ID), {
       lineColor: 'blue',
       bgColor: 'lightgray',
       lineWidth: 2,
-      width: 10
+      width: 10,
+      resizeHotSpotSize: 8
     }
   })
 });

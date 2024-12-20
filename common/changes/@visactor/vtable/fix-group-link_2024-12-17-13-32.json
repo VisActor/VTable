@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix group title link click #3022",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

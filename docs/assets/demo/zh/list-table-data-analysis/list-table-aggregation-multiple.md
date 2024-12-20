@@ -3,7 +3,7 @@ category: examples
 group: list-table-data-analysis
 title: 同一列数据设置多种聚合汇总方式
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-multiple-aggregation.png
-link: '../guide/data_analysis/list_table_dataAnalysis'
+link: data_analysis/list_table_dataAnalysis
 option: ListTable-columns-text#aggregation(Aggregation%20%7C%20CustomAggregation%20%7C%20Array)
 ---
 

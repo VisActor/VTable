@@ -7,7 +7,16 @@ import {
   type ITimelineDateInfo,
   type ITimelineScale
 } from './ts-types';
-import { createDateAtMidnight, getWeekNumber } from './tools/util';
+import {
+  createDateAtLastHour,
+  createDateAtLastMillisecond,
+  createDateAtLastMinute,
+  createDateAtLastSecond,
+  createDateAtMidnight,
+  getEndDateByTimeUnit,
+  getStartDateByTimeUnit,
+  getWeekNumber
+} from './tools/util';
 
 const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
 export const DayTimes = 1000 * 60 * 60 * 24;
@@ -20,7 +29,8 @@ export function getTaskIndexByY(y: number, gantt: Gantt) {
 }
 export function getDateIndexByX(x: number, gantt: Gantt) {
   const totalX = x + gantt.stateManager.scroll.horizontalBarPos;
-  const dateIndex = Math.floor(totalX / gantt.parsedOptions.timelineColWidth);
+  const firstDateColWidth = gantt.getDateColWidth(0);
+  const dateIndex = Math.floor((totalX - firstDateColWidth) / gantt.parsedOptions.timelineColWidth) + 1;
   return dateIndex;
 }
 
@@ -101,9 +111,23 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.startDateField = options.taskBar?.startDateField ?? 'startDate';
   gantt.parsedOptions.endDateField = options.taskBar?.endDateField ?? 'endDate';
   gantt.parsedOptions.progressField = options.taskBar?.progressField ?? 'progress';
-  gantt.parsedOptions.minDate = options?.minDate ? createDateAtMidnight(options?.minDate) : undefined;
-  gantt.parsedOptions.maxDate = options?.maxDate ? createDateAtMidnight(options?.maxDate) : undefined;
-
+  // gantt.parsedOptions.minDate = options?.minDate
+  //   ? gantt.parsedOptions.timeScaleIncludeHour
+  //     ? createDateAtMidnight(options.minDate)
+  //     : createDateAtMidnight(options.minDate, true)
+  //   : undefined;
+  // gantt.parsedOptions.maxDate = options?.maxDate
+  //   ? gantt.parsedOptions.timeScaleIncludeHour
+  //     ? createDateAtLastHour(options.maxDate)
+  //     : createDateAtLastHour(options.maxDate, true)
+  //   : undefined;
+  const { unit: minTimeUnit, startOfWeek, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+  gantt.parsedOptions.minDate = options?.minDate
+    ? getStartDateByTimeUnit(new Date(options.minDate), minTimeUnit, startOfWeek)
+    : undefined;
+  gantt.parsedOptions.maxDate = options?.maxDate
+    ? getEndDateByTimeUnit(gantt.parsedOptions.minDate, new Date(options.maxDate), minTimeUnit, step)
+    : undefined;
   gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
   gantt.parsedOptions.overscrollBehavior = options?.overscrollBehavior ?? 'auto';
@@ -245,8 +269,10 @@ export function initOptions(gantt: Gantt) {
       gantt.parsedOptions.markLine[0].scrollToMarkLine = true;
     }
     if (gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine)) {
-      gantt.parsedOptions.scrollToMarkLineDate = createDateAtMidnight(
-        gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine).date
+      gantt.parsedOptions.scrollToMarkLineDate = getStartDateByTimeUnit(
+        new Date(gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine).date),
+        minTimeUnit,
+        startOfWeek
       );
     }
   }
@@ -312,77 +338,128 @@ export function initOptions(gantt: Gantt) {
     options?.dependency?.linkCreatingLineStyle
   );
 }
+export function updateOptionsWhenScaleChanged(gantt: Gantt) {
+  const options = gantt.options;
+
+  const { unit: minTimeUnit, startOfWeek, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+  gantt.parsedOptions.minDate = getStartDateByTimeUnit(new Date(gantt.parsedOptions.minDate), minTimeUnit, startOfWeek);
+  gantt.parsedOptions.maxDate = getEndDateByTimeUnit(
+    gantt.parsedOptions.minDate,
+    new Date(gantt.parsedOptions.maxDate),
+    minTimeUnit,
+    step
+  );
+  gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
+  gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
+  gantt.parsedOptions.timeLineHeaderRowHeights = [];
+  gantt.parsedOptions.timelineHeaderStyles = [];
+  for (let i = 0; i < gantt.parsedOptions.sortedTimelineScales.length ?? 0; i++) {
+    const style = gantt.parsedOptions.sortedTimelineScales[i].style;
+    gantt.parsedOptions.timelineHeaderStyles.push(
+      Object.assign(
+        {
+          fontSize: 20,
+          fontWeight: 'bold',
+          textAlign: 'center',
+          textBaseline: 'middle',
+          color: '#000',
+          backgroundColor: '#fff'
+        },
+        style
+      )
+    );
+
+    gantt.parsedOptions.timeLineHeaderRowHeights.push(
+      gantt.parsedOptions.sortedTimelineScales[i].rowHeight ?? options?.headerRowHeight ?? 40
+    );
+  }
+}
 
 export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: ITimelineScale) {
   const { unit, step, format } = scale;
   const timelineDates: ITimelineDateInfo[] = [];
-  while (currentDate <= endDate) {
+  while (currentDate < endDate) {
     if (unit === 'day') {
-      const dateEnd = createDateAtMidnight(currentDate.getTime() + step * 24 * 60 * 60 * 1000);
-      const startDate = createDateAtMidnight(currentDate);
-      const formattedDate = format?.({ dateIndex: currentDate.getDate(), startDate, endDate: dateEnd });
-      const columnTitle = formattedDate || currentDate.getDate().toString();
-      const dayCellConfig = {
-        days: step,
-        startDate,
-        endDate: dateEnd,
-        title: columnTitle,
-        dateIndex: currentDate.getDate()
-      };
-      timelineDates.push(dayCellConfig);
-      currentDate.setDate(currentDate.getDate() + step);
-    } else if (unit === 'month') {
       const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
-      const end = new Date(year, month + step - 1, 0);
+      const month = currentDate.getMonth();
+      const day = currentDate.getDate();
+      const end = createDateAtLastHour(new Date(year, month, day + step - 1), true);
       if (end.getTime() > endDate.getTime()) {
-        end.setDate(endDate.getDate());
+        end.setTime(endDate.getTime());
       }
       const start = currentDate;
-      const formattedDate = format?.({ dateIndex: month, startDate: start, endDate: end });
-      const columnTitle = formattedDate || month.toString();
+      const formattedDate = format?.({ dateIndex: day, startDate: start, endDate: end });
+      const columnTitle = formattedDate || day.toString();
       const dayCellConfig = {
-        days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
+        step,
+        unit: 'day',
         title: columnTitle,
-        dateIndex: month
+        dateIndex: day
+      };
+      timelineDates.push(dayCellConfig);
+      // currentDate.setTime(createDateAtMidnight(currentDate.getTime() + step * 24 * 60 * 60 * 1000, true).getTime());
+      currentDate = new Date(year, month, day + step);
+    } else if (unit === 'month') {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth(); //index 从0 开始
+      const end = createDateAtLastHour(new Date(year, month + step, 0), true);
+      if (end.getTime() > endDate.getTime()) {
+        end.setTime(endDate.getTime());
+      }
+      const start = currentDate;
+      const formattedDate = format?.({ dateIndex: month + 1, startDate: start, endDate: end });
+      const columnTitle = formattedDate || (month + 1).toString();
+      const dayCellConfig = {
+        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
+        startDate: start,
+        step,
+        unit: 'month',
+        endDate: end,
+        title: columnTitle,
+        dateIndex: month + 1
       };
 
       timelineDates.push(dayCellConfig);
-      currentDate = new Date(year, currentDate.getMonth() + step, 1);
+      currentDate = new Date(year, month + step, 1);
     } else if (unit === 'quarter') {
       const year = currentDate.getFullYear();
-      const quarter = Math.floor(currentDate.getMonth() / 3 + 1);
-      const end = new Date(year, (quarter + step - 1) * 3, 0);
+      const quarter = Math.floor(currentDate.getMonth() / 3); //quarter 从0 开始
+      const end = createDateAtLastHour(new Date(year, (quarter + step) * 3, 0), true);
       if (end.getTime() > endDate.getTime()) {
-        end.setDate(endDate.getDate());
+        end.setTime(endDate.getTime());
       }
       const start = currentDate;
-      const formattedDate = format?.({ dateIndex: quarter, startDate: start, endDate: end });
-      const columnTitle = formattedDate || quarter.toString();
+      const formattedDate = format?.({ dateIndex: quarter + 1, startDate: start, endDate: end });
+      const columnTitle = formattedDate || (quarter + 1).toString();
       const dayCellConfig = {
-        days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / (1000 * 60 * 60 * 24),
         startDate: start,
+        step,
+        unit: 'quarter',
         endDate: end,
         title: columnTitle,
-        dateIndex: quarter
+        dateIndex: quarter + 1
       };
       timelineDates.push(dayCellConfig);
-      currentDate = new Date(year, (quarter + step - 1) * 3, 1);
+      currentDate = new Date(year, (quarter + step) * 3, 1);
     } else if (unit === 'year') {
       const year = currentDate.getFullYear();
-      const end = new Date(year, 11, 31);
+      const end = createDateAtLastHour(new Date(year + step - 1, 11, 31), true);
       if (end.getTime() > endDate.getTime()) {
-        end.setDate(endDate.getDate());
+        end.setTime(endDate.getTime());
       }
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: year, startDate: start, endDate: end });
       const columnTitle = formattedDate || year.toString();
       const dayCellConfig = {
-        days: Math.ceil(Math.abs(end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
+        step,
+        unit: 'year',
         title: columnTitle,
         dateIndex: year
       };
@@ -395,10 +472,13 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
         dayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Calculate the difference between the current day and the start of the week
       }
       const startOfWeek = createDateAtMidnight(currentDate);
-      const endOfWeek = createDateAtMidnight(startOfWeek.getTime() + (6 - dayOfWeek) * 24 * 60 * 60 * 1000); // Calculate the end of the week
-
-      if (endOfWeek > endDate) {
-        endOfWeek.setDate(endDate.getDate());
+      // const endOfWeek = createDateAtLastHour(startOfWeek.getTime() + (6 - dayOfWeek) * 24 * 60 * 60 * 1000, true); // Calculate the end of the week
+      const dateEnd = createDateAtLastHour(
+        currentDate.getTime() + (7 * step - dayOfWeek) * 24 * 60 * 60 * 1000 - 1,
+        true
+      );
+      if (dateEnd > endDate) {
+        dateEnd.setTime(endDate.getTime());
       }
 
       // Calculate the week number within the year
@@ -407,12 +487,15 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const weekNumber = getWeekNumber(startOfWeek);
 
       const columnTitle =
-        format?.({ dateIndex: weekNumber, startDate: startOfWeek, endDate: endOfWeek }) || weekNumber.toString();
+        format?.({ dateIndex: weekNumber, startDate: startOfWeek, endDate: dateEnd }) || weekNumber.toString();
 
       const dayCellConfig = {
-        days: Math.ceil((endOfWeek.getTime() - startOfWeek.getTime()) / (24 * 60 * 60 * 1000)) + 1,
+        days: (dateEnd.getTime() - startOfWeek.getTime() + 1) / DayTimes,
+        // days: Math.abs(dateEnd.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24),
         startDate: startOfWeek,
-        endDate: endOfWeek,
+        endDate: dateEnd,
+        step,
+        unit: 'week',
         title: columnTitle,
         dateIndex: weekNumber
       };
@@ -420,7 +503,82 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       timelineDates.push(dayCellConfig);
 
       // Move currentDate to the next week
-      currentDate.setDate(currentDate.getDate() + (7 - dayOfWeek));
+      // currentDate.setDate(currentDate.getDate() + (7 - dayOfWeek));
+      currentDate.setTime(
+        createDateAtMidnight(currentDate.getTime() + (7 * step - dayOfWeek) * 24 * 60 * 60 * 1000, true).getTime()
+      );
+    } else if (unit === 'hour') {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const day = currentDate.getDate();
+      const hour = currentDate.getHours();
+      const end = createDateAtLastMinute(new Date(year, month, day, hour + step - 1), true);
+      if (end.getTime() > endDate.getTime()) {
+        end.setTime(endDate.getTime());
+      }
+      const start = currentDate;
+      const formattedDate = format?.({ dateIndex: hour, startDate: start, endDate: end });
+      const columnTitle = formattedDate || hour.toString();
+      const dayCellConfig = {
+        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
+        startDate: start,
+        endDate: end,
+        step,
+        unit: 'hour',
+        title: columnTitle,
+        dateIndex: currentDate.getHours()
+      };
+      timelineDates.push(dayCellConfig);
+      currentDate = new Date(year, month, day, hour + step);
+    } else if (unit === 'minute') {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const day = currentDate.getDate();
+      const hour = currentDate.getHours();
+      const minute = currentDate.getMinutes();
+      const end = createDateAtLastSecond(new Date(year, month, day, hour, minute + step - 1), true);
+      if (end.getTime() > endDate.getTime()) {
+        end.setTime(endDate.getTime());
+      }
+      const start = currentDate;
+      const formattedDate = format?.({ dateIndex: minute, startDate: start, endDate: end });
+      const columnTitle = formattedDate || minute.toString();
+      const dayCellConfig = {
+        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
+        startDate: start,
+        endDate: end,
+        step,
+        unit: 'minute',
+        title: columnTitle,
+        dateIndex: currentDate.getMinutes()
+      };
+      timelineDates.push(dayCellConfig);
+      currentDate = new Date(year, month, day, hour, minute + step);
+    } else if (unit === 'second') {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const day = currentDate.getDate();
+      const hour = currentDate.getHours();
+      const minute = currentDate.getMinutes();
+      const second = currentDate.getSeconds();
+      const end = createDateAtLastMillisecond(new Date(year, month, day, hour, minute, second + step - 1), true);
+      if (end.getTime() > endDate.getTime()) {
+        end.setTime(endDate.getTime());
+      }
+      const start = currentDate;
+      const formattedDate = format?.({ dateIndex: second, startDate: start, endDate: end });
+      const columnTitle = formattedDate || second.toString();
+      const dayCellConfig = {
+        days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
+        startDate: start,
+        endDate: end,
+        step,
+        unit: 'second',
+        title: columnTitle,
+        dateIndex: currentDate.getSeconds()
+      };
+      timelineDates.push(dayCellConfig);
+      currentDate = new Date(year, month, day, hour, minute, second + step);
     }
   }
   return timelineDates;
@@ -678,7 +836,7 @@ export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
   return { task_index, sub_task_index };
 }
 
-export function computeRowsCountByRecordDateForCompact(record: any, startDateField: string, endDateField: string) {
+export function computeRowsCountByRecordDateForCompact(gantt: Gantt, record: any) {
   if (!record.children || record.children.length === 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
@@ -687,23 +845,23 @@ export function computeRowsCountByRecordDateForCompact(record: any, startDateFie
   }
   // 创建一个浅拷贝并排序子任务，根据开始日期排序
   const sortedChildren = record.children.slice().sort((a: any, b: any) => {
-    return createDateAtMidnight(a[startDateField]).getTime() - createDateAtMidnight(b[startDateField]).getTime();
+    const { startDate: aStartDate } = formatRecordDateConsiderHasHour(gantt, a);
+    const { startDate: bStartDate } = formatRecordDateConsiderHasHour(gantt, b);
+    return aStartDate.getTime() - bStartDate.getTime();
   });
-  const count = 0;
   // 用于存储每一行的结束日期
   const rows = [];
   for (let i = 0; i <= sortedChildren.length - 1; i++) {
     const newRecord = sortedChildren[i];
-    const startDate = createDateAtMidnight(newRecord[startDateField]).getTime();
-    const endDate = createDateAtMidnight(newRecord[endDateField]).getTime();
+    const { startDate, endDate } = formatRecordDateConsiderHasHour(gantt, newRecord);
 
     let placed = false;
 
     // 尝试将当前任务放入已有的行中
     for (let j = 0; j < rows.length; j++) {
-      if (startDate > rows[j]) {
+      if (startDate.getTime() > rows[j]) {
         // 如果当前任务的开始日期在该行的结束日期之后，则可以放在这一行
-        rows[j] = endDate;
+        rows[j] = endDate.getTime();
         placed = true;
         newRecord.vtable_gantt_showIndex = j;
         break;
@@ -712,7 +870,7 @@ export function computeRowsCountByRecordDateForCompact(record: any, startDateFie
 
     // 如果不能放在已有的行中，则需要新开一行
     if (!placed) {
-      rows.push(endDate);
+      rows.push(endDate.getTime());
       newRecord.vtable_gantt_showIndex = rows.length - 1;
     }
   }
@@ -720,16 +878,13 @@ export function computeRowsCountByRecordDateForCompact(record: any, startDateFie
   return rows.length;
 }
 // 检查两个日期范围是否重叠
-function isOverlapping(task: any, rowTasks: any[], startDateField: string, endDateField: string) {
-  const start1 = createDateAtMidnight(task[startDateField]).getTime();
-  const end1 = createDateAtMidnight(task[endDateField]).getTime();
+function isOverlapping(startDate: Date, endDate: Date, rowTasks: any[], gantt: Gantt) {
   return rowTasks.some(rowTask => {
-    const start2 = createDateAtMidnight(rowTask[startDateField]).getTime();
-    const end2 = createDateAtMidnight(rowTask[endDateField]).getTime();
-    return start1 <= end2 && start2 <= end1;
+    const { startDate: startDate2, endDate: endDate2 } = formatRecordDateConsiderHasHour(gantt, rowTask);
+    return startDate <= endDate2 && startDate2 <= endDate;
   });
 }
-export function computeRowsCountByRecordDate(record: any, startDateField: string, endDateField: string) {
+export function computeRowsCountByRecordDate(gantt: Gantt, record: any) {
   if (!record.children || record.children.length === 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
@@ -737,22 +892,18 @@ export function computeRowsCountByRecordDate(record: any, startDateField: string
     return 1;
   }
 
-  const count = 0;
   // 用于存储每一行的结束日期
   const rows = [];
   for (let i = 0; i <= record.children.length - 1; i++) {
     const newRecord = record.children[i];
-    const startDate = createDateAtMidnight(newRecord[startDateField]).getTime();
-    const endDate = createDateAtMidnight(newRecord[endDateField]).getTime();
-
+    const { startDate, endDate } = formatRecordDateConsiderHasHour(gantt, newRecord);
     let placed = false;
-
     // 尝试将当前任务放入已有的行中
     for (let j = 0; j < rows.length; j++) {
       const rowTasks = record.children.filter((t: any) => t !== newRecord && t.vtable_gantt_showIndex === j);
-      if (!isOverlapping(newRecord, rowTasks, startDateField, endDateField)) {
+      if (!isOverlapping(startDate, endDate, rowTasks, gantt)) {
         // 如果当前任务的开始日期在该行的结束日期之后，则可以放在这一行
-        rows[j] = endDate;
+        rows[j] = endDate.getTime();
         placed = true;
         newRecord.vtable_gantt_showIndex = j;
         break;
@@ -761,7 +912,7 @@ export function computeRowsCountByRecordDate(record: any, startDateField: string
 
     // 如果不能放在已有的行中，则需要新开一行
     if (!placed) {
-      rows.push(endDate);
+      rows.push(endDate.getTime());
       newRecord.vtable_gantt_showIndex = rows.length - 1;
     }
   }
@@ -816,4 +967,57 @@ export function getSubTaskRowIndexByRecordDate(
   }
 
   return 0;
+}
+
+/**
+ * 获取指定index处任务数据的具体信息
+ * @param index
+ * @returns 当前任务信息
+ */
+export function formatRecordDateConsiderHasHour(
+  gantt: Gantt,
+  record: any
+): {
+  startDate: Date;
+  endDate: Date;
+} {
+  const { timeScaleIncludeHour, startDateField, endDateField } = gantt.parsedOptions;
+  const startDate = record[startDateField];
+  const endDate = record[endDateField];
+  if (timeScaleIncludeHour) {
+    return { startDate: createDateAtMidnight(startDate), endDate: createDateAtLastHour(endDate) };
+  }
+  return { startDate: createDateAtMidnight(startDate, true), endDate: createDateAtLastHour(endDate, true) };
+}
+
+export function updateOptionsWhenRecordChanged(gantt: Gantt) {
+  const options = gantt.options;
+  const { unit: minTimeUnit, startOfWeek } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+  gantt.parsedOptions.markLine = generateMarkLine(options?.markLine);
+  if (gantt.parsedOptions.markLine?.length ?? 0) {
+    if (gantt.parsedOptions.markLine?.every(item => item.scrollToMarkLine === undefined)) {
+      gantt.parsedOptions.markLine[0].scrollToMarkLine = true;
+    }
+    if (gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine)) {
+      gantt.parsedOptions.scrollToMarkLineDate = getStartDateByTimeUnit(
+        new Date(gantt.parsedOptions.markLine?.find(item => item.scrollToMarkLine).date),
+        minTimeUnit,
+        startOfWeek
+      );
+    }
+  }
+  gantt.parsedOptions.dependencyLinks = options.dependency?.links;
+}
+
+export function updateOptionsWhenDateRangeChanged(gantt: Gantt) {
+  const options = gantt.options;
+  const { unit: minTimeUnit, startOfWeek, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+  gantt.parsedOptions.minDate = options?.minDate
+    ? getStartDateByTimeUnit(new Date(options.minDate), minTimeUnit, startOfWeek)
+    : undefined;
+  gantt.parsedOptions.maxDate = options?.maxDate
+    ? getEndDateByTimeUnit(gantt.parsedOptions.minDate, new Date(options.maxDate), minTimeUnit, step)
+    : undefined;
+  gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
+  gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
 }

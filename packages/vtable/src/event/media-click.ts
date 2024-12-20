@@ -44,6 +44,10 @@ export function bindMediaClick(table: BaseTableAPI): void {
         if (templateLink) {
           // 如果有模板链接，使用模板
           const rowData = table.getCellOriginRecord(col, row);
+          if (rowData.vtableMerge) {
+            // group title
+            return;
+          }
           const data = Object.assign(
             {
               __value: cellValue,
@@ -66,6 +70,10 @@ export function bindMediaClick(table: BaseTableAPI): void {
           // 没有模板链接，使用单元格内的字符串
           url = cellValue;
         } else {
+          return;
+        }
+
+        if (!url) {
           return;
         }
 
