@@ -207,6 +207,17 @@ export interface IEditor<V = any> {
    * Expected to return the current value of the cell.
    */
   getValue: () => V;
+
+  /**
+   * Verify whether the input new value is valid.
+   * true: The verification passes, and the editing state is exited.
+   * false: The verification fails, and the editing state is retained.
+   * ValidateEnum.validateReturn: The verification passes, and the editing state is exited.
+   * ValidateEnum.invalidateReturn: The verification fails, the editing state is exited, and the old value is retained.
+   * ValidateEnum.validateNotReturn: The verification passes, and the editing state is not exited.
+   * ValidateEnum.invalidateNotReturn: The verification fails, and the editing state is not exited.
+   */
+  validateValue?: (newValue?: any, oldValue?: any, position?: CellAddress, table?: any) => boolean | ValidateEnum;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

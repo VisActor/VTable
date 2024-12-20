@@ -208,9 +208,15 @@ export interface IEditor<V = any> {
   getValue: () => V;
 
   /**
-   * 校验输入新值是否合法
+   * 校验输入新值是否合法，
+   * true: 校验通过，退出编辑状态。
+   * false: 校验失败，保留在编辑状态。
+   * ValidateEnum.validateReturn: 校验通过，退出编辑状态。
+   * ValidateEnum.invalidateReturn: 校验不通过，退出编辑状态，保留旧值。
+   * ValidateEnum.validateNotReturn: 校验通过，不退出编辑状态。
+   * ValidateEnum.invalidateNotReturn: 校验不通过，不退出编辑状态。
    */
-  validateValue?: () => boolean;
+  validateValue?: (newValue?: any, oldValue?: any, position?: CellAddress, table?: any) => boolean | ValidateEnum;
 }
 
 export interface EditContext<V = any> {
