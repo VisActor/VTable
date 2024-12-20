@@ -403,6 +403,16 @@ export class Scenegraph {
           taskDays: linkedFromTaskTaskDays
         } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex));
       }
+      if (
+        !linkedFromTaskStartDate ||
+        !linkedFromTaskEndDate ||
+        !linkedToTaskStartDate ||
+        !linkedToTaskEndDate ||
+        !linkLineNode ||
+        !lineArrowNode
+      ) {
+        return;
+      }
       const { linePoints, arrowPoints } = updateLinkLinePoints(
         type,
         linkedFromTaskStartDate,
@@ -545,7 +555,16 @@ export class Scenegraph {
         0,
         this._gantt
       );
-
+      if (
+        !linkedFromTaskStartDate ||
+        !linkedFromTaskEndDate ||
+        !linkedToTaskStartDate ||
+        !linkedToTaskEndDate ||
+        !linkLineNode ||
+        !lineArrowNode
+      ) {
+        return;
+      }
       linkLineNode.setAttribute('points', linePoints);
       lineArrowNode.setAttribute('points', arrowPoints);
     }
