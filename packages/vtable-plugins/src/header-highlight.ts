@@ -52,8 +52,8 @@ export class HeaderHighlightPlugin {
   }
 
   clearHighlight() {
-    this.colHeaderRange && this.table.arrangeCustomCellStyle({ range: this.colHeaderRange }, undefined);
-    this.rowHeaderRange && this.table.arrangeCustomCellStyle({ range: this.rowHeaderRange }, undefined);
+    this.colHeaderRange && this.table.arrangeCustomCellStyle({ range: this.colHeaderRange }, undefined, true);
+    this.rowHeaderRange && this.table.arrangeCustomCellStyle({ range: this.rowHeaderRange }, undefined, true);
 
     // clear range
     this.colHeaderRange = undefined;

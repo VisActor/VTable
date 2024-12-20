@@ -143,7 +143,7 @@ import {
   getTargetRowAtConsiderBottomFrozen
 } from './utils/get-cell-position';
 import { getCellStyle } from './style-helper';
-import type { EditManeger } from '../edit/edit-manager';
+import type { EditManager } from '../edit/edit-manager';
 import { createReactContainer } from '../scenegraph/layout/frozen-react';
 import { setIconColor } from '../icons';
 import { TableAnimationManager } from './animation';
@@ -182,7 +182,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   scenegraph: Scenegraph;
   stateManager: StateManager;
   eventManager: EventManager;
-  editorManager: EditManeger;
+  editorManager: EditManager;
   animationManager: TableAnimationManager;
   _pixelRatio: number;
 
@@ -4128,8 +4128,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.customCellStylePlugin?.registerCustomCellStyle(customStyleId, customStyle);
   }
 
-  arrangeCustomCellStyle(cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) {
-    this.customCellStylePlugin?.arrangeCustomCellStyle(cellPos, customStyleId);
+  arrangeCustomCellStyle(
+    cellPos: { col?: number; row?: number; range?: CellRange },
+    customStyleId: string,
+    forceFastUpdate?: boolean
+  ) {
+    this.customCellStylePlugin?.arrangeCustomCellStyle(cellPos, customStyleId, forceFastUpdate);
   }
   isSeriesNumber(col: number, row: number): boolean {
     return this.internalProps.layoutMap.isSeriesNumber(col, row);
