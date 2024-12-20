@@ -377,13 +377,6 @@ export class Scenegraph {
       this.table.internalProps.layoutMap.clearCellRangeMap();
     }
 
-    // if (this.table.heightMode === 'autoHeight') {
-    //   this.table.defaultRowHeight = getDefaultHeight(this.table);
-    // }
-    // if (this.table.widthMode === 'autoWidth' || this.table.internalProps.transpose) {
-    //   this.table.defaultColWidth = getDefaultWidth(this.table);
-    // }
-
     // bind AutoPoptip
     if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart
@@ -1970,7 +1963,7 @@ export class Scenegraph {
       (this.table.autoFillHeight && (this.table.getAllRowsHeight() <= this.table.tableNoFrameHeight || isNotFillHeight))
     ) {
       this.table.scenegraph.recalculateRowHeights();
-    } else if (this.table.heightMode === 'autoHeight') {
+    } else if (this.table.isAutoRowHeight()) {
       // if (updateCells.length > 0) {
       //   this.table.scenegraph.recalculateRowHeights();
       // }

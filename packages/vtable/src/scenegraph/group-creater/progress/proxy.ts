@@ -73,7 +73,7 @@ export class SceneProxy {
       // this.colLimit = 100;
       this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
       this.colLimit = Math.max(100, Math.ceil((table.tableNoFrameWidth * 2) / table.defaultColWidth));
-    } else if (this.table.heightMode === 'autoHeight') {
+    } else if (this.table.isAutoRowHeight()) {
       // this.rowLimit = 100;
       this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
     } else if (this.table.widthMode === 'autoWidth') {
@@ -557,13 +557,13 @@ export class SceneProxy {
   updateCellGroups(count: number) {
     const distRow = Math.min(this.bodyBottomRow, this.rowUpdatePos + count);
     // console.log('updateCellGroups', this.rowUpdatePos, distRow);
-    if (this.table.heightMode === 'autoHeight') {
+    if (this.table.isAutoRowHeight()) {
       computeRowsHeight(this.table, this.rowUpdatePos, distRow, false);
     }
 
     updateRowContent(this.rowUpdatePos, distRow, this);
 
-    if (this.table.heightMode === 'autoHeight') {
+    if (this.table.isAutoRowHeight()) {
       // body group
       updateAutoRow(
         this.bodyLeftCol, // colStart
@@ -602,13 +602,13 @@ export class SceneProxy {
   updateBottomFrozenCellGroups() {
     const startRow = this.table.rowCount - this.table.bottomFrozenRowCount;
     const endRow = this.table.rowCount - 1;
-    if (this.table.heightMode === 'autoHeight') {
+    if (this.table.isAutoRowHeight()) {
       computeRowsHeight(this.table, startRow, endRow, false);
     }
     console.log('updateBottomFrozenCellGroups', startRow, endRow);
     updateRowContent(startRow, endRow, this);
 
-    if (this.table.heightMode === 'autoHeight') {
+    if (this.table.isAutoRowHeight()) {
       // body group
       updateAutoRow(
         this.bodyLeftCol, // colStart
@@ -648,7 +648,7 @@ export class SceneProxy {
     console.log('updateRightFrozenCellGroups', startCol, endCol);
     updateColContent(startCol, endCol, this);
 
-    if (this.table.heightMode === 'autoHeight') {
+    if (this.table.isAutoRowHeight()) {
       // body group
       updateAutoColumn(startCol, endCol, this.table, this.colUpdateDirection);
     }

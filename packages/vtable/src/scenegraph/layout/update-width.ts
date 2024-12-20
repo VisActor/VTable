@@ -434,7 +434,6 @@ function updateCellWidth(
             width,
             height,
             false,
-            // scene.table.heightMode === 'autoHeight',
             scene.table.isAutoRowHeight(row),
             padding,
             isMergeCellGroup(cellGroup)
