@@ -1,10 +1,8 @@
-import { Group, createLine } from '@visactor/vtable/es/vrender';
+import { Group, createLine, createRect } from '@visactor/vtable/es/vrender';
 
 import type { Scenegraph } from './scenegraph';
 import type { IGrid } from '../ts-types';
 export class Grid {
-  vertical: boolean;
-  horizontal: boolean;
   // verticalLineSpace: number;
   // horizontalLineSpace: number;
   gridStyle: IGrid;
@@ -19,13 +17,14 @@ export class Grid {
   group: Group;
   verticalLineGroup: Group;
   horizontalLineGroup: Group;
+  verticalBackgroundRectsGroup: Group;
+  horizontalBackgroundRectsGroup: Group;
   allGridHeight: number;
   allGridWidth: number;
   _scene: Scenegraph;
   constructor(scene: Scenegraph) {
     this._scene = scene;
-    this.vertical = !!scene._gantt.parsedOptions.grid.verticalLine;
-    this.horizontal = !!scene._gantt.parsedOptions.grid.horizontalLine;
+
     this.scrollLeft = 0;
     this.scrollTop = 0;
     this.x = 0;
@@ -46,7 +45,8 @@ export class Grid {
     });
     this.group.name = 'grid-container';
     scene.tableGroup.addChild(this.group);
-
+    this.createVerticalBackgroundRects();
+    this.createHorizontalBackgroundRects();
     this.createVerticalLines();
     this.createHorizontalLines();
     this.createTimeLineHeaderBottomLine();
@@ -76,7 +76,7 @@ export class Grid {
 
   createVerticalLines() {
     const gridStyle = this._scene._gantt.parsedOptions.grid;
-    if (this.vertical) {
+    if (gridStyle.verticalLine) {
       this.verticalLineGroup = new Group({
         x: 0,
         y: 0,
@@ -129,7 +129,7 @@ export class Grid {
   }
   createHorizontalLines() {
     const gridStyle = this._scene._gantt.parsedOptions.grid;
-    if (this.horizontal) {
+    if (gridStyle.horizontalLine) {
       this.horizontalLineGroup = new Group({
         x: 0,
         y: 0,
@@ -179,6 +179,94 @@ export class Grid {
       }
     }
   }
+
+  createVerticalBackgroundRects() {
+    const columnBackgroundColor = this._scene._gantt.parsedOptions.grid.columnBackgroundColor;
+    const weekendBackgroundColor = this._scene._gantt.parsedOptions.grid.weekendBackgroundColor;
+    if (columnBackgroundColor || weekendBackgroundColor) {
+      this.verticalBackgroundRectsGroup = new Group({
+        x: 0,
+        y: 0,
+        width: this.allGridWidth,
+        height: this.allGridHeight
+      });
+      this.verticalBackgroundRectsGroup.name = 'grid-vertical-background';
+      this.group.appendChild(this.verticalBackgroundRectsGroup);
+
+      const { timelineDates, unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
+      const timelineColWidth = this._scene._gantt.parsedOptions.timelineColWidth;
+
+      if (columnBackgroundColor) {
+        for (let i = 0; i <= timelineDates?.length - 1; i++) {
+          let backgroundColor;
+          if (
+            weekendBackgroundColor &&
+            unit === 'day' &&
+            step === 1 &&
+            (timelineDates[i].startDate.getDay() === 0 || timelineDates[i].startDate.getDay() === 6)
+          ) {
+            backgroundColor = weekendBackgroundColor;
+          } else if (typeof columnBackgroundColor === 'function') {
+            backgroundColor = columnBackgroundColor({
+              index: i,
+              dateIndex: timelineDates[i].dateIndex,
+              date: timelineDates[i].endDate,
+              ganttInstance: this._scene._gantt
+            });
+          } else {
+            backgroundColor = columnBackgroundColor[i % columnBackgroundColor.length];
+          }
+          const x = Math.ceil(timelineColWidth * i);
+          const rect = createRect({
+            pickable: false,
+            fill: backgroundColor,
+            x,
+            y: 0,
+            width: timelineColWidth,
+            height: this.allGridHeight
+          });
+          this.verticalBackgroundRectsGroup.appendChild(rect);
+        }
+      }
+    }
+  }
+  createHorizontalBackgroundRects() {
+    const rowBackgroundColor = this._scene._gantt.parsedOptions.grid.rowBackgroundColor;
+    if (rowBackgroundColor) {
+      this.horizontalBackgroundRectsGroup = new Group({
+        x: 0,
+        y: 0,
+        width: this.allGridWidth,
+        height: this.allGridHeight
+      });
+      this.horizontalBackgroundRectsGroup.name = 'grid-horizontal-background';
+      this.group.appendChild(this.horizontalBackgroundRectsGroup);
+
+      let y = 0;
+      for (let i = 0; i <= this.rowCount - 1; i++) {
+        let backgroundColor;
+        if (typeof rowBackgroundColor === 'function') {
+          backgroundColor = rowBackgroundColor({
+            index: i,
+            ganttInstance: this._scene._gantt
+          });
+        } else {
+          backgroundColor = rowBackgroundColor[i % rowBackgroundColor.length];
+        }
+
+        const rect = createRect({
+          pickable: false,
+          fill: backgroundColor,
+          x: 0,
+          y,
+          width: this.allGridWidth,
+          height: this._scene._gantt.getRowHeightByIndex(i)
+        });
+        this.horizontalBackgroundRectsGroup.appendChild(rect);
+        y += this._scene._gantt.getRowHeightByIndex(i);
+      }
+    }
+  }
   /** 重新创建网格线场景树结点 */
   refresh() {
     this.width = this._scene.tableGroup.attribute.width;
@@ -191,8 +279,13 @@ export class Grid {
     this.rowCount = this._scene._gantt.itemCount;
     this.allGridWidth = this._scene._gantt.getAllDateColsWidth();
     this.allGridHeight = this._scene._gantt.getAllTaskBarsHeight();
-    this.verticalLineGroup?.parent.removeChild(this.verticalLineGroup);
-    this.horizontalLineGroup?.parent.removeChild(this.horizontalLineGroup);
+    this.group.removeAllChild();
+    // this.verticalLineGroup?.parent.removeChild(this.verticalLineGroup);
+    // this.horizontalLineGroup?.parent.removeChild(this.horizontalLineGroup);
+    // this.verticalBackgroundRectsGroup?.parent.removeChild(this.verticalBackgroundRectsGroup);
+    // this.horizontalBackgroundRectsGroup?.parent.removeChild(this.horizontalBackgroundRectsGroup);
+    this.createVerticalBackgroundRects();
+    this.createHorizontalBackgroundRects();
     this.createVerticalLines();
     this.createHorizontalLines();
     this.createTimeLineHeaderBottomLine();
@@ -200,10 +293,14 @@ export class Grid {
   setX(x: number) {
     this.verticalLineGroup?.setAttribute('x', x);
     this.horizontalLineGroup?.setAttribute('x', x);
+    this.verticalBackgroundRectsGroup?.setAttribute('x', x);
+    this.horizontalBackgroundRectsGroup?.setAttribute('x', x);
   }
   setY(y: number) {
     this.verticalLineGroup?.setAttribute('y', y);
     this.horizontalLineGroup?.setAttribute('y', y);
+    this.verticalBackgroundRectsGroup?.setAttribute('y', y);
+    this.horizontalBackgroundRectsGroup?.setAttribute('y', y);
   }
   resize() {
     this.width = this._scene.tableGroup.attribute.width;

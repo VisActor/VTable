@@ -805,7 +805,7 @@ export function createTable() {
     }
   ];
   const option = {
-    records: [],
+    records,
     taskListTable: {
       columns: columns,
       tableWidth: 400,
@@ -894,7 +894,10 @@ export function createTable() {
       horizontalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
-      }
+      },
+      weekendBackgroundColor: 'rgba(0,100,0,0.3)',
+      columnBackgroundColor: ['#fbfbfc', '#fbfbf0', '#fbfbe0'] // args => (args.index % 2 === 0 ? '#fbfbfc' : '#fbfbf0')
+      // rowBackgroundColor: ['rgba(33,44,255,0.2)', '#fbfbf0', '#fbfbe0'] //args => (args.index % 2 === 0 ? '#fbfbfc' : '#fbfbf0')
     },
     headerRowHeight: 60,
     rowHeight: 40,
@@ -939,6 +942,10 @@ export function createTable() {
       backgroundColor: '#EEF1F5',
       colWidth: 60,
       scales: [
+        {
+          unit: 'month',
+          step: 1
+        },
         {
           unit: 'week',
           step: 1,
@@ -1031,7 +1038,7 @@ export function createTable() {
   // ]
   const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
   window.ganttInstance = ganttInstance;
-  ganttInstance.setRecords(records);
+  // ganttInstance.setRecords(records);
 
   ganttInstance.on('scroll', e => {
     console.log('scroll', e);
