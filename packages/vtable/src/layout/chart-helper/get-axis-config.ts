@@ -8,6 +8,12 @@ import { Factory } from '../../core/factory';
 import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
 import { getQuadProps } from '../../scenegraph/utils/padding';
 import { getProp } from '../../scenegraph/utils/get-prop';
+import { getTickModeFunction, getZeroAlignTickAlignTicks } from './tick-align';
+
+type AxisRange = {
+  min: number;
+  max: number;
+};
 
 export type GetAxisConfigInPivotChart = (col: number, row: number, layout: PivotHeaderLayoutMap) => any;
 export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotHeaderLayoutMap): any {
@@ -32,32 +38,32 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const padding = getQuadProps(getProp('padding', chartCellStyle, col, row + 1, layout._table));
 
       // range for top axis
-      const { range, ticks, axisOption, isZeroAlign, theme } = axisRange;
+      const { range, ticks, axisOption, targetTicks, targetRange, index, theme } = axisRange;
 
-      if (isZeroAlign) {
-        // range for bottom axis
-        const subAxisRange = getRange(
-          'bottom',
-          col,
-          row + 1,
-          col,
-          layout.columnHeaderLevelCount - 1,
-          col,
-          row,
-          0,
-          layout
-        );
+      // if (isZeroAlign) {
+      //   // range for bottom axis
+      //   const subAxisRange = getRange(
+      //     'bottom',
+      //     col,
+      //     row + 1,
+      //     col,
+      //     layout.columnHeaderLevelCount - 1,
+      //     col,
+      //     row,
+      //     0,
+      //     layout
+      //   );
 
-        if (subAxisRange) {
-          const { range: subRange } = subAxisRange;
+      //   if (subAxisRange) {
+      //     const { range: subRange } = subAxisRange;
 
-          const align = getNewRangeToAlign(range, subRange);
-          if (align) {
-            range.min = align.range1[0];
-            range.max = align.range1[1];
-          }
-        }
-      }
+      //     const align = getNewRangeToAlign(range, subRange);
+      //     if (align) {
+      //       range.min = align.range1[0];
+      //       range.max = align.range1[1];
+      //     }
+      //   }
+      // }
 
       if (isNumber(axisOption?.min)) {
         range.min = axisOption.min;
@@ -84,6 +90,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           label: {
             flush: true
           },
+          tick: {
+            tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
+          },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
           __vtablePadding: padding
@@ -94,7 +103,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       col >= layout.rowHeaderLevelCount &&
       col < layout.colCount - layout.rightFrozenColCount
     ) {
-      const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+      // const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+      const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
       let indicatorInfo = null;
       indicatorKeys?.forEach(key => {
         const info = layout.getIndicatorInfo(key);
@@ -112,22 +122,22 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const padding = getQuadProps(getProp('padding', chartCellStyle, col, row - 1, layout._table));
 
       // range for bottom axis
-      const { range, ticks, axisOption, isZeroAlign, theme } = axisRange;
+      const { range, ticks, axisOption, index, targetTicks, targetRange, theme } = axisRange;
 
-      if (isZeroAlign) {
-        // range for top axis
-        const subAxisRange = getRange('top', col, row - 1, col, row, col, row, 1, layout);
+      // if (isZeroAlign) {
+      //   // range for top axis
+      //   const subAxisRange = getRange('top', col, row - 1, col, row, col, row, 1, layout);
 
-        if (subAxisRange) {
-          const { range: subRange } = subAxisRange;
+      //   if (subAxisRange) {
+      //     const { range: subRange } = subAxisRange;
 
-          const align = getNewRangeToAlign(range, subRange);
-          if (align) {
-            range.min = align.range1[0];
-            range.max = align.range1[1];
-          }
-        }
-      }
+      //     const align = getNewRangeToAlign(range, subRange);
+      //     if (align) {
+      //       range.min = align.range1[0];
+      //       range.max = align.range1[1];
+      //     }
+      //   }
+      // }
 
       if (isNumber(axisOption?.min)) {
         range.min = axisOption.min;
@@ -159,6 +169,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           label: {
             flush: true
           },
+          tick: {
+            tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
+          },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
           __vtablePadding: padding
@@ -176,7 +189,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
 
       const rowPath = layout.getRowKeysPath(col, row);
-      const domain = (data[rowPath ?? ''] as Array<string>) ?? [];
+      const domain = ((data as any)[rowPath ?? ''] as Array<string>) ?? [];
 
       const { axisOption, theme, chartType } = getAxisOption(col + 1, row, 'left', layout);
       if (axisOption?.visible === false) {
@@ -220,7 +233,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row >= layout.columnHeaderLevelCount &&
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
-      const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+      // const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
+      const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
       let indicatorInfo = null;
       indicatorKeys?.forEach(key => {
         const info = layout.getIndicatorInfo(key);
@@ -238,22 +252,22 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const padding = getQuadProps(getProp('padding', chartCellStyle, col + 1, row, layout._table));
 
       // range for left axis
-      const { range, ticks, axisOption, isZeroAlign, theme } = axisRange;
+      const { range, ticks, axisOption, index, targetTicks, targetRange, theme } = axisRange;
 
-      if (isZeroAlign) {
-        // range for right axis
-        const subAxisRange = getRange('right', col + 1, row, col, row, col, row, 1, layout);
+      // if (isZeroAlign) {
+      //   // range for right axis
+      //   const subAxisRange = getRange('right', col + 1, row, col, row, col, row, 1, layout);
 
-        if (subAxisRange) {
-          const { range: subRange } = subAxisRange;
+      //   if (subAxisRange) {
+      //     const { range: subRange } = subAxisRange;
 
-          const align = getNewRangeToAlign(range, subRange);
-          if (align) {
-            range.min = align.range1[0];
-            range.max = align.range1[1];
-          }
-        }
-      }
+      //     const align = getNewRangeToAlign(range, subRange);
+      //     if (align) {
+      //       range.min = align.range1[0];
+      //       range.max = align.range1[1];
+      //     }
+      //   }
+      // }
 
       if (isNumber(axisOption?.min)) {
         range.min = axisOption.min;
@@ -285,6 +299,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           label: {
             flush: true
           },
+          tick: {
+            tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
+          },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
           __vtablePadding: padding
@@ -304,22 +321,22 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const padding = getQuadProps(getProp('padding', chartCellStyle, col - 1, row, layout._table));
 
       // range for right axis
-      const { range, ticks, axisOption, isZeroAlign, theme } = axisRange;
+      const { range, ticks, axisOption, index, targetTicks, targetRange, theme } = axisRange;
 
-      if (isZeroAlign) {
-        // range for left axis
-        const subAxisRange = getRange('left', col - 1, row, layout.rowHeaderLevelCount - 1, row, col, row, 0, layout);
+      // if (isZeroAlign) {
+      //   // range for left axis
+      //   const subAxisRange = getRange('left', col - 1, row, layout.rowHeaderLevelCount - 1, row, col, row, 0, layout);
 
-        if (subAxisRange) {
-          const { range: subRange } = subAxisRange;
+      //   if (subAxisRange) {
+      //     const { range: subRange } = subAxisRange;
 
-          const align = getNewRangeToAlign(range, subRange);
-          if (align) {
-            range.min = align.range1[0];
-            range.max = align.range1[1];
-          }
-        }
-      }
+      //     const align = getNewRangeToAlign(range, subRange);
+      //     if (align) {
+      //       range.min = align.range1[0];
+      //       range.max = align.range1[1];
+      //     }
+      //   }
+      // }
 
       if (isNumber(axisOption?.min)) {
         range.min = axisOption.min;
@@ -349,6 +366,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           label: {
             flush: true
           },
+          tick: {
+            tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
+          },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
           __vtablePadding: padding
@@ -368,7 +388,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const data = layout.dataset.collectedValues[columnDimensionKey] ?? ([] as string[]);
 
       const colPath = layout.getColKeysPath(col, row);
-      const domain = (data?.[colPath ?? ''] as Array<string>) ?? [];
+      const domain = ((data as any)?.[colPath ?? ''] as Array<string>) ?? [];
 
       const { axisOption, isPercent, theme, chartType } = getAxisOption(col, row - 1, 'bottom', layout);
       if (axisOption?.visible === false) {
@@ -432,10 +452,12 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
       } else if (isValid(seriesIndex) && isArray(spec.series)) {
         seriesIndice = seriesIndex;
       }
+      const { isZeroAlign, isTickAlign } = checkZeroAlign(spec, orient, layout);
       return {
         axisOption,
         isPercent: spec.percent,
-        isZeroAlign: checkZeroAlign(spec, orient, layout),
+        isZeroAlign,
+        isTickAlign,
         seriesIndice,
         theme: spec.theme,
         chartType: seriesSpec?.type ?? spec.type
@@ -445,10 +467,13 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
   const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
     return axisOption.orient === orient;
   });
+  const { isZeroAlign, isTickAlign } = checkZeroAlign(spec, orient, layout);
   return {
     axisOption,
     isPercent: false,
-    isZeroAlign: checkZeroAlign(spec, orient, layout),
+    // isZeroAlign: checkZeroAlign(spec, orient, layout),
+    isZeroAlign,
+    isTickAlign,
     theme: spec.theme,
     chartType: spec.type
   };
@@ -471,6 +496,9 @@ function checkZeroAlign(spec: any, orient: string, layout: PivotHeaderLayoutMap)
   } else {
     axesSpec = (layout._table as PivotChart).pivotChartAxes as ITableAxisOption[];
   }
+
+  let isZeroAlign = false;
+  let isTickAlign = false;
   if (isArray(axesSpec)) {
     const axes: any[] = [];
     axesSpec.forEach((axis: any) => {
@@ -482,18 +510,24 @@ function checkZeroAlign(spec: any, orient: string, layout: PivotHeaderLayoutMap)
       const axis = axes[i];
       if (
         axis.sync &&
-        axis.sync.zeroAlign &&
+        // axis.sync.zeroAlign &&
         axis.sync.axisId &&
         axes.find(axisSync => {
           return axisSync.id === axis.sync.axisId;
         })
       ) {
-        return true;
+        // return true;
+        isZeroAlign = isZeroAlign || axis.sync.zeroAlign;
+        isTickAlign = isTickAlign || axis.sync.tickAlign;
       }
     }
   }
 
-  return false;
+  // return false;
+  return {
+    isZeroAlign,
+    isTickAlign
+  };
 }
 
 export function getAxisRange(
@@ -502,7 +536,7 @@ export function getAxisRange(
   isZeroAlign: boolean,
   colPath: string,
   seriesId: number | number[]
-): { max: number; min: number } | null {
+): AxisRange | null {
   if (isArray(seriesId)) {
     const range = { min: Infinity, max: -Infinity };
     for (let i = 0; i < seriesId.length; i++) {
@@ -545,85 +579,6 @@ export function getAxisRange(
   }
 
   return range;
-}
-
-function getRange(
-  position: 'left' | 'right' | 'top' | 'bottom',
-  colForAxisOption: number,
-  rowForAxisOption: number,
-  colForIndicatorKey: number,
-  rowForIndicatorKey: number,
-  col: number,
-  row: number,
-  defaultSeriesIndice: number,
-  layout: PivotHeaderLayoutMap
-) {
-  const { axisOption, isPercent, isZeroAlign, seriesIndice, theme, chartType } = getAxisOption(
-    colForAxisOption,
-    rowForAxisOption,
-    position,
-    layout
-  );
-  if (axisOption?.visible === false) {
-    return undefined;
-  }
-  const indicatorKeys = layout.getIndicatorKeyInChartSpec(colForIndicatorKey, rowForIndicatorKey).slice(0, 2);
-  let path;
-  if (position === 'top' || position === 'bottom') {
-    path = layout.getColKeysPath(col, row);
-  } else {
-    path = layout.getRowKeysPath(col, row);
-  }
-
-  const range = getAxisRange(
-    layout.dataset.collectedValues,
-    indicatorKeys,
-    isZeroAlign,
-    path,
-    seriesIndice ?? defaultSeriesIndice
-  );
-  if (!range) {
-    return undefined;
-  }
-
-  if (isPercent) {
-    range.min = range.min < 0 ? -1 : 0;
-    range.max = range.max > 0 ? 1 : 0;
-  }
-  const getAxisDomainRangeAndLabels = Factory.getFunction('getAxisDomainRangeAndLabels') as GetAxisDomainRangeAndLabels;
-  const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(
-    range.min,
-    range.max,
-    axisOption,
-    isZeroAlign,
-    position === 'bottom' || position === 'top'
-      ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
-      : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight // avoid 0, 0 causes NaN
-  );
-  range.min = !isNaN(niceRange[0]) ? niceRange[0] : 0;
-  range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;
-
-  if (isNumber(axisOption?.min)) {
-    range.min = axisOption.min;
-    if (range.min > 0) {
-      axisOption.zero = false;
-    }
-  }
-  if (isNumber(axisOption?.max)) {
-    range.max = axisOption.max;
-    if (range.max < 0) {
-      axisOption.zero = false;
-    }
-  }
-
-  return {
-    axisOption,
-    isZeroAlign,
-    range,
-    ticks,
-    theme,
-    chartType
-  };
 }
 
 export function isTopOrBottomAxis(col: number, row: number, layout: PivotHeaderLayoutMap): boolean {
@@ -763,4 +718,285 @@ export function hasLinearAxis(spec: any, tableAxesConfig: any, isHorizontal: boo
   }
 
   return (isHorizontal && isThisXAxis) || (!isHorizontal && !isThisXAxis);
+}
+
+function getRange(
+  position: 'left' | 'right' | 'top' | 'bottom',
+  colForAxisOption: number,
+  rowForAxisOption: number,
+  colForIndicatorKey: number,
+  rowForIndicatorKey: number,
+  col: number,
+  row: number,
+  defaultSeriesIndice: number,
+  layout: PivotHeaderLayoutMap
+) {
+  const indicatorKeys = layout.getIndicatorKeyInChartSpec(colForIndicatorKey, rowForIndicatorKey);
+  let path;
+  if (position === 'top' || position === 'bottom') {
+    path = layout.getColKeysPath(col, row);
+  } else {
+    path = layout.getRowKeysPath(col, row);
+  }
+
+  const rangeConfig = getChartAxisRange(
+    colForAxisOption,
+    rowForAxisOption,
+    defaultSeriesIndice,
+    position,
+    indicatorKeys,
+    path,
+    layout
+  );
+
+  if (!rangeConfig) {
+    return undefined;
+  }
+
+  const subAxisPosition =
+    position === 'bottom' ? 'top' : position === 'top' ? 'bottom' : position === 'left' ? 'right' : 'left';
+
+  const { targetRange, targetTicks } = getTargetRangeAndTicks(
+    colForAxisOption,
+    rowForAxisOption,
+    rangeConfig.index,
+    rangeConfig.isZeroAlign,
+    rangeConfig.isTickAlign,
+    rangeConfig.range,
+    indicatorKeys,
+    subAxisPosition,
+    path,
+    layout
+  );
+
+  if (rangeConfig.index !== 0 && targetTicks) {
+    // reset range
+    const getAxisDomainRangeAndLabels = Factory.getFunction(
+      'getAxisDomainRangeAndLabels'
+    ) as GetAxisDomainRangeAndLabels;
+    const { range: newRange, ticks: newTicks } = getAxisDomainRangeAndLabels(
+      rangeConfig.range.min,
+      rangeConfig.range.max,
+      // merge({}, rangeConfig.axisOption, { nice: true, tick: { forceTickCount: targetTicks.length } }),
+      rangeConfig.axisOption,
+      rangeConfig.isZeroAlign,
+      // layout._table.getColWidth(col)
+      position === 'bottom' || position === 'top'
+        ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
+        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight, // avoid 0, 0 causes NaN
+      {
+        targetTicks,
+        targetRange
+      }
+    );
+    rangeConfig.range.min = newRange[0];
+    rangeConfig.range.max = newRange[1];
+    rangeConfig.ticks = newTicks;
+  }
+
+  (rangeConfig as any).targetRange = targetRange;
+  (rangeConfig as any).targetTicks = targetTicks;
+
+  return rangeConfig as typeof rangeConfig & { targetRange: AxisRange; targetTicks: number[] };
+}
+
+function getChartAxisRange(
+  col: number,
+  row: number,
+  index: number,
+  position: 'bottom' | 'top' | 'left' | 'right',
+  indicatorKeys: string[],
+  path: string,
+  layout: PivotHeaderLayoutMap
+) {
+  const { axisOption, isPercent, isZeroAlign, isTickAlign, seriesIndice, theme, chartType } = getAxisOption(
+    col,
+    row,
+    position,
+    layout
+  );
+
+  // if (axisOption?.visible === false) {
+  //   return undefined;
+  // }
+
+  const range = getAxisRange(layout.dataset.collectedValues, indicatorKeys, isZeroAlign, path, seriesIndice ?? index);
+
+  if (!range) {
+    return undefined;
+  }
+
+  if (isPercent) {
+    range.min = range.min < 0 ? -1 : 0;
+    range.max = range.max > 0 ? 1 : 0;
+  }
+  if (axisOption?.zero || range.min === range.max) {
+    range.min = Math.min(range.min, 0);
+    range.max = Math.max(range.max, 0);
+  }
+  let ticks;
+  if (axisOption?.nice || isTickAlign) {
+    const getAxisDomainRangeAndLabels = Factory.getFunction(
+      'getAxisDomainRangeAndLabels'
+    ) as GetAxisDomainRangeAndLabels;
+    const { range: axisRange, ticks: selfTicks } = getAxisDomainRangeAndLabels(
+      range.min,
+      range.max,
+      axisOption,
+      isZeroAlign,
+      // layout._table.getColWidth(col)
+      position === 'bottom' || position === 'top'
+        ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
+        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight // avoid 0, 0 causes NaN
+    );
+    if (axisOption?.nice) {
+      range.min = axisRange[0];
+      range.max = axisRange[1];
+    }
+    // if (isTickAlign) {
+    // }
+    ticks = selfTicks;
+  }
+  if (isNumber(axisOption?.min)) {
+    range.min = axisOption.min;
+  }
+  if (isNumber(axisOption?.max)) {
+    range.max = axisOption.max;
+  }
+
+  return {
+    index: seriesIndice ?? index,
+    range,
+    ticks,
+    isZeroAlign,
+    isTickAlign,
+    axisOption,
+    theme,
+    chartType
+  };
+}
+
+export function getAxisRangeAndTicks(
+  col: number,
+  row: number,
+  index: number,
+  position: 'bottom' | 'top' | 'left' | 'right',
+  subAxisPosition: 'bottom' | 'top' | 'left' | 'right',
+  indicatorKeys: string[],
+  path: string,
+  layout: PivotHeaderLayoutMap
+) {
+  const { range, isZeroAlign, isTickAlign, axisOption } = getChartAxisRange(
+    col,
+    row,
+    index,
+    position,
+    indicatorKeys,
+    path,
+    layout
+  );
+  const { targetRange, targetTicks } = getTargetRangeAndTicks(
+    col,
+    row,
+    index,
+    isZeroAlign,
+    isTickAlign,
+    range,
+    indicatorKeys,
+    subAxisPosition,
+    path,
+    layout
+  );
+
+  if (index !== 0 && targetTicks) {
+    // reset range
+    const getAxisDomainRangeAndLabels = Factory.getFunction(
+      'getAxisDomainRangeAndLabels'
+    ) as GetAxisDomainRangeAndLabels;
+    const { range: newRange, ticks: newTicks } = getAxisDomainRangeAndLabels(
+      range.min,
+      range.max,
+      // merge({}, axisOption, { nice: true, tick: { forceTickCount: targetTicks.length } }),
+      isZeroAlign,
+      // layout._table.getColWidth(col)
+      position === 'bottom' || position === 'top'
+        ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
+        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight, // avoid 0, 0 causes NaN
+      {
+        targetTicks,
+        targetRange
+      }
+    );
+    range.min = newRange[0];
+    range.max = newRange[1];
+    // axisOption.ticks = newTicks;
+  }
+
+  return {
+    axisOption,
+    range,
+    targetTicks,
+    targetRange
+  };
+}
+
+function getTargetRangeAndTicks(
+  col: number,
+  row: number,
+  index: number,
+  isZeroAlign: boolean,
+  isTickAlign: boolean,
+  range: AxisRange,
+  indicatorKeys: string[],
+  subAxisPosition: 'bottom' | 'top' | 'left' | 'right',
+  path: string,
+  layout: PivotHeaderLayoutMap
+) {
+  let targetTicks: number[];
+  let targetRange: {
+    max: number;
+    min: number;
+  };
+
+  if (!isZeroAlign && !isTickAlign) {
+    return {
+      targetTicks,
+      targetRange
+    };
+  }
+
+  const subAxisRange = getChartAxisRange(
+    col,
+    row,
+    indicatorKeys.length - 1 - index,
+    subAxisPosition,
+    indicatorKeys,
+    path,
+    layout
+  );
+  if (subAxisRange) {
+    const { range: subRange, ticks: subTicks } = subAxisRange;
+    targetRange = subRange;
+    if (isZeroAlign) {
+      const align = getNewRangeToAlign(range, subRange);
+      if (align) {
+        range.min = align.range1[0];
+        range.max = align.range1[1];
+        targetRange.min = align.range2[0];
+        targetRange.max = align.range2[1];
+      }
+    }
+    if (isTickAlign) {
+      if (!isZeroAlign) {
+        targetTicks = subTicks;
+      } else {
+        targetTicks = getZeroAlignTickAlignTicks(targetRange, col, row, index, subAxisPosition, layout);
+      }
+    }
+  }
+
+  return {
+    targetTicks,
+    targetRange
+  };
 }

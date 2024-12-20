@@ -1,6 +1,39 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 09 Dec 2024 08:20:54 GMT and should not be manually modified.
+This log was last generated on Mon, 16 Dec 2024 11:33:07 GMT and should not be manually modified.
+
+## 1.13.2
+Mon, 16 Dec 2024 11:33:07 GMT
+
+### Updates
+
+- fix: copy permission check when in iframe #3077
+
+
+- fix: when has select cells to resize col width or row height error #3085
+
+
+- feat: resizable and moveable support function #3074
+
+
+- feat: add updateOption and updateScales api
+
+
+- fix: consider not set mindate maxdate call setRecords api
+
+
+
+## 1.13.1
+Fri, 13 Dec 2024 08:48:53 GMT
+
+### Updates
+
+- feat: add time scale unit hour #2976
+
+
+- fix: left table width handle with tableWidth set auto #3033
+
+
 
 ## 1.13.0
 Mon, 09 Dec 2024 08:20:54 GMT

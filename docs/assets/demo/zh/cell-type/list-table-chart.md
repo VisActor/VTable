@@ -3,7 +3,7 @@ category: examples
 group: Cell Type
 title: 基本表格集成图表
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-chart.png
-link: '../guide/cell_type/chart'
+link: cell_type/chart
 option: ListTable-columns-chart#cellType
 ---
 

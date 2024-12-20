@@ -1,7 +1,37 @@
+# v1.13.2
+
+2024-12-16
+
+**🆕 New feature**
+
+- **@visactor/vtable-gantt**: resizable and moveable support function [#3074](https://github.com/VisActor/VTable/issues/3074)
+- **@visactor/vtable-gantt**: add updateOption and updateScales api
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: copy permission check when in iframe [#3077](https://github.com/VisActor/VTable/issues/3077)
+- **@visactor/vtable**: when has select cells to resize col width or row height error [#3085](https://github.com/VisActor/VTable/issues/3085)
+- **@visactor/vtable-gantt**: consider not set mindate maxdate call setRecords api
+
+[more detail about v1.13.2](https://github.com/VisActor/VTable/releases/tag/v1.13.2)
+
+# v1.13.1
+
+2024-12-13
+
+**🆕 New feature**
+
+- **@visactor/vtable-gantt**: add time scale unit hour [#2976](https://github.com/VisActor/VTable/issues/2976)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable-gantt**: left table width handle with tableWidth set auto [#3033](https://github.com/VisActor/VTable/issues/3033)
+
+[more detail about v1.13.1](https://github.com/VisActor/VTable/releases/tag/v1.13.1)
+
 # v1.13.0
 
 2024-12-09
-
 
 **🆕 New feature**
 
@@ -16,7 +46,7 @@
 - **@visactor/vtable**: fix col&row range in getCellMergeRange() [#2906](https://github.com/VisActor/VTable/issues/2906)
 - **@visactor/vtable**: fix merge cell select range update [#2944](https://github.com/VisActor/VTable/issues/2944)
 - **@visactor/vtable**: fix ListTreeStickCellPlugin update in tree_hierarchy_state_change event [#2914](https://github.com/VisActor/VTable/issues/2914)
-- **@visactor/vtable**: fix row update range in _refreshHierarchyState() [#2987](https://github.com/VisActor/VTable/issues/2987)
+- **@visactor/vtable**: fix row update range in \_refreshHierarchyState() [#2987](https://github.com/VisActor/VTable/issues/2987)
 - **@visactor/vtable**: fix text baseline align problem
 
 [more detail about v1.13.0](https://github.com/VisActor/VTable/releases/tag/v1.13.0)

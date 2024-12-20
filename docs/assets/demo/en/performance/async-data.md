@@ -3,7 +3,7 @@ category: examples
 group: performace
 title: Async Lazy Load Data
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/asyncData.gif
-link: '../guide/data/async_data'
+link: data/async_data
 ---
 
 # Async Lazy Load Data
@@ -58,78 +58,78 @@ const getRecordsWithAjax = (startIndex, num) => {
 // create DataSource
 const loadedData = {};
 const dataSource = new VTable.data.CachedDataSource({
-    get(index) {
-      // 每一批次请求100条数据 0-99 100-199 200-299
-      const loadStartIndex = Math.floor(index / 100) * 100;
-      // 判断是否已请求过？
-      if (!loadedData[loadStartIndex]) {
-        const promiseObject = getRecordsWithAjax(loadStartIndex, 100); // return Promise Object
-        loadedData[loadStartIndex] = promiseObject;
-      }
-      return loadedData[loadStartIndex].then((data) => {
-        return data[index - loadStartIndex]; //获取批次数据列表中的index对应数据
-      });
-    },
-    length: 10000 //all records count
-  });
+  get(index) {
+    // 每一批次请求100条数据 0-99 100-199 200-299
+    const loadStartIndex = Math.floor(index / 100) * 100;
+    // 判断是否已请求过？
+    if (!loadedData[loadStartIndex]) {
+      const promiseObject = getRecordsWithAjax(loadStartIndex, 100); // return Promise Object
+      loadedData[loadStartIndex] = promiseObject;
+    }
+    return loadedData[loadStartIndex].then(data => {
+      return data[index - loadStartIndex]; //获取批次数据列表中的index对应数据
+    });
+  },
+  length: 10000 //all records count
+});
 const columns = [
   {
-      field: 'id',
-      title: 'ID',
-      width: 120
-      // sort: true
-    },
-    {
-      field: 'email1',
-      title: 'email',
-      width: 200
-      // sort: true
-    },
-    {
-      title: 'full name',
-      columns: [
-        {
-          field: 'name',
-          title: 'First Name',
-          width: 200
-        },
-        {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
-        }
-      ]
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    }
+    field: 'id',
+    title: 'ID',
+    width: 120
+    // sort: true
+  },
+  {
+    field: 'email1',
+    title: 'email',
+    width: 200
+    // sort: true
+  },
+  {
+    title: 'full name',
+    columns: [
+      {
+        field: 'name',
+        title: 'First Name',
+        width: 200
+      },
+      {
+        field: 'name',
+        title: 'Last Name',
+        width: 200
+      }
+    ]
+  },
+  {
+    field: 'date1',
+    title: 'birthday',
+    width: 200
+  },
+  {
+    field: 'sex',
+    title: 'sex',
+    width: 100
+  },
+  {
+    field: 'tel',
+    title: 'telephone',
+    width: 150
+  },
+  {
+    field: 'work',
+    title: 'job',
+    width: 200
+  },
+  {
+    field: 'city',
+    title: 'city',
+    width: 150
+  }
 ];
 const option = {
   columns
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 tableInstance.dataSource = dataSource;
 window['tableInstance'] = tableInstance;
 ```

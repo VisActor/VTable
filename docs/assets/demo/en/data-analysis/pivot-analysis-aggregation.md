@@ -3,7 +3,7 @@ category: examples
 group: data-analysis
 title: Indicator Aggregation Type
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-aggregation.png
-link: '../guide/data_analysis/pivot_table_dataAnalysis'
+link: data_analysis/pivot_table_dataAnalysis
 option: PivotTable#dataConfig.aggregationRules
 ---
 

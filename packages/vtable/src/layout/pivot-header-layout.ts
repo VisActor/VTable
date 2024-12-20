@@ -3025,7 +3025,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         isHasCartesianChartInline(col, row, 'col', this))
     ) {
       const getAxisConfigInPivotChart = Factory.getFunction('getAxisConfigInPivotChart') as GetAxisConfigInPivotChart;
-      return getAxisConfigInPivotChart(col, row, this);
+      const config = getAxisConfigInPivotChart(col, row, this);
+      if (config?.visible === false) {
+        return undefined;
+      }
+      return config;
     }
     return undefined;
   }

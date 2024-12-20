@@ -4,7 +4,7 @@ group: Theme
 title: Theme - DARK
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dark.png
 order: 6-3
-link: '../guide/theme_and_style/theme'
+link: theme_and_style/theme
 option: ListTable#theme.bodyStyle.bgColor
 ---
 

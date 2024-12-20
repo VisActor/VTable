@@ -3,7 +3,7 @@ category: examples
 group: Component
 title: Scrollbar
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scrollbar.png
-link: '../guide/interaction/scroll'
+link: interaction/scroll
 option: ListTable#theme.scrollStyle.scrollRailColor
 ---
 

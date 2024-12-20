@@ -1,12 +1,23 @@
 {{ target: common-gantt-grid }}
 
-IGrid定义如下：
+IGrid 定义如下：
+
 ```
 export interface IGrid {
   backgroundColor?: string;
-  verticalLine?: ILineStyle;
-  horizontalLine?: ILineStyle;
+  verticalLine?: ILineStyle | ((args: GridVerticalLineStyleArgumentType) => ILineStyle);
+  horizontalLine?: ILineStyle | ((args: GridHorizontalLineStyleArgumentType) => ILineStyle);
 }
+
+export type GridVerticalLineStyleArgumentType = {
+  /** The vertical line is what line */
+  index: number;
+  /** The current date belongs to the number of the date scale. Such as quarter date in fourth quarter return 4。 */
+  dateIndex: number;
+  /** If it is a vertical line, date represents the specific point in time to which the divider points */
+  date?: Date;
+  ganttInstance: Gantt;
+};
 ```
 
 ${prefix} backgroundColor(string)
@@ -15,7 +26,7 @@ ${prefix} backgroundColor(string)
 
 非必填
 
-${prefix} verticalLine(ILineStyle)
+${prefix} verticalLine(ILineStyle | Function)
 
 垂直间隔线样式
 
@@ -23,7 +34,7 @@ ${prefix} verticalLine(ILineStyle)
 
 {{ use: common-gantt-line-style }}
 
-${prefix} horizontalLine(ILineStyle)
+${prefix} horizontalLine(ILineStyle | Function)
 
 水平间隔线样式
 

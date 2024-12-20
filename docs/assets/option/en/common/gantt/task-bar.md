@@ -48,17 +48,45 @@ Optional
 
 {{ use: common-gantt-task-bar-custom-layout }}
 
-${prefix} resizable(boolean) = true
+${prefix} resizable(boolean | [ boolean, boolean ] | Function) = true
 
 Whether the task bar can be resized. The default is true.
 
 Optional
 
-${prefix} moveable(boolean) = true
+```
+ /** Whether the task bar can be resized. The configuration function can return whether the size can be resized depending on the situation */
+    resizable?:
+      | boolean
+      | [boolean, boolean]
+      | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
+
+export type TaskBarInteractionArgumentType = {
+  taskRecord: string;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+```
+
+${prefix} moveable(boolean | Function) = true
 
 Whether the task bar can be moved. The default is true.
 
 Optional
+
+```
+moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+
+export type TaskBarInteractionArgumentType = {
+  taskRecord: string;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+```
 
 ${prefix} hoverBarStyle(ITaskBarHoverStyle)
 

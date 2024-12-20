@@ -4,7 +4,7 @@ group: Custom
 title: 自定义图标
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-icon.png
 order: 7-2
-link: '../guide/custom_define/custom_icon'
+link: custom_define/custom_icon
 ---
 
 # 自定义图标
