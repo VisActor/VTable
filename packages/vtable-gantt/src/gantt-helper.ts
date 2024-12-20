@@ -337,6 +337,7 @@ export function initOptions(gantt: Gantt) {
     },
     options?.dependency?.linkCreatingLineStyle
   );
+  gantt.parsedOptions.eventOptions = options?.eventOptions;
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   const options = gantt.options;

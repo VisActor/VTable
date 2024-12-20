@@ -141,6 +141,10 @@ export interface EVENT_TYPES {
    */
   CLICK_TASK_BAR: 'click_task_bar';
   /**
+   * Right-click task bar event
+   */
+  CONTEXTMENU_TASK_BAR: 'contextmenu_task_bar';
+  /**
    * Mouse enter task bar event
    */
   MOUSEENTER_TASK_BAR: 'mouseenter_task_bar';

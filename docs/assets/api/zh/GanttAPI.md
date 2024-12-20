@@ -141,6 +141,10 @@ export interface EVENT_TYPES {
    */
   CLICK_TASK_BAR: 'click_task_bar';
   /**
+   * 右键点击任务条事件
+   */
+  CONTEXTMENU_TASK_BAR: 'contextmenu_task_bar';
+  /**
    * 鼠标移入任务条事件
    */
   MOUSEENTER_TASK_BAR: 'mouseenter_task_bar';

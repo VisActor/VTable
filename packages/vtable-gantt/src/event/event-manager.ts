@@ -490,9 +490,9 @@ function bindContainerDomListener(eventManager: EventManager) {
   const stateManager = gantt.stateManager;
   const handler = eventManager._eventHandler;
   handler.on(gantt.getElement(), 'contextmenu', (e: any) => {
-    // if (gantt.eventOptions?.preventDefaultContextMenu !== false) {
-    e.preventDefault();
-    // }
+    if (gantt.parsedOptions.eventOptions?.preventDefaultContextMenu !== false) {
+      e.preventDefault();
+    }
   });
   handler.on(gantt.getElement(), 'wheel', (e: WheelEvent) => {
     handleWhell(e, stateManager, eventManager._gantt);

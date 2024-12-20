@@ -198,6 +198,7 @@ export interface GanttConstructorOptions {
   groupBy?: true | string | string[];
   /** 展示嵌套结构数据时的模式，默认为full。*/
   tasksShowMode?: TasksShowMode;
+  eventOptions?: IEventOptions;
 }
 /**
  * IBarLabelText
@@ -266,6 +267,7 @@ export type IFrameStyle = {
 export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
+export type IEventOptions = TYPES.TableEventOptions;
 export type DateFormatArgumentType = {
   /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
   dateIndex: number;
