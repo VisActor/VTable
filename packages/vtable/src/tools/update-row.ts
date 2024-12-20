@@ -55,7 +55,7 @@ export function fixUpdateRowRange(
 
   const newRowEnd = Math.min(rowStart + rowLimit, table.rowCount - 1 - table.bottomFrozenRowCount);
   for (let i = 0; i < removeCellPositions.length; i++) {
-    const { row: cellRow } = removeCellPositions[i];
+    const { row: cellRow } = removeCellPositions[removeCellPositions.length - i - 1];
     if (cellRow < rowStart || cellRow > rowEnd) {
       // row before rowStart or after rowEnd => skip
       continue;
@@ -65,6 +65,7 @@ export function fixUpdateRowRange(
         col,
         row: cellRow
       });
+      updateRow--;
     } else {
       // row after rowStart and before new rowEnd => update row to rowEnd
       updateRow = Math.min(updateRow, cellRow);
