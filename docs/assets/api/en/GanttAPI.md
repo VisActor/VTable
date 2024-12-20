@@ -54,6 +54,14 @@ update gantt chart date range
   updateDateRange: (minDate: string, maxDate: string) => void
 ```
 
+### updateMarkLine(Function)
+
+update markLine
+
+```
+  updateMarkLine: (markLine: IMarkLine[]) => void
+```
+
 ### updateTaskRecord(Function)
 
 Update a specific data record
@@ -140,6 +148,10 @@ export interface EVENT_TYPES {
    * Click task bar event
    */
   CLICK_TASK_BAR: 'click_task_bar';
+  /**
+   * Right-click task bar event
+   */
+  CONTEXTMENU_TASK_BAR: 'contextmenu_task_bar';
   /**
    * Mouse enter task bar event
    */

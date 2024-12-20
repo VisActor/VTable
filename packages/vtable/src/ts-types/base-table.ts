@@ -100,7 +100,7 @@ import type { ISortedMapItem } from '../data/DataSource';
 import type { IAnimationAppear, ITableAnimationOption } from './animation/appear';
 import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
-import type { EditManeger } from '../edit/edit-manager';
+import type { EditManager } from '../edit/edit-manager';
 import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 
@@ -427,7 +427,7 @@ export interface BaseTableConstructorOptions {
   widthAdaptiveMode?: WidthAdaptiveModeDef;
   /** adaptive 模式下高度的适应策略 **/
   heightAdaptiveMode?: HeightAdaptiveModeDef;
-
+  /** 当配置adaptive模式时，默认true，即在计算每行行高的基础上去等比拉伸行高撑满容器宽度的。如果不需要计算行高用默认行高撑满的话请配置为false */
   autoHeightInAdaptiveMode?: boolean;
 
   // /** 行高是否根据内容来计算 */
@@ -525,6 +525,7 @@ export interface BaseTableConstructorOptions {
   renderOption?: any;
 
   formatCopyValue?: (value: string) => string;
+  customComputeRowHeight?: (computeArgs: { row: number; table: BaseTableAPI }) => number | 'auto' | undefined;
 }
 export interface BaseTableAPI {
   id: string;
@@ -629,7 +630,7 @@ export interface BaseTableAPI {
   /** 动画管理模块 */
   animationManager: TableAnimationManager;
 
-  editorManager: EditManeger;
+  editorManager: EditManager;
   /** 行表头的层数 */
   rowHeaderLevelCount: number;
   /** 列表头的层数 */
@@ -899,7 +900,7 @@ export interface BaseTableAPI {
   isSeriesNumber: (col: number, row?: number) => boolean;
   isHasSeriesNumber: () => boolean;
   leftRowSeriesNumberCount: number;
-  isAutoRowHeight: (row: number) => boolean;
+  isAutoRowHeight: (row?: number) => boolean;
 
   reactCustomLayout?: ReactCustomLayout;
   checkReactCustomLayout: (removeAllContainer: () => void) => void;

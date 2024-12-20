@@ -23,7 +23,9 @@ import type {
   ITaskBarHoverStyle,
   ITaskLinkSelectedStyle,
   IPointStyle,
-  TaskBarInteractionArgumentType
+  TaskBarInteractionArgumentType,
+  IEventOptions,
+  IMilestoneStyle
 } from './ts-types';
 import { TasksShowMode } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
@@ -42,6 +44,7 @@ import {
   getVerticalScrollBarSize,
   initOptions,
   updateOptionsWhenDateRangeChanged,
+  updateOptionsWhenMarkLineChanged,
   updateOptionsWhenRecordChanged,
   updateOptionsWhenScaleChanged,
   updateSplitLineAndResizeLine
@@ -122,6 +125,9 @@ export class Gantt extends EventTarget {
     timeScaleIncludeHour: boolean;
     grid: IGrid;
     taskBarStyle: ITaskBarStyle;
+    taskBarMilestoneStyle: IMilestoneStyle;
+    /** 里程碑是旋转后的矩形，所以需要计算里程碑的对角线长度 */
+    taskBarMilestoneHypotenuse: number;
     taskBarHoverStyle: ITaskBarHoverStyle;
     taskBarSelectedStyle: ITaskBarSelectedStyle;
     taskBarSelectable: boolean;
@@ -179,6 +185,7 @@ export class Gantt extends EventTarget {
     dependencyLinkLineCreatingPointStyle: IPointStyle;
     dependencyLinkLineCreatingStyle?: ILineStyle;
     underlayBackgroundColor: string;
+    eventOptions: IEventOptions;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
@@ -335,7 +342,14 @@ export class Gantt extends EventTarget {
   }
   _generateListTableOptions() {
     const listTable_options: ListTableConstructorOptions = {};
-    const needPutInListTableKeys = ['container', 'records', 'rowSeriesNumber', 'overscrollBehavior', 'pixelRatio'];
+    const needPutInListTableKeys = [
+      'container',
+      'records',
+      'rowSeriesNumber',
+      'overscrollBehavior',
+      'pixelRatio',
+      'eventOptions'
+    ];
     for (const key in this.options) {
       if (needPutInListTableKeys.indexOf(key) >= 0) {
         listTable_options[key] = this.options[key];
@@ -544,21 +558,27 @@ export class Gantt extends EventTarget {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
         const record = table.getRecordByRowCol(0, row);
-        return (record.children?.length || 1) * this.parsedOptions.rowHeight;
+        if (record) {
+          return (record.children?.length || 1) * this.parsedOptions.rowHeight;
+        }
       };
       listTable_options.defaultRowHeight = 'auto';
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact) {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
         const record = table.getRecordByRowCol(0, row);
-        return computeRowsCountByRecordDateForCompact(this, record) * this.parsedOptions.rowHeight;
+        if (record) {
+          return computeRowsCountByRecordDateForCompact(this, record) * this.parsedOptions.rowHeight;
+        }
       };
       listTable_options.defaultRowHeight = 'auto';
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
         const record = table.getRecordByRowCol(0, row);
-        return computeRowsCountByRecordDate(this, record) * this.parsedOptions.rowHeight;
+        if (record) {
+          return computeRowsCountByRecordDate(this, record) * this.parsedOptions.rowHeight;
+        }
       };
       listTable_options.defaultRowHeight = 'auto';
     } else {
@@ -744,16 +764,19 @@ export class Gantt extends EventTarget {
     progress: number;
   } {
     const taskRecord = this.getRecordByIndex(taskShowIndex, sub_task_index);
+    const isMilestone = taskRecord?.type;
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
     const progressField = this.parsedOptions.progressField;
     const rawDateStartDateTime = createDateAtMidnight(taskRecord?.[startDateField]).getTime();
     const rawDateEndDateTime = createDateAtMidnight(taskRecord?.[endDateField]).getTime();
     if (
-      rawDateEndDateTime < this.parsedOptions._minDateTime ||
-      rawDateStartDateTime > this.parsedOptions._maxDateTime ||
-      !taskRecord?.[startDateField] ||
-      !taskRecord?.[endDateField]
+      (isMilestone && !taskRecord?.[startDateField]) ||
+      (!isMilestone &&
+        (rawDateEndDateTime < this.parsedOptions._minDateTime ||
+          rawDateStartDateTime > this.parsedOptions._maxDateTime ||
+          !taskRecord?.[startDateField] ||
+          !taskRecord?.[endDateField]))
     ) {
       return {
         taskDays: 0,
@@ -918,6 +941,7 @@ export class Gantt extends EventTarget {
 
     this._sortScales();
     initOptions(this);
+    this.scenegraph.updateStageBackground();
     this.data.setRecords(this.records);
     this._generateTimeLineDateMap();
 
@@ -982,6 +1006,13 @@ export class Gantt extends EventTarget {
     this._updateSize();
     this.scenegraph.refreshAll();
     this._scrollToMarkLine();
+  }
+  /** 更新markLine标记线 */
+  updateMarkLine(markLine: IMarkLine[]) {
+    this.options.markLine = markLine;
+    updateOptionsWhenMarkLineChanged(this);
+    this.scenegraph.markLine.refresh();
+    this.scenegraph.renderSceneGraph();
   }
   /** 滚动到scrollToMarkLineDate所指向的日期 */
   _scrollToMarkLine() {

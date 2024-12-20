@@ -1,4 +1,4 @@
-import type { IEditor } from '@visactor/vtable-editors';
+import type { IEditor, ValidateEnum } from '@visactor/vtable-editors';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import type { ListTableAPI, ListTableConstructorOptions } from '../ts-types';
@@ -7,7 +7,7 @@ import type { SimpleHeaderLayoutMap } from '../layout';
 import { isPromise } from '../tools/helper';
 import { isValid } from '@visactor/vutils';
 
-export class EditManeger {
+export class EditManager {
   table: BaseTableAPI;
   editingEditor: IEditor;
   isValidatingValue: boolean = false;
@@ -155,18 +155,24 @@ export class EditManeger {
     }
     if (this.editingEditor.validateValue) {
       this.isValidatingValue = true;
-      const maybePromiseOrValue = this.editingEditor.validateValue?.();
+      const newValue = this.editingEditor.getValue();
+      const oldValue = this.table.getCellOriginValue(this.editCell.col, this.editCell.row);
+
+      const maybePromiseOrValue = this.editingEditor.validateValue?.(newValue, oldValue, this.editCell, this.table);
+
       if (isPromise(maybePromiseOrValue)) {
+        this.isValidatingValue = true;
         return new Promise((resolve, reject) => {
           maybePromiseOrValue
             .then(result => {
-              if (result) {
-                this.doExit();
-                resolve(true);
-              } else {
-                this.isValidatingValue = false;
-                resolve(false);
-              }
+              // if (result) {
+              //   this.doExit();
+              //   resolve(true);
+              // } else {
+              //   this.isValidatingValue = false;
+              //   resolve(false);
+              // }
+              dealWithValidateValue(result, this, oldValue, resolve);
             })
             .catch((err: Error) => {
               this.isValidatingValue = false;
@@ -174,17 +180,14 @@ export class EditManeger {
               reject(err);
             });
         });
-      } else if (maybePromiseOrValue) {
-        this.doExit();
-        return true;
       }
-      return false;
+      return dealWithValidateValue(maybePromiseOrValue, this, oldValue);
     }
     this.doExit();
     return true;
   }
 
-  private doExit() {
+  doExit() {
     const changedValue = this.editingEditor.getValue?.();
     const range = this.table.getCellRange(this.editCell.col, this.editCell.row);
     const changedValues: any[] = [];
@@ -211,4 +214,35 @@ export class EditManeger {
       this.editingEditor = null;
     }
   }
+}
+
+function dealWithValidateValue(
+  validateValue: boolean | ValidateEnum,
+  editManager: EditManager,
+  oldValue: any,
+  resolve?: (value: boolean | PromiseLike<boolean>) => void
+): boolean {
+  editManager.isValidatingValue = false;
+  if (validateValue === 'validate-exit') {
+    editManager.doExit();
+    resolve?.(true);
+    return true;
+  } else if (validateValue === 'invalidate-exit') {
+    (editManager.editingEditor as any).setValue(oldValue);
+    editManager.doExit();
+    resolve?.(true);
+    return true;
+  } else if (validateValue === 'validate-not-exit') {
+    resolve?.(false);
+    return false;
+  } else if (validateValue === 'invalidate-not-exit') {
+    resolve?.(false);
+    return false;
+  } else if (validateValue === true) {
+    editManager.doExit();
+    resolve?.(true);
+    return true;
+  }
+  resolve?.(false);
+  return false;
 }

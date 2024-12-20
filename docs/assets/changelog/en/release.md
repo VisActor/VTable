@@ -1,3 +1,20 @@
+# v1.13.2
+
+2024-12-16
+
+**🆕 New feature**
+
+- **@visactor/vtable-gantt**: resizable and moveable support function [#3074](https://github.com/VisActor/VTable/issues/3074)
+- **@visactor/vtable-gantt**: add updateOption and updateScales api
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: copy permission check when in iframe [#3077](https://github.com/VisActor/VTable/issues/3077)
+- **@visactor/vtable**: when has select cells to resize col width or row height error [#3085](https://github.com/VisActor/VTable/issues/3085)
+- **@visactor/vtable-gantt**: consider not set mindate maxdate call setRecords api
+
+[more detail about v1.13.2](https://github.com/VisActor/VTable/releases/tag/v1.13.2)
+
 # v1.13.1
 
 2024-12-13

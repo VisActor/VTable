@@ -3,6 +3,7 @@ title: 5. How to Contribute Code
 
 key words: VisActor, VChart, VTable, VStory, VMind, VGrammar, VRender, Visualization, Chart, Data, Table, Graph, GIS, LLM
 ---
+
 # Creating a Branch
 
 The default branch for VTable is the develop branch. For any feature development, bug fixes, or documentation writing, please create a new branch and then merge it into the develop branch. Use the following code to create a branch:
@@ -107,7 +108,6 @@ Explain can be used with Context or Files commands to generate explanations for 
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HyeabsSvjoHYZ9xAbLRc55j8nDg.gif' alt='' width='1000' height='auto'>
 
-
 ## 5.3 Content Retrieval
 
 Usually, for each Q&A session, [Marscode](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a) will provide reference documents, which can offer more contextual reference for further analysis.
@@ -132,7 +132,7 @@ Use the "/doc" command to generate code comments.
 
 ## 5.6 Generating Unit Tests
 
-The unit test code for VTable is located in the “__**tests**” directory of each package.
+The unit test code for VTable is located in the `__tests__` directory of each package.
 
 <img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/code-unit-test.png' alt='' width='1000' height='auto'>
 
@@ -163,36 +163,66 @@ Please write the description with a concise and accurate English description.
 
 Before submitting a commit, we will conduct commit lint checks. For more details, please see [check rules](https://github.com/VisActor/VTable/blob/develop/common/autoinstallers/lint/commitlint.config.js).
 
+## Writing Documents and Demos
+
+If you have added an API or a new feature, please modify the relevant configuration documents. If necessary, please add the corresponding official website demo. To start the tutorial, run:
+
+```
+# Comment: Start the official website page in the outer directory. start site development server, execute in file path: ./
+$ rush docs
+```
+
+## Generating Changelog
+
+If it is a bug fix or a new feature submission, please generate the changelog before pushing. After running the following command, the commit information of the last submission will be used to generate the changelog:
+
+```
+# Comment: Generate changelog after submitting code. after executing git commit, please run the following command to update the change log. Please execute in file path: ./
+
+rush change-all
+```
+
+The following files are generated in common:
+
+<img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/contribute-changelog.png' alt='' width='400' height='auto'>
+
+## Resolving Code Conflicts
+
 A common issue is that the remote upstream (@visactor/vtable) has new updates, which may cause conflicts when you submit a Pull Request. Therefore, you can merge the commits from other developers with your commits before submitting. Use the following code to switch to the develop branch:
 
 ```
 git checkout develop
 
 ```
+
 Use the following code to pull out the latest code from upstream:
 
 ```
 git pull upstream develop
 
 ```
+
 Switch back to your development branch:
 
 ```
 git checkout docs/add-funnel-demo
 
 ```
+
 Merge the commits from develop into your branch:
 
 ```
 git rebase develop
 
 ```
+
 Submit the updated code to your branch:
 
 ```
 git push origin docs/add-funnel-demo
 
 ```
+
 # Submitting a PR
 
 You can click the `Compare & pull request` button on your GitHub code repository page.
@@ -203,15 +233,15 @@ Or create one through the `contribute` button:
 
 Fill in the modification details of this submission according to the template:
 
-*  Check what type of modification this is
+- Check what type of modification this is
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/AgIOb5bRAo7UUVxS52AcNZCanad.gif' alt='' width='692' height='auto'>
 
-*  Fill in the associated issue
+- Fill in the associated issue
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/VGonbJeFJoc68XxDzkOc7j8Lnjd.gif' alt='' width='470' height='auto'>
 
-*  If there are complex changes, please explain the background and solution
+- If there are complex changes, please explain the background and solution
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HYy2bLtuCopGfxxdeKkc2pt0n4e.gif' alt='' width='1000' height='auto'>
 
@@ -240,5 +270,6 @@ Feishu Group:
 Discord: https://discord.com/invite/3wPyxVyH6m
 
 # This Document Was Contributed By
-[玄魂](https://github.com/xuanhun)
 
+[玄魂](https://github.com/xuanhun)
+[方帅](https://github.com/fangsmile)

@@ -31,7 +31,7 @@ import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import type { ITitleComponent } from './components/title/title';
 import { Env } from './tools/env';
 import * as editors from './edit/editors';
-import { EditManeger } from './edit/edit-manager';
+import { EditManager } from './edit/edit-manager';
 import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
@@ -142,7 +142,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     this.transpose = options.transpose ?? false;
     if (Env.mode !== 'node') {
-      this.editorManager = new EditManeger(this);
+      this.editorManager = new EditManager(this);
     }
     this.refreshHeader();
     this.internalProps.useOneRowHeightFillAll = false;
@@ -309,8 +309,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return title;
       }
       if ((this.options as ListTableConstructorOptions).groupBy) {
-        const { vtableMerge } = table.getCellRawRecord(col, row);
-        if (vtableMerge) {
+        const record = table.getCellRawRecord(col, row);
+        if (record?.vtableMerge) {
           return '';
         }
         const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
@@ -1058,19 +1058,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
   getCheckboxState(field?: string | number) {
-    if (this.stateManager.checkedState.length < this.rowCount - this.columnHeaderLevelCount) {
+    if (this.stateManager.checkedState.size < this.rowCount - this.columnHeaderLevelCount) {
       this.stateManager.initLeftRecordsCheckState(this.records);
     }
     if (isValid(field)) {
-      let stateArr = this.stateManager.checkedState;
+      let stateArr = this.stateManager.checkedState.values() as any;
       if (this.options.groupBy) {
-        stateArr = getGroupCheckboxState(this);
+        stateArr = getGroupCheckboxState(this) as any;
       }
-      return stateArr.map(state => {
+      return stateArr.map((state: any) => {
         return state[field];
       });
     }
-    return this.stateManager.checkedState;
+    return new Array(...this.stateManager.checkedState.values());
   }
   /** 获取某个单元格checkbox的状态 */
   getCellCheckboxState(col: number, row: number) {
@@ -1078,8 +1078,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const field = define?.field;
     const cellType = this.getCellType(col, row);
     if (isValid(field) && cellType === 'checkbox') {
-      const dataIndex = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row));
-      return this.stateManager.checkedState[dataIndex as number]?.[field as string | number];
+      const dataIndex = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row)).toString();
+      return this.stateManager.checkedState.get(dataIndex)?.[field as string | number];
     }
     return undefined;
   }

@@ -38,6 +38,14 @@ export interface TableEventHandlersEventArgumentMap {
     event: Event;
     federatedEvent: FederatedPointerEvent;
   };
+  contextmenu_task_bar: {
+    /** 第几条数据 */
+    index: number;
+    sub_task_index?: number;
+    record: any;
+    event: Event;
+    federatedEvent: FederatedPointerEvent;
+  };
   change_date_range: {
     /** 第几条数据 */
     index: number;
@@ -87,6 +95,7 @@ export interface TableEventHandlersReturnMap {
   mouseenter_task_bar: void;
   mouseleave_task_bar: void;
   click_task_bar: void;
+  contextmenu_task_bar: void;
   change_date_range: void;
   create_task_schedule: void;
   create_dependency_link: void;

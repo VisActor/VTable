@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { shallowRef, computed, defineProps, useSlots } from 'vue';
-import { flattenVNodes, extractPivotSlotOptions } from '../utils';
+import { flattenVNodes, extractPivotSlotOptions, mergeSlotOptions } from '../utils';
 import BaseTable from './base-table.vue';
 
 interface Props {
@@ -27,22 +27,10 @@ const props = defineProps<Props>();
 const baseTableRef = shallowRef<InstanceType<typeof BaseTable> | null>(null);
 const slots = useSlots();
 
-
 const computedOptions = computed(() => {
   const flattenedSlots = flattenVNodes(slots.default?.() || []);
   const slotOptions = extractPivotSlotOptions(flattenedSlots);
-
-  return {
-    ...props.options,
-    columns: slotOptions.columns.length ? slotOptions.columns : props.options.columns,
-    columnHeaderTitle: slotOptions.columnHeaderTitle.length ? slotOptions.columnHeaderTitle : props.options.columnHeaderTitle,
-    rows: slotOptions.rows.length ? slotOptions.rows : props.options.rows,
-    rowHeaderTitle: slotOptions.rowHeaderTitle.length ? slotOptions.rowHeaderTitle : props.options.rowHeaderTitle,
-    indicators: slotOptions.indicators.length ? slotOptions.indicators : props.options.indicators,
-    corner: props.options.corner || slotOptions.corner,
-    tooltip: props.options.tooltip || slotOptions.tooltip,
-    menu: props.options.menu || slotOptions.menu,
-  };
+  return mergeSlotOptions(props.options, slotOptions);
 });
 
 defineExpose({ vTableInstance: computed(() => baseTableRef.value?.vTableInstance || null) });

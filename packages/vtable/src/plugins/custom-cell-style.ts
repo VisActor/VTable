@@ -1,4 +1,4 @@
-import { merge } from '@visactor/vutils';
+import { isValid, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import {
   cellStyleKeys,
@@ -131,7 +131,8 @@ export class CustomCellStylePlugin {
       row?: number;
       range?: CellRange;
     },
-    customStyleId: string | undefined | null
+    customStyleId: string | undefined | null,
+    forceFastUpdate?: boolean
   ) {
     const index = this.customCellStyleArrangement.findIndex(style => {
       if (style.cellPosition.range && cellPos.range) {
@@ -170,7 +171,7 @@ export class CustomCellStylePlugin {
     }
 
     const style = this.getCustomCellStyleOption(customStyleId)?.style;
-    let forceFastUpdate;
+    // let forceFastUpdate;
     if (style) {
       forceFastUpdate = true;
       for (const key in style) {
@@ -230,7 +231,7 @@ export function mergeStyle(cacheStyle: Style, customCellStyle: ColumnStyleOption
 
   for (const key in customCellStyle) {
     const value = (customCellStyle as any)[key];
-    if (value) {
+    if (isValid(value)) {
       (cacheStyle as any)[`_${key}`] = value;
     }
   }

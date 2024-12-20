@@ -29,7 +29,7 @@ import type { ICellAxisOption, ITableAxisOption } from './component/axis';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
 import type { DataSource } from '../data';
-import type { EditManeger } from '../edit/edit-manager';
+import type { EditManager } from '../edit/edit-manager';
 import type { ICustomRender } from './customElement';
 import type { ICustomLayout } from './customLayout';
 import type { ColorPropertyDefine, StylePropertyFunctionArg } from './style-define';
@@ -267,8 +267,6 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   groupTitleCustomLayout?: ICustomLayout;
 
   enableTreeStickCell?: boolean;
-
-  customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => number;
 }
 
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
@@ -281,7 +279,7 @@ export type GroupConfig = {
 export interface ListTableAPI extends BaseTableAPI {
   transpose: boolean;
   options: ListTableConstructorOptions;
-  editorManager: EditManeger;
+  editorManager: EditManager;
   sortState: SortState[] | SortState | null;
   // /** 数据分析相关配置  */
   // dataConfig?: IListTableDataConfig;
@@ -472,7 +470,7 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
 export interface PivotTableAPI extends BaseTableAPI {
   records?: any;
   options: PivotTableConstructorOptions;
-  editorManager: EditManeger;
+  editorManager: EditManager;
   // internalProps: PivotTableProtected;
   pivotSortState: {
     dimensions: IDimensionInfo[];

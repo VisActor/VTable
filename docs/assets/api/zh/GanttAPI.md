@@ -54,6 +54,14 @@
   updateDateRange: (minDate: string, maxDate: string) => void
 ```
 
+### updateMarkLine(Function)
+
+更新 markLine
+
+```
+  updateMarkLine: (markLine: IMarkLine[]) => void
+```
+
 ### updateTaskRecord(Function)
 
 更新某一条数据
@@ -140,6 +148,10 @@ export interface EVENT_TYPES {
    * 点击任务条事件
    */
   CLICK_TASK_BAR: 'click_task_bar';
+  /**
+   * 右键点击任务条事件
+   */
+  CONTEXTMENU_TASK_BAR: 'contextmenu_task_bar';
   /**
    * 鼠标移入任务条事件
    */

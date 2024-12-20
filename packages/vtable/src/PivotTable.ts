@@ -36,7 +36,7 @@ import { Env } from './tools/env';
 import type { ITreeLayoutHeadNode } from './layout/tree-helper';
 import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
-import { EditManeger } from './edit/edit-manager';
+import { EditManager } from './edit/edit-manager';
 import * as editors from './edit/editors';
 import type { IEditor } from '@visactor/vtable-editors';
 import { computeColWidth } from './scenegraph/layout/compute-col-width';
@@ -201,7 +201,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         // this.updatePivotSortState(options.pivotSortState);
       }
       if (Env.mode !== 'node') {
-        this.editorManager = new EditManeger(this);
+        this.editorManager = new EditManager(this);
       }
 
       this.refreshHeader();
@@ -1723,7 +1723,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         if (this.internalProps._heightResizedRowMap.size === 0) {
           this.scenegraph.recalculateRowHeights();
         }
-      } else if (this.heightMode === 'autoHeight' && !this.internalProps._heightResizedRowMap.has(row)) {
+      } else if (this.isAutoRowHeight() && !this.internalProps._heightResizedRowMap.has(row)) {
         const oldHeight = this.getRowHeight(row);
         const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
         this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
@@ -1837,7 +1837,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
       this.scenegraph.recalculateRowHeights();
-    } else if (this.heightMode === 'autoHeight') {
+    } else if (this.isAutoRowHeight()) {
       const rows: number[] = [];
       const deltaYs: number[] = [];
       for (let sRow = startRow; sRow <= range.end.row; sRow++) {

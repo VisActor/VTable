@@ -207,6 +207,17 @@ export interface IEditor<V = any> {
    * Expected to return the current value of the cell.
    */
   getValue: () => V;
+
+  /**
+   * Verify whether the input new value is valid.
+   * true: The verification passes, and the editing state is exited.
+   * false: The verification fails, and the editing state is retained.
+   * ValidateEnum.validateExit: The verification passes, and the editing state is exited.
+   * ValidateEnum.invalidateExit: The verification fails, the editing state is exited, and the old value is retained.
+   * ValidateEnum.validateNotExit: The verification passes, and the editing state is not exited.
+   * ValidateEnum.invalidateNotExit: The verification fails, and the editing state is not exited.
+   */
+  validateValue?: (newValue?: any, oldValue?: any, position?: CellAddress, table?: any) => boolean | ValidateEnum;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -271,9 +282,14 @@ interface ListTableConstructorOptions {
 
 If validation is required, please customize the editor to implement the validation function `validateValue`
 
-If this interface is not defined, the edit value will not be checked by default;
+If this interface is not defined, the edit value will not be checked by default; Support the following return values:
 
-If the interface returns false, the value will remain in the editing state if the verification fails; if it returns true, the edited value will be submitted if the verification succeeds.
+- true: The verification passes, and the editing state is exited.
+- false: The verification fails, and the editing state is retained.
+- ValidateEnum.validateExit: The verification passes, and the editing state is exited.
+- ValidateEnum.invalidateExit: The verification fails, the editing state is exited, and the old value is retained.
+- ValidateEnum.validateNotExit: The verification passes, and the editing state is not exited.
+- ValidateEnum.invalidateNotExit: The verification fails, and the editing state is not exited.
 
 If you need to implement asynchronous verification, you can return a Promise object, which is resolved with a true value when the verification succeeds and a false value when the verification fails.
 

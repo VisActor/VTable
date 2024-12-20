@@ -1,4 +1,4 @@
-import { isArray, isObject, isValid } from '@visactor/vutils';
+import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
 import type { StateManager } from '../state';
 import type { CheckboxColumnDefine, ListTableAPI } from '../../ts-types';
 import { getOrApply } from '../../tools/helper';
@@ -15,12 +15,13 @@ export function setCheckedState(
 ) {
   const recordIndex = state.table.getRecordShowIndexByCell(col, row);
   if (recordIndex >= 0) {
-    const dataIndex = state.table.dataSource.getIndexKey(recordIndex) as number;
-    if (state.checkedState[dataIndex]) {
-      state.checkedState[dataIndex][field] = checked;
+    const dataIndex = state.table.dataSource.getIndexKey(recordIndex).toString();
+    if (state.checkedState.has(dataIndex)) {
+      state.checkedState.get(dataIndex)[field] = checked;
     } else {
-      state.checkedState[dataIndex] = {};
-      state.checkedState[dataIndex][field] = checked;
+      state.checkedState.set(dataIndex, {
+        [field]: checked
+      });
     }
   }
 }
@@ -56,7 +57,7 @@ export function syncCheckedState(
       return undefined;
     } else if (isValid(checked)) {
       state.headerCheckedState[field] = checked;
-    } else if (state.checkedState?.length > 0) {
+    } else if (state.checkedState?.size > 0) {
       const isAllChecked = state.updateHeaderCheckedState(field, col, row);
       return isAllChecked;
     }
@@ -64,15 +65,16 @@ export function syncCheckedState(
   }
   const recordIndex = state.table.getRecordShowIndexByCell(col, row);
   if (recordIndex >= 0) {
-    const dataIndex = state.table.dataSource.getIndexKey(recordIndex) as number;
-    if (isValid(state.checkedState[dataIndex]?.[field])) {
-      return state.checkedState[dataIndex][field];
+    const dataIndex = state.table.dataSource.getIndexKey(recordIndex).toString();
+    if (isValid(state.checkedState.get(dataIndex)?.[field])) {
+      return state.checkedState.get(dataIndex)[field];
     }
-    if (state.checkedState[dataIndex]) {
-      state.checkedState[dataIndex][field] = checked;
+    if (state.checkedState.has(dataIndex)) {
+      state.checkedState.get(dataIndex)[field] = checked;
     } else {
-      state.checkedState[dataIndex] = {};
-      state.checkedState[dataIndex][field] = checked;
+      state.checkedState.set(dataIndex, {
+        [field]: checked
+      });
     }
   }
   return checked;
@@ -84,7 +86,7 @@ export function syncCheckedState(
  */
 export function initCheckedState(records: any[], state: StateManager) {
   // clear checkbox state
-  state.checkedState = [];
+  state.checkedState.clear();
   state.headerCheckedState = {};
   state.radioState = {};
 
@@ -125,36 +127,7 @@ export function initCheckedState(records: any[], state: StateManager) {
 
   //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
   if (isNeedInitHeaderCheckedStateFromRecord) {
-    records?.forEach((record: any, index: number) => {
-      state._checkboxCellTypeFields.forEach(field => {
-        const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
-        let isChecked;
-        if (isObject(value)) {
-          isChecked = value.checked;
-        } else if (typeof value === 'boolean') {
-          isChecked = value;
-        }
-        if (isChecked === undefined || isChecked === null) {
-          const headerCheckFunc = state._headerCheckFuncs[field];
-          if (headerCheckFunc) {
-            //如果定义的checked是个函数 则需要每个都去计算这个值
-            const cellAddr = state.table.getCellAddrByFieldRecord(field, index);
-            const globalChecked = getOrApply(headerCheckFunc as any, {
-              col: cellAddr.col,
-              row: cellAddr.row,
-              table: state.table,
-              context: null,
-              value
-            });
-            isChecked = globalChecked;
-          }
-        }
-        if (!state.checkedState[index]) {
-          state.checkedState[index] = {};
-        }
-        state.checkedState[index][field] = isChecked;
-      });
-    });
+    initRecordCheckState(records, state);
   }
 }
 
@@ -169,37 +142,45 @@ export function updateHeaderCheckedState(
   col: number,
   row: number
 ): boolean | 'indeterminate' {
-  const allChecked = state.checkedState.every((check_state: Record<string | number, boolean>, index: number) => {
-    const tableIndex = state.table.getTableIndexByRecordIndex(index);
+  let allChecked = true;
+  let allUnChecked = true;
+  let hasChecked = false;
+  state.checkedState.forEach((check_state: Record<string | number, boolean>, index: string | number | number[]) => {
+    if ((index as string).includes(',')) {
+      index = (index as string).split(',').map(item => {
+        return Number(item);
+      }) as number[];
+    } else {
+      index = Number(index);
+    }
+    const tableIndex = state.table.getTableIndexByRecordIndex(index as number);
     const mergeCell = (state.table as ListTableAPI).transpose
       ? state.table.getCustomMerge(tableIndex, row)
       : state.table.getCustomMerge(col, tableIndex);
-    if (mergeCell) {
-      return true;
+
+    const data = state.table.dataSource?.get(index as number);
+    if (mergeCell || data.vtableMerge) {
+      // 不参与check状态的计算
+      return;
     }
-    return check_state?.[field] === true;
+    if (check_state?.[field] !== true) {
+      allChecked = false;
+    } else {
+      allUnChecked = false;
+      hasChecked = true;
+    }
   });
+
   if (allChecked) {
     state.headerCheckedState[field] = true;
     return allChecked;
   }
-  const allUnChecked = state.checkedState.every((check_state: Record<string | number, boolean>, index: number) => {
-    const tableIndex = state.table.getTableIndexByRecordIndex(index);
-    const mergeCell = (state.table as ListTableAPI).transpose
-      ? state.table.getCustomMerge(tableIndex, row)
-      : state.table.getCustomMerge(col, tableIndex);
-    if (mergeCell) {
-      return true;
-    }
-    return check_state?.[field] === false;
-  });
+
   if (allUnChecked) {
     state.headerCheckedState[field] = false;
     return false;
   }
-  const hasChecked = state.checkedState.find((check_state: Record<string | number, boolean>) => {
-    return check_state?.[field] === true;
-  });
+
   if (hasChecked) {
     state.headerCheckedState[field] = 'indeterminate';
     return 'indeterminate'; //半选状态
@@ -212,7 +193,7 @@ export function updateHeaderCheckedState(
  * @param records
  */
 export function initLeftRecordsCheckState(records: any[], state: StateManager) {
-  for (let index = state.checkedState.length; index < records.length; index++) {
+  for (let index = state.checkedState.size; index < records.length; index++) {
     const record = records[index];
     state._checkboxCellTypeFields.forEach(field => {
       const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
@@ -222,10 +203,11 @@ export function initLeftRecordsCheckState(records: any[], state: StateManager) {
       } else if (typeof value === 'boolean') {
         isChecked = value;
       }
-      if (!state.checkedState[index]) {
-        state.checkedState[index] = {};
+      const dataIndex = index.toString();
+      if (!state.checkedState.get(dataIndex)) {
+        state.checkedState.set(dataIndex, {});
       }
-      state.checkedState[index][field] = isChecked;
+      state.checkedState.get(dataIndex)[field] = isChecked;
     });
   }
 }
@@ -283,30 +265,63 @@ export function setCellCheckboxState(col: number, row: number, checked: boolean,
 
 export function changeCheckboxOrder(sourceIndex: number, targetIndex: number, state: StateManager) {
   const { checkedState, table } = state;
+  let source;
+  let target;
   if (table.internalProps.transpose) {
     sourceIndex = table.getRecordShowIndexByCell(sourceIndex, 0);
     targetIndex = table.getRecordShowIndexByCell(targetIndex, 0);
   } else {
-    sourceIndex = table.getRecordShowIndexByCell(0, sourceIndex);
-    targetIndex = table.getRecordShowIndexByCell(0, targetIndex);
+    // sourceIndex = table.getRecordShowIndexByCell(0, sourceIndex);
+    // targetIndex = table.getRecordShowIndexByCell(0, targetIndex);
+
+    source = (table as any).getRecordIndexByCell(0, sourceIndex);
+    target = (table as any).getRecordIndexByCell(0, targetIndex);
   }
-  // if (sourceIndex !== targetIndex) {
-  //   const sourceRecord = checkedState[sourceIndex];
-  //   checkedState[sourceIndex] = checkedState[targetIndex];
-  //   checkedState[targetIndex] = sourceRecord;
-  // }
-  if (sourceIndex > targetIndex) {
-    const sourceRecord = checkedState[sourceIndex];
-    for (let i = sourceIndex; i > targetIndex; i--) {
-      checkedState[i] = checkedState[i - 1];
+
+  if (isNumber(source) && isNumber(target)) {
+    if (sourceIndex > targetIndex) {
+      const sourceRecord = checkedState.get(sourceIndex.toString());
+      for (let i = sourceIndex; i > targetIndex; i--) {
+        // checkedState[i] = checkedState[i - 1];
+        checkedState.set(i.toString(), checkedState.get((i - 1).toString()));
+      }
+      // checkedState[targetIndex] = sourceRecord;
+      checkedState.set(targetIndex.toString(), sourceRecord);
+    } else if (sourceIndex < targetIndex) {
+      const sourceRecord = checkedState.get(sourceIndex.toString());
+      for (let i = sourceIndex; i < targetIndex; i++) {
+        // checkedState[i] = checkedState[i + 1];
+        checkedState.set(i.toString(), checkedState.get((i + 1).toString()));
+      }
+      // checkedState[targetIndex] = sourceRecord;
+      checkedState.set(targetIndex.toString(), sourceRecord);
     }
-    checkedState[targetIndex] = sourceRecord;
-  } else if (sourceIndex < targetIndex) {
-    const sourceRecord = checkedState[sourceIndex];
-    for (let i = sourceIndex; i < targetIndex; i++) {
-      checkedState[i] = checkedState[i + 1];
+  } else if (isArray(source) && isArray(target)) {
+    sourceIndex = source[source.length - 1];
+    targetIndex = target[target.length - 1];
+    if (sourceIndex > targetIndex) {
+      const sourceRecord = checkedState.get(source.toString());
+      for (let i = sourceIndex; i > targetIndex; i--) {
+        const now = [...source];
+        now[now.length - 1] = i;
+        const last = [...source];
+        last[last.length - 1] = i - 1;
+        checkedState.set(now.toString(), checkedState.get(last.toString()));
+      }
+      // checkedState[targetIndex] = sourceRecord;
+      checkedState.set(target.toString(), sourceRecord);
+    } else if (sourceIndex < targetIndex) {
+      const sourceRecord = checkedState.get(source.toString());
+      for (let i = sourceIndex; i < targetIndex; i++) {
+        const now = [...source];
+        now[now.length - 1] = i;
+        const next = [...source];
+        next[next.length - 1] = i + 1;
+        checkedState.set(now.toString(), checkedState.get(next.toString()));
+      }
+      // checkedState[targetIndex] = sourceRecord;
+      checkedState.set(target.toString(), sourceRecord);
     }
-    checkedState[targetIndex] = sourceRecord;
   }
 }
 
@@ -318,9 +333,59 @@ export function getGroupCheckboxState(table: BaseTableAPI) {
     if (isArray(indexArr) && indexArr.length === groupKeyLength) {
       // get record by index
       const { vtableOriginIndex } = (dataSource as any).getRawRecord(indexArr);
-      result[vtableOriginIndex] = table.stateManager.checkedState[indexArr];
+      result[vtableOriginIndex] = table.stateManager.checkedState.get(indexArr.toString());
     }
   });
 
   return result;
+}
+
+function initRecordCheckState(records: any[], state: StateManager) {
+  const table = state.table;
+  const start = table.isPivotTable()
+    ? 0
+    : table.internalProps.transpose
+    ? table.rowHeaderLevelCount
+    : table.columnHeaderLevelCount;
+  const end = table.isPivotTable()
+    ? isArray(records)
+      ? records.length
+      : 0
+    : table.internalProps.transpose
+    ? table.colCount
+    : table.rowCount;
+  for (let index = 0; index + start < end; index++) {
+    const record = table.isPivotTable() ? records[index] : table.dataSource.get(index);
+    // eslint-disable-next-line no-loop-func
+    state._checkboxCellTypeFields.forEach(field => {
+      const value =
+        record && (record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean);
+      let isChecked;
+      if (isObject(value)) {
+        isChecked = value.checked;
+      } else if (typeof value === 'boolean') {
+        isChecked = value;
+      }
+      if (isChecked === undefined || isChecked === null) {
+        const headerCheckFunc = state._headerCheckFuncs[field];
+        if (headerCheckFunc) {
+          //如果定义的checked是个函数 则需要每个都去计算这个值
+          const cellAddr = state.table.getCellAddrByFieldRecord(field, index);
+          const globalChecked = getOrApply(headerCheckFunc as any, {
+            col: cellAddr.col,
+            row: cellAddr.row,
+            table: state.table,
+            context: null,
+            value
+          });
+          isChecked = globalChecked;
+        }
+      }
+      const dataIndex = table.isPivotTable() ? index.toString() : state.table.dataSource.getIndexKey(index).toString();
+      if (!state.checkedState.get(dataIndex)) {
+        state.checkedState.set(dataIndex, {});
+      }
+      state.checkedState.get(dataIndex)[field] = isChecked;
+    });
+  }
 }

@@ -143,7 +143,7 @@ import {
   getTargetRowAtConsiderBottomFrozen
 } from './utils/get-cell-position';
 import { getCellStyle } from './style-helper';
-import type { EditManeger } from '../edit/edit-manager';
+import type { EditManager } from '../edit/edit-manager';
 import { createReactContainer } from '../scenegraph/layout/frozen-react';
 import { setIconColor } from '../icons';
 import { TableAnimationManager } from './animation';
@@ -182,7 +182,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   scenegraph: Scenegraph;
   stateManager: StateManager;
   eventManager: EventManager;
-  editorManager: EditManeger;
+  editorManager: EditManager;
   animationManager: TableAnimationManager;
   _pixelRatio: number;
 
@@ -1252,6 +1252,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // autoRowHeight || all rows in header, use accumulation
     if (
       this.heightMode === 'standard' &&
+      !this.options.customComputeRowHeight &&
       !this.autoFillHeight &&
       this.internalProps.layoutMap &&
       // endRow >= this.columnHeaderLevelCount &&
@@ -1353,8 +1354,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this._adjustColWidth(col, this._colWidthDefineToPxWidth(width));
   }
   /** 判断某行是否应该计算行高 */
-  isAutoRowHeight(row: number): boolean {
+  isAutoRowHeight(row?: number): boolean {
     if (this.heightMode === 'autoHeight') {
+      return true;
+    } else if (this.options.customComputeRowHeight) {
       return true;
     } else if (row >= 0 && row < this.columnHeaderLevelCount) {
       return this.getDefaultRowHeight(row) === 'auto';
@@ -2797,7 +2800,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     this.internalProps.autoWrapText = autoWrapText;
     this.options.autoWrapText = autoWrapText;
-    // if (this.heightMode === 'autoHeight' || this.heightMode === 'adaptive') {
     this.scenegraph.clearCells();
     this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
@@ -4126,8 +4128,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.customCellStylePlugin?.registerCustomCellStyle(customStyleId, customStyle);
   }
 
-  arrangeCustomCellStyle(cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) {
-    this.customCellStylePlugin?.arrangeCustomCellStyle(cellPos, customStyleId);
+  arrangeCustomCellStyle(
+    cellPos: { col?: number; row?: number; range?: CellRange },
+    customStyleId: string,
+    forceFastUpdate?: boolean
+  ) {
+    this.customCellStylePlugin?.arrangeCustomCellStyle(cellPos, customStyleId, forceFastUpdate);
   }
   isSeriesNumber(col: number, row: number): boolean {
     return this.internalProps.layoutMap.isSeriesNumber(col, row);

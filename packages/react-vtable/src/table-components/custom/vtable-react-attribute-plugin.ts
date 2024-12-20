@@ -188,7 +188,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
   }
 
   protected drawHTML() {
-    if (application.global.env === 'browser') {
+    if (application?.global?.env === 'browser') {
       (this.pluginService.stage as any).children // fix interactive layer problem
         .sort((a: IGraphic, b: IGraphic) => {
           return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);
