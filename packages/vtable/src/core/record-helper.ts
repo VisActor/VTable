@@ -170,8 +170,8 @@ export function listTableChangeCellValues(
           } else {
             isCanChange =
               maybePromiseOrValue === true ||
-              maybePromiseOrValue === 'validate-return' ||
-              maybePromiseOrValue === 'invalidate-return';
+              maybePromiseOrValue === 'validate-exit' ||
+              maybePromiseOrValue === 'invalidate-exit';
           }
         }
       }

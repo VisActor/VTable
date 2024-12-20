@@ -223,19 +223,19 @@ function dealWithValidateValue(
   resolve?: (value: boolean | PromiseLike<boolean>) => void
 ): boolean {
   editManager.isValidatingValue = false;
-  if (validateValue === 'validate-return') {
+  if (validateValue === 'validate-exit') {
     editManager.doExit();
     resolve?.(true);
     return true;
-  } else if (validateValue === 'invalidate-return') {
+  } else if (validateValue === 'invalidate-exit') {
     (editManager.editingEditor as any).setValue(oldValue);
     editManager.doExit();
     resolve?.(true);
     return true;
-  } else if (validateValue === 'validate-not-return') {
+  } else if (validateValue === 'validate-not-exit') {
     resolve?.(false);
     return false;
-  } else if (validateValue === 'invalidate-not-return') {
+  } else if (validateValue === 'invalidate-not-exit') {
     resolve?.(false);
     return false;
   } else if (validateValue === true) {

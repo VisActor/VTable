@@ -211,10 +211,10 @@ export interface IEditor<V = any> {
    * 校验输入新值是否合法，
    * true: 校验通过，退出编辑状态。
    * false: 校验失败，保留在编辑状态。
-   * ValidateEnum.validateReturn: 校验通过，退出编辑状态。
-   * ValidateEnum.invalidateReturn: 校验不通过，退出编辑状态，保留旧值。
-   * ValidateEnum.validateNotReturn: 校验通过，不退出编辑状态。
-   * ValidateEnum.invalidateNotReturn: 校验不通过，不退出编辑状态。
+   * ValidateEnum.validateExit: 校验通过，退出编辑状态。
+   * ValidateEnum.invalidateExit: 校验不通过，退出编辑状态，保留旧值。
+   * ValidateEnum.validateNotExit: 校验通过，不退出编辑状态。
+   * ValidateEnum.invalidateNotExit: 校验不通过，不退出编辑状态。
    */
   validateValue?: (newValue?: any, oldValue?: any, position?: CellAddress, table?: any) => boolean | ValidateEnum;
 }
@@ -281,9 +281,14 @@ interface ListTableConstructorOptions {
 
 需要校验的情况 请自定义编辑器实现校验函数`validateValue`
 
-如未定义该接口则编辑值值默认不做校验；
+如未定义该接口则编辑值值默认不做校验，返回值支持：
 
-接口返回 false，校验失败则保留在编辑状态; 返回 true，校验成功则提交编辑值。
+- true: 校验通过，退出编辑状态。
+- false: 校验失败，保留在编辑状态。
+- ValidateEnum.validateExit: 校验通过，退出编辑状态。
+- ValidateEnum.invalidateExit: 校验不通过，退出编辑状态，保留旧值。
+- ValidateEnum.validateNotExit: 校验通过，不退出编辑状态。
+- ValidateEnum.invalidateNotExit: 校验不通过，不退出编辑状态。
 
 若需要实现异步校验，可以返回一个 Promise 对象，该 Promise 对象在校验成功时以真值解析，校验失败时以假值解析。
 

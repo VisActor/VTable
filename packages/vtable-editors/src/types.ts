@@ -111,10 +111,10 @@ export interface ReferencePosition {
 }
 
 export enum ValidateEnum {
-  validateReturn = 'validate-return',
-  invalidateReturn = 'invalidate-return',
-  validateNotReturn = 'validate-not-return',
-  invalidateNotReturn = 'invalidate-not-return'
+  validateExit = 'validate-exit',
+  invalidateExit = 'invalidate-exit',
+  validateNotExit = 'validate-not-exit',
+  invalidateNotExit = 'invalidate-not-exit'
 }
 
 export type CellAddress = {
