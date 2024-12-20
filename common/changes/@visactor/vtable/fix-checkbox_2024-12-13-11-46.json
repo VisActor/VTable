@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/vtable",
       "comment": "fix: change checkboxState into Map",
-      "type": "none"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vtable"
