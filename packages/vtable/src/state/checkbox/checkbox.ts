@@ -352,7 +352,8 @@ function initRecordCheckState(records: any[], state: StateManager) {
     const record = table.isPivotTable() ? records[index] : table.dataSource.get(index);
     // eslint-disable-next-line no-loop-func
     state._checkboxCellTypeFields.forEach(field => {
-      const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
+      const value =
+        record && (record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean);
       let isChecked;
       if (isObject(value)) {
         isChecked = value.checked;
