@@ -2,14 +2,13 @@
 
 2024-12-20
 
-
 **🆕 New feature**
 
-- **@visactor/vtable**: add contextmenu_task_bar event [#3013](https://github.com/VisActor/VTable/issues/3013)
-- **@visactor/vtable**: add milestone type [#3097](https://github.com/VisActor/VTable/issues/3097)
+- **@visactor/vtable-gantt**: add contextmenu_task_bar event [#3013](https://github.com/VisActor/VTable/issues/3013)
+- **@visactor/vtable-gantt**: add milestone type [#3097](https://github.com/VisActor/VTable/issues/3097)
 - **@visactor/vtable**: add mergeCell function to support more detailed conditions
 - **@visactor/vtable**: support tickAlign in PivotChart
-- **@visactor/vtable**: add updateMarkLine
+- **@visactor/vtable-gantt**: add updateMarkLine
 - **@visactor/vtable**: add enums in validateValue of vtable-editor [#3039](https://github.com/VisActor/VTable/issues/3039)
 
 **🐛 Bug fix**

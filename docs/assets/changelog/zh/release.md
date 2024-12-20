@@ -4,28 +4,30 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**：甘特图添加contextmenu_task_bar事件 #3013
-- **@visactor/vtable**：甘特图添加里程碑类型 #3097
+- **@visactor/vtable-gantt**：甘特图添加 contextmenu_task_bar 事件 #3013
+- **@visactor/vtable-gantt**：甘特图添加里程碑类型 #3097
 - **@visactor/vtable**：添加合并单元格功能以支持更详细的条件
 - **@visactor/vtable**：在数据透视表中支持刻度对齐
-- **@visactor/vtable**：添加更新标记线功能
-- **@visactor/vtable**：在vtable编辑器的validateValue中添加枚举类型 #3039
+- **@visactor/vtable-gantt**：添加更新标记线接口
+- **@visactor/vtable**：在 vtable 编辑器的 validateValue 中添加枚举类型 #3039
 
 **🐛 修复**
-- **@visactor/vtable**：validateValue非Promise情况无法被回调 #3144
+
+- **@visactor/vtable**：validateValue 非 Promise 情况无法被回调 #3144
 - **@visactor/vtable**：调整表格组上的滚动热区限制 #3152
-- **@visactor/vtable**：修复树状表格中React组件的更新问题
+- **@visactor/vtable**：修复树状表格中 React 组件的更新问题
 - **@visactor/vtable**：修复自定义样式更新不生效的问题 #3068
-- **@visactor/vtable**：修复vtable导出中的字体粗细问题 #3005
-- **@visactor/vtable**：修复图形HTML属性错误
-- **@visactor/vtable**：在react-vtable的UMD文件中定义应用程序 #3093
-- **@visactor/vtable**：修复react-vtable中的自定义渲染错误 #3142
+- **@visactor/vtable**：修复 vtable 导出中的字体粗细问题 #3005
+- **@visactor/vtable**：修复图形 HTML 属性错误
+- **@visactor/vtable**：在 react-vtable 的 UMD 文件中定义应用程序 #3093
+- **@visactor/vtable**：修复 react-vtable 中的自定义渲染错误 #3142
 - **@visactor/vtable**：修复组标题链接点击问题 #3022
 - **@visactor/vtable**：修复滚动时单元格组判断问题 #3149
 - **@visactor/vtable**：修复文本测量中的下划线高度问题 #3112
-- **@visactor/vtable**：将checkboxState改为Map类型
+- **@visactor/vtable**：将 checkboxState 改为 Map 类型
 
 **🔨 重构**
+
 - **@visactor/vtable**：自定义计算行高逻辑
 
 [更多详情请查看 v1.14.0](https://github.com/VisActor/VTable/releases/tag/v1.14.0)
