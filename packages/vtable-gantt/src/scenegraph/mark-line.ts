@@ -6,13 +6,11 @@ import { Group, createLine } from '@visactor/vtable/es/vrender';
 export class MarkLine {
   _scene: Scenegraph;
   group: Group;
-  markLine: IMarkLine[];
   markLIneContainer: Group;
   markLineContainerWidth: number = 20;
   height: number;
   constructor(scene: Scenegraph) {
     this._scene = scene;
-    this.markLine = scene._gantt.parsedOptions.markLine;
     this.height =
       Math.min(scene._gantt.tableNoFrameHeight, scene._gantt.drawHeight) - scene._gantt.getAllHeaderRowsHeight();
     this.group = new Group({
@@ -38,7 +36,8 @@ export class MarkLine {
     this.initMarkLines();
   }
   initMarkLines() {
-    this.markLine.forEach(line => {
+    const markLine = this._scene._gantt.parsedOptions.markLine;
+    markLine.forEach(line => {
       const style = line.style;
       const date = this._scene._gantt.parsedOptions.timeScaleIncludeHour
         ? createDateAtMidnight(line.date)

@@ -1037,3 +1037,8 @@ export function updateOptionsWhenDateRangeChanged(gantt: Gantt) {
   gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
 }
+
+export function updateOptionsWhenMarkLineChanged(gantt: Gantt) {
+  const options = gantt.options;
+  gantt.parsedOptions.markLine = generateMarkLine(options?.markLine);
+}
