@@ -2,6 +2,74 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.14.0",
+      "tag": "@visactor/vtable_v1.14.0",
+      "date": "Fri, 20 Dec 2024 10:12:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add contextmenu_task_bar event #3013\n\n"
+          },
+          {
+            "comment": "feat: add milestone type #3097\n\n"
+          },
+          {
+            "comment": "fix: validateValue not promise case can not be recalled #3144\n\n"
+          },
+          {
+            "comment": "fix: adjust scroll hot area limited on table group #3152\n\n"
+          },
+          {
+            "comment": "feat: add mergeCell function to support more detailed conditions"
+          },
+          {
+            "comment": "feat: support tickAlign in PivotChart"
+          },
+          {
+            "comment": "feat: add updateMarkLine\n\n"
+          },
+          {
+            "comment": "fix: fix react-component update in tree table"
+          },
+          {
+            "comment": "fix: fix customStyle update not work #3068"
+          },
+          {
+            "comment": "fix: fix font-weight in vtable-export #3005"
+          },
+          {
+            "comment": "feat: add enums in validateValue of vtable-editor #3039"
+          },
+          {
+            "comment": "fix: fix graphic html attribute error"
+          },
+          {
+            "comment": "fix: application define in react-vtable umd file #3093"
+          },
+          {
+            "comment": "fix: fix customRender error in react-vtable #3142"
+          },
+          {
+            "comment": "fix: fix group title link click #3022"
+          },
+          {
+            "comment": "fix: fix cell group judgement when scroll #3149"
+          },
+          {
+            "comment": "fix: fix undeline height in text measurement #3112"
+          },
+          {
+            "comment": "refactor: customComputeRowHeight logic\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "fix: change checkboxState into Map"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.13.2",
       "tag": "@visactor/vtable_v1.13.2",
       "date": "Mon, 16 Dec 2024 11:33:07 GMT",
