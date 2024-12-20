@@ -154,9 +154,9 @@ export class EditManeger {
       console.warn('VTable Warn: `getValue` is not provided, did you forget to implement it?');
     }
     if (this.editingEditor.validateValue) {
-      this.isValidatingValue = true;
       const maybePromiseOrValue = this.editingEditor.validateValue?.();
       if (isPromise(maybePromiseOrValue)) {
+        this.isValidatingValue = true;
         return new Promise((resolve, reject) => {
           maybePromiseOrValue
             .then(result => {
