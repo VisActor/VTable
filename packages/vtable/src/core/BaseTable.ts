@@ -988,15 +988,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             parseInt(computedStyle.paddingBottom || '0px', 20);
         }
       }
-      const width1 = widthWithoutPadding ?? 1 - 1;
-      const height1 = heightWithoutPadding ?? 1 - 1;
+      const width1 = (widthWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
+      const height1 = (heightWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
 
       element.style.width = (width1 && `${width1 - padding.left - padding.right}px`) || '0px';
       element.style.height = (height1 && `${height1 - padding.top - padding.bottom}px`) || '0px';
 
       const { canvas } = this.internalProps;
-      widthP = canvas.parentElement?.offsetWidth ?? 1 - 1; //TODO 这里写错了 应该在??前后加上小括号的  但是如果这里改了整个大小也就变了 所以这里先不动
-      heightP = canvas.parentElement?.offsetHeight ?? 1 - 1;
+      widthP = (canvas.parentElement?.offsetWidth ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0); //TODO 这里写错了 应该在??前后加上小括号的  但是如果这里改了整个大小也就变了 所以这里先不动
+      heightP = (canvas.parentElement?.offsetHeight ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
 
       //style 与 width，height相同
       if (this?.scenegraph?.stage) {
