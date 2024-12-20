@@ -151,7 +151,7 @@ export class Scenegraph {
     this.dependencyLink.refresh();
     this.markLine.refresh();
     this.dependencyLink.refresh();
-    this.frameBorder.resize();
+    this.frameBorder.refresh();
     this.scrollbarComponent.updateScrollBar();
     this.updateNextFrame();
   }
@@ -193,6 +193,11 @@ export class Scenegraph {
     this.taskBar.resize();
     this.markLine.refresh();
     this.frameBorder.resize();
+  }
+
+  updateStageBackground() {
+    this.stage.background = this._gantt.parsedOptions.underlayBackgroundColor;
+    this.updateNextFrame();
   }
 
   /**
@@ -404,12 +409,14 @@ export class Scenegraph {
         linkedFromTaskEndDate,
         linkedFromTaskShowIndex,
         linkedFromTaskTaskDays,
+        linkedFromTaskRecord.record.type === 'milestone',
         null,
         0,
         linkedToTaskStartDate,
         linkedToTaskEndDate,
         linkedToTaskShowIndex,
         linkedToTaskTaskDays,
+        linkedToTaskRecord.record.type === 'milestone',
         target,
         diffY ?? 0,
         this._gantt
@@ -526,13 +533,14 @@ export class Scenegraph {
         linkedFromTaskEndDate,
         linkedFromTaskShowIndex,
         linkedFromTaskTaskDays,
-
+        linkedFromTaskRecord.record.type === 'milestone',
         target,
         diffY ?? 0,
         linkedToTaskStartDate,
         linkedToTaskEndDate,
         linkedToTaskShowIndex,
         linkedToTaskTaskDays,
+        linkedToTaskRecord.record.type === 'milestone',
         null,
         0,
         this._gantt

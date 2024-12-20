@@ -1,4 +1,4 @@
-import { merge } from '@visactor/vutils';
+import { isValid, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import {
   cellStyleKeys,
@@ -230,7 +230,7 @@ export function mergeStyle(cacheStyle: Style, customCellStyle: ColumnStyleOption
 
   for (const key in customCellStyle) {
     const value = (customCellStyle as any)[key];
-    if (value) {
+    if (isValid(value)) {
       (cacheStyle as any)[`_${key}`] = value;
     }
   }

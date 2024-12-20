@@ -198,6 +198,7 @@ export function initOptions(gantt: Gantt) {
       cornerRadius: 3,
       /** 任务条的边框 */
       borderWidth: 0,
+
       /** 边框颜色 */
       // borderColor: 'red',
       fontFamily: 'Arial',
@@ -205,6 +206,17 @@ export function initOptions(gantt: Gantt) {
     },
     options?.taskBar?.barStyle
   );
+  gantt.parsedOptions.taskBarMilestoneStyle = Object.assign(
+    {
+      width: gantt.parsedOptions.taskBarStyle.width,
+      borderColor: gantt.parsedOptions.taskBarStyle.borderColor,
+      borderLineWidth: gantt.parsedOptions.taskBarStyle.borderLineWidth ?? 1,
+      fillColor: gantt.parsedOptions.taskBarStyle.barColor,
+      cornerRadius: 0
+    },
+    options?.taskBar?.milestoneStyle
+  );
+  gantt.parsedOptions.taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneStyle.width * Math.sqrt(2);
 
   gantt.parsedOptions.dateFormat = options?.dateFormat;
   gantt.parsedOptions.taskBarHoverStyle = Object.assign(
@@ -289,7 +301,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.verticalSplitLineMoveable = options.frame?.verticalSplitLineMoveable;
 
   gantt.parsedOptions.taskKeyField = options.taskKeyField ?? 'id';
-  gantt.parsedOptions.dependencyLinks = options.dependency?.links;
+  gantt.parsedOptions.dependencyLinks = options.dependency?.links ?? [];
   gantt.parsedOptions.dependencyLinkCreatable = options.dependency?.linkCreatable ?? false;
   gantt.parsedOptions.dependencyLinkSelectable = options.dependency?.linkSelectable ?? true;
   gantt.parsedOptions.dependencyLinkLineStyle = Object.assign(
@@ -841,6 +853,8 @@ export function computeRowsCountByRecordDateForCompact(gantt: Gantt, record: any
   if (!record.children || record.children.length === 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
+    } else {
+      record.vtable_gantt_showIndex = 0;
     }
     return 1;
   }
@@ -889,6 +903,8 @@ export function computeRowsCountByRecordDate(gantt: Gantt, record: any) {
   if (!record.children || record.children.length === 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
+    } else {
+      record.vtable_gantt_showIndex = 0;
     }
     return 1;
   }
@@ -1021,4 +1037,9 @@ export function updateOptionsWhenDateRangeChanged(gantt: Gantt) {
     : undefined;
   gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
+}
+
+export function updateOptionsWhenMarkLineChanged(gantt: Gantt) {
+  const options = gantt.options;
+  gantt.parsedOptions.markLine = generateMarkLine(options?.markLine);
 }

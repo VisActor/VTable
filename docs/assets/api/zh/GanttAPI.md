@@ -54,6 +54,14 @@
   updateDateRange: (minDate: string, maxDate: string) => void
 ```
 
+### updateMarkLine(Function)
+
+更新 markLine
+
+```
+  updateMarkLine: (markLine: IMarkLine[]) => void
+```
+
 ### updateTaskRecord(Function)
 
 更新某一条数据

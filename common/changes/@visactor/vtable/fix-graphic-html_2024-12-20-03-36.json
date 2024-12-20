@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix customRender error in react-vtable #3142",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

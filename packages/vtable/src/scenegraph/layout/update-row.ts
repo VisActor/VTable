@@ -543,11 +543,11 @@ function _getUpdateRowIndexUseCellNode(beforeRow: number, afterRow: number, scen
         {
           start: {
             row: beforeCell.mergeStartRow,
-            col: scene.table.heightMode === 'autoHeight' ? 0 : beforeCell.mergeStartCol
+            col: scene.table.isAutoRowHeight() ? 0 : beforeCell.mergeStartCol
           },
           end: {
             row: beforeCell.mergeEndRow,
-            col: scene.table.heightMode === 'autoHeight' ? scene.table.colCount - 1 : beforeCell.mergeEndCol
+            col: scene.table.isAutoRowHeight() ? scene.table.colCount - 1 : beforeCell.mergeEndCol
           }
         },
         scene
@@ -561,11 +561,11 @@ function _getUpdateRowIndexUseCellNode(beforeRow: number, afterRow: number, scen
         {
           start: {
             row: afterCell.mergeStartRow,
-            col: scene.table.heightMode === 'autoHeight' ? 0 : afterCell.mergeStartCol
+            col: scene.table.isAutoRowHeight() ? 0 : afterCell.mergeStartCol
           },
           end: {
             row: afterCell.mergeEndRow,
-            col: scene.table.heightMode === 'autoHeight' ? scene.table.colCount - 1 : afterCell.mergeEndCol
+            col: scene.table.isAutoRowHeight() ? scene.table.colCount - 1 : afterCell.mergeEndCol
           }
         },
         scene

@@ -85,6 +85,7 @@ export interface GanttConstructorOptions {
     labelTextStyle?: ITaskBarLabelTextStyle;
     /** 任务条样式 */
     barStyle?: ITaskBarStyle;
+    milestoneStyle?: IMilestoneStyle;
     /** 自定义布局渲染 */
     customLayout?: ITaskBarCustomLayout;
     /** 任务条是否可调整大小 */
@@ -222,6 +223,8 @@ export interface ITaskBarLabelTextStyle {
   textOverflow?: string;
   textBaseline?: 'alphabetic' | 'bottom' | 'middle' | 'top'; // 设置单元格内文字的垂直对齐方式
   padding?: number | number[];
+  // /** 相对于任务条文字方位位置，可选值：'left', 'top', 'right', 'bottom'，分别代表左、上、右、下四个方向 */
+  // orient?: 'left', 'top', 'right', 'bottom';
 }
 export interface ITaskBarStyle {
   /** 任务条的颜色 */
@@ -232,10 +235,33 @@ export interface ITaskBarStyle {
   width?: number;
   /** 任务条的圆角 */
   cornerRadius?: number;
-  /** 任务条的边框 */
+  /**@deprecated 请配置borderLineWidth */
   borderWidth?: number;
+
+  /** 任务条的边框宽度 */
+  borderLineWidth?: number;
   /** 边框颜色 */
   borderColor?: string;
+}
+export interface IMilestoneStyle {
+  /** 里程碑边框颜色 */
+  borderColor?: string;
+  /** 里程碑边框宽度 */
+  borderLineWidth?: number;
+  /** 里程碑填充颜色 */
+  fillColor?: string;
+  /** 里程碑正方形圆角 */
+  cornerRadius?: number;
+  /** 里程碑默认是个正方形，这个width配置正方形的边长 */
+  width?: number;
+  //  /** 里程碑展示文字。可以配置固定文本 或者 字符串模版`${fieldName}` */
+  //  labelText?: ITaskBarLabelText;
+  //  /** 里程碑文字样式 */
+  //  labelTextStyle?: ITaskBarLabelTextStyle;
+  // /** 里程碑图标 */
+  // icon?: string;
+  // /** 相对于任务条文字方位位置，可选值：'left', 'top', 'right', 'bottom'，分别代表左、上、右、下四个方向 */
+  // textorient?: 'left', 'top', 'right', 'bottom';
 }
 export type ILineStyle = {
   lineColor?: string;
@@ -294,7 +320,7 @@ export type TaskBarCustomLayoutArgumentType = {
   ganttInstance: Gantt;
 };
 export type ITaskBarCustomLayoutObj = {
-  rootContainer: Group;
+  rootContainer?: Group;
   renderDefaultBar?: boolean; // 默认false
   renderDefaultResizeIcon?: boolean; // 默认false
   renderDefaultText?: boolean; // 默认false
