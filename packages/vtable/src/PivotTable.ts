@@ -1728,13 +1728,15 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
         this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
       }
-      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-        col,
-        row,
-        rawValue,
-        currentValue: oldValue,
-        changedValue: newValue
-      });
+      if (oldValue !== newValue) {
+        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+          col,
+          row,
+          rawValue,
+          currentValue: oldValue,
+          changedValue: newValue
+        });
+      }
       this.scenegraph.updateNextFrame();
     }
   }
