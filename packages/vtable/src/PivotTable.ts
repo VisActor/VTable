@@ -1799,14 +1799,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             newValue = parseFloat(value);
           }
           this._changeCellValueToDataSet(startCol + j, startRow + i, oldValue, newValue);
-
-          this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-            col: startCol + j,
-            row: startRow + i,
-            rawValue,
-            currentValue: oldValue,
-            changedValue: this.getCellOriginValue(startCol + j, startRow + i)
-          });
+          const changedValue = this.getCellOriginValue(startCol + j, startRow + i);
+          if (changedValue !== oldValue) {
+            this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+              col: startCol + j,
+              row: startRow + i,
+              rawValue,
+              currentValue: oldValue,
+              changedValue
+            });
+          }
         }
       }
       pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
