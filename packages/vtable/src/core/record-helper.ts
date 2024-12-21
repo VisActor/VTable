@@ -90,13 +90,16 @@ export function listTableChangeCellValue(
       const newHeight = computeRowHeight(row, 0, table.colCount - 1, table);
       table.scenegraph.updateRowHeight(row, newHeight - oldHeight);
     }
-    table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-      col,
-      row,
-      rawValue: beforeChangeValue,
-      currentValue: oldValue,
-      changedValue: table.getCellOriginValue(col, row)
-    });
+    const changedValue = table.getCellOriginValue(col, row);
+    if (oldValue !== changedValue) {
+      table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+        col,
+        row,
+        rawValue: beforeChangeValue,
+        currentValue: oldValue,
+        changedValue
+      });
+    }
     table.scenegraph.updateNextFrame();
   }
 }
@@ -189,13 +192,16 @@ export function listTableChangeCellValues(
         } else {
           table.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, table);
         }
-        table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-          col: startCol + j,
-          row: startRow + i,
-          rawValue: beforeChangeValue,
-          currentValue: oldValue,
-          changedValue: table.getCellOriginValue(startCol + j, startRow + i)
-        });
+        const changedValue = table.getCellOriginValue(startCol + j, startRow + i);
+        if (oldValue !== changedValue) {
+          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+            col: startCol + j,
+            row: startRow + i,
+            rawValue: beforeChangeValue,
+            currentValue: oldValue,
+            changedValue
+          });
+        }
       }
     }
     pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
