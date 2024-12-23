@@ -103,13 +103,9 @@ ${prefix} sort(boolean|Function)
 
 Whether to support sorting, or define a function to specify sorting rules
 
-${prefix} showSort(boolean|Function)
+${prefix} showSort(boolean)
 
 Whether to display the sort icon, no real sorting logic. If the sort field is set, this can be omitted
-
-```
-  showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
-```
 
 ${prefix} disableHover(boolean)
 This column does not support hover interaction behavior
