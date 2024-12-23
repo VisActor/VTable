@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix axes count error in seriesIds config",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
