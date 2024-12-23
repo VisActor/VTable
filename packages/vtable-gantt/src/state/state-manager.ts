@@ -661,15 +661,9 @@ export class StateManager {
     const progress = taskRecord[progressField];
 
     let diffWidth = this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx;
-    let taskBarSize = taskBarGroup.attribute.width + diffWidth;
-    if (diffWidth < 0 && taskBarSize <= this._gantt.parsedOptions.timelineColWidth) {
-      diffWidth = this._gantt.parsedOptions.timelineColWidth - taskBarGroup.attribute.width;
-      taskBarSize += diffWidth;
-    }
-    // taskBarGroup.setAttribute('width', taskBarSize);
-    // if (this._gantt.stateManager.resizeTaskBar.onIconName === 'left') {
-    //   taskBarGroup.setAttribute('x', taskBarGroup.attribute.x - diffWidth);
-    // }
+    const taskBarSize = Math.max(1, taskBarGroup.attribute.width + diffWidth);
+    diffWidth = taskBarSize - taskBarGroup.attribute.width;
+
     resizeOrMoveTaskBar(
       taskBarGroup,
       this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -diffWidth : 0,

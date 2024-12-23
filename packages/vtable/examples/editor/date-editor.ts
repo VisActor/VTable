@@ -190,5 +190,8 @@ export function createTable() {
   tableInstance.on('initialized', args => {
     console.log('initialized');
   });
+  tableInstance.on('change_cell_value', arg => {
+    console.log(arg);
+  });
   window.tableInstance = tableInstance;
 }

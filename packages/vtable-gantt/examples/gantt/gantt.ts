@@ -887,6 +887,7 @@ export function createTable() {
     },
     grid: {
       // backgroundColor: 'gray',
+      weekendBackgroundColor: 'yellow',
       verticalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
@@ -895,6 +896,9 @@ export function createTable() {
         lineWidth: 1,
         lineColor: '#e1e4e8'
       }
+      // weekendBackgroundColor: 'rgba(0,100,0,0.3)',
+      // verticalBackgroundColor: ['#fbfbfc', '#fbfbf0', '#fbfbe0'] // args => (args.index % 2 === 0 ? '#fbfbfc' : '#fbfbf0')
+      // rowBackgroundColor: ['rgba(33,44,255,0.2)', '#fbfbf0', '#fbfbe0'] //args => (args.index % 2 === 0 ? '#fbfbfc' : '#fbfbf0')
     },
     headerRowHeight: 60,
     rowHeight: 40,
@@ -939,6 +943,10 @@ export function createTable() {
       backgroundColor: '#EEF1F5',
       colWidth: 60,
       scales: [
+        {
+          unit: 'month',
+          step: 1
+        },
         {
           unit: 'week',
           step: 1,

@@ -30,6 +30,17 @@ VTableGantt.VTable.register.editor('input', input_editor);
 VTableGantt.VTable.register.editor('date-input', date_input_editor);
 const barColors0 = ['#aecde6', '#c6a49a', '#ffb582', '#eec1de', '#b3d9b3', '#d9d1a5', '#cccccc', '#e59a9c', '#c9bede'];
 const barColors = ['#1f77b4', '#8c564b', '#ff7f0e', '#e377c2', '#2ca02c', '#bcbd22', '#7f7f7f', '#d62728', '#9467bd'];
+const bgColors = [
+  'rgba(174,205,230,0.4)',
+  'rgba(198,164,154,0.4)',
+  'rgba(255,181,130,0.4)',
+  'rgba(238,193,222,0.4)',
+  'rgba(179,217,179,0.4)',
+  'rgba(217,209,165,0.4)',
+  'rgba(204,204,204,0.4)',
+  'rgba(229,154,156,0.4)',
+  'rgba(201,190,222,0.4)'
+];
 
 let ganttInstance;
 const records = [
@@ -245,7 +256,16 @@ const option = {
     theme: {
       bodyStyle: {
         padding: 5,
-        bgColor: 'white'
+        color(args) {
+          const { row } = args;
+          const bgColor = barColors[(row - 1) % 9];
+          return bgColor;
+        },
+        bgColor(args) {
+          const { row } = args;
+          const bgColor = bgColors[(row - 1) % 9];
+          return bgColor;
+        }
       },
       headerStyle: {
         color: 'white'
@@ -263,6 +283,7 @@ const option = {
     verticalSplitLineMoveable: false
   },
   grid: {
+    horizontalBackgroundColor: bgColors,
     horizontalLine: {
       lineWidth: 1,
       lineColor: '#e1e4e8'
