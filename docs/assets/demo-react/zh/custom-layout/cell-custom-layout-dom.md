@@ -9,7 +9,7 @@ link: custom_define/react-custom-component
 
 # 单元格自定义组件+dom 组件
 
-在单元格弹窗使用 ArcoDesign，具体可以参考[自定义组件](../guide/custom_define/react-custom-component)
+在单元格弹窗使用 ArcoDesign，具体可以参考[自定义组件](../../guide/custom_define/react-custom-component)
 
 ## 代码演示
 

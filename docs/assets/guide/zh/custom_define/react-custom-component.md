@@ -127,7 +127,7 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
 * Circle 圆
 * Group 图元组
 
-具体配置属性可以参考[`VRender图元配置`](https://visactor.io/vrender/option/Group)，具体使用和布局可以参考[自定义布局](../custom_define/custom_layout)，[参考示例](../../demo-react/component/custom-layout)。
+具体配置属性可以参考[`VRender图元配置`](https://visactor.io/vrender/option/Group)，具体使用和布局可以参考[自定义布局](../custom_define/custom_layout)，[参考示例](../../demo-react/component/cell-custom-component)。
 
 <div style="display: flex; justify-content: center;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png" style="flex: 0 0 50%; padding: 10px;">
