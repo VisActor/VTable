@@ -103,9 +103,13 @@ ${prefix} sort(boolean|Function)
 
 是否支持排序，也可以定义函数来指定排序规则
 
-${prefix} showSort(boolean)
+${prefix} showSort(boolean|Function)
 
 是否显示 sort 排序 icon，无真正的排序逻辑。如果设置了 sort 字段 则可以省略这个
+
+```
+  showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
+```
 
 ${prefix} disableHover(bolean)
 该列不支持 hover 交互行为
@@ -254,7 +258,6 @@ ${prefix} aggregation(Aggregation | CustomAggregation | Array)
 全局 option 也可以配置，对每一列都配置聚合规则。
 
 可参考[教程文档](https://visactor.io/vtable/guide/data_analysis/list_table_dataAnalysis)
-
 
 ${prefix} hide(boolean) = false
 非必填。

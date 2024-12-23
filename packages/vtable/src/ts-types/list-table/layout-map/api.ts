@@ -83,7 +83,7 @@ export interface HeaderData extends WidthData {
   hierarchyState?: HierarchyState;
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 
-  showSort?: boolean;
+  showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
   sort?: SortOption;
 
   /**

@@ -27,7 +27,7 @@ export interface IBasicHeaderIndicator {
   /** sort排序规则 */
   sort?: boolean;
   /** 显示sort排序icon。为了仅仅显示图标，无排序逻辑 */
-  showSort?: boolean;
+  showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
   disableColumnResize?: boolean; // 是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
 
   /** 指标名称表头自定义渲染内容定义 */

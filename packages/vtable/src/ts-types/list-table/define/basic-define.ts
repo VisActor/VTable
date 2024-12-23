@@ -22,7 +22,7 @@ export interface IBasicHeaderDefine {
   /** sort排序规则 */
   sort?: SortOption;
   /** 显示sort排序icon。为了仅仅显示图标，无排序逻辑 */
-  showSort?: boolean;
+  showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
   /** 该列不支持hover交互行为 */
   disableHover?: boolean;
   /** 该列不支持选中 */
