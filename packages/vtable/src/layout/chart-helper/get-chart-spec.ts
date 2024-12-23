@@ -184,7 +184,7 @@ export function getChartSpec(col: number, row: number, layout: PivotHeaderLayout
 }
 
 export function getChartAxes(col: number, row: number, layout: PivotHeaderLayoutMap): any {
-  const axes = [];
+  const axes: any[] = [];
   if (layout.indicatorsAsCol) {
     // const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row).slice(0, 2);
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
@@ -207,6 +207,11 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       if (isNumber(axisOption?.max)) {
         (range as any).max = axisOption.max;
       }
+
+      if (hasSameAxis(axisOption, axes)) {
+        return;
+      }
+
       axes.push(
         merge(
           {
@@ -291,6 +296,10 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       }
       if (isNumber(axisOption?.max)) {
         (range as any).max = axisOption.max;
+      }
+
+      if (hasSameAxis(axisOption, axes)) {
+        return;
       }
 
       axes.push(
@@ -410,4 +419,28 @@ export function checkHasChart(layout: PivotHeaderLayoutMap | SimpleHeaderLayoutM
     }
   }
   return isHasChart;
+}
+
+function hasSameAxis(axisOption: any, axes: any[]) {
+  if (axisOption && isArray(axisOption.seriesId) && axisOption.seriesId.length > 0) {
+    // find same seriesId axes
+    const sameSeriesIdAxes = (axes as any[]).filter(axis => {
+      // same seriesId
+      if (
+        axis.orient === axisOption.orient &&
+        axis.seriesId &&
+        axis.seriesId.length === axisOption.seriesId.length &&
+        axis.seriesId.every((id: string, index: number) => id === axisOption.seriesId[index])
+      ) {
+        return true;
+      }
+      return false;
+    });
+
+    if (sameSeriesIdAxes.length > 0) {
+      // has same seriesId axes
+      return true;
+    }
+  }
+  return false;
 }
