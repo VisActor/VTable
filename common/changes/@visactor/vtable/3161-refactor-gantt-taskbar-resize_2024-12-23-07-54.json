@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: gantt taskbar resize width interaction can not limit one time unit #3161\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
