@@ -10,7 +10,7 @@ option: ListTable-columns-text#customLayout
 
 # custom layout
 
-You can use jsx in customLayout to customize the layout. For details, please refer to [Custom Layout](../guide/custom_define/custom_layout)
+You can use jsx in customLayout to customize the layout. For details, please refer to [Custom Layout](../../guide/custom_define/custom_layout)
 
 ## code demo
 
