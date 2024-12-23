@@ -127,7 +127,7 @@ const option = {
                     if (stateName === 'hover') {
                       return {
                         background: {
-                          fill: '#ccc',
+                          fill: '#c90',
                           cornerRadius: 5,
                           expandX: 1,
                           expandY: 1

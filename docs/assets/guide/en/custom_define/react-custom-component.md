@@ -796,7 +796,7 @@ The following properties are also supported in react:
   * 'bottom-left'
   * 'center'
 
-We recommend that users use the meta tags provided by react-vtable for the content displayed in the cell. For pop-ups, menus and other components triggered in the cell, you can use DOM react components. This is the best performance solution. [Reference example](../../demo-react/component/custom-layout).
+We recommend that users use the meta tags provided by react-vtable for the content displayed in the cell. For pop-ups, menus and other components triggered in the cell, you can use DOM react components. This is the best performance solution. [Reference example](../../demo-react/component/cell-custom-component).
 
 If you need to display content in a cell, use DOM react components. You need to specify `react.container` according to the restrictions on components displayed in the table content area. It should be noted that this method requires frequent updates of component-related DOM, which will have a certain impact on performance. You can refer to [custom layout](../custom_define/custom_layout). We strongly recommend that the content components in the cell use the meta tags provided by react-vtable, which is the best solution for performance.
 
