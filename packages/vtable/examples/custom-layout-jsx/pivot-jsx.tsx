@@ -536,9 +536,9 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
   // const width = 300;
   // const height = 100;
   const hierarchyState = table.getHierarchyState(col, row);
-  const path = table.internalProps.layoutMap.getCellHeaderPathsWidthTreeNode(col, row);
-  const rowPathLength = path.rowHeaderPaths.length;
-  const children = path.rowHeaderPaths[rowPathLength - 1].children;
+  const path = table.getLayoutRowTree(col, row);
+  const rowPathLength = path.length;
+  const children = path[rowPathLength - 1].children;
   if (!children) {
     // 根节点指定传入宽高
     return {
@@ -852,12 +852,12 @@ function customLayoutRow(args: VTable.TYPES.CustomRenderFunctionArg) {
   const { height, width } = args.rect;
   const title = value;
   // const subTitle = '销售额+利润';
-  const path = table.internalProps.layoutMap.getCellHeaderPathsWidthTreeNode(col, row);
+  const path = table.getLayoutColumnTree(col, row);
   let subTitle = '';
-  if (path.colHeaderPaths?.[0].children[0].children.length === 2) {
+  if (path[0].children[0].children.length === 2) {
     subTitle = '销售额+利润';
   } else {
-    subTitle = path.colHeaderPaths[0].children[0].children[0].value;
+    subTitle = path[0].children[0].children[0].value;
   }
 
   const container = (
