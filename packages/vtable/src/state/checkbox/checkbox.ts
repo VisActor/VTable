@@ -274,8 +274,8 @@ export function changeCheckboxOrder(sourceIndex: number, targetIndex: number, st
     // sourceIndex = table.getRecordShowIndexByCell(0, sourceIndex);
     // targetIndex = table.getRecordShowIndexByCell(0, targetIndex);
 
-    source = (table as any).getRecordIndexByCell(0, sourceIndex);
-    target = (table as any).getRecordIndexByCell(0, targetIndex);
+    source = table.isPivotTable() ? undefined : (table as any).getRecordIndexByCell(0, sourceIndex);
+    target = table.isPivotTable() ? undefined : (table as any).getRecordIndexByCell(0, targetIndex);
   }
 
   if (isNumber(source) && isNumber(target)) {
