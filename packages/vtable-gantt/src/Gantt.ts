@@ -140,7 +140,7 @@ export class Gantt extends EventTarget {
     taskBarDragOrder: boolean;
     taskBarLabelStyle: ITaskBarLabelTextStyle;
     taskBarCustomLayout: ITaskBarCustomLayout;
-    taskBarCreatable: boolean;
+    taskBarCreatable: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
     taskBarCreationButtonStyle: ILineStyle & {
       cornerRadius?: number;
       backgroundColor?: string;

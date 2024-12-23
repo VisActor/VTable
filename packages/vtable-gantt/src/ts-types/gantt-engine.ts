@@ -118,7 +118,7 @@ export interface GanttConstructorOptions {
           ) => TYPES.MenuListItem[]);
     };
     /** 数据没有排期时，可通过创建任务条排期。默认为true */
-    scheduleCreatable?: boolean;
+    scheduleCreatable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
     /** 针对没有分配日期的任务，可以显示出创建按钮 */
     scheduleCreation?: {
       buttonStyle: ILineStyle & {
@@ -301,7 +301,7 @@ export type DateFormatArgumentType = {
   endDate: Date;
 };
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;
