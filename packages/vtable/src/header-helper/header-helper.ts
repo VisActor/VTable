@@ -212,10 +212,12 @@ export class HeaderHelper {
 
     const headerC = _table.getHeaderDefine(col, row) as any;
     let _showSort;
-    if (typeof headerC.showSort === 'function') {
-      _showSort = headerC.showSort({ col, row, table: this._table });
-    } else {
-      _showSort = headerC.showSort;
+    if (headerC) {
+      if (typeof headerC.showSort === 'function') {
+        _showSort = headerC.showSort({ col, row, table: this._table });
+      } else {
+        _showSort = headerC.showSort;
+      }
     }
     if (
       !headerC ||
@@ -236,10 +238,12 @@ export class HeaderHelper {
   ): ColumnIconOption | null {
     const headerC = _table.getHeaderDefine(col, row) as any;
     let _showSort;
-    if (typeof headerC.showSort === 'function') {
-      _showSort = headerC.showSort({ col, row, table: this._table });
-    } else {
-      _showSort = headerC.showSort;
+    if (headerC) {
+      if (typeof headerC.showSort === 'function') {
+        _showSort = headerC.showSort({ col, row, table: this._table });
+      } else {
+        _showSort = headerC.showSort;
+      }
     }
     if (
       !headerC ||
