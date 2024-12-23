@@ -168,7 +168,10 @@ export function listTableChangeCellValues(
             //TODO 处理promise的情况
             isCanChange = true;
           } else {
-            isCanChange = maybePromiseOrValue;
+            isCanChange =
+              maybePromiseOrValue === true ||
+              maybePromiseOrValue === 'validate-exit' ||
+              maybePromiseOrValue === 'invalidate-exit';
           }
         }
       }

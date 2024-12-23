@@ -804,8 +804,8 @@ export function createTable() {
       sort: true
     }
   ];
-  const option = {
-    records,
+  const option: GanttConstructorOptions = {
+    records: [],
     taskListTable: {
       columns: columns,
       tableWidth: 400,
@@ -1019,6 +1019,9 @@ export function createTable() {
     scrollStyle: {
       visible: 'scrolling'
     },
+    eventOptions: {
+      preventDefaultContextMenu: false
+    },
     overscrollBehavior: 'none'
   };
   // columns:[
@@ -1038,7 +1041,7 @@ export function createTable() {
   // ]
   const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
   window.ganttInstance = ganttInstance;
-  // ganttInstance.setRecords(records);
+  ganttInstance.setRecords(records);
 
   ganttInstance.on('scroll', e => {
     console.log('scroll', e);
@@ -1054,6 +1057,9 @@ export function createTable() {
   });
   ganttInstance.on('click_task_bar', e => {
     console.log('click_task_bar', e);
+  });
+  ganttInstance.on('contextmenu_task_bar', e => {
+    console.log('contextmenu_task_bar', e);
   });
   ganttInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);

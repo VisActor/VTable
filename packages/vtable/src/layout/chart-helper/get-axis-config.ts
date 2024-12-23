@@ -916,7 +916,7 @@ export function getAxisRangeAndTicks(
     const { range: newRange, ticks: newTicks } = getAxisDomainRangeAndLabels(
       range.min,
       range.max,
-      // merge({}, axisOption, { nice: true, tick: { forceTickCount: targetTicks.length } }),
+      merge({}, axisOption, { nice: true, tick: { forceTickCount: targetTicks.length } }),
       isZeroAlign,
       // layout._table.getColWidth(col)
       position === 'bottom' || position === 'top'
