@@ -195,22 +195,38 @@ function bindTableGroupListener(event: EventManager) {
           gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Inline &&
           gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
           gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
-          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact &&
-          gantt.parsedOptions.taskBarCreatable
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact
         ) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);
           const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
-          if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord && !recordTaskInfo.taskRecord.vtableMerge) {
-            const dateIndex = getDateIndexByX(e.offset.x, gantt);
-            const showX =
-              (dateIndex >= 1 ? gantt.getDateColsWidth(0, dateIndex - 1) : 0) -
-              gantt.stateManager.scroll.horizontalBarPos;
-            const showY = taskIndex * gantt.parsedOptions.rowHeight - gantt.stateManager.scroll.verticalBarPos;
-            //    -
-            // (gantt.stateManager.scroll.horizontalBarPos % gantt.parsedOptions.rowHeight);
-            // const date = getDateByX(e.offset.x, gantt);
-            gantt.scenegraph.showTaskCreationButton(showX, showY, dateIndex);
-            return;
+          let taskBarCreatable: boolean = true;
+          if (typeof gantt.parsedOptions.taskBarCreatable === 'function') {
+            const { startDate, endDate, taskRecord } = recordTaskInfo;
+            const args = {
+              index: taskIndex,
+              startDate,
+              endDate,
+              taskRecord,
+              ganttInstance: gantt
+            };
+            taskBarCreatable = gantt.parsedOptions.taskBarCreatable(args);
+          } else {
+            taskBarCreatable = gantt.parsedOptions.taskBarCreatable;
+          }
+
+          if (taskBarCreatable) {
+            if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord && !recordTaskInfo.taskRecord.vtableMerge) {
+              const dateIndex = getDateIndexByX(e.offset.x, gantt);
+              const showX =
+                (dateIndex >= 1 ? gantt.getDateColsWidth(0, dateIndex - 1) : 0) -
+                gantt.stateManager.scroll.horizontalBarPos;
+              const showY = taskIndex * gantt.parsedOptions.rowHeight - gantt.stateManager.scroll.verticalBarPos;
+              //    -
+              // (gantt.stateManager.scroll.horizontalBarPos % gantt.parsedOptions.rowHeight);
+              // const date = getDateByX(e.offset.x, gantt);
+              gantt.scenegraph.showTaskCreationButton(showX, showY, dateIndex);
+              return;
+            }
           }
         }
         //#endregion
