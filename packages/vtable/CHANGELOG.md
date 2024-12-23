@@ -1,6 +1,22 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 20 Dec 2024 10:12:51 GMT and should not be manually modified.
+This log was last generated on Mon, 23 Dec 2024 12:36:10 GMT and should not be manually modified.
+
+## 1.14.1
+Mon, 23 Dec 2024 12:36:10 GMT
+
+### Updates
+
+- feat: add grid rowBackgroundColor and columnBackgroundColor weekendBackgroundColor #3155
+
+
+- refactor: add option tableSizeAntiJitter #3160
+
+
+- fix: gantt taskbar resize width interaction can not limit one time unit #3161
+
+
+- fix: fix axes count error in seriesIds config
 
 ## 1.14.0
 Fri, 20 Dec 2024 10:12:51 GMT
