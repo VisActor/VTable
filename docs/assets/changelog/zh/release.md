@@ -1,3 +1,25 @@
+# v1.14.1
+
+2024-12-23
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add grid rowBackgroundColor and columnBackgroundColor weekendBackgroundColor [#3155](https://github.com/VisActor/VTable/issues/3155)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: gantt taskbar resize width interaction can not limit one time unit [#3161](https://github.com/VisActor/VTable/issues/3161)
+- **@visactor/vtable**: fix axes count error in seriesIds config
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: add option tableSizeAntiJitter [#3160](https://github.com/VisActor/VTable/issues/3160)
+
+
+
+[更多详情请查看 v1.14.1](https://github.com/VisActor/VTable/releases/tag/v1.14.1)
+
 # v1.14.0
 
 2024-12-20
