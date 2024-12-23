@@ -646,7 +646,7 @@ const option = {
     }
   },
   grid: {
-    // backgroundColor: 'gray',
+    weekendBackgroundColor: '#f8f8f8',
     verticalLine: {
       lineWidth: 1,
       lineColor: '#e1e4e8'
@@ -696,7 +696,7 @@ const option = {
     }
   },
   timelineHeader: {
-    colWidth: 100,
+    colWidth: 50,
     backgroundColor: '#EEF1F5',
     horizontalLine: {
       lineWidth: 1,

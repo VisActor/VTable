@@ -196,7 +196,7 @@ export class Grid {
       const { timelineDates, unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
       const timelineColWidth = this._scene._gantt.parsedOptions.timelineColWidth;
 
-      if (verticalBackgroundColor) {
+      if (verticalBackgroundColor || weekendBackgroundColor) {
         for (let i = 0; i <= timelineDates?.length - 1; i++) {
           let backgroundColor;
           if (
@@ -213,19 +213,21 @@ export class Grid {
               date: timelineDates[i].endDate,
               ganttInstance: this._scene._gantt
             });
-          } else {
+          } else if (verticalBackgroundColor) {
             backgroundColor = verticalBackgroundColor[i % verticalBackgroundColor.length];
           }
-          const x = Math.ceil(timelineColWidth * i);
-          const rect = createRect({
-            pickable: false,
-            fill: backgroundColor,
-            x,
-            y: 0,
-            width: timelineColWidth,
-            height: this.allGridHeight
-          });
-          this.verticalBackgroundRectsGroup.appendChild(rect);
+          if (backgroundColor) {
+            const x = Math.ceil(timelineColWidth * i);
+            const rect = createRect({
+              pickable: false,
+              fill: backgroundColor,
+              x,
+              y: 0,
+              width: timelineColWidth,
+              height: this.allGridHeight
+            });
+            this.verticalBackgroundRectsGroup.appendChild(rect);
+          }
         }
       }
     }
