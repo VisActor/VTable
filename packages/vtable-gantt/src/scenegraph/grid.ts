@@ -181,9 +181,9 @@ export class Grid {
   }
 
   createVerticalBackgroundRects() {
-    const columnBackgroundColor = this._scene._gantt.parsedOptions.grid.columnBackgroundColor;
+    const verticalBackgroundColor = this._scene._gantt.parsedOptions.grid.verticalBackgroundColor;
     const weekendBackgroundColor = this._scene._gantt.parsedOptions.grid.weekendBackgroundColor;
-    if (columnBackgroundColor || weekendBackgroundColor) {
+    if (verticalBackgroundColor || weekendBackgroundColor) {
       this.verticalBackgroundRectsGroup = new Group({
         x: 0,
         y: 0,
@@ -196,7 +196,7 @@ export class Grid {
       const { timelineDates, unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
       const timelineColWidth = this._scene._gantt.parsedOptions.timelineColWidth;
 
-      if (columnBackgroundColor) {
+      if (verticalBackgroundColor) {
         for (let i = 0; i <= timelineDates?.length - 1; i++) {
           let backgroundColor;
           if (
@@ -206,15 +206,15 @@ export class Grid {
             (timelineDates[i].startDate.getDay() === 0 || timelineDates[i].startDate.getDay() === 6)
           ) {
             backgroundColor = weekendBackgroundColor;
-          } else if (typeof columnBackgroundColor === 'function') {
-            backgroundColor = columnBackgroundColor({
+          } else if (typeof verticalBackgroundColor === 'function') {
+            backgroundColor = verticalBackgroundColor({
               index: i,
               dateIndex: timelineDates[i].dateIndex,
               date: timelineDates[i].endDate,
               ganttInstance: this._scene._gantt
             });
           } else {
-            backgroundColor = columnBackgroundColor[i % columnBackgroundColor.length];
+            backgroundColor = verticalBackgroundColor[i % verticalBackgroundColor.length];
           }
           const x = Math.ceil(timelineColWidth * i);
           const rect = createRect({
@@ -231,8 +231,8 @@ export class Grid {
     }
   }
   createHorizontalBackgroundRects() {
-    const rowBackgroundColor = this._scene._gantt.parsedOptions.grid.rowBackgroundColor;
-    if (rowBackgroundColor) {
+    const horizontalBackgroundColor = this._scene._gantt.parsedOptions.grid.horizontalBackgroundColor;
+    if (horizontalBackgroundColor) {
       this.horizontalBackgroundRectsGroup = new Group({
         x: 0,
         y: 0,
@@ -245,13 +245,13 @@ export class Grid {
       let y = 0;
       for (let i = 0; i <= this.rowCount - 1; i++) {
         let backgroundColor;
-        if (typeof rowBackgroundColor === 'function') {
-          backgroundColor = rowBackgroundColor({
+        if (typeof horizontalBackgroundColor === 'function') {
+          backgroundColor = horizontalBackgroundColor({
             index: i,
             ganttInstance: this._scene._gantt
           });
         } else {
-          backgroundColor = rowBackgroundColor[i % rowBackgroundColor.length];
+          backgroundColor = horizontalBackgroundColor[i % horizontalBackgroundColor.length];
         }
 
         const rect = createRect({

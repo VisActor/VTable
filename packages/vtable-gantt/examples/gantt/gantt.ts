@@ -896,7 +896,7 @@ export function createTable() {
         lineColor: '#e1e4e8'
       },
       weekendBackgroundColor: 'rgba(0,100,0,0.3)',
-      columnBackgroundColor: ['#fbfbfc', '#fbfbf0', '#fbfbe0'] // args => (args.index % 2 === 0 ? '#fbfbfc' : '#fbfbf0')
+      verticalBackgroundColor: ['#fbfbfc', '#fbfbf0', '#fbfbe0'] // args => (args.index % 2 === 0 ? '#fbfbfc' : '#fbfbf0')
       // rowBackgroundColor: ['rgba(33,44,255,0.2)', '#fbfbf0', '#fbfbe0'] //args => (args.index % 2 === 0 ? '#fbfbfc' : '#fbfbf0')
     },
     headerRowHeight: 60,
