@@ -9,7 +9,7 @@ link: custom_define/react-custom-component
 
 # cell custom component
 
-Like customLayout, you can use react components to customize layout. For details, please refer to [Custom Components](../guide/custom_define/react-custom-component)
+Like customLayout, you can use react components to customize layout. For details, please refer to [Custom Components](../../guide/custom_define/react-custom-component)
 
 ## code demo
 

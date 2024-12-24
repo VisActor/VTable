@@ -9,7 +9,7 @@ link: '../../guide/custom_define/react-custom-component'
 
 # cell custom dom component
 
-Use ArcoDesign in cells. For details, please refer to [Custom Components](../guide/custom_define/react-custom-component)
+Use ArcoDesign in cells. For details, please refer to [Custom Components](../../guide/custom_define/react-custom-component)
 
 ## code demo
 

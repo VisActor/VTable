@@ -9,7 +9,7 @@ link: custom_define/react-custom-component
 
 # 单元格自定义组件
 
-同 customLayout 一样，可以使用 react 组件进行自定义布局，具体可以参考[自定义组件](../guide/custom_define/react-custom-component)
+同 customLayout 一样，可以使用 react 组件进行自定义布局，具体可以参考[自定义组件](../../guide/custom_define/react-custom-component)
 
 ## 代码演示
 

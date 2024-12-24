@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.14.1",
+      "tag": "@visactor/vtable_v1.14.1",
+      "date": "Mon, 23 Dec 2024 12:36:10 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add grid rowBackgroundColor and columnBackgroundColor weekendBackgroundColor #3155\n\n"
+          },
+          {
+            "comment": "refactor: add option tableSizeAntiJitter #3160\n\n"
+          },
+          {
+            "comment": "fix: gantt taskbar resize width interaction can not limit one time unit #3161\n\n"
+          },
+          {
+            "comment": "fix: fix axes count error in seriesIds config"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.14.0",
       "tag": "@visactor/vtable_v1.14.0",
       "date": "Fri, 20 Dec 2024 10:12:51 GMT",
