@@ -262,15 +262,24 @@ export class Scenegraph {
     this.mergeMap.clear();
 
     this.colHeaderGroup.clear();
+    delete this.colHeaderGroup.border;
     this.rowHeaderGroup.clear();
+    delete this.rowHeaderGroup.border;
     this.cornerHeaderGroup.clear();
+    delete this.cornerHeaderGroup.border;
     this.bodyGroup.clear();
+    delete this.bodyGroup.border;
 
     this.bottomFrozenGroup.clear();
+    delete this.bottomFrozenGroup.border;
     this.rightFrozenGroup.clear();
+    delete this.rightFrozenGroup.border;
     this.rightTopCornerGroup.clear();
+    delete this.rightTopCornerGroup.border;
     this.rightBottomCornerGroup.clear();
+    delete this.rightBottomCornerGroup.border;
     this.leftBottomCornerGroup.clear();
+    delete this.leftBottomCornerGroup.border;
 
     this.colHeaderGroup.setAttributes({
       x: 0,
