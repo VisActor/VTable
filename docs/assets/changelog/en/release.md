@@ -1,3 +1,11 @@
+# aeolus
+
+2024-12-24
+
+
+
+[more detail about aeolus](https://github.com/VisActor/VTable/releases/tag/aeolus)
+
 # v1.14.1
 
 2024-12-23
