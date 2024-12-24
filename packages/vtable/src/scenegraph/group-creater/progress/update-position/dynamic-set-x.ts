@@ -290,6 +290,12 @@ export function updateColContent(syncLeftCol: number, syncRightCol: number, prox
     const colGroup = proxy.table.scenegraph.getColGroup(col);
     colGroup && updateColGroupContentAsync(colGroup, proxy);
   }
+
+  // update column container width
+  updateColumnContainerWidth(proxy.table.scenegraph.colHeaderGroup);
+  updateColumnContainerWidth(proxy.table.scenegraph.bottomFrozenGroup);
+  updateColumnContainerWidth(proxy.table.scenegraph.bodyGroup);
+
   proxy.progress();
 }
 
@@ -330,4 +336,14 @@ function updateAllColPosition(distStartColY: number, count: number, direction: '
       );
     }
   });
+}
+
+function updateColumnContainerWidth(containerGroup: Group) {
+  // update column container width
+  const lastColGroup = getLastChild(containerGroup);
+  if (!lastColGroup) {
+    return;
+  }
+  containerGroup.setAttribute('width', lastColGroup.attribute.x + lastColGroup.attribute.width);
+  containerGroup.border?.setAttribute('width', lastColGroup.attribute.x + lastColGroup.attribute.width);
 }

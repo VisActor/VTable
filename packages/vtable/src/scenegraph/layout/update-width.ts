@@ -610,7 +610,7 @@ function resetRowHeight(scene: Scenegraph, row: number) {
     const distHeight = maxHeight;
     const cell = scene.highPerformanceGetCell(col, row);
     if (cell.role === 'empty') {
-      return;
+      continue;
     }
 
     updateCellHeightForRow(
