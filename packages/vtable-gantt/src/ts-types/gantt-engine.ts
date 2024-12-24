@@ -29,6 +29,13 @@ export interface ITimelineHeaderStyle {
 }
 export interface IGrid {
   backgroundColor?: string;
+  /** 需要按数据行设置不同背景色 */
+  horizontalBackgroundColor?: string[] | ((args: GridHorizontalLineStyleArgumentType) => string);
+  /** 需要按日期列设置不同背景色 */
+  verticalBackgroundColor?: string[] | ((args: GridVerticalLineStyleArgumentType) => string);
+  /** 周末背景色 */
+  weekendBackgroundColor?: string;
+
   verticalLine?: ILineStyle | ((args: GridVerticalLineStyleArgumentType) => ILineStyle);
   horizontalLine?: ILineStyle | ((args: GridHorizontalLineStyleArgumentType) => ILineStyle);
 }
