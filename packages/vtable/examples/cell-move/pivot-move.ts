@@ -347,7 +347,13 @@ export function createTable() {
       {
         dimensionKey: '邮寄方式',
         title: '邮寄方式11',
-        showSort: true,
+        showSort(args) {
+          const { col, row, table } = args;
+          if (col % 3 === 0) {
+            return true;
+          }
+          return false;
+        },
         headerFormat(value) {
           return `${value}邮寄方式`;
         },
@@ -360,7 +366,13 @@ export function createTable() {
     ],
     indicators: [
       {
-        showSort: true,
+        showSort(args) {
+          const { col, row, table } = args;
+          if (col % 3 === 0) {
+            return true;
+          }
+          return false;
+        },
         indicatorKey: '1',
         title: '销售额',
         format(value) {

@@ -40,7 +40,7 @@ export interface IBasicDimension {
   /** sort排序规则 */
   sort?: SortOption;
   /** 显示sort排序icon。为了仅仅显示图标，无排序逻辑 */
-  showSort?: boolean;
+  showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
   /** 在角头的维度名称单元格中是否显示排序 */
   showSortInCorner?: boolean;
   /** 是否可以拖拽表头换位置 */
