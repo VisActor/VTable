@@ -5,11 +5,11 @@
 
 **🆕 New feature**
 
-- **@visactor/vtable**: add grid rowBackgroundColor and columnBackgroundColor weekendBackgroundColor [#3155](https://github.com/VisActor/VTable/issues/3155)
+- **@visactor/vtable-gantt**: add grid rowBackgroundColor and columnBackgroundColor weekendBackgroundColor [#3155](https://github.com/VisActor/VTable/issues/3155)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: gantt taskbar resize width interaction can not limit one time unit [#3161](https://github.com/VisActor/VTable/issues/3161)
+- **@visactor/vtable-gantt**: gantt taskbar resize width interaction can not limit one time unit [#3161](https://github.com/VisActor/VTable/issues/3161)
 - **@visactor/vtable**: fix axes count error in seriesIds config
 
 **🔨 Refactor**
