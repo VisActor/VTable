@@ -1,3 +1,11 @@
+# aeolus-241225
+
+2024-12-25
+
+
+
+[更多详情请查看 aeolus-241225](https://github.com/VisActor/VTable/releases/tag/aeolus-241225)
+
 # v1.14.1
 
 2024-12-23
