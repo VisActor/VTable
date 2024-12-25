@@ -139,7 +139,7 @@ function checkHasColMerge(colStart: number, colEnd: number, row: number, proxy: 
 
 export function getFirstChild(containerGroup: Group): Group {
   let child = containerGroup.firstChild as Group;
-  while (child.type !== 'group') {
+  while (child && child.type !== 'group') {
     child = child._next as Group;
   }
   return child;
@@ -147,7 +147,7 @@ export function getFirstChild(containerGroup: Group): Group {
 
 export function getLastChild(containerGroup: Group): Group {
   let child = containerGroup.lastChild as Group;
-  while (child.type !== 'group') {
+  while (child && child.type !== 'group') {
     child = child._prev as Group;
   }
   return child;

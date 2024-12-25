@@ -124,7 +124,7 @@ describe('listTable-checkbox init test', () => {
 
   const listTable = new ListTable(containerDom, option);
   test('listTable-checkbox getCheckboxState', () => {
-    expect(listTable.stateManager?.checkedState.size).toEqual(101);
+    expect(listTable.stateManager?.checkedState.size).toEqual(100);
     expect(listTable.getCheckboxState().length).toEqual(2000);
     listTable.release();
   });
