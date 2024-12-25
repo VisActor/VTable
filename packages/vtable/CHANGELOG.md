@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 23 Dec 2024 12:36:10 GMT and should not be manually modified.
+This log was last generated on Wed, 25 Dec 2024 09:27:34 GMT and should not be manually modified.
+
+## 1.14.2
+Wed, 25 Dec 2024 09:27:34 GMT
+
+### Updates
+
+- fix: fix borderLineWidth array config #3183
 
 ## 1.14.1
 Mon, 23 Dec 2024 12:36:10 GMT
