@@ -2047,7 +2047,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         //   rowPath = this.rowDimensionTree.getTreePath(recordRow, col + hd.hierarchyLevel);
         // }
         // 考虑多层级的ExtensionRowTree
-        const row_pathIds = this._rowHeaderCellIds[recordRow]; //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
+        const row_pathIds = this._rowHeaderCellFullPathIds[recordRow]; //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
         let findTree = this.rowDimensionTree; //第一棵寻找的树是第一列的维度树 主树
         let level = 0; //level和col对应，代表一层层树找的过程
         while (findTree) {
