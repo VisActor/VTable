@@ -351,7 +351,7 @@ export function deleteHideIndicatorNode(
   table: PivotTable
 ) {
   const hasHideSettingIndicators: IIndicator[] = [];
-  for (let i = 0; i < indicators.length; i++) {
+  for (let i = 0; i < indicators?.length; i++) {
     const indicator = indicators[i];
     if ((indicator as IIndicator)?.hide) {
       hasHideSettingIndicators.push(indicator as IIndicator);

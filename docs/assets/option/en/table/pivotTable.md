@@ -298,6 +298,8 @@ export interface IIndicatorHeaderNode {
   value?: string;
   /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
   levelSpan?: number;
+  /** Whether to hide this indicator node */
+  hide?: boolean;
 }
 ```
 

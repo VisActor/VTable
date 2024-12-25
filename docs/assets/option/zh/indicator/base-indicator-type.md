@@ -169,6 +169,13 @@ ${prefix} showSort(boolean|Function)
   showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
 ```
 
+${prefix} hide(boolean|Function)
+指标隐藏 默认 false
+
+```
+  hide?:  boolean | ((args: { dimensionPaths: IDimensionInfo[]; table: BaseTableAPI }) => boolean);
+```
+
 ${prefix} disableColumnResize(boolean)
 是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
 

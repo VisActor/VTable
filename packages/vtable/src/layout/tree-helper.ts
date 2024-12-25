@@ -766,7 +766,7 @@ export function deleteTreeHideNode(
     if (hasHideNode && (node as any).hide) {
       tree_children.splice(i, 1);
     } else if (node.indicatorKey) {
-      const hide = indicators.find(indicator => indicator.indicatorKey === node.indicatorKey)?.hide;
+      const hide = indicators?.find(indicator => indicator.indicatorKey === node.indicatorKey)?.hide;
       if (typeof hide === 'function') {
         if (hide({ dimensionPaths: dimensionPath, table })) {
           tree_children.splice(i, 1);

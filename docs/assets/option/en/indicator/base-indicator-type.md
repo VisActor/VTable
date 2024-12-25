@@ -167,6 +167,13 @@ Whether to display the sorting icon, no data sorting logic
   showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
 ```
 
+${prefix} hide(boolean|Function)
+hide indicator, default false
+
+```
+  hide?:  boolean | ((args: { dimensionPaths: IDimensionInfo[]; table: BaseTableAPI }) => boolean);
+```
+
 ${prefix} disableColumnResize(boolean)
 Whether to disable column width adjustment. If it is a transposed table or the indicator is specified in the row direction of the pivot table, this configuration does not take effect.
 
