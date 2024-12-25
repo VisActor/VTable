@@ -3,7 +3,7 @@ import type { ICustomLayout } from '../../customLayout';
 import type { FieldFormat } from '../../table-engine';
 import type { ColumnIconOption } from '../../icon';
 import type { MenuListItem } from '../../menu';
-import type { BaseCellInfo, CellInfo } from '../../common';
+import type { BaseCellInfo, CellInfo, IDimensionInfo } from '../../common';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { BaseTableAPI } from '../../base-table';
 
@@ -29,7 +29,8 @@ export interface IBasicHeaderIndicator {
   /** 显示sort排序icon。为了仅仅显示图标，无排序逻辑 */
   showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
   disableColumnResize?: boolean; // 是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
-
+  /** 指标隐藏 默认false */
+  hide?: boolean | ((args: { dimensionPaths: IDimensionInfo[]; table: BaseTableAPI }) => boolean);
   /** 指标名称表头自定义渲染内容定义 */
   headerCustomRender?: ICustomRender; // header单元格的自定义内容
   /** 指标名称表头自定义布局元素 */

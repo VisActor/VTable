@@ -44,7 +44,11 @@ import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
-import { parseColKeyRowKeyForPivotTable, supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
+import {
+  deleteHideIndicatorNode,
+  parseColKeyRowKeyForPivotTable,
+  supplementIndicatorNodesForCustomTree
+} from './layout/layout-helper';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 
@@ -168,10 +172,17 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               options.indicators
             );
           }
+          options.indicatorsAsCol !== false &&
+            deleteHideIndicatorNode(this.dataset.colHeaderTree, options.indicators, false, this);
           columnDimensionTree = new DimensionTree(
             (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
             this.layoutNodeId
           );
+        } else {
+          if (columnDimensionTree.hasHideNode) {
+            deleteHideIndicatorNode(columnDimensionTree.tree.children, options.indicators, true, this);
+            columnDimensionTree.reset(columnDimensionTree.tree.children);
+          }
         }
         if (!options.rowTree) {
           if (options.indicatorsAsCol === false) {
@@ -180,12 +191,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               options.indicators
             );
           }
+          options.indicatorsAsCol === false &&
+            deleteHideIndicatorNode(this.dataset.rowHeaderTree, options.indicators, false, this);
           rowDimensionTree = new DimensionTree(
             (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
             this.layoutNodeId,
             this.options.rowHierarchyType,
             this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
           );
+        } else {
+          if (rowDimensionTree.hasHideNode) {
+            deleteHideIndicatorNode(rowDimensionTree.tree.children, options.indicators, true, this);
+            rowDimensionTree.reset(rowDimensionTree.tree.children);
+          }
         }
         this.internalProps.layoutMap = new PivotHeaderLayoutMap(
           this,
