@@ -305,7 +305,7 @@ export function renderStrokeWithCornerRadius(
     if (isSplitDraw || isDash) {
       if (strokeArrayColor && strokeArrayColor[0]) {
         context.strokeStyle = strokeArrayColor[0];
-      } else {
+      } else if (strokeArrayColor && !strokeArrayColor[0]) {
         context.strokeStyle = 'transparent';
       }
       if (!isWidthNumber) {
@@ -336,7 +336,7 @@ export function renderStrokeWithCornerRadius(
     if (isSplitDraw || isDash) {
       if (strokeArrayColor && strokeArrayColor[1]) {
         context.strokeStyle = strokeArrayColor[1];
-      } else {
+      } else if (strokeArrayColor && !strokeArrayColor[1]) {
         context.strokeStyle = 'transparent';
       }
       if (!isWidthNumber) {
@@ -367,7 +367,7 @@ export function renderStrokeWithCornerRadius(
     if (isSplitDraw || isDash) {
       if (strokeArrayColor && strokeArrayColor[2]) {
         context.strokeStyle = strokeArrayColor[2];
-      } else {
+      } else if (strokeArrayColor && !strokeArrayColor[2]) {
         context.strokeStyle = 'transparent';
       }
       if (!isWidthNumber) {
@@ -398,7 +398,7 @@ export function renderStrokeWithCornerRadius(
     if (isSplitDraw || isDash) {
       if (strokeArrayColor && strokeArrayColor[3]) {
         context.strokeStyle = strokeArrayColor[3];
-      } else {
+      } else if (strokeArrayColor && !strokeArrayColor[3]) {
         context.strokeStyle = 'transparent';
       }
       if (!isWidthNumber) {
