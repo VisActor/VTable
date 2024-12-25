@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.14.2",
+      "tag": "@visactor/vtable_v1.14.2",
+      "date": "Wed, 25 Dec 2024 09:27:34 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix borderLineWidth array config #3183"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.14.1",
       "tag": "@visactor/vtable_v1.14.1",
       "date": "Mon, 23 Dec 2024 12:36:10 GMT",
