@@ -8,9 +8,9 @@
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:1.11.6-alpha.3",
-    "@visactor/vtable-gantt": "workspace:1.11.6-alpha.3",
-    "@visactor/vtable-editors": "workspace:1.11.6-alpha.3"
+    "@visactor/vtable": "workspace:1.11.6-alpha.4",
+    "@visactor/vtable-gantt": "workspace:1.11.6-alpha.4",
+    "@visactor/vtable-editors": "workspace:1.11.6-alpha.4"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "~1.1.4",
