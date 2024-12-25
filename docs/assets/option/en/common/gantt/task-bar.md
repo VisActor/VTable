@@ -133,11 +133,23 @@ Whether the service clause is optional, the default is true
 
 Not required
 
-${prefix} scheduleCreatable(boolean) = true
+${prefix} scheduleCreatable(boolean | Function) = true
 
 When there is no schedule, you can create a task bar schedule by clicking on the create button. The default is true.
 
 Optional
+
+```
+scheduleCreatable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+
+export type TaskBarInteractionArgumentType = {
+  taskRecord: string;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+```
 
 ${prefix} scheduleCreation(Object)
 

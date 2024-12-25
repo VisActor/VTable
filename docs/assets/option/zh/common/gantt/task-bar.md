@@ -136,11 +136,24 @@ ${prefix} selectable(boolean)
 
 非必填
 
-${prefix} scheduleCreatable(boolean) = true
+${prefix} scheduleCreatable(boolean | Function) = true
 
 数据没有排期时，可通过创建任务条排期。默认为 true
 
 非必填
+
+```
+scheduleCreatable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+
+//其中：
+export type TaskBarInteractionArgumentType = {
+  taskRecord: string;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+```
 
 ${prefix} scheduleCreation(Object)
 
