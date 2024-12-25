@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix borderLineWidth array config #3183",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
