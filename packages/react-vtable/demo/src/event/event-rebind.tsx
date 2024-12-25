@@ -48,7 +48,7 @@ const App = () => {
       >
         get transpose
       </button>
-      <ListTable option={option} height={'500px'} onClickCell={handleCell} />
+      <ListTable option={option} height={500} onClickCell={handleCell} />
     </div>
   );
 };

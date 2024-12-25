@@ -65,7 +65,7 @@ const option = {
   records: new Array(1000).fill(['John', 18, 'male', '🏀'])
 };
 
-Inula.render(<ListTable option={option} height={'500px'} />, document.getElementById('root'));
+Inula.render(<ListTable option={option} height={500} />, document.getElementById('root'));
 ```
 
 Refer to [demo](../../demo-openinula/usage/option)

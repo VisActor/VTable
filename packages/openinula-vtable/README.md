@@ -60,7 +60,7 @@ const option = {
 };
 
 Inula.render(
-  <ListTable option={option} height={'500px'}/>,
+  <ListTable option={option} height={500}/>,
   (document.getElementById('root') as HTMLElement)
 );
 ```
