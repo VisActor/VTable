@@ -54,6 +54,7 @@ export function fixUpdateRowRange(
   }
 
   const newRowEnd = Math.min(rowStart + rowLimit, table.rowCount - 1 - table.bottomFrozenRowCount);
+  const notFullRow = newRowEnd < rowStart + rowLimit;
   for (let i = 0; i < removeCellPositions.length; i++) {
     const { row: cellRow } = removeCellPositions[removeCellPositions.length - i - 1];
     if (cellRow < rowStart || cellRow > rowEnd) {
@@ -61,6 +62,13 @@ export function fixUpdateRowRange(
       continue;
     } else if (cellRow > newRowEnd) {
       // rows after new rowEnd before old rowEnd => delete
+      removeCells.push({
+        col,
+        row: cellRow
+      });
+      updateRow--;
+    } else if (notFullRow) {
+      // row range is not full
       removeCells.push({
         col,
         row: cellRow
