@@ -146,6 +146,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-group-manyChild'
+      },
+      {
+        path: 'list',
+        name: 'list-tree-checkbox'
       }
     ]
   },

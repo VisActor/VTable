@@ -181,7 +181,7 @@ export interface SeriesNumberColumnData extends WidthData {
   title?: string | (() => string);
   field?: FieldDef;
   // fieldKey?: FieldKeyDef;
-  format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
+  format?: (col?: number, row?: number, table?: BaseTableAPI, originValue?: string | number) => any;
   // icon?: ColumnIconOption | ColumnIconOption[];
   icon?:
     | string

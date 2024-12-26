@@ -786,7 +786,7 @@ export class Scenegraph {
     this.table.isPivotChart() && updateChartState(this, datum);
   }
 
-  updateCheckboxCellState(col: number, row: number, checked: boolean) {
+  updateCheckboxCellState(col: number, row: number, checked: boolean | 'indeterminate') {
     if ((this.table as any).transpose) {
       this.bodyGroup.children?.forEach((columnGroup: INode) => {
         columnGroup
@@ -794,7 +794,13 @@ export class Scenegraph {
           ?.getChildren()
           .forEach((node: INode) => {
             if (node.name === 'checkbox') {
-              (node as CheckBox).setAttribute('checked', checked);
+              if (checked === 'indeterminate') {
+                (node as CheckBox).setAttribute('indeterminate', true);
+                (node as CheckBox).setAttribute('checked', undefined);
+              } else {
+                (node as CheckBox).setAttribute('indeterminate', undefined);
+                (node as CheckBox).setAttribute('checked', checked);
+              }
             }
           });
       });
@@ -803,7 +809,13 @@ export class Scenegraph {
       columnGroup?.children?.forEach((cellNode: INode) => {
         cellNode.getChildren().find(node => {
           if (node.name === 'checkbox') {
-            (node as CheckBox).setAttribute('checked', checked);
+            if (checked === 'indeterminate') {
+              (node as CheckBox).setAttribute('indeterminate', true);
+              (node as CheckBox).setAttribute('checked', undefined);
+            } else {
+              (node as CheckBox).setAttribute('indeterminate', undefined);
+              (node as CheckBox).setAttribute('checked', checked);
+            }
           }
         });
       });
