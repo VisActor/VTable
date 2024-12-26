@@ -945,21 +945,18 @@ export class Gantt extends EventTarget {
 
     this._sortScales();
     initOptions(this);
-    this.scenegraph.updateStageBackground();
     this.data.setRecords(this.records);
     this._generateTimeLineDateMap();
-
     this.timeLineHeaderLevel = this.parsedOptions.sortedTimelineScales.length;
-    this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
-
     this._updateSize();
-
     if (this.taskListTableInstance) {
       const listTableOption = this._generateListTableOptions();
       this.taskListTableInstance.updateOption(listTableOption);
       this._updateListTableSize(this.taskListTableInstance);
     }
     this._syncPropsFromTable();
+    this.scenegraph.updateStageBackground();
+    this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
 
     updateSplitLineAndResizeLine(this);
     this.scenegraph.updateSceneGraph();
