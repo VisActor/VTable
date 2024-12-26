@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: change taskRecord type from string to any\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "lou@trip.com"
+}
