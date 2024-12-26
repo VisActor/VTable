@@ -70,7 +70,7 @@ Optional
       | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
 
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;
@@ -88,7 +88,7 @@ Optional
 moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
 
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;
@@ -143,7 +143,7 @@ Optional
 scheduleCreatable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
 
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;

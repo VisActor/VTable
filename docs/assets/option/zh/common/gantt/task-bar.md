@@ -72,7 +72,7 @@ ${prefix} resizable(boolean | [ boolean, boolean ] | Function) = true
 
 //其中：
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;
@@ -91,7 +91,7 @@ moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boole
 
 //其中：
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;
@@ -147,7 +147,7 @@ scheduleCreatable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType)
 
 //其中：
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;
