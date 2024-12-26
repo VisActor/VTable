@@ -308,16 +308,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
         const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
       }
+      let value;
       if ((this.options as ListTableConstructorOptions).groupBy) {
         const record = table.getCellRawRecord(col, row);
         if (record?.vtableMerge) {
           return '';
         }
         const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
-        return indexs[indexs.length - 1] + 1;
+        value = indexs[indexs.length - 1] + 1;
+      } else {
+        value = row - this.columnHeaderLevelCount + 1;
       }
       const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
-      return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount + 1;
+      return typeof format === 'function' ? format(col, row, this, value) : value;
     } else if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
@@ -1095,7 +1098,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return getCellRadioState(col, row, this);
   }
 
-  setCellCheckboxState(col: number, row: number, checked: boolean) {
+  setCellCheckboxState(col: number, row: number, checked: boolean | 'indeterminate') {
     setCellCheckboxState(col, row, checked, this);
   }
 

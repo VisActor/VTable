@@ -136,6 +136,9 @@ export interface IRowSeriesNumber {
   dragOrder?: boolean;
   /** 是否禁止列宽调整 */
   disableColumnResize?: boolean;
+
+  /** 是否开启树形结构复选框 */
+  enableTreeCheckbox?: boolean;
 }
 
 export interface ColumnSeriesNumber {

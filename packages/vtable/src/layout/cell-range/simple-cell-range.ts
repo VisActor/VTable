@@ -124,11 +124,18 @@ function getTreeTitleMerge(col: number, row: number, cellRange: CellRange, layou
   }
 
   const cellRecord = layout._table.getCellRawRecord(col, row);
-  if (cellRecord?.vtableMerge) {
-    // const vtableMergeName = cellRecord.vtableMergeName;
-    cellRange.start.col = layout.rowHeaderLevelCount;
-    cellRange.end.col = layout.colCount - 1;
-    cellRange.start.row = cellRange.end.row = row;
+  if (layout._table.internalProps.rowSeriesNumber?.enableTreeCheckbox) {
+    if (cellRecord?.vtableMerge && col >= layout.leftRowSeriesNumberColumnCount) {
+      cellRange.start.col = layout.rowHeaderLevelCount + layout.leftRowSeriesNumberColumnCount;
+      cellRange.end.col = layout.colCount - 1;
+      cellRange.start.row = cellRange.end.row = row;
+    }
+  } else {
+    if (cellRecord?.vtableMerge) {
+      cellRange.start.col = layout.rowHeaderLevelCount;
+      cellRange.end.col = layout.colCount - 1;
+      cellRange.start.row = cellRange.end.row = row;
+    }
   }
 }
 
