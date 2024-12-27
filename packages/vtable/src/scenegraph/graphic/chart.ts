@@ -23,6 +23,8 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   //   y2: number;
   // };
   tableChartOption: any;
+  col?: number;
+  row?: number;
 }
 
 export const CHART_NUMBER_TYPE = genNumberType();
