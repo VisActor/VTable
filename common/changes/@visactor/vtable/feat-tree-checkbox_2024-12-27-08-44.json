@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add enableTreeCheckbox config",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
