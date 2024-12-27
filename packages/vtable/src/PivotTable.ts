@@ -504,13 +504,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     table.colCount = layoutMap.colCount ?? 0;
     table.rowCount = layoutMap.rowCount ?? 0;
-    // table.frozenColCount = layoutMap.rowHeaderLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
-    // table.internalProps.frozenColCount = layoutMap.rowHeaderLevelCount ?? 0;
-    this.internalProps.frozenColCount = Math.max(
-      (layoutMap.rowHeaderLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount,
-      this.options.frozenColCount ?? 0
-    );
-    // table.frozenRowCount = layoutMap.headerLevelCount;
+
+    this.internalProps.frozenColCount = this.options.frozenColCount
+      ? this.options.frozenColCount
+      : (layoutMap.rowHeaderLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount;
+    //   this.internalProps.frozenColCount= Math.max(
+    //   (layoutMap.rowHeaderLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount,
+    //   this.options.frozenColCount ?? 0
+    // );
     table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
 
     if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {

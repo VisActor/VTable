@@ -856,32 +856,41 @@ export class StateManager {
     return endMoveCol(this);
   }
 
-  checkFrozen(): boolean {
+  checkFrozen() {
     // 判断固定列的总宽度 是否过大
-    let originalFrozenColCount =
-      this.table.isListTable() && !this.table.internalProps.transpose
-        ? this.table.options.frozenColCount
-        : this.table.isPivotChart()
-        ? this.table.rowHeaderLevelCount ?? 0
-        : Math.max(
-            (this.table.rowHeaderLevelCount ?? 0) + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount,
-            this.table.options.frozenColCount ?? 0
-          );
+    // let originalFrozenColCount =
+    //   this.table.isListTable() && !this.table.internalProps.transpose
+    //     ? this.table.options.frozenColCount
+    //     : this.table.isPivotChart()
+    //     ? this.table.rowHeaderLevelCount ?? 0
+    //     : Math.max(
+    //         (this.table.rowHeaderLevelCount ?? 0) + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount,
+    //         this.table.options.frozenColCount ?? 0
+    //       );
+    let originalFrozenColCount = this.table.isPivotChart()
+      ? this.table.rowHeaderLevelCount ?? 0
+      : this.table.options.frozenColCount ??
+        (this.table.rowHeaderLevelCount ?? 0) + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount;
     if (originalFrozenColCount) {
       if (originalFrozenColCount > this.table.colCount) {
         originalFrozenColCount = this.table.colCount;
       }
-      if (this.table.tableNoFrameWidth - this.table.getColsWidth(0, originalFrozenColCount - 1) <= 120) {
-        this.table._setFrozenColCount(0);
-        this.setFrozenCol(-1);
-        return false;
+
+      const maxFrozenWidth = this.table._getMaxFrozenWidth();
+      if (this.table.getColsWidth(0, originalFrozenColCount - 1) > maxFrozenWidth) {
+        if (this.table.internalProps.unfreezeAllOnExceedsMaxWidth) {
+          this.table._setFrozenColCount(0);
+          this.setFrozenCol(-1);
+        } else {
+          const computedFrozenColCount = this.table._getComputedFrozenColCount(originalFrozenColCount);
+          this.table._setFrozenColCount(computedFrozenColCount);
+          this.setFrozenCol(computedFrozenColCount);
+        }
       } else if (this.table.frozenColCount !== originalFrozenColCount) {
         this.table._setFrozenColCount(originalFrozenColCount);
         this.setFrozenCol(originalFrozenColCount);
-        return false;
       }
     }
-    return true;
   }
   setFrozenCol(col: number) {
     if (col !== this.frozen.col) {
