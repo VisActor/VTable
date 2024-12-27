@@ -5,15 +5,14 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: showSort support function type [#2630](https://github.com/VisActor/VTable/issues/2630)
-- **@visactor/vtable**: add hide for indicator setting [#2257](https://github.com/VisActor/VTable/issues/2257) [#2451](https://github.com/VisActor/VTable/issues/2451)
-- **@visactor/vtable**: add enableTreeCheckbox config
+- **@visactor/vtable**: 透视表指标及维度的showSort支持函数配置 [#2630](https://github.com/VisActor/VTable/issues/2630)
+- **@visactor/vtable**: 透视表指标支持设置hide隐藏功能 [#2257](https://github.com/VisActor/VTable/issues/2257) [#2451](https://github.com/VisActor/VTable/issues/2451)
+- **@visactor/vtable**: 添加enableTreeCheckbox配置 groupBy分组模式下支持复选框交互
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix borderLineWidth array config [#3183](https://github.com/VisActor/VTable/issues/3183)
-- **@visactor/vtable**: when set resizable false hover taskbar occor error [#3189](https://github.com/VisActor/VTable/issues/3189)
-
+- **@visactor/vtable**: 修复borderLineWidth数组配置 [#3183](https://github.com/VisActor/VTable/issues/3183)
+- **@visactor/vtable**: 当设置resizable为false时，悬停任务栏出现错误 [#3189](https://github.com/VisActor/VTable/issues/3189)
 
 
 [更多详情请查看 v1.14.3](https://github.com/VisActor/VTable/releases/tag/v1.14.3)
