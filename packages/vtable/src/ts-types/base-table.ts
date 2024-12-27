@@ -512,7 +512,14 @@ export interface BaseTableConstructorOptions {
   chartOption?: any;
   disableInteraction?: boolean;
 
-  specFormat?: (spec: any) => { needFormatSpec: boolean; spec?: any };
+  // 渲染时的 spec 改变
+  specFormat?: (
+    spec: any,
+    chartInstance: any,
+    chart: any
+  ) => { needFormatSpec: boolean; spec?: any; updateSpec?: boolean };
+  // chart 单元格 的 spec 生成时的转换
+  specTransformInCell?: (spec: any, col: number, row: number) => any;
 
   beforeRender?: (stage: any) => void;
   afterRender?: (stage: any) => void;
