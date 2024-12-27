@@ -31,6 +31,13 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
         setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table);
         // 1.2.2 update group title state
         updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
+
+        // 1.2.3 update header checkbox state
+        const oldHeaderCheckedState = table.stateManager.headerCheckedState._vtable_rowSeries_number;
+        const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState('_vtable_rowSeries_number', col, row);
+        if (oldHeaderCheckedState !== newHeaderCheckedState) {
+          table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
+        }
       }
     } else {
       // 2. group content, reset group title state
