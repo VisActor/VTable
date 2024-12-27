@@ -2274,6 +2274,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       customRender,
       renderChartAsync,
       renderChartAsyncBatchCount,
+      canvasWidth,
+      canvasHeight,
       overscrollBehavior,
       limitMinWidth,
       limitMinHeight
@@ -2307,6 +2309,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.autoFillWidth = autoFillWidth ?? false;
     this.autoFillHeight = autoFillHeight ?? false;
     this.customRender = customRender;
+    this.canvasWidth = canvasWidth;
+    this.canvasHeight = canvasHeight;
     // 更新protectedSpace
     const internalProps: IBaseTableProtected = this.internalProps;
     if (Env.mode !== 'node' && !options.canvas) {

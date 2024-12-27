@@ -195,6 +195,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-tree-hide'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-rowSeriesNumber'
       },
       {
@@ -520,6 +524,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-tree'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-hide'
       },
       {
         path: 'pivot-analysis',

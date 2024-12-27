@@ -165,7 +165,7 @@ VisActor 的 commit 提交信息遵循 [Conventional Commits](https://www.conven
 
 ## Writing Documents and Demos
 
-If you have added an API or a new feature, please modify the relevant configuration documents. If necessary, please add the corresponding official website demo. To start the tutorial, run:
+如果是添加 api 或者新增功能，需要修改相关文档或者官网 demo，启动官网命令如下：
 
 ```
 # Comment: Start the official website page in the outer directory. start site development server, execute in file path: ./
@@ -174,7 +174,7 @@ $ rush docs
 
 ## Generating Changelog
 
-If it is a bug fix or a new feature submission, please generate the changelog before pushing. After running the following command, the commit information of the last submission will be used to generate the changelog:
+如果是修复或者新增功能，需要生成 changelog。 在 commit 命令后执行如下命令即可根据 commit 的信息自动生成 changelog：
 
 ```
 # Comment: Generate changelog after submitting code. after executing git commit, please run the following command to update the change log. Please execute in file path: ./
@@ -182,7 +182,7 @@ If it is a bug fix or a new feature submission, please generate the changelog be
 rush change-all
 ```
 
-The following files are generated in common:
+文件会在 common 目录下生成，如下图：
 
 <img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/contribute-changelog.png' alt='' width='400' height='auto'>
 
