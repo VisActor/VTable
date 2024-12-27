@@ -1220,7 +1220,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           sourceCellRange.start.col - this.leftRowSeriesNumberColumnCount,
           targetIndex - this.leftRowSeriesNumberColumnCount
         );
-        this.columnTree.reset(this.columnTree.tree.children, true);
+        this.columnTree.reset(this.columnTree.tree.children);
         this._cellRangeMap = new Map();
         return {
           sourceIndex: sourceCellRange.start.col,
@@ -1270,7 +1270,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           sourceCellRange.start.row,
           targetIndex + (target.row > source.row ? sourceCellRange.end.row - sourceCellRange.start.row : 0)
         );
-        this.columnTree.reset(this.columnTree.tree.children, true);
+        this.columnTree.reset(this.columnTree.tree.children);
         this._cellRangeMap = new Map();
         return {
           sourceIndex: sourceCellRange.start.row,
