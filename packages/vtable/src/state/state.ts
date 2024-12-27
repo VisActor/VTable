@@ -867,10 +867,12 @@ export class StateManager {
     //         (this.table.rowHeaderLevelCount ?? 0) + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount,
     //         this.table.options.frozenColCount ?? 0
     //       );
-    let originalFrozenColCount = this.table.isPivotChart()
-      ? this.table.rowHeaderLevelCount ?? 0
-      : this.table.options.frozenColCount ??
-        (this.table.rowHeaderLevelCount ?? 0) + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount;
+    let originalFrozenColCount = this.table.options.frozenColCount
+      ? this.table.options.frozenColCount
+      : this.table.isPivotTable() || (this.table.isListTable() && this.table.internalProps.transpose)
+      ? (this.table.rowHeaderLevelCount ?? 0) + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount
+      : 0;
+
     if (originalFrozenColCount) {
       if (originalFrozenColCount > this.table.colCount) {
         originalFrozenColCount = this.table.colCount;
