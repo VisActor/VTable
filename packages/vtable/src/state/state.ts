@@ -199,7 +199,7 @@ export class StateManager {
    * 对应原始数据列表顺序的checked状态
    */
   // checkedState: Record<string | number, boolean>[] = [];
-  checkedState: Map<string | number, Record<string | number, boolean>> = new Map();
+  checkedState: Map<string | number, Record<string | number, boolean | 'indeterminate'>> = new Map();
   /**
    * 对应表头checked状态
    */
@@ -1507,10 +1507,10 @@ export class StateManager {
       this.sparkLine.row = -1;
     }
   }
-  setCheckedState(col: number, row: number, field: string | number, checked: boolean) {
+  setCheckedState(col: number, row: number, field: string | number, checked: boolean | 'indeterminate') {
     return setCheckedState(col, row, field, checked, this);
   }
-  setHeaderCheckedState(field: string | number, checked: boolean) {
+  setHeaderCheckedState(field: string | number, checked: boolean | 'indeterminate') {
     return setHeaderCheckedState(field, checked, this);
   }
 

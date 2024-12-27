@@ -3,14 +3,14 @@ import type { StateManager } from '../state';
 import type { CheckboxColumnDefine, ListTableAPI } from '../../ts-types';
 import { getOrApply } from '../../tools/helper';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { CheckBox } from '@visactor/vrender-components';
 import type { CachedDataSource } from '../../data';
+import type { CheckBox } from '@src/vrender';
 
 export function setCheckedState(
   col: number,
   row: number,
   field: string | number,
-  checked: boolean,
+  checked: boolean | 'indeterminate',
   state: StateManager
 ) {
   const recordIndex = state.table.getRecordShowIndexByCell(col, row);
@@ -26,7 +26,7 @@ export function setCheckedState(
   }
 }
 
-export function setHeaderCheckedState(field: string | number, checked: boolean, state: StateManager) {
+export function setHeaderCheckedState(field: string | number, checked: boolean | 'indeterminate', state: StateManager) {
   state.headerCheckedState[field] = checked;
   state.checkedState?.forEach(recordCheckState => {
     recordCheckState[field] = checked;
@@ -159,7 +159,7 @@ export function updateHeaderCheckedState(
       : state.table.getCustomMerge(col, tableIndex);
 
     const data = state.table.dataSource?.get(index as number);
-    if (mergeCell || data.vtableMerge) {
+    if (mergeCell || (!state.table.internalProps.rowSeriesNumber?.enableTreeCheckbox && data.vtableMerge)) {
       // 不参与check状态的计算
       return;
     }
@@ -212,7 +212,12 @@ export function initLeftRecordsCheckState(records: any[], state: StateManager) {
   }
 }
 
-export function setCellCheckboxState(col: number, row: number, checked: boolean, table: BaseTableAPI) {
+export function setCellCheckboxState(
+  col: number,
+  row: number,
+  checked: boolean | 'indeterminate',
+  table: BaseTableAPI
+) {
   const cellGroup = table.scenegraph.getCell(col, row);
   const checkbox = cellGroup?.getChildByName('checkbox') as any;
   if (!checkbox) {
@@ -259,6 +264,25 @@ export function setCellCheckboxState(col: number, row: number, checked: boolean,
       checkbox._handlePointerUp();
     } else {
       // do nothing
+    }
+  }
+}
+
+export function setCellCheckboxStateByAttribute(
+  col: number,
+  row: number,
+  checked: boolean | 'indeterminate',
+  table: BaseTableAPI
+) {
+  const cellGroup = table.scenegraph.getCell(col, row);
+  const checkbox = cellGroup?.getChildByName('checkbox') as any;
+  if (checkbox) {
+    if (checked === 'indeterminate') {
+      (checkbox as CheckBox).setAttribute('indeterminate', true);
+      (checkbox as CheckBox).setAttribute('checked', undefined);
+    } else {
+      (checkbox as CheckBox).setAttribute('indeterminate', undefined);
+      (checkbox as CheckBox).setAttribute('checked', checked);
     }
   }
 }

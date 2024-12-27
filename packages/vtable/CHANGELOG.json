@@ -2,6 +2,30 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.14.3",
+      "tag": "@visactor/vtable_v1.14.3",
+      "date": "Fri, 27 Dec 2024 09:48:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: showSort support function type #2630\n\n"
+          },
+          {
+            "comment": "feat: add hide for indicator setting #2257 #2451\n\n"
+          },
+          {
+            "comment": "feat: add enableTreeCheckbox config"
+          },
+          {
+            "comment": "fix: fix borderLineWidth array config #3183"
+          },
+          {
+            "comment": "fix: when set resizable false hover taskbar occor error #3189\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.14.2",
       "tag": "@visactor/vtable_v1.14.2",
       "date": "Wed, 25 Dec 2024 09:27:34 GMT",
