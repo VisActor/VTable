@@ -605,7 +605,6 @@ export class SceneProxy {
     if (this.table.isAutoRowHeight()) {
       computeRowsHeight(this.table, startRow, endRow, false);
     }
-    console.log('updateBottomFrozenCellGroups', startRow, endRow);
     updateRowContent(startRow, endRow, this);
 
     if (this.table.isAutoRowHeight()) {

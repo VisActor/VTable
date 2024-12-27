@@ -84,6 +84,14 @@ Freeze Columns Right
 
 number of frozen rows at the bottom
 
+#${prefix} maxFrozenWidth(number | string) = '80%'
+
+Maximum freezing width, fixed value or percentage. Default is '80%'
+
+#${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
+
+Whether to defrost after the maximum freezing width is exceeded. The default value is true
+
 #${prefix} allowFrozenColCount(number) = 0
 
 Allow the number of frozen columns, indicating how many columns will show the frozen operation button (effective for basic tables)

@@ -114,6 +114,7 @@ export interface IBaseTableProtected {
   rowCount: number;
   colCount: number;
   frozenColCount: number;
+  unfreezeAllOnExceedsMaxWidth: boolean;
   allowFrozenColCount: number;
 
   frozenRowCount: number;
@@ -297,6 +298,10 @@ export interface BaseTableConstructorOptions {
   frozenRowCount?: number;
   rightFrozenColCount?: number;
   bottomFrozenRowCount?: number;
+  /** 最大冻结宽度，固定值 or 百分比。默认为'80%' */
+  maxFrozenWidth?: number | string;
+  /** 超过最大冻结宽度后是否全部解冻，默认true */
+  unfreezeAllOnExceedsMaxWidth?: boolean;
 
   // /** 待实现 TODO */
   // frozenRowCount?: number;
@@ -942,6 +947,8 @@ export interface BaseTableAPI {
   bodyMergeTitleCache: Map<string, any>;
   isSeriesNumberInBody: (col: number, row: number) => boolean;
   getGroupTitleLevel: (col: number, row: number) => number | undefined;
+  _getMaxFrozenWidth: () => number;
+  _getComputedFrozenColCount: (frozenColCount: number) => number;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
