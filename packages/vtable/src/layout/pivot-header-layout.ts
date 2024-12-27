@@ -75,7 +75,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   private _cornerHeaderCellFullPathIds: number[][] = [];
   private _columnHeaderCellFullPathIds: number[][] = [];
   private _rowHeaderCellFullPathIds: number[][] = [];
-  private _rowHeaderCellFullPathIds_FULL: number[][] = []; //分页需求新增  为了保存全量的id  当页的是_rowHeaderCellIds
+  private _rowHeaderCellFullPathIds_FULL: number[][] = []; //分页需求新增  为了保存全量的id  当页的是_rowHeaderCellFullPathIds
 
   /**下面四份代表实际展示的 如果隐藏了某部分表头 那这里就会相比上面的数组少了隐藏掉的id */
   private _cornerHeaderCellIds: number[][] = [];
@@ -253,7 +253,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // this.indicatorsAsCol = !isValid(this.rowDimensionKeys.find(key => key === this.indicatorDimensionKey));
     //  this.colAttrs[this.colAttrs.length-1]===this.indicatorDimensionKey&&this.colAttrs.pop();
     //  this.rowAttrs[this.rowAttrs.length-1]===this.indicatorDimensionKey&&this.rowAttrs.pop();
-
     //生成列表头单元格
     this._generateColHeaderIds();
 
@@ -1005,7 +1004,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
         let rowExtensionDimensionTree;
         if (this._rowHeaderExtensionTree[key]) {
-          this._rowHeaderExtensionTree[key].reset(this._rowHeaderExtensionTree[key].tree.children, true);
+          this._rowHeaderExtensionTree[key].reset(this._rowHeaderExtensionTree[key].tree.children);
           rowExtensionDimensionTree = this._rowHeaderExtensionTree[key];
         } else {
           rowExtensionDimensionTree = new DimensionTree(tree ?? [], this.sharedVar, this.rowHierarchyType, undefined);
@@ -1584,7 +1583,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this._table.isPivotChart() ||
       (this.dataset.records as Array<any>)?.length > 0 ||
       (this.dataset.records && !Array.isArray(this.dataset.records))
-        ? this.columnDimensionTree.tree.size
+        ? this._columnHeaderCellIds[0]?.length ?? this.columnDimensionTree.tree.size
         : 0) +
       this.rowHeaderLevelCount +
       this.rightHeaderColCount +
@@ -2237,7 +2236,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     (<any>hd.define).hierarchyState =
       (<any>hd.define).hierarchyState === HierarchyState.collapse ? HierarchyState.expand : HierarchyState.collapse;
     //过程类似构造函数处理过程
-    this.rowDimensionTree.reset(this.rowDimensionTree.tree.children, true);
+    this.rowDimensionTree.reset(this.rowDimensionTree.tree.children);
     this._rowHeaderCellFullPathIds_FULL = [];
     this.rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
     this.fullRowDimensionKeys = [];
@@ -2656,7 +2655,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           sourceCellRange.start.col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount,
           targetCellRange.start.col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount
         );
-        this.columnDimensionTree.reset(this.columnDimensionTree.tree.children, true);
+        this.columnDimensionTree.reset(this.columnDimensionTree.tree.children);
         this._CellHeaderPathMap = new Map();
         // this._cellRangeMap = new Map();
         this._largeCellRangeCache.length = 0;
@@ -2731,7 +2730,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           // targetCellRange.start.row - this.columnHeaderLevelCount
           targetIndex + (target.row > source.row ? sourceRowHeaderNode.size - 1 : 0)
         );
-        this.rowDimensionTree.reset(this.rowDimensionTree.tree.children, true);
+        this.rowDimensionTree.reset(this.rowDimensionTree.tree.children);
         this._CellHeaderPathMap = new Map();
         // this._cellRangeMap = new Map();
         this._largeCellRangeCache.length = 0;
@@ -3752,6 +3751,32 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this._columnHeaderCellIds.splice(0, this._columnHeaderCellIds.length);
       }
     }
+    // else if (this.indicatorsAsCol) {
+    //   const indicatorsIds = this._columnHeaderCellIds[this._columnHeaderCellIds.length - 1];
+    //   for (let i = indicatorsIds.length - 1; i >= 0; i--) {
+    //     const id = indicatorsIds[i];
+    //     const define: IIndicator = this.headerObjects[id]?.define as any as IIndicator;
+    //     if ((define as any).indicatorKey && define.hide) {
+    //       let isHide = false;
+    //       if (typeof define.hide === 'function') {
+    //         isHide = define.hide({
+    //           dimensionPaths: this.getCellHeaderPaths(this.rowHeaderLevelCount + i, this.columnHeaderLevelCount - 1)
+    //             .colHeaderPaths as IDimensionInfo[],
+    //           table: this._table
+    //         });
+    //       } else {
+    //         isHide = define.hide;
+    //       }
+    //       //判断指标是否设置了hide
+    //       if (isHide) {
+    //         for (let j = 0; j < this._columnHeaderCellIds.length; j++) {
+    //           const _cellIds = this._columnHeaderCellIds[j];
+    //           _cellIds.splice(i, 1);
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
     // 创建原数组的副本
     this._rowHeaderCellIds_FULL = this._rowHeaderCellFullPathIds_FULL.slice();
     if (!this.showRowHeader) {
@@ -3772,6 +3797,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         });
       }
     }
+    // else if (!this.indicatorsAsCol) {
+    //   this._rowHeaderCellIds_FULL = this._rowHeaderCellFullPathIds_FULL;
+    //   const _rowIds = this._rowHeaderCellIds_FULL;
+    //   for (let i = _rowIds.length - 1; i >= 0; i--) {
+    //     const id = _rowIds[i][_rowIds[i].length - 1];
+    //     const define = this.headerObjects[id]?.define;
+    //     if ((define as any).indicatorKey && define.hide) {
+    //       this._rowHeaderCellIds_FULL.splice(i, 1);
+    //     }
+    //   }
+    // }
     this._rowHeaderCellIds = this._rowHeaderCellIds_FULL.slice();
 
     // 创建原数组的副本

@@ -162,7 +162,7 @@ If rowHierarchyType is set to tree and you expect to load lazily when you click 
 
 In some scenarios of pivot table analysis, the table structure and data to be displayed do not match perfectly. For example, the pivot table may only have row dimensions and indicator values. When there are many fields for indicator values, you want to group the indicators by customizing column headers. In fact, the column headers are virtual, and the data records are not associated with corresponding dimension fields, and the number of levels is uncertain.
 
-Based on this scenario, VTable provides the function of virtual header node, through which the headers on the column can be grouped. For a specific example, see: URL_ADDRESS.
+Based on this scenario, VTable provides the function of virtual header node, through which the headers on the column can be grouped. [For a specific example](../../../demo/table-type/pivot-table-virtual-header)。
 
 Just add `virtual: true` when configuring the nodes in rowTree columnTree.
 
@@ -253,3 +253,9 @@ The `parseCustomTreeToMatchRecords` configuration needs to be turned on if you h
 The regular tree structure refers to: the nodes on the same layer have the same dimension keys.
 
 The non-regular tree structure is the tree where nodes on the same layer exist with different dimension values.
+
+# Hide indicator node
+
+In the nodes of rowTree or columnTree, configure hide: true, you can hide the indicator node.
+
+It can also be hidden using the `hide` configuration item in `indicators`.

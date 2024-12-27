@@ -60,7 +60,13 @@ export class HeaderHelper {
     if (this._table.isPivotTable()) {
       // 透视表显示排序按钮
       const { showSort, sort } = this._table.internalProps.layoutMap.getHeader(col, row) as HeaderData;
-      if (showSort) {
+      let _showSort;
+      if (typeof showSort === 'function') {
+        _showSort = showSort({ col, row, table: this._table });
+      } else {
+        _showSort = showSort;
+      }
+      if (_showSort) {
         let order = (this._table as PivotTableAPI).getPivotSortState(col, row) as string;
         if (order) {
           order = order.toUpperCase();
@@ -205,10 +211,18 @@ export class HeaderHelper {
     const icon = order === 'asc' ? this.upIcon : order === 'desc' ? this.downIcon : this.normalIcon;
 
     const headerC = _table.getHeaderDefine(col, row) as any;
+    let _showSort;
+    if (headerC) {
+      if (typeof headerC.showSort === 'function') {
+        _showSort = headerC.showSort({ col, row, table: this._table });
+      } else {
+        _showSort = headerC.showSort;
+      }
+    }
     if (
       !headerC ||
-      headerC.showSort === false ||
-      (!isValid(headerC.showSort) && !headerC.sort) ||
+      _showSort === false ||
+      (!isValid(_showSort) && !headerC.sort) ||
       (headerC.columns && headerC.columns.length > 0)
     ) {
       return null;
@@ -223,10 +237,18 @@ export class HeaderHelper {
     row: number
   ): ColumnIconOption | null {
     const headerC = _table.getHeaderDefine(col, row) as any;
+    let _showSort;
+    if (headerC) {
+      if (typeof headerC.showSort === 'function') {
+        _showSort = headerC.showSort({ col, row, table: this._table });
+      } else {
+        _showSort = headerC.showSort;
+      }
+    }
     if (
       !headerC ||
-      headerC.showSort === false ||
-      (!isValid(headerC.showSort) && !headerC.sort) ||
+      _showSort === false ||
+      (!isValid(_showSort) && !headerC.sort) ||
       (headerC.columns && headerC.columns.length > 0)
     ) {
       return null;

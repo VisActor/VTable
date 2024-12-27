@@ -255,7 +255,6 @@ ${prefix} aggregation(Aggregation | CustomAggregation | Array)
 
 可参考[教程文档](https://visactor.io/vtable/guide/data_analysis/list_table_dataAnalysis)
 
-
 ${prefix} hide(boolean) = false
 非必填。
 
