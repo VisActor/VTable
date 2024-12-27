@@ -87,6 +87,13 @@
           }
         },
         {
+          "path": "list-table-group-checkbox",
+          "title": {
+            "zh": "基本表格分组复选框",
+            "en": "List Table Group Checkbox"
+          }
+        },
+        {
           "path": "transpose-table",
           "title": {
             "zh": "转置表格",

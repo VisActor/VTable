@@ -6,7 +6,7 @@
 
 - `container`：表格的容器 DOM 元素，dom 容器需要提前设置好宽高。这里非必填，可以放到初始化函数的第一个参数中如`new VTable.ListTable(container, option);`
 - `records`：表格的数据，以数组形式表示。
-- `indicators`： 透视表中各个指标的具体配置。
+- `indicators`： 透视表中各个指标的具体配置(包括样式 排序 是否隐藏等)。
 - `columns`：列表头对应各级维度的样式及 format 配置。
 - `rows`：行表头对应各级维度的样式及 format 配置。
 - `columnTree`：自定义列表头维度树（自定义能力），一般当有维度值特殊排序要求的情况下才需要配置这个树结构。

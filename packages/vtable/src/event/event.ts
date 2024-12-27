@@ -26,6 +26,7 @@ import type { ListTable } from '../ListTable';
 import { isValid } from '@visactor/vutils';
 import { InertiaScroll } from './scroll';
 import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
+import { bindGroupTitleCheckboxChange } from './list-table/checkbox';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -213,6 +214,9 @@ export class EventManager {
 
     // chart axis event
     bindAxisHoverEvent(this.table);
+
+    // group title checkbox change
+    bindGroupTitleCheckboxChange(this.table);
   }
 
   dealTableHover(eventArgsSet?: SceneEvent) {

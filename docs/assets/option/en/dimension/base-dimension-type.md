@@ -120,8 +120,12 @@ Display drill-down icon, clicking it will trigger a corresponding event
 ${prefix} drillUp(boolean)
 Display drill-up icon, clicking it will trigger a corresponding event
 
-${prefix} showSort(boolean)
+${prefix} showSort(boolean|Function)
 Whether the dimension value cell displays the sort icon. Clicking it does not have data sorting logic.
+
+```
+  showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
+```
 
 ${prefix} sort(boolean)
 Whether the corresponding dimension header cell displays the sort icon.

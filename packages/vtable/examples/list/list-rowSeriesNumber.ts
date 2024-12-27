@@ -213,9 +213,9 @@ export function createTable() {
       dragOrder: true,
       headerIcon: 'book',
       width: 'auto',
-      // format: (args: any) => {
-      //   return '';
-      // },
+      format: (args: any) => {
+        return '';
+      },
       headerStyle: {
         color: 'black',
         bgColor: 'pink'

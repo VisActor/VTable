@@ -6,7 +6,7 @@ The following are the Key Configurations items and their descriptions for using 
 
 - `container`: The container DOM element of the table, which needs to have width and height.
 - `records`: table data, expressed in array form.
-- `indicators`: The specific configuration of each indicator in the pivot table.
+- `indicators`: The specific configuration of each indicator in the pivot table(including style sorting and hiding etc.).
 - `columns`: The column header corresponds to the style and format configuration of various levels of dimensions.
 - `rows`: The row header corresponds to the style and format configuration of dimensions at all levels.
 - `columnTree`: Customize the list header dimension tree (custom capability). Generally, this tree structure only needs to be configured when there are special sorting requirements for dimension values.

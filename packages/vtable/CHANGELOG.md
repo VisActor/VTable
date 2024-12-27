@@ -1,6 +1,23 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 25 Dec 2024 09:27:34 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Dec 2024 09:48:26 GMT and should not be manually modified.
+
+## 1.14.3
+Fri, 27 Dec 2024 09:48:26 GMT
+
+### Updates
+
+- feat: showSort support function type #2630
+
+
+- feat: add hide for indicator setting #2257 #2451
+
+
+- feat: add enableTreeCheckbox config
+- fix: fix borderLineWidth array config #3183
+- fix: when set resizable false hover taskbar occor error #3189
+
+
 
 ## 1.14.2
 Wed, 25 Dec 2024 09:27:34 GMT

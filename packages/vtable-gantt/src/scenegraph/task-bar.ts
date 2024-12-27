@@ -389,8 +389,8 @@ export class TaskBar {
         0;
       this.hoverBarGroup.setAttribute('cornerRadius', cornerRadius);
     }
-    this.hoverBarLeftIcon.setAttribute('visible', false);
-    this.hoverBarRightIcon.setAttribute('visible', false);
+    this.hoverBarLeftIcon?.setAttribute('visible', false);
+    this.hoverBarRightIcon?.setAttribute('visible', false);
 
     let leftResizable = true;
     let rightResizable = true;

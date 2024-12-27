@@ -136,6 +136,9 @@ export interface IRowSeriesNumber {
   dragOrder?: boolean;
   /** 是否禁止列宽调整 */
   disableColumnResize?: boolean;
+
+  /** 是否开启树形结构复选框 */
+  enableTreeCheckbox?: boolean;
 }
 
 export interface ColumnSeriesNumber {
@@ -561,6 +564,8 @@ export interface IIndicatorHeaderNode {
   children?: IHeaderTreeDefine[] | null;
   //跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格
   levelSpan?: number;
+  /** 隐藏该指标。 但内部聚合逻辑是正常执行的 */
+  hide?: boolean;
 }
 export interface IDimensionHeaderNode {
   /**

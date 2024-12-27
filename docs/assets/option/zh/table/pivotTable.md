@@ -302,6 +302,8 @@ export interface IIndicatorHeaderNode {
   value?: string;
   /** 跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格 */
   levelSpan?: number;
+  /** 该指标节点是否隐藏 */
+  hide?: boolean;
 }
 ```
 

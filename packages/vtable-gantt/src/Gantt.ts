@@ -304,40 +304,45 @@ export class Gantt extends EventTarget {
       this.tableNoFrameHeight = height - lineWidth * 2;
     }
   }
+  _updateListTableSize(taskListTableInstance: ListTable) {
+    if (!taskListTableInstance) {
+      return;
+    }
+    if (this.options?.taskListTable?.tableWidth === 'auto' || this.taskTableWidth === -1) {
+      this.taskTableWidth =
+        taskListTableInstance.getAllColsWidth() + this.parsedOptions.outerFrameStyle.borderLineWidth;
+      if (this.options?.taskListTable?.maxTableWidth) {
+        this.taskTableWidth = Math.min(this.options?.taskListTable?.maxTableWidth, this.taskTableWidth);
+      }
+      if (this.options?.taskListTable?.minTableWidth) {
+        this.taskTableWidth = Math.max(this.options?.taskListTable?.minTableWidth, this.taskTableWidth);
+      }
+      this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
+      taskListTableInstance.setCanvasSize(
+        this.taskTableWidth,
+        this.tableNoFrameHeight + this.parsedOptions.outerFrameStyle.borderLineWidth * 2
+      );
+      this._updateSize();
+    }
+
+    if (taskListTableInstance.columnHeaderLevelCount > 1) {
+      if (taskListTableInstance.columnHeaderLevelCount === this.parsedOptions.timeLineHeaderRowHeights.length) {
+        for (let i = 0; i < taskListTableInstance.columnHeaderLevelCount; i++) {
+          taskListTableInstance.setRowHeight(i, this.parsedOptions.timeLineHeaderRowHeights[i]);
+        }
+      } else {
+        const newRowHeight = this.getAllHeaderRowsHeight() / taskListTableInstance.columnHeaderLevelCount;
+        for (let i = 0; i < taskListTableInstance.columnHeaderLevelCount; i++) {
+          taskListTableInstance.setRowHeight(i, newRowHeight);
+        }
+      }
+    }
+  }
   _generateListTable() {
     if (this.taskTableColumns.length >= 1 || this.options?.rowSeriesNumber) {
       const listTableOption = this._generateListTableOptions();
       this.taskListTableInstance = new ListTable(this.container, listTableOption);
-
-      if (this.options?.taskListTable?.tableWidth === 'auto' || this.taskTableWidth === -1) {
-        this.taskTableWidth =
-          this.taskListTableInstance.getAllColsWidth() + this.parsedOptions.outerFrameStyle.borderLineWidth;
-        if (this.options?.taskListTable?.maxTableWidth) {
-          this.taskTableWidth = Math.min(this.options?.taskListTable?.maxTableWidth, this.taskTableWidth);
-        }
-        if (this.options?.taskListTable?.minTableWidth) {
-          this.taskTableWidth = Math.max(this.options?.taskListTable?.minTableWidth, this.taskTableWidth);
-        }
-        this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
-        this.taskListTableInstance.setCanvasSize(
-          this.taskTableWidth,
-          this.tableNoFrameHeight + this.parsedOptions.outerFrameStyle.borderLineWidth * 2
-        );
-        this._updateSize();
-      }
-
-      if (this.taskListTableInstance.columnHeaderLevelCount > 1) {
-        if (this.taskListTableInstance.columnHeaderLevelCount === this.parsedOptions.timeLineHeaderRowHeights.length) {
-          for (let i = 0; i < this.taskListTableInstance.columnHeaderLevelCount; i++) {
-            this.taskListTableInstance.setRowHeight(i, this.parsedOptions.timeLineHeaderRowHeights[i]);
-          }
-        } else {
-          const newRowHeight = this.getAllHeaderRowsHeight() / this.taskListTableInstance.columnHeaderLevelCount;
-          for (let i = 0; i < this.taskListTableInstance.columnHeaderLevelCount; i++) {
-            this.taskListTableInstance.setRowHeight(i, newRowHeight);
-          }
-        }
-      }
+      this._updateListTableSize(this.taskListTableInstance);
     }
   }
   _generateListTableOptions() {
@@ -930,7 +935,6 @@ export class Gantt extends EventTarget {
   }
 
   updateOption(options: GanttConstructorOptions) {
-    this.taskListTableInstance?.release(); //这里省事用了先释放再重新创建的方式  也可以考虑调用listTable的updateOption
     (this.parsedOptions as any) = {};
     this.options = options;
 
@@ -941,17 +945,18 @@ export class Gantt extends EventTarget {
 
     this._sortScales();
     initOptions(this);
-    this.scenegraph.updateStageBackground();
     this.data.setRecords(this.records);
     this._generateTimeLineDateMap();
-
     this.timeLineHeaderLevel = this.parsedOptions.sortedTimelineScales.length;
-    this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
-
     this._updateSize();
-
-    this._generateListTable();
+    if (this.taskListTableInstance) {
+      const listTableOption = this._generateListTableOptions();
+      this.taskListTableInstance.updateOption(listTableOption);
+      this._updateListTableSize(this.taskListTableInstance);
+    }
     this._syncPropsFromTable();
+    this.scenegraph.updateStageBackground();
+    this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
 
     updateSplitLineAndResizeLine(this);
     this.scenegraph.updateSceneGraph();
