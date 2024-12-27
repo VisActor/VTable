@@ -140,6 +140,11 @@ const option: VTable.ListTableConstructorOptions = {
 在option中，可以配置`groupTitleCustomLayout`属性，用于在分组标题中进行自定义布局。
 
 ```javascript livedemo template=vtable
+// only use for website
+const {createGroup, createText, createImage} = VRender;
+// use this for project
+// import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
+
 const records = [
    {
       name: 'John Smith',
@@ -296,6 +301,85 @@ const option = {
       rootContainer: container,
       renderDefault: false
     };
+  }
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```
+
+## 分组复选框
+
+可以在`rowSeriesNumber`中配置`enableTreeCheckbox`属性，用于开启分组复选框。开启后，分组标题的左侧会出现复选框，会和子元素的选中状态同步。
+
+```javascript livedemo template=vtable
+// only use for website
+const {createGroup, createText, createImage} = VRender;
+// use this for project
+// import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
+
+const records = [
+   {
+      name: 'John Smith',
+      position: 'Recruiting Manager',
+      salary: '$8000',
+      group: 'Recruiting Group'
+    },
+    {
+      name: 'Emily Johnson',
+      position: 'Recruiting Supervisor',
+      salary: '$6000',
+      group: 'Recruiting Group'
+    },
+    {
+      name: 'Michael Davis',
+      position: 'Recruiting Specialist',
+      salary: '$4000',
+      group: 'Recruiting Group'
+    },
+    {
+      name: 'Jessica Brown',
+      position: 'Training Manager',
+      salary: '$8000',
+      group: 'Training Group',
+    },
+    {
+      name: 'Andrew Wilson',
+      position: 'Training Supervisor',
+      salary: '$6000',
+      group: 'Training Group',
+    }
+];
+const columns = [
+  {
+    field: 'name',
+    title: 'Name',
+    width: 'auto',
+  },
+  {
+    field: 'position',
+    title: 'Position',
+    width: 'auto',
+  },
+  {
+    field: 'salary',
+    title: 'Salary',
+    width: 'auto',
+  },
+];
+
+const option = {
+  records,
+  columns,
+  widthMode: 'standard',
+  groupBy: 'group',
+
+  rowSeriesNumber: {
+    width: 50,
+    format: () => {
+      return '';
+    },
+    cellType: 'checkbox',
+    enableTreeCheckbox: true
   }
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);

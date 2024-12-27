@@ -302,3 +302,83 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 ```
+
+## Group checkbox
+
+In `rowSeriesNumber`, you can configure `enableTreeCheckbox` to enable the group checkbox.
+If enabled, checkbox will be displayed in the left of group title, and it will be synced with the children checkbox.
+
+```javascript livedemo template=vtable
+// only use for website
+const {createGroup, createText, createImage} = VRender;
+// use this for project
+// import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
+
+const records = [
+   {
+      name: 'John Smith',
+      position: 'Recruiting Manager',
+      salary: '$8000',
+      group: 'Recruiting Group'
+    },
+    {
+      name: 'Emily Johnson',
+      position: 'Recruiting Supervisor',
+      salary: '$6000',
+      group: 'Recruiting Group'
+    },
+    {
+      name: 'Michael Davis',
+      position: 'Recruiting Specialist',
+      salary: '$4000',
+      group: 'Recruiting Group'
+    },
+    {
+      name: 'Jessica Brown',
+      position: 'Training Manager',
+      salary: '$8000',
+      group: 'Training Group',
+    },
+    {
+      name: 'Andrew Wilson',
+      position: 'Training Supervisor',
+      salary: '$6000',
+      group: 'Training Group',
+    }
+];
+const columns = [
+  {
+    field: 'name',
+    title: 'Name',
+    width: 'auto',
+  },
+  {
+    field: 'position',
+    title: 'Position',
+    width: 'auto',
+  },
+  {
+    field: 'salary',
+    title: 'Salary',
+    width: 'auto',
+  },
+];
+
+const option = {
+  records,
+  columns,
+  widthMode: 'standard',
+  groupBy: 'group',
+
+  rowSeriesNumber: {
+    width: 50,
+    format: () => {
+      return '';
+    },
+    cellType: 'checkbox',
+    enableTreeCheckbox: true
+  }
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```
