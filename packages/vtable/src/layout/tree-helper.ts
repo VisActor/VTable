@@ -130,22 +130,27 @@ export class DimensionTree {
     if (node.dimensionKey ?? node.indicatorKey) {
       if (
         !node.virtual &&
-        !this.dimensionKeys.contain(node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey)
+        !this.dimensionKeys.contain(
+          (node as any).indicatorKey ? IndicatorDimensionKeyPlaceholder : (node as any).dimensionKey
+        )
       ) {
-        this.dimensionKeys.put(node.level, node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey);
+        this.dimensionKeys.put(
+          (node as any).level,
+          (node as any).indicatorKey ? IndicatorDimensionKeyPlaceholder : (node as any).dimensionKey
+        );
       }
       if (
         !this.dimensionKeysIncludeVirtual.contain(
-          node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey
+          (node as any).indicatorKey ? IndicatorDimensionKeyPlaceholder : (node as any).dimensionKey
         )
       ) {
         this.dimensionKeysIncludeVirtual.put(
-          node.level,
-          node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey
+          (node as any).level,
+          (node as any).indicatorKey ? IndicatorDimensionKeyPlaceholder : (node as any).dimensionKey
         );
       }
-      if (!node.id) {
-        node.id = ++this.sharedVar.seqId;
+      if (!(node as any).id) {
+        (node as any).id = ++this.sharedVar.seqId;
       }
     }
     let size = node.dimensionKey ? (this.sizeIncludeParent ? 1 : 0) : 0;
