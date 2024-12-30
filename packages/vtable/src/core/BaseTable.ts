@@ -922,7 +922,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const limits = this._getColWidthLimits(col);
     return Math.max(_applyColWidthLimits(limits, orgWidth), 0);
   }
-
+  get pixelRatio(): number {
+    return this.internalProps.pixelRatio;
+  }
   /**
    * 设置像数比
    * @param pixelRatio
@@ -943,6 +945,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.scenegraph.setPixelRatio(pixelRatio);
     }
   }
+
   /**
    * 窗口尺寸发生变化 或者像数比变化
    * @return {void}
