@@ -72,7 +72,8 @@ import type {
   ColumnInfo,
   RowInfo,
   CellAddressWithBound,
-  Placement
+  Placement,
+  CustomMergeCellFunc
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -259,7 +260,7 @@ export interface IBaseTableProtected {
 
   stick: { changedCells: Map<string, StickCell> };
 
-  customMergeCell?: CustomMergeCell;
+  customMergeCell?: CustomMergeCellFunc;
   /**
    * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
    *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
