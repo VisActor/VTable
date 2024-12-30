@@ -62,7 +62,7 @@ const option = {
 };
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <ListTable option={option} height={500}/>
+  <ListTable option={option} height={'500px'}/>
 );
 ```
 
