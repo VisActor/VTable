@@ -591,7 +591,10 @@ export interface IExtensionRowDefine {
 
 export type StickCell = { col: number; row: number; dx: number; dy: number };
 
-export type CustomMergeCell = (col: number, row: number, table: BaseTableAPI) => undefined | CustomMerge;
+export type CustomMergeCell = CustomMergeCellFunc | CustomMergeCellArray;
+
+export type CustomMergeCellFunc = (col: number, row: number, table: BaseTableAPI) => undefined | CustomMerge;
+export type CustomMergeCellArray = CustomMerge[];
 export type CustomMerge = {
   range: CellRange;
   text?: string;
