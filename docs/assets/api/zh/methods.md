@@ -371,7 +371,7 @@ setRecords(records: Array<any>)
 **ListTable 专有**
 ```
 
-## getTaskShowIndexByRecordIndex(Function)
+## getBodyRowIndexByRecordIndex(Function)
 
 根据数据的索引获取应该显示在 body 的第几行, 参数和返回值的碎银均从 0 开始。如果是树形模式的表格，参数支持数组，如[1,2]
 
@@ -537,6 +537,29 @@ setRecords(records: Array<any>)
    * @returns {Rect} the rect of the cell.
    */
   getCellRelativeRect(col: number, row: number): Rect
+```
+
+## getCellRange(Function)
+
+获取单元格的合并范围
+
+```
+ /**
+   * @param {number} col column index
+   * @param {number} row row index
+   * @returns {Rect}
+*/
+getCellRange(col: number, row: number): CellRange
+
+export interface CellRange {
+  start: CellAddress;
+  end: CellAddress;
+}
+
+export interface CellAddress {
+  col: number;
+  row: number;
+}
 ```
 
 ## getCellHeaderPaths(Function)
@@ -1325,4 +1348,15 @@ interface ISortedMapItem {
 ```
   /** 设置单元格的树形展开收起状态为 loading */
   setLoadingHierarchyState: (col: number, row: number) => void;
+```
+
+## setPixelRatio(Function)
+
+设置画布的像素比，内部逻辑默认值为 window.devicePixelRatio 。如果感觉绘制内容模糊，可以尝试将这个值设置高一点。
+
+获取 pixelRatio 画布像素比可以直接通过实例的 pixelRatio 属性获取。
+
+```
+  /** 设置画布的像素比 */
+  setPixelRatio: (pixelRatio: number) => void;
 ```

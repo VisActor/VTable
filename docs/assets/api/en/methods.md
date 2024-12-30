@@ -373,7 +373,7 @@ If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd
 **ListTable proprietary**
 ```
 
-## getTaskShowIndexByRecordIndex(Function)
+## getBodyRowIndexByRecordIndex(Function)
 
 Get the row number that should be displayed in the body according to the index of the data. Both the parameter and the return value start from 0. If it is a table in tree mode, the parameter supports arrays, such as [1,2]
 
@@ -541,6 +541,29 @@ Get the specific position of the cell in the entire table. Relative position is 
    * @returns {Rect} the rect of the cell.
    */
   getCellRelativeRect(col: number, row: number): Rect
+```
+
+## getCellRange(Function)
+
+Gets the merge range for the cell
+
+```
+ /**
+   * @param {number} col column index
+   * @param {number} row row index
+   * @returns {Rect}
+*/
+getCellRange(col: number, row: number): CellRange
+
+export interface CellRange {
+  start: CellAddress;
+  end: CellAddress;
+}
+
+export interface CellAddress {
+  col: number;
+  row: number;
+}
 ```
 
 ## getCellHeaderPaths(Function)
@@ -1327,4 +1350,15 @@ Set the loading state of the tree expansion and collapse of the cell
 ```
   /** Set the loading state of the tree expansion and collapse of the cell */
   setLoadingHierarchyState: (col: number, row: number) => void;
+```
+
+## setPixelRatio(Function)
+
+Sets the pixel ratio of the canvas. The default internal logic is window.devicePixelRatio. If the drawing feels fuzzy, try setting this value higher.
+
+The pixelRatio can be obtained directly from the instance's pixelRatio property.
+
+```
+  /** Set the canvas pixel ratio */
+  setPixelRatio: (pixelRatio: number) => void;
 ```

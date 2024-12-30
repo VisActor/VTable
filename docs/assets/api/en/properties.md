@@ -85,3 +85,7 @@ Horizontal scroll bar position
 ## scrollTop
 
 Vertical scroll bar position
+
+## pixelRatio
+
+Canvas pixel ratio

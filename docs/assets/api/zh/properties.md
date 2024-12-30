@@ -2,7 +2,7 @@
 
 # Properties
 
-表格实例的属性列表，以下列出的都有getter 部分有setter。
+表格实例的属性列表，以下列出的都有 getter 部分有 setter。
 
 ## records
 
@@ -85,3 +85,7 @@
 ## scrollTop
 
 纵向滚动条位置
+
+## pixelRatio
+
+画布像素比
