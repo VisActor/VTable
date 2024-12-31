@@ -5,7 +5,6 @@ export type LayoutObjectId = number | string;
 
 export interface ITimelineDateInfo {
   days: number;
-  timeScaleCount: number;
   endDate: Date;
   startDate: Date;
   title: string;
@@ -102,6 +101,8 @@ export interface GanttConstructorOptions {
       | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
     /** 任务条是否可移动 */
     moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+    /** 任务条拖拽超出当前日期范围时自动扩展日期范围 */
+    moveToExtendDateRange?: boolean;
     /** 任务条是否可以被拖拽来改变顺序 */
     dragOrder?: boolean;
     /** 任务条hover时的样式 */

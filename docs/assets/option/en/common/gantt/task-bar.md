@@ -96,6 +96,10 @@ export type TaskBarInteractionArgumentType = {
 };
 ```
 
+${prefix} moveToExtendDateRange(boolean) = true
+
+Whether to move the task bar to the extended date range. The default is true.
+
 ${prefix} hoverBarStyle(ITaskBarHoverStyle)
 
 Taskbar hover style

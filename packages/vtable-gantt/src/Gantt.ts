@@ -133,6 +133,7 @@ export class Gantt extends EventTarget {
     taskBarSelectable: boolean;
     taskBarLabelText: ITaskBarLabelText;
     taskBarMoveable: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+    moveTaskBarToExtendDateRange: boolean;
     taskBarResizable:
       | boolean
       | [boolean, boolean]
@@ -1081,29 +1082,29 @@ export class Gantt extends EventTarget {
       height
     };
   }
-  getMinScaleUnitToDays() {
-    const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
-    const minScaleUnit = minScale.unit;
-    const minScaleStep = minScale.step ?? 1;
-    if (minScaleUnit === 'day') {
-      return minScaleStep;
-    } else if (minScaleUnit === 'week') {
-      return 7 * minScaleStep;
-    } else if (minScaleUnit === 'month') {
-      return 30 * minScaleStep;
-    } else if (minScaleUnit === 'quarter') {
-      return 90 * minScaleStep;
-    } else if (minScaleUnit === 'year') {
-      return 365 * minScaleStep;
-    } else if (minScaleUnit === 'hour') {
-      return (1 / 24) * minScaleStep;
-    } else if (minScaleUnit === 'minute') {
-      return (1 / 24 / 60) * minScaleStep;
-    } else if (minScaleUnit === 'second') {
-      return (1 / 24 / 60 / 60) * minScaleStep;
-    }
-    return 1;
-  }
+  // getMinScaleUnitToDays() {
+  //   const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
+  //   const minScaleUnit = minScale.unit;
+  //   const minScaleStep = minScale.step ?? 1;
+  //   if (minScaleUnit === 'day') {
+  //     return minScaleStep;
+  //   } else if (minScaleUnit === 'week') {
+  //     return 7 * minScaleStep;
+  //   } else if (minScaleUnit === 'month') {
+  //     return 30 * minScaleStep;
+  //   } else if (minScaleUnit === 'quarter') {
+  //     return 90 * minScaleStep;
+  //   } else if (minScaleUnit === 'year') {
+  //     return 365 * minScaleStep;
+  //   } else if (minScaleUnit === 'hour') {
+  //     return (1 / 24) * minScaleStep;
+  //   } else if (minScaleUnit === 'minute') {
+  //     return (1 / 24 / 60) * minScaleStep;
+  //   } else if (minScaleUnit === 'second') {
+  //     return (1 / 24 / 60 / 60) * minScaleStep;
+  //   }
+  //   return 1;
+  // }
 
   getDateColWidth(dateIndex: number) {
     return this.parsedOptions.timelineColWidth;

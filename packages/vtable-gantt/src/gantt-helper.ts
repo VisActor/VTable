@@ -239,6 +239,7 @@ export function initOptions(gantt: Gantt) {
   );
   gantt.parsedOptions.taskBarLabelText = options?.taskBar?.labelText ?? '';
   gantt.parsedOptions.taskBarMoveable = options?.taskBar?.moveable ?? true;
+  gantt.parsedOptions.moveTaskBarToExtendDateRange = options?.taskBar?.moveToExtendDateRange ?? true;
   gantt.parsedOptions.taskBarResizable = options?.taskBar?.resizable ?? true;
   gantt.parsedOptions.taskBarDragOrder = options?.taskBar?.dragOrder ?? true;
 
@@ -403,7 +404,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: day, startDate: start, endDate: end });
       const columnTitle = formattedDate || day.toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
@@ -425,7 +426,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: month + 1, startDate: start, endDate: end });
       const columnTitle = formattedDate || (month + 1).toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         step,
@@ -447,7 +448,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: quarter + 1, startDate: start, endDate: end });
       const columnTitle = formattedDate || (quarter + 1).toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / (1000 * 60 * 60 * 24),
         startDate: start,
         step,
@@ -467,7 +468,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: year, startDate: start, endDate: end });
       const columnTitle = formattedDate || year.toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
@@ -502,7 +503,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const columnTitle =
         format?.({ dateIndex: weekNumber, startDate: startOfWeek, endDate: dateEnd }) || weekNumber.toString();
 
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: (dateEnd.getTime() - startOfWeek.getTime() + 1) / DayTimes,
         // days: Math.abs(dateEnd.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24),
         startDate: startOfWeek,
@@ -532,7 +533,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: hour, startDate: start, endDate: end });
       const columnTitle = formattedDate || hour.toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
@@ -556,7 +557,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: minute, startDate: start, endDate: end });
       const columnTitle = formattedDate || minute.toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
@@ -581,7 +582,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: second, startDate: start, endDate: end });
       const columnTitle = formattedDate || second.toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,

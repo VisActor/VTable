@@ -99,6 +99,10 @@ export type TaskBarInteractionArgumentType = {
 };
 ```
 
+${prefix} moveToExtendDateRange(boolean) = true
+
+任务条拖拽超出当前日期范围时自动扩展日期范围, 默认为 true
+
 ${prefix} hoverBarStyle(ITaskBarHoverStyle)
 
 任务条 hover 时的样式
