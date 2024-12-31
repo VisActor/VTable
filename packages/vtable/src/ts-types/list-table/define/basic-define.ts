@@ -56,6 +56,8 @@ export interface IBasicColumnBodyDefine {
   field: FieldDef;
   /** @deprecated 已不维护 */
   fieldKey?: FieldKeyDef;
+  // 列的唯一标识
+  key?: string;
   fieldFormat?: FieldFormat;
   width?: number | string;
   minWidth?: number | string;
