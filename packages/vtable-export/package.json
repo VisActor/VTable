@@ -42,7 +42,7 @@
     "exceljs": "4.4.0"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.13.1-alpha.2",
+    "@visactor/vchart": "1.13.3-alpha.2",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
