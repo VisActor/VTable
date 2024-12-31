@@ -140,6 +140,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.headerHelper.setTableColumnsEditor();
     this.showHeader = options.showHeader ?? true;
 
+    this.internalProps.columnWidthConfig = options.columnWidthConfig;
+
     this.transpose = options.transpose ?? false;
     if (Env.mode !== 'node') {
       this.editorManager = new EditManager(this);
@@ -500,6 +502,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // 更新表头
     this.refreshHeader();
     this.internalProps.useOneRowHeightFillAll = false;
+
+    this.internalProps.columnWidthConfig = options.columnWidthConfig;
 
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据

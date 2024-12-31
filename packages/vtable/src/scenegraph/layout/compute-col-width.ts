@@ -26,8 +26,16 @@ import { emptyCustomLayout } from '../../components/react/react-custom-layout';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   // const time = typeof window !== 'undefined' ? window.performance.now() : 0;
-  table.internalProps.columnWidthConfig &&
-    (table as PivotTableAPI | ListTableAPI)._parseColumnWidthConfig(table.internalProps.columnWidthConfig as any);
+  (table as PivotTableAPI | ListTableAPI).internalProps.columnWidthConfig &&
+    (table as PivotTableAPI | ListTableAPI)._parseColumnWidthConfig(
+      (table as PivotTableAPI | ListTableAPI).internalProps.columnWidthConfig as any
+    );
+
+  (table as PivotTableAPI).internalProps.columnWidthConfigForRowHeader &&
+    (table as PivotTableAPI)._parseColumnWidthConfigForRowHeader(
+      (table as PivotTableAPI).internalProps.columnWidthConfigForRowHeader
+    );
+
   colStart = colStart ?? 0;
   colEnd = colEnd ?? table.colCount - 1;
   // table._clearColRangeWidthsMap();

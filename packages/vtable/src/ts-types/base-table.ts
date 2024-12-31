@@ -136,15 +136,6 @@ export interface IBaseTableProtected {
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
-  columnWidthConfig?:
-    | {
-        dimensions: IDimensionInfo[];
-        width: number;
-      }[]
-    | {
-        key: string;
-        width: number;
-      }[];
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
   /** 拖拽表头移动位置 针对冻结部分的规则
@@ -954,6 +945,10 @@ export interface ListTableProtected extends IBaseTableProtected {
   dataConfig?: IListTableDataConfig;
   columns: ColumnsDefine;
   layoutMap: SimpleHeaderLayoutMap;
+  columnWidthConfig?: {
+    key: string;
+    width: number;
+  }[];
 }
 
 export interface PivotTableProtected extends IBaseTableProtected {
@@ -973,6 +968,15 @@ export interface PivotTableProtected extends IBaseTableProtected {
   columns?: (IColumnDimension | string)[]; // (string | IDimension)[];
   /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
   indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
+
+  columnWidthConfig?: {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
+  columnWidthConfigForRowHeader?: {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
 }
 export interface PivotChartProtected extends IBaseTableProtected {
   /** 表格数据 */

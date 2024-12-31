@@ -33,6 +33,7 @@ import type {
   PivotTableConstructorOptions,
   PivotChartConstructorOptions
 } from '@visactor/vtable';
+import type { TYPES } from '@visactor/vtable';
 
 export type IVTable = ListTable | PivotTable | PivotChart;
 export type IOption = ListTableConstructorOptions | PivotTableConstructorOptions | PivotChartConstructorOptions;
@@ -139,6 +140,8 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const skipFunctionDiff = !!props.skipFunctionDiff;
   const keepColumnWidthChange = !!props.keepColumnWidthChange;
   const columnWidths = useRef<Map<string, number>>(new Map());
+  const pivotColumnWidths = useRef<{ dimensions: TYPES.IDimensionInfo[]; width: number }[]>([]);
+  const pivotHeaderColumnWidths = useRef<number[]>([]);
 
   const parseOption = useCallback(
     (props: Props) => {
@@ -155,6 +158,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
           clearDOM: false
         };
       }
+
       return {
         records: props.records,
         ...prevOption.current,
@@ -172,16 +176,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
 
   const createTable = useCallback(
     (props: Props) => {
-      // let vtable;
-      // if (props.type === 'pivot-table') {
-      //   vtable = new VTable.PivotTable(props.container, parseOption(props));
-      // } else if (props.type === 'pivot-chart') {
-      //   vtable = new VTable.PivotChart(props.container, parseOption(props));
-      // } else {
-      //   vtable = new VTable.ListTable(props.container, parseOption(props));
-      // }
       const vtable = new props.vtableConstrouctor(props.container, parseOption(props));
-      // vtable.scenegraph.stage.enableReactAttribute(ReactDOM);
       vtable.scenegraph.stage.reactAttribute = props.ReactDOM;
       vtable.scenegraph.stage.pluginService.register(new VTableReactAttributePlugin());
       vtable.scenegraph.stage.params.ReactDOM = props.ReactDOM;
@@ -189,14 +184,40 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       isUnmount.current = false;
 
       columnWidths.current.clear();
+      pivotColumnWidths.current = [];
+      pivotHeaderColumnWidths.current = [];
+
       vtable.on('resize_column_end', (args: { col: number; colWidths: number[] }) => {
-        if (vtable.isPivotTable() || !keepColumnWidthChange) {
+        const table = tableContext.current.table;
+        if (!keepColumnWidthChange) {
           return;
         }
         const { col, colWidths } = args;
-        const define = tableContext.current.table.getBodyColumnDefine(col, 0);
-        if ((define as any)?.key) {
-          columnWidths.current.set((define as any).key, colWidths[col]);
+        const width = colWidths[col];
+        if (vtable.isPivotTable()) {
+          const path = (table as PivotTable).getCellHeaderPaths(col, table.columnHeaderLevelCount);
+          let dimensions;
+          if (path.cellLocation === 'rowHeader') {
+            dimensions = path.rowHeaderPaths as TYPES.IDimensionInfo[];
+          } else {
+            dimensions = path.colHeaderPaths as TYPES.IDimensionInfo[];
+          }
+
+          let found = false;
+          pivotColumnWidths.current.forEach(item => {
+            if (JSON.stringify(item.dimensions) === JSON.stringify(dimensions)) {
+              item.width = width;
+              found = true;
+            }
+          });
+          if (!found) {
+            pivotColumnWidths.current.push({ dimensions, width });
+          }
+        } else {
+          const define = table.getBodyColumnDefine(col, 0);
+          if ((define as any)?.key) {
+            columnWidths.current.set((define as any).key, width);
+          }
         }
       });
     },
@@ -274,17 +295,17 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       prevOption.current = newOption;
       optionFromChildren.current = newOptionFromChildren;
 
-      const columnWidthConfig: { key: string; width: number }[] = [];
-      columnWidths.current.forEach((width, key) => {
-        columnWidthConfig.push({
-          key,
-          width
-        });
-      });
-      tableContext.current.table.internalProps.columnWidthConfig = columnWidthConfig;
-
-      // eslint-disable-next-line promise/catch-or-return
-      tableContext.current.table.updateOption(parseOption(props) as any);
+      const option = parseOption(props);
+      if (keepColumnWidthChange) {
+        const columnWidthConfig = updateWidthCache(
+          columnWidths.current,
+          pivotColumnWidths.current,
+          tableContext.current.table
+        );
+        (option as any).columnWidthConfig = columnWidthConfig;
+        (option as any).columnWidthConfigForRowHeader = columnWidthConfig;
+      }
+      tableContext.current.table.updateOption(option as any);
 
       // columnWidths.current = [];
       handleTableRender();
@@ -292,14 +313,15 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
     } else if (hasRecords && !isEqual(props.records, prevRecords.current, { skipFunction: skipFunctionDiff })) {
       prevRecords.current = props.records;
 
-      const columnWidthConfig: { key: string; width: number }[] = [];
-      columnWidths.current.forEach((width, key) => {
-        columnWidthConfig.push({
-          key,
-          width
-        });
-      });
-      tableContext.current.table.internalProps.columnWidthConfig = columnWidthConfig;
+      if (keepColumnWidthChange) {
+        const columnWidthConfig = updateWidthCache(
+          columnWidths.current,
+          pivotColumnWidths.current,
+          tableContext.current.table
+        );
+        (tableContext.current.table.internalProps as any).columnWidthConfig = columnWidthConfig;
+        (tableContext.current.table.internalProps as any).columnWidthConfigForRowHeader = columnWidthConfig;
+      }
 
       tableContext.current.table.setRecords(props.records);
       handleTableRender();
@@ -380,3 +402,21 @@ export const createTable = <T extends Props>(
   Com.displayName = componentName;
   return Com;
 };
+
+function updateWidthCache(
+  columnWidths: Map<string, number>,
+  pivotColumnWidths: { dimensions: TYPES.IDimensionInfo[]; width: number }[],
+  table: IVTable
+) {
+  if (table.isPivotTable()) {
+    return pivotColumnWidths;
+  }
+  const columnWidthConfig: { key: string; width: number }[] = [];
+  columnWidths.forEach((width, key) => {
+    columnWidthConfig.push({
+      key,
+      width
+    });
+  });
+  return columnWidthConfig;
+}

@@ -26,12 +26,12 @@ import customLayoutPivot from './component/custom-layout-pivot';
 // export default listTable;
 // export default listEditor;
 // export default listOptionRecord;
-export default listComponent;
+// export default listComponent;
 // export default listCustomLayout;
 // export default listGroup;
 
 // export default pivotTable;
-// export default pivotComponent;
+export default pivotComponent;
 // export default pivotComponentEmptyTip;
 
 // export default pivotChart;
