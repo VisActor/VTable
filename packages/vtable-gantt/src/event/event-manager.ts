@@ -192,20 +192,33 @@ function bindTableGroupListener(event: EventManager) {
         }
         //#region hover到某一个任务 检查有没有日期安排，没有的话显示创建按钮
         if (
-          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Inline &&
-          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
-          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
-          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact &&
+          // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Inline &&
+          // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
+          // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
+          // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact &&
           gantt.parsedOptions.taskBarCreatable
         ) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-          const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
+          let recordTaskInfo;
+          if (typeof taskIndex === 'number') {
+            recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
+          } else {
+            recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex[0], taskIndex[1]);
+          }
           if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord && !recordTaskInfo.taskRecord.vtableMerge) {
             const dateIndex = getDateIndexByX(e.offset.x, gantt);
             const showX =
               (dateIndex >= 1 ? gantt.getDateColsWidth(0, dateIndex - 1) : 0) -
               gantt.stateManager.scroll.horizontalBarPos;
-            const showY = taskIndex * gantt.parsedOptions.rowHeight - gantt.stateManager.scroll.verticalBarPos;
+            const showY =
+              typeof taskIndex === 'number'
+                ? taskIndex * gantt.parsedOptions.rowHeight
+                : gantt.taskListTableInstance.getRowsHeight(
+                    gantt.taskListTableInstance.columnHeaderLevelCount,
+                    taskIndex[0] + gantt.taskListTableInstance.columnHeaderLevelCount - 1
+                  ) +
+                  taskIndex[1] * gantt.parsedOptions.rowHeight;
+            gantt.stateManager.scroll.verticalBarPos;
             //    -
             // (gantt.stateManager.scroll.horizontalBarPos % gantt.parsedOptions.rowHeight);
             // const date = getDateByX(e.offset.x, gantt);
@@ -351,7 +364,14 @@ function bindTableGroupListener(event: EventManager) {
         stateManager.hideDependencyLinkSelectedLine();
         stateManager.hideTaskBarSelectedBorder();
         const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-        const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
+
+        let recordTaskInfo;
+        if (typeof taskIndex === 'number') {
+          recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
+        } else {
+          recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex[0], taskIndex[1]);
+        }
+
         if (recordTaskInfo.taskRecord) {
           // const minTimeUnit = gantt.parsedOptions.reverseSortedTimelineScales[0].unit;
           const dateFormat =
@@ -368,7 +388,8 @@ function bindTableGroupListener(event: EventManager) {
             gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE, {
               federatedEvent: e,
               event: e.nativeEvent,
-              index: taskIndex,
+              index: typeof taskIndex === 'number' ? taskIndex : taskIndex[0],
+              sub_task_index: typeof taskIndex === 'number' ? undefined : taskIndex[1],
               startDate: recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField],
               endDate: recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField],
               record: recordTaskInfo.taskRecord
@@ -387,10 +408,17 @@ function bindTableGroupListener(event: EventManager) {
       } else if ((isClickLeftLinkPoint || isClickRightLinkPoint) && event.poniterState === 'down') {
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_DEPENDENCY_LINK_POINT)) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-          const record = gantt.getRecordByIndex(taskIndex);
+
+          let record;
+          if (typeof taskIndex === 'number') {
+            record = gantt.getRecordByIndex(taskIndex);
+          } else {
+            record = gantt.getRecordByIndex(taskIndex[0], taskIndex[1]);
+          }
           gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_DEPENDENCY_LINK_POINT, {
             event: e.nativeEvent,
-            index: taskIndex,
+            index: typeof taskIndex === 'number' ? taskIndex : taskIndex[0],
+            sub_task_index: typeof taskIndex === 'number' ? undefined : taskIndex[1],
             point: isClickLeftLinkPoint ? 'start' : 'end',
             record
           });

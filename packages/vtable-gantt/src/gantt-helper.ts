@@ -25,6 +25,25 @@ export function getTaskIndexByY(y: number, gantt: Gantt) {
   const gridY = y - gantt.headerHeight;
   const taskBarHeight = gantt.stateManager.scroll.verticalBarPos + gridY;
   const taskBarIndex = Math.floor(taskBarHeight / gantt.parsedOptions.rowHeight);
+  // let tableRecordIndex = taskBarIndex;
+  if (gantt.taskListTableInstance) {
+    const row = gantt.taskListTableInstance.getTargetRowAt(y).row;
+    const index = gantt.taskListTableInstance.getRecordIndexByCell(0, row);
+    if (typeof index === 'number') {
+      // tableRecordIndex = index;
+      if (taskBarIndex !== index) {
+        return [
+          index,
+          Math.floor(
+            (taskBarHeight -
+              gantt.taskListTableInstance.getRowsHeight(gantt.taskListTableInstance.columnHeaderLevelCount, row - 1)) /
+              gantt.parsedOptions.rowHeight
+          )
+        ];
+      }
+    }
+  }
+
   return taskBarIndex;
 }
 export function getDateIndexByX(x: number, gantt: Gantt) {

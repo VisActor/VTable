@@ -86,6 +86,7 @@ export interface TableEventHandlersEventArgumentMap {
     point: 'start' | 'end';
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     record: any;
   };
 }

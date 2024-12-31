@@ -62,6 +62,7 @@ import {
 } from './tools/util';
 import { DataSource } from './data/DataSource';
 import { isValid } from '@visactor/vutils';
+import type { GanttTaskBarNode } from './scenegraph/gantt-node';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
@@ -735,22 +736,22 @@ export class Gantt extends EventTarget {
     return this.records[taskShowIndex];
   }
 
-  _refreshTaskBar(taskShowIndex: number) {
+  _refreshTaskBar(taskShowIndex: number, sub_task_index: number) {
     // this.taskListTableInstance.updateRecords([record], [index]);
-    this.scenegraph.taskBar.updateTaskBarNode(taskShowIndex);
+    this.scenegraph.taskBar.updateTaskBarNode(taskShowIndex, sub_task_index);
     this.scenegraph.refreshRecordLinkNodes(
       taskShowIndex,
       undefined,
-      this.scenegraph.taskBar.getTaskBarNodeByIndex(taskShowIndex)
+      this.scenegraph.taskBar.getTaskBarNodeByIndex(taskShowIndex, sub_task_index) as GanttTaskBarNode
     );
     this.scenegraph.updateNextFrame();
   }
-  _updateRecordToListTable(record: any, index: number) {
-    const indexs = this.taskListTableInstance.getRecordIndexByCell(
-      0,
-      index + this.taskListTableInstance.columnHeaderLevelCount
-    );
-    this.taskListTableInstance.updateRecords([record], [indexs]);
+  _updateRecordToListTable(record: any, index: number | number[]) {
+    // const indexs = this.taskListTableInstance.getRecordIndexByCell(
+    //   0,
+    //   index + this.taskListTableInstance.columnHeaderLevelCount
+    // );
+    this.taskListTableInstance.updateRecords([record], [index]);
   }
   /**
    * 获取指定index处任务数据的具体信息
@@ -882,10 +883,18 @@ export class Gantt extends EventTarget {
     this.data.adjustOrder(source_index, source_sub_task_index, target_index, target_sub_task_index);
   }
   /** 目前不支持树形tree的情况更新单条数据 需要的话目前可以setRecords。 */
-  updateTaskRecord(record: any, index: number) {
+  updateTaskRecord(record: any, index: number | number[]) {
+    let task_index;
+    let sub_task_index;
+    if (Array.isArray(index)) {
+      task_index = index[0];
+      sub_task_index = index[1];
+    } else {
+      task_index = index;
+    }
     //const taskRecord = this.getRecordByIndex(index);
     this._updateRecordToListTable(record, index);
-    this._refreshTaskBar(index);
+    this._refreshTaskBar(task_index, sub_task_index);
   }
 
   /**

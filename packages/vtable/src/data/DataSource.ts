@@ -937,7 +937,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   /**
    * 修改多条数据recordIndexs
    */
-  updateRecords(records: any[], recordIndexs: number[] | number[][]) {
+  updateRecords(records: any[], recordIndexs: (number | number[])[]) {
     const realDeletedRecordIndexs = [];
     for (let index = 0; index < recordIndexs.length; index++) {
       const recordIndex = recordIndexs[index];
