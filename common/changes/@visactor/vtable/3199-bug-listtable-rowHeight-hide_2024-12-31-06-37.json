@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "docs: update changlog of rush\n\n",
+      "comment": "fix: when columns is all hide then should not generate cell ids #3199\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
