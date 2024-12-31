@@ -136,10 +136,15 @@ export interface IBaseTableProtected {
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
-  columnWidthConfig?: {
-    dimensions: IDimensionInfo[];
-    width: number;
-  }[];
+  columnWidthConfig?:
+    | {
+        dimensions: IDimensionInfo[];
+        width: number;
+      }[]
+    | {
+        key: string;
+        width: number;
+      }[];
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
   /** 拖拽表头移动位置 针对冻结部分的规则

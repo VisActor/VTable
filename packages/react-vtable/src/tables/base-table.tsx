@@ -6,7 +6,7 @@ import type { ContainerProps } from '../containers/withContainer';
 import withContainer from '../containers/withContainer';
 import type { TableContextType } from '../context/table';
 import RootTableContext from '../context/table';
-import { isEqual, isNil, pickWithout } from '@visactor/vutils';
+import { isEqual, isNil, isNumber, pickWithout } from '@visactor/vutils';
 import { toArray } from '../util';
 import { REACT_PRIVATE_PROPS } from '../constants';
 import type { IMarkElement } from '../table-components';
@@ -52,6 +52,7 @@ export type BaseTableProps = EventsProps &
     /** 画布高度 */
     height?: number;
     skipFunctionDiff?: boolean;
+    keepColumnWidthChange?: boolean;
 
     ReactDOM?: any;
 
@@ -105,6 +106,10 @@ const parseOptionFromChildren = (props: Props) => {
         option: any;
       };
 
+      if ((child as React.ReactElement).key) {
+        optionResult.option.key = (child as React.ReactElement).key;
+      }
+
       if (optionResult.isSingle) {
         optionFromChildren[optionResult.optionName] = optionResult.option as never;
       } else {
@@ -132,6 +137,8 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const prevRecords = useRef(props.records);
   const eventsBinded = React.useRef<BaseTableProps>(null);
   const skipFunctionDiff = !!props.skipFunctionDiff;
+  const keepColumnWidthChange = !!props.keepColumnWidthChange;
+  const columnWidths = useRef<Map<string, number>>(new Map());
 
   const parseOption = useCallback(
     (props: Props) => {
@@ -180,6 +187,18 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       vtable.scenegraph.stage.params.ReactDOM = props.ReactDOM;
       tableContext.current = { ...tableContext.current, table: vtable };
       isUnmount.current = false;
+
+      columnWidths.current.clear();
+      vtable.on('resize_column_end', (args: { col: number; colWidths: number[] }) => {
+        if (vtable.isPivotTable() || !keepColumnWidthChange) {
+          return;
+        }
+        const { col, colWidths } = args;
+        const define = tableContext.current.table.getBodyColumnDefine(col, 0);
+        if ((define as any)?.key) {
+          columnWidths.current.set((define as any).key, colWidths[col]);
+        }
+      });
     },
     [parseOption]
   );
@@ -255,12 +274,33 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       prevOption.current = newOption;
       optionFromChildren.current = newOptionFromChildren;
 
+      const columnWidthConfig: { key: string; width: number }[] = [];
+      columnWidths.current.forEach((width, key) => {
+        columnWidthConfig.push({
+          key,
+          width
+        });
+      });
+      tableContext.current.table.internalProps.columnWidthConfig = columnWidthConfig;
+
       // eslint-disable-next-line promise/catch-or-return
       tableContext.current.table.updateOption(parseOption(props) as any);
+
+      // columnWidths.current = [];
       handleTableRender();
       eventsBinded.current = props;
     } else if (hasRecords && !isEqual(props.records, prevRecords.current, { skipFunction: skipFunctionDiff })) {
       prevRecords.current = props.records;
+
+      const columnWidthConfig: { key: string; width: number }[] = [];
+      columnWidths.current.forEach((width, key) => {
+        columnWidthConfig.push({
+          key,
+          width
+        });
+      });
+      tableContext.current.table.internalProps.columnWidthConfig = columnWidthConfig;
+
       tableContext.current.table.setRecords(props.records);
       handleTableRender();
       eventsBinded.current = props;

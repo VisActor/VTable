@@ -1424,4 +1424,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return this.dataSource.getTableIndex(index);
   }
+
+  /** 解析配置columnWidthConfig传入的列宽配置 */
+  _parseColumnWidthConfig(columnWidthConfig: { key: string; width: number }[]) {
+    for (let i = 0; i < columnWidthConfig?.length; i++) {
+      const item = columnWidthConfig[i];
+      const key = item.key;
+      const width = item.width;
+      const columnData = this.internalProps.layoutMap.getColumnByKey(key);
+      if (columnData.columnDefine) {
+        const { col } = columnData;
+        if (!this.internalProps._widthResizedColMap.has(col)) {
+          this._setColWidth(col, width);
+          this.internalProps._widthResizedColMap.add(col); // add resize tag
+        }
+      }
+    }
+  }
 }

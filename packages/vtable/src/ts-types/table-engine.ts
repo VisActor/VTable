@@ -328,6 +328,8 @@ export interface ListTableAPI extends BaseTableAPI {
    * @param  {number} index The record index.
    */
   getBodyRowIndexByRecordIndex: (index: number | number[]) => number;
+
+  _parseColumnWidthConfig: (columnWidthConfig: { key: string; width: number }[]) => void;
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**
