@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: groupby support array config\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "liujiamei.913@bytedance.com"
+}
