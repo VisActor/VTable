@@ -13,7 +13,7 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import type { ColumnData, ColumnsDefine } from '../ts-types/list-table/layout-map/api';
 import type { DataSourceParam } from './DataSource';
 import { DataSource } from './DataSource';
-import { get } from 'lodash';
+import get from 'lodash/get';
 
 /** @private */
 function _setFieldCache(
