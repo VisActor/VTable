@@ -150,15 +150,22 @@ export function updateReactComponentContainer(scene: Scenegraph) {
   }
   const { table, stage } = scene;
   const plugin = stage.pluginService.findPluginsByName('ReactAttributePlugin')[0] as ReactAttributePlugin;
-  const { htmlMap } = plugin;
+  const { htmlMap, renderId: stageRenderId } = plugin;
 
   for (const key in htmlMap) {
     const item = htmlMap[key];
-    const { graphic, wrapContainer } = item as typeof item & { graphic: IGraphic };
+    const { graphic, wrapContainer, renderId } = item as typeof item & { graphic: IGraphic };
+    if (renderId !== stageRenderId) {
+      continue;
+    }
     let targetContainer: HTMLElement;
     if (scene.frozenColCount > table.frozenColCount) {
       // move columnGroup from rowHeaderGroup into bodyGroup(from cornerHeaderGroup into colHeaderGroup)
-      const { col, row } = getTargetCell(graphic);
+      const targetCell = getTargetCell(graphic);
+      if (!targetCell) {
+        continue;
+      }
+      const { col, row } = targetCell;
       if (
         row >= table.rowCount - table.bottomFrozenRowCount &&
         col < scene.frozenColCount &&
@@ -183,7 +190,11 @@ export function updateReactComponentContainer(scene: Scenegraph) {
       }
     } else if (scene.frozenColCount < table.frozenColCount) {
       // move columnGroup from bodyGroup into rowHeaderGroup(from colHeaderGroup into cornerHeaderGroup)
-      const { col, row } = getTargetCell(graphic);
+      const targetCell = getTargetCell(graphic);
+      if (!targetCell) {
+        continue;
+      }
+      const { col, row } = targetCell;
       if (
         row >= table.rowCount - table.bottomFrozenRowCount &&
         col < table.frozenColCount &&
