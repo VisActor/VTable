@@ -195,7 +195,7 @@ function bindTableGroupListener(event: EventManager) {
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Inline &&
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
-          // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact &&
+          // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact
           gantt.parsedOptions.taskBarCreatable
         ) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);
@@ -205,25 +205,49 @@ function bindTableGroupListener(event: EventManager) {
           } else {
             recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex[0], taskIndex[1]);
           }
-          if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord && !recordTaskInfo.taskRecord.vtableMerge) {
-            const dateIndex = getDateIndexByX(e.offset.x, gantt);
-            const showX =
-              (dateIndex >= 1 ? gantt.getDateColsWidth(0, dateIndex - 1) : 0) -
-              gantt.stateManager.scroll.horizontalBarPos;
-            const showY =
-              typeof taskIndex === 'number'
-                ? taskIndex * gantt.parsedOptions.rowHeight
-                : gantt.taskListTableInstance.getRowsHeight(
-                    gantt.taskListTableInstance.columnHeaderLevelCount,
-                    taskIndex[0] + gantt.taskListTableInstance.columnHeaderLevelCount - 1
-                  ) +
-                  taskIndex[1] * gantt.parsedOptions.rowHeight;
-            gantt.stateManager.scroll.verticalBarPos;
-            //    -
-            // (gantt.stateManager.scroll.horizontalBarPos % gantt.parsedOptions.rowHeight);
-            // const date = getDateByX(e.offset.x, gantt);
-            gantt.scenegraph.showTaskCreationButton(showX, showY, dateIndex);
-            return;
+          let taskBarCreatable: boolean = true;
+          if (typeof gantt.parsedOptions.taskBarCreatable === 'function') {
+            const { startDate, endDate, taskRecord } = recordTaskInfo;
+            const args = {
+              index: typeof taskIndex === 'number' ? taskIndex : taskIndex[0],
+              sub_task_index: typeof taskIndex === 'number' ? undefined : taskIndex[1],
+              startDate,
+              endDate,
+              taskRecord,
+              ganttInstance: gantt
+            };
+            taskBarCreatable = gantt.parsedOptions.taskBarCreatable(args);
+          } else {
+            taskBarCreatable = gantt.parsedOptions.taskBarCreatable;
+          }
+
+          if (taskBarCreatable) {
+            if (
+              ((gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+                gantt.parsedOptions.tasksShowMode === TasksShowMode.Tasks_Separate) &&
+                !recordTaskInfo.taskDays &&
+                recordTaskInfo.taskRecord &&
+                !recordTaskInfo.taskRecord.vtableMerge) ||
+              gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+              gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+              gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+            ) {
+              const dateIndex = getDateIndexByX(e.offset.x, gantt);
+              const showX =
+                (dateIndex >= 1 ? gantt.getDateColsWidth(0, dateIndex - 1) : 0) -
+                gantt.stateManager.scroll.horizontalBarPos;
+              const showY =
+                typeof taskIndex === 'number'
+                  ? taskIndex * gantt.parsedOptions.rowHeight
+                  : gantt.taskListTableInstance.getRowsHeight(
+                      gantt.taskListTableInstance.columnHeaderLevelCount,
+                      taskIndex[0] + gantt.taskListTableInstance.columnHeaderLevelCount - 1
+                    ) +
+                    taskIndex[1] * gantt.parsedOptions.rowHeight;
+              gantt.stateManager.scroll.verticalBarPos;
+              gantt.scenegraph.showTaskCreationButton(showX, showY, dateIndex);
+              return;
+            }
           }
         }
         //#endregion
