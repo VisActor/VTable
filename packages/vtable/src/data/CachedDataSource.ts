@@ -13,6 +13,7 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import type { ColumnData, ColumnsDefine } from '../ts-types/list-table/layout-map/api';
 import type { DataSourceParam } from './DataSource';
 import { DataSource } from './DataSource';
+import { get } from 'lodash';
 
 /** @private */
 function _setFieldCache(
@@ -257,7 +258,7 @@ function dealWithGroup(record: any, children: any[], map: Map<number, any>, grou
     children.push(record);
     return;
   }
-  const value = record[groupByKey];
+  const value = get(record, groupByKey);
   if (value !== undefined) {
     if (map.has(value)) {
       const index = map.get(value);
