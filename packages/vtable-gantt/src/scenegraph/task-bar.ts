@@ -122,7 +122,7 @@ export class TaskBar {
         : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
         ? computeRowsCountByRecordDateForCompact(this._scene._gantt, this._scene._gantt.records[index])
         : 1;
-    const oneTaskHeigth = this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
+    const oneTaskHeigth = this._scene._gantt.parsedOptions.rowHeight; // this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
     const milestoneTaskBarHeight = this._scene._gantt.parsedOptions.taskBarMilestoneStyle.width;
     const x =
       computeCountToTimeScale(startDate, this._scene._gantt.parsedOptions.minDate, unit, step) *

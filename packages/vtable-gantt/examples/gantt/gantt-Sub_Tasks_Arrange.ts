@@ -307,6 +307,7 @@ export function createTable() {
     },
     headerRowHeight: 60,
     taskBar: {
+      scheduleCreatable: true,
       startDateField: 'start',
       endDateField: 'end',
       progressField: 'progress',

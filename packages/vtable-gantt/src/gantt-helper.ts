@@ -31,7 +31,7 @@ export function getTaskIndexByY(y: number, gantt: Gantt) {
     const index = gantt.taskListTableInstance.getRecordIndexByCell(0, row);
     if (typeof index === 'number') {
       // tableRecordIndex = index;
-      if (taskBarIndex !== index) {
+      if (gantt.parsedOptions.tasksShowMode !== TasksShowMode.Tasks_Separate) {
         return [
           index,
           Math.floor(
