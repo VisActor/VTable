@@ -1,6 +1,7 @@
 import { isArray, isNumber } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { setCellCheckboxStateByAttribute } from '../../state/checkbox/checkbox';
+import { HierarchyState } from '../../ts-types';
 
 export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
   table.on('checkbox_state_change', args => {
@@ -22,13 +23,21 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
       if (checked) {
         // 1.1 group title check
         // 1.1.1 check all children
-        setAllChildrenCheckboxState(true, titleShowIndex, titleIndex, indexedData, table);
+        if (table.getHierarchyState(col, row) === HierarchyState.collapse) {
+          updateChildrenCheckboxState(true, titleIndex, table);
+        } else {
+          setAllChildrenCheckboxState(true, titleShowIndex, titleIndex, indexedData, table);
+        }
         // 1.1.2 update group title state
         updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
       } else {
         // 1.2 group title uncheck
         // 1.2.1 uncheck all children
-        setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table);
+        if (table.getHierarchyState(col, row) === HierarchyState.collapse) {
+          updateChildrenCheckboxState(false, titleIndex, table);
+        } else {
+          setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table);
+        }
         // 1.2.2 update group title state
         updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
 
@@ -46,6 +55,7 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
   });
 }
 
+// update visible children checkbox state
 function setAllChildrenCheckboxState(
   state: boolean,
   titleShowIndex: number,
@@ -126,4 +136,26 @@ function updateParentCheckboxState(col: number, row: number, currentIndex: numbe
     table.stateManager.setCheckedState(col, row, '_vtable_rowSeries_number', 'indeterminate');
     setCellCheckboxStateByAttribute(col, row, 'indeterminate', table);
   }
+}
+
+// update invisible children checkbox state(collapsed)
+function updateChildrenCheckboxState(state: boolean, currentIndex: number | number[], table: BaseTableAPI) {
+  const { checkedState } = table.stateManager;
+  const key = currentIndex.toString();
+  const currentIndexLength = isArray(currentIndex) ? currentIndex.length : 1;
+  let start = false;
+
+  checkedState.forEach((value, index: string) => {
+    if (start) {
+      const indexData = index.split(',');
+      if (indexData.length === currentIndexLength) {
+        start = false;
+      } else {
+        value._vtable_rowSeries_number = state;
+      }
+    }
+    if (index === key) {
+      start = true;
+    }
+  });
 }
