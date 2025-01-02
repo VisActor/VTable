@@ -68,11 +68,13 @@ export interface TableEventHandlersEventArgumentMap {
     index: number;
     sub_task_index?: number;
     /** 改变后的起始日期 */
-    startDate: Date;
+    startDate: string;
     /** 改变后的结束日期 */
-    endDate: Date;
+    endDate: string;
     /** 改变后的数据条目 */
     record: any;
+    /** 如果是子任务模式，父级数据信息 */
+    parentRecord?: any;
   };
   create_dependency_link: {
     federatedEvent: FederatedPointerEvent;

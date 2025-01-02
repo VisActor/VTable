@@ -883,17 +883,9 @@ export class Gantt extends EventTarget {
     this.data.adjustOrder(source_index, source_sub_task_index, target_index, target_sub_task_index);
   }
   /** 目前不支持树形tree的情况更新单条数据 需要的话目前可以setRecords。 */
-  updateTaskRecord(record: any, index: number | number[]) {
-    let task_index;
-    let sub_task_index;
-    if (Array.isArray(index)) {
-      task_index = index[0];
-      sub_task_index = index[1];
-    } else {
-      task_index = index;
-    }
+  updateTaskRecord(record: any, task_index: number, sub_task_index: number) {
     //const taskRecord = this.getRecordByIndex(index);
-    this._updateRecordToListTable(record, index);
+    this._updateRecordToListTable(record, isValid(sub_task_index) ? [task_index, sub_task_index] : task_index);
     this._refreshTaskBar(task_index, sub_task_index);
   }
 

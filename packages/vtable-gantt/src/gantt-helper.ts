@@ -20,32 +20,6 @@ import {
 
 const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
 export const DayTimes = 1000 * 60 * 60 * 24;
-/** 通过事件坐标y计算鼠标当前所在所几条任务条上。y是相对于canvas的坐标值，vrender事件返回的e.offset.y */
-export function getTaskIndexByY(y: number, gantt: Gantt) {
-  const gridY = y - gantt.headerHeight;
-  const taskBarHeight = gantt.stateManager.scroll.verticalBarPos + gridY;
-  const taskBarIndex = Math.floor(taskBarHeight / gantt.parsedOptions.rowHeight);
-  // let tableRecordIndex = taskBarIndex;
-  if (gantt.taskListTableInstance) {
-    const row = gantt.taskListTableInstance.getTargetRowAt(y).row;
-    const index = gantt.taskListTableInstance.getRecordIndexByCell(0, row);
-    if (typeof index === 'number') {
-      // tableRecordIndex = index;
-      if (gantt.parsedOptions.tasksShowMode !== TasksShowMode.Tasks_Separate) {
-        return [
-          index,
-          Math.floor(
-            (taskBarHeight -
-              gantt.taskListTableInstance.getRowsHeight(gantt.taskListTableInstance.columnHeaderLevelCount, row - 1)) /
-              gantt.parsedOptions.rowHeight
-          )
-        ];
-      }
-    }
-  }
-
-  return taskBarIndex;
-}
 export function getDateIndexByX(x: number, gantt: Gantt) {
   const totalX = x + gantt.stateManager.scroll.horizontalBarPos;
   const firstDateColWidth = gantt.getDateColWidth(0);
@@ -860,7 +834,14 @@ export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
       const { row } = rowInfo;
       task_index = row - gantt.taskListTableInstance.columnHeaderLevelCount;
       const beforeRowsHeight = gantt.getRowsHeightByIndex(0, task_index - 1); // 耦合了listTableOption的customComputeRowHeight
-      sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+      if (
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
+      ) {
+        sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+      }
     }
   } else {
     task_index = Math.floor(y / gantt.parsedOptions.rowHeight);
@@ -1061,4 +1042,36 @@ export function updateOptionsWhenDateRangeChanged(gantt: Gantt) {
 export function updateOptionsWhenMarkLineChanged(gantt: Gantt) {
   const options = gantt.options;
   gantt.parsedOptions.markLine = generateMarkLine(options?.markLine);
+}
+
+/**
+ * 获取指定坐标处任务数据的具体信息
+ * @param eventX
+ * @param eventY
+ * @returns 当前任务信息
+ */
+export function _getTaskInfoByXYForCreateSchedule(eventX: number, eventY: number, gantt: Gantt) {
+  const taskIndex = getTaskIndexsByTaskY(eventY - gantt.headerHeight, gantt);
+  const recordParent = gantt.getRecordByIndex(taskIndex.task_index);
+  const dateIndex = getDateIndexByX(eventX, gantt);
+  const dateRange = gantt.getDateRangeByIndex(dateIndex);
+  if (recordParent?.children) {
+    const taskIndex = getTaskIndexsByTaskY(eventY - gantt.headerHeight, gantt);
+    for (let i = 0; i < recordParent.children.length; i++) {
+      const { startDate, endDate, taskDays, progress, taskRecord } = gantt.getTaskInfoByTaskListIndex(
+        taskIndex.task_index,
+        i
+      );
+      if (
+        ((gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact ||
+          gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) &&
+          taskRecord.vtable_gantt_showIndex === taskIndex.sub_task_index) ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline
+      ) {
+        if (dateRange.startDate.getTime() >= startDate.getTime() && dateRange.endDate.getTime() <= endDate.getTime()) {
+          return { startDate, endDate, taskDays, progress, taskRecord };
+        }
+      }
+    }
+  }
 }
