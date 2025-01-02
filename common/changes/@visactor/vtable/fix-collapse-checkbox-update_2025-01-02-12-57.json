@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix collapse checkbox state update #3171",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
