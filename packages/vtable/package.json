@@ -60,7 +60,8 @@
     "@visactor/vdataset": "~0.18.1",
     "@visactor/vutils-extension": "~1.11.5",
     "cssfontparser": "^1.2.1",
-    "gifuct-js": "2.1.2"
+    "gifuct-js": "2.1.2",
+    "lodash": "4.17.21"
   },
   "devDependencies": {
     "luxon": "*",
@@ -84,6 +85,7 @@
     "@types/mocha": "9.0.0",
     "@types/node": "*",
     "@types/offscreencanvas": "2019.6.4",
+    "@types/lodash": "4.14.182",
     "chai": "4.3.4",
     "jest": "^26.0.0",
     "jest-electron": "^0.1.12",

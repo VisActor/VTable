@@ -1,7 +1,7 @@
 {
   "extends": "@internal/ts-config/tsconfig.base.json",
   "include": ["src"],
-  "compilerOptions": {    
+  "compilerOptions": {
     "types": ["jest", "offscreencanvas", "node"],
     "lib": ["DOM", "ESNext"],
     "baseUrl": "./",
@@ -19,7 +19,8 @@
     "paths": {
       "@src/*": ["./src/*"],
       "@vutils-extension": ["./src/vutil-extension-temp"]
-    }
+    },
+    "esModuleInterop": true
   },
   "references": [
     {
