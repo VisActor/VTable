@@ -1069,7 +1069,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (this.options.groupBy) {
         stateArr = getGroupCheckboxState(this) as any;
       }
-      return stateArr.map((state: any) => {
+      return Array.from(stateArr, (state: any) => {
         return state[field];
       });
     }
