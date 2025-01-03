@@ -80,6 +80,7 @@ ListTable({
   multipleSort: true
 });
 ```
+
 If enabled, users, when clicking on the sort icon in the column headers, can add additional sort criteria without removing the previous sort.
 
 Example:
@@ -103,13 +104,13 @@ const columns = [
     field: 'name',
     title: 'Name',
     width: 'auto',
-    sort:true,
+    sort: true
   },
   {
     field: 'age',
     title: 'Age',
     width: 'auto',
-    sort:true,
+    sort: true
   }
 ];
 
@@ -186,25 +187,34 @@ By using the `updateSortState` interface, users can dynamically adjust the sorti
 
 In some scenarios, the execution of sorting logic is not expected to be performed by VTable, for example: the backend is responsible for sorting.
 
-You can disable VTable's default sorting behavior by listening to events:
+You can use the following configuration and process:
+
+1. Set `sort` to false;
+
+2. If you need to display the sort button, set `sortState` to true;
+
+3. Use the `sort_click` event to know that the user has clicked the sort button. Note that the event callback function needs to return false to disable the internal sorting logic of VTable:
 
 ```
 tableInstance.on('sort_click', args => {
     .....
-    return false; //return false means that internal sorting logic is not executed
+    return false; //returning false means not executing the internal sorting logic
   });
 ```
 
-After the sorting is completed, setRecords is required to update the data to the table. If you need to switch the sorting icon, you need to cooperate with the interface `updateSortState` and use the second parameter of the interface to be set to false to switch only the sorting icon.
+4. After listening to the sort button click, execute the business layer's sorting logic. After the sorting is completed, you need to use `setRecords` to update the data to the table.
+   Note:
 
-- When calling the setRecords interface, you need to set the second parameter's sortState set to null to clear the internal sorting state (otherwise, when setRecords is called, the data will be sorted according to the last set sorting state)
+- When calling the setRecords interface, the sortState in the second parameter option needs to be set to null, which clears the internal sorting state (otherwise, when the setRecords is called, vtable will sort the data according to the last set sorting state)
+
+5. If you need to correspondingly switch the status of the sort icon, you need to use the `updateSortState` interface, note that the second parameter of the interface needs to be set to false, so that you can only switch the sort icon without executing the vtable's sorting logic.
 
 Example:
 
 ```javascript livedemo template=vtable
 const records = [
   {
-    230517143221027: 'CA-2018-156720',
+    230517143221027: 'CA-2018-10',
     230517143221030: 'JM-15580',
     230517143221032: 'Bagged Rubber Bands',
     230517143221023: 'Office Supplies',
@@ -217,7 +227,7 @@ const records = [
     230517143221041: '-0.605'
   },
   {
-    230517143221027: 'CA-2018-115427',
+    230517143221027: 'CA-2018-70',
     230517143221030: 'EB-13975',
     230517143221032: 'GBC Binding covers',
     230517143221023: 'Office Supplies',
@@ -230,7 +240,7 @@ const records = [
     230517143221041: '6.475'
   },
   {
-    230517143221027: 'CA-2018-115427',
+    230517143221027: 'CA-2018-30',
     230517143221030: 'EB-13975',
     230517143221032: 'Cardinal Slant-D Ring Binder, Heavy Gauge Vinyl',
     230517143221023: 'Office Supplies',
@@ -243,7 +253,7 @@ const records = [
     230517143221041: '4.519'
   },
   {
-    230517143221027: 'CA-2018-143259',
+    230517143221027: 'CA-2018-80',
     230517143221030: 'PO-18865',
     230517143221032: 'Wilson Jones Legal Size Ring Binders',
     230517143221023: 'Office Supplies',
@@ -256,7 +266,7 @@ const records = [
     230517143221041: '19.791'
   },
   {
-    230517143221027: 'CA-2018-143259',
+    230517143221027: 'CA-2018-20',
     230517143221030: 'PO-18865',
     230517143221032: 'Gear Head AU3700S Headset',
     230517143221023: 'Technology',
@@ -269,7 +279,7 @@ const records = [
     230517143221041: '2.728'
   },
   {
-    230517143221027: 'CA-2018-143259',
+    230517143221027: 'CA-2018-40',
     230517143221030: 'PO-18865',
     230517143221032: 'Bush Westfield Collection Bookcases, Fully Assembled',
     230517143221023: 'Furniture',
@@ -282,7 +292,7 @@ const records = [
     230517143221041: '12.118'
   },
   {
-    230517143221027: 'CA-2018-126221',
+    230517143221027: 'CA-2018-60',
     230517143221030: 'CC-12430',
     230517143221032: 'Eureka The Boss Plus 12-Amp Hard Box Upright Vacuum, Red',
     230517143221023: 'Office Supplies',
@@ -295,7 +305,7 @@ const records = [
     230517143221041: '56.511'
   },
   {
-    230517143221027: 'US-2018-158526',
+    230517143221027: 'US-2018-50',
     230517143221030: 'KH-16360',
     230517143221032: 'Harbour Creations Steel Folding Chair',
     230517143221023: 'Furniture',
@@ -308,7 +318,7 @@ const records = [
     230517143221041: '77.625'
   },
   {
-    230517143221027: 'US-2018-158526',
+    230517143221027: 'US-2018-90',
     230517143221030: 'KH-16360',
     230517143221032: 'Global Leather and Oak Executive Chair, Black',
     230517143221023: 'Furniture',
@@ -321,7 +331,7 @@ const records = [
     230517143221041: '87.284'
   },
   {
-    230517143221027: 'US-2018-158526',
+    230517143221027: 'US-2018-10',
     230517143221030: 'KH-16360',
     230517143221032: 'Panasonic KP-350BK Electric Pencil Sharpener with Auto Stop',
     230517143221023: 'Office Supplies',
@@ -334,7 +344,7 @@ const records = [
     230517143221041: '10.028'
   },
   {
-    230517143221027: 'US-2018-158526',
+    230517143221027: 'US-2018-40',
     230517143221030: 'KH-16360',
     230517143221032: 'GBC ProClick Spines for 32-Hole Punch',
     230517143221023: 'Office Supplies',
@@ -347,7 +357,7 @@ const records = [
     230517143221041: '5.889'
   },
   {
-    230517143221027: 'US-2018-158526',
+    230517143221027: 'US-2018-30',
     230517143221030: 'KH-16360',
     230517143221032: 'DMI Arturo Collection Mission-style Design Wood Chair',
     230517143221023: 'Furniture',
@@ -360,7 +370,7 @@ const records = [
     230517143221041: '314.038'
   },
   {
-    230517143221027: 'CA-2018-130631',
+    230517143221027: 'CA-2018-99',
     230517143221030: 'BS-11755',
     230517143221032: 'Hand-Finished Solid Wood Document Frame',
     230517143221023: 'Furniture',
@@ -379,6 +389,7 @@ const columns = [
     field: '230517143221027',
     title: 'Order ID',
     width: 'auto',
+    sort: false,
     showSort: true
   },
   {
