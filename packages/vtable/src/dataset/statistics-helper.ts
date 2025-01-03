@@ -101,7 +101,7 @@ export class RecordAggregator extends Aggregator {
 }
 
 export class NoneAggregator extends Aggregator {
-  type: string = AggregationType.NONE; //仅获取其中一条数据 不做聚合 其fieldValue可以是number或者string类型
+  type: string = AggregationType.NONE; //仅获取其中一条数据(最新push的一条) 不做聚合 其fieldValue可以是number或者string类型
   isRecord?: boolean = true;
   declare field?: string;
   fieldValue?: any;
@@ -155,7 +155,7 @@ export class NoneAggregator extends Aggregator {
   }
 }
 export class CustomAggregator extends Aggregator {
-  type: string = AggregationType.CUSTOM; //仅获取其中一条数据 不做聚合 其fieldValue可以是number或者string类型
+  type: string = AggregationType.CUSTOM;
   isRecord?: boolean = true;
   declare field?: string;
   aggregationFun?: Function;
@@ -227,8 +227,9 @@ export class CustomAggregator extends Aggregator {
     // do nothing
   }
 }
+/** 透视表计算字段逻辑使用 */
 export class RecalculateAggregator extends Aggregator {
-  type: string = AggregationType.RECALCULATE; //仅获取其中一条数据 不做聚合 其fieldValue可以是number或者string类型
+  type: string = AggregationType.RECALCULATE;
   isRecord?: boolean = true;
   declare field?: string;
   calculateFun: Function;

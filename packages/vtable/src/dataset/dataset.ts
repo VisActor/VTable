@@ -28,6 +28,7 @@ import type { Aggregator, IAggregator } from './statistics-helper';
 import {
   AvgAggregator,
   CountAggregator,
+  CustomAggregator,
   MaxAggregator,
   MinAggregator,
   NoneAggregator,
@@ -109,6 +110,7 @@ export class Dataset {
       new (args: {
         key: string;
         dimension: string | string[];
+        aggregationFun?: any;
         formatFun?: any;
         isRecord?: boolean;
         needSplitPositiveAndNegative?: boolean;
@@ -401,6 +403,7 @@ export class Dataset {
     this.registerAggregator(AggregationType.AVG, AvgAggregator);
     this.registerAggregator(AggregationType.NONE, NoneAggregator);
     this.registerAggregator(AggregationType.RECALCULATE, RecalculateAggregator);
+    this.registerAggregator(AggregationType.CUSTOM, CustomAggregator);
   }
   /**processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的 处理收集维度值范围 */
   private processCollectedValuesWithSumBy() {
@@ -826,6 +829,7 @@ export class Dataset {
                   // single: true,
                   key: toComputeIndicatorKeys[i],
                   dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+                  aggregationFun: aggRule?.aggregationFun,
                   formatFun:
                     aggRule?.formatFun ??
                     (
@@ -929,6 +933,7 @@ export class Dataset {
               ]({
                 key: toComputeIndicatorKeys[i],
                 dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+                aggregationFun: aggRule?.aggregationFun,
                 formatFun:
                   aggRule?.formatFun ??
                   (
@@ -964,6 +969,7 @@ export class Dataset {
                 total: new this.aggregators[aggRule?.aggregationType ?? AggregationType.SUM]({
                   key: this.indicatorKeys[i],
                   dimension: aggRule?.field ?? this.indicatorKeys[i],
+                  aggregationFun: aggRule?.aggregationFun,
                   formatFun:
                     aggRule?.formatFun ??
                     (
@@ -1510,6 +1516,7 @@ export class Dataset {
                   ]({
                     key: toComputeIndicatorKeys[i],
                     dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+                    aggregationFun: aggRule?.aggregationFun,
                     formatFun:
                       aggRule?.formatFun ??
                       (
