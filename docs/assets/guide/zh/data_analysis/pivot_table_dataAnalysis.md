@@ -159,7 +159,13 @@ dataConfig: {
 
 ### 4. 聚合方式
 
-默认所有指标值都会按照加和 SUM 的方式计算，如果不想这个默认的计算方式，可以通过配置 aggregationRules 来修改。通常情况下如果指标是字符串型，需要配置 NONE 来显示数据源字段原始值。
+默认所有指标值都会按照加和 `SUM` 的方式计算，如果不想这个默认的计算方式，可以通过配置 `aggregationRules` 来修改。
+
+通常情况下指标应该是 `number` 类型，这样内部才能进行计算。
+
+如果指标是字符串型或者 `null`，需要配置 `aggregationType` 为 `VTable.TYPES.AggregationType.NONE` 来显示数据源字段的原始值。
+
+如果用到了自定义渲染 `customLayout`，在 `customLayout` 函数中想获取单元格对应的所有数据 `records`，可以配置 `aggregationType` 为 `VTable.TYPES.AggregationType.RECORD`。
 
 [option 说明](../../option/PivotTable#dataConfig.aggregationRules)
 

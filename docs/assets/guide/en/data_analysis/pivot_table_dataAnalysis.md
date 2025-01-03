@@ -159,7 +159,13 @@ Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-filte
 
 ### 4. Aggregation method
 
-By default, all indicator values are calculated as SUM. If you do not want this default calculation method, you can modify it by configuring aggregationRules. Usually, if the indicator is a string type, you need to configure NONE to display the original value of the data source field.
+By default, all indicator values are calculated in the `SUM` way. If you don't want this default calculation method, you can modify it by configuring `aggregationRules`.
+
+In general, indicators should be of type `number` so that internal calculations can be performed.
+
+If the indicator is a string type or `null`, you need to configure `aggregationType` as `VTable.TYPES.AggregationType.NONE` to display the original value of the data source field.
+
+If you use custom rendering `customLayout` and want to get all the data `records` corresponding to the cell in the `customLayout` function, you can configure `aggregationType` as `VTable.TYPES.AggregationType.RECORD`.
 
 [option description](../../option/PivotTable#dataConfig.aggregationRules)
 
