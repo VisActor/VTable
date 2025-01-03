@@ -317,7 +317,7 @@ export interface ListTableAPI extends BaseTableAPI {
   addRecord: (record: any, recordIndex?: number) => void;
   addRecords: (records: any[], recordIndex?: number) => void;
   deleteRecords: (recordIndexs: number[]) => void;
-  updateRecords: (records: any[], recordIndexs: number[]) => void;
+  updateRecords: (records: any[], recordIndexs: (number | number[])[]) => void;
   updateFilterRules: (filterRules: FilterRules) => void;
   getAggregateValuesByField: (field: string | number) => {
     col: number;

@@ -444,7 +444,9 @@ export function createTable() {
   ganttInstance.on('scroll', e => {
     console.log('scroll', e);
   });
-
+  ganttInstance.on('create_task_schedule', e => {
+    console.log('CREATE_TASK_SCHEDULE', e);
+  });
   ganttInstance.listTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });

@@ -151,11 +151,19 @@ links:[
 
 #### 创建排期
 
+配置 taskBar.scheduleCreatable 为 true。
+
 原始数据中如果没有任务日期的字段数据，那么可以通过创建排期能力来给任务指定一个开始时间和结束时间。默认当 hover 到没有日期数据的网格上时，会出现一个添加排期的按钮。
 
 按钮的样式可以通过`taskBar.scheduleCreation.buttonStyle`配置。
 
 如果当前配置不能满足需求，也可以通过`taskBar.scheduleCreation.customLayout`配置项自定义创建排期的展示效果。
+
+**注意：不同的甘特图实例，创建排期能力不同。：**
+
+当`tasksShowMode`为`TasksShowMode.Tasks_Separate`或`TasksShowMode.Sub_Tasks_Separate`，也就是没条数据有对应的一行位置展示，但是数据中没有设置 startDate 和 endDate 的字段时，鼠标 hover 到该行会出现创建按钮，点击按钮会创建排期并展示任务条。
+
+当`tasksShowMode`为`TasksShowMode.Sub_Tasks_Inline`或`TasksShowMode.Sub_Tasks_Arrange`或`TasksShowMode.Sub_Tasks_Compact`，当鼠标 hover 到空白区域即会显示创建按钮，点击按钮会触发事件`GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE`但不会真正的创建任务排期，使用者需要监听该事件根据业务需求来自行创建排期更新数据。
 
 ## 借助表格的能力
 

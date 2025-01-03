@@ -67,7 +67,9 @@
 更新某一条数据
 
 ```
-  updateTaskRecord: (record: any, index: number) => void
+  /** 更新数据信息 可以传入具体的索引，更新子任务也可以传入索引数组 */
+  updateTaskRecord(record: any, task_index: number | number[]): void;
+  updateTaskRecord(record: any, task_index: number, sub_task_index: number): void;
 ```
 
 ### release(Function)

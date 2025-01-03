@@ -714,17 +714,17 @@ export function listTableDeleteRecords(recordIndexs: number[], table: ListTable)
  * @param records 修改数据条目
  * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
  */
-export function listTableUpdateRecords(records: any[], recordIndexs: number[], table: ListTable) {
+export function listTableUpdateRecords(records: any[], recordIndexs: (number | number[])[], table: ListTable) {
   if (recordIndexs?.length > 0) {
     if (table.options.groupBy) {
-      (table.dataSource as CachedDataSource).updateRecordsForGroup?.(records, recordIndexs);
+      (table.dataSource as CachedDataSource).updateRecordsForGroup?.(records, recordIndexs as number[]);
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
       // 更新整个场景树
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
-      table.dataSource.updateRecordsForSorted(records, recordIndexs);
+      table.dataSource.updateRecordsForSorted(records, recordIndexs as number[]);
       sortRecords(table);
       table.refreshRowColCount();
       // 更新整个场景树
