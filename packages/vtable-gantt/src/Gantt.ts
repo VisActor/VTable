@@ -882,11 +882,27 @@ export class Gantt extends EventTarget {
     // const source_taskRecord = this.getRecordByIndex(source_index, source_sub_task_index);
     this.data.adjustOrder(source_index, source_sub_task_index, target_index, target_sub_task_index);
   }
-  /** 目前不支持树形tree的情况更新单条数据 需要的话目前可以setRecords。 */
-  updateTaskRecord(record: any, task_index: number, sub_task_index: number) {
-    //const taskRecord = this.getRecordByIndex(index);
-    this._updateRecordToListTable(record, isValid(sub_task_index) ? [task_index, sub_task_index] : task_index);
-    this._refreshTaskBar(task_index, sub_task_index);
+  // 定义多个函数签名
+  /** 更新数据信息 */
+  updateTaskRecord(record: any, task_index: number | number[]): void;
+  updateTaskRecord(record: any, task_index: number, sub_task_index: number): void;
+  updateTaskRecord(record: any, task_index: number | number[], sub_task_index?: number) {
+    if (isValid(sub_task_index)) {
+      const index = typeof task_index === 'number' ? task_index : task_index[0];
+      this._updateRecordToListTable(record, [index, sub_task_index]);
+      this._refreshTaskBar(index, sub_task_index);
+      return;
+    }
+    if (Array.isArray(task_index)) {
+      const index = (task_index as number[])[0];
+      const sub_index = (task_index as number[])[1];
+      this._updateRecordToListTable(record, isValid(sub_index) ? [index, sub_index] : index);
+      this._refreshTaskBar(index, sub_index);
+      return;
+    }
+    const index = task_index as number;
+    this._updateRecordToListTable(record, index);
+    this._refreshTaskBar(index, undefined);
   }
 
   /**
