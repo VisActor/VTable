@@ -33,10 +33,10 @@ function App() {
       <button
         onClick={() => {
           // setTitle('title' + Math.floor(10 * Math.random()));
-          // const records = new Array(15).fill(['李四', 16, '男', 'icon']);
-          // setRecords(records);
+          const records = new Array(15).fill(['李四', 16, '男', 'icon']);
+          setRecords(records);
 
-          setUpdate(!update);
+          // setUpdate(!update);
         }}
       >
         点击

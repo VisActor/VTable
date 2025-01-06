@@ -31,7 +31,8 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       (table as PivotTableAPI | ListTableAPI).internalProps.columnWidthConfig as any
     );
 
-  (table as PivotTableAPI).internalProps.columnWidthConfigForRowHeader &&
+  (table as PivotTableAPI).isPivotTable() &&
+    (table as PivotTableAPI).internalProps.columnWidthConfigForRowHeader &&
     (table as PivotTableAPI)._parseColumnWidthConfigForRowHeader(
       (table as PivotTableAPI).internalProps.columnWidthConfigForRowHeader
     );

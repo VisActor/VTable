@@ -270,14 +270,33 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
 
     if (hasOption) {
       if (!isEqual(eventsBinded.current.option, props.option, { skipFunction: skipFunctionDiff })) {
+        const option = parseOption(props);
+        if (keepColumnWidthChange) {
+          const columnWidthConfig = updateWidthCache(
+            columnWidths.current,
+            pivotColumnWidths.current,
+            tableContext.current.table
+          );
+          (option as any).columnWidthConfig = columnWidthConfig;
+          (option as any).columnWidthConfigForRowHeader = columnWidthConfig;
+        }
         // eslint-disable-next-line promise/catch-or-return
-        tableContext.current.table.updateOption(parseOption(props) as any);
+        tableContext.current.table.updateOption(option as any);
         handleTableRender();
         eventsBinded.current = props;
       } else if (
         hasRecords &&
         !isEqual(eventsBinded.current.records, props.records, { skipFunction: skipFunctionDiff })
       ) {
+        if (keepColumnWidthChange) {
+          const columnWidthConfig = updateWidthCache(
+            columnWidths.current,
+            pivotColumnWidths.current,
+            tableContext.current.table
+          );
+          (tableContext.current.table.internalProps as any).columnWidthConfig = columnWidthConfig;
+          (tableContext.current.table.internalProps as any).columnWidthConfigForRowHeader = columnWidthConfig;
+        }
         tableContext.current.table.setRecords(props.records as any[]);
         handleTableRender();
         eventsBinded.current = props;
