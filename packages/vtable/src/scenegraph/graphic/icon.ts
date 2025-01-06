@@ -57,7 +57,7 @@ export class Icon extends Image {
 
   loadGif() {
     this.playing = false;
-    ResourceLoader.GetFile((this.attribute as any).gif + '?role=gif', 'arrayBuffer') // ?role=gif: hack for ResourceLoader cache
+    ResourceLoader.GetFile((this.attribute as any).gif + '?role=gif' + `&radom=${Math.random()}`, 'arrayBuffer') // ?role=gif: hack for ResourceLoader cache
       .then((res: ArrayBuffer) => {
         const gif = parseGIF(res);
         const frames = decompressFrames(gif, true);
