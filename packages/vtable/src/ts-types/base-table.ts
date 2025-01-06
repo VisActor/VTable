@@ -518,6 +518,9 @@ export interface BaseTableConstructorOptions {
 
     // 表格是否限制内容高度
     limitContentHeight?: boolean;
+
+    // 图片资源请求时是否使用anonymous模式
+    imageAnonymous?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;

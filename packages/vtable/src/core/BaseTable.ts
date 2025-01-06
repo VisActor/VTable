@@ -151,6 +151,7 @@ import type { ITableAnimationOption } from '../ts-types/animation/appear';
 import { checkCellInSelect } from '../state/common/check-in-select';
 import type { CustomCellStylePlugin, ICustomCellStylePlugin } from '../plugins/custom-cell-style';
 import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
+import { vglobal } from '@src/vrender';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -231,6 +232,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (!container && options.mode !== 'node' && !options.canvas) {
       throw new Error("vtable's container is undefined");
     }
+
+    // for image anonymous
+    if (options.customConfig?.imageAnonymous === false) {
+      vglobal.isImageAnonymous = false;
+    }
+
     const {
       // rowCount = 0,
       // colCount = 0,
