@@ -1,5 +1,4 @@
 import type { ColorPropertyDefine } from '.';
-import type { IAggregator } from '../dataset/statistics-helper';
 import type { Either } from '../tools/helper';
 import type { BaseTableAPI } from './base-table';
 
@@ -148,8 +147,7 @@ export interface AggregationRule<T extends AggregationType> {
   indicatorKey: string;
   // 可以收集单个字段的聚合结果，或者收集多个字段的聚合结果
   field: T extends AggregationType.RECORD ? string[] | string : string;
-  /** aggregationType 配置为 AggregationType.CUSTOM 时，需要配置 customAggregation 或者 aggregationFun。且 customAggregation优先级会高于 aggregationFun*/
-  customAggregation?: T extends AggregationType.CUSTOM ? IAggregator : undefined;
+  /** aggregationType 配置为 AggregationType.CUSTOM 时，需要配置 aggregationFun。*/
   aggregationFun?: T extends AggregationType.CUSTOM ? (values: any[], records: any[]) => any : undefined;
   aggregationType: T;
   /**计算结果格式化 */

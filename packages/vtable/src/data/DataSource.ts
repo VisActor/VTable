@@ -31,7 +31,7 @@ import {
   AvgAggregator,
   NoneAggregator,
   CustomAggregator
-} from '../dataset/statistics-helper';
+} from '../ts-types/dataset/aggregation';
 import type { ColumnsDefine } from '../ts-types/list-table/layout-map/api';
 
 /**

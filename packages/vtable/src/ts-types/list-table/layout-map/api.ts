@@ -24,7 +24,7 @@ import type {
   SortOption,
   FieldGetter
 } from '../../';
-import type { Aggregator } from '../../../dataset/statistics-helper';
+import type { Aggregator } from '../../dataset/aggregation';
 import type { BaseTableAPI } from '../../base-table';
 
 import type { HeaderDefine, ColumnDefine, ColumnBodyDefine } from '../define';

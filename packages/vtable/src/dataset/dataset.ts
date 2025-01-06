@@ -24,8 +24,9 @@ import type {
   SortType
 } from '../ts-types';
 import { AggregationType } from '../ts-types';
-import type { Aggregator, IAggregator } from './statistics-helper';
+import type { Aggregator, IAggregator } from '../ts-types/dataset/aggregation';
 import {
+  registeredAggregators,
   AvgAggregator,
   CountAggregator,
   CustomAggregator,
@@ -38,7 +39,7 @@ import {
   naturalSort,
   sortBy,
   typeSort
-} from './statistics-helper';
+} from '../ts-types/dataset/aggregation';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { join } from '../tools/join';
 /**
@@ -104,22 +105,6 @@ export class Dataset {
   totals?: Totals;
   //全局统计各指标的极值
   indicatorStatistics: { max: Aggregator; min: Aggregator; total: Aggregator }[] = [];
-
-  aggregators: {
-    [key: string]: {
-      new (args: {
-        key: string;
-        dimension: string | string[];
-        aggregationFun?: any;
-        formatFun?: any;
-        isRecord?: boolean;
-        needSplitPositiveAndNegative?: boolean;
-        calculateFun?: any;
-        dependAggregators?: any;
-        dependIndicatorKeys?: string[];
-      }): Aggregator;
-    };
-  } = {};
 
   stringJoinChar = String.fromCharCode(0);
   //缓存rows对应每个值是否为汇总字段
@@ -391,7 +376,7 @@ export class Dataset {
   }
   //将聚合类型注册 收集到aggregators
   registerAggregator(type: string, aggregator: any) {
-    this.aggregators[type] = aggregator;
+    registeredAggregators[type] = aggregator;
   }
   //将聚合类型注册
   registerAggregators() {
@@ -613,13 +598,13 @@ export class Dataset {
         }
 
         if (this.collectValuesBy[field].sumBy) {
-          const sumByKeys = this.collectValuesBy[field]
-            .sumBy!.map(byField => record[byField])
+          const sumByKeys: string = this.collectValuesBy[field].sumBy
+            ?.map(byField => record[byField])
             .join(this.stringJoinChar);
           if (!this.collectedValues[field][collectKeys][sumByKeys]) {
-            this.collectedValues[field][collectKeys][sumByKeys] = new this.aggregators[AggregationType.SUM]({
+            this.collectedValues[field][collectKeys][sumByKeys] = new registeredAggregators[AggregationType.SUM]({
               key: field,
-              dimension: field,
+              field: field,
               isRecord: undefined,
               needSplitPositiveAndNegative: this.needSplitPositiveAndNegative
             });
@@ -801,9 +786,11 @@ export class Dataset {
                 rule => rule.key === toComputeIndicatorKeys[i]
               );
               if (!this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i]) {
-                this.totalRecordsTree[flatRowKey][flatColKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
+                this.totalRecordsTree[flatRowKey][flatColKey][i] = new registeredAggregators[
+                  AggregationType.RECALCULATE
+                ]({
                   key: toComputeIndicatorKeys[i],
-                  dimension: toComputeIndicatorKeys[i],
+                  field: toComputeIndicatorKeys[i],
                   isRecord: true,
                   // single: true,
                   formatFun: (
@@ -823,12 +810,12 @@ export class Dataset {
             } else {
               const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
               if (!this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i]) {
-                this.totalRecordsTree[flatRowKey][flatColKey][i] = new this.aggregators[
+                this.totalRecordsTree[flatRowKey][flatColKey][i] = new registeredAggregators[
                   aggRule?.aggregationType ?? AggregationType.SUM
                 ]({
                   // single: true,
                   key: toComputeIndicatorKeys[i],
-                  dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+                  field: aggRule?.field ?? toComputeIndicatorKeys[i],
                   aggregationFun: aggRule?.aggregationFun,
                   formatFun:
                     aggRule?.formatFun ??
@@ -882,9 +869,9 @@ export class Dataset {
           if (this.calculatedFiledKeys.indexOf(toComputeIndicatorKeys[i]) >= 0) {
             const calculatedFieldRule = this.calculatedFieldRules?.find(rule => rule.key === toComputeIndicatorKeys[i]);
             if (!this.tree[flatRowKey]?.[flatColKey]?.[i]) {
-              this.tree[flatRowKey][flatColKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
+              this.tree[flatRowKey][flatColKey][i] = new registeredAggregators[AggregationType.RECALCULATE]({
                 key: toComputeIndicatorKeys[i],
-                dimension: toComputeIndicatorKeys[i],
+                field: toComputeIndicatorKeys[i],
                 isRecord: true,
                 formatFun: (
                   this.indicators?.find((indicator: string | IIndicator) => {
@@ -928,11 +915,11 @@ export class Dataset {
               toComputeIndicatorKeys[i] in record && (needAddToAggregator = true);
             }
             if (!this.tree[flatRowKey]?.[flatColKey]?.[i] && needAddToAggregator) {
-              this.tree[flatRowKey][flatColKey][i] = new this.aggregators[
+              this.tree[flatRowKey][flatColKey][i] = new registeredAggregators[
                 aggRule?.aggregationType ?? AggregationType.SUM
               ]({
                 key: toComputeIndicatorKeys[i],
-                dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+                field: aggRule?.field ?? toComputeIndicatorKeys[i],
                 aggregationFun: aggRule?.aggregationFun,
                 formatFun:
                   aggRule?.formatFun ??
@@ -958,17 +945,17 @@ export class Dataset {
             if (!this.indicatorStatistics[i]) {
               const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
               this.indicatorStatistics[i] = {
-                max: new this.aggregators[AggregationType.MAX]({
+                max: new registeredAggregators[AggregationType.MAX]({
                   key: this.indicatorKeys[i],
-                  dimension: this.indicatorKeys[i]
+                  field: this.indicatorKeys[i]
                 }),
-                min: new this.aggregators[AggregationType.MIN]({
+                min: new registeredAggregators[AggregationType.MIN]({
                   key: this.indicatorKeys[i],
-                  dimension: this.indicatorKeys[i]
+                  field: this.indicatorKeys[i]
                 }),
-                total: new this.aggregators[aggRule?.aggregationType ?? AggregationType.SUM]({
+                total: new registeredAggregators[aggRule?.aggregationType ?? AggregationType.SUM]({
                   key: this.indicatorKeys[i],
-                  dimension: aggRule?.field ?? this.indicatorKeys[i],
+                  field: aggRule?.field ?? this.indicatorKeys[i],
                   aggregationFun: aggRule?.aggregationFun,
                   formatFun:
                     aggRule?.formatFun ??
@@ -1171,7 +1158,6 @@ export class Dataset {
           formatValue: agg.formatValue,
           formatFun: agg.formatFun,
           records: agg.records,
-          className: '',
           recalculate() {
             // do nothing
           },
@@ -1197,10 +1183,10 @@ export class Dataset {
         // };
       }
       return {
+        records: [],
         value() {
           return changeValue;
         },
-        className: '',
         push() {
           // do nothing
         },
@@ -1229,7 +1215,7 @@ export class Dataset {
     return agg
       ? agg
       : {
-          className: '',
+          records: [],
           push() {
             // do nothing
           },
@@ -1488,9 +1474,9 @@ export class Dataset {
                   rule => rule.key === toComputeIndicatorKeys[i]
                 );
                 if (!this.tree[flatRowKey]?.[flatColTotalKey]?.[i]) {
-                  this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
+                  this.tree[flatRowKey][flatColTotalKey][i] = new registeredAggregators[AggregationType.RECALCULATE]({
                     key: toComputeIndicatorKeys[i],
-                    dimension: toComputeIndicatorKeys[i],
+                    field: toComputeIndicatorKeys[i],
                     isRecord: true,
                     formatFun: (
                       this.indicators?.find((indicator: string | IIndicator) => {
@@ -1511,11 +1497,11 @@ export class Dataset {
               } else {
                 if (!this.tree[flatRowKey][flatColTotalKey][i]) {
                   const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
-                  this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
+                  this.tree[flatRowKey][flatColTotalKey][i] = new registeredAggregators[
                     aggRule?.aggregationType ?? AggregationType.SUM
                   ]({
                     key: toComputeIndicatorKeys[i],
-                    dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+                    field: aggRule?.field ?? toComputeIndicatorKeys[i],
                     aggregationFun: aggRule?.aggregationFun,
                     formatFun:
                       aggRule?.formatFun ??
@@ -1552,9 +1538,9 @@ export class Dataset {
           if (this.calculatedFiledKeys.indexOf(toComputeIndicatorKeys[i]) >= 0) {
             const calculatedFieldRule = this.calculatedFieldRules?.find(rule => rule.key === toComputeIndicatorKeys[i]);
             if (!this.tree[flatRowKey]?.[flatColTotalKey]?.[i]) {
-              this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
+              this.tree[flatRowKey][flatColTotalKey][i] = new registeredAggregators[AggregationType.RECALCULATE]({
                 key: toComputeIndicatorKeys[i],
-                dimension: toComputeIndicatorKeys[i],
+                field: toComputeIndicatorKeys[i],
                 isRecord: true,
                 formatFun: (
                   this.indicators?.find((indicator: string | IIndicator) => {
@@ -1575,11 +1561,11 @@ export class Dataset {
           } else {
             if (!this.tree[flatRowKey][flatColTotalKey][i]) {
               const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
-              this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
+              this.tree[flatRowKey][flatColTotalKey][i] = new registeredAggregators[
                 aggRule?.aggregationType ?? AggregationType.SUM
               ]({
                 key: toComputeIndicatorKeys[i],
-                dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+                field: aggRule?.field ?? toComputeIndicatorKeys[i],
                 formatFun:
                   aggRule?.formatFun ??
                   (
@@ -1643,9 +1629,11 @@ export class Dataset {
                       const calculatedFieldRule = this.calculatedFieldRules?.find(
                         rule => rule.key === toComputeIndicatorKeys[i]
                       );
-                      this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
+                      this.tree[flatRowTotalKey][flatColKey][i] = new registeredAggregators[
+                        AggregationType.RECALCULATE
+                      ]({
                         key: toComputeIndicatorKeys[i],
-                        dimension: toComputeIndicatorKeys[i],
+                        field: toComputeIndicatorKeys[i],
                         isRecord: true,
                         formatFun: (
                           this.indicators?.find((indicator: string | IIndicator) => {
@@ -1661,11 +1649,11 @@ export class Dataset {
                       });
                     } else {
                       const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
-                      this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
+                      this.tree[flatRowTotalKey][flatColKey][i] = new registeredAggregators[
                         aggRule?.aggregationType ?? AggregationType.SUM
                       ]({
                         key: toComputeIndicatorKeys[i],
-                        dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+                        field: aggRule?.field ?? toComputeIndicatorKeys[i],
                         formatFun:
                           aggRule?.formatFun ??
                           (
@@ -1703,9 +1691,9 @@ export class Dataset {
                   const calculatedFieldRule = this.calculatedFieldRules?.find(
                     rule => rule.key === toComputeIndicatorKeys[i]
                   );
-                  this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[AggregationType.RECALCULATE]({
+                  this.tree[flatRowTotalKey][flatColKey][i] = new registeredAggregators[AggregationType.RECALCULATE]({
                     key: toComputeIndicatorKeys[i],
-                    dimension: toComputeIndicatorKeys[i],
+                    field: toComputeIndicatorKeys[i],
                     isRecord: true,
                     formatFun: (
                       this.indicators?.find((indicator: string | IIndicator) => {
@@ -1721,11 +1709,11 @@ export class Dataset {
                   });
                 } else {
                   const aggRule = this.getAggregatorRule(toComputeIndicatorKeys[i]);
-                  this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
+                  this.tree[flatRowTotalKey][flatColKey][i] = new registeredAggregators[
                     aggRule?.aggregationType ?? AggregationType.SUM
                   ]({
                     key: toComputeIndicatorKeys[i],
-                    dimension: aggRule?.field ?? toComputeIndicatorKeys[i],
+                    field: aggRule?.field ?? toComputeIndicatorKeys[i],
                     formatFun:
                       aggRule?.formatFun ??
                       (
