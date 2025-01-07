@@ -3,7 +3,7 @@ import { EmptyTip as EmptyTipComponents } from '@visactor/vrender-components';
 import type { EmptyTipAttributes } from '@visactor/vrender-components';
 import type { IEmptyTip } from '../../ts-types/component/empty-tip';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { isEqual } from '@visactor/vutils';
+import { isBoolean, isEqual, isValid } from '@visactor/vutils';
 import type { ListTable } from '../../ListTable';
 import type { PivotTable } from '../../PivotTable';
 import type { BaseTable } from '../../core';
@@ -34,6 +34,15 @@ export class EmptyTip {
   private _cacheAttrs: EmptyTipAttributes;
   constructor(emptyTipOption: IEmptyTip | true, table: BaseTableAPI) {
     this.table = table;
+    // deal with displayMode
+    if (!isBoolean(emptyTipOption) && !isValid(emptyTipOption.displayMode)) {
+      // for list table and pivot table current display effect
+      if (this.table.isListTable()) {
+        emptyTipOption.displayMode = 'basedOnTable';
+      } else {
+        emptyTipOption.displayMode = 'basedOnContainer';
+      }
+    }
     this._emptyTipOption = Object.assign(this._emptyTipOption, emptyTipOption === true ? {} : emptyTipOption);
     this._emptyTipComponent = this._createOrUpdateEmptyTipComponent(this._getEmptyTipAttrs());
   }
@@ -135,13 +144,17 @@ export class EmptyTip {
         ? this.table.getFrozenRowsHeight()
         : 0;
     const width =
-      (this.table.columnHeaderLevelCount > 0 && this.table.isListTable()
+      (this._emptyTipOption.displayMode !== 'basedOnContainer' &&
+      this.table.columnHeaderLevelCount > 0 &&
+      this.table.colCount > this.table.rowHeaderLevelCount
         ? this.table.getDrawRange().width
         : this.table.tableNoFrameWidth) -
       leftHeaderWidth -
       (this.table as BaseTable).getTheme().scrollStyle.width;
     const height =
-      (this.table.rowHeaderLevelCount > 0 && this.table.isListTable()
+      (this._emptyTipOption.displayMode !== 'basedOnContainer' &&
+      this.table.rowHeaderLevelCount > 0 &&
+      this.table.rowCount > this.table.columnHeaderLevelCount
         ? this.table.getDrawRange().height
         : this.table.tableNoFrameHeight) -
       topHeaderHeight -
