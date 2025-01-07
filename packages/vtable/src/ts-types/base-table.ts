@@ -887,7 +887,8 @@ export interface BaseTableAPI {
   scrollToCol: (col: number, animationOption?: ITableAnimationOption | boolean) => void;
   registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
   arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
-
+  /** 是否有列是自动计算列宽 */
+  checkHasColumnAutoWidth: () => boolean;
   _moveHeaderPosition: (
     source: CellAddress,
     target: CellAddress
