@@ -371,15 +371,15 @@ setRecords(records: Array<any>)
 **ListTable 专有**
 ```
 
-## getTaskShowIndexByRecordIndex(Function)
+## getBodyRowIndexByRecordIndex(Function)
 
-根据数据的索引获取应该显示在 body 的第几行, 参数和返回值的碎银均从 0 开始。如果是树形模式的表格，参数支持数组，如[1,2]
+根据数据的索引获取应该显示在 body 的第几行, 参数和返回值的索引均从 0 开始。如果是树形模式的表格，参数支持数组，如[1,2]
 
 **ListTable 专有**
 
 ```
   /**
-   * 根据数据的索引获取应该显示在body的第几行  参数和返回值的碎银均从0开始
+   * 根据数据的索引获取应该显示在body的第几行  参数和返回值的索引均从0开始
    * @param  {number} index The record index.
    */
   getBodyRowIndexByRecordIndex: (index: number | number[]) => number;

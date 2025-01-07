@@ -373,19 +373,17 @@ If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd
 **ListTable proprietary**
 ```
 
-## getTaskShowIndexByRecordIndex(Function)
+## getBodyRowIndexByRecordIndex(Function)
+Get the row index that should be displayed in the body based on the data index, with both parameter and return value indices starting from 0. If it is a tree mode table, the parameter supports arrays, such as [1,2].
 
-Get the row number that should be displayed in the body according to the index of the data. Both the parameter and the return value start from 0. If it is a table in tree mode, the parameter supports arrays, such as [1,2]
-
-**ListTable Proprietary**
+**ListTable proprietary**
 
 ```
-/**
-* Get the row number of the body that should be displayed according to the index of the data. Both the parameter and the return value start from 0.
-* @param {number} index The record index.
-*/
-getBodyRowIndexByRecordIndex: (index: number | number[]) => number;
-```
+  /**
+   * Get the row index that should be displayed in the body based on the data index, with both parameter and return value indices starting from 0.
+   * @param  {number} index The record index.
+   */
+  getBodyRowIndexByRecordIndex: (index: number | number[]) => number;
 
 ## getTableIndexByField(Function)
 
