@@ -1,28 +1,68 @@
 ---
 category: examples
 group: data-analysis
-title: Pivot Table - Calculated Field
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/calculatedField.jpeg
+title: 透视表自定义聚合类型
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-customAggregator.png
 link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#dataConfig.calculatedFieldRules
+option: PivotTable#dataConfig.aggregationRules
 ---
 
-# Pivot Table - Calculated Field
+# 透视分析——自定义聚合类型
 
-The pivot table configures the calculated fields through the calculatedFieldRules in the dataConfig.
+透视分析表通过 dataConfig 中的 aggregationRules 配置项可以对透视表的指标进行聚合计算。聚合类型除了内置的 SUM、COUNT、AVERAGE、MAX、MIN 等类型外，还支持自定义聚合类型。使用自定义聚合类型需要先定义一个自定义聚合类，继承内置的 Aggregator 类，注册到 VTable 中，然后在自定义聚合类中实现聚合逻辑。
 
-## Key Configurations
+## 关键配置
 
 - `PivotTable`
 - `columns`
 - `rows`
 - `indicators`
-- `dataConfig.calculatedFieldRules`
+- `dataConfig.aggregationRules` 配置聚合字段
 
-## Code demo
+## 代码演示
 
 ```javascript livedemo template=vtable
 let tableInstance;
+class AvgPriceAggregator extends VTable.TYPES.Aggregator {
+  sales_sum = 0;
+  number_sum = 0;
+  constructor(config) {
+    super(config);
+    this.key = config.key;
+    this.formatFun = config.formatFun;
+  }
+  push(record) {
+    if (record) {
+      if (record.isAggregator) {
+        this.records.push(...record.records);
+      } else {
+        this.records.push(record);
+      }
+
+      if (record.isAggregator) {
+        this.sales_sum += record.sales_sum;
+        this.number_sum += record.number_sum;
+      } else {
+        record.Sales && (this.sales_sum += parseFloat(record.Sales));
+        record.Quantity && (this.number_sum += parseFloat(record.Quantity));
+      }
+    }
+    this.clearCacheValue();
+  }
+
+  clearCacheValue() {
+    this._formatedValue = undefined;
+  }
+  value() {
+    return this.records?.length >= 1 ? this.sales_sum / this.number_sum : undefined;
+  }
+  reset() {
+    super.reset();
+    this.sales_sum = 0;
+    this.number_sum = 0;
+  }
+}
+VTable.register.aggregator('avgPrice', AvgPriceAggregator);
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
   .then(res => res.json())
   .then(data => {
@@ -78,80 +118,14 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
-          headerStyle: {
-            fontWeight: 'normal'
-          },
-          style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
-            },
-            bgColor(arg) {
-              const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#ba54ba';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#ff9900';
-              }
-              return undefined;
-            }
-          }
-        },
-        {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
-          headerStyle: {
-            fontWeight: 'normal'
-          },
-          format: rec => {
-            return '$' + Number(rec).toFixed(2);
-          },
-          style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
-            },
-            bgColor(arg) {
-              const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#ba54ba';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#ff9900';
-              }
-              return undefined;
-            }
-          }
-        },
-        {
-          indicatorKey: 'AvgPrice',
+          indicatorKey: 'AvgPrice(CalculatedField)',
           title: 'AvgPrice',
           width: 'auto',
           format: rec => {
             return '$' + Number(rec).toFixed(2);
-          },
-          headerStyle: {
-            color: 'blue'
-          },
-          style: {
-            bgColor(arg) {
-              const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#ba54ba';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#ff9900';
-              }
-              return undefined;
-            }
           }
-        }
+        },
+        { indicatorKey: 'AvgPrice(CustomAggregator)', title: 'AvgPrice CustomAggregator', width: 'auto' }
       ],
       corner: {
         titleOnDimension: 'row',
@@ -160,9 +134,16 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         }
       },
       dataConfig: {
+        aggregationRules: [
+          {
+            indicatorKey: 'AvgPrice(CustomAggregator)',
+            aggregationType: 'avgPrice',
+            field: ['Sales', 'Quantity'] //聚合计算逻辑所依赖的数据字段
+          }
+        ],
         calculatedFieldRules: [
           {
-            key: 'AvgPrice',
+            key: 'AvgPrice(CalculatedField)',
             dependIndicatorKeys: ['Quantity', 'Sales'],
             calculateFun: dependValue => {
               return dependValue.Sales / dependValue.Quantity;

@@ -169,7 +169,7 @@ If you use custom rendering `customLayout` and want to get all the data `records
 
 [option description](../../option/PivotTable#dataConfig.aggregationRules)
 
-Configuration example:
+#### Configuration example:
 
 ```
 dataConfig: {
@@ -206,12 +206,27 @@ dataConfig: {
           indicatorKey: 'orderRecords', //Indicator name
           field: 'Sales', //Indicator based on field
           aggregationType: VTable.TYPES.AggregationType.RECORD, //don't aggregate. Match all the corresponding data as the value of the cell
+        },
+        {
+          indicatorKey: 'Custom Aggregation Function', //Indicator name
+          field: 'sales', //Indicator based field
+          aggregationType: VTable.TYPES.AggregationType.CUSTOM, //Custom aggregation type requires configuration of custom function aggregationFun
+          aggregationFun(values, records) {
+            return values.reduce((pre, cur) => pre + cur, 0) / values.length;
+          }
+        },
+        {
+          indicatorKey: 'Average Product Price (Registered Aggregation Class)', //Indicator name
+          field: 'sales', //Indicator based field
+          aggregationType: 'avgPrice', //Registered aggregation type
         }
       ]
 }
 ```
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
+
+#### 特殊聚合类型使用说明
 
 **Special Note:**
 
@@ -235,10 +250,88 @@ dataConfig:{
   }]
 }
 ```
+  In this data record, the sales indicator is a non-numeric value. If the product requirement is to directly display `"NULL"` in the table cell, then the aggregation rule can be set to `VTable.TYPES.AggregationType.NONE`, so that VTable's internal will not perform aggregation calculations, but directly take the `sales` field value as the display value of the cell.
 
-The sales indicator in this record is a non-numeric value, and it is required to display `"NULL"` directly in the table cell. In this case, you can set `NONE` to require the internal aggregation logic of VTable to directly obtain the value of the sales field without aggregation.
+  2. AggregationType.RECORD usage scenario is mainly used to match all data based on the user's input data record and use it as the display data of the cell. Usage scenarios include: needing to collect data sets for mini-chart displays, specific demo see: https://visactor.io/vtable/demo/cell-type/pivot-sparkline
 
-2. The usage scenario of AggregationType.RECORD indicator without aggregation is mainly used to match all data according to the data record passed by the user, and use it as the display data of the cell. The usage scenario is such as collecting data sets as mini-charts. For specific demo, see: https://visactor.io/vtable/demo/cell-type/pivot-sparkline
+#### Custom Aggregation Type Introduction
+
+To declare a custom aggregation class, you need to inherit the internal type `VTable.TYPES.Aggregator`, and then register it to VTable through `VTable.register.aggregator`.
+
+Here is an example of a custom aggregation class:
+
+```
+// Implement a custom aggregation type to calculate the average product price
+class AvgPriceAggregator extends VTable.TYPES.Aggregator {
+  sales_sum: number = 0;
+  number_sum: number = 0;
+  constructor(config: { key: string; field: string; formatFun?: any }) {
+    super(config);
+    this.key = config.key;
+    this.formatFun = config.formatFun;
+  }
+  push(record: any): void {
+    if (record) {
+      if (record.isAggregator) {
+        this.records.push(...record.records);
+      } else {
+        this.records.push(record);
+      }
+
+      if (record.isAggregator) {
+        this.sales_sum += record.sales_sum;
+        this.number_sum += record.number_sum;
+      } else {
+        record.sales && (this.sales_sum += parseFloat(record.sales));
+        record.number && (this.number_sum += parseFloat(record.number));
+      }
+    }
+    this.clearCacheValue();
+  }
+  deleteRecord: (record: any) => void;
+  updateRecord: (oldRecord: any, newRecord: any) => void;
+  recalculate: () => any;
+  clearCacheValue() {
+    this._formatedValue = undefined;
+  }
+  value() {
+    return this.records?.length >= 1 ? this.sales_sum / this.number_sum : undefined;
+  }
+  reset() {
+    super.reset();
+    this.sales_sum = 0;
+    this.number_sum = 0;
+  }
+}
+// Register the aggregation type to VTable
+VTable.register.aggregator('avgPrice', AvgPriceAggregator);
+// Usage after registration, in dataConfig.aggregationRules, configure aggregationType as `avgPrice`.
+const option={
+  ...
+  dataConfig: {
+    aggregationRules: [
+        {
+          indicatorKey: 'Average Product Price (Registered Aggregation Class)', //Indicator name
+          field: 'sales', //Indicator based field
+          aggregationType: 'avgPrice', //Registered aggregation type 
+        }
+      ]
+  }
+}
+```
+
+VTable's internal aggregation rules code address: https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/ts-types/dataset/aggregation.ts, can be referred to!
+
+The methods that need to be implemented for the aggregation type are:
+- constructor: The constructor function, used to initialize the aggregator.
+- push: Add data records to the aggregator, used to calculate the aggregated value.
+- deleteRecord: Delete records from the aggregator and update the aggregated value, called by VTable's delete interface deleteRecords.
+- updateRecord: Update data records and update the aggregated value, called by the updateRecords interface.
+- recalculate: Recalculate the aggregated value, currently called by the method of copying and pasting cell values.
+- value: Get the aggregated value.
+- reset: Reset the aggregator.
+
+If you feel that methods that do not need to be implemented can be written as empty functions.
 
 ### 5. Derive Field
 

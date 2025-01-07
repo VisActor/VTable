@@ -146,10 +146,10 @@ export interface AggregationRule<T extends AggregationType> {
   /** 区别于field 重新起个key值，供配置indicators使用 */
   indicatorKey: string;
   // 可以收集单个字段的聚合结果，或者收集多个字段的聚合结果
-  field: T extends AggregationType.RECORD ? string[] | string : string;
+  field: string[] | string;
+  aggregationType: string | T;
   /** aggregationType 配置为 AggregationType.CUSTOM 时，需要配置 aggregationFun。*/
   aggregationFun?: T extends AggregationType.CUSTOM ? (values: any[], records: any[]) => any : undefined;
-  aggregationType: T;
   /**计算结果格式化 */
   formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => number | string;
 }

@@ -929,7 +929,7 @@ export function sortBy(order: string[]) {
 function _getDependAggregatorValues(aggregators: Aggregator[], dependIndicatorKeys: string[]) {
   const dependAggregatorValues: any = {};
   for (let m = 0; m < dependIndicatorKeys?.length; m++) {
-    const aggrator = aggregators.find(aggrator => aggrator.key === dependIndicatorKeys[m]);
+    const aggrator = aggregators.find(aggrator => aggrator?.key === dependIndicatorKeys[m]);
     if (aggrator) {
       dependAggregatorValues[aggrator.key] = aggrator?.value();
     }

@@ -58,10 +58,6 @@ export function createTable() {
     rows: ['province', 'city'],
     columns: ['category', 'sub_category'],
     indicators: [
-      '销售总额',
-      '订单数',
-      '订单均价',
-      '自定义聚合函数',
       '商品均价（注册聚合类）',
       {
         indicatorKey: '商品均价（计算字段）',
@@ -75,36 +71,7 @@ export function createTable() {
     dataConfig: {
       aggregationRules: [
         //做聚合计算的依据，如销售额如果没有配置则默认按聚合sum计算结果显示单元格内容
-        {
-          indicatorKey: '销售总额', //指标名称
-          field: 'sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.SUM, //计算类型
-          formatFun(value, col, row, table) {
-            return value;
-          }
-        },
-        {
-          indicatorKey: '订单数', //指标名称
-          field: 'sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.COUNT, //计算类型
-          formatFun: countNumberFormat
-        },
-        {
-          indicatorKey: '订单均价', //指标名称
-          field: 'sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.AVG, //计算类型
-          formatFun: sumNumberFormat
-        },
-        {
-          indicatorKey: '自定义聚合函数', //指标名称
-          field: 'sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.CUSTOM, //计算类型
-          aggregationFun(values, records) {
-            console.log('自定义', values, records);
-            return values.reduce((pre, cur) => pre + cur, 0) / values.length;
-          },
-          formatFun: sumNumberFormat
-        },
+
         {
           indicatorKey: '商品均价（注册聚合类）', //指标名称
           field: 'sales', //指标依据字段
