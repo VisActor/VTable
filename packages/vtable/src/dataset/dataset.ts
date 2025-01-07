@@ -257,6 +257,7 @@ export class Dataset {
     this.rowKeys = [];
     this.rowsHasValue = [];
     this.columnsHasValue = [];
+    this.sorted = false;
     if (records) {
       //处理数据
       this.records = records;
