@@ -178,6 +178,10 @@ export const menus = [
       },
       {
         path: 'list-analysis',
+        name: 'list-aggregation-group-header'
+      },
+      {
+        path: 'list-analysis',
         name: 'olympic-winners'
       }
     ]
