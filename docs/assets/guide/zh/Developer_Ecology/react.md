@@ -295,3 +295,16 @@ register.chartModule('vchart', VChart);
 
 // ......
 ```
+
+### 列宽保持
+
+在 React-VTable 中，props的更新会触发VTable的updateOption（或setRecords），如果手动调整了列宽，则会导致列宽重置为初始状态。如果需要保留列宽，可以配置`keepColumnWidthChange` props为true。需要注意的是，在列表中，需要给每个`ListColumn`配置`key`作为唯一标识，透视表中不需要。
+
+```jsx
+<ListTable records={records} keepColumnWidthChange={true}>
+  <ListColumn field={'0'} title={'名称'} key={'0'} />
+  <ListColumn field={'1'} title={'年龄'} key={'1'} />
+  <ListColumn field={'2'} title={'性别'} key={'2'} />
+  <ListColumn field={'3'} title={'爱好'} key={'3'} />
+</ListTable>
+```
