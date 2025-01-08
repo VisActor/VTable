@@ -1253,6 +1253,13 @@
           }
         },
         {
+          "path": "pivot-analysis-customAggregator",
+          "title": {
+            "zh": "自定义聚合类型",
+            "en": "Custom Aggregation Type"
+          }
+        },
+        {
           "path": "pivot-analysis-table-drill",
           "title": {
             "zh": "透视表上钻下钻",

@@ -103,6 +103,7 @@ import {
   _setDataSource,
   _setRecords,
   _toPxWidth,
+  checkHasColumnAutoWidth,
   createRootElement,
   getStyleTheme,
   updateRootElementPadding
@@ -235,6 +236,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // rowCount = 0,
       // colCount = 0,
       frozenColCount = 0,
+      unfreezeAllOnExceedsMaxWidth,
       frozenRowCount,
       defaultRowHeight = 40,
       defaultHeaderRowHeight,
@@ -346,6 +348,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.pixelRatio = pixelRatio;
     internalProps.frozenColCount = frozenColCount;
     internalProps.frozenRowCount = frozenRowCount;
+    internalProps.unfreezeAllOnExceedsMaxWidth = unfreezeAllOnExceedsMaxWidth ?? true;
 
     internalProps.defaultRowHeight = defaultRowHeight;
     internalProps.defaultHeaderRowHeight = defaultHeaderRowHeight ?? defaultRowHeight; // defaultHeaderRowHeight没有设置取defaultRowHeight
@@ -593,9 +596,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // const oldFrozenColCount = this.internalProps.frozenColCount;
     this.internalProps.frozenColCount = frozenColCount;
     this.options.frozenColCount = frozenColCount;
+
     // 纠正frozenColCount的值;
-    if (this.tableNoFrameWidth - this.getColsWidth(0, frozenColCount - 1) <= 120) {
-      this.internalProps.frozenColCount = 0;
+    const maxFrozenWidth = this._getMaxFrozenWidth();
+    // if (this.tableNoFrameWidth - this.getColsWidth(0, frozenColCount - 1) <= 120) {
+    if (this.getColsWidth(0, frozenColCount - 1) > maxFrozenWidth) {
+      if (this.internalProps.unfreezeAllOnExceedsMaxWidth) {
+        this.internalProps.frozenColCount = 0;
+      } else {
+        const computedFrozenColCount = this._getComputedFrozenColCount(frozenColCount);
+        this.internalProps.frozenColCount = computedFrozenColCount;
+      }
     }
     this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
@@ -608,9 +619,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps.frozenColCount = frozenColCount;
     this.options.frozenColCount = frozenColCount;
     //纠正frozenColCount的值
-    if (this.tableNoFrameWidth - this.getColsWidth(0, frozenColCount - 1) <= 120) {
-      this.internalProps.frozenColCount = 0;
+    const maxFrozenWidth = this._getMaxFrozenWidth();
+    // if (this.tableNoFrameWidth - this.getColsWidth(0, frozenColCount - 1) <= 120) {
+    if (this.getColsWidth(0, frozenColCount - 1) > maxFrozenWidth) {
+      if (this.internalProps.unfreezeAllOnExceedsMaxWidth) {
+        this.internalProps.frozenColCount = 0;
+      } else {
+        const computedFrozenColCount = this._getComputedFrozenColCount(frozenColCount);
+        this.internalProps.frozenColCount = computedFrozenColCount;
+      }
     }
+
     this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   /**
@@ -883,6 +902,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return _toPxWidth(this, width);
   }
 
+  _getMaxFrozenWidth(): number {
+    const maxFrozenWidth = this.options.maxFrozenWidth ?? '80%';
+    return _toPxWidth(this, maxFrozenWidth);
+  }
+  _getComputedFrozenColCount(frozenColCount: number): number {
+    const maxFrozenWidth = this._getMaxFrozenWidth();
+    let computedfrozenColCount = frozenColCount;
+    while (this.getColsWidth(0, computedfrozenColCount - 1) > maxFrozenWidth) {
+      computedfrozenColCount--;
+      if (computedfrozenColCount <= 0) {
+        break;
+      }
+    }
+    return computedfrozenColCount;
+  }
   /**
    * 获取列宽的最大最小限制
    * @param {number} col number of column
@@ -922,7 +956,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const limits = this._getColWidthLimits(col);
     return Math.max(_applyColWidthLimits(limits, orgWidth), 0);
   }
-
+  get pixelRatio(): number {
+    return this.internalProps.pixelRatio;
+  }
   /**
    * 设置像数比
    * @param pixelRatio
@@ -943,6 +979,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.scenegraph.setPixelRatio(pixelRatio);
     }
   }
+
   /**
    * 窗口尺寸发生变化 或者像数比变化
    * @return {void}
@@ -2209,6 +2246,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // rowCount = 0,
       // colCount = 0,
       frozenColCount = 0,
+      unfreezeAllOnExceedsMaxWidth,
       // frozenRowCount = 0,
       defaultRowHeight = 40,
       defaultHeaderRowHeight,
@@ -2288,6 +2326,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // internalProps.rowCount = rowCount;
     // internalProps.colCount = colCount;
     internalProps.frozenColCount = frozenColCount;
+    internalProps.unfreezeAllOnExceedsMaxWidth = unfreezeAllOnExceedsMaxWidth ?? true;
     // internalProps.frozenRowCount = frozenRowCount;
     internalProps.defaultRowHeight = defaultRowHeight;
     internalProps.defaultHeaderRowHeight = defaultHeaderRowHeight ?? defaultRowHeight;
@@ -4281,5 +4320,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.scrollTop = Math.min(top - frozenHeight, this.getAllRowsHeight() - drawRange.height);
     }
     this.render();
+  }
+  checkHasColumnAutoWidth(): boolean {
+    return checkHasColumnAutoWidth(this);
   }
 }

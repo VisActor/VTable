@@ -122,13 +122,13 @@ export function createGroupForFirstScreen(
         table
       );
     }
-    if (table.rowHeaderLevelCount > 0) {
+    if (table.frozenColCount > table.leftRowSeriesNumberCount) {
       createColGroup(
         rowHeaderGroup,
         xOrigin,
         yOrigin,
         table.leftRowSeriesNumberCount, // colStart
-        table.leftRowSeriesNumberCount + table.rowHeaderLevelCount - 1, // colEnd
+        Math.min(table.frozenColCount - 1, table.rowHeaderLevelCount + table.leftRowSeriesNumberCount - 1), // colEnd
         table.frozenRowCount, // rowStart
         // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
         distRow - table.bottomFrozenRowCount,

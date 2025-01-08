@@ -114,6 +114,7 @@ export interface IBaseTableProtected {
   rowCount: number;
   colCount: number;
   frozenColCount: number;
+  unfreezeAllOnExceedsMaxWidth: boolean;
   allowFrozenColCount: number;
 
   frozenRowCount: number;
@@ -297,6 +298,10 @@ export interface BaseTableConstructorOptions {
   frozenRowCount?: number;
   rightFrozenColCount?: number;
   bottomFrozenRowCount?: number;
+  /** 最大冻结宽度，固定值 or 百分比。默认为'80%' */
+  maxFrozenWidth?: number | string;
+  /** 超过最大冻结宽度后是否全部解冻，默认true */
+  unfreezeAllOnExceedsMaxWidth?: boolean;
 
   // /** 待实现 TODO */
   // frozenRowCount?: number;
@@ -647,6 +652,8 @@ export interface BaseTableAPI {
   _colRangeWidthsMap: Map<string, number>;
   canvasSizeSeted?: boolean;
 
+  pixelRatio: number;
+
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -887,7 +894,8 @@ export interface BaseTableAPI {
   scrollToCol: (col: number, animationOption?: ITableAnimationOption | boolean) => void;
   registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
   arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
-
+  /** 是否有列是自动计算列宽 */
+  checkHasColumnAutoWidth: () => boolean;
   _moveHeaderPosition: (
     source: CellAddress,
     target: CellAddress
@@ -942,6 +950,8 @@ export interface BaseTableAPI {
   bodyMergeTitleCache: Map<string, any>;
   isSeriesNumberInBody: (col: number, row: number) => boolean;
   getGroupTitleLevel: (col: number, row: number) => number | undefined;
+  _getMaxFrozenWidth: () => number;
+  _getComputedFrozenColCount: (frozenColCount: number) => number;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

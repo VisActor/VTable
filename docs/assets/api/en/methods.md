@@ -374,6 +374,7 @@ If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd
 ```
 
 ## getBodyRowIndexByRecordIndex(Function)
+
 Get the row index that should be displayed in the body based on the data index, with both parameter and return value indices starting from 0. If it is a tree mode table, the parameter supports arrays, such as [1,2].
 
 **ListTable proprietary**
@@ -392,13 +393,17 @@ Get the index row number or column number displayed in the table according to th
 Note: ListTable specific interface
 
 ```
-  /**
-   * Get the index row number or column number displayed in the table according to the field of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number).
 
-   Note: ListTable specific interface
-   * @param recordIndex
-   */
+/\*\*
+
+- Get the index row number or column number displayed in the table according to the field of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number).
+
+Note: ListTable specific interface
+
+- @param recordIndex
+  \*/
   getTableIndexByField: (field: FieldDef) => number;
+
 ```
 
 ## getRecordShowIndexByCell(Function)
@@ -408,8 +413,10 @@ Get the index of the current cell data in the body part, that is, remove the ind
 **ListTable proprietary**
 
 ```
-  /** Get the display index of the current cell in the body part,it is ( row / col )- headerLevelCount. Note: ListTable specific interface */
-  getRecordShowIndexByCell(col: number, row: number): number
+
+/\*_ Get the display index of the current cell in the body part,it is ( row / col )- headerLevelCount. Note: ListTable specific interface _/
+getRecordShowIndexByCell(col: number, row: number): number
+
 ```
 
 ## getCellAddrByFieldRecord(Function)
@@ -419,13 +426,16 @@ Get the cell row and column number based on the index and field in the data sour
 Note: ListTable specific interface
 
 ```
-  /**
-   * Get the cell row and column number based on the index and field in the data source. Note: ListTable specific interface
-   * @param field
-   * @param recordIndex
-   * @returns
-   */
+
+/\*\*
+
+- Get the cell row and column number based on the index and field in the data source. Note: ListTable specific interface
+- @param field
+- @param recordIndex
+- @returns
+  \*/
   getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
+
 ```
 
 ## getCellOriginRecord(Function)
@@ -437,13 +447,16 @@ If it is a normal table, the source data object will be returned.
 If it is a pivot analysis table (a pivot table with data analysis turned on), an array of source data will be returned.
 
 ```
-  /**
-   * Get source data based on row and column numbers
-   * @param {number} col col index.
-   * @param {number} row row index.
-   * @return {object} record or record array. ListTable return one record, PivotTable return an array of records.
-   */
+
+/\*\*
+
+- Get source data based on row and column numbers
+- @param {number} col col index.
+- @param {number} row row index.
+- @return {object} record or record array. ListTable return one record, PivotTable return an array of records.
+  \*/
   getCellOriginRecord(col: number, row: number)
+
 ```
 
 ## getAllCells(Function)
@@ -451,13 +464,16 @@ If it is a pivot analysis table (a pivot table with data analysis turned on), an
 Get all cell context information
 
 ```
-  /**
-   * :: Obtain information on all cell data
-   * @param colMaxCount Limit the number of columns to be fetched.
-   * @param rowMaxCount Limit the number of rows to be fetched.
-   * @returns CellInfo[][]
-   */
+
+/\*\*
+
+- :: Obtain information on all cell data
+- @param colMaxCount Limit the number of columns to be fetched.
+- @param rowMaxCount Limit the number of rows to be fetched.
+- @returns CellInfo[][]
+  \*/
   getAllCells(colMaxCount?: number, rowMaxCount?: number) => CellInfo[][];
+
 ```
 
 ## getAllBodyCells(Function)
@@ -465,13 +481,16 @@ Get all cell context information
 Get all body cell context information
 
 ```
-  /**
-   * :: Get all body cell context information
-   * @param colMaxCount Limit the number of columns to be fetched.
-   * @param rowMaxCount Limit the number of rows to be fetched.
-   * @returns CellInfo[][]
-   */
+
+/\*\*
+
+- :: Get all body cell context information
+- @param colMaxCount Limit the number of columns to be fetched.
+- @param rowMaxCount Limit the number of rows to be fetched.
+- @returns CellInfo[][]
+  \*/
   getAllBodyCells(colMaxCount?: number, rowMaxCount?: number) => CellInfo[][];
+
 ```
 
 ## getAllColumnHeaderCells(Function)
@@ -479,11 +498,14 @@ Get all body cell context information
 Get all list header cell context information
 
 ```
-  /**
-   * :: Obtain information on all list header cell data
-   * @returns CellInfo[][]
-   */
+
+/\*\*
+
+- :: Obtain information on all list header cell data
+- @returns CellInfo[][]
+  \*/
   getAllColumnHeaderCells(colMaxCount?: number, rowMaxCount?: number) => CellInfo[][];
+
 ```
 
 ## getAllRowHeaderCells(Function)
@@ -491,11 +513,14 @@ Get all list header cell context information
 Get all row header cell context information
 
 ```
-  /**
-   * :: Obtain all row header cell context information
-   * @returns CellInfo[][]
-   */
+
+/\*\*
+
+- :: Obtain all row header cell context information
+- @returns CellInfo[][]
+  \*/
   getAllRowHeaderCells(colMaxCount?: number, rowMaxCount?: number) => CellInfo[][];
+
 ```
 
 ## getCellOverflowText(Function)
@@ -503,14 +528,17 @@ Get all row header cell context information
 Get the text of the cell with omitted text.
 
 ```
-  /**
-   * :: Obtaining the text content of cells with omitted text
-   * :: cellTextOverflows stores values for which full text cannot be displayed, for use by toolTip
-   * @param {number} col column index.
-   * @param {number} row row index
-   * @return {string | null}
-   */
+
+/\*\*
+
+- :: Obtaining the text content of cells with omitted text
+- :: cellTextOverflows stores values for which full text cannot be displayed, for use by toolTip
+- @param {number} col column index.
+- @param {number} row row index
+- @return {string | null}
+  \*/
   getCellOverflowText(col: number, row: number) => string | null
+
 ```
 
 ## getCellRect(Function)
@@ -518,13 +546,16 @@ Get the text of the cell with omitted text.
 Get the specific position of the cell in the entire table.
 
 ```
- /**
-   * Get the range of cells. The return value is Rect type. Regardless of whether it is a merged cell, the coordinates start from 0
-   * @param {number} col column index
-   * @param {number} row row index
-   * @returns {Rect}
-   */
+
+/\*\*
+
+- Get the range of cells. The return value is Rect type. Regardless of whether it is a merged cell, the coordinates start from 0
+- @param {number} col column index
+- @param {number} row row index
+- @returns {Rect}
+  \*/
   getCellRect(col: number, row: number): Rect
+
 ```
 
 ## getCellRelativeRect(Function)
@@ -532,13 +563,42 @@ Get the specific position of the cell in the entire table.
 Get the specific position of the cell in the entire table. Relative position is based on the upper left corner of the table (scroll condition minus scroll value)
 
 ```
-  /**
-   * The obtained position is relative to the upper left corner of the table display interface. In case of scrolling, if the cell has rolled out of the top of the table, the y of this cell will be a negative value.
-   * @param {number} col index of column, of the cell
-   * @param {number} row index of row, of the cell
-   * @returns {Rect} the rect of the cell.
-   */
+
+/\*\*
+
+- The obtained position is relative to the upper left corner of the table display interface. In case of scrolling, if the cell has rolled out of the top of the table, the y of this cell will be a negative value.
+- @param {number} col index of column, of the cell
+- @param {number} row index of row, of the cell
+- @returns {Rect} the rect of the cell.
+  \*/
   getCellRelativeRect(col: number, row: number): Rect
+
+```
+
+## getCellRange(Function)
+
+Gets the merge range for the cell
+
+```
+
+/\*\*
+
+- @param {number} col column index
+- @param {number} row row index
+- @returns {Rect}
+  \*/
+  getCellRange(col: number, row: number): CellRange
+
+export interface CellRange {
+start: CellAddress;
+end: CellAddress;
+}
+
+export interface CellAddress {
+col: number;
+row: number;
+}
+
 ```
 
 ## getCellHeaderPaths(Function)
@@ -546,13 +606,16 @@ Get the specific position of the cell in the entire table. Relative position is 
 Get the path to the row list header
 
 ```
-  /**
-   * :: Get the path to the header of the line list
-   * @param col
-   * @param row
-   * @returns ICellHeaderPaths
-   */
+
+/\*\*
+
+- :: Get the path to the header of the line list
+- @param col
+- @param row
+- @returns ICellHeaderPaths
+  \*/
   getCellHeaderPaths(col: number, row: number) => ICellHeaderPaths
+
 ```
 
 {{ use: ICellHeaderPaths() }}
@@ -562,13 +625,16 @@ Get the path to the row list header
 Obtain the header tree node based on the row and column number, which includes the user's custom attributes on the custom tree rowTree and columnTree trees (it is also the node of the internal layout tree, please do not modify it at will after obtaining it).Under normal circumstances, just use getCellHeaderPaths.
 
 ```
-  /**
-   * Obtain the header tree node based on the row and column number, which includes the user's custom attributes on the custom tree rowTree and columnTree trees (it is also the node of the internal layout tree, please do not modify it at will after obtaining it)
-   * @param col
-   * @param row
-   * @returns ICellHeaderPaths
-   */
+
+/\*\*
+
+- Obtain the header tree node based on the row and column number, which includes the user's custom attributes on the custom tree rowTree and columnTree trees (it is also the node of the internal layout tree, please do not modify it at will after obtaining it)
+- @param col
+- @param row
+- @returns ICellHeaderPaths
+  \*/
   getCellHeaderTreeNodes(col: number, row: number)=> ICellHeaderPaths
+
 ```
 
 ## getCellAddress(Function)
@@ -576,13 +642,16 @@ Obtain the header tree node based on the row and column number, which includes t
 Get the row and column number of a piece of data in the body based on the data and field attribute field names. Currently only the basic table ListTable is supported.
 
 ```
-  /**
-   The * method is used to get the row and column number of a piece of data in the body.
-   * @param findTargetRecord Calculates the index of a data entry from a data object or a specified function.
-   * @param field
-   * @returns
-   */
+
+/\*_
+The _ method is used to get the row and column number of a piece of data in the body.
+
+- @param findTargetRecord Calculates the index of a data entry from a data object or a specified function.
+- @param field
+- @returns
+  \*/
   getCellAddress(findTargetRecord: any | ((record: any) => boolean), field: FieldDef) => CellAddress
+
 ```
 
 ## getCellAddressByHeaderPaths(Function)
@@ -590,19 +659,22 @@ Get the row and column number of a piece of data in the body based on the data a
 For pivot table interfaces, get specific cell addresses based on the header dimension path to be matched.
 
 ```
-  /**
-   * :: Calculation of cell positions through dimension value paths in table headers
-   * @param dimensionPaths
-   * @returns
-   */
+
+/\*\*
+
+- :: Calculation of cell positions through dimension value paths in table headers
+- @param dimensionPaths
+- @returns
+  \*/
   getCellAddressByHeaderPaths(
-    dimensionPaths.
-      | {
-          colHeaderPaths: IDimensionInfo[].
-          rowHeaderPaths: IDimensionInfo[];
-        }
-      | IDimensionInfo[]
+  dimensionPaths.
+  | {
+  colHeaderPaths: IDimensionInfo[].
+  rowHeaderPaths: IDimensionInfo[];
+  }
+  | IDimensionInfo[]
   ) => CellAddress
+
 ```
 
 ## getScrollTop(Function)
@@ -626,11 +698,14 @@ Set the horizontal scroll position (the rendering interface will be updated)
 Scroll to a specific cell location
 
 ```
-  /**
-   * :: Scrolling to a specific cell location
-   * @param cellAddr The cell position to scroll to.
-   */
+
+/\*\*
+
+- :: Scrolling to a specific cell location
+- @param cellAddr The cell position to scroll to.
+  \*/
   scrollToCell(cellAddr: { col?: number; row?: number })=>void
+
 ```
 
 ## toggleHierarchyState(Function)
@@ -638,13 +713,16 @@ Scroll to a specific cell location
 Tree expand and collapse state switch
 
 ```
- /**
-   * Header switches level status
-   * @param col
-   * @param row
-   * @param recalculateColWidths Whether to recalculate the column width. Default is true. (Case when has set width:auto or autoWidth is necessary to consider this parameter)
-   */
+
+/\*\*
+
+- Header switches level status
+- @param col
+- @param row
+- @param recalculateColWidths Whether to recalculate the column width. Default is true. (Case when has set width:auto or autoWidth is necessary to consider this parameter)
+  \*/
   toggleHierarchyState(col: number, row: number,recalculateColWidths: boolean = true)
+
 ```
 
 ## getHierarchyState(Function)
@@ -652,19 +730,22 @@ Tree expand and collapse state switch
 Get the tree-shaped expanded or collapsed status of a certain cell
 
 ```
-  /**
-   * Get the collapsed and expanded status of hierarchical nodes
-   * @param col
-   * @param row
-   * @returns
-   */
+
+/\*\*
+
+- Get the collapsed and expanded status of hierarchical nodes
+- @param col
+- @param row
+- @returns
+  \*/
   getHierarchyState(col: number, row: number) : HierarchyState | null;
 
 enum HierarchyState {
-  expand = 'expand',
-  collapse = 'collapse',
-  none = 'none'
+expand = 'expand',
+collapse = 'collapse',
+none = 'none'
 }
+
 ```
 
 ## getLayoutRowTree(Function)
@@ -674,11 +755,14 @@ enum HierarchyState {
 Get the table row header tree structure
 
 ```
-  /**
-   * Get the table row tree structure
-   * @returns
-   */
+
+/\*\*
+
+- Get the table row tree structure
+- @returns
+  \*/
   getLayoutRowTree() : LayoutTreeNode[]
+
 ```
 
 ## getLayoutRowTreeCount(Function)
@@ -690,11 +774,14 @@ Get the total number of nodes occupying the table row header tree structure.
 Note: The logic distinguishes between flat and tree hierarchies.
 
 ```
-  /**
-   * Get the total number of nodes occupying the table row header tree structure.
-   * @returns
-   */
+
+/\*\*
+
+- Get the total number of nodes occupying the table row header tree structure.
+- @returns
+  \*/
   getLayoutRowTreeCount() : number
+
 ```
 
 ## getLayoutColumnTree(Function)
@@ -704,11 +791,14 @@ Note: The logic distinguishes between flat and tree hierarchies.
 Get the table column header tree structure
 
 ```
-  /**
-   * Get the table column header tree structure
-   * @returns
-   */
+
+/\*\*
+
+- Get the table column header tree structure
+- @returns
+  \*/
   getLayoutColumnTree() : LayouTreeNode[]
+
 ```
 
 ## getLayoutColumnTreeCount(Function)
@@ -718,11 +808,14 @@ Get the table column header tree structure
 Get the total number of nodes occupying the table column header tree structure.
 
 ```
-  /**
-   * Get the total number of nodes occupying the table column header tree structure.
-   * @returns
-   */
+
+/\*\*
+
+- Get the total number of nodes occupying the table column header tree structure.
+- @returns
+  \*/
   getLayoutColumnTreeCount() : number
+
 ```
 
 ## updateSortState(Function)
@@ -730,12 +823,15 @@ Get the total number of nodes occupying the table column header tree structure.
 Update the sort status, ListTable exclusive
 
 ```
-  /**
-   * Update sort status
-   * @param sortState the sorting state to be set
-   * @param executeSort Whether to execute the internal sorting logic, setting false will only update the icon state
-   */
+
+/\*\*
+
+- Update sort status
+- @param sortState the sorting state to be set
+- @param executeSort Whether to execute the internal sorting logic, setting false will only update the icon state
+  \*/
   updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true)
+
 ```
 
 ## updateSortRules(Function)
@@ -743,11 +839,14 @@ Update the sort status, ListTable exclusive
 Pivot table update sorting rules, exclusive to PivotTable
 
 ```
-  /**
-   * Full update of sorting rules
-   * @param sortRules
-   */
+
+/\*\*
+
+- Full update of sorting rules
+- @param sortRules
+  \*/
   updateSortRules(sortRules: SortRules)
+
 ```
 
 ## updatePivotSortState(Function)
@@ -755,14 +854,17 @@ Pivot table update sorting rules, exclusive to PivotTable
 Update sort status, The vtable itself does not perform sorting logic. PivotTable exclusive
 
 ```
-  /**
-   * Update sort status
-   * @param pivotSortStateConfig.dimensions sorting state dimension correspondence; pivotSortStateConfig.order sorting state
-   */
+
+/\*\*
+
+- Update sort status
+- @param pivotSortStateConfig.dimensions sorting state dimension correspondence; pivotSortStateConfig.order sorting state
+  \*/
   updatePivotSortState(pivotSortStateConfig: {
-      dimensions: IDimensionInfo[];
-      order: SortOrder;
-    }[])
+  dimensions: IDimensionInfo[];
+  order: SortOrder;
+  }[])
+
 ```
 
 The table will not be redrawn automatically after updating, and the interface renderWithRecreateCells needs to be configured to refresh
@@ -772,7 +874,9 @@ The table will not be redrawn automatically after updating, and the interface re
 Set the selected state of the drop-down menu
 
 ```
-  setDropDownMenuHighlight(cells: DropDownMenuHighlightInfo[]): void
+
+setDropDownMenuHighlight(cells: DropDownMenuHighlightInfo[]): void
+
 ```
 
 ## showTooltip(Function)
@@ -780,13 +884,16 @@ Set the selected state of the drop-down menu
 Show tooltip information prompt box
 
 ```
-  /**
-   * Display tooltip information prompt box
-   * @param col The column number of the cell where the prompt box is displayed
-   * @param row The row number of the cell where the prompt box is displayed
-   * @param tooltipOptions tooltip content configuration
-   */
+
+/\*\*
+
+- Display tooltip information prompt box
+- @param col The column number of the cell where the prompt box is displayed
+- @param row The row number of the cell where the prompt box is displayed
+- @param tooltipOptions tooltip content configuration
+  \*/
   showTooltip(col: number, row: number, tooltipOptions?: TooltipOptions) => void
+
 ```
 
 Note: For the time being, it only supports setting tooltip.renderMode='html' globally, and calling this interface is valid
@@ -796,42 +903,71 @@ If you want the tooltip to be hover by the mouse, you need to configure the inte
 Where the TooltipOptions type is:
 
 ```
-/** Display popup prompt content */
+
+/** Display popup prompt content \*/
 export type TooltipOptions = {
-  /** tooltip content */
-  content: string;
-  /** The position of the tooltip box has priority over referencePosition */
-  position?: { x: number; y: number };
-  /** The reference position of the tooltip box If the position is set, the configuration will not take effect */
-  referencePosition?: {
-    /** The reference position is set to a rectangular boundary, and the placement is set to specify the orientation at the boundary position*/
-    rect: RectProps;
-    /** Specify the orientation at the boundary position */
-    placement?: Placement;
-  };
-  /** Need custom style to specify className dom tooltip to take effect */
-  className?: string;
-  /** Set the tooltip style */
-  style?: {
-    bgColor?: string;
-    font?: string;
-    color?: string;
-    padding?: number[];
-    arrowMark?: boolean;
-  };
-  /** set tooltip's  vanishing time */
-  disappearDelay?: number;
+/** tooltip content _/
+content: string;
+/\*\* The position of the tooltip box has priority over referencePosition _/
+position?: { x: number; y: number };
+/** The reference position of the tooltip box If the position is set, the configuration will not take effect \*/
+referencePosition?: {
+/** The reference position is set to a rectangular boundary, and the placement is set to specify the orientation at the boundary position*/
+rect: RectProps;
+/\*\* Specify the orientation at the boundary position */
+placement?: Placement;
+};
+/** Need custom style to specify className dom tooltip to take effect \*/
+className?: string;
+/** Set the tooltip style _/
+style?: {
+bgColor?: string;
+font?: string;
+color?: string;
+padding?: number[];
+arrowMark?: boolean;
+};
+/\*\* set tooltip's vanishing time _/
+disappearDelay?: number;
 };
 
 ```
 
+## showDropdownMenu(Function)
+Display dropdown menu, the content can be the menu items already set in the option, or display specific dom content. Use [demo](../demo/component/dropdown)
+```
+
+/\*\*
+
+- Display dropdown menu
+- @param col The column number of the cell where the dropdown menu is displayed
+- @param row The row number of the cell where the dropdown menu is displayed
+- @param menuOptions The content configuration of the dropdown menu
+  \*/
+  showDropdownMenu(col: number, row: number, menuOptions?: DropDownMenuOptions) => void;
+
+/** Display dropdown menu settings or display specific dom content \*/
+export type DropDownMenuOptions = {
+// menuList?: MenuListItem[];
+content: HTMLElement | MenuListItem[];
+position?: { x: number; y: number };
+referencePosition?: {
+rect: RectProps;
+/** Currently, the dropdown menu icon is aligned to the right, but the specified position is not yet implemented \*/
+placement?: Placement;
+};
+};
+
+```
 ## updateFilterRules(Function)
 
 Update data filtering rules
 
 ```
-/** Update data filtering rules */
+
+/\*_ Update data filtering rules _/
 updateFilterRules(filterRules: FilterRules) => void
+
 ```
 
 use case: For the PivotChart scene, after clicking the legend item, update the filter rules to update the chart
@@ -849,8 +985,10 @@ Sets the selection state of the legend.
 Note: After setting, if you need to synchronize the state of the chart, you need to use the updateFilterRules interface
 
 ```
-/** Set the selection state of the legend. After setting, the status of the synchronization chart needs to be used in conjunction with the updateFilterRules interface */
-  setLegendSelected(selectedData: (string | number)[])
+
+/\*_ Set the selection state of the legend. After setting, the status of the synchronization chart needs to be used in conjunction with the updateFilterRules interface _/
+setLegendSelected(selectedData: (string | number)[])
+
 ```
 
 ## getChartDatumPosition(Function)
@@ -858,13 +996,16 @@ Note: After setting, if you need to synchronize the state of the chart, you need
 Get the position of a certain primitive on the chart
 
 ```
-/**
-   * Get the position of a certain primitive on the chart
-   * @param datum data corresponding to the primitive
-   * @param cellHeaderPaths header path of the cell
-   * @returns The coordinate position of the primitive on the entire table (relative to the visual coordinates of the upper left corner of the table)
-   */
+
+/\*\*
+
+- Get the position of a certain primitive on the chart
+- @param datum data corresponding to the primitive
+- @param cellHeaderPaths header path of the cell
+- @returns The coordinate position of the primitive on the entire table (relative to the visual coordinates of the upper left corner of the table)
+  \*/
   getChartDatumPosition(datum:any,cellHeaderPaths:IPivotTableCellHeaderPaths):{x:number,y:number}
+
 ```
 
 ## exportImg(Function)
@@ -872,11 +1013,14 @@ Get the position of a certain primitive on the chart
 Export a picture of the currently visible area in the table.
 
 ```
-  /**
-   * Export pictures of the currently visible area in the table
-   * @returns base64 picture
-   */
+
+/\*\*
+
+- Export pictures of the currently visible area in the table
+- @returns base64 picture
+  \*/
   exportImg(): string
+
 ```
 
 ## exportCellImg(Function)
@@ -884,11 +1028,14 @@ Export a picture of the currently visible area in the table.
 Export a cell picture
 
 ```
- /**
-   * Export a cell picture
-   * @returns base64 picture
-   */
+
+/\*\*
+
+- Export a cell picture
+- @returns base64 picture
+  \*/
   exportCellImg(col: number, row: number, options?: { disableBackground?: boolean; disableBorder?: boolean }): string
+
 ```
 
 ## exportCellRangeImg(Function)
@@ -896,11 +1043,14 @@ Export a cell picture
 Export a picture of a certain cell range
 
 ```
- /**
-   * Export pictures of a certain area
-   * @returns base64 picture
-   */
+
+/\*\*
+
+- Export pictures of a certain area
+- @returns base64 picture
+  \*/
   exportCellRangeImg(cellRange: CellRange): string
+
 ```
 
 ## changeCellValue(Function)
@@ -908,8 +1058,10 @@ Export a picture of a certain cell range
 Change the value of a cell:
 
 ```
-  /** Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly */
-  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
+
+/\*_ Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly _/
+changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
+
 ```
 
 ## changeCellValues(Function)
@@ -917,13 +1069,16 @@ Change the value of a cell:
 Change the value of cells in batches:
 
 ```
-  /**
-   * Batch update data of multiple cells
-   * @param col The starting column number of pasted data
-   * @param row The starting row number of pasted data
-   * @param values Data array of multiple cells
-   */
+
+/\*\*
+
+- Batch update data of multiple cells
+- @param col The starting column number of pasted data
+- @param row The starting row number of pasted data
+- @param values Data array of multiple cells
+  \*/
   changeCellValues(startCol: number, startRow: number, values: string[][])
+
 ```
 
 ## getEditor(Function)
@@ -931,8 +1086,10 @@ Change the value of cells in batches:
 Get the editor for the cell configuration
 
 ```
-  /** Get the editor of cell configuration */
-  getEditor: (col: number, row: number) => IEditor;
+
+/\*_ Get the editor of cell configuration _/
+getEditor: (col: number, row: number) => IEditor;
+
 ```
 
 ## startEditCell(Function)
@@ -942,8 +1099,10 @@ Enable cell editing.
 If you want to change the value displayed in the edit box, you can configure the value to set the change
 
 ```
-  /** Enable cell editing */
-  startEditCell: (col?: number, row?: number, value?: string | number) => void;
+
+/\*_ Enable cell editing _/
+startEditCell: (col?: number, row?: number, value?: string | number) => void;
+
 ```
 
 ## completeEditCell(Function)
@@ -951,8 +1110,10 @@ If you want to change the value displayed in the edit box, you can configure the
 End editing
 
 ```
-  /** End editing */
-  completeEditCell: () => void;
+
+/\*_ End editing _/
+completeEditCell: () => void;
+
 ```
 
 ## records
@@ -970,14 +1131,17 @@ Add data, support multiple pieces of data
 **Note: ListTable specific interface**
 
 ```
-  /**
-   * Add data to support multiple pieces of data
-   * @param records multiple data
-   * @param recordIndex The position to be inserted into the data source, starting from 0. If recordIndex is not set, it will be appended to the end by default.
-   * If the sorting rule recordIndex is set to be invalid, the sorting logic will be automatically adapted to determine the insertion order.
-   * recordIndex can be obtained through the interface getRecordShowIndexByCell
-   */
+
+/\*\*
+
+- Add data to support multiple pieces of data
+- @param records multiple data
+- @param recordIndex The position to be inserted into the data source, starting from 0. If recordIndex is not set, it will be appended to the end by default.
+- If the sorting rule recordIndex is set to be invalid, the sorting logic will be automatically adapted to determine the insertion order.
+- recordIndex can be obtained through the interface getRecordShowIndexByCell
+  \*/
   addRecords(records: any[], recordIndex?: number)
+
 ```
 
 ## addRecord(Function)
@@ -987,14 +1151,17 @@ Add data, single piece of data
 **Note: ListTable specific interface**
 
 ```
-  /**
-   * Add data single data
-   * @param record data
-   * @param recordIndex The position to be inserted into the data source, starting from 0. If recordIndex is not set, it will be appended to the end by default.
-   * If the sorting rule recordIndex is set to be invalid, the sorting logic will be automatically adapted to determine the insertion order.
-   * recordIndex can be obtained through the interface getRecordShowIndexByCell
-   */
+
+/\*\*
+
+- Add data single data
+- @param record data
+- @param recordIndex The position to be inserted into the data source, starting from 0. If recordIndex is not set, it will be appended to the end by default.
+- If the sorting rule recordIndex is set to be invalid, the sorting logic will be automatically adapted to determine the insertion order.
+- recordIndex can be obtained through the interface getRecordShowIndexByCell
+  \*/
   addRecord(record: any, recordIndex?: number)
+
 ```
 
 ## deleteRecords(Function)
@@ -1004,11 +1171,14 @@ Delete data supports multiple pieces of data
 **Note: ListTable specific interface**
 
 ```
-  /**
-   * Delete data supports multiple pieces of data
-   * @param recordIndexs The index of the data to be deleted (the entry index displayed in the body)
-   */
+
+/\*\*
+
+- Delete data supports multiple pieces of data
+- @param recordIndexs The index of the data to be deleted (the entry index displayed in the body)
+  \*/
   deleteRecords(recordIndexs: number[])
+
 ```
 
 ## updateRecords(Function)
@@ -1018,12 +1188,15 @@ Modify data to support multiple pieces of data
 **ListTable proprietary**
 
 ```
-  /**
-   * Modify data to support multiple pieces of data
-   * @param records Modify data entries
-   * @param recordIndexs The index corresponding to the modified data (the index displayed in the body, that is, which row of data in the body part is to be modified)
-   */
+
+/\*\*
+
+- Modify data to support multiple pieces of data
+- @param records Modify data entries
+- @param recordIndexs The index corresponding to the modified data (the index displayed in the body, that is, which row of data in the body part is to be modified)
+  \*/
   updateRecords(records: any[], recordIndexs: number[])
+
 ```
 
 ## getBodyVisibleCellRange(Function)
@@ -1031,8 +1204,10 @@ Modify data to support multiple pieces of data
 Get the display cell range of the table body part
 
 ```
-  /** Get the display cell range of the table body */
-  getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
+
+/\*_ Get the display cell range of the table body _/
+getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
+
 ```
 
 ## getBodyVisibleColRange(Function)
@@ -1040,8 +1215,10 @@ Get the display cell range of the table body part
 Get the displayed column number range in the body part of the table
 
 ```
-  /** Get the displayed column number range in the body part of the table */
-  getBodyVisibleColRange: () => { colStart: number; colEnd: number };
+
+/\*_ Get the displayed column number range in the body part of the table _/
+getBodyVisibleColRange: () => { colStart: number; colEnd: number };
+
 ```
 
 ## getBodyVisibleRowRange(Function)
@@ -1049,8 +1226,10 @@ Get the displayed column number range in the body part of the table
 Get the displayed row number range of the table body part
 
 ```
-  /** Get the displayed row number range of the table body */
-  getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
+
+/\*_ Get the displayed row number range of the table body _/
+getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
+
 ```
 
 ## getAggregateValuesByField(Function)
@@ -1058,12 +1237,15 @@ Get the displayed row number range of the table body part
 Get aggregation summary value
 
 ```
-/**
-* Get the aggregate value based on the field
-* @param field field name
-* Returns an array, including the column number and the aggregate value array of each column
-*/
-getAggregateValuesByField(field: string | number)
+
+/\*\*
+
+- Get the aggregate value based on the field
+- @param field field name
+- Returns an array, including the column number and the aggregate value array of each column
+  \*/
+  getAggregateValuesByField(field: string | number)
+
 ```
 
 **ListTable Proprietary**
@@ -1073,7 +1255,9 @@ getAggregateValuesByField(field: string | number)
 Determine whether it is an aggregate cell
 
 ```
+
 isAggregation(col: number, row: number): boolean
+
 ```
 
 **ListTable Proprietary**
@@ -1083,7 +1267,9 @@ isAggregation(col: number, row: number): boolean
 Register a custom style
 
 ```
+
 registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void
+
 ```
 
 Custom cell style
@@ -1096,7 +1282,9 @@ Custom cell style
 Assign custom styles
 
 ```
+
 arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+
 ```
 
 - cellPosition: cell position information, supports configuration of single cells and cell areas
@@ -1109,7 +1297,9 @@ arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: Cel
 Get the selected status of all data in the checkbox under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
 
 ```
+
 getCheckboxState(field?: string | number): Array
+
 ```
 
 ## getCellCheckboxState(Function)
@@ -1117,7 +1307,9 @@ getCheckboxState(field?: string | number): Array
 Get the status of a cell checkbox
 
 ```
+
 getCellCheckboxState(col: number, row: number): Array
+
 ```
 
 ## getRadioState(Function)
@@ -1125,7 +1317,9 @@ getCellCheckboxState(col: number, row: number): Array
 Get the selected status of all radio data under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
 
 ```
+
 getRadioState(field?: string | number): number | Record<number, boolean | number>
+
 ```
 
 ## getCellRadioState(Function)
@@ -1133,7 +1327,9 @@ getRadioState(field?: string | number): number | Record<number, boolean | number
 Get the status of a cell radio. If a cell contains multiple radio buttons, the return value is number, which refers to the index of the selected radio in the cell. Otherwise, the return value is boolean.
 
 ```
+
 getCellRadioState(col: number, row: number): boolean | number
+
 ```
 
 ## setCellCheckboxState(Function)
@@ -1141,7 +1337,9 @@ getCellRadioState(col: number, row: number): boolean | number
 Set the checkbox state of a cell
 
 ```
+
 setCellCheckboxState(col: number, row: number, checked: boolean) => void
+
 ```
 
 - col: column number
@@ -1153,7 +1351,9 @@ setCellCheckboxState(col: number, row: number, checked: boolean) => void
 Set the cell's radio state to selected
 
 ```
+
 setCellRadioState(col: number, row: number, index?: number) => void
+
 ```
 
 - col: column number
@@ -1165,7 +1365,9 @@ setCellRadioState(col: number, row: number, index?: number) => void
 get all rows height
 
 ```
+
 getAllRowsHeight: () => number;
+
 ```
 
 ## getAllColsWidth(Function)
@@ -1173,7 +1375,9 @@ getAllRowsHeight: () => number;
 get all columns width
 
 ```
+
 getAllColsWidth: () => number;
+
 ```
 
 ## setSortedIndexMap(Function)
@@ -1181,13 +1385,15 @@ getAllColsWidth: () => number;
 Set up a pre-sort index to improve initial sorting performance in scenarios where large amounts of data are sorted.
 
 ```
+
 setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
 
 interface ISortedMapItem {
-  asc?: (number | number[])[];
-  desc?: (number | number[])[];
-  normal?: (number | number[])[];
+asc?: (number | number[])[];
+desc?: (number | number[])[];
+normal?: (number | number[])[];
 }
+
 ```
 
 ## getHeaderField(Function)
@@ -1196,8 +1402,10 @@ In **ListTable** can get header's field.
 In **PivotTable** get indicatorKey.
 
 ```
-  /**get field of header  */
-  getHeaderField: (col: number, row: number)
+
+/\*_get field of header _/
+getHeaderField: (col: number, row: number)
+
 ```
 
 ## getColWidth(Function)
@@ -1205,8 +1413,10 @@ In **PivotTable** get indicatorKey.
 get column width.
 
 ```
-  /**get column width */
-  getColWidth: (col: number)
+
+/\*_get column width _/
+getColWidth: (col: number)
+
 ```
 
 ## getRowHeight(Function)
@@ -1214,8 +1424,10 @@ get column width.
 get row height.
 
 ```
-  /**get row height */
-  getRowHeight: (row: number)
+
+/\*_get row height _/
+getRowHeight: (row: number)
+
 ```
 
 ## setColWidth(Function)
@@ -1223,8 +1435,10 @@ get row height.
 set column width.
 
 ```
-  /**set column width */
-  setColWidth: (col: number, width: number)
+
+/\*_set column width _/
+setColWidth: (col: number, width: number)
+
 ```
 
 ## setRowHeight(Function)
@@ -1232,8 +1446,10 @@ set column width.
 set row height.
 
 ```
-  /**set row height */
-  setRowHeight: (row: number, height: number)
+
+/\*_set row height _/
+setRowHeight: (row: number, height: number)
+
 ```
 
 ## cellIsInVisualView(Function)
@@ -1241,7 +1457,9 @@ set row height.
 Determines whether the cell is in the visible area of the cell. If the cell is completely in the visible area, it returns true. If part or all of the cell is outside the visible area, it returns false.
 
 ```
-  cellIsInVisualView(col: number, row: number)
+
+cellIsInVisualView(col: number, row: number)
+
 ```
 
 ## getCellAtRelativePosition(Function)
@@ -1251,14 +1469,17 @@ Gets the cell position relative to the upper left corner of the table.
 In the case of scrolling, the cells obtained are those after scrolling. For example, if the currently displayed rows are 100-120, the cell position relative to the upper left corner of the table (10,100) is (first column, 103rd row), assuming the row height is 40px.
 
 ```
-/**
-* Get the cell information corresponding to the screen coordinates, taking scrolling into account
-* @param this
-* @param relativeX The left x value, relative to the upper left corner of the container, taking into account the scrolling of the grid
-* @param relativeY The left y value, relative to the upper left corner of the container, taking into account the scrolling of the grid
-* @returns
-*/
-getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound
+
+/\*\*
+
+- Get the cell information corresponding to the screen coordinates, taking scrolling into account
+- @param this
+- @param relativeX The left x value, relative to the upper left corner of the container, taking into account the scrolling of the grid
+- @param relativeY The left y value, relative to the upper left corner of the container, taking into account the scrolling of the grid
+- @returns
+  \*/
+  getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound
+
 ```
 
 ## showMoverLine(Function)
@@ -1266,12 +1487,15 @@ getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWith
 Displays a highlighted line for moving columns or rows
 
 ```
-/**
-* Display the highlight line of the moving column or row If the (col, row) cell is the column header, the highlight column line is displayed; If the (col, row) cell is the row header, the highlight row line is displayed
-* @param col Which column in the table header should be highlighted after?
-* @param row The row after which the highlighted line is displayed
-*/
-showMoverLine(col: number, row: number)
+
+/\*\*
+
+- Display the highlight line of the moving column or row If the (col, row) cell is the column header, the highlight column line is displayed; If the (col, row) cell is the row header, the highlight row line is displayed
+- @param col Which column in the table header should be highlighted after?
+- @param row The row after which the highlighted line is displayed
+  \*/
+  showMoverLine(col: number, row: number)
+
 ```
 
 ## hideMoverLine(Function)
@@ -1279,12 +1503,15 @@ showMoverLine(col: number, row: number)
 Hide the highlight line of the moved column or row
 
 ```
-/**
-* Hide the highlight line of the moved column or row
-* @param col
-* @param row
-*/
-hideMoverLine(col: number, row: number)
+
+/\*\*
+
+- Hide the highlight line of the moved column or row
+- @param col
+- @param row
+  \*/
+  hideMoverLine(col: number, row: number)
+
 ```
 
 ## disableScroll(Function)
@@ -1292,10 +1519,12 @@ hideMoverLine(col: number, row: number)
 Close the scrolling of the table. If you do not want the table content to scroll in the business scenario, you can call this method.
 
 ```
-/** Turn off scrolling of the table */
+
+/\*_ Turn off scrolling of the table _/
 disableScroll() {
 this.eventManager.disableScroll();
 }
+
 ```
 
 ## enableScroll(Function)
@@ -1303,10 +1532,12 @@ this.eventManager.disableScroll();
 Enable scrolling of the table
 
 ```
-/** Enable scrolling of the table */
+
+/\*_ Enable scrolling of the table _/
 enableScroll() {
 this.eventManager.enableScroll();
 }
+
 ```
 
 ## setCanvasSize(Function)
@@ -1314,8 +1545,10 @@ this.eventManager.enableScroll();
 Directly set the width and height of the canvas instead of determining the size of the table based on the container width and height
 
 ```
-/** Directly set the width and height of the canvas instead of determining the size of the table based on the width and height of the container */
+
+/\*_ Directly set the width and height of the canvas instead of determining the size of the table based on the width and height of the container _/
 setCanvasSize: (width: number, height: number) => void;
+
 ```
 
 ## setLoadingHierarchyState(Function)
@@ -1323,6 +1556,23 @@ setCanvasSize: (width: number, height: number) => void;
 Set the loading state of the tree expansion and collapse of the cell
 
 ```
-  /** Set the loading state of the tree expansion and collapse of the cell */
-  setLoadingHierarchyState: (col: number, row: number) => void;
+
+/\*_ Set the loading state of the tree expansion and collapse of the cell _/
+setLoadingHierarchyState: (col: number, row: number) => void;
+
+```
+
+## setPixelRatio(Function)
+
+Sets the pixel ratio of the canvas. The default internal logic is window.devicePixelRatio. If the drawing feels fuzzy, try setting this value higher.
+
+The pixelRatio can be obtained directly from the instance's pixelRatio property.
+
+```
+
+/\*_ Set the canvas pixel ratio _/
+setPixelRatio: (pixelRatio: number) => void;
+
+```
+
 ```

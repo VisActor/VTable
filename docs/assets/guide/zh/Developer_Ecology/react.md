@@ -295,3 +295,9 @@ register.chartModule('vchart', VChart);
 
 // ......
 ```
+
+### 自定义组件
+
+为了方便 React 开发者快速实现自定义单元格内容，React-VTable 提供了封装组件并在单元格中使用的能力。
+
+具体可以参考教程：[自定义组件](../custom_define/react-custom-component)

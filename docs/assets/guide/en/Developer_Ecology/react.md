@@ -294,3 +294,9 @@ register.chartModule('vchart', VChart);
 
 // ......
 ```
+
+### Custom component
+
+To make it easy for React developers to quickly customize cell content, React-VTable provides the ability to encapsulate components and use them in cells.
+
+Refer to the tutorial for details：[Custom component](../custom_define/react-custom-component)

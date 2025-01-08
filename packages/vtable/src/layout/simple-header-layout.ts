@@ -28,7 +28,7 @@ import {
   checkHasAggregationOnTop,
   checkHasTreeDefine
 } from './layout-helper';
-import type { Aggregator } from '../dataset/statistics-helper';
+import type { Aggregator } from '../ts-types/dataset/aggregation';
 import { DimensionTree } from './tree-helper';
 import { getCellRange } from './cell-range/simple-cell-range';
 // import { EmptyDataCache } from './utils';
@@ -997,9 +997,14 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         rowCells[col] = this._headerCellIds[row - 1][col];
       }
       if (hd.columns) {
-        this._addHeaders(row + 1, hd.columns, [...roots, id], hd.hideColumnsSubHeader || hideColumnsSubHeader).forEach(
-          c => results.push(c)
-        );
+        const isAllHided = hd.columns.every((c: any) => c.hide);
+        !isAllHided &&
+          this._addHeaders(
+            row + 1,
+            hd.columns,
+            [...roots, id],
+            hd.hideColumnsSubHeader || hideColumnsSubHeader
+          ).forEach(c => results.push(c));
       } else {
         const colDef = {
           id: this.seqId++,

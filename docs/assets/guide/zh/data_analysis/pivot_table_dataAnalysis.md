@@ -159,11 +159,17 @@ dataConfig: {
 
 ### 4. 聚合方式
 
-默认所有指标值都会按照加和 SUM 的方式计算，如果不想这个默认的计算方式，可以通过配置 aggregationRules 来修改。通常情况下如果指标是字符串型，需要配置 NONE 来显示数据源字段原始值。
+默认所有指标值都会按照加和 `SUM` 的方式计算，如果不想这个默认的计算方式，可以通过配置 `aggregationRules` 来修改。
+
+通常情况下指标应该是 `number` 类型，这样内部才能进行计算。
+
+如果指标是字符串型或者 `null`，需要配置 `aggregationType` 为 `VTable.TYPES.AggregationType.NONE` 来显示数据源字段的原始值。
+
+如果用到了自定义渲染 `customLayout`，在 `customLayout` 函数中想获取单元格对应的所有数据 `records`，可以配置 `aggregationType` 为 `VTable.TYPES.AggregationType.RECORD`。
 
 [option 说明](../../option/PivotTable#dataConfig.aggregationRules)
 
-配置示例：
+#### 配置示例：
 
 ```
 dataConfig: {
@@ -200,12 +206,27 @@ dataConfig: {
           indicatorKey: 'orderRecords', //指标名称
           field: 'Sales', //指标依据字段
           aggregationType: VTable.TYPES.AggregationType.RECORD, //不做聚合 匹配到其中对应的全部数据作为单元格的值
+        },
+        {
+          indicatorKey: '自定义聚合函数', //指标名称
+          field: 'sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.CUSTOM, //自定义聚合类型 需要同时配置自定义函数aggregationFun
+          aggregationFun(values, records) {
+            return values.reduce((pre, cur) => pre + cur, 0) / values.length;
+          }
+        },
+        {
+          indicatorKey: '商品均价（注册聚合类）', //指标名称
+          field: 'sales', //指标依据字段
+          aggregationType: 'avgPrice', //自己注册的聚合类型 
         }
       ]
 }
 ```
 
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
+
+#### 特殊聚合类型使用说明
 
 **特别提示：**
 
@@ -231,9 +252,88 @@ dataConfig:{
 }
 ```
 
-其中该条 record 中 sales 指标是个非数值型的值，而且需求要将`"NULL"`直接显示到表格单元格中，那么可以设置 NONE，要求 VTable 的内部聚合逻辑不聚合直接取`sales`字段值。
+  其中该条数据 record 中 sales 指标是个非数值型的值，如果产品需求要将`"NULL"`直接显示到表格单元格中，那么可以设置聚合规则为`VTable.TYPES.AggregationType.NONE`，这样 VTable 的内部不会进行聚合计算，而是直接取`sales`字段值作为单元格展示值。
 
-2. AggregationType.RECORD 指标不做聚合的使用场景主要用于根据用户传入数据 record 匹配到所有数据，将其作为单元格的展示数据，用法场景如需要搜集数据集作为迷你图展示，具体 demo 见：https://visactor.io/vtable/demo/cell-type/pivot-sparkline
+2. AggregationType.RECORD 使用场景主要用于根据用户传入数据 record 匹配到所有数据，将其作为单元格的展示数据，用法场景如：需要搜集数据集作为迷你图展示，具体 demo 见：https://visactor.io/vtable/demo/cell-type/pivot-sparkline
+
+#### 自定义聚合类型介绍
+
+声明一个自定义聚合类，需要继承内部类型 `VTable.TYPES.Aggregator`，然后通过 `VTable.register.aggregator` 注册到 VTable 中。
+
+如下是一个自定义聚合类的示例：
+
+```
+// 实现一个计算商品平均价格的聚合类型
+class AvgPriceAggregator extends VTable.TYPES.Aggregator {
+  sales_sum: number = 0;
+  number_sum: number = 0;
+  constructor(config: { key: string; field: string; formatFun?: any }) {
+    super(config);
+    this.key = config.key;
+    this.formatFun = config.formatFun;
+  }
+  push(record: any): void {
+    if (record) {
+      if (record.isAggregator) {
+        this.records.push(...record.records);
+      } else {
+        this.records.push(record);
+      }
+
+      if (record.isAggregator) {
+        this.sales_sum += record.sales_sum;
+        this.number_sum += record.number_sum;
+      } else {
+        record.sales && (this.sales_sum += parseFloat(record.sales));
+        record.number && (this.number_sum += parseFloat(record.number));
+      }
+    }
+    this.clearCacheValue();
+  }
+  deleteRecord: (record: any) => void;
+  updateRecord: (oldRecord: any, newRecord: any) => void;
+  recalculate: () => any;
+  clearCacheValue() {
+    this._formatedValue = undefined;
+  }
+  value() {
+    return this.records?.length >= 1 ? this.sales_sum / this.number_sum : undefined;
+  }
+  reset() {
+    super.reset();
+    this.sales_sum = 0;
+    this.number_sum = 0;
+  }
+}
+// 将聚合类型注册到VTable中
+VTable.register.aggregator('avgPrice', AvgPriceAggregator);
+// 注册后的使用，在dataConfig.aggregationRules中配置aggregationType为`avgPrice`。
+const option={
+  ...
+  dataConfig: {
+    aggregationRules: [
+        {
+          indicatorKey: '商品均价（注册聚合类）', //指标名称
+          field: 'sales', //指标依据字段
+          aggregationType: 'avgPrice', //自己注册的聚合类型 
+        }
+      ]
+  }
+}
+```
+
+VTable内部的几种聚合规则代码地址：https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/ts-types/dataset/aggregation.ts，可予以参考！
+
+其中聚合类型需要实现的几个方法分别为：
+- constructor：构造函数，用于初始化聚合器。
+- push：将数据记录添加到聚合器中，用于计算聚合值。
+- deleteRecord：从聚合器中删除记录，并更新聚合值，调用vtable的删除接口deleteRecords会调用该接口。
+- updateRecord：更新数据记录，并更新聚合值，调用接口updateRecords会调用该接口。
+- recalculate：重新计算聚合值，目前复制粘贴单元格值会调用该方法。
+- value：获取聚合值。
+- reset：重置聚合器。
+
+如果觉得无需实现的方法写个空函数即可。
 
 ### 5. 派生字段
 
