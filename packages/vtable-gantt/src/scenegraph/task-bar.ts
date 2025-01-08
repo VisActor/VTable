@@ -568,8 +568,8 @@ export class TaskBar {
     this.selectedBorders[0].appendChild(line);
   }
 
-  getTaskBarNodeByIndex(index: number, sub_task_index?: number) {
-    let c = this.barContainer.firstChild as Group;
+  getTaskBarNodeByIndex(index: number, sub_task_index?: number): GanttTaskBarNode {
+    let c = this.barContainer.firstChild as GanttTaskBarNode;
     if (!c) {
       return null;
     }
@@ -580,7 +580,7 @@ export class TaskBar {
       ) {
         return c;
       }
-      c = c._next as Group;
+      c = c._next as GanttTaskBarNode;
     }
     return null;
   }
