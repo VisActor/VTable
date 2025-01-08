@@ -50,6 +50,8 @@ export { getDataCellPath } from './tools/get-data-path';
 export * from './render/jsx';
 export { getTargetCell } from './event/util';
 
+export { Icon } from './scenegraph/graphic/icon';
+
 // export * as VRender from './vrender';
 // import * as VRender from './vrender';
 
@@ -105,6 +107,7 @@ export {
   graphicUtil,
   setCustomAlphabetCharSet,
   restoreMeasureText
+
   // VRender // should use import {xxx} from '@visactor/vtable/es/vrender'
 };
 

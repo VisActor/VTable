@@ -13,6 +13,10 @@ export const menus = [
       {
         path: 'list',
         name: 'edit-demo'
+      },
+      {
+        path: 'list',
+        name: 'custom-weather'
       }
     ]
   }
