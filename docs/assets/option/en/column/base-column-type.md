@@ -71,7 +71,7 @@ Header cell icon configuration. Available configuration types are:
 string | ColumnIconOption | (string | ColumnIconOption)[];
 ```
 
-For the specific configuration of ColumnIconOption, refer to the [definition](/zh/option.html#ListTable-columns-text.icon.ColumnIconOption定义：)
+For the specific configuration of ColumnIconOption, refer to the [definition](./ListTable-columns-text#icon.ColumnIconOption)
 
 ${prefix} icon(string|Object|Array|Funciton)
 

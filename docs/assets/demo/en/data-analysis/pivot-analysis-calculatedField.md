@@ -4,7 +4,7 @@ group: data-analysis
 title: Pivot Table - Calculated Field
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/calculatedField.jpeg
 link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#dataConfig.totals
+option: PivotTable#dataConfig.calculatedFieldRules
 ---
 
 # Pivot Table - Calculated Field

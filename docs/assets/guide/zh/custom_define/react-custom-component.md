@@ -803,6 +803,7 @@ React-VTable组件库正在持续丰富中，欢迎开发者在使用中封装�
 
 react中还支持配置以下属性：
 * `pointerEvents` 是否响应鼠标事件
+* `penetrateEventList` 鼠标事件穿透列表，用于指定哪些鼠标事件需要穿透到VTable（目前暂时只支持`wheel`）
 * `container` 容器，用于限制滚动时组件显示区域在表格中，如果需要限制组件显示在表格内容区域，需要指定为`table.bodyDomContainer`；如果需要限制组件显示在表格表头区域，需要指定为`table.headerDomContainer`；如果是弹窗或菜单类组件，不需要配置该属性
 * `anchorType` 锚定类型，用于指定组件左上角相对于单元格的锚定位置
   * 'top'

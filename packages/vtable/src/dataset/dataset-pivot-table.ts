@@ -17,7 +17,7 @@ import type {
   IHeaderTreeDefine
 } from '../ts-types';
 import { AggregationType, SortType } from '../ts-types';
-import type { Aggregator } from './statistics-helper';
+import type { Aggregator } from '../ts-types/dataset/aggregation';
 import {
   AvgAggregator,
   CountAggregator,
@@ -27,7 +27,7 @@ import {
   naturalSort,
   sortBy,
   typeSort
-} from './statistics-helper';
+} from '../ts-types/dataset/aggregation';
 /**
  * 数据处理模块
  */
@@ -411,8 +411,8 @@ export class DatasetForPivotTable {
     return agg
       ? agg
       : {
+          records: [],
           key: '',
-          className: '',
           push() {
             // do nothing
           },

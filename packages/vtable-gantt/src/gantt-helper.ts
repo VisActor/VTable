@@ -20,13 +20,6 @@ import {
 
 const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
 export const DayTimes = 1000 * 60 * 60 * 24;
-/** 通过事件坐标y计算鼠标当前所在所几条任务条上。y是相对于canvas的坐标值，vrender事件返回的e.offset.y */
-export function getTaskIndexByY(y: number, gantt: Gantt) {
-  const gridY = y - gantt.headerHeight;
-  const taskBarHeight = gantt.stateManager.scroll.verticalBarPos + gridY;
-  const taskBarIndex = Math.floor(taskBarHeight / gantt.parsedOptions.rowHeight);
-  return taskBarIndex;
-}
 export function getDateIndexByX(x: number, gantt: Gantt) {
   const totalX = x + gantt.stateManager.scroll.horizontalBarPos;
   const firstDateColWidth = gantt.getDateColWidth(0);
@@ -239,6 +232,7 @@ export function initOptions(gantt: Gantt) {
   );
   gantt.parsedOptions.taskBarLabelText = options?.taskBar?.labelText ?? '';
   gantt.parsedOptions.taskBarMoveable = options?.taskBar?.moveable ?? true;
+  gantt.parsedOptions.moveTaskBarToExtendDateRange = options?.taskBar?.moveToExtendDateRange ?? true;
   gantt.parsedOptions.taskBarResizable = options?.taskBar?.resizable ?? true;
   gantt.parsedOptions.taskBarDragOrder = options?.taskBar?.dragOrder ?? true;
 
@@ -304,6 +298,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.dependencyLinks = options.dependency?.links ?? [];
   gantt.parsedOptions.dependencyLinkCreatable = options.dependency?.linkCreatable ?? false;
   gantt.parsedOptions.dependencyLinkSelectable = options.dependency?.linkSelectable ?? true;
+  gantt.parsedOptions.dependencyLinkDeletable = options.dependency?.linkDeletable ?? false;
   gantt.parsedOptions.dependencyLinkLineStyle = Object.assign(
     {
       lineColor: 'red',
@@ -350,6 +345,7 @@ export function initOptions(gantt: Gantt) {
     options?.dependency?.linkCreatingLineStyle
   );
   gantt.parsedOptions.eventOptions = options?.eventOptions;
+  gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   const options = gantt.options;
@@ -403,7 +399,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: day, startDate: start, endDate: end });
       const columnTitle = formattedDate || day.toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
@@ -425,7 +421,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: month + 1, startDate: start, endDate: end });
       const columnTitle = formattedDate || (month + 1).toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         step,
@@ -447,7 +443,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: quarter + 1, startDate: start, endDate: end });
       const columnTitle = formattedDate || (quarter + 1).toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / (1000 * 60 * 60 * 24),
         startDate: start,
         step,
@@ -467,7 +463,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: year, startDate: start, endDate: end });
       const columnTitle = formattedDate || year.toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
@@ -502,7 +498,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const columnTitle =
         format?.({ dateIndex: weekNumber, startDate: startOfWeek, endDate: dateEnd }) || weekNumber.toString();
 
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: (dateEnd.getTime() - startOfWeek.getTime() + 1) / DayTimes,
         // days: Math.abs(dateEnd.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24),
         startDate: startOfWeek,
@@ -532,7 +528,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: hour, startDate: start, endDate: end });
       const columnTitle = formattedDate || hour.toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
@@ -556,7 +552,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: minute, startDate: start, endDate: end });
       const columnTitle = formattedDate || minute.toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
@@ -581,7 +577,7 @@ export function generateTimeLineDate(currentDate: Date, endDate: Date, scale: IT
       const start = currentDate;
       const formattedDate = format?.({ dateIndex: second, startDate: start, endDate: end });
       const columnTitle = formattedDate || second.toString();
-      const dayCellConfig = {
+      const dayCellConfig: ITimelineDateInfo = {
         days: Math.abs(end.getTime() - currentDate.getTime() + 1) / DayTimes,
         startDate: start,
         endDate: end,
@@ -841,7 +837,14 @@ export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
       const { row } = rowInfo;
       task_index = row - gantt.taskListTableInstance.columnHeaderLevelCount;
       const beforeRowsHeight = gantt.getRowsHeightByIndex(0, task_index - 1); // 耦合了listTableOption的customComputeRowHeight
-      sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+      if (
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
+      ) {
+        sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+      }
     }
   } else {
     task_index = Math.floor(y / gantt.parsedOptions.rowHeight);
@@ -1042,4 +1045,36 @@ export function updateOptionsWhenDateRangeChanged(gantt: Gantt) {
 export function updateOptionsWhenMarkLineChanged(gantt: Gantt) {
   const options = gantt.options;
   gantt.parsedOptions.markLine = generateMarkLine(options?.markLine);
+}
+
+/**
+ * 获取指定坐标处任务数据的具体信息
+ * @param eventX
+ * @param eventY
+ * @returns 当前任务信息
+ */
+export function _getTaskInfoByXYForCreateSchedule(eventX: number, eventY: number, gantt: Gantt) {
+  const taskIndex = getTaskIndexsByTaskY(eventY - gantt.headerHeight, gantt);
+  const recordParent = gantt.getRecordByIndex(taskIndex.task_index);
+  const dateIndex = getDateIndexByX(eventX, gantt);
+  const dateRange = gantt.getDateRangeByIndex(dateIndex);
+  if (recordParent?.children) {
+    const taskIndex = getTaskIndexsByTaskY(eventY - gantt.headerHeight, gantt);
+    for (let i = 0; i < recordParent.children.length; i++) {
+      const { startDate, endDate, taskDays, progress, taskRecord } = gantt.getTaskInfoByTaskListIndex(
+        taskIndex.task_index,
+        i
+      );
+      if (
+        ((gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact ||
+          gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) &&
+          taskRecord.vtable_gantt_showIndex === taskIndex.sub_task_index) ||
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline
+      ) {
+        if (dateRange.startDate.getTime() >= startDate.getTime() && dateRange.endDate.getTime() <= endDate.getTime()) {
+          return { startDate, endDate, taskDays, progress, taskRecord };
+        }
+      }
+    }
+  }
 }

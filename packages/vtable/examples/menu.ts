@@ -595,6 +595,10 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-register-aggregationRule'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-pagination'
       },
       {
@@ -678,6 +682,10 @@ export const menus = [
       {
         path: 'header',
         name: 'sort'
+      },
+      {
+        path: 'header',
+        name: 'sort-false'
       },
       {
         path: 'header',

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when header tree indicator node has different value, columnWidthConfig not work #3258\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

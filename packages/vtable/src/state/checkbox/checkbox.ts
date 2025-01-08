@@ -159,7 +159,7 @@ export function updateHeaderCheckedState(
       : state.table.getCustomMerge(col, tableIndex);
 
     const data = state.table.dataSource?.get(index as number);
-    if (mergeCell || (!state.table.internalProps.rowSeriesNumber?.enableTreeCheckbox && data.vtableMerge)) {
+    if (mergeCell || (!state.table.internalProps.rowSeriesNumber?.enableTreeCheckbox && data?.vtableMerge)) {
       // 不参与check状态的计算
       return;
     }

@@ -1,4 +1,4 @@
-import type { FederatedPointerEvent } from '@visactor/vtable/es/vrender';
+import type { FederatedPointerEvent, FederatedWheelEvent } from '@visactor/vtable/es/vrender';
 
 import type { Gantt } from '../Gantt';
 import { InteractionState } from '../ts-types';
@@ -11,7 +11,12 @@ import type { StateManager } from '../state/state-manager';
  * @param state
  * @param isWheelEvent 是否是由鼠标或者触摸板原生滚动事件触发进入？
  */
-export function handleWhell(event: WheelEvent, state: StateManager, gantt: Gantt, isWheelEvent: boolean = true) {
+export function handleWhell(
+  event: FederatedWheelEvent,
+  state: StateManager,
+  gantt: Gantt,
+  isWheelEvent: boolean = true
+) {
   let { deltaX, deltaY } = event;
   // 如果按住了shift 则进行横向滚动 纵向不滚动
   if (event.shiftKey && event.deltaY) {

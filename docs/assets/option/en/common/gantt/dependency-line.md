@@ -4,17 +4,18 @@ Specific definition:
 
 ```
 {
-links: ITaskLink[];
-linkLineStyle?: ILineStyle;
-linkCreatable?: boolean;
-linkSelectable?: boolean;
-linkSelectedLineStyle?: ITaskLinkSelectedStyle;
-/** Create an operation point for the association line */
-linkCreatePointStyle?: IPointStyle;
-/** Create the operating point response status effect of the association line */
-linkCreatingPointStyle?: IPointStyle;
-/** Create an operation line style for the association line */
-linkCreatingLineStyle?: ILineStyle;
+  links: ITaskLink[];
+  linkLineStyle?: ILineStyle;
+  linkCreatable?: boolean;
+  linkSelectable?: boolean;
+  linkDeletable?: boolean;
+  linkSelectedLineStyle?: ITaskLinkSelectedStyle;
+  /** Create an operation point for the association line */
+  linkCreatePointStyle?: IPointStyle;
+  /** Create the operating point response status effect of the association line */
+  linkCreatingPointStyle?: IPointStyle;
+  /** Create an operation line style for the association line */
+  linkCreatingLineStyle?: ILineStyle;
 }
 ```
 

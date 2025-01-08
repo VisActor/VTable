@@ -67,7 +67,9 @@ update markLine
 Update a specific data record
 
 ```
-  updateTaskRecord: (record: any, index: number) => void
+  /** Updating data information can be passed into a specific index, and updating subtasks can also be passed into an index array */
+  updateTaskRecord(record: any, task_index: number | number[]): void;
+  updateTaskRecord(record: any, task_index: number, sub_task_index: number): void;
 ```
 
 ### release(Function)
@@ -318,5 +320,30 @@ Event return parameters:
     index: number;
     /** the data info */
     record: any;
+  };
+```
+
+### CONTEXTMENU_DEPENDENCY_LINK
+
+Events that right-click dependency line
+Event return parameters:
+
+```
+{
+    federatedEvent: FederatedPointerEvent;
+    event: Event;
+    /** dependency link */
+    link: ITaskLink;
+  };
+```
+### DELETE_DEPENDENCY_LINK
+
+Events that delete dependency line
+Event return parameters:
+```
+{
+    event: Event;
+    /** dependency link */
+    link: ITaskLink;
   };
 ```
