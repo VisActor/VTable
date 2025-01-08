@@ -7,7 +7,7 @@ import { formatDate, parseDateFormat, throttle } from '../tools/util';
 import { GANTT_EVENT_TYPE, InteractionState, TasksShowMode } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
-import { DayTimes, getDateIndexByX, getTaskIndexByY } from '../gantt-helper';
+import { DayTimes, getDateIndexByX, getTaskIndexsByTaskY, _getTaskInfoByXYForCreateSchedule } from '../gantt-helper';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 
 export class EventManager {
@@ -192,25 +192,58 @@ function bindTableGroupListener(event: EventManager) {
         }
         //#region hover到某一个任务 检查有没有日期安排，没有的话显示创建按钮
         if (
-          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Inline &&
-          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
-          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
-          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact &&
+          // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Inline &&
+          // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
+          // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
+          // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact
           gantt.parsedOptions.taskBarCreatable
         ) {
-          const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-          const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
-          if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord && !recordTaskInfo.taskRecord.vtableMerge) {
-            const dateIndex = getDateIndexByX(e.offset.x, gantt);
-            const showX =
-              (dateIndex >= 1 ? gantt.getDateColsWidth(0, dateIndex - 1) : 0) -
-              gantt.stateManager.scroll.horizontalBarPos;
-            const showY = taskIndex * gantt.parsedOptions.rowHeight - gantt.stateManager.scroll.verticalBarPos;
-            //    -
-            // (gantt.stateManager.scroll.horizontalBarPos % gantt.parsedOptions.rowHeight);
-            // const date = getDateByX(e.offset.x, gantt);
-            gantt.scenegraph.showTaskCreationButton(showX, showY, dateIndex);
-            return;
+          const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight, gantt);
+          const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex.task_index, taskIndex.sub_task_index);
+
+          let taskBarCreatable: boolean = true;
+          if (typeof gantt.parsedOptions.taskBarCreatable === 'function') {
+            const { startDate, endDate, taskRecord } = recordTaskInfo;
+            const args = {
+              index: taskIndex.task_index,
+              sub_task_index: taskIndex.sub_task_index,
+              startDate,
+              endDate,
+              taskRecord,
+              ganttInstance: gantt
+            };
+            taskBarCreatable = gantt.parsedOptions.taskBarCreatable(args);
+          } else {
+            taskBarCreatable = gantt.parsedOptions.taskBarCreatable;
+          }
+
+          if (taskBarCreatable) {
+            const taskInfoOnXY = _getTaskInfoByXYForCreateSchedule(e.offset.x, e.offset.y, gantt);
+            if (
+              ((gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+                gantt.parsedOptions.tasksShowMode === TasksShowMode.Tasks_Separate) &&
+                !recordTaskInfo.taskDays &&
+                recordTaskInfo.taskRecord &&
+                !recordTaskInfo.taskRecord.vtableMerge) ||
+              ((gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+                gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+                gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact) &&
+                !taskInfoOnXY)
+            ) {
+              const dateIndex = getDateIndexByX(e.offset.x, gantt);
+              const showX =
+                (dateIndex >= 1 ? gantt.getDateColsWidth(0, dateIndex - 1) : 0) -
+                gantt.stateManager.scroll.horizontalBarPos;
+              const showY =
+                gantt.taskListTableInstance.getRowsHeight(
+                  gantt.taskListTableInstance.columnHeaderLevelCount,
+                  taskIndex.task_index + gantt.taskListTableInstance.columnHeaderLevelCount - 1
+                ) +
+                (taskIndex.sub_task_index ?? 0) * gantt.parsedOptions.rowHeight -
+                gantt.stateManager.scroll.verticalBarPos;
+              gantt.scenegraph.showTaskCreationButton(showX, showY, dateIndex);
+              return;
+            }
           }
         }
         //#endregion
@@ -350,29 +383,56 @@ function bindTableGroupListener(event: EventManager) {
       } else if (isClickCreationButtom && event.poniterState === 'down') {
         stateManager.hideDependencyLinkSelectedLine();
         stateManager.hideTaskBarSelectedBorder();
-        const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-        const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
-        if (recordTaskInfo.taskRecord) {
-          // const minTimeUnit = gantt.parsedOptions.reverseSortedTimelineScales[0].unit;
-          const dateFormat =
-            gantt.parsedOptions.dateFormat ??
-            (gantt.parsedOptions.timeScaleIncludeHour ? 'yyyy-mm-dd hh:mm:ss' : 'yyyy-mm-dd');
-          const dateIndex = getDateIndexByX(e.offset.x, gantt);
-          const dateRange = gantt.getDateRangeByIndex(dateIndex);
-          recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField] = formatDate(dateRange.startDate, dateFormat);
-          recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField] = formatDate(dateRange.endDate, dateFormat);
+        const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight, gantt);
 
-          gantt.scenegraph.hideTaskCreationButton();
-          gantt.updateTaskRecord(recordTaskInfo.taskRecord, taskIndex);
+        if (
+          gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+          gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+          gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+        ) {
           if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE)) {
+            const dateIndex = getDateIndexByX(e.offset.x, gantt);
+            const dateRange = gantt.getDateRangeByIndex(dateIndex);
+            const dateFormat =
+              gantt.parsedOptions.dateFormat ??
+              (gantt.parsedOptions.timeScaleIncludeHour ? 'yyyy-mm-dd hh:mm:ss' : 'yyyy-mm-dd');
             gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE, {
               federatedEvent: e,
               event: e.nativeEvent,
-              index: taskIndex,
-              startDate: recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField],
-              endDate: recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField],
-              record: recordTaskInfo.taskRecord
+              index: taskIndex.task_index,
+              sub_task_index: taskIndex.sub_task_index,
+              startDate: formatDate(dateRange.startDate, dateFormat),
+              endDate: formatDate(dateRange.endDate, dateFormat),
+              record: undefined,
+              parentRecord: gantt.getRecordByIndex(taskIndex.task_index)
             });
+          }
+        } else {
+          const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex.task_index, taskIndex.sub_task_index);
+
+          if (recordTaskInfo.taskRecord) {
+            // const minTimeUnit = gantt.parsedOptions.reverseSortedTimelineScales[0].unit;
+            const dateFormat =
+              gantt.parsedOptions.dateFormat ??
+              (gantt.parsedOptions.timeScaleIncludeHour ? 'yyyy-mm-dd hh:mm:ss' : 'yyyy-mm-dd');
+            const dateIndex = getDateIndexByX(e.offset.x, gantt);
+            const dateRange = gantt.getDateRangeByIndex(dateIndex);
+            recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField] = formatDate(dateRange.startDate, dateFormat);
+            recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField] = formatDate(dateRange.endDate, dateFormat);
+
+            gantt.scenegraph.hideTaskCreationButton();
+            gantt.updateTaskRecord(recordTaskInfo.taskRecord, taskIndex.task_index, taskIndex.sub_task_index);
+            if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE)) {
+              gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE, {
+                federatedEvent: e,
+                event: e.nativeEvent,
+                index: taskIndex.task_index,
+                sub_task_index: taskIndex.sub_task_index,
+                startDate: recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField],
+                endDate: recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField],
+                record: recordTaskInfo.taskRecord
+              });
+            }
           }
         }
       } else if (
@@ -386,11 +446,14 @@ function bindTableGroupListener(event: EventManager) {
         stateManager.showDependencyLinkSelectedLine();
       } else if ((isClickLeftLinkPoint || isClickRightLinkPoint) && event.poniterState === 'down') {
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_DEPENDENCY_LINK_POINT)) {
-          const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-          const record = gantt.getRecordByIndex(taskIndex);
+          const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight, gantt);
+
+          const record = gantt.getRecordByIndex(taskIndex.task_index, taskIndex.sub_task_index);
+
           gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_DEPENDENCY_LINK_POINT, {
             event: e.nativeEvent,
-            index: taskIndex,
+            index: taskIndex.task_index,
+            sub_task_index: taskIndex.sub_task_index,
             point: isClickLeftLinkPoint ? 'start' : 'end',
             record
           });

@@ -486,7 +486,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   getTableIndex(colOrRow: number | number[]): number {
     if (Array.isArray(colOrRow)) {
-      return this.currentPagerIndexedData.findIndex(value => arrayEqual(value, colOrRow));
+      if (this.rowHierarchyType === 'tree') {
+        return this.currentPagerIndexedData.findIndex(value => arrayEqual(value, colOrRow));
+      }
+      return this.currentPagerIndexedData.findIndex(value => value === colOrRow[0]);
     }
     return this.currentPagerIndexedData.findIndex(value => value === colOrRow);
   }
@@ -937,7 +940,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   /**
    * 修改多条数据recordIndexs
    */
-  updateRecords(records: any[], recordIndexs: number[] | number[][]) {
+  updateRecords(records: any[], recordIndexs: (number | number[])[]) {
     const realDeletedRecordIndexs = [];
     for (let index = 0; index < recordIndexs.length; index++) {
       const recordIndex = recordIndexs[index];
