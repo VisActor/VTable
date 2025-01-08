@@ -850,6 +850,29 @@ export type TooltipOptions = {
 
 ```
 
+## showDropdownMenu(Function)
+Display dropdown menu, the content can be the menu items already set in the option, or display specific dom content. Use [demo](../demo/component/dropdown)
+```
+  /**
+   * Display dropdown menu
+   * @param col The column number of the cell where the dropdown menu is displayed
+   * @param row The row number of the cell where the dropdown menu is displayed
+   * @param menuOptions The content configuration of the dropdown menu
+   */
+  showDropdownMenu(col: number, row: number, menuOptions?: DropDownMenuOptions) => void;
+
+  /** Display dropdown menu settings or display specific dom content */
+  export type DropDownMenuOptions = {
+    // menuList?: MenuListItem[];
+    content: HTMLElement | MenuListItem[];
+    position?: { x: number; y: number };
+    referencePosition?: {
+      rect: RectProps;
+      /** Currently, the dropdown menu icon is aligned to the right, but the specified position is not yet implemented */
+      placement?: Placement;
+    };
+  };
+```
 ## updateFilterRules(Function)
 
 Update data filtering rules

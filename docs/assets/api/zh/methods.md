@@ -847,6 +847,32 @@ export type TooltipOptions = {
 
 ```
 
+## showDropdownMenu(Function)
+
+显示下拉菜单，显示内容可以为 option 中已经设置好的菜单项, 或者显示指定 dom 内容。使用[demo](../demo/component/dropdown)
+
+```
+  /**
+   * 显示下拉菜单
+   * @param col 显示下拉菜单的单元格的列号
+   * @param row 显示下拉菜单的单元格的行号
+   * @param menuOptions 下拉菜单的内容配置
+   */
+  showDropdownMenu(col: number, row: number, menuOptions?: DropDownMenuOptions) => void;
+
+  /** 显示下拉菜单设置项 或者显示指定dom内容 */
+  export type DropDownMenuOptions = {
+    // menuList?: MenuListItem[];
+    content: HTMLElement | MenuListItem[];
+    position?: { x: number; y: number };
+    referencePosition?: {
+      rect: RectProps;
+      /** 目前下拉菜单右对齐icon，指定位置暂未实现  */
+      placement?: Placement;
+    };
+  };
+```
+
 ## updateFilterRules(Function)
 
 更新数据过滤规则
