@@ -436,7 +436,7 @@ Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'
 'none': don't triggers the browser's default behavior when the table scrolls to the top or bottom;
 ```
 
-#${prefix} customMergeCell(Function)
+#${prefix} customMergeCell(Function|Object)
 Customize cell merging rules. When the incoming row and column numbers are within the target area, the merging rules are returned:
 
 - text: Merge text in cells
@@ -467,6 +467,8 @@ Customize cell merging rules. When the incoming row and column numbers are withi
   }
 
 ```
+
+`customMergeCell` can also be configured as an array of merge rules. Each item in the array is a merge rule. The configuration of the rule is the same as the return value of the `customMergeCell` callback function.
 
 #${prefix} customCellStyle(Array)
 
