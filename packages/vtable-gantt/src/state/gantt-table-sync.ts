@@ -31,8 +31,14 @@ export function syncEditCellFromTable(gantt: Gantt) {
 export function syncTreeChangeFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('tree_hierarchy_state_change', (args: any) => {
     gantt._syncPropsFromTable();
-
     gantt.scenegraph.refreshTaskBarsAndGrid();
+    if (
+      gantt.taskListTableInstance.checkHasColumnAutoWidth() &&
+      (gantt.options.taskListTable?.tableWidth === 'auto' || gantt.taskTableWidth === -1)
+    ) {
+      // 和监听resize_column事件处理逻辑一致
+      _syncTableSize(gantt);
+    }
     const left = gantt.stateManager.scroll.horizontalBarPos;
     const top = gantt.stateManager.scroll.verticalBarPos;
     gantt.scenegraph.setX(-left);
@@ -84,25 +90,29 @@ export function syncDragOrderFromTable(gantt: Gantt) {
 
 export function syncTableWidthFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('resize_column', (args: any) => {
-    const oldTaskTableWidth: number = gantt.taskTableWidth;
-
-    gantt.taskTableWidth =
-      gantt.taskListTableInstance.getAllColsWidth() + gantt.parsedOptions.outerFrameStyle.borderLineWidth;
-    if (gantt.options?.taskListTable?.maxTableWidth) {
-      gantt.taskTableWidth = Math.min(gantt.options?.taskListTable?.maxTableWidth, gantt.taskTableWidth);
-    }
-    if (gantt.options?.taskListTable?.minTableWidth) {
-      gantt.taskTableWidth = Math.max(gantt.options?.taskListTable?.minTableWidth, gantt.taskTableWidth);
-    }
-    if (oldTaskTableWidth === gantt.taskTableWidth) {
-      return;
-    }
-    gantt.element.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth}px` : '0px';
-    gantt.taskListTableInstance.setCanvasSize(
-      gantt.taskTableWidth,
-      gantt.tableNoFrameHeight + gantt.parsedOptions.outerFrameStyle.borderLineWidth * 2
-    );
-    gantt._updateSize();
-    updateSplitLineAndResizeLine(gantt);
+    _syncTableSize(gantt);
   });
+}
+
+function _syncTableSize(gantt: Gantt) {
+  const oldTaskTableWidth: number = gantt.taskTableWidth;
+
+  gantt.taskTableWidth =
+    gantt.taskListTableInstance.getAllColsWidth() + gantt.parsedOptions.outerFrameStyle.borderLineWidth;
+  if (gantt.options?.taskListTable?.maxTableWidth) {
+    gantt.taskTableWidth = Math.min(gantt.options?.taskListTable?.maxTableWidth, gantt.taskTableWidth);
+  }
+  if (gantt.options?.taskListTable?.minTableWidth) {
+    gantt.taskTableWidth = Math.max(gantt.options?.taskListTable?.minTableWidth, gantt.taskTableWidth);
+  }
+  if (oldTaskTableWidth === gantt.taskTableWidth) {
+    return;
+  }
+  gantt.element.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth}px` : '0px';
+  gantt.taskListTableInstance.setCanvasSize(
+    gantt.taskTableWidth,
+    gantt.tableNoFrameHeight + gantt.parsedOptions.outerFrameStyle.borderLineWidth * 2
+  );
+  gantt._updateSize();
+  updateSplitLineAndResizeLine(gantt);
 }

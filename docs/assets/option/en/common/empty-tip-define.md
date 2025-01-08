@@ -21,3 +21,8 @@ Empty data icon.
 - width?: number; icon height
 - height?: number; the height of the icon
 - image?: string; image URL or inline SVG content
+
+#${prefix} displayMode('basedOnTable' | 'basedOnContainer')
+
+- basedOnTable: show empty data description content based on table range;
+- basedOnContainer: show empty data description content based on container range;

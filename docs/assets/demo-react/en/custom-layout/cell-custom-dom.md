@@ -46,6 +46,7 @@ const CommentComponent = (props) => {
         height,
         react: {
           pointerEvents: true,
+          penetrateEventList: ['wheel'],
           container: table.bodyDomContainer, // table.headerDomContainer
           // anchorType: 'bottom-right',
           element: <CommentReactComponent name={dataValue} />
@@ -110,6 +111,7 @@ const OperationComponent = (props) => {
         height,
         react: {
           pointerEvents: true,
+          penetrateEventList: ['wheel'],
           container: table.bodyDomContainer, // table.headerDomContainer
           // anchorType: 'bottom-right',
           element: <OperationReactComponent />

@@ -67,7 +67,9 @@
 更新某一条数据
 
 ```
-  updateTaskRecord: (record: any, index: number) => void
+  /** 更新数据信息 可以传入具体的索引，更新子任务也可以传入索引数组 */
+  updateTaskRecord(record: any, task_index: number | number[]): void;
+  updateTaskRecord(record: any, task_index: number, sub_task_index: number): void;
 ```
 
 ### release(Function)
@@ -318,5 +320,30 @@ export interface EVENT_TYPES {
     index: number;
     /** 点击连接点的数据信息 */
     record: any;
+  };
+```
+
+### CONTEXTMENU_DEPENDENCY_LINK
+
+右键点击依赖关系的事件
+事件回传参数：
+
+```
+{
+    federatedEvent: FederatedPointerEvent;
+    event: Event;
+    /** 依赖信息 */
+    link: ITaskLink;
+  };
+```
+
+### DELETE_DEPENDENCY_LINK
+删除了任务依赖关系
+事件回传参数：
+```
+{
+    event: Event;
+    /** 依赖信息 */
+    link: ITaskLink;
   };
 ```

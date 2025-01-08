@@ -4,6 +4,8 @@ import { chartTypes as chartTypePlugins } from './plugins/chartModules';
 import type { ColumnIconOption, ITableThemeDefine } from './ts-types';
 import type { IEditor } from '@visactor/vtable-editors';
 import { editors } from './edit/editors';
+import type { Aggregator } from './ts-types/dataset/aggregation';
+import { registeredAggregators } from './ts-types/dataset/aggregation';
 
 function register(obj: { [key: string]: any }, name: string, value: any): any {
   const old = obj[name];
@@ -35,6 +37,16 @@ export function editor(name: string, editor?: IEditor): IEditor {
   }
   return editors[name];
 }
+export function aggregator(
+  aggregationType: string,
+  aggregation: {
+    new (args: { key: string; field: string; formatFun?: any }): Aggregator;
+  }
+) {
+  if (aggregation !== null && aggregation !== undefined) {
+    register(registeredAggregators, aggregationType, aggregation);
+  }
+}
 // 清理注册的全局theme icon chartModule
 function clear(obj: any) {
   for (const key in obj) {
@@ -48,4 +60,6 @@ export function clearAll() {
   clear(themePlugins);
   clear(iconPlugins);
   clear(chartTypePlugins);
+  clear(editors);
+  clear(registeredAggregators);
 }

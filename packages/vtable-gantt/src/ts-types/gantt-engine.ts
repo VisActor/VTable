@@ -5,7 +5,6 @@ export type LayoutObjectId = number | string;
 
 export interface ITimelineDateInfo {
   days: number;
-  timeScaleCount: number;
   endDate: Date;
   startDate: Date;
   title: string;
@@ -102,6 +101,8 @@ export interface GanttConstructorOptions {
       | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
     /** 任务条是否可移动 */
     moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+    /** 任务条拖拽超出当前日期范围时自动扩展日期范围 */
+    moveToExtendDateRange?: boolean;
     /** 任务条是否可以被拖拽来改变顺序 */
     dragOrder?: boolean;
     /** 任务条hover时的样式 */
@@ -125,7 +126,7 @@ export interface GanttConstructorOptions {
           ) => TYPES.MenuListItem[]);
     };
     /** 数据没有排期时，可通过创建任务条排期。默认为true */
-    scheduleCreatable?: boolean;
+    scheduleCreatable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
     /** 针对没有分配日期的任务，可以显示出创建按钮 */
     scheduleCreation?: {
       buttonStyle: ILineStyle & {
@@ -144,6 +145,7 @@ export interface GanttConstructorOptions {
     linkLineStyle?: ILineStyle;
     linkCreatable?: boolean;
     linkSelectable?: boolean;
+    linkDeletable?: boolean;
     linkSelectedLineStyle?: ITaskLinkSelectedStyle;
     /** 创建关联线的操作点 */
     linkCreatePointStyle?: IPointStyle;
@@ -207,6 +209,7 @@ export interface GanttConstructorOptions {
   /** 展示嵌套结构数据时的模式，默认为full。*/
   tasksShowMode?: TasksShowMode;
   eventOptions?: IEventOptions;
+  keyboardOptions?: IKeyboardOptions;
 }
 /**
  * IBarLabelText
@@ -301,6 +304,13 @@ export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
 export type IEventOptions = TYPES.TableEventOptions;
+
+export interface IKeyboardOptions {
+  /** 当按下del按键是否删除连线 默认为false */
+  deleteLinkOnDel?: boolean;
+  /** 当按下back按键是否删除连线 默认为false */
+  deleteLinkOnBack?: boolean;
+}
 export type DateFormatArgumentType = {
   /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
   dateIndex: number;
@@ -308,7 +318,7 @@ export type DateFormatArgumentType = {
   endDate: Date;
 };
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;

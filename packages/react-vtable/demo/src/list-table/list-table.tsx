@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ListTable, VTable } from '../../../src';
+import { ListTable } from '../../../src';
+import * as VTable from '@visactor/vtable';
 import data from '../../data/list-data.json';
 
 const titleColorPool = ['#3370ff', '#34c724', '#ff9f1a', '#ff4050', '#1f2329'];
@@ -31,57 +32,68 @@ function App() {
   const columns = [
     {
       field: 'Order ID',
+      key: 'Order ID',
       title: 'Order ID',
       width: 'auto',
       sort: true
     },
     {
       field: 'Customer ID',
+      key: 'Customer ID',
       title: 'Customer ID',
       width: 'auto'
     },
     {
       field: 'Product Name',
+      key: 'Product Name',
       title: 'Product Name',
       width: 'auto'
     },
     {
       field: 'Category',
+      key: 'Category',
       title: 'Category',
       width: 'auto'
     },
     {
       field: 'Sub-Category',
+      key: 'Sub-Category',
       title: 'Sub-Category',
       width: 'auto'
     },
     {
       field: 'Region',
+      key: 'Region',
       title: 'Region',
       width: 'auto'
     },
     {
       field: 'City',
+      key: 'City',
       title: 'City',
       width: 'auto'
     },
     {
       field: 'Order Date',
+      key: 'Order Date',
       title: 'Order Date',
       width: 'auto'
     },
     {
       field: 'Quantity',
+      key: 'Quantity',
       title: 'Quantity',
       width: 'auto'
     },
     {
       field: 'Sales',
+      key: 'Sales',
       title: 'Sales',
       width: 'auto'
     },
     {
       field: 'Profit',
+      key: 'Profit',
       title: 'Profit',
       width: 'auto'
     }
@@ -159,7 +171,18 @@ function App() {
   //   setRecord(data.slice(100, 200));
   // }, 1000);
 
-  return <ListTable option={option} />;
+  return (
+    <>
+      <button
+        onClick={() => {
+          setRecord(data.slice(100, 200));
+        }}
+      >
+        点击
+      </button>
+      <ListTable option={option} keepColumnWidthChange={true} />;
+    </>
+  );
 }
 
 export default App;
