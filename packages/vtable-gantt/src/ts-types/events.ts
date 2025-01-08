@@ -80,6 +80,11 @@ export interface TableEventHandlersEventArgumentMap {
     /** 依赖信息 */
     link: ITaskLink;
   };
+  delete_dependency_link: {
+    event: KeyboardEvent;
+    /** 依赖信息 */
+    link: ITaskLink;
+  };
   click_dependency_link_point: {
     event: Event;
     /** 点击的是起始点还是结束点 */
@@ -87,6 +92,12 @@ export interface TableEventHandlersEventArgumentMap {
     /** 第几条数据 */
     index: number;
     record: any;
+  };
+  contextmenu_dependency_link: {
+    federatedEvent: FederatedPointerEvent;
+    event: Event;
+    /** 依赖信息 */
+    link: ITaskLink;
   };
 }
 
@@ -99,4 +110,6 @@ export interface TableEventHandlersReturnMap {
   change_date_range: void;
   create_task_schedule: void;
   create_dependency_link: void;
+  delete_dependency_link: void;
+  contextmenu_dependency_link: void;
 }

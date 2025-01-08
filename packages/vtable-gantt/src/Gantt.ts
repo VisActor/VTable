@@ -25,7 +25,8 @@ import type {
   IPointStyle,
   TaskBarInteractionArgumentType,
   IEventOptions,
-  IMilestoneStyle
+  IMilestoneStyle,
+  IKeyboardOptions
 } from './ts-types';
 import { TasksShowMode } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
@@ -179,6 +180,7 @@ export class Gantt extends EventTarget {
     dependencyLinks?: ITaskLink[];
     dependencyLinkCreatable: boolean;
     dependencyLinkSelectable: boolean;
+    dependencyLinkDeletable: boolean;
     dependencyLinkLineStyle: ILineStyle;
     dependencyLinkSelectedLineStyle: ITaskLinkSelectedStyle;
     dependencyLinkLineCreatePointStyle: IPointStyle;
@@ -186,6 +188,7 @@ export class Gantt extends EventTarget {
     dependencyLinkLineCreatingStyle?: ILineStyle;
     underlayBackgroundColor: string;
     eventOptions: IEventOptions;
+    keyboardOptions: IKeyboardOptions;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
@@ -1037,17 +1040,19 @@ export class Gantt extends EventTarget {
     this.scenegraph.updateNextFrame();
   }
   deleteLink(link: ITaskLink) {
-    const index = this.parsedOptions.dependencyLinks.findIndex(
-      item =>
-        item.type === link.type &&
-        item.linkedFromTaskKey === link.linkedFromTaskKey &&
-        item.linkedToTaskKey === link.linkedToTaskKey
-    );
-    if (index !== -1) {
-      const link = this.parsedOptions.dependencyLinks[index];
-      this.parsedOptions.dependencyLinks.splice(index, 1);
-      this.scenegraph.dependencyLink.deleteLink(link);
-      this.scenegraph.updateNextFrame();
+    if (this.parsedOptions.dependencyLinkDeletable) {
+      const index = this.parsedOptions.dependencyLinks.findIndex(
+        item =>
+          item.type === link.type &&
+          item.linkedFromTaskKey === link.linkedFromTaskKey &&
+          item.linkedToTaskKey === link.linkedToTaskKey
+      );
+      if (index !== -1) {
+        const link = this.parsedOptions.dependencyLinks[index];
+        this.parsedOptions.dependencyLinks.splice(index, 1);
+        this.scenegraph.dependencyLink.deleteLink(link);
+        this.scenegraph.updateNextFrame();
+      }
     }
   }
   get scrollTop(): number {

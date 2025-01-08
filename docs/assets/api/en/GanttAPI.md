@@ -320,3 +320,28 @@ Event return parameters:
     record: any;
   };
 ```
+
+### CONTEXTMENU_DEPENDENCY_LINK
+
+Events that right-click dependency line
+Event return parameters:
+
+```
+{
+    federatedEvent: FederatedPointerEvent;
+    event: Event;
+    /** dependency link */
+    link: ITaskLink;
+  };
+```
+### DELETE_DEPENDENCY_LINK
+
+Events that delete dependency line
+Event return parameters:
+```
+{
+    event: Event;
+    /** dependency link */
+    link: ITaskLink;
+  };
+```

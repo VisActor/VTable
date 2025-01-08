@@ -144,6 +144,7 @@ export interface GanttConstructorOptions {
     linkLineStyle?: ILineStyle;
     linkCreatable?: boolean;
     linkSelectable?: boolean;
+    linkDeletable?: boolean;
     linkSelectedLineStyle?: ITaskLinkSelectedStyle;
     /** 创建关联线的操作点 */
     linkCreatePointStyle?: IPointStyle;
@@ -207,6 +208,7 @@ export interface GanttConstructorOptions {
   /** 展示嵌套结构数据时的模式，默认为full。*/
   tasksShowMode?: TasksShowMode;
   eventOptions?: IEventOptions;
+  keyboardOptions?: IKeyboardOptions;
 }
 /**
  * IBarLabelText
@@ -301,6 +303,13 @@ export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
 export type IEventOptions = TYPES.TableEventOptions;
+
+export interface IKeyboardOptions {
+  /** 当按下del按键是否删除连线 默认为false */
+  deleteLinkOnDel?: boolean;
+  /** 当按下back按键是否删除连线 默认为false */
+  deleteLinkOnBack?: boolean;
+}
 export type DateFormatArgumentType = {
   /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
   dateIndex: number;

@@ -1,5 +1,5 @@
 import { vglobal } from '@visactor/vtable/es/vrender';
-import type { Circle, FederatedPointerEvent } from '@visactor/vtable/es/vrender';
+import type { Circle, FederatedPointerEvent, FederatedWheelEvent } from '@visactor/vtable/es/vrender';
 import type { Gantt } from '../Gantt';
 import { EventHandler } from '../event/EventHandler';
 import { handleWhell } from '../event/scroll';
@@ -426,10 +426,16 @@ function bindTableGroupListener(event: EventManager) {
   });
   scene.tableGroup.addEventListener('rightdown', (e: FederatedPointerEvent) => {
     let isClickBar = false;
+    let isClickDependencyLine = false;
+    let depedencyLink;
     const taskBarTarget = e.detailPath.find((pathNode: any) => {
       if (pathNode.name === 'task-bar') {
         isClickBar = true;
         return true;
+      } else if (pathNode.attribute.vtable_link) {
+        isClickDependencyLine = true;
+        depedencyLink = pathNode.attribute.vtable_link;
+        return false;
       }
       return false;
     });
@@ -445,6 +451,14 @@ function bindTableGroupListener(event: EventManager) {
           index: taskIndex,
           sub_task_index,
           record
+        });
+      }
+    } else if (isClickDependencyLine) {
+      if (gantt.hasListeners(GANTT_EVENT_TYPE.CONTEXTMENU_DEPENDENCY_LINK)) {
+        gantt.fireListeners(GANTT_EVENT_TYPE.CONTEXTMENU_DEPENDENCY_LINK, {
+          federatedEvent: e,
+          event: e.nativeEvent,
+          link: depedencyLink
         });
       }
     }
@@ -482,6 +496,9 @@ function bindTableGroupListener(event: EventManager) {
       scene.scrollbarComponent.hideVerticalScrollBar();
     }
   });
+  scene.tableGroup.addEventListener('wheel', (e: FederatedWheelEvent) => {
+    handleWhell(e, stateManager, gantt);
+  });
 }
 
 function bindContainerDomListener(eventManager: EventManager) {
@@ -493,9 +510,6 @@ function bindContainerDomListener(eventManager: EventManager) {
     if (gantt.parsedOptions.eventOptions?.preventDefaultContextMenu !== false) {
       e.preventDefault();
     }
-  });
-  handler.on(gantt.getElement(), 'wheel', (e: WheelEvent) => {
-    handleWhell(e, stateManager, eventManager._gantt);
   });
 
   handler.on(gantt.getContainer(), 'resize', (e: any) => {
@@ -605,4 +619,31 @@ function bindContainerDomListener(eventManager: EventManager) {
     callback: globalMouseupCallback
   });
   vglobal.addEventListener('mouseup', globalMouseupCallback);
+
+  const globalKeydownCallback = (e: KeyboardEvent) => {
+    if (
+      gantt.parsedOptions.dependencyLinkDeletable &&
+      ((e.key === 'Delete' && gantt.parsedOptions.keyboardOptions?.deleteLinkOnDel) ||
+        (e.key === 'Backspace' && gantt.parsedOptions.keyboardOptions?.deleteLinkOnBack))
+    ) {
+      if (gantt.stateManager.selectedDenpendencyLink.link) {
+        const link = gantt.stateManager.selectedDenpendencyLink.link;
+        gantt.deleteLink(gantt.stateManager.selectedDenpendencyLink.link);
+        stateManager.hideDependencyLinkSelectedLine();
+        stateManager.hideTaskBarSelectedBorder();
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.DELETE_DEPENDENCY_LINK)) {
+          gantt.fireListeners(GANTT_EVENT_TYPE.DELETE_DEPENDENCY_LINK, {
+            event: e,
+            link
+          });
+        }
+      }
+    }
+  };
+  eventManager.globalEventListeners.push({
+    name: 'keydown',
+    env: 'document',
+    callback: globalKeydownCallback
+  });
+  vglobal.addEventListener('keydown', globalKeydownCallback);
 }

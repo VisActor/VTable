@@ -304,6 +304,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.dependencyLinks = options.dependency?.links ?? [];
   gantt.parsedOptions.dependencyLinkCreatable = options.dependency?.linkCreatable ?? false;
   gantt.parsedOptions.dependencyLinkSelectable = options.dependency?.linkSelectable ?? true;
+  gantt.parsedOptions.dependencyLinkDeletable = options.dependency?.linkDeletable ?? false;
   gantt.parsedOptions.dependencyLinkLineStyle = Object.assign(
     {
       lineColor: 'red',
@@ -350,6 +351,7 @@ export function initOptions(gantt: Gantt) {
     options?.dependency?.linkCreatingLineStyle
   );
   gantt.parsedOptions.eventOptions = options?.eventOptions;
+  gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   const options = gantt.options;
