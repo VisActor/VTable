@@ -28,7 +28,7 @@ import {
   checkHasAggregationOnTop,
   checkHasTreeDefine
 } from './layout-helper';
-import type { Aggregator } from '../dataset/statistics-helper';
+import type { Aggregator } from '../ts-types/dataset/aggregation';
 import { DimensionTree } from './tree-helper';
 import { getCellRange } from './cell-range/simple-cell-range';
 // import { EmptyDataCache } from './utils';
@@ -997,9 +997,14 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         rowCells[col] = this._headerCellIds[row - 1][col];
       }
       if (hd.columns) {
-        this._addHeaders(row + 1, hd.columns, [...roots, id], hd.hideColumnsSubHeader || hideColumnsSubHeader).forEach(
-          c => results.push(c)
-        );
+        const isAllHided = hd.columns.every((c: any) => c.hide);
+        !isAllHided &&
+          this._addHeaders(
+            row + 1,
+            hd.columns,
+            [...roots, id],
+            hd.hideColumnsSubHeader || hideColumnsSubHeader
+          ).forEach(c => results.push(c));
       } else {
         const colDef = {
           id: this.seqId++,
@@ -1423,6 +1428,24 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       return pre;
     }, []);
     return result;
+  }
+
+  getColumnByKey(key: string): {
+    col: number;
+    columnDefine: ColumnData;
+  } {
+    let col;
+    const result = this.columnObjects?.find((columnData: ColumnData, index) => {
+      if (columnData.define?.key === key) {
+        col = index;
+        return true;
+      }
+      return false;
+    });
+    return {
+      columnDefine: result,
+      col
+    };
   }
 
   getColumnDefine(col: number, row: number) {

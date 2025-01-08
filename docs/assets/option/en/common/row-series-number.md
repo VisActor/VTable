@@ -40,7 +40,7 @@ Table header cell icon configuration. The configurable types are:
 string | ColumnIconOption | (string | ColumnIconOption)[];
 ```
 
-For detailed configuration of ColumnIconOption, please refer to [Definition](/zh/option.html#ListTable-columns-text.icon.ColumnIconOptionDefinition:)
+For detailed configuration of ColumnIconOption, please refer to [Definition](./ListTable-columns-text#icon.ColumnIconOption)
 
 ${prefix} icon(string|Object|Array|Funciton)
 

@@ -106,10 +106,12 @@ window['tableInstance'] = tableInstance;
 
 ## 自定义单元格合并
 
-在VTable中，可以配置`customMergeCell`自定义单元格的合并方式，这种方式常用来显示一些标注信息。其中`customMergeCell`回调函数会传入行列号和表格实例，在函数中判断需要合并的单元格，并返回相应的合并规则：
+在VTable中，可以配置`customMergeCell`自定义单元格的合并方式，这种方式常用来显示一些标注信息。其中`customMergeCell`可以配置回调函数会传入行列号和表格实例，在函数中判断需要合并的单元格，并返回相应的合并规则：
 * text: 合并单元格内的文字
 * range: 合并的范围
 * style: 合并单元格的样式
+
+`customMergeCell`也可以配置为合并规则的数组，数组中的每一项为一个合并规则，规则的配置与`customMergeCell`回调函数的返回值相同。
 
 ### 示例
 

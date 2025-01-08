@@ -105,6 +105,9 @@ export class Calendar extends EventTarget {
 
     tableInstance.addEventListener('scroll', () => {
       const record: DateRecord = this.getYearAndMonth();
+      if (!record) {
+        return;
+      }
       if (!record.Sun) {
         // top
         this._updateMonthCustomStyle(this.startDate.getFullYear(), this.startDate.getMonth());

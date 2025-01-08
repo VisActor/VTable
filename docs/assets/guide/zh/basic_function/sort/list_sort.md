@@ -81,6 +81,7 @@ ListTable({
   multipleSort: true
 });
 ```
+
 如果启用，用户在单击列标题中的排序图标时，可以添加其他排序条件，而无需删除之前的排序。
 
 例子：
@@ -104,13 +105,13 @@ const columns = [
     field: 'name',
     title: '姓名',
     width: 'auto',
-    sort:true,
+    sort: true
   },
   {
     field: 'age',
     title: '年龄',
     width: 'auto',
-    sort:true,
+    sort: true
   }
 ];
 
@@ -187,7 +188,13 @@ tableInstance.updateSortState({
 
 在某些场景下，排序逻辑的执行并不期望由 VTable 来执行，如：后端负责排序。
 
-可以通过监听事件来禁止 VTable 的默认排序行为：
+可以按照如下配置和流程来使用：
+
+1. 配置 `sort` 为 false；
+
+2. 如果需要显示排序按钮，配置 `sortState` 为 true；
+
+3. 通过监听事件 `sort_click`事件来得知用户点击了排序按钮，注意这个事件回调函数需要返回 false 来禁止 VTable 内部的排序逻辑：
 
 ```
 tableInstance.on('sort_click', args => {
@@ -196,18 +203,19 @@ tableInstance.on('sort_click', args => {
   });
 ```
 
-排序完成后需要 setRecords 将数据更新到表格，如果需要排序图标的切换则需要配合接口`updateSortState`，利用接口的第二个参数设置为 false，只切换排序图标.
+4. 监听排序按钮点击后，执行业务层的排序逻辑。排序完成后需要 `setRecords` 将数据更新到表格。
+   注意：
 
-注意：
+- setRecords 接口调用时需将第二个参数 option 中的 sortState 设置为 null，这样就清除了内部排序状态（否则 setRecords 调用时 vtable 会按上次设置过的排序状态对数据进行排序）
 
-- setRecords 接口调用时需将第二个参数 option 中的 sortState 设置为 null，这样就清除了内部排序状态（否则 setRecords 调用时会按上次设置过的排序状态对数据进行排序）
+5. 如果需要对应切换排序图标的状态则需要配合接口`updateSortState`，注意接口的第二个参数需设置为 false，这样可以只切换排序图标而不执行 vtable 的排序逻辑.
 
 示例：
 
 ```javascript livedemo template=vtable
 const records = [
   {
-    230517143221027: 'CA-2018-156720',
+    230517143221027: 'CA-2018-10',
     230517143221030: 'JM-15580',
     230517143221032: 'Bagged Rubber Bands',
     230517143221023: 'Office Supplies',
@@ -220,7 +228,7 @@ const records = [
     230517143221041: '-0.605'
   },
   {
-    230517143221027: 'CA-2018-115427',
+    230517143221027: 'CA-2018-70',
     230517143221030: 'EB-13975',
     230517143221032: 'GBC Binding covers',
     230517143221023: 'Office Supplies',
@@ -233,7 +241,7 @@ const records = [
     230517143221041: '6.475'
   },
   {
-    230517143221027: 'CA-2018-115427',
+    230517143221027: 'CA-2018-30',
     230517143221030: 'EB-13975',
     230517143221032: 'Cardinal Slant-D Ring Binder, Heavy Gauge Vinyl',
     230517143221023: 'Office Supplies',
@@ -246,7 +254,7 @@ const records = [
     230517143221041: '4.519'
   },
   {
-    230517143221027: 'CA-2018-143259',
+    230517143221027: 'CA-2018-80',
     230517143221030: 'PO-18865',
     230517143221032: 'Wilson Jones Legal Size Ring Binders',
     230517143221023: 'Office Supplies',
@@ -259,7 +267,7 @@ const records = [
     230517143221041: '19.791'
   },
   {
-    230517143221027: 'CA-2018-143259',
+    230517143221027: 'CA-2018-20',
     230517143221030: 'PO-18865',
     230517143221032: 'Gear Head AU3700S Headset',
     230517143221023: 'Technology',
@@ -272,7 +280,7 @@ const records = [
     230517143221041: '2.728'
   },
   {
-    230517143221027: 'CA-2018-143259',
+    230517143221027: 'CA-2018-40',
     230517143221030: 'PO-18865',
     230517143221032: 'Bush Westfield Collection Bookcases, Fully Assembled',
     230517143221023: 'Furniture',
@@ -285,7 +293,7 @@ const records = [
     230517143221041: '12.118'
   },
   {
-    230517143221027: 'CA-2018-126221',
+    230517143221027: 'CA-2018-60',
     230517143221030: 'CC-12430',
     230517143221032: 'Eureka The Boss Plus 12-Amp Hard Box Upright Vacuum, Red',
     230517143221023: 'Office Supplies',
@@ -298,7 +306,7 @@ const records = [
     230517143221041: '56.511'
   },
   {
-    230517143221027: 'US-2018-158526',
+    230517143221027: 'US-2018-50',
     230517143221030: 'KH-16360',
     230517143221032: 'Harbour Creations Steel Folding Chair',
     230517143221023: 'Furniture',
@@ -311,7 +319,7 @@ const records = [
     230517143221041: '77.625'
   },
   {
-    230517143221027: 'US-2018-158526',
+    230517143221027: 'US-2018-90',
     230517143221030: 'KH-16360',
     230517143221032: 'Global Leather and Oak Executive Chair, Black',
     230517143221023: 'Furniture',
@@ -324,7 +332,7 @@ const records = [
     230517143221041: '87.284'
   },
   {
-    230517143221027: 'US-2018-158526',
+    230517143221027: 'US-2018-10',
     230517143221030: 'KH-16360',
     230517143221032: 'Panasonic KP-350BK Electric Pencil Sharpener with Auto Stop',
     230517143221023: 'Office Supplies',
@@ -337,7 +345,7 @@ const records = [
     230517143221041: '10.028'
   },
   {
-    230517143221027: 'US-2018-158526',
+    230517143221027: 'US-2018-40',
     230517143221030: 'KH-16360',
     230517143221032: 'GBC ProClick Spines for 32-Hole Punch',
     230517143221023: 'Office Supplies',
@@ -350,7 +358,7 @@ const records = [
     230517143221041: '5.889'
   },
   {
-    230517143221027: 'US-2018-158526',
+    230517143221027: 'US-2018-30',
     230517143221030: 'KH-16360',
     230517143221032: 'DMI Arturo Collection Mission-style Design Wood Chair',
     230517143221023: 'Furniture',
@@ -363,7 +371,7 @@ const records = [
     230517143221041: '314.038'
   },
   {
-    230517143221027: 'CA-2018-130631',
+    230517143221027: 'CA-2018-99',
     230517143221030: 'BS-11755',
     230517143221032: 'Hand-Finished Solid Wood Document Frame',
     230517143221023: 'Furniture',
@@ -382,6 +390,7 @@ const columns = [
     field: '230517143221027',
     title: 'Order ID',
     width: 'auto',
+    sort: false,
     showSort: true
   },
   {

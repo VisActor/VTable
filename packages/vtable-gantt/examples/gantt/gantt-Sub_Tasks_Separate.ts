@@ -91,8 +91,7 @@ export function createTable() {
           id: 7,
           title: 'Determine project scope',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-08-09',
-          end: '2024-09-11',
+
           progress: 100,
           priority: 'P1'
         }

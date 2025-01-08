@@ -206,6 +206,13 @@
             "zh": "日历图介绍",
             "en": "calendar introduction"
           }
+        },
+        {
+          "path": "calendar_custom_layout",
+          "title": {
+            "zh": "日历图自定义单元格",
+            "en": "calendar custom layout"
+          }
         }
       ]
     },

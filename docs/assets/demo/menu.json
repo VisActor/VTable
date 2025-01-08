@@ -353,6 +353,13 @@
             "zh": "日历图自定义日程",
             "en": "Calendar Custom Event"
           }
+        },
+        {
+          "path": "calendar-custom-layout",
+          "title": {
+            "zh": "日历图自定义单元格",
+            "en": "Calendar Custom Layout"
+          }
         }
       ]
     },
@@ -1250,6 +1257,13 @@
           "title": {
             "zh": "计算字段",
             "en": "Calculate Field"
+          }
+        },
+        {
+          "path": "pivot-analysis-customAggregator",
+          "title": {
+            "zh": "自定义聚合类型",
+            "en": "Custom Aggregation Type"
           }
         },
         {

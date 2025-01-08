@@ -85,6 +85,8 @@ export interface AggregationRule<T extends AggregationType> {
   aggregationType: T;
   /**Formatting calculation results */
   formatFun?: (num: number) => string;
+  /** when aggregationType set AggregationType.CUSTOM，please set this aggregationFun。*/
+  aggregationFun?: T extends AggregationType.CUSTOM ? (values: any[], records: any[]) => any : undefined;
 }
 ```
 
@@ -98,9 +100,12 @@ export enum AggregationType {
   MAX = 'MAX',
   AVG = 'AVG',
   COUNT = 'COUNT',
-  NONE = 'NONE'
+  NONE = 'NONE',
+  CUSTOM = 'CUSTOM'
 }
 ```
+
+In addition to the several built-in aggregation methods mentioned above in VTable, it also supports registering and defining aggregation methods. To use custom aggregation types, you need to first define a custom aggregation class, inherit the built-in Aggregator class, register it in VTable, and then implement the aggregation logic in the custom aggregation class. For details, please refer to the [demo](../demo/data-analysis/pivot-analysis-customAggregator)
 
 ### sortRules(SortRules)
 

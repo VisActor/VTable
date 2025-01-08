@@ -257,7 +257,7 @@ export function createTable() {
     }
     // widthMode: 'adaptive'
   };
-  const tableInstance = new VTable.ListTable(option);
+  const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)!, option);
   window.tableInstance = tableInstance;
 
   bindDebugTool(tableInstance.scenegraph.stage, {

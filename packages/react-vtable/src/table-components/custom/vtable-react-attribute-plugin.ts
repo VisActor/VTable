@@ -109,12 +109,23 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
     nativeContainer: HTMLElement,
     options: SimpleDomStyleOptions & CommonDomOptions
   ) {
-    const { pointerEvents } = options;
+    const { pointerEvents, penetrateEventList = [] } = options;
     let calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
 
     calculateStyle.display = graphic.attribute.visible !== false ? 'block' : 'none';
     // 事件穿透
     calculateStyle.pointerEvents = pointerEvents === true ? 'all' : pointerEvents ? pointerEvents : 'none';
+    if (calculateStyle.pointerEvents !== 'none') {
+      // 删除所有的事件
+      this.removeWrapContainerEventListener(wrapContainer);
+      // 监听所有的事件
+      penetrateEventList.forEach(event => {
+        if (event === 'wheel') {
+          wrapContainer.addEventListener('wheel', this.onWheel);
+        }
+      });
+    }
+
     // 定位wrapGroup
     if (!wrapContainer.style.position) {
       wrapContainer.style.position = 'absolute';

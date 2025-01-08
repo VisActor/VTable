@@ -174,7 +174,12 @@ export function createTable() {
       minTableWidth: 100,
       maxTableWidth: 600
     },
+    keyboardOptions: {
+      deleteLinkOnDel: true,
+      deleteLinkOnBack: true
+    },
     dependency: {
+      linkDeletable: true,
       links: [
         {
           type: DependencyType.FinishToStart,
@@ -393,7 +398,13 @@ export function createTable() {
   ganttInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);
   });
+  ganttInstance.on('contextmenu_dependency_link', e => {
+    console.log('contextmenu_dependency_link', e);
+  });
 
+  ganttInstance.on('delete_dependency_link', e => {
+    console.log('delete_dependency_link', e);
+  });
   // bindDebugTool(ganttInstance.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']
   // });

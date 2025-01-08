@@ -84,6 +84,14 @@ Freeze Columns Right
 
 number of frozen rows at the bottom
 
+#${prefix} maxFrozenWidth(number | string) = '80%'
+
+Maximum freezing width, fixed value or percentage. Default is '80%'
+
+#${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
+
+Whether to defrost after the maximum freezing width is exceeded. The default value is true
+
 #${prefix} allowFrozenColCount(number) = 0
 
 Allow the number of frozen columns, indicating how many columns will show the frozen operation button (effective for basic tables)
@@ -436,7 +444,7 @@ Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'
 'none': don't triggers the browser's default behavior when the table scrolls to the top or bottom;
 ```
 
-#${prefix} customMergeCell(Function)
+#${prefix} customMergeCell(Function|Object)
 Customize cell merging rules. When the incoming row and column numbers are within the target area, the merging rules are returned:
 
 - text: Merge text in cells
@@ -467,6 +475,8 @@ Customize cell merging rules. When the incoming row and column numbers are withi
   }
 
 ```
+
+`customMergeCell` can also be configured as an array of merge rules. Each item in the array is a merge rule. The configuration of the rule is the same as the return value of the `customMergeCell` callback function.
 
 #${prefix} customCellStyle(Array)
 
