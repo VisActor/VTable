@@ -4321,7 +4321,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     this.render();
   }
-  checkHasColumnAutoWidth() {
+  checkHasColumnAutoWidth(): boolean {
     return checkHasColumnAutoWidth(this);
   }
 }
