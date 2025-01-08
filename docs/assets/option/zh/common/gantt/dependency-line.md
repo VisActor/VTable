@@ -8,6 +8,7 @@
   linkLineStyle?: ILineStyle;
   linkCreatable?: boolean;
   linkSelectable?: boolean;
+  linkDeletable?: boolean;
   linkSelectedLineStyle?: ITaskLinkSelectedStyle;
   /** 创建关联线的操作点 */
   linkCreatePointStyle?: IPointStyle;

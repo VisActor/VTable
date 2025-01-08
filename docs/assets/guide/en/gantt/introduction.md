@@ -116,10 +116,7 @@ links:[
   }
 ]
 ```
-
-The value of `linkedFromTaskKey` is the unique identifier field in records. The field name of the unique identifier field defaults to `id`. If you need to modify it, you can modify it through the `taskKeyField` configuration item.
-
-Through the `dependency.linkLineStyle` configuration item set link line style, you can customize the style of the dependencies between tasks. Through the `dependency.linkLineSelectedStyle` configuration item, you can customize the style of the dependencies between tasks when they are selected. In addition, you can dynamically create association lines. Through the `dependency.linkCreatable` configuration item, you can set whether association lines can be created.
+The values of `linkedFromTaskKey` and `linkedToTaskKey` need to correspond to the unique identifier field in the `records`, with the default field name being `id`. If you need to modify it, you can do so through the `taskKeyField` configuration item.
 
 ### Interaction
 
@@ -201,10 +198,23 @@ In the vtable-gantt component, the main supported configurations include:
 
 3. Dependency Line `dependency`
 
-   1. Dependencies: Through the links configuration item, you can set dependencies between tasks.
-   2. Link line style: You can set the link line style, including color, width, dashed line style, etc., through the linkLineStyle configuration item.
-   3. Link creation: Through the linkCreatable configuration item, you can set whether to allow the creation of link lines.
-   4. The operation style of the association line creation process: Through the linkSelectedLineStyle linkCreatingPointStyle linkCreatingLineStyle configuration items, you can set the style of the association line selection process, including color, width, dashed line style, etc.
+   Introduction to related configuration items for task dependencies:
+
+    - `dependency.links`：You can set the dependencies between tasks through the `dependency.links` configuration item.
+
+    - `taskKeyField`：You can set the field name of the unique identifier field for dependencies through the `taskKeyField` configuration item.
+
+    - `dependency.linkLineStyle`：You can configure the style of dependency lines, including color, width, dashed style, etc., through `dependency.linkLineStyle`.
+
+    - `dependency.linkLineSelectedStyle`：You can customize the style of dependencies when selected between tasks.
+
+    - `dependency.linkCreatable`：You can set whether association lines can be created through the `dependency.linkCreatable` configuration item.
+
+    - `dependency.linkSelectable`：You can set whether association lines can be selected through the `dependency.linkSelectable` configuration item.
+
+    - `dependency.linkDeletable`：You can set whether association lines can be deleted through the `dependency.linkDeletable` configuration item. If you want to delete association lines through the right-click menu, you can listen to the `CONTEXTMENU_DEPENDENCY_LINK` event to actively call the deleteLink interface to delete. If you configure shortcut keys `keyboardOptions.deleteLinkOnDel` or `keyboardOptions.deleteLinkOnBack` to delete association lines by pressing the 'del' or 'back' key on the keyboard.
+
+    - Operation style during the creation of association lines: You can set the style of the association line selection process, including color, width, dashed style, etc., through the `linkSelectedLineStyle` `linkCreatePointStyle` `linkCreatingPointStyle` `linkCreatingLineStyle` configuration items.
 
 4. Date Header Configuration `timelineHeader`
    1. Custom Rendering: You can customize the rendering of date headers through the `customLayout` configuration item.
