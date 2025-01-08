@@ -3,7 +3,7 @@ import type { ColumnIconOption, SvgIcon } from './icon';
 export type { HeaderData } from './list-table/layout-map/api';
 export type LayoutObjectId = number | string;
 import type { Rect } from '../tools/Rect';
-import type { BaseTableAPI, BaseTableConstructorOptions, ListTableProtected } from './base-table';
+import type { BaseTableAPI, BaseTableConstructorOptions, ListTableProtected, PivotTableProtected } from './base-table';
 import type {
   Aggregation,
   AggregationType,
@@ -270,6 +270,8 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   groupTitleCustomLayout?: ICustomLayout;
 
   enableTreeStickCell?: boolean;
+
+  columnWidthConfig?: { key: string; width: number }[];
 }
 
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
@@ -328,6 +330,8 @@ export interface ListTableAPI extends BaseTableAPI {
    * @param  {number} index The record index.
    */
   getBodyRowIndexByRecordIndex: (index: number | number[]) => number;
+
+  _parseColumnWidthConfig: (columnWidthConfig: { key: string; width: number }[]) => void;
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**
@@ -345,6 +349,10 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
     order: SortOrder;
   }[];
   columnWidthConfig?: {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
+  columnWidthConfigForRowHeader?: {
     dimensions: IDimensionInfo[];
     width: number;
   }[];
@@ -471,6 +479,7 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
   axes?: ITableAxisOption[];
 }
 export interface PivotTableAPI extends BaseTableAPI {
+  internalProps: PivotTableProtected;
   records?: any;
   options: PivotTableConstructorOptions;
   editorManager: EditManager;
@@ -493,6 +502,9 @@ export interface PivotTableAPI extends BaseTableAPI {
    */
   changeCellValues: (col: number, row: number, values: (string | number)[][], workOnEditableCell: boolean) => void;
   _parseColumnWidthConfig: (columnWidthConfig: { dimensions: IDimensionInfo[]; width: string | number }[]) => void;
+  _parseColumnWidthConfigForRowHeader: (
+    columnWidthConfig: { dimensions: IDimensionInfo[]; width: string | number }[]
+  ) => void;
 }
 export interface PivotChartAPI extends BaseTableAPI {
   records?: any | Record<string, any[]>;

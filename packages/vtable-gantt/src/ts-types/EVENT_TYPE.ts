@@ -34,12 +34,18 @@ export interface EVENT_TYPES {
   CREATE_DEPENDENCY_LINK: 'create_dependency_link';
 
   /**
+   * 删除了任务依赖关系
+   */
+  DELETE_DEPENDENCY_LINK: 'delete_dependency_link';
+  /**
    * 点击依赖关系连接点
    */
   CLICK_DEPENDENCY_LINK_POINT: 'click_dependency_link_point';
+  /** 右键点击依赖关系 */
+  CONTEXTMENU_DEPENDENCY_LINK: 'contextmenu_dependency_link';
 }
 /**
- * Table event types
+ * GanttChart event types
  */
 export const GANTT_EVENT_TYPE: EVENT_TYPES = {
   SCROLL: 'scroll',
@@ -50,5 +56,7 @@ export const GANTT_EVENT_TYPE: EVENT_TYPES = {
   MOUSELEAVE_TASK_BAR: 'mouseleave_task_bar',
   CREATE_TASK_SCHEDULE: 'create_task_schedule',
   CREATE_DEPENDENCY_LINK: 'create_dependency_link',
-  CLICK_DEPENDENCY_LINK_POINT: 'click_dependency_link_point'
+  DELETE_DEPENDENCY_LINK: 'delete_dependency_link',
+  CLICK_DEPENDENCY_LINK_POINT: 'click_dependency_link_point',
+  CONTEXTMENU_DEPENDENCY_LINK: 'contextmenu_dependency_link'
 } as EVENT_TYPES;

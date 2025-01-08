@@ -322,3 +322,28 @@ export interface EVENT_TYPES {
     record: any;
   };
 ```
+
+### CONTEXTMENU_DEPENDENCY_LINK
+
+右键点击依赖关系的事件
+事件回传参数：
+
+```
+{
+    federatedEvent: FederatedPointerEvent;
+    event: Event;
+    /** 依赖信息 */
+    link: ITaskLink;
+  };
+```
+
+### DELETE_DEPENDENCY_LINK
+删除了任务依赖关系
+事件回传参数：
+```
+{
+    event: Event;
+    /** 依赖信息 */
+    link: ITaskLink;
+  };
+```
