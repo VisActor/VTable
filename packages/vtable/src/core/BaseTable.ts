@@ -103,6 +103,7 @@ import {
   _setDataSource,
   _setRecords,
   _toPxWidth,
+  checkHasColumnAutoWidth,
   createRootElement,
   getStyleTheme,
   updateRootElementPadding
@@ -4319,5 +4320,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.scrollTop = Math.min(top - frozenHeight, this.getAllRowsHeight() - drawRange.height);
     }
     this.render();
+  }
+  checkHasColumnAutoWidth() {
+    return checkHasColumnAutoWidth(this);
   }
 }
