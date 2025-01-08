@@ -40,7 +40,7 @@ ${prefix} headerIcon(string|Object|Array)
 string | ColumnIconOption | (string | ColumnIconOption)[];
 ```
 
-ColumnIconOption 具体配置可参考[定义](/zh/option.html#ListTable-columns-text.icon.ColumnIconOption定义：)
+ColumnIconOption 具体配置可参考[定义](./ListTable-columns-text#icon.ColumnIconOption)
 
 ${prefix} icon(string|Object|Array|Funciton)
 
