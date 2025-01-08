@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: Gantt chart interaction - create schedule
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-task-creation-button.gif
-link: '../guide/gantt/introduction'
+link: gantt/introduction
 option: Gantt#taskBar
 ---
 
@@ -625,7 +625,7 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 8,
       /** 任务条的边框 */
-      borderWidth: 1,
+      borderLineWidth: 1,
       /** 边框颜色 */
       borderColor: 'black'
     },

@@ -1,4 +1,6 @@
 import type { Gantt } from '../Gantt';
+import { updateSplitLineAndResizeLine } from '../gantt-helper';
+import { TasksShowMode } from '../ts-types';
 
 export function syncScrollStateToTable(gantt: Gantt) {
   const { scroll } = gantt.stateManager;
@@ -29,7 +31,7 @@ export function syncEditCellFromTable(gantt: Gantt) {
 export function syncTreeChangeFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('tree_hierarchy_state_change', (args: any) => {
     gantt._syncPropsFromTable();
-    gantt.verticalSplitResizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
+
     gantt.scenegraph.refreshTaskBarsAndGrid();
     const left = gantt.stateManager.scroll.horizontalBarPos;
     const top = gantt.stateManager.scroll.verticalBarPos;
@@ -48,7 +50,15 @@ export function syncSortFromTable(gantt: Gantt) {
 }
 export function syncDragOrderFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('change_header_position', (args: any) => {
-    gantt.scenegraph.refreshTaskBars();
+    if (
+      gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+      gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact ||
+      gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
+    ) {
+      gantt.scenegraph.refreshTaskBarsAndGrid();
+    } else {
+      gantt.scenegraph.refreshTaskBars();
+    }
     gantt.scenegraph.dragOrderLine.hideDragLine();
     const left = gantt.stateManager.scroll.horizontalBarPos;
     const top = gantt.stateManager.scroll.verticalBarPos;
@@ -69,5 +79,30 @@ export function syncDragOrderFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('change_header_position_fail', (args: any) => {
     gantt.scenegraph.dragOrderLine.hideDragLine();
     gantt.scenegraph.updateNextFrame();
+  });
+}
+
+export function syncTableWidthFromTable(gantt: Gantt) {
+  gantt.taskListTableInstance?.on('resize_column', (args: any) => {
+    const oldTaskTableWidth: number = gantt.taskTableWidth;
+
+    gantt.taskTableWidth =
+      gantt.taskListTableInstance.getAllColsWidth() + gantt.parsedOptions.outerFrameStyle.borderLineWidth;
+    if (gantt.options?.taskListTable?.maxTableWidth) {
+      gantt.taskTableWidth = Math.min(gantt.options?.taskListTable?.maxTableWidth, gantt.taskTableWidth);
+    }
+    if (gantt.options?.taskListTable?.minTableWidth) {
+      gantt.taskTableWidth = Math.max(gantt.options?.taskListTable?.minTableWidth, gantt.taskTableWidth);
+    }
+    if (oldTaskTableWidth === gantt.taskTableWidth) {
+      return;
+    }
+    gantt.element.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth}px` : '0px';
+    gantt.taskListTableInstance.setCanvasSize(
+      gantt.taskTableWidth,
+      gantt.tableNoFrameHeight + gantt.parsedOptions.outerFrameStyle.borderLineWidth * 2
+    );
+    gantt._updateSize();
+    updateSplitLineAndResizeLine(gantt);
   });
 }

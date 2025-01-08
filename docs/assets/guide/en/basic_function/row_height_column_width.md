@@ -7,7 +7,7 @@ In the field of data analysis, tables are a common way of displaying data. Corre
 In VTable, the calculation mode of table column width `widthMode` can be configured as `standard` (standard mode), `adaptive` (adaptive container width mode) or `autoWidth` (automatic column width mode). [demo example](https://visactor.io/vtable/demo/basic-functionality/width-mode-autoWidth). (If `widthMode: 'autoWidth'` is set, then each cell will participate in calculating the width. It can be imagined that this calculation process requires performance.)
 
 - Standard mode (standard): The table uses the width specified by the `width` attribute as the column width. If not specified, the default column width set by `defaultColWidth` or `defaultHeaderColWidth` is used.
-- Adaptive container width mode (adaptive): In adaptive container width mode, the table uses the width of the container to allocate column widths (the ratio of each column width is based on the width value in standard mode). [demo example](https://visactor.io/vtable/demo/basic-functionality/width-mode-adaptive)
+- Adaptive container width mode (adaptive): In adaptive container width mode, the table uses the width of the container to allocate column widths (the ratio of each column width is based on the width value in standard mode. This can be changed by autoHeightInAdaptiveMode). [demo example](https://visactor.io/vtable/demo/basic-functionality/width-mode-adaptive)
 - Automatic column width mode (autoWidth): In automatic width mode, column width is automatically calculated based on the content in the column header and body cells, ignoring the set `width` attribute and `defaultColWidth`.
 
 # Row height calculation mode
@@ -60,6 +60,10 @@ const table = new VTable.ListTable({
   autoFillHeight: true
 });
 ```
+
+## Custom calculated row height
+
+If you need to customize the logic for calculating row height, you can configure the `customComputeRowHeight` function to proxy the logic for calculating row height inside VTable.
 
 # Column width related configuration
 

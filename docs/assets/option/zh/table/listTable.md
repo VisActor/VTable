@@ -141,3 +141,15 @@ type CustomAggregation = {
 ## groupTitleCustomLayout(CustomLayout)
 
 分组标题自定义布局。
+
+## customComputeRowHeight(Function)
+
+代码 VTable 内部计算行高的方法，用户可以自定义计算行高的方法。如果返回 number 则是行高，如果返回 auto 则是自动行高，返回 undefined 则是默认行高。
+
+```
+customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => number|'auto'|undefined;
+```
+
+## tableSizeAntiJitter(boolean) = false
+
+当表格出现抖动情况，请排查是否上层 dom 容器的宽高是小数引起的。如果不能保证是整数，请配置这个配置项为 true

@@ -31,7 +31,7 @@ import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import type { ITitleComponent } from './components/title/title';
 import { Env } from './tools/env';
 import * as editors from './edit/editors';
-import { EditManeger } from './edit/edit-manager';
+import { EditManager } from './edit/edit-manager';
 import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
@@ -54,6 +54,7 @@ import {
   sortRecords
 } from './core/record-helper';
 import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
+import { fixUpdateRowRange } from './tools/update-row';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -141,7 +142,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     this.transpose = options.transpose ?? false;
     if (Env.mode !== 'node') {
-      this.editorManager = new EditManeger(this);
+      this.editorManager = new EditManager(this);
     }
     this.refreshHeader();
     this.internalProps.useOneRowHeightFillAll = false;
@@ -160,11 +161,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       } else {
         const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       }
     }
 
@@ -307,16 +308,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
         const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
       }
+      let value;
       if ((this.options as ListTableConstructorOptions).groupBy) {
-        const { vtableMerge } = table.getCellRawRecord(col, row);
-        if (vtableMerge) {
+        const record = table.getCellRawRecord(col, row);
+        if (record?.vtableMerge) {
           return '';
         }
         const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
-        return indexs[indexs.length - 1] + 1;
+        value = indexs[indexs.length - 1] + 1;
+      } else {
+        value = row - this.columnHeaderLevelCount + 1;
       }
       const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
-      return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount + 1;
+      return typeof format === 'function' ? format(col, row, this, value) : value;
     } else if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
@@ -526,11 +530,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       } else {
         const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       }
     }
     return new Promise(resolve => {
@@ -904,32 +908,40 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.layoutMap.clearCellRangeMap();
     this.internalProps.useOneRowHeightFillAll = false;
     // this.scenegraph.updateHierarchyIcon(col, row);// 添加了updateCells:[{ col, row }] 就不需要单独更新图标了（只更新图标针对有自定义元素的情况 会有更新不到问题）'
-    const updateCells = [{ col, row }];
-    // 如果需要移出的节点超过了当前加载部分最后一行  则转变成更新对应的行
-    if (
-      diffPositions.removeCellPositions?.length > 0 &&
-      diffPositions.removeCellPositions[diffPositions.removeCellPositions.length - 1].row >=
-        this.scenegraph.proxy.rowEnd
-    ) {
-      for (let i = 0; i <= diffPositions.removeCellPositions.length - 1; i++) {
-        if (diffPositions.removeCellPositions[i].row <= this.scenegraph.proxy.rowEnd) {
-          updateCells.push({
-            col: diffPositions.removeCellPositions[i].col,
-            row: diffPositions.removeCellPositions[i].row
-          });
-        }
-      }
-      diffPositions.removeCellPositions = [];
+    // const updateCells = [{ col, row }];
+    // // 如果需要移出的节点超过了当前加载部分最后一行  则转变成更新对应的行
+    // if (
+    //   diffPositions.removeCellPositions?.length > 0 &&
+    //   diffPositions.removeCellPositions[diffPositions.removeCellPositions.length - 1].row >=
+    //     this.scenegraph.proxy.rowEnd
+    // ) {
+    //   for (let i = 0; i <= diffPositions.removeCellPositions.length - 1; i++) {
+    //     if (diffPositions.removeCellPositions[i].row <= this.scenegraph.proxy.rowEnd) {
+    //       updateCells.push({
+    //         col: diffPositions.removeCellPositions[i].col,
+    //         row: diffPositions.removeCellPositions[i].row
+    //       });
+    //     }
+    //   }
+    //   diffPositions.removeCellPositions = [];
 
-      // reset proxy row config
-      this.scenegraph.proxy.refreshRowCount();
-    }
+    //   // reset proxy row config
+    //   this.scenegraph.proxy.refreshRowCount();
+    // }
+
+    const { updateCells, addCells, removeCells } = fixUpdateRowRange(diffPositions, col, row, this);
+    this.reactCustomLayout?.clearCache();
     this.scenegraph.updateRow(
-      diffPositions.removeCellPositions,
-      diffPositions.addCellPositions,
+      // diffPositions.removeCellPositions,
+      // diffPositions.addCellPositions,
+      removeCells,
+      addCells,
       updateCells,
-      recalculateColWidths
+      recalculateColWidths,
+      true
     );
+    this.reactCustomLayout?.updateAllCustomCell();
+
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
       if (this.autoFillWidth && !notFillWidth) {
@@ -1049,19 +1061,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
   getCheckboxState(field?: string | number) {
-    if (this.stateManager.checkedState.length < this.rowCount - this.columnHeaderLevelCount) {
+    if (this.stateManager.checkedState.size < this.rowCount - this.columnHeaderLevelCount) {
       this.stateManager.initLeftRecordsCheckState(this.records);
     }
     if (isValid(field)) {
-      let stateArr = this.stateManager.checkedState;
+      let stateArr = this.stateManager.checkedState.values() as any;
       if (this.options.groupBy) {
-        stateArr = getGroupCheckboxState(this);
+        stateArr = getGroupCheckboxState(this) as any;
       }
-      return stateArr.map(state => {
+      return stateArr.map((state: any) => {
         return state[field];
       });
     }
-    return this.stateManager.checkedState;
+    return new Array(...this.stateManager.checkedState.values());
   }
   /** 获取某个单元格checkbox的状态 */
   getCellCheckboxState(col: number, row: number) {
@@ -1069,8 +1081,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const field = define?.field;
     const cellType = this.getCellType(col, row);
     if (isValid(field) && cellType === 'checkbox') {
-      const dataIndex = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row));
-      return this.stateManager.checkedState[dataIndex as number]?.[field as string | number];
+      const dataIndex = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row)).toString();
+      return this.stateManager.checkedState.get(dataIndex)?.[field as string | number];
     }
     return undefined;
   }
@@ -1086,7 +1098,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return getCellRadioState(col, row, this);
   }
 
-  setCellCheckboxState(col: number, row: number, checked: boolean) {
+  setCellCheckboxState(col: number, row: number, checked: boolean | 'indeterminate') {
     setCellCheckboxState(col, row, checked, this);
   }
 
@@ -1096,9 +1108,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /**
    * 设置表格数据 及排序状态
    * @param records
-   * @param sort
+   * @param option 附近参数，其中的sortState为排序状态，如果设置null 将清除目前的排序状态
    */
-  setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] }): void {
+  setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] | null }): void {
     // 释放事件 及 对象
     this.internalProps.dataSource?.release();
     // 过滤掉dataSource的引用
@@ -1170,11 +1182,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       } else {
         const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       }
     }
 
@@ -1288,6 +1300,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   addRecord(record: any, recordIndex?: number) {
     listTableAddRecord(record, recordIndex, this);
+    this.internalProps.emptyTip?.resetVisible();
   }
 
   /**
@@ -1299,6 +1312,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   addRecords(records: any[], recordIndex?: number) {
     listTableAddRecords(records, recordIndex, this);
+    this.internalProps.emptyTip?.resetVisible();
   }
 
   /**
@@ -1307,6 +1321,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   deleteRecords(recordIndexs: number[]) {
     listTableDeleteRecords(recordIndexs, this);
+    this.internalProps.emptyTip?.resetVisible();
   }
 
   /**

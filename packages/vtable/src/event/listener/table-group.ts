@@ -21,7 +21,6 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CheckBox, CheckboxAttributes, Radio } from '@visactor/vrender-components';
-import { ResizeColumnHotSpotSize } from '../../tools/global';
 import { handleWhell } from '../scroll';
 import { fireMoveColEventListeners } from '../helper';
 export function bindTableGroupListener(eventManager: EventManager) {
@@ -61,7 +60,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       !(table as ListTableAPI).editorManager?.editingEditor
     ) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
-        if (stateManager.isResizeCol()) {
+        if (stateManager.isResizeCol() || stateManager.isResizeRow()) {
           /* do nothing */
         } else if (stateManager.isMoveCol()) {
           eventManager.dealColumnMover(eventArgsSet);
@@ -276,7 +275,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
   table.scenegraph.tableGroup.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
     //resize 列宽 当鼠标离开table也需要继续响应
-    if (!stateManager.isResizeCol() && !stateManager.isMoveCol() && !stateManager.isSelecting()) {
+    if (
+      !stateManager.isResizeCol() &&
+      !stateManager.isResizeRow() &&
+      !stateManager.isMoveCol() &&
+      !stateManager.isSelecting()
+    ) {
       stateManager.updateInteractionState(InteractionState.default);
       stateManager.updateCursor();
     }
@@ -398,7 +402,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   };
   const globalPointerdownCallback = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (!table.getElement().contains(target)) {
+    if (!table.getElement().contains(target) && !table.internalProps.menuHandler.containElement(target)) {
       // 如果点击到表格外部的dom
       const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
       getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
@@ -799,7 +803,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         const { eventArgs } = eventArgsSet;
         if (!eventArgs?.targetCell) {
           const cell = table.getCellAt(
-            eventArgsSet.abstractPos.x - ResizeColumnHotSpotSize / 2,
+            eventArgsSet.abstractPos.x - table.theme.columnResize.resizeHotSpotSize / 2,
             eventArgsSet.abstractPos.y
           );
           if (cell) {
@@ -822,6 +826,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // eventManager._resizing = false;
       if (stateManager.isResizeCol()) {
         endResizeCol(table);
+      } else if (stateManager.isResizeRow()) {
+        endResizeRow(table);
       }
     }
   });
@@ -1037,8 +1043,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
     table.scenegraph.updateNextFrame();
   });
   table.scenegraph.stage.addEventListener('wheel', (e: FederatedWheelEvent) => {
-    const tableGroup: any = e.path.find(node => (node as any).role === 'table');
-    if (tableGroup) {
+    const legend: any = e.path.find(node => (node as any).name === 'legend');
+    if (!legend) {
       table.editorManager?.completeEdit();
       if (table.eventManager._enableTableScroll) {
         handleWhell(e, stateManager);

@@ -68,6 +68,18 @@
 
 {{ use: common-gantt-task-bar(prefix = '###')}}
 
+## taskShowMode(TaskShowMode)
+
+任务条展示模式。使用枚举类型`TaskShowMode`进行配置
+
+非必填
+
+- `TaskShowMode.Tasks_Separate`: 每一个任务节点用单独一行来展示，父任务占用一行，子任务分别占用一行。这是默认的显示效果！
+- `TaskShowMode.Sub_Tasks_Separate`: 省去父任务节点不展示，且所有子任务的节点分别用一行展示。
+- `TaskShowMode.Sub_Tasks_Inline`: 省去父任务节点不展示，并把所有子任务的节点都放到同一行来展示。
+- `TaskShowMode.Sub_Tasks_Arrange`: 省去父任务节点不展示，且所有子任务会维持 records 中的数据顺序布局，并保证节点不重叠展示。
+- `TaskShowMode.Sub_Tasks_Compact`: 省去父任务节点不展示，且所有子任务会按照日期早晚的属性来布局，并保证节点不重叠的紧凑型展示。
+
 ## taskKeyField(string)
 
 数据条目可唯一标识的字段名, 默认为'id'
@@ -184,5 +196,15 @@
 ## underlayBackgroundColor(string)
 
 绘制范围外的 canvas 上填充的颜色，默认为'#fff'，同时也适配到左侧表格的背景色。
+
+非必填
+
+## eventOptions(Object)
+
+事件触发相关问题设置，具体配置项：
+
+### preventDefaultContextMenu(boolean) = true
+
+阻止鼠标右键的默认行为
 
 非必填

@@ -20,6 +20,14 @@ The following is an example of obtaining the selected state of the table:
 
 For specific ListTable interfaces, refer to: https://visactor.io/vtable/api/Methods
 
+### updateOption(Function)
+
+Update options
+
+```
+  updateOption: (options: GanttConstructorOptions) => void
+```
+
 ### setRecords(Function)
 
 Set data
@@ -37,6 +45,22 @@ Update timeline scales
 ```
 
 {{ use: common-gantt-timeline-scale }}
+
+### updateDateRange(Function)
+
+update gantt chart date range
+
+```
+  updateDateRange: (minDate: string, maxDate: string) => void
+```
+
+### updateMarkLine(Function)
+
+update markLine
+
+```
+  updateMarkLine: (markLine: IMarkLine[]) => void
+```
 
 ### updateTaskRecord(Function)
 
@@ -62,13 +86,34 @@ Add Dependencies
 addLink: (link: ITaskLink) => void
 ```
 
-### removeLink(Function)
+### deleteLink(Function)
 
 Removing Dependencies
 
 ```
-removeLink: (link: ITaskLink) => void
+deleteLink: (link: ITaskLink) => void
 
+```
+
+### scrollTop
+
+Get or set the vertical scroll value to a specified position.
+
+### scrollLeft
+
+Get or set the horizontal scroll value to a specified position.
+
+### getTaskBarRelativeRect(Function)
+
+Get the position of the task bar. The position relative to the top-left corner of the Gantt chart.
+
+```
+  getTaskBarRelativeRect:(index: number) =>{
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }
 ```
 
 ## Events
@@ -103,6 +148,10 @@ export interface EVENT_TYPES {
    * Click task bar event
    */
   CLICK_TASK_BAR: 'click_task_bar';
+  /**
+   * Right-click task bar event
+   */
+  CONTEXTMENU_TASK_BAR: 'contextmenu_task_bar';
   /**
    * Mouse enter task bar event
    */
@@ -186,6 +235,7 @@ Event callback parameters:
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -200,6 +250,7 @@ Event callback parameters:
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -214,6 +265,7 @@ Event callback parameters:
     index: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   }
 ```
 
@@ -225,6 +277,7 @@ Event return parameters:
 
 ```
 {
+federatedEvent: FederatedPointerEvent;
 event: Event;
 /** The first data */
 index: number;
@@ -244,8 +297,26 @@ Event return parameters:
 
 ```
 {
-   event: Event;
+    federatedEvent: FederatedPointerEvent;
+    event: Event;
     /** dependency link */
     link: ITaskLink;
+  };
+```
+
+### CLICK_DEPENDENCY_LINK_POINT
+
+Events that click dependency line point
+Event return parameters:
+
+```
+{
+   event: Event;
+    /** click start or end link point */
+    point: 'start' | 'end';
+    /** the data order */
+    index: number;
+    /** the data info */
+    record: any;
   };
 ```

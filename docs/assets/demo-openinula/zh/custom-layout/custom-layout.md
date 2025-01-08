@@ -4,13 +4,13 @@ group: component
 title: custom layout
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png
 order: 1-1
-link: '../guide/custom_define/custom_layout'
+link: custom_define/custom_layout
 option: ListTable-columns-text#customLayout
 ---
 
 # custom layout
 
-可以在 customLayout 中使用 jsx 进行自定义布局，具体可以参考[自定义布局](../guide/custom_define/custom_layout)
+可以在 customLayout 中使用 jsx 进行自定义布局，具体可以参考[自定义布局](../../guide/custom_define/custom_layout)
 
 ## 代码演示
 

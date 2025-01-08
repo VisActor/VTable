@@ -9,6 +9,7 @@ import type {
   HeaderData,
   ICustomRender,
   IDimension,
+  IDimensionInfo,
   IHeaderTreeDefine,
   IIndicator,
   IRowDimension,
@@ -18,6 +19,7 @@ import { HierarchyState } from '../ts-types';
 import type { PivotHeaderLayoutMap } from './pivot-header-layout';
 import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
+import type { BaseTableAPI } from '../ts-types/base-table';
 // import { sharedVar } from './pivot-header-layout';
 
 interface ITreeLayoutBaseHeadNode {
@@ -48,6 +50,7 @@ interface ITreeLayoutDimensionHeadNode extends ITreeLayoutBaseHeadNode {
 }
 interface ITreeLayoutIndicatorHeadNode extends ITreeLayoutBaseHeadNode {
   indicatorKey: string;
+  hide?: boolean;
 }
 export type ITreeLayoutHeadNode = Either<ITreeLayoutDimensionHeadNode, ITreeLayoutIndicatorHeadNode>;
 export class DimensionTree {
@@ -56,6 +59,7 @@ export class DimensionTree {
   // cache: {
   //   [propName: string]: any;
   // };
+  hasHideNode = false;
   //树形展示 会将非叶子节点单独展示一行 所以size会增加非叶子节点的个数
   sizeIncludeParent = false;
   rowExpandLevel: number;
@@ -97,7 +101,8 @@ export class DimensionTree {
     this.reset(tree);
   }
 
-  reset(tree: ITreeLayoutHeadNode[], updateTreeNode = false) {
+  reset(tree: ITreeLayoutHeadNode[]) {
+    this.hasHideNode = false;
     // 清空缓存的计算
     // this.cache = {};
     // this.dimensions = dimensions;
@@ -114,6 +119,9 @@ export class DimensionTree {
   setTreeNode(node: ITreeLayoutHeadNode, startIndex: number, parent: ITreeLayoutHeadNode): number {
     node.startIndex = startIndex;
     node.startInTotal = (parent.startInTotal ?? 0) + node.startIndex;
+    if (node.hide) {
+      this.hasHideNode = true;
+    }
     // if (node.dimensionKey) {
     //   !this.dimensionKeys.contain(node.dimensionKey) &&
     //     this.dimensionKeys.put(node.level, node.dimensionKey);
@@ -122,22 +130,27 @@ export class DimensionTree {
     if (node.dimensionKey ?? node.indicatorKey) {
       if (
         !node.virtual &&
-        !this.dimensionKeys.contain(node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey)
+        !this.dimensionKeys.contain(
+          (node as any).indicatorKey ? IndicatorDimensionKeyPlaceholder : (node as any).dimensionKey
+        )
       ) {
-        this.dimensionKeys.put(node.level, node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey);
+        this.dimensionKeys.put(
+          (node as any).level,
+          (node as any).indicatorKey ? IndicatorDimensionKeyPlaceholder : (node as any).dimensionKey
+        );
       }
       if (
         !this.dimensionKeysIncludeVirtual.contain(
-          node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey
+          (node as any).indicatorKey ? IndicatorDimensionKeyPlaceholder : (node as any).dimensionKey
         )
       ) {
         this.dimensionKeysIncludeVirtual.put(
-          node.level,
-          node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey
+          (node as any).level,
+          (node as any).indicatorKey ? IndicatorDimensionKeyPlaceholder : (node as any).dimensionKey
         );
       }
-      if (!node.id) {
-        node.id = ++this.sharedVar.seqId;
+      if (!(node as any).id) {
+        (node as any).id = ++this.sharedVar.seqId;
       }
     }
     let size = node.dimensionKey ? (this.sizeIncludeParent ? 1 : 0) : 0;
@@ -635,7 +648,9 @@ export function dealHeaderForTreeMode(
       headerCustomLayout: (indicatorInfo ?? dimensionInfo)?.headerCustomLayout,
       dragHeader: dimensionInfo?.dragHeader,
       disableHeaderHover: !!(indicatorInfo ?? dimensionInfo)?.disableHeaderHover,
-      disableHeaderSelect: !!(indicatorInfo ?? dimensionInfo)?.disableHeaderSelect
+      disableHeaderSelect: !!(indicatorInfo ?? dimensionInfo)?.disableHeaderSelect,
+      showSort: indicatorInfo?.showSort ?? dimensionInfo?.showSort,
+      hide: indicatorInfo?.hide
     }), //这里不能新建对象，要用hd保持引用关系
     fieldFormat: indicatorInfo?.headerFormat ?? dimensionInfo?.headerFormat,
     // iconPositionList:[]
@@ -740,5 +755,33 @@ function clearNode(children: any) {
     if (childrenNew) {
       clearNode(childrenNew);
     }
+  }
+}
+
+export function deleteTreeHideNode(
+  tree_children: LayouTreeNode[],
+  dimensionPath: IDimensionInfo[],
+  indicators: IIndicator[],
+  hasHideNode: boolean,
+  table: BaseTableAPI
+) {
+  for (let i = tree_children.length - 1; i >= 0; i--) {
+    const node = tree_children[i];
+    dimensionPath.push(node);
+    if (hasHideNode && (node as any).hide) {
+      tree_children.splice(i, 1);
+    } else if (node.indicatorKey) {
+      const hide = indicators?.find(indicator => indicator.indicatorKey === node.indicatorKey)?.hide;
+      if (typeof hide === 'function') {
+        if (hide({ dimensionPaths: dimensionPath, table })) {
+          tree_children.splice(i, 1);
+        }
+      } else if (hide) {
+        tree_children.splice(i, 1);
+      }
+    } else if (node.children && node.children.length > 0) {
+      deleteTreeHideNode(node.children, dimensionPath, indicators, hasHideNode, table);
+    }
+    dimensionPath.pop();
   }
 }

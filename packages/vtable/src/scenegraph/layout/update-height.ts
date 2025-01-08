@@ -173,15 +173,7 @@ export function updateCellHeight(
     oldBarCell.release();
 
     // deal with text
-    updateMergeCellContentHeight(
-      cell,
-      distHeight,
-      detaY,
-      // scene.table.heightMode === 'autoHeight',
-      scene.table.isAutoRowHeight(row),
-      true,
-      scene.table
-    );
+    updateMergeCellContentHeight(cell, distHeight, detaY, scene.table.isAutoRowHeight(row), true, scene.table);
   } else if (type === 'sparkline') {
     // 目前先采用重新生成节点的方案
     cell.removeAllChild();
@@ -279,7 +271,6 @@ export function updateCellHeight(
             width,
             height,
             false,
-            // scene.table.heightMode === 'autoHeight',
             scene.table.isAutoRowHeight(row),
             padding,
             isMergeCellGroup(cell)
@@ -309,22 +300,13 @@ export function updateCellHeight(
     //     distHeight,
     //     detaY,
     //     // scene.table.internalProps.autoRowHeight,
-    //     scene.table.heightMode === 'autoHeight',
     //     getQuadProps(style.padding as number),
     //     style.textAlign,
     //     style.textBaseline,
     //     scene.table
     //   );
     // }
-    updateMergeCellContentHeight(
-      cell,
-      distHeight,
-      detaY,
-      // scene.table.heightMode === 'autoHeight',
-      scene.table.isAutoRowHeight(row),
-      renderDefault,
-      scene.table
-    );
+    updateMergeCellContentHeight(cell, distHeight, detaY, scene.table.isAutoRowHeight(row), renderDefault, scene.table);
   }
 }
 
@@ -345,6 +327,9 @@ function updateMergeCellContentHeight(
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
+        if (singleCellGroup.role !== 'cell') {
+          continue;
+        }
         singleCellGroup.forEachChildren((child: IGraphic) => {
           child.setAttributes({
             dx: 0,
@@ -354,12 +339,13 @@ function updateMergeCellContentHeight(
 
         if (renderDefault) {
           const style = table._getCellStyle(colStart, rowStart);
+          const padding = getQuadProps(getProp('padding', style, col, row, table));
           updateCellContentHeight(
             singleCellGroup,
             distHeight,
             detaY,
             autoRowHeight,
-            getQuadProps(style.padding as number),
+            padding,
             style.textAlign,
             style.textBaseline,
             table
@@ -396,12 +382,13 @@ function updateMergeCellContentHeight(
     }
   } else {
     const style = table._getCellStyle(cellGroup.col, cellGroup.row);
+    const padding = getQuadProps(getProp('padding', style, cellGroup.col, cellGroup.row, table));
     updateCellContentHeight(
       cellGroup,
       distHeight,
       detaY,
       autoRowHeight,
-      getQuadProps(style.padding as number),
+      padding,
       style.textAlign,
       style.textBaseline,
       table

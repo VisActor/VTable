@@ -3,7 +3,7 @@ category: examples
 group: functional-components
 title: Use arco-design select component in cell editor
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/arco-select-editor.png
-link: '../guide/edit/edit_cell'
+link: edit/edit_cell
 ---
 
 # Use arco-design select component in cell editor

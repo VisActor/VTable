@@ -36,7 +36,7 @@ import { Env } from './tools/env';
 import type { ITreeLayoutHeadNode } from './layout/tree-helper';
 import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
-import { EditManeger } from './edit/edit-manager';
+import { EditManager } from './edit/edit-manager';
 import * as editors from './edit/editors';
 import type { IEditor } from '@visactor/vtable-editors';
 import { computeColWidth } from './scenegraph/layout/compute-col-width';
@@ -44,7 +44,11 @@ import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
-import { parseColKeyRowKeyForPivotTable, supplementIndicatorNodesForCustomTree } from './layout/layout-helper';
+import {
+  deleteHideIndicatorNode,
+  parseColKeyRowKeyForPivotTable,
+  supplementIndicatorNodesForCustomTree
+} from './layout/layout-helper';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 
@@ -168,10 +172,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               options.indicators
             );
           }
+          options.indicatorsAsCol !== false &&
+            options.indicators &&
+            this.dataset.colHeaderTree &&
+            deleteHideIndicatorNode(this.dataset.colHeaderTree, options.indicators, false, this);
           columnDimensionTree = new DimensionTree(
             (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
             this.layoutNodeId
           );
+        } else {
+          if (columnDimensionTree.hasHideNode) {
+            deleteHideIndicatorNode(columnDimensionTree.tree.children, options.indicators, true, this);
+            columnDimensionTree.reset(columnDimensionTree.tree.children);
+          }
         }
         if (!options.rowTree) {
           if (options.indicatorsAsCol === false) {
@@ -180,12 +193,21 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               options.indicators
             );
           }
+          options.indicatorsAsCol === false &&
+            this.dataset.rowHeaderTree &&
+            options.indicators &&
+            deleteHideIndicatorNode(this.dataset.rowHeaderTree, options.indicators, false, this);
           rowDimensionTree = new DimensionTree(
             (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
             this.layoutNodeId,
             this.options.rowHierarchyType,
             this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
           );
+        } else {
+          if (rowDimensionTree.hasHideNode) {
+            deleteHideIndicatorNode(rowDimensionTree.tree.children, options.indicators, true, this);
+            rowDimensionTree.reset(rowDimensionTree.tree.children);
+          }
         }
         this.internalProps.layoutMap = new PivotHeaderLayoutMap(
           this,
@@ -201,7 +223,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         // this.updatePivotSortState(options.pivotSortState);
       }
       if (Env.mode !== 'node') {
-        this.editorManager = new EditManeger(this);
+        this.editorManager = new EditManager(this);
       }
 
       this.refreshHeader();
@@ -220,11 +242,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
       if (this.options.emptyTip) {
         if (this.internalProps.emptyTip) {
-          this.internalProps.emptyTip.resetVisible();
+          this.internalProps.emptyTip?.resetVisible();
         } else {
           const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
           this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-          this.internalProps.emptyTip.resetVisible();
+          this.internalProps.emptyTip?.resetVisible();
         }
       }
       //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
@@ -375,10 +397,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             options.indicators
           );
         }
+        options.indicatorsAsCol !== false &&
+          options.indicators &&
+          this.dataset.colHeaderTree &&
+          deleteHideIndicatorNode(this.dataset.colHeaderTree, options.indicators, false, this);
         columnDimensionTree = new DimensionTree(
           (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId
         );
+      } else {
+        if (columnDimensionTree.hasHideNode) {
+          deleteHideIndicatorNode(columnDimensionTree.tree.children, options.indicators, true, this);
+          columnDimensionTree.reset(columnDimensionTree.tree.children);
+        }
       }
       if (!options.rowTree) {
         if (options.indicatorsAsCol === false) {
@@ -387,12 +418,21 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             options.indicators
           );
         }
+        options.indicatorsAsCol === false &&
+          this.dataset.rowHeaderTree &&
+          options.indicators &&
+          deleteHideIndicatorNode(this.dataset.rowHeaderTree, options.indicators, false, this);
         rowDimensionTree = new DimensionTree(
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
           this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
         );
+      } else {
+        if (rowDimensionTree.hasHideNode) {
+          deleteHideIndicatorNode(rowDimensionTree.tree.children, options.indicators, true, this);
+          rowDimensionTree.reset(rowDimensionTree.tree.children);
+        }
       }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
     }
@@ -436,11 +476,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       } else {
         const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       }
     }
     // this.render();
@@ -1112,9 +1152,31 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const dimensions = item.dimensions;
       const width = item.width;
       const cell = this.getCellAddressByHeaderPaths(dimensions);
-      if (cell && !this.internalProps._widthResizedColMap.has(cell.col)) {
-        this._setColWidth(cell.col, width);
-        this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+      if (cell && cell.col >= this.rowHeaderLevelCount) {
+        const cellPath = this.getCellHeaderPaths(cell.col, this.columnHeaderLevelCount); //如单指标隐藏指标情况，从body行去取headerPath才会包括指标维度
+        if (cellPath.colHeaderPaths.length === dimensions.length) {
+          let match = true;
+          for (let i = 0; i < dimensions.length; i++) {
+            const dimension = dimensions[i];
+            const finded = (cellPath.colHeaderPaths as IDimensionInfo[]).findIndex((colPath: IDimensionInfo, index) => {
+              if (colPath.indicatorKey === dimension.indicatorKey) {
+                return true;
+              }
+              if (colPath.dimensionKey === dimension.dimensionKey && colPath.value === dimension.value) {
+                return true;
+              }
+              return false;
+            });
+            if (finded < 0) {
+              match = false;
+              break;
+            }
+          }
+          if (match && !this.internalProps._widthResizedColMap.has(cell.col)) {
+            this._setColWidth(cell.col, width);
+            this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+          }
+        }
       }
     }
   }
@@ -1394,12 +1456,15 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // this.invalidate();
     this.clearCellStyleCache();
     this.scenegraph.updateHierarchyIcon(col, row);
+    this.reactCustomLayout?.clearCache();
     this.scenegraph.updateRow(
       result.removeCellPositions,
       result.addCellPositions,
       result.updateCellPositions,
       recalculateColWidths
     );
+    this.reactCustomLayout?.updateAllCustomCell();
+
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
       if (this.autoFillWidth && !notFillWidth) {
@@ -1550,6 +1615,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (options.columnTree) {
         columnDimensionTree = internalProps.layoutMap.columnDimensionTree;
       } else {
+        options.indicatorsAsCol !== false &&
+          options.indicators &&
+          this.dataset.colHeaderTree &&
+          deleteHideIndicatorNode(this.dataset.colHeaderTree, options.indicators, false, this);
         columnDimensionTree = new DimensionTree(
           (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId
@@ -1558,6 +1627,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (options.rowTree) {
         rowDimensionTree = internalProps.layoutMap.rowDimensionTree;
       } else {
+        options.indicatorsAsCol === false &&
+          this.dataset.rowHeaderTree &&
+          options.indicators &&
+          deleteHideIndicatorNode(this.dataset.rowHeaderTree, options.indicators, false, this);
         rowDimensionTree = new DimensionTree(
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
@@ -1592,11 +1665,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.eventManager.updateEventBinder();
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       } else {
         const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
         this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-        this.internalProps.emptyTip.resetVisible();
+        this.internalProps.emptyTip?.resetVisible();
       }
     }
   }
@@ -1698,18 +1771,20 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         if (this.internalProps._heightResizedRowMap.size === 0) {
           this.scenegraph.recalculateRowHeights();
         }
-      } else if (this.heightMode === 'autoHeight' && !this.internalProps._heightResizedRowMap.has(row)) {
+      } else if (this.isAutoRowHeight() && !this.internalProps._heightResizedRowMap.has(row)) {
         const oldHeight = this.getRowHeight(row);
         const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
         this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
       }
-      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-        col,
-        row,
-        rawValue,
-        currentValue: oldValue,
-        changedValue: newValue
-      });
+      if (oldValue !== newValue) {
+        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+          col,
+          row,
+          rawValue,
+          currentValue: oldValue,
+          changedValue: newValue
+        });
+      }
       this.scenegraph.updateNextFrame();
     }
   }
@@ -1772,14 +1847,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             newValue = parseFloat(value);
           }
           this._changeCellValueToDataSet(startCol + j, startRow + i, oldValue, newValue);
-
-          this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-            col: startCol + j,
-            row: startRow + i,
-            rawValue,
-            currentValue: oldValue,
-            changedValue: this.getCellOriginValue(startCol + j, startRow + i)
-          });
+          const changedValue = this.getCellOriginValue(startCol + j, startRow + i);
+          if (changedValue !== oldValue) {
+            this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+              col: startCol + j,
+              row: startRow + i,
+              rawValue,
+              currentValue: oldValue,
+              changedValue
+            });
+          }
         }
       }
       pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
@@ -1812,7 +1889,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
       this.scenegraph.recalculateRowHeights();
-    } else if (this.heightMode === 'autoHeight') {
+    } else if (this.isAutoRowHeight()) {
       const rows: number[] = [];
       const deltaYs: number[] = [];
       for (let sRow = startRow; sRow <= range.end.row; sRow++) {

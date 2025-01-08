@@ -1,7 +1,7 @@
 import { clone, cloneDeep, isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import type { ITaskLink } from '../ts-types';
-import { InteractionState, GANTT_EVENT_TYPE, DependencyType } from '../ts-types';
+import { InteractionState, GANTT_EVENT_TYPE, DependencyType, TasksShowMode } from '../ts-types';
 import type { Group, FederatedPointerEvent, Polygon, Line, Circle } from '@visactor/vtable/es/vrender';
 import {
   syncEditCellFromTable,
@@ -9,14 +9,15 @@ import {
   syncScrollStateToTable,
   syncDragOrderFromTable,
   syncTreeChangeFromTable,
-  syncSortFromTable
+  syncSortFromTable,
+  syncTableWidthFromTable
 } from './gantt-table-sync';
-import { findRecordByTaskKey, getTaskIndexByY } from '../gantt-helper';
+import { clearRecordShowIndex, findRecordByTaskKey, getDateIndexByX, getTaskIndexsByTaskY } from '../gantt-helper';
 import { debounce } from '../tools/debounce';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 import { TASKBAR_HOVER_ICON_WIDTH } from '../scenegraph/task-bar';
 import { Inertia } from '../tools/inertia';
-import { generateLinkLinePoints, updateLinkLinePoints } from '../scenegraph/dependency-link';
+import { createDateAtMidnight } from '../tools/util';
 export class StateManager {
   _gantt: Gantt;
 
@@ -40,7 +41,9 @@ export class StateManager {
     startX: number;
     startY: number;
     deltaX: number;
+    deltaY: number;
     targetStartX: number;
+    targetStartY: number;
     startOffsetY: number;
     moving: boolean;
     target: GanttTaskBarNode;
@@ -61,6 +64,7 @@ export class StateManager {
     /** 刚开始时 任务条节点的offsetX */
     startOffsetY: number;
     targetStartX: number;
+    targetEndX: number;
     target: GanttTaskBarNode;
     resizing: boolean;
     onIconName: string;
@@ -102,7 +106,9 @@ export class StateManager {
     };
     this.moveTaskBar = {
       targetStartX: null,
+      targetStartY: null,
       deltaX: 0,
+      deltaY: 0,
       startOffsetY: null,
       startX: null,
       startY: null,
@@ -124,6 +130,7 @@ export class StateManager {
     this.resizeTaskBar = {
       startOffsetY: null,
       targetStartX: null,
+      targetEndX: null,
       startX: null,
       startY: null,
       target: null,
@@ -155,6 +162,9 @@ export class StateManager {
     syncDragOrderFromTable(this._gantt);
     syncTreeChangeFromTable(this._gantt);
     syncSortFromTable(this._gantt);
+    if (this._gantt.options.taskListTable?.tableWidth === 'auto' || this._gantt.taskTableWidth === -1) {
+      syncTableWidthFromTable(this._gantt);
+    }
   }
 
   setScrollTop(top: number, triggerEvent: boolean = true) {
@@ -197,7 +207,7 @@ export class StateManager {
   }
   setScrollLeft(left: number, triggerEvent: boolean = true) {
     // 矫正left值范围
-    const totalWidth = this._gantt._getAllColsWidth();
+    const totalWidth = this._gantt.getAllDateColsWidth();
 
     left = Math.max(0, Math.min(left, totalWidth - this._gantt.scenegraph.width));
     left = Math.ceil(left);
@@ -268,7 +278,7 @@ export class StateManager {
     });
   }
   updateHorizontalScrollBar(xRatio: number) {
-    const totalWidth = this._gantt._getAllColsWidth();
+    const totalWidth = this._gantt.getAllDateColsWidth();
     const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this._gantt.scenegraph.width));
     if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
@@ -311,76 +321,191 @@ export class StateManager {
     this.moveTaskBar.moving = true;
     this.moveTaskBar.target = target;
     this.moveTaskBar.targetStartX = target.attribute.x;
+    this.moveTaskBar.targetStartY = target.attribute.y;
     this.moveTaskBar.startX = x;
     this.moveTaskBar.startY = y;
     this.moveTaskBar.startOffsetY = offsetY;
+    target.setAttribute('zIndex', 10000);
   }
 
   isMoveingTaskBar() {
     return this.moveTaskBar.moving;
   }
-  endMoveTaskBar(x: number) {
+  endMoveTaskBar() {
     if (this.moveTaskBar.moveTaskBarXInertia.isInertiaScrolling()) {
       this.moveTaskBar.moveTaskBarXInertia.endInertia();
     }
-    const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
-    // const deltaX = x - this.moveTaskBar.startX;
+
     const deltaX = this.moveTaskBar.deltaX;
-    const days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
+    const deltaY = this.moveTaskBar.deltaY;
+    const target = this.moveTaskBar.target;
+    if (Math.abs(deltaX) >= 1 || Math.abs(deltaY) >= 1) {
+      const taskIndex = target.task_index;
+      const sub_task_index = target.sub_task_index;
+      const { startDate: oldStartDate, endDate: oldEndDate } = this._gantt.getTaskInfoByTaskListIndex(
+        taskIndex,
+        sub_task_index
+      );
 
-    const correctX = days * this._gantt.parsedOptions.colWidthPerDay;
-    const targetEndX = this.moveTaskBar.targetStartX + correctX;
-    const target = this._gantt.stateManager.moveTaskBar.target;
-    // target.setAttribute('x', targetEndX);
-    resizeOrMoveTaskBar(taskIndex, target, targetEndX - target.attribute.x, null, this);
-    // if (target.attribute.x < this._gantt.stateManager.scrollLeft - 2) {
-    //   this._gantt.stateManager.setScrollLeft(target.attribute.x);
-    // }
-    // if(this._gantt.stateManager.scrollLeft===0){
+      const targetEndY =
+        this.moveTaskBar.targetStartY +
+        this._gantt.parsedOptions.rowHeight * Math.round(deltaY / this._gantt.parsedOptions.rowHeight);
+      const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
+      const testDateX =
+        this.moveTaskBar.target.attribute.x + (target.record.type === 'milestone' ? milestoneTaskbarHeight / 2 : 0);
+      const startDateColIndex = getDateIndexByX(
+        testDateX - this._gantt.stateManager.scroll.horizontalBarPos,
+        this._gantt
+      );
+      const timelineStartDate =
+        this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[startDateColIndex];
+      const newStartDate = timelineStartDate.startDate;
+      // const endDateColIndex = getDateIndexByX(
+      //   this.moveTaskBar.target.attribute.x +
+      //     this.moveTaskBar.target.attribute.width -
+      //     this._gantt.stateManager.scroll.horizontalBarPos,
+      //   this._gantt
+      // );
+      // const timelineEndDate = this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[endDateColIndex];
+      const newEndDate = new Date(
+        newStartDate.getTime() +
+          (createDateAtMidnight(oldEndDate).getTime() - createDateAtMidnight(oldStartDate).getTime())
+      );
+      // 判断横向拖动 更新数据的date
+      let dateChanged: 'left' | 'right';
+      if (createDateAtMidnight(oldStartDate).getTime() !== newStartDate.getTime()) {
+        dateChanged = createDateAtMidnight(oldStartDate).getTime() > newStartDate.getTime() ? 'left' : 'right';
+        // this._gantt._updateDateToTaskRecord('move', days, taskIndex, sub_task_index);
+        this._gantt._updateStartEndDateToTaskRecord(newStartDate, newEndDate, taskIndex, sub_task_index);
+        const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
 
-    // }
-    if (Math.abs(days) >= 1) {
-      const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
-      const oldRecord = this._gantt.getRecordByIndex(taskIndex);
-      const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
-      const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
-      this._gantt._updateDateToTaskRecord('move', days, taskIndex);
-      if (this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
-        const newRecord = this._gantt.getRecordByIndex(taskIndex);
-        this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
-          startDate: newRecord[this._gantt.parsedOptions.startDateField],
-          endDate: newRecord[this._gantt.parsedOptions.endDateField],
-          oldStartDate,
-          oldEndDate,
-          index: taskIndex,
-          record: newRecord
-        });
+        if (this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
+          this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
+            startDate: newRecord[this._gantt.parsedOptions.startDateField],
+            endDate: newRecord[this._gantt.parsedOptions.endDateField],
+            oldStartDate,
+            oldEndDate,
+            index: taskIndex,
+            record: newRecord
+          });
+        }
       }
+      if (
+        this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+      ) {
+        const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
+        this._gantt._dragOrderTaskRecord(
+          target.task_index,
+          target.sub_task_index,
+          indexs.task_index,
+          indexs.sub_task_index
+        );
+        clearRecordShowIndex(this._gantt.records);
+        this._gantt.taskListTableInstance.renderWithRecreateCells();
+        this._gantt._syncPropsFromTable();
+        this._gantt.scenegraph.refreshTaskBarsAndGrid();
+      } else {
+        // 判断纵向拖动 处理数据的位置
+        if (
+          this._gantt.parsedOptions.tasksShowMode !== TasksShowMode.Tasks_Separate &&
+          Math.abs(Math.round(deltaY / this._gantt.parsedOptions.rowHeight)) >= 1
+        ) {
+          const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
+          this._gantt._dragOrderTaskRecord(
+            target.task_index,
+            target.sub_task_index,
+            indexs.task_index,
+            indexs.sub_task_index
+          );
+          if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
+            this._gantt.taskListTableInstance.renderWithRecreateCells();
+            this._gantt.scenegraph.refreshTaskBarsAndGrid();
+          } else {
+            this._gantt.scenegraph.taskBar.refresh();
+            this._gantt.scenegraph.dependencyLink.refresh();
+          }
+          // target = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(indexs.task_index, indexs.sub_task_index);
+        } else {
+          let newX = startDateColIndex >= 1 ? this._gantt.getDateColsWidth(0, startDateColIndex - 1) : 0;
+          if (target.record.type === 'milestone') {
+            const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
+            newX -= milestoneTaskbarHeight / 2;
+          }
+          resizeOrMoveTaskBar(
+            target,
+            newX - (target as Group).attribute.x,
+            targetEndY - (target as Group).attribute.y,
+            null,
+            this
+          );
+
+          // 为了确保拖拽后 保持startDate日期晚的显示在上层不被盖住 这里需要重新排序一下
+          if (dateChanged === 'right') {
+            let insertAfterNode = target;
+            while (
+              (insertAfterNode as Group).nextSibling &&
+              (insertAfterNode as Group).nextSibling.attribute.y === (target as Group).attribute.y &&
+              (insertAfterNode as Group).nextSibling.record[this._gantt.parsedOptions.startDateField] <=
+                target.record[this._gantt.parsedOptions.startDateField]
+            ) {
+              insertAfterNode = (insertAfterNode as Group).nextSibling;
+            }
+            if (insertAfterNode !== target) {
+              (insertAfterNode as Group).parent.insertAfter(target, insertAfterNode);
+            }
+          } else if (dateChanged === 'left') {
+            let insertBeforeNode = target;
+            while (
+              (insertBeforeNode as Group).previousSibling &&
+              (insertBeforeNode as Group).previousSibling.attribute.y === (target as Group).attribute.y &&
+              (insertBeforeNode as Group).previousSibling.record[this._gantt.parsedOptions.startDateField] >=
+                target.record[this._gantt.parsedOptions.startDateField]
+            ) {
+              insertBeforeNode = (insertBeforeNode as Group).previousSibling;
+            }
+            if (insertBeforeNode !== target) {
+              (insertBeforeNode as Group).parent.insertBefore(target, insertBeforeNode);
+            }
+          }
+        }
+      }
+      this._gantt.scenegraph.updateNextFrame();
     }
-    this._gantt.scenegraph.updateNextFrame();
     this.moveTaskBar.moving = false;
+    if (this.selectedTaskBar.target !== target) {
+      target.setAttribute('zIndex', 0);
+    }
     this.moveTaskBar.target = null;
     this.moveTaskBar.deltaX = 0;
+    this.moveTaskBar.deltaY = 0;
     this.moveTaskBar.moveTaskBarXSpeed = 0;
   }
   dealTaskBarMove(e: FederatedPointerEvent) {
     const target = this.moveTaskBar.target;
-    const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
+    target.setAttribute('zIndex', 10000);
+    // const taskIndex = getTaskIndexByY(this.moveTaskBar.startOffsetY, this._gantt);
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
     const x2 = e.x;
     const dx = x2 - x1;
+    const y1 = this._gantt.eventManager.lastDragPointerXYOnWindow.y;
+    const y2 = e.y;
+    const dy = y2 - y1;
+
     this.moveTaskBar.deltaX += dx;
+    this.moveTaskBar.deltaY += dy;
     // target.setAttribute('x', target.attribute.x + dx);
-    resizeOrMoveTaskBar(taskIndex, target, dx, null, this);
+    resizeOrMoveTaskBar(target, dx, dy, null, this);
 
     // 处理向左拖拽任务条时，整体向左滚动
     if (target.attribute.x <= this._gantt.stateManager.scrollLeft && dx < 0) {
-      this.moveTaskBar.moveTaskBarXSpeed = -this._gantt.parsedOptions.colWidthPerDay / 100;
+      this.moveTaskBar.moveTaskBarXSpeed = -this._gantt.parsedOptions.timelineColWidth / 100;
 
       this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
       this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
         this.moveTaskBar.deltaX += dx;
-        resizeOrMoveTaskBar(taskIndex, target, dx, null, this);
+        this.moveTaskBar.deltaY += dy;
+        resizeOrMoveTaskBar(target, dx, dy, null, this);
 
         this._gantt.stateManager.setScrollLeft(target.attribute.x);
         if (this._gantt.stateManager.scrollLeft === 0) {
@@ -393,17 +518,18 @@ export class StateManager {
       dx > 0
     ) {
       // 处理向右拖拽任务条时，整体向右滚动
-      this.moveTaskBar.moveTaskBarXSpeed = this._gantt.parsedOptions.colWidthPerDay / 100;
+      this.moveTaskBar.moveTaskBarXSpeed = this._gantt.parsedOptions.timelineColWidth / 100;
 
       this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
       this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
         this.moveTaskBar.deltaX += dx;
-        resizeOrMoveTaskBar(taskIndex, target, dx, null, this);
+        this.moveTaskBar.deltaY += dy;
+        resizeOrMoveTaskBar(target, dx, dy, null, this);
 
         this._gantt.stateManager.setScrollLeft(
           target.attribute.x + target.attribute.width - this._gantt.tableNoFrameWidth
         );
-        if (this._gantt.stateManager.scrollLeft === this._gantt._getAllColsWidth() - this._gantt.tableNoFrameWidth) {
+        if (this._gantt.stateManager.scrollLeft === this._gantt.getAllDateColsWidth() - this._gantt.tableNoFrameWidth) {
           this.moveTaskBar.moveTaskBarXInertia.endInertia();
         }
       });
@@ -426,6 +552,7 @@ export class StateManager {
     this.resizeTaskBar.resizing = true;
     this.resizeTaskBar.target = target;
     this.resizeTaskBar.targetStartX = target.attribute.x;
+    this.resizeTaskBar.targetEndX = target.attribute.x + target.attribute.width;
     this.resizeTaskBar.startX = x;
     this.resizeTaskBar.startY = y;
     this.resizeTaskBar.startOffsetY = startOffsetY;
@@ -437,45 +564,71 @@ export class StateManager {
     const direction = this._gantt.stateManager.resizeTaskBar.onIconName;
     const deltaX = x - this.resizeTaskBar.startX;
     if (Math.abs(deltaX) >= 1) {
-      let diff_days = Math.round(deltaX / this._gantt.parsedOptions.colWidthPerDay);
-      diff_days = direction === 'left' ? -diff_days : diff_days;
+      // let diff_days =
+      //   Math.round(deltaX / this._gantt.parsedOptions.timelineColWidth) * this._gantt.getMinScaleUnitToDays();
 
-      const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
-      const rect = this._gantt.stateManager.resizeTaskBar.target.barRect;
-      const progressRect = this._gantt.stateManager.resizeTaskBar.target.progressRect;
-      const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
-      const oldRecord = this._gantt.getRecordByIndex(taskIndex);
-      const oldStartDate = oldRecord[this._gantt.parsedOptions.startDateField];
-      const oldEndDate = oldRecord[this._gantt.parsedOptions.endDateField];
-      const { taskDays, progress } = this._gantt.getTaskInfoByTaskListIndex(taskIndex);
-      if (diff_days < 0 && taskDays + diff_days <= 0) {
-        diff_days = 1 - taskDays;
-      }
-      const correctX = (direction === 'left' ? -diff_days : diff_days) * this._gantt.parsedOptions.colWidthPerDay;
-      const targetEndX = this.resizeTaskBar.targetStartX + correctX;
+      const colIndex = getDateIndexByX(
+        (direction === 'left'
+          ? this.resizeTaskBar.target.attribute.x
+          : this.resizeTaskBar.target.attribute.x + this.resizeTaskBar.target.attribute.width) -
+          this._gantt.stateManager.scroll.horizontalBarPos,
+        this._gantt
+      );
+      const timelineDate = this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[colIndex];
+      const targetDate = direction === 'left' ? timelineDate.startDate : timelineDate.endDate;
+      // diff_days = direction === 'left' ? -diff_days : diff_days;
 
-      const taskBarSize = this._gantt.parsedOptions.colWidthPerDay * (taskDays + diff_days);
+      const taskBarGroup = this.resizeTaskBar.target;
+      const clipGroupBox = taskBarGroup.clipGroupBox;
+      const rect = this.resizeTaskBar.target.barRect;
+      const progressRect = this.resizeTaskBar.target.progressRect;
+      const taskIndex = this.resizeTaskBar.target.task_index;
+      const sub_task_index = this.resizeTaskBar.target.sub_task_index;
+
+      const {
+        taskDays,
+        progress,
+        startDate: oldStartDate,
+        endDate: oldEndDate
+      } = this._gantt.getTaskInfoByTaskListIndex(taskIndex, sub_task_index);
+
+      let dateChanged = false;
       if (direction === 'left') {
-        // taskBarGroup.setAttribute('x', targetEndX);
-        // taskBarGroup.setAttribute('width', taskBarSize);
-        resizeOrMoveTaskBar(taskIndex, taskBarGroup, targetEndX - taskBarGroup.attribute.x, taskBarSize, this);
-        rect?.setAttribute('width', taskBarGroup.attribute.width);
-        progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-        this._gantt._updateDateToTaskRecord('start-move', -diff_days, taskIndex);
-      } else if (direction === 'right') {
-        // taskBarGroup.setAttribute('width', taskBarSize);
-        resizeOrMoveTaskBar(taskIndex, taskBarGroup, 0, taskBarSize, this);
-        rect?.setAttribute('width', taskBarGroup.attribute.width);
-        progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
-        this._gantt._updateDateToTaskRecord('end-move', diff_days, taskIndex);
+        this._gantt._updateStartDateToTaskRecord(targetDate, taskIndex, sub_task_index);
+        targetDate.getTime() !== new Date(oldStartDate).getTime() && (dateChanged = true);
+      } else {
+        this._gantt._updateEndDateToTaskRecord(targetDate, taskIndex, sub_task_index);
+        targetDate.getTime() !== new Date(oldEndDate).getTime() && (dateChanged = true);
       }
-      this.showTaskBarHover();
-      reCreateCustomNode(this._gantt, taskBarGroup, taskIndex);
+      if (
+        this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+      ) {
+        this._gantt.taskListTableInstance.renderWithRecreateCells();
+        this._gantt._syncPropsFromTable();
+        this._gantt.scenegraph.refreshTaskBarsAndGrid();
+      } else {
+        if (direction === 'left') {
+          const newX = colIndex >= 1 ? this._gantt.getDateColsWidth(0, colIndex - 1) : 0;
+          taskBarGroup.setAttribute('x', newX);
+          taskBarGroup.setAttribute('width', this.resizeTaskBar.targetEndX - newX);
+        } else if (direction === 'right') {
+          const newEndX = this._gantt.getDateColsWidth(0, colIndex);
+          taskBarGroup.setAttribute('width', newEndX - this.resizeTaskBar.targetStartX);
+        }
+        clipGroupBox.setAttribute('width', taskBarGroup.attribute.width);
+        rect?.setAttribute('width', taskBarGroup.attribute.width);
+        progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
+        this._gantt.scenegraph.refreshRecordLinkNodes(taskIndex, sub_task_index, taskBarGroup, 0); //更新关联线
+        this.showTaskBarHover();
+        reCreateCustomNode(this._gantt, taskBarGroup, taskIndex, sub_task_index);
+        taskBarGroup.setAttribute('zIndex', 0);
+      }
       this.resizeTaskBar.resizing = false;
       this.resizeTaskBar.target = null;
 
-      if (Math.abs(diff_days) >= 1 && this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
-        const newRecord = this._gantt.getRecordByIndex(taskIndex);
+      if (dateChanged && this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
+        const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
         this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
           startDate: newRecord[this._gantt.parsedOptions.startDateField],
           endDate: newRecord[this._gantt.parsedOptions.endDateField],
@@ -494,33 +647,31 @@ export class StateManager {
     const dx = x2 - x1;
     // debugger;
     const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
+    taskBarGroup.setAttribute('zIndex', 10000);
+    const clipGroupBox = taskBarGroup.clipGroupBox;
     const rect = taskBarGroup.barRect;
     const progressRect = taskBarGroup.progressRect;
     const textLabel = taskBarGroup.textLabel;
 
     const progressField = this._gantt.parsedOptions.progressField;
-    const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
-    const taskRecord = this._gantt.getRecordByIndex(taskIndex);
+    // const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
+    const taskIndex = taskBarGroup.task_index;
+    const sub_task_index = taskBarGroup.sub_task_index;
+    const taskRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
     const progress = taskRecord[progressField];
 
     let diffWidth = this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx;
-    let taskBarSize = taskBarGroup.attribute.width + diffWidth;
-    if (diffWidth < 0 && taskBarSize <= this._gantt.parsedOptions.colWidthPerDay) {
-      diffWidth = this._gantt.parsedOptions.colWidthPerDay - taskBarGroup.attribute.width;
-      taskBarSize += diffWidth;
-    }
+    const taskBarSize = Math.max(1, taskBarGroup.attribute.width + diffWidth);
+    diffWidth = taskBarSize - taskBarGroup.attribute.width;
 
-    // taskBarGroup.setAttribute('width', taskBarSize);
-    // if (this._gantt.stateManager.resizeTaskBar.onIconName === 'left') {
-    //   taskBarGroup.setAttribute('x', taskBarGroup.attribute.x - diffWidth);
-    // }
     resizeOrMoveTaskBar(
-      taskIndex,
       taskBarGroup,
       this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -diffWidth : 0,
+      0,
       taskBarSize,
       this
     );
+    clipGroupBox.setAttribute('width', taskBarGroup.attribute.width);
     rect?.setAttribute('width', taskBarGroup.attribute.width);
     progressRect?.setAttribute('width', (progress / 100) * taskBarGroup.attribute.width);
 
@@ -528,7 +679,7 @@ export class StateManager {
 
     this.showTaskBarHover();
 
-    reCreateCustomNode(this._gantt, taskBarGroup, taskIndex);
+    reCreateCustomNode(this._gantt, taskBarGroup, taskIndex, sub_task_index);
     this._gantt.scenegraph.updateNextFrame();
     //
   }
@@ -551,11 +702,15 @@ export class StateManager {
   }
   endCreateDependencyLine(offsetY: number) {
     const taskKeyField = this._gantt.parsedOptions.taskKeyField;
-    const fromTaskIndex = getTaskIndexByY(this.creatingDenpendencyLink.startOffsetY, this._gantt);
-    const toTaskIndex = getTaskIndexByY(offsetY, this._gantt);
-    const fromRecord = this._gantt.getRecordByIndex(fromTaskIndex);
+    // const fromTaskIndex = getTaskIndexByY(this.creatingDenpendencyLink.startOffsetY, this._gantt);
+    const fromTaskIndex = this.selectedTaskBar.target.task_index;
+    const from_sub_task_id = this.selectedTaskBar.target.sub_task_index;
+    // const toTaskIndex = getTaskIndexByY(offsetY, this._gantt);
+    const toTaskIndex = this.creatingDenpendencyLink.secondTaskBarNode.task_index;
+    const to_sub_task_id = this.creatingDenpendencyLink.secondTaskBarNode.sub_task_index;
+    const fromRecord = this._gantt.getRecordByIndex(fromTaskIndex, from_sub_task_id);
     const linkedFromTaskKey = fromRecord[taskKeyField];
-    const toRecord = this._gantt.getRecordByIndex(toTaskIndex);
+    const toRecord = this._gantt.getRecordByIndex(toTaskIndex, to_sub_task_id);
     const linkedToTaskKey = toRecord[taskKeyField];
     const link = {
       linkedFromTaskKey,
@@ -643,12 +798,14 @@ export class StateManager {
 
   showTaskBarHover() {
     const target = this._gantt.stateManager.hoverTaskBar.target;
-    const x = target.attribute.x;
-    const y = target.attribute.y;
-    const width = target.attribute.width;
-    const height = target.attribute.height;
-    this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, target);
-    this._gantt.scenegraph.updateNextFrame();
+    if (target) {
+      const x = target.attribute.x;
+      const y = target.attribute.y;
+      const width = target.attribute.width;
+      const height = target.attribute.height;
+      this._gantt.scenegraph.taskBar.showHoverBar(x, y, width, height, target);
+      this._gantt.scenegraph.updateNextFrame();
+    }
   }
   hideTaskBarHover(e: FederatedPointerEvent) {
     this._gantt.stateManager.hoverTaskBar.target = null;
@@ -656,9 +813,11 @@ export class StateManager {
     this._gantt.scenegraph.updateNextFrame();
   }
 
-  showTaskBarSelectedBorder() {
+  showTaskBarSelectedBorder(target: GanttTaskBarNode) {
+    this._gantt.stateManager.selectedTaskBar.target?.setAttribute('zIndex', 0);
+    this._gantt.stateManager.selectedTaskBar.target = target as any as GanttTaskBarNode;
     const linkCreatable = this._gantt.parsedOptions.dependencyLinkCreatable;
-    const target = this._gantt.stateManager.selectedTaskBar.target;
+    target.setAttribute('zIndex', 10000);
     const x = target.attribute.x;
     const y = target.attribute.y;
     const width = target.attribute.width;
@@ -668,6 +827,7 @@ export class StateManager {
   }
 
   hideTaskBarSelectedBorder() {
+    this._gantt.stateManager.selectedTaskBar.target?.setAttribute('zIndex', 0);
     this._gantt.stateManager.selectedTaskBar.target = null;
     this._gantt.scenegraph.taskBar.removeSelectedBorder();
     this._gantt.scenegraph.updateNextFrame();
@@ -692,12 +852,29 @@ export class StateManager {
 
     const { taskKeyField, dependencyLinks } = this._gantt.parsedOptions;
     const { linkedToTaskKey, linkedFromTaskKey, type } = link;
+    let linkFrom_index;
+    let linkFrom_sub_task_index;
+    let linkTo_index;
+    let linkTo_sub_task_index;
     const linkedToTaskRecord = findRecordByTaskKey(this._gantt.records, taskKeyField, linkedToTaskKey);
     const linkedFromTaskRecord = findRecordByTaskKey(this._gantt.records, taskKeyField, linkedFromTaskKey);
-    const linkedFromTaskShowIndex = this._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
-    const linkedToTaskShowIndex = this._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+    if (
+      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+      this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+    ) {
+      linkFrom_index = linkedFromTaskRecord.index[0];
+      linkFrom_sub_task_index = linkedFromTaskRecord.index[1];
+      linkTo_index = linkedToTaskRecord.index[0];
+      linkTo_sub_task_index = linkedToTaskRecord.index[1];
+    } else {
+      linkFrom_index = this._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+      linkTo_index = this._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+    }
     const fromTaskNode = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(
-      linkedFromTaskShowIndex
+      linkFrom_index,
+      linkFrom_sub_task_index
     ) as GanttTaskBarNode;
     this._gantt.scenegraph.taskBar.createSelectedBorder(
       fromTaskNode.attribute.x,
@@ -707,7 +884,10 @@ export class StateManager {
       fromTaskNode,
       false
     );
-    const toTaskNode = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(linkedToTaskShowIndex) as GanttTaskBarNode;
+    const toTaskNode = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(
+      linkTo_index,
+      linkTo_sub_task_index
+    ) as GanttTaskBarNode;
     this._gantt.scenegraph.taskBar.createSelectedBorder(
       toTaskNode.attribute.x,
       toTaskNode.attribute.y,
@@ -747,12 +927,15 @@ export class StateManager {
   }
 }
 
-function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number) {
+function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number, sub_task_index?: number) {
   const taskBarCustomLayout = gantt.parsedOptions.taskBarCustomLayout;
   if (taskBarCustomLayout) {
     let customLayoutObj;
     if (typeof taskBarCustomLayout === 'function') {
-      const { startDate, endDate, taskDays, progress, taskRecord } = gantt.getTaskInfoByTaskListIndex(taskIndex);
+      const { startDate, endDate, taskDays, progress, taskRecord } = gantt.getTaskInfoByTaskListIndex(
+        taskIndex,
+        sub_task_index
+      );
       const arg = {
         width: taskBarGroup.attribute.width,
         height: taskBarGroup.attribute.height,
@@ -771,95 +954,46 @@ function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number
     if (customLayoutObj) {
       const rootContainer = customLayoutObj.rootContainer;
       rootContainer.name = 'task-bar-custom-render';
-      const oldCustomIndex = taskBarGroup.children.findIndex((node: any) => {
-        return node.name === 'task-bar-custom-render';
-      });
-      const oldCustomNode = taskBarGroup.children[oldCustomIndex] as Group;
-      taskBarGroup.removeChild(oldCustomNode);
-      taskBarGroup.insertInto(rootContainer, oldCustomIndex);
+      const barGroup = taskBarGroup.children.find((node: any) => node.name === 'task-bar-group');
+      if (barGroup) {
+        const oldCustomIndex = barGroup.children.findIndex((node: any) => {
+          return node.name === 'task-bar-custom-render';
+        });
+        const oldCustomNode = barGroup.children[oldCustomIndex] as Group;
+        if (oldCustomNode) {
+          barGroup.removeChild(oldCustomNode);
+          barGroup.insertInto(rootContainer, oldCustomIndex);
+        }
+      }
     }
   }
 }
 
-function resizeOrMoveTaskBar(
-  taskIndex: number,
-  target: GanttTaskBarNode,
-  dx: number,
-  newWidth: number,
-  state: StateManager
-) {
+function resizeOrMoveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, newWidth: number, state: StateManager) {
   // const taskIndex = getTaskIndexByY(state.moveTaskBar.startOffsetY, state._gantt);
-  const record = state._gantt.getRecordByIndex(taskIndex);
+  const taskIndex = target.task_index;
+  const sub_task_index = target.sub_task_index;
+  const record = target.record;
+  const isMilestone = record.type === 'milestone';
   if (dx) {
     target.setAttribute('x', target.attribute.x + dx);
   }
+  if (state._gantt.parsedOptions.tasksShowMode !== TasksShowMode.Tasks_Separate) {
+    if (dy) {
+      target.setAttribute('y', target.attribute.y + dy);
+    }
+  } else {
+    dy = 0;
+  }
+  if (isMilestone) {
+    target.setAttribute('anchor', [
+      target.attribute.x + target.attribute.width / 2,
+      target.attribute.y + target.attribute.height / 2
+    ]);
+  }
+
   if (newWidth) {
     target.setAttribute('width', newWidth);
   }
-  const vtable_gantt_linkedTo = record.vtable_gantt_linkedTo;
-  const vtable_gantt_linkedFrom = record.vtable_gantt_linkedFrom;
-  for (let i = 0; i < vtable_gantt_linkedTo?.length; i++) {
-    const link = vtable_gantt_linkedTo[i];
-    const linkLineNode = link.vtable_gantt_linkLineNode;
-    const lineArrowNode = link.vtable_gantt_linkArrowNode;
-
-    const { linkedToTaskKey, linkedFromTaskKey, type } = link;
-    const { taskKeyField, minDate } = state._gantt.parsedOptions;
-    const linkedFromTaskRecord = findRecordByTaskKey(state._gantt.records, taskKeyField, linkedFromTaskKey);
-
-    const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskIndex);
-    const taskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
-    const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskShowIndex);
-    const { linePoints, arrowPoints } = updateLinkLinePoints(
-      type,
-      linkedFromTaskStartDate,
-      linkedFromTaskEndDate,
-      taskShowIndex,
-      linkedToTaskStartDate,
-      linkedToTaskEndDate,
-      taskIndex,
-      minDate,
-      state._gantt.parsedOptions.rowHeight,
-      state._gantt.parsedOptions.colWidthPerDay,
-      null,
-      target
-    );
-    linkLineNode.setAttribute('points', linePoints);
-    lineArrowNode.setAttribute('points', arrowPoints);
-  }
-
-  for (let i = 0; i < vtable_gantt_linkedFrom?.length; i++) {
-    const link = vtable_gantt_linkedFrom[i];
-    const linkLineNode = link.vtable_gantt_linkLineNode;
-    const lineArrowNode = link.vtable_gantt_linkArrowNode;
-
-    const { linkedToTaskKey, linkedFromTaskKey, type } = link;
-    const { taskKeyField, minDate } = state._gantt.parsedOptions;
-    const linkedToTaskRecord = findRecordByTaskKey(state._gantt.records, taskKeyField, linkedToTaskKey);
-
-    const { startDate: linkedFromTaskStartDate, endDate: linkedFromTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskIndex);
-    const taskShowIndex = state._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
-    const { startDate: linkedToTaskStartDate, endDate: linkedToTaskEndDate } =
-      state._gantt.getTaskInfoByTaskListIndex(taskShowIndex);
-    const { linePoints, arrowPoints } = updateLinkLinePoints(
-      type,
-      linkedFromTaskStartDate,
-      linkedFromTaskEndDate,
-      taskIndex,
-      linkedToTaskStartDate,
-      linkedToTaskEndDate,
-      taskShowIndex,
-      minDate,
-      state._gantt.parsedOptions.rowHeight,
-      state._gantt.parsedOptions.colWidthPerDay,
-      target,
-      null
-    );
-
-    linkLineNode.setAttribute('points', linePoints);
-    lineArrowNode.setAttribute('points', arrowPoints);
-  }
+  state._gantt.scenegraph.refreshRecordLinkNodes(taskIndex, sub_task_index, target, dy);
 }

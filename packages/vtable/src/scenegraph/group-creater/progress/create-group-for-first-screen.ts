@@ -30,24 +30,24 @@ export function createGroupForFirstScreen(
   let distRowForCompute;
   if (
     table.widthMode === 'adaptive' ||
-    (table.options.autoWrapText && (table.heightMode === 'adaptive' || table.heightMode === 'autoHeight'))
+    (table.options.autoWrapText && (table.heightMode === 'adaptive' || table.isAutoRowHeight()))
   ) {
     // distCol = table.colCount - 1;
     // proxy.colEnd = distCol;
 
     distColForCompute = table.colCount - 1;
-    distCol = Math.min(proxy.firstScreenColLimit, table.colCount - 1);
+    distCol = Math.min(proxy.firstScreenColLimit - 1, table.colCount - 1);
   } else {
-    distCol = Math.min(proxy.firstScreenColLimit, table.colCount - 1);
+    distCol = Math.min(proxy.firstScreenColLimit - 1, table.colCount - 1);
   }
   if (table.heightMode === 'adaptive') {
     // distRow = table.rowCount - 1;
     // proxy.rowEnd = distRow;
 
     distRowForCompute = table.rowCount - 1;
-    distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1);
+    distRow = Math.min(proxy.firstScreenRowLimit - 1, table.rowCount - 1);
   } else {
-    distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1);
+    distRow = Math.min(proxy.firstScreenRowLimit - 1, table.rowCount - 1);
   }
   if (table.internalProps._widthResizedColMap.size === 0) {
     // compute colums width in first screen

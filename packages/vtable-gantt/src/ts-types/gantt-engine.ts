@@ -5,11 +5,14 @@ export type LayoutObjectId = number | string;
 
 export interface ITimelineDateInfo {
   days: number;
+  timeScaleCount: number;
   endDate: Date;
   startDate: Date;
   title: string;
   /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
   dateIndex: number;
+  unit: 'year' | 'month' | 'quarter' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+  step: number;
 }
 
 export interface ITimelineHeaderStyle {
@@ -26,8 +29,15 @@ export interface ITimelineHeaderStyle {
 }
 export interface IGrid {
   backgroundColor?: string;
-  verticalLine?: ILineStyle;
-  horizontalLine?: ILineStyle;
+  /** 需要按数据行设置不同背景色 */
+  horizontalBackgroundColor?: string[] | ((args: GridHorizontalLineStyleArgumentType) => string);
+  /** 需要按日期列设置不同背景色 */
+  verticalBackgroundColor?: string[] | ((args: GridVerticalLineStyleArgumentType) => string);
+  /** 周末背景色 */
+  weekendBackgroundColor?: string;
+
+  verticalLine?: ILineStyle | ((args: GridVerticalLineStyleArgumentType) => ILineStyle);
+  horizontalLine?: ILineStyle | ((args: GridHorizontalLineStyleArgumentType) => ILineStyle);
 }
 //#region gantt
 export interface GanttConstructorOptions {
@@ -82,20 +92,24 @@ export interface GanttConstructorOptions {
     labelTextStyle?: ITaskBarLabelTextStyle;
     /** 任务条样式 */
     barStyle?: ITaskBarStyle;
+    milestoneStyle?: IMilestoneStyle;
     /** 自定义布局渲染 */
     customLayout?: ITaskBarCustomLayout;
     /** 任务条是否可调整大小 */
-    resizable?: boolean;
+    resizable?:
+      | boolean
+      | [boolean, boolean]
+      | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
     /** 任务条是否可移动 */
-    moveable?: boolean;
+    moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+    /** 任务条是否可以被拖拽来改变顺序 */
+    dragOrder?: boolean;
     /** 任务条hover时的样式 */
     hoverBarStyle?: ITaskBarHoverStyle;
     /** 任务条选择时的样式 TODO */
     selectedBarStyle?: ITaskBarSelectedStyle;
     /** 任务条是否可选择，默认为true */
     selectable?: boolean;
-    /** 任务条是否可以被拖拽来改变顺序 */
-    dragOrder?: boolean;
     /** 任务条右键菜单 */
     menu?: {
       /** 右键菜单。代替原来的option.contextmenu */
@@ -189,6 +203,10 @@ export interface GanttConstructorOptions {
 
   /** 表格绘制范围外的canvas上填充的颜色 */
   underlayBackgroundColor?: string;
+  groupBy?: true | string | string[];
+  /** 展示嵌套结构数据时的模式，默认为full。*/
+  tasksShowMode?: TasksShowMode;
+  eventOptions?: IEventOptions;
 }
 /**
  * IBarLabelText
@@ -197,7 +215,7 @@ export interface GanttConstructorOptions {
 export type ITaskBarLabelText = string; //| string[] | ((args: any) => string | string[]);
 export interface ITimelineScale {
   rowHeight?: number;
-  unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
+  unit: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second';
   step: number;
   startOfWeek?: 'sunday' | 'monday';
   customLayout?: IDateCustomLayout;
@@ -212,6 +230,8 @@ export interface ITaskBarLabelTextStyle {
   textOverflow?: string;
   textBaseline?: 'alphabetic' | 'bottom' | 'middle' | 'top'; // 设置单元格内文字的垂直对齐方式
   padding?: number | number[];
+  // /** 相对于任务条文字方位位置，可选值：'left', 'top', 'right', 'bottom'，分别代表左、上、右、下四个方向 */
+  // orient?: 'left', 'top', 'right', 'bottom';
 }
 export interface ITaskBarStyle {
   /** 任务条的颜色 */
@@ -222,10 +242,33 @@ export interface ITaskBarStyle {
   width?: number;
   /** 任务条的圆角 */
   cornerRadius?: number;
-  // /** 任务条的边框 */
-  // borderWidth?: number;
-  // /** 边框颜色 */
-  // borderColor?: string;
+  /**@deprecated 请配置borderLineWidth */
+  borderWidth?: number;
+
+  /** 任务条的边框宽度 */
+  borderLineWidth?: number;
+  /** 边框颜色 */
+  borderColor?: string;
+}
+export interface IMilestoneStyle {
+  /** 里程碑边框颜色 */
+  borderColor?: string;
+  /** 里程碑边框宽度 */
+  borderLineWidth?: number;
+  /** 里程碑填充颜色 */
+  fillColor?: string;
+  /** 里程碑正方形圆角 */
+  cornerRadius?: number;
+  /** 里程碑默认是个正方形，这个width配置正方形的边长 */
+  width?: number;
+  //  /** 里程碑展示文字。可以配置固定文本 或者 字符串模版`${fieldName}` */
+  //  labelText?: ITaskBarLabelText;
+  //  /** 里程碑文字样式 */
+  //  labelTextStyle?: ITaskBarLabelTextStyle;
+  // /** 里程碑图标 */
+  // icon?: string;
+  // /** 相对于任务条文字方位位置，可选值：'left', 'top', 'right', 'bottom'，分别代表左、上、右、下四个方向 */
+  // textorient?: 'left', 'top', 'right', 'bottom';
 }
 export type ILineStyle = {
   lineColor?: string;
@@ -257,12 +300,21 @@ export type IFrameStyle = {
 export type ITableStyle = TYPES.ThemeStyle;
 export type IRowSeriesNumber = TYPES.IRowSeriesNumber;
 export type IScrollStyle = TYPES.ScrollStyle;
+export type IEventOptions = TYPES.TableEventOptions;
 export type DateFormatArgumentType = {
   /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
   dateIndex: number;
   startDate: Date;
   endDate: Date;
 };
+export type TaskBarInteractionArgumentType = {
+  taskRecord: string;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+
 export type TaskBarCustomLayoutArgumentType = {
   width: number;
   height: number;
@@ -275,7 +327,7 @@ export type TaskBarCustomLayoutArgumentType = {
   ganttInstance: Gantt;
 };
 export type ITaskBarCustomLayoutObj = {
-  rootContainer: Group;
+  rootContainer?: Group;
   renderDefaultBar?: boolean; // 默认false
   renderDefaultResizeIcon?: boolean; // 默认false
   renderDefaultText?: boolean; // 默认false
@@ -299,6 +351,22 @@ export type IDateCustomLayoutObj = {
   renderDefaultText?: boolean; // 默认false
 };
 export type IDateCustomLayout = (args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj;
+
+export type GridVerticalLineStyleArgumentType = {
+  /** 竖线是第几条线*/
+  index: number;
+  /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
+  dateIndex: number;
+  /** 如果是竖线，date代表分割线指向的具体时间点 */
+  date?: Date;
+  ganttInstance: Gantt;
+};
+
+export type GridHorizontalLineStyleArgumentType = {
+  /** 横线是第几条线 也代表了左侧表格的body行号 */
+  index: number;
+  ganttInstance: Gantt;
+};
 
 export type TaskCreationCustomLayoutArgumentType = {
   width: number;
@@ -330,6 +398,18 @@ export enum DependencyType {
   StartToStart = 'start_to_start',
   FinishToFinish = 'finish_to_finish',
   StartToFinish = 'start_to_finish'
+}
+export enum TasksShowMode {
+  /** 每一个任务节点用单独一行来展示，父任务占用一行，子任务分别占用一行。这是默认的显示效果 */
+  Tasks_Separate = 'tasks_separate',
+  /** 省去父任务节点不展示，并把所有子任务的节点都放到同一行来展示。 */
+  Sub_Tasks_Inline = 'sub_tasks_inline',
+  /** 省去父任务节点不展示，且所有子任务的节点分别用一行展示。*/
+  Sub_Tasks_Separate = 'sub_tasks_separate',
+  /** 省去父任务节点不展示，且所有子任务会维持records中的数据顺序布局，并保证节点不重叠展示 */
+  Sub_Tasks_Arrange = 'sub_tasks_arrange',
+  /** 省去父任务节点不展示，且所有子任务会按照日期早晚的属性来布局，并保证节点不重叠的紧凑型展示 */
+  Sub_Tasks_Compact = 'sub_tasks_compact'
 }
 export type ITaskBarSelectedStyle = {
   shadowBlur?: number; //阴影宽度

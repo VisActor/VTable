@@ -19,24 +19,29 @@ export function updateSelectPosition(
   isCtrl: boolean,
   isSelectAll: boolean,
   makeSelectCellVisible: boolean = true,
-  skipBodyMerge: boolean = false,
-  forceSelect: boolean = false
+  skipBodyMerge: boolean = false
+  // forceSelect: boolean = false
 ) {
   const { table, interactionState } = state;
   const { scenegraph } = table;
-  const { highlightScope, disableHeader, cellPos } = state.select;
+  const { highlightScope, disableHeader, cellPos, disableCtrlMultiSelect } = state.select;
+  // const disableSelect = table.options?.select?.disableSelect;
+  // const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
+  // const { highlightScope, disableHeader, cellPos } = state.select;
+  // const disableSelect = table.options?.select?.disableSelect;
+  // const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
 
-  if (((disableHeader && table.isHeader(col, row)) || highlightScope === 'none') && forceSelect === false) {
-    if (col !== -1 && row !== -1 && makeSelectCellVisible) {
-      table._makeVisibleCell(col, row);
-    }
-    col = -1;
-    row = -1;
+  // if (
+  //   ((disableHeader && table.isHeader(col, row)) || highlightScope === 'none' || cellDisable) &&
+  //   forceSelect === false
+  // ) {
+  if (col !== -1 && row !== -1 && makeSelectCellVisible) {
+    table._makeVisibleCell(col, row);
   }
-  // 如果这里不继续进行 会造成问题drag select first cell seleted repeatly https://github.com/VisActor/VTable/issues/611
-  // if (cellPos.col === col && cellPos.row === row) {
-  //   return;
+  //   col = -1;
+  //   row = -1;
   // }
+
   /** 完整显示选中单元格 自动滚动效果*/
   if (col !== -1 && row !== -1 && makeSelectCellVisible) {
     if (interactionState === InteractionState.grabing && state.select.ranges.length > 0) {
@@ -103,7 +108,7 @@ export function updateSelectPosition(
   ) {
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
     if (isShift && currentRange) {
-      if (!isCtrl) {
+      if (!isCtrl || disableCtrlMultiSelect) {
         cellPos.col = col;
         cellPos.row = row;
       }
@@ -165,7 +170,7 @@ export function updateSelectPosition(
     } else {
       let extendSelectRange = true;
       // 单选或多选开始
-      if (cellPos.col !== -1 && cellPos.row !== -1 && !isCtrl) {
+      if (cellPos.col !== -1 && cellPos.row !== -1 && (!isCtrl || disableCtrlMultiSelect)) {
         state.select.ranges = [];
         scenegraph.deleteAllSelectBorder();
       }

@@ -3,7 +3,7 @@ category: examples
 group: Interaction
 title: invert highlight
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/invert-highlight.png
-link: '../guide/plugin/invert-highlight'
+link: plugin/invert-highlight
 ---
 
 # Invert highlight
@@ -12,7 +12,7 @@ Show the highlight effect when set highlight range.
 
 ## Key Configurations
 
-- `VTable.InvertHighlightPlugin` invert highlight plugin
+- `InvertHighlightPlugin` invert highlight plugin
   - `fill` invert highlight background color
   - `opacity` invert highlight opacity
 - `setInvertHighlightRange` set highlight range
@@ -20,6 +20,10 @@ Show the highlight effect when set highlight range.
 ## Code demo
 
 ```javascript livedemo template=vtable
+// use this for project
+// import * as VTable from '@visactor/vtable';
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
     id: i + 1,
@@ -38,50 +42,50 @@ const generatePersons = count => {
 
 const records = generatePersons(20);
 
-const columns =[
-    {
-      field: 'id',
-      title: 'ID',
-      width: 'auto',
-      minWidth: 50,
-      sort: true
-    },
-    {
-      field: 'email1',
-      title: 'email',
-      width: 200,
-      sort: true,
-      style: {
-        underline: true,
-        underlineDash: [2, 0],
-        underlineOffset: 3
-      }
-    },
-    {
-      title: 'full name',
-      columns: [
-        {
-          field: 'name',
-          title: 'First Name',
-          width: 200
-        },
-        {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
-        }
-      ]
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
+const columns = [
+  {
+    field: 'id',
+    title: 'ID',
+    width: 'auto',
+    minWidth: 50,
+    sort: true
+  },
+  {
+    field: 'email1',
+    title: 'email',
+    width: 200,
+    sort: true,
+    style: {
+      underline: true,
+      underlineDash: [2, 0],
+      underlineOffset: 3
     }
+  },
+  {
+    title: 'full name',
+    columns: [
+      {
+        field: 'name',
+        title: 'First Name',
+        width: 200
+      },
+      {
+        field: 'name',
+        title: 'Last Name',
+        width: 200
+      }
+    ]
+  },
+  {
+    field: 'date1',
+    title: 'birthday',
+    width: 200
+  },
+  {
+    field: 'sex',
+    title: 'sex',
+    width: 100
+  }
 ];
 
 const option = {
@@ -89,10 +93,10 @@ const option = {
   columns,
   theme: VTable.themes.DARK
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 
-const highlightPlugin = new VTable.InvertHighlightPlugin(tableInstance, {});
+const highlightPlugin = new VTablePlugins.InvertHighlightPlugin(tableInstance, {});
 
 highlightPlugin.setInvertHighlightRange({
   start: {

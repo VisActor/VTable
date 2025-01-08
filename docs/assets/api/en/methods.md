@@ -140,12 +140,12 @@ Set the table data interface, which can be called as an update interface.
 
 Basic table updates:
 
-The basic table can also set the sorting status to sort the table data. Set sortState to null to clear the sorting status. If not set, the incoming data will be sorted according to the current sorting status.
+The basic table can also set the sorting status to sort the table data. Set sortState to null to clear the sorting status. If not set, the incoming data will be sorted according to the current sorting status.In a scenario where internal sorting is disabled, be sure to clear the current sorting state before invoking the interface.
 
 ```
 setRecords(
     records: Array<any>,
-    option?: { sortState?: SortState | SortState[]}
+    option?: { sortState?: SortState | SortState[] | null }
   ): void;
 ```
 
@@ -227,8 +227,9 @@ Select a cell。If empty is passed, the currently selected highlight state will 
    * @param isShift Whether to add the shift key to the selection
    * @param isCtrl Whether to add the ctrl key to the selection
    * @param makeSelectCellVisible Whether to make the selected cell visible
+   * @param skipBodyMerge Whether to ignore merge cells, the default false automatically expands the selection for merge cells
    */
-  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean): void
+  selectCell(col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean,skipBodyMerge?: boolean): void
 ```
 
 ## selectCells(Function)
@@ -1322,6 +1323,7 @@ setCanvasSize: (width: number, height: number) => void;
 ## setLoadingHierarchyState(Function)
 
 Set the loading state of the tree expansion and collapse of the cell
+
 ```
   /** Set the loading state of the tree expansion and collapse of the cell */
   setLoadingHierarchyState: (col: number, row: number) => void;

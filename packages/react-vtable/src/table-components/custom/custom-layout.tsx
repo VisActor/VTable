@@ -62,6 +62,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
       const currentContainer = container.current.get(key);
       reconcilor.updateContainer(null, currentContainer, null);
       // group = currentContainer.containerInfo;
+      currentContainer.containerInfo.delete();
       container.current.delete(key);
     }
   }, []);
@@ -70,6 +71,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     container.current.forEach((value, key) => {
       const currentContainer = value;
       reconcilor.updateContainer(null, currentContainer, null);
+      currentContainer.containerInfo.delete();
     });
     container.current.clear();
   }, []);
@@ -91,7 +93,9 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     // eslint-disable-next-line no-undef
     console.log('update props', props, table);
 
-    table?.checkReactCustomLayout(removeAllContainer); // init reactCustomLayout component
+    table?.checkReactCustomLayout(); // init reactCustomLayout component
+    table?.reactCustomLayout?.setReactRemoveAllGraphic(componentId, removeAllContainer, isHeaderCustomLayout); // set customLayout function
+
     if (table && !table.reactCustomLayout?.hasReactCreateGraphic(componentId, isHeaderCustomLayout)) {
       table.reactCustomLayout?.setReactCreateGraphic(
         componentId,

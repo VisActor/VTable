@@ -20,7 +20,7 @@ export const reactEnvModule = new ContainerModule((bind, unbind, isBound, rebind
 class VTableBrowserEnvContribution extends BrowserEnvContribution {
   updateDom(dom: HTMLElement, params: CreateDOMParamsTypeForVTable): boolean {
     const tableDiv = dom.parentElement;
-    if (tableDiv) {
+    if (tableDiv && params.graphic) {
       const top = parseInt(params.style.top, 10);
       const left = parseInt(params.style.left, 10);
 

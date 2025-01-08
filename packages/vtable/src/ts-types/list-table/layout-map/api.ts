@@ -21,7 +21,8 @@ import type {
   HierarchyState,
   Aggregation,
   IRowSeriesNumber,
-  SortOption
+  SortOption,
+  FieldGetter
 } from '../../';
 import type { Aggregator } from '../../../dataset/statistics-helper';
 import type { BaseTableAPI } from '../../base-table';
@@ -82,7 +83,7 @@ export interface HeaderData extends WidthData {
   hierarchyState?: HierarchyState;
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 
-  showSort?: boolean;
+  showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
   sort?: SortOption;
 
   /**
@@ -127,7 +128,7 @@ export interface ColumnData extends WidthData {
   sparklineSpec?: SparklineSpec | ((arg0: CellInfo) => SparklineSpec);
   style: ColumnStyleOption | null | undefined;
   define: ColumnDefine;
-  templateLink?: string;
+  templateLink?: string | FieldGetter;
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
   /**存储图标的位置 坐标及宽高 是包括了boxWidth boxWidth 共getHitIcon方法使用 计算是否命中图标*/
   // iconPositionList?: { [key in IconFuncTypeEnum]?: RectProps & { icon: ColumnIconOption } };
@@ -180,7 +181,7 @@ export interface SeriesNumberColumnData extends WidthData {
   title?: string | (() => string);
   field?: FieldDef;
   // fieldKey?: FieldKeyDef;
-  format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
+  format?: (col?: number, row?: number, table?: BaseTableAPI, originValue?: string | number) => any;
   // icon?: ColumnIconOption | ColumnIconOption[];
   icon?:
     | string

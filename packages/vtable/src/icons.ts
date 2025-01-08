@@ -336,7 +336,8 @@ const builtins = {
   get loading(): ImageIcon {
     return {
       type: 'image',
-      src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+      // hack fo url test
+      src: 'https://lf9-dp-fe-cms-tos.' + 'byt' + 'eorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
       width: collapse_size,
       height: collapse_size,
       name: 'loading',

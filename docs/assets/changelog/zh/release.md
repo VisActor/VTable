@@ -1,22 +1,236 @@
-# v1.11.1
+# v1.14.3
 
-2024-11-21
+2024-12-27
 
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add setCustomSelectRanges in stateManager [#2750](https://github.com/VisActor/VTable/issues/2750) [#2845](https://github.com/VisActor/VTable/issues/2845)
-- **@visactor/vtable**: optimize range select in HeaderHighlightPlugin
-- **@visactor/vtable**: isShowOverflowTextTooltip support function
+- **@visactor/vtable**: 透视表指标及维度的showSort支持函数配置 [#2630](https://github.com/VisActor/VTable/issues/2630)
+- **@visactor/vtable**: 透视表指标支持设置hide隐藏功能 [#2257](https://github.com/VisActor/VTable/issues/2257) [#2451](https://github.com/VisActor/VTable/issues/2451)
+- **@visactor/vtable**: 添加enableTreeCheckbox配置 groupBy分组模式下支持复选框交互
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: add isValidatingValue state to fix call validateValue api repeatedly [#2830](https://github.com/VisActor/VTable/issues/2830)
-- **@visactor/vtable**: when up on canvas blank area not drag position rightly [#2831](https://github.com/VisActor/VTable/issues/2831)
-- **@visactor/vtable**: fix cell border dash update [#2818](https://github.com/VisActor/VTable/issues/2818)
-- **@visactor/vtable**: fix merge cell text position [#2858](https://github.com/VisActor/VTable/issues/2858)
+- **@visactor/vtable**: 修复borderLineWidth数组配置 [#3183](https://github.com/VisActor/VTable/issues/3183)
+- **@visactor/vtable**: 当设置resizable为false时，悬停任务栏出现错误 [#3189](https://github.com/VisActor/VTable/issues/3189)
 
 
+[更多详情请查看 v1.14.3](https://github.com/VisActor/VTable/releases/tag/v1.14.3)
+
+# v1.14.1
+
+2024-12-23
+
+
+**🆕 新增功能**
+- **@visactor/vtable-gantt**: 添加grid配置支持行背景颜色和列背景颜色、周末背景颜色 [#3155](https://github.com/VisActor/VTable/issues/3155)
+
+**🐛 功能修复**
+
+- **@visactor/vtable-gantt**: 甘特图任务条调整宽度交互无法限制一个时间单位 [#3161](https://github.com/VisActor/VTable/issues/3161)
+- **@visactor/vtable**: 修复系列Ids配置中的轴计数错误
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 添加选项tableSizeAntiJitter防止容器宽高小数情况下表格抖动[#3160](https://github.com/VisActor/VTable/issues/3160)
+
+
+
+[更多详情请查看 v1.14.1](https://github.com/VisActor/VTable/releases/tag/v1.14.1)
+
+# v1.14.0
+
+2024-12-20
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**：甘特图添加 contextmenu_task_bar 事件 #3013
+- **@visactor/vtable-gantt**：甘特图添加里程碑类型 #3097
+- **@visactor/vtable**：添加合并单元格功能以支持更详细的条件
+- **@visactor/vtable**：在数据透视表中支持刻度对齐
+- **@visactor/vtable-gantt**：添加更新标记线接口
+- **@visactor/vtable**：在 vtable 编辑器的 validateValue 中添加枚举类型 #3039
+
+**🐛 修复**
+
+- **@visactor/vtable**：validateValue 非 Promise 情况无法被回调 #3144
+- **@visactor/vtable**：调整表格组上的滚动热区限制 #3152
+- **@visactor/vtable**：修复树状表格中 React 组件的更新问题
+- **@visactor/vtable**：修复自定义样式更新不生效的问题 #3068
+- **@visactor/vtable**：修复 vtable 导出中的字体粗细问题 #3005
+- **@visactor/vtable**：修复图形 HTML 属性错误
+- **@visactor/vtable**：在 react-vtable 的 UMD 文件中定义应用程序 #3093
+- **@visactor/vtable**：修复 react-vtable 中的自定义渲染错误 #3142
+- **@visactor/vtable**：修复组标题链接点击问题 #3022
+- **@visactor/vtable**：修复滚动时单元格组判断问题 #3149
+- **@visactor/vtable**：修复文本测量中的下划线高度问题 #3112
+- **@visactor/vtable**：将 checkboxState 改为 Map 类型
+
+**🔨 重构**
+
+- **@visactor/vtable**：自定义计算行高逻辑
+
+[更多详情请查看 v1.14.0](https://github.com/VisActor/VTable/releases/tag/v1.14.0)
+
+# v1.13.2
+
+2024-12-16
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: 任务条调整大小和可移动支持函数配置 [#3074](https://github.com/VisActor/VTable/issues/3074)
+- **@visactor/vtable-gantt**: 添加 updateOption 和 updateScales API
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 在 iframe 中进行复制权限检查 [#3077](https://github.com/VisActor/VTable/issues/3077)
+- **@visactor/vtable**: 当有选中单元格时调整列宽或行高出错 [#3085](https://github.com/VisActor/VTable/issues/3085)
+- **@visactor/vtable-gantt**: 考虑未设置 minDate 和 maxDate 时调用 setRecords API
+
+[更多详情请查看 v1.13.2](https://github.com/VisActor/VTable/releases/tag/v1.13.2)
+
+# v1.13.1
+
+2024-12-13
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: 甘特图时间单位支持时分秒级别 [#2976](https://github.com/VisActor/VTable/issues/2976)
+
+**🐛 功能修复**
+
+- **@visactor/vtable-gantt**: 处理 tableWidth 设置为 'auto' 情况下的表格整体宽度自动适应问题 [#3033](https://github.com/VisActor/VTable/issues/3033)
+
+[更多详情请查看 v1.13.1](https://github.com/VisActor/VTable/releases/tag/v1.13.1)
+
+# v1.13.0
+
+2024-12-09
+
+**🆕 新增功能**
+
+- **@visactor/vtable**：添加键盘 ctrlMultiSelect 配置 [#2995](https://github.com/VisActor/VTable/issues/2995)
+- **@visactor/vtable**：在 Popover 中添加 panelStyle 和 arrowStyle 配置 [#2988](https://github.com/VisActor/VTable/issues/2988)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**：当 select 设置为 disableSelect 时，选择不起作用 [#2981](https://github.com/VisActor/VTable/issues/2981)
+- **@visactor/vtable**：修复 checkbox/radio 中的 textAlign 问题 [#2908](https://github.com/VisActor/VTable/issues/2908)
+- **@visactor/vtable**：菜单元素中的 outsideClickDeselect 事件
+- **@visactor/vtable**：修复 getCellMergeRange() 中的列和行范围问题 [#2906](https://github.com/VisActor/VTable/issues/2906)
+- **@visactor/vtable**：修复合并单元格选择范围更新问题 [#2944](https://github.com/VisActor/VTable/issues/2944)
+- **@visactor/vtable**：修复 tree_hierarchy_state_change 事件中 ListTreeStickCellPlugin 的更新问题 [#2914](https://github.com/VisActor/VTable/issues/2914)
+- **@visactor/vtable**：修复 \_refreshHierarchyState() 中的行更新范围问题 [#2987](https://github.com/VisActor/VTable/issues/2987)
+- **@visactor/vtable**: 修复文字 baseline 对齐问题
+
+[更多详情请查看 v1.13.0](https://github.com/VisActor/VTable/releases/tag/v1.13.0)
+
+# v1.12.0
+
+2024-12-03
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加选项 customComputeRowHeight，并且 defaultRowHeight 可以设置为 "auto"
+- **@visactor/vtable-gantt**: 为甘特图添加 taskShowMode 选项 [#2849](https://github.com/VisActor/VTable/issues/2849)
+
+**🐛 功能修复**
+
+- **@visactor/vtable-gantt**: 编辑记录任务日期时更新任务栏出现错误 [#2938](https://github.com/VisActor/VTable/issues/2938)
+- **@visactor/vtable**: 修复最后一列和最后一行编辑器的大小问题 [#2926](https://github.com/VisActor/VTable/issues/2926)
+- **@visactor/vtable**: 修复 CustomCellStylePlugin 中的单元格更新事件问题 [#2927](https://github.com/VisActor/VTable/issues/2927)
+- **@visactor/vtable**: 修复树模式下的 React 组件更新问题
+- **@visactor/vtable**: 修复 computeRowHeight() 中的默认行高问题 [#2903](https://github.com/VisActor/VTable/issues/2903)
+- **@visactor/vtable**: 修复调整表格大小时图例可见性的问题
+- **@visactor/vtable**: 修复 Icon.loadGif() 中的缓存问题 [#2905](https://github.com/VisActor/VTable/issues/2905)
+- **@visactor/vtable**: 修复合并单选单元格的选中状态更新问题 [#2881](https://github.com/VisActor/VTable/issues/2881)
+- **@visactor/vtable**: 修复 updateCell() 中的 strokeArrayWidth 更新问题 [#2811](https://github.com/VisActor/VTable/issues/2811)
+
+**📖 文档更新**
+
+- **@visactor/vtable-gantt**: 添加 getTaskBarRelativeRect API [#2920](https://github.com/VisActor/VTable/issues/2920)
+
+[更多详情请查看 v1.12.0](https://github.com/VisActor/VTable/releases/tag/v1.12.0)
+
+# v1.11.5
+
+2024-11-29
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加 @visactor/vtable-plugins 包
+
+**📖 文档更新**
+
+- **@visactor/vtable**: 更新进入或离开节点时的事件文档
+- **@visactor/vtable**: 更新甘特图事件文档，暴露整个 e 的信息
+
+[更多详情请查看 v1.11.5](https://github.com/VisActor/VTable/releases/tag/v1.11.5)
+
+# v1.11.3
+
+2024-11-28
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 冻结图表在调整行或列宽时不更新 [#2876](https://github.com/VisActor/VTable/issues/2876)
+- **@visactor/vtable**: 修复 deleteRecords API 中的自定义组件更新问题
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 当 columnWidthConfig 设置错误维度时应判断此情况 [#2948](https://github.com/VisActor/VTable/issues/2948)
+
+[更多详情请查看 v1.11.3](https://github.com/VisActor/VTable/releases/tag/v1.11.3)
+
+# v1.11.2
+
+2024-11-26
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加 select makeSelectCellVisible [#2840](https://github.com/VisActor/VTable/issues/2840)
+- **@visactor/vtable**: 在 stateManager 中添加 setCustomSelectRanges [#2750](https://github.com/VisActor/VTable/issues/2750) [#2845](https://github.com/VisActor/VTable/issues/2845)
+- **@visactor/vtable**: 优化 HeaderHighlightPlugin 中的范围选择
+- **@visactor/vtable**: isShowOverflowTextTooltip 支持函数
+- **@visactor/vtable**: 单元格支持多自定义样式 [#2841](https://github.com/VisActor/VTable/issues/2841)
+- **@visactor/vtable**: templateLink 支持函数 [#2847](https://github.com/VisActor/VTable/issues/2847)
+- **@visactor/vtable**: 在 tooltip 配置中添加 position [#2869](https://github.com/VisActor/VTable/issues/2869)
+- **@visactor/vtable**: 在菜单选项中添加 parentElement
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 添加 isValidatingValue 状态以修复重复调用 validateValue API 的问题 [#2830](https://github.com/VisActor/VTable/issues/2830)
+- **@visactor/vtable**: 在画布空白区域上移时不能正确拖动位置 [#2831](https://github.com/VisActor/VTable/issues/2831)
+- **@visactor/vtable**: 调整列宽时选择状态被清除 [#2861](https://github.com/VisActor/VTable/issues/2861)
+- **@visactor/vtable**: 容器调整大小时触发标记线调整大小 [#2883](https://github.com/VisActor/VTable/issues/2883)
+- **@visactor/vtable**: 未设置 minDate 和 maxDate 时调用 setRecords 渲染错误 [#2892](https://github.com/VisActor/VTable/issues/2892)
+- **@visactor/vtable**: 修复单元格边框虚线更新问题 [#2818](https://github.com/VisActor/VTable/issues/2818)
+- **@visactor/vtable**: 修复合并单元格文本位置问题 [#2858](https://github.com/VisActor/VTable/issues/2858)
+- **@visactor/vtable**: 修复函数式 padding 更新问题 [#2774](https://github.com/VisActor/VTable/issues/2774)
+- **@visactor/vtable**: 修复行系列编号复选框中的全选问题 [#2880](https://github.com/VisActor/VTable/issues/2880)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 设置 headerSelectMode 时，body 拖动列顺序应起作用 [#2860](https://github.com/VisActor/VTable/issues/2860)
+
+[更多详情请查看 v1.11.2](https://github.com/VisActor/VTable/releases/tag/v1.11.2)
+
+# v1.11.1
+
+2024-11-21
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 在 stateManager 中添加 setCustomSelectRanges [#2750](https://github.com/VisActor/VTable/issues/2750) [#2845](https://github.com/VisActor/VTable/issues/2845)
+- **@visactor/vtable**: 优化 HeaderHighlightPlugin 中的范围选择
+- **@visactor/vtable**: isShowOverflowTextTooltip 支持函数
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 添加 isValidatingValue 状态以修复重复调用 validateValue API 的问题 [#2830](https://github.com/VisActor/VTable/issues/2830)
+- **@visactor/vtable**: 在画布空白区域上移时不能正确拖动位置 [#2831](https://github.com/VisActor/VTable/issues/2831)
+- **@visactor/vtable**: 修复单元格边框虚线更新问题 [#2818](https://github.com/VisActor/VTable/issues/2818)
+- **@visactor/vtable**: 修复合并单元格文本位置问题 [#2858](https://github.com/VisActor/VTable/issues/2858)
 
 [更多详情请查看 v1.11.1](https://github.com/VisActor/VTable/releases/tag/v1.11.1)
 

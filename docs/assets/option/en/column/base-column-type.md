@@ -110,7 +110,7 @@ Whether to display the sort icon, no real sorting logic. If the sort field is se
 ${prefix} disableHover(boolean)
 This column does not support hover interaction behavior
 
-${prefix} disableSelect(boolean)
+${prefix} disableSelect(boolean | ((col: number, row: number, table: BaseTableAPI) => boolean))
 This column does not support selection
 
 ${prefix} disableHeaderHover(boolean)

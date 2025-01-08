@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: 甘特图编辑数据
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-edit-preview.gif
-link: '../guide/gantt/gantt_edit'
+link: gantt/gantt_edit
 option: Gantt#taskListTable.columns
 ---
 
@@ -700,7 +700,7 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 8,
       /** 任务条的边框 */
-      borderWidth: 1,
+      borderLineWidth: 1,
       /** 边框颜色 */
       borderColor: 'black'
     }

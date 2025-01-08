@@ -41,8 +41,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
       (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')
     ) {
       if (
-        !(table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
-        (table as ListTableAPI).editorManager?.editingEditor
+        (!(table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
+          (table as ListTableAPI).editorManager?.editingEditor) ||
+        table.options.keyboardOptions?.moveSelectedCellOnArrowKeys === false
       ) {
         // 编辑单元格状态下 如果没有开启方向键切换cell 则退出 。方向键可以在编辑input内移动光标
         return;
@@ -234,12 +235,14 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
   }
 
-  handler.on(table.getElement(), 'copy', (e: KeyboardEvent) => {
+  handler.on(table.getElement(), 'copy', async (e: KeyboardEvent) => {
     if (table.keyboardOptions?.copySelected) {
       const data = table.getCopyValue();
       if (isValid(data)) {
         e.preventDefault();
-        if (navigator.clipboard?.write) {
+        //检查是否有权限
+        const permissionState = await navigator.permissions.query({ name: 'clipboard-write' as PermissionName });
+        if (navigator.clipboard?.write && permissionState.state === 'granted') {
           // 将复制的数据转为html格式
           const setDataToHTML = (data: string) => {
             const result = ['<table>'];

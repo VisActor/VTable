@@ -1,6 +1,6 @@
 import { isValid } from '@visactor/vutils';
 import { getTextPos } from '../gantt-helper';
-import { toBoxArray } from '../tools/util';
+import { computeCountToTimeScale, toBoxArray } from '../tools/util';
 import type { Scenegraph } from './scenegraph';
 import { Group, Text, createLine } from '@visactor/vtable/es/vrender';
 export class TimelineHeader {
@@ -15,7 +15,7 @@ export class TimelineHeader {
     const dateHeader = new Group({
       x: 0,
       y: 0,
-      width: scene._gantt._getAllColsWidth(), //width - 2,
+      width: scene._gantt.getAllDateColsWidth(), //width - 2,
       height: scene._gantt.getAllHeaderRowsHeight(),
       clip: true,
       pickable: false
@@ -26,13 +26,13 @@ export class TimelineHeader {
     this.group = dateHeader;
     dateHeader.name = 'date-header-container';
     scene.tableGroup.addChild(this.group);
-
+    const { unit: minUnit, step } = scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
     let y = 0;
     for (let i = 0; i < scene._gantt.timeLineHeaderLevel; i++) {
       const rowHeader = new Group({
         x: 0,
         y,
-        width: scene._gantt._getAllColsWidth(),
+        width: scene._gantt.getAllDateColsWidth(),
         height: scene._gantt.parsedOptions.timeLineHeaderRowHeights[i],
         clip: false
       });
@@ -40,30 +40,37 @@ export class TimelineHeader {
       rowHeader.name = 'row-header';
       dateHeader.addChild(rowHeader);
 
-      const { unit, timelineDates, customLayout } = scene._gantt.parsedOptions.sortedTimelineScales[i];
-      let x = 0;
-      for (let j = 0; j < timelineDates.length; j++) {
-        const { days, endDate, startDate, title, dateIndex } = timelineDates[j];
+      const { timelineDates, customLayout } = scene._gantt.parsedOptions.sortedTimelineScales[i];
+      for (let j = 0; j < timelineDates?.length; j++) {
+        const { days, endDate, startDate, title, dateIndex, unit } = timelineDates[j];
+        const x = Math.ceil(
+          computeCountToTimeScale(startDate, scene._gantt.parsedOptions.minDate, minUnit, step) *
+            scene._gantt.parsedOptions.timelineColWidth
+        );
+        const right_x = Math.ceil(
+          computeCountToTimeScale(endDate, scene._gantt.parsedOptions.minDate, minUnit, step, 1) *
+            scene._gantt.parsedOptions.timelineColWidth
+        );
+        console.log(
+          unit,
+          x,
+          right_x,
+          computeCountToTimeScale(startDate, scene._gantt.parsedOptions.minDate, minUnit, step),
+          computeCountToTimeScale(endDate, scene._gantt.parsedOptions.minDate, minUnit, step, 1)
+        );
+        const width = right_x - x;
         const date = new Group({
           x,
           y: 0,
-          width: scene._gantt.parsedOptions.colWidthPerDay * days,
+          width,
           height: rowHeader.attribute.height,
           clip: false,
           fill: scene._gantt.parsedOptions.timelineHeaderBackgroundColor
         });
         date.name = 'date-header-cell';
-        // const rect = createRect({
-        //   x: 0,
-        //   y: 0,
-        //   width: scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
-        //   height: scene._gantt.parsedOptions.headerRowHeight,
-        //   fill: scene._gantt.parsedOptions.timelineHeaderStyle?.backgroundColor
-        // });
-        // date.appendChild(rect);
         let rootContainer;
         let renderDefaultText = true;
-        const width = scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days;
+
         const height = rowHeader.attribute.height;
         if (customLayout) {
           let customLayoutObj;
@@ -111,7 +118,6 @@ export class TimelineHeader {
             x: position.x,
             y: position.y,
             maxLineWidth: width,
-            // width: scene._gantt.parsedOptions.colWidthPerDay * timelineDates[j].days,
             heightLimit: height,
             // clip: true,
             pickable: true,
@@ -154,7 +160,6 @@ export class TimelineHeader {
           });
           date.appendChild(line);
         }
-        x += width;
       }
       //创建表头分割线 水平分割线 TODO
       if (i > 0) {
@@ -165,7 +170,7 @@ export class TimelineHeader {
           points: [
             { x: 0, y: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth & 1 ? 0.5 : 0 },
             {
-              x: scene._gantt._getAllColsWidth(),
+              x: scene._gantt.getAllDateColsWidth(),
               y: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth & 1 ? 0.5 : 0
             }
           ]

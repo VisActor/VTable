@@ -1,12 +1,22 @@
-import type { Style } from '../body-helper/style';
-import type {
-  CellRange,
-  ColumnStyleOption,
-  CustomCellStyle,
-  CustomCellStyleArrangement,
-  FullExtendStyle
-} from '../ts-types';
+import { isValid, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
+import {
+  cellStyleKeys,
+  type CellRange,
+  type ColumnStyleOption,
+  type CustomCellStyle,
+  type CustomCellStyleArrangement
+} from '../ts-types';
+import type { Style } from '../body-helper/style';
+import { Factory } from '../core/factory';
+
+export interface ICustomCellStylePlugin {
+  new (
+    table: BaseTableAPI,
+    customCellStyle: CustomCellStyle[],
+    customCellStyleArrangement: CustomCellStyleArrangement[]
+  ): CustomCellStylePlugin;
+}
 
 export class CustomCellStylePlugin {
   table: BaseTableAPI;
@@ -24,16 +34,27 @@ export class CustomCellStylePlugin {
   }
 
   getCustomCellStyle(col: number, row: number) {
-    const customStyleId = this.getCustomCellStyleId(col, row);
-    if (customStyleId) {
-      const styleOption = this.getCustomCellStyleOption(customStyleId);
-      return styleOption?.style;
+    const customStyleIds = this.getCustomCellStyleIds(col, row);
+    if (customStyleIds.length) {
+      const styles: ColumnStyleOption[] = [];
+
+      customStyleIds.forEach(customStyleId => {
+        const styleOption = this.getCustomCellStyleOption(customStyleId);
+        if (styleOption?.style) {
+          styles.push(styleOption.style);
+        }
+      });
+
+      return merge({}, ...styles);
+      // const styleOption = this.getCustomCellStyleOption(customStyleId);
+      // return styleOption?.style;
     }
     return undefined;
   }
 
-  getCustomCellStyleId(col: number, row: number) {
-    let customStyleId;
+  getCustomCellStyleIds(col: number, row: number) {
+    // let customStyleId;
+    const customStyleIds: string[] = [];
 
     const range = this.table.getCellRange(col, row);
     for (let c = range.start.col; c <= range.end.col; c++) {
@@ -47,16 +68,18 @@ export class CustomCellStylePlugin {
               style.cellPosition.range.start.row <= r &&
               style.cellPosition.range.end.row >= r
             ) {
-              customStyleId = style.customStyleId;
+              // customStyleId = style.customStyleId;
+              customStyleIds.push(style.customStyleId);
             }
           } else if (style.cellPosition.col === c && style.cellPosition.row === r) {
-            customStyleId = style.customStyleId;
+            // customStyleId = style.customStyleId;
+            customStyleIds.push(style.customStyleId);
           }
         });
       }
     }
 
-    return customStyleId;
+    return customStyleIds;
   }
 
   getCustomCellStyleOption(customStyleId: string) {
@@ -81,8 +104,16 @@ export class CustomCellStylePlugin {
       const cellPos = cellStyle.cellPosition;
       if (cellStyle.customStyleId === customStyleId) {
         if (cellPos.range) {
-          for (let col = cellPos.range.start.col; col <= cellPos.range.end.col; col++) {
-            for (let row = cellPos.range.start.row; row <= cellPos.range.end.row; row++) {
+          for (
+            let col = Math.max(0, cellPos.range.start.col);
+            col <= Math.min(this.table.colCount - 1, cellPos.range.end.col);
+            col++
+          ) {
+            for (
+              let row = Math.max(0, cellPos.range.start.row);
+              row <= Math.min(this.table.rowCount - 1, cellPos.range.end.row);
+              row++
+            ) {
               this.table.scenegraph.updateCellContent(col, row);
             }
           }
@@ -100,7 +131,8 @@ export class CustomCellStylePlugin {
       row?: number;
       range?: CellRange;
     },
-    customStyleId: string | undefined | null
+    customStyleId: string | undefined | null,
+    forceFastUpdate?: boolean
   ) {
     const index = this.customCellStyleArrangement.findIndex(style => {
       if (style.cellPosition.range && cellPos.range) {
@@ -138,21 +170,41 @@ export class CustomCellStylePlugin {
       this.customCellStyleArrangement.splice(index, 1);
     }
 
+    const style = this.getCustomCellStyleOption(customStyleId)?.style;
+    // let forceFastUpdate;
+    if (style) {
+      forceFastUpdate = true;
+      for (const key in style) {
+        if (cellStyleKeys.indexOf(key) === -1) {
+          forceFastUpdate = false;
+          break;
+        }
+      }
+    }
+
     // update cell group
     if (cellPos.range) {
-      for (let col = cellPos.range.start.col; col <= cellPos.range.end.col; col++) {
-        for (let row = cellPos.range.start.row; row <= cellPos.range.end.row; row++) {
+      for (
+        let col = Math.max(0, cellPos.range.start.col);
+        col <= Math.min(this.table.colCount - 1, cellPos.range.end.col);
+        col++
+      ) {
+        for (
+          let row = Math.max(0, cellPos.range.start.row);
+          row <= Math.min(this.table.rowCount - 1, cellPos.range.end.row);
+          row++
+        ) {
           const range = this.table.getCellRange(col, row);
           for (let c = range.start.col; c <= range.end.col; c++) {
             for (let r = range.start.row; r <= range.end.row; r++) {
-              this.table.scenegraph.updateCellContent(c, r);
+              this.table.scenegraph.updateCellContent(c, r, forceFastUpdate);
             }
           }
           // this.table.scenegraph.updateCellContent(col, row);
         }
       }
     } else {
-      this.table.scenegraph.updateCellContent(cellPos.col, cellPos.row);
+      this.table.scenegraph.updateCellContent(cellPos.col, cellPos.row, forceFastUpdate);
     }
 
     this.table.scenegraph.updateNextFrame();
@@ -179,10 +231,16 @@ export function mergeStyle(cacheStyle: Style, customCellStyle: ColumnStyleOption
 
   for (const key in customCellStyle) {
     const value = (customCellStyle as any)[key];
-    if (value) {
+    if (isValid(value)) {
       (cacheStyle as any)[`_${key}`] = value;
     }
   }
 
   return cacheStyle;
 }
+
+export const registerCustomCellStylePlugin = () => {
+  Factory.registerComponent('customCellStylePlugin', CustomCellStylePlugin);
+};
+
+// export type ICustomCellStylePlugin = typeof CustomCellStylePlugin;

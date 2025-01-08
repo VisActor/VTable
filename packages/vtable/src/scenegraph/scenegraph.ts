@@ -19,7 +19,6 @@ import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
 import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateCornerRadius, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
-import { ResizeColumnHotSpotSize, ResizeRowHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
 import { getFunctionalProp, getProp } from './utils/get-prop';
 import { dealWithIcon } from './utils/text-icon-layout';
@@ -263,15 +262,24 @@ export class Scenegraph {
     this.mergeMap.clear();
 
     this.colHeaderGroup.clear();
+    delete this.colHeaderGroup.border;
     this.rowHeaderGroup.clear();
+    delete this.rowHeaderGroup.border;
     this.cornerHeaderGroup.clear();
+    delete this.cornerHeaderGroup.border;
     this.bodyGroup.clear();
+    delete this.bodyGroup.border;
 
     this.bottomFrozenGroup.clear();
+    delete this.bottomFrozenGroup.border;
     this.rightFrozenGroup.clear();
+    delete this.rightFrozenGroup.border;
     this.rightTopCornerGroup.clear();
+    delete this.rightTopCornerGroup.border;
     this.rightBottomCornerGroup.clear();
+    delete this.rightBottomCornerGroup.border;
     this.leftBottomCornerGroup.clear();
+    delete this.leftBottomCornerGroup.border;
 
     this.colHeaderGroup.setAttributes({
       x: 0,
@@ -377,13 +385,6 @@ export class Scenegraph {
       this.table.rowHeightsMap.clear();
       this.table.internalProps.layoutMap.clearCellRangeMap();
     }
-
-    // if (this.table.heightMode === 'autoHeight') {
-    //   this.table.defaultRowHeight = getDefaultHeight(this.table);
-    // }
-    // if (this.table.widthMode === 'autoWidth' || this.table.internalProps.transpose) {
-    //   this.table.defaultColWidth = getDefaultWidth(this.table);
-    // }
 
     // bind AutoPoptip
     if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
@@ -528,7 +529,13 @@ export class Scenegraph {
     return element || undefined;
   }
 
-  getColGroupInBottom(col: number): Group | undefined {
+  getColGroupInBottom(col: number, isCornerOrColHeader = false): Group | undefined {
+    if (isCornerOrColHeader) {
+      const element = this.getColGroupInLeftBottomCorner(col) ?? this.getColGroupInRightBottomCorner(col);
+      if (element) {
+        return element;
+      }
+    }
     if (this.table.bottomFrozenRowCount > 0) {
       return this.bottomFrozenGroup.getColGroup(col) as Group;
     }
@@ -779,7 +786,7 @@ export class Scenegraph {
     this.table.isPivotChart() && updateChartState(this, datum);
   }
 
-  updateCheckboxCellState(col: number, row: number, checked: boolean) {
+  updateCheckboxCellState(col: number, row: number, checked: boolean | 'indeterminate') {
     if ((this.table as any).transpose) {
       this.bodyGroup.children?.forEach((columnGroup: INode) => {
         columnGroup
@@ -787,7 +794,13 @@ export class Scenegraph {
           ?.getChildren()
           .forEach((node: INode) => {
             if (node.name === 'checkbox') {
-              (node as CheckBox).setAttribute('checked', checked);
+              if (checked === 'indeterminate') {
+                (node as CheckBox).setAttribute('indeterminate', true);
+                (node as CheckBox).setAttribute('checked', undefined);
+              } else {
+                (node as CheckBox).setAttribute('indeterminate', undefined);
+                (node as CheckBox).setAttribute('checked', checked);
+              }
             }
           });
       });
@@ -796,7 +809,13 @@ export class Scenegraph {
       columnGroup?.children?.forEach((cellNode: INode) => {
         cellNode.getChildren().find(node => {
           if (node.name === 'checkbox') {
-            (node as CheckBox).setAttribute('checked', checked);
+            if (checked === 'indeterminate') {
+              (node as CheckBox).setAttribute('indeterminate', true);
+              (node as CheckBox).setAttribute('checked', undefined);
+            } else {
+              (node as CheckBox).setAttribute('indeterminate', undefined);
+              (node as CheckBox).setAttribute('checked', checked);
+            }
           }
         });
       });
@@ -1727,9 +1746,9 @@ export class Scenegraph {
   getResizeColAt(
     abstractX: number,
     abstractY: number,
-    cellGroup?: Group,
-    offset = ResizeColumnHotSpotSize / 2
+    cellGroup?: Group
   ): { col: number; row: number; x?: number; rightFrozen?: boolean } {
+    const offset = this.table.theme.columnResize.resizeHotSpotSize / 2;
     let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
     if (!cellGroup) {
       const drawRange = this.table.getDrawRange();
@@ -1775,7 +1794,8 @@ export class Scenegraph {
     return { col: -1, row: -1 };
   }
 
-  getResizeRowAt(abstractX: number, abstractY: number, cellGroup?: Group, offset = ResizeRowHotSpotSize / 2) {
+  getResizeRowAt(abstractX: number, abstractY: number, cellGroup?: Group) {
+    const offset = this.table.theme.columnResize.resizeHotSpotSize / 2;
     if (!cellGroup) {
       // to do: 处理最后一列外调整列宽
     } else {
@@ -1914,11 +1934,11 @@ export class Scenegraph {
     this.component.drillIcon.update(visible, x, y, drillDown, drillUp, this);
   }
 
-  updateCellContent(col: number, row: number) {
+  updateCellContent(col: number, row: number, forceFastUpdate: boolean = false) {
     if (this.clear) {
       return undefined;
     }
-    return updateCell(col, row, this.table);
+    return updateCell(col, row, this.table, undefined, undefined, forceFastUpdate);
   }
 
   setPixelRatio(pixelRatio: number) {
@@ -1935,7 +1955,8 @@ export class Scenegraph {
     removeCells: CellAddress[],
     addCells: CellAddress[],
     updateCells: CellAddress[] = [],
-    recalculateColWidths: boolean = true
+    recalculateColWidths: boolean = true,
+    skipUpdateProxy?: boolean
   ) {
     this.table.internalProps.layoutMap.clearCellRangeMap();
     this.table.internalProps.useOneRowHeightFillAll = false;
@@ -1950,7 +1971,7 @@ export class Scenegraph {
       this.table.tableNoFrameHeight;
 
     // add or move rows
-    updateRow(removeCells, addCells, updateCells, this.table);
+    updateRow(removeCells, addCells, updateCells, this.table, skipUpdateProxy);
 
     // update column width and row height
 
@@ -1963,7 +1984,7 @@ export class Scenegraph {
       (this.table.autoFillHeight && (this.table.getAllRowsHeight() <= this.table.tableNoFrameHeight || isNotFillHeight))
     ) {
       this.table.scenegraph.recalculateRowHeights();
-    } else if (this.table.heightMode === 'autoHeight') {
+    } else if (this.table.isAutoRowHeight()) {
       // if (updateCells.length > 0) {
       //   this.table.scenegraph.recalculateRowHeights();
       // }

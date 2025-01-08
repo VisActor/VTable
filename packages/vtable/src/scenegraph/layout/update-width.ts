@@ -434,7 +434,6 @@ function updateCellWidth(
             width,
             height,
             false,
-            // scene.table.heightMode === 'autoHeight',
             scene.table.isAutoRowHeight(row),
             padding,
             isMergeCellGroup(cellGroup)
@@ -500,6 +499,9 @@ function updateMergeCellContentWidth(
           continue;
         }
         const singleCellGroup = table.scenegraph.getCell(col, row);
+        if (singleCellGroup.role !== 'cell') {
+          continue;
+        }
         singleCellGroup.forEachChildren((child: IGraphic) => {
           child.setAttributes({
             dx: 0,
@@ -512,7 +514,8 @@ function updateMergeCellContentWidth(
           // 处理文字
           // const style = table._getCellStyle(col, row);
           const style = table._getCellStyle(colStart, rowStart);
-          const padding = getQuadProps(style.padding as number);
+          const padding = getQuadProps(getProp('padding', style, col, row, table));
+
           const textAlign = style.textAlign;
           const textBaseline = style.textBaseline;
           changed = updateCellContentWidth(
@@ -574,7 +577,7 @@ function updateMergeCellContentWidth(
 
   // 处理文字
   const style = table._getCellStyle(cellGroup.col, cellGroup.row);
-  const padding = getQuadProps(style.padding as number);
+  const padding = getQuadProps(getProp('padding', style, cellGroup.col, cellGroup.row, table));
   const textAlign = style.textAlign;
   const textBaseline = style.textBaseline;
   return updateCellContentWidth(
@@ -607,7 +610,7 @@ function resetRowHeight(scene: Scenegraph, row: number) {
     const distHeight = maxHeight;
     const cell = scene.highPerformanceGetCell(col, row);
     if (cell.role === 'empty') {
-      return;
+      continue;
     }
 
     updateCellHeightForRow(

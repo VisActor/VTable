@@ -65,7 +65,7 @@ export interface EventsProps {
   // pivot chart only
   onVChartEventType?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['vchart_event_type']>;
 
-  onChangCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
+  onChangeCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
 
   onMousedownFillHandle?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousedown_fill_handle']>;
   onDragFillHandleEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['drag_fill_handle_end']>;
@@ -131,12 +131,14 @@ export const TABLE_EVENTS = {
   // pivot chart only
   onVChartEventType: EVENT_TYPE.VCHART_EVENT_TYPE,
 
-  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
+  onChangeCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
   onMousedownFillHandle: EVENT_TYPE.MOUSEDOWN_FILL_HANDLE,
   onDragFillHandleEnd: EVENT_TYPE.DRAG_FILL_HANDLE_END,
   onDblclickFillHandle: EVENT_TYPE.DBLCLICK_FILL_HANDLE,
   onScrollVerticalEnd: EVENT_TYPE.SCROLL_VERTICAL_END,
-  onScrollHorizontalEnd: EVENT_TYPE.SCROLL_HORIZONTAL_END
+  onScrollHorizontalEnd: EVENT_TYPE.SCROLL_HORIZONTAL_END,
+
+  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE //will remove this typo in upcoming release
 };
 
 export const TABLE_EVENTS_KEYS = Object.keys(TABLE_EVENTS);

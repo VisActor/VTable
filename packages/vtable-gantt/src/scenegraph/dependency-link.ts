@@ -2,12 +2,13 @@ import type { Line } from '@visactor/vtable/es/vrender';
 import { Group, createLine, createRect, Polygon } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
-import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
+import { computeCountToTimeScale, createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
-import { findRecordByTaskKey, getTextPos } from '../gantt-helper';
+import { clearRecordLinkInfos, findRecordByTaskKey, getSubTaskRowIndexByRecordDate, getTextPos } from '../gantt-helper';
 import type { GanttTaskBarNode } from './gantt-node';
 import type { ITaskLink } from '../ts-types';
-import { DependencyType } from '../ts-types';
+import { DependencyType, TasksShowMode } from '../ts-types';
+import type { Gantt } from '../Gantt';
 
 export class DependencyLink {
   group: Group;
@@ -36,18 +37,20 @@ export class DependencyLink {
   }
 
   initLinkLines() {
+    clearRecordLinkInfos(this._scene._gantt.records);
     this.linkLinesContainer = new Group({
       x: 0,
       y: 0,
-      width: this._scene._gantt._getAllColsWidth(),
+      width: this._scene._gantt.getAllDateColsWidth(),
       height: this._scene._gantt.getAllTaskBarsHeight(),
       pickable: false,
       clip: true
     });
     this.group.appendChild(this.linkLinesContainer);
-
-    for (let i = 0; i < this._scene._gantt.parsedOptions.dependencyLinks?.length ?? 0; i++) {
-      this.initLinkLine(i);
+    if (this._scene._gantt.records?.length) {
+      for (let i = 0; i < this._scene._gantt.parsedOptions.dependencyLinks?.length ?? 0; i++) {
+        this.initLinkLine(i);
+      }
     }
   }
   initLinkLine(index: number) {
@@ -55,29 +58,91 @@ export class DependencyLink {
     const link = dependencyLinks[index];
     const { linkedToTaskKey, linkedFromTaskKey, type } = link;
     const linkedToTaskRecord = findRecordByTaskKey(this._scene._gantt.records, taskKeyField, linkedToTaskKey);
+    const linkedFromTaskRecord = findRecordByTaskKey(this._scene._gantt.records, taskKeyField, linkedFromTaskKey);
+    if (!linkedToTaskRecord || !linkedFromTaskRecord) {
+      return;
+    }
     if (!linkedToTaskRecord.record.vtable_gantt_linkedTo) {
       linkedToTaskRecord.record.vtable_gantt_linkedTo = [];
     }
     linkedToTaskRecord.record.vtable_gantt_linkedTo.push(link);
-    const linkedFromTaskRecord = findRecordByTaskKey(this._scene._gantt.records, taskKeyField, linkedFromTaskKey);
+
     if (!linkedFromTaskRecord.record.vtable_gantt_linkedFrom) {
       linkedFromTaskRecord.record.vtable_gantt_linkedFrom = [];
     }
     linkedFromTaskRecord.record.vtable_gantt_linkedFrom.push(link);
 
-    const linkedFromTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
-    const linkedToTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+    let linkedToTaskStartDate;
+    let linkedToTaskEndDate;
+    let linkedToTaskTaskDays;
+    let linkedFromTaskStartDate;
+    let linkedFromTaskEndDate;
+    let linkedFromTaskTaskDays;
 
-    const {
-      startDate: linkedToTaskStartDate,
-      endDate: linkedToTaskEndDate,
-      taskDays: linkedToTaskTaskDays
-    } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex);
-    const {
-      startDate: linkedFromTaskStartDate,
-      endDate: linkedFromTaskEndDate,
-      taskDays: linkedFromTaskTaskDays
-    } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex);
+    let linkedToTaskShowIndex;
+    let linkedFromTaskShowIndex;
+
+    if (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline) {
+      linkedFromTaskShowIndex = linkedFromTaskRecord.index[0];
+      linkedToTaskShowIndex = linkedToTaskRecord.index[0];
+      ({
+        startDate: linkedToTaskStartDate,
+        endDate: linkedToTaskEndDate,
+        taskDays: linkedToTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedToTaskRecord.index[0], linkedToTaskRecord.index[1]));
+      ({
+        startDate: linkedFromTaskStartDate,
+        endDate: linkedFromTaskEndDate,
+        taskDays: linkedFromTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
+    } else if (
+      this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+      this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+      this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+    ) {
+      const beforeRowCountLinkedFrom =
+        this._scene._gantt.getRowsHeightByIndex(0, linkedFromTaskRecord.index[0] - 1) /
+        this._scene._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
+      linkedFromTaskShowIndex =
+        beforeRowCountLinkedFrom +
+        (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+          ? linkedFromTaskRecord.record.vtable_gantt_showIndex
+          : linkedFromTaskRecord.index[1] ?? 0);
+      const beforeRowCountLinkedTo =
+        this._scene._gantt.getRowsHeightByIndex(0, linkedToTaskRecord.index[0] - 1) /
+        this._scene._gantt.parsedOptions.rowHeight; // 耦合了listTableOption的customComputeRowHeight
+      linkedToTaskShowIndex =
+        beforeRowCountLinkedTo +
+        (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+        this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+          ? linkedToTaskRecord.record.vtable_gantt_showIndex
+          : linkedToTaskRecord.index[1] ?? 0);
+      ({
+        startDate: linkedToTaskStartDate,
+        endDate: linkedToTaskEndDate,
+        taskDays: linkedToTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedToTaskRecord.index[0], linkedToTaskRecord.index[1]));
+      ({
+        startDate: linkedFromTaskStartDate,
+        endDate: linkedFromTaskEndDate,
+        taskDays: linkedFromTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
+    } else {
+      linkedFromTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+      linkedToTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+
+      ({
+        startDate: linkedToTaskStartDate,
+        endDate: linkedToTaskEndDate,
+        taskDays: linkedToTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex));
+      ({
+        startDate: linkedFromTaskStartDate,
+        endDate: linkedFromTaskEndDate,
+        taskDays: linkedFromTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex));
+    }
     if (!linkedFromTaskTaskDays || !linkedToTaskTaskDays) {
       return;
     }
@@ -88,12 +153,14 @@ export class DependencyLink {
       linkedFromTaskStartDate,
       linkedFromTaskEndDate,
       linkedFromTaskShowIndex,
+      linkedFromTaskTaskDays,
+      linkedFromTaskRecord.record.type === 'milestone',
       linkedToTaskStartDate,
       linkedToTaskEndDate,
       linkedToTaskShowIndex,
-      minDate,
-      this._scene._gantt.parsedOptions.rowHeight,
-      this._scene._gantt.parsedOptions.colWidthPerDay
+      linkedToTaskTaskDays,
+      linkedToTaskRecord.record.type === 'milestone',
+      this._scene._gantt
     );
 
     const lineStyle = this._scene._gantt.parsedOptions.dependencyLinkLineStyle;
@@ -132,9 +199,13 @@ export class DependencyLink {
       width: this.width,
       y: this._scene._gantt.getAllHeaderRowsHeight()
     });
+    const x = this.linkLinesContainer.attribute.x;
+    const y = this.linkLinesContainer.attribute.y;
     this.linkLinesContainer.removeAllChild();
     this.group.removeChild(this.linkLinesContainer);
     this.initLinkLines();
+    this.setX(x);
+    this.setY(y);
   }
   resize() {
     this.width = this._scene._gantt.tableNoFrameWidth;
@@ -201,13 +272,18 @@ export function generateLinkLinePoints(
   linkedFromTaskStartDate: Date,
   linkedFromTaskEndDate: Date,
   linkedFromTaskRecordRowIndex: number,
+  linkedFromTaskTaskDays: number,
+  linkedFromTaskIsMilestone: boolean,
   linkedToTaskStartDate: Date,
   linkedToTaskEndDate: Date,
   linkedToTaskRecordRowIndex: number,
-  minDate: Date,
-  rowHeight: number,
-  colWidthPerDay: number
+  linkedToTaskTaskDays: number,
+  linkedToTaskIsMilestone: boolean,
+  gantt: Gantt
 ) {
+  const { unit, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+  const { minDate, rowHeight, timelineColWidth } = gantt.parsedOptions;
+  const taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneHypotenuse;
   const distanceToTaskBar: number = 20;
   const arrowWidth: number = 10;
   const arrowHeight: number = 5;
@@ -216,12 +292,18 @@ export function generateLinkLinePoints(
   let linePoints: { x: number; y: number }[] = [];
   let arrowPoints: { x: number; y: number }[] = [];
   if (type === DependencyType.FinishToStart) {
-    startDate = linkedFromTaskEndDate;
+    startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    const linkFromPointX =
-      colWidthPerDay * (Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
-    const linkToPointX =
-      colWidthPerDay * Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+    let linkFromPointX = computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    if (linkedFromTaskIsMilestone) {
+      linkFromPointX =
+        computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
+        taskBarMilestoneHypotenuse / 2;
+    }
+    let linkToPointX = computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
+    if (linkedToTaskIsMilestone) {
+      linkToPointX -= taskBarMilestoneHypotenuse / 2;
+    }
     linePoints = [
       {
         x: linkFromPointX,
@@ -279,11 +361,17 @@ export function generateLinkLinePoints(
     ];
   } else if (type === DependencyType.StartToFinish) {
     startDate = linkedFromTaskStartDate;
-    endDate = linkedToTaskEndDate;
-    const linkFromPointX =
-      colWidthPerDay * Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
-    const linkToPointX =
-      colWidthPerDay * (Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+    endDate = linkedToTaskStartDate;
+    let linkFromPointX = computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+    if (linkedFromTaskIsMilestone) {
+      linkFromPointX -= taskBarMilestoneHypotenuse / 2;
+    }
+    let linkToPointX = computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    if (linkedToTaskIsMilestone) {
+      linkToPointX =
+        computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
+        taskBarMilestoneHypotenuse / 2;
+    }
     linePoints = [
       {
         x: linkFromPointX,
@@ -342,21 +430,46 @@ export function generateLinkLinePoints(
   } else if (type === DependencyType.StartToStart) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    const linkFromPointX =
-      colWidthPerDay * Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
-    const linkToPointX =
-      colWidthPerDay * Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+    let linkFromPointX = computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+    if (linkedFromTaskIsMilestone) {
+      linkFromPointX -= taskBarMilestoneHypotenuse / 2;
+    }
+    let linkToPointX = computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
+    if (linkedToTaskIsMilestone) {
+      linkToPointX -= taskBarMilestoneHypotenuse / 2;
+    }
     linePoints = [
       {
         x: linkFromPointX,
         y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
       },
       {
-        x: Math.min(linkFromPointX, linkToPointX) - distanceToTaskBar,
+        x:
+          (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
+            ? linkFromPointX
+            : Math.min(linkFromPointX, linkToPointX)) - distanceToTaskBar,
         y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
       },
       {
-        x: Math.min(linkFromPointX, linkToPointX) - distanceToTaskBar,
+        x:
+          (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
+            ? linkFromPointX
+            : Math.min(linkFromPointX, linkToPointX)) - distanceToTaskBar,
+        y:
+          rowHeight *
+          (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5))
+      },
+      {
+        x: linkToPointX - distanceToTaskBar,
+        y:
+          rowHeight *
+          (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5))
+      },
+      {
+        x:
+          (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
+            ? linkToPointX
+            : Math.min(linkFromPointX, linkToPointX)) - distanceToTaskBar,
         y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
       },
       {
@@ -384,23 +497,49 @@ export function generateLinkLinePoints(
       }
     ];
   } else if (type === DependencyType.FinishToFinish) {
-    startDate = linkedFromTaskEndDate;
-    endDate = linkedToTaskEndDate;
-    const linkFromPointX =
-      colWidthPerDay * (Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
-    const linkToPointX =
-      colWidthPerDay * (Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+    startDate = linkedFromTaskStartDate;
+    endDate = linkedToTaskStartDate;
+    let linkFromPointX = computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    if (linkedFromTaskIsMilestone) {
+      linkFromPointX =
+        computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
+        taskBarMilestoneHypotenuse / 2;
+    }
+    let linkToPointX = computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    if (linkedToTaskIsMilestone) {
+      linkToPointX =
+        computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
+        taskBarMilestoneHypotenuse / 2;
+    }
     linePoints = [
       {
         x: linkFromPointX,
         y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
       },
       {
-        x: Math.max(linkFromPointX, linkToPointX) + distanceToTaskBar,
+        x:
+          (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
+            ? linkFromPointX
+            : Math.max(linkFromPointX, linkToPointX)) + distanceToTaskBar,
         y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
       },
       {
-        x: Math.max(linkFromPointX, linkToPointX) + distanceToTaskBar,
+        x:
+          (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
+            ? linkFromPointX
+            : Math.max(linkFromPointX, linkToPointX)) + distanceToTaskBar,
+        y:
+          rowHeight *
+          (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5))
+      },
+      {
+        x: linkToPointX + distanceToTaskBar,
+        y:
+          rowHeight *
+          (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5))
+      },
+      {
+        x: linkToPointX + distanceToTaskBar,
         y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
       },
       {
@@ -431,20 +570,45 @@ export function generateLinkLinePoints(
   return { linePoints, arrowPoints };
 }
 
+/**
+ *
+ * @param type 依赖关联类型
+ * @param linkedFromTaskStartDate 关联源任务的开始时间
+ * @param linkedFromTaskEndDate 关联源任务的结束时间
+ * @param linkedFromTaskRecordRowIndex  关联源任务所在的行索引
+ * @param fromNodeDiffY 关联源任务的偏移量，如果在拖拽过程中，会有偏移量
+ * @param linkedToTaskStartDate   关联目标任务的开始时间
+ * @param linkedToTaskEndDate    关联目标任务的结束时间
+ * @param linkedToTaskRecordRowIndex  关联目标任务所在的行索引
+ * @param toNodeDiffY    关联目标任务的偏移量，如果在拖拽过程中，会有偏移量
+ * @param linkedFromMovedTaskBarNode  关联源任务的任务场景树节点
+ * @param linkedToMovedTaskBarNode   关联目标任务的任务场景树节点
+ * @returns
+ */
 export function updateLinkLinePoints(
   type: DependencyType,
   linkedFromTaskStartDate: Date,
   linkedFromTaskEndDate: Date,
   linkedFromTaskRecordRowIndex: number,
+  linkedFromTaskTaskDays: number,
+  linkedFromTaskIsMilestone: boolean,
+  linkedFromMovedTaskBarNode: GanttTaskBarNode,
+
+  fromNodeDiffY: number,
   linkedToTaskStartDate: Date,
   linkedToTaskEndDate: Date,
   linkedToTaskRecordRowIndex: number,
-  minDate: Date,
-  rowHeight: number,
-  colWidthPerDay: number,
-  linkedFromMovedTaskBarNode: GanttTaskBarNode,
-  linkedToMovedTaskBarNode: GanttTaskBarNode
+  linkedToTaskTaskDays: number,
+  linkedToTaskIsMilestone: boolean,
+  linkedToMovedTaskBarNode: GanttTaskBarNode,
+
+  toNodeDiffY: number,
+  gantt: Gantt
 ) {
+  const { unit, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+  const { minDate, rowHeight, timelineColWidth } = gantt.parsedOptions;
+  const taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneHypotenuse;
+  const milestoneTaskbarHeight = gantt.parsedOptions.taskBarMilestoneStyle.width;
   const distanceToTaskBar: number = 20;
   const arrowWidth: number = 10;
   const arrowHeight: number = 5;
@@ -453,49 +617,61 @@ export function updateLinkLinePoints(
   let linePoints: { x: number; y: number }[] = [];
   let arrowPoints: { x: number; y: number }[] = [];
   if (type === DependencyType.FinishToStart) {
-    startDate = linkedFromTaskEndDate;
+    startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    const linkFromPointX = linkedFromMovedTaskBarNode
+    let linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x + linkedFromMovedTaskBarNode.attribute.width
-      : colWidthPerDay * (Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
-    const linkToPointX = linkedToMovedTaskBarNode
+      : computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    if (linkedFromTaskIsMilestone) {
+      linkFromPointX = linkedFromMovedTaskBarNode
+        ? linkedFromMovedTaskBarNode.attribute.x +
+          linkedFromMovedTaskBarNode.attribute.width +
+          (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
+        : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
+          taskBarMilestoneHypotenuse / 2;
+    }
+    let linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x
-      : colWidthPerDay * Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
-
+      : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
+    if (linkedToTaskIsMilestone) {
+      linkToPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
+    }
     linePoints = [
       {
         x: linkFromPointX,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x: linkFromPointX + distanceToTaskBar,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x: linkFromPointX + distanceToTaskBar,
         y:
           rowHeight *
-          (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1))
+            (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1)) +
+          fromNodeDiffY
       },
       {
         x: linkToPointX - distanceToTaskBar,
         y:
           rowHeight *
-          (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1))
+            (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1)) +
+          fromNodeDiffY
       },
       {
         x: linkToPointX - distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       },
       {
         x: linkToPointX,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       }
     ];
     if (linkFromPointX + distanceToTaskBar <= linkToPointX - distanceToTaskBar) {
       linePoints.splice(2, 3, {
         x: linkFromPointX + distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       });
     }
     const lastPoint = linePoints[linePoints.length - 1];
@@ -519,48 +695,61 @@ export function updateLinkLinePoints(
     ];
   } else if (type === DependencyType.StartToFinish) {
     startDate = linkedFromTaskStartDate;
-    endDate = linkedToTaskEndDate;
+    endDate = linkedToTaskStartDate;
 
-    const linkFromPointX = linkedFromMovedTaskBarNode
+    let linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x
-      : colWidthPerDay * Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
-    const linkToPointX = linkedToMovedTaskBarNode
+      : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+    if (linkedFromTaskIsMilestone) {
+      linkFromPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
+    }
+    let linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x + linkedToMovedTaskBarNode.attribute.width
-      : colWidthPerDay * (Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+      : computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    if (linkedToTaskIsMilestone) {
+      linkToPointX = linkedToMovedTaskBarNode
+        ? linkedToMovedTaskBarNode.attribute.x +
+          linkedToMovedTaskBarNode.attribute.width +
+          (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
+        : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
+          taskBarMilestoneHypotenuse / 2;
+    }
     linePoints = [
       {
         x: linkFromPointX,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x: linkFromPointX - distanceToTaskBar,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
         x: linkFromPointX - distanceToTaskBar,
         y:
           rowHeight *
-          (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1))
+            (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1)) +
+          fromNodeDiffY
       },
       {
         x: linkToPointX + distanceToTaskBar,
         y:
           rowHeight *
-          (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1))
+            (linkedFromTaskRecordRowIndex + (linkedFromTaskRecordRowIndex > linkedToTaskRecordRowIndex ? 0 : 1)) +
+          fromNodeDiffY
       },
       {
         x: linkToPointX + distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       },
       {
         x: linkToPointX,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       }
     ];
     if (linkFromPointX - distanceToTaskBar >= linkToPointX + distanceToTaskBar) {
       linePoints.splice(2, 3, {
         x: linkFromPointX - distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       });
     }
     const lastPoint = linePoints[linePoints.length - 1];
@@ -585,28 +774,57 @@ export function updateLinkLinePoints(
   } else if (type === DependencyType.StartToStart) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    const linkFromPointX = linkedFromMovedTaskBarNode
+    let linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x
-      : colWidthPerDay * Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
-    const linkToPointX = linkedToMovedTaskBarNode
+      : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+    if (linkedFromTaskIsMilestone) {
+      linkFromPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
+    }
+    let linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x
-      : colWidthPerDay * Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+      : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
+    if (linkedToTaskIsMilestone) {
+      linkToPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
+    }
     linePoints = [
       {
         x: linkFromPointX,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
-        x: Math.min(linkFromPointX, linkToPointX) - distanceToTaskBar,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        x:
+          (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
+            ? linkFromPointX
+            : Math.min(linkFromPointX, linkToPointX)) - distanceToTaskBar,
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
-        x: Math.min(linkFromPointX, linkToPointX) - distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        x:
+          (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
+            ? linkFromPointX
+            : Math.min(linkFromPointX, linkToPointX)) - distanceToTaskBar,
+        y:
+          rowHeight *
+            (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5)) +
+          toNodeDiffY
+      },
+      {
+        x: linkToPointX - distanceToTaskBar,
+        y:
+          rowHeight *
+            (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5)) +
+          toNodeDiffY
+      },
+      {
+        x:
+          (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
+            ? linkToPointX
+            : Math.min(linkFromPointX, linkToPointX)) - distanceToTaskBar,
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       },
       {
         x: linkToPointX,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       }
     ];
     const lastPoint = linePoints[linePoints.length - 1];
@@ -629,30 +847,66 @@ export function updateLinkLinePoints(
       }
     ];
   } else if (type === DependencyType.FinishToFinish) {
-    startDate = linkedFromTaskEndDate;
-    endDate = linkedToTaskEndDate;
-    const linkFromPointX = linkedFromMovedTaskBarNode
+    startDate = linkedFromTaskStartDate;
+    endDate = linkedToTaskStartDate;
+    let linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x + linkedFromMovedTaskBarNode.attribute.width
-      : colWidthPerDay * (Math.ceil(Math.abs(startDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
-    const linkToPointX = linkedToMovedTaskBarNode
+      : computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    if (linkedFromTaskIsMilestone) {
+      linkFromPointX = linkedFromMovedTaskBarNode
+        ? linkedFromMovedTaskBarNode.attribute.x +
+          linkedFromMovedTaskBarNode.attribute.width +
+          (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
+        : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
+          taskBarMilestoneHypotenuse / 2;
+    }
+    let linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x + linkedToMovedTaskBarNode.attribute.width
-      : colWidthPerDay * (Math.ceil(Math.abs(endDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+      : computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    if (linkedToTaskIsMilestone) {
+      linkToPointX = linkedToMovedTaskBarNode
+        ? linkedToMovedTaskBarNode.attribute.x +
+          linkedToMovedTaskBarNode.attribute.width +
+          (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
+        : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
+          taskBarMilestoneHypotenuse / 2;
+    }
     linePoints = [
       {
         x: linkFromPointX,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
-        x: Math.max(linkFromPointX, linkToPointX) + distanceToTaskBar,
-        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5)
+        x:
+          (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
+            ? linkFromPointX
+            : Math.max(linkFromPointX, linkToPointX)) + distanceToTaskBar,
+        y: rowHeight * (linkedFromTaskRecordRowIndex + 0.5) + fromNodeDiffY
       },
       {
-        x: Math.max(linkFromPointX, linkToPointX) + distanceToTaskBar,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        x:
+          (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex
+            ? linkFromPointX
+            : Math.max(linkFromPointX, linkToPointX)) + distanceToTaskBar,
+        y:
+          rowHeight *
+            (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5)) +
+          toNodeDiffY
+      },
+      {
+        x: linkToPointX + distanceToTaskBar,
+        y:
+          rowHeight *
+            (linkedToTaskRecordRowIndex + (linkedFromTaskRecordRowIndex === linkedToTaskRecordRowIndex ? 1 : 0.5)) +
+          toNodeDiffY
+      },
+      {
+        x: linkToPointX + distanceToTaskBar,
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       },
       {
         x: linkToPointX,
-        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5)
+        y: rowHeight * (linkedToTaskRecordRowIndex + 0.5) + toNodeDiffY
       }
     ];
     const lastPoint = linePoints[linePoints.length - 1];

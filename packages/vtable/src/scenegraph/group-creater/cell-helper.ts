@@ -33,10 +33,11 @@ import type { CreateCheckboxCellGroup } from './cell-type/checkbox-cell';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
-import { isArray, isValid } from '@visactor/vutils';
+import { isArray, isNumber, isValid } from '@visactor/vutils';
 import { breakString } from '../utils/break-string';
 import type { CreateRadioCellGroup } from './cell-type/radio-cell';
 import { onBeforeAttributeUpdateForInvertHighlight } from '../../plugins/invert-highlight';
+import { getCellBorderStrokeWidth } from '../utils/cell-border-stroke-width';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -158,7 +159,6 @@ export function createCell(
           cellWidth,
           cellHeight,
           false,
-          // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           padding,
           range,
@@ -384,7 +384,8 @@ export function createCell(
       textBaseline,
       table,
       cellTheme,
-      define as RadioColumnDefine
+      define as RadioColumnDefine,
+      range
     );
   }
 
@@ -392,7 +393,14 @@ export function createCell(
   return cellGroup;
 }
 
-export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean, isShadow?: boolean) {
+export function updateCell(
+  col: number,
+  row: number,
+  table: BaseTableAPI,
+  addNew?: boolean,
+  isShadow?: boolean,
+  forceFastUpdate?: boolean
+) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
   const cellLocation = table.getCellLocation(col, row);
@@ -431,7 +439,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
           table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
           table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
           false,
-          // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           [0, 0, 0, 0],
           range,
@@ -515,11 +522,13 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     !addNew &&
     !isMerge &&
     !(define?.customLayout || define?.customRender || define?.headerCustomLayout || define?.headerCustomRender) &&
-    canUseFastUpdate(col, row, oldCellGroup, autoWrapText, mayHaveIcon, table)
+    (forceFastUpdate || canUseFastUpdate(col, row, oldCellGroup, autoWrapText, mayHaveIcon, table))
   ) {
     // update group
     const cellWidth = table.getColWidth(col);
     const cellHeight = table.getRowHeight(row);
+    const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
+
     oldCellGroup.setAttributes({
       width: cellWidth,
       height: cellHeight,
@@ -527,7 +536,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       lineWidth: cellTheme?.group?.lineWidth ?? undefined,
       fill: cellTheme?.group?.fill ?? undefined,
       stroke: cellTheme?.group?.stroke ?? undefined,
-      strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
+      strokeArrayWidth: strokeArrayWidth ?? undefined,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
       cornerRadius: cellTheme?.group?.cornerRadius ?? 0,
@@ -545,7 +554,12 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
     // update text
     const textMark = oldCellGroup.getChildByName('text');
-    if (textMark) {
+    if (forceFastUpdate && textMark) {
+      const attribute = {
+        textBaseline: 'top'
+      };
+      textMark.setAttributes(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
+    } else if (textMark) {
       const text = table.getCellValue(col, row);
       const { text: textArr, moreThanMaxCharacters } = breakString(text, table);
 
@@ -759,7 +773,9 @@ function updateCellContent(
       const reactGroup = oldCellGroup.getChildByName('custom-container');
       if (reactGroup) {
         const { col, row } = reactGroup;
-        table.reactCustomLayout.removeCustomCell(col, row);
+        if (isNumber(col) && isNumber(row)) {
+          table.reactCustomLayout.removeCustomCell(col, row);
+        }
       }
     }
   }
@@ -810,7 +826,6 @@ function canUseFastUpdate(
   // const define = table.getBodyColumnDefine(col, row);
   // const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
   const cellType = table.getBodyColumnType(col, row);
-  // const autoRowHeight = table.heightMode === 'autoHeight';
   const autoRowHeight = table.isAutoRowHeight(row);
   const value = table.getCellValue(col, row);
 
@@ -902,7 +917,6 @@ export function dealWithMergeCellSize(
           cellGroup,
           cellHeight,
           cellHeight,
-          // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           padding,
           textAlign,
@@ -917,7 +931,6 @@ export function dealWithMergeCellSize(
           cellWidth,
           cellHeight,
           0,
-          // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           padding,
           textAlign,
@@ -953,7 +966,6 @@ export function dealWithMergeCellSizeForShadow(
       cellGroup,
       cellHeight,
       cellHeight,
-      // table.heightMode === 'autoHeight',
       table.isAutoRowHeight(row),
       padding,
       textAlign,
@@ -968,7 +980,6 @@ export function dealWithMergeCellSizeForShadow(
       cellWidth,
       cellHeight,
       0,
-      // table.heightMode === 'autoHeight',
       table.isAutoRowHeight(row),
       padding,
       textAlign,
@@ -1098,7 +1109,6 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
           table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
           table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
           false,
-          // table.heightMode === 'autoHeight',
           table.isAutoRowHeight(row),
           [0, 0, 0, 0],
           customMergeRange,

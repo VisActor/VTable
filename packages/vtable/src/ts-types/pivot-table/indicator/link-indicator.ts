@@ -1,5 +1,6 @@
 import type { ITextStyleOption } from '../../column';
 import type { StylePropertyFunctionArg } from '../../style-define';
+import type { FieldGetter } from '../../table-engine';
 import type { IBasicColumnIndicator, IBasicHeaderIndicator } from './basic-indicator';
 
 export interface ILinkHeaderIndicator extends IBasicHeaderIndicator {
@@ -16,7 +17,7 @@ export interface ILinkHeaderIndicator extends IBasicHeaderIndicator {
   linkJump?: boolean; // 链接是否点击跳转
   //默认false
   linkDetect?: boolean; // 链接是否进行正则检测
-  templateLink?: string;
+  templateLink?: string | FieldGetter;
 
   linkTarget?: string; // window.open的第二个参数
   linkWindowFeatures?: string; // window.open的第三个参数
@@ -33,7 +34,7 @@ export interface ILinkColumnIndicator extends IBasicColumnIndicator {
 
   linkJump?: boolean; // 链接是否点击跳转
   linkDetect?: boolean; // 链接是否进行正则检测
-  templateLink?: string;
+  templateLink?: string | FieldGetter;
 
   linkTarget?: string; // window.open的第二个参数
   linkWindowFeatures?: string; // window.open的第三个参数

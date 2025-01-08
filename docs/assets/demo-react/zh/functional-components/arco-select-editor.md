@@ -3,7 +3,7 @@ category: examples
 group: functional-components
 title: 自定义编辑器中使用arco列表选择器
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/arco-select-editor.png
-link: '../guide/Developer_Ecology/react'
+link: Developer_Ecology/react
 ---
 
 # 自定义编辑器中使用 arco 列表选择器

@@ -4,12 +4,12 @@ group: component
 title: cell custom component + dom component
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-vtable-dom-component.gif
 order: 1-1
-link: '../guide/custom_define/react-custom-component'
+link: custom_define/react-custom-component
 ---
 
 # cell custom component + dom component
 
-Use ArcoDesign in the cell pop-up window. For details, please refer to [Custom Components](../guide/custom_define/react-custom-component)
+Use ArcoDesign in the cell pop-up window. For details, please refer to [Custom Components](../../guide/custom_define/react-custom-component)
 
 ## code demo
 
@@ -22,7 +22,7 @@ const { Avatar, Card, Space, Typography } = ArcoDesign;
 const { IconThumbUp, IconShareInternal, IconMore } = ArcoDesignIcon;
 const { Meta } = Card;
 
-const UserProfileComponent = (props) => {
+const UserProfileComponent = props => {
   const { table, row, col, rect, dataValue } = props;
   if (!table || row === undefined || col === undefined) {
     return null;
@@ -65,11 +65,11 @@ const UserProfileComponent = (props) => {
             element: <CardInfo record={record} hover={hover} row={row} />
           }
         }}
-        onMouseEnter={(event) => {
+        onMouseEnter={event => {
           setHover(true);
           event.currentTarget.stage.renderNextFrame(); // to do: auto execute in react-vtable
         }}
-        onMouseLeave={(event) => {
+        onMouseLeave={event => {
           setHover(false);
           event.currentTarget.stage.renderNextFrame();
         }}
@@ -81,7 +81,7 @@ const UserProfileComponent = (props) => {
             image: record.bloggerAvatar,
             cornerRadius: 10,
             boundsPadding: [0, 0, 0, 10],
-            cursor: 'pointer',
+            cursor: 'pointer'
           }}
         />
         <Text
@@ -91,7 +91,7 @@ const UserProfileComponent = (props) => {
             fontFamily: 'sans-serif',
             fill: 'rgb(51, 101, 238)',
             boundsPadding: [0, 0, 0, 10],
-            cursor: 'pointer',
+            cursor: 'pointer'
           }}
         />
       </Group>
@@ -99,7 +99,7 @@ const UserProfileComponent = (props) => {
   );
 };
 
-const CardInfo = (props) => {
+const CardInfo = props => {
   const { bloggerName, bloggerAvatar, introduction, city } = props.record;
   return props.hover ? (
     <Card
@@ -138,7 +138,9 @@ const CardInfo = (props) => {
         description={introduction}
       />
     </Card>
-  ) : <></>;
+  ) : (
+    <></>
+  );
 };
 
 function App() {

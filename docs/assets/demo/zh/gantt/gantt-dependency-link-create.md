@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: 创建任务之间依赖线
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-dependency-link-line-create.gif
-link: '../guide/gantt/introduction'
+link: gantt/introduction
 option: Gantt#taskBar
 ---
 
@@ -69,9 +69,7 @@ const records = [
     title: 'Scope',
     developer: 'liufangfang.jane@bytedance.com',
     start: '07/19/2024',
-    end: '07/20/2024',
-    progress: 60,
-    priority: 'P0'
+    type: 'milestone'
   },
   {
     id: 6,

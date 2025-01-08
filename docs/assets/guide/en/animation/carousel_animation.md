@@ -8,7 +8,7 @@ VTable provides carousel animation plugin, which can implement the carousel scro
 
 ## Carousel Animation Configuration
 
-- `VTable.CarouselAnimationPlugin`  carousel animation plugin, can configure the following parameters:
+- `CarouselAnimationPlugin`  carousel animation plugin, can configure the following parameters:
   - `rowCount` scroll row count in a carousel animation
   - `colCount` scroll column count in a carousel animation
   - `animationDuration` The duration of a single carousel animation, in milliseconds
@@ -17,7 +17,7 @@ VTable provides carousel animation plugin, which can implement the carousel scro
   - `replaceScrollAction` Whether to replace the scroll action, if true, the scroll action will be replaced by the carousel animation
 
 ```js
-const carouselAnimationPlugin = new VTable.CarouselAnimationPlugin(tableInstance, {
+const carouselAnimationPlugin = new CarouselAnimationPlugin(tableInstance, {
   rowCount: 2,
   replaceScrollAction: true
 });

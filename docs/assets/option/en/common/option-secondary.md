@@ -30,6 +30,10 @@ The height adaptable strategy in adaptive mode, default is 'only-body'.
 - 'only-body': Only the rows in the body part participate in the height adaptation calculation, and the height of the header part remains unchanged.
 - 'all': All columns participate in the height adaptation calculation.
 
+#${prefix} autoHeightInAdaptiveMode(boolean) = true
+
+When the adaptive mode is configured, the default value is true, that is, the length of the container is equal to the height of the stretched row based on the calculation of the height of each row. If you do not need to calculate the row height, set it to false if the default row height is used
+
 #${prefix} columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
 
 When calculating the content width, the limited area participates in the calculation:
@@ -88,21 +92,37 @@ Allow the number of frozen columns, indicating how many columns will show the fr
 
 Whether to show the fixed column pin icon, effective for basic tables
 
-#${prefix} defaultRowHeight(number) = 40
+#${prefix} defaultRowHeight(number|'auto') = 40
 
-Default row height
+Default row height.
+
+- 'auto': The default row height calculated based on the row height. Combined with defaultHeaderRowHeight, it can achieve the effect of automatic row height calculation for the header or body part.
+- Specific value: Set a specific row height.
 
 #${prefix} defaultHeaderRowHeight(Array|number)
 
-Default row height for list header, can be set row by row. If not set, defaultRowHeight is used.
+The default row height of the column header can be set row by row. If not set, the defaultRowHeight value will be used as the row height of the table header.
+
+Specific definition:
+
+```
+defaultHeaderRowHeight?: (number | 'auto') | (number | 'auto')[];
+```
 
 #${prefix} defaultColWidth(number) = 80
 
-Default column width value
+Column width default value
 
 #${prefix} defaultHeaderColWidth(Array|number)
 
-Default column width for row headers, can be set column by column. If not set, defaultColWidth is used.
+The default column width of the row header can be set column by column. If not set, the value of defaultColWidth will be used as the column width and height of the header.
+
+Specific definition:
+
+```
+/** The default column width of the row header can be set column by column. If not, defaultColWidth is used */
+defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
+```
 
 #${prefix} keyboardOptions(Object)
 
@@ -147,6 +167,10 @@ If this configuration is turned on, if you are currently editing a cell, the arr
 
 Switching the selected cells with the up, down, left and right arrow keys is not affected by this configuration.
 
+##${prefix} ctrlMultiSelect(boolean) = true
+
+Whether to enable ctrl multi-select. Default is true.
+
 #${prefix} eventOptions(Object)
 
 Issue settings related to event triggering, specific configuration items:
@@ -171,7 +195,7 @@ Mouse hover over the cell right border can drag and adjust column width. This op
 - 'header' Only adjustable in header cells
 - 'body' Only adjustable in body cells
 
-#${prefix} columnResizeMode(string) = 'all'
+#${prefix} rowResizeMode(string) = 'none'
 
 Mouse hover over the cell bottom border can drag and adjust row height. This operation can trigger the following range:
 
@@ -225,7 +249,7 @@ Possible values:
 
 'body': Do not select the table header. Clicking a row header selects all body cells in the row. Clicking a column header selects all body cells in the column.
 
-##${prefix} disableSelect (boolean) = false
+##${prefix} disableSelect (boolean | ((col: number, row: number, table: BaseTableAPI) => boolean)) = false
 
 Do not respond to mouse select interaction.
 
@@ -247,7 +271,11 @@ Whether to disable dragging selection.
 
 ##${prefix} highlightInRange(boolean) = false
 
-Will the entire row or column be highlighted when select in multiple rows or columns?
+Will the entire row or column be highlighted when select in multiple rows or columns.
+
+##${prefix} makeSelectCellVisible(boolean) = true
+
+Whether to make the selected cell visible, default is true.
 
 #${prefix} theme(Object)
 

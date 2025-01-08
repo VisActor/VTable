@@ -1,5 +1,6 @@
 import type { ColumnsDefine } from '@visactor/vtable';
 import type { GanttConstructorOptions, TYPES } from '../../src/index';
+import * as VTableGantt from '../../src/index';
 import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
@@ -10,8 +11,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-30',
-      end: '2024-08-14',
+      start: '2024-07-04',
+      end: '2024-07-14',
       progress: 31,
       priority: 'P0'
     },
@@ -19,8 +20,8 @@ export function createTable() {
       id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
+      start: '2024-07-05',
+      end: '2024-07-05',
       progress: 60,
       priority: 'P0'
     },
@@ -28,8 +29,8 @@ export function createTable() {
       id: 3,
       title: 'Determine project scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024/07/24',
-      end: '2024/08/04',
+      start: '2024/07/08',
+      end: '2024/07/14',
       progress: 100,
       priority: 'P1'
     },
@@ -37,8 +38,8 @@ export function createTable() {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-08-04',
-      end: '2024-08-04',
+      start: '2024-07-09',
+      end: '2024-07-14',
       progress: 90,
       priority: 'P0'
     },
@@ -46,8 +47,8 @@ export function createTable() {
       id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '07/24/2024',
-      end: '08/04/2024',
+      start: '07/14/2024',
+      end: '07/24/2024',
       progress: 60,
       priority: 'P0'
     },
@@ -55,8 +56,8 @@ export function createTable() {
       id: 3,
       title: 'Determine project scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
-      end: '2024-08-04',
+      start: '2024-07-10',
+      end: '2024-07-14',
       progress: 100,
       priority: 'P1'
     },
@@ -764,7 +765,7 @@ export function createTable() {
     }
   ];
 
-  const columns: ColumnsDefine = [
+  const columns = [
     // {
     //   field: 'id',
     //   title: 'ID',
@@ -804,14 +805,70 @@ export function createTable() {
     }
   ];
   const option: GanttConstructorOptions = {
-    records,
+    records: [],
     taskListTable: {
       columns: columns,
       tableWidth: 400,
       minTableWidth: 100,
       maxTableWidth: 600
     },
-
+    dependency: {
+      links: [
+        {
+          type: VTableGantt.TYPES.DependencyType.FinishToStart,
+          linkedFromTaskKey: 1,
+          linkedToTaskKey: 2
+        },
+        {
+          type: VTableGantt.TYPES.DependencyType.StartToFinish,
+          linkedFromTaskKey: 2,
+          linkedToTaskKey: 3
+        },
+        {
+          type: VTableGantt.TYPES.DependencyType.StartToStart,
+          linkedFromTaskKey: 3,
+          linkedToTaskKey: 4
+        },
+        {
+          type: VTableGantt.TYPES.DependencyType.FinishToFinish,
+          linkedFromTaskKey: 4,
+          linkedToTaskKey: 5
+        },
+        {
+          type: VTableGantt.TYPES.DependencyType.StartToFinish,
+          linkedFromTaskKey: 5,
+          linkedToTaskKey: 2
+        },
+        {
+          type: VTableGantt.TYPES.DependencyType.StartToStart,
+          linkedFromTaskKey: 52,
+          linkedToTaskKey: 1
+        },
+        {
+          type: VTableGantt.TYPES.DependencyType.StartToStart,
+          linkedFromTaskKey: 53,
+          linkedToTaskKey: 3
+        },
+        {
+          type: VTableGantt.TYPES.DependencyType.FinishToFinish,
+          linkedFromTaskKey: 4,
+          linkedToTaskKey: 54
+        },
+        {
+          type: VTableGantt.TYPES.DependencyType.FinishToStart,
+          linkedFromTaskKey: 1,
+          linkedToTaskKey: 5
+        }
+      ],
+      // linkLineSelectable: false,
+      linkSelectedLineStyle: {
+        shadowBlur: 5, //阴影宽度
+        shadowColor: 'red',
+        lineColor: 'red',
+        lineWidth: 1
+      },
+      linkCreatable: true
+    },
     frame: {
       verticalSplitLineMoveable: true,
       outerFrameStyle: {
@@ -830,6 +887,7 @@ export function createTable() {
     },
     grid: {
       // backgroundColor: 'gray',
+      weekendBackgroundColor: 'yellow',
       verticalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
@@ -838,12 +896,14 @@ export function createTable() {
         lineWidth: 1,
         lineColor: '#e1e4e8'
       }
+      // weekendBackgroundColor: 'rgba(0,100,0,0.3)',
+      // verticalBackgroundColor: ['#fbfbfc', '#fbfbf0', '#fbfbe0'] // args => (args.index % 2 === 0 ? '#fbfbfc' : '#fbfbf0')
+      // rowBackgroundColor: ['rgba(33,44,255,0.2)', '#fbfbf0', '#fbfbe0'] //args => (args.index % 2 === 0 ? '#fbfbfc' : '#fbfbf0')
     },
     headerRowHeight: 60,
     rowHeight: 40,
 
     taskBar: {
-      selectable: false,
       startDateField: 'start',
       endDateField: 'end',
       progressField: 'progress',
@@ -861,6 +921,14 @@ export function createTable() {
         completedBarColor: '#91e8e0',
         /** 任务条的圆角 */
         cornerRadius: 10
+      },
+      selectedBarStyle: {
+        shadowBlur: 5, //阴影宽度
+        shadowOffsetX: 0, //x方向偏移
+        shadowOffsetY: 0, //Y方向偏移
+        shadowColor: 'black', //阴影颜色
+        borderColor: 'red', //边框颜色
+        borderLineWidth: 1 //边框宽度
       }
     },
     timelineHeader: {
@@ -876,10 +944,14 @@ export function createTable() {
       colWidth: 60,
       scales: [
         {
+          unit: 'month',
+          step: 1
+        },
+        {
           unit: 'week',
           step: 1,
           startOfWeek: 'sunday',
-          format(date: TYPES.DateFormatArgumentType) {
+          format(date) {
             return `Week ${date.dateIndex}`;
           },
           style: {
@@ -891,7 +963,7 @@ export function createTable() {
         {
           unit: 'day',
           step: 1,
-          format(date: TYPES.DateFormatArgumentType) {
+          format(date) {
             return date.dateIndex.toString();
           },
           style: {
@@ -909,28 +981,28 @@ export function createTable() {
         // }
       ]
     },
-    minDate: '2024-07-01',
-    maxDate: '2024-10-15',
-    markLine: [
-      {
-        date: '2024-07-17',
-        style: {
-          lineWidth: 1,
-          lineColor: 'blue',
-          lineDash: [8, 4]
-        }
-      },
-      {
-        date: '2024-08-17',
-        position: 'middle',
-        scrollToMarkLine: true,
-        style: {
-          lineWidth: 2,
-          lineColor: 'red',
-          lineDash: [8, 4]
-        }
-      }
-    ],
+    // minDate: '2024-07-01',
+    // maxDate: '2024-10-15',
+    // markLine: [
+    //   {
+    //     date: '2024-07-17',
+    //     style: {
+    //       lineWidth: 1,
+    //       lineColor: 'blue',
+    //       lineDash: [8, 4]
+    //     }
+    //   },
+    //   {
+    //     date: '2024-08-17',
+    //     position: 'middle',
+    //     // scrollToMarkLine: true,
+    //     style: {
+    //       lineWidth: 2,
+    //       lineColor: 'red',
+    //       lineDash: [8, 4]
+    //     }
+    //   }
+    // ],
     rowSeriesNumber: {
       title: '行号',
       dragOrder: true,
@@ -940,11 +1012,16 @@ export function createTable() {
         borderColor: '#e1e4e8'
       },
       style: {
-        borderColor: '#e1e4e8'
+        bgColor: 'gray',
+        color: '#FFF',
+        fontSize: 14
       }
     },
     scrollStyle: {
       visible: 'scrolling'
+    },
+    eventOptions: {
+      preventDefaultContextMenu: false
     },
     overscrollBehavior: 'none'
   };
@@ -965,6 +1042,8 @@ export function createTable() {
   // ]
   const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
   window.ganttInstance = ganttInstance;
+  ganttInstance.setRecords(records);
+
   ganttInstance.on('scroll', e => {
     console.log('scroll', e);
   });
@@ -979,6 +1058,9 @@ export function createTable() {
   });
   ganttInstance.on('click_task_bar', e => {
     console.log('click_task_bar', e);
+  });
+  ganttInstance.on('contextmenu_task_bar', e => {
+    console.log('contextmenu_task_bar', e);
   });
   ganttInstance.taskListTableInstance?.on('scroll', e => {
     console.log('listTable scroll', e);

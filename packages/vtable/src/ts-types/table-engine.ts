@@ -29,7 +29,7 @@ import type { ICellAxisOption, ITableAxisOption } from './component/axis';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
 import type { DataSource } from '../data';
-import type { EditManeger } from '../edit/edit-manager';
+import type { EditManager } from '../edit/edit-manager';
 import type { ICustomRender } from './customElement';
 import type { ICustomLayout } from './customLayout';
 import type { ColorPropertyDefine, StylePropertyFunctionArg } from './style-define';
@@ -104,6 +104,10 @@ export interface TableKeyboardOptions {
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
   /** 快捷键粘贴，默认：false 。粘贴内容到指定位置（即粘贴前要有选中的单元格）；支持批量粘贴；粘贴生效仅针对配置了编辑 editor 的单元格；*/
   pasteValueToCell?: boolean; //paste是和浏览器的快捷键一致的
+  /** 方向键是否可以更改选中单元格位置，默认：true */
+  moveSelectedCellOnArrowKeys?: boolean;
+  /** 是否启用ctrl多选框 */
+  ctrlMultiSelect?: boolean;
 }
 export interface TableEventOptions {
   /** 是否阻止右键的默认行为， 默认为true。*/
@@ -132,6 +136,9 @@ export interface IRowSeriesNumber {
   dragOrder?: boolean;
   /** 是否禁止列宽调整 */
   disableColumnResize?: boolean;
+
+  /** 是否开启树形结构复选框 */
+  enableTreeCheckbox?: boolean;
 }
 
 export interface ColumnSeriesNumber {
@@ -275,7 +282,7 @@ export type GroupConfig = {
 export interface ListTableAPI extends BaseTableAPI {
   transpose: boolean;
   options: ListTableConstructorOptions;
-  editorManager: EditManeger;
+  editorManager: EditManager;
   sortState: SortState[] | SortState | null;
   // /** 数据分析相关配置  */
   // dataConfig?: IListTableDataConfig;
@@ -466,7 +473,7 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
 export interface PivotTableAPI extends BaseTableAPI {
   records?: any;
   options: PivotTableConstructorOptions;
-  editorManager: EditManeger;
+  editorManager: EditManager;
   // internalProps: PivotTableProtected;
   pivotSortState: {
     dimensions: IDimensionInfo[];
@@ -557,6 +564,8 @@ export interface IIndicatorHeaderNode {
   children?: IHeaderTreeDefine[] | null;
   //跨单元格合并显示该维度值，默认是1。如果表头层数最大是5，那么最末级剩下多大就合并多大层数的单元格
   levelSpan?: number;
+  /** 隐藏该指标。 但内部聚合逻辑是正常执行的 */
+  hide?: boolean;
 }
 export interface IDimensionHeaderNode {
   /**
@@ -593,78 +602,3 @@ export type CustomMerge = {
 
 export type ColumnInfo = { col: number; left: number; right: number; width: number };
 export type RowInfo = { row: number; top: number; bottom: number; height: number };
-
-//#region gantt
-export interface GanttConstructorOptions {
-  container?: HTMLElement;
-  /**
-   * 数据集合
-   */
-  records?: any[];
-  /** 时间刻度 */
-  timelineScales: {
-    unit: 'day' | 'week' | 'month' | 'quarter' | 'year';
-    step: number;
-    format: (date: Date) => string;
-    // 时间刻度对应的字段名
-    headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
-  }[];
-  /** 定义列 */
-  infoTableColumns?: ColumnsDefine; // (string | IDimension)[];
-  infoTableWidth?: 'auto' | number;
-  gridStyle?: {
-    vertical: {
-      lineColor?: string;
-      lineWidth?: number;
-    };
-    horizontal: {
-      lineColor?: string;
-      lineWidth?: number;
-    };
-  };
-  timelineStyle?: {} | {}[];
-  /** 时间刻度对应的字段名 */
-  startField: string;
-  /** 时间刻度对应的字段名 */
-  endField: string;
-  /** 指定整个甘特图的最小日期 */
-  minDate?: string;
-  /** 指定整个甘特图的最大日期 不设置的话用默认规则*/
-  maxDate?: string;
-
-  /** 设置的表格主题 */
-  theme?: TableTheme;
-  /** 设置任务条样式 可以设置多组 依次循环使用 */
-  barStyle?: IBarStyleOption[];
-  defaultHeaderRowHeight?: number;
-  defaultRowHeight?: number;
-  timelineColWidth?: number;
-
-  rowSeriesNumber?: IRowSeriesNumber;
-  dragHeader?: boolean;
-
-  /**
-   * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
-   *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
-   * */
-  overscrollBehavior?: 'auto' | 'none';
-
-  // infoTableTheme?: ITableThemeDefine;
-}
-
-export type IBarStyleOption = {
-  /** 任务条的颜色 */
-  barColor?: ColorPropertyDefine;
-  /** 已完成部分任务条的颜色 */
-  barColor2?: ColorPropertyDefine;
-  /** 任务条的宽度 */
-  width?: number;
-  /** 任务条的圆角 */
-  cornerRadius?: number;
-  /** 任务条的边框 */
-  borderWidth?: number;
-  /** 边框颜色 */
-  borderColor?: ColorPropertyDefine;
-  font?: ITextStyleOption;
-};
-//#endregion

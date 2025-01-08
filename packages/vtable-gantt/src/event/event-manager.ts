@@ -4,7 +4,7 @@ import type { Gantt } from '../Gantt';
 import { EventHandler } from '../event/EventHandler';
 import { handleWhell } from '../event/scroll';
 import { formatDate, parseDateFormat, throttle } from '../tools/util';
-import { GANTT_EVENT_TYPE, InteractionState } from '../ts-types';
+import { GANTT_EVENT_TYPE, InteractionState, TasksShowMode } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
 import { DayTimes, getDateIndexByX, getTaskIndexByY } from '../gantt-helper';
@@ -106,8 +106,28 @@ function bindTableGroupListener(event: EventManager) {
         );
         stateManager.updateInteractionState(InteractionState.grabing);
       } else if (gantt.parsedOptions.taskBarMoveable) {
-        stateManager.startMoveTaskBar(downBarNode, (e.nativeEvent as any).x, (e.nativeEvent as any).y, e.offset.y);
-        stateManager.updateInteractionState(InteractionState.grabing);
+        let moveable: boolean = true;
+        if (typeof gantt.parsedOptions.taskBarMoveable === 'function') {
+          const { startDate, endDate, taskRecord } = scene._gantt.getTaskInfoByTaskListIndex(
+            (downBarNode as GanttTaskBarNode).task_index,
+            (downBarNode as GanttTaskBarNode).sub_task_index
+          );
+
+          const args = {
+            index: (downBarNode as GanttTaskBarNode).task_index,
+            startDate,
+            endDate,
+            taskRecord,
+            ganttInstance: scene._gantt
+          };
+          moveable = gantt.parsedOptions.taskBarMoveable(args);
+        } else {
+          moveable = gantt.parsedOptions.taskBarMoveable;
+        }
+        if (moveable) {
+          stateManager.startMoveTaskBar(downBarNode, (e.nativeEvent as any).x, (e.nativeEvent as any).y, e.offset.y);
+          stateManager.updateInteractionState(InteractionState.grabing);
+        }
       }
     } else if (downLeftLinkPointNode) {
       stateManager.startCreateDependencyLine(
@@ -140,40 +160,56 @@ function bindTableGroupListener(event: EventManager) {
           scene._gantt.stateManager.hoverTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
           stateManager.showTaskBarHover();
           if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR)) {
-            const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
-            const record = scene._gantt.getRecordByIndex(taskIndex);
+            // const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
+            const taskIndex = taskBarTarget.task_index;
+            const sub_task_index = taskBarTarget.sub_task_index;
+            const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
+              federatedEvent: e,
               event: e.nativeEvent,
               index: taskIndex,
+              sub_task_index,
               record
             });
           }
         }
       } else {
         if (scene._gantt.stateManager.hoverTaskBar.target) {
-          stateManager.hideTaskBarHover(e);
           if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR)) {
-            const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
-            const record = scene._gantt.getRecordByIndex(taskIndex);
+            // const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
+            const taskIndex = scene._gantt.stateManager.hoverTaskBar.target.task_index;
+            const sub_task_index = scene._gantt.stateManager.hoverTaskBar.target.sub_task_index;
+            const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
+              federatedEvent: e,
               event: e.nativeEvent,
               index: taskIndex,
+              sub_task_index,
               record
             });
           }
+          stateManager.hideTaskBarHover(e);
         }
         //#region hover到某一个任务 检查有没有日期安排，没有的话显示创建按钮
-        if (gantt.parsedOptions.taskBarCreatable) {
+        if (
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Inline &&
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
+          gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact &&
+          gantt.parsedOptions.taskBarCreatable
+        ) {
           const taskIndex = getTaskIndexByY(e.offset.y, gantt);
           const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
-          if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord) {
+          if (!recordTaskInfo.taskDays && recordTaskInfo.taskRecord && !recordTaskInfo.taskRecord.vtableMerge) {
             const dateIndex = getDateIndexByX(e.offset.x, gantt);
-            const showX = dateIndex * gantt.parsedOptions.timelineColWidth - gantt.stateManager.scroll.horizontalBarPos;
+            const showX =
+              (dateIndex >= 1 ? gantt.getDateColsWidth(0, dateIndex - 1) : 0) -
+              gantt.stateManager.scroll.horizontalBarPos;
             const showY = taskIndex * gantt.parsedOptions.rowHeight - gantt.stateManager.scroll.verticalBarPos;
             //    -
             // (gantt.stateManager.scroll.horizontalBarPos % gantt.parsedOptions.rowHeight);
             // const date = getDateByX(e.offset.x, gantt);
-            gantt.scenegraph.showTaskCreationButton(showX, showY, taskIndex, recordTaskInfo.taskRecord);
+            gantt.scenegraph.showTaskCreationButton(showX, showY, dateIndex);
             return;
           }
         }
@@ -262,116 +298,157 @@ function bindTableGroupListener(event: EventManager) {
       }
     }
   });
+  // pointerup如果改为pointertap 问题：新建依赖关系线不起作用
   scene.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
-    let isClickBar = false;
-    let isClickCreationButtom = false;
-    let isClickDependencyLine = false;
-    let isClickLeftLinkPoint = false;
-    let isClickRightLinkPoint = false;
-    let depedencyLink;
+    if (e.button === 0) {
+      let isClickBar = false;
+      let isClickCreationButtom = false;
+      let isClickDependencyLine = false;
+      let isClickLeftLinkPoint = false;
+      let isClickRightLinkPoint = false;
+      let depedencyLink;
 
+      const taskBarTarget = e.detailPath.find((pathNode: any) => {
+        if (pathNode.name === 'task-bar') {
+          // || pathNode.name === 'task-bar-hover-shadow';
+          isClickBar = true;
+          return true;
+        } else if (pathNode.name === 'task-creation-button') {
+          isClickCreationButtom = true;
+          return false;
+        } else if (pathNode.name === 'task-bar-link-point-left') {
+          // || pathNode.name === 'task-bar-hover-shadow';
+          isClickLeftLinkPoint = true;
+          return false;
+        } else if (pathNode.name === 'task-bar-link-point-right') {
+          // || pathNode.name === 'task-bar-hover-shadow';
+          isClickRightLinkPoint = true;
+          return false;
+        } else if (pathNode.attribute.vtable_link) {
+          isClickDependencyLine = true;
+          depedencyLink = pathNode.attribute.vtable_link;
+          return false;
+        }
+        return false;
+      });
+      if (isClickBar && scene._gantt.parsedOptions.taskBarSelectable && event.poniterState === 'down') {
+        stateManager.hideDependencyLinkSelectedLine();
+        stateManager.showTaskBarSelectedBorder(taskBarTarget);
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
+          // const taskIndex = getTaskIndexByY(e.offset.y, gantt);
+          const taskIndex = taskBarTarget.task_index;
+          const sub_task_index = taskBarTarget.sub_task_index;
+          const record = gantt.getRecordByIndex(taskIndex, sub_task_index);
+          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
+            federatedEvent: e,
+            event: e.nativeEvent,
+            index: taskIndex,
+            sub_task_index,
+            record
+          });
+        }
+      } else if (isClickCreationButtom && event.poniterState === 'down') {
+        stateManager.hideDependencyLinkSelectedLine();
+        stateManager.hideTaskBarSelectedBorder();
+        const taskIndex = getTaskIndexByY(e.offset.y, gantt);
+        const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
+        if (recordTaskInfo.taskRecord) {
+          // const minTimeUnit = gantt.parsedOptions.reverseSortedTimelineScales[0].unit;
+          const dateFormat =
+            gantt.parsedOptions.dateFormat ??
+            (gantt.parsedOptions.timeScaleIncludeHour ? 'yyyy-mm-dd hh:mm:ss' : 'yyyy-mm-dd');
+          const dateIndex = getDateIndexByX(e.offset.x, gantt);
+          const dateRange = gantt.getDateRangeByIndex(dateIndex);
+          recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField] = formatDate(dateRange.startDate, dateFormat);
+          recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField] = formatDate(dateRange.endDate, dateFormat);
+
+          gantt.scenegraph.hideTaskCreationButton();
+          gantt.updateTaskRecord(recordTaskInfo.taskRecord, taskIndex);
+          if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE)) {
+            gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE, {
+              federatedEvent: e,
+              event: e.nativeEvent,
+              index: taskIndex,
+              startDate: recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField],
+              endDate: recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField],
+              record: recordTaskInfo.taskRecord
+            });
+          }
+        }
+      } else if (
+        isClickDependencyLine &&
+        scene._gantt.parsedOptions.dependencyLinkSelectable &&
+        event.poniterState === 'down'
+      ) {
+        stateManager.hideDependencyLinkSelectedLine();
+        stateManager.hideTaskBarSelectedBorder();
+        scene._gantt.stateManager.selectedDenpendencyLink.link = depedencyLink;
+        stateManager.showDependencyLinkSelectedLine();
+      } else if ((isClickLeftLinkPoint || isClickRightLinkPoint) && event.poniterState === 'down') {
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_DEPENDENCY_LINK_POINT)) {
+          const taskIndex = getTaskIndexByY(e.offset.y, gantt);
+          const record = gantt.getRecordByIndex(taskIndex);
+          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_DEPENDENCY_LINK_POINT, {
+            event: e.nativeEvent,
+            index: taskIndex,
+            point: isClickLeftLinkPoint ? 'start' : 'end',
+            record
+          });
+        }
+        stateManager.hideTaskBarSelectedBorder();
+      } else if (isClickLeftLinkPoint && event.poniterState === 'draging') {
+        if (stateManager.isCreatingDependencyLine()) {
+          const link = stateManager.endCreateDependencyLine(e.offset.y);
+          if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK)) {
+            gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK, {
+              federatedEvent: e,
+              event: e.nativeEvent,
+              link
+            });
+          }
+        }
+      } else if (isClickRightLinkPoint && event.poniterState === 'draging') {
+        if (stateManager.isCreatingDependencyLine()) {
+          const link = stateManager.endCreateDependencyLine(e.offset.y);
+          if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK)) {
+            gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK, {
+              federatedEvent: e,
+              event: e.nativeEvent,
+              link
+            });
+          }
+        }
+      } else {
+        stateManager.hideDependencyLinkSelectedLine();
+        stateManager.hideTaskBarSelectedBorder();
+      }
+    }
+  });
+  scene.tableGroup.addEventListener('rightdown', (e: FederatedPointerEvent) => {
+    let isClickBar = false;
     const taskBarTarget = e.detailPath.find((pathNode: any) => {
       if (pathNode.name === 'task-bar') {
-        // || pathNode.name === 'task-bar-hover-shadow';
         isClickBar = true;
         return true;
-      } else if (pathNode.name === 'task-creation-button') {
-        isClickCreationButtom = true;
-        return false;
-      } else if (pathNode.name === 'task-bar-link-point-left') {
-        // || pathNode.name === 'task-bar-hover-shadow';
-        isClickLeftLinkPoint = true;
-        return false;
-      } else if (pathNode.name === 'task-bar-link-point-right') {
-        // || pathNode.name === 'task-bar-hover-shadow';
-        isClickRightLinkPoint = true;
-        return false;
-      } else if (pathNode.attribute.vtable_link) {
-        isClickDependencyLine = true;
-        depedencyLink = pathNode.attribute.vtable_link;
-        return false;
       }
       return false;
     });
-    if (isClickBar && scene._gantt.parsedOptions.taskBarSelectable && event.poniterState === 'down') {
-      stateManager.hideDependencyLinkSelectedLine();
-      scene._gantt.stateManager.selectedTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
-      stateManager.showTaskBarSelectedBorder();
-      if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
-        const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-        const record = gantt.getRecordByIndex(taskIndex);
-        gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
+    if (isClickBar) {
+      if (gantt.hasListeners(GANTT_EVENT_TYPE.CONTEXTMENU_TASK_BAR)) {
+        // const taskIndex = getTaskIndexByY(e.offset.y, gantt);
+        const taskIndex = taskBarTarget.task_index;
+        const sub_task_index = taskBarTarget.sub_task_index;
+        const record = gantt.getRecordByIndex(taskIndex, sub_task_index);
+        gantt.fireListeners(GANTT_EVENT_TYPE.CONTEXTMENU_TASK_BAR, {
+          federatedEvent: e,
           event: e.nativeEvent,
           index: taskIndex,
+          sub_task_index,
           record
         });
       }
-    } else if (isClickCreationButtom && event.poniterState === 'down') {
-      stateManager.hideDependencyLinkSelectedLine();
-      stateManager.hideTaskBarSelectedBorder();
-      const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-      const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex);
-      if (recordTaskInfo.taskRecord) {
-        const dateFormat = gantt.parsedOptions.dateFormat ?? 'yyyy-mm-dd';
-        recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField] = recordTaskInfo.taskRecord[
-          gantt.parsedOptions.endDateField
-        ] = formatDate(
-          new Date(
-            gantt.parsedOptions._minDateTime +
-              Math.floor(
-                (e.offset.x + gantt.stateManager.scroll.horizontalBarPos) / gantt.parsedOptions.colWidthPerDay
-              ) *
-                DayTimes
-          ),
-          dateFormat
-        );
-        gantt.scenegraph.hideTaskCreationButton();
-        gantt.updateTaskRecord(recordTaskInfo.taskRecord, taskIndex);
-        if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE)) {
-          gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE, {
-            event: e.nativeEvent,
-            index: taskIndex,
-            startDate: recordTaskInfo.taskRecord[gantt.parsedOptions.startDateField],
-            endDate: recordTaskInfo.taskRecord[gantt.parsedOptions.endDateField],
-            record: recordTaskInfo.taskRecord
-          });
-        }
-      }
-    } else if (
-      isClickDependencyLine &&
-      scene._gantt.parsedOptions.dependencyLinkSelectable &&
-      event.poniterState === 'down'
-    ) {
-      stateManager.hideDependencyLinkSelectedLine();
-      stateManager.hideTaskBarSelectedBorder();
-      scene._gantt.stateManager.selectedDenpendencyLink.link = depedencyLink;
-      stateManager.showDependencyLinkSelectedLine();
-    } else if (isClickLeftLinkPoint && event.poniterState === 'draging') {
-      if (stateManager.isCreatingDependencyLine()) {
-        const link = stateManager.endCreateDependencyLine(e.offset.y);
-        if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK)) {
-          gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK, {
-            event: e.nativeEvent,
-            link
-          });
-        }
-      }
-    } else if (isClickRightLinkPoint && event.poniterState === 'draging') {
-      if (stateManager.isCreatingDependencyLine()) {
-        const link = stateManager.endCreateDependencyLine(e.offset.y);
-        if (gantt.hasListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK)) {
-          gantt.fireListeners(GANTT_EVENT_TYPE.CREATE_DEPENDENCY_LINK, {
-            event: e.nativeEvent,
-            link
-          });
-        }
-      }
-    } else {
-      stateManager.hideDependencyLinkSelectedLine();
-      stateManager.hideTaskBarSelectedBorder();
     }
   });
-
   scene.tableGroup.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
     if (
       (gantt.parsedOptions.scrollStyle.horizontalVisible &&
@@ -412,6 +489,11 @@ function bindContainerDomListener(eventManager: EventManager) {
   const scene = eventManager._gantt.scenegraph;
   const stateManager = gantt.stateManager;
   const handler = eventManager._eventHandler;
+  handler.on(gantt.getElement(), 'contextmenu', (e: any) => {
+    if (gantt.parsedOptions.eventOptions?.preventDefaultContextMenu !== false) {
+      e.preventDefault();
+    }
+  });
   handler.on(gantt.getElement(), 'wheel', (e: WheelEvent) => {
     handleWhell(e, stateManager, eventManager._gantt);
   });
@@ -475,8 +557,8 @@ function bindContainerDomListener(eventManager: EventManager) {
     }
     if (stateManager.interactionState === InteractionState.grabing && gantt.eventManager.poniterState === 'draging') {
       const lastX = gantt.eventManager.lastDragPointerXYOnWindow?.x ?? e.x;
-      // const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
-      if (Math.abs(lastX - e.x) >= 1) {
+      const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
+      if (Math.abs(lastX - e.x) >= 1 || Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizingTableWidth()) {
           stateManager.hideDependencyLinkSelectedLine();
           stateManager.hideTaskBarSelectedBorder();
@@ -509,7 +591,7 @@ function bindContainerDomListener(eventManager: EventManager) {
       if (stateManager.isResizingTableWidth()) {
         stateManager.endResizeTableWidth();
       } else if (stateManager.isMoveingTaskBar()) {
-        stateManager.endMoveTaskBar(e.x);
+        stateManager.endMoveTaskBar();
       } else if (stateManager.isResizingTaskBar()) {
         stateManager.endResizeTaskBar(e.x);
       }

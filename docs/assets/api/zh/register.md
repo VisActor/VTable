@@ -92,8 +92,6 @@ const tableInstance = new VTable.PivotTable({
 });
 ```
 
-2. 注册好icon 之后在 customLayout 中使用可参考[示例](../demo/custom-render/custom-cell-layout)
-
 - ColumnIconOption 定义：
 
 ```
@@ -102,13 +100,13 @@ type ColumnIconOption = ImageIcon | SvgIcon;
 
 ###ImageIcon(Object)
 
-注册图片资源的icon
+注册图片资源的 icon
 
 {{ use: image-icon(  prefix = '####') }}
 
 ###SvgIcon(Object)
 
-注册svg资源的icon
+注册 svg 资源的 icon
 
 {{ use: svg-icon(  prefix = '####') }}
 

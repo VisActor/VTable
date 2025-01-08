@@ -3,7 +3,7 @@ category: examples
 group: Custom
 title: 单元格自定义布局（JSX）
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png
-link: '../guide/custom_define/custom_layout'
+link: custom_define/custom_layout
 option: ListTable-columns-text#customLayout
 ---
 
@@ -127,7 +127,7 @@ const option = {
                     if (stateName === 'hover') {
                       return {
                         background: {
-                          fill: '#ccc',
+                          fill: '#c90',
                           cornerRadius: 5,
                           expandX: 1,
                           expandY: 1

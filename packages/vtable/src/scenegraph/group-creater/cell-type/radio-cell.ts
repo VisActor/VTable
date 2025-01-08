@@ -1,6 +1,6 @@
 import type { IThemeSpec } from '@src/vrender';
 import { Group } from '../../graphic/group';
-import type { RadioColumnDefine, RadioStyleOption } from '../../../ts-types';
+import type { CellRange, RadioColumnDefine, RadioStyleOption } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { cos, isArray, isBoolean, isNumber, isObject, isValid, merge } from '@visactor/vutils';
 import type { RadioAttributes } from '@visactor/vrender-components';
@@ -26,7 +26,8 @@ export function createRadioCellGroup(
   textBaseline: CanvasTextBaseline,
   table: BaseTableAPI,
   cellTheme: IThemeSpec,
-  define: RadioColumnDefine
+  define: RadioColumnDefine,
+  range: CellRange
 ) {
   // cell
   if (!cellGroup) {
@@ -71,6 +72,7 @@ export function createRadioCellGroup(
     cellTheme,
     define,
     cellGroup,
+    range,
     table
   );
 
@@ -110,6 +112,7 @@ function createRadio(
   cellTheme: IThemeSpec,
   define: RadioColumnDefine,
   cellGroup: Group,
+  range: CellRange,
   table: BaseTableAPI
 ) {
   const style = table._getCellStyle(col, row) as RadioStyle;
@@ -148,7 +151,7 @@ function createRadio(
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const { lineClamp } = cellStyle;
   const autoColWidth = colWidth === 'auto';
-  const autoRowHeight = table.heightMode === 'autoHeight';
+  const autoRowHeight = table.isAutoRowHeight();
 
   const attribute = {
     // text: text.length === 1 ? text[0] : text,
@@ -156,7 +159,7 @@ function createRadio(
       ? Infinity
       : cellWidth - (padding[1] + padding[3] + hierarchyOffset) - size - spaceBetweenTextAndIcon,
     // fill: true,
-    // textAlign: 'left',
+    textAlign: 'left',
     textBaseline: 'top',
     autoWrapText,
     lineClamp,
@@ -206,7 +209,7 @@ function createRadio(
       if (radioComponent) {
         cellGroup.appendChild(radioComponent);
       }
-      radioComponent.id = `radio-${col}-${row}-${index}`;
+      radioComponent.id = `radio-${range?.start.col ?? col}-${range?.start.row ?? row}-${index}`;
 
       radioComponent.render();
       const bounds = radioComponent.AABBBounds;
@@ -235,7 +238,7 @@ function createRadio(
     if (radioComponent) {
       cellGroup.appendChild(radioComponent);
     }
-    radioComponent.id = `radio-${col}-${row}`;
+    radioComponent.id = `radio-${range?.start.col ?? col}-${range?.start.row ?? row}`;
     radioComponent.render();
     const bounds = radioComponent.AABBBounds;
     width = bounds.width();

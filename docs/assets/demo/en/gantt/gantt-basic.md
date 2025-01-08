@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: Basic Usage of Gantt Chart
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-basic-preview.png
-link: '../guide/gantt/introduction'
+link: gantt/introduction
 option: Gantt#taskBar
 ---
 
@@ -55,7 +55,8 @@ const records = [
         start: '2024/07/27',
         end: '2024/07/26',
         progress: 100,
-        priority: 'P1'
+        priority: 'P1',
+        type: 'milestone'
       },
       {
         id: 3,
@@ -156,10 +157,8 @@ const records = [
     id: 1,
     title: 'Software Development',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-08-04',
-    progress: 31,
-    priority: 'P0'
+    start: '2024-07-28',
+    type: 'milestone'
   },
   {
     id: 2,
@@ -647,7 +646,7 @@ const option = {
     }
   },
   grid: {
-    // backgroundColor: 'gray',
+    weekendBackgroundColor: '#f8f8f8',
     verticalLine: {
       lineWidth: 1,
       lineColor: '#e1e4e8'
@@ -685,13 +684,19 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 8,
       /** 任务条的边框 */
-      borderWidth: 1,
+      borderLineWidth: 1,
       /** 边框颜色 */
       borderColor: 'black'
+    },
+    milestoneStyle: {
+      borderColor: 'red',
+      borderLineWidth: 1,
+      fillColor: 'green',
+      width: 15
     }
   },
   timelineHeader: {
-    colWidth: 100,
+    colWidth: 50,
     backgroundColor: '#EEF1F5',
     horizontalLine: {
       lineWidth: 1,

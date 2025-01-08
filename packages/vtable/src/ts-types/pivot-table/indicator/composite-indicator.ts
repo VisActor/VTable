@@ -2,6 +2,7 @@ import type { ColumnTypeOption, IStyleOption, ITextStyleOption } from '../../col
 import type { CellInfo } from '../../common';
 import type { SparklineSpec } from '../../sparkline';
 import type { StylePropertyFunctionArg } from '../../style-define';
+import type { FieldGetter } from '../../table-engine';
 import type { IBasicColumnIndicator } from './basic-indicator';
 
 export interface ICompositeColumnIndicator extends IBasicColumnIndicator {
@@ -14,7 +15,7 @@ export interface ICompositeColumnIndicator extends IBasicColumnIndicator {
   /** 链接是否进行正则检测，如果链接符合url规则才展示成为link。如果配置了模板链接该配置不生效。 */
   linkDetect?: boolean;
   /** 模板链接地址，如：'https://www.google.com.hk/search?q={name}'，name是数据源属性字段名。 */
-  templateLink?: string;
+  templateLink?: string | FieldGetter;
 
   linkTarget?: string; // window.open的第二个参数
   linkWindowFeatures?: string; // window.open的第三个参数

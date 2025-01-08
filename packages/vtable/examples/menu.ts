@@ -121,6 +121,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-merge-cell-function'
+      },
+      {
+        path: 'list',
         name: 'list-more-columns'
       },
       {
@@ -142,6 +146,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-group-manyChild'
+      },
+      {
+        path: 'list',
+        name: 'list-tree-checkbox'
       }
     ]
   },
@@ -188,6 +196,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-tree-lazy-load'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-tree-hide'
       },
       {
         path: 'pivot',
@@ -516,6 +528,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-tree'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-hide'
       },
       {
         path: 'pivot-analysis',

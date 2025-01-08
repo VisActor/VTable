@@ -239,7 +239,6 @@ function createCheckbox(
   });
 
   const autoColWidth = colWidth === 'auto';
-  // const autoRowHeight = table.heightMode === 'autoHeight';
   const autoRowHeight = table.isAutoRowHeight(row);
 
   const attribute = {
@@ -248,7 +247,7 @@ function createCheckbox(
       ? Infinity
       : cellWidth - (padding[1] + padding[3] + hierarchyOffset) - size - spaceBetweenTextAndIcon,
     // fill: true,
-    // textAlign: 'left',
+    textAlign: 'left',
     textBaseline: 'top',
     autoWrapText,
     lineClamp,

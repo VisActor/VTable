@@ -1,6 +1,242 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 19 Nov 2024 12:21:58 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Dec 2024 09:48:26 GMT and should not be manually modified.
+
+## 1.14.3
+Fri, 27 Dec 2024 09:48:26 GMT
+
+### Updates
+
+- feat: showSort support function type #2630
+
+
+- feat: add hide for indicator setting #2257 #2451
+
+
+- feat: add enableTreeCheckbox config
+- fix: fix borderLineWidth array config #3183
+- fix: when set resizable false hover taskbar occor error #3189
+
+
+
+## 1.14.2
+Wed, 25 Dec 2024 09:27:34 GMT
+
+### Updates
+
+- fix: fix borderLineWidth array config #3183
+
+## 1.14.1
+Mon, 23 Dec 2024 12:36:10 GMT
+
+### Updates
+
+- feat: add grid rowBackgroundColor and columnBackgroundColor weekendBackgroundColor #3155
+
+
+- refactor: add option tableSizeAntiJitter #3160
+
+
+- fix: gantt taskbar resize width interaction can not limit one time unit #3161
+
+
+- fix: fix axes count error in seriesIds config
+
+## 1.14.0
+Fri, 20 Dec 2024 10:12:51 GMT
+
+### Minor changes
+
+- fix: change checkboxState into Map
+
+### Updates
+
+- feat: add contextmenu_task_bar event #3013
+
+
+- feat: add milestone type #3097
+
+
+- fix: validateValue not promise case can not be recalled #3144
+
+
+- fix: adjust scroll hot area limited on table group #3152
+
+
+- feat: add mergeCell function to support more detailed conditions
+- feat: support tickAlign in PivotChart
+- feat: add updateMarkLine
+
+
+- fix: fix react-component update in tree table
+- fix: fix customStyle update not work #3068
+- fix: fix font-weight in vtable-export #3005
+- feat: add enums in validateValue of vtable-editor #3039
+- fix: fix graphic html attribute error
+- fix: application define in react-vtable umd file #3093
+- fix: fix customRender error in react-vtable #3142
+- fix: fix group title link click #3022
+- fix: fix cell group judgement when scroll #3149
+- fix: fix undeline height in text measurement #3112
+- refactor: customComputeRowHeight logic
+
+
+
+## 1.13.2
+Mon, 16 Dec 2024 11:33:07 GMT
+
+### Updates
+
+- fix: copy permission check when in iframe #3077
+
+
+- fix: when has select cells to resize col width or row height error #3085
+
+
+- feat: resizable and moveable support function #3074
+
+
+- feat: add updateOption and updateScales api
+
+
+- fix: consider not set mindate maxdate call setRecords api
+
+
+
+## 1.13.1
+Fri, 13 Dec 2024 08:48:53 GMT
+
+### Updates
+
+- feat: add time scale unit hour #2976
+
+
+- fix: left table width handle with tableWidth set auto #3033
+
+
+
+## 1.13.0
+Mon, 09 Dec 2024 08:20:54 GMT
+
+### Minor changes
+
+- fix: fix text baseline align problem
+
+### Updates
+
+- fix: select not work when select set disableSelect #2981
+
+
+- feat: add keybord ctrlMultiSelect config #2995
+- fix: fix textAlign in checkbox/radio #2908
+- fix: outsideClickDeselect event in menu element
+- fix: fix col&row range in getCellMergeRange() #2906
+- feat: add panelStyle&arrowStyle config in Popover #2988
+- fix: fix merge cell select range update #2944
+- fix: fix ListTreeStickCellPlugin update in tree_hierarchy_state_change event #2914
+- fix: fix row update range in _refreshHierarchyState() #2987
+
+## 1.12.0
+Tue, 03 Dec 2024 11:06:35 GMT
+
+### Minor changes
+
+- feat: add taskShowMode for gantt chart #2849
+
+
+
+### Updates
+
+- feat: add option customComputeRowHeight and defaultRowHeight can set "auto"
+
+
+- docs: add getTaskBarRelativeRect api #2920
+
+
+- fix: when edit record task date update taskbar occor error #2938
+
+
+- fix: fix last col&row editor size #2926
+- fix: fix cell update event problem in CustomCellStylePlugin #2927
+- fix: fix react-component in tree mode update
+- fix: fix default row height in computeRowHeight() #2903
+- fix: fix legend visible problem when reize table
+- fix: fix cache problem in Icon.loadGif() #2905
+- fix: fix merge radio cell check update #2881
+- fix: fix strokeArrayWidth update in updateCell() #2811
+
+## 1.11.5
+Fri, 29 Nov 2024 07:59:16 GMT
+
+### Updates
+
+- docs: 更新进入或离开节点时的事件文档
+
+
+- docs: 更新甘特图事件文档，暴露整个e的信息
+
+
+- feat: add @visactor/vtable-plugins package
+
+## 1.11.4
+Fri, 29 Nov 2024 03:38:27 GMT
+
+### Updates
+
+- fix: columnWidthConfig match problem #2957
+
+
+
+## 1.11.3
+Thu, 28 Nov 2024 12:26:11 GMT
+
+### Updates
+
+- fix: frozen chart not update when resize row or column width #2876
+
+
+- refactor: when columnWidthConfig set wrong dimensions should judge this case #2948
+
+
+- fix: fix custom-component update in deleteRecords api
+
+## 1.11.2
+Tue, 26 Nov 2024 09:13:29 GMT
+
+### Updates
+
+- fix: add isValidatingValue state to fix call validateValue api repeatedly #2830
+
+
+- fix: when up on canvas blank area not drag position rightly #2831
+
+
+- feat: add select makeSelectCellVisible #2840
+
+
+- refactor: when set headerSelectMode body drag column order should work #2860
+
+
+- fix: when resize column width the select state be cleared #2861
+
+
+- fix: when container resize trigger mark line resize #2883
+
+
+- fix: when not set minDate maxDate call setRecords render error #2892
+
+
+- feat: add setCustomSelectRanges in stateManager #2750 #2845
+- feat: optimize range select in HeaderHighlightPlugin
+- feat: isShowOverflowTextTooltip support function
+- feat: cell support multi-custom-style #2841
+- feat: templateLink support function #2847
+- feat: add position in tooltip config #2869
+- feat: add parentElement in menu option
+- fix: fix cell border dash update #2818
+- fix: fix merge cell text position #2858
+- fix: fix functional padding update #2774
+- fix: fix select all in row-series-number checkbox #2880
 
 ## 1.11.1
 Tue, 19 Nov 2024 12:21:58 GMT

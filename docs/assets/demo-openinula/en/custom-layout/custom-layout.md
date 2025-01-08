@@ -4,13 +4,13 @@ group: component
 title: custom layout
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png
 order: 1-1
-link: '../guide/custom_define/custom_layout'
+link: custom_define/custom_layout
 option: ListTable-columns-text#customLayout
 ---
 
 # custom layout
 
-You can use jsx in customLayout to customize the layout. For details, please refer to [Custom Layout](../guide/custom_define/custom_layout)
+You can use jsx in customLayout to customize the layout. For details, please refer to [Custom Layout](../../guide/custom_define/custom_layout)
 
 ## code demo
 

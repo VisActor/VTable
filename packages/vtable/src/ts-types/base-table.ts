@@ -71,7 +71,8 @@ import type {
   HeightAdaptiveModeDef,
   ColumnInfo,
   RowInfo,
-  CellAddressWithBound
+  CellAddressWithBound,
+  Placement
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -96,12 +97,12 @@ import type { NumberRangeMap } from '../layout/row-height-map';
 import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 import type { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
-import type { IAnimationAppear } from './animation/appear';
+import type { IAnimationAppear, ITableAnimationOption } from './animation/appear';
 import type { IEmptyTip } from './component/empty-tip';
 import type { EmptyTip } from '../components/empty-tip/empty-tip';
+import type { EditManager } from '../edit/edit-manager';
+import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
-import type { EditManeger } from '../edit/edit-manager';
-import type { ITableAnimationOption, TableAnimationManager } from '../core/animation';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -118,7 +119,7 @@ export interface IBaseTableProtected {
   frozenRowCount: number;
   rightFrozenColCount: number;
   bottomFrozenRowCount: number;
-  defaultRowHeight: number;
+  defaultRowHeight: number | 'auto';
   /**表头默认行高 可以按逐行设置 如果没有就取defaultRowHeight */
   defaultHeaderRowHeight: (number | 'auto') | (number | 'auto')[];
   defaultColWidth: number;
@@ -200,6 +201,7 @@ export interface IBaseTableProtected {
       | ((field: FieldDef, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+    parentElement?: HTMLElement;
   };
   /** 提示弹框的相关配置。消失时机：显示后鼠标移动到指定区域外或者进入新的单元格后自动消失*/
   tooltip: {
@@ -211,6 +213,7 @@ export interface IBaseTableProtected {
     overflowTextTooltipDisappearDelay?: number;
     /** 弹框是否需要限定在表格区域内 */
     confine: boolean;
+    position: Placement;
   };
 
   dataSourceEventIds?: EventListenerId[];
@@ -302,7 +305,7 @@ export interface BaseTableConstructorOptions {
   /**
    * 默认行高. 默认 40
    */
-  defaultRowHeight?: number;
+  defaultRowHeight?: number | 'auto';
   /** 列表头默认行高 可以按逐行设置 如果没有就取defaultRowHeight */
   defaultHeaderRowHeight?: (number | 'auto') | (number | 'auto')[];
   /**
@@ -366,7 +369,7 @@ export interface BaseTableConstructorOptions {
      */
     headerSelectMode?: 'inline' | 'cell' | 'body';
     /** 不响应鼠标select交互 */
-    disableSelect?: boolean;
+    disableSelect?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
     /** 单独设置表头不响应鼠标select交互 */
     disableHeaderSelect?: boolean;
     /** 点击空白区域是否取消选中 */
@@ -392,6 +395,7 @@ export interface BaseTableConstructorOptions {
       | ((field: string, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+    parentElement?: HTMLElement;
   };
   /** tooltip相关配置 */
   tooltip?: {
@@ -404,6 +408,7 @@ export interface BaseTableConstructorOptions {
     overflowTextTooltipDisappearDelay?: number;
     /** 是否将 tooltip 框限制在画布区域内，默认开启。针对renderMode:"html"有效 */
     confine?: boolean;
+    position?: Placement;
   };
   /**
    * Theme
@@ -422,7 +427,7 @@ export interface BaseTableConstructorOptions {
   widthAdaptiveMode?: WidthAdaptiveModeDef;
   /** adaptive 模式下高度的适应策略 **/
   heightAdaptiveMode?: HeightAdaptiveModeDef;
-
+  /** 当配置adaptive模式时，默认true，即在计算每行行高的基础上去等比拉伸行高撑满容器宽度的。如果不需要计算行高用默认行高撑满的话请配置为false */
   autoHeightInAdaptiveMode?: boolean;
 
   // /** 行高是否根据内容来计算 */
@@ -520,6 +525,9 @@ export interface BaseTableConstructorOptions {
   renderOption?: any;
 
   formatCopyValue?: (value: string) => string;
+  customComputeRowHeight?: (computeArgs: { row: number; table: BaseTableAPI }) => number | 'auto' | undefined;
+  /** 当表格出现抖动情况，请排查是否上层dom容器的宽高是小数引起的。如果不能保证是整数，请配置这个配置项为true */
+  tableSizeAntiJitter?: boolean;
 }
 export interface BaseTableAPI {
   id: string;
@@ -624,7 +632,7 @@ export interface BaseTableAPI {
   /** 动画管理模块 */
   animationManager: TableAnimationManager;
 
-  editorManager: EditManeger;
+  editorManager: EditManager;
   /** 行表头的层数 */
   rowHeaderLevelCount: number;
   /** 列表头的层数 */
@@ -638,6 +646,7 @@ export interface BaseTableAPI {
   _rowRangeHeightsMap: Map<string, number>;
   _colRangeWidthsMap: Map<string, number>;
   canvasSizeSeted?: boolean;
+
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -699,7 +708,14 @@ export interface BaseTableAPI {
   getFrozenColsWidth: () => number;
   getBottomFrozenRowsHeight: () => number;
   getRightFrozenColsWidth: () => number;
-  selectCell: (col: number, row: number, isShift?: boolean, isCtrl?: boolean, makeSelectCellVisible?: boolean) => void;
+  selectCell: (
+    col: number,
+    row: number,
+    isShift?: boolean,
+    isCtrl?: boolean,
+    makeSelectCellVisible?: boolean,
+    skipBodyMerge?: boolean
+  ) => void;
   selectCells: (cellRanges: CellRange[]) => void;
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;
@@ -886,7 +902,7 @@ export interface BaseTableAPI {
   isSeriesNumber: (col: number, row?: number) => boolean;
   isHasSeriesNumber: () => boolean;
   leftRowSeriesNumberCount: number;
-  isAutoRowHeight: (row: number) => boolean;
+  isAutoRowHeight: (row?: number) => boolean;
 
   reactCustomLayout?: ReactCustomLayout;
   checkReactCustomLayout: (removeAllContainer: () => void) => void;
@@ -919,7 +935,7 @@ export interface BaseTableAPI {
   /** 开启表格的滚动 */
   enableScroll: () => void;
 
-  customCellStylePlugin: CustomCellStylePlugin;
+  customCellStylePlugin?: CustomCellStylePlugin;
   headerStyleCache: Map<string, any>;
   bodyBottomStyleCache: Map<string, any>;
   bodyStyleCache: Map<string, any>;

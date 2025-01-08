@@ -52,6 +52,7 @@ import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import { addCustomSelectRanges, deletaCustomSelectRanges } from './select/custom-select';
+import { expendCellRange } from '../tools/merge-range';
 
 export type CustomSelectionStyle = {
   cellBorderColor?: string; //边框颜色
@@ -81,6 +82,7 @@ export class StateManager {
     // cellPosEnd: CellPosition;
     singleStyle?: boolean; // select当前单元格是否使用单独样式
     disableHeader?: boolean; // 是否禁用表头select
+    disableCtrlMultiSelect?: boolean; // 是否禁用ctrl多选框
     /** 点击表头单元格效果
      * 'inline': 点击行表头则整行选中，选择列表头则整列选中；
      * 'cell': 仅仅选择当前点击的表头单元格；
@@ -196,7 +198,8 @@ export class StateManager {
   /**
    * 对应原始数据列表顺序的checked状态
    */
-  checkedState: Record<string | number, boolean>[] = [];
+  // checkedState: Record<string | number, boolean>[] = [];
+  checkedState: Map<string | number, Record<string | number, boolean | 'indeterminate'>> = new Map();
   /**
    * 对应表头checked状态
    */
@@ -455,7 +458,9 @@ export class StateManager {
     // } else if (enableColumnHighlight) {
     //   this.select.highlightScope = HighlightScope.column;
     // } else
-    if (!disableSelect) {
+    if (disableSelect === true) {
+      this.select.highlightScope = HighlightScope.none;
+    } else {
       if (highlightMode === 'cross') {
         this.select.highlightScope = HighlightScope.cross;
       } else if (highlightMode === 'row') {
@@ -465,14 +470,13 @@ export class StateManager {
       } else {
         this.select.highlightScope = HighlightScope.single;
       }
-    } else {
-      this.select.highlightScope = HighlightScope.none;
     }
 
     this.select.singleStyle = !disableSelect;
     this.select.disableHeader = disableHeaderSelect;
     this.select.headerSelectMode = headerSelectMode;
     this.select.highlightInRange = highlightInRange;
+    this.select.disableCtrlMultiSelect = this.table.options.keyboardOptions?.ctrlMultiSelect === false;
   }
 
   isSelected(col: number, row: number): boolean {
@@ -598,23 +602,12 @@ export class StateManager {
     isCtrl: boolean = false,
     isSelectAll: boolean = false,
     makeSelectCellVisible: boolean = true,
-    skipBodyMerge: boolean = false,
-    forceSelect: boolean = false
+    skipBodyMerge: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(
-      this,
-      col,
-      row,
-      isShift,
-      isCtrl,
-      isSelectAll,
-      makeSelectCellVisible,
-      skipBodyMerge,
-      forceSelect
-    );
+    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -716,6 +709,10 @@ export class StateManager {
 
       // this.select.ranges deduplication
       const currentRange = this.select.ranges[this.select.ranges.length - 1];
+
+      // deal with merge cell
+      expendCellRange(currentRange, this.table);
+
       let isSame = false;
       for (let i = 0; i < this.select.ranges.length - 1; i++) {
         const range = this.select.ranges[i];
@@ -772,10 +769,10 @@ export class StateManager {
 
     this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
-    // 调整列宽期间清空选中清空
-    const isHasSelected = !!this.select.ranges?.length;
-    this.updateSelectPos(-1, -1);
-    this.endSelectCells(true, isHasSelected);
+    // // 调整列宽期间清空选中清空
+    // const isHasSelected = !!this.select.ranges?.length;
+    // this.updateSelectPos(-1, -1);
+    // this.endSelectCells(true, isHasSelected);
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeCol(xInTable: number, yInTable: number) {
@@ -1499,10 +1496,10 @@ export class StateManager {
       this.sparkLine.row = -1;
     }
   }
-  setCheckedState(col: number, row: number, field: string | number, checked: boolean) {
+  setCheckedState(col: number, row: number, field: string | number, checked: boolean | 'indeterminate') {
     return setCheckedState(col, row, field, checked, this);
   }
-  setHeaderCheckedState(field: string | number, checked: boolean) {
+  setHeaderCheckedState(field: string | number, checked: boolean | 'indeterminate') {
     return setHeaderCheckedState(field, checked, this);
   }
 
@@ -1586,7 +1583,7 @@ export class StateManager {
   }
 
   changeCheckboxAndRadioOrder(sourceIndex: number, targetIndex: number) {
-    if (this.checkedState.length) {
+    if (this.checkedState.size) {
       changeCheckboxOrder(sourceIndex, targetIndex, this);
     }
     if (this.radioState.length) {

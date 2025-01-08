@@ -3,7 +3,7 @@ import type { ICustomLayout } from '../../customLayout';
 import type { FieldFormat } from '../../table-engine';
 import type { ColumnIconOption } from '../../icon';
 import type { MenuListItem } from '../../menu';
-import type { BaseCellInfo, CellInfo } from '../../common';
+import type { BaseCellInfo, CellInfo, IDimensionInfo } from '../../common';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { BaseTableAPI } from '../../base-table';
 
@@ -17,7 +17,7 @@ export interface IBasicHeaderIndicator {
 
   // linkJump?: boolean;
   // linkDetect?: boolean;
-  // templateLink?: string;
+  // templateLink?: string | FieldGetter;
 
   // chartSpec?: any | ((arg0: CustomRenderFunctionArg) => any);
   // chartModule?: string; // 如果配置了columnType未chart，chartType来指定图表组件类型 如'vchart' 需要从预先register的图表类型获取
@@ -27,9 +27,10 @@ export interface IBasicHeaderIndicator {
   /** sort排序规则 */
   sort?: boolean;
   /** 显示sort排序icon。为了仅仅显示图标，无排序逻辑 */
-  showSort?: boolean;
+  showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
   disableColumnResize?: boolean; // 是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
-
+  /** 指标隐藏 默认false */
+  hide?: boolean | ((args: { dimensionPaths: IDimensionInfo[]; table: BaseTableAPI }) => boolean);
   /** 指标名称表头自定义渲染内容定义 */
   headerCustomRender?: ICustomRender; // header单元格的自定义内容
   /** 指标名称表头自定义布局元素 */
@@ -66,5 +67,5 @@ export interface IBasicColumnIndicator {
   /** 该指标内容不支持hover交互行为 */
   disableHover?: boolean;
   /** 该指标内容不支持选中 */
-  disableSelect?: boolean;
+  disableSelect?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
 }

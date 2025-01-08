@@ -2,6 +2,369 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.14.3",
+      "tag": "@visactor/vtable_v1.14.3",
+      "date": "Fri, 27 Dec 2024 09:48:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: showSort support function type #2630\n\n"
+          },
+          {
+            "comment": "feat: add hide for indicator setting #2257 #2451\n\n"
+          },
+          {
+            "comment": "feat: add enableTreeCheckbox config"
+          },
+          {
+            "comment": "fix: fix borderLineWidth array config #3183"
+          },
+          {
+            "comment": "fix: when set resizable false hover taskbar occor error #3189\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.14.2",
+      "tag": "@visactor/vtable_v1.14.2",
+      "date": "Wed, 25 Dec 2024 09:27:34 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix borderLineWidth array config #3183"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.14.1",
+      "tag": "@visactor/vtable_v1.14.1",
+      "date": "Mon, 23 Dec 2024 12:36:10 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add grid rowBackgroundColor and columnBackgroundColor weekendBackgroundColor #3155\n\n"
+          },
+          {
+            "comment": "refactor: add option tableSizeAntiJitter #3160\n\n"
+          },
+          {
+            "comment": "fix: gantt taskbar resize width interaction can not limit one time unit #3161\n\n"
+          },
+          {
+            "comment": "fix: fix axes count error in seriesIds config"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.14.0",
+      "tag": "@visactor/vtable_v1.14.0",
+      "date": "Fri, 20 Dec 2024 10:12:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add contextmenu_task_bar event #3013\n\n"
+          },
+          {
+            "comment": "feat: add milestone type #3097\n\n"
+          },
+          {
+            "comment": "fix: validateValue not promise case can not be recalled #3144\n\n"
+          },
+          {
+            "comment": "fix: adjust scroll hot area limited on table group #3152\n\n"
+          },
+          {
+            "comment": "feat: add mergeCell function to support more detailed conditions"
+          },
+          {
+            "comment": "feat: support tickAlign in PivotChart"
+          },
+          {
+            "comment": "feat: add updateMarkLine\n\n"
+          },
+          {
+            "comment": "fix: fix react-component update in tree table"
+          },
+          {
+            "comment": "fix: fix customStyle update not work #3068"
+          },
+          {
+            "comment": "fix: fix font-weight in vtable-export #3005"
+          },
+          {
+            "comment": "feat: add enums in validateValue of vtable-editor #3039"
+          },
+          {
+            "comment": "fix: fix graphic html attribute error"
+          },
+          {
+            "comment": "fix: application define in react-vtable umd file #3093"
+          },
+          {
+            "comment": "fix: fix customRender error in react-vtable #3142"
+          },
+          {
+            "comment": "fix: fix group title link click #3022"
+          },
+          {
+            "comment": "fix: fix cell group judgement when scroll #3149"
+          },
+          {
+            "comment": "fix: fix undeline height in text measurement #3112"
+          },
+          {
+            "comment": "refactor: customComputeRowHeight logic\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "fix: change checkboxState into Map"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.13.2",
+      "tag": "@visactor/vtable_v1.13.2",
+      "date": "Mon, 16 Dec 2024 11:33:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: copy permission check when in iframe #3077\n\n"
+          },
+          {
+            "comment": "fix: when has select cells to resize col width or row height error #3085\n\n"
+          },
+          {
+            "comment": "feat: resizable and moveable support function #3074\n\n"
+          },
+          {
+            "comment": "feat: add updateOption and updateScales api\n\n"
+          },
+          {
+            "comment": "fix: consider not set mindate maxdate call setRecords api\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.13.1",
+      "tag": "@visactor/vtable_v1.13.1",
+      "date": "Fri, 13 Dec 2024 08:48:53 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add time scale unit hour #2976\n\n"
+          },
+          {
+            "comment": "fix: left table width handle with tableWidth set auto #3033\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.13.0",
+      "tag": "@visactor/vtable_v1.13.0",
+      "date": "Mon, 09 Dec 2024 08:20:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: select not work when select set disableSelect #2981\n\n"
+          },
+          {
+            "comment": "feat: add keybord ctrlMultiSelect config #2995"
+          },
+          {
+            "comment": "fix: fix textAlign in checkbox/radio #2908"
+          },
+          {
+            "comment": "fix: outsideClickDeselect event in menu element"
+          },
+          {
+            "comment": "fix: fix col&row range in getCellMergeRange() #2906"
+          },
+          {
+            "comment": "feat: add panelStyle&arrowStyle config in Popover #2988"
+          },
+          {
+            "comment": "fix: fix merge cell select range update #2944"
+          },
+          {
+            "comment": "fix: fix ListTreeStickCellPlugin update in tree_hierarchy_state_change event #2914"
+          },
+          {
+            "comment": "fix: fix row update range in _refreshHierarchyState() #2987"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "fix: fix text baseline align problem"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.12.0",
+      "tag": "@visactor/vtable_v1.12.0",
+      "date": "Tue, 03 Dec 2024 11:06:35 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add option customComputeRowHeight and defaultRowHeight can set \"auto\"\n\n"
+          },
+          {
+            "comment": "docs: add getTaskBarRelativeRect api #2920\n\n"
+          },
+          {
+            "comment": "fix: when edit record task date update taskbar occor error #2938\n\n"
+          },
+          {
+            "comment": "fix: fix last col&row editor size #2926"
+          },
+          {
+            "comment": "fix: fix cell update event problem in CustomCellStylePlugin #2927"
+          },
+          {
+            "comment": "fix: fix react-component in tree mode update"
+          },
+          {
+            "comment": "fix: fix default row height in computeRowHeight() #2903"
+          },
+          {
+            "comment": "fix: fix legend visible problem when reize table"
+          },
+          {
+            "comment": "fix: fix cache problem in Icon.loadGif() #2905"
+          },
+          {
+            "comment": "fix: fix merge radio cell check update #2881"
+          },
+          {
+            "comment": "fix: fix strokeArrayWidth update in updateCell() #2811"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add taskShowMode for gantt chart #2849\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.11.5",
+      "tag": "@visactor/vtable_v1.11.5",
+      "date": "Fri, 29 Nov 2024 07:59:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "docs: 更新进入或离开节点时的事件文档\n\n"
+          },
+          {
+            "comment": "docs: 更新甘特图事件文档，暴露整个e的信息\n\n"
+          },
+          {
+            "comment": "feat: add @visactor/vtable-plugins package"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.11.4",
+      "tag": "@visactor/vtable_v1.11.4",
+      "date": "Fri, 29 Nov 2024 03:38:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: columnWidthConfig match problem #2957\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.11.3",
+      "tag": "@visactor/vtable_v1.11.3",
+      "date": "Thu, 28 Nov 2024 12:26:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: frozen chart not update when resize row or column width #2876\n\n"
+          },
+          {
+            "comment": "refactor: when columnWidthConfig set wrong dimensions should judge this case #2948\n\n"
+          },
+          {
+            "comment": "fix: fix custom-component update in deleteRecords api"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.11.2",
+      "tag": "@visactor/vtable_v1.11.2",
+      "date": "Tue, 26 Nov 2024 09:13:29 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add isValidatingValue state to fix call validateValue api repeatedly #2830\n\n"
+          },
+          {
+            "comment": "fix: when up on canvas blank area not drag position rightly #2831\n\n"
+          },
+          {
+            "comment": "feat: add select makeSelectCellVisible #2840\n\n"
+          },
+          {
+            "comment": "refactor: when set headerSelectMode body drag column order should work #2860\n\n"
+          },
+          {
+            "comment": "fix: when resize column width the select state be cleared #2861\n\n"
+          },
+          {
+            "comment": "fix: when container resize trigger mark line resize #2883\n\n"
+          },
+          {
+            "comment": "fix: when not set minDate maxDate call setRecords render error #2892\n\n"
+          },
+          {
+            "comment": "feat: add setCustomSelectRanges in stateManager #2750 #2845"
+          },
+          {
+            "comment": "feat: optimize range select in HeaderHighlightPlugin"
+          },
+          {
+            "comment": "feat: isShowOverflowTextTooltip support function"
+          },
+          {
+            "comment": "feat: cell support multi-custom-style #2841"
+          },
+          {
+            "comment": "feat: templateLink support function #2847"
+          },
+          {
+            "comment": "feat: add position in tooltip config #2869"
+          },
+          {
+            "comment": "feat: add parentElement in menu option"
+          },
+          {
+            "comment": "fix: fix cell border dash update #2818"
+          },
+          {
+            "comment": "fix: fix merge cell text position #2858"
+          },
+          {
+            "comment": "fix: fix functional padding update #2774"
+          },
+          {
+            "comment": "fix: fix select all in row-series-number checkbox #2880"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.11.1",
       "tag": "@visactor/vtable_v1.11.1",
       "date": "Tue, 19 Nov 2024 12:21:58 GMT",

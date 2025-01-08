@@ -92,8 +92,6 @@ const tableInstance = new VTable.PivotTable({
 });
 ```
 
-2. After registering the icon, you can use it in customLayout. Refer to the [example](../demo/custom-render/custom-cell-layout).
-
 - ColumnIconOption definition:
 
 ```

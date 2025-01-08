@@ -80,3 +80,24 @@ export function extractListSlotOptions(vnodes: any[]) {
 
   return options;
 }
+
+export function mergeSlotOptions(propsOptions: Record<string, unknown>, slotOptions: Record<string, any>) {
+  return {
+    ...propsOptions,
+    columns: slotOptions.columns && slotOptions.columns.length ? slotOptions.columns : propsOptions.columns,
+    columnHeaderTitle:
+      slotOptions.columnHeaderTitle && slotOptions.columnHeaderTitle.length
+        ? slotOptions.columnHeaderTitle
+        : propsOptions.columnHeaderTitle,
+    rows: slotOptions.rows && slotOptions.rows.length ? slotOptions.rows : propsOptions.rows,
+    rowHeaderTitle:
+      slotOptions.rowHeaderTitle && slotOptions.rowHeaderTitle.length
+        ? slotOptions.rowHeaderTitle
+        : propsOptions.rowHeaderTitle,
+    indicators:
+      slotOptions.indicators && slotOptions.indicators.length ? slotOptions.indicators : propsOptions.indicators,
+    corner: Object.keys(propsOptions.corner || {}).length ? propsOptions.corner : slotOptions.corner,
+    tooltip: Object.keys(slotOptions.tooltip || {}).length ? slotOptions.tooltip : propsOptions.tooltip,
+    menu: Object.keys(slotOptions.menu || {}).length ? slotOptions.menu : propsOptions.menu
+  };
+}

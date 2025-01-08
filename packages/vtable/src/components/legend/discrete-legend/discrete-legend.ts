@@ -43,12 +43,8 @@ export class DiscreteTableLegend {
     this.legendComponent = legend;
     if (this.visible === false) {
       legend.setAttributes({
-        maxWidth: 0,
-        width: 0,
-        maxHeight: 0,
-        height: 0,
-        clip: true
-        // visible: false
+        visible: false,
+        visibleAll: false
       });
       legend.hideAll();
     }
@@ -58,7 +54,7 @@ export class DiscreteTableLegend {
   }
 
   resize() {
-    if (!this.legendComponent) {
+    if (!this.legendComponent || this.visible === false) {
       return;
     }
 
@@ -71,6 +67,9 @@ export class DiscreteTableLegend {
   }
 
   adjustTableSize(attrs: any) {
+    if (!this.legendComponent || this.visible === false) {
+      return;
+    }
     // 调整位置
     let width = isFinite(this.legendComponent.AABBBounds.width()) ? this.legendComponent.AABBBounds.width() : 0;
     let height = isFinite(this.legendComponent.AABBBounds.height()) ? this.legendComponent.AABBBounds.height() : 0;

@@ -30,6 +30,10 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 - 'only-body'：只有 body 部分的行参与高度适应计算，表头部分高度不变。
 - 'all'：所有列参与高度适应计算。
 
+#${prefix} autoHeightInAdaptiveMode(boolean) = true
+
+当配置 adaptive 模式时，默认 true，即在计算每行行高的基础上去等比拉伸行高撑满容器宽度的。如果不需要计算行高用默认行高撑满的话请配置为 false
+
 #${prefix} columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
 
 计算内容宽度时限定区域参与计算：
@@ -88,13 +92,22 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 
 是否显示固定列图钉（基本表格生效）
 
-#${prefix} defaultRowHeight(number) = 40
+#${prefix} defaultRowHeight(number|'auto') = 40
 
-默认行高
+默认行高。
+
+- 'auto'：根据行高计算出的默认行高。结合 defaultHeaderRowHeight 使用可以实现表头或者 body 部分的行自动行高计算的效果。
+- 具体数值：设置具体的行高。
 
 #${prefix} defaultHeaderRowHeight(Array|number)
 
-列表头默认行高 可以按逐行设置 如果没有就取 defaultRowHeight
+列表头默认行高 可以按逐行设置, 如果没有设置的话会取 defaultRowHeight 的值作为表头的行高。
+
+具体定义：
+
+```
+  defaultHeaderRowHeight?: (number | 'auto') | (number | 'auto')[];
+```
 
 #${prefix} defaultColWidth(number) = 80
 
@@ -102,7 +115,14 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 
 #${prefix} defaultHeaderColWidth(Array|number)
 
-行表头默认列宽 可以按逐列设置 如果没有就取 defaultColWidth
+行表头默认列宽 可以按逐列设置, 如果没有设置的话会取 defaultColWidth 的值作为表头的列宽高。
+
+具体定义：
+
+```
+  /** 行表头默认列宽 可以按逐列设置 如果没有就取defaultColWidth */
+  defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
+```
 
 #${prefix} keyboardOptions(Object)
 
@@ -145,6 +165,10 @@ export interface SelectAllOnCtrlAOption {
 
 上下左右方向键切换选中单元格不受该配置影响，
 
+##${prefix} ctrlMultiSelect(boolean) = true
+
+是否开启 ctrl 多选框，默认开启。
+
 #${prefix} eventOptions(Object)
 
 事件触发相关问题设置，具体配置项：
@@ -169,7 +193,7 @@ export interface SelectAllOnCtrlAOption {
 - 'header' 只能在表头处单元格调整
 - 'body' 只能在 body 单元格调整
 
-#${prefix} rowResizeMode(string) = 'all'
+#${prefix} rowResizeMode(string) = 'none'
 
 鼠标 hover 到单元格下边界可拖拽调整行高。该操作可触发的范围：
 
@@ -220,7 +244,7 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 'body': 不选择表头，点击行表头则选择该行所有 body 单元格，点击列表头则选择该列所有 body 单元格。
 
-##${prefix} disableSelect (boolean) = false
+##${prefix} disableSelect (boolean | ((col: number, row: number, table: BaseTableAPI) => boolean)) = false
 
 不响应鼠标 select 交互。
 
@@ -243,6 +267,10 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 ##${prefix} highlightInRange(boolean) = false
 
 是否在多行或者多列时展示整行或整列高亮效果。
+
+##${prefix} makeSelectCellVisible(boolean) = true
+
+是否将选中的单元格自动滚动到视口内 默认为 true。
 
 #${prefix} theme(Object)
 

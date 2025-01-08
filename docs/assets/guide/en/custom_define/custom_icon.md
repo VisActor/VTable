@@ -84,11 +84,13 @@ const tableInstance = new VTable.ListTable({
 
 In this example, we configure a cell named `Avatar` Icon. The role of this icon is to display the avatar picture, and the value of the picture src is obtained from the field of the avator of records.
 
-online demo：https://visactor.io/vtable/demo/custom-render/custom-icon
+[online demo](../../demo/custom-render/custom-icon)
 
 ## How to register the icon and use it after registration
 
 In VTable, through `register.icon` Method, we can register custom icons and use them in the table. If you want to replace the built-in function icons, you can also do so by registering.
+
+[Registration Interface Method Usage Introduction](../../api/register#icon)
 
 ### Example: Register an icon named order
 

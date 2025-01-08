@@ -35,7 +35,8 @@ import {
   type LayoutObjectId,
   type HeightModeDef,
   type ITableThemeDefine,
-  InteractionState
+  InteractionState,
+  Placement
 } from '../ts-types';
 import type {
   AnyFunction,
@@ -125,7 +126,6 @@ import { NumberRangeMap } from '../layout/row-height-map';
 import { ListTable } from '../ListTable';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { RowSeriesNumberHelper } from './row-series-number-helper';
-import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 import type { ITextGraphicAttribute } from '@src/vrender';
 import { ReactCustomLayout } from '../components/react/react-custom-layout';
@@ -143,12 +143,14 @@ import {
   getTargetRowAtConsiderBottomFrozen
 } from './utils/get-cell-position';
 import { getCellStyle } from './style-helper';
-import type { EditManeger } from '../edit/edit-manager';
+import type { EditManager } from '../edit/edit-manager';
 import { createReactContainer } from '../scenegraph/layout/frozen-react';
 import { setIconColor } from '../icons';
 import { TableAnimationManager } from './animation';
 import type { ITableAnimationOption } from '../ts-types/animation/appear';
 import { checkCellInSelect } from '../state/common/check-in-select';
+import type { CustomCellStylePlugin, ICustomCellStylePlugin } from '../plugins/custom-cell-style';
+import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -180,7 +182,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   scenegraph: Scenegraph;
   stateManager: StateManager;
   eventManager: EventManager;
-  editorManager: EditManeger;
+  editorManager: EditManager;
   animationManager: TableAnimationManager;
   _pixelRatio: number;
 
@@ -217,7 +219,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   isReleased: boolean = false;
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
 
-  customCellStylePlugin: CustomCellStylePlugin;
+  customCellStylePlugin?: CustomCellStylePlugin;
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 
@@ -462,7 +464,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         parentElement: this.getElement(),
         renderMode: 'html',
         isShowOverflowTextTooltip: false,
-        confine: true
+        confine: true,
+        position: Placement.bottom
       },
       options.tooltip
     );
@@ -497,11 +500,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.customMergeCell = options.customMergeCell;
 
-    this.customCellStylePlugin = new CustomCellStylePlugin(
-      this,
-      options.customCellStyle ?? [],
-      options.customCellStyleArrangement ?? []
-    );
+    const CustomCellStylePlugin = Factory.getComponent('customCellStylePlugin') as ICustomCellStylePlugin;
+    if (CustomCellStylePlugin) {
+      this.customCellStylePlugin = new CustomCellStylePlugin(
+        this,
+        options.customCellStyle ?? [],
+        options.customCellStyleArrangement ?? []
+      );
+    }
   }
   /** 节流绘制 */
   throttleInvalidate = throttle2(this.render.bind(this), 200);
@@ -665,12 +671,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    *
    */
   get defaultRowHeight(): number {
-    return this.internalProps.defaultRowHeight;
+    if (isNumber(this.internalProps.defaultRowHeight)) {
+      return this.internalProps.defaultRowHeight as number;
+    }
+    return 40;
   }
   /**
    * Set the default row height.
    */
-  set defaultRowHeight(defaultRowHeight: number) {
+  set defaultRowHeight(defaultRowHeight: number | 'auto') {
     this.internalProps.defaultRowHeight = defaultRowHeight;
     this.options.defaultRowHeight = defaultRowHeight;
   }
@@ -977,17 +986,18 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             element.parentElement.offsetHeight -
             parseInt(computedStyle.paddingTop || '0px', 10) -
             parseInt(computedStyle.paddingBottom || '0px', 20);
+          widthWithoutPadding = (widthWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
+          heightWithoutPadding = (heightWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
         }
       }
-      const width1 = widthWithoutPadding ?? 1 - 1;
-      const height1 = heightWithoutPadding ?? 1 - 1;
 
-      element.style.width = (width1 && `${width1 - padding.left - padding.right}px`) || '0px';
-      element.style.height = (height1 && `${height1 - padding.top - padding.bottom}px`) || '0px';
+      element.style.width = (widthWithoutPadding && `${widthWithoutPadding - padding.left - padding.right}px`) || '0px';
+      element.style.height =
+        (heightWithoutPadding && `${heightWithoutPadding - padding.top - padding.bottom}px`) || '0px';
 
       const { canvas } = this.internalProps;
-      widthP = canvas.parentElement?.offsetWidth ?? 1 - 1; //TODO 这里写错了 应该在??前后加上小括号的  但是如果这里改了整个大小也就变了 所以这里先不动
-      heightP = canvas.parentElement?.offsetHeight ?? 1 - 1;
+      widthP = (canvas.parentElement?.offsetWidth ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
+      heightP = (canvas.parentElement?.offsetHeight ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
 
       //style 与 width，height相同
       if (this?.scenegraph?.stage) {
@@ -1239,14 +1249,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     endRow = Math.min(endRow, (this.rowCount ?? Infinity) - 1);
 
     let h = 0;
+    const isDefaultRowHeightIsAuto = this.options.defaultRowHeight === 'auto';
     // autoRowHeight || all rows in header, use accumulation
     if (
       this.heightMode === 'standard' &&
+      !this.options.customComputeRowHeight &&
       !this.autoFillHeight &&
       this.internalProps.layoutMap &&
       // endRow >= this.columnHeaderLevelCount &&
       // !this.bottomFrozenRowCount &&
       !this.hasAutoImageColumn() &&
+      !isDefaultRowHeightIsAuto &&
       this.internalProps._heightResizedRowMap.size === 0
     ) {
       // part in header
@@ -1342,8 +1355,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this._adjustColWidth(col, this._colWidthDefineToPxWidth(width));
   }
   /** 判断某行是否应该计算行高 */
-  isAutoRowHeight(row: number): boolean {
+  isAutoRowHeight(row?: number): boolean {
     if (this.heightMode === 'autoHeight') {
+      return true;
+    } else if (this.options.customComputeRowHeight) {
       return true;
     } else if (row >= 0 && row < this.columnHeaderLevelCount) {
       return this.getDefaultRowHeight(row) === 'auto';
@@ -2225,6 +2240,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       customRender,
       renderChartAsync,
       renderChartAsyncBatchCount,
+      canvasWidth,
+      canvasHeight,
       overscrollBehavior,
       limitMinWidth,
       limitMinHeight
@@ -2258,6 +2275,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.autoFillWidth = autoFillWidth ?? false;
     this.autoFillHeight = autoFillHeight ?? false;
     this.customRender = customRender;
+    this.canvasWidth = canvasWidth;
+    this.canvasHeight = canvasHeight;
     // 更新protectedSpace
     const internalProps: IBaseTableProtected = this.internalProps;
     if (Env.mode !== 'node' && !options.canvas) {
@@ -2376,7 +2395,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         parentElement: this.getElement(),
         renderMode: 'html',
         isShowOverflowTextTooltip: false,
-        confine: true
+        confine: true,
+        position: Placement.bottom
       },
       options.tooltip
     );
@@ -2409,7 +2429,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.customMergeCell = options.customMergeCell;
 
-    this.customCellStylePlugin.updateCustomCell(
+    this.customCellStylePlugin?.updateCustomCell(
       options.customCellStyle ?? [],
       options.customCellStyleArrangement ?? []
     );
@@ -2594,6 +2614,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 选中单元格  和鼠标选中单元格效果一致
    * @param col
    * @param row
+   * @param isShift 是否按住 shift 键
+   * @param isCtrl 是否按住 ctrl 键
+   * @param makeSelectCellVisible 是否让选中的单元格可见
+   * @param skipBodyMerge 是否忽略合并单元格，默认 false针对合并单元自动扩大选取范围
    */
   selectCell(
     col: number,
@@ -2601,8 +2625,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     isShift?: boolean,
     isCtrl?: boolean,
     makeSelectCellVisible?: boolean,
-    skipBodyMerge: boolean = false,
-    forceSelect: boolean = false
+    skipBodyMerge: boolean = false
   ) {
     const isHasSelected = !!this.stateManager.select.ranges?.length;
     this.stateManager.updateSelectPos(
@@ -2612,8 +2635,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       isCtrl,
       false,
       makeSelectCellVisible ?? this.options.select?.makeSelectCellVisible ?? true,
-      skipBodyMerge,
-      forceSelect
+      skipBodyMerge
     );
     this.stateManager.endSelectCells(true, isHasSelected);
   }
@@ -2783,7 +2805,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     this.internalProps.autoWrapText = autoWrapText;
     this.options.autoWrapText = autoWrapText;
-    // if (this.heightMode === 'autoHeight' || this.heightMode === 'adaptive') {
     this.scenegraph.clearCells();
     this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
@@ -3297,8 +3318,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           checkCellInSelect(col, row, [
             this.getCellRange(this.stateManager.select.cellPos.col, this.stateManager.select.cellPos.row)
           ])) ||
-        this.options.select?.disableHeaderSelect ||
-        this.options.select?.disableSelect)
+        isCellDisableSelect(this, col, row))
     ) {
       if (this.internalProps.frozenColDragHeaderMode === 'disabled' && this.isFrozenColumn(col)) {
         return false;
@@ -4107,14 +4127,18 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //
   }
   hasCustomCellStyle(customStyleId: string): boolean {
-    return this.customCellStylePlugin.hasCustomCellStyle(customStyleId);
+    return this.customCellStylePlugin?.hasCustomCellStyle(customStyleId);
   }
   registerCustomCellStyle(customStyleId: string, customStyle: ColumnStyleOption | undefined | null) {
-    this.customCellStylePlugin.registerCustomCellStyle(customStyleId, customStyle);
+    this.customCellStylePlugin?.registerCustomCellStyle(customStyleId, customStyle);
   }
 
-  arrangeCustomCellStyle(cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) {
-    this.customCellStylePlugin.arrangeCustomCellStyle(cellPos, customStyleId);
+  arrangeCustomCellStyle(
+    cellPos: { col?: number; row?: number; range?: CellRange },
+    customStyleId: string,
+    forceFastUpdate?: boolean
+  ) {
+    this.customCellStylePlugin?.arrangeCustomCellStyle(cellPos, customStyleId, forceFastUpdate);
   }
   isSeriesNumber(col: number, row: number): boolean {
     return this.internalProps.layoutMap.isSeriesNumber(col, row);
@@ -4156,9 +4180,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   //   startInertia(0, -1, 1, this.stateManager);
   // }
 
-  checkReactCustomLayout(removeAllContainer: () => void) {
+  checkReactCustomLayout() {
     if (!this.reactCustomLayout) {
-      this.reactCustomLayout = new ReactCustomLayout(removeAllContainer, this);
+      this.reactCustomLayout = new ReactCustomLayout(this);
     }
   }
 

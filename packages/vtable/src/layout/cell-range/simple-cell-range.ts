@@ -33,7 +33,18 @@ export function getCellRange(col: number, row: number, layout: SimpleHeaderLayou
             if (
               !(layout.columnObjects[col - layout.leftRowSeriesNumberColumnCount].define.mergeCell as Function)(
                 value,
-                last_Value
+                last_Value,
+                {
+                  source: {
+                    col,
+                    row
+                  },
+                  target: {
+                    col,
+                    row: r
+                  },
+                  table: layout._table
+                }
               )
             ) {
               break;
@@ -51,7 +62,18 @@ export function getCellRange(col: number, row: number, layout: SimpleHeaderLayou
             if (
               !(layout.columnObjects[col - layout.leftRowSeriesNumberColumnCount].define.mergeCell as Function)(
                 value,
-                next_Value
+                next_Value,
+                {
+                  source: {
+                    col,
+                    row
+                  },
+                  target: {
+                    col,
+                    row: r
+                  },
+                  table: layout._table
+                }
               )
             ) {
               break;
@@ -102,11 +124,18 @@ function getTreeTitleMerge(col: number, row: number, cellRange: CellRange, layou
   }
 
   const cellRecord = layout._table.getCellRawRecord(col, row);
-  if (cellRecord?.vtableMerge) {
-    // const vtableMergeName = cellRecord.vtableMergeName;
-    cellRange.start.col = layout.rowHeaderLevelCount;
-    cellRange.end.col = layout.colCount - 1;
-    cellRange.start.row = cellRange.end.row = row;
+  if (layout._table.internalProps.rowSeriesNumber?.enableTreeCheckbox) {
+    if (cellRecord?.vtableMerge && col >= layout.leftRowSeriesNumberColumnCount) {
+      cellRange.start.col = layout.rowHeaderLevelCount + layout.leftRowSeriesNumberColumnCount;
+      cellRange.end.col = layout.colCount - 1;
+      cellRange.start.row = cellRange.end.row = row;
+    }
+  } else {
+    if (cellRecord?.vtableMerge) {
+      cellRange.start.col = layout.rowHeaderLevelCount;
+      cellRange.end.col = layout.colCount - 1;
+      cellRange.start.row = cellRange.end.row = row;
+    }
   }
 }
 
@@ -127,7 +156,19 @@ export function getCellRangeTranspose(col: number, row: number, layout: SimpleHe
             break;
           }
         } else {
-          if (!(layout.columnObjects[row].define.mergeCell as Function)(value, last_Value)) {
+          if (
+            !(layout.columnObjects[row].define.mergeCell as Function)(value, last_Value, {
+              source: {
+                col,
+                row
+              },
+              target: {
+                col: c,
+                row
+              },
+              table: layout._table
+            })
+          ) {
             break;
           }
         }
@@ -140,7 +181,19 @@ export function getCellRangeTranspose(col: number, row: number, layout: SimpleHe
             break;
           }
         } else {
-          if (!(layout.columnObjects[row].define.mergeCell as Function)(value, next_Value)) {
+          if (
+            !(layout.columnObjects[row].define.mergeCell as Function)(value, next_Value, {
+              source: {
+                col,
+                row
+              },
+              target: {
+                col: c,
+                row
+              },
+              table: layout._table
+            })
+          ) {
             break;
           }
         }

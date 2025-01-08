@@ -1,3 +1,4 @@
+import { isFunction } from '@visactor/vutils';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { Env } from '../tools/env';
 import { regUrl } from '../tools/global';
@@ -43,6 +44,10 @@ export function bindMediaClick(table: BaseTableAPI): void {
         if (templateLink) {
           // 如果有模板链接，使用模板
           const rowData = table.getCellOriginRecord(col, row);
+          if (rowData.vtableMerge) {
+            // group title
+            return;
+          }
           const data = Object.assign(
             {
               __value: cellValue,
@@ -50,17 +55,25 @@ export function bindMediaClick(table: BaseTableAPI): void {
             },
             rowData
           );
-          const re = /\{\s*(\S+?)\s*\}/g;
-          url = templateLink.replace(re, (matchs: string, key: string) => {
-            matchs;
-            return (data as any)[key];
-          });
+          if (isFunction(templateLink)) {
+            url = templateLink(data, col, row, table);
+          } else {
+            const re = /\{\s*(\S+?)\s*\}/g;
+            url = templateLink.replace(re, (matchs: string, key: string) => {
+              matchs;
+              return (data as any)[key];
+            });
+          }
         } else if (!linkDetect) {
           url = cellValue;
         } else if (regUrl.test(cellValue)) {
           // 没有模板链接，使用单元格内的字符串
           url = cellValue;
         } else {
+          return;
+        }
+
+        if (!url) {
           return;
         }
 

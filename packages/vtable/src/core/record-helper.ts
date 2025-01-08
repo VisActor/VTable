@@ -85,18 +85,21 @@ export function listTableChangeCellValue(
       if (table.internalProps._heightResizedRowMap.size === 0) {
         table.scenegraph.recalculateRowHeights();
       }
-    } else if (table.heightMode === 'autoHeight' && !table.internalProps._heightResizedRowMap.has(row)) {
+    } else if (table.isAutoRowHeight() && !table.internalProps._heightResizedRowMap.has(row)) {
       const oldHeight = table.getRowHeight(row);
       const newHeight = computeRowHeight(row, 0, table.colCount - 1, table);
       table.scenegraph.updateRowHeight(row, newHeight - oldHeight);
     }
-    table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-      col,
-      row,
-      rawValue: beforeChangeValue,
-      currentValue: oldValue,
-      changedValue: table.getCellOriginValue(col, row)
-    });
+    const changedValue = table.getCellOriginValue(col, row);
+    if (oldValue !== changedValue) {
+      table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+        col,
+        row,
+        rawValue: beforeChangeValue,
+        currentValue: oldValue,
+        changedValue
+      });
+    }
     table.scenegraph.updateNextFrame();
   }
 }
@@ -168,7 +171,10 @@ export function listTableChangeCellValues(
             //TODO 处理promise的情况
             isCanChange = true;
           } else {
-            isCanChange = maybePromiseOrValue;
+            isCanChange =
+              maybePromiseOrValue === true ||
+              maybePromiseOrValue === 'validate-exit' ||
+              maybePromiseOrValue === 'invalidate-exit';
           }
         }
       }
@@ -186,13 +192,16 @@ export function listTableChangeCellValues(
         } else {
           table.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, table);
         }
-        table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-          col: startCol + j,
-          row: startRow + i,
-          rawValue: beforeChangeValue,
-          currentValue: oldValue,
-          changedValue: table.getCellOriginValue(startCol + j, startRow + i)
-        });
+        const changedValue = table.getCellOriginValue(startCol + j, startRow + i);
+        if (oldValue !== changedValue) {
+          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+            col: startCol + j,
+            row: startRow + i,
+            rawValue: beforeChangeValue,
+            currentValue: oldValue,
+            changedValue
+          });
+        }
       }
     }
     pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
@@ -274,7 +283,7 @@ export function listTableChangeCellValues(
     (table.autoFillHeight && table.getAllRowsHeight() <= table.tableNoFrameHeight)
   ) {
     table.scenegraph.recalculateRowHeights();
-  } else if (table.heightMode === 'autoHeight') {
+  } else if (table.isAutoRowHeight()) {
     const rows: number[] = [];
     const deltaYs: number[] = [];
     for (let sRow = startRow; sRow <= range.end.row; sRow++) {
@@ -648,9 +657,11 @@ export function listTableDeleteRecords(recordIndexs: number[], table: ListTable)
                 }
               }
             }
+            table.reactCustomLayout?.clearCache();
             table.transpose
               ? table.scenegraph.updateCol(delRows, [], updateRows)
               : table.scenegraph.updateRow(delRows, [], updateRows);
+            table.reactCustomLayout?.updateAllCustomCell();
           }
         }
       } else {
@@ -687,9 +698,11 @@ export function listTableDeleteRecords(recordIndexs: number[], table: ListTable)
           }
         }
 
+        table.reactCustomLayout?.clearCache();
         table.transpose
           ? table.scenegraph.updateCol(delRows, [], updateRows)
           : table.scenegraph.updateRow(delRows, [], updateRows);
+        table.reactCustomLayout?.updateAllCustomCell();
       }
     }
     // table.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });

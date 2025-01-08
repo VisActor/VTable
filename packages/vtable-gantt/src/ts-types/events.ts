@@ -1,3 +1,4 @@
+import type { FederatedPointerEvent } from '@visactor/vtable/es/vrender';
 import type { ITaskLink } from './gantt-engine';
 
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
@@ -16,24 +17,39 @@ export interface TableEventHandlersEventArgumentMap {
   mouseenter_task_bar: {
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   };
   mouseleave_task_bar: {
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
   };
   click_task_bar: {
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     record: any;
     event: Event;
+    federatedEvent: FederatedPointerEvent;
+  };
+  contextmenu_task_bar: {
+    /** 第几条数据 */
+    index: number;
+    sub_task_index?: number;
+    record: any;
+    event: Event;
+    federatedEvent: FederatedPointerEvent;
   };
   change_date_range: {
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     /** 改变后的起始日期 */
     startDate: Date;
     /** 改变后的结束日期 */
@@ -46,9 +62,11 @@ export interface TableEventHandlersEventArgumentMap {
     record: any;
   };
   create_task_schedule: {
+    federatedEvent: FederatedPointerEvent;
     event: Event;
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     /** 改变后的起始日期 */
     startDate: Date;
     /** 改变后的结束日期 */
@@ -57,9 +75,18 @@ export interface TableEventHandlersEventArgumentMap {
     record: any;
   };
   create_dependency_link: {
+    federatedEvent: FederatedPointerEvent;
     event: Event;
     /** 依赖信息 */
     link: ITaskLink;
+  };
+  click_dependency_link_point: {
+    event: Event;
+    /** 点击的是起始点还是结束点 */
+    point: 'start' | 'end';
+    /** 第几条数据 */
+    index: number;
+    record: any;
   };
 }
 
@@ -68,6 +95,7 @@ export interface TableEventHandlersReturnMap {
   mouseenter_task_bar: void;
   mouseleave_task_bar: void;
   click_task_bar: void;
+  contextmenu_task_bar: void;
   change_date_range: void;
   create_task_schedule: void;
   create_dependency_link: void;

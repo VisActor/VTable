@@ -14,7 +14,8 @@ export function updateRow(
   removeCells: CellAddress[],
   addCells: CellAddress[],
   updateCells: CellAddress[],
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  skipUpdateProxy?: boolean
 ) {
   const scene = table.scenegraph;
   // deduplication
@@ -43,7 +44,7 @@ export function updateRow(
 
   // remove cells
   removeRows.forEach(row => {
-    removeRow(row, scene);
+    removeRow(row, scene, skipUpdateProxy);
   });
 
   const rowHeightsMap = table.rowHeightsMap;
@@ -65,7 +66,7 @@ export function updateRow(
   // add cells
   let updateAfter: number;
   addRows.forEach(row => {
-    const needUpdateAfter = addRow(row, scene);
+    const needUpdateAfter = addRow(row, scene, skipUpdateProxy);
     updateAfter = updateAfter ?? needUpdateAfter;
     rowHeightsMap.insert(row);
   });
@@ -179,7 +180,7 @@ export function updateRow(
     }
   }
 }
-function removeRow(row: number, scene: Scenegraph) {
+function removeRow(row: number, scene: Scenegraph, skipUpdateProxy?: boolean) {
   // const infectCellRange = removeCellGroup(row, scene);
   // for (let i = 0; i < infectCellRange.length; i++) {
   //   const { mergeStartCol, mergeEndCol, mergeStartRow, mergeEndRow } = infectCellRange[i];
@@ -201,20 +202,24 @@ function removeRow(row: number, scene: Scenegraph) {
     proxy.rowEnd--;
     proxy.currentRow--;
   }
-  proxy.bodyBottomRow--;
-  // proxy.totalRow--;
-  const totalActualBodyRowCount = Math.min(proxy.rowLimit, proxy.bodyBottomRow - proxy.bodyTopRow + 1); // 渐进加载总row数量
-  proxy.totalActualBodyRowCount = totalActualBodyRowCount;
-  proxy.totalRow = Math.min(proxy.table.rowCount - 1, proxy.rowStart + totalActualBodyRowCount - 1); // 目标渐进完成的row
+  if (!skipUpdateProxy) {
+    proxy.bodyBottomRow--;
+    // proxy.totalRow--;
+    const totalActualBodyRowCount = Math.min(proxy.rowLimit, proxy.bodyBottomRow - proxy.bodyTopRow + 1); // 渐进加载总row数量
+    proxy.totalActualBodyRowCount = totalActualBodyRowCount;
+    proxy.totalRow = Math.min(proxy.table.rowCount - 1, proxy.rowStart + totalActualBodyRowCount - 1); // 目标渐进完成的row
+  }
 }
 
-function addRow(row: number, scene: Scenegraph) {
+function addRow(row: number, scene: Scenegraph, skipUpdateProxy?: boolean) {
   const proxy = scene.proxy;
-  proxy.bodyBottomRow++;
-  // proxy.totalRow++;
-  const totalActualBodyRowCount = Math.min(proxy.rowLimit, proxy.bodyBottomRow - proxy.bodyTopRow + 1); // 渐进加载总row数量
-  proxy.totalActualBodyRowCount = totalActualBodyRowCount;
-  proxy.totalRow = proxy.rowStart + totalActualBodyRowCount - 1; // 目标渐进完成的row
+  if (!skipUpdateProxy) {
+    proxy.bodyBottomRow++;
+    // proxy.totalRow++;
+    const totalActualBodyRowCount = Math.min(proxy.rowLimit, proxy.bodyBottomRow - proxy.bodyTopRow + 1); // 渐进加载总row数量
+    proxy.totalActualBodyRowCount = totalActualBodyRowCount;
+    proxy.totalRow = proxy.rowStart + totalActualBodyRowCount - 1; // 目标渐进完成的row
+  }
 
   if (row < proxy.rowStart) {
     return undefined;
@@ -538,11 +543,11 @@ function _getUpdateRowIndexUseCellNode(beforeRow: number, afterRow: number, scen
         {
           start: {
             row: beforeCell.mergeStartRow,
-            col: scene.table.heightMode === 'autoHeight' ? 0 : beforeCell.mergeStartCol
+            col: scene.table.isAutoRowHeight() ? 0 : beforeCell.mergeStartCol
           },
           end: {
             row: beforeCell.mergeEndRow,
-            col: scene.table.heightMode === 'autoHeight' ? scene.table.colCount - 1 : beforeCell.mergeEndCol
+            col: scene.table.isAutoRowHeight() ? scene.table.colCount - 1 : beforeCell.mergeEndCol
           }
         },
         scene
@@ -556,11 +561,11 @@ function _getUpdateRowIndexUseCellNode(beforeRow: number, afterRow: number, scen
         {
           start: {
             row: afterCell.mergeStartRow,
-            col: scene.table.heightMode === 'autoHeight' ? 0 : afterCell.mergeStartCol
+            col: scene.table.isAutoRowHeight() ? 0 : afterCell.mergeStartCol
           },
           end: {
             row: afterCell.mergeEndRow,
-            col: scene.table.heightMode === 'autoHeight' ? scene.table.colCount - 1 : afterCell.mergeEndCol
+            col: scene.table.isAutoRowHeight() ? scene.table.colCount - 1 : afterCell.mergeEndCol
           }
         },
         scene
