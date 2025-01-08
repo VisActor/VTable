@@ -28,7 +28,7 @@ import {
   checkHasAggregationOnTop,
   checkHasTreeDefine
 } from './layout-helper';
-import type { Aggregator } from '../dataset/statistics-helper';
+import type { Aggregator } from '../ts-types/dataset/aggregation';
 import { DimensionTree } from './tree-helper';
 import { getCellRange } from './cell-range/simple-cell-range';
 // import { EmptyDataCache } from './utils';

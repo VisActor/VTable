@@ -1,6 +1,50 @@
 import * as VTable from '../../src';
+import type { BaseTableAPI } from '../../src/ts-types/base-table';
 const PivotTable = VTable.PivotTable;
 const CONTAINER_ID = 'vTable';
+
+class AvgPriceAggregator extends VTable.TYPES.Aggregator {
+  sales_sum: number = 0;
+  number_sum: number = 0;
+  constructor(config: { key: string; field: string; formatFun?: any }) {
+    super(config);
+    this.key = config.key;
+    this.formatFun = config.formatFun;
+  }
+  push(record: any): void {
+    if (record) {
+      if (record.isAggregator) {
+        this.records.push(...record.records);
+      } else {
+        this.records.push(record);
+      }
+
+      if (record.isAggregator) {
+        this.sales_sum += record.sales_sum;
+        this.number_sum += record.number_sum;
+      } else {
+        record.sales && (this.sales_sum += parseFloat(record.sales));
+        record.number && (this.number_sum += parseFloat(record.number));
+      }
+    }
+    this.clearCacheValue();
+  }
+  deleteRecord: (record: any) => void;
+  updateRecord: (oldRecord: any, newRecord: any) => void;
+  recalculate: () => any;
+  clearCacheValue() {
+    this._formatedValue = undefined;
+  }
+  value() {
+    return this.records?.length >= 1 ? this.sales_sum / this.number_sum : undefined;
+  }
+  reset() {
+    super.reset();
+    this.sales_sum = 0;
+    this.number_sum = 0;
+  }
+}
+VTable.register.aggregator('avgPrice', AvgPriceAggregator);
 const sumNumberFormat = VTable.DataStatistics.numberFormat({
   suffix: '元'
 });
@@ -13,42 +57,35 @@ export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
     rows: ['province', 'city'],
     columns: ['category', 'sub_category'],
-    indicators: ['销售总额', '订单数', '订单均价', '自定义'],
+    indicators: [
+      '商品均价（注册聚合类）',
+      {
+        indicatorKey: '商品均价（计算字段）',
+        title: '商品均价（计算字段）',
+        format: sumNumberFormat
+      }
+    ],
 
     indicatorTitle: '指标名称',
     indicatorsAsCol: false,
     dataConfig: {
       aggregationRules: [
         //做聚合计算的依据，如销售额如果没有配置则默认按聚合sum计算结果显示单元格内容
+
         {
-          indicatorKey: '销售总额', //指标名称
+          indicatorKey: '商品均价（注册聚合类）', //指标名称
           field: 'sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.SUM, //计算类型
-          formatFun(value, col, row, table) {
-            return value;
+          aggregationType: 'avgPrice', //计算类型
+          formatFun: sumNumberFormat
+        }
+      ],
+      calculatedFieldRules: [
+        {
+          key: '商品均价（计算字段）',
+          dependIndicatorKeys: ['number', 'sales'],
+          calculateFun: (dependValue: any) => {
+            return dependValue.sales / dependValue.number;
           }
-        },
-        {
-          indicatorKey: '订单数', //指标名称
-          field: 'sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.COUNT, //计算类型
-          formatFun: countNumberFormat
-        },
-        {
-          indicatorKey: '订单均价', //指标名称
-          field: 'sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.AVG, //计算类型
-          formatFun: sumNumberFormat
-        },
-        {
-          indicatorKey: '自定义', //指标名称
-          field: 'sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.CUSTOM, //计算类型
-          aggregationFun(values, records) {
-            console.log('自定义', values, records);
-            return values.reduce((pre, cur) => pre + cur, 0) / values.length;
-          },
-          formatFun: sumNumberFormat
         }
       ]
     },
@@ -619,8 +656,4 @@ export function createTable() {
   };
 
   const instance = new PivotTable(document.getElementById(CONTAINER_ID)!, option);
-  window.tableInstance = instance;
-
-  // 只为了方便控制太调试用，不要拷贝
-  window.tableInstance = instance;
 }
