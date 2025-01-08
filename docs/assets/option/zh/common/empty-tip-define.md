@@ -21,3 +21,9 @@
 - width?: number;icon 的高度
 - height?: number; icon 的高度
 - image?: string;图片地址 或者 内联 SVG 内容
+
+#${prefix} displayMode('basedOnTable' | 'basedOnContainer')
+空数据描述内容的展示模式。
+
+- basedOnTable: 基于表格范围展示空数据描述内容；
+- basedOnContainer: 基于容器范围展示空数据描述内容；

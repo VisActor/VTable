@@ -85,6 +85,8 @@ export interface AggregationRule<T extends AggregationType> {
   aggregationType: T;
   /**计算结果格式化 */
   formatFun?: (num: number) => string;
+  /** aggregationType 配置为 AggregationType.CUSTOM 时，需要配置 aggregationFun。*/
+  aggregationFun?: T extends AggregationType.CUSTOM ? (values: any[], records: any[]) => any : undefined;
 }
 ```
 
@@ -98,9 +100,12 @@ export enum AggregationType {
   MAX = 'MAX',
   AVG = 'AVG',
   COUNT = 'COUNT',
-  NONE = 'NONE'
+  NONE = 'NONE',
+  CUSTOM = 'CUSTOM',
 }
 ```
+
+除了上述 VTable 内置的 几 种聚合方式，还支持注册定义聚合方式。使用自定义聚合类型需要先定义一个自定义聚合类，继承内置的 Aggregator 类，注册到 VTable 中，然后在自定义聚合类中实现聚合逻辑。具体可以参考[demo](../demo/data-analysis/pivot-analysis-customAggregator)
 
 ### sortRules(SortRules)
 

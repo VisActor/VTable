@@ -2870,7 +2870,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             (!isValid(colDimension.indicatorKey) &&
               dimension.dimensionKey === colDimension.dimensionKey &&
               dimension.value === colDimension.value) ||
-            (isValid(colDimension.indicatorKey) && dimension.indicatorKey === colDimension.indicatorKey)
+            (isValid(colDimension.indicatorKey) &&
+              dimension.indicatorKey === colDimension.indicatorKey &&
+              ((isValid(dimension.value) && isValid(colDimension.value) && colDimension.value === dimension.value) ||
+                !isValid(dimension.value) ||
+                !isValid(colDimension.value)))
           ) {
             colArr = dimension.children as IHeaderTreeDefine[];
             if (needLowestLevel && !colArr) {

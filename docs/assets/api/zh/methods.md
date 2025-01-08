@@ -371,15 +371,15 @@ setRecords(records: Array<any>)
 **ListTable 专有**
 ```
 
-## getTaskShowIndexByRecordIndex(Function)
+## getBodyRowIndexByRecordIndex(Function)
 
-根据数据的索引获取应该显示在 body 的第几行, 参数和返回值的碎银均从 0 开始。如果是树形模式的表格，参数支持数组，如[1,2]
+根据数据的索引获取应该显示在 body 的第几行, 参数和返回值的索引均从 0 开始。如果是树形模式的表格，参数支持数组，如[1,2]
 
 **ListTable 专有**
 
 ```
   /**
-   * 根据数据的索引获取应该显示在body的第几行  参数和返回值的碎银均从0开始
+   * 根据数据的索引获取应该显示在body的第几行  参数和返回值的索引均从0开始
    * @param  {number} index The record index.
    */
   getBodyRowIndexByRecordIndex: (index: number | number[]) => number;
@@ -537,6 +537,29 @@ setRecords(records: Array<any>)
    * @returns {Rect} the rect of the cell.
    */
   getCellRelativeRect(col: number, row: number): Rect
+```
+
+## getCellRange(Function)
+
+获取单元格的合并范围
+
+```
+ /**
+   * @param {number} col column index
+   * @param {number} row row index
+   * @returns {Rect}
+*/
+getCellRange(col: number, row: number): CellRange
+
+export interface CellRange {
+  start: CellAddress;
+  end: CellAddress;
+}
+
+export interface CellAddress {
+  col: number;
+  row: number;
+}
 ```
 
 ## getCellHeaderPaths(Function)
@@ -822,6 +845,32 @@ export type TooltipOptions = {
   disappearDelay?: number;
 };
 
+```
+
+## showDropdownMenu(Function)
+
+显示下拉菜单，显示内容可以为 option 中已经设置好的菜单项, 或者显示指定 dom 内容。使用[demo](../demo/component/dropdown)
+
+```
+  /**
+   * 显示下拉菜单
+   * @param col 显示下拉菜单的单元格的列号
+   * @param row 显示下拉菜单的单元格的行号
+   * @param menuOptions 下拉菜单的内容配置
+   */
+  showDropdownMenu(col: number, row: number, menuOptions?: DropDownMenuOptions) => void;
+
+  /** 显示下拉菜单设置项 或者显示指定dom内容 */
+  export type DropDownMenuOptions = {
+    // menuList?: MenuListItem[];
+    content: HTMLElement | MenuListItem[];
+    position?: { x: number; y: number };
+    referencePosition?: {
+      rect: RectProps;
+      /** 目前下拉菜单右对齐icon，指定位置暂未实现  */
+      placement?: Placement;
+    };
+  };
 ```
 
 ## updateFilterRules(Function)
@@ -1325,4 +1374,15 @@ interface ISortedMapItem {
 ```
   /** 设置单元格的树形展开收起状态为 loading */
   setLoadingHierarchyState: (col: number, row: number) => void;
+```
+
+## setPixelRatio(Function)
+
+设置画布的像素比，内部逻辑默认值为 window.devicePixelRatio 。如果感觉绘制内容模糊，可以尝试将这个值设置高一点。
+
+获取 pixelRatio 画布像素比可以直接通过实例的 pixelRatio 属性获取。
+
+```
+  /** 设置画布的像素比 */
+  setPixelRatio: (pixelRatio: number) => void;
 ```
