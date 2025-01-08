@@ -151,11 +151,18 @@ Through the `dependency.linkCreatable` configuration item, you can set whether t
 
 #### Creation Schedule
 
+Configuration taskBar. ScheduleCreatable to true.
+
 If there is no field data for the task date in the original data, you can create a schedule to specify a start time and end time for the task. By default, when you hover over a grid without date data, a button to add a schedule will appear.
 
 The button style can be configured via `taskBar.scheduleCreation.buttonStyle`.
 
 If the current configuration does not meet your needs, you can also customize the display effect of the creation schedule through the `taskBar.scheduleCreation.customLayout` configuration item.
+**Note: Different Gantt chart instances have different capabilities to create schedules.**
+
+When `tasksShowMode` is `TasksShowMode.Tasks_Separate` or `TasksShowMode.Sub_Tasks_Separate`, each piece of data has a corresponding row position display, but when there is no `startDate` and `endDate` field set in the data, a create button will appear when the mouse hovers over the row, and clicking the button will create a schedule and display the task bar.
+
+When `tasksShowMode` is `TasksShowMode.Sub_Tasks_Inline`, `TasksShowMode.Sub_Tasks_Arrange`, or `TasksShowMode.Sub_Tasks_Compact`, a create button will be displayed when the mouse hovers over the blank area, and clicking the button will trigger the event `GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE`, but it will not actually create a task schedule. The user needs to listen for this event and create a schedule update data according to business needs.
 
 ## Leveraging the Capabilities of the Table
 

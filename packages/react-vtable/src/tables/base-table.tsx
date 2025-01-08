@@ -49,9 +49,9 @@ export type BaseTableProps = EventsProps &
     /** 数据 */
     records?: Record<string, unknown>[];
     /** 画布宽度 */
-    width?: number;
+    width?: number | string;
     /** 画布高度 */
-    height?: number;
+    height?: number | string;
     skipFunctionDiff?: boolean;
     keepColumnWidthChange?: boolean;
 

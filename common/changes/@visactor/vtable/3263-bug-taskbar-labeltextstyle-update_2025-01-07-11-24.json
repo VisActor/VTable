@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when resize taskBar width the text label should update #3263\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

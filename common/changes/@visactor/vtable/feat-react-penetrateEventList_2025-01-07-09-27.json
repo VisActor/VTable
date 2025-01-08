@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add penetrateEventList config in react-component",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

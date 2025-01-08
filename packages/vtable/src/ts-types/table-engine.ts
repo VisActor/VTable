@@ -319,14 +319,14 @@ export interface ListTableAPI extends BaseTableAPI {
   addRecord: (record: any, recordIndex?: number) => void;
   addRecords: (records: any[], recordIndex?: number) => void;
   deleteRecords: (recordIndexs: number[]) => void;
-  updateRecords: (records: any[], recordIndexs: number[]) => void;
+  updateRecords: (records: any[], recordIndexs: (number | number[])[]) => void;
   updateFilterRules: (filterRules: FilterRules) => void;
   getAggregateValuesByField: (field: string | number) => {
     col: number;
     aggregateValue: { aggregationType: AggregationType; value: number | string }[];
   }[];
   /**
-   * 根据数据的索引获取应该显示在body的第几行  参数和返回值的碎银均从0开始
+   * 根据数据的索引获取应该显示在body的第几行  参数和返回值的索引均从0开始
    * @param  {number} index The record index.
    */
   getBodyRowIndexByRecordIndex: (index: number | number[]) => number;

@@ -51,13 +51,6 @@ export class TimelineHeader {
           computeCountToTimeScale(endDate, scene._gantt.parsedOptions.minDate, minUnit, step, 1) *
             scene._gantt.parsedOptions.timelineColWidth
         );
-        console.log(
-          unit,
-          x,
-          right_x,
-          computeCountToTimeScale(startDate, scene._gantt.parsedOptions.minDate, minUnit, step),
-          computeCountToTimeScale(endDate, scene._gantt.parsedOptions.minDate, minUnit, step, 1)
-        );
         const width = right_x - x;
         const date = new Group({
           x,

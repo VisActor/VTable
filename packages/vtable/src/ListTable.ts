@@ -1073,7 +1073,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (this.options.groupBy) {
         stateArr = getGroupCheckboxState(this) as any;
       }
-      return stateArr.map((state: any) => {
+      return Array.from(stateArr, (state: any) => {
         return state[field];
       });
     }
@@ -1333,7 +1333,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param records 修改数据条目
    * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
    */
-  updateRecords(records: any[], recordIndexs: number[]) {
+  updateRecords(records: any[], recordIndexs: (number | number[])[]) {
     listTableUpdateRecords(records, recordIndexs, this);
   }
 

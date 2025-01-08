@@ -307,3 +307,9 @@ In React-VTable, the update of props will trigger VTable's updateOption (or setR
   <ListColumn field={'3'} title={'Hobby'} key={'3'} />
 </ListTable>
 ```
+
+### Custom component
+
+To make it easy for React developers to quickly customize cell content, React-VTable provides the ability to encapsulate components and use them in cells.
+
+Refer to the tutorial for details：[Custom component](../custom_define/react-custom-component)

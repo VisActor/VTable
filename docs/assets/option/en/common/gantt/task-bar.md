@@ -70,7 +70,7 @@ Optional
       | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
 
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;
@@ -88,13 +88,17 @@ Optional
 moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
 
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;
   ganttInstance: Gantt;
 };
 ```
+
+${prefix} moveToExtendDateRange(boolean) = true
+
+Whether to move the task bar to the extended date range. The default is true.
 
 ${prefix} hoverBarStyle(ITaskBarHoverStyle)
 
@@ -133,11 +137,23 @@ Whether the service clause is optional, the default is true
 
 Not required
 
-${prefix} scheduleCreatable(boolean) = true
+${prefix} scheduleCreatable(boolean | Function) = true
 
 When there is no schedule, you can create a task bar schedule by clicking on the create button. The default is true.
 
 Optional
+
+```
+scheduleCreatable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+
+export type TaskBarInteractionArgumentType = {
+  taskRecord: any;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+```
 
 ${prefix} scheduleCreation(Object)
 
