@@ -182,7 +182,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   registedAggregators: {
     [key: string]: {
       new (config: {
-        dimension: string | string[];
+        field: string | string[];
         formatFun?: any;
         isRecord?: boolean;
         aggregationFun?: Function;
@@ -292,7 +292,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         for (let j = 0; j < aggragation.length; j++) {
           const item = aggragation[j];
           const aggregator = new this.registedAggregators[item.aggregationType]({
-            dimension: field as string,
+            field: field as string,
             formatFun: item.formatFun,
             isRecord: true,
             aggregationFun: (item as CustomAggregation).aggregationFun
@@ -305,7 +305,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         }
       } else {
         const aggregator = new this.registedAggregators[aggragation.aggregationType]({
-          dimension: field as string,
+          field: field as string,
           formatFun: aggragation.formatFun,
           isRecord: true,
           aggregationFun: (aggragation as CustomAggregation).aggregationFun
