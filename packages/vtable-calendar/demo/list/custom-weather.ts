@@ -1,6 +1,11 @@
 import { Calendar } from '../../src';
-import { Icon } from '@visactor/vtable';
-import { createGroup } from '@visactor/vtable/es/vrender';
+import {
+  createGroup,
+  GifImage,
+  container,
+  gifImageModule,
+  gifImageCanvasPickModule
+} from '@visactor/vtable/es/vrender';
 const CONTAINER_ID = 'vTable';
 
 const gifs = [
@@ -13,6 +18,9 @@ const gifs = [
   '/gif/icons8-瓢泼大雨.gif',
   '/gif/icons8-白天晴间多云.gif'
 ];
+
+container.load(gifImageModule);
+container.load(gifImageCanvasPickModule);
 
 export function createTable() {
   const calendar = new Calendar(document.getElementById(CONTAINER_ID), {
@@ -35,12 +43,10 @@ export function createTable() {
         });
 
         const gif = gifs[Math.floor(Math.random() * gifs.length)];
-        const image = new Icon({
+        const image = new GifImage({
           width: 50,
           height: 50,
-          image: gif,
-          gif: gif,
-          isGif: true
+          gifImage: gif
         });
 
         container.add(image);
