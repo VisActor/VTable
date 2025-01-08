@@ -135,7 +135,7 @@ Not required
 
 ${prefix} scheduleCreatable(boolean) = true
 
-When there is no schedule, you can create a task bar schedule by clicking on the create button. The default is true.
+When there is no scheduling data, scheduling can be done by creating a task bar. When `tasksShowMode` is `TasksShowMode.Tasks_Separate` or `TasksShowMode.Sub_Tasks_Separate`, `scheduleCreatable` defaults to `true`, otherwise, when `tasksShowMode` is `TasksShowMode.Sub_Tasks_Inline`, `TasksShowMode.Sub_Tasks_Arrange`, or `TasksShowMode.Sub_Tasks_Compact`, `scheduleCreatable` defaults to `false`.
 
 Optional
 

@@ -254,7 +254,12 @@ export function initOptions(gantt: Gantt) {
     textOverflow: options?.taskBar?.labelTextStyle?.textOverflow
   };
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
-  gantt.parsedOptions.taskBarCreatable = options?.taskBar?.scheduleCreatable ?? true;
+  gantt.parsedOptions.taskBarCreatable =
+    options?.taskBar?.scheduleCreatable ??
+    !!(
+      gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+      gantt.parsedOptions.tasksShowMode === TasksShowMode.Tasks_Separate
+    );
   gantt.parsedOptions.taskBarCreationButtonStyle = Object.assign(
     {
       lineColor: 'rgb(99, 144, 0)',
