@@ -681,6 +681,10 @@ export const menus = [
       },
       {
         path: 'header',
+        name: 'sort-false'
+      },
+      {
+        path: 'header',
         name: 'frozen'
       },
       {
