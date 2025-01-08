@@ -1430,6 +1430,24 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return result;
   }
 
+  getColumnByKey(key: string): {
+    col: number;
+    columnDefine: ColumnData;
+  } {
+    let col;
+    const result = this.columnObjects?.find((columnData: ColumnData, index) => {
+      if (columnData.define?.key === key) {
+        col = index;
+        return true;
+      }
+      return false;
+    });
+    return {
+      columnDefine: result,
+      col
+    };
+  }
+
   getColumnDefine(col: number, row: number) {
     if (col >= 0) {
       if (col < this.leftRowSeriesNumberColumnCount) {

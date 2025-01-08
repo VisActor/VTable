@@ -105,6 +105,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.internalProps.rowResizeType = options.rowResizeType ?? 'row';
       this.internalProps.dataConfig = cloneDeep(options.dataConfig);
       this.internalProps.columnWidthConfig = options.columnWidthConfig;
+      this.internalProps.columnWidthConfigForRowHeader = options.columnWidthConfigForRowHeader;
 
       const records = this.internalProps.records;
       this.internalProps.recordsIsTwoDimensionalArray = false;
@@ -314,6 +315,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     internalProps.rowResizeType = options.rowResizeType ?? 'row';
     internalProps.dataConfig = cloneDeep(options.dataConfig);
     this.internalProps.columnWidthConfig = options.columnWidthConfig;
+    this.internalProps.columnWidthConfigForRowHeader = options.columnWidthConfigForRowHeader;
 
     //维护tree树形结构的展开状态
     if (
@@ -1178,9 +1180,31 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
           }
         }
+      } else if (cell && cell.col < this.rowHeaderLevelCount) {
+        if (!this.internalProps._widthResizedColMap.has(cell.col)) {
+          this._setColWidth(cell.col, width);
+          this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+        }
       }
     }
   }
+
+  // particularly for row header in react-vtable keepColumnWidthChange config
+  _parseColumnWidthConfigForRowHeader(columnWidthConfig: { dimensions: IDimensionInfo[]; width: number }[]) {
+    for (let i = 0; i < columnWidthConfig?.length; i++) {
+      const item = columnWidthConfig[i];
+      const dimensions = item.dimensions;
+      const width = item.width;
+      const cell = this.getCellAddressByHeaderPaths(dimensions);
+      if (cell && cell.col < this.rowHeaderLevelCount) {
+        if (!this.internalProps._widthResizedColMap.has(cell.col)) {
+          this._setColWidth(cell.col, width);
+          this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+        }
+      }
+    }
+  }
+
   /**
    * 更新排序状态
    * @param pivotSortStateConfig.dimensions 排序状态维度对应关系；pivotSortStateConfig.order 排序状态

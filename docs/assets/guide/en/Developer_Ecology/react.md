@@ -295,6 +295,19 @@ register.chartModule('vchart', VChart);
 // ......
 ```
 
+### Keep column width
+
+In React-VTable, the update of props will trigger VTable's updateOption (or setRecords). If the column width is manually adjusted, it will cause the column width to be reset to the initial state. If you need to keep the column width, you can configure `keepColumnWidthChange` props to true. It should be noted that in the list, each `ListColumn` needs to be configured with `key` as a unique identifier, which is not required in the pivot table.
+
+```jsx
+<ListTable records={records} keepColumnWidthChange={true}>
+  <ListColumn field={'0'} title={'Name'} key={'0'} />
+  <ListColumn field={'1'} title={'Age'} key={'1'} />
+  <ListColumn field={'2'} title={'Sex'} key={'2'} />
+  <ListColumn field={'3'} title={'Hobby'} key={'3'} />
+</ListTable>
+```
+
 ### Custom component
 
 To make it easy for React developers to quickly customize cell content, React-VTable provides the ability to encapsulate components and use them in cells.

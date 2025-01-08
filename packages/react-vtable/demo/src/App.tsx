@@ -23,7 +23,7 @@ import customLayoutDomSite from './component/custom-layout-dom-site';
 import customLayoutDomSite1 from './component/custom-layout-dom-site-1';
 import customLayoutPivot from './component/custom-layout-pivot';
 
-// export default listTable;
+export default listTable;
 // export default listEditor;
 // export default listOptionRecord;
 // export default listComponent;
