@@ -784,6 +784,7 @@ If you need to use DOM react components in components, you can specify the `reac
 
 The following properties are also supported in react:
 * `pointerEvents` whether to respond to mouse events
+* `penetrateEventList` Mouse event penetration list, used to specify which mouse events need to be penetrated to the VTable (currently only supports `wheel`)
 * `container` Container, used to limit the component display area in the table when scrolling. If you need to limit the component display in the table content area, you need to specify it as `table.bodyDomContainer`; if you need to limit the component display in the table header area, you need to specify it as `table.headerDomContainer`; if it is a pop-up window or menu component, you do not need to configure this property
 * `anchorType` Anchor type, used to specify the anchor position of the upper left corner of the component relative to the cell
   * 'top'
