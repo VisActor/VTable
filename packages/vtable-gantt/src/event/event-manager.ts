@@ -198,7 +198,7 @@ function bindTableGroupListener(event: EventManager) {
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact
           gantt.parsedOptions.taskBarCreatable
         ) {
-          const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight, gantt);
+          const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight + gantt.stateManager.scrollTop, gantt);
           const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex.task_index, taskIndex.sub_task_index);
 
           let taskBarCreatable: boolean = true;
@@ -383,7 +383,7 @@ function bindTableGroupListener(event: EventManager) {
       } else if (isClickCreationButtom && event.poniterState === 'down') {
         stateManager.hideDependencyLinkSelectedLine();
         stateManager.hideTaskBarSelectedBorder();
-        const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight, gantt);
+        const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight + gantt.stateManager.scrollTop, gantt);
 
         if (
           gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
@@ -446,7 +446,7 @@ function bindTableGroupListener(event: EventManager) {
         stateManager.showDependencyLinkSelectedLine();
       } else if ((isClickLeftLinkPoint || isClickRightLinkPoint) && event.poniterState === 'down') {
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_DEPENDENCY_LINK_POINT)) {
-          const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight, gantt);
+          const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight + gantt.stateManager.scrollTop, gantt);
 
           const record = gantt.getRecordByIndex(taskIndex.task_index, taskIndex.sub_task_index);
 
