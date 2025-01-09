@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.18.14"
+    "@visactor/vutils": "~0.19.1"
   },
   "devDependencies": {
     "@visactor/vchart": "1.13.3-alpha.2",

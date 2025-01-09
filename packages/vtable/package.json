@@ -55,7 +55,7 @@
     "@visactor/vrender-core": "0.21.9-alpha.1",
     "@visactor/vrender-kits": "0.21.9-alpha.1",
     "@visactor/vrender-components": "0.21.9-alpha.1",
-    "@visactor/vutils": "~0.18.14",
+    "@visactor/vutils": "~0.19.1",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
     "@visactor/vutils-extension": "~1.11.5",
