@@ -111,6 +111,8 @@ In VTable, you can configure `customMergeCell` to customize the merging method o
 * range: merged range
 * style: style of merged cells
 
+`customMergeCell` can also be configured as an array of merge rules. Each item in the array is a merge rule. The configuration of the rule is the same as the return value of the `customMergeCell` callback function.
+
 ### Example
 
 ```javascript livedemo template=vtable

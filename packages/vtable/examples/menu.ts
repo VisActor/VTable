@@ -178,6 +178,10 @@ export const menus = [
       },
       {
         path: 'list-analysis',
+        name: 'list-aggregation-group-header'
+      },
+      {
+        path: 'list-analysis',
         name: 'olympic-winners'
       }
     ]
@@ -595,6 +599,10 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-register-aggregationRule'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-pagination'
       },
       {
@@ -678,6 +686,10 @@ export const menus = [
       {
         path: 'header',
         name: 'sort'
+      },
+      {
+        path: 'header',
+        name: 'sort-false'
       },
       {
         path: 'header',

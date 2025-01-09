@@ -20,4 +20,5 @@ export type IEmptyTip = {
     height?: number; // 如果是font图标 不设的话默认是字体高度
     image: string;
   };
+  displayMode?: 'basedOnTable' | 'basedOnContainer';
 };

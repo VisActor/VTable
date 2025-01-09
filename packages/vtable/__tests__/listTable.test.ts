@@ -203,6 +203,8 @@ describe('listTable init test', () => {
       fontWeight: 'bold'
     });
     expect(measureTextWdith).toEqual({
+      fontBoundingBoxAscent: 14,
+      fontBoundingBoxDescent: 3,
       width: 390.0501427283655,
       height: 15
     });

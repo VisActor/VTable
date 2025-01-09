@@ -1,6 +1,64 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 27 Dec 2024 09:48:26 GMT and should not be manually modified.
+This log was last generated on Thu, 09 Jan 2025 08:44:38 GMT and should not be manually modified.
+
+## 1.15.0
+Thu, 09 Jan 2025 08:44:38 GMT
+
+### Minor changes
+
+- feat: aggregationType custom work in pivot table #1508
+
+
+
+### Updates
+
+- feat: support register aggregator #1508
+
+
+- fix: when columns is all hide then should not generate cell ids #3199
+
+
+- feat: frozenColCount work in pivot table #3201
+
+
+- feat: add moveToExtendDateRange option #3221
+
+
+- fix: when header tree indicator node has different value, columnWidthConfig not work #3258
+
+
+- fix: when resize taskBar width the text label should update #3263
+
+
+- fix: when left table set autoWidth gantt chart render error #3266
+
+
+- feat: add keyboardOptions and add delete_dependency_link contextmenu_dependency_link event #3268
+
+
+- docs: add weather calendar demo
+- feat: customMergeCell support array config #3202
+- feat: add displayMode in emptyTip
+- feat: groupby support array config
+
+
+- feat: add penetrateEventList config in react-component
+- docs: add scheduleCreatable doc
+
+
+- fix: change taskRecord type from string to any
+
+
+- fix: fix aggregation display issue in tree-structured table headers
+
+
+- fix: fix collapse checkbox state update #3171
+- fix: clear sort target when setRecords in dataset
+- fix: fix frozen update problem in react-dom-component
+- fix: fix iterator map in getCheckboxState() #3177 #3239
+- feat: add keepColumnWidthChange props in react-vtable
+- feat: add imageAnonymous in customConfig
 
 ## 1.14.3
 Fri, 27 Dec 2024 09:48:26 GMT

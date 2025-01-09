@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-plugins",
-  "version": "1.14.3",
+  "version": "1.15.0",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -34,7 +34,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.18.14"
+    "@visactor/vutils": "~0.19.1"
   },
   "peerDependencies": {
     "@visactor/vtable": "workspace:*"
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@visactor/vtable": "workspace:*",
     "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vchart": "1.13.1-alpha.2",
+    "@visactor/vchart": "1.13.3-alpha.2",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

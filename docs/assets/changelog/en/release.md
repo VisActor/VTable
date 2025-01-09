@@ -1,3 +1,23 @@
+# v1.14.3
+
+2024-12-27
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: showSort support function type [#2630](https://github.com/VisActor/VTable/issues/2630)
+- **@visactor/vtable**: add hide for indicator setting [#2257](https://github.com/VisActor/VTable/issues/2257) [#2451](https://github.com/VisActor/VTable/issues/2451)
+- **@visactor/vtable**: add enableTreeCheckbox config
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix borderLineWidth array config [#3183](https://github.com/VisActor/VTable/issues/3183)
+- **@visactor/vtable**: when set resizable false hover taskbar occor error [#3189](https://github.com/VisActor/VTable/issues/3189)
+
+
+
+[more detail about v1.14.3](https://github.com/VisActor/VTable/releases/tag/v1.14.3)
+
 # v1.14.1
 
 2024-12-23

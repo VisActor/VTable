@@ -140,6 +140,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.headerHelper.setTableColumnsEditor();
     this.showHeader = options.showHeader ?? true;
 
+    this.internalProps.columnWidthConfig = options.columnWidthConfig;
+
     this.transpose = options.transpose ?? false;
     if (Env.mode !== 'node') {
       this.editorManager = new EditManager(this);
@@ -500,6 +502,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // 更新表头
     this.refreshHeader();
     this.internalProps.useOneRowHeightFillAll = false;
+
+    this.internalProps.columnWidthConfig = options.columnWidthConfig;
 
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
@@ -1069,7 +1073,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (this.options.groupBy) {
         stateArr = getGroupCheckboxState(this) as any;
       }
-      return stateArr.map((state: any) => {
+      return Array.from(stateArr, (state: any) => {
         return state[field];
       });
     }
@@ -1329,7 +1333,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param records 修改数据条目
    * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
    */
-  updateRecords(records: any[], recordIndexs: number[]) {
+  updateRecords(records: any[], recordIndexs: (number | number[])[]) {
     listTableUpdateRecords(records, recordIndexs, this);
   }
 
@@ -1423,5 +1427,22 @@ export class ListTable extends BaseTable implements ListTableAPI {
       index = index[0];
     }
     return this.dataSource.getTableIndex(index);
+  }
+
+  /** 解析配置columnWidthConfig传入的列宽配置 */
+  _parseColumnWidthConfig(columnWidthConfig: { key: string; width: number }[]) {
+    for (let i = 0; i < columnWidthConfig?.length; i++) {
+      const item = columnWidthConfig[i];
+      const key = item.key;
+      const width = item.width;
+      const columnData = this.internalProps.layoutMap.getColumnByKey(key);
+      if (columnData.columnDefine) {
+        const { col } = columnData;
+        if (!this.internalProps._widthResizedColMap.has(col)) {
+          this._setColWidth(col, width);
+          this.internalProps._widthResizedColMap.add(col); // add resize tag
+        }
+      }
+    }
   }
 }

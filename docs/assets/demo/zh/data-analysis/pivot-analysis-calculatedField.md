@@ -4,7 +4,7 @@ group: data-analysis
 title: 透视表计算字段
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/calculatedField.jpeg
 link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#dataConfig.totals
+option: PivotTable#dataConfig.calculatedFieldRules
 ---
 
 # 透视分析——计算字段

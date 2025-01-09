@@ -276,14 +276,17 @@ const CardInfo = (props: { text: string; hover: boolean; row?: number }) => {
   ) : null;
 };
 
+const data = new Array(20).fill(['John', 18, 'male', '🏀']);
 function App() {
-  const records = new Array(2000).fill(['John', 18, 'male', '🏀']);
+  const [records, setRecords] = useState(data);
   const [preStr, setPreStr] = useState('vt');
 
   useEffect(() => {
     // eslint-disable-next-line no-undef
     setTimeout(() => {
-      setPreStr(preStr + '1');
+      // setPreStr(preStr + '1');
+      const data = new Array(20).fill(['John', 19, 'male', '🏀']);
+      setRecords(data);
     }, 1000);
   }, []);
 
@@ -293,15 +296,16 @@ function App() {
       height={900}
       defaultHeaderRowHeight={80}
       defaultRowHeight={227}
+      frozenColCount={1}
       onReady={table => {
         // eslint-disable-next-line no-undef
         (window as any).tableInstance = table;
       }}
       ReactDOM={ReactDOM}
     >
-      <ListColumn field={'0'} title={'name'} />
-      <ListColumn field={'1'} title={'age'} />
-      <ListColumn field={'2'} title={'gender'} />
+      <ListColumn field={'0'} title={'name'} width={1400} />
+      <ListColumn field={'1'} title={'age'} width={400} />
+      <ListColumn field={'2'} title={'gender'} width={400} />
       <ListColumn field={'3'} title={'hobby'} width={362}>
         {/* <CustomLayoutComponent role={'custom-layout'} text={preStr} /> */}
         {/* <DomCustomLayoutComponent role={'custom-layout'} text={preStr} /> */}

@@ -25,7 +25,8 @@ import type {
   IPointStyle,
   TaskBarInteractionArgumentType,
   IEventOptions,
-  IMilestoneStyle
+  IMilestoneStyle,
+  IKeyboardOptions
 } from './ts-types';
 import { TasksShowMode } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
@@ -62,6 +63,7 @@ import {
 } from './tools/util';
 import { DataSource } from './data/DataSource';
 import { isValid } from '@visactor/vutils';
+import type { GanttTaskBarNode } from './scenegraph/gantt-node';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
@@ -133,6 +135,7 @@ export class Gantt extends EventTarget {
     taskBarSelectable: boolean;
     taskBarLabelText: ITaskBarLabelText;
     taskBarMoveable: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+    moveTaskBarToExtendDateRange: boolean;
     taskBarResizable:
       | boolean
       | [boolean, boolean]
@@ -140,7 +143,7 @@ export class Gantt extends EventTarget {
     taskBarDragOrder: boolean;
     taskBarLabelStyle: ITaskBarLabelTextStyle;
     taskBarCustomLayout: ITaskBarCustomLayout;
-    taskBarCreatable: boolean;
+    taskBarCreatable: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
     taskBarCreationButtonStyle: ILineStyle & {
       cornerRadius?: number;
       backgroundColor?: string;
@@ -179,6 +182,7 @@ export class Gantt extends EventTarget {
     dependencyLinks?: ITaskLink[];
     dependencyLinkCreatable: boolean;
     dependencyLinkSelectable: boolean;
+    dependencyLinkDeletable: boolean;
     dependencyLinkLineStyle: ILineStyle;
     dependencyLinkSelectedLineStyle: ITaskLinkSelectedStyle;
     dependencyLinkLineCreatePointStyle: IPointStyle;
@@ -186,6 +190,7 @@ export class Gantt extends EventTarget {
     dependencyLinkLineCreatingStyle?: ILineStyle;
     underlayBackgroundColor: string;
     eventOptions: IEventOptions;
+    keyboardOptions: IKeyboardOptions;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
@@ -735,22 +740,22 @@ export class Gantt extends EventTarget {
     return this.records[taskShowIndex];
   }
 
-  _refreshTaskBar(taskShowIndex: number) {
+  _refreshTaskBar(taskShowIndex: number, sub_task_index: number) {
     // this.taskListTableInstance.updateRecords([record], [index]);
-    this.scenegraph.taskBar.updateTaskBarNode(taskShowIndex);
+    this.scenegraph.taskBar.updateTaskBarNode(taskShowIndex, sub_task_index);
     this.scenegraph.refreshRecordLinkNodes(
       taskShowIndex,
       undefined,
-      this.scenegraph.taskBar.getTaskBarNodeByIndex(taskShowIndex)
+      this.scenegraph.taskBar.getTaskBarNodeByIndex(taskShowIndex, sub_task_index) as GanttTaskBarNode
     );
     this.scenegraph.updateNextFrame();
   }
-  _updateRecordToListTable(record: any, index: number) {
-    const indexs = this.taskListTableInstance.getRecordIndexByCell(
-      0,
-      index + this.taskListTableInstance.columnHeaderLevelCount
-    );
-    this.taskListTableInstance.updateRecords([record], [indexs]);
+  _updateRecordToListTable(record: any, index: number | number[]) {
+    // const indexs = this.taskListTableInstance.getRecordIndexByCell(
+    //   0,
+    //   index + this.taskListTableInstance.columnHeaderLevelCount
+    // );
+    this.taskListTableInstance.updateRecords([record], [index]);
   }
   /**
    * 获取指定index处任务数据的具体信息
@@ -881,11 +886,27 @@ export class Gantt extends EventTarget {
     // const source_taskRecord = this.getRecordByIndex(source_index, source_sub_task_index);
     this.data.adjustOrder(source_index, source_sub_task_index, target_index, target_sub_task_index);
   }
-  /** 目前不支持树形tree的情况更新单条数据 需要的话目前可以setRecords。 */
-  updateTaskRecord(record: any, index: number) {
-    //const taskRecord = this.getRecordByIndex(index);
+  // 定义多个函数签名
+  /** 更新数据信息 */
+  updateTaskRecord(record: any, task_index: number | number[]): void;
+  updateTaskRecord(record: any, task_index: number, sub_task_index: number): void;
+  updateTaskRecord(record: any, task_index: number | number[], sub_task_index?: number) {
+    if (isValid(sub_task_index)) {
+      const index = typeof task_index === 'number' ? task_index : task_index[0];
+      this._updateRecordToListTable(record, [index, sub_task_index]);
+      this._refreshTaskBar(index, sub_task_index);
+      return;
+    }
+    if (Array.isArray(task_index)) {
+      const index = (task_index as number[])[0];
+      const sub_index = (task_index as number[])[1];
+      this._updateRecordToListTable(record, isValid(sub_index) ? [index, sub_index] : index);
+      this._refreshTaskBar(index, sub_index);
+      return;
+    }
+    const index = task_index as number;
     this._updateRecordToListTable(record, index);
-    this._refreshTaskBar(index);
+    this._refreshTaskBar(index, undefined);
   }
 
   /**
@@ -1037,17 +1058,19 @@ export class Gantt extends EventTarget {
     this.scenegraph.updateNextFrame();
   }
   deleteLink(link: ITaskLink) {
-    const index = this.parsedOptions.dependencyLinks.findIndex(
-      item =>
-        item.type === link.type &&
-        item.linkedFromTaskKey === link.linkedFromTaskKey &&
-        item.linkedToTaskKey === link.linkedToTaskKey
-    );
-    if (index !== -1) {
-      const link = this.parsedOptions.dependencyLinks[index];
-      this.parsedOptions.dependencyLinks.splice(index, 1);
-      this.scenegraph.dependencyLink.deleteLink(link);
-      this.scenegraph.updateNextFrame();
+    if (this.parsedOptions.dependencyLinkDeletable) {
+      const index = this.parsedOptions.dependencyLinks.findIndex(
+        item =>
+          item.type === link.type &&
+          item.linkedFromTaskKey === link.linkedFromTaskKey &&
+          item.linkedToTaskKey === link.linkedToTaskKey
+      );
+      if (index !== -1) {
+        const link = this.parsedOptions.dependencyLinks[index];
+        this.parsedOptions.dependencyLinks.splice(index, 1);
+        this.scenegraph.dependencyLink.deleteLink(link);
+        this.scenegraph.updateNextFrame();
+      }
     }
   }
   get scrollTop(): number {
@@ -1081,29 +1104,29 @@ export class Gantt extends EventTarget {
       height
     };
   }
-  getMinScaleUnitToDays() {
-    const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
-    const minScaleUnit = minScale.unit;
-    const minScaleStep = minScale.step ?? 1;
-    if (minScaleUnit === 'day') {
-      return minScaleStep;
-    } else if (minScaleUnit === 'week') {
-      return 7 * minScaleStep;
-    } else if (minScaleUnit === 'month') {
-      return 30 * minScaleStep;
-    } else if (minScaleUnit === 'quarter') {
-      return 90 * minScaleStep;
-    } else if (minScaleUnit === 'year') {
-      return 365 * minScaleStep;
-    } else if (minScaleUnit === 'hour') {
-      return (1 / 24) * minScaleStep;
-    } else if (minScaleUnit === 'minute') {
-      return (1 / 24 / 60) * minScaleStep;
-    } else if (minScaleUnit === 'second') {
-      return (1 / 24 / 60 / 60) * minScaleStep;
-    }
-    return 1;
-  }
+  // getMinScaleUnitToDays() {
+  //   const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
+  //   const minScaleUnit = minScale.unit;
+  //   const minScaleStep = minScale.step ?? 1;
+  //   if (minScaleUnit === 'day') {
+  //     return minScaleStep;
+  //   } else if (minScaleUnit === 'week') {
+  //     return 7 * minScaleStep;
+  //   } else if (minScaleUnit === 'month') {
+  //     return 30 * minScaleStep;
+  //   } else if (minScaleUnit === 'quarter') {
+  //     return 90 * minScaleStep;
+  //   } else if (minScaleUnit === 'year') {
+  //     return 365 * minScaleStep;
+  //   } else if (minScaleUnit === 'hour') {
+  //     return (1 / 24) * minScaleStep;
+  //   } else if (minScaleUnit === 'minute') {
+  //     return (1 / 24 / 60) * minScaleStep;
+  //   } else if (minScaleUnit === 'second') {
+  //     return (1 / 24 / 60 / 60) * minScaleStep;
+  //   }
+  //   return 1;
+  // }
 
   getDateColWidth(dateIndex: number) {
     return this.parsedOptions.timelineColWidth;

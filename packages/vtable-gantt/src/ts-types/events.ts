@@ -68,15 +68,22 @@ export interface TableEventHandlersEventArgumentMap {
     index: number;
     sub_task_index?: number;
     /** 改变后的起始日期 */
-    startDate: Date;
+    startDate: string;
     /** 改变后的结束日期 */
-    endDate: Date;
+    endDate: string;
     /** 改变后的数据条目 */
     record: any;
+    /** 如果是子任务模式，父级数据信息 */
+    parentRecord?: any;
   };
   create_dependency_link: {
     federatedEvent: FederatedPointerEvent;
     event: Event;
+    /** 依赖信息 */
+    link: ITaskLink;
+  };
+  delete_dependency_link: {
+    event: KeyboardEvent;
     /** 依赖信息 */
     link: ITaskLink;
   };
@@ -86,7 +93,14 @@ export interface TableEventHandlersEventArgumentMap {
     point: 'start' | 'end';
     /** 第几条数据 */
     index: number;
+    sub_task_index?: number;
     record: any;
+  };
+  contextmenu_dependency_link: {
+    federatedEvent: FederatedPointerEvent;
+    event: Event;
+    /** 依赖信息 */
+    link: ITaskLink;
   };
 }
 
@@ -99,4 +113,6 @@ export interface TableEventHandlersReturnMap {
   change_date_range: void;
   create_task_schedule: void;
   create_dependency_link: void;
+  delete_dependency_link: void;
+  contextmenu_dependency_link: void;
 }
