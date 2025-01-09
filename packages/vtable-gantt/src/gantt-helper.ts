@@ -248,7 +248,12 @@ export function initOptions(gantt: Gantt) {
     textOverflow: options?.taskBar?.labelTextStyle?.textOverflow
   };
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
-  gantt.parsedOptions.taskBarCreatable = options?.taskBar?.scheduleCreatable ?? true;
+  gantt.parsedOptions.taskBarCreatable =
+    options?.taskBar?.scheduleCreatable ??
+    !!(
+      gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+      gantt.parsedOptions.tasksShowMode === TasksShowMode.Tasks_Separate
+    );
   gantt.parsedOptions.taskBarCreationButtonStyle = Object.assign(
     {
       lineColor: 'rgb(99, 144, 0)',
@@ -1054,12 +1059,12 @@ export function updateOptionsWhenMarkLineChanged(gantt: Gantt) {
  * @returns 当前任务信息
  */
 export function _getTaskInfoByXYForCreateSchedule(eventX: number, eventY: number, gantt: Gantt) {
-  const taskIndex = getTaskIndexsByTaskY(eventY - gantt.headerHeight, gantt);
+  const taskIndex = getTaskIndexsByTaskY(eventY - gantt.headerHeight + gantt.stateManager.scrollTop, gantt);
   const recordParent = gantt.getRecordByIndex(taskIndex.task_index);
   const dateIndex = getDateIndexByX(eventX, gantt);
   const dateRange = gantt.getDateRangeByIndex(dateIndex);
   if (recordParent?.children) {
-    const taskIndex = getTaskIndexsByTaskY(eventY - gantt.headerHeight, gantt);
+    const taskIndex = getTaskIndexsByTaskY(eventY - gantt.headerHeight + gantt.stateManager.scrollTop, gantt);
     for (let i = 0; i < recordParent.children.length; i++) {
       const { startDate, endDate, taskDays, progress, taskRecord } = gantt.getTaskInfoByTaskListIndex(
         taskIndex.task_index,
