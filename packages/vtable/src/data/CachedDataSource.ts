@@ -154,7 +154,7 @@ export class CachedDataSource extends DataSource {
       // const groupByKey = this.dataConfig.groupByRules[0];
       const groupByKeys = this.dataConfig.groupByRules;
       this.groupAggregator = new this.registedAggregators[AggregationType.CUSTOM]({
-        dimension: '',
+        field: '',
         aggregationFun: (values: any, records: any, field: any) => {
           const groupMap = new Map();
           const groupResult = [] as any[];
