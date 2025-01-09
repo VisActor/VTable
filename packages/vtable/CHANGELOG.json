@@ -2,6 +2,86 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.15.0",
+      "tag": "@visactor/vtable_v1.15.0",
+      "date": "Thu, 09 Jan 2025 08:44:38 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: aggregationType custom work in pivot table #1508\n\n"
+          }
+        ],
+        "none": [
+          {
+            "comment": "feat: support register aggregator #1508\n\n"
+          },
+          {
+            "comment": "fix: when columns is all hide then should not generate cell ids #3199\n\n"
+          },
+          {
+            "comment": "feat: frozenColCount work in pivot table #3201\n\n"
+          },
+          {
+            "comment": "feat: add moveToExtendDateRange option #3221\n\n"
+          },
+          {
+            "comment": "fix: when header tree indicator node has different value, columnWidthConfig not work #3258\n\n"
+          },
+          {
+            "comment": "fix: when resize taskBar width the text label should update #3263\n\n"
+          },
+          {
+            "comment": "fix: when left table set autoWidth gantt chart render error #3266\n\n"
+          },
+          {
+            "comment": "feat: add keyboardOptions and add delete_dependency_link contextmenu_dependency_link event #3268\n\n"
+          },
+          {
+            "comment": "docs: add weather calendar demo"
+          },
+          {
+            "comment": "feat: customMergeCell support array config #3202"
+          },
+          {
+            "comment": "feat: add displayMode in emptyTip"
+          },
+          {
+            "comment": "feat: groupby support array config\n\n"
+          },
+          {
+            "comment": "feat: add penetrateEventList config in react-component"
+          },
+          {
+            "comment": "docs: add scheduleCreatable doc\n\n"
+          },
+          {
+            "comment": "fix: change taskRecord type from string to any\n\n"
+          },
+          {
+            "comment": "fix: fix aggregation display issue in tree-structured table headers\n\n"
+          },
+          {
+            "comment": "fix: fix collapse checkbox state update #3171"
+          },
+          {
+            "comment": "fix: clear sort target when setRecords in dataset"
+          },
+          {
+            "comment": "fix: fix frozen update problem in react-dom-component"
+          },
+          {
+            "comment": "fix: fix iterator map in getCheckboxState() #3177 #3239"
+          },
+          {
+            "comment": "feat: add keepColumnWidthChange props in react-vtable"
+          },
+          {
+            "comment": "feat: add imageAnonymous in customConfig"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.14.3",
       "tag": "@visactor/vtable_v1.14.3",
       "date": "Fri, 27 Dec 2024 09:48:26 GMT",
