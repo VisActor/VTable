@@ -72,7 +72,7 @@ ${prefix} resizable(boolean | [ boolean, boolean ] | Function) = true
 
 //其中：
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;
@@ -91,13 +91,17 @@ moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boole
 
 //其中：
 export type TaskBarInteractionArgumentType = {
-  taskRecord: string;
+  taskRecord: any;
   index: number;
   startDate: Date;
   endDate: Date;
   ganttInstance: Gantt;
 };
 ```
+
+${prefix} moveToExtendDateRange(boolean) = true
+
+任务条拖拽超出当前日期范围时自动扩展日期范围, 默认为 true
 
 ${prefix} hoverBarStyle(ITaskBarHoverStyle)
 
@@ -136,11 +140,24 @@ ${prefix} selectable(boolean)
 
 非必填
 
-${prefix} scheduleCreatable(boolean) = true
+${prefix} scheduleCreatable(boolean | Function) = true
 
 数据没有排期时，可通过创建任务条排期。当 tasksShowMode 为 TasksShowMode.Tasks_Separate 或 TasksShowMode.Sub_Tasks_Separate 时 `scheduleCreatable` 默认为 true，其他情况即当 tasksShowMode 为 TasksShowMode.Sub_Tasks_Inline 或 TasksShowMode.Sub_Tasks_Arrange 或 TasksShowMode.Sub_Tasks_Compact 时 `scheduleCreatable` 默认为 false
 
 非必填
+
+```
+scheduleCreatable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+
+//其中：
+export type TaskBarInteractionArgumentType = {
+  taskRecord: any;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+```
 
 ${prefix} scheduleCreation(Object)
 

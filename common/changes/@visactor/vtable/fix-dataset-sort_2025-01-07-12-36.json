@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: clear sort target when setRecords in dataset",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

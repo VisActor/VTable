@@ -117,9 +117,7 @@ links:[
 ]
 ```
 
-`linkedFromTaskKey` 的值是 records 中的唯一标识字段，唯一表示字段的字段名默认为`id`，如果需要修改可以通过`taskKeyField`配置项来修改。
-
-样式可以通过 `dependency.linkLineStyle` 配置项，可以自定义任务之间的依赖关系的样式。通过 `dependency.linkLineSelectedStyle` 配置项，可以自定义任务之间的依赖关系选中时的样式。另外可以动态创建关联线，通过 `dependency.linkCreatable` 配置项，可以设置是否可以创建关联线。
+其中`linkedFromTaskKey` 和 `linkedToTaskKey` 的值需要对应 records 中的唯一标识字段，唯一标识的字段名默认为`id`，如果需要修改可以通过`taskKeyField`配置项来修改。
 
 ### 交互
 
@@ -164,6 +162,12 @@ links:[
 
 当`tasksShowMode`为`TasksShowMode.Sub_Tasks_Inline`或`TasksShowMode.Sub_Tasks_Arrange`或`TasksShowMode.Sub_Tasks_Compact`，需要明确指明 scheduleCreatable 为`true`，才可出现创建按钮。当鼠标 hover 到空白区域即会显示创建按钮，点击按钮会触发事件`GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE`但不会真正的创建任务排期，使用者需要监听该事件根据业务需求来自行创建排期更新数据。
 
+**注意：不同的甘特图实例，创建排期能力不同。：**
+
+当`tasksShowMode`为`TasksShowMode.Tasks_Separate`或`TasksShowMode.Sub_Tasks_Separate`，也就是没条数据有对应的一行位置展示，但是数据中没有设置 startDate 和 endDate 的字段时，鼠标 hover 到该行会出现创建按钮，点击按钮会创建排期并展示任务条。
+
+当`tasksShowMode`为`TasksShowMode.Sub_Tasks_Inline`或`TasksShowMode.Sub_Tasks_Arrange`或`TasksShowMode.Sub_Tasks_Compact`，当鼠标 hover 到空白区域即会显示创建按钮，点击按钮会触发事件`GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE`但不会真正的创建任务排期，使用者需要监听该事件根据业务需求来自行创建排期更新数据。
+
 ## 借助表格的能力
 
 甘特图是基于 VTable 的 ListTable 实现的，看上去相当于一个拼接形式，左侧是任务信息表格，右侧是任务条列表。
@@ -201,10 +205,23 @@ VTableGantt 内部借助这个表格实例 tableInstance 实现的能力有：
 
 3. 依赖关联线 `dependency`
 
-   1. 依赖关系：通过 `links` 配置项，可以设置任务之间的依赖关系。
-   2. 关联线的样式: 通过 `linkLineStyle` 配置项，可以设置关联线的样式，包括颜色、宽度、虚线样式等。
-   3. 关联线创建: 通过 `linkCreatable` 配置项，可以设置是否允许创建关联线。
-   4. 关联线创建过程的操作样式: 通过 `linkSelectedLineStyle` `linkCreatingPointStyle` `linkCreatingLineStyle` 配置项，可以设置关联线选中过程的样式，包括颜色、宽度、虚线样式等。
+   任务依赖关系的相关配置项介绍：
+
+   - `dependency.links`：可以通过 `dependency.links` 配置项，设置任务之间的依赖关系。
+
+   - `taskKeyField`：可以通过 `taskKeyField` 配置项，设置依赖关系唯一标识字段的字段名。
+
+   - `dependency.linkLineStyle`：可以通过 `dependency.linkLineStyle` 配置依赖线样式，包括颜色、宽度、虚线样式等。
+
+   - `dependency.linkLineSelectedStyle`：可以自定义任务之间的依赖关系选中时的样式。
+
+   - `dependency.linkCreatable`：通过 `dependency.linkCreatable` 配置项，可以设置是否可以创建关联线。
+
+   - `dependency.linkSelectable`：通过 `dependency.linkSelectable` 配置项，可以设置是否可以选中关联线。
+
+   - `dependency.linkDeletable`：通过 `dependency.linkDeletable` 配置项，可以设置是否可以删除关联线,如果想要通过鼠标右键删除关联线，可以监听`CONTEXTMENU_DEPENDENCY_LINK`事件，来主动调用接口 deleteLink 来删除。如果配置快捷键`keyboardOptions.deleteLinkOnDel`或者`keyboardOptions.deleteLinkOnBack`来通过按下键盘'del'或者'back'键来删除关联线。
+
+   - 关联线创建过程的操作样式: 通过 `linkSelectedLineStyle` `linkCreatePointStyle` `linkCreatingPointStyle` `linkCreatingLineStyle` 配置项，可以设置关联线选中过程的样式，包括颜色、宽度、虚线样式等。
 
 4. 日期表头配置 timelineHeader
    1. 自定义渲染: 通过 customLayout 配置项，可以自定义日期表头的渲染方式。

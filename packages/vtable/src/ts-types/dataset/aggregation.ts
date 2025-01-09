@@ -1,12 +1,27 @@
 import { isValid } from '@visactor/vutils';
-import type { SortOrder } from '../ts-types';
-import { AggregationType, SortType } from '../ts-types';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { SortOrder } from '..';
+import { AggregationType, SortType } from '..';
+import type { BaseTableAPI } from '../base-table';
+
+export const registeredAggregators: {
+  [key: string]: {
+    new (args: {
+      key?: string;
+      field: string | string[];
+      aggregationFun?: any;
+      formatFun?: any;
+      isRecord?: boolean;
+      needSplitPositiveAndNegative?: boolean;
+      calculateFun?: any;
+      dependAggregators?: any;
+      dependIndicatorKeys?: string[];
+    }): Aggregator;
+  };
+} = {};
 
 export interface IAggregator {
-  records?: any[];
+  records: any[];
   value: () => any;
-  className: string;
   push: (record: any) => void;
   deleteRecord: (record: any) => void;
   updateRecord: (oldRecord: any, newRecord: any) => void;
@@ -17,18 +32,18 @@ export interface IAggregator {
   reset: () => void;
 }
 export abstract class Aggregator implements IAggregator {
-  className = 'Aggregator';
+  isAggregator?: boolean = true;
   isRecord?: boolean = true; //是否需要维护records 将数据源都记录下来
-  records?: any[] = [];
+  records: any[] = [];
   type?: string;
   key: string;
   field?: string | string[];
   formatFun?: any;
   _formatedValue?: any;
 
-  constructor(config: { key: string; dimension: string; formatFun?: any; isRecord?: boolean }) {
+  constructor(config: { key: string; field: string | string[]; formatFun?: any; isRecord?: boolean }) {
     this.key = config.key;
-    this.field = config.dimension;
+    this.field = config.field;
     this.formatFun = config.formatFun;
     this.isRecord = config.isRecord ?? this.isRecord;
   }
@@ -60,7 +75,7 @@ export class RecordAggregator extends Aggregator {
   isRecord?: boolean = true;
   push(record: any): void {
     if (record && this.isRecord && this.records) {
-      if (record.className === 'Aggregator') {
+      if (record.isAggregator) {
         this.records.push(...record.records);
       } else {
         this.records.push(record);
@@ -101,7 +116,7 @@ export class RecordAggregator extends Aggregator {
 }
 
 export class NoneAggregator extends Aggregator {
-  type: string = AggregationType.NONE; //仅获取其中一条数据 不做聚合 其fieldValue可以是number或者string类型
+  type: string = AggregationType.NONE; //仅获取其中一条数据(最新push的一条) 不做聚合 其fieldValue可以是number或者string类型
   isRecord?: boolean = true;
   declare field?: string;
   fieldValue?: any;
@@ -155,26 +170,20 @@ export class NoneAggregator extends Aggregator {
   }
 }
 export class CustomAggregator extends Aggregator {
-  type: string = AggregationType.CUSTOM; //仅获取其中一条数据 不做聚合 其fieldValue可以是number或者string类型
+  type: string = AggregationType.CUSTOM;
   isRecord?: boolean = true;
   declare field?: string;
   aggregationFun?: Function;
   values: (string | number)[] = [];
   fieldValue?: any;
-  constructor(config: {
-    key: string;
-    dimension: string;
-    formatFun?: any;
-    isRecord?: boolean;
-    aggregationFun?: Function;
-  }) {
+  constructor(config: { key: string; field: string; formatFun?: any; isRecord?: boolean; aggregationFun?: Function }) {
     super(config);
     this.aggregationFun = config.aggregationFun;
   }
   push(record: any): void {
     if (record) {
       if (this.isRecord && this.records) {
-        if (record.className === 'Aggregator') {
+        if (record.isAggregator) {
           this.records.push(...record.records);
         } else {
           this.records.push(record);
@@ -227,8 +236,9 @@ export class CustomAggregator extends Aggregator {
     // do nothing
   }
 }
+/** 透视表计算字段逻辑使用 */
 export class RecalculateAggregator extends Aggregator {
-  type: string = AggregationType.RECALCULATE; //仅获取其中一条数据 不做聚合 其fieldValue可以是number或者string类型
+  type: string = AggregationType.RECALCULATE;
   isRecord?: boolean = true;
   declare field?: string;
   calculateFun: Function;
@@ -237,7 +247,7 @@ export class RecalculateAggregator extends Aggregator {
   dependIndicatorKeys: string[];
   constructor(config: {
     key: string;
-    dimension: string;
+    field: string;
     formatFun: any;
     isRecord: boolean;
     calculateFun: Function;
@@ -251,7 +261,7 @@ export class RecalculateAggregator extends Aggregator {
   }
   push(record: any): void {
     if (record && this.isRecord && this.records) {
-      if (record.className === 'Aggregator') {
+      if (record.isAggregator) {
         this.records.push(...record.records);
       } else {
         this.records.push(record);
@@ -304,7 +314,7 @@ export class SumAggregator extends Aggregator {
   needSplitPositiveAndNegativeForSum?: boolean = false;
   constructor(config: {
     key: string;
-    dimension: string;
+    field: string;
     formatFun?: any;
     isRecord?: boolean;
     needSplitPositiveAndNegative?: boolean;
@@ -315,13 +325,13 @@ export class SumAggregator extends Aggregator {
   push(record: any): void {
     if (record) {
       if (this.isRecord && this.records) {
-        if (record.className === 'Aggregator') {
+        if (record.isAggregator) {
           this.records.push(...record.records);
         } else {
           this.records.push(record);
         }
       }
-      if (record.className === 'Aggregator') {
+      if (record.isAggregator) {
         const value = record.value();
         this.sum += value ?? 0;
         if (this.needSplitPositiveAndNegativeForSum) {
@@ -350,7 +360,7 @@ export class SumAggregator extends Aggregator {
       if (this.isRecord && this.records) {
         this.records = this.records.filter(item => item !== record);
       }
-      if (record.className === 'Aggregator') {
+      if (record.isAggregator) {
         const value = record.value();
         this.sum -= value ?? 0;
         if (this.needSplitPositiveAndNegativeForSum) {
@@ -384,7 +394,7 @@ export class SumAggregator extends Aggregator {
           return item;
         });
       }
-      if (oldRecord.className === 'Aggregator') {
+      if (oldRecord.isAggregator) {
         const oldValue = oldRecord.value();
         const newValue = newRecord.value();
         this.sum += newValue - oldValue;
@@ -440,7 +450,7 @@ export class SumAggregator extends Aggregator {
     if (this.records) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
-        if (record.className === 'Aggregator') {
+        if (record.isAggregator) {
           const value = record.value();
           this.sum += value ?? 0;
           if (this.needSplitPositiveAndNegativeForSum) {
@@ -473,13 +483,13 @@ export class CountAggregator extends Aggregator {
   push(record: any): void {
     if (record) {
       if (this.isRecord && this.records) {
-        if (record.className === 'Aggregator') {
+        if (record.isAggregator) {
           this.records.push(...record.records);
         } else {
           this.records.push(record);
         }
       }
-      if (record.className === 'Aggregator') {
+      if (record.isAggregator) {
         this.count += record.value();
       } else {
         this.count++;
@@ -492,7 +502,7 @@ export class CountAggregator extends Aggregator {
       if (this.isRecord && this.records) {
         this.records = this.records.filter(item => item !== record);
       }
-      if (record.className === 'Aggregator') {
+      if (record.isAggregator) {
         this.count -= record.value();
       } else {
         this.count--;
@@ -510,7 +520,7 @@ export class CountAggregator extends Aggregator {
           return item;
         });
       }
-      if (oldRecord.className === 'Aggregator') {
+      if (oldRecord.isAggregator) {
         this.count += newRecord.value() - oldRecord.value();
       } else {
         //this.count++;
@@ -530,7 +540,7 @@ export class CountAggregator extends Aggregator {
     if (this.records) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
-        if (record.className === 'Aggregator') {
+        if (record.isAggregator) {
           this.count += record.value();
         } else {
           this.count++;
@@ -547,13 +557,13 @@ export class AvgAggregator extends Aggregator {
   push(record: any): void {
     if (record) {
       if (this.isRecord && this.records) {
-        if (record.className === 'Aggregator') {
+        if (record.isAggregator) {
           this.records.push(...record.records);
         } else {
           this.records.push(record);
         }
       }
-      if (record.className === 'Aggregator' && record.type === AggregationType.AVG) {
+      if (record.isAggregator && record.type === AggregationType.AVG) {
         this.sum += record.sum;
         this.count += record.count;
       } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
@@ -568,7 +578,7 @@ export class AvgAggregator extends Aggregator {
       if (this.isRecord && this.records) {
         this.records = this.records.filter(item => item !== record);
       }
-      if (record.className === 'Aggregator' && record.type === AggregationType.AVG) {
+      if (record.isAggregator && record.type === AggregationType.AVG) {
         this.sum -= record.sum;
         this.count -= record.count;
       } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
@@ -588,7 +598,7 @@ export class AvgAggregator extends Aggregator {
           return item;
         });
       }
-      if (oldRecord.className === 'Aggregator' && oldRecord.type === AggregationType.AVG) {
+      if (oldRecord.isAggregator && oldRecord.type === AggregationType.AVG) {
         this.sum += newRecord.sum - oldRecord.sum;
         this.count += newRecord.count - oldRecord.count;
       } else if (this.field && !isNaN(parseFloat(oldRecord[this.field]))) {
@@ -613,7 +623,7 @@ export class AvgAggregator extends Aggregator {
     if (this.records) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
-        if (record.className === 'Aggregator' && record.type === AggregationType.AVG) {
+        if (record.isAggregator && record.type === AggregationType.AVG) {
           this.sum += record.sum;
           this.count += record.count;
         } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
@@ -631,13 +641,13 @@ export class MaxAggregator extends Aggregator {
   push(record: any): void {
     if (record) {
       if (this.isRecord && this.records) {
-        if (record.className === 'Aggregator') {
+        if (record.isAggregator) {
           this.records.push(...record.records);
         } else {
           this.records.push(record);
         }
       }
-      if (record.className === 'Aggregator') {
+      if (record.isAggregator) {
         this.max = record.max > this.max ? record.max : this.max;
       } else if (typeof record === 'number') {
         this.max = record > this.max ? record : this.max;
@@ -683,7 +693,7 @@ export class MaxAggregator extends Aggregator {
     if (this.records) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
-        if (record.className === 'Aggregator') {
+        if (record.isAggregator) {
           this.max = record.max > this.max ? record.max : this.max;
         } else if (typeof record === 'number') {
           this.max = record > this.max ? record : this.max;
@@ -703,13 +713,13 @@ export class MinAggregator extends Aggregator {
   push(record: any): void {
     if (record) {
       if (this.isRecord && this.records) {
-        if (record.className === 'Aggregator') {
+        if (record.isAggregator) {
           this.records.push(...record.records);
         } else {
           this.records.push(record);
         }
       }
-      if (record.className === 'Aggregator') {
+      if (record.isAggregator) {
         this.min = record.min < this.min ? record.min : this.min;
       } else if (typeof record === 'number') {
         this.min = record < this.min ? record : this.min;
@@ -755,7 +765,7 @@ export class MinAggregator extends Aggregator {
     if (this.records) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
-        if (record.className === 'Aggregator') {
+        if (record.isAggregator) {
           this.min = record.min < this.min ? record.min : this.min;
         } else if (typeof record === 'number') {
           this.min = record < this.min ? record : this.min;
@@ -867,8 +877,8 @@ export function naturalSort(as: any, bs: any, sortType: SortType) {
 export function sortBy(order: string[]) {
   let x;
   let i;
-  const mapping = {};
-  const lowercase_mapping = {};
+  const mapping: any = {};
+  const lowercase_mapping: any = {};
   // for (i in order) {
   for (let i = 0; i < order.length; i++) {
     x = order[i];
@@ -919,7 +929,7 @@ export function sortBy(order: string[]) {
 function _getDependAggregatorValues(aggregators: Aggregator[], dependIndicatorKeys: string[]) {
   const dependAggregatorValues: any = {};
   for (let m = 0; m < dependIndicatorKeys?.length; m++) {
-    const aggrator = aggregators.find(aggrator => aggrator.key === dependIndicatorKeys[m]);
+    const aggrator = aggregators.find(aggrator => aggrator?.key === dependIndicatorKeys[m]);
     if (aggrator) {
       dependAggregatorValues[aggrator.key] = aggrator?.value();
     }

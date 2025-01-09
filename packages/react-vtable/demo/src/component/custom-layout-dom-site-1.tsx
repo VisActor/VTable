@@ -34,6 +34,7 @@ const CommentComponent = (props: CustomLayoutFunctionArg) => {
         height,
         react: {
           pointerEvents: true,
+          penetrateEventList: ['wheel'],
           container: table.bodyDomContainer, // table.headerDomContainer
           // anchorType: 'bottom-right',
           element: <CommentReactComponent name={dataValue} />
@@ -191,10 +192,10 @@ function App() {
       height={500}
       width={1200}
       defaultRowHeight={110}
-      allowFrozenColCount={4}
-      frozenColCount={2}
-      rightFrozenColCount={1}
-      bottomFrozenRowCount={1}
+      // allowFrozenColCount={4}
+      // frozenColCount={2}
+      // rightFrozenColCount={1}
+      // bottomFrozenRowCount={1}
       onReady={table => {
         // eslint-disable-next-line no-undef
         (window as any).tableInstance = table;

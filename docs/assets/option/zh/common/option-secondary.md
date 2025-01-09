@@ -88,6 +88,14 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 
 允许冻结列数，表示前多少列会出现冻结操作按钮（基本表格生效）
 
+#${prefix} maxFrozenWidth(number | string) = '80%'
+
+最大冻结宽度，固定值 or 百分比。默认为'80%'
+
+#${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
+
+超过最大冻结宽度后是否全部解冻，默认 true
+
 #${prefix} showFrozenIcon(boolean) = true
 
 是否显示固定列图钉（基本表格生效）
@@ -463,6 +471,8 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
   }
 
 ```
+
+`customMergeCell`也可以配置为合并规则的数组，数组中的每一项为一个合并规则，规则的配置与`customMergeCell`回调函数的返回值相同。
 
 #${prefix} customCellStyle(Array)
 

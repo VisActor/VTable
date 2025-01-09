@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "docs: add weather calendar demo",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

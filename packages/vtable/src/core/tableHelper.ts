@@ -483,3 +483,29 @@ export function checkHasAggregationOnColumnDefine(colDefs: ColumnsDefine) {
   }
   return false;
 }
+
+/**
+ * 检查是否有列设置了autoWidth
+ * @param table
+ * @returns
+ */
+export function checkHasColumnAutoWidth(table: BaseTableAPI) {
+  if (table.options.widthMode === 'autoWidth') {
+    return true;
+  }
+  if (
+    table.options.defaultHeaderColWidth === 'auto' ||
+    (Array.isArray(table.options.defaultHeaderColWidth) && table.options.defaultHeaderColWidth.includes('auto'))
+  ) {
+    return true;
+  }
+  const columnObjects = table.internalProps.layoutMap.columnObjects;
+  for (let i = 0; i < columnObjects.length; i++) {
+    const column = columnObjects[i];
+    if (column.width === 'auto') {
+      return true;
+    }
+  }
+
+  return false;
+}
