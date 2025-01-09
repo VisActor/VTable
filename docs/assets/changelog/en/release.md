@@ -1,3 +1,44 @@
+# v1.15.0
+
+2025-01-09
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: support register aggregator [#1508](https://github.com/VisActor/VTable/issues/1508)
+- **@visactor/vtable**: frozenColCount work in pivot table [#3201](https://github.com/VisActor/VTable/issues/3201)
+- **@visactor/vtable**: add moveToExtendDateRange option [#3221](https://github.com/VisActor/VTable/issues/3221)
+- **@visactor/vtable**: add keyboardOptions and add delete_dependency_link contextmenu_dependency_link event [#3268](https://github.com/VisActor/VTable/issues/3268)
+- **@visactor/vtable**: customMergeCell support array config [#3202](https://github.com/VisActor/VTable/issues/3202)
+- **@visactor/vtable**: add displayMode in emptyTip
+- **@visactor/vtable**: groupby support array config
+- **@visactor/vtable**: add penetrateEventList config in react-component
+- **@visactor/vtable**: add keepColumnWidthChange props in react-vtable
+- **@visactor/vtable**: add imageAnonymous in customConfig
+- **@visactor/vtable**: aggregationType custom work in pivot table [#1508](https://github.com/VisActor/VTable/issues/1508)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when columns is all hide then should not generate cell ids [#3199](https://github.com/VisActor/VTable/issues/3199)
+- **@visactor/vtable**: when header tree indicator node has different value, columnWidthConfig not work [#3258](https://github.com/VisActor/VTable/issues/3258)
+- **@visactor/vtable**: when resize taskBar width the text label should update [#3263](https://github.com/VisActor/VTable/issues/3263)
+- **@visactor/vtable**: when left table set autoWidth gantt chart render error [#3266](https://github.com/VisActor/VTable/issues/3266)
+- **@visactor/vtable**: change taskRecord type from string to any
+- **@visactor/vtable**: fix aggregation display issue in tree-structured table headers
+- **@visactor/vtable**: fix collapse checkbox state update [#3171](https://github.com/VisActor/VTable/issues/3171)
+- **@visactor/vtable**: clear sort target when setRecords in dataset
+- **@visactor/vtable**: fix frozen update problem in react-dom-component
+- **@visactor/vtable**: fix iterator map in getCheckboxState() [#3177](https://github.com/VisActor/VTable/issues/3177) [#3239](https://github.com/VisActor/VTable/issues/3239)
+
+**📖 Site / documentation update**
+
+- **@visactor/vtable**: add weather calendar demo
+- **@visactor/vtable**: add scheduleCreatable doc
+
+
+
+[more detail about v1.15.0](https://github.com/VisActor/VTable/releases/tag/v1.15.0)
+
 # v1.14.3
 
 2024-12-27
