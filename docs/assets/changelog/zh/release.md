@@ -2,38 +2,37 @@
 
 2025-01-09
 
-
 **🆕 新增功能**
 
-- **@visactor/vtable**: support register aggregator [#1508](https://github.com/VisActor/VTable/issues/1508)
-- **@visactor/vtable**: frozenColCount work in pivot table [#3201](https://github.com/VisActor/VTable/issues/3201)
-- **@visactor/vtable**: add moveToExtendDateRange option [#3221](https://github.com/VisActor/VTable/issues/3221)
-- **@visactor/vtable**: add keyboardOptions and add delete_dependency_link contextmenu_dependency_link event [#3268](https://github.com/VisActor/VTable/issues/3268)
-- **@visactor/vtable**: customMergeCell support array config [#3202](https://github.com/VisActor/VTable/issues/3202)
-- **@visactor/vtable**: add displayMode in emptyTip
-- **@visactor/vtable**: groupby support array config
-- **@visactor/vtable**: add penetrateEventList config in react-component
-- **@visactor/vtable**: add keepColumnWidthChange props in react-vtable
-- **@visactor/vtable**: add imageAnonymous in customConfig
-- **@visactor/vtable**: aggregationType custom work in pivot table [#1508](https://github.com/VisActor/VTable/issues/1508)
+- **@visactor/vtable**: 透视表支持注册自定义聚合类型 [#1508](https://github.com/VisActor/VTable/issues/1508)
+- **@visactor/vtable**: 优化透视表中的frozenColCount功能工作正常 [#3201](https://github.com/VisActor/VTable/issues/3201)
+- **@visactor/vtable-gantt**: 添加moveToExtendDateRange选项，可以拖拽超出甘特图日期范围时自动扩展日期 [#3221](https://github.com/VisActor/VTable/issues/3221)
+- **@visactor/vtable-gantt**: 添加keyboardOptions选项，并添加了delete_dependency_link和contextmenu_dependency_link事件 [#3268](https://github.com/VisActor/VTable/issues/3268)
+- **@visactor/vtable**: customMergeCell支持数组配置 [#3202](https://github.com/VisActor/VTable/issues/3202)
+- **@visactor/vtable**: 在emptyTip中添加displayMode
+- **@visactor/vtable**: groupby支持数组配置
+- **@visactor/vtable**: 在react-component中添加penetrateEventList配置
+- **@visactor/vtable**: 在react-vtable中添加keepColumnWidthChange属性
+- **@visactor/vtable**: 在customConfig中添加imageAnonymous
+- **@visactor/vtable**: 透视表中的aggregationType为custom时配合aggregationFun使用 [#1508](https://github.com/VisActor/VTable/issues/1508)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when columns is all hide then should not generate cell ids [#3199](https://github.com/VisActor/VTable/issues/3199)
-- **@visactor/vtable**: when header tree indicator node has different value, columnWidthConfig not work [#3258](https://github.com/VisActor/VTable/issues/3258)
-- **@visactor/vtable**: when resize taskBar width the text label should update [#3263](https://github.com/VisActor/VTable/issues/3263)
-- **@visactor/vtable**: when left table set autoWidth gantt chart render error [#3266](https://github.com/VisActor/VTable/issues/3266)
-- **@visactor/vtable**: change taskRecord type from string to any
-- **@visactor/vtable**: fix aggregation display issue in tree-structured table headers
-- **@visactor/vtable**: fix collapse checkbox state update [#3171](https://github.com/VisActor/VTable/issues/3171)
-- **@visactor/vtable**: clear sort target when setRecords in dataset
-- **@visactor/vtable**: fix frozen update problem in react-dom-component
-- **@visactor/vtable**: fix iterator map in getCheckboxState() [#3177](https://github.com/VisActor/VTable/issues/3177) [#3239](https://github.com/VisActor/VTable/issues/3239)
+- **@visactor/vtable**: 当所有列都隐藏时，不应该生成单元格id [#3199](https://github.com/VisActor/VTable/issues/3199)
+- **@visactor/vtable**: 修复当头部树指示器节点有不同的值时，columnWidthConfig不起作用 [#3258](https://github.com/VisActor/VTable/issues/3258)
+- **@visactor/vtable-gantt**: 当调整任务栏的宽度时，文本标签应该更新 [#3263](https://github.com/VisActor/VTable/issues/3263)
+- **@visactor/vtable-gantt**: 当左边的表格设置为自动宽度时，甘特图渲染错误 [#3266](https://github.com/VisActor/VTable/issues/3266)
+- **@visactor/vtable-gantt**: 将taskRecord类型从string改为any
+- **@visactor/vtable**: 修复树形结构表头中的聚合显示问题
+- **@visactor/vtable**: 修复折叠复选框状态更新问题 [#3171](https://github.com/VisActor/VTable/issues/3171)
+- **@visactor/vtable**: 在dataset中设置记录时，清除排序目标
+- **@visactor/vtable**: 修复react-dom-component中的冻结更新问题
+- **@visactor/vtable**: 修复getCheckboxState()中的迭代器映射问题 [#3177](https://github.com/VisActor/VTable/issues/3177) [#3239](https://github.com/VisActor/VTable/issues/3239)
 
 **📖 文档更新**
 
-- **@visactor/vtable**: add weather calendar demo
-- **@visactor/vtable**: add scheduleCreatable doc
+- **@visactor/vtable**: 添加天气日历演示
+- **@visactor/vtable**: 添加日程可创建文档
 
 
 
