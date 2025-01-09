@@ -152,6 +152,7 @@ import type { ITableAnimationOption } from '../ts-types/animation/appear';
 import { checkCellInSelect } from '../state/common/check-in-select';
 import type { CustomCellStylePlugin, ICustomCellStylePlugin } from '../plugins/custom-cell-style';
 import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
+import { getCustomMergeCellFunc } from './utils/get-custom-merge-cell-func';
 import { vglobal } from '@src/vrender';
 
 const { toBoxArray } = utilStyle;
@@ -508,7 +509,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.stick = { changedCells: new Map() };
 
-    internalProps.customMergeCell = options.customMergeCell;
+    internalProps.customMergeCell = getCustomMergeCellFunc(options.customMergeCell);
 
     const CustomCellStylePlugin = Factory.getComponent('customCellStylePlugin') as ICustomCellStylePlugin;
     if (CustomCellStylePlugin) {
@@ -2473,7 +2474,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.clearColWidthCache();
     this.clearRowHeightCache();
 
-    internalProps.customMergeCell = options.customMergeCell;
+    internalProps.customMergeCell = getCustomMergeCellFunc(options.customMergeCell);
 
     this.customCellStylePlugin?.updateCustomCell(
       options.customCellStyle ?? [],

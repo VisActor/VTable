@@ -472,6 +472,8 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 
 ```
 
+`customMergeCell`也可以配置为合并规则的数组，数组中的每一项为一个合并规则，规则的配置与`customMergeCell`回调函数的返回值相同。
+
 #${prefix} customCellStyle(Array)
 
 ```

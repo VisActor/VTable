@@ -116,6 +116,7 @@ links:[
   }
 ]
 ```
+
 The values of `linkedFromTaskKey` and `linkedToTaskKey` need to correspond to the unique identifier field in the `records`, with the default field name being `id`. If you need to modify it, you can do so through the `taskKeyField` configuration item.
 
 ### Interaction
@@ -148,7 +149,7 @@ Through the `dependency.linkCreatable` configuration item, you can set whether t
 
 #### Creation Schedule
 
-Configuration taskBar. ScheduleCreatable to true.
+Configuration taskBar. ScheduleCreatable.
 
 If there is no field data for the task date in the original data, you can create a schedule to specify a start time and end time for the task. By default, when you hover over a grid without date data, a button to add a schedule will appear.
 
@@ -160,6 +161,12 @@ If the current configuration does not meet your needs, you can also customize th
 When `tasksShowMode` is `TasksShowMode.Tasks_Separate` or `TasksShowMode.Sub_Tasks_Separate`, each piece of data has a corresponding row position display, but when there is no `startDate` and `endDate` field set in the data, a create button will appear when the mouse hovers over the row, and clicking the button will create a schedule and display the task bar.
 
 When `tasksShowMode` is `TasksShowMode.Sub_Tasks_Inline`, `TasksShowMode.Sub_Tasks_Arrange`, or `TasksShowMode.Sub_Tasks_Compact`, a create button will be displayed when the mouse hovers over the blank area, and clicking the button will trigger the event `GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE`, but it will not actually create a task schedule. The user needs to listen for this event and create a schedule update data according to business needs.
+
+**Note: Different Gantt chart instances have different capabilities to create schedules.**
+
+When `tasksShowMode` is `TasksShowMode.Tasks_Separate` or `TasksShowMode.Sub_Tasks_Separate`, that is, each piece of data has a corresponding row position display, but the data does not set the `startDate` and `endDate` fields, a create button will appear when the mouse hovers over the row, and clicking the button will create a schedule and display the task bar.
+
+When `tasksShowMode` is `TasksShowMode.Sub_Tasks_Inline`, `TasksShowMode.Sub_Tasks_Arrange`, or `TasksShowMode.Sub_Tasks_Compact`, it is necessary to explicitly set `scheduleCreatable` to `true` for the create button to appear. When the mouse hovers over the blank area, the create button will be displayed, and clicking the button will trigger the event `GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE`, but it will not actually create the task schedule. The user needs to listen to this event and create the schedule update data according to business requirements.
 
 ## Leveraging the Capabilities of the Table
 
@@ -200,21 +207,21 @@ In the vtable-gantt component, the main supported configurations include:
 
    Introduction to related configuration items for task dependencies:
 
-    - `dependency.links`：You can set the dependencies between tasks through the `dependency.links` configuration item.
+   - `dependency.links`：You can set the dependencies between tasks through the `dependency.links` configuration item.
 
-    - `taskKeyField`：You can set the field name of the unique identifier field for dependencies through the `taskKeyField` configuration item.
+   - `taskKeyField`：You can set the field name of the unique identifier field for dependencies through the `taskKeyField` configuration item.
 
-    - `dependency.linkLineStyle`：You can configure the style of dependency lines, including color, width, dashed style, etc., through `dependency.linkLineStyle`.
+   - `dependency.linkLineStyle`：You can configure the style of dependency lines, including color, width, dashed style, etc., through `dependency.linkLineStyle`.
 
-    - `dependency.linkLineSelectedStyle`：You can customize the style of dependencies when selected between tasks.
+   - `dependency.linkLineSelectedStyle`：You can customize the style of dependencies when selected between tasks.
 
-    - `dependency.linkCreatable`：You can set whether association lines can be created through the `dependency.linkCreatable` configuration item.
+   - `dependency.linkCreatable`：You can set whether association lines can be created through the `dependency.linkCreatable` configuration item.
 
-    - `dependency.linkSelectable`：You can set whether association lines can be selected through the `dependency.linkSelectable` configuration item.
+   - `dependency.linkSelectable`：You can set whether association lines can be selected through the `dependency.linkSelectable` configuration item.
 
-    - `dependency.linkDeletable`：You can set whether association lines can be deleted through the `dependency.linkDeletable` configuration item. If you want to delete association lines through the right-click menu, you can listen to the `CONTEXTMENU_DEPENDENCY_LINK` event to actively call the deleteLink interface to delete. If you configure shortcut keys `keyboardOptions.deleteLinkOnDel` or `keyboardOptions.deleteLinkOnBack` to delete association lines by pressing the 'del' or 'back' key on the keyboard.
+   - `dependency.linkDeletable`：You can set whether association lines can be deleted through the `dependency.linkDeletable` configuration item. If you want to delete association lines through the right-click menu, you can listen to the `CONTEXTMENU_DEPENDENCY_LINK` event to actively call the deleteLink interface to delete. If you configure shortcut keys `keyboardOptions.deleteLinkOnDel` or `keyboardOptions.deleteLinkOnBack` to delete association lines by pressing the 'del' or 'back' key on the keyboard.
 
-    - Operation style during the creation of association lines: You can set the style of the association line selection process, including color, width, dashed style, etc., through the `linkSelectedLineStyle` `linkCreatePointStyle` `linkCreatingPointStyle` `linkCreatingLineStyle` configuration items.
+   - Operation style during the creation of association lines: You can set the style of the association line selection process, including color, width, dashed style, etc., through the `linkSelectedLineStyle` `linkCreatePointStyle` `linkCreatingPointStyle` `linkCreatingLineStyle` configuration items.
 
 4. Date Header Configuration `timelineHeader`
    1. Custom Rendering: You can customize the rendering of date headers through the `customLayout` configuration item.

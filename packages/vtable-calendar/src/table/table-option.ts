@@ -4,6 +4,7 @@ import type { DateRecord, DateRecordKeys } from '../date-util';
 import { defaultDayTitles, getMonthString, getWeekdayString } from '../date-util';
 import { calendarCustomLayout } from '../custom/custom-layout';
 import { merge } from '@visactor/vutils';
+import { addDays, isSameDay } from 'date-fns';
 
 export function createTableOption(
   week: DateRecordKeys[],
@@ -16,11 +17,7 @@ export function createTableOption(
       title: item,
       // width: columnWidth ?? 140,
       fieldFormat: (record: DateRecord) => {
-        if (
-          record.year === currentDate.getFullYear() &&
-          record.month === currentDate.getMonth() &&
-          record[item] === currentDate.getDate()
-        ) {
+        if (isSameDay(addDays(new Date(record.year, record.month, record.Sun), index), currentDate)) {
           return `${record[item]}\nToday`;
         } else if (record[item] === 1) {
           const monthIndex = item === 'Sun' ? record.month : record.month + 1;
@@ -29,7 +26,7 @@ export function createTableOption(
         }
         return record[item];
       },
-      customLayout: calendarCustomLayout
+      customLayout: config.tableOptions?.customLayout ?? calendarCustomLayout
     };
   });
 
@@ -63,9 +60,10 @@ export function createTableOption(
               const month = record.Sun > dataValue ? record.month + 1 : record.month;
               const year = record.month === 11 && record.Sun > dataValue ? record.year + 1 : record.year;
               if (
-                year === currentDate.getFullYear() &&
-                month === currentDate.getMonth() &&
-                date === currentDate.getDate()
+                // year === currentDate.getFullYear() &&
+                // month === currentDate.getMonth() &&
+                // date === currentDate.getDate()
+                isSameDay(addDays(new Date(record.year, record.month, record.Sun), col), currentDate)
               ) {
                 return '#f0f0f0';
               }

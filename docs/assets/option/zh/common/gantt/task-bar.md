@@ -142,7 +142,7 @@ ${prefix} selectable(boolean)
 
 ${prefix} scheduleCreatable(boolean | Function) = true
 
-数据没有排期时，可通过创建任务条排期。默认为 true
+数据没有排期时，可通过创建任务条排期。当 tasksShowMode 为 TasksShowMode.Tasks_Separate 或 TasksShowMode.Sub_Tasks_Separate 时 `scheduleCreatable` 默认为 true，其他情况即当 tasksShowMode 为 TasksShowMode.Sub_Tasks_Inline 或 TasksShowMode.Sub_Tasks_Arrange 或 TasksShowMode.Sub_Tasks_Compact 时 `scheduleCreatable` 默认为 false
 
 非必填
 
