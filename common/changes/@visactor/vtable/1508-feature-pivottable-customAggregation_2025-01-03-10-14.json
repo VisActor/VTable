@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: aggregationType custom work in pivot table #1508\n\n",
-      "type": "none",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
