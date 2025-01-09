@@ -32,7 +32,7 @@ import {
   NoneAggregator,
   CustomAggregator
 } from '../ts-types/dataset/aggregation';
-import type { ColumnsDefine } from '../ts-types/list-table/layout-map/api';
+import type { ColumnDefine, ColumnsDefine } from '../ts-types/list-table/layout-map/api';
 
 /**
  * 判断字段数据是否为访问器的格式
@@ -280,40 +280,62 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   _generateFieldAggragations() {
     const columnObjs = this.columns;
+
     this.fieldAggregators = [];
-    for (let i = 0; i < columnObjs?.length; i++) {
-      delete (columnObjs[i] as any).vtable_aggregator; //重置聚合器 如更新了过滤条件都需要重新计算
-      const field = columnObjs[i].field;
-      const aggragation = columnObjs[i].aggregation;
-      if (!aggragation) {
-        continue;
+
+    const processColumn: (columns: ColumnDefine) => void = column => {
+      // 重置聚合器
+      delete (column as any).vtable_aggregator;
+
+      const field = column.field;
+      const aggregation = column.aggregation;
+      if (!aggregation) {
+        return; // 当前列无聚合逻辑，跳过
       }
-      if (Array.isArray(aggragation)) {
-        for (let j = 0; j < aggragation.length; j++) {
-          const item = aggragation[j];
+
+      if (Array.isArray(aggregation)) {
+        for (const item of aggregation) {
           const aggregator = new this.registedAggregators[item.aggregationType]({
             field: field as string,
             formatFun: item.formatFun,
             isRecord: true,
             aggregationFun: (item as CustomAggregation).aggregationFun
           });
+
           this.fieldAggregators.push(aggregator);
-          if (!(columnObjs[i] as any).vtable_aggregator) {
-            (columnObjs[i] as any).vtable_aggregator = [];
+
+          if (!(column as any).vtable_aggregator) {
+            (column as any).vtable_aggregator = [];
           }
-          (columnObjs[i] as any).vtable_aggregator.push(aggregator);
+          (column as any).vtable_aggregator.push(aggregator);
         }
       } else {
-        const aggregator = new this.registedAggregators[aggragation.aggregationType]({
+        const aggregator = new this.registedAggregators[aggregation.aggregationType]({
           field: field as string,
-          formatFun: aggragation.formatFun,
+          formatFun: aggregation.formatFun,
           isRecord: true,
-          aggregationFun: (aggragation as CustomAggregation).aggregationFun
+          aggregationFun: (aggregation as CustomAggregation).aggregationFun
         });
+
         this.fieldAggregators.push(aggregator);
-        (columnObjs[i] as any).vtable_aggregator = aggregator;
+        (column as any).vtable_aggregator = aggregator;
       }
-    }
+    };
+
+    const traverseColumns: (columns: ColumnsDefine) => void = columns => {
+      if (!columns || columns.length === 0) {
+        return;
+      }
+
+      for (const column of columns) {
+        processColumn(column); // 处理当前列
+        if (column.columns) {
+          traverseColumns(column.columns); // 递归处理子列
+        }
+      }
+    };
+
+    traverseColumns(columnObjs); // 从根列开始处理
   }
   processRecords(records: any[]) {
     this._generateFieldAggragations();
