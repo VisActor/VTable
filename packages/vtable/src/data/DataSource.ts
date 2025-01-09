@@ -130,9 +130,9 @@ function _getIndex(sortedIndexMap: null | (number | number[])[], index: number):
 }
 
 export interface DataSourceParam {
-  get: (index: number) => any;
-  length: number;
-  /** 需要异步加载的情况 请不要设置records */
+  get?: (index: number) => any;
+  length?: number;
+  /** 需要异步加载的情况 请不要设置records 请提供get接口 */
   records?: any;
   added?: (index: number, count: number) => any;
   deleted?: (index: number[]) => any;
@@ -1334,6 +1334,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   });
   isCanExchangeOrder(sourceIndex: number, targetIndex: number) {
     // if (this.treeDataHierarchyState?.size > 0) {
+
     if (this.hasHierarchyStateExpand) {
       let sourceIndexs = this.currentPagerIndexedData[sourceIndex] as number[];
       let targetIndexs = this.currentPagerIndexedData[targetIndex] as number[];

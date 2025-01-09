@@ -150,7 +150,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.useOneRowHeightFillAll = false;
 
     if (options.dataSource) {
-      _setDataSource(this, options.dataSource);
+      // _setDataSource(this, options.dataSource)
+      this.dataSource = options.dataSource;
     } else if (options.records) {
       this.setRecords(options.records as any, { sortState: internalProps.sortState });
     } else {
@@ -516,7 +517,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // this._updateSize();
     // 传入新数据
     if (options.dataSource) {
-      _setDataSource(this, options.dataSource);
+      // _setDataSource(this, options.dataSource);
+      this.dataSource = options.dataSource;
     } else if (options.records) {
       this.setRecords(options.records as any, {
         sortState: options.sortState
