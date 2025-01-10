@@ -7,24 +7,12 @@ import { _getTargetFrozenColAt, _getTargetFrozenRowAt } from '../tableHelper';
  * @param absoluteY 相对于表格左上角的y坐标（无滚动）
  * @returns
  */
-export function getRowAt(
-  absoluteY: number,
-  _this: BaseTableAPI
-): { top: number; row: number; bottom: number; height: number } {
-  const frozen = _getTargetFrozenRowAt(_this as any, absoluteY);
+export function getRowAt(absoluteY: number, _this: BaseTableAPI): RowInfo {
+  const frozen = _getTargetFrozenRowAt(_this, absoluteY);
   if (frozen) {
     return frozen;
   }
-  let row = getTargetRowAt(absoluteY, _this);
-  if (!row) {
-    row = {
-      top: -1,
-      row: -1,
-      bottom: -1,
-      height: -1
-    };
-  }
-  return row;
+  return getTargetRowAt(absoluteY, _this) ?? { top: -1, row: -1, bottom: -1, height: -1 };
 }
 
 /**
@@ -32,24 +20,12 @@ export function getRowAt(
  * @param absoluteX 相对于表格左上角的x坐标（无滚动）
  * @returns
  */
-export function getColAt(
-  absoluteX: number,
-  _this: BaseTableAPI
-): { left: number; col: number; right: number; width: number } {
-  const frozen = _getTargetFrozenColAt(_this as any, absoluteX);
+export function getColAt(absoluteX: number, _this: BaseTableAPI): ColumnInfo {
+  const frozen = _getTargetFrozenColAt(_this, absoluteX);
   if (frozen) {
     return frozen;
   }
-  let col = getTargetColAt(absoluteX, _this);
-  if (!col) {
-    col = {
-      left: -1,
-      col: -1,
-      right: -1,
-      width: 1
-    };
-  }
-  return col;
+  return getTargetColAt(absoluteX, _this) ?? { left: -1, col: -1, right: -1, width: 1 };
 }
 /**
  * 根据坐标值获取行列位置，index和rect范围
@@ -87,15 +63,7 @@ export function getTargetColAt(absoluteX: number, _this: BaseTableAPI): ColumnIn
   if (absoluteX === 0) {
     return { left: 0, col: 0, right: 0, width: 0 };
   }
-  const findBefore = (
-    startCol: number,
-    startRight: number
-  ): {
-    left: number;
-    col: number;
-    right: number;
-    width: number;
-  } | null => {
+  const findBefore = (startCol: number, startRight: number): ColumnInfo | null => {
     let right = startRight;
     for (let col = startCol; col >= 0; col--) {
       const width = _this.getColWidth(col);
@@ -112,15 +80,7 @@ export function getTargetColAt(absoluteX: number, _this: BaseTableAPI): ColumnIn
     }
     return null;
   };
-  const findAfter = (
-    startCol: number,
-    startRight: number
-  ): {
-    left: number;
-    col: number;
-    right: number;
-    width: number;
-  } | null => {
+  const findAfter = (startCol: number, startRight: number): ColumnInfo | null => {
     let left = startRight - _this.getColWidth(startCol);
     const { colCount } = _this.internalProps;
     for (let col = startCol; col < colCount; col++) {
@@ -158,15 +118,7 @@ export function getTargetRowAt(absoluteY: number, _this: BaseTableAPI): RowInfo 
     return { top: 0, row: 0, bottom: 0, height: 0 };
   }
 
-  const findBefore = (
-    startRow: number,
-    startBottom: number
-  ): {
-    top: number;
-    row: number;
-    bottom: number;
-    height: number;
-  } | null => {
+  const findBefore = (startRow: number, startBottom: number): RowInfo | null => {
     let bottom = startBottom;
     for (let row = startRow; row >= 0; row--) {
       const height = _this.getRowHeight(row);
@@ -183,15 +135,7 @@ export function getTargetRowAt(absoluteY: number, _this: BaseTableAPI): RowInfo 
     }
     return null;
   };
-  const findAfter = (
-    startRow: number,
-    startBottom: number
-  ): {
-    top: number;
-    row: number;
-    bottom: number;
-    height: number;
-  } | null => {
+  const findAfter = (startRow: number, startBottom: number): RowInfo | null => {
     let top = startBottom - _this.getRowHeight(startRow);
     const { rowCount } = _this.internalProps;
     for (let row = startRow; row < rowCount; row++) {
