@@ -97,8 +97,8 @@ export class CachedDataSource extends DataSource {
     return super.getOriginalRecord(index);
   }
   protected getRawRecord(index: number | number[]): MaybePromiseOrUndefined {
-    if (this.beforeChangedRecordsMap?.[index as number]) {
-      return this.beforeChangedRecordsMap[index as number];
+    if (this.beforeChangedRecordsMap?.has(index.toString())) {
+      return this.beforeChangedRecordsMap?.get(index.toString());
     }
     if (isNumber(index) && this._recordCache && this._recordCache[index]) {
       return this._recordCache[index];
@@ -226,6 +226,8 @@ export class CachedDataSource extends DataSource {
     }
     this.dataSourceObj.records.splice(originRecordIndex, 0, ...recordArr);
 
+    this.adjustBeforeChangedRecordsMap(recordIndex, recordArr.length);
+
     this.updateGroup();
   }
 
@@ -241,7 +243,7 @@ export class CachedDataSource extends DataSource {
       }
       const originRecordIndex = this.getOriginRecordIndexForGroup(recordIndex);
 
-      isNumber(recordIndex) && delete this.beforeChangedRecordsMap[recordIndex];
+      this.beforeChangedRecordsMap.delete(recordIndex.toString());
       this.dataSourceObj.records.splice(originRecordIndex, 1);
       this.sourceLength -= 1;
     }
@@ -256,7 +258,7 @@ export class CachedDataSource extends DataSource {
         continue;
       }
       const originRecordIndex = this.getOriginRecordIndexForGroup(recordIndex);
-      isNumber(recordIndex) && delete this.beforeChangedRecordsMap[recordIndex];
+      this.beforeChangedRecordsMap.delete(recordIndex.toString());
       this.dataSourceObj.records[originRecordIndex] = records[index];
     }
 
@@ -267,6 +269,9 @@ export class CachedDataSource extends DataSource {
     if (!isArray(recordArr) || recordArr.length === 0) {
       return;
     }
+
+    this.adjustBeforeChangedRecordsMap(recordIndex, recordArr.length);
+
     if (isNumber(recordIndex)) {
       this.dataSourceObj.records.splice(recordIndex, 0, ...recordArr);
     } else {
@@ -289,7 +294,7 @@ export class CachedDataSource extends DataSource {
       if (isNumber(recordIndex) && (recordIndex >= this.sourceLength || recordIndex < 0)) {
         continue;
       }
-      isNumber(recordIndex) && delete this.beforeChangedRecordsMap[recordIndex];
+      this.beforeChangedRecordsMap.delete(recordIndex.toString());
 
       if (isNumber(recordIndex)) {
         this.dataSourceObj.records.splice(recordIndex, 1);
@@ -312,7 +317,7 @@ export class CachedDataSource extends DataSource {
       if (isNumber(recordIndex) && (recordIndex >= this.sourceLength || recordIndex < 0)) {
         continue;
       }
-      isNumber(recordIndex) && delete this.beforeChangedRecordsMap[recordIndex];
+      this.beforeChangedRecordsMap.delete(recordIndex.toString());
 
       if (isNumber(recordIndex)) {
         this.dataSourceObj.records.splice(recordIndex, 1, record);
@@ -325,6 +330,45 @@ export class CachedDataSource extends DataSource {
 
     this.initTreeHierarchyState();
     this.updatePagerData();
+  }
+
+  adjustBeforeChangedRecordsMap(insertIndex: number | number[], insertCount: number, type: 'add' | 'delete' = 'add') {
+    if (this.rowHierarchyType === 'tree') {
+      let insertIndexArr: number[];
+      if (isNumber(insertIndex)) {
+        insertIndexArr = [insertIndex];
+      } else {
+        insertIndexArr = insertIndex;
+      }
+
+      const targetResult: { originKey: string; targetKey: string; value: any }[] = [];
+      this.beforeChangedRecordsMap.forEach((value, key) => {
+        const keyArray = key.split(',');
+        const length = Math.max(keyArray.length, insertIndexArr.length);
+        for (let i = 0; i < length; i++) {
+          const current = insertIndexArr[i] ?? -1;
+          const keyIndex = Number(keyArray[i]) ?? -1;
+          if (
+            current < keyIndex ||
+            (current === keyIndex && i === keyArray.length - 1 && i === insertIndexArr.length - 1)
+          ) {
+            keyArray[i] = (keyIndex + insertCount).toString();
+            targetResult.push({
+              originKey: key,
+              targetKey: keyArray.toString(),
+              value
+            });
+            return;
+          }
+        }
+      });
+      targetResult.forEach(({ originKey, targetKey, value }) => {
+        this.beforeChangedRecordsMap.delete(originKey);
+        this.beforeChangedRecordsMap.set(targetKey, value);
+      });
+    } else {
+      super.adjustBeforeChangedRecordsMap(insertIndex as number, insertCount, type);
+    }
   }
 }
 

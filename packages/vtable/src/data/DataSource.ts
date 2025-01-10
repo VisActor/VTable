@@ -178,7 +178,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   hasHierarchyStateExpand: boolean = false;
   // treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
-  beforeChangedRecordsMap: Record<number | string, any> = {}; // TODO过滤后 或者排序后的对应关系
+  // beforeChangedRecordsMap: Record<number | string, any> = {}; // TODO过滤后 或者排序后的对应关系
+  beforeChangedRecordsMap: Map<string, any> = new Map(); // TODO过滤后 或者排序后的对应关系
+  /**
+   * 注册聚合类型
+   */
 
   // 注册聚合类型
   registedAggregators: {
@@ -714,15 +718,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       return undefined;
     }
     if (index >= 0) {
-      const dataIndex = this.getIndexKey(index) as number;
+      const dataIndex = this.getIndexKey(index);
 
-      if (!this.beforeChangedRecordsMap[dataIndex]) {
+      if (!this.beforeChangedRecordsMap.has(dataIndex.toString())) {
         const originRecord = this.getOriginalRecord(dataIndex);
-        this.beforeChangedRecordsMap[dataIndex] =
-          cloneDeep(originRecord, undefined, ['vtable_gantt_linkedFrom', 'vtable_gantt_linkedTo']) ?? {};
+        this.beforeChangedRecordsMap.set(
+          dataIndex.toString(),
+          cloneDeep(originRecord, undefined, ['vtable_gantt_linkedFrom', 'vtable_gantt_linkedTo']) ?? {}
+        );
       }
       if (typeof field === 'string' || typeof field === 'number') {
-        const beforeChangedValue = this.beforeChangedRecordsMap[dataIndex][field as any]; // this.getOriginalField(index, field, col, row, table);
+        const beforeChangedValue = this.beforeChangedRecordsMap.get(dataIndex.toString())?.[field as any]; // this.getOriginalField(index, field, col, row, table);
         const record = this.getOriginalRecord(dataIndex);
         let formatValue = value;
         if (typeof beforeChangedValue === 'number' && isAllDigits(value)) {
@@ -862,7 +868,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    */
   addRecordForSorted(record: any) {
     if (Array.isArray(this.records)) {
-      this.beforeChangedRecordsMap = []; // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
+      this.beforeChangedRecordsMap.clear(); // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
       this.records.push(record);
       this.currentIndexedData.push(this.currentIndexedData.length);
       this._sourceLength += 1;
@@ -880,7 +886,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    */
   addRecordsForSorted(recordArr: any) {
     if (Array.isArray(this.records)) {
-      this.beforeChangedRecordsMap = []; // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
+      this.beforeChangedRecordsMap.clear(); // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
       if (Array.isArray(recordArr)) {
         this.records.push(...recordArr);
         for (let i = 0; i < recordArr.length; i++) {
@@ -896,12 +902,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
   }
 
-  adjustBeforeChangedRecordsMap(insertIndex: number, insertCount: number) {
-    const length = this.beforeChangedRecordsMap.length;
+  adjustBeforeChangedRecordsMap(insertIndex: number, insertCount: number, type: 'add' | 'delete' = 'add') {
+    const length = this.beforeChangedRecordsMap.size;
     for (let key = length - 1; key >= insertIndex; key--) {
-      const record = this.beforeChangedRecordsMap[key];
-      delete this.beforeChangedRecordsMap[key];
-      this.beforeChangedRecordsMap[key + insertCount] = record;
+      const record = this.beforeChangedRecordsMap.get(key.toString());
+      this.beforeChangedRecordsMap.delete(key.toString());
+      this.beforeChangedRecordsMap.set((key + insertCount).toString(), record);
     }
   }
   /**
@@ -916,7 +922,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (recordIndex >= this._sourceLength || recordIndex < 0) {
           continue;
         }
-        delete this.beforeChangedRecordsMap[recordIndex];
+        this.beforeChangedRecordsMap.delete(recordIndex.toString());
         realDeletedRecordIndexs.push(recordIndex);
         const deletedRecord = this.records[recordIndex];
         for (let i = 0; i < this.fieldAggregators.length; i++) {
@@ -953,7 +959,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           continue;
         }
         const rawIndex = this.currentIndexedData[recordIndex] as number;
-        delete this.beforeChangedRecordsMap[rawIndex];
+        this.beforeChangedRecordsMap.delete(rawIndex.toString());
         this.records.splice(rawIndex, 1);
         this._sourceLength -= 1;
       }
@@ -973,7 +979,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     for (let index = 0; index < recordIndexs.length; index++) {
       const recordIndex = recordIndexs[index];
       if (Array.isArray(recordIndex)) {
-        delete this.beforeChangedRecordsMap[recordIndex.join(',')];
+        this.beforeChangedRecordsMap.delete(recordIndex.toString());
         realDeletedRecordIndexs.push(recordIndex);
         // for (let i = 0; i < this.fieldAggregators.length; i++) {
         //   this.fieldAggregators[i].updateRecord(this.records[recordIndex], records[index]);
@@ -990,7 +996,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (recordIndex >= this._sourceLength || recordIndex < 0) {
           continue;
         }
-        delete this.beforeChangedRecordsMap[recordIndex];
+        this.beforeChangedRecordsMap.delete(recordIndex.toString());
         realDeletedRecordIndexs.push(recordIndex);
         for (let i = 0; i < this.fieldAggregators.length; i++) {
           this.fieldAggregators[i].updateRecord(this.records[recordIndex], records[index]);
@@ -1019,7 +1025,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (typeof rawIndex !== 'number') {
         return;
       }
-      delete this.beforeChangedRecordsMap[rawIndex];
+      this.beforeChangedRecordsMap.delete(rawIndex.toString());
       realDeletedRecordIndexs.push(recordIndex);
       this.records[rawIndex] = records[index];
     }
@@ -1123,7 +1129,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
   private clearFilteredChildren(record: any) {
     record.filteredChildren = undefined;
-    for (let i = 0; i < record.children?.length ?? 0; i++) {
+    for (let i = 0; i < (record.children?.length ?? 0); i++) {
       this.clearFilteredChildren(record.children[i]);
     }
   }
@@ -1261,8 +1267,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     });
   }
   protected getRawRecord(dataIndex: number | number[]): MaybePromiseOrUndefined {
-    if (this.beforeChangedRecordsMap?.[dataIndex as number]) {
-      return this.beforeChangedRecordsMap[dataIndex as number];
+    if (this.beforeChangedRecordsMap?.has(dataIndex.toString())) {
+      return this.beforeChangedRecordsMap?.get(dataIndex.toString());
     }
     let data;
     if (!this.dataSourceObj.records) {
