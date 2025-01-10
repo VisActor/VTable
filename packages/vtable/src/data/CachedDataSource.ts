@@ -1,4 +1,4 @@
-import { isArray, isValid } from '@visactor/vutils';
+import { isArray, isNumber, isValid } from '@visactor/vutils';
 import {
   AggregationType,
   HierarchyState,
@@ -12,7 +12,7 @@ import {
 import type { BaseTableAPI } from '../ts-types/base-table';
 import type { ColumnData, ColumnsDefine } from '../ts-types/list-table/layout-map/api';
 import type { DataSourceParam } from './DataSource';
-import { DataSource } from './DataSource';
+import { DataSource, sortRecordIndexs } from './DataSource';
 import get from 'lodash/get';
 
 /** @private */
@@ -90,17 +90,17 @@ export class CachedDataSource extends DataSource {
     this._recordCache = [];
     this._fieldCache = {};
   }
-  protected getOriginalRecord(index: number): MaybePromiseOrUndefined {
-    if (this._recordCache && this._recordCache[index]) {
+  protected getOriginalRecord(index: number | number[]): MaybePromiseOrUndefined {
+    if (isNumber(index) && this._recordCache && this._recordCache[index]) {
       return this._recordCache[index];
     }
     return super.getOriginalRecord(index);
   }
-  protected getRawRecord(index: number): MaybePromiseOrUndefined {
+  protected getRawRecord(index: number | number[]): MaybePromiseOrUndefined {
     if (this.beforeChangedRecordsMap?.[index as number]) {
       return this.beforeChangedRecordsMap[index as number];
     }
-    if (this._recordCache && this._recordCache[index]) {
+    if (isNumber(index) && this._recordCache && this._recordCache[index]) {
       return this._recordCache[index];
     }
     return super.getRawRecord(index);
@@ -205,50 +205,126 @@ export class CachedDataSource extends DataSource {
     this.updatePagerData();
   }
 
-  addRecordsForGroup(recordArr: any[], recordIndex?: number) {
+  getOriginRecordIndexForGroup(recordIndex: number | number[]) {
+    const targetRecord = this.getOriginalRecord(recordIndex);
+    for (let i = 0; i < this.dataSourceObj.records.length; i++) {
+      if (this.dataSourceObj.records[i] === targetRecord) {
+        return i;
+      }
+    }
+    return undefined;
+  }
+
+  addRecordsForGroup(recordArr: any[], recordIndex?: number | number[]) {
     if (!isArray(recordArr) || recordArr.length === 0) {
       return;
     }
-    if (recordIndex === undefined || recordIndex > this.dataSourceObj.records) {
-      recordIndex = this.dataSourceObj.records;
+    let originRecordIndex = this.getOriginRecordIndexForGroup(recordIndex);
+
+    if (originRecordIndex === undefined || originRecordIndex > this.dataSourceObj.records) {
+      originRecordIndex = this.dataSourceObj.records.length;
     }
-    // this.dataSourceObj.records.push(...recordArr);
-    this.dataSourceObj.records.splice(recordIndex, 0, ...recordArr);
+    this.dataSourceObj.records.splice(originRecordIndex, 0, ...recordArr);
 
     this.updateGroup();
   }
 
-  deleteRecordsForGroup(recordIndexs: number[]) {
+  deleteRecordsForGroup(recordIndexs: (number | number[])[]) {
     if (!isArray(recordIndexs) || recordIndexs.length === 0) {
       return;
     }
-    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
+    const recordIndexsMaxToMin = sortRecordIndexs(recordIndexs, -1);
     for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
       const recordIndex = recordIndexsMaxToMin[index];
-      if (recordIndex >= this.sourceLength || recordIndex < 0) {
+      if (isNumber(recordIndex) && (recordIndex >= this.sourceLength || recordIndex < 0)) {
         continue;
       }
-      delete this.beforeChangedRecordsMap[recordIndex];
-      this.dataSourceObj.records.splice(recordIndex, 1);
+      const originRecordIndex = this.getOriginRecordIndexForGroup(recordIndex);
+
+      isNumber(recordIndex) && delete this.beforeChangedRecordsMap[recordIndex];
+      this.dataSourceObj.records.splice(originRecordIndex, 1);
       this.sourceLength -= 1;
     }
 
     this.updateGroup();
   }
 
-  updateRecordsForGroup(records: any[], recordIndexs: number[]) {
-    // const realDeletedRecordIndexs: number[] = [];
+  updateRecordsForGroup(records: any[], recordIndexs: (number | number[])[]) {
     for (let index = 0; index < recordIndexs.length; index++) {
       const recordIndex = recordIndexs[index];
-      if (recordIndex >= this.sourceLength || recordIndex < 0) {
+      if (isNumber(recordIndex) && (recordIndex >= this.sourceLength || recordIndex < 0)) {
         continue;
       }
-      delete this.beforeChangedRecordsMap[recordIndex];
-      // realDeletedRecordIndexs.push(recordIndex);
-      this.dataSourceObj.records[recordIndex] = records[index];
+      const originRecordIndex = this.getOriginRecordIndexForGroup(recordIndex);
+      isNumber(recordIndex) && delete this.beforeChangedRecordsMap[recordIndex];
+      this.dataSourceObj.records[originRecordIndex] = records[index];
     }
 
     this.updateGroup();
+  }
+
+  addRecordsForTree(recordArr: any[], recordIndex?: number | number[]) {
+    if (!isArray(recordArr) || recordArr.length === 0) {
+      return;
+    }
+    if (isNumber(recordIndex)) {
+      this.dataSourceObj.records.splice(recordIndex, 0, ...recordArr);
+    } else {
+      const index = recordIndex.pop();
+      const parentRecord = this.getOriginalRecord(recordIndex);
+      parentRecord.children.splice(index, 0, ...recordArr);
+    }
+
+    this.initTreeHierarchyState();
+    this.updatePagerData();
+  }
+
+  deleteRecordsForTree(recordIndexs: (number | number[])[]) {
+    if (!isArray(recordIndexs) || recordIndexs.length === 0) {
+      return;
+    }
+    const recordIndexsMaxToMin = sortRecordIndexs(recordIndexs, -1);
+    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
+      const recordIndex = recordIndexsMaxToMin[index];
+      if (isNumber(recordIndex) && (recordIndex >= this.sourceLength || recordIndex < 0)) {
+        continue;
+      }
+      isNumber(recordIndex) && delete this.beforeChangedRecordsMap[recordIndex];
+
+      if (isNumber(recordIndex)) {
+        this.dataSourceObj.records.splice(recordIndex, 1);
+      } else {
+        const index = recordIndex.pop();
+        const parentRecord = this.getOriginalRecord(recordIndex);
+        // delete parentRecord.children[index];
+        parentRecord.children.splice(index, 1);
+      }
+    }
+
+    this.initTreeHierarchyState();
+    this.updatePagerData();
+  }
+
+  updateRecordsForTree(records: any[], recordIndexs: (number | number[])[]) {
+    for (let index = 0; index < recordIndexs.length; index++) {
+      const recordIndex = recordIndexs[index];
+      const record = records[index];
+      if (isNumber(recordIndex) && (recordIndex >= this.sourceLength || recordIndex < 0)) {
+        continue;
+      }
+      isNumber(recordIndex) && delete this.beforeChangedRecordsMap[recordIndex];
+
+      if (isNumber(recordIndex)) {
+        this.dataSourceObj.records.splice(recordIndex, 1, record);
+      } else {
+        const index = recordIndex.pop();
+        const parentRecord = this.getOriginalRecord(recordIndex);
+        parentRecord.children.splice(index, 1, record);
+      }
+    }
+
+    this.initTreeHierarchyState();
+    this.updatePagerData();
   }
 }
 

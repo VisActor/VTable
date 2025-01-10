@@ -1331,7 +1331,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 删除数据 支持多条数据
    * @param recordIndexs 要删除数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
    */
-  deleteRecords(recordIndexs: number[]) {
+  deleteRecords(recordIndexs: number[] | number[][]) {
     listTableDeleteRecords(recordIndexs, this);
     this.internalProps.emptyTip?.resetVisible();
   }

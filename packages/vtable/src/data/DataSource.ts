@@ -19,7 +19,7 @@ import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/he
 import { EventTarget } from '../event/EventTarget';
 import { getValueByPath, isAllDigits } from '../tools/util';
 import { calculateArrayDiff } from '../tools/diff-cell';
-import { arrayEqual, cloneDeep, isValid } from '@visactor/vutils';
+import { arrayEqual, cloneDeep, isArray, isNumber, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import {
   RecordAggregator,
@@ -1260,7 +1260,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.recordPromiseCallBack(dataIndex, val);
     });
   }
-  protected getRawRecord(dataIndex: number): MaybePromiseOrUndefined {
+  protected getRawRecord(dataIndex: number | number[]): MaybePromiseOrUndefined {
     if (this.beforeChangedRecordsMap?.[dataIndex as number]) {
       return this.beforeChangedRecordsMap[dataIndex as number];
     }
@@ -1560,5 +1560,27 @@ function getValueFromDeepArray(array: any, index: number[]) {
       result = children;
     }
   }
+  return result;
+}
+
+export function sortRecordIndexs(recordIndexs: (number | number[])[], sort: -1 | 1) {
+  const result = recordIndexs.sort((a: number | number[], b: number | number[]) => {
+    if (isNumber(a)) {
+      a = [a];
+    }
+    if (isNumber(b)) {
+      b = [b];
+    }
+
+    const length = Math.max(a.length, b.length);
+    for (let i = 0; i < length; i++) {
+      const aa = a[i] ?? -1;
+      const bb = b[i] ?? -1;
+      if (aa !== bb) {
+        return sort === 1 ? aa - bb : bb - aa;
+      }
+    }
+    return 0;
+  });
   return result;
 }
