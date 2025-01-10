@@ -12,7 +12,7 @@ export class FrameBorder {
   }
   createFrameBorder() {
     const justForXYPosition = false;
-    const group = this._scene.tableGroup;
+    const group = this._scene.ganttGroup;
     const frameStyle = this._scene._gantt.parsedOptions.outerFrameStyle;
     // const strokeArray = [true, true, true, false];
     if (!frameStyle) {
@@ -92,7 +92,7 @@ export class FrameBorder {
       // x: -borderLineWidth / 2,
       // y: borderLineWidth / 2,
       width:
-        this._scene.tableGroup.attribute.width +
+        this._scene.ganttGroup.attribute.width +
         borderLineWidth +
         (this._scene._gantt.taskListTableInstance ? this._scene._gantt.parsedOptions.verticalSplitLine.lineWidth : 0),
       // this._scene.tableGroup.attribute.width +

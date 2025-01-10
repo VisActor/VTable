@@ -22,7 +22,7 @@ export class DragOrderLine {
       visible: false
     });
     this.dragLineContainer.name = 'drag-order-line-container';
-    scene.tableGroup.addChild(this.dragLineContainer);
+    scene.ganttGroup.addChild(this.dragLineContainer);
     this.initDragLine();
   }
   initDragLine() {
