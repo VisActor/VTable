@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when mouse leave gantt should trigger mouseleave_taskbar #3294\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
