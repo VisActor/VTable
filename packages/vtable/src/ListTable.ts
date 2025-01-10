@@ -392,7 +392,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getRecordIndexByCell(col: number, row: number): number | number[] {
     const { layoutMap } = this.internalProps;
     const recordShowIndex = layoutMap.getRecordShowIndexByCell(col, row);
-    return this.dataSource.currentPagerIndexedData[recordShowIndex];
+    return this.dataSource.getRecordIndexPaths(recordShowIndex);
   }
 
   getTableIndexByRecordIndex(recordIndex: number | number[]) {
@@ -749,7 +749,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       sourceIndex = this.getRecordShowIndexByCell(0, sourceIndex);
       targetIndex = this.getRecordShowIndexByCell(0, targetIndex);
     }
-    this.dataSource.reorderRecord(sourceIndex, targetIndex);
+    this.dataSource.changeOrder(sourceIndex, targetIndex);
   }
   /**
    * 方法适用于获取body中某条数据的行列号
@@ -874,9 +874,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
       });
     }
   }
+  /**
+   * 开启层级节点展开的loading动画状态，在设置数据调用setRecordChildren后会自动关闭loading
+   * @param col
+   * @param row
+   */
   setLoadingHierarchyState(col: number, row: number) {
     this.scenegraph.setLoadingHierarchyState(col, row);
   }
+
   /** 刷新当前节点收起展开状态，如手动更改过 */
   _refreshHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     let notFillWidth = false;

@@ -136,6 +136,8 @@ export interface DataSourceParam {
   records?: any;
   added?: (index: number, count: number) => any;
   deleted?: (index: number[]) => any;
+  canChangeOrder?: (sourceIndex: number, targetIndex: number) => boolean;
+  changeOrder?: (sourceIndex: number, targetIndex: number) => void;
 }
 export interface ISortedMapItem {
   asc?: (number | number[])[];
@@ -488,6 +490,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     } else if (this._sourceLength > 0) {
       throw new Error(`currentIndexedData should has values!`);
     }
+  }
+
+  getRecordIndexPaths(bodyShowIndex: number): number | number[] {
+    return this._currentPagerIndexedData[bodyShowIndex];
   }
 
   get records(): any[] {
@@ -1332,8 +1338,16 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     },
     length: 0
   });
-  isCanExchangeOrder(sourceIndex: number, targetIndex: number) {
-    // if (this.treeDataHierarchyState?.size > 0) {
+  /**
+   * 判断原位置sourceIndex处的数据是否可以移动到targetIndex目标位置处
+   * @param sourceIndex 被移动数据在body中的index
+   * @param targetIndex 数据要放置在body中的index
+   * @returns 根据参数判断是否可以交换位置
+   */
+  canChangeOrder(sourceIndex: number, targetIndex: number): boolean {
+    if ((this, this.dataSourceObj?.canChangeOrder)) {
+      return this.dataSourceObj.canChangeOrder(sourceIndex, targetIndex);
+    }
 
     if (this.hasHierarchyStateExpand) {
       let sourceIndexs = this.currentPagerIndexedData[sourceIndex] as number[];
@@ -1349,7 +1363,13 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       } else {
         targetIndexs = [targetIndexs];
       }
-
+      // //实现可以跨父级拖拽节点位置，约束条件只需要禁止父级拖到自己的字节节点即可
+      // if (true) {
+      //   if (sourceIndexs.every((item, index) => targetIndexs[index] === item)) {
+      //     return false;
+      //   }
+      //   return true;
+      // }
       if (targetIndex > sourceIndex) {
         if (targetIndexs.length > sourceIndexs.length) {
           let targetNextIndexs = this.currentPagerIndexedData[targetIndex + 1] as number[];
@@ -1378,13 +1398,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     return true;
   }
   // 拖拽调整数据位置 目前对排序过的数据不过处理，因为自动排序和手动排序融合问题目前没有找到好的解决方式
-  reorderRecord(sourceIndex: number, targetIndex: number) {
+  changeOrder(sourceIndex: number, targetIndex: number) {
+    if ((this, this.dataSourceObj?.changeOrder)) {
+      this.dataSourceObj.changeOrder(sourceIndex, targetIndex);
+      return;
+    }
     if (this.lastSortStates?.some(state => state.order === 'asc' || state.order === 'desc')) {
       // const sourceIds = this._currentPagerIndexedData.splice(sourceIndex, 1);
       // sourceIds.unshift(targetIndex, 0);
       // Array.prototype.splice.apply(this._currentPagerIndexedData, sourceIds);
       return;
-    } else if (this.isCanExchangeOrder(sourceIndex, targetIndex)) {
+    } else if (this.canChangeOrder(sourceIndex, targetIndex)) {
       // if (this.treeDataHierarchyState?.size > 0) {
       if (this.hasHierarchyStateExpand) {
         let sourceIndexs = this.currentPagerIndexedData[sourceIndex];
