@@ -49,7 +49,7 @@ export class TaskBar {
       clip: true
     });
     this.group.name = 'task-bar-container';
-    scene.tableGroup.addChild(this.group);
+    scene.ganttGroup.addChild(this.group);
     this.initBars();
     this.initHoverBarIcons();
   }
