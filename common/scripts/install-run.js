@@ -518,6 +518,7 @@ function _installPackage(logger, packageInstallFolder, name, version, command) {
         const result = child_process__WEBPACK_IMPORTED_MODULE_0__.spawnSync(npmPath, [command], {
             stdio: 'inherit',
             cwd: packageInstallFolder,
+            shell: true,
             env: process.env
         });
         if (result.status !== 0) {
@@ -582,7 +583,7 @@ function installAndRun(logger, packageName, packageVersion, packageBinName, pack
         result = child_process__WEBPACK_IMPORTED_MODULE_0__.spawnSync(platformBinPath, packageBinArgs, {
             stdio: 'inherit',
             windowsVerbatimArguments: false,
-            shell: shouldUseShell,
+            shell: true,
             cwd: process.cwd(),
             env: process.env
         });
