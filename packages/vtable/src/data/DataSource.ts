@@ -735,8 +735,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           if (record) {
             record[field] = formatValue;
           } else {
-            this.records[dataIndex] = {};
-            this.records[dataIndex][field] = formatValue;
+            this.records[dataIndex as number] = {};
+            this.records[dataIndex as number][field] = formatValue;
           }
         }
       }
@@ -922,7 +922,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (recordIndex >= this._sourceLength || recordIndex < 0) {
           continue;
         }
-        this.beforeChangedRecordsMap.delete(recordIndex.toString());
+        // this.beforeChangedRecordsMap.delete(recordIndex.toString());
+        this.adjustBeforeChangedRecordsMap(recordIndex, 1, 'delete');
         realDeletedRecordIndexs.push(recordIndex);
         const deletedRecord = this.records[recordIndex];
         for (let i = 0; i < this.fieldAggregators.length; i++) {
@@ -959,7 +960,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           continue;
         }
         const rawIndex = this.currentIndexedData[recordIndex] as number;
-        this.beforeChangedRecordsMap.delete(rawIndex.toString());
         this.records.splice(rawIndex, 1);
         this._sourceLength -= 1;
       }
@@ -968,6 +968,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         this.pagination.perPageCount = this._sourceLength;
         this.pagination.totalCount = this._sourceLength;
       }
+      this.beforeChangedRecordsMap.clear();
     }
   }
 

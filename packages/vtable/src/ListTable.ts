@@ -1302,7 +1302,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecord(record: any, recordIndex?: number) {
+  addRecord(record: any, recordIndex?: number | number[]) {
     listTableAddRecord(record, recordIndex, this);
     this.internalProps.emptyTip?.resetVisible();
   }
@@ -1314,7 +1314,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecords(records: any[], recordIndex?: number) {
+  addRecords(records: any[], recordIndex?: number | number[]) {
     listTableAddRecords(records, recordIndex, this);
     this.internalProps.emptyTip?.resetVisible();
   }
