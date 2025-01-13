@@ -700,6 +700,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return childrenLength;
   }
+
   changeFieldValue(
     value: FieldData,
     index: number,
@@ -714,13 +715,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     if (index >= 0) {
       const dataIndex = this.getIndexKey(index);
 
-      if (!this.beforeChangedRecordsMap.has(dataIndex.toString())) {
-        const originRecord = this.getOriginalRecord(dataIndex);
-        this.beforeChangedRecordsMap.set(
-          dataIndex.toString(),
-          cloneDeep(originRecord, undefined, ['vtable_gantt_linkedFrom', 'vtable_gantt_linkedTo']) ?? {}
-        );
-      }
+      this.cacheBeforeChangedRecord(dataIndex, table);
       if (typeof field === 'string' || typeof field === 'number') {
         const beforeChangedValue = this.beforeChangedRecordsMap.get(dataIndex.toString())?.[field as any]; // this.getOriginalField(index, field, col, row, table);
         const record = this.getOriginalRecord(dataIndex);
@@ -748,6 +743,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     // return getField(record, field);
   }
+
+  cacheBeforeChangedRecord(dataIndex: number | number[], table?: BaseTableAPI) {
+    if (!this.beforeChangedRecordsMap.has(dataIndex.toString())) {
+      const originRecord = this.getOriginalRecord(dataIndex);
+      this.beforeChangedRecordsMap.set(
+        dataIndex.toString(),
+        cloneDeep(originRecord, undefined, ['vtable_gantt_linkedFrom', 'vtable_gantt_linkedTo']) ?? {}
+      );
+    }
+  }
+
   /**
    * 将数据record 替换到index位置处
    * @param record
@@ -901,7 +907,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     for (let key = length - 1; key >= insertIndex; key--) {
       const record = this.beforeChangedRecordsMap.get(key.toString());
       this.beforeChangedRecordsMap.delete(key.toString());
-      this.beforeChangedRecordsMap.set((key + insertCount).toString(), record);
+      this.beforeChangedRecordsMap.set((key + (type === 'add' ? insertCount : -insertCount)).toString(), record);
     }
   }
   /**

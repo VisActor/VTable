@@ -1,4 +1,5 @@
 import { isArray, isNumber, isValid } from '@visactor/vutils';
+import type { ListTableConstructorOptions } from '../ts-types';
 import {
   AggregationType,
   HierarchyState,
@@ -226,7 +227,7 @@ export class CachedDataSource extends DataSource {
     }
     this.dataSourceObj.records.splice(originRecordIndex, 0, ...recordArr);
 
-    this.adjustBeforeChangedRecordsMap(recordIndex, recordArr.length);
+    this.adjustBeforeChangedRecordsMap(originRecordIndex, recordArr.length);
 
     this.updateGroup();
   }
@@ -246,6 +247,8 @@ export class CachedDataSource extends DataSource {
       this.beforeChangedRecordsMap.delete(recordIndex.toString());
       this.dataSourceObj.records.splice(originRecordIndex, 1);
       this.sourceLength -= 1;
+
+      this.adjustBeforeChangedRecordsMap(originRecordIndex, 1, 'delete');
     }
 
     this.updateGroup();
@@ -304,6 +307,8 @@ export class CachedDataSource extends DataSource {
         // delete parentRecord.children[index];
         parentRecord.children.splice(index, 1);
       }
+
+      this.adjustBeforeChangedRecordsMap(recordIndex, 1, 'delete');
     }
 
     this.initTreeHierarchyState();
@@ -352,7 +357,7 @@ export class CachedDataSource extends DataSource {
             current < keyIndex ||
             (current === keyIndex && i === keyArray.length - 1 && i === insertIndexArr.length - 1)
           ) {
-            keyArray[i] = (keyIndex + insertCount).toString();
+            keyArray[i] = (keyIndex + (type === 'add' ? insertCount : -insertCount)).toString();
             targetResult.push({
               originKey: key,
               targetKey: keyArray.toString(),
@@ -369,6 +374,13 @@ export class CachedDataSource extends DataSource {
     } else {
       super.adjustBeforeChangedRecordsMap(insertIndex as number, insertCount, type);
     }
+  }
+
+  cacheBeforeChangedRecord(dataIndex: number | number[], table?: BaseTableAPI) {
+    if ((table.options as ListTableConstructorOptions).groupBy) {
+      dataIndex = this.getOriginRecordIndexForGroup(dataIndex);
+    }
+    super.cacheBeforeChangedRecord(dataIndex, table);
   }
 }
 
