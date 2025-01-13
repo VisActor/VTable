@@ -43,6 +43,7 @@ Supported event types:
   CHANGING_HEADER_POSITION: 'changing_header_position',
   CHANGE_HEADER_POSITION_FAIL: 'changing_header_position_fail',
   SORT_CLICK: 'sort_click',
+  PIVOT_SORT_CLICK: 'pivot_sort_click',
   AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
@@ -59,7 +60,7 @@ Supported event types:
   ICON_CLICK: 'icon_click',
   // Pivot table-specific events
    DRILLMENU_CLICK: 'drillmenu_click',
-  PIVOT_SORT_CLICK: 'pivot_sort_click'
+  ......
 }`
 
 ## INITIALIZED
@@ -287,79 +288,117 @@ Parameter type of event callback function:
 
 ## SORT_CLICK
 
-Click on the sort icon event.
+Click on the sort icon event. **ListTable proprietary event**
 
 Event callback function parameter types.
-`  {
+
+```
+  {
     field: string;
     order: 'asc' | 'desc' | 'normal';
      event: Event;
-  }`
+  }
+```
+
+## PIVOT_SORT_CLICK
+
+Sort icon click event in the pivot table. **PivotTable proprietary events！**
+
+Event callback function parameter types.
+
+```
+    {
+      col: number.
+      row: number.
+      order: 'asc' | 'desc' | 'normal'.
+      dimensionInfo: IDimensionInfo[];
+      cellLocation: CellLocation.
+    }
+```
+
+Among them:
+{{ use: common-IDimensionInfo()}}
+{{ use: CellLocation()}}
 
 ## AFTER_SORT
 
-after execute sort logic.
+after execute sort logic. **ListTable proprietary event**
 
 Event callback function parameter types.
-`  {
+
+```
+  {
     field: string;
     order: 'asc' | 'desc' | 'normal';
      event: Event;
-  }`
+  }
+```
 
 ## FREEZE_CLICK
 
 Click on the fixed column icon to freeze or unfreeze the event.
 
 Event callback function parameter types.
-`{
+
+```
+{
   col: number;
   row: number
   fields: string[];
   colCount: number;
-}`
+}
+```
 
 ## SCROLL
 
 Scroll form events.
 
 Event callback function parameter types.
-`    {
+
+```
+    {
       scrollLeft: number;
       scrollTop: number;
       scrollWidth: number;
       scrollHeight: number;
       viewWidth: number;
       viewHeight: number;
-    }`
+    }
+```
 
 ## SCROLL_HORIZONTAL_END
 
 Scroll horizontally to the right to end the event
 
 Event callback function parameter types.
-`    {
+
+```
+    {
     scrollLeft: number;
     scrollTop: number;
     scrollWidth: number;
     scrollHeight: number;
     viewWidth: number;
     viewHeight: number;
-}`
+}
+```
 
 ## SCROLL_VERTICAL_END
 
 Vertical scroll bar scrolls to the end position
 
 Event callback function parameter types.
-`    {
+
+```
+    {
     scrollLeft: number;
     scrollTop: number;
     scrollWidth: number;
     scrollHeight: number;
     viewWidth: number;
     viewHeight: number;
-}`
+}
+```
 
 ## MOUSEOVER_CHART_SYMBOL
 
@@ -406,13 +445,16 @@ Tree structure expand and collapse click events
 Displays menu events.
 
 Event callback function parameter types.
-`    {
+
+```
+   {
       x: number.
       y: number.
       col: number.
       row: number.
       type: 'dropDown' | 'contextmenu' | 'custom';
-    }`
+    }
+```
 
 ## HIDE_MENU
 
@@ -423,7 +465,9 @@ Hide menu events
 icon icon click event.
 
 Event callback function parameter types.
-`    {
+
+```
+    {
       name: string;
       col: number.
       row: number.
@@ -431,23 +475,8 @@ Event callback function parameter types.
       y: number.
       funcType?: IconFuncTypeEnum | string;
       icon: Icon.
-    }`
-
-## PIVOT_SORT_CLICK
-
-Sort icon click event in the pivot table. **PivotTable proprietary events！**
-
-Event callback function parameter types.
-`    {
-      col: number.
-      row: number.
-      order: 'asc' | 'desc' | 'normal'.
-      dimensionInfo: IDimensionInfo[];
-      cellLocation: CellLocation.
-    }`
-Among them:
-{{ use: common-IDimensionInfo()}}
-{{ use: CellLocation()}}
+    }
+```
 
 ## LEGEND_ITEM_CLICK
 
