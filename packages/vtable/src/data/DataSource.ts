@@ -266,6 +266,35 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     // }
   }
 
+  supplementConfig(
+    pagination?: IPagination,
+    columns?: ColumnsDefine,
+    rowHierarchyType?: 'grid' | 'tree',
+    hierarchyExpandLevel?: number
+  ) {
+    this.columns = columns;
+    this._sourceLength = this._source?.length || 0;
+    this.sortedIndexMap = new Map<string, ISortedMapItem>();
+
+    this._currentPagerIndexedData = [];
+    this.userPagination = pagination;
+    this.pagination = pagination || {
+      totalCount: this._sourceLength,
+      perPageCount: this._sourceLength,
+      currentPage: 0
+    };
+    if (hierarchyExpandLevel >= 1) {
+      this.hierarchyExpandLevel = hierarchyExpandLevel;
+    }
+    this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+    // 初始化currentIndexedData 正常未排序。设置其状态
+    if (rowHierarchyType === 'tree') {
+      this.initTreeHierarchyState();
+    }
+    this.rowHierarchyType = rowHierarchyType;
+    this.updatePagerData();
+  }
+
   //将聚合类型注册 收集到aggregators
   registerAggregator(type: string, aggregator: any) {
     this.registedAggregators[type] = aggregator;
@@ -557,7 +586,13 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   getHierarchyState(index: number): HierarchyState {
     // const indexed = this.getIndexKey(index);
     const record = this.getOriginalRecord(this.currentPagerIndexedData[index]);
-    return record?.hierarchyState ?? null;
+    if (record?.hierarchyState) {
+      const hierarchyState = record.hierarchyState;
+      if (record.children?.length > 0 || record.children === true) {
+        return hierarchyState;
+      }
+    }
+    return null;
     // return this.treeDataHierarchyState.get(Array.isArray(indexed) ? indexed.join(',') : indexed) ?? null;
   }
   /**

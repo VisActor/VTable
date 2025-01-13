@@ -90,6 +90,12 @@ export function _setDataSource(table: BaseTableAPI, dataSource: DataSource): voi
     if (dataSource) {
       if (dataSource instanceof DataSource) {
         table.internalProps.dataSource = dataSource;
+        table.internalProps.dataSource.supplementConfig(
+          table.pagination,
+          (table.options as ListTableConstructorOptions).columns,
+          table.internalProps.layoutMap.rowHierarchyType,
+          getHierarchyExpandLevel(table as ListTableAPI)
+        );
       } else {
         table.internalProps.dataSource = new CachedDataSource(dataSource);
       }

@@ -77,6 +77,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-dataSource-changeOrder'
+      },
+      {
+        path: 'list',
         name: 'list-chart'
       },
       {
