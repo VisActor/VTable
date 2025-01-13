@@ -277,7 +277,11 @@ export class CachedDataSource extends DataSource {
     } else {
       const index = recordIndex.pop();
       const parentRecord = this.getOriginalRecord(recordIndex);
-      parentRecord.children.splice(index, 0, ...recordArr);
+      if (parentRecord.children) {
+        parentRecord.children.splice(index, 0, ...recordArr);
+      } else {
+        parentRecord.children = recordArr;
+      }
     }
 
     this.initTreeHierarchyState();
