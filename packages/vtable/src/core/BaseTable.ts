@@ -385,11 +385,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.colContentWidthsMap = new NumberMap();
     this.colWidthsLimit = {};
 
+    const that = this;
     internalProps.calcWidthContext = {
       _: internalProps,
       get full(): number {
         if (Env.mode === 'node') {
-          return canvasWidth / (pixelRatio ?? 1);
+          return that.canvasWidth / (pixelRatio ?? 1);
         }
         return this._.canvas.width / ((this._.context as any).pixelRatio ?? window.devicePixelRatio);
       }
