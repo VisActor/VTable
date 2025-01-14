@@ -356,7 +356,7 @@ export function getGroupCheckboxState(table: BaseTableAPI) {
   dataSource.currentIndexedData.forEach((indexArr: number, index) => {
     if (isArray(indexArr) && indexArr.length === groupKeyLength) {
       // get record by index
-      const { vtableOriginIndex } = (dataSource as any).getRawRecord(indexArr);
+      const vtableOriginIndex = (dataSource as CachedDataSource).getOriginRecordIndexForGroup(indexArr);
       result[vtableOriginIndex] = table.stateManager.checkedState.get(indexArr.toString());
     }
   });
