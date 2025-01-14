@@ -317,8 +317,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         if (record?.vtableMerge) {
           return '';
         }
-        const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
-        value = indexs[indexs.length - 1] + 1;
+        value = (this.dataSource as CachedDataSource).getGroupSeriesNumber(row - this.columnHeaderLevelCount);
+        // const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
+        // value = indexs[indexs.length - 1] + 1;
       } else {
         value = row - this.columnHeaderLevelCount + 1;
       }
@@ -1044,7 +1045,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
             return {
               field: item.field,
               order: item.order,
-              orderFn: sortFunc
+              orderFn: sortFunc ?? defaultOrderFn
             };
           })
         );
