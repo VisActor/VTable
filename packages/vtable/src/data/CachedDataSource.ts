@@ -161,7 +161,6 @@ export class CachedDataSource extends DataSource {
           const groupResult = [] as any[];
           for (let i = 0; i < records.length; i++) {
             dealWithGroup(records[i], groupResult, groupMap, groupByKeys, 0);
-            records[i].vtableOriginIndex = i;
           }
           return groupResult;
         }
@@ -385,6 +384,19 @@ export class CachedDataSource extends DataSource {
       dataIndex = this.getOriginRecordIndexForGroup(dataIndex);
     }
     super.cacheBeforeChangedRecord(dataIndex, table);
+  }
+
+  getGroupSeriesNumber(showIndex: number) {
+    const recordIndex = this.dataSource.currentIndexedData[showIndex] as number[];
+    const parentRecordIndexLength = recordIndex.length - 1;
+
+    let recordIndexLength = recordIndex.length;
+    let i = 1;
+    for (; recordIndexLength > parentRecordIndexLength; i++) {
+      const index = this.dataSource.currentIndexedData[showIndex - i];
+      recordIndexLength = isNumber(index) ? 1 : (index as number[]).length;
+    }
+    return i - 1;
   }
 }
 
