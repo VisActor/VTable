@@ -56,7 +56,11 @@ export function createGroupForFirstScreen(
 
   if (table.internalProps._heightResizedRowMap.size === 0) {
     // compute rows height in first screen
-    computeRowsHeight(table, 0, distRowForCompute ?? distRow);
+    computeRowsHeight(
+      table,
+      0,
+      table.options.canvasHeight === 'auto' ? table.rowCount - 1 : distRowForCompute ?? distRow
+    ); //如果配置了 canvasHeight为 'auto'， 则一次性将所有行高都计算出来才能满足后续赋值表格高度的使用
   }
 
   if (distCol < table.colCount - table.rightFrozenColCount) {
