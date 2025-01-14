@@ -519,6 +519,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         options.customCellStyleArrangement ?? []
       );
     }
+    this._adjustCanvasSizeByOption();
+  }
+  _adjustCanvasSizeByOption() {
     // 等宽高都进行了内部计算，判断如果配置了内容自动撑开表格，需要在这里赋值canvasWidth 和 canvasHeight
     if (this.options.canvasHeight === 'auto' || this.options.canvasWidth === 'auto') {
       setTimeout(() => {
@@ -1021,7 +1024,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   setPixelRatio(pixelRatio: number) {
     if (pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
-      const canvasWidth = this.options.canvasWidth;
+      const canvasWidth = this.canvasWidth;
       this.internalProps.calcWidthContext = {
         _: this.internalProps,
         get full(): number {
@@ -2368,8 +2371,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.autoFillWidth = autoFillWidth ?? false;
     this.autoFillHeight = autoFillHeight ?? false;
     this.customRender = customRender;
-    this.canvasWidth = canvasWidth;
-    this.canvasHeight = canvasHeight;
+    this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
+    this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
     // 更新protectedSpace
     const internalProps: IBaseTableProtected = this.internalProps;
     if (Env.mode !== 'node' && !options.canvas) {
@@ -2527,6 +2530,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       options.customCellStyle ?? [],
       options.customCellStyleArrangement ?? []
     );
+    this._adjustCanvasSizeByOption();
   }
   /**
    * 重新创建场景树并重新渲染
