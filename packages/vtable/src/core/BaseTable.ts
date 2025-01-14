@@ -314,8 +314,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     this.tableNoFrameWidth = 0;
     this.tableNoFrameHeight = 0;
-    this.canvasWidth = canvasWidth;
-    this.canvasHeight = canvasHeight;
+    this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
+    this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
 
     this.columnWidthComputeMode = options.columnWidthComputeMode ?? 'normal';
 
@@ -518,6 +518,53 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         options.customCellStyle ?? [],
         options.customCellStyleArrangement ?? []
       );
+    }
+    // 等宽高都进行了内部计算，判断如果配置了内容自动撑开表格，需要在这里赋值canvasWidth 和 canvasHeight
+    if (this.options.canvasHeight === 'auto' || this.options.canvasWidth === 'auto') {
+      setTimeout(() => {
+        let canvasWidth;
+        let canvasHeight;
+        if (this.options.canvasHeight === 'auto') {
+          let borderWidth = 0;
+          if (this.theme.frameStyle?.innerBorder) {
+            const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
+            borderWidth += shadowWidths[1] ?? 0;
+          } else if (this.theme.frameStyle) {
+            const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
+            const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
+            borderWidth +=
+              (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0) + ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
+          }
+          canvasHeight =
+            Math.min(
+              this.options.maxCanvasHeight ? this.options.maxCanvasHeight - borderWidth : 20000,
+              this.getAllRowsHeight()
+            ) + borderWidth;
+        } else {
+          canvasHeight = this.canvasHeight;
+        }
+        if (this.options.canvasWidth === 'auto') {
+          let borderWidth = 0;
+          if (this.theme.frameStyle?.innerBorder) {
+            const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
+            borderWidth += shadowWidths[2] ?? 0;
+          } else if (this.theme.frameStyle) {
+            const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
+            const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
+            borderWidth +=
+              (lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0) + ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0));
+          }
+          canvasWidth =
+            Math.min(
+              this.options.maxCanvasWidth ? this.options.maxCanvasWidth - borderWidth : 20000,
+              this.getAllColsWidth()
+            ) + borderWidth;
+        } else {
+          canvasWidth = this.canvasWidth;
+        }
+
+        this.setCanvasSize(canvasWidth, canvasHeight);
+      }, 0);
     }
   }
   /** 节流绘制 */

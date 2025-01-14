@@ -556,13 +556,25 @@ editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' |
 
 是否清空容器 DOM。
 
-#${prefix} canvasWidth(number)
+#${prefix} canvasWidth(number | 'auto')
 
-直接设置 canvas 的宽度. 不根据容器宽高来决定表格的尺寸
+直接设置 canvas 的宽度. 如果设置'auto', 会根据表格内容撑开 canvas。
 
-#${prefix} canvasHeight(number)
+不设置的话，会根据容器宽高来决定表格的尺寸。
 
-直接设置 canvas 的高度. 不根据容器宽高来决定表格的尺寸
+#${prefix} canvasHeight(number | 'auto')
+
+直接设置 canvas 的高度. 如果设置'auto', 会根据表格内容撑开 canvas。
+
+不设置的话，会根据容器宽高来决定表格的尺寸。
+
+#${prefix} maxCanvasWidth(number)
+
+表格 canvas 最大宽度。canvasWidth 设置了'auto'时才生效。
+
+#${prefix} maxCanvasHeight(number)
+
+表格 canvas 最大高度。canvasHeight 设置了'auto'时才生效。
 
 #${prefix} animationAppear(boolean|Object|)
 
