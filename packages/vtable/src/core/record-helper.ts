@@ -353,6 +353,8 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
     (table.dataSource as CachedDataSource).addRecordsForGroup?.([record], recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
+    table.sortState && sortRecords(table);
+
     // 更新整个场景树
     table.scenegraph.clearCells();
     table.scenegraph.createSceneGraph();
@@ -360,6 +362,8 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
     (table.dataSource as CachedDataSource).addRecordsForTree?.([record], recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
+    table.sortState && sortRecords(table);
+
     // 更新整个场景树
     table.scenegraph.clearCells();
     table.scenegraph.createSceneGraph();
@@ -473,6 +477,8 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
     (table.dataSource as CachedDataSource).addRecordsForGroup?.(records, recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
+    table.sortState && sortRecords(table);
+
     // 更新整个场景树
     table.scenegraph.clearCells();
     table.scenegraph.createSceneGraph();
@@ -480,6 +486,8 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
     (table.dataSource as CachedDataSource).addRecordsForTree?.(records, recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
+    table.sortState && sortRecords(table);
+
     // 更新整个场景树
     table.scenegraph.clearCells();
     table.scenegraph.createSceneGraph();
@@ -745,6 +753,7 @@ export function listTableUpdateRecords(records: any[], recordIndexs: (number | n
       (table.dataSource as CachedDataSource).updateRecordsForGroup?.(records, recordIndexs as number[]);
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
+      table.sortState && sortRecords(table);
       // 更新整个场景树
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
@@ -752,6 +761,7 @@ export function listTableUpdateRecords(records: any[], recordIndexs: (number | n
       (table.dataSource as CachedDataSource).updateRecordsForTree?.(records, recordIndexs as number[]);
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
+      table.sortState && sortRecords(table);
       // 更新整个场景树
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
