@@ -60,7 +60,7 @@ type PromiseBack = (value: MaybePromiseOrUndefined) => void;
  * @param promiseCallBack
  * @returns
  */
-function getValue(value: MaybePromiseOrCallOrUndefined, promiseCallBack: PromiseBack): MaybePromiseOrUndefined {
+export function getValue(value: MaybePromiseOrCallOrUndefined, promiseCallBack: PromiseBack): MaybePromiseOrUndefined {
   const maybePromiseOrValue = getOrApply(value);
   if (isPromise(maybePromiseOrValue)) {
     const promiseValue = maybePromiseOrValue.then((r: any) => {
@@ -1534,7 +1534,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
  * @param index
  * @returns
  */
-function getValueFromDeepArray(array: any, index: number[]) {
+export function getValueFromDeepArray(array: any, index: number[]) {
   let result = array;
   for (let i = 0; i < index.length; i++) {
     const currentIdx = index[i];

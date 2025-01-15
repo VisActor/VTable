@@ -1,4 +1,4 @@
-import { isArray, isNumber, isValid } from '@visactor/vutils';
+import { cloneDeep, isArray, isNumber, isValid } from '@visactor/vutils';
 import type { ListTableConstructorOptions } from '../ts-types';
 import {
   AggregationType,
@@ -13,7 +13,7 @@ import {
 import type { BaseTableAPI } from '../ts-types/base-table';
 import type { ColumnData, ColumnsDefine } from '../ts-types/list-table/layout-map/api';
 import type { DataSourceParam } from './DataSource';
-import { DataSource, sortRecordIndexs } from './DataSource';
+import { DataSource, getValue, getValueFromDeepArray, sortRecordIndexs } from './DataSource';
 import get from 'lodash/get';
 
 /** @private */
@@ -44,6 +44,7 @@ export class CachedDataSource extends DataSource {
   private _fieldCache: { [index: number]: Map<FieldDef, any> };
 
   groupAggregator: any;
+  private _isGrouped: boolean;
 
   static get EVENT_TYPE(): typeof DataSource.EVENT_TYPE {
     return DataSource.EVENT_TYPE;
@@ -84,10 +85,13 @@ export class CachedDataSource extends DataSource {
     rowHierarchyType?: 'grid' | 'tree',
     hierarchyExpandLevel?: number
   ) {
+    let _isGrouped;
     if (isArray(dataConfig?.groupByRules)) {
       rowHierarchyType = 'tree';
+      _isGrouped = true;
     }
     super(opt, dataConfig, pagination, columns, rowHierarchyType, hierarchyExpandLevel);
+    this._isGrouped = _isGrouped;
     this._recordCache = [];
     this._fieldCache = {};
   }
@@ -98,13 +102,36 @@ export class CachedDataSource extends DataSource {
     return super.getOriginalRecord(index);
   }
   protected getRawRecord(index: number | number[]): MaybePromiseOrUndefined {
-    if (this.beforeChangedRecordsMap?.has(index.toString())) {
-      return this.beforeChangedRecordsMap?.get(index.toString());
+    let originRecordIndex;
+    if (this._isGrouped) {
+      // in group mode, record with children is title, do not return record
+      originRecordIndex = this.getOriginRecordIndexForGroup(index);
+      if (isValid(originRecordIndex) && this.beforeChangedRecordsMap?.has(originRecordIndex.toString())) {
+        return this.beforeChangedRecordsMap?.get(originRecordIndex.toString());
+      }
+    } else {
+      if (this.beforeChangedRecordsMap?.has(index.toString())) {
+        return this.beforeChangedRecordsMap?.get(index.toString());
+      }
     }
     if (isNumber(index) && this._recordCache && this._recordCache[index]) {
       return this._recordCache[index];
     }
-    return super.getRawRecord(index);
+    // return super.getRawRecord(index);
+
+    let data;
+    if (!this.dataSourceObj.records) {
+      data = (this as any)._get(index);
+    } else {
+      if (Array.isArray(index)) {
+        data = getValueFromDeepArray(this.records, index);
+      } else {
+        data = this.records[index];
+      }
+    }
+    return getValue(data, (val: MaybePromiseOrUndefined) => {
+      this.recordPromiseCallBack(index as number, val);
+    });
   }
   protected getOriginalField<F extends FieldDef>(
     index: number,
@@ -207,6 +234,9 @@ export class CachedDataSource extends DataSource {
 
   getOriginRecordIndexForGroup(recordIndex: number | number[]) {
     const targetRecord = this.getOriginalRecord(recordIndex);
+    if (targetRecord.children && targetRecord.children.length > 0) {
+      return undefined;
+    }
     for (let i = 0; i < this.dataSourceObj.records.length; i++) {
       if (this.dataSourceObj.records[i] === targetRecord) {
         return i;
@@ -243,7 +273,7 @@ export class CachedDataSource extends DataSource {
       }
       const originRecordIndex = this.getOriginRecordIndexForGroup(recordIndex);
 
-      this.beforeChangedRecordsMap.delete(recordIndex.toString());
+      this.beforeChangedRecordsMap.delete(originRecordIndex.toString());
       this.dataSourceObj.records.splice(originRecordIndex, 1);
       this.sourceLength -= 1;
 
@@ -260,7 +290,7 @@ export class CachedDataSource extends DataSource {
         continue;
       }
       const originRecordIndex = this.getOriginRecordIndexForGroup(recordIndex);
-      this.beforeChangedRecordsMap.delete(recordIndex.toString());
+      this.beforeChangedRecordsMap.delete(originRecordIndex.toString());
       this.dataSourceObj.records[originRecordIndex] = records[index];
     }
 
@@ -376,10 +406,16 @@ export class CachedDataSource extends DataSource {
   }
 
   cacheBeforeChangedRecord(dataIndex: number | number[], table?: BaseTableAPI) {
+    const originRecord = this.getOriginalRecord(dataIndex);
     if ((table.options as ListTableConstructorOptions).groupBy) {
       dataIndex = this.getOriginRecordIndexForGroup(dataIndex);
     }
-    super.cacheBeforeChangedRecord(dataIndex, table);
+    if (!this.beforeChangedRecordsMap.has(dataIndex.toString())) {
+      this.beforeChangedRecordsMap.set(
+        dataIndex.toString(),
+        cloneDeep(originRecord, undefined, ['vtable_gantt_linkedFrom', 'vtable_gantt_linkedTo']) ?? {}
+      );
+    }
   }
 
   getGroupSeriesNumber(showIndex: number) {
