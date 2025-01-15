@@ -632,3 +632,11 @@ radioIndexInCell: boolean | number;
 ```
 
 ```
+
+## EMPTY_TIP_CLICK
+
+空数据提示点击事件。
+
+## EMPTY_TIP_DBLCLICK
+
+空数据提示双击事件。
