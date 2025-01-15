@@ -154,7 +154,7 @@ describe('listTable-group-update-date init test', () => {
   });
 
   test('update', () => {
-    listTable.addRecords(
+    listTable.updateRecords(
       [
         {
           'Row ID': '5092',
@@ -180,7 +180,7 @@ describe('listTable-group-update-date init test', () => {
           Profit: '-0.6048'
         }
       ],
-      [0, 1, 1]
+      [[0, 1, 1]]
     );
     expect(listTable.getRecordByCell(0, 4)).toEqual({
       'Row ID': '5092',

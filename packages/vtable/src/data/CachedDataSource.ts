@@ -234,6 +234,9 @@ export class CachedDataSource extends DataSource {
 
   getOriginRecordIndexForGroup(recordIndex: number | number[]) {
     const targetRecord = this.getOriginalRecord(recordIndex);
+    if (!isValid(targetRecord)) {
+      return undefined;
+    }
     if (targetRecord.children && targetRecord.children.length > 0) {
       return undefined;
     }
