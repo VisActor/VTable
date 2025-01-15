@@ -199,6 +199,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-grid-tree'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-tree-lazy-load'
       },
       {

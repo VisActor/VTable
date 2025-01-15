@@ -913,7 +913,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   }
 
   _hasHierarchyTreeHeader() {
-    return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree';
+    return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'grid';
   }
 
   getMenuInfo(col: number, row: number, type: string): DropDownMenuEventInfo {

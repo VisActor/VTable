@@ -203,7 +203,7 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
       (table.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
       table.layoutNodeId,
       table.options.rowHierarchyType,
-      table.options.rowHierarchyType === 'tree' ? table.options.rowExpandLevel ?? 1 : undefined
+      table.options.rowHierarchyType !== 'grid' ? table.options.rowExpandLevel ?? 1 : undefined
     );
     // if (
     //   table.options.supplementIndicatorNodes !== false &&
@@ -285,7 +285,7 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
       }
       return keys;
     }, []) ?? [];
-  if (options.rowHierarchyType === 'tree' && (options.extensionRows?.length ?? 0) >= 1) {
+  if (options.rowHierarchyType !== 'grid' && (options.extensionRows?.length ?? 0) >= 1) {
     options.extensionRows?.forEach(extensionRow => {
       const extension_rowKeys: string[] = [];
       extensionRow.rows.forEach(row => {

@@ -145,7 +145,7 @@ export class Dataset {
   // private rowKeysPath_FULL: string[][];
   colHeaderTree: any[];
   rowHeaderTree: any[];
-  rowHierarchyType: 'grid' | 'tree';
+  rowHierarchyType: 'grid' | 'tree' | 'grid-tree';
   indicators?: (string | IIndicator)[];
   indicatorsAsCol: boolean;
   // 记录用户传入的汇总数据
@@ -161,7 +161,7 @@ export class Dataset {
     indicators: (string | IIndicator)[] | undefined,
     indicatorsAsCol: boolean,
     records: any[] | Record<string, any[]> | undefined,
-    rowHierarchyType?: 'grid' | 'tree',
+    rowHierarchyType?: 'grid' | 'tree' | 'grid-tree',
     customColTree?: IHeaderTreeDefine[],
     customRowTree?: IHeaderTreeDefine[],
     needSplitPositiveAndNegative?: boolean,
@@ -315,7 +315,7 @@ export class Dataset {
 
         this.rowHeaderTree = this.customRowTree;
       } else {
-        if (this.rowHierarchyType === 'tree') {
+        if (this.rowHierarchyType !== 'grid') {
           this.rowHeaderTree = this.ArrToTree1(
             this.rowKeys,
             this.rows.filter((key, index) => {
@@ -992,7 +992,7 @@ export class Dataset {
     this.sortKeys();
     //和初始化代码逻辑一致 但未考虑透视图类型
     if (!this.customRowTree) {
-      if (this.rowHierarchyType === 'tree') {
+      if (this.rowHierarchyType !== 'grid') {
         this.rowHeaderTree = this.ArrToTree1(
           this.rowKeys,
           this.rows.filter((key, index) => {
@@ -2145,7 +2145,7 @@ export class Dataset {
         });
       }
       if ((node.children as [])?.length > 0) {
-        if (that.rowHierarchyType === 'tree' && type === 'row') {
+        if (that.rowHierarchyType !== 'grid' && type === 'row') {
           arr[arr.length - 1].childKeys = [];
           result.push([...arr]);
         }
@@ -2215,7 +2215,7 @@ export class Dataset {
       }
       //上面条件符合 在进一步判断 如果有是指标在行的情况 且展示为树形结构，除了有指标的节点外 其他节点都不需要统计指标值
       if (isMatch) {
-        if (!this.indicatorsAsCol && this.rowHierarchyType === 'tree') {
+        if (!this.indicatorsAsCol && this.rowHierarchyType !== 'grid') {
           if (
             !dimensionPath.find(path => {
               return path.indicatorKey;

@@ -33,7 +33,7 @@ import type {
 import type { PivotTable } from '../PivotTable';
 import type { PivotChart } from '../PivotChart';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
-import { diffCellAddress } from '../tools/diff-cell';
+import { diffCellAddress, diffCellAddressForGridTree } from '../tools/diff-cell';
 import {
   checkHasCartesianChart,
   checkHasChart,
@@ -47,7 +47,14 @@ import {
   isShareChartSpec
 } from './chart-helper/get-chart-spec';
 import type { ITreeLayoutHeadNode, LayouTreeNode } from './tree-helper';
-import { DimensionTree, countLayoutTree, dealHeader, dealHeaderForTreeMode, generateLayoutTree } from './tree-helper';
+import {
+  DimensionTree,
+  countLayoutTree,
+  dealHeader,
+  dealHeaderForGridTreeMode,
+  dealHeaderForTreeMode,
+  generateLayoutTree
+} from './tree-helper';
 import type { Dataset } from '../dataset/dataset';
 import { cloneDeep, isArray, isValid } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';
@@ -104,7 +111,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   cornerSetting: ICornerDefine;
   private _indicatorShowType: ShowColumnRowType = 'column';
   /**层级维度结构显示形式 */
-  rowHierarchyType?: 'grid' | 'tree';
+  rowHierarchyType?: 'grid' | 'tree' | 'grid-tree';
   rowExpandLevel?: number;
   rowHierarchyIndent?: number;
   rowHierarchyTextStartAlignment?: boolean = false;
@@ -531,6 +538,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.rowsDefine,
           this.rowHeaderObjs
         );
+      } else if (this.rowHierarchyType === 'grid-tree') {
+        const startRow = 0;
+        this._addHeadersForGridTreeMode(
+          this._rowHeaderCellFullPathIds_FULL,
+          startRow,
+          this.rowDimensionTree.tree.children,
+          [],
+          this.rowDimensionTree.totalLevel,
+          true,
+          this.rowsDefine,
+          this.rowHeaderObjs
+          // this.columnDimensionTree.totalLevel,
+          // this.indicatorKeys
+        );
       } else {
         //#region 处理需求 当没有数据时仍然显示角头维度名称
         let startRow = 0;
@@ -592,6 +613,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this._headerObjects[id] = cell;
     }
   }
+  /** 行表头和列表头的组织都是走这个函数，这个函数的行列命名是按照列头的逻辑来写的，所以组织行头的时候需要思维做下转换 */
   _addHeaders(
     _headerCellIds: number[][],
     row: number,
@@ -630,6 +652,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       );
     }
   }
+  /** 行表头和列表头的组织都是走这个函数，这个函数的行列命名是按照列头的逻辑来写的，所以组织行头的时候需要思维做下转换 */
   _addHeadersForTreeMode(
     _headerCellIds: number[][],
     row: number,
@@ -659,6 +682,48 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     for (let i = 0; i < header.length; i++) {
       const hd = header[i];
       dealHeaderForTreeMode(hd, _headerCellIds, results, roots, row, totalLevel, show, dimensions, this);
+    }
+  }
+  _addHeadersForGridTreeMode(
+    _headerCellIds: number[][],
+    row: number,
+    header: ITreeLayoutHeadNode[],
+    roots: number[],
+    totalLevel: number,
+    show: boolean,
+    dimensions: (IDimension | string)[],
+    results: HeaderData[]
+  ) {
+    const _this = this;
+    function _newRow(row: number): number[] {
+      const newRow: number[] = (_headerCellIds[row] = []);
+      if (_this.colIndex === 0) {
+        return newRow;
+      }
+      const prev = _headerCellIds[row - 1];
+      for (let col = 0; col < prev?.length; col++) {
+        newRow[col] = prev[col];
+      }
+      return newRow;
+    }
+    if (!_headerCellIds[row]) {
+      _newRow(row);
+    }
+
+    for (let i = 0; i < header.length; i++) {
+      const hd = header[i];
+      dealHeaderForGridTreeMode(
+        hd,
+        _headerCellIds,
+        results,
+        roots,
+        row,
+        totalLevel,
+        show,
+        dimensions,
+        this.indicatorsAsCol,
+        this
+      );
     }
   }
   private _addCornerHeaders(
@@ -2241,16 +2306,32 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
     this.fullRowDimensionKeys = [];
     this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
-    this._addHeadersForTreeMode(
-      this._rowHeaderCellFullPathIds_FULL,
-      0,
-      this.rowDimensionTree.tree.children,
-      [],
-      this.rowDimensionTree.totalLevel,
-      true,
-      this.rowsDefine,
-      this.rowHeaderObjs
-    );
+    if (this.rowHierarchyType === 'tree') {
+      this._addHeadersForTreeMode(
+        this._rowHeaderCellFullPathIds_FULL,
+        0,
+        this.rowDimensionTree.tree.children,
+        [],
+        this.rowDimensionTree.totalLevel,
+        true,
+        this.rowsDefine,
+        this.rowHeaderObjs
+      );
+    } else if (this.rowHierarchyType === 'grid-tree') {
+      const startRow = 0;
+      this._addHeadersForGridTreeMode(
+        this._rowHeaderCellFullPathIds_FULL,
+        startRow,
+        this.rowDimensionTree.tree.children,
+        [],
+        this.rowDimensionTree.totalLevel,
+        true,
+        this.rowsDefine,
+        this.rowHeaderObjs
+        // this.columnDimensionTree.totalLevel,
+        // this.indicatorKeys
+      );
+    }
 
     if (this.rowHeaderTitle) {
       const id = ++this.sharedVar.seqId;
@@ -2293,18 +2374,35 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._CellHeaderPathMap = new Map();
     // this._cellRangeMap = new Map();
     this._largeCellRangeCache.length = 0;
-    const diffCell: {
+
+    let diffCell: {
       addCellPositions: CellAddress[];
       removeCellPositions: CellAddress[];
       updateCellPositions?: CellAddress[];
-    } = diffCellAddress(
-      col,
-      row,
-      oldRowHeaderCellIds.map(oldCellId => oldCellId[col - this.leftRowSeriesNumberColumnCount]),
-      this._rowHeaderCellFullPathIds_FULL.map(newCellId => newCellId[col - this.leftRowSeriesNumberColumnCount]),
-      oldRowHeaderCellPositons,
-      this
-    );
+    };
+    if (this.rowHierarchyType === 'tree') {
+      diffCell = diffCellAddress(
+        col,
+        row,
+        oldRowHeaderCellIds.map(oldCellId => oldCellId[col - this.leftRowSeriesNumberColumnCount]),
+        this._rowHeaderCellFullPathIds_FULL.map(newCellId => newCellId[col - this.leftRowSeriesNumberColumnCount]),
+        oldRowHeaderCellPositons,
+        this
+      );
+    } else {
+      const lastLevelIndex =
+        (this.indicatorsAsCol ? this.rowHeaderLevelCount - 1 : this.rowHeaderLevelCount - 2) -
+        this.leftRowSeriesNumberColumnCount;
+      diffCell = diffCellAddressForGridTree(
+        col,
+        row,
+        oldRowHeaderCellIds.map(oldCellId => oldCellId[lastLevelIndex]),
+        this._rowHeaderCellFullPathIds_FULL.map(newCellId => newCellId[lastLevelIndex]),
+        oldRowHeaderCellPositons,
+
+        this
+      );
+    }
     // this._rowHeaderCellIds = this._rowHeaderCellIds_FULL.slice();
     this.generateCellIdsConsiderHideHeader();
     this.setPagination(this.pagination);
@@ -3613,7 +3711,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       (this.rowTree as ITreeLayoutHeadNode[]) ?? [],
       this.sharedVar,
       this.rowHierarchyType,
-      this.rowHierarchyType === 'tree' ? this.rowExpandLevel : undefined
+      this.rowHierarchyType !== 'grid' ? this.rowExpandLevel : undefined
     );
 
     this.resetColumnHeaderLevelCount();

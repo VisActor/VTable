@@ -48,6 +48,53 @@ export function diffCellAddress(
   };
 }
 
+export function diffCellAddressForGridTree(
+  col: number,
+  row: number,
+  oldCellIds: number[],
+  newCellIds: number[],
+  oldRowHeaderCellPositons: CellAddress[],
+
+  layout: PivotHeaderLayoutMap
+) {
+  const columnHeaderStart = layout.columnHeaderLevelCount;
+  // const oldCellIds = oldCellIdsArr.map(oldCellId => oldCellId[0]);
+  // const newCellIds = newCellIdsArr.map(oldCellId => oldCellId[0]);
+  const addCellPositions = [];
+  const removeCellPositions = [];
+  // const updateCellIds: Set<LayoutObjectId> = new Set();
+  // diff two array elements
+  for (let i = 0; i < oldCellIds.length; i++) {
+    if (!newCellIds.includes(oldCellIds[i])) {
+      // updateCellIds.add(layout.getParentCellId(oldRowHeaderCellPositons[i].col, oldRowHeaderCellPositons[i].row));
+      removeCellPositions.push(oldRowHeaderCellPositons[i]);
+    }
+  }
+  for (let i = 0; i < newCellIds.length; i++) {
+    if (!oldCellIds.includes(newCellIds[i])) {
+      const newCellAddr = { col, row: columnHeaderStart + i }; // layout.getHeaderCellAdressById(newCellIds[i]);
+      // updateCellIds.add(layout.getParentCellId(newCellAddr.col, newCellAddr.row));
+      addCellPositions.push(newCellAddr);
+    }
+  }
+  let parentId = layout.getParentCellId(col, row);
+  let parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
+  const updateCellPositions = [];
+  parentCellAddress && updateCellPositions.push(parentCellAddress);
+  while (parentId) {
+    parentId = layout.getParentCellId(parentCellAddress.col, parentCellAddress.row);
+    if (parentId) {
+      parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
+      updateCellPositions.push(parentCellAddress);
+    }
+  }
+  return {
+    addCellPositions,
+    removeCellPositions,
+    updateCellPositions
+  };
+}
+
 // find diff between two arrays
 function diffCellIndices(oldIndexedData: (number | number[])[], currentIndexedData: (number | number[])[]) {
   const add = [];

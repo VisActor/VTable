@@ -126,7 +126,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+          this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
         );
         // }
         this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
@@ -202,7 +202,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
             this.layoutNodeId,
             this.options.rowHierarchyType,
-            this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+            this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
           );
         } else {
           if (rowDimensionTree.hasHideNode) {
@@ -319,8 +319,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     //维护tree树形结构的展开状态
     if (
-      options?.rowHierarchyType === 'tree' &&
-      (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree' &&
+      options?.rowHierarchyType !== 'grid' &&
+      (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'grid' &&
       (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowExpandLevel === options?.rowExpandLevel
     ) {
       const beforeRowDimensions = (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowDimensionTree.tree.children;
@@ -354,7 +354,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+          this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
         );
       }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
@@ -428,7 +428,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+          this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
         );
       } else {
         if (rowDimensionTree.hasHideNode) {
@@ -574,7 +574,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /**
    * Get rowHierarchyType of pivotTable
    */
-  get rowHierarchyType(): 'grid' | 'tree' {
+  get rowHierarchyType(): 'grid' | 'tree' | 'grid-tree' {
     return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType;
   }
   /**
@@ -1589,7 +1589,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     return headerNodes;
   }
   _hasHierarchyTreeHeader() {
-    return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree';
+    return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'grid';
   }
 
   getMenuInfo(col: number, row: number, type: string): DropDownMenuEventInfo {
@@ -1660,7 +1660,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+          this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
         );
       }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
