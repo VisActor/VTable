@@ -626,3 +626,11 @@ radioIndexInCell: boolean | number;
 
 如果单元格中只有一个单选框，radioIndexInCell 为 boolean 类型，表示是否选中；如果单元格中有多个单选框，radioIndexInCell 为 number 类型，表示选中的单选框的索引。
 ```
+
+## EMPTY_TIP_CLICK
+
+空数据提示点击事件。
+
+## EMPTY_TIP_DBLCLICK
+
+空数据提示双击事件。

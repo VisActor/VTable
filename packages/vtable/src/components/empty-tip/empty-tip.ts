@@ -1,9 +1,9 @@
-import { EmptyTip as EmptyTipComponents } from '@visactor/vrender-components';
+import { EmptyTip as EmptyTipComponents } from '@src/vrender';
 // eslint-disable-next-line no-duplicate-imports
-import type { EmptyTipAttributes } from '@visactor/vrender-components';
+import type { EmptyTipAttributes, FederatedPointerEvent } from '@src/vrender';
 import type { IEmptyTip } from '../../ts-types/component/empty-tip';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { isBoolean, isEqual, isValid } from '@visactor/vutils';
+import { AABBBounds, isBoolean, isEqual, isValid } from '@visactor/vutils';
 import type { ListTable } from '../../ListTable';
 import type { PivotTable } from '../../PivotTable';
 import type { BaseTable } from '../../core';
@@ -57,10 +57,36 @@ export class EmptyTip {
       emptyTip.name = 'emptyTip';
       this.table.scenegraph.stage.defaultLayer.appendChild(emptyTip);
       this._emptyTipComponent = emptyTip;
+
+      // bind events
+      this.bindEvents();
     }
     // update table size
     // this._adjustTableSize(this._emptyTipComponent.attribute);
     return this._emptyTipComponent;
+  }
+
+  bindEvents() {
+    this._emptyTipComponent.on('click', (e: FederatedPointerEvent) => {
+      const bounds = new AABBBounds();
+      this._emptyTipComponent.forEachChildren((child: any) => {
+        bounds.union(child.globalAABBBounds);
+      });
+      if (bounds.contains(e.x, e.y)) {
+        this.table.fireListeners('empty_tip_click', e);
+        return;
+      }
+    });
+    this._emptyTipComponent.on('dblclick', (e: FederatedPointerEvent) => {
+      const bounds = new AABBBounds();
+      this._emptyTipComponent.forEachChildren((child: any) => {
+        bounds.union(child.globalAABBBounds);
+      });
+      if (bounds.contains(e.x, e.y)) {
+        this.table.fireListeners('empty_tip_dblclick', e);
+        return;
+      }
+    });
   }
 
   resize() {

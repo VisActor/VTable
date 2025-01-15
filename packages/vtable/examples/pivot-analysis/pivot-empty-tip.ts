@@ -12,16 +12,16 @@ export function createTable() {
     indicatorsAsCol: false,
     corner: { titleOnDimension: 'column' },
     columnResizeType: 'all',
-    records: [
-      {
-        sales: 891,
-        number: 7789,
-        province: '浙江省',
-        city: '杭州市',
-        category: '家具',
-        sub_category: '桌子'
-      }
-    ],
+    // records: [
+    //   {
+    //     sales: 891,
+    //     number: 7789,
+    //     province: '浙江省',
+    //     city: '杭州市',
+    //     category: '家具',
+    //     sub_category: '桌子'
+    //   }
+    // ],
     emptyTip: true,
     widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
   };
@@ -29,28 +29,32 @@ export function createTable() {
   const instance = new PivotTable(document.getElementById(CONTAINER_ID)!, option);
   window.tableInstance = instance;
 
-  setTimeout(() => {
-    instance.updateOption({
-      rows: ['province', 'city'],
-      columns: ['category', 'sub_category'],
-      indicators: ['sales', 'number'],
+  instance.on('empty_tip_dblclick', args => {
+    console.log('empty_tip_dblclick', args);
+  });
 
-      indicatorTitle: '指标名称',
-      indicatorsAsCol: false,
-      corner: { titleOnDimension: 'column' },
-      columnResizeType: 'all',
-      records: [
-        // {
-        //   sales: 891,
-        //   number: 7789,
-        //   province: '浙江省',
-        //   city: '杭州市',
-        //   category: '家具',
-        //   sub_category: '桌子'
-        // }
-      ],
-      emptyTip: true,
-      widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
-    });
-  }, 1000);
+  // setTimeout(() => {
+  //   instance.updateOption({
+  //     rows: ['province', 'city'],
+  //     columns: ['category', 'sub_category'],
+  //     indicators: ['sales', 'number'],
+
+  //     indicatorTitle: '指标名称',
+  //     indicatorsAsCol: false,
+  //     corner: { titleOnDimension: 'column' },
+  //     columnResizeType: 'all',
+  //     records: [
+  //       // {
+  //       //   sales: 891,
+  //       //   number: 7789,
+  //       //   province: '浙江省',
+  //       //   city: '杭州市',
+  //       //   category: '家具',
+  //       //   sub_category: '桌子'
+  //       // }
+  //     ],
+  //     emptyTip: true,
+  //     widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
+  //   });
+  // }, 1000);
 }

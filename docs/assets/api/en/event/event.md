@@ -561,3 +561,11 @@ Parameter types of event callback function:
 ```
 
 If there is only one radio button in the cell, radioIndexInCell is of type boolean, indicating whether it is selected; if there are multiple radio buttons in the cell, radioIndexInCell is of type number, indicating the index of the selected radio button.
+
+## EMPTY_TIP_CLICK
+
+Empty data prompt click event.
+
+## EMPTY_TIP_DBLCLICK
+
+Empty data prompt double-click event.
