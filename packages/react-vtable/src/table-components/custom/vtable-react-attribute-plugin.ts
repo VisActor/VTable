@@ -122,6 +122,15 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
       penetrateEventList.forEach(event => {
         if (event === 'wheel') {
           wrapContainer.addEventListener('wheel', this.onWheel);
+
+          // hack for preventing drag touch cause page jump
+          wrapContainer.addEventListener(
+            'wheel',
+            e => {
+              e.preventDefault();
+            },
+            true
+          );
         }
       });
     }
