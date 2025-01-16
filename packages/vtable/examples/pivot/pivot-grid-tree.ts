@@ -13,7 +13,7 @@ export function createTable() {
         menu: {
           contextMenuItems: ['复制单元格内容', '查询详情']
         },
-        // rowTree: [
+        // columnTree: [
         //   {
         //     dimensionKey: '220524114340021',
         //     value: '办公用品',
@@ -152,7 +152,7 @@ export function createTable() {
         //     ]
         //   }
         // ],
-        // columnTree: [
+        // rowTree: [
         //   {
         //     dimensionKey: '220524114340020',
         //     value: '东北',
@@ -203,51 +203,7 @@ export function createTable() {
         //   },
         //   {
         //     dimensionKey: '220524114340020',
-        //     value: '华北',
-        //     children: [
-        //       {
-        //         dimensionKey: '220524114340031',
-        //         value: '内蒙古',
-        //         children: [
-        //           {
-        //             indicatorKey: '220524114340013',
-        //             value: '销售额'
-        //           },
-        //           {
-        //             indicatorKey: '220524114340014',
-        //             value: '利润'
-        //           }
-        //         ]
-        //       },
-        //       {
-        //         dimensionKey: '220524114340031',
-        //         value: '北京',
-        //         children: [
-        //           {
-        //             indicatorKey: '220524114340013',
-        //             value: '销售额'
-        //           },
-        //           {
-        //             indicatorKey: '220524114340014',
-        //             value: '利润'
-        //           }
-        //         ]
-        //       },
-        //       {
-        //         dimensionKey: '220524114340031',
-        //         value: '天津',
-        //         children: [
-        //           {
-        //             indicatorKey: '220524114340013',
-        //             value: '销售额'
-        //           },
-        //           {
-        //             indicatorKey: '220524114340014',
-        //             value: '利润'
-        //           }
-        //         ]
-        //       }
-        //     ]
+        //     value: '华北'
         //   },
         //   {
         //     dimensionKey: '220524114340020',
@@ -298,58 +254,34 @@ export function createTable() {
         //     ]
         //   }
         // ],
-        rows: [
+        columns: [
           {
             dimensionKey: '220524114340021',
             title: '类别',
             headerFormat(value) {
               return `${value}`;
-            },
-            width: 200,
-            headerStyle: {
-              cursor: 'help',
-              textAlign: 'left',
-              borderColor: 'blue',
-              color: 'purple',
-              // textBaseline: 'top',
-              textStick: true,
-              bgColor: '#6cd26f'
             }
+            // width: 200
           },
           {
             dimensionKey: '220524114340022',
-            title: '子类别',
-            headerStyle: {
-              textAlign: 'left',
-              color: 'blue',
-              bgColor: '#45b89f'
-            }
+            title: '子类别'
+
             // headerType: 'MULTILINETEXT',
           },
           {
             dimensionKey: '220524114340023',
-            title: '邮寄方式',
-            headerStyle: {
-              textAlign: 'left',
-              color: 'white',
-              bgColor: '#6699ff'
-            }
-            // headerType: 'MULTILINETEXT',
+            title: '邮寄方式'
           }
         ],
-        columns: [
+        rows: [
           {
             dimensionKey: '220524114340020',
             title: '地区',
             headerFormat(value) {
               return `${value}地区`;
             },
-            headerStyle: {
-              textAlign: 'right',
-              borderColor: 'blue',
-              color: 'yellow',
-              textStick: true
-            },
+
             // 指标菜单
             dropDownMenu: ['升序排序I', '降序排序I', '冻结列I'],
             // corner菜单
@@ -392,6 +324,7 @@ export function createTable() {
             headerStyle: {}
           }
         ],
+        indicatorTitle: '指标',
         corner: {
           titleOnDimension: 'row',
           headerStyle: {
@@ -407,11 +340,11 @@ export function createTable() {
         heightMode: 'autoHeight',
         autoWrapText: true,
         widthMode: 'standard',
-        rowHierarchyType: 'grid-tree',
+        // rowHierarchyType: 'grid-tree',
         rowExpandLevel: 1,
         rowHierarchyIndent: 20,
         theme: VTable.themes.ARCO,
-        indicatorsAsCol: false,
+        // indicatorsAsCol: false,
         dragHeaderMode: 'all'
       };
       const tableInstance = new PivotTable(option);

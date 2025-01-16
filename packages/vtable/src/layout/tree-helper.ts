@@ -187,7 +187,9 @@ export class DimensionTree {
       (children?.length >= 1 || children === true)
     ) {
       //树形展示 有子节点 且下一层需要展开
-      node.hierarchyState = HierarchyState.expand;
+      if (children === true || !children[0]?.indicatorKey) {
+        node.hierarchyState = HierarchyState.expand;
+      }
       children?.length >= 1 &&
         children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
@@ -196,7 +198,9 @@ export class DimensionTree {
         });
     } else if (children?.length >= 1 || children === true) {
       //树形展示 有子节点 且下一层不需要展开
-      node.hierarchyState = HierarchyState.collapse;
+      if (children === true || !children[0]?.indicatorKey) {
+        node.hierarchyState = HierarchyState.collapse;
+      }
       children?.length >= 1 &&
         children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
@@ -759,22 +763,19 @@ export function dealHeaderForGridTreeMode(
         _headerCellIds[r] = [];
       }
       _headerCellIds[r][layoutMap.colIndex] = id;
-
-      // if ((hd as any).levelSpan > 1) {
-      //   for (let i = 1; i < (hd as any).levelSpan; i++) {
-      //     _headerCellIds[r + i][layoutMap.colIndex] = id;
-      //   }
-      // }
     }
-    if (row < (indicatorsAsCol ? totalLevel : totalLevel - 1) - 1 && indicatorsAsCol === false) {
+
+    // 指标在行头的情况下 就算是折叠状态也需要显示最后的指标节点
+    if (row <= (indicatorsAsCol ? totalLevel : totalLevel - 1) - 1 && indicatorsAsCol === false) {
       let lastIndidcatorChildren = hd;
-      let levelSpan = 1;
+      const levelSpan = (indicatorsAsCol ? totalLevel : totalLevel - 1) - row;
       // debugger;
+      // 为找到最后的指标节点
       while (lastIndidcatorChildren) {
         if (lastIndidcatorChildren.children?.[0].indicatorKey) {
           break;
         }
-        levelSpan++;
+        // levelSpan++;
         lastIndidcatorChildren = lastIndidcatorChildren.children[0];
       }
 

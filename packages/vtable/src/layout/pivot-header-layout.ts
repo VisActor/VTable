@@ -2136,6 +2136,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           findTree = this._rowHeaderExtensionTree[row_pathIds[level]];
           level++;
         }
+      } else if (this.rowHierarchyType === 'grid-tree') {
+        const row_pathIds = this._rowHeaderCellFullPathIds[recordRow]; //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
+        const findTree = this.rowDimensionTree; //第一棵寻找的树是第一列的维度树 主树
+
+        const findedRowPath = findTree.getTreePathByCellIds(row_pathIds);
+        // rowPath = rowPath.concat(findedRowPath);
+        rowPath.push(...findedRowPath);
       } else {
         rowPath = this.rowDimensionTree.getTreePath(
           recordRow,

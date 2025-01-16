@@ -1480,7 +1480,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // this.scenegraph.createSceneGraph();
     // this.invalidate();
     this.clearCellStyleCache();
-    this.scenegraph.updateHierarchyIcon(col, row);
+    if (this.rowHierarchyType === 'tree') {
+      //'grid-tree'模式下不用特意更新，updateRow会更新掉和`tree`模式不一样
+      this.scenegraph.updateHierarchyIcon(col, row);
+    }
     this.reactCustomLayout?.clearCache();
     this.scenegraph.updateRow(
       result.removeCellPositions,
