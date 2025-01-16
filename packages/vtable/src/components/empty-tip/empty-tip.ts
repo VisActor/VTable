@@ -67,27 +67,7 @@ export class EmptyTip {
     if (!this._emptyTipComponent) {
       return;
     }
-    const leftHeaderWidth =
-      (this.table as ListTable).transpose || (this.table as PivotTable).options.indicatorsAsCol === false
-        ? this.table.getFrozenColsWidth()
-        : 0;
-    const topHeaderHeight =
-      !(this.table as ListTable).transpose || (this.table as PivotTable).options.indicatorsAsCol
-        ? this.table.getFrozenRowsHeight()
-        : 0;
-    const width =
-      (this.table.columnHeaderLevelCount > 0 && this.table.isListTable()
-        ? this.table.getDrawRange().width
-        : this.table.tableNoFrameWidth) -
-      leftHeaderWidth -
-      (this.table as BaseTable).getTheme().scrollStyle.width;
-
-    const height =
-      (this.table.rowHeaderLevelCount > 0 && this.table.isListTable()
-        ? this.table.getDrawRange().height
-        : this.table.tableNoFrameHeight) -
-      topHeaderHeight -
-      (this.table as BaseTable).getTheme().scrollStyle.width;
+    const { leftHeaderWidth, topHeaderHeight, width, height } = this.getWidthAndHeight();
     this._emptyTipComponent.setAttributes({
       spaceBetweenTextAndIcon: this._emptyTipOption.spaceBetweenTextAndIcon,
       x: this.table.tableX + leftHeaderWidth,
@@ -134,7 +114,7 @@ export class EmptyTip {
     }
   }
 
-  private _getEmptyTipAttrs() {
+  getWidthAndHeight() {
     const leftHeaderWidth =
       (this.table as ListTable).transpose || (this.table as PivotTable).options.indicatorsAsCol === false
         ? this.table.getFrozenColsWidth()
@@ -159,6 +139,16 @@ export class EmptyTip {
         : this.table.tableNoFrameHeight) -
       topHeaderHeight -
       (this.table as BaseTable).getTheme().scrollStyle.width;
+    return {
+      leftHeaderWidth,
+      topHeaderHeight,
+      width,
+      height
+    };
+  }
+
+  private _getEmptyTipAttrs() {
+    const { leftHeaderWidth, topHeaderHeight, width, height } = this.getWidthAndHeight();
 
     return {
       spaceBetweenTextAndIcon: this._emptyTipOption.spaceBetweenTextAndIcon,
