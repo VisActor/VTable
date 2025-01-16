@@ -786,6 +786,15 @@ The following properties are also supported in react:
 * `pointerEvents` whether to respond to mouse events
 * `penetrateEventList` Mouse event penetration list, used to specify which mouse events need to be penetrated to the VTable (currently only supports `wheel`)
 * `container` Container, used to limit the component display area in the table when scrolling. If you need to limit the component display in the table content area, you need to specify it as `table.bodyDomContainer`; if you need to limit the component display in the table header area, you need to specify it as `table.headerDomContainer`; if it is a pop-up window or menu component, you do not need to configure this property
+  * `table.bodyDomContainer` Table content area
+  * `table.headerDomContainer` Table header area
+  * `table.frozenBodyDomContainer` Left frozen area of table content
+  * `table.frozenHeaderDomContainer` Frozen area of table header
+  * `table.rightFrozenBodyDomContainer` Right frozen area of table content
+  * `table.rightFrozenHeaderDomContainer` Right frozen area of table header
+  * `table.frozenBottomDomContainer` Left frozen area of table bottom
+  * `table.bottomDomContainer` Bottom frozen area of table
+  * `table.rightFrozenBottomDomContainer` Right frozen area of table bottom
 * `anchorType` Anchor type, used to specify the anchor position of the upper left corner of the component relative to the cell
   * 'top'
   * 'bottom'

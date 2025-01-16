@@ -805,6 +805,15 @@ react中还支持配置以下属性：
 * `pointerEvents` 是否响应鼠标事件
 * `penetrateEventList` 鼠标事件穿透列表，用于指定哪些鼠标事件需要穿透到VTable（目前暂时只支持`wheel`）
 * `container` 容器，用于限制滚动时组件显示区域在表格中，如果需要限制组件显示在表格内容区域，需要指定为`table.bodyDomContainer`；如果需要限制组件显示在表格表头区域，需要指定为`table.headerDomContainer`；如果是弹窗或菜单类组件，不需要配置该属性
+  * `table.bodyDomContainer` 表格内容区域
+  * `table.headerDomContainer` 表格表头区域
+  * `table.frozenBodyDomContainer` 表格内容左侧冻结区域
+  * `table.frozenHeaderDomContainer` 表格表头冻结区域
+  * `table.rightFrozenBodyDomContainer` 表格右侧冻结区域
+  * `table.rightFrozenHeaderDomContainer` 表格右侧表头冻结区域
+  * `table.frozenBottomDomContainer` 表格底部左侧冻结区域
+  * `table.bottomDomContainer` 表格底部冻结区域
+  * `table.rightFrozenBottomDomContainer` 表格右侧底部冻结区域
 * `anchorType` 锚定类型，用于指定组件左上角相对于单元格的锚定位置
   * 'top'
   * 'bottom'
