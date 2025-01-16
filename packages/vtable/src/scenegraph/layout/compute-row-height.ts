@@ -331,6 +331,16 @@ export function computeRowsHeight(
         }
       }
     }
+
+    // update top & bttom frozen row
+    for (let row = 0; row < table.frozenRowCount; row++) {
+      const newRowHeight = table.getRowHeight(row);
+      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
+        // update the row height in scenegraph
+        table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
+      }
+    }
+    // update body row
     for (let row = table.scenegraph.proxy.rowStart; row <= table.scenegraph.proxy.rowEnd; row++) {
       const newRowHeight = table.getRowHeight(row);
       if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
