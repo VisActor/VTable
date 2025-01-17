@@ -414,6 +414,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       options.indicatorsAsCol ?? true,
       options.records ?? this.internalProps.records,
       undefined,
+      undefined,
       this.internalProps.columnTree,
       this.internalProps.rowTree,
       true

@@ -757,7 +757,8 @@ export function dealHeaderForGridTreeMode(
       totalLevel,
       show && hd.hierarchyState === HierarchyState.expand, //当前节点show即显示状态 且当前节点状态为展开 则传给子节点为show：true
       dimensions,
-      results
+      results,
+      isRowTree
       // totalLevel,
       // indicatorKeys
     );
