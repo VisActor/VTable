@@ -141,6 +141,10 @@ Enable the group display function to display the hierarchical structure of the g
 
 Enable the group title sticking function.
 
+## groupTitleFieldFormat(Function)
+
+Customize the group title.
+
 ## groupTitleCustomLayout(CustomLayout)
 
 Customize the group title layout.

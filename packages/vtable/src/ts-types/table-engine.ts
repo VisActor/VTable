@@ -268,7 +268,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   enableTreeNodeMerge?: boolean;
   groupBy?: GroupByOption;
   groupTitleCustomLayout?: ICustomLayout;
-
+  groupTitleFieldFormat?: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
   enableTreeStickCell?: boolean;
 
   columnWidthConfig?: { key: string; width: number }[];
