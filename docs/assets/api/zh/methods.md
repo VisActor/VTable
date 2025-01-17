@@ -1022,11 +1022,11 @@ use case: 对于透视图的场景上，点击图例项后 更新过滤规则 �
   /**
    * 添加数据 支持多条数据
    * @param records 多条数据
-   * @param recordIndex 向数据源中要插入的位置，从0开始。不设置recordIndex的话 默认追加到最后。
+   * @param recordIndex 向数据源中要插入的位置，从0开始。不设置recordIndex的话 默认追加到最后。在树形（分组）结构中，recordIndex可能是一个数组，代表改节点从根节点开始的每级索引位置。
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecords(records: any[], recordIndex?: number)
+  addRecords(records: any[], recordIndex?: number|number[])
 ```
 
 ## addRecord(Function)
@@ -1039,11 +1039,11 @@ use case: 对于透视图的场景上，点击图例项后 更新过滤规则 �
   /**
    * 添加数据 单条数据
    * @param record 数据
-   * @param recordIndex 向数据源中要插入的位置，从0开始。不设置recordIndex的话 默认追加到最后。
+   * @param recordIndex 向数据源中要插入的位置，从0开始。不设置recordIndex的话 默认追加到最后。在树形（分组）结构中，recordIndex可能是一个数组，代表改节点从根节点开始的每级索引位置。
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecord(record: any, recordIndex?: number)
+  addRecord(record: any, recordIndex?: number|number[])
 ```
 
 ## deleteRecords(Function)
@@ -1055,9 +1055,9 @@ use case: 对于透视图的场景上，点击图例项后 更新过滤规则 �
 ```
   /**
    * 删除数据 支持多条数据
-   * @param recordIndexs 要删除数据的索引（显示到body中的条目索引）
+   * @param recordIndexs 要删除数据的索引（显示到body中的条目索引）,在树形（分组）结构中，recordIndex可能是一个数组，代表改节点从根节点开始的每级索引位置。
    */
-  deleteRecords(recordIndexs: number[])
+  deleteRecords(recordIndexs: number[]|number[][])
 ```
 
 ## updateRecords(Function)
@@ -1070,9 +1070,9 @@ use case: 对于透视图的场景上，点击图例项后 更新过滤规则 �
   /**
    * 修改数据 支持多条数据
    * @param records 修改数据条目
-   * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
+   * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）,在树形（分组）结构中，recordIndex可能是一个数组，代表改节点从根节点开始的每级索引位置。
    */
-  updateRecords(records: any[], recordIndexs: number[])
+  updateRecords(records: any[], recordIndexs: number[]|number[][])
 ```
 
 ## getBodyVisibleCellRange(Function)
