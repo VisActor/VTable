@@ -5,16 +5,16 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add emptyTip click event
-- **@visactor/vtable**: canvasWidth canvasHeight support auto setting [#3089](https://github.com/VisActor/VTable/issues/3089)
-- **@visactor/vtable**: add data update in list-table tree(group) mode
-- **@visactor/vtable**: add groupTitleFieldFormat API [#3092](https://github.com/VisActor/VTable/issues/3092)
+- **@visactor/vtable**: 添加 emptyTip 点击事件
+- **@visactor/vtable**: canvasWidth canvasHeight 支持'auto'设置 [#3089](https://github.com/VisActor/VTable/issues/3089)
+- **@visactor/vtable**: 在基本表tree及group模式中支持添加数据及更新数据接口
+- **@visactor/vtable**: 添加 groupTitleFieldFormat API [#3092](https://github.com/VisActor/VTable/issues/3092)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when mouse leave gantt should trigger mouseleave_taskbar [#3294](https://github.com/VisActor/VTable/issues/3294)
-- **@visactor/vtable**: fix empty-tip layout problem when resize window [#3312](https://github.com/VisActor/VTable/issues/3312)
-- **@visactor/vtable**: remove tree limit in handleTextStick() [#3274](https://github.com/VisActor/VTable/issues/3274)
+- **@visactor/vtable-gantt**: 当鼠标离开甘特图时应触发 mouseleave_taskbar 事件 [#3294](https://github.com/VisActor/VTable/issues/3294)
+- **@visactor/vtable**: 修复调整窗口大小时的空提示布局问题 [#3312](https://github.com/VisActor/VTable/issues/3312)
+- **@visactor/vtable**: 在 handleTextStick() 中移除树形结构限制 [#3274](https://github.com/VisActor/VTable/issues/3274)
 
 [更多详情请查看 v1.15.1](https://github.com/VisActor/VTable/releases/tag/v1.15.1)
 
