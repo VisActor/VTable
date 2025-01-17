@@ -353,6 +353,15 @@ Table data can be modified using `updateRecords`. Please check the api documenta
 
 Or you can modify a certain data field using the `changeCellValue` or `changeCellValues` interface.
 
+### Tree structure data update
+
+In the tree (group) structure, the data update is passed in `recordIndex` as an array, representing the index of each node from the root node. In addition, in the case of sorting, `recordIndex` is the original data structure, and it may not be consistent with the hierarchical order displayed in the table. Therefore, in the tree (group) structure table, please use the `getRecordIndexByCell` interface to get the correct `recordIndex`, and then use the `updateRecords` interface to update the data.
+
+```javascript
+const recordIndex = tableInstance.getRecordIndexByCell(col, row);
+tableInstance.updateRecords([newRecord], [recordIndex]);
+```
+
 ## Empty data prompt
 
 If the data source is not passed, or an empty array is passed, you can configure emptyTip to display an empty data prompt.

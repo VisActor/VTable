@@ -1136,11 +1136,11 @@ Add data, support multiple pieces of data
 
 - Add data to support multiple pieces of data
 - @param records multiple data
-- @param recordIndex The position to be inserted into the data source, starting from 0. If recordIndex is not set, it will be appended to the end by default.
+- @param recordIndex The position to be inserted into the data source, starting from 0. If recordIndex is not set, it will be appended to the end by default. In the tree (group) structure, recordIndex may be an array, representing the index of each node from the root node.
 - If the sorting rule recordIndex is set to be invalid, the sorting logic will be automatically adapted to determine the insertion order.
 - recordIndex can be obtained through the interface getRecordShowIndexByCell
   \*/
-  addRecords(records: any[], recordIndex?: number)
+  addRecords(records: any[], recordIndex?: number | number[])
 
 ```
 
@@ -1156,11 +1156,11 @@ Add data, single piece of data
 
 - Add data single data
 - @param record data
-- @param recordIndex The position to be inserted into the data source, starting from 0. If recordIndex is not set, it will be appended to the end by default.
+- @param recordIndex The position to be inserted into the data source, starting from 0. If recordIndex is not set, it will be appended to the end by default. In the tree (group) structure, recordIndex may be an array, representing the index of each node from the root node.
 - If the sorting rule recordIndex is set to be invalid, the sorting logic will be automatically adapted to determine the insertion order.
 - recordIndex can be obtained through the interface getRecordShowIndexByCell
   \*/
-  addRecord(record: any, recordIndex?: number)
+  addRecord(record: any, recordIndex?: number | number[])
 
 ```
 
@@ -1175,9 +1175,9 @@ Delete data supports multiple pieces of data
 /\*\*
 
 - Delete data supports multiple pieces of data
-- @param recordIndexs The index of the data to be deleted (the entry index displayed in the body)
+- @param recordIndexs The index of the data to be deleted (the entry index displayed in the body), in the tree (group) structure, recordIndex may be an array, representing the index of each node from the root node.
   \*/
-  deleteRecords(recordIndexs: number[])
+  deleteRecords(recordIndexs: number[] | number[][])
 
 ```
 
@@ -1193,9 +1193,9 @@ Modify data to support multiple pieces of data
 
 - Modify data to support multiple pieces of data
 - @param records Modify data entries
-- @param recordIndexs The index corresponding to the modified data (the index displayed in the body, that is, which row of data in the body part is to be modified)
+- @param recordIndexs The index corresponding to the modified data (the index displayed in the body, that is, which row of data in the body part is to be modified), in the tree (group) structure, recordIndex may be an array, representing the index of each node from the root node.
   \*/
-  updateRecords(records: any[], recordIndexs: number[])
+  updateRecords(records: any[], recordIndexs: number[] | number[][])
 
 ```
 
