@@ -2167,7 +2167,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
       const hd: HeaderData = this._headerObjects[id as number];
       if (hd?.define) {
-        paths.push(hd.define as ITreeLayoutHeadNode);
+        paths.push(hd.define as any as ITreeLayoutHeadNode); // tree 或者 grid-tree 的define 就是node节点复制上的
       }
     }
     return paths;
