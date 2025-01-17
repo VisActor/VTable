@@ -22,7 +22,7 @@ export class MarkLine {
       clip: true
     });
     this.group.name = 'mark-line-container';
-    scene.tableGroup.addChild(this.group);
+    scene.ganttGroup.addChild(this.group);
 
     this.markLIneContainer = new Group({
       x: 0,

@@ -26,7 +26,7 @@ export class Scenegraph {
   dependencyLink: DependencyLink;
   taskBar: TaskBar;
   _gantt: Gantt;
-  tableGroup: Group;
+  ganttGroup: Group;
   scrollbarComponent: ScrollBarComponent;
   markLine: MarkLine;
   dragOrderLine: DragOrderLine;
@@ -85,7 +85,7 @@ export class Scenegraph {
   initSceneGraph() {
     const scene = this;
 
-    scene.tableGroup = new Group({
+    scene.ganttGroup = new Group({
       x: scene._gantt.tableX,
       y: scene._gantt.tableY,
       width: this.tableGroupWidth,
@@ -93,8 +93,8 @@ export class Scenegraph {
       clip: true,
       pickable: false
     });
-    scene.stage.defaultLayer.add(scene.tableGroup);
-    scene.tableGroup.name = 'table';
+    scene.stage.defaultLayer.add(scene.ganttGroup);
+    scene.ganttGroup.name = 'table';
     // 初始化顶部时间线表头部分
     scene.timelineHeader = new TimelineHeader(scene);
 
@@ -143,8 +143,8 @@ export class Scenegraph {
   refreshAll() {
     this.tableGroupHeight = Math.min(this._gantt.tableNoFrameHeight, this._gantt.drawHeight);
     this.tableGroupWidth = this._gantt.tableNoFrameWidth;
-    this.tableGroup.setAttribute('height', this.tableGroupHeight);
-    this.tableGroup.setAttribute('width', this.tableGroupWidth);
+    this.ganttGroup.setAttribute('height', this.tableGroupHeight);
+    this.ganttGroup.setAttribute('width', this.tableGroupWidth);
     this.timelineHeader.refresh();
     this.grid.refresh();
     this.taskBar.refresh();
@@ -169,7 +169,7 @@ export class Scenegraph {
   refreshTaskBarsAndGrid() {
     this._gantt.verticalSplitResizeLine.style.height = this._gantt.drawHeight + 'px'; //'100%';
     this.tableGroupHeight = Math.min(this._gantt.tableNoFrameHeight, this._gantt.drawHeight);
-    this.tableGroup.setAttribute('height', this.tableGroupHeight);
+    this.ganttGroup.setAttribute('height', this.tableGroupHeight);
     // this.timelineHeader.refresh();
     this.grid.refresh();
     this.taskBar.refresh();
@@ -183,7 +183,7 @@ export class Scenegraph {
   updateTableSize() {
     this.tableGroupHeight = Math.min(this._gantt.tableNoFrameHeight, this._gantt.drawHeight);
     this.tableGroupWidth = this._gantt.tableNoFrameWidth;
-    this.tableGroup.setAttributes({
+    this.ganttGroup.setAttributes({
       x: this._gantt.tableX,
       y: this._gantt.tableY,
       width: this._gantt.tableNoFrameWidth,
@@ -218,19 +218,19 @@ export class Scenegraph {
     this.stage.renderNextFrame();
   }
   get width(): number {
-    return this.tableGroup.attribute?.width ?? 0;
+    return this.ganttGroup.attribute?.width ?? 0;
   }
 
   get height(): number {
-    return this.tableGroup.attribute?.height ?? 0;
+    return this.ganttGroup.attribute?.height ?? 0;
   }
 
   get x(): number {
-    return this.tableGroup.attribute?.x ?? 0;
+    return this.ganttGroup.attribute?.x ?? 0;
   }
 
   get y(): number {
-    return this.tableGroup.attribute?.y ?? 0;
+    return this.ganttGroup.attribute?.y ?? 0;
   }
 
   /**

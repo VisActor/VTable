@@ -29,8 +29,8 @@ export class Grid {
     this.scrollTop = 0;
     this.x = 0;
     this.y = scene._gantt.getAllHeaderRowsHeight();
-    this.width = scene.tableGroup.attribute.width;
-    this.height = scene.tableGroup.attribute.height - scene.timelineHeader.group.attribute.height;
+    this.width = scene.ganttGroup.attribute.width;
+    this.height = scene.ganttGroup.attribute.height - scene.timelineHeader.group.attribute.height;
     this.rowHeight = scene._gantt.parsedOptions.rowHeight;
     this.rowCount = scene._gantt.itemCount;
     this.allGridWidth = scene._gantt.getAllDateColsWidth();
@@ -44,7 +44,7 @@ export class Grid {
       fill: scene._gantt.parsedOptions.grid?.backgroundColor
     });
     this.group.name = 'grid-container';
-    scene.tableGroup.addChild(this.group);
+    scene.ganttGroup.addChild(this.group);
     this.createVerticalBackgroundRects();
     this.createHorizontalBackgroundRects();
     this.createVerticalLines();
@@ -271,8 +271,8 @@ export class Grid {
   }
   /** 重新创建网格线场景树结点 */
   refresh() {
-    this.width = this._scene.tableGroup.attribute.width;
-    this.height = this._scene.tableGroup.attribute.height - this._scene.timelineHeader.group.attribute.height;
+    this.width = this._scene.ganttGroup.attribute.width;
+    this.height = this._scene.ganttGroup.attribute.height - this._scene.timelineHeader.group.attribute.height;
     this.group.setAttributes({
       width: this.width,
       height: this.height,
@@ -305,8 +305,8 @@ export class Grid {
     this.horizontalBackgroundRectsGroup?.setAttribute('y', y);
   }
   resize() {
-    this.width = this._scene.tableGroup.attribute.width;
-    this.height = this._scene.tableGroup.attribute.height - this._scene.timelineHeader.group.attribute.height;
+    this.width = this._scene.ganttGroup.attribute.width;
+    this.height = this._scene.ganttGroup.attribute.height - this._scene.timelineHeader.group.attribute.height;
     this.group.setAttribute('width', this.width);
     this.group.setAttribute('height', this.height);
   }
