@@ -2857,13 +2857,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * Get the data source.
    */
-  get dataSource(): DataSource | CachedDataSource {
+  get dataSource(): CachedDataSource | DataSource {
     return this.internalProps.dataSource;
   }
   /**
    * Set the data source from given
    */
-  set dataSource(dataSource: DataSource | CachedDataSource) {
+  set dataSource(dataSource: CachedDataSource | DataSource) {
     // 清空单元格内容
     this.scenegraph.clearCells();
     _setDataSource(this, dataSource);

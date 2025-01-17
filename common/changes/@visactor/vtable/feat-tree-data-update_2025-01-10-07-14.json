@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add data update in list-table tree(group) mode",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
