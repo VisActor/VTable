@@ -176,6 +176,15 @@ export interface TableEvents {
    * 双击填充柄事件
    */
   DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle';
+
+  /**
+   * 空数据提示点击事件
+   */
+  EMPTY_TIP_CLICK: 'empty_tip_click';
+  /**
+   * 空数据提示双击事件
+   */
+  EMPTY_TIP_DBLCLICK: 'empty_tip_dblclick';
 }
 /**
  * Table event types
@@ -242,5 +251,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   CHANGE_CELL_VALUE: 'change_cell_value',
   DRAG_FILL_HANDLE_END: 'drag_fill_handle_end',
   MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle',
-  DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle'
+  DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle',
+
+  EMPTY_TIP_CLICK: 'empty_tip_click',
+  EMPTY_TIP_DBLCLICK: 'empty_tip_dblclick'
 } as TableEvents;

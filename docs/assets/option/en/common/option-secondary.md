@@ -559,13 +559,25 @@ Whether to enable line break, the default is false.
 
 Whether to clear the container DOM.
 
-#${prefix} canvasWidth(number)
+#${prefix} canvasWidth(number | 'auto')
 
-Directly set the width of the canvas. Do not determine the size of the table based on the container width and height.
+Sets the width of the canvas directly. If 'auto' is set, the canvas will be stretched based on the table content.
 
-#${prefix} canvasHeight(number)
+If not set, the size of the table will be determined based on the container's width and height.
 
-Directly set the height of the canvas. Do not determine the size of the table based on the width and height of the container.
+#${prefix} canvasHeight(number | 'auto')
+
+Sets the height of the canvas directly. If 'auto' is set, the canvas will be stretched based on the table content.
+
+If not set, the size of the table will be determined based on the container's width and height.
+
+#${prefix} maxCanvasWidth(number)
+
+The maximum width of the table canvas. Only effective when canvasWidth is set to 'auto'.
+
+#${prefix} maxCanvasHeight(number)
+
+The maximum height of the table canvas. Only effective when canvasHeight is set to 'auto'.
 
 #${prefix} animationAppear(boolean|Object|)
 

@@ -222,6 +222,9 @@ export interface TableEventHandlersEventArgumentMap {
   mousedown_fill_handle: {};
   drag_fill_handle_end: { direction?: 'top' | 'bottom' | 'left' | 'right' };
   dblclick_fill_handle: {};
+
+  empty_tip_click: {};
+  empty_tip_dblclick: {};
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -307,4 +310,7 @@ export interface TableEventHandlersReturnMap {
   scroll_vertical_end: void;
 
   scroll_horizontal_end: void;
+
+  empty_tip_click: void;
+  empty_tip_dblclick: void;
 }

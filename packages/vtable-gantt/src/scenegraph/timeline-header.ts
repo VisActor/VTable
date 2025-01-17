@@ -25,7 +25,7 @@ export class TimelineHeader {
     });
     this.group = dateHeader;
     dateHeader.name = 'date-header-container';
-    scene.tableGroup.addChild(this.group);
+    scene.ganttGroup.addChild(this.group);
     const { unit: minUnit, step } = scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
     let y = 0;
     for (let i = 0; i < scene._gantt.timeLineHeaderLevel; i++) {

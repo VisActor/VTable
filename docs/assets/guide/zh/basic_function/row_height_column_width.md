@@ -285,4 +285,8 @@ const table = new VTable.ListTable({
 
 如果在 columns 中声明了 width，我们会遍历 columns 配置的 width 最大 number 值作为所有列的列宽。如果没有 number 值的 width 配置，但其中某列配置了 auto 则自动计算所有列宽。为了使配置更清晰合理，所以我们建议使用 defaultColWidth 来指定列宽。
 
+## 表格宽高配置
+
+一般需要通过指定容器宽高进而给定表格整体的宽高。如果不指定宽高，想让 VTable 根据内容自动撑开容器的话，可以设置 canvasWidth 为'auto', canvasHeight 为'auto'。 同时配合 maxCanvasWidth 与 maxCanvasHeight 来限制最大宽高。
+
 至此，我们已经介绍了 VTable 中的表格行高列宽计算功能，包括行高、列宽配置，以及表格宽度模式。通过掌握这些功能，您可以更便捷地 VTable 中进行数据展示与分析，现各种实际需求。

@@ -86,16 +86,23 @@ function getHierarchyExpandLevel(table: ListTableAPI) {
 
 export function _setDataSource(table: BaseTableAPI, dataSource: DataSource): void {
   _dealWithUpdateDataSource(table, () => {
+    table.internalProps.dataSource && table.internalProps.dataSource.release?.();
     if (dataSource) {
       if (dataSource instanceof DataSource) {
         table.internalProps.dataSource = dataSource;
+        table.internalProps.dataSource.supplementConfig(
+          table.pagination,
+          (table.options as ListTableConstructorOptions).columns,
+          table.internalProps.layoutMap.rowHierarchyType,
+          getHierarchyExpandLevel(table as ListTableAPI)
+        );
       } else {
-        const newDataSource = (table.internalProps.dataSource = new CachedDataSource(dataSource));
-        table.addReleaseObj(newDataSource);
+        table.internalProps.dataSource = new CachedDataSource(dataSource);
       }
     } else {
       table.internalProps.dataSource = DataSource.EMPTY;
     }
+    table.addReleaseObj(table.internalProps.dataSource);
     table.internalProps.records = null;
   });
 }

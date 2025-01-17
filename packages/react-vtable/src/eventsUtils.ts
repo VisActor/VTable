@@ -82,6 +82,8 @@ export interface EventsProps {
   onVChartEventType?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['vchart_event_type']>;
 
   onChangCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
+  onEmptyTipClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['empty_tip_click']>;
+  onEmptyTipDblclick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['empty_tip_dblclick']>;
 }
 
 export const TABLE_EVENTS = {
@@ -152,7 +154,9 @@ export const TABLE_EVENTS = {
   // pivot chart only
   onVChartEventType: EVENT_TYPE.VCHART_EVENT_TYPE,
 
-  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE
+  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
+  onEmptyTipClick: EVENT_TYPE.EMPTY_TIP_CLICK,
+  onEmptyTipDblclick: EVENT_TYPE.EMPTY_TIP_DBLCLICK
 };
 
 export const TABLE_EVENTS_KEYS = Object.keys(TABLE_EVENTS);

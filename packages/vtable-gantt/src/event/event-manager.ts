@@ -51,7 +51,7 @@ function bindTableGroupListener(event: EventManager) {
   const gantt = event._gantt;
   const stateManager = gantt.stateManager;
 
-  scene.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
+  scene.ganttGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     if (e.button !== 0) {
       // 只处理左键
       return;
@@ -150,7 +150,7 @@ function bindTableGroupListener(event: EventManager) {
     }
   });
 
-  scene.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
+  scene.ganttGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     if (stateManager.interactionState === InteractionState.default) {
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
@@ -332,7 +332,7 @@ function bindTableGroupListener(event: EventManager) {
     }
   });
   // pointerup如果改为pointertap 问题：新建依赖关系线不起作用
-  scene.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
+  scene.ganttGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
     if (e.button === 0) {
       let isClickBar = false;
       let isClickCreationButtom = false;
@@ -487,7 +487,7 @@ function bindTableGroupListener(event: EventManager) {
       }
     }
   });
-  scene.tableGroup.addEventListener('rightdown', (e: FederatedPointerEvent) => {
+  scene.ganttGroup.addEventListener('rightdown', (e: FederatedPointerEvent) => {
     let isClickBar = false;
     let isClickDependencyLine = false;
     let depedencyLink;
@@ -526,7 +526,7 @@ function bindTableGroupListener(event: EventManager) {
       }
     }
   });
-  scene.tableGroup.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
+  scene.ganttGroup.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
     if (
       (gantt.parsedOptions.scrollStyle.horizontalVisible &&
         gantt.parsedOptions.scrollStyle.horizontalVisible === 'focus') ||
@@ -543,7 +543,7 @@ function bindTableGroupListener(event: EventManager) {
     }
   });
 
-  scene.tableGroup.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
+  scene.ganttGroup.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
     if (
       (gantt.parsedOptions.scrollStyle.horizontalVisible &&
         gantt.parsedOptions.scrollStyle.horizontalVisible === 'focus') ||
@@ -558,8 +558,26 @@ function bindTableGroupListener(event: EventManager) {
     ) {
       scene.scrollbarComponent.hideVerticalScrollBar();
     }
+
+    // 移动到gantt外部 如移动到表格空白区域 移动到表格浏览器外部
+    if (scene._gantt.stateManager.hoverTaskBar.target) {
+      if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR)) {
+        // const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
+        const taskIndex = scene._gantt.stateManager.hoverTaskBar.target.task_index;
+        const sub_task_index = scene._gantt.stateManager.hoverTaskBar.target.sub_task_index;
+        const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
+        scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR, {
+          federatedEvent: e,
+          event: e.nativeEvent,
+          index: taskIndex,
+          sub_task_index,
+          record
+        });
+      }
+      stateManager.hideTaskBarHover(e);
+    }
   });
-  scene.tableGroup.addEventListener('wheel', (e: FederatedWheelEvent) => {
+  scene.ganttGroup.addEventListener('wheel', (e: FederatedWheelEvent) => {
     handleWhell(e, stateManager, gantt);
   });
 }

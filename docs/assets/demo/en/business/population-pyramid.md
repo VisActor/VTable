@@ -20,7 +20,7 @@ Data source: https://population-pyramid.net/zh-cn
 ## Code Demo
 
 ```javascript livedemo template=vtable
- const records = [
+const records = [
   [0, 5634674, 5063545],
   [1, 5705095, 5104886],
   [2, 6428332, 5727205],
@@ -155,7 +155,7 @@ const columns = [
     max: 13601860 + 1000000,
     style: {
       color: 'red',
-      barHeight: 6,
+      barHeight: 5,
       barColor: '#4cba72',
       barRightToLeft: true
     }
@@ -172,7 +172,7 @@ const columns = [
     max: 13601860 + 1000000, //12693324,
     style: {
       color: 'red',
-      barHeight: 6,
+      barHeight: 5,
       showBarMark: true
     }
   },
@@ -236,6 +236,6 @@ const option = {
     }
   })
 };
-  const tableInstance =  new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-  window.tableInstance = tableInstance;
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window.tableInstance = tableInstance;
 ```
