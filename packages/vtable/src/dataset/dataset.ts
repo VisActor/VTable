@@ -64,8 +64,8 @@ export class Dataset {
    */
   tree: Record<string, Record<string, Aggregator[]>> = {};
   changedTree: Record<string, Record<string, any[]>> = {};
-  private colFlatKeys = {};
-  private rowFlatKeys = {};
+  private colFlatKeys: Record<string, number> = {}; //记录某个colKey已经被添加过colKeys到
+  private rowFlatKeys: Record<string, number> = {}; //记录某个rowKey已经被添加过rowKeys到
 
   //列表头的每列对应的表头键值
   colKeys: string[][] = [];
@@ -146,6 +146,7 @@ export class Dataset {
   colHeaderTree: any[];
   rowHeaderTree: any[];
   rowHierarchyType: 'grid' | 'tree' | 'grid-tree';
+  columnHierarchyType: 'grid' | 'grid-tree';
   indicators?: (string | IIndicator)[];
   indicatorsAsCol: boolean;
   // 记录用户传入的汇总数据
@@ -162,6 +163,7 @@ export class Dataset {
     indicatorsAsCol: boolean,
     records: any[] | Record<string, any[]> | undefined,
     rowHierarchyType?: 'grid' | 'tree' | 'grid-tree',
+    columnHierarchyType?: 'grid' | 'grid-tree',
     customColTree?: IHeaderTreeDefine[],
     customRowTree?: IHeaderTreeDefine[],
     needSplitPositiveAndNegative?: boolean,
@@ -172,6 +174,7 @@ export class Dataset {
     this.dataConfig = dataConfig;
     this.filterRules = this.dataConfig?.filterRules;
     this.rowHierarchyType = rowHierarchyType ?? 'grid';
+    this.columnHierarchyType = columnHierarchyType ?? 'grid';
     // this.allTotal = new SumAggregator(this.indicators[0]);
     this.sortRules = this.dataConfig?.sortRules;
     this.aggregationRules = this.dataConfig?.aggregationRules;
@@ -349,19 +352,33 @@ export class Dataset {
         // }
         this.colHeaderTree = this.customColTree;
       } else {
-        this.colHeaderTree = this.ArrToTree(
-          this.colKeys,
-          this.columns.filter((key, index) => {
-            return this.columnsHasValue[index];
-          }),
-          this.indicatorsAsCol ? this.indicators : undefined,
-          this.colsIsTotal,
-          this.totals?.column?.showGrandTotals || (!this.indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
-          this.colGrandTotalLabel,
-          this.colSubTotalLabel,
-          this.totals?.column?.showGrandTotalsOnLeft ?? false,
-          this.totals?.column?.showSubTotalsOnLeft ?? false
-        );
+        if (this.columnHierarchyType !== 'grid') {
+          this.colHeaderTree = this.ArrToTree1(
+            this.colKeys,
+            this.columns.filter((key, index) => {
+              return this.columnsHasValue[index];
+            }),
+            this.indicatorsAsCol ? this.indicators : undefined,
+            this.totals?.column?.showGrandTotals ||
+              (!this.indicatorsAsCol && this.columns.length === 0) ||
+              (this.indicatorsAsCol && this.rows.length === 0),
+            this.colGrandTotalLabel
+          );
+        } else {
+          this.colHeaderTree = this.ArrToTree(
+            this.colKeys,
+            this.columns.filter((key, index) => {
+              return this.columnsHasValue[index];
+            }),
+            this.indicatorsAsCol ? this.indicators : undefined,
+            this.colsIsTotal,
+            this.totals?.column?.showGrandTotals || (!this.indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
+            this.colGrandTotalLabel,
+            this.colSubTotalLabel,
+            this.totals?.column?.showGrandTotalsOnLeft ?? false,
+            this.totals?.column?.showSubTotalsOnLeft ?? false
+          );
+        }
       }
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('TreeToArr:', t8 - t7);
@@ -843,6 +860,8 @@ export class Dataset {
         // if (this.rowKeys.indexOf(rowKey) === -1) this.rowKeys.push(rowKey);
         // if (this.colKeys.indexOf(colKey) === -1) this.colKeys.push(colKey);
 
+        // 这一段代码需要再考虑下 目前isToTalRecord中没有 this.rowKeys.push逻辑 。造成的一个问题例如有列小计的相关自定义汇总数据，但没有push到this.rowKeys中
+        // 但是放到上面目前isToTalRecord逻辑return之前的话 会引起新的问题。这个this.rowKeys的补充是否需要从this.totalRecordsTree中获取到？ TODO（pivot-tree demo加上列小计就能复现）
         if (rowKey.length !== 0) {
           if (!this.rowFlatKeys[flatRowKey]) {
             this.rowKeys.push(rowKey);

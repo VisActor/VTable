@@ -332,6 +332,7 @@ export interface ListTableAPI extends BaseTableAPI {
   getBodyRowIndexByRecordIndex: (index: number | number[]) => number;
 
   _parseColumnWidthConfig: (columnWidthConfig: { key: string; width: number }[]) => void;
+  _hasHierarchyTreeHeader: () => boolean;
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**

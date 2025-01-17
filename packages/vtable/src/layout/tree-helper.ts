@@ -611,6 +611,7 @@ export function dealHeaderForGridTreeMode(
   /** 其子节点是否都进行展示 */
   show: boolean,
   dimensions: (IDimension | string)[],
+  isRowTree: boolean,
   indicatorsAsCol: boolean,
   layoutMap: PivotHeaderLayoutMap
   // totalLevel: number,
@@ -763,17 +764,21 @@ export function dealHeaderForGridTreeMode(
     // .forEach(c => results.push(c));
   } else {
     // columns.push([""])//代码一个路径
-    for (let r = row + 1; r < (indicatorsAsCol ? totalLevel : totalLevel - 1); r++) {
+    const needSupplementLength = (isRowTree ? indicatorsAsCol : !indicatorsAsCol) ? totalLevel : totalLevel - 1;
+    for (let r = row + 1; r < needSupplementLength; r++) {
       if (!_headerCellIds[r]) {
         _headerCellIds[r] = [];
       }
       _headerCellIds[r][layoutMap.colIndex] = id;
     }
 
-    // 指标在行头的情况下 就算是折叠状态也需要显示最后的指标节点
-    if (row <= (indicatorsAsCol ? totalLevel : totalLevel - 1) - 1 && indicatorsAsCol === false) {
+    // 指标在表头的情况下 就算是折叠状态也需要显示最后的指标节点
+    if (
+      row <= needSupplementLength - 1 &&
+      ((isRowTree && indicatorsAsCol === false) || (!isRowTree && indicatorsAsCol === true))
+    ) {
       let lastIndidcatorChildren = hd;
-      const levelSpan = (indicatorsAsCol ? totalLevel : totalLevel - 1) - row;
+      const levelSpan = needSupplementLength - row;
       // debugger;
       // 为找到最后的指标节点
       while (lastIndidcatorChildren) {
@@ -792,7 +797,8 @@ export function dealHeaderForGridTreeMode(
         totalLevel,
         true, //当前节点show即显示状态 且当前节点状态为展开 则传给子节点为show：true
         dimensions,
-        results
+        results,
+        isRowTree
         // totalLevel,
         // indicatorKeys
       );

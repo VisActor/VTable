@@ -33,7 +33,11 @@ import type {
 import type { PivotTable } from '../PivotTable';
 import type { PivotChart } from '../PivotChart';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
-import { diffCellAddress, diffCellAddressForGridTree } from '../tools/diff-cell';
+import {
+  diffCellAddress,
+  diffCellAddressForGridTree,
+  diffCellAddressForGridTreeOnColumnHeaderTree
+} from '../tools/diff-cell';
 import {
   checkHasCartesianChart,
   checkHasChart,
@@ -84,7 +88,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   private _rowHeaderCellFullPathIds: number[][] = [];
   private _rowHeaderCellFullPathIds_FULL: number[][] = []; //分页需求新增  为了保存全量的id  当页的是_rowHeaderCellFullPathIds
 
-  /**下面四份代表实际展示的 如果隐藏了某部分表头 那这里就会相比上面的数组少了隐藏掉的id */
+  /**下面四份代表实际展示的 如果隐藏了某部分表头 那这里就会相比上面的数组少了隐藏掉的id 例如收hideIndicatorName影响*/
   private _cornerHeaderCellIds: number[][] = [];
   private _columnHeaderCellIds: number[][] = [];
   private _rowHeaderCellIds: number[][] = [];
@@ -112,7 +116,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   private _indicatorShowType: ShowColumnRowType = 'column';
   /**层级维度结构显示形式 */
   rowHierarchyType?: 'grid' | 'tree' | 'grid-tree';
+  columnHierarchyType?: 'grid' | 'grid-tree';
+
   rowExpandLevel?: number;
+  columnExpandLevel?: number;
   rowHierarchyIndent?: number;
   rowHierarchyTextStartAlignment?: boolean = false;
   /**
@@ -200,7 +207,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.rowHeaderTitle = table.options.rowHeaderTitle;
     this.columnHeaderTitle = table.options.columnHeaderTitle;
     this.rowHierarchyType = (table as PivotTable).options.rowHierarchyType ?? 'grid';
+    this.columnHierarchyType = (table as PivotTable).options.columnHierarchyType ?? 'grid';
     this.rowExpandLevel = (table as PivotTable).options.rowExpandLevel ?? 1;
+    this.columnExpandLevel = (table as PivotTable).options.columnExpandLevel ?? 1;
     this.rowHierarchyIndent = (table as PivotTable).options.rowHierarchyIndent ?? 20;
     this.rowHierarchyTextStartAlignment = (table as PivotTable).options.rowHierarchyTextStartAlignment;
     this.cornerSetting = Object.assign({ titleOnDimension: 'column', forceShowHeader: false }, table.options.corner);
@@ -468,32 +477,47 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   _generateColHeaderIds() {
     if (this.columnDimensionTree.tree.children?.length >= 1) {
-      //#region 处理需求 当没有数据时仍然显示角头维度名称
-      let startRow = 0;
-      if (
-        this.dataset &&
-        !this._table.isPivotChart() &&
-        (this.dataset.records?.length ?? 0) === 0 &&
-        !this.dataset.customColTree &&
-        !this.dataset.customRowTree &&
-        this.indicatorsAsCol &&
-        this.columnDimensionTree.totalLevel < this.columnHeaderLevelCount
-      ) {
-        startRow = this.columnHeaderLevelCount - this.columnDimensionTree.totalLevel;
-        for (let i = 0; i < startRow; i++) {
-          this._columnHeaderCellFullPathIds.unshift([]);
+      if (this.columnHierarchyType === 'grid-tree') {
+        const startCol = 0;
+        this._addHeadersForGridTreeMode(
+          this._columnHeaderCellFullPathIds,
+          startCol,
+          this.columnDimensionTree.tree.children,
+          [],
+          this.columnDimensionTree.totalLevel,
+          true,
+          this.columnsDefine,
+          this.columnHeaderObjs,
+          false
+        );
+      } else {
+        //#region 处理需求 当没有数据时仍然显示角头维度名称
+        let startRow = 0;
+        if (
+          this.dataset &&
+          !this._table.isPivotChart() &&
+          (this.dataset.records?.length ?? 0) === 0 &&
+          !this.dataset.customColTree &&
+          !this.dataset.customRowTree &&
+          this.indicatorsAsCol &&
+          this.columnDimensionTree.totalLevel < this.columnHeaderLevelCount
+        ) {
+          startRow = this.columnHeaderLevelCount - this.columnDimensionTree.totalLevel;
+          for (let i = 0; i < startRow; i++) {
+            this._columnHeaderCellFullPathIds.unshift([]);
+          }
         }
+        //#endregion
+        this._addHeaders(
+          this._columnHeaderCellFullPathIds,
+          startRow,
+          this.columnDimensionTree.tree.children,
+          [],
+          this.columnHeaderObjs
+          // this.columnDimensionTree.totalLevel,
+          // this.indicatorKeys
+        );
       }
-      //#endregion
-      this._addHeaders(
-        this._columnHeaderCellFullPathIds,
-        startRow,
-        this.columnDimensionTree.tree.children,
-        [],
-        this.columnHeaderObjs
-        // this.columnDimensionTree.totalLevel,
-        // this.indicatorKeys
-      );
     }
     // if (typeof this.showColumnHeader !== 'boolean') {
     if (this.columnHeaderTitle) {
@@ -548,7 +572,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.rowDimensionTree.totalLevel,
           true,
           this.rowsDefine,
-          this.rowHeaderObjs
+          this.rowHeaderObjs,
+          true
           // this.columnDimensionTree.totalLevel,
           // this.indicatorKeys
         );
@@ -692,7 +717,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     totalLevel: number,
     show: boolean,
     dimensions: (IDimension | string)[],
-    results: HeaderData[]
+    results: HeaderData[],
+    isRowTree: boolean
   ) {
     const _this = this;
     function _newRow(row: number): number[] {
@@ -721,6 +747,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         totalLevel,
         show,
         dimensions,
+        isRowTree,
         this.indicatorsAsCol,
         this
       );
@@ -2088,12 +2115,24 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
     // column
     if (!colPath && row >= 0 && recordCol >= 0) {
-      colPath = this.columnDimensionTree.getTreePath(
-        recordCol,
-        this.showHeader && this.showColumnHeader
-          ? row - (this.columnHeaderTitle ? 1 : 0)
-          : this.columnDimensionTree.totalLevel
-      );
+      colPath = [];
+      if (this.columnHierarchyType === 'grid-tree') {
+        const col_pathIds: number[] = [];
+        this._columnHeaderCellFullPathIds.map(arr => {
+          col_pathIds.push(arr[recordCol]);
+        }); //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
+
+        const findedRowPath = this.getTreePathByCellIds(col_pathIds);
+        // rowPath = rowPath.concat(findedRowPath);
+        colPath.push(...findedRowPath);
+      } else {
+        colPath = this.columnDimensionTree.getTreePath(
+          recordCol,
+          this.showHeader && this.showColumnHeader
+            ? row - (this.columnHeaderTitle ? 1 : 0)
+            : this.columnDimensionTree.totalLevel
+        );
+      }
       // this._colHeaderPathCache.set(col, colPath);
       this.setColHeaderPathCache(col, row, colPath);
     }
@@ -2348,7 +2387,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.rowDimensionTree.totalLevel,
         true,
         this.rowsDefine,
-        this.rowHeaderObjs
+        this.rowHeaderObjs,
+        true
         // this.columnDimensionTree.totalLevel,
         // this.indicatorKeys
       );
@@ -2427,6 +2467,95 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // this._rowHeaderCellIds = this._rowHeaderCellIds_FULL.slice();
     this.generateCellIdsConsiderHideHeader();
     this.setPagination(this.pagination);
+    return diffCell;
+  }
+  /**
+   * 点击某个单元格的展开折叠按钮 改变该节点的状态 维度树重置
+   * @param col
+   * @param row
+   */
+  toggleHierarchyStateForColumnTree(col: number, row: number) {
+    this.colIndex = 0;
+    const oldColumnHeaderCellIds = this._columnHeaderCellFullPathIds.slice(0);
+    const oldColumnHeaderCellPositons = oldColumnHeaderCellIds[this.columnHeaderLevelCount - 1].map((id, col) => {
+      return { col: col + this.rowHeaderLevelCount, row };
+    });
+    const hd = this.getHeader(col, row);
+    (<any>hd.define).hierarchyState =
+      (<any>hd.define).hierarchyState === HierarchyState.collapse ? HierarchyState.expand : HierarchyState.collapse;
+    //过程类似构造函数处理过程
+    this.columnDimensionTree.reset(this.columnDimensionTree.tree.children);
+    this._columnHeaderCellFullPathIds = [];
+    this.colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+    // this.fullRowDimensionKeys = [];
+    // this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
+    if (this.columnHierarchyType === 'grid-tree') {
+      const startRow = 0;
+      this._addHeadersForGridTreeMode(
+        this._columnHeaderCellFullPathIds,
+        startRow,
+        this.columnDimensionTree.tree.children,
+        [],
+        this.columnDimensionTree.totalLevel,
+        true,
+        this.columnsDefine,
+        this.columnHeaderObjs,
+        false
+        // this.columnDimensionTree.totalLevel,
+        // this.indicatorKeys
+      );
+    }
+
+    if (this.columnHeaderTitle) {
+      const id = ++this.sharedVar.seqId;
+      const firstRowIds = Array(this.colCount - this.rowHeaderLevelCount - this.rightFrozenColCount).fill(id);
+      this._columnHeaderCellFullPathIds.unshift(firstRowIds);
+      const cell: HeaderData = {
+        id,
+        title:
+          typeof this.columnHeaderTitle.title === 'string'
+            ? this.columnHeaderTitle.title
+            : (this.columnsDefine.reduce((title: string, value) => {
+                if (typeof value === 'string') {
+                  return title;
+                }
+                return title + (title ? `/${value.title}` : `${value.title}`);
+              }, '') as string),
+        field: undefined,
+        headerType: this.columnHeaderTitle?.headerType ?? 'text',
+        style: this.columnHeaderTitle?.headerStyle,
+        define: <any>{
+          id,
+          disableHeaderHover: !!this.columnHeaderTitle?.disableHeaderHover,
+          disableHeaderSelect: !!this.columnHeaderTitle?.disableHeaderSelect
+        }
+      };
+      this.columnHeaderObjs.push(cell);
+      this._headerObjects[id] = cell;
+    }
+
+    this.colIndex = 0;
+    this._headerObjectMap = this._headerObjects.reduce((o, e) => {
+      o[e.id as number] = e;
+      return o;
+    }, {} as { [key: LayoutObjectId]: HeaderData });
+    this._CellHeaderPathMap = new Map();
+    // this._cellRangeMap = new Map();
+    this._largeCellRangeCache.length = 0;
+
+    const lastLevelIndex = !this.indicatorsAsCol ? this.columnHeaderLevelCount - 1 : this.columnHeaderLevelCount - 2;
+    const diffCell = diffCellAddressForGridTreeOnColumnHeaderTree(
+      col,
+      row,
+      oldColumnHeaderCellIds[lastLevelIndex],
+      this._columnHeaderCellFullPathIds[lastLevelIndex],
+      oldColumnHeaderCellPositons,
+      this
+    );
+
+    // this._rowHeaderCellIds = this._rowHeaderCellIds_FULL.slice();
+    this.generateCellIdsConsiderHideHeader();
+
     return diffCell;
   }
   // 为列宽计算专用，兼容列表

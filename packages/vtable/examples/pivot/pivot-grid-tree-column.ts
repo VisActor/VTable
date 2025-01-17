@@ -254,7 +254,7 @@ export function createTable() {
         //     ]
         //   }
         // ],
-        columns: [
+        rows: [
           {
             dimensionKey: '220524114340021',
             title: '类别',
@@ -274,7 +274,7 @@ export function createTable() {
             title: '邮寄方式'
           }
         ],
-        rows: [
+        columns: [
           {
             dimensionKey: '220524114340020',
             title: '地区',
@@ -337,32 +337,34 @@ export function createTable() {
             fontFamily: 'sans-serif'
           }
         },
-        dataConfig: {
-          totals: {
-            row: {
-              showGrandTotals: true,
-              showSubTotals: true,
-              subTotalsDimensions: ['220524114340020'],
-              grandTotalLabel: '行总计',
-              subTotalLabel: '小计'
-            }
-            // column: {
-            //   showGrandTotals: true,
-            //   showSubTotals: true,
-            //   subTotalsDimensions: ['220524114340022'],
-            //   grandTotalLabel: '列总计',
-            //   subTotalLabel: '小计'
-            // }
-          }
-        },
+        // dataConfig: {
+        //   totals: {
+        //     row: {
+        //       showGrandTotals: true,
+        //       showSubTotals: true,
+        //       subTotalsDimensions: ['220524114340022'],
+        //       grandTotalLabel: '行总计',
+        //       subTotalLabel: '小计'
+        //     }
+        // column: {
+        //   showGrandTotals: true,
+        //   showSubTotals: true,
+        //   subTotalsDimensions: ['220524114340022'],
+        //   grandTotalLabel: '列总计',
+        //   subTotalLabel: '小计'
+        // }
+        // }
+        // },
         heightMode: 'autoHeight',
         autoWrapText: true,
         widthMode: 'standard',
-        rowHierarchyType: 'grid-tree',
-        rowExpandLevel: 2,
+        // rowHierarchyType: 'grid-tree',
+        columnHierarchyType: 'grid-tree',
+        rowExpandLevel: 1,
+        columnExpandLevel: 2,
         rowHierarchyIndent: 20,
         theme: VTable.themes.ARCO,
-        // indicatorsAsCol: false,
+        indicatorsAsCol: false,
         dragHeaderMode: 'all'
       };
       const tableInstance = new PivotTable(option);

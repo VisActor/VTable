@@ -912,10 +912,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     return (this._getHeaderLayoutMap(col, row) as HeaderData)?.hierarchyState;
   }
 
-  _hasHierarchyTreeHeader() {
-    return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'grid';
-  }
-
   getMenuInfo(col: number, row: number, type: string): DropDownMenuEventInfo {
     const dimensionInfos = (this.internalProps.layoutMap as PivotHeaderLayoutMap).getPivotDimensionInfo(col, row);
     const result: DropDownMenuEventInfo = {
