@@ -168,6 +168,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           options.indicatorsAsCol ?? true,
           options.records,
           options.rowHierarchyType,
+          options.columnHierarchyType,
           this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
           this.internalProps.rowTree,
           false,
@@ -404,6 +405,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         options.indicatorsAsCol ?? true,
         records,
         options.rowHierarchyType,
+        options.columnHierarchyType,
         this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
         this.internalProps.rowTree,
         false,

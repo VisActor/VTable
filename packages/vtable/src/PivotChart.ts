@@ -205,6 +205,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       options.indicatorsAsCol ?? true,
       options.records,
       undefined,
+      undefined,
       this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
       this.internalProps.rowTree,
       true
