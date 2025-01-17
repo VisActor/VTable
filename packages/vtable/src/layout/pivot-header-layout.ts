@@ -2130,7 +2130,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             }
           }
           // 组装好pathIds后从树中找出具体路径paths
-          const findedRowPath = findTree.getTreePathByCellIds(pathIds);
+          const findedRowPath = this.getTreePathByCellIds(pathIds);
           // rowPath = rowPath.concat(findedRowPath);
           rowPath.push(...findedRowPath);
           findTree = this._rowHeaderExtensionTree[row_pathIds[level]];
@@ -2138,9 +2138,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
       } else if (this.rowHierarchyType === 'grid-tree') {
         const row_pathIds = this._rowHeaderCellFullPathIds[recordRow]; //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
-        const findTree = this.rowDimensionTree; //第一棵寻找的树是第一列的维度树 主树
 
-        const findedRowPath = findTree.getTreePathByCellIds(row_pathIds);
+        const findedRowPath = this.getTreePathByCellIds(row_pathIds);
         // rowPath = rowPath.concat(findedRowPath);
         rowPath.push(...findedRowPath);
       } else {
@@ -2157,6 +2156,21 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const p = { colHeaderPaths: colPath, rowHeaderPaths: rowPath, cellLocation: this.getCellLocation(col, row) };
     // this._CellHeaderPathMap.set(`${col}-${row}`, p);
     return p;
+  }
+
+  getTreePathByCellIds(row_pathIds: LayoutObjectId[]) {
+    const paths: ITreeLayoutHeadNode[] = [];
+    for (let i = 0; i < row_pathIds.length; i++) {
+      const id = row_pathIds[i];
+      if (i > 0 && id === row_pathIds[i - 1]) {
+        continue;
+      }
+      const hd: HeaderData = this._headerObjects[id as number];
+      if (hd?.define) {
+        paths.push(hd.define as ITreeLayoutHeadNode);
+      }
+    }
+    return paths;
   }
   getCellHeaderPaths(col: number, row: number): IPivotTableCellHeaderPaths {
     const headerPathsWidthNode = this.getCellHeaderPathsWithTreeNode(col, row);

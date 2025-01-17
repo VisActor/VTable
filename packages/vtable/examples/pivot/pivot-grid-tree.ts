@@ -337,10 +337,28 @@ export function createTable() {
             fontFamily: 'sans-serif'
           }
         },
+        dataConfig: {
+          totals: {
+            row: {
+              showGrandTotals: true,
+              showSubTotals: true,
+              subTotalsDimensions: ['220524114340020'],
+              grandTotalLabel: '行总计',
+              subTotalLabel: '小计'
+            },
+            column: {
+              showGrandTotals: true,
+              showSubTotals: true,
+              subTotalsDimensions: ['220524114340022'],
+              grandTotalLabel: '列总计',
+              subTotalLabel: '小计'
+            }
+          }
+        },
         heightMode: 'autoHeight',
         autoWrapText: true,
         widthMode: 'standard',
-        // rowHierarchyType: 'grid-tree',
+        rowHierarchyType: 'tree',
         rowExpandLevel: 1,
         rowHierarchyIndent: 20,
         theme: VTable.themes.ARCO,

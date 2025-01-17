@@ -80,6 +80,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     super(container as HTMLElement, options);
     if (options) {
+      if (!options.rowHierarchyType) {
+        options.rowHierarchyType = 'grid';
+      }
       if ((options as any).layout) {
         //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
         Object.assign(options, (options as any).layout);
@@ -292,6 +295,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options);
+    if (!options.rowHierarchyType) {
+      options.rowHierarchyType = 'grid';
+    }
     this.layoutNodeId = { seqId: 0 };
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);

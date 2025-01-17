@@ -118,6 +118,7 @@ export class DimensionTree {
   }
   setTreeNode(node: ITreeLayoutHeadNode, startIndex: number, parent: ITreeLayoutHeadNode): number {
     node.startIndex = startIndex;
+
     node.startInTotal = (parent.startInTotal ?? 0) + node.startIndex;
     if (node.hide) {
       this.hasHideNode = true;
@@ -225,22 +226,26 @@ export class DimensionTree {
     return path;
   }
 
-  getTreePathByCellIds(ids: LayoutObjectId[]): Array<ITreeLayoutHeadNode> {
-    const path: any[] = [];
-    let nodes = this.tree.children;
-    for (let i = 0; i < ids.length; i++) {
-      const id = ids[i];
-      const pathNode = this.findNodeById(nodes, id);
-      if (pathNode) {
-        path.push(pathNode);
-        nodes = pathNode.children;
-      } else {
-        break;
-      }
-    }
-    // path.shift();
-    return path;
-  }
+  // 用pivot-header-layout中的getTreePathByCellIds 代替
+  // getTreePathByCellIds(ids: LayoutObjectId[]): Array<ITreeLayoutHeadNode> {
+  //   const path: any[] = [];
+  //   let nodes = this.tree.children;
+  //   for (let i = 0; i < ids.length; i++) {
+  //     const id = ids[i];
+  //     if (i > 0 && id === ids[i - 1]) {
+  //       continue;
+  //     }
+  //     const pathNode = this.findNodeById(nodes, id);
+  //     if (pathNode) {
+  //       path.push(pathNode);
+  //       nodes = pathNode.children;
+  //     } else {
+  //       break;
+  //     }
+  //   }
+  //   // path.shift();
+  //   return path;
+  // }
   findNodeById(nodes: ITreeLayoutHeadNode[], id: LayoutObjectId) {
     return nodes.find(node => {
       return node.id === id;
