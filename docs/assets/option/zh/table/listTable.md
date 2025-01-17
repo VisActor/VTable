@@ -138,6 +138,10 @@ type CustomAggregation = {
 
 开启分组标题吸附功能。
 
+## groupTitleFieldFormat(Function)
+
+自定义分组标题。
+
 ## groupTitleCustomLayout(CustomLayout)
 
 分组标题自定义布局。

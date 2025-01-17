@@ -91,6 +91,9 @@ export function createTable() {
         columns,
         widthMode: 'standard',
         groupBy: ['Category', 'Sub-Category'],
+        groupTitleFieldFormat: (record, col, row, table) => {
+          return record.vtableMergeName + '(' + record.children.length + ')';
+        },
         // autoFillWidth: true,
 
         // hierarchyExpandLevel: Infinity,
