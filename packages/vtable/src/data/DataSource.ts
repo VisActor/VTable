@@ -19,7 +19,7 @@ import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/he
 import { EventTarget } from '../event/EventTarget';
 import { getValueByPath, isAllDigits } from '../tools/util';
 import { calculateArrayDiff } from '../tools/diff-cell';
-import { arrayEqual, cloneDeep, isValid } from '@visactor/vutils';
+import { arrayEqual, cloneDeep, isArray, isNumber, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import {
   RecordAggregator,
@@ -60,7 +60,7 @@ type PromiseBack = (value: MaybePromiseOrUndefined) => void;
  * @param promiseCallBack
  * @returns
  */
-function getValue(value: MaybePromiseOrCallOrUndefined, promiseCallBack: PromiseBack): MaybePromiseOrUndefined {
+export function getValue(value: MaybePromiseOrCallOrUndefined, promiseCallBack: PromiseBack): MaybePromiseOrUndefined {
   const maybePromiseOrValue = getOrApply(value);
   if (isPromise(maybePromiseOrValue)) {
     const promiseValue = maybePromiseOrValue.then((r: any) => {
@@ -130,12 +130,14 @@ function _getIndex(sortedIndexMap: null | (number | number[])[], index: number):
 }
 
 export interface DataSourceParam {
-  get: (index: number) => any;
-  length: number;
-  /** 需要异步加载的情况 请不要设置records */
+  get?: (index: number) => any;
+  length?: number;
+  /** 需要异步加载的情况 请不要设置records 请提供get接口 */
   records?: any;
   added?: (index: number, count: number) => any;
   deleted?: (index: number[]) => any;
+  canChangeOrder?: (sourceIndex: number, targetIndex: number) => boolean;
+  changeOrder?: (sourceIndex: number, targetIndex: number) => void;
 }
 export interface ISortedMapItem {
   asc?: (number | number[])[];
@@ -176,7 +178,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   hasHierarchyStateExpand: boolean = false;
   // treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
-  beforeChangedRecordsMap: Record<number | string, any> = {}; // TODO过滤后 或者排序后的对应关系
+  // beforeChangedRecordsMap: Record<number | string, any> = {}; // TODO过滤后 或者排序后的对应关系
+  beforeChangedRecordsMap: Map<string, any> = new Map(); // TODO过滤后 或者排序后的对应关系
+  /**
+   * 注册聚合类型
+   */
 
   // 注册聚合类型
   registedAggregators: {
@@ -258,6 +264,35 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     // }
     // }
+  }
+
+  supplementConfig(
+    pagination?: IPagination,
+    columns?: ColumnsDefine,
+    rowHierarchyType?: 'grid' | 'tree',
+    hierarchyExpandLevel?: number
+  ) {
+    this.columns = columns;
+    this._sourceLength = this._source?.length || 0;
+    this.sortedIndexMap = new Map<string, ISortedMapItem>();
+
+    this._currentPagerIndexedData = [];
+    this.userPagination = pagination;
+    this.pagination = pagination || {
+      totalCount: this._sourceLength,
+      perPageCount: this._sourceLength,
+      currentPage: 0
+    };
+    if (hierarchyExpandLevel >= 1) {
+      this.hierarchyExpandLevel = hierarchyExpandLevel;
+    }
+    this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+    // 初始化currentIndexedData 正常未排序。设置其状态
+    if (rowHierarchyType === 'tree') {
+      this.initTreeHierarchyState();
+    }
+    this.rowHierarchyType = rowHierarchyType;
+    this.updatePagerData();
   }
 
   //将聚合类型注册 收集到aggregators
@@ -490,6 +525,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
   }
 
+  getRecordIndexPaths(bodyShowIndex: number): number | number[] {
+    return this._currentPagerIndexedData[bodyShowIndex];
+  }
+
   get records(): any[] {
     return Array.isArray(this._source) ? this._source : [];
   }
@@ -547,7 +586,13 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   getHierarchyState(index: number): HierarchyState {
     // const indexed = this.getIndexKey(index);
     const record = this.getOriginalRecord(this.currentPagerIndexedData[index]);
-    return record?.hierarchyState ?? null;
+    if (record?.hierarchyState) {
+      const hierarchyState = record.hierarchyState;
+      if (record.children?.length > 0 || record.children === true) {
+        return hierarchyState;
+      }
+    }
+    return null;
     // return this.treeDataHierarchyState.get(Array.isArray(indexed) ? indexed.join(',') : indexed) ?? null;
   }
   /**
@@ -696,6 +741,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return childrenLength;
   }
+
   changeFieldValue(
     value: FieldData,
     index: number,
@@ -708,15 +754,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       return undefined;
     }
     if (index >= 0) {
-      const dataIndex = this.getIndexKey(index) as number;
+      const dataIndex = this.getIndexKey(index);
 
-      if (!this.beforeChangedRecordsMap[dataIndex]) {
-        const originRecord = this.getOriginalRecord(dataIndex);
-        this.beforeChangedRecordsMap[dataIndex] =
-          cloneDeep(originRecord, undefined, ['vtable_gantt_linkedFrom', 'vtable_gantt_linkedTo']) ?? {};
-      }
+      this.cacheBeforeChangedRecord(dataIndex, table);
       if (typeof field === 'string' || typeof field === 'number') {
-        const beforeChangedValue = this.beforeChangedRecordsMap[dataIndex][field as any]; // this.getOriginalField(index, field, col, row, table);
+        const beforeChangedValue = this.beforeChangedRecordsMap.get(dataIndex.toString())?.[field as any]; // this.getOriginalField(index, field, col, row, table);
         const record = this.getOriginalRecord(dataIndex);
         let formatValue = value;
         if (typeof beforeChangedValue === 'number' && isAllDigits(value)) {
@@ -734,14 +776,25 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           if (record) {
             record[field] = formatValue;
           } else {
-            this.records[dataIndex] = {};
-            this.records[dataIndex][field] = formatValue;
+            this.records[dataIndex as number] = {};
+            this.records[dataIndex as number][field] = formatValue;
           }
         }
       }
     }
     // return getField(record, field);
   }
+
+  cacheBeforeChangedRecord(dataIndex: number | number[], table?: BaseTableAPI) {
+    if (!this.beforeChangedRecordsMap.has(dataIndex.toString())) {
+      const originRecord = this.getOriginalRecord(dataIndex);
+      this.beforeChangedRecordsMap.set(
+        dataIndex.toString(),
+        cloneDeep(originRecord, undefined, ['vtable_gantt_linkedFrom', 'vtable_gantt_linkedTo']) ?? {}
+      );
+    }
+  }
+
   /**
    * 将数据record 替换到index位置处
    * @param record
@@ -856,7 +909,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    */
   addRecordForSorted(record: any) {
     if (Array.isArray(this.records)) {
-      this.beforeChangedRecordsMap = []; // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
+      this.beforeChangedRecordsMap.clear(); // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
       this.records.push(record);
       this.currentIndexedData.push(this.currentIndexedData.length);
       this._sourceLength += 1;
@@ -874,7 +927,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    */
   addRecordsForSorted(recordArr: any) {
     if (Array.isArray(this.records)) {
-      this.beforeChangedRecordsMap = []; // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
+      this.beforeChangedRecordsMap.clear(); // 排序情况下插入数据，很难将原index和插入新增再次排序后的新index做对应，所以这里之前先清除掉beforeChangedRecordsMap 不做维护
       if (Array.isArray(recordArr)) {
         this.records.push(...recordArr);
         for (let i = 0; i < recordArr.length; i++) {
@@ -890,12 +943,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
   }
 
-  adjustBeforeChangedRecordsMap(insertIndex: number, insertCount: number) {
-    const length = this.beforeChangedRecordsMap.length;
+  adjustBeforeChangedRecordsMap(insertIndex: number, insertCount: number, type: 'add' | 'delete' = 'add') {
+    const length = this.beforeChangedRecordsMap.size;
     for (let key = length - 1; key >= insertIndex; key--) {
-      const record = this.beforeChangedRecordsMap[key];
-      delete this.beforeChangedRecordsMap[key];
-      this.beforeChangedRecordsMap[key + insertCount] = record;
+      const record = this.beforeChangedRecordsMap.get(key.toString());
+      this.beforeChangedRecordsMap.delete(key.toString());
+      this.beforeChangedRecordsMap.set((key + (type === 'add' ? insertCount : -insertCount)).toString(), record);
     }
   }
   /**
@@ -910,7 +963,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (recordIndex >= this._sourceLength || recordIndex < 0) {
           continue;
         }
-        delete this.beforeChangedRecordsMap[recordIndex];
+        // this.beforeChangedRecordsMap.delete(recordIndex.toString());
+        this.adjustBeforeChangedRecordsMap(recordIndex, 1, 'delete');
         realDeletedRecordIndexs.push(recordIndex);
         const deletedRecord = this.records[recordIndex];
         for (let i = 0; i < this.fieldAggregators.length; i++) {
@@ -947,7 +1001,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           continue;
         }
         const rawIndex = this.currentIndexedData[recordIndex] as number;
-        delete this.beforeChangedRecordsMap[rawIndex];
         this.records.splice(rawIndex, 1);
         this._sourceLength -= 1;
       }
@@ -956,6 +1009,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         this.pagination.perPageCount = this._sourceLength;
         this.pagination.totalCount = this._sourceLength;
       }
+      this.beforeChangedRecordsMap.clear();
     }
   }
 
@@ -967,7 +1021,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     for (let index = 0; index < recordIndexs.length; index++) {
       const recordIndex = recordIndexs[index];
       if (Array.isArray(recordIndex)) {
-        delete this.beforeChangedRecordsMap[recordIndex.join(',')];
+        this.beforeChangedRecordsMap.delete(recordIndex.toString());
         realDeletedRecordIndexs.push(recordIndex);
         // for (let i = 0; i < this.fieldAggregators.length; i++) {
         //   this.fieldAggregators[i].updateRecord(this.records[recordIndex], records[index]);
@@ -984,7 +1038,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (recordIndex >= this._sourceLength || recordIndex < 0) {
           continue;
         }
-        delete this.beforeChangedRecordsMap[recordIndex];
+        this.beforeChangedRecordsMap.delete(recordIndex.toString());
         realDeletedRecordIndexs.push(recordIndex);
         for (let i = 0; i < this.fieldAggregators.length; i++) {
           this.fieldAggregators[i].updateRecord(this.records[recordIndex], records[index]);
@@ -1013,7 +1067,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (typeof rawIndex !== 'number') {
         return;
       }
-      delete this.beforeChangedRecordsMap[rawIndex];
+      this.beforeChangedRecordsMap.delete(rawIndex.toString());
       realDeletedRecordIndexs.push(recordIndex);
       this.records[rawIndex] = records[index];
     }
@@ -1117,7 +1171,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
   private clearFilteredChildren(record: any) {
     record.filteredChildren = undefined;
-    for (let i = 0; i < record.children?.length ?? 0; i++) {
+    for (let i = 0; i < (record.children?.length ?? 0); i++) {
       this.clearFilteredChildren(record.children[i]);
     }
   }
@@ -1254,9 +1308,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.recordPromiseCallBack(dataIndex, val);
     });
   }
-  protected getRawRecord(dataIndex: number): MaybePromiseOrUndefined {
-    if (this.beforeChangedRecordsMap?.[dataIndex as number]) {
-      return this.beforeChangedRecordsMap[dataIndex as number];
+  protected getRawRecord(dataIndex: number | number[]): MaybePromiseOrUndefined {
+    if (this.beforeChangedRecordsMap?.has(dataIndex.toString())) {
+      return this.beforeChangedRecordsMap?.get(dataIndex.toString());
     }
     let data;
     if (!this.dataSourceObj.records) {
@@ -1332,8 +1386,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     },
     length: 0
   });
-  isCanExchangeOrder(sourceIndex: number, targetIndex: number) {
-    // if (this.treeDataHierarchyState?.size > 0) {
+  /**
+   * 判断原位置sourceIndex处的数据是否可以移动到targetIndex目标位置处
+   * @param sourceIndex 被移动数据在body中的index
+   * @param targetIndex 数据要放置在body中的index
+   * @returns 根据参数判断是否可以交换位置
+   */
+  canChangeOrder(sourceIndex: number, targetIndex: number): boolean {
+    if ((this, this.dataSourceObj?.canChangeOrder)) {
+      return this.dataSourceObj.canChangeOrder(sourceIndex, targetIndex);
+    }
+
     if (this.hasHierarchyStateExpand) {
       let sourceIndexs = this.currentPagerIndexedData[sourceIndex] as number[];
       let targetIndexs = this.currentPagerIndexedData[targetIndex] as number[];
@@ -1348,7 +1411,13 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       } else {
         targetIndexs = [targetIndexs];
       }
-
+      // //实现可以跨父级拖拽节点位置，约束条件只需要禁止父级拖到自己的字节节点即可
+      // if (true) {
+      //   if (sourceIndexs.every((item, index) => targetIndexs[index] === item)) {
+      //     return false;
+      //   }
+      //   return true;
+      // }
       if (targetIndex > sourceIndex) {
         if (targetIndexs.length > sourceIndexs.length) {
           let targetNextIndexs = this.currentPagerIndexedData[targetIndex + 1] as number[];
@@ -1377,13 +1446,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     return true;
   }
   // 拖拽调整数据位置 目前对排序过的数据不过处理，因为自动排序和手动排序融合问题目前没有找到好的解决方式
-  reorderRecord(sourceIndex: number, targetIndex: number) {
+  changeOrder(sourceIndex: number, targetIndex: number) {
+    if ((this, this.dataSourceObj?.changeOrder)) {
+      this.dataSourceObj.changeOrder(sourceIndex, targetIndex);
+      return;
+    }
     if (this.lastSortStates?.some(state => state.order === 'asc' || state.order === 'desc')) {
       // const sourceIds = this._currentPagerIndexedData.splice(sourceIndex, 1);
       // sourceIds.unshift(targetIndex, 0);
       // Array.prototype.splice.apply(this._currentPagerIndexedData, sourceIds);
       return;
-    } else if (this.isCanExchangeOrder(sourceIndex, targetIndex)) {
+    } else if (this.canChangeOrder(sourceIndex, targetIndex)) {
       // if (this.treeDataHierarchyState?.size > 0) {
       if (this.hasHierarchyStateExpand) {
         let sourceIndexs = this.currentPagerIndexedData[sourceIndex];
@@ -1521,7 +1594,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
  * @param index
  * @returns
  */
-function getValueFromDeepArray(array: any, index: number[]) {
+export function getValueFromDeepArray(array: any, index: number[]) {
   let result = array;
   for (let i = 0; i < index.length; i++) {
     const currentIdx = index[i];
@@ -1535,5 +1608,27 @@ function getValueFromDeepArray(array: any, index: number[]) {
       result = children;
     }
   }
+  return result;
+}
+
+export function sortRecordIndexs(recordIndexs: (number | number[])[], sort: -1 | 1) {
+  const result = recordIndexs.sort((a: number | number[], b: number | number[]) => {
+    if (isNumber(a)) {
+      a = [a];
+    }
+    if (isNumber(b)) {
+      b = [b];
+    }
+
+    const length = Math.max(a.length, b.length);
+    for (let i = 0; i < length; i++) {
+      const aa = a[i] ?? -1;
+      const bb = b[i] ?? -1;
+      if (aa !== bb) {
+        return sort === 1 ? aa - bb : bb - aa;
+      }
+    }
+    return 0;
+  });
   return result;
 }

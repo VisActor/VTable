@@ -88,6 +88,9 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       columns,
       widthMode: 'standard',
       groupBy: ['Category', 'Sub-Category'],
+      groupTitleFieldFormat: (record, col, row, table) => {
+        return record.vtableMergeName + '(' + record.children.length + ')';
+      },
       theme: VTable.themes.DEFAULT.extends({
         groupTitleStyle: {
           fontWeight: 'bold',

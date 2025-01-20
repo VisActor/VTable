@@ -92,6 +92,73 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 window['tableInstance'] = tableInstance;
 ```
 
+## Custom Group Title Text Format
+
+In the option, you can configure the `groupTitleFieldFormat` property to customize the text format of group titles. This property is a function that receives the grouping field name and group value as parameters and returns the text content to be displayed.
+
+```ts
+const option: VTable.ListTableConstructorOptions = {
+  // ...
+  groupBy: 'group',
+  groupTitleFieldFormat: (record, col, row, table) => {
+    return record.vtableMergeName + '(' + record.children.length + ')';
+  }
+};
+```
+
+Example:
+```javascript livedemo template=vtable
+const records = [
+   {
+      name: 'John Smith',
+      position: 'Recruiting Manager',
+      salary: '$8000',
+      group: 'Recruiting Group'
+    },
+    {
+      name: 'Emily Johnson',
+      position: 'Recruiting Supervisor',
+      salary: '$6000',
+      group: 'Recruiting Group'
+    },
+    {
+      name: 'Jessica Brown',
+      position: 'Training Manager',
+      salary: '$8000',
+      group: 'Training Group',
+    }
+];
+const columns = [
+  {
+    field: 'name',
+    title: 'Name',
+    width: 'auto',
+  },
+  {
+    field: 'position',
+    title: 'Position',
+    width: 'auto',
+  },
+  {
+    field: 'salary',
+    title: 'Salary',
+    width: 'auto',
+  },
+];
+
+const option = {
+  records,
+  columns,
+  widthMode: 'standard',
+  groupBy: 'group',
+  groupTitleFieldFormat: (record, col, row, table) => {
+    return record.vtableMergeName + '(' + record.children.length + ')';
+  }
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```
+
 ## Specify the display style of the group title
 
 In the theme, you can configure the groupTitleStyle property to specify the display style of the group title. If you need to specify the style of group titles at different levels, you can use the function to get the level of the current node through the `table.getGroupTitleLevel(col, row)` method to specify the styles of different levels.

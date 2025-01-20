@@ -45,6 +45,7 @@ TABLE_EVENT_TYPE = {
   CHANGING_HEADER_POSITION: 'changing_header_position',
   CHANGE_HEADER_POSITION_FAIL: 'changing_header_position_fail',
   SORT_CLICK: 'sort_click',
+  PIVOT_SORT_CLICK: 'pivot_sort_click',
   AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
@@ -61,7 +62,7 @@ TABLE_EVENT_TYPE = {
   ICON_CLICK: 'icon_click',
   // 透视表特有事件
   DRILLMENU_CLICK: 'drillmenu_click',
-  PIVOT_SORT_CLICK: 'pivot_sort_click'
+  ......
 }
 ```
 
@@ -294,7 +295,7 @@ TABLE_EVENT_TYPE = {
 
 ## SORT_CLICK
 
-点击排序图标事件。
+点击排序图标事件。**ListTable 专有事件**
 
 事件回调函数的参数类型:
 
@@ -306,9 +307,31 @@ TABLE_EVENT_TYPE = {
   }
 ```
 
+## PIVOT_SORT_CLICK
+
+透视表中排序图标点击事件。**PivotTable 透视表专有事件**
+
+事件回调函数的参数类型:
+
+```
+
+    {
+      col: number;
+      row: number;
+      order: 'asc' | 'desc' | 'normal';
+      dimensionInfo: IDimensionInfo[];
+      cellLocation: CellLocation;
+    }
+
+```
+
+其中：
+{{ use: common-IDimensionInfo()}}
+{{ use: CellLocation()}}
+
 ## AFTER_SORT
 
-执行完排序事件。
+执行完排序事件。**ListTable 专有事件**
 事件回调函数的参数类型:
 
 ```
@@ -317,6 +340,8 @@ TABLE_EVENT_TYPE = {
     order: 'asc' | 'desc' | 'normal';
     event: Event;
   }
+```
+
 ## FREEZE_CLICK
 
 点击固定列图标冻结或者解冻事件。
@@ -473,28 +498,6 @@ icon 图标点击事件。
 
 ```
 
-## PIVOT_SORT_CLICK
-
-透视表中排序图标点击事件。**透视表专有事件**
-
-事件回调函数的参数类型:
-
-```
-
-    {
-      col: number;
-      row: number;
-      order: 'asc' | 'desc' | 'normal';
-      dimensionInfo: IDimensionInfo[];
-      cellLocation: CellLocation;
-    }
-
-```
-
-其中：
-{{ use: common-IDimensionInfo()}}
-{{ use: CellLocation()}}
-
 ## LEGEND_ITEM_CLICK
 
 图例项点击事件。**图例专有事件**
@@ -625,6 +628,9 @@ radioIndexInCell: boolean | number;
 ```
 
 如果单元格中只有一个单选框，radioIndexInCell 为 boolean 类型，表示是否选中；如果单元格中有多个单选框，radioIndexInCell 为 number 类型，表示选中的单选框的索引。
+
+```
+
 ```
 
 ## EMPTY_TIP_CLICK

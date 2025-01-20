@@ -1121,7 +1121,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       // return true;
       const sourceIndex = this.getRecordShowIndexByCell(0, source.row);
       const targetIndex = this.getRecordShowIndexByCell(0, target.row);
-      const canMove = this._table.dataSource.isCanExchangeOrder(sourceIndex, targetIndex);
+      const canMove = this._table.dataSource.canChangeOrder(sourceIndex, targetIndex);
       return canMove;
     } else if (
       this.transpose &&

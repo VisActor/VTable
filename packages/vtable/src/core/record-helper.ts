@@ -348,11 +348,22 @@ export function sortRecords(table: ListTable) {
  * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
  * recordIndex 可以通过接口getRecordShowIndexByCell获取
  */
-export function listTableAddRecord(record: any, recordIndex: number, table: ListTable) {
+export function listTableAddRecord(record: any, recordIndex: number | number[], table: ListTable) {
   if (table.options.groupBy) {
     (table.dataSource as CachedDataSource).addRecordsForGroup?.([record], recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
+    table.sortState && sortRecords(table);
+
+    // 更新整个场景树
+    table.scenegraph.clearCells();
+    table.scenegraph.createSceneGraph();
+  } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
+    (table.dataSource as CachedDataSource).addRecordsForTree?.([record], recordIndex);
+    table.refreshRowColCount();
+    table.internalProps.layoutMap.clearCellRangeMap();
+    table.sortState && sortRecords(table);
+
     // 更新整个场景树
     table.scenegraph.clearCells();
     table.scenegraph.createSceneGraph();
@@ -364,6 +375,7 @@ export function listTableAddRecord(record: any, recordIndex: number, table: List
     table.scenegraph.clearCells();
     table.scenegraph.createSceneGraph();
   } else {
+    recordIndex = recordIndex as number;
     if (recordIndex === undefined || recordIndex > table.dataSource.sourceLength) {
       recordIndex = table.dataSource.sourceLength;
     }
@@ -460,11 +472,22 @@ export function listTableAddRecord(record: any, recordIndex: number, table: List
  * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
  * recordIndex 可以通过接口getRecordShowIndexByCell获取
  */
-export function listTableAddRecords(records: any[], recordIndex: number, table: ListTable) {
+export function listTableAddRecords(records: any[], recordIndex: number | number[], table: ListTable) {
   if (table.options.groupBy) {
     (table.dataSource as CachedDataSource).addRecordsForGroup?.(records, recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
+    table.sortState && sortRecords(table);
+
+    // 更新整个场景树
+    table.scenegraph.clearCells();
+    table.scenegraph.createSceneGraph();
+  } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
+    (table.dataSource as CachedDataSource).addRecordsForTree?.(records, recordIndex);
+    table.refreshRowColCount();
+    table.internalProps.layoutMap.clearCellRangeMap();
+    table.sortState && sortRecords(table);
+
     // 更新整个场景树
     table.scenegraph.clearCells();
     table.scenegraph.createSceneGraph();
@@ -476,6 +499,7 @@ export function listTableAddRecords(records: any[], recordIndex: number, table: 
     table.scenegraph.clearCells();
     table.scenegraph.createSceneGraph();
   } else {
+    recordIndex = recordIndex as number;
     if (recordIndex === undefined || recordIndex > table.dataSource.sourceLength) {
       recordIndex = table.dataSource.sourceLength;
     } else if (recordIndex < 0) {
@@ -582,24 +606,33 @@ export function listTableAddRecords(records: any[], recordIndex: number, table: 
  * 删除数据 支持多条数据
  * @param recordIndexs 要删除数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
  */
-export function listTableDeleteRecords(recordIndexs: number[], table: ListTable) {
+export function listTableDeleteRecords(recordIndexs: number[] | number[][], table: ListTable) {
   if (recordIndexs?.length > 0) {
     if (table.options.groupBy) {
       (table.dataSource as CachedDataSource).deleteRecordsForGroup?.(recordIndexs);
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
+      table.sortState && sortRecords(table);
+      // 更新整个场景树
+      table.scenegraph.clearCells();
+      table.scenegraph.createSceneGraph();
+    } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
+      (table.dataSource as CachedDataSource).deleteRecordsForTree?.(recordIndexs);
+      table.refreshRowColCount();
+      table.internalProps.layoutMap.clearCellRangeMap();
+      table.sortState && sortRecords(table);
       // 更新整个场景树
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
-      table.dataSource.deleteRecordsForSorted(recordIndexs);
+      table.dataSource.deleteRecordsForSorted(recordIndexs as number[]);
       sortRecords(table);
       table.refreshRowColCount();
       // 更新整个场景树
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else {
-      const deletedRecordIndexs = table.dataSource.deleteRecords(recordIndexs);
+      const deletedRecordIndexs = table.dataSource.deleteRecords(recordIndexs as number[]);
       if (deletedRecordIndexs.length === 0) {
         return;
       }
@@ -720,6 +753,15 @@ export function listTableUpdateRecords(records: any[], recordIndexs: (number | n
       (table.dataSource as CachedDataSource).updateRecordsForGroup?.(records, recordIndexs as number[]);
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
+      table.sortState && sortRecords(table);
+      // 更新整个场景树
+      table.scenegraph.clearCells();
+      table.scenegraph.createSceneGraph();
+    } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
+      (table.dataSource as CachedDataSource).updateRecordsForTree?.(records, recordIndexs as number[]);
+      table.refreshRowColCount();
+      table.internalProps.layoutMap.clearCellRangeMap();
+      table.sortState && sortRecords(table);
       // 更新整个场景树
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();

@@ -28,7 +28,7 @@ import type { ICellAxisOption, ITableAxisOption } from './component/axis';
 
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
-import type { DataSource } from '../data';
+import type { CachedDataSource, DataSource } from '../data';
 import type { EditManager } from '../edit/edit-manager';
 import type { ICustomRender } from './customElement';
 import type { ICustomLayout } from './customLayout';
@@ -210,9 +210,9 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    */
   records?: any[];
   /**
-   * 传入用户实例化的数据对象 目前不完善
+   * 传入用户实例化的数据对象
    */
-  dataSource?: DataSource;
+  dataSource?: CachedDataSource | DataSource;
   /**
    * 是否显示表头
    */
@@ -268,7 +268,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   enableTreeNodeMerge?: boolean;
   groupBy?: GroupByOption;
   groupTitleCustomLayout?: ICustomLayout;
-
+  groupTitleFieldFormat?: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
   enableTreeStickCell?: boolean;
 
   columnWidthConfig?: { key: string; width: number }[];
