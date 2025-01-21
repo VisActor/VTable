@@ -4160,13 +4160,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         });
       }
     } else {
-      if (this._cornerHeaderCellIds[0].length < this._columnHeaderCellIds[0].length) {
+      if (this._cornerHeaderCellIds[0]?.length < this._columnHeaderCellIds[0]?.length) {
         this._cornerHeaderCellIds.forEach((cellIds: number[], index: number) => {
           const oldLength = cellIds.length;
           cellIds.length = this._columnHeaderCellIds[0].length;
           cellIds.fill(cellIds[0], oldLength);
         });
-      } else if (this._cornerHeaderCellIds[0].length > this._columnHeaderCellIds[0].length) {
+      } else if (this._cornerHeaderCellIds[0]?.length > this._columnHeaderCellIds[0]?.length) {
         this._cornerHeaderCellIds.forEach((cellIds: number[], index: number) => {
           cellIds.length = this._columnHeaderCellIds[0].length;
         });
