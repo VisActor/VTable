@@ -90,7 +90,7 @@ export function diffCellAddressForGridTree(
   }
 
   const addCellPositionsColumnDirection = [];
-  const updateCellPositionsColumnDirection = [];
+  // const updateCellPositionsColumnDirection = [];
   const removeCellPositionsColumnDirection = [];
   if (
     layout.rowHierarchyType === 'grid-tree' &&
@@ -118,8 +118,8 @@ export function diffCellAddressForGridTree(
     removeCellPositionsRowDirection,
     updateCellPositionsRowDirection,
     addCellPositionsColumnDirection,
-    removeCellPositionsColumnDirection,
-    updateCellPositionsColumnDirection
+    removeCellPositionsColumnDirection
+    // updateCellPositionsColumnDirection
   };
 }
 
@@ -165,7 +165,7 @@ export function diffCellAddressForGridTreeOnColumn(
   }
 
   const addCellPositionsRowDirection = [];
-  const updateCellPositionsRowDirection = [];
+  // const updateCellPositionsRowDirection = [];
   const removeCellPositionsRowDirection = [];
   if (
     layout.columnHierarchyType === 'grid-tree' &&
@@ -192,7 +192,7 @@ export function diffCellAddressForGridTreeOnColumn(
     removeCellPositionsColumnDirection,
     updateCellPositionsColumnDirection,
     addCellPositionsRowDirection,
-    updateCellPositionsRowDirection,
+    // updateCellPositionsRowDirection,
     removeCellPositionsRowDirection
   };
 }
