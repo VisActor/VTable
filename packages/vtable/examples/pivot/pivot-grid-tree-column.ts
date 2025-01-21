@@ -262,16 +262,6 @@ export function createTable() {
               return `${value}`;
             }
             // width: 200
-          },
-          {
-            dimensionKey: '220524114340022',
-            title: '子类别'
-
-            // headerType: 'MULTILINETEXT',
-          },
-          {
-            dimensionKey: '220524114340023',
-            title: '邮寄方式'
           }
         ],
         columns: [
@@ -337,34 +327,34 @@ export function createTable() {
             fontFamily: 'sans-serif'
           }
         },
-        // dataConfig: {
-        //   totals: {
-        //     row: {
-        //       showGrandTotals: true,
-        //       showSubTotals: true,
-        //       subTotalsDimensions: ['220524114340022'],
-        //       grandTotalLabel: '行总计',
-        //       subTotalLabel: '小计'
-        //     }
-        // column: {
-        //   showGrandTotals: true,
-        //   showSubTotals: true,
-        //   subTotalsDimensions: ['220524114340022'],
-        //   grandTotalLabel: '列总计',
-        //   subTotalLabel: '小计'
-        // }
-        // }
-        // },
+        dataConfig: {
+          totals: {
+            //   row: {
+            //     showGrandTotals: true,
+            //     showSubTotals: true,
+            //     subTotalsDimensions: ['220524114340022'],
+            //     grandTotalLabel: '行总计',
+            //     subTotalLabel: '小计'
+            //   }
+            column: {
+              showGrandTotals: true,
+              showSubTotals: true,
+              subTotalsDimensions: ['220524114340020'],
+              grandTotalLabel: '列总计',
+              subTotalLabel: '小计'
+            }
+          }
+        },
         heightMode: 'autoHeight',
         autoWrapText: true,
         widthMode: 'standard',
         // rowHierarchyType: 'grid-tree',
         columnHierarchyType: 'grid-tree',
         rowExpandLevel: 1,
-        columnExpandLevel: 2,
+        columnExpandLevel: 1,
         rowHierarchyIndent: 20,
         theme: VTable.themes.ARCO,
-        indicatorsAsCol: false,
+        // indicatorsAsCol: false,
         dragHeaderMode: 'all'
       };
       const tableInstance = new PivotTable(option);

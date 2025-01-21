@@ -2023,6 +2023,7 @@ export class Scenegraph {
     updateCol(removeCells, addCells, updateCells, this.table);
 
     // update column width and row height
+
     this.recalculateColWidths();
 
     this.recalculateRowHeights();
@@ -2044,6 +2045,32 @@ export class Scenegraph {
 
     // rerender
     this.updateNextFrame();
+  }
+
+  updateCornerHeaderCells() {
+    for (let col = 0; col < this.table.frozenColCount; col++) {
+      for (let row = 0; row < this.table.frozenRowCount; row++) {
+        // const cellGroup = this.highPerformanceGetCell(col, row);
+        // cellGroup && (cellGroup.needUpdate = true);
+        updateCell(col, row, this.table, false);
+      }
+    }
+  }
+  updateRowHeaderCells() {
+    for (let col = 0; col < this.table.frozenColCount; col++) {
+      for (let row = this.table.frozenRowCount; row < this.table.rowCount; row++) {
+        // const cellGroup = this.highPerformanceGetCell(col, row);
+        // cellGroup && (cellGroup.needUpdate = true);
+        updateCell(col, row, this.table, false);
+      }
+    }
+  }
+  updateColumnHeaderCells() {
+    for (let row = 0; row < this.table.frozenRowCount; row++) {
+      for (let col = this.table.frozenColCount; col < this.table.colCount; col++) {
+        updateCell(col, row, this.table, false);
+      }
+    }
   }
   getColumnGroupX(col: number) {
     if (col < this.table.rowHeaderLevelCount) {

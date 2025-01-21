@@ -262,17 +262,17 @@ export function createTable() {
               return `${value}`;
             }
             // width: 200
-          },
-          {
-            dimensionKey: '220524114340022',
-            title: '子类别'
-
-            // headerType: 'MULTILINETEXT',
-          },
-          {
-            dimensionKey: '220524114340023',
-            title: '邮寄方式'
           }
+          // {
+          //   dimensionKey: '220524114340022',
+          //   title: '子类别'
+
+          //   // headerType: 'MULTILINETEXT',
+          // },
+          // {
+          //   dimensionKey: '220524114340023',
+          //   title: '邮寄方式'
+          // }
         ],
         rows: [
           {
@@ -326,7 +326,7 @@ export function createTable() {
         ],
         indicatorTitle: '指标',
         corner: {
-          titleOnDimension: 'row',
+          titleOnDimension: 'column',
           headerStyle: {
             textAlign: 'center',
             borderColor: 'red',
@@ -356,13 +356,15 @@ export function createTable() {
           }
         },
         heightMode: 'autoHeight',
+        defaultHeaderColWidth: 100,
         autoWrapText: true,
-        widthMode: 'standard',
+        widthMode: 'autoWidth',
         rowHierarchyType: 'grid-tree',
-        rowExpandLevel: 2,
+        rowExpandLevel: 1,
         rowHierarchyIndent: 20,
         theme: VTable.themes.ARCO,
-        // indicatorsAsCol: false,
+        indicatorsAsCol: false,
+        // hideIndicatorName:true,
         dragHeaderMode: 'all'
       };
       const tableInstance = new PivotTable(option);

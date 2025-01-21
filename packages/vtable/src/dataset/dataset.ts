@@ -765,7 +765,9 @@ export class Dataset {
             this.dataConfig?.totals?.column?.subTotalsDimensions &&
             this.dataConfig?.totals?.column?.subTotalsDimensions.indexOf(this.columns[n - 1]) >= 0
           ) {
-            colKey.push(this.colSubTotalLabel);
+            if (this.columnHierarchyType === 'grid') {
+              colKey.push(this.colSubTotalLabel);
+            }
             isToTalRecord = true;
             break;
           }
@@ -1474,9 +1476,9 @@ export class Dataset {
           const dimensionIndex = that.columns.indexOf(dimension);
           if (dimensionIndex >= 0) {
             const colTotalKey = colKey.slice(0, dimensionIndex + 1);
-            // if (this.rowHierarchyType === 'grid') {
-            colTotalKey.push(that.colSubTotalLabel);
-            // }
+            if (this.columnHierarchyType === 'grid') {
+              colTotalKey.push(that.colSubTotalLabel);
+            }
             const flatColTotalKey = colTotalKey.join(this.stringJoinChar);
             if (this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey]) {
               // 利用汇总数据替换

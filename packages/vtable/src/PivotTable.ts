@@ -1481,6 +1481,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
   // beforeUpdateCell主要用于setTreeNodeChildren方法
   _refreshHierarchyState(col: number, row: number, recalculateColWidths: boolean = true, beforeUpdateCell?: Function) {
+    const oldFrozenColCount = this.frozenColCount;
+    const oldFrozenRowCount = this.frozenRowCount;
     let notFillWidth = false;
     let notFillHeight = false;
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
@@ -1495,30 +1497,76 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
     }
     const isChangeRowTree = this.internalProps.layoutMap.isRowHeader(col, row);
-    const result = isChangeRowTree
+    const result: {
+      addCellPositionsRowDirection?: CellAddress[];
+      removeCellPositionsRowDirection?: CellAddress[];
+      updateCellPositionsRowDirection?: CellAddress[];
+      addCellPositionsColumnDirection?: CellAddress[];
+      removeCellPositionsColumnDirection?: CellAddress[];
+      updateCellPositionsColumnDirection?: CellAddress[];
+    } = isChangeRowTree
       ? (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row)
       : (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyStateForColumnTree(col, row);
     beforeUpdateCell && beforeUpdateCell();
     //影响行数
-    this.refreshRowColCount();
-    // this.scenegraph.clearCells();
-    // this.scenegraph.createSceneGraph();
-    // this.invalidate();
+    this.refreshRowColCount(); //逻辑中有setFrozenCol处理 影响了原本bodyGroup的列数
+    const newFrozenColCount = this.frozenColCount;
+    const newFrozenRowCount = this.frozenRowCount;
     this.clearCellStyleCache();
     if (this.rowHierarchyType === 'tree') {
       //'grid-tree'模式下不用特意更新，updateRow会更新掉和`tree`模式不一样
       this.scenegraph.updateHierarchyIcon(col, row);
     }
     this.reactCustomLayout?.clearCache();
-    if (isChangeRowTree) {
+    // if (isChangeRowTree) {
+    //   this.scenegraph.updateRow(
+    //     result.removeCellPositions,
+    //     result.addCellPositions,
+    //     result.updateCellPositions,
+    //     recalculateColWidths
+    //   );
+    // } else {
+    //   this.scenegraph.updateCol(result.removeCellPositions, result.addCellPositions, result.updateCellPositions);
+    // }
+
+    if (
+      result.addCellPositionsColumnDirection?.length ||
+      result.removeCellPositionsColumnDirection?.length ||
+      result.updateCellPositionsColumnDirection?.length
+    ) {
+      this.scenegraph.updateCol(
+        result.removeCellPositionsColumnDirection,
+        result.addCellPositionsColumnDirection.map(item => {
+          item.col += newFrozenColCount - oldFrozenColCount;
+          return item;
+        }),
+        result.updateCellPositionsColumnDirection
+      );
+    }
+
+    if (
+      result.addCellPositionsRowDirection?.length ||
+      result.removeCellPositionsRowDirection?.length ||
+      result.updateCellPositionsRowDirection?.length
+    ) {
       this.scenegraph.updateRow(
-        result.removeCellPositions,
-        result.addCellPositions,
-        result.updateCellPositions,
+        result.removeCellPositionsRowDirection,
+        result.addCellPositionsRowDirection.map(item => {
+          item.row += newFrozenRowCount - oldFrozenRowCount;
+          return item;
+        }),
+        result.updateCellPositionsRowDirection,
         recalculateColWidths
       );
-    } else {
-      this.scenegraph.updateCol(result.removeCellPositions, result.addCellPositions, result.updateCellPositions);
+    }
+    if (this.rowHierarchyType === 'grid-tree') {
+      this.scenegraph.updateCornerHeaderCells();
+      if (newFrozenColCount !== oldFrozenColCount) {
+        this.scenegraph.updateRowHeaderCells();
+      }
+      if (newFrozenRowCount !== oldFrozenRowCount) {
+        this.scenegraph.updateColumnHeaderCells();
+      }
     }
     this.reactCustomLayout?.updateAllCustomCell();
 

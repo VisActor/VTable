@@ -79,6 +79,7 @@ export class DimensionTree {
   };
 
   totalLevel = 0;
+  expandedMaxLevel = 0;
 
   // blockLevel: number = 0;
 
@@ -102,6 +103,8 @@ export class DimensionTree {
   }
 
   reset(tree: ITreeLayoutHeadNode[]) {
+    this.totalLevel = 0;
+    this.expandedMaxLevel = 0;
     this.hasHideNode = false;
     // 清空缓存的计算
     // this.cache = {};
@@ -110,11 +113,7 @@ export class DimensionTree {
     this.dimensionKeys = new NumberMap<string>();
     this.dimensionKeysIncludeVirtual = new NumberMap<string>();
     this.tree.children = tree as ITreeLayoutHeadNode[];
-    // const re = { totalLevel: 0 };
-    // if (updateTreeNode) this.updateTreeNode(this.tree, 0, re, this.tree);
-    // else
     this.setTreeNode(this.tree, 0, this.tree);
-    // this.totalLevel = this.dimensionKeys.count();
   }
   setTreeNode(node: ITreeLayoutHeadNode, startIndex: number, parent: ITreeLayoutHeadNode): number {
     node.startIndex = startIndex;
@@ -173,6 +172,7 @@ export class DimensionTree {
       children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
         this.totalLevel = Math.max(this.totalLevel, n.level + 1);
+        this.expandedMaxLevel = Math.max(this.expandedMaxLevel, n.level + 1);
         size += this.setTreeNode(n, size, node);
       });
     } else if (node.hierarchyState === HierarchyState.collapse && children?.length >= 1) {
@@ -195,6 +195,7 @@ export class DimensionTree {
         children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
           this.totalLevel = Math.max(this.totalLevel, n.level + 1);
+          this.expandedMaxLevel = Math.max(this.expandedMaxLevel, n.level + 1);
           size += this.setTreeNode(n, size, node);
         });
     } else if (children?.length >= 1 || children === true) {
@@ -212,7 +213,6 @@ export class DimensionTree {
       //树形展示 无children子节点。但不能确定是最后一层的叶子节点 totalLevel还不能确定是计算完整棵树的整体深度
       node.hierarchyState = HierarchyState.none;
       size = 1;
-      // re.totalLevel = Math.max(re.totalLevel, (node.level ?? -1) + 1);
     }
 
     node.size = size;
@@ -608,6 +608,7 @@ export function dealHeaderForGridTreeMode(
   roots: number[],
   row: number,
   totalLevel: number,
+  expandedMaxLevel: number,
   /** 其子节点是否都进行展示 */
   show: boolean,
   dimensions: (IDimension | string)[],
@@ -755,6 +756,7 @@ export function dealHeaderForGridTreeMode(
       (hd as ITreeLayoutHeadNode).children ?? [],
       [...roots, ...Array((hd as any).levelSpan ?? 1).fill(id)],
       totalLevel,
+      expandedMaxLevel,
       show && hd.hierarchyState === HierarchyState.expand, //当前节点show即显示状态 且当前节点状态为展开 则传给子节点为show：true
       dimensions,
       results,
@@ -765,7 +767,9 @@ export function dealHeaderForGridTreeMode(
     // .forEach(c => results.push(c));
   } else {
     // columns.push([""])//代码一个路径
-    const needSupplementLength = (isRowTree ? indicatorsAsCol : !indicatorsAsCol) ? totalLevel : totalLevel - 1;
+    const needSupplementLength = (isRowTree ? indicatorsAsCol : !indicatorsAsCol)
+      ? expandedMaxLevel
+      : expandedMaxLevel - 1;
     for (let r = row + 1; r < needSupplementLength; r++) {
       if (!_headerCellIds[r]) {
         _headerCellIds[r] = [];
@@ -780,7 +784,6 @@ export function dealHeaderForGridTreeMode(
     ) {
       let lastIndidcatorChildren = hd;
       const levelSpan = needSupplementLength - row;
-      // debugger;
       // 为找到最后的指标节点
       while (lastIndidcatorChildren) {
         if (lastIndidcatorChildren.children?.[0].indicatorKey) {
@@ -792,10 +795,11 @@ export function dealHeaderForGridTreeMode(
 
       layoutMap._addHeadersForGridTreeMode(
         _headerCellIds,
-        totalLevel - 1,
+        expandedMaxLevel - 1,
         (lastIndidcatorChildren as ITreeLayoutHeadNode).children ?? [],
         [...roots, ...Array(Math.max(levelSpan, (hd as any).levelSpan ?? 1)).fill(id)],
         totalLevel,
+        expandedMaxLevel,
         true, //当前节点show即显示状态 且当前节点状态为展开 则传给子节点为show：true
         dimensions,
         results,

@@ -117,10 +117,15 @@ function removeCol(col: number, scene: Scenegraph) {
   // removeCellGroup(col, scene);
   //先考虑非表头部分删除情况
   if (col >= scene.table.rowHeaderLevelCount) {
-    if (col >= scene.table.colCount - scene.table.rightFrozenColCount) {
+    if (col >= scene.table.colCount - scene.table.rightFrozenColCount && scene.table.rightFrozenColCount) {
       // 如果是删除的右侧固定列 这里不做真正的删除，只需要后面将相应列做更新
-      // scene.bodyGroup.removeChild(scene.bodyGroup.lastChild as any);
-      // scene.bottomFrozenGroup.removeChild(scene.bottomFrozenGroup.lastChild as any);
+      // 如果删除的列已经超出了colCount 则直接删除
+      if (col >= scene.table.colCount) {
+        scene.colHeaderGroup?.lastChild && scene.colHeaderGroup?.removeChild(scene.colHeaderGroup?.lastChild as any);
+        scene.bodyGroup?.lastChild && scene.bodyGroup?.removeChild(scene.bodyGroup?.lastChild as any);
+        scene.bottomFrozenGroup?.lastChild &&
+          scene.bottomFrozenGroup?.removeChild?.(scene.bottomFrozenGroup?.lastChild as any);
+      }
     } else {
       const colGroup = scene.getColGroup(col, false);
       if (colGroup && colGroup.parent === scene.bodyGroup) {
@@ -129,6 +134,10 @@ function removeCol(col: number, scene: Scenegraph) {
       const bottomColGroup = scene.getColGroupInBottom(col);
       if (bottomColGroup && bottomColGroup.parent === scene.bottomFrozenGroup) {
         scene.bottomFrozenGroup.removeChild(bottomColGroup);
+      }
+      const headerColGroup = scene.getColGroup(col, true);
+      if (headerColGroup && headerColGroup.parent === scene.colHeaderGroup) {
+        scene.colHeaderGroup.removeChild(headerColGroup);
       }
     }
   }
