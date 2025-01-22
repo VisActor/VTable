@@ -1,4 +1,5 @@
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
+import type { Scenegraph } from '../scenegraph/scenegraph';
 import type { CellAddress } from '../ts-types';
 import type { LayoutObjectId } from '../ts-types/base-table';
 
@@ -170,14 +171,14 @@ export function diffCellAddressForGridTreeOnColumn(
   if (
     layout.columnHierarchyType === 'grid-tree' &&
     layout.cornerSetting.titleOnDimension === 'row' &&
-    layout.columnHeaderLevelCount !== layout._cornerHeaderCellIds[0].length // 表头层级数发生了变化 需要整体做更新_cornerHeaderCellIds是旧值 rowHeaderLevelCount是新值
+    layout.columnHeaderLevelCount !== layout._cornerHeaderCellIds.length // 表头层级数发生了变化 需要整体做更新_cornerHeaderCellIds是旧值 rowHeaderLevelCount是新值
   ) {
-    if (layout.columnHeaderLevelCount > layout._cornerHeaderCellIds[0].length) {
-      for (let i = layout._cornerHeaderCellIds[0].length; i < layout.columnHeaderLevelCount; i++) {
+    if (layout.columnHeaderLevelCount > layout._cornerHeaderCellIds.length) {
+      for (let i = layout._cornerHeaderCellIds.length; i < layout.columnHeaderLevelCount; i++) {
         addCellPositionsRowDirection.push({ col, row: i });
       }
     } else {
-      for (let i = layout.columnHeaderLevelCount; i < layout._cornerHeaderCellIds[0].length; i++) {
+      for (let i = layout.columnHeaderLevelCount; i < layout._cornerHeaderCellIds.length; i++) {
         // if (layout.hideIndicatorName && layout.indicatorsAsCol) {
         //   removeCellPositionsRowDirection.push({ col, row: i });
         //   updateCellPositionsRowDirection.push({ col, row: i - 1 });
@@ -308,4 +309,64 @@ function isEqual(arr1: any, arr2: any) {
   }
 
   return true;
+}
+
+export function callUpdateRowOnScenegraph(
+  result: {
+    addCellPositionsRowDirection?: CellAddress[];
+    removeCellPositionsRowDirection?: CellAddress[];
+    updateCellPositionsRowDirection?: CellAddress[];
+    addCellPositionsColumnDirection?: CellAddress[];
+    removeCellPositionsColumnDirection?: CellAddress[];
+    updateCellPositionsColumnDirection?: CellAddress[];
+  },
+  recalculateColWidths: boolean,
+  newFrozenRowCount: number,
+  oldFrozenRowCount: number,
+  scenegraph: Scenegraph
+) {
+  if (
+    result.addCellPositionsRowDirection?.length ||
+    result.removeCellPositionsRowDirection?.length ||
+    result.updateCellPositionsRowDirection?.length
+  ) {
+    scenegraph.updateRow(
+      result.removeCellPositionsRowDirection,
+      result.addCellPositionsRowDirection.map(item => {
+        item.row += newFrozenRowCount - oldFrozenRowCount;
+        return item;
+      }),
+      result.updateCellPositionsRowDirection,
+      recalculateColWidths
+    );
+  }
+}
+
+export function callUpdateColOnScenegraph(
+  result: {
+    addCellPositionsRowDirection?: CellAddress[];
+    removeCellPositionsRowDirection?: CellAddress[];
+    updateCellPositionsRowDirection?: CellAddress[];
+    addCellPositionsColumnDirection?: CellAddress[];
+    removeCellPositionsColumnDirection?: CellAddress[];
+    updateCellPositionsColumnDirection?: CellAddress[];
+  },
+  newFrozenColCount: number,
+  oldFrozenColCount: number,
+  scenegraph: Scenegraph
+) {
+  if (
+    result.addCellPositionsColumnDirection?.length ||
+    result.removeCellPositionsColumnDirection?.length ||
+    result.updateCellPositionsColumnDirection?.length
+  ) {
+    scenegraph.updateCol(
+      result.removeCellPositionsColumnDirection,
+      result.addCellPositionsColumnDirection.map(item => {
+        item.col += newFrozenColCount - oldFrozenColCount;
+        return item;
+      }),
+      result.updateCellPositionsColumnDirection
+    );
+  }
 }

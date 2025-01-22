@@ -352,6 +352,7 @@ export function createTable() {
         columnHierarchyType: 'grid-tree',
         rowExpandLevel: 1,
         columnExpandLevel: 1,
+        // rightFrozenColCount: 2,
         rowHierarchyIndent: 20,
         theme: VTable.themes.ARCO,
         // indicatorsAsCol: false,

@@ -51,6 +51,7 @@ import {
 } from './layout/layout-helper';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
+import { callUpdateColOnScenegraph, callUpdateRowOnScenegraph } from './tools/diff-cell';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
@@ -585,6 +586,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     }
     this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
+    this.stateManager.setFrozenRow(this.frozenRowCount);
   }
   protected _getSortFuncFromHeaderOption(
     columns: undefined,
@@ -598,6 +600,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    */
   get rowHierarchyType(): 'grid' | 'tree' | 'grid-tree' {
     return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType;
+  }
+  /**
+   * Get columnHierarchyType of pivotTable
+   */
+  get columnHierarchyType(): 'grid' | 'grid-tree' {
+    return (this.internalProps.layoutMap as PivotHeaderLayoutMap).columnHierarchyType;
   }
   /**
    * 将现有tree中的的hierarchyState同步到rows透视树中
@@ -1528,38 +1536,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // } else {
     //   this.scenegraph.updateCol(result.removeCellPositions, result.addCellPositions, result.updateCellPositions);
     // }
-
     if (
-      result.addCellPositionsColumnDirection?.length ||
-      result.removeCellPositionsColumnDirection?.length ||
-      result.updateCellPositionsColumnDirection?.length
+      this.columnHierarchyType === 'grid-tree' &&
+      this.isColumnHeader(col, row) &&
+      oldFrozenRowCount > this.frozenRowCount //p判断这个
     ) {
-      this.scenegraph.updateCol(
-        result.removeCellPositionsColumnDirection,
-        result.addCellPositionsColumnDirection.map(item => {
-          item.col += newFrozenColCount - oldFrozenColCount;
-          return item;
-        }),
-        result.updateCellPositionsColumnDirection
-      );
+      callUpdateRowOnScenegraph(result, recalculateColWidths, newFrozenRowCount, oldFrozenRowCount, this.scenegraph);
+      callUpdateColOnScenegraph(result, newFrozenColCount, oldFrozenColCount, this.scenegraph);
+    } else {
+      callUpdateColOnScenegraph(result, newFrozenColCount, oldFrozenColCount, this.scenegraph);
+      callUpdateRowOnScenegraph(result, recalculateColWidths, newFrozenRowCount, oldFrozenRowCount, this.scenegraph);
     }
 
-    if (
-      result.addCellPositionsRowDirection?.length ||
-      result.removeCellPositionsRowDirection?.length ||
-      result.updateCellPositionsRowDirection?.length
-    ) {
-      this.scenegraph.updateRow(
-        result.removeCellPositionsRowDirection,
-        result.addCellPositionsRowDirection.map(item => {
-          item.row += newFrozenRowCount - oldFrozenRowCount;
-          return item;
-        }),
-        result.updateCellPositionsRowDirection,
-        recalculateColWidths
-      );
-    }
-    if (this.rowHierarchyType === 'grid-tree') {
+    if (this.rowHierarchyType === 'grid-tree' || this.columnHierarchyType === 'grid-tree') {
       this.scenegraph.updateCornerHeaderCells();
       if (newFrozenColCount !== oldFrozenColCount) {
         this.scenegraph.updateRowHeaderCells();

@@ -166,7 +166,7 @@ export class StateManager {
   }>;
   frozen: {
     col: number;
-    // row: number;
+    row: number;
     icon?: Icon;
   };
   scroll: {
@@ -907,6 +907,16 @@ export class StateManager {
       this.table.scenegraph.updateFrozenIcon(0, this.table.colCount - 1);
     } else {
       this.table.scenegraph.updateFrozenIcon(0, this.table.colCount - 1);
+    }
+  }
+  setFrozenRow(row: number) {
+    if (row !== this.frozen.row) {
+      // const oldFrozenCol = this.frozen.col;
+      this.frozen.row = row;
+
+      // 更新scenegraph，这里因为dealFreeze更新了table里存储的frozen信息，会影响scenegraph里的getCell
+      // 因此先更新scenegraph结构再更新icon
+      this.table.scenegraph.updateRowFrozen();
     }
   }
   checkVerticalScrollBarEnd() {

@@ -31,7 +31,7 @@ export class SceneProxy {
   rowStart = 0; // 当前维护的部分第一行的row number
   rowEnd = 0; // 当前维护的部分最后一行的row number
   referenceRow = 0; // 当前维护的部分中间一行的row number，认为referenceRow对应当前屏幕显示范围的第一行
-  bodyTopRow: number; // table body部分的第一行row number
+  // bodyTopRow: number; // table body部分的第一行row number
   bodyBottomRow: number; // table body部分的最后一行row number
   screenRowCount: number; // 预计屏幕范围内显示的row count
   firstScreenRowLimit: number; // 首屏同步加载部分最后一行的row number
@@ -97,6 +97,9 @@ export class SceneProxy {
   get bodyLeftCol(): number {
     return this.table.frozenColCount;
   }
+  get bodyTopRow(): number {
+    return this.table.frozenRowCount;
+  }
 
   setParamsForColumn() {
     // this.bodyLeftCol = this.table.frozenColCount;
@@ -131,7 +134,7 @@ export class SceneProxy {
   }
 
   setParamsForRow() {
-    this.bodyTopRow = this.table.frozenRowCount;
+    // this.bodyTopRow = this.table.frozenRowCount;
     this.bodyBottomRow = this.table.rowCount - 1 - this.table.bottomFrozenRowCount;
     // this.bodyLeftCol = 0;
     // this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
@@ -166,7 +169,7 @@ export class SceneProxy {
   }
 
   refreshRowCount() {
-    this.bodyTopRow = this.table.frozenRowCount;
+    // this.bodyTopRow = this.table.frozenRowCount;
     this.bodyBottomRow = this.table.rowCount - 1 - this.table.bottomFrozenRowCount;
     const totalActualBodyRowCount = Math.min(this.rowLimit, this.bodyBottomRow - this.bodyTopRow + 1); // 渐进加载总row数量
     this.totalActualBodyRowCount = totalActualBodyRowCount;

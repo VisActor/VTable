@@ -41,7 +41,7 @@ import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowHeight, computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
-import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
+import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen, resetRowFrozen } from './layout/frozen';
 import {
   updateChartSizeForResizeColWidth,
   updateChartSizeForResizeRowHeight,
@@ -1515,6 +1515,10 @@ export class Scenegraph {
     resetFrozen(this);
   }
 
+  resetRowFrozen() {
+    resetRowFrozen(this);
+  }
+
   /**
    * @description: 判断指定列更新宽度时，其中单元格是否会更新宽度；如果更新宽度，返回true
    * @param {Group} columnGroup
@@ -1832,6 +1836,15 @@ export class Scenegraph {
       return;
     }
     this.resetFrozen();
+    // this.dealFrozen();
+    this.component.updateScrollBar();
+  }
+
+  updateRowFrozen() {
+    if (this.clear) {
+      return;
+    }
+    this.resetRowFrozen();
     // this.dealFrozen();
     this.component.updateScrollBar();
   }
