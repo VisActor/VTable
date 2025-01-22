@@ -295,8 +295,8 @@ export class StateManager {
       }
     ];
     this.frozen = {
-      col: -1
-      // row: -1,
+      col: -1,
+      row: -1
     };
     // this.scroll = {
     //   horizontalBarPos: 0,
