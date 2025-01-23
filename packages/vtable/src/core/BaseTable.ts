@@ -331,8 +331,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // internalProps.autoRowHeight = options.autoRowHeight ?? false;
 
     if (this.options.canvas) {
-      internalProps.element = this.options.canvas.parentElement;
-      internalProps.element.style.position = 'relative';
+      if (Env.mode !== 'node') {
+        internalProps.element = this.options.canvas.parentElement;
+        internalProps.element.style.position = 'relative';
+      }
       internalProps.focusControl = new FocusInput(this, internalProps.element);
       internalProps.canvas = this.options.canvas;
       internalProps.context = internalProps.canvas.getContext('2d')!;
