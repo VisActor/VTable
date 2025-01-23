@@ -52,7 +52,7 @@ Other annotated configuration items will be gradually improved in the future, an
 **Note:**
 
 - Sorted tables do not support dragging row numbers to change the order of data;
-- Perspectives currently do not support row numbers.
+- Tree-structured tables are currently restricted to move between nodes of the same parent level when dragged and dropped in order;How to move between different parent levels, you can see another [tutorial](../interaction/drag_header)。
 
 [Demo Example](../../demo/basic-functionality/row-series-number)
 

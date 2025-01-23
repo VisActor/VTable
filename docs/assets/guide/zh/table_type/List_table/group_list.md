@@ -96,6 +96,73 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 window['tableInstance'] = tableInstance;
 ```
 
+## 自定义分组标题文本格式
+
+在option中，可以配置`groupTitleFieldFormat`属性，用于自定义分组标题的文本格式。该属性是一个函数，接收分组字段名称和分组值作为参数，返回要显示的文本内容。
+
+```ts
+const option: VTable.ListTableConstructorOptions = {
+  // ...
+  groupBy: 'group',
+  groupTitleFieldFormat: (record, col, row, table) => {
+    return record.vtableMergeName + '(' + record.children.length + ')';
+  }
+};
+```
+
+示例：
+```javascript livedemo template=vtable
+const records = [
+   {
+      name: 'John Smith',
+      position: 'Recruiting Manager',
+      salary: '$8000',
+      group: 'Recruiting Group'
+    },
+    {
+      name: 'Emily Johnson',
+      position: 'Recruiting Supervisor',
+      salary: '$6000',
+      group: 'Recruiting Group'
+    },
+    {
+      name: 'Jessica Brown',
+      position: 'Training Manager',
+      salary: '$8000',
+      group: 'Training Group',
+    }
+];
+const columns = [
+  {
+    field: 'name',
+    title: 'Name',
+    width: 'auto',
+  },
+  {
+    field: 'position',
+    title: 'Position',
+    width: 'auto',
+  },
+  {
+    field: 'salary',
+    title: 'Salary',
+    width: 'auto',
+  },
+];
+
+const option = {
+  records,
+  columns,
+  widthMode: 'standard',
+  groupBy: 'group',
+  groupTitleFieldFormat: (record, col, row, table) => {
+    return record.vtableMergeName + '(' + record.children.length + ')';
+  }
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```
+
 ## 指定分组标题显示样式
 
 在theme中，可以配置groupTitleStyle属性，用于指定分组标题的显示样式。其中，如果需要指定不同层级的分组标题的样式，可以使用函数，通过`table.getGroupTitleLevel(col, row)`方法获取当前节点的层级，去指定不同层级的样式。

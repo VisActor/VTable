@@ -150,7 +150,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.useOneRowHeightFillAll = false;
 
     if (options.dataSource) {
-      _setDataSource(this, options.dataSource);
+      // _setDataSource(this, options.dataSource)
+      this.dataSource = options.dataSource;
     } else if (options.records) {
       this.setRecords(options.records as any, { sortState: internalProps.sortState });
     } else {
@@ -316,8 +317,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         if (record?.vtableMerge) {
           return '';
         }
-        const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
-        value = indexs[indexs.length - 1] + 1;
+        value = (this.dataSource as CachedDataSource).getGroupSeriesNumber(row - this.columnHeaderLevelCount);
+        // const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
+        // value = indexs[indexs.length - 1] + 1;
       } else {
         value = row - this.columnHeaderLevelCount + 1;
       }
@@ -391,7 +393,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getRecordIndexByCell(col: number, row: number): number | number[] {
     const { layoutMap } = this.internalProps;
     const recordShowIndex = layoutMap.getRecordShowIndexByCell(col, row);
-    return this.dataSource.currentPagerIndexedData[recordShowIndex];
+    return this.dataSource.getRecordIndexPaths(recordShowIndex);
   }
 
   getTableIndexByRecordIndex(recordIndex: number | number[]) {
@@ -516,7 +518,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // this._updateSize();
     // 传入新数据
     if (options.dataSource) {
-      _setDataSource(this, options.dataSource);
+      // _setDataSource(this, options.dataSource);
+      this.dataSource = options.dataSource;
     } else if (options.records) {
       this.setRecords(options.records as any, {
         sortState: options.sortState
@@ -747,7 +750,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       sourceIndex = this.getRecordShowIndexByCell(0, sourceIndex);
       targetIndex = this.getRecordShowIndexByCell(0, targetIndex);
     }
-    this.dataSource.reorderRecord(sourceIndex, targetIndex);
+    this.dataSource.changeOrder(sourceIndex, targetIndex);
   }
   /**
    * 方法适用于获取body中某条数据的行列号
@@ -872,9 +875,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
       });
     }
   }
+  /**
+   * 开启层级节点展开的loading动画状态，在设置数据调用setRecordChildren后会自动关闭loading
+   * @param col
+   * @param row
+   */
   setLoadingHierarchyState(col: number, row: number) {
     this.scenegraph.setLoadingHierarchyState(col, row);
   }
+
   /** 刷新当前节点收起展开状态，如手动更改过 */
   _refreshHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     let notFillWidth = false;
@@ -1036,7 +1045,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
             return {
               field: item.field,
               order: item.order,
-              orderFn: sortFunc
+              orderFn: sortFunc ?? defaultOrderFn
             };
           })
         );
@@ -1302,7 +1311,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecord(record: any, recordIndex?: number) {
+  addRecord(record: any, recordIndex?: number | number[]) {
     listTableAddRecord(record, recordIndex, this);
     this.internalProps.emptyTip?.resetVisible();
   }
@@ -1314,7 +1323,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecords(records: any[], recordIndex?: number) {
+  addRecords(records: any[], recordIndex?: number | number[]) {
     listTableAddRecords(records, recordIndex, this);
     this.internalProps.emptyTip?.resetVisible();
   }
@@ -1323,7 +1332,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 删除数据 支持多条数据
    * @param recordIndexs 要删除数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
    */
-  deleteRecords(recordIndexs: number[]) {
+  deleteRecords(recordIndexs: number[] | number[][]) {
     listTableDeleteRecords(recordIndexs, this);
     this.internalProps.emptyTip?.resetVisible();
   }

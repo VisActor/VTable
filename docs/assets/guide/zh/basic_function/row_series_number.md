@@ -52,7 +52,7 @@ export interface IRowSeriesNumber {
 **注：**
 
 - 设置过排序的表格不支持拖拽行序号来更换数据顺序；
-- 透视图目前不支持行序号。
+- 树形结构的表格目前拖拽顺序时会约束只能在同父级的节点之间移动位置，如何在不同父级之间移动位置，可以参考另外一篇[教程](../interaction/drag_header)。
 
 [demo 示例](../../demo/basic-functionality/row-series-number)
 

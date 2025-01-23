@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: canvasWidth canvasHeight support auto setting #3089\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

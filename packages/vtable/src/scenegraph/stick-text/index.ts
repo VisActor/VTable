@@ -71,7 +71,7 @@ export function handleTextStick(table: BaseTableAPI) {
       const style = table._getCellStyle(col, row);
       if (
         style?.textStick &&
-        (table.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'tree' &&
+        // (table.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'tree' &&
         style?.textStick !== 'horizontal'
       ) {
         const cellGroup = table.scenegraph.getCell(col, row);

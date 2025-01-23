@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add groupTitleFieldFormat API #3092",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

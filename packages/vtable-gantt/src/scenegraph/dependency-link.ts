@@ -32,7 +32,7 @@ export class DependencyLink {
       clip: true
     });
     this.group.name = 'dependency-link-container';
-    scene.tableGroup.addChild(this.group);
+    scene.ganttGroup.addChild(this.group);
     this.initLinkLines();
   }
 

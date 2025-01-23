@@ -161,8 +161,8 @@ export class ScrollBarComponent {
     const width = scrollStyle?.width as number;
     const visible = scrollStyle?.visible as string;
     // const hoverOn = theme.scrollStyle?.hoverOn as boolean;
-    const tableWidth = Math.ceil(this._gantt.scenegraph.tableGroup.attribute.width);
-    const tableHeight = Math.ceil(this._gantt.scenegraph.tableGroup.attribute.height);
+    const tableWidth = Math.ceil(this._gantt.scenegraph.ganttGroup.attribute.width);
+    const tableHeight = Math.ceil(this._gantt.scenegraph.ganttGroup.attribute.height);
 
     const totalHeight = this._gantt.getAllRowsHeight();
     const totalWidth = this._gantt.getAllDateColsWidth();
@@ -180,14 +180,14 @@ export class ScrollBarComponent {
       if (scrollStyle.barToSide) {
         attrY =
           this._gantt.tableNoFrameHeight -
-          (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.y) +
+          (hoverOn ? width : -this._gantt.scenegraph.ganttGroup.attribute.y) +
           this._gantt.tableY;
       } else {
-        attrY = y - (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.y) + this._gantt.tableY;
+        attrY = y - (hoverOn ? width : -this._gantt.scenegraph.ganttGroup.attribute.y) + this._gantt.tableY;
       }
 
       this.hScrollBar.setAttributes({
-        x: this._gantt.scenegraph.tableGroup.attribute.x,
+        x: this._gantt.scenegraph.ganttGroup.attribute.x,
         y: attrY,
         width: tableWidth,
         range: [0, rangeEnd],
@@ -211,21 +211,21 @@ export class ScrollBarComponent {
     }
 
     if (totalHeight > tableHeight) {
-      const x = Math.min(tableWidth, totalWidth) + this._gantt.scenegraph.tableGroup.attribute.x;
+      const x = Math.min(tableWidth, totalWidth) + this._gantt.scenegraph.ganttGroup.attribute.x;
       const rangeEnd = Math.max(0.05, (tableHeight - frozenRowsHeight) / (totalHeight - frozenRowsHeight));
 
       let attrX = 0;
       const hoverOn = this._gantt.parsedOptions.scrollStyle.hoverOn;
 
       if (this._gantt.parsedOptions.scrollStyle.barToSide) {
-        attrX = this._gantt.tableNoFrameWidth - (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.x);
+        attrX = this._gantt.tableNoFrameWidth - (hoverOn ? width : -this._gantt.scenegraph.ganttGroup.attribute.x);
       } else {
-        attrX = x - (hoverOn ? width : -this._gantt.scenegraph.tableGroup.attribute.x);
+        attrX = x - (hoverOn ? width : -this._gantt.scenegraph.ganttGroup.attribute.x);
       }
 
       this.vScrollBar.setAttributes({
         x: attrX,
-        y: frozenRowsHeight + (!hoverOn ? this._gantt.scenegraph.tableGroup.attribute.y : 0) + this._gantt.tableY,
+        y: frozenRowsHeight + (!hoverOn ? this._gantt.scenegraph.ganttGroup.attribute.y : 0) + this._gantt.tableY,
         height: tableHeight - frozenRowsHeight,
         range: [0, rangeEnd],
         visible: visible === 'always'

@@ -1108,6 +1108,9 @@ export class Scenegraph {
         width: this.table.getRightFrozenColsWidth()
       });
     }
+
+    // update dom container size
+    this.updateDomContainer();
   }
 
   updateRowHeight(row: number, detaY: number, skipTableHeightMap?: boolean) {
@@ -1669,7 +1672,7 @@ export class Scenegraph {
     this.updateTableSize();
     this.component.updateScrollBar();
 
-    this.updateDomContainer();
+    // this.updateDomContainer();
 
     this.updateNextFrame();
   }

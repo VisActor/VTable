@@ -187,6 +187,58 @@ const CardInfo = (props: { record: any; hover: boolean; row?: number }) => {
   ) : null;
 };
 
+const TestIndicatorTitle = (props: CustomLayoutFunctionArg) => {
+  const { table, row, col, rect, text, value } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const [hover, setHover] = useState(false);
+
+  const groupRef = useRef(null);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        react: {
+          pointerEvents: true,
+          container: table.headerDomContainer, // table.headerDomContainer
+          element: <div style={{ width, height, backgroundColor: 'rgba(255,0,0,0.2)' }}>testIndicatorTitle</div>
+        }
+      }}
+      ref={groupRef}
+    ></Group>
+  );
+};
+
+const TestIndicatorBody = (props: CustomLayoutFunctionArg) => {
+  const { table, row, col, rect, text, value } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const [hover, setHover] = useState(false);
+
+  const groupRef = useRef(null);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        react: {
+          pointerEvents: true,
+          container: table.bodyDomContainer, // table.headerDomContainer
+          element: <div style={{ width, height, backgroundColor: 'rgba(255,255,0,0.2)' }}>testIndicatorBody</div>
+        }
+      }}
+      ref={groupRef}
+    ></Group>
+  );
+};
+
 function App() {
   return (
     <PivotTable
@@ -208,7 +260,9 @@ function App() {
       <PivotIndicator indicatorKey={'Quantity'} title={'Quantity'} />
       <PivotIndicator indicatorKey={'Sales'} title={'Sales'} />
       <PivotIndicator indicatorKey={'Profit'} title={'Profit'}>
-        <UserProfileComponent role={'custom-layout'} renderDefault={false} />
+        {/* <UserProfileComponent role={'custom-layout'} renderDefault={false} /> */}
+        <TestIndicatorTitle role={'header-custom-layout'} />
+        <TestIndicatorBody role={'custom-layout'} />
       </PivotIndicator>
       <PivotCorner titleOnDimension={'row'} />
       {/* <Tooltip isShowOverflowTextTooltip={true} /> */}

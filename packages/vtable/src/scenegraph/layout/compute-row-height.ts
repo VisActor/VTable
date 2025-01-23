@@ -312,25 +312,28 @@ export function computeRowsHeight(
       }
     }
 
-    if (
-      table.heightMode === 'adaptive' ||
-      (table.autoFillHeight && table.getAllRowsHeight() <= table.tableNoFrameHeight)
-    ) {
-      for (let row = 0; row <= table.columnHeaderLevelCount - 1; row++) {
-        const newRowHeight = table.getRowHeight(row);
-        if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
-          // update the row height in scenegraph
-          table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
-        }
-      }
-      for (let row = table.rowCount - table.bottomFrozenRowCount; row <= table.rowCount - 1; row++) {
-        const newRowHeight = table.getRowHeight(row);
-        if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
-          // update the row height in scenegraph
-          table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
-        }
+    // if (
+    //   table.heightMode === 'adaptive' ||
+    //   (table.autoFillHeight && table.getAllRowsHeight() <= table.tableNoFrameHeight) ||
+    //   (table.options as ListTableConstructorOptions).customComputeRowHeight
+    // ) {
+    for (let row = 0; row <= table.frozenRowCount - 1; row++) {
+      const newRowHeight = table.getRowHeight(row);
+      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
+        // update the row height in scenegraph
+        table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
       }
     }
+    for (let row = table.rowCount - table.bottomFrozenRowCount; row <= table.rowCount - 1; row++) {
+      const newRowHeight = table.getRowHeight(row);
+      if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {
+        // update the row height in scenegraph
+        table.scenegraph.updateRowHeight(row, newRowHeight - (oldRowHeights[row] ?? table.getRowHeight(row)), true);
+      }
+    }
+    // }
+
+    // update body row
     for (let row = table.scenegraph.proxy.rowStart; row <= table.scenegraph.proxy.rowEnd; row++) {
       const newRowHeight = table.getRowHeight(row);
       if (newRowHeight !== (oldRowHeights[row] ?? table.getRowHeight(row))) {

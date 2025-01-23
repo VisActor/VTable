@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: remove tree limit in handleTextStick() #3274",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

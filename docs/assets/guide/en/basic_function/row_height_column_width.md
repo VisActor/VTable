@@ -284,4 +284,8 @@ Please use defaultHeaderColWidth to specify the width of each column in the head
 
 If width is declared in columns, we will traverse the maximum number value of the width configured in columns as the column width of all columns. If there is no width configuration with a number value, but one of the columns is configured with auto, all column widths will be automatically calculated. In order to make the configuration clearer and more reasonable, we recommend using defaultColWidth to specify the column width.
 
+## Table Width and Height Configuration
+
+Typically, you need to specify the container's width and height to determine the overall width and height of the table. If you don't specify the width and height, and you want VTable to automatically expand the container based on the content, you can set canvasWidth to 'auto' and canvasHeight to 'auto'. At the same time, use maxCanvasWidth and maxCanvasHeight to limit the maximum width and height.
+
 So far, we have introduced the table row height and column width calculation function in VTable, including row height, column width configuration, and table width mode. By mastering these functions, you can display and analyze data in VTable more conveniently to meet various practical needs.

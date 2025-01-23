@@ -474,8 +474,11 @@ export interface BaseTableConstructorOptions {
   // #region for nodejs
   mode?: 'node' | 'browser';
   modeParams?: any;
-  canvasWidth?: number;
-  canvasHeight?: number;
+  canvasWidth?: number | 'auto';
+  canvasHeight?: number | 'auto';
+  maxCanvasWidth?: number;
+  maxCanvasHeight?: number;
+
   // #endregion
   /**
    * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
