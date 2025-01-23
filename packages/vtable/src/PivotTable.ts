@@ -1491,6 +1491,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   _refreshHierarchyState(col: number, row: number, recalculateColWidths: boolean = true, beforeUpdateCell?: Function) {
     const oldFrozenColCount = this.frozenColCount;
     const oldFrozenRowCount = this.frozenRowCount;
+    this.internalProps._oldRowCount = this.rowCount;
+    this.internalProps._oldColCount = this.colCount;
     let notFillWidth = false;
     let notFillHeight = false;
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
@@ -1571,6 +1573,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.scenegraph.updateChartSizeForResizeColWidth(-1); // 如果收起展开有性能问题 可以排查下这个防范
       }
     }
+    this.internalProps._oldRowCount = undefined;
+    this.internalProps._oldColCount = undefined;
   }
   /**
    * 通过表头的维度值路径来计算单元格位置  getCellAddressByHeaderPaths接口更强大一些 不限表头 不限参数格式

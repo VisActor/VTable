@@ -128,8 +128,12 @@ export function updateRow(
   }
 
   if (isNumber(updateAfter)) {
-    for (let col = 0; col < table.colCount; col++) {
-      for (let row = updateAfter; row < table.rowCount; row++) {
+    for (let col = 0; col < Math.max(table.colCount, table.internalProps._oldColCount ?? table.colCount); col++) {
+      for (
+        let row = updateAfter;
+        row < Math.max(table.rowCount, table.internalProps._oldRowCount ?? table.rowCount);
+        row++
+      ) {
         const cellGroup = scene.highPerformanceGetCell(col, row, true);
         cellGroup && (cellGroup.needUpdate = true);
       }
@@ -147,12 +151,12 @@ export function updateRow(
       const minRow = Math.min(...addRows);
       scene.proxy.rowUpdatePos = Math.min(minRow, scene.proxy.rowUpdatePos);
     }
-    // if (scene.proxy.rowUpdatePos < scene.proxy.table.frozenRowCount) {
-    scene.proxy.rowUpdateDirection = 'up';
+    // if (addRows.length > removeRows.length) {
+    scene.proxy.rowUpdateDirection = 'down';
     // } else {
-    //   scene.proxy.rowUpdateDirection = 'down';
+    // scene.proxy.rowUpdateDirection = 'up';
     // }
-    // console.log('rowUpdateDirection', scene.proxy.rowUpdateDirection);
+    console.log('rowUpdateDirection', scene.proxy.rowUpdateDirection);
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
     updateBottomFrozeCellGroups();
     // scene.proxy.progress();

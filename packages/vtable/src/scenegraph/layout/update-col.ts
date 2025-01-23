@@ -68,8 +68,12 @@ export function updateCol(
   });
 
   if (isNumber(updateAfter)) {
-    for (let col = updateAfter; col < table.colCount; col++) {
-      for (let row = 0; row < table.rowCount; row++) {
+    for (
+      let col = updateAfter;
+      col < Math.max(table.colCount, table.internalProps._oldColCount ?? table.colCount);
+      col++
+    ) {
+      for (let row = 0; row < Math.max(table.rowCount, table.internalProps._oldRowCount ?? table.rowCount); row++) {
         const cellGroup = scene.highPerformanceGetCell(col, row, true);
         cellGroup && (cellGroup.needUpdate = true);
       }

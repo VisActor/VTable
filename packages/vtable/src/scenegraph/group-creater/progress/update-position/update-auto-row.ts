@@ -54,9 +54,13 @@ export function updateAutoRow(
           // y = ((cellGroup._next as Group)?.attribute.y ?? 0) - (cellGroup.attribute.height ?? 0);
           y = (cellGroup._next as Group)?.attribute.y - table.getRowHeight(cellGroup.row);
         } else if (part) {
-          const baseRowIndex = rowStart === table.frozenRowCount ? rowStart : rowStart - 1;
-          const baseCellGroup = table.scenegraph.highPerformanceGetCell(col, baseRowIndex, true);
-          y = baseCellGroup.attribute.y;
+          const baseRowIndex = rowStart <= table.frozenRowCount ? table.frozenRowCount : rowStart - 1;
+          if (rowStart <= table.frozenRowCount) {
+            y = 0;
+          } else {
+            const baseCellGroup = table.scenegraph.highPerformanceGetCell(col, baseRowIndex, true);
+            y = baseCellGroup.attribute.y;
+          }
           for (let r = baseRowIndex; r < row; r++) {
             const height = table.getRowHeight(r);
             y += height;
