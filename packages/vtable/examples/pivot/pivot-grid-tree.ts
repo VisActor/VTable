@@ -365,8 +365,8 @@ export function createTable() {
         theme: VTable.themes.ARCO,
         indicatorsAsCol: false,
         // hideIndicatorName:true,
-        dragHeaderMode: 'all'
-        // bottomFrozenRowCount: 2
+        dragHeaderMode: 'all',
+        bottomFrozenRowCount: 2
       };
       const tableInstance = new PivotTable(option);
       // 只为了方便控制太调试用，不要拷贝

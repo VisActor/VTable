@@ -147,7 +147,7 @@ export function updateRow(
       const minRow = Math.min(...addRows);
       scene.proxy.rowUpdatePos = Math.min(minRow, scene.proxy.rowUpdatePos);
     }
-    scene.proxy.rowUpdateDirection = 'up';
+    scene.proxy.rowUpdateDirection = 'down';
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
     updateBottomFrozeCellGroups();
     // scene.proxy.progress();
