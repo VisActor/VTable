@@ -736,8 +736,9 @@ export function dealHeaderForGridTreeMode(
   _headerCellIds[row][layoutMap.colIndex] = id;
 
   // 处理汇总小计跨维度层级的情况
-  if ((hd as any).levelSpan > 1) {
-    for (let i = 1; i < (hd as any).levelSpan; i++) {
+  const span = Math.min(expandedMaxLevel, (hd as any).levelSpan);
+  if (span > 1) {
+    for (let i = 1; i < span; i++) {
       if (!_headerCellIds[row + i]) {
         _headerCellIds[row + i] = [];
         // 当行前几个没有赋值的id 赋值

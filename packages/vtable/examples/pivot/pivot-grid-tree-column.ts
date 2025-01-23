@@ -355,7 +355,7 @@ export function createTable() {
         // rightFrozenColCount: 2,
         rowHierarchyIndent: 20,
         theme: VTable.themes.ARCO,
-        // indicatorsAsCol: false,
+        indicatorsAsCol: false,
         dragHeaderMode: 'all'
       };
       const tableInstance = new PivotTable(option);

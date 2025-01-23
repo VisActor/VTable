@@ -4147,11 +4147,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     }
     //#region 纠正角头 处理角头和行头或者列头长度不一致的情况（grid-tree模式下会有这种情况发生）
-    if (
-      this.rowHierarchyType === 'grid-tree' &&
-      this.cornerSetting.titleOnDimension === 'column' &&
-      this.indicatorsAsCol === false
-    ) {
+    if (this.rowHierarchyType === 'grid-tree' && this.cornerSetting.titleOnDimension === 'column') {
       if (this._cornerHeaderCellIds[0].length < this._rowHeaderCellIds[0].length) {
         this._cornerHeaderCellIds.forEach((cellIds: number[], index: number) => {
           const oldLength = cellIds.length;
@@ -4163,11 +4159,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           cellIds.length = this._rowHeaderCellIds[0].length;
         });
       }
-    } else if (
-      this.columnHierarchyType === 'grid-tree' &&
-      this.cornerSetting.titleOnDimension === 'row' &&
-      this.indicatorsAsCol === true
-    ) {
+    } else if (this.columnHierarchyType === 'grid-tree' && this.cornerSetting.titleOnDimension === 'row') {
       if (this._cornerHeaderCellIds?.length < this._columnHeaderCellIds?.length) {
         const oldLength = this._cornerHeaderCellIds.length;
         this._cornerHeaderCellIds.length = this._columnHeaderCellIds.length;

@@ -37,7 +37,7 @@ export class SceneProxy {
   firstScreenRowLimit: number; // 首屏同步加载部分最后一行的row number
   taskRowCount: number; // 一次任务生成/更新的row count
   rowUpdatePos: number; // 异步任务目前更新到的行的row number
-  rowUpdateDirection: 'up' | 'down'; // 当前行更新的方向
+  rowUpdateDirection: 'up' | 'down'; // 当前行更新的方向,down表示从下往上挨个更新，up表示从上往下挨个更新
   screenTopRow: number = 0; // 当前屏幕范围内显示的第一行的row number
   totalActualBodyRowCount: number; // 实际表格body部分的行数
   deltaY: number = 0;

@@ -1550,12 +1550,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     if (this.rowHierarchyType === 'grid-tree' || this.columnHierarchyType === 'grid-tree') {
       this.scenegraph.updateCornerHeaderCells();
-      if (newFrozenColCount !== oldFrozenColCount) {
-        this.scenegraph.updateRowHeaderCells();
-      }
-      if (newFrozenRowCount !== oldFrozenRowCount) {
-        this.scenegraph.updateColumnHeaderCells();
-      }
+      // if (newFrozenColCount !== oldFrozenColCount) {
+      this.scenegraph.updateRowHeaderCells();
+      // }
+      // if (newFrozenRowCount !== oldFrozenRowCount) {
+      this.scenegraph.updateColumnHeaderCells();
+      // }
     }
     this.reactCustomLayout?.updateAllCustomCell();
 

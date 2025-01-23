@@ -318,7 +318,7 @@ export class Dataset {
 
         this.rowHeaderTree = this.customRowTree;
       } else {
-        if (this.rowHierarchyType !== 'grid') {
+        if (this.rowHierarchyType === 'tree') {
           this.rowHeaderTree = this.ArrToTree1(
             this.rowKeys,
             this.rows.filter((key, index) => {
@@ -352,33 +352,33 @@ export class Dataset {
         // }
         this.colHeaderTree = this.customColTree;
       } else {
-        if (this.columnHierarchyType !== 'grid') {
-          this.colHeaderTree = this.ArrToTree1(
-            this.colKeys,
-            this.columns.filter((key, index) => {
-              return this.columnsHasValue[index];
-            }),
-            this.indicatorsAsCol ? this.indicators : undefined,
-            this.totals?.column?.showGrandTotals ||
-              (!this.indicatorsAsCol && this.columns.length === 0) ||
-              (this.indicatorsAsCol && this.rows.length === 0),
-            this.colGrandTotalLabel
-          );
-        } else {
-          this.colHeaderTree = this.ArrToTree(
-            this.colKeys,
-            this.columns.filter((key, index) => {
-              return this.columnsHasValue[index];
-            }),
-            this.indicatorsAsCol ? this.indicators : undefined,
-            this.colsIsTotal,
-            this.totals?.column?.showGrandTotals || (!this.indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
-            this.colGrandTotalLabel,
-            this.colSubTotalLabel,
-            this.totals?.column?.showGrandTotalsOnLeft ?? false,
-            this.totals?.column?.showSubTotalsOnLeft ?? false
-          );
-        }
+        // if (this.columnHierarchyType !== 'grid') {
+        //   this.colHeaderTree = this.ArrToTree1(
+        //     this.colKeys,
+        //     this.columns.filter((key, index) => {
+        //       return this.columnsHasValue[index];
+        //     }),
+        //     this.indicatorsAsCol ? this.indicators : undefined,
+        //     this.totals?.column?.showGrandTotals ||
+        //       (!this.indicatorsAsCol && this.columns.length === 0) ||
+        //       (this.indicatorsAsCol && this.rows.length === 0),
+        //     this.colGrandTotalLabel
+        //   );
+        // } else {
+        this.colHeaderTree = this.ArrToTree(
+          this.colKeys,
+          this.columns.filter((key, index) => {
+            return this.columnsHasValue[index];
+          }),
+          this.indicatorsAsCol ? this.indicators : undefined,
+          this.colsIsTotal,
+          this.totals?.column?.showGrandTotals || (!this.indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
+          this.colGrandTotalLabel,
+          this.colSubTotalLabel,
+          this.totals?.column?.showGrandTotalsOnLeft ?? false,
+          this.totals?.column?.showSubTotalsOnLeft ?? false
+        );
+        // }
       }
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('TreeToArr:', t8 - t7);
@@ -705,7 +705,7 @@ export class Dataset {
             this.dataConfig?.totals?.row?.subTotalsDimensions &&
             this.dataConfig?.totals?.row?.subTotalsDimensions.indexOf(this.rows[l - 1]) >= 0
           ) {
-            if (this.rowHierarchyType === 'grid') {
+            if (this.rowHierarchyType !== 'tree') {
               //如果是tree的话 不附加标签'小计'
               rowKey.push(this.rowSubTotalLabel);
             }
@@ -765,9 +765,9 @@ export class Dataset {
             this.dataConfig?.totals?.column?.subTotalsDimensions &&
             this.dataConfig?.totals?.column?.subTotalsDimensions.indexOf(this.columns[n - 1]) >= 0
           ) {
-            if (this.columnHierarchyType === 'grid') {
-              colKey.push(this.colSubTotalLabel);
-            }
+            // if (this.columnHierarchyType === 'grid') {
+            colKey.push(this.colSubTotalLabel);
+            // }
             isToTalRecord = true;
             break;
           }
@@ -1013,7 +1013,7 @@ export class Dataset {
     this.sortKeys();
     //和初始化代码逻辑一致 但未考虑透视图类型
     if (!this.customRowTree) {
-      if (this.rowHierarchyType !== 'grid') {
+      if (this.rowHierarchyType === 'tree') {
         this.rowHeaderTree = this.ArrToTree1(
           this.rowKeys,
           this.rows.filter((key, index) => {
@@ -1141,6 +1141,12 @@ export class Dataset {
           }
         });
       }
+      if (rowKey.length < this.rows.length && this.rowHierarchyType === 'grid-tree') {
+        if (rowKey[0] === this.rowGrandTotalLabel) {
+        } else if (this.totals?.row?.subTotalsDimensions && this.totals?.row?.subTotalsDimensions?.length >= 1) {
+          rowKey.push(this.rowSubTotalLabel);
+        }
+      }
       // flatRowKey = rowKey.join(this.stringJoinChar);
       flatRowKey = join(rowKey, this.stringJoinChar);
     }
@@ -1155,6 +1161,12 @@ export class Dataset {
             colKey.splice(i, 1);
           }
         });
+      }
+      if (colKey.length < this.columns.length && this.columnHierarchyType === 'grid-tree') {
+        if (colKey[0] === this.colGrandTotalLabel) {
+        } else if (this.totals?.column?.subTotalsDimensions && this.totals?.column?.subTotalsDimensions?.length >= 1) {
+          colKey.push(this.colSubTotalLabel);
+        }
       }
       // flatColKey = colKey.join(this.stringJoinChar);
       flatColKey = join(colKey, this.stringJoinChar);
@@ -1476,9 +1488,9 @@ export class Dataset {
           const dimensionIndex = that.columns.indexOf(dimension);
           if (dimensionIndex >= 0) {
             const colTotalKey = colKey.slice(0, dimensionIndex + 1);
-            if (this.columnHierarchyType === 'grid') {
-              colTotalKey.push(that.colSubTotalLabel);
-            }
+            // if (this.columnHierarchyType === 'grid') {
+            colTotalKey.push(that.colSubTotalLabel);
+            // }
             const flatColTotalKey = colTotalKey.join(this.stringJoinChar);
             if (this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey]) {
               // 利用汇总数据替换
@@ -1632,7 +1644,7 @@ export class Dataset {
               const dimensionIndex = that.rows.indexOf(dimension);
               if (dimensionIndex >= 0 && dimensionIndex < that.rows.length - 1) {
                 const rowTotalKey = rowKey.slice(0, dimensionIndex + 1);
-                if (this.rowHierarchyType === 'grid') {
+                if (this.rowHierarchyType !== 'tree') {
                   // 如果是tree的情况则不追加小计单元格值
                   rowTotalKey.push(that.rowSubTotalLabel);
                 }
@@ -2166,7 +2178,7 @@ export class Dataset {
         });
       }
       if ((node.children as [])?.length > 0) {
-        if (that.rowHierarchyType !== 'grid' && type === 'row') {
+        if (that.rowHierarchyType === 'tree' && type === 'row') {
           arr[arr.length - 1].childKeys = [];
           result.push([...arr]);
         }
@@ -2236,7 +2248,7 @@ export class Dataset {
       }
       //上面条件符合 在进一步判断 如果有是指标在行的情况 且展示为树形结构，除了有指标的节点外 其他节点都不需要统计指标值
       if (isMatch) {
-        if (!this.indicatorsAsCol && this.rowHierarchyType !== 'grid') {
+        if (!this.indicatorsAsCol && this.rowHierarchyType === 'tree') {
           if (
             !dimensionPath.find(path => {
               return path.indicatorKey;

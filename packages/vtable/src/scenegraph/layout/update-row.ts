@@ -147,7 +147,12 @@ export function updateRow(
       const minRow = Math.min(...addRows);
       scene.proxy.rowUpdatePos = Math.min(minRow, scene.proxy.rowUpdatePos);
     }
-    scene.proxy.rowUpdateDirection = 'down';
+    // if (scene.proxy.rowUpdatePos < scene.proxy.table.frozenRowCount) {
+    scene.proxy.rowUpdateDirection = 'up';
+    // } else {
+    //   scene.proxy.rowUpdateDirection = 'down';
+    // }
+    // console.log('rowUpdateDirection', scene.proxy.rowUpdateDirection);
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
     updateBottomFrozeCellGroups();
     // scene.proxy.progress();
