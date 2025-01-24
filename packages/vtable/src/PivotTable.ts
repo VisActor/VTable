@@ -1528,36 +1528,42 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.scenegraph.updateHierarchyIcon(col, row);
     }
     this.reactCustomLayout?.clearCache();
-    // if (isChangeRowTree) {
-    //   this.scenegraph.updateRow(
-    //     result.removeCellPositions,
-    //     result.addCellPositions,
-    //     result.updateCellPositions,
-    //     recalculateColWidths
-    //   );
-    // } else {
-    //   this.scenegraph.updateCol(result.removeCellPositions, result.addCellPositions, result.updateCellPositions);
-    // }
-    if (
-      this.columnHierarchyType === 'grid-tree' &&
-      this.isColumnHeader(col, row) &&
-      oldFrozenRowCount > this.frozenRowCount //p判断这个
-    ) {
-      callUpdateRowOnScenegraph(result, recalculateColWidths, newFrozenRowCount, oldFrozenRowCount, this.scenegraph);
-      callUpdateColOnScenegraph(result, newFrozenColCount, oldFrozenColCount, this.scenegraph);
+    if (this.rowHierarchyType !== 'grid-tree' && this.columnHierarchyType !== 'grid-tree') {
+      //增加'grid-tree'之前的逻辑是这样子的
+      this.scenegraph.updateRow(
+        result.removeCellPositionsRowDirection,
+        result.addCellPositionsRowDirection,
+        result.updateCellPositionsRowDirection,
+        recalculateColWidths
+      );
     } else {
-      callUpdateColOnScenegraph(result, newFrozenColCount, oldFrozenColCount, this.scenegraph);
-      callUpdateRowOnScenegraph(result, recalculateColWidths, newFrozenRowCount, oldFrozenRowCount, this.scenegraph);
-    }
+      // bug 太多了 直接先全部生成吧!! TODO 性能优化
+      // if (
+      //   this.columnHierarchyType === 'grid-tree' &&
+      //   this.isColumnHeader(col, row) &&
+      //   oldFrozenRowCount > this.frozenRowCount //p判断这个
+      // ) {
+      //   callUpdateRowOnScenegraph(result, recalculateColWidths, newFrozenRowCount, oldFrozenRowCount, this.scenegraph);
+      //   callUpdateColOnScenegraph(result, newFrozenColCount, oldFrozenColCount, this.scenegraph);
+      // } else {
+      //   callUpdateColOnScenegraph(result, newFrozenColCount, oldFrozenColCount, this.scenegraph);
+      //   callUpdateRowOnScenegraph(result, recalculateColWidths, newFrozenRowCount, oldFrozenRowCount, this.scenegraph);
+      // }
 
-    if (this.rowHierarchyType === 'grid-tree' || this.columnHierarchyType === 'grid-tree') {
-      this.scenegraph.updateCornerHeaderCells();
-      // if (newFrozenColCount !== oldFrozenColCount) {
-      this.scenegraph.updateRowHeaderCells();
+      // if (this.rowHierarchyType === 'grid-tree' || this.columnHierarchyType === 'grid-tree') {
+      //   this.scenegraph.updateCornerHeaderCells();
+      //   // if (newFrozenColCount !== oldFrozenColCount) {
+      //   this.scenegraph.updateRowHeaderCells();
+      //   // }
+      //   // if (newFrozenRowCount !== oldFrozenRowCount) {
+      //   this.scenegraph.updateColumnHeaderCells();
+      //   // }
       // }
-      // if (newFrozenRowCount !== oldFrozenRowCount) {
-      this.scenegraph.updateColumnHeaderCells();
-      // }
+      this.scenegraph.clearCells();
+      this.clearCellStyleCache();
+      this.scenegraph.createSceneGraph();
+      this.render();
+      // this.renderWithRecreateCells();
     }
     this.reactCustomLayout?.updateAllCustomCell();
 

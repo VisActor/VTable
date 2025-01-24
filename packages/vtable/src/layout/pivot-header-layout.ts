@@ -3910,7 +3910,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     });
 
-    this.columnDimensionTree = new DimensionTree((this.columnTree as ITreeLayoutHeadNode[]) ?? [], this.sharedVar);
+    this.columnDimensionTree = new DimensionTree(
+      (this.columnTree as ITreeLayoutHeadNode[]) ?? [],
+      this.sharedVar,
+      this.columnHierarchyType,
+      this.columnHierarchyType !== 'grid' ? this.columnExpandLevel : undefined
+    );
     this.rowDimensionTree = new DimensionTree(
       (this.rowTree as ITreeLayoutHeadNode[]) ?? [],
       this.sharedVar,

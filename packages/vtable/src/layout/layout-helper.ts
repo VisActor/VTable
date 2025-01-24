@@ -174,7 +174,9 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
     }
     columnDimensionTree = new DimensionTree(
       (table.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
-      table.layoutNodeId
+      table.layoutNodeId,
+      table.options.columnHierarchyType,
+      table.options.columnHierarchyType !== 'grid' ? table.options.columnExpandLevel ?? 1 : undefined
     );
 
     // if (

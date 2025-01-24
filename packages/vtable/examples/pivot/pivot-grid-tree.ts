@@ -281,7 +281,9 @@ export function createTable() {
             headerFormat(value) {
               return `${value}地区`;
             },
-
+            headerStyle: {
+              textBaseline: 'top'
+            },
             // 指标菜单
             dropDownMenu: ['升序排序I', '降序排序I', '冻结列I'],
             // corner菜单

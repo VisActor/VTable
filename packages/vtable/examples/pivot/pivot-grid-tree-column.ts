@@ -260,6 +260,9 @@ export function createTable() {
             title: '类别',
             headerFormat(value) {
               return `${value}`;
+            },
+            headerStyle: {
+              textBaseline: 'top'
             }
             // width: 200
           }
