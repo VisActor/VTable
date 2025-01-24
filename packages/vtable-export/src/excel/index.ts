@@ -16,11 +16,21 @@ export type CellInfo = {
   row: number;
 };
 
+export type SkipImageExportCellType =
+  | 'image'
+  | 'video'
+  | 'progressbar'
+  | 'sparkline'
+  | 'chart'
+  | 'custom'
+  | 'textWithIcon';
+
 export type ExportVTableToExcelOptions = {
   ignoreIcon?: boolean;
   formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
   formatExcelJSCell?: (cellInfo: CellInfo, cellInExcelJS: ExcelJS.Cell) => ExcelJS.Cell;
   excelJSWorksheetCallback?: (worksheet: ExcelJS.Worksheet) => void;
+  skipImageExportCellType?: SkipImageExportCellType[];
 };
 
 export async function exportVTableToExcel(tableInstance: IVTable, options?: ExportVTableToExcelOptions) {
@@ -173,17 +183,29 @@ async function addCell(
     customRender ||
     customLayout
   ) {
-    const cellImageBase64 = exportCellImg(col, row, tableInstance);
-    const imageId = workbook.addImage({
-      base64: cellImageBase64,
-      extension: 'png'
-    });
-    worksheet.addImage(imageId, {
-      tl: { col: col + 1 / 80, row: row + 1 / 120 } as any, // ~1px
-      br: { col: col + 1, row: row + 1 } as any,
-      editAs: 'oneCell'
-      // ext: { width: tableInstance.getColWidth(col), height: tableInstance.getRowHeight(row) }
-    });
+    if (
+      !needCellImageExport(
+        cellType,
+        layoutMap.isAxisCell(col, row),
+        !!customRender || !!customLayout,
+        !!(!options?.ignoreIcon && isArray(icons) && icons.length),
+        options
+      )
+    ) {
+      cell = worksheet.getCell(encodeCellAddress(col, row));
+    } else {
+      const cellImageBase64 = exportCellImg(col, row, tableInstance);
+      const imageId = workbook.addImage({
+        base64: cellImageBase64,
+        extension: 'png'
+      });
+      worksheet.addImage(imageId, {
+        tl: { col: col + 1 / 80, row: row + 1 / 120 } as any, // ~1px
+        br: { col: col + 1, row: row + 1 } as any,
+        editAs: 'oneCell'
+        // ext: { width: tableInstance.getColWidth(col), height: tableInstance.getRowHeight(row) }
+      });
+    }
   } else if (cellType === 'text' || cellType === 'link') {
     cell = worksheet.getCell(encodeCellAddress(col, row));
     cell.value = getCellValue(cellValue, cellType);
@@ -193,20 +215,24 @@ async function addCell(
     const offset = getHierarchyOffset(col, row, tableInstance as any);
     cell.alignment = getCellAlignment(cellStyle, Math.ceil(offset / cell.font.size));
   } else if (cellType === 'chart') {
-    const cellGroup = tableInstance.scenegraph.getCell(col, row);
-    renderChart(cellGroup.firstChild as any); // render chart first
-    const cellImageBase64 = exportCellImg(col, row, tableInstance);
-    const imageId = workbook.addImage({
-      base64: cellImageBase64,
-      extension: 'png'
-    });
-    worksheet.addImage(imageId, {
-      tl: { col: col + 1 / 80, row: row + 1 / 120 } as any, // ~1px
-      br: { col: col + 1, row: row + 1 } as any,
-      editAs: 'oneCell'
-      // ext: { width: tableInstance.getColWidth(col), height: tableInstance.getRowHeight(row) }
-    });
-    tableInstance.scenegraph.updateNextFrame(); // rerender chart to avoid display error
+    if (!needCellImageExport('chart', false, false, false, options)) {
+      cell = worksheet.getCell(encodeCellAddress(col, row));
+    } else {
+      const cellGroup = tableInstance.scenegraph.getCell(col, row);
+      renderChart(cellGroup.firstChild as any); // render chart first
+      const cellImageBase64 = exportCellImg(col, row, tableInstance);
+      const imageId = workbook.addImage({
+        base64: cellImageBase64,
+        extension: 'png'
+      });
+      worksheet.addImage(imageId, {
+        tl: { col: col + 1 / 80, row: row + 1 / 120 } as any, // ~1px
+        br: { col: col + 1, row: row + 1 } as any,
+        editAs: 'oneCell'
+        // ext: { width: tableInstance.getColWidth(col), height: tableInstance.getRowHeight(row) }
+      });
+      tableInstance.scenegraph.updateNextFrame(); // rerender chart to avoid display error
+    }
   }
 
   if (cell && options?.formatExcelJSCell) {
@@ -248,4 +274,33 @@ function exportCellImg(col: number, row: number, tableInstance: IVTable) {
     cellGroup.parent?.removeChild(cellGroup);
   }
   return canvas.toDataURL();
+}
+
+function needCellImageExport(
+  cellType: CellType,
+  isAxisCell: boolean,
+  isCustomCell: boolean,
+  isTextWithIcon: boolean,
+  options?: ExportVTableToExcelOptions
+) {
+  if (!options?.skipImageExportCellType) {
+    return true;
+  }
+
+  if (
+    cellType === 'image' ||
+    cellType === 'video' ||
+    cellType === 'progressbar' ||
+    cellType === 'sparkline' ||
+    cellType === 'chart'
+  ) {
+    return !options.skipImageExportCellType.includes(cellType);
+  } else if (isAxisCell) {
+    return !options.skipImageExportCellType.includes('chart');
+  } else if (isCustomCell) {
+    return !options.skipImageExportCellType.includes('custom');
+  } else if (isTextWithIcon) {
+    return !options.skipImageExportCellType.includes('textWithIcon');
+  }
+  return true;
 }
