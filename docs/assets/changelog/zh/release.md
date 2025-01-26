@@ -2,21 +2,9 @@
 
 2025-01-26
 
-
 **🆕 新增功能**
 
-- **@visactor/vtable**: dependField&batType support function in progress-bar
-- **@visactor/vtable**: add emptyTip click event
-- **@visactor/vtable**: canvasWidth canvasHeight support auto setting [#3089](https://github.com/VisActor/VTable/issues/3089)
-- **@visactor/vtable**: add data update in list-table tree(group) mode
-- **@visactor/vtable**: add groupTitleFieldFormat API [#3092](https://github.com/VisActor/VTable/issues/3092)
-- **@visactor/vtable**: add skipImageExportCellType in vtable-export
-
-**🐛 功能修复**
-
-- **@visactor/vtable**: when mouse leave gantt should trigger mouseleave_taskbar [#3294](https://github.com/VisActor/VTable/issues/3294)
-- **@visactor/vtable**: fix empty-tip layout problem when resize window [#3312](https://github.com/VisActor/VTable/issues/3312)
-- **@visactor/vtable**: remove tree limit in handleTextStick() [#3274](https://github.com/VisActor/VTable/issues/3274)
+- **@visactor/vtable**: 进度条中 dependField&batType 配置支持函数配置
 
 [更多详情请查看 v1.15.2](https://github.com/VisActor/VTable/releases/tag/v1.15.2)
 
@@ -24,12 +12,11 @@
 
 2025-01-17
 
-
 **🆕 新增功能**
 
 - **@visactor/vtable**: 添加 emptyTip 点击事件
 - **@visactor/vtable**: canvasWidth canvasHeight 支持'auto'设置 [#3089](https://github.com/VisActor/VTable/issues/3089)
-- **@visactor/vtable**: 在基本表tree及group模式中支持添加数据及更新数据接口
+- **@visactor/vtable**: 在基本表 tree 及 group 模式中支持添加数据及更新数据接口
 - **@visactor/vtable**: 添加 groupTitleFieldFormat API [#3092](https://github.com/VisActor/VTable/issues/3092)
 
 **🐛 功能修复**
@@ -47,36 +34,34 @@
 **🆕 新增功能**
 
 - **@visactor/vtable**: 透视表支持注册自定义聚合类型 [#1508](https://github.com/VisActor/VTable/issues/1508)
-- **@visactor/vtable**: 优化透视表中的frozenColCount功能工作正常 [#3201](https://github.com/VisActor/VTable/issues/3201)
-- **@visactor/vtable-gantt**: 添加moveToExtendDateRange选项，可以拖拽超出甘特图日期范围时自动扩展日期 [#3221](https://github.com/VisActor/VTable/issues/3221)
-- **@visactor/vtable-gantt**: 添加keyboardOptions选项，并添加了delete_dependency_link和contextmenu_dependency_link事件 [#3268](https://github.com/VisActor/VTable/issues/3268)
-- **@visactor/vtable**: customMergeCell支持数组配置 [#3202](https://github.com/VisActor/VTable/issues/3202)
-- **@visactor/vtable**: 在emptyTip中添加displayMode
-- **@visactor/vtable**: groupby支持数组配置
-- **@visactor/vtable**: 在react-component中添加penetrateEventList配置
-- **@visactor/vtable**: 在react-vtable中添加keepColumnWidthChange属性
-- **@visactor/vtable**: 在customConfig中添加imageAnonymous
-- **@visactor/vtable**: 透视表中的aggregationType为custom时配合aggregationFun使用 [#1508](https://github.com/VisActor/VTable/issues/1508)
+- **@visactor/vtable**: 优化透视表中的 frozenColCount 功能工作正常 [#3201](https://github.com/VisActor/VTable/issues/3201)
+- **@visactor/vtable-gantt**: 添加 moveToExtendDateRange 选项，可以拖拽超出甘特图日期范围时自动扩展日期 [#3221](https://github.com/VisActor/VTable/issues/3221)
+- **@visactor/vtable-gantt**: 添加 keyboardOptions 选项，并添加了 delete_dependency_link 和 contextmenu_dependency_link 事件 [#3268](https://github.com/VisActor/VTable/issues/3268)
+- **@visactor/vtable**: customMergeCell 支持数组配置 [#3202](https://github.com/VisActor/VTable/issues/3202)
+- **@visactor/vtable**: 在 emptyTip 中添加 displayMode
+- **@visactor/vtable**: groupby 支持数组配置
+- **@visactor/vtable**: 在 react-component 中添加 penetrateEventList 配置
+- **@visactor/vtable**: 在 react-vtable 中添加 keepColumnWidthChange 属性
+- **@visactor/vtable**: 在 customConfig 中添加 imageAnonymous
+- **@visactor/vtable**: 透视表中的 aggregationType 为 custom 时配合 aggregationFun 使用 [#1508](https://github.com/VisActor/VTable/issues/1508)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: 当所有列都隐藏时，不应该生成单元格id [#3199](https://github.com/VisActor/VTable/issues/3199)
-- **@visactor/vtable**: 修复当头部树指示器节点有不同的值时，columnWidthConfig不起作用 [#3258](https://github.com/VisActor/VTable/issues/3258)
+- **@visactor/vtable**: 当所有列都隐藏时，不应该生成单元格 id [#3199](https://github.com/VisActor/VTable/issues/3199)
+- **@visactor/vtable**: 修复当头部树指示器节点有不同的值时，columnWidthConfig 不起作用 [#3258](https://github.com/VisActor/VTable/issues/3258)
 - **@visactor/vtable-gantt**: 当调整任务栏的宽度时，文本标签应该更新 [#3263](https://github.com/VisActor/VTable/issues/3263)
 - **@visactor/vtable-gantt**: 当左边的表格设置为自动宽度时，甘特图渲染错误 [#3266](https://github.com/VisActor/VTable/issues/3266)
-- **@visactor/vtable-gantt**: 将taskRecord类型从string改为any
+- **@visactor/vtable-gantt**: 将 taskRecord 类型从 string 改为 any
 - **@visactor/vtable**: 修复树形结构表头中的聚合显示问题
 - **@visactor/vtable**: 修复折叠复选框状态更新问题 [#3171](https://github.com/VisActor/VTable/issues/3171)
-- **@visactor/vtable**: 在dataset中设置记录时，清除排序目标
-- **@visactor/vtable**: 修复react-dom-component中的冻结更新问题
-- **@visactor/vtable**: 修复getCheckboxState()中的迭代器映射问题 [#3177](https://github.com/VisActor/VTable/issues/3177) [#3239](https://github.com/VisActor/VTable/issues/3239)
+- **@visactor/vtable**: 在 dataset 中设置记录时，清除排序目标
+- **@visactor/vtable**: 修复 react-dom-component 中的冻结更新问题
+- **@visactor/vtable**: 修复 getCheckboxState()中的迭代器映射问题 [#3177](https://github.com/VisActor/VTable/issues/3177) [#3239](https://github.com/VisActor/VTable/issues/3239)
 
 **📖 文档更新**
 
 - **@visactor/vtable**: 添加天气日历演示
 - **@visactor/vtable**: 添加日程可创建文档
-
-
 
 [更多详情请查看 v1.15.0](https://github.com/VisActor/VTable/releases/tag/v1.15.0)
 
@@ -84,18 +69,16 @@
 
 2024-12-27
 
-
 **🆕 新增功能**
 
-- **@visactor/vtable**: 透视表指标及维度的showSort支持函数配置 [#2630](https://github.com/VisActor/VTable/issues/2630)
-- **@visactor/vtable**: 透视表指标支持设置hide隐藏功能 [#2257](https://github.com/VisActor/VTable/issues/2257) [#2451](https://github.com/VisActor/VTable/issues/2451)
-- **@visactor/vtable**: 添加enableTreeCheckbox配置 groupBy分组模式下支持复选框交互
+- **@visactor/vtable**: 透视表指标及维度的 showSort 支持函数配置 [#2630](https://github.com/VisActor/VTable/issues/2630)
+- **@visactor/vtable**: 透视表指标支持设置 hide 隐藏功能 [#2257](https://github.com/VisActor/VTable/issues/2257) [#2451](https://github.com/VisActor/VTable/issues/2451)
+- **@visactor/vtable**: 添加 enableTreeCheckbox 配置 groupBy 分组模式下支持复选框交互
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: 修复borderLineWidth数组配置 [#3183](https://github.com/VisActor/VTable/issues/3183)
-- **@visactor/vtable**: 当设置resizable为false时，悬停任务栏出现错误 [#3189](https://github.com/VisActor/VTable/issues/3189)
-
+- **@visactor/vtable**: 修复 borderLineWidth 数组配置 [#3183](https://github.com/VisActor/VTable/issues/3183)
+- **@visactor/vtable**: 当设置 resizable 为 false 时，悬停任务栏出现错误 [#3189](https://github.com/VisActor/VTable/issues/3189)
 
 [更多详情请查看 v1.14.3](https://github.com/VisActor/VTable/releases/tag/v1.14.3)
 
@@ -103,20 +86,18 @@
 
 2024-12-23
 
-
 **🆕 新增功能**
-- **@visactor/vtable-gantt**: 添加grid配置支持行背景颜色和列背景颜色、周末背景颜色 [#3155](https://github.com/VisActor/VTable/issues/3155)
+
+- **@visactor/vtable-gantt**: 添加 grid 配置支持行背景颜色和列背景颜色、周末背景颜色 [#3155](https://github.com/VisActor/VTable/issues/3155)
 
 **🐛 功能修复**
 
 - **@visactor/vtable-gantt**: 甘特图任务条调整宽度交互无法限制一个时间单位 [#3161](https://github.com/VisActor/VTable/issues/3161)
-- **@visactor/vtable**: 修复系列Ids配置中的轴计数错误
+- **@visactor/vtable**: 修复系列 Ids 配置中的轴计数错误
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: 添加选项tableSizeAntiJitter防止容器宽高小数情况下表格抖动[#3160](https://github.com/VisActor/VTable/issues/3160)
-
-
+- **@visactor/vtable**: 添加选项 tableSizeAntiJitter 防止容器宽高小数情况下表格抖动[#3160](https://github.com/VisActor/VTable/issues/3160)
 
 [更多详情请查看 v1.14.1](https://github.com/VisActor/VTable/releases/tag/v1.14.1)
 
