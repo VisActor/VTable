@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: updateScales to quarter taskbar size error #3348\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
