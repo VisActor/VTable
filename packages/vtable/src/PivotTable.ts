@@ -1491,6 +1491,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   _refreshHierarchyState(col: number, row: number, recalculateColWidths: boolean = true, beforeUpdateCell?: Function) {
     const oldFrozenColCount = this.frozenColCount;
     const oldFrozenRowCount = this.frozenRowCount;
+    const visibleStartRow = this.getBodyVisibleRowRange().rowStart;
     this.internalProps._oldRowCount = this.rowCount;
     this.internalProps._oldColCount = this.colCount;
     let notFillWidth = false;
@@ -1562,7 +1563,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.scenegraph.clearCells();
       this.clearCellStyleCache();
       this.scenegraph.createSceneGraph();
-      this.render();
+      this.scrollToRow(visibleStartRow);
       // this.renderWithRecreateCells();
     }
     this.reactCustomLayout?.updateAllCustomCell();
