@@ -1143,7 +1143,11 @@ export class Dataset {
       }
       if (rowKey.length < this.rows.length && this.rowHierarchyType === 'grid-tree') {
         if (rowKey[0] === this.rowGrandTotalLabel) {
-        } else if (this.totals?.row?.subTotalsDimensions && this.totals?.row?.subTotalsDimensions?.length >= 1) {
+        } else if (
+          this.totals?.row?.subTotalsDimensions &&
+          this.totals?.row?.subTotalsDimensions?.length >= 1 &&
+          rowKey[rowKey.length - 1] !== this.rowSubTotalLabel
+        ) {
           rowKey.push(this.rowSubTotalLabel);
         }
       }
