@@ -1,3 +1,25 @@
+# v1.15.2
+
+2025-01-26
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: dependField&batType support function in progress-bar
+- **@visactor/vtable**: add emptyTip click event
+- **@visactor/vtable**: canvasWidth canvasHeight support auto setting [#3089](https://github.com/VisActor/VTable/issues/3089)
+- **@visactor/vtable**: add data update in list-table tree(group) mode
+- **@visactor/vtable**: add groupTitleFieldFormat API [#3092](https://github.com/VisActor/VTable/issues/3092)
+- **@visactor/vtable**: add skipImageExportCellType in vtable-export
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when mouse leave gantt should trigger mouseleave_taskbar [#3294](https://github.com/VisActor/VTable/issues/3294)
+- **@visactor/vtable**: fix empty-tip layout problem when resize window [#3312](https://github.com/VisActor/VTable/issues/3312)
+- **@visactor/vtable**: remove tree limit in handleTextStick() [#3274](https://github.com/VisActor/VTable/issues/3274)
+
+[more detail about v1.15.2](https://github.com/VisActor/VTable/releases/tag/v1.15.2)
+
 # v1.15.1
 
 2025-01-17
