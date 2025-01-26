@@ -34,16 +34,16 @@ export class EmptyTip {
   private _cacheAttrs: EmptyTipAttributes;
   constructor(emptyTipOption: IEmptyTip | true, table: BaseTableAPI) {
     this.table = table;
+    this._emptyTipOption = Object.assign(this._emptyTipOption, emptyTipOption === true ? {} : emptyTipOption);
     // deal with displayMode
-    if (!isBoolean(emptyTipOption) && !isValid(emptyTipOption.displayMode)) {
+    if (!isValid(this._emptyTipOption.displayMode)) {
       // for list table and pivot table current display effect
       if (this.table.isListTable()) {
-        emptyTipOption.displayMode = 'basedOnTable';
+        this._emptyTipOption.displayMode = 'basedOnTable';
       } else {
-        emptyTipOption.displayMode = 'basedOnContainer';
+        this._emptyTipOption.displayMode = 'basedOnContainer';
       }
     }
-    this._emptyTipOption = Object.assign(this._emptyTipOption, emptyTipOption === true ? {} : emptyTipOption);
     this._emptyTipComponent = this._createOrUpdateEmptyTipComponent(this._getEmptyTipAttrs());
   }
 
