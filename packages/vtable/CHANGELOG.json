@@ -2,6 +2,42 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.15.2",
+      "tag": "@visactor/vtable_v1.15.2",
+      "date": "Sun, 26 Jan 2025 08:59:28 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when mouse leave gantt should trigger mouseleave_taskbar #3294\n\n"
+          },
+          {
+            "comment": "feat: dependField&batType support function in progress-bar"
+          },
+          {
+            "comment": "feat: add emptyTip click event"
+          },
+          {
+            "comment": "feat: canvasWidth canvasHeight support auto setting #3089\n\n"
+          },
+          {
+            "comment": "feat: add data update in list-table tree(group) mode"
+          },
+          {
+            "comment": "feat: add groupTitleFieldFormat API #3092"
+          },
+          {
+            "comment": "feat: add skipImageExportCellType in vtable-export"
+          },
+          {
+            "comment": "fix: fix empty-tip layout problem when resize window #3312"
+          },
+          {
+            "comment": "fix: remove tree limit in handleTextStick() #3274"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.15.1",
       "tag": "@visactor/vtable_v1.15.1",
       "date": "Fri, 17 Jan 2025 10:20:01 GMT",
