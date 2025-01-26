@@ -2,28 +2,15 @@
 
 2025-01-26
 
-
 **🆕 New feature**
 
 - **@visactor/vtable**: dependField&batType support function in progress-bar
-- **@visactor/vtable**: add emptyTip click event
-- **@visactor/vtable**: canvasWidth canvasHeight support auto setting [#3089](https://github.com/VisActor/VTable/issues/3089)
-- **@visactor/vtable**: add data update in list-table tree(group) mode
-- **@visactor/vtable**: add groupTitleFieldFormat API [#3092](https://github.com/VisActor/VTable/issues/3092)
-- **@visactor/vtable**: add skipImageExportCellType in vtable-export
-
-**🐛 Bug fix**
-
-- **@visactor/vtable**: when mouse leave gantt should trigger mouseleave_taskbar [#3294](https://github.com/VisActor/VTable/issues/3294)
-- **@visactor/vtable**: fix empty-tip layout problem when resize window [#3312](https://github.com/VisActor/VTable/issues/3312)
-- **@visactor/vtable**: remove tree limit in handleTextStick() [#3274](https://github.com/VisActor/VTable/issues/3274)
 
 [more detail about v1.15.2](https://github.com/VisActor/VTable/releases/tag/v1.15.2)
 
 # v1.15.1
 
 2025-01-17
-
 
 **🆕 New feature**
 
@@ -76,14 +63,11 @@
 - **@visactor/vtable**: add weather calendar demo
 - **@visactor/vtable**: add scheduleCreatable doc
 
-
-
 [more detail about v1.15.0](https://github.com/VisActor/VTable/releases/tag/v1.15.0)
 
 # v1.14.3
 
 2024-12-27
-
 
 **🆕 New feature**
 
@@ -96,14 +80,11 @@
 - **@visactor/vtable**: fix borderLineWidth array config [#3183](https://github.com/VisActor/VTable/issues/3183)
 - **@visactor/vtable**: when set resizable false hover taskbar occor error [#3189](https://github.com/VisActor/VTable/issues/3189)
 
-
-
 [more detail about v1.14.3](https://github.com/VisActor/VTable/releases/tag/v1.14.3)
 
 # v1.14.1
 
 2024-12-23
-
 
 **🆕 New feature**
 
@@ -117,8 +98,6 @@
 **🔨 Refactor**
 
 - **@visactor/vtable**: add option tableSizeAntiJitter [#3160](https://github.com/VisActor/VTable/issues/3160)
-
-
 
 [more detail about v1.14.1](https://github.com/VisActor/VTable/releases/tag/v1.14.1)
 
