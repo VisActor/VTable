@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "1.11.6-alpha.5",
+  "version": "1.11.6-alpha.6",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -51,7 +51,7 @@
     "test-nodejs": "ts-node --transpileOnly --skipProject ./nodejs/index.ts"
   },
   "dependencies": {
-    "@visactor/vtable-editors": "workspace:1.11.6-alpha.5",
+    "@visactor/vtable-editors": "workspace:1.11.6-alpha.6",
     "@visactor/vrender-core": "0.21.0-alpha.13",
     "@visactor/vrender-kits": "0.21.0-alpha.13",
     "@visactor/vrender-components": "0.21.0-alpha.13",

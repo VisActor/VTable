@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-export",
-  "version": "1.11.6-alpha.5",
+  "version": "1.11.6-alpha.6",
   "description": "The export util of VTable",
   "author": {
     "name": "VisActor",
@@ -35,7 +35,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:1.11.6-alpha.5",
+    "@visactor/vtable": "workspace:1.11.6-alpha.6",
     "@visactor/vutils": "~0.18.14",
     "file-saver": "2.0.5",
     "@types/file-saver": "2.0.7",
