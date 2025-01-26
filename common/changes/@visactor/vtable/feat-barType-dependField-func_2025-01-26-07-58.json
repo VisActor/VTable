@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: dependField&batType support function in progress-bar",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
