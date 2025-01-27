@@ -1142,6 +1142,7 @@ export class Dataset {
         });
       }
       if (rowKey.length < this.rows.length && this.rowHierarchyType === 'grid-tree') {
+        // 如果是平铺树结构 小计需要处理补充到rowKey中
         if (rowKey[0] === this.rowGrandTotalLabel) {
         } else if (
           this.totals?.row?.subTotalsDimensions &&
