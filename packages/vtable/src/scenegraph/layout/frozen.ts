@@ -523,7 +523,7 @@ export function resetRowFrozen(scene: Scenegraph) {
   scene.frozenRowCount = scene.table.frozenRowCount;
   scene.frozenColCount = scene.rowHeaderGroup?.childrenCount ?? 0;
   //   scene.proxy.colStart = scene.table.frozenColCount;
-  scene.proxy.rowStart = (scene.bodyGroup.firstChild.firstChild as any)?.row ?? scene.table.frozenRowCount;
+  scene.proxy.rowStart = (scene.bodyGroup.firstChild?.firstChild as any)?.row ?? scene.table.frozenRowCount;
   scene.bodyGroup.setAttribute('y', scene.colHeaderGroup.attribute.height);
   scene.rowHeaderGroup.setAttribute('y', scene.cornerHeaderGroup.attribute.height);
   // scene.updateContainerAttrWidthAndX();
