@@ -188,7 +188,8 @@ export class DimensionTree {
       (children?.length >= 1 || children === true)
     ) {
       //树形展示 有子节点 且下一层需要展开
-      if (children === true || !children[0]?.indicatorKey) {
+      if (!(children[0]?.indicatorKey && this.hierarchyType === 'grid-tree')) {
+        //平铺情况 指标已经是最后一层且已经显示了 不需要设置图标昨天
         node.hierarchyState = HierarchyState.expand;
       }
       children?.length >= 1 &&
@@ -200,7 +201,9 @@ export class DimensionTree {
         });
     } else if (children?.length >= 1 || children === true) {
       //树形展示 有子节点 且下一层不需要展开
-      if (children === true || !children[0]?.indicatorKey) {
+
+      if (!(children[0]?.indicatorKey && this.hierarchyType === 'grid-tree')) {
+        //平铺情况 指标已经是最后一层且已经显示了 不需要设置图标昨天
         node.hierarchyState = HierarchyState.collapse;
       }
       children?.length >= 1 &&
