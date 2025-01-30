@@ -739,17 +739,20 @@ export function dealHeaderForGridTreeMode(
   _headerCellIds[row][layoutMap.colIndex] = id;
 
   // 处理汇总小计跨维度层级的情况
-  const span = Math.min(expandedMaxLevel, (hd as any).levelSpan);
-  if (span > 1) {
-    for (let i = 1; i < span; i++) {
-      if (!_headerCellIds[row + i]) {
-        _headerCellIds[row + i] = [];
+  const span = Math.min(
+    (isRowTree ? indicatorsAsCol : !indicatorsAsCol) ? expandedMaxLevel : expandedMaxLevel - 1,
+    (hd as any).levelSpan ?? 1000
+  );
+  if (span > 0) {
+    for (let r = row + 1; r < span; r++) {
+      if (!_headerCellIds[r]) {
+        _headerCellIds[r] = [];
         // 当行前几个没有赋值的id 赋值
         for (let col = 0; col < layoutMap.colIndex; col++) {
-          _headerCellIds[row + i][col] = _headerCellIds[row][col];
+          _headerCellIds[r][col] = _headerCellIds[row][col];
         }
       }
-      _headerCellIds[row + i][layoutMap.colIndex] = id;
+      _headerCellIds[r][layoutMap.colIndex] = id;
     }
   }
 

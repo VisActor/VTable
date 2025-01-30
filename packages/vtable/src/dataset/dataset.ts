@@ -1169,7 +1169,11 @@ export class Dataset {
       }
       if (colKey.length < this.columns.length && this.columnHierarchyType === 'grid-tree') {
         if (colKey[0] === this.colGrandTotalLabel) {
-        } else if (this.totals?.column?.subTotalsDimensions && this.totals?.column?.subTotalsDimensions?.length >= 1) {
+        } else if (
+          this.totals?.column?.subTotalsDimensions &&
+          this.totals?.column?.subTotalsDimensions?.length >= 1 &&
+          colKey[colKey.length - 1] !== this.colSubTotalLabel
+        ) {
           colKey.push(this.colSubTotalLabel);
         }
       }
