@@ -62,7 +62,7 @@ export class DimensionTree {
   hasHideNode = false;
   //树形展示 会将非叶子节点单独展示一行 所以size会增加非叶子节点的个数
   sizeIncludeParent = false;
-  rowExpandLevel: number;
+  setExpandLevel: number;
   hierarchyType: 'grid' | 'tree' | 'grid-tree';
   tree: ITreeLayoutHeadNode = {
     id: 0,
@@ -96,7 +96,7 @@ export class DimensionTree {
     rowExpandLevel: number = undefined
   ) {
     this.sizeIncludeParent = rowExpandLevel !== null && rowExpandLevel !== undefined;
-    this.rowExpandLevel = rowExpandLevel;
+    this.setExpandLevel = rowExpandLevel;
     this.hierarchyType = hierarchyType;
     this.sharedVar = sharedVar;
     this.reset(tree);
@@ -184,7 +184,7 @@ export class DimensionTree {
       });
     } else if (
       !node.hierarchyState &&
-      node.level + 1 < this.rowExpandLevel &&
+      node.level + 1 < this.setExpandLevel &&
       (children?.length >= 1 || children === true)
     ) {
       //树形展示 有子节点 且下一层需要展开
