@@ -1,6 +1,25 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 17 Jan 2025 10:20:01 GMT and should not be manually modified.
+This log was last generated on Sun, 26 Jan 2025 08:59:28 GMT and should not be manually modified.
+
+## 1.15.2
+Sun, 26 Jan 2025 08:59:28 GMT
+
+### Updates
+
+- fix: when mouse leave gantt should trigger mouseleave_taskbar #3294
+
+
+- feat: dependField&batType support function in progress-bar
+- feat: add emptyTip click event
+- feat: canvasWidth canvasHeight support auto setting #3089
+
+
+- feat: add data update in list-table tree(group) mode
+- feat: add groupTitleFieldFormat API #3092
+- feat: add skipImageExportCellType in vtable-export
+- fix: fix empty-tip layout problem when resize window #3312
+- fix: remove tree limit in handleTextStick() #3274
 
 ## 1.15.1
 Fri, 17 Jan 2025 10:20:01 GMT

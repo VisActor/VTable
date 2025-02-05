@@ -68,7 +68,9 @@ export interface IBasicColumnBodyDefine {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo & { table: BaseTableAPI }) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((
+        args: CellInfo & { table: BaseTableAPI }
+      ) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
 
   // cellType?: ColumnTypeOption | BaseColumn<T, any> | null;
 

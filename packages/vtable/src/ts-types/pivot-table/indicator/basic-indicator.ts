@@ -57,7 +57,7 @@ export interface IBasicColumnIndicator {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
 
   /** 指标值body单元格自定义渲染内容定义 */
   customRender?: ICustomRender; // body单元格的自定义内容
