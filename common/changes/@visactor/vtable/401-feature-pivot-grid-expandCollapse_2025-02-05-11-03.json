@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "Merge remote-tracking branch origin/develop into 401-feature-pivot-grid-expandCollapse\n\n",
-      "type": "none",
+      "comment": "feat: add gird-tree mode for pivot table\n\n",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
