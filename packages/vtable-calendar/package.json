@@ -35,7 +35,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:1.15.2-alpha.0",
+    "@visactor/vtable": "workspace:1.15.2",
     "@visactor/vutils": "~0.19.1",
     "date-fns": "3.6.0"
   },
