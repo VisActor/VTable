@@ -120,8 +120,15 @@
             {
               "path": "pivot_table_tree",
               "title": {
-                "zh": "树形结构",
-                "en": "pivot table tree"
+                "zh": "表头树形展示",
+                "en": "pivot table tree show"
+              }
+            },
+            {
+              "path": "pivot_table_grid_tree",
+              "title": {
+                "zh": "表头平铺和树形结合展示",
+                "en": "pivot table gird&tree show"
               }
             },
             {
