@@ -129,7 +129,7 @@ export interface IRowSeriesNumber {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
   // /** 选中整行或者全选时 是否包括序号部分 */
   // selectRangeInclude?: boolean;
   /** 是否可拖拽顺序 */
@@ -155,7 +155,7 @@ export interface ColumnSeriesNumber {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
   /** 选中整行或者全选时 是否包括序号部分 */
   selectRangeInclude?: boolean;
   /** 是否可拖拽顺序 */

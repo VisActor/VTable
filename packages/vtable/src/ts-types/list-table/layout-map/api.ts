@@ -55,7 +55,7 @@ export interface HeaderData extends WidthData {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
   icons?: (string | ColumnIconOption)[] | ((args: CellInfo) => (string | ColumnIconOption)[]);
 
   field: FieldDef;
@@ -117,7 +117,7 @@ export interface ColumnData extends WidthData {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
 
   cellType: 'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart' | 'checkbox' | 'radio';
   /** 如果是绘制图表库组件的图表类型 需要将注入的组件名称 写到chartType */
@@ -165,7 +165,7 @@ export interface IndicatorData extends WidthData {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
   sparklineSpec?: SparklineSpec | ((arg0: CustomRenderFunctionArg) => SparklineSpec);
   /**
    * 是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
@@ -187,7 +187,7 @@ export interface SeriesNumberColumnData extends WidthData {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
   cellType: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   headerType: 'text' | 'link' | 'image' | 'video' | 'checkbox';
