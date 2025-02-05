@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "feat: add gird-tree mode for pivot table\n\n",
+      "comment": "feat: add grid-tree mode for pivot table\n\n",
       "type": "minor",
       "packageName": "@visactor/vtable"
     }
