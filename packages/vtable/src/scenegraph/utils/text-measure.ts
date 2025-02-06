@@ -15,7 +15,7 @@ import { MeasureModeEnum } from '@visactor/vrender-core';
 //   TextMeasureContribution
 // } from '@visactor/vrender/es/core/contributions/textMeasure/textMeasure-contribution';
 import type { ITextMeasureOption, ITextSize } from '@visactor/vutils';
-import { TextMeasure } from '@visactor/vutils';
+import { isValid, TextMeasure } from '@visactor/vutils';
 
 let customAlphabetCharSet = '';
 let textMeasureMode: 'quick' | 'canvas' = 'quick';
@@ -92,6 +92,12 @@ export class FastTextMeasureContribution extends DefaultTextMeasureContribution 
     const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
     const textMeasure = fastTextMeasure.measure(text, textMeasureMode);
+
+    if (!isValid(textMeasure.fontBoundingBoxAscent) && !isValid(textMeasure.fontBoundingBoxDescent)) {
+      const { ascent, descent } = this.measureTextBoundADscentEstimate(options);
+      textMeasure.fontBoundingBoxAscent = ascent;
+      textMeasure.fontBoundingBoxDescent = descent;
+    }
     return textMeasure;
   }
   /**
