@@ -3691,7 +3691,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (row < this.headerLevelCount) {
         // return this.leftRowSeriesNumberColumn[col];
         return Object.assign({}, this.leftRowSeriesNumberColumn[col], {
-          style: this._table.internalProps.rowSeriesNumber.headerStyle
+          style: Object.assign(
+            {},
+            this._table.internalProps.theme.cornerHeaderStyle,
+            this._table.internalProps.rowSeriesNumber.headerStyle
+          )
         });
       }
     }
