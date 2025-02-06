@@ -5,6 +5,7 @@ import { regUrl } from '../tools/global';
 import type { LinkColumnDefine, MousePointerCellEvent } from '../ts-types';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import type { IImageColumnBodyDefine } from '../ts-types/list-table/define/image-define';
+import { getOrApply } from '../tools/helper';
 
 export function bindMediaClick(table: BaseTableAPI): void {
   if (Env.mode === 'browser') {
@@ -32,14 +33,30 @@ export function bindMediaClick(table: BaseTableAPI): void {
       const cellValue = table.getCellValue(col, row);
       const cellOriginValue = table.getCellOriginValue(col, row);
       if (cellType === 'link') {
-        const linkJump = (columnDefine as LinkColumnDefine).linkJump !== false;
+        let linkJump: boolean | undefined = getOrApply((columnDefine as LinkColumnDefine).linkJump, {
+          col,
+          row,
+          table,
+          value: cellValue,
+          dataValue: cellOriginValue,
+          cellHeaderPaths: undefined
+        });
+        linkJump = linkJump !== false;
         if (!linkJump) {
           return;
         }
 
         // 点击链接，打开相应页面
         const templateLink = (columnDefine as LinkColumnDefine).templateLink;
-        const linkDetect = (columnDefine as LinkColumnDefine).linkDetect !== false;
+        let linkDetect = getOrApply((columnDefine as LinkColumnDefine).linkDetect, {
+          col,
+          row,
+          table,
+          value: cellValue,
+          dataValue: cellOriginValue,
+          cellHeaderPaths: undefined
+        });
+        linkDetect = linkDetect !== false;
         let url;
         if (templateLink) {
           // 如果有模板链接，使用模板
