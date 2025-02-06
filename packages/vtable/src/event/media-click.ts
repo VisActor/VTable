@@ -44,7 +44,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
         if (templateLink) {
           // 如果有模板链接，使用模板
           const rowData = table.getCellOriginRecord(col, row);
-          if (rowData.vtableMerge) {
+          if (rowData && rowData.vtableMerge) {
             // group title
             return;
           }
