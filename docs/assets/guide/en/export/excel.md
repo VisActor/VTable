@@ -16,8 +16,8 @@ import { downloadExcel, exportVTableToExcel } from '@visactor/vtable-export';
 //......
 const tableInstance = new VTable.ListTable(option);
 
-// donload csv file
-downloadExcel(exportVTableToExcel(tableInstance, optionForExport), 'export-csv');
+// download csv file
+await downloadExcel(exportVTableToExcel(tableInstance, optionForExport), 'export-csv');
 ```
 
 - `exportVTableToExcel`: Table output tool, outputs table instances as an ArrayBuffer in Excel format; option is an optional parameter, see below for configuration items
@@ -75,7 +75,7 @@ const excelOption = {
     }
   }
 };
-downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
 
 ### formatExcelJSCell
@@ -108,7 +108,7 @@ const excelOption = {
     return cellInExceljs;
   }
 };
-downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
 
 If you want to export the original record field value instead of the format displayed in the table, you can use the table.getCellOriginValue(col,row) method to get it and assign it to cellInExceljs.value.
@@ -120,7 +120,7 @@ const excelOption = {
     return cellInExceljs;
   }
 };
-downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
 
 ### excelJSWorksheetCallback
@@ -135,5 +135,5 @@ const excelOption = {
     worksheet.headerFooter.oddFooter = 'Hello World';
   }
 };
-downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
