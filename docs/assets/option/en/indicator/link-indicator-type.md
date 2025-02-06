@@ -12,11 +12,11 @@ Specify the column type as 'link', and the default cellType is 'text' if not spe
     prefix = '##'+${prefix}
 ) }}
 
-##${prefix} linkJump(boolean) = true
+##${prefix} linkJump(boolean|Function) = true
 
 **Exclusive configuration for link type** Whether the link is clickable and can be redirected
 
-##${prefix} linkDetect(boolean) = true
+##${prefix} linkDetect(boolean|Function) = true
 
 **Exclusive configuration for link type** Whether to perform regular detection on the link. If the link conforms to the URL rules, it will be displayed as a link. This configuration does not take effect if a template link is configured.
 
@@ -26,7 +26,7 @@ Specify the column type as 'link', and the default cellType is 'text' if not spe
 
 ##${prefix} linkTarget(string)
 
-**link type exclusive configuration item** Specifying the name of the browsing context the resource is being loaded into, is the second parameter of window.open(), and defaults to '_blank'.
+**link type exclusive configuration item** Specifying the name of the browsing context the resource is being loaded into, is the second parameter of window.open(), and defaults to '\_blank'.
 
 ##${prefix} linkWindowFeatures(string)
 
