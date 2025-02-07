@@ -2537,6 +2537,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 重新创建场景树并重新渲染
    */
   renderWithRecreateCells() {
+    this.internalProps.stick.changedCells.clear();
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.refreshHeader();
     this.internalProps.useOneRowHeightFillAll = false;
