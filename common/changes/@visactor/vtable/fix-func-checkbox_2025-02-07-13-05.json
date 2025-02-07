@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix header checkbox state in functional cellType #3334",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
