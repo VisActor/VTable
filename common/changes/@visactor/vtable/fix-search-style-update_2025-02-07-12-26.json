@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix merge cell style update in vtable-search #3327",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
