@@ -47,6 +47,7 @@ export class SearchComponent {
   queryResult: {
     col: number;
     row: number;
+    range?: VTable.TYPES.CellRange;
     value: string;
   }[];
   currentIndex: number;
@@ -82,11 +83,32 @@ export class SearchComponent {
         }
         const value = this.table.getCellValue(col, row);
         if (this.queryMethod(this.queryStr, value, { col, row, table: this.table })) {
-          this.queryResult.push({
-            col,
-            row,
-            value
-          });
+          // deal merge cell
+          const mergeCell = this.table.getCellRange(col, row);
+          if (mergeCell.start.col !== mergeCell.end.col || mergeCell.start.row !== mergeCell.end.row) {
+            // find is cell already in queryResult
+            let isIn = false;
+            for (let i = this.queryResult.length - 1; i >= 0; i--) {
+              if (this.queryResult[i].col === mergeCell.start.col && this.queryResult[i].row === mergeCell.start.row) {
+                isIn = true;
+                break;
+              }
+            }
+            if (!isIn) {
+              this.queryResult.push({
+                col: mergeCell.start.col,
+                row: mergeCell.start.row,
+                range: mergeCell,
+                value
+              });
+            }
+          } else {
+            this.queryResult.push({
+              col,
+              row,
+              value
+            });
+          }
         }
       }
     }
@@ -123,14 +145,23 @@ export class SearchComponent {
       this.table.registerCustomCellStyle('__search_component_focuse', this.focuseHighlightCellStyle as any);
     }
     for (let i = 0; i < this.queryResult.length; i++) {
-      const { col, row } = this.queryResult[i];
-      this.table.arrangeCustomCellStyle(
-        {
-          col,
-          row
-        },
-        highlight ? '__search_component_highlight' : null
-      );
+      const { col, row, range } = this.queryResult[i];
+      if (range) {
+        this.table.arrangeCustomCellStyle(
+          {
+            range
+          },
+          highlight ? '__search_component_highlight' : null
+        );
+      } else {
+        this.table.arrangeCustomCellStyle(
+          {
+            col,
+            row
+          },
+          highlight ? '__search_component_highlight' : null
+        );
+      }
     }
   }
 
@@ -143,20 +174,46 @@ export class SearchComponent {
     }
     if (this.currentIndex !== -1) {
       // reset last focus
-      this.table.arrangeCustomCellStyle(
-        {
-          col: this.queryResult[this.currentIndex].col,
-          row: this.queryResult[this.currentIndex].row
-        },
-        '__search_component_highlight'
-      );
+      const { col, row, range } = this.queryResult[this.currentIndex];
+      if (range) {
+        this.table.arrangeCustomCellStyle(
+          {
+            range
+          },
+          '__search_component_highlight'
+        );
+      } else {
+        this.table.arrangeCustomCellStyle(
+          {
+            col,
+            row
+          },
+          '__search_component_highlight'
+        );
+      }
     }
     this.currentIndex++;
     if (this.currentIndex >= this.queryResult.length) {
       this.currentIndex = 0;
     }
-    const { col, row } = this.queryResult[this.currentIndex];
-    this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
+    const { col, row, range } = this.queryResult[this.currentIndex];
+    // this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
+    if (range) {
+      this.table.arrangeCustomCellStyle(
+        {
+          range
+        },
+        '__search_component_focuse'
+      );
+    } else {
+      this.table.arrangeCustomCellStyle(
+        {
+          col,
+          row
+        },
+        '__search_component_focuse'
+      );
+    }
 
     this.jumpToCell(col, row);
 
@@ -175,20 +232,53 @@ export class SearchComponent {
     }
     if (this.currentIndex !== -1) {
       // reset last focus
-      this.table.arrangeCustomCellStyle(
-        {
-          col: this.queryResult[this.currentIndex].col,
-          row: this.queryResult[this.currentIndex].row
-        },
-        '__search_component_highlight'
-      );
+      // this.table.arrangeCustomCellStyle(
+      //   {
+      //     col: this.queryResult[this.currentIndex].col,
+      //     row: this.queryResult[this.currentIndex].row
+      //   },
+      //   '__search_component_highlight'
+      // );
+      const { col, row, range } = this.queryResult[this.currentIndex];
+      if (range) {
+        this.table.arrangeCustomCellStyle(
+          {
+            range
+          },
+          '__search_component_highlight'
+        );
+      } else {
+        this.table.arrangeCustomCellStyle(
+          {
+            col,
+            row
+          },
+          '__search_component_highlight'
+        );
+      }
     }
     this.currentIndex--;
     if (this.currentIndex < 0) {
       this.currentIndex = this.queryResult.length - 1;
     }
-    const { col, row } = this.queryResult[this.currentIndex];
-    this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
+    const { col, row, range } = this.queryResult[this.currentIndex];
+    // this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
+    if (range) {
+      this.table.arrangeCustomCellStyle(
+        {
+          range
+        },
+        '__search_component_focuse'
+      );
+    } else {
+      this.table.arrangeCustomCellStyle(
+        {
+          col,
+          row
+        },
+        '__search_component_focuse'
+      );
+    }
 
     this.jumpToCell(col, row);
 
