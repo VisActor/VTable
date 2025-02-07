@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add `specTransformInCell` for support modifying vchart spec of each cell in PivotChart\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "lixuef1313@163.com"
+}
