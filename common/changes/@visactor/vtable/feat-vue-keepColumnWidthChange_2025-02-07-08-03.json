@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add keepColumnWidthChange in vue-vtable #3346",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
