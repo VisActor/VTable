@@ -46,7 +46,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
       container = checkFrozenContainer(graphic);
     }
 
-    if (!(element && ReactDOM && ReactDOM.createRoot)) {
+    if (!(element && ReactDOM && (ReactDOM.createRoot || ReactDOM.render))) {
       return;
     }
     const id = isNil(react.id) ? `${graphic.id ?? graphic._uid}_react` : react.id;
@@ -60,18 +60,36 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, container);
 
       if (wrapContainer) {
-        const root = ReactDOM.createRoot(wrapContainer);
-        root.render(element);
-
         if (!this.htmlMap) {
           this.htmlMap = {};
         }
 
-        this.htmlMap[id] = { root, wrapContainer, nativeContainer, container, renderId: this.renderId, graphic };
+        if (ReactDOM.createRoot) {
+          const root = ReactDOM.createRoot(wrapContainer);
+          root.render(element);
+          this.htmlMap[id] = { root, wrapContainer, nativeContainer, container, renderId: this.renderId, graphic };
+        } else {
+          ReactDOM.render(element, wrapContainer);
+
+          this.htmlMap[id] = {
+            wrapContainer,
+            nativeContainer,
+            container,
+            renderId: this.renderId,
+            unmount: () => {
+              ReactDOM.unmountComponentAtNode(wrapContainer);
+            },
+            graphic
+          };
+        }
       }
     } else {
       // update react element
-      this.htmlMap[id].root.render(element);
+      if (ReactDOM.createRoot) {
+        this.htmlMap[id].root.render(element);
+      } else {
+        ReactDOM.render(element, this.htmlMap[id].wrapContainer);
+      }
     }
 
     if (!this.htmlMap || !this.htmlMap[id]) {
