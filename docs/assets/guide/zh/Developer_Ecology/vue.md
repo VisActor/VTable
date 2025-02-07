@@ -291,6 +291,23 @@ registerChartModule('vchart', VChart);
 // ......
 ```
 
+### 列宽保持
+
+在 Vue-VTable 中，props 的更新会触发 VTable 的 updateOption（或 setRecords），如果手动调整了列宽，则会导致列宽重置为初始状态。如果需要保留列宽，可以配置`keepColumnWidthChange` props 为 true。需要注意的是，在列表中，需要给每个`ListColumn`配置`key`作为唯一标识，透视表中不需要。
+
+```jsx
+<vue-list-table
+  :options="tableOptions"
+  :records="records"
+  :keep-column-width-change="keepColumnWidthChange"
+>
+  <ListColumn key="0" field="0" title="name" />
+  <ListColumn key="1" field="1" title="age" />
+  <ListColumn key="2" field="2" title="sex" />
+  <ListColumn key="3" field="3" title="hobby" />
+</vue-list-table>
+```
+
 ### 自定义组件
 
 为了方便 Vue 开发者快速实现自定义单元格内容，Vue-VTable 提供了封装组件并在单元格中使用的能力。
