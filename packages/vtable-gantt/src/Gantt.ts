@@ -1137,12 +1137,15 @@ export class Gantt extends EventTarget {
 
   getDateRangeByIndex(index: number) {
     const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
-    const startDate = minScale.timelineDates[index].startDate;
-    const endDate = minScale.timelineDates[index].endDate;
-    return {
-      startDate,
-      endDate
-    };
+    if (index < minScale.timelineDates.length) {
+      const startDate = minScale.timelineDates[index].startDate;
+      const endDate = minScale.timelineDates[index].endDate;
+      return {
+        startDate,
+        endDate
+      };
+    }
+    return null;
   }
 
   parseTimeFormat(date: string) {
