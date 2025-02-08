@@ -1,3 +1,36 @@
+# v1.16.0
+
+2025-02-08
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 在 downloadCsv&downloadExcel 中支持异步操作
+- **@visactor/vtable**: linkJump 和 linkDetect 支持函数配置
+- **@visactor/vtable**: 在 customLayout 函数中支持 react17
+- **@visactor/vtable**: 在 vue-vtable 中添加 keepColumnWidthChange 配置 [#3346](https://github.com/VisActor/VTable/issues/3346)
+- **@visactor/vtable**: 为透视表添加网格树形结构模式:`rowHierarchyType: grid-tree` 和 `columnHierarchyType: grid-tree`
+
+**🐛 功能修复**
+
+- **@visactor/vtable-gantt**: 调整甘特图视图大小时需要更新依赖节点大小 [#3287](https://github.com/VisActor/VTable/issues/3287)
+- **@visactor/vtable-gantt**: 修复调整或移动任务条时更新记录的问题 [#3321](https://github.com/VisActor/VTable/issues/3321)
+- **@visactor/vtable-gantt**: 修复更新scale时任务条大小时的错误 [#3348](https://github.com/VisActor/VTable/issues/3348)
+- **@visactor/vtable-gantt**: 修复甘特图中鼠标悬停在最后日期边界时出现的错误 [#3373](https://github.com/VisActor/VTable/issues/3373)
+- **@visactor/vtable**: 修复 getCellOverflowText() 中的裁剪判断
+- **@visactor/vtable**: 修复媒体点击事件中的行数据错误 [#3342](https://github.com/VisActor/VTable/issues/3342)
+- **@visactor/vtable**: 修复函数单元格类型中的表头复选框状态 [#3334](https://github.com/VisActor/VTable/issues/3334)
+- **@visactor/vtable**: 修复文本垂直布局问题 [#3353](https://github.com/VisActor/VTable/issues/3353)
+- **@visactor/vtable**: 修复表格搜索中合并单元格样式更新问题 [#3327](https://github.com/VisActor/VTable/issues/3327)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 行序号单元格现可使用主题表头样式 [#3362](https://github.com/VisActor/VTable/issues/3362)
+
+
+
+[更多详情请查看 v1.16.0](https://github.com/VisActor/VTable/releases/tag/v1.16.0)
+
 # v1.15.2
 
 2025-01-26
