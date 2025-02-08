@@ -782,12 +782,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   ) {
     this._cornerHeaderCellFullPathIds = [];
     const results: HeaderData[] = [];
-    const colLevelCount = this._getColumnHeaderTreeExpandedMaxLevelCount()
-      ? this._getColumnHeaderTreeExpandedMaxLevelCount()
-      : this.columnHeaderLevelCount;
-    const rowLevelCount = this._getRowHeaderTreeExpandedMaxLevelCount()
-      ? this._getRowHeaderTreeExpandedMaxLevelCount()
-      : this.rowHeaderLevelCount;
+    const colLevelCount =
+      this.columnHierarchyType === 'grid-tree'
+        ? this._getColumnHeaderTreeExpandedMaxLevelCount() || this.columnHeaderLevelCount
+        : this.columnHeaderLevelCount;
+    const rowLevelCount =
+      this.rowHierarchyType === 'grid-tree'
+        ? this._getRowHeaderTreeExpandedMaxLevelCount() || this.rowHeaderLevelCount
+        : this.rowHeaderLevelCount;
     if (this.cornerSetting.titleOnDimension === 'all') {
       if (this.indicatorsAsCol) {
         if (colDimensionKeys) {
