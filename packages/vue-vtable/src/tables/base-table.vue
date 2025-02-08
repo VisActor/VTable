@@ -36,8 +36,6 @@ const props = withDefaults(defineProps<BaseTableProps>(), {
   height: '100%'
 });
 
-console.log('props', props);
-
 // 创建用于引用 DOM 元素和表格实例的 ref
 const vTableContainer = ref<HTMLElement | null>(null);
 const vTableInstance = shallowRef<IVTable | null>(null);
@@ -79,15 +77,15 @@ const createTableInstance = (Type: any, options: IOption) => {
   pivotHeaderColumnWidths.value = [];
 
   vtable.on('resize_column_end', (args: { col: number; colWidths: number[] }) => {
-    const table = vTableInstance.value;
+    // const table = vTableInstance.value;
     if (!props.keepColumnWidthChange) {
       return;
     }
     const { col, colWidths } = args;
     const width = colWidths[col];
     if (vtable.isPivotTable()) {
-      const path = (table as PivotTable).getCellHeaderPaths(col, table.columnHeaderLevelCount);
-      let dimensions;
+      const path = (vtable as PivotTable).getCellHeaderPaths(col, vtable.columnHeaderLevelCount);
+      let dimensions = null;
       if (path.cellLocation === 'rowHeader') {
         dimensions = path.rowHeaderPaths as TYPES.IDimensionInfo[];
       } else {
@@ -95,17 +93,24 @@ const createTableInstance = (Type: any, options: IOption) => {
       }
 
       let found = false;
-      pivotColumnWidths.value.forEach(item => {
+      // pivotColumnWidths.value.forEach(item => {
+      //   if (JSON.stringify(item.dimensions) === JSON.stringify(dimensions)) {
+      //     item.width = width;
+      //     found = true;
+      //   }
+      // });
+      for (let i = 0; i < pivotColumnWidths.value.length; i++) {
+        const item = pivotColumnWidths.value[i];
         if (JSON.stringify(item.dimensions) === JSON.stringify(dimensions)) {
           item.width = width;
           found = true;
         }
-      });
+      }
       if (!found) {
         pivotColumnWidths.value.push({ dimensions, width });
       }
     } else {
-      const define = table.getBodyColumnDefine(col, 0);
+      const define = vtable.getBodyColumnDefine(col, 0);
       if ((define as any)?.key) {
         columnWidths.value.set((define as any).key, width);
       }
@@ -166,14 +171,14 @@ const updateVTable = (newOptions: IOption) => {
   try {
     // for keepColumnWidthChange, update column width
 
-    if (props.keepColumnWidthChange) {
-      const columnWidthConfig = updateWidthCache(columnWidths.value, pivotColumnWidths.value, vTableInstance.value);
-      newOptions = {
-        ...newOptions,
-        columnWidthConfig,
-        columnWidthConfigForRowHeader: columnWidthConfig
-      };
-    }
+    // if (props.keepColumnWidthChange) {
+    //   const columnWidthConfig = updateWidthCache(columnWidths.value, pivotColumnWidths.value, vTableInstance.value);
+    //   newOptions = {
+    //     ...newOptions,
+    //     columnWidthConfig: columnWidthConfig as any,
+    //     columnWidthConfigForRowHeader: columnWidthConfig as any
+    //   };
+    // }
     switch (props.type) {
       case 'list':
         if (vTableInstance.value instanceof ListTable) {
