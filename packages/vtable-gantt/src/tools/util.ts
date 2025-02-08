@@ -1,4 +1,5 @@
 import { isValid } from '@visactor/vutils';
+import { DayTimes } from '../gantt-helper';
 
 /**
  * throttle 保障了首次立即执行 后续触发的回调执行间隔delay时间 区别于throttle2 最后执行时机会提前
@@ -706,7 +707,8 @@ export function computeCountToTimeScale(
         Math.floor(adjusted_date.getMonth() / 3) -
         Math.floor(startDate.getMonth() / 3);
       difference +=
-        (adjusted_date.getDate() - startDate.getDate()) /
+        (adjusted_date.getTime() - startDate.getTime()) /
+        DayTimes /
         (3 * new Date(adjusted_date.getFullYear(), adjusted_date.getMonth() + 1, 0).getDate());
       break;
     case 'year':

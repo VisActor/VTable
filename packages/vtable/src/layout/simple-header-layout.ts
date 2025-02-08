@@ -236,7 +236,13 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       }
       if (row < this.headerLevelCount) {
         return Object.assign({}, this.leftRowSeriesNumberColumn[col], {
-          style: this._table.internalProps.rowSeriesNumber.headerStyle
+          style: Object.assign(
+            {},
+            this._table.transpose
+              ? this._table.internalProps.theme.rowHeaderStyle
+              : this._table.internalProps.theme.headerStyle,
+            this._table.internalProps.rowSeriesNumber.headerStyle
+          )
         });
       }
     }

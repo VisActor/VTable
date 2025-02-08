@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix text vertical layout #3353",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

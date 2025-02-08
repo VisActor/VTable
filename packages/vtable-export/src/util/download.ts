@@ -1,20 +1,20 @@
 import { saveAs } from 'file-saver';
 
-export function downloadCsv(str: string, name: string) {
+export async function downloadCsv(str: string, name: string) {
   const blob = new Blob([`\ufeff${str}`], {
     type: 'text/csv;charset=utf-8'
   });
 
-  saveAs(blob, `${name}.csv`);
+  await saveAs(blob, `${name}.csv`);
 }
 
-export function downloadExcel(arrayBuffer: ArrayBuffer, name: string) {
+export async function downloadExcel(arrayBuffer: ArrayBuffer, name: string) {
   // const arrayBuffer = workSheetStr2ArrayBuffer(workSheetStr);
   const blob = new Blob([arrayBuffer], {
     type: 'application/octet-stream'
   });
 
-  saveAs(blob, `${name}.xlsx`);
+  await saveAs(blob, `${name}.xlsx`);
 }
 
 function workSheetStr2ArrayBuffer(workSheetStr: string) {

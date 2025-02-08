@@ -76,7 +76,7 @@ class ArcoListEditor {
           {
             default: () =>
               this.options.map((option: any) =>
-                h(AOption, { key: option, value: option }, { default: () => option })
+                h(AOption, { key: option, value: option, class: 'arco-select-vtable'}, { default: () => option })
               ),
           }
         ),
@@ -121,7 +121,7 @@ class ArcoListEditor {
 
   isClickPopUp(target: HTMLElement) {
     while (target) {
-      if (target.classList && target.classList.contains('arco-select-option')) {
+      if (target.classList && target.classList.contains('arco-select-vtable')) {
         return true;
       }
       target = target.parentNode as HTMLElement;

@@ -28,6 +28,13 @@
             "zh": "快速上手",
             "en": "Getting_Started"
           }
+        },
+        {
+          "path": "AI_tools_help",
+          "title": {
+            "zh": "AI工具助力VTable",
+            "en": "AI tools help"
+          }
         }
       ]
     },
