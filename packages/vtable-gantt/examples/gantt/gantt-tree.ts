@@ -23,7 +23,7 @@ export function createTable() {
       children: [
         {
           id: 2,
-          title: 'Scope',
+          title: 'Scope1',
           developer: 'liufangfang.jane@bytedance.com',
           start: '2024-07-24',
           end: '2024-08-04',
@@ -43,7 +43,7 @@ export function createTable() {
     },
     {
       id: 2,
-      title: 'Scope',
+      title: 'Scope2',
       developer: 'liufangfang.jane@bytedance.com',
       start: '07/24/2024',
       end: '08/04/2024',
