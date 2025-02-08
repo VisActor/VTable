@@ -1,13 +1,13 @@
 ---
 category: examples
 group: table-type
-title: Pivot analysis tree table
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-tree.png
-link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
+title: Pivot Table Row Header Tree Mode
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-tree.gif
+link: data_analysis/pivot_table_tree
+option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree'%7C'grid-tree')
 ---
 
-# Pivot analysis tree table
+# Pivot Table Row Header Tree Mode
 
 Pivot analysis tree table
 
