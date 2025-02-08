@@ -782,10 +782,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   ) {
     this._cornerHeaderCellFullPathIds = [];
     const results: HeaderData[] = [];
+    const colLevelCount = this._getColumnHeaderTreeExpandedMaxLevelCount()
+      ? this._getColumnHeaderTreeExpandedMaxLevelCount()
+      : this.columnHeaderLevelCount;
+    const rowLevelCount = this._getRowHeaderTreeExpandedMaxLevelCount()
+      ? this._getRowHeaderTreeExpandedMaxLevelCount()
+      : this.rowHeaderLevelCount;
     if (this.cornerSetting.titleOnDimension === 'all') {
       if (this.indicatorsAsCol) {
         if (colDimensionKeys) {
-          for (let i = 0; i < this._getColumnHeaderTreeExpandedMaxLevelCount(); i++) {
+          for (let i = 0; i < colLevelCount; i++) {
             const dimensionKey = colDimensionKeys[i];
             const id = ++this.sharedVar.seqId;
             const dimensionInfo: IDimension = dimensions.find(dimension =>
@@ -832,13 +838,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             if (!this._cornerHeaderCellFullPathIds[i]) {
               this._cornerHeaderCellFullPathIds[i] = [];
             }
-            for (let r = 0; r < this._getRowHeaderTreeExpandedMaxLevelCount(); r++) {
+            for (let r = 0; r < rowLevelCount; r++) {
               this._cornerHeaderCellFullPathIds[i][r] = id;
             }
           }
         }
         if (rowDimensionKeys) {
-          for (let i = 0; i < this._getRowHeaderTreeExpandedMaxLevelCount(); i++) {
+          for (let i = 0; i < rowLevelCount; i++) {
             const dimensionKey = rowDimensionKeys[i];
             const id = ++this.sharedVar.seqId;
             const dimensionInfo: IDimension = dimensions.find(dimension =>
@@ -889,7 +895,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
       } else {
         if (rowDimensionKeys) {
-          for (let i = 0; i < this._getRowHeaderTreeExpandedMaxLevelCount(); i++) {
+          for (let i = 0; i < rowLevelCount; i++) {
             const dimensionKey = rowDimensionKeys[i];
             const id = ++this.sharedVar.seqId;
             const dimensionInfo: IDimension = dimensions.find(dimension =>
@@ -933,7 +939,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             results[id] = cell;
             this._headerObjects[id] = cell;
 
-            for (let r = 0; r < this._getColumnHeaderTreeExpandedMaxLevelCount(); r++) {
+            for (let r = 0; r < colLevelCount; r++) {
               if (!this._cornerHeaderCellFullPathIds[r]) {
                 this._cornerHeaderCellFullPathIds[r] = [];
               }
@@ -942,7 +948,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           }
         }
         if (colDimensionKeys) {
-          for (let c = 0; c < this._getColumnHeaderTreeExpandedMaxLevelCount(); c++) {
+          for (let c = 0; c < colLevelCount; c++) {
             const dimensionKey = colDimensionKeys[c];
             const id = ++this.sharedVar.seqId;
             const dimensionInfo: IDimension = dimensions.find(dimension =>
