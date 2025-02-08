@@ -1,6 +1,42 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Sun, 26 Jan 2025 08:59:28 GMT and should not be manually modified.
+This log was last generated on Sat, 08 Feb 2025 11:35:13 GMT and should not be manually modified.
+
+## 1.16.0
+Sat, 08 Feb 2025 11:35:13 GMT
+
+### Minor changes
+
+- feat: add grid-tree mode for pivot table
+
+
+
+### Updates
+
+- fix: when resize gantt view size should update dependency node size #3287
+
+
+- fix: resize or move taskbar update record problem #3321
+
+
+- fix: updateScales to quarter taskbar size error #3348
+
+
+- refactor: rowSeriesNumber cell can use theme headerStyle #3362
+
+
+- fix: mouseover last date border occor error for gantt #3373
+
+
+- feat: support async in downloadCsv&downloadExcel
+- feat: linkJump & linkDetect support function
+- feat: support react17 in customLayout function
+- feat: add keepColumnWidthChange in vue-vtable #3346
+- fix: fix clipped judgement in getCellOverflowText()
+- fix: fix rowData error in media-click #3342
+- fix: fix header checkbox state in functional cellType #3334
+- fix: fix text vertical layout #3353
+- fix: fix merge cell style update in vtable-search #3327
 
 ## 1.15.2
 Sun, 26 Jan 2025 08:59:28 GMT
