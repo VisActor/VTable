@@ -13,10 +13,10 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when resize gantt view size should update dependency node size [#3287](https://github.com/VisActor/VTable/issues/3287)
-- **@visactor/vtable**: resize or move taskbar update record problem [#3321](https://github.com/VisActor/VTable/issues/3321)
-- **@visactor/vtable**: updateScales to quarter taskbar size error [#3348](https://github.com/VisActor/VTable/issues/3348)
-- **@visactor/vtable**: mouseover last date border occor error for gantt [#3373](https://github.com/VisActor/VTable/issues/3373)
+- **@visactor/vtable-gantt**: when resize gantt view size should update dependency node size [#3287](https://github.com/VisActor/VTable/issues/3287)
+- **@visactor/vtable-gantt**: resize or move taskbar update record problem [#3321](https://github.com/VisActor/VTable/issues/3321)
+- **@visactor/vtable-gantt**: updateScales to quarter taskbar size error [#3348](https://github.com/VisActor/VTable/issues/3348)
+- **@visactor/vtable-gantt**: mouseover last date border occor error for gantt [#3373](https://github.com/VisActor/VTable/issues/3373)
 - **@visactor/vtable**: fix clipped judgement in getCellOverflowText()
 - **@visactor/vtable**: fix rowData error in media-click [#3342](https://github.com/VisActor/VTable/issues/3342)
 - **@visactor/vtable**: fix header checkbox state in functional cellType [#3334](https://github.com/VisActor/VTable/issues/3334)
