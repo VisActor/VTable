@@ -16,8 +16,8 @@ import { downloadExcel, exportVTableToExcel } from '@visactor/vtable-export';
 // ......
 const tableInstance = new VTable.ListTable(option);
 
-// donload csv file
-downloadExcel(exportVTableToExcel(tableInstance, optionForExport), 'export-csv');
+// download csv file
+await downloadExcel(exportVTableToExcel(tableInstance, optionForExport), 'export-csv');
 ```
 
 - `exportVTableToExcel`：表格输出工具，将表格实例输出为一个 Excel 格式的 ArrayBuffer；option 为可选参数，详见下方配置项
@@ -75,7 +75,7 @@ const excelOption = {
     }
   }
 };
-downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
 
 ### formatExcelJSCell
@@ -108,7 +108,7 @@ const excelOption = {
     return cellInExceljs;
   }
 };
-downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
 
 如果想要导出原始 record 字段值 而不是表格中显示的 format 之后的，可以借助 table.getCellOriginValue(col,row)方法来获取后，将其赋值到 cellInExceljs.value 中。
@@ -120,7 +120,7 @@ const excelOption = {
     return cellInExceljs;
   }
 };
-downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
 
 ### excelJSWorksheetCallback
@@ -135,5 +135,5 @@ const excelOption = {
     worksheet.headerFooter.oddFooter = 'Hello World';
   }
 };
-downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```

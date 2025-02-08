@@ -25,7 +25,7 @@ import type { CreateTextCellGroup } from './cell-type/text-cell';
 import type { CreateVideoCellGroup } from './cell-type/video-cell';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
-import { isPromise } from '../../tools/helper';
+import { getOrApply, isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
 import type { ICartesianAxis } from '../../components/axis/axis';
 import { Factory } from '../../core/factory';
@@ -94,12 +94,23 @@ export function createCell(
       //如果是超链接 颜色按照linkColor绘制 TODO：放到方法_getCellStyle中
       // const columnDefine = table.getHeaderDefine(col, row);
       const cellValue = value;
+      const cellOriginValue = table.getCellOriginValue(col, row);
       const headerStyle = table._getCellStyle(col, row);
 
       if (
         type === 'link' &&
         (('templateLink' in define && define.templateLink) ||
-          !('linkDetect' in define && define.linkDetect) ||
+          !(
+            'linkDetect' in define &&
+            getOrApply(define.linkDetect, {
+              col,
+              row,
+              table,
+              value: cellValue,
+              dataValue: cellOriginValue,
+              cellHeaderPaths: undefined
+            })
+          ) ||
           regUrl.test(cellValue))
       ) {
         if (cellTheme) {

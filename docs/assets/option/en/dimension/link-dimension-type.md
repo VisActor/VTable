@@ -12,11 +12,11 @@ Specify the column type as 'link', headerType can be omitted and defaults to 'te
     prefix = '##'+${prefix}
 ) }}
 
-##${prefix} linkJump(boolean) = true
+##${prefix} linkJump(boolean|Function) = true
 
 **Link type exclusive configuration item** Whether the link is clickable and can be redirected
 
-##${prefix} linkDetect(boolean) = true
+##${prefix} linkDetect(boolean|Function) = true
 
 **Link type exclusive configuration item** Whether the link undetrrgoes regular expression detection, and only if the link complies with the URL rules it will be displayed as a link. This configuration does not take effect if a template link is configured.
 
@@ -26,7 +26,7 @@ Specify the column type as 'link', headerType can be omitted and defaults to 'te
 
 ##${prefix} linkTarget(string)
 
-**link type exclusive configuration item** Specifying the name of the browsing context the resource is being loaded into, is the second parameter of window.open(), and defaults to '_blank'.
+**link type exclusive configuration item** Specifying the name of the browsing context the resource is being loaded into, is the second parameter of window.open(), and defaults to '\_blank'.
 
 ##${prefix} linkWindowFeatures(string)
 

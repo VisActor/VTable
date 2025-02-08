@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: support async in downloadCsv&downloadExcel",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
