@@ -1120,7 +1120,7 @@ completeEditCell: () => void;
 
 Get all data of the current table
 
-## dataSouce(CachedDataSource)
+## dataSource(CachedDataSource)
 
 Set the data source for the VTable table component instance. For specific usage, please refer to [Asynchronous data lazy loading demo](../demo/performance/async-data) and [Tutorial](../guide/data/async_data)
 
