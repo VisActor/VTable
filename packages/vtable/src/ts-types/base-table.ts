@@ -281,6 +281,9 @@ export interface IBaseTableProtected {
 
   // 启用树形结构数据内的merge配置
   enableTreeNodeMerge?: boolean;
+
+  _oldRowCount?: number;
+  _oldColCount?: number;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -813,8 +816,6 @@ export interface BaseTableAPI {
   getCellStyle: (col: number, row: number) => CellStyle; //  计算后style
 
   getHierarchyState: (col: number, row: number) => HierarchyState | null;
-
-  _hasHierarchyTreeHeader: () => boolean;
 
   _canDragHeaderPosition: (col: number, row: number) => boolean;
 

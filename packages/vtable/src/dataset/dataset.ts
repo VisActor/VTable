@@ -64,8 +64,8 @@ export class Dataset {
    */
   tree: Record<string, Record<string, Aggregator[]>> = {};
   changedTree: Record<string, Record<string, any[]>> = {};
-  private colFlatKeys = {};
-  private rowFlatKeys = {};
+  private colFlatKeys: Record<string, number> = {}; //记录某个colKey已经被添加过colKeys到
+  private rowFlatKeys: Record<string, number> = {}; //记录某个rowKey已经被添加过rowKeys到
 
   //列表头的每列对应的表头键值
   colKeys: string[][] = [];
@@ -145,7 +145,8 @@ export class Dataset {
   // private rowKeysPath_FULL: string[][];
   colHeaderTree: any[];
   rowHeaderTree: any[];
-  rowHierarchyType: 'grid' | 'tree';
+  rowHierarchyType: 'grid' | 'tree' | 'grid-tree';
+  columnHierarchyType: 'grid' | 'grid-tree';
   indicators?: (string | IIndicator)[];
   indicatorsAsCol: boolean;
   // 记录用户传入的汇总数据
@@ -161,7 +162,8 @@ export class Dataset {
     indicators: (string | IIndicator)[] | undefined,
     indicatorsAsCol: boolean,
     records: any[] | Record<string, any[]> | undefined,
-    rowHierarchyType?: 'grid' | 'tree',
+    rowHierarchyType?: 'grid' | 'tree' | 'grid-tree',
+    columnHierarchyType?: 'grid' | 'grid-tree',
     customColTree?: IHeaderTreeDefine[],
     customRowTree?: IHeaderTreeDefine[],
     needSplitPositiveAndNegative?: boolean,
@@ -172,6 +174,7 @@ export class Dataset {
     this.dataConfig = dataConfig;
     this.filterRules = this.dataConfig?.filterRules;
     this.rowHierarchyType = rowHierarchyType ?? 'grid';
+    this.columnHierarchyType = columnHierarchyType ?? 'grid';
     // this.allTotal = new SumAggregator(this.indicators[0]);
     this.sortRules = this.dataConfig?.sortRules;
     this.aggregationRules = this.dataConfig?.aggregationRules;
@@ -349,6 +352,19 @@ export class Dataset {
         // }
         this.colHeaderTree = this.customColTree;
       } else {
+        // if (this.columnHierarchyType !== 'grid') {
+        //   this.colHeaderTree = this.ArrToTree1(
+        //     this.colKeys,
+        //     this.columns.filter((key, index) => {
+        //       return this.columnsHasValue[index];
+        //     }),
+        //     this.indicatorsAsCol ? this.indicators : undefined,
+        //     this.totals?.column?.showGrandTotals ||
+        //       (!this.indicatorsAsCol && this.columns.length === 0) ||
+        //       (this.indicatorsAsCol && this.rows.length === 0),
+        //     this.colGrandTotalLabel
+        //   );
+        // } else {
         this.colHeaderTree = this.ArrToTree(
           this.colKeys,
           this.columns.filter((key, index) => {
@@ -362,6 +378,7 @@ export class Dataset {
           this.totals?.column?.showGrandTotalsOnLeft ?? false,
           this.totals?.column?.showSubTotalsOnLeft ?? false
         );
+        // }
       }
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('TreeToArr:', t8 - t7);
@@ -688,7 +705,7 @@ export class Dataset {
             this.dataConfig?.totals?.row?.subTotalsDimensions &&
             this.dataConfig?.totals?.row?.subTotalsDimensions.indexOf(this.rows[l - 1]) >= 0
           ) {
-            if (this.rowHierarchyType === 'grid') {
+            if (this.rowHierarchyType !== 'tree') {
               //如果是tree的话 不附加标签'小计'
               rowKey.push(this.rowSubTotalLabel);
             }
@@ -748,7 +765,9 @@ export class Dataset {
             this.dataConfig?.totals?.column?.subTotalsDimensions &&
             this.dataConfig?.totals?.column?.subTotalsDimensions.indexOf(this.columns[n - 1]) >= 0
           ) {
+            // if (this.columnHierarchyType === 'grid') {
             colKey.push(this.colSubTotalLabel);
+            // }
             isToTalRecord = true;
             break;
           }
@@ -843,6 +862,8 @@ export class Dataset {
         // if (this.rowKeys.indexOf(rowKey) === -1) this.rowKeys.push(rowKey);
         // if (this.colKeys.indexOf(colKey) === -1) this.colKeys.push(colKey);
 
+        // 这一段代码需要再考虑下 目前isToTalRecord中没有 this.rowKeys.push逻辑 。造成的一个问题例如有列小计的相关自定义汇总数据，但没有push到this.rowKeys中
+        // 但是放到上面目前isToTalRecord逻辑return之前的话 会引起新的问题。这个this.rowKeys的补充是否需要从this.totalRecordsTree中获取到？ TODO（pivot-tree demo加上列小计就能复现）
         if (rowKey.length !== 0) {
           if (!this.rowFlatKeys[flatRowKey]) {
             this.rowKeys.push(rowKey);
@@ -1120,6 +1141,17 @@ export class Dataset {
           }
         });
       }
+      if (rowKey.length < this.rows.length && this.rowHierarchyType === 'grid-tree') {
+        // 如果是平铺树结构 小计需要处理补充到rowKey中
+        if (rowKey[0] === this.rowGrandTotalLabel) {
+        } else if (
+          this.totals?.row?.subTotalsDimensions &&
+          this.totals?.row?.subTotalsDimensions?.length >= 1 &&
+          rowKey[rowKey.length - 1] !== this.rowSubTotalLabel
+        ) {
+          rowKey.push(this.rowSubTotalLabel);
+        }
+      }
       // flatRowKey = rowKey.join(this.stringJoinChar);
       flatRowKey = join(rowKey, this.stringJoinChar);
     }
@@ -1134,6 +1166,16 @@ export class Dataset {
             colKey.splice(i, 1);
           }
         });
+      }
+      if (colKey.length < this.columns.length && this.columnHierarchyType === 'grid-tree') {
+        if (colKey[0] === this.colGrandTotalLabel) {
+        } else if (
+          this.totals?.column?.subTotalsDimensions &&
+          this.totals?.column?.subTotalsDimensions?.length >= 1 &&
+          colKey[colKey.length - 1] !== this.colSubTotalLabel
+        ) {
+          colKey.push(this.colSubTotalLabel);
+        }
       }
       // flatColKey = colKey.join(this.stringJoinChar);
       flatColKey = join(colKey, this.stringJoinChar);
@@ -1455,7 +1497,7 @@ export class Dataset {
           const dimensionIndex = that.columns.indexOf(dimension);
           if (dimensionIndex >= 0) {
             const colTotalKey = colKey.slice(0, dimensionIndex + 1);
-            // if (this.rowHierarchyType === 'grid') {
+            // if (this.columnHierarchyType === 'grid') {
             colTotalKey.push(that.colSubTotalLabel);
             // }
             const flatColTotalKey = colTotalKey.join(this.stringJoinChar);
@@ -1611,7 +1653,7 @@ export class Dataset {
               const dimensionIndex = that.rows.indexOf(dimension);
               if (dimensionIndex >= 0 && dimensionIndex < that.rows.length - 1) {
                 const rowTotalKey = rowKey.slice(0, dimensionIndex + 1);
-                if (this.rowHierarchyType === 'grid') {
+                if (this.rowHierarchyType !== 'tree') {
                   // 如果是tree的情况则不追加小计单元格值
                   rowTotalKey.push(that.rowSubTotalLabel);
                 }

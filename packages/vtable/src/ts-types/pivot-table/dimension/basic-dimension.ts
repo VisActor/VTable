@@ -19,7 +19,7 @@ export interface IBasicDimension {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
   /** 维度作为行表头时起作用，表示该维度单元格的宽度 */
   width?: number | string;
   /** 维度作为行表头时起作用，表示该维度单元格的最小宽度 */
@@ -70,5 +70,5 @@ export interface IBasicDimension {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
 }

@@ -1,6 +1,5 @@
 <template>
-  <div ref="vTableContainer"
-:style="{ width: containerWidth, height: containerHeight }" style="position: relative" />
+  <div ref="vTableContainer" :style="{ width: containerWidth, height: containerHeight }" style="position: relative" />
 </template>
 
 <script setup lang="ts">
@@ -10,6 +9,7 @@ import { isEqual } from '@visactor/vutils';
 import { TABLE_EVENTS, TABLE_EVENTS_KEYS } from '../eventsUtils';
 import type * as VTable from '@visactor/vtable';
 import type { EventsProps } from '../eventsUtils';
+import type { TYPES } from '@visactor/vtable';
 
 // 定义表格实例和选项的类型
 export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
@@ -27,6 +27,7 @@ export interface BaseTableProps extends EventsProps {
   height?: number | string;
   onReady?: (instance: IVTable, isInitial: boolean) => void;
   onError?: (err: Error) => void;
+  keepColumnWidthChange?: boolean;
 }
 
 // 设置默认属性
@@ -38,6 +39,11 @@ const props = withDefaults(defineProps<BaseTableProps>(), {
 // 创建用于引用 DOM 元素和表格实例的 ref
 const vTableContainer = ref<HTMLElement | null>(null);
 const vTableInstance = shallowRef<IVTable | null>(null);
+
+// for keepColumnWidthChange
+const columnWidths = ref<Map<string, number>>(new Map());
+const pivotColumnWidths = ref<{ dimensions: TYPES.IDimensionInfo[]; width: number }[]>([]);
+const pivotHeaderColumnWidths = ref<number[]>([]);
 
 // 公开 vTableInstance，以便外部组件可以访问
 defineExpose({ vTableInstance });
@@ -62,7 +68,54 @@ type Constructor<T> = new (dom: HTMLElement, options: IOption) => T;
 // 创建表格实例
 // use Constructor<T> will cause error in rollup-plugin-typescript2, use any temporarily
 const createTableInstance = (Type: any, options: IOption) => {
-  vTableInstance.value = new Type(vTableContainer.value!, options);
+  const vtable = new Type(vTableContainer.value!, options);
+  vTableInstance.value = vtable;
+
+  // for keepColumnWidthChange
+  columnWidths.value.clear();
+  pivotColumnWidths.value = [];
+  pivotHeaderColumnWidths.value = [];
+
+  vtable.on('resize_column_end', (args: { col: number; colWidths: number[] }) => {
+    // const table = vTableInstance.value;
+    if (!props.keepColumnWidthChange) {
+      return;
+    }
+    const { col, colWidths } = args;
+    const width = colWidths[col];
+    if (vtable.isPivotTable()) {
+      const path = (vtable as PivotTable).getCellHeaderPaths(col, vtable.columnHeaderLevelCount);
+      let dimensions = null;
+      if (path.cellLocation === 'rowHeader') {
+        dimensions = path.rowHeaderPaths as TYPES.IDimensionInfo[];
+      } else {
+        dimensions = path.colHeaderPaths as TYPES.IDimensionInfo[];
+      }
+
+      let found = false;
+      // pivotColumnWidths.value.forEach(item => {
+      //   if (JSON.stringify(item.dimensions) === JSON.stringify(dimensions)) {
+      //     item.width = width;
+      //     found = true;
+      //   }
+      // });
+      for (let i = 0; i < pivotColumnWidths.value.length; i++) {
+        const item = pivotColumnWidths.value[i];
+        if (JSON.stringify(item.dimensions) === JSON.stringify(dimensions)) {
+          item.width = width;
+          found = true;
+        }
+      }
+      if (!found) {
+        pivotColumnWidths.value.push({ dimensions, width });
+      }
+    } else {
+      const define = vtable.getBodyColumnDefine(col, 0);
+      if ((define as any)?.key) {
+        columnWidths.value.set((define as any).key, width);
+      }
+    }
+  });
 };
 
 const createVTable = () => {
@@ -116,6 +169,16 @@ const updateVTable = (newOptions: IOption) => {
   }
 
   try {
+    // for keepColumnWidthChange, update column width
+
+    // if (props.keepColumnWidthChange) {
+    //   const columnWidthConfig = updateWidthCache(columnWidths.value, pivotColumnWidths.value, vTableInstance.value);
+    //   newOptions = {
+    //     ...newOptions,
+    //     columnWidthConfig: columnWidthConfig as any,
+    //     columnWidthConfigForRowHeader: columnWidthConfig as any
+    //   };
+    // }
     switch (props.type) {
       case 'list':
         if (vTableInstance.value instanceof ListTable) {
@@ -172,4 +235,22 @@ watch(
   },
   { deep: true }
 );
+
+function updateWidthCache(
+  columnWidths: Map<string, number>,
+  pivotColumnWidths: { dimensions: TYPES.IDimensionInfo[]; width: number }[],
+  table: IVTable
+) {
+  if (table.isPivotTable()) {
+    return pivotColumnWidths;
+  }
+  const columnWidthConfig: { key: string; width: number }[] = [];
+  columnWidths.forEach((width, key) => {
+    columnWidthConfig.push({
+      key,
+      width
+    });
+  });
+  return columnWidthConfig;
+}
 </script>

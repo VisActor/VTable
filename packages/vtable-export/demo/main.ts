@@ -141,15 +141,16 @@ function bindExport() {
     return;
   }
 
-  exportCsvButton.addEventListener('click', () => {
+  exportCsvButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      downloadCsv(exportVTableToCsv(window.tableInstance, window.csvOption), 'export');
+      await downloadCsv(exportVTableToCsv(window.tableInstance, window.csvOption), 'export');
     }
   });
 
   exportExcelButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      downloadExcel(await exportVTableToExcel(window.tableInstance, window.excelOption), 'export');
+      await downloadExcel(await exportVTableToExcel(window.tableInstance, window.excelOption), 'export');
+      // window.tableInstance.release();
     }
   });
 }

@@ -51,6 +51,7 @@ import {
 } from './layout/layout-helper';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
+import { callUpdateColOnScenegraph, callUpdateRowOnScenegraph } from './tools/diff-cell';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
@@ -80,6 +81,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     super(container as HTMLElement, options);
     if (options) {
+      if (!options.rowHierarchyType) {
+        options.rowHierarchyType = 'grid';
+      }
+      if (!options.columnHierarchyType) {
+        options.columnHierarchyType = 'grid';
+      }
       if ((options as any).layout) {
         //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
         Object.assign(options, (options as any).layout);
@@ -118,7 +125,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         // if (options.columnTree) {
         const columnDimensionTree = new DimensionTree(
           (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
-          this.layoutNodeId
+          this.layoutNodeId,
+          this.options.columnHierarchyType,
+          this.options.columnHierarchyType !== 'grid' ? this.options.columnExpandLevel ?? 1 : undefined
         );
         // }
         // if (options.rowTree) {
@@ -126,7 +135,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+          this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
         );
         // }
         this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
@@ -160,6 +169,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           options.indicatorsAsCol ?? true,
           options.records,
           options.rowHierarchyType,
+          options.columnHierarchyType,
           this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
           this.internalProps.rowTree,
           false,
@@ -179,7 +189,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             deleteHideIndicatorNode(this.dataset.colHeaderTree, options.indicators, false, this);
           columnDimensionTree = new DimensionTree(
             (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-            this.layoutNodeId
+            this.layoutNodeId,
+            this.options.columnHierarchyType,
+            this.options.columnHierarchyType !== 'grid' ? this.options.columnExpandLevel ?? 1 : undefined
           );
         } else {
           if (columnDimensionTree.hasHideNode) {
@@ -202,7 +214,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
             this.layoutNodeId,
             this.options.rowHierarchyType,
-            this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+            this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
           );
         } else {
           if (rowDimensionTree.hasHideNode) {
@@ -292,6 +304,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options);
+    if (!options.rowHierarchyType) {
+      options.rowHierarchyType = 'grid';
+    }
+    if (!options.columnHierarchyType) {
+      options.columnHierarchyType = 'grid';
+    }
     this.layoutNodeId = { seqId: 0 };
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
@@ -319,8 +337,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     //维护tree树形结构的展开状态
     if (
-      options?.rowHierarchyType === 'tree' &&
-      (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree' &&
+      options?.rowHierarchyType !== 'grid' &&
+      (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'grid' &&
       (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowExpandLevel === options?.rowExpandLevel
     ) {
       const beforeRowDimensions = (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowDimensionTree.tree.children;
@@ -346,7 +364,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (options.columnTree) {
         columnDimensionTree = new DimensionTree(
           (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
-          this.layoutNodeId
+          this.layoutNodeId,
+          this.options.columnHierarchyType,
+          this.options.columnHierarchyType !== 'grid' ? this.options.columnExpandLevel ?? 1 : undefined
         );
       }
       if (options.rowTree) {
@@ -354,7 +374,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+          this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
         );
       }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
@@ -386,6 +406,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         options.indicatorsAsCol ?? true,
         records,
         options.rowHierarchyType,
+        options.columnHierarchyType,
         this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
         this.internalProps.rowTree,
         false,
@@ -405,7 +426,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           deleteHideIndicatorNode(this.dataset.colHeaderTree, options.indicators, false, this);
         columnDimensionTree = new DimensionTree(
           (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-          this.layoutNodeId
+          this.layoutNodeId,
+          this.options.columnHierarchyType,
+          this.options.columnHierarchyType !== 'grid' ? this.options.columnExpandLevel ?? 1 : undefined
         );
       } else {
         if (columnDimensionTree.hasHideNode) {
@@ -428,7 +451,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+          this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
         );
       } else {
         if (rowDimensionTree.hasHideNode) {
@@ -563,6 +586,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     }
     this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
+    this.stateManager.setFrozenRow(this.frozenRowCount);
   }
   protected _getSortFuncFromHeaderOption(
     columns: undefined,
@@ -574,8 +598,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /**
    * Get rowHierarchyType of pivotTable
    */
-  get rowHierarchyType(): 'grid' | 'tree' {
+  get rowHierarchyType(): 'grid' | 'tree' | 'grid-tree' {
     return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType;
+  }
+  /**
+   * Get columnHierarchyType of pivotTable
+   */
+  get columnHierarchyType(): 'grid' | 'grid-tree' {
+    return (this.internalProps.layoutMap as PivotHeaderLayoutMap).columnHierarchyType;
   }
   /**
    * 将现有tree中的的hierarchyState同步到rows透视树中
@@ -1459,6 +1489,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
   // beforeUpdateCell主要用于setTreeNodeChildren方法
   _refreshHierarchyState(col: number, row: number, recalculateColWidths: boolean = true, beforeUpdateCell?: Function) {
+    const oldFrozenColCount = this.frozenColCount;
+    const oldFrozenRowCount = this.frozenRowCount;
+    const visibleStartRow = this.getBodyVisibleRowRange().rowStart;
+    this.internalProps._oldRowCount = this.rowCount;
+    this.internalProps._oldColCount = this.colCount;
     let notFillWidth = false;
     let notFillHeight = false;
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
@@ -1472,22 +1507,66 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
       }
     }
-    const result = (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
+    const isChangeRowTree = this.internalProps.layoutMap.isRowHeader(col, row);
+    const result: {
+      addCellPositionsRowDirection?: CellAddress[];
+      removeCellPositionsRowDirection?: CellAddress[];
+      updateCellPositionsRowDirection?: CellAddress[];
+      addCellPositionsColumnDirection?: CellAddress[];
+      removeCellPositionsColumnDirection?: CellAddress[];
+      updateCellPositionsColumnDirection?: CellAddress[];
+    } = isChangeRowTree
+      ? (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row)
+      : (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyStateForColumnTree(col, row);
     beforeUpdateCell && beforeUpdateCell();
     //影响行数
-    this.refreshRowColCount();
-    // this.scenegraph.clearCells();
-    // this.scenegraph.createSceneGraph();
-    // this.invalidate();
+    this.refreshRowColCount(); //逻辑中有setFrozenCol处理 影响了原本bodyGroup的列数
+    const newFrozenColCount = this.frozenColCount;
+    const newFrozenRowCount = this.frozenRowCount;
     this.clearCellStyleCache();
-    this.scenegraph.updateHierarchyIcon(col, row);
+    if (this.rowHierarchyType === 'tree') {
+      //'grid-tree'模式下不用特意更新，updateRow会更新掉和`tree`模式不一样
+      this.scenegraph.updateHierarchyIcon(col, row);
+    }
     this.reactCustomLayout?.clearCache();
-    this.scenegraph.updateRow(
-      result.removeCellPositions,
-      result.addCellPositions,
-      result.updateCellPositions,
-      recalculateColWidths
-    );
+    if (this.rowHierarchyType !== 'grid-tree' && this.columnHierarchyType !== 'grid-tree') {
+      //增加'grid-tree'之前的逻辑是这样子的
+      this.scenegraph.updateRow(
+        result.removeCellPositionsRowDirection,
+        result.addCellPositionsRowDirection,
+        result.updateCellPositionsRowDirection,
+        recalculateColWidths
+      );
+    } else {
+      // bug 太多了 直接先全部生成吧!! TODO 性能优化
+      // if (
+      //   this.columnHierarchyType === 'grid-tree' &&
+      //   this.isColumnHeader(col, row) &&
+      //   oldFrozenRowCount > this.frozenRowCount //p判断这个
+      // ) {
+      //   callUpdateRowOnScenegraph(result, recalculateColWidths, newFrozenRowCount, oldFrozenRowCount, this.scenegraph);
+      //   callUpdateColOnScenegraph(result, newFrozenColCount, oldFrozenColCount, this.scenegraph);
+      // } else {
+      //   callUpdateColOnScenegraph(result, newFrozenColCount, oldFrozenColCount, this.scenegraph);
+      //   callUpdateRowOnScenegraph(result, recalculateColWidths, newFrozenRowCount, oldFrozenRowCount, this.scenegraph);
+      // }
+
+      // if (this.rowHierarchyType === 'grid-tree' || this.columnHierarchyType === 'grid-tree') {
+      //   this.scenegraph.updateCornerHeaderCells();
+      //   // if (newFrozenColCount !== oldFrozenColCount) {
+      //   this.scenegraph.updateRowHeaderCells();
+      //   // }
+      //   // if (newFrozenRowCount !== oldFrozenRowCount) {
+      //   this.scenegraph.updateColumnHeaderCells();
+      //   // }
+      // }
+      this.internalProps.stick.changedCells.clear();
+      this.scenegraph.clearCells();
+      this.clearCellStyleCache();
+      this.scenegraph.createSceneGraph();
+      this.scrollToRow(visibleStartRow);
+      // this.renderWithRecreateCells();
+    }
     this.reactCustomLayout?.updateAllCustomCell();
 
     if (checkHasChart) {
@@ -1502,6 +1581,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.scenegraph.updateChartSizeForResizeColWidth(-1); // 如果收起展开有性能问题 可以排查下这个防范
       }
     }
+    this.internalProps._oldRowCount = undefined;
+    this.internalProps._oldColCount = undefined;
   }
   /**
    * 通过表头的维度值路径来计算单元格位置  getCellAddressByHeaderPaths接口更强大一些 不限表头 不限参数格式
@@ -1588,9 +1669,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const headerNodes = layoutMap.getCellHeaderPathsWithTreeNode(col, row);
     return headerNodes;
   }
-  _hasHierarchyTreeHeader() {
-    return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree';
-  }
 
   getMenuInfo(col: number, row: number, type: string): DropDownMenuEventInfo {
     const dimensionInfos = (this.internalProps.layoutMap as PivotHeaderLayoutMap).getPivotDimensionInfo(col, row);
@@ -1646,7 +1724,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           deleteHideIndicatorNode(this.dataset.colHeaderTree, options.indicators, false, this);
         columnDimensionTree = new DimensionTree(
           (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-          this.layoutNodeId
+          this.layoutNodeId,
+          this.options.columnHierarchyType,
+          this.options.columnHierarchyType !== 'grid' ? this.options.columnExpandLevel ?? 1 : undefined
         );
       }
       if (options.rowTree) {
@@ -1660,7 +1740,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId,
           this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel ?? 1 : undefined
+          this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
         );
       }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);

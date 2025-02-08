@@ -203,6 +203,22 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-grid-tree'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-grid-tree-column'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-grid-tree-row&column'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-grid-tree-totals'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-tree-lazy-load'
       },
       {

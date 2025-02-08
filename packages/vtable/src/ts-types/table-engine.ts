@@ -129,7 +129,7 @@ export interface IRowSeriesNumber {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
   // /** 选中整行或者全选时 是否包括序号部分 */
   // selectRangeInclude?: boolean;
   /** 是否可拖拽顺序 */
@@ -155,7 +155,7 @@ export interface ColumnSeriesNumber {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
   /** 选中整行或者全选时 是否包括序号部分 */
   selectRangeInclude?: boolean;
   /** 是否可拖拽顺序 */
@@ -332,6 +332,7 @@ export interface ListTableAPI extends BaseTableAPI {
   getBodyRowIndexByRecordIndex: (index: number | number[]) => number;
 
   _parseColumnWidthConfig: (columnWidthConfig: { key: string; width: number }[]) => void;
+  _hasHierarchyTreeHeader: () => boolean;
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**
@@ -359,9 +360,12 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
 
   //#region layout中挪到外层的属性
   /**层级维度结构显示形式 */
-  rowHierarchyType?: 'grid' | 'tree';
+  rowHierarchyType?: 'grid' | 'tree' | 'grid-tree';
+  columnHierarchyType?: 'grid' | 'grid-tree';
   /**展开层数 */
   rowExpandLevel?: number;
+  /**展开层数 */
+  columnExpandLevel?: number;
   /**子层级维度缩进距离 */
   rowHierarchyIndent?: number;
   /** 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认false */

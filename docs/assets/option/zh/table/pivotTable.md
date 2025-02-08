@@ -326,11 +326,11 @@ export interface IIndicatorHeaderNode {
 
 指标显示在列上，默认是 true。如果配置为 false，则显示在行，指标以行展示
 
-## rowHierarchyType('grid' | 'tree')
+## rowHierarchyType('grid' | 'tree'|'grid-tree')
 
 层级维度结构显示形式，平铺还是树形结构。
 
-[平铺示例](../demo/table-type/pivot-table) [树形示例](../demo/table-type/pivot-table-tree)
+[平铺示例](../demo/table-type/pivot-table) [树形示例](../demo/table-type/pivot-analysis-table-tree)  [平铺树形示例](../demo/table-type/pivot-analysis-table-grid-tree)
 
 {{ use: extension-rows-dimension-define( prefix = '#',) }}
 
@@ -345,6 +345,12 @@ export interface IIndicatorHeaderNode {
 ## rowHierarchyTextStartAlignment(boolean) = false
 
 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认 false
+
+## columnHierarchyType('grid' |'grid-tree')
+列表头中层级维度结构显示形式，平铺还是树形结构。
+
+## columnExpandLevel(number)
+列表头初始化展开层数，默认是 1。
 
 ## indicatorTitle(string)
 

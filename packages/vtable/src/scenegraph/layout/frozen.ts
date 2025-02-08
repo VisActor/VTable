@@ -493,3 +493,160 @@ function insertBefore(container: Group, newNode: Group, targetGroup: Group) {
     container.appendChild(newNode);
   }
 }
+
+export function resetRowFrozen(scene: Scenegraph) {
+  if (scene.frozenRowCount > scene.table.frozenRowCount) {
+    // move columnGroup from rowHeaderGroup into bodyGroup(from cornerHeaderGroup into colHeaderGroup)
+    scene.bodyGroup.setAttribute('width', scene.colHeaderGroup.attribute.width);
+    scene.bodyGroup.setAttribute('x', scene.colHeaderGroup.attribute.x);
+    scene.rowHeaderGroup.setAttribute('width', scene.cornerHeaderGroup.attribute.width);
+    for (let i = 0; i < scene.frozenRowCount - scene.table.frozenRowCount; i++) {
+      moveRowFromColHeaderToBody(scene);
+      moveRowFromCornerHeaderToRowHeader(scene);
+      moveRowFromTopRightCornerToRight(scene);
+    }
+  } else if (scene.frozenRowCount < scene.table.frozenRowCount) {
+    // move columnGroup from bodyGroup into rowHeaderGroup(from colHeaderGroup into cornerHeaderGroup)
+    scene.colHeaderGroup.setAttribute('width', scene.bodyGroup.attribute.width);
+    scene.colHeaderGroup.setAttribute('x', scene.bodyGroup.attribute.x);
+    scene.cornerHeaderGroup.setAttribute('width', scene.rowHeaderGroup.attribute.width);
+    for (let i = 0; i < scene.table.frozenRowCount - scene.frozenRowCount; i++) {
+      moveRowFromBodyToColHeader(scene);
+      moveRowFromRowHeaderToCornerHeader(scene);
+      moveRowFromRightToTopRightCorner(scene);
+    }
+  }
+
+  updateReactComponentContainer(scene);
+  scene.recreateAllSelectRangeComponents();
+  // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
+  scene.frozenRowCount = scene.table.frozenRowCount;
+  scene.frozenColCount = scene.rowHeaderGroup?.childrenCount ?? 0;
+  //   scene.proxy.colStart = scene.table.frozenColCount;
+  scene.proxy.rowStart = (scene.bodyGroup.firstChild?.firstChild as any)?.row ?? scene.table.frozenRowCount;
+  scene.bodyGroup.setAttribute('y', scene.colHeaderGroup.attribute.height);
+  scene.rowHeaderGroup.setAttribute('y', scene.cornerHeaderGroup.attribute.height);
+  // scene.updateContainerAttrWidthAndX();
+  scene.updateContainer();
+  scene.updateBorderSizeAndPosition();
+
+  scene.hasFrozen = true;
+}
+
+function moveRowFromBodyToColHeader(scene: Scenegraph) {
+  let hasSetedHeight = false;
+  // deal with bodyGroup
+  for (let i = 0; i < scene.bodyGroup.childrenCount; i++) {
+    const colGroup = scene.bodyGroup.children[i] as Group;
+    const rowCell = colGroup.firstChild as Group;
+    scene.colHeaderGroup.children[i]?.appendChild(rowCell);
+    // update container width
+    if (!hasSetedHeight) {
+      scene.colHeaderGroup.setAttribute('height', scene.colHeaderGroup.attribute.height + rowCell.attribute.height);
+      scene.bodyGroup.setAttribute('height', scene.bodyGroup.attribute.height - rowCell.attribute.height);
+      hasSetedHeight = true;
+    }
+  }
+}
+
+function moveRowFromRowHeaderToCornerHeader(scene: Scenegraph) {
+  let hasSetedHeight = false;
+  // deal with rowHeaderGroup
+  for (let i = 0; i < scene.rowHeaderGroup.childrenCount; i++) {
+    const colGroup = scene.rowHeaderGroup.children[i] as Group;
+    const rowCell = colGroup.firstChild as Group;
+    scene.cornerHeaderGroup.children[i]?.appendChild(rowCell);
+    // update container width
+    if (!hasSetedHeight) {
+      scene.cornerHeaderGroup.setAttribute(
+        'height',
+        scene.cornerHeaderGroup.attribute.height + rowCell.attribute.height
+      );
+      scene.rowHeaderGroup.setAttribute('height', scene.rowHeaderGroup.attribute.height - rowCell.attribute.height);
+      hasSetedHeight = true;
+    }
+  }
+}
+
+function moveRowFromRightToTopRightCorner(scene: Scenegraph) {
+  let hasSetedHeight = false;
+  // deal with rowHeaderGroup
+  for (let i = 0; i < scene.rightFrozenGroup.childrenCount; i++) {
+    const colGroup = scene.rightFrozenGroup.children[i] as Group;
+    const rowCell = colGroup.firstChild as Group;
+    scene.rightTopCornerGroup.children[i]?.appendChild(rowCell);
+    // update container width
+    if (!hasSetedHeight) {
+      scene.rightTopCornerGroup.setAttribute(
+        'height',
+        scene.rightTopCornerGroup.attribute.height + rowCell.attribute.height
+      );
+      scene.rightFrozenGroup.setAttribute('height', scene.rightFrozenGroup.attribute.height - rowCell.attribute.height);
+      hasSetedHeight = true;
+    }
+  }
+}
+
+function moveRowFromColHeaderToBody(scene: Scenegraph) {
+  let hasSetedHeight = false;
+  // deal with bodyGroup
+  for (let i = 0; i < scene.colHeaderGroup.childrenCount; i++) {
+    const colGroup = scene.colHeaderGroup.children[i] as Group;
+    const rowCell = colGroup.lastChild as Group;
+    insertBefore(scene.bodyGroup.children[i] as Group, rowCell, scene.bodyGroup.children[i].firstChild as Group);
+    // update container width
+    if (!hasSetedHeight) {
+      scene.colHeaderGroup.setAttribute('height', scene.colHeaderGroup.attribute.height - rowCell.attribute.height);
+      scene.bodyGroup.setAttribute('height', scene.bodyGroup.attribute.height + rowCell.attribute.height);
+      hasSetedHeight = true;
+    }
+  }
+}
+
+function moveRowFromCornerHeaderToRowHeader(scene: Scenegraph) {
+  let hasSetedHeight = false;
+  // deal with rowHeaderGroup
+  for (let i = 0; i < scene.cornerHeaderGroup.childrenCount; i++) {
+    const colGroup = scene.cornerHeaderGroup.children[i] as Group;
+    const rowCell = colGroup.lastChild as Group;
+    // scene.rowHeaderGroup.children[i]?.appendChild(rowCell);
+    insertBefore(
+      scene.rowHeaderGroup.children[i] as Group,
+      rowCell,
+      scene.rowHeaderGroup.children[i].firstChild as Group
+    );
+    // update container width
+    if (!hasSetedHeight) {
+      scene.cornerHeaderGroup.setAttribute(
+        'height',
+        scene.cornerHeaderGroup.attribute.height - rowCell.attribute.height
+      );
+      scene.rowHeaderGroup.setAttribute('height', scene.rowHeaderGroup.attribute.height + rowCell.attribute.height);
+      hasSetedHeight = true;
+    }
+  }
+}
+
+function moveRowFromTopRightCornerToRight(scene: Scenegraph) {
+  let hasSetedHeight = false;
+  // deal with rowHeaderGroup
+  for (let i = 0; i < scene.rightTopCornerGroup.childrenCount; i++) {
+    const colGroup = scene.rightTopCornerGroup.children[i] as Group;
+    const rowCell = colGroup.lastChild as Group;
+    // scene.rightFrozenGroup.children[i]?.appendChild(rowCell);
+    insertBefore(
+      scene.rightFrozenGroup.children[i] as Group,
+      rowCell,
+      scene.rightFrozenGroup.children[i].firstChild as Group
+    );
+    // update container width
+    if (!hasSetedHeight) {
+      scene.rightTopCornerGroup.setAttribute(
+        'height',
+        scene.rightTopCornerGroup.attribute.height - rowCell.attribute.height
+      );
+      scene.rightFrozenGroup.setAttribute('height', scene.rightFrozenGroup.attribute.height + rowCell.attribute.height);
+      hasSetedHeight = true;
+    }
+  }
+}

@@ -1,7 +1,16 @@
+# v1.15.2
+
+2025-01-26
+
+**🆕 New feature**
+
+- **@visactor/vtable**: dependField&batType support function in progress-bar
+
+[more detail about v1.15.2](https://github.com/VisActor/VTable/releases/tag/v1.15.2)
+
 # v1.15.1
 
 2025-01-17
-
 
 **🆕 New feature**
 
@@ -54,14 +63,11 @@
 - **@visactor/vtable**: add weather calendar demo
 - **@visactor/vtable**: add scheduleCreatable doc
 
-
-
 [more detail about v1.15.0](https://github.com/VisActor/VTable/releases/tag/v1.15.0)
 
 # v1.14.3
 
 2024-12-27
-
 
 **🆕 New feature**
 
@@ -74,14 +80,11 @@
 - **@visactor/vtable**: fix borderLineWidth array config [#3183](https://github.com/VisActor/VTable/issues/3183)
 - **@visactor/vtable**: when set resizable false hover taskbar occor error [#3189](https://github.com/VisActor/VTable/issues/3189)
 
-
-
 [more detail about v1.14.3](https://github.com/VisActor/VTable/releases/tag/v1.14.3)
 
 # v1.14.1
 
 2024-12-23
-
 
 **🆕 New feature**
 
@@ -95,8 +98,6 @@
 **🔨 Refactor**
 
 - **@visactor/vtable**: add option tableSizeAntiJitter [#3160](https://github.com/VisActor/VTable/issues/3160)
-
-
 
 [more detail about v1.14.1](https://github.com/VisActor/VTable/releases/tag/v1.14.1)
 

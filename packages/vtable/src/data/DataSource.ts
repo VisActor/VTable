@@ -195,7 +195,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       }): Aggregator;
     };
   } = {};
-  rowHierarchyType: 'grid' | 'tree';
+  rowHierarchyType: 'grid' | 'tree' | 'grid-tree' = 'grid';
   // columns对应各个字段的聚合类对象
   fieldAggregators: Aggregator[] = [];
   columns: ColumnsDefine;
@@ -269,7 +269,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   supplementConfig(
     pagination?: IPagination,
     columns?: ColumnsDefine,
-    rowHierarchyType?: 'grid' | 'tree',
+    rowHierarchyType?: 'grid' | 'tree' | 'grid-tree',
     hierarchyExpandLevel?: number
   ) {
     this.columns = columns;

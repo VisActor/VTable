@@ -25,10 +25,11 @@ export function updateAutoRow(
           // y = ((cellGroup._prev as Group)?.attribute.y ?? 0) + ((cellGroup._prev as Group)?.attribute.height ?? 0);
           y = (cellGroup._prev as Group)?.attribute.y + table.getRowHeight((cellGroup._prev as Group).row);
         } else if (part) {
-          const baseCellGroup = table.scenegraph.highPerformanceGetCell(col, rowEnd + 1, true);
+          const baseRowIndex = rowEnd === table.rowCount - table.bottomFrozenRowCount - 1 ? rowEnd : rowEnd + 1;
+          const baseCellGroup = table.scenegraph.highPerformanceGetCell(col, baseRowIndex, true);
           y = baseCellGroup.attribute.y;
           if (isValid(y)) {
-            for (let r = row; r <= rowEnd; r++) {
+            for (let r = row; r < baseRowIndex; r++) {
               y -= table.getRowHeight(r);
             }
           }
@@ -53,9 +54,14 @@ export function updateAutoRow(
           // y = ((cellGroup._next as Group)?.attribute.y ?? 0) - (cellGroup.attribute.height ?? 0);
           y = (cellGroup._next as Group)?.attribute.y - table.getRowHeight(cellGroup.row);
         } else if (part) {
-          const baseCellGroup = table.scenegraph.highPerformanceGetCell(col, rowStart - 1, true);
-          y = baseCellGroup.attribute.y;
-          for (let r = rowStart - 1; r < row; r++) {
+          const baseRowIndex = rowStart <= table.frozenRowCount ? table.frozenRowCount : rowStart - 1;
+          if (rowStart <= table.frozenRowCount) {
+            y = 0;
+          } else {
+            const baseCellGroup = table.scenegraph.highPerformanceGetCell(col, baseRowIndex, true);
+            y = baseCellGroup.attribute.y;
+          }
+          for (let r = baseRowIndex; r < row; r++) {
             const height = table.getRowHeight(r);
             y += height;
           }

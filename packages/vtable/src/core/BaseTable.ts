@@ -725,7 +725,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   set frozenRowCount(frozenRowCount: number) {
     this.internalProps.frozenRowCount = frozenRowCount;
-    // this.options.frozenRowCount = frozenRowCount;
+    this.stateManager.setFrozenRow(this.internalProps.frozenRowCount);
   }
 
   get rightFrozenColCount(): number {
@@ -1153,7 +1153,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.stage.window.setViewBoxTransform(a, b, c, d, e, f);
   }
 
-  get rowHierarchyType(): 'grid' | 'tree' {
+  get rowHierarchyType(): 'grid' | 'tree' | 'grid-tree' {
     return 'grid';
   }
 
@@ -2537,6 +2537,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 重新创建场景树并重新渲染
    */
   renderWithRecreateCells() {
+    this.internalProps.stick.changedCells.clear();
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.refreshHeader();
     this.internalProps.useOneRowHeightFillAll = false;
@@ -2797,7 +2798,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;
   abstract toggleHierarchyState(col: number, row: number, recalculateColWidths?: boolean): void;
-  abstract _hasHierarchyTreeHeader(): boolean;
+
   abstract getMenuInfo(col: number, row: number, type: string): DropDownMenuEventInfo;
   abstract _moveHeaderPosition(
     source: CellAddress,

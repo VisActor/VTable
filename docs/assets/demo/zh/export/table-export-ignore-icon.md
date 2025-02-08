@@ -225,15 +225,15 @@ function bindExport() {
   exportContainer.appendChild(exportCsvButton);
   exportContainer.appendChild(exportExcelButton);
 
-  exportCsvButton.addEventListener('click', () => {
+  exportCsvButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
+      await downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
     }
   });
 
   exportExcelButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      downloadExcel(
+      await downloadExcel(
         await exportVTableToExcel(window.tableInstance, {
           ignoreIcon: true
         }),

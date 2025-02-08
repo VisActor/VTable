@@ -1,12 +1,7 @@
 {
   // Eslint
   "eslint.format.enable": true,
-  "eslint.validate": [
-    "typescript",
-    "javascript",
-    "javascriptreact",
-    "typescriptreact"
-  ],
+  "eslint.validate": ["typescript", "javascript", "javascriptreact", "typescriptreact"],
   // Formatter
   "javascript.format.enable": false,
   "typescript.format.enable": false,
@@ -21,9 +16,7 @@
   },
   // Editor
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": [
-    "source.fixAll.eslint"
-  ],
+  "editor.codeActionsOnSave": ["source.fixAll.eslint"],
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
@@ -32,6 +25,7 @@
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
-	"python.formatting.provider": "none",
-	"nuxt.isNuxtApp": false
+  "python.formatting.provider": "none",
+  "nuxt.isNuxtApp": false,
+  "cSpell.words": ["visactor"]
 }
