@@ -780,15 +780,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     rowDimensionKeys: string[] | null,
     dimensions: (string | IDimension)[]
   ) {
+    this._cornerHeaderCellFullPathIds = [];
     const results: HeaderData[] = [];
     if (this.cornerSetting.titleOnDimension === 'all') {
       if (this.indicatorsAsCol) {
-        let indicatorAtIndex = -1;
         if (colDimensionKeys) {
-          colDimensionKeys.forEach((dimensionKey: string, key: number) => {
-            if (dimensionKey === this.indicatorDimensionKey) {
-              indicatorAtIndex = key;
-            }
+          for (let i = 0; i < this._getColumnHeaderTreeExpandedMaxLevelCount(); i++) {
+            const dimensionKey = colDimensionKeys[i];
             const id = ++this.sharedVar.seqId;
             const dimensionInfo: IDimension = dimensions.find(dimension =>
               typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
@@ -831,16 +829,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             results[id] = cell;
             this._headerObjects[id] = cell;
 
-            if (!this._cornerHeaderCellFullPathIds[key]) {
-              this._cornerHeaderCellFullPathIds[key] = [];
+            if (!this._cornerHeaderCellFullPathIds[i]) {
+              this._cornerHeaderCellFullPathIds[i] = [];
             }
-            for (let r = 0; r < this.rowHeaderLevelCount; r++) {
-              this._cornerHeaderCellFullPathIds[key][r] = id;
+            for (let r = 0; r < this._getRowHeaderTreeExpandedMaxLevelCount(); r++) {
+              this._cornerHeaderCellFullPathIds[i][r] = id;
             }
-          });
+          }
         }
         if (rowDimensionKeys) {
-          rowDimensionKeys.forEach((dimensionKey: string, key: number) => {
+          for (let i = 0; i < this._getRowHeaderTreeExpandedMaxLevelCount(); i++) {
+            const dimensionKey = rowDimensionKeys[i];
             const id = ++this.sharedVar.seqId;
             const dimensionInfo: IDimension = dimensions.find(dimension =>
               typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
@@ -882,19 +881,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             };
             results[id] = cell;
             this._headerObjects[id] = cell;
-            if (!this._cornerHeaderCellFullPathIds[indicatorAtIndex]) {
-              this._cornerHeaderCellFullPathIds[indicatorAtIndex] = [];
+            if (!this._cornerHeaderCellFullPathIds[this._cornerHeaderCellFullPathIds.length - 1]) {
+              this._cornerHeaderCellFullPathIds[this._cornerHeaderCellFullPathIds.length - 1] = [];
             }
-            this._cornerHeaderCellFullPathIds[indicatorAtIndex][key] = id;
-          });
+            this._cornerHeaderCellFullPathIds[this._cornerHeaderCellFullPathIds.length - 1][i] = id;
+          }
         }
       } else {
-        let indicatorAtIndex = -1;
         if (rowDimensionKeys) {
-          rowDimensionKeys.forEach((dimensionKey: string, key: number) => {
-            if (dimensionKey === this.indicatorDimensionKey) {
-              indicatorAtIndex = key;
-            }
+          for (let i = 0; i < this._getRowHeaderTreeExpandedMaxLevelCount(); i++) {
+            const dimensionKey = rowDimensionKeys[i];
             const id = ++this.sharedVar.seqId;
             const dimensionInfo: IDimension = dimensions.find(dimension =>
               typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
@@ -937,16 +933,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             results[id] = cell;
             this._headerObjects[id] = cell;
 
-            for (let r = 0; r < this.columnHeaderLevelCount; r++) {
+            for (let r = 0; r < this._getColumnHeaderTreeExpandedMaxLevelCount(); r++) {
               if (!this._cornerHeaderCellFullPathIds[r]) {
                 this._cornerHeaderCellFullPathIds[r] = [];
               }
-              this._cornerHeaderCellFullPathIds[r][key] = id;
+              this._cornerHeaderCellFullPathIds[r][i] = id;
             }
-          });
+          }
         }
         if (colDimensionKeys) {
-          colDimensionKeys.forEach((dimensionKey: string, key: number) => {
+          for (let c = 0; c < this._getColumnHeaderTreeExpandedMaxLevelCount(); c++) {
+            const dimensionKey = colDimensionKeys[c];
             const id = ++this.sharedVar.seqId;
             const dimensionInfo: IDimension = dimensions.find(dimension =>
               typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
@@ -991,8 +988,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             // if (!this._cornerHeaderCellFullPathIds[indicatorAtIndex]) {
             //   this._cornerHeaderCellFullPathIds[indicatorAtIndex] = [];
             // }
-            this._cornerHeaderCellFullPathIds[key][indicatorAtIndex] = id;
-          });
+            this._cornerHeaderCellFullPathIds[c][this._cornerHeaderCellFullPathIds[c].length - 1] = id;
+          }
         }
       }
     } else if (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'column') {
@@ -2428,6 +2425,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // this.columnDimensionTree.totalLevel,
         // this.indicatorKeys
       );
+
+      this.cornerHeaderObjs = this._addCornerHeaders(
+        this.colDimensionKeys,
+        this.rowDimensionKeys,
+        this.columnsDefine.concat(...this.rowsDefine)
+      );
     }
 
     if (this.rowHeaderTitle) {
@@ -2551,6 +2554,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         false
         // this.columnDimensionTree.totalLevel,
         // this.indicatorKeys
+      );
+      this.cornerHeaderObjs = this._addCornerHeaders(
+        this.colDimensionKeys,
+        this.rowDimensionKeys,
+        this.columnsDefine.concat(...this.rowsDefine)
       );
     }
 
