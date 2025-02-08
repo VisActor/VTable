@@ -109,7 +109,7 @@ export function createCellContent(
             : autoRowHeight && !table.options.customConfig?.multilinesForXTable
             ? -1
             : cellHeight - Math.floor(padding[0] + padding[2]),
-        // pickable: false,
+        pickable: false,
         dx: (textAlign === 'left' ? hierarchyOffset : 0) + _contentOffset,
         // dy: -1,
         whiteSpace:

@@ -1903,19 +1903,23 @@ export class Scenegraph {
       if ((text.attribute as any).moreThanMaxCharacters) {
         return this.table.getCellValue(col, row);
       }
-      const textAttributeStr = isArray(text.attribute.text)
-        ? text.attribute.text.join('')
-        : (text.attribute.text as string);
-      let cacheStr = '';
-      if (isString(text.cache.clipedText)) {
-        cacheStr = text.cache.clipedText;
-      } else {
-        (text.cache as ITextCache).layoutData?.lines?.forEach((line: any) => {
-          cacheStr += line.str;
-        });
-      }
-      if (cacheStr !== textAttributeStr) {
-        // return textAttributeStr;
+      // const textAttributeStr = isArray(text.attribute.text)
+      //   ? text.attribute.text.join('')
+      //   : (text.attribute.text as string);
+      // let cacheStr = '';
+      // if (isString(text.cache.clipedText)) {
+      //   cacheStr = text.cache.clipedText;
+      // } else {
+      //   (text.cache as ITextCache).layoutData?.lines?.forEach((line: any) => {
+      //     cacheStr += line.str;
+      //   });
+      // }
+      // if (cacheStr !== textAttributeStr) {
+      //   // return textAttributeStr;
+      //   return this.table.getCellValue(col, row);
+      // }
+
+      if (text.cliped) {
         return this.table.getCellValue(col, row);
       }
     } else if (text && text.type === 'richtext') {
