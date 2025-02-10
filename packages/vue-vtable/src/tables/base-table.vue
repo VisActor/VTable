@@ -171,14 +171,14 @@ const updateVTable = (newOptions: IOption) => {
   try {
     // for keepColumnWidthChange, update column width
 
-    // if (props.keepColumnWidthChange) {
-    //   const columnWidthConfig = updateWidthCache(columnWidths.value, pivotColumnWidths.value, vTableInstance.value);
-    //   newOptions = {
-    //     ...newOptions,
-    //     columnWidthConfig: columnWidthConfig as any,
-    //     columnWidthConfigForRowHeader: columnWidthConfig as any
-    //   };
-    // }
+    if (props.keepColumnWidthChange) {
+      const columnWidthConfig = updateWidthCache(columnWidths.value, pivotColumnWidths.value, vTableInstance.value);
+      newOptions = {
+        ...newOptions,
+        columnWidthConfig: columnWidthConfig as any,
+        columnWidthConfigForRowHeader: columnWidthConfig as any
+      };
+    }
     switch (props.type) {
       case 'list':
         if (vTableInstance.value instanceof ListTable) {
