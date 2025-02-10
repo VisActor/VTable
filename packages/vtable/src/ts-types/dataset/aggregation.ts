@@ -233,6 +233,8 @@ export class CustomAggregator extends Aggregator {
     this.fieldValue = undefined;
   }
   recalculate() {
+    this.fieldValue = undefined;
+    this._formatedValue = undefined;
     // do nothing
   }
 }

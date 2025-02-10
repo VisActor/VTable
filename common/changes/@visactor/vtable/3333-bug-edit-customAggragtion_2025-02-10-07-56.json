@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when column has custom aggregation edit cell update #3333\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
