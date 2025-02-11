@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: supplement theme frozen frameStyle border create #3400\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

@@ -91,6 +91,46 @@ Corner header cell style configuration
   prefix = '#' + ${prefix},
 ) }}
 
+#${prefix} cornerLeftBottomCellStyle(Object)
+
+Corner left bottom cell style configuration
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
+#${prefix} cornerRightBottomCellStyle(Object)
+
+Corner right bottom cell style configuration
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
+#${prefix} bottomFrozenStyle(Object)
+
+Bottom frozen area style configuration
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
+#${prefix} rightFrozenStyle(Object)
+
+Right frozen area style configuration
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
+#${prefix} cornerRightTopCellStyle(Object)
+
+Corner right top cell style configuration
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
 #${prefix} groupTitleStyle(Object)
 
 Group title style configuration in grouping display mode

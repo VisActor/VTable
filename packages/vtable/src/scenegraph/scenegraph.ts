@@ -1739,6 +1739,42 @@ export class Scenegraph {
       this.cornerHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );
+    this.table.theme.cornerLeftBottomCellStyle?.frameStyle &&
+      createFrameBorder(
+        this.leftBottomCornerGroup,
+        this.table.theme.cornerLeftBottomCellStyle.frameStyle,
+        this.leftBottomCornerGroup.role,
+        isListTableWithFrozen ? [true, false, true, true] : undefined
+      );
+    this.table.theme.bottomFrozenStyle?.frameStyle &&
+      createFrameBorder(
+        this.bottomFrozenGroup,
+        this.table.theme.bottomFrozenStyle.frameStyle,
+        this.bottomFrozenGroup.role,
+        isListTableWithFrozen ? [true, true, true, false] : undefined
+      );
+    this.table.theme.rightFrozenStyle?.frameStyle &&
+      createFrameBorder(
+        this.rightFrozenGroup,
+        this.table.theme.rightFrozenStyle.frameStyle,
+        this.rightFrozenGroup.role,
+        undefined
+      );
+    this.table.theme.cornerRightTopCellStyle?.frameStyle &&
+      createFrameBorder(
+        this.rightTopCornerGroup,
+        this.table.theme.cornerRightTopCellStyle.frameStyle,
+        this.rightTopCornerGroup.role,
+        undefined
+      );
+    this.table.theme.cornerRightBottomCellStyle?.frameStyle &&
+      createFrameBorder(
+        this.rightBottomCornerGroup,
+        this.table.theme.cornerRightBottomCellStyle.frameStyle,
+        this.rightBottomCornerGroup.role,
+        undefined
+      );
+
     createFrameBorder(this.tableGroup, this.table.theme.frameStyle, this.tableGroup.role, undefined);
   }
 
@@ -1893,6 +1929,26 @@ export class Scenegraph {
     if (this.cornerHeaderGroup.border) {
       this.cornerHeaderGroup.appendChild(this.cornerHeaderGroup.border);
       updateFrameBorderSize(this.cornerHeaderGroup);
+    }
+    if (this.leftBottomCornerGroup.border) {
+      this.leftBottomCornerGroup.appendChild(this.leftBottomCornerGroup.border);
+      updateFrameBorderSize(this.leftBottomCornerGroup);
+    }
+    if (this.bottomFrozenGroup.border) {
+      this.bottomFrozenGroup.appendChild(this.bottomFrozenGroup.border);
+      updateFrameBorderSize(this.bottomFrozenGroup);
+    }
+    if (this.rightFrozenGroup.border) {
+      this.rightFrozenGroup.appendChild(this.rightFrozenGroup.border);
+      updateFrameBorderSize(this.rightFrozenGroup);
+    }
+    if (this.rightTopCornerGroup.border) {
+      this.rightTopCornerGroup.appendChild(this.rightTopCornerGroup.border);
+      updateFrameBorderSize(this.rightTopCornerGroup);
+    }
+    if (this.rightBottomCornerGroup.border) {
+      this.rightBottomCornerGroup.appendChild(this.rightBottomCornerGroup.border);
+      updateFrameBorderSize(this.rightBottomCornerGroup);
     }
 
     updateCornerRadius(this.table);

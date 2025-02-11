@@ -91,6 +91,46 @@ body 单元格的样式配置
   prefix = '#' + ${prefix},
 ) }}
 
+#${prefix} cornerLeftBottomCellStyle(Object)
+
+左下角单元格的样式配置
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
+#${prefix} cornerRightBottomCellStyle(Object)
+
+右下角单元格的样式配置
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
+#${prefix} bottomFrozenStyle(Object)
+
+底部冻结区域的样式配置
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
+#${prefix} rightFrozenStyle(Object)
+
+右侧冻结区域的样式配置
+
+{{ use: common-theme-style( 
+  prefix = '#' + ${prefix},
+) }}
+
+#${prefix} cornerRightTopCellStyle(Object)
+
+右上角单元格的样式配置
+
+{{ use: common-theme-style(
+  prefix = '#' + ${prefix},
+) }}
+
 #${prefix} groupTitleStyle(Object)
 
 分组展示时，分组标题的样式配置
