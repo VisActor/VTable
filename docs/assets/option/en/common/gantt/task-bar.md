@@ -32,11 +32,26 @@ The style of the text on the task bar.
 
 Optional
 
-${prefix} barStyle(ITaskBarStyle)
-
-The style of the task bar.
+${prefix} barStyle(ITaskBarStyle|Function)
 
 Optional
+
+The style of the task bar, you can configure the function to return different styles based on the situation.
+
+```
+barStyle?: ITaskBarStyle | ((args: TaskBarInteractionArgumentType) => ITaskBarStyle);
+
+// TaskBarInteractionArgumentType definition:
+export type TaskBarInteractionArgumentType = {
+  taskRecord: any;
+  index: number;
+  subIndex?: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+```
+
 
 {{ use: common-gantt-task-bar-style }}
 

@@ -3,6 +3,7 @@ import type { GanttConstructorOptions, TYPES } from '../../src/index';
 import * as VTableGantt from '../../src/index';
 import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
+import { debug } from 'console';
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
@@ -913,14 +914,27 @@ export function createTable() {
         fontSize: 16,
         textAlign: 'left'
       },
-      barStyle: {
-        width: 20,
-        /** 任务条的颜色 */
-        barColor: '#ee8800',
-        /** 已完成部分任务条的颜色 */
-        completedBarColor: '#91e8e0',
-        /** 任务条的圆角 */
-        cornerRadius: 10
+      barStyle(args) {
+        if (args.taskRecord.title === 'Scope') {
+          return {
+            width: 30,
+            /** 任务条的颜色 */
+            barColor: 'red',
+            /** 已完成部分任务条的颜色 */
+            completedBarColor: '#91e8e0',
+            /** 任务条的圆角 */
+            cornerRadius: 10
+          };
+        }
+        return {
+          width: 20,
+          /** 任务条的颜色 */
+          barColor: '#ee8800',
+          /** 已完成部分任务条的颜色 */
+          completedBarColor: '#91e8e0',
+          /** 任务条的圆角 */
+          cornerRadius: 10
+        };
       },
       selectedBarStyle: {
         shadowBlur: 5, //阴影宽度
