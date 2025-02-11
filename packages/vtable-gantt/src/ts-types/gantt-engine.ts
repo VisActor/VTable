@@ -90,7 +90,7 @@ export interface GanttConstructorOptions {
     /** 任务条文字样式 */
     labelTextStyle?: ITaskBarLabelTextStyle;
     /** 任务条样式 */
-    barStyle?: ITaskBarStyle | ((interactionArgs: TaskBarInteractionArgumentType) => ITaskBarStyle);
+    barStyle?: ITaskBarStyle | ((args: TaskBarInteractionArgumentType) => ITaskBarStyle);
     milestoneStyle?: IMilestoneStyle;
     /** 自定义布局渲染 */
     customLayout?: ITaskBarCustomLayout;
