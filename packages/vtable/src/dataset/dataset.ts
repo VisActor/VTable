@@ -328,7 +328,8 @@ export class Dataset {
             this.totals?.row?.showGrandTotals ||
               (!this.indicatorsAsCol && this.columns.length === 0) ||
               (this.indicatorsAsCol && this.rows.length === 0),
-            this.rowGrandTotalLabel
+            this.rowGrandTotalLabel,
+            this.totals?.row?.showGrandTotalsOnTop ?? false
           );
         } else {
           this.rowHeaderTree = this.ArrToTree(
@@ -1023,7 +1024,8 @@ export class Dataset {
           this.totals?.row?.showGrandTotals ||
             (!this.indicatorsAsCol && this.columns.length === 0) ||
             (this.indicatorsAsCol && this.rows.length === 0),
-          this.rowGrandTotalLabel
+          this.rowGrandTotalLabel,
+          this.totals?.row?.showGrandTotalsOnTop ?? false
         );
       } else {
         this.rowHeaderTree = this.ArrToTree(
@@ -1836,7 +1838,8 @@ export class Dataset {
     rows: string[],
     indicators: (string | IIndicator)[] | undefined,
     isGrandTotal: boolean,
-    grandTotalLabel: string
+    grandTotalLabel: string,
+    showGrandTotalsOnTop: boolean
   ) {
     /**
      *
@@ -1847,7 +1850,7 @@ export class Dataset {
     const result: any[] = []; // 结果
     const concatStr = this.stringJoinChar; // 连接符(随便写，保证key唯一性就OK)
     const map = new Map(); // 存储根节点 主要提升性能
-    function addList(list: any) {
+    function addList(list: any, isGrandTotal: boolean) {
       const path: any[] = []; // 路径
       let node: any; // 当前节点
       list.forEach((value: any, index: number) => {
@@ -1882,7 +1885,11 @@ export class Dataset {
           if (node) {
             node.children.push(item);
           } else {
-            result.push(item);
+            if (showGrandTotalsOnTop && isGrandTotal) {
+              result.unshift(item);
+            } else {
+              result.push(item);
+            }
           }
         }
         node = item; // 更新当前节点
@@ -1891,7 +1898,7 @@ export class Dataset {
 
     arr.forEach(item => addList(item));
     if (isGrandTotal) {
-      addList([grandTotalLabel]);
+      addList([grandTotalLabel], isGrandTotal);
     }
     return result;
   }
