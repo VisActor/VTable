@@ -1896,7 +1896,7 @@ export class Dataset {
       });
     }
 
-    arr.forEach(item => addList(item));
+    arr.forEach(item => addList(item, false));
     if (isGrandTotal) {
       addList([grandTotalLabel], isGrandTotal);
     }
