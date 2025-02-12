@@ -791,10 +791,10 @@ enum HierarchyState {
 
 ## setDropDownMenuHighlight(Function)
 
-设置下拉菜单选中状态
+设置下拉菜单选中状态, 同时单元格中也会显示对应的icon
 
 ```
-  setDropDownMenuHighlight(cells: DropDownMenuHighlightInfo[]): void
+  setDropDownMenuHighlight(dropDownMenuInfo: DropDownMenuHighlightInfo[]): void
 ```
 
 ## showTooltip(Function)

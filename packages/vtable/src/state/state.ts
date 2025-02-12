@@ -1241,10 +1241,10 @@ export class StateManager {
     }
   }
 
-  setDropDownMenuHighlight(cells: DropDownMenuHighlightInfo[]): void {
-    this.menu.dropDownMenuHighlight = cells;
-    for (let i = 0; i < cells.length; i++) {
-      const { col, row } = cells[i];
+  setDropDownMenuHighlight(dropDownMenuInfo: DropDownMenuHighlightInfo[]): void {
+    this.menu.dropDownMenuHighlight = dropDownMenuInfo;
+    for (let i = 0; i < dropDownMenuInfo.length; i++) {
+      const { col, row } = dropDownMenuInfo[i];
       const range = this.table.getCellRange(col, row);
       if (!range) {
         continue;

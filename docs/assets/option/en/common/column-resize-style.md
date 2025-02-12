@@ -43,3 +43,11 @@ The background color of the label
 ##${prefix} labelBackgroundCornerRadius(number)
 
 The corner radius of the label background
+
+##${prefix} visibleOnHover(boolean)
+
+Whether to display when hovering, default is false
+
+##${prefix} resizeHotSpotSize(number)
+
+The size of the hot area for interactive behavior of adjusting row height and column width

@@ -143,6 +143,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
     eventManager.dealIconHover(eventArgsSet);
     eventManager.dealTableHover(eventArgsSet);
 
+    if (table.theme.columnResize.visibleOnHover) {
+      // 是否在hover时显示
+      eventManager.checkColumnResize(eventArgsSet, true);
+    }
     // 触发MOUSEMOVE_CELL
     if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEMOVE_CELL)) {
       let icon;

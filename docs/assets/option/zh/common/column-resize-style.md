@@ -44,3 +44,11 @@
 
 标签的背景圆角
 
+##${prefix} visibleOnHover(boolean)
+
+是否在hover时显示 默认为false
+
+##${prefix} resizeHotSpotSize(number)
+
+响应调整行高列宽交互行为热区的大小
+

@@ -104,9 +104,10 @@ export interface ITableThemeDefine {
   frameStyle?: TableFrameStyle;
   //列调整宽度的直线
   columnResize?: {
-    lineColor: ColorPropertyDefine; //上面线的颜色
+    visibleOnHover?: boolean; //是否在hover时显示
+    lineColor?: ColorPropertyDefine; //上面线的颜色
     bgColor?: ColorPropertyDefine; //背景线的颜色
-    lineWidth: number; //上面线的宽度
+    lineWidth?: number; //上面线的宽度
     width?: number; //背景线的宽度
     resizeHotSpotSize?: number; //响应调整行高列宽交互行为热区的大小
     labelVisible?: boolean; //是否显示label

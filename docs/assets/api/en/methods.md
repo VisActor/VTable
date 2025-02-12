@@ -871,11 +871,11 @@ The table will not be redrawn automatically after updating, and the interface re
 
 ## setDropDownMenuHighlight(Function)
 
-Set the selected state of the drop-down menu
+Set the selected state of the drop-down menu. The cell will also display the corresponding icon
 
 ```
 
-setDropDownMenuHighlight(cells: DropDownMenuHighlightInfo[]): void
+setDropDownMenuHighlight(dropDownMenuInfo: DropDownMenuHighlightInfo[]): void
 
 ```
 

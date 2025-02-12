@@ -28,7 +28,13 @@ export function createTable() {
         }
       }
     },
+    columnResizeMode: 'header',
     corner: { titleOnDimension: 'row' },
+    theme: VTable.themes.DEFAULT.extends({
+      columnResize: {
+        visibleOnHover: true
+      }
+    }),
     records: [
       {
         sales: 891,
