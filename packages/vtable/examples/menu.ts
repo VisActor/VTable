@@ -611,6 +611,10 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-SortTotal'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-updateSortRule'
       },
       {
