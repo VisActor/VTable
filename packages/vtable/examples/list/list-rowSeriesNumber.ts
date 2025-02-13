@@ -213,15 +213,61 @@ export function createTable() {
       dragOrder: true,
       headerIcon: 'book',
       width: 'auto',
-      format: (args: any) => {
-        return '';
-      },
+
       headerStyle: {
         color: 'black',
         bgColor: 'pink'
       },
       style: {
         color: 'red'
+      },
+      customLayout: (args: any) => {
+        const { table, row, col, rect } = args;
+        const record = table.getRecordByCell(col, row);
+        const { height, width } = rect ?? table.getCellRect(col, row);
+        const container = new VTable.CustomLayout.Group({
+          height,
+          width,
+          display: 'flex',
+          flexDirection: 'row',
+          flexWrap: 'nowrap'
+        });
+        const bloggerName = new VTable.CustomLayout.Text({
+          text: 'ttttttt ffff',
+          fontSize: 13,
+          fontFamily: 'sans-serif',
+          fill: 'black',
+          marginLeft: 10
+        });
+        container.add(bloggerName);
+        return {
+          rootContainer: container,
+          renderDefault: true
+        };
+      },
+      headerCustomLayout: (args: any) => {
+        const { table, row, col, rect } = args;
+        const record = table.getRecordByCell(col, row);
+        const { height, width } = rect ?? table.getCellRect(col, row);
+        const container = new VTable.CustomLayout.Group({
+          height,
+          width,
+          display: 'flex',
+          flexDirection: 'row',
+          flexWrap: 'nowrap'
+        });
+        const bloggerName = new VTable.CustomLayout.Text({
+          text: 'ttttttt ffff',
+          fontSize: 13,
+          fontFamily: 'sans-serif',
+          fill: 'black',
+          marginLeft: 10
+        });
+        container.add(bloggerName);
+        return {
+          rootContainer: container,
+          renderDefault: true
+        };
       }
     },
     bottomFrozenRowCount: 3
