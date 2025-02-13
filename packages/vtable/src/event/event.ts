@@ -160,48 +160,50 @@ export class EventManager {
     bindMediaClick(this.table);
 
     // 双击自动列宽
-    if (!this.table.options.disableDblclickAutoResizeColWidth) {
-      this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, (e: MousePointerCellEvent) => {
-        if (e.federatedEvent) {
-          const eventArgsSet = getCellEventArgsSet(e.federatedEvent as any);
-          const resizeCol = this.table.scenegraph.getResizeColAt(
-            eventArgsSet.abstractPos.x,
-            eventArgsSet.abstractPos.y,
-            eventArgsSet.eventArgs?.targetCell
-          );
-          if (this.table.eventManager.checkCellFillhandle(eventArgsSet)) {
-            this.table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE, {});
-          } else if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
-            this.table.scenegraph.updateAutoColWidth(resizeCol.col);
-            this.table.internalProps._widthResizedColMap.add(resizeCol.col);
-            // if (this.table.isPivotChart()) {
-            this.table.scenegraph.updateChartSizeForResizeColWidth(resizeCol.col);
-            // }
-            const state = this.table.stateManager;
-            // update frozen shadowline component
-            if (
-              state.columnResize.col < state.table.frozenColCount &&
-              !state.table.isPivotTable() &&
-              !(state.table as ListTable).transpose
-            ) {
-              state.table.scenegraph.component.setFrozenColumnShadow(
-                state.table.frozenColCount - 1,
-                state.columnResize.isRightFrozen
-              );
-            }
-            const colWidths = [];
-            // 返回所有列宽信息
-            for (let col = 0; col < this.table.colCount; col++) {
-              colWidths.push(this.table.getColWidth(col));
-            }
-            this.table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
-              col: resizeCol.col,
-              colWidths
-            });
+    this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, (e: MousePointerCellEvent) => {
+      if (e.federatedEvent) {
+        const eventArgsSet = getCellEventArgsSet(e.federatedEvent as any);
+        const resizeCol = this.table.scenegraph.getResizeColAt(
+          eventArgsSet.abstractPos.x,
+          eventArgsSet.abstractPos.y,
+          eventArgsSet.eventArgs?.targetCell
+        );
+        if (this.table.eventManager.checkCellFillhandle(eventArgsSet)) {
+          this.table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE, {});
+        } else if (
+          this.table._canResizeColumn(resizeCol.col, resizeCol.row) &&
+          resizeCol.col >= 0 &&
+          !this.table.options.disableDblclickAutoResizeColWidth
+        ) {
+          this.table.scenegraph.updateAutoColWidth(resizeCol.col);
+          this.table.internalProps._widthResizedColMap.add(resizeCol.col);
+          // if (this.table.isPivotChart()) {
+          this.table.scenegraph.updateChartSizeForResizeColWidth(resizeCol.col);
+          // }
+          const state = this.table.stateManager;
+          // update frozen shadowline component
+          if (
+            state.columnResize.col < state.table.frozenColCount &&
+            !state.table.isPivotTable() &&
+            !(state.table as ListTable).transpose
+          ) {
+            state.table.scenegraph.component.setFrozenColumnShadow(
+              state.table.frozenColCount - 1,
+              state.columnResize.isRightFrozen
+            );
           }
+          const colWidths = [];
+          // 返回所有列宽信息
+          for (let col = 0; col < this.table.colCount; col++) {
+            colWidths.push(this.table.getColWidth(col));
+          }
+          this.table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
+            col: resizeCol.col,
+            colWidths
+          });
         }
-      });
-    }
+      }
+    });
 
     // drill icon
     if (this.table.isPivotTable() && checkHaveDrill(this.table as PivotTable)) {
