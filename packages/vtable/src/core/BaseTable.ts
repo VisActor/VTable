@@ -177,6 +177,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _widthAdaptiveMode: WidthAdaptiveModeDef;
   _heightAdaptiveMode: HeightAdaptiveModeDef;
   customRender?: ICustomRender;
+  columns: ColumnInfo[];
 
   canvasWidth?: number;
   canvasHeight?: number;
