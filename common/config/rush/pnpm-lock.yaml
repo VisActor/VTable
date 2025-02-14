@@ -513,7 +513,6 @@ importers:
       '@types/jest': ^26.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
-      '@visactor/vtable': workspace:*
       eslint: ~8.18.0
       husky: 7.0.4
       jest: ^26.0.0

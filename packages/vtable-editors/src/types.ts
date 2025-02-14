@@ -1,14 +1,12 @@
-import type { TYPES } from '@visactor/vtable';
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface IEditor<V = any> {
+export interface IEditor<V = any, T = any> {
   /**
    * Called when cell enters edit mode.
    *
    * Warning will be thrown if you don't provide this function
    * after removal of `beginEditing`.
    */
-  onStart: (context: EditContext<V>) => void;
+  onStart: (context: EditContext<V, T>) => void;
   /**
    * called when cell exits edit mode.
    *
@@ -69,7 +67,7 @@ export interface IEditor<V = any> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface EditContext<V = any> {
+export interface EditContext<V = any, T = any> {
   /** Container element of the VTable instance. */
   container: HTMLElement;
   /** Position info of the cell that is being edited. */
@@ -89,7 +87,7 @@ export interface EditContext<V = any> {
    * end edit mode.
    */
   endEdit: () => void;
-  table: TYPES.ListTableAPI;
+  table: T;
   col: number;
   row: number;
 }
