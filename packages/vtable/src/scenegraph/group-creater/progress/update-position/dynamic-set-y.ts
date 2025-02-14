@@ -1,8 +1,10 @@
 import type { RowInfo } from '../../../../ts-types';
+import type { IRect } from '../../../../vrender';
 import type { Group } from '../../../graphic/group';
 import { computeRowsHeight } from '../../../layout/compute-row-height';
 import type { SceneProxy } from '../proxy';
 import { updateAutoRow } from './update-auto-row';
+import { getLastChild } from './util';
 
 export async function dynamicSetY(y: number, screenTop: RowInfo | null, isEnd: boolean, proxy: SceneProxy) {
   if (!screenTop) {
@@ -422,7 +424,36 @@ export function updateRowContent(syncTopRow: number, syncBottomRow: number, prox
       proxy.updateCellGroupContent(cellGroup);
     }
   }
+
+  // update container height
+  updateColumnContainerHeight(proxy.table.scenegraph.rowHeaderGroup);
+  updateColumnContainerHeight(proxy.table.scenegraph.rightFrozenGroup);
+  updateColumnContainerHeight(proxy.table.scenegraph.bodyGroup);
+
   proxy.table.scenegraph.updateNextFrame();
 
   return sync;
+}
+
+function updateColumnContainerHeight(containerGroup: Group) {
+  // update column container width
+  const lastColGroup = getLastChild(containerGroup);
+  if (!lastColGroup) {
+    return;
+  }
+  const lastCellGroup = getLastChild(lastColGroup);
+  if (!lastCellGroup) {
+    return;
+  }
+  containerGroup.setAttribute('height', lastCellGroup.attribute.y + lastCellGroup.attribute.height);
+  if (containerGroup.border) {
+    const border = containerGroup.border as IRect;
+    border.setAttribute(
+      'height',
+      lastCellGroup.attribute.y +
+        lastCellGroup.attribute.height -
+        ((border.attribute as any).borderTop ?? 0) / 2 -
+        ((border.attribute as any).borderBottom ?? 0) / 2
+    );
+  }
 }

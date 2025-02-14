@@ -1078,7 +1078,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.stateManager.initLeftRecordsCheckState(this.records);
     }
     if (isValid(field)) {
-      let stateArr = this.stateManager.checkedState.values() as any;
+      // let stateArr = this.stateManager.checkedState.values() as any;
+      // map按照key(dataIndex)的升序输出value
+      const keys = Array.from(this.stateManager.checkedState.keys()).sort();
+      let stateArr = keys.map(key => this.stateManager.checkedState.get(key));
+
       if (this.options.groupBy) {
         stateArr = getGroupCheckboxState(this) as any;
       }
