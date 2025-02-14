@@ -2,6 +2,51 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.16.1",
+      "tag": "@visactor/vtable_v1.16.1",
+      "date": "Fri, 14 Feb 2025 09:37:30 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: progressbar type cell support customLayou #3295\n\n"
+          },
+          {
+            "comment": "fix: when rowHierarchyType is tree total value show on top no work #3322\n\n"
+          },
+          {
+            "comment": "fix: when column has custom aggregation edit cell update #3333\n\n"
+          },
+          {
+            "comment": "feat: add visibleOnHover setting for columnResize #3349\n\n"
+          },
+          {
+            "comment": "feat: gantt barStyle support function #3364\n\n"
+          },
+          {
+            "comment": "refactor: supplement theme frozen frameStyle border create #3400\n\n"
+          },
+          {
+            "comment": "fix: progress will only support number not decimals #3401\n\n"
+          },
+          {
+            "comment": "fix: disable auto resize column width when double clicking the column border line\n\n"
+          },
+          {
+            "comment": "fix: fix bodyGroup frame update #3404"
+          },
+          {
+            "comment": "fix: fix dom position in react-vtable #3314"
+          },
+          {
+            "comment": "fix: fix groupBy judgement in getHierarchyState() #3406"
+          },
+          {
+            "comment": "fix: fix sorted checkbox state #3394"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.16.0",
       "tag": "@visactor/vtable_v1.16.0",
       "date": "Sat, 08 Feb 2025 11:35:13 GMT",

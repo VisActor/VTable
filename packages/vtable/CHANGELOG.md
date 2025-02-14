@@ -1,6 +1,40 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Sat, 08 Feb 2025 11:35:13 GMT and should not be manually modified.
+This log was last generated on Fri, 14 Feb 2025 09:37:30 GMT and should not be manually modified.
+
+## 1.16.1
+Fri, 14 Feb 2025 09:37:30 GMT
+
+### Updates
+
+- refactor: progressbar type cell support customLayou #3295
+
+
+- fix: when rowHierarchyType is tree total value show on top no work #3322
+
+
+- fix: when column has custom aggregation edit cell update #3333
+
+
+- feat: add visibleOnHover setting for columnResize #3349
+
+
+- feat: gantt barStyle support function #3364
+
+
+- refactor: supplement theme frozen frameStyle border create #3400
+
+
+- fix: progress will only support number not decimals #3401
+
+
+- fix: disable auto resize column width when double clicking the column border line
+
+
+- fix: fix bodyGroup frame update #3404
+- fix: fix dom position in react-vtable #3314
+- fix: fix groupBy judgement in getHierarchyState() #3406
+- fix: fix sorted checkbox state #3394
 
 ## 1.16.0
 Sat, 08 Feb 2025 11:35:13 GMT
