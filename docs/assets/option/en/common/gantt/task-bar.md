@@ -184,3 +184,15 @@ Custom rendering of the task bar creation button.
 Optional
 
 {{ use: common-gantt-task-creation-custom-layout }}
+
+${prefix} maxWidth(number)
+
+The maximum width of the task bar creation button.
+
+Optional
+
+${prefix} minWidth(number)
+
+The minimum width of the task bar creation button.
+
+Optional

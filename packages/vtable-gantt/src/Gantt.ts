@@ -149,7 +149,8 @@ export class Gantt extends EventTarget {
       backgroundColor?: string;
     };
     taskBarCreationCustomLayout: ITaskCreationCustomLayout;
-
+    taskBarCreationMaxWidth: number;
+    taskBarCreationMinWidth: number;
     outerFrameStyle: IFrameStyle;
     pixelRatio: number;
     tasksShowMode: TasksShowMode;
@@ -703,6 +704,9 @@ export class Gantt extends EventTarget {
   getAllHeaderRowsHeight() {
     // if (Array.isArray(this.parsedOptions.timeLineHeaderRowHeights)) {
     return this.parsedOptions.timeLineHeaderRowHeights.reduce((acc, curr, index) => {
+      if (this.parsedOptions.sortedTimelineScales[index].visible === false) {
+        return acc;
+      }
       return acc + curr;
     }, 0);
     // }
@@ -770,6 +774,12 @@ export class Gantt extends EventTarget {
     //   0,
     //   index + this.taskListTableInstance.columnHeaderLevelCount
     // );
+    if (!Array.isArray(index)) {
+      index = this.taskListTableInstance.getRecordIndexByCell(
+        0,
+        index + this.taskListTableInstance.columnHeaderLevelCount
+      );
+    }
     this.taskListTableInstance.updateRecords([record], [index]);
   }
   /**
@@ -864,7 +874,6 @@ export class Gantt extends EventTarget {
 
     const newEndDate = formatDate(endDate, dateFormat);
     taskRecord[endDateField] = newEndDate;
-
     if (!isValid(sub_task_index)) {
       //子任务不是独占左侧表格一行的情况
       this._updateRecordToListTable(taskRecord, index);

@@ -188,3 +188,15 @@ ${prefix} scheduleCreation(Object)
 非必填
 
 {{ use: common-gantt-task-creation-custom-layout }}
+
+${prefix} maxWidth(number)
+
+任务条创建按钮的最大宽度
+
+非必填
+
+${prefix} minWidth(number)
+
+任务条创建按钮的最小宽度
+
+非必填

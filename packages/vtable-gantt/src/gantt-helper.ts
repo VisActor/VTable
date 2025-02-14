@@ -265,7 +265,8 @@ export function initOptions(gantt: Gantt) {
     options?.taskBar?.scheduleCreation?.buttonStyle
   );
   gantt.parsedOptions.taskBarCreationCustomLayout = options?.taskBar?.scheduleCreation?.customLayout;
-
+  gantt.parsedOptions.taskBarCreationMaxWidth = options?.taskBar?.scheduleCreation?.maxWidth;
+  gantt.parsedOptions.taskBarCreationMinWidth = options?.taskBar?.scheduleCreation?.minWidth;
   gantt.parsedOptions.outerFrameStyle = Object.assign(
     {
       borderColor: '#e1e4e8',

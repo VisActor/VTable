@@ -230,6 +230,7 @@ VTableGantt 内部借助这个表格实例 tableInstance 实现的能力有：
    1. 行高和时间单位: 通过 rowHeight 和 unit 配置项，可以设置时间刻度的行高和时间单位（如天、周、月等）。
    2. 步长和周起始日: 通过 step 和 startOfWeek 配置项，可以设置时间刻度的步长和一周的起始日。
    3. 日期格式化: 通过 format 配置项，可以自定义日期的显示格式。
+   4. 表头部分是否显示对应的日期格子: 通过 visible 配置项，可以设置是否显示日期刻度，默认显示。
 6. 网格线配置 grid
    1. 样式配置: 通过 verticalLine 和 horizontalLine 配置项，可以设置网格线的颜色、宽度、虚线样式等。
    2. 背景颜色: 通过 backgroundColor 配置项，可以设置网格线的背景颜色。
