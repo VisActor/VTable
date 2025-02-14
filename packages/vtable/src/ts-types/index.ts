@@ -15,4 +15,3 @@ export * from './pivot-table';
 export * from './component';
 export * from './animation';
 export * from './dataset';
-export * from './base-table';
