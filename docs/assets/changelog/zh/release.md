@@ -1,3 +1,31 @@
+# v1.16.1
+
+2025-02-14
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add visibleOnHover setting for columnResize [#3349](https://github.com/VisActor/VTable/issues/3349)
+- **@visactor/vtable**: gantt barStyle support function [#3364](https://github.com/VisActor/VTable/issues/3364)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: when rowHierarchyType is tree total value show on top no work [#3322](https://github.com/VisActor/VTable/issues/3322)
+- **@visactor/vtable**: when column has custom aggregation edit cell update [#3333](https://github.com/VisActor/VTable/issues/3333)
+- **@visactor/vtable**: progress will only support number not decimals [#3401](https://github.com/VisActor/VTable/issues/3401)
+- **@visactor/vtable**: disable auto resize column width when double clicking the column border line
+- **@visactor/vtable**: fix bodyGroup frame update [#3404](https://github.com/VisActor/VTable/issues/3404)
+- **@visactor/vtable**: fix dom position in react-vtable [#3314](https://github.com/VisActor/VTable/issues/3314)
+- **@visactor/vtable**: fix groupBy judgement in getHierarchyState() [#3406](https://github.com/VisActor/VTable/issues/3406)
+- **@visactor/vtable**: fix sorted checkbox state [#3394](https://github.com/VisActor/VTable/issues/3394)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: progressbar type cell support customLayou [#3295](https://github.com/VisActor/VTable/issues/3295)
+- **@visactor/vtable**: supplement theme frozen frameStyle border create [#3400](https://github.com/VisActor/VTable/issues/3400)
+
+[更多详情请查看 v1.16.1](https://github.com/VisActor/VTable/releases/tag/v1.16.1)
+
 # v1.16.0
 
 2025-02-08
