@@ -153,7 +153,8 @@ export function createCell(
       cellWidth,
       cellHeight,
       padding,
-      range
+      range,
+      customResult
     );
 
     const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
@@ -278,7 +279,8 @@ export function createCell(
       cellWidth,
       cellHeight,
       padding,
-      range
+      range,
+      customResult
     );
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
     const dataValue = table.getCellOriginValue(col, row);
