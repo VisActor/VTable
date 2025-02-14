@@ -1,5 +1,5 @@
-import { createLine, PopTip } from '@visactor/vtable/es/vrender';
-import type { PopTipAttributes, IRectGraphicAttribute, IGraphic, Group } from '@visactor/vtable/es/vrender';
+import { PopTip } from '@visactor/vtable/es/vrender';
+import type { IRectGraphicAttribute, IGraphic, Group } from '@visactor/vtable/es/vrender';
 
 import type { Scenegraph } from './scenegraph';
 
@@ -9,32 +9,28 @@ export class ToolTip {
   constructor(scene: Scenegraph) {
     this._scene = scene;
     this.group = new PopTip({
-      title: 'pop测试',
       position: 'top',
-      // content: '我是content',
-      // padding: 16,
+      content: '创建里程碑',
+      contentStyle: {
+        fill: '#fff'
+      },
       visible: false,
       panel: {
         visible: true,
-        background: 'red'
+        background: '#14161c',
+        cornerRadius: 4
       }
-      // stroke: this._scene._gantt.parsedOptions.taskBarCreationButtonStyle.lineColor,
-      // cornerRadius: this._scene._gantt.parsedOptions.taskBarCreationButtonStyle.cornerRadius ?? 0,
-      // fill: this._scene._gantt.parsedOptions.taskBarCreationButtonStyle.backgroundColor
     });
     scene.ganttGroup.addChild(this.group);
   }
-  // options: PopTipAttributes
   show(graphic: IGraphic<Partial<IRectGraphicAttribute>>) {
     const matrix = graphic.globalTransMatrix;
     const targetWidth = graphic.attribute.width;
     this.group.setAttributes({
       visibleAll: true,
       visible: true,
-      pickable: false,
-      childrenPickable: false,
-      x: matrix.e + targetWidth / 2,
-      y: matrix.f
+      x: matrix.e + targetWidth / 2 - 2,
+      y: matrix.f - 2
     });
   }
 
