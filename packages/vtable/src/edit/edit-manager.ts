@@ -18,7 +18,7 @@ export class EditManager<T extends ListTableAPI = ListTableAPI> {
   }
 
   bindEvent() {
-    // const handler = this.table.internalProps.handler;
+    const handler = this.table.internalProps.handler;
     const editCellTrigger = this.table.options.editCellTrigger;
     this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
       if (
