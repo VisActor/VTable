@@ -528,6 +528,11 @@ export class EventManager {
       }
       return true;
     }
+    if (this.table.stateManager.isResizeCol()) {
+      // 结束列调整
+      this.table.stateManager.endResizeCol();
+    }
+
     // }
 
     return false;
