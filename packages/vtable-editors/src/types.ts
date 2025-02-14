@@ -1,3 +1,5 @@
+import type { TYPES } from '@visactor/vtable';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface IEditor<V = any> {
   /**
@@ -87,6 +89,7 @@ export interface EditContext<V = any> {
    * end edit mode.
    */
   endEdit: () => void;
+  table: TYPES.ListTableAPI;
   col: number;
   row: number;
 }

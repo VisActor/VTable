@@ -1,26 +1,25 @@
 import type { IEditor, ValidateEnum } from '@visactor/vtable-editors';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
-import type { BaseTableAPI } from '../ts-types/base-table';
-import type { ListTableAPI, ListTableConstructorOptions } from '../ts-types';
+import type { ListTableAPI } from '../ts-types';
 import { getCellEventArgsSet } from '../event/util';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { isPromise } from '../tools/helper';
 import { isValid } from '@visactor/vutils';
 
-export class EditManager {
-  table: BaseTableAPI;
+export class EditManager<T extends ListTableAPI = ListTableAPI> {
+  table: T;
   editingEditor: IEditor;
   isValidatingValue: boolean = false;
   editCell: { col: number; row: number };
 
-  constructor(table: BaseTableAPI) {
+  constructor(table: T) {
     this.table = table;
     this.bindEvent();
   }
 
   bindEvent() {
-    const handler = this.table.internalProps.handler;
-    const editCellTrigger = (this.table.options as ListTableConstructorOptions).editCellTrigger;
+    // const handler = this.table.internalProps.handler;
+    const editCellTrigger = this.table.options.editCellTrigger;
     this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
       if (
         !editCellTrigger || //默认为双击
@@ -66,7 +65,7 @@ export class EditManager {
     if (this.editingEditor) {
       return;
     }
-    const editor = (this.table as ListTableAPI).getEditor(col, row);
+    const editor = this.table.getEditor(col, row);
     if (editor) {
       // //自定义内容单元格不允许编辑
       // if (this.table.getCustomRender(col, row) || this.table.getCustomLayout(col, row)) {
@@ -104,25 +103,27 @@ export class EditManager {
         referencePosition.rect.height = rect.height - 1;
       }
 
-      editor.beginEditing && console.warn('VTable Warn: `beginEditing` is deprecated, please use `onStart` instead.');
-      editor.beginEditing?.(this.table.getElement(), referencePosition, dataValue);
-
-      if (editor.bindSuccessCallback) {
+      if (typeof editor.beginEditing === 'function') {
+        console.warn('VTable Warn: `beginEditing` is deprecated, please use `onStart` instead.');
+        editor.beginEditing(this.table.getElement(), referencePosition, dataValue);
+      } else if (typeof editor.bindSuccessCallback === 'function') {
         console.warn('VTable Warn: `bindSuccessCallback` is deprecated, please use `onStart` instead.');
-      }
-      editor.bindSuccessCallback?.(() => {
-        this.completeEdit();
-      });
-      editor.onStart?.({
-        value: dataValue,
-        endEdit: () => {
+        editor.bindSuccessCallback(() => {
           this.completeEdit();
-        },
-        referencePosition,
-        container: this.table.getElement(),
-        col,
-        row
-      });
+        });
+      } else if (typeof editor.onStart === 'function') {
+        editor.onStart({
+          value: dataValue,
+          endEdit: () => {
+            this.completeEdit();
+          },
+          referencePosition,
+          container: this.table.getElement(),
+          table: this.table,
+          col,
+          row
+        });
+      }
     }
   }
 
@@ -190,7 +191,7 @@ export class EditManager {
   doExit() {
     const changedValue = this.editingEditor.getValue?.();
     const range = this.table.getCellRange(this.editCell.col, this.editCell.row);
-    const changedValues: any[] = [];
+    const changedValues = [];
     for (let row = range.start.row; row <= range.end.row; row++) {
       const rowChangedValues = [];
       for (let col = range.start.col; col <= range.end.col; col++) {
@@ -198,10 +199,15 @@ export class EditManager {
       }
       changedValues.push(rowChangedValues);
     }
-    (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
-    this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
-    this.editingEditor.exit?.();
-    this.editingEditor.onEnd?.();
+    this.table.changeCellValues(range.start.col, range.start.row, changedValues);
+
+    if (typeof this.editingEditor.exit === 'function') {
+      console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
+      this.editingEditor.exit();
+    } else if (typeof this.editingEditor.onEnd === 'function') {
+      this.editingEditor.onEnd();
+    }
+
     this.editingEditor = null;
     this.isValidatingValue = false;
   }
@@ -219,7 +225,7 @@ export class EditManager {
 function dealWithValidateValue(
   validateValue: boolean | ValidateEnum,
   editManager: EditManager,
-  oldValue: any,
+  oldValue: unknown,
   resolve?: (value: boolean | PromiseLike<boolean>) => void
 ): boolean {
   editManager.isValidatingValue = false;
