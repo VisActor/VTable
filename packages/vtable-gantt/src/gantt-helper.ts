@@ -648,10 +648,10 @@ export function convertProgress(progress: number | string) {
     progress = parseFloat(progress);
   }
 
-  // 如果小于或等于1，说明是0.4这种情况，转换成百分比
-  if (progress <= 1) {
-    progress = progress * 100;
-  }
+  // // 如果小于或等于1，说明是0.4这种情况，转换成百分比
+  // if (progress <= 1) {
+  //   progress = progress * 100;
+  // }
 
   // 最后转换成整数
   return Math.round(progress);
