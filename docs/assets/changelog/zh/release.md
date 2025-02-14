@@ -2,34 +2,32 @@
 
 2025-02-14
 
-
 **🆕 新增功能**
 
-- **@visactor/vtable**: add visibleOnHover setting for columnResize [#3349](https://github.com/VisActor/VTable/issues/3349)
-- **@visactor/vtable**: gantt barStyle support function [#3364](https://github.com/VisActor/VTable/issues/3364)
+- **@visactor/vtable**: 为列宽调整添加 visibleOnHover 设置 [#3349](https://github.com/VisActor/VTable/issues/3349)
+- **@visactor/vtable**: 甘特图的 barStyle 支持函数配置 [#3364](https://github.com/VisActor/VTable/issues/3364)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when rowHierarchyType is tree total value show on top no work [#3322](https://github.com/VisActor/VTable/issues/3322)
-- **@visactor/vtable**: when column has custom aggregation edit cell update [#3333](https://github.com/VisActor/VTable/issues/3333)
-- **@visactor/vtable**: progress will only support number not decimals [#3401](https://github.com/VisActor/VTable/issues/3401)
-- **@visactor/vtable**: disable auto resize column width when double clicking the column border line
-- **@visactor/vtable**: fix bodyGroup frame update [#3404](https://github.com/VisActor/VTable/issues/3404)
-- **@visactor/vtable**: fix dom position in react-vtable [#3314](https://github.com/VisActor/VTable/issues/3314)
-- **@visactor/vtable**: fix groupBy judgement in getHierarchyState() [#3406](https://github.com/VisActor/VTable/issues/3406)
-- **@visactor/vtable**: fix sorted checkbox state [#3394](https://github.com/VisActor/VTable/issues/3394)
+- **@visactor/vtable**: 修复当 rowHierarchyType 为 tree 时，总计值显示在顶部不生效的问题 [#3322](https://github.com/VisActor/VTable/issues/3322)
+- **@visactor/vtable**: 修复当列有自定义聚合时编辑单元格更新的问题 [#3333](https://github.com/VisActor/VTable/issues/3333)
+- **@visactor/vtable**: 进度条类型现在仅支持数字而非小数 [#3401](https://github.com/VisActor/VTable/issues/3401)
+- **@visactor/vtable**: 禁用双击列边框时自动调整列宽的功能
+- **@visactor/vtable**: 修复表体组框架更新问题 [#3404](https://github.com/VisActor/VTable/issues/3404)
+- **@visactor/vtable**: 修复 react-vtable 中 DOM 定位问题 [#3314](https://github.com/VisActor/VTable/issues/3314)
+- **@visactor/vtable**: 修复 getHierarchyState() 中 groupBy 判断问题 [#3406](https://github.com/VisActor/VTable/issues/3406)
+- **@visactor/vtable**: 修复排序后复选框状态问题 [#3394](https://github.com/VisActor/VTable/issues/3394)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: progressbar type cell support customLayou [#3295](https://github.com/VisActor/VTable/issues/3295)
-- **@visactor/vtable**: supplement theme frozen frameStyle border create [#3400](https://github.com/VisActor/VTable/issues/3400)
+- **@visactor/vtable**: 进度条类型单元格支持自定义布局 [#3295](https://github.com/VisActor/VTable/issues/3295)
+- **@visactor/vtable**: 补充主题冻结框架样式边框创建 [#3400](https://github.com/VisActor/VTable/issues/3400)
 
 [更多详情请查看 v1.16.1](https://github.com/VisActor/VTable/releases/tag/v1.16.1)
 
 # v1.16.0
 
 2025-02-08
-
 
 **🆕 新增功能**
 
@@ -43,7 +41,7 @@
 
 - **@visactor/vtable-gantt**: 调整甘特图视图大小时需要更新依赖节点大小 [#3287](https://github.com/VisActor/VTable/issues/3287)
 - **@visactor/vtable-gantt**: 修复调整或移动任务条时更新记录的问题 [#3321](https://github.com/VisActor/VTable/issues/3321)
-- **@visactor/vtable-gantt**: 修复更新scale时任务条大小时的错误 [#3348](https://github.com/VisActor/VTable/issues/3348)
+- **@visactor/vtable-gantt**: 修复更新 scale 时任务条大小时的错误 [#3348](https://github.com/VisActor/VTable/issues/3348)
 - **@visactor/vtable-gantt**: 修复甘特图中鼠标悬停在最后日期边界时出现的错误 [#3373](https://github.com/VisActor/VTable/issues/3373)
 - **@visactor/vtable**: 修复 getCellOverflowText() 中的裁剪判断
 - **@visactor/vtable**: 修复媒体点击事件中的行数据错误 [#3342](https://github.com/VisActor/VTable/issues/3342)
@@ -54,8 +52,6 @@
 **🔨 功能重构**
 
 - **@visactor/vtable**: 行序号单元格现可使用主题表头样式 [#3362](https://github.com/VisActor/VTable/issues/3362)
-
-
 
 [更多详情请查看 v1.16.0](https://github.com/VisActor/VTable/releases/tag/v1.16.0)
 
