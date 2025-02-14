@@ -30,7 +30,7 @@ export class ToolTip {
       visibleAll: true,
       visible: true,
       x: matrix.e + targetWidth / 2 - 2,
-      y: matrix.f - 2
+      y: matrix.f - 4
     });
   }
 

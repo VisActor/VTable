@@ -130,6 +130,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-taskMerge-customLayout'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-phase'
   }
   //   ]
   // }

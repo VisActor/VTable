@@ -148,6 +148,7 @@ export class TimelineHeader {
             visiable: true
           });
           phaseGroup.name = 'phase-hover-group';
+          phaseGroup.data = timelineDates[j];
           const phaseInnerGroup = new Group({
             x: 0,
             y: 0,

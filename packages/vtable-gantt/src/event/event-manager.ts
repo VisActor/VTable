@@ -354,6 +354,7 @@ function bindTableGroupListener(event: EventManager) {
       let isClickLeftLinkPoint = false;
       let isClickRightLinkPoint = false;
       let depedencyLink;
+      let isClickPhaseIcon = false;
 
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         if (pathNode.name === 'task-bar') {
@@ -374,6 +375,9 @@ function bindTableGroupListener(event: EventManager) {
         } else if (pathNode.attribute.vtable_link) {
           isClickDependencyLine = true;
           depedencyLink = pathNode.attribute.vtable_link;
+          return false;
+        } else if (pathNode.name === 'phase-hover-group') {
+          isClickPhaseIcon = true;
           return false;
         }
         return false;
@@ -473,6 +477,13 @@ function bindTableGroupListener(event: EventManager) {
           });
         }
         stateManager.hideTaskBarSelectedBorder();
+      } else if (isClickPhaseIcon && event.poniterState === 'down') {
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_PHASE_ICON)) {
+          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_PHASE_ICON, {
+            event: e.nativeEvent,
+            data: scene._gantt.stateManager.phaseIcon.target.data
+          });
+        }
       } else if (isClickLeftLinkPoint && event.poniterState === 'draging') {
         if (stateManager.isCreatingDependencyLine()) {
           const link = stateManager.endCreateDependencyLine(e.offset.y);
