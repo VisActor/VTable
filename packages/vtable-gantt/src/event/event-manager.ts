@@ -155,6 +155,20 @@ function bindTableGroupListener(event: EventManager) {
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
       });
+      const phaseGroupTarget = e.detailPath.find((pathNode: any) => {
+        return pathNode.name === 'phase-hover-group';
+      });
+      if (phaseGroupTarget) {
+        if (scene._gantt.stateManager.phaseIcon.target !== phaseGroupTarget) {
+          scene._gantt.stateManager.phaseIcon.target = phaseGroupTarget;
+          stateManager.showPhaseIconHover();
+        }
+      } else {
+        if (scene._gantt.stateManager.phaseIcon.target) {
+          stateManager.hidePhaseIconHover();
+        }
+      }
+
       if (taskBarTarget) {
         if (scene._gantt.stateManager.hoverTaskBar.target !== (taskBarTarget as any as GanttTaskBarNode)) {
           scene._gantt.stateManager.hoverTaskBar.target = taskBarTarget as any as GanttTaskBarNode;

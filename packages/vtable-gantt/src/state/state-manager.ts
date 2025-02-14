@@ -100,6 +100,9 @@ export class StateManager {
     secondTaskBarNode: GanttTaskBarNode;
     lastHighLightLinkPoint: Group;
   };
+  phaseIcon: {
+    target: any;
+  };
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
@@ -127,6 +130,9 @@ export class StateManager {
     this.hoverTaskBar = {
       targetStartX: null,
       startX: null,
+      target: null
+    };
+    this.phaseIcon = {
       target: null
     };
 
@@ -974,6 +980,22 @@ export class StateManager {
       circle.setAttribute('lineWidth', this._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeWidth);
       this._gantt.scenegraph.updateNextFrame();
     }
+  }
+  showPhaseIconHover() {
+    const target = this._gantt.stateManager.phaseIcon.target;
+    if (target) {
+      const phaseGroup = this._gantt.scenegraph.timelineHeader.showPhaseIcon(target.parent);
+      if (phaseGroup) {
+        this._gantt.scenegraph.showToolTip(phaseGroup);
+      }
+      this._gantt.scenegraph.updateNextFrame();
+    }
+  }
+  hidePhaseIconHover() {
+    this._gantt.scenegraph.timelineHeader.hidePhaseIconHover(this._gantt.stateManager.phaseIcon.target.parent);
+    this._gantt.scenegraph.hideToolTip();
+    this._gantt.stateManager.phaseIcon.target = null;
+    this._gantt.scenegraph.updateNextFrame();
   }
 }
 
