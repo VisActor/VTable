@@ -103,27 +103,26 @@ export class EditManager<T extends ListTableAPI = ListTableAPI> {
         referencePosition.rect.height = rect.height - 1;
       }
 
-      if (typeof editor.beginEditing === 'function') {
-        console.warn('VTable Warn: `beginEditing` is deprecated, please use `onStart` instead.');
-        editor.beginEditing(this.table.getElement(), referencePosition, dataValue);
-      } else if (typeof editor.bindSuccessCallback === 'function') {
+      editor.beginEditing && console.warn('VTable Warn: `beginEditing` is deprecated, please use `onStart` instead.');
+      editor.beginEditing?.(this.table.getElement(), referencePosition, dataValue);
+
+      if (editor.bindSuccessCallback) {
         console.warn('VTable Warn: `bindSuccessCallback` is deprecated, please use `onStart` instead.');
-        editor.bindSuccessCallback(() => {
-          this.completeEdit();
-        });
-      } else if (typeof editor.onStart === 'function') {
-        editor.onStart({
-          value: dataValue,
-          endEdit: () => {
-            this.completeEdit();
-          },
-          referencePosition,
-          container: this.table.getElement(),
-          table: this.table,
-          col,
-          row
-        });
       }
+      editor.bindSuccessCallback?.(() => {
+        this.completeEdit();
+      });
+      editor.onStart?.({
+        value: dataValue,
+        endEdit: () => {
+          this.completeEdit();
+        },
+        referencePosition,
+        container: this.table.getElement(),
+        table: this.table,
+        col,
+        row
+      });
     }
   }
 
@@ -199,15 +198,10 @@ export class EditManager<T extends ListTableAPI = ListTableAPI> {
       }
       changedValues.push(rowChangedValues);
     }
-    this.table.changeCellValues(range.start.col, range.start.row, changedValues);
-
-    if (typeof this.editingEditor.exit === 'function') {
-      console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
-      this.editingEditor.exit();
-    } else if (typeof this.editingEditor.onEnd === 'function') {
-      this.editingEditor.onEnd();
-    }
-
+    (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
+    this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
+    this.editingEditor.exit?.();
+    this.editingEditor.onEnd?.();
     this.editingEditor = null;
     this.isValidatingValue = false;
   }
@@ -225,7 +219,7 @@ export class EditManager<T extends ListTableAPI = ListTableAPI> {
 function dealWithValidateValue(
   validateValue: boolean | ValidateEnum,
   editManager: EditManager,
-  oldValue: unknown,
+  oldValue: any,
   resolve?: (value: boolean | PromiseLike<boolean>) => void
 ): boolean {
   editManager.isValidatingValue = false;
