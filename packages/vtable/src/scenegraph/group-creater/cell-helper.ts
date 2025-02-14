@@ -145,40 +145,17 @@ export function createCell(
     //   }
     // }
 
-    let customElementsGroup;
-    let renderDefault = true;
-    if (customResult) {
-      customElementsGroup = customResult.elementsGroup;
-      renderDefault = customResult.renderDefault;
-    } else {
-      let customRender;
-      let customLayout;
-      const cellLocation = table.getCellLocation(col, row);
-      if (cellLocation !== 'body') {
-        customRender = define?.headerCustomRender;
-        customLayout = define?.headerCustomLayout;
-      } else {
-        customRender = define?.customRender || table.customRender;
-        customLayout = define?.customLayout;
-      }
-      if (customLayout || customRender) {
-        const customResult = dealWithCustom(
-          customLayout,
-          customRender,
-          col,
-          row,
-          cellWidth,
-          cellHeight,
-          false,
-          table.isAutoRowHeight(row),
-          padding,
-          range,
-          table
-        );
-        customElementsGroup = customResult.elementsGroup;
-        renderDefault = customResult.renderDefault;
-      }
-    }
+    const { customElementsGroup, renderDefault } = _generateCustomElementsGroup(
+      table,
+      define,
+      col,
+      row,
+      cellWidth,
+      cellHeight,
+      padding,
+      range,
+      customResult
+    );
 
     const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
     cellGroup = createTextCellGroup(
@@ -294,6 +271,17 @@ export function createCell(
       table.internalProps.layoutMap.isNoChartDataRenderNothing(col, row)
     );
   } else if (type === 'progressbar') {
+    const { customElementsGroup, renderDefault } = _generateCustomElementsGroup(
+      table,
+      define,
+      col,
+      row,
+      cellWidth,
+      cellHeight,
+      padding,
+      range,
+      customResult
+    );
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
     const dataValue = table.getCellOriginValue(col, row);
     // 创建基础文字单元格
@@ -313,8 +301,8 @@ export function createCell(
       textAlign,
       textBaseline,
       false,
-      null,
-      true,
+      customElementsGroup,
+      renderDefault,
       cellTheme,
       range,
       isAsync
@@ -402,6 +390,60 @@ export function createCell(
 
   cellGroup.onBeforeAttributeUpdate = onBeforeAttributeUpdateForInvertHighlight as any;
   return cellGroup;
+}
+
+function _generateCustomElementsGroup(
+  table: BaseTableAPI,
+  define: ColumnDefine,
+  col: number,
+  row: number,
+  cellWidth: number,
+  cellHeight: number,
+  padding: [number, number, number, number],
+  range: CellRange | undefined,
+  customResult?: {
+    elementsGroup?: VGroup;
+    renderDefault: boolean;
+  }
+) {
+  let customElementsGroup;
+  let renderDefault = true;
+  if (customResult) {
+    customElementsGroup = customResult.elementsGroup;
+    renderDefault = customResult.renderDefault;
+  } else {
+    let customRender;
+    let customLayout;
+    const cellLocation = table.getCellLocation(col, row);
+    if (cellLocation !== 'body') {
+      customRender = define?.headerCustomRender;
+      customLayout = define?.headerCustomLayout;
+    } else {
+      customRender = define?.customRender || table.customRender;
+      customLayout = define?.customLayout;
+    }
+    if (customLayout || customRender) {
+      const customResult = dealWithCustom(
+        customLayout,
+        customRender,
+        col,
+        row,
+        cellWidth,
+        cellHeight,
+        false,
+        table.isAutoRowHeight(row),
+        padding,
+        range,
+        table
+      );
+      customElementsGroup = customResult.elementsGroup;
+      renderDefault = customResult.renderDefault;
+    }
+  }
+  return {
+    customElementsGroup,
+    renderDefault
+  };
 }
 
 export function updateCell(

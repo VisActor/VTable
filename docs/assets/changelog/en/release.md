@@ -1,3 +1,36 @@
+# v1.16.0
+
+2025-02-08
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: support async in downloadCsv&downloadExcel
+- **@visactor/vtable**: linkJump & linkDetect support function
+- **@visactor/vtable**: support react17 in customLayout function
+- **@visactor/vtable**: add keepColumnWidthChange in vue-vtable [#3346](https://github.com/VisActor/VTable/issues/3346)
+- **@visactor/vtable**: add grid-tree mode for pivot table
+
+**🐛 Bug fix**
+
+- **@visactor/vtable-gantt**: when resize gantt view size should update dependency node size [#3287](https://github.com/VisActor/VTable/issues/3287)
+- **@visactor/vtable-gantt**: resize or move taskbar update record problem [#3321](https://github.com/VisActor/VTable/issues/3321)
+- **@visactor/vtable-gantt**: updateScales to quarter taskbar size error [#3348](https://github.com/VisActor/VTable/issues/3348)
+- **@visactor/vtable-gantt**: mouseover last date border occor error for gantt [#3373](https://github.com/VisActor/VTable/issues/3373)
+- **@visactor/vtable**: fix clipped judgement in getCellOverflowText()
+- **@visactor/vtable**: fix rowData error in media-click [#3342](https://github.com/VisActor/VTable/issues/3342)
+- **@visactor/vtable**: fix header checkbox state in functional cellType [#3334](https://github.com/VisActor/VTable/issues/3334)
+- **@visactor/vtable**: fix text vertical layout [#3353](https://github.com/VisActor/VTable/issues/3353)
+- **@visactor/vtable**: fix merge cell style update in vtable-search [#3327](https://github.com/VisActor/VTable/issues/3327)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: rowSeriesNumber cell can use theme headerStyle [#3362](https://github.com/VisActor/VTable/issues/3362)
+
+
+
+[more detail about v1.16.0](https://github.com/VisActor/VTable/releases/tag/v1.16.0)
+
 # v1.15.2
 
 2025-01-26

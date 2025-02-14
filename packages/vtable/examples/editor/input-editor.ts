@@ -64,7 +64,7 @@ export function createTable() {
     },
     {
       // progress: '',
-      // id: 2,
+      id: 2,
       name: 'b'
     },
     {
@@ -157,7 +157,17 @@ export function createTable() {
           }
           return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
         },
-        width: 'auto'
+        aggregation: {
+          aggregationType: VTable.TYPES.AggregationType.CUSTOM,
+          aggregationFun(values, records) {
+            // 使用 reduce() 方法统计金牌数
+            const max = records.reduce((acc, data) => {
+              acc = Math.max(data.id, acc);
+              return acc;
+            }, 0);
+            return max;
+          }
+        }
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
