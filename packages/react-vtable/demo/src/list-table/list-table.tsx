@@ -165,6 +165,7 @@ function App() {
     //   };
     // },
     // enableTreeStickCell: true
+    // disableDblclickAutoResizeColWidth: true
   };
 
   // setTimeout(() => {
