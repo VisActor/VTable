@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix groupBy judgement in getHierarchyState() #3406",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

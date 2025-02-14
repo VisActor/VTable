@@ -342,6 +342,7 @@ export class Scenegraph {
       let linkedToTaskShowIndex;
       let linkedFromTaskShowIndex;
       let diffY: number;
+      const taskBarStyle = this._gantt.getTaskBarStyle(taskIndex, sub_task_index);
       if (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline) {
         const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, gantt);
         linkedFromTaskShowIndex = linkedFromTaskRecord.index[0];
@@ -360,7 +361,7 @@ export class Scenegraph {
           taskDays: linkedFromTaskTaskDays
         } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
 
-        const taskbarHeight = gantt.parsedOptions.taskBarStyle.width;
+        const taskbarHeight = taskBarStyle.width;
         diffY = target.attribute.y + taskbarHeight / 2 - (linkedToTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
       } else if (
         gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
@@ -399,7 +400,7 @@ export class Scenegraph {
           taskDays: linkedFromTaskTaskDays
         } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
 
-        const taskbarHeight = gantt.parsedOptions.taskBarStyle.width;
+        const taskbarHeight = taskBarStyle.width;
         diffY = target.attribute.y + taskbarHeight / 2 - (linkedToTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
       } else {
         linkedFromTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
@@ -475,6 +476,7 @@ export class Scenegraph {
       let linkedToTaskShowIndex;
       let linkedFromTaskShowIndex;
       let diffY: number;
+      const taskBarStyle = this._gantt.getTaskBarStyle(taskIndex, sub_task_index);
       if (gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline) {
         const new_indexs = getTaskIndexsByTaskY(target.attribute.y + dy, gantt);
         const beforeRowCountLinkedFrom =
@@ -493,7 +495,7 @@ export class Scenegraph {
           endDate: linkedFromTaskEndDate,
           taskDays: linkedFromTaskTaskDays
         } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
-        const taskbarHeight = gantt.parsedOptions.taskBarStyle.width;
+        const taskbarHeight = taskBarStyle.width;
         diffY =
           target.attribute.y + taskbarHeight / 2 - (linkedFromTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
       } else if (
@@ -532,7 +534,7 @@ export class Scenegraph {
           endDate: linkedFromTaskEndDate,
           taskDays: linkedFromTaskTaskDays
         } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
-        const taskbarHeight = gantt.parsedOptions.taskBarStyle.width;
+        const taskbarHeight = taskBarStyle.width;
         diffY =
           target.attribute.y + taskbarHeight / 2 - (linkedFromTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
       } else {

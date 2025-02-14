@@ -126,7 +126,7 @@ export class Gantt extends EventTarget {
     reverseSortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
     timeScaleIncludeHour: boolean;
     grid: IGrid;
-    taskBarStyle: ITaskBarStyle;
+    taskBarStyle: ITaskBarStyle | ((interactionArgs: TaskBarInteractionArgumentType) => ITaskBarStyle);
     taskBarMilestoneStyle: IMilestoneStyle;
     /** 里程碑是旋转后的矩形，所以需要计算里程碑的对角线长度 */
     taskBarMilestoneHypotenuse: number;
@@ -1175,5 +1175,21 @@ export class Gantt extends EventTarget {
 
   parseTimeFormat(date: string) {
     return parseDateFormat(date);
+  }
+
+  getTaskBarStyle(task_index: number, sub_task_index?: number) {
+    if (typeof this.parsedOptions.taskBarStyle === 'function') {
+      const { startDate, endDate, taskRecord } = this.getTaskInfoByTaskListIndex(task_index, sub_task_index);
+
+      const args = {
+        index: task_index,
+        startDate,
+        endDate,
+        taskRecord,
+        ganttInstance: this
+      };
+      return this.parsedOptions.taskBarStyle(args);
+    }
+    return this.parsedOptions.taskBarStyle;
   }
 }

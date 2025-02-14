@@ -32,11 +32,26 @@ ${prefix} labelTextStyle(ITaskBarLabelTextStyle)
 
 非必填
 
-${prefix} barStyle(ITaskBarStyle)
+${prefix} barStyle(ITaskBarStyle|Function)
 
-任务条样式
+任务条样式, 可以配置函数，根据情况返回不同的样式.
 
 非必填
+
+```
+ /** 任务条样式 */
+barStyle?: ITaskBarStyle | ((args: TaskBarInteractionArgumentType) => ITaskBarStyle);
+
+//其中 TaskBarInteractionArgumentType 的定义为：
+export type TaskBarInteractionArgumentType = {
+  taskRecord: any;
+  index: number;
+  subIndex?: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+```
 
 {{ use: common-gantt-task-bar-style }}
 

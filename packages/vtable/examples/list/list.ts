@@ -256,6 +256,7 @@ export function createTable() {
       fillHandle: true
     }
     // widthMode: 'adaptive'
+    // disableDblclickAutoResizeColWidth: false
   };
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)!, option);
   window.tableInstance = tableInstance;

@@ -286,9 +286,13 @@ export function updateFrameBorderSize(group: Group) {
     : (group.border.attribute.lineWidth as number) ?? 0;
 
   group.border.setAttributes({
+    borderLeft,
+    borderTop,
+    borderRight,
+    borderBottom,
     width: group.attribute.width - borderLeft / 2 - borderRight / 2,
     height: group.attribute.height - borderTop / 2 - borderBottom / 2
-  });
+  } as any);
 
   if (group.border.type === 'group') {
     (group.border.firstChild as IRect).setAttributes({
