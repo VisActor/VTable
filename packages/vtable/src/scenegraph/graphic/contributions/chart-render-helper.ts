@@ -81,11 +81,11 @@ export function renderChart(chart: Chart) {
 
   let updateSpec = false;
   if (table.options.specFormat) {
-    const formatResult = table.options.specFormat(chart.attribute.spec);
+    const formatResult = table.options.specFormat(chart.attribute.spec, chartInstance, chart);
     if (formatResult.needFormatSpec && formatResult.spec) {
       const spec = formatResult.spec;
       chartInstance.updateSpecSync(spec);
-      updateSpec = true;
+      updateSpec = formatResult.updateSpec ?? true;
     }
   }
 
