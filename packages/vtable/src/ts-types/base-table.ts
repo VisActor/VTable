@@ -539,6 +539,8 @@ export interface BaseTableConstructorOptions {
   customComputeRowHeight?: (computeArgs: { row: number; table: BaseTableAPI }) => number | 'auto' | undefined;
   /** 当表格出现抖动情况，请排查是否上层dom容器的宽高是小数引起的。如果不能保证是整数，请配置这个配置项为true */
   tableSizeAntiJitter?: boolean;
+  /** 编辑触发时机 双击事件  单击事件 api手动开启编辑 或者 鼠标按下新值即可开启编辑。默认为双击'doubleclick' */
+  editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
 }
 export interface BaseTableAPI {
   id: string;

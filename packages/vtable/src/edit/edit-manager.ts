@@ -1,7 +1,7 @@
 import type { IEditor, ValidateEnum } from '@visactor/vtable-editors';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import type { BaseTableAPI } from '../ts-types/base-table';
-import type { ListTableAPI, ListTableConstructorOptions } from '../ts-types';
+import type { ListTableAPI } from '../ts-types';
 import { getCellEventArgsSet } from '../event/util';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { isPromise } from '../tools/helper';
@@ -12,7 +12,7 @@ export class EditManager {
   editingEditor: IEditor;
   isValidatingValue: boolean = false;
   editCell: { col: number; row: number };
-  listenersId: number[];
+  listenersId: number[] = [];
 
   constructor(table: BaseTableAPI) {
     this.table = table;
@@ -21,36 +21,39 @@ export class EditManager {
 
   bindEvent() {
     // const handler = this.table.internalProps.handler;
-    const editCellTrigger = (this.table.options as ListTableConstructorOptions).editCellTrigger;
     const doubleClickEventId = this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
-      if (
-        !editCellTrigger || //默认为双击
-        editCellTrigger === 'doubleclick' ||
-        (Array.isArray(editCellTrigger) && editCellTrigger.includes('doubleclick'))
-      ) {
-        const { col, row } = e;
+      const { editCellTrigger = 'doubleclick' } = this.table.options;
 
-        //取双击自动列宽逻辑
-        const eventArgsSet = getCellEventArgsSet(e.federatedEvent);
-        const resizeCol = this.table.scenegraph.getResizeColAt(
-          eventArgsSet.abstractPos.x,
-          eventArgsSet.abstractPos.y,
-          eventArgsSet.eventArgs?.targetCell
-        );
-        if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
-          // 判断同双击自动列宽的时间监听的DBLCLICK_CELL
-          // 如果是双击自动列宽 则编辑不开启
-          return;
-        }
-        this.startEditCell(col, row);
+      if (!editCellTrigger.includes('doubleclick')) {
+        return;
       }
+
+      const { col, row } = e;
+
+      //取双击自动列宽逻辑
+      const eventArgsSet = getCellEventArgsSet(e.federatedEvent);
+      const resizeCol = this.table.scenegraph.getResizeColAt(
+        eventArgsSet.abstractPos.x,
+        eventArgsSet.abstractPos.y,
+        eventArgsSet.eventArgs?.targetCell
+      );
+      if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
+        // 判断同双击自动列宽的时间监听的DBLCLICK_CELL
+        // 如果是双击自动列宽 则编辑不开启
+        return;
+      }
+      this.startEditCell(col, row);
     });
 
     const clickEventId = this.table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
-      if (editCellTrigger === 'click' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('click'))) {
-        const { col, row } = e;
-        this.startEditCell(col, row);
+      const { editCellTrigger } = this.table.options;
+
+      if (!editCellTrigger.includes('click')) {
+        return;
       }
+
+      const { col, row } = e;
+      this.startEditCell(col, row);
     });
 
     this.listenersId.push(doubleClickEventId, clickEventId);
