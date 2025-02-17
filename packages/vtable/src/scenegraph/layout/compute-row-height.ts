@@ -18,7 +18,7 @@ import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import type { ComputeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
 import { Factory } from '../../core/factory';
 import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
-import { CheckBox } from '@visactor/vrender-components';
+import { CheckBox } from '@src/vrender';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
 import { getCellMergeInfo } from '../utils/get-cell-merge';

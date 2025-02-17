@@ -2,7 +2,7 @@ import { isBoolean, isNumber, isObject, isValid } from '@visactor/vutils';
 import type { StateManager } from '../state';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ColumnDefine } from '../../ts-types';
-import type { Radio } from '@visactor/vrender-components';
+import type { Radio } from '@src/vrender';
 
 export function setRadioState(
   col: number,

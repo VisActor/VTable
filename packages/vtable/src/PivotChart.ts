@@ -41,7 +41,7 @@ import {
 } from './scenegraph/refresh-node/update-chart';
 import type { ITableAxisOption } from './ts-types/component/axis';
 import { cloneDeep, isArray, isNumber } from '@visactor/vutils';
-import type { DiscreteLegend } from '@visactor/vrender-components';
+import type { DiscreteLegend } from '@src/vrender';
 import type { ITitleComponent } from './components/title/title';
 import { Env } from './tools/env';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';

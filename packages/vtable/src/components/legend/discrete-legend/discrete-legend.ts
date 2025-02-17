@@ -1,7 +1,7 @@
 import { cloneDeep, get, merge } from '@visactor/vutils';
 import type { IDiscreteTableLegendOption } from '../../../ts-types/component/legend';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
-import { DiscreteLegend, LegendEvent } from '@visactor/vrender-components';
+import { DiscreteLegend, LegendEvent } from '@src/vrender';
 import { getLegendAttributes } from './get-discrete-legend-attributes';
 import { TABLE_EVENT_TYPE } from '../../../core/TABLE_EVENT_TYPE';
 import { getQuadProps } from '../../../scenegraph/utils/padding';

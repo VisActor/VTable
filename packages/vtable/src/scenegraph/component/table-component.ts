@@ -1,7 +1,7 @@
 import { theme } from './../../themes';
 import type { ILine, IRect, IGroup, FederatedPointerEvent, Text, IText } from '@src/vrender';
 import { createRect, createLine, createText, createGroup, createSymbol } from '@src/vrender';
-import { ScrollBar } from '@visactor/vrender-components';
+import { ScrollBar } from '@src/vrender';
 import type { Group } from '../graphic/group';
 import { MenuHandler } from './menu';
 import { DrillIcon } from './drill-icon';

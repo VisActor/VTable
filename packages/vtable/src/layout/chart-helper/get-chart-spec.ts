@@ -8,7 +8,7 @@ import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { Factory } from '../../core/factory';
 import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
 import { DEFAULT_TEXT_FONT_SIZE } from '../../components/axis/get-axis-attributes';
-import { convertDomainToTickData } from '@visactor/vrender-components';
+import { convertDomainToTickData } from '@src/vrender';
 import { getTickModeFunction, getZeroAlignTickAlignTicks } from './tick-align';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
