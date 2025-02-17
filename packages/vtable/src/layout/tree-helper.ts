@@ -159,7 +159,7 @@ export class DimensionTree {
     if (this.hierarchyType === 'grid') {
       if (children?.length >= 1) {
         children.forEach((n: any) => {
-          n.level = (node.level ?? 0) + 1;
+          n.level = (node.level ?? 0) + (node.levelSpan ?? 1);
           this.totalLevel = Math.max(this.totalLevel, n.level + 1);
           size += this.setTreeNode(n, size, node);
         });
@@ -170,7 +170,7 @@ export class DimensionTree {
     } else if (node.hierarchyState === HierarchyState.expand && children?.length >= 1) {
       //树形展示 有子节点 且下一层需要展开
       children.forEach((n: any) => {
-        n.level = (node.level ?? 0) + 1;
+        n.level = (node.level ?? 0) + (node.levelSpan ?? 1);
         this.totalLevel = Math.max(this.totalLevel, n.level + 1);
         this.expandedMaxLevel = Math.max(this.expandedMaxLevel, n.level + 1);
         size += this.setTreeNode(n, size, node);
@@ -178,7 +178,7 @@ export class DimensionTree {
     } else if (node.hierarchyState === HierarchyState.collapse && children?.length >= 1) {
       //树形展示 有子节点 且下一层不需要展开
       children.forEach((n: any) => {
-        n.level = (node.level ?? 0) + 1;
+        n.level = (node.level ?? 0) + (node.levelSpan ?? 1);
         this.totalLevel = Math.max(this.totalLevel, n.level + 1);
         this.setTreeNode(n, size, node);
       });
@@ -194,7 +194,7 @@ export class DimensionTree {
       }
       children?.length >= 1 &&
         children.forEach((n: any) => {
-          n.level = (node.level ?? 0) + 1;
+          n.level = (node.level ?? 0) + (node.levelSpan ?? 1);
           this.totalLevel = Math.max(this.totalLevel, n.level + 1);
           this.expandedMaxLevel = Math.max(this.expandedMaxLevel, n.level + 1);
           size += this.setTreeNode(n, size, node);
@@ -208,7 +208,7 @@ export class DimensionTree {
       }
       children?.length >= 1 &&
         children.forEach((n: any) => {
-          n.level = (node.level ?? 0) + 1;
+          n.level = (node.level ?? 0) + (node.levelSpan ?? 1);
           this.totalLevel = Math.max(this.totalLevel, n.level + 1);
           this.setTreeNode(n, size, node);
         });
