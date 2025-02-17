@@ -188,7 +188,7 @@ TABLE_EVENT_TYPE = {
 
   {
     col: number;
-    columns: number[]
+    colWidths: number[]
   }
 
 ```
