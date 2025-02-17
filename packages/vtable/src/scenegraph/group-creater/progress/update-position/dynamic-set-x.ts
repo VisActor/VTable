@@ -1,5 +1,6 @@
 import type { ColumnInfo } from '../../../../ts-types';
 import type { BaseTableAPI } from '../../../../ts-types/base-table';
+import type { IRect } from '../../../../vrender';
 import type { Group } from '../../../graphic/group';
 import { computeColsWidth } from '../../../layout/compute-col-width';
 import type { SceneProxy } from '../proxy';
@@ -345,5 +346,14 @@ function updateColumnContainerWidth(containerGroup: Group) {
     return;
   }
   containerGroup.setAttribute('width', lastColGroup.attribute.x + lastColGroup.attribute.width);
-  containerGroup.border?.setAttribute('width', lastColGroup.attribute.x + lastColGroup.attribute.width);
+  if (containerGroup.border) {
+    const border = containerGroup.border as IRect;
+    border.setAttribute(
+      'width',
+      lastColGroup.attribute.x +
+        lastColGroup.attribute.width -
+        ((border.attribute as any).borderLeft ?? 0) / 2 -
+        ((border.attribute as any).borderRight ?? 0) / 2
+    );
+  }
 }

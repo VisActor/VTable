@@ -29,7 +29,7 @@ import type {
 export type { HeaderData } from './list-table/layout-map/api';
 import type { TableTheme } from '../themes/theme';
 import type { ICustomRender } from './customElement';
-export type LayoutObjectId = number | string;
+import type { LayoutObjectId } from './table-engine';
 import type { Rect } from '../tools/Rect';
 import type { Scenegraph } from '../scenegraph/scenegraph';
 import type { StateManager } from '../state/state';
@@ -539,6 +539,9 @@ export interface BaseTableConstructorOptions {
   customComputeRowHeight?: (computeArgs: { row: number; table: BaseTableAPI }) => number | 'auto' | undefined;
   /** 当表格出现抖动情况，请排查是否上层dom容器的宽高是小数引起的。如果不能保证是整数，请配置这个配置项为true */
   tableSizeAntiJitter?: boolean;
+
+  /** 是否禁用双击列边框自动调整列宽 **/
+  disableDblclickAutoResizeColWidth?: boolean;
 }
 export interface BaseTableAPI {
   id: string;

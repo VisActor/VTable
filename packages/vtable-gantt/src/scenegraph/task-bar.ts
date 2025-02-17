@@ -12,6 +12,7 @@ import { isValid } from '@visactor/vutils';
 import {
   computeRowsCountByRecordDate,
   computeRowsCountByRecordDateForCompact,
+  defaultTaskBarStyle,
   getSubTaskRowIndexByRecordDate,
   getTextPos
 } from '../gantt-helper';
@@ -111,7 +112,9 @@ export class TaskBar {
     const { unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
     const taskBarSize =
       computeCountToTimeScale(endDate, startDate, unit, step, 1) * this._scene._gantt.parsedOptions.timelineColWidth;
-    const taskbarHeight = this._scene._gantt.parsedOptions.taskBarStyle.width;
+
+    const taskBarStyle = this._scene._gantt.getTaskBarStyle(index, childIndex);
+    const taskbarHeight = taskBarStyle.width;
     const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
 
     const subTaskShowRowCount =
@@ -145,14 +148,13 @@ export class TaskBar {
       height: isMilestone ? milestoneTaskBarHeight : taskbarHeight,
       cornerRadius: isMilestone
         ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.cornerRadius
-        : this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
+        : taskBarStyle.cornerRadius,
       lineWidth: isMilestone
         ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.borderLineWidth * 2
-        : (this._scene._gantt.parsedOptions.taskBarStyle.borderLineWidth ??
-            this._scene._gantt.parsedOptions.taskBarStyle.borderWidth) * 2,
+        : (taskBarStyle.borderLineWidth ?? taskBarStyle.borderWidth) * 2,
       stroke: isMilestone
         ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.borderColor
-        : this._scene._gantt.parsedOptions.taskBarStyle.borderColor,
+        : taskBarStyle.borderColor,
       angle: isMilestone ? (45 / 180) * Math.PI : 0,
       anchor: isMilestone ? [x + milestoneTaskBarHeight / 2, y + milestoneTaskBarHeight / 2] : undefined
       // clip: true
@@ -169,7 +171,7 @@ export class TaskBar {
       height: barGroupBox.attribute.height,
       cornerRadius: isMilestone
         ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.cornerRadius
-        : this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius,
+        : taskBarStyle.cornerRadius,
       clip: true
     });
     barGroup.name = 'task-bar-group';
@@ -215,9 +217,7 @@ export class TaskBar {
         y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
         width: barGroupBox.attribute.width,
         height: barGroupBox.attribute.height,
-        fill: isMilestone
-          ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.fillColor
-          : this._scene._gantt.parsedOptions.taskBarStyle.barColor,
+        fill: isMilestone ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.fillColor : taskBarStyle.barColor,
         pickable: false
       });
       rect.name = 'task-bar-rect';
@@ -230,7 +230,7 @@ export class TaskBar {
           y: 0, //(this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
           width: (taskBarSize * progress) / 100,
           height: taskbarHeight,
-          fill: this._scene._gantt.parsedOptions.taskBarStyle.completedBarColor,
+          fill: taskBarStyle.completedBarColor,
           pickable: false
         });
         progress_rect.name = 'task-bar-progress-rect';
@@ -296,9 +296,7 @@ export class TaskBar {
       clip: true,
       pickable: false,
       cornerRadius:
-        this._scene._gantt.parsedOptions.taskBarHoverStyle.cornerRadius ??
-        this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius ??
-        0,
+        this._scene._gantt.parsedOptions.taskBarHoverStyle.cornerRadius ?? defaultTaskBarStyle.cornerRadius ?? 0,
       fill: this._scene._gantt.parsedOptions.taskBarHoverStyle.barOverlayColor,
       visibleAll: false
     });
@@ -380,13 +378,12 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('width', width);
     this.hoverBarGroup.setAttribute('height', height);
     this.hoverBarGroup.setAttribute('visibleAll', true);
+    const taskBarStyle = this._scene._gantt.getTaskBarStyle(target.task_index, target.sub_task_index);
     if (taskRecord.type === 'milestone') {
       this.hoverBarGroup.setAttribute('cornerRadius', target.attribute.cornerRadius);
     } else {
       const cornerRadius =
-        this._scene._gantt.parsedOptions.taskBarHoverStyle.cornerRadius ??
-        this._scene._gantt.parsedOptions.taskBarStyle.cornerRadius ??
-        0;
+        this._scene._gantt.parsedOptions.taskBarHoverStyle.cornerRadius ?? taskBarStyle.cornerRadius ?? 0;
       this.hoverBarGroup.setAttribute('cornerRadius', cornerRadius);
     }
     this.hoverBarLeftIcon?.setAttribute('visible', false);
