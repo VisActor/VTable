@@ -12,6 +12,7 @@ export class EditManager {
   editingEditor: IEditor;
   isValidatingValue: boolean = false;
   editCell: { col: number; row: number };
+  listenersId: number[];
 
   constructor(table: BaseTableAPI) {
     this.table = table;
@@ -19,9 +20,9 @@ export class EditManager {
   }
 
   bindEvent() {
-    const handler = this.table.internalProps.handler;
+    // const handler = this.table.internalProps.handler;
     const editCellTrigger = (this.table.options as ListTableConstructorOptions).editCellTrigger;
-    this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
+    const doubleClickEventId = this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
       if (
         !editCellTrigger || //默认为双击
         editCellTrigger === 'doubleclick' ||
@@ -45,12 +46,14 @@ export class EditManager {
       }
     });
 
-    this.table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
+    const clickEventId = this.table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
       if (editCellTrigger === 'click' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('click'))) {
         const { col, row } = e;
         this.startEditCell(col, row);
       }
     });
+
+    this.listenersId.push(doubleClickEventId, clickEventId);
 
     // handler.on(this.table.getElement(), 'wheel', (e: WheelEvent) => {
     //   this.completeEdit();
@@ -213,6 +216,12 @@ export class EditManager {
       this.editingEditor.onEnd?.();
       this.editingEditor = null;
     }
+  }
+
+  release() {
+    this.listenersId.forEach(id => {
+      this.table.off(id);
+    });
   }
 }
 
