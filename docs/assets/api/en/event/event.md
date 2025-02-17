@@ -183,7 +183,7 @@ Event callback function parameter types.
 
 {
 col: number.
-columns: number[]
+colWidths: number[]
 }
 
 ``
