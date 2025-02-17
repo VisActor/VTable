@@ -1,4 +1,4 @@
-import type { IThemeSpec } from '@visactor/vrender-core';
+import type { IThemeSpec } from '@src/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { style as utilStyle } from '../../tools/helper';
 import { isValid } from '@visactor/vutils';

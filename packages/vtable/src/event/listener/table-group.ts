@@ -20,7 +20,7 @@ import type { EventManager } from '../event';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
-import type { CheckBox, CheckboxAttributes, Radio } from '@visactor/vrender-components';
+import type { CheckBox, CheckboxAttributes, Radio } from '@src/vrender';
 import { handleWhell } from '../scroll';
 import { fireMoveColEventListeners } from '../helper';
 export function bindTableGroupListener(eventManager: EventManager) {

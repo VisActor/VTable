@@ -1,7 +1,7 @@
 import { isArray, isNumber, isObject } from '@visactor/vutils';
 import { validToString } from '../../tools/util';
 import { getProp } from '../utils/get-prop';
-import { CheckBox, Radio } from '@visactor/vrender-components';
+import { CheckBox, Radio } from '@src/vrender';
 import type { FullExtendStyle, RadioColumnDefine } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 

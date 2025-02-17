@@ -3,7 +3,7 @@ import type { ColorsDef, LineDashsDef, LineWidthsDef, LineWidthsPropertyDefine, 
 import type { CheckboxStyle, ITextStyleOption, RadioStyle } from './column/style';
 import type { ColorPropertyDefine, ColorsPropertyDefine } from './style-define';
 import type { ICellAxisOption } from './component/axis';
-import type { PopTipAttributes } from '@visactor/vrender-components';
+import type { PopTipAttributes } from '@src/vrender';
 // ****** Custom Theme *******
 export type PartialTableThemeDefine = Partial<ITableThemeDefine>;
 export type ThemeStyle = ITextStyleOption & {

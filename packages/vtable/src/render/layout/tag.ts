@@ -1,5 +1,5 @@
-import type { TagAttributes } from '@visactor/vrender-components';
-import { Tag as VTag } from '@visactor/vrender-components';
+import type { TagAttributes } from '@src/vrender';
+import { Tag as VTag } from '@src/vrender';
 import { isArray } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
