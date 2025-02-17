@@ -139,6 +139,8 @@ export interface IRowSeriesNumber {
 
   /** 是否开启树形结构复选框 */
   enableTreeCheckbox?: boolean;
+  customLayout?: ICustomLayout;
+  headerCustomLayout?: ICustomLayout;
 }
 
 export interface ColumnSeriesNumber {

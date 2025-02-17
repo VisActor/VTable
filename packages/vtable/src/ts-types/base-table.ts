@@ -29,7 +29,7 @@ import type {
 export type { HeaderData } from './list-table/layout-map/api';
 import type { TableTheme } from '../themes/theme';
 import type { ICustomRender } from './customElement';
-export type LayoutObjectId = number | string;
+import type { LayoutObjectId } from './table-engine';
 import type { Rect } from '../tools/Rect';
 import type { Scenegraph } from '../scenegraph/scenegraph';
 import type { StateManager } from '../state/state';
@@ -541,6 +541,8 @@ export interface BaseTableConstructorOptions {
   tableSizeAntiJitter?: boolean;
   /** 编辑触发时机 双击事件  单击事件 api手动开启编辑 或者 鼠标按下新值即可开启编辑。默认为双击'doubleclick' */
   editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
+  /** 是否禁用双击列边框自动调整列宽 **/
+  disableDblclickAutoResizeColWidth?: boolean;
 }
 export interface BaseTableAPI {
   id: string;

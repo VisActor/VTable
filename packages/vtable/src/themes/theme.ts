@@ -590,6 +590,9 @@ export class TableTheme implements ITableThemeDefine {
         },
         get labelVisible(): boolean {
           return columnResize.labelVisible ?? true;
+        },
+        get visibleOnHover(): boolean {
+          return columnResize.visibleOnHover ?? false;
         }
       };
     }

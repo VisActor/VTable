@@ -1,7 +1,6 @@
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { Scenegraph } from '../scenegraph/scenegraph';
 import type { CellAddress } from '../ts-types';
-import type { LayoutObjectId } from '../ts-types/base-table';
 
 export function diffCellAddress(
   col: number,
