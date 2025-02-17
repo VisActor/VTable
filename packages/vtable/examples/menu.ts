@@ -735,6 +735,10 @@ export const menus = [
       {
         path: 'icon',
         name: 'icon-shape'
+      },
+      {
+        path: 'icon',
+        name: 'font-icon'
       }
     ]
   },
