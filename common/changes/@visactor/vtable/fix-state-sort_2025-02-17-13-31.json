@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix sort function in getCheckboxState() #3394",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
