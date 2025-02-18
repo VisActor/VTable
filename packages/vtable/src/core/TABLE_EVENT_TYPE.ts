@@ -155,6 +155,7 @@ export interface TableEvents {
 
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change';
   RADIO_STATE_CHANGE: 'radio_state_change';
+  SWITCH_STATE_CHANGE: 'switch_state_change';
   //#region lifecircle
   /** 每次渲染完成触发 */
   AFTER_RENDER: 'after_render';
@@ -246,6 +247,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
 
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change',
   RADIO_STATE_CHANGE: 'radio_state_change',
+  SWITCH_STATE_CHANGE: 'switch_state_change',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
   CHANGE_CELL_VALUE: 'change_cell_value',

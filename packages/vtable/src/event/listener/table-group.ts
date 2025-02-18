@@ -1,4 +1,4 @@
-import type { IEventTarget, FederatedPointerEvent, FederatedWheelEvent } from '@src/vrender';
+import type { IEventTarget, FederatedPointerEvent, FederatedWheelEvent, Switch } from '@src/vrender';
 import { Gesture, vglobal } from '@src/vrender';
 import type {
   ListTableAPI,
@@ -1045,6 +1045,48 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
     table.scenegraph.updateNextFrame();
   });
+
+  table.scenegraph.tableGroup.addEventListener('switch_state_change', (e: FederatedPointerEvent) => {
+    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const { col, row, target } = eventArgsSet.eventArgs;
+    const cellInfo = table.getCellInfo(col, row);
+
+    const mergeRange = getCellMergeInfo(table, col, row);
+    if (mergeRange) {
+      for (let col = mergeRange.start.col; col <= mergeRange.end.col; col++) {
+        for (let row = mergeRange.start.row; row <= mergeRange.end.row; row++) {
+          const cellGroup = table.scenegraph.getCell(col, row);
+          cellGroup.forEachChildren((switchComponent: Switch) => {
+            if (switchComponent.name === 'switch') {
+              switchComponent.setAttributes({
+                checked: (e.target.attribute as CheckboxAttributes).checked
+              });
+            }
+          });
+        }
+      }
+    }
+
+    const cellsEvent: MousePointerCellEvent & { checked: boolean } = {
+      ...cellInfo,
+      event: e.nativeEvent,
+      target: eventArgsSet?.eventArgs?.target,
+      mergeCellInfo: eventArgsSet?.eventArgs?.mergeInfo,
+      checked: (e.detail as unknown as { checked: boolean }).checked
+    };
+
+    table.stateManager.setCheckedState(
+      col,
+      row,
+      cellInfo.field as string | number,
+      (e.detail as unknown as { checked: boolean }).checked
+    );
+
+    table.fireListeners(TABLE_EVENT_TYPE.SWITCH_STATE_CHANGE, cellsEvent);
+
+    table.scenegraph.updateNextFrame();
+  });
+
   table.scenegraph.stage.addEventListener('wheel', (e: FederatedWheelEvent) => {
     const legend: any = e.path.find(node => (node as any).name === 'legend');
     if (!legend) {

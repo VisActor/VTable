@@ -3,6 +3,7 @@ import { createChartCellGroup } from './chart-cell';
 import { createCheckboxCellGroup } from './checkbox-cell';
 import { createImageCellGroup } from './image-cell';
 import { createRadioCellGroup } from './radio-cell';
+import { createSwitchCellGroup } from './switch-cell';
 import { createSparkLineCellGroup } from './spark-line-cell';
 import { createVideoCellGroup } from './video-cell';
 import { createCellGroup as createTextCellGroup } from './text-cell';
@@ -28,6 +29,10 @@ export const registerProgressBarCell = () => {
 
 export const registerRadioCell = () => {
   Factory.registerFunction('createRadioCellGroup', createRadioCellGroup);
+};
+
+export const registerSwitchCell = () => {
+  Factory.registerFunction('createSwitchCellGroup', createSwitchCellGroup);
 };
 
 export const registerSparkLineCell = () => {
