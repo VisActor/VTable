@@ -13,7 +13,11 @@ export function getHierarchyOffset(col: number, row: number, table: BaseTableAPI
   if (layoutMap.isHeader(col, row)) {
     const hd = layoutMap.getHeader(col, row) as HeaderData;
     if (isValid(hd?.hierarchyLevel)) {
-      cellHierarchyIndent = (hd.hierarchyLevel ?? 0) * ((layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0);
+      cellHierarchyIndent =
+        (hd.hierarchyLevel ?? 0) *
+        ((layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree'
+          ? (layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0
+          : 0);
       if (
         (layoutMap as PivotHeaderLayoutMap).rowHierarchyTextStartAlignment &&
         !table.internalProps.headerHelper.getHierarchyIcon(col, row)

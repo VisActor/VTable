@@ -16,13 +16,13 @@ import { downloadCsv, exportVTableToCsv } from '@visactor/vtable-export';
 //......
 const tableInstance = new VTable.ListTable(option);
 
-// donload csv file
+// download csv file
 downloadCsv(exportVTableToCsv(tableInstance), 'export-csv');
 ```
 
-* `exportVTableToCsv`: Table output tool, outputs table instances as a string in CSV format
-* `downloadCsv`: Download tool to download CSV format strings as files in a browser environment
-* If it is a server environment, you can process the CSV format string converted by `exportVTableToCsv` yourself.
+- `exportVTableToCsv`: Table output tool, outputs table instances as a string in CSV format
+- `downloadCsv`: Download tool to download CSV format strings as files in a browser environment
+- If it is a server environment, you can process the CSV format string converted by `exportVTableToCsv` yourself.
 
 Reference[demo](../../demo/export/table-export)
 

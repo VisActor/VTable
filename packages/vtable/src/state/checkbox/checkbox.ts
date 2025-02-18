@@ -1,4 +1,4 @@
-import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
+import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import type { StateManager } from '../state';
 import type { CheckboxColumnDefine, ListTableAPI } from '../../ts-types';
 import { getOrApply } from '../../tools/helper';
@@ -106,7 +106,7 @@ export function initCheckedState(records: any[], state: StateManager) {
       } else {
         state.headerCheckedState[hd.field as string | number] = headerChecked;
       }
-      if (hd.define.cellType === 'checkbox' && !hd.fieldFormat) {
+      if ((hd.define.cellType === 'checkbox' || isFunction(hd.define.cellType)) && !hd.fieldFormat) {
         state._checkboxCellTypeFields.push(hd.field as string | number);
       }
     }

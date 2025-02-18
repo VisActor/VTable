@@ -128,19 +128,19 @@ keystroke event
 
 Mouse over a cell event
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function.
+Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function (some parameters may be omitted and can be obtained through the corresponding interfaces).
 
 ## MOUSEENTER_CELL
 
 Mouse into cell event
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function.
+Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function. (some parameters may be omitted and can be obtained through the corresponding interfaces).
 
 ## MOUSELEAVE_CELL
 
 Mouse-out-of-cell event
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function.
+Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function. (some parameters may be omitted and can be obtained through the corresponding interfaces).
 
 ## CONTEXTMENU_CELL
 
@@ -183,7 +183,7 @@ Event callback function parameter types.
 
 {
 col: number.
-columns: number[]
+colWidths: number[]
 }
 
 ``

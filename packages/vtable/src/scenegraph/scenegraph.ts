@@ -41,7 +41,7 @@ import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowHeight, computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
-import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
+import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen, resetRowFrozen } from './layout/frozen';
 import {
   updateChartSizeForResizeColWidth,
   updateChartSizeForResizeRowHeight,
@@ -1518,6 +1518,10 @@ export class Scenegraph {
     resetFrozen(this);
   }
 
+  resetRowFrozen() {
+    resetRowFrozen(this);
+  }
+
   /**
    * @description: 判断指定列更新宽度时，其中单元格是否会更新宽度；如果更新宽度，返回true
    * @param {Group} columnGroup
@@ -1735,6 +1739,42 @@ export class Scenegraph {
       this.cornerHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );
+    this.table.theme.cornerLeftBottomCellStyle?.frameStyle &&
+      createFrameBorder(
+        this.leftBottomCornerGroup,
+        this.table.theme.cornerLeftBottomCellStyle.frameStyle,
+        this.leftBottomCornerGroup.role,
+        isListTableWithFrozen ? [true, false, true, true] : undefined
+      );
+    this.table.theme.bottomFrozenStyle?.frameStyle &&
+      createFrameBorder(
+        this.bottomFrozenGroup,
+        this.table.theme.bottomFrozenStyle.frameStyle,
+        this.bottomFrozenGroup.role,
+        isListTableWithFrozen ? [true, true, true, false] : undefined
+      );
+    this.table.theme.rightFrozenStyle?.frameStyle &&
+      createFrameBorder(
+        this.rightFrozenGroup,
+        this.table.theme.rightFrozenStyle.frameStyle,
+        this.rightFrozenGroup.role,
+        undefined
+      );
+    this.table.theme.cornerRightTopCellStyle?.frameStyle &&
+      createFrameBorder(
+        this.rightTopCornerGroup,
+        this.table.theme.cornerRightTopCellStyle.frameStyle,
+        this.rightTopCornerGroup.role,
+        undefined
+      );
+    this.table.theme.cornerRightBottomCellStyle?.frameStyle &&
+      createFrameBorder(
+        this.rightBottomCornerGroup,
+        this.table.theme.cornerRightBottomCellStyle.frameStyle,
+        this.rightBottomCornerGroup.role,
+        undefined
+      );
+
     createFrameBorder(this.tableGroup, this.table.theme.frameStyle, this.tableGroup.role, undefined);
   }
 
@@ -1839,6 +1879,15 @@ export class Scenegraph {
     this.component.updateScrollBar();
   }
 
+  updateRowFrozen() {
+    if (this.clear) {
+      return;
+    }
+    this.resetRowFrozen();
+    // this.dealFrozen();
+    this.component.updateScrollBar();
+  }
+
   dealWidthRightFrozen(rightFrozenColCount: number) {
     if (this.clear) {
       this.table.internalProps.rightFrozenColCount = rightFrozenColCount;
@@ -1881,6 +1930,26 @@ export class Scenegraph {
       this.cornerHeaderGroup.appendChild(this.cornerHeaderGroup.border);
       updateFrameBorderSize(this.cornerHeaderGroup);
     }
+    if (this.leftBottomCornerGroup.border) {
+      this.leftBottomCornerGroup.appendChild(this.leftBottomCornerGroup.border);
+      updateFrameBorderSize(this.leftBottomCornerGroup);
+    }
+    if (this.bottomFrozenGroup.border) {
+      this.bottomFrozenGroup.appendChild(this.bottomFrozenGroup.border);
+      updateFrameBorderSize(this.bottomFrozenGroup);
+    }
+    if (this.rightFrozenGroup.border) {
+      this.rightFrozenGroup.appendChild(this.rightFrozenGroup.border);
+      updateFrameBorderSize(this.rightFrozenGroup);
+    }
+    if (this.rightTopCornerGroup.border) {
+      this.rightTopCornerGroup.appendChild(this.rightTopCornerGroup.border);
+      updateFrameBorderSize(this.rightTopCornerGroup);
+    }
+    if (this.rightBottomCornerGroup.border) {
+      this.rightBottomCornerGroup.appendChild(this.rightBottomCornerGroup.border);
+      updateFrameBorderSize(this.rightBottomCornerGroup);
+    }
 
     updateCornerRadius(this.table);
   }
@@ -1903,19 +1972,23 @@ export class Scenegraph {
       if ((text.attribute as any).moreThanMaxCharacters) {
         return this.table.getCellValue(col, row);
       }
-      const textAttributeStr = isArray(text.attribute.text)
-        ? text.attribute.text.join('')
-        : (text.attribute.text as string);
-      let cacheStr = '';
-      if (isString(text.cache.clipedText)) {
-        cacheStr = text.cache.clipedText;
-      } else {
-        (text.cache as ITextCache).layoutData?.lines?.forEach((line: any) => {
-          cacheStr += line.str;
-        });
-      }
-      if (cacheStr !== textAttributeStr) {
-        // return textAttributeStr;
+      // const textAttributeStr = isArray(text.attribute.text)
+      //   ? text.attribute.text.join('')
+      //   : (text.attribute.text as string);
+      // let cacheStr = '';
+      // if (isString(text.cache.clipedText)) {
+      //   cacheStr = text.cache.clipedText;
+      // } else {
+      //   (text.cache as ITextCache).layoutData?.lines?.forEach((line: any) => {
+      //     cacheStr += line.str;
+      //   });
+      // }
+      // if (cacheStr !== textAttributeStr) {
+      //   // return textAttributeStr;
+      //   return this.table.getCellValue(col, row);
+      // }
+
+      if (text.cliped) {
         return this.table.getCellValue(col, row);
       }
     } else if (text && text.type === 'richtext') {
@@ -2026,6 +2099,7 @@ export class Scenegraph {
     updateCol(removeCells, addCells, updateCells, this.table);
 
     // update column width and row height
+
     this.recalculateColWidths();
 
     this.recalculateRowHeights();
@@ -2047,6 +2121,32 @@ export class Scenegraph {
 
     // rerender
     this.updateNextFrame();
+  }
+
+  updateCornerHeaderCells() {
+    for (let col = 0; col < this.table.frozenColCount; col++) {
+      for (let row = 0; row < this.table.frozenRowCount; row++) {
+        // const cellGroup = this.highPerformanceGetCell(col, row);
+        // cellGroup && (cellGroup.needUpdate = true);
+        updateCell(col, row, this.table, false);
+      }
+    }
+  }
+  updateRowHeaderCells() {
+    for (let col = 0; col < this.table.frozenColCount; col++) {
+      for (let row = this.table.frozenRowCount; row < this.table.rowCount; row++) {
+        // const cellGroup = this.highPerformanceGetCell(col, row);
+        // cellGroup && (cellGroup.needUpdate = true);
+        updateCell(col, row, this.table, false);
+      }
+    }
+  }
+  updateColumnHeaderCells() {
+    for (let row = 0; row < this.table.frozenRowCount; row++) {
+      for (let col = this.table.frozenColCount; col < this.table.colCount; col++) {
+        updateCell(col, row, this.table, false);
+      }
+    }
   }
   getColumnGroupX(col: number) {
     if (col < this.table.rowHeaderLevelCount) {

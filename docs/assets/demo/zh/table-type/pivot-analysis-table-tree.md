@@ -1,13 +1,13 @@
 ---
 category: examples
 group: table-type
-title: 透视分析表格
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-tree.png
-link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
+title: 透视表行头树形展示
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-tree.gif
+link: data_analysis/pivot_table_tree
+option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree'%7C'grid-tree')
 ---
 
-# 透视分析表格树形展示
+# 透视表行头树形展示
 
 透视分析表格树形展示
 

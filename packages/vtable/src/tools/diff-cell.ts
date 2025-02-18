@@ -1,6 +1,6 @@
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
+import type { Scenegraph } from '../scenegraph/scenegraph';
 import type { CellAddress } from '../ts-types';
-import type { LayoutObjectId } from '../ts-types/base-table';
 
 export function diffCellAddress(
   col: number,
@@ -13,38 +13,187 @@ export function diffCellAddress(
   const columnHeaderStart = layout.columnHeaderLevelCount;
   // const oldCellIds = oldCellIdsArr.map(oldCellId => oldCellId[0]);
   // const newCellIds = newCellIdsArr.map(oldCellId => oldCellId[0]);
-  const addCellPositions = [];
-  const removeCellPositions = [];
+  const addCellPositionsRowDirection = [];
+  const removeCellPositionsRowDirection = [];
   // const updateCellIds: Set<LayoutObjectId> = new Set();
   // diff two array elements
   for (let i = 0; i < oldCellIds.length; i++) {
     if (!newCellIds.includes(oldCellIds[i])) {
       // updateCellIds.add(layout.getParentCellId(oldRowHeaderCellPositons[i].col, oldRowHeaderCellPositons[i].row));
-      removeCellPositions.push(oldRowHeaderCellPositons[i]);
+      removeCellPositionsRowDirection.push(oldRowHeaderCellPositons[i]);
     }
   }
   for (let i = 0; i < newCellIds.length; i++) {
     if (!oldCellIds.includes(newCellIds[i])) {
       const newCellAddr = { col, row: columnHeaderStart + i }; // layout.getHeaderCellAdressById(newCellIds[i]);
       // updateCellIds.add(layout.getParentCellId(newCellAddr.col, newCellAddr.row));
-      addCellPositions.push(newCellAddr);
+      addCellPositionsRowDirection.push(newCellAddr);
     }
   }
   let parentId = layout.getParentCellId(col, row);
   let parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
-  const updateCellPositions = [];
-  parentCellAddress && updateCellPositions.push(parentCellAddress);
+  const updateCellPositionsRowDirection = [];
+  parentCellAddress && updateCellPositionsRowDirection.push(parentCellAddress);
   while (parentId) {
     parentId = layout.getParentCellId(parentCellAddress.col, parentCellAddress.row);
     if (parentId) {
       parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
-      updateCellPositions.push(parentCellAddress);
+      updateCellPositionsRowDirection.push(parentCellAddress);
     }
   }
   return {
-    addCellPositions,
-    removeCellPositions,
-    updateCellPositions
+    addCellPositionsRowDirection,
+    removeCellPositionsRowDirection,
+    updateCellPositionsRowDirection
+  };
+}
+
+export function diffCellAddressForGridTree(
+  col: number,
+  row: number,
+  oldCellIds: number[],
+  newCellIds: number[],
+  oldRowHeaderCellPositons: CellAddress[],
+
+  layout: PivotHeaderLayoutMap
+) {
+  const columnHeaderStart = layout.columnHeaderLevelCount;
+  // const oldCellIds = oldCellIdsArr.map(oldCellId => oldCellId[0]);
+  // const newCellIds = newCellIdsArr.map(oldCellId => oldCellId[0]);
+  const addCellPositionsRowDirection = [];
+  const removeCellPositionsRowDirection = [];
+  // const updateCellIds: Set<LayoutObjectId> = new Set();
+  // diff two array elements
+  for (let i = 0; i < oldCellIds.length; i++) {
+    if (!newCellIds.includes(oldCellIds[i])) {
+      // updateCellIds.add(layout.getParentCellId(oldRowHeaderCellPositons[i].col, oldRowHeaderCellPositons[i].row));
+      removeCellPositionsRowDirection.push(oldRowHeaderCellPositons[i]);
+    }
+  }
+  for (let i = 0; i < newCellIds.length; i++) {
+    if (!oldCellIds.includes(newCellIds[i])) {
+      const newCellAddr = { col, row: columnHeaderStart + i }; // layout.getHeaderCellAdressById(newCellIds[i]);
+      // updateCellIds.add(layout.getParentCellId(newCellAddr.col, newCellAddr.row));
+      addCellPositionsRowDirection.push(newCellAddr);
+    }
+  }
+  let parentId = layout.getParentCellId(col, row);
+  let parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
+  const updateCellPositionsRowDirection = [];
+  parentCellAddress && updateCellPositionsRowDirection.push(parentCellAddress);
+  while (parentId) {
+    parentId = layout.getParentCellId(parentCellAddress.col, parentCellAddress.row);
+    if (parentId) {
+      parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
+      updateCellPositionsRowDirection.push(parentCellAddress);
+    }
+  }
+
+  const addCellPositionsColumnDirection = [];
+  // const updateCellPositionsColumnDirection = [];
+  const removeCellPositionsColumnDirection = [];
+  if (
+    layout.rowHierarchyType === 'grid-tree' &&
+    layout.cornerSetting.titleOnDimension === 'column' &&
+    layout.rowHeaderLevelCount !== layout._cornerHeaderCellIds[0].length // 表头层级数发生了变化 需要整体做更新_cornerHeaderCellIds是旧值 rowHeaderLevelCount是新值
+  ) {
+    if (layout.rowHeaderLevelCount > layout._cornerHeaderCellIds[0].length) {
+      for (let i = layout._cornerHeaderCellIds[0].length; i < layout.rowHeaderLevelCount; i++) {
+        addCellPositionsColumnDirection.push({ col: i, row });
+      }
+    } else {
+      for (let i = layout.rowHeaderLevelCount; i < layout._cornerHeaderCellIds[0].length; i++) {
+        // if (layout.hideIndicatorName === false && layout.indicatorsAsCol === false) {
+        //   removeCellPositionsColumnDirection.push({ col: i, row });
+        //   updateCellPositionsColumnDirection.push({ col: i - 1, row });
+        // } else {
+        removeCellPositionsColumnDirection.push({ col: i, row });
+        // }
+      }
+    }
+  }
+
+  return {
+    addCellPositionsRowDirection,
+    removeCellPositionsRowDirection,
+    updateCellPositionsRowDirection,
+    addCellPositionsColumnDirection,
+    removeCellPositionsColumnDirection
+    // updateCellPositionsColumnDirection
+  };
+}
+
+export function diffCellAddressForGridTreeOnColumn(
+  col: number,
+  row: number,
+  oldCellIds: number[],
+  newCellIds: number[],
+  oldRowHeaderCellPositons: CellAddress[],
+
+  layout: PivotHeaderLayoutMap
+) {
+  const rowHeaderStart = layout.rowHeaderLevelCount;
+  // const oldCellIds = oldCellIdsArr.map(oldCellId => oldCellId[0]);
+  // const newCellIds = newCellIdsArr.map(oldCellId => oldCellId[0]);
+  const addCellPositionsColumnDirection = [];
+  const removeCellPositionsColumnDirection = [];
+  // const updateCellIds: Set<LayoutObjectId> = new Set();
+  // diff two array elements
+  for (let i = 0; i < oldCellIds.length; i++) {
+    if (!newCellIds.includes(oldCellIds[i])) {
+      // updateCellIds.add(layout.getParentCellId(oldRowHeaderCellPositons[i].col, oldRowHeaderCellPositons[i].row));
+      removeCellPositionsColumnDirection.push(oldRowHeaderCellPositons[i]);
+    }
+  }
+  for (let i = 0; i < newCellIds.length; i++) {
+    if (!oldCellIds.includes(newCellIds[i])) {
+      const newCellAddr = { col: rowHeaderStart + i, row }; // layout.getHeaderCellAdressById(newCellIds[i]);
+      // updateCellIds.add(layout.getParentCellId(newCellAddr.col, newCellAddr.row));
+      addCellPositionsColumnDirection.push(newCellAddr);
+    }
+  }
+  let parentId = layout.getParentCellId(col, row);
+  let parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
+  const updateCellPositionsColumnDirection = [];
+  parentCellAddress && updateCellPositionsColumnDirection.push(parentCellAddress);
+  while (parentCellAddress && parentId) {
+    parentId = layout.getParentCellId(parentCellAddress.col, parentCellAddress.row);
+    if (parentId) {
+      parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
+      updateCellPositionsColumnDirection.push(parentCellAddress);
+    }
+  }
+
+  const addCellPositionsRowDirection = [];
+  // const updateCellPositionsRowDirection = [];
+  const removeCellPositionsRowDirection = [];
+  if (
+    layout.columnHierarchyType === 'grid-tree' &&
+    layout.cornerSetting.titleOnDimension === 'row' &&
+    layout.columnHeaderLevelCount !== layout._cornerHeaderCellIds.length // 表头层级数发生了变化 需要整体做更新_cornerHeaderCellIds是旧值 rowHeaderLevelCount是新值
+  ) {
+    if (layout.columnHeaderLevelCount > layout._cornerHeaderCellIds.length) {
+      for (let i = layout._cornerHeaderCellIds.length; i < layout.columnHeaderLevelCount; i++) {
+        addCellPositionsRowDirection.push({ col, row: i });
+      }
+    } else {
+      for (let i = layout.columnHeaderLevelCount; i < layout._cornerHeaderCellIds.length; i++) {
+        // if (layout.hideIndicatorName && layout.indicatorsAsCol) {
+        //   removeCellPositionsRowDirection.push({ col, row: i });
+        //   updateCellPositionsRowDirection.push({ col, row: i - 1 });
+        // } else {
+        removeCellPositionsRowDirection.push({ col, row: i });
+        // }
+      }
+    }
+  }
+  return {
+    addCellPositionsColumnDirection,
+    removeCellPositionsColumnDirection,
+    updateCellPositionsColumnDirection,
+    addCellPositionsRowDirection,
+    // updateCellPositionsRowDirection,
+    removeCellPositionsRowDirection
   };
 }
 
@@ -159,4 +308,64 @@ function isEqual(arr1: any, arr2: any) {
   }
 
   return true;
+}
+
+export function callUpdateRowOnScenegraph(
+  result: {
+    addCellPositionsRowDirection?: CellAddress[];
+    removeCellPositionsRowDirection?: CellAddress[];
+    updateCellPositionsRowDirection?: CellAddress[];
+    addCellPositionsColumnDirection?: CellAddress[];
+    removeCellPositionsColumnDirection?: CellAddress[];
+    updateCellPositionsColumnDirection?: CellAddress[];
+  },
+  recalculateColWidths: boolean,
+  newFrozenRowCount: number,
+  oldFrozenRowCount: number,
+  scenegraph: Scenegraph
+) {
+  if (
+    result.addCellPositionsRowDirection?.length ||
+    result.removeCellPositionsRowDirection?.length ||
+    result.updateCellPositionsRowDirection?.length
+  ) {
+    scenegraph.updateRow(
+      result.removeCellPositionsRowDirection,
+      result.addCellPositionsRowDirection.map(item => {
+        item.row += newFrozenRowCount - oldFrozenRowCount;
+        return item;
+      }),
+      result.updateCellPositionsRowDirection,
+      recalculateColWidths
+    );
+  }
+}
+
+export function callUpdateColOnScenegraph(
+  result: {
+    addCellPositionsRowDirection?: CellAddress[];
+    removeCellPositionsRowDirection?: CellAddress[];
+    updateCellPositionsRowDirection?: CellAddress[];
+    addCellPositionsColumnDirection?: CellAddress[];
+    removeCellPositionsColumnDirection?: CellAddress[];
+    updateCellPositionsColumnDirection?: CellAddress[];
+  },
+  newFrozenColCount: number,
+  oldFrozenColCount: number,
+  scenegraph: Scenegraph
+) {
+  if (
+    result.addCellPositionsColumnDirection?.length ||
+    result.removeCellPositionsColumnDirection?.length ||
+    result.updateCellPositionsColumnDirection?.length
+  ) {
+    scenegraph.updateCol(
+      result.removeCellPositionsColumnDirection,
+      result.addCellPositionsColumnDirection.map(item => {
+        item.col += newFrozenColCount - oldFrozenColCount;
+        return item;
+      }),
+      result.updateCellPositionsColumnDirection
+    );
+  }
 }

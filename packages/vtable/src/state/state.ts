@@ -166,7 +166,7 @@ export class StateManager {
   }>;
   frozen: {
     col: number;
-    // row: number;
+    row: number;
     icon?: Icon;
   };
   scroll: {
@@ -295,8 +295,8 @@ export class StateManager {
       }
     ];
     this.frozen = {
-      col: -1
-      // row: -1,
+      col: -1,
+      row: -1
     };
     // this.scroll = {
     //   horizontalBarPos: 0,
@@ -379,8 +379,8 @@ export class StateManager {
       }
     ];
     this.frozen = {
-      col: -1
-      // row: -1,
+      col: -1,
+      row: -1
     };
     this.scroll = {
       horizontalBarPos: 0,
@@ -909,6 +909,16 @@ export class StateManager {
       this.table.scenegraph.updateFrozenIcon(0, this.table.colCount - 1);
     }
   }
+  setFrozenRow(row: number) {
+    if (row !== this.frozen.row) {
+      // const oldFrozenCol = this.frozen.col;
+      this.frozen.row = row;
+
+      // 更新scenegraph，这里因为dealFreeze更新了table里存储的frozen信息，会影响scenegraph里的getCell
+      // 因此先更新scenegraph结构再更新icon
+      this.table.scenegraph.updateRowFrozen();
+    }
+  }
   checkVerticalScrollBarEnd() {
     const totalHeight = this.table.getAllRowsHeight();
     const scrollTop = this.scroll.verticalBarPos;
@@ -1231,10 +1241,10 @@ export class StateManager {
     }
   }
 
-  setDropDownMenuHighlight(cells: DropDownMenuHighlightInfo[]): void {
-    this.menu.dropDownMenuHighlight = cells;
-    for (let i = 0; i < cells.length; i++) {
-      const { col, row } = cells[i];
+  setDropDownMenuHighlight(dropDownMenuInfo: DropDownMenuHighlightInfo[]): void {
+    this.menu.dropDownMenuHighlight = dropDownMenuInfo;
+    for (let i = 0; i < dropDownMenuInfo.length; i++) {
+      const { col, row } = dropDownMenuInfo[i];
       const range = this.table.getCellRange(col, row);
       if (!range) {
         continue;

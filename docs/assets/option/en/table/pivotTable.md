@@ -322,11 +322,11 @@ Row header tree, with a structure similar to columnTree.
 
 The indicator is displayed on the column, default is true. If configured to false, it will be displayed in rows and the indicator will be displayed in rows.
 
-## rowHierarchyType('grid' | 'tree')
+## rowHierarchyType('grid' | 'tree' | 'grid-tree')
 
 Hierarchy display style for dimensional structure, flat or tree.
 
-[Flat Example](../demo/table-type/pivot-table) [Tree Example](../demo/table-type/pivot-table-tree)
+[Flat Example](../demo/table-type/pivot-table) [Tree Example](../demo/table-type/pivot-analysis-table-tree)  [Grid Tree Example](../demo/table-type/pivot-analysis-table-grid-tree)
 
 {{ use: extension-rows-dimension-define( prefix = '#',) }}
 
@@ -341,6 +341,12 @@ If tree display is set, the indentation distance of content displayed in the chi
 ## rowHierarchyTextStartAlignment(boolean) = false
 
 Whether nodes at the same level are aligned by text, such as nodes without collapsed expansion icons and nodes with icons. Default is false
+
+## columnHierarchyType('grid' |'grid-tree')
+Hierarchical dimension structure display style in column headers, flat or tree structure.
+
+## columnExpandLevel(number)
+Initial expansion level for column headers, default is 1.
 
 ## indicatorTitle(string)
 

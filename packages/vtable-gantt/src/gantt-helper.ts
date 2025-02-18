@@ -17,7 +17,25 @@ import {
   getStartDateByTimeUnit,
   getWeekNumber
 } from './tools/util';
+export const defaultTaskBarStyle = {
+  barColor: 'blue',
+  /** 已完成部分任务条的颜色 */
+  completedBarColor: 'gray',
+  /** 任务条的宽度 */
+  width: 30,
+  /** 任务条的圆角 */
+  cornerRadius: 3,
+  /** 任务条的边框 */
+  borderWidth: 0,
 
+  /** 边框颜色 */
+  // borderColor: 'red',
+  fontFamily: 'Arial',
+  fontSize: 14
+};
+function setWidthToDefaultTaskBarStyle(width: number) {
+  defaultTaskBarStyle.width = width;
+}
 const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
 export const DayTimes = 1000 * 60 * 60 * 24;
 export function getDateIndexByX(x: number, gantt: Gantt) {
@@ -179,34 +197,21 @@ export function initOptions(gantt: Gantt) {
     // },
     options?.grid
   );
-  gantt.parsedOptions.taskBarStyle = Object.assign(
-    {},
-    {
-      barColor: 'blue',
-      /** 已完成部分任务条的颜色 */
-      completedBarColor: 'gray',
-      /** 任务条的宽度 */
-      width: (gantt.parsedOptions.rowHeight * 3) / 4,
-      /** 任务条的圆角 */
-      cornerRadius: 3,
-      /** 任务条的边框 */
-      borderWidth: 0,
-
-      /** 边框颜色 */
-      // borderColor: 'red',
-      fontFamily: 'Arial',
-      fontSize: 14
-    },
-    options?.taskBar?.barStyle
-  );
+  setWidthToDefaultTaskBarStyle((gantt.parsedOptions.rowHeight * 3) / 4);
+  gantt.parsedOptions.taskBarStyle =
+    options?.taskBar?.barStyle && typeof options?.taskBar?.barStyle === 'function'
+      ? options.taskBar.barStyle
+      : Object.assign({}, defaultTaskBarStyle, options?.taskBar?.barStyle);
   gantt.parsedOptions.taskBarMilestoneStyle = Object.assign(
-    {
-      width: gantt.parsedOptions.taskBarStyle.width,
-      borderColor: gantt.parsedOptions.taskBarStyle.borderColor,
-      borderLineWidth: gantt.parsedOptions.taskBarStyle.borderLineWidth ?? 1,
-      fillColor: gantt.parsedOptions.taskBarStyle.barColor,
-      cornerRadius: 0
-    },
+    typeof gantt.parsedOptions.taskBarStyle === 'function'
+      ? {}
+      : {
+          width: gantt.parsedOptions.taskBarStyle.width,
+          borderColor: gantt.parsedOptions.taskBarStyle.borderColor,
+          borderLineWidth: gantt.parsedOptions.taskBarStyle.borderLineWidth ?? 1,
+          fillColor: gantt.parsedOptions.taskBarStyle.barColor,
+          cornerRadius: 0
+        },
     options?.taskBar?.milestoneStyle
   );
   gantt.parsedOptions.taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneStyle.width * Math.sqrt(2);
@@ -220,14 +225,21 @@ export function initOptions(gantt: Gantt) {
   );
   gantt.parsedOptions.taskBarSelectable = options?.taskBar?.selectable ?? true;
   gantt.parsedOptions.taskBarSelectedStyle = Object.assign(
-    {
-      shadowBlur: 6, //阴影宽度
-      shadowOffsetX: 0, //x方向偏移
-      shadowOffsetY: 0, //Y方向偏移
-      shadowColor: gantt.parsedOptions.taskBarStyle.barColor, //阴影颜色
-      borderColor: gantt.parsedOptions.taskBarStyle.barColor, //边框颜色
-      borderLineWidth: 1 //边框宽度
-    },
+    typeof gantt.parsedOptions.taskBarStyle === 'function'
+      ? {
+          shadowBlur: 6, //阴影宽度
+          shadowOffsetX: 0, //x方向偏移
+          shadowOffsetY: 0, //Y方向偏移
+          borderLineWidth: 1 //边框宽度
+        }
+      : {
+          shadowBlur: 6, //阴影宽度
+          shadowOffsetX: 0, //x方向偏移
+          shadowOffsetY: 0, //Y方向偏移
+          shadowColor: gantt.parsedOptions.taskBarStyle.barColor, //阴影颜色
+          borderColor: gantt.parsedOptions.taskBarStyle.barColor, //边框颜色
+          borderLineWidth: 1 //边框宽度
+        },
     options?.taskBar?.selectedBarStyle
   );
   gantt.parsedOptions.taskBarLabelText = options?.taskBar?.labelText ?? '';
@@ -636,10 +648,10 @@ export function convertProgress(progress: number | string) {
     progress = parseFloat(progress);
   }
 
-  // 如果小于或等于1，说明是0.4这种情况，转换成百分比
-  if (progress <= 1) {
-    progress = progress * 100;
-  }
+  // // 如果小于或等于1，说明是0.4这种情况，转换成百分比
+  // if (progress <= 1) {
+  //   progress = progress * 100;
+  // }
 
   // 最后转换成整数
   return Math.round(progress);

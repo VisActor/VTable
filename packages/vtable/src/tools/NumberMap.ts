@@ -220,9 +220,10 @@ export class NumberMap<T> {
   }
 
   addAndReorder(index: number, newValue?: T) {
-    const lastIndex = this.getLastIndex();
-    this.adjustOrder(index, index + 1, lastIndex - index);
     if (isValid(newValue)) {
+      const lastIndex = this.getLastIndex();
+      this.adjustOrder(index, index + 1, lastIndex - index);
+
       this.put(index, newValue);
     }
   }

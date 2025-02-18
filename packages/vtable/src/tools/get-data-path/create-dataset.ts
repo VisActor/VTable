@@ -75,6 +75,7 @@ export function createDataset(options: PivotChartConstructorOptions) {
     options.indicatorsAsCol ?? true,
     options.records,
     undefined,
+    undefined,
     columnTree || options.columnTree,
     rowTree || options.rowTree,
     true

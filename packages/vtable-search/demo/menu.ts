@@ -14,6 +14,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-basic'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-merge'
       }
     ]
   }

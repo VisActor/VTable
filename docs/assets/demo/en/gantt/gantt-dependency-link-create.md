@@ -189,9 +189,9 @@ const option = {
   records,
   taskListTable: {
     columns: columns,
-    tableWidth: 400,
+    tableWidth: 'auto',
     minTableWidth: 100,
-    maxTableWidth: 600
+    maxTableWidth: 500
   },
   dependency: {
     links: [

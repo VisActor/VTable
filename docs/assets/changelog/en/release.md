@@ -1,7 +1,77 @@
+# v1.16.1
+
+2025-02-14
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add visibleOnHover setting for columnResize [#3349](https://github.com/VisActor/VTable/issues/3349)
+- **@visactor/vtable**: gantt barStyle support function [#3364](https://github.com/VisActor/VTable/issues/3364)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when rowHierarchyType is tree total value show on top no work [#3322](https://github.com/VisActor/VTable/issues/3322)
+- **@visactor/vtable**: when column has custom aggregation edit cell update [#3333](https://github.com/VisActor/VTable/issues/3333)
+- **@visactor/vtable**: progress will only support number not decimals [#3401](https://github.com/VisActor/VTable/issues/3401)
+- **@visactor/vtable**: disable auto resize column width when double clicking the column border line
+- **@visactor/vtable**: fix bodyGroup frame update [#3404](https://github.com/VisActor/VTable/issues/3404)
+- **@visactor/vtable**: fix dom position in react-vtable [#3314](https://github.com/VisActor/VTable/issues/3314)
+- **@visactor/vtable**: fix groupBy judgement in getHierarchyState() [#3406](https://github.com/VisActor/VTable/issues/3406)
+- **@visactor/vtable**: fix sorted checkbox state [#3394](https://github.com/VisActor/VTable/issues/3394)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: progressbar type cell support customLayou [#3295](https://github.com/VisActor/VTable/issues/3295)
+- **@visactor/vtable**: supplement theme frozen frameStyle border create [#3400](https://github.com/VisActor/VTable/issues/3400)
+
+[more detail about v1.16.1](https://github.com/VisActor/VTable/releases/tag/v1.16.1)
+
+# v1.16.0
+
+2025-02-08
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: support async in downloadCsv&downloadExcel
+- **@visactor/vtable**: linkJump & linkDetect support function
+- **@visactor/vtable**: support react17 in customLayout function
+- **@visactor/vtable**: add keepColumnWidthChange in vue-vtable [#3346](https://github.com/VisActor/VTable/issues/3346)
+- **@visactor/vtable**: add grid-tree mode for pivot table
+
+**🐛 Bug fix**
+
+- **@visactor/vtable-gantt**: when resize gantt view size should update dependency node size [#3287](https://github.com/VisActor/VTable/issues/3287)
+- **@visactor/vtable-gantt**: resize or move taskbar update record problem [#3321](https://github.com/VisActor/VTable/issues/3321)
+- **@visactor/vtable-gantt**: updateScales to quarter taskbar size error [#3348](https://github.com/VisActor/VTable/issues/3348)
+- **@visactor/vtable-gantt**: mouseover last date border occor error for gantt [#3373](https://github.com/VisActor/VTable/issues/3373)
+- **@visactor/vtable**: fix clipped judgement in getCellOverflowText()
+- **@visactor/vtable**: fix rowData error in media-click [#3342](https://github.com/VisActor/VTable/issues/3342)
+- **@visactor/vtable**: fix header checkbox state in functional cellType [#3334](https://github.com/VisActor/VTable/issues/3334)
+- **@visactor/vtable**: fix text vertical layout [#3353](https://github.com/VisActor/VTable/issues/3353)
+- **@visactor/vtable**: fix merge cell style update in vtable-search [#3327](https://github.com/VisActor/VTable/issues/3327)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: rowSeriesNumber cell can use theme headerStyle [#3362](https://github.com/VisActor/VTable/issues/3362)
+
+
+
+[more detail about v1.16.0](https://github.com/VisActor/VTable/releases/tag/v1.16.0)
+
+# v1.15.2
+
+2025-01-26
+
+**🆕 New feature**
+
+- **@visactor/vtable**: dependField&batType support function in progress-bar
+
+[more detail about v1.15.2](https://github.com/VisActor/VTable/releases/tag/v1.15.2)
+
 # v1.15.1
 
 2025-01-17
-
 
 **🆕 New feature**
 
@@ -54,14 +124,11 @@
 - **@visactor/vtable**: add weather calendar demo
 - **@visactor/vtable**: add scheduleCreatable doc
 
-
-
 [more detail about v1.15.0](https://github.com/VisActor/VTable/releases/tag/v1.15.0)
 
 # v1.14.3
 
 2024-12-27
-
 
 **🆕 New feature**
 
@@ -74,14 +141,11 @@
 - **@visactor/vtable**: fix borderLineWidth array config [#3183](https://github.com/VisActor/VTable/issues/3183)
 - **@visactor/vtable**: when set resizable false hover taskbar occor error [#3189](https://github.com/VisActor/VTable/issues/3189)
 
-
-
 [more detail about v1.14.3](https://github.com/VisActor/VTable/releases/tag/v1.14.3)
 
 # v1.14.1
 
 2024-12-23
-
 
 **🆕 New feature**
 
@@ -95,8 +159,6 @@
 **🔨 Refactor**
 
 - **@visactor/vtable**: add option tableSizeAntiJitter [#3160](https://github.com/VisActor/VTable/issues/3160)
-
-
 
 [more detail about v1.14.1](https://github.com/VisActor/VTable/releases/tag/v1.14.1)
 

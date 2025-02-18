@@ -33,5 +33,10 @@ export class DateInputEditor extends InputEditor implements IEditor {
         e.stopPropagation();
       }
     });
+
+    // hack for preventing drag touch cause page jump
+    input.addEventListener('wheel', e => {
+      e.preventDefault();
+    });
   }
 }

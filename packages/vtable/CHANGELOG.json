@@ -2,6 +2,143 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.16.1",
+      "tag": "@visactor/vtable_v1.16.1",
+      "date": "Fri, 14 Feb 2025 09:37:30 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: progressbar type cell support customLayou #3295\n\n"
+          },
+          {
+            "comment": "fix: when rowHierarchyType is tree total value show on top no work #3322\n\n"
+          },
+          {
+            "comment": "fix: when column has custom aggregation edit cell update #3333\n\n"
+          },
+          {
+            "comment": "feat: add visibleOnHover setting for columnResize #3349\n\n"
+          },
+          {
+            "comment": "feat: gantt barStyle support function #3364\n\n"
+          },
+          {
+            "comment": "refactor: supplement theme frozen frameStyle border create #3400\n\n"
+          },
+          {
+            "comment": "fix: progress will only support number not decimals #3401\n\n"
+          },
+          {
+            "comment": "fix: disable auto resize column width when double clicking the column border line\n\n"
+          },
+          {
+            "comment": "fix: fix bodyGroup frame update #3404"
+          },
+          {
+            "comment": "fix: fix dom position in react-vtable #3314"
+          },
+          {
+            "comment": "fix: fix groupBy judgement in getHierarchyState() #3406"
+          },
+          {
+            "comment": "fix: fix sorted checkbox state #3394"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.16.0",
+      "tag": "@visactor/vtable_v1.16.0",
+      "date": "Sat, 08 Feb 2025 11:35:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when resize gantt view size should update dependency node size #3287\n\n"
+          },
+          {
+            "comment": "fix: resize or move taskbar update record problem #3321\n\n"
+          },
+          {
+            "comment": "fix: updateScales to quarter taskbar size error #3348\n\n"
+          },
+          {
+            "comment": "refactor: rowSeriesNumber cell can use theme headerStyle #3362\n\n"
+          },
+          {
+            "comment": "fix: mouseover last date border occor error for gantt #3373\n\n"
+          },
+          {
+            "comment": "feat: support async in downloadCsv&downloadExcel"
+          },
+          {
+            "comment": "feat: linkJump & linkDetect support function"
+          },
+          {
+            "comment": "feat: support react17 in customLayout function"
+          },
+          {
+            "comment": "feat: add keepColumnWidthChange in vue-vtable #3346"
+          },
+          {
+            "comment": "fix: fix clipped judgement in getCellOverflowText()"
+          },
+          {
+            "comment": "fix: fix rowData error in media-click #3342"
+          },
+          {
+            "comment": "fix: fix header checkbox state in functional cellType #3334"
+          },
+          {
+            "comment": "fix: fix text vertical layout #3353"
+          },
+          {
+            "comment": "fix: fix merge cell style update in vtable-search #3327"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add grid-tree mode for pivot table\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.15.2",
+      "tag": "@visactor/vtable_v1.15.2",
+      "date": "Sun, 26 Jan 2025 08:59:28 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when mouse leave gantt should trigger mouseleave_taskbar #3294\n\n"
+          },
+          {
+            "comment": "feat: dependField&batType support function in progress-bar"
+          },
+          {
+            "comment": "feat: add emptyTip click event"
+          },
+          {
+            "comment": "feat: canvasWidth canvasHeight support auto setting #3089\n\n"
+          },
+          {
+            "comment": "feat: add data update in list-table tree(group) mode"
+          },
+          {
+            "comment": "feat: add groupTitleFieldFormat API #3092"
+          },
+          {
+            "comment": "feat: add skipImageExportCellType in vtable-export"
+          },
+          {
+            "comment": "fix: fix empty-tip layout problem when resize window #3312"
+          },
+          {
+            "comment": "fix: remove tree limit in handleTextStick() #3274"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.15.1",
       "tag": "@visactor/vtable_v1.15.1",
       "date": "Fri, 17 Jan 2025 10:20:01 GMT",

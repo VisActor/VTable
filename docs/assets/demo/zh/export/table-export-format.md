@@ -10,7 +10,7 @@ link: '../../guide/export/excel'
 
 # 表格导出（自定义导出）
 
-默认情况下，表格导出时，会将导出单元格的内文字或图片输出到Excel中，如果需要自定义导出内容，可以设置`formatExportOutput`为一个函数，函数的参数为单元格信息，函数的返回值为导出字符串，如果返回`undefined`，则按照默认导出逻辑处理。
+默认情况下，表格导出时，会将导出单元格的内文字或图片输出到 Excel 中，如果需要自定义导出内容，可以设置`formatExportOutput`为一个函数，函数的参数为单元格信息，函数的返回值为导出字符串，如果返回`undefined`，则按照默认导出逻辑处理。
 
 ## 代码演示
 
@@ -93,21 +93,24 @@ function bindExport() {
   exportContainer.appendChild(exportCsvButton);
   exportContainer.appendChild(exportExcelButton);
 
-  exportCsvButton.addEventListener('click', () => {
+  exportCsvButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
+      await downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
     }
   });
 
   exportExcelButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      downloadExcel(await exportVTableToExcel(window.tableInstance, {
-        formatExportOutput: ({ cellType, cellValue, table, col, row }) => {
-          if (cellType === 'checkbox') {
-            return table.getCellCheckboxState(col, row) ? 'true' : 'false';
+      await downloadExcel(
+        await exportVTableToExcel(window.tableInstance, {
+          formatExportOutput: ({ cellType, cellValue, table, col, row }) => {
+            if (cellType === 'checkbox') {
+              return table.getCellCheckboxState(col, row) ? 'true' : 'false';
+            }
           }
-        }
-      }), 'export');
+        }),
+        'export'
+      );
     }
   });
 }

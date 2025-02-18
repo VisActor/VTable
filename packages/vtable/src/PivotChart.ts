@@ -205,6 +205,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       options.indicatorsAsCol ?? true,
       options.records,
       undefined,
+      undefined,
       this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
       this.internalProps.rowTree,
       true
@@ -413,6 +414,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.internalProps.indicators,
       options.indicatorsAsCol ?? true,
       options.records ?? this.internalProps.records,
+      undefined,
       undefined,
       this.internalProps.columnTree,
       this.internalProps.rowTree,
@@ -910,10 +912,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   }
   getHierarchyState(col: number, row: number): HierarchyState {
     return (this._getHeaderLayoutMap(col, row) as HeaderData)?.hierarchyState;
-  }
-
-  _hasHierarchyTreeHeader() {
-    return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree';
   }
 
   getMenuInfo(col: number, row: number, type: string): DropDownMenuEventInfo {

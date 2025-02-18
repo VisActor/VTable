@@ -27,11 +27,28 @@ export function createProgressBarCell(
   range?: CellRange
 ) {
   if (progressBarDefine.dependField) {
-    dataValue = (table.getCellOriginRecord(col, row) as any)?.[progressBarDefine.dependField] ?? dataValue;
+    const dependField = getOrApply(progressBarDefine.dependField, {
+      col,
+      row,
+      table,
+      value,
+      dataValue,
+      cellHeaderPaths: undefined
+    });
+    dataValue = (table.getCellOriginRecord(col, row) as any)?.[dependField] ?? dataValue;
   }
 
-  progressBarDefine.barType = progressBarDefine.barType ?? 'default';
-  progressBarDefine.min =
+  const barType =
+    getOrApply(progressBarDefine.barType, {
+      col,
+      row,
+      table,
+      value,
+      dataValue,
+      cellHeaderPaths: undefined
+    }) ?? 'default';
+
+  const min: number =
     getOrApply(progressBarDefine.min, {
       col,
       row,
@@ -40,7 +57,7 @@ export function createProgressBarCell(
       dataValue,
       cellHeaderPaths: undefined
     }) ?? 0;
-  progressBarDefine.max =
+  const max: number =
     getOrApply(progressBarDefine.max, {
       col,
       row,
@@ -48,7 +65,8 @@ export function createProgressBarCell(
       value,
       dataValue,
       cellHeaderPaths: undefined
-    }) ?? progressBarDefine.min + 100;
+    }) ?? min + 100;
+
   let height = 0;
   if (range) {
     height = table.getRowsHeight(range.start.row, range.end.row);
@@ -168,13 +186,8 @@ export function createProgressBarCell(
       return percentCompleteBarGroup;
     }
 
-    if ((progressBarDefine.barType ?? 'default') === 'default') {
-      const percentile =
-        num < progressBarDefine.min
-          ? 0
-          : num > progressBarDefine.max
-          ? 1
-          : (num - progressBarDefine.min) / (progressBarDefine.max - progressBarDefine.min);
+    if ((barType ?? 'default') === 'default') {
+      const percentile = num < min ? 0 : num > max ? 1 : (num - min) / (max - min);
 
       const barMaxWidth = contentWidth;
       const barTop = top + contentHeight - (barHeight as number) - (barBottom as number);
@@ -225,11 +238,11 @@ export function createProgressBarCell(
         fill: fillColor
       });
       percentCompleteBarGroup.addChild(barMain);
-    } else if (progressBarDefine.barType === 'negative') {
+    } else if (barType === 'negative') {
       // negative模式参考风神现有数据条样式，显示坐标轴和正负数据条
       // 计算坐标轴位置
-      const negativeRange = progressBarDefine.min < 0 ? -progressBarDefine.min : 0;
-      const positiveRange = progressBarDefine.max > 0 ? progressBarDefine.max : 0;
+      const negativeRange = min < 0 ? -min : 0;
+      const positiveRange = max > 0 ? max : 0;
 
       const negativeFactor = negativeRange / (negativeRange + positiveRange);
       const positiveFactor = 1 - negativeFactor;
@@ -432,11 +445,11 @@ export function createProgressBarCell(
         });
         percentCompleteBarGroup.addChild(barMark);
       }
-    } else if (progressBarDefine.barType === 'negative_no_axis') {
+    } else if (barType === 'negative_no_axis') {
       // negative_no_axis模式不显示坐标轴，正负数据条同向，区分颜色
       // 计算range
-      const _negativeRange = progressBarDefine.min < 0 ? -progressBarDefine.min : 0;
-      const _positiveRange = progressBarDefine.max > 0 ? progressBarDefine.max : 0;
+      const _negativeRange = min < 0 ? -min : 0;
+      const _positiveRange = max > 0 ? max : 0;
       const range = Math.max(_negativeRange, _positiveRange);
 
       // 计算rate

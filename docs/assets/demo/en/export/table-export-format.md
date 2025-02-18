@@ -93,21 +93,24 @@ function bindExport() {
   exportContainer.appendChild(exportCsvButton);
   exportContainer.appendChild(exportExcelButton);
 
-  exportCsvButton.addEventListener('click', () => {
+  exportCsvButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
+      await downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
     }
   });
 
   exportExcelButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      downloadExcel(await exportVTableToExcel(window.tableInstance, {
-        formatExportOutput: ({ cellType, cellValue, table, col, row }) => {
-          if (cellType === 'checkbox') {
-            return table.getCellCheckboxState(col, row) ? 'true' : 'false';
+      await downloadExcel(
+        await exportVTableToExcel(window.tableInstance, {
+          formatExportOutput: ({ cellType, cellValue, table, col, row }) => {
+            if (cellType === 'checkbox') {
+              return table.getCellCheckboxState(col, row) ? 'true' : 'false';
+            }
           }
-        }
-      }), 'export');
+        }),
+        'export'
+      );
     }
   });
 }

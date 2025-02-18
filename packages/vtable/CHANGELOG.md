@@ -1,6 +1,95 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 17 Jan 2025 10:20:01 GMT and should not be manually modified.
+This log was last generated on Fri, 14 Feb 2025 09:37:30 GMT and should not be manually modified.
+
+## 1.16.1
+Fri, 14 Feb 2025 09:37:30 GMT
+
+### Updates
+
+- refactor: progressbar type cell support customLayou #3295
+
+
+- fix: when rowHierarchyType is tree total value show on top no work #3322
+
+
+- fix: when column has custom aggregation edit cell update #3333
+
+
+- feat: add visibleOnHover setting for columnResize #3349
+
+
+- feat: gantt barStyle support function #3364
+
+
+- refactor: supplement theme frozen frameStyle border create #3400
+
+
+- fix: progress will only support number not decimals #3401
+
+
+- fix: disable auto resize column width when double clicking the column border line
+
+
+- fix: fix bodyGroup frame update #3404
+- fix: fix dom position in react-vtable #3314
+- fix: fix groupBy judgement in getHierarchyState() #3406
+- fix: fix sorted checkbox state #3394
+
+## 1.16.0
+Sat, 08 Feb 2025 11:35:13 GMT
+
+### Minor changes
+
+- feat: add grid-tree mode for pivot table
+
+
+
+### Updates
+
+- fix: when resize gantt view size should update dependency node size #3287
+
+
+- fix: resize or move taskbar update record problem #3321
+
+
+- fix: updateScales to quarter taskbar size error #3348
+
+
+- refactor: rowSeriesNumber cell can use theme headerStyle #3362
+
+
+- fix: mouseover last date border occor error for gantt #3373
+
+
+- feat: support async in downloadCsv&downloadExcel
+- feat: linkJump & linkDetect support function
+- feat: support react17 in customLayout function
+- feat: add keepColumnWidthChange in vue-vtable #3346
+- fix: fix clipped judgement in getCellOverflowText()
+- fix: fix rowData error in media-click #3342
+- fix: fix header checkbox state in functional cellType #3334
+- fix: fix text vertical layout #3353
+- fix: fix merge cell style update in vtable-search #3327
+
+## 1.15.2
+Sun, 26 Jan 2025 08:59:28 GMT
+
+### Updates
+
+- fix: when mouse leave gantt should trigger mouseleave_taskbar #3294
+
+
+- feat: dependField&batType support function in progress-bar
+- feat: add emptyTip click event
+- feat: canvasWidth canvasHeight support auto setting #3089
+
+
+- feat: add data update in list-table tree(group) mode
+- feat: add groupTitleFieldFormat API #3092
+- feat: add skipImageExportCellType in vtable-export
+- fix: fix empty-tip layout problem when resize window #3312
+- fix: remove tree limit in handleTextStick() #3274
 
 ## 1.15.1
 Fri, 17 Jan 2025 10:20:01 GMT

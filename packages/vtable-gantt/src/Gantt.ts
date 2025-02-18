@@ -126,7 +126,7 @@ export class Gantt extends EventTarget {
     reverseSortedTimelineScales: (ITimelineScale & { timelineDates?: ITimelineDateInfo[] })[];
     timeScaleIncludeHour: boolean;
     grid: IGrid;
-    taskBarStyle: ITaskBarStyle;
+    taskBarStyle: ITaskBarStyle | ((interactionArgs: TaskBarInteractionArgumentType) => ITaskBarStyle);
     taskBarMilestoneStyle: IMilestoneStyle;
     /** 里程碑是旋转后的矩形，所以需要计算里程碑的对角线长度 */
     taskBarMilestoneHypotenuse: number;
@@ -724,15 +724,30 @@ export class Gantt extends EventTarget {
     }
     return this.itemCount * this.parsedOptions.rowHeight;
   }
+  /**
+   * 通过任务显示的index获取数据记录的index
+   * @param showIndex 显示index
+   * @returns
+   */
+  getRecordIndexByTaskShowIndex(showIndex: number): number | number[] {
+    if (this.taskListTableInstance) {
+      return this.taskListTableInstance.getRecordIndexByCell(
+        0,
+        this.taskListTableInstance.columnHeaderLevelCount + showIndex
+      );
+    }
+    return showIndex;
+  }
   getTaskShowIndexByRecordIndex(index: number | number[]) {
     return this.taskListTableInstance.getBodyRowIndexByRecordIndex(index);
   }
   getRecordByIndex(taskShowIndex: number, sub_task_index?: number) {
     if (isValid(sub_task_index)) {
+      //如果有sub_task_index 表示是sub_task等模式
       return this.records[taskShowIndex]?.children?.[sub_task_index];
     }
     if (this.taskListTableInstance) {
-      return this.taskListTableInstance.getRecordByRowCol(
+      return this.taskListTableInstance.getRecordByCell(
         0,
         taskShowIndex + this.taskListTableInstance.columnHeaderLevelCount
       );
@@ -866,8 +881,9 @@ export class Gantt extends EventTarget {
     const newEndDate = formatDate(endDate, dateFormat);
     taskRecord[endDateField] = newEndDate;
     if (!isValid(sub_task_index)) {
+      const indexs = this.getRecordIndexByTaskShowIndex(index);
       //子任务不是独占左侧表格一行的情况
-      this._updateRecordToListTable(taskRecord, index);
+      this._updateRecordToListTable(taskRecord, indexs);
     }
   }
 
@@ -1137,15 +1153,34 @@ export class Gantt extends EventTarget {
 
   getDateRangeByIndex(index: number) {
     const minScale = this.parsedOptions.reverseSortedTimelineScales[0];
-    const startDate = minScale.timelineDates[index].startDate;
-    const endDate = minScale.timelineDates[index].endDate;
-    return {
-      startDate,
-      endDate
-    };
+    if (index < minScale.timelineDates.length) {
+      const startDate = minScale.timelineDates[index].startDate;
+      const endDate = minScale.timelineDates[index].endDate;
+      return {
+        startDate,
+        endDate
+      };
+    }
+    return null;
   }
 
   parseTimeFormat(date: string) {
     return parseDateFormat(date);
+  }
+
+  getTaskBarStyle(task_index: number, sub_task_index?: number) {
+    if (typeof this.parsedOptions.taskBarStyle === 'function') {
+      const { startDate, endDate, taskRecord } = this.getTaskInfoByTaskListIndex(task_index, sub_task_index);
+
+      const args = {
+        index: task_index,
+        startDate,
+        endDate,
+        taskRecord,
+        ganttInstance: this
+      };
+      return this.parsedOptions.taskBarStyle(args);
+    }
+    return this.parsedOptions.taskBarStyle;
   }
 }

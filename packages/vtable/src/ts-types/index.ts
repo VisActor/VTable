@@ -1,5 +1,4 @@
 export * from './common';
-export * from './table-engine';
 export * from './column';
 export * from './events';
 export * from './theme';

@@ -41,33 +41,32 @@ import { downloadCsv, exportVTableToCsv, downloadExcel, exportVTableToExcel } fr
 const option = {
   header: [
     {
-      field: "0",
-      caption: "name",
+      field: '0',
+      caption: 'name'
     },
     {
-      field: "1",
-      caption: "age",
+      field: '1',
+      caption: 'age'
     },
     {
-      field: "2",
-      caption: "gender",
+      field: '2',
+      caption: 'gender'
     },
     {
-      field: "3",
-      caption: "hobby",
-    },
+      field: '3',
+      caption: 'hobby'
+    }
   ],
-  records: new Array(1000).fill(["John", 18, "male", "🏀"]),
+  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
 };
 
 const tableInstance = new VTable.ListTable(option);
 
-// donload csv file
-downloadCsv(exportVTableToCsv(tableInstance), 'export-csv');
+// download csv file
+await downloadCsv(exportVTableToCsv(tableInstance), 'export-csv');
 
-// donload excel file
-downloadExcel(await exportVTableToExcel(tableInstance), 'export-excel');
-
+// download excel file
+await downloadExcel(await exportVTableToExcel(tableInstance), 'export-excel');
 ```
 
 ##
@@ -80,9 +79,9 @@ downloadExcel(await exportVTableToExcel(tableInstance), 'export-excel');
 
 # Ecosystem
 
-| Project                                                     | Description                                                                            |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| [AI-generated Components](https://visactor.io/ai-vtable)    | AI-generated table component.                                                          |
+| Project                                                  | Description                   |
+| -------------------------------------------------------- | ----------------------------- |
+| [AI-generated Components](https://visactor.io/ai-vtable) | AI-generated table component. |
 
 # Contribution
 

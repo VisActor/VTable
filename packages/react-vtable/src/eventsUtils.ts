@@ -83,7 +83,7 @@ export interface EventsProps {
 
   onChangCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
   onEmptyTipClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['empty_tip_click']>;
-  onEmptyTipDblclick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['empty_tip_dblclick']>;
+  onEmptyTipDblClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['empty_tip_dblclick']>;
 }
 
 export const TABLE_EVENTS = {
@@ -156,7 +156,7 @@ export const TABLE_EVENTS = {
 
   onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
   onEmptyTipClick: EVENT_TYPE.EMPTY_TIP_CLICK,
-  onEmptyTipDblclick: EVENT_TYPE.EMPTY_TIP_DBLCLICK
+  onEmptyTipDblClick: EVENT_TYPE.EMPTY_TIP_DBLCLICK
 };
 
 export const TABLE_EVENTS_KEYS = Object.keys(TABLE_EVENTS);

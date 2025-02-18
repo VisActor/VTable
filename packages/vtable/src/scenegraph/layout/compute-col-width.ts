@@ -391,7 +391,10 @@ function computeAutoColWidth(
       }
       if (isValid((hd as HeaderData)?.hierarchyLevel)) {
         cellHierarchyIndent =
-          ((hd as HeaderData).hierarchyLevel ?? 0) * ((layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0);
+          ((hd as HeaderData).hierarchyLevel ?? 0) *
+          ((layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree'
+            ? (layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0
+            : 0);
         if (
           (layoutMap as PivotHeaderLayoutMap).rowHierarchyTextStartAlignment &&
           !table.internalProps.headerHelper.getHierarchyIcon(col, row)
