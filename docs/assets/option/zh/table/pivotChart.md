@@ -141,24 +141,6 @@ export interface IIndicatorHeaderNode {
 
 {{ use: pivot-header-title( prefix = '###',) }}
 
-## columnResizeType(string)
-
-调整列宽的生效范围，可配置项：
-
-- `column`: 调整列宽只调整当前列
-- `indicator`: 调整列宽时对应相同指标的列都会被调整
-- `indicatorGroup`: 调整同父级维度下所有指标列的宽度
-- `all`： 所有列宽都被调整
-
-## rowResizeType(string)
-
-调整行高的生效范围，可配置项：
-
-- `row`: 调整行高只调整当前行
-- `indicator`: 调整行高时对应相同指标的行都会被调整
-- `indicatorGroup`: 调整同父级维度下所有指标行的宽度
-- `all`： 所有行高都被调整
-
 ## renderChartAsync(boolean)
 
 是否开启图表异步渲染

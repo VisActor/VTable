@@ -432,6 +432,14 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   supplementIndicatorNodes?: boolean;
   /** 如果配置了rowTree 或者 columnTree 且是非规则的树结构，即树的同一层存在不同维度的维度值时，为了去匹配对应的数据，需要开启该配置 */
   parseCustomTreeToMatchRecords?: boolean;
+
+  resize?: {
+    /**
+     * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
+     */
+    columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+    rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
+  } & BaseTableConstructorOptions['resize'];
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**
@@ -483,6 +491,14 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
   indicatorTitle?: string;
 
   axes?: ITableAxisOption[];
+
+  resize?: {
+    /**
+     * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
+     */
+    columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+    rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
+  } & BaseTableConstructorOptions['resize'];
 }
 export interface PivotTableAPI extends BaseTableAPI {
   internalProps: PivotTableProtected;

@@ -263,6 +263,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // disableRowHeaderColumnResize,
       columnResizeMode,
       rowResizeMode = 'none',
+      resize,
       dragHeaderMode,
       // showHeader,
       // scrollBar,
@@ -369,8 +370,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.rowSeriesNumber = rowSeriesNumber;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
-    internalProps.columnResizeMode = columnResizeMode;
-    internalProps.rowResizeMode = rowResizeMode;
+    internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
+    internalProps.rowResizeMode = resize?.rowResizeMode ?? rowResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
@@ -2318,6 +2319,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // disableRowHeaderColumnResize,
       columnResizeMode,
       rowResizeMode = 'none',
+      resize,
       dragHeaderMode,
 
       // scrollBar,
@@ -2396,8 +2398,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.rowSeriesNumber = rowSeriesNumber;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
-    internalProps.columnResizeMode = columnResizeMode;
-    internalProps.rowResizeMode = rowResizeMode;
+    internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
+    internalProps.rowResizeMode = resize?.rowResizeMode ?? rowResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);

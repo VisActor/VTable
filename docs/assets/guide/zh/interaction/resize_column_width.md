@@ -1027,7 +1027,9 @@ const option = {
   widthMode: 'standard',
   rowHierarchyIndent: 20,
   rowHierarchyTextStartAlignment: true,
-  columnResizeType: 'all'
+  resize: {
+    columnResizeType: 'all'
+  }
 };
 const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
 ```
@@ -1080,7 +1082,9 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 
 ```javascript livedemo  template=vtable
 const myVTable = new VTable.ListTable(document.getElementById(CONTAINER_ID), {
-  columnResizeMode: 'header',
+  resize: {
+    columnResizeMode: 'header'
+  },
   columns: [
     {
       field: '订单 ID',
