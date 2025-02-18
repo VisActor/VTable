@@ -1,5 +1,5 @@
 import type { Either } from '../../../tools/helper';
-import type { ICompositeColumnBodyDefine } from './Composite-define';
+import type { ICompositeColumnBodyDefine } from './composite-define';
 import type { IChartColumnBodyDefine } from './chart-define';
 import type { ICheckboxColumnBodyDefine, ICheckboxHeaderDefine } from './checkbox-define';
 import type { IImageColumnBodyDefine, IImageHeaderDefine } from './image-define';
@@ -8,7 +8,7 @@ import type { ITextColumnBodyDefine, ITextHeaderDefine } from './multilinetext-d
 import type { IProgressbarColumnBodyDefine } from './progressbar-define';
 import type { ISparklineColumnBodyDefine } from './sparkline-define';
 import type { IRadioColumnBodyDefine } from './radio-define';
-
+import type { ISwitchColumnBodyDefine } from './switch-define';
 export type HeaderDefine = IImageHeaderDefine | ILinkHeaderDefine | ICheckboxHeaderDefine | ITextHeaderDefine;
 
 export type ColumnBodyDefine =
@@ -19,7 +19,8 @@ export type ColumnBodyDefine =
   | ICheckboxColumnBodyDefine
   | IRadioColumnBodyDefine
   | IChartColumnBodyDefine
-  | ITextColumnBodyDefine;
+  | ITextColumnBodyDefine
+  | ISwitchColumnBodyDefine;
 export type TextColumnDefine = ITextColumnBodyDefine & HeaderDefine;
 export type LinkColumnDefine = ILinkColumnBodyDefine & HeaderDefine;
 export type ImageColumnDefine = IImageColumnBodyDefine & HeaderDefine;
@@ -29,6 +30,7 @@ export type CheckboxColumnDefine = ICheckboxColumnBodyDefine & HeaderDefine;
 export type RadioColumnDefine = IRadioColumnBodyDefine & HeaderDefine;
 export type ChartColumnDefine = IChartColumnBodyDefine & HeaderDefine;
 export type CompositeColumnDefine = ICompositeColumnBodyDefine & HeaderDefine;
+export type SwitchColumnDefine = ISwitchColumnBodyDefine & HeaderDefine;
 // export type GroupColumnDefine = IChartColumnBodyDefine & HeaderDefine;
 export type GroupColumnDefine = HeaderDefine & {
   columns: ColumnsDefine;
@@ -43,7 +45,8 @@ export type ColumnDefine = Either<
   | RadioColumnDefine
   | ChartColumnDefine
   | TextColumnDefine
-  | CompositeColumnDefine,
+  | CompositeColumnDefine
+  | SwitchColumnDefine,
   GroupColumnDefine
 >;
 

@@ -67,6 +67,17 @@ export function createTable() {
           spaceBetweenTextAndIcon: 15
         }
         // checked: false
+      },
+      {
+        field: 'switch',
+        title: 'switch',
+        width: 120,
+        cellType: 'switch',
+        uncheckedText: 'off',
+        checkedText: 'on',
+        style: {
+          color: '#FFF'
+        }
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标

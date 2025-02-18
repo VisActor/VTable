@@ -208,6 +208,7 @@ export interface TableEventHandlersEventArgumentMap {
 
   checkbox_state_change: MousePointerCellEvent & { checked: boolean };
   radio_state_change: MousePointerCellEvent & { radioIndexInCell: number | undefined };
+  switch_state_change: MousePointerCellEvent & { checked: boolean };
   after_render: null;
   initialized: null;
 
@@ -299,6 +300,7 @@ export interface TableEventHandlersReturnMap {
 
   checkbox_state_change: void;
   radio_state_change: void;
+  switch_state_change: void;
   after_render: void;
   initialized: void;
 

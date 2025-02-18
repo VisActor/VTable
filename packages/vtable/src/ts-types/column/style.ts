@@ -195,6 +195,12 @@ export type RadioStyleOption = {
   radioStyle?: RadioStyle;
 } & ITextStyleOption;
 
+export type SwitchStyleOption = {
+  size?: number;
+  spaceBetweenTextAndIcon?: number;
+  switchStyle?: SwitchStyle;
+} & ITextStyleOption;
+
 export type CheckboxStyle = {
   // 选择框尺寸
   size?: number;
@@ -249,4 +255,27 @@ export type RadioStyle = {
   disableCheckedFill?: string;
   // checked状态描边颜色
   disableCheckedStroke?: string;
+};
+
+export type SwitchStyle = {
+  // 开关与文字间距
+  spaceBetweenTextAndIcon?: number;
+
+  // 圆圈半径
+  circleRadius?: number;
+  // 开关宽度
+  boxWidth?: number;
+  // 开关高度
+  boxHeight?: number;
+
+  // 未选中状态box填充颜色
+  checkedFill?: string;
+  // 未选中状态box填充颜色
+  uncheckedFill?: string;
+  // disable&checked状态box填充颜色
+  disableCheckedFill?: string;
+  // disable&unchecked状态box填充颜色
+  disableUncheckedFill?: string;
+  // 圆圈填充颜色
+  circleFill?: string;
 };

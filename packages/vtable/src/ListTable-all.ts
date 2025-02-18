@@ -16,6 +16,7 @@ import {
   registerProgressBarCell,
   registerRadioCell,
   registerSparkLineCell,
+  registerSwitchCell,
   registerTextCell,
   registerVideoCell
 } from './scenegraph/group-creater/cell-type';
@@ -34,6 +35,7 @@ registerCheckboxCell();
 registerImageCell();
 registerProgressBarCell();
 registerRadioCell();
+registerSwitchCell();
 registerSparkLineCell();
 registerTextCell();
 registerVideoCell();
