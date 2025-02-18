@@ -342,9 +342,12 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
    */
   records?: any[];
   /**
-   * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
+   * @deprecated 请使用resize.columnResizeType
    */
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+  /**
+   * @deprecated 请使用resize.rowResizeType
+   */
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 设置排序状态，只对应按钮展示效果 无数据排序逻辑 */
   pivotSortState?: {
@@ -447,9 +450,12 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
    */
   records?: any[] | Record<string, any[]>;
   /**
-   * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
+   * @deprecated 请使用resize.columnResizeType
    */
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+  /**
+   * @deprecated 请使用resize.rowResizeType
+   */
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 列表头维度结构 */
   columnTree?: IHeaderTreeDefine[];
