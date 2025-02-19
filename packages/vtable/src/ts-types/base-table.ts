@@ -133,10 +133,21 @@ export interface IBaseTableProtected {
   rowSeriesNumber?: IRowSeriesNumber;
   columnSeriesNumber?: ColumnSeriesNumber[];
   // disableRowHeaderColumnResize?: boolean;
-  // 列宽调整模式（全列调整；全列不可调整；仅表头单元格可调整；仅内容单元格可调整）
+  /**
+   *@deprecated 请使用resize.columnResizeType
+   */
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  /**
+   *@deprecated 请使用resize.rowResizeType
+   */
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
+  /**
+   *@deprecated 请使用resize.columnResizeType
+   */
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+  /**
+   *@deprecated 请使用resize.rowResizeType
+   */
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
@@ -540,8 +551,21 @@ export interface BaseTableConstructorOptions {
   /** 当表格出现抖动情况，请排查是否上层dom容器的宽高是小数引起的。如果不能保证是整数，请配置这个配置项为true */
   tableSizeAntiJitter?: boolean;
 
-  /** 是否禁用双击列边框自动调整列宽 **/
+  /**
+   * @deprecated 请使用resize.disableDblclickAutoResizeColWidth
+   */
   disableDblclickAutoResizeColWidth?: boolean;
+
+  /** resize交互配置 **/
+  resize?: {
+    /**
+     * 调整列宽 可操作范围。'all' | 'none' | 'header' | 'body'; 整列间隔线|禁止调整|只能在表头处间隔线|只能在body间隔线
+     */
+    columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+    rowResizeMode?: 'all' | 'none' | 'header' | 'body';
+    /** 是否禁用双击列边框自动调整列宽 **/
+    disableDblclickAutoResizeColWidth?: boolean;
+  };
 }
 export interface BaseTableAPI {
   id: string;

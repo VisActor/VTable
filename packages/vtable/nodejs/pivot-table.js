@@ -480,7 +480,9 @@ function createPivotTable() {
         allowFrozenColCount: 2,
         widthMode: 'autoWidth',
         defaultRowHeight: 80,
-        columnResizeType: 'indicator',
+        resize: {
+          columnResizeType: 'indicator',
+        },
         tooltip: {
             isShowOverflowTextTooltip: true
         },

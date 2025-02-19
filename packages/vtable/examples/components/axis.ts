@@ -1260,7 +1260,9 @@ export function createTable() {
     widthMode: 'standard', // 宽度模式：standard 标准模式； adaptive 自动填满容器
     defaultRowHeight: 80,
     defaultColWidth: 100,
-    columnResizeType: 'indicator', // 'column' | 'indicator' | 'all'
+    resize: {
+      columnResizeType: 'indicator' // 'column' | 'indicator' | 'all'
+    },
     dragHeaderMode: 'all'
   };
 

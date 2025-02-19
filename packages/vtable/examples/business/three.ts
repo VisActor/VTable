@@ -14,7 +14,9 @@ export function createTable() {
     keyboardOptions: {
       copySelected: false
     },
-    columnResizeType: 'all',
+    resize: {
+      columnResizeType: 'all'
+    },
     dropDownMenu: {
       renderMode: 'html',
       dropDownMenuHighlight: []

@@ -342,9 +342,12 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
    */
   records?: any[];
   /**
-   * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
+   * @deprecated 请使用resize.columnResizeType
    */
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+  /**
+   * @deprecated 请使用resize.rowResizeType
+   */
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 设置排序状态，只对应按钮展示效果 无数据排序逻辑 */
   pivotSortState?: {
@@ -432,6 +435,14 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   supplementIndicatorNodes?: boolean;
   /** 如果配置了rowTree 或者 columnTree 且是非规则的树结构，即树的同一层存在不同维度的维度值时，为了去匹配对应的数据，需要开启该配置 */
   parseCustomTreeToMatchRecords?: boolean;
+
+  resize?: {
+    /**
+     * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
+     */
+    columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+    rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
+  } & BaseTableConstructorOptions['resize'];
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**
@@ -439,9 +450,12 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
    */
   records?: any[] | Record<string, any[]>;
   /**
-   * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
+   * @deprecated 请使用resize.columnResizeType
    */
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+  /**
+   * @deprecated 请使用resize.rowResizeType
+   */
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 列表头维度结构 */
   columnTree?: IHeaderTreeDefine[];
@@ -483,6 +497,14 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
   indicatorTitle?: string;
 
   axes?: ITableAxisOption[];
+
+  resize?: {
+    /**
+     * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
+     */
+    columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+    rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
+  } & BaseTableConstructorOptions['resize'];
 }
 export interface PivotTableAPI extends BaseTableAPI {
   internalProps: PivotTableProtected;
