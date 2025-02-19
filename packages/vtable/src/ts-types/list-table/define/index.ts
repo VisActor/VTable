@@ -9,6 +9,8 @@ import type { IProgressbarColumnBodyDefine } from './progressbar-define';
 import type { ISparklineColumnBodyDefine } from './sparkline-define';
 import type { IRadioColumnBodyDefine } from './radio-define';
 import type { ISwitchColumnBodyDefine } from './switch-define';
+import type { IButtonColumnBodyDefine } from './button-define';
+
 export type HeaderDefine = IImageHeaderDefine | ILinkHeaderDefine | ICheckboxHeaderDefine | ITextHeaderDefine;
 
 export type ColumnBodyDefine =
@@ -20,7 +22,8 @@ export type ColumnBodyDefine =
   | IRadioColumnBodyDefine
   | IChartColumnBodyDefine
   | ITextColumnBodyDefine
-  | ISwitchColumnBodyDefine;
+  | ISwitchColumnBodyDefine
+  | IButtonColumnBodyDefine;
 export type TextColumnDefine = ITextColumnBodyDefine & HeaderDefine;
 export type LinkColumnDefine = ILinkColumnBodyDefine & HeaderDefine;
 export type ImageColumnDefine = IImageColumnBodyDefine & HeaderDefine;
@@ -31,6 +34,7 @@ export type RadioColumnDefine = IRadioColumnBodyDefine & HeaderDefine;
 export type ChartColumnDefine = IChartColumnBodyDefine & HeaderDefine;
 export type CompositeColumnDefine = ICompositeColumnBodyDefine & HeaderDefine;
 export type SwitchColumnDefine = ISwitchColumnBodyDefine & HeaderDefine;
+export type ButtonColumnDefine = IButtonColumnBodyDefine & HeaderDefine;
 // export type GroupColumnDefine = IChartColumnBodyDefine & HeaderDefine;
 export type GroupColumnDefine = HeaderDefine & {
   columns: ColumnsDefine;
@@ -46,7 +50,8 @@ export type ColumnDefine = Either<
   | ChartColumnDefine
   | TextColumnDefine
   | CompositeColumnDefine
-  | SwitchColumnDefine,
+  | SwitchColumnDefine
+  | ButtonColumnDefine,
   GroupColumnDefine
 >;
 

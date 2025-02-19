@@ -10,6 +10,7 @@ import {
 import { registerCustomCellStylePlugin } from './plugins/custom-cell-style';
 import { registerListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import {
+  registerButtonCell,
   registerChartCell,
   registerCheckboxCell,
   registerImageCell,
@@ -36,6 +37,7 @@ registerImageCell();
 registerProgressBarCell();
 registerRadioCell();
 registerSwitchCell();
+registerButtonCell();
 registerSparkLineCell();
 registerTextCell();
 registerVideoCell();

@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "feat: add switch cell type",
+      "comment": "feat: add switch & button cell type",
       "type": "minor"
     }
   ],

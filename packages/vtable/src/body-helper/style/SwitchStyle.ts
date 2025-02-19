@@ -5,7 +5,7 @@ import type { SwitchStyle as SwitchStyleThemeOption } from '../../ts-types/colum
 let defaultStyle: SwitchStyle;
 
 export class SwitchStyle extends Style {
-  private _spaceBetweenTextAndIcon: number;
+  private _spaceBetweenTextAndCircle: number;
   private _circleRadius: number;
   private _boxWidth: number;
   private _boxHeight: number;
@@ -25,10 +25,10 @@ export class SwitchStyle extends Style {
   ) {
     super(style, headerStyle);
 
-    this._spaceBetweenTextAndIcon =
-      (style?.spaceBetweenTextAndIcon ??
-        headerStyle?.spaceBetweenTextAndIcon ??
-        switchThemeStyle?.spaceBetweenTextAndIcon) ||
+    this._spaceBetweenTextAndCircle =
+      (style?.spaceBetweenTextAndCircle ??
+        headerStyle?.spaceBetweenTextAndCircle ??
+        switchThemeStyle?.spaceBetweenTextAndCircle) ||
       6;
     this._circleRadius = (style?.switchStyle?.circleRadius ?? switchThemeStyle?.circleRadius) || 8;
     this._boxWidth = (style?.switchStyle?.boxWidth ?? switchThemeStyle?.boxWidth) || 40;
@@ -42,11 +42,11 @@ export class SwitchStyle extends Style {
     this._circleFill = (style?.switchStyle?.circleFill ?? switchThemeStyle?.circleFill) || '#FFF';
   }
 
-  get spaceBetweenTextAndIcon(): number {
-    return this._spaceBetweenTextAndIcon;
+  get spaceBetweenTextAndCircle(): number {
+    return this._spaceBetweenTextAndCircle;
   }
-  set spaceBetweenTextAndIcon(spaceBetweenTextAndIcon: number) {
-    this._spaceBetweenTextAndIcon = spaceBetweenTextAndIcon;
+  set spaceBetweenTextAndCircle(spaceBetweenTextAndCircle: number) {
+    this._spaceBetweenTextAndCircle = spaceBetweenTextAndCircle;
   }
   get circleRadius(): number {
     return this._circleRadius;

@@ -226,6 +226,12 @@ export interface TableEventHandlersEventArgumentMap {
 
   empty_tip_click: {};
   empty_tip_dblclick: {};
+
+  button_click: {
+    col: number;
+    row: number;
+    event: Event;
+  };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -315,4 +321,6 @@ export interface TableEventHandlersReturnMap {
 
   empty_tip_click: void;
   empty_tip_dblclick: void;
+
+  button_click: void;
 }

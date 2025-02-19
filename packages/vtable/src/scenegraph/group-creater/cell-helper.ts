@@ -13,7 +13,8 @@ import type {
   TextColumnDefine,
   RadioColumnDefine,
   ListTableConstructorOptions,
-  SwitchColumnDefine
+  SwitchColumnDefine,
+  ButtonColumnDefine
 } from '../../ts-types';
 import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
@@ -40,6 +41,7 @@ import type { CreateRadioCellGroup } from './cell-type/radio-cell';
 import { onBeforeAttributeUpdateForInvertHighlight } from '../../plugins/invert-highlight';
 import { getCellBorderStrokeWidth } from '../utils/cell-border-stroke-width';
 import type { CreateSwitchCellGroup } from './cell-type/switch-cell';
+import type { CreateButtonCellGroup } from './cell-type/button-cell';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -407,6 +409,28 @@ export function createCell(
       table,
       cellTheme,
       define as SwitchColumnDefine,
+      range,
+      isAsync
+    );
+  } else if (type === 'button') {
+    const createButtonCellGroup = Factory.getFunction('createButtonCellGroup') as CreateButtonCellGroup;
+    cellGroup = createButtonCellGroup(
+      null,
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      colWidth,
+      cellWidth,
+      cellHeight,
+      padding,
+      textAlign,
+      textBaseline,
+      mayHaveIcon,
+      table,
+      cellTheme,
+      define as ButtonColumnDefine,
       range,
       isAsync
     );
