@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.16.2",
+      "tag": "@visactor/vtable_v1.16.2",
+      "date": "Wed, 19 Feb 2025 07:56:38 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: field with dot occor error # 3409\n\n"
+          },
+          {
+            "comment": "fix: getChartInstance log vchart updateViewBox method #3442\n\n"
+          },
+          {
+            "comment": "fix: computeAxisComponentWidth value ceil #3444\n\n"
+          },
+          {
+            "comment": "fix: fix sort function in getCheckboxState() #3394"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.16.1",
       "tag": "@visactor/vtable_v1.16.1",
       "date": "Fri, 14 Feb 2025 09:37:30 GMT",
