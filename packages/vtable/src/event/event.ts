@@ -27,6 +27,7 @@ import { isValid } from '@visactor/vutils';
 import { InertiaScroll } from './scroll';
 import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
 import { bindGroupTitleCheckboxChange } from './list-table/checkbox';
+import { bindButtonClickEvent } from './component/button';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -221,6 +222,9 @@ export class EventManager {
 
     // group title checkbox change
     bindGroupTitleCheckboxChange(this.table);
+
+    // button click
+    bindButtonClickEvent(this.table);
   }
 
   dealTableHover(eventArgsSet?: SceneEvent) {
@@ -262,7 +266,8 @@ export class EventManager {
       if (
         eventArgs.target.name === 'checkbox' ||
         eventArgs.target.name === 'radio' ||
-        eventArgs.target.name === 'switch'
+        eventArgs.target.name === 'switch' ||
+        eventArgs.target.name === 'button'
       ) {
         return false;
       }

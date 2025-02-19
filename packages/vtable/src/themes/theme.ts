@@ -85,6 +85,8 @@ export class TableTheme implements ITableThemeDefine {
   private _axisStyle: RequiredTableThemeDefine['axisStyle'] | null = null;
   private _checkboxStyle: RequiredTableThemeDefine['checkboxStyle'] | null = null;
   private _radioStyle: RequiredTableThemeDefine['radioStyle'] | null = null;
+  private _switchStyle: RequiredTableThemeDefine['switchStyle'] | null = null;
+  private _buttonStyle: RequiredTableThemeDefine['buttonStyle'] | null = null;
   private _textPopTipStyle: RequiredTableThemeDefine['textPopTipStyle'] | null = null;
   private _internalIconsStyle: RequiredTableThemeDefine['functionalIconsStyle'] | null = null;
   isPivot: boolean = false;
@@ -760,6 +762,32 @@ export class TableTheme implements ITableThemeDefine {
       this._radioStyle = radioStyle;
     }
     return this._radioStyle;
+  }
+
+  get switchStyle(): RequiredTableThemeDefine['switchStyle'] {
+    if (!this._switchStyle) {
+      const { obj, superTheme } = this.internalTheme;
+      const switchStyle: RequiredTableThemeDefine['switchStyle'] = ingoreNoneValueMerge(
+        {},
+        superTheme.switchStyle,
+        obj.switchStyle
+      );
+      this._switchStyle = switchStyle;
+    }
+    return this._switchStyle;
+  }
+
+  get buttonStyle(): RequiredTableThemeDefine['buttonStyle'] {
+    if (!this._buttonStyle) {
+      const { obj, superTheme } = this.internalTheme;
+      const buttonStyle: RequiredTableThemeDefine['buttonStyle'] = ingoreNoneValueMerge(
+        {},
+        superTheme.buttonStyle,
+        obj.buttonStyle
+      );
+      this._buttonStyle = buttonStyle;
+    }
+    return this._buttonStyle;
   }
 
   get textPopTipStyle(): RequiredTableThemeDefine['textPopTipStyle'] {

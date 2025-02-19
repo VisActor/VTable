@@ -1,6 +1,6 @@
-import { Switch } from '@src/vrender';
-import type { IThemeSpec, SwitchAttributes } from '@src/vrender';
-import type { CellRange, SwitchStyle, SwitchColumnDefine, SwitchStyleOption } from '../../../ts-types';
+import { Tag } from '@src/vrender';
+import type { IThemeSpec, TagAttributes } from '@src/vrender';
+import type { CellRange, ButtonColumnDefine, ButtonStyleOption, ButtonStyle } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { Group } from '../../graphic/group';
 import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
@@ -10,7 +10,7 @@ import { getOrApply } from '../../../tools/helper';
 import { getHierarchyOffset } from '../../utils/get-hierarchy-offset';
 import { dealWithIconLayout } from '../../utils/text-icon-layout';
 
-export function createSwitchCellGroup(
+export function createButtonCellGroup(
   cellGroup: Group | null,
   columnGroup: Group,
   xOrigin: number,
@@ -26,7 +26,7 @@ export function createSwitchCellGroup(
   mayHaveIcon: boolean,
   table: BaseTableAPI,
   cellTheme: IThemeSpec,
-  define: SwitchColumnDefine,
+  define: ButtonColumnDefine,
   range: CellRange | undefined,
   isAsync: boolean
 ) {
@@ -130,7 +130,7 @@ export function createSwitchCellGroup(
     });
   }
 
-  const switchComponent = createSwitch(
+  const buttonComponent = createButton(
     col,
     row,
     colWidth - iconWidth,
@@ -141,37 +141,37 @@ export function createSwitchCellGroup(
     define,
     table
   );
-  if (switchComponent) {
-    cellGroup.appendChild(switchComponent);
+  if (buttonComponent) {
+    cellGroup.appendChild(buttonComponent);
   }
 
-  switchComponent.render();
+  // buttonComponent.render();
 
   width -= padding[1] + padding[3] + iconWidth;
   height -= padding[0] + padding[2];
   if (textAlign === 'center') {
-    switchComponent.setAttribute(
+    buttonComponent.setAttribute(
       'x',
-      padding[3] + cellLeftIconWidth + (width - switchComponent.AABBBounds.width()) / 2
+      padding[3] + cellLeftIconWidth + (width - buttonComponent.AABBBounds.width()) / 2
     );
   } else if (textAlign === 'right') {
-    switchComponent.setAttribute('x', padding[3] + cellLeftIconWidth + width - switchComponent.AABBBounds.width());
+    buttonComponent.setAttribute('x', padding[3] + cellLeftIconWidth + width - buttonComponent.AABBBounds.width());
   } else {
-    switchComponent.setAttribute('x', padding[3] + cellLeftIconWidth);
+    buttonComponent.setAttribute('x', padding[3] + cellLeftIconWidth);
   }
 
   if (textBaseline === 'middle') {
-    switchComponent.setAttribute('y', padding[0] + (height - switchComponent.AABBBounds.height()) / 2);
+    buttonComponent.setAttribute('y', padding[0] + (height - buttonComponent.AABBBounds.height()) / 2);
   } else if (textBaseline === 'bottom') {
-    switchComponent.setAttribute('y', padding[0] + height - switchComponent.AABBBounds.height());
+    buttonComponent.setAttribute('y', padding[0] + height - buttonComponent.AABBBounds.height());
   } else {
-    switchComponent.setAttribute('y', padding[0]);
+    buttonComponent.setAttribute('y', padding[0]);
   }
 
   return cellGroup;
 }
 
-function createSwitch(
+function createButton(
   col: number,
   row: number,
   colWidth: number | 'auto',
@@ -179,89 +179,53 @@ function createSwitch(
   cellHeight: number,
   padding: number[],
   cellTheme: IThemeSpec,
-  define: SwitchColumnDefine,
+  define: ButtonColumnDefine,
   table: BaseTableAPI
 ) {
-  const style = table._getCellStyle(col, row) as SwitchStyle;
-
-  const spaceBetweenTextAndCircle = getProp('spaceBetweenTextAndCircle', style, col, row, table);
-  const circleRadius = getProp('circleRadius', style, col, row, table);
-  const boxWidth = getProp('boxWidth', style, col, row, table);
-  const boxHeight = getProp('boxHeight', style, col, row, table);
-  const checkedFill = getProp('checkedFill', style, col, row, table);
-  const uncheckedFill = getProp('uncheckedFill', style, col, row, table);
-  const disableCheckedFill = getProp('disableCheckedFill', style, col, row, table);
-  const disableUncheckedFill = getProp('disableUncheckedFill', style, col, row, table);
-  const circleFill = getProp('circleFill', style, col, row, table);
+  const style = table._getCellStyle(col, row) as ButtonStyle;
+  const buttonColor = getProp('buttonColor', style, col, row, table);
+  const buttonBorderColor = getProp('buttonBorderColor', style, col, row, table);
+  const buttonLineWidth = getProp('buttonLineWidth', style, col, row, table);
+  const buttonBorderRadius = getProp('buttonBorderRadius', style, col, row, table);
+  const buttonHoverColor = getProp('buttonHoverColor', style, col, row, table);
+  const buttonHoverBorderColor = getProp('buttonHoverBorderColor', style, col, row, table);
+  const buttonPadding = getProp('buttonPadding', style, col, row, table);
+  const buttonTextHoverColor = getProp('buttonTextHoverColor', style, col, row, table);
+  const buttonDisableColor = getProp('buttonDisableColor', style, col, row, table);
+  const buttonDisableBorderColor = getProp('buttonDisableBorderColor', style, col, row, table);
+  const buttonTextDisableColor = getProp('buttonTextDisableColor', style, col, row, table);
 
   const value = table.getCellValue(col, row) as string | { text: string; checked: boolean; disable: boolean } | boolean;
   const dataValue = table.getCellOriginValue(col, row);
-  let isChecked: boolean;
-  let isDisabled;
-  let text = (value as string) ?? '';
-  if (isObject(value)) {
-    isChecked = value.checked;
-    isDisabled = value.disable;
-    text = value.text ?? '';
-  } else if (typeof value === 'boolean') {
-    isChecked = value;
-    text = '';
-  }
-  isChecked = table.stateManager.syncCheckedState(col, row, define.field as string | number, isChecked) as boolean;
   const hierarchyOffset = getHierarchyOffset(col, row, table);
-  const cellStyle = table._getCellStyle(col, row) as SwitchStyleOption; // to be fixed
+  const cellStyle = table._getCellStyle(col, row) as ButtonStyleOption; // to be fixed
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const { lineClamp } = cellStyle;
-  const { checked, disable, uncheckedText, checkedText } = define;
-  if (isChecked === undefined || isChecked === null || typeof isChecked === 'function') {
-    //isChecked无效值 取全局设置的值
-    const globalChecked = getOrApply(checked as any, {
-      col,
-      row,
-      table,
-      context: null,
-      value,
-      dataValue
-    });
-    isChecked = table.stateManager.syncCheckedState(
-      col,
-      row,
-      define.field as string | number,
-      globalChecked
-    ) as boolean;
-  }
-  const globalDisable = getOrApply(disable as any, {
-    col,
-    row,
-    table,
-    context: null,
-    value,
-    dataValue
-  });
-  const checkedTextString = getOrApply(checkedText as any, {
-    col,
-    row,
-    table,
-    context: null,
-    value,
-    dataValue
-  });
-  const uncheckedTextString = getOrApply(uncheckedText as any, {
-    col,
-    row,
-    table,
-    context: null,
-    value,
-    dataValue
-  });
   const autoColWidth = colWidth === 'auto';
   const autoRowHeight = table.isAutoRowHeight(row);
 
+  const { disable, text } = define;
+  const isDisable = getOrApply(disable as any, {
+    col,
+    row,
+    table,
+    context: null,
+    value,
+    dataValue
+  });
+  const buttonTextValue = getOrApply(text as any, {
+    col,
+    row,
+    table,
+    context: null,
+    value,
+    dataValue
+  });
+
+  const buttonText = buttonTextValue ?? (value as string) ?? '';
+
   const attribute = {
-    text: text.length === 1 ? text[0] : text,
-    maxLineWidth: autoColWidth
-      ? Infinity
-      : cellWidth - (padding[1] + padding[3] + hierarchyOffset) - circleRadius * 2 - spaceBetweenTextAndCircle,
+    maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
     // fill: true,
     textAlign: 'left',
     textBaseline: 'top',
@@ -272,37 +236,54 @@ function createSwitch(
     heightLimit: autoRowHeight ? -1 : cellHeight - Math.floor(padding[0] + padding[2]),
     pickable: false,
     dx: hierarchyOffset,
-    whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
-
-    checkedText: checkedTextString,
-    uncheckedText: uncheckedTextString
+    whiteSpace: buttonText.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
   };
   const testAttribute = cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute;
-  const switchAttributes: SwitchAttributes = {
+
+  const buttonAttributes: TagAttributes = {
     x: 0,
     y: 0,
-    text: testAttribute,
-    circle: {
-      radius: circleRadius
+    cursor: 'pointer',
+    disable: isDisable,
+    childrenPickable: false,
+    text: buttonText.length === 1 ? buttonText[0] : buttonText,
+    textStyle: testAttribute,
+    padding: buttonPadding,
+    panel: {
+      visible: true,
+      fill: isDisable ? buttonDisableColor : buttonColor,
+      stroke: isDisable ? buttonDisableBorderColor : buttonBorderColor,
+      lineWidth: buttonLineWidth,
+      cornerRadius: buttonBorderRadius
     },
-    box: {
-      width: boxWidth,
-      height: boxHeight
-    },
-    spaceBetweenTextAndCircle,
-    disabled: isDisabled ?? globalDisable ?? false
-  };
-  switchAttributes.checked = isChecked;
+    state: {
+      text: {},
+      panel: {
+        hover: {
+          fill: buttonHoverColor,
+          stroke: buttonHoverBorderColor
+        }
+      }
+    }
+  } as any;
+  buttonTextDisableColor && (buttonAttributes.state.text.fill = buttonTextDisableColor);
+  buttonTextHoverColor && (buttonAttributes.state.text.hover.fill = buttonTextHoverColor);
 
-  uncheckedFill && (switchAttributes.box.uncheckedFill = uncheckedFill);
-  disableUncheckedFill && (switchAttributes.box.disableUncheckedFill = disableUncheckedFill);
-  checkedFill && (switchAttributes.box.checkedFill = checkedFill);
-  disableCheckedFill && (switchAttributes.box.disableCheckedFill = disableCheckedFill);
-  circleFill && (switchAttributes.circle.fill = circleFill);
+  const buttonComponent = new Tag(buttonAttributes);
+  buttonComponent.name = 'button';
 
-  const switchComponent = new Switch(switchAttributes);
-  switchComponent.name = 'switch';
-  return switchComponent;
+  if (!isDisable) {
+    buttonComponent.addEventListener('mouseenter', () => {
+      buttonComponent.addState('hover', true, false);
+      buttonComponent.stage.renderNextFrame();
+    });
+    buttonComponent.addEventListener('mouseleave', () => {
+      buttonComponent.removeState('hover', false);
+      buttonComponent.stage.renderNextFrame();
+    });
+  }
+
+  return buttonComponent;
 }
 
-export type CreateSwitchCellGroup = typeof createSwitchCellGroup;
+export type CreateButtonCellGroup = typeof createButtonCellGroup;

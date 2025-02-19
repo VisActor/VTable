@@ -9,6 +9,7 @@ import { createVideoCellGroup } from './video-cell';
 import { createCellGroup as createTextCellGroup } from './text-cell';
 import { createProgressBarCell } from './progress-bar-cell';
 import { getAxisDomainRangeAndLabels } from '../../../layout/chart-helper/get-axis-domain';
+import { createButtonCellGroup } from './button-cell';
 
 export const registerChartCell = () => {
   Factory.registerFunction('createChartCellGroup', createChartCellGroup);
@@ -33,6 +34,10 @@ export const registerRadioCell = () => {
 
 export const registerSwitchCell = () => {
   Factory.registerFunction('createSwitchCellGroup', createSwitchCellGroup);
+};
+
+export const registerButtonCell = () => {
+  Factory.registerFunction('createButtonCellGroup', createButtonCellGroup);
 };
 
 export const registerSparkLineCell = () => {

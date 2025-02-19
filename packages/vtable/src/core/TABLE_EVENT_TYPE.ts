@@ -186,6 +186,11 @@ export interface TableEvents {
    * 空数据提示双击事件
    */
   EMPTY_TIP_DBLCLICK: 'empty_tip_dblclick';
+
+  /**
+   * 按钮点击事件
+   */
+  BUTTON_CLICK: 'button_click';
 }
 /**
  * Table event types
@@ -256,5 +261,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle',
 
   EMPTY_TIP_CLICK: 'empty_tip_click',
-  EMPTY_TIP_DBLCLICK: 'empty_tip_dblclick'
+  EMPTY_TIP_DBLCLICK: 'empty_tip_dblclick',
+
+  BUTTON_CLICK: 'button_click'
 } as TableEvents;
