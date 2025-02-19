@@ -1080,7 +1080,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (isValid(field)) {
       // let stateArr = this.stateManager.checkedState.values() as any;
       // map按照key(dataIndex)的升序输出value
-      const keys = Array.from(this.stateManager.checkedState.keys()).sort();
+      const keys = Array.from(this.stateManager.checkedState.keys()).sort(
+        (a: string, b: string) => Number(a) - Number(b)
+      );
       let stateArr = keys.map(key => this.stateManager.checkedState.get(key));
 
       if (this.options.groupBy) {

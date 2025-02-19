@@ -1334,14 +1334,22 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
         chartInstance.updateViewBox(
           {
-            x1: viewBox.x1 - (chartNode.getRootNode() as any).table.scrollLeft,
-            x2: viewBox.x2 - (chartNode.getRootNode() as any).table.scrollLeft,
-            y1: viewBox.y1 - (chartNode.getRootNode() as any).table.scrollTop,
-            y2: viewBox.y2 - (chartNode.getRootNode() as any).table.scrollTop
+            x1: 0,
+            x2: viewBox.x2 - viewBox.x1,
+            y1: 0,
+            y2: viewBox.y2 - viewBox.y1
           },
           false,
           false
         );
+        // 拷贝的chart-render-helper.ts 的代码
+        const chartStage = chartInstance.getStage();
+        const matrix = chartNode.globalTransMatrix.clone();
+        const stageMatrix = chartNode.stage.window.getViewBoxTransform();
+        matrix.multiply(stageMatrix.a, stageMatrix.b, stageMatrix.c, stageMatrix.d, stageMatrix.e, stageMatrix.f);
+        chartStage.window.setViewBoxTransform &&
+          chartStage.window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
+
         // chartInstance.updateDataSync(dataId, data);
         if (typeof dataId === 'string') {
           chartInstance.updateDataSync(dataId, data ?? []);
@@ -1374,8 +1382,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           chartInstance.updateFullDataSync?.(dataBatch);
         }
         // position = chartInstance.convertDatumToPosition(datum);
-        // this.render();
-        this.renderAsync();
+        this.render();
+        // this.renderAsync();
       }
       // cellPosition.offsetLeft(this.tableX);
       // cellPosition.offsetTop(this.tableY);

@@ -30,7 +30,10 @@ interface ITreeLayoutBaseHeadNode {
   value: string;
   children: ITreeLayoutHeadNode[] | undefined;
   columns?: any; //兼容ListTable情况 simple-header-layout中增加了columnTree
+  //节点所在真正的level
   level: number;
+  //计算节点跨占（+spanLevel）情况下的level
+  afterSpanLevel: number;
   /** 节点跨占层数 如汇总节点跨几层维度 */
   levelSpan: number;
   startIndex: number;
@@ -71,6 +74,7 @@ export class DimensionTree {
     value: '',
     children: [],
     level: -1,
+    afterSpanLevel: -1,
     levelSpan: 1,
     startIndex: 0,
     size: 0,
@@ -156,10 +160,11 @@ export class DimensionTree {
     let size = node.dimensionKey ? (this.sizeIncludeParent ? 1 : 0) : 0;
     const children = node.children || node.columns;
     //平铺展示 分析所有层级
-    if (this.hierarchyType === 'grid') {
+    if (this.hierarchyType === 'grid' || this.hierarchyType === null) {
       if (children?.length >= 1) {
         children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
+          this.hierarchyType === 'grid' && (n.afterSpanLevel = (node.afterSpanLevel ?? 0) + (node.levelSpan ?? 1));
           this.totalLevel = Math.max(this.totalLevel, n.level + 1);
           size += this.setTreeNode(n, size, node);
         });
@@ -171,6 +176,7 @@ export class DimensionTree {
       //树形展示 有子节点 且下一层需要展开
       children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
+        // n.afterSpanLevel = (node.afterSpanLevel ?? 0) + (node.levelSpan ?? 1);
         this.totalLevel = Math.max(this.totalLevel, n.level + 1);
         this.expandedMaxLevel = Math.max(this.expandedMaxLevel, n.level + 1);
         size += this.setTreeNode(n, size, node);
@@ -179,6 +185,7 @@ export class DimensionTree {
       //树形展示 有子节点 且下一层不需要展开
       children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
+        // n.afterSpanLevel = (node.afterSpanLevel ?? 0) + (node.levelSpan ?? 1);
         this.totalLevel = Math.max(this.totalLevel, n.level + 1);
         this.setTreeNode(n, size, node);
       });
@@ -195,6 +202,7 @@ export class DimensionTree {
       children?.length >= 1 &&
         children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
+          // n.afterSpanLevel = (node.afterSpanLevel ?? 0) + (node.levelSpan ?? 1);
           this.totalLevel = Math.max(this.totalLevel, n.level + 1);
           this.expandedMaxLevel = Math.max(this.expandedMaxLevel, n.level + 1);
           size += this.setTreeNode(n, size, node);
@@ -209,6 +217,7 @@ export class DimensionTree {
       children?.length >= 1 &&
         children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
+          // n.afterSpanLevel = (node.afterSpanLevel ?? 0) + (node.levelSpan ?? 1);
           this.totalLevel = Math.max(this.totalLevel, n.level + 1);
           this.setTreeNode(n, size, node);
         });

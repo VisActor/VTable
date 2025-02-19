@@ -1,3 +1,19 @@
+# v1.16.2
+
+2025-02-19
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复字段名包含点号时出现的错误 [#3409](https://github.com/VisActor/VTable/issues/3409)
+- **@visactor/vtable**: 修复 getChartInstance 方法中 vchart updateViewBox 的参数 [#3442](https://github.com/VisActor/VTable/issues/3442)
+- **@visactor/vtable**: 修复 computeAxisComponentWidth 的返回值向上取整 [#3444](https://github.com/VisActor/VTable/issues/3444) 
+- **@visactor/vtable**: 修复 getCheckboxState() 中的排序函数 [#3394](https://github.com/VisActor/VTable/issues/3394)
+
+
+
+[更多详情请查看 v1.16.2](https://github.com/VisActor/VTable/releases/tag/v1.16.2)
+
 # v1.16.1
 
 2025-02-14
