@@ -2,10 +2,10 @@ import type { FieldData } from './table-engine';
 import type { RectProps } from './common';
 import type { BaseTableAPI } from './base-table';
 import type { TextAlignType, TextBaselineType } from './style-define';
-export interface CustomRenderFunctionArg {
+export interface CustomRenderFunctionArg<TypedTable = BaseTableAPI> {
   row: number;
   col: number;
-  table: BaseTableAPI;
+  table: TypedTable;
   /**format之后的值 */
   value: FieldData;
   /**原始值 */
@@ -128,7 +128,7 @@ export type ICustomRenderElement =
   | LineElement;
 export type ICustomRenderElements = Array<ICustomRenderElement>;
 
-export type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
+export type ICustomRenderFuc<T = BaseTableAPI> = (args: CustomRenderFunctionArg<T>) => ICustomRenderObj;
 
 export type ICustomRenderObj = {
   /** 配置出来的类型集合 */
@@ -143,4 +143,4 @@ export type ICustomRenderObj = {
   renderDefault?: boolean;
 };
 
-export type ICustomRender = ICustomRenderFuc | ICustomRenderObj;
+export type ICustomRender<T = BaseTableAPI> = ICustomRenderFuc<T> | ICustomRenderObj;

@@ -66,7 +66,7 @@ import { Factory } from '../core/factory';
 // export const sharedVar = { seqId: 0 };
 // let colIndex = 0;
 
-const defaultDimension = { startInTotal: 0, level: 0 };
+const defaultDimension = { startInTotal: 0, afterSpanLevel: 0 };
 export class PivotHeaderLayoutMap implements LayoutMapAPI {
   sharedVar: { seqId: number };
   colIndex = 0;
@@ -2708,19 +2708,19 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     let row = 0;
     if (rowDimension) {
       row = this.columnHeaderLevelCount;
-      const { startInTotal, level } = rowDimension as ITreeLayoutHeadNode;
+      const { startInTotal, afterSpanLevel } = rowDimension as ITreeLayoutHeadNode;
       row += startInTotal;
       if (this.rowHierarchyType === 'grid') {
-        col = (this.rowHeaderTitle ? level + 1 : level) + this.leftRowSeriesNumberColumnCount;
+        col = (this.rowHeaderTitle ? afterSpanLevel + 1 : afterSpanLevel) + this.leftRowSeriesNumberColumnCount;
       } else {
         col = 0 + this.leftRowSeriesNumberColumnCount;
       } //树形展示的情况下 肯定是在第0列
       return { col, row };
     } else if (colDimension) {
       col = this.rowHeaderLevelCount + this.leftRowSeriesNumberColumnCount;
-      const { startInTotal, level } = colDimension as ITreeLayoutHeadNode;
+      const { startInTotal, afterSpanLevel } = colDimension as ITreeLayoutHeadNode;
       col += startInTotal;
-      row = this.columnHeaderTitle ? level + 1 : level;
+      row = this.columnHeaderTitle ? afterSpanLevel + 1 : afterSpanLevel;
       return { col, row };
     }
     return undefined;
@@ -3274,19 +3274,19 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // 通过dimension获取col和row
     if (rowDimensionFinded || forceBody) {
       row = this.columnHeaderLevelCount;
-      const { startInTotal, level } = (rowDimensionFinded as ITreeLayoutHeadNode) ?? defaultDimension;
+      const { startInTotal, afterSpanLevel } = (rowDimensionFinded as ITreeLayoutHeadNode) ?? defaultDimension;
       row += startInTotal ?? 0;
       if (this.rowHierarchyType === 'grid') {
-        defaultCol = (this.rowHeaderTitle ? level + 1 : level) + this.leftRowSeriesNumberColumnCount;
+        defaultCol = (this.rowHeaderTitle ? afterSpanLevel + 1 : afterSpanLevel) + this.leftRowSeriesNumberColumnCount;
       } else {
         defaultCol = 0;
       } //树形展示的情况下 肯定是在第0列
     }
     if (colDimensionFinded || forceBody) {
       col = this.rowHeaderLevelCount + this.leftRowSeriesNumberColumnCount;
-      const { startInTotal, level } = (colDimensionFinded as ITreeLayoutHeadNode) ?? defaultDimension;
+      const { startInTotal, afterSpanLevel } = (colDimensionFinded as ITreeLayoutHeadNode) ?? defaultDimension;
       col += startInTotal ?? 0;
-      defaultRow = this.columnHeaderTitle ? level + 1 : level;
+      defaultRow = this.columnHeaderTitle ? afterSpanLevel + 1 : afterSpanLevel;
     }
     if (isValid(col) || isValid(row)) {
       return { col: col ?? defaultCol, row: row ?? defaultRow };

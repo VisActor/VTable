@@ -1,6 +1,22 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 14 Feb 2025 09:37:30 GMT and should not be manually modified.
+This log was last generated on Wed, 19 Feb 2025 07:56:38 GMT and should not be manually modified.
+
+## 1.16.2
+Wed, 19 Feb 2025 07:56:38 GMT
+
+### Updates
+
+- fix: field with dot occor error # 3409
+
+
+- fix: getChartInstance log vchart updateViewBox method #3442
+
+
+- fix: computeAxisComponentWidth value ceil #3444
+
+
+- fix: fix sort function in getCheckboxState() #3394
 
 ## 1.16.1
 Fri, 14 Feb 2025 09:37:30 GMT
