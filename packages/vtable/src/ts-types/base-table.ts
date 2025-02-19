@@ -192,7 +192,9 @@ export interface IBaseTableProtected {
     /** 代替原来的option.menuType */
     renderMode?: 'canvas' | 'html';
     /** 内置下拉菜单的全局设置项 目前只针对基本表格有效 会对每个表头单元格开启默认的下拉菜单功能。代替原来的option.dropDownMenu*/
-    defaultHeaderMenuItems?: MenuListItem[];
+    defaultHeaderMenuItems?:
+      | MenuListItem[]
+      | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[]);
     /** 右键菜单。代替原来的option.contextmenu */
     contextMenuItems?:
       | MenuListItem[]
@@ -393,7 +395,9 @@ export interface BaseTableConstructorOptions {
     /** 代替原来的option.menuType  html目前实现较完整 先默认html渲染方式*/
     renderMode?: 'canvas' | 'html';
     /** 内置下拉菜单的全局设置项 目前只针对基本表格有效 会对每个表头单元格开启默认的下拉菜单功能。代替原来的option.dropDownMenu*/
-    defaultHeaderMenuItems?: MenuListItem[];
+    defaultHeaderMenuItems?:
+      | MenuListItem[]
+      | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[]);
     /** 右键菜单。代替原来的option.contextmenu */
     contextMenuItems?:
       | MenuListItem[]
@@ -590,7 +594,7 @@ export interface BaseTableAPI {
   /** 用户设置的options 不要修改这个这个 */
   options: BaseTableConstructorOptions;
   /** 设置的全局下拉菜单列表项配置 */
-  globalDropDownMenu?: MenuListItem[];
+  globalDropDownMenu?: MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[]);
   /** 设置的全局自定义渲染函数 */
   customRender?: ICustomRender;
 

@@ -1289,7 +1289,11 @@ export class StateManager {
           // 手动查询menuKey对应的dropDownIndex
           const headerC = this.table._getHeaderLayoutMap(col ?? colNow, row ?? rowNow);
 
-          const dropDownMenu = (headerC as HeaderData).dropDownMenu || this.table.globalDropDownMenu;
+          let dropDownMenu = (headerC as HeaderData).dropDownMenu || this.table.globalDropDownMenu;
+          if (typeof dropDownMenu === 'function') {
+            dropDownMenu = dropDownMenu({ row, col, table: this.table });
+          }
+
           if (dropDownMenu) {
             for (let i = 0; i < dropDownMenu.length; i++) {
               const item: any = dropDownMenu[i];
