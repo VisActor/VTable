@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: field with dot occor error # 3409\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

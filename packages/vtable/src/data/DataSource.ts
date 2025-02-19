@@ -19,7 +19,7 @@ import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/he
 import { EventTarget } from '../event/EventTarget';
 import { getValueByPath, isAllDigits } from '../tools/util';
 import { calculateArrayDiff } from '../tools/diff-cell';
-import { arrayEqual, cloneDeep, isArray, isNumber, isValid } from '@visactor/vutils';
+import { arrayEqual, cloneDeep, isArray, isNumber, isObject, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import {
   RecordAggregator,
@@ -95,7 +95,7 @@ export function getField(
     return record.then((r: any) => getField(r, field, col, row, table, promiseCallBack));
   }
   const fieldGet: any = isFieldAssessor(field) ? field.get : field;
-  if (fieldGet in (record as any)) {
+  if (isObject(record) && fieldGet in (record as any)) {
     const fieldResult = (record as any)[fieldGet];
 
     return getValue(fieldResult, promiseCallBack);

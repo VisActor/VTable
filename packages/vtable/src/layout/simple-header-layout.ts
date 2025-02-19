@@ -77,7 +77,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._headerCellIds = [];
     this.hierarchyIndent = hierarchyIndent ?? 20;
     this.hierarchyTextStartAlignment = table.options.hierarchyTextStartAlignment;
-    this.columnTree = new DimensionTree(columns as any, { seqId: 0 }); //seqId这里没有利用上 所有顺便传了0
+    this.columnTree = new DimensionTree(columns as any, { seqId: 0 }, null); //seqId这里没有利用上 所有顺便传了0
     this._headerObjectsIncludeHided = this._addHeaders(0, columns, []);
     // this._headerObjectMapIncludeHided = this._headerObjectsIncludeHided.reduce((o, e) => {
     //   o[e.id as number] = e;
