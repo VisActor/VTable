@@ -180,6 +180,7 @@ export function getTargetColAtConsiderRightFrozen(
   if (absoluteX === 0) {
     return { left: 0, col: 0, right: 0, width: 0 };
   }
+  absoluteX = absoluteX - _this.tableX;
   if (
     isConsider &&
     absoluteX > _this.tableNoFrameWidth - _this.getRightFrozenColsWidth() &&
@@ -335,13 +336,14 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
     rightFrozen = true;
   }
 
+  // 加上 tableX 和 tableY 是因为在考虑冻结列和冻结行时，需要将坐标转换为相对于表格左上角的坐标
   const colInfo = getTargetColAtConsiderRightFrozen(
-    leftFrozen || rightFrozen ? x : x + _this.scrollLeft,
+    (leftFrozen || rightFrozen ? x : x + _this.scrollLeft) + _this.tableX,
     rightFrozen,
     _this
   );
   const rowInfo = getTargetRowAtConsiderBottomFrozen(
-    topFrozen || bottomFrozen ? y : y + _this.scrollTop,
+    (topFrozen || bottomFrozen ? y : y + _this.scrollTop) + _this.tableY,
     bottomFrozen,
     _this
   );
