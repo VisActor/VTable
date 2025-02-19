@@ -5,10 +5,10 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: field with dot occor error # 3409
-- **@visactor/vtable**: getChartInstance log vchart updateViewBox method [#3442](https://github.com/VisActor/VTable/issues/3442)
-- **@visactor/vtable**: computeAxisComponentWidth value ceil [#3444](https://github.com/VisActor/VTable/issues/3444)
-- **@visactor/vtable**: fix sort function in getCheckboxState() [#3394](https://github.com/VisActor/VTable/issues/3394)
+- **@visactor/vtable**: 修复字段名包含点号时出现的错误 [#3409](https://github.com/VisActor/VTable/issues/3409)
+- **@visactor/vtable**: 修复 getChartInstance 方法中 vchart updateViewBox 的参数 [#3442](https://github.com/VisActor/VTable/issues/3442)
+- **@visactor/vtable**: 修复 computeAxisComponentWidth 的返回值向上取整 [#3444](https://github.com/VisActor/VTable/issues/3444) 
+- **@visactor/vtable**: 修复 getCheckboxState() 中的排序函数 [#3394](https://github.com/VisActor/VTable/issues/3394)
 
 
 
