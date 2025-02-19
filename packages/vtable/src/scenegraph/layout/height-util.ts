@@ -1,12 +1,13 @@
 import { isArray, isNumber, isObject } from '@visactor/vutils';
 import { validToString } from '../../tools/util';
 import { getProp } from '../utils/get-prop';
-import { CheckBox, Radio } from '@src/vrender';
+import { CheckBox, Radio, Switch, Tag } from '@src/vrender';
 import type { FullExtendStyle, RadioColumnDefine } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
 const utilCheckBoxMark = new CheckBox({});
 const utilRadioMark = new Radio({});
+const utilButtonMark = new Tag({});
 
 export function computeCheckboxCellHeight(
   cellValue: any,
@@ -208,6 +209,82 @@ export function computeSingleRadioCellHeight(
     maxHeight = utilRadioMark.AABBBounds.height();
   } else {
     maxHeight = Math.max(size, lines.length * lineHeight);
+  }
+
+  return maxHeight;
+}
+
+export function computeSwitchCellHeight(
+  cellValue: any,
+  col: number,
+  row: number,
+  endCol: number,
+  actStyle: FullExtendStyle,
+  autoWrapText: boolean,
+  iconWidth: number,
+  fontSize: number,
+  fontStyle: string,
+  fontWeight: string,
+  fontFamily: string,
+  lineHeight: number,
+  lineClamp: number | undefined,
+  padding: [number, number, number, number],
+  table: BaseTableAPI
+) {
+  const boxWidth = getProp('boxWidth', actStyle, col, row, table);
+
+  return boxWidth;
+}
+
+export function computeButtonCellHeight(
+  cellValue: any,
+  col: number,
+  row: number,
+  endCol: number,
+  actStyle: FullExtendStyle,
+  autoWrapText: boolean,
+  iconWidth: number,
+  fontSize: number,
+  fontStyle: string,
+  fontWeight: string,
+  fontFamily: string,
+  lineHeight: number,
+  lineClamp: number | undefined,
+  padding: [number, number, number, number],
+  table: BaseTableAPI
+) {
+  const text = isObject(cellValue) ? (cellValue as any).text : cellValue;
+  const lines = validToString(text).split('\n') || [];
+  const cellWidth = table.getColsWidth(col, endCol);
+  const buttonPadding = getProp('buttonPadding', actStyle, col, row, table);
+  const buttonLineWidth = getProp('buttonLineWidth', actStyle, col, row, table);
+  let maxHeight = 0;
+  if (autoWrapText) {
+    const maxLineWidth = cellWidth - (padding[1] + padding[3]);
+    utilButtonMark.setAttributes({
+      text: lines,
+      textStyle: {
+        maxLineWidth,
+        fontSize,
+        fontStyle,
+        fontWeight,
+        fontFamily,
+        lineHeight,
+        wordBreak: 'break-word',
+        lineClamp
+      },
+      padding: buttonPadding,
+      panel: {
+        visible: true,
+        fill: 'red',
+        stroke: 'red',
+        lineWidth: buttonLineWidth
+      }
+    });
+    utilRadioMark.render();
+    maxHeight = utilRadioMark.AABBBounds.height();
+  } else {
+    maxHeight = lines.length * lineHeight + buttonPadding * 2;
   }
 
   return maxHeight;
