@@ -243,7 +243,7 @@ function createButton(
   const buttonAttributes: TagAttributes = {
     x: 0,
     y: 0,
-    cursor: 'pointer',
+    cursor: isDisable ? 'not-allowed' : 'pointer',
     disable: isDisable,
     childrenPickable: false,
     text: buttonText.length === 1 ? buttonText[0] : buttonText,

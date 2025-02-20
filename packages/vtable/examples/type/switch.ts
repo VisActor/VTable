@@ -15,7 +15,8 @@ export function createTable() {
       {
         field: 'value',
         title: 'value',
-        width: 120
+        width: 120,
+        sort: true
       },
       {
         field: 'switch',
@@ -41,7 +42,14 @@ export function createTable() {
   const records = [
     { percent: '100%', value: 20 },
     { percent: '80%', value: 18 },
-    { percent: '20%', value: 12 },
+    {
+      percent: '20%',
+      value: 12,
+      switch: {
+        checked: true,
+        disable: true
+      }
+    },
     { percent: '0%', value: 10 },
     { percent: '60%', value: 16 },
     { percent: '40%', value: 14 },
