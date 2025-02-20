@@ -179,6 +179,14 @@ Common style, if the items in headerStyle, rowHeaderStyle, and defaultStyle are 
   prefix = ${prefix}
   ) }}
 
+{{ use: common-switch-style (
+  prefix = ${prefix}
+  ) }}
+
+{{ use: common-button-style (
+  prefix = ${prefix}
+  ) }}
+
 #${prefix} selectionStyle(Object)
 
 Selection box style
