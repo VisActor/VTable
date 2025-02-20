@@ -440,6 +440,20 @@
           }
         },
         {
+          "path": "switch",
+          "title": {
+            "zh": "开关类型",
+            "en": "Switch Type"
+          }
+        },
+        {
+          "path": "button",
+          "title": {
+            "zh": "按钮类型",
+            "en": "Button Type"
+          }
+        },
+        {
           "path": "list-chart",
           "title": {
             "zh": "基本表格集成图表",

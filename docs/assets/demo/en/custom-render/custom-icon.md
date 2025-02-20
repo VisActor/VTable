@@ -143,6 +143,29 @@ VTable.register.icon('order', {
   // },
 });
 
+VTable.register.icon('text-button', {
+  type: 'text',
+  content: 'click',
+  name: 'text-button',
+  positionType: VTable.TYPES.IconPosition.left,
+  style: {
+    fill: 'red',
+    cursor: 'pointer'
+  }
+});
+
+VTable.register.icon('text-button1', {
+  type: 'text',
+  content: 'click',
+  name: 'text-button',
+  positionType: VTable.TYPES.IconPosition.left,
+  marginLeft: 10,
+  style: {
+    cursor: 'pointer',
+    fill: 'blue'
+  }
+});
+
 let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
   .then(res => res.json())
@@ -223,9 +246,10 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         width: 'auto'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        field: 'null',
+        title: 'text icon',
+        width: 'auto',
+        icon: ['text-button', 'text-button1']
       },
       {
         field: '2234',
@@ -272,7 +296,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       widthMode: 'standard',
       allowFrozenColCount: 3,
       frozenColCount: 1,
-      rightFrozenColCount: 1
+      rightFrozenColCount: 2
     };
     tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
     window['tableInstance'] = tableInstance;

@@ -280,6 +280,20 @@
           }
         },
         {
+          "path": "switch",
+          "title": {
+            "zh": "开关",
+            "en": "switch"
+          }
+        },
+        {
+          "path": "button",
+          "title": {
+            "zh": "按钮",
+            "en": "button"
+          }
+        },
+        {
           "path": "sparkline",
           "title": {
             "zh": "迷你图",
