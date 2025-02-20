@@ -67,6 +67,7 @@ export interface EventsProps {
 
   onCheckboxStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['checkbox_state_change']>;
   onRadioStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['radio_state_change']>;
+  onSwitchStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['switch_state_change']>;
   onAfterRender?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_render']>;
   onInitialized?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['initialized']>;
   onChangeCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
@@ -84,6 +85,7 @@ export interface EventsProps {
   onChangCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
   onEmptyTipClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['empty_tip_click']>;
   onEmptyTipDblClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['empty_tip_dblclick']>;
+  onButtonClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['button_click']>;
 }
 
 export const TABLE_EVENTS = {
@@ -140,6 +142,7 @@ export const TABLE_EVENTS = {
 
   onCheckboxStateChange: EVENT_TYPE.CHECKBOX_STATE_CHANGE,
   onRadioStateChange: EVENT_TYPE.RADIO_STATE_CHANGE,
+  onSwitchStateChange: EVENT_TYPE.SWITCH_STATE_CHANGE,
   onAfterRender: EVENT_TYPE.AFTER_RENDER,
   onInitialized: EVENT_TYPE.INITIALIZED,
   onChangeCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
@@ -156,7 +159,8 @@ export const TABLE_EVENTS = {
 
   onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
   onEmptyTipClick: EVENT_TYPE.EMPTY_TIP_CLICK,
-  onEmptyTipDblClick: EVENT_TYPE.EMPTY_TIP_DBLCLICK
+  onEmptyTipDblClick: EVENT_TYPE.EMPTY_TIP_DBLCLICK,
+  onButtonClick: EVENT_TYPE.BUTTON_CLICK
 };
 
 export const TABLE_EVENTS_KEYS = Object.keys(TABLE_EVENTS);
