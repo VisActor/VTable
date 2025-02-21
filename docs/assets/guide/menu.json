@@ -132,13 +132,6 @@
               }
             },
             {
-              "path": "pivot_table_grid_tree",
-              "title": {
-                "zh": "表头平铺和树形结合展示",
-                "en": "pivot table gird&tree show"
-              }
-            },
-            {
               "path": "custom_header",
               "title": {
                 "zh": "自定义表头",

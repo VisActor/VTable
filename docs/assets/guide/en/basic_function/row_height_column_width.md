@@ -7,7 +7,7 @@ In the field of data analysis, tables are a common way of displaying data. Corre
 In VTable, the calculation mode of table column width `widthMode` can be configured as `standard` (standard mode), `adaptive` (adaptive container width mode) or `autoWidth` (automatic column width mode). [demo example](https://visactor.io/vtable/demo/basic-functionality/width-mode-autoWidth). (If `widthMode: 'autoWidth'` is set, then each cell will participate in calculating the width. It can be imagined that this calculation process requires performance.)
 
 - Standard mode (standard): The table uses the width specified by the `width` attribute as the column width. If not specified, the default column width set by `defaultColWidth` or `defaultHeaderColWidth` is used.
-- Adaptive container width mode (adaptive): In adaptive container width mode, the table uses the width of the container to allocate column widths (the ratio of each column width is based on the width value in standard mode. This can be changed by autoHeightInAdaptiveMode). [demo example](https://visactor.io/vtable/demo/basic-functionality/width-mode-adaptive)
+- Adaptive container width mode (adaptive): In adaptive container width mode, the table uses the width of the container to allocate column widths (the ratio of each column width is based on the width value in standard mode). If you do not want the header to participate in the calculation, you can set `widthAdaptiveMode` to `only-body`.[demo example](https://visactor.io/vtable/demo/basic-functionality/width-mode-adaptive)
 - Automatic column width mode (autoWidth): In automatic width mode, column width is automatically calculated based on the content in the column header and body cells, ignoring the set `width` attribute and `defaultColWidth`.
 
 # Row height calculation mode
@@ -15,7 +15,7 @@ In VTable, the calculation mode of table column width `widthMode` can be configu
 The calculation mode of table row height `heightMode` can also be configured as `standard` (standard mode), `adaptive` (adaptive container width mode) or `autoHeight` (automatic row height mode).
 
 - Standard mode (standard): Use `defaultRowHeight` and `defaultHeaderRowHeight` as the row height.
-- Adaptive container height mode (adaptive): Use the height of the container to allocate the height of each row, and allocate based on the calculated height ratio of the content of each row.
+- Adaptive container height mode (adaptive): Use the height of the container to allocate the height of each row, and allocate based on the calculated height ratio of the content of each row. If you do not want the header to participate in the calculation, you can set `heightAdaptiveMode` to `only-body`. If you only want to use the default height to calculate the row height, you can set `autoHeightInAdaptiveMode` to false.
 - Automatic line height mode (autoHeight): Automatically calculate line height based on content, based on fontSize and lineHeight (text line height), and padding. The related configuration item `autoWrapText` automatically wraps lines, and can calculate the line height based on the multi-line text content after line wrapping.
 
 # Row height related configurations

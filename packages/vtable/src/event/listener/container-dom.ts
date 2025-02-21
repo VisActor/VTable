@@ -364,6 +364,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
   if (!table.options.canvas) {
     handler.on(table.getContainer(), 'resize', e => {
+      if (table.isReleased) {
+        return;
+      }
       if (e.width === 0 && e.height === 0) {
         // 临时绕行解决因为display设置为none产生的问题
         return;

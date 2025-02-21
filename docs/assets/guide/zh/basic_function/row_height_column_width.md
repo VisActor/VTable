@@ -7,7 +7,7 @@
 在 VTable 中，表格列宽度的计算模式`widthMode`可以配置为 `standard`（标准模式）、`adaptive`（自适应容器宽度模式）或 `autoWidth`（自动列宽模式）。[demo 示例](https://visactor.io/vtable/demo/basic-functionality/width-mode-autoWidth)。（如果设置了`widthMode: 'autoWidth'`, 那么每一个单元格都会参与计算宽度，可想而知这个计算过程是需要耗费性能的。）
 
 - 标准模式（standard）：表格使用`width` 属性指定的宽度作为列宽度，如未指定，则采用 `defaultColWidth`或`defaultHeaderColWidth ` 设定的默认列宽。
-- 自适应容器宽度模式（adaptive）：在自适应容器宽度模式下表格使用容器的宽度分配列宽度(每列宽度的比例基于 standard 模式中的宽度值)。[demo 示例](https://visactor.io/vtable/demo/basic-functionality/width-mode-adaptive)
+- 自适应容器宽度模式（adaptive）：在自适应容器宽度模式下表格使用容器的宽度分配列宽度(每列宽度的比例基于 standard 模式中的宽度值)。 如果不想表头参与计算可通过 `widthAdaptiveMode` 来改变。[demo 示例](https://visactor.io/vtable/demo/basic-functionality/width-mode-adaptive)
 - 自动列宽模式（autoWidth）：在自动宽度模式下，根据列头和 body 单元格中的内容自动计算列宽度，忽略设置的 `width` 属性和 `defaultColWidth`。
 
 # 行高计算模式
@@ -15,7 +15,7 @@
 表格行高度的计算模式`heightMode`也可以配置为 `standard`（标准模式）、`adaptive`（自适应容器宽度模式）或 `autoHeight`（自动行高模式）。
 
 - 标准模式（standard）：采用 `defaultRowHeight` 及 `defaultHeaderRowHeight` 作为行高。
-- 自适应容器高度模式（adaptive）：使用容器的高度分配每行高度，默认逻辑是基于每行内容计算后的高度比例来分配（可通过 autoHeightInAdaptiveMode 来改变）。
+- 自适应容器高度模式（adaptive）：使用容器的高度分配每行高度，默认逻辑是基于每行内容计算后的高度比例来分配。如果不想表头参与计算可通过 `heightAdaptiveMode` 来改变。如果只想通过默认高度来计算行高，则可以通过关闭配置 `autoHeightInAdaptiveMode` 来实现， 这样反而节省性能。
 - 自动行高模式（autoHeight）：根据内容自动计算行高，计算依据 fontSize 和 lineHeight(文字行高)，以及 padding。相关搭配设置项`autoWrapText`自动换行，可以根据换行后的多行文本内容来计算行高。
 
 # 行高相关配置

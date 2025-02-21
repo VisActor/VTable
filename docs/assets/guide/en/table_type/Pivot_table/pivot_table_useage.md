@@ -13,7 +13,7 @@ The following are the Key Configurations items and their descriptions for using 
 - `rowTree`: Customize the row header dimension tree (customization capability). Generally, this tree structure needs to be configured when there are special sorting requirements for dimension values.
 - `indicatorsAsCol`: Whether indicators are displayed as column headers and indicator values are displayed in columns. The default is true.
 - `indicatorTitle`: indicator title, the title displayed at the corner position.
-- `rowHierarchyType`: tree hierarchical display or tile display.
+- `rowHierarchyType`: tree hierarchical display or tile display, or tree and tile combination display.
 - `hideIndicatorName`: Whether it is necessary to hide the indicator name on the header. Default is false.
 - `showRowHeader`: Whether to display the row header, the default is true.
 - `showColumnHeader`: Whether to display the column header, the default is true.
