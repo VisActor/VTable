@@ -16,6 +16,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-hour-scaleHide'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-hour-day'
   },
   {

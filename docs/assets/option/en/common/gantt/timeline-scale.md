@@ -65,3 +65,9 @@ export type DateFormatArgumentType = {
 
 };
 ```
+
+${prefix} visible(boolean)
+
+Whether to display the date scale, the default is displayed
+
+Optional
