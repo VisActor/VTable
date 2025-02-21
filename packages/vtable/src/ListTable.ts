@@ -1099,7 +1099,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
     const field = define?.field;
     const cellType = this.getCellType(col, row);
-    if (isValid(field) && cellType === 'checkbox') {
+    if (isValid(field) && (cellType === 'checkbox' || cellType === 'switch')) {
       const dataIndex = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row)).toString();
       return this.stateManager.checkedState.get(dataIndex)?.[field as string | number];
     }

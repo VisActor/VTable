@@ -39,7 +39,7 @@ export function getCellRadioState(col: number, row: number, table: BaseTableAPI)
   const define = table.getBodyColumnDefine(col, row) as ColumnDefine;
   const field = define?.field;
   const cellType = table.getCellType(col, row);
-  if (isValid(field) && cellType === 'checkbox') {
+  if (isValid(field) && cellType === 'radio') {
     const dataIndex = table.dataSource.getIndexKey(table.getRecordShowIndexByCell(col, row)) as number;
     const columnState = table.stateManager.radioState?.[field as string | number];
     if (isNumber(columnState)) {
