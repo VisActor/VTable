@@ -236,6 +236,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         // this.updatePivotSortState(options.pivotSortState);
       }
       if (Env.mode !== 'node') {
+        // @ts-expect-error
         this.editorManager = new EditManager(this);
       }
 
