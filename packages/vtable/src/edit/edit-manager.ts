@@ -6,6 +6,7 @@ import { getCellEventArgsSet } from '../event/util';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { isPromise } from '../tools/helper';
 import { isValid } from '@visactor/vutils';
+import type { ListTable } from '..';
 
 export class EditManager {
   table: BaseTableAPI;
@@ -21,8 +22,9 @@ export class EditManager {
 
   bindEvent() {
     // const handler = this.table.internalProps.handler;
-    const doubleClickEventId = this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
-      const { editCellTrigger = 'doubleclick' } = this.table.options;
+    const table = this.table as ListTable;
+    const doubleClickEventId = table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
+      const { editCellTrigger = 'doubleclick' } = table.options;
 
       if (!editCellTrigger.includes('doubleclick')) {
         return;
@@ -32,12 +34,12 @@ export class EditManager {
 
       //取双击自动列宽逻辑
       const eventArgsSet = getCellEventArgsSet(e.federatedEvent);
-      const resizeCol = this.table.scenegraph.getResizeColAt(
+      const resizeCol = table.scenegraph.getResizeColAt(
         eventArgsSet.abstractPos.x,
         eventArgsSet.abstractPos.y,
         eventArgsSet.eventArgs?.targetCell
       );
-      if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
+      if (table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
         // 判断同双击自动列宽的时间监听的DBLCLICK_CELL
         // 如果是双击自动列宽 则编辑不开启
         return;
@@ -45,8 +47,8 @@ export class EditManager {
       this.startEditCell(col, row);
     });
 
-    const clickEventId = this.table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
-      const { editCellTrigger = 'doubleclick' } = this.table.options;
+    const clickEventId = table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
+      const { editCellTrigger } = table.options;
 
       if (!editCellTrigger.includes('click')) {
         return;

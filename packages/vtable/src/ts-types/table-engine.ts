@@ -250,6 +250,8 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置编辑器 */
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 编辑触发时机 双击事件  单击事件 api手动开启编辑 或者 鼠标按下新值即可开启编辑。默认为双击'doubleclick' */
+  editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
   /** 拖拽表头移动位置 针对冻结部分的规则  默认为fixedFrozenCount
    * "disabled"（禁止调整冻结列位置）：不允许其他列的表头移入冻结列，也不允许冻结列移出，冻结列保持不变。
    * "adjustFrozenCount"（根据交互结果调整冻结数量）：允许其他列的表头移入冻结列，及冻结列移出，并根据拖拽的动作调整冻结列的数量。当其他列的表头被拖拽进入冻结列位置时，冻结列数量增加；当其他列的表头被拖拽移出冻结列位置时，冻结列数量减少。
@@ -424,6 +426,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   /** 全局设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 
+  /** 编辑触发时机 双击事件  单击事件 api手动开启编辑 或者 鼠标按下新值即可开启编辑。默认为双击'doubleclick' */
+  editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
   /** 是否需要补充指标节点到对应的自定义表头中如rowTree或者columnTree. 默认为true */
   supplementIndicatorNodes?: boolean;
   /** 如果配置了rowTree 或者 columnTree 且是非规则的树结构，即树的同一层存在不同维度的维度值时，为了去匹配对应的数据，需要开启该配置 */
