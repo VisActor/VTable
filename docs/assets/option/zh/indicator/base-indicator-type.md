@@ -99,7 +99,7 @@ icon?:
 #${prefix}ColumnIconOption
 
 ```
-type ColumnIconOption = ImageIcon | SvgIcon;
+type ColumnIconOption = ImageIcon | SvgIcon | TextIcon;
 ```
 
 #${prefix}ImageIcon(Object)
@@ -109,6 +109,10 @@ type 配置成 'image'。需要配置图片地址在 src 中
 #${prefix}SvgIcon(Object)
 type 配置成 'svg'。需要配置 svg 地址或者 svg 完整文件字符串在 svg 中
 {{ use: svg-icon(  prefix = '##' + ${prefix}) }}
+
+#${prefix}TextIcon(Object)
+type 配置成 'text'。需要配置文本内容在 content 中
+{{ use: text-icon(  prefix = '##' + ${prefix}) }}
 
 ${prefix} headerCustomRender(Function|Object)
 指标名称表头自定义渲染内容定义。可具体参考[基本表格自定义渲染配置](../option/ListTable-columns-text#headerCustomRender)

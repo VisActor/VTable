@@ -18,12 +18,17 @@ import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import type { ComputeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
 import { Factory } from '../../core/factory';
 import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
-import { CheckBox } from '@visactor/vrender-components';
+import { CheckBox } from '@src/vrender';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
-import { computeCheckboxCellHeight, computeRadioCellHeight } from './height-util';
+import {
+  computeButtonCellHeight,
+  computeCheckboxCellHeight,
+  computeRadioCellHeight,
+  computeSwitchCellHeight
+} from './height-util';
 import { measureTextBounds } from '../utils/text-measure';
 import { breakString } from '../utils/break-string';
 import { emptyCustomLayout } from '../../components/react/react-custom-layout';
@@ -726,7 +731,9 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
     cellType !== 'link' &&
     cellType !== 'progressbar' &&
     cellType !== 'checkbox' &&
-    cellType !== 'radio'
+    cellType !== 'radio' &&
+    cellType !== 'switch' &&
+    cellType !== 'button'
   ) {
     maxHeight = lineHeight;
   } else if (cellType === 'checkbox') {
@@ -749,6 +756,42 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
     );
   } else if (cellType === 'radio') {
     maxHeight = computeRadioCellHeight(
+      cellValue,
+      col,
+      row,
+      endCol,
+      actStyle,
+      autoWrapText,
+      iconWidth,
+      fontSize,
+      fontStyle,
+      fontWeight,
+      fontFamily,
+      lineHeight,
+      lineClamp,
+      padding,
+      table
+    );
+  } else if (cellType === 'switch') {
+    maxHeight = computeSwitchCellHeight(
+      cellValue,
+      col,
+      row,
+      endCol,
+      actStyle,
+      autoWrapText,
+      iconWidth,
+      fontSize,
+      fontStyle,
+      fontWeight,
+      fontFamily,
+      lineHeight,
+      lineClamp,
+      padding,
+      table
+    );
+  } else if (cellType === 'button') {
+    maxHeight = computeButtonCellHeight(
       cellValue,
       col,
       row,

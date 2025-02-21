@@ -1,7 +1,7 @@
 import type { CustomSelectionStyle, StateManager } from '../state';
 import type { CellRange } from '../../ts-types';
-import type { IRect, IRectGraphicAttribute } from '@visactor/vrender-core';
-import { createRect } from '@visactor/vrender-core';
+import type { IRect, IRectGraphicAttribute } from '@src/vrender';
+import { createRect } from '@src/vrender';
 import { updateAllSelectComponent } from '../../scenegraph/select/update-select-border';
 import type { Scenegraph } from '../../scenegraph/scenegraph';
 

@@ -1,7 +1,7 @@
 import { degreeToRadian, isNil, isValidNumber, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
-import { LineAxis, type LineAxisAttributes } from '@visactor/vrender-components';
+import { LineAxis, type LineAxisAttributes } from '@src/vrender';
 import { getAxisAttributes, getCommonAxis } from './get-axis-attributes';
 import { isXAxis, isYAxis } from '../util/orient';
 import type { IOrientType } from '../../ts-types/component/util';

@@ -1,93 +1,97 @@
-# checkbox type
+# Checkbox Cell Type
 
-Checkbox type cells are suitable for use in tables to provide multiple selection options and allow the user to select or deselect one or more items. Checkbox type cells are widely used in many applications, including task management, data filtering, permission settings, etc.
+Checkbox cell type is suitable for providing multiple-choice options in tables, allowing users to select or deselect one or more items. Checkbox cells are widely used in many applications, including task management, data filtering, permission settings, and more.
 
-The advantages of checkbox cells in tables are as follows:
+The advantages of checkbox cells in tables are:
 
-1. The use of checkbox type cells is very intuitive and flexible. Users can select one or more options to perform specific actions or filter data based on their needs. This interaction method enables users to control their operations more finely, improving user experience and efficiency.
-2. Checkbox type cells usually use different icons or colors to indicate selected and unselected states, providing visual feedback. This way the user can easily identify which options have been selected and which have not.
+1. Checkbox cells are intuitive and flexible to use. Users can select one or multiple options based on their needs to perform specific operations or filter data. This interaction method allows users to have more precise control over their operations, improving user experience and efficiency.
+2. Checkbox cells typically use different icons or colors to represent checked and unchecked states, providing visual feedback. This makes it easy for users to identify which options have been selected and which haven't.
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/checkbox.png)
 
-## Introduction to the exclusive configuration items of checkbox
+## Checkbox-specific Configuration Options
 
-The unique configuration items of the checkbox checkbox type in the configuration are as follows:
+The checkbox type has the following specific configuration options:
 
-1. `checked`: Whether the cell is selected. The default value is false. Configuration functions are supported. Different cell configurations are different.
-2. `disable`: Whether the cell check box can disable clicks. The default value is false. It supports configuration functions. Different cell configurations are different.
+1. `checked`: Determines whether the cell is in a checked state. Default value is false. Supports function configuration for different cells.
+2. `disable`: Determines whether the checkbox can be disabled. Default value is false. Supports function configuration for different cells.
 
 Example:
+
 ```javascript
 {
-  headerType: 'checkbox', //Specify the header cell to be displayed as a checkbox
-  cellType: 'checkbox',//The specified body cell is displayed as a check box
+  headerType: 'checkbox', // Specify header cell to display as checkbox
+  cellType: 'checkbox', // Specify body cell to display as checkbox
   field: 'check',
   checked: true,
-  disabled: false
+  disbaled: false
 }
 ```
 
-## Introduction to the exclusive data type of checkbox
+## Checkbox Data Types
 
-The data corresponding to the checkbox supports `boolean`, `string` or `Object`, or it defaults to false if the value is not set.
+Checkbox data supports `boolean`, `string`, or `Object` types, or defaults to false if no value is set.
 
-1. Among the three types, it is more common to set the `boolean` type. For example, the check field is set as follows:
-```
-const columns=[
+1. Setting `boolean` type is most common. Example with check field:
+
+```javascript
+const columns = [
   {
-    headerType: 'checkbox', //Specify the header cell to be displayed as a checkbox
-    cellType: 'checkbox',//The specified body cell is displayed as a check box
-    field: 'check',
+    headerType: 'checkbox', // Specify header cell to display as checkbox
+    cellType: 'checkbox', // Specify body cell to display as checkbox
+    field: 'check'
   }
-]
+];
 const records = [
   {
     product: 'a',
     check: true
   },
   {
-     product: 'b',
+    product: 'b',
     check: false
   },
   {
-     product: 'c',
+    product: 'c',
     check: false
   }
-]
+];
 ```
 
-2. If set to `string` type, the text will be displayed on the right side of the checkbox, and the checkbox will be unselected by default. For example, the product field is set as follows:
-```
-const columns=[
+2. If set as a `string` type, the text will be displayed to the right of the checkbox, with the checkbox defaulting to unchecked. Example with product field:
+
+```javascript
+const columns = [
   {
-    headerType: 'checkbox', //Specify the header cell to be displayed as a checkbox
-    cellType: 'checkbox',//The specified body cell is displayed as a check box
-    field: 'product',
+    headerType: 'checkbox', // Specify header cell to display as checkbox
+    cellType: 'checkbox', // Specify body cell to display as checkbox
+    field: 'product'
   }
-]
+];
 const records = [
   {
-    product: 'a',
+    product: 'a'
   },
   {
-     product: 'b',
+    product: 'b'
   },
   {
-     product: 'c',
+    product: 'c'
   }
-]
+];
 ```
 
-3. If each state of the data item is different, you can set the Object object.
+3. If each data entry has different states, you can set an Object.
 
-The Object object supports configuring the following properties:
+The Object supports the following properties:
 
-* text: The text displayed in the check box of this cell
-* checked: Whether the cell check box is selected
-* disable: whether the cell checkbox is disabled
+- text: The text displayed in the checkbox cell
+- checked: Whether the checkbox is checked
+- disable: Whether the checkbox is disabled
 
 Example:
-```javasxript
+
+```javascript
 const records = [
   {
     percent: '100%',
@@ -108,15 +112,30 @@ const records = [
 ];
 ```
 
-`checked` and `disable` support configuration in both data and `column`. The priority of configuration in data is higher than the configuration in `column`.
+Both `checked` and `disable` can be configured in the data or in the `column`. Configurations in the data take precedence over configurations in the `column`.
 
-## Get the data selection status through the interface
+## Getting Checkbox States Through APIs
 
-Get the selected status of all data in the checkbox under a certain field.
+1. Get the checked states of all checkboxes under a specific field.
 
-Note: The order corresponds to the original incoming data records and does not correspond to the status value of the row displayed in the table.
-```
+Note: The order corresponds to the original input records data, not the table display row states
+
+```javascript
 getCheckboxState(field?: string | number): Array
 ```
 
-Through the above introduction, you have learned how to use the checkbox checkbox type to display data in the VTable table. I hope it will be helpful to you.
+2. Get the checked state of a specific cell's checkbox.
+
+```javascript
+getCellCheckboxState(col: number, row: number): boolean
+```
+
+## Setting Checkbox States Through APIs
+
+Set the checked state of a specific cell's checkbox.
+
+```javascript
+setCellCheckboxState(col: number, row: number, checked: boolean | 'indeterminate')
+```
+
+With the above introduction, you've learned how to use checkbox cell types for data display in VTable. We hope this helps!

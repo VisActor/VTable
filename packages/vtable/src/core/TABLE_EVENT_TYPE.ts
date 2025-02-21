@@ -155,6 +155,7 @@ export interface TableEvents {
 
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change';
   RADIO_STATE_CHANGE: 'radio_state_change';
+  SWITCH_STATE_CHANGE: 'switch_state_change';
   //#region lifecircle
   /** 每次渲染完成触发 */
   AFTER_RENDER: 'after_render';
@@ -185,6 +186,11 @@ export interface TableEvents {
    * 空数据提示双击事件
    */
   EMPTY_TIP_DBLCLICK: 'empty_tip_dblclick';
+
+  /**
+   * 按钮点击事件
+   */
+  BUTTON_CLICK: 'button_click';
 }
 /**
  * Table event types
@@ -246,6 +252,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
 
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change',
   RADIO_STATE_CHANGE: 'radio_state_change',
+  SWITCH_STATE_CHANGE: 'switch_state_change',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
   CHANGE_CELL_VALUE: 'change_cell_value',
@@ -254,5 +261,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle',
 
   EMPTY_TIP_CLICK: 'empty_tip_click',
-  EMPTY_TIP_DBLCLICK: 'empty_tip_dblclick'
+  EMPTY_TIP_DBLCLICK: 'empty_tip_dblclick',
+
+  BUTTON_CLICK: 'button_click'
 } as TableEvents;

@@ -7,5 +7,7 @@ export type ColumnTypeOption =
   | 'sparkline'
   | 'progressbar'
   | 'checkbox'
-  | 'radio';
+  | 'radio'
+  | 'switch'
+  | 'button';
 export type HeaderTypeOption = 'text' | 'image' | 'video' | 'link' | 'checkbox';

@@ -49,8 +49,8 @@ import {
 } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
-import type { CheckBox } from '@visactor/vrender-components';
-import { loadPoptip, setPoptipTheme } from '@visactor/vrender-components';
+import type { CheckBox } from '@src/vrender';
+import { loadPoptip, setPoptipTheme } from '@src/vrender';
 import textMeasureModule from './utils/text-measure';
 import {
   getIconByXY,

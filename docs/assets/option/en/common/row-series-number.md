@@ -57,7 +57,7 @@ icon?:
 #${prefix}ColumnIconOption
 
 ```
-type ColumnIconOption = ImageIcon | SvgIcon;
+type ColumnIconOption = ImageIcon | SvgIcon | TextIcon;
 ```
 
 #${prefix}ImageIcon(Object)
@@ -67,6 +67,10 @@ type is set to 'image'. The image address needs to be set in src
 #${prefix}SvgIcon(Object)
 type is set to 'svg'. You need to configure the svg address or the complete svg file string in svg
 {{ use: svg-icon( prefix = '##' + ${prefix}) }}
+
+#${prefix}TextIcon(Object)
+type is set to 'text'. You need to configure the text content in content
+{{ use: text-icon( prefix = '##' + ${prefix}) }}
 
 ${prefix} headerCustomLayout(Function)
 The header cell custom layout element definition, this custom form is suitable for cells with complex content layout.
