@@ -6,7 +6,6 @@ import { getCellEventArgsSet } from '../event/util';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { isPromise } from '../tools/helper';
 import { isValid } from '@visactor/vutils';
-import type { ListTable } from '..';
 
 export class EditManager {
   table: BaseTableAPI;
@@ -22,7 +21,7 @@ export class EditManager {
 
   bindEvent() {
     // const handler = this.table.internalProps.handler;
-    const table = this.table as ListTable;
+    const table = this.table as ListTableAPI;
     const doubleClickEventId = table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
       const { editCellTrigger = 'doubleclick' } = table.options;
 
