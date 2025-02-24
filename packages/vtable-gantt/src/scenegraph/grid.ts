@@ -91,9 +91,10 @@ export class Grid {
       this.verticalLineGroup.name = 'grid-vertical';
       this.group.appendChild(this.verticalLineGroup);
 
-      const dependenceOnTimeScale = this._scene._gantt.parsedOptions.reverseSortedTimelineScales.find(
-        scale => scale.unit === verticalLineDependenceOnTimeScale
-      );
+      const dependenceOnTimeScale =
+        this._scene._gantt.parsedOptions.reverseSortedTimelineScales.find(
+          scale => scale.unit === verticalLineDependenceOnTimeScale
+        ) ?? this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
       const { unit: minUnit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
       const { timelineDates } = dependenceOnTimeScale;
       const timelineColWidth = this._scene._gantt.parsedOptions.timelineColWidth;
