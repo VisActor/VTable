@@ -1027,6 +1027,7 @@ export class Gantt extends EventTarget {
     this.scenegraph.setY(-top);
   }
   updateScales(scales: ITimelineScale[]) {
+    const oldScalesLength = this.parsedOptions.sortedTimelineScales.length;
     const gantt = this;
     this.options.timelineHeader.scales = scales;
     this._sortScales();
@@ -1046,6 +1047,9 @@ export class Gantt extends EventTarget {
           this.taskListTableInstance.setRowHeight(i, newRowHeight);
         }
       }
+    }
+    if (oldScalesLength !== scales.length) {
+      this._resize();
     }
   }
   /** 更新日期范围 */
