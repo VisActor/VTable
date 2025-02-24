@@ -10,6 +10,7 @@ import { TABLE_EVENTS, TABLE_EVENTS_KEYS } from '../eventsUtils';
 import type * as VTable from '@visactor/vtable';
 import type { EventsProps } from '../eventsUtils';
 import type { TYPES } from '@visactor/vtable';
+import { VTableVueAttributePlugin } from '../components/custom/vtable-vue-attribute-plugin';
 
 // 定义表格实例和选项的类型
 export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
@@ -70,6 +71,8 @@ type Constructor<T> = new (dom: HTMLElement, options: IOption) => T;
 const createTableInstance = (Type: any, options: IOption) => {
   const vtable = new Type(vTableContainer.value!, options);
   vTableInstance.value = vtable;
+  // 注册 vtable-vue 自定义组件集成插件
+  vtable.scenegraph.stage.pluginService.register(new VTableVueAttributePlugin());
 
   // for keepColumnWidthChange
   columnWidths.value.clear();

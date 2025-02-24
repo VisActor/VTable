@@ -1,6 +1,7 @@
 import * as VTable from '@visactor/vtable';
 import { convertPropsToCamelCase, toCamelCase } from './stringUtils';
-import { isFunction } from '@visactor/vutils';
+import { isFunction, isObject } from '@visactor/vutils';
+import { isVNode } from 'vue';
 
 // 检查属性是否为事件
 function isEventProp(key: string, props: any) {
@@ -42,6 +43,13 @@ export function createCustomLayout(children: any): any {
 
     // 递归创建子组件
     const subChildren = resolveChildren(childChildren);
+    if (isObject(props?.vue)) {
+      // vue 自定义节点：无需继续循环子节点
+      const { element } = props.vue as any;
+      const targetVNode = element ?? subChildren[0];
+      child.props.vue.element = isVNode(targetVNode) ? targetVNode : null;
+      return component;
+    }
     subChildren.forEach((subChild: any) => {
       const subComponent = createComponent(subChild);
       if (subComponent) {
