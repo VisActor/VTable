@@ -46,6 +46,7 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): 
   } else if (Array.isArray(markLine)) {
     return markLine.map((item, index) => {
       return {
+        ...item,
         date: item.date,
         scrollToMarkLine: item.scrollToMarkLine,
         position: item.position ?? 'left',
@@ -59,6 +60,7 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): 
   }
   return [
     {
+      ...markLine,
       date: (markLine as IMarkLine).date,
       scrollToMarkLine: (markLine as IMarkLine).scrollToMarkLine ?? true,
       position: (markLine as IMarkLine).position ?? 'left',

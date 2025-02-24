@@ -216,10 +216,14 @@ export function createTable() {
     markLine: [
       {
         date: '2024-10-06',
+        content: '我是内容哈哈哈哈哈我是内容哈哈哈哈哈我是内容哈哈哈哈哈我是内容哈哈哈哈哈我是内容哈哈哈哈哈',
+        contentStyle: {
+          color: '#fff'
+          // fontSize: 40
+        },
         style: {
           lineWidth: 1,
-          lineColor: 'blue',
-          lineDash: [8, 4]
+          lineColor: 'red'
         }
       }
     ],

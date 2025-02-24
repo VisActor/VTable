@@ -286,6 +286,15 @@ export type IPointStyle = {
 };
 export interface IMarkLine {
   date: string;
+  content: string;
+  contentStyle?: {
+    color?: string;
+    fontSize?: number;
+    fontWeight?: string;
+    lineHeight?: number;
+    backgroundColor?: string;
+    cornerRadius?: number | number[];
+  };
   style?: ILineStyle;
   /** 标记线显示在日期列下的位置 默认为'left' */
   position?: 'left' | 'right' | 'middle';
