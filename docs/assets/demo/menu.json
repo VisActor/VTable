@@ -328,6 +328,13 @@
             "zh": "以小时为单元的任务甘特图",
             "en": "Gantt Task Hour Unit"
           }
+        },
+        {
+          "path": "gantt-hide-time-scale",
+          "title": {
+            "zh": "实现任务时间可小于最小时间单元",
+            "en": "Gantt Task Hide Time Scale"
+          }
         }
       ]
     },

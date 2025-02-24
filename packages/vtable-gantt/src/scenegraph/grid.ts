@@ -2,6 +2,7 @@ import { Group, createLine, createRect } from '@visactor/vtable/es/vrender';
 
 import type { Scenegraph } from './scenegraph';
 import type { IGrid } from '../ts-types';
+import { computeCountToTimeScale } from '../tools/util';
 export class Grid {
   // verticalLineSpace: number;
   // horizontalLineSpace: number;
@@ -76,6 +77,10 @@ export class Grid {
 
   createVerticalLines() {
     const gridStyle = this._scene._gantt.parsedOptions.grid;
+    const verticalLineDependenceOnTimeScale =
+      gridStyle.verticalLineDependenceOnTimeScale ??
+      this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0].unit;
+
     if (gridStyle.verticalLine) {
       this.verticalLineGroup = new Group({
         x: 0,
@@ -86,18 +91,27 @@ export class Grid {
       this.verticalLineGroup.name = 'grid-vertical';
       this.group.appendChild(this.verticalLineGroup);
 
-      const timelineDates = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
+      const dependenceOnTimeScale = this._scene._gantt.parsedOptions.reverseSortedTimelineScales.find(
+        scale => scale.unit === verticalLineDependenceOnTimeScale
+      );
+      const { unit: minUnit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
+      const { timelineDates } = dependenceOnTimeScale;
       const timelineColWidth = this._scene._gantt.parsedOptions.timelineColWidth;
 
       if (typeof gridStyle.verticalLine === 'function') {
         for (let i = 0; i < timelineDates?.length - 1; i++) {
+          const { endDate } = timelineDates[i];
+          const x = Math.ceil(
+            computeCountToTimeScale(endDate, this._scene._gantt.parsedOptions.minDate, minUnit, step, 1) *
+              timelineColWidth
+          );
           const verticalLine_style = gridStyle.verticalLine({
             index: i,
             dateIndex: timelineDates[i].dateIndex,
             date: timelineDates[i].endDate,
             ganttInstance: this._scene._gantt
           });
-          const x = Math.ceil(timelineColWidth * (i + 1)) + (verticalLine_style.lineWidth & 1 ? 0.5 : 0);
+          // const x = Math.ceil(timelineColWidth * (i + 1)) + (verticalLine_style.lineWidth & 1 ? 0.5 : 0);
           const line = createLine({
             pickable: false,
             stroke: verticalLine_style.lineColor,
@@ -112,7 +126,12 @@ export class Grid {
       } else {
         const verticalLine_style = gridStyle.verticalLine;
         for (let i = 0; i < timelineDates?.length - 1; i++) {
-          const x = Math.ceil(timelineColWidth * (i + 1)) + (verticalLine_style.lineWidth & 1 ? 0.5 : 0);
+          const { endDate } = timelineDates[i];
+          const x = Math.ceil(
+            computeCountToTimeScale(endDate, this._scene._gantt.parsedOptions.minDate, minUnit, step, 1) *
+              timelineColWidth
+          );
+          // const x = Math.ceil(timelineColWidth * (i + 1)) + (verticalLine_style.lineWidth & 1 ? 0.5 : 0);
           const line = createLine({
             pickable: false,
             stroke: verticalLine_style.lineColor,

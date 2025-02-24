@@ -15,6 +15,8 @@ export interface IGrid {
   verticalLine?: ILineStyle | ((args: GridVerticalLineStyleArgumentType) => ILineStyle);
   /** 水平间隔线样式 */
   horizontalLine?: ILineStyle | ((args: GridHorizontalLineStyleArgumentType) => ILineStyle);
+  /** 竖线依赖的日期刻度。默认为timelineHeader中scales中的最小时间粒度 */
+  verticalLineDependenceOnTimeScale?: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second';
 }
 
 export type GridVerticalLineStyleArgumentType = {
@@ -75,3 +77,9 @@ ${prefix} horizontalLine(ILineStyle | Function)
 非必填
 
 {{ use: common-gantt-line-style }}
+
+${prefix} verticalLineDependenceOnTimeScale('day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second')
+
+竖线依赖的日期刻度。默认为timelineHeader中scales中的最小时间粒度。如设置为'week'，则竖线将根据周来绘制。
+
+非必填

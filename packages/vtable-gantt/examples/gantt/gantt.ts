@@ -889,10 +889,20 @@ export function createTable() {
     grid: {
       // backgroundColor: 'gray',
       weekendBackgroundColor: 'yellow',
-      verticalLine: {
-        lineWidth: 1,
-        lineColor: '#e1e4e8'
+      verticalLine(args) {
+        const dateIndex = args.date?.getDate();
+        if (dateIndex === 20) {
+          return {
+            lineWidth: 1,
+            lineColor: '#e1e4e8'
+          };
+        }
+        return {
+          lineWidth: 1,
+          lineColor: 'red'
+        };
       },
+      verticalLineDependenceOnTimeScale: 'week',
       horizontalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
