@@ -2,13 +2,14 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-02-24 09:32:57
- * @Description: 
+ * @LastEditTime: 2025-02-24 14:23:02
+ * @Description:
  */
 import type {
   CommonDomOptions,
   CreateDOMParamsType,
   IGraphic,
+  IGroup,
   IPlugin,
   IStage,
   IText,
@@ -116,7 +117,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       return;
     }
 
-    this.updateStyleOfWrapContainer(graphic, stage, targetWrapContainer, targetNativeContainer, vue);
+    this.updateStyleOfWrapContainer(graphic, stage, targetWrapContainer, targetNativeContainer);
     this.htmlMap[id].renderId = this.renderId;
   }
 
@@ -148,24 +149,25 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
    * @param {IStage} stage
    * @param {HTMLElement} wrapContainer
    * @param {HTMLElement} nativeContainer
-   * @param {SimpleDomStyleOptions & CommonDomOptions} options
    * @return {*}
    */
   updateStyleOfWrapContainer(
     graphic: IGraphic,
     stage: IStage,
     wrapContainer: HTMLElement,
-    nativeContainer: HTMLElement,
-    options: SimpleDomStyleOptions & CommonDomOptions
+    nativeContainer: HTMLElement
   ) {
+    const { attribute, type } = graphic as IGroup;
+    //@ts-ignore
+    const { vue: options, width, height, visible, display, ...rest } = attribute || {};
     const { pointerEvents, penetrateEventList = [] } = options;
     const calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
-
-    const { attribute, type } = graphic;
-
-    calculateStyle.display = attribute.visible !== false ? 'block' : 'none';
-    calculateStyle.pointerEvents = pointerEvents === true ? 'all' : pointerEvents || 'none';
-    calculateStyle.position = 'absolute';
+    Object.assign(calculateStyle, {
+      ...(rest || {}),
+      display: visible !== false ? display || 'block' : 'none',
+      pointerEvents: pointerEvents === true ? 'all' : pointerEvents || 'none',
+      position: 'absolute'
+    });
 
     if (calculateStyle.pointerEvents !== 'none') {
       this.removeWrapContainerEventListener(wrapContainer);
@@ -191,8 +193,8 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
 
     // TODO 确认是否需要对接 VTableBrowserEnvContribution
     application.global.updateDom(wrapContainer, {
-      width: options.width,
-      height: options.height,
+      width,
+      height,
       style: calculateStyle
     });
   }
