@@ -102,16 +102,17 @@ export class Grid {
       if (typeof gridStyle.verticalLine === 'function') {
         for (let i = 0; i < timelineDates?.length - 1; i++) {
           const { endDate } = timelineDates[i];
-          const x = Math.ceil(
-            computeCountToTimeScale(endDate, this._scene._gantt.parsedOptions.minDate, minUnit, step, 1) *
-              timelineColWidth
-          );
           const verticalLine_style = gridStyle.verticalLine({
             index: i,
             dateIndex: timelineDates[i].dateIndex,
             date: timelineDates[i].endDate,
             ganttInstance: this._scene._gantt
           });
+          const x =
+            Math.ceil(
+              computeCountToTimeScale(endDate, this._scene._gantt.parsedOptions.minDate, minUnit, step, 1) *
+                timelineColWidth
+            ) + (verticalLine_style.lineWidth & 1 ? 0.5 : 0);
           // const x = Math.ceil(timelineColWidth * (i + 1)) + (verticalLine_style.lineWidth & 1 ? 0.5 : 0);
           const line = createLine({
             pickable: false,
@@ -128,10 +129,11 @@ export class Grid {
         const verticalLine_style = gridStyle.verticalLine;
         for (let i = 0; i < timelineDates?.length - 1; i++) {
           const { endDate } = timelineDates[i];
-          const x = Math.ceil(
-            computeCountToTimeScale(endDate, this._scene._gantt.parsedOptions.minDate, minUnit, step, 1) *
-              timelineColWidth
-          );
+          const x =
+            Math.ceil(
+              computeCountToTimeScale(endDate, this._scene._gantt.parsedOptions.minDate, minUnit, step, 1) *
+                timelineColWidth
+            ) + (verticalLine_style.lineWidth & 1 ? 0.5 : 0);
           // const x = Math.ceil(timelineColWidth * (i + 1)) + (verticalLine_style.lineWidth & 1 ? 0.5 : 0);
           const line = createLine({
             pickable: false,
