@@ -1,6 +1,10 @@
 import type { EasingType } from '@visactor/vtable/es/vrender';
 import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
 
+function isInteger(value: number) {
+  return Math.floor(value) === value;
+}
+
 export interface ICarouselAnimationPluginOptions {
   rowCount?: number;
   colCount?: number;
@@ -108,7 +112,10 @@ export class CarouselAnimationPlugin {
     if (customRow) {
       this.row = customRow.distRow;
       animation = customRow.animation ?? true;
-    } else if (this.table.scenegraph.proxy.screenTopRow !== this.row) {
+    } else if (isInteger(this.row) && this.table.scenegraph.proxy.screenTopRow !== this.row) {
+      this.row = this.table.frozenRowCount;
+      animation = false;
+    } else if (!isInteger(this.row) && this.table.scenegraph.proxy.screenTopRow !== Math.floor(this.row)) {
       this.row = this.table.frozenRowCount;
       animation = false;
     } else {
@@ -139,7 +146,10 @@ export class CarouselAnimationPlugin {
     if (customCol) {
       this.col = customCol.distCol;
       animation = customCol.animation ?? true;
-    } else if (this.table.scenegraph.proxy.screenLeftCol !== this.col) {
+    } else if (isInteger(this.col) && this.table.scenegraph.proxy.screenLeftCol !== this.col) {
+      this.col = this.table.frozenColCount;
+      animation = false;
+    } else if (!isInteger(this.col) && this.table.scenegraph.proxy.screenLeftCol !== Math.floor(this.col)) {
       this.col = this.table.frozenColCount;
       animation = false;
     } else {
