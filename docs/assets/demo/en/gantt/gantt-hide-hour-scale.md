@@ -1,24 +1,24 @@
 ---
 category: examples
 group: gantt
-title: 实现任务时间可小于最小时间单元
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-hide-time-scale.png
+title: Hide Hour Scale
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-hide-hour-scale.png
 link: gantt/introduction
-option: Gantt#grid.verticalLineDependenceOnTimeScale
+option: Gantt#timelineHeader.scales
 ---
 
-# 实现任务时间可小于最小时间单元
+# Hide Hour Scale, to implement Task Time Less Than Minimum Time Unit
 
-支持配置时间刻度单位 unit('day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second')，默认情况下，每个任务条的长度不得小于最小时间单元。但可以通过隐藏底层时间刻度来实现任务时间可小于最小时间单元的模拟效果。
+Hide the bottom time scale by setting the scales visible to false, so that the task time can be less than the minimum time unit.
 
+If you want to make the vertical line drawing effect of the grid line consistent with the time scale in the table header, you can achieve this by configuring `grid.verticalLineDependenceOnTimeScale`. For example, in this example, set `grid.verticalLineDependenceOnTimeScale` to `day` to make the vertical line drawing effect of the grid line consistent with the `day` time scale in the time scale of the table header.
 
-
-## 关键配置
+## Key Configuration
 
 - `Gantt`
 - `Gantt#timelineHeader.scales`
-
-## 代码演示
+- `Gantt#grid.verticalLineDependenceOnTimeScale`
+## Code Demo
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';
@@ -199,8 +199,8 @@ const records = [
               disable: true
             },
             name: '负责人',
-            planStartCalendar: '2025-01-02 13:30',
-            planFinishCalendar: '2025-01-02 15:00',
+            // planStartCalendar: '2025-01-02 13:30',
+            // planFinishCalendar: '2025-01-02 15:00',
             keyNode: false,
             timeConflict: true,
             confirmed: false
@@ -343,13 +343,7 @@ const records = [
   }
 ];
 const columns = [
-  {
-    headerType: 'checkbox', //指定表头单元格显示为复选框
-    cellType: 'checkbox', //指定body单元格显示为复选框
-    field: 'check',
-    checked: false,
-    width: 50
-  },
+ 
   {
     field: 'name',
     title: '任务',
@@ -435,6 +429,7 @@ const option = {
     }
   },
   grid: {
+    // verticalLineDependenceOnTimeScale: 'day',
     verticalLine: {
       lineWidth: 1,
       lineColor: '#e1e4e8'
@@ -452,7 +447,7 @@ const option = {
     progressField: 'progress',
     resizable: true,
     moveable: true,
-    scheduleCreatable: false,
+    scheduleCreatable: true,
     labelTextStyle: {
       fontFamily: 'Arial',
       fontSize: 14,
@@ -478,6 +473,10 @@ const option = {
       borderColor: '#000000',
       borderLineWidth: 0
     },
+    scheduleCreation: {
+      maxWidth: 100,
+      minWidth: 40
+    },
     customLayout
   },
   timelineHeader: {
@@ -490,7 +489,7 @@ const option = {
       lineColor: '#e1e4e8'
     },
     backgroundColor: '#EEF1F5',
-    colWidth: 40,
+    colWidth: 20,
     scales: [
       {
         unit: 'day',
@@ -508,6 +507,7 @@ const option = {
       {
         unit: 'hour',
         step: 1,
+        visible: false,
         style: {
           fontSize: 14,
           fontWeight: 'normal'

@@ -330,10 +330,10 @@
           }
         },
         {
-          "path": "gantt-hide-time-scale",
+          "path": "gantt-hide-hour-scale",
           "title": {
-            "zh": "实现任务时间可小于最小时间单元",
-            "en": "Gantt Task Hide Time Scale"
+            "zh": "隐藏底部时间刻度",
+            "en": "Gantt Hide Hour Scale"
           }
         }
       ]

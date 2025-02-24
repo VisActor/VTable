@@ -978,6 +978,7 @@ export function createTable() {
           format(date) {
             return `Week ${date.dateIndex}`;
           },
+
           style: {
             fontSize: 20,
             fontWeight: 'bold',
@@ -990,6 +991,7 @@ export function createTable() {
           format(date) {
             return date.dateIndex.toString();
           },
+
           style: {
             fontSize: 20,
             fontWeight: 'bold',
