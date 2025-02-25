@@ -193,6 +193,29 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 
 在一些场景下，子节点数据可能比较大，鉴于后台数据库性能压力过大，并不想一次性获取到全部数据，需要在点击展开时才进行调用接口来加载数据。那么可以使用如下方式来实现：
 
+0. （可选）注册 loading 图标
+
+```javascript
+VTable.register.icon('loading', {
+  type: 'image',
+  width: 16,
+  height: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+  name: 'loading', //定义图标的名称，在内部会作为缓存的key值
+  positionType: VTable.TYPES.IconPosition.absoluteRight, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
+  marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
+  marginRight: 4, // 右侧内容间隔 在特定位置position中起作用
+  visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
+  hover: {
+    // 热区大小
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101,117,168,0.1)'
+  },
+  isGif: true
+});
+```
+
 1. 将对应数据的 children 设置为 true 而非具体的数据集合，以使该单元格可以显示折叠状态的图标；
 2. 当用户点击状态图标时，会触发事件`VTable.ListTable.EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE`，前端代码需要监听该事件，来请求 children 数据
 3. （可选）在请求数据前，可以调用接口`instance.setLoadingHierarchyState(col, row);` 可以将该节点的图标设置为`loading`，表示该节点正在加载数据；
