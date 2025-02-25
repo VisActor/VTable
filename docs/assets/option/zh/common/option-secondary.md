@@ -538,7 +538,7 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 ```
 
 #${prefix} editCellTrigger('doubleclick' | 'click' | 'api' | 'keydown') = 'doubleclick'
-
+** `PivotChart` 不支持该配置项 **
 进入编辑状态的触发时机。
 
 ```

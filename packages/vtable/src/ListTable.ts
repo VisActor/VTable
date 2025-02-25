@@ -1460,4 +1460,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
   }
+
+  release() {
+    this.editorManager.release();
+    super.release();
+  }
 }
