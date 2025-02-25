@@ -5,13 +5,15 @@ import listtablecheckbox from '../table/unified/options/list-table/list-table-ch
 import listtabletranspose from '../table/unified/options/list-table/list-table-transpose.vue';
 import listtable from '../table/unified/options/list-table/list-table.vue';
 import listtablefetch from '../table/unified/options/list-table/list-table-fetch.vue';
+// import listtabledom from '../table/gramatical/composition/ListTable-dom.vue';
+import listtabledom from '../table/unified/composition/list-table/list-table-dom.vue';
 import pivottable from '../table/unified/options/pivot-table/pivot-table.vue';
 import pivottabletree from '../table/unified/options/pivot-table/pivot-table-tree.vue';
 import pivottabletitleOnDimension from '../table/unified/options/pivot-table/pivot-table-titleOnDimension.vue';
 import pivotchartlistTable from '../table/unified/composition/pivot-chart/pivot-chart-listTable.vue';
 import pivotchart from '../table/unified/composition/pivot-chart/pivot-chart.vue';
 import listtablepagination from '../table/unified/composition/list-table/list-table-pagination.vue';
-import listtableedit from '../table/unified/composition/list-table/list-table-edit.vue';
+import listtableedit from '../table/unified/composition/list-table/list-table-editor.vue';
 import pivottablelazyTreeload from '../table/unified/composition/pivot-table/pivot-table-lazyTreeload.vue';
 
 const components = {
@@ -19,6 +21,7 @@ const components = {
   listtabletranspose,
   listtable,
   listtablefetch,
+  listtabledom,
   pivottable,
   pivottabletree,
   pivottabletitleOnDimension,
@@ -26,24 +29,21 @@ const components = {
   pivotchart,
   listtablepagination,
   listtableedit,
-  pivottablelazyTreeload,
+  pivottablelazyTreeload
 };
-
-
-
 
 const props = defineProps({
   currentComponent: {
     type: String,
-    required: true,
-  },
+    required: true
+  }
 });
 
 const currentComponent = ref(props.currentComponent);
 
 watch(
   () => props.currentComponent,
-  (newVal) => {
+  newVal => {
     currentComponent.value = newVal;
   }
 );
