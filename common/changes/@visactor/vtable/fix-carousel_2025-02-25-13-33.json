@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: delete loading icon auto register",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
