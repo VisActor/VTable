@@ -91,13 +91,18 @@ export function createCustomLayout(children: any): any {
   return { rootComponent: createComponent(children) };
 }
 
-export function createCustomLayoutHandler(children: any) {
+export function createCustomLayoutHandler(children: any, isHeader?: boolean) {
   return (args: any) => {
     const { table, row, col, rect } = args;
     const record = table.getCellOriginRecord(col, row);
     const { height, width } = rect ?? table.getCellRect(col, row);
 
-    const rootContainer = children.customLayout({ table, row, col, rect, record, height, width })[0];
+    const customLayoutKey = isHeader ? 'headerCustomLayout' : 'customLayout';
+    if (!children[customLayoutKey]) {
+      return null;
+    }
+
+    const rootContainer = children[customLayoutKey]({ table, row, col, rect, record, height, width })[0];
     const { rootComponent } = createCustomLayout(rootContainer);
 
     return {
