@@ -158,6 +158,9 @@ function bindTableGroupListener(event: EventManager) {
       const phaseGroupTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'phase-hover-group';
       });
+      const phaseContentGroupTarget = e.detailPath.find((pathNode: any) => {
+        return pathNode.name === 'mark-line-content';
+      });
       if (phaseGroupTarget) {
         if (scene._gantt.stateManager.phaseIcon.target !== phaseGroupTarget) {
           scene._gantt.stateManager.phaseIcon.target = phaseGroupTarget;
@@ -210,7 +213,8 @@ function bindTableGroupListener(event: EventManager) {
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact
-          gantt.parsedOptions.taskBarCreatable
+          gantt.parsedOptions.taskBarCreatable &&
+          !phaseContentGroupTarget
         ) {
           const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight + gantt.stateManager.scrollTop, gantt);
           const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex.task_index, taskIndex.sub_task_index);
@@ -347,6 +351,7 @@ function bindTableGroupListener(event: EventManager) {
   });
   // pointerup如果改为pointertap 问题：新建依赖关系线不起作用
   scene.ganttGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
+    console.log('%c Line:350 🥓 e', 'font-size:20px;color:#ea7e5c', e);
     if (e.button === 0) {
       let isClickBar = false;
       let isClickCreationButtom = false;
@@ -355,6 +360,8 @@ function bindTableGroupListener(event: EventManager) {
       let isClickRightLinkPoint = false;
       let depedencyLink;
       let isClickPhaseIcon = false;
+      let isClickPhaseContent = false;
+      let phaseContentTarget: any;
 
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         if (pathNode.name === 'task-bar') {
@@ -379,9 +386,14 @@ function bindTableGroupListener(event: EventManager) {
         } else if (pathNode.name === 'phase-hover-group') {
           isClickPhaseIcon = true;
           return false;
+        } else if (pathNode.name === 'mark-line-content') {
+          isClickPhaseContent = true;
+          phaseContentTarget = pathNode;
+          return false;
         }
         return false;
       });
+
       if (isClickBar && scene._gantt.parsedOptions.taskBarSelectable && event.poniterState === 'down') {
         stateManager.hideDependencyLinkSelectedLine();
         stateManager.showTaskBarSelectedBorder(taskBarTarget);
@@ -482,6 +494,13 @@ function bindTableGroupListener(event: EventManager) {
           gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_PHASE_ICON, {
             event: e.nativeEvent,
             data: scene._gantt.stateManager.phaseIcon.target.data
+          });
+        }
+      } else if (isClickPhaseContent && event.poniterState === 'down') {
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_PHASE_CONTENT)) {
+          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_PHASE_CONTENT, {
+            event: e.nativeEvent,
+            data: phaseContentTarget.data
           });
         }
       } else if (isClickLeftLinkPoint && event.poniterState === 'draging') {

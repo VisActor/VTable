@@ -81,15 +81,16 @@ export class MarkLine {
           clip: false,
           fill: contentStyle.backgroundColor || style.lineColor,
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           cornerRadius: contentStyle.cornerRadius || [0, 2, 2, 0]
         });
+        textGroup.name = 'mark-line-content';
+        textGroup.data = line;
         markLineGroup.appendChild(textGroup);
         // 创建内容
         const text = new Text({
           maxLineWidth: textMaxLineWidth,
           text: line.content,
+          lineHeight: textContainerHeight,
           fontWeight: contentStyle.fontWeight || 'normal',
           fill: contentStyle.color || style.lineColor,
           fontSize: contentStyle.fontSize || 12,

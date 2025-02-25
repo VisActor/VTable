@@ -216,7 +216,7 @@ export function createTable() {
     markLine: [
       {
         date: '2024-10-06',
-        content: '我是内容哈哈哈哈哈我是内容哈哈哈哈哈我是内容哈哈哈哈哈我是内容哈哈哈哈哈我是内容哈哈哈哈哈',
+        content: '我的啊啊得的',
         contentStyle: {
           color: '#fff'
           // fontSize: 40
@@ -238,4 +238,10 @@ export function createTable() {
   ganttInstance.on('click_phase_icon', e => {
     console.log('click_phase_icon', e);
   });
+  ganttInstance.on('click_phase_content', e => {
+    console.log('click_phase_content', e);
+  });
+  // bindDebugTool(ganttInstance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', '_updateTag']
+  // });
 }
