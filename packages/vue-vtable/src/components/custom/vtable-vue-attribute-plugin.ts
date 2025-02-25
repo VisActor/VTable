@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-02-24 14:23:02
+ * @LastEditTime: 2025-02-25 08:56:54
  * @Description:
  */
 import type {
@@ -160,9 +160,11 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     const { attribute, type } = graphic as IGroup;
     //@ts-ignore
     const { vue: options, width, height, visible, display, ...rest } = attribute || {};
-    const { pointerEvents, penetrateEventList = [] } = options;
+    // 默认自定义区域内也可带动表格画布滚动
+    const { pointerEvents, penetrateEventList = ['wheel'] } = options;
     const calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
     Object.assign(calculateStyle, {
+      overflow: 'hidden',
       ...(rest || {}),
       display: visible !== false ? display || 'block' : 'none',
       pointerEvents: pointerEvents === true ? 'all' : pointerEvents || 'none',
