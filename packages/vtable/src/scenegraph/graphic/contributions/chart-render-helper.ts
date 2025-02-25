@@ -198,7 +198,7 @@ export function startRenderChartQueue(table: any) {
 }
 
 const cacheCanvasSizeLimit = 2000;
-function cacheStageCanvas(stage: IStage, chart: Chart) {
+export function cacheStageCanvas(stage: IStage, chart: Chart) {
   const { viewWidth, viewHeight } = stage;
   if (viewWidth < cacheCanvasSizeLimit && viewHeight < cacheCanvasSizeLimit) {
     chart.cacheCanvas = toCanvas(stage);

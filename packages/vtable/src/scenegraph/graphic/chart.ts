@@ -100,6 +100,7 @@ export class Chart extends Group {
       y1: y1 - table.scrollTop,
       y2: y2 - table.scrollTop
     });
+    this.activeChartInstance?.release();
     this.activeChartInstance = new this.attribute.ClassType(
       this.attribute.spec,
       merge({}, this.attribute.tableChartOption, {
