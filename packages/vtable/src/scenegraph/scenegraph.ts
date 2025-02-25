@@ -2203,8 +2203,9 @@ export class Scenegraph {
     if (iconGraphic) {
       const regedIcons = registerIcons.get();
       const loadingIcon = regedIcons[InternalIconName.loadingIconName];
-
-      dealWithIcon(loadingIcon, iconGraphic, col, row);
+      if (loadingIcon) {
+        dealWithIcon(loadingIcon, iconGraphic, col, row);
+      }
     }
   }
 

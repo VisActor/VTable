@@ -21,6 +21,26 @@ Basic table tree display, turn on the tree mode of a certain column, if the chil
 ## Code Demo
 
 ```javascript livedemo template=vtable
+// Register the loading icon
+VTable.register.icon('loading', {
+  type: 'image',
+  width: 16,
+  height: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+  name: 'loading', // Define the name of the icon, which will be used as the key value for caching in the internal cache
+  positionType: VTable.TYPES.IconPosition.absoluteRight, // Specify the position, which can be before or after the text, or left or right of the cell
+  marginLeft: 0, // The left content interval in the specific position
+  marginRight: 4, // The right content interval in the specific position
+  visibleTime: 'always', // The display time, 'always' | 'mouseover_cell' | 'click_cell'
+  hover: {
+    // The size of the hot area
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101,117,168,0.1)'
+  },
+  isGif: true
+});
+
 let tableInstance;
 const data = [
   {
