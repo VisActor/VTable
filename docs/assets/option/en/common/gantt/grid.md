@@ -15,6 +15,8 @@ export interface IGrid {
   verticalLine?: ILineStyle | ((args: GridVerticalLineStyleArgumentType) => ILineStyle);
   /** 水平间隔线样式 */
   horizontalLine?: ILineStyle | ((args: GridHorizontalLineStyleArgumentType) => ILineStyle);
+  /** 竖线依赖的日期刻度。默认为timelineHeader中scales中的最小时间粒度 */
+  verticalLineDependenceOnTimeScale?: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second';
 }
 
 export type GridVerticalLineStyleArgumentType = {
@@ -73,3 +75,9 @@ Horizontal interval line style
 Optional
 
 {{ use: common-gantt-line-style }}
+
+${prefix} verticalLineDependenceOnTimeScale('day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second')
+
+The vertical line depends on the date scale. The default is the smallest time scale in the timelineHeader.scales. If set to 'week', the vertical line will be drawn according to the week.
+
+Optional

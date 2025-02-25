@@ -328,6 +328,13 @@
             "zh": "以小时为单元的任务甘特图",
             "en": "Gantt Task Hour Unit"
           }
+        },
+        {
+          "path": "gantt-hide-hour-scale",
+          "title": {
+            "zh": "隐藏底部时间刻度",
+            "en": "Gantt Hide Hour Scale"
+          }
         }
       ]
     },
