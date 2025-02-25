@@ -12,30 +12,29 @@ const links = ref({
     { name: 'list-table-fetch', component: 'listtablefetch' },
     { name: 'list-table-pagination', component: 'listtablepagination' },
     { name: 'list-table-edit', component: 'listtableedit' },
+    { name: 'list-table-dom', component: 'listtabledom' }
   ],
   PivotTable: [
     { name: 'pivot-table', component: 'pivottable' },
     { name: 'pivot-table-tree', component: 'pivottabletree' },
     { name: 'pivot-table-titleOnDimension', component: 'pivottabletitleOnDimension' },
-    { name: 'pivot-table-lazyTreeload', component: 'pivottablelazyTreeload' },
+    { name: 'pivot-table-lazyTreeload', component: 'pivottablelazyTreeload' }
   ],
   PivotChart: [
     { name: 'pivot-chart-listTable', component: 'pivotchartlistTable' },
-    { name: 'pivot-chart', component: 'pivotchart' },
-  ],
+    { name: 'pivot-chart', component: 'pivotchart' }
+  ]
 });
-
 </script>
 
 <template>
   <nav class="sidebar">
     <div class="title">
-      <img style="width: 100%; margin-bottom: 10px;"
-      src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/logo_500_200_light.png"
+      <img
+        style="width: 100%; margin-bottom: 10px"
+        src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/logo_500_200_light.png"
       />
-      <div>
-        VTable-Vue-Demo
-      </div>
+      <div>VTable-Vue-Demo</div>
     </div>
     <ul class="list">
       <li v-for="(category, categoryName) in links" :key="categoryName">
@@ -79,22 +78,22 @@ const links = ref({
 
 .sidebar li {
   border-radius: 5px;
-  margin:10px 0 30px 0;
+  margin: 10px 0 30px 0;
 }
 
 .sidebar a {
   color: #000000;
   text-decoration: none;
   cursor: pointer;
-  outline: none; 
+  outline: none;
   font-size: 16px;
   padding-bottom: 10px;
   border-bottom: 0.1px solid #646464;
-  white-space: nowrap; 
+  white-space: nowrap;
 }
 
 .sidebar a:focus {
-  color: rgb(0, 58, 204); 
+  color: rgb(0, 58, 204);
 }
 
 .title {
@@ -111,6 +110,6 @@ const links = ref({
 }
 
 .link {
- margin-left: 12px;
+  margin-left: 12px;
 }
 </style>
