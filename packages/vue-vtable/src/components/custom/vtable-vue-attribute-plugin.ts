@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-02-25 08:56:54
+ * @LastEditTime: 2025-02-25 11:01:11
  * @Description:
  */
 import type {
@@ -161,7 +161,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     //@ts-ignore
     const { vue: options, width, height, visible, display, ...rest } = attribute || {};
     // 默认自定义区域内也可带动表格画布滚动
-    const { pointerEvents, penetrateEventList = ['wheel'] } = options;
+    const { pointerEvents = true, penetrateEventList = ['wheel'] } = options;
     const calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
     Object.assign(calculateStyle, {
       overflow: 'hidden',
