@@ -293,9 +293,13 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 menu 渲染方式，html 目前实现较完整，先默认使用 html 渲染方式。
 
-##${prefix} defaultHeaderMenuItems(MenuListItem[])
+##${prefix} defaultHeaderMenuItems(MenuListItem[]|Function)
 
-内置下拉菜单的全局设置项，类型为`MenuListItem[]`。目前只针对基本表格有效，会对每个表头单元格开启默认的下拉菜单功能。
+内置下拉菜单的全局设置项.
+
+类型为`MenuListItem[] | ((args:{col:number,row:number,table:BaseTableAPI})=>MenuListItem[])`。
+
+目前只针对基本表格有效，会对每个表头单元格开启默认的下拉菜单功能。
 
 {{ use: common-menu-list-item() }}
 

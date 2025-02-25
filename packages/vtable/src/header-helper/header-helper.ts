@@ -1,4 +1,5 @@
 import type {
+  ColumnDefine,
   ColumnIconOption,
   ColumnsDefine,
   ListTableAPI,
@@ -260,15 +261,22 @@ export class HeaderHelper {
   }
 
   private getDropDownStateIcons(_table: BaseTableAPI, col: number, row: number): ColumnIconOption[] {
-    const headerC = _table.getHeaderDefine(col, row) as any;
-    const headerL = _table._getHeaderLayoutMap(col, row);
-    const { dropDownMenu } = headerL as HeaderData;
+    const headerC = _table.getHeaderDefine(col, row) as ColumnDefine;
+    const headerL = _table._getHeaderLayoutMap(col, row) as HeaderData;
+    let { dropDownMenu } = headerL as HeaderData;
+    if (typeof dropDownMenu === 'function') {
+      dropDownMenu = dropDownMenu({ row, col, table: _table });
+    }
+    let globalDropDownMenu = _table.globalDropDownMenu;
+    if (typeof globalDropDownMenu === 'function') {
+      globalDropDownMenu = globalDropDownMenu({ row, col, table: _table });
+    }
     const results: ColumnIconOption[] = [];
     if (
       (Array.isArray(dropDownMenu) && dropDownMenu.length) || // header中配置dropDownMenu
-      (Array.isArray(_table.globalDropDownMenu) && _table.globalDropDownMenu.length && !headerC?.columns?.length) // 全局配置dropDownMenu，只在最下级表头展示
+      (Array.isArray(globalDropDownMenu) && globalDropDownMenu.length && !headerC?.columns?.length) // 全局配置dropDownMenu，只在最下级表头展示
     ) {
-      const menus = dropDownMenu || _table.globalDropDownMenu;
+      const menus = dropDownMenu || globalDropDownMenu;
       let highlightIndex = -1;
       let subHighlightIndex = -1;
       for (let i = 0; i < menus.length; i++) {
@@ -303,11 +311,9 @@ export class HeaderHelper {
       if (highlightIndex !== -1) {
         let menu;
         if (subHighlightIndex !== -1) {
-          menu = ((dropDownMenu || _table.globalDropDownMenu)[highlightIndex] as any).children[
-            subHighlightIndex
-          ] as any;
+          menu = (menus[highlightIndex] as any).children[subHighlightIndex];
         } else {
-          menu = (dropDownMenu || _table.globalDropDownMenu)[highlightIndex] as any;
+          menu = menus[highlightIndex];
         }
 
         if (menu.stateIcon) {
@@ -413,20 +419,29 @@ export class HeaderHelper {
      * 3. header中dropDownMenu为空数组 =》 icon不展示
      */
     if (_table.isPivotTable()) {
-      const headerC = _table._getHeaderLayoutMap(col, row) as any;
+      const headerC = _table._getHeaderLayoutMap(col, row) as HeaderData;
+      let dropDownMenu = headerC.dropDownMenu;
+      if (typeof dropDownMenu === 'function') {
+        dropDownMenu = dropDownMenu({ row, col, table: _table });
+      }
       if (
-        Array.isArray(headerC.dropDownMenu) &&
-        headerC.dropDownMenu.length // header中配置dropDownMenu
+        Array.isArray(dropDownMenu) &&
+        dropDownMenu.length // header中配置dropDownMenu
       ) {
         return true;
       }
     } else {
-      const headerC = _table.getHeaderDefine(col, row) as any;
+      const headerC = _table.getHeaderDefine(col, row) as ColumnDefine;
+      const dropDownMenu = headerC.dropDownMenu;
+      let globalDropDownMenu = _table.globalDropDownMenu;
+      if (typeof globalDropDownMenu === 'function') {
+        globalDropDownMenu = globalDropDownMenu({ row, col, table: _table });
+      }
       if (
-        (Array.isArray(headerC.dropDownMenu) && headerC.dropDownMenu.length) || // header中配置dropDownMenu
+        (Array.isArray(dropDownMenu) && dropDownMenu.length) || // header中配置dropDownMenu
         ((!Array.isArray(headerC.dropDownMenu) || headerC.dropDownMenu.length !== 0) && // header中dropDownMenu为空数组，不显示
-          Array.isArray(_table.globalDropDownMenu) &&
-          _table.globalDropDownMenu.length && // 全局配置dropDownMenu
+          Array.isArray(globalDropDownMenu) &&
+          globalDropDownMenu.length && // 全局配置dropDownMenu
           !headerC?.columns?.length) // 只在最下级表头展示
       ) {
         return true;
