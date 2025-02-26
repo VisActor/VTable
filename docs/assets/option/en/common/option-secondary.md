@@ -281,9 +281,11 @@ Configuration related to the drop-down menu. Disappearance timing: automatically
 
 Menu rendering method, html is currently more complete, default using html rendering method.
 
-##${prefix} defaultHeaderMenuItems(MenuListItem[])
+##${prefix} defaultHeaderMenuItems(MenuListItem[]|Function)
 
-Global settings for built-in drop-down menus, type is `MenuListItem[]`. Currently only valid for basic tables, it will enable the default drop-down menu function for each header cell.
+Global settings for built-in drop-down menus, type is `MenuListItem[] | ((args:{col:number,row:number,table:BaseTableAPI})=>MenuListItem[])`.
+
+Currently only valid for basic tables, it will enable the default drop-down menu function for each header cell.
 
 {{ use: common-menu-list-item() }}
 

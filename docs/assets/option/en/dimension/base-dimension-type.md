@@ -91,8 +91,12 @@ Custom layout element definition for header cells, this customization is suitabl
     prefix =  '#'+${prefix},
 ) }}
 
-${prefix} dropDownMenu(Array)
-Dropdown menu item configuration. Dropdown menu items can be top-level menu items or second-level menu items, and only one configuration is required. The specific type is MenuListItem[].
+${prefix} dropDownMenu(MenuListItem[]|Function)
+Dropdown menu item configuration. Dropdown menu items can be top-level menu items or second-level menu items, and only one configuration is required.
+
+具体类型为 `MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[])`。
+
+{{ use: common-menu-list-item() }}
 
 ${prefix} cornerDropDownMenu(Array)
 Angle header cell display drop-down button and drop-down menu item configuration. Dropdown menu items can be top-level menu items or second-level menu items, and only one configuration is required. The specific type is MenuListItem[].
