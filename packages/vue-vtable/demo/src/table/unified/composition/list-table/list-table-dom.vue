@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 10:45:36
  * @LastEditors: lym
- * @LastEditTime: 2025-02-25 11:16:12
+ * @LastEditTime: 2025-02-26 19:56:43
  * @Description: 自定义dom组件
 -->
 <template>
@@ -12,6 +12,7 @@
 <script setup lang="ts">
 import { h, ref } from 'vue';
 import { Tag } from '@arco-design/web-vue';
+import { IconMan } from '@arco-design/web-vue/es/icon';
 import * as VTable from '../../../../../../../vtable/src/index';
 import { generateMockData } from '../../../utils';
 
@@ -26,13 +27,11 @@ const option = {
         const container = new VTable.CustomLayout.Group({
           height,
           width,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          vue: { element: h(Tag, { color: 'green' }, value), container: table.headerDomContainer }
+          vue: {
+            element: h('div', [value, h(IconMan)]),
+            container: table.headerDomContainer
+          }
         });
-
         return {
           rootContainer: container,
           renderDefault: false
@@ -45,10 +44,6 @@ const option = {
         const container = new VTable.CustomLayout.Group({
           height,
           width,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
           vue: {
             element: h(Tag, { color: value === '女' ? 'magenta' : 'arcoblue' }, value),
             container: table.bodyDomContainer

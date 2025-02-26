@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-25 09:27:39
  * @LastEditors: lym
- * @LastEditTime: 2025-02-25 10:23:55
+ * @LastEditTime: 2025-02-26 19:57:04
  * @Description:
  */
 
@@ -47,13 +47,13 @@ export function generateMockData(count: number = 100, extraColumnDefineMap?: Col
   });
 
   const rawColumnDefineMap: ColumnDefineMap = {
-    id: { field: 'id', title: 'ID', width: 80 },
-    name: { field: 'name', title: '姓名', width: 100 },
-    gender: { field: 'gender', title: '性别', width: 80 },
-    age: { field: 'age', title: '年龄', width: 80 },
-    birthday: { field: 'birthday', title: '出生日期', width: 120 },
-    phone: { field: 'phone', title: '联系电话', width: 150 },
-    city: { field: 'city', title: '城市', width: 100 }
+    id: { field: 'id', title: 'ID', width: 100 },
+    name: { field: 'name', title: '姓名', width: 200 },
+    gender: { field: 'gender', title: '性别', width: 150 },
+    age: { field: 'age', title: '年龄', width: 150 },
+    birthday: { field: 'birthday', title: '出生日期', width: 220 },
+    phone: { field: 'phone', title: '联系电话', width: 250 },
+    city: { field: 'city', title: '城市', width: 200 }
   };
   const columnDefineMap = merge({}, rawColumnDefineMap, extraColumnDefineMap);
 

@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-02-26 16:20:42
+ * @LastEditTime: 2025-02-26 19:57:19
  * @Description:
  */
 import type {
@@ -219,13 +219,14 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
   private convertCellStyle(graphic: IGraphic) {
     const { col, row, stage } = getTargetGroup(graphic);
     const style = stage?.table?.getCellStyle(col, row);
-    if (!style) {
+    if (!isObject(style)) {
       return;
     }
+    const { lineHeight, padding, ...rest } = style as any;
     // TODO 表格提供具体解析方法，暂时只解析padding
     return {
-      ...style,
-      padding: isArray(style.padding) ? style.padding.map(value => `${value}px`).join(' ') : style.padding
+      ...rest,
+      padding: isArray(padding) ? padding.map(value => `${value}px`).join(' ') : padding
     };
   }
 
