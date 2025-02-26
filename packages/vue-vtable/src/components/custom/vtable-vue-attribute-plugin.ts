@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-02-25 11:01:11
+ * @LastEditTime: 2025-02-26 16:20:42
  * @Description:
  */
 import type {
@@ -16,7 +16,15 @@ import type {
   SimpleDomStyleOptions
 } from '@visactor/vtable/es/vrender';
 import { HtmlAttributePlugin, application } from '@visactor/vtable/es/vrender';
-import { calculateAnchorOfBounds, isFunction, isNil, isObject, isString, styleStringToObject } from '@visactor/vutils';
+import {
+  calculateAnchorOfBounds,
+  isArray,
+  isFunction,
+  isNil,
+  isObject,
+  isString,
+  styleStringToObject
+} from '@visactor/vutils';
 import { render } from 'vue';
 
 /**
@@ -83,42 +91,40 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     if (!element) {
       return;
     }
+
+    // 获取实际容器
     const actualContainer = expectedContainer ? checkFrozenContainer(graphic) : expectedContainer;
     const id = isNil(vue.id) ? `${graphic.id ?? graphic._uid}_vue` : vue.id;
-    const targetMap = this.htmlMap[id];
-
-    const { container } = targetMap || {};
-    let { wrapContainer: targetWrapContainer, nativeContainer: targetNativeContainer } = targetMap || {};
-
-    if (targetMap && actualContainer && actualContainer !== container) {
+    // 检查是否需要移除旧容器
+    let targetMap = this.htmlMap?.[id];
+    if (targetMap && actualContainer && actualContainer !== targetMap.container) {
       this.removeElement(id);
+      targetMap = null;
     }
 
+    // 渲染或更新 Vue 组件
     if (!targetMap) {
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, actualContainer);
       if (wrapContainer) {
         render(element, wrapContainer);
-        targetWrapContainer = wrapContainer;
-        targetNativeContainer = nativeContainer;
-        this.htmlMap[id] = {
+        targetMap = {
           wrapContainer,
           nativeContainer,
           container: actualContainer,
           renderId: this.renderId,
           graphic
         };
+        this.htmlMap[id] = targetMap;
       }
     } else {
-      // 更新Vue组件
-      render(element, targetWrapContainer);
+      render(element, targetMap.wrapContainer);
     }
 
-    if (!targetWrapContainer) {
-      return;
+    // 更新样式并记录渲染 ID
+    if (targetMap) {
+      this.updateStyleOfWrapContainer(graphic, stage, targetMap.wrapContainer, targetMap.nativeContainer);
+      this.htmlMap[id].renderId = this.renderId;
     }
-
-    this.updateStyleOfWrapContainer(graphic, stage, targetWrapContainer, targetNativeContainer);
-    this.htmlMap[id].renderId = this.renderId;
   }
 
   /**
@@ -163,9 +169,13 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     // 默认自定义区域内也可带动表格画布滚动
     const { pointerEvents = true, penetrateEventList = ['wheel'] } = options;
     const calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
+    // 单元格样式
+    const style = this.convertCellStyle(graphic);
     Object.assign(calculateStyle, {
       overflow: 'hidden',
+      ...(style || {}),
       ...(rest || {}),
+      boxSizing: 'border-box',
       display: visible !== false ? display || 'block' : 'none',
       pointerEvents: pointerEvents === true ? 'all' : pointerEvents || 'none',
       position: 'absolute'
@@ -199,6 +209,24 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       height,
       style: calculateStyle
     });
+  }
+
+  /**
+   * @description: 转换单元格样式
+   * @param {IGraphic} graphic
+   * @return {*}
+   */
+  private convertCellStyle(graphic: IGraphic) {
+    const { col, row, stage } = getTargetGroup(graphic);
+    const style = stage?.table?.getCellStyle(col, row);
+    if (!style) {
+      return;
+    }
+    // TODO 表格提供具体解析方法，暂时只解析padding
+    return {
+      ...style,
+      padding: isArray(style.padding) ? style.padding.map(value => `${value}px`).join(' ') : style.padding
+    };
   }
 
   /**
