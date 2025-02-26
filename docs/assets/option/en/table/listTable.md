@@ -160,7 +160,3 @@ customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => 
 ## tableSizeAntiJitter(boolean) = false
 
 If the table jitter occurs, check whether the width and height of the upper dom container are caused by decimal numbers. If it is not guaranteed to be an integer, set this configuration item to true
-
-## disableDbTapColBdAutoResizeColWidth(boolean) = false
-
-Disable auto resize column width when double tapping the column border line

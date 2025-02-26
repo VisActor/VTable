@@ -157,7 +157,3 @@ customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => 
 ## tableSizeAntiJitter(boolean) = false
 
 当表格出现抖动情况，请排查是否上层 dom 容器的宽高是小数引起的。如果不能保证是整数，请配置这个配置项为 true
-
-## disableDbTapColBdAutoResizeColWidth(boolean) = false
-
-是否禁用双击列边框自动调整列宽

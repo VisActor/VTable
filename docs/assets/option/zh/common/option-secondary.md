@@ -192,24 +192,6 @@ export interface SelectAllOnCtrlAOption {
 
 填充柄，设置为 true 后，当选中单元格后，填充柄会显示在单元格右下方，可以拖动填充柄来编辑单元格的值。或者双击填充柄来改变需要编辑单元格的值。
 
-#${prefix} columnResizeMode(string) = 'all'
-
-鼠标 hover 到单元格右边界可拖拽调整列宽。该操作可触发的范围：
-
-- 'all' 整列包括表头和 body 处的单元格均可调整列宽
-- 'none' 禁止调整
-- 'header' 只能在表头处单元格调整
-- 'body' 只能在 body 单元格调整
-
-#${prefix} rowResizeMode(string) = 'none'
-
-鼠标 hover 到单元格下边界可拖拽调整行高。该操作可触发的范围：
-
-- 'all' 整列包括表头和 body 处的单元格均可调整列宽
-- 'none' 禁止调整
-- 'header' 只能在表头处单元格调整
-- 'body' 只能在 body 单元格调整
-
 #${prefix} dragHeaderMode(string) = 'none'
 
 控制拖拽表头移动位置的开关。选中某个单元格后，鼠标拖拽该单元格可触发移动。 可换位单元格范围限定：
@@ -599,3 +581,47 @@ animationAppear?: boolean | {
 #${prefix} formatCopyValue((value: string) => string)
 
 设置复制内容格式化函数。
+
+#${prefix} resize(Object)
+
+调整列宽/行高的交互配置，具体配置项如下：
+
+##${prefix} columnResizeMode(string) = 'all'
+
+鼠标 hover 到单元格右边界可拖拽调整列宽。该操作可触发的范围：
+
+- 'all' 整列包括表头和 body 处的单元格均可调整列宽
+- 'none' 禁止调整
+- 'header' 只能在表头处单元格调整
+- 'body' 只能在 body 单元格调整
+
+##${prefix} rowResizeMode(string) = 'none'
+
+鼠标 hover 到单元格下边界可拖拽调整行高。该操作可触发的范围：
+
+- 'all' 整列包括表头和 body 处的单元格均可调整列宽
+- 'none' 禁止调整
+- 'header' 只能在表头处单元格调整
+- 'body' 只能在 body 单元格调整
+
+##${prefix} disableDblclickAutoResizeColWidth(boolean) = false
+
+是否禁用双击列边框自动调整列宽
+
+##${prefix} columnResizeType(string)
+
+仅在 PivotTable/PivotChart 下生效 调整列宽的生效范围，可配置项：
+
+- `column`: 调整列宽只调整当前列
+- `indicator`: 调整列宽时对应相同指标的列都会被调整
+- `indicatorGroup`: 调整同父级维度下所有指标列的宽度
+- `all`： 所有列宽都被调整
+
+##${prefix} rowResizeType(string)
+
+仅在 PivotTable/PivotChart 下生效 调整行高的生效范围，可配置项：
+
+- `row`: 调整行高只调整当前行
+- `indicator`: 调整行高时对应相同指标的行都会被调整
+- `indicatorGroup`: 调整同父级维度下所有指标行的宽度
+- `all`： 所有行高都被调整
