@@ -2180,4 +2180,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   getFilteredRecords() {
     return this.dataset?.filterRules;
   }
+
+  /**
+   * 开启层级节点展开的loading动画状态，在设置数据调用setRecordChildren后会自动关闭loading
+   * @param col
+   * @param row
+   */
+  setLoadingHierarchyState(col: number, row: number) {
+    this.scenegraph.setLoadingHierarchyState(col, row);
+  }
 }

@@ -2198,7 +2198,7 @@ export class Scenegraph {
 
   setLoadingHierarchyState(col: number, row: number) {
     const cellGroup = this.getCell(col, row);
-    const iconGraphic = cellGroup.getChildByName('collapse', true);
+    const iconGraphic = cellGroup.getChildByName('collapse', true) || cellGroup.getChildByName('expand', true);
     if (iconGraphic) {
       const regedIcons = registerIcons.get();
       const loadingIcon = regedIcons[InternalIconName.loadingIconName];
