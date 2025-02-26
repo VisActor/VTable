@@ -7,15 +7,17 @@ link: gantt/introduction
 option: Gantt#timelineHeader.scales
 ---
 
-# Hide Hour Scale
+# Hide Hour Scale, to implement Task Time Less Than Minimum Time Unit
 
-Hide the bottom time scale by setting the scales visible to false
+Hide the bottom time scale by setting the scales visible to false, so that the task time can be less than the minimum time unit.
+
+If you want to make the vertical line drawing effect of the grid line consistent with the time scale in the table header, you can achieve this by configuring `grid.verticalLineDependenceOnTimeScale`. For example, in this example, set `grid.verticalLineDependenceOnTimeScale` to `day` to make the vertical line drawing effect of the grid line consistent with the `day` time scale in the time scale of the table header.
 
 ## Key Configuration
 
 - `Gantt`
 - `Gantt#timelineHeader.scales`
-
+- `Gantt#grid.verticalLineDependenceOnTimeScale`
 ## Code Demo
 
 ```javascript livedemo template=vtable
@@ -427,6 +429,7 @@ const option = {
     }
   },
   grid: {
+    // verticalLineDependenceOnTimeScale: 'day',
     verticalLine: {
       lineWidth: 1,
       lineColor: '#e1e4e8'

@@ -7,14 +7,17 @@ link: gantt/introduction
 option: Gantt#timelineHeader.scales
 ---
 
-# 隐藏底部时间刻度
+# 隐藏底部时间刻度，实现任务时间可小于最小时间单元
 
-通过设置 scales 的 visible 为 false 来隐藏底部时间刻度
+通过设置 scales 的 visible 为 false 来隐藏底部时间刻度，从而实现任务时间可小于最小时间单元的模拟效果。
+
+如果想将网格线的纵向线条绘制效果与表头时间刻度一致，可以通过配置 `grid.verticalLineDependenceOnTimeScale` 来实现。如在本例中，将 `grid.verticalLineDependenceOnTimeScale` 设置为 `day`，即可将网格线的纵向线条绘制效果与表头时间刻度中的 `day` 时间刻度一致。
 
 ## 关键配置
 
 - `Gantt`
 - `Gantt#timelineHeader.scales`
+- `Gantt#grid.verticalLineDependenceOnTimeScale`
 
 ## 代码演示
 
@@ -427,6 +430,7 @@ const option = {
     }
   },
   grid: {
+    // verticalLineDependenceOnTimeScale: 'day',
     verticalLine: {
       lineWidth: 1,
       lineColor: '#e1e4e8'

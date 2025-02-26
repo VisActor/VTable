@@ -128,7 +128,8 @@ export class EditManager {
         referencePosition,
         container: this.table.getElement(),
         col,
-        row
+        row,
+        table: this.table
       });
     }
   }
