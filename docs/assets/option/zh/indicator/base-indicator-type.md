@@ -163,8 +163,13 @@ ${prefix} customLayout(Function)
     prefix =  '#'+${prefix},
 ) }}
 
-${prefix} dropDownMenu(Array)
-下拉菜单项配置。下拉菜单项可以是一级菜单项或者二级菜单项，只要有一个配置即可。具体类型为 MenuListItem[]。
+${prefix} dropDownMenu(MenuListItem[]|Function)
+
+下拉菜单项配置。下拉菜单项可以是一级菜单项或者二级菜单项，只要有一个配置即可。
+
+具体类型为 `MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[])`。
+
+{{ use: common-menu-list-item() }}
 
 ${prefix} showSort(boolean|Function)
 是否显示排序 icon，无数据排序逻辑

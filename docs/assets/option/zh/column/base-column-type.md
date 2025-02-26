@@ -128,8 +128,11 @@ ${prefix} disableHeaderSelect(boolean)
 ${prefix} description(string)
 表头 hover 时的描述信息 会以 tooltip 形式展示出来
 
-${prefix} dropDownMenu(Array)
-下拉菜单项配置。下拉菜单项可以是一级菜单项或者二级菜单项，只要有一个配置即可。具体类型为 MenuListItem[]。
+${prefix} dropDownMenu(MenuListItem[])
+下拉菜单项配置。下拉菜单项可以是一级菜单项或者二级菜单项，只要有一个配置即可。
+
+具体类型为 `MenuListItem[] `。
+
 {{ use: common-menu-list-item() }}
 
 ${prefix} headerCustomRender(Function|Object)

@@ -169,7 +169,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     for (let col = 0; col < table.colCount; col++) {
       const colWidth = update ? newWidths[col] ?? table.getColWidth(col) : table.getColWidth(col);
       if (
-        col < table.rowHeaderLevelCount ||
+        col < table.rowHeaderLevelCount + table.leftRowSeriesNumberCount ||
         (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
       ) {
         actualHeaderWidth += colWidth;
@@ -178,7 +178,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     }
     // 如果内容宽度小于canvas宽度，执行adaptive放大
     if (actualWidth < canvasWidth && actualWidth > actualHeaderWidth) {
-      const startCol = table.rowHeaderLevelCount;
+      const startCol = table.rowHeaderLevelCount + table.leftRowSeriesNumberCount;
       const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
       getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, update, newWidths, table);
     }

@@ -230,6 +230,7 @@ In the vtable-gantt component, the main supported configurations include:
    1. Row Height and Time Unit: You can set the row height and time unit (such as day, week, month, etc.) of the time scale through the `rowHeight` and `unit` configuration items.
    2. Step Length and Week Start Day: You can set the step length of the time scale and the start day of the week through the `step` and `startOfWeek` configuration items.
    3. Date Formatting: You can customize the display format of dates through the `format` configuration item.
+   4. Whether to display the corresponding date grid in the header part: You can set whether to display the date grid in the header part through the `visible` configuration item, the default is displayed.
 6. Grid Line Configuration `grid`
    1. Style Configuration: You can set the color, width, dashed style, etc., of grid lines through the `verticalLine` and `horizontalLine` configuration items.
    2. Background Color: You can set the background color of grid lines through the `backgroundColor` configuration item.

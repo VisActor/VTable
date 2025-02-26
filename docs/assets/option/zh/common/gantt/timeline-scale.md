@@ -63,3 +63,9 @@ export type DateFormatArgumentType = {
   endDate: Date;
 };
 ```
+
+${prefix} visible(boolean)
+
+是否显示日期刻度，默认显示
+
+非必填

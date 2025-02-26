@@ -169,12 +169,15 @@ export class EventManager {
           eventArgsSet.abstractPos.y,
           eventArgsSet.eventArgs?.targetCell
         );
+        const disableDblclickAutoResizeColWidth =
+          this.table.options.disableDblclickAutoResizeColWidth ??
+          this.table.options.resize?.disableDblclickAutoResizeColWidth;
         if (this.table.eventManager.checkCellFillhandle(eventArgsSet)) {
           this.table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE, {});
         } else if (
           this.table._canResizeColumn(resizeCol.col, resizeCol.row) &&
           resizeCol.col >= 0 &&
-          !this.table.options.disableDblclickAutoResizeColWidth
+          !disableDblclickAutoResizeColWidth
         ) {
           this.table.scenegraph.updateAutoColWidth(resizeCol.col);
           this.table.internalProps._widthResizedColMap.add(resizeCol.col);

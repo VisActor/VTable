@@ -73,6 +73,7 @@ import {
   registerVideoCell
 } from './scenegraph/group-creater/cell-type';
 import { hasLinearAxis } from './layout/chart-helper/get-axis-config';
+import { cacheStageCanvas } from './scenegraph/graphic/contributions/chart-render-helper';
 
 registerAxis();
 registerEmptyTip();
@@ -132,8 +133,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.internalProps.records = options.records;
 
     this.setCustomStateNameToSpec();
-    this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
-    this.internalProps.rowResizeType = options.rowResizeType ?? 'row';
+    this.internalProps.columnResizeType = options.resize?.columnResizeType ?? options.columnResizeType ?? 'column';
+    this.internalProps.rowResizeType = options.resize?.rowResizeType ?? options.rowResizeType ?? 'row';
     this.internalProps.dataConfig = { isPivotChart: true };
     this._axes = isArray(options.axes) ? options.axes : [];
 
@@ -337,8 +338,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.setCustomStateNameToSpec();
     this._selectedDataItemsInChart = [];
     // 更新protectedSpace
-    internalProps.columnResizeType = options.columnResizeType ?? 'column';
-    internalProps.rowResizeType = options.rowResizeType ?? 'row';
+    internalProps.columnResizeType = options.resize?.columnResizeType ?? options.columnResizeType ?? 'column';
+    internalProps.rowResizeType = options.resize?.rowResizeType ?? options.rowResizeType ?? 'row';
     internalProps.dataConfig = { isPivotChart: true };
 
     this._axes = isArray(options.axes) ? options.axes : [];
@@ -1398,6 +1399,114 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     return {};
   }
 
+  /** 激活某个单元格的图表（相当于鼠标hover到单元格上）  */
+  activateChartInstance(cellHeaderPaths: IPivotTableCellHeaderPaths) {
+    const cellAddr = this.getCellAddressByHeaderPaths(cellHeaderPaths);
+    if (cellAddr) {
+      // const cellPosition = this.getCellRelativeRect(cellAddr.col, cellAddr.row);
+      const col = cellAddr.col;
+      const row = cellAddr.row;
+      const cellGroup = this.scenegraph.getCell(col, row);
+      const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
+      const activeChartInstance = this.scenegraph.activateChart(col, row);
+      const { dataId, data, axes, spec } = chartNode.attribute;
+      const viewBox = chartNode.getViewBox();
+
+      axes?.forEach((axis: any, index: number) => {
+        if (axis.type === 'linear') {
+          // const chartAxis = chartInstance._chart._components[index];
+          // chartAxis._domain = {
+          //   min: axis.range?.min ?? 0,
+          //   max: axis.range?.max ?? 0
+          // };
+          activeChartInstance.updateModelSpecSync(
+            { type: 'axes', index },
+            {
+              min: axis.range?.min ?? 0,
+              max: axis.range?.max ?? 0,
+              tick: {
+                tickMode: axis.tick?.tickMode
+              }
+            },
+            true
+          );
+        } else if (axis.type === 'band') {
+          // const chartAxis = chartInstance._chart._components[index];
+          // chartAxis._spec.domain = axis.domain.slice(0);
+          // chartAxis.updateScaleDomain();
+          activeChartInstance.updateModelSpec({ type: 'axes', index }, { domain: axis.domain.slice(0) }, true);
+        }
+      });
+
+      activeChartInstance.updateViewBox(
+        {
+          x1: 0,
+          x2: viewBox.x2 - viewBox.x1,
+          y1: 0,
+          y2: viewBox.y2 - viewBox.y1
+        },
+        false,
+        false
+      );
+      // console.log(viewBox);
+
+      const chartStage = activeChartInstance.getStage();
+      chartStage.needRender = true;
+      // chartStage.background = 'red';
+      const matrix = chartNode.globalTransMatrix.clone();
+      const stageMatrix = chartNode.stage.window.getViewBoxTransform().clone();
+      // matrix.multiply(stageMatrix.a, stageMatrix.b, stageMatrix.c, stageMatrix.d, stageMatrix.e, stageMatrix.f);
+      stageMatrix.multiply(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
+      chartStage.window.setViewBoxTransform(
+        stageMatrix.a,
+        stageMatrix.b,
+        stageMatrix.c,
+        stageMatrix.d,
+        stageMatrix.e,
+        stageMatrix.f
+      );
+      if (typeof dataId === 'string') {
+        activeChartInstance.updateDataSync(dataId, data ?? []);
+      } else {
+        const dataBatch = [];
+        // 如果是组合图有series系列 需要组个设置数据 这里的data包括的单元格完整数据 需要根据key过滤
+        for (const dataIdStr in dataId) {
+          const dataIdAndField = dataId[dataIdStr];
+          const series = spec.series.find((item: any) => item?.data?.id === dataIdStr);
+          dataBatch.push({
+            id: dataIdStr,
+            values: dataIdAndField
+              ? data?.filter((item: any) => {
+                  return item.hasOwnProperty(dataIdAndField);
+                }) ?? []
+              : data ?? [],
+            fields: series?.data?.fields
+          });
+          if (!activeChartInstance.updateFullDataSync) {
+            activeChartInstance.updateDataSync(
+              dataIdStr,
+              dataIdAndField
+                ? data?.filter((item: any) => {
+                    return item.hasOwnProperty(dataIdAndField);
+                  }) ?? []
+                : data ?? []
+            );
+          }
+        }
+        activeChartInstance.updateFullDataSync?.(dataBatch);
+      }
+      return activeChartInstance;
+    }
+  }
+  /** 替换某个单元格图表的缓存图片 */
+  replaceChartCacheImage(cellHeaderPaths: IPivotTableCellHeaderPaths, chartInstance: any) {
+    const cellAddr = this.getCellAddressByHeaderPaths(cellHeaderPaths);
+    if (cellAddr) {
+      const cellGroup = this.scenegraph.getCell(cellAddr.col, cellAddr.row);
+      const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
+      cacheStageCanvas(chartInstance.getStage(), chartNode);
+    }
+  }
   _getDimensionSortArray(): string[] | undefined {
     if (this.options?.axes?.length) {
       const dimensionAxisOrient = this.options.indicatorsAsCol ? 'left' : 'bottom';

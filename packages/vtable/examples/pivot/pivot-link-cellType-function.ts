@@ -178,7 +178,9 @@ export function createTable() {
     theme: VTable.themes.DEFAULT,
     records: records,
     // widthMode: 'autoWidth', // 宽度模式：standard 标准模式； adaptive 自动填满容器
-    columnResizeType: 'indicator', // 'column' | 'indicator' | 'all'
+    resize: {
+      columnResizeType: 'indicator' // 'column' | 'indicator' | 'all'
+    },
     defaultRowHeight: 100,
     defaultHeaderRowHeight: 40
   };

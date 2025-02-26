@@ -161,8 +161,12 @@ Custom layout elements for the indicator value body cell.
     prefix =  '#'+${prefix},
 ) }}
 
-${prefix} dropDownMenu(Array)
-Dropdown menu item configuration. Dropdown menu items can be first-level menu items or second-level menu items, and only one configuration is required. The specific type is MenuListItem[].
+${prefix} dropDownMenu(MenuListItem[]|Function)
+Dropdown menu item configuration. Dropdown menu items can be first-level menu items or second-level menu items, and only one configuration is required.
+
+具体类型为 `MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[])`。
+
+{{ use: common-menu-list-item() }}
 
 ${prefix} showSort(boolean|Function)
 Whether to display the sorting icon, no data sorting logic

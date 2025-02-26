@@ -128,8 +128,12 @@ This header column does not support selection
 ${prefix} description(string)
 The description of the header when hover, which will be displayed in the form of a tooltip
 
-${prefix} dropDownMenu(Array)
-The drop-down menu item configuration. The drop-down menu item can be a first-level menu item or a second-level menu item, as long as there is a configuration. The specific type is MenuListItem[].
+${prefix} dropDownMenu(MenuListItem[])
+The drop-down menu item configuration. The drop-down menu item can be a first-level menu item or a second-level menu item, as long as there is a configuration.
+
+具体类型为 `MenuListItem[]`。
+
+{{ use: common-menu-list-item() }}
 
 ${prefix} headerCustomRender(Function|Object)
 

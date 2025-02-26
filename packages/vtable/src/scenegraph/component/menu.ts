@@ -275,10 +275,11 @@ export class MenuHandler {
    */
   getMenuInfo(col: number, row: number, type: MenuType) {
     if (type === MenuType.dropDown) {
-      const { dropDownMenu = this._table.globalDropDownMenu, pivotInfo } = this._table._getHeaderLayoutMap(
-        col,
-        row
-      ) as HeaderData;
+      let dropDownMenu = this._table.globalDropDownMenu;
+      dropDownMenu = (this._table._getHeaderLayoutMap(col, row) as HeaderData).dropDownMenu;
+      if (typeof dropDownMenu === 'function') {
+        dropDownMenu = dropDownMenu({ row, col, table: this._table });
+      }
       let highlightIndex = -1;
       if (Array.isArray(dropDownMenu)) {
         for (let i = 0; i < dropDownMenu.length; i++) {

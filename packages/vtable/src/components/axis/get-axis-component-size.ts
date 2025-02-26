@@ -89,7 +89,6 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
     }
     titleWidth += attribute.title.space ?? 4;
   }
-
   return Math.ceil(tickWidth + labelWidth + titleWidth + 1); // 2 is buffer
 }
 
