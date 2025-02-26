@@ -39,7 +39,7 @@ export class MarkLine {
     const markLine = this._scene._gantt.parsedOptions.markLine;
     markLine.forEach(line => {
       const style = line.style;
-      const contentStyle = line.contentStyle;
+      const contentStyle = line.contentStyle || {};
       const date = this._scene._gantt.parsedOptions.timeScaleIncludeHour
         ? createDateAtMidnight(line.date)
         : createDateAtMidnight(line.date, true);

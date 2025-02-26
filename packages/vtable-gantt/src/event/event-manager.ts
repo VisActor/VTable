@@ -7,7 +7,13 @@ import { formatDate, parseDateFormat, throttle } from '../tools/util';
 import { GANTT_EVENT_TYPE, InteractionState, TasksShowMode } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
-import { DayTimes, getDateIndexByX, getTaskIndexsByTaskY, _getTaskInfoByXYForCreateSchedule } from '../gantt-helper';
+import {
+  DayTimes,
+  getDateIndexByX,
+  getTaskIndexsByTaskY,
+  _getTaskInfoByXYForCreateSchedule,
+  getPhaseIconClickPos
+} from '../gantt-helper';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 
 export class EventManager {
@@ -351,7 +357,6 @@ function bindTableGroupListener(event: EventManager) {
   });
   // pointerup如果改为pointertap 问题：新建依赖关系线不起作用
   scene.ganttGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
-    console.log('%c Line:350 🥓 e', 'font-size:20px;color:#ea7e5c', e);
     if (e.button === 0) {
       let isClickBar = false;
       let isClickCreationButtom = false;
@@ -362,6 +367,7 @@ function bindTableGroupListener(event: EventManager) {
       let isClickPhaseIcon = false;
       let isClickPhaseContent = false;
       let phaseContentTarget: any;
+      let phaseIconTarget: any;
 
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         if (pathNode.name === 'task-bar') {
@@ -385,6 +391,7 @@ function bindTableGroupListener(event: EventManager) {
           return false;
         } else if (pathNode.name === 'phase-hover-group') {
           isClickPhaseIcon = true;
+          phaseIconTarget = pathNode;
           return false;
         } else if (pathNode.name === 'mark-line-content') {
           isClickPhaseContent = true;
@@ -493,6 +500,7 @@ function bindTableGroupListener(event: EventManager) {
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_PHASE_ICON)) {
           gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_PHASE_ICON, {
             event: e.nativeEvent,
+            position: getPhaseIconClickPos(phaseIconTarget, scene._gantt),
             data: scene._gantt.stateManager.phaseIcon.target.data
           });
         }
@@ -500,6 +508,7 @@ function bindTableGroupListener(event: EventManager) {
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_PHASE_CONTENT)) {
           gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_PHASE_CONTENT, {
             event: e.nativeEvent,
+            position: getPhaseIconClickPos(phaseContentTarget, scene._gantt),
             data: phaseContentTarget.data
           });
         }

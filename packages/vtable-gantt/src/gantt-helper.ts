@@ -1,8 +1,9 @@
-import { text } from 'stream/consumers';
+import type { Group } from '@visactor/vtable/es/vrender';
 import type { Gantt } from './Gantt';
 import {
   TasksShowMode,
   type IMarkLine,
+  type IPosition,
   type IScrollStyle,
   type ITimelineDateInfo,
   type ITimelineScale
@@ -1084,4 +1085,21 @@ export function _getTaskInfoByXYForCreateSchedule(eventX: number, eventY: number
       }
     }
   }
+}
+
+export function getPhaseIconClickPos(phaseIconNode: Group, gantt: Gantt) {
+  const left =
+    phaseIconNode.globalTransMatrix.e +
+    gantt.taskListTableInstance.tableNoFrameWidth +
+    gantt.taskListTableInstance.tableX +
+    gantt.tableX;
+  const top = phaseIconNode.globalTransMatrix.f;
+  const width = phaseIconNode.attribute.width;
+  const height = phaseIconNode.attribute.height;
+  return {
+    left,
+    top,
+    width,
+    height
+  } as IPosition;
 }

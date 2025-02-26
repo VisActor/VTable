@@ -1,5 +1,6 @@
 import type { FederatedPointerEvent } from '@visactor/vtable/es/vrender';
 import type { IMarkLine, ITaskLink, ITimelineDateInfo } from './gantt-engine';
+import type { IPosition } from './common';
 
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
   args: TableEventHandlersEventArgumentMap[TYPE]
@@ -105,6 +106,7 @@ export interface TableEventHandlersEventArgumentMap {
   click_phase_icon: {
     event: Event;
     data: ITimelineDateInfo[];
+    postion: IPosition;
   };
   click_phase_content: {
     event: Event;
@@ -123,4 +125,6 @@ export interface TableEventHandlersReturnMap {
   create_dependency_link: void;
   delete_dependency_link: void;
   contextmenu_dependency_link: void;
+  click_phase_icon: void;
+  click_phase_content: void;
 }
