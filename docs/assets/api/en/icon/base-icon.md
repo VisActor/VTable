@@ -1,7 +1,7 @@
 {{ target: base-icon }}
 
-${prefix} type ('font' | 'svg' | 'path' | 'image')
-The content type of the icon, such as svg font. Can be used to restrict different types of property definitions.
+${prefix} type ('text' | 'svg' | 'path' | 'image')
+The content type of the icon, such as svg text. Can be used to restrict different types of property definitions.
 
 ${prefix} width (number)
 The width of the icon.
