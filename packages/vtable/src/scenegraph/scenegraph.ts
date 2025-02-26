@@ -702,6 +702,7 @@ export class Scenegraph {
     }
     const cellGroup = this.getCell(col, row);
     (cellGroup?.firstChild as any)?.activate?.(this.table);
+    return (cellGroup?.firstChild as any)?.activeChartInstance;
   }
 
   removeInteractionBorder(col: number, row: number) {
