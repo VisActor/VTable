@@ -234,7 +234,8 @@ export function createTable() {
     markLineOptions: {
       enableCreateMarkLine: true,
       toolTipOption: {
-        position: 'top'
+        position: 'top',
+        tipContent: '创建啊啊啊'
       }
     }
   };

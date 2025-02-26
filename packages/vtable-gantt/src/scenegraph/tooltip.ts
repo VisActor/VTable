@@ -10,7 +10,7 @@ export class ToolTip {
     this._scene = scene;
     this.group = new PopTip({
       position: 'top',
-      content: '创建里程碑',
+      content: '',
       contentStyle: {
         fill: '#fff'
       },
@@ -24,13 +24,13 @@ export class ToolTip {
     scene.ganttGroup.addChild(this.group);
   }
   show(graphic: IGraphic<Partial<IRectGraphicAttribute>>) {
-    const options = this._scene._gantt.parsedOptions.markLineOptions;
+    const options = this._scene._gantt.parsedOptions.markLineOptions?.toolTipOption || {};
     const matrix = graphic.globalTransMatrix;
     const targetWidth = graphic.attribute.width;
     const targetHeight = graphic.attribute.height;
     let x;
     let y;
-    const position = options.toolTipOption?.position || 'top';
+    const position = options.position || 'top';
     if (position === 'top') {
       x = matrix.e + targetWidth / 2 - 2;
       y = matrix.f;
@@ -39,6 +39,7 @@ export class ToolTip {
       y = matrix.f + targetHeight;
     }
     this.group.setAttributes({
+      content: options.tipContent,
       position,
       visibleAll: true,
       visible: true,

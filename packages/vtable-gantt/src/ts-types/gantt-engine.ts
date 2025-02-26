@@ -448,7 +448,8 @@ export type ITaskBarHoverStyle = {
 
 export type IMarkLineOptions = {
   enableCreateMarkLine: boolean;
-  toolTipOption: {
-    position: 'top' | 'bottom' | 'left' | 'right';
+  toolTipOption?: {
+    position?: 'top' | 'bottom';
+    tipContent?: string;
   };
 };
