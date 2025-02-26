@@ -164,7 +164,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showFrozenIcon = true;
   padding: { top: number; left: number; right: number; bottom: number };
-  globalDropDownMenu?: MenuListItem[];
+  globalDropDownMenu?: MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[]);
   //画布绘制单元格的区域 不包括整体边框frame，所以比canvas的width和height要小一点（canvas的width包括了frame）
   tableNoFrameWidth: number;
   tableNoFrameHeight: number;
@@ -263,6 +263,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // disableRowHeaderColumnResize,
       columnResizeMode,
       rowResizeMode = 'none',
+      resize,
       dragHeaderMode,
       // showHeader,
       // scrollBar,
@@ -369,8 +370,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.rowSeriesNumber = rowSeriesNumber;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
-    internalProps.columnResizeMode = columnResizeMode;
-    internalProps.rowResizeMode = rowResizeMode;
+    internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
+    internalProps.rowResizeMode = resize?.rowResizeMode ?? rowResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
@@ -495,7 +496,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.setDropDownMenuHighlight(options.menu?.dropDownMenuHighlight);
 
     // 全局下拉菜单
-    Array.isArray(options.menu?.defaultHeaderMenuItems) &&
+    (Array.isArray(options.menu?.defaultHeaderMenuItems) ||
+      typeof options.menu?.defaultHeaderMenuItems === 'function') &&
       (this.globalDropDownMenu = options.menu.defaultHeaderMenuItems);
 
     if (internalProps.menu.renderMode === 'html') {
@@ -1023,7 +1025,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param pixelRatio
    */
   setPixelRatio(pixelRatio: number) {
-    if (pixelRatio !== this.internalProps.pixelRatio) {
+    if (pixelRatio !== this.internalProps?.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
       const canvasWidth = this.canvasWidth;
       this.internalProps.calcWidthContext = {
@@ -2318,6 +2320,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // disableRowHeaderColumnResize,
       columnResizeMode,
       rowResizeMode = 'none',
+      resize,
       dragHeaderMode,
 
       // scrollBar,
@@ -2396,8 +2399,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.rowSeriesNumber = rowSeriesNumber;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
-    internalProps.columnResizeMode = columnResizeMode;
-    internalProps.rowResizeMode = rowResizeMode;
+    internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
+    internalProps.rowResizeMode = resize?.rowResizeMode ?? rowResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
@@ -2514,7 +2517,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.setDropDownMenuHighlight(options.menu?.dropDownMenuHighlight);
 
     // 全局下拉菜单
-    Array.isArray(options.menu?.defaultHeaderMenuItems) &&
+    (Array.isArray(options.menu?.defaultHeaderMenuItems) ||
+      typeof options.menu?.defaultHeaderMenuItems === 'function') &&
       (this.globalDropDownMenu = options.menu.defaultHeaderMenuItems);
 
     if (internalProps.menu.renderMode === 'html' && !internalProps.menuHandler) {

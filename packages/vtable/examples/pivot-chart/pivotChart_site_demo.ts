@@ -337,7 +337,9 @@ export function createTable() {
         defaultHeaderColWidth: 80,
         indicatorTitle: 'indicator',
         autoWrapText: true,
-        columnResizeType: 'indicator',
+        resize: {
+          columnResizeType: 'indicator'
+        },
         // widthMode:'adaptive',
         // heightMode:'adaptive',
         corner: {

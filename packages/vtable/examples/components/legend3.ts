@@ -18,7 +18,9 @@ export function createTable() {
     return `rgb(${red},${green},255)`;
   }
   const option = {
-    columnResizeType: 'all',
+    resize: {
+      columnResizeType: 'all'
+    },
     records: [
       {
         220922103859011: '936196.0161590576',

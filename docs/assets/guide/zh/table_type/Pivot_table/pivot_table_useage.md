@@ -13,7 +13,7 @@
 - `rowTree`：自定义行表头维度树（自定义能力），一般当有维度值特殊排序要求的情况下才需要配置这个树结构。
 - `indicatorsAsCol`：指标是否作为列表头展示，指标值以列展示，默认为 true。
 - `indicatorTitle`：指标标题，显示在角头位置的标题。
-- `rowHierarchyType`：树形层级展示还是平铺展示。
+- `rowHierarchyType`：树形层级展示还是平铺展示，或者树形和平铺结合展示。
 - `hideIndicatorName`：是否需要将表头上的指标名称隐藏掉。默认为 false。
 - `showRowHeader`：是否显示行表头，默认为 true。
 - `showColumnHeader`：是否显示列表头，默认为 true。

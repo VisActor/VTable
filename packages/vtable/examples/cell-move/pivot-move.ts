@@ -413,7 +413,10 @@ export function createTable() {
     widthMode: 'standard', // 宽度模式：standard 标准模式； adaptive 自动填满容器
     // heightMode: 'autoHeight',
     autoWrapText: true,
-    columnResizeType: 'indicator', // 'column' | 'indicator' | 'all'
+    resize: {
+      columnResizeType: 'indicator', // 'column' | 'indicator' | 'all'
+      columnResizeMode: 'header'
+    },
     pivotSortState: [
       {
         dimensions: [
@@ -458,7 +461,6 @@ export function createTable() {
     // tooltip: {
     //   isShowOverflowTextTooltip: true,
     // },
-    columnResizeMode: 'header',
     dragHeaderMode: 'all',
     keyboardOptions: {
       selectAllOnCtrlA: true,
