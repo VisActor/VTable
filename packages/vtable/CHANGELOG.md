@@ -1,6 +1,47 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 19 Feb 2025 07:56:38 GMT and should not be manually modified.
+This log was last generated on Wed, 26 Feb 2025 11:11:06 GMT and should not be manually modified.
+
+## 1.17.0
+Wed, 26 Feb 2025 11:11:06 GMT
+
+### Minor changes
+
+- feat: add switch & button cell type
+- feat: delete loading icon auto register
+
+### Updates
+
+- feat: gantt time scale support visible #3098
+
+
+- docs: update changlog of rush
+
+
+- feat: dropdownmenu support function #3443
+
+
+- fix: after release instance, resize event occor error #3459
+
+
+- fix: when set autoFillWidth the rowSeriesNumber column not change his width #3459
+
+
+- fix: when resize taskbar start or end time tree node update error #3460
+
+
+- feat: add verticalLineDependenceOnTimeScale #3467
+
+
+- fix: fix node env config
+- feat: add api activateChartInstance replaceChartCacheImage
+
+
+- feat: add `specTransformInCell` for support modifying vchart spec of each cell in PivotChart
+
+
+- fix: fix row/col is decimal in animation #3455
+- fix: fix height is decimal in carousel #3458
 
 ## 1.16.2
 Wed, 19 Feb 2025 07:56:38 GMT
