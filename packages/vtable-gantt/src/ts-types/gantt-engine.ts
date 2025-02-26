@@ -451,5 +451,9 @@ export type IMarkLineOptions = {
   toolTipOption?: {
     position?: 'top' | 'bottom';
     tipContent?: string;
+    style?: {
+      contentStyle?: any;
+      panelStyle?: any;
+    };
   };
 };

@@ -16,7 +16,6 @@ export class ToolTip {
       },
       visible: false,
       panel: {
-        visible: true,
         background: '#14161c',
         cornerRadius: 4
       }
@@ -38,11 +37,18 @@ export class ToolTip {
       x = matrix.e + targetWidth / 2 - 2;
       y = matrix.f + targetHeight;
     }
+    const contentStyle = options.style?.contentStyle || { fill: '#fff' };
+    const pannelStyle = options.style?.panelStyle || { background: '#14161c', cornerRadius: 4 };
     this.group.setAttributes({
       content: options.tipContent,
       position,
       visibleAll: true,
       visible: true,
+      contentStyle,
+      panel: {
+        ...pannelStyle,
+        visible: true
+      },
       x,
       y
     });

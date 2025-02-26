@@ -235,7 +235,15 @@ export function createTable() {
       enableCreateMarkLine: true,
       toolTipOption: {
         position: 'top',
-        tipContent: '创建啊啊啊'
+        tipContent: '创建啊啊啊',
+        style: {
+          contentStyle: {
+            fill: 'red'
+          },
+          panelStyle: {
+            background: 'green'
+          }
+        }
       }
     }
   };
