@@ -48,13 +48,10 @@ export class EditManager {
 
     const clickEventId = table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
       const { editCellTrigger = 'doubleclick' } = table.options;
-
-      if (!editCellTrigger.includes('click')) {
-        return;
+      if (editCellTrigger === 'click' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('click'))) {
+        const { col, row } = e;
+        this.startEditCell(col, row);
       }
-
-      const { col, row } = e;
-      this.startEditCell(col, row);
     });
 
     this.listenersId.push(doubleClickEventId, clickEventId);
