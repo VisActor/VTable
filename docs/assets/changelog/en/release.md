@@ -2,22 +2,24 @@
 
 2025-02-26
 
+**💥 Breaking change**
+
+- **@visactor/vtable**: delete loading icon auto register, need to register manually, please refer to the tutorial: /guide/table_type/List_table/tree_list
 
 **🆕 New feature**
 
-- **@visactor/vtable**: gantt time scale support visible [#3098](https://github.com/VisActor/VTable/issues/3098)
+- **@visactor/vtable-gantt**: gantt time scale support visible [#3098](https://github.com/VisActor/VTable/issues/3098)
 - **@visactor/vtable**: dropdownmenu support function [#3443](https://github.com/VisActor/VTable/issues/3443)
-- **@visactor/vtable**: add verticalLineDependenceOnTimeScale [#3467](https://github.com/VisActor/VTable/issues/3467)
+- **@visactor/vtable-gantt**: add verticalLineDependenceOnTimeScale [#3467](https://github.com/VisActor/VTable/issues/3467)
 - **@visactor/vtable**: add api activateChartInstance replaceChartCacheImage
 - **@visactor/vtable**: add `specTransformInCell` for support modifying vchart spec of each cell in PivotChart
 - **@visactor/vtable**: add switch & button cell type
-- **@visactor/vtable**: delete loading icon auto register
 
 **🐛 Bug fix**
 
 - **@visactor/vtable**: after release instance, resize event occor error [#3459](https://github.com/VisActor/VTable/issues/3459)
 - **@visactor/vtable**: when set autoFillWidth the rowSeriesNumber column not change his width [#3459](https://github.com/VisActor/VTable/issues/3459)
-- **@visactor/vtable**: when resize taskbar start or end time tree node update error [#3460](https://github.com/VisActor/VTable/issues/3460)
+- **@visactor/vtable-gantt**: when resize taskbar start or end time tree node update error [#3460](https://github.com/VisActor/VTable/issues/3460)
 - **@visactor/vtable**: fix node env config
 - **@visactor/vtable**: fix row/col is decimal in animation [#3455](https://github.com/VisActor/VTable/issues/3455)
 - **@visactor/vtable**: fix height is decimal in carousel [#3458](https://github.com/VisActor/VTable/issues/3458)
