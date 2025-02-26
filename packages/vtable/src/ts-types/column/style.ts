@@ -195,6 +195,16 @@ export type RadioStyleOption = {
   radioStyle?: RadioStyle;
 } & ITextStyleOption;
 
+export type SwitchStyleOption = {
+  size?: number;
+  spaceBetweenTextAndCircle?: number;
+  switchStyle?: SwitchStyle;
+} & ITextStyleOption;
+
+export type ButtonStyleOption = {
+  buttonStyle?: ButtonStyle;
+} & ITextStyleOption;
+
 export type CheckboxStyle = {
   // 选择框尺寸
   size?: number;
@@ -250,3 +260,51 @@ export type RadioStyle = {
   // checked状态描边颜色
   disableCheckedStroke?: string;
 };
+
+export type SwitchStyle = {
+  // 开关与文字间距
+  spaceBetweenTextAndCircle?: number;
+
+  // 圆圈半径
+  circleRadius?: number;
+  // 开关宽度
+  boxWidth?: number;
+  // 开关高度
+  boxHeight?: number;
+
+  // 未选中状态box填充颜色
+  checkedFill?: string;
+  // 未选中状态box填充颜色
+  uncheckedFill?: string;
+  // disable&checked状态box填充颜色
+  disableCheckedFill?: string;
+  // disable&unchecked状态box填充颜色
+  disableUncheckedFill?: string;
+  // 圆圈填充颜色
+  circleFill?: string;
+};
+
+export interface ButtonStyle {
+  /** 按钮背景色 */
+  buttonColor?: string;
+  /** 按钮边框颜色 */
+  buttonBorderColor?: string;
+  /** 按钮边框宽度 */
+  buttonLineWidth?: number;
+  /** 按钮圆角 */
+  buttonBorderRadius?: number;
+  /** 按钮hover状态背景色 */
+  buttonHoverColor?: string;
+  /** 按钮hover状态边框颜色 */
+  buttonHoverBorderColor?: string;
+  /** 按钮hover状态文本颜色 */
+  buttonTextHoverColor?: string;
+  /** 按钮disable状态背景色 */
+  buttonDisableColor?: string;
+  /** 按钮disable状态边框颜色 */
+  buttonDisableBorderColor?: string;
+  /** 按钮disable状态文本颜色 */
+  buttonTextDisableColor?: string;
+  /** 按钮内边距 */
+  buttonPadding?: number;
+}

@@ -330,7 +330,7 @@ export interface IIndicatorHeaderNode {
 
 层级维度结构显示形式，平铺还是树形结构。
 
-[平铺示例](../demo/table-type/pivot-table) [树形示例](../demo/table-type/pivot-analysis-table-tree)  [平铺树形示例](../demo/table-type/pivot-analysis-table-grid-tree)
+[平铺示例](../demo/table-type/pivot-table) [树形示例](../demo/table-type/pivot-analysis-table-tree) [平铺树形示例](../demo/table-type/pivot-analysis-table-grid-tree)
 
 {{ use: extension-rows-dimension-define( prefix = '#',) }}
 
@@ -347,9 +347,11 @@ export interface IIndicatorHeaderNode {
 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认 false
 
 ## columnHierarchyType('grid' |'grid-tree')
+
 列表头中层级维度结构显示形式，平铺还是树形结构。
 
 ## columnExpandLevel(number)
+
 列表头初始化展开层数，默认是 1。
 
 ## indicatorTitle(string)
@@ -384,24 +386,6 @@ export interface IIndicatorHeaderNode {
 列表头最上层增加一行来显示维度名称 可以自定义或者显示 title 组合名
 
 {{ use: pivot-header-title( prefix = '###',) }}
-
-## columnResizeType(string)
-
-调整列宽的生效范围，可配置项：
-
-- `column`: 调整列宽只调整当前列
-- `indicator`: 调整列宽时对应相同指标的列都会被调整
-- `indicatorGroup`: 调整同父级维度下所有指标列的宽度
-- `all`： 所有列宽都被调整
-
-## rowResizeType(string)
-
-调整行高的生效范围，可配置项：
-
-- `row`: 调整行高只调整当前行
-- `indicator`: 调整行高时对应相同指标的行都会被调整
-- `indicatorGroup`: 调整同父级维度下所有指标行的宽度
-- `all`： 所有行高都被调整
 
 ## pivotSortState(Array)
 

@@ -110,6 +110,12 @@ type ColumnIconOption = ImageIcon | SvgIcon;
 
 {{ use: svg-icon(  prefix = '####') }}
 
+###TextIcon(Object)
+
+注册文本资源的 icon
+
+{{ use: text-icon(  prefix = '####') }}
+
 ## chartModule(Function)
 
 [使用示例](../demo/cell-type/chart)：

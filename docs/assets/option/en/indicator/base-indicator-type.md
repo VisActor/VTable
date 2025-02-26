@@ -99,7 +99,7 @@ icon?:
 #${prefix}ColumnIconOption
 
 ```
-type ColumnIconOption = ImageIcon | SvgIcon;
+type ColumnIconOption = ImageIcon | SvgIcon | TextIcon;
 ```
 
 #${prefix}ImageIcon(Object)
@@ -109,6 +109,10 @@ type is set to 'image'. The image address needs to be set in src
 #${prefix}SvgIcon(Object)
 type is set to 'svg'. You need to configure the svg address or the complete svg file string in svg
 {{ use: svg-icon(  prefix = '##' + ${prefix}) }}
+
+#${prefix}TextIcon(Object)
+type is set to 'text'. You need to configure the text content in content
+{{ use: text-icon(  prefix = '##' + ${prefix}) }}
 
 ${prefix} headerCustomRender(Function|Object)
 Custom rendering content definition for the indicator name header. For details, please refer to [Basic table custom rendering configuration](../option/ListTable-columns-text#headerCustomRender)
@@ -157,8 +161,12 @@ Custom layout elements for the indicator value body cell.
     prefix =  '#'+${prefix},
 ) }}
 
-${prefix} dropDownMenu(Array)
-Dropdown menu item configuration. Dropdown menu items can be first-level menu items or second-level menu items, and only one configuration is required. The specific type is MenuListItem[].
+${prefix} dropDownMenu(MenuListItem[]|Function)
+Dropdown menu item configuration. Dropdown menu items can be first-level menu items or second-level menu items, and only one configuration is required.
+
+具体类型为 `MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[])`。
+
+{{ use: common-menu-list-item() }}
 
 ${prefix} showSort(boolean|Function)
 Whether to display the sorting icon, no data sorting logic

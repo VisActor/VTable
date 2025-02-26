@@ -1,9 +1,9 @@
 /* eslint-disable sort-imports */
 import type { ColorsDef, LineDashsDef, LineWidthsDef, LineWidthsPropertyDefine, LineDashsPropertyDefine } from '.';
-import type { CheckboxStyle, ITextStyleOption, RadioStyle } from './column/style';
+import type { ButtonStyle, CheckboxStyle, ITextStyleOption, RadioStyle, SwitchStyle } from './column/style';
 import type { ColorPropertyDefine, ColorsPropertyDefine } from './style-define';
 import type { ICellAxisOption } from './component/axis';
-import type { PopTipAttributes } from '@visactor/vrender-components';
+import type { PopTipAttributes } from '@src/vrender';
 // ****** Custom Theme *******
 export type PartialTableThemeDefine = Partial<ITableThemeDefine>;
 export type ThemeStyle = ITextStyleOption & {
@@ -167,6 +167,8 @@ export interface ITableThemeDefine {
 
   checkboxStyle?: CheckboxStyle;
   radioStyle?: RadioStyle;
+  switchStyle?: SwitchStyle;
+  buttonStyle?: ButtonStyle;
 
   // style for text pop tip
   textPopTipStyle?: PopTipAttributes;

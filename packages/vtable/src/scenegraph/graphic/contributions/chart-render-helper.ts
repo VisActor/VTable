@@ -81,11 +81,11 @@ export function renderChart(chart: Chart) {
 
   let updateSpec = false;
   if (table.options.specFormat) {
-    const formatResult = table.options.specFormat(chart.attribute.spec);
+    const formatResult = table.options.specFormat(chart.attribute.spec, chartInstance, chart);
     if (formatResult.needFormatSpec && formatResult.spec) {
       const spec = formatResult.spec;
       chartInstance.updateSpecSync(spec);
-      updateSpec = true;
+      updateSpec = formatResult.updateSpec ?? true;
     }
   }
 
@@ -198,7 +198,7 @@ export function startRenderChartQueue(table: any) {
 }
 
 const cacheCanvasSizeLimit = 2000;
-function cacheStageCanvas(stage: IStage, chart: Chart) {
+export function cacheStageCanvas(stage: IStage, chart: Chart) {
   const { viewWidth, viewHeight } = stage;
   if (viewWidth < cacheCanvasSizeLimit && viewHeight < cacheCanvasSizeLimit) {
     chart.cacheCanvas = toCanvas(stage);

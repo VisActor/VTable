@@ -108,8 +108,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
       //分页配置
       this.pagination = options.pagination;
-      this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
-      this.internalProps.rowResizeType = options.rowResizeType ?? 'row';
+      this.internalProps.columnResizeType = options.resize?.columnResizeType ?? options.columnResizeType ?? 'column';
+      this.internalProps.rowResizeType = options.resize?.rowResizeType ?? options.rowResizeType ?? 'row';
       this.internalProps.dataConfig = cloneDeep(options.dataConfig);
       this.internalProps.columnWidthConfig = options.columnWidthConfig;
       this.internalProps.columnWidthConfigForRowHeader = options.columnWidthConfigForRowHeader;
@@ -236,7 +236,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         // this.updatePivotSortState(options.pivotSortState);
       }
       if (Env.mode !== 'node') {
-        // @ts-expect-error
         this.editorManager = new EditManager(this);
       }
 
@@ -330,8 +329,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //分页配置
     this.pagination = options.pagination;
     // 更新protectedSpace
-    internalProps.columnResizeType = options.columnResizeType ?? 'column';
-    internalProps.rowResizeType = options.rowResizeType ?? 'row';
+    internalProps.columnResizeType = options.resize?.columnResizeType ?? options.columnResizeType ?? 'column';
+    internalProps.rowResizeType = options.resize?.rowResizeType ?? options.rowResizeType ?? 'row';
     internalProps.dataConfig = cloneDeep(options.dataConfig);
     this.internalProps.columnWidthConfig = options.columnWidthConfig;
     this.internalProps.columnWidthConfigForRowHeader = options.columnWidthConfigForRowHeader;
@@ -2179,5 +2178,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /** 获取过滤后的数据 */
   getFilteredRecords() {
     return this.dataset?.filterRules;
+  }
+
+  release() {
+    this.editorManager.release();
+    super.release();
   }
 }

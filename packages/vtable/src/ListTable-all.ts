@@ -10,12 +10,14 @@ import {
 import { registerCustomCellStylePlugin } from './plugins/custom-cell-style';
 import { registerListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import {
+  registerButtonCell,
   registerChartCell,
   registerCheckboxCell,
   registerImageCell,
   registerProgressBarCell,
   registerRadioCell,
   registerSparkLineCell,
+  registerSwitchCell,
   registerTextCell,
   registerVideoCell
 } from './scenegraph/group-creater/cell-type';
@@ -34,6 +36,8 @@ registerCheckboxCell();
 registerImageCell();
 registerProgressBarCell();
 registerRadioCell();
+registerSwitchCell();
+registerButtonCell();
 registerSparkLineCell();
 registerTextCell();
 registerVideoCell();

@@ -6,12 +6,12 @@ import type { CellRange, ColumnIconOption } from '../../ts-types';
 import { IconFuncTypeEnum, IconPosition } from '../../ts-types';
 import { CellContent } from '../component/cell-content';
 import type { Group } from '../graphic/group';
-import { Icon } from '../graphic/icon';
+import { Icon, TextIcon } from '../graphic/icon';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from './get-cell-merge';
 import { getHierarchyOffset } from './get-hierarchy-offset';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { isNil, isNumber, isValid, isValidNumber } from '@visactor/vutils';
+import { isNil, isNumber, isValid, isValidNumber, merge } from '@visactor/vutils';
 import { isMergeCellGroup } from './is-merge-cell-group';
 import { breakString } from './break-string';
 import { CUSTOM_CONTAINER_NAME } from '../component/custom';
@@ -486,7 +486,7 @@ export function dealWithIcon(
   dealWithIconComputeVar?: {
     addedHierarchyOffset: number;
   }
-): Icon {
+): Icon | TextIcon {
   // positionType在外部处理
   const iconAttribute = {} as any;
 
@@ -566,9 +566,19 @@ export function dealWithIcon(
     return mark;
   }
   // funcType, cursor, tooltip, hover在事件响应阶段处理
-  const iconMark = new Icon(iconAttribute);
-  iconMark.tooltip = icon.tooltip;
-  iconMark.name = icon.name;
+
+  let iconMark: Icon | TextIcon;
+  if (icon.type === 'text') {
+    iconAttribute.text = icon.content;
+    merge(iconAttribute, icon.style);
+    iconMark = new TextIcon(iconAttribute);
+    iconMark.tooltip = icon.tooltip;
+    iconMark.name = icon.name;
+  } else {
+    iconMark = new Icon(iconAttribute);
+    iconMark.tooltip = icon.tooltip;
+    iconMark.name = icon.name;
+  }
 
   return iconMark;
 }

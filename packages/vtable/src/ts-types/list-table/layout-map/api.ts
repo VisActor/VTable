@@ -22,7 +22,8 @@ import type {
   Aggregation,
   IRowSeriesNumber,
   SortOption,
-  FieldGetter
+  FieldGetter,
+  BaseCellInfo
 } from '../../';
 import type { Aggregator } from '../../dataset/aggregation';
 import type { BaseTableAPI } from '../../base-table';
@@ -67,7 +68,7 @@ export interface HeaderData extends WidthData {
   // freezeIconPosition?: RectProps;
   /**存储图标的位置 坐标及宽高 是包括了boxWidth boxWidth 共getHitIcon方法使用 计算是否命中图标*/
   // iconPositionList?: { [key in IconFuncTypeEnum]?: RectProps & { icon: ColumnIconOption } };
-  dropDownMenu?: MenuListItem[];
+  dropDownMenu?: MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[]);
   pivotInfo?: PivotInfo;
   /**
    * 维度层级level 从0开始：第0层 第1层

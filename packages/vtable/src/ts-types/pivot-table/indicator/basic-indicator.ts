@@ -23,7 +23,7 @@ export interface IBasicHeaderIndicator {
   // chartModule?: string; // 如果配置了columnType未chart，chartType来指定图表组件类型 如'vchart' 需要从预先register的图表类型获取
   // sparklineSpec?: SparklineSpec | ((arg0: CustomRenderFunctionArg) => SparklineSpec);
 
-  dropDownMenu?: MenuListItem[]; // 针对单独指标上配置下拉按钮
+  dropDownMenu?: MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[]); // 针对单独指标上配置下拉按钮
   /** sort排序规则 */
   sort?: boolean;
   /** 显示sort排序icon。为了仅仅显示图标，无排序逻辑 */

@@ -49,8 +49,8 @@ import {
 } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
-import type { CheckBox } from '@visactor/vrender-components';
-import { loadPoptip, setPoptipTheme } from '@visactor/vrender-components';
+import type { CheckBox } from '@src/vrender';
+import { loadPoptip, setPoptipTheme } from '@src/vrender';
 import textMeasureModule from './utils/text-measure';
 import {
   getIconByXY,
@@ -142,14 +142,14 @@ export class Scenegraph {
     setPoptipTheme(this.table.theme.textPopTipStyle);
     let width;
     let height;
-    if (table.options.canvas && table.options.viewBox) {
-      vglobal.setEnv('browser');
-      width = table.options.viewBox.x2 - table.options.viewBox.x1;
-      height = table.options.viewBox.y2 - table.options.viewBox.y1;
-    } else if (Env.mode === 'node') {
+    if (Env.mode === 'node') {
       vglobal.setEnv('node', table.options.modeParams);
       width = table.canvasWidth;
       height = table.canvasHeight;
+    } else if (table.options.canvas && table.options.viewBox) {
+      vglobal.setEnv('browser');
+      width = table.options.viewBox.x2 - table.options.viewBox.x1;
+      height = table.options.viewBox.y2 - table.options.viewBox.y1;
     } else {
       vglobal.setEnv('browser');
       width = table.canvas.width;
@@ -702,6 +702,7 @@ export class Scenegraph {
     }
     const cellGroup = this.getCell(col, row);
     (cellGroup?.firstChild as any)?.activate?.(this.table);
+    return (cellGroup?.firstChild as any)?.activeChartInstance;
   }
 
   removeInteractionBorder(col: number, row: number) {
@@ -2202,8 +2203,9 @@ export class Scenegraph {
     if (iconGraphic) {
       const regedIcons = registerIcons.get();
       const loadingIcon = regedIcons[InternalIconName.loadingIconName];
-
-      dealWithIcon(loadingIcon, iconGraphic, col, row);
+      if (loadingIcon) {
+        dealWithIcon(loadingIcon, iconGraphic, col, row);
+      }
     }
   }
 

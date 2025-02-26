@@ -1,12 +1,13 @@
 // ****** Icon配置信息，header ，以及列Icon *******9
 
+import type { ITextAttribute } from '@src/vrender';
 import type { Placement } from './table-engine';
 
 export interface IIconBase {
   /**
    * icon 是何种内容类型，如svg font。可用来约束不同类型的属性定义
    */
-  type: 'font' | 'svg' | 'path' | 'image';
+  type: 'text' | 'svg' | 'path' | 'image';
   /** icon的高度 */
   width?: number;
   /** icon的高度 */
@@ -75,11 +76,10 @@ export interface IIconBase {
 }
 
 // ****** Column Icon Options *******
-export interface FontIcon extends IIconBase {
-  type: 'font';
-  font?: string;
+export interface TextIcon extends IIconBase {
+  type: 'text';
   content: string;
-  color?: string;
+  style?: ITextAttribute;
 }
 export interface ImageIcon extends IIconBase {
   type: 'image';
@@ -172,4 +172,4 @@ export enum InternalIconName {
   loadingIconName = 'loading'
 }
 // 目前暂不支持FontIcon&PathIcon
-export type ColumnIconOption = ImageIcon | SvgIcon;
+export type ColumnIconOption = ImageIcon | SvgIcon | TextIcon;

@@ -44,7 +44,7 @@ const defaultProps: ButtonProps = {
   },
   panelStyle: {
     visible: true,
-    fill: 'rgb(22, 93, 255)',
+    fill: '#165dff',
     lineWidth: 1,
     cornerRadius: 2
   },
@@ -53,10 +53,10 @@ const defaultProps: ButtonProps = {
   state: {
     panelStyle: {
       hover: {
-        fill: 'rgb(64, 128, 255)'
+        fill: '#4080ff'
       },
       disabled: {
-        fill: 'rgb(148, 191, 255)'
+        fill: '#94bfff'
       }
     }
   }

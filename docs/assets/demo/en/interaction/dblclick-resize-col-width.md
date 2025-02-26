@@ -21,7 +21,6 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
   .then(res => res.json())
   .then(data => {
     const option = {
-      columnResizeMode: 'header',
       records: data,
       rows: [
         {
@@ -96,7 +95,10 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      //columnResizeType:'all',
+      resize: {
+        columnResizeMode: 'header'
+        //columnResizeType:'all',
+      },
       widthMode: 'standard',
       defaultColWidth: 120
     };

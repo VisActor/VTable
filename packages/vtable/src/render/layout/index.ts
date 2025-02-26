@@ -11,4 +11,4 @@ export * from './tag';
 export * from './group';
 export * from './line';
 
-export { CheckBox, Radio } from '@visactor/vrender-components';
+export { CheckBox, Radio } from '@src/vrender';

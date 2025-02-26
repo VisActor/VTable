@@ -27,6 +27,7 @@ import { isValid } from '@visactor/vutils';
 import { InertiaScroll } from './scroll';
 import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
 import { bindGroupTitleCheckboxChange } from './list-table/checkbox';
+import { bindButtonClickEvent } from './component/button';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -168,12 +169,15 @@ export class EventManager {
           eventArgsSet.abstractPos.y,
           eventArgsSet.eventArgs?.targetCell
         );
+        const disableDblclickAutoResizeColWidth =
+          this.table.options.disableDblclickAutoResizeColWidth ??
+          this.table.options.resize?.disableDblclickAutoResizeColWidth;
         if (this.table.eventManager.checkCellFillhandle(eventArgsSet)) {
           this.table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE, {});
         } else if (
           this.table._canResizeColumn(resizeCol.col, resizeCol.row) &&
           resizeCol.col >= 0 &&
-          !this.table.options.disableDblclickAutoResizeColWidth
+          !disableDblclickAutoResizeColWidth
         ) {
           this.table.scenegraph.updateAutoColWidth(resizeCol.col);
           this.table.internalProps._widthResizedColMap.add(resizeCol.col);
@@ -221,6 +225,9 @@ export class EventManager {
 
     // group title checkbox change
     bindGroupTitleCheckboxChange(this.table);
+
+    // button click
+    bindButtonClickEvent(this.table);
   }
 
   dealTableHover(eventArgsSet?: SceneEvent) {
@@ -259,7 +266,12 @@ export class EventManager {
     const { eventArgs } = eventArgsSet;
 
     if (eventArgs) {
-      if (eventArgs.target.name === 'checkbox' || eventArgs.target.name === 'radio') {
+      if (
+        eventArgs.target.name === 'checkbox' ||
+        eventArgs.target.name === 'radio' ||
+        eventArgs.target.name === 'switch' ||
+        eventArgs.target.name === 'button'
+      ) {
         return false;
       }
 

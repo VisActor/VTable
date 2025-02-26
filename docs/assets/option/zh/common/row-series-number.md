@@ -57,7 +57,7 @@ icon?:
 #${prefix}ColumnIconOption
 
 ```
-type ColumnIconOption = ImageIcon | SvgIcon;
+type ColumnIconOption = ImageIcon | SvgIcon | TextIcon;
 ```
 
 #${prefix}ImageIcon(Object)
@@ -67,6 +67,10 @@ type 配置成 'image'。需要配置图片地址在 src 中
 #${prefix}SvgIcon(Object)
 type 配置成 'svg'。需要配置 svg 地址或者 svg 完整文件字符串在 svg 中
 {{ use: svg-icon(  prefix = '##' + ${prefix}) }}
+
+#${prefix}TextIcon(Object)
+type 配置成 'text'。需要配置文本内容在 content 中
+{{ use: text-icon(  prefix = '##' + ${prefix}) }}
 
 ${prefix} headerCustomLayout(Function)
 表头单元格自定义布局元素定义，该自定义形式适合内容复杂布局的单元格。

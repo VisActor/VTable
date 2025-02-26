@@ -194,24 +194,6 @@ Align excel advanced capabilities
 
 Fill handle, when set to true, when a cell is selected, the fill handle will be displayed on the lower right side of the cell. You can drag the fill handle to edit the value of the cell. Or double-click the fill handle to change the value of the cell you want to edit.
 
-#${prefix} columnResizeMode(string) = 'all'
-
-Mouse hover over the cell right border can drag and adjust column width. This operation can trigger the following range:
-
-- 'all' The entire column, including header and body cells, can adjust column width
-- 'none' Disable adjustment
-- 'header' Only adjustable in header cells
-- 'body' Only adjustable in body cells
-
-#${prefix} rowResizeMode(string) = 'none'
-
-Mouse hover over the cell bottom border can drag and adjust row height. This operation can trigger the following range:
-
-- 'all' The entire row, including header and body cells, can adjust row height
-- 'none' Disable adjustment
-- 'header' Only adjustable in header cells
-- 'body' Only adjustable in body cells
-
 #${prefix} dragHeaderMode(string) = 'none'
 
 The switch of dragging the header to move the position. After selecting a cell, drag the cell to trigger the move. The range of replaceable cells is limited:
@@ -299,9 +281,11 @@ Configuration related to the drop-down menu. Disappearance timing: automatically
 
 Menu rendering method, html is currently more complete, default using html rendering method.
 
-##${prefix} defaultHeaderMenuItems(MenuListItem[])
+##${prefix} defaultHeaderMenuItems(MenuListItem[]|Function)
 
-Global settings for built-in drop-down menus, type is `MenuListItem[]`. Currently only valid for basic tables, it will enable the default drop-down menu function for each header cell.
+Global settings for built-in drop-down menus, type is `MenuListItem[] | ((args:{col:number,row:number,table:BaseTableAPI})=>MenuListItem[])`.
+
+Currently only valid for basic tables, it will enable the default drop-down menu function for each header cell.
 
 {{ use: common-menu-list-item() }}
 
@@ -528,6 +512,7 @@ Among them, IEditor is the editor interface defined in @visactor/vtable-editors.
 
 #${prefix} headerEditor (string|Object|Function)
 
+** `PivotChart` does not support setting this configuration item. **
 Global configuration table header display title title editor
 
 ```
@@ -602,3 +587,47 @@ You can configure true to enable the default animation, or you can configure the
 #${prefix} formatCopyValue((value: string) => string)
 
 Format the value when copying.
+
+#${prefix} resize(Object)
+
+Resizing lineHeight/columnWidth interaction configuration, specific configuration items as follows:
+
+#${prefix} columnResizeMode(string) = 'all'
+
+Mouse hover over the cell right border can drag and adjust column width. This operation can trigger the following range:
+
+- 'all' The entire column, including header and body cells, can adjust column width
+- 'none' Disable adjustment
+- 'header' Only adjustable in header cells
+- 'body' Only adjustable in body cells
+
+#${prefix} rowResizeMode(string) = 'none'
+
+Mouse hover over the cell bottom border can drag and adjust row height. This operation can trigger the following range:
+
+- 'all' The entire row, including header and body cells, can adjust row height
+- 'none' Disable adjustment
+- 'header' Only adjustable in header cells
+- 'body' Only adjustable in body cells
+
+##${prefix} disableDblclickAutoResizeColWidth(boolean) = false
+
+Disable auto resize column width when double tapping the column border line
+
+columnResizeType(string)
+
+Only affects in PivotTable/PivotChard The range of effects when adjusting column width, configurable options:
+
+- `column`: Adjusting the column width only adjusts the current column
+- `indicator`: When adjusting the column width, the corresponding columns of the same indicator will be adjusted
+- `indicatorGroup`: Adjust the width of all indicator columns under the same parent dimension
+- `all`: All column widths are adjusted
+
+##${prefix} rowResizeType(string)
+
+Only affects in PivotTable/PivotChard Adjust the effective range of row height, configurable items:
+
+- `row`: adjust the row height only adjust the current row
+- `indicator`: rows corresponding to the same indicator will be adjusted when the row height is adjusted
+- `indicatorGroup`: Adjust the height of all indicator rows under the same parent dimension
+- `all`: All row heights are adjusted

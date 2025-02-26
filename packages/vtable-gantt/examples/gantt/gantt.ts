@@ -889,10 +889,20 @@ export function createTable() {
     grid: {
       // backgroundColor: 'gray',
       weekendBackgroundColor: 'yellow',
-      verticalLine: {
-        lineWidth: 1,
-        lineColor: '#e1e4e8'
+      verticalLine(args) {
+        const dateIndex = args.date?.getDate();
+        if (dateIndex === 20) {
+          return {
+            lineWidth: 1,
+            lineColor: '#e1e4e8'
+          };
+        }
+        return {
+          lineWidth: 1,
+          lineColor: 'red'
+        };
       },
+      verticalLineDependenceOnTimeScale: 'week',
       horizontalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
@@ -968,6 +978,7 @@ export function createTable() {
           format(date) {
             return `Week ${date.dateIndex}`;
           },
+
           style: {
             fontSize: 20,
             fontWeight: 'bold',
@@ -980,6 +991,7 @@ export function createTable() {
           format(date) {
             return date.dateIndex.toString();
           },
+
           style: {
             fontSize: 20,
             fontWeight: 'bold',
