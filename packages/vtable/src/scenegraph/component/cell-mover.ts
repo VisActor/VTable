@@ -94,7 +94,7 @@ export class CellMover {
       linePoints.push({ x: 0, y: this.table.tableNoFrameHeight });
     } else if (
       cellLocation === 'rowHeader' ||
-      (this.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+      (this.table.internalProps.layoutMap as SimpleHeaderLayoutMap).canDragSortRow(col, row)
     ) {
       rectY = this.table.getRowsHeight(0, row - 1) - this.table.stateManager.scroll.verticalBarPos;
       rectX = this.table.getColsWidth(0, this.table.frozenColCount - 1);
