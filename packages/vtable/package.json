@@ -43,7 +43,7 @@
     "eslint": "eslint --debug --fix src/",
     "build": "bundle --clean",
     "dev": "bundle --clean -f es -w",
-    "start": "vite ./vite",
+    "start": "vite serve examples",
     "test": "jest --silent",
     "test-cov": "jest --coverage",
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts",

@@ -37,6 +37,8 @@ export interface IGrid {
 
   verticalLine?: ILineStyle | ((args: GridVerticalLineStyleArgumentType) => ILineStyle);
   horizontalLine?: ILineStyle | ((args: GridHorizontalLineStyleArgumentType) => ILineStyle);
+  /** 竖线依赖的日期刻度。默认为timelineHeader中scales中的最小时间粒度 */
+  verticalLineDependenceOnTimeScale?: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second';
 }
 //#region gantt
 export interface GanttConstructorOptions {
