@@ -2180,4 +2180,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   getFilteredRecords() {
     return this.dataset?.filterRules;
   }
+
+  release() {
+    this.editorManager.release();
+    super.release();
+  }
 }

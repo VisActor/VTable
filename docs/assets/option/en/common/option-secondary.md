@@ -510,6 +510,7 @@ Among them, IEditor is the editor interface defined in @visactor/vtable-editors.
 
 #${prefix} headerEditor (string|Object|Function)
 
+** `PivotChart` does not support setting this configuration item. **
 Global configuration table header display title title editor
 
 ```
