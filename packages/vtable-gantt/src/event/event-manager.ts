@@ -167,7 +167,7 @@ function bindTableGroupListener(event: EventManager) {
       const phaseContentGroupTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'mark-line-content';
       });
-      if (phaseGroupTarget) {
+      if (phaseGroupTarget && gantt.parsedOptions.markLineOptions.enableCreateMarkLine) {
         if (scene._gantt.stateManager.phaseIcon.target !== phaseGroupTarget) {
           scene._gantt.stateManager.phaseIcon.target = phaseGroupTarget;
           stateManager.showPhaseIconHover();

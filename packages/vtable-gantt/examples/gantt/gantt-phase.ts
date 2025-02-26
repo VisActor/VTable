@@ -230,7 +230,13 @@ export function createTable() {
     scrollStyle: {
       visible: 'scrolling'
     },
-    overscrollBehavior: 'none'
+    overscrollBehavior: 'none',
+    markLineOptions: {
+      enableCreateMarkLine: true,
+      toolTipOption: {
+        position: 'bottom'
+      }
+    }
   };
 
   const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);

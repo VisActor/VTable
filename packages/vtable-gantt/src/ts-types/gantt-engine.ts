@@ -210,6 +210,7 @@ export interface GanttConstructorOptions {
   tasksShowMode?: TasksShowMode;
   eventOptions?: IEventOptions;
   keyboardOptions?: IKeyboardOptions;
+  markLineOptions?: IMarkLineOptions;
 }
 /**
  * IBarLabelText
@@ -444,3 +445,10 @@ export type ITaskBarHoverStyle = {
   barOverlayColor?: string;
 };
 //#endregion
+
+export type IMarkLineOptions = {
+  enableCreateMarkLine: boolean;
+  toolTipOption: {
+    position: 'top' | 'bottom' | 'left' | 'right';
+  };
+};
