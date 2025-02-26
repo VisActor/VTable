@@ -1024,7 +1024,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param pixelRatio
    */
   setPixelRatio(pixelRatio: number) {
-    if (pixelRatio !== this.internalProps.pixelRatio) {
+    if (pixelRatio !== this.internalProps?.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
       const canvasWidth = this.canvasWidth;
       this.internalProps.calcWidthContext = {
