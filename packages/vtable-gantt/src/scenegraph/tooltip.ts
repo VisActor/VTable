@@ -24,13 +24,26 @@ export class ToolTip {
     scene.ganttGroup.addChild(this.group);
   }
   show(graphic: IGraphic<Partial<IRectGraphicAttribute>>) {
+    const options = this._scene._gantt.parsedOptions.markLineOptions;
     const matrix = graphic.globalTransMatrix;
     const targetWidth = graphic.attribute.width;
+    const targetHeight = graphic.attribute.height;
+    let x;
+    let y;
+    const position = options.toolTipOption?.position || 'top';
+    if (position === 'top') {
+      x = matrix.e + targetWidth / 2 - 2;
+      y = matrix.f;
+    } else if (position === 'bottom') {
+      x = matrix.e + targetWidth / 2 - 2;
+      y = matrix.f + targetHeight;
+    }
     this.group.setAttributes({
+      position,
       visibleAll: true,
       visible: true,
-      x: matrix.e + targetWidth / 2 - 2,
-      y: matrix.f - 4
+      x,
+      y
     });
   }
 

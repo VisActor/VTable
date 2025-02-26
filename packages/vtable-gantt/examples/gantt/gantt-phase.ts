@@ -234,7 +234,7 @@ export function createTable() {
     markLineOptions: {
       enableCreateMarkLine: true,
       toolTipOption: {
-        position: 'bottom'
+        position: 'top'
       }
     }
   };

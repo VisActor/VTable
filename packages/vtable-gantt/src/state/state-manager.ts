@@ -984,7 +984,7 @@ export class StateManager {
   showPhaseIconHover() {
     const target = this._gantt.stateManager.phaseIcon.target;
     if (target) {
-      const phaseGroup = this._gantt.scenegraph.timelineHeader.showPhaseIcon(target.parent);
+      const phaseGroup = this._gantt.scenegraph.timelineHeader.showPhaseIcon(target.parent.parent);
       if (phaseGroup) {
         this._gantt.scenegraph.showToolTip(phaseGroup);
       }
