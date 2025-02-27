@@ -464,7 +464,7 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 
 ```
 {
-  customCellStyle: {id: string;style: ColumnStyleOption}[]
+  customCellStyle: {id: string;style: ColumnStyleOption | ((styleArg: StylePropertyFunctionArg) => ColumnStyleOption)}[]
 }
 ```
 

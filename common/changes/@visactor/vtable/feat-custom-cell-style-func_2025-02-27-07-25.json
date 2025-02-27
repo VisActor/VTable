@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: customCellStyle supports functional config #3483",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
