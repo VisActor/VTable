@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-02-27 18:51:11
+ * @LastEditTime: 2025-02-27 19:33:17
  * @Description:
  */
 import type {
@@ -64,8 +64,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
    * @return {*}
    */
   renderGraphicHTML(graphic: IGraphic) {
-    const { id } = this.getGraphicOptions(graphic) || {};
-    if (!id) {
+    if (!this.checkNeedRender(graphic)) {
       return;
     }
     // 加入异步渲染队列
@@ -102,28 +101,9 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
    * @return {*}
    */
   doRenderGraphic(graphic: IGraphic) {
-    const { id, options } = this.getGraphicOptions(graphic) || {};
-    if (!id) {
-      return;
-    }
-
+    const { id, options } = this.getGraphicOptions(graphic);
     const stage = graphic.stage;
-    if (!stage) {
-      return;
-    }
-
     const { element, container: expectedContainer } = options;
-    if (!element) {
-      return;
-    }
-
-    const isInViewport = this.checkInViewport(graphic);
-    if (!isInViewport) {
-      // 不在可视区内(clearCacheContainer方法会移除节点，不重复移除)
-      // this.removeElement(id);
-      return;
-    }
-
     // 获取实际容器
     const actualContainer = expectedContainer ? checkFrozenContainer(graphic) : expectedContainer;
     // 检查是否需要移除旧容器
@@ -135,7 +115,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     }
 
     // 渲染或更新 Vue 组件
-    if (!targetMap || !document.contains(targetMap.wrapContainer)) {
+    if (!targetMap || !this.checkDom(targetMap.wrapContainer)) {
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, actualContainer, { id, options });
       if (wrapContainer) {
         render(element, wrapContainer);
@@ -177,7 +157,31 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     const id = isNil(vue.id) ? `${graphic.id ?? graphic._uid}_vue` : vue.id;
     return { id, options: vue };
   }
+  /**
+   * @description: 检查是否需要渲染
+   * @param {IGraphic} graphic
+   * @return {*}
+   */
+  checkNeedRender(graphic: IGraphic) {
+    const { id, options } = this.getGraphicOptions(graphic) || {};
+    if (!id) {
+      return false;
+    }
 
+    const stage = graphic.stage;
+    if (!stage) {
+      return false;
+    }
+
+    const { element } = options;
+    if (!element) {
+      return false;
+    }
+
+    const isInViewport = this.checkInViewport(graphic);
+    // 不在可视区内暂时不需要移除，因为在 clearCacheContainer 方法中提前被移除了
+    return isInViewport;
+  }
   /**
    * @description: 判断当前是否在可视区内
    * @param {IGraphic} graphic
@@ -206,6 +210,17 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
 
     return isIntersecting;
   }
+  /**
+   * @description: 检查 dom 是否存在
+   * @param {HTMLElement} dom
+   * @return {*}
+   */
+  checkDom(dom: HTMLElement) {
+    if (!dom) {
+      return false;
+    }
+    return document.contains(dom);
+  }
 
   /**
    * @description: 清除所有 dom
@@ -226,6 +241,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
    * @param {string} id
    * @param {boolean} clear 强制清除
    * @return {*}
+   * 目前涉及到页面重绘的操作(比如列宽拖动会使得图形重绘，id变更)，会有短暂的容器插拔现象
    */
   removeElement(id: string, clear?: boolean) {
     const record = this.htmlMap?.[id];
@@ -244,7 +260,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       // 标记不在视口
       record.isInViewport = false;
     } else {
-      super.removeElement(id);
+      this.checkDom(wrapContainer) && super.removeElement(id);
       // 清理引用
       delete this.htmlMap[id];
     }
@@ -273,7 +289,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     const record = this.htmlMap[id];
     if (record && !record.isInViewport) {
       const { wrapContainer } = record;
-      if (!document.contains(wrapContainer)) {
+      if (!this.checkDom(wrapContainer)) {
         // 添加游离节点
         nativeContainer.appendChild(wrapContainer);
       }
