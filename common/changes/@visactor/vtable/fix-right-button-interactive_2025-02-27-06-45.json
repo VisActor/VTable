@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: active right button interactive #3482",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
