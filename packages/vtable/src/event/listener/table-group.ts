@@ -456,10 +456,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
     // e.preventDefault(); //为了阻止mousedown事件的触发，后续：不能这样写，会阻止table聚焦
     table.eventManager.LastPointerXY = { x: e.x, y: e.y };
-    if (e.button !== 0) {
-      // 只处理左键
-      return;
-    }
+    // if (e.button !== 0) {
+    //   // 只处理左键
+    //   return;
+    // }
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     eventManager.downIcon = undefined;
     if (stateManager.interactionState !== InteractionState.default) {
