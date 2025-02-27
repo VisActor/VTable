@@ -2,12 +2,11 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-02-26 19:57:19
+ * @LastEditTime: 2025-02-27 18:51:11
  * @Description:
  */
 import type {
   CommonDomOptions,
-  CreateDOMParamsType,
   IGraphic,
   IGroup,
   IPlugin,
@@ -19,11 +18,13 @@ import { HtmlAttributePlugin, application } from '@visactor/vtable/es/vrender';
 import {
   calculateAnchorOfBounds,
   isArray,
+  isEqual,
   isFunction,
   isNil,
   isObject,
   isString,
-  styleStringToObject
+  styleStringToObject,
+  uniqArray
 } from '@visactor/vutils';
 import { render } from 'vue';
 
@@ -44,41 +45,65 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       renderId: number;
       /** 图形 */
       graphic: IGraphic;
+      /** 是否在视口内 */
+      isInViewport: boolean;
+      /** 上次位置 */
+      lastPosition?: { x: number; y: number };
+      /** 上次样式 */
+      lastStyle?: Record<string, any>;
     }
   >;
+  /** 渲染队列 */
+  private renderQueue = new Set<IGraphic>();
+  /** 是否正在渲染 */
+  private isRendering = false;
 
-  /**
-   * @description: 移除元素
-   * @param {string} id
-   * @return {*}
-   */
-  removeElement(id: string) {
-    const record = this.htmlMap?.[id];
-    if (!record) {
-      return;
-    }
-    const { wrapContainer } = record;
-    // 1. 卸载组件
-    if (wrapContainer) {
-      render(null, wrapContainer);
-    }
-    // 2. 移除DOM
-    super.removeElement(id);
-    // 3. 清理事件
-    this.removeWrapContainerEventListener(wrapContainer);
-    // 4. 清理引用
-    delete this.htmlMap[id];
-  }
   /**
    * @description: 单元格变化后重新渲染组件，由 HtmlAttributePlugin 插件触发
    * @param {IGraphic} graphic
    * @return {*}
    */
   renderGraphicHTML(graphic: IGraphic) {
-    // TODO render 组件接入 vue 类型
-    // @ts-ignore
-    const { vue } = graphic.attribute;
-    if (!vue) {
+    const { id } = this.getGraphicOptions(graphic) || {};
+    if (!id) {
+      return;
+    }
+    // 加入异步渲染队列
+    this.renderQueue.add(graphic);
+    this.scheduleRender();
+  }
+
+  /**
+   * @description: 渲染调度
+   * @return {*}
+   */
+  private scheduleRender() {
+    if (this.isRendering) {
+      return;
+    }
+
+    this.isRendering = true;
+    requestAnimationFrame(() => {
+      this.renderQueue.forEach(graphic => {
+        try {
+          this.doRenderGraphic(graphic);
+        } catch (error) {
+          const { id } = this.getGraphicOptions(graphic) || {};
+          this.removeElement(id, true);
+        }
+      });
+      this.renderQueue.clear();
+      this.isRendering = false;
+    });
+  }
+  /**
+   * @description: 单元格变化后实际组件渲染方法
+   * @param {IGraphic} graphic
+   * @return {*}
+   */
+  doRenderGraphic(graphic: IGraphic) {
+    const { id, options } = this.getGraphicOptions(graphic) || {};
+    if (!id) {
       return;
     }
 
@@ -87,24 +112,31 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       return;
     }
 
-    const { element, container: expectedContainer } = vue;
+    const { element, container: expectedContainer } = options;
     if (!element) {
+      return;
+    }
+
+    const isInViewport = this.checkInViewport(graphic);
+    if (!isInViewport) {
+      // 不在可视区内(clearCacheContainer方法会移除节点，不重复移除)
+      // this.removeElement(id);
       return;
     }
 
     // 获取实际容器
     const actualContainer = expectedContainer ? checkFrozenContainer(graphic) : expectedContainer;
-    const id = isNil(vue.id) ? `${graphic.id ?? graphic._uid}_vue` : vue.id;
     // 检查是否需要移除旧容器
     let targetMap = this.htmlMap?.[id];
     if (targetMap && actualContainer && actualContainer !== targetMap.container) {
+      // 容器变更
       this.removeElement(id);
       targetMap = null;
     }
 
     // 渲染或更新 Vue 组件
-    if (!targetMap) {
-      const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, actualContainer);
+    if (!targetMap || !document.contains(targetMap.wrapContainer)) {
+      const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, actualContainer, { id, options });
       if (wrapContainer) {
         render(element, wrapContainer);
         targetMap = {
@@ -112,7 +144,10 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
           nativeContainer,
           container: actualContainer,
           renderId: this.renderId,
-          graphic
+          graphic,
+          isInViewport: true,
+          lastPosition: { x: 0, y: 0 },
+          lastStyle: {}
         };
         this.htmlMap[id] = targetMap;
       }
@@ -123,8 +158,98 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     // 更新样式并记录渲染 ID
     if (targetMap) {
       this.updateStyleOfWrapContainer(graphic, stage, targetMap.wrapContainer, targetMap.nativeContainer);
-      this.htmlMap[id].renderId = this.renderId;
+      targetMap.renderId = this.renderId;
     }
+  }
+
+  /**
+   * @description: 获取渲染参数
+   * @param {IGraphic} graphic
+   * @return {*}
+   */
+  private getGraphicOptions(graphic: IGraphic) {
+    // TODO render 组件接入 vue 类型
+    //@ts-ignore
+    const { vue } = graphic.attribute;
+    if (!vue) {
+      return null;
+    }
+    const id = isNil(vue.id) ? `${graphic.id ?? graphic._uid}_vue` : vue.id;
+    return { id, options: vue };
+  }
+
+  /**
+   * @description: 判断当前是否在可视区内
+   * @param {IGraphic} graphic
+   * @return {*}
+   */
+  checkInViewport(graphic: IGraphic) {
+    const { stage, globalAABBBounds: cBounds } = graphic;
+    if (!stage) {
+      return false;
+    }
+    // 设立缓冲区 100px，提前加载
+    const BUFFER = 100;
+    // 获取视口的AABB边界
+    //@ts-ignore
+    const { AABBBounds: vBounds } = stage;
+    // 扩展视口判断范围
+    const eBounds = {
+      x1: vBounds.x1 - BUFFER,
+      x2: vBounds.x2 + BUFFER,
+      y1: vBounds.y1 - BUFFER,
+      y2: vBounds.y2 + BUFFER
+    };
+    // 判断两个区域是否相交
+    const isIntersecting =
+      cBounds.x1 < eBounds.x2 && cBounds.x2 > eBounds.x1 && cBounds.y1 < eBounds.y2 && cBounds.y2 > eBounds.y1;
+
+    return isIntersecting;
+  }
+
+  /**
+   * @description: 清除所有 dom
+   * @param {IGraphic} g
+   * @return {*}
+   */
+  removeAllDom(g: IGraphic) {
+    if (this.htmlMap) {
+      Object.keys(this.htmlMap).forEach(key => {
+        this.removeElement(key, true);
+      });
+
+      this.htmlMap = null;
+    }
+  }
+  /**
+   * @description: 移除元素
+   * @param {string} id
+   * @param {boolean} clear 强制清除
+   * @return {*}
+   */
+  removeElement(id: string, clear?: boolean) {
+    const record = this.htmlMap?.[id];
+    if (!record) {
+      return;
+    }
+    const { wrapContainer } = record;
+    if (!wrapContainer) {
+      return;
+    }
+    // 卸载子组件
+    render(null, wrapContainer);
+    if (!clear) {
+      // 移除 dom 但保留在 htmlMap 中，供下次进入可视区时快速复用
+      wrapContainer.remove();
+      // 标记不在视口
+      record.isInViewport = false;
+    } else {
+      super.removeElement(id);
+      // 清理引用
+      delete this.htmlMap[id];
+    }
+    // 清理事件
+    this.removeWrapContainerEventListener(wrapContainer);
   }
 
   /**
@@ -134,13 +259,28 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
    * @param {CreateDOMParamsType} domParams
    * @return {*}
    */
-  getWrapContainer(stage: IStage, userContainer?: string | HTMLElement | null, domParams?: CreateDOMParamsType) {
+  getWrapContainer(stage: IStage, userContainer?: string | HTMLElement | null, domParams?: any) {
     let nativeContainer: HTMLElement;
     if (userContainer) {
       nativeContainer =
         typeof userContainer === 'string' ? application.global.getElementById(userContainer) : userContainer;
     } else {
       nativeContainer = stage.window.getContainer();
+    }
+
+    const { id } = domParams || {};
+    // 从 htmlMap 查找可复用 dom
+    const record = this.htmlMap[id];
+    if (record && !record.isInViewport) {
+      const { wrapContainer } = record;
+      if (!document.contains(wrapContainer)) {
+        // 添加游离节点
+        nativeContainer.appendChild(wrapContainer);
+      }
+      return {
+        wrapContainer,
+        nativeContainer
+      };
     }
 
     return {
@@ -166,6 +306,23 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     const { attribute, type } = graphic as IGroup;
     //@ts-ignore
     const { vue: options, width, height, visible, display, ...rest } = attribute || {};
+    const { x: left, y: top } = this.calculatePosition(graphic, options.anchorType);
+    const { left: offsetX, top: offsetTop } = this.calculateOffset(stage, nativeContainer, left, top);
+
+    const { id } = this.getGraphicOptions(graphic) || {};
+    const record = id ? this.htmlMap[id] : null;
+    if (!record) {
+      return;
+    }
+
+    // 位置变化检查
+    const positionChanged =
+      !record.lastPosition || record.lastPosition.x !== offsetX || record.lastPosition.y !== offsetTop;
+    if (!positionChanged) {
+      // 位置没有变化，无需更新样式
+      return;
+    }
+
     // 默认自定义区域内也可带动表格画布滚动
     const { pointerEvents = true, penetrateEventList = ['wheel'] } = options;
     const calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
@@ -175,6 +332,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       overflow: 'hidden',
       ...(style || {}),
       ...(rest || {}),
+      transform: `translate(${offsetX}px, ${offsetTop}px)`,
       boxSizing: 'border-box',
       display: visible !== false ? display || 'block' : 'none',
       pointerEvents: pointerEvents === true ? 'all' : pointerEvents || 'none',
@@ -183,7 +341,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
 
     if (calculateStyle.pointerEvents !== 'none') {
       this.removeWrapContainerEventListener(wrapContainer);
-      penetrateEventList.forEach(event => {
+      uniqArray(penetrateEventList).forEach((event: any) => {
         if (event === 'wheel') {
           wrapContainer.addEventListener('wheel', this.onWheel);
           wrapContainer.addEventListener('wheel', e => e.preventDefault(), true);
@@ -191,24 +349,23 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       });
     }
 
-    const { x: left, y: top } = this.calculatePosition(graphic, options.anchorType);
-    const { left: offsetX, top: offsetTop } = this.calculateOffset(stage, nativeContainer, left, top);
-
-    calculateStyle.left = `${offsetX}px`;
-    calculateStyle.top = `${offsetTop}px`;
-
     if (type === 'text' && options.anchorType === 'position') {
       Object.assign(calculateStyle, this.getTransformOfText(graphic as IText));
     }
-
     this.applyUserStyles(options, calculateStyle, { offsetX, offsetTop, graphic, wrapContainer });
 
-    // TODO 确认是否需要对接 VTableBrowserEnvContribution
-    application.global.updateDom(wrapContainer, {
-      width,
-      height,
-      style: calculateStyle
-    });
+    // 样式变化检查
+    const styleChanged = !isEqual(record.lastStyle, calculateStyle);
+    if (styleChanged) {
+      // TODO 确认是否需要对接 VTableBrowserEnvContribution
+      application.global.updateDom(wrapContainer, {
+        width,
+        height,
+        style: calculateStyle
+      });
+
+      record.lastStyle = calculateStyle;
+    }
   }
 
   /**

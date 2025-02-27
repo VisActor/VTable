@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 10:51:41
  * @LastEditors: lym
- * @LastEditTime: 2025-02-26 20:02:59
+ * @LastEditTime: 2025-02-27 17:03:22
  * @Description: 自定义dom组件-插槽式
 -->
 <template>
@@ -93,12 +93,12 @@ import {
 import * as VTable from '../../../../../../vtable/src/index';
 import { generateMockData } from '../../utils';
 
-const { columns, records } = generateMockData(20);
+const { columns, records } = generateMockData(1000);
 
 /** 表格配置 */
 const tableOptions = ref({
   theme: VTable.themes.default.DEFAULT.extends({
-    scrollStyle: { barToSide: false, visible: 'always' }
+    scrollStyle: { barToSide: true, visible: 'always' }
   }),
   defaultHeaderRowHeight: 40,
   defaultRowHeight: 90,
@@ -122,11 +122,14 @@ const tableRef = ref();
  * @return {*}
  */
 const filterData = (field: string, value: any) => {
+  const { vTableInstance: instance } = tableRef.value;
   if (!value) {
-    tableOptions.value.records = records;
+    // tableOptions.value.records = records;
+    instance.setRecords(records);
     return;
   }
-  tableOptions.value.records = records.filter(item => item[field] === value);
+  // tableOptions.value.records = records.filter(item => item[field] === value);
+  instance.setRecords(records.filter(item => item[field] === value));
 };
 /**
  * @description: 冻结列
