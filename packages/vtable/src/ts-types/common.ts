@@ -4,6 +4,7 @@ import type { ColumnData } from './list-table/layout-map/api';
 import type { CellLocation, CellRange, FieldData, FieldDef } from './table-engine';
 import type { Rect } from '../tools/Rect';
 import type { BaseTableAPI } from './base-table';
+import type { StylePropertyFunctionArg } from './style-define';
 
 export type MaybePromise<T> = T | Promise<T>;
 
@@ -141,7 +142,7 @@ export type SortOrder = 'asc' | 'desc' | 'normal' | 'ASC' | 'DESC' | 'NORMAL';
 
 export type CustomCellStyle = {
   id: string;
-  style: ColumnStyleOption;
+  style: ColumnStyleOption | ((styleArg: StylePropertyFunctionArg) => ColumnStyleOption);
 };
 
 export type CustomCellStyleArrangement = {
