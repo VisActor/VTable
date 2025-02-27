@@ -524,6 +524,32 @@ export function bindTableGroupListener(eventManager: EventManager) {
               // console.log('DRAG_SELECT_START');
             }
           }, 500);
+          if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEENTER_CELL)) {
+            // const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
+            const cellGoup: any = e.path.find(node => (node as any).role === 'cell');
+            if (
+              cellGoup?.role === 'cell' &&
+              isValid(cellGoup.col) &&
+              isValid(cellGoup.row) &&
+              (cellGoup.col !== table.stateManager.hover.cellPos.col ||
+                cellGoup.row !== table.stateManager.hover.cellPos.row) &&
+              (cellGoup.col !== table.stateManager.hover.cellPosContainHeader?.col ||
+                cellGoup.row !== table.stateManager.hover.cellPosContainHeader?.row)
+            ) {
+              table.fireListeners(TABLE_EVENT_TYPE.MOUSEENTER_CELL, {
+                col: cellGoup.col,
+                row: cellGoup.row,
+                cellRange: table.getCellRangeRelativeRect({
+                  col: cellGoup.col,
+                  row: cellGoup.row
+                }),
+                scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
+                event: e.nativeEvent,
+                target: eventArgsSet?.eventArgs?.target,
+                mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
+              });
+            }
+          }
           // 这里处理成hover  这样移动端 当点击到带有下拉菜单dropdown的单元格时 那个icon才能绘制出来。可以测试example的menu示例
           eventManager.dealTableHover(eventArgsSet);
         } else {
