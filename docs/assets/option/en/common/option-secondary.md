@@ -466,7 +466,7 @@ Customize cell merging rules. When the incoming row and column numbers are withi
 
 ```
 {
-   customCellStyle: {id: string;style: ColumnStyleOption}[]
+   customCellStyle: {id: string;style: ColumnStyleOption | ((styleArg: StylePropertyFunctionArg) => ColumnStyleOption)}[]
 }
 ```
 
