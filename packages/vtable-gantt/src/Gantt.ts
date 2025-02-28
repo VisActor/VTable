@@ -774,12 +774,12 @@ export class Gantt extends EventTarget {
     //   0,
     //   index + this.taskListTableInstance.columnHeaderLevelCount
     // );
-    if (!Array.isArray(index)) {
-      index = this.taskListTableInstance.getRecordIndexByCell(
-        0,
-        index + this.taskListTableInstance.columnHeaderLevelCount
-      );
-    }
+    // if (!Array.isArray(index)) {
+    //   index = this.taskListTableInstance.getRecordIndexByCell(
+    //     0,
+    //     index + this.taskListTableInstance.columnHeaderLevelCount
+    //   );
+    // }
     this.taskListTableInstance.updateRecords([record], [index]);
   }
   /**
