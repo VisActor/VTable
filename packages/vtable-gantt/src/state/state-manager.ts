@@ -365,6 +365,9 @@ export class StateManager {
       );
       const timelineStartDate =
         this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[startDateColIndex];
+      if (!timelineStartDate) {
+        return;
+      }
       const newStartDate = timelineStartDate.startDate;
       // const endDateColIndex = getDateIndexByX(
       //   this.moveTaskBar.target.attribute.x +
@@ -630,6 +633,9 @@ export class StateManager {
         this._gantt
       );
       const timelineDate = this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[colIndex];
+      if (!timelineDate) {
+        return;
+      }
       const targetDate = direction === 'left' ? timelineDate.startDate : timelineDate.endDate;
       // diff_days = direction === 'left' ? -diff_days : diff_days;
 
