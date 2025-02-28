@@ -106,11 +106,12 @@ export interface TableEventHandlersEventArgumentMap {
   click_markline_icon: {
     event: Event;
     data: ITimelineDateInfo[];
-    postion: IPosition;
+    position: IPosition;
   };
   click_markline_content: {
     event: Event;
     data: IMarkLine;
+    position: IPosition;
   };
 }
 
