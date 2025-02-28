@@ -854,6 +854,12 @@ export class Gantt extends EventTarget {
     };
   }
 
+  /**
+   * 更新任务的开始日期
+   * @param startDate 新的开始日期
+   * @param index 对应的一定是左侧表格body的index
+   * @param sub_task_index 子任务的index 只有当TasksShowMode时dsunb_task_* 的时候才会传入
+   */
   _updateStartDateToTaskRecord(startDate: Date, index: number, sub_task_index?: number) {
     const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const startDateField = this.parsedOptions.startDateField;
