@@ -15,7 +15,7 @@ export function createTable() {
           field: 'group',
           title: 'department',
           width: 'auto',
-          tree: true,
+          // tree: true,
           fieldFormat(rec) {
             return rec['department'] ?? rec['group'] ?? rec['name'];
           }
@@ -60,7 +60,12 @@ export function createTable() {
       const option = {
         records: data,
         columns,
-        widthMode: 'standard'
+        widthMode: 'standard',
+        rowSeriesNumber: {
+          width: 'auto',
+          title: '行号',
+          tree: true
+        }
       };
       tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window['tableInstance'] = tableInstance;

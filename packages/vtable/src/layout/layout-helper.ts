@@ -72,14 +72,14 @@ export function checkHasTreeDefine(layoutMap: SimpleHeaderLayoutMap) {
   if (layoutMap._table.options.groupBy) {
     return true;
   }
-  const { columns } = layoutMap._table.options as ListTableConstructorOptions;
+  const { columns, rowSeriesNumber } = layoutMap._table.options as ListTableConstructorOptions;
   if (isArray(columns) && columns.length > 0) {
     for (let i = 0; i < columns.length; i++) {
       const column = columns[i];
       if (isString(column)) {
         continue;
       }
-      if (column.tree) {
+      if (column.tree || (rowSeriesNumber && rowSeriesNumber.tree)) {
         return true;
       }
     }

@@ -108,6 +108,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           return {
             id: this.seqId++,
             title: seriesNumber.title,
+            tree: seriesNumber.tree,
             define: merge({ field: '_vtable_rowSeries_number_' + index }, seriesNumber),
             cellType: seriesNumber.cellType ?? 'text',
             headerType: rowSeriesNumber.cellType ?? 'text',
