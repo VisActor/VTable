@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-02-27 19:33:17
+ * @LastEditTime: 2025-02-28 09:21:32
  * @Description:
  */
 import type {
@@ -48,7 +48,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       /** 是否在视口内 */
       isInViewport: boolean;
       /** 上次位置 */
-      lastPosition?: { x: number; y: number };
+      lastPosition?: { x: number; y: number } | null;
       /** 上次样式 */
       lastStyle?: Record<string, any>;
     }
@@ -126,7 +126,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
           renderId: this.renderId,
           graphic,
           isInViewport: true,
-          lastPosition: { x: 0, y: 0 },
+          lastPosition: null,
           lastStyle: {}
         };
         this.htmlMap[id] = targetMap;
@@ -286,7 +286,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
 
     const { id } = domParams || {};
     // 从 htmlMap 查找可复用 dom
-    const record = this.htmlMap[id];
+    const record = this.htmlMap?.[id];
     if (record && !record.isInViewport) {
       const { wrapContainer } = record;
       if (!this.checkDom(wrapContainer)) {
@@ -300,7 +300,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     }
 
     return {
-      wrapContainer: application.global.createDom({ tagName: 'div', parent: nativeContainer, ...domParams }),
+      wrapContainer: application.global.createDom({ tagName: 'div', parent: nativeContainer }),
       nativeContainer
     };
   }
