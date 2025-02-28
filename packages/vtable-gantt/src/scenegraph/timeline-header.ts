@@ -138,7 +138,11 @@ export class TimelineHeader {
           date.appendChild(text);
           text.name = 'date-header-cell-text';
         }
-        if (i === scene._gantt.timeLineHeaderLevel - 1) {
+        if (
+          i === scene._gantt.timeLineHeaderLevel - 1 &&
+          scene._gantt.parsedOptions.markLineOptions &&
+          scene._gantt.parsedOptions.markLineOptions.enableCreateMarkLine
+        ) {
           // 是否开启里程碑功能
           const phaseGroup = new Group({
             x: width / 2 - PHASE_ICON_WIDTH / 2,
@@ -168,6 +172,7 @@ export class TimelineHeader {
             width: 18,
             height: 18,
             image: phaseIcon,
+            cursor: 'pointer',
             pickable: true
           });
           icon.name = 'phase-hover-icon';
