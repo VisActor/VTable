@@ -12,6 +12,7 @@ import { FrameBorder } from './frame-border';
 import { findRecordByTaskKey, getTaskIndexByY, getTaskIndexsByTaskY } from '../gantt-helper';
 import graphicContribution from './graphic';
 import { TaskCreationButton } from './task-creation-button';
+import { ToolTip } from './tooltip';
 import { DependencyLink, updateLinkLinePoints } from './dependency-link';
 import { DragOrderLine } from './drag-order-line';
 import type { GanttTaskBarNode } from './gantt-node';
@@ -32,6 +33,7 @@ export class Scenegraph {
   dragOrderLine: DragOrderLine;
   frameBorder: FrameBorder;
   taskCreationButton: TaskCreationButton;
+  toolTip: ToolTip;
   stage: Stage;
   tableGroupWidth: number;
   tableGroupHeight: number;
@@ -107,6 +109,7 @@ export class Scenegraph {
 
     // 初始化标记线组件
     scene.markLine = new MarkLine(scene);
+    scene.toolTip = new ToolTip(scene);
 
     // 初始化边框
     scene.frameBorder = new FrameBorder(scene);
@@ -310,6 +313,18 @@ export class Scenegraph {
       this.updateNextFrame();
     }
   }
+
+  showToolTip(target: any) {
+    if (!this.toolTip) {
+      this.toolTip = new ToolTip(this._gantt.scenegraph);
+    }
+    this.toolTip.show(target);
+  }
+
+  hideToolTip() {
+    this.toolTip.hide();
+  }
+
   refreshRecordLinkNodes(taskIndex: number, sub_task_index: number, target: GanttTaskBarNode, dy: number = 0) {
     const gantt: Gantt = this._gantt;
     const record = gantt.getRecordByIndex(taskIndex, sub_task_index);

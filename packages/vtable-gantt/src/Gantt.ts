@@ -26,7 +26,8 @@ import type {
   TaskBarInteractionArgumentType,
   IEventOptions,
   IMilestoneStyle,
-  IKeyboardOptions
+  IKeyboardOptions,
+  IMarkLineOptions
 } from './ts-types';
 import { TasksShowMode } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
@@ -192,6 +193,7 @@ export class Gantt extends EventTarget {
     underlayBackgroundColor: string;
     eventOptions: IEventOptions;
     keyboardOptions: IKeyboardOptions;
+    markLineOptions: IMarkLineOptions;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
@@ -1081,6 +1083,18 @@ export class Gantt extends EventTarget {
       const left = targetDayDistance - this.tableNoFrameWidth / 2;
       this.stateManager.setScrollLeft(left);
     }
+  }
+
+  scrollToMarkLine(date: Date) {
+    if (!date || !this.parsedOptions.minDate) {
+      return;
+    }
+    const minDate = this.parsedOptions.minDate;
+    const { unit, step } = this.parsedOptions.reverseSortedTimelineScales[0];
+    const count = computeCountToTimeScale(date, minDate, unit, step);
+    const targetDayDistance = count * this.parsedOptions.timelineColWidth;
+    const left = targetDayDistance - this.tableNoFrameWidth / 2;
+    this.stateManager.setScrollLeft(left);
   }
 
   addLink(link: ITaskLink) {

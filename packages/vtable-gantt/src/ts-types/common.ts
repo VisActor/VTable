@@ -12,3 +12,10 @@ export enum InteractionState {
   'grabing' = 'grabing',
   'scrolling' = 'scrolling'
 }
+
+export interface IPosition {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
