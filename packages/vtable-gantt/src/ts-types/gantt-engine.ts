@@ -456,4 +456,9 @@ export type IMarkLineOptions = {
       panelStyle?: any;
     };
   };
+  style?: {
+    fill?: string;
+    size?: number;
+    iconSize?: number;
+  };
 };

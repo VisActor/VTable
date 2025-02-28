@@ -77,6 +77,7 @@ export class MarkLine {
         const textGroup = new Group({
           x: this.markLineContainerWidth / 2,
           y: 0,
+          cursor: 'pointer',
           height: textContainerHeight,
           clip: false,
           fill: contentStyle.backgroundColor || style.lineColor,
@@ -90,6 +91,7 @@ export class MarkLine {
         const text = new Text({
           maxLineWidth: textMaxLineWidth,
           text: line.content,
+          cursor: 'pointer',
           lineHeight: textContainerHeight,
           fontWeight: contentStyle.fontWeight || 'normal',
           fill: contentStyle.color || style.lineColor,

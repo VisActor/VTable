@@ -244,6 +244,11 @@ export function createTable() {
             background: 'green'
           }
         }
+      },
+      style: {
+        fill: 'yellow',
+        size: 30,
+        iconSize: 12
       }
     }
   };

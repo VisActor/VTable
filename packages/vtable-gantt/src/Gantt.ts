@@ -1071,7 +1071,7 @@ export class Gantt extends EventTarget {
   }
 
   scrollToMarkLine(date: Date) {
-    if (date || !this.parsedOptions.minDate) {
+    if (!date || !this.parsedOptions.minDate) {
       return;
     }
     const minDate = this.parsedOptions.minDate;

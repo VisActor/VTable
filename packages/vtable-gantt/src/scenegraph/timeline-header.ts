@@ -143,12 +143,15 @@ export class TimelineHeader {
           scene._gantt.parsedOptions.markLineOptions &&
           scene._gantt.parsedOptions.markLineOptions.enableCreateMarkLine
         ) {
+          const markLineStyle = scene._gantt.parsedOptions.markLineOptions.style || {};
+          const size = markLineStyle.size || 24;
+          const iconSize = markLineStyle.iconSize || 18;
           // 是否开启里程碑功能
           const phaseGroup = new Group({
-            x: width / 2 - PHASE_ICON_WIDTH / 2,
-            y: height / 2 - PHASE_ICON_WIDTH / 2,
-            width: PHASE_ICON_WIDTH,
-            height: PHASE_ICON_WIDTH,
+            x: width / 2 - size / 2,
+            y: height / 2 - size / 2,
+            width: size,
+            height: size,
             visiable: true
           });
           phaseGroup.name = 'phase-hover-group';
@@ -156,10 +159,10 @@ export class TimelineHeader {
           const phaseInnerGroup = new Group({
             x: 0,
             y: 0,
-            width: PHASE_ICON_WIDTH,
-            height: PHASE_ICON_WIDTH,
-            cornerRadius: PHASE_ICON_WIDTH / 2,
-            fill: '#ccc',
+            width: size,
+            height: size,
+            cornerRadius: size / 2,
+            fill: markLineStyle.fill || '#ccc',
             cursor: 'pointer',
             display: 'flex',
             justifyContent: 'center',
@@ -169,8 +172,8 @@ export class TimelineHeader {
           phaseInnerGroup.name = 'phase-hover-inner-group';
           phaseGroup.add(phaseInnerGroup);
           const icon = new Image({
-            width: 18,
-            height: 18,
+            width: iconSize,
+            height: iconSize,
             image: phaseIcon,
             cursor: 'pointer',
             pickable: true
