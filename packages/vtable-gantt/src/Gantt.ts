@@ -1070,6 +1070,18 @@ export class Gantt extends EventTarget {
     }
   }
 
+  scrollToMarkLine(date: Date) {
+    if (date || !this.parsedOptions.minDate) {
+      return;
+    }
+    const minDate = this.parsedOptions.minDate;
+    const { unit, step } = this.parsedOptions.reverseSortedTimelineScales[0];
+    const count = computeCountToTimeScale(date, minDate, unit, step);
+    const targetDayDistance = count * this.parsedOptions.timelineColWidth;
+    const left = targetDayDistance - this.tableNoFrameWidth / 2;
+    this.stateManager.setScrollLeft(left);
+  }
+
   addLink(link: ITaskLink) {
     this.parsedOptions.dependencyLinks.push(link);
     this.scenegraph.dependencyLink.initLinkLine(this.parsedOptions.dependencyLinks.length - 1);
