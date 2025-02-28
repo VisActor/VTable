@@ -67,7 +67,12 @@ export function extractListSlotOptions(vnodes: any[]) {
 
     if (optionKey) {
       if (optionKey === 'columns' && vnode.children) {
-        vnode.props.customLayout = createCustomLayoutHandler(vnode.children);
+        if (vnode.children.customLayout) {
+          vnode.props.customLayout = createCustomLayoutHandler(vnode.children);
+        }
+        if (vnode.children.headerCustomLayout) {
+          vnode.props.headerCustomLayout = createCustomLayoutHandler(vnode.children, true);
+        }
       }
 
       if (Array.isArray(options[optionKey])) {
