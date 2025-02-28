@@ -44,9 +44,9 @@ export interface EVENT_TYPES {
   /** 右键点击依赖关系 */
   CONTEXTMENU_DEPENDENCY_LINK: 'contextmenu_dependency_link';
   /** 点击里程碑图标 */
-  CLICK_PHASE_ICON: 'click_phase_icon';
+  CLICK_MARKLINE_ICON: 'click_markline_icon';
   /** 点击里程碑内容 */
-  CLICK_PHASE_CONTENT: 'click_phase_content';
+  CLICK_MARKLINE_CONTENT: 'click_markline_content';
 }
 /**
  * GanttChart event types
@@ -63,6 +63,6 @@ export const GANTT_EVENT_TYPE: EVENT_TYPES = {
   DELETE_DEPENDENCY_LINK: 'delete_dependency_link',
   CLICK_DEPENDENCY_LINK_POINT: 'click_dependency_link_point',
   CONTEXTMENU_DEPENDENCY_LINK: 'contextmenu_dependency_link',
-  CLICK_PHASE_ICON: 'click_phase_icon',
-  CLICK_PHASE_CONTENT: 'click_phase_content'
+  CLICK_MARKLINE_ICON: 'click_markline_icon',
+  CLICK_MARKLINE_CONTENT: 'click_markline_content'
 } as EVENT_TYPES;

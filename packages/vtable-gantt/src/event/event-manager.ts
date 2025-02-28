@@ -12,7 +12,7 @@ import {
   getDateIndexByX,
   getTaskIndexsByTaskY,
   _getTaskInfoByXYForCreateSchedule,
-  getPhaseIconClickPos
+  getNodeClickPos
 } from '../gantt-helper';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 
@@ -161,20 +161,20 @@ function bindTableGroupListener(event: EventManager) {
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
       });
-      const phaseGroupTarget = e.detailPath.find((pathNode: any) => {
-        return pathNode.name === 'phase-hover-group';
+      const marklineCreateGroupTarget = e.detailPath.find((pathNode: any) => {
+        return pathNode.name === 'markline-hover-group';
       });
-      const phaseContentGroupTarget = e.detailPath.find((pathNode: any) => {
+      const marklineContentGroupTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'mark-line-content';
       });
-      if (phaseGroupTarget && gantt.parsedOptions.markLineOptions.enableCreateMarkLine) {
-        if (scene._gantt.stateManager.phaseIcon.target !== phaseGroupTarget) {
-          scene._gantt.stateManager.phaseIcon.target = phaseGroupTarget;
-          stateManager.showPhaseIconHover();
+      if (marklineCreateGroupTarget && gantt.parsedOptions.markLineOptions.enableCreateMarkLine) {
+        if (scene._gantt.stateManager.marklineIcon.target !== marklineCreateGroupTarget) {
+          scene._gantt.stateManager.marklineIcon.target = marklineCreateGroupTarget;
+          stateManager.showMarklineIconHover();
         }
       } else {
-        if (scene._gantt.stateManager.phaseIcon.target) {
-          stateManager.hidePhaseIconHover();
+        if (scene._gantt.stateManager.marklineIcon.target) {
+          stateManager.hideMarklineIconHover();
         }
       }
 
@@ -220,7 +220,7 @@ function bindTableGroupListener(event: EventManager) {
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact
           gantt.parsedOptions.taskBarCreatable &&
-          !phaseContentGroupTarget
+          !marklineContentGroupTarget
         ) {
           const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight + gantt.stateManager.scrollTop, gantt);
           const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex.task_index, taskIndex.sub_task_index);
@@ -364,10 +364,10 @@ function bindTableGroupListener(event: EventManager) {
       let isClickLeftLinkPoint = false;
       let isClickRightLinkPoint = false;
       let depedencyLink;
-      let isClickPhaseIcon = false;
-      let isClickPhaseContent = false;
-      let phaseContentTarget: any;
-      let phaseIconTarget: any;
+      let isClickMarklineIcon = false;
+      let isClickMarklineContent = false;
+      let markLineContentTarget: any;
+      let markLineIconTarget: any;
 
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         if (pathNode.name === 'task-bar') {
@@ -389,13 +389,13 @@ function bindTableGroupListener(event: EventManager) {
           isClickDependencyLine = true;
           depedencyLink = pathNode.attribute.vtable_link;
           return false;
-        } else if (pathNode.name === 'phase-hover-group') {
-          isClickPhaseIcon = true;
-          phaseIconTarget = pathNode;
+        } else if (pathNode.name === 'markline-hover-group') {
+          isClickMarklineIcon = true;
+          markLineIconTarget = pathNode;
           return false;
         } else if (pathNode.name === 'mark-line-content') {
-          isClickPhaseContent = true;
-          phaseContentTarget = pathNode;
+          isClickMarklineContent = true;
+          markLineContentTarget = pathNode;
           return false;
         }
         return false;
@@ -496,20 +496,20 @@ function bindTableGroupListener(event: EventManager) {
           });
         }
         stateManager.hideTaskBarSelectedBorder();
-      } else if (isClickPhaseIcon && event.poniterState === 'down') {
-        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_PHASE_ICON)) {
-          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_PHASE_ICON, {
+      } else if (isClickMarklineIcon && event.poniterState === 'down') {
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_ICON)) {
+          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_ICON, {
             event: e.nativeEvent,
-            position: getPhaseIconClickPos(phaseIconTarget, scene._gantt),
-            data: scene._gantt.stateManager.phaseIcon.target.data
+            position: getNodeClickPos(markLineIconTarget, scene._gantt),
+            data: scene._gantt.stateManager.marklineIcon.target.data
           });
         }
-      } else if (isClickPhaseContent && event.poniterState === 'down') {
-        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_PHASE_CONTENT)) {
-          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_PHASE_CONTENT, {
+      } else if (isClickMarklineContent && event.poniterState === 'down') {
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_CONTENT)) {
+          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_CONTENT, {
             event: e.nativeEvent,
-            position: getPhaseIconClickPos(phaseContentTarget, scene._gantt),
-            data: phaseContentTarget.data
+            position: getNodeClickPos(markLineContentTarget, scene._gantt),
+            data: markLineContentTarget.data
           });
         }
       } else if (isClickLeftLinkPoint && event.poniterState === 'draging') {

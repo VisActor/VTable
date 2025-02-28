@@ -100,7 +100,7 @@ export class StateManager {
     secondTaskBarNode: GanttTaskBarNode;
     lastHighLightLinkPoint: Group;
   };
-  phaseIcon: {
+  marklineIcon: {
     target: any;
   };
   // 供滚动重置为default使用
@@ -132,7 +132,7 @@ export class StateManager {
       startX: null,
       target: null
     };
-    this.phaseIcon = {
+    this.marklineIcon = {
       target: null
     };
 
@@ -981,20 +981,20 @@ export class StateManager {
       this._gantt.scenegraph.updateNextFrame();
     }
   }
-  showPhaseIconHover() {
-    const target = this._gantt.stateManager.phaseIcon.target;
+  showMarklineIconHover() {
+    const target = this._gantt.stateManager.marklineIcon.target;
     if (target) {
-      const phaseGroup = this._gantt.scenegraph.timelineHeader.showPhaseIcon(target.parent);
-      if (phaseGroup) {
-        this._gantt.scenegraph.showToolTip(phaseGroup);
+      const marklineGroup = this._gantt.scenegraph.timelineHeader.showMarklineIcon(target.parent);
+      if (marklineGroup) {
+        this._gantt.scenegraph.showToolTip(marklineGroup);
       }
       this._gantt.scenegraph.updateNextFrame();
     }
   }
-  hidePhaseIconHover() {
-    this._gantt.scenegraph.timelineHeader.hidePhaseIconHover(this._gantt.stateManager.phaseIcon.target.parent);
+  hideMarklineIconHover() {
+    this._gantt.scenegraph.timelineHeader.hideMarklineIconHover(this._gantt.stateManager.marklineIcon.target.parent);
     this._gantt.scenegraph.hideToolTip();
-    this._gantt.stateManager.phaseIcon.target = null;
+    this._gantt.stateManager.marklineIcon.target = null;
     this._gantt.scenegraph.updateNextFrame();
   }
 }

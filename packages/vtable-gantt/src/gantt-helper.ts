@@ -1088,15 +1088,15 @@ export function _getTaskInfoByXYForCreateSchedule(eventX: number, eventY: number
   }
 }
 
-export function getPhaseIconClickPos(phaseIconNode: Group, gantt: Gantt) {
+export function getNodeClickPos(marklineIconNode: Group, gantt: Gantt) {
   const left =
-    phaseIconNode.globalTransMatrix.e +
+    marklineIconNode.globalTransMatrix.e +
     gantt.taskListTableInstance.tableNoFrameWidth +
     gantt.taskListTableInstance.tableX +
     gantt.tableX;
-  const top = phaseIconNode.globalTransMatrix.f;
-  const width = phaseIconNode.attribute.width;
-  const height = phaseIconNode.attribute.height;
+  const top = marklineIconNode.globalTransMatrix.f;
+  const width = marklineIconNode.attribute.width;
+  const height = marklineIconNode.attribute.height;
   return {
     left,
     top,

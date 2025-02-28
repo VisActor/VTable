@@ -103,12 +103,12 @@ export interface TableEventHandlersEventArgumentMap {
     /** 依赖信息 */
     link: ITaskLink;
   };
-  click_phase_icon: {
+  click_markline_icon: {
     event: Event;
     data: ITimelineDateInfo[];
     postion: IPosition;
   };
-  click_phase_content: {
+  click_markline_content: {
     event: Event;
     data: IMarkLine;
   };
@@ -125,6 +125,6 @@ export interface TableEventHandlersReturnMap {
   create_dependency_link: void;
   delete_dependency_link: void;
   contextmenu_dependency_link: void;
-  click_phase_icon: void;
-  click_phase_content: void;
+  click_markline_icon: void;
+  click_markline_content: void;
 }
