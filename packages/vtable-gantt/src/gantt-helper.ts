@@ -1104,3 +1104,12 @@ export function getNodeClickPos(marklineIconNode: Group, gantt: Gantt) {
     height
   } as IPosition;
 }
+
+export function judgeIfHasMarkLine(data: { startDate: Date; endDate: Date }, markLine: IMarkLine[]) {
+  const beginTime = data.startDate.getTime();
+  const endTime = data.endDate.getTime();
+  return markLine.some(item => {
+    const marklineTime = new Date(item.date).getTime();
+    return marklineTime >= beginTime && marklineTime <= endTime;
+  });
+}

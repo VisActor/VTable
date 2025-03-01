@@ -12,7 +12,8 @@ import {
   getDateIndexByX,
   getTaskIndexsByTaskY,
   _getTaskInfoByXYForCreateSchedule,
-  getNodeClickPos
+  getNodeClickPos,
+  judgeIfHasMarkLine
 } from '../gantt-helper';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 
@@ -167,14 +168,19 @@ function bindTableGroupListener(event: EventManager) {
       const marklineContentGroupTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'mark-line-content';
       });
-      if (marklineCreateGroupTarget && gantt.parsedOptions.markLineOptions.enableCreateMarkLine) {
-        if (scene._gantt.stateManager.marklineIcon.target !== marklineCreateGroupTarget) {
-          scene._gantt.stateManager.marklineIcon.target = marklineCreateGroupTarget;
-          stateManager.showMarklineIconHover();
-        }
-      } else {
-        if (scene._gantt.stateManager.marklineIcon.target) {
-          stateManager.hideMarklineIconHover();
+      if (gantt.parsedOptions.markLineOptions.enableCreateMarkLine) {
+        if (
+          marklineCreateGroupTarget &&
+          !judgeIfHasMarkLine(marklineCreateGroupTarget.data, gantt.parsedOptions.markLine)
+        ) {
+          if (scene._gantt.stateManager.marklineIcon.target !== marklineCreateGroupTarget) {
+            scene._gantt.stateManager.marklineIcon.target = marklineCreateGroupTarget;
+            stateManager.showMarklineIconHover();
+          }
+        } else {
+          if (scene._gantt.stateManager.marklineIcon.target) {
+            stateManager.hideMarklineIconHover();
+          }
         }
       }
 
