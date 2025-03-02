@@ -345,11 +345,22 @@ export interface BaseTableConstructorOptions {
   container?: HTMLElement | null;
 
   /**
+   * @deprecated
+   * 请使用resize.columnResizeMode
    * 调整列宽 可操作范围。'all' | 'none' | 'header' | 'body'; 整列间隔线|禁止调整|只能在表头处间隔线|只能在body间隔线
    */
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  /**
+   * @deprecated
+   * 请使用resize.rowResizeMode
+   */
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
-  /** 控制拖拽表头移动位置顺序开关 */
+
+  /**
+   * @deprecated
+   * dragOrder.dragHeaderMode
+   * 控制拖拽表头移动位置顺序开关
+   */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
 
   /**
@@ -576,6 +587,10 @@ export interface BaseTableConstructorOptions {
     rowResizeMode?: 'all' | 'none' | 'header' | 'body';
     /** 是否禁用双击列边框自动调整列宽 **/
     disableDblclickAutoResizeColWidth?: boolean;
+  };
+  dragOrder?: {
+    /** 控制拖拽表头移动位置顺序开关 */
+    dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
   };
 }
 export interface BaseTableAPI {
