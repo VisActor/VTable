@@ -1,8 +1,9 @@
-import { text } from 'stream/consumers';
+import type { Group } from '@visactor/vtable/es/vrender';
 import type { Gantt } from './Gantt';
 import {
   TasksShowMode,
   type IMarkLine,
+  type IPosition,
   type IScrollStyle,
   type ITimelineDateInfo,
   type ITimelineScale
@@ -64,6 +65,7 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): 
   } else if (Array.isArray(markLine)) {
     return markLine.map((item, index) => {
       return {
+        ...item,
         date: item.date,
         scrollToMarkLine: item.scrollToMarkLine,
         position: item.position ?? 'left',
@@ -77,6 +79,7 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): 
   }
   return [
     {
+      ...markLine,
       date: (markLine as IMarkLine).date,
       scrollToMarkLine: (markLine as IMarkLine).scrollToMarkLine ?? true,
       position: (markLine as IMarkLine).position ?? 'left',
@@ -364,6 +367,7 @@ export function initOptions(gantt: Gantt) {
   );
   gantt.parsedOptions.eventOptions = options?.eventOptions;
   gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
+  gantt.parsedOptions.markLineOptions = options?.markLineOptions;
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   const options = gantt.options;
@@ -1095,4 +1099,30 @@ export function _getTaskInfoByXYForCreateSchedule(eventX: number, eventY: number
       }
     }
   }
+}
+
+export function getNodeClickPos(marklineIconNode: Group, gantt: Gantt) {
+  const left =
+    marklineIconNode.globalTransMatrix.e +
+    gantt.taskListTableInstance.tableNoFrameWidth +
+    gantt.taskListTableInstance.tableX +
+    gantt.tableX;
+  const top = marklineIconNode.globalTransMatrix.f;
+  const width = marklineIconNode.attribute.width;
+  const height = marklineIconNode.attribute.height;
+  return {
+    left,
+    top,
+    width,
+    height
+  } as IPosition;
+}
+
+export function judgeIfHasMarkLine(data: { startDate: Date; endDate: Date }, markLine: IMarkLine[]) {
+  const beginTime = data.startDate.getTime();
+  const endTime = data.endDate.getTime();
+  return markLine.some(item => {
+    const marklineTime = new Date(item.date).getTime();
+    return marklineTime >= beginTime && marklineTime <= endTime;
+  });
 }

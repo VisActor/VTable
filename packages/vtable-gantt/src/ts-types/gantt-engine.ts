@@ -216,6 +216,7 @@ export interface GanttConstructorOptions {
   tasksShowMode?: TasksShowMode;
   eventOptions?: IEventOptions;
   keyboardOptions?: IKeyboardOptions;
+  markLineOptions?: IMarkLineOptions;
 }
 /**
  * IBarLabelText
@@ -293,6 +294,15 @@ export type IPointStyle = {
 };
 export interface IMarkLine {
   date: string;
+  content: string;
+  contentStyle?: {
+    color?: string;
+    fontSize?: number;
+    fontWeight?: string;
+    lineHeight?: number;
+    backgroundColor?: string;
+    cornerRadius?: number | number[];
+  };
   style?: ILineStyle;
   /** 标记线显示在日期列下的位置 默认为'left' */
   position?: 'left' | 'right' | 'middle';
@@ -443,3 +453,20 @@ export type ITaskBarHoverStyle = {
   barOverlayColor?: string;
 };
 //#endregion
+
+export type IMarkLineOptions = {
+  enableCreateMarkLine: boolean;
+  toolTipOption?: {
+    position?: 'top' | 'bottom';
+    tipContent?: string;
+    style?: {
+      contentStyle?: any;
+      panelStyle?: any;
+    };
+  };
+  style?: {
+    fill?: string;
+    size?: number;
+    iconSize?: number;
+  };
+};

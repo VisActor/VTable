@@ -7,7 +7,14 @@ import { formatDate, parseDateFormat, throttle } from '../tools/util';
 import { GANTT_EVENT_TYPE, InteractionState, TasksShowMode } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
-import { DayTimes, getDateIndexByX, getTaskIndexsByTaskY, _getTaskInfoByXYForCreateSchedule } from '../gantt-helper';
+import {
+  DayTimes,
+  getDateIndexByX,
+  getTaskIndexsByTaskY,
+  _getTaskInfoByXYForCreateSchedule,
+  getNodeClickPos,
+  judgeIfHasMarkLine
+} from '../gantt-helper';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 
 export class EventManager {
@@ -155,6 +162,28 @@ function bindTableGroupListener(event: EventManager) {
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
       });
+      const marklineCreateGroupTarget = e.detailPath.find((pathNode: any) => {
+        return pathNode.name === 'markline-hover-group';
+      });
+      const marklineContentGroupTarget = e.detailPath.find((pathNode: any) => {
+        return pathNode.name === 'mark-line-content';
+      });
+      if (gantt.parsedOptions.markLineOptions.enableCreateMarkLine) {
+        if (
+          marklineCreateGroupTarget &&
+          !judgeIfHasMarkLine(marklineCreateGroupTarget.data, gantt.parsedOptions.markLine)
+        ) {
+          if (scene._gantt.stateManager.marklineIcon.target !== marklineCreateGroupTarget) {
+            scene._gantt.stateManager.marklineIcon.target = marklineCreateGroupTarget;
+            stateManager.showMarklineIconHover();
+          }
+        } else {
+          if (scene._gantt.stateManager.marklineIcon.target) {
+            stateManager.hideMarklineIconHover();
+          }
+        }
+      }
+
       if (taskBarTarget) {
         if (scene._gantt.stateManager.hoverTaskBar.target !== (taskBarTarget as any as GanttTaskBarNode)) {
           scene._gantt.stateManager.hoverTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
@@ -196,7 +225,8 @@ function bindTableGroupListener(event: EventManager) {
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Separate &&
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Arrange &&
           // gantt.parsedOptions.tasksShowMode !== TasksShowMode.Sub_Tasks_Compact
-          gantt.parsedOptions.taskBarCreatable
+          gantt.parsedOptions.taskBarCreatable &&
+          !marklineContentGroupTarget
         ) {
           const taskIndex = getTaskIndexsByTaskY(e.offset.y - gantt.headerHeight + gantt.stateManager.scrollTop, gantt);
           const recordTaskInfo = gantt.getTaskInfoByTaskListIndex(taskIndex.task_index, taskIndex.sub_task_index);
@@ -340,6 +370,10 @@ function bindTableGroupListener(event: EventManager) {
       let isClickLeftLinkPoint = false;
       let isClickRightLinkPoint = false;
       let depedencyLink;
+      let isClickMarklineIcon = false;
+      let isClickMarklineContent = false;
+      let markLineContentTarget: any;
+      let markLineIconTarget: any;
 
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         if (pathNode.name === 'task-bar') {
@@ -361,9 +395,18 @@ function bindTableGroupListener(event: EventManager) {
           isClickDependencyLine = true;
           depedencyLink = pathNode.attribute.vtable_link;
           return false;
+        } else if (pathNode.name === 'markline-hover-group') {
+          isClickMarklineIcon = true;
+          markLineIconTarget = pathNode;
+          return false;
+        } else if (pathNode.name === 'mark-line-content') {
+          isClickMarklineContent = true;
+          markLineContentTarget = pathNode;
+          return false;
         }
         return false;
       });
+
       if (isClickBar && scene._gantt.parsedOptions.taskBarSelectable && event.poniterState === 'down') {
         stateManager.hideDependencyLinkSelectedLine();
         stateManager.showTaskBarSelectedBorder(taskBarTarget);
@@ -459,6 +502,22 @@ function bindTableGroupListener(event: EventManager) {
           });
         }
         stateManager.hideTaskBarSelectedBorder();
+      } else if (isClickMarklineIcon && event.poniterState === 'down') {
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_ICON)) {
+          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_ICON, {
+            event: e.nativeEvent,
+            position: getNodeClickPos(markLineIconTarget, scene._gantt),
+            data: scene._gantt.stateManager.marklineIcon.target.data
+          });
+        }
+      } else if (isClickMarklineContent && event.poniterState === 'down') {
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_CONTENT)) {
+          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_CONTENT, {
+            event: e.nativeEvent,
+            position: getNodeClickPos(markLineContentTarget, scene._gantt),
+            data: markLineContentTarget.data
+          });
+        }
       } else if (isClickLeftLinkPoint && event.poniterState === 'draging') {
         if (stateManager.isCreatingDependencyLine()) {
           const link = stateManager.endCreateDependencyLine(e.offset.y);
