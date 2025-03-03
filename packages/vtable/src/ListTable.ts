@@ -1080,9 +1080,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (isValid(field)) {
       // let stateArr = this.stateManager.checkedState.values() as any;
       // map按照key(dataIndex)的升序输出value
-      const keys = Array.from(this.stateManager.checkedState.keys()).sort(
-        (a: string, b: string) => Number(a) - Number(b)
-      );
+      // const keys = Array.from(this.stateManager.checkedState.keys()).sort(
+      //   (a: string, b: string) => Number(a) - Number(b)
+      // );
+      const keys = Array.from(this.stateManager.checkedState.keys()).sort((a: string, b: string) => {
+        // debugger;
+        // 处理树形结构的key
+        if (a.includes(',') || b.includes(',')) {
+          const aArr = a.split(',').map(Number);
+          const bArr = b.split(',').map(Number);
+          // 按层级比较
+          for (let i = 0; i < Math.min(aArr.length, bArr.length); i++) {
+            if (aArr[i] !== bArr[i]) {
+              return aArr[i] - bArr[i];
+            }
+          }
+          // 如果前面的层级都相同，层级少的排前面
+          return aArr.length - bArr.length;
+        }
+        // 普通数字索引的处理
+        return Number(a) - Number(b);
+      });
       let stateArr = keys.map(key => this.stateManager.checkedState.get(key));
 
       if (this.options.groupBy) {
