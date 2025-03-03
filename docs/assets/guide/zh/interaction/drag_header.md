@@ -15,7 +15,9 @@
 
 ```javascript
 const table = new VTable.ListTable({
-  dragHeaderMode: 'all'
+  dragOrder: {
+    dragHeaderMode: 'all'
+  }
 });
 ```
 
@@ -68,8 +70,10 @@ const table = new VTable.ListTable({
 可以通过下面的配置进行约束(仅针对 ListTable 生效)：
 
 ```
-拖拽表头移动位置 针对冻结部分的规则  默认为fixedFrozenCount
-frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
+dragOrder: {
+  // 拖拽表头移动位置 针对冻结部分的规则  默认为fixedFrozenCount
+  frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
+}
 ```
 
 不同规则描述如下：
@@ -80,7 +84,20 @@ frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
 
 至此，我们已经介绍了 VTable 的拖拽表头换位功能，括拖拽表头换位功能的开启、拖拽表头换位标记线的样式配置以及某一列是否可以拖拽。通过掌握这些功能，您可以更便捷地在 VTable 中进行数据分析与处理。
 
-## 移动数据顺序
+## 移动位置结束时验证
+
+我们内部默认的验证规则是：如果是表头层级结构情况下拖拽，则不允许跨父级移动位置，只允许在同父级中移动位置。如果是基本表格利用行序号rowSeriesNumber来拖拽数据顺序，是不会进行校验的。当不满足默认的验证规则时，VTable是在鼠标移动过程中出现禁止拖拽的鼠标样式。
+
+但也有些业务需求是说要在拖拽结束时进行校验是否满足拖拽换顺序的条件，如果不满足业务层会进行提示或者其他操作。实现这个需求可以通过钩子函数 `validateDragOrderOnEnd` 进行验证，如果返回 `true` 则移动成功，如果返回 `false` 则移动失败。
+
+```javascript
+dragOrder: {
+  validateDragOrderOnEnd(source, target) {
+    return true;
+  }
+}
+```
+## ListTable移动数据顺序
 
 **ListTable 数据换位说明：**
 

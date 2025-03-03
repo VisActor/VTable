@@ -265,6 +265,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       rowResizeMode = 'none',
       resize,
       dragHeaderMode,
+      dragOrder,
       // showHeader,
       // scrollBar,
       showFrozenIcon,
@@ -374,7 +375,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
     internalProps.rowResizeMode = resize?.rowResizeMode ?? rowResizeMode;
-    internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
+    internalProps.dragHeaderMode = dragOrder?.dragHeaderMode ?? dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
@@ -2324,7 +2325,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       rowResizeMode = 'none',
       resize,
       dragHeaderMode,
-
+      dragOrder,
       // scrollBar,
       showFrozenIcon,
       allowFrozenColCount,
@@ -2403,7 +2404,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
     internalProps.rowResizeMode = resize?.rowResizeMode ?? rowResizeMode;
-    internalProps.dragHeaderMode = dragHeaderMode ?? 'none';
+    internalProps.dragHeaderMode = dragOrder?.dragHeaderMode ?? dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';

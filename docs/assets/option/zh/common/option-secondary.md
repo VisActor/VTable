@@ -192,14 +192,7 @@ export interface SelectAllOnCtrlAOption {
 
 填充柄，设置为 true 后，当选中单元格后，填充柄会显示在单元格右下方，可以拖动填充柄来编辑单元格的值。或者双击填充柄来改变需要编辑单元格的值。
 
-#${prefix} dragHeaderMode(string) = 'none'
 
-控制拖拽表头移动位置的开关。选中某个单元格后，鼠标拖拽该单元格可触发移动。 可换位单元格范围限定：
-
-- 'all' 所有表头均可换位
-- 'none' 不可换位
-- 'column' 只有换列表头可换位
-- 'row' 只有换行表头可换位
 
 #${prefix} hover(Object)
 
@@ -629,3 +622,35 @@ animationAppear?: boolean | {
 - `indicator`: 调整行高时对应相同指标的行都会被调整
 - `indicatorGroup`: 调整同父级维度下所有指标行的宽度
 - `all`： 所有行高都被调整
+
+#${prefix} dragOrder(Object)
+
+拖拽移动位置的配置。
+
+##${prefix} dragHeaderMode(string) = 'none'
+
+控制拖拽表头移动位置的开关。选中某个单元格后，鼠标拖拽该单元格可触发移动。 可换位单元格范围限定：
+
+- 'all' 所有表头均可换位
+- 'none' 不可换位
+- 'column' 只有换列表头可换位
+- 'row' 只有换行表头可换位
+
+##${prefix} frozenColDragHeaderMode(string) = 'fixedFrozenCount'
+
+拖拽表头移动位置 针对冻结部分的规则 默认为 fixedFrozenCount。基本表格ListTable类型设置才有效！
+
+- "disabled"（禁止调整冻结列位置）：不允许其他列的表头移入冻结列，也不允许冻结列移出，冻结列保持不变。
+- "adjustFrozenCount"（根据交互结果调整冻结数量）：允许其他列的表头移入冻结列，及冻结列移出，并根据拖拽的动作调整冻结列的数量。当其他列的表头被拖拽进入冻结列位置时，冻结列数量增加；当其他列的表头被拖拽移出冻结列位置时，冻结列数量减少。
+- "fixedFrozenCount"（可调整冻结列，并维持冻结数量不变）：允许自由拖拽其他列的表头移入或移出冻结列位置，同时保持冻结列的数量不变。
+
+##${prefix} validateDragOrderOnEnd(Function)
+
+拖拽移动位置结束时进行验证，返回成功会调整位置，返回失败不会调整位置。
+
+```
+validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
+```
+
+
+

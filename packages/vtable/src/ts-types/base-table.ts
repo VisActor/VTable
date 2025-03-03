@@ -133,21 +133,13 @@ export interface IBaseTableProtected {
   rowSeriesNumber?: IRowSeriesNumber;
   columnSeriesNumber?: ColumnSeriesNumber[];
   // disableRowHeaderColumnResize?: boolean;
-  /**
-   *@deprecated 请使用resize.columnResizeType
-   */
+
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
-  /**
-   *@deprecated 请使用resize.rowResizeType
-   */
+
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
-  /**
-   *@deprecated 请使用resize.columnResizeType
-   */
+
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
-  /**
-   *@deprecated 请使用resize.rowResizeType
-   */
+
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
@@ -591,6 +583,8 @@ export interface BaseTableConstructorOptions {
   dragOrder?: {
     /** 控制拖拽表头移动位置顺序开关 */
     dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
+    /** 拖拽移动位置结束时进行验证 */
+    validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
   };
 }
 export interface BaseTableAPI {
