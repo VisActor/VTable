@@ -1,55 +1,60 @@
 import type { IEditor, ValidateEnum } from '@visactor/vtable-editors';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
+import type { BaseTableAPI } from '../ts-types/base-table';
 import type { ListTableAPI } from '../ts-types';
 import { getCellEventArgsSet } from '../event/util';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { isPromise } from '../tools/helper';
 import { isValid } from '@visactor/vutils';
 
-export class EditManager<T extends ListTableAPI = ListTableAPI> {
-  table: T;
+export class EditManager {
+  table: BaseTableAPI;
   editingEditor: IEditor;
   isValidatingValue: boolean = false;
   editCell: { col: number; row: number };
+  listenersId: number[] = [];
 
-  constructor(table: T) {
+  constructor(table: BaseTableAPI) {
     this.table = table;
     this.bindEvent();
   }
 
   bindEvent() {
-    const handler = this.table.internalProps.handler;
-    const editCellTrigger = this.table.options.editCellTrigger;
-    this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
-      if (
-        !editCellTrigger || //默认为双击
-        editCellTrigger === 'doubleclick' ||
-        (Array.isArray(editCellTrigger) && editCellTrigger.includes('doubleclick'))
-      ) {
-        const { col, row } = e;
+    // const handler = this.table.internalProps.handler;
+    const table = this.table as ListTableAPI;
+    const doubleClickEventId = table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
+      const { editCellTrigger = 'doubleclick' } = table.options;
 
-        //取双击自动列宽逻辑
-        const eventArgsSet = getCellEventArgsSet(e.federatedEvent);
-        const resizeCol = this.table.scenegraph.getResizeColAt(
-          eventArgsSet.abstractPos.x,
-          eventArgsSet.abstractPos.y,
-          eventArgsSet.eventArgs?.targetCell
-        );
-        if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
-          // 判断同双击自动列宽的时间监听的DBLCLICK_CELL
-          // 如果是双击自动列宽 则编辑不开启
-          return;
-        }
-        this.startEditCell(col, row);
+      if (!editCellTrigger.includes('doubleclick')) {
+        return;
       }
+
+      const { col, row } = e;
+
+      //取双击自动列宽逻辑
+      const eventArgsSet = getCellEventArgsSet(e.federatedEvent);
+      const resizeCol = table.scenegraph.getResizeColAt(
+        eventArgsSet.abstractPos.x,
+        eventArgsSet.abstractPos.y,
+        eventArgsSet.eventArgs?.targetCell
+      );
+      if (table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
+        // 判断同双击自动列宽的时间监听的DBLCLICK_CELL
+        // 如果是双击自动列宽 则编辑不开启
+        return;
+      }
+      this.startEditCell(col, row);
     });
 
-    this.table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
+    const clickEventId = table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
+      const { editCellTrigger = 'doubleclick' } = table.options;
       if (editCellTrigger === 'click' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('click'))) {
         const { col, row } = e;
         this.startEditCell(col, row);
       }
     });
+
+    this.listenersId.push(doubleClickEventId, clickEventId);
 
     // handler.on(this.table.getElement(), 'wheel', (e: WheelEvent) => {
     //   this.completeEdit();
@@ -65,7 +70,7 @@ export class EditManager<T extends ListTableAPI = ListTableAPI> {
     if (this.editingEditor) {
       return;
     }
-    const editor = this.table.getEditor(col, row);
+    const editor = (this.table as ListTableAPI).getEditor(col, row);
     if (editor) {
       // //自定义内容单元格不允许编辑
       // if (this.table.getCustomRender(col, row) || this.table.getCustomLayout(col, row)) {
@@ -119,9 +124,9 @@ export class EditManager<T extends ListTableAPI = ListTableAPI> {
         },
         referencePosition,
         container: this.table.getElement(),
-        table: this.table,
         col,
-        row
+        row,
+        table: this.table
       });
     }
   }
@@ -190,7 +195,7 @@ export class EditManager<T extends ListTableAPI = ListTableAPI> {
   doExit() {
     const changedValue = this.editingEditor.getValue?.();
     const range = this.table.getCellRange(this.editCell.col, this.editCell.row);
-    const changedValues = [];
+    const changedValues: any[] = [];
     for (let row = range.start.row; row <= range.end.row; row++) {
       const rowChangedValues = [];
       for (let col = range.start.col; col <= range.end.col; col++) {
@@ -213,6 +218,12 @@ export class EditManager<T extends ListTableAPI = ListTableAPI> {
       this.editingEditor.onEnd?.();
       this.editingEditor = null;
     }
+  }
+
+  release() {
+    this.listenersId.forEach(id => {
+      this.table.off(id);
+    });
   }
 }
 

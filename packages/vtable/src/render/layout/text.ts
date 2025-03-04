@@ -1,6 +1,6 @@
 import { Text as VText, type ITextGraphicAttribute } from '@src/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { TagAttributes } from '@visactor/vrender-components';
+import type { TagAttributes } from '@src/vrender';
 import { isArray } from '@visactor/vutils';
 
 type ITextOption = {

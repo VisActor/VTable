@@ -11,7 +11,9 @@ export function createTable() {
     indicatorTitle: '指标名称',
     indicatorsAsCol: false,
     corner: { titleOnDimension: 'column' },
-    columnResizeType: 'all',
+    resize: {
+      columnResizeType: 'all'
+    },
     // records: [
     //   {
     //     sales: 891,
@@ -42,7 +44,9 @@ export function createTable() {
   //     indicatorTitle: '指标名称',
   //     indicatorsAsCol: false,
   //     corner: { titleOnDimension: 'column' },
-  //     columnResizeType: 'all',
+  //     resize: {
+  //      columnResizeType: 'all'
+  //     },
   //     records: [
   //       // {
   //       //   sales: 891,

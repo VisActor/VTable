@@ -1,5 +1,5 @@
-import type { IImageGraphicAttribute, ISetAttributeContext } from '@src/vrender';
-import { Image, ResourceLoader } from '@src/vrender';
+import type { IImageGraphicAttribute, ISetAttributeContext, ITextGraphicAttribute } from '@src/vrender';
+import { Image, ResourceLoader, Text } from '@src/vrender';
 import type { IIconBase } from '../../ts-types';
 import type { ParsedFrame } from 'gifuct-js';
 import { decompressFrames, parseGIF } from 'gifuct-js';
@@ -198,5 +198,21 @@ export class Icon extends Image {
     if ((params as any).gif) {
       this.loadGif();
     }
+  }
+}
+
+export class TextIcon extends Text {
+  declare attribute: IIconGraphicAttribute;
+  role?: string;
+  tooltip?: IIconBase['tooltip'];
+
+  constructor(params: ITextGraphicAttribute) {
+    // default text icon style
+    params.fill = params.fill ?? '#00F';
+    params.fontSize = params.fontSize ?? 12;
+    params.underline = params.underline ?? 1;
+    params.textBaseline = params.textBaseline ?? 'top';
+    params.cursor = params.cursor ?? 'pointer';
+    super(params);
   }
 }

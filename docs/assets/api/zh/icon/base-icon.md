@@ -1,7 +1,7 @@
 {{ target: base-icon }}
 
-${prefix} type ('font' | 'svg' | 'path' | 'image')
-icon 是何种内容类型，如 svg font。可用来约束不同类型的属性定义。
+${prefix} type ('text' | 'svg' | 'path' | 'image')
+icon 是何种内容类型，如 svg text。可用来约束不同类型的属性定义。
 
 ${prefix} width (number)
 icon 的宽度。

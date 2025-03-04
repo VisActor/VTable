@@ -34,7 +34,7 @@ export interface IBasicDimension {
   /** 显示向上钻取图标 点击后会有对应事件 */
   drillUp?: boolean;
   /** 单元格显示下拉按钮及下拉菜单*/
-  dropDownMenu?: MenuListItem[];
+  dropDownMenu?: MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[]);
   /** 角头单元格显示下拉按钮及下拉菜单*/
   cornerDropDownMenu?: MenuListItem[];
   /** sort排序规则 */

@@ -2,7 +2,7 @@
 import type { IGroupGraphicAttribute } from '@src/vrender';
 import { RichText, Text } from '@src/vrender';
 import { Group } from '../graphic/group';
-import { Icon } from '../graphic/icon';
+import { Icon, TextIcon } from '../graphic/icon';
 
 /*
  * cell区域规划
@@ -84,7 +84,7 @@ export class CellContent extends Group {
     this._baseline = option.baseline;
   }
 
-  addLeftOccupyingIcon(icon: Icon) {
+  addLeftOccupyingIcon(icon: Icon | TextIcon) {
     icon.setAttribute('x', this._leftGroup.width + (icon.attribute.marginLeft ?? 0));
     this._leftGroup.appendChild(icon);
     this._leftGroup.setDeltaWidth(
@@ -92,7 +92,7 @@ export class CellContent extends Group {
     );
   }
 
-  addRightOccupyingIcon(icon: Icon) {
+  addRightOccupyingIcon(icon: Icon | TextIcon) {
     icon.setAttribute('x', this._rightGroup.width + (icon.attribute.marginLeft ?? 0));
     this._rightGroup.appendChild(icon);
     this._rightGroup.setDeltaWidth(
@@ -100,7 +100,7 @@ export class CellContent extends Group {
     );
   }
 
-  addContent(content: Icon | Text | RichText) {
+  addContent(content: Icon | TextIcon | Text | RichText) {
     const lastChild = this._centerGroup.lastChild as Icon | Text | RichText;
     if (lastChild) {
       // 横排content，新加入content更新x坐标
@@ -166,7 +166,7 @@ export class CellContent extends Group {
     // 计算留给文字的空间
     let textWidth = contentWidth;
     this._centerGroup.forEachChildren(child => {
-      if (child instanceof Icon) {
+      if (child instanceof Icon || child instanceof TextIcon) {
         textWidth -= child.AABBBounds.width();
       }
     });
@@ -181,7 +181,7 @@ export class CellContent extends Group {
 
     // 按顺序更新x
     let x = 0;
-    this._centerGroup.forEachChildren((child: Icon | Text | RichText) => {
+    this._centerGroup.forEachChildren((child: Icon | TextIcon | Text | RichText) => {
       child.setAttribute('x', x);
       x += child.AABBBounds.width();
     });
@@ -208,10 +208,10 @@ export class CellContent extends Group {
       this._centerGroup.setAttribute('y', 0);
     } else if (this._baseline === 'middle') {
       // 处理Group内icon对齐
-      this._leftGroup.forEachChildren((icon: Icon) => {
+      this._leftGroup.forEachChildren((icon: Icon | TextIcon) => {
         icon.setAttribute('y', (this._leftGroup.height - icon.AABBBounds.height()) / 2);
       });
-      this._rightGroup.forEachChildren((icon: Icon) => {
+      this._rightGroup.forEachChildren((icon: Icon | TextIcon) => {
         icon.setAttribute('y', (this._rightGroup.height - icon.AABBBounds.height()) / 2);
       });
 
@@ -220,10 +220,10 @@ export class CellContent extends Group {
       this._centerGroup.setAttribute('y', this._cellHeight / 2 - this._centerGroup.height / 2);
     } else if (this._baseline === 'bottom') {
       // 处理Group内icon对齐
-      this._leftGroup.forEachChildren((icon: Icon) => {
+      this._leftGroup.forEachChildren((icon: Icon | TextIcon) => {
         icon.setAttribute('y', this._leftGroup.height - icon.AABBBounds.height());
       });
-      this._rightGroup.forEachChildren((icon: Icon) => {
+      this._rightGroup.forEachChildren((icon: Icon | TextIcon) => {
         icon.setAttribute('y', this._rightGroup.height - icon.AABBBounds.height());
       });
 

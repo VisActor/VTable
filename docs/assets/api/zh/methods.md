@@ -791,7 +791,7 @@ enum HierarchyState {
 
 ## setDropDownMenuHighlight(Function)
 
-设置下拉菜单选中状态, 同时单元格中也会显示对应的icon
+设置下拉菜单选中状态, 同时单元格中也会显示对应的 icon
 
 ```
   setDropDownMenuHighlight(dropDownMenuInfo: DropDownMenuHighlightInfo[]): void
@@ -1208,6 +1208,34 @@ setCellRadioState(col: number, row: number, index?: number) => void
 - col: 列号
 - row: 行号
 - index: 更新的目标 radio 在单元格中的索引
+
+## getSwitchState(Function)
+
+获取某个字段下 switch 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
+```
+getSwitchState(field?: string | number): Array
+```
+
+## getCellSwitchState(Function)
+
+获取某个单元格 switch 的状态
+
+```
+getCellSwitchState(col: number, row: number): boolean
+```
+
+## setCellSwitchState(Function)
+
+设置单元格的 switch 状态
+
+```
+setCellSwitchState(col: number, row: number, checked: boolean) => void
+```
+
+- col: 列号
+- row: 行号
+- checked: 是否选中
 
 ## getAllRowsHeight(Function)
 

@@ -13,8 +13,8 @@ export {
   VText,
   jsx
 } from '@src/vrender';
-import type { CheckboxAttributes, RadioAttributes, TagAttributes } from '@visactor/vrender-components';
-import { Tag, CheckBox, Radio } from '@visactor/vrender-components';
+import type { CheckboxAttributes, RadioAttributes, TagAttributes } from '@src/vrender';
+import { Tag, CheckBox, Radio } from '@src/vrender';
 
 type IDefaultGraphicParamsType<T> = {
   attribute?: T;

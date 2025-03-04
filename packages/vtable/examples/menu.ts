@@ -438,6 +438,14 @@ export const menus = [
       {
         path: 'type',
         name: 'radio'
+      },
+      {
+        path: 'type',
+        name: 'switch'
+      },
+      {
+        path: 'type',
+        name: 'button'
       }
     ]
   },
@@ -735,6 +743,10 @@ export const menus = [
       {
         path: 'icon',
         name: 'icon-shape'
+      },
+      {
+        path: 'icon',
+        name: 'font-icon'
       }
     ]
   },

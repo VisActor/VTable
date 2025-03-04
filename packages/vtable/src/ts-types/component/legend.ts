@@ -1,6 +1,6 @@
 // TODO: import from '@visactor/vchart'
 import type { IDiscreteLegendSpec, IColorLegendSpec, ISizeLegendSpec } from '@visactor/vchart/esm/component/legend';
-import type { LegendItemDatum } from '@visactor/vrender-components';
+import type { LegendItemDatum } from '@src/vrender';
 
 export type IDiscreteTableLegendOption = Omit<IDiscreteLegendSpec, 'data'> & { data: LegendItemDatum[] };
 export type IColorTableLegendOption = Omit<IColorLegendSpec, 'field' | 'scale'> & {

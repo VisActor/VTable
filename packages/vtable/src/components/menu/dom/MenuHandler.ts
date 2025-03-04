@@ -64,8 +64,14 @@ function getMenuInstanceInfo(
   } // 没有指定的下拉菜单 从headerLayout中获取下拉菜单内容
   else if (type === 'dropdown-menu') {
     // 获取下拉菜单信息及位置 注：这里逻辑特指内置的下拉菜单
-    const { dropDownMenu = table.globalDropDownMenu, pivotInfo } = table._getHeaderLayoutMap(col, row) as HeaderData;
+    let dropDownMenu = table.globalDropDownMenu;
+    const headerData = table._getHeaderLayoutMap(col, row) as HeaderData;
+    dropDownMenu = headerData.dropDownMenu ?? dropDownMenu;
+    const pivotInfo = headerData.pivotInfo;
 
+    if (typeof dropDownMenu === 'function') {
+      dropDownMenu = dropDownMenu({ row, col, table });
+    }
     // const x = (left + right) / 2;
     // const y = bottom;
 

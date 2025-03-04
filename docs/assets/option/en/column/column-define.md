@@ -40,6 +40,14 @@ Table column configuration, each column needs to set configuration items separat
     prefix = ${prefix}
 ) }}
 
+{{ use: switch-cell-type(
+    prefix = ${prefix}
+) }}
+
+{{ use: button-cell-type(
+    prefix = ${prefix}
+) }}
+
 {{ use: composite-cell-type(
     prefix = ${prefix}
 ) }}

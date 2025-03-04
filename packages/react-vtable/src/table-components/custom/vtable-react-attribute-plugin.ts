@@ -241,7 +241,11 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
 }
 
 function checkFrozenContainer(graphic: IGraphic) {
-  const { col, row, stage } = getTargetGroup(graphic);
+  const targetGroup = getTargetGroup(graphic);
+  if (!targetGroup) {
+    return null;
+  }
+  const { col, row, stage } = targetGroup;
   let { container } = graphic.attribute.react;
   const { table } = stage as any;
   // deal with react dom container

@@ -602,7 +602,7 @@ MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
 {
 col: number;
 row: number;
-alue: string | number;
+value: string | number;
 dataValue: string | number;
 checked: boolean;
 };
@@ -620,7 +620,7 @@ checked: boolean;
 {
 col: number;
 row: number;
-alue: string | number;
+value: string | number;
 dataValue: string | number;
 radioIndexInCell: boolean | number;
 };
@@ -629,7 +629,37 @@ radioIndexInCell: boolean | number;
 
 如果单元格中只有一个单选框，radioIndexInCell 为 boolean 类型，表示是否选中；如果单元格中有多个单选框，radioIndexInCell 为 number 类型，表示选中的单选框的索引。
 
+## SWITCH_STATE_CHANGE
+
+switch 状态改变事件。**ListTable 表格专有事件**
+
+事件回调函数的参数类型:
+
 ```
+
+{
+col: number;
+row: number;
+value: string | number;
+dataValue: string | number;
+checked: boolean;
+};
+
+```
+
+## BUTTON_CLICK
+
+按钮点击事件。**ListTable 表格专有事件**
+
+事件回调函数的参数类型:
+
+```
+
+{
+col: number;
+row: number;
+event: Event;
+};
 
 ```
 

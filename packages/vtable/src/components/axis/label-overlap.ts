@@ -1,5 +1,5 @@
 import type { IGroup, INode, IText } from '@src/vrender';
-import type { LineAxis } from '@visactor/vrender-components';
+import type { LineAxis } from '@src/vrender';
 import type { CartesianAxis } from './axis';
 import { isXAxis } from '../util/orient';
 import { isEmpty, last as peek } from '@visactor/vutils';

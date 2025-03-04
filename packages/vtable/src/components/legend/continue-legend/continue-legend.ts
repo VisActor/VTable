@@ -1,7 +1,7 @@
 import { cloneDeep, get, merge } from '@visactor/vutils';
 import type { IColorTableLegendOption, ISizeTableLegendOption } from '../../../ts-types/component/legend';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
-import { ColorContinuousLegend, SizeContinuousLegend, LegendEvent } from '@visactor/vrender-components';
+import { ColorContinuousLegend, SizeContinuousLegend, LegendEvent } from '@src/vrender';
 import { getContinuousLegendAttributes } from './get-continue-legend-attributes';
 import { TABLE_EVENT_TYPE } from '../../../core/TABLE_EVENT_TYPE';
 import { getQuadProps } from '../../../scenegraph/utils/padding';

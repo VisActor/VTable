@@ -4,6 +4,9 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import { isBoolean, isNumber } from '@visactor/vutils';
 import type { ITableAnimationOption } from '../ts-types/animation/appear';
 
+function isInteger(value: number) {
+  return Math.floor(value) === value;
+}
 class Animateaaa extends ACustomAnimate<any> {
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     if (this.from.x !== this.to.x) {
@@ -40,10 +43,34 @@ export class TableAnimationManager {
       x: this.table.scrollLeft,
       y: this.table.scrollTop
     };
-    const cellRect = this.table.getCellRect(position.col ?? 0, position.row ?? 0);
+
+    const { col, row } = position;
+    let colInt = col;
+    let rowInt = row;
+    let colDecimal;
+    let rowDecimal;
+    if (isNumber(col) && !isInteger(col)) {
+      colInt = Math.floor(col);
+      colDecimal = col - colInt;
+    }
+    if (isNumber(row) && !isInteger(row)) {
+      rowInt = Math.floor(row);
+      rowDecimal = row - rowInt;
+    }
+    const cellRect = this.table.getCellRect(colInt ?? 0, rowInt ?? 0);
+    let { left, top } = cellRect;
+
+    // deal with decimal
+    if (colDecimal) {
+      left += colDecimal * cellRect.width;
+    }
+    if (rowDecimal) {
+      top += rowDecimal * cellRect.height;
+    }
+
     const to = {
-      x: isNumber(position.col) ? cellRect.left - this.table.getFrozenColsWidth() : this.table.scrollLeft,
-      y: isNumber(position.row) ? cellRect.top - this.table.getFrozenRowsHeight() : this.table.scrollTop
+      x: isNumber(col) ? left - this.table.getFrozenColsWidth() : this.table.scrollLeft,
+      y: isNumber(row) ? top - this.table.getFrozenRowsHeight() : this.table.scrollTop
     };
     const duration = !isBoolean(animationOption) ? animationOption?.duration ?? 3000 : animationOption ? 3000 : 0;
     const easing = !isBoolean(animationOption) ? animationOption?.easing ?? 'linear' : animationOption ? 'linear' : '';

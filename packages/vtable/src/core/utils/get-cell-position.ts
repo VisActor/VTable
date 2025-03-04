@@ -118,12 +118,14 @@ export function getTargetRowAt(absoluteY: number, _this: BaseTableAPI): RowInfo 
     return { top: 0, row: 0, bottom: 0, height: 0 };
   }
 
+  const floorOrRound = _this.options.customConfig?._disableColumnAndRowSizeRound === true ? Math.floor : Math.round;
+
   const findBefore = (startRow: number, startBottom: number): RowInfo | null => {
     let bottom = startBottom;
     for (let row = startRow; row >= 0; row--) {
       const height = _this.getRowHeight(row);
       const top = bottom - height;
-      if (Math.round(top) <= Math.round(absoluteY) && Math.round(absoluteY) < Math.round(bottom)) {
+      if (floorOrRound(top) <= floorOrRound(absoluteY) && floorOrRound(absoluteY) < floorOrRound(bottom)) {
         return {
           top,
           row,
@@ -141,7 +143,7 @@ export function getTargetRowAt(absoluteY: number, _this: BaseTableAPI): RowInfo 
     for (let row = startRow; row < rowCount; row++) {
       const height = _this.getRowHeight(row);
       const bottom = top + height;
-      if (Math.round(top) <= Math.round(absoluteY) && Math.round(absoluteY) < Math.round(bottom)) {
+      if (floorOrRound(top) <= floorOrRound(absoluteY) && floorOrRound(absoluteY) < floorOrRound(bottom)) {
         return {
           top,
           row,

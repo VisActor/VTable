@@ -286,7 +286,21 @@ export class Scenegraph {
     if (!this.taskCreationButton) {
       this.taskCreationButton = new TaskCreationButton(this._gantt.scenegraph);
     }
-    this.taskCreationButton.show(x, y, this._gantt.getDateColWidth(dateIndex), this._gantt.parsedOptions.rowHeight);
+    //根据最大最小宽度计算按钮的宽度
+    const createButton_max_width = this._gantt.parsedOptions.taskBarCreationMaxWidth;
+    const createButton_min_width = this._gantt.parsedOptions.taskBarCreationMinWidth;
+    const col_width = this._gantt.getDateColWidth(dateIndex);
+    const button_width = createButton_max_width
+      ? Math.min(
+          createButton_max_width,
+          createButton_min_width ? Math.max(createButton_min_width, col_width) : col_width
+        )
+      : createButton_min_width
+      ? Math.max(createButton_min_width, col_width)
+      : col_width;
+    // 调整x，使按钮居中
+    const button_x = x - (button_width - col_width) / 2;
+    this.taskCreationButton.show(button_x, y, button_width, this._gantt.parsedOptions.rowHeight);
     this.updateNextFrame();
   }
 

@@ -1360,6 +1360,40 @@ setCellRadioState(col: number, row: number, index?: number) => void
 - row: row number
 - index: the index of the updated target radio in the cell
 
+## getSwitchState(Function)
+
+Get the selected status of all switch data under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
+
+```
+
+getSwitchState(field?: string | number): Array
+
+```
+
+## getCellSwitchState(Function)
+
+Get the status of a cell switch
+
+```
+
+getCellSwitchState(col: number, row: number): boolean
+
+```
+
+## setCellSwitchState(Function)
+
+Set the switch state of a cell
+
+```
+
+setCellSwitchState(col: number, row: number, checked: boolean) => void
+
+```
+
+- col: column number
+- row: row number
+- checked: whether checked
+
 ## getAllRowsHeight(Function)
 
 get all rows height

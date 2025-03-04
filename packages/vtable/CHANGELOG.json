@@ -2,6 +2,59 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.17.0",
+      "tag": "@visactor/vtable_v1.17.0",
+      "date": "Wed, 26 Feb 2025 11:11:06 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: gantt time scale support visible #3098\n\n"
+          },
+          {
+            "comment": "docs: update changlog of rush\n\n"
+          },
+          {
+            "comment": "feat: dropdownmenu support function #3443\n\n"
+          },
+          {
+            "comment": "fix: after release instance, resize event occor error #3459\n\n"
+          },
+          {
+            "comment": "fix: when set autoFillWidth the rowSeriesNumber column not change his width #3459\n\n"
+          },
+          {
+            "comment": "fix: when resize taskbar start or end time tree node update error #3460\n\n"
+          },
+          {
+            "comment": "feat: add verticalLineDependenceOnTimeScale #3467\n\n"
+          },
+          {
+            "comment": "fix: fix node env config"
+          },
+          {
+            "comment": "feat: add api activateChartInstance replaceChartCacheImage\n\n"
+          },
+          {
+            "comment": "feat: add `specTransformInCell` for support modifying vchart spec of each cell in PivotChart\n\n"
+          },
+          {
+            "comment": "fix: fix row/col is decimal in animation #3455"
+          },
+          {
+            "comment": "fix: fix height is decimal in carousel #3458"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add switch & button cell type"
+          },
+          {
+            "comment": "feat: delete loading icon auto register"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.16.2",
       "tag": "@visactor/vtable_v1.16.2",
       "date": "Wed, 19 Feb 2025 07:56:38 GMT",

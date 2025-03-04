@@ -37,6 +37,8 @@ export interface IGrid {
 
   verticalLine?: ILineStyle | ((args: GridVerticalLineStyleArgumentType) => ILineStyle);
   horizontalLine?: ILineStyle | ((args: GridHorizontalLineStyleArgumentType) => ILineStyle);
+  /** 竖线依赖的日期刻度。默认为timelineHeader中scales中的最小时间粒度 */
+  verticalLineDependenceOnTimeScale?: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second';
 }
 //#region gantt
 export interface GanttConstructorOptions {
@@ -129,12 +131,16 @@ export interface GanttConstructorOptions {
     scheduleCreatable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
     /** 针对没有分配日期的任务，可以显示出创建按钮 */
     scheduleCreation?: {
-      buttonStyle: ILineStyle & {
+      buttonStyle?: ILineStyle & {
         cornerRadius?: number;
         backgroundColor?: string;
       };
       /** 任务条创建按钮的自定义渲染 */
       customLayout?: ITaskCreationCustomLayout;
+      /** 任务条创建按钮的最大宽度 */
+      maxWidth?: number;
+      /** 任务条创建按钮的最小宽度 */
+      minWidth?: number;
     };
   };
   /** 数据条目可唯一标识的字段名,默认为'id' */
@@ -224,6 +230,7 @@ export interface ITimelineScale {
   customLayout?: IDateCustomLayout;
   style?: ITimelineHeaderStyle;
   format?: (date: DateFormatArgumentType) => string;
+  visible?: boolean;
 }
 export interface ITaskBarLabelTextStyle {
   fontFamily?: string;

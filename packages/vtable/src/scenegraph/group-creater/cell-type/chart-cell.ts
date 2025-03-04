@@ -96,7 +96,7 @@ export function createChartCellGroup(
       canvas: table.canvas ?? (table.scenegraph.stage.window.getContext().canvas as unknown as HTMLCanvasElement),
       mode: table.options.mode,
       modeParams: table.options.modeParams,
-      spec: chartSpec,
+      spec: table.options.specTransformInCell ? table.options.specTransformInCell(chartSpec, col, row) : chartSpec,
       ClassType,
       width: width - padding[3] - padding[1],
       height: height - padding[2] - padding[0],
@@ -118,7 +118,9 @@ export function createChartCellGroup(
       //   width: width - padding[1] - padding[3], //cellGroup.globalAABBBounds.width() - padding[1] - padding[3],
       //   height: height - padding[0] - padding[2],
       // },
-      tableChartOption: table.options.chartOption
+      tableChartOption: table.options.chartOption,
+      col,
+      row
     });
     cellGroup.appendChild(chartGroup);
     // 将生成的实例存到layoutMap中 共享

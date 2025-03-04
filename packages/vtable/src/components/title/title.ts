@@ -1,6 +1,6 @@
-import { Title as TitleComponents } from '@visactor/vrender-components';
+import { Title as TitleComponents } from '@src/vrender';
 // eslint-disable-next-line no-duplicate-imports
-import type { TitleAttrs } from '@visactor/vrender-components';
+import type { TitleAttrs } from '@src/vrender';
 import type { ITitle } from '../../ts-types/component/title';
 import { getQuadProps } from '../../scenegraph/utils/padding';
 import type { BaseTableAPI } from '../../ts-types/base-table';

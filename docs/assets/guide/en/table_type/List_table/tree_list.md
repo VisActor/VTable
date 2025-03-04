@@ -192,6 +192,29 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 
 In some scenarios, the child node data may be relatively large. In view of the excessive performance pressure on the backend database, and you do not want to obtain all the data at once, you need to call the interface to load the data when you click to expand. Then you can use the following method to achieve:
 
+0. (Optional) Register the loading icon
+
+```javascript
+VTable.register.icon('loading', {
+  type: 'image',
+  width: 16,
+  height: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+  name: 'loading', // Define the name of the icon, which will be used as the key value for caching in the internal cache
+  positionType: VTable.TYPES.IconPosition.absoluteRight, // Specify the position, which can be before or after the text, or left or right of the cell
+  marginLeft: 0, // The left content interval in the specific position
+  marginRight: 4, // The right content interval in the specific position
+  visibleTime: 'always', // The display time, 'always' | 'mouseover_cell' | 'click_cell'
+  hover: {
+    // The size of the hot area
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101,117,168,0.1)'
+  },
+  isGif: true
+});
+```
+
 1. Set the children of the corresponding data to true instead of a specific data collection so that the cell can display the folded icon;
 2. When the user clicks the status icon, the event `VTable.ListTable.EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE` will be triggered. The front-end code needs to listen to this event to request children data.
 3. (Optional) Before loading the data, call the `instance.setLoadingHierarchyState(col, row)` method to display the loading icon;

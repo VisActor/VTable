@@ -12,7 +12,9 @@ import type {
   IRowSeriesNumber,
   TextColumnDefine,
   RadioColumnDefine,
-  ListTableConstructorOptions
+  ListTableConstructorOptions,
+  SwitchColumnDefine,
+  ButtonColumnDefine
 } from '../../ts-types';
 import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
@@ -38,6 +40,8 @@ import { breakString } from '../utils/break-string';
 import type { CreateRadioCellGroup } from './cell-type/radio-cell';
 import { onBeforeAttributeUpdateForInvertHighlight } from '../../plugins/invert-highlight';
 import { getCellBorderStrokeWidth } from '../utils/cell-border-stroke-width';
+import type { CreateSwitchCellGroup } from './cell-type/switch-cell';
+import type { CreateButtonCellGroup } from './cell-type/button-cell';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -385,6 +389,50 @@ export function createCell(
       cellTheme,
       define as RadioColumnDefine,
       range
+    );
+  } else if (type === 'switch') {
+    const createSwitchCellGroup = Factory.getFunction('createSwitchCellGroup') as CreateSwitchCellGroup;
+    cellGroup = createSwitchCellGroup(
+      null,
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      colWidth,
+      cellWidth,
+      cellHeight,
+      padding,
+      textAlign,
+      textBaseline,
+      mayHaveIcon,
+      table,
+      cellTheme,
+      define as SwitchColumnDefine,
+      range,
+      isAsync
+    );
+  } else if (type === 'button') {
+    const createButtonCellGroup = Factory.getFunction('createButtonCellGroup') as CreateButtonCellGroup;
+    cellGroup = createButtonCellGroup(
+      null,
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      colWidth,
+      cellWidth,
+      cellHeight,
+      padding,
+      textAlign,
+      textBaseline,
+      mayHaveIcon,
+      table,
+      cellTheme,
+      define as ButtonColumnDefine,
+      range,
+      isAsync
     );
   }
 

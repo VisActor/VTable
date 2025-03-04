@@ -1,3 +1,39 @@
+# v1.17.0
+
+2025-02-26
+
+
+
+**💥 Breaking change**
+
+- **@visactor/vtable**: 删除loading加载图标的自动注册，需要手动注册，具体可以参考教程：/guide/table_type/List_table/tree_list
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: 甘特图scale时间表头支持可见性设置 [#3098](https://github.com/VisActor/VTable/issues/3098)
+- **@visactor/vtable**: 下拉菜单支持函数配置 [#3443](https://github.com/VisActor/VTable/issues/3443)
+- **@visactor/vtable-gantt**: 新增grid网格垂直线依赖于时间轴的配置 [#3467](https://github.com/VisActor/VTable/issues/3467)
+- **@visactor/vtable**: 新增 activateChartInstance 和 replaceChartCacheImage API
+- **@visactor/vtable**: 新增 `specTransformInCell` 配置，支持修改透视表每个单元格的 VChart 规范
+- **@visactor/vtable**: 新增开关和按钮类型单元格
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复释放实例后，调整大小事件发生错误的问题 [#3459](https://github.com/VisActor/VTable/issues/3459)
+- **@visactor/vtable**: 修复设置 autoFillWidth 时行号列宽度不变的问题 [#3459](https://github.com/VisActor/VTable/issues/3459)
+- **@visactor/vtable-gantt**: 修复调整任务条开始或结束时间时树节点更新错误的问题 [#3460](https://github.com/VisActor/VTable/issues/3460)
+- **@visactor/vtable**: 修复 node 环境配置
+- **@visactor/vtable**: 修复动画中行列为小数的问题 [#3455](https://github.com/VisActor/VTable/issues/3455)
+- **@visactor/vtable**: 修复轮播中高度为小数的问题 [#3458](https://github.com/VisActor/VTable/issues/3458)
+
+**📖 文档更新**
+
+- **@visactor/vtable**: 更新 Rush 的更新日志
+
+
+
+[更多详情请查看 v1.17.0](https://github.com/VisActor/VTable/releases/tag/v1.17.0)
+
 # v1.16.2
 
 2025-02-19

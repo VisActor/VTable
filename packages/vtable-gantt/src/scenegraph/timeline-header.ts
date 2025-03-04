@@ -29,6 +29,10 @@ export class TimelineHeader {
     const { unit: minUnit, step } = scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
     let y = 0;
     for (let i = 0; i < scene._gantt.timeLineHeaderLevel; i++) {
+      const { timelineDates, customLayout, visible } = scene._gantt.parsedOptions.sortedTimelineScales[i];
+      if (visible === false) {
+        continue;
+      }
       const rowHeader = new Group({
         x: 0,
         y,
@@ -40,7 +44,6 @@ export class TimelineHeader {
       rowHeader.name = 'row-header';
       dateHeader.addChild(rowHeader);
 
-      const { timelineDates, customLayout } = scene._gantt.parsedOptions.sortedTimelineScales[i];
       for (let j = 0; j < timelineDates?.length; j++) {
         const { days, endDate, startDate, title, dateIndex, unit } = timelineDates[j];
         const x = Math.ceil(
