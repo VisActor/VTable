@@ -119,7 +119,7 @@ body 单元格的样式配置
 
 右侧冻结区域的样式配置
 
-{{ use: common-theme-style( 
+{{ use: common-theme-style(
   prefix = '#' + ${prefix},
 ) }}
 
@@ -176,6 +176,14 @@ body 单元格的样式配置
   ) }}
 
 {{ use: common-radio-style (
+  prefix = ${prefix}
+  ) }}
+
+{{ use: common-switch-style (
+  prefix = ${prefix}
+  ) }}
+
+{{ use: common-button-style (
   prefix = ${prefix}
   ) }}
 

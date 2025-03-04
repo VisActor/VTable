@@ -1099,7 +1099,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
     const field = define?.field;
     const cellType = this.getCellType(col, row);
-    if (isValid(field) && cellType === 'checkbox') {
+    if (isValid(field) && (cellType === 'checkbox' || cellType === 'switch')) {
       const dataIndex = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row)).toString();
       return this.stateManager.checkedState.get(dataIndex)?.[field as string | number];
     }
@@ -1116,14 +1116,24 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getCellRadioState(col: number, row: number): boolean | number {
     return getCellRadioState(col, row, this);
   }
-
   setCellCheckboxState(col: number, row: number, checked: boolean | 'indeterminate') {
     setCellCheckboxState(col, row, checked, this);
   }
-
   setCellRadioState(col: number, row: number, index?: number) {
     setCellRadioState(col, row, index, this);
   }
+
+  // switch 开关类型，状态管理同checkbox
+  getSwitchState(field?: string | number) {
+    return this.getCheckboxState(field);
+  }
+  getCellSwitchState(col: number, row: number) {
+    return this.getCellCheckboxState(col, row);
+  }
+  setCellSwitchState(col: number, row: number, checked: boolean | 'indeterminate') {
+    this.setCellCheckboxState(col, row, checked);
+  }
+
   /**
    * 设置表格数据 及排序状态
    * @param records
@@ -1459,5 +1469,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
         }
       }
     }
+  }
+
+  release() {
+    this.editorManager.release();
+    super.release();
   }
 }

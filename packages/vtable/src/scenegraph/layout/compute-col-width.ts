@@ -23,6 +23,7 @@ import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vuti
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { breakString } from '../utils/break-string';
 import { emptyCustomLayout } from '../../components/react/react-custom-layout';
+import { getOrApply } from '../../tools/helper';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   // const time = typeof window !== 'undefined' ? window.performance.now() : 0;
@@ -168,7 +169,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     for (let col = 0; col < table.colCount; col++) {
       const colWidth = update ? newWidths[col] ?? table.getColWidth(col) : table.getColWidth(col);
       if (
-        col < table.rowHeaderLevelCount ||
+        col < table.rowHeaderLevelCount + table.leftRowSeriesNumberCount ||
         (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
       ) {
         actualHeaderWidth += colWidth;
@@ -177,7 +178,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     }
     // 如果内容宽度小于canvas宽度，执行adaptive放大
     if (actualWidth < canvasWidth && actualWidth > actualHeaderWidth) {
-      const startCol = table.rowHeaderLevelCount;
+      const startCol = table.rowHeaderLevelCount + table.leftRowSeriesNumberCount;
       const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
       getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, update, newWidths, table);
     }
@@ -371,7 +372,9 @@ function computeAutoColWidth(
       cellType !== 'link' &&
       cellType !== 'progressbar' &&
       cellType !== 'checkbox' &&
-      cellType !== 'radio'
+      cellType !== 'radio' &&
+      cellType !== 'switch' &&
+      cellType !== 'button'
     ) {
       // text&link&progressbar测量文字宽度
       // image&video&sparkline使用默认宽度
@@ -626,6 +629,17 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
     } else {
       text = isObject(cellValue) ? (cellValue as any).text : cellValue;
     }
+  } else if (cellType === 'button') {
+    const define = table.getBodyColumnDefine(col, row);
+    const buttonTextValue = getOrApply((define as any).text, {
+      col,
+      row,
+      table,
+      context: null,
+      value: cellValue,
+      dataValue: table.getCellOriginValue(col, row)
+    });
+    text = buttonTextValue ?? (cellValue as string) ?? '';
   } else {
     text = cellValue;
   }
@@ -693,6 +707,12 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
         maxWidth += spaceBetweenTextAndIcon;
       }
     }
+  } else if (cellType === 'switch') {
+    const boxWidth = getProp('boxWidth', actStyle, col, row, table);
+    maxWidth = boxWidth;
+  } else if (cellType === 'button') {
+    const buttonPadding = getProp('buttonPadding', actStyle, col, row, table);
+    maxWidth += buttonPadding * 2;
   }
 
   return maxWidth;

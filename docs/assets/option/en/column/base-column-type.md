@@ -61,6 +61,8 @@ The type structure of IStyleOption is as follows:
   isProgressbar = ${isProgressbar},
   isCheckbox = ${isCheckbox},
   isRadio = ${isRadio},
+  isSwitch = ${isSwitch},
+  isButton = ${isButton},
 ) }}
 
 ${prefix} headerIcon(string|Object|Array)
@@ -88,7 +90,7 @@ icon?:
 #${prefix} ColumnIconOption
 
 ```
-type ColumnIconOption = ImageIcon | SvgIcon;
+type ColumnIconOption = ImageIcon | SvgIcon | TextIcon;
 ```
 
 #${prefix} ImageIcon(Object)
@@ -98,6 +100,10 @@ type is set to 'image'. The image address needs to be set in src
 #${prefix} SvgIcon(Object)
 type is set to 'svg'. You need to configure the svg address or the complete svg file string in svg
 {{ use: svg-icon(  prefix = '##' + ${prefix}) }}
+
+#${prefix} TextIcon(Object)
+type is set to 'text'. You need to configure the text content in content
+{{ use: text-icon(  prefix = '##' + ${prefix}) }}
 
 ${prefix} sort(boolean|Function)
 
@@ -122,8 +128,12 @@ This header column does not support selection
 ${prefix} description(string)
 The description of the header when hover, which will be displayed in the form of a tooltip
 
-${prefix} dropDownMenu(Array)
-The drop-down menu item configuration. The drop-down menu item can be a first-level menu item or a second-level menu item, as long as there is a configuration. The specific type is MenuListItem[].
+${prefix} dropDownMenu(MenuListItem[])
+The drop-down menu item configuration. The drop-down menu item can be a first-level menu item or a second-level menu item, as long as there is a configuration.
+
+具体类型为 `MenuListItem[]`。
+
+{{ use: common-menu-list-item() }}
 
 ${prefix} headerCustomRender(Function|Object)
 

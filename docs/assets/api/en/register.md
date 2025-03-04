@@ -110,6 +110,12 @@ register svg resource.
 
 {{ use: svg-icon(  prefix = '####') }}
 
+###TextIcon(Object)
+
+register text resource.
+
+{{ use: text-icon(  prefix = '####') }}
+
 ## chartModule(Function)
 
 [Usage example](../demo/cell-type/chart):

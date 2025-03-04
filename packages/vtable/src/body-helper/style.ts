@@ -16,6 +16,8 @@ import { Style } from './style/Style';
 import type { TableTheme } from '../themes/theme';
 import { CheckboxStyle } from './style/CheckboxStyle';
 import { RadioStyle } from './style/RadioStyle';
+import { SwitchStyle } from './style/SwitchStyle';
+import { ButtonStyle } from './style/ButtonStyle';
 
 const { EVENT_TYPE } = Style;
 export {
@@ -53,6 +55,10 @@ export function of(
       return new CheckboxStyle(columnStyle ?? {}, (bodyStyle ?? {}) as any, (theme.checkboxStyle ?? {}) as any);
     } else if (StyleClassDef === RadioStyle) {
       return new RadioStyle(columnStyle ?? {}, (bodyStyle ?? {}) as any, (theme.radioStyle ?? {}) as any);
+    } else if (StyleClassDef === SwitchStyle) {
+      return new SwitchStyle(columnStyle ?? {}, (bodyStyle ?? {}) as any, (theme.switchStyle ?? {}) as any);
+    } else if (StyleClassDef === ButtonStyle) {
+      return new ButtonStyle(columnStyle ?? {}, (bodyStyle ?? {}) as any, (theme.buttonStyle ?? {}) as any);
     }
     return new StyleClassDef((columnStyle ?? {}) as any, (bodyStyle ?? {}) as any);
   }

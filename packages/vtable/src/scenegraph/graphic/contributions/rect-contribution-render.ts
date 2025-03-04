@@ -16,7 +16,7 @@ import { getWidthInfo, renderStroke } from './group-contribution-render';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { vec2, vec4 } from '@visactor/vutils';
 import { abs, arrayEqual, halfPi, isArray, isNumber, pi } from '@visactor/vutils';
-import { createRectPath } from '@visactor/vrender-core';
+import { createRectPath } from '@src/vrender';
 
 @injectable()
 export class SplitRectBeforeRenderContribution implements IRectRenderContribution {

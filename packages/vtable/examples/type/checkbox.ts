@@ -67,6 +67,28 @@ export function createTable() {
           spaceBetweenTextAndIcon: 15
         }
         // checked: false
+      },
+      {
+        field: 'switch',
+        title: 'switch',
+        width: 120,
+        cellType: 'switch',
+        uncheckedText: 'off',
+        checkedText: 'on',
+        style: {
+          color: '#FFF'
+        }
+      },
+      {
+        field: 'button',
+        title: 'button',
+        width: 120,
+        cellType: 'button',
+        disable: false,
+        text: 'button',
+        style: {
+          color: '#FFF'
+        }
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
@@ -104,9 +126,12 @@ export function createTable() {
     // customGrapicKeys: ['role', '_updateTag'],
   });
 
-  const { CHECKBOX_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  const { CHECKBOX_STATE_CHANGE, BUTTON_CLICK } = VTable.ListTable.EVENT_TYPE;
   instance.on(CHECKBOX_STATE_CHANGE, e => {
     console.log(e.col, e.row, e.checked);
+  });
+  instance.on(BUTTON_CLICK, e => {
+    console.log(BUTTON_CLICK, e.col, e.row, e.event);
   });
 
   // 只为了方便控制太调试用，不要拷贝

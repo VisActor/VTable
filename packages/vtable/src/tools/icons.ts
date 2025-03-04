@@ -1,18 +1,18 @@
 import type {
-  FontIcon,
+  TextIcon,
   ImageIcon,
   // NamedIcon,
   PathIcon,
   SvgIcon
 } from '../ts-types';
 
-type IconPropKey = keyof FontIcon | keyof SvgIcon | keyof ImageIcon | keyof PathIcon;
+type IconPropKey = keyof TextIcon | keyof SvgIcon | keyof ImageIcon | keyof PathIcon;
 // | keyof NamedIcon;
 const ICON_PROP_KEYS: IconPropKey[] = [
   //TODO 需要去掉这个逻辑  每次fontIcon新增属性 就会丢失 定位到是这里需要对应加上key
   'type',
   'content',
-  'font',
+  'style',
   'color',
   'width',
   'height',

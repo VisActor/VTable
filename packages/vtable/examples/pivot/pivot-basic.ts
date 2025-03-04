@@ -493,7 +493,9 @@ export function createTable() {
     allowFrozenColCount: 2,
     widthMode: 'autoWidth', // 宽度模式：standard 标准模式； adaptive 自动填满容器
     defaultRowHeight: 80,
-    columnResizeType: 'indicator', // 'column' | 'indicator' | 'all'
+    resize: {
+      columnResizeType: 'indicator' // 'column' | 'indicator' | 'all'
+    },
     tooltip: {
       isShowOverflowTextTooltip: true
     },

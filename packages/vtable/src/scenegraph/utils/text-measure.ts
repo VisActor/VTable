@@ -8,7 +8,7 @@ import {
   container,
   Text
 } from '@src/vrender';
-import { MeasureModeEnum } from '@visactor/vrender-core';
+import { MeasureModeEnum } from '@src/vrender';
 // eslint-disable-next-line max-len
 // import {
 //   DefaultTextMeasureContribution,

@@ -253,3 +253,19 @@
   ) }}
 
 {{ /if }}
+
+{{ if: ${isSwitch} }}
+
+{{ use: common-switch-style (
+  prefix = ${prefix}
+  ) }}
+
+{{ /if }}
+
+{{ if: ${isButton} }}
+
+{{ use: common-button-style (
+  prefix = ${prefix}
+  ) }}
+
+{{ /if }}

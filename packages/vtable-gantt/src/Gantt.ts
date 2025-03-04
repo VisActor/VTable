@@ -149,7 +149,8 @@ export class Gantt extends EventTarget {
       backgroundColor?: string;
     };
     taskBarCreationCustomLayout: ITaskCreationCustomLayout;
-
+    taskBarCreationMaxWidth: number;
+    taskBarCreationMinWidth: number;
     outerFrameStyle: IFrameStyle;
     pixelRatio: number;
     tasksShowMode: TasksShowMode;
@@ -703,6 +704,9 @@ export class Gantt extends EventTarget {
   getAllHeaderRowsHeight() {
     // if (Array.isArray(this.parsedOptions.timeLineHeaderRowHeights)) {
     return this.parsedOptions.timeLineHeaderRowHeights.reduce((acc, curr, index) => {
+      if (this.parsedOptions.sortedTimelineScales[index].visible === false) {
+        return acc;
+      }
       return acc + curr;
     }, 0);
     // }
@@ -770,6 +774,12 @@ export class Gantt extends EventTarget {
     //   0,
     //   index + this.taskListTableInstance.columnHeaderLevelCount
     // );
+    if (!Array.isArray(index)) {
+      index = this.taskListTableInstance.getRecordIndexByCell(
+        0,
+        index + this.taskListTableInstance.columnHeaderLevelCount
+      );
+    }
     this.taskListTableInstance.updateRecords([record], [index]);
   }
   /**
@@ -853,7 +863,8 @@ export class Gantt extends EventTarget {
 
     if (!isValid(sub_task_index)) {
       //子任务不是独占左侧表格一行的情况
-      this._updateRecordToListTable(taskRecord, index);
+      const indexs = this.getRecordIndexByTaskShowIndex(index);
+      this._updateRecordToListTable(taskRecord, indexs);
     }
   }
 
@@ -864,10 +875,10 @@ export class Gantt extends EventTarget {
 
     const newEndDate = formatDate(endDate, dateFormat);
     taskRecord[endDateField] = newEndDate;
-
     if (!isValid(sub_task_index)) {
       //子任务不是独占左侧表格一行的情况
-      this._updateRecordToListTable(taskRecord, index);
+      const indexs = this.getRecordIndexByTaskShowIndex(index);
+      this._updateRecordToListTable(taskRecord, indexs);
     }
   }
 
@@ -1018,6 +1029,7 @@ export class Gantt extends EventTarget {
     this.scenegraph.setY(-top);
   }
   updateScales(scales: ITimelineScale[]) {
+    const oldScalesLength = this.parsedOptions.sortedTimelineScales.length;
     const gantt = this;
     this.options.timelineHeader.scales = scales;
     this._sortScales();
@@ -1037,6 +1049,9 @@ export class Gantt extends EventTarget {
           this.taskListTableInstance.setRowHeight(i, newRowHeight);
         }
       }
+    }
+    if (oldScalesLength !== scales.length) {
+      this._resize();
     }
   }
   /** 更新日期范围 */

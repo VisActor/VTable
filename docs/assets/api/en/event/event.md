@@ -591,6 +591,37 @@ Parameter types of event callback function:
 
 If there is only one radio button in the cell, radioIndexInCell is of type boolean, indicating whether it is selected; if there are multiple radio buttons in the cell, radioIndexInCell is of type number, indicating the index of the selected radio button.
 
+## SWITCH_STATE_CHANGE
+
+Switch state change event. **ListTable table exclusive event**
+
+Parameter types of event callback function:
+
+```
+{
+col: number;
+row: number;
+value: string | number;
+dataValue: string | number;
+checked: boolean;
+};
+
+```
+
+## BUTTON_CLICK
+
+Button click event. **ListTable table exclusive event**
+
+Parameter types of event callback function:
+
+```
+{
+col: number;
+row: number;
+event: Event;
+};
+```
+
 ## EMPTY_TIP_CLICK
 
 Empty data prompt click event.

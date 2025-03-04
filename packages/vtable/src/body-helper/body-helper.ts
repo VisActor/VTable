@@ -11,6 +11,8 @@ import { obj } from '../tools/helper';
 import { CheckboxStyle } from './style/CheckboxStyle';
 import { RadioStyle } from './style/RadioStyle';
 import { isValid } from '@visactor/vutils';
+import { SwitchStyle } from './style/SwitchStyle';
+import { ButtonStyle } from './style/ButtonStyle';
 export class BodyHelper {
   expandIcon: SvgIcon;
   collapseIcon: SvgIcon;
@@ -97,6 +99,8 @@ export class BodyHelper {
       | 'chart'
       | 'checkbox'
       | 'radio'
+      | 'switch'
+      | 'button'
   ) {
     switch (cellType) {
       case 'text':
@@ -117,6 +121,10 @@ export class BodyHelper {
         return CheckboxStyle;
       case 'radio':
         return RadioStyle;
+      case 'switch':
+        return SwitchStyle;
+      case 'button':
+        return ButtonStyle;
     }
     return TextStyle;
   }

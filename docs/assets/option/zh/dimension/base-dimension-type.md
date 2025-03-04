@@ -91,8 +91,12 @@ ${prefix} headerCustomLayout(Function)
     prefix =  '#'+${prefix},
 ) }}
 
-${prefix} dropDownMenu(Array)
-下拉菜单项配置。下拉菜单项可以是一级菜单项或者二级菜单项，只要有一个配置即可。具体类型为 MenuListItem[]。
+${prefix} dropDownMenu(MenuListItem[]|Function)
+下拉菜单项配置。下拉菜单项可以是一级菜单项或者二级菜单项，只要有一个配置即可。
+
+具体类型为 `MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[])`。
+
+{{ use: common-menu-list-item() }}
 
 ${prefix} cornerDropDownMenu(Array)
 角头单元格显示下拉按钮及下拉菜单项配置。下拉菜单项可以是一级菜单项或者二级菜单项，只要有一个配置即可。具体类型为 MenuListItem[]。
