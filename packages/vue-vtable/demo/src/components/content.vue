@@ -7,6 +7,8 @@ import listtable from '../table/unified/options/list-table/list-table.vue';
 import listtablefetch from '../table/unified/options/list-table/list-table-fetch.vue';
 import listtabledom from '../table/gramatical/composition/ListTable-dom.vue';
 // import listtabledom from '../table/unified/composition/list-table/list-table-dom.vue';
+import listtableeditorrender from '../table/gramatical/composition/ListTable-editor-render.vue';
+
 import pivottable from '../table/unified/options/pivot-table/pivot-table.vue';
 import pivottabletree from '../table/unified/options/pivot-table/pivot-table-tree.vue';
 import pivottabletitleOnDimension from '../table/unified/options/pivot-table/pivot-table-titleOnDimension.vue';
@@ -22,6 +24,8 @@ const components = {
   listtable,
   listtablefetch,
   listtabledom,
+  listtableeditorrender,
+
   pivottable,
   pivottabletree,
   pivottabletitleOnDimension,

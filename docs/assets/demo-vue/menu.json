@@ -134,6 +134,13 @@
             "zh": "ArcoDesign列表选择器",
             "en": "Arco Design select editor"
           }
+        },
+        {
+          "path": "edit-render",
+          "title": {
+            "zh": "渲染式单元格编辑器",
+            "en": "Dynamic rendering cell editor"
+          }
         }
       ]
     },

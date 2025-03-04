@@ -12,7 +12,8 @@ const links = ref({
     { name: 'list-table-fetch', component: 'listtablefetch' },
     { name: 'list-table-pagination', component: 'listtablepagination' },
     { name: 'list-table-edit', component: 'listtableedit' },
-    { name: 'list-table-dom', component: 'listtabledom' }
+    { name: 'list-table-dom', component: 'listtabledom' },
+    { name: 'list-table-editor-render', component: 'listtableeditorrender' }
   ],
   PivotTable: [
     { name: 'pivot-table', component: 'pivottable' },
