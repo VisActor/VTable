@@ -49,8 +49,8 @@
     "build:es": "bundle --clean -f es --ignorePostTasks"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:1.16.3-alpha.2",
-    "@visactor/vtable-editors": "workspace:1.16.3-alpha.2",
+    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable-editors": "workspace:*",
     "@visactor/vutils": "~0.19.1",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
