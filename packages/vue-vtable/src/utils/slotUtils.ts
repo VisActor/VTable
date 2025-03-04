@@ -3,6 +3,7 @@ import { createCustomLayoutHandler } from './customLayoutUtils';
 import type { ColumnDefine, ICornerDefine, IIndicator, IDimension, ITitleDefine } from '@visactor/vtable';
 import type { TooltipProps } from '../components/component/tooltip';
 import type { MenuProps } from '../components/component/menu';
+import { checkRenderEditor } from '../edit';
 
 export function extractPivotSlotOptions(vnodes: any[]) {
   const options = {
@@ -73,6 +74,8 @@ export function extractListSlotOptions(vnodes: any[]) {
         if (vnode.children.headerCustomLayout) {
           vnode.props.headerCustomLayout = createCustomLayoutHandler(vnode.children, true);
         }
+        // 校验编辑器
+        checkRenderEditor(vnode.props, vnode.children.edit);
       }
 
       if (Array.isArray(options[optionKey])) {
