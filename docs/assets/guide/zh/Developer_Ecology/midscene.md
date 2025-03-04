@@ -240,7 +240,7 @@ await page.setViewport({
 await page.goto(URL);
 ```
 
-2. 插入运行 VChart 代码，创建图表
+2. 插入运行 VTable 代码，创建表格
 
 ```ts
 await page.evaluate(spec => {
@@ -252,7 +252,7 @@ await page.evaluate(spec => {
   window.vtableInstance = vtable;
 }, spec);
 
-// 等待canvas创建完成，图表完成渲染
+// 等待canvas创建完成，表格完成渲染
 await page.waitForSelector('canvas');
 ```
 
@@ -270,8 +270,12 @@ console.log('表格中第一列第一行的内容', items);
 await agent.aiAction('点击表格第一列的 Order ID 右侧的排序按钮');
 
 // 断言表格中第一列第二行的内容为CA-2015-105417。返回一个 Promise，当断言成功时解析为 void；若断言失败，则抛出一个错误，错误信息包含 errorMsg 以及 AI 生成的原因
-await agent.aiAssert('表格中第一列第二行的内容为 CA-2015-105417',);
+await agent.aiAssert('表格中第一列第二行的内容为 CA-2015-105417');
+```
+
 4. 截图，对比标准图片
+
+```ts
 const screenshot = await page.screenshot();
 
 // 对比标准图片

@@ -240,7 +240,7 @@ await page.setViewport({
 await page.goto(URL);
 ```
 
-2. Insert VChart code to create chart
+2. Insert VTable code to create table
 
 ```ts
 await page.evaluate(spec => {
@@ -252,7 +252,7 @@ await page.evaluate(spec => {
   window.vtableInstance = vtable;
 }, spec);
 
-// Wait for canvas creation and chart rendering completion
+// Wait for canvas creation and table rendering completion
 await page.waitForSelector('canvas');
 ```
 
@@ -271,8 +271,11 @@ await agent.aiAction('Click the sort button on the right side of Order ID in the
 
 // Assert that the content of the second row in the first column is CA-2015-105417. Returns a Promise that resolves to void when assertion succeeds; throws an error with errorMsg and AI-generated reason if assertion fails
 await agent.aiAssert('The content of the second row in the first column is CA-2015-105417');
+```
 
 4. Take screenshot and compare with standard image
+
+```ts
 const screenshot = await page.screenshot();
 
 // Compare with standard image
