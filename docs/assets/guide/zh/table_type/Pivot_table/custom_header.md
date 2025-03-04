@@ -157,7 +157,9 @@ VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
 
 自定义树的复杂在于组建行列维度树，可酌情根据业务场景来选择使用，如果具有复杂的排序、汇总或分页规则可选择使用自定义方式。
 
-如果 rowHierarchyType 设置为 tree，并且期望点击展开节点时懒加载，那么也需要使用自定义表头的透视表，具体 demo 可参考： https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load 。
+如果 rowHierarchyType 设置为 tree，并且期望点击展开节点时懒加载，那么也需要使用自定义表头的透视表，具体 [demo](../../../demo/table-type/pivot-table-tree-lazy-load) 可参考。
+
+如果想显示排序图标，可以在维度（rows或者columns）或者指标（indicators）配置上加`showSort`来显示按钮，然后通过监听事件`PIVOT_SORT_CLICK`来处理点击排序后的逻辑。
 
 # 虚拟表头节点
 

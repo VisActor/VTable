@@ -2,7 +2,7 @@
 
 透视表的排序能力以下几种实现方式：
 
-1. 透视表自定义表头的树形结构，rowTree 和 columnTree 都自行传入即可按照这个结构进行展示。这个时候即便配置了 sortRule 也不会起作用。此方式对于表头有默认顺序或者结构比较特殊，或者排序规则比较复杂的情况下使用，可以参考教程：https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_tree。
+1. 透视表自定义表头的树形结构，rowTree 和 columnTree 都自行传入即可按照这个结构进行展示。这个时候即便配置了 sortRule 也不会起作用。此方式对于表头有默认顺序或者结构比较特殊，或者排序规则比较复杂的情况下使用，可以参考教程：[自定义表头维度树](../../table_type/Pivot_table/custom_header)。
 2. 在维度或者指标配置中添加`sort:true`来开启排序，此时会显示排序按钮，点击按钮会触发排序。通过接口的方式进行排序：自行调用接口`updateSortRules`来排序。
 3. 其他特殊需求：仅显示排序状态，不使用 VTable 的排序逻辑
 
