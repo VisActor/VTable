@@ -499,6 +499,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
           eventManager.touchSetTimeout = setTimeout(() => {
             eventManager.isTouchdown = false;
             eventManager.touchMove = true;
+
+            // 处理列头checkbox状态改变
+            if (eventManager.checkColumnCheck(eventArgsSet)) {
+              return;
+            }
+
             // 处理列宽调整
             if (
               !eventManager.touchEnd &&
@@ -527,6 +533,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
           // 这里处理成hover  这样移动端 当点击到带有下拉菜单dropdown的单元格时 那个icon才能绘制出来。可以测试example的menu示例
           eventManager.dealTableHover(eventArgsSet);
         } else {
+          // 处理列头checkbox状态改变
+          if (eventManager.checkColumnCheck(eventArgsSet)) {
+            return;
+          }
+
           // 处理列宽调整
           if (
             !eventManager.checkCellFillhandle(eventArgsSet) &&

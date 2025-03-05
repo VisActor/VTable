@@ -575,6 +575,20 @@ export class EventManager {
     return false;
   }
 
+  checkColumnCheck(eventArgsSet: SceneEvent, update?: boolean): boolean {
+    // debugger;
+    const { eventArgs } = eventArgsSet;
+    const { col, row, target } = eventArgs;
+    if (!this.table.isHeader(col, row)) {
+      return false;
+    }
+    const cellType = this.table.getCellType(eventArgs.col, eventArgs.row);
+    if (cellType === 'checkbox' && target.name === 'checkbox') {
+      return true;
+    }
+    return false;
+  }
+
   checkCellFillhandle(eventArgsSet: SceneEvent, update?: boolean): boolean {
     if (this.table.options.excelOptions?.fillHandle) {
       const { eventArgs } = eventArgsSet;
