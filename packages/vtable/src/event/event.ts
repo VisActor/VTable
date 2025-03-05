@@ -575,8 +575,7 @@ export class EventManager {
     return false;
   }
 
-  checkColumnCheck(eventArgsSet: SceneEvent, update?: boolean): boolean {
-    // debugger;
+  cellIsHeaderCheck(eventArgsSet: SceneEvent, update?: boolean): boolean {
     const { eventArgs } = eventArgsSet;
     const { col, row, target } = eventArgs;
     if (!this.table.isHeader(col, row)) {
