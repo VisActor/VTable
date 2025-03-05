@@ -18,7 +18,7 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
       titleIndex = [titleIndex];
     }
 
-    if (record.vtableMerge) {
+    if (record.vtableMerge || record.children?.length) {
       // 1. group title
       if (checked) {
         // 1.1 group title check
@@ -105,7 +105,28 @@ function updateParentCheckboxState(col: number, row: number, currentIndex: numbe
   const currentIndexLength = isArray(currentIndex) ? currentIndex.length : 1;
   let start = false;
   const result: (boolean | string)[] = [];
-  checkedState.forEach((value, index: string) => {
+
+  const keys = Array.from(checkedState.keys()).sort((a: string, b: string) => {
+    // number or number[]
+    const aArr = (a as string).split(',');
+    const bArr = (b as string).split(',');
+    const maxLength = Math.max(aArr.length, bArr.length);
+
+    // judge from first to last
+    for (let i = 0; i < maxLength; i++) {
+      const a = Number(aArr[i]) ?? 0;
+      const b = Number(bArr[i]) ?? 0;
+      if (a !== b) {
+        return a - b;
+      }
+    }
+    return 0;
+  });
+  const stateArr = keys.map(key => checkedState.get(key));
+
+  stateArr.forEach((state, i) => {
+    const index = keys[i] as string;
+    const value = state;
     if (start) {
       const indexData = index.split(',');
       if (indexData.length === currentIndexLength) {
