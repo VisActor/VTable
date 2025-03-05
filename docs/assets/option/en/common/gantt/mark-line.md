@@ -10,6 +10,7 @@ export interface IMarkLine {
   position?: 'left' | 'right' | 'middle';
   /** Automatically include the mark line within the date range */
   scrollToMarkLine?: boolean;
+  content?: string; // markLine content
   /** markLine content style */
   contentStyle?: {
     color?: string;

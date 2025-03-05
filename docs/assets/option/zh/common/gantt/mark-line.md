@@ -10,6 +10,7 @@ export interface IMarkLine {
   position?: 'left' | 'right' | 'middle';
   /** 自动将日期范围内 包括改标记线 */
   scrollToMarkLine?: boolean;
+  content?: string; // markLine中内容
   /** markLine中内容的样式 */
   contentStyle?: {
     color?: string;
