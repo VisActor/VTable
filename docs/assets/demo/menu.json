@@ -309,6 +309,13 @@
           }
         },
         {
+          "path": "gantt-interaction-create-mark-line",
+          "title": {
+            "zh": "甘特图交互——创建markLine",
+            "en": "Gantt Interaction —— Create markLine"
+          }
+        },
+        {
           "path": "gantt-taskShowMode",
           "title": {
             "zh": "甘特图子任务布局模式",
