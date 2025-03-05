@@ -103,9 +103,9 @@ export interface TableEventHandlersEventArgumentMap {
     /** 依赖信息 */
     link: ITaskLink;
   };
-  click_markline_icon: {
+  click_markline_create: {
     event: Event;
-    data: ITimelineDateInfo[];
+    data: ITimelineDateInfo;
     position: IPosition;
   };
   click_markline_content: {
@@ -126,6 +126,6 @@ export interface TableEventHandlersReturnMap {
   create_dependency_link: void;
   delete_dependency_link: void;
   contextmenu_dependency_link: void;
-  click_markline_icon: void;
+  click_markline_create: void;
   click_markline_content: void;
 }

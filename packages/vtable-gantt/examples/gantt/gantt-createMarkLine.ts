@@ -235,33 +235,95 @@ export function createTable() {
       markLineCreatable: true,
       markLineCreationHoverToolTip: {
         position: 'top',
-        tipContent: '创建啊啊啊',
+        tipContent: '创建里程碑',
         style: {
           contentStyle: {
-            fill: 'red'
+            fill: '#fff'
           },
           panelStyle: {
-            background: 'green'
+            background: '#14161c',
+            cornerRadius: 4
           }
         }
       },
       markLineCreationStyle: {
-        fill: 'yellow',
+        fill: '#ccc',
         size: 30,
-        iconSize: 12
+        iconSize: 12,
+        svg: '<svg t="1741145302032" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2861" width="200" height="200"><path d="M967.68 558.08v-89.6H542.72V43.52h-87.04v424.96H30.72v89.6h424.96v422.4h87.04V558.08z" fill="" p-id="2862"></path></svg>'
       }
     }
   };
 
   const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
   window.ganttInstance = ganttInstance;
-  ganttInstance.on('click_phase_icon', e => {
-    console.log('click_phase_icon', e);
+  ganttInstance.on('click_markline_create', ({ data, position }) => {
+    createPopup({ date: data.startDate, content: '' }, position, value => {
+      ganttInstance.addMarkLine({
+        date: formatDate(data.startDate),
+        content: value,
+        contentStyle: {
+          color: '#fff'
+        },
+        style: {
+          lineWidth: 1,
+          lineColor: 'red'
+        }
+      });
+    });
   });
-  ganttInstance.on('click_phase_content', e => {
-    console.log('click_phase_content', e);
+  ganttInstance.on('click_markline_content', ({ data, position }) => {
+    createPopup({ date: data.date, content: data.content }, position, value => {
+      ganttInstance.updateCurrentMarkLine({ date: data.date, content: value });
+    });
   });
   // bindDebugTool(ganttInstance.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']
   // });
+}
+
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2); // 补零技巧
+  const day = ('0' + date.getDate()).slice(-2);
+  return year + '-' + month + '-' + day;
+}
+
+function createPopup({ date, content }, position, callback) {
+  const container = document.getElementById('article');
+
+  // 创建弹窗元素
+  const popup = document.createElement('div');
+  popup.className = 'popup';
+
+  // 设置定位参数
+  popup.style.top = `${position.top}px`;
+  popup.style.left = `${position.left}px`;
+  popup.style.position = 'absolute';
+  popup.style.background = '#ccc';
+  popup.style.padding = '10px';
+  popup.style.zIndex = '10000';
+
+  // 日期显示格式化
+  const dateString = typeof date === 'string' ? date : formatDate(date);
+
+  // 弹窗内容
+  popup.innerHTML = `
+      <span class="close-btn" onclick="this.parentElement.remove()">×</span>
+      <div>日期：${dateString}</div>
+      <input type="text" placeholder="输入内容"  class="popup-input" value="${content}" />
+      <button class="confirm-btn">确定</button>
+  `;
+
+  const confirmBtn = popup.querySelector('.confirm-btn')!;
+  confirmBtn.addEventListener('click', () => {
+    const inputValue = popup.querySelector('.popup-input')!.value;
+    popup.remove();
+    if (typeof callback === 'function') {
+      callback(inputValue);
+    }
+  });
+
+  // 添加弹窗到容器
+  container!.appendChild(popup);
 }
