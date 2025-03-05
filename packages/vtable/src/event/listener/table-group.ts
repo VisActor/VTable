@@ -517,7 +517,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
             }
 
             // 处理column mover
-            if (!eventManager.touchEnd && eventManager.chechColumnMover(eventArgsSet)) {
+            if (!eventManager.touchEnd && eventManager.checkColumnMover(eventArgsSet)) {
               stateManager.updateInteractionState(InteractionState.grabing);
               return;
             }
@@ -551,7 +551,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
           }
 
           // 处理column mover
-          if (eventManager.chechColumnMover(eventArgsSet)) {
+          if (eventManager.checkColumnMover(eventArgsSet)) {
             stateManager.updateInteractionState(InteractionState.grabing);
             return;
           }

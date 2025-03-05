@@ -632,7 +632,7 @@ export class EventManager {
     this.table.stateManager.updateResizeRow(xInTable, yInTable);
   }
 
-  chechColumnMover(eventArgsSet: SceneEvent): boolean {
+  checkColumnMover(eventArgsSet: SceneEvent): boolean {
     // return false;
     const { eventArgs } = eventArgsSet;
     if (
