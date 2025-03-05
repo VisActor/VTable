@@ -4,7 +4,7 @@ import { computeCountToTimeScale, toBoxArray } from '../tools/util';
 import type { Scenegraph } from './scenegraph';
 import { Group, Text, createLine, Image } from '@visactor/vtable/es/vrender';
 
-const marklineCreateIcon = `<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1471" width="24" height="24"> <path d="M840.05 153.35a27.61875 27.61875 0 0 0-22.95-4.95c-56.25 13.05-218.25 39.6-289.8 2.25-115.65-60.75-241.65-31.95-299.7-13.05V95.75a27.05625 27.05625 0 0 0-27-27 27.05625 27.05625 0 0 0-27 27v834.75c0 14.85 12.15 27 27 27s27-12.15 27-27V611.9c44.1-13.95 199.35-56.25 293.85 1.8 45.9 28.35 96.75 37.8 143.55 37.8 89.1 0 164.7-34.2 169.65-36.45a27.9 27.9 0 0 0 15.75-24.75V174.5a27.5625 27.5625 0 0 0-10.35-21.15z" fill="#f54319" p-id="1472"></path></svg>`;
+const DEFAULT_MARKLINE_CREATION_ICON = `<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1471" width="24" height="24"> <path d="M840.05 153.35a27.61875 27.61875 0 0 0-22.95-4.95c-56.25 13.05-218.25 39.6-289.8 2.25-115.65-60.75-241.65-31.95-299.7-13.05V95.75a27.05625 27.05625 0 0 0-27-27 27.05625 27.05625 0 0 0-27 27v834.75c0 14.85 12.15 27 27 27s27-12.15 27-27V611.9c44.1-13.95 199.35-56.25 293.85 1.8 45.9 28.35 96.75 37.8 143.55 37.8 89.1 0 164.7-34.2 169.65-36.45a27.9 27.9 0 0 0 15.75-24.75V174.5a27.5625 27.5625 0 0 0-10.35-21.15z" fill="#f54319" p-id="1472"></path></svg>`;
 export class TimelineHeader {
   group: Group;
   _scene: Scenegraph;
@@ -140,11 +140,12 @@ export class TimelineHeader {
         if (
           i === scene._gantt.timeLineHeaderLevel - 1 &&
           scene._gantt.parsedOptions.markLineOptions &&
-          scene._gantt.parsedOptions.markLineOptions.enableCreateMarkLine
+          scene._gantt.parsedOptions.markLineOptions.markLineCreatable
         ) {
-          const markLineStyle = scene._gantt.parsedOptions.markLineOptions.style || {};
+          const markLineStyle = scene._gantt.parsedOptions.markLineOptions.markLineCreationStyle || {};
           const size = markLineStyle.size || 24;
           const iconSize = markLineStyle.iconSize || 18;
+          const marklineCreateIcon = markLineStyle.svg || DEFAULT_MARKLINE_CREATION_ICON;
           // 是否开启里程碑功能
           const marklineCreateGroup = new Group({
             x: width / 2 - size / 2,

@@ -168,7 +168,7 @@ function bindTableGroupListener(event: EventManager) {
       const marklineContentGroupTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'mark-line-content';
       });
-      if (gantt.parsedOptions.markLineOptions.enableCreateMarkLine) {
+      if (gantt.parsedOptions.markLineOptions.markLineCreatable) {
         if (
           marklineCreateGroupTarget &&
           !judgeIfHasMarkLine(marklineCreateGroupTarget.data, gantt.parsedOptions.markLine)

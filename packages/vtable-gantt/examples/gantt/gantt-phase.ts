@@ -232,8 +232,8 @@ export function createTable() {
     },
     overscrollBehavior: 'none',
     markLineOptions: {
-      enableCreateMarkLine: true,
-      toolTipOption: {
+      markLineCreatable: true,
+      markLineCreationHoverToolTip: {
         position: 'top',
         tipContent: '创建啊啊啊',
         style: {
@@ -245,7 +245,7 @@ export function createTable() {
           }
         }
       },
-      style: {
+      markLineCreationStyle: {
         fill: 'yellow',
         size: 30,
         iconSize: 12
