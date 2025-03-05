@@ -62,6 +62,22 @@ update markLine
   updateMarkLine: (markLine: IMarkLine[]) => void
 ```
 
+### addMarkLine(Function)
+
+add markLine
+
+```
+  addMarkLine: (markLine: IMarkLine) => void
+```
+
+### updateCurrentMarkLine(Function)
+
+update one markLine。 date and content are required
+
+```
+  updateCurrentMarkLine: (markLine: IMarkLine) => void
+```
+
 ### updateTaskRecord(Function)
 
 Update a specific data record
@@ -336,14 +352,43 @@ Event return parameters:
     link: ITaskLink;
   };
 ```
+
 ### DELETE_DEPENDENCY_LINK
 
 Events that delete dependency line
 Event return parameters:
+
 ```
 {
     event: Event;
     /** dependency link */
     link: ITaskLink;
+  };
+```
+
+### CLICK_MARKLINE_CREATE
+
+点击创建 markLine 事件
+Events that click to create markLine
+Event return parameters:
+
+```
+{
+    event: Event;
+    data: ITimelineDateInfo; // time information
+    position: IPosition; // position information
+  };
+```
+
+### CLICK_MARKLINE_CONTENT
+
+Events that click markLine content
+Event return parameters:
+
+```
+{
+    event: Event;
+    data: IMarkLine; // markLine information
+    position: IPosition; // position information
   };
 ```
