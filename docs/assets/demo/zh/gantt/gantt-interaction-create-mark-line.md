@@ -2,7 +2,7 @@
 category: examples
 group: gantt
 title: 甘特图交互-创建markLine
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-interaction-drag-taskBar-preview.gif
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-markline-create.gif
 link: gantt/introduction
 option: Gantt#IMarkLineCreateOptions
 ---
