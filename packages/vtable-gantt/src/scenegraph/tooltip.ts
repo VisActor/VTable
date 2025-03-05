@@ -23,7 +23,7 @@ export class ToolTip {
     scene.ganttGroup.addChild(this.group);
   }
   show(graphic: IGraphic<Partial<IRectGraphicAttribute>>) {
-    const options = this._scene._gantt.parsedOptions.markLineOptions?.toolTipOption || {};
+    const options = this._scene._gantt.parsedOptions.markLineCreateOptions?.markLineCreationHoverToolTip || {};
     const matrix = graphic.globalTransMatrix;
     const targetWidth = graphic.attribute.width;
     const targetHeight = graphic.attribute.height;

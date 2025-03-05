@@ -27,7 +27,7 @@ import type {
   IEventOptions,
   IMilestoneStyle,
   IKeyboardOptions,
-  IMarkLineOptions
+  IMarkLineCreateOptions
 } from './ts-types';
 import { TasksShowMode } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
@@ -193,7 +193,7 @@ export class Gantt extends EventTarget {
     underlayBackgroundColor: string;
     eventOptions: IEventOptions;
     keyboardOptions: IKeyboardOptions;
-    markLineOptions: IMarkLineOptions;
+    markLineCreateOptions: IMarkLineCreateOptions;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
@@ -1072,6 +1072,32 @@ export class Gantt extends EventTarget {
     updateOptionsWhenMarkLineChanged(this);
     this.scenegraph.markLine.refresh();
     this.scenegraph.renderSceneGraph();
+  }
+  /** 增加markLine标记线 */
+  addMarkLine(markLine: IMarkLine) {
+    this.options.markLine = [...(this.parsedOptions.markLine as IMarkLine[]), markLine];
+    updateOptionsWhenMarkLineChanged(this);
+    this.scenegraph.markLine.refresh();
+    this.scenegraph.renderSceneGraph();
+    this.scenegraph.updateNextFrame();
+  }
+  /** 更新当前的markLine标记线 */
+  updateCurrentMarkLine(markLine: IMarkLine) {
+    const currentMarkLineIndex = (this.parsedOptions.markLine as IMarkLine[]).findIndex(
+      item => item.date === markLine.date
+    );
+    if (currentMarkLineIndex === -1) {
+      return;
+    }
+    this.options.markLine = [
+      ...this.parsedOptions.markLine.slice(0, currentMarkLineIndex),
+      { ...(this.options.markLine as IMarkLine[])[currentMarkLineIndex], ...markLine },
+      ...this.parsedOptions.markLine.slice(currentMarkLineIndex + 1)
+    ];
+    updateOptionsWhenMarkLineChanged(this);
+    this.scenegraph.markLine.refresh();
+    this.scenegraph.renderSceneGraph();
+    this.scenegraph.updateNextFrame();
   }
   /** 滚动到scrollToMarkLineDate所指向的日期 */
   _scrollToMarkLine() {

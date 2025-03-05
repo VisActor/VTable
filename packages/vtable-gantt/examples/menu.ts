@@ -137,7 +137,7 @@ export const menus = [
   },
   {
     path: 'gantt',
-    name: 'gantt-phase'
+    name: 'gantt-createMarkLine'
   }
   //   ]
   // }

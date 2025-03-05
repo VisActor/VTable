@@ -216,7 +216,7 @@ export interface GanttConstructorOptions {
   tasksShowMode?: TasksShowMode;
   eventOptions?: IEventOptions;
   keyboardOptions?: IKeyboardOptions;
-  markLineOptions?: IMarkLineOptions;
+  markLineCreateOptions?: IMarkLineCreateOptions;
 }
 /**
  * IBarLabelText
@@ -454,9 +454,9 @@ export type ITaskBarHoverStyle = {
 };
 //#endregion
 
-export type IMarkLineOptions = {
-  enableCreateMarkLine: boolean;
-  toolTipOption?: {
+export type IMarkLineCreateOptions = {
+  markLineCreatable: boolean;
+  markLineCreationHoverToolTip?: {
     position?: 'top' | 'bottom';
     tipContent?: string;
     style?: {
@@ -464,9 +464,10 @@ export type IMarkLineOptions = {
       panelStyle?: any;
     };
   };
-  style?: {
+  markLineCreationStyle?: {
     fill?: string;
     size?: number;
     iconSize?: number;
+    svg?: string;
   };
 };

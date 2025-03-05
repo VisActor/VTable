@@ -72,6 +72,7 @@ Supports horizontal divider lines for both the header and body, as well as divid
 ### Marker Lines
 
 In the Gantt chart, it is often necessary to mark some important dates. We configure this effect through the `markLine` configuration item. You can specify key dates through `markLine.date` and customize the style of marker lines through the `markLine.style` configuration item. If you need to ensure that the date is displayed at initialization, you can set `markLine.scrollToMarkLine` to `true`.
+[demo](https://visactor.io/vtable/demo/gantt/gantt-interaction-create-mark-line)
 
 ### Container Grid Lines
 

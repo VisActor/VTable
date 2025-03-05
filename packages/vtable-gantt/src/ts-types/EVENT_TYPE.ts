@@ -44,7 +44,7 @@ export interface EVENT_TYPES {
   /** 右键点击依赖关系 */
   CONTEXTMENU_DEPENDENCY_LINK: 'contextmenu_dependency_link';
   /** 点击里程碑图标 */
-  CLICK_MARKLINE_ICON: 'click_markline_icon';
+  CLICK_MARKLINE_CREATE: 'click_markline_create';
   /** 点击里程碑内容 */
   CLICK_MARKLINE_CONTENT: 'click_markline_content';
 }
@@ -63,6 +63,6 @@ export const GANTT_EVENT_TYPE: EVENT_TYPES = {
   DELETE_DEPENDENCY_LINK: 'delete_dependency_link',
   CLICK_DEPENDENCY_LINK_POINT: 'click_dependency_link_point',
   CONTEXTMENU_DEPENDENCY_LINK: 'contextmenu_dependency_link',
-  CLICK_MARKLINE_ICON: 'click_markline_icon',
+  CLICK_MARKLINE_CREATE: 'click_markline_create',
   CLICK_MARKLINE_CONTENT: 'click_markline_content'
 } as EVENT_TYPES;

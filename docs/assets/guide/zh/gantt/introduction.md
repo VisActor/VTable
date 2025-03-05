@@ -71,7 +71,7 @@ VTable-Gantt 是一款基于 VTable 表格组件及 canvas 渲染器 VRender 构
 
 ### 标记线
 
-在 gantt 甘特图中通常需要标记一些重要的日期，我们通过配置项 markLine 来配置该效果。通过`markLine.date`来指定重点日期，通过 `markLine.style` 配置项，可以自定义标记线的样式。如果需要将该日期在初始化时一定要展示出来可以设置`markLine.scrollToMarkLine`为`true`。
+在 gantt 甘特图中通常需要标记一些重要的日期，我们通过配置项 markLine 来配置该效果。通过`markLine.date`来指定重点日期，通过 `markLine.style` 配置项，可以自定义标记线的样式。如果需要将该日期在初始化时一定要展示出来可以设置`markLine.scrollToMarkLine`为`true`。[示例](https://visactor.io/vtable/demo/gantt/gantt-interaction-create-mark-line)
 
 ### 容器网格线
 

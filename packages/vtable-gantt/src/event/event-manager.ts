@@ -168,7 +168,7 @@ function bindTableGroupListener(event: EventManager) {
       const marklineContentGroupTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'mark-line-content';
       });
-      if (gantt.parsedOptions.markLineOptions.enableCreateMarkLine) {
+      if (gantt.parsedOptions.markLineCreateOptions?.markLineCreatable) {
         if (
           marklineCreateGroupTarget &&
           !judgeIfHasMarkLine(marklineCreateGroupTarget.data, gantt.parsedOptions.markLine)
@@ -503,8 +503,8 @@ function bindTableGroupListener(event: EventManager) {
         }
         stateManager.hideTaskBarSelectedBorder();
       } else if (isClickMarklineIcon && event.poniterState === 'down') {
-        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_ICON)) {
-          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_ICON, {
+        if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_CREATE)) {
+          gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_MARKLINE_CREATE, {
             event: e.nativeEvent,
             position: getNodeClickPos(markLineIconTarget, scene._gantt),
             data: scene._gantt.stateManager.marklineIcon.target.data
