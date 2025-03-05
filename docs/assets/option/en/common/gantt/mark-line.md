@@ -10,6 +10,15 @@ export interface IMarkLine {
   position?: 'left' | 'right' | 'middle';
   /** Automatically include the mark line within the date range */
   scrollToMarkLine?: boolean;
+  /** markLine content style */
+  contentStyle?: {
+    color?: string;
+    fontSize?: string;
+    fontWeight?: string;
+    lineHeight?: string;
+    backgroundColor?: string;
+    cornerRadius?: string;
+  }
 }
 ```
 
@@ -42,3 +51,20 @@ Default is true. If markLine is an array and multiple mark lines have scrollToMa
 If no value is set, the first one is defaulted to true.
 
 Optional
+
+${prefix} contentStyle
+
+markLine content style
+
+Optional
+
+```
+export type IContentStyle = {
+    color?: string;
+    fontSize?: string;
+    fontWeight?: string;
+    lineHeight?: string;
+    backgroundColor?: string;
+    cornerRadius?: string;
+};
+```

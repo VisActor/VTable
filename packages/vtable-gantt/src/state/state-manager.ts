@@ -985,7 +985,7 @@ export class StateManager {
     const target = this._gantt.stateManager.marklineIcon.target;
     if (target) {
       const marklineGroup = this._gantt.scenegraph.timelineHeader.showMarklineIcon(target.parent);
-      if (marklineGroup && this._gantt.parsedOptions.markLineOptions?.markLineCreationHoverToolTip?.tipContent) {
+      if (marklineGroup && this._gantt.parsedOptions.markLineCreateOptions?.markLineCreationHoverToolTip?.tipContent) {
         this._gantt.scenegraph.showToolTip(marklineGroup);
       }
       this._gantt.scenegraph.updateNextFrame();

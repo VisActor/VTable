@@ -139,10 +139,10 @@ export class TimelineHeader {
         }
         if (
           i === scene._gantt.timeLineHeaderLevel - 1 &&
-          scene._gantt.parsedOptions.markLineOptions &&
-          scene._gantt.parsedOptions.markLineOptions.markLineCreatable
+          scene._gantt.parsedOptions.markLineCreateOptions &&
+          scene._gantt.parsedOptions.markLineCreateOptions.markLineCreatable
         ) {
-          const markLineStyle = scene._gantt.parsedOptions.markLineOptions.markLineCreationStyle || {};
+          const markLineStyle = scene._gantt.parsedOptions.markLineCreateOptions.markLineCreationStyle || {};
           const size = markLineStyle.size || 24;
           const iconSize = markLineStyle.iconSize || 18;
           const marklineCreateIcon = markLineStyle.svg || DEFAULT_MARKLINE_CREATION_ICON;

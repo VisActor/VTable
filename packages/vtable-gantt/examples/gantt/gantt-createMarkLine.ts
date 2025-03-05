@@ -231,7 +231,7 @@ export function createTable() {
       visible: 'scrolling'
     },
     overscrollBehavior: 'none',
-    markLineOptions: {
+    markLineCreateOptions: {
       markLineCreatable: true,
       markLineCreationHoverToolTip: {
         position: 'top',

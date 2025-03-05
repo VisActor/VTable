@@ -27,7 +27,7 @@ import type {
   IEventOptions,
   IMilestoneStyle,
   IKeyboardOptions,
-  IMarkLineOptions
+  IMarkLineCreateOptions
 } from './ts-types';
 import { TasksShowMode } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
@@ -192,7 +192,7 @@ export class Gantt extends EventTarget {
     underlayBackgroundColor: string;
     eventOptions: IEventOptions;
     keyboardOptions: IKeyboardOptions;
-    markLineOptions: IMarkLineOptions;
+    markLineCreateOptions: IMarkLineCreateOptions;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;

@@ -354,7 +354,7 @@ export function initOptions(gantt: Gantt) {
   );
   gantt.parsedOptions.eventOptions = options?.eventOptions;
   gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
-  gantt.parsedOptions.markLineOptions = options?.markLineOptions;
+  gantt.parsedOptions.markLineCreateOptions = options?.markLineCreateOptions;
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   const options = gantt.options;

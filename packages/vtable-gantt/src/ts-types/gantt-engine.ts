@@ -210,7 +210,7 @@ export interface GanttConstructorOptions {
   tasksShowMode?: TasksShowMode;
   eventOptions?: IEventOptions;
   keyboardOptions?: IKeyboardOptions;
-  markLineOptions?: IMarkLineOptions;
+  markLineCreateOptions?: IMarkLineCreateOptions;
 }
 /**
  * IBarLabelText
@@ -446,7 +446,7 @@ export type ITaskBarHoverStyle = {
 };
 //#endregion
 
-export type IMarkLineOptions = {
+export type IMarkLineCreateOptions = {
   markLineCreatable: boolean;
   markLineCreationHoverToolTip?: {
     position?: 'top' | 'bottom';
