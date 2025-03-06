@@ -283,7 +283,8 @@ export function renderStrokeWithCornerRadius(
   }
 
   // 单独处理每条边界，目前不考虑圆角
-  // context.beginPath();
+  context.stroke(); // stroke last corner
+  context.beginPath(); // clean path
   context.moveTo(x, y);
 
   const strokeTop = (isStrokeTrue || stroke[0]) && (isWidthNumber || strokeArrayWidth[0]);
@@ -415,6 +416,7 @@ export function renderStrokeWithCornerRadius(
   } else if (i === 3) {
     context.moveTo(x, y);
   }
+  context.closePath();
 
   if (!isSplitDraw && !isDash) {
     // context.strokeStyle = strokeArrayColor;
@@ -427,7 +429,7 @@ export function renderStrokeWithCornerRadius(
   // context.lineCap = oldLineCap;
   context.setLineDash([]);
 
-  context.closePath();
+  context.beginPath(); // clean path
 }
 
 type IEdgeCb = (x1: number, y1: number, x2: number, y2: number) => void;
