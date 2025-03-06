@@ -5,11 +5,12 @@ import { HierarchyState } from '../../ts-types';
 
 export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
   table.on('checkbox_state_change', args => {
-    if (table.internalProps.rowSeriesNumber?.enableTreeCheckbox !== true) {
+    const { col, row, checked, field } = args;
+
+    if (field !== '_vtable_rowSeries_number' || table.internalProps.rowSeriesNumber?.enableTreeCheckbox !== true) {
       return;
     }
 
-    const { col, row, checked } = args;
     if (table.isHeader(col, row)) {
       return;
     }
