@@ -10,6 +10,9 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
     }
 
     const { col, row, checked } = args;
+    if (table.isHeader(col, row)) {
+      return;
+    }
     const record = table.getCellOriginRecord(col, row);
     const indexedData = (table.dataSource as any).currentPagerIndexedData as (number | number[])[];
     const titleShowIndex = table.getRecordShowIndexByCell(col, row);
@@ -177,6 +180,31 @@ function updateChildrenCheckboxState(state: boolean, currentIndex: number | numb
     }
     if (index === key) {
       start = true;
+    }
+  });
+}
+
+export function bindHeaderCheckboxChange(table: BaseTableAPI) {
+  table.on('checkbox_state_change', args => {
+    const { col, row, checked, field } = args;
+    if (table.isHeader(col, row)) {
+      //点击的表头部分的checkbox 需要同时处理表头和body单元格的状态
+      table.stateManager.setHeaderCheckedState(field as string | number, checked);
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
+        table.scenegraph.updateCheckboxCellState(col, row, checked);
+      }
+    } else {
+      //点击的是body单元格的checkbox  处理本单元格的状态维护 同时需要检查表头是否改变状态
+      table.stateManager.setCheckedState(col, row, field as string | number, checked);
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
+        const oldHeaderCheckedState = table.stateManager.headerCheckedState[field as string | number];
+        const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(field as string | number, col, row);
+        if (oldHeaderCheckedState !== newHeaderCheckedState) {
+          table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
+        }
+      }
     }
   });
 }
