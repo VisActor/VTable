@@ -296,9 +296,9 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 1.12.12
       '@visactor/vdataset': ~0.18.1
-      '@visactor/vrender-components': 0.21.2-alpha.2
-      '@visactor/vrender-core': 0.21.2-alpha.2
-      '@visactor/vrender-kits': 0.21.2-alpha.2
+      '@visactor/vrender-components': 0.21.15-alpha.1
+      '@visactor/vrender-core': 0.21.15-alpha.1
+      '@visactor/vrender-kits': 0.21.15-alpha.1
       '@visactor/vscale': ~0.18.1
       '@visactor/vtable-editors': workspace:1.13.1-alpha.4
       '@visactor/vutils': ~0.18.14
@@ -342,9 +342,9 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 0.18.18
-      '@visactor/vrender-components': 0.21.2-alpha.2
-      '@visactor/vrender-core': 0.21.2-alpha.2
-      '@visactor/vrender-kits': 0.21.2-alpha.2
+      '@visactor/vrender-components': 0.21.15-alpha.1
+      '@visactor/vrender-core': 0.21.15-alpha.1
+      '@visactor/vrender-kits': 0.21.15-alpha.1
       '@visactor/vscale': 0.18.18
       '@visactor/vtable-editors': link:../vtable-editors
       '@visactor/vutils': 0.18.18
@@ -4244,13 +4244,13 @@ packages:
       '@visactor/vscale': 0.18.18
       '@visactor/vutils': 0.18.18
 
-  /@visactor/vrender-components/0.21.2-alpha.2:
-    resolution: {integrity: sha512-aE6Nty/l/ucDzjGU75fcdNjmKW3hp43jQ+RFz9xoiGMq8wKTfKMm+G/k9Q0SspKukeH15rnGt0x+3dir8TlhnA==}
+  /@visactor/vrender-components/0.21.15-alpha.1:
+    resolution: {integrity: sha512-29SS0vJksBOQirEC9bsWC1fVHQ68cZWcVOXCwf9d64YkJAsffD9uGElArdDnDv1efanHwyVl0oSp0a/MGzf82g==}
     dependencies:
-      '@visactor/vrender-core': 0.21.2-alpha.2
-      '@visactor/vrender-kits': 0.21.2-alpha.2
-      '@visactor/vscale': 0.19.2
-      '@visactor/vutils': 0.19.2
+      '@visactor/vrender-core': 0.21.15-alpha.1
+      '@visactor/vrender-kits': 0.21.15-alpha.1
+      '@visactor/vscale': 0.19.4
+      '@visactor/vutils': 0.19.4
     dev: false
 
   /@visactor/vrender-core/0.20.15:
@@ -4259,10 +4259,10 @@ packages:
       '@visactor/vutils': 0.18.18
       color-convert: 2.0.1
 
-  /@visactor/vrender-core/0.21.2-alpha.2:
-    resolution: {integrity: sha512-OUAnFz/VCinciF03hy30kQeI6U3avVr9tG+atx+C/z+irHlYQmZfbegCfA8rIbe3sD7Xows0kAOvSE/pZXdHLA==}
+  /@visactor/vrender-core/0.21.15-alpha.1:
+    resolution: {integrity: sha512-UDo6fjK3vZFCXP2nNJzAd1S3MDIQ3wm9k3+mDK23GZg5SQ6IpTq9mgUfsLQk/n9kEClh3c8O/Im8iVPDKOTbOA==}
     dependencies:
-      '@visactor/vutils': 0.19.2
+      '@visactor/vutils': 0.19.4
       color-convert: 2.0.1
     dev: false
 
@@ -4274,12 +4274,13 @@ packages:
       '@visactor/vutils': 0.18.18
       roughjs: 4.5.2
 
-  /@visactor/vrender-kits/0.21.2-alpha.2:
-    resolution: {integrity: sha512-Hy6ULajpmd8mgMAa8Yl7SS/6YruSzI5++/Y3gWwFTh0tM0U3uo99/Ii6MLQ+iolyuRb24TYmbQE4KRYmmoZ03w==}
+  /@visactor/vrender-kits/0.21.15-alpha.1:
+    resolution: {integrity: sha512-K2/8xEDmTO4GnjfHYx6YZLAEZxOD1+hsOYRO8rAED7JWl3Nf5xkcGkPCEm1ZkQ9eAPESHfqIjv2VE7iZh+SKcg==}
     dependencies:
       '@resvg/resvg-js': 2.4.1
-      '@visactor/vrender-core': 0.21.2-alpha.2
-      '@visactor/vutils': 0.19.2
+      '@visactor/vrender-core': 0.21.15-alpha.1
+      '@visactor/vutils': 0.19.4
+      gifuct-js: 2.1.2
       roughjs: 4.5.2
     dev: false
 
@@ -4288,10 +4289,10 @@ packages:
     dependencies:
       '@visactor/vutils': 0.18.18
 
-  /@visactor/vscale/0.19.2:
-    resolution: {integrity: sha512-grS2nI/dyky9+YWt6EbtBS7aPiHmJrnGnleeRLvaaa6uZN9ItLsuP7oSv63k1arJzkyJ0xcLH4ze/nZmrWopzA==}
+  /@visactor/vscale/0.19.4:
+    resolution: {integrity: sha512-kp69hPMof3GBKRuUiXSR9+9K+Z8ZXsTlOAwcnknXmiiZDhdcDkPlv27/d+Xx1Wi/iqw+BS2S7YIjHmfzdiVQ/Q==}
     dependencies:
-      '@visactor/vutils': 0.19.2
+      '@visactor/vutils': 0.19.4
     dev: false
 
   /@visactor/vutils-extension/1.11.14:
@@ -4314,8 +4315,8 @@ packages:
       '@turf/invariant': 6.5.0
       eventemitter3: 4.0.7
 
-  /@visactor/vutils/0.19.2:
-    resolution: {integrity: sha512-RIg+cZTLvTRNbj0f3pc/4W5ASXhuM6G5XJU4JJ2Ghdqt8YGaGzdLFrqOIu5MaHfm8EuJun0oPapDk8PXt4ZQgQ==}
+  /@visactor/vutils/0.19.4:
+    resolution: {integrity: sha512-kLbcsTe1/3HSSvEJvJikzGD0plY0gdHbpxt98oo7W6OrianfYd97nm/w7rFXcq/S49e6C5d1SdU4MZk/PYxhEQ==}
     dependencies:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
@@ -4333,7 +4334,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.25.9_@babel+core@7.20.12
       magic-string: 0.27.0
       react-refresh: 0.14.2
-      vite: 3.2.6_girnrryua4ny3ya6dfs4crajjq
+      vite: 3.2.6
     transitivePeerDependencies:
       - supports-color
     dev: true
