@@ -115,6 +115,7 @@ export interface TableEventOptions {
 }
 
 export interface IRowSeriesNumber {
+  tree?: boolean | false;
   width?: number | 'auto';
   // align?: 'left' | 'right';
   // span?: number | 'dependOnNear';
