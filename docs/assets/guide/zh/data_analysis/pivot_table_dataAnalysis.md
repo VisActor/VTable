@@ -163,7 +163,7 @@ dataConfig: {
 
 通常情况下指标应该是 `number` 类型，这样内部才能进行计算。
 
-如果指标是字符串型或者 `null`，需要配置 `aggregationType` 为 `VTable.TYPES.AggregationType.NONE` 来显示数据源字段的原始值。
+如果指标是字符串型或者 `null`，且需要在单元格中进行展示，可以配置 `aggregationType` 为 `VTable.TYPES.AggregationType.NONE` 来显示数据源字段的原始值; 或者在指标format函数中结合接口`getCellOriginRecord`获取到单元格对应的数据源条目，然后进行特殊处理。
 
 如果用到了自定义渲染 `customLayout`，在 `customLayout` 函数中想获取单元格对应的所有数据 `records`，可以配置 `aggregationType` 为 `VTable.TYPES.AggregationType.RECORD`。
 
