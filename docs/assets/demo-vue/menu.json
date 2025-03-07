@@ -104,6 +104,13 @@
             "zh": "单元格自定义组件",
             "en": "cell custom component"
           }
+        },
+        {
+          "path": "cell-dom-component",
+          "title": {
+            "zh": "单元格内dom组件",
+            "en": "cell dom component"
+          }
         }
       ]
     },
@@ -126,6 +133,13 @@
           "title": {
             "zh": "ArcoDesign列表选择器",
             "en": "Arco Design select editor"
+          }
+        },
+        {
+          "path": "edit-render",
+          "title": {
+            "zh": "渲染式单元格编辑器",
+            "en": "Dynamic rendering cell editor"
           }
         }
       ]
