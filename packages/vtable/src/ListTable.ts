@@ -1105,7 +1105,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         stateArr = getGroupCheckboxState(this) as any;
       }
       return Array.from(stateArr, (state: any) => {
-        return state[field];
+        return state && state[field];
       });
     }
     return new Array(...this.stateManager.checkedState.values());

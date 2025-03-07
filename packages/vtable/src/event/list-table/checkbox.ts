@@ -164,19 +164,40 @@ function updateParentCheckboxState(col: number, row: number, currentIndex: numbe
 }
 
 // update invisible children checkbox state(collapsed)
-function updateChildrenCheckboxState(state: boolean, currentIndex: number | number[], table: BaseTableAPI) {
+function updateChildrenCheckboxState(parentState: boolean, currentIndex: number | number[], table: BaseTableAPI) {
   const { checkedState } = table.stateManager;
   const key = currentIndex.toString();
   const currentIndexLength = isArray(currentIndex) ? currentIndex.length : 1;
   let start = false;
 
-  checkedState.forEach((value, index: string) => {
+  const keys = Array.from(checkedState.keys()).sort((a: string, b: string) => {
+    // number or number[]
+    const aArr = (a as string).split(',');
+    const bArr = (b as string).split(',');
+    const maxLength = Math.max(aArr.length, bArr.length);
+
+    // judge from first to last
+    for (let i = 0; i < maxLength; i++) {
+      const a = Number(aArr[i]) ?? 0;
+      const b = Number(bArr[i]) ?? 0;
+      if (a !== b) {
+        return a - b;
+      }
+    }
+    return 0;
+  });
+  const stateArr = keys.map(key => checkedState.get(key));
+
+  stateArr.forEach((state, i) => {
+    const index = keys[i] as string;
+    const value = state;
+
     if (start) {
       const indexData = index.split(',');
       if (indexData.length === currentIndexLength) {
         start = false;
       } else {
-        value._vtable_rowSeries_number = state;
+        value._vtable_rowSeries_number = parentState;
       }
     }
     if (index === key) {
