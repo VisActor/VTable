@@ -31,6 +31,7 @@ export interface IRowSeriesNumber {
   dragOrder?: boolean;
   /** Whether to disable row serial number width adjustment. */
   disableColumnResize?: boolean;
+  tree: boolean;
 }
 ```
 
@@ -46,6 +47,7 @@ The specific configuration items are described as follows:
 - icon: row number body cell icon
 - dragOrder: Whether the row serial number order can be dragged, the default is false. If set to true, the icon at the dragging position will be displayed, and you can drag and drop on the icon to change its position. If you need to replace the icon, you can configure it yourself. Please refer to the tutorial: https://visactor.io/vtable/guide/custom_define/custom_icon for the chapter on resetting function icons.
 - disableColumnResize: Whether to disable row serial number width adjustment, the default is false
+- tree: Whether to enable tree display. When enabled, expand/collapse control icons for tree structure will be shown in the row number column to control the expand/collapse state of tree data
 
 Other annotated configuration items will be gradually improved in the future, and anxious comrades can participate in joint construction and development.
 
