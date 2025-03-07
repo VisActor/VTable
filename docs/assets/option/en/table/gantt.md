@@ -110,6 +110,14 @@ Optional
 
 {{use: common-gantt-mark-line(prefix = '###')}}
 
+## markLineCreateOptions(IMarkLineCreateOptions)
+
+configuration of the mark line creation.
+
+Optional
+
+{{use: common-gantt-create-mark-line(prefix = '###')}}
+
 ## frame(Object)
 
 Configuration of the entire outer frame and horizontal and vertical dividing lines.

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: gantt chart support create markline\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "lou@trip.com"
+}
