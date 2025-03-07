@@ -4173,14 +4173,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /** 根据表格单元格的行列号 获取在body部分的列索引及行索引 */
   getBodyIndexByTableIndex(col: number, row: number) {
     return {
-      col: col - this.rowHeaderLevelCount,
+      col: col - this.rowHeaderLevelCount - this.leftRowSeriesNumberCount,
       row: row - this.columnHeaderLevelCount
     };
   }
   /** 根据body部分的列索引及行索引，获取单元格的行列号 */
   getTableIndexByBodyIndex(col: number, row: number) {
     return {
-      col: col + this.rowHeaderLevelCount,
+      col: col + this.rowHeaderLevelCount + this.leftRowSeriesNumberCount,
       row: row + this.columnHeaderLevelCount
     };
   }
