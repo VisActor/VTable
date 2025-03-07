@@ -273,6 +273,7 @@ export function renderStrokeWithCornerRadius(
   const isWidthNumber = !Array.isArray(strokeArrayWidth);
   const isStrokeTrue = !Array.isArray(stroke);
   const isSplitDraw = Array.isArray(strokeArrayColor) || widthInfo.isSplitDraw;
+  context.stroke(); // stroke last corner with last stroke style
 
   context.setStrokeStyle(rect, rect.attribute, x, y, rectAttribute);
   const { lineDash = groupAttribute.lineDash } = group.attribute as any;
@@ -283,7 +284,6 @@ export function renderStrokeWithCornerRadius(
   }
 
   // 单独处理每条边界，目前不考虑圆角
-  context.stroke(); // stroke last corner
   context.beginPath(); // clean path
   context.moveTo(x, y);
 
