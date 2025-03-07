@@ -1,4 +1,4 @@
-import { isValid, merge } from '@visactor/vutils';
+import { isFunction, isValid, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import {
   cellStyleKeys,
@@ -9,7 +9,7 @@ import {
 } from '../ts-types';
 import type { Style } from '../body-helper/style';
 import { Factory } from '../core/factory';
-
+import type { StylePropertyFunctionArg } from '../ts-types/style-define';
 export interface ICustomCellStylePlugin {
   new (
     table: BaseTableAPI,
@@ -40,7 +40,17 @@ export class CustomCellStylePlugin {
 
       customStyleIds.forEach(customStyleId => {
         const styleOption = this.getCustomCellStyleOption(customStyleId);
-        if (styleOption?.style) {
+        if (isFunction(styleOption?.style)) {
+          const style = styleOption.style({
+            col,
+            row,
+            table: this.table,
+            value: this.table.getCellValue(col, row),
+            dataValue: this.table.getCellOriginValue(col, row),
+            cellHeaderPaths: this.table.getCellHeaderPaths(col, row)
+          });
+          styles.push(style);
+        } else if (styleOption?.style) {
           styles.push(styleOption.style);
         }
       });
@@ -86,7 +96,10 @@ export class CustomCellStylePlugin {
     return this.customCellStyle.find(style => style.id === customStyleId);
   }
 
-  registerCustomCellStyle(customStyleId: string, customStyle: ColumnStyleOption | undefined | null) {
+  registerCustomCellStyle(
+    customStyleId: string,
+    customStyle: ColumnStyleOption | ((styleArg: StylePropertyFunctionArg) => ColumnStyleOption) | undefined | null
+  ) {
     const index = this.customCellStyle.findIndex(style => style.id === customStyleId);
     if (index === -1) {
       this.customCellStyle.push({

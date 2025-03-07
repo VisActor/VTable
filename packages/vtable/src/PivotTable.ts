@@ -1309,14 +1309,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
                 ? this.dataset.rows[this.dataset.rows.length - 1]
                 : this.dataset.columns[this.dataset.columns.length - 1])
           ) {
+            cacheOldDimensionSortRule[sortRule.sortField] = sortRule;
             (this as PivotTable).dataset.sortRules.splice(i, 1);
           }
         }
         if (sortIndicator) {
+          const sortField = this.dataset.indicatorsAsCol
+            ? this.dataset.rows[this.dataset.rows.length - 1]
+            : this.dataset.columns[this.dataset.columns.length - 1];
           (this as PivotTable).dataset.sortRules.push({
-            sortField: this.dataset.indicatorsAsCol
-              ? this.dataset.rows[this.dataset.rows.length - 1]
-              : this.dataset.columns[this.dataset.columns.length - 1],
+            sortField,
             sortType: SortType[order],
             sortByIndicator: sortIndicator,
             query: dimensions.reduce((arr, dimension) => {
@@ -1324,7 +1326,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
                 arr.push(dimension.value);
               }
               return arr;
-            }, [])
+            }, []),
+            sortFunc: (cacheOldDimensionSortRule[sortField] as SortByIndicatorRule)?.sortFunc
           });
         } else {
           (this as PivotTable).dataset.sortRules.push(
@@ -2180,6 +2183,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     return this.dataset?.filterRules;
   }
 
+  /**
+   * 开启层级节点展开的loading动画状态，在设置数据调用setRecordChildren后会自动关闭loading
+   * @param col
+   * @param row
+   */
+  setLoadingHierarchyState(col: number, row: number) {
+    this.scenegraph.setLoadingHierarchyState(col, row);
+  }
   release() {
     this.editorManager.release();
     super.release();

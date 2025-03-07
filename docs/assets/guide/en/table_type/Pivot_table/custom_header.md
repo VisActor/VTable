@@ -156,7 +156,9 @@ VTable official website example: https://visactor.io/vtable/demo/table-type/pivo
 
 The complexity of custom trees lies in the formation of row and column dimension trees, which can be selected according to business scenarios. If you have complex sorting, summarization or paging rules, you can choose to use custom methods.
 
-If rowHierarchyType is set to tree and you expect to load lazily when you click to expand the node, you also need to use a pivot table with a custom header. For the specific demo, please refer to: https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load.
+If rowHierarchyType is set to tree and you expect to load lazily when you click to expand the node, you also need to use a pivot table with a custom header. For the specific demo, please refer to: [Pivot table tree lazy load](../../../demo/table-type/pivot-table-tree-lazy-load).
+
+If you want to display the sort icon, you can add `showSort` to the dimension (rows or columns) or indicator (indicators) configuration to display the button, and then handle the logic after clicking the sort by listening to the event `PIVOT_SORT_CLICK`.
 
 # Virtual header node
 

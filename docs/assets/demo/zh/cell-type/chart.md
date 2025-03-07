@@ -232,7 +232,9 @@ const option = {
   corner: {
     titleOnDimension: 'row'
   },
-  dragHeaderMode: 'all'
+  dragOrder: {
+    dragHeaderMode: 'all'
+  }
 };
 const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;

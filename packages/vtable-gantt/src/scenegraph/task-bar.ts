@@ -96,6 +96,7 @@ export class TaskBar {
       }
     }
   }
+  // childIndex 只有当TasksShowMode时dsunb_task_* 的时候才会传入
   initBar(index: number, childIndex?: number, childrenLength?: number) {
     const taskBarCustomLayout = this._scene._gantt.parsedOptions.taskBarCustomLayout;
     const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(

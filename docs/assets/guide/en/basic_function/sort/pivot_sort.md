@@ -2,7 +2,7 @@
 
 The sorting capability of a pivot table can be implemented in the following ways:
 
-1. Pivot table customizes the tree structure of the table header. RowTree and columnTree can be passed in and displayed according to this structure. At this time, even if sortRule is configured, it will not work. This method is used when the table header has a default order or a special structure, or the sorting rules are complex. You can refer to the tutorial: https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_tree.
+1. Pivot table customizes the tree structure of the table header. RowTree and columnTree can be passed in and displayed according to this structure. At this time, even if sortRule is configured, it will not work. This method is used when the table header has a default order or a special structure, or the sorting rules are complex. You can refer to the tutorial: [Custom header dimension tree](../../table_type/Pivot_table/custom_header).
 2. Add `sort:true` in the dimension or indicator configuration to enable sorting. The sort button will be displayed and clicking the button will trigger sorting. Sorting through the interface: Call the interface `updateSortRules` to sort.
 3. Other special requirements: only display the sorting status, do not use the VTable sorting logic
 
