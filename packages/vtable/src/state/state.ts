@@ -711,7 +711,12 @@ export class StateManager {
       const currentRange = this.select.ranges[this.select.ranges.length - 1];
 
       // deal with merge cell
-      expendCellRange(currentRange, this.table);
+      if (
+        !this.table.isSeriesNumber(this.select.cellPos.col, this.select.cellPos.row) &&
+        !this.table.isHeader(this.select.cellPos.col, this.select.cellPos.row)
+      ) {
+        expendCellRange(currentRange, this.table);
+      }
 
       let isSame = false;
       for (let i = 0; i < this.select.ranges.length - 1; i++) {
