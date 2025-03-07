@@ -310,7 +310,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         padding.right && (this.padding.right = padding.right);
       }
     }
-    if (isValid(canvasHeight) && isValid(canvasWidth)) {
+    if (isValid(canvasHeight) || isValid(canvasWidth)) {
       this.canvasSizeSeted = true;
     }
     this.tableNoFrameWidth = 0;
@@ -1072,23 +1072,34 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       const element = this.getElement();
       let widthWithoutPadding = 0;
       let heightWithoutPadding = 0;
+      const isDefWidth = isValid(this.canvasWidth);
+      const isDefHeight = isValid(this.canvasHeight);
       if (this.canvasSizeSeted) {
-        widthWithoutPadding = this.canvasWidth;
-        heightWithoutPadding = this.canvasHeight;
-      } else {
-        if (element.parentElement) {
-          const computedStyle = element.parentElement.style || window.getComputedStyle(element.parentElement); // 兼容性处理
+        if (isDefWidth) {
+          widthWithoutPadding = this.canvasWidth;
+        }
+        if (isDefHeight) {
+          heightWithoutPadding = this.canvasHeight;
+        }
+      }
+      const unDefSize = (!isDefWidth || !isDefHeight) && element.parentElement;
+      if (unDefSize) {
+        const computedStyle = element.parentElement.style || window.getComputedStyle(element.parentElement); // 兼容性处理
+        if (!isDefWidth) {
           widthWithoutPadding =
             element.parentElement.offsetWidth -
-            parseInt(computedStyle.paddingLeft || '0px', 10) -
-            parseInt(computedStyle.paddingRight || '0px', 10);
+            (parseInt(computedStyle.paddingLeft, 10) || 0) -
+            (parseInt(computedStyle.paddingRight, 10) || 0);
+        }
+        if (!isDefHeight) {
           heightWithoutPadding =
             element.parentElement.offsetHeight -
             parseInt(computedStyle.paddingTop || '0px', 10) -
             parseInt(computedStyle.paddingBottom || '0px', 20);
-          widthWithoutPadding = (widthWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
-          heightWithoutPadding = (heightWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
         }
+
+        widthWithoutPadding = (widthWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
+        heightWithoutPadding = (heightWithoutPadding ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
       }
 
       element.style.width = (widthWithoutPadding && `${widthWithoutPadding - padding.left - padding.right}px`) || '0px';
