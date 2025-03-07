@@ -2,6 +2,7 @@ import { isArray, isNumber } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { setCellCheckboxStateByAttribute } from '../../state/checkbox/checkbox';
 import { HierarchyState } from '../../ts-types';
+import type { CachedDataSource } from '../../data';
 
 export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
   table.on('checkbox_state_change', args => {
@@ -27,7 +28,7 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
       if (checked) {
         // 1.1 group title check
         // 1.1.1 check all children
-        if (table.getHierarchyState(col, row) === HierarchyState.collapse) {
+        if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
           updateChildrenCheckboxState(true, titleIndex, table);
         } else {
           setAllChildrenCheckboxState(true, titleShowIndex, titleIndex, indexedData, table);
@@ -37,7 +38,7 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
       } else {
         // 1.2 group title uncheck
         // 1.2.1 uncheck all children
-        if (table.getHierarchyState(col, row) === HierarchyState.collapse) {
+        if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
           updateChildrenCheckboxState(false, titleIndex, table);
         } else {
           setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table);
@@ -229,4 +230,10 @@ export function bindHeaderCheckboxChange(table: BaseTableAPI) {
       }
     }
   });
+}
+
+// get hierarchy state by row
+function getHierarchyState(table: BaseTableAPI, col: number, row: number) {
+  const index = table.getRecordShowIndexByCell(col, row);
+  return (table.dataSource as CachedDataSource).getHierarchyState(index);
 }
