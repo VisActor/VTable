@@ -5,13 +5,11 @@
 <script setup lang="ts">
 import { ref, shallowRef, watch, computed, onMounted, onBeforeUnmount } from 'vue';
 import { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
-import { isEqual, isValid } from '@visactor/vutils';
 import { TABLE_EVENTS, TABLE_EVENTS_KEYS } from '../eventsUtils';
 import type * as VTable from '@visactor/vtable';
 import type { EventsProps } from '../eventsUtils';
 import type { TYPES } from '@visactor/vtable';
-import { VTableVueAttributePlugin } from '../components/custom/vtable-vue-attribute-plugin';
-import { releaseRenderEditor, resolveRenderEditor } from '../edit';
+import { useCellRender, useEditorRender } from '../hooks';
 
 // 定义表格实例和选项的类型
 export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
@@ -47,6 +45,11 @@ const columnWidths = ref<Map<string, number>>(new Map());
 const pivotColumnWidths = ref<{ dimensions: TYPES.IDimensionInfo[]; width: number }[]>([]);
 const pivotHeaderColumnWidths = ref<number[]>([]);
 
+// 自定义编辑渲染器
+useEditorRender(props, vTableInstance);
+// 自定义单元格渲染器
+useCellRender(props, vTableInstance);
+
 // 公开 vTableInstance，以便外部组件可以访问
 defineExpose({ vTableInstance });
 
@@ -72,11 +75,6 @@ type Constructor<T> = new (dom: HTMLElement, options: IOption) => T;
 const createTableInstance = (Type: any, options: IOption) => {
   const vtable = new Type(vTableContainer.value!, options);
   vTableInstance.value = vtable;
-  // 注册 vtable-vue 自定义组件集成插件
-  vtable.scenegraph.stage.pluginService.register(new VTableVueAttributePlugin());
-  // 校验并植入渲染式编辑器
-  resolveRenderEditor(vtable, options);
-
   // for keepColumnWidthChange
   columnWidths.value.clear();
   pivotColumnWidths.value = [];
@@ -211,11 +209,6 @@ const updateVTable = (newOptions: IOption) => {
 onMounted(createVTable);
 onBeforeUnmount(() => {
   vTableInstance.value?.release();
-  const { id } = vTableInstance.value || {};
-  if (isValid(id)) {
-    // 移除自定义编辑器
-    releaseRenderEditor(id);
-  }
 });
 
 // 监听 options 属性的变化
@@ -226,10 +219,6 @@ watch(
   (newOptions, oldOptions) => {
     if (vTableInstance.value) {
       updateVTable(newOptions);
-      if (!isEqual(newOptions.columns, oldOptions?.columns)) {
-        // 更新编辑列
-        resolveRenderEditor(vTableInstance.value, newOptions);
-      }
     } else {
       createVTable();
     }

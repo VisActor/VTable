@@ -1,7 +1,6 @@
 import { isValid } from '@visactor/vutils';
 import { isVNode, render } from 'vue';
-import { VTable } from '..';
-import type { IBasicColumnBodyDefine } from '@visactor/vtable/src/ts-types/list-table/define/basic-define';
+import { TYPES } from '@visactor/vtable';
 
 /** 渲染式编辑器参数 */
 export interface DynamicRenderEditorParams {
@@ -43,7 +42,10 @@ export interface ValidateValueParams {
   table?: any;
 }
 
-interface ColumnDefine extends IBasicColumnBodyDefine {
+/** 必要列配置 */
+interface ColumnDefine {
+  /** 列唯一标识 */
+  key?: string;
   /** 渲染式编辑器配置 */
   editConfig?: DynamicRenderEditorConfig;
 }
@@ -118,8 +120,9 @@ export class DynamicRenderEditor {
       return false;
     }
     const define = table.getBodyColumnDefine(col, row) as ColumnDefine;
-    const { key, editConfig } = define || {};
+    const { editConfig } = define || {};
     const { id } = table;
+    const key = this.getColumnKeyField(define);
     if (!isValid(key) || !isValid(id)) {
       return false;
     }
@@ -130,7 +133,7 @@ export class DynamicRenderEditor {
         table.showTooltip(col, row, {
           // TODO 多语言
           content: editConfig.disablePrompt || 'This field is not allowed to be edited',
-          referencePosition: { rect: referencePosition?.rect, placement: VTable.TYPES.Placement.top },
+          referencePosition: { rect: referencePosition?.rect, placement: TYPES.Placement.top },
           style: {
             bgColor: 'black',
             color: 'white',
@@ -172,6 +175,16 @@ export class DynamicRenderEditor {
     }
     return true;
   }
+  /**
+   * @description: 获取渲染式编辑器的列配置主键
+   * @param {any} column
+   * @return {*}
+   */
+  getColumnKeyField(column: any) {
+    const { field, key } = column || {};
+    // 兼容取 field
+    return isValid(key) ? key : field;
+  }
 
   getValue() {
     return this.currentValue;
@@ -208,7 +221,7 @@ export class DynamicRenderEditor {
         const rect = table.getVisibleCellRangeRelativeRect({ col, row });
         table.showTooltip(col, row, {
           content: editConfig.invalidPrompt || 'invalid',
-          referencePosition: { rect, placement: VTable.TYPES.Placement.top },
+          referencePosition: { rect, placement: TYPES.Placement.top },
           style: {
             bgColor: 'red',
             color: 'white',
