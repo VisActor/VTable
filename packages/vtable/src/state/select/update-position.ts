@@ -278,6 +278,13 @@ export function updateSelectPosition(
       cellPos.row = row;
       // scenegraph.setCellNormalStyle(col, row);
       const currentRange = state.select.ranges?.[state.select.ranges.length - 1];
+      if (
+        (currentRange.start.row >= table.rowCount - 1 && currentRange.end.row >= table.rowCount - 1) ||
+        (currentRange.start.col >= table.colCount - 1 && currentRange.end.col >= table.colCount - 1)
+      ) {
+        // 如果选中范围超出表格范围，则不更新select border
+        return;
+      }
       currentRange && scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
     }
   } else if (
@@ -408,6 +415,13 @@ export function updateSelectPosition(
             currentRange.skipBodyMerge = true;
           }
         }
+      }
+      if (
+        (currentRange.start.row >= table.rowCount - 1 && currentRange.end.row >= table.rowCount - 1) ||
+        (currentRange.start.col >= table.colCount - 1 && currentRange.end.col >= table.colCount - 1)
+      ) {
+        // 如果选中范围超出表格范围，则不更新select border
+        return;
       }
       scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
     }
