@@ -5,22 +5,20 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: pivot table add api setLoadingHierarchyState [#3469](https://github.com/VisActor/VTable/issues/3469)
-- **@visactor/vtable**: add validateDragOrderOnEnd on dragOrder option [#3493](https://github.com/VisActor/VTable/issues/3493)
-- **@visactor/vtable**: sortByIndicatorRule support sortFunc [#3508](https://github.com/VisActor/VTable/issues/3508)
-- **@visactor/vtable**: gantt chart support create markline
-- **@visactor/vtable**: customCellStyle supports functional config [#3483](https://github.com/VisActor/VTable/issues/3483)
+- **@visactor/vtable**: 透视表新增 setLoadingHierarchyState API [#3469](https://github.com/VisActor/VTable/issues/3469)
+- **@visactor/vtable**: 在 dragOrder 选项中新增 validateDragOrderOnEnd 配置 [#3493](https://github.com/VisActor/VTable/issues/3493)
+- **@visactor/vtable**: sortByIndicatorRule 支持 sortFunc 配置 [#3508](https://github.com/VisActor/VTable/issues/3508)
+- **@visactor/vtable-gantt**: 甘特图支持创建标记线
+- **@visactor/vtable**: customCellStyle 支持函数配置 [#3483](https://github.com/VisActor/VTable/issues/3483)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: mobile drill icon state update [#3485](https://github.com/VisActor/VTable/issues/3485)
-- **@visactor/vtable**: active right button interactive [#3482](https://github.com/VisActor/VTable/issues/3482)
+- **@visactor/vtable**: 移动端下钻图标状态更新 [#3485](https://github.com/VisActor/VTable/issues/3485)
+- **@visactor/vtable**: 激活右键交互 [#3482](https://github.com/VisActor/VTable/issues/3482)
 
 **🔧 项目配置**
 
-- **@visactor/vtable**: update vrender version
-
-
+- **@visactor/vtable**: 更新 vrender 版本
 
 [更多详情请查看 v1.17.1](https://github.com/VisActor/VTable/releases/tag/v1.17.1)
 

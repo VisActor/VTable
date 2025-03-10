@@ -8,7 +8,7 @@
 - **@visactor/vtable**: pivot table add api setLoadingHierarchyState [#3469](https://github.com/VisActor/VTable/issues/3469)
 - **@visactor/vtable**: add validateDragOrderOnEnd on dragOrder option [#3493](https://github.com/VisActor/VTable/issues/3493)
 - **@visactor/vtable**: sortByIndicatorRule support sortFunc [#3508](https://github.com/VisActor/VTable/issues/3508)
-- **@visactor/vtable**: gantt chart support create markline
+- **@visactor/vtable-gantt**: gantt chart support create markline
 - **@visactor/vtable**: customCellStyle supports functional config [#3483](https://github.com/VisActor/VTable/issues/3483)
 
 **🐛 Bug fix**
