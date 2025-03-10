@@ -62,6 +62,22 @@
   updateMarkLine: (markLine: IMarkLine[]) => void
 ```
 
+### addMarkLine(Function)
+
+添加 markLine
+
+```
+  addMarkLine: (markLine: IMarkLine) => void
+```
+
+### updateCurrentMarkLine(Function)
+
+更新一条 markLine。 date 和 content 是必传的
+
+```
+  updateCurrentMarkLine: (markLine: IMarkLine) => void
+```
+
 ### updateTaskRecord(Function)
 
 更新某一条数据
@@ -337,13 +353,28 @@ export interface EVENT_TYPES {
   };
 ```
 
-### DELETE_DEPENDENCY_LINK
-删除了任务依赖关系
+### CLICK_MARKLINE_CREATE
+
+点击创建 markLine 事件
 事件回传参数：
+
 ```
 {
     event: Event;
-    /** 依赖信息 */
-    link: ITaskLink;
+    data: ITimelineDateInfo; // 时间信息
+    position: IPosition; // 位置信息
+  };
+```
+
+### CLICK_MARKLINE_CONTENT
+
+点击 markLine 的内容事件
+事件回传参数：
+
+```
+{
+    event: Event;
+    data: IMarkLine; // markLine信息
+    position: IPosition; // 位置信息
   };
 ```

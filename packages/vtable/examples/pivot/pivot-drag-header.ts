@@ -6,6 +6,12 @@ export function createTable() {
     .then(res => res.json())
     .then(data => {
       const option: VTable.PivotTableConstructorOptions = {
+        dragOrder: {
+          validateDragOrderOnEnd(source, target) {
+            console.log(source, target);
+            return true;
+          }
+        },
         records: data,
         dragHeaderMode: 'all',
         rowHierarchyType: 'tree',

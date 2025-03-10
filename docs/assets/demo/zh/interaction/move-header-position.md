@@ -5,7 +5,7 @@ title: 移动表头位置
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/move-header-position.gif
 order: 4-5
 link: interaction/drag_header
-option: ListTable#dragHeaderMode
+option: ListTable#dragOrder.dragHeaderMode
 ---
 
 # 移动表头位置
@@ -361,7 +361,9 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         }
       },
       widthMode: 'standard',
-      dragHeaderMode: 'column'
+      dragOrder: {
+        dragHeaderMode: 'column'
+      }
     };
     tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
     window['tableInstance'] = tableInstance;

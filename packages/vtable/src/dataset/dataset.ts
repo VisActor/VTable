@@ -1445,9 +1445,27 @@ export class Dataset {
           return that.getAggregator(rowKey, colKey, (<SortByIndicatorRule>sortRule).sortByIndicator!).value();
         };
         if (isSortRow) {
+          if ((<SortByIndicatorRule>sortRule).sortFunc) {
+            return (<SortByIndicatorRule>sortRule).sortFunc(
+              getValue(a, (<SortByIndicatorRule>sortRule).query),
+              getValue(b, (<SortByIndicatorRule>sortRule).query),
+              a,
+              b,
+              sortType
+            );
+          }
           return naturalSort(
             getValue(a, (<SortByIndicatorRule>sortRule).query),
             getValue(b, (<SortByIndicatorRule>sortRule).query),
+            sortType
+          );
+        }
+        if ((<SortByIndicatorRule>sortRule).sortFunc) {
+          return (<SortByIndicatorRule>sortRule).sortFunc(
+            getValue((<SortByIndicatorRule>sortRule).query, a),
+            getValue((<SortByIndicatorRule>sortRule).query, b),
+            a,
+            b,
             sortType
           );
         }

@@ -391,7 +391,9 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tre
       rowHierarchyType: 'tree',
       rowHierarchyIndent: 20,
       theme: VTable.themes.ARCO,
-      dragHeaderMode: 'all'
+      dragOrder: {
+        dragHeaderMode: 'all'
+      }
     };
 
     tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);

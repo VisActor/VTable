@@ -1,6 +1,32 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 26 Feb 2025 11:11:06 GMT and should not be manually modified.
+This log was last generated on Sun, 09 Mar 2025 12:30:39 GMT and should not be manually modified.
+
+## 1.17.1
+Sun, 09 Mar 2025 12:30:39 GMT
+
+### Updates
+
+- feat: pivot table add api setLoadingHierarchyState #3469
+
+
+- fix: mobile drill icon state update #3485
+
+
+- feat: add validateDragOrderOnEnd on dragOrder option #3493
+
+
+- feat: sortByIndicatorRule support sortFunc #3508
+
+
+- chore: update vrender version
+
+
+- feat: gantt chart support create markline
+
+
+- feat: customCellStyle supports functional config #3483
+- fix: active right button interactive #3482
 
 ## 1.17.0
 Wed, 26 Feb 2025 11:11:06 GMT

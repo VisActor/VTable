@@ -93,13 +93,6 @@ When displayed as a tree structure, the number of levels is expanded by default.
 
 Whether nodes at the same level are aligned by text, such as nodes without collapsed expansion icons and nodes with icons. Default is false
 
-## frozenColDragHeaderMode(string) = 'fixedFrozenCount'
-
-Drag the table header to move the position. Rules for frozen parts. The default is fixedFrozenCount.
-
-- "disabled" (disables adjusting the position of frozen columns): The headers of other columns are not allowed to be moved into the frozen column, nor are the frozen columns allowed to be moved out. The frozen column remains unchanged.
-- "adjustFrozenCount" (adjust the number of frozen columns based on the interaction results): allows the headers of other columns to move into the frozen column, and the frozen column to move out, and adjusts the number of frozen columns based on the dragging action. When the headers of other columns are dragged into the frozen column position, the number of frozen columns increases; when the headers of other columns are dragged out of the frozen column position, the number of frozen columns decreases.
-- "fixedFrozenCount" (can adjust frozen columns and keep the number of frozen columns unchanged): Allows you to freely drag the headers of other columns into or out of the frozen column position while keeping the number of frozen columns unchanged.
 
 ## aggregation(Aggregation|CustomAggregation|Array|Function)
 

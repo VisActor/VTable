@@ -5,11 +5,11 @@
 <script setup lang="ts">
 import { ref, shallowRef, watch, computed, onMounted, onBeforeUnmount } from 'vue';
 import { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
-import { isEqual } from '@visactor/vutils';
 import { TABLE_EVENTS, TABLE_EVENTS_KEYS } from '../eventsUtils';
 import type * as VTable from '@visactor/vtable';
 import type { EventsProps } from '../eventsUtils';
 import type { TYPES } from '@visactor/vtable';
+import { useCellRender, useEditorRender } from '../hooks';
 
 // 定义表格实例和选项的类型
 export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
@@ -45,6 +45,11 @@ const columnWidths = ref<Map<string, number>>(new Map());
 const pivotColumnWidths = ref<{ dimensions: TYPES.IDimensionInfo[]; width: number }[]>([]);
 const pivotHeaderColumnWidths = ref<number[]>([]);
 
+// 自定义编辑渲染器
+useEditorRender(props, vTableInstance);
+// 自定义单元格渲染器
+useCellRender(props, vTableInstance);
+
 // 公开 vTableInstance，以便外部组件可以访问
 defineExpose({ vTableInstance });
 
@@ -70,7 +75,6 @@ type Constructor<T> = new (dom: HTMLElement, options: IOption) => T;
 const createTableInstance = (Type: any, options: IOption) => {
   const vtable = new Type(vTableContainer.value!, options);
   vTableInstance.value = vtable;
-
   // for keepColumnWidthChange
   columnWidths.value.clear();
   pivotColumnWidths.value = [];
@@ -203,14 +207,16 @@ const updateVTable = (newOptions: IOption) => {
 
 // 组件挂载时创建表格
 onMounted(createVTable);
-onBeforeUnmount(() => vTableInstance.value?.release());
+onBeforeUnmount(() => {
+  vTableInstance.value?.release();
+});
 
 // 监听 options 属性的变化
 // 需要去做细颗粒度的比较
 // deep 选中会导致tree失效
 watch(
   () => props.options,
-  newOptions => {
+  (newOptions, oldOptions) => {
     if (vTableInstance.value) {
       updateVTable(newOptions);
     } else {
