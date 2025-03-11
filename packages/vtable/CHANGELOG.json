@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.17.2",
+      "tag": "@visactor/vtable_v1.17.2",
+      "date": "Tue, 11 Mar 2025 08:19:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: custom container value error\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.17.1",
       "tag": "@visactor/vtable_v1.17.1",
       "date": "Sun, 09 Mar 2025 12:30:39 GMT",

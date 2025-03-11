@@ -9,7 +9,7 @@ import { VTableVueAttributePlugin } from '../components/custom/vtable-vue-attrib
  */
 export function useCellRender(props: any, tableRef: Ref) {
   watchEffect(() => {
-    if (!props?.customConfig?.createReactContainer) {
+    if (!props?.options?.customConfig?.createReactContainer) {
       // 未开启自定义容器
       return;
     }
