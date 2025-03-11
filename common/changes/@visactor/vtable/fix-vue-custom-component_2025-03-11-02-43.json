@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Merge pull request #3548 from 7dingdang0/fix/vue-custom-component\n\nfix: custom container value error\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
