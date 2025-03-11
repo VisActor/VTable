@@ -3,7 +3,7 @@ import type { FullExtendStyle, HeaderStyleOption, StylePropertyFunctionArg } fro
 import { TextHeaderStyle } from './style/MultilineTextHeaderStyle';
 // import { SortHeaderStyle } from "./style/SortHeaderStyle";
 import { Style } from './style/Style';
-import type { TableTheme } from '../themes/theme';
+import type { TableTheme } from '../themes/theme-define';
 import { CheckboxStyle } from './style/CheckboxStyle';
 
 export { Style, TextHeaderStyle };

@@ -27,7 +27,7 @@ import type {
   SeriesNumberColumnData
 } from './list-table/layout-map/api';
 export type { HeaderData } from './list-table/layout-map/api';
-import type { TableTheme } from '../themes/theme';
+import type { TableTheme } from '../themes/theme-define';
 import type { ICustomRender } from './customElement';
 import type { LayoutObjectId } from './table-engine';
 import type { Rect } from '../tools/Rect';

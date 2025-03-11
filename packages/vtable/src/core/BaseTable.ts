@@ -62,7 +62,7 @@ import { EventHandler } from '../event/EventHandler';
 import { EventTarget } from '../event/EventTarget';
 import { NumberMap } from '../tools/NumberMap';
 import { Rect } from '../tools/Rect';
-import type { TableTheme } from '../themes/theme';
+import type { TableTheme } from '../themes/theme-define';
 import { throttle2 } from '../tools/util';
 import themes from '../themes';
 import { Env } from '../tools/env';
@@ -96,7 +96,6 @@ import type {
   SeriesNumberColumnData
 } from '../ts-types/list-table/layout-map/api';
 import type { TooltipOptions } from '../ts-types/tooltip';
-import { IconCache } from '../plugins/icons';
 import {
   _applyColWidthLimits,
   _getScrollableVisibleRect,
@@ -2256,7 +2255,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     internalProps.tooltipHandler?.release?.();
     internalProps.menuHandler?.release?.();
-    IconCache.clearAll();
 
     super.release?.();
     internalProps.handler?.release?.();
