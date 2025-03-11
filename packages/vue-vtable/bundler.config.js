@@ -11,9 +11,11 @@ module.exports = {
     treeshake: true
   },
   globals: {
-    '@visactor/vtable': 'VTable'
+    '@visactor/vtable': 'VTable',
+    'vue': 'Vue',
+    '@visactor/vutils': 'VUtils'
   },
-  external: ['@visactor/vtable'],
+  external: ['@visactor/vtable', 'vue', '@visactor/vtable/es/vrender'],
   alias: {
     '@visactor/vtable/es/vrender': '@visactor/vtable/es/vrender.js'
   }
