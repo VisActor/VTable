@@ -278,7 +278,15 @@ export function updateSelectPosition(
       cellPos.row = row;
       // scenegraph.setCellNormalStyle(col, row);
       const currentRange = state.select.ranges?.[state.select.ranges.length - 1];
-      currentRange && scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
+      if (
+        currentRange &&
+        currentRange.start.row <= table.rowCount - 1 &&
+        currentRange.end.row <= table.rowCount - 1 &&
+        currentRange.start.col <= table.colCount - 1 &&
+        currentRange.end.col <= table.colCount - 1
+      ) {
+        scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
+      }
     }
   } else if (
     (interactionState === InteractionState.grabing || table.eventManager.isDraging) &&
@@ -409,7 +417,15 @@ export function updateSelectPosition(
           }
         }
       }
-      scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
+      if (
+        currentRange &&
+        currentRange.start.row <= table.rowCount - 1 &&
+        currentRange.end.row <= table.rowCount - 1 &&
+        currentRange.start.col <= table.colCount - 1 &&
+        currentRange.end.col <= table.colCount - 1
+      ) {
+        scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
+      }
     }
   }
   scenegraph.updateNextFrame();
