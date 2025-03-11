@@ -1,3 +1,16 @@
+# v1.17.2
+
+2025-03-11
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: custom container value error
+
+
+
+[更多详情请查看 v1.17.2](https://github.com/VisActor/VTable/releases/tag/v1.17.2)
+
 # v1.17.1
 
 2025-03-10
