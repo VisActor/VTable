@@ -11,23 +11,23 @@ link: custom_define/vue-dom-component
 
 In `vue-vtable`, it is possible to directly render DOM components within cells, allowing for the easy embedding of complex Vue components to achieve highly customized table display effects. Two forms are supported: **slot-based** and **directly passing into the `column` configuration**. Both methods require wrapping with the `Group` component.
 
-## Detailed Explanation
+Detailed Explanation：
 
-### 1. Enabling the Feature
+1. Enabling the Feature
 
 In `vue-vtable`, rendering DOM components requires two key steps:
 
 - **Pass the `vue` property in the `Group` component**: This allows the `Group` component to recognize and handle Vue components.
 - **Enable `customConfig.createReactContainer`**: This configuration item is used to create a table container, ensuring that Vue components can be correctly rendered into the table container.
 
-### 2. Slot-Based Rendering
+2. Slot-Based Rendering
 
 Slot-based rendering is achieved through the two slots `headerCustomLayout` and `customLayout` of the `ListColumn` component. Custom components need to be wrapped with the `Group` component.
 
 - **`headerCustomLayout`**: Used for custom rendering of header cells.
 - **`customLayout`**: Used for custom rendering of body cells.
 
-### 3. Direct Configuration-Based Rendering
+3. Direct Configuration-Based Rendering
 
 Direct configuration-based rendering is similar to slot-based rendering, with the difference being that you do not need to pass components through slots. Instead, you directly pass virtual nodes in the `element` property of the `column.headerCustomLayout` or `column.customLayout` configuration. The usage is largely the same as with [custom components](../../guide/custom_define/custom_layout).
 
