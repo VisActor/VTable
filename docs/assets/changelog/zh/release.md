@@ -4,7 +4,7 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: 修复 custom container value 问题
+- **@visactor/vue-vtable**: 修复 custom container value 问题
 
 [更多详情请查看 v1.17.2](https://github.com/VisActor/VTable/releases/tag/v1.17.2)
 
