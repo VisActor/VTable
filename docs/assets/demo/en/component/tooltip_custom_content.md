@@ -290,7 +290,9 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       rowHierarchyIndent: 20,
       rowExpandLevel: 1,
       rowHierarchyTextStartAlignment: true,
-      dragHeaderMode: 'all'
+      dragOrder: {
+        dragHeaderMode: 'all'
+      }
     };
     tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
     window.tableInstance = tableInstance;

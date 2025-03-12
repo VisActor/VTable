@@ -15,7 +15,9 @@ By default, VTable's drag-and-drop header transposition feature is turned off. T
 
 ```javascript
 const table = new VTable.ListTable({
-  dragHeaderMode: 'all'
+  dragOrder: {
+    dragHeaderMode: 'all'
+  }
 });
 ```
 
@@ -68,8 +70,10 @@ Drag and drop the table header to move the position. Select different effects ac
 Constraints can be made through the following configuration (only valid for ListTable):
 
 ```
-Drag the table header to move the position. Rules for frozen parts. The default is fixedFrozenCount.
-frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
+dragOrder: {
+  // Drag the table header to move the position. Rules for frozen parts. The default is fixedFrozenCount.
+  frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
+}
 ```
 
 The different rules are described below:
@@ -80,7 +84,22 @@ The different rules are described below:
 
 So far, we have introduced the drag-and-drop header transposition function of VTable, including the activation of the drag-and-drop header transposition function, the style configuration of the drag-and-drop header transposition mark line, and whether a certain column can be dragged. By mastering these functions, you can more easily perform data analytics and processing in VTable.
 
-## Adjusting Data Order
+
+## Validation When Moving Position Ends
+
+Our internal default validation rule is: if dragging under a header hierarchy structure, it is not allowed to move positions across parent levels, only allowing moving positions within the same parent level. If it is a basic table using the row number `rowSeriesNumber` to drag and reorder data, no validation will be performed. When the default validation rule is not satisfied, VTable will display a mouse style prohibiting dragging during the mouse movement process.
+
+However, some business requirements state that validation should be performed at the end of dragging to check if the conditions for dragging to reorder are met. If not met, the business layer will prompt or perform other operations. This requirement can be implemented through the hook function `validateDragOrderOnEnd` for validation. If it returns `true`, the move is successful; if it returns `false`, the move fails.
+
+```javascript
+dragOrder: {
+  validateDragOrderOnEnd(source, target) {
+    return true;
+  }
+}
+```
+
+## Adjusting Data Order for ListTable
 
 **ListTable Data Reordering Explanation:**
 

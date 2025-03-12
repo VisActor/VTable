@@ -8,12 +8,25 @@ module.exports = {
   name: 'VueVTable',
   umdOutputFilename: 'vue-vtable',
   rollupOptions: {
-    treeshake: true
+    treeshake: true,
+    output: {
+      // 路径映射
+      paths: {
+        '@visactor/vtable/es/vrender': 'VTable.vrender'
+      }
+    }
   },
   globals: {
-    '@visactor/vtable': 'VTable'
+    '@visactor/vtable': 'VTable',
+    'vue': 'Vue',
+    '@visactor/vutils': 'VUtils',
+    '@visactor/vtable/es/vrender': 'VTable.vrender'
   },
-  external: ['@visactor/vtable'],
+  external: [
+    '@visactor/vtable',
+    'vue',
+    '@visactor/vtable/es/vrender'
+  ],
   alias: {
     '@visactor/vtable/es/vrender': '@visactor/vtable/es/vrender.js'
   }

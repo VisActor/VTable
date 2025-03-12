@@ -575,6 +575,19 @@ export class EventManager {
     return false;
   }
 
+  cellIsHeaderCheck(eventArgsSet: SceneEvent, update?: boolean): boolean {
+    const { eventArgs } = eventArgsSet;
+    const { col, row, target } = eventArgs;
+    if (!this.table.isHeader(col, row)) {
+      return false;
+    }
+    const cellType = this.table.getCellType(eventArgs.col, eventArgs.row);
+    if (cellType === 'checkbox' && target.name === 'checkbox') {
+      return true;
+    }
+    return false;
+  }
+
   checkCellFillhandle(eventArgsSet: SceneEvent, update?: boolean): boolean {
     if (this.table.options.excelOptions?.fillHandle) {
       const { eventArgs } = eventArgsSet;
@@ -618,7 +631,7 @@ export class EventManager {
     this.table.stateManager.updateResizeRow(xInTable, yInTable);
   }
 
-  chechColumnMover(eventArgsSet: SceneEvent): boolean {
+  checkColumnMover(eventArgsSet: SceneEvent): boolean {
     // return false;
     const { eventArgs } = eventArgsSet;
     if (

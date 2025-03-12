@@ -18,7 +18,7 @@ The following are the Key Configurations items and their descriptions for using 
 - `showRowHeader`: Whether to display the row header, the default is true.
 - `showColumnHeader`: Whether to display the column header, the default is true.
 - `corner`: Various configurations and style customization of the corner table header.
-- `dataConfig`: Data analysis configuration, which can configure data aggregation and calculation methods, sorting and filtering, etc.
+- `dataConfig`: Data analysis configuration, which can configure data aggregation and calculation methods, sorting and filtering, etc. Note that the internal default aggregation of all indicators is SUM, and if null values are encountered, they will be calculated as 0. For details, please refer to [Data Analysis Configuration](./data_config.md).
 
 ## Example: Create a simple pivot table
 

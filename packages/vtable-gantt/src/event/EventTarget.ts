@@ -113,7 +113,7 @@ export class EventTarget {
   //   }
   //   return list.map(listener => listener.call(this, ...args)).filter(r => isValid(r));
   // }
-  fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(
+  fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap & keyof TableEventHandlersReturnMap>(
     type: TYPE,
     event: TableEventHandlersEventArgumentMap[TYPE]
   ): TableEventHandlersReturnMap[TYPE][] {

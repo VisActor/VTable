@@ -98,6 +98,14 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           style: {
             color: 'green'
           }
+        },
+        {
+          id: 'custom-3',
+          style: styleArg => {
+            return {
+              color: styleArg.row % 2 === 0 ? 'red' : 'blue'
+            };
+          }
         }
       ],
       customCellStyleArrangement: [
@@ -122,6 +130,21 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
             }
           },
           customStyleId: 'custom-2'
+        },
+        {
+          cellPosition: {
+            range: {
+              start: {
+                col: 1,
+                row: 3
+              },
+              end: {
+                col: 2,
+                row: 10
+              }
+            }
+          },
+          customStyleId: 'custom-3'
         }
       ]
     };

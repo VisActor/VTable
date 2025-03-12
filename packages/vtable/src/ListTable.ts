@@ -116,7 +116,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     super(container as HTMLElement, options);
     const internalProps = this.internalProps;
-    internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
+    internalProps.frozenColDragHeaderMode =
+      options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;
     //分页配置
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
@@ -477,7 +478,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   updateOption(options: ListTableConstructorOptions) {
     const internalProps = this.internalProps;
     super.updateOption(options);
-    internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
+    internalProps.frozenColDragHeaderMode =
+      options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;
     //分页配置
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;

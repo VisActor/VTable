@@ -396,7 +396,9 @@ const option = {
   widthMode: 'standard', // 宽度模式：standard 标准模式； adaptive 自动填满容器
   bottomFrozenRowCount: 2,
   rightFrozenColCount: 1,
-  dragHeaderMode: 'all'
+  dragOrder: {
+    dragHeaderMode: 'all'
+  }
 };
 
 const instance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);

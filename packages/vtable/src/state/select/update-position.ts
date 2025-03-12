@@ -185,7 +185,7 @@ export function updateSelectPosition(
           });
         } else {
           state.select.ranges.push({
-            start: { col: cellRange.start.col, row },
+            start: { col: cellRange.start.col, row: cellRange.start.row },
             end: { col: cellRange.end.col, row: table.rowCount - 1 },
             skipBodyMerge: true
           });
@@ -201,7 +201,7 @@ export function updateSelectPosition(
           });
         } else {
           state.select.ranges.push({
-            start: { col, row: cellRange.start.row },
+            start: { col: cellRange.start.col, row: cellRange.start.row },
             end: { col: table.colCount - 1, row: cellRange.end.row },
             skipBodyMerge: true
           });

@@ -6,6 +6,7 @@ const CONTAINER_ID = 'vTable';
 export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
+
     columns: [
       {
         field: 'p',
@@ -211,7 +212,13 @@ export function createTable() {
         progress: 79
       }
     ],
-    dragHeaderMode: 'column'
+    dragOrder: {
+      dragHeaderMode: 'column',
+      validateDragOrderOnEnd(source, target) {
+        console.log(source, target);
+        return false;
+      }
+    }
     // theme: VTable.themes.SIMPLIFY,
     // defaultRowHeight: 100,
     // autoWrapText: false,

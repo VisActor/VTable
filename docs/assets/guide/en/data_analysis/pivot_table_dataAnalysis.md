@@ -163,7 +163,7 @@ By default, all indicator values are calculated in the `SUM` way. If you don't w
 
 In general, indicators should be of type `number` so that internal calculations can be performed.
 
-If the indicator is a string type or `null`, you need to configure `aggregationType` as `VTable.TYPES.AggregationType.NONE` to display the original value of the data source field.
+If the indicator is a string type or `null`, and needs to be displayed in the cell, you can configure `aggregationType` as `VTable.TYPES.AggregationType.NONE` to display the original value of the data source field; or you can use the `getCellOriginRecord` interface in the indicator format function to obtain the data source entry corresponding to the cell, and then perform special processing.
 
 If you use custom rendering `customLayout` and want to get all the data `records` corresponding to the cell in the `customLayout` function, you can configure `aggregationType` as `VTable.TYPES.AggregationType.RECORD`.
 

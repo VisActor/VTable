@@ -2,6 +2,51 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.17.2",
+      "tag": "@visactor/vtable_v1.17.2",
+      "date": "Tue, 11 Mar 2025 08:19:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: custom container value error\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.17.1",
+      "tag": "@visactor/vtable_v1.17.1",
+      "date": "Sun, 09 Mar 2025 12:30:39 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: pivot table add api setLoadingHierarchyState #3469\n\n"
+          },
+          {
+            "comment": "fix: mobile drill icon state update #3485\n\n"
+          },
+          {
+            "comment": "feat: add validateDragOrderOnEnd on dragOrder option #3493\n\n"
+          },
+          {
+            "comment": "feat: sortByIndicatorRule support sortFunc #3508\n\n"
+          },
+          {
+            "comment": "chore: update vrender version\n\n"
+          },
+          {
+            "comment": "feat: gantt chart support create markline\n\n"
+          },
+          {
+            "comment": "feat: customCellStyle supports functional config #3483"
+          },
+          {
+            "comment": "fix: active right button interactive #3482"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.17.0",
       "tag": "@visactor/vtable_v1.17.0",
       "date": "Wed, 26 Feb 2025 11:11:06 GMT",

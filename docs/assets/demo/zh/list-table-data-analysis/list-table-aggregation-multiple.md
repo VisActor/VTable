@@ -170,7 +170,9 @@ const option = {
   autoWrapText: true,
   widthMode: 'autoWidth',
   heightMode: 'autoHeight',
-  dragHeaderMode: 'all',
+  dragOrder: {
+    dragHeaderMode: 'all'
+  },
   keyboardOptions: {
     pasteValueToCell: true
   },
