@@ -2191,7 +2191,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     let colRole: CellPivotRole = colHeaderPaths.length ? 'normal' : undefined;
     let rowRole: CellPivotRole = rowHeaderPaths.length ? 'normal' : undefined;
 
-    colHeaderPaths.forEach((path: IDimensionInfo) => {
+    (colHeaderPaths as IDimensionInfo[]).forEach((path: IDimensionInfo) => {
       if (path.role === 'sub-total') {
         colRole = 'sub-total';
       } else if (path.role === 'grand-total') {
@@ -2199,7 +2199,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
     });
 
-    rowHeaderPaths.forEach((path: IDimensionInfo) => {
+    (rowHeaderPaths as IDimensionInfo[]).forEach((path: IDimensionInfo) => {
       if (path.role === 'sub-total') {
         rowRole = 'sub-total';
       } else if (path.role === 'grand-total') {
