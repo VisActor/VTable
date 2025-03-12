@@ -121,7 +121,7 @@ export interface IRowSeriesNumber {
   title?: string;
   // field?: FieldDef;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
-  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
+  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox' | 'radio';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
