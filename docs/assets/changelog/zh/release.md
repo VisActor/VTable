@@ -2,19 +2,15 @@
 
 2025-03-11
 
-
 **🐛 功能修复**
 
-- **@visactor/vtable**: custom container value error
-
-
+- **@visactor/vtable**: 修复 custom container value 问题
 
 [更多详情请查看 v1.17.2](https://github.com/VisActor/VTable/releases/tag/v1.17.2)
 
 # v1.17.1
 
 2025-03-10
-
 
 **🆕 新增功能**
 
@@ -39,17 +35,15 @@
 
 2025-02-26
 
-
-
 **💥 Breaking change**
 
-- **@visactor/vtable**: 删除loading加载图标的自动注册，需要手动注册，具体可以参考教程：/guide/table_type/List_table/tree_list
+- **@visactor/vtable**: 删除 loading 加载图标的自动注册，需要手动注册，具体可以参考教程：/guide/table_type/List_table/tree_list
 
 **🆕 新增功能**
 
-- **@visactor/vtable-gantt**: 甘特图scale时间表头支持可见性设置 [#3098](https://github.com/VisActor/VTable/issues/3098)
+- **@visactor/vtable-gantt**: 甘特图 scale 时间表头支持可见性设置 [#3098](https://github.com/VisActor/VTable/issues/3098)
 - **@visactor/vtable**: 下拉菜单支持函数配置 [#3443](https://github.com/VisActor/VTable/issues/3443)
-- **@visactor/vtable-gantt**: 新增grid网格垂直线依赖于时间轴的配置 [#3467](https://github.com/VisActor/VTable/issues/3467)
+- **@visactor/vtable-gantt**: 新增 grid 网格垂直线依赖于时间轴的配置 [#3467](https://github.com/VisActor/VTable/issues/3467)
 - **@visactor/vtable**: 新增 activateChartInstance 和 replaceChartCacheImage API
 - **@visactor/vtable**: 新增 `specTransformInCell` 配置，支持修改透视表每个单元格的 VChart 规范
 - **@visactor/vtable**: 新增开关和按钮类型单元格
@@ -67,23 +61,18 @@
 
 - **@visactor/vtable**: 更新 Rush 的更新日志
 
-
-
 [更多详情请查看 v1.17.0](https://github.com/VisActor/VTable/releases/tag/v1.17.0)
 
 # v1.16.2
 
 2025-02-19
 
-
 **🐛 功能修复**
 
 - **@visactor/vtable**: 修复字段名包含点号时出现的错误 [#3409](https://github.com/VisActor/VTable/issues/3409)
 - **@visactor/vtable**: 修复 getChartInstance 方法中 vchart updateViewBox 的参数 [#3442](https://github.com/VisActor/VTable/issues/3442)
-- **@visactor/vtable**: 修复 computeAxisComponentWidth 的返回值向上取整 [#3444](https://github.com/VisActor/VTable/issues/3444) 
+- **@visactor/vtable**: 修复 computeAxisComponentWidth 的返回值向上取整 [#3444](https://github.com/VisActor/VTable/issues/3444)
 - **@visactor/vtable**: 修复 getCheckboxState() 中的排序函数 [#3394](https://github.com/VisActor/VTable/issues/3394)
-
-
 
 [更多详情请查看 v1.16.2](https://github.com/VisActor/VTable/releases/tag/v1.16.2)
 
