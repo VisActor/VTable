@@ -1,7 +1,7 @@
 import type { Style } from '../body-helper/style';
 import type { ColumnStyleOption, ColumnTypeOption } from './column';
 import type { ColumnData } from './list-table/layout-map/api';
-import type { CellLocation, CellRange, FieldData, FieldDef } from './table-engine';
+import type { CellLocation, CellPivotRole, CellRange, FieldData, FieldDef } from './table-engine';
 import type { Rect } from '../tools/Rect';
 import type { BaseTableAPI } from './base-table';
 import type { StylePropertyFunctionArg } from './style-define';
@@ -98,6 +98,7 @@ export type IPivotTableCellHeaderPaths = {
   /** 行表头各级path表头信息 */
   readonly rowHeaderPaths?: IDimensionInfo[];
   cellLocation: CellLocation;
+  role?: CellPivotRole;
 };
 
 export interface IDimensionInfo {
@@ -106,6 +107,7 @@ export interface IDimensionInfo {
   indicatorKey?: string;
   isPivotCorner?: boolean;
   virtual?: boolean;
+  role?: CellPivotRole;
 }
 
 /**
