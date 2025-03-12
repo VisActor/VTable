@@ -34,12 +34,13 @@ link: custom_define/vue-dom-component
 
 ## 代码演示
 
-在代码演示中，我们展示了如何在表格中渲染自定义的 Vue 组件。具体包括：
-
-- **性别列**：通过 `ArcoDesignVue.Tag` 组件来渲染性别信息，并根据性别值动态改变标签颜色。
-- **评论列**：通过 `ArcoDesignVue.Comment` 组件来渲染评论信息，并包含点赞、收藏、回复等操作按钮。
 
 ```javascript livedemo template=vtable-vue
+
+//在代码演示中，我们展示了如何在表格中渲染自定义的 Vue 组件。具体包括：
+//- **性别列**：通过 `ArcoDesignVue.Tag` 组件来渲染性别信息，并根据性别值动态改变标签颜色。
+//- **评论列**：通过 `ArcoDesignVue.Comment` 组件来渲染评论信息，并包含点赞、收藏、回复等操作按钮。
+
 const app = createApp({
   template: `
     <vue-list-table :options="option" :records="records" ref="tableRef" />

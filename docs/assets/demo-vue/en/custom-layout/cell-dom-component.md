@@ -33,12 +33,13 @@ Direct configuration-based rendering is similar to slot-based rendering, with th
 
 ## Code Demonstration
 
-In the code demonstration, we show how to render custom Vue components within the table. Specifically, it includes:
-
-- **Gender Column**: Uses the `ArcoDesignVue.Tag` component to render gender information and dynamically changes the tag color based on the gender value.
-- **Comment Column**: Uses the `ArcoDesignVue.Comment` component to render comment information, including like, collect, and reply action buttons.
-
 ```javascript livedemo template=vtable-vue
+
+// In the code demonstration, we show how to render custom Vue components within the table. Specifically, it includes:
+
+// - **Gender Column**: Uses the `ArcoDesignVue.Tag` component to render gender information and dynamically changes the tag color based on the gender value.
+// - **Comment Column**: Uses the `ArcoDesignVue.Comment` component to render comment information, including like, collect, and reply action buttons.
+
 const app = createApp({
   template: `
     <vue-list-table :options="option" :records="records" ref="tableRef" />
