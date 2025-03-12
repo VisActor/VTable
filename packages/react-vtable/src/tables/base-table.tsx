@@ -57,6 +57,8 @@ export type BaseTableProps = EventsProps &
 
     ReactDOM?: any;
 
+    reactAttributePlugin?: VTableReactAttributePlugin;
+
     /** 表格渲染完成事件 */
     onReady?: (instance: IVTable, isInitial: boolean) => void;
     /** throw error when chart run into an error */
@@ -178,7 +180,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
     (props: Props) => {
       const vtable = new props.vtableConstrouctor(props.container, parseOption(props));
       vtable.scenegraph.stage.reactAttribute = props.ReactDOM;
-      vtable.scenegraph.stage.pluginService.register(new VTableReactAttributePlugin());
+      vtable.scenegraph.stage.pluginService.register(props.reactAttributePlugin ?? new VTableReactAttributePlugin());
       vtable.scenegraph.stage.params.ReactDOM = props.ReactDOM;
       tableContext.current = { ...tableContext.current, table: vtable };
       isUnmount.current = false;
