@@ -194,14 +194,6 @@ Align excel advanced capabilities
 
 Fill handle, when set to true, when a cell is selected, the fill handle will be displayed on the lower right side of the cell. You can drag the fill handle to edit the value of the cell. Or double-click the fill handle to change the value of the cell you want to edit.
 
-#${prefix} dragHeaderMode(string) = 'none'
-
-The switch of dragging the header to move the position. After selecting a cell, drag the cell to trigger the move. The range of replaceable cells is limited:
-
-- 'all' All headers can be swapped
-- 'none' Cannot be swapped
-- 'column' Only the column header can be swapped
-- 'row' Only the row header can be swapped
 
 #${prefix} hover(Object)
 
@@ -466,7 +458,7 @@ Customize cell merging rules. When the incoming row and column numbers are withi
 
 ```
 {
-   customCellStyle: {id: string;style: ColumnStyleOption}[]
+   customCellStyle: {id: string;style: ColumnStyleOption | ((styleArg: StylePropertyFunctionArg) => ColumnStyleOption)}[]
 }
 ```
 
@@ -631,3 +623,34 @@ Only affects in PivotTable/PivotChard Adjust the effective range of row height, 
 - `indicator`: rows corresponding to the same indicator will be adjusted when the row height is adjusted
 - `indicatorGroup`: Adjust the height of all indicator rows under the same parent dimension
 - `all`: All row heights are adjusted
+
+#${prefix} dragOrder(Object)
+
+#${prefix} dragOrder(Object)
+
+Configuration for dragging to move positions.
+
+##${prefix} dragHeaderMode(string) = 'none'
+
+Controls the switch for dragging the table header to move positions. After selecting a cell, dragging the cell with the mouse can trigger the move. The range of interchangeable cells can be limited:
+
+- 'all' All table headers can be interchanged
+- 'none' Cannot be interchanged
+- 'column' Only column headers can be interchanged
+- 'row' Only row headers can be interchanged
+
+##${prefix} frozenColDragHeaderMode(string) = 'fixedFrozenCount'
+
+The rule for dragging the table header to move positions for the frozen part. The default is fixedFrozenCount. Only effective for ListTable type settings!
+
+- "disabled" (prohibit adjusting frozen column positions): Do not allow table headers of other columns to move into frozen columns, nor allow frozen columns to move out. Frozen columns remain unchanged.
+- "adjustFrozenCount" (adjust the number of frozen columns according to the interaction results): Allow table headers of other columns to move into frozen columns and frozen columns to move out, and adjust the number of frozen columns according to the dragging action. When the table headers of other columns are dragged into the frozen column position, the number of frozen columns increases; when the table headers of other columns are dragged out of the frozen column position, the number of frozen columns decreases.
+- "fixedFrozenCount" (can adjust frozen columns and keep the number of frozen columns unchanged): Allow freely dragging table headers of other columns into or out of frozen column positions while keeping the number of frozen columns unchanged.
+
+##${prefix} validateDragOrderOnEnd(Function)
+
+Validate when the drag to move position ends.
+
+```
+validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
+```

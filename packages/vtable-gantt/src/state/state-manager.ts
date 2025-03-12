@@ -100,6 +100,9 @@ export class StateManager {
     secondTaskBarNode: GanttTaskBarNode;
     lastHighLightLinkPoint: Group;
   };
+  marklineIcon: {
+    target: any;
+  };
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
@@ -127,6 +130,9 @@ export class StateManager {
     this.hoverTaskBar = {
       targetStartX: null,
       startX: null,
+      target: null
+    };
+    this.marklineIcon = {
       target: null
     };
 
@@ -365,6 +371,9 @@ export class StateManager {
       );
       const timelineStartDate =
         this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[startDateColIndex];
+      if (!timelineStartDate) {
+        return;
+      }
       const newStartDate = timelineStartDate.startDate;
       // const endDateColIndex = getDateIndexByX(
       //   this.moveTaskBar.target.attribute.x +
@@ -630,6 +639,9 @@ export class StateManager {
         this._gantt
       );
       const timelineDate = this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[colIndex];
+      if (!timelineDate) {
+        return;
+      }
       const targetDate = direction === 'left' ? timelineDate.startDate : timelineDate.endDate;
       // diff_days = direction === 'left' ? -diff_days : diff_days;
 
@@ -974,6 +986,22 @@ export class StateManager {
       circle.setAttribute('lineWidth', this._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeWidth);
       this._gantt.scenegraph.updateNextFrame();
     }
+  }
+  showMarklineIconHover() {
+    const target = this._gantt.stateManager.marklineIcon.target;
+    if (target) {
+      const marklineGroup = this._gantt.scenegraph.timelineHeader.showMarklineIcon(target.parent);
+      if (marklineGroup && this._gantt.parsedOptions.markLineCreateOptions?.markLineCreationHoverToolTip?.tipContent) {
+        this._gantt.scenegraph.showToolTip(marklineGroup);
+      }
+      this._gantt.scenegraph.updateNextFrame();
+    }
+  }
+  hideMarklineIconHover() {
+    this._gantt.scenegraph.timelineHeader.hideMarklineIconHover(this._gantt.stateManager.marklineIcon.target.parent);
+    this._gantt.scenegraph.hideToolTip();
+    this._gantt.stateManager.marklineIcon.target = null;
+    this._gantt.scenegraph.updateNextFrame();
   }
 }
 
