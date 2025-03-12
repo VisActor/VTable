@@ -1,3 +1,15 @@
+# v1.17.2
+
+2025-03-11
+
+
+**🐛 Bug fix**
+
+- **@visactor/vue-vtable**: custom container value error
+
+
+[more detail about v1.17.2](https://github.com/VisActor/VTable/releases/tag/v1.17.2)
+
 # v1.17.1
 
 2025-03-10
