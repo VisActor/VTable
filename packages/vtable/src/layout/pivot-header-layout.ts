@@ -3206,7 +3206,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 !isValid(colDimension.value)))
           ) {
             colArr = dimension.children as IHeaderTreeDefine[];
-            if (needLowestLevel_colPaths && !colArr) {
+            if (needLowestLevel_colPaths && !colArr?.length) {
               colDimensionFinded = dimension;
             } else if (!needLowestLevel_colPaths) {
               colDimensionFinded = dimension;
@@ -3265,7 +3265,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 (!isValid(rowDimension.value) || dimension.value === rowDimension.value))
             ) {
               rowArr = dimension.children as IHeaderTreeDefine[];
-              if (needLowestLevel_rowPaths && (!rowArr || rowArr.some(row => row.dimensionKey === 'axis'))) {
+              if (needLowestLevel_rowPaths && (!rowArr?.length || rowArr.some(row => row.dimensionKey === 'axis'))) {
                 rowDimensionFinded = dimension;
               } else if (!needLowestLevel_rowPaths) {
                 rowDimensionFinded = dimension;
