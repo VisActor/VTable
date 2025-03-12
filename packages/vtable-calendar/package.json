@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-calendar",
-  "version": "1.17.2",
+  "version": "1.17.3-alpha.1",
   "description": "The calendar component of VTable",
   "author": {
     "name": "VisActor",
@@ -35,7 +35,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable": "workspace:1.17.3-alpha.1",
     "@visactor/vutils": "~0.19.1",
     "date-fns": "3.6.0"
   },
