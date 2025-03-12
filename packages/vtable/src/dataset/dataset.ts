@@ -620,15 +620,17 @@ export class Dataset {
           const sumByKeys: string = this.collectValuesBy[field].sumBy
             ?.map(byField => record[byField])
             .join(this.stringJoinChar);
-          if (!this.collectedValues[field][collectKeys][sumByKeys]) {
-            this.collectedValues[field][collectKeys][sumByKeys] = new registeredAggregators[AggregationType.SUM]({
+          if (!(this.collectedValues[field][collectKeys] as any)[sumByKeys]) {
+            (this.collectedValues[field][collectKeys] as any)[sumByKeys] = new registeredAggregators[
+              AggregationType.SUM
+            ]({
               key: field,
               field: field,
               isRecord: undefined,
               needSplitPositiveAndNegative: this.needSplitPositiveAndNegative
             });
           }
-          this.collectedValues[field][collectKeys][sumByKeys].push(record);
+          (this.collectedValues[field][collectKeys] as any)[sumByKeys].push(record);
         } else if (this.collectValuesBy[field].range) {
           const fieldRange = this.collectedValues[field][collectKeys] as {
             max: number;
@@ -1961,30 +1963,36 @@ export class Dataset {
           if (subTotalFlags[index]) {
             let curChild = item.children ?? [];
             // for (let i = index; i < list.length - 1; i++) {
-            const totalChild: { value: string; dimensionKey: string; children: any[] | undefined; levelSpan: number } =
-              {
-                value: subTotalLabel,
-                dimensionKey: rows[index + 1],
-                levelSpan: subTotalFlags.length - index - 1,
-                // id: `${flatKey}${concatStr}${subTotalLabel}`, // getId(item?.id, 1),
-                //树的叶子节点补充指标
-                children:
-                  // i + 1 === list.length - 1 &&
-                  (indicators?.length ?? 0) >= 1
-                    ? indicators?.map(indicator => {
-                        if (typeof indicator === 'string') {
-                          return {
-                            indicatorKey: indicator,
-                            value: indicator
-                          };
-                        }
+            const totalChild: {
+              value: string;
+              dimensionKey: string;
+              children: any[] | undefined;
+              levelSpan: number;
+              role: string;
+            } = {
+              value: subTotalLabel,
+              dimensionKey: rows[index + 1],
+              levelSpan: subTotalFlags.length - index - 1,
+              // id: `${flatKey}${concatStr}${subTotalLabel}`, // getId(item?.id, 1),
+              //树的叶子节点补充指标
+              children:
+                // i + 1 === list.length - 1 &&
+                (indicators?.length ?? 0) >= 1
+                  ? indicators?.map(indicator => {
+                      if (typeof indicator === 'string') {
                         return {
-                          indicatorKey: indicator.indicatorKey,
-                          value: indicator.title
+                          indicatorKey: indicator,
+                          value: indicator
                         };
-                      })
-                    : []
-              };
+                      }
+                      return {
+                        indicatorKey: indicator.indicatorKey,
+                        value: indicator.title
+                      };
+                    })
+                  : [],
+              role: 'sub-total'
+            };
 
             curChild.push(totalChild);
 
@@ -2019,7 +2027,7 @@ export class Dataset {
     }
     //最后将总计的节点加上
     if (isGrandTotal && arr?.length) {
-      const node: { value: string; dimensionKey: string; children: any[]; levelSpan: number } = {
+      const node: { value: string; dimensionKey: string; children: any[]; levelSpan: number; role: string } = {
         value: grandTotalLabel, // getId(item?.id, 1),
         dimensionKey: rows[0],
         levelSpan: subTotalFlags.length,
@@ -2035,7 +2043,8 @@ export class Dataset {
               indicatorKey: indicator.indicatorKey,
               value: indicator.title
             };
-          }) ?? []
+          }) ?? [],
+        role: 'grand-total'
       };
       if (showGrandTotalsOnTop) {
         result.unshift(node);
@@ -2210,7 +2219,7 @@ export class Dataset {
 
   private getFieldMatchColDimensionPaths(record: any) {
     const fieldMatchDimensionPaths = [];
-    for (let i = 0; i < this.customColTreeDimensionPaths?.length ?? 0; i++) {
+    for (let i = 0; i < (this.customColTreeDimensionPaths?.length ?? 0); i++) {
       const dimensionPath: {
         dimensionKey?: string | number;
         value: string;
@@ -2237,7 +2246,7 @@ export class Dataset {
 
   private getFieldMatchRowDimensionPaths(record: any) {
     const fieldMatchDimensionPaths = [];
-    for (let i = 0; i < this.customRowTreeDimensionPaths?.length ?? 0; i++) {
+    for (let i = 0; i < (this.customRowTreeDimensionPaths?.length ?? 0); i++) {
       const dimensionPath: {
         dimensionKey?: string | number;
         value: string;
