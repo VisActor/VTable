@@ -153,6 +153,8 @@ import type { CustomCellStylePlugin, ICustomCellStylePlugin } from '../plugins/c
 import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
 import { getCustomMergeCellFunc } from './utils/get-custom-merge-cell-func';
 import { vglobal } from '@src/vrender';
+import { PluginManager } from '../plugins/plugin-manager';
+import type { IVTablePlugin } from '../plugins/interface';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -228,12 +230,28 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   reactCustomLayout?: ReactCustomLayout;
   _hasAutoImageColumn?: boolean;
 
+  pluginManager: PluginManager;
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
+
+    if (Env.mode === 'node') {
+      options = container as BaseTableConstructorOptions;
+      container = null;
+    } else if (!(container instanceof HTMLElement)) {
+      options = container as BaseTableConstructorOptions;
+      if ((container as BaseTableConstructorOptions).container) {
+        container = (container as BaseTableConstructorOptions).container;
+      } else {
+        container = null;
+      }
+    }
     if (!container && options.mode !== 'node' && !options.canvas) {
       throw new Error("vtable's container is undefined");
     }
 
+    this.pluginManager = new PluginManager(this, options);
+    this.fireListeners(TABLE_EVENT_TYPE.BEFORE_INIT, { options, container });
+    container = options.container;
     // for image anonymous
     if (options.customConfig?.imageAnonymous === false) {
       vglobal.isImageAnonymous = false;
@@ -2288,6 +2306,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps = null;
 
     this.reactCustomLayout?.clearCache();
+    this.plugins.release();
   }
 
   fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(

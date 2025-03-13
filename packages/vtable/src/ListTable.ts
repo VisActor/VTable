@@ -103,18 +103,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   constructor(options: ListTableConstructorOptions);
   constructor(container: HTMLElement, options: ListTableConstructorOptions);
   constructor(container?: HTMLElement | ListTableConstructorOptions, options?: ListTableConstructorOptions) {
-    if (Env.mode === 'node') {
-      options = container as ListTableConstructorOptions;
-      container = null;
-    } else if (!(container instanceof HTMLElement)) {
-      options = container as ListTableConstructorOptions;
-      if ((container as ListTableConstructorOptions).container) {
-        container = (container as ListTableConstructorOptions).container;
-      } else {
-        container = null;
-      }
-    }
     super(container as HTMLElement, options);
+    options = this.options;
     const internalProps = this.internalProps;
     internalProps.frozenColDragHeaderMode =
       options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;

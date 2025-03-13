@@ -157,6 +157,10 @@ export interface TableEvents {
   RADIO_STATE_CHANGE: 'radio_state_change';
   SWITCH_STATE_CHANGE: 'switch_state_change';
   //#region lifecircle
+  /** 表格实例初始化前触发 */
+  BEFORE_INIT: 'before_init';
+  /** 设置表格大小前触发 */
+  BEFORE_SET_SIZE: 'before_set_size';
   /** 每次渲染完成触发 */
   AFTER_RENDER: 'after_render';
   /** 表格实例初始化完成 */
@@ -253,6 +257,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change',
   RADIO_STATE_CHANGE: 'radio_state_change',
   SWITCH_STATE_CHANGE: 'switch_state_change',
+  BEFORE_SET_SIZE: 'before_set_size',
+  BEFORE_INIT: 'before_init',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
   CHANGE_CELL_VALUE: 'change_cell_value',

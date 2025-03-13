@@ -104,6 +104,7 @@ import type { EmptyTip } from '../components/empty-tip/empty-tip';
 import type { EditManager } from '../edit/edit-manager';
 import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
+import type { IVTablePlugin } from '../plugins/interface';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -586,6 +587,8 @@ export interface BaseTableConstructorOptions {
     /** 拖拽移动位置结束时进行验证 */
     validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
   };
+  /** 插件配置 */
+  plugins?: IVTablePlugin[];
 }
 export interface BaseTableAPI {
   id: string;

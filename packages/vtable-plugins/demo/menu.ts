@@ -25,5 +25,14 @@ export const menus = [
         name: 'invert-highlight'
       }
     ]
+  },
+  {
+    menu: 'add-row-column',
+    children: [
+      {
+        path: 'add-row-column',
+        name: 'add-row-column'
+      }
+    ]
   }
 ];
