@@ -2306,7 +2306,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps = null;
 
     this.reactCustomLayout?.clearCache();
-    this.plugins.release();
+    this.pluginManager.release();
   }
 
   fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(
