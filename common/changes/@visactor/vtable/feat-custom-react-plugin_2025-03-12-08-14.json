@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add custom reactAttributePlugin in react-vtable",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

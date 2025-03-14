@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import type { CustomLayoutFunctionArg } from '../../../src';
-import { ListTable, ListColumn, CustomLayout, Group, Text, Tag, Image } from '../../../src';
+import { ListTable, ListColumn, CustomLayout, Group, Text, Tag, Image, VTableReactAttributePlugin } from '../../../src';
 import {
   Avatar,
   Comment,
@@ -177,6 +177,13 @@ const HeaderCustomLayoutComponent = props => {
   );
 };
 
+class customPlugin extends VTableReactAttributePlugin {
+  renderGraphicHTML(graphic: any) {
+    super.renderGraphicHTML(graphic);
+    // console.log('renderGraphicHTML');
+  }
+}
+
 function App() {
   const records = [];
   for (let i = 0; i < 20; i++) {
@@ -201,6 +208,7 @@ function App() {
         (window as any).tableInstance = table;
       }}
       ReactDOM={ReactDOM}
+      reactAttributePlugin={new customPlugin()}
     >
       <ListColumn field={'id'} title={'ID'} />
       <ListColumn field={'name'} title={'Comment'} width={500}>
