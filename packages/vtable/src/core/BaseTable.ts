@@ -1153,8 +1153,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   updateViewBox(newViewBox: IBoundsLike) {
-    const oldWidth = (this.options?.viewBox.x2 ?? 0) - (this.options?.viewBox.x1 ?? 0);
-    const oldHeight = (this.options?.viewBox.y2 ?? 0) - (this.options?.viewBox.y1 ?? 0);
+    const oldWidth = (this.options?.viewBox?.x2 ?? 0) - (this.options?.viewBox?.x1 ?? 0);
+    const oldHeight = (this.options?.viewBox?.y2 ?? 0) - (this.options?.viewBox?.y1 ?? 0);
     const newWidth = newViewBox.x2 - newViewBox.x1;
     const newHeight = newViewBox.y2 - newViewBox.y1;
     this.options.viewBox = newViewBox;

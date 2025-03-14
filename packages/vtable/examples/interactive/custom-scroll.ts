@@ -474,14 +474,14 @@ export function createTable() {
 
     customConfig: {
       scrollEventAlwaysTrigger: true
-    },
-
-    viewBox: {
-      x1: 20,
-      y1: 20,
-      x2: 700,
-      y2: 700
     }
+
+    // viewBox: {
+    //   x1: 20,
+    //   y1: 20,
+    //   x2: 700,
+    //   y2: 700
+    // }
 
     // canvasWidth: 660,
     // canvasHeight: 660
@@ -492,7 +492,7 @@ export function createTable() {
   const dom = document.getElementById(CONTAINER_ID);
   dom.style.width = '700px';
   dom.style.height = '700px';
-  // dom.style.border = '1px solid red';
+  dom.style.border = '1px solid red';
 
   window.update = () => {
     dom.style.width = '500px';
