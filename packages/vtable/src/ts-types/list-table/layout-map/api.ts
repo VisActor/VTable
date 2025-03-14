@@ -190,7 +190,7 @@ export interface SeriesNumberColumnData extends WidthData {
     | (string | ColumnIconOption)[]
     | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
-  cellType: 'text' | 'link' | 'image' | 'video' | 'checkbox';
+  cellType: 'text' | 'link' | 'image' | 'video' | 'checkbox' | 'radio';
   headerType: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style: ColumnStyleOption | null | undefined;
   define: IRowSeriesNumber;
