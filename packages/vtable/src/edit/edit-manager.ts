@@ -103,9 +103,13 @@ export class EditManager {
       // adjust last col&row, same as packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw
       if (col === this.table.colCount - 1) {
         referencePosition.rect.width = rect.width - 1;
+      } else {
+        referencePosition.rect.width = rect.width + 1; // 这里的1应该根据单元格的borderWidth来定;
       }
       if (row === this.table.rowCount - 1) {
         referencePosition.rect.height = rect.height - 1;
+      } else {
+        referencePosition.rect.height = rect.height + 1; // 这里的1应该根据单元格的borderWidth来定;
       }
 
       editor.beginEditing && console.warn('VTable Warn: `beginEditing` is deprecated, please use `onStart` instead.');
