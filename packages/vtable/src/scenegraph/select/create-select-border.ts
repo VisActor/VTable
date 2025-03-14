@@ -2,6 +2,7 @@ import { createRect } from '@src/vrender';
 import type { CellSubLocation } from '../../ts-types';
 import type { Scenegraph } from '../scenegraph';
 import { table } from 'console';
+import type { BaseTableAPI } from '../../ts-types/base-table';
 
 export function createCellSelectBorder(
   scene: Scenegraph,
@@ -63,7 +64,16 @@ export function createCellSelectBorder(
     y: firstCellBound.y1 - scene.tableGroup.attribute.y,
     width: 0,
     height: 0,
-    visible: true
+    visible: true,
+    cornerRadius: getCornerRadius(
+      selectRangeType,
+      scene.table.theme.frameStyle?.cornerRadius,
+      start_Col,
+      start_Row,
+      end_Col,
+      end_Row,
+      scene.table
+    )
   });
   // 创建右下角小方块
   let fillhandle;
@@ -128,4 +138,54 @@ export function createCellSelectBorder(
         ? scene.bottomFrozenGroup
         : scene.rightBottomCornerGroup
     );
+}
+
+// set corner radius in select rect which covers the corner of the table
+function getCornerRadius(
+  selectRangeType: CellSubLocation,
+  cornerRadius: undefined | number | [number, number, number, number],
+  start_Col: number,
+  start_Row: number,
+  end_Col: number,
+  end_Row: number,
+  table: BaseTableAPI
+) {
+  if (!cornerRadius) {
+    return undefined;
+  }
+  const cornerRadiusArray = Array.isArray(cornerRadius)
+    ? cornerRadius
+    : [cornerRadius, cornerRadius, cornerRadius, cornerRadius]; // [left top, right top, right bottom, left bottom]
+
+  const tableStartCol = 0;
+  const tableStartRow = 0;
+  const tableEndCol = table.colCount - 1;
+  const tableEndRow = table.rowCount - 1;
+
+  const result = [0, 0, 0, 0];
+  let changed = false;
+
+  if (start_Col === tableStartCol && start_Row === tableStartRow) {
+    // select rect covers the left top corner of the table
+    result[0] = cornerRadiusArray[0];
+    changed = true;
+  } else if (end_Col === tableEndCol && end_Row === tableEndRow) {
+    // select rect covers the right bottom corner of the table
+    result[2] = cornerRadiusArray[2];
+    changed = true;
+  } else if (start_Col === tableStartCol && end_Row === tableEndRow) {
+    // select rect covers the left bottom corner of the table
+    result[3] = cornerRadiusArray[3];
+    changed = true;
+  } else if (end_Col === tableEndCol && start_Row === tableStartRow) {
+    // select rect covers the right top corner of the table
+    result[1] = cornerRadiusArray[1];
+    changed = true;
+  }
+
+  if (changed) {
+    return result;
+  }
+
+  return undefined;
 }

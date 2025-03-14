@@ -71,6 +71,7 @@ export type HeightAdaptiveModeDef = 'only-body' | 'all';
 export type ShowColumnRowType = 'column' | 'row' | 'none' | 'all';
 /** 单元格所处表格哪部分 */
 export type CellLocation = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
+export type CellPivotRole = 'normal' | 'sub-total' | 'grand-total' | undefined;
 export type CellSubLocation =
   | 'body'
   | 'rowHeader'

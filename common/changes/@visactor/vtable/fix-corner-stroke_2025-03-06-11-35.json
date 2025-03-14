@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix cell border in cell with corner-radius",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

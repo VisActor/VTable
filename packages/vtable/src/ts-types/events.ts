@@ -86,6 +86,8 @@ export interface TableEventHandlersEventArgumentMap {
     scrollDirection: 'horizontal' | 'vertical';
     scrollRatioX?: number;
     scrollRatioY?: number;
+    dx?: number;
+    dy?: number;
   };
   scroll_vertical_end: {
     scrollLeft: number;
@@ -260,7 +262,7 @@ export interface TableEventHandlersReturnMap {
   mouseup_cell: void;
   contextmenu_cell: void;
   keydown: void;
-  scroll: void;
+  scroll: void | boolean;
   focus_table: void;
   blur_table: void;
   resize_column: void;
