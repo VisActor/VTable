@@ -19,5 +19,6 @@ export class BeforeInitPlugin implements VTable.plugins.IVTablePlugin {
     // const eventArgs = args[1];
     // const options = eventArgs.options;
     // const container = eventArgs.container;
+    // 可以通过options.container重置替换容器
   }
 }

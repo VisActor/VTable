@@ -56,6 +56,8 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
     }
   ) {
     this.pluginOptions = pluginOptions;
+    this.pluginOptions.addColumnEnable = this.pluginOptions.addColumnEnable ?? true;
+    this.pluginOptions.addRowEnable = this.pluginOptions.addRowEnable ?? true;
     if (this.pluginOptions.addColumnEnable) {
       this.initAddColumnDomElement();
       this.bindEventForAddColumn();
@@ -446,4 +448,14 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
     }, delay);
   }
   // #endregion
+  release() {
+    this.leftDotForAddColumn.remove();
+    this.rightDotForAddColumn.remove();
+    this.addIconForAddColumn.remove();
+    this.addLineForAddColumn.remove();
+    this.topDotForAddRow.remove();
+    this.bottomDotForAddRow.remove();
+    this.addIconForAddRow.remove();
+    this.addLineForAddRow.remove();
+  }
 }

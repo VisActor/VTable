@@ -1,38 +1,26 @@
 export const menus = [
   {
-    menu: 'carousel-animation',
-    children: [
-      {
-        path: 'carousel-animation',
-        name: 'carousel-animation'
-      }
-    ]
+    path: 'carousel-animation',
+    name: 'carousel-animation'
   },
   {
-    menu: 'header-highlight',
-    children: [
-      {
-        path: 'header-highlight',
-        name: 'header-highlight'
-      }
-    ]
+    path: 'header-highlight',
+    name: 'header-highlight'
   },
   {
-    menu: 'invert-highlight',
-    children: [
-      {
-        path: 'invert-highlight',
-        name: 'invert-highlight'
-      }
-    ]
+    path: 'invert-highlight',
+    name: 'invert-highlight'
   },
   {
-    menu: 'add-row-column',
-    children: [
-      {
-        path: 'add-row-column',
-        name: 'add-row-column'
-      }
-    ]
+    path: 'add-row-column',
+    name: 'add-row-column'
+  },
+  {
+    path: 'column-series',
+    name: 'column-series'
+  },
+  {
+    path: 'combine-plugins',
+    name: 'combine-plugins'
   }
 ];

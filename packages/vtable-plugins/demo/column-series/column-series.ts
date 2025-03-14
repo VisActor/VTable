@@ -1,6 +1,6 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
-import { AddRowColumnPlugin } from '../../src';
+import { ColumnSeriesPlugin, RowSeriesPlugin } from '../../src';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -20,65 +20,17 @@ const generatePersons = count => {
 
 export function createTable() {
   const records = generatePersons(20);
-  const columns: VTable.ColumnsDefine = [
-    {
-      field: 'image',
-      title: '行号',
-      width: 80,
-      cellType: 'image',
-      keepAspectRatio: true
-    },
-    {
-      field: 'id',
-      title: 'ID',
-      width: 'auto',
-      minWidth: 50,
-      sort: true
-    },
-    {
-      field: 'email1',
-      title: 'email',
-      width: 200,
-      sort: true,
-      style: {
-        underline: true,
-        underlineDash: [2, 0],
-        underlineOffset: 3
-      }
-    },
-    {
-      title: 'full name',
-      columns: [
-        {
-          field: 'name',
-          title: 'First Name',
-          width: 200
-        },
-        {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
-        }
-      ]
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    }
-  ];
-  const addRowColumn = new AddRowColumnPlugin();
+
+  const columnSeries = new ColumnSeriesPlugin({
+    columnCount: 100
+  });
+  const rowSeries = new RowSeriesPlugin({
+    rowCount: 100
+  });
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
-    columns,
-    padding: 30,
-    plugins: [addRowColumn]
+    plugins: [columnSeries, rowSeries]
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;

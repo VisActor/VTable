@@ -251,7 +251,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.pluginManager = new PluginManager(this, options);
     this.fireListeners(TABLE_EVENT_TYPE.BEFORE_INIT, { options, container });
-    container = options.container || container;
+    container = options.container && options.container instanceof HTMLElement ? options.container : container;
     // for image anonymous
     if (options.customConfig?.imageAnonymous === false) {
       vglobal.isImageAnonymous = false;
