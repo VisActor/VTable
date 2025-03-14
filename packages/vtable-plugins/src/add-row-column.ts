@@ -1,11 +1,31 @@
 import * as VTable from '@visactor/vtable';
+/**
+ * 添加行和列的插件的配置选项
+ */
 export interface AddRowColumnOptions {
+  /**
+   * 是否启用添加列
+   */
   addColumnEnable?: boolean;
+  /**
+   * 是否启用添加行
+   */
   addRowEnable?: boolean;
+  /**
+   * 添加列的回调函数
+   */
   addColumnCallback?: (col: number) => void;
+  /**
+   * 添加行的回调函数
+   */
   addRowCallback?: (row: number) => void;
 }
-
+/**
+ * 添加行和列的插件
+ * 该插件监听了table的MOUSEENTER_CELL,MOUSELEAVE_CELL,MOUSELEAVE_TABLE事件
+ * 当鼠标hover到table的cell时，会显示添加行和列的dot和加号
+ * 当鼠标离开table的cell时，会隐藏添加行和列的dot和加号
+ */
 export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
   id = 'add-row-column';
   name = 'Add-Row-Column';
@@ -53,7 +73,6 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
     if (runTime === VTable.TABLE_EVENT_TYPE.MOUSEENTER_CELL) {
       clearTimeout(this.hideAllTimeoutId_addColumn);
       clearTimeout(this.hideAllTimeoutId_addRow);
-      console.log('mouseenter cell', args);
       const canvasBounds = table.canvas.getBoundingClientRect();
       const cell = table.getCellAtRelativePosition(
         eventArgs.event.clientX - canvasBounds.left,
@@ -62,22 +81,25 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
       this.hoverCell = cell;
       const cellRect = table.getCellRelativeRect(cell.col, cell.row);
       if (this.pluginOptions.addColumnEnable) {
+        const isRowSerierNumberCol = table.isSeriesNumber(cell.col);
         this.showDotForAddColumn(
           canvasBounds.top - 6,
           cellRect.left + canvasBounds.left,
-          cellRect.right + canvasBounds.left
+          cellRect.right + canvasBounds.left,
+          !isRowSerierNumberCol
         );
       }
       if (this.pluginOptions.addRowEnable) {
+        const isHeader = table.isHeader(cell.col, cell.row);
         this.showDotForAddRow(
           cellRect.top + canvasBounds.top,
           canvasBounds.left - 6,
-          cellRect.bottom + canvasBounds.top
+          cellRect.bottom + canvasBounds.top,
+          !isHeader,
+          !isHeader
         );
       }
-      // console.log('cellRect', cellRect);
     } else if (runTime === VTable.TABLE_EVENT_TYPE.MOUSELEAVE_CELL) {
-      console.log('mouseleave cell');
     } else if (runTime === VTable.TABLE_EVENT_TYPE.MOUSELEAVE_TABLE) {
       if (this.pluginOptions.addColumnEnable) {
         this.delayHideAllForAddColumn();
@@ -217,7 +239,13 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
       this.delayHideAllForAddColumn(0);
     });
   }
-  showDotForAddColumn(top: number, left: number, right: number) {
+  showDotForAddColumn(
+    top: number,
+    left: number,
+    right: number,
+    isShowLeft: boolean = true,
+    isShowRight: boolean = true
+  ) {
     // 动态获取元素尺寸
     const dotWidth = this.leftDotForAddColumn.offsetWidth;
     const dotHeight = this.leftDotForAddColumn.offsetHeight;
@@ -225,8 +253,8 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
     this.leftDotForAddColumn.style.top = `${top - dotHeight / 2}px`;
     this.rightDotForAddColumn.style.left = `${right - dotWidth / 2}px`;
     this.rightDotForAddColumn.style.top = `${top - dotHeight / 2}px`;
-    this.leftDotForAddColumn.style.display = 'block';
-    this.rightDotForAddColumn.style.display = 'block';
+    this.leftDotForAddColumn.style.display = isShowLeft ? 'block' : 'none';
+    this.rightDotForAddColumn.style.display = isShowRight ? 'block' : 'none';
   }
   showAddIconForAddColumn(left: number, top: number, isLeft: boolean) {
     // 动态获取元素尺寸
@@ -373,12 +401,13 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
       if (this.pluginOptions.addRowCallback) {
         this.pluginOptions.addRowCallback(addRowIndex);
       } else {
-        //debugger;
+        const recordIndex = this.table.getRecordIndexByCell(0, addRowIndex);
+        this.table.addRecord({}, recordIndex);
       }
       this.delayHideAllForAddRow(0);
     });
   }
-  showDotForAddRow(top: number, left: number, bottom: number) {
+  showDotForAddRow(top: number, left: number, bottom: number, isShowTop: boolean = true, isShowBottom: boolean = true) {
     // 动态获取元素尺寸
     const dotWidth = this.topDotForAddRow.offsetWidth;
     const dotHeight = this.topDotForAddRow.offsetHeight;
@@ -386,8 +415,8 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
     this.topDotForAddRow.style.top = `${top - dotHeight / 2}px`;
     this.bottomDotForAddRow.style.left = `${left - dotWidth / 2}px`;
     this.bottomDotForAddRow.style.top = `${bottom - dotHeight / 2}px`;
-    this.topDotForAddRow.style.display = 'block';
-    this.bottomDotForAddRow.style.display = 'block';
+    this.topDotForAddRow.style.display = isShowTop ? 'block' : 'none';
+    this.bottomDotForAddRow.style.display = isShowBottom ? 'block' : 'none';
   }
   showAddIconForAddRow(left: number, top: number, isTop: boolean) {
     // 动态获取元素尺寸
