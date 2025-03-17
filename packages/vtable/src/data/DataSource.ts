@@ -776,7 +776,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (isPromise(record)) {
           record
             .then(record => {
-              record[field] = formatValue;
+              record[field as string | number] = formatValue;
             })
             .catch((err: Error) => {
               console.error('VTable Error:', err);

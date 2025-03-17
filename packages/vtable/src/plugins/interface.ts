@@ -19,7 +19,7 @@ export interface IVTablePlugin {
   // 初始化方法，在VTable实例创建后、首次渲染前调用
   run: (...args: any[]) => void;
   // 更新方法，当表格数据或配置更新时调用
-  // update?: (table: VTable, options?: any) => void;
-  // // 销毁方法，在VTable实例销毁前调用
-  // release?: (table: VTable) => void;
+  update?: (table: BaseTableAPI, options?: any) => void;
+  // 销毁方法，在VTable实例销毁前调用
+  release?: (table: BaseTableAPI) => void;
 }
