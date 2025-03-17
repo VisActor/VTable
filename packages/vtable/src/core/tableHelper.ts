@@ -366,7 +366,7 @@ export function getStyleTheme(
 
 export function getCellCornerRadius(col: number, row: number, table: BaseTableAPI) {
   const tableCornerRadius = table.theme.frameStyle.cornerRadius;
-  if (Array.isArray(tableCornerRadius)) {
+  if (Array.isArray(tableCornerRadius) && table.theme.cellInnerBorder) {
     if (col === 0 && row === 0) {
       return [tableCornerRadius[0], 0, 0, 0];
     } else if (col === table.colCount - 1 && row === 0) {
@@ -376,7 +376,7 @@ export function getCellCornerRadius(col: number, row: number, table: BaseTableAP
     } else if (col === table.colCount - 1 && row === table.rowCount - 1) {
       return [0, 0, tableCornerRadius[2], 0];
     }
-  } else if (tableCornerRadius) {
+  } else if (tableCornerRadius && table.theme.cellInnerBorder) {
     if (col === 0 && row === 0) {
       return [tableCornerRadius, 0, 0, 0];
     } else if (col === table.colCount - 1 && row === 0) {
