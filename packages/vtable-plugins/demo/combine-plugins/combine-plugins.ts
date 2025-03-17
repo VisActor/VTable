@@ -2,6 +2,7 @@ import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import { AddRowColumnPlugin, ColumnSeriesPlugin, RowSeriesPlugin } from '../../src';
 import { InputEditor } from '@visactor/vtable-editors';
+import { table } from 'console';
 const CONTAINER_ID = 'vTable';
 const input_editor = new InputEditor({});
 VTable.register.editor('input', input_editor);
@@ -10,25 +11,55 @@ export function createTable() {
   const addRowColumn = new AddRowColumnPlugin({
     addColumnCallback: col => {
       columnSeries.resetColumnCount(columnSeries.pluginOptions.columnCount + 1);
+      const newRecords = tableInstance.records.map(record => {
+        if (Array.isArray(record)) {
+          record.splice(col - 1, 0, '');
+        }
+        return record;
+      });
+      tableInstance.setRecords(newRecords);
+    },
+    addRowCallback: row => {
+      tableInstance.addRecord([], row - tableInstance.columnHeaderLevelCount);
     }
   });
 
   const columnSeries = new ColumnSeriesPlugin({
-    columnCount: 100
+    columnCount: 26
   });
   const rowSeries = new RowSeriesPlugin({
-    rowCount: 100
+    rowCount: 100,
+    fillRowRecord: (index: number) => {
+      return [];
+    }
   });
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
-    records: [],
-    columns: [],
+    records: [
+      ['姓名', '年龄', '地址'],
+      ['张三', 18, '北京'],
+      ['李四', 20, '上海'],
+      ['王五', 22, '广州'],
+      ['赵六', 24, '深圳'],
+      ['孙七', 26, '成都']
+    ],
+
     padding: 30,
     editor: 'input',
     editCellTrigger: 'click',
     select: {
-      disableSelect: true
+      // disableSelect: true
     },
+    theme: VTable.themes.DEFAULT.extends({
+      defaultStyle: {
+        textAlign: 'left',
+        padding: [2, 6, 2, 6]
+      },
+      headerStyle: {
+        textAlign: 'center'
+      }
+    }),
+    defaultRowHeight: 30,
     plugins: [addRowColumn, columnSeries, rowSeries]
   };
   const tableInstance = new VTable.ListTable(option);

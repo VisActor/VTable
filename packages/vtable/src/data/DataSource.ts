@@ -95,6 +95,11 @@ export function getField(
     return record.then((r: any) => getField(r, field, col, row, table, promiseCallBack));
   }
   const fieldGet: any = isFieldAssessor(field) ? field.get : field;
+  // 如果fieldGet为undefined或'' 并且record是数组 则取值逻辑按照colIndex取数组值 返回record[col - table.leftRowSeriesNumberCount]
+  if ((fieldGet === undefined || fieldGet === '') && Array.isArray(record)) {
+    const colIndex = col - table.leftRowSeriesNumberCount;
+    return record[colIndex];
+  }
   if (isObject(record) && fieldGet in (record as any)) {
     const fieldResult = (record as any)[fieldGet];
 
@@ -757,6 +762,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       const dataIndex = this.getIndexKey(index);
 
       this.cacheBeforeChangedRecord(dataIndex, table);
+      // 如果field为undefined或'' 按照colIndex取数组值
+      if (field === undefined || field === '') {
+        field = col - table.leftRowSeriesNumberCount;
+      }
       if (typeof field === 'string' || typeof field === 'number') {
         const beforeChangedValue = this.beforeChangedRecordsMap.get(dataIndex.toString())?.[field as any]; // this.getOriginalField(index, field, col, row, table);
         const record = this.getOriginalRecord(dataIndex);

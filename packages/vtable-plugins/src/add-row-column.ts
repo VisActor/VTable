@@ -83,7 +83,7 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
       this.hoverCell = cell;
       const cellRect = table.getCellRelativeRect(cell.col, cell.row);
       if (this.pluginOptions.addColumnEnable) {
-        const isRowSerierNumberCol = table.isSeriesNumber(cell.col);
+        const isRowSerierNumberCol = table.isSeriesNumber(cell.col, 0);
         this.showDotForAddColumn(
           canvasBounds.top - 6,
           cellRect.left + canvasBounds.left,
@@ -232,7 +232,7 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
         this.pluginOptions.addColumnCallback(addColIndex);
       } else {
         columns.splice(addColIndex, 0, {
-          field: `new-column-${col}`,
+          field: ``,
           title: `New Column ${col}`,
           width: 100
         });

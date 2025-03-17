@@ -4,7 +4,7 @@ import * as VTable from '@visactor/vtable';
  */
 export interface RowSeriesOptions {
   rowCount: number;
-  generateRowTitle?: (index: number) => string;
+  fillRowRecord?: (index: number) => any;
 }
 /**
  * 生成行序号标题的插件
@@ -28,7 +28,7 @@ export class RowSeriesPlugin implements VTable.plugins.IVTablePlugin {
     const records = options.records ?? [];
     //用空数据将records填充到pluginOptions.rowCount
     for (let i = records.length; i < this.pluginOptions.rowCount; i++) {
-      records.push({});
+      records.push(this.pluginOptions.fillRowRecord ? this.pluginOptions.fillRowRecord(i) : {});
     }
     options.records = records;
     if (!options.rowSeriesNumber) {

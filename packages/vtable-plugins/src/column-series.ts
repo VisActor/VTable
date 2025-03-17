@@ -30,13 +30,19 @@ export class ColumnSeriesPlugin implements VTable.plugins.IVTablePlugin {
     this.columns = this.generateColumnFields(this.pluginOptions.columnCount);
     options.columns = this.columns;
   }
-  generateColumnFields(columnCount: number): { field: string; title: string }[] {
+  /**
+   * 生成列字段和标题
+   * 规则和excel一致，如A~Z,AA~AZ,AB~AZ,AA~ZZ,AAA~ZZZ
+   * @param columnCount 列数
+   * @returns 列字段和标题的数组
+   */
+  generateColumnFields(columnCount: number): { field?: string; title: string }[] {
     const columnFields = [];
     for (let i = 0; i < columnCount; i++) {
       const column = {
-        field: this.pluginOptions.generateColumnField
-          ? this.pluginOptions.generateColumnField(i)
-          : this.generateColumnField(i),
+        // field: this.pluginOptions.generateColumnField
+        //   ? this.pluginOptions.generateColumnField(i)
+        //   : this.generateColumnField(i),
         title: this.pluginOptions.generateColumnTitle
           ? this.pluginOptions.generateColumnTitle(i)
           : this.generateColumnField(i)
