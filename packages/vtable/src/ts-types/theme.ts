@@ -57,7 +57,7 @@ export type ScrollStyle = {
   scrollSliderCornerRadius?: number;
   /**滚动条宽度大小 */
   width?: number;
-  /**滚动条是否可见  'always' | 'scrolling' | 'none' | 'focus',常驻|滚动时|不显示|聚焦在画布上时 */
+  /**滚动条是否可见  'always' | 'scrolling' | 'none' | 'focus',常驻|滚动时|不显示|聚焦在画布上时 。默认'scrolling'*/
   visible?: 'always' | 'scrolling' | 'none' | 'focus';
   horizontalVisible?: 'always' | 'scrolling' | 'none' | 'focus';
   verticalVisible?: 'always' | 'scrolling' | 'none' | 'focus';

@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Sun, 09 Mar 2025 12:30:39 GMT and should not be manually modified.
+This log was last generated on Tue, 11 Mar 2025 08:19:47 GMT and should not be manually modified.
+
+## 1.17.2
+Tue, 11 Mar 2025 08:19:47 GMT
+
+### Updates
+
+- fix: custom container value error
+
+
 
 ## 1.17.1
 Sun, 09 Mar 2025 12:30:39 GMT

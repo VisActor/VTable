@@ -617,6 +617,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     // this.stateManager.checkFrozen();
     this.scenegraph.resize();
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.RESIZE_TABLE, {
+        tableX: this.tableX,
+        tableY: this.tableY,
+        tableWidth: this.tableNoFrameWidth,
+        tableHeight: this.tableNoFrameHeight
+      });
+    }, 0);
   }
 
   /**

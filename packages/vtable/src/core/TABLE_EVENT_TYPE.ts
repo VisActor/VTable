@@ -78,6 +78,10 @@ export interface TableEvents {
    */
   RESIZE_ROW_END: 'resize_row_end';
   /**
+   * 表格调整大小事件
+   */
+  RESIZE_TABLE: 'resize_table';
+  /**
    * 拖拽表头移动位置的事件
    */
   CHANGE_HEADER_POSITION: 'change_header_position';
@@ -215,6 +219,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   RESIZE_COLUMN_END: 'resize_column_end',
   RESIZE_ROW: 'resize_row',
   RESIZE_ROW_END: 'resize_row_end',
+  RESIZE_TABLE: 'resize_table',
   CHANGE_HEADER_POSITION_START: 'change_header_position_start',
   CHANGE_HEADER_POSITION: 'change_header_position',
   CHANGING_HEADER_POSITION: 'changing_header_position',

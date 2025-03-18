@@ -107,6 +107,7 @@ export interface TableEventHandlersEventArgumentMap {
   resize_column_end: { col: number; colWidths: number[] };
   resize_row: { row: number; rowHeight: number };
   resize_row_end: { row: number; rowHeight: number };
+  resize_table: { tableX: number; tableY: number; tableWidth: number; tableHeight: number };
   change_header_position: { source: CellAddress; target: CellAddress; event: Event };
   change_header_position_start: {
     col: number;
@@ -267,6 +268,7 @@ export interface TableEventHandlersReturnMap {
   resize_column_end: void;
   resize_row: void;
   resize_row_end: void;
+  resize_table: void;
   change_header_position: void;
   change_header_position_start: void;
   changing_header_position: void;

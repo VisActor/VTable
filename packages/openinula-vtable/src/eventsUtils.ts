@@ -27,6 +27,9 @@ export interface EventsProps {
   onContextMenuCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['contextmenu_cell']>;
   onResizeColumn?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column']>;
   onResizeColumnEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column_end']>;
+  onResizeRow?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_row']>;
+  onResizeRowEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_row_end']>;
+  onResizeTable?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_table']>;
   onChangeHeaderPosition?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position']>;
   onSortClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['sort_click']>;
   onFreezeClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['freeze_click']>;
@@ -92,6 +95,9 @@ export const TABLE_EVENTS = {
   onContextMenuCell: EVENT_TYPE.CONTEXTMENU_CELL,
   onResizeColumn: EVENT_TYPE.RESIZE_COLUMN,
   onResizeColumnEnd: EVENT_TYPE.RESIZE_COLUMN_END,
+  onResizeRow: EVENT_TYPE.RESIZE_ROW,
+  onResizeRowEnd: EVENT_TYPE.RESIZE_ROW_END,
+  onResizeTable: EVENT_TYPE.RESIZE_TABLE,
   onChangeHeaderPosition: EVENT_TYPE.CHANGE_HEADER_POSITION,
   onSortClick: EVENT_TYPE.SORT_CLICK,
   onFreezeClick: EVENT_TYPE.FREEZE_CLICK,

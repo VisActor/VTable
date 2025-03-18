@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: custom container value error\n\n",
+      "comment": "feat: add resize_table event #3575\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

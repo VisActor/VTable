@@ -1397,11 +1397,31 @@ interface ISortedMapItem {
 
 ## setLoadingHierarchyState(Function)
 
-设置单元格的树形展开收起状态为 loading
+设置单元格的树形展开收起状态为 loading，注意在使用前需要手动注册 loading 图标。
 
 ```
-  /** 设置单元格的树形展开收起状态为 loading */
-  setLoadingHierarchyState: (col: number, row: number) => void;
+// 注册loading图标
+VTable.register.icon('loading', {
+  type: 'image',
+  width: 16,
+  height: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+  name: 'loading', //定义图标的名称，在内部会作为缓存的key值
+  positionType: VTable.TYPES.IconPosition.absoluteRight, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
+  marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
+  marginRight: 4, // 右侧内容间隔 在特定位置position中起作用
+  visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
+  hover: {
+    // 热区大小
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101,117,168,0.1)'
+  },
+  isGif: true
+});
+
+/** 设置单元格的树形展开收起状态为 loading */
+setLoadingHierarchyState: (col: number, row: number) => void;
 ```
 
 ## setPixelRatio(Function)

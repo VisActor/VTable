@@ -29,6 +29,7 @@
 | 拖拽行高                 | RESIZE_ROW                  | 行高调整事件                                                              |
 | 拖拽行高结束             | RESIZE_ROW_END              | 行高调整结束事件                                                          |
 | 拖拽表头                 | CHANGE_HEADER_POSITION      | 拖拽表头移动位置的事件                                                    |
+| 表格调整大小             | RESIZE_TABLE                | 表格调整大小事件                                                          |
 | 点击排序                 | SORT_CLICK                  | 点击排序图标事件                                                          |
 | 执行完排序               | AFTER_SORT                  | 执行完排序事件                                                            |
 | 点击固定列               | FREEZE_CLICK                | 点击固定列图标事件                                                        |
