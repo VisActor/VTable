@@ -33,6 +33,7 @@ export interface EventsProps {
   onResizeColumnEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column_end']>;
   onResizeRow?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_row']>;
   onResizeRowEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_row_end']>;
+  onResizeTable?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_table']>;
   onChangeHeaderPositionStart?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position_start']>;
   onChangeHeaderPosition?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position']>;
   onChangeHeaderPositionFail?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position_fail']>;
@@ -108,6 +109,7 @@ export const TABLE_EVENTS = {
   onResizeColumnEnd: EVENT_TYPE.RESIZE_COLUMN_END,
   onResizeRow: EVENT_TYPE.RESIZE_ROW,
   onResizeRowEnd: EVENT_TYPE.RESIZE_ROW_END,
+  onResizeTable: EVENT_TYPE.RESIZE_TABLE,
   onChangeHeaderPositionStart: EVENT_TYPE.CHANGE_HEADER_POSITION_START,
   onChangeHeaderPosition: EVENT_TYPE.CHANGE_HEADER_POSITION,
   onChangeHeaderPositionFail: EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL,

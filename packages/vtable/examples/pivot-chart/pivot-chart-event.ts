@@ -762,13 +762,16 @@ export function createTable() {
   window.tableInstance = tableInstance;
   bindDebugTool(tableInstance.scenegraph.stage, {});
 
-  const { SCROLL, AFTER_RENDER } = VTable.PivotChart.EVENT_TYPE;
+  const { SCROLL, AFTER_RENDER, RESIZE_TABLE } = VTable.PivotChart.EVENT_TYPE;
   tableInstance.on(SCROLL, e => {
     console.log('scroll', e);
   });
 
   tableInstance.on(AFTER_RENDER, () => {
     console.log('AFTER_RENDER');
+  });
+  tableInstance.on(RESIZE_TABLE, e => {
+    console.log('resize_table', e);
   });
 
   const targetData = {

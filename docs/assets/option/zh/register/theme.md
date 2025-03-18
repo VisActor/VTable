@@ -36,6 +36,7 @@ TABLE_EVENT_TYPE = {
   RESIZE_COLUMN_END: 'resize_column_end',
   RESIZE_ROW: 'resize_row',
   RESIZE_ROW_END: 'resize_row_end',
+  RESIZE_TABLE: 'resize_table',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
   AFTER_SORT: 'after_sort',
@@ -186,6 +187,23 @@ TABLE_EVENT_TYPE = {
   {
     row: number;
     rowHeight: number
+  }
+
+```
+
+## RESIZE_TABLE
+
+表格调整大小事件。
+
+事件回调函数的参数类型:
+
+```
+
+  {
+    tableX: number;
+    tableY: number;
+    tableWidth: number;
+    tableHeight: number;
   }
 
 ```

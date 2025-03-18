@@ -34,6 +34,7 @@ Supported event types（not all）:
   RESIZE_COLUMN_END: 'resize_column_end',
   RESIZE_ROW: 'resize_row',
   RESIZE_ROW_END: 'resize_row_end',
+  RESIZE_TABLE: 'resize_table',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
   AFTER_SORT: 'after_sort',
@@ -182,6 +183,20 @@ rowHeight: number
 }
 
 ``
+
+## RESIZE_TABLE
+
+Table size adjustment event.
+
+Event callback function parameter types.
+```
+{
+  tableX: number;
+  tableY: number;
+  tableWidth: number;
+  tableHeight: number;
+}
+```
 
 ## CHANGE_HEADER_POSITION
 
