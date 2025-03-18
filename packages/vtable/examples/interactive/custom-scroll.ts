@@ -491,7 +491,7 @@ export function createTable() {
 
   const dom = document.getElementById(CONTAINER_ID);
   dom.style.width = '700px';
-  dom.style.height = '700px';
+  dom.style.height = '200px';
   dom.style.border = '1px solid red';
 
   window.update = () => {
@@ -502,12 +502,15 @@ export function createTable() {
   window['tableInstance'] = tableInstance;
 
   const operator = new VTablePaddingOperator([20, 20, 20, 20], tableInstance);
+  window['operator'] = operator;
   // operator.destroy();
 }
 
 class VTablePaddingOperator {
   table: VTable.PivotTable;
+  padding: [number, number, number, number];
   x2: number;
+  y2: number;
   x2Target: number;
   y2Target: number;
   tag: boolean;
@@ -516,6 +519,7 @@ class VTablePaddingOperator {
 
   constructor(padding: [number, number, number, number], vtable: VTable.PivotTable) {
     this.table = vtable;
+    this.padding = padding;
 
     this.element = vtable.getElement().parentElement as HTMLElement;
 
@@ -530,6 +534,7 @@ class VTablePaddingOperator {
     });
 
     this.x2 = width;
+    this.y2 = height;
     this.x2Target = width;
     this.y2Target = height;
     this.tag = false;
@@ -539,41 +544,53 @@ class VTablePaddingOperator {
     this.observer?.observe(this.element);
 
     this.table.on('scroll', e => {
-      console.log(e.dx, e.scrollRatioX);
-      if (e.scrollRatioX === 1 && (e.dx ?? 0) >= 0 && this.x2 > this.x2Target - 20) {
+      // horizontal scroll
+      // console.log(e.dx, e.scrollRatioX);
+      if (e.scrollRatioX === 1 && (e.dx ?? 0) >= 0 && this.x2 > this.x2Target - this.padding[1]) {
         // right
-        this.x2 = this.x2 - (e.dx || 1);
+        this.x2 = Math.max(this.x2Target - this.padding[1], this.x2 - (e.dx || 1));
 
         console.log('left', this.x2);
         setTimeout(() => {
-          const context = this.table.canvas.getContext('2d');
-          context?.clearRect(0, 0, this.x2Target * 2, this.y2Target * 2);
-          this.table.updateViewBox({
-            x1: 20,
-            y1: 20,
-            x2: this.x2,
-            y2: this.y2Target
-          });
+          this.clearCanvas();
+          this.updateViewBox();
           this.table.scenegraph.setX(-this.table.stateManager.scroll.horizontalBarPos - 1, true);
         }, 0);
       } else if (this.x2 < this.x2Target && (e.dx ?? 0) < 0) {
         // left
-        this.x2 = this.x2 - (e.dx ?? 0);
+        this.x2 = Math.min(this.x2Target, this.x2 - (e.dx ?? 0));
 
         console.log('right', this.x2);
         setTimeout(() => {
-          const context = this.table.canvas.getContext('2d');
-          context?.clearRect(0, 0, this.x2Target * 2, this.y2Target * 2);
-          this.table.updateViewBox({
-            x1: 20,
-            y1: 20,
-            x2: this.x2,
-            y2: this.y2Target
-          });
+          this.clearCanvas();
+          this.updateViewBox();
           this.table.scenegraph.setX(-this.table.stateManager.scroll.horizontalBarPos - 1, true);
         }, 0);
       } else {
         console.log('normal', this.x2);
+      }
+
+      // vertical scroll
+      if (e.scrollRatioY === 1 && (e.dy ?? 0) >= 0 && this.y2 > this.y2Target - this.padding[2]) {
+        // bottom
+        this.y2 = Math.max(this.y2Target - this.padding[2], this.y2 - (e.dy || 1));
+        console.log('top', this.y2);
+        setTimeout(() => {
+          this.clearCanvas();
+          this.updateViewBox();
+          this.table.scenegraph.setY(-this.table.stateManager.scroll.verticalBarPos - 1, true);
+        }, 0);
+      } else if (this.y2 < this.y2Target && (e.dy ?? 0) < 0) {
+        // top
+        this.y2 = Math.min(this.y2Target, this.y2 - (e.dy ?? 0));
+        console.log('bottom', this.y2);
+        setTimeout(() => {
+          this.clearCanvas();
+          this.updateViewBox();
+          this.table.scenegraph.setY(-this.table.stateManager.scroll.verticalBarPos - 1, true);
+        }, 0);
+      } else {
+        console.log('normal', this.y2);
       }
     });
   }
@@ -582,15 +599,29 @@ class VTablePaddingOperator {
     const xOffset = this.element.offsetWidth - this.x2Target;
     const yOffset = this.element.offsetHeight - this.y2Target;
     this.x2 = this.x2 + xOffset;
+    this.y2 = this.y2 + yOffset;
     this.x2Target = this.element.offsetWidth;
     this.y2Target = this.element.offsetHeight;
-    this.table.updateViewBox({
-      x1: 20,
-      y1: 20,
-      x2: this.element.offsetWidth,
-      y2: this.element.offsetHeight
-    });
+    this.updateViewBox();
   };
+
+  updateViewBox() {
+    this.table.updateViewBox({
+      x1: this.padding[3],
+      y1: this.padding[0],
+      x2: this.x2,
+      y2: this.y2
+    });
+  }
+
+  reset() {
+    this.updateViewBox();
+  }
+
+  clearCanvas() {
+    const context = this.table.canvas.getContext('2d');
+    context?.clearRect(0, 0, this.x2Target * 2, this.y2Target * 2);
+  }
 
   destroy() {
     this.observer.disconnect();
