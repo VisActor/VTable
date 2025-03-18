@@ -20,12 +20,12 @@
 
 具体 ListTable 的接口参考：https://visactor.io/vtable/api/Methods
 
-### updateOptions(Function)
+### updateOption(Function)
 
 更新 options
 
 ```
-  updateOptions: (options: GanttConstructorOptions) => void
+  updateOption: (options: GanttConstructorOptions) => void
 ```
 
 ### setRecords(Function)
