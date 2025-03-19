@@ -210,6 +210,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.rowHierarchyTextStartAlignment = (table as PivotTable).options.rowHierarchyTextStartAlignment;
     this.cornerSetting = Object.assign({ titleOnDimension: 'column', forceShowHeader: false }, table.options.corner);
 
+    if (this._table.options?.customConfig?.enablePivotPathCache) {
+      this._useHeaderPathCache = true;
+      this._colHeaderPathCache.clear();
+      this._rowHeaderPathCache.clear();
+    }
+
     if (dataset) {
       this.rowTree = dataset.rowHeaderTree;
       this.columnTree = dataset.colHeaderTree;
@@ -4206,14 +4212,22 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._getBodyCache.clear();
   }
   enableUseHeaderPathCache() {
-    this._useHeaderPathCache = true;
-    this._colHeaderPathCache.clear();
-    this._rowHeaderPathCache.clear();
+    if (this._table.options?.customConfig?.enablePivotPathCache) {
+      this._useHeaderPathCache = true;
+    } else {
+      this._useHeaderPathCache = true;
+      this._colHeaderPathCache.clear();
+      this._rowHeaderPathCache.clear();
+    }
   }
   disableUseHeaderPathCache() {
-    this._useHeaderPathCache = false;
-    this._colHeaderPathCache.clear();
-    this._rowHeaderPathCache.clear();
+    if (this._table.options?.customConfig?.enablePivotPathCache) {
+      this._useHeaderPathCache = true;
+    } else {
+      this._useHeaderPathCache = false;
+      this._colHeaderPathCache.clear();
+      this._rowHeaderPathCache.clear();
+    }
   }
   getBodyWidthCache(col: number, row: number) {
     if (!this._useGetBodyCache || this.isHeader(col, row) || this.isSeriesNumber(col, row)) {
@@ -4271,6 +4285,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this._useHeaderPathCache && !this.isHeader(col, row) && !this.isSeriesNumber(col, row)) {
       this._rowHeaderPathCache.set(row, cache);
     }
+  }
+
+  clearHeaderPathCache() {
+    this._colHeaderPathCache.clear();
+    this._rowHeaderPathCache.clear();
   }
 }
 /** 计算 scale 的实际 range 长度 */

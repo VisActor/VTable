@@ -556,6 +556,9 @@ export interface BaseTableConstructorOptions {
 
     // 图片资源请求时是否使用anonymous模式
     imageAnonymous?: boolean;
+
+    // 开启透视结构缓存
+    enablePivotPathCache?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
