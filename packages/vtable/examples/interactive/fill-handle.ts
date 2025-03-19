@@ -82,7 +82,13 @@ export function createTable() {
         columns,
         widthMode: 'standard',
         excelOptions: {
-          fillHandle: true
+          fillHandle: (col, row, table) => {
+            // console.trace('fillHandle', col, row, table);
+            if (col === 1) {
+              return false;
+            }
+            return true;
+          }
         }
       };
       const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);

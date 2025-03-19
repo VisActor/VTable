@@ -107,12 +107,18 @@ function updateComponent(
     visible: true
   });
   if (selectComp.fillhandle) {
+    const fillHandle = scene.table.options.excelOptions?.fillHandle;
+    let visible = true;
+    if (typeof fillHandle === 'function') {
+      visible = fillHandle(endCol, endRow, scene.table);
+    }
+    // console.log('updateComponent', selectComp.fillhandle);
     selectComp.fillhandle?.setAttributes({
       x: lastCellBound.x2 - scene.tableGroup.attribute.x - 3, // 调整小方块位置
       y: lastCellBound.y2 - scene.tableGroup.attribute.y - 3, // 调整小方块位置
       width: 6,
       height: 6,
-      visible: true
+      visible
     });
   }
 
