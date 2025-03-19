@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix small window size frozen column count",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
