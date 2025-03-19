@@ -481,6 +481,8 @@ export interface BaseTableConstructorOptions {
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
+  // maximum number of columns maintained in table instance
+  maintainedColumnCount?: number;
 
   legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
