@@ -1109,7 +1109,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         canvas.style.width = `${widthP}px`;
         canvas.style.height = `${heightP}px`;
       } else if (this.options?.viewBox && !this.options?.canvas) {
-        this.scenegraph.stage.resize(widthP, heightP, false);
+        this.scenegraph.stage.resize(widthP, heightP);
       }
 
       if (this.options?.viewBox) {

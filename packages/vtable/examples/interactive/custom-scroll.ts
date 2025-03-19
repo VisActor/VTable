@@ -501,6 +501,8 @@ export function createTable() {
   tableInstance = new VTable.PivotTable(dom, option);
   window['tableInstance'] = tableInstance;
 
+  const resizable = new ResizableDiv(dom);
+
   const operator = new VTablePaddingOperator([20, 20, 20, 20], tableInstance);
   window['operator'] = operator;
   // operator.destroy();
@@ -627,3 +629,122 @@ class VTablePaddingOperator {
     this.observer.disconnect();
   }
 }
+
+class ResizableDiv {
+  element: HTMLElement;
+  resizers: HTMLElement[];
+  minimum_size = 100;
+  original_width = 0;
+  original_height = 0;
+  original_x = 0;
+  original_y = 0;
+  original_mouse_x = 0;
+  original_mouse_y = 0;
+  isResizing = false;
+
+  constructor(element: HTMLElement) {
+    this.element = element;
+    this.resizers = [];
+    this.init();
+  }
+
+  init() {
+    // Set position relative to enable absolute positioning of resizers
+    this.element.style.position = 'relative';
+
+    // Create resizers
+    const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+    positions.forEach(position => {
+      const resizer = document.createElement('div');
+      resizer.className = `resizer ${position}`;
+      resizer.style.width = '10px';
+      resizer.style.height = '10px';
+      resizer.style.background = 'white';
+      resizer.style.border = '3px solid #4286f4';
+      resizer.style.position = 'absolute';
+      resizer.style.cursor = this.getCursor(position);
+
+      // Position the resizer
+      if (position.includes('top')) {
+        resizer.style.top = '-5px';
+      } else {
+        resizer.style.bottom = '-5px';
+      }
+      if (position.includes('left')) {
+        resizer.style.left = '-5px';
+      } else {
+        resizer.style.right = '-5px';
+      }
+
+      this.element.appendChild(resizer);
+      this.resizers.push(resizer);
+
+      // Add mouse down event listener
+      resizer.addEventListener('mousedown', this.mouseDownHandler.bind(this, position));
+    });
+  }
+
+  getCursor(position: string): string {
+    if (position === 'top-left' || position === 'bottom-right') {
+      return 'nw-resize';
+    }
+    return 'ne-resize';
+  }
+
+  mouseDownHandler(position: string, e: MouseEvent) {
+    e.preventDefault();
+    this.isResizing = true;
+
+    // Get the current rect
+    const rect = this.element.getBoundingClientRect();
+
+    // Store the original dimensions
+    this.original_width = rect.width;
+    this.original_height = rect.height;
+    this.original_x = rect.left;
+    this.original_y = rect.top;
+    this.original_mouse_x = e.pageX;
+    this.original_mouse_y = e.pageY;
+
+    // Add event listeners
+    window.addEventListener('mousemove', this.mouseMoveHandler.bind(this, position));
+    window.addEventListener('mouseup', this.mouseUpHandler.bind(this));
+  }
+
+  mouseMoveHandler(position: string, e: MouseEvent) {
+    if (!this.isResizing) {
+      return;
+    }
+    // Calculate the new dimensions
+    const width = this.original_width + (e.pageX - this.original_mouse_x);
+    const height = this.original_height + (e.pageY - this.original_mouse_y);
+
+    if (width > this.minimum_size) {
+      this.element.style.width = width + 'px';
+    }
+
+    if (height > this.minimum_size) {
+      this.element.style.height = height + 'px';
+    }
+  }
+
+  mouseUpHandler() {
+    this.isResizing = false;
+    window.removeEventListener('mousemove', this.mouseMoveHandler);
+    window.removeEventListener('mouseup', this.mouseUpHandler);
+  }
+
+  destroy() {
+    // Remove all resizers
+    this.resizers.forEach(resizer => {
+      resizer.remove();
+    });
+    this.resizers = [];
+  }
+}
+
+// Example usage:
+// const div = document.createElement('div');
+// div.style.width = '400px';
+// div.style.height = '300px';
+// document.getElementById(CONTAINER_ID)?.parentElement.appendChild(resizable.element);
