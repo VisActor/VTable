@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-02-28 09:21:32
+ * @LastEditTime: 2025-03-20 19:35:09
  * @Description:
  */
 import type {
@@ -102,6 +102,9 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
    */
   doRenderGraphic(graphic: IGraphic) {
     const { id, options } = this.getGraphicOptions(graphic);
+    if (!id) {
+      return;
+    }
     const stage = graphic.stage;
     const { element, container: expectedContainer } = options;
     // 获取实际容器
@@ -118,6 +121,17 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     if (!targetMap || !this.checkDom(targetMap.wrapContainer)) {
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, actualContainer, { id, options });
       if (wrapContainer) {
+        // 检查历史渲染节点
+        const historyWrapContainer = document.getElementById(id);
+        const dataRenderId = `${this.renderId}`;
+        if (historyWrapContainer && historyWrapContainer.getAttribute('data-vue-renderId') !== dataRenderId) {
+          // 历史渲染节点清除
+          render(null, historyWrapContainer);
+          historyWrapContainer.remove();
+          this.removeWrapContainerEventListener(historyWrapContainer);
+        }
+        wrapContainer.id = id;
+        wrapContainer.setAttribute('data-vue-renderId', dataRenderId);
         render(element, wrapContainer);
         targetMap = {
           wrapContainer,
@@ -150,12 +164,12 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
   private getGraphicOptions(graphic: IGraphic) {
     // TODO render 组件接入 vue 类型
     //@ts-ignore
-    const { vue } = graphic.attribute;
+    const { vue } = graphic?.attribute || {};
     if (!vue) {
       return null;
     }
-    const id = isNil(vue.id) ? `${graphic.id ?? graphic._uid}_vue` : vue.id;
-    return { id, options: vue };
+    const id = isNil(vue.id) ? graphic.id ?? graphic._uid : vue.id;
+    return { id: `vue_${id}`, options: vue };
   }
   /**
    * @description: 检查是否需要渲染
