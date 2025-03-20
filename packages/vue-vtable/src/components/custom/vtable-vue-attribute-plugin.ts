@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-03-20 19:35:09
+ * @LastEditTime: 2025-03-20 21:00:32
  * @Description:
  */
 import type {
@@ -106,7 +106,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       return;
     }
     const stage = graphic.stage;
-    const { element, container: expectedContainer } = options;
+    const { element, container: expectedContainer, userAppContext } = options;
     // 获取实际容器
     const actualContainer = expectedContainer ? checkFrozenContainer(graphic) : expectedContainer;
     // 检查是否需要移除旧容器
@@ -115,6 +115,13 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       // 容器变更
       this.removeElement(id);
       targetMap = null;
+    }
+    if (userAppContext) {
+      // 上下文传递
+      try {
+        const ele = element.ctx ? element.ctx : element;
+        ele.appContext = userAppContext;
+      } catch (error) {}
     }
 
     // 渲染或更新 Vue 组件
@@ -354,7 +361,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     }
 
     // 默认自定义区域内也可带动表格画布滚动
-    const { pointerEvents = true, penetrateEventList = ['wheel'] } = options;
+    const { pointerEvents, penetrateEventList = ['wheel'] } = options;
     const calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
     // 单元格样式
     const style = this.convertCellStyle(graphic);
