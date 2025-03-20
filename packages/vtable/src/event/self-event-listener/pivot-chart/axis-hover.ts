@@ -1,6 +1,6 @@
-import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
-import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import { TABLE_EVENT_TYPE } from '../../../core/TABLE_EVENT_TYPE';
+import type { PivotHeaderLayoutMap } from '../../../layout/pivot-header-layout';
+import type { BaseTableAPI } from '../../../ts-types/base-table';
 
 export function bindAxisHoverEvent(table: BaseTableAPI) {
   if (!table.isPivotChart()) {
