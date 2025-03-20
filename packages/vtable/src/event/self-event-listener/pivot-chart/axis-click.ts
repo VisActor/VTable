@@ -1,10 +1,10 @@
 import type { FederatedPointerEvent } from '@src/vrender';
-import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { SceneEvent } from '../util';
-import { getCellEventArgsSet } from '../util';
-import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
-import type { PivotChart } from '../../PivotChart';
-import { clearChartCacheImage } from '../../scenegraph/refresh-node/update-chart';
+import type { BaseTableAPI } from '../../../ts-types/base-table';
+import type { SceneEvent } from '../../util';
+import { getCellEventArgsSet } from '../../util';
+import type { PivotHeaderLayoutMap } from '../../../layout/pivot-header-layout';
+import type { PivotChart } from '../../../PivotChart';
+import { clearChartCacheImage } from '../../../scenegraph/refresh-node/update-chart';
 
 export function bindAxisClickEvent(table: BaseTableAPI) {
   if (!table.isPivotChart()) {

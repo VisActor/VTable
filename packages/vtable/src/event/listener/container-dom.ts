@@ -359,6 +359,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
   handler.on(table.getElement(), 'contextmenu', (e: any) => {
     if (table.eventOptions?.preventDefaultContextMenu !== false) {
       e.preventDefault();
+    } else {
+      // default context menu will cause pointerup event can not trigger
+      // call manually
+      globalPointerupCallback(e);
     }
   });
 
