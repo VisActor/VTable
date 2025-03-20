@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix axis label autosize computation",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
