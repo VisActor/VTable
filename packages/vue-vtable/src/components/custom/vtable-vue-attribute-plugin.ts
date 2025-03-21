@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-03-20 21:00:32
+ * @LastEditTime: 2025-03-21 10:55:32
  * @Description:
  */
 import type {
@@ -26,6 +26,7 @@ import {
   styleStringToObject,
   uniqArray
 } from '@visactor/vutils';
+import type { VNode } from 'vue';
 import { render } from 'vue';
 
 /**
@@ -106,7 +107,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       return;
     }
     const stage = graphic.stage;
-    const { element, container: expectedContainer, userAppContext } = options;
+    const { element, container: expectedContainer } = options;
     // 获取实际容器
     const actualContainer = expectedContainer ? checkFrozenContainer(graphic) : expectedContainer;
     // 检查是否需要移除旧容器
@@ -116,14 +117,8 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       this.removeElement(id);
       targetMap = null;
     }
-    if (userAppContext) {
-      // 上下文传递
-      try {
-        const ele = element.ctx ? element.ctx : element;
-        ele.appContext = userAppContext;
-      } catch (error) {}
-    }
-
+    // 校验并传递上下文
+    this.checkToPassAppContext(element, graphic);
     // 渲染或更新 Vue 组件
     if (!targetMap || !this.checkDom(targetMap.wrapContainer)) {
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, actualContainer, { id, options });
@@ -177,6 +172,26 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     }
     const id = isNil(vue.id) ? graphic.id ?? graphic._uid : vue.id;
     return { id: `vue_${id}`, options: vue };
+  }
+  /**
+   * @description: 校验并传递上下文
+   * @param {VNode} vnode
+   * @param {IGraphic} graphic
+   * @return {*}
+   */
+  checkToPassAppContext(vnode: VNode, graphic: IGraphic) {
+    const { stage } = getTargetGroup(graphic);
+    const { table } = stage || {};
+    if (!table) {
+      return;
+    }
+    const userAppContext = table.options?.customConfig?.getUserAppContext?.();
+    if (userAppContext) {
+      // 上下文传递
+      try {
+        vnode.appContext = userAppContext;
+      } catch (error) {}
+    }
   }
   /**
    * @description: 检查是否需要渲染

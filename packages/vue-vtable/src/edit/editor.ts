@@ -1,4 +1,5 @@
 import { isValid } from '@visactor/vutils';
+import type { VNode } from 'vue';
 import { isVNode, render } from 'vue';
 import { TYPES } from '@visactor/vtable';
 
@@ -157,6 +158,7 @@ export class DynamicRenderEditor {
     if (!vnode || !isVNode(vnode)) {
       return false;
     }
+    this.checkToPassAppContext(vnode, table);
     // 创建包裹容器
     const wrapContainer = document.createElement('div');
     wrapContainer.style.position = 'absolute';
@@ -174,6 +176,24 @@ export class DynamicRenderEditor {
       this.adjustPosition(referencePosition.rect);
     }
     return true;
+  }
+  /**
+   * @description: 校验并传递上下文
+   * @param {VNode} vnode
+   * @param {any} table
+   * @return {*}
+   */
+  checkToPassAppContext(vnode: VNode, table: any) {
+    if (!table) {
+      return;
+    }
+    const userAppContext = table.options?.customConfig?.getUserAppContext?.();
+    if (userAppContext) {
+      // 上下文传递
+      try {
+        vnode.appContext = userAppContext;
+      } catch (error) {}
+    }
   }
   /**
    * @description: 获取渲染式编辑器的列配置主键
