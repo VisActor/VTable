@@ -5,3 +5,6 @@ export * from './case-before-init';
 export * from './add-row-column';
 export * from './column-series';
 export * from './row-series';
+export * from './highlight-header';
+export * from './excel-edit-cell-keyboard';
+export * from './types';

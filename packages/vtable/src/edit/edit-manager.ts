@@ -13,7 +13,7 @@ export class EditManager {
   isValidatingValue: boolean = false;
   editCell: { col: number; row: number };
   listenersId: number[] = [];
-
+  beginTriggerEditCellMode: 'doubleclick' | 'click' | 'keydown';
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.bindEvent();
@@ -43,12 +43,14 @@ export class EditManager {
         // 如果是双击自动列宽 则编辑不开启
         return;
       }
+      this.beginTriggerEditCellMode = 'doubleclick';
       this.startEditCell(col, row);
     });
 
     const clickEventId = table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
       const { editCellTrigger = 'doubleclick' } = table.options;
       if (editCellTrigger === 'click' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('click'))) {
+        this.beginTriggerEditCellMode = 'click';
         const { col, row } = e;
         this.startEditCell(col, row);
       }
@@ -213,6 +215,7 @@ export class EditManager {
     this.editingEditor.onEnd?.();
     this.editingEditor = null;
     this.isValidatingValue = false;
+    this.beginTriggerEditCellMode = null;
   }
 
   cancelEdit() {

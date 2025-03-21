@@ -17,7 +17,7 @@ export class ColumnSeriesPlugin implements VTable.plugins.IVTablePlugin {
   runTime = [VTable.TABLE_EVENT_TYPE.BEFORE_INIT];
   pluginOptions: ColumnSeriesOptions;
   table: VTable.ListTable;
-  columns: { field: string; title: string }[] = [];
+  columns: { field?: string; title: string }[] = [];
   constructor(pluginOptions: ColumnSeriesOptions = { columnCount: 100 }) {
     this.pluginOptions = pluginOptions;
   }

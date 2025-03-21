@@ -1,6 +1,12 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
-import { AddRowColumnPlugin, ColumnSeriesPlugin, RowSeriesPlugin } from '../../src';
+import {
+  AddRowColumnPlugin,
+  ColumnSeriesPlugin,
+  ExcelEditCellKeyboardPlugin,
+  HighlightHeaderPlugin,
+  RowSeriesPlugin
+} from '../../src';
 import { InputEditor } from '@visactor/vtable-editors';
 import { table } from 'console';
 const CONTAINER_ID = 'vTable';
@@ -33,6 +39,13 @@ export function createTable() {
       return [];
     }
   });
+  const highlightPlugin = new HighlightHeaderPlugin({
+    colHighlight: true,
+    rowHighlight: true
+  });
+  const excelEditCellKeyboardPlugin = new ExcelEditCellKeyboardPlugin({
+    replaceMode: true
+  });
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records: [
@@ -46,7 +59,7 @@ export function createTable() {
 
     padding: 30,
     editor: 'input',
-    editCellTrigger: 'click',
+    editCellTrigger: ['api', 'keydown', 'doubleclick'],
     select: {
       // disableSelect: true
     },
@@ -60,7 +73,7 @@ export function createTable() {
       }
     }),
     defaultRowHeight: 30,
-    plugins: [addRowColumn, columnSeries, rowSeries]
+    plugins: [addRowColumn, columnSeries, rowSeries, highlightPlugin, excelEditCellKeyboardPlugin]
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;

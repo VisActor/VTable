@@ -25,8 +25,11 @@ export interface TableEvents {
    * 单元格选中状态改变事件
    */
   SELECTED_CLEAR: 'selected_clear';
+
+  /** 键盘按下事件 内部逻辑处理前 */
+  BEFORE_KEYDOWN: 'before_keydown';
   /**
-   * 键盘按下事件
+   * 键盘按下事件 触发时机是在内部处理keydown逻辑之后
    */
   KEYDOWN: 'keydown';
   /**
@@ -167,6 +170,9 @@ export interface TableEvents {
   INITIALIZED: 'initialized';
   //#endregion
 
+  /** 开始编辑单元格 */
+  BEFORE_EDIT_CELL: 'before_edit_cell';
+  /** 编辑单元格 */
   CHANGE_CELL_VALUE: 'change_cell_value';
 
   /**
@@ -206,6 +212,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   MOUSEUP_CELL: 'mouseup_cell',
   SELECTED_CELL: 'selected_cell',
   SELECTED_CLEAR: 'selected_clear',
+  BEFORE_KEYDOWN: 'before_keydown',
   KEYDOWN: 'keydown',
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
