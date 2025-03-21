@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-03-21 14:22:18
+ * @LastEditTime: 2025-03-21 19:05:30
  * @Description:
  */
 import type {
@@ -33,6 +33,7 @@ import { render } from 'vue';
  * 表格自定义组件集成插件
  */
 export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPlugin {
+  name: string = 'VTableVueAttributePlugin';
   declare htmlMap: Record<
     string,
     {
@@ -130,15 +131,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     if (!targetMap || !this.checkDom(targetMap.wrapContainer)) {
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, actualContainer, { id, options });
       if (wrapContainer) {
-        // 检查历史渲染节点
-        const historyWrapContainer = document.getElementById(id);
         const dataRenderId = `${this.renderId}`;
-        if (historyWrapContainer && historyWrapContainer.getAttribute('data-vue-renderId') !== dataRenderId) {
-          // 历史渲染节点清除
-          render(null, historyWrapContainer);
-          historyWrapContainer.remove();
-          this.removeWrapContainerEventListener(historyWrapContainer);
-        }
         wrapContainer.id = id;
         wrapContainer.setAttribute('data-vue-renderId', dataRenderId);
         render(element, wrapContainer);
