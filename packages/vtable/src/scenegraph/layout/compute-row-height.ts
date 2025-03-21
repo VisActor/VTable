@@ -69,7 +69,8 @@ export function computeRowsHeight(
     table.defaultHeaderRowHeight === 'auto' ||
     (isArray(table.defaultHeaderRowHeight) && table.defaultHeaderRowHeight.some(item => item === 'auto'));
   const isAllRowsAuto =
-    table.isAutoRowHeight() || (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
+    table.isAutoRowHeight(rowStart) ||
+    (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
   const isDefaultRowHeightIsAuto = table.options.defaultRowHeight === 'auto';
 
   if (isAllRowsAuto || isDefaultHeaderHasAuto || isDefaultRowHeightIsAuto) {
@@ -133,7 +134,7 @@ export function computeRowsHeight(
           (table.isPivotTable() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)
         ) &&
         !(table.options as ListTableConstructorOptions).customComputeRowHeight &&
-        checkFixedStyleAndNoWrap(table)
+        checkFixedStyleAndNoWrap(table, rowStart)
       ) {
         // check fixed style and no wrap situation, fill all row width single compute
         // traspose table and row indicator pivot table cannot use single row height
@@ -357,7 +358,7 @@ export function computeRowsHeight(
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
   const isAllRowsAuto =
-    table.isAutoRowHeight() || (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
+    table.isAutoRowHeight(row) || (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
   if (!isAllRowsAuto && table.getDefaultRowHeight(row) !== 'auto') {
     return table.getDefaultRowHeight(row) as number;
   }
@@ -449,13 +450,13 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
   return isNumber(defaultHeight) ? defaultHeight : table.defaultRowHeight;
 }
 
-function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
+function checkFixedStyleAndNoWrap(table: BaseTableAPI, rowStart: number): boolean {
   const { layoutMap } = table.internalProps;
   const row = table.columnHeaderLevelCount;
   //设置了全局自动换行的话 不能复用高度计算
   if (
     (table.internalProps.autoWrapText || table.internalProps.enableLineBreak || table.isPivotChart()) &&
-    (table.isAutoRowHeight() || table.options.heightMode === 'adaptive')
+    (table.isAutoRowHeight(rowStart) || table.options.heightMode === 'adaptive')
   ) {
     return false;
   }
@@ -492,7 +493,7 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
   //设置了全局自动换行的话 不能复用高度计算
   if (
     (table.internalProps.autoWrapText || table.internalProps.enableLineBreak) &&
-    (table.isAutoRowHeight() || table.options.heightMode === 'adaptive')
+    (table.isAutoRowHeight(row) || table.options.heightMode === 'adaptive')
   ) {
     return false;
   }
@@ -523,7 +524,7 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
 function checkPivotFixedStyleAndNoWrap(table: BaseTableAPI, row: number) {
   const { layoutMap } = table.internalProps;
   //设置了全局自动换行的话 不能复用高度计算
-  if (table.internalProps.autoWrapText && (table.isAutoRowHeight() || table.options.heightMode === 'adaptive')) {
+  if (table.internalProps.autoWrapText && (table.isAutoRowHeight(row) || table.options.heightMode === 'adaptive')) {
     return false;
   }
 
@@ -602,7 +603,8 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       rect: getCellRect(col, row, table),
       table,
       originCol: col,
-      originRow: row
+      originRow: row,
+      forComputation: true
     };
     if (customLayout === 'react-custom-layout') {
       // customLayout = table._reactCreateGraphic;
