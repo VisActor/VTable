@@ -1,4 +1,5 @@
 import { isValid } from '@visactor/vutils';
+import type { VNode } from 'vue';
 import { isVNode, render } from 'vue';
 import { TYPES } from '@visactor/vtable';
 
@@ -67,8 +68,11 @@ export class DynamicRenderEditor {
   currentValue: string | null;
   /** 节点 map */
   nodeMap?: Map<string | number, Map<string | number, (params: DynamicRenderEditorParams) => any>>;
+  /** 当前上下文 */
+  currentContext?: any;
 
-  constructor() {
+  constructor(currentContext?: any) {
+    this.currentContext = currentContext;
     this.tableContainer = null;
     this.currentValue = null;
     this.wrapContainer = null;
@@ -153,10 +157,11 @@ export class DynamicRenderEditor {
       value,
       table,
       onChange: (value: any) => this.setValue(value)
-    })?.[0];
+    })?.find((node: any) => node?.type !== Symbol.for('v-cmt'));
     if (!vnode || !isVNode(vnode)) {
       return false;
     }
+    this.checkToPassAppContext(vnode);
     // 创建包裹容器
     const wrapContainer = document.createElement('div');
     wrapContainer.style.position = 'absolute';
@@ -174,6 +179,16 @@ export class DynamicRenderEditor {
       this.adjustPosition(referencePosition.rect);
     }
     return true;
+  }
+  /**
+   * @description: 校验并传递上下文
+   * @param {VNode} vnode
+   * @return {*}
+   */
+  checkToPassAppContext(vnode: VNode) {
+    if (this.currentContext) {
+      vnode.appContext = this.currentContext;
+    }
   }
   /**
    * @description: 获取渲染式编辑器的列配置主键
