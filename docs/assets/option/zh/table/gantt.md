@@ -110,6 +110,14 @@
 
 {{use: common-gantt-mark-line(prefix = '###')}}
 
+## markLineCreateOptions(IMarkLineCreateOptions)
+
+创建标记线配置。
+
+非必填
+
+{{use: common-gantt-create-mark-line(prefix = '###')}}
+
 ## frame(Object)
 
 整个外边框及横纵分割线配置。

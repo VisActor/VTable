@@ -689,6 +689,13 @@
       }
     },
     {
+      "path": "operate_scenegraph",
+      "title": {
+        "zh": "操作场景树（进阶）",
+        "en": "operate scenegraph"
+      }
+    },
+    {
       "path": "search",
       "title": {
         "zh": "搜索",
@@ -774,6 +781,13 @@
           "title": {
             "zh": "NodeJS 服务端渲染",
             "en": "NodeJS Server-Side Rendering"
+          }
+        },
+        {
+          "path": "midscene",
+          "title": {
+            "zh": "使用 Midscene.js 通过AI简化测试",
+            "en": "Use Midscene.js to simplify testing with AI"
           }
         }
       ]

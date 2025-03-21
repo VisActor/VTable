@@ -61,5 +61,5 @@ demo：https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load</br
 ## Related Documents
 
 Related api: https://visactor.io/vtable/option/PivotTable#rowHierarchyType ('grid'% 20% 7C% 20'tree ')</br>
-Tutorial: https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_tree</br>
+Tutorial: https://visactor.io/vtable/guide/table_type/Pivot_table/custom_header</br>
 github：https://github.com/VisActor/VTable</br>

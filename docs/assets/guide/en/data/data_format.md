@@ -351,11 +351,22 @@ Table data can be deleted using `deleteRecords`. Please check the api documentat
 
 Table data can be modified using `updateRecords`. Please check the api documentation for details.
 
+```javascript
+  /**
+   * 修改数据 支持多条数据
+   * @param records 修改数据条目
+   * @param recordIndexs 对应修改数据的索引
+   * 基本表格中显示在body中的索引，即要修改的是body部分的第几行数据；
+   * 如果是树形结构的话 recordIndexs 为数组，数组中每个元素为data的原始数据索引；
+   */
+  updateRecords(records: any[], recordIndexs: (number | number[])[])
+```
+
 Or you can modify a certain data field using the `changeCellValue` or `changeCellValues` interface.
 
 ### Tree structure data update
 
-In the tree (group) structure, the data update is passed in `recordIndex` as an array, representing the index of each node from the root node. In addition, in the case of sorting, `recordIndex` is the original data structure, and it may not be consistent with the hierarchical order displayed in the table. Therefore, in the tree (group) structure table, please use the `getRecordIndexByCell` interface to get the correct `recordIndex`, and then use the `updateRecords` interface to update the data.
+In the tree (group) structure, the data update is passed in `recordIndex` as an array, representing the index of the data in the table body. In addition, in the case of sorting, `recordIndex` is the original data structure, and it may not be consistent with the hierarchical order displayed in the table. Therefore, in the tree (group) structure table, please use the `getRecordIndexByCell` interface to get the correct `recordIndex`, and then use the `updateRecords` interface to update the data.
 
 ```javascript
 const recordIndex = tableInstance.getRecordIndexByCell(col, row);

@@ -90,13 +90,6 @@ SortState {
 
 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认 false
 
-## frozenColDragHeaderMode(string) = 'fixedFrozenCount'
-
-拖拽表头移动位置 针对冻结部分的规则 默认为 fixedFrozenCount
-
-- "disabled"（禁止调整冻结列位置）：不允许其他列的表头移入冻结列，也不允许冻结列移出，冻结列保持不变。
-- "adjustFrozenCount"（根据交互结果调整冻结数量）：允许其他列的表头移入冻结列，及冻结列移出，并根据拖拽的动作调整冻结列的数量。当其他列的表头被拖拽进入冻结列位置时，冻结列数量增加；当其他列的表头被拖拽移出冻结列位置时，冻结列数量减少。
-- "fixedFrozenCount"（可调整冻结列，并维持冻结数量不变）：允许自由拖拽其他列的表头移入或移出冻结列位置，同时保持冻结列的数量不变。
 
 ## aggregation(Aggregation|CustomAggregation|Array|Function)
 

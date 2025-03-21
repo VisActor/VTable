@@ -485,6 +485,15 @@ export function createTable() {
         style: {
           color: 'green'
         }
+      },
+      {
+        id: 'custom-3',
+        style: styleArg => {
+          // console.log(styleArg);
+          return {
+            color: styleArg.row % 2 === 0 ? 'red' : 'blue'
+          };
+        }
       }
     ],
     customCellStyleArrangement: [
@@ -509,6 +518,21 @@ export function createTable() {
           }
         },
         customStyleId: 'custom-2'
+      },
+      {
+        cellPosition: {
+          range: {
+            start: {
+              col: 4,
+              row: 6
+            },
+            end: {
+              col: 5,
+              row: 10
+            }
+          }
+        },
+        customStyleId: 'custom-3'
       }
     ]
   };

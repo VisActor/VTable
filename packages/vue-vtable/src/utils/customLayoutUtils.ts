@@ -1,6 +1,7 @@
 import * as VTable from '@visactor/vtable';
 import { convertPropsToCamelCase, toCamelCase } from './stringUtils';
-import { isFunction } from '@visactor/vutils';
+import { isFunction, isObject } from '@visactor/vutils';
+import { isVNode } from 'vue';
 
 // 检查属性是否为事件
 function isEventProp(key: string, props: any) {
@@ -8,7 +9,7 @@ function isEventProp(key: string, props: any) {
 }
 
 // 创建自定义布局
-export function createCustomLayout(children: any): any {
+export function createCustomLayout(children: any, isHeader?: boolean, args?: any): any {
   // 组件映射
   const componentMap: Record<string, any> = {
     Group: VTable.CustomLayout.Group,
@@ -42,6 +43,17 @@ export function createCustomLayout(children: any): any {
 
     // 递归创建子组件
     const subChildren = resolveChildren(childChildren);
+    if (isObject(props?.vue)) {
+      // vue 自定义节点：无需继续循环子节点
+      const { element } = props.vue as any;
+      const targetVNode = element ?? subChildren[0];
+      Object.assign(child.props.vue, {
+        element: isVNode(targetVNode) ? targetVNode : null,
+        // 不接入外部指定
+        container: isHeader ? args?.table?.headerDomContainer : args?.table?.bodyDomContainer
+      });
+      return component;
+    }
     subChildren.forEach((subChild: any) => {
       const subComponent = createComponent(subChild);
       if (subComponent) {
@@ -83,14 +95,19 @@ export function createCustomLayout(children: any): any {
   return { rootComponent: createComponent(children) };
 }
 
-export function createCustomLayoutHandler(children: any) {
+export function createCustomLayoutHandler(children: any, isHeader?: boolean) {
   return (args: any) => {
     const { table, row, col, rect } = args;
     const record = table.getCellOriginRecord(col, row);
     const { height, width } = rect ?? table.getCellRect(col, row);
 
-    const rootContainer = children.customLayout({ table, row, col, rect, record, height, width })[0];
-    const { rootComponent } = createCustomLayout(rootContainer);
+    const customLayoutKey = isHeader ? 'headerCustomLayout' : 'customLayout';
+    if (!children[customLayoutKey]) {
+      return null;
+    }
+
+    const rootContainer = children[customLayoutKey]({ table, row, col, rect, record, height, width })[0];
+    const { rootComponent } = createCustomLayout(rootContainer, isHeader, args);
 
     return {
       rootContainer: rootComponent,

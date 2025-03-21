@@ -186,7 +186,7 @@ const theme = {
     borderColor: '#d1d5da',
     borderLineWidth: 1,
     borderLineDash: [],
-    roundCornerRadius: 10,
+    cornerRadius: 10,
     shadowBlur: 6,
     shadowOffsetX: 0,
     shadowOffsetY: 0,
@@ -1189,29 +1189,7 @@ const option = {
   widthMode: 'standard',
   rowHierarchyIndent: 20,
   rowHierarchyTextStartAlignment: true,
-  theme: {
-    defaultStyle: {
-      borderLineWidth: 0
-    },
-    headerStyle: {
-      frameStyle: {
-        borderColor: 'blue',
-        borderLineWidth: [0, 0, 1, 0]
-      }
-    },
-    rowHeaderStyle: {
-      frameStyle: {
-        borderColor: 'blue',
-        borderLineWidth: [0, 1, 0, 0]
-      }
-    },
-    cornerHeaderStyle: {
-      frameStyle: {
-        borderColor: 'blue',
-        borderLineWidth: [0, 1, 1, 0]
-      }
-    }
-  }
+  theme
 };
 
 const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);

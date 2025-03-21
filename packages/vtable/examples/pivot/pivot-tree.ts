@@ -466,6 +466,15 @@ export function createTable() {
         dragHeaderMode: 'all'
       };
       const tableInstance = new PivotTable(option);
+      // const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+      // tableInstance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
+      //   debugger;
+      //   // TODO 调用接口插入设置子节点的数据
+      //   if (args.hierarchyState === VTable.TYPES.HierarchyState.expand) {
+      //     const record = args.originData;
+      //     tableInstance.setLoadingHierarchyState(args.col, args.row);
+      //   }
+      // });
       // 只为了方便控制太调试用，不要拷贝
       window.tableInstance = tableInstance;
     })

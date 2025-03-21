@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix row update range #3468",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

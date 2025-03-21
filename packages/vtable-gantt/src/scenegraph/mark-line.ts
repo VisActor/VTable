@@ -1,7 +1,7 @@
 import { computeCountToTimeScale, createDateAtMidnight } from '../tools/util';
 import type { IMarkLine } from '../ts-types';
 import type { Scenegraph } from './scenegraph';
-import { Group, createLine } from '@visactor/vtable/es/vrender';
+import { Group, createLine, Text } from '@visactor/vtable/es/vrender';
 
 export class MarkLine {
   _scene: Scenegraph;
@@ -39,6 +39,7 @@ export class MarkLine {
     const markLine = this._scene._gantt.parsedOptions.markLine;
     markLine.forEach(line => {
       const style = line.style;
+      const contentStyle = line.contentStyle || {};
       const date = this._scene._gantt.parsedOptions.timeScaleIncludeHour
         ? createDateAtMidnight(line.date)
         : createDateAtMidnight(line.date, true);
@@ -69,6 +70,40 @@ export class MarkLine {
         ]
       });
       markLineGroup.appendChild(lineObj);
+      if (line.content) {
+        const textMaxLineWidth = this._scene._gantt.parsedOptions.timelineColWidth;
+        const textContainerHeight = contentStyle.lineHeight || 18;
+        // 创建内容区
+        const textGroup = new Group({
+          x: this.markLineContainerWidth / 2,
+          y: 0,
+          cursor: 'pointer',
+          height: textContainerHeight,
+          clip: false,
+          fill: contentStyle.backgroundColor || style.lineColor,
+          display: 'flex',
+          cornerRadius: contentStyle.cornerRadius || [0, 2, 2, 0]
+        });
+        textGroup.name = 'mark-line-content';
+        textGroup.data = line;
+        markLineGroup.appendChild(textGroup);
+        // 创建内容
+        const text = new Text({
+          maxLineWidth: textMaxLineWidth,
+          text: line.content,
+          cursor: 'pointer',
+          lineHeight: textContainerHeight,
+          fontWeight: contentStyle.fontWeight || 'normal',
+          fill: contentStyle.color || style.lineColor,
+          fontSize: contentStyle.fontSize || 12,
+          poptip: {
+            position: 'top',
+            dx: textMaxLineWidth / 4,
+            dy: -textContainerHeight / 4
+          }
+        });
+        textGroup.appendChild(text);
+      }
     });
   }
 

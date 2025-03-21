@@ -18,16 +18,20 @@ import { bindScrollBarListener } from './listener/scroll-bar';
 import { bindContainerDomListener } from './listener/container-dom';
 import { bindTouchListener } from './listener/touch';
 import { getCellEventArgsSet, type SceneEvent } from './util';
-import { bindAxisClickEvent } from './pivot-chart/axis-click';
-import { bindAxisHoverEvent } from './pivot-chart/axis-hover';
+import { bindAxisClickEvent } from './self-event-listener/pivot-chart/axis-click';
+import { bindAxisHoverEvent } from './self-event-listener/pivot-chart/axis-hover';
 import type { PivotTable } from '../PivotTable';
 import { Env } from '../tools/env';
 import type { ListTable } from '../ListTable';
 import { isValid } from '@visactor/vutils';
 import { InertiaScroll } from './scroll';
 import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
-import { bindGroupTitleCheckboxChange, bindHeaderCheckboxChange } from './list-table/checkbox';
+import { bindGroupTitleCheckboxChange, bindHeaderCheckboxChange } from './self-event-listener/list-table/checkbox';
 import { bindButtonClickEvent } from './component/button';
+import { bindIconClickEvent } from './self-event-listener/base-table/icon';
+import { bindDropdownMenuClickEvent } from './self-event-listener/base-table/dropdown-menu';
+import { bindDBClickAutoColumnWidthEvent } from './self-event-listener/base-table/dbclick-auto-column-width';
+import { rightButtonClickEvent } from './self-event-listener/base-table/right-button-click';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -123,32 +127,11 @@ export class EventManager {
       return;
     }
 
-    const stateManager: StateManager = this.table.stateManager;
-
     // 图标点击
-    this.table.on(TABLE_EVENT_TYPE.ICON_CLICK, iconInfo => {
-      const { col, row, x, y, funcType, icon, event } = iconInfo;
-      // 下拉菜单按钮点击
-      if (funcType === IconFuncTypeEnum.dropDown) {
-        stateManager.triggerDropDownMenu(col, row, x, y, event);
-      } else if (funcType === IconFuncTypeEnum.sort) {
-        stateManager.triggerSort(col, row, icon, event);
-      } else if (funcType === IconFuncTypeEnum.frozen) {
-        stateManager.triggerFreeze(col, row, icon);
-      } else if (funcType === IconFuncTypeEnum.drillDown) {
-        drillClick(this.table);
-      } else if (funcType === IconFuncTypeEnum.collapse || funcType === IconFuncTypeEnum.expand) {
-        const isHasSelected = !!stateManager.select.ranges?.length;
-        stateManager.updateSelectPos(-1, -1);
-        stateManager.endSelectCells(true, isHasSelected);
-        this.table.toggleHierarchyState(col, row);
-      }
-    });
+    bindIconClickEvent(this.table);
 
     // 下拉菜单内容点击
-    this.table.on(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK, () => {
-      stateManager.hideMenu();
-    });
+    bindDropdownMenuClickEvent(this.table);
 
     // 处理textStick
     // if (checkHaveTextStick(this.table)) {
@@ -157,57 +140,12 @@ export class EventManager {
     //   });
     // }
     this.updateEventBinder();
+
     // link/image/video点击
     bindMediaClick(this.table);
 
     // 双击自动列宽
-    this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, (e: MousePointerCellEvent) => {
-      if (e.federatedEvent) {
-        const eventArgsSet = getCellEventArgsSet(e.federatedEvent as any);
-        const resizeCol = this.table.scenegraph.getResizeColAt(
-          eventArgsSet.abstractPos.x,
-          eventArgsSet.abstractPos.y,
-          eventArgsSet.eventArgs?.targetCell
-        );
-        const disableDblclickAutoResizeColWidth =
-          this.table.options.disableDblclickAutoResizeColWidth ??
-          this.table.options.resize?.disableDblclickAutoResizeColWidth;
-        if (this.table.eventManager.checkCellFillhandle(eventArgsSet)) {
-          this.table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE, {});
-        } else if (
-          this.table._canResizeColumn(resizeCol.col, resizeCol.row) &&
-          resizeCol.col >= 0 &&
-          !disableDblclickAutoResizeColWidth
-        ) {
-          this.table.scenegraph.updateAutoColWidth(resizeCol.col);
-          this.table.internalProps._widthResizedColMap.add(resizeCol.col);
-          // if (this.table.isPivotChart()) {
-          this.table.scenegraph.updateChartSizeForResizeColWidth(resizeCol.col);
-          // }
-          const state = this.table.stateManager;
-          // update frozen shadowline component
-          if (
-            state.columnResize.col < state.table.frozenColCount &&
-            !state.table.isPivotTable() &&
-            !(state.table as ListTable).transpose
-          ) {
-            state.table.scenegraph.component.setFrozenColumnShadow(
-              state.table.frozenColCount - 1,
-              state.columnResize.isRightFrozen
-            );
-          }
-          const colWidths = [];
-          // 返回所有列宽信息
-          for (let col = 0; col < this.table.colCount; col++) {
-            colWidths.push(this.table.getColWidth(col));
-          }
-          this.table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
-            col: resizeCol.col,
-            colWidths
-          });
-        }
-      }
-    });
+    bindDBClickAutoColumnWidthEvent(this.table);
 
     // drill icon
     if (this.table.isPivotTable() && checkHaveDrill(this.table as PivotTable)) {
@@ -230,6 +168,9 @@ export class EventManager {
 
     // button click
     bindButtonClickEvent(this.table);
+
+    // right button click
+    rightButtonClickEvent(this.table);
   }
 
   dealTableHover(eventArgsSet?: SceneEvent) {
@@ -577,6 +518,19 @@ export class EventManager {
     return false;
   }
 
+  cellIsHeaderCheck(eventArgsSet: SceneEvent, update?: boolean): boolean {
+    const { eventArgs } = eventArgsSet;
+    const { col, row, target } = eventArgs;
+    if (!this.table.isHeader(col, row)) {
+      return false;
+    }
+    const cellType = this.table.getCellType(eventArgs.col, eventArgs.row);
+    if (cellType === 'checkbox' && target.name === 'checkbox') {
+      return true;
+    }
+    return false;
+  }
+
   checkCellFillhandle(eventArgsSet: SceneEvent, update?: boolean): boolean {
     if (this.table.options.excelOptions?.fillHandle) {
       const { eventArgs } = eventArgsSet;
@@ -620,7 +574,7 @@ export class EventManager {
     this.table.stateManager.updateResizeRow(xInTable, yInTable);
   }
 
-  chechColumnMover(eventArgsSet: SceneEvent): boolean {
+  checkColumnMover(eventArgsSet: SceneEvent): boolean {
     // return false;
     const { eventArgs } = eventArgsSet;
     if (

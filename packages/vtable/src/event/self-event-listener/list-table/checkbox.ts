@@ -1,8 +1,8 @@
 import { isArray, isNumber } from '@visactor/vutils';
-import type { BaseTableAPI } from '../../ts-types/base-table';
-import { setCellCheckboxStateByAttribute } from '../../state/checkbox/checkbox';
-import { HierarchyState } from '../../ts-types';
-import type { CachedDataSource } from '../../data';
+import type { BaseTableAPI } from '../../../ts-types/base-table';
+import { setCellCheckboxStateByAttribute } from '../../../state/checkbox/checkbox';
+import { HierarchyState } from '../../../ts-types';
+import type { CachedDataSource } from '../../../data';
 
 export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
   table.on('checkbox_state_change', args => {

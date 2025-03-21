@@ -112,6 +112,14 @@ export interface SortByIndicatorRule {
   sortByIndicator?: string;
   /**如果按指标值排序，还需要指定另外一个（行或列）方向的底层维度成员具体值。例如按照办公用品下的纸张 ['办公用品', '纸张'] */
   query?: string[];
+  /**自定义排序函数 否则按自然排序 */
+  sortFunc?: (
+    value_a: string | number,
+    value_b: string | number,
+    path_a: string[],
+    path_b: string[],
+    sortType: SortType
+  ) => number;
 }
 //4. 自定义排序方法function
 export interface SortFuncRule {

@@ -133,21 +133,13 @@ export interface IBaseTableProtected {
   rowSeriesNumber?: IRowSeriesNumber;
   columnSeriesNumber?: ColumnSeriesNumber[];
   // disableRowHeaderColumnResize?: boolean;
-  /**
-   *@deprecated 请使用resize.columnResizeType
-   */
+
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
-  /**
-   *@deprecated 请使用resize.rowResizeType
-   */
+
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
-  /**
-   *@deprecated 请使用resize.columnResizeType
-   */
+
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
-  /**
-   *@deprecated 请使用resize.rowResizeType
-   */
+
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
@@ -345,11 +337,22 @@ export interface BaseTableConstructorOptions {
   container?: HTMLElement | null;
 
   /**
+   * @deprecated
+   * 请使用resize.columnResizeMode
    * 调整列宽 可操作范围。'all' | 'none' | 'header' | 'body'; 整列间隔线|禁止调整|只能在表头处间隔线|只能在body间隔线
    */
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  /**
+   * @deprecated
+   * 请使用resize.rowResizeMode
+   */
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
-  /** 控制拖拽表头移动位置顺序开关 */
+
+  /**
+   * @deprecated
+   * dragOrder.dragHeaderMode
+   * 控制拖拽表头移动位置顺序开关
+   */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
 
   /**
@@ -478,6 +481,8 @@ export interface BaseTableConstructorOptions {
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
+  // maximum number of columns maintained in table instance
+  maintainedColumnCount?: number;
 
   legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
@@ -551,6 +556,12 @@ export interface BaseTableConstructorOptions {
 
     // 图片资源请求时是否使用anonymous模式
     imageAnonymous?: boolean;
+
+    // 滚动到边界是否继续触发滚动事件
+    scrollEventAlwaysTrigger?: boolean;
+
+    // 开启透视结构缓存
+    enablePivotPathCache?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -576,6 +587,12 @@ export interface BaseTableConstructorOptions {
     rowResizeMode?: 'all' | 'none' | 'header' | 'body';
     /** 是否禁用双击列边框自动调整列宽 **/
     disableDblclickAutoResizeColWidth?: boolean;
+  };
+  dragOrder?: {
+    /** 控制拖拽表头移动位置顺序开关 */
+    dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
+    /** 拖拽移动位置结束时进行验证 */
+    validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
   };
 }
 export interface BaseTableAPI {

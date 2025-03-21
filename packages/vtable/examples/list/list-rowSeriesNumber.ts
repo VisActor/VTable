@@ -198,7 +198,7 @@ export function createTable() {
       copySelected: true
     },
     theme: { headerStyle: { bgColor: 'yellow' } },
-    dragHeaderMode: 'all',
+
     // sortState: {
     //   field: 'email1',
     //   order: 'asc'
@@ -207,6 +207,13 @@ export function createTable() {
     //   perPageCount: 20,
     //   currentPage: 1
     // },
+    dragOrder: {
+      validateDragOrderOnEnd(source, target) {
+        console.log(source, target);
+        return true;
+      },
+      dragHeaderMode: 'all'
+    },
     rowSeriesNumber: {
       title: '',
       // field: 'sex',

@@ -1,4 +1,4 @@
-import { createRect, type IRect } from '@src/vrender';
+import { type IRect } from '@src/vrender';
 import type { Scenegraph } from '../scenegraph';
 import type { CellRange, CellSubLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
@@ -434,7 +434,23 @@ export function updateCellSelectBorder(
       extendSelectRange();
     }
   };
-  ifExtendSelectRange && extendSelectRange();
+  if (ifExtendSelectRange) {
+    extendSelectRange();
+    if (selectRange.start.col > selectRange.end.col) {
+      selectRange.start.col = Math.max(startCol, endCol);
+      selectRange.end.col = Math.min(startCol, endCol);
+    } else {
+      selectRange.start.col = Math.min(startCol, endCol);
+      selectRange.end.col = Math.max(startCol, endCol);
+    }
+    if (selectRange.start.row > selectRange.end.row) {
+      selectRange.start.row = Math.max(startRow, endRow);
+      selectRange.end.row = Math.min(startRow, endRow);
+    } else {
+      selectRange.start.row = Math.min(startRow, endRow);
+      selectRange.end.row = Math.max(startRow, endRow);
+    }
+  }
   //#endregion
   scene.selectingRangeComponents.forEach(
     (selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation }, key: string) => {

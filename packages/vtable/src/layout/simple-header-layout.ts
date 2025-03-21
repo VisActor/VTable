@@ -110,7 +110,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             title: seriesNumber.title,
             define: merge({ field: '_vtable_rowSeries_number_' + index }, seriesNumber),
             cellType: seriesNumber.cellType ?? 'text',
-            headerType: rowSeriesNumber.cellType ?? 'text',
+            headerType: seriesNumber.cellType === 'checkbox' ? 'checkbox' : 'text',
             style: seriesNumber.style,
             width: seriesNumber.width,
             format: seriesNumber.format,
@@ -127,7 +127,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             title: rowSeriesNumber.title,
             define: merge({ field: '_vtable_rowSeries_number' }, rowSeriesNumber),
             cellType: rowSeriesNumber.cellType ?? 'text',
-            headerType: rowSeriesNumber.cellType ?? 'text',
+            headerType: rowSeriesNumber.cellType === 'checkbox' ? 'checkbox' : 'text',
             style: rowSeriesNumber.style,
             width: rowSeriesNumber.width,
             format: rowSeriesNumber.format,
@@ -1187,7 +1187,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     moveType: 'column' | 'row';
   } {
     // 判断从source地址是否可以移动到target地址
-    if (this.canMoveHeaderPosition(source, target)) {
+    if (
+      (this._table.options.dragOrder?.validateDragOrderOnEnd(source, target) ||
+        !this._table.options.dragOrder?.validateDragOrderOnEnd) &&
+      this.canMoveHeaderPosition(source, target)
+    ) {
       let sourceCellRange = this.getCellRange(source.col, source.row);
       // 对移动列表头 行表头 分别处理
       if (this.isColumnHeader(source.col, source.row)) {
