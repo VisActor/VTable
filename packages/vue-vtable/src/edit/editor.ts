@@ -157,7 +157,7 @@ export class DynamicRenderEditor {
       value,
       table,
       onChange: (value: any) => this.setValue(value)
-    })?.[0];
+    })?.find((node: any) => node?.type !== Symbol.for('v-cmt'));
     if (!vnode || !isVNode(vnode)) {
       return false;
     }
@@ -187,9 +187,7 @@ export class DynamicRenderEditor {
    */
   checkToPassAppContext(vnode: VNode) {
     if (this.currentContext) {
-      try {
-        vnode.appContext = this.currentContext;
-      } catch (error) {}
+      vnode.appContext = this.currentContext;
     }
   }
   /**
