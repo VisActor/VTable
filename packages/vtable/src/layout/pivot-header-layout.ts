@@ -18,7 +18,8 @@ import type {
   IColumnDimension,
   IRowDimension,
   IChartIndicator,
-  IRowSeriesNumber
+  IRowSeriesNumber,
+  CellPivotRole
 } from '../ts-types';
 import { HierarchyState } from '../ts-types';
 import type {
@@ -1119,7 +1120,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (typeof extensionRow.rowTree === 'function') {
           const fullCellIds = this.findFullCellIds(row_ids);
           tree = (extensionRow.rowTree as Function)(
-            fullCellIds.map(id => {
+            fullCellIds.map((id: number) => {
               return { dimensionKey: this._headerObjects[id].field, value: this._headerObjects[id].title };
             })
           );
@@ -2266,11 +2267,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         indicatorKey?: string;
         value?: string;
         virtual?: boolean;
+        role?: CellPivotRole;
       } = {};
       colHeaderPath.dimensionKey = colHeader.dimensionKey;
       colHeaderPath.indicatorKey = colHeader.indicatorKey;
       colHeaderPath.value = colHeader.value ?? this.getIndicatorInfoByIndicatorKey(colHeader.indicatorKey)?.title ?? '';
       colHeaderPath.virtual = colHeader.virtual;
+      colHeaderPath.role = colHeader.role;
       headerPaths.colHeaderPaths!.push(colHeaderPath);
     });
 
@@ -2281,12 +2284,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           indicatorKey?: string;
           value?: string;
           virtual?: boolean;
+          role?: CellPivotRole;
         } = {};
         rowHeaderPath.dimensionKey = rowHeader.dimensionKey;
         rowHeaderPath.indicatorKey = rowHeader.indicatorKey;
         rowHeaderPath.value =
           rowHeader.value ?? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? '';
         rowHeaderPath.virtual = rowHeader.virtual;
+        rowHeaderPath.role = rowHeader.role;
         headerPaths.rowHeaderPaths!.push(rowHeaderPath);
       }
     });
@@ -3544,7 +3549,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (isCol) {
         continue;
       }
-      for (let k = 0; k < rowArr?.length ?? 0; k++) {
+      for (let k = 0; k < (rowArr?.length ?? 0); k++) {
         const dimension = rowArr[k];
         if (
           (isValid(highlightDimension.dimensionKey) &&

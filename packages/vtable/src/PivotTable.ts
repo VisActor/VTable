@@ -20,7 +20,8 @@ import type {
   SortByIndicatorRule,
   SortTypeRule,
   SortRule,
-  FilterRules
+  FilterRules,
+  CellPivotRole
 } from './ts-types';
 import { HierarchyState, SortType } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
@@ -2186,6 +2187,36 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /** 获取过滤后的数据 */
   getFilteredRecords() {
     return this.dataset?.filterRules;
+  }
+
+  getCellPivotRole(col: number, row: number) {
+    const path = this.getCellHeaderPaths(col, row);
+    const { cellLocation, colHeaderPaths, rowHeaderPaths } = path;
+
+    let colRole: CellPivotRole = colHeaderPaths.length ? 'normal' : undefined;
+    let rowRole: CellPivotRole = rowHeaderPaths.length ? 'normal' : undefined;
+
+    (colHeaderPaths as IDimensionInfo[]).forEach((path: IDimensionInfo) => {
+      if (path.role === 'sub-total') {
+        colRole = 'sub-total';
+      } else if (path.role === 'grand-total') {
+        colRole = 'grand-total';
+      }
+    });
+
+    (rowHeaderPaths as IDimensionInfo[]).forEach((path: IDimensionInfo) => {
+      if (path.role === 'sub-total') {
+        rowRole = 'sub-total';
+      } else if (path.role === 'grand-total') {
+        rowRole = 'grand-total';
+      }
+    });
+
+    return {
+      colRole,
+      rowRole,
+      cellLocation
+    };
   }
 
   /**
