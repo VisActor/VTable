@@ -151,12 +151,9 @@ export function updateRow(
       const minRow = Math.min(...addRows);
       scene.proxy.rowUpdatePos = Math.min(minRow, scene.proxy.rowUpdatePos);
     }
-    // if (addRows.length > removeRows.length) {
-    scene.proxy.rowUpdateDirection = 'down';
-    // } else {
-    // scene.proxy.rowUpdateDirection = 'up';
-    // }
-    console.log('rowUpdateDirection', scene.proxy.rowUpdateDirection);
+    // 对于列表，折叠展开时最上行（按钮行行）位置不变，为基准向下更新，所以这里配置方向为up（从上向下更新）
+    // 对于透视表，最上行以上以下都也可能会变，目前采区重新建立场景树方案
+    scene.proxy.rowUpdateDirection = 'up';
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
     updateBottomFrozeCellGroups();
     // scene.proxy.progress();

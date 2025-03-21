@@ -92,6 +92,9 @@ export class SceneProxy {
     if (this.table.options.maintainedDataCount) {
       this.rowLimit = this.table.options.maintainedDataCount;
     }
+    if (this.table.options.maintainedColumnCount) {
+      this.colLimit = this.table.options.maintainedColumnCount;
+    }
   }
 
   get bodyLeftCol(): number {

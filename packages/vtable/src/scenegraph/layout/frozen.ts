@@ -47,7 +47,10 @@ export function dealFrozen(scene: Scenegraph) {
 
   // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
   scene.frozenColCount = scene.table.frozenColCount;
-  scene.frozenRowCount = scene.colHeaderGroup.firstChild?.childrenCount ?? 0;
+  scene.frozenRowCount =
+    scene.colHeaderGroup.firstChild?.childrenCount ??
+    scene.cornerHeaderGroup.firstChild?.childrenCount ??
+    scene.table.frozenRowCount;
 }
 
 export function resetFrozen(scene: Scenegraph) {
@@ -77,7 +80,10 @@ export function resetFrozen(scene: Scenegraph) {
   scene.recreateAllSelectRangeComponents();
   // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
   scene.frozenColCount = scene.table.frozenColCount;
-  scene.frozenRowCount = scene.colHeaderGroup.firstChild?.childrenCount ?? 0;
+  scene.frozenRowCount =
+    scene.colHeaderGroup.firstChild?.childrenCount ??
+    scene.cornerHeaderGroup.firstChild?.childrenCount ??
+    scene.table.frozenRowCount;
   //   scene.proxy.colStart = scene.table.frozenColCount;
   scene.proxy.colStart = (scene.bodyGroup.firstChild as any)?.col ?? scene.table.frozenColCount;
 
