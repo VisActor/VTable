@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "Merge pull request #3605 from 7dingdang0/fix/vue-custom-render\n\nFix/vue custom render: repeated rendering and context\n",
+      "comment": "fix: vue custom render repeated rendering and context\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
