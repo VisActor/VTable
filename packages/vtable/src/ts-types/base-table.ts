@@ -543,8 +543,6 @@ export interface BaseTableConstructorOptions {
     imageMargin?: number;
     // 是否创建react custom container
     createReactContainer?: boolean;
-    /** 获取上下文，用于指定自定义 dom 节点的上下文 */
-    getVueUserAppContext?: () => any;
     // adaptive 模式下优先缩小迷你图
     shrinkSparklineFirst?: boolean;
 

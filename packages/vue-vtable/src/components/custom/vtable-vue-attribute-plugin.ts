@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-03-21 10:55:32
+ * @LastEditTime: 2025-03-21 14:22:18
  * @Description:
  */
 import type {
@@ -58,6 +58,13 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
   private renderQueue = new Set<IGraphic>();
   /** 是否正在渲染 */
   private isRendering = false;
+  /** 当前上下文 */
+  currentContext?: any;
+
+  constructor(currentContext?: any) {
+    super();
+    this.currentContext = currentContext;
+  }
 
   /**
    * @description: 单元格变化后重新渲染组件，由 HtmlAttributePlugin 插件触发
@@ -118,7 +125,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       targetMap = null;
     }
     // 校验并传递上下文
-    this.checkToPassAppContext(element, graphic);
+    this.checkToPassAppContext(element);
     // 渲染或更新 Vue 组件
     if (!targetMap || !this.checkDom(targetMap.wrapContainer)) {
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, actualContainer, { id, options });
@@ -176,20 +183,12 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
   /**
    * @description: 校验并传递上下文
    * @param {VNode} vnode
-   * @param {IGraphic} graphic
    * @return {*}
    */
-  checkToPassAppContext(vnode: VNode, graphic: IGraphic) {
-    const { stage } = getTargetGroup(graphic);
-    const { table } = stage || {};
-    if (!table) {
-      return;
-    }
-    const userAppContext = table.options?.customConfig?.getVueUserAppContext?.();
-    if (userAppContext) {
-      // 上下文传递
+  checkToPassAppContext(vnode: VNode) {
+    if (this.currentContext) {
       try {
-        vnode.appContext = userAppContext;
+        vnode.appContext = this.currentContext;
       } catch (error) {}
     }
   }

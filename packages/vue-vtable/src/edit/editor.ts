@@ -68,8 +68,11 @@ export class DynamicRenderEditor {
   currentValue: string | null;
   /** 节点 map */
   nodeMap?: Map<string | number, Map<string | number, (params: DynamicRenderEditorParams) => any>>;
+  /** 当前上下文 */
+  currentContext?: any;
 
-  constructor() {
+  constructor(currentContext?: any) {
+    this.currentContext = currentContext;
     this.tableContainer = null;
     this.currentValue = null;
     this.wrapContainer = null;
@@ -158,7 +161,7 @@ export class DynamicRenderEditor {
     if (!vnode || !isVNode(vnode)) {
       return false;
     }
-    this.checkToPassAppContext(vnode, table);
+    this.checkToPassAppContext(vnode);
     // 创建包裹容器
     const wrapContainer = document.createElement('div');
     wrapContainer.style.position = 'absolute';
@@ -180,18 +183,12 @@ export class DynamicRenderEditor {
   /**
    * @description: 校验并传递上下文
    * @param {VNode} vnode
-   * @param {any} table
    * @return {*}
    */
-  checkToPassAppContext(vnode: VNode, table: any) {
-    if (!table) {
-      return;
-    }
-    const userAppContext = table.options?.customConfig?.getVueUserAppContext?.();
-    if (userAppContext) {
-      // 上下文传递
+  checkToPassAppContext(vnode: VNode) {
+    if (this.currentContext) {
       try {
-        vnode.appContext = userAppContext;
+        vnode.appContext = this.currentContext;
       } catch (error) {}
     }
   }
