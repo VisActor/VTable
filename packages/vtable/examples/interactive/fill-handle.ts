@@ -82,7 +82,27 @@ export function createTable() {
         columns,
         widthMode: 'standard',
         excelOptions: {
-          fillHandle: true
+          fillHandle: args => {
+            const { selectRanges, table } = args;
+            if (selectRanges.length === 1) {
+              const { start, end } = selectRanges[0];
+              console.log('fillHandle', start, end);
+              const minCol = Math.min(start.col, end.col);
+              const maxCol = Math.max(start.col, end.col);
+              const minRow = Math.min(start.row, end.row);
+              const maxRow = Math.max(start.row, end.row);
+              //判断start到end 所有单元格有没有不能编辑的
+              for (let col = minCol; col <= maxCol; col++) {
+                for (let row = minRow; row <= maxRow; row++) {
+                  if (row === 2 && col === 2) {
+                    return false;
+                  }
+                }
+              }
+              return true;
+            }
+            return false;
+          }
         }
       };
       const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);

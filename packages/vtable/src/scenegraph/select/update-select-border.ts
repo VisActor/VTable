@@ -94,10 +94,6 @@ function updateComponent(
     computeRectCellRangeStartCol,
     computeRectCellRangeStartRow
   ).globalAABBBounds;
-  const lastCellBound = scene.highPerformanceGetCell(
-    computeRectCellRangeEndCol,
-    computeRectCellRangeEndRow
-  ).globalAABBBounds;
 
   selectComp.rect.setAttributes({
     x: firstCellBound.x1 - scene.tableGroup.attribute.x, //坐标xy在下面的逻辑中会做适当调整
@@ -107,12 +103,50 @@ function updateComponent(
     visible: true
   });
   if (selectComp.fillhandle) {
+    const fillHandle = scene.table.options.excelOptions?.fillHandle;
+    let visible = true;
+    if (typeof fillHandle === 'function') {
+      visible = fillHandle({ selectRanges: scene.table.stateManager.select.ranges, table: scene.table });
+    }
+    //#region 计算填充柄小方块的位置
+
+    let lastCellBound;
+    //当选择区域没有到到最后一列时
+    if (computeRectCellRangeEndCol < table.colCount - 1) {
+      lastCellBound = scene.highPerformanceGetCell(
+        computeRectCellRangeEndCol,
+        computeRectCellRangeEndRow
+      ).globalAABBBounds;
+    } else {
+      // 最后一列
+      lastCellBound = scene.highPerformanceGetCell(
+        computeRectCellRangeStartCol - 1,
+        computeRectCellRangeEndRow
+      ).globalAABBBounds;
+    }
+    const handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
+    //当选择区域没有到到最后一行时
+    if (computeRectCellRangeEndRow < table.rowCount - 1) {
+      lastCellBound = scene.highPerformanceGetCell(
+        computeRectCellRangeEndCol,
+        computeRectCellRangeEndRow
+      ).globalAABBBounds;
+    } else {
+      // 最后一行
+      lastCellBound = scene.highPerformanceGetCell(
+        computeRectCellRangeEndCol,
+        computeRectCellRangeStartRow - 1
+      ).globalAABBBounds;
+    }
+    const handlerY = lastCellBound.y2 - scene.tableGroup.attribute.y - 3;
+    //#endregion
+
     selectComp.fillhandle?.setAttributes({
-      x: lastCellBound.x2 - scene.tableGroup.attribute.x - 3, // 调整小方块位置
-      y: lastCellBound.y2 - scene.tableGroup.attribute.y - 3, // 调整小方块位置
+      x: handlerX, // 调整小方块位置
+      y: handlerY, // 调整小方块位置
       width: 6,
       height: 6,
-      visible: true
+      visible
     });
   }
 
