@@ -378,6 +378,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
         );
       }
+      internalProps.layoutMap.clearHeaderPathCache();
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
       //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
       //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
@@ -520,6 +521,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param pagination 修改页码
    */
   updatePagination(pagination?: IPagination): void {
+    this.internalProps.layoutMap.clearHeaderPathCache();
+
     if (pagination) {
       if (!this.pagination) {
         this.pagination = { currentPage: 0, perPageCount: 0 };
@@ -1463,6 +1466,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param recalculateColWidths  是否重新计算列宽 默认为true.（设置width:auto或者 autoWidth 情况下才有必要考虑该参数）
    */
   toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
+    this.internalProps.layoutMap.clearHeaderPathCache();
+
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
       this._refreshHierarchyState(col, row, recalculateColWidths);
@@ -2223,6 +2228,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.scenegraph.setLoadingHierarchyState(col, row);
   }
   release() {
+    this.internalProps.layoutMap.clearHeaderPathCache();
     this.editorManager.release();
     super.release();
   }

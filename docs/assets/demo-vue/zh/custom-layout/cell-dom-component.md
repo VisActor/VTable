@@ -13,21 +13,21 @@ link: custom_define/vue-dom-component
 
 详细说明：
 
-1. 开启方式
+**关键点 1： 开启方式**
 
 在 `vue-vtable` 中，渲染 DOM 组件需要两个关键步骤：
 
 - **`Group` 组件中传入 `vue` 属性**：这是为了让 `Group` 组件能够识别并处理 Vue 组件。
 - **开启 `customConfig.createReactContainer`**：这个配置项用于创建表格容器，确保 Vue 组件能够正确渲染到表格容器中。
 
-2. 插槽式渲染
+**关键点 2： 插槽式渲染**
 
 插槽式渲染是通过 `ListColumn` 组件的两个插槽 `headerCustomLayout` 和 `customLayout` 来实现的。自定义组件需要使用 `Group` 组件进行包裹。
 
 - **`headerCustomLayout`**：用于自定义表头单元格的渲染。
 - **`customLayout`**：用于自定义表格体单元格的渲染。
 
-3. 直接传入配置式渲染
+**关键点 3： 直接传入配置式渲染**
 
 直接传入配置式渲染与插槽式渲染类似，区别在于你不需要通过插槽来传递组件，而是直接在 `column.headerCustomLayout` 或 `column.customLayout` 配置中的 `element` 属性中传入虚拟节点。
 使用方法与 [自定义组件](../../guide/custom_define/custom_layout) 大致相同。

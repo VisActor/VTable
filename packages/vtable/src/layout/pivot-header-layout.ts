@@ -211,6 +211,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.rowHierarchyTextStartAlignment = (table as PivotTable).options.rowHierarchyTextStartAlignment;
     this.cornerSetting = Object.assign({ titleOnDimension: 'column', forceShowHeader: false }, table.options.corner);
 
+    if (this._table.options?.customConfig?.enablePivotPathCache) {
+      this._useHeaderPathCache = true;
+      this._colHeaderPathCache.clear();
+      this._rowHeaderPathCache.clear();
+    }
+
     if (dataset) {
       this.rowTree = dataset.rowHeaderTree;
       this.columnTree = dataset.colHeaderTree;
@@ -3086,6 +3092,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     let colHeaderPaths: IDimensionInfo[];
     let rowHeaderPaths: IDimensionInfo[];
     let isCornerCell = false;
+    // forceBody 的逻辑TODO去除，逻辑处理不当，去除时需要考虑历史包袱：https://github.com/VisActor/VTable/issues/544
     let forceBody = false;
     if (Array.isArray(dimensionPaths)) {
       if (dimensionPaths.length > this.rowDimensionKeys.length + this.colDimensionKeys.length) {
@@ -3172,10 +3179,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
       }
     }
-    let needLowestLevel = false; // needLowestLevel来标记是否需要 提供到最底层的维度层级信息
+    let needLowestLevel_colPaths = false; // needLowestLevel来标记是否需要 提供到最底层的维度层级信息
+    let needLowestLevel_rowPaths = false; // needLowestLevel来标记是否需要 提供到最底层的维度层级信息
     // 如果行列维度都有值 说明是匹配body单元格 那这个时候 维度层级应该是满的
     if (colHeaderPaths?.length >= 1 && rowHeaderPaths?.length >= 1) {
-      needLowestLevel = true;
+      needLowestLevel_colPaths = true;
+      needLowestLevel_rowPaths = true;
+    }
+    if (colHeaderPaths.length >= this.columnHeaderLevelCount) {
+      needLowestLevel_colPaths = true;
+    }
+    if (rowHeaderPaths.length >= this.rowHeaderLevelCount) {
+      needLowestLevel_rowPaths = true;
     }
     let col;
     let row;
@@ -3202,9 +3217,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 !isValid(colDimension.value)))
           ) {
             colArr = dimension.children as IHeaderTreeDefine[];
-            if (needLowestLevel && !colArr) {
+            if (needLowestLevel_colPaths && !colArr?.length) {
               colDimensionFinded = dimension;
-            } else if (!needLowestLevel) {
+            } else if (!needLowestLevel_colPaths) {
               colDimensionFinded = dimension;
             }
             break;
@@ -3261,9 +3276,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 (!isValid(rowDimension.value) || dimension.value === rowDimension.value))
             ) {
               rowArr = dimension.children as IHeaderTreeDefine[];
-              if (needLowestLevel && (!rowArr || rowArr.some(row => row.dimensionKey === 'axis'))) {
+              if (needLowestLevel_rowPaths && (!rowArr?.length || rowArr.some(row => row.dimensionKey === 'axis'))) {
                 rowDimensionFinded = dimension;
-              } else if (!needLowestLevel) {
+              } else if (!needLowestLevel_rowPaths) {
                 rowDimensionFinded = dimension;
               }
               break;
@@ -3273,7 +3288,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     }
     // 如果是body单元格 需要找到行列对应的维度值节点
-    if (!forceBody && needLowestLevel) {
+    if (!forceBody && needLowestLevel_colPaths && needLowestLevel_rowPaths) {
       if ((!rowDimensionFinded && !isValid(row)) || !colDimensionFinded) {
         return undefined;
       }
@@ -4211,14 +4226,22 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._getBodyCache.clear();
   }
   enableUseHeaderPathCache() {
-    this._useHeaderPathCache = true;
-    this._colHeaderPathCache.clear();
-    this._rowHeaderPathCache.clear();
+    if (this._table.options?.customConfig?.enablePivotPathCache) {
+      this._useHeaderPathCache = true;
+    } else {
+      this._useHeaderPathCache = true;
+      this._colHeaderPathCache.clear();
+      this._rowHeaderPathCache.clear();
+    }
   }
   disableUseHeaderPathCache() {
-    this._useHeaderPathCache = false;
-    this._colHeaderPathCache.clear();
-    this._rowHeaderPathCache.clear();
+    if (this._table.options?.customConfig?.enablePivotPathCache) {
+      this._useHeaderPathCache = true;
+    } else {
+      this._useHeaderPathCache = false;
+      this._colHeaderPathCache.clear();
+      this._rowHeaderPathCache.clear();
+    }
   }
   getBodyWidthCache(col: number, row: number) {
     if (!this._useGetBodyCache || this.isHeader(col, row) || this.isSeriesNumber(col, row)) {
@@ -4276,6 +4299,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this._useHeaderPathCache && !this.isHeader(col, row) && !this.isSeriesNumber(col, row)) {
       this._rowHeaderPathCache.set(row, cache);
     }
+  }
+
+  clearHeaderPathCache() {
+    this._colHeaderPathCache.clear();
+    this._rowHeaderPathCache.clear();
   }
 }
 /** 计算 scale 的实际 range 长度 */

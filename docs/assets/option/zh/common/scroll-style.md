@@ -18,7 +18,7 @@
 滚动条宽度大小
 
 ##${prefix} visible(string)
-滚动条是否可见，可配值：`'always' | 'scrolling' | 'none' | 'focus'`,分别对应：常驻显示|滚动时显示|不显示|聚焦在画布上时显示
+滚动条是否可见，可配值：`'always' | 'scrolling' | 'none' | 'focus'`,分别对应：常驻显示|滚动时显示|不显示|聚焦在画布上时显示。默认'scrolling'
 
 ##${prefix} hoverOn(boolean)
 指定滚动条是悬浮在容器上，还是独立于容器。默认为 true 即悬浮于容器上。

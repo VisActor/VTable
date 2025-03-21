@@ -481,6 +481,8 @@ export interface BaseTableConstructorOptions {
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
+  // maximum number of columns maintained in table instance
+  maintainedColumnCount?: number;
 
   legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
@@ -555,8 +557,12 @@ export interface BaseTableConstructorOptions {
     // 图片资源请求时是否使用anonymous模式
     imageAnonymous?: boolean;
 
+
     // 滚动到边界是否继续触发滚动事件
     scrollEventAlwaysTrigger?: boolean;
+    
+    // 开启透视结构缓存
+    enablePivotPathCache?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
