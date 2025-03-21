@@ -2,7 +2,25 @@ import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const PivotTable = VTable.PivotTable;
 const CONTAINER_ID = 'vTable';
-
+// 注册loading图标
+VTable.register.icon('loading', {
+  type: 'image',
+  width: 16,
+  height: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+  name: 'loading', //定义图标的名称，在内部会作为缓存的key值
+  positionType: VTable.TYPES.IconPosition.absoluteRight, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
+  marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
+  marginRight: 4, // 右侧内容间隔 在特定位置position中起作用
+  visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
+  hover: {
+    // 热区大小
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101,117,168,0.1)'
+  },
+  isGif: true
+});
 export function createTable() {
   const data = [
     {
@@ -1990,6 +2008,7 @@ export function createTable() {
   window.tableInstance = tableInstance;
   const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
   tableInstance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
+    tableInstance.setLoadingHierarchyState(args.col, args.row);
     // TODO 调用接口插入设置子节点的数据
     if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && args.originData.children === true) {
       console.log(args.originData);
