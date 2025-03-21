@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-03-21 14:22:18
+ * @LastEditTime: 2025-02-28 09:21:32
  * @Description:
  */
 import type {
@@ -26,7 +26,6 @@ import {
   styleStringToObject,
   uniqArray
 } from '@visactor/vutils';
-import type { VNode } from 'vue';
 import { render } from 'vue';
 
 /**
@@ -58,13 +57,6 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
   private renderQueue = new Set<IGraphic>();
   /** 是否正在渲染 */
   private isRendering = false;
-  /** 当前上下文 */
-  currentContext?: any;
-
-  constructor(currentContext?: any) {
-    super();
-    this.currentContext = currentContext;
-  }
 
   /**
    * @description: 单元格变化后重新渲染组件，由 HtmlAttributePlugin 插件触发
@@ -110,9 +102,6 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
    */
   doRenderGraphic(graphic: IGraphic) {
     const { id, options } = this.getGraphicOptions(graphic);
-    if (!id) {
-      return;
-    }
     const stage = graphic.stage;
     const { element, container: expectedContainer } = options;
     // 获取实际容器
@@ -124,23 +113,11 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       this.removeElement(id);
       targetMap = null;
     }
-    // 校验并传递上下文
-    this.checkToPassAppContext(element);
+
     // 渲染或更新 Vue 组件
     if (!targetMap || !this.checkDom(targetMap.wrapContainer)) {
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, actualContainer, { id, options });
       if (wrapContainer) {
-        // 检查历史渲染节点
-        const historyWrapContainer = document.getElementById(id);
-        const dataRenderId = `${this.renderId}`;
-        if (historyWrapContainer && historyWrapContainer.getAttribute('data-vue-renderId') !== dataRenderId) {
-          // 历史渲染节点清除
-          render(null, historyWrapContainer);
-          historyWrapContainer.remove();
-          this.removeWrapContainerEventListener(historyWrapContainer);
-        }
-        wrapContainer.id = id;
-        wrapContainer.setAttribute('data-vue-renderId', dataRenderId);
         render(element, wrapContainer);
         targetMap = {
           wrapContainer,
@@ -173,24 +150,12 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
   private getGraphicOptions(graphic: IGraphic) {
     // TODO render 组件接入 vue 类型
     //@ts-ignore
-    const { vue } = graphic?.attribute || {};
+    const { vue } = graphic.attribute;
     if (!vue) {
       return null;
     }
-    const id = isNil(vue.id) ? graphic.id ?? graphic._uid : vue.id;
-    return { id: `vue_${id}`, options: vue };
-  }
-  /**
-   * @description: 校验并传递上下文
-   * @param {VNode} vnode
-   * @return {*}
-   */
-  checkToPassAppContext(vnode: VNode) {
-    if (this.currentContext) {
-      try {
-        vnode.appContext = this.currentContext;
-      } catch (error) {}
-    }
+    const id = isNil(vue.id) ? `${graphic.id ?? graphic._uid}_vue` : vue.id;
+    return { id, options: vue };
   }
   /**
    * @description: 检查是否需要渲染
@@ -375,7 +340,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     }
 
     // 默认自定义区域内也可带动表格画布滚动
-    const { pointerEvents, penetrateEventList = ['wheel'] } = options;
+    const { pointerEvents = true, penetrateEventList = ['wheel'] } = options;
     const calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
     // 单元格样式
     const style = this.convertCellStyle(graphic);

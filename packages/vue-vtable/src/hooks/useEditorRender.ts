@@ -1,5 +1,5 @@
 import type { Ref } from 'vue';
-import { computed, onBeforeUnmount, watchEffect, getCurrentInstance } from 'vue';
+import { computed, onBeforeUnmount, watchEffect } from 'vue';
 import { isArray, isObject, isValid } from '@visactor/vutils';
 import { checkRenderEditor, getRenderEditor, getRenderEditorColumnKeyField } from '../edit';
 
@@ -9,8 +9,6 @@ import { checkRenderEditor, getRenderEditor, getRenderEditorColumnKeyField } fro
  * @param tableRef
  */
 export function useEditorRender(props: any, tableRef: Ref) {
-  /** 当前实例 */
-  const instance = getCurrentInstance();
   /** 需要渲染编辑器的列 */
   const validColumns = computed(() => {
     const columns = props.options?.columns;
@@ -40,7 +38,7 @@ export function useEditorRender(props: any, tableRef: Ref) {
       renderEditor.removeNode(id);
     } else if (validColumns.value.length > 0) {
       // 注册编辑器
-      renderEditor = getRenderEditor(true, instance?.appContext);
+      renderEditor = getRenderEditor(true);
     }
     validColumns.value.forEach(column => {
       const { getEditCustomNode } = column;
