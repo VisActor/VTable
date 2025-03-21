@@ -1340,7 +1340,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /**
    * 修改数据 支持多条数据
    * @param records 修改数据条目
-   * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
+   * @param recordIndexs 对应修改数据的索引
+   * 基本表格中显示在body中的索引，即要修改的是body部分的第几行数据；
+   * 如果是树形结构的话 recordIndexs 为数组，数组中每个元素为data的原始数据索引；
    */
   updateRecords(records: any[], recordIndexs: (number | number[])[]) {
     listTableUpdateRecords(records, recordIndexs, this);
