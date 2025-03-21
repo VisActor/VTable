@@ -185,7 +185,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     if (!table) {
       return;
     }
-    const userAppContext = table.options?.customConfig?.getUserAppContext?.();
+    const userAppContext = table.options?.customConfig?.getVueUserAppContext?.();
     if (userAppContext) {
       // 上下文传递
       try {
