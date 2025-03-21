@@ -46,7 +46,7 @@ export function createCustomLayout(children: any, isHeader?: boolean, args?: any
     if (isObject(props?.vue)) {
       // vue 自定义节点：无需继续循环子节点
       const { element } = props.vue as any;
-      const targetVNode = element ?? subChildren[0];
+      const targetVNode = element ?? subChildren.find(node => node?.type !== Symbol.for('v-cmt'));
       Object.assign(child.props.vue, {
         element: isVNode(targetVNode) ? targetVNode : null,
         // 不接入外部指定
