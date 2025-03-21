@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-03-21 19:05:30
+ * @LastEditTime: 2025-03-21 19:38:26
  * @Description:
  */
 import type {
@@ -126,7 +126,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       targetMap = null;
     }
     // 校验并传递上下文
-    this.checkToPassAppContext(element);
+    this.checkToPassAppContext(element, graphic);
     // 渲染或更新 Vue 组件
     if (!targetMap || !this.checkDom(targetMap.wrapContainer)) {
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, actualContainer, { id, options });
@@ -176,14 +176,19 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
   /**
    * @description: 校验并传递上下文
    * @param {VNode} vnode
+   * @param {IGraphic} graphic
    * @return {*}
    */
-  checkToPassAppContext(vnode: VNode) {
-    if (this.currentContext) {
-      try {
-        vnode.appContext = this.currentContext;
-      } catch (error) {}
-    }
+  checkToPassAppContext(vnode: VNode, graphic: IGraphic) {
+    try {
+      const { stage } = getTargetGroup(graphic);
+      const { table } = stage || {};
+      const userAppContext = table?.options?.customConfig?.getVueUserAppContext?.() ?? this.currentContext;
+      // 简单校验合法性
+      if (!!userAppContext?.components && !!userAppContext?.directives) {
+        vnode.appContext = userAppContext;
+      }
+    } catch (error) {}
   }
   /**
    * @description: 检查是否需要渲染
