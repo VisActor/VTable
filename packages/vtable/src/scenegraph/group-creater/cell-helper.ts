@@ -506,7 +506,7 @@ export function updateCell(
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
 
   if (oldCellGroup.role !== 'cell' && !addNew) {
-    return;
+    return undefined;
   }
 
   const cellLocation = table.getCellLocation(col, row);
