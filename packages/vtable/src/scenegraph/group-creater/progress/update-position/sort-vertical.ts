@@ -18,7 +18,7 @@ export async function sortVertical(proxy: SceneProxy) {
   // 更新同步范围
   let syncTopRow;
   let syncBottomRow;
-  if (proxy.table.isAutoRowHeight()) {
+  if (proxy.table.isAutoRowHeight(proxy.rowStart)) {
     syncTopRow = proxy.rowStart;
     syncBottomRow = proxy.rowEnd;
   } else {
@@ -41,7 +41,7 @@ export async function sortVertical(proxy: SceneProxy) {
     proxy.table.scenegraph.updateContainerHeight(proxy.table.frozenRowCount, newBodyHeight - oldBodyHeight);
   }
 
-  for (let col = 0; col < proxy.table.frozenColCount ?? 0; col++) {
+  for (let col = 0; col < (proxy.table.frozenColCount ?? 0); col++) {
     // 将该列的chartInstance清除掉
     const columnGroup = proxy.table.scenegraph.getColGroup(col);
     columnGroup?.setAttribute('chartInstance', undefined);
@@ -74,7 +74,7 @@ export async function sortVertical(proxy: SceneProxy) {
 
   updateRowContent(syncTopRow, syncBottomRow, proxy);
 
-  if (proxy.table.isAutoRowHeight()) {
+  if (proxy.table.isAutoRowHeight(syncTopRow)) {
     updateAutoRow(
       proxy.bodyLeftCol, // colStart
       proxy.bodyRightCol, // colEnd
@@ -101,7 +101,7 @@ export async function sortVertical(proxy: SceneProxy) {
   // }
 
   proxy.table.scenegraph.updateNextFrame();
-  if (!proxy.table.isAutoRowHeight()) {
+  if (!proxy.table.isAutoRowHeight(proxy.rowStart)) {
     await proxy.progress();
   }
 }

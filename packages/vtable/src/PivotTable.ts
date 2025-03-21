@@ -1879,7 +1879,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         if (this.internalProps._heightResizedRowMap.size === 0) {
           this.scenegraph.recalculateRowHeights();
         }
-      } else if (this.isAutoRowHeight() && !this.internalProps._heightResizedRowMap.has(row)) {
+      } else if (this.isAutoRowHeight(row) && !this.internalProps._heightResizedRowMap.has(row)) {
         const oldHeight = this.getRowHeight(row);
         const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
         this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
@@ -1997,7 +1997,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
       this.scenegraph.recalculateRowHeights();
-    } else if (this.isAutoRowHeight()) {
+    } else if (this.isAutoRowHeight(startRow)) {
       const rows: number[] = [];
       const deltaYs: number[] = [];
       for (let sRow = startRow; sRow <= range.end.row; sRow++) {
