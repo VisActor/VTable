@@ -1111,10 +1111,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       widthP = (canvas.parentElement?.offsetWidth ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
       heightP = (canvas.parentElement?.offsetHeight ?? 1) - (this.options.tableSizeAntiJitter ? 1 : 0);
 
-      //style 与 width，height相同
-      if (this?.scenegraph?.stage) {
-        this.scenegraph.stage.resize(widthP, heightP);
-      } else {
+      if (!this?.scenegraph?.stage) {
         canvas.style.width = '';
         canvas.style.height = '';
         canvas.width = widthP;
@@ -1122,6 +1119,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
         canvas.style.width = `${widthP}px`;
         canvas.style.height = `${heightP}px`;
+      } else if (this.options?.viewBox && !this.options?.canvas) {
+        this.scenegraph.stage.resize(widthP, heightP);
+      }
+
+      if (this.options?.viewBox) {
+        widthP = this.options.viewBox.x2 - this.options.viewBox.x1;
+        heightP = this.options.viewBox.y2 - this.options.viewBox.y1;
+      }
+
+      //style 与 width，height相同
+      if (this?.scenegraph?.stage) {
+        // this.scenegraph.stage.resize(widthP, heightP);
+        if (this.options.viewBox) {
+          (this.scenegraph.stage as any).setViewBox(this.options.viewBox, false);
+        } else {
+          this.scenegraph.stage.resize(widthP, heightP);
+        }
       }
     } else if (Env.mode === 'node') {
       widthP = this.canvasWidth - 1;
@@ -1152,8 +1166,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   updateViewBox(newViewBox: IBoundsLike) {
-    const oldWidth = this.options?.viewBox.x2 ?? 0 - this.options?.viewBox.x1 ?? 0;
-    const oldHeight = this.options?.viewBox.y2 ?? 0 - this.options?.viewBox.y1 ?? 0;
+    const oldWidth = (this.options?.viewBox?.x2 ?? 0) - (this.options?.viewBox?.x1 ?? 0);
+    const oldHeight = (this.options?.viewBox?.y2 ?? 0) - (this.options?.viewBox?.y1 ?? 0);
     const newWidth = newViewBox.x2 - newViewBox.x1;
     const newHeight = newViewBox.y2 - newViewBox.y1;
     this.options.viewBox = newViewBox;
