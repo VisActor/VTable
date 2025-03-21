@@ -2,14 +2,19 @@ import { isArray, isNumber } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { setCellCheckboxStateByAttribute } from '../../../state/checkbox/checkbox';
 import { HierarchyState } from '../../../ts-types';
+import type { CachedDataSource } from '../../../data';
 
 export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
   table.on('checkbox_state_change', args => {
-    if (table.internalProps.rowSeriesNumber?.enableTreeCheckbox !== true) {
+    const { col, row, checked, field } = args;
+
+    if (field !== '_vtable_rowSeries_number' || table.internalProps.rowSeriesNumber?.enableTreeCheckbox !== true) {
       return;
     }
 
-    const { col, row, checked } = args;
+    if (table.isHeader(col, row)) {
+      return;
+    }
     const record = table.getCellOriginRecord(col, row);
     const indexedData = (table.dataSource as any).currentPagerIndexedData as (number | number[])[];
     const titleShowIndex = table.getRecordShowIndexByCell(col, row);
@@ -18,12 +23,12 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
       titleIndex = [titleIndex];
     }
 
-    if (record.vtableMerge) {
+    if (record.vtableMerge || record.children?.length) {
       // 1. group title
       if (checked) {
         // 1.1 group title check
         // 1.1.1 check all children
-        if (table.getHierarchyState(col, row) === HierarchyState.collapse) {
+        if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
           updateChildrenCheckboxState(true, titleIndex, table);
         } else {
           setAllChildrenCheckboxState(true, titleShowIndex, titleIndex, indexedData, table);
@@ -33,7 +38,7 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
       } else {
         // 1.2 group title uncheck
         // 1.2.1 uncheck all children
-        if (table.getHierarchyState(col, row) === HierarchyState.collapse) {
+        if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
           updateChildrenCheckboxState(false, titleIndex, table);
         } else {
           setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table);
@@ -105,7 +110,28 @@ function updateParentCheckboxState(col: number, row: number, currentIndex: numbe
   const currentIndexLength = isArray(currentIndex) ? currentIndex.length : 1;
   let start = false;
   const result: (boolean | string)[] = [];
-  checkedState.forEach((value, index: string) => {
+
+  const keys = Array.from(checkedState.keys()).sort((a: string, b: string) => {
+    // number or number[]
+    const aArr = (a as string).split(',');
+    const bArr = (b as string).split(',');
+    const maxLength = Math.max(aArr.length, bArr.length);
+
+    // judge from first to last
+    for (let i = 0; i < maxLength; i++) {
+      const a = Number(aArr[i]) ?? 0;
+      const b = Number(bArr[i]) ?? 0;
+      if (a !== b) {
+        return a - b;
+      }
+    }
+    return 0;
+  });
+  const stateArr = keys.map(key => checkedState.get(key));
+
+  stateArr.forEach((state, i) => {
+    const index = keys[i] as string;
+    const value = state;
     if (start) {
       const indexData = index.split(',');
       if (indexData.length === currentIndexLength) {
@@ -139,23 +165,75 @@ function updateParentCheckboxState(col: number, row: number, currentIndex: numbe
 }
 
 // update invisible children checkbox state(collapsed)
-function updateChildrenCheckboxState(state: boolean, currentIndex: number | number[], table: BaseTableAPI) {
+function updateChildrenCheckboxState(parentState: boolean, currentIndex: number | number[], table: BaseTableAPI) {
   const { checkedState } = table.stateManager;
   const key = currentIndex.toString();
   const currentIndexLength = isArray(currentIndex) ? currentIndex.length : 1;
   let start = false;
 
-  checkedState.forEach((value, index: string) => {
+  const keys = Array.from(checkedState.keys()).sort((a: string, b: string) => {
+    // number or number[]
+    const aArr = (a as string).split(',');
+    const bArr = (b as string).split(',');
+    const maxLength = Math.max(aArr.length, bArr.length);
+
+    // judge from first to last
+    for (let i = 0; i < maxLength; i++) {
+      const a = Number(aArr[i]) ?? 0;
+      const b = Number(bArr[i]) ?? 0;
+      if (a !== b) {
+        return a - b;
+      }
+    }
+    return 0;
+  });
+  const stateArr = keys.map(key => checkedState.get(key));
+
+  stateArr.forEach((state, i) => {
+    const index = keys[i] as string;
+    const value = state;
+
     if (start) {
       const indexData = index.split(',');
       if (indexData.length === currentIndexLength) {
         start = false;
       } else {
-        value._vtable_rowSeries_number = state;
+        value._vtable_rowSeries_number = parentState;
       }
     }
     if (index === key) {
       start = true;
     }
   });
+}
+
+export function bindHeaderCheckboxChange(table: BaseTableAPI) {
+  table.on('checkbox_state_change', args => {
+    const { col, row, checked, field } = args;
+    if (table.isHeader(col, row)) {
+      //点击的表头部分的checkbox 需要同时处理表头和body单元格的状态
+      table.stateManager.setHeaderCheckedState(field as string | number, checked);
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
+        table.scenegraph.updateCheckboxCellState(col, row, checked);
+      }
+    } else {
+      //点击的是body单元格的checkbox  处理本单元格的状态维护 同时需要检查表头是否改变状态
+      table.stateManager.setCheckedState(col, row, field as string | number, checked);
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
+        const oldHeaderCheckedState = table.stateManager.headerCheckedState[field as string | number];
+        const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(field as string | number, col, row);
+        if (oldHeaderCheckedState !== newHeaderCheckedState) {
+          table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
+        }
+      }
+    }
+  });
+}
+
+// get hierarchy state by row
+function getHierarchyState(table: BaseTableAPI, col: number, row: number) {
+  const index = table.getRecordShowIndexByCell(col, row);
+  return (table.dataSource as CachedDataSource).getHierarchyState(index);
 }
