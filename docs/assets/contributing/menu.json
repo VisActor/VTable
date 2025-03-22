@@ -35,6 +35,13 @@
         "zh": "5.如何贡献代码",
         "en": "5-How to Contribute Code"
       }
+    },
+    {
+      "path": "11-VTable Data Editing Function Source Code Documentation",
+      "title": {
+        "zh": "11.VTable数据编辑功能源码文档",
+        "en": "11-VTable Data Editing Function Source Code Documentation"
+      }
     }
   ]
 }
