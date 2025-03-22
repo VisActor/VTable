@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@visactor/vtable": "^1.17.2"
+  }
+}
