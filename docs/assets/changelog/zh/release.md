@@ -2,24 +2,23 @@
 
 2025-03-24
 
-
 **🆕 新增功能**
 
-- **@visactor/vtable**: rowSeriesNumber support cell type radio [#3558](https://github.com/VisActor/VTable/issues/3558)
-- **@visactor/vtable**: add custom reactAttributePlugin in react-vtable
-- **@visactor/vtable**: add maintainedColumnCount config
+- **@visactor/vtable**: 行序号支持单选按钮类型 [#3558](https://github.com/VisActor/VTable/issues/3558)
+- **@visactor/vtable**: 在 react-vtable 中添加自定义 reactAttributePlugin
+- **@visactor/vtable**: 添加 maintainedColumnCount 配置
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: selection mergeCell extend range [#3529](https://github.com/VisActor/VTable/issues/3529)
-- **@visactor/vtable**: set cellInnerBorder false frame border render error [#3574](https://github.com/VisActor/VTable/issues/3574)
-- **@visactor/vtable**: fix cell border in cell with corner-radius
-- **@visactor/vtable**: fix axis label autosize computation
-- **@visactor/vtable**: fix small window size frozen column count
-- **@visactor/vtable**: columnWidthConfig match dimension error
-- **@visactor/vtable**: fix react component update [#3474](https://github.com/VisActor/VTable/issues/3474)
-- **@visactor/vtable**: fix right button select problem
-- **@visactor/vtable**: fix row update range [#3468](https://github.com/VisActor/VTable/issues/3468)
+- **@visactor/vtable**: 修复选择合并单元格扩展范围问题 [#3529](https://github.com/VisActor/VTable/issues/3529)
+- **@visactor/vtable**: 修复设置 cellInnerBorder 为 false 时边框渲染错误 [#3574](https://github.com/VisActor/VTable/issues/3574)
+- **@visactor/vtable**: 修复带圆角单元格的边框问题
+- **@visactor/vtable**: 修复坐标轴标签自动大小计算
+- **@visactor/vtable**: 修复小窗口大小下冻结列数问题
+- **@visactor/vtable**: 修复 columnWidthConfig 维度匹配错误
+- **@visactor/vtable**: 修复 React 组件更新问题 [#3474](https://github.com/VisActor/VTable/issues/3474)
+- **@visactor/vtable**: 修复右键选择问题
+- **@visactor/vtable**: 修复行更新范围问题 [#3468](https://github.com/VisActor/VTable/issues/3468)
 
 [更多详情请查看 v1.17.3](https://github.com/VisActor/VTable/releases/tag/v1.17.3)
 
