@@ -609,10 +609,10 @@ export class StateManager {
     }
     // trim select position
     if (col < 0) {
-      col = 0;
+      col = -1;
     }
     if (row < 0) {
-      row = 0;
+      row = -1;
     }
     if (col > this.table.colCount - 1) {
       col = this.table.colCount - 1;
