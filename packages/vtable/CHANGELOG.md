@@ -1,6 +1,32 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 11 Mar 2025 08:19:47 GMT and should not be manually modified.
+This log was last generated on Mon, 24 Mar 2025 09:35:45 GMT and should not be manually modified.
+
+## 1.17.3
+Mon, 24 Mar 2025 09:35:45 GMT
+
+### Updates
+
+- fix: selection mergeCell extend range #3529
+
+
+- feat: rowSeriesNumber support cell type radio #3558
+
+
+- fix: set cellInnerBorder false frame border render error #3574
+
+
+- feat: add custom reactAttributePlugin in react-vtable
+- feat: add maintainedColumnCount config
+- fix: fix cell border in cell with corner-radius
+- fix: fix axis label autosize computation
+- fix: fix small window size frozen column count
+- fix: columnWidthConfig match dimension error
+
+
+- fix: fix react component update #3474
+- fix: fix right button select problem
+- fix: fix row update range #3468
 
 ## 1.17.2
 Tue, 11 Mar 2025 08:19:47 GMT
