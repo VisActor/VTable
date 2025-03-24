@@ -161,7 +161,7 @@ export class DynamicRenderEditor {
     if (!vnode || !isVNode(vnode)) {
       return false;
     }
-    this.checkToPassAppContext(vnode);
+    this.checkToPassAppContext(vnode, table);
     // 创建包裹容器
     const wrapContainer = document.createElement('div');
     wrapContainer.style.position = 'absolute';
@@ -183,12 +183,17 @@ export class DynamicRenderEditor {
   /**
    * @description: 校验并传递上下文
    * @param {VNode} vnode
+   * @param {any} table
    * @return {*}
    */
-  checkToPassAppContext(vnode: VNode) {
-    if (this.currentContext) {
-      vnode.appContext = this.currentContext;
-    }
+  checkToPassAppContext(vnode: VNode, table: any) {
+    try {
+      const userAppContext = table.options?.customConfig?.getVueUserAppContext?.() ?? this.currentContext;
+      // 简单校验合法性
+      if (!!userAppContext?.components && !!userAppContext?.directives) {
+        vnode.appContext = userAppContext;
+      }
+    } catch (error) {}
   }
   /**
    * @description: 获取渲染式编辑器的列配置主键

@@ -1,6 +1,7 @@
 import type { Ref } from 'vue';
 import { getCurrentInstance, watchEffect } from 'vue';
 import { VTableVueAttributePlugin } from '../components/custom/vtable-vue-attribute-plugin';
+import { isArray } from '@visactor/vutils';
 
 /**
  * 自定义单元格渲染器
@@ -10,15 +11,23 @@ import { VTableVueAttributePlugin } from '../components/custom/vtable-vue-attrib
 export function useCellRender(props: any, tableRef: Ref) {
   /** 当前实例 */
   const instance = getCurrentInstance();
+  /** 自定义 dom 开关 */
+  const createReactContainer = props?.options?.customConfig?.createReactContainer;
+
   watchEffect(() => {
-    if (!props?.options?.customConfig?.createReactContainer) {
-      // 未开启自定义容器
+    if (!createReactContainer) {
       return;
     }
-    if (!tableRef.value) {
+    const pluginService = tableRef.value?.scenegraph?.stage?.pluginService;
+    if (!pluginService) {
       return;
     }
-    // 注册 vtable-vue 自定义组件集成插件
-    tableRef.value.scenegraph.stage.pluginService.register(new VTableVueAttributePlugin(instance?.appContext));
+
+    const exist = pluginService.findPluginsByName('VTableVueAttributePlugin');
+    if (isArray(exist) && !!exist.length) {
+      return;
+    }
+    const plugin = new VTableVueAttributePlugin(instance?.appContext);
+    pluginService.register(plugin);
   });
 }
