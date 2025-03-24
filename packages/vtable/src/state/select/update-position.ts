@@ -259,11 +259,39 @@ export function updateSelectPosition(
             skipBodyMerge: true
           });
         } else {
-          state.select.ranges.push({
-            start: { col: table.leftRowSeriesNumberCount, row: 0 },
-            end: { col: table.colCount - 1, row: table.rowCount - 1 },
-            skipBodyMerge: true
-          });
+          const { cornerHeaderSelectMode } = state.select;
+          if (cornerHeaderSelectMode === 'body') {
+            state.select.ranges.push({
+              start: {
+                col: table.leftRowSeriesNumberCount,
+                row: 0
+              },
+              end: { col: table.colCount - 1, row: table.rowCount - 1 },
+              skipBodyMerge: true
+            });
+          } else if (cornerHeaderSelectMode === 'cell') {
+            // 选中普通单元格
+            const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
+            state.select.ranges.push({
+              start: { col: cellRange.start.col, row: cellRange.start.row },
+              end: { col: cellRange.end.col, row: cellRange.end.row },
+              skipBodyMerge: skipBodyMerge || undefined
+            });
+          } else {
+            // inline
+            const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
+            state.select.ranges.push({
+              start: { col: cellRange.start.col, row: cellRange.start.row },
+              end: { col: cellRange.end.col, row: table.rowCount - 1 },
+              skipBodyMerge: true
+            });
+          }
+          // 选中全部
+          // state.select.ranges.push({
+          //   start: { col: table.leftRowSeriesNumberCount, row: 0 },
+          //   end: { col: table.colCount - 1, row: table.rowCount - 1 },
+          //   skipBodyMerge: true
+          // });
         }
       } else if (col >= 0 && row >= 0) {
         // 选中普通单元格
