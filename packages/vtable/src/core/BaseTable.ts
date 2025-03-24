@@ -3127,7 +3127,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         customMerge.range &&
         (isValid(customMerge.text) || customMerge.customLayout || customMerge.customRender)
       ) {
-        return customMerge.range;
+        // return customMerge.range;
+        // trim range
+        const range = {
+          start: {
+            col: Math.max(customMerge.range.start.col, 0),
+            row: Math.max(customMerge.range.start.row, 0)
+          },
+          end: {
+            col: Math.min(customMerge.range.end.col, this.colCount - 1),
+            row: Math.min(customMerge.range.end.row, this.rowCount - 1)
+          }
+        };
+        return range;
       }
     }
     return this.internalProps.layoutMap?.getCellRange(col, row);

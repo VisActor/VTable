@@ -607,6 +607,19 @@ export class StateManager {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
+    // trim select position
+    if (col < 0) {
+      col = 0;
+    }
+    if (row < 0) {
+      row = 0;
+    }
+    if (col > this.table.colCount - 1) {
+      col = this.table.colCount - 1;
+    }
+    if (row > this.table.rowCount - 1) {
+      row = this.table.rowCount - 1;
+    }
     updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
   }
 
