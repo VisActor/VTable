@@ -1,5 +1,5 @@
-import type { GraphicType, IGroupGraphicAttribute, Stage } from '@src/vrender';
-import { genNumberType, Group } from '@src/vrender';
+import type { GraphicType, IGroupGraphicAttribute, Stage, Group } from '@src/vrender';
+import { genNumberType, Rect } from '@src/vrender';
 import { Bounds, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
@@ -29,7 +29,7 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
 
 export const CHART_NUMBER_TYPE = genNumberType();
 
-export class Chart extends Group {
+export class Chart extends Rect {
   type: GraphicType = 'chart' as any;
   declare attribute: IChartGraphicAttribute;
   chartInstance: any;
