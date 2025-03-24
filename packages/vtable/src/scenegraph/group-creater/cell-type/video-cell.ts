@@ -226,13 +226,19 @@ export function createVideoCellGroup(
     const anchorY =
       top + (height > image.attribute.height ? image.attribute.y - top + image.attribute.height / 2 : height / 2);
 
+    // get dx dy of image graphic for merge cell
+    const imageGraphic = cellGroup.getChildByName('image', true);
+    const { dx, dy } = imageGraphic.attribute;
+
     const playIcon: Icon = new Icon({
       x: anchorX - iconSize / 2,
       y: anchorY - iconSize / 2,
       width: iconSize,
       height: iconSize,
       image: (regedIcons.play as any).svg,
-      cursor: (regedIcons.play as any).cursor
+      cursor: (regedIcons.play as any).cursor,
+      dx,
+      dy
     });
     playIcon.name = 'play-icon';
     cellGroup.appendChild(playIcon);
