@@ -9,6 +9,10 @@ export class VChartPicker implements IGraphicPicker {
   numberType: number = CHART_NUMBER_TYPE;
 
   contains(chart: any, point: any, params?: IPickParams): boolean | any {
+    const vChart = (chart as VChartGraphic).activeChartInstance;
+    if (!vChart) {
+      return false;
+    }
     // 将当前的point转化到global
     const matrix = chart.parent.globalTransMatrix.clone();
     const stageMatrix = chart.stage.window.getViewBoxTransform();
@@ -18,7 +22,6 @@ export class VChartPicker implements IGraphicPicker {
     toGlobalMatrix.transformPoint(point, nextP);
 
     // 得到 vchart stage
-    const vChart = (chart as VChartGraphic).activeChartInstance;
     const vchartStage = vChart.getStage();
     vchartStage.dirtyBounds?.clear();
     const toChartMatrix = vchartStage.window.getViewBoxTransform();
