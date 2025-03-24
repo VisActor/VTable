@@ -457,8 +457,12 @@ function _generateCustomElementsGroup(
   let customElementsGroup;
   let renderDefault = true;
   if (customResult) {
+    // custom merge custom render
     customElementsGroup = customResult.elementsGroup;
     renderDefault = customResult.renderDefault;
+  } else if (range?.isCustom) {
+    // custom merge && no custom render
+    // do not use column custom render
   } else {
     let customRender;
     let customLayout;

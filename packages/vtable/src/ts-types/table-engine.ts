@@ -49,6 +49,7 @@ export interface CellAddressWithBound {
 export interface CellRange {
   start: CellAddress;
   end: CellAddress;
+  isCustom?: boolean;
 }
 
 export type FieldGetter = (record: any, col?: number, row?: number, table?: BaseTableAPI) => any;
