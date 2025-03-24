@@ -30,7 +30,8 @@ export function createGroupForFirstScreen(
   let distRowForCompute;
   if (
     table.widthMode === 'adaptive' ||
-    (table.options.autoWrapText && (table.heightMode === 'adaptive' || table.isAutoRowHeight()))
+    (table.options.autoWrapText &&
+      (table.heightMode === 'adaptive' || table.isAutoRowHeight(table.columnHeaderLevelCount)))
   ) {
     // distCol = table.colCount - 1;
     // proxy.colEnd = distCol;

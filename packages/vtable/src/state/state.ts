@@ -607,6 +607,19 @@ export class StateManager {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
+    // trim select position
+    if (col < 0) {
+      col = -1;
+    }
+    if (row < 0) {
+      row = -1;
+    }
+    if (col > this.table.colCount - 1) {
+      col = this.table.colCount - 1;
+    }
+    if (row > this.table.rowCount - 1) {
+      row = this.table.rowCount - 1;
+    }
     updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
   }
 
@@ -959,10 +972,35 @@ export class StateManager {
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
     const oldVerticalBarPos = this.scroll.verticalBarPos;
-    this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
-    if (!isValid(this.scroll.verticalBarPos) || isNaN(this.scroll.verticalBarPos)) {
-      this.scroll.verticalBarPos = 0;
+
+    let verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
+    if (!isValid(verticalBarPos) || isNaN(verticalBarPos)) {
+      verticalBarPos = 0;
     }
+    // verticalBarPos -= this.table.scenegraph.proxy.deltaY;
+    const dy = verticalBarPos - this.table.scenegraph.proxy.deltaY - oldVerticalBarPos;
+
+    const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.CAN_SCROLL, {
+      event: undefined,
+      scrollTop: verticalBarPos - this.table.scenegraph.proxy.deltaY,
+      scrollLeft: this.scroll.horizontalBarPos,
+      scrollHeight: this.table.theme.scrollStyle?.width,
+      scrollWidth: this.table.theme.scrollStyle?.width,
+      viewHeight: this.table.tableNoFrameHeight,
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'vertical',
+      scrollRatioY: yRatio,
+      dy
+    });
+
+    if (canScroll.some(value => value === false)) {
+      // reset scrollbar pos
+      const yRatio = this.scroll.verticalBarPos / (totalHeight - this.table.scenegraph.height);
+      this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
+      return;
+    }
+
+    this.scroll.verticalBarPos = verticalBarPos;
     this.table.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
     this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
     this.table.scenegraph.proxy.deltaY = 0;
@@ -980,7 +1018,8 @@ export class StateManager {
       viewHeight: this.table.tableNoFrameHeight,
       viewWidth: this.table.tableNoFrameWidth,
       scrollDirection: 'vertical',
-      scrollRatioY: yRatio
+      scrollRatioY: yRatio,
+      dy
     });
 
     if (oldVerticalBarPos !== this.scroll.verticalBarPos) {
@@ -990,10 +1029,39 @@ export class StateManager {
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
     const oldHorizontalBarPos = this.scroll.horizontalBarPos;
-    this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
-    if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
-      this.scroll.horizontalBarPos = 0;
+
+    let horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
+    if (!isValid(horizontalBarPos) || isNaN(horizontalBarPos)) {
+      horizontalBarPos = 0;
     }
+    // horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
+    const dx = horizontalBarPos - this.table.scenegraph.proxy.deltaX - oldHorizontalBarPos;
+
+    const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.CAN_SCROLL, {
+      event: undefined,
+      scrollTop: this.scroll.verticalBarPos,
+      scrollLeft: horizontalBarPos - this.table.scenegraph.proxy.deltaX,
+      scrollHeight: this.table.theme.scrollStyle?.width,
+      scrollWidth: this.table.theme.scrollStyle?.width,
+      viewHeight: this.table.tableNoFrameHeight,
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'horizontal',
+      scrollRatioX: xRatio,
+      dx: dx
+    });
+
+    if (canScroll.some(value => value === false)) {
+      // reset scrollbar pos
+      const xRatio = this.scroll.horizontalBarPos / (totalWidth - this.table.scenegraph.width);
+      this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
+      return;
+    }
+
+    // this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
+    // if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
+    //   this.scroll.horizontalBarPos = 0;
+    // }
+    this.scroll.horizontalBarPos = horizontalBarPos;
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
     this.table.scenegraph.proxy.deltaX = 0;
@@ -1015,7 +1083,8 @@ export class StateManager {
       viewHeight: this.table.tableNoFrameHeight,
       viewWidth: this.table.tableNoFrameWidth,
       scrollDirection: 'horizontal',
-      scrollRatioX: xRatio
+      scrollRatioX: xRatio,
+      dx: dx
     });
 
     if (oldHorizontalBarPos !== this.scroll.horizontalBarPos) {
@@ -1032,11 +1101,44 @@ export class StateManager {
     const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
     top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height - sizeTolerance));
     top = Math.ceil(top);
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
+    const yRatio = top / (totalHeight - this.table.scenegraph.height);
+
+    if (
+      (oldVerticalBarPos !== top || this.table.options?.customConfig?.scrollEventAlwaysTrigger === true) &&
+      triggerEvent
+    ) {
+      let verticalBarPos = top;
+      if (!isValid(verticalBarPos) || isNaN(verticalBarPos)) {
+        verticalBarPos = 0;
+      }
+
+      const dy = verticalBarPos - oldVerticalBarPos;
+      const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.CAN_SCROLL, {
+        event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
+        scrollTop: verticalBarPos,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth: this.table.tableNoFrameWidth,
+        scrollDirection: 'vertical',
+        scrollRatioY: yRatio,
+        dy
+      });
+
+      if (canScroll.some(value => value === false)) {
+        // reset scrollbar pos
+        const yRatio = this.scroll.verticalBarPos / (totalHeight - this.table.scenegraph.height);
+        this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
+        return;
+      }
+    }
+
     // 滚动期间清空选中清空 如果调用接口hover状态需要保留，但是如果不调用updateHoverPos透视图处于hover状态的图就不能及时更新 所以这里单独判断了isPivotChart
     if (top !== this.scroll.verticalBarPos || this.table.isPivotChart()) {
       this.updateHoverPos(-1, -1);
     }
-    const oldVerticalBarPos = this.scroll.verticalBarPos;
     // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
     if (!isValid(this.scroll.verticalBarPos) || isNaN(this.scroll.verticalBarPos)) {
@@ -1046,22 +1148,23 @@ export class StateManager {
     this.table.scenegraph.setY(-top);
 
     // 更新scrollbar位置
-    const yRatio = top / (totalHeight - this.table.scenegraph.height);
     this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
 
-    if (oldVerticalBarPos !== top && triggerEvent) {
-      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-        event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
-        scrollTop: this.scroll.verticalBarPos,
-        scrollLeft: this.scroll.horizontalBarPos,
-        scrollHeight: this.table.theme.scrollStyle?.width,
-        scrollWidth: this.table.theme.scrollStyle?.width,
-        viewHeight: this.table.tableNoFrameHeight,
-        viewWidth: this.table.tableNoFrameWidth,
-        scrollDirection: 'vertical',
-        scrollRatioY: yRatio
-      });
+    const dy = this.scroll.verticalBarPos - oldVerticalBarPos;
+    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
+      scrollTop: this.scroll.verticalBarPos,
+      scrollLeft: this.scroll.horizontalBarPos,
+      scrollHeight: this.table.theme.scrollStyle?.width,
+      scrollWidth: this.table.theme.scrollStyle?.width,
+      viewHeight: this.table.tableNoFrameHeight,
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'vertical',
+      scrollRatioY: yRatio,
+      dy
+    });
 
+    if (oldVerticalBarPos !== top && triggerEvent) {
       this.checkVerticalScrollBarEnd();
     }
   }
@@ -1079,12 +1182,45 @@ export class StateManager {
 
     left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width - sizeTolerance));
     left = Math.ceil(left);
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
+    const xRatio = left / (totalWidth - this.table.scenegraph.width);
+
+    // if (oldHorizontalBarPos !== left && triggerEvent) {
+    if (
+      (oldHorizontalBarPos !== left || this.table.options?.customConfig?.scrollEventAlwaysTrigger === true) &&
+      triggerEvent
+    ) {
+      let horizontalBarPos = left;
+      if (!isValid(horizontalBarPos) || isNaN(horizontalBarPos)) {
+        horizontalBarPos = 0;
+      }
+      const dx = horizontalBarPos - oldHorizontalBarPos;
+      const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.CAN_SCROLL, {
+        event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft: horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth: this.table.tableNoFrameWidth,
+        scrollDirection: 'horizontal',
+        scrollRatioX: xRatio,
+        dx
+      });
+
+      if (canScroll.some(value => value === false)) {
+        // reset scrollbar pos
+        const xRatio = this.scroll.horizontalBarPos / (totalWidth - this.table.scenegraph.width);
+        this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
+        return;
+      }
+    }
+
     // 滚动期间清空选中清空
     if (left !== this.scroll.horizontalBarPos) {
       this.updateHoverPos(-1, -1);
     }
     // this.table.stateManager.updateSelectPos(-1, -1);
-    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = left;
     if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
       this.scroll.horizontalBarPos = 0;
@@ -1094,22 +1230,23 @@ export class StateManager {
     this.table.scenegraph.setX(-left);
 
     // 更新scrollbar位置
-    const xRatio = left / (totalWidth - this.table.scenegraph.width);
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
 
-    if (oldHorizontalBarPos !== left && triggerEvent) {
-      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-        event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
-        scrollTop: this.scroll.verticalBarPos,
-        scrollLeft: this.scroll.horizontalBarPos,
-        scrollHeight: this.table.theme.scrollStyle?.width,
-        scrollWidth: this.table.theme.scrollStyle?.width,
-        viewHeight: this.table.tableNoFrameHeight,
-        viewWidth: this.table.tableNoFrameWidth,
-        scrollDirection: 'horizontal',
-        scrollRatioX: xRatio
-      });
+    const dx = this.scroll.horizontalBarPos - oldHorizontalBarPos;
+    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
+      scrollTop: this.scroll.verticalBarPos,
+      scrollLeft: this.scroll.horizontalBarPos,
+      scrollHeight: this.table.theme.scrollStyle?.width,
+      scrollWidth: this.table.theme.scrollStyle?.width,
+      viewHeight: this.table.tableNoFrameHeight,
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'horizontal',
+      scrollRatioX: xRatio,
+      dx
+    });
 
+    if (oldHorizontalBarPos !== left && triggerEvent) {
       this.checkHorizontalScrollBarEnd();
     }
   }

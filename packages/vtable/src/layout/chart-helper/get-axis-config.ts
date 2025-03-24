@@ -834,29 +834,27 @@ function getChartAxisRange(
     range.min = Math.min(range.min, 0);
     range.max = Math.max(range.max, 0);
   }
-  let ticks;
-  if (axisOption?.nice || isTickAlign) {
-    const getAxisDomainRangeAndLabels = Factory.getFunction(
-      'getAxisDomainRangeAndLabels'
-    ) as GetAxisDomainRangeAndLabels;
-    const { range: axisRange, ticks: selfTicks } = getAxisDomainRangeAndLabels(
-      range.min,
-      range.max,
-      axisOption,
-      isZeroAlign,
-      // layout._table.getColWidth(col)
-      position === 'bottom' || position === 'top'
-        ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
-        : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight // avoid 0, 0 causes NaN
-    );
-    if (axisOption?.nice) {
-      range.min = axisRange[0];
-      range.max = axisRange[1];
-    }
-    // if (isTickAlign) {
-    // }
-    ticks = selfTicks;
+  // let ticks;
+  // if (axisOption?.nice || isTickAlign) {
+  const getAxisDomainRangeAndLabels = Factory.getFunction('getAxisDomainRangeAndLabels') as GetAxisDomainRangeAndLabels;
+  const { range: axisRange, ticks: selfTicks } = getAxisDomainRangeAndLabels(
+    range.min,
+    range.max,
+    axisOption,
+    isZeroAlign,
+    // layout._table.getColWidth(col)
+    position === 'bottom' || position === 'top'
+      ? layout._table.getColWidth(col) || layout._table.tableNoFrameWidth
+      : layout._table.getRowHeight(row) || layout._table.tableNoFrameHeight // avoid 0, 0 causes NaN
+  );
+  if (axisOption?.nice) {
+    range.min = axisRange[0];
+    range.max = axisRange[1];
   }
+  // if (isTickAlign) {
+  // }
+  const ticks = selfTicks;
+  // }
   if (isNumber(axisOption?.min)) {
     range.min = axisOption.min;
   }

@@ -151,7 +151,7 @@ function createRadio(
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const { lineClamp } = cellStyle;
   const autoColWidth = colWidth === 'auto';
-  const autoRowHeight = table.isAutoRowHeight();
+  const autoRowHeight = table.isAutoRowHeight(row);
 
   const attribute = {
     // text: text.length === 1 ? text[0] : text,

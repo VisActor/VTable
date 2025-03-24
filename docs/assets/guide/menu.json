@@ -689,6 +689,13 @@
       }
     },
     {
+      "path": "operate_scenegraph",
+      "title": {
+        "zh": "操作场景树（进阶）",
+        "en": "operate scenegraph"
+      }
+    },
+    {
       "path": "search",
       "title": {
         "zh": "搜索",

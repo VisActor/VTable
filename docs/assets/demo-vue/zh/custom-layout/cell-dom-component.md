@@ -11,35 +11,36 @@ link: custom_define/vue-dom-component
 
 在 `vue-vtable` 中，支持在单元格中直接渲染 DOM 组件，可以轻松地在表格中嵌入复杂的 Vue 组件，实现高度自定义的表格展示效果。支持两种形式：**插槽式**和**直接传入到 `column` 配置中**。两种方式都需要通过 `Group` 组件进行包裹。
 
-## 详细说明
+详细说明：
 
-### 1. 开启方式
+**关键点 1： 开启方式**
 
 在 `vue-vtable` 中，渲染 DOM 组件需要两个关键步骤：
 
 - **`Group` 组件中传入 `vue` 属性**：这是为了让 `Group` 组件能够识别并处理 Vue 组件。
 - **开启 `customConfig.createReactContainer`**：这个配置项用于创建表格容器，确保 Vue 组件能够正确渲染到表格容器中。
 
-### 2. 插槽式渲染
+**关键点 2： 插槽式渲染**
 
 插槽式渲染是通过 `ListColumn` 组件的两个插槽 `headerCustomLayout` 和 `customLayout` 来实现的。自定义组件需要使用 `Group` 组件进行包裹。
 
 - **`headerCustomLayout`**：用于自定义表头单元格的渲染。
 - **`customLayout`**：用于自定义表格体单元格的渲染。
 
-### 3. 直接传入配置式渲染
+**关键点 3： 直接传入配置式渲染**
 
 直接传入配置式渲染与插槽式渲染类似，区别在于你不需要通过插槽来传递组件，而是直接在 `column.headerCustomLayout` 或 `column.customLayout` 配置中的 `element` 属性中传入虚拟节点。
 使用方法与 [自定义组件](../../guide/custom_define/custom_layout) 大致相同。
 
 ## 代码演示
 
-在代码演示中，我们展示了如何在表格中渲染自定义的 Vue 组件。具体包括：
-
-- **性别列**：通过 `ArcoDesignVue.Tag` 组件来渲染性别信息，并根据性别值动态改变标签颜色。
-- **评论列**：通过 `ArcoDesignVue.Comment` 组件来渲染评论信息，并包含点赞、收藏、回复等操作按钮。
 
 ```javascript livedemo template=vtable-vue
+
+//在代码演示中，我们展示了如何在表格中渲染自定义的 Vue 组件。具体包括：
+//- **性别列**：通过 `ArcoDesignVue.Tag` 组件来渲染性别信息，并根据性别值动态改变标签颜色。
+//- **评论列**：通过 `ArcoDesignVue.Comment` 组件来渲染评论信息，并包含点赞、收藏、回复等操作按钮。
+
 const app = createApp({
   template: `
     <vue-list-table :options="option" :records="records" ref="tableRef" />

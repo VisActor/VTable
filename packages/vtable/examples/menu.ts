@@ -709,6 +709,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'highlight-color'
+      },
+      {
+        path: 'interactive',
+        name: 'custom-scroll'
       }
     ]
   },

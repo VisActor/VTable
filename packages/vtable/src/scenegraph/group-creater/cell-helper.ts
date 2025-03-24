@@ -504,6 +504,11 @@ export function updateCell(
 ) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+
+  if (oldCellGroup.role !== 'cell' && !addNew) {
+    return undefined;
+  }
+
   const cellLocation = table.getCellLocation(col, row);
   let value = table.getCellValue(col, row);
 
