@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add isCustom tag for merge cell range #3504",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
