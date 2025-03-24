@@ -552,7 +552,7 @@ class VTablePaddingOperator {
         // right
         this.x2 = Math.max(this.x2Target - this.padding[1], this.x2 - (e.dx || 1));
 
-        console.log('left', this.x2);
+        // console.log('left', this.x2);
         setTimeout(() => {
           this.clearCanvas();
           this.updateViewBox();
@@ -562,21 +562,21 @@ class VTablePaddingOperator {
         // left
         this.x2 = Math.min(this.x2Target, this.x2 - (e.dx ?? 0));
 
-        console.log('right', this.x2);
+        // console.log('right', this.x2);
         setTimeout(() => {
           this.clearCanvas();
           this.updateViewBox();
           this.table.scenegraph.setX(-this.table.stateManager.scroll.horizontalBarPos - 1, true);
         }, 0);
       } else {
-        console.log('normal', this.x2);
+        // console.log('normal', this.x2);
       }
 
       // vertical scroll
       if (e.scrollRatioY === 1 && (e.dy ?? 0) >= 0 && this.y2 > this.y2Target - this.padding[2]) {
         // bottom
         this.y2 = Math.max(this.y2Target - this.padding[2], this.y2 - (e.dy || 1));
-        console.log('top', this.y2);
+        // console.log('top', this.y2);
         setTimeout(() => {
           this.clearCanvas();
           this.updateViewBox();
@@ -585,14 +585,14 @@ class VTablePaddingOperator {
       } else if (this.y2 < this.y2Target && (e.dy ?? 0) < 0) {
         // top
         this.y2 = Math.min(this.y2Target, this.y2 - (e.dy ?? 0));
-        console.log('bottom', this.y2);
+        // console.log('bottom', this.y2);
         setTimeout(() => {
           this.clearCanvas();
           this.updateViewBox();
           this.table.scenegraph.setY(-this.table.stateManager.scroll.verticalBarPos - 1, true);
         }, 0);
       } else {
-        console.log('normal', this.y2);
+        // console.log('normal', this.y2);
       }
     });
   }
@@ -614,6 +614,8 @@ class VTablePaddingOperator {
       x2: this.x2,
       y2: this.y2
     });
+    this.clearCanvas();
+    this.table.render();
   }
 
   reset() {

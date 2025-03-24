@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix react component update #3474",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

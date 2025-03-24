@@ -13,6 +13,8 @@ export interface CustomRenderFunctionArg<TypedTable = BaseTableAPI> {
   rect?: RectProps;
   originCol?: number;
   originRow?: number;
+
+  forComputation?: boolean;
 }
 interface baseElement {
   elementKey?: string;
