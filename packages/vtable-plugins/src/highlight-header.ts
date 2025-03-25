@@ -1,6 +1,6 @@
 import type { CellRange } from '@visactor/vtable/es/ts-types';
-import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
-import * as VTable from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
+import type { BaseTableAPI, plugins } from '@visactor/vtable';
 interface IHeaderHighlightPluginOptions {
   rowHighlight?: boolean;
   colHighlight?: boolean;
@@ -10,17 +10,17 @@ interface IHeaderHighlightPluginOptions {
   rowHighlightColor?: string;
 }
 
-export class HighlightHeaderPlugin implements VTable.plugins.IVTablePlugin {
+export class HighlightHeaderPlugin implements plugins.IVTablePlugin {
   id = 'highlight-header';
   name = 'Highlight Header';
   type: 'layout' = 'layout';
   runTime = [
-    VTable.TABLE_EVENT_TYPE.INITIALIZED,
-    VTable.TABLE_EVENT_TYPE.SELECTED_CLEAR,
-    VTable.TABLE_EVENT_TYPE.SELECTED_CELL,
-    VTable.TABLE_EVENT_TYPE.MOUSEMOVE_TABLE
+    TABLE_EVENT_TYPE.INITIALIZED,
+    TABLE_EVENT_TYPE.SELECTED_CLEAR,
+    TABLE_EVENT_TYPE.SELECTED_CELL,
+    TABLE_EVENT_TYPE.MOUSEMOVE_TABLE
   ];
-  table: VTable.ListTable;
+  table: BaseTableAPI;
   pluginOptions: IHeaderHighlightPluginOptions;
   colHeaderRanges: CellRange[] = [];
   rowHeaderRanges: CellRange[] = [];
@@ -28,17 +28,17 @@ export class HighlightHeaderPlugin implements VTable.plugins.IVTablePlugin {
     this.pluginOptions = pluginOptions;
   }
   run(...args: any[]) {
-    const eventArgs = args[0];
+    // const eventArgs = args[0];
     const runTime = args[1];
-    const table: VTable.BaseTableAPI = args[2];
-    this.table = table as VTable.ListTable;
-    if (runTime === VTable.TABLE_EVENT_TYPE.SELECTED_CLEAR) {
+    const table: BaseTableAPI = args[2];
+    this.table = table;
+    if (runTime === TABLE_EVENT_TYPE.SELECTED_CLEAR) {
       this.clearHighlight();
-    } else if (runTime === VTable.TABLE_EVENT_TYPE.SELECTED_CELL) {
+    } else if (runTime === TABLE_EVENT_TYPE.SELECTED_CELL) {
       this.updateHighlight();
-    } else if (runTime === VTable.TABLE_EVENT_TYPE.MOUSEMOVE_TABLE) {
+    } else if (runTime === TABLE_EVENT_TYPE.MOUSEMOVE_TABLE) {
       this.updateHighlight();
-    } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
+    } else if (runTime === TABLE_EVENT_TYPE.INITIALIZED) {
       this.registerStyle();
     }
   }
@@ -58,12 +58,12 @@ export class HighlightHeaderPlugin implements VTable.plugins.IVTablePlugin {
   clearHighlight() {
     if (this.colHeaderRanges) {
       this.colHeaderRanges.forEach(range => {
-        this.table.arrangeCustomCellStyle({ range }, undefined, true);
+        this.table.arrangeCustomCellStyle({ range }, undefined);
       });
     }
     if (this.rowHeaderRanges) {
       this.rowHeaderRanges.forEach(range => {
-        this.table.arrangeCustomCellStyle({ range }, undefined, true);
+        this.table.arrangeCustomCellStyle({ range }, undefined);
       });
     }
     // clear range

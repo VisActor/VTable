@@ -8,3 +8,4 @@ export * from './row-series';
 export * from './highlight-header';
 export * from './excel-edit-cell-keyboard';
 export * from './types';
+export * from './focus-highlight';

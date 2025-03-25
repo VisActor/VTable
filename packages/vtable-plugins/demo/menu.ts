@@ -24,6 +24,10 @@ export const menus = [
     name: 'combine-plugins'
   },
   {
+    path: 'focus-highlight',
+    name: 'focus-highlight'
+  },
+  {
     path: 'highlight-header',
     name: 'highlight-header'
   }
