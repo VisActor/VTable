@@ -62,7 +62,35 @@ export function createTable() {
       title: 'email',
       width: 200,
       sort: true,
+      headerStyle: {
+        marked: {
+          bgColor: 'red',
+          shape: 'rect',
+          position: 'right-top',
+          size: 10,
+          offset: 6
+        }
+      },
       style: {
+        marked: args => {
+          const value = args.value;
+          if (value === '4@xxx.com') {
+            return {
+              bgColor: 'red',
+              shape: 'rect',
+              position: 'right-top',
+              size: 10,
+              offset: 6
+            };
+          }
+          return {
+            bgColor: 'red',
+            shape: 'triangle',
+            position: 'right-top',
+            size: 10,
+            offset: 6
+          };
+        },
         underline: true,
         underlineDash: [2, 0],
         underlineOffset: 3
@@ -191,6 +219,10 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     emptyTip: true,
     records,
+    rowSeriesNumber: {
+      dragOrder: true
+    },
+
     columns: [
       ...columns
       // ...columns,

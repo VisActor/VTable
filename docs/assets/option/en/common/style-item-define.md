@@ -134,7 +134,20 @@ type CursorPropertyDefine = string | ((args: StylePropertyFunctionArg) => string
 {{ target: common-marked }}
 
 ```
-type MarkedPropertyDefine = boolean | ((args: StylePropertyFunctionArg) => boolean);
+type MarkedPropertyDefine = boolean | MarkCellStyle | ((args: StylePropertyFunctionArg) => boolean | MarkCellStyle);
+
+type MarkCellStyle = {
+  /** 标记背景色 默认蓝色*/
+  bgColor?: CanvasRenderingContext2D['fillStyle'];
+  /** 标记形状 默认'sector' */
+  shape?: 'rect' | 'triangle' | 'sector';
+  /** 标记位置 默认'right-top' */
+  position?: 'left-top' | 'left-bottom' | 'right-top' | 'right-bottom';
+  /** 标记大小 默认10 */
+  size?: number;
+  /** 标记偏移量 默认0 */
+  offset?: number;
+};
 
 ```
 
