@@ -9,3 +9,4 @@ export * from './highlight-header';
 export * from './excel-edit-cell-keyboard';
 export * from './types';
 export * from './focus-highlight';
+export * from './table-carousel-animation';

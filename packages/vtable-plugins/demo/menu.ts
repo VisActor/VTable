@@ -1,15 +1,27 @@
 export const menus = [
   {
     path: 'carousel-animation',
-    name: 'carousel-animation'
+    name: '(deprecated)carousel-animation'
   },
   {
     path: 'header-highlight',
-    name: 'header-highlight'
+    name: '(deprecated)header-highlight'
   },
   {
     path: 'invert-highlight',
-    name: 'invert-highlight'
+    name: '(deprecated)invert-highlight'
+  },
+  {
+    path: 'focus-highlight',
+    name: 'focus-highlight'
+  },
+  {
+    path: 'highlight-header',
+    name: 'highlight-header'
+  },
+  {
+    path: 'table-carousel-animation',
+    name: 'table-carousel-animation'
   },
   {
     path: 'add-row-column',
@@ -22,13 +34,5 @@ export const menus = [
   {
     path: 'combine-plugins',
     name: 'combine-plugins'
-  },
-  {
-    path: 'focus-highlight',
-    name: 'focus-highlight'
-  },
-  {
-    path: 'highlight-header',
-    name: 'highlight-header'
   }
 ];
