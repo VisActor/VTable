@@ -2,6 +2,51 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.17.3",
+      "tag": "@visactor/vtable_v1.17.3",
+      "date": "Mon, 24 Mar 2025 09:35:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: selection mergeCell extend range #3529\n\n"
+          },
+          {
+            "comment": "feat: rowSeriesNumber support cell type radio #3558\n\n"
+          },
+          {
+            "comment": "fix: set cellInnerBorder false frame border render error #3574\n\n"
+          },
+          {
+            "comment": "feat: add custom reactAttributePlugin in react-vtable"
+          },
+          {
+            "comment": "feat: add maintainedColumnCount config"
+          },
+          {
+            "comment": "fix: fix cell border in cell with corner-radius"
+          },
+          {
+            "comment": "fix: fix axis label autosize computation"
+          },
+          {
+            "comment": "fix: fix small window size frozen column count"
+          },
+          {
+            "comment": "fix: columnWidthConfig match dimension error\n\n"
+          },
+          {
+            "comment": "fix: fix react component update #3474"
+          },
+          {
+            "comment": "fix: fix right button select problem"
+          },
+          {
+            "comment": "fix: fix row update range #3468"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.17.2",
       "tag": "@visactor/vtable_v1.17.2",
       "date": "Tue, 11 Mar 2025 08:19:47 GMT",

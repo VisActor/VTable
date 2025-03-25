@@ -1669,6 +1669,13 @@
             "zh": "歌曲播放排行榜",
             "en": "Song Play Ranking"
           }
+        },
+        {
+          "path": "product-compare",
+          "title": {
+            "zh": "产品对比表",
+            "en": "Product Compare Table"
+          }
         }
       ]
     }
