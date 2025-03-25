@@ -315,6 +315,8 @@ export function changeCheckboxOrder(sourceIndex: number, targetIndex: number, st
   }
 
   if (isNumber(source) && isNumber(target)) {
+    sourceIndex = source;
+    targetIndex = target;
     if (sourceIndex > targetIndex) {
       const sourceRecord = checkedState.get(sourceIndex.toString());
       for (let i = sourceIndex; i > targetIndex; i--) {
