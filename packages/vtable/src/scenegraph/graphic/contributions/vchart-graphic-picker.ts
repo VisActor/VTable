@@ -13,20 +13,11 @@ export class VChartPicker implements IGraphicPicker {
     if (!vChart) {
       return false;
     }
-    // 将当前的point转化到global
-    const matrix = chart.parent.globalTransMatrix.clone();
-    const stageMatrix = chart.stage.window.getViewBoxTransform();
-    matrix.multiply(stageMatrix.a, stageMatrix.b, stageMatrix.c, stageMatrix.d, stageMatrix.e, stageMatrix.f);
-    const toGlobalMatrix = matrix.getInverse();
-    const nextP = { x: 0, y: 0 };
-    toGlobalMatrix.transformPoint(point, nextP);
-
     // 得到 vchart stage
     const vchartStage = vChart.getStage();
     vchartStage.dirtyBounds?.clear();
-    const toChartMatrix = vchartStage.window.getViewBoxTransform();
-    toChartMatrix.transformPoint(nextP, nextP);
-    const pick = vchartStage.pick(nextP.x, nextP.y);
+    // 因为vchart 在 vtable 内始坐标变换始终等于在group中的坐标变换，所以这里不需要再做坐标转换
+    const pick = vchartStage.pick(point.x, point.y);
     // @ts-ignore
     if (pick.graphic === null && pick.group.name === 'root') {
       return false;
