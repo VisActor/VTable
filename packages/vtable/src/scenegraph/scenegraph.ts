@@ -2061,7 +2061,7 @@ export class Scenegraph {
       (this.table.autoFillHeight && (this.table.getAllRowsHeight() <= this.table.tableNoFrameHeight || isNotFillHeight))
     ) {
       this.table.scenegraph.recalculateRowHeights();
-    } else if (this.table.isAutoRowHeight()) {
+    } else if (this.table.isAutoRowHeight(this.table.columnHeaderLevelCount)) {
       // if (updateCells.length > 0) {
       //   this.table.scenegraph.recalculateRowHeights();
       // }

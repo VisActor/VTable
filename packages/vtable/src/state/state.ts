@@ -607,6 +607,19 @@ export class StateManager {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
+    // trim select position
+    if (col < 0) {
+      col = -1;
+    }
+    if (row < 0) {
+      row = -1;
+    }
+    if (col > this.table.colCount - 1) {
+      col = this.table.colCount - 1;
+    }
+    if (row > this.table.rowCount - 1) {
+      row = this.table.rowCount - 1;
+    }
     updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
   }
 
@@ -967,7 +980,7 @@ export class StateManager {
     // verticalBarPos -= this.table.scenegraph.proxy.deltaY;
     const dy = verticalBarPos - this.table.scenegraph.proxy.deltaY - oldVerticalBarPos;
 
-    const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+    const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.CAN_SCROLL, {
       event: undefined,
       scrollTop: verticalBarPos - this.table.scenegraph.proxy.deltaY,
       scrollLeft: this.scroll.horizontalBarPos,
@@ -996,17 +1009,18 @@ export class StateManager {
     this.updateHoverPos(-1, -1);
     // this.updateSelectPos(-1, -1);
 
-    // this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-    //   event: undefined,
-    //   scrollTop: this.scroll.verticalBarPos,
-    //   scrollLeft: this.scroll.horizontalBarPos,
-    //   scrollHeight: this.table.theme.scrollStyle?.width,
-    //   scrollWidth: this.table.theme.scrollStyle?.width,
-    //   viewHeight: this.table.tableNoFrameHeight,
-    //   viewWidth: this.table.tableNoFrameWidth,
-    //   scrollDirection: 'vertical',
-    //   scrollRatioY: yRatio
-    // });
+    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      event: undefined,
+      scrollTop: this.scroll.verticalBarPos,
+      scrollLeft: this.scroll.horizontalBarPos,
+      scrollHeight: this.table.theme.scrollStyle?.width,
+      scrollWidth: this.table.theme.scrollStyle?.width,
+      viewHeight: this.table.tableNoFrameHeight,
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'vertical',
+      scrollRatioY: yRatio,
+      dy
+    });
 
     if (oldVerticalBarPos !== this.scroll.verticalBarPos) {
       this.checkVerticalScrollBarEnd();
@@ -1022,7 +1036,8 @@ export class StateManager {
     }
     // horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
     const dx = horizontalBarPos - this.table.scenegraph.proxy.deltaX - oldHorizontalBarPos;
-    const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+
+    const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.CAN_SCROLL, {
       event: undefined,
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: horizontalBarPos - this.table.scenegraph.proxy.deltaX,
@@ -1059,17 +1074,18 @@ export class StateManager {
     // 滚动期间清空选中清空
     this.updateHoverPos(-1, -1);
     // this.updateSelectPos(-1, -1);
-    // this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-    //   event: undefined,
-    //   scrollTop: this.scroll.verticalBarPos,
-    //   scrollLeft: this.scroll.horizontalBarPos,
-    //   scrollHeight: this.table.theme.scrollStyle?.width,
-    //   scrollWidth: this.table.theme.scrollStyle?.width,
-    //   viewHeight: this.table.tableNoFrameHeight,
-    //   viewWidth: this.table.tableNoFrameWidth,
-    //   scrollDirection: 'horizontal',
-    //   scrollRatioX: xRatio
-    // });
+    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      event: undefined,
+      scrollTop: this.scroll.verticalBarPos,
+      scrollLeft: this.scroll.horizontalBarPos,
+      scrollHeight: this.table.theme.scrollStyle?.width,
+      scrollWidth: this.table.theme.scrollStyle?.width,
+      viewHeight: this.table.tableNoFrameHeight,
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'horizontal',
+      scrollRatioX: xRatio,
+      dx: dx
+    });
 
     if (oldHorizontalBarPos !== this.scroll.horizontalBarPos) {
       this.checkHorizontalScrollBarEnd();
@@ -1098,7 +1114,7 @@ export class StateManager {
       }
 
       const dy = verticalBarPos - oldVerticalBarPos;
-      const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.CAN_SCROLL, {
         event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
         scrollTop: verticalBarPos,
         scrollLeft: this.scroll.horizontalBarPos,
@@ -1134,6 +1150,20 @@ export class StateManager {
     // 更新scrollbar位置
     this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
 
+    const dy = this.scroll.verticalBarPos - oldVerticalBarPos;
+    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
+      scrollTop: this.scroll.verticalBarPos,
+      scrollLeft: this.scroll.horizontalBarPos,
+      scrollHeight: this.table.theme.scrollStyle?.width,
+      scrollWidth: this.table.theme.scrollStyle?.width,
+      viewHeight: this.table.tableNoFrameHeight,
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'vertical',
+      scrollRatioY: yRatio,
+      dy
+    });
+
     if (oldVerticalBarPos !== top && triggerEvent) {
       this.checkVerticalScrollBarEnd();
     }
@@ -1165,7 +1195,7 @@ export class StateManager {
         horizontalBarPos = 0;
       }
       const dx = horizontalBarPos - oldHorizontalBarPos;
-      const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      const canScroll = this.table.fireListeners(TABLE_EVENT_TYPE.CAN_SCROLL, {
         event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
         scrollTop: this.scroll.verticalBarPos,
         scrollLeft: horizontalBarPos,
@@ -1201,6 +1231,20 @@ export class StateManager {
 
     // 更新scrollbar位置
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
+
+    const dx = this.scroll.horizontalBarPos - oldHorizontalBarPos;
+    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+      event: (event as FederatedWheelEvent)?.nativeEvent as WheelEvent,
+      scrollTop: this.scroll.verticalBarPos,
+      scrollLeft: this.scroll.horizontalBarPos,
+      scrollHeight: this.table.theme.scrollStyle?.width,
+      scrollWidth: this.table.theme.scrollStyle?.width,
+      viewHeight: this.table.tableNoFrameHeight,
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'horizontal',
+      scrollRatioX: xRatio,
+      dx
+    });
 
     if (oldHorizontalBarPos !== left && triggerEvent) {
       this.checkHorizontalScrollBarEnd();

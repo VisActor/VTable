@@ -89,6 +89,20 @@ export interface TableEventHandlersEventArgumentMap {
     dx?: number;
     dy?: number;
   };
+  can_scroll: {
+    event: WheelEvent;
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+    scrollDirection: 'horizontal' | 'vertical';
+    scrollRatioX?: number;
+    scrollRatioY?: number;
+    dx?: number;
+    dy?: number;
+  };
   scroll_vertical_end: {
     scrollLeft: number;
     scrollTop: number;
@@ -262,7 +276,8 @@ export interface TableEventHandlersReturnMap {
   mouseup_cell: void;
   contextmenu_cell: void;
   keydown: void;
-  scroll: void | boolean;
+  scroll: void;
+  can_scroll: void | boolean;
   focus_table: void;
   blur_table: void;
   resize_column: void;

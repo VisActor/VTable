@@ -2,7 +2,7 @@
  * @Author: lym
  * @Date: 2025-02-24 09:32:53
  * @LastEditors: lym
- * @LastEditTime: 2025-03-21 14:22:18
+ * @LastEditTime: 2025-03-21 19:38:26
  * @Description:
  */
 import type {
@@ -33,6 +33,7 @@ import { render } from 'vue';
  * 表格自定义组件集成插件
  */
 export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPlugin {
+  name: string = 'VTableVueAttributePlugin';
   declare htmlMap: Record<
     string,
     {
@@ -125,20 +126,12 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       targetMap = null;
     }
     // 校验并传递上下文
-    this.checkToPassAppContext(element);
+    this.checkToPassAppContext(element, graphic);
     // 渲染或更新 Vue 组件
     if (!targetMap || !this.checkDom(targetMap.wrapContainer)) {
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, actualContainer, { id, options });
       if (wrapContainer) {
-        // 检查历史渲染节点
-        const historyWrapContainer = document.getElementById(id);
         const dataRenderId = `${this.renderId}`;
-        if (historyWrapContainer && historyWrapContainer.getAttribute('data-vue-renderId') !== dataRenderId) {
-          // 历史渲染节点清除
-          render(null, historyWrapContainer);
-          historyWrapContainer.remove();
-          this.removeWrapContainerEventListener(historyWrapContainer);
-        }
         wrapContainer.id = id;
         wrapContainer.setAttribute('data-vue-renderId', dataRenderId);
         render(element, wrapContainer);
@@ -183,14 +176,19 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
   /**
    * @description: 校验并传递上下文
    * @param {VNode} vnode
+   * @param {IGraphic} graphic
    * @return {*}
    */
-  checkToPassAppContext(vnode: VNode) {
-    if (this.currentContext) {
-      try {
-        vnode.appContext = this.currentContext;
-      } catch (error) {}
-    }
+  checkToPassAppContext(vnode: VNode, graphic: IGraphic) {
+    try {
+      const { stage } = getTargetGroup(graphic);
+      const { table } = stage || {};
+      const userAppContext = table?.options?.customConfig?.getVueUserAppContext?.() ?? this.currentContext;
+      // 简单校验合法性
+      if (!!userAppContext?.components && !!userAppContext?.directives) {
+        vnode.appContext = userAppContext;
+      }
+    } catch (error) {}
   }
   /**
    * @description: 检查是否需要渲染

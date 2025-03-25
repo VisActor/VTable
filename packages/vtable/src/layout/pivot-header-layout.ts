@@ -431,17 +431,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   handleRowSeriesNumber(rowSeriesNumber: IRowSeriesNumber) {
     if (rowSeriesNumber) {
       if (Array.isArray(rowSeriesNumber)) {
-        this.rowSeriesNumberColumn = rowSeriesNumber.map(seriesNumber => {
+        this.rowSeriesNumberColumn = rowSeriesNumber.map((seriesNumber: IRowSeriesNumber) => {
           return {
             id: '',
             title: seriesNumber.title,
             define: seriesNumber,
             cellType: seriesNumber.cellType ?? 'text',
-            headerType: seriesNumber.cellType ?? 'text',
+            headerType: seriesNumber.cellType && seriesNumber.cellType !== 'radio' ? seriesNumber.cellType : 'text',
             width: seriesNumber.width,
             style: seriesNumber.style,
             format: seriesNumber.format,
-            field: seriesNumber.field,
+            field: (seriesNumber as any).field,
             icon: seriesNumber.icon
           };
         });
@@ -452,7 +452,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             title: rowSeriesNumber.title,
             define: rowSeriesNumber,
             cellType: rowSeriesNumber.cellType ?? 'text',
-            headerType: rowSeriesNumber.cellType ?? 'text',
+            headerType:
+              rowSeriesNumber.cellType && rowSeriesNumber.cellType !== 'radio' ? rowSeriesNumber.cellType : 'text',
             style: rowSeriesNumber.style,
             width: rowSeriesNumber.width,
             format: rowSeriesNumber.format,
