@@ -93,8 +93,9 @@ export class StateManager {
      * 'inline': 点击corner选择列表头则整列选中；
      * 'cell': 仅仅选择当前点击的corner表头单元格；
      * 'body': 点击corner列表头则选择该列所有 body 单元格。
+     * 'all': 点击corner选择整个图表
      */
-    cornerHeaderSelectMode?: 'inline' | 'cell' | 'body';
+    cornerHeaderSelectMode?: 'inline' | 'cell' | 'body' | 'all';
     highlightInRange?: boolean;
     selecting: boolean;
     customSelectRanges?: {
@@ -450,7 +451,7 @@ export class StateManager {
       {
         /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
         headerSelectMode: 'inline',
-        cornerHeaderSelectMode: 'body',
+        cornerHeaderSelectMode: 'all', // 点击 corner 默认选中整个图表
         disableSelect: false,
         disableHeaderSelect: false,
         highlightMode: 'cell',

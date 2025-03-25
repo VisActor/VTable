@@ -248,8 +248,8 @@ export function updateSelectPosition(
       } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isCornerHeader(col, row)) {
         // 选中表头行号单元格
         extendSelectRange = false;
-
-        if (state.select.headerSelectMode === 'body') {
+        const { cornerHeaderSelectMode } = state.select;
+        if (state.select.headerSelectMode === 'body' || cornerHeaderSelectMode === 'body') {
           state.select.ranges.push({
             start: {
               col: table.rowHeaderLevelCount + table.leftRowSeriesNumberCount,
@@ -259,8 +259,7 @@ export function updateSelectPosition(
             skipBodyMerge: true
           });
         } else {
-          const { cornerHeaderSelectMode } = state.select;
-          if (cornerHeaderSelectMode === 'body') {
+          if (cornerHeaderSelectMode === 'all') {
             state.select.ranges.push({
               start: {
                 col: table.leftRowSeriesNumberCount,
