@@ -7,7 +7,8 @@ import {
   SplitRectAfterRenderContribution,
   ContainerModule,
   DrawItemInterceptor,
-  TextRenderContribution
+  TextRenderContribution,
+  CanvasPickerContribution
 } from '@src/vrender';
 import { ChartRender, DefaultCanvasChartRender } from './chart-render';
 import {
@@ -34,6 +35,8 @@ import {
 } from './group-contribution-render';
 import { VTableDrawItemInterceptorContribution } from './draw-interceptor';
 import { SuffixTextBeforeRenderContribution } from './text-contribution-render';
+import { VChartPicker } from './vchart-graphic-picker';
+// import { VChartPickServiceInterceptorContribution } from './picker-interceptor';
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
   // rect 渲染器注入contributions
@@ -54,6 +57,11 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(DefaultCanvasChartRender).toSelf().inSingletonScope();
   bind(ChartRender).to(DefaultCanvasChartRender);
   bind(GraphicRender).to(DefaultCanvasChartRender);
+  // chart picker 注入
+  bind(VChartPicker).toSelf().inSingletonScope();
+  bind(CanvasPickerContribution).toService(VChartPicker);
+  // bind(VChartPickServiceInterceptorContribution).toSelf().inSingletonScope();
+  // bind(PickServiceInterceptor).toService(VChartPickServiceInterceptorContribution);
 
   // image 渲染器注入contributions
   bind(BeforeImageRenderContribution).toSelf().inSingletonScope();
