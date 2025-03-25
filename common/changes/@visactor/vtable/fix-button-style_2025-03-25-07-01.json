@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix button style problem #3614",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
