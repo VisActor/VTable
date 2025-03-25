@@ -1,15 +1,14 @@
 /* eslint-disable no-undef */
 import type { IThemeSpec, Group as VGroup } from '@src/vrender';
-import { createArc } from '@src/vrender';
 import { isValid } from '@visactor/vutils';
 import { Group } from '../../graphic/group';
 // import { parseFont } from '../../utils/font';
 import { getFunctionalProp } from '../../utils/get-prop';
 import { createCellContent } from '../../utils/text-icon-layout';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
-import { getStyleTheme } from '../../../core/tableHelper';
 import type { CellRange } from '../../../ts-types';
 import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
+import { createMark } from '../../graphic/mark';
 
 /**
  * @description: 创建单元格场景节点
@@ -155,18 +154,7 @@ export function createCellGroup(
     );
 
     if ((cellTheme as any)?._vtable?.marked) {
-      const mark = createArc({
-        x: cellGroup.attribute.width,
-        y: 0,
-        startAngle: Math.PI / 2,
-        endAngle: Math.PI,
-        outerRadius: 6,
-        fill: '#3073F2',
-        pickable: false
-      });
-      mark.name = 'mark';
-
-      cellGroup.appendChild(mark);
+      createMark((cellTheme as any)?._vtable?.marked, cellGroup, table);
     }
   }
   if (customElementsGroup) {
