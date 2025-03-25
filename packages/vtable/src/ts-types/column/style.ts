@@ -180,6 +180,8 @@ export interface ProgressBarStyleOption extends IStyleOption {
   barMarkWidth?: number;
   // 进度条标记位置
   barMarkPosition?: 'right' | 'bottom';
+  // 进度条标记是否在进度条内
+  barMarkInBar?: boolean;
 }
 
 export type CheckboxStyleOption = {
