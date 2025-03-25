@@ -184,7 +184,8 @@ export function createTable() {
     },
     editor(args) {
       return new InputEditor({});
-    }
+    },
+    groupBy: ['sex']
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.on('initialized', args => {
