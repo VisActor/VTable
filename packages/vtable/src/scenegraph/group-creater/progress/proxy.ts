@@ -95,6 +95,12 @@ export class SceneProxy {
     if (this.table.options.maintainedColumnCount) {
       this.colLimit = this.table.options.maintainedColumnCount;
     }
+    if (this.table.heightMode === 'adaptive') {
+      this.rowLimit = this.table.rowCount;
+    }
+    if (this.table.widthMode === 'adaptive') {
+      this.colLimit = this.table.colCount;
+    }
   }
 
   get bodyLeftCol(): number {
@@ -302,7 +308,9 @@ export class SceneProxy {
   createRowCellGroup(onceCount: number) {
     const endRow = Math.min(this.totalRow, this.currentRow + onceCount);
     // compute rows height
-    computeRowsHeight(this.table, this.currentRow + 1, endRow, false);
+    if (this.table.heightMode !== 'adaptive') {
+      computeRowsHeight(this.table, this.currentRow + 1, endRow, false);
+    }
 
     this.rowEnd = endRow;
 
