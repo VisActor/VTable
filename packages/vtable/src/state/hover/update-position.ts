@@ -43,9 +43,12 @@ export function updateHoverPosition(state: StateManager, col: number, row: numbe
   if (prevHoverCellCol === col && prevHoverCellRow === row) {
     return;
   }
-  // 将hover单元格的图表实例激活 并将上一个失去焦点
-  scenegraph.deactivateChart(prevHoverCellCol, prevHoverCellRow);
-  scenegraph.activateChart(col, row);
+
+  if (!state.table.options.customConfig?.disableBuildInChartActive) {
+    // 将hover单元格的图表实例激活 并将上一个失去焦点
+    scenegraph.deactivateChart(prevHoverCellCol, prevHoverCellRow);
+    scenegraph.activateChart(col, row);
+  }
 
   let updateScenegraph = false;
   const {
