@@ -12,7 +12,7 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
   id = 'excel-edit-cell-keyboard';
   name = 'Excel Edit Cell Keyboard';
   type: 'layout' = 'layout';
-  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED, VTable.TABLE_EVENT_TYPE.KEYDOWN];
+  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
   table: VTable.ListTable;
   pluginOptions: IExcelEditCellKeyboardPluginOptions;
   constructor(pluginOptions: IExcelEditCellKeyboardPluginOptions) {
@@ -21,28 +21,10 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
     this.bindEvent();
   }
   run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], VTable.BaseTableAPI]) {
-    const eventArgs = args[0];
-    const runTime = args[1];
     const table: VTable.BaseTableAPI = args[2];
     this.table = table as VTable.ListTable;
-    if (runTime === VTable.TABLE_EVENT_TYPE.KEYDOWN) {
-      this.handleWithKeyDown(eventArgs);
-    } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
-      //
-    }
   }
 
-  handleWithKeyDown(eventArgs: EventArg) {
-    const select = this.table.stateManager.select;
-    const cellPos = select.cellPos;
-    const event = eventArgs.event as KeyboardEvent;
-    //判断event的keycode如果不是excel的快捷键，如left enter tab 而是数字字母符号等 则调用table的startEditCell方法 进入编辑 且替换单元格已有内容
-    if (!this.isExcelShortcutKey(event)) {
-      // this.table.startEditCell(cellPos.col, cellPos.row, '');
-    } else if (event.key === 'Enter') {
-      this.table.startEditCell(cellPos.col, cellPos.row, '');
-    }
-  }
   // 判断event的keyCode是否是excel的快捷键
   isExcelShortcutKey(event: KeyboardEvent) {
     return (
@@ -59,26 +41,39 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
     document.addEventListener(
       'keydown',
       event => {
-        if (this.table.editorManager.beginTriggerEditCellMode === 'keydown') {
-          if (this.table.editorManager.editingEditor && this.isExcelShortcutKey(event)) {
-            const { col, row } = this.table.editorManager.editCell;
-            this.table.editorManager.completeEdit();
-            if (event.key === 'Enter') {
-              this.table.selectCell(col, row + 1);
-            } else if (event.key === 'Tab') {
-              this.table.selectCell(col + 1, row);
-            } else if (event.key === 'ArrowLeft') {
-              this.table.selectCell(col - 1, row);
-            } else if (event.key === 'ArrowRight') {
-              this.table.selectCell(col + 1, row);
-            } else if (event.key === 'ArrowDown') {
-              this.table.selectCell(col, row + 1);
-            } else if (event.key === 'ArrowUp') {
-              this.table.selectCell(col, row - 1);
+        if (this.table.editorManager) {
+          if (this.table.editorManager.beginTriggerEditCellMode === 'keydown') {
+            if (this.table.editorManager.editingEditor && this.isExcelShortcutKey(event)) {
+              const { col, row } = this.table.editorManager.editCell;
+              this.table.editorManager.completeEdit();
+              if (event.key === 'Enter') {
+                this.table.selectCell(col, row + 1);
+              } else if (event.key === 'Tab') {
+                this.table.selectCell(col + 1, row);
+              } else if (event.key === 'ArrowLeft') {
+                this.table.selectCell(col - 1, row);
+              } else if (event.key === 'ArrowRight') {
+                this.table.selectCell(col + 1, row);
+              } else if (event.key === 'ArrowDown') {
+                this.table.selectCell(col, row + 1);
+              } else if (event.key === 'ArrowUp') {
+                this.table.selectCell(col, row - 1);
+              }
+              this.table.getElement().focus();
+              // 阻止事件传播和默认行为
+              event.stopPropagation();
+              event.preventDefault();
             }
-            // 阻止事件传播和默认行为
-            event.stopPropagation();
-            event.preventDefault();
+          } else {
+            const { col, row } = this.table.stateManager.select.cellPos;
+            if (this.table.editorManager.editingEditor && event.key === 'Enter') {
+              this.table.editorManager.completeEdit();
+              this.table.getElement().focus();
+              this.table.selectCell(col, row + 1);
+              // 阻止事件传播和默认行为
+              event.stopPropagation();
+              event.preventDefault();
+            }
           }
         }
       },
