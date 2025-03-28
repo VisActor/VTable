@@ -13,6 +13,8 @@ How to Choose a Robotic Vacuum & Mop❓︎ Multi-dimensional Product Configurati
 
 This example customizes the row header tree by configuring `PivotTable.rowTree`; and sets the background color of rows with different indicator values to red using `indicators[x].style.bgColor`, making it easy to spot differences at a glance.
 
+Contributor: [Jacleklm](https://github.com/Jacleklm)
+
 ## Key Configurations
 
 - `PivotTable.rowTree` Customize row header dimension tree
