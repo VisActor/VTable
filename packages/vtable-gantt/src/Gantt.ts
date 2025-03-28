@@ -782,6 +782,13 @@ export class Gantt extends EventTarget {
     //     index + this.taskListTableInstance.columnHeaderLevelCount
     //   );
     // }
+    if (this.taskListTableInstance.rowHierarchyType === 'tree' && typeof index === 'number') {
+      //如果是树形结构 需要获取数据源对应的索引
+      index = this.taskListTableInstance.getRecordIndexByCell(
+        0,
+        index + this.taskListTableInstance.columnHeaderLevelCount
+      );
+    }
     this.taskListTableInstance.updateRecords([record], [index]);
   }
   /**

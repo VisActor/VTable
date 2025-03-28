@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: gantt chart updateRecords error when table is tree mode #3639\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

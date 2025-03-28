@@ -1184,7 +1184,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   get rowHierarchyType(): 'grid' | 'tree' | 'grid-tree' {
-    return 'grid';
+    return this.dataSource.rowHierarchyType;
   }
 
   // /**
