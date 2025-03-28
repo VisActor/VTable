@@ -100,7 +100,8 @@ export function createProgressBarCell(
     barMarkPositiveColor,
     barMarkNegativeColor,
     barMarkWidth,
-    barMarkPosition
+    barMarkPosition,
+    barMarkInBar
   } = style;
   let { barHeight, barBottom, barPadding } = style;
   // const { col, row, dataValue: originalValue } = context;
@@ -128,9 +129,14 @@ export function createProgressBarCell(
 
   const borderWidth = getQuadProps(getProp('borderLineWidth', style, col, row, table));
   const barPaddingTop = Math.max((barPadding as number[])[0], Math.ceil(borderWidth[0] / 2));
-  const barPaddingRight = Math.max((barPadding as number[])[1], Math.floor(borderWidth[1] / 2));
+  let barPaddingRight = Math.max((barPadding as number[])[1], Math.floor(borderWidth[1] / 2));
   const barPaddingBottom = Math.max((barPadding as number[])[2], Math.floor(borderWidth[2] / 2));
-  const barPaddingLeft = Math.max((barPadding as number[])[3], Math.ceil(borderWidth[3] / 2));
+  let barPaddingLeft = Math.max((barPadding as number[])[3], Math.ceil(borderWidth[3] / 2));
+
+  if (showBarMark && barMarkWidth > 0 && barMarkPosition === 'right' && barMarkInBar === false) {
+    barPaddingRight += barMarkWidth;
+    barPaddingLeft += barMarkWidth;
+  }
 
   contentWidth -= barPaddingRight + barPaddingLeft;
   contentHeight -= barPaddingBottom + barPaddingTop;
@@ -395,7 +401,7 @@ export function createProgressBarCell(
           if (barMarkPosition === 'right') {
             const markLeft = barRightToLeft
               ? barRectPosi.left + barMarkWidth / 2
-              : barRectPosi.left + barRectPosi.width - barMarkWidth / 2;
+              : barRectPosi.left + barRectPosi.width + (barMarkInBar ? -barMarkWidth / 2 : barMarkWidth / 2);
             points.push({ x: markLeft, y: barRectPosi.top });
             points.push({ x: markLeft, y: barRectPosi.top + barRectPosi.height });
           } else if (barMarkPosition === 'bottom') {

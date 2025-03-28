@@ -236,6 +236,10 @@
 
 进度条标记位置，可设置`'right' | 'bottom'`，默认`'right'`。
 
+#${prefix} barMarkInBar(boolean)
+
+进度条标记是否显示在进度条内侧，默认`true`。
+
 {{ /if }}
 
 {{ if: ${isCheckbox} }}
