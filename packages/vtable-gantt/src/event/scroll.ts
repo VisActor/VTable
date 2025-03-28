@@ -41,7 +41,7 @@ export function handleWhell(
   }
   isWheelEvent && state.resetInteractionState();
   if (
-    event.cancelable &&
+    event.nativeEvent?.cancelable &&
     (state._gantt.parsedOptions.overscrollBehavior === 'none' ||
       (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, state)) ||
       (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, state)))
