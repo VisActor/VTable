@@ -489,7 +489,8 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       rect: getCellRect(col, row, table),
       table,
       originCol: col,
-      originRow: row
+      originRow: row,
+      forComputation: true
     };
     if (customLayout === 'react-custom-layout') {
       // customLayout = table._reactCreateGraphic;

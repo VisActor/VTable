@@ -349,11 +349,24 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 
 可以使用`updateRecords` 来修改表格数据。具体可查看 api 文档。
 
+```javascript
+  /**
+   * 修改数据 支持多条数据
+   * @param records 修改数据条目
+   * @param recordIndexs 对应修改数据的索引
+   * 基本表格中显示在body中的索引，即要修改的是body部分的第几行数据；
+   * 如果是树形结构的话 recordIndexs 为数组，数组中每个元素为data的原始数据索引；
+   */
+  updateRecords(records: any[], recordIndexs: (number | number[])[])
+```
+
 或者可以修改某一个数据字段利用`changeCellValue`或者`changeCellValues`接口来实现。
 
 ### 树形结构数据更新
 
-在普通的列表中，数据更新是传入的`recordIndex`为一个数值，代表改行数据在列表中的索引。例如当`recordIndex`为`0`时，代表列表中的第一行数据。但是在树形（分组）结构中，`recordIndex`可能是一个数组，代表改节点从根节点开始的每级索引位置。尤其是在有排序的情况下，`recordIndex`是原始数据的结构，和在表格中显示的层级顺序可能不一致。因此在树形（分组）结构的表格中，请使用`getRecordIndexByCell`接口来获取目标位置的正确`recordIndex`，然后使用`updateRecords`等接口来更新数据。
+在普通的列表中，数据更新是传入的`recordIndex`为一个数值，代表改行数据在表格body中的索引。例如当`recordIndex`为`0`时，代表列表中的第一行数据。
+
+当在树形（分组）结构中，`recordIndex`可能是一个数组，代表改节点从根节点开始的每级索引位置。尤其是在有排序的情况下，`recordIndex`是原始数据的结构，和在表格中显示的层级顺序可能不一致。因此在树形（分组）结构的表格中，请使用`getRecordIndexByCell`接口来获取目标位置的正确`recordIndex`，然后使用`updateRecords`等接口来更新数据。
 
 ```javascript
 const recordIndex = tableInstance.getRecordIndexByCell(col, row);

@@ -71,6 +71,7 @@ export type HeightAdaptiveModeDef = 'only-body' | 'all';
 export type ShowColumnRowType = 'column' | 'row' | 'none' | 'all';
 /** 单元格所处表格哪部分 */
 export type CellLocation = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
+export type CellPivotRole = 'normal' | 'sub-total' | 'grand-total' | undefined;
 export type CellSubLocation =
   | 'body'
   | 'rowHeader'
@@ -121,7 +122,7 @@ export interface IRowSeriesNumber {
   title?: string;
   // field?: FieldDef;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
-  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
+  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox' | 'radio';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];

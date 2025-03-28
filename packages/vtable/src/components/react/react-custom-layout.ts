@@ -90,6 +90,17 @@ export class ReactCustomLayout {
     //   }
     // }
 
+    if (table.widthMode === 'autoWidth') {
+      table.scenegraph.recalculateColWidths();
+    }
+    if (
+      table.isAutoRowHeight() ||
+      (table.internalProps.defaultRowHeight === 'auto' && !isHeaderCustomLayout) ||
+      (table.internalProps.defaultHeaderRowHeight === 'auto' && isHeaderCustomLayout)
+    ) {
+      table.scenegraph.recalculateRowHeights();
+    }
+
     if (table.isPivotTable()) {
       const ranges = getUpdateCustomCellRangeInPivotTable(componentId, table, isHeaderCustomLayout);
       for (let i = 0; i < ranges.length; i++) {
@@ -108,12 +119,7 @@ export class ReactCustomLayout {
         }
       }
     }
-    if (table.widthMode === 'autoWidth') {
-      table.scenegraph.recalculateColWidths();
-    }
-    if (table.isAutoRowHeight()) {
-      table.scenegraph.recalculateRowHeights();
-    }
+
     // table.scenegraph.updateNextFrame();
     table.scenegraph.renderSceneGraph(); // use sync render for faster update
   }

@@ -88,7 +88,7 @@ async function moveCell(
     // 更新同步范围
     let syncTopRow;
     let syncBottomRow;
-    if (proxy.table.isAutoRowHeight()) {
+    if (proxy.table.isAutoRowHeight(startRow)) {
       syncTopRow = distStartRow;
       syncBottomRow = distEndRow;
     } else {
@@ -115,7 +115,7 @@ async function moveCell(
     // 本次行更新是否同步完成，列数超过limit时为false
     const sync = updateRowContent(syncTopRow, syncBottomRow, proxy, true);
 
-    if (proxy.table.isAutoRowHeight()) {
+    if (proxy.table.isAutoRowHeight(startRow)) {
       // body group
       updateAutoRow(
         proxy.bodyLeftCol, // colStart
@@ -177,7 +177,7 @@ async function moveCell(
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
     // proxy.referenceRow = screenTopRow;
     // proxy.rowUpdatePos = Math.min(proxy.rowUpdatePos, distStartRow);
-    if (proxy.table.isAutoRowHeight() && sync) {
+    if (proxy.table.isAutoRowHeight(startRow) && sync) {
       proxy.rowUpdatePos = Math.min(proxy.rowUpdatePos, proxy.rowEnd + 1);
     } else {
       proxy.rowUpdatePos = Math.min(proxy.rowUpdatePos, distStartRow);
@@ -196,7 +196,7 @@ async function moveCell(
 
     let syncTopRow;
     let syncBottomRow;
-    if (proxy.table.isAutoRowHeight()) {
+    if (proxy.table.isAutoRowHeight(distStartRow)) {
       syncTopRow = distStartRow;
       syncBottomRow = distEndRow;
     } else {
@@ -214,7 +214,7 @@ async function moveCell(
 
     const sync = updateRowContent(syncTopRow, syncBottomRow, proxy, true);
 
-    if (proxy.table.isAutoRowHeight()) {
+    if (proxy.table.isAutoRowHeight(distStartRow)) {
       // body group
       updateAutoRow(
         proxy.bodyLeftCol, // colStart
@@ -277,7 +277,7 @@ async function moveCell(
     );
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
     // proxy.referenceRow = screenTopRow;
-    if (proxy.table.isAutoRowHeight() && sync) {
+    if (proxy.table.isAutoRowHeight(distStartRow) && sync) {
       proxy.rowUpdatePos = proxy.rowEnd + 1;
     } else {
       proxy.rowUpdatePos = proxy.rowStart;

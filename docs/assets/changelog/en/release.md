@@ -1,3 +1,28 @@
+# v1.17.3
+
+2025-03-24
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: rowSeriesNumber support cell type radio [#3558](https://github.com/VisActor/VTable/issues/3558)
+- **@visactor/vtable**: add custom reactAttributePlugin in react-vtable
+- **@visactor/vtable**: add maintainedColumnCount config
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: selection mergeCell extend range [#3529](https://github.com/VisActor/VTable/issues/3529)
+- **@visactor/vtable**: set cellInnerBorder false frame border render error [#3574](https://github.com/VisActor/VTable/issues/3574)
+- **@visactor/vtable**: fix cell border in cell with corner-radius
+- **@visactor/vtable**: fix axis label autosize computation
+- **@visactor/vtable**: fix small window size frozen column count
+- **@visactor/vtable**: columnWidthConfig match dimension error
+- **@visactor/vtable**: fix react component update [#3474](https://github.com/VisActor/VTable/issues/3474)
+- **@visactor/vtable**: fix right button select problem
+- **@visactor/vtable**: fix row update range [#3468](https://github.com/VisActor/VTable/issues/3468)
+
+[more detail about v1.17.3](https://github.com/VisActor/VTable/releases/tag/v1.17.3)
+
 # v1.17.2
 
 2025-03-11

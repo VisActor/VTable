@@ -13,6 +13,8 @@ export { CustomComponent } from './custom-component';
 export { CustomLayout, type CustomLayoutFunctionArg } from './custom/custom-layout';
 export * from './custom/graphic';
 
+export * from './custom/vtable-react-attribute-plugin';
+
 type Props = { updateId?: number };
 
 export interface IMarkElement extends React.ReactElement<Props, React.JSXElementConstructor<Props>> {

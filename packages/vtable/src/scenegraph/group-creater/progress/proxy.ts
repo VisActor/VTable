@@ -73,7 +73,7 @@ export class SceneProxy {
       // this.colLimit = 100;
       this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
       this.colLimit = Math.max(100, Math.ceil((table.tableNoFrameWidth * 2) / table.defaultColWidth));
-    } else if (this.table.isAutoRowHeight()) {
+    } else if (this.table.isAutoRowHeight(table.columnHeaderLevelCount)) {
       // this.rowLimit = 100;
       this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
     } else if (this.table.widthMode === 'autoWidth') {
@@ -91,6 +91,9 @@ export class SceneProxy {
     }
     if (this.table.options.maintainedDataCount) {
       this.rowLimit = this.table.options.maintainedDataCount;
+    }
+    if (this.table.options.maintainedColumnCount) {
+      this.colLimit = this.table.options.maintainedColumnCount;
     }
   }
 
@@ -560,13 +563,13 @@ export class SceneProxy {
   updateCellGroups(count: number) {
     const distRow = Math.min(this.bodyBottomRow, this.rowUpdatePos + count);
     // console.log('updateCellGroups', this.rowUpdatePos, distRow);
-    if (this.table.isAutoRowHeight()) {
+    if (this.table.isAutoRowHeight(this.rowUpdatePos)) {
       computeRowsHeight(this.table, this.rowUpdatePos, distRow, false);
     }
 
     updateRowContent(this.rowUpdatePos, distRow, this);
 
-    if (this.table.isAutoRowHeight()) {
+    if (this.table.isAutoRowHeight(this.rowUpdatePos)) {
       // body group
       updateAutoRow(
         this.bodyLeftCol, // colStart
@@ -605,12 +608,12 @@ export class SceneProxy {
   updateBottomFrozenCellGroups() {
     const startRow = this.table.rowCount - this.table.bottomFrozenRowCount;
     const endRow = this.table.rowCount - 1;
-    if (this.table.isAutoRowHeight()) {
+    if (this.table.isAutoRowHeight(startRow)) {
       computeRowsHeight(this.table, startRow, endRow, false);
     }
     updateRowContent(startRow, endRow, this);
 
-    if (this.table.isAutoRowHeight()) {
+    if (this.table.isAutoRowHeight(startRow)) {
       // body group
       updateAutoRow(
         this.bodyLeftCol, // colStart
@@ -650,7 +653,7 @@ export class SceneProxy {
     console.log('updateRightFrozenCellGroups', startCol, endCol);
     updateColContent(startCol, endCol, this);
 
-    if (this.table.isAutoRowHeight()) {
+    if (this.table.isAutoRowHeight(this.rowStart)) {
       // body group
       updateAutoColumn(startCol, endCol, this.table, this.colUpdateDirection);
     }
