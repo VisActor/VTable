@@ -719,6 +719,9 @@ export class TableTheme implements ITableThemeDefine {
         },
         get selectionFillMode(): 'overlay' | 'replace' {
           return selectionStyle?.selectionFillMode ?? 'overlay';
+        },
+        get dynamicUpdateSelectionSize(): boolean {
+          return selectionStyle?.dynamicUpdateSelectionSize ?? false;
         }
       };
     }
