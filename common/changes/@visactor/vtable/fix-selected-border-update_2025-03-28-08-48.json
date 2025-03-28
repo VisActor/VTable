@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add dynamicUpdateSelectionSize config in theme.selectionStyle",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
