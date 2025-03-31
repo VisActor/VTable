@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix tree checkbox state update problem",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

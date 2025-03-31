@@ -35,6 +35,7 @@ export class ProgressBarStyle extends Style {
   private _barMarkWidth: number;
   private _barMarkPosition: 'right' | 'bottom';
   private _barRightToLeft: boolean;
+  private _barMarkInBar: boolean;
 
   static get DEFAULT(): ProgressBarStyle {
     return defaultStyle ? defaultStyle : (defaultStyle = new ProgressBarStyle());
@@ -57,6 +58,7 @@ export class ProgressBarStyle extends Style {
     this._barMarkWidth = style.barMarkWidth ?? 2;
     this._barMarkPosition = style.barMarkPosition ?? 'right';
     this._barRightToLeft = style.barRightToLeft ?? false;
+    this._barMarkInBar = style.barMarkInBar ?? true;
   }
   get showBar(): boolean | ((args: StylePropertyFunctionArg) => boolean) {
     return this._showBar;
@@ -161,6 +163,13 @@ export class ProgressBarStyle extends Style {
   }
   set barRightToLeft(value: boolean) {
     this._barRightToLeft = value;
+    //this.doChangeStyle();
+  }
+  get barMarkInBar(): boolean {
+    return this._barMarkInBar;
+  }
+  set barMarkInBar(value: boolean) {
+    this._barMarkInBar = value;
     //this.doChangeStyle();
   }
   clone(): ProgressBarStyle {

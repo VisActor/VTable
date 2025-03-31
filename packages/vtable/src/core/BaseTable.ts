@@ -3140,7 +3140,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           end: {
             col: Math.min(customMerge.range.end.col, this.colCount - 1),
             row: Math.min(customMerge.range.end.row, this.rowCount - 1)
-          }
+          },
+          isCustom: true
         };
         return range;
       }
@@ -3180,6 +3181,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           );
           customMerge.style = fullStyle;
         }
+        customMerge.range = {
+          start: {
+            col: Math.max(customMerge.range.start.col, 0),
+            row: Math.max(customMerge.range.start.row, 0)
+          },
+          end: {
+            col: Math.min(customMerge.range.end.col, this.colCount - 1),
+            row: Math.min(customMerge.range.end.row, this.rowCount - 1)
+          },
+          isCustom: true
+        };
         return customMerge;
       }
     }

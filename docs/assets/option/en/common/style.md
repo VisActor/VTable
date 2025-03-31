@@ -235,6 +235,10 @@ Progress bar mark width
 
 Progress bar mark position, can be set to `'right' | 'bottom'`, default is `'right'`.
 
+#${prefix} barMarkInBar(boolean)
+
+Progress bar mark shows inside of bar, default is `true`。
+
 {{ /if }}
 
 {{ if: ${isCheckbox} }}
