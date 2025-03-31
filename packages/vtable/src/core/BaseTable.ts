@@ -121,7 +121,11 @@ import type { CreateLegend } from '../components/legend/create-legend';
 import type { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
 import type { Chart } from '../scenegraph/graphic/chart';
-import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
+import {
+  chartRenderQueueList,
+  clearChartRenderQueue,
+  setBatchRenderChartCount
+} from '../scenegraph/graphic/contributions/chart-render-helper';
 import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get-axis-config';
 import { NumberRangeMap } from '../layout/row-height-map';
 import { ListTable } from '../ListTable';
@@ -2316,6 +2320,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps = null;
 
     this.reactCustomLayout?.clearCache();
+    clearChartRenderQueue();
   }
 
   fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(
@@ -2486,6 +2491,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.emptyTip?.release();
     internalProps.emptyTip = null;
     internalProps.layoutMap.release();
+    clearChartRenderQueue();
     this.scenegraph.clearCells();
     this.scenegraph.updateComponent();
     this.stateManager.updateOptionSetState();

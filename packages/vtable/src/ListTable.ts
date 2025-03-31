@@ -55,6 +55,7 @@ import {
 } from './core/record-helper';
 import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import { fixUpdateRowRange } from './tools/update-row';
+import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -1142,6 +1143,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param option 附近参数，其中的sortState为排序状态，如果设置null 将清除目前的排序状态
    */
   setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] | null }): void {
+    clearChartRenderQueue();
     // 释放事件 及 对象
     this.internalProps.dataSource?.release();
     // 过滤掉dataSource的引用
