@@ -2,6 +2,33 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.17.4",
+      "tag": "@visactor/vtable_v1.17.4",
+      "date": "Mon, 31 Mar 2025 12:27:48 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add barMarkInBar style config in progressbar #3616"
+          },
+          {
+            "comment": "fix: fix button style problem #3614"
+          },
+          {
+            "comment": "fix: fix checkbox state order update #3606"
+          },
+          {
+            "comment": "fix: add isCustom tag for merge cell range #3504"
+          },
+          {
+            "comment": "fix: fix tree checkbox state update problem"
+          },
+          {
+            "comment": "fix: disable group title editor"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.17.3",
       "tag": "@visactor/vtable_v1.17.3",
       "date": "Mon, 24 Mar 2025 09:35:45 GMT",
