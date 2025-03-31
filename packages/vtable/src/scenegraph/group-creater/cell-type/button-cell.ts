@@ -257,7 +257,9 @@ function createButton(
       cornerRadius: buttonBorderRadius
     },
     state: {
-      text: {},
+      text: {
+        hover: {}
+      },
       panel: {
         hover: {
           fill: buttonHoverColor,
