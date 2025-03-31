@@ -33,7 +33,15 @@ export type ExportVTableToExcelOptions = {
   skipImageExportCellType?: SkipImageExportCellType[];
 };
 
-export async function exportVTableToExcel(tableInstance: IVTable, options?: ExportVTableToExcelOptions) {
+function requestIdleCallbackPromise(options?: IdleRequestOptions) {
+  return new Promise<IdleDeadline>((resolve) => {
+    requestIdleCallback((deadline) => {
+      resolve(deadline);
+    }, options);
+  });
+}
+
+export async function exportVTableToExcel(tableInstance: IVTable, options?: ExportVTableToExcelOptions, optimization = false) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
   worksheet.properties.defaultRowHeight = 40;
@@ -49,9 +57,9 @@ export async function exportVTableToExcel(tableInstance: IVTable, options?: Expo
   const SLICE_SIZE = 100;
   let currentRow = minRow;
 
-  function processSlice(deadline: IdleDeadline) {
+  function processSlice(deadline?: IdleDeadline) {
     return new Promise<void>(async resolve => {
-      while (currentRow <= maxRow && deadline.timeRemaining() > 0) {
+      while (currentRow <= maxRow && (!optimization || (deadline?.timeRemaining() > 0))) {
         const endRow = Math.min(currentRow + SLICE_SIZE - 1, maxRow);
         for (let col = minCol; col <= maxCol; col++) {
           const colWidth = tableInstance.getColWidth(col);
@@ -84,19 +92,23 @@ export async function exportVTableToExcel(tableInstance: IVTable, options?: Expo
       if (currentRow > maxRow) {
         resolve();
       } else {
-        requestIdleCallback(async nextDeadline => {
-          await processSlice(nextDeadline);
-          resolve();
-        });
+        let nextDeadline: IdleDeadline | undefined;
+        if (optimization) {
+          nextDeadline = await requestIdleCallbackPromise()
+        }
+        await processSlice(nextDeadline);
+        resolve();
       }
     });
   }
 
-  await new Promise<void>(resolve => {
-    requestIdleCallback(async deadline => {
-      await processSlice(deadline);
-      resolve();
-    });
+  await new Promise<void>(async resolve => {
+    let deadline: IdleDeadline | undefined;
+    if (optimization) {
+      deadline = await requestIdleCallbackPromise()
+    }
+    await processSlice(deadline);
+    resolve();
   });
 
   worksheet.columns = columns;
