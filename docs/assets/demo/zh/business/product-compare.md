@@ -13,6 +13,8 @@ option: PivotTable#rowTree
 
 该示例通过配置 `PivotTable.rowTree` 自定义行表头树；通过 `indicators[x].style.bgColor`，将指标值不同的行背景色设置为红色，方便一眼看出不同
 
+贡献者：[Jacleklm](https://github.com/Jacleklm)
+
 ## 关键配置
 
 - `PivotTable.rowTree` 自定义行表头树
