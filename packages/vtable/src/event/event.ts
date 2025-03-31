@@ -26,7 +26,7 @@ import type { ListTable } from '../ListTable';
 import { isValid } from '@visactor/vutils';
 import { InertiaScroll } from './scroll';
 import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
-import { bindGroupTitleCheckboxChange } from './self-event-listener/list-table/checkbox';
+import { bindGroupTitleCheckboxChange, bindHeaderCheckboxChange } from './self-event-listener/list-table/checkbox';
 import { bindButtonClickEvent } from './component/button';
 import { bindIconClickEvent } from './self-event-listener/base-table/icon';
 import { bindDropdownMenuClickEvent } from './self-event-listener/base-table/dropdown-menu';
@@ -163,6 +163,8 @@ export class EventManager {
 
     // group title checkbox change
     bindGroupTitleCheckboxChange(this.table);
+    // header checkbox change
+    bindHeaderCheckboxChange(this.table);
 
     // button click
     bindButtonClickEvent(this.table);
