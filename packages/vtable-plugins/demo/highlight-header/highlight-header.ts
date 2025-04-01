@@ -1,6 +1,8 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
-import { InvertHighlightPlugin, CarouselAnimationPlugin } from '../../src';
+import * as VTable_editors from '@visactor/vtable-editors';
+
+import { HighlightHeaderPlugin } from '../../src';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -19,21 +21,19 @@ const generatePersons = count => {
 };
 
 export function createTable() {
+  const input_editor = new VTable_editors.InputEditor();
+  VTable.register.editor('input-editor', input_editor);
+
   const records = generatePersons(20);
   const columns: VTable.ColumnsDefine = [
-    {
-      field: 'image',
-      title: '行号',
-      width: 80,
-      cellType: 'image',
-      keepAspectRatio: true
-    },
     {
       field: 'id',
       title: 'ID',
       width: 'auto',
       minWidth: 50,
-      sort: true
+      sort: true,
+      headerEditor: 'input-editor',
+      editor: 'input-editor'
     },
     {
       field: 'email1',
@@ -47,21 +47,6 @@ export function createTable() {
       }
     },
     {
-      title: 'full name',
-      columns: [
-        {
-          field: 'name',
-          title: 'First Name',
-          width: 200
-        },
-        {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
-        }
-      ]
-    },
-    {
       field: 'date1',
       title: 'birthday',
       width: 200
@@ -72,15 +57,26 @@ export function createTable() {
       width: 100
     }
   ];
+
+  const highlightPlugin = new HighlightHeaderPlugin({
+    colHighlight: true,
+    rowHighlight: true
+  });
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
-    theme: VTable.themes.DARK,
-    // heightMode: 'adaptive',
+    rowSeriesNumber: {},
     select: {
-      disableSelect: true
-    }
+      outsideClickDeselect: true,
+      headerSelectMode: 'body'
+    },
+    autoWrapText: true,
+    editor: 'input-editor',
+    menu: {
+      contextMenuItems: ['copy', 'paste', 'delete', '...']
+    },
+    plugins: [highlightPlugin]
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
@@ -89,10 +85,5 @@ export function createTable() {
     customGrapicKeys: ['col', 'row']
   });
 
-  const ca = new CarouselAnimationPlugin(tableInstance, {
-    rowCount: 2,
-    replaceScrollAction: true
-  });
-
-  ca.play();
+  // tableInstance.scenegraph.temporarilyUpdateSelectRectStyle({stroke: false})
 }
