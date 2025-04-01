@@ -19,7 +19,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(20);
+  const records = generatePersons(30);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'image',
@@ -75,7 +75,6 @@ export function createTable() {
   const tca = new TableCarouselAnimationPlugin({
     rowCount: 2,
     // colCount: 2,
-    replaceScrollAction: true,
     autoPlay: true,
     autoPlayDelay: 1000
   });

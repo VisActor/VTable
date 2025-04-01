@@ -25,60 +25,9 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
     this.table = table as VTable.ListTable;
   }
 
-  // 判断event的keyCode是否是excel的快捷键
-  isExcelShortcutKey(event: KeyboardEvent) {
-    return (
-      event.key === 'Enter' ||
-      event.key === 'Tab' ||
-      event.key === 'ArrowLeft' ||
-      event.key === 'ArrowRight' ||
-      event.key === 'ArrowDown' ||
-      event.key === 'ArrowUp'
-    );
-  }
   bindEvent() {
     //监听document全局的keydown事件 捕获阶段
-    document.addEventListener(
-      'keydown',
-      event => {
-        if (this.table.editorManager) {
-          if (this.table.editorManager.beginTriggerEditCellMode === 'keydown') {
-            if (this.table.editorManager.editingEditor && this.isExcelShortcutKey(event)) {
-              const { col, row } = this.table.editorManager.editCell;
-              this.table.editorManager.completeEdit();
-              if (event.key === 'Enter') {
-                this.table.selectCell(col, row + 1);
-              } else if (event.key === 'Tab') {
-                this.table.selectCell(col + 1, row);
-              } else if (event.key === 'ArrowLeft') {
-                this.table.selectCell(col - 1, row);
-              } else if (event.key === 'ArrowRight') {
-                this.table.selectCell(col + 1, row);
-              } else if (event.key === 'ArrowDown') {
-                this.table.selectCell(col, row + 1);
-              } else if (event.key === 'ArrowUp') {
-                this.table.selectCell(col, row - 1);
-              }
-              this.table.getElement().focus();
-              // 阻止事件传播和默认行为
-              event.stopPropagation();
-              event.preventDefault();
-            }
-          } else {
-            const { col, row } = this.table.stateManager.select.cellPos;
-            if (this.table.editorManager.editingEditor && event.key === 'Enter') {
-              this.table.editorManager.completeEdit();
-              this.table.getElement().focus();
-              this.table.selectCell(col, row + 1);
-              // 阻止事件传播和默认行为
-              event.stopPropagation();
-              event.preventDefault();
-            }
-          }
-        }
-      },
-      true
-    );
+    document.addEventListener('keydown', this.handleKeyDown.bind(this), true);
     //   this.table.on('selected_cell', () => {
     //     this.updateHighlight();
     //   });
@@ -93,8 +42,55 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
     //     }
     //   });
   }
-
+  handleKeyDown(event: KeyboardEvent) {
+    if (this.table.editorManager) {
+      if (this.table.editorManager.beginTriggerEditCellMode === 'keydown') {
+        if (this.table.editorManager.editingEditor && this.isExcelShortcutKey(event)) {
+          const { col, row } = this.table.editorManager.editCell;
+          this.table.editorManager.completeEdit();
+          if (event.key === 'Enter') {
+            this.table.selectCell(col, row + 1);
+          } else if (event.key === 'Tab') {
+            this.table.selectCell(col + 1, row);
+          } else if (event.key === 'ArrowLeft') {
+            this.table.selectCell(col - 1, row);
+          } else if (event.key === 'ArrowRight') {
+            this.table.selectCell(col + 1, row);
+          } else if (event.key === 'ArrowDown') {
+            this.table.selectCell(col, row + 1);
+          } else if (event.key === 'ArrowUp') {
+            this.table.selectCell(col, row - 1);
+          }
+          this.table.getElement().focus();
+          // 阻止事件传播和默认行为
+          event.stopPropagation();
+          event.preventDefault();
+        }
+      } else {
+        const { col, row } = this.table.stateManager.select.cellPos;
+        if (this.table.editorManager.editingEditor && event.key === 'Enter') {
+          this.table.editorManager.completeEdit();
+          this.table.getElement().focus();
+          this.table.selectCell(col, row + 1);
+          // 阻止事件传播和默认行为
+          event.stopPropagation();
+          event.preventDefault();
+        }
+      }
+    }
+  }
+  // 判断event的keyCode是否是excel的快捷键
+  isExcelShortcutKey(event: KeyboardEvent) {
+    return (
+      event.key === 'Enter' ||
+      event.key === 'Tab' ||
+      event.key === 'ArrowLeft' ||
+      event.key === 'ArrowRight' ||
+      event.key === 'ArrowDown' ||
+      event.key === 'ArrowUp'
+    );
+  }
   release() {
-    //
+    document.removeEventListener('keydown', this.handleKeyDown, true);
   }
 }

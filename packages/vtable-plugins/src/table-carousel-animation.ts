@@ -32,7 +32,6 @@ export class TableCarouselAnimationPlugin {
   animationDuration: number;
   animationDelay: number;
   animationEasing: EasingType;
-  replaceScrollAction: boolean;
 
   playing: boolean;
   row: number;
@@ -50,7 +49,6 @@ export class TableCarouselAnimationPlugin {
     this.animationDuration = options?.animationDuration ?? 500;
     this.animationDelay = options?.animationDelay ?? 1000;
     this.animationEasing = options?.animationEasing ?? 'linear';
-    this.replaceScrollAction = options?.replaceScrollAction ?? false;
     this.autoPlay = options?.autoPlay ?? false;
     this.autoPlayDelay = options?.autoPlayDelay ?? 0;
     this.customDistColFunction = options.customDistColFunction;
@@ -61,18 +59,11 @@ export class TableCarouselAnimationPlugin {
       this.table = args[2] as BaseTableAPI;
     }
     this.reset();
-    this.init();
+
     if (this.autoPlay) {
       setTimeout(() => {
         this.play();
       }, this.autoPlayDelay);
-    }
-  }
-  init() {
-    if (this.replaceScrollAction) {
-      this.table.disableScroll();
-
-      this.table.scenegraph.stage.addEventListener('wheel', this.onScrollEnd.bind(this));
     }
   }
 
@@ -80,28 +71,6 @@ export class TableCarouselAnimationPlugin {
     this.playing = false;
     this.row = this.table.frozenRowCount;
     this.col = this.table.frozenColCount;
-  }
-
-  onScrollEnd(e: Event) {
-    if (this.rowCount) {
-      if ((e as any).deltaY > 0) {
-        this.row += this.rowCount;
-        this.row = Math.min(this.row, this.table.rowCount - this.table.frozenRowCount);
-      } else if ((e as any).deltaY < 0) {
-        this.row -= this.rowCount;
-        this.row = Math.max(this.row, this.table.frozenRowCount);
-      }
-      this.table.scrollToRow(this.row, { duration: this.animationDuration, easing: this.animationEasing });
-    } else if (this.colCount) {
-      if ((e as any).deltaX > 0) {
-        this.col += this.colCount;
-        this.col = Math.min(this.col, this.table.colCount - this.table.frozenColCount);
-      } else if ((e as any).deltaX < 0) {
-        this.col -= this.colCount;
-        this.col = Math.max(this.col, this.table.frozenColCount);
-      }
-      this.table.scrollToCol(this.col, { duration: this.animationDuration, easing: this.animationEasing });
-    }
   }
 
   play() {
@@ -189,5 +158,8 @@ export class TableCarouselAnimationPlugin {
       // animation ? this.animationDuration + this.animationDelay : 0
       this.animationDuration + this.animationDelay
     );
+  }
+  release() {
+    // do nothing
   }
 }
