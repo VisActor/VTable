@@ -1730,7 +1730,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       (this.dataset.records as Array<any>)?.length > 0 ||
       (this.dataset.records && !Array.isArray(this.dataset.records))
     ) {
-      bodyColCount = (this._columnHeaderCellIds[0]?.length ?? this.columnDimensionTree.tree.size) || 1;
+      bodyColCount =
+        (this._columnHeaderCellIds[0]?.length ?? this.columnDimensionTree.tree.size) ||
+        (this._indicators?.length > 0 ? 1 : 0);
     } else {
       bodyColCount = 0;
     }
