@@ -1163,6 +1163,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           height - ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) - ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
       }
     }
+
+    this._clearColRangeWidthsMap();
+    this._clearRowRangeHeightsMap();
   }
 
   updateViewBox(newViewBox: IBoundsLike) {
