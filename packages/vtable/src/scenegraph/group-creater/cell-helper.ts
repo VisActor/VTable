@@ -460,7 +460,8 @@ function _generateCustomElementsGroup(
     // custom merge custom render
     customElementsGroup = customResult.elementsGroup;
     renderDefault = customResult.renderDefault;
-  } else if (range?.isCustom) {
+  } else if (range?.isCustom && !table.isCornerHeader(col, row)) {
+    // 判断不是角头单元格，来兼容corner中设置的customLayout
     // custom merge && no custom render
     // do not use column custom render
   } else {

@@ -169,7 +169,7 @@ export class DimensionTree {
           size += this.setTreeNode(n, size, node);
         });
       } else {
-        size = 1;
+        node.level === -1 ? (size = 0) : (size = 1);
         // re.totalLevel = Math.max(re.totalLevel, (node.level ?? -1) + 1);
       }
     } else if (node.hierarchyState === HierarchyState.expand && children?.length >= 1) {
@@ -224,7 +224,7 @@ export class DimensionTree {
     } else {
       //树形展示 无children子节点。但不能确定是最后一层的叶子节点 totalLevel还不能确定是计算完整棵树的整体深度
       node.hierarchyState = HierarchyState.none;
-      size = 1;
+      node.level === -1 ? (size = 0) : (size = 1);
     }
 
     node.size = size;

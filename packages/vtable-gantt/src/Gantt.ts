@@ -782,6 +782,13 @@ export class Gantt extends EventTarget {
     //     index + this.taskListTableInstance.columnHeaderLevelCount
     //   );
     // }
+    // if (this.taskListTableInstance.rowHierarchyType === 'tree' && typeof index === 'number') {
+    //   //如果是树形结构 需要获取数据源对应的索引
+    //   index = this.taskListTableInstance.getRecordIndexByCell(
+    //     0,
+    //     index + this.taskListTableInstance.columnHeaderLevelCount
+    //   );
+    // }
     this.taskListTableInstance.updateRecords([record], [index]);
   }
   /**
@@ -935,11 +942,20 @@ export class Gantt extends EventTarget {
     if (Array.isArray(task_index)) {
       const index = (task_index as number[])[0];
       const sub_index = (task_index as number[])[1];
-      this._updateRecordToListTable(record, isValid(sub_index) ? [index, sub_index] : index);
+      // this._updateRecordToListTable(record, isValid(sub_index) ? [index, sub_index] : index);
+      this._updateRecordToListTable(record, task_index);
       this._refreshTaskBar(index, sub_index);
       return;
     }
     const index = task_index as number;
+
+    // if (this.taskListTableInstance.rowHierarchyType === 'tree' && typeof index === 'number') {
+    //   //如果是树形结构 需要获取数据源对应的索引
+    //   index = this.taskListTableInstance.getRecordIndexByCell(
+    //     0,
+    //     index + this.taskListTableInstance.columnHeaderLevelCount
+    //   );
+    // }
     this._updateRecordToListTable(record, index);
     this._refreshTaskBar(index, undefined);
   }
