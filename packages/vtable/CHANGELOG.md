@@ -1,6 +1,18 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 24 Mar 2025 09:35:45 GMT and should not be manually modified.
+This log was last generated on Mon, 31 Mar 2025 12:27:48 GMT and should not be manually modified.
+
+## 1.17.4
+Mon, 31 Mar 2025 12:27:48 GMT
+
+### Updates
+
+- feat: add barMarkInBar style config in progressbar #3616
+- fix: fix button style problem #3614
+- fix: fix checkbox state order update #3606
+- fix: add isCustom tag for merge cell range #3504
+- fix: fix tree checkbox state update problem
+- fix: disable group title editor
 
 ## 1.17.3
 Mon, 24 Mar 2025 09:35:45 GMT
