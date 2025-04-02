@@ -1,3 +1,21 @@
+# v1.17.4
+
+2025-03-31
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 在进度条中添加条形标记样式配置 [#3616](https://github.com/VisActor/VTable/issues/3616)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复按钮样式问题 [#3614](https://github.com/VisActor/VTable/issues/3614)
+- **@visactor/vtable**: 修复复选框状态顺序更新问题 [#3606](https://github.com/VisActor/VTable/issues/3606)
+- **@visactor/vtable**: 为合并单元格范围添加自定义标记 [#3504](https://github.com/VisActor/VTable/issues/3504)
+- **@visactor/vtable**: 修复树形复选框状态更新问题
+- **@visactor/vtable**: 禁用分组标题编辑器
+
+[更多详情请查看 v1.17.4](https://github.com/VisActor/VTable/releases/tag/v1.17.4)
+
 # v1.17.3
 
 2025-03-24
