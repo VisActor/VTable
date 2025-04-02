@@ -11,28 +11,26 @@ link: custom_define/vue-dom-component
 
 在 `vue-vtable` 中，支持在单元格中直接渲染 DOM 组件，可以轻松地在表格中嵌入复杂的 Vue 组件，实现高度自定义的表格展示效果。支持两种形式：**插槽式**和**直接传入到 `column` 配置中**。两种方式都需要通过 `Group` 组件进行包裹。
 
-## 开启方式
+**🛠️ 核心配置步骤：开启 DOM 组件渲染**
 
 在 `vue-vtable` 中，渲染 DOM 组件需要两个关键步骤：
 
 - **`Group` 组件中传入 `vue` 属性**：这是为了让 `Group` 组件能够识别并处理 Vue 组件。
 - **开启 `customConfig.createReactContainer`**：这个配置项用于创建表格容器，确保 Vue 组件能够正确渲染到表格容器中。
 
-## 使用方式
-
-**使用方式 1：插槽式渲染**
+**✨ 使用方式 1：插槽式渲染**
 
 插槽式渲染是通过 `ListColumn` 组件的两个插槽 `headerCustomLayout` 和 `customLayout` 来实现的。自定义组件需要使用 `Group` 组件进行包裹。
 
 - **`headerCustomLayout`**：用于自定义表头单元格的渲染。
 - **`customLayout`**：用于自定义表格体单元格的渲染。
 
-**使用方式 2： 直接传入配置式渲染**
+**✨ 使用方式 2： 直接传入配置式渲染**
 
 直接传入配置式渲染与插槽式渲染类似，区别在于你不需要通过插槽来传递组件，而是直接在 `column.headerCustomLayout` 或 `column.customLayout` 配置中的 `element` 属性中传入虚拟节点。
 使用方法与 [自定义组件](../../guide/custom_define/custom_layout) 大致相同。
 
-## 注意事项
+**⚠️ 注意事项**
 
 - **交互开启**： 若自定义单元格中需要鼠标交互，需要手动开启 `pointer-events`, 如下示例
 
