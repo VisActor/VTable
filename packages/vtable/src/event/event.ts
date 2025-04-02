@@ -530,9 +530,17 @@ export class EventManager {
     }
     return false;
   }
-
   checkCellFillhandle(eventArgsSet: SceneEvent, update?: boolean): boolean {
-    if (this.table.options.excelOptions?.fillHandle) {
+    let isFillHandle = false;
+    if (typeof this.table.options.excelOptions?.fillHandle === 'function') {
+      isFillHandle = this.table.options.excelOptions.fillHandle({
+        selectRanges: this.table.stateManager.select.ranges,
+        table: this.table
+      });
+    } else {
+      isFillHandle = this.table.options.excelOptions?.fillHandle;
+    }
+    if (isFillHandle) {
       const { eventArgs } = eventArgsSet;
       if (eventArgs) {
         if (this.table.stateManager.select?.ranges?.length) {
@@ -544,11 +552,31 @@ export class EventManager {
             this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].start.row,
             this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.row
           );
-
-          const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
-          // 计算鼠标与fillhandle矩形中心之间的距离
+          const startCol = Math.min(
+            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].start.col,
+            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.col
+          );
+          const startRow = Math.min(
+            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].start.row,
+            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.row
+          );
+          // 计算鼠标与fillhandle矩形中心之间的距离 distanceX 和 distanceY
+          // 考虑最后一行和最后一列的特殊情况
+          let lastCellBound;
+          if (lastCol < this.table.colCount - 1) {
+            lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+          } else {
+            lastCellBound = this.table.scenegraph.highPerformanceGetCell(startCol - 1, lastRow).globalAABBBounds;
+          }
           const distanceX = Math.abs(eventArgsSet.abstractPos.x - lastCellBound.x2);
+
+          if (lastRow < this.table.rowCount - 1) {
+            lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+          } else {
+            lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, startRow - 1).globalAABBBounds;
+          }
           const distanceY = Math.abs(eventArgsSet.abstractPos.y - lastCellBound.y2);
+
           const squareSize = 6 * 3;
           // 判断鼠标是否落在fillhandle矩形内
           if (
