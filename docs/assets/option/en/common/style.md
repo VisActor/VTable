@@ -123,10 +123,12 @@ Set whether the text in the cell has a sticking effect 【Text can dynamically a
 When the cell text has an adsorption effect [the text can dynamically adjust its position when scrolling], the basis for adsorption is the horizontal alignment of the cell. For example, when `textStickBaseOnAlign` is `true` and `textAlign` is `'center'`, the text will be adsorbed to the horizontal center of the cell; otherwise, it will be adsorbed to the left or right edge of the cell (depending on the scroll position)
 
 #${prefix} marked(MarkedPropertyDefine)
+
 Set whether the cell has a marked style
 {{ use: common-marked(
   prefix = ${prefix}
   ) }}
+  
 #${prefix} autoWrapText(boolean)
 Set whether the cell's text should automatically wrap
 
