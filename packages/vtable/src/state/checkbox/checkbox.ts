@@ -13,6 +13,26 @@ export function setCheckedState(
   checked: boolean | 'indeterminate',
   state: StateManager
 ) {
+  const table = state.table;
+  const cellRange = table.getCellRange(col, row);
+  if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
+    for (let i = cellRange.start.col; i <= cellRange.end.col; i++) {
+      for (let j = cellRange.start.row; j <= cellRange.end.row; j++) {
+        setSingleCheckedState(i, j, field, checked, state);
+      }
+    }
+  } else {
+    setSingleCheckedState(col, row, field, checked, state);
+  }
+}
+
+function setSingleCheckedState(
+  col: number,
+  row: number,
+  field: string | number,
+  checked: boolean | 'indeterminate',
+  state: StateManager
+) {
   const recordIndex = state.table.getRecordShowIndexByCell(col, row);
   if (recordIndex >= 0) {
     const dataIndex = state.table.dataSource.getIndexKey(recordIndex).toString();
