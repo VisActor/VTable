@@ -2,6 +2,42 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.17.5",
+      "tag": "@visactor/vtable_v1.17.5",
+      "date": "Wed, 02 Apr 2025 09:56:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: fillHandle function #3582\n\n"
+          },
+          {
+            "comment": "feat: cell support marked function #3583\n\n"
+          },
+          {
+            "comment": "fix: gantt scale set quarter parser problem #3612\n\n"
+          },
+          {
+            "comment": "fix: gantt overscrollBehavior none work #3638\n\n"
+          },
+          {
+            "comment": "fix: gantt chart updateRecords error when table is tree mode #3639\n\n"
+          },
+          {
+            "comment": "fix: rowHeight error when set adaptive heightMode #3640\n\n"
+          },
+          {
+            "comment": "feat: refactor pivotTable corner with no columns or rows case #3653\n\n"
+          },
+          {
+            "comment": "fix: when set renderChartAsync setRecords api render error #3661\n\n"
+          },
+          {
+            "comment": "fix: fix merge cell checkbox state update #3668"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.17.4",
       "tag": "@visactor/vtable_v1.17.4",
       "date": "Mon, 31 Mar 2025 12:27:48 GMT",
