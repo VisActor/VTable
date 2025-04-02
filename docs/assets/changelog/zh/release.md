@@ -1,3 +1,30 @@
+# v1.17.5
+
+2025-04-02
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 单元格支持标记功能 [#3583](https://github.com/VisActor/VTable/issues/3583)
+- **@visactor/vtable**: 重构透视表在无列或无行情况下的角落处理 [#3653](https://github.com/VisActor/VTable/issues/3653)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复甘特图刻度设置季度解析问题 [#3612](https://github.com/VisActor/VTable/issues/3612)
+- **@visactor/vtable**: 修复甘特图 overscrollBehavior 无效问题 [#3638](https://github.com/VisActor/VTable/issues/3638)
+- **@visactor/vtable**: 修复树形模式下甘特图 updateRecords 错误 [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: 修复设置自适应高度模式时行高错误 [#3640](https://github.com/VisActor/VTable/issues/3640)
+- **@visactor/vtable**: 修复设置异步渲染图表时 setRecords API 渲染错误 [#3661](https://github.com/VisActor/VTable/issues/3661)
+- **@visactor/vtable**: 修复合并单元格复选框状态更新问题 [#3668](https://github.com/VisActor/VTable/issues/3668)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 重构填充句柄功能 [#3582](https://github.com/VisActor/VTable/issues/3582)
+
+
+
+[更多详情请查看 v1.17.5](https://github.com/VisActor/VTable/releases/tag/v1.17.5)
+
 # v1.17.4
 
 2025-03-31
