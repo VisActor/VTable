@@ -194,7 +194,6 @@ Align excel advanced capabilities
 
 Fill handle, when set to true, when a cell is selected, the fill handle will be displayed on the lower right side of the cell. You can drag the fill handle to edit the value of the cell. Or double-click the fill handle to change the value of the cell you want to edit.
 
-
 #${prefix} hover(Object)
 
 Hover interaction configuration, specific configuration items as follows:
@@ -230,6 +229,20 @@ Possible values:
 'cell': select only the currently clicked header cell;
 
 'body': Do not select the table header. Clicking a row header selects all body cells in the row. Clicking a column header selects all body cells in the column.
+
+##${prefix} cornerHeaderSelectMode ('inline' | 'cell' | 'body' | 'all') = 'all'
+
+When clicking on the corner header cell, the selection mode to be applied.
+
+Possible values:
+
+'inline': Clicking the corner header selects the entire column;
+
+'cell': Select only the currently clicked corner header cell;
+
+'body': Clicking the corner header selects all body cells;
+
+'all': Clicking the corner header selects the entire table.
 
 ##${prefix} disableSelect (boolean | ((col: number, row: number, table: BaseTableAPI) => boolean)) = false
 
