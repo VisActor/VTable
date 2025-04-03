@@ -89,6 +89,13 @@ export class StateManager {
      * 'body': 不选择表头，点击行表头则选择该行所有 body 单元格，点击列表头则选择该列所有 body 单元格。
      */
     headerSelectMode?: 'inline' | 'cell' | 'body';
+    /** 点击表头corner单元格效果
+     * 'inline': 点击corner选择列表头则整列选中；
+     * 'cell': 仅仅选择当前点击的corner表头单元格；
+     * 'body': 点击corner列表头则选择该列所有 body 单元格。
+     * 'all': 点击corner选择整个图表
+     */
+    cornerHeaderSelectMode?: 'inline' | 'cell' | 'body' | 'all';
     highlightInRange?: boolean;
     selecting: boolean;
     customSelectRanges?: {
@@ -434,6 +441,7 @@ export class StateManager {
       // enableColumnHighlight,
       /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
       headerSelectMode,
+      cornerHeaderSelectMode,
       disableSelect,
       disableHeaderSelect,
       highlightMode,
@@ -443,6 +451,7 @@ export class StateManager {
       {
         /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
         headerSelectMode: 'inline',
+        cornerHeaderSelectMode: 'all', // 点击 corner 默认选中整个图表
         disableSelect: false,
         disableHeaderSelect: false,
         highlightMode: 'cell',
@@ -475,6 +484,8 @@ export class StateManager {
     this.select.singleStyle = !disableSelect;
     this.select.disableHeader = disableHeaderSelect;
     this.select.headerSelectMode = headerSelectMode;
+
+    this.select.cornerHeaderSelectMode = cornerHeaderSelectMode;
     this.select.highlightInRange = highlightInRange;
     this.select.disableCtrlMultiSelect = this.table.options.keyboardOptions?.ctrlMultiSelect === false;
   }

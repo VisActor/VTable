@@ -389,6 +389,13 @@ export interface BaseTableConstructorOptions {
      * 'body': 不选择表头，点击行表头则选择该行所有 body 单元格，点击列表头则选择该列所有 body 单元格。
      */
     headerSelectMode?: 'inline' | 'cell' | 'body';
+    /** 点击表头corner单元格效果
+     * 'inline': 点击corner选择列表头则整列选中；
+     * 'cell': 仅仅选择当前点击的corner表头单元格；
+     * 'body': 点击corner列表头则选择该列所有 body 单元格；
+     * 'all': 点击corner选择整个图表。
+     */
+    cornerHeaderSelectMode?: 'inline' | 'cell' | 'body' | 'all';
     /** 不响应鼠标select交互 */
     disableSelect?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
     /** 单独设置表头不响应鼠标select交互 */
