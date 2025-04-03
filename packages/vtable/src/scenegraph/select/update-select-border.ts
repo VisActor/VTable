@@ -187,11 +187,12 @@ function updateComponent(
     }
   }
 
+  const { dynamicUpdateSelectionSize } = table.theme.selectionStyle;
   if (
-    (isNearRowHeader && selectComp.rect.attribute.stroke[3]) ||
-    (isNearRightRowHeader && selectComp.rect.attribute.stroke[1]) ||
-    (isNearColHeader && selectComp.rect.attribute.stroke[0]) ||
-    (isNearBottomColHeader && selectComp.rect.attribute.stroke[2])
+    (isNearRowHeader && (selectComp.rect.attribute.stroke[3] || dynamicUpdateSelectionSize)) ||
+    (isNearRightRowHeader && (selectComp.rect.attribute.stroke[1] || dynamicUpdateSelectionSize)) ||
+    (isNearColHeader && (selectComp.rect.attribute.stroke[0] || dynamicUpdateSelectionSize)) ||
+    (isNearBottomColHeader && (selectComp.rect.attribute.stroke[2] || dynamicUpdateSelectionSize))
   ) {
     if (isNearRowHeader && selectComp.rect.attribute.stroke[3]) {
       scene.tableGroup.insertAfter(
