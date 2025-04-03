@@ -90,6 +90,13 @@ SortState {
 
 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认 false
 
+## columnHierarchyType('grid-tree')
+
+列表头中层级维度结构显示形式，设置为 'grid-tree' 时开启树形结构的展开折叠功能。
+
+## columnExpandLevel(number)
+
+列表头初始化展开层数，默认是 1。
 
 ## aggregation(Aggregation|CustomAggregation|Array|Function)
 

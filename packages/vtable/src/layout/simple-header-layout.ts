@@ -1016,7 +1016,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         rowCells[col] = this._headerCellIds[row - 1][col];
       }
       // 当前节点是展开状态才需要添加子节点
-      const expand = (hd as HeaderData).hierarchyState === HierarchyState.expand;
+      const expand = !(hd as HeaderData).hierarchyState || (hd as HeaderData).hierarchyState === HierarchyState.expand;
       if (!!hd.columns && !!expand) {
         const isAllHided = hd.columns.every((c: any) => c.hide);
         !isAllHided &&
