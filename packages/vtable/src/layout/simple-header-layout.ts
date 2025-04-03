@@ -86,7 +86,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this.columnTree = new DimensionTree(
       columns as any,
       { seqId: 0 },
-      this.columnHierarchyType,
+      this.columnHierarchyType ?? null,
       this.columnHierarchyType === 'grid-tree' ? this.columnExpandLevel : undefined
     ); //seqId这里没有利用上 所有顺便传了0
     this._headerObjectsIncludeHided = this._addHeaders(0, columns, []);
