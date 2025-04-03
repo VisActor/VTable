@@ -823,6 +823,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       eventManager.downIcon = hitIcon;
       // 处理列宽调整  这里和tableGroup.addEventListener('pointerdown' 逻辑一样
       if (
+        e.pointerType !== 'touch' && // 移动端不应该在这里处理列宽调整 下面有eventManager.touchMove的逻辑
         !hitIcon &&
         !eventManager.checkCellFillhandle(eventArgsSet) &&
         !stateManager.columnResize.resizing &&
