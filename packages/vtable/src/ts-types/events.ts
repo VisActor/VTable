@@ -203,6 +203,7 @@ export interface TableEventHandlersEventArgumentMap {
     dimensionInfo?: IDimensionInfo[];
     /**整条数据-原始数据 */
     originData?: any;
+    cellLocation?: CellLocation;
   };
   vchart_event_type: {
     eventName: string;
