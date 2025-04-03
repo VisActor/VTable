@@ -9,13 +9,13 @@ option: ListTable-columns-text#columns
 
 # List Table - Header Group Collapse
 
-Configure columns as a nested multi-layer structure to achieve multi-layer header grouping effects. Enable tree-style expansion and collapse functionality through `columnHierarchyType: 'grid-tree'`, and set the default expansion level with `columnExpandLevel`.
+Configure columns as a nested multi-layer structure to achieve multi-layer header grouping effects. Enable tree-style expansion and collapse functionality through `headerHierarchyType: 'grid-tree'`, and set the default expansion level with `headerExpandLevel`.
 
 ## Key Configurations
 
 - columns
-- `columnHierarchyType` Set hierarchy display to `grid-tree` to enable tree-style expand/collapse
-- `columnExpandLevel` Configure default expansion level (defaults to 1)
+- `headerHierarchyType` Set hierarchy display to `grid-tree` to enable tree-style expand/collapse
+- `headerExpandLevel` Configure default expansion level (defaults to 1)
 
 ## Code demo
 
@@ -103,8 +103,8 @@ const columns = [
 const option = {
   records,
   columns,
-  columnHierarchyType: 'grid-tree',
-  columnExpandLevel: 3,
+  headerHierarchyType: 'grid-tree',
+  headerExpandLevel: 3,
   widthMode: 'standard',
   autoWrapText: true,
   autoRowHeight: true,

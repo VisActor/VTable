@@ -81,8 +81,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._headerCellIds = [];
     this.hierarchyIndent = hierarchyIndent ?? 20;
     this.hierarchyTextStartAlignment = table.options.hierarchyTextStartAlignment;
-    this.columnHierarchyType = table.options.columnHierarchyType;
-    this.columnExpandLevel = table.options.columnExpandLevel ?? 1;
+    this.columnHierarchyType = table.options.headerHierarchyType;
+    this.columnExpandLevel = table.options.headerExpandLevel ?? 1;
     this.columnTree = new DimensionTree(
       columns as any,
       { seqId: 0 },

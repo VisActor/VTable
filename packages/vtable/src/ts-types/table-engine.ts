@@ -239,10 +239,10 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   hierarchyExpandLevel?: number;
   /** 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认false */
   hierarchyTextStartAlignment?: boolean;
-  /** 列表头树形展示模式(设置成 'grid-tree' 则支持展开和折叠) */
-  columnHierarchyType?: 'grid-tree';
-  /** 列表头默认展开层级(columnHierarchyType 为 'grid-tree' 时有效) */
-  columnExpandLevel?: number;
+  /** 表头树形展示模式(设置成 'grid-tree' 则支持展开和折叠) */
+  headerHierarchyType?: 'grid-tree';
+  /** 表头默认展开层级(headerHierarchyType 为 'grid-tree' 时有效) */
+  headerExpandLevel?: number;
   /** 分页配置 */
   pagination?: IPagination;
 

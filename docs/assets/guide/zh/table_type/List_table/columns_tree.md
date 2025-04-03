@@ -19,11 +19,11 @@
 
 ### 2. 启用树形折叠功能
 
-设置 `columnHierarchyType: 'grid-tree'` 开启表头树形折叠交互。
+设置 `headerHierarchyType: 'grid-tree'` 开启表头树形折叠交互。
 
 ### 3. 设置默认展开层级
 
-通过 `columnExpandLevel` 指定初始展开层级（默认值为 `1`，即仅展示第一级分组）。
+通过 `headerExpandLevel` 指定初始展开层级（默认值为 `1`，即仅展示第一级分组）。
 
 ## 示例
 
@@ -68,8 +68,8 @@ const columns = [
 const option = {
   records,
   columns,
-  columnHierarchyType: 'grid-tree', // 启用树形折叠
-  columnExpandLevel: 2, // 默认展开至第二级
+  headerHierarchyType: 'grid-tree', // 启用树形折叠
+  headerExpandLevel: 2, // 默认展开至第二级
   widthMode: 'standard',
   defaultRowHeight: 40
 };

@@ -23,11 +23,11 @@ Define header hierarchies using nested structures in the `columns` configuration
 
 ### 2. Enable Tree-Style Collapsing
 
-Set `columnHierarchyType: 'grid-tree'` to enable interactive tree-style collapsing for headers.
+Set `headerHierarchyType: 'grid-tree'` to enable interactive tree-style collapsing for headers.
 
 ### 3. Set Default Expansion Level
 
-Specify the initial expansion level using `columnExpandLevel` (default: `1`, showing only the first-level groups).
+Specify the initial expansion level using `headerExpandLevel` (default: `1`, showing only the first-level groups).
 
 ---
 
@@ -74,8 +74,8 @@ const columns = [
 const option = {
   records,
   columns,
-  columnHierarchyType: 'grid-tree', // Enable tree-style collapsing
-  columnExpandLevel: 2, // Expand to the second level by default
+  headerHierarchyType: 'grid-tree', // Enable tree-style collapsing
+  headerExpandLevel: 2, // Expand to the second level by default
   widthMode: 'standard',
   defaultRowHeight: 40
 };

@@ -9,13 +9,13 @@ option: ListTable-columns-text#columns
 
 # 基本表格表头分组与折叠
 
-将 columns 配置为嵌套多层结构来实现多层表头分组效果，可通过配置 `columnHierarchyType: 'grid-tree'` 开启树形的展开和折叠，并通过 `columnExpandLevel` 来设置默认展开层级。
+将 columns 配置为嵌套多层结构来实现多层表头分组效果，可通过配置 `headerHierarchyType: 'grid-tree'` 开启树形的展开和折叠，并通过 `headerExpandLevel` 来设置默认展开层级。
 
 ## 关键配置
 
 - columns
-- `columnHierarchyType` 将层级展示设置为 `grid-tree`，开启树形的展开和折叠功能
-- `columnExpandLevel` 设置默认展开层级，默认为`1`
+- `headerHierarchyType` 将层级展示设置为 `grid-tree`，开启树形的展开和折叠功能
+- `headerExpandLevel` 设置默认展开层级，默认为`1`
 
 ## 代码演示
 
@@ -103,8 +103,8 @@ const columns = [
 const option = {
   records,
   columns,
-  columnHierarchyType: 'grid-tree',
-  columnExpandLevel: 3,
+  headerHierarchyType: 'grid-tree',
+  headerExpandLevel: 3,
   widthMode: 'standard',
   autoWrapText: true,
   autoRowHeight: true,
