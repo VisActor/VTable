@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "Merge pull request #3698 from VisActor/develop\n\nmerge develop\n",
+      "comment": "feat: list table header support hierarchy \n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
