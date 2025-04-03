@@ -44,27 +44,31 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
   }
   handleKeyDown(event: KeyboardEvent) {
     if (this.table.editorManager) {
+      //判断是键盘触发开始编辑的情况，那么在编辑状态中切换方向需要选中下一个继续编辑
       if (this.table.editorManager.beginTriggerEditCellMode === 'keydown') {
         if (this.table.editorManager.editingEditor && this.isExcelShortcutKey(event)) {
           const { col, row } = this.table.editorManager.editCell;
           this.table.editorManager.completeEdit();
-          if (event.key === 'Enter') {
-            this.table.selectCell(col, row + 1);
-          } else if (event.key === 'Tab') {
-            this.table.selectCell(col + 1, row);
-          } else if (event.key === 'ArrowLeft') {
-            this.table.selectCell(col - 1, row);
-          } else if (event.key === 'ArrowRight') {
-            this.table.selectCell(col + 1, row);
-          } else if (event.key === 'ArrowDown') {
-            this.table.selectCell(col, row + 1);
-          } else if (event.key === 'ArrowUp') {
-            this.table.selectCell(col, row - 1);
-          }
           this.table.getElement().focus();
-          // 阻止事件传播和默认行为
-          event.stopPropagation();
-          event.preventDefault();
+          if (!event.shiftKey && !event.ctrlKey && !event.metaKey) {
+            //有这些配合键，则不进行选中下一个单元格的行为 执行vtable内部逻辑
+            if (event.key === 'Enter') {
+              this.table.selectCell(col, row + 1);
+            } else if (event.key === 'Tab') {
+              this.table.selectCell(col + 1, row);
+            } else if (event.key === 'ArrowLeft') {
+              this.table.selectCell(col - 1, row);
+            } else if (event.key === 'ArrowRight') {
+              this.table.selectCell(col + 1, row);
+            } else if (event.key === 'ArrowDown') {
+              this.table.selectCell(col, row + 1);
+            } else if (event.key === 'ArrowUp') {
+              this.table.selectCell(col, row - 1);
+            }
+            // 阻止事件传播和默认行为
+            event.stopPropagation();
+            event.preventDefault();
+          }
         }
       } else {
         const { col, row } = this.table.stateManager.select.cellPos;

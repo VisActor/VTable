@@ -213,7 +213,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
           }
         }
       }
-    } else if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
+    } else if (!(e.ctrlKey || e.metaKey)) {
       const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
       if (
         (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
