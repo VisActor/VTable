@@ -1060,7 +1060,7 @@ Change the value of a cell:
 ```
 
 /\*_ Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly _/
-changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
+changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false, triggerEvent = true) => void;
 
 ```
 
@@ -1077,7 +1077,7 @@ Change the value of cells in batches:
 - @param row The starting row number of pasted data
 - @param values Data array of multiple cells
   \*/
-  changeCellValues(startCol: number, startRow: number, values: string[][])
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => void;
 
 ```
 

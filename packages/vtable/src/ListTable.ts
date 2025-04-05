@@ -1326,9 +1326,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row
    * @param value 更改后的值
    * @param workOnEditableCell 限制只能更改配置了编辑器的单元格值。快捷键paste这里配置的true，限制只能修改可编辑单元格值
+   * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
    */
-  changeCellValue(col: number, row: number, value: string | number | null, workOnEditableCell = false) {
-    return listTableChangeCellValue(col, row, value, workOnEditableCell, this);
+  changeCellValue(
+    col: number,
+    row: number,
+    value: string | number | null,
+    workOnEditableCell = false,
+    triggerEvent = true
+  ) {
+    return listTableChangeCellValue(col, row, value, workOnEditableCell, triggerEvent, this);
   }
   /**
    * 批量更新多个单元格的数据
@@ -1336,9 +1343,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    * @param workOnEditableCell 是否仅更改可编辑单元格
+   * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
    */
-  changeCellValues(startCol: number, startRow: number, values: (string | number)[][], workOnEditableCell = false) {
-    return listTableChangeCellValues(startCol, startRow, values, workOnEditableCell, this);
+  changeCellValues(
+    startCol: number,
+    startRow: number,
+    values: (string | number)[][],
+    workOnEditableCell = false,
+    triggerEvent = true
+  ) {
+    return listTableChangeCellValues(startCol, startRow, values, workOnEditableCell, triggerEvent, this);
   }
   /**
    * 添加数据 单条数据
