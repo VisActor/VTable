@@ -53,6 +53,7 @@ import {
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { callUpdateColOnScenegraph, callUpdateRowOnScenegraph } from './tools/diff-cell';
+import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
@@ -1697,6 +1698,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param sort
    */
   setRecords(records: Array<any>): void {
+    clearChartRenderQueue();
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.options.records = this.internalProps.records = records;
     this.internalProps.recordsIsTwoDimensionalArray = false;

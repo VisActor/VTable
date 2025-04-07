@@ -4,18 +4,25 @@ import type { IAABBBounds } from '@visactor/vutils';
 import { Bounds, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 export const cancelRenderChartQueue = false;
-export const chartRenderKeys: string[] = [];
-export const chartRenderQueueList: Chart[] = [];
+export let chartRenderKeys: string[] = [];
+export let chartRenderQueueList: Chart[] = [];
 interface chartRenderQueueItem {
   chart: Chart;
 }
 //每次消费的图表数量
 let batchRenderChartCount = 5;
 let isHandlingChartQueue = false;
+let requestAnimationFrameId: number;
 export function setBatchRenderChartCount(count: number) {
   if (isValid(count)) {
     batchRenderChartCount = count;
   }
+}
+export function clearChartRenderQueue() {
+  chartRenderKeys = [];
+  chartRenderQueueList = [];
+  isHandlingChartQueue = false;
+  cancelAnimationFrame(requestAnimationFrameId);
 }
 export function IsHandlingChartQueue() {
   return isHandlingChartQueue;
@@ -175,7 +182,7 @@ export function startRenderChartQueue(table: any) {
   if (chartRenderQueueList.length > 0) {
     // 使用 requestAnimationFrame 或 setTimeout 来调度下一批图表的渲染
     // requestAnimationFrame(() => renderChartQueue(table));
-    requestAnimationFrame(() => {
+    requestAnimationFrameId = requestAnimationFrame(() => {
       // 从集合中获取要渲染的图表上下文
       const chartsToRender = chartRenderQueueList.splice(0, batchRenderChartCount);
       chartRenderKeys.splice(0, batchRenderChartCount);

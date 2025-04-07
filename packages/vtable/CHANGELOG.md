@@ -1,6 +1,49 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 24 Mar 2025 09:35:45 GMT and should not be manually modified.
+This log was last generated on Wed, 02 Apr 2025 09:56:31 GMT and should not be manually modified.
+
+## 1.17.5
+Wed, 02 Apr 2025 09:56:31 GMT
+
+### Updates
+
+- refactor: fillHandle function #3582
+
+
+- feat: cell support marked function #3583
+
+
+- fix: gantt scale set quarter parser problem #3612
+
+
+- fix: gantt overscrollBehavior none work #3638
+
+
+- fix: gantt chart updateRecords error when table is tree mode #3639
+
+
+- fix: rowHeight error when set adaptive heightMode #3640
+
+
+- feat: refactor pivotTable corner with no columns or rows case #3653
+
+
+- fix: when set renderChartAsync setRecords api render error #3661
+
+
+- fix: fix merge cell checkbox state update #3668
+
+## 1.17.4
+Mon, 31 Mar 2025 12:27:48 GMT
+
+### Updates
+
+- feat: add barMarkInBar style config in progressbar #3616
+- fix: fix button style problem #3614
+- fix: fix checkbox state order update #3606
+- fix: add isCustom tag for merge cell range #3504
+- fix: fix tree checkbox state update problem
+- fix: disable group title editor
 
 ## 1.17.3
 Mon, 24 Mar 2025 09:35:45 GMT

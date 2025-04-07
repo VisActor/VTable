@@ -121,7 +121,11 @@ import type { CreateLegend } from '../components/legend/create-legend';
 import type { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
 import type { Chart } from '../scenegraph/graphic/chart';
-import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
+import {
+  chartRenderQueueList,
+  clearChartRenderQueue,
+  setBatchRenderChartCount
+} from '../scenegraph/graphic/contributions/chart-render-helper';
 import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get-axis-config';
 import { NumberRangeMap } from '../layout/row-height-map';
 import { ListTable } from '../ListTable';
@@ -1184,7 +1188,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   get rowHierarchyType(): 'grid' | 'tree' | 'grid-tree' {
-    return 'grid';
+    return this.dataSource.rowHierarchyType;
   }
 
   // /**
@@ -2316,6 +2320,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps = null;
 
     this.reactCustomLayout?.clearCache();
+    clearChartRenderQueue();
   }
 
   fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(
@@ -2486,6 +2491,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.emptyTip?.release();
     internalProps.emptyTip = null;
     internalProps.layoutMap.release();
+    clearChartRenderQueue();
     this.scenegraph.clearCells();
     this.scenegraph.updateComponent();
     this.stateManager.updateOptionSetState();
@@ -3137,7 +3143,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           end: {
             col: Math.min(customMerge.range.end.col, this.colCount - 1),
             row: Math.min(customMerge.range.end.row, this.rowCount - 1)
-          }
+          },
+          isCustom: true
         };
         return range;
       }
@@ -3177,6 +3184,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           );
           customMerge.style = fullStyle;
         }
+        customMerge.range = {
+          start: {
+            col: Math.max(customMerge.range.start.col, 0),
+            row: Math.max(customMerge.range.start.row, 0)
+          },
+          end: {
+            col: Math.min(customMerge.range.end.col, this.colCount - 1),
+            row: Math.min(customMerge.range.end.row, this.rowCount - 1)
+          },
+          isCustom: true
+        };
         return customMerge;
       }
     }

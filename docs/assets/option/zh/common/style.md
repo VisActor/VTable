@@ -124,10 +124,12 @@
 当单元格的文本有吸附效果【当滚动时文本可动态调整位置】时，吸附的基准是单元格的水平对齐方式。例如当`textStickBaseOnAlign`为`true`时，`textAlign`为`'center'`时，文本会吸附在单元格的水平中心位置；否则就会吸附在单元格左边缘或右边缘（依据滚动位置决定）。
 
 #${prefix} marked(MarkedPropertyDefine)
+
 设置单元格是否有标记样式
 {{ use: common-marked(
   prefix = ${prefix}
   ) }}
+  
 #${prefix} autoWrapText(boolean)
 设置单元格是否自动换行
 
@@ -235,6 +237,10 @@
 #${prefix} barMarkPosition(string)
 
 进度条标记位置，可设置`'right' | 'bottom'`，默认`'right'`。
+
+#${prefix} barMarkInBar(boolean)
+
+进度条标记是否显示在进度条内侧，默认`true`。
 
 {{ /if }}
 

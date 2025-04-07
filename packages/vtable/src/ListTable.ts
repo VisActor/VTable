@@ -55,6 +55,7 @@ import {
 } from './core/record-helper';
 import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import { fixUpdateRowRange } from './tools/update-row';
+import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -1082,16 +1083,32 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (isValid(field)) {
       // let stateArr = this.stateManager.checkedState.values() as any;
       // map按照key(dataIndex)的升序输出value
-      const keys = Array.from(this.stateManager.checkedState.keys()).sort(
-        (a: string, b: string) => Number(a) - Number(b)
-      );
+      // const keys = Array.from(this.stateManager.checkedState.keys()).sort(
+      //   (a: string, b: string) => Number(a) - Number(b)
+      // );
+      const keys = Array.from(this.stateManager.checkedState.keys()).sort((a: string, b: string) => {
+        // number or number[]
+        const aArr = (a as string).split(',');
+        const bArr = (b as string).split(',');
+        const maxLength = Math.max(aArr.length, bArr.length);
+
+        // judge from first to last
+        for (let i = 0; i < maxLength; i++) {
+          const a = Number(aArr[i]) ?? 0;
+          const b = Number(bArr[i]) ?? 0;
+          if (a !== b) {
+            return a - b;
+          }
+        }
+        return 0;
+      });
       let stateArr = keys.map(key => this.stateManager.checkedState.get(key));
 
       if (this.options.groupBy) {
         stateArr = getGroupCheckboxState(this) as any;
       }
       return Array.from(stateArr, (state: any) => {
-        return state[field];
+        return state && state[field];
       });
     }
     return new Array(...this.stateManager.checkedState.values());
@@ -1142,6 +1159,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param option 附近参数，其中的sortState为排序状态，如果设置null 将清除目前的排序状态
    */
   setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] | null }): void {
+    clearChartRenderQueue();
     // 释放事件 及 对象
     this.internalProps.dataSource?.release();
     // 过滤掉dataSource的引用

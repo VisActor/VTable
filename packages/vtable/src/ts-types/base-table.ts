@@ -327,7 +327,7 @@ export interface BaseTableConstructorOptions {
   /** 快捷键功能设置 */
   keyboardOptions?: TableKeyboardOptions;
   excelOptions?: {
-    fillHandle?: boolean;
+    fillHandle?: boolean | ((args: { selectRanges: CellRange[]; table: BaseTableAPI }) => boolean);
   };
   /** 事件触发相关设置 */
   eventOptions?: TableEventOptions;
