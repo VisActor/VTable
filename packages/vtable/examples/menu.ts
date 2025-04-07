@@ -113,6 +113,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-rowSeriesNumber-cornerHeaderSelectMode'
+      },
+      {
+        path: 'list',
         name: 'list-transpose-rowSeriesNumber'
       },
       {
