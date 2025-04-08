@@ -9,40 +9,76 @@ link: custom_define/vue-dom-component
 
 # Cell Rendering DOM Components
 
-In `vue-vtable`, it is possible to directly render DOM components within cells, allowing for the easy embedding of complex Vue components to achieve highly customized table display effects. Two forms are supported: **slot-based** and **directly passing into the `column` configuration**. Both methods require wrapping with the `Group` component.
+In `vue-vtable`, you can directly render DOM components within table cells, enabling seamless integration of complex Vue components for highly customizable table displays. Two approaches are supported: **slot-based** and **directly passing components into the `column` configuration**. Both methods require wrapping components with the `Group` component.
 
-Detailed Explanation：
+**🛠️ Core configuration steps: Enable DOM component rendering**
 
-**Key point 1. Enabling the Feature**
+To render DOM components in `vue-vtable`, follow these key steps:
 
-In `vue-vtable`, rendering DOM components requires two key steps:
+- **Pass the `vue` property to the `Group` component**: This allows the `Group` component to recognize and process Vue components.
+- **Enable `customConfig.createReactContainer`**: This configuration creates a table container to ensure Vue components render correctly within the table.
 
-- **Pass the `vue` property in the `Group` component**: This allows the `Group` component to recognize and handle Vue components.
-- **Enable `customConfig.createReactContainer`**: This configuration item is used to create a table container, ensuring that Vue components can be correctly rendered into the table container.
+**✨ Method 1: Slot-Based Rendering**
 
-**Key point 2. Slot-Based Rendering**
+Slot-based rendering uses the `headerCustomLayout` and `customLayout` slots of the `ListColumn` component. Custom components must be wrapped in the `Group` component.
 
-Slot-based rendering is achieved through the two slots `headerCustomLayout` and `customLayout` of the `ListColumn` component. Custom components need to be wrapped with the `Group` component.
+- **`headerCustomLayout`**: Customizes header cell rendering.
+- **`customLayout`**: Customizes body cell rendering.
 
-- **`headerCustomLayout`**: Used for custom rendering of header cells.
-- **`customLayout`**: Used for custom rendering of body cells.
+**✨ Method 2: Direct Configuration-Based Rendering**
 
-**Key point 3. Direct Configuration-Based Rendering**
+This method is similar to slot-based rendering but does not use slots. Instead, directly pass virtual nodes via the `element` property in the `column.headerCustomLayout` or `column.customLayout` configuration. The usage aligns with [Custom Components](../../guide/custom_define/custom_layout).
 
-Direct configuration-based rendering is similar to slot-based rendering, with the difference being that you do not need to pass components through slots. Instead, you directly pass virtual nodes in the `element` property of the `column.headerCustomLayout` or `column.customLayout` configuration. The usage is largely the same as with [custom components](../../guide/custom_define/custom_layout).
+**⚠️ Notes**
 
-## Code Demonstration
+- **Enabling Interactions**: If custom cells require mouse interactions, manually enable `pointer-events`. See the example below.
+
+## Code Demo
 
 ```javascript livedemo template=vtable-vue
-
-// In the code demonstration, we show how to render custom Vue components within the table. Specifically, it includes:
-
-// - **Gender Column**: Uses the `ArcoDesignVue.Tag` component to render gender information and dynamically changes the tag color based on the gender value.
-// - **Comment Column**: Uses the `ArcoDesignVue.Comment` component to render comment information, including like, collect, and reply action buttons.
+// In this demo, we show how to render custom Vue components in the table. Specifically:
+// - **Gender Column**: Renders gender headers using the `ArcoDesignVue.Tag` component.
+// - **Comment Column**: Renders comments with the `ArcoDesignVue.Comment` component, including action buttons for likes, favorites, and replies.
 
 const app = createApp({
   template: `
-    <vue-list-table :options="option" :records="records" ref="tableRef" />
+   <vue-list-table :options="option" :records="records" ref="tableRef">
+    <ListColumn field="name" title="Name" width="200" />
+    <ListColumn field="age" title="Age" width="150" />
+    <ListColumn field="city" title="City" width="150" />
+    <ListColumn field="gender" title="Gender" width="100">
+      <template #headerCustomLayout="{ width, height }">
+        <Group :width="width" :height="height" display="flex" align-items="center" :vue="{}">
+          <ATag color="green"> Gender </ATag>
+        </Group>
+      </template>
+    </ListColumn>
+    <ListColumn field="comment" title="Comment" width="300">
+      <template #customLayout="{ width, height, record }">
+        <Group :width="width" :height="height" display="flex" align-items="center" :vue="{}">
+          <AComment author="Socrates" :content="record['comment']" datetime="1 hour">
+            <template #actions>
+              <span key="heart" style="cursor: pointer; pointer-events: auto">
+                {{ 83 }}
+              </span>
+              <span key="star" style="cursor: pointer; pointer-events: auto">
+                {{ 3 }}
+              </span>
+              <span key="reply" style="cursor: pointer; pointer-events: auto"> Reply </span>
+            </template>
+            <template #avatar>
+              <AAvatar>
+                <img
+                  alt="avatar"
+                  src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
+                />
+              </AAvatar>
+            </template>
+          </AComment>
+        </Group>
+      </template>
+    </ListColumn>
+  </vue-list-table>
   `,
   data() {
     return {
@@ -57,108 +93,6 @@ const app = createApp({
           { gender: 'Female', name: 'Zhou Ba', age: 25, city: 'Chongqing' },
           { gender: 'Male', name: 'Wu Jiu', age: 26, city: "Xi'an" }
         ],
-        columns: [
-          {
-            field: 'name',
-            title: 'Name',
-            width: 200
-          },
-          { field: 'age', title: 'Age', width: 150 },
-          { field: 'city', title: 'City', width: 200 },
-          {
-            field: 'gender',
-            title: 'Gender',
-            width: 100,
-            headerCustomLayout: args => {
-              const { table, row, col, rect, value } = args;
-              const { height, width } = rect ?? table.getCellRect(col, row);
-
-              const container = new VTable.CustomLayout.Group({
-                height,
-                width,
-                display: 'flex',
-                alignItems: 'center',
-                vue: {
-                  element: h(ArcoDesignVue.Tag, { color: 'green' }, value),
-                  container: table.headerDomContainer
-                }
-              });
-              return {
-                rootContainer: container,
-                renderDefault: false
-              };
-            },
-            customLayout: args => {
-              const { table, row, col, rect, value } = args;
-              const { height, width } = rect ?? table.getCellRect(col, row);
-
-              const container = new VTable.CustomLayout.Group({
-                height,
-                width,
-                display: 'flex',
-                alignItems: 'center',
-                vue: {
-                  element: h(ArcoDesignVue.Tag, { color: value === 'Female' ? 'magenta' : 'arcoblue' }, value),
-                  container: table.bodyDomContainer
-                }
-              });
-
-              return {
-                rootContainer: container,
-                renderDefault: false
-              };
-            }
-          },
-          {
-            field: 'comment',
-            title: 'Comment',
-            width: 300,
-            customLayout: args => {
-              const { table, row, col, rect, value } = args;
-              const { height, width } = rect ?? table.getCellRect(col, row);
-
-              const container = new VTable.CustomLayout.Group({
-                height,
-                width,
-                display: 'flex',
-                alignItems: 'center',
-                vue: {
-                  element: h(
-                    ArcoDesignVue.Comment,
-                    { author: 'Socrates', content: value, datetime: '1 hour' },
-                    {
-                      actions: () => [
-                        h('span', { key: 'heart', style: { cursor: 'pointer' } }, [h('span', 'Like')]),
-                        h('span', { key: 'star', style: { cursor: 'pointer' } }, [h('span', 'Collect')]),
-                        h('span', { key: 'reply', style: { cursor: 'pointer' } }, [h('span', 'Reply')])
-                      ],
-                      avatar: () => [
-                        h(
-                          ArcoDesignVue.Avatar,
-                          {},
-                          {
-                            default: () => [
-                              h('img', {
-                                alt: 'avatar',
-                                src: 'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'
-                              })
-                            ]
-                          }
-                        )
-                      ]
-                    }
-                  ),
-                  container: table.bodyDomContainer
-                }
-              });
-
-              return {
-                rootContainer: container,
-                renderDefault: false
-              };
-            }
-          }
-        ],
         defaultHeaderRowHeight: 40,
         defaultRowHeight: 80,
         customConfig: {
@@ -170,6 +104,11 @@ const app = createApp({
 });
 
 app.component('vue-list-table', VueVTable.ListTable);
+app.component('ListColumn', VueVTable.ListColumn);
+app.component('Group', VueVTable.Group);
+app.component('ATag', ArcoDesignVue.Tag);
+app.component('AComment', ArcoDesignVue.Comment);
+app.component('AAvatar', ArcoDesignVue.Avatar);
 
 app.mount(`#${CONTAINER_ID}`);
 

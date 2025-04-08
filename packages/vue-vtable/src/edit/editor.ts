@@ -11,6 +11,8 @@ export interface DynamicRenderEditorParams {
   col: number;
   /** 值 */
   value: any;
+  /** 行数据 */
+  record: any;
   /** 表格实例 */
   table: any;
   /** 设置值方法 */
@@ -148,6 +150,7 @@ export class DynamicRenderEditor {
         return false;
       }
     }
+    const record = table?.getCellOriginRecord(col, row);
     const vnode = this.getNode(
       id,
       key
@@ -155,6 +158,7 @@ export class DynamicRenderEditor {
       row,
       col,
       value,
+      record,
       table,
       onChange: (value: any) => this.setValue(value)
     })?.find((node: any) => node?.type !== Symbol.for('v-cmt'));

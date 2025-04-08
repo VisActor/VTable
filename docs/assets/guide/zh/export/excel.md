@@ -137,3 +137,12 @@ const excelOption = {
 };
 await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
+
+### equestIdleCallback
+
+`@visactor/vtable-export`使用`exceljs`库作为导出 Excel 文件的工具，如果需要解决导出对页面性能影响，可以设置`requestIdleCallback`的启用参数`optimization`
+
+```js
+const excelOption = {};
+await downloadExcel(await exportVTableToExcel(tableInstance, excelOption， true));
+```
