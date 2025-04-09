@@ -695,7 +695,9 @@ export class SceneProxy {
     //     colGroup.needUpdate = false;
     //   }
     // }
-    computeColsWidth(this.table, this.colUpdatePos, distCol);
+    if (this.table.widthMode === 'autoWidth') {
+      computeColsWidth(this.table, this.colUpdatePos, distCol);
+    }
     updateColContent(this.colUpdatePos, distCol, this);
     this.colUpdatePos = distCol + 1;
   }
