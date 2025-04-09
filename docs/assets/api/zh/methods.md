@@ -956,8 +956,15 @@ use case: 对于透视图的场景上，点击图例项后 更新过滤规则 �
 更改单元格的 value 值：
 
 ```
-  /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
-  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
+  /**
+   * 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改
+   * @param col 单元格的起始列号
+   * @param row 单元格的起始行号
+   * @param value 更改后的值
+   * @param workOnEditableCell 是否仅更改可编辑单元格
+   * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
+   */
+  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false, triggerEvent = true) => void;
 ```
 
 ## changeCellValues(Function)
@@ -971,8 +978,9 @@ use case: 对于透视图的场景上，点击图例项后 更新过滤规则 �
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    * @param workOnEditableCell 是否仅更改可编辑单元格
+   * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false)
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => void;
 ```
 
 ## getEditor(Function)
