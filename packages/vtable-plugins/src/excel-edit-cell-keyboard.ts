@@ -79,6 +79,16 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
           // 阻止事件传播和默认行为
           event.stopPropagation();
           event.preventDefault();
+        } else if (event.key === 'Delete') {
+          //响应删除键，删除
+          const selectCells = this.table.getSelectedCellInfos();
+          if (selectCells?.length > 0) {
+            // 如果选中的是范围，则删除范围内的所有单元格
+            deleteSelectRange(selectCells, this.table);
+          }
+          // 阻止事件传播和默认行为
+          event.stopPropagation();
+          event.preventDefault();
         }
       }
     }
@@ -96,5 +106,13 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
   }
   release() {
     document.removeEventListener('keydown', this.handleKeyDown, true);
+  }
+}
+//将选中单元格的值设置为空
+function deleteSelectRange(selectCells: VTable.TYPES.CellInfo[][], tableInstance: VTable.ListTable) {
+  for (let i = 0; i < selectCells.length; i++) {
+    for (let j = 0; j < selectCells[i].length; j++) {
+      tableInstance.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, '');
+    }
   }
 }

@@ -63,7 +63,6 @@ export function createTable() {
     rowHighlight: true
   });
   const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(CONTAINER_ID),
     records,
     columns,
     rowSeriesNumber: {},
@@ -78,7 +77,7 @@ export function createTable() {
     },
     plugins: [highlightPlugin]
   };
-  const tableInstance = new VTable.ListTable(option);
+  const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)!, option);
   window.tableInstance = tableInstance;
 
   bindDebugTool(tableInstance.scenegraph.stage, {

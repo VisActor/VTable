@@ -15,9 +15,34 @@ VTable 提供表头高亮插件，支持选中单元格后，高亮对应的表�
   - `rowHighlightBGColor` 行头高亮背景色
   - `colHighlightColor` 列头高亮字体色
   - `rowHighlightColor` 行头高亮字体色
+ 
+插件参数类型：
+```
+interface IHeaderHighlightPluginOptions {
+  rowHighlight?: boolean;
+  colHighlight?: boolean;
+  colHighlightBGColor?: string;
+  colHighlightColor?: string;
+  rowHighlightBGColor?: string;
+  rowHighlightColor?: string;
+}
+```
 
+## 使用示例：
 ```js
-const highlightPlugin = new HeaderHighlightPlugin(tableInstance, {});
+  const highlightPlugin = new HighlightHeaderPlugin({
+    colHighlight: true,
+    rowHighlight: true
+  });
+  const option: VTable.ListTableConstructorOptions = {
+    records,
+    columns,
+    select: {
+      outsideClickDeselect: true,
+      headerSelectMode: 'body'
+    },
+    plugins: [highlightPlugin]
+  };
 ```
 
 具体使用参考[demo](../../demo/interaction/head-highlight)

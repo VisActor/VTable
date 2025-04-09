@@ -726,10 +726,17 @@
       },
       "children": [
         {
-          "path": "invert-highlight",
+          "path": "row-column-series",
           "title": {
-            "zh": "反选高亮",
-            "en": "Invert Highlight"
+            "zh": "行列序号",
+            "en": "Row Column Series"
+          }
+        },
+        {
+          "path": "focus-highlight",
+          "title": {
+            "zh": "聚焦高亮",
+            "en": "Focus Highlight"
           }
         },
         {
