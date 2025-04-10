@@ -10,7 +10,7 @@ option: ListTable#menu.contextMenuItems
 
 # Right click menu
 
-Right-click pop-up menu, if you need to click on the drop-down menu to continue the operation, you can listen to the event dropdownmenu_click.
+Right-click pop-up menu, if you need to click on the drop-down menu to continue the operation, you can listen to the event dropdown_menu_click.
 
 In this example, after clicking the right mouse button, a copy, paste, delete and other functions will appear in the drop-down menu. After clicking the copy, the selected cell content will be copied to the clipboard, after clicking paste, the content in the clipboard will be pasted to the selected cell, and after clicking delete, the content of the selected cell will be set to empty.
 

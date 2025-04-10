@@ -11,7 +11,7 @@ option: ListTable-columns-text#dropDownMenu
 # drop down menu
 
 In this example, the dropDownMenu is configured in the first column of columns, and when hovered to the header cell, a drop-down menu is displayed for further operation.
-At the same time through monitoring`click_cell`Event, when the mouse clicks the order icon in the first column, the interface showDropDownMenu is called to display the drop-down menu. To continue the operation according to the item clicked on the drop-down menu, you can listen to the event dropdownmenu_click.
+At the same time through monitoring`click_cell`Event, when the mouse clicks the order icon in the first column, the interface showDropDownMenu is called to display the drop-down menu. To continue the operation according to the item clicked on the drop-down menu, you can listen to the event dropdown_menu_click.
 
 ## Key Configurations
 

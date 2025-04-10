@@ -326,7 +326,7 @@ export class MenuHandler {
         result.event = e.nativeEvent;
         this._table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK, result);
 
-        // 由DROPDOWNMENU_CLICK事件清空菜单
+        // 由DROPDOWN_MENU_CLICK事件清空菜单
         // this.detach();
       }
     });
