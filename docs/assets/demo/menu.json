@@ -521,6 +521,13 @@
           }
         },
         {
+          "path": "list-table-header-group-collapse",
+          "title": {
+            "zh": "基本表格表头分组与折叠",
+            "en": "List Table - Header Group Collapse"
+          }
+        },
+        {
           "path": "auto-wrap-text",
           "title": {
             "zh": "自动换行",

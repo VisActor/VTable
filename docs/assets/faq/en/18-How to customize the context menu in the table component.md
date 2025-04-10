@@ -38,10 +38,10 @@ Menu item configuration:
 - text: the text of the menu item
 - menuKey: unique identifier of the menu item
 
-After the drop-down menu item is selected, the "dropdownmenu_click" event will be triggered, and you can listen to the event and perform related operations.
+After the drop-down menu item is selected, the "dropdown_menu_click" event will be triggered, and you can listen to the event and perform related operations.
 
 ```javascript
-table.on('dropdownmenu_click', (args: any) => {
+table.on('dropdown_menu_click', (args: any) => {
   console.log('menu_click', args);
 });
 ```
@@ -65,7 +65,7 @@ const option: TYPES.ListTableConstructorOptions = {
   }
 };
 const table = new ListTable(document.getElementById('container'), option);
-table.on('dropdownmenu_click', (args: any) => {
+table.on('dropdown_menu_click', (args: any) => {
   console.log('menu_click', args);
 });
 ```

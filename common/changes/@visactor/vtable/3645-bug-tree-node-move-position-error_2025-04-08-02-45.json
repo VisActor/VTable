@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when move tree node position code occor error #3645 #3706\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

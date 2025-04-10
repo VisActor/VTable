@@ -38,10 +38,10 @@ menu: {
 - text: 菜单项目的文字
 - menuKey: 菜单项目的唯一标识符
 
-下拉菜单项目选中后，会触发"dropdownmenu_click"事件，可以监听事件事件执行相关操作。
+下拉菜单项目选中后，会触发"dropdown_menu_click"事件，可以监听事件事件执行相关操作。
 
 ```javascript
-table.on('dropdownmenu_click', (args: any) => {
+table.on('dropdown_menu_click', (args: any) => {
   console.log('menu_click', args);
 });
 ```
@@ -65,7 +65,7 @@ const option: TYPES.ListTableConstructorOptions = {
   }
 };
 const table = new ListTable(document.getElementById('container'), option);
-table.on('dropdownmenu_click', (args: any) => {
+table.on('dropdown_menu_click', (args: any) => {
   console.log('menu_click', args);
 });
 ```

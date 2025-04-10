@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix flex layout update in react-custom-layout component #3696",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
