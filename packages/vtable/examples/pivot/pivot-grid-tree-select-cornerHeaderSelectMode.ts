@@ -341,7 +341,7 @@ export function createTable() {
         },
         select: {
           headerSelectMode: 'body', // 为 body 时，优先选中body
-          cornerHeaderSelectMode: 'all' // 默认选中整个图表
+          cornerHeaderSelectMode: 'cell' // 默认选中整个图表
         },
         dataConfig: {
           totals: {
@@ -359,6 +359,17 @@ export function createTable() {
             //   grandTotalLabel: '列总计',
             //   subTotalLabel: '小计'
             // }
+          }
+        },
+        rowSeriesNumber: {
+          title: '行号',
+          dragOrder: true,
+          headerStyle: {
+            bgColor: '#EEF1F5',
+            borderColor: '#e1e4e8'
+          },
+          style: {
+            borderColor: '#e1e4e8'
           }
         },
         heightMode: 'autoHeight',

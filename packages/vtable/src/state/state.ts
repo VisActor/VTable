@@ -441,7 +441,6 @@ export class StateManager {
       // enableColumnHighlight,
       /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
       headerSelectMode,
-      cornerHeaderSelectMode,
       disableSelect,
       disableHeaderSelect,
       highlightMode,
@@ -451,7 +450,8 @@ export class StateManager {
       {
         /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
         headerSelectMode: 'inline',
-        cornerHeaderSelectMode: 'all', // 点击 corner 默认选中整个图表
+        /** 不默认设置该值了，从用户传的 cornerHeaderSelectMode 中获取 */
+        // cornerHeaderSelectMode: '',
         disableSelect: false,
         disableHeaderSelect: false,
         highlightMode: 'cell',
@@ -459,6 +459,13 @@ export class StateManager {
       },
       this.table.options.select
     );
+
+    /** 设置 cornerHeaderSelectMode */
+    const cornerHeaderSelectMode = this.table.options.select?.cornerHeaderSelectMode
+      ? this.table.options.select?.cornerHeaderSelectMode
+      : this.table.options.select?.headerSelectMode === 'body'
+      ? this.table.options.select?.headerSelectMode
+      : 'all';
 
     // if (enableRowHighlight && enableColumnHighlight) {
     //   this.select.highlightScope = HighlightScope.cross;
