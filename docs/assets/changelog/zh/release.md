@@ -5,18 +5,18 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: listTable added tiggerEvent parameter to changeCellValue
-- **@visactor/vtable**: list table header support hierarchy
+- **@visactor/vtable**: ListTable的changeCellValue方法新增tiggerEvent参数
+- **@visactor/vtable**: ListTable表头支持层级结构
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when move tree node position code occor error [#3645](https://github.com/VisActor/VTable/issues/3645) [#3706](https://github.com/VisActor/VTable/issues/3706)
-- **@visactor/vtable**: frame border set array render bottom line position error [#3684](https://github.com/VisActor/VTable/issues/3684)
-- **@visactor/vtable**: mobile touch event resize column width [#3693](https://github.com/VisActor/VTable/issues/3693)
-- **@visactor/vtable**: when set frozen disableDragSelect not work [#3702](https://github.com/VisActor/VTable/issues/3702)
-- **@visactor/vtable**: fix flex layout update in react-custom-layout component [#3696](https://github.com/VisActor/VTable/issues/3696)
-- **@visactor/vtable**: updateTaskRecord api [#3639](https://github.com/VisActor/VTable/issues/3639)
-- **@visactor/vtable**: repeat call computeColsWidth adaptive mode result error
+- **@visactor/vtable**: 修复移动树节点位置时代码报错问题 [#3645](https://github.com/VisActor/VTable/issues/3645) [#3706](https://github.com/VisActor/VTable/issues/3706)
+- **@visactor/vtable**: 修复边框设置数组时底部线条位置渲染错误 [#3684](https://github.com/VisActor/VTable/issues/3684)
+- **@visactor/vtable**: 修复移动端触摸事件调整列宽问题 [#3693](https://github.com/VisActor/VTable/issues/3693)
+- **@visactor/vtable**: 修复设置冻结时禁用拖拽选择不生效问题 [#3702](https://github.com/VisActor/VTable/issues/3702)
+- **@visactor/vtable**: 修复react-custom-layout组件中flex布局更新问题 [#3696](https://github.com/VisActor/VTable/issues/3696)
+- **@visactor/vtable**: 修复updateTaskRecord接口问题 [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: 修复重复调用computeColsWidth自适应模式结果错误问题
 
 
 
