@@ -36,7 +36,7 @@ function setSingleCheckedState(
   const recordIndex = state.table.getRecordShowIndexByCell(col, row);
   if (recordIndex >= 0) {
     const dataIndex = state.table.dataSource.getIndexKey(recordIndex).toString();
-    if (state.checkedState.has(dataIndex)) {
+    if (state.checkedState.get(dataIndex)) {
       state.checkedState.get(dataIndex)[field] = checked;
     } else {
       state.checkedState.set(dataIndex, {
@@ -89,7 +89,7 @@ export function syncCheckedState(
     if (isValid(state.checkedState.get(dataIndex)?.[field])) {
       return state.checkedState.get(dataIndex)[field];
     }
-    if (state.checkedState.has(dataIndex)) {
+    if (state.checkedState.get(dataIndex)) {
       state.checkedState.get(dataIndex)[field] = checked;
     } else if (dataIndex.includes(',')) {
       // child record, sync parent record state
