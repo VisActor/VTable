@@ -785,7 +785,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
           table.stateManager.updateInteractionState(InteractionState.grabing);
           const targetCol = table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX);
           const targetRow = table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY);
-          if (isValid(targetCol) && isValid(targetRow)) {
+          if (!table.options.select?.disableDragSelect && isValid(targetCol) && isValid(targetRow)) {
             table.stateManager.updateSelectPos(targetCol.col, targetRow.row, false, false, false, false);
           }
         });
