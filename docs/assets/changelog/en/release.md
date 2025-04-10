@@ -1,3 +1,27 @@
+# v1.17.6
+
+2025-04-10
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: listTable added tiggerEvent parameter to changeCellValue
+- **@visactor/vtable**: list table header support hierarchy
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when move tree node position code occor error [#3645](https://github.com/VisActor/VTable/issues/3645) [#3706](https://github.com/VisActor/VTable/issues/3706)
+- **@visactor/vtable**: frame border set array render bottom line position error [#3684](https://github.com/VisActor/VTable/issues/3684)
+- **@visactor/vtable**: mobile touch event resize column width [#3693](https://github.com/VisActor/VTable/issues/3693)
+- **@visactor/vtable**: when set frozen disableDragSelect not work [#3702](https://github.com/VisActor/VTable/issues/3702)
+- **@visactor/vtable**: fix flex layout update in react-custom-layout component [#3696](https://github.com/VisActor/VTable/issues/3696)
+- **@visactor/vtable**: updateTaskRecord api [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: repeat call computeColsWidth adaptive mode result error
+
+
+
+[more detail about v1.17.6](https://github.com/VisActor/VTable/releases/tag/v1.17.6)
+
 # v1.17.5
 
 2025-04-02
