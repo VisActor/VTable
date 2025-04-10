@@ -219,6 +219,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-grid-tree-select-cornerHeaderSelectMode'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-tree-lazy-load'
       },
       {
