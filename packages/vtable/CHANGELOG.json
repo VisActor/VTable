@@ -2,6 +2,42 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.17.6",
+      "tag": "@visactor/vtable_v1.17.6",
+      "date": "Thu, 10 Apr 2025 09:18:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when move tree node position code occor error #3645 #3706\n\n"
+          },
+          {
+            "comment": "fix: frame border set array render bottom line position error #3684\n\n"
+          },
+          {
+            "comment": "fix: mobile touch event resize column width #3693\n\n"
+          },
+          {
+            "comment": "fix: when set frozen disableDragSelect not work #3702\n\n"
+          },
+          {
+            "comment": "feat: listTable added tiggerEvent parameter to changeCellValue\n\n"
+          },
+          {
+            "comment": "feat: list table header support hierarchy \n\n"
+          },
+          {
+            "comment": "fix: fix flex layout update in react-custom-layout component #3696"
+          },
+          {
+            "comment": "fix: updateTaskRecord api #3639\n\n"
+          },
+          {
+            "comment": "fix: repeat call computeColsWidth adaptive mode result error\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.17.5",
       "tag": "@visactor/vtable_v1.17.5",
       "date": "Wed, 02 Apr 2025 09:56:31 GMT",
