@@ -392,7 +392,9 @@ export class SceneProxy {
   createColGroup(onceCount: number) {
     // compute rows height
     const endCol = Math.min(this.totalCol, this.currentCol + onceCount);
-    computeColsWidth(this.table, this.currentCol + 1, endCol);
+    if (this.table.widthMode !== 'adaptive') {
+      computeColsWidth(this.table, this.currentCol + 1, endCol);
+    }
 
     this.colEnd = endCol;
 
@@ -693,7 +695,9 @@ export class SceneProxy {
     //     colGroup.needUpdate = false;
     //   }
     // }
-    computeColsWidth(this.table, this.colUpdatePos, distCol);
+    if (this.table.widthMode === 'autoWidth') {
+      computeColsWidth(this.table, this.colUpdatePos, distCol);
+    }
     updateColContent(this.colUpdatePos, distCol, this);
     this.colUpdatePos = distCol + 1;
   }

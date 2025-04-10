@@ -88,6 +88,13 @@
               }
             },
             {
+              "path": "columns_tree",
+              "title": {
+                "zh": "表头分组及折叠",
+                "en": "Columns tree"
+              }
+            },
+            {
               "path": "group_list",
               "title": {
                 "zh": "分组展示",

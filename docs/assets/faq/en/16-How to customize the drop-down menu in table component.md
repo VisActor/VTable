@@ -58,11 +58,11 @@ menu: {
 2. Configure in the header
    dropDownMenu can be configured in columns. The items are the same as defaultHeaderMenuItems. The menu only takes effect in the corresponding column.
 3. Menu selection status update
-   After the drop-down menu item is selected, the "dropdownmenu_click" event will be triggered. The listening event updates the drop-down menu status through the setDropDownMenuHighlight interface. The selected item text and icon will change the style.
+   After the drop-down menu item is selected, the "dropdown_menu_click" event will be triggered. The listening event updates the drop-down menu status through the setDropDownMenuHighlight interface. The selected item text and icon will change the style.
 
 ```javascript
-table.on('dropdownmenu_click', (args: any) => {
-  console.log('dropdownmenu_click', args);
+table.on('dropdown_menu_click', (args: any) => {
+  console.log('dropdown_menu_click', args);
   table.setDropDownMenuHighlight([args]);
 });
 ```
@@ -140,8 +140,8 @@ const option: TYPES.ListTableConstructorOptions = {
   }
 };
 const table = new ListTable(document.getElementById('container'), option);
-table.on('dropdownmenu_click', (args: any) => {
-  console.log('dropdownmenu_click', args);
+table.on('dropdown_menu_click', (args: any) => {
+  console.log('dropdown_menu_click', args);
   table.setDropDownMenuHighlight([args]);
 });
 ```

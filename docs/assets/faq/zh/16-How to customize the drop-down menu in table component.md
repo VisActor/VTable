@@ -58,11 +58,11 @@ menu: {
 2. 在表头中配置
    在 columns 中可以配置 dropDownMenu，项目与 defaultHeaderMenuItems 相同，该菜单只在对应的列中生效。
 3. 菜单选中状态更新
-   下拉菜单项目选中后，会触发"dropdownmenu_click"事件，监听事件事件通过 setDropDownMenuHighlight 接口更新下拉菜单状态，选中的项目文字和 icon 会更改样式。
+   下拉菜单项目选中后，会触发"dropdown_menu_click"事件，监听事件事件通过 setDropDownMenuHighlight 接口更新下拉菜单状态，选中的项目文字和 icon 会更改样式。
 
 ```javascript
-table.on('dropdownmenu_click', (args: any) => {
-  console.log('dropdownmenu_click', args);
+table.on('dropdown_menu_click', (args: any) => {
+  console.log('dropdown_menu_click', args);
   table.setDropDownMenuHighlight([args]);
 });
 ```
@@ -140,8 +140,8 @@ const option: TYPES.ListTableConstructorOptions = {
   }
 };
 const table = new ListTable(document.getElementById('container'), option);
-table.on('dropdownmenu_click', (args: any) => {
-  console.log('dropdownmenu_click', args);
+table.on('dropdown_menu_click', (args: any) => {
+  console.log('dropdown_menu_click', args);
   table.setDropDownMenuHighlight([args]);
 });
 ```

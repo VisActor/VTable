@@ -113,6 +113,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-rowSeriesNumber-cornerHeaderSelectMode'
+      },
+      {
+        path: 'list',
         name: 'list-transpose-rowSeriesNumber'
       },
       {
@@ -216,6 +220,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-grid-tree-totals'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-grid-tree-select-cornerHeaderSelectMode'
       },
       {
         path: 'pivot',
