@@ -766,6 +766,13 @@
             "zh": "excel键盘交互对齐",
             "en": "excel keyboard interaction alignment"
           }
+        },
+        {
+          "path": "row-column-add",
+          "title": {
+            "zh": "行列新增插件",
+            "en": "add row column plugin"
+          }
         }
       ]
     },
