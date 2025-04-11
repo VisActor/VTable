@@ -13,10 +13,30 @@ export function setCheckedState(
   checked: boolean | 'indeterminate',
   state: StateManager
 ) {
+  const table = state.table;
+  const cellRange = table.getCellRange(col, row);
+  if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
+    for (let i = cellRange.start.col; i <= cellRange.end.col; i++) {
+      for (let j = cellRange.start.row; j <= cellRange.end.row; j++) {
+        setSingleCheckedState(i, j, field, checked, state);
+      }
+    }
+  } else {
+    setSingleCheckedState(col, row, field, checked, state);
+  }
+}
+
+function setSingleCheckedState(
+  col: number,
+  row: number,
+  field: string | number,
+  checked: boolean | 'indeterminate',
+  state: StateManager
+) {
   const recordIndex = state.table.getRecordShowIndexByCell(col, row);
   if (recordIndex >= 0) {
     const dataIndex = state.table.dataSource.getIndexKey(recordIndex).toString();
-    if (state.checkedState.has(dataIndex)) {
+    if (state.checkedState.get(dataIndex)) {
       state.checkedState.get(dataIndex)[field] = checked;
     } else {
       state.checkedState.set(dataIndex, {
@@ -69,8 +89,20 @@ export function syncCheckedState(
     if (isValid(state.checkedState.get(dataIndex)?.[field])) {
       return state.checkedState.get(dataIndex)[field];
     }
-    if (state.checkedState.has(dataIndex)) {
+    if (state.checkedState.get(dataIndex)) {
       state.checkedState.get(dataIndex)[field] = checked;
+    } else if (dataIndex.includes(',')) {
+      // child record, sync parent record state
+      const parentDataIndex = dataIndex.split(',').slice(0, -1).join(','); // get latest parent data index
+      if (state.checkedState.has(parentDataIndex) && state.checkedState.get(parentDataIndex)[field] === true) {
+        state.checkedState.set(dataIndex, {
+          [field]: true
+        });
+      } else {
+        state.checkedState.set(dataIndex, {
+          [field]: checked
+        });
+      }
     } else {
       state.checkedState.set(dataIndex, {
         [field]: checked
@@ -303,6 +335,8 @@ export function changeCheckboxOrder(sourceIndex: number, targetIndex: number, st
   }
 
   if (isNumber(source) && isNumber(target)) {
+    sourceIndex = source;
+    targetIndex = target;
     if (sourceIndex > targetIndex) {
       const sourceRecord = checkedState.get(sourceIndex.toString());
       for (let i = sourceIndex; i > targetIndex; i--) {

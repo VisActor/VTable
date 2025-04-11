@@ -73,7 +73,7 @@ export class SceneProxy {
       // this.colLimit = 100;
       this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
       this.colLimit = Math.max(100, Math.ceil((table.tableNoFrameWidth * 2) / table.defaultColWidth));
-    } else if (this.table.isAutoRowHeight()) {
+    } else if (this.table.isAutoRowHeight(table.columnHeaderLevelCount)) {
       // this.rowLimit = 100;
       this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
     } else if (this.table.widthMode === 'autoWidth') {
@@ -91,6 +91,15 @@ export class SceneProxy {
     }
     if (this.table.options.maintainedDataCount) {
       this.rowLimit = this.table.options.maintainedDataCount;
+    }
+    if (this.table.options.maintainedColumnCount) {
+      this.colLimit = this.table.options.maintainedColumnCount;
+    }
+    if (this.table.heightMode === 'adaptive') {
+      this.rowLimit = this.table.rowCount;
+    }
+    if (this.table.widthMode === 'adaptive') {
+      this.colLimit = this.table.colCount;
     }
   }
 
@@ -299,7 +308,9 @@ export class SceneProxy {
   createRowCellGroup(onceCount: number) {
     const endRow = Math.min(this.totalRow, this.currentRow + onceCount);
     // compute rows height
-    computeRowsHeight(this.table, this.currentRow + 1, endRow, false);
+    if (this.table.heightMode !== 'adaptive') {
+      computeRowsHeight(this.table, this.currentRow + 1, endRow, false);
+    }
 
     this.rowEnd = endRow;
 
@@ -381,7 +392,9 @@ export class SceneProxy {
   createColGroup(onceCount: number) {
     // compute rows height
     const endCol = Math.min(this.totalCol, this.currentCol + onceCount);
-    computeColsWidth(this.table, this.currentCol + 1, endCol);
+    if (this.table.widthMode !== 'adaptive') {
+      computeColsWidth(this.table, this.currentCol + 1, endCol);
+    }
 
     this.colEnd = endCol;
 
@@ -560,13 +573,13 @@ export class SceneProxy {
   updateCellGroups(count: number) {
     const distRow = Math.min(this.bodyBottomRow, this.rowUpdatePos + count);
     // console.log('updateCellGroups', this.rowUpdatePos, distRow);
-    if (this.table.isAutoRowHeight()) {
+    if (this.table.isAutoRowHeight(this.rowUpdatePos)) {
       computeRowsHeight(this.table, this.rowUpdatePos, distRow, false);
     }
 
     updateRowContent(this.rowUpdatePos, distRow, this);
 
-    if (this.table.isAutoRowHeight()) {
+    if (this.table.isAutoRowHeight(this.rowUpdatePos)) {
       // body group
       updateAutoRow(
         this.bodyLeftCol, // colStart
@@ -605,12 +618,12 @@ export class SceneProxy {
   updateBottomFrozenCellGroups() {
     const startRow = this.table.rowCount - this.table.bottomFrozenRowCount;
     const endRow = this.table.rowCount - 1;
-    if (this.table.isAutoRowHeight()) {
+    if (this.table.isAutoRowHeight(startRow)) {
       computeRowsHeight(this.table, startRow, endRow, false);
     }
     updateRowContent(startRow, endRow, this);
 
-    if (this.table.isAutoRowHeight()) {
+    if (this.table.isAutoRowHeight(startRow)) {
       // body group
       updateAutoRow(
         this.bodyLeftCol, // colStart
@@ -650,7 +663,7 @@ export class SceneProxy {
     console.log('updateRightFrozenCellGroups', startCol, endCol);
     updateColContent(startCol, endCol, this);
 
-    if (this.table.isAutoRowHeight()) {
+    if (this.table.isAutoRowHeight(this.rowStart)) {
       // body group
       updateAutoColumn(startCol, endCol, this.table, this.colUpdateDirection);
     }
@@ -682,7 +695,9 @@ export class SceneProxy {
     //     colGroup.needUpdate = false;
     //   }
     // }
-    computeColsWidth(this.table, this.colUpdatePos, distCol);
+    if (this.table.widthMode === 'autoWidth') {
+      computeColsWidth(this.table, this.colUpdatePos, distCol);
+    }
     updateColContent(this.colUpdatePos, distCol, this);
     this.colUpdatePos = distCol + 1;
   }

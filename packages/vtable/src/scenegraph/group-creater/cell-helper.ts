@@ -457,8 +457,13 @@ function _generateCustomElementsGroup(
   let customElementsGroup;
   let renderDefault = true;
   if (customResult) {
+    // custom merge custom render
     customElementsGroup = customResult.elementsGroup;
     renderDefault = customResult.renderDefault;
+  } else if (range?.isCustom && !table.isCornerHeader(col, row)) {
+    // 判断不是角头单元格，来兼容corner中设置的customLayout
+    // custom merge && no custom render
+    // do not use column custom render
   } else {
     let customRender;
     let customLayout;
@@ -504,6 +509,11 @@ export function updateCell(
 ) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+
+  if (oldCellGroup.role !== 'cell' && !addNew) {
+    return undefined;
+  }
+
   const cellLocation = table.getCellLocation(col, row);
   let value = table.getCellValue(col, row);
 

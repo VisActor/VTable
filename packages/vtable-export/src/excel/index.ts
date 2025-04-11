@@ -33,7 +33,19 @@ export type ExportVTableToExcelOptions = {
   skipImageExportCellType?: SkipImageExportCellType[];
 };
 
-export async function exportVTableToExcel(tableInstance: IVTable, options?: ExportVTableToExcelOptions) {
+function requestIdleCallbackPromise(options?: IdleRequestOptions) {
+  return new Promise<IdleDeadline>(resolve => {
+    requestIdleCallback(deadline => {
+      resolve(deadline);
+    }, options);
+  });
+}
+
+export async function exportVTableToExcel(
+  tableInstance: IVTable,
+  options?: ExportVTableToExcelOptions,
+  optimization = false
+) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
   worksheet.properties.defaultRowHeight = 40;
@@ -46,29 +58,62 @@ export async function exportVTableToExcel(tableInstance: IVTable, options?: Expo
   const mergeCells = [];
   const mergeCellSet = new Set();
 
-  for (let col = minCol; col <= maxCol; col++) {
-    const colWith = tableInstance.getColWidth(col);
-    columns[col] = { width: colWith / 6 };
-    for (let row = minRow; row <= maxRow; row++) {
-      if (col === minCol) {
-        const rowHeight = tableInstance.getRowHeight(row);
-        const worksheetRow = worksheet.getRow(row + 1);
-        // worksheetRow.height = rowHeight * 0.75;
-        worksheetRow.height = rowHeight;
-      }
+  const SLICE_SIZE = 100;
+  let currentRow = minRow;
 
-      await addCell(col, row, tableInstance, worksheet, workbook, options);
+  function processSlice(deadline?: IdleDeadline) {
+    return new Promise<void>(async resolve => {
+      while (currentRow <= maxRow && (!optimization || deadline?.timeRemaining() > 0)) {
+        const endRow = Math.min(currentRow + SLICE_SIZE - 1, maxRow);
+        for (let col = minCol; col <= maxCol; col++) {
+          const colWidth = tableInstance.getColWidth(col);
+          if (columns[col] === undefined) {
+            columns[col] = { width: colWidth / 6 };
+          }
+          for (let row = currentRow; row <= endRow; row++) {
+            if (col === minCol) {
+              const rowHeight = tableInstance.getRowHeight(row);
+              const worksheetRow = worksheet.getRow(row + 1);
+              // worksheetRow.height = rowHeight * 0.75;
+              worksheetRow.height = rowHeight;
+            }
 
-      const cellRange = tableInstance.getCellRange(col, row);
-      if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
-        const key = `${cellRange.start.col},${cellRange.start.row}:${cellRange.end.col},${cellRange.end.row}}`;
-        if (!mergeCellSet.has(key)) {
-          mergeCellSet.add(key);
-          mergeCells.push(cellRange);
+            await addCell(col, row, tableInstance, worksheet, workbook, options);
+
+            const cellRange = tableInstance.getCellRange(col, row);
+            if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
+              const key = `${cellRange.start.col},${cellRange.start.row}:${cellRange.end.col},${cellRange.end.row}`;
+              if (!mergeCellSet.has(key)) {
+                mergeCellSet.add(key);
+                mergeCells.push(cellRange);
+              }
+            }
+          }
         }
+        currentRow = endRow + 1;
       }
-    }
+
+      if (currentRow > maxRow) {
+        resolve();
+      } else {
+        let nextDeadline: IdleDeadline | undefined;
+        if (optimization) {
+          nextDeadline = await requestIdleCallbackPromise();
+        }
+        await processSlice(nextDeadline);
+        resolve();
+      }
+    });
   }
+
+  await new Promise<void>(async resolve => {
+    let deadline: IdleDeadline | undefined;
+    if (optimization) {
+      deadline = await requestIdleCallbackPromise();
+    }
+    await processSlice(deadline);
+    resolve();
+  });
 
   worksheet.columns = columns;
   mergeCells.forEach(mergeCell => {

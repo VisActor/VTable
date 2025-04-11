@@ -31,21 +31,28 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
   // customLayout function for vtable
   const createGraphic: ICustomLayoutFuc = useCallback(
     args => {
-      const key = `${args.originCol ?? args.col}-${args.originRow ?? args.row}`;
+      const key = `${args.originCol ?? args.col}-${args.originRow ?? args.row}${
+        args.forComputation ? '-forComputation' : ''
+      }`;
       let group;
       if (container.current.has(key)) {
         const currentContainer = container.current.get(key);
-        // reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
         reconcilorUpdateContainer(children, currentContainer, args);
         group = currentContainer.containerInfo;
-        // 这里更新group，可能会残留dx dy
       } else {
         group = new Group({});
-        const currentContainer = reconcilor.createContainer(group, LegacyRoot, null, null, null, 'custom', null, null);
+        const currentContainer = reconcilor.createContainer(
+          group as any,
+          LegacyRoot,
+          null,
+          null,
+          null,
+          'custom',
+          null,
+          null
+        );
         container.current.set(key, currentContainer);
         reconcilorUpdateContainer(children, currentContainer, args);
-        // const ele = React.cloneElement(children, { ...args });
-        // reconcilor.updateContainer(ele, currentContainer, null);
       }
 
       return {

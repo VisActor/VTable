@@ -1,7 +1,109 @@
+# v1.17.6
+
+2025-04-10
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: ListTable的changeCellValue方法新增tiggerEvent参数
+- **@visactor/vtable**: ListTable表头支持层级结构
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复移动树节点位置时代码报错问题 [#3645](https://github.com/VisActor/VTable/issues/3645) [#3706](https://github.com/VisActor/VTable/issues/3706)
+- **@visactor/vtable**: 修复边框设置数组时底部线条位置渲染错误 [#3684](https://github.com/VisActor/VTable/issues/3684)
+- **@visactor/vtable**: 修复移动端触摸事件调整列宽问题 [#3693](https://github.com/VisActor/VTable/issues/3693)
+- **@visactor/vtable**: 修复设置冻结时禁用拖拽选择不生效问题 [#3702](https://github.com/VisActor/VTable/issues/3702)
+- **@visactor/vtable**: 修复react-custom-layout组件中flex布局更新问题 [#3696](https://github.com/VisActor/VTable/issues/3696)
+- **@visactor/vtable**: 修复updateTaskRecord接口问题 [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: 修复重复调用computeColsWidth自适应模式结果错误问题
+
+
+
+[更多详情请查看 v1.17.6](https://github.com/VisActor/VTable/releases/tag/v1.17.6)
+
+# v1.17.5
+
+2025-04-02
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 单元格支持标记功能 [#3583](https://github.com/VisActor/VTable/issues/3583)
+- **@visactor/vtable**: 重构透视表在无列或无行情况下的角落处理 [#3653](https://github.com/VisActor/VTable/issues/3653)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复甘特图刻度设置季度解析问题 [#3612](https://github.com/VisActor/VTable/issues/3612)
+- **@visactor/vtable**: 修复甘特图 overscrollBehavior 无效问题 [#3638](https://github.com/VisActor/VTable/issues/3638)
+- **@visactor/vtable**: 修复树形模式下甘特图 updateRecords 错误 [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: 修复设置自适应高度模式时行高错误 [#3640](https://github.com/VisActor/VTable/issues/3640)
+- **@visactor/vtable**: 修复设置异步渲染图表时 setRecords API 渲染错误 [#3661](https://github.com/VisActor/VTable/issues/3661)
+- **@visactor/vtable**: 修复合并单元格复选框状态更新问题 [#3668](https://github.com/VisActor/VTable/issues/3668)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 重构填充句柄功能 [#3582](https://github.com/VisActor/VTable/issues/3582)
+
+
+
+[更多详情请查看 v1.17.5](https://github.com/VisActor/VTable/releases/tag/v1.17.5)
+
+# v1.17.4
+
+2025-03-31
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 在进度条中添加条形标记样式配置 [#3616](https://github.com/VisActor/VTable/issues/3616)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复按钮样式问题 [#3614](https://github.com/VisActor/VTable/issues/3614)
+- **@visactor/vtable**: 修复复选框状态顺序更新问题 [#3606](https://github.com/VisActor/VTable/issues/3606)
+- **@visactor/vtable**: 为合并单元格范围添加自定义标记 [#3504](https://github.com/VisActor/VTable/issues/3504)
+- **@visactor/vtable**: 修复树形复选框状态更新问题
+- **@visactor/vtable**: 禁用分组标题编辑器
+
+[更多详情请查看 v1.17.4](https://github.com/VisActor/VTable/releases/tag/v1.17.4)
+
+# v1.17.3
+
+2025-03-24
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 行序号支持单选按钮类型 [#3558](https://github.com/VisActor/VTable/issues/3558)
+- **@visactor/vtable**: 在 react-vtable 中添加自定义 reactAttributePlugin
+- **@visactor/vtable**: 添加 maintainedColumnCount 配置
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复选择合并单元格扩展范围问题 [#3529](https://github.com/VisActor/VTable/issues/3529)
+- **@visactor/vtable**: 修复设置 cellInnerBorder 为 false 时边框渲染错误 [#3574](https://github.com/VisActor/VTable/issues/3574)
+- **@visactor/vtable**: 修复带圆角单元格的边框问题
+- **@visactor/vtable**: 修复坐标轴标签自动大小计算
+- **@visactor/vtable**: 修复小窗口大小下冻结列数问题
+- **@visactor/vtable**: 修复 columnWidthConfig 维度匹配错误
+- **@visactor/vtable**: 修复 React 组件更新问题 [#3474](https://github.com/VisActor/VTable/issues/3474)
+- **@visactor/vtable**: 修复右键选择问题
+- **@visactor/vtable**: 修复行更新范围问题 [#3468](https://github.com/VisActor/VTable/issues/3468)
+
+[更多详情请查看 v1.17.3](https://github.com/VisActor/VTable/releases/tag/v1.17.3)
+
+# v1.17.2
+
+2025-03-11
+
+**🐛 功能修复**
+
+- **@visactor/vue-vtable**: 修复 custom container value 问题
+
+[更多详情请查看 v1.17.2](https://github.com/VisActor/VTable/releases/tag/v1.17.2)
+
 # v1.17.1
 
 2025-03-10
-
 
 **🆕 新增功能**
 
@@ -26,17 +128,15 @@
 
 2025-02-26
 
-
-
 **💥 Breaking change**
 
-- **@visactor/vtable**: 删除loading加载图标的自动注册，需要手动注册，具体可以参考教程：/guide/table_type/List_table/tree_list
+- **@visactor/vtable**: 删除 loading 加载图标的自动注册，需要手动注册，具体可以参考教程：/guide/table_type/List_table/tree_list
 
 **🆕 新增功能**
 
-- **@visactor/vtable-gantt**: 甘特图scale时间表头支持可见性设置 [#3098](https://github.com/VisActor/VTable/issues/3098)
+- **@visactor/vtable-gantt**: 甘特图 scale 时间表头支持可见性设置 [#3098](https://github.com/VisActor/VTable/issues/3098)
 - **@visactor/vtable**: 下拉菜单支持函数配置 [#3443](https://github.com/VisActor/VTable/issues/3443)
-- **@visactor/vtable-gantt**: 新增grid网格垂直线依赖于时间轴的配置 [#3467](https://github.com/VisActor/VTable/issues/3467)
+- **@visactor/vtable-gantt**: 新增 grid 网格垂直线依赖于时间轴的配置 [#3467](https://github.com/VisActor/VTable/issues/3467)
 - **@visactor/vtable**: 新增 activateChartInstance 和 replaceChartCacheImage API
 - **@visactor/vtable**: 新增 `specTransformInCell` 配置，支持修改透视表每个单元格的 VChart 规范
 - **@visactor/vtable**: 新增开关和按钮类型单元格
@@ -54,23 +154,18 @@
 
 - **@visactor/vtable**: 更新 Rush 的更新日志
 
-
-
 [更多详情请查看 v1.17.0](https://github.com/VisActor/VTable/releases/tag/v1.17.0)
 
 # v1.16.2
 
 2025-02-19
 
-
 **🐛 功能修复**
 
 - **@visactor/vtable**: 修复字段名包含点号时出现的错误 [#3409](https://github.com/VisActor/VTable/issues/3409)
 - **@visactor/vtable**: 修复 getChartInstance 方法中 vchart updateViewBox 的参数 [#3442](https://github.com/VisActor/VTable/issues/3442)
-- **@visactor/vtable**: 修复 computeAxisComponentWidth 的返回值向上取整 [#3444](https://github.com/VisActor/VTable/issues/3444) 
+- **@visactor/vtable**: 修复 computeAxisComponentWidth 的返回值向上取整 [#3444](https://github.com/VisActor/VTable/issues/3444)
 - **@visactor/vtable**: 修复 getCheckboxState() 中的排序函数 [#3394](https://github.com/VisActor/VTable/issues/3394)
-
-
 
 [更多详情请查看 v1.16.2](https://github.com/VisActor/VTable/releases/tag/v1.16.2)
 

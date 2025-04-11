@@ -73,7 +73,7 @@ import {
   registerVideoCell
 } from './scenegraph/group-creater/cell-type';
 import { hasLinearAxis } from './layout/chart-helper/get-axis-config';
-import { cacheStageCanvas } from './scenegraph/graphic/contributions/chart-render-helper';
+import { cacheStageCanvas, clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
 
 registerAxis();
 registerEmptyTip();
@@ -1519,6 +1519,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param sort
    */
   setRecords(records: Array<any>): void {
+    this.internalProps.layoutMap.release();
+    clearChartRenderQueue();
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.options.records = this.internalProps.records = records;
     const options = this.options;

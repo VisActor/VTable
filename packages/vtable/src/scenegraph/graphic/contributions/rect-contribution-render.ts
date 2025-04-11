@@ -226,8 +226,8 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
           stroke,
           strokeArrayWidth || lineWidth,
           strokeArrayColor || strokeColor,
-          Math.ceil(width + deltaWidth),
-          Math.ceil(height + deltaHeight)
+          rect.name !== 'table-border-rect' ? Math.ceil(width + deltaWidth) : width + deltaWidth,
+          rect.name !== 'table-border-rect' ? Math.ceil(height + deltaHeight) : height + deltaHeight
         );
       }
     }
@@ -273,6 +273,7 @@ export function renderStrokeWithCornerRadius(
   const isWidthNumber = !Array.isArray(strokeArrayWidth);
   const isStrokeTrue = !Array.isArray(stroke);
   const isSplitDraw = Array.isArray(strokeArrayColor) || widthInfo.isSplitDraw;
+  context.stroke(); // stroke last corner with last stroke style
 
   context.setStrokeStyle(rect, rect.attribute, x, y, rectAttribute);
   const { lineDash = groupAttribute.lineDash } = group.attribute as any;
@@ -283,7 +284,7 @@ export function renderStrokeWithCornerRadius(
   }
 
   // 单独处理每条边界，目前不考虑圆角
-  // context.beginPath();
+  context.beginPath(); // clean path
   context.moveTo(x, y);
 
   const strokeTop = (isStrokeTrue || stroke[0]) && (isWidthNumber || strokeArrayWidth[0]);
@@ -415,6 +416,7 @@ export function renderStrokeWithCornerRadius(
   } else if (i === 3) {
     context.moveTo(x, y);
   }
+  context.closePath();
 
   if (!isSplitDraw && !isDash) {
     // context.strokeStyle = strokeArrayColor;
@@ -427,7 +429,7 @@ export function renderStrokeWithCornerRadius(
   // context.lineCap = oldLineCap;
   context.setLineDash([]);
 
-  context.closePath();
+  context.beginPath(); // clean path
 }
 
 type IEdgeCb = (x1: number, y1: number, x2: number, y2: number) => void;

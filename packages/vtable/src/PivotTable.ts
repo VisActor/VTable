@@ -20,7 +20,8 @@ import type {
   SortByIndicatorRule,
   SortTypeRule,
   SortRule,
-  FilterRules
+  FilterRules,
+  CellPivotRole
 } from './ts-types';
 import { HierarchyState, SortType } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
@@ -52,6 +53,7 @@ import {
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { callUpdateColOnScenegraph, callUpdateRowOnScenegraph } from './tools/diff-cell';
+import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
@@ -367,6 +369,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           this.options.rowHierarchyType !== 'grid' ? this.options.rowExpandLevel ?? 1 : undefined
         );
       }
+      internalProps.layoutMap.clearHeaderPathCache();
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
       //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
       //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
@@ -509,6 +512,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param pagination 修改页码
    */
   updatePagination(pagination?: IPagination): void {
+    this.internalProps.layoutMap.clearHeaderPathCache();
+
     if (pagination) {
       if (!this.pagination) {
         this.pagination = { currentPage: 0, perPageCount: 0 };
@@ -1452,6 +1457,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param recalculateColWidths  是否重新计算列宽 默认为true.（设置width:auto或者 autoWidth 情况下才有必要考虑该参数）
    */
   toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
+    this.internalProps.layoutMap.clearHeaderPathCache();
+
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
       this._refreshHierarchyState(col, row, recalculateColWidths);
@@ -1681,6 +1688,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param sort
    */
   setRecords(records: Array<any>): void {
+    clearChartRenderQueue();
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.options.records = this.internalProps.records = records;
     this.internalProps.recordsIsTwoDimensionalArray = false;
@@ -1869,7 +1877,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         if (this.internalProps._heightResizedRowMap.size === 0) {
           this.scenegraph.recalculateRowHeights();
         }
-      } else if (this.isAutoRowHeight() && !this.internalProps._heightResizedRowMap.has(row)) {
+      } else if (this.isAutoRowHeight(row) && !this.internalProps._heightResizedRowMap.has(row)) {
         const oldHeight = this.getRowHeight(row);
         const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
         this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
@@ -1987,7 +1995,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
       this.scenegraph.recalculateRowHeights();
-    } else if (this.isAutoRowHeight()) {
+    } else if (this.isAutoRowHeight(startRow)) {
       const rows: number[] = [];
       const deltaYs: number[] = [];
       for (let sRow = startRow; sRow <= range.end.row; sRow++) {
@@ -2173,6 +2181,36 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     return this.dataset?.filterRules;
   }
 
+  getCellPivotRole(col: number, row: number) {
+    const path = this.getCellHeaderPaths(col, row);
+    const { cellLocation, colHeaderPaths, rowHeaderPaths } = path;
+
+    let colRole: CellPivotRole = colHeaderPaths.length ? 'normal' : undefined;
+    let rowRole: CellPivotRole = rowHeaderPaths.length ? 'normal' : undefined;
+
+    (colHeaderPaths as IDimensionInfo[]).forEach((path: IDimensionInfo) => {
+      if (path.role === 'sub-total') {
+        colRole = 'sub-total';
+      } else if (path.role === 'grand-total') {
+        colRole = 'grand-total';
+      }
+    });
+
+    (rowHeaderPaths as IDimensionInfo[]).forEach((path: IDimensionInfo) => {
+      if (path.role === 'sub-total') {
+        rowRole = 'sub-total';
+      } else if (path.role === 'grand-total') {
+        rowRole = 'grand-total';
+      }
+    });
+
+    return {
+      colRole,
+      rowRole,
+      cellLocation
+    };
+  }
+
   /**
    * 开启层级节点展开的loading动画状态，在设置数据调用setRecordChildren后会自动关闭loading
    * @param col
@@ -2182,6 +2220,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.scenegraph.setLoadingHierarchyState(col, row);
   }
   release() {
+    this.internalProps.layoutMap.clearHeaderPathCache();
     this.editorManager.release();
     super.release();
   }

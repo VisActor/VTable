@@ -92,6 +92,13 @@ export class EditManager {
         return;
       }
 
+      // group title cell do not allow edit
+      const record = this.table.getCellRawRecord(col, row);
+      if (record?.vtableMerge) {
+        console.warn("VTable Warn: this is group title, can't be edited");
+        return;
+      }
+
       if (!this.editingEditor) {
         this.editCell = { col, row };
       }

@@ -456,10 +456,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
     // e.preventDefault(); //为了阻止mousedown事件的触发，后续：不能这样写，会阻止table聚焦
     table.eventManager.LastPointerXY = { x: e.x, y: e.y };
-    // if (e.button !== 0) {
-    //   // 只处理左键
-    //   return;
-    // }
+    if (e.button !== 0) {
+      // 只处理左键
+      return;
+    }
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     eventManager.downIcon = undefined;
     if (stateManager.interactionState !== InteractionState.default) {
@@ -823,6 +823,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       eventManager.downIcon = hitIcon;
       // 处理列宽调整  这里和tableGroup.addEventListener('pointerdown' 逻辑一样
       if (
+        e.pointerType !== 'touch' && // 移动端不应该在这里处理列宽调整 下面有eventManager.touchMove的逻辑
         !hitIcon &&
         !eventManager.checkCellFillhandle(eventArgsSet) &&
         !stateManager.columnResize.resizing &&

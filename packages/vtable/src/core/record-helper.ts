@@ -14,12 +14,14 @@ import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
  * @param row
  * @param value 更改后的值
  * @param workOnEditableCell 限制只能更改配置了编辑器的单元格值。快捷键paste这里配置的true，限制只能修改可编辑单元格值
+ * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
  */
 export function listTableChangeCellValue(
   col: number,
   row: number,
   value: string | number | null,
   workOnEditableCell: boolean,
+  triggerEvent: boolean,
   table: ListTable
 ) {
   if ((workOnEditableCell && table.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
@@ -85,13 +87,13 @@ export function listTableChangeCellValue(
       if (table.internalProps._heightResizedRowMap.size === 0) {
         table.scenegraph.recalculateRowHeights();
       }
-    } else if (table.isAutoRowHeight() && !table.internalProps._heightResizedRowMap.has(row)) {
+    } else if (table.isAutoRowHeight(row) && !table.internalProps._heightResizedRowMap.has(row)) {
       const oldHeight = table.getRowHeight(row);
       const newHeight = computeRowHeight(row, 0, table.colCount - 1, table);
       table.scenegraph.updateRowHeight(row, newHeight - oldHeight);
     }
     const changedValue = table.getCellOriginValue(col, row);
-    if (oldValue !== changedValue) {
+    if (oldValue !== changedValue && triggerEvent) {
       table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
         col,
         row,
@@ -109,12 +111,14 @@ export function listTableChangeCellValue(
  * @param row 粘贴数据的起始行号
  * @param values 多个单元格的数据数组
  * @param workOnEditableCell 是否仅更改可编辑单元格
+ * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
  */
 export function listTableChangeCellValues(
   startCol: number,
   startRow: number,
   values: (string | number)[][],
   workOnEditableCell: boolean,
+  triggerEvent: boolean,
   table: ListTable
 ) {
   let pasteColEnd = startCol;
@@ -193,7 +197,7 @@ export function listTableChangeCellValues(
           table.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, table);
         }
         const changedValue = table.getCellOriginValue(startCol + j, startRow + i);
-        if (oldValue !== changedValue) {
+        if (oldValue !== changedValue && triggerEvent) {
           table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
             col: startCol + j,
             row: startRow + i,
@@ -283,7 +287,7 @@ export function listTableChangeCellValues(
     (table.autoFillHeight && table.getAllRowsHeight() <= table.tableNoFrameHeight)
   ) {
     table.scenegraph.recalculateRowHeights();
-  } else if (table.isAutoRowHeight()) {
+  } else if (table.isAutoRowHeight(startRow)) {
     const rows: number[] = [];
     const deltaYs: number[] = [];
     for (let sRow = startRow; sRow <= range.end.row; sRow++) {

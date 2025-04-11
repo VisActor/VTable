@@ -1,4 +1,5 @@
 import { isValid } from '@visactor/vutils';
+import type { VNode } from 'vue';
 import { isVNode, render } from 'vue';
 import { TYPES } from '@visactor/vtable';
 
@@ -10,6 +11,8 @@ export interface DynamicRenderEditorParams {
   col: number;
   /** 值 */
   value: any;
+  /** 行数据 */
+  record: any;
   /** 表格实例 */
   table: any;
   /** 设置值方法 */
@@ -67,8 +70,11 @@ export class DynamicRenderEditor {
   currentValue: string | null;
   /** 节点 map */
   nodeMap?: Map<string | number, Map<string | number, (params: DynamicRenderEditorParams) => any>>;
+  /** 当前上下文 */
+  currentContext?: any;
 
-  constructor() {
+  constructor(currentContext?: any) {
+    this.currentContext = currentContext;
     this.tableContainer = null;
     this.currentValue = null;
     this.wrapContainer = null;
@@ -144,6 +150,7 @@ export class DynamicRenderEditor {
         return false;
       }
     }
+    const record = table?.getCellOriginRecord(col, row);
     const vnode = this.getNode(
       id,
       key
@@ -151,12 +158,14 @@ export class DynamicRenderEditor {
       row,
       col,
       value,
+      record,
       table,
       onChange: (value: any) => this.setValue(value)
-    })?.[0];
+    })?.find((node: any) => node?.type !== Symbol.for('v-cmt'));
     if (!vnode || !isVNode(vnode)) {
       return false;
     }
+    this.checkToPassAppContext(vnode, table);
     // 创建包裹容器
     const wrapContainer = document.createElement('div');
     wrapContainer.style.position = 'absolute';
@@ -174,6 +183,21 @@ export class DynamicRenderEditor {
       this.adjustPosition(referencePosition.rect);
     }
     return true;
+  }
+  /**
+   * @description: 校验并传递上下文
+   * @param {VNode} vnode
+   * @param {any} table
+   * @return {*}
+   */
+  checkToPassAppContext(vnode: VNode, table: any) {
+    try {
+      const userAppContext = table.options?.customConfig?.getVueUserAppContext?.() ?? this.currentContext;
+      // 简单校验合法性
+      if (!!userAppContext?.components && !!userAppContext?.directives) {
+        vnode.appContext = userAppContext;
+      }
+    } catch (error) {}
   }
   /**
    * @description: 获取渲染式编辑器的列配置主键

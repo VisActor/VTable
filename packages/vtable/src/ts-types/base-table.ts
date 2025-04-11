@@ -328,7 +328,7 @@ export interface BaseTableConstructorOptions {
   /** 快捷键功能设置 */
   keyboardOptions?: TableKeyboardOptions;
   excelOptions?: {
-    fillHandle?: boolean;
+    fillHandle?: boolean | ((args: { selectRanges: CellRange[]; table: BaseTableAPI }) => boolean);
   };
   /** 事件触发相关设置 */
   eventOptions?: TableEventOptions;
@@ -390,6 +390,13 @@ export interface BaseTableConstructorOptions {
      * 'body': 不选择表头，点击行表头则选择该行所有 body 单元格，点击列表头则选择该列所有 body 单元格。
      */
     headerSelectMode?: 'inline' | 'cell' | 'body';
+    /** 点击表头corner单元格效果
+     * 'inline': 点击corner选择列表头则整列选中；
+     * 'cell': 仅仅选择当前点击的corner表头单元格；
+     * 'body': 点击corner列表头则选择该列所有 body 单元格；
+     * 'all': 点击corner选择整个图表。
+     */
+    cornerHeaderSelectMode?: 'inline' | 'cell' | 'body' | 'all';
     /** 不响应鼠标select交互 */
     disableSelect?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
     /** 单独设置表头不响应鼠标select交互 */
@@ -482,6 +489,8 @@ export interface BaseTableConstructorOptions {
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
+  // maximum number of columns maintained in table instance
+  maintainedColumnCount?: number;
 
   legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
@@ -555,6 +564,12 @@ export interface BaseTableConstructorOptions {
 
     // 图片资源请求时是否使用anonymous模式
     imageAnonymous?: boolean;
+
+    // 滚动到边界是否继续触发滚动事件
+    scrollEventAlwaysTrigger?: boolean;
+
+    // 开启透视结构缓存
+    enablePivotPathCache?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;

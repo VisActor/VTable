@@ -1,6 +1,115 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Sun, 09 Mar 2025 12:30:39 GMT and should not be manually modified.
+This log was last generated on Thu, 10 Apr 2025 09:18:51 GMT and should not be manually modified.
+
+## 1.17.6
+Thu, 10 Apr 2025 09:18:51 GMT
+
+### Updates
+
+- fix: when move tree node position code occor error #3645 #3706
+
+
+- fix: frame border set array render bottom line position error #3684
+
+
+- fix: mobile touch event resize column width #3693
+
+
+- fix: when set frozen disableDragSelect not work #3702
+
+
+- feat: listTable added tiggerEvent parameter to changeCellValue
+
+
+- feat: list table header support hierarchy 
+
+
+- fix: fix flex layout update in react-custom-layout component #3696
+- fix: updateTaskRecord api #3639
+
+
+- fix: repeat call computeColsWidth adaptive mode result error
+
+
+
+## 1.17.5
+Wed, 02 Apr 2025 09:56:31 GMT
+
+### Updates
+
+- refactor: fillHandle function #3582
+
+
+- feat: cell support marked function #3583
+
+
+- fix: gantt scale set quarter parser problem #3612
+
+
+- fix: gantt overscrollBehavior none work #3638
+
+
+- fix: gantt chart updateRecords error when table is tree mode #3639
+
+
+- fix: rowHeight error when set adaptive heightMode #3640
+
+
+- feat: refactor pivotTable corner with no columns or rows case #3653
+
+
+- fix: when set renderChartAsync setRecords api render error #3661
+
+
+- fix: fix merge cell checkbox state update #3668
+
+## 1.17.4
+Mon, 31 Mar 2025 12:27:48 GMT
+
+### Updates
+
+- feat: add barMarkInBar style config in progressbar #3616
+- fix: fix button style problem #3614
+- fix: fix checkbox state order update #3606
+- fix: add isCustom tag for merge cell range #3504
+- fix: fix tree checkbox state update problem
+- fix: disable group title editor
+
+## 1.17.3
+Mon, 24 Mar 2025 09:35:45 GMT
+
+### Updates
+
+- fix: selection mergeCell extend range #3529
+
+
+- feat: rowSeriesNumber support cell type radio #3558
+
+
+- fix: set cellInnerBorder false frame border render error #3574
+
+
+- feat: add custom reactAttributePlugin in react-vtable
+- feat: add maintainedColumnCount config
+- fix: fix cell border in cell with corner-radius
+- fix: fix axis label autosize computation
+- fix: fix small window size frozen column count
+- fix: columnWidthConfig match dimension error
+
+
+- fix: fix react component update #3474
+- fix: fix right button select problem
+- fix: fix row update range #3468
+
+## 1.17.2
+Tue, 11 Mar 2025 08:19:47 GMT
+
+### Updates
+
+- fix: custom container value error
+
+
 
 ## 1.17.1
 Sun, 09 Mar 2025 12:30:39 GMT

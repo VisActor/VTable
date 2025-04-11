@@ -704,11 +704,9 @@ export function computeCountToTimeScale(
     case 'quarter':
       difference =
         (adjusted_date.getFullYear() - startDate.getFullYear()) * 4 +
-        Math.floor(adjusted_date.getMonth() / 3) -
-        Math.floor(startDate.getMonth() / 3);
+        (adjusted_date.getMonth() - startDate.getMonth()) / 3;
       difference +=
-        (adjusted_date.getTime() - startDate.getTime()) /
-        DayTimes /
+        (adjusted_date.getDate() - startDate.getDate()) /
         (3 * new Date(adjusted_date.getFullYear(), adjusted_date.getMonth() + 1, 0).getDate());
       break;
     case 'year':

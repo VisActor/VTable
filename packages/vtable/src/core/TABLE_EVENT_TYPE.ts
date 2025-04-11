@@ -103,6 +103,7 @@ export interface TableEvents {
    * 滚动表格事件
    */
   SCROLL: 'scroll';
+  CAN_SCROLL: 'can_scroll';
   /**
    * 横向滚动条滚动到结束位
    */
@@ -237,6 +238,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
+  CAN_SCROLL: 'can_scroll',
   SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
   SCROLL_VERTICAL_END: 'scroll_vertical_end',
   DROPDOWN_MENU_CLICK: 'dropdown_menu_click',

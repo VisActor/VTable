@@ -956,8 +956,15 @@ use case: 对于透视图的场景上，点击图例项后 更新过滤规则 �
 更改单元格的 value 值：
 
 ```
-  /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
-  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
+  /**
+   * 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改
+   * @param col 单元格的起始列号
+   * @param row 单元格的起始行号
+   * @param value 更改后的值
+   * @param workOnEditableCell 是否仅更改可编辑单元格
+   * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
+   */
+  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false, triggerEvent = true) => void;
 ```
 
 ## changeCellValues(Function)
@@ -971,8 +978,9 @@ use case: 对于透视图的场景上，点击图例项后 更新过滤规则 �
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    * @param workOnEditableCell 是否仅更改可编辑单元格
+   * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false)
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => void;
 ```
 
 ## getEditor(Function)
@@ -1397,11 +1405,31 @@ interface ISortedMapItem {
 
 ## setLoadingHierarchyState(Function)
 
-设置单元格的树形展开收起状态为 loading
+设置单元格的树形展开收起状态为 loading，注意在使用前需要手动注册 loading 图标。
 
 ```
-  /** 设置单元格的树形展开收起状态为 loading */
-  setLoadingHierarchyState: (col: number, row: number) => void;
+// 注册loading图标
+VTable.register.icon('loading', {
+  type: 'image',
+  width: 16,
+  height: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+  name: 'loading', //定义图标的名称，在内部会作为缓存的key值
+  positionType: VTable.TYPES.IconPosition.absoluteRight, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
+  marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
+  marginRight: 4, // 右侧内容间隔 在特定位置position中起作用
+  visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
+  hover: {
+    // 热区大小
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101,117,168,0.1)'
+  },
+  isGif: true
+});
+
+/** 设置单元格的树形展开收起状态为 loading */
+setLoadingHierarchyState: (col: number, row: number) => void;
 ```
 
 ## setPixelRatio(Function)

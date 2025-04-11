@@ -782,6 +782,13 @@ export class Gantt extends EventTarget {
     //     index + this.taskListTableInstance.columnHeaderLevelCount
     //   );
     // }
+    // if (this.taskListTableInstance.rowHierarchyType === 'tree' && typeof index === 'number') {
+    //   //如果是树形结构 需要获取数据源对应的索引
+    //   index = this.taskListTableInstance.getRecordIndexByCell(
+    //     0,
+    //     index + this.taskListTableInstance.columnHeaderLevelCount
+    //   );
+    // }
     this.taskListTableInstance.updateRecords([record], [index]);
   }
   /**
@@ -922,7 +929,10 @@ export class Gantt extends EventTarget {
     this.data.adjustOrder(source_index, source_sub_task_index, target_index, target_sub_task_index);
   }
   // 定义多个函数签名
-  /** 更新数据信息 */
+  /** 更新数据信息
+   * 如果TasksShowModes是 tasks_separate 模式 则需要传入task_index即可
+   * 如果TasksShowModes是 sub_tasks_*** 模式 则需要传入task_index和sub_task_index
+   */
   updateTaskRecord(record: any, task_index: number | number[]): void;
   updateTaskRecord(record: any, task_index: number, sub_task_index: number): void;
   updateTaskRecord(record: any, task_index: number | number[], sub_task_index?: number) {
@@ -935,13 +945,21 @@ export class Gantt extends EventTarget {
     if (Array.isArray(task_index)) {
       const index = (task_index as number[])[0];
       const sub_index = (task_index as number[])[1];
-      this._updateRecordToListTable(record, isValid(sub_index) ? [index, sub_index] : index);
+      // this._updateRecordToListTable(record, isValid(sub_index) ? [index, sub_index] : index);
+      this._updateRecordToListTable(record, task_index);
       this._refreshTaskBar(index, sub_index);
       return;
     }
-    const index = task_index as number;
-    this._updateRecordToListTable(record, index);
-    this._refreshTaskBar(index, undefined);
+    let recordIndexs: number | number[] = task_index;
+    if (this.taskListTableInstance.rowHierarchyType === 'tree') {
+      //如果是树形结构 需要获取数据源对应的索引
+      recordIndexs = this.taskListTableInstance.getRecordIndexByCell(
+        0,
+        task_index + this.taskListTableInstance.columnHeaderLevelCount
+      );
+    }
+    this._updateRecordToListTable(record, recordIndexs);
+    this._refreshTaskBar(task_index, undefined);
   }
 
   /**

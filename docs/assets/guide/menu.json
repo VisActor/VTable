@@ -88,6 +88,13 @@
               }
             },
             {
+              "path": "columns_tree",
+              "title": {
+                "zh": "表头分组及折叠",
+                "en": "Columns tree"
+              }
+            },
+            {
               "path": "group_list",
               "title": {
                 "zh": "分组展示",
@@ -686,6 +693,13 @@
       "title": {
         "zh": "按需加载",
         "en": "Load on Demand"
+      }
+    },
+    {
+      "path": "operate_scenegraph",
+      "title": {
+        "zh": "操作场景树（进阶）",
+        "en": "operate scenegraph"
       }
     },
     {

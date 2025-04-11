@@ -230,7 +230,7 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
           })
         );
 
-        context.stroke();
+        context.stroke(); // stroke last corner
       } else {
         renderStroke(
           group,

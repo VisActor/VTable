@@ -1060,7 +1060,7 @@ Change the value of a cell:
 ```
 
 /\*_ Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly _/
-changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
+changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false, triggerEvent = true) => void;
 
 ```
 
@@ -1077,7 +1077,7 @@ Change the value of cells in batches:
 - @param row The starting row number of pasted data
 - @param values Data array of multiple cells
   \*/
-  changeCellValues(startCol: number, startRow: number, values: string[][])
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => void;
 
 ```
 
@@ -1587,9 +1587,29 @@ setCanvasSize: (width: number, height: number) => void;
 
 ## setLoadingHierarchyState(Function)
 
-Set the loading state of the tree expansion and collapse of the cell
+Set the loading state of the tree expansion and collapse of the cell, Note that you need to manually register the loading icon before using it.
 
 ```
+
+// Register the loading icon
+VTable.register.icon('loading', {
+type: 'image',
+width: 16,
+height: 16,
+src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+name: 'loading', // Define the name of the icon, which will be used as the key value for caching in the internal cache
+positionType: VTable.TYPES.IconPosition.absoluteRight, // Specify the position, which can be before or after the text, or left or right of the cell
+marginLeft: 0, // The left content interval in the specific position
+marginRight: 4, // The right content interval in the specific position
+visibleTime: 'always', // The display time, 'always' | 'mouseover_cell' | 'click_cell'
+hover: {
+// The size of the hot area
+width: 22,
+height: 22,
+bgColor: 'rgba(101,117,168,0.1)'
+},
+isGif: true
+});
 
 /\*_ Set the loading state of the tree expansion and collapse of the cell _/
 setLoadingHierarchyState: (col: number, row: number) => void;
