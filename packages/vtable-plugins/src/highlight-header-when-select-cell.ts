@@ -1,7 +1,7 @@
 import type { CellRange } from '@visactor/vtable/es/ts-types';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { BaseTableAPI, plugins } from '@visactor/vtable';
-interface IHeaderHighlightPluginOptions {
+interface IHighlightHeaderWhenSelectCellPluginOptions {
   rowHighlight?: boolean;
   colHighlight?: boolean;
   colHighlightBGColor?: string;
@@ -10,9 +10,9 @@ interface IHeaderHighlightPluginOptions {
   rowHighlightColor?: string;
 }
 
-export class HighlightHeaderPlugin implements plugins.IVTablePlugin {
-  id = 'highlight-header';
-  name = 'Highlight Header';
+export class HighlightHeaderWhenSelectCellPlugin implements plugins.IVTablePlugin {
+  id = 'highlight-header-when-select-cell';
+  name = 'Highlight Header When Select Cell';
   type: 'layout' = 'layout';
   runTime = [
     TABLE_EVENT_TYPE.INITIALIZED,
@@ -21,10 +21,10 @@ export class HighlightHeaderPlugin implements plugins.IVTablePlugin {
     TABLE_EVENT_TYPE.MOUSEMOVE_TABLE
   ];
   table: BaseTableAPI;
-  pluginOptions: IHeaderHighlightPluginOptions;
+  pluginOptions: IHighlightHeaderWhenSelectCellPluginOptions;
   colHeaderRanges: CellRange[] = [];
   rowHeaderRanges: CellRange[] = [];
-  constructor(pluginOptions: IHeaderHighlightPluginOptions) {
+  constructor(pluginOptions: IHighlightHeaderWhenSelectCellPluginOptions) {
     this.pluginOptions = pluginOptions;
   }
   run(...args: any[]) {

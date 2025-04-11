@@ -759,6 +759,13 @@
             "zh": "表头高亮",
             "en": "Header Highlight"
           }
+        },
+        {
+          "path": "excel-keyboard-alignment",
+          "title": {
+            "zh": "excel键盘交互对齐",
+            "en": "excel keyboard interaction alignment"
+          }
         }
       ]
     },

@@ -20,8 +20,13 @@ export interface ColumnSeriesOptions {
 export interface RowSeriesOptions {
   rowCount: number;
   fillRowRecord?: (index: number) => any; // 填充空行的 自定义生成数据函数
+  rowSeriesNumber?: VTable.TYPES.IRowSeriesNumber;
 }
 ```
+
+列序号插件的配置中除了可以配置生成列的数量，以及对应到VTable中columns的配置所需要的字段名field和标题title。
+
+行序号插件的配置中`rowCount`可以配置生成行的数量，`rowSeriesNumber`可以配置行序号的配置,这里配置后比new VTable实例中options.rowSeriesNumber优先级更高。`fillRowRecord`可以配置生成行的数据，如果不配置的话 默认是返回个空对象`{}`。
 
 ## 基本用法
 
@@ -70,7 +75,7 @@ const columnSeries = new ColumnSeriesPlugin({
 ```typescript
 const rowSeries = new RowSeriesPlugin({
   rowCount: 100,
-  // 自定义行数据生成
+  // 自定义行数据生成 返回一个空数组
   fillRowRecord: (index) => ([])
 });
 

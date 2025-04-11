@@ -37,6 +37,9 @@ export function createTable() {
     rowCount: 100,
     fillRowRecord: (index: number) => {
       return [];
+    },
+    rowSeriesNumber: {
+      width: 'auto'
     }
   });
   const highlightPlugin = new HighlightHeaderPlugin({
@@ -61,7 +64,8 @@ export function createTable() {
     editor: 'input',
     editCellTrigger: ['api', 'keydown', 'doubleclick'],
     select: {
-      // disableSelect: true
+      cornerHeaderSelectMode: 'body',
+      headerSelectMode: 'body'
     },
     theme: VTable.themes.DEFAULT.extends({
       defaultStyle: {

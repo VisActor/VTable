@@ -5,6 +5,7 @@ import * as VTable from '@visactor/vtable';
 export interface RowSeriesOptions {
   rowCount: number;
   fillRowRecord?: (index: number) => any;
+  rowSeriesNumber?: VTable.TYPES.IRowSeriesNumber;
 }
 /**
  * 生成行序号标题的插件
@@ -31,7 +32,12 @@ export class RowSeriesPlugin implements VTable.plugins.IVTablePlugin {
       records.push(this.pluginOptions.fillRowRecord ? this.pluginOptions.fillRowRecord(i) : {});
     }
     options.records = records;
-    if (!options.rowSeriesNumber) {
+    if (this.pluginOptions.rowSeriesNumber) {
+      options.rowSeriesNumber = this.pluginOptions.rowSeriesNumber;
+      if (!this.pluginOptions.rowSeriesNumber.width) {
+        options.rowSeriesNumber.width = 'auto';
+      }
+    } else if (!options.rowSeriesNumber) {
       options.rowSeriesNumber = {
         width: 'auto'
       };

@@ -1,6 +1,6 @@
-# 表头高亮插件
+# 选中单元格对应表头高亮插件
 
-VTable 提供表头高亮插件，支持选中单元格后，高亮对应的表头（行头和列头）。
+VTable 提供选中单元格对应表头高亮插件，支持选中单元格后，高亮对应的表头（行头和列头）。
 
 <div style="display: flex; justify-content: center;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/head-highlight.png" style="flex: 0 0 50%; padding: 10px;">
@@ -8,7 +8,7 @@ VTable 提供表头高亮插件，支持选中单元格后，高亮对应的表�
 
 ## 表头高亮插件配置项
 
-- `HeaderHighlightPlugin`  表头高亮插件，可以配置以下参数：
+- `HighlightHeaderWhenSelectCellPlugin` 选中单元格对应表头高亮插件，可以配置以下参数：
   - `columnHighlight` 是否高亮列头
   - `rowHighlight` 是否高亮行头
   - `colHighlightBGColor` 列头高亮背景色
@@ -18,7 +18,7 @@ VTable 提供表头高亮插件，支持选中单元格后，高亮对应的表�
  
 插件参数类型：
 ```
-interface IHeaderHighlightPluginOptions {
+interface IHighlightHeaderWhenSelectCellPluginOptions {
   rowHighlight?: boolean;
   colHighlight?: boolean;
   colHighlightBGColor?: string;
@@ -30,7 +30,7 @@ interface IHeaderHighlightPluginOptions {
 
 ## 使用示例：
 ```js
-  const highlightPlugin = new HighlightHeaderPlugin({
+  const highlightPlugin = new HighlightHeaderWhenSelectCellPlugin({
     colHighlight: true,
     rowHighlight: true
   });
