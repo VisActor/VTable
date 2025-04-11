@@ -5,29 +5,51 @@ import { isSameRange } from '@visactor/vtable/es/tools/cell-range';
 import type { CellRange } from '@visactor/vtable/es/ts-types';
 import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
 import { cellInRange } from '@visactor/vtable/es/tools/helper';
-
-export interface InvertHighlightPluginOptions {
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
+export interface FocusHighlightPluginOptions {
   fill?: string;
   opacity?: number;
 }
 
-/**
- * @deprecated 请使用 FocusHighlightPlugin 插件
- */
-export class InvertHighlightPlugin {
+export class FocusHighlightPlugin {
+  id = 'focus-highlight';
+  name = 'Focus Highlight';
+  type: 'layout' = 'layout';
+  runTime = [TABLE_EVENT_TYPE.CLICK_CELL];
   table: BaseTableAPI;
   range?: CellRange;
-  _fill: string;
-  _opacity: number;
+  pluginOptions: FocusHighlightPluginOptions;
 
-  constructor(table: BaseTableAPI, options?: InvertHighlightPluginOptions) {
-    this.table = table;
-
-    this._fill = options?.fill ?? '#000';
-    this._opacity = options?.opacity ?? 0.5;
+  constructor(
+    options: FocusHighlightPluginOptions = {
+      fill: '#000',
+      opacity: 0.5
+    }
+  ) {
+    this.pluginOptions = options;
+  }
+  run(...args: any[]) {
+    if (!this.table) {
+      this.table = args[2] as BaseTableAPI;
+    }
+    const { col, row } = args[0];
+    if (this.table.isHeader(col, row)) {
+      this.setFocusHighlightRange(undefined);
+    } else {
+      this.setFocusHighlightRange({
+        start: {
+          col: 0,
+          row
+        },
+        end: {
+          col: this.table.colCount - 1,
+          row
+        }
+      });
+    }
   }
 
-  setInvertHighlightRange(range?: CellRange) {
+  setFocusHighlightRange(range?: CellRange) {
     if (isSameRange(this.range, range)) {
       return;
     }
@@ -89,8 +111,8 @@ export class InvertHighlightPlugin {
               y: 0,
               width: cell.attribute.width,
               height: cell.attribute.height,
-              fill: this._fill,
-              opacity: this._opacity
+              fill: this.pluginOptions.fill,
+              opacity: this.pluginOptions.opacity
             });
             shadowRect.name = 'shadow-rect';
             shadowGroup.appendChild(shadowRect);

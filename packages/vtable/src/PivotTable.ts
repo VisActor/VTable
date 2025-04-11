@@ -70,18 +70,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   constructor(options: PivotTableConstructorOptions);
   constructor(container: HTMLElement, options: PivotTableConstructorOptions);
   constructor(container?: HTMLElement | PivotTableConstructorOptions, options?: PivotTableConstructorOptions) {
-    if (Env.mode === 'node') {
-      options = container as PivotTableConstructorOptions;
-      container = null;
-    } else if (!(container instanceof HTMLElement)) {
-      options = container as PivotTableConstructorOptions;
-      if ((container as PivotTableConstructorOptions).container) {
-        container = (container as PivotTableConstructorOptions).container;
-      } else {
-        container = null;
-      }
-    }
     super(container as HTMLElement, options);
+    options = this.options;
     if (options) {
       if (!options.rowHierarchyType) {
         options.rowHierarchyType = 'grid';

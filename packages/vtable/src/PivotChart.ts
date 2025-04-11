@@ -107,18 +107,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   constructor(options: PivotChartConstructorOptions);
   constructor(container: HTMLElement, options: PivotChartConstructorOptions);
   constructor(container?: HTMLElement | PivotChartConstructorOptions, options?: PivotChartConstructorOptions) {
-    if (Env.mode === 'node') {
-      options = container as PivotChartConstructorOptions;
-      container = null;
-    } else if (!(container instanceof HTMLElement)) {
-      options = container as PivotChartConstructorOptions;
-      if ((container as PivotChartConstructorOptions).container) {
-        container = (container as PivotChartConstructorOptions).container;
-      } else {
-        container = null;
-      }
-    }
     super(container as HTMLElement, options);
+    options = this.options;
     if ((options as any).layout) {
       //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
       Object.assign(options, (options as any).layout);

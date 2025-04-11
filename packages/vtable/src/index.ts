@@ -9,6 +9,7 @@ import * as icons from './icons';
 import * as register from './register';
 import * as themes from './themes';
 import * as DataStatistics from './dataset/DataStatistics';
+import * as plugins from './plugins';
 import type {
   ColumnDefine,
   ColumnsDefine,
@@ -42,6 +43,7 @@ import * as CustomLayout from './render/layout';
 import { updateCell } from './scenegraph/group-creater/cell-helper';
 import { renderChart } from './scenegraph/graphic/contributions/chart-render-helper';
 import { restoreMeasureText, setCustomAlphabetCharSet } from './scenegraph/utils/text-measure';
+import type { BaseTableAPI } from './ts-types/base-table';
 
 // import { container, loadCanvasPicker } from '@src/vrender';
 // loadCanvasPicker(container);
@@ -68,6 +70,7 @@ export {
   core,
   ListTable,
   ListTableSimple,
+  BaseTableAPI,
   ListTableConstructorOptions,
   PivotTable,
   PivotTableSimple,
@@ -106,8 +109,8 @@ export {
   renderChart,
   graphicUtil,
   setCustomAlphabetCharSet,
-  restoreMeasureText
-
+  restoreMeasureText,
+  plugins
   // VRender // should use import {xxx} from '@visactor/vtable/es/vrender'
 };
 

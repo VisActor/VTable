@@ -34,14 +34,18 @@ export type ExportVTableToExcelOptions = {
 };
 
 function requestIdleCallbackPromise(options?: IdleRequestOptions) {
-  return new Promise<IdleDeadline>((resolve) => {
-    requestIdleCallback((deadline) => {
+  return new Promise<IdleDeadline>(resolve => {
+    requestIdleCallback(deadline => {
       resolve(deadline);
     }, options);
   });
 }
 
-export async function exportVTableToExcel(tableInstance: IVTable, options?: ExportVTableToExcelOptions, optimization = false) {
+export async function exportVTableToExcel(
+  tableInstance: IVTable,
+  options?: ExportVTableToExcelOptions,
+  optimization = false
+) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
   worksheet.properties.defaultRowHeight = 40;
@@ -59,7 +63,7 @@ export async function exportVTableToExcel(tableInstance: IVTable, options?: Expo
 
   function processSlice(deadline?: IdleDeadline) {
     return new Promise<void>(async resolve => {
-      while (currentRow <= maxRow && (!optimization || (deadline?.timeRemaining() > 0))) {
+      while (currentRow <= maxRow && (!optimization || deadline?.timeRemaining() > 0)) {
         const endRow = Math.min(currentRow + SLICE_SIZE - 1, maxRow);
         for (let col = minCol; col <= maxCol; col++) {
           const colWidth = tableInstance.getColWidth(col);
@@ -94,7 +98,7 @@ export async function exportVTableToExcel(tableInstance: IVTable, options?: Expo
       } else {
         let nextDeadline: IdleDeadline | undefined;
         if (optimization) {
-          nextDeadline = await requestIdleCallbackPromise()
+          nextDeadline = await requestIdleCallbackPromise();
         }
         await processSlice(nextDeadline);
         resolve();
@@ -105,7 +109,7 @@ export async function exportVTableToExcel(tableInstance: IVTable, options?: Expo
   await new Promise<void>(async resolve => {
     let deadline: IdleDeadline | undefined;
     if (optimization) {
-      deadline = await requestIdleCallbackPromise()
+      deadline = await requestIdleCallbackPromise();
     }
     await processSlice(deadline);
     resolve();

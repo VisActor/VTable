@@ -23,7 +23,7 @@
     }
   },
   "scripts": {
-    "start": "vite ./demo",
+    "demo": "vite ./demo",
     "build": "bundle --clean"
   },
   "unpkg": "latest",
