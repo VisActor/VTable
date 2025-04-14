@@ -59,6 +59,9 @@ ${prefix} linkCreatable(boolean)
 依赖线是否可创建，默认为 false。如果为 true，当点击任务条时，会出现创建依赖线的操作点。
 
 非必填
+${prefix} linkCreatable(boolean)
+依赖线是否可删除，默认为 false。
+非必填
 
 ${prefix} linkSelectable(boolean)
 依赖线是否可选择，默认为 true

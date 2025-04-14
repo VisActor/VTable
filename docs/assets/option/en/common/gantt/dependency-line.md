@@ -60,6 +60,11 @@ Whether the dependency line can be created, the default value is false. If true,
 
 Not required
 
+${prefix} linkDeletable(boolean)
+Whether the dependency line can be deleted, the default value is false.
+
+Not required
+
 ${prefix} linkSelectable(boolean)
 Whether the dependency line is selectable, the default is true
 
