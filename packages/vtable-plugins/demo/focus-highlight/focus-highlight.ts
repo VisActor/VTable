@@ -19,7 +19,18 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const highlightPlugin = new FocusHighlightPlugin();
+  const highlightPlugin = new FocusHighlightPlugin({
+    highlightRange: {
+      start: {
+        col: 0,
+        row: 5
+      },
+      end: {
+        col: 6,
+        row: 6
+      }
+    }
+  });
   const records = generatePersons(20);
   const columns: VTable.ColumnsDefine = [
     {
@@ -78,6 +89,9 @@ export function createTable() {
     records,
     columns,
     theme: VTable.themes.DARK,
+    select: {
+      headerSelectMode: 'cell'
+    },
     // heightMode: 'adaptive',
     // select: {
     //   disableSelect: true
@@ -90,27 +104,4 @@ export function createTable() {
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']
   });
-
-  // highlightPlugin.setInvertHighlightRange({
-  //   start: {
-  //     col: 0,
-  //     row: 6
-  //   },
-  //   end: {
-  //     col: 6,
-  //     row: 6
-  //   }
-  // });
-
-  // const ca = new CarouselAnimationPlugin(tableInstance, {
-  //   rowCount: 2,
-  //   replaceScrollAction: true
-  // });
-
-  // ca.play();
-
-  // setInterval(() => {
-  //   row += 2;
-  //   tableInstance.scrollToRow(row, { duration: 500 });
-  // }, 2000);
 }

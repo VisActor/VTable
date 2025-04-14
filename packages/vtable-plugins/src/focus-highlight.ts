@@ -2,20 +2,21 @@ import type { INode } from '@visactor/vtable/es/vrender';
 import { createRect } from '@visactor/vtable/es/vrender';
 import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
 import { isSameRange } from '@visactor/vtable/es/tools/cell-range';
-import type { CellRange } from '@visactor/vtable/es/ts-types';
+import type { CellAddress, CellRange } from '@visactor/vtable/es/ts-types';
 import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
 import { cellInRange } from '@visactor/vtable/es/tools/helper';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
+import type * as VTable from '@visactor/vtable';
 export interface FocusHighlightPluginOptions {
   fill?: string;
   opacity?: number;
+  highlightRange?: CellAddress | CellRange; //初始化聚焦高亮范围
 }
 
-export class FocusHighlightPlugin {
+export class FocusHighlightPlugin implements VTable.plugins.IVTablePlugin {
   id = 'focus-highlight';
   name = 'Focus Highlight';
-  type: 'layout' = 'layout';
-  runTime = [TABLE_EVENT_TYPE.CLICK_CELL];
+  runTime = [TABLE_EVENT_TYPE.INITIALIZED, TABLE_EVENT_TYPE.SELECTED_CELL];
   table: BaseTableAPI;
   range?: CellRange;
   pluginOptions: FocusHighlightPluginOptions;
@@ -23,38 +24,68 @@ export class FocusHighlightPlugin {
   constructor(
     options: FocusHighlightPluginOptions = {
       fill: '#000',
-      opacity: 0.5
+      opacity: 0.5,
+      highlightRange: undefined
     }
   ) {
-    this.pluginOptions = options;
+    this.pluginOptions = Object.assign(
+      {
+        fill: '#000',
+        opacity: 0.5
+      },
+      options
+    );
   }
   run(...args: any[]) {
     if (!this.table) {
       this.table = args[2] as BaseTableAPI;
     }
-    const { col, row } = args[0];
-    if (this.table.isHeader(col, row)) {
-      this.setFocusHighlightRange(undefined);
-    } else {
+    if (args[1] === TABLE_EVENT_TYPE.INITIALIZED) {
+      this.pluginOptions.highlightRange && this.setFocusHighlightRange(this.pluginOptions.highlightRange);
+    } else if (args[1] === TABLE_EVENT_TYPE.CLICK_CELL) {
+      const { col, row } = args[0];
+      if (this.table.isHeader(col, row)) {
+        this.setFocusHighlightRange(undefined);
+      } else {
+        this.setFocusHighlightRange({
+          start: {
+            col: 0,
+            row
+          },
+          end: {
+            col: this.table.colCount - 1,
+            row
+          }
+        });
+      }
+    } else if (args[1] === TABLE_EVENT_TYPE.SELECTED_CELL) {
+      const ranges = this.table.stateManager.select.ranges;
+      const min_col = 0;
+      const max_col = this.table.colCount - 1;
+      const min_row = Math.min(ranges[0].start.row, ranges[0].end.row);
+      const max_row = Math.max(ranges[0].start.row, ranges[0].end.row);
       this.setFocusHighlightRange({
-        start: {
-          col: 0,
-          row
-        },
-        end: {
-          col: this.table.colCount - 1,
-          row
-        }
+        start: { col: min_col, row: min_row },
+        end: { col: max_col, row: max_row }
       });
     }
   }
 
-  setFocusHighlightRange(range?: CellRange) {
-    if (isSameRange(this.range, range)) {
+  setFocusHighlightRange(range?: CellAddress | CellRange) {
+    let cellRange: CellRange;
+    if (range && 'start' in range && 'end' in range) {
+      cellRange = range as CellRange;
+    } else {
+      cellRange = {
+        start: range as CellAddress,
+        end: range as CellAddress
+      };
+    }
+    if (isSameRange(this.range, cellRange)) {
       return;
     }
 
-    this.range = range;
+    this.range = cellRange;
     if (!range) {
       // reset highlight
       this.deleteAllCellGroupShadow();
@@ -87,7 +118,16 @@ export class FocusHighlightPlugin {
     this.updateCellGroupShadowInContainer(this.table.scenegraph.bottomFrozenGroup), this.range;
     this.updateCellGroupShadowInContainer(this.table.scenegraph.rightBottomCornerGroup, this.range);
   }
-  updateCellGroupShadowInContainer(container: Group, range?: CellRange) {
+  updateCellGroupShadowInContainer(container: Group, range?: CellAddress | CellRange) {
+    let cellRange: CellRange;
+    if (range && 'start' in range && 'end' in range) {
+      cellRange = range;
+    } else {
+      cellRange = {
+        start: range as CellAddress,
+        end: range as CellAddress
+      };
+    }
     container.forEachChildrenSkipChild((item: INode) => {
       const column = item as unknown as Group;
       if (column.role === 'column') {
@@ -98,10 +138,10 @@ export class FocusHighlightPlugin {
           }
           cell.attachShadow(cell.shadowRoot);
           const shadowGroup = cell.shadowRoot;
-          if (!range) {
+          if (!cellRange) {
             // no highlight
             shadowGroup.removeAllChild();
-          } else if (cellInRange(range, cell.col, cell.row)) {
+          } else if (cellInRange(cellRange, cell.col, cell.row)) {
             // inside highlight
             shadowGroup.removeAllChild();
           } else if (!shadowGroup.firstChild) {

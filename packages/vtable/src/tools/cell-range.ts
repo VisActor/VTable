@@ -10,9 +10,9 @@ export function isSameRange(range1: CellRange | undefined | null, range2: CellRa
   }
 
   return (
-    range1.start.col === range2.start.col &&
-    range1.start.row === range2.start.row &&
-    range1.end.col === range2.end.col &&
-    range1.end.row === range2.end.row
+    range1.start?.col === range2.start?.col &&
+    range1.start?.row === range2.start?.row &&
+    range1.end?.col === range2.end?.col &&
+    range1.end?.row === range2.end?.row
   );
 }

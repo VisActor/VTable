@@ -35,12 +35,12 @@ export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
-    plugins: [columnSeries, rowSeries],
-    theme: {
-      selectionStyle: {
-        cellBorderLineWidth: 4
-      }
-    }
+    plugins: [columnSeries, rowSeries]
+    // theme: {
+    //   selectionStyle: {
+    //     cellBorderLineWidth: 4
+    //   }
+    // }
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;

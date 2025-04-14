@@ -12,8 +12,6 @@ interface IHighlightHeaderWhenSelectCellPluginOptions {
 
 export class HighlightHeaderWhenSelectCellPlugin implements plugins.IVTablePlugin {
   id = 'highlight-header-when-select-cell';
-  name = 'Highlight Header When Select Cell';
-  type: 'layout' = 'layout';
   runTime = [
     TABLE_EVENT_TYPE.INITIALIZED,
     TABLE_EVENT_TYPE.SELECTED_CLEAR,

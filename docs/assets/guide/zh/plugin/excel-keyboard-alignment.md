@@ -31,18 +31,87 @@
 
 结合VTable已有的部分符合需求的能力，我们开发了`ExcelEditCellKeyboardPlugin`插件，能够实现编辑单元格键盘行为对齐Excel的功能。
 
-## 插件使用说明
+## 插件使用示例
 
-```ts
+```javascript livedemo template=vtable
+//  import * as VTable from '@visactor/vtable';
+// 使用时需要引入插件包@visactor/vtable-plugins
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+// 正常使用方式 const columnSeries = new VTable.plugins.ColumnSeriesPlugin({});
+// 官网编辑器中将 VTable.plugins重命名成了VTablePlugins
 
-  const excelEditCellKeyboardPlugin = new ExcelEditCellKeyboardPlugin();
+const generatePersons = count => {
+  return Array.from(new Array(count)).map((_, i) => ({
+    id: i + 1,
+    email1: `${i + 1}@xxx.com`,
+    name: `小明${i + 1}`,
+    lastName: '王',
+    date1: '2022年9月1日',
+    tel: '000-0000-0000',
+    sex: i % 2 === 0 ? 'boy' : 'girl',
+    work: i % 2 === 0 ? 'back-end engineer' + (i + 1) : 'front-end engineer' + (i + 1),
+    city: 'beijing',
+    image:
+      '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 10V4H8V38L14 35" stroke="#f5a623" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 44V10H40V44L27 37.7273L14 44Z" fill="#f5a623" stroke="#f5a623" stroke-width="1" stroke-linejoin="round"/></svg>'
+  }));
+};
+  const excelEditCellKeyboardPlugin = new VTablePlugins.ExcelEditCellKeyboardPlugin();
 
-  const option: VTable.ListTableConstructorOptions = {
-    records,
-    columns,
-    theme: VTable.themes.DARK,
+  const option = {
+    records: generatePersons(20),
+    columns:[
+    {
+      field: 'id',
+      title: 'ID',
+      width: 'auto',
+      minWidth: 50,
+      sort: true
+    },
+    {
+      field: 'email1',
+      title: 'email',
+      width: 200,
+      sort: true,
+      style: {
+        underline: true,
+        underlineDash: [2, 0],
+        underlineOffset: 3
+      }
+    },
+    {
+      title: 'full name',
+      columns: [
+        {
+          field: 'name',
+          title: 'First Name',
+          width: 200
+        },
+        {
+          field: 'name',
+          title: 'Last Name',
+          width: 200
+        }
+      ]
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    }
+  ],
+    editor: new VTable_editors.InputEditor(),
+    editCellTrigger: ['keydown'],
     plugins: [excelEditCellKeyboardPlugin]
   };
+  const tableInstance = new VTable.ListTable( document.getElementById(CONTAINER_ID),option);
+  window.tableInstance = tableInstance;
+
+  
 ```
 
 ## 插件后续完善

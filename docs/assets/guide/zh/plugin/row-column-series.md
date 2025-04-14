@@ -86,3 +86,45 @@ const rowSeries = new RowSeriesPlugin({
   fillRowRecord: (index) => (['姓名', '年龄', '地址'])
 });
 ```
+
+## 具体示例
+
+```javascript livedemo template=vtable
+
+let tableInstance;
+//  import * as VTable from '@visactor/vtable';
+// 使用时需要引入插件包@visactor/vtable-plugins
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+// 正常使用方式 const columnSeries = new VTable.plugins.ColumnSeriesPlugin({});
+// 官网编辑器中将 VTable.plugins重命名成了VTablePlugins
+
+// 创建 ColumnSeries 插件实例
+const columnSeries = new VTablePlugins.ColumnSeriesPlugin({
+  columnCount: 100,
+  // 自定义列标题生成
+  // generateColumnTitle(index)
+  // {
+  //   return `自定义标题 ${index}`
+  // },
+  // 自定义字段名生成
+  generateColumnField: (index) => `field_${index}`
+}); 
+
+// 创建 RowSeries 插件实例
+const rowSeries = new VTablePlugins.RowSeriesPlugin({
+  rowCount: 100,
+  // 自定义行数据生成
+  fillRowRecord: (index) => ([])
+});
+
+// 在 VTable 选项中使用插件
+const option = {
+  records: [],
+  plugins: [columnSeries, rowSeries],
+  // 其他 VTable 配置...
+};
+
+// 创建表格实例
+tableInstance = new VTable.ListTable( document.getElementById(CONTAINER_ID),option);
+window.tableInstance = tableInstance;
+```

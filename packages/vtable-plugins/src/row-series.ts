@@ -12,8 +12,6 @@ export interface RowSeriesOptions {
  */
 export class RowSeriesPlugin implements VTable.plugins.IVTablePlugin {
   id = 'row-series';
-  name = 'Row-Series';
-  type: 'layout' = 'layout';
   runTime = [VTable.TABLE_EVENT_TYPE.BEFORE_INIT];
   pluginOptions: RowSeriesOptions;
   table: VTable.ListTable;

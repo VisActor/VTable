@@ -28,8 +28,6 @@ export interface AddRowColumnOptions {
  */
 export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
   id = 'add-row-column';
-  name = 'Add-Row-Column';
-  type: 'layout' = 'layout';
   runTime = [
     VTable.TABLE_EVENT_TYPE.MOUSEENTER_CELL,
     VTable.TABLE_EVENT_TYPE.MOUSELEAVE_CELL,

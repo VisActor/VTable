@@ -12,8 +12,6 @@ export interface ColumnSeriesOptions {
  */
 export class ColumnSeriesPlugin implements VTable.plugins.IVTablePlugin {
   id = 'column-series';
-  name = 'Column-Series';
-  type: 'layout' = 'layout';
   runTime = [VTable.TABLE_EVENT_TYPE.BEFORE_INIT];
   pluginOptions: ColumnSeriesOptions;
   table: VTable.ListTable;

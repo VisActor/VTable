@@ -740,6 +740,20 @@
       },
       "children": [
         {
+          "path": "usage",
+          "title": {
+            "zh": "插件使用",
+            "en": "plugin usage"
+          }
+        },
+        {
+          "path": "contribute",
+          "title": {
+            "zh": "插件贡献",
+            "en": "plugin contribute"
+          }
+        },
+        {
           "path": "row-column-series",
           "title": {
             "zh": "行列序号",
@@ -772,6 +786,13 @@
           "title": {
             "zh": "行列新增插件",
             "en": "add row column plugin"
+          }
+        },
+        {
+          "path": "table-carousel-animation",
+          "title": {
+            "zh": "表格轮播动画",
+            "en": "table carousel animation"
           }
         }
       ]
