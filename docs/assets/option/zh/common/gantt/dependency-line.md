@@ -60,7 +60,7 @@ ${prefix} linkCreatable(boolean)
 
 非必填
 
-${prefix} linkCreatable(boolean)
+${prefix} linkDeletable(boolean)
 依赖线是否可删除，默认为 false。
 
 非必填
