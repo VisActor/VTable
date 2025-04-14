@@ -13,5 +13,6 @@ type MenuListItem =
       selectedIcon?: Icon;
       stateIcon?: Icon;
       children?: MenuListItem[];
+      disabled?: boolean;
     };
 ```

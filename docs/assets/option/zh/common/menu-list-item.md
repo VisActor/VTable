@@ -1,6 +1,6 @@
 {{ target: common-menu-list-item }}
 
-MenuListItem定义如下：
+MenuListItem 定义如下：
 
 ```
 type MenuListItem =
@@ -13,5 +13,6 @@ type MenuListItem =
       selectedIcon?: Icon;
       stateIcon?: Icon;
       children?: MenuListItem[];
+      disabled?: boolean;
     };
 ```
