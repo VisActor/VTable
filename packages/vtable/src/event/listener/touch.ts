@@ -1,3 +1,4 @@
+import { vglobal } from '@src/vrender';
 import type { FederatedPointerEvent } from '@src/vrender';
 import { handleWhell, isHorizontalScrollable, isVerticalScrollable } from '../scroll';
 import type { EventManager } from '../event';
@@ -63,10 +64,10 @@ export function bindTouchListener(eventManager: EventManager) {
       }
     }
   };
-  window.addEventListener('touchmove', globalTouchMoveCallback, { passive: false });
+  vglobal.addEventListener('touchmove', globalTouchMoveCallback, { passive: false });
   eventManager.globalEventListeners.push({
     name: 'touchmove',
-    env: 'window',
+    env: 'vglobal',
     callback: globalTouchMoveCallback
   });
 
@@ -107,10 +108,10 @@ export function bindTouchListener(eventManager: EventManager) {
     eventManager.isTouchdown = false;
     eventManager.touchMovePoints = [];
   };
-  window.addEventListener('touchend', globalTouchEndCallback);
+  vglobal.addEventListener('touchend', globalTouchEndCallback);
   eventManager.globalEventListeners.push({
     name: 'touchend',
-    env: 'window',
+    env: 'vglobal',
     callback: globalTouchEndCallback
   });
 
@@ -123,10 +124,10 @@ export function bindTouchListener(eventManager: EventManager) {
     eventManager.isTouchdown = false;
     eventManager.touchMovePoints = [];
   };
-  window.addEventListener('touchcancel', globalTouchCancelCallback);
+  vglobal.addEventListener('touchcancel', globalTouchCancelCallback);
   eventManager.globalEventListeners.push({
     name: 'touchcancel',
-    env: 'window',
+    env: 'vglobal',
     callback: globalTouchCancelCallback
   });
 }
