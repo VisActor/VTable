@@ -14,7 +14,7 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
   runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
   table: VTable.ListTable;
   pluginOptions: IExcelEditCellKeyboardPluginOptions;
-  constructor(pluginOptions: IExcelEditCellKeyboardPluginOptions) {
+  constructor(pluginOptions?: IExcelEditCellKeyboardPluginOptions) {
     this.pluginOptions = pluginOptions;
 
     this.bindEvent();

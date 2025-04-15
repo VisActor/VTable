@@ -28,7 +28,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
   // 监听键盘事件
   handler.on(table.getElement(), 'keydown', (e: KeyboardEvent) => {
-    console.log('keydown', e.key);
     // 键盘按下事件 内部逻辑处理前
     const beforeKeydownEvent: KeydownEvent = {
       keyCode: e.keyCode ?? e.which,

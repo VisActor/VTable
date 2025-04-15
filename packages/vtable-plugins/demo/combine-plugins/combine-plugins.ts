@@ -46,9 +46,7 @@ export function createTable() {
     colHighlight: true,
     rowHighlight: true
   });
-  const excelEditCellKeyboardPlugin = new ExcelEditCellKeyboardPlugin({
-    replaceMode: true
-  });
+  const excelEditCellKeyboardPlugin = new ExcelEditCellKeyboardPlugin();
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records: [

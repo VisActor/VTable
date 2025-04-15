@@ -34,5 +34,14 @@ export const menus = [
   {
     path: 'combine-plugins',
     name: 'combine-plugins'
+  },
+  {
+    menu: 'pivot-plugin',
+    children: [
+      {
+        path: 'pivot',
+        name: 'pivot-plugin'
+      }
+    ]
   }
 ];
