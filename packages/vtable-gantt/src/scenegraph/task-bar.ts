@@ -161,7 +161,9 @@ export class TaskBar {
       // clip: true
     });
     barGroupBox.name = 'task-bar';
+    //如果TaskShowMode是tasks_separate模式 这里的task_index其实是table中的bodyIndex；如果TaskShowMode是sub_tasks_***模式 task_index也是对应父节点任务条在table中的bodyIndex（但不会渲染父节点，只是渲染子节点）
     barGroupBox.task_index = index;
+    //如果TaskShowMode是tasks_separate模式，不会赋值sub_task_index；如果TaskShowMode是sub_tasks_***模式 这里的sub_task_index是父节点下子元素的index
     barGroupBox.sub_task_index = childIndex;
     barGroupBox.record = taskRecord;
 

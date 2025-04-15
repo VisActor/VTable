@@ -798,6 +798,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.rowHierarchyType === 'grid-tree'
         ? this._getRowHeaderTreeExpandedMaxLevelCount() || this.rowHeaderLevelCount
         : this.rowHeaderLevelCount;
+    if (colLevelCount === 0 || rowLevelCount === 0) {
+      return results;
+    }
     if (this.cornerSetting.titleOnDimension === 'all') {
       if (this.indicatorsAsCol) {
         if (colDimensionKeys) {
@@ -1581,7 +1584,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         !this.dataset.customColTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
         // && !this.dataset.customRowTree?.length
       ) {
-        if (this.cornerSetting.titleOnDimension === 'row' && this.cornerSetting.forceShowHeader) {
+        if (
+          (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all') &&
+          this.cornerSetting.forceShowHeader
+        ) {
           count = 1;
         } else if (
           !this._table.isPivotChart() &&
@@ -1658,7 +1664,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // && !this.dataset.customColTree
         !this.dataset.customRowTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
       ) {
-        if (this.cornerSetting.titleOnDimension === 'column' && this.cornerSetting.forceShowHeader) {
+        if (
+          (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all') &&
+          this.cornerSetting.forceShowHeader
+        ) {
           count = 1;
         } else if (
           !this._table.isPivotChart() &&
@@ -1714,17 +1723,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._rowHeaderLevelCount = count;
   }
   get colCount(): number {
-    return (
-      (this._getColumnHeaderTreeExpandedMaxLevelCount() > 0 ||
+    let bodyColCount;
+    if (
+      this._getColumnHeaderTreeExpandedMaxLevelCount() > 0 ||
       this._table.isPivotChart() ||
       (this.dataset.records as Array<any>)?.length > 0 ||
       (this.dataset.records && !Array.isArray(this.dataset.records))
-        ? this._columnHeaderCellIds[0]?.length ?? this.columnDimensionTree.tree.size
-        : 0) +
-      this.rowHeaderLevelCount +
-      this.rightHeaderColCount +
-      this.leftRowSeriesNumberColumnCount
-    ); // 小心rightFrozenColCount和colCount的循环引用 造成调用栈溢出
+    ) {
+      bodyColCount =
+        (this._columnHeaderCellIds[0]?.length ?? this.columnDimensionTree.tree.size) ||
+        (this._indicators?.length > 0 ? 1 : 0);
+    } else {
+      bodyColCount = 0;
+    }
+    return bodyColCount + this.rowHeaderLevelCount + this.rightHeaderColCount + this.leftRowSeriesNumberColumnCount; // 小心rightFrozenColCount和colCount的循环引用 造成调用栈溢出
   }
   get rowCount(): number {
     return (
@@ -1740,7 +1752,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.columnHeaderLevelCount +
       this.bottomHeaderRowCount // 小心bottomFrozenRowCount和rowCount的循环引用 造成调用栈溢出
     );
-    // return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
   }
   get bodyRowSpanCount() {
     return this.rowDimensionTree.tree.size;

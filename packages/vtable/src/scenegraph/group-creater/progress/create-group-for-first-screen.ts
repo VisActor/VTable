@@ -66,11 +66,15 @@ export function createGroupForFirstScreen(
 
   if (distCol < table.colCount - table.rightFrozenColCount) {
     // compute right frozen row height
-    computeColsWidth(table, table.colCount - table.rightFrozenColCount, table.colCount - 1);
+    if (table.colCount - table.rightFrozenColCount <= table.colCount - 1) {
+      computeColsWidth(table, table.colCount - table.rightFrozenColCount, table.colCount - 1);
+    }
   }
   if (distRow < table.rowCount - table.bottomFrozenRowCount) {
     // compute bottom frozen row height
-    computeRowsHeight(table, table.rowCount - table.bottomFrozenRowCount, table.rowCount - 1);
+    if (table.rowCount - table.bottomFrozenRowCount <= table.rowCount - 1) {
+      computeRowsHeight(table, table.rowCount - table.bottomFrozenRowCount, table.rowCount - 1);
+    }
   }
 
   // update colHeaderGroup rowHeaderGroup bodyGroup position

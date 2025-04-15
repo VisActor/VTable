@@ -35,7 +35,7 @@
 | 滚动                     | SCROLL                      | 滚动表格事件                                                              |
 | 滚动                     | SCROLL_HORIZONTAL_END       | 横向滚动右侧事件                                                          |
 | 滚动                     | SCROLL_VERTICAL_END         | 竖向滚动底部事件                                                          |
-| 点击下拉图标             | DROPDOWNMENU_CLICK          | 点击下拉菜单图标事件                                                      |
+| 点击下拉图标             | DROPDOWN_MENU_CLICK          | 点击下拉菜单图标事件                                                      |
 | 点击下拉菜单             | MENU_CLICK                  | 点击下拉菜单事件                                                          |
 | 鼠标经过迷你图           | MOUSEOVER_CHART_SYMBOL      | 鼠标经过迷你图标记事件                                                    |
 | 拖拽框选鼠标松开         | DRAG_SELECT_END             | 拖拽框选单元格鼠标松开事件                                                |

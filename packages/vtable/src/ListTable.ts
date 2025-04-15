@@ -36,7 +36,7 @@ import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
-import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
+import type { ColumnData, ColumnDefine, HeaderData } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { getGroupCheckboxState, setCellCheckboxState } from './state/checkbox/checkbox';
@@ -839,6 +839,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @returns
    */
   getHierarchyState(col: number, row: number) {
+    if (this.isHeader(col, row)) {
+      return (this._getHeaderLayoutMap(col, row) as HeaderData)?.hierarchyState;
+    }
     if (!this.options.groupBy || (isArray(this.options.groupBy) && this.options.groupBy.length === 0)) {
       const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
       if (!define.tree) {
@@ -857,6 +860,34 @@ export class ListTable extends BaseTable implements ListTableAPI {
   toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
     const hierarchyState = this.getHierarchyState(col, row);
+    if (this.isHeader(col, row)) {
+      // 表头的展开和收起
+      const headerTreeNode = this.internalProps.layoutMap.getHeader(col, row) as any;
+      const { hierarchyState: rawHierarchyState, define: columnDefine } = headerTreeNode;
+      if (![HierarchyState.collapse, HierarchyState.expand].includes(rawHierarchyState) || !columnDefine) {
+        return;
+      }
+      const children = columnDefine.columns;
+      // 有子节点才需要自动展开和折叠
+      if (!!Array.isArray(children) && children.length > 0) {
+        const hierarchyState =
+          rawHierarchyState === HierarchyState.expand ? HierarchyState.collapse : HierarchyState.expand;
+        headerTreeNode.hierarchyState = hierarchyState;
+        headerTreeNode.define.hierarchyState = hierarchyState;
+        // 全量更新
+        this.updateColumns(this.internalProps.columns);
+      }
+
+      this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col,
+        row,
+        hierarchyState,
+        originData: headerTreeNode,
+        cellLocation: this.getCellLocation(col, row)
+      });
+      return;
+    }
+
     if (hierarchyState === HierarchyState.expand) {
       this._refreshHierarchyState(col, row, recalculateColWidths);
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
@@ -1326,9 +1357,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row
    * @param value 更改后的值
    * @param workOnEditableCell 限制只能更改配置了编辑器的单元格值。快捷键paste这里配置的true，限制只能修改可编辑单元格值
+   * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
    */
-  changeCellValue(col: number, row: number, value: string | number | null, workOnEditableCell = false) {
-    return listTableChangeCellValue(col, row, value, workOnEditableCell, this);
+  changeCellValue(
+    col: number,
+    row: number,
+    value: string | number | null,
+    workOnEditableCell = false,
+    triggerEvent = true
+  ) {
+    return listTableChangeCellValue(col, row, value, workOnEditableCell, triggerEvent, this);
   }
   /**
    * 批量更新多个单元格的数据
@@ -1336,9 +1374,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    * @param workOnEditableCell 是否仅更改可编辑单元格
+   * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
    */
-  changeCellValues(startCol: number, startRow: number, values: (string | number)[][], workOnEditableCell = false) {
-    return listTableChangeCellValues(startCol, startRow, values, workOnEditableCell, this);
+  changeCellValues(
+    startCol: number,
+    startRow: number,
+    values: (string | number)[][],
+    workOnEditableCell = false,
+    triggerEvent = true
+  ) {
+    return listTableChangeCellValues(startCol, startRow, values, workOnEditableCell, triggerEvent, this);
   }
   /**
    * 添加数据 单条数据

@@ -227,8 +227,8 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
           stroke,
           strokeArrayWidth || lineWidth,
           strokeArrayColor || strokeColor,
-          Math.ceil(width + deltaWidth),
-          Math.ceil(height + deltaHeight)
+          rect.name !== 'table-border-rect' ? Math.ceil(width + deltaWidth) : width + deltaWidth,
+          rect.name !== 'table-border-rect' ? Math.ceil(height + deltaHeight) : height + deltaHeight
         );
       }
     }

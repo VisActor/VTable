@@ -1,3 +1,54 @@
+# v1.17.6
+
+2025-04-10
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: ListTable的changeCellValue方法新增tiggerEvent参数
+- **@visactor/vtable**: ListTable表头支持层级结构
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复移动树节点位置时代码报错问题 [#3645](https://github.com/VisActor/VTable/issues/3645) [#3706](https://github.com/VisActor/VTable/issues/3706)
+- **@visactor/vtable**: 修复边框设置数组时底部线条位置渲染错误 [#3684](https://github.com/VisActor/VTable/issues/3684)
+- **@visactor/vtable**: 修复移动端触摸事件调整列宽问题 [#3693](https://github.com/VisActor/VTable/issues/3693)
+- **@visactor/vtable**: 修复设置冻结时禁用拖拽选择不生效问题 [#3702](https://github.com/VisActor/VTable/issues/3702)
+- **@visactor/vtable**: 修复react-custom-layout组件中flex布局更新问题 [#3696](https://github.com/VisActor/VTable/issues/3696)
+- **@visactor/vtable**: 修复updateTaskRecord接口问题 [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: 修复重复调用computeColsWidth自适应模式结果错误问题
+
+
+
+[更多详情请查看 v1.17.6](https://github.com/VisActor/VTable/releases/tag/v1.17.6)
+
+# v1.17.5
+
+2025-04-02
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 单元格支持标记功能 [#3583](https://github.com/VisActor/VTable/issues/3583)
+- **@visactor/vtable**: 重构透视表在无列或无行情况下的角落处理 [#3653](https://github.com/VisActor/VTable/issues/3653)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复甘特图刻度设置季度解析问题 [#3612](https://github.com/VisActor/VTable/issues/3612)
+- **@visactor/vtable**: 修复甘特图 overscrollBehavior 无效问题 [#3638](https://github.com/VisActor/VTable/issues/3638)
+- **@visactor/vtable**: 修复树形模式下甘特图 updateRecords 错误 [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: 修复设置自适应高度模式时行高错误 [#3640](https://github.com/VisActor/VTable/issues/3640)
+- **@visactor/vtable**: 修复设置异步渲染图表时 setRecords API 渲染错误 [#3661](https://github.com/VisActor/VTable/issues/3661)
+- **@visactor/vtable**: 修复合并单元格复选框状态更新问题 [#3668](https://github.com/VisActor/VTable/issues/3668)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 重构填充句柄功能 [#3582](https://github.com/VisActor/VTable/issues/3582)
+
+
+
+[更多详情请查看 v1.17.5](https://github.com/VisActor/VTable/releases/tag/v1.17.5)
+
 # v1.17.4
 
 2025-03-31

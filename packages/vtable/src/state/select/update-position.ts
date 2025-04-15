@@ -174,6 +174,7 @@ export function updateSelectPosition(
         state.select.ranges = [];
         scenegraph.deleteAllSelectBorder();
       }
+
       if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
         // 选中行表头
         const cellRange = table.getCellRange(col, row);
@@ -210,7 +211,8 @@ export function updateSelectPosition(
         // 选中表头行号单元格
         extendSelectRange = false;
 
-        if (state.select.headerSelectMode === 'body') {
+        const { cornerHeaderSelectMode } = state.select;
+        if (cornerHeaderSelectMode === 'body') {
           state.select.ranges.push({
             start: {
               col: table.leftRowSeriesNumberCount,
@@ -219,6 +221,22 @@ export function updateSelectPosition(
             end: { col: table.colCount - 1, row: table.rowCount - 1 },
             skipBodyMerge: true
           });
+        } else if (cornerHeaderSelectMode === 'inline') {
+          // inline 选中行号所在单元格下所有列
+          const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
+          state.select.ranges.push({
+            start: { col: cellRange.start.col, row: cellRange.start.row },
+            end: { col: cellRange.end.col, row: table.rowCount - 1 },
+            skipBodyMerge: true
+          });
+        } else if (cornerHeaderSelectMode === 'cell') {
+          // 选中行号单元格
+          const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
+          state.select.ranges.push({
+            start: { col: cellRange.start.col, row: cellRange.start.row },
+            end: { col: cellRange.end.col, row: cellRange.end.row },
+            skipBodyMerge: skipBodyMerge || undefined
+          });
         } else {
           state.select.ranges.push({
             start: { col: 0, row: 0 },
@@ -226,6 +244,23 @@ export function updateSelectPosition(
             skipBodyMerge: true
           });
         }
+        // 旧逻辑
+        // if (state.select.headerSelectMode === 'body') {
+        //   state.select.ranges.push({
+        //     start: {
+        //       col: table.leftRowSeriesNumberCount,
+        //       row: table.columnHeaderLevelCount
+        //     },
+        //     end: { col: table.colCount - 1, row: table.rowCount - 1 },
+        //     skipBodyMerge: true
+        //   });
+        // } else {
+        //   state.select.ranges.push({
+        //     start: { col: 0, row: 0 },
+        //     end: { col: table.colCount - 1, row: table.rowCount - 1 },
+        //     skipBodyMerge: true
+        //   });
+        // }
       } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)) {
         // 选中内容行号单元格
         extendSelectRange = false;
@@ -248,8 +283,9 @@ export function updateSelectPosition(
       } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isCornerHeader(col, row)) {
         // 选中表头行号单元格
         extendSelectRange = false;
+        const { cornerHeaderSelectMode } = state.select;
 
-        if (state.select.headerSelectMode === 'body') {
+        if (cornerHeaderSelectMode === 'body') {
           state.select.ranges.push({
             start: {
               col: table.rowHeaderLevelCount + table.leftRowSeriesNumberCount,
@@ -258,9 +294,38 @@ export function updateSelectPosition(
             end: { col: table.colCount - 1, row: table.rowCount - 1 },
             skipBodyMerge: true
           });
+        } else if (cornerHeaderSelectMode === 'cell') {
+          // 选中普通单元格
+          const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
+          state.select.ranges.push({
+            start: { col: cellRange.start.col, row: cellRange.start.row },
+            end: { col: cellRange.end.col, row: cellRange.end.row },
+            skipBodyMerge: skipBodyMerge || undefined
+          });
+        } else if (cornerHeaderSelectMode === 'inline') {
+          // inline
+          const cellRange = skipBodyMerge ? { start: { col, row }, end: { col, row } } : table.getCellRange(col, row);
+          state.select.ranges.push({
+            start: { col: cellRange.start.col, row: cellRange.start.row },
+            end: { col: cellRange.end.col, row: table.rowCount - 1 },
+            skipBodyMerge: true
+          });
+        } else if (cornerHeaderSelectMode === 'all') {
+          // all 或者用户传的其他的什么值 ：'' | 'test'，虽然类型会提示用户不能为其他的值，
+          state.select.ranges.push({
+            start: {
+              col: table.leftRowSeriesNumberCount,
+              row: 0
+            },
+            end: { col: table.colCount - 1, row: table.rowCount - 1 },
+            skipBodyMerge: true
+          });
         } else {
           state.select.ranges.push({
-            start: { col: table.leftRowSeriesNumberCount, row: 0 },
+            start: {
+              col: table.leftRowSeriesNumberCount,
+              row: 0
+            },
             end: { col: table.colCount - 1, row: table.rowCount - 1 },
             skipBodyMerge: true
           });

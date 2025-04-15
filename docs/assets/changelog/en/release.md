@@ -1,3 +1,54 @@
+# v1.17.6
+
+2025-04-10
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: listTable added tiggerEvent parameter to changeCellValue
+- **@visactor/vtable**: list table header support hierarchy
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when move tree node position code occor error [#3645](https://github.com/VisActor/VTable/issues/3645) [#3706](https://github.com/VisActor/VTable/issues/3706)
+- **@visactor/vtable**: frame border set array render bottom line position error [#3684](https://github.com/VisActor/VTable/issues/3684)
+- **@visactor/vtable**: mobile touch event resize column width [#3693](https://github.com/VisActor/VTable/issues/3693)
+- **@visactor/vtable**: when set frozen disableDragSelect not work [#3702](https://github.com/VisActor/VTable/issues/3702)
+- **@visactor/vtable**: fix flex layout update in react-custom-layout component [#3696](https://github.com/VisActor/VTable/issues/3696)
+- **@visactor/vtable**: updateTaskRecord api [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: repeat call computeColsWidth adaptive mode result error
+
+
+
+[more detail about v1.17.6](https://github.com/VisActor/VTable/releases/tag/v1.17.6)
+
+# v1.17.5
+
+2025-04-02
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: cell support marked function [#3583](https://github.com/VisActor/VTable/issues/3583)
+- **@visactor/vtable**: refactor pivotTable corner with no columns or rows case [#3653](https://github.com/VisActor/VTable/issues/3653)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: gantt scale set quarter parser problem [#3612](https://github.com/VisActor/VTable/issues/3612)
+- **@visactor/vtable**: gantt overscrollBehavior none work [#3638](https://github.com/VisActor/VTable/issues/3638)
+- **@visactor/vtable**: gantt chart updateRecords error when table is tree mode [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: rowHeight error when set adaptive heightMode [#3640](https://github.com/VisActor/VTable/issues/3640)
+- **@visactor/vtable**: when set renderChartAsync setRecords api render error [#3661](https://github.com/VisActor/VTable/issues/3661)
+- **@visactor/vtable**: fix merge cell checkbox state update [#3668](https://github.com/VisActor/VTable/issues/3668)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: fillHandle function [#3582](https://github.com/VisActor/VTable/issues/3582)
+
+
+
+[more detail about v1.17.5](https://github.com/VisActor/VTable/releases/tag/v1.17.5)
+
 # v1.17.4
 
 2025-03-31
