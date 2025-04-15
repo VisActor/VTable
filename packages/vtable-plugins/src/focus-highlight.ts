@@ -16,7 +16,7 @@ export interface FocusHighlightPluginOptions {
 export class FocusHighlightPlugin implements VTable.plugins.IVTablePlugin {
   id = 'focus-highlight';
   name = 'Focus Highlight';
-  runTime = [TABLE_EVENT_TYPE.INITIALIZED, TABLE_EVENT_TYPE.SELECTED_CELL];
+  runTime = [TABLE_EVENT_TYPE.INITIALIZED, TABLE_EVENT_TYPE.SELECTED_CELL, TABLE_EVENT_TYPE.SELECTED_CLEAR];
   table: BaseTableAPI;
   range?: CellRange;
   pluginOptions: FocusHighlightPluginOptions;
@@ -42,32 +42,23 @@ export class FocusHighlightPlugin implements VTable.plugins.IVTablePlugin {
     }
     if (args[1] === TABLE_EVENT_TYPE.INITIALIZED) {
       this.pluginOptions.highlightRange && this.setFocusHighlightRange(this.pluginOptions.highlightRange);
-    } else if (args[1] === TABLE_EVENT_TYPE.CLICK_CELL) {
-      const { col, row } = args[0];
-      if (this.table.isHeader(col, row)) {
+    } else if (args[1] === TABLE_EVENT_TYPE.SELECTED_CELL) {
+      const posCell = this.table.stateManager.select.cellPos;
+      if (this.table.isHeader(posCell.col, posCell.row)) {
         this.setFocusHighlightRange(undefined);
       } else {
+        const ranges = this.table.stateManager.select.ranges;
+        const min_col = 0;
+        const max_col = this.table.colCount - 1;
+        const min_row = Math.min(ranges[0].start.row, ranges[0].end.row);
+        const max_row = Math.max(ranges[0].start.row, ranges[0].end.row);
         this.setFocusHighlightRange({
-          start: {
-            col: 0,
-            row
-          },
-          end: {
-            col: this.table.colCount - 1,
-            row
-          }
+          start: { col: min_col, row: min_row },
+          end: { col: max_col, row: max_row }
         });
       }
-    } else if (args[1] === TABLE_EVENT_TYPE.SELECTED_CELL) {
-      const ranges = this.table.stateManager.select.ranges;
-      const min_col = 0;
-      const max_col = this.table.colCount - 1;
-      const min_row = Math.min(ranges[0].start.row, ranges[0].end.row);
-      const max_row = Math.max(ranges[0].start.row, ranges[0].end.row);
-      this.setFocusHighlightRange({
-        start: { col: min_col, row: min_row },
-        end: { col: max_col, row: max_row }
-      });
+    } else if (args[1] === TABLE_EVENT_TYPE.SELECTED_CLEAR) {
+      this.setFocusHighlightRange(undefined);
     }
   }
 
@@ -75,7 +66,7 @@ export class FocusHighlightPlugin implements VTable.plugins.IVTablePlugin {
     let cellRange: CellRange;
     if (range && 'start' in range && 'end' in range) {
       cellRange = range as CellRange;
-    } else {
+    } else if (range) {
       cellRange = {
         start: range as CellAddress,
         end: range as CellAddress
@@ -122,7 +113,7 @@ export class FocusHighlightPlugin implements VTable.plugins.IVTablePlugin {
     let cellRange: CellRange;
     if (range && 'start' in range && 'end' in range) {
       cellRange = range;
-    } else {
+    } else if (range) {
       cellRange = {
         start: range as CellAddress,
         end: range as CellAddress

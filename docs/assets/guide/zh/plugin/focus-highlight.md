@@ -113,8 +113,6 @@ const generatePersons = count => {
   };
   const tableInstance = new VTable.ListTable( document.getElementById(CONTAINER_ID),option);
   window.tableInstance = tableInstance;
-
-  
 ```
 
 具体使用参考[demo](../../demo/interaction/head-highlight)

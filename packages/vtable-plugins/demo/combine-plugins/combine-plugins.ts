@@ -4,7 +4,7 @@ import {
   AddRowColumnPlugin,
   ColumnSeriesPlugin,
   ExcelEditCellKeyboardPlugin,
-  HighlightHeaderPlugin,
+  HighlightHeaderWhenSelectCellPlugin,
   RowSeriesPlugin
 } from '../../src';
 import { InputEditor } from '@visactor/vtable-editors';
@@ -42,7 +42,7 @@ export function createTable() {
       width: 'auto'
     }
   });
-  const highlightPlugin = new HighlightHeaderPlugin({
+  const highlightPlugin = new HighlightHeaderWhenSelectCellPlugin({
     colHighlight: true,
     rowHighlight: true
   });

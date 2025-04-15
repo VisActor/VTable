@@ -2,7 +2,7 @@ import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import * as VTable_editors from '@visactor/vtable-editors';
 
-import { HighlightHeaderPlugin } from '../../src';
+import { HighlightHeaderWhenSelectCellPlugin } from '../../src';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -58,7 +58,7 @@ export function createTable() {
     }
   ];
 
-  const highlightPlugin = new HighlightHeaderPlugin({
+  const highlightPlugin = new HighlightHeaderWhenSelectCellPlugin({
     colHighlight: true,
     rowHighlight: true
   });
