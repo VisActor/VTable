@@ -12,7 +12,7 @@ Show the highlight effect when set highlight range.
 
 ## Key Configurations
 
-- `InvertHighlightPlugin` invert highlight plugin
+- `FocusHighlightPlugin` invert highlight plugin
   - `fill` invert highlight background color
   - `opacity` invert highlight opacity
 - `setInvertHighlightRange` set highlight range
@@ -87,25 +87,16 @@ const columns = [
     width: 100
   }
 ];
-
+const highlightPlugin = new VTablePlugins.FocusHighlightPlugin();
 const option = {
   records,
   columns,
-  theme: VTable.themes.DARK
+  theme: VTable.themes.DARK,
+  plugins: [highlightPlugin]
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 
-const highlightPlugin = new VTablePlugins.InvertHighlightPlugin(tableInstance, {});
 
-highlightPlugin.setInvertHighlightRange({
-  start: {
-    col: 0,
-    row: 6
-  },
-  end: {
-    col: 5,
-    row: 6
-  }
-});
+
 ```

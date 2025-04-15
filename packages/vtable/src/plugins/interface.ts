@@ -11,7 +11,7 @@ export interface IVTablePlugin {
   // // 插件类型，用于区分不同功能的插件
   // type: 'layout' | 'interaction' | 'style' | 'animation';
   // 插件运行时机
-  runTime: TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][];
+  runTime: TableEvents[keyof TableEvents][];
   // // 插件依赖
   // dependencies?: string[];
   // 初始化方法，在VTable实例创建后、首次渲染前调用

@@ -31,17 +31,11 @@ export class PluginManager {
 
   initPlugins(table: BaseTableAPI) {
     this.plugins.forEach(plugin => {
-      if (Array.isArray(plugin.runTime)) {
-        plugin.runTime.forEach(runTime => {
-          table.on(runTime, (...args) => {
-            plugin.run?.(...args, runTime, table);
-          });
+      plugin.runTime?.forEach(runTime => {
+        table.on(runTime, (...args) => {
+          plugin.run?.(...args, runTime, table);
         });
-      } else {
-        table.on(plugin.runTime, (...args) => {
-          plugin.run?.(table, ...args, plugin.runTime as TableEvents[keyof TableEvents]);
-        });
-      }
+      });
     });
   }
 

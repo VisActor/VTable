@@ -1,30 +1,23 @@
-# Highlight Header When Cell Selected Plugin
+# Focus Highlight Plugin
 
-VTable provides a plugin to highlight the corresponding headers when a cell is selected, supporting highlighting of row and column headers.
+VTable provides a focus highlight plugin that supports highlighting specified areas.
 
 <div style="display: flex; justify-content: center;">
-  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/head-highlight.png" style="flex: 0 0 50%; padding: 10px;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/invert-highlight.png" style="flex: 0 0 50%; padding: 10px;">
 </div>
 
-## Header Highlight Plugin Configuration Options
+## Focus Highlight Plugin Configuration Options
 
-- `HighlightHeaderWhenSelectCellPlugin` Header highlight when cell selected plugin, can be configured with the following parameters:
-  - `columnHighlight` Whether to highlight column headers
-  - `rowHighlight` Whether to highlight row headers
-  - `colHighlightBGColor` Column header highlight background color
-  - `rowHighlightBGColor` Row header highlight background color
-  - `colHighlightColor` Column header highlight font color
-  - `rowHighlightColor` Row header highlight font color
- 
-Plugin parameter types:
+- `FocusHighlightPlugin` Focus Highlight Plugin, can be configured with the following parameters:
+  - `fill` Focus highlight background color
+  - `opacity` Focus highlight opacity
+  - `highlightRange` Initial focus highlight range
+
 ```
-interface IHighlightHeaderWhenSelectCellPluginOptions {
-  rowHighlight?: boolean;
-  colHighlight?: boolean;
-  colHighlightBGColor?: string;
-  colHighlightColor?: string;
-  rowHighlightBGColor?: string;
-  rowHighlightColor?: string;
+export interface FocusHighlightPluginOptions {
+  fill?: string;
+  opacity?: number;
+  highlightRange?: CellRange;
 }
 ```
 
@@ -54,14 +47,30 @@ const generatePersons = count => {
   }));
 };
 
-  const highlightPlugin = new VTablePlugins.HighlightHeaderWhenSelectCellPlugin({
-    colHighlight: true,
-    rowHighlight: true
+  const highlightPlugin = new VTablePlugins.FocusHighlightPlugin({
+    fill: '#000',
+    opacity: 0.5,
+    highlightRange: {
+      start: {
+        col: 4,
+        row: 4
+      },
+      end: {
+        col: 4,
+        row: 4
+      }
+    }
   });
   const option = {
     records: generatePersons(20),
-    rowSeriesNumber: {},
     columns:[
+    {
+      field: 'id',
+      title: 'ID',
+      width: 'auto',
+      minWidth: 50,
+      sort: true
+    },
     {
       field: 'email1',
       title: 'email',
@@ -73,7 +82,9 @@ const generatePersons = count => {
         underlineOffset: 3
       }
     },
-
+    {
+      title: 'full name',
+      columns: [
         {
           field: 'name',
           title: 'First Name',
@@ -83,8 +94,9 @@ const generatePersons = count => {
           field: 'name',
           title: 'Last Name',
           width: 200
-        },
-
+        }
+      ]
+    },
     {
       field: 'date1',
       title: 'birthday',
@@ -96,7 +108,7 @@ const generatePersons = count => {
       width: 100
     }
   ],
-
+    theme: VTable.themes.DARK,
     plugins: [highlightPlugin]
   };
   const tableInstance = new VTable.ListTable( document.getElementById(CONTAINER_ID),option);

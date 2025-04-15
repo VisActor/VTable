@@ -171,8 +171,6 @@ export interface TableEvents {
   INITIALIZED: 'initialized';
   //#endregion
 
-  /** 开始编辑单元格 */
-  BEFORE_EDIT_CELL: 'before_edit_cell';
   /** 编辑单元格 */
   CHANGE_CELL_VALUE: 'change_cell_value';
 
