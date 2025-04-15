@@ -138,7 +138,7 @@ const excelOption = {
 await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
 ```
 
-### equestIdleCallback
+### requestIdleCallback
 
 `@visactor/vtable-export` uses the `exceljs` library as a tool for exporting Excel files. If you need tosolve the impact on page performance during the export process, you can set the `optimization` parameter to enable `requestIdleCallback`.
 
