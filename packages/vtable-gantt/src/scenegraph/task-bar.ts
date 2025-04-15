@@ -267,8 +267,8 @@ export class TaskBar {
             ? textOverflow
             : undefined,
         poptip: {
-          position: 'bottom',
-          dx: (taskBarSize - TASKBAR_HOVER_ICON_WIDTH) / 4
+          position: 'bottom'
+          // dx: (taskBarSize - TASKBAR_HOVER_ICON_WIDTH) / 4
         }
         // dx: 12 + 4,
         // dy: this._scene._gantt.barLabelStyle.fontSize / 2
