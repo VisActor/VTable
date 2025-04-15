@@ -1866,6 +1866,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let absoluteLeft = this.getColsWidth(0, startCol - 1) || 0; // startCol为0时，absoluteLeft计算为Nan
     let width = this.getColsWidth(startCol, endCol);
     const scrollLeft = this.scrollLeft;
+
+    const tableWidth = Math.min(this.tableNoFrameWidth, this.getAllColsWidth());
+    const tableHeight = Math.min(this.tableNoFrameHeight, this.getAllRowsHeight());
     if (this.isLeftFrozenColumn(startCol) && this.isRightFrozenColumn(endCol)) {
       width = this.tableNoFrameWidth - (this.getColsWidth(startCol + 1, this.colCount - 1) ?? 0) - absoluteLeft;
       // width =
@@ -1875,10 +1878,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else if (this.isLeftFrozenColumn(startCol) && !this.isLeftFrozenColumn(endCol)) {
       width = Math.max(width - scrollLeft, this.getColsWidth(startCol, this.frozenColCount - 1));
     } else if (!this.isRightFrozenColumn(startCol) && this.isRightFrozenColumn(endCol)) {
-      absoluteLeft = Math.min(absoluteLeft - scrollLeft, this.tableNoFrameWidth - this.getRightFrozenColsWidth());
-      width = this.tableNoFrameWidth - (this.getColsWidth(startCol + 1, this.colCount - 1) ?? 0) - absoluteLeft;
+      absoluteLeft = Math.min(absoluteLeft - scrollLeft, tableWidth - this.getRightFrozenColsWidth());
+      width = tableWidth - (this.getColsWidth(startCol + 1, this.colCount - 1) ?? 0) - absoluteLeft;
     } else if (this.isRightFrozenColumn(startCol)) {
-      absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(startCol, this.colCount - 1) ?? 0);
+      absoluteLeft = tableWidth - (this.getColsWidth(startCol, this.colCount - 1) ?? 0);
     } else {
       // 范围全部在整体一块区域 如都在右侧冻结区域 都可以走这块逻辑
       // do nothing
@@ -1896,10 +1899,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else if (this.isTopFrozenRow(startRow) && !this.isTopFrozenRow(endRow)) {
       height = Math.max(height - scrollTop, this.getRowsHeight(startRow, this.frozenRowCount - 1));
     } else if (!this.isBottomFrozenRow(startRow) && this.isBottomFrozenRow(endRow)) {
-      absoluteTop = Math.min(absoluteTop - scrollTop, this.tableNoFrameHeight - this.getBottomFrozenRowsHeight());
-      height = this.tableNoFrameHeight - (this.getRowsHeight(startRow + 1, this.rowCount - 1) ?? 0) - absoluteTop;
+      absoluteTop = Math.min(absoluteTop - scrollTop, tableHeight - this.getBottomFrozenRowsHeight());
+      height = tableHeight - (this.getRowsHeight(startRow + 1, this.rowCount - 1) ?? 0) - absoluteTop;
     } else if (this.isBottomFrozenRow(startRow)) {
-      absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(startRow, this.rowCount - 1) ?? 0);
+      absoluteTop = tableHeight - (this.getRowsHeight(startRow, this.rowCount - 1) ?? 0);
     } else {
       // 范围全部在整体一块区域 如都在右侧冻结区域 都可以走这块逻辑
       // do nothing
