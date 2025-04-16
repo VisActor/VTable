@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix row/column update problem in text-stick #3744",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
