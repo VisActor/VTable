@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/vtable",
       "comment": "fix: fix switch default direction #3667",
-      "type": "none"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vtable"
