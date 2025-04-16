@@ -209,6 +209,7 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
           widthForStroke,
           heightForStroke,
           cornerRadius,
+          true,
           new Array(4).fill(0).map((_, i) => (x1: number, y1: number, x2: number, y2: number) => {
             renderStrokeWithCornerRadius(
               i,
