@@ -1203,8 +1203,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   } {
     // 判断从source地址是否可以移动到target地址
     if (
-      (this._table.options.dragOrder?.validateDragOrderOnEnd(source, target) ||
-        !this._table.options.dragOrder?.validateDragOrderOnEnd) &&
+      (!this._table.options.dragOrder?.validateDragOrderOnEnd ||
+        this._table.options.dragOrder?.validateDragOrderOnEnd(source, target)) &&
       this.canMoveHeaderPosition(source, target)
     ) {
       let sourceCellRange = this.getCellRange(source.col, source.row);
