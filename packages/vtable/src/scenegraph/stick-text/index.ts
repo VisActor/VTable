@@ -6,7 +6,7 @@ import type { ITextStyleOption, StickCell } from '../../ts-types';
 import { isNumber, min } from '@visactor/vutils';
 import { getCellMergeRange } from '../../tools/merge-range';
 
-export function handleTextStick(table: BaseTableAPI) {
+export function resetTextStick(table: BaseTableAPI) {
   // reset
   const { changedCells } = table.internalProps.stick; // changedCells only cache one time
   changedCells.forEach((cellPos: StickCell) => {
@@ -19,6 +19,11 @@ export function handleTextStick(table: BaseTableAPI) {
     });
   });
   changedCells.clear();
+  return changedCells;
+}
+
+export function handleTextStick(table: BaseTableAPI) {
+  const changedCells = resetTextStick(table);
 
   const { scrollTop, scrollLeft, frozenRowCount, frozenColCount } = table;
   const frozenRowsHeight = table.getFrozenRowsHeight();

@@ -200,6 +200,10 @@ export interface TableEvents {
    * 按钮点击事件
    */
   BUTTON_CLICK: 'button_click';
+  /**
+   * 缓存图表事件
+   */
+  BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image';
 }
 /**
  * Table event types
@@ -276,5 +280,6 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   EMPTY_TIP_CLICK: 'empty_tip_click',
   EMPTY_TIP_DBLCLICK: 'empty_tip_dblclick',
 
-  BUTTON_CLICK: 'button_click'
+  BUTTON_CLICK: 'button_click',
+  BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image'
 } as TableEvents;

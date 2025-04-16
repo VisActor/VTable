@@ -261,6 +261,7 @@ export interface TableEventHandlersEventArgumentMap {
     row: number;
     event: Event;
   };
+  before_cache_chart_image: { chartInstance: any };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -356,4 +357,5 @@ export interface TableEventHandlersReturnMap {
   empty_tip_dblclick: void;
 
   button_click: void;
+  before_cache_chart_image: void;
 }

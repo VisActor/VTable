@@ -158,6 +158,7 @@ export function renderChart(chart: Chart) {
     }
   }
 
+  table.fireListeners('before_cache_chart_image', { chartInstance });
   const sg = chartInstance.getStage();
   cacheStageCanvas(sg, chart);
   // chart.cacheCanvas = sg.toCanvas();
