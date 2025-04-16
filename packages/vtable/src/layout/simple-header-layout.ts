@@ -1462,7 +1462,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     let col;
     const result = this.columnObjects?.find((columnData: ColumnData, index) => {
       if (columnData.define?.key === key) {
-        col = index;
+        col = index + this.leftRowSeriesNumberColumnCount;
         return true;
       }
       return false;
