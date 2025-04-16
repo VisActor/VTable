@@ -15,12 +15,22 @@ export interface ColumnSeriesOptions {
   columnCount: number;
   generateColumnTitle?: (index: number) => string; // Custom column title generation function
   generateColumnField?: (index: number) => string;// Custom column field name generation function
+  /**
+   * Whether to automatically extend columns
+   * @default true
+   */
+  autoExtendColumn?: boolean;
 }
 
 export interface RowSeriesOptions {
   rowCount: number;
   fillRowRecord?: (index: number) => any; // Custom data generation function for filling empty rows
   rowSeriesNumber?: VTable.TYPES.IRowSeriesNumber;
+  /**
+   * Whether to automatically extend rows
+   * @default true
+   */
+  autoExtendRow?: boolean;
 }
 ```
 

@@ -15,12 +15,22 @@ export interface ColumnSeriesOptions {
   columnCount: number;
   generateColumnTitle?: (index: number) => string; // 自定义列标题生成函数
   generateColumnField?: (index: number) => string;// 自定义列字段名生成函数
+  /**
+   * 是否自动扩展列
+   * @default true
+   */
+  autoExtendColumn?: boolean;
 }
 
 export interface RowSeriesOptions {
   rowCount: number;
   fillRowRecord?: (index: number) => any; // 填充空行的 自定义生成数据函数
   rowSeriesNumber?: VTable.TYPES.IRowSeriesNumber;
+  /**
+   * 是否自动扩展行
+   * @default true
+   */
+  autoExtendRow?: boolean;
 }
 ```
 

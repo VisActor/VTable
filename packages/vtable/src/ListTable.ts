@@ -239,6 +239,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.renderAsync();
     this.eventManager.updateEventBinder();
   }
+  /**
+   * 添加列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能
+   * @param column
+   */
+  addColumn(column: ColumnDefine) {
+    const columns = this.options.columns;
+    columns.push(column);
+    this.updateColumns(columns);
+  }
   get columns(): ColumnsDefine {
     // return this.internalProps.columns;
     return this.internalProps.layoutMap.columnTree.getCopiedTree(); //调整顺序后的columns

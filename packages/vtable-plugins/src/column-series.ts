@@ -6,27 +6,45 @@ export interface ColumnSeriesOptions {
   columnCount: number;
   generateColumnTitle?: (index: number) => string;
   generateColumnField?: (index: number) => string;
+  /**
+   * 是否自动扩展列
+   * @default true
+   */
+  autoExtendColumn?: boolean;
 }
 /**
  * 生成列序号标题的插件
  */
 export class ColumnSeriesPlugin implements VTable.plugins.IVTablePlugin {
   id = 'column-series';
-  runTime = [VTable.TABLE_EVENT_TYPE.BEFORE_INIT];
+  runTime = [VTable.TABLE_EVENT_TYPE.BEFORE_INIT, VTable.TABLE_EVENT_TYPE.BEFORE_KEYDOWN];
   pluginOptions: ColumnSeriesOptions;
   table: VTable.ListTable;
   columns: { field?: string; title: string }[] = [];
-  constructor(pluginOptions: ColumnSeriesOptions = { columnCount: 100 }) {
-    this.pluginOptions = pluginOptions;
+  constructor(pluginOptions: ColumnSeriesOptions) {
+    this.pluginOptions = Object.assign({ columnCount: 100, autoExtendColumn: true }, pluginOptions);
   }
   run(...args: any[]) {
-    const eventArgs = args[0];
-    const table: VTable.BaseTableAPI = args[2];
-    this.table = table as VTable.ListTable;
-    const options = eventArgs.options;
-    //根据pluginOptions的columnCount组织columns，column的title生成规则和excel一致，如A~Z,AA~AZ,AB~AZ,AA~ZZ,AAA~ZZZ
-    this.columns = this.generateColumnFields(this.pluginOptions.columnCount);
-    options.columns = this.columns;
+    if (args[1] === VTable.TABLE_EVENT_TYPE.BEFORE_INIT) {
+      const eventArgs = args[0];
+      const table: VTable.BaseTableAPI = args[2];
+      this.table = table as VTable.ListTable;
+      const options = eventArgs.options;
+      //根据pluginOptions的columnCount组织columns，column的title生成规则和excel一致，如A~Z,AA~AZ,AB~AZ,AA~ZZ,AAA~ZZZ
+      this.columns = this.generateColumns(this.pluginOptions.columnCount);
+      options.columns = this.columns;
+    } else if (args[1] === VTable.TABLE_EVENT_TYPE.BEFORE_KEYDOWN) {
+      const eventArgs = args[0];
+      const e = eventArgs.event;
+      if (e.key === 'ArrowRight') {
+        if (
+          this.pluginOptions.autoExtendColumn &&
+          this.table.stateManager.select.cellPos.col === this.table.colCount - 1
+        ) {
+          this.table.addColumn(this.generateColumn(this.table.colCount - 1) as VTable.ColumnDefine);
+        }
+      }
+    }
   }
   /**
    * 生成列字段和标题
@@ -34,20 +52,23 @@ export class ColumnSeriesPlugin implements VTable.plugins.IVTablePlugin {
    * @param columnCount 列数
    * @returns 列字段和标题的数组
    */
-  generateColumnFields(columnCount: number): { field?: string; title: string }[] {
+  generateColumns(columnCount: number): { field?: string; title: string }[] {
     const columnFields = [];
     for (let i = 0; i < columnCount; i++) {
-      const column = {
-        // field: this.pluginOptions.generateColumnField
-        //   ? this.pluginOptions.generateColumnField(i)
-        //   : this.generateColumnField(i),
-        title: this.pluginOptions.generateColumnTitle
-          ? this.pluginOptions.generateColumnTitle(i)
-          : this.generateColumnField(i)
-      };
-      columnFields.push(column);
+      columnFields.push(this.generateColumn(i));
     }
     return columnFields;
+  }
+  generateColumn(index: number): { field?: string; title: string } {
+    const column = {
+      // field: this.pluginOptions.generateColumnField
+      //   ? this.pluginOptions.generateColumnField(i)
+      //   : this.generateColumnField(i),
+      title: this.pluginOptions.generateColumnTitle
+        ? this.pluginOptions.generateColumnTitle(index)
+        : this.generateColumnField(index)
+    };
+    return column;
   }
   /**
    * 生成excel的列标题，规则和excel一致，如A~Z,AA~AZ,AB~AZ,AA~ZZ,AAA~ZZZ
@@ -74,7 +95,7 @@ export class ColumnSeriesPlugin implements VTable.plugins.IVTablePlugin {
 
   resetColumnCount(columnCount: number) {
     this.pluginOptions.columnCount = columnCount;
-    this.columns = this.generateColumnFields(columnCount);
-    this.table.updateColumns(this.columns);
+    this.columns = this.generateColumns(columnCount);
+    this.table.updateColumns(this.columns as VTable.ColumnsDefine);
   }
 }

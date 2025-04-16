@@ -31,10 +31,10 @@ export function createTable() {
   });
 
   const columnSeries = new ColumnSeriesPlugin({
-    columnCount: 26
+    columnCount: 3
   });
   const rowSeries = new RowSeriesPlugin({
-    rowCount: 100,
+    rowCount: 6,
     fillRowRecord: (index: number) => {
       return [];
     },
@@ -74,6 +74,10 @@ export function createTable() {
         textAlign: 'center'
       }
     }),
+    keyboardOptions: {
+      moveFocusCellOnEnter: true
+      // editCellOnEnter: false
+    },
     defaultRowHeight: 30,
     plugins: [addRowColumn, columnSeries, rowSeries, highlightPlugin, excelEditCellKeyboardPlugin]
   };
