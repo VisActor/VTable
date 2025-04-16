@@ -9422,10 +9422,10 @@ export function createTable() {
         cellBgColor: ''
       }
     },
-    selectionStyle: {
-      cellBgColor: '',
-      cellBorderColor: ''
-    },
+    // selectionStyle: {
+    //   cellBgColor: '',
+    //   cellBorderColor: ''
+    // },
     frameStyle: {
       borderLineWidth: 0
     },
