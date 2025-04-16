@@ -442,7 +442,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             style: seriesNumber.style,
             format: seriesNumber.format,
             field: (seriesNumber as any).field,
-            icon: seriesNumber.icon
+            icon: seriesNumber.icon,
+            headerIcon: seriesNumber.headerIcon,
+            isChildNode: false
           };
         });
       } else {
@@ -459,6 +461,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             format: rowSeriesNumber.format,
             field: '', // rowSeriesNumber.field,
             icon: rowSeriesNumber.icon,
+            headerIcon: rowSeriesNumber.headerIcon,
             isChildNode: false
           }
         ];

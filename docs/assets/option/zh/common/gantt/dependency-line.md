@@ -60,6 +60,11 @@ ${prefix} linkCreatable(boolean)
 
 非必填
 
+${prefix} linkDeletable(boolean)
+依赖线是否可删除，默认为 false。
+
+非必填
+
 ${prefix} linkSelectable(boolean)
 依赖线是否可选择，默认为 true
 
