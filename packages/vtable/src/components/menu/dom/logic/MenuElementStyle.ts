@@ -75,8 +75,17 @@ export function importStyle() {
 }
 .vtable__menu-element--select {
 	color: #2E68CF;
-}.vtable__menu-element--normal {
+}
+.vtable__menu-element--normal {
 	color: rgba(20, 20, 20, 0.9);;
+}
+.vtable__menu-element__item-disabled {
+    color: rgba(0, 0, 0, 0.25);
+    cursor: not-allowed;
+	  background-color: #fff;
+}
+.vtable__menu-element__item-disabled:hover {
+	  background-color: #fff;
 }
 .vtable__menu-element__split {
 	height: 0px;
