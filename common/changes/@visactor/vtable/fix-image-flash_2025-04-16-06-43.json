@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix image flash problem #3588",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
