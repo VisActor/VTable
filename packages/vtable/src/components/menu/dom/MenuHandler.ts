@@ -228,6 +228,11 @@ export class MenuHandler {
         });
       }
     });
+    // 监听滚动事件，关闭菜单
+    table.on(TABLE_EVENT_TYPE.SCROLL, e => {
+      table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null);
+      table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU, null);
+    });
   }
   _getMenuInstanceInfo(
     col: number,
