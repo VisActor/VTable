@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "chore: release 1.18.0",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
