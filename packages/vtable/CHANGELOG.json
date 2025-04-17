@@ -2,6 +2,41 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.17.7",
+      "tag": "@visactor/vtable_v1.17.7",
+      "date": "Thu, 17 Apr 2025 06:30:44 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add onBeforeCacheChartImage event\n\n"
+          },
+          {
+            "comment": "feat: support customConfig disableBuildInChartActive\n\n"
+          },
+          {
+            "comment": "fix: fix table size in getCellsRect() #3681"
+          },
+          {
+            "comment": "fix: correct column index calculation when rowSeriesNumber is configured\n\n"
+          },
+          {
+            "comment": "fix: fix image flash problem #3588"
+          },
+          {
+            "comment": "feat: add dynamicUpdateSelectionSize config in theme.selectionStyle"
+          },
+          {
+            "comment": "fix: fix row/column update problem in text-stick #3744"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "fix: fix switch default direction #3667"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.17.6",
       "tag": "@visactor/vtable_v1.17.6",
       "date": "Thu, 10 Apr 2025 09:18:51 GMT",

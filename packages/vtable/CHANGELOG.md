@@ -1,6 +1,29 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 10 Apr 2025 09:18:51 GMT and should not be manually modified.
+This log was last generated on Thu, 17 Apr 2025 06:30:44 GMT and should not be manually modified.
+
+## 1.17.7
+Thu, 17 Apr 2025 06:30:44 GMT
+
+### Minor changes
+
+- fix: fix switch default direction #3667
+
+### Updates
+
+- feat: add onBeforeCacheChartImage event
+
+
+- feat: support customConfig disableBuildInChartActive
+
+
+- fix: fix table size in getCellsRect() #3681
+- fix: correct column index calculation when rowSeriesNumber is configured
+
+
+- fix: fix image flash problem #3588
+- feat: add dynamicUpdateSelectionSize config in theme.selectionStyle
+- fix: fix row/column update problem in text-stick #3744
 
 ## 1.17.6
 Thu, 10 Apr 2025 09:18:51 GMT
