@@ -1,7 +1,12 @@
-# v1.17.7
+# v1.18.0
+  v1.17.7 same content
 
 2025-04-17
 
+**💥 Breaking change**
+
+- **@visactor/vtable**: fix switch default direction [#3667](https://github.com/VisActor/VTable/issues/3667)
+- **@visactor/vtable-editors**: fix input editor default style
 
 **🆕 New feature**
 
