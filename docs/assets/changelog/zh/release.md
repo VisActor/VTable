@@ -1,3 +1,26 @@
+# v1.17.7
+
+2025-04-17
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add onBeforeCacheChartImage event
+- **@visactor/vtable**: support customConfig disableBuildInChartActive
+- **@visactor/vtable**: add dynamicUpdateSelectionSize config in theme.selectionStyle
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix table size in getCellsRect() [#3681](https://github.com/VisActor/VTable/issues/3681)
+- **@visactor/vtable**: correct column index calculation when rowSeriesNumber is configured
+- **@visactor/vtable**: fix image flash problem [#3588](https://github.com/VisActor/VTable/issues/3588)
+- **@visactor/vtable**: fix row/column update problem in text-stick [#3744](https://github.com/VisActor/VTable/issues/3744)
+- **@visactor/vtable**: fix switch default direction [#3667](https://github.com/VisActor/VTable/issues/3667)
+
+
+
+[更多详情请查看 v1.17.7](https://github.com/VisActor/VTable/releases/tag/v1.17.7)
+
 # v1.17.6
 
 2025-04-10
