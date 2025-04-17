@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 17 Apr 2025 06:30:44 GMT and should not be manually modified.
+This log was last generated on Thu, 17 Apr 2025 07:40:27 GMT and should not be manually modified.
+
+## 1.18.0
+Thu, 17 Apr 2025 07:40:27 GMT
+
+### Updates
+
+- chore: release 1.18.0
 
 ## 1.17.7
 Thu, 17 Apr 2025 06:30:44 GMT
