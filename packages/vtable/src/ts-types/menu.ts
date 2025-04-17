@@ -30,6 +30,7 @@ export type MenuListItem =
       selectedIcon?: Icon;
       stateIcon?: Icon;
       children?: MenuListItem[];
+      disabled?: boolean; // 禁用菜单项
     };
 
 export type PivotInfo = {

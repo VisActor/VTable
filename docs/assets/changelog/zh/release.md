@@ -1,3 +1,30 @@
+# v1.18.0 
+  v1.17.7 版本相同内容
+
+2025-04-17
+
+**💥 Breaking change**
+
+- **@visactor/vtable**: 修复 switch 默认方向问题 [#3667](https://github.com/VisActor/VTable/issues/3667)
+- **@visactor/vtable-editors**: 修改了input编辑器中的默认样式
+
+**🆕 新增功能**
+- **@visactor/vtable-plugins**: 新增 行列新增 行列序号 excel键盘对齐等插件
+- **@visactor/vtable**: 新增 onBeforeCacheChartImage 事件
+- **@visactor/vtable**: 支持 customConfig disableBuildInChartActive 配置
+- **@visactor/vtable**: 在 theme.selectionStyle 中新增 dynamicUpdateSelectionSize 配置
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复 getCellsRect() 中表格大小问题 [#3681](https://github.com/VisActor/VTable/issues/3681)
+- **@visactor/vtable**: 修复配置 rowSeriesNumber 时列索引计算错误问题
+- **@visactor/vtable**: 修复图片闪烁问题 [#3588](https://github.com/VisActor/VTable/issues/3588)
+- **@visactor/vtable**: 修复 text-stick 中行/列更新问题 [#3744](https://github.com/VisActor/VTable/issues/3744)
+
+
+
+[更多详情请查看 v1.17.7](https://github.com/VisActor/VTable/releases/tag/v1.17.7)
+
 # v1.17.6
 
 2025-04-10

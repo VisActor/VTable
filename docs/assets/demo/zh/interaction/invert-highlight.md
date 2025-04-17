@@ -12,7 +12,7 @@ link: plugin/invert-highlight
 
 ## 关键配置
 
-- `InvertHighlightPlugin` 反选高亮插件
+- `FocusHighlightPlugin` 反选高亮插件
   - `fill` 反选高亮背景色
   - `opacity` 反选高亮透明度
 - `setInvertHighlightRange` 设置反选高亮范围
@@ -87,25 +87,16 @@ const columns = [
     width: 100
   }
 ];
-
+const highlightPlugin = new VTablePlugins.FocusHighlightPlugin();
 const option = {
   records,
   columns,
-  theme: VTable.themes.DARK
+  theme: VTable.themes.DARK,
+  plugins: [highlightPlugin]
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 
-const highlightPlugin = new VTablePlugins.InvertHighlightPlugin(tableInstance, {});
 
-highlightPlugin.setInvertHighlightRange({
-  start: {
-    col: 0,
-    row: 6
-  },
-  end: {
-    col: 5,
-    row: 6
-  }
-});
+
 ```

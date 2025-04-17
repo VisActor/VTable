@@ -11,6 +11,9 @@ export interface InvertHighlightPluginOptions {
   opacity?: number;
 }
 
+/**
+ * @deprecated 请使用 FocusHighlightPlugin 插件
+ */
 export class InvertHighlightPlugin {
   table: BaseTableAPI;
   range?: CellRange;

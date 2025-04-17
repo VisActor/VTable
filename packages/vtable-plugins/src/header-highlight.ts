@@ -10,6 +10,9 @@ export interface IHeaderHighlightPluginOptions {
   rowHighlightColor?: string;
 }
 
+/**
+ * @deprecated 请使用 HighlightHeaderPlugin 插件
+ */
 export class HeaderHighlightPlugin {
   table: BaseTableAPI;
   options: IHeaderHighlightPluginOptions;

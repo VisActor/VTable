@@ -9422,10 +9422,10 @@ export function createTable() {
         cellBgColor: ''
       }
     },
-    selectionStyle: {
-      cellBgColor: '',
-      cellBorderColor: ''
-    },
+    // selectionStyle: {
+    //   cellBgColor: '',
+    //   cellBorderColor: ''
+    // },
     frameStyle: {
       borderLineWidth: 0
     },
@@ -9477,6 +9477,9 @@ export function createTable() {
   };
 
   const tableInstance = new VTable.PivotChart(option);
+  tableInstance.on('before_cache_chart_image', args => {
+    console.log('before_cache_chart_image', args);
+  });
   tableInstance.onVChartEvent('click', args => {
     console.log('onVChartEvent click', args);
   });

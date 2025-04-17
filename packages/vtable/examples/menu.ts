@@ -109,6 +109,11 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-contextMenu-disabledMenu'
+      },
+
+      {
+        path: 'list',
         name: 'list-rowSeriesNumber'
       },
       {

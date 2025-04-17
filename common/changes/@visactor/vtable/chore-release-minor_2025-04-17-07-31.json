@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "fix: fix switch default direction #3667",
-      "type": "minor"
+      "comment": "chore: release 1.18.0",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vtable"
