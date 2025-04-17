@@ -1,4 +1,12 @@
 # v1.18.0
+
+2025-04-17
+
+
+
+[more detail about v1.18.0](https://github.com/VisActor/VTable/releases/tag/v1.18.0)
+
+# v1.18.0
   v1.17.7 same content
 
 2025-04-17
