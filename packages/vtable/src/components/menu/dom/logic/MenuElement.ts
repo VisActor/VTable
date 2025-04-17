@@ -30,6 +30,7 @@ const TITLE_CLASSNAME = `${CLASSNAME}__title`;
 const ARROW_CLASSNAME = `${CLASSNAME}__arrow`;
 const NOEVENT_CLASSNAME = `${CLASSNAME}__no-event`;
 const ITEMTEXT_CLASSNAME = `${CLASSNAME}__item-text`;
+const ITEM_DISABLED_CLASSNAME = `${CLASSNAME}__item-disabled`;
 
 function createMenuDomElement(): HTMLElement {
   const rootElement = createElement('div', [CLASSNAME, HIDDEN_CLASSNAME]);
@@ -118,6 +119,11 @@ export class MenuElement {
     this._rootElement?.addEventListener('touchend', e => {
       e.stopPropagation();
       e.preventDefault();
+
+      // disabled菜单项，禁用菜单点击
+      if ((e.target as HTMLElement).classList.contains(ITEM_DISABLED_CLASSNAME)) {
+        return;
+      }
       if (this._rootElement.classList.contains(HIDDEN_CLASSNAME)) {
         return;
       }
@@ -155,6 +161,11 @@ export class MenuElement {
     this._rootElement?.addEventListener('click', e => {
       e.stopPropagation();
       e.preventDefault();
+
+      // disabled菜单项，禁用菜单点击
+      if ((e.target as HTMLElement).classList.contains(ITEM_DISABLED_CLASSNAME)) {
+        return;
+      }
       if (this._rootElement.classList.contains(HIDDEN_CLASSNAME)) {
         return;
       }
@@ -283,6 +294,11 @@ export class MenuElement {
     this._secondElement?.addEventListener('click', e => {
       e.stopPropagation();
       e.preventDefault();
+
+      // disabled菜单项，禁用菜单点击
+      if ((e.target as HTMLElement).classList.contains(ITEM_DISABLED_CLASSNAME)) {
+        return;
+      }
       if (this._secondElement.classList.contains(HIDDEN_CLASSNAME)) {
         return;
       }
@@ -608,7 +624,7 @@ export class MenuElement {
         y: secondTop,
         width: secondWidth,
         height: secondHeight
-      } = rootElement.getBoundingClientRect();
+      } = secondElement.getBoundingClientRect();
       if (
         x > secondLeft - 5 &&
         x < secondLeft + secondWidth + 5 &&
@@ -627,6 +643,11 @@ function createItem(info: MenuListItem, isHighlight: boolean): HTMLDivElement {
     ITEM_CLASSNAME,
     isHighlight ? SELECT_CLASSNAME : NORAML_CLASSNAME
   ]) as HTMLDivElement;
+
+  // 添加disabled样式
+  if (typeof info === 'object' && info.disabled) {
+    itemContainer.classList.add(ITEM_DISABLED_CLASSNAME);
+  }
 
   if (typeof info === 'string') {
     const item = createElement('span', [CONTENT_CLASSNAME, NOEVENT_CLASSNAME, ITEMTEXT_CLASSNAME]);

@@ -260,7 +260,24 @@ export function createTable() {
             title: '类别',
             headerFormat(value) {
               return `${value}`;
-            }
+            },
+
+            // corner菜单
+            cornerDropDownMenu: [
+              {
+                menuKey: '升序排序C',
+                text: '升序排序C',
+                disabled: true
+              },
+              {
+                menuKey: '降序排序I',
+                text: '降序排序I'
+              },
+              {
+                menuKey: '冻结列I',
+                text: '冻结列I'
+              }
+            ]
             // width: 200
           }
           // {

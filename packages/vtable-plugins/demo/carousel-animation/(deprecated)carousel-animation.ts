@@ -19,7 +19,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(20);
+  const records = generatePersons(30);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'image',
@@ -76,7 +76,11 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
-    theme: VTable.themes.DARK,
+    theme: VTable.themes.DARK.extends({
+      scrollStyle: {
+        visible: 'none'
+      }
+    }),
     // heightMode: 'adaptive',
     select: {
       disableSelect: true
@@ -84,14 +88,10 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
-
-  bindDebugTool(tableInstance.scenegraph.stage, {
-    customGrapicKeys: ['col', 'row']
-  });
-
+  tableInstance.disableScroll();
   const ca = new CarouselAnimationPlugin(tableInstance, {
     rowCount: 2,
-    replaceScrollAction: true
+    replaceScrollAction: false
   });
 
   ca.play();

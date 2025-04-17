@@ -25,8 +25,11 @@ export interface TableEvents {
    * 单元格选中状态改变事件
    */
   SELECTED_CLEAR: 'selected_clear';
+
+  /** 键盘按下事件 内部逻辑处理前 */
+  BEFORE_KEYDOWN: 'before_keydown';
   /**
-   * 键盘按下事件
+   * 键盘按下事件 触发时机是在内部处理keydown逻辑之后
    */
   KEYDOWN: 'keydown';
   /**
@@ -158,12 +161,17 @@ export interface TableEvents {
   RADIO_STATE_CHANGE: 'radio_state_change';
   SWITCH_STATE_CHANGE: 'switch_state_change';
   //#region lifecircle
+  /** 表格实例初始化前触发 */
+  BEFORE_INIT: 'before_init';
+  /** 设置表格大小前触发 */
+  BEFORE_SET_SIZE: 'before_set_size';
   /** 每次渲染完成触发 */
   AFTER_RENDER: 'after_render';
   /** 表格实例初始化完成 */
   INITIALIZED: 'initialized';
   //#endregion
 
+  /** 编辑单元格 */
   CHANGE_CELL_VALUE: 'change_cell_value';
 
   /**
@@ -192,6 +200,10 @@ export interface TableEvents {
    * 按钮点击事件
    */
   BUTTON_CLICK: 'button_click';
+  /**
+   * 缓存图表事件
+   */
+  BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image';
 }
 /**
  * Table event types
@@ -203,6 +215,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   MOUSEUP_CELL: 'mouseup_cell',
   SELECTED_CELL: 'selected_cell',
   SELECTED_CLEAR: 'selected_clear',
+  BEFORE_KEYDOWN: 'before_keydown',
   KEYDOWN: 'keydown',
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
@@ -255,6 +268,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change',
   RADIO_STATE_CHANGE: 'radio_state_change',
   SWITCH_STATE_CHANGE: 'switch_state_change',
+  BEFORE_SET_SIZE: 'before_set_size',
+  BEFORE_INIT: 'before_init',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
   CHANGE_CELL_VALUE: 'change_cell_value',
@@ -265,5 +280,6 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   EMPTY_TIP_CLICK: 'empty_tip_click',
   EMPTY_TIP_DBLCLICK: 'empty_tip_dblclick',
 
-  BUTTON_CLICK: 'button_click'
+  BUTTON_CLICK: 'button_click',
+  BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image'
 } as TableEvents;

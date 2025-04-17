@@ -6,6 +6,7 @@ import { updateCell } from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import type { IGroup } from '@src/vrender';
+import { checkHaveTextStick, resetTextStick } from '../stick-text';
 
 /**
  * add and remove rows in scenegraph
@@ -16,6 +17,10 @@ export function updateCol(
   updateCells: CellAddress[],
   table: BaseTableAPI
 ) {
+  if (checkHaveTextStick(table)) {
+    resetTextStick(table); // reset text stick
+  }
+
   const scene = table.scenegraph;
   // deduplication
   const removeCols = deduplication(removeCells.map(cell => cell.col)).sort((a, b) => b - a);

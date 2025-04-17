@@ -13,7 +13,7 @@ import type { IBaseScale } from '@visactor/vscale';
 import { ticks } from '@src/vrender';
 import { LinearAxisScale } from './linear-scale';
 import { doOverlap } from './label-overlap';
-import type { TableTheme } from '../../themes/theme';
+import type { TableTheme } from '../../themes/theme-define';
 
 const DEFAULT_BAND_INNER_PADDING = 0.1;
 const DEFAULT_BAND_OUTER_PADDING = 0.3;

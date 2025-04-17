@@ -1,26 +1,25 @@
 ---
 category: examples
 group: Animation
-title: carousel animation
+title: Carousel Animation
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/carousel-animation.gif
 link: animation/carousel_animation
 ---
 
 # Carousel Animation
 
-Carousel animation in VTable
+Table carousel animation display
 
-## Key configuration
+## Key Configuration
 
-- `CarouselAnimationPlugin` carousel animation plugin
-  - `rowCount` scroll row count in a carousel animation
-  - `colCount` scroll column count in a carousel animation
-  - `animationDuration` The duration of a single carousel animation, in milliseconds
-  - `animationDelay` The delay of a single carousel animation, in milliseconds
-  - `animationEasing` The easing function of a single carousel animation
-  - `replaceScrollAction` Whether to replace the scroll action, if true, the scroll action will be replaced by the carousel animation
+- `TableCarouselAnimationPlugin` Carousel animation plugin
+  - `rowCount` Number of rows scrolled in one animation
+  - `colCount` Number of columns scrolled in one animation
+  - `animationDuration` Duration of a single scroll animation
+  - `animationDelay` Time interval between animations
+  - `animationEasing` Animation easing function
 
-## Code demonstration
+## Code demo
 
 ```javascript livedemo template=vtable
 // use this for project
@@ -31,6 +30,10 @@ let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data100.json')
   .then(res => res.json())
   .then(data => {
+
+    const animationPlugin = new VTablePlugins.TableCarouselAnimationPlugin( {
+      rowCount: 2,
+    });
     const columns = [
       {
         field: 'Category',
@@ -92,16 +95,12 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     const option = {
       records: data.slice(0, 20),
       columns,
-      widthMode: 'standard'
+      widthMode: 'standard',
+      plugins: [animationPlugin]
     };
     tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
     window['tableInstance'] = tableInstance;
 
-    const ca = new VTablePlugins.CarouselAnimationPlugin(tableInstance, {
-      rowCount: 2,
-      replaceScrollAction: true
-    });
-
-    ca.play();
+    
   });
 ```

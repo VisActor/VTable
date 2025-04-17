@@ -13,7 +13,7 @@ import { ImageStyle } from './style/ImageStyle';
 import { TextStyle } from './style/MultilineTextStyle';
 import { NumberStyle } from './style/NumberStyle';
 import { Style } from './style/Style';
-import type { TableTheme } from '../themes/theme';
+import type { TableTheme } from '../themes/theme-define';
 import { CheckboxStyle } from './style/CheckboxStyle';
 import { RadioStyle } from './style/RadioStyle';
 import { SwitchStyle } from './style/SwitchStyle';

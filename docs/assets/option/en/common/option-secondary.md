@@ -505,6 +505,15 @@ Custom cell style assignment
   - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
 
+
+#${prefix} rowSeriesNumber(IRowSeriesNumber)
+
+set row serial number.
+{{ use: row-series-number(
+    prefix = '###',
+) }}
+
+
 #${prefix} editor (string|Object|Function)
 
 Global configuration cell editor
@@ -534,12 +543,13 @@ The trigger timing for entering the editing state.
 editCellTrigger?:'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
 ```
 
-#${prefix} rowSeriesNumber(IRowSeriesNumber)
+#${prefix} plugins(IVTablePlugin[])
 
-set row serial number.
-{{ use: row-series-number(
-    prefix = '###',
-) }}
+Configure plugins. For details, please refer to the tutorial [click here](../guide/plugin/usage)
+
+```
+plugins?: IVTablePlugin[];
+```
 
 #${prefix} enableLineBreak(boolean) = false
 

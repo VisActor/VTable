@@ -740,10 +740,31 @@
       },
       "children": [
         {
-          "path": "invert-highlight",
+          "path": "usage",
           "title": {
-            "zh": "反选高亮",
-            "en": "Invert Highlight"
+            "zh": "插件使用",
+            "en": "plugin usage"
+          }
+        },
+        {
+          "path": "contribute",
+          "title": {
+            "zh": "插件贡献",
+            "en": "plugin contribute"
+          }
+        },
+        {
+          "path": "row-column-series",
+          "title": {
+            "zh": "行列序号",
+            "en": "Row Column Series"
+          }
+        },
+        {
+          "path": "focus-highlight",
+          "title": {
+            "zh": "聚焦高亮",
+            "en": "Focus Highlight"
           }
         },
         {
@@ -751,6 +772,27 @@
           "title": {
             "zh": "表头高亮",
             "en": "Header Highlight"
+          }
+        },
+        {
+          "path": "excel-keyboard-alignment",
+          "title": {
+            "zh": "excel键盘交互对齐",
+            "en": "excel keyboard interaction alignment"
+          }
+        },
+        {
+          "path": "row-column-add",
+          "title": {
+            "zh": "行列新增插件",
+            "en": "add row column plugin"
+          }
+        },
+        {
+          "path": "table-carousel-animation",
+          "title": {
+            "zh": "表格轮播动画",
+            "en": "table carousel animation"
           }
         }
       ]

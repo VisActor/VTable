@@ -104,18 +104,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   constructor(options: ListTableConstructorOptions);
   constructor(container: HTMLElement, options: ListTableConstructorOptions);
   constructor(container?: HTMLElement | ListTableConstructorOptions, options?: ListTableConstructorOptions) {
-    if (Env.mode === 'node') {
-      options = container as ListTableConstructorOptions;
-      container = null;
-    } else if (!(container instanceof HTMLElement)) {
-      options = container as ListTableConstructorOptions;
-      if ((container as ListTableConstructorOptions).container) {
-        container = (container as ListTableConstructorOptions).container;
-      } else {
-        container = null;
-      }
-    }
     super(container as HTMLElement, options);
+    options = this.options;
     const internalProps = this.internalProps;
     internalProps.frozenColDragHeaderMode =
       options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;
@@ -248,6 +238,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
     this.eventManager.updateEventBinder();
+  }
+  /**
+   * 添加列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能
+   * @param column
+   */
+  addColumn(column: ColumnDefine) {
+    const columns = this.options.columns;
+    columns.push(column);
+    this.updateColumns(columns);
   }
   get columns(): ColumnsDefine {
     // return this.internalProps.columns;

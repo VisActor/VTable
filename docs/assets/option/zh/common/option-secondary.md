@@ -539,6 +539,14 @@ editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' |
 
 ```
 
+#${prefix} plugins(IVTablePlugin[])
+
+配置插件。具体教程[点击这里](../guide/plugin/usage)
+
+```
+plugins?: IVTablePlugin[];
+```
+
 #${prefix} enableLineBreak(boolean) = false
 
 是否开启换行符解析，开启后，单元格内容中包含换行符时，会自动解析换行。
