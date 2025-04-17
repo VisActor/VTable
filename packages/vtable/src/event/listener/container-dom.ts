@@ -28,6 +28,14 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
   // 监听键盘事件
   handler.on(table.getElement(), 'keydown', (e: KeyboardEvent) => {
+    // 键盘按下事件 内部逻辑处理前
+    const beforeKeydownEvent: KeydownEvent = {
+      keyCode: e.keyCode ?? e.which,
+      code: e.code,
+      event: e
+    };
+    table.fireListeners(TABLE_EVENT_TYPE.BEFORE_KEYDOWN, beforeKeydownEvent);
+    // 键盘按下事件 内部逻辑处理
     if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
       if (table.keyboardOptions?.selectAllOnCtrlA) {
         // 处理全选
@@ -204,7 +212,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
           }
         }
       }
-    } else if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
+    } else if (!(e.ctrlKey || e.metaKey)) {
       const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
       if (
         (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
@@ -212,6 +220,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       ) {
         const allowedKeys = /^[a-zA-Z0-9+\-*\/%=.,\s]$/; // 允许的键值正则表达式
         if (e.key.match(allowedKeys)) {
+          table.editorManager.beginTriggerEditCellMode = 'keydown';
           table.editorManager.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
         }
       }

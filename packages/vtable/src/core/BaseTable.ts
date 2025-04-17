@@ -62,7 +62,7 @@ import { EventHandler } from '../event/EventHandler';
 import { EventTarget } from '../event/EventTarget';
 import { NumberMap } from '../tools/NumberMap';
 import { Rect } from '../tools/Rect';
-import type { TableTheme } from '../themes/theme';
+import type { TableTheme } from '../themes/theme-define';
 import { throttle2 } from '../tools/util';
 import themes from '../themes';
 import { Env } from '../tools/env';
@@ -96,7 +96,6 @@ import type {
   SeriesNumberColumnData
 } from '../ts-types/list-table/layout-map/api';
 import type { TooltipOptions } from '../ts-types/tooltip';
-import { IconCache } from '../plugins/icons';
 import {
   _applyColWidthLimits,
   _getScrollableVisibleRect,
@@ -158,6 +157,8 @@ import type { CustomCellStylePlugin, ICustomCellStylePlugin } from '../plugins/c
 import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
 import { getCustomMergeCellFunc } from './utils/get-custom-merge-cell-func';
 import { vglobal } from '@src/vrender';
+import { PluginManager } from '../plugins/plugin-manager';
+import type { IVTablePlugin } from '../plugins/interface';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -233,12 +234,28 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   reactCustomLayout?: ReactCustomLayout;
   _hasAutoImageColumn?: boolean;
 
+  pluginManager: PluginManager;
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
+
+    if (Env.mode === 'node') {
+      options = container as BaseTableConstructorOptions;
+      container = null;
+    } else if (!(container instanceof HTMLElement)) {
+      options = container as BaseTableConstructorOptions;
+      if ((container as BaseTableConstructorOptions).container) {
+        container = (container as BaseTableConstructorOptions).container;
+      } else {
+        container = null;
+      }
+    }
     if (!container && options.mode !== 'node' && !options.canvas) {
       throw new Error("vtable's container is undefined");
     }
 
+    this.pluginManager = new PluginManager(this, options);
+    this.fireListeners(TABLE_EVENT_TYPE.BEFORE_INIT, { options, container });
+    container = options.container && options.container instanceof HTMLElement ? options.container : container;
     // for image anonymous
     if (options.customConfig?.imageAnonymous === false) {
       vglobal.isImageAnonymous = false;
@@ -2292,7 +2309,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     internalProps.tooltipHandler?.release?.();
     internalProps.menuHandler?.release?.();
-    IconCache.clearAll();
 
     super.release?.();
     internalProps.handler?.release?.();
@@ -2326,6 +2342,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps = null;
 
     this.reactCustomLayout?.clearCache();
+    this.pluginManager.release();
     clearChartRenderQueue();
   }
 

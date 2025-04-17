@@ -1483,6 +1483,22 @@
       ]
     },
     {
+      "path": "plugin",
+      "title": {
+        "zh": "插件库",
+        "en": "plugin library"
+      },
+      "children": [
+        {
+          "path": "excel-online-editing",
+          "title": {
+            "zh": "类Excel在线编辑",
+            "en": "Excel online editing"
+          }
+        }
+      ]
+    },
+    {
       "path": "export",
       "title": {
         "zh": "表格导出",

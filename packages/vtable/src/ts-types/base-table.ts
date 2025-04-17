@@ -27,7 +27,7 @@ import type {
   SeriesNumberColumnData
 } from './list-table/layout-map/api';
 export type { HeaderData } from './list-table/layout-map/api';
-import type { TableTheme } from '../themes/theme';
+import type { TableTheme } from '../themes/theme-define';
 import type { ICustomRender } from './customElement';
 import type { LayoutObjectId } from './table-engine';
 import type { Rect } from '../tools/Rect';
@@ -104,6 +104,7 @@ import type { EmptyTip } from '../components/empty-tip/empty-tip';
 import type { EditManager } from '../edit/edit-manager';
 import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
+import type { IVTablePlugin } from '../plugins/interface';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -604,6 +605,8 @@ export interface BaseTableConstructorOptions {
     /** 拖拽移动位置结束时进行验证 */
     validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
   };
+  /** 插件配置 */
+  plugins?: IVTablePlugin[];
 }
 export interface BaseTableAPI {
   id: string;
