@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: skip serial number calculation for aggregation rows when groupBy is enabled\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "zzh7498624@163.com"
+}
