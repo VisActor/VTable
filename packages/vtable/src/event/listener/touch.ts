@@ -16,9 +16,10 @@ export function bindTouchListener(eventManager: EventManager) {
       return;
     }
     eventManager.isTouchdown = true;
+    const touchEvent = e.nativeEvent as TouchEvent;
     eventManager.touchMovePoints.push({
-      x: e.page.x,
-      y: e.page.y,
+      x: (touchEvent.changedTouches?.[0] as any)?._canvasX ?? e.canvas?.x ?? e.page.x,
+      y: (touchEvent.changedTouches?.[0] as any)?._canvasY ?? e.canvas?.y ?? e.page.y,
       timestamp: Date.now()
     });
   });
@@ -40,8 +41,8 @@ export function bindTouchListener(eventManager: EventManager) {
         eventManager.touchMovePoints.shift();
       }
       eventManager.touchMovePoints.push({
-        x: e.changedTouches[0].pageX,
-        y: e.changedTouches[0].pageY,
+        x: (e.changedTouches[0] as any)._canvasX ?? e.changedTouches[0].pageX,
+        y: (e.changedTouches[0] as any)._canvasY ?? e.changedTouches[0].pageY,
         timestamp: Date.now()
       });
       if (eventManager._enableTableScroll) {
@@ -86,8 +87,8 @@ export function bindTouchListener(eventManager: EventManager) {
           eventManager.touchMovePoints.shift();
         }
         eventManager.touchMovePoints.push({
-          x: e.changedTouches[0].pageX,
-          y: e.changedTouches[0].pageY,
+          x: (e.changedTouches[0] as any)._canvasX ?? e.changedTouches[0].pageX,
+          y: (e.changedTouches[0] as any)._canvasY ?? e.changedTouches[0].pageY,
           timestamp: Date.now()
         });
         // compute inertia parameter
