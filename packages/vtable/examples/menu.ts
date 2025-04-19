@@ -789,6 +789,10 @@ export const menus = [
       {
         path: 'style',
         name: 'custom-cell-style'
+      },
+      {
+        path: 'style',
+        name: 'scrollbar-always-visible-space-correction'
       }
     ]
   },

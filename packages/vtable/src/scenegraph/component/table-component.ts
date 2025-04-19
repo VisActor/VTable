@@ -376,6 +376,11 @@ export class TableComponent {
         attrY = y - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
       }
 
+      // always的情况下没触发scrollbar应当取消掉这部分区域的留白
+      if (hoverOn && horizontalVisible === 'always' && this.table.scenegraph.component.hScrollBar.attribute.visible) {
+        attrY += width;
+      }
+
       this.hScrollBar.setAttributes({
         x: frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0),
         y: attrY,
@@ -416,6 +421,11 @@ export class TableComponent {
         attrX = x - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x);
       }
 
+      // always的情况下没触发scrollbar应当取消掉这部分区域的留白
+      if (hoverOn && verticalVisible === 'always' && this.table.scenegraph.component.vScrollBar.attribute.visible) {
+        attrX += width;
+      }
+
       this.vScrollBar.setAttributes({
         x: attrX,
         y: frozenRowsHeight + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.y : 0),
@@ -443,6 +453,10 @@ export class TableComponent {
 
     this.table.stateManager.setScrollLeft(oldHorizontalBarPos);
     this.table.stateManager.setScrollTop(oldVerticalBarPos);
+
+    if (horizontalVisible === 'always') {
+      this.table._updateSize();
+    }
   }
 
   /**

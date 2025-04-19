@@ -1163,8 +1163,25 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightP = this.canvasHeight - 1;
     }
 
-    const width = Math.floor(widthP - style.getVerticalScrollBarSize(this.getTheme().scrollStyle));
-    const height = Math.floor(heightP - style.getHorizontalScrollBarSize(this.getTheme().scrollStyle));
+    const scrollStyle = this.getTheme().scrollStyle;
+    let vScrollBarWidth = style.getVerticalScrollBarSize(scrollStyle);
+    let hScrollBarHeight = style.getHorizontalScrollBarSize(scrollStyle);
+
+    // always的情况下没触发scrollbar应当取消掉这部分区域的留白
+    if (scrollStyle.visible === 'always') {
+      const vScrollBarVisible = this.scenegraph ? this.scenegraph.component.vScrollBar.attribute.visible : false;
+      if (vScrollBarWidth > 0 && vScrollBarVisible !== true) {
+        vScrollBarWidth = 0;
+      }
+
+      const hScrollBarVisible = this.scenegraph ? this.scenegraph.component.hScrollBar.attribute.visible : false;
+      if (hScrollBarHeight > 0 && hScrollBarVisible !== true) {
+        hScrollBarHeight = 0;
+      }
+    }
+
+    const width = Math.floor(widthP - vScrollBarWidth);
+    const height = Math.floor(heightP - hScrollBarHeight);
 
     if (this.internalProps.theme?.frameStyle) {
       //考虑表格整体边框的问题
