@@ -141,11 +141,14 @@ export function createComplexColumn(
           ? table.getHeaderDefine(colForDefine, rowForDefine)
           : table.getBodyColumnDefine(colForDefine, rowForDefine);
     }
-    let mayHaveIcon =
-      cellLocation !== 'body'
-        ? true
-        : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
+    const isAggregation =
+      'isAggregation' in table.internalProps.layoutMap && table.internalProps.layoutMap.isAggregation(col, row);
+    const isSeriesNumber = table.internalProps.layoutMap.isSeriesNumber(col, row);
 
+    let mayHaveIcon =
+      !!define?.icon ||
+      !!(define as ColumnDefine)?.tree ||
+      ((define as IRowSeriesNumber)?.dragOrder && !(isAggregation && isSeriesNumber));
     if (
       !range &&
       (table.internalProps.enableTreeNodeMerge || cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)
