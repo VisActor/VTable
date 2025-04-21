@@ -639,8 +639,9 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       const padding = getQuadProps(getProp('padding', actStyle, col, row, table));
       height += padding[0] + padding[2];
     }
+    const minSingleRowHeight = table.options.customConfig?.minSingleRowHeight ?? 2;
     return {
-      height: height / spanRow,
+      height: Math.max(height / spanRow, minSingleRowHeight),
       renderDefault
     };
   }
@@ -880,7 +881,8 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       }
     }
   }
-  return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;
+  const minSingleRowHeight = table.options.customConfig?.minSingleRowHeight ?? 2;
+  return Math.max((Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow, minSingleRowHeight);
 }
 
 function getCellRect(col: number, row: number, table: BaseTableAPI) {

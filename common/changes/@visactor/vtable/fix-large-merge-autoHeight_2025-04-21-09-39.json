@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix merge cell autoHeight #3752",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
