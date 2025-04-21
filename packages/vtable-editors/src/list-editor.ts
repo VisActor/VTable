@@ -12,7 +12,6 @@ export class ListEditor implements IEditor {
   successCallback?: () => void;
 
   constructor(editorConfig: ListEditorConfig) {
-    console.log('listEditor constructor');
     this.editorConfig = editorConfig;
   }
 
@@ -25,6 +24,21 @@ export class ListEditor implements IEditor {
     select.style.width = '100%';
     select.style.boxSizing = 'border-box';
     select.style.backgroundColor = '#FFFFFF';
+    select.style.borderRadius = '0px';
+    select.style.border = '2px solid #d9d9d9';
+    // #region 为了保证input在focus时，没有圆角
+    select.addEventListener('focus', () => {
+      select.style.borderColor = '#4A90E2';
+      select.style.outline = 'none';
+    });
+
+    select.addEventListener('blur', () => {
+      select.style.borderColor = '#d9d9d9';
+      // input.style.boxShadow = 'none';
+    });
+
+
+
     this.element = select;
 
     // create option tags
@@ -72,10 +86,18 @@ export class ListEditor implements IEditor {
   }
 
   adjustPosition(rect: RectProps) {
-    this.element.style.top = rect.top + 'px';
-    this.element.style.left = rect.left + 'px';
-    this.element.style.width = rect.width + 'px';
-    this.element.style.height = rect.height + 'px';
+
+    //使border均分input位置rect的上下左右
+    const borderWidth = 2;
+    const top = rect.top - borderWidth / 2;
+    const left = rect.left - borderWidth / 2;
+    const width = rect.width + borderWidth;
+    const height = rect.height + borderWidth;
+
+    this.element.style.top =top + 'px';
+    this.element.style.left =left + 'px';
+    this.element.style.width = width + 'px';
+    this.element.style.height = height + 'px';
   }
 
   endEditing() {
