@@ -43,7 +43,7 @@ import { getGroupCheckboxState, setCellCheckboxState } from './state/checkbox/ch
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
-import type { CachedDataSource } from './data';
+import { DataSource, type CachedDataSource } from './data';
 import {
   listTableAddRecord,
   listTableAddRecords,
@@ -475,7 +475,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return ifCan;
   }
-  updateOption(options: ListTableConstructorOptions) {
+  updateOption(
+    options: ListTableConstructorOptions,
+    updateConfig: {
+      //当新的option没有传入records或者dataSource时，是否保留原本的数据
+      keepData?: boolean;
+    } = {
+      keepData: false
+    }
+  ) {
     const internalProps = this.internalProps;
     super.updateOption(options);
     internalProps.frozenColDragHeaderMode =
@@ -512,14 +520,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
     if (internalProps.releaseList) {
-      internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
-      internalProps.releaseList = null;
+      for (let i = internalProps.releaseList.length - 1; i >= 0; i--) {
+        const releaseObj = internalProps.releaseList[i];
+        if (updateConfig.keepData && releaseObj instanceof DataSource) {
+          releaseObj.updateColumns(this.internalProps.columns);
+        } else {
+          releaseObj?.release?.();
+          internalProps.releaseList.splice(i, 1);
+        }
+      }
     }
     // // 恢复selection状态
     // internalProps.selection.range = range;
     // this._updateSize();
     // 传入新数据
-    if (options.dataSource) {
+    if (options.dataSource && this.dataSource !== options.dataSource) {
       // _setDataSource(this, options.dataSource);
       this.dataSource = options.dataSource;
     } else if (options.records) {
@@ -527,6 +542,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         sortState: options.sortState
       });
     } else {
+      this.refreshRowColCount();
       this._resetFrozenColCount();
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
