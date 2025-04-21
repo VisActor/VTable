@@ -318,7 +318,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         if (record?.vtableMerge) {
           return '';
         }
-        value = (this.dataSource as CachedDataSource).getGroupSeriesNumber(row - this.columnHeaderLevelCount);
+        if (!table.internalProps.layoutMap.isAggregation(col, row)) {
+          value = (this.dataSource as CachedDataSource).getGroupSeriesNumber(row - this.columnHeaderLevelCount);
+        }
         // const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
         // value = indexs[indexs.length - 1] + 1;
       } else {
