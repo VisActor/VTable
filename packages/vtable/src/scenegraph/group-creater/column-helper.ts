@@ -146,9 +146,10 @@ export function createComplexColumn(
     const isSeriesNumber = table.internalProps.layoutMap.isSeriesNumber(col, row);
 
     let mayHaveIcon =
-      !!define?.icon ||
-      !!(define as ColumnDefine)?.tree ||
-      ((define as IRowSeriesNumber)?.dragOrder && !(isAggregation && isSeriesNumber));
+      cellLocation !== 'body'
+        ? true
+        : ((define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree) &&
+          !(isAggregation && isSeriesNumber);
     if (
       !range &&
       (table.internalProps.enableTreeNodeMerge || cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)
