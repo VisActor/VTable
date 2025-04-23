@@ -2358,7 +2358,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param options
    */
   updateOption(options: BaseTableConstructorOptions) {
-    this.editorManager.cancelEdit();
+    this.editorManager?.cancelEdit();
     (this.options as BaseTable['options']) = options;
     this._hasAutoImageColumn = undefined;
     const {
