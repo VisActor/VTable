@@ -2,6 +2,8 @@ import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import * as VTable_editors from '@visactor/vtable-editors';
 
+// import * as VTable_editors from '../../../vtable-editors/src/index'; // 直接引入，省的需要在vtable-editors中rushx build。
+
 import { HighlightHeaderWhenSelectCellPlugin } from '../../src';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
@@ -24,11 +26,19 @@ export function createTable() {
   const input_editor = new VTable_editors.InputEditor();
   VTable.register.editor('input-editor', input_editor);
 
+  const textArea_editor = new VTable_editors.TextAreaEditor();
+  VTable.register.editor('textArea-editor', textArea_editor);
+
+  const date_input_editor = new VTable_editors.DateInputEditor();
+  const list_editor = new VTable_editors.ListEditor({ values: ['girl', 'boy'] });
+  VTable.register.editor('date_input_editor', date_input_editor);
+  VTable.register.editor('list_editor', list_editor);
+
   const records = generatePersons(20);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
-      title: 'ID',
+      title: 'ID ( input-editor )',
       width: 'auto',
       minWidth: 50,
       sort: true,
@@ -37,9 +47,10 @@ export function createTable() {
     },
     {
       field: 'email1',
-      title: 'email',
-      width: 200,
+      title: 'email ( textArea-editor )',
+      width: 300,
       sort: true,
+      editor: 'textArea-editor',
       style: {
         underline: true,
         underlineDash: [2, 0],
@@ -48,13 +59,15 @@ export function createTable() {
     },
     {
       field: 'date1',
-      title: 'birthday',
-      width: 200
+      title: 'birthday ( date_input_editor )',
+      width: 300,
+      editor: 'date_input_editor'
     },
     {
       field: 'sex',
-      title: 'sex',
-      width: 100
+      title: 'sex ( list_editor )',
+      width: 300,
+      editor: 'list_editor'
     }
   ];
 
@@ -70,6 +83,8 @@ export function createTable() {
       outsideClickDeselect: true,
       headerSelectMode: 'body'
     },
+
+    editCellTrigger: 'click',
     autoWrapText: true,
     editor: 'input-editor',
     menu: {

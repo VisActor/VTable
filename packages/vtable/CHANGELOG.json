@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.18.1",
+      "tag": "@visactor/vtable_v1.18.1",
+      "date": "Mon, 21 Apr 2025 09:53:06 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix scroll console error #3770"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.18.0",
       "tag": "@visactor/vtable_v1.18.0",
       "date": "Thu, 17 Apr 2025 07:40:27 GMT",
