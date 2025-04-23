@@ -17,10 +17,54 @@ export function handleWhell(
   gantt: Gantt,
   isWheelEvent: boolean = true
 ) {
+  // 如果按住Ctrl键，执行缩放操作
+  if (event.ctrlKey) {
+    event.preventDefault(); // 阻止默认滚动行为
+
+    // 确定缩放方向和缩放因子
+    const zoomFactor = event.deltaY < 0 ? 1.1 : 0.9; // 放大或缩小10%
+
+    // 获取当前列宽
+    const currentColWidth = gantt.parsedOptions.timelineColWidth;
+
+    // 计算新的列宽
+    const newColWidth = Math.max(10, Math.min(200, currentColWidth * zoomFactor));
+
+    // 如果列宽没有变化，则不执行后续操作
+    if (newColWidth === currentColWidth) {
+      return;
+    }
+
+    // 获取鼠标在甘特图中的位置
+    const rect = gantt.element.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+
+    // 计算鼠标位置对应的时间点
+    const scrollLeft = state.scrollLeft;
+    const mouseTimePosition = scrollLeft + mouseX;
+
+    // 更新列宽
+    gantt.parsedOptions.timelineColWidth = newColWidth;
+
+    // 重新计算鼠标位置对应的滚动位置
+    const scaleFactor = newColWidth / currentColWidth;
+    const newScrollLeft = mouseTimePosition * scaleFactor - mouseX;
+
+    // 更新视图
+    gantt._updateSize();
+    gantt._generateTimeLineDateMap(); // 重新生成时间线日期映射
+    gantt.scenegraph.refreshAll();
+
+    // 设置新的滚动位置
+    state.setScrollLeft(newScrollLeft);
+
+    return; // 执行缩放后不再执行滚动
+  }
+
+  // 原有的滚动处理逻辑
   let { deltaX, deltaY } = event;
   // 如果按住了shift 则进行横向滚动 纵向不滚动
   if (event.shiftKey && event.deltaY) {
-    //mac电脑按住shift 鼠标滚动deltaX和deltaY是自动互换的，所以此逻辑只针对windows电脑有效及mac触摸板有效
     deltaX = deltaY;
     deltaY = 0;
   }

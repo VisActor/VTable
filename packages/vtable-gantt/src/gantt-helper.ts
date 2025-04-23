@@ -368,6 +368,14 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.eventOptions = options?.eventOptions;
   gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
   gantt.parsedOptions.markLineCreateOptions = options?.markLineCreateOptions;
+
+  // 设置缩放相关的默认值
+  gantt.parsedOptions.zoom = {
+    enableMouseWheel: gantt.options.zoom?.enableMouseWheel ?? true,
+    minColWidth: gantt.options.zoom?.minColWidth ?? 10,
+    maxColWidth: gantt.options.zoom?.maxColWidth ?? 200,
+    step: gantt.options.zoom?.step ?? 0.1 // 默认每次缩放10%
+  };
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   const options = gantt.options;

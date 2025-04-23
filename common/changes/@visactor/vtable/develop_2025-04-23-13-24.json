@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "gantt zoom first version",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

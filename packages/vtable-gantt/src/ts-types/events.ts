@@ -15,6 +15,7 @@ export interface TableEventHandlersEventArgumentMap {
     scrollRatioX?: number;
     scrollRatioY?: number;
   };
+
   mouseenter_task_bar: {
     /** 第几条数据 */
     index: number;
@@ -113,6 +114,16 @@ export interface TableEventHandlersEventArgumentMap {
     data: IMarkLine;
     position: IPosition;
   };
+
+  // 添加缩放事件参数
+  zoom: {
+    /** 缩放前的列宽 */
+    oldWidth: number;
+    /** 缩放后的列宽 */
+    newWidth: number;
+    /** 缩放比例 (newWidth / oldWidth) */
+    scale: number;
+  };
 }
 
 export interface TableEventHandlersReturnMap {
@@ -125,7 +136,11 @@ export interface TableEventHandlersReturnMap {
   create_task_schedule: void;
   create_dependency_link: void;
   delete_dependency_link: void;
+  click_dependency_link_point: void; // 注意：这个在原接口中缺失，我添加了它
   contextmenu_dependency_link: void;
   click_markline_create: void;
   click_markline_content: void;
+
+  // 添加缩放事件返回类型
+  zoom: void;
 }

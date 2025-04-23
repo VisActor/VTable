@@ -47,7 +47,12 @@ export interface EVENT_TYPES {
   CLICK_MARKLINE_CREATE: 'click_markline_create';
   /** 点击里程碑内容 */
   CLICK_MARKLINE_CONTENT: 'click_markline_content';
+  /**
+   * 缩放事件
+   */
+  ZOOM: 'zoom';
 }
+
 /**
  * GanttChart event types
  */
@@ -64,5 +69,6 @@ export const GANTT_EVENT_TYPE: EVENT_TYPES = {
   CLICK_DEPENDENCY_LINK_POINT: 'click_dependency_link_point',
   CONTEXTMENU_DEPENDENCY_LINK: 'contextmenu_dependency_link',
   CLICK_MARKLINE_CREATE: 'click_markline_create',
-  CLICK_MARKLINE_CONTENT: 'click_markline_content'
+  CLICK_MARKLINE_CONTENT: 'click_markline_content',
+  ZOOM: 'zoom'
 } as EVENT_TYPES;
