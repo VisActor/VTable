@@ -17,6 +17,7 @@ export interface ICarouselAnimationPluginOptions {
   customDistColFunction?: (col: number, table: BaseTableAPI) => { distCol: number; animation?: boolean } | undefined;
 }
 
+/** @deprecated 请使用 TableCarouselAnimationPlugin 代替 */
 export class CarouselAnimationPlugin {
   table: BaseTableAPI;
 

@@ -390,6 +390,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
   // });
 
   const globalPointerupCallback = (e: MouseEvent) => {
+    if (table.isReleased) {
+      return;
+    }
     const target = e.target as HTMLElement;
     if (!table.getElement().contains(target)) {
       // 如果点击到表格外部的dom
@@ -405,6 +408,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     }
   };
   const globalPointerdownCallback = (e: MouseEvent) => {
+    if (table.isReleased) {
+      return;
+    }
     const target = e.target as HTMLElement;
     if (!table.getElement().contains(target) && !table.internalProps.menuHandler.containElement(target)) {
       // 如果点击到表格外部的dom

@@ -100,7 +100,70 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
-
+  const columns1: VTable.ColumnsDefine = [
+    {
+      field: 'image',
+      title: '行号',
+      width: 80,
+      cellType: 'image',
+      keepAspectRatio: true
+    },
+    {
+      field: 'id',
+      title: 'ID',
+      width: 'auto',
+      minWidth: 50,
+      sort: true
+    },
+    {
+      field: 'email1',
+      title: 'email',
+      width: 200,
+      sort: true,
+      style: {
+        underline: true,
+        underlineDash: [2, 0],
+        underlineOffset: 3
+      }
+    },
+    {
+      title: 'full name',
+      columns: [
+        {
+          field: 'name',
+          title: 'First Name',
+          width: 200
+        },
+        {
+          field: 'name',
+          title: 'Last Name',
+          width: 200
+        }
+      ]
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    }
+  ];
+  setTimeout(() => {
+    const option1: VTable.ListTableConstructorOptions = {
+      container: document.getElementById(CONTAINER_ID),
+      records,
+      columns: columns1,
+      theme: VTable.themes.DARK,
+      select: {
+        headerSelectMode: 'cell'
+      },
+      // heightMode: 'adaptive',
+      // select: {
+      //   disableSelect: true
+      // },
+      plugins: [highlightPlugin]
+    };
+    tableInstance.updateOption(option1);
+  }, 2000);
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']
   });

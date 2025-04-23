@@ -546,6 +546,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.internalProps.emptyTip?.resetVisible();
       }
     }
+    this.pluginManager.updatePlugins(options.plugins);
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });

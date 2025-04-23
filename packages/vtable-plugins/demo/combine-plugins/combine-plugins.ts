@@ -31,10 +31,12 @@ export function createTable() {
   });
 
   const columnSeries = new ColumnSeriesPlugin({
-    columnCount: 3
+    columnCount: 26,
+    autoExtendColumnTriggerKeys: ['ArrowRight', 'Tab']
   });
   const rowSeries = new RowSeriesPlugin({
-    rowCount: 6,
+    rowCount: 100,
+    autoExtendRowTriggerKeys: ['ArrowDown', 'Enter'],
     fillRowRecord: (index: number) => {
       return [];
     },
@@ -74,11 +76,12 @@ export function createTable() {
         textAlign: 'center'
       }
     }),
+    frozenColCount: 1,
+    defaultRowHeight: 30,
     keyboardOptions: {
       moveFocusCellOnEnter: true
       // editCellOnEnter: false
     },
-    defaultRowHeight: 30,
     plugins: [addRowColumn, columnSeries, rowSeries, highlightPlugin, excelEditCellKeyboardPlugin]
   };
   const tableInstance = new VTable.ListTable(option);

@@ -10,7 +10,8 @@ export type IExcelEditCellKeyboardPluginOptions = {
 };
 
 export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin {
-  id = 'excel-edit-cell-keyboard';
+  id = `excel-edit-cell-keyboard-${Date.now()}`;
+  name = 'Excel Edit Cell Keyboard';
   runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
   table: VTable.ListTable;
   pluginOptions: IExcelEditCellKeyboardPluginOptions;

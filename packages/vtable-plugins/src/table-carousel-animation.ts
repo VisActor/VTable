@@ -20,7 +20,8 @@ export interface ITableCarouselAnimationPluginOptions {
 }
 
 export class TableCarouselAnimationPlugin implements VTable.plugins.IVTablePlugin {
-  id = 'table-carousel-animation';
+  id = `table-carousel-animation-${Date.now()}`;
+  name = 'Table Carousel Animation';
   runTime = [TABLE_EVENT_TYPE.INITIALIZED];
   table: BaseTableAPI;
 
