@@ -4,7 +4,7 @@ The `@visactor/vtable-search` package is a component that encapsulates the VTabl
 
 ## Usage
 
-For demo, please refer to [demo](../../demo/search/search-component)
+For demo, please refer to [demo](/vtable/demo/search/search-component)
 
 ### Initialization
 First, you need to install the `@visactor/vtable` and `@visactor/vtable-search` packages in your application, and then introduce them in your code to generate a table instance and a search component instance:

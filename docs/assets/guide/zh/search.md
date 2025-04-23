@@ -4,7 +4,7 @@
 
 ## 使用方式
 
-demo可以参考[demo](../../demo/search/search-component)
+demo可以参考[demo](/vtable/demo/search/search-component)
 
 ### 初始化
 首先，你需要在你的应用中安装`@visactor/vtable`和`@visactor/vtable-search`包，然后在你的代码中引入它们生成一个表格实例，和一个搜索组件实例：
