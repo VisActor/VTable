@@ -217,6 +217,8 @@ export interface GanttConstructorOptions {
   eventOptions?: IEventOptions;
   keyboardOptions?: IKeyboardOptions;
   markLineCreateOptions?: IMarkLineCreateOptions;
+
+  showTextOutsideBar?: boolean;
 }
 /**
  * IBarLabelText

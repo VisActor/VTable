@@ -368,6 +368,9 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.eventOptions = options?.eventOptions;
   gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
   gantt.parsedOptions.markLineCreateOptions = options?.markLineCreateOptions;
+
+  gantt.parsedOptions.showTextOutsideBar =
+    gantt.options.showTextOutsideBar !== undefined ? gantt.options.showTextOutsideBar : true;
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   const options = gantt.options;

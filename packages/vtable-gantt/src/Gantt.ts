@@ -194,6 +194,7 @@ export class Gantt extends EventTarget {
     eventOptions: IEventOptions;
     keyboardOptions: IKeyboardOptions;
     markLineCreateOptions: IMarkLineCreateOptions;
+    showTextOutsideBar?: boolean;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
@@ -240,6 +241,21 @@ export class Gantt extends EventTarget {
 
     this.scenegraph.afterCreateSceneGraph();
     this._scrollToMarkLine();
+  }
+
+  updateAllTaskBarTextPositions() {
+    if (!this.scenegraph?.taskBar?.barContainer) {
+      return;
+    }
+
+    // 遍历所有任务条节点
+    let taskBarNode = this.scenegraph.taskBar.barContainer.firstChild as GanttTaskBarNode;
+    while (taskBarNode) {
+      if (taskBarNode.updateTextPosition && typeof taskBarNode.updateTextPosition === 'function') {
+        taskBarNode.updateTextPosition();
+      }
+      taskBarNode = taskBarNode._next as GanttTaskBarNode;
+    }
   }
 
   renderTaskBarsTable() {

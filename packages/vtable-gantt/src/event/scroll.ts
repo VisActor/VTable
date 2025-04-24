@@ -287,6 +287,7 @@ export function bindScrollBarListener(eventManager: EventManager) {
     }
     const ratio = e.detail.value[0] / (1 - e.detail.value[1] + e.detail.value[0]);
     throttleVerticalWheel(ratio, e);
+    throttle(() => scenegraph._gantt.updateAllTaskBarTextPositions(), 20)();
   });
 
   scenegraph.scrollbarComponent.hScrollBar.addEventListener('scrollDrag', (e: any) => {
@@ -300,5 +301,6 @@ export function bindScrollBarListener(eventManager: EventManager) {
     // stateManager._gantt.scenegraph.proxy.isSkipProgress = true;
     const ratio = e.detail.value[0] / (1 - e.detail.value[1] + e.detail.value[0]);
     throttleHorizontalWheel(ratio);
+    throttle(() => scenegraph._gantt.updateAllTaskBarTextPositions(), 20)();
   });
 }
