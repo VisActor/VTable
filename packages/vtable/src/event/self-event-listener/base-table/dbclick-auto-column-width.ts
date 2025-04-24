@@ -39,14 +39,10 @@ export function bindDBClickAutoColumnWidthEvent(table: BaseTableAPI) {
             state.columnResize.isRightFrozen
           );
         }
-        const colWidths = [];
-        // 返回所有列宽信息
-        for (let col = 0; col < table.colCount; col++) {
-          colWidths.push(table.getColWidth(col));
-        }
+
         table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
           col: resizeCol.col,
-          colWidths
+          colWidths: table.getColsWidths()
         });
       }
     }
