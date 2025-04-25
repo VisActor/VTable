@@ -164,7 +164,8 @@ export function initOptions(gantt: Gantt) {
     ? getEndDateByTimeUnit(gantt.parsedOptions.minDate, new Date(maxDate), minTimeUnit, step)
     : getEndDateByTimeUnit(gantt.parsedOptions.minDate, new Date(), minTimeUnit, step);
 
-  console.log(gantt.parsedOptions.minDate, gantt.parsedOptions.maxDate);
+  // console.log(gantt.parsedOptions.minDate, gantt.parsedOptions.maxDate);
+
   gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
   gantt.parsedOptions.overscrollBehavior = options?.overscrollBehavior ?? 'auto';

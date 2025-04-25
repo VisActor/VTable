@@ -129,7 +129,7 @@ export function createTable() {
     }
   ];
   const option: GanttConstructorOptions = {
-    records,
+    records: [],
     taskListTable: {
       columns: columns,
       tableWidth: 400,
