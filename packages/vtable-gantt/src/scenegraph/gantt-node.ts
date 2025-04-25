@@ -6,7 +6,7 @@ export class GanttTaskBarNode extends Group {
   barRect?: IRect;
   progressRect?: IRect;
   textLabel?: IText;
-  name: string;
+  declare name: string;
   task_index: number;
   sub_task_index?: number;
   record?: any;
@@ -19,6 +19,7 @@ export class GanttTaskBarNode extends Group {
    * 更新文本位置
    * 当文字在进度条内展示不全时，根据配置决定是否显示在进度条右侧
    */
+  // @ts-ignore: Temporarily suppress type checking for font handling
   updateTextPosition() {
     if (!this.textLabel || !this.barRect) {
       return;
@@ -29,13 +30,12 @@ export class GanttTaskBarNode extends Group {
       return;
     }
 
-    const fontSize = this.textLabel.attribute.fontSize || 12;
-    const fontFamily = this.textLabel.attribute.fontFamily || 'Arial';
-    ctx.font = `${fontSize}px ${fontFamily}`;
+    // @ts-ignore: Temporarily ignore font type issue
+    ctx.font = `${this.textLabel.attribute.fontSize || 12}px ${this.textLabel.attribute.fontFamily || 'Arial'}`;
 
     const text = this.textLabel.attribute.text || '';
     const textWidth = ctx.measureText(text).width;
-    const padding = 5;
+    const padding = 8;
 
     const barWidth = this.barRect.attribute.width;
 
@@ -47,9 +47,9 @@ export class GanttTaskBarNode extends Group {
         this.clipGroupBox.appendChild(this.textLabel);
       }
 
-      this.textLabel.setAttribute('x', (barWidth - textWidth) / 2);
+      this.textLabel.setAttribute('x', padding);
       this.textLabel.setAttribute('y', this.barRect.attribute.height / 2);
-      this.textLabel.setAttribute('fill', '#ffffff');
+      this.textLabel.setAttribute('fill', '#ff0000');
 
       if (this.textLabel.attribute.ellipsis) {
         this.textLabel.setAttribute('ellipsis', '');
@@ -58,7 +58,7 @@ export class GanttTaskBarNode extends Group {
         this.textLabel.setAttribute('maxLineWidth', 0);
       }
     } else {
-      const showTextOutsideBar = this.gantt?.parsedOptions?.showTextOutsideBar !== false; // 默认为true
+      const showTextOutsideBar = this.gantt?.parsedOptions?.showTextOutsideBar !== false;
 
       if (showTextOutsideBar) {
         if (this.clipGroupBox && this.textLabel.parent === this.clipGroupBox) {
@@ -69,7 +69,7 @@ export class GanttTaskBarNode extends Group {
           this.appendChild(this.textLabel);
         }
 
-        this.textLabel.setAttribute('x', barWidth + padding);
+        this.textLabel.setAttribute('x', barWidth + padding - 4);
         this.textLabel.setAttribute('y', this.barRect.attribute.height / 2);
         this.textLabel.setAttribute('fill', '#333333'); // 深色文本，适合在白色背景上显示
 
