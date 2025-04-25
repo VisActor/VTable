@@ -1147,9 +1147,14 @@ export function endResizeCol(table: BaseTableAPI) {
   // textStick 依赖了这个事件 所以一定要触发RESIZE_COLUMN_END
   // if ((table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END)) {
   // RESIZE_COLUMN_END事件触发，返回所有列宽
+  const columns = [];
+  // 返回所有列宽信息
+  for (let col = 0; col < table.colCount; col++) {
+    columns.push(table.getColWidth(col));
+  }
   table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
     col: table.stateManager.columnResize.col,
-    colWidths: table.getColsWidths()
+    colWidths: columns
   });
   // }
 }
