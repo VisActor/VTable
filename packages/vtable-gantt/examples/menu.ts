@@ -1,3 +1,5 @@
+import path from 'path';
+
 export const menus = [
   // {
   //   menu: 'gantt',
@@ -33,6 +35,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-week'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-default-minDate-maxDate'
   },
   {
     path: 'gantt',

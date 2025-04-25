@@ -808,3 +808,25 @@ export function parseDateToTimeUnit(
 // const timeUnit = 'hour';
 // const result = parseDateToTimeUnit(date, timeUnit);
 // console.log(result); // 输出相对于小时的时间差值
+// 找出最大日期和最小日期
+export function findMinMaxDates(dateArray: string[]) {
+  // 将字符串日期转换为 Date 对象，并过滤掉无效日期
+  const dates = dateArray
+    .map((dateStr, index) => ({ date: new Date(dateStr), index }))
+    .filter(item => !isNaN(item.date as unknown as number)); // 过滤掉无效的日期
+
+  if (dates.length === 0) {
+    // throw new Error('数组中没有有效的日期');
+    return {};
+  }
+
+  // 找到最小和最大的日期对象
+  const minDateObj = dates.reduce((min, current) => (current.date < min.date ? current : min));
+  const maxDateObj = dates.reduce((max, current) => (current.date > max.date ? current : max));
+
+  // 返回原始数组中的日期字符串
+  return {
+    minDate: dateArray[minDateObj.index], // 从原始数组中获取最小日期
+    maxDate: dateArray[maxDateObj.index] // 从原始数组中获取最大日期
+  };
+}

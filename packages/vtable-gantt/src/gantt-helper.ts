@@ -16,7 +16,8 @@ import {
   createDateAtMidnight,
   getEndDateByTimeUnit,
   getStartDateByTimeUnit,
-  getWeekNumber
+  getWeekNumber,
+  findMinMaxDates
 } from './tools/util';
 export const defaultTaskBarStyle = {
   barColor: 'blue',
@@ -136,12 +137,34 @@ export function initOptions(gantt: Gantt) {
   //     : createDateAtLastHour(options.maxDate, true)
   //   : undefined;
   const { unit: minTimeUnit, startOfWeek, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+
+  const startDatesInRecord = [];
+  const endDatesInRecord = [];
+  for (let i = 0; i < gantt.records.length; i++) {
+    if (gantt.records[i][gantt.parsedOptions.startDateField]) {
+      startDatesInRecord.push(gantt.records[i][gantt.parsedOptions.startDateField]);
+    }
+  }
+  for (let i = 0; i < gantt.records.length; i++) {
+    if (gantt.records[i][gantt.parsedOptions.endDateField]) {
+      endDatesInRecord.push(gantt.records[i][gantt.parsedOptions.endDateField]);
+    }
+  }
+
+  const { minDate } = findMinMaxDates(startDatesInRecord);
+  const { maxDate } = findMinMaxDates(endDatesInRecord); // minDate, maxDate 的大小别的地方应该有处理 理论上 minDate <= maxDate
   gantt.parsedOptions.minDate = options?.minDate
     ? getStartDateByTimeUnit(new Date(options.minDate), minTimeUnit, startOfWeek)
-    : undefined;
+    : minDate
+    ? getStartDateByTimeUnit(new Date(minDate), minTimeUnit, startOfWeek)
+    : getStartDateByTimeUnit(new Date(), minTimeUnit, startOfWeek);
   gantt.parsedOptions.maxDate = options?.maxDate
     ? getEndDateByTimeUnit(gantt.parsedOptions.minDate, new Date(options.maxDate), minTimeUnit, step)
-    : undefined;
+    : maxDate
+    ? getEndDateByTimeUnit(gantt.parsedOptions.minDate, new Date(maxDate), minTimeUnit, step)
+    : getEndDateByTimeUnit(gantt.parsedOptions.minDate, new Date(), minTimeUnit, step);
+
+  console.log(gantt.parsedOptions.minDate, gantt.parsedOptions.maxDate);
   gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
   gantt.parsedOptions.overscrollBehavior = options?.overscrollBehavior ?? 'auto';
