@@ -323,6 +323,7 @@ export function createTable() {
     headerRowHeight: 60,
     rowHeight: 40,
     taskBar: {
+      showTextOutsideBar: true,
       startDateField: 'start',
       endDateField: 'end',
       progressField: 'progress',
