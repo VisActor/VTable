@@ -370,7 +370,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.markLineCreateOptions = options?.markLineCreateOptions;
 
   gantt.parsedOptions.showTextOutsideBar =
-    gantt.options.showTextOutsideBar !== undefined ? gantt.options.showTextOutsideBar : true;
+    gantt.options.taskBar.showTextOutsideBar !== undefined ? gantt.options.taskBar.showTextOutsideBar : true;
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   const options = gantt.options;

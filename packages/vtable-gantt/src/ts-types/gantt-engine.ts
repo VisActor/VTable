@@ -113,6 +113,8 @@ export interface GanttConstructorOptions {
     selectedBarStyle?: ITaskBarSelectedStyle;
     /** 任务条是否可选择，默认为true */
     selectable?: boolean;
+    /** 是否在任务条外显示文本 */
+    showTextOutsideBar?: boolean;
     /** 任务条右键菜单 */
     menu?: {
       /** 右键菜单。代替原来的option.contextmenu */
@@ -217,8 +219,6 @@ export interface GanttConstructorOptions {
   eventOptions?: IEventOptions;
   keyboardOptions?: IKeyboardOptions;
   markLineCreateOptions?: IMarkLineCreateOptions;
-
-  showTextOutsideBar?: boolean;
 }
 /**
  * IBarLabelText

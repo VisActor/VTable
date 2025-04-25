@@ -39,7 +39,7 @@ export class GanttTaskBarNode extends Group {
 
     const barWidth = this.barRect.attribute.width;
 
-    // 检查是否有showTextOutsideBar配置，从gantt.parsedOptions中获取
+    // 检查是否有showTextOutsideBar配置，从taskBar配置中获取
     const showTextOutsideBar = this.gantt?.parsedOptions?.showTextOutsideBar !== false;
 
     if (textWidth + padding * 2 <= barWidth) {
