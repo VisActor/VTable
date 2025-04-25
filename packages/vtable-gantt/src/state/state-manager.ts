@@ -489,6 +489,8 @@ export class StateManager {
     this.moveTaskBar.deltaX = 0;
     this.moveTaskBar.deltaY = 0;
     this.moveTaskBar.moveTaskBarXSpeed = 0;
+
+    this._gantt.updateAllTaskBarTextPositions();
   }
   dealTaskBarMove(e: FederatedPointerEvent) {
     const gantt = this._gantt;
@@ -605,6 +607,8 @@ export class StateManager {
 
     gantt.scenegraph.updateNextFrame();
 
+    this._gantt.updateAllTaskBarTextPositions();
+
     //
   }
   //#region 调整拖拽任务条的大小
@@ -720,6 +724,7 @@ export class StateManager {
       }
       this._gantt.scenegraph.updateNextFrame();
     }
+    this._gantt.updateAllTaskBarTextPositions();
   }
   dealTaskBarResize(e: FederatedPointerEvent) {
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
@@ -743,6 +748,8 @@ export class StateManager {
     );
 
     this._gantt.scenegraph.updateNextFrame();
+
+    this._gantt.updateAllTaskBarTextPositions();
     //
   }
   //#endregion
@@ -1071,6 +1078,8 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
     ]);
   }
 
+  target.updateTextPosition();
+
   state._gantt.scenegraph.refreshRecordLinkNodes(taskIndex, sub_task_index, target, dy);
 }
 
@@ -1110,6 +1119,9 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
     textLabel.setAttribute('maxLineWidth', newWidth - TASKBAR_HOVER_ICON_WIDTH * 2);
     textLabel.setAttribute('x', position.x);
   }
+
+  target.updateTextPosition();
+
   state.showTaskBarHover();
 
   reCreateCustomNode(state._gantt, target, taskIndex, sub_task_index);

@@ -33,7 +33,7 @@ export class GanttTaskBarNode extends Group {
     // @ts-ignore: Temporarily ignore font type issue
     ctx.font = `${this.textLabel.attribute.fontSize || 12}px ${this.textLabel.attribute.fontFamily || 'Arial'}`;
 
-    const text = this.textLabel.attribute.text || '';
+    const text = String(this.textLabel.attribute.text || '');
     const textWidth = ctx.measureText(text).width;
     const padding = 8;
 
@@ -51,14 +51,11 @@ export class GanttTaskBarNode extends Group {
       this.textLabel.setAttribute('y', this.barRect.attribute.height / 2);
       this.textLabel.setAttribute('fill', '#ff0000');
 
-      if (this.textLabel.attribute.ellipsis) {
-        this.textLabel.setAttribute('ellipsis', '');
-      }
-      if (this.textLabel.attribute.maxLineWidth) {
-        this.textLabel.setAttribute('maxLineWidth', 0);
-      }
+      // Remove ellipsis when text fits inside bar
+      this.textLabel.setAttribute('ellipsis', '');
+      this.textLabel.setAttribute('maxLineWidth', barWidth - padding * 2);
     } else {
-      const showTextOutsideBar = this.gantt?.parsedOptions?.showTextOutsideBar !== false;
+      const showTextOutsideBar = this.gantt?.parsedOptions?.taskBar?.showTextOutsideBar ?? true;
 
       if (showTextOutsideBar) {
         if (this.clipGroupBox && this.textLabel.parent === this.clipGroupBox) {
@@ -71,14 +68,11 @@ export class GanttTaskBarNode extends Group {
 
         this.textLabel.setAttribute('x', barWidth + padding - 4);
         this.textLabel.setAttribute('y', this.barRect.attribute.height / 2);
-        this.textLabel.setAttribute('fill', '#333333'); // 深色文本，适合在白色背景上显示
+        this.textLabel.setAttribute('fill', '#333333');
 
-        if (this.textLabel.attribute.ellipsis) {
-          this.textLabel.setAttribute('ellipsis', '');
-        }
-        if (this.textLabel.attribute.maxLineWidth) {
-          this.textLabel.setAttribute('maxLineWidth', 0);
-        }
+        // Remove ellipsis when text is outside bar
+        this.textLabel.setAttribute('ellipsis', '');
+        this.textLabel.setAttribute('maxLineWidth', '0');
       } else {
         if (this.clipGroupBox && this.textLabel.parent !== this.clipGroupBox) {
           if (this.textLabel.parent) {
@@ -89,7 +83,7 @@ export class GanttTaskBarNode extends Group {
 
         this.textLabel.setAttribute('x', padding);
         this.textLabel.setAttribute('y', this.barRect.attribute.height / 2);
-        this.textLabel.setAttribute('fill', '#ffffff');
+        this.textLabel.setAttribute('fill', '#ff0000');
 
         this.textLabel.setAttribute('ellipsis', '...');
         this.textLabel.setAttribute('maxLineWidth', barWidth - padding * 2);
