@@ -19,7 +19,6 @@ export class GanttTaskBarNode extends Group {
    * 更新文本位置
    * 当文字在进度条内展示不全时，根据配置决定是否显示在进度条右侧
    */
-  // @ts-ignore: Temporarily suppress type checking for font handling
   updateTextPosition() {
     if (!this.textLabel || !this.barRect) {
       return;
@@ -30,20 +29,24 @@ export class GanttTaskBarNode extends Group {
       return;
     }
 
-    // @ts-ignore: Temporarily ignore font type issue
-    ctx.font = `${this.textLabel.attribute.fontSize || 12}px ${this.textLabel.attribute.fontFamily || 'Arial'}`;
+    const fontSize = this.textLabel.attribute.fontSize || 12;
+    ctx.font = `${fontSize.toString()}px ${this.textLabel.attribute.fontFamily || 'Arial'}`;
 
-    const text = this.textLabel.attribute.text || '';
+    const text = String(this.textLabel.attribute.text || '');
     const textWidth = ctx.measureText(text).width;
-    const padding = 8;
+
+    const labelStyle = this.gantt?.parsedOptions?.taskBarLabelStyle;
+    const padding = labelStyle?.padding
+      ? Array.isArray(labelStyle.padding)
+        ? labelStyle.padding[3]
+        : labelStyle.padding
+      : 8;
 
     const barWidth = this.barRect.attribute.width;
 
-    // 检查是否有showTextOutsideBar配置，从taskBar配置中获取
     const showTextOutsideBar = this.gantt?.parsedOptions?.showTextOutsideBar !== false;
 
     if (textWidth + padding * 2 <= barWidth) {
-      // 文本可以完全显示在进度条内
       if (this.clipGroupBox && this.textLabel.parent !== this.clipGroupBox) {
         if (this.textLabel.parent) {
           this.textLabel.parent.removeChild(this.textLabel);
@@ -51,10 +54,18 @@ export class GanttTaskBarNode extends Group {
         this.clipGroupBox.appendChild(this.textLabel);
       }
 
-      // 设置文本位置和样式
-      this.textLabel.setAttribute('x', padding);
-      this.textLabel.setAttribute('y', this.barRect.attribute.height / 2);
-      this.textLabel.setAttribute('fill', '#ff0000');
+      const textAlign = this.gantt?.parsedOptions?.taskBarLabelStyle?.textAlign || 'left';
+      this.textLabel.setAttribute('textAlign', textAlign);
+
+      if (textAlign === 'right') {
+        this.textLabel.setAttribute('x', barWidth - padding);
+      } else if (textAlign === 'center') {
+        this.textLabel.setAttribute('x', barWidth / 2);
+      } else {
+        this.textLabel.setAttribute('x', padding);
+      }
+
+      this.textLabel.setAttribute('fill', this.gantt?.parsedOptions?.taskBarLabelStyle?.color || '#333333');
 
       this.textLabel.setAttribute('ellipsis', undefined);
       this.textLabel.setAttribute('maxLineWidth', barWidth - padding * 2);
@@ -67,9 +78,9 @@ export class GanttTaskBarNode extends Group {
         this.appendChild(this.textLabel);
       }
 
+      const originalFill = this.gantt?.parsedOptions?.taskBarLabelStyle?.outsideColor || '#333333';
       this.textLabel.setAttribute('x', barWidth + padding);
-      this.textLabel.setAttribute('y', this.barRect.attribute.height / 2);
-      this.textLabel.setAttribute('fill', '#333333');
+      this.textLabel.setAttribute('fill', originalFill);
 
       this.textLabel.setAttribute('ellipsis', undefined);
       this.textLabel.setAttribute('maxLineWidth', undefined);
@@ -84,16 +95,31 @@ export class GanttTaskBarNode extends Group {
       }
 
       this.textLabel.setAttribute('x', padding);
-      this.textLabel.setAttribute('y', this.barRect.attribute.height / 2);
-      this.textLabel.setAttribute('fill', '#ff0000');
+      this.textLabel.setAttribute('fill', this.gantt?.parsedOptions?.taskBarLabelStyle?.color || '#333333');
 
       this.textLabel.setAttribute('ellipsis', '...');
       this.textLabel.setAttribute('maxLineWidth', barWidth - padding * 2);
     }
 
-    this.textLabel.setAttribute('textBaseline', 'middle');
-    this.textLabel.setAttribute('textAlign', 'left');
+    // When text is outside, always align to left
+    if (!this.clipGroupBox || this.textLabel.parent !== this.clipGroupBox) {
+      this.textLabel.setAttribute('textAlign', 'left');
+    }
 
+    // Use configured textBaseline or default to middle
+    const textBaseline = this.gantt?.parsedOptions?.taskBarLabelStyle?.textBaseline || 'middle';
+    this.textLabel.setAttribute('textBaseline', textBaseline);
+
+    // Adjust y position based on textBaseline
+    let yPos = this.barRect.attribute.height / 2;
+    if (textBaseline === 'top') {
+      yPos = labelStyle?.padding?.[0] || 0;
+    } else if (textBaseline === 'bottom') {
+      yPos = this.barRect.attribute.height - (labelStyle?.padding?.[2] || 0);
+    }
+
+    // Update y position for all text elements
+    this.textLabel.setAttribute('y', yPos);
     this.textLabel.setAttribute('visible', true);
   }
 }
