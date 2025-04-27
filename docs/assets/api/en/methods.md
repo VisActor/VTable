@@ -1421,6 +1421,16 @@ getAllColsWidth: () => number;
 
 ```
 
+## getAllColsWidths(Function)
+
+get all columns width list
+
+```
+
+getAllColsWidth: () => number[];
+
+```
+
 ## setSortedIndexMap(Function)
 
 Set up a pre-sort index to improve initial sorting performance in scenarios where large amounts of data are sorted.

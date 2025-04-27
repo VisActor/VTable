@@ -1268,6 +1268,14 @@ getAllRowsHeight: () => number;
 getAllColsWidth: () => number;
 ```
 
+## getAllColsWidths(Function)
+
+获取表格所有列的宽度列表
+
+```
+getAllColsWidth: () => number[];
+```
+
 ## setSortedIndexMap(Function)
 
 设置预排序索引，用在大数据量排序的场景下，提升初次排序性能

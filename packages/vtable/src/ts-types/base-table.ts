@@ -778,6 +778,7 @@ export interface BaseTableAPI {
   // focusCell(col: number, row: number): void;
   getCellOverflowText: (col: number, row: number) => string | null;
   getColsWidth: (startCol: number, endCol: number) => number;
+  getColsWidths: () => number[];
   getRowsHeight: (startRow: number, endRow: number) => number;
 
   release: () => void;
