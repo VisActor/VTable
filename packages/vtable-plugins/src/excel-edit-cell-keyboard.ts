@@ -1,5 +1,3 @@
-import type { CellRange } from '@visactor/vtable/es/ts-types';
-import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
 import * as VTable from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';

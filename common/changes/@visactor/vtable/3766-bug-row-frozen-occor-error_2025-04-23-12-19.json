@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when records is blank updateColumns api occor error #3766\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

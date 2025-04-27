@@ -37,8 +37,6 @@ export class ListEditor implements IEditor {
       // input.style.boxShadow = 'none';
     });
 
-
-
     this.element = select;
 
     // create option tags
@@ -86,7 +84,6 @@ export class ListEditor implements IEditor {
   }
 
   adjustPosition(rect: RectProps) {
-
     //使border均分input位置rect的上下左右
     const borderWidth = 2;
     const top = rect.top - borderWidth / 2;
@@ -94,8 +91,8 @@ export class ListEditor implements IEditor {
     const width = rect.width + borderWidth;
     const height = rect.height + borderWidth;
 
-    this.element.style.top =top + 'px';
-    this.element.style.left =left + 'px';
+    this.element.style.top = top + 'px';
+    this.element.style.left = left + 'px';
     this.element.style.width = width + 'px';
     this.element.style.height = height + 'px';
   }

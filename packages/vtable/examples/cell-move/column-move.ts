@@ -213,11 +213,11 @@ export function createTable() {
       }
     ],
     dragOrder: {
-      dragHeaderMode: 'column',
-      validateDragOrderOnEnd(source, target) {
-        console.log(source, target);
-        return false;
-      }
+      dragHeaderMode: 'column'
+      // validateDragOrderOnEnd(source, target) {
+      //   console.log(source, target);
+      //   return false;
+      // }
     }
     // theme: VTable.themes.SIMPLIFY,
     // defaultRowHeight: 100,

@@ -86,7 +86,14 @@ function getHierarchyExpandLevel(table: ListTableAPI) {
 
 export function _setDataSource(table: BaseTableAPI, dataSource: DataSource): void {
   _dealWithUpdateDataSource(table, () => {
-    table.internalProps.dataSource && table.internalProps.dataSource.release?.();
+    if (table.internalProps.dataSource) {
+      table.internalProps.releaseList.forEach(releaseObj => {
+        if (releaseObj instanceof DataSource) {
+          releaseObj.release();
+          table.internalProps.releaseList.splice(table.internalProps.releaseList.indexOf(releaseObj), 1);
+        }
+      });
+    }
     if (dataSource) {
       if (dataSource instanceof DataSource) {
         table.internalProps.dataSource = dataSource;

@@ -1665,6 +1665,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**
+   * 获取所有表列的宽度的数组
+   * @returns {number[]} 宽度列表
+   */
+  getColsWidths(): number[] {
+    const maxCount = this.colCount;
+    const widths: number[] = [];
+
+    for (let col = 0; col < maxCount; col++) {
+      widths.push(this.getColWidth(col));
+    }
+
+    return widths;
+  }
+
+  /**
    * 根据列号 获取列宽最大值
    * @param  {number} col column index
    * @return {number} column max width

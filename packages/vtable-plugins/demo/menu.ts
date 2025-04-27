@@ -36,6 +36,10 @@ export const menus = [
     name: 'combine-plugins'
   },
   {
+    path: 'rotate-table',
+    name: 'rotate-table'
+  },
+  {
     menu: 'pivot-plugin',
     children: [
       {

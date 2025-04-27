@@ -6,12 +6,19 @@
 
 Update table configuration items, which will be automatically redrawn after being called.
 
+updateConfig parameter description:
+
+- keepData: When the new option does not pass in records or dataSource, whether to retain the original data. The default is false
+
 ```ts
   /**
    *Update options currently only support full updates
    * @param options
    */
-  updateOption(options: BaseTableConstructorOptions) => void
+  updateOption(options: BaseTableConstructorOptions,updateConfig?:{
+    //When the new option does not pass in records or dataSource, whether to retain the original data. The default is false
+    keepData?:boolean
+  }) => void
 ```
 
 If you need to update a single configuration item, please refer to the other `update**` interfaces below
@@ -1411,6 +1418,16 @@ get all columns width
 ```
 
 getAllColsWidth: () => number;
+
+```
+
+## getAllColsWidths(Function)
+
+get all columns width list
+
+```
+
+getAllColsWidth: () => number[];
 
 ```
 

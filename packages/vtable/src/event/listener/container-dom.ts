@@ -4,12 +4,13 @@ import type { ListTableConstructorOptions, MousePointerMultiCellEvent } from '..
 import { InteractionState, type KeydownEvent, type ListTableAPI } from '../../ts-types';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
-import { browser } from '../../tools/helper';
+import { browser, getPromiseValue } from '../../tools/helper';
 import type { EventManager } from '../event';
 import { getPixelRatio } from '../../tools/pixel-ratio';
 import { endResizeCol, endResizeRow } from './table-group';
 import { isCellDisableSelect } from '../../state/select/is-cell-select-highlight';
 import { fireMoveColEventListeners } from '../helper';
+import { vglobal } from '@src/vrender';
 export function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
@@ -563,16 +564,37 @@ export function bindContainerDomListener(eventManager: EventManager) {
   }
   // 有被阻止冒泡的场景 就触发不到这里的事件了 所以这个LastBodyPointerXY变量的赋值在scrollbar的down事件也进行了处理
   const globalPointerdownCallback = (e: MouseEvent) => {
+    if (table.isReleased) {
+      return;
+    }
     // console.log('body pointerdown');
     table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
     table.eventManager.isDown = true;
+
+    const target = e.target as HTMLElement;
+    if (!table.getElement().contains(target) && !table.internalProps.menuHandler.containElement(target)) {
+      // 如果点击到表格外部的dom
+      const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
+      getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
+        if (isCompleteEdit === false) {
+          // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+          return;
+        }
+        //点击到表格外部不需要取消选中状态
+        if (table.options.select?.outsideClickDeselect) {
+          const isHasSelected = !!stateManager.select.ranges?.length;
+          eventManager.dealTableSelect();
+          stateManager.endSelectCells(true, isHasSelected);
+        }
+      });
+    }
   };
   eventManager.globalEventListeners.push({
     name: 'pointerdown',
-    env: 'body',
+    env: 'vglobal',
     callback: globalPointerdownCallback
   });
-  document.body.addEventListener('pointerdown', globalPointerdownCallback);
+  vglobal.addEventListener('pointerdown', globalPointerdownCallback);
 
   const globalPointerupOutsideCallback = (e: MouseEvent) => {
     // console.log('pointerupoutside');
@@ -615,10 +637,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
   };
 
   const globalPointerupCallback = (e: MouseEvent) => {
+    if (table.isReleased) {
+      return;
+    }
     const target = e.target as HTMLElement;
+
     if (target !== table.canvas) {
       globalPointerupOutsideCallback(e);
     }
+
     table.eventManager.LastBodyPointerXY = null;
     // console.log('body pointerup', table.eventManager.isDown, table.eventManager.isDraging);
     table.eventManager.isDown = false;
@@ -631,14 +658,27 @@ export function bindContainerDomListener(eventManager: EventManager) {
     } else if (stateManager.isMoveCol()) {
       const endMoveColSuccess = table.stateManager.endMoveCol();
       fireMoveColEventListeners(table, endMoveColSuccess, e);
+    } else if (table.editorManager.editingEditor) {
+      if (!table.getElement().contains(target)) {
+        // 如果点击到表格外部的dom
+        const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
+        getPromiseValue<boolean>(isCompleteEdit, (isCompleteEdit: boolean) => {
+          if (isCompleteEdit === false) {
+            // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+            return;
+          }
+          stateManager.updateInteractionState(InteractionState.default);
+          eventManager.dealTableHover();
+        });
+      }
     }
   };
   eventManager.globalEventListeners.push({
     name: 'pointerup',
-    env: 'document',
+    env: 'vglobal',
     callback: globalPointerupCallback
   });
-  document.addEventListener('pointerup', globalPointerupCallback);
+  vglobal.addEventListener('pointerup', globalPointerupCallback);
 
   const globalPointermoveCallback = (e: MouseEvent) => {
     if (table.eventManager.isDown && table.eventManager.LastBodyPointerXY) {
@@ -807,8 +847,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
   };
   eventManager.globalEventListeners.push({
     name: 'pointermove',
-    env: 'body',
+    env: 'vglobal',
     callback: globalPointermoveCallback
   });
-  document.body.addEventListener('pointermove', globalPointermoveCallback);
+  vglobal.addEventListener('pointermove', globalPointermoveCallback);
 }
