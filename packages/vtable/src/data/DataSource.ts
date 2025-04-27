@@ -1285,6 +1285,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   release(): void {
     super.release?.();
     this.lastFilterRules = null;
+    this.clearSortedMap();
+    this.clearCurrentIndexedData();
+    this.currentPagerIndexedData.length = 0;
   }
   clearSortedMap() {
     this.currentIndexedData && (this.currentIndexedData.length = 0);
