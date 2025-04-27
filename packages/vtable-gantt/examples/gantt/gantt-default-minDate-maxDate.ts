@@ -213,7 +213,7 @@ export function createTable() {
     },
     // maxDate: '2024-06-01',
     // minDate: '2024-06-01',
-    // maxDate: '2024-10-15',
+    maxDate: '2024-10-15',
 
     taskBar: {
       startDateField: 'start',

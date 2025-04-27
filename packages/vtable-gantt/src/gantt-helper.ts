@@ -142,7 +142,7 @@ export function initOptions(gantt: Gantt) {
 
   // processRecords函数中，重新计算了是否缺失minDate，maxDate 的情况
   gantt.parsedOptions.maxDate =
-    options?.maxDate && options?.minDate
+    options?.maxDate && gantt.parsedOptions?.minDate
       ? getEndDateByTimeUnit(gantt.parsedOptions?.minDate, new Date(options.maxDate), minTimeUnit, step)
       : undefined;
 
