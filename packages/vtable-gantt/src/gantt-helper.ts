@@ -140,10 +140,12 @@ export function initOptions(gantt: Gantt) {
     ? getStartDateByTimeUnit(new Date(options.minDate), minTimeUnit, startOfWeek)
     : undefined;
 
-  // processRecords函数中，重新计算了是否缺失minDate，maxDate 的情况，gantt.parsedOptions?.minDate ?? new Date()，这是为了其不报错, 默认 minDate 为当前时间
-  gantt.parsedOptions.maxDate = options?.maxDate
-    ? getEndDateByTimeUnit(gantt.parsedOptions?.minDate ?? new Date(), new Date(options.maxDate), minTimeUnit, step)
-    : undefined;
+  // processRecords函数中，重新计算了是否缺失minDate，maxDate 的情况
+  gantt.parsedOptions.maxDate =
+    options?.maxDate && options?.minDate
+      ? getEndDateByTimeUnit(gantt.parsedOptions?.minDate, new Date(options.maxDate), minTimeUnit, step)
+      : undefined;
+
   gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
   gantt.parsedOptions.overscrollBehavior = options?.overscrollBehavior ?? 'auto';
