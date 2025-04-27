@@ -272,14 +272,21 @@ export interface IMilestoneStyle {
   cornerRadius?: number;
   /** 里程碑默认是个正方形，这个width配置正方形的边长 */
   width?: number;
-  //  /** 里程碑展示文字。可以配置固定文本 或者 字符串模版`${fieldName}` */
-  //  labelText?: ITaskBarLabelText;
-  //  /** 里程碑文字样式 */
-  //  labelTextStyle?: ITaskBarLabelTextStyle;
-  // /** 里程碑图标 */
-  // icon?: string;
-  // /** 相对于任务条文字方位位置，可选值：'left', 'top', 'right', 'bottom'，分别代表左、上、右、下四个方向 */
-  // textorient?: 'left', 'top', 'right', 'bottom';
+
+  // 新增文字相关属性
+  /** 里程碑展示文字。可以配置固定文本 或者 字符串模版`${fieldName}` */
+  labelText?: string;
+  /** 里程碑文字样式 */
+  labelTextStyle?: {
+    fontFamily?: string;
+    fontSize?: number;
+    color?: string;
+    textAlign?: 'center' | 'end' | 'left' | 'right' | 'start';
+    textBaseline?: 'alphabetic' | 'bottom' | 'middle' | 'top';
+    padding?: number | number[];
+  };
+  /** 文字相对于里程碑的位置 */
+  textPosition?: 'left' | 'top' | 'right' | 'bottom' | 'center';
 }
 export type ILineStyle = {
   lineColor?: string;

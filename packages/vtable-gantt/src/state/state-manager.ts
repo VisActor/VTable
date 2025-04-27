@@ -1053,6 +1053,8 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
   const sub_task_index = target.sub_task_index;
   const record = target.record;
   const isMilestone = record.type === 'milestone';
+  const oldX = target.attribute.x;
+  const oldY = target.attribute.y;
 
   if (dx) {
     target.setAttribute('x', Math.max(0, target.attribute.x + dx));
@@ -1069,6 +1071,25 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
       target.attribute.x + target.attribute.width / 2,
       target.attribute.y + target.attribute.height / 2
     ]);
+
+    // 如果是里程碑且有文本容器，同步更新文本容器位置
+    if (target.milestoneTextContainer) {
+      // 计算位置偏移量
+      const deltaX = target.attribute.x - oldX;
+      const deltaY = target.attribute.y - oldY;
+
+      // 更新文本容器位置
+      const currentX = target.milestoneTextContainer.attribute.x;
+      const currentY = target.milestoneTextContainer.attribute.y;
+      target.milestoneTextContainer.setAttribute('x', currentX + deltaX);
+      target.milestoneTextContainer.setAttribute('y', currentY + deltaY);
+    }
+    target.milestoneTextContainer.setAttribute('zIndex', 10001);
+
+    // 如果有里程碑文本，确保它也保持高层级
+    if (target.milestoneTextLabel) {
+      target.milestoneTextLabel.setAttribute('zIndex', 10002);
+    }
   }
 
   state._gantt.scenegraph.refreshRecordLinkNodes(taskIndex, sub_task_index, target, dy);
@@ -1086,6 +1107,8 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
   const record = target.record;
   const progress = record[progressField];
   const isMilestone = record.type === 'milestone';
+  const oldX = target.attribute.x;
+  const oldY = target.attribute.y;
   target.setAttribute('zIndex', 10000);
   if (dx) {
     target.setAttribute('x', target.attribute.x + dx);
@@ -1096,6 +1119,23 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
       target.attribute.x + target.attribute.width / 2,
       target.attribute.y + target.attribute.height / 2
     ]);
+
+    // 如果是里程碑且有文本容器，同步更新文本容器位置
+    if (target.milestoneTextContainer) {
+      // 计算位置偏移量
+      const deltaX = target.attribute.x - oldX;
+
+      // 更新文本容器位置
+      const currentX = target.milestoneTextContainer.attribute.x;
+      const currentY = target.milestoneTextContainer.attribute.y;
+      target.milestoneTextContainer.setAttribute('x', currentX + deltaX);
+      target.milestoneTextContainer.setAttribute('y', currentY);
+
+      // 添加了这几行，确保文本位置更新
+      if (target.milestoneTextLabel) {
+        target.updateMilestoneTextPosition();
+      }
+    }
   }
 
   if (newWidth) {
