@@ -281,7 +281,7 @@ export interface IMilestoneStyle {
   // /** 里程碑图标 */
   // icon?: string;
   /** 文字相对于里程碑的位置 */
-  textorient?: 'left' | 'top' | 'right' | 'bottom' | 'center';
+  textorient?: 'left' | 'top' | 'right' | 'bottom';
 }
 export type ILineStyle = {
   lineColor?: string;

@@ -92,12 +92,6 @@ export class TaskBar {
     const center = milestoneWidth / 2;
 
     switch (position) {
-      case 'center':
-        textX = center;
-        textY = center;
-        textAlignValue = 'center';
-        textBaselineValue = 'middle';
-        break;
       case 'left':
         textX = -paddingVal;
         textY = center;
