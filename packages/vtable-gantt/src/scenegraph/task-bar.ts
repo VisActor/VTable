@@ -394,54 +394,39 @@ export class TaskBar {
       taskRecord.type === 'milestone' &&
       this._scene._gantt.parsedOptions.taskBarMilestoneStyle.labelText
     ) {
-      // 获取里程碑文字样式配置
-      const milestoneStyle = this._scene._gantt.parsedOptions.taskBarMilestoneStyle || {};
+      // 处理里程碑文本
+      const milestoneStyle = this._scene._gantt.parsedOptions.taskBarMilestoneStyle;
       const textStyle = milestoneStyle.labelTextStyle || {};
-      const textPosition = milestoneStyle.textPosition || 'top'; // 默认在里程碑上方
+      const pos = this.calculateMilestoneTextPosition(
+        milestoneStyle.textPosition || 'top',
+        milestoneStyle.width,
+        textStyle.padding ?? 4
+      );
 
-      // 解析文本内容
-      let text = this._scene._gantt.parsedOptions.taskBarMilestoneStyle.labelText;
-      text = this.formatMilestoneText(text, taskRecord);
-
-      const milestoneWidth = this._scene._gantt.parsedOptions.taskBarMilestoneStyle.width;
-      const padding = typeof textStyle.padding === 'number' ? textStyle.padding : 4;
-
-      // 创建一个不受旋转影响的文本容器
       const textContainer = new Group({
-        x: x, // 使用与里程碑相同的初始位置
-        y: y,
-        width: milestoneWidth,
-        height: milestoneWidth,
-        angle: 0, // 确保不旋转
+        x,
+        y,
+        width: milestoneStyle.width,
+        height: milestoneStyle.width,
+        angle: 0,
         pickable: false,
         zIndex: 5000
       });
 
-      // 计算文本位置
-      const { textX, textY, textAlignValue, textBaselineValue } = this.calculateMilestoneTextPosition(
-        textPosition,
-        milestoneWidth,
-        padding
-      );
-
-      // 创建里程碑文本
       const milestoneLabel = createText({
-        x: textX,
-        y: textY,
-        fontSize: textStyle.fontSize || 18,
+        x: pos.textX,
+        y: pos.textY,
+        fontSize: textStyle.fontSize || 16,
         fontFamily: textStyle.fontFamily || 'Arial',
         fill: textStyle.color || '#ff0000',
-        textBaseline: textStyle.textBaseline || textBaselineValue,
-        textAlign: textStyle.textAlign || textAlignValue,
-        text,
-        zIndex: 5001, // 提高层级确保显示在里程碑上方
+        textBaseline: textStyle.textBaseline || pos.textBaselineValue,
+        textAlign: textStyle.textAlign || pos.textAlignValue,
+        text: this.formatMilestoneText(milestoneStyle.labelText, taskRecord),
+        zIndex: 5001,
         pickable: false
       });
 
-      // 将文本添加到文本容器
       textContainer.appendChild(milestoneLabel);
-
-      // 将文本容器添加到barContainer
       this.barContainer.appendChild(textContainer);
 
       // 保存文本引用
@@ -483,58 +468,25 @@ export class TaskBar {
 
         // 如果之前有里程碑文本，确保新创建的里程碑也有文本
         if (hasMilestoneText && barGroup.record?.type === 'milestone' && !barGroup.milestoneTextLabel) {
-          // 创建里程碑文本
-          const milestoneStyle = this._scene._gantt.parsedOptions.taskBarMilestoneStyle || {};
-          // 获取默认文本样式并合并用户配置
-          const defaultTextStyle = {
-            fontSize: 18,
-            color: '#ff0000',
-            fontFamily: 'Arial',
-            padding: 4
-          };
-          const textStyle = { ...defaultTextStyle, ...(milestoneStyle.labelTextStyle || {}) };
-
-          // 使用用户配置的 textPosition，如果没有则使用 top
-          const textPosition = milestoneStyle.textPosition || 'center';
-          const milestoneWidth = milestoneStyle.width || 16;
-
-          // 创建文本容器，使用保存的位置
+          // 恢复之前的文本状态和位置
           const textContainer = new Group({
             x: textContainerPos ? textContainerPos.x : barGroup.attribute.x,
             y: textContainerPos ? textContainerPos.y : barGroup.attribute.y,
-            width: milestoneWidth,
-            height: milestoneWidth,
+            width: barGroup.attribute.width,
+            height: barGroup.attribute.height,
             angle: 0,
             pickable: false,
             zIndex: 2000
           });
 
-          // 计算文本位置
-          const { textX, textY, textAlignValue, textBaselineValue } = this.calculateMilestoneTextPosition(
-            textPosition,
-            milestoneWidth,
-            textStyle.padding
-          );
-
-          // 创建文本
           const milestoneLabel = createText({
-            x: textX,
-            y: textY,
-            fontSize: textStyle.fontSize || 18,
-            fontFamily: textStyle.fontFamily || 'Arial',
-            fill: textStyle.color || '#ff0000',
-            text: milestoneText.text,
-            textBaseline: milestoneText.textBaseline || textBaselineValue,
-            textAlign: milestoneText.textAlign || textAlignValue,
-            zIndex: 2000,
+            ...milestoneText,
             pickable: false,
-            dx: 0,
-            dy: -4 // 额外上移一点距离
+            zIndex: 2000
           });
 
           textContainer.appendChild(milestoneLabel);
           this.barContainer.appendChild(textContainer);
-
           barGroup.milestoneTextLabel = milestoneLabel;
           barGroup.milestoneTextContainer = textContainer;
         }
