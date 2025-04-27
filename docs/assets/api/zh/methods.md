@@ -6,19 +6,12 @@
 
 更新表格配置项，调用后会自动重绘。
 
-updateConfig 参数说明：
-
-- keepData: 当新的option没有传入records或者dataSource时，是否保留原本的数据。默认为false
-
 ```ts
   /**
    * 更新options 目前只支持全量更新
    * @param options
    */
-  updateOption(options: BaseTableConstructorOptions,updateConfig?:{
-    //当新的option没有传入records或者dataSource时，是否保留原本的数据
-    keepData?:boolean
-  }) => void
+  updateOption(options: BaseTableConstructorOptions) => void
 ```
 
 如果需要更新单个配置项，请参考下面其他`update**`接口

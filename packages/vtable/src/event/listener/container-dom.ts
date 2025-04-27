@@ -564,6 +564,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
   }
   // 有被阻止冒泡的场景 就触发不到这里的事件了 所以这个LastBodyPointerXY变量的赋值在scrollbar的down事件也进行了处理
   const globalPointerdownCallback = (e: MouseEvent) => {
+    if (table.isReleased) {
+      return;
+    }
     // console.log('body pointerdown');
     table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
     table.eventManager.isDown = true;
@@ -634,6 +637,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
   };
 
   const globalPointerupCallback = (e: MouseEvent) => {
+    if (table.isReleased) {
+      return;
+    }
     const target = e.target as HTMLElement;
 
     if (target !== table.canvas) {

@@ -11,7 +11,8 @@ interface IHighlightHeaderWhenSelectCellPluginOptions {
 }
 
 export class HighlightHeaderWhenSelectCellPlugin implements plugins.IVTablePlugin {
-  id = 'highlight-header-when-select-cell';
+  id = `highlight-header-when-select-cell-${Date.now()}`;
+  name = 'Highlight Header When Select Cell';
   runTime = [
     TABLE_EVENT_TYPE.INITIALIZED,
     TABLE_EVENT_TYPE.SELECTED_CLEAR,
@@ -162,6 +163,10 @@ export class HighlightHeaderWhenSelectCellPlugin implements plugins.IVTablePlugi
         this.rowHeaderRanges.push(rowHeaderRange);
       }
     }
+  }
+  update() {
+    this.registerStyle();
+    this.updateHighlight();
   }
   release() {
     this.rowHeaderRanges = [];

@@ -1676,7 +1676,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       widths.push(this.getColWidth(col));
     }
 
-    return widths
+    return widths;
   }
 
   /**
@@ -2373,6 +2373,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param options
    */
   updateOption(options: BaseTableConstructorOptions) {
+    this.editorManager?.cancelEdit();
     (this.options as BaseTable['options']) = options;
     this._hasAutoImageColumn = undefined;
     const {
