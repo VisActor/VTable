@@ -25,6 +25,13 @@ import { breakString } from '../utils/break-string';
 import { emptyCustomLayout } from '../../components/react/react-custom-layout';
 import { getOrApply } from '../../tools/helper';
 
+/**
+ * @description: 计算列宽
+ * @param {BaseTableAPI} table
+ * @param {number} colStart
+ * @param {number} colEnd
+ * @param {boolean} update 是否执行更新场景树
+ */
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   // const time = typeof window !== 'undefined' ? window.performance.now() : 0;
   (table as PivotTableAPI | ListTableAPI).internalProps.columnWidthConfig &&
