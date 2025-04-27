@@ -101,7 +101,7 @@ export function getHorizontalScrollBarSize(scrollStyle?: IScrollStyle): number {
   ) {
     return 0;
   }
-  return scrollStyle?.width || 7;
+  return scrollStyle?.width ?? 7;
 }
 
 export function getVerticalScrollBarSize(scrollStyle?: IScrollStyle): number {
@@ -112,7 +112,7 @@ export function getVerticalScrollBarSize(scrollStyle?: IScrollStyle): number {
   ) {
     return 0;
   }
-  return scrollStyle?.width || 7;
+  return scrollStyle?.width ?? 7;
 }
 
 export { isNode };

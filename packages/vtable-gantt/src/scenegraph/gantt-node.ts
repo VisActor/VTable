@@ -38,7 +38,7 @@ export class GanttTaskBarNode extends Group {
     };
     const textStyle = { ...defaultTextStyle, ...(milestoneStyle.labelTextStyle || {}) };
 
-    const textPosition = milestoneStyle.textPosition || 'center';
+    const textPosition = milestoneStyle.textorient || 'center';
     const milestoneWidth = milestoneStyle.width || 16;
     const padding = typeof textStyle.padding === 'number' ? textStyle.padding : 4;
 

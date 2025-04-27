@@ -11,6 +11,7 @@ import {
   type ITextGraphicAttribute
 } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
+// import { Icon } from './icon';
 
 interface IGanttGroup extends Group {
   task_index?: number;
@@ -398,7 +399,7 @@ export class TaskBar {
       const milestoneStyle = this._scene._gantt.parsedOptions.taskBarMilestoneStyle;
       const textStyle = milestoneStyle.labelTextStyle || {};
       const pos = this.calculateMilestoneTextPosition(
-        milestoneStyle.textPosition || 'top',
+        milestoneStyle.textorient || 'right',
         milestoneStyle.width,
         textStyle.padding ?? 4
       );

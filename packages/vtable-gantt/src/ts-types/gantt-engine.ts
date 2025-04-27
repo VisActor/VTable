@@ -275,18 +275,13 @@ export interface IMilestoneStyle {
 
   // 新增文字相关属性
   /** 里程碑展示文字。可以配置固定文本 或者 字符串模版`${fieldName}` */
-  labelText?: string;
+  labelText?: ITaskBarLabelText;
   /** 里程碑文字样式 */
-  labelTextStyle?: {
-    fontFamily?: string;
-    fontSize?: number;
-    color?: string;
-    textAlign?: 'center' | 'end' | 'left' | 'right' | 'start';
-    textBaseline?: 'alphabetic' | 'bottom' | 'middle' | 'top';
-    padding?: number | number[];
-  };
+  labelTextStyle?: ITaskBarLabelTextStyle;
+  // /** 里程碑图标 */
+  // icon?: string;
   /** 文字相对于里程碑的位置 */
-  textPosition?: 'left' | 'top' | 'right' | 'bottom' | 'center';
+  textorient?: 'left' | 'top' | 'right' | 'bottom' | 'center';
 }
 export type ILineStyle = {
   lineColor?: string;
