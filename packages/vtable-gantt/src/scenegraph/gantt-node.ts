@@ -22,9 +22,6 @@ export class GanttTaskBarNode extends Group {
   /**
    * 更新里程碑文本位置
    */
-  /**
-   * 更新里程碑文本位置
-   */
   updateMilestoneTextPosition() {
     if (!this.milestoneTextLabel || this.record?.type !== 'milestone') {
       return;

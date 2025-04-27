@@ -428,9 +428,9 @@ export class TaskBar {
       const milestoneLabel = createText({
         x: textX,
         y: textY,
-        fontSize: textStyle.fontSize || 12,
+        fontSize: textStyle.fontSize || 18,
         fontFamily: textStyle.fontFamily || 'Arial',
-        fill: textStyle.color || '#333333',
+        fill: textStyle.color || '#ff0000',
         textBaseline: textStyle.textBaseline || textBaselineValue,
         textAlign: textStyle.textAlign || textAlignValue,
         text,
@@ -487,8 +487,8 @@ export class TaskBar {
           const milestoneStyle = this._scene._gantt.parsedOptions.taskBarMilestoneStyle || {};
           // 获取默认文本样式并合并用户配置
           const defaultTextStyle = {
-            fontSize: 12,
-            color: '#333333',
+            fontSize: 18,
+            color: '#ff0000',
             fontFamily: 'Arial',
             padding: 4
           };
@@ -520,9 +520,9 @@ export class TaskBar {
           const milestoneLabel = createText({
             x: textX,
             y: textY,
-            fontSize: textStyle.fontSize || 12,
+            fontSize: textStyle.fontSize || 18,
             fontFamily: textStyle.fontFamily || 'Arial',
-            fill: textStyle.color || '#333333',
+            fill: textStyle.color || '#ff0000',
             text: milestoneText.text,
             textBaseline: milestoneText.textBaseline || textBaselineValue,
             textAlign: milestoneText.textAlign || textAlignValue,
