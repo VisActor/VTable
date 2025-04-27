@@ -207,17 +207,15 @@ export function initOptions(gantt: Gantt) {
       ? options.taskBar.barStyle
       : Object.assign({}, defaultTaskBarStyle, options?.taskBar?.barStyle || {});
 
-  //里程碑相关默认配置
   const defaultMilestoneStyle = {
     borderColor: '#096dd9',
     borderLineWidth: 1,
     fillColor: '#1890ff',
     cornerRadius: 0,
     width: 16,
-    // 默认不显示文字
     labelText: '${title}',
     labelTextStyle: {
-      fontSize: 18,
+      fontSize: 16,
       color: '#ff0000',
       fontFamily: 'Arial',
       padding: 4

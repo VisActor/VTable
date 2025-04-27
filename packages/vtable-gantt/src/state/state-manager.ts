@@ -1072,13 +1072,10 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
       target.attribute.y + target.attribute.height / 2
     ]);
 
-    // 如果是里程碑且有文本容器，同步更新文本容器位置
     if (target.milestoneTextContainer) {
-      // 计算位置偏移量
       const deltaX = target.attribute.x - oldX;
       const deltaY = target.attribute.y - oldY;
 
-      // 更新文本容器位置
       const currentX = target.milestoneTextContainer.attribute.x;
       const currentY = target.milestoneTextContainer.attribute.y;
       target.milestoneTextContainer.setAttribute('x', currentX + deltaX);
@@ -1086,7 +1083,6 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
     }
     target.milestoneTextContainer.setAttribute('zIndex', 10001);
 
-    // 如果有里程碑文本，确保它也保持高层级
     if (target.milestoneTextLabel) {
       target.milestoneTextLabel.setAttribute('zIndex', 10002);
     }
@@ -1120,18 +1116,14 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
       target.attribute.y + target.attribute.height / 2
     ]);
 
-    // 如果是里程碑且有文本容器，同步更新文本容器位置
     if (target.milestoneTextContainer) {
-      // 计算位置偏移量
       const deltaX = target.attribute.x - oldX;
 
-      // 更新文本容器位置
       const currentX = target.milestoneTextContainer.attribute.x;
       const currentY = target.milestoneTextContainer.attribute.y;
       target.milestoneTextContainer.setAttribute('x', currentX + deltaX);
       target.milestoneTextContainer.setAttribute('y', currentY);
 
-      // 添加了这几行，确保文本位置更新
       if (target.milestoneTextLabel) {
         target.updateMilestoneTextPosition();
       }

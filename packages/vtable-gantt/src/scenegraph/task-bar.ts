@@ -382,14 +382,11 @@ export class TaskBar {
       barGroup.appendChild(label);
       barGroupBox.textLabel = label;
     }
-    // 在 TaskBar 类的 initBar 方法中找到处理里程碑文本的部分
-    // 在 TaskBar 类的 initBar 方法中找到处理里程碑文本的部分
     if (
       renderDefaultText &&
       taskRecord.type === 'milestone' &&
       this._scene._gantt.parsedOptions.taskBarMilestoneStyle.labelText
     ) {
-      // 处理里程碑文本
       const milestoneStyle = this._scene._gantt.parsedOptions.taskBarMilestoneStyle;
       const textStyle = milestoneStyle.labelTextStyle || {};
       const pos = this.calculateMilestoneTextPosition(
@@ -424,7 +421,6 @@ export class TaskBar {
       textContainer.appendChild(milestoneLabel);
       this.barContainer.appendChild(textContainer);
 
-      // 保存文本引用
       barGroupBox.milestoneTextLabel = milestoneLabel;
       barGroupBox.milestoneTextContainer = textContainer;
     }
@@ -433,7 +429,6 @@ export class TaskBar {
   updateTaskBarNode(index: number, sub_task_index: number) {
     const taskbarGroup = this.getTaskBarNodeByIndex(index, sub_task_index);
     if (taskbarGroup) {
-      // 如果是里程碑且有文本，需要保存文本引用以便后续恢复
       const hasMilestoneText = taskbarGroup.record?.type === 'milestone' && taskbarGroup.milestoneTextLabel;
       let milestoneText;
       let textContainerPos;
@@ -461,9 +456,7 @@ export class TaskBar {
       if (barGroup) {
         this.barContainer.insertInto(barGroup, index);
 
-        // 如果之前有里程碑文本，确保新创建的里程碑也有文本
         if (hasMilestoneText && barGroup.record?.type === 'milestone' && !barGroup.milestoneTextLabel) {
-          // 恢复之前的文本状态和位置
           const textContainer = new Group({
             x: textContainerPos ? textContainerPos.x : barGroup.attribute.x,
             y: textContainerPos ? textContainerPos.y : barGroup.attribute.y,
