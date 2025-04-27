@@ -1,6 +1,6 @@
 // import { FederatedPointerEvent } from '@src/vrender';
 import type { FederatedPointerEvent, Gesture, IEventTarget } from '@src/vrender';
-import { RichText } from '@src/vrender';
+import { RichText, vglobal } from '@src/vrender';
 import type { ColumnDefine, ListTableConstructorOptions, MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManager } from '../state/state';
@@ -60,7 +60,11 @@ export class EventManager {
   scrollXSpeed: number;
   downIcon: IEventTarget; // 记录鼠标按下的sicon
   //报错已绑定过的事件 后续清除绑定
-  globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
+  globalEventListeners: {
+    name: string;
+    env: 'document' | 'body' | 'window' | 'vglobal';
+    callback: (e?: any) => void;
+  }[] = [];
   inertiaScroll: InertiaScroll;
 
   bindSparklineHoverEvent: boolean;
@@ -705,6 +709,8 @@ export class EventManager {
         document.body.removeEventListener(item.name, item.callback);
       } else if (item.env === 'window') {
         window.removeEventListener(item.name, item.callback);
+      } else if (item.env === 'vglobal') {
+        vglobal.removeEventListener(item.name, item.callback);
       }
     });
     this.globalEventListeners = [];

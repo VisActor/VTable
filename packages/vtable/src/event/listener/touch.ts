@@ -1,3 +1,4 @@
+import { vglobal } from '@src/vrender';
 import type { FederatedPointerEvent } from '@src/vrender';
 import { handleWhell, isHorizontalScrollable, isVerticalScrollable } from '../scroll';
 import type { EventManager } from '../event';
@@ -15,9 +16,10 @@ export function bindTouchListener(eventManager: EventManager) {
       return;
     }
     eventManager.isTouchdown = true;
+    const touchEvent = e.nativeEvent as TouchEvent;
     eventManager.touchMovePoints.push({
-      x: e.page.x,
-      y: e.page.y,
+      x: (touchEvent.changedTouches?.[0] as any)?._canvasX ?? e.canvas?.x ?? e.page.x,
+      y: (touchEvent.changedTouches?.[0] as any)?._canvasY ?? e.canvas?.y ?? e.page.y,
       timestamp: Date.now()
     });
   });
@@ -39,8 +41,8 @@ export function bindTouchListener(eventManager: EventManager) {
         eventManager.touchMovePoints.shift();
       }
       eventManager.touchMovePoints.push({
-        x: e.changedTouches[0].pageX,
-        y: e.changedTouches[0].pageY,
+        x: (e.changedTouches[0] as any)._canvasX ?? e.changedTouches[0].pageX,
+        y: (e.changedTouches[0] as any)._canvasY ?? e.changedTouches[0].pageY,
         timestamp: Date.now()
       });
       if (eventManager._enableTableScroll) {
@@ -63,10 +65,10 @@ export function bindTouchListener(eventManager: EventManager) {
       }
     }
   };
-  window.addEventListener('touchmove', globalTouchMoveCallback, { passive: false });
+  vglobal.addEventListener('touchmove', globalTouchMoveCallback, { passive: false });
   eventManager.globalEventListeners.push({
     name: 'touchmove',
-    env: 'window',
+    env: 'vglobal',
     callback: globalTouchMoveCallback
   });
 
@@ -85,8 +87,8 @@ export function bindTouchListener(eventManager: EventManager) {
           eventManager.touchMovePoints.shift();
         }
         eventManager.touchMovePoints.push({
-          x: e.changedTouches[0].pageX,
-          y: e.changedTouches[0].pageY,
+          x: (e.changedTouches[0] as any)._canvasX ?? e.changedTouches[0].pageX,
+          y: (e.changedTouches[0] as any)._canvasY ?? e.changedTouches[0].pageY,
           timestamp: Date.now()
         });
         // compute inertia parameter
@@ -107,10 +109,10 @@ export function bindTouchListener(eventManager: EventManager) {
     eventManager.isTouchdown = false;
     eventManager.touchMovePoints = [];
   };
-  window.addEventListener('touchend', globalTouchEndCallback);
+  vglobal.addEventListener('touchend', globalTouchEndCallback);
   eventManager.globalEventListeners.push({
     name: 'touchend',
-    env: 'window',
+    env: 'vglobal',
     callback: globalTouchEndCallback
   });
 
@@ -123,10 +125,10 @@ export function bindTouchListener(eventManager: EventManager) {
     eventManager.isTouchdown = false;
     eventManager.touchMovePoints = [];
   };
-  window.addEventListener('touchcancel', globalTouchCancelCallback);
+  vglobal.addEventListener('touchcancel', globalTouchCancelCallback);
   eventManager.globalEventListeners.push({
     name: 'touchcancel',
-    env: 'window',
+    env: 'vglobal',
     callback: globalTouchCancelCallback
   });
 }
