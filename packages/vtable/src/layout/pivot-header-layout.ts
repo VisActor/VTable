@@ -3201,10 +3201,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       needLowestLevel_colPaths = true;
       needLowestLevel_rowPaths = true;
     }
-    if (colHeaderPaths.length >= this.columnHeaderLevelCount) {
+    if (colHeaderPaths.length >= this._getColumnHeaderTreeExpandedMaxLevelCount()) {
       needLowestLevel_colPaths = true;
     }
-    if (rowHeaderPaths.length >= this.rowHeaderLevelCount) {
+    if (rowHeaderPaths.length >= this._getRowHeaderTreeExpandedMaxLevelCount()) {
       needLowestLevel_rowPaths = true;
     }
     let col;
