@@ -246,17 +246,33 @@ export class TaskBar {
     if (renderDefaultText && taskRecord.type !== 'milestone') {
       const { textAlign, textBaseline, fontSize, fontFamily, textOverflow, color, padding } =
         this._scene._gantt.parsedOptions.taskBarLabelStyle;
-
+      const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, taskBarSize, taskbarHeight);
+      //创建label 文字
       // 创建文本标签
       const label = createText({
-        x: 0,
-        y: 0,
+        x: position.x, //extAlign === 'center' ? taskBarSize / 2 : textAlign === 'left' ? 10 : taskBarSize - 10,
+        y: position.y, //fontSize / 2,
         fontSize: fontSize,
         fill: color,
         fontFamily: fontFamily,
         text: parseStringTemplate(this._scene._gantt.parsedOptions.taskBarLabelText as string, taskRecord),
-        textBaseline: 'middle',
-        textAlign: 'left'
+        maxLineWidth: taskBarSize - TASKBAR_HOVER_ICON_WIDTH,
+        textBaseline,
+        textAlign,
+        ellipsis:
+          textOverflow === 'clip'
+            ? ''
+            : textOverflow === 'ellipsis'
+            ? '...'
+            : isValid(textOverflow)
+            ? textOverflow
+            : undefined,
+        poptip: {
+          position: 'bottom'
+          // dx: (taskBarSize - TASKBAR_HOVER_ICON_WIDTH) / 4
+        }
+        // dx: 12 + 4,
+        // dy: this._scene._gantt.barLabelStyle.fontSize / 2
       });
 
       barGroup.appendChild(label);

@@ -1,5 +1,8 @@
 import type { IRect, IText, IGroupGraphicAttribute } from '@visactor/vtable/es/vrender';
 import { Group } from '@visactor/vtable/es/vrender';
+import { getTextPos } from '../gantt-helper';
+import { toBoxArray } from '../tools/util';
+import { isValid } from '@visactor/vutils';
 
 export class GanttTaskBarNode extends Group {
   clipGroupBox: Group;
@@ -46,21 +49,38 @@ export class GanttTaskBarNode extends Group {
     const barWidth = this.barRect.attribute.width;
     const barHeight = this.barRect.attribute.height;
 
-    // 判断文本是否能放入任务条内部
+    // 计算文本适应性
     const textFitsInBar = textWidth + padding * 2 <= barWidth;
 
-    // 确定文本显示位置
-    // 1. 如果设置了orient，直接使用该方位
-    // 2. 如果文本溢出且设置了orientHandleWithOverflow（且未设置orient），使用orientHandleWithOverflow的方位
-    // 3. 其他情况显示在任务条内部
-    let position;
-    if (labelStyle.orient) {
-      position = labelStyle.orient;
-    } else if (!textFitsInBar && labelStyle.orientHandleWithOverflow) {
-      position = labelStyle.orientHandleWithOverflow;
-    }
+    // 获取默认文本位置和样式
+    const { textAlign = 'left', textBaseline = 'middle', textOverflow, color } = labelStyle;
+    const defaultPosition = getTextPos(toBoxArray(padding), textAlign, textBaseline, barWidth, barHeight);
 
-    if (position) {
+    // 确定最终的文本方位
+    const textPosition =
+      labelStyle.orient ||
+      (!textFitsInBar && labelStyle.orientHandleWithOverflow ? labelStyle.orientHandleWithOverflow : null);
+
+    // 根据原始逻辑设置默认文本位置和属性
+    this.textLabel.setAttribute('x', defaultPosition.x);
+    this.textLabel.setAttribute('y', defaultPosition.y);
+    this.textLabel.setAttribute('textAlign', textAlign);
+    this.textLabel.setAttribute('textBaseline', textBaseline);
+    this.textLabel.setAttribute('fill', color || '#333333');
+    this.textLabel.setAttribute('maxLineWidth', barWidth - padding * 2);
+    this.textLabel.setAttribute(
+      'ellipsis',
+      textOverflow === 'clip'
+        ? ''
+        : textOverflow === 'ellipsis'
+        ? '...'
+        : isValid(textOverflow)
+        ? textOverflow
+        : undefined
+    );
+
+    // 根据orient配置决定文本位置
+    if (textPosition) {
       // 文本显示在任务条外部指定方位
       // 确保文本从clipGroupBox移到主容器
       this.textLabel.parent?.removeChild(this.textLabel);
@@ -75,7 +95,7 @@ export class GanttTaskBarNode extends Group {
       this.setAttribute('zIndex', 10000);
 
       // 根据方位设置文本位置和对齐方式
-      switch (position) {
+      switch (textPosition) {
         case 'left':
           this.textLabel.setAttribute('x', -padding);
           this.textLabel.setAttribute('y', barHeight / 2);
@@ -113,30 +133,19 @@ export class GanttTaskBarNode extends Group {
       this.textLabel.setAttribute('textBaseline', textBaseline);
       this.textLabel.setAttribute('fill', labelStyle.color || '#333333');
 
-      // 设置水平位置
-      if (textFitsInBar) {
-        if (textAlign === 'right') {
-          this.textLabel.setAttribute('x', barWidth - padding);
-        } else if (textAlign === 'center') {
-          this.textLabel.setAttribute('x', barWidth / 2);
-        } else {
-          this.textLabel.setAttribute('x', padding);
-        }
-        this.textLabel.setAttribute('ellipsis', undefined);
-      } else {
-        this.textLabel.setAttribute('x', padding);
-        this.textLabel.setAttribute('ellipsis', '...');
-      }
+      this.textLabel.setAttribute('x', defaultPosition.x);
+      this.textLabel.setAttribute('y', defaultPosition.y);
       this.textLabel.setAttribute('maxLineWidth', barWidth - padding * 2);
-
-      // 设置垂直位置
-      let yPos = barHeight / 2;
-      if (textBaseline === 'top') {
-        yPos = labelStyle?.padding?.[0] || 0;
-      } else if (textBaseline === 'bottom') {
-        yPos = barHeight - (labelStyle?.padding?.[2] || 0);
-      }
-      this.textLabel.setAttribute('y', yPos);
+      this.textLabel.setAttribute(
+        'ellipsis',
+        textOverflow === 'clip'
+          ? ''
+          : textOverflow === 'ellipsis'
+          ? '...'
+          : isValid(textOverflow)
+          ? textOverflow
+          : undefined
+      );
     }
 
     this.textLabel.setAttribute('visible', true);
