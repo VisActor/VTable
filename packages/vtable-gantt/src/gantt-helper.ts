@@ -261,7 +261,9 @@ export function initOptions(gantt: Gantt) {
     textAlign: options?.taskBar?.labelTextStyle?.textAlign ?? 'left',
     textBaseline: options?.taskBar?.labelTextStyle?.textBaseline ?? 'middle',
     padding: options?.taskBar?.labelTextStyle?.padding ?? [0, 0, 0, 10],
-    textOverflow: options?.taskBar?.labelTextStyle?.textOverflow
+    textOverflow: options?.taskBar?.labelTextStyle?.textOverflow,
+    orient: options?.taskBar?.labelTextStyle?.orient,
+    orientHandleWithOverflow: options?.taskBar?.labelTextStyle?.orientHandleWithOverflow
   };
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
   gantt.parsedOptions.taskBarCreatable =
@@ -369,9 +371,6 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.eventOptions = options?.eventOptions;
   gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
   gantt.parsedOptions.markLineCreateOptions = options?.markLineCreateOptions;
-
-  gantt.parsedOptions.showTextOutsideBar =
-    gantt.options.taskBar.showTextOutsideBar !== undefined ? gantt.options.taskBar.showTextOutsideBar : true;
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   const options = gantt.options;

@@ -113,8 +113,6 @@ export interface GanttConstructorOptions {
     selectedBarStyle?: ITaskBarSelectedStyle;
     /** 任务条是否可选择，默认为true */
     selectable?: boolean;
-    /** 是否在任务条外显示文本 */
-    showTextOutsideBar?: boolean;
     /** 任务条右键菜单 */
     menu?: {
       /** 右键菜单。代替原来的option.contextmenu */
@@ -246,7 +244,9 @@ export interface ITaskBarLabelTextStyle {
   textBaseline?: 'alphabetic' | 'bottom' | 'middle' | 'top'; // 设置单元格内文字的垂直对齐方式
   padding?: number | number[];
   // /** 相对于任务条文字方位位置，可选值：'left', 'top', 'right', 'bottom'，分别代表左、上、右、下四个方向 */
-  // orient?: 'left', 'top', 'right', 'bottom';
+  orient?: 'left' | 'top' | 'right' | 'bottom';
+  /** 只有当文本在 taskbar 中容纳不下时，会根据该方位将文本显示在任务条旁边。当配置 orient 时，该配置无效 */
+  orientHandleWithOverflow?: 'left' | 'top' | 'right' | 'bottom';
 }
 export interface ITaskBarStyle {
   /** 任务条的颜色 */

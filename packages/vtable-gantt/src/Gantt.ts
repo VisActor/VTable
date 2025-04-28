@@ -194,7 +194,6 @@ export class Gantt extends EventTarget {
     eventOptions: IEventOptions;
     keyboardOptions: IKeyboardOptions;
     markLineCreateOptions: IMarkLineCreateOptions;
-    showTextOutsideBar?: boolean;
   } = {} as any;
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
