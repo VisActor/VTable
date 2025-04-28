@@ -24,6 +24,7 @@ export class RotateTablePlugin implements VTable.plugins.IVTablePlugin {
   id = 'rotate-table';
   runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
   table: VTable.ListTable;
+  vglobal_mapToCanvasPoint: any; // 保存vrender中vglobal的mapToCanvasPoint原方法
   // pluginOptions: IRotateTablePluginOptions;
   constructor() {
     // this.pluginOptions = pluginOptions;
@@ -81,6 +82,7 @@ export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
     getRect,
     transformPointForCanvas
   );
+  this.vglobal_mapToCanvasPoint = vglobal.mapToCanvasPoint;
   vglobal.mapToCanvasPoint = mapToCanvasPointForCanvas;
   //transformPointForCanvas和mapToCanvasPointForCanvas时相对应的
   //具体逻辑在 VRender/packages/vrender-core/src/common/event-transformer.ts中
@@ -117,5 +119,5 @@ export function cancelTransform(this: BaseTable, rotateDom: HTMLElement) {
     getRect,
     transformPointForCanvas
   );
-  vglobal.mapToCanvasPoint = mapToCanvasPointForCanvas;
+  vglobal.mapToCanvasPoint = this.vglobal_mapToCanvasPoint;
 }
