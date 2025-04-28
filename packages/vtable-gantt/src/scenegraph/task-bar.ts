@@ -248,11 +248,12 @@ export class TaskBar {
         this._scene._gantt.parsedOptions.taskBarLabelStyle;
       const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, taskBarSize, taskbarHeight);
       //创建label 文字
-      // 创建文本标签
       const label = createText({
+        // visible: false,
+        // pickable: false,
         x: position.x, //extAlign === 'center' ? taskBarSize / 2 : textAlign === 'left' ? 10 : taskBarSize - 10,
         y: position.y, //fontSize / 2,
-        fontSize: fontSize,
+        fontSize: fontSize, //10
         fill: color,
         fontFamily: fontFamily,
         text: parseStringTemplate(this._scene._gantt.parsedOptions.taskBarLabelText as string, taskRecord),
