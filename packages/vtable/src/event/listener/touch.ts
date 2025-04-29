@@ -18,20 +18,20 @@ export function bindTouchListener(eventManager: EventManager) {
     eventManager.isTouchdown = true;
     const touchEvent = e.nativeEvent as TouchEvent;
     eventManager.touchMovePoints.push({
-      x: (touchEvent.changedTouches?.[0] as any)?._canvasX ?? e.canvas?.x ?? e.page.x,
-      y: (touchEvent.changedTouches?.[0] as any)?._canvasY ?? e.canvas?.y ?? e.page.y,
+      x: table.rotateDegree ? (touchEvent.changedTouches?.[0] as any)?._canvasX ?? e.canvas?.x : e.page.x,
+      y: table.rotateDegree ? (touchEvent.changedTouches?.[0] as any)?._canvasY ?? e.canvas?.y : e.page.y,
       timestamp: Date.now()
     });
   });
 
   const globalTouchMoveCallback = (e: TouchEvent) => {
-    if (eventManager.touchMove) {
+    if (eventManager.isLongTouch) {
       e.preventDefault();
     }
     if (!eventManager.isTouchdown || !isTouchEvent(e)) {
       return;
     }
-    console.log('downIcon', eventManager.downIcon);
+    eventManager.isTouchMove = true;
     if ((eventManager.downIcon?.attribute as any)?.funcType === IconFuncTypeEnum.dragReorder) {
       // console.log()
       e.preventDefault();
@@ -41,8 +41,8 @@ export function bindTouchListener(eventManager: EventManager) {
         eventManager.touchMovePoints.shift();
       }
       eventManager.touchMovePoints.push({
-        x: (e.changedTouches[0] as any)._canvasX ?? e.changedTouches[0].pageX,
-        y: (e.changedTouches[0] as any)._canvasY ?? e.changedTouches[0].pageY,
+        x: table.rotateDegree ? (e.changedTouches[0] as any)._canvasX : e.changedTouches[0].pageX,
+        y: table.rotateDegree ? (e.changedTouches[0] as any)._canvasY : e.changedTouches[0].pageY,
         timestamp: Date.now()
       });
       if (eventManager._enableTableScroll) {
@@ -74,7 +74,7 @@ export function bindTouchListener(eventManager: EventManager) {
 
   const globalTouchEndCallback = (e: TouchEvent) => {
     eventManager.touchEnd = true;
-    eventManager.touchMove = false;
+    eventManager.isLongTouch = false;
     if (!eventManager.isTouchdown || !isTouchEvent(e)) {
       return;
     }
@@ -87,8 +87,8 @@ export function bindTouchListener(eventManager: EventManager) {
           eventManager.touchMovePoints.shift();
         }
         eventManager.touchMovePoints.push({
-          x: (e.changedTouches[0] as any)._canvasX ?? e.changedTouches[0].pageX,
-          y: (e.changedTouches[0] as any)._canvasY ?? e.changedTouches[0].pageY,
+          x: table.rotateDegree ? (e.changedTouches[0] as any)._canvasX : e.changedTouches[0].pageX,
+          y: table.rotateDegree ? (e.changedTouches[0] as any)._canvasY : e.changedTouches[0].pageY,
           timestamp: Date.now()
         });
         // compute inertia parameter
@@ -107,6 +107,7 @@ export function bindTouchListener(eventManager: EventManager) {
       }
     }
     eventManager.isTouchdown = false;
+    eventManager.isTouchMove = false;
     eventManager.touchMovePoints = [];
   };
   vglobal.addEventListener('touchend', globalTouchEndCallback);
@@ -118,11 +119,13 @@ export function bindTouchListener(eventManager: EventManager) {
 
   const globalTouchCancelCallback = (e: TouchEvent) => {
     eventManager.touchEnd = true;
-    eventManager.touchMove = false;
+    eventManager.isLongTouch = false;
+
     if (!eventManager.isTouchdown) {
       return;
     }
     eventManager.isTouchdown = false;
+    eventManager.isTouchMove = false;
     eventManager.touchMovePoints = [];
   };
   vglobal.addEventListener('touchcancel', globalTouchCancelCallback);

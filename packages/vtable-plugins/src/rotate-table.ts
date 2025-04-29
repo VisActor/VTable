@@ -47,6 +47,7 @@ export class RotateTablePlugin implements VTable.plugins.IVTablePlugin {
  * 所以需要进行坐标转换，将旋转后的坐标转换后作为VRender及VTable逻辑中用到的坐标。
  */
 export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
+  this.rotateDegree = 90;
   const rotateCenter = Math.min(rotateDom.clientWidth, rotateDom.clientHeight) / 2;
   const domRect = this.getElement().getBoundingClientRect();
   const x1 = domRect.left;
@@ -95,6 +96,7 @@ export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
   // 在VTable的touch文件中，利用到了_canvasX _canvasY 所以如果自定义上面两个函数也需提供_canvasX _canvasY
 }
 export function cancelTransform(this: BaseTable, rotateDom: HTMLElement) {
+  this.rotateDegree = 0;
   rotateDom.style.transform = 'none';
   rotateDom.style.transformOrigin = 'none';
   const domRect = this.getElement().getBoundingClientRect();
