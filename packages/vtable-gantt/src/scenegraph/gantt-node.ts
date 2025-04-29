@@ -14,8 +14,17 @@ export class GanttTaskBarNode extends Group {
   sub_task_index?: number;
   record?: any;
   gantt: any;
+
+  _lastWidth?: number;
+  _lastHeight?: number;
+  _lastX?: number;
+  _lastY?: number;
   constructor(attrs: IGroupGraphicAttribute) {
     super(attrs);
+    this._lastWidth = attrs.width;
+    this._lastHeight = attrs.height;
+    this._lastX = attrs.x;
+    this._lastY = attrs.y;
   }
 
   /**
@@ -49,19 +58,15 @@ export class GanttTaskBarNode extends Group {
     const barWidth = this.barRect.attribute.width;
     const barHeight = this.barRect.attribute.height;
 
-    // 计算文本适应性
     const textFitsInBar = textWidth + padding * 2 <= barWidth;
 
-    // 获取默认文本位置和样式
     const { textAlign = 'left', textBaseline = 'middle', textOverflow, color } = labelStyle;
     const defaultPosition = getTextPos(toBoxArray(padding), textAlign, textBaseline, barWidth, barHeight);
 
-    // 确定最终的文本方位
     const textPosition =
       labelStyle.orient ||
       (!textFitsInBar && labelStyle.orientHandleWithOverflow ? labelStyle.orientHandleWithOverflow : null);
 
-    // 根据原始逻辑设置默认文本位置和属性
     this.textLabel.setAttribute('x', defaultPosition.x);
     this.textLabel.setAttribute('y', defaultPosition.y);
     this.textLabel.setAttribute('textAlign', textAlign);
@@ -79,10 +84,7 @@ export class GanttTaskBarNode extends Group {
         : undefined
     );
 
-    // 根据orient配置决定文本位置
     if (textPosition) {
-      // 文本显示在任务条外部指定方位
-      // 确保文本从clipGroupBox移到主容器
       this.textLabel.parent?.removeChild(this.textLabel);
       this.appendChild(this.textLabel);
 
@@ -90,11 +92,9 @@ export class GanttTaskBarNode extends Group {
       this.textLabel.setAttribute('fill', outsideFill);
       this.textLabel.setAttribute('ellipsis', undefined);
       this.textLabel.setAttribute('maxLineWidth', undefined);
-      // 确保外部文本显示在最上层
       this.textLabel.setAttribute('zIndex', 10000);
       this.setAttribute('zIndex', 10000);
 
-      // 根据方位设置文本位置和对齐方式
       switch (textPosition) {
         case 'left':
           this.textLabel.setAttribute('x', -padding);
@@ -122,7 +122,6 @@ export class GanttTaskBarNode extends Group {
           break;
       }
     } else {
-      // 确保文本在clipGroupBox内
       this.textLabel.parent?.removeChild(this.textLabel);
       this.clipGroupBox?.appendChild(this.textLabel);
 

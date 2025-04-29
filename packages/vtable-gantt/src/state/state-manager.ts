@@ -490,7 +490,7 @@ export class StateManager {
     this.moveTaskBar.deltaY = 0;
     this.moveTaskBar.moveTaskBarXSpeed = 0;
 
-    this._gantt.updateAllTaskBarTextPositions();
+    this._gantt.updateTaskBarTextPositions();
   }
   dealTaskBarMove(e: FederatedPointerEvent) {
     const gantt = this._gantt;
@@ -607,7 +607,7 @@ export class StateManager {
 
     gantt.scenegraph.updateNextFrame();
 
-    this._gantt.updateAllTaskBarTextPositions();
+    this._gantt.updateTaskBarTextPositions();
 
     //
   }
@@ -724,7 +724,7 @@ export class StateManager {
       }
       this._gantt.scenegraph.updateNextFrame();
     }
-    this._gantt.updateAllTaskBarTextPositions();
+    this._gantt.updateTaskBarTextPositions();
   }
   dealTaskBarResize(e: FederatedPointerEvent) {
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
@@ -749,7 +749,7 @@ export class StateManager {
 
     this._gantt.scenegraph.updateNextFrame();
 
-    this._gantt.updateAllTaskBarTextPositions();
+    this._gantt.updateTaskBarTextPositions();
     //
   }
   //#endregion
