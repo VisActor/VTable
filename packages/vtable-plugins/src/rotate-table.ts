@@ -53,9 +53,9 @@ export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
   const y1 = domRect.top;
   const x2 = domRect.right;
   const y2 = domRect.bottom;
+
   rotateDom.style.transform = 'rotate(90deg)';
   rotateDom.style.transformOrigin = `${rotateCenter}px ${rotateCenter}px`;
-
   const getRect = () => {
     return {
       x1,
@@ -65,6 +65,11 @@ export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
     };
   };
   const getMatrix = () => {
+    const containerRect = rotateDom.getBoundingClientRect(); //TODO 这个地方应该获取窗口的宽高 最好能从vglobal上直接获取
+    const domRect = this.getElement().getBoundingClientRect();
+    const x1 = domRect.top;
+    const y1 = containerRect.width - domRect.right;
+
     const matrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
     matrix.translate(x1, y1);
     const centerX = rotateCenter - x1;
