@@ -485,12 +485,11 @@ export class StateManager {
     if (this.selectedTaskBar.target !== target) {
       target.setAttribute('zIndex', 0);
     }
+    target.updateTextPosition();
     this.moveTaskBar.target = null;
     this.moveTaskBar.deltaX = 0;
     this.moveTaskBar.deltaY = 0;
     this.moveTaskBar.moveTaskBarXSpeed = 0;
-
-    this._gantt.updateTaskBarTextPositions();
   }
   dealTaskBarMove(e: FederatedPointerEvent) {
     const gantt = this._gantt;
@@ -606,10 +605,6 @@ export class StateManager {
     }
 
     gantt.scenegraph.updateNextFrame();
-
-    this._gantt.updateTaskBarTextPositions();
-
-    //
   }
   //#region 调整拖拽任务条的大小
   startResizeTaskBar(target: Group, x: number, y: number, startOffsetY: number, onIconName: string) {
@@ -708,6 +703,7 @@ export class StateManager {
         reCreateCustomNode(this._gantt, taskBarGroup, taskIndex, sub_task_index);
         taskBarGroup.setAttribute('zIndex', 0);
       }
+      taskBarGroup.updateTextPosition();
       this.resizeTaskBar.resizing = false;
       this.resizeTaskBar.target = null;
 
@@ -724,7 +720,6 @@ export class StateManager {
       }
       this._gantt.scenegraph.updateNextFrame();
     }
-    this._gantt.updateTaskBarTextPositions();
   }
   dealTaskBarResize(e: FederatedPointerEvent) {
     const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
@@ -748,9 +743,6 @@ export class StateManager {
     );
 
     this._gantt.scenegraph.updateNextFrame();
-
-    this._gantt.updateTaskBarTextPositions();
-    //
   }
   //#endregion
   //#region 生成关联线的交互处理

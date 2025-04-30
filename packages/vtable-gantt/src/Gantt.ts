@@ -242,32 +242,6 @@ export class Gantt extends EventTarget {
     this._scrollToMarkLine();
   }
 
-  updateTaskBarTextPositions() {
-    if (!this.scenegraph?.taskBar?.barContainer) {
-      return;
-    }
-
-    let taskBarNode = this.scenegraph.taskBar.barContainer.firstChild as GanttTaskBarNode;
-    while (taskBarNode) {
-      if (
-        taskBarNode.textLabel &&
-        taskBarNode.updateTextPosition &&
-        typeof taskBarNode.updateTextPosition === 'function' &&
-        (taskBarNode.attribute.width !== taskBarNode._lastWidth ||
-          taskBarNode.attribute.height !== taskBarNode._lastHeight ||
-          taskBarNode.attribute.x !== taskBarNode._lastX ||
-          taskBarNode.attribute.y !== taskBarNode._lastY)
-      ) {
-        taskBarNode.updateTextPosition();
-        taskBarNode._lastWidth = taskBarNode.attribute.width;
-        taskBarNode._lastHeight = taskBarNode.attribute.height;
-        taskBarNode._lastX = taskBarNode.attribute.x;
-        taskBarNode._lastY = taskBarNode.attribute.y;
-      }
-      taskBarNode = taskBarNode._next as GanttTaskBarNode;
-    }
-  }
-
   renderTaskBarsTable() {
     this.scenegraph.updateNextFrame();
   }

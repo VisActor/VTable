@@ -294,7 +294,7 @@ export class TaskBar {
     const barGroup = this.initBar(index, sub_task_index);
     if (barGroup) {
       this.barContainer.insertInto(barGroup, index); //TODO
-      this._scene._gantt.updateTaskBarTextPositions();
+      barGroup.updateTextPosition();
     }
   }
   initHoverBarIcons() {
