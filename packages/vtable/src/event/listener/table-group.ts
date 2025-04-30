@@ -634,6 +634,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
         });
       }
     }
+    eventManager.isTouchdown = false;
+    eventManager.isTouchMove = false;
+    eventManager.isDraging = false;
+    eventManager.touchMovePoints = [];
   });
 
   table.scenegraph.tableGroup.addEventListener('rightdown', (e: FederatedPointerEvent) => {

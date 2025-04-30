@@ -10,6 +10,7 @@ import type { BaseTable } from '@visactor/vtable/src/core/BaseTable';
 import * as VTable from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';
+import type { Matrix } from '@visactor/vutils';
 // export type IRotateTablePluginOptions = {
 //   // 旋转角度
 //   rotate?: number;
@@ -22,8 +23,10 @@ import type { EventArg } from './types';
  */
 export class RotateTablePlugin implements VTable.plugins.IVTablePlugin {
   id = 'rotate-table';
+  name = 'Rotate Table';
   runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
   table: VTable.ListTable;
+  matrix: Matrix;
   vglobal_mapToCanvasPoint: any; // 保存vrender中vglobal的mapToCanvasPoint原方法
   // pluginOptions: IRotateTablePluginOptions;
   constructor() {
@@ -48,7 +51,10 @@ export class RotateTablePlugin implements VTable.plugins.IVTablePlugin {
  */
 export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
   this.rotateDegree = 90;
-  const rotateCenter = Math.min(rotateDom.clientWidth, rotateDom.clientHeight) / 2;
+  const rotateCenter =
+    rotateDom.clientWidth < rotateDom.clientHeight
+      ? Math.max(rotateDom.clientWidth, rotateDom.clientHeight) / 2
+      : Math.min(rotateDom.clientWidth, rotateDom.clientHeight) / 2;
   const domRect = this.getElement().getBoundingClientRect();
   const x1 = domRect.left;
   const y1 = domRect.top;
@@ -65,11 +71,28 @@ export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
       y2
     };
   };
+  // 获取视口尺寸的通用方法
+  const getViewportDimensions = () => {
+    // 浏览器环境
+    if (typeof window !== 'undefined') {
+      return {
+        width: window.innerWidth || document.documentElement.clientWidth,
+        height: window.innerHeight || document.documentElement.clientHeight
+      };
+    }
+    // 如果有 vglobal 上的方法可以使用
+    if (vglobal && vglobal.getViewportSize) {
+      return vglobal.getViewportSize();
+    }
+    // 默认使用容器的尺寸
+    return rotateDom.getBoundingClientRect();
+  };
+
   const getMatrix = () => {
-    const containerRect = rotateDom.getBoundingClientRect(); //TODO 这个地方应该获取窗口的宽高 最好能从vglobal上直接获取
-    const domRect = this.getElement().getBoundingClientRect();
+    const viewPortWidth = getViewportDimensions().width; //获取整个视口的尺寸
+    const domRect = this.getElement().getBoundingClientRect(); //TODO 这个地方应该获取窗口的宽高 最好能从vglobal上直接获取
     const x1 = domRect.top;
-    const y1 = containerRect.width - domRect.right;
+    const y1 = viewPortWidth - domRect.right;
 
     const matrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
     matrix.translate(x1, y1);
@@ -78,6 +101,10 @@ export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
     matrix.translate(centerX, centerY);
     matrix.rotate(Math.PI / 2);
     matrix.translate(-centerX, -centerY);
+    const rotateRablePlugin = this.pluginManager.getPluginByName('Rotate Table');
+    if (rotateRablePlugin) {
+      (rotateRablePlugin as RotateTablePlugin).matrix = matrix;
+    }
     return matrix;
   };
   registerGlobalEventTransformer(vglobal, this.getElement(), getMatrix, getRect, transformPointForCanvas);
@@ -88,7 +115,10 @@ export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
     getRect,
     transformPointForCanvas
   );
-  this.vglobal_mapToCanvasPoint = vglobal.mapToCanvasPoint;
+  const rotateRablePlugin = this.pluginManager.getPluginByName('Rotate Table');
+  if (rotateRablePlugin) {
+    (rotateRablePlugin as RotateTablePlugin).vglobal_mapToCanvasPoint = vglobal.mapToCanvasPoint;
+  }
   vglobal.mapToCanvasPoint = mapToCanvasPointForCanvas;
   //transformPointForCanvas和mapToCanvasPointForCanvas时相对应的
   //具体逻辑在 VRender/packages/vrender-core/src/common/event-transformer.ts中
@@ -126,5 +156,8 @@ export function cancelTransform(this: BaseTable, rotateDom: HTMLElement) {
     getRect,
     transformPointForCanvas
   );
-  vglobal.mapToCanvasPoint = this.vglobal_mapToCanvasPoint;
+  const rotateRablePlugin = this.pluginManager.getPluginByName('Rotate Table');
+  if (rotateRablePlugin) {
+    vglobal.mapToCanvasPoint = (rotateRablePlugin as RotateTablePlugin).vglobal_mapToCanvasPoint;
+  }
 }

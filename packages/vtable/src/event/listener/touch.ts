@@ -108,6 +108,7 @@ export function bindTouchListener(eventManager: EventManager) {
     }
     eventManager.isTouchdown = false;
     eventManager.isTouchMove = false;
+    eventManager.isDraging = false;
     eventManager.touchMovePoints = [];
   };
   vglobal.addEventListener('touchend', globalTouchEndCallback);
@@ -127,6 +128,7 @@ export function bindTouchListener(eventManager: EventManager) {
     eventManager.isTouchdown = false;
     eventManager.isTouchMove = false;
     eventManager.touchMovePoints = [];
+    eventManager.isDraging = false;
   };
   vglobal.addEventListener('touchcancel', globalTouchCancelCallback);
   eventManager.globalEventListeners.push({

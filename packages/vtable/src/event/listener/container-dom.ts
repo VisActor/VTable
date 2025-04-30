@@ -695,7 +695,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     //   eventManager.touchSetTimeout = undefined;
     // }
     // const eventArgsSet = getCellEventArgsSet(e);
-    const { x, y } = table._getMouseAbstractPoint(e, false);
+    const { x, y } = table._getMouseAbstractPoint(e);
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }

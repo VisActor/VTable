@@ -136,6 +136,9 @@ export function createTable() {
     };
     const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)!, option);
     window.tableInstance = tableInstance;
+    tableInstance.on('click_cell', e => {
+      console.log('click_cell');
+    });
   };
   /** @ts-ignore */
   window.createTableInstance();
@@ -180,9 +183,9 @@ export function createTable() {
     window.tableInstance.updateOption(option);
   };
   /** @ts-ignore */
-  bindDebugTool(window.tableInstance.scenegraph.stage, {
-    customGrapicKeys: ['col', 'row']
-  });
+  // bindDebugTool(window.tableInstance.scenegraph.stage, {
+  //   customGrapicKeys: ['col', 'row']
+  // });
 
   // tableInstance.scenegraph.temporarilyUpdateSelectRectStyle({stroke: false})
 }
