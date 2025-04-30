@@ -130,6 +130,10 @@ type CustomAggregation = {
 };
 ```
 
+## showAggregationWhenEmpty(boolean)
+
+数据为空时是否仍显示聚合结果。
+
 ## groupBy(string|string[])
 
 开启分组展示功能，用于展示数据中分组字段的层级结构。值为分组字段名称，可以配置一个字段，也可以配置多个字段组成的数组。

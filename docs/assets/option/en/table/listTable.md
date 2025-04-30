@@ -133,6 +133,10 @@ type CustomAggregation = {
 };
 ```
 
+## showAggregationWhenEmpty(boolean)
+
+Display aggregation result when data is empty.
+
 ## groupBy(string|string[])
 
 Enable the group display function to display the hierarchical structure of the group fields in the data. The value is the group field name, which can be configured as one field or an array of multiple fields.
