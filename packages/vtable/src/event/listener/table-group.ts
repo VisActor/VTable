@@ -1,5 +1,5 @@
 import type { IEventTarget, FederatedPointerEvent, FederatedWheelEvent, Switch } from '@src/vrender';
-import { Gesture, vglobal } from '@src/vrender';
+import { Gesture } from '@src/vrender';
 import type {
   ListTableAPI,
   MousePointerCellEvent,
@@ -389,55 +389,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
   //   }
   // });
 
-  const globalPointerupCallback = (e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (!table.getElement().contains(target)) {
-      // 如果点击到表格外部的dom
-      const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
-      getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
-        if (isCompleteEdit === false) {
-          // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
-          return;
-        }
-        stateManager.updateInteractionState(InteractionState.default);
-        eventManager.dealTableHover();
-      });
-    }
-  };
-  const globalPointerdownCallback = (e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (!table.getElement().contains(target) && !table.internalProps.menuHandler.containElement(target)) {
-      // 如果点击到表格外部的dom
-      const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
-      getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
-        if (isCompleteEdit === false) {
-          // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
-          return;
-        }
-        //点击到表格外部不需要取消选中状态
-        if (table.options.select?.outsideClickDeselect) {
-          const isHasSelected = !!stateManager.select.ranges?.length;
-          eventManager.dealTableSelect();
-          stateManager.endSelectCells(true, isHasSelected);
-        }
-      });
-    }
-  };
-  //释放时最好是通过vglobal.removeEventListener TODO
-  eventManager.globalEventListeners.push({
-    name: 'pointerup',
-    env: 'document',
-    callback: globalPointerupCallback
-  });
-  //释放时最好是通过vglobal.removeEventListener TODO
-  eventManager.globalEventListeners.push({
-    name: 'pointerdown',
-    env: 'document',
-    callback: globalPointerdownCallback
-  });
-  // 整体全局监听事件
-  vglobal.addEventListener('pointerup', globalPointerupCallback);
-  vglobal.addEventListener('pointerdown', globalPointerdownCallback);
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
       table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
@@ -502,7 +453,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
           eventManager.touchEnd = false;
           eventManager.touchSetTimeout = setTimeout(() => {
             eventManager.isTouchdown = false;
-            eventManager.touchMove = true;
+            eventManager.isLongTouch = true;
 
             // 处理列宽调整
             if (
@@ -683,6 +634,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
         });
       }
     }
+    setTimeout(() => {
+      eventManager.isTouchdown = false;
+      eventManager.isTouchMove = false;
+      eventManager.isDraging = false;
+      eventManager.touchMovePoints = [];
+    }, 0);
   });
 
   table.scenegraph.tableGroup.addEventListener('rightdown', (e: FederatedPointerEvent) => {
@@ -743,7 +700,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     }
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     if (
-      !eventManager.touchMove &&
+      !eventManager.isTouchMove &&
       e.button === 0 &&
       eventArgsSet.eventArgs &&
       (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)

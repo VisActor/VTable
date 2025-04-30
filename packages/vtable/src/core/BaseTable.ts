@@ -235,6 +235,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _hasAutoImageColumn?: boolean;
 
   pluginManager: PluginManager;
+  rotateDegree?: number;
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
 
@@ -1665,6 +1666,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**
+   * 获取所有表列的宽度的数组
+   * @returns {number[]} 宽度列表
+   */
+  getColsWidths(): number[] {
+    const maxCount = this.colCount;
+    const widths: number[] = [];
+
+    for (let col = 0; col < maxCount; col++) {
+      widths.push(this.getColWidth(col));
+    }
+
+    return widths;
+  }
+
+  /**
    * 根据列号 获取列宽最大值
    * @param  {number} col column index
    * @return {number} column max width
@@ -2358,6 +2374,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param options
    */
   updateOption(options: BaseTableConstructorOptions) {
+    this.editorManager?.cancelEdit();
     (this.options as BaseTable['options']) = options;
     this._hasAutoImageColumn = undefined;
     const {
@@ -2674,10 +2691,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /** @private  将鼠标坐标值 转换成表格坐标系中的坐标位置
    * isAddScroll默认为true 返回的xy 加上了scrollX和scrollY。如滚动后通过该方法计算出的坐标值是未滚动时的坐标
    */
-  _getMouseAbstractPoint(
-    evt: TouchEvent | MouseEvent | undefined,
-    isAddScroll = true
-  ): { x: number; y: number; inTable: boolean } {
+  _getMouseAbstractPoint(evt: TouchEvent | MouseEvent | undefined): { x: number; y: number; inTable: boolean } {
     const table = this;
     let e: MouseEvent | Touch;
     if (!evt) {
@@ -2700,22 +2714,32 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
 
     const currentWidth = rect.width;
-    const originWidth = this.canvas.offsetWidth || currentWidth;
+    // 考虑旋转情况下宽高值和rect的宽高是相反的
+    const originWidth = (this.rotateDegree === 90 ? this.canvas.offsetHeight : this.canvas.offsetWidth) || currentWidth;
     const widthRatio = currentWidth / originWidth;
 
     const currentHeight = rect.height;
-    const originHeight = this.canvas.offsetHeight || currentHeight;
+    // 考虑旋转情况下宽高值和rect的宽高是相反的
+    const originHeight =
+      (this.rotateDegree === 90 ? this.canvas.offsetWidth : this.canvas.offsetHeight) || currentHeight;
     const heightRatio = currentHeight / originHeight;
-
-    const x =
-      (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0) - (this.options.viewBox?.x1 ?? 0);
-    const y =
-      (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0) - (this.options.viewBox?.y1 ?? 0);
+    //接下来和rotateTablePlugin插件逻辑有点耦合了 需要借助旋转插件的矩阵来计算相对于表格的坐标
+    const rotateTablePlugin = this.pluginManager.getPluginByName('Rotate Table');
+    if (rotateTablePlugin && this.rotateDegree === 90) {
+      const x = clientX / widthRatio - (this.options.viewBox?.x1 ?? 0);
+      const y = clientY / heightRatio - (this.options.viewBox?.y1 ?? 0);
+      const point = { x, y, inTable };
+      const matrix = (rotateTablePlugin as any).matrix;
+      matrix.transformPoint(point, point);
+      return point;
+    }
+    const x = (clientX - rect.left) / widthRatio - (this.options.viewBox?.x1 ?? 0);
+    const y = (clientY - rect.top) / heightRatio - (this.options.viewBox?.y1 ?? 0);
     const point = { x, y, inTable };
-
     if (this.internalProps.modifiedViewBoxTransform && this.scenegraph.stage.window.getViewBoxTransform()) {
       const transform = this.scenegraph.stage.window.getViewBoxTransform();
       transform.transformPoint(point, point);
+      return point;
     }
     return point;
   }

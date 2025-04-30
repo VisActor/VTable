@@ -94,7 +94,50 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)!, option);
   window.tableInstance = tableInstance;
+  const columns1: VTable.ColumnsDefine = [
+    {
+      field: 'id',
+      title: 'ID ( input-editor )',
+      width: 'auto',
+      minWidth: 50,
+      sort: true,
+      headerEditor: 'input-editor',
+      editor: 'input-editor'
+    },
+    {
+      field: 'date1',
+      title: 'birthday ( date_input_editor )',
+      width: 300,
+      editor: 'date_input_editor'
+    },
+    {
+      field: 'sex',
+      title: 'sex ( list_editor )',
+      width: 300,
+      editor: 'list_editor'
+    }
+  ];
+  setTimeout(() => {
+    const option1: VTable.ListTableConstructorOptions = {
+      container: document.getElementById(CONTAINER_ID),
+      records,
+      columns: columns1,
+      select: {
+        outsideClickDeselect: true,
+        headerSelectMode: 'body'
+      },
 
+      editCellTrigger: 'click',
+      autoWrapText: true,
+      editor: 'input-editor',
+      menu: {
+        contextMenuItems: ['copy', 'paste', 'delete', '...']
+      },
+      rowSeriesNumber: {},
+      plugins: [highlightPlugin]
+    };
+    tableInstance.updateOption(option1);
+  }, 2000);
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']
   });

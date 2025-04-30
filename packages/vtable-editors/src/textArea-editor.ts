@@ -83,8 +83,6 @@ export class TextAreaEditor implements IEditor {
   }
 
   adjustPosition(rect: RectProps) {
-
-
     //使border均分input位置rect的上下左右
     const borderWidth = 2;
     const top = rect.top - borderWidth / 2;

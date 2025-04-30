@@ -4,7 +4,7 @@
 
 ## updateOption(Function)
 
-更新表格配置项，调用后会自动重绘
+更新表格配置项，调用后会自动重绘。
 
 ```ts
   /**
@@ -1259,6 +1259,14 @@ getAllRowsHeight: () => number;
 
 ```
 getAllColsWidth: () => number;
+```
+
+## getAllColsWidths(Function)
+
+获取表格所有列的宽度列表
+
+```
+getAllColsWidth: () => number[];
 ```
 
 ## setSortedIndexMap(Function)

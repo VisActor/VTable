@@ -35,6 +35,13 @@
             "zh": "AI工具助力VTable",
             "en": "AI tools help"
           }
+        },
+        {
+          "path": "Quickly_Get_Started_with_VisActor_Using_Trae_Context_Doc",
+          "title": {
+            "zh": "借助trae-context快速上手VisActor",
+            "en": "Quickly Get Started with VisActor Using Trae-Context"
+          }
         }
       ]
     },
@@ -793,6 +800,13 @@
           "title": {
             "zh": "表格轮播动画",
             "en": "table carousel animation"
+          }
+        },
+        {
+          "path": "rotate-table",
+          "title": {
+            "zh": "表格旋转",
+            "en": "rotate table"
           }
         }
       ]

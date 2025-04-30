@@ -1373,17 +1373,22 @@ export class Scenegraph {
       table._clearColRangeWidthsMap();
       const canvasWidth = table.tableNoFrameWidth;
       let actualHeaderWidth = 0;
-      for (let col = 0; col < table.colCount; col++) {
-        if (
-          col < table.rowHeaderLevelCount ||
-          (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
-        ) {
-          const colWidth = table.getColWidth(col);
-          actualHeaderWidth += colWidth;
+      let startCol = 0;
+      let endCol = table.colCount;
+      if (table.widthAdaptiveMode === 'only-body') {
+        for (let col = 0; col < table.colCount; col++) {
+          if (
+            col < table.rowHeaderLevelCount ||
+            (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+          ) {
+            const colWidth = table.getColWidth(col);
+            actualHeaderWidth += colWidth;
+          }
         }
+        startCol = table.rowHeaderLevelCount;
+        endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
       }
-      const startCol = table.rowHeaderLevelCount;
-      const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
+
       getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table, true);
     } else if (table.autoFillWidth) {
       table._clearColRangeWidthsMap();

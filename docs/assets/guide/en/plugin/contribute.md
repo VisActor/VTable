@@ -19,12 +19,14 @@ Plugins need to implement the `VTable.plugins.IVTablePlugin` interface.
 export interface IVTablePlugin {
   // Plugin unique identifier
   id: string;
+  // Plugin name
+  name: string;
   // Plugin runtime trigger
   runTime: TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][];
   // Initialization method, called after VTable instance creation and before first render
   run: (...args: any[]) => void;
   // Update method, called when table data or configuration updates
-  update?: (table: BaseTableAPI, options?: any) => void;
+  update?: () => void;
   // Destruction method, called before VTable instance is destroyed
   release?: (table: BaseTableAPI) => void;
 }
@@ -46,7 +48,7 @@ sequenceDiagram
     participant ListTable
     participant EventManager
     participant PluginManager
-    participant Plugin as IVTablePlugin
+    participant Plugin as VTablePlugin
     participant RenderManager
     
     %% Initialization
@@ -65,13 +67,17 @@ sequenceDiagram
         Plugin->>Plugin: process event logic
     end
     
-    Plugin->>RenderManager: requestRender()
-    RenderManager->>ListTable: render updates
+    Plugin->>ListTable: render request to update table
     ListTable->>DOM: update display
 
-    %% Release
+
+    %% table.updateOption
+    ListTable->>PluginManager: updateOption
+    PluginManager->>Plugin: updatePlugins()
+    %% table.release
     ListTable->>PluginManager: release
     PluginManager->>Plugin: release()
+
 ```
 
 From the above diagram, you can understand the runtime timing of plugins:

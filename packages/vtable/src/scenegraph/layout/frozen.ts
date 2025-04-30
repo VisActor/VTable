@@ -543,8 +543,11 @@ function moveRowFromBodyToColHeader(scene: Scenegraph) {
   let hasSetedHeight = false;
   // deal with bodyGroup
   for (let i = 0; i < scene.bodyGroup.childrenCount; i++) {
-    const colGroup = scene.bodyGroup.children[i] as Group;
-    const rowCell = colGroup.firstChild as Group;
+    const child = scene.bodyGroup.children[i];
+    if (!checkBeforeMove(child)) {
+      continue;
+    }
+    const rowCell = child.firstChild as Group;
     scene.colHeaderGroup.children[i]?.appendChild(rowCell);
     // update container width
     if (!hasSetedHeight) {
@@ -559,8 +562,11 @@ function moveRowFromRowHeaderToCornerHeader(scene: Scenegraph) {
   let hasSetedHeight = false;
   // deal with rowHeaderGroup
   for (let i = 0; i < scene.rowHeaderGroup.childrenCount; i++) {
-    const colGroup = scene.rowHeaderGroup.children[i] as Group;
-    const rowCell = colGroup.firstChild as Group;
+    const child = scene.rowHeaderGroup.children[i];
+    if (!checkBeforeMove(child)) {
+      continue;
+    }
+    const rowCell = child.firstChild as Group;
     scene.cornerHeaderGroup.children[i]?.appendChild(rowCell);
     // update container width
     if (!hasSetedHeight) {
@@ -578,8 +584,11 @@ function moveRowFromRightToTopRightCorner(scene: Scenegraph) {
   let hasSetedHeight = false;
   // deal with rowHeaderGroup
   for (let i = 0; i < scene.rightFrozenGroup.childrenCount; i++) {
-    const colGroup = scene.rightFrozenGroup.children[i] as Group;
-    const rowCell = colGroup.firstChild as Group;
+    const child = scene.rightFrozenGroup.children[i];
+    if (!checkBeforeMove(child)) {
+      continue;
+    }
+    const rowCell = child.firstChild as Group;
     scene.rightTopCornerGroup.children[i]?.appendChild(rowCell);
     // update container width
     if (!hasSetedHeight) {
@@ -597,10 +606,17 @@ function moveRowFromColHeaderToBody(scene: Scenegraph) {
   let hasSetedHeight = false;
   // deal with bodyGroup
   for (let i = 0; i < scene.colHeaderGroup.childrenCount; i++) {
-    const colGroup = scene.colHeaderGroup.children[i] as Group;
-    const rowCell = colGroup.lastChild as Group;
-    insertBefore(scene.bodyGroup.children[i] as Group, rowCell, scene.bodyGroup.children[i].firstChild as Group);
-    // update container width
+    const child = scene.colHeaderGroup.children[i];
+    if (!checkBeforeMove(child)) {
+      continue;
+    }
+    const target = scene.bodyGroup.children[i] as Group;
+    if (!target) {
+      continue;
+    }
+    const rowCell = child.lastChild as Group;
+    insertBefore(target, rowCell, target.firstChild as Group);
+    // 更新高度
     if (!hasSetedHeight) {
       scene.colHeaderGroup.setAttribute('height', scene.colHeaderGroup.attribute.height - rowCell.attribute.height);
       scene.bodyGroup.setAttribute('height', scene.bodyGroup.attribute.height + rowCell.attribute.height);
@@ -613,14 +629,17 @@ function moveRowFromCornerHeaderToRowHeader(scene: Scenegraph) {
   let hasSetedHeight = false;
   // deal with rowHeaderGroup
   for (let i = 0; i < scene.cornerHeaderGroup.childrenCount; i++) {
-    const colGroup = scene.cornerHeaderGroup.children[i] as Group;
-    const rowCell = colGroup.lastChild as Group;
+    const child = scene.cornerHeaderGroup.children[i];
+    if (!checkBeforeMove(child)) {
+      continue;
+    }
+    const target = scene.rowHeaderGroup.children[i] as Group;
+    if (!target) {
+      continue;
+    }
+    const rowCell = child.lastChild as Group;
     // scene.rowHeaderGroup.children[i]?.appendChild(rowCell);
-    insertBefore(
-      scene.rowHeaderGroup.children[i] as Group,
-      rowCell,
-      scene.rowHeaderGroup.children[i].firstChild as Group
-    );
+    insertBefore(target, rowCell, target.firstChild as Group);
     // update container width
     if (!hasSetedHeight) {
       scene.cornerHeaderGroup.setAttribute(
@@ -637,14 +656,17 @@ function moveRowFromTopRightCornerToRight(scene: Scenegraph) {
   let hasSetedHeight = false;
   // deal with rowHeaderGroup
   for (let i = 0; i < scene.rightTopCornerGroup.childrenCount; i++) {
-    const colGroup = scene.rightTopCornerGroup.children[i] as Group;
-    const rowCell = colGroup.lastChild as Group;
+    const child = scene.rightTopCornerGroup.children[i];
+    if (!checkBeforeMove(child)) {
+      continue;
+    }
+    const target = scene.rightFrozenGroup.children[i] as Group;
+    if (!target) {
+      continue;
+    }
+    const rowCell = child.lastChild as Group;
     // scene.rightFrozenGroup.children[i]?.appendChild(rowCell);
-    insertBefore(
-      scene.rightFrozenGroup.children[i] as Group,
-      rowCell,
-      scene.rightFrozenGroup.children[i].firstChild as Group
-    );
+    insertBefore(target, rowCell, target.firstChild as Group);
     // update container width
     if (!hasSetedHeight) {
       scene.rightTopCornerGroup.setAttribute(
@@ -655,4 +677,9 @@ function moveRowFromTopRightCornerToRight(scene: Scenegraph) {
       hasSetedHeight = true;
     }
   }
+}
+
+function checkBeforeMove(child: any) {
+  // 跳过非 Group 类型或名为 'table-border-rect' 的边框节点
+  return child instanceof Group && child?.name !== 'table-border-rect';
 }

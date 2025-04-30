@@ -10,8 +10,8 @@ export class PluginManager {
     this.table = table;
     options.plugins?.map(plugin => {
       this.register(plugin);
+      this._bindTableEventForPlugin(plugin);
     });
-    this.initPlugins(table);
   }
 
   // 注册插件
@@ -28,23 +28,37 @@ export class PluginManager {
   getPlugin(id: string): IVTablePlugin | undefined {
     return this.plugins.get(id);
   }
+  getPluginByName(name: string): IVTablePlugin | undefined {
+    return Array.from(this.plugins.values()).find(plugin => plugin.name === name);
+  }
 
-  initPlugins(table: BaseTableAPI) {
-    this.plugins.forEach(plugin => {
-      plugin.runTime?.forEach(runTime => {
-        table.on(runTime, (...args) => {
-          plugin.run?.(...args, runTime, table);
-        });
+  _bindTableEventForPlugin(plugin: IVTablePlugin) {
+    plugin.runTime?.forEach(runTime => {
+      this.table.on(runTime, (...args) => {
+        plugin.run?.(...args, runTime, this.table);
       });
     });
   }
 
   // 更新所有插件
-  updatePlugins(): void {
+  updatePlugins(plugins?: IVTablePlugin[]): void {
+    // 先找到plugins中没有，但this.plugins中有，也就是已经被移除的插件
+    const removedPlugins = Array.from(this.plugins.values()).filter(plugin => !plugins?.some(p => p.id === plugin.id));
+    removedPlugins.forEach(plugin => {
+      this.release();
+      this.plugins.delete(plugin.id);
+    });
+    // 更新插件
     this.plugins.forEach(plugin => {
       if (plugin.update) {
-        plugin.update(this.table);
+        plugin.update();
       }
+    });
+    // 添加新插件
+    const addedPlugins = plugins?.filter(plugin => !this.plugins.has(plugin.id));
+    addedPlugins?.forEach(plugin => {
+      this.register(plugin);
+      this._bindTableEventForPlugin(plugin);
     });
   }
   release() {

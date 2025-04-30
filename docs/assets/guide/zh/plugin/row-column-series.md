@@ -19,7 +19,7 @@ export interface ColumnSeriesOptions {
    * 是否自动扩展列
    * @default true
    */
-  autoExtendColumn?: boolean;
+  autoExtendColumnTriggerKeys?: ('ArrowRight' | 'Tab')[];
 }
 
 export interface RowSeriesOptions {
@@ -30,7 +30,7 @@ export interface RowSeriesOptions {
    * 是否自动扩展行
    * @default true
    */
-  autoExtendRow?: boolean;
+  autoExtendRowTriggerKeys?: ('ArrowDown' | 'Enter')[];
 }
 ```
 

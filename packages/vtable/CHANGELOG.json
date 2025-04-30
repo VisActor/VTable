@@ -2,6 +2,45 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.18.2",
+      "tag": "@visactor/vtable_v1.18.2",
+      "date": "Wed, 30 Apr 2025 09:48:20 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: change event listener with vglobal #3734\n\n"
+          },
+          {
+            "comment": "fix: when records is blank updateColumns api occor error #3766\n\n"
+          },
+          {
+            "comment": "fix: updateOption with dataSource object occor error #3768\n\n"
+          },
+          {
+            "comment": "refactor: plugins update progress #3788\n\n"
+          },
+          {
+            "comment": "fix: when hide pivot header find headerPath error #3791\n\n"
+          },
+          {
+            "comment": "fix: supplement adaptive widthAdaptiveMode logic #3796\n\n"
+          },
+          {
+            "comment": "fix: transform rotate api\n\n"
+          },
+          {
+            "comment": "fix: after rotate resize column interaction error\n\n"
+          },
+          {
+            "comment": "fix: skip serial number calculation for aggregation rows when groupBy is enabled\n\n"
+          },
+          {
+            "comment": "fix: hide rowSeriesNumber and checkbox in aggregation #2173\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.18.1",
       "tag": "@visactor/vtable_v1.18.1",
       "date": "Mon, 21 Apr 2025 09:53:06 GMT",

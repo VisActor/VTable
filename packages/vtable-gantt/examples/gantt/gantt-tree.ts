@@ -618,7 +618,9 @@ export function createTable() {
   ];
   const option: GanttConstructorOptions = {
     records,
+
     taskListTable: {
+      headerEditor: 'input',
       columns: columns,
       tableWidth: 400,
       minTableWidth: 100,

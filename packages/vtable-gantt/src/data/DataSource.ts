@@ -60,6 +60,18 @@ export class DataSource {
         this._gantt.parsedOptions.minDate = getStartDateByTimeUnit(new Date(minDate), minTimeUnit, startOfWeek);
         this._gantt.parsedOptions._minDateTime = this._gantt.parsedOptions.minDate.getTime();
       }
+
+      // 提供了最大值，没有提供最小值，因为最大值依赖最小值，所以应该重新计算
+      if (needMinDate && !needMaxDate) {
+        this._gantt.parsedOptions.maxDate = getEndDateByTimeUnit(
+          this._gantt.parsedOptions.minDate,
+          new Date(this._gantt.options.maxDate),
+          minTimeUnit,
+          step
+        );
+        this._gantt.parsedOptions._maxDateTime = this._gantt.parsedOptions.maxDate.getTime();
+      }
+
       if (needMaxDate) {
         this._gantt.parsedOptions.maxDate = getEndDateByTimeUnit(
           this._gantt.parsedOptions.minDate,

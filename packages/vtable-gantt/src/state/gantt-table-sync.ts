@@ -21,8 +21,10 @@ export function syncScrollStateFromTable(gantt: Gantt) {
 }
 export function syncEditCellFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('change_cell_value', (args: any) => {
-    const { col, row, rawValue, changedValue } = args;
-    gantt._refreshTaskBar(row - gantt.taskListTableInstance.columnHeaderLevelCount);
+    const { col, row } = args;
+    if (!gantt.taskListTableInstance.isHeader(col, row)) {
+      gantt._refreshTaskBar(row - gantt.taskListTableInstance.columnHeaderLevelCount);
+    }
     // const record = gantt.getRecordByIndex(row - gantt.taskListTableInstance.columnHeaderLevelCount);
     // debugger;
   });

@@ -1,6 +1,42 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 21 Apr 2025 09:53:06 GMT and should not be manually modified.
+This log was last generated on Wed, 30 Apr 2025 09:48:20 GMT and should not be manually modified.
+
+## 1.18.2
+Wed, 30 Apr 2025 09:48:20 GMT
+
+### Updates
+
+- refactor: change event listener with vglobal #3734
+
+
+- fix: when records is blank updateColumns api occor error #3766
+
+
+- fix: updateOption with dataSource object occor error #3768
+
+
+- refactor: plugins update progress #3788
+
+
+- fix: when hide pivot header find headerPath error #3791
+
+
+- fix: supplement adaptive widthAdaptiveMode logic #3796
+
+
+- fix: transform rotate api
+
+
+- fix: after rotate resize column interaction error
+
+
+- fix: skip serial number calculation for aggregation rows when groupBy is enabled
+
+
+- fix: hide rowSeriesNumber and checkbox in aggregation #2173
+
+
 
 ## 1.18.1
 Mon, 21 Apr 2025 09:53:06 GMT

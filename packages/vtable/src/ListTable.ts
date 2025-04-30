@@ -43,7 +43,7 @@ import { getGroupCheckboxState, setCellCheckboxState } from './state/checkbox/ch
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
-import type { CachedDataSource } from './data';
+import { DataSource, type CachedDataSource } from './data';
 import {
   listTableAddRecord,
   listTableAddRecords,
@@ -213,6 +213,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * Sets the define of the column.
    */
   updateColumns(columns: ColumnsDefine) {
+    this.scenegraph.clearCells(); //将该代码提前 逻辑中有设置this.clear=true。refreshHeader逻辑中有判断clear这个值的地方
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.columns = cloneDeepSpec(columns, ['children']);
     generateAggregationForColumn(this);
@@ -230,7 +231,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.dataSource.processRecords(this.dataSource.dataSourceObj?.records ?? this.dataSource.dataSourceObj);
     }
     this.internalProps.useOneRowHeightFillAll = false;
-    this.scenegraph.clearCells();
+
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.bodyBottomStyleCache = new Map();
@@ -318,7 +319,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         if (record?.vtableMerge) {
           return '';
         }
-        value = (this.dataSource as CachedDataSource).getGroupSeriesNumber(row - this.columnHeaderLevelCount);
+        if (!table.internalProps.layoutMap.isAggregation(col, row)) {
+          value = (this.dataSource as CachedDataSource).getGroupSeriesNumber(row - this.columnHeaderLevelCount);
+        }
         // const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
         // value = indexs[indexs.length - 1] + 1;
       } else {
@@ -512,14 +515,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
     if (internalProps.releaseList) {
-      internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
-      internalProps.releaseList = null;
+      for (let i = internalProps.releaseList.length - 1; i >= 0; i--) {
+        const releaseObj = internalProps.releaseList[i];
+        if (releaseObj instanceof DataSource) {
+          releaseObj.updateColumns(this.internalProps.columns);
+        } else {
+          releaseObj?.release?.();
+          internalProps.releaseList.splice(i, 1);
+        }
+      }
     }
     // // 恢复selection状态
     // internalProps.selection.range = range;
     // this._updateSize();
     // 传入新数据
-    if (options.dataSource) {
+    if (options.dataSource && this.dataSource !== options.dataSource) {
       // _setDataSource(this, options.dataSource);
       this.dataSource = options.dataSource;
     } else if (options.records) {
@@ -527,6 +537,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         sortState: options.sortState
       });
     } else {
+      this.refreshRowColCount();
       this._resetFrozenColCount();
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
@@ -546,6 +557,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.internalProps.emptyTip?.resetVisible();
       }
     }
+    this.pluginManager.updatePlugins(options.plugins);
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });
@@ -606,7 +618,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     const dataCount = table.internalProps.dataSource?.length ?? 0;
     layoutMap.recordsCount =
-      dataCount + (dataCount > 0 ? layoutMap.hasAggregationOnTopCount + layoutMap.hasAggregationOnBottomCount : 0);
+      dataCount +
+      (dataCount > 0 || !!this.options.showAggregationWhenEmpty
+        ? layoutMap.hasAggregationOnTopCount + layoutMap.hasAggregationOnBottomCount
+        : 0);
 
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;

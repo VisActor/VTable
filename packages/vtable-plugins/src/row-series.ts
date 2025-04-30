@@ -11,19 +11,20 @@ export interface RowSeriesOptions {
    * 是否自动扩展行
    * @default true
    */
-  autoExtendRow?: boolean;
+  autoExtendRowTriggerKeys?: ('ArrowDown' | 'Enter')[];
 }
 /**
  * 生成行序号标题的插件
  */
 export class RowSeriesPlugin implements plugins.IVTablePlugin {
-  id = 'row-series';
+  id = `row-series-${Date.now()}`;
+  name = 'Row Series';
   runTime = [TABLE_EVENT_TYPE.BEFORE_INIT, TABLE_EVENT_TYPE.BEFORE_KEYDOWN];
   pluginOptions: RowSeriesOptions;
   table: ListTable;
 
   constructor(pluginOptions: RowSeriesOptions) {
-    this.pluginOptions = Object.assign({ rowCount: 100, autoExtendRow: true }, pluginOptions);
+    this.pluginOptions = Object.assign({ rowCount: 100 }, pluginOptions);
   }
   run(...args: any[]) {
     if (args[1] === TABLE_EVENT_TYPE.BEFORE_INIT) {
@@ -51,17 +52,16 @@ export class RowSeriesPlugin implements plugins.IVTablePlugin {
       const eventArgs = args[0];
 
       const e = eventArgs.event;
-      if (e.key === 'ArrowDown') {
-        if (
-          this.pluginOptions.autoExtendRow &&
-          this.table.stateManager.select.cellPos.row === this.table.rowCount - 1
-        ) {
-          (this.table as ListTable).addRecord(
-            this.pluginOptions.fillRowRecord
-              ? this.pluginOptions.fillRowRecord(this.table.rowCount - this.table.columnHeaderLevelCount)
-              : {}
-          );
-        }
+
+      if (
+        this.pluginOptions.autoExtendRowTriggerKeys?.includes(e.key) &&
+        this.table.stateManager.select.cellPos.row === this.table.rowCount - 1
+      ) {
+        (this.table as ListTable).addRecord(
+          this.pluginOptions.fillRowRecord
+            ? this.pluginOptions.fillRowRecord(this.table.rowCount - this.table.columnHeaderLevelCount)
+            : {}
+        );
       }
     }
   }

@@ -280,7 +280,7 @@ export class TaskBar {
     }
     return barGroupBox;
   }
-  updateTaskBarNode(index: number, sub_task_index: number) {
+  updateTaskBarNode(index: number, sub_task_index?: number) {
     const taskbarGroup = this.getTaskBarNodeByIndex(index, sub_task_index);
     if (taskbarGroup) {
       this.barContainer.removeChild(taskbarGroup);

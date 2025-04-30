@@ -349,27 +349,55 @@ export function createCell(
       isAsync
     );
   } else if (type === 'checkbox') {
-    const createCheckboxCellGroup = Factory.getFunction('createCheckboxCellGroup') as CreateCheckboxCellGroup;
-    cellGroup = createCheckboxCellGroup(
-      null,
-      columnGroup,
-      0,
-      y,
-      col,
-      row,
-      colWidth,
-      cellWidth,
-      cellHeight,
-      padding,
-      textAlign,
-      textBaseline,
-      mayHaveIcon,
-      table,
-      cellTheme,
-      define as CheckboxColumnDefine,
-      range,
-      isAsync
-    );
+    const isAggregation =
+      'isAggregation' in table.internalProps.layoutMap && table.internalProps.layoutMap.isAggregation(col, row);
+    const isSeriesNumber = table.internalProps.layoutMap.isSeriesNumber(col, row);
+    if (isAggregation && isSeriesNumber) {
+      const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
+      cellGroup = createTextCellGroup(
+        table,
+        value,
+        columnGroup,
+        0,
+        y,
+        col,
+        row,
+        colWidth,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        false,
+        undefined,
+        true,
+        cellTheme,
+        range,
+        isAsync
+      );
+    } else {
+      const createCheckboxCellGroup = Factory.getFunction('createCheckboxCellGroup') as CreateCheckboxCellGroup;
+      cellGroup = createCheckboxCellGroup(
+        null,
+        columnGroup,
+        0,
+        y,
+        col,
+        row,
+        colWidth,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        mayHaveIcon,
+        table,
+        cellTheme,
+        define as CheckboxColumnDefine,
+        range,
+        isAsync
+      );
+    }
   } else if (type === 'radio') {
     const createRadioCellGroup = Factory.getFunction('createRadioCellGroup') as CreateRadioCellGroup;
     cellGroup = createRadioCellGroup(
