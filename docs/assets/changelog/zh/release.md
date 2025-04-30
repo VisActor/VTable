@@ -1,3 +1,37 @@
+# v1.18.2
+
+2025-04-30
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 当 records 为空时，updateColumns 接口报错 [#3766](https://github.com/VisActor/VTable/issues/3766)
+- **@visactor/vtable**: 使用 dataSource 对象做数据源，调用 updateOption 接口报错 [#3768](https://github.com/VisActor/VTable/issues/3768)
+- **@visactor/vtable**: 隐藏透视表表头时，查找 headerPath 错误 [#3791](https://github.com/VisActor/VTable/issues/3791)
+- **@visactor/vtable**: 补充自适应 widthAdaptiveMode 逻辑 [#3796](https://github.com/VisActor/VTable/issues/3796)
+- **@visactor/vtable**: 启用 groupBy 时，跳过聚合行的序号计算
+- **@visactor/vtable**: 在聚合中隐藏 rowSeriesNumber 和复选框 [#2173](https://github.com/VisActor/VTable/issues/2173)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 使用 vglobal 更改事件监听器 [#3734](https://github.com/VisActor/VTable/issues/3734)
+- **@visactor/vtable**: 插件更新机制 [#3788](https://github.com/VisActor/VTable/issues/3788)
+- **@visactor/vtable**: 添加转换表格插件
+
+
+[更多详情请查看 v1.18.2](https://github.com/VisActor/VTable/releases/tag/v1.18.2)
+
+
+# v1.18.1
+
+2025-04-21
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复当拖拽滚动条时，控制台报错问题 #3770 [#3766](https://github.com/VisActor/VTable/issues/3770)
+
+
 # v1.18.0 
   v1.17.7 版本相同内容
 
