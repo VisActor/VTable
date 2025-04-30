@@ -19,12 +19,14 @@
 export interface IVTablePlugin {
   // 插件唯一标识
   id: string;
+  // 插件名称
+  name: string;
   // 插件运行时机
   runTime: TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][];
   // 初始化方法，在VTable实例创建后、首次渲染前调用
   run: (...args: any[]) => void;
   // 更新方法，当表格数据或配置更新时调用
-  update?: (table: BaseTableAPI, options?: any) => void;
+  update?: () => void;
   // 销毁方法，在VTable实例销毁前调用
   release?: (table: BaseTableAPI) => void;
 }
@@ -46,7 +48,7 @@ sequenceDiagram
     participant ListTable
     participant EventManager
     participant PluginManager
-    participant Plugin as IVTablePlugin
+    participant Plugin as VTablePlugin
     participant RenderManager
     
     %% Initialization
@@ -65,13 +67,17 @@ sequenceDiagram
         Plugin->>Plugin: process event logic
     end
     
-    Plugin->>RenderManager: requestRender()
-    RenderManager->>ListTable: render updates
+    Plugin->>ListTable: render request to update table
     ListTable->>DOM: update display
 
-    %% Release
+
+    %% table.updateOption
+    ListTable->>PluginManager: updateOption
+    PluginManager->>Plugin: updatePlugins()
+    %% table.release
     ListTable->>PluginManager: release
     PluginManager->>Plugin: release()
+
 ```
 
 通过上图可以了解到插件的运行时机：

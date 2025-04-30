@@ -280,7 +280,8 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
         col: number;
         field: string;
       }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
-
+  /** 数据为空时显示聚合结果 */
+  showAggregationWhenEmpty?: boolean;
   enableTreeNodeMerge?: boolean;
   groupBy?: GroupByOption;
   groupTitleCustomLayout?: ICustomLayout;

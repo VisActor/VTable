@@ -61,10 +61,12 @@ VTable.register.editor('input', input_editor);
   });
 
   const columnSeries = new VTablePlugins.ColumnSeriesPlugin({
-    columnCount: 26
+    columnCount: 26,
+    autoExtendColumnTriggerKeys: ['ArrowRight', 'Tab']
   });
   const rowSeries = new VTablePlugins.RowSeriesPlugin({
     rowCount: 100,
+    autoExtendRowTriggerKeys: ['ArrowDown', 'Enter'],
     //records数据以外 填充空行数据
     fillRowRecord: (index) => {
       return [];
@@ -105,7 +107,11 @@ VTable.register.editor('input', input_editor);
         textAlign: 'center'
       }
     }),
+    frozenColCount: 1,
     defaultRowHeight: 30,
+    keyboardOptions: {
+      moveFocusCellOnEnter: true
+    },
     plugins: [addRowColumn, columnSeries, rowSeries, highlightPlugin, excelEditCellKeyboardPlugin]
   };
   const tableInstance = new VTable.ListTable( document.getElementById(CONTAINER_ID),option);

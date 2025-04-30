@@ -478,15 +478,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return ifCan;
   }
-  updateOption(
-    options: ListTableConstructorOptions,
-    updateConfig: {
-      //当新的option没有传入records或者dataSource时，是否保留原本的数据
-      keepData?: boolean;
-    } = {
-      keepData: false
-    }
-  ) {
+  updateOption(options: ListTableConstructorOptions) {
     const internalProps = this.internalProps;
     super.updateOption(options);
     internalProps.frozenColDragHeaderMode =
@@ -525,7 +517,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (internalProps.releaseList) {
       for (let i = internalProps.releaseList.length - 1; i >= 0; i--) {
         const releaseObj = internalProps.releaseList[i];
-        if (updateConfig.keepData && releaseObj instanceof DataSource) {
+        if (releaseObj instanceof DataSource) {
           releaseObj.updateColumns(this.internalProps.columns);
         } else {
           releaseObj?.release?.();
@@ -565,6 +557,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.internalProps.emptyTip?.resetVisible();
       }
     }
+    this.pluginManager.updatePlugins(options.plugins);
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });
@@ -625,7 +618,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     const dataCount = table.internalProps.dataSource?.length ?? 0;
     layoutMap.recordsCount =
-      dataCount + (dataCount > 0 ? layoutMap.hasAggregationOnTopCount + layoutMap.hasAggregationOnBottomCount : 0);
+      dataCount +
+      (dataCount > 0 || !!this.options.showAggregationWhenEmpty
+        ? layoutMap.hasAggregationOnTopCount + layoutMap.hasAggregationOnBottomCount
+        : 0);
 
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;
