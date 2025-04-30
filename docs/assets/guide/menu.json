@@ -801,6 +801,13 @@
             "zh": "表格轮播动画",
             "en": "table carousel animation"
           }
+        },
+        {
+          "path": "rotate-table",
+          "title": {
+            "zh": "表格旋转",
+            "en": "rotate table"
+          }
         }
       ]
     },

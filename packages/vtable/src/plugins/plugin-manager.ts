@@ -28,6 +28,9 @@ export class PluginManager {
   getPlugin(id: string): IVTablePlugin | undefined {
     return this.plugins.get(id);
   }
+  getPluginByName(name: string): IVTablePlugin | undefined {
+    return Array.from(this.plugins.values()).find(plugin => plugin.name === name);
+  }
 
   _bindTableEventForPlugin(plugin: IVTablePlugin) {
     plugin.runTime?.forEach(runTime => {

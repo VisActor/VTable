@@ -50,3 +50,4 @@ If you encounter issues with plugin usage, please provide feedback promptly.
 | `HighlightHeaderWhenSelectCellPlugin` | Highlight the selected cell | `ListTable`,`PivotTable` |
 | `ExcelEditCellKeyboardPlugin` | Excel edit cell keyboard plugin | `ListTable`,`PivotTable` |
 | `TableCarouselAnimationPlugin` | Table carousel animation plugin | `ListTable`,`PivotTable` |
+| `RotateTablePlugin` | Table rotation plugin | `ListTable`,`PivotTable` |

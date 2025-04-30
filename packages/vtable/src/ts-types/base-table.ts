@@ -727,14 +727,11 @@ export interface BaseTableAPI {
   canvasSizeSeted?: boolean;
 
   pixelRatio: number;
-
+  rotateDegree?: number;
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
-  _getMouseAbstractPoint: (
-    evt: TouchEvent | MouseEvent | undefined,
-    isAddScroll?: boolean
-  ) => { x: number; y: number; inTable: boolean };
+  _getMouseAbstractPoint: (evt: TouchEvent | MouseEvent | undefined) => { x: number; y: number; inTable: boolean };
   getElement: () => HTMLElement;
   getContainer: () => HTMLElement;
 

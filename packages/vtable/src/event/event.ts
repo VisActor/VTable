@@ -40,6 +40,7 @@ export class EventManager {
   // /** 为了能够判断canvas mousedown 事件 以阻止事件冒泡 */
   // isPointerDownOnTable: boolean = false;
   isTouchdown: boolean; // touch scrolling mode on
+  isTouchMove: boolean; // touchmove 事件中设置
   touchMovePoints: {
     x: number;
     y: number;
@@ -47,7 +48,8 @@ export class EventManager {
   }[]; // touch points record in touch scrolling mode
   touchSetTimeout: any; // touch start timeout, use to distinguish touch scrolling mode and default touch event
   touchEnd: boolean; // is touch event end when default touch event listener response
-  touchMove: boolean; // is touch listener working, use to disable document touch scrolling function
+  /** 是在touchSetTimeout中设置的true 延迟了500ms 如果在500ms内接入了touch事件 则取消touchSetTimeout逻辑 也就是不会将touchMode设置为true。这个是longTouch的逻辑 */
+  isLongTouch: boolean; // is touch listener working, use to disable document touch scrolling function
   gesture: Gesture;
   handleTextStickBindId: number[];
 

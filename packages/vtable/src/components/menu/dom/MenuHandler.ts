@@ -97,7 +97,7 @@ function getMenuInstanceInfo(
   }
   // else if (type === 'context-menu') {
   //   // 获取右键菜单信息及位置
-  //   const abstractPos = table._getMouseAbstractPoint(event, false);
+  //   const abstractPos = table._getMouseAbstractPoint(event);
   //   let menu = null;
   //   if (abstractPos && typeof table.options.contextmenu === 'function') {
   //     menu = table.options.contextmenu(table.getHeaderField(col, row) as string, row);
@@ -209,7 +209,7 @@ export class MenuHandler {
     table.on(TABLE_EVENT_TYPE.CONTEXTMENU_CELL, e => {
       if (table.internalProps.menu?.renderMode === 'html') {
         // 获取右键菜单信息及位置
-        const abstractPos = table._getMouseAbstractPoint(e.event, false);
+        const abstractPos = table._getMouseAbstractPoint(e.event);
         let menu = null;
         if (abstractPos.inTable && typeof table.internalProps.menu?.contextMenuItems === 'function') {
           menu = table.internalProps.menu.contextMenuItems(

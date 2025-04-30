@@ -453,7 +453,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
           eventManager.touchEnd = false;
           eventManager.touchSetTimeout = setTimeout(() => {
             eventManager.isTouchdown = false;
-            eventManager.touchMove = true;
+            eventManager.isLongTouch = true;
 
             // 处理列宽调整
             if (
@@ -634,6 +634,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
         });
       }
     }
+    setTimeout(() => {
+      eventManager.isTouchdown = false;
+      eventManager.isTouchMove = false;
+      eventManager.isDraging = false;
+      eventManager.touchMovePoints = [];
+    }, 0);
   });
 
   table.scenegraph.tableGroup.addEventListener('rightdown', (e: FederatedPointerEvent) => {
@@ -694,7 +700,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     }
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     if (
-      !eventManager.touchMove &&
+      !eventManager.isTouchMove &&
       e.button === 0 &&
       eventArgsSet.eventArgs &&
       (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)

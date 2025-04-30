@@ -141,7 +141,7 @@ export class TooltipHandler {
         const position = this._attachInfo.tooltipOptions.referencePosition;
         const { event } = e;
         const { left, right, top, bottom } = position.rect;
-        const abstractPos = table._getMouseAbstractPoint(event, false);
+        const abstractPos = table._getMouseAbstractPoint(event);
         if (
           !(
             abstractPos.inTable &&

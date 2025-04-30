@@ -19,12 +19,10 @@ const generatePersons = count => {
       '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 10V4H8V38L14 35" stroke="#f5a623" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 44V10H40V44L27 37.7273L14 44Z" fill="#f5a623" stroke="#f5a623" stroke-width="1" stroke-linejoin="round"/></svg>'
   }));
 };
-
+const rotatePlugin = new RotateTablePlugin();
 export function createTable() {
   const input_editor = new VTable_editors.InputEditor();
   VTable.register.editor('input-editor', input_editor);
-
-  const records = generatePersons(40);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
@@ -117,34 +115,43 @@ export function createTable() {
       width: 100
     }
   ];
-
-  const rotatePlugin = new RotateTablePlugin();
-  const option: VTable.ListTableConstructorOptions = {
-    records,
-    columns,
-    rowSeriesNumber: {},
-    select: {
-      outsideClickDeselect: true,
-      headerSelectMode: 'body'
-    },
-    autoWrapText: true,
-    editor: 'input-editor',
-    overscrollBehavior: 'none',
-    menu: {
-      contextMenuItems: ['copy', 'paste', 'delete', '...']
-    },
-    plugins: [rotatePlugin]
+  window.createTableInstance = function () {
+    window.tableInstance?.release();
+    const records = generatePersons(40);
+    const option: VTable.ListTableConstructorOptions = {
+      records,
+      columns,
+      rowSeriesNumber: {},
+      select: {
+        outsideClickDeselect: true,
+        headerSelectMode: 'body'
+      },
+      autoWrapText: true,
+      editor: 'input-editor',
+      overscrollBehavior: 'none',
+      menu: {
+        contextMenuItems: ['copy', 'paste', 'delete', '...']
+      },
+      plugins: [rotatePlugin]
+    };
+    const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)!, option);
+    window.tableInstance = tableInstance;
+    tableInstance.on('click_cell', e => {
+      console.log('click_cell');
+    });
   };
-  const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)!, option);
-  window.tableInstance = tableInstance;
+  /** @ts-ignore */
+  window.createTableInstance();
+  /** @ts-ignore */
   window.transform = function () {
     const bigContainer: HTMLElement = document.getElementsByClassName('container')[0] as HTMLElement;
     const bigContainerWidth = bigContainer.clientWidth;
     const bigContainerHeight = bigContainer.clientHeight;
     bigContainer.style.width = `${bigContainerHeight}px`;
     bigContainer.style.height = `${bigContainerWidth}px`;
-    tableInstance.rotate90WithTransform(bigContainer);
+    window.tableInstance.rotate90WithTransform(bigContainer);
   };
+  /** @ts-ignore */
   window.cancelTransform = function () {
     const bigContainer: HTMLElement = document.getElementsByClassName('container')[0] as HTMLElement;
 
@@ -152,11 +159,33 @@ export function createTable() {
     const bigContainerHeight = bigContainer.clientHeight;
     bigContainer.style.width = `${bigContainerHeight}px`;
     bigContainer.style.height = `${bigContainerWidth}px`;
-    tableInstance.cancelTransform(bigContainer);
+    window.tableInstance.cancelTransform(bigContainer);
   };
-  bindDebugTool(tableInstance.scenegraph.stage, {
-    customGrapicKeys: ['col', 'row']
-  });
+  /** @ts-ignore */
+  window.updateOption = function () {
+    const records = generatePersons(40);
+    const option: VTable.ListTableConstructorOptions = {
+      records: records.sort((a, b) => b.id - a.id),
+      columns,
+      rowSeriesNumber: {},
+      select: {
+        outsideClickDeselect: true,
+        headerSelectMode: 'body'
+      },
+      autoWrapText: true,
+      editor: 'input-editor',
+      overscrollBehavior: 'none',
+      menu: {
+        contextMenuItems: ['copy', 'paste', 'delete', '...']
+      },
+      plugins: [rotatePlugin]
+    };
+    window.tableInstance.updateOption(option);
+  };
+  /** @ts-ignore */
+  // bindDebugTool(window.tableInstance.scenegraph.stage, {
+  //   customGrapicKeys: ['col', 'row']
+  // });
 
   // tableInstance.scenegraph.temporarilyUpdateSelectRectStyle({stroke: false})
 }
