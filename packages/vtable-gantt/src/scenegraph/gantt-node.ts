@@ -65,26 +65,22 @@ export class GanttTaskBarNode extends Group {
     const barWidth = this.barRect.attribute.width;
     const barHeight = this.barRect.attribute.height;
 
-    // 计算文本宽度
     const fontSize = this.textLabel.attribute.fontSize || 12;
     const fontFamily = this.textLabel.attribute.fontFamily || 'Arial';
     GanttTaskBarNode.measureContext.font = `${fontSize}px ${fontFamily}`;
     const text = String(this.textLabel.attribute.text || '');
     const textWidth = GanttTaskBarNode.measureContext.measureText(text).width;
 
-    // 计算文本位置
     const textFitsInBar = textWidth + padding * 2 <= barWidth;
     const defaultPosition = getTextPos(toBoxArray(padding), textAlign, textBaseline, barWidth, barHeight);
     const textPosition =
       labelStyle.orient ||
       (!textFitsInBar && labelStyle.orientHandleWithOverflow ? labelStyle.orientHandleWithOverflow : null);
 
-    // 设置公共属性
     this.textLabel.setAttribute('visible', true);
     this.textLabel.setAttribute('textBaseline', textBaseline);
 
     if (textPosition) {
-      // 文本在任务条外部显示
       this.textLabel.parent?.removeChild(this.textLabel);
       this.appendChild(this.textLabel);
       this.textLabel.setAttribute('fill', outsideColor);
@@ -103,7 +99,6 @@ export class GanttTaskBarNode extends Group {
         [key: string]: Position;
       };
 
-      // 根据方位设置位置
       const positions: Positions = {
         left: {
           x: -padding,
@@ -139,7 +134,6 @@ export class GanttTaskBarNode extends Group {
         this.textLabel.setAttribute('textBaseline', pos.baseline);
       }
     } else {
-      // 文本在任务条内部显示
       this.textLabel.parent?.removeChild(this.textLabel);
       this.clipGroupBox?.appendChild(this.textLabel);
       this.textLabel.setAttribute('x', defaultPosition.x);

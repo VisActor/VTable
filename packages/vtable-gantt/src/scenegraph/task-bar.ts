@@ -253,7 +253,7 @@ export class TaskBar {
         // pickable: false,
         x: position.x, //extAlign === 'center' ? taskBarSize / 2 : textAlign === 'left' ? 10 : taskBarSize - 10,
         y: position.y, //fontSize / 2,
-        fontSize: fontSize, //10
+        fontSize: fontSize, // 10
         fill: color,
         fontFamily: fontFamily,
         text: parseStringTemplate(this._scene._gantt.parsedOptions.taskBarLabelText as string, taskRecord),
@@ -279,7 +279,6 @@ export class TaskBar {
       barGroup.appendChild(label);
       barGroupBox.textLabel = label;
 
-      // 设置gantt引用，以便在updateTextPosition中访问甘特图实例
       barGroupBox.gantt = this._scene._gantt;
 
       barGroupBox.updateTextPosition();
