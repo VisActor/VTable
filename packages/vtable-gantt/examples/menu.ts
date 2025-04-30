@@ -40,6 +40,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-default-minDate-maxDate'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-createButton'
   },
   {
