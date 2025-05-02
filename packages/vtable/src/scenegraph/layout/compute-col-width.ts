@@ -419,6 +419,9 @@ function computeAutoColWidth(
       // if (cellHierarchyState === HierarchyState.expand || cellHierarchyState === HierarchyState.collapse) {
       const define = table.getBodyColumnDefine(col, row);
       if ((define as ColumnDefine)?.tree) {
+        if (define.cellType === 'checkbox') {
+          // 计算复选框的长度
+        }
         const indexArr = table.dataSource.getIndexKey(table.getRecordShowIndexByCell(col, row));
         cellHierarchyIndent =
           Array.isArray(indexArr) && table.getHierarchyState(col, row) !== HierarchyState.none
