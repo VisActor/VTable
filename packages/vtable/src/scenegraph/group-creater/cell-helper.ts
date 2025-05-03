@@ -17,7 +17,7 @@ import type {
   ButtonColumnDefine
 } from '../../ts-types';
 import { dealWithCustom } from '../component/custom';
-import type { Group } from '../graphic/group';
+import { Group } from '../graphic/group';
 import { getProp } from '../utils/get-prop';
 import type { CreateChartCellGroup } from './cell-type/chart-cell';
 import type { CreateImageCellGroup } from './cell-type/image-cell';
@@ -93,7 +93,107 @@ export function createCell(
   // }
 
   // customMerge&customLayout cell as text cell
-  if (type === 'text' || type === 'link' || customResult) {
+  if (type === 'checkbox' && define.tree) {
+    const { customElementsGroup, renderDefault } = _generateCustomElementsGroup(
+      table,
+      define,
+      col,
+      row,
+      cellWidth,
+      cellHeight,
+      padding,
+      range,
+      customResult
+    );
+    const isAggregation =
+      'isAggregation' in table.internalProps.layoutMap && table.internalProps.layoutMap.isAggregation(col, row);
+    const isSeriesNumber = table.internalProps.layoutMap.isSeriesNumber(col, row);
+    if (isAggregation && isSeriesNumber) {
+      const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
+      cellGroup = createTextCellGroup(
+        table,
+        value,
+        columnGroup,
+        0,
+        y,
+        col,
+        row,
+        colWidth,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        false,
+        undefined,
+        true,
+        cellTheme,
+        range,
+        isAsync
+      );
+    } else {
+      // ✅ 创建 cellGroup，作为容器
+      cellGroup = new Group({
+        x: 0,
+        y: y,
+        width: colWidth,
+        height: cellHeight,
+        clip: false
+      });
+
+      // ✅ 先加到 columnGroup 中（假设 columnGroup 是你最终的列容器）
+      columnGroup.addChild(cellGroup);
+
+      const createCheckboxCellGroup = Factory.getFunction('createCheckboxCellGroup') as CreateCheckboxCellGroup;
+      const checkBoxCellGroup = createCheckboxCellGroup(
+        cellGroup,
+        columnGroup,
+        0,
+        0, // 注意这里是相对 y=0
+        col,
+        row,
+        colWidth,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        mayHaveIcon,
+        table,
+        cellTheme,
+        define as CheckboxColumnDefine,
+        range,
+        isAsync
+      );
+
+      const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
+      const textCellGroup = createTextCellGroup(
+        table,
+        value,
+        cellGroup, // ✅ 放入 cellGroup
+        checkBoxCellGroup.attribute?.width, // x 偏移量
+        0,
+        col,
+        row,
+        colWidth,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        mayHaveIcon,
+        customElementsGroup,
+        renderDefault,
+        cellTheme,
+        range,
+        isAsync
+      );
+
+      // ✅ 添加两个子 group 到 cellGroup 中
+      cellGroup.addChild(checkBoxCellGroup);
+      cellGroup.addChild(textCellGroup);
+    }
+  } else if (type === 'text' || type === 'link' || customResult) {
     if (type === 'link') {
       //如果是超链接 颜色按照linkColor绘制 TODO：放到方法_getCellStyle中
       // const columnDefine = table.getHeaderDefine(col, row);
