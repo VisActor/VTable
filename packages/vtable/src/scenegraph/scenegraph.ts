@@ -129,6 +129,7 @@ export class Scenegraph {
   frozenColCount: number; // 冻结列数
   frozenRowCount: number; // 冻结行数
   clear: boolean;
+  containerFit: boolean; // 是否表格外框始终撑满容器，内容区宽高不拉伸，剩余空白/超出滚动
 
   mergeMap: MergeMap;
   _dealAutoFillHeightOriginRowsHeight: number; // hack 缓存一个值 用于处理autoFillHeight的逻辑判断 在某些情况下是需要更新此值的 如增删数据 但目前没有做这个
@@ -1458,6 +1459,9 @@ export class Scenegraph {
    */
   dealWidthMode() {
     const table = this.table;
+    if (table.containerFit) {
+      return;
+    }
     if (table.widthMode === 'adaptive') {
       table._clearColRangeWidthsMap();
       const canvasWidth = table.tableNoFrameWidth;
@@ -1537,6 +1541,12 @@ export class Scenegraph {
    */
   dealHeightMode() {
     const table = this.table;
+
+    // 处理containerFit
+    if (table.containerFit) {
+      return;
+    }
+
     // 处理adaptive高度
     if (table.heightMode === 'adaptive') {
       table._clearRowRangeHeightsMap();

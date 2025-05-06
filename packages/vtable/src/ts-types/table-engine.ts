@@ -290,6 +290,11 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   enableTreeStickCell?: boolean;
 
   columnWidthConfig?: { key: string; width: number }[];
+
+  /**
+   * 表格外框始终撑满容器，内容区宽高不拉伸，剩余空白/超出滚动
+   */
+  containerFit?: boolean;
 }
 
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
