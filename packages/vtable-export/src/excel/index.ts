@@ -44,7 +44,8 @@ function requestIdleCallbackPromise(options?: IdleRequestOptions) {
 export async function exportVTableToExcel(
   tableInstance: IVTable,
   options?: ExportVTableToExcelOptions,
-  optimization = false
+  optimization = false,
+  exportAllData = false
 ) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
@@ -52,7 +53,7 @@ export async function exportVTableToExcel(
 
   const columns = [];
   const minRow = 0;
-  const maxRow = tableInstance.rowCount - 1;
+  const maxRow = exportAllData ? (tableInstance.options.records.length as number) : tableInstance.rowCount - 1;
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
   const mergeCells = [];

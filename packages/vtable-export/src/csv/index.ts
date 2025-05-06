@@ -12,9 +12,13 @@ export type ExportVTableToCsvOptions = {
   escape?: boolean;
 };
 
-export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableToCsvOptions): string {
+export function exportVTableToCsv(
+  tableInstance: IVTable,
+  option?: ExportVTableToCsvOptions,
+  exportAllData: boolean = false
+): string {
   const minRow = 0;
-  const maxRow = tableInstance.rowCount - 1;
+  const maxRow = exportAllData ? (tableInstance.options.records.length as number) : tableInstance.rowCount - 1;
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
 
