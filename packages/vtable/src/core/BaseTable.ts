@@ -169,6 +169,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showFrozenIcon = true;
   padding: { top: number; left: number; right: number; bottom: number };
+  containerFit: boolean = false;
   globalDropDownMenu?: MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[]);
   //画布绘制单元格的区域 不包括整体边框frame，所以比canvas的width和height要小一点（canvas的width包括了frame）
   tableNoFrameWidth: number;
