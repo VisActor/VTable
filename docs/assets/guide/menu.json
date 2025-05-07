@@ -796,6 +796,13 @@
           }
         },
         {
+          "path": "paste-add-row-column",
+          "title": {
+            "zh": "复制粘贴插入插件",
+            "en": "paste add row column plugin"
+          }
+        },
+        {
           "path": "table-carousel-animation",
           "title": {
             "zh": "表格轮播动画",
