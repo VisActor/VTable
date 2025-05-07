@@ -27,6 +27,7 @@ export type SkipImageExportCellType =
 
 export type ExportVTableToExcelOptions = {
   ignoreIcon?: boolean;
+  exportAllData?: boolean;
   formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
   formatExcelJSCell?: (cellInfo: CellInfo, cellInExcelJS: ExcelJS.Cell) => ExcelJS.Cell;
   excelJSWorksheetCallback?: (worksheet: ExcelJS.Worksheet) => void;
@@ -44,16 +45,16 @@ function requestIdleCallbackPromise(options?: IdleRequestOptions) {
 export async function exportVTableToExcel(
   tableInstance: IVTable,
   options?: ExportVTableToExcelOptions,
-  optimization = false,
-  exportAllData = false
+  optimization = false
 ) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
+  const exportAllData = !!options?.exportAllData;
   worksheet.properties.defaultRowHeight = 40;
 
   const columns = [];
   const minRow = 0;
-  const maxRow = exportAllData ? (tableInstance.options.records.length as number) : tableInstance.rowCount - 1;
+  const maxRow = exportAllData ? tableInstance.recordsCount + 1 : tableInstance.rowCount - 1;
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
   const mergeCells = [];
