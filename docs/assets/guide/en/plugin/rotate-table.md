@@ -11,6 +11,8 @@ The plugin adds the rotate90WithTransform and cancelTransform methods to the tab
 - rotate90WithTransform: Rotate 90 degrees
 - cancelTransform: Cancel rotation
 
+**Generally speaking, plugins do not need to bind APIs to table instances. They can have APIs of their own and be called directly by the business layer. For example: rotatePlugin.rotate90WithTransform()**
+
 Please follow the example process below:
 1. Ensure that the selected object is the upper container of the table, and the container of the table is full screen. The selected object can be a div or body that covers the entire screen.
 2. Before calling the rotate90WithTransform interface, adjust the container's width and height.
