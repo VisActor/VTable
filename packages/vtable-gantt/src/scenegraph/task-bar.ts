@@ -275,8 +275,13 @@ export class TaskBar {
         // dx: 12 + 4,
         // dy: this._scene._gantt.barLabelStyle.fontSize / 2
       });
+
       barGroup.appendChild(label);
       barGroupBox.textLabel = label;
+
+      barGroupBox.gantt = this._scene._gantt;
+
+      barGroupBox.updateTextPosition();
     }
     return barGroupBox;
   }
@@ -288,6 +293,7 @@ export class TaskBar {
     const barGroup = this.initBar(index, sub_task_index);
     if (barGroup) {
       this.barContainer.insertInto(barGroup, index); //TODO
+      barGroup.updateTextPosition();
     }
   }
   initHoverBarIcons() {
