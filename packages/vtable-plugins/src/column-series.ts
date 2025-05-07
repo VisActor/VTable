@@ -3,6 +3,7 @@ import * as VTable from '@visactor/vtable';
  * 添加行和列的插件的配置选项
  */
 export interface ColumnSeriesOptions {
+  id?: string;
   columnCount: number;
   generateColumnTitle?: (index: number) => string;
   generateColumnField?: (index: number) => string;
@@ -23,6 +24,7 @@ export class ColumnSeriesPlugin implements VTable.plugins.IVTablePlugin {
   table: VTable.ListTable;
   columns: { field?: string; title: string }[] = [];
   constructor(pluginOptions: ColumnSeriesOptions) {
+    this.id = pluginOptions.id ?? this.id;
     this.pluginOptions = Object.assign({ columnCount: 100 }, pluginOptions);
   }
   run(...args: any[]) {

@@ -4,6 +4,7 @@ import type { TYPES, BaseTableAPI, ListTable, ListTableConstructorOptions, plugi
  * 添加行和列的插件的配置选项
  */
 export interface RowSeriesOptions {
+  id?: string;
   rowCount: number;
   fillRowRecord?: (index: number) => any;
   rowSeriesNumber?: TYPES.IRowSeriesNumber;
@@ -24,6 +25,7 @@ export class RowSeriesPlugin implements plugins.IVTablePlugin {
   table: ListTable;
 
   constructor(pluginOptions: RowSeriesOptions) {
+    this.id = pluginOptions.id ?? this.id;
     this.pluginOptions = Object.assign({ rowCount: 100 }, pluginOptions);
   }
   run(...args: any[]) {

@@ -7,6 +7,7 @@ function isInteger(value: number) {
 }
 
 export interface ITableCarouselAnimationPluginOptions {
+  id?: string;
   rowCount?: number;
   colCount?: number;
   animationDuration?: number;
@@ -42,6 +43,7 @@ export class TableCarouselAnimationPlugin implements VTable.plugins.IVTablePlugi
   customDistRowFunction?: (row: number, table: BaseTableAPI) => { distRow: number; animation?: boolean } | undefined;
   customDistColFunction?: (col: number, table: BaseTableAPI) => { distCol: number; animation?: boolean } | undefined;
   constructor(options: ITableCarouselAnimationPluginOptions = {}) {
+    this.id = options.id ?? this.id;
     this.rowCount = options?.rowCount ?? undefined;
     this.colCount = options?.colCount ?? undefined;
     this.animationDuration = options?.animationDuration ?? 500;

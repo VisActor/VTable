@@ -11,6 +11,8 @@
 - rotate90WithTransform：旋转90度
 - cancelTransform：取消旋转
 
+**一般情况下插件不需要将api绑定到table实例上，可以插件自身拥有api，然后由业务方直接调用。如：rotatePlugin.rotate90WithTransform( )**
+
 请按照下面示例过程使用：
 1. 确保选择对象是表格的上层容器，且表格的容器是全屏的。选择对象可以是覆盖整屏的div或者body。
 2. 在调用rotate90WithTransform接口前，将容器的宽高调整好。
