@@ -6,6 +6,7 @@ import { getCellEventArgsSet } from '../event/util';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { isPromise } from '../tools/helper';
 import { isValid } from '@visactor/vutils';
+import type { IIconGraphicAttribute } from '../scenegraph/graphic/icon';
 
 export class EditManager {
   table: BaseTableAPI;
@@ -43,6 +44,10 @@ export class EditManager {
         // 如果是双击自动列宽 则编辑不开启
         return;
       }
+      if ((e.target?.attribute as IIconGraphicAttribute)?.funcType) {
+        // 点击功能图标不进入编辑
+        return;
+      }
       this.beginTriggerEditCellMode = 'doubleclick';
       this.startEditCell(col, row);
     });
@@ -50,6 +55,10 @@ export class EditManager {
     const clickEventId = table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
       const { editCellTrigger = 'doubleclick' } = table.options;
       if (editCellTrigger === 'click' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('click'))) {
+        if ((e.target?.attribute as IIconGraphicAttribute)?.funcType) {
+          // 点击功能图标不进入编辑
+          return;
+        }
         this.beginTriggerEditCellMode = 'click';
         const { col, row } = e;
         this.startEditCell(col, row);
