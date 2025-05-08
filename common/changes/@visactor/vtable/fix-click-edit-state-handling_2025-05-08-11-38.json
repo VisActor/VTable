@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "Merge pull request #3843 from 7dingdang0/fix/click-edit-state-handling\n\nfix: unintended edit state activation on functional button clicks\n",
+      "comment": "fix: unintended edit state activation on functional button clicks\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
