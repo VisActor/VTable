@@ -76,7 +76,8 @@ export default {
     shadow: {
       width: 3,
       startColor: '#CBDCFE',
-      endColor: '#CBDCFE'
+      endColor: '#CBDCFE',
+      visible: 'always'
     }
   },
   // menuStyle: {

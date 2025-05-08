@@ -16,3 +16,11 @@ Start Color
 
 ###${prefix} endColor(string)
 End Color
+
+###${prefix} visible(string)
+
+Shadow Visible Time, default is `scrolling`.
+
+- always: always show
+- scrolling: show when scrolling
+

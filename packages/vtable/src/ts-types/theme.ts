@@ -130,6 +130,8 @@ export interface ITableThemeDefine {
       width: number; //阴影整体宽度
       startColor: string; //开始颜色
       endColor: string; //结束颜色
+      /**滚动条是否可见  'always' | 'scrolling' | 'none' | 'focus',常驻|滚动时|不显示|聚焦在画布上时 。默认'scrolling'*/
+      visible?: 'always' | 'scrolling';
     };
     /** TODO  暂未生效 */
     border?: {

@@ -16,3 +16,14 @@
 
 ###${prefix} endColor(string)
 结束颜色
+
+###${prefix} visible(string)
+阴影显示时机，默认为 `scrolling`。
+
+- always: 总是显示
+- scrolling: 滚动时显示
+
+
+
+
+
