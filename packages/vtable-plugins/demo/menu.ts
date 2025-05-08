@@ -4,6 +4,10 @@ export const menus = [
     name: '(deprecated)carousel-animation'
   },
   {
+    path: 'gantt-export-helper',
+    name: 'gantt-export-helper'
+  },
+  {
     path: 'header-highlight',
     name: '(deprecated)header-highlight'
   },
