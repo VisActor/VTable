@@ -1053,6 +1053,8 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
   const sub_task_index = target.sub_task_index;
   const record = target.record;
   const isMilestone = record.type === 'milestone';
+  const oldX = target.attribute.x;
+  const oldY = target.attribute.y;
 
   if (dx) {
     target.setAttribute('x', Math.max(0, target.attribute.x + dx));
@@ -1069,6 +1071,21 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
       target.attribute.x + target.attribute.width / 2,
       target.attribute.y + target.attribute.height / 2
     ]);
+
+    if (target.milestoneTextContainer) {
+      const deltaX = target.attribute.x - oldX;
+      const deltaY = target.attribute.y - oldY;
+
+      const currentX = target.milestoneTextContainer.attribute.x;
+      const currentY = target.milestoneTextContainer.attribute.y;
+      target.milestoneTextContainer.setAttribute('x', currentX + deltaX);
+      target.milestoneTextContainer.setAttribute('y', currentY + deltaY);
+    }
+    target.milestoneTextContainer.setAttribute('zIndex', 10001);
+
+    if (target.milestoneTextLabel) {
+      target.milestoneTextLabel.setAttribute('zIndex', 10002);
+    }
   }
 
   state._gantt.scenegraph.refreshRecordLinkNodes(taskIndex, sub_task_index, target, dy);
@@ -1086,6 +1103,8 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
   const record = target.record;
   const progress = record[progressField];
   const isMilestone = record.type === 'milestone';
+  const oldX = target.attribute.x;
+  const oldY = target.attribute.y;
   target.setAttribute('zIndex', 10000);
   if (dx) {
     target.setAttribute('x', target.attribute.x + dx);
@@ -1096,6 +1115,19 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
       target.attribute.x + target.attribute.width / 2,
       target.attribute.y + target.attribute.height / 2
     ]);
+
+    if (target.milestoneTextContainer) {
+      const deltaX = target.attribute.x - oldX;
+
+      const currentX = target.milestoneTextContainer.attribute.x;
+      const currentY = target.milestoneTextContainer.attribute.y;
+      target.milestoneTextContainer.setAttribute('x', currentX + deltaX);
+      target.milestoneTextContainer.setAttribute('y', currentY);
+
+      if (target.milestoneTextLabel) {
+        target.updateMilestoneTextPosition();
+      }
+    }
   }
 
   if (newWidth) {

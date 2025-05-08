@@ -54,6 +54,7 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): 
     return [
       {
         date: createDateAtMidnight().toLocaleDateString(),
+        content: '',
         scrollToMarkLine: true,
         position: 'left',
         style: {
@@ -206,10 +207,27 @@ export function initOptions(gantt: Gantt) {
   );
   setWidthToDefaultTaskBarStyle((gantt.parsedOptions.rowHeight * 3) / 4);
   gantt.parsedOptions.taskBarStyle =
-    options?.taskBar?.barStyle && typeof options?.taskBar?.barStyle === 'function'
+    typeof options?.taskBar?.barStyle === 'function'
       ? options.taskBar.barStyle
-      : Object.assign({}, defaultTaskBarStyle, options?.taskBar?.barStyle);
+      : Object.assign({}, defaultTaskBarStyle, options?.taskBar?.barStyle || {});
+
+  const defaultMilestoneStyle = {
+    borderColor: '#096dd9',
+    borderLineWidth: 1,
+    fillColor: '#1890ff',
+    cornerRadius: 0,
+    width: 16,
+    labelText: '${title}',
+    labelTextStyle: {
+      fontSize: 16,
+      color: '#ff0000',
+      fontFamily: 'Arial',
+      padding: 4
+    },
+    textPosition: 'center'
+  };
   gantt.parsedOptions.taskBarMilestoneStyle = Object.assign(
+    defaultMilestoneStyle,
     typeof gantt.parsedOptions.taskBarStyle === 'function'
       ? {}
       : {
@@ -219,7 +237,7 @@ export function initOptions(gantt: Gantt) {
           fillColor: gantt.parsedOptions.taskBarStyle.barColor,
           cornerRadius: 0
         },
-    options?.taskBar?.milestoneStyle
+    options?.taskBar?.milestoneStyle || {}
   );
   gantt.parsedOptions.taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneStyle.width * Math.sqrt(2);
 
@@ -369,10 +387,12 @@ export function initOptions(gantt: Gantt) {
     },
     options?.dependency?.linkCreatingLineStyle
   );
+  // 已经在上面设置过taskBarMilestoneStyle，这里不需要再设置
   gantt.parsedOptions.eventOptions = options?.eventOptions;
   gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
   gantt.parsedOptions.markLineCreateOptions = options?.markLineCreateOptions;
 }
+
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   const options = gantt.options;
 

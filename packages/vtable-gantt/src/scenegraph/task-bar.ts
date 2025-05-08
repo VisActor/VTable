@@ -1,6 +1,26 @@
-import { Group, createText, createRect, Image, Circle, Line, Rect } from '@visactor/vtable/es/vrender';
+import {
+  Group,
+  createText,
+  createRect,
+  Image,
+  Circle,
+  Line,
+  Rect,
+  type IText,
+  type IGroupGraphicAttribute,
+  type ITextGraphicAttribute
+} from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
+
+interface IGanttGroup extends Group {
+  task_index?: number;
+  sub_task_index?: number;
+  record?: any;
+  clipGroupBox?: Group;
+  milestoneTextLabel?: IText;
+}
+
 import {
   computeCountToTimeScale,
   createDateAtLastHour,
@@ -17,7 +37,7 @@ import {
   getTextPos
 } from '../gantt-helper';
 import { GanttTaskBarNode } from './gantt-node';
-import { TasksShowMode } from '../ts-types';
+import { TasksShowMode, type ITextGraphicAttribute } from '../ts-types';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -25,7 +45,91 @@ const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.o
 </svg>`;
 export const TASKBAR_HOVER_ICON_WIDTH = 10;
 
+interface IMilestoneTextPosition {
+  textX: number;
+  textY: number;
+  textAlignValue: CanvasTextAlign;
+  textBaselineValue: CanvasTextBaseline;
+}
+
 export class TaskBar {
+  formatMilestoneText(text: string, record: any): string {
+    if (!text) {
+      return '';
+    }
+    const fieldPattern = /\${([^}]+)}/g;
+    const matches = text.match(fieldPattern);
+
+    if (matches) {
+      matches.forEach(match => {
+        const fieldName = match.substring(2, match.length - 1);
+        const fieldValue = record[fieldName];
+        if (fieldValue !== undefined) {
+          text = text.replace(match, String(fieldValue));
+        }
+      });
+    }
+    return text;
+  }
+
+  calculateMilestoneTextPosition(
+    position: string,
+    milestoneWidth: number,
+    padding: number | number[] = 4
+  ): {
+    textX: number;
+    textY: number;
+    textAlignValue: CanvasTextAlign;
+    textBaselineValue: CanvasTextBaseline;
+  } {
+    const paddingVal = typeof padding === 'number' ? padding : 4;
+    let textX = 0;
+    let textY = 0;
+    let textAlignValue: CanvasTextAlign = 'left';
+    let textBaselineValue: CanvasTextBaseline = 'middle';
+
+    // 将文本位置改为以中心点为基准
+    const center = milestoneWidth / 2;
+
+    switch (position) {
+      case 'left':
+        textX = -paddingVal;
+        textY = center;
+        textAlignValue = 'end';
+        textBaselineValue = 'middle';
+        break;
+      case 'right':
+        textX = milestoneWidth + paddingVal;
+        textY = center;
+        textAlignValue = 'start';
+        textBaselineValue = 'middle';
+        break;
+      case 'top':
+        textX = center;
+        textY = -paddingVal;
+        textAlignValue = 'center';
+        textBaselineValue = 'bottom';
+        break;
+      case 'bottom':
+        textX = center;
+        textY = milestoneWidth + paddingVal;
+        textAlignValue = 'center';
+        textBaselineValue = 'top';
+        break;
+      default:
+        textX = milestoneWidth + paddingVal;
+        textY = center;
+        textAlignValue = 'start';
+        textBaselineValue = 'middle';
+    }
+
+    return {
+      textX,
+      textY,
+      textAlignValue,
+      textBaselineValue
+    };
+  }
   group: Group;
   barContainer: Group;
   hoverBarGroup: Group;
@@ -175,7 +279,7 @@ export class TaskBar {
       cornerRadius: isMilestone
         ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.cornerRadius
         : taskBarStyle.cornerRadius,
-      clip: true
+      clip: !isMilestone
     });
     barGroup.name = 'task-bar-group';
     barGroupBox.appendChild(barGroup);
@@ -278,16 +382,108 @@ export class TaskBar {
       barGroup.appendChild(label);
       barGroupBox.textLabel = label;
     }
+    if (
+      renderDefaultText &&
+      taskRecord.type === 'milestone' &&
+      this._scene._gantt.parsedOptions.taskBarMilestoneStyle.labelText
+    ) {
+      const milestoneStyle = this._scene._gantt.parsedOptions.taskBarMilestoneStyle;
+      const textStyle = milestoneStyle.labelTextStyle || {};
+      const pos = this.calculateMilestoneTextPosition(
+        milestoneStyle.textorient || 'right',
+        milestoneStyle.width,
+        textStyle.padding ?? 4
+      );
+
+      const textContainer = new Group({
+        x,
+        y,
+        width: milestoneStyle.width,
+        height: milestoneStyle.width,
+        angle: 0,
+        pickable: false,
+        zIndex: 5000
+      });
+
+      const milestoneLabel = createText({
+        x: pos.textX,
+        y: pos.textY,
+        fontSize: textStyle.fontSize || 16,
+        fontFamily: textStyle.fontFamily || 'Arial',
+        fill: textStyle.color || '#ff0000',
+        textBaseline: textStyle.textBaseline || pos.textBaselineValue,
+        textAlign: textStyle.textAlign || pos.textAlignValue,
+        text: this.formatMilestoneText(milestoneStyle.labelText, taskRecord),
+        zIndex: 5001,
+        pickable: false
+      });
+
+      textContainer.appendChild(milestoneLabel);
+      this.barContainer.appendChild(textContainer);
+
+      barGroupBox.milestoneTextLabel = milestoneLabel;
+      barGroupBox.milestoneTextContainer = textContainer;
+    }
     return barGroupBox;
   }
   updateTaskBarNode(index: number, sub_task_index?: number) {
     const taskbarGroup = this.getTaskBarNodeByIndex(index, sub_task_index);
     if (taskbarGroup) {
+      const hasMilestoneText = taskbarGroup.record?.type === 'milestone' && taskbarGroup.milestoneTextLabel;
+      let milestoneText;
+      let textContainerPos;
+
+      if (hasMilestoneText) {
+        milestoneText = {
+          text: taskbarGroup.milestoneTextLabel.attribute.text,
+          textAlign: taskbarGroup.milestoneTextLabel.attribute.textAlign,
+          textBaseline: taskbarGroup.milestoneTextLabel.attribute.textBaseline
+        };
+
+        // 如果有文本容器，保存其位置并移除
+        if (taskbarGroup.milestoneTextContainer) {
+          textContainerPos = {
+            x: taskbarGroup.milestoneTextContainer.attribute.x,
+            y: taskbarGroup.milestoneTextContainer.attribute.y
+          };
+          this.barContainer.removeChild(taskbarGroup.milestoneTextContainer);
+        }
+      }
+
       this.barContainer.removeChild(taskbarGroup);
-    }
-    const barGroup = this.initBar(index, sub_task_index);
-    if (barGroup) {
-      this.barContainer.insertInto(barGroup, index); //TODO
+
+      const barGroup = this.initBar(index, sub_task_index);
+      if (barGroup) {
+        this.barContainer.insertInto(barGroup, index);
+
+        if (hasMilestoneText && barGroup.record?.type === 'milestone' && !barGroup.milestoneTextLabel) {
+          const textContainer = new Group({
+            x: textContainerPos ? textContainerPos.x : barGroup.attribute.x,
+            y: textContainerPos ? textContainerPos.y : barGroup.attribute.y,
+            width: barGroup.attribute.width,
+            height: barGroup.attribute.height,
+            angle: 0,
+            pickable: false,
+            zIndex: 2000
+          });
+
+          const milestoneLabel = createText({
+            ...milestoneText,
+            pickable: false,
+            zIndex: 2000
+          });
+
+          textContainer.appendChild(milestoneLabel);
+          this.barContainer.appendChild(textContainer);
+          barGroup.milestoneTextLabel = milestoneLabel;
+          barGroup.milestoneTextContainer = textContainer;
+        }
+      }
+    } else {
+      const barGroup = this.initBar(index, sub_task_index);
+      if (barGroup) {
+        this.barContainer.insertInto(barGroup, index);
+      }
     }
   }
   initHoverBarIcons() {
