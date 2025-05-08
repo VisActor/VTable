@@ -1286,10 +1286,12 @@ export class StateManager {
   }
   showHorizontalScrollBar(autoHide?: boolean) {
     this.table.scenegraph.component.showHorizontalScrollBar();
+    this.table.scenegraph?.component.showFrozenColumnShadow();
     if (autoHide) {
       // 滚轮触发滚动条显示后，异步隐藏
       clearTimeout(this._clearHorizontalScrollBar);
       this._clearHorizontalScrollBar = setTimeout(() => {
+        this.table.scenegraph?.component.hideFrozenColumnShadow();
         this.table.scenegraph?.component.hideHorizontalScrollBar();
       }, 1000);
     }

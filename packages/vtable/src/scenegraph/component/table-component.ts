@@ -181,8 +181,9 @@ export class TableComponent {
     const shadowWidth = theme.frozenColumnLine?.shadow?.width;
     const shadowStartColor = theme.frozenColumnLine?.shadow?.startColor;
     const shadowEndColor = theme.frozenColumnLine?.shadow?.endColor;
+    const visible = theme.frozenColumnLine?.shadow?.visible;
     this.frozenShadowLine = createRect({
-      visible: true,
+      visible: visible === 'always',
       pickable: false,
       x: 0,
       y: 0,
@@ -201,7 +202,7 @@ export class TableComponent {
       }
     });
     this.rightFrozenShadowLine = createRect({
-      visible: true,
+      visible: visible === 'always',
       pickable: false,
       x: 0,
       y: 0,
@@ -651,13 +652,14 @@ export class TableComponent {
    * @return {*}
    */
   setFrozenColumnShadow(col: number, isRightFrozen?: boolean) {
-    if (col < 0) {
+    const colX = getColX(col, this.table, isRightFrozen);
+    if (col < 0 || this.table.theme.frozenColumnLine?.shadow?.visible !== 'always') {
       this.frozenShadowLine.setAttributes({
-        visible: false
+        visible: false,
+        x: colX,
+        height: this.table.getDrawRange().height
       });
     } else {
-      // const colX = this.table.getColsWidth(0, col);
-      const colX = getColX(col, this.table, isRightFrozen);
       this.frozenShadowLine.setAttributes({
         visible: true,
         x: colX,
@@ -672,13 +674,14 @@ export class TableComponent {
    * @return {*}
    */
   setRightFrozenColumnShadow(col: number) {
-    if (col >= this.table.colCount) {
+    const colX = getColX(col, this.table, true);
+    if (col >= this.table.colCount || this.table.theme.frozenColumnLine?.shadow?.visible !== 'always') {
       this.rightFrozenShadowLine.setAttributes({
-        visible: false
+        visible: false,
+        x: colX - this.rightFrozenShadowLine.attribute.width,
+        height: this.table.getDrawRange().height
       });
     } else {
-      // const colX = this.table.getColsWidth(0, col);
-      const colX = getColX(col, this.table, true);
       this.rightFrozenShadowLine.setAttributes({
         visible: true,
         x: colX - this.rightFrozenShadowLine.attribute.width,
@@ -686,7 +689,26 @@ export class TableComponent {
       });
     }
   }
-
+  hideFrozenColumnShadow() {
+    const visible1 = this.table.theme.frozenColumnLine?.shadow?.visible;
+    const visible = this.table.theme.frozenColumnLine?.shadow?.visible ?? visible1;
+    if (visible !== 'scrolling') {
+      return;
+    }
+    this.frozenShadowLine.setAttribute('visible', false);
+    this.rightFrozenShadowLine.setAttribute('visible', false);
+    this.table.scenegraph.updateNextFrame();
+  }
+  showFrozenColumnShadow() {
+    const visible1 = this.table.theme.frozenColumnLine?.shadow?.visible;
+    const visible = this.table.theme.frozenColumnLine?.shadow?.visible ?? visible1;
+    if (visible !== 'scrolling') {
+      return;
+    }
+    this.frozenShadowLine.setAttribute('visible', true);
+    this.rightFrozenShadowLine.setAttribute('visible', true);
+    this.table.scenegraph.updateNextFrame();
+  }
   hideVerticalScrollBar() {
     const visible1 = this.table.theme.scrollStyle.visible;
     const verticalVisible = this.table.theme.scrollStyle.verticalVisible ?? visible1;
