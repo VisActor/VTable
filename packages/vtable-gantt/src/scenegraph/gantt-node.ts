@@ -4,6 +4,7 @@ import { Group } from '@visactor/vtable/es/vrender';
 import { getTextPos } from '../gantt-helper';
 import { toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
+import { textMeasure } from '@visactor/vtable';
 
 export class GanttTaskBarNode extends Group {
   clipGroupBox: Group;
@@ -28,9 +29,6 @@ export class GanttTaskBarNode extends Group {
     this._lastY = attrs.y;
   }
 
-  // 用于测量文本的 canvas 上下文
-  private static measureContext: CanvasRenderingContext2D;
-
   /**
    * 更新任务条文本标签的位置和样式
    * @description 根据任务条的大小和配置，更新文本标签的位置、对齐方式等属性
@@ -40,16 +38,6 @@ export class GanttTaskBarNode extends Group {
   updateTextPosition() {
     if (!this.textLabel || !this.barRect) {
       return;
-    }
-
-    // 懒加载创建用于测量文本的 canvas 上下文
-    if (!GanttTaskBarNode.measureContext) {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        return;
-      }
-      GanttTaskBarNode.measureContext = ctx;
     }
 
     const labelStyle = this.labelStyle || {};
@@ -68,9 +56,8 @@ export class GanttTaskBarNode extends Group {
 
     const fontSize = this.textLabel.attribute.fontSize || 12;
     const fontFamily = this.textLabel.attribute.fontFamily || 'Arial';
-    GanttTaskBarNode.measureContext.font = `${fontSize}px ${fontFamily}`;
     const text = String(this.textLabel.attribute.text || '');
-    const textWidth = GanttTaskBarNode.measureContext.measureText(text).width;
+    const textWidth = textMeasure.measureTextWidth(text, { fontSize, fontFamily });
 
     const textFitsInBar = textWidth + padding * 2 <= barWidth;
     const defaultPosition = getTextPos(toBoxArray(padding), textAlign, textBaseline, barWidth, barHeight);
