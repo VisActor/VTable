@@ -390,7 +390,7 @@ export class TaskBar {
       const milestoneStyle = this._scene._gantt.parsedOptions.taskBarMilestoneStyle;
       const textStyle = milestoneStyle.labelTextStyle || {};
       const pos = this.calculateMilestoneTextPosition(
-        milestoneStyle.textorient || 'right',
+        milestoneStyle.textOrient || 'right',
         milestoneStyle.width,
         textStyle.padding ?? 4
       );

@@ -272,8 +272,6 @@ export interface IMilestoneStyle {
   cornerRadius?: number;
   /** 里程碑默认是个正方形，这个width配置正方形的边长 */
   width?: number;
-
-  // 新增文字相关属性
   /** 里程碑展示文字。可以配置固定文本 或者 字符串模版`${fieldName}` */
   labelText?: ITaskBarLabelText;
   /** 里程碑文字样式 */
@@ -281,7 +279,7 @@ export interface IMilestoneStyle {
   // /** 里程碑图标 */
   // icon?: string;
   /** 文字相对于里程碑的位置 */
-  textorient?: 'left' | 'top' | 'right' | 'bottom';
+  textOrient?: 'left' | 'top' | 'right' | 'bottom';
 }
 export type ILineStyle = {
   lineColor?: string;

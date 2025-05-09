@@ -363,11 +363,11 @@ export function createTable() {
         borderWidth: 2
       },
       milestoneStyle: {
-        borderColor: '#1890ff',
-        borderLineWidth: 2,
-        fillColor: '#e6f7ff',
+        borderColor: 'red',
+        borderLineWidth: 1,
+        fillColor: 'green',
         cornerRadius: 0,
-        width: 16,
+        width: 15,
         labelText: '${title}',
         labelTextStyle: {
           fontFamily: 'Arial',
