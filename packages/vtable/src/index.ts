@@ -42,7 +42,7 @@ import * as CustomLayout from './render/layout';
 
 import { updateCell } from './scenegraph/group-creater/cell-helper';
 import { renderChart } from './scenegraph/graphic/contributions/chart-render-helper';
-import { restoreMeasureText, setCustomAlphabetCharSet } from './scenegraph/utils/text-measure';
+import { restoreMeasureText, setCustomAlphabetCharSet, textMeasure } from './scenegraph/utils/text-measure';
 import type { BaseTableAPI } from './ts-types/base-table';
 
 // import { container, loadCanvasPicker } from '@src/vrender';
@@ -93,6 +93,7 @@ export {
   GroupColumnDefine,
   TextAlignType,
   TextBaselineType,
+  textMeasure,
   themes,
   data,
   MousePointerCellEvent,

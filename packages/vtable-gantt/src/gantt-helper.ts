@@ -261,10 +261,13 @@ export function initOptions(gantt: Gantt) {
     fontFamily: options?.taskBar?.labelTextStyle?.fontFamily ?? 'Arial',
     fontSize: options?.taskBar?.labelTextStyle?.fontSize ?? 20,
     color: options?.taskBar?.labelTextStyle?.color ?? '#F01',
+    outsideColor: options?.taskBar?.labelTextStyle?.outsideColor ?? '#333333',
     textAlign: options?.taskBar?.labelTextStyle?.textAlign ?? 'left',
     textBaseline: options?.taskBar?.labelTextStyle?.textBaseline ?? 'middle',
     padding: options?.taskBar?.labelTextStyle?.padding ?? [0, 0, 0, 10],
-    textOverflow: options?.taskBar?.labelTextStyle?.textOverflow
+    textOverflow: options?.taskBar?.labelTextStyle?.textOverflow,
+    orient: options?.taskBar?.labelTextStyle?.orient,
+    orientHandleWithOverflow: options?.taskBar?.labelTextStyle?.orientHandleWithOverflow
   };
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
   gantt.parsedOptions.taskBarCreatable =

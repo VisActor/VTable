@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add support for text not to be hidden #3802",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
