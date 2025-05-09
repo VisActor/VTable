@@ -34,6 +34,28 @@ export interface IVTablePlugin {
 
 其中`runTime`指定了插件的运行时机，配置是`TableEvents`中的事件类型。
 
+The `Gantt` plugin needs to implement the `VTableGantt.plugins.IGanttPlugin` interface.
+
+```ts
+// 插件统一接口
+export interface IGanttPlugin {
+  // 插件唯一标识
+  id: string;
+  // 插件名称
+  name: string;
+  // 插件运行时机,如果没有传入的话默认会Gantt构建时直接运行
+  runTime?: EVENT_TYPES[keyof EVENT_TYPES][];
+  // 初始化方法
+  run: (...args: any[]) => void;
+  // 更新方法，当Gantt数据或配置更新时调用
+  update?: () => void;
+  // 销毁方法，在Gantt实例销毁前调用
+  release?: (gantt: Gantt) => void;   
+}
+```
+
+其中`runTime`指定了插件的运行时机，配置是`EVENT_TYPES`中的事件类型。
+
 ####  组件的生命周期过程：
 
 <div style="display: flex; justify-content: center;  width: 100%;">

@@ -17,6 +17,7 @@ import { Gantt } from './Gantt';
 import * as tools from './tools';
 import * as VRender from './vrender';
 import * as VTable from './vtable';
+import * as plugins from './plugins';
 export const version = __VERSION__;
 /**
  * @namespace VTable
@@ -38,5 +39,6 @@ export {
   TextBaselineType,
   tools,
   VRender,
-  VTable
+  VTable,
+  plugins
 };
