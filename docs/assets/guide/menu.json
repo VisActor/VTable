@@ -808,6 +808,13 @@
             "zh": "表格旋转",
             "en": "rotate table"
           }
+        },
+        {
+            "path": "gantt-export-image",
+            "title":{
+                "zh": "全量导出甘特图",
+                "en": "gantt export image"
+            }
         }
       ]
     },

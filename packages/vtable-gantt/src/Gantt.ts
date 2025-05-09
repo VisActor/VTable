@@ -65,6 +65,7 @@ import {
 import { DataSource } from './data/DataSource';
 import { isValid } from '@visactor/vutils';
 import type { GanttTaskBarNode } from './scenegraph/gantt-node';
+import { PluginManager } from './plugins/plugin-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
@@ -112,6 +113,8 @@ export class Gantt extends EventTarget {
   headerHeight: number;
   gridHeight: number;
 
+  pluginManager: PluginManager;
+  
   parsedOptions: {
     timeLineHeaderRowHeights: number[];
     rowHeight: number;
@@ -240,6 +243,7 @@ export class Gantt extends EventTarget {
 
     this.scenegraph.afterCreateSceneGraph();
     this._scrollToMarkLine();
+    this.pluginManager = new PluginManager(this, options);
   }
 
   renderTaskBarsTable() {
@@ -1006,6 +1010,7 @@ export class Gantt extends EventTarget {
       this.horizontalSplitLine && parentElement.removeChild(this.horizontalSplitLine);
     }
     this.scenegraph = null;
+    this.pluginManager.release();
   }
 
   updateOption(options: GanttConstructorOptions) {

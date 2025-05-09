@@ -2,7 +2,7 @@ import type { ColumnsDefine, TYPES, ListTableConstructorOptions } from '@visacto
 import type { Group } from '@visactor/vtable/es/vrender';
 import type { Gantt } from '../Gantt';
 export type LayoutObjectId = number | string;
-
+import type { IGanttPlugin } from '../plugins/interface';
 export interface ITimelineDateInfo {
   days: number;
   endDate: Date;
@@ -217,6 +217,7 @@ export interface GanttConstructorOptions {
   eventOptions?: IEventOptions;
   keyboardOptions?: IKeyboardOptions;
   markLineCreateOptions?: IMarkLineCreateOptions;
+  plugins?: IGanttPlugin[];
 }
 /**
  * IBarLabelText
