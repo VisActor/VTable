@@ -1639,10 +1639,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (this.rowHierarchyType === 'tree') {
         const extensionRowCount = this.extensionRows?.length ?? 0;
         if (this.rowHeaderTitle) {
-          this.rowHeaderLevelCount = 2 + extensionRowCount;
+          this.rowHeaderLevelCount = 1 + (this.rowDimensionTree.totalLevel ? 1 : 0) + extensionRowCount;
           return;
         }
-        this.rowHeaderLevelCount = 1 + extensionRowCount;
+        this.rowHeaderLevelCount = (this.rowDimensionTree.totalLevel ? 1 : 0) + extensionRowCount;
         return;
       }
       const rowLevelCount = this._getRowHeaderTreeExpandedMaxLevelCount();
@@ -2212,7 +2212,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         const row_pathIds = this._rowHeaderCellFullPathIds[recordRow]; //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
         let findTree = this.rowDimensionTree; //第一棵寻找的树是第一列的维度树 主树
         let level = 0; //level和col对应，代表一层层树找的过程
-        while (findTree) {
+        while (findTree && row_pathIds) {
           const pathIds: (number | string)[] = []; // pathIds记录寻找当前树需要匹配的cellId
           let cellId: LayoutObjectId = row_pathIds[level]; //row_pathIds中每个值对应了pathIds的一个节点cellId
           pathIds.push(cellId);

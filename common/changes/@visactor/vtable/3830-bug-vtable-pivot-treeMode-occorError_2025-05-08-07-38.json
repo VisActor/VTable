@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when no rowTree treeMode occor error #3830\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
