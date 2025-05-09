@@ -4,8 +4,8 @@ export const menus = [
     name: '(deprecated)carousel-animation'
   },
   {
-    path: 'gantt-export-helper',
-    name: 'gantt-export-helper'
+    path: 'gantt-export-image',
+    name: 'gantt-export-image'
   },
   {
     path: 'header-highlight',
