@@ -279,7 +279,7 @@ export class TaskBar {
       barGroup.appendChild(label);
       barGroupBox.textLabel = label;
 
-      barGroupBox.gantt = this._scene._gantt;
+      barGroupBox.labelStyle = this._scene._gantt.parsedOptions.taskBarLabelStyle;
 
       barGroupBox.updateTextPosition();
     }

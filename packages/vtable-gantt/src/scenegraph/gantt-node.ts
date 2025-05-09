@@ -1,4 +1,5 @@
 import type { IRect, IText, IGroupGraphicAttribute } from '@visactor/vtable/es/vrender';
+import type { ITaskBarLabelTextStyle } from '../ts-types';
 import { Group } from '@visactor/vtable/es/vrender';
 import { getTextPos } from '../gantt-helper';
 import { toBoxArray } from '../tools/util';
@@ -13,7 +14,7 @@ export class GanttTaskBarNode extends Group {
   task_index: number;
   sub_task_index?: number;
   record?: any;
-  gantt: any;
+  labelStyle?: ITaskBarLabelTextStyle;
 
   _lastWidth?: number;
   _lastHeight?: number;
@@ -51,7 +52,7 @@ export class GanttTaskBarNode extends Group {
       GanttTaskBarNode.measureContext = ctx;
     }
 
-    const labelStyle = this.gantt?.parsedOptions?.taskBarLabelStyle || {};
+    const labelStyle = this.labelStyle || {};
     const {
       textAlign = 'left',
       textBaseline = 'middle',
@@ -140,7 +141,7 @@ export class GanttTaskBarNode extends Group {
       this.textLabel.setAttribute('y', defaultPosition.y);
       this.textLabel.setAttribute('textAlign', textAlign);
       this.textLabel.setAttribute('fill', color);
-      this.textLabel.setAttribute('maxLineWidth', barWidth - padding * 2);
+      this.textLabel.setAttribute('maxLineWidth', barWidth - padding);
       this.textLabel.setAttribute(
         'ellipsis',
         textOverflow === 'clip'
