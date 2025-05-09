@@ -1,29 +1,28 @@
-# 甘特图导出插件
+# Gantt Chart Export Plugin
 
-## 功能介绍
+## Feature Introduction
 
-`ExportGanttPlugin`是为了支持让甘特图全量的导出并且可以适应甘特图的大小而写的插件
+`ExportGanttPlugin` is a plugin written to support the full export of Gantt charts and to adapt to the size of the Gantt chart.
 
-该插件会在Gantt的`constructor`的时候开始生效
+This plugin will take effect when the Gantt chart is being `constructor`
 
-当需要导出图片的时候，你可以去执行`exportGanttPlugin.exportToImage`来导出图片
+When you need to export an image, you can execute`exportGanttPlugin.exportToImage` to do so.
 
-## 插件配置
+## Plugin Configuration
 
-当你调用`exportGanttPlugin.exportToImage`是，里面还需要接受以下参数来更改导出图片的参数
-
+When you call`exportGanttPlugin.exportToImage`,it also needs to accept the following parameters to change the export image settings
 ```
-fileName: '甘特图导出测试',
+fileName: 'Gantt chart export test',
 type: formatSelect.value as 'png' | 'jpeg',
-// 分辨率倍数
+// resolution ratio
 scale: Number(scaleSelect.value),
 backgroundColor: bgColorInput.value,
-// 导出的图片的质量
+// The quality of the exported pictures
 quality: 1
 ```
 
-## 插件示例
-初始化插件对象，添加到Gantt配置中的plugins中
+## Plugin example
+Initialize the plugin object and add it to the plugins in the Gantt configuration
 ```
 const exportGanttPlugin = new ExportGanttPlugin();
 const option = {
@@ -35,7 +34,7 @@ const option = {
 ```
 
 ```javascript livedemo template=vtable
-//  使用时需要引入插件包@visactor/vtable-plugins
+//  The plugin package needs to be introduced when in use@visactor/vtable-plugins
 //  import * as VTablePlugins from '@visactor/vtable-plugins';
 const EXPORT_PANEL_ID = 'gantt-export-panel';
 const exportGanttPlugin = new VTablePlugins.ExportGanttPlugin();
@@ -197,15 +196,10 @@ const option = {
     },
     barStyle: {
       width: 20,
-      /** 任务条的颜色 */
       barColor: '#ee8800',
-      /** 已完成部分任务条的颜色 */
       completedBarColor: '#91e8e0',
-      /** 任务条的圆角 */
       cornerRadius: 8,
-      /** 任务条的边框 */
       borderLineWidth: 1,
-      /** 边框颜色 */
       borderColor: 'black'
     }
   },
@@ -292,34 +286,34 @@ const option = {
 
 const container = document.getElementById(CONTAINER_ID);
 
-// 创建一个包装容器
+// Create a packaging container
 const wrapper = document.createElement('div');
 wrapper.style.height = '100%';
 wrapper.style.width = '100%';
 wrapper.style.position = 'relative';
 container.appendChild(wrapper);
 
-// 创建导出面板，放入包装容器
+// Create the export panel and put it into the packaging container
 const exportPanel = document.createElement('div');
 exportPanel.id = EXPORT_PANEL_ID;
 exportPanel.style.cssText = 'padding: 2px; background-color: #f6f6f6; margin-bottom: 2px; position: absolute; z-index: 1; border: 1px solid black; opacity: 0.5;';
 wrapper.appendChild(exportPanel);
 
-// 创建甘特图容器，放入包装容器
+// Create a Gantt chart container and place it in the packaging container
 const ganttContainer = document.createElement('div');
-ganttContainer.style.height = '100%';
+ganttContainer.style.height = '100%'; 
 ganttContainer.style.width = '100%';
 ganttContainer.style.position = 'relative'; 
 wrapper.appendChild(ganttContainer);
 
-// 文件格式选择
+// File format selection
 const formatSelect = document.createElement('select');
 formatSelect.innerHTML = `
 <option value="png">PNG</option>
 `;
 formatSelect.style.marginRight = '5px';
 
-// 缩放比例选择
+// Zoom ratio selection
 const scaleSelect = document.createElement('select');
 scaleSelect.innerHTML = `
 <option value="1">1x</option>
@@ -328,18 +322,17 @@ scaleSelect.innerHTML = `
 `;
 scaleSelect.style.marginRight = '5px';
 
-// 背景色选择
+// Background color selection
 const bgColorInput = document.createElement('input');
 bgColorInput.type = 'color';
 bgColorInput.value = '#ffffff';
 bgColorInput.style.marginRight = '5px';
 
-// 导出按钮
+// Export button
 const exportButton = document.createElement('button');
 exportButton.textContent = '导出甘特图';
 exportButton.style.marginLeft = '5px';
 
-// 说明文本
 const infoText = document.createElement('div');
 infoText.innerHTML = '导出功能会直接捕获完整的甘特图和任务列表，即使部分内容在滚动区域外。';
 infoText.style.marginTop = '10px';
@@ -356,10 +349,9 @@ exportPanel.appendChild(bgColorInput);
 exportPanel.appendChild(exportButton);
 exportPanel.appendChild(infoText);
 
-// 创建甘特图实例
 const gantt = new VTableGantt.Gantt(ganttContainer, option);
 
-// 绑定导出事件
+// Bind the export event
 exportButton.onclick = async () => {
   try {
     exportButton.disabled = true;
@@ -387,6 +379,6 @@ exportButton.onclick = async () => {
   }
 };
 ```
-# 本文档由由以下人员贡献
+# This document was contributed by:
 
-[抽象薯片](https://github.com/Violet2314)
+[Abstract chips](https://github.com/Violet2314)
