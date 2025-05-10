@@ -7,7 +7,7 @@ export interface IMarkLine {
   date: string;
   style?: ILineStyle;
   /** 标记线显示在日期列下的位置 默认为'left' */
-  position?: 'left' | 'right' | 'middle';
+  position?: 'left' | 'right' | 'middle' | 'date';
   /** 自动将日期范围内 包括改标记线 */
   scrollToMarkLine?: boolean;
   content?: string; // markLine中内容
@@ -37,9 +37,11 @@ ${prefix} style(ILineStyle)
 
 {{ use: common-gantt-line-style }}
 
-${prefix} position('left' | 'right' | 'middle')
+${prefix} position('left' | 'right' | 'middle' | 'date')
 
 标记线显示在日期列下的位置 默认为'left'
+
+'date' 则根据具体时间定位
 
 非必填
 
