@@ -148,6 +148,7 @@ export function createTable() {
         field: '类别',
         tree: true,
         cellType: 'checkbox',
+        enableTreeCheckbox: true,
         title: '类别',
         width: 'auto',
         sort: true
@@ -185,6 +186,14 @@ export function createTable() {
     select: {
       disableDragSelect: true
     }
+    // rowSeriesNumber: {
+    //   width: 50,
+    //   format: () => {
+    //     return '';
+    //   },
+    //   cellType: 'checkbox',
+    //   enableTreeCheckbox: true
+    // }
   };
 
   const instance = new ListTable(option);
