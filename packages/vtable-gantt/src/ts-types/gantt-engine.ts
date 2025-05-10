@@ -305,7 +305,7 @@ export interface IMarkLine {
   };
   style?: ILineStyle;
   /** 标记线显示在日期列下的位置 默认为'left' */
-  position?: 'left' | 'right' | 'middle';
+  position?: 'left' | 'right' | 'middle' | 'date';
   /** 自动将日期范围内 包括改标记线 */
   scrollToMarkLine?: boolean;
 }

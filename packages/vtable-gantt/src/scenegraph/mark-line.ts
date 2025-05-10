@@ -1,5 +1,6 @@
 import { computeCountToTimeScale, createDateAtMidnight } from '../tools/util';
-import type { IMarkLine } from '../ts-types';
+import { DayTimes } from '../gantt-helper';
+//import type { IMarkLine } from '../ts-types';
 import type { Scenegraph } from './scenegraph';
 import { Group, createLine, Text } from '@visactor/vtable/es/vrender';
 
@@ -46,9 +47,56 @@ export class MarkLine {
       const minDate = this._scene._gantt.parsedOptions.minDate;
       const { unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
       const unitCount = computeCountToTimeScale(date, minDate, unit, step);
-      const dateX =
-        this._scene._gantt.parsedOptions.timelineColWidth *
-        (Math.floor(unitCount) + (line.position === 'right' ? 1 : line.position === 'middle' ? 0.5 : 0));
+      let positionOffset = 0;
+      if (line.position === 'right') {
+        positionOffset = 1;
+      } else if (line.position === 'middle') {
+        positionOffset = 0.5;
+      } else if (line.position === 'date') {
+        const cellIndex = Math.floor(unitCount);
+        const scaleStart = new Date(minDate);
+        const cellStartDate = new Date(scaleStart);
+        let cellEndDate = new Date(scaleStart);
+
+        if (unit === 'week') {
+          cellStartDate.setDate(cellStartDate.getDate() + step * 7 * cellIndex);
+          cellEndDate = new Date(cellStartDate);
+          cellEndDate.setDate(cellEndDate.getDate() + step * 7);
+        } else if (unit === 'month') {
+          cellStartDate.setMonth(cellStartDate.getMonth() + step * cellIndex);
+          cellEndDate = new Date(cellStartDate);
+          cellEndDate.setMonth(cellEndDate.getMonth() + step);
+        } else if (unit === 'quarter') {
+          cellStartDate.setMonth(cellStartDate.getMonth() + step * 3 * cellIndex);
+          cellEndDate = new Date(cellStartDate);
+          cellEndDate.setMonth(cellEndDate.getMonth() + step * 3);
+        } else if (unit === 'year') {
+          cellStartDate.setFullYear(cellStartDate.getFullYear() + step * cellIndex);
+          cellEndDate = new Date(cellStartDate);
+          cellEndDate.setFullYear(cellEndDate.getFullYear() + step);
+        } else if (unit === 'hour') {
+          cellStartDate.setTime(cellStartDate.getTime() + step * cellIndex * 60 * 60 * 1000);
+          cellEndDate = new Date(cellStartDate);
+          cellEndDate.setTime(cellEndDate.getTime() + step * 60 * 60 * 1000);
+        } else if (unit === 'minute') {
+          cellStartDate.setTime(cellStartDate.getTime() + step * cellIndex * 60 * 1000);
+          cellEndDate = new Date(cellStartDate);
+          cellEndDate.setTime(cellEndDate.getTime() + step * 60 * 1000);
+        } else if (unit === 'second') {
+          cellStartDate.setTime(cellStartDate.getTime() + step * cellIndex * 1000);
+          cellEndDate = new Date(cellStartDate);
+          cellEndDate.setTime(cellEndDate.getTime() + step * 1000);
+        } else {
+          // 默认当做 day
+          cellStartDate.setTime(cellStartDate.getTime() + cellIndex * step * DayTimes);
+          cellEndDate = new Date(cellStartDate);
+          cellEndDate.setTime(cellEndDate.getTime() + step * DayTimes);
+        }
+
+        const markDate = date.getTime();
+        positionOffset = (markDate - cellStartDate.getTime()) / (cellEndDate.getTime() - cellStartDate.getTime());
+      }
+      const dateX = this._scene._gantt.parsedOptions.timelineColWidth * (Math.floor(unitCount) + positionOffset);
       const markLineGroup = new Group({
         pickable: false,
         x: dateX - this.markLineContainerWidth / 2,
