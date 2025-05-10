@@ -147,7 +147,7 @@ export function createTable() {
       {
         field: '类别',
         tree: true,
-        //cellType:'checkbox',
+        cellType: 'checkbox',
         title: '类别',
         width: 'auto',
         sort: true
