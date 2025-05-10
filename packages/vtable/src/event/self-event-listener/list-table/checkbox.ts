@@ -76,60 +76,55 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
 
 // 在cellType: 'checkbox'与tree: true同时配置时，开启enableTreeCheckbox
 export function bindGroupCheckboxTreeChange(table: BaseTableAPI) {
-  table.on('checkbox_state_change', args => {
-    const { col, row, checked, field } = args;
-
-    let isCheckboxAndTree = false;
-    isCheckboxAndTree = table.columns.some(column => {
-      if (column.tree && column.enableTreeCheckbox) {
-        return true;
-      }
-    });
-
-    if (!isCheckboxAndTree) {
-      return;
-    }
-
-    if (table.isHeader(col, row)) {
-      return;
-    }
-
-    const record = table.getCellOriginRecord(col, row);
-    const indexedData = (table.dataSource as any).currentPagerIndexedData as (number | number[])[];
-    const titleShowIndex = table.getRecordShowIndexByCell(col, row);
-    let titleIndex = indexedData[titleShowIndex];
-    if (isNumber(titleIndex)) {
-      titleIndex = [titleIndex];
-    }
-
-    if (record.vtableMerge || record.children?.length) {
-      // 1. group title
-      if (checked) {
-        // 1.1 group title check
-        // 1.1.1 check all children
-        if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
-          updateChildrenCheckboxState(true, titleIndex, table);
-        } else {
-          setAllChildrenCheckboxState(true, titleShowIndex, titleIndex, indexedData, table);
-        }
-        // 1.1.2 update group title state
-        updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
-      } else {
-        // 1.2 group title uncheck
-        // 1.2.1 uncheck all children
-        if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
-          updateChildrenCheckboxState(false, titleIndex, table);
-        } else {
-          setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table);
-        }
-        // 1.2.2 update group title state
-        updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
-      }
-    } else {
-      // 2. group content, reset group title state
-      updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
-    }
-  });
+  // table.on('checkbox_state_change', args => {
+  //   const { col, row, checked, field } = args;
+  //   let isCheckboxAndTree = false;
+  //   isCheckboxAndTree = table.columns.some(column => {
+  //     if (column.tree && column.enableTreeCheckbox) {
+  //       return true;
+  //     }
+  //   });
+  //   if (!isCheckboxAndTree) {
+  //     return;
+  //   }
+  //   if (table.isHeader(col, row)) {
+  //     return;
+  //   }
+  //   const record = table.getCellOriginRecord(col, row);
+  //   const indexedData = (table.dataSource as any).currentPagerIndexedData as (number | number[])[];
+  //   const titleShowIndex = table.getRecordShowIndexByCell(col, row);
+  //   let titleIndex = indexedData[titleShowIndex];
+  //   if (isNumber(titleIndex)) {
+  //     titleIndex = [titleIndex];
+  //   }
+  //   if (record.vtableMerge || record.children?.length) {
+  //     // 1. group title
+  //     if (checked) {
+  //       // 1.1 group title check
+  //       // 1.1.1 check all children
+  //       if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
+  //         updateChildrenCheckboxState(true, titleIndex, table);
+  //       } else {
+  //         setAllChildrenCheckboxState(true, titleShowIndex, titleIndex, indexedData, table);
+  //       }
+  //       // 1.1.2 update group title state
+  //       updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
+  //     } else {
+  //       // 1.2 group title uncheck
+  //       // 1.2.1 uncheck all children
+  //       if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
+  //         updateChildrenCheckboxState(false, titleIndex, table);
+  //       } else {
+  //         setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table);
+  //       }
+  //       // 1.2.2 update group title state
+  //       updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
+  //     }
+  //   } else {
+  //     // 2. group content, reset group title state
+  //     updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
+  //   }
+  // });
 }
 
 // update visible children checkbox state
