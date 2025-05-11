@@ -5,8 +5,7 @@ import { isSameRange } from '@visactor/vtable/es/tools/cell-range';
 import type { CellAddress, CellRange } from '@visactor/vtable/es/ts-types';
 import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
 import { cellInRange } from '@visactor/vtable/es/tools/helper';
-import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type * as VTable from '@visactor/vtable';
+import * as VTable from '@visactor/vtable';
 export interface FocusHighlightPluginOptions {
   fill?: string;
   opacity?: number;
@@ -16,7 +15,7 @@ export interface FocusHighlightPluginOptions {
 export class FocusHighlightPlugin implements VTable.plugins.IVTablePlugin {
   id = `focus-highlight-${Date.now()}`;
   name = 'Focus Highlight';
-  runTime = [TABLE_EVENT_TYPE.INITIALIZED, TABLE_EVENT_TYPE.SELECTED_CELL, TABLE_EVENT_TYPE.SELECTED_CLEAR];
+  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED, VTable.TABLE_EVENT_TYPE.SELECTED_CELL, VTable.TABLE_EVENT_TYPE.SELECTED_CLEAR];
   table: BaseTableAPI;
   range?: CellRange;
   pluginOptions: FocusHighlightPluginOptions;
@@ -40,9 +39,9 @@ export class FocusHighlightPlugin implements VTable.plugins.IVTablePlugin {
     if (!this.table) {
       this.table = args[2] as BaseTableAPI;
     }
-    if (args[1] === TABLE_EVENT_TYPE.INITIALIZED) {
+    if (args[1] === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
       this.pluginOptions.highlightRange && this.setFocusHighlightRange(this.pluginOptions.highlightRange);
-    } else if (args[1] === TABLE_EVENT_TYPE.SELECTED_CELL) {
+    } else if (args[1] === VTable.TABLE_EVENT_TYPE.SELECTED_CELL) {
       const posCell = this.table.stateManager.select.cellPos;
       if (this.table.isHeader(posCell.col, posCell.row)) {
         this.setFocusHighlightRange(undefined);
@@ -57,7 +56,7 @@ export class FocusHighlightPlugin implements VTable.plugins.IVTablePlugin {
           end: { col: max_col, row: max_row }
         });
       }
-    } else if (args[1] === TABLE_EVENT_TYPE.SELECTED_CLEAR) {
+    } else if (args[1] === VTable.TABLE_EVENT_TYPE.SELECTED_CLEAR) {
       this.setFocusHighlightRange(undefined);
     }
   }

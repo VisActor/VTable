@@ -1,24 +1,30 @@
 {
   "extends": "@internal/ts-config/tsconfig.base.json",
-  "compilerOptions": {
-    "jsx": "react",
+  "include": ["src"],
+  "compilerOptions": {    
     "types": ["jest", "offscreencanvas", "node"],
     "lib": ["DOM", "ESNext"],
     "baseUrl": "./",
     "rootDir": "./src",
+    "outDir": "./es",
+    "composite": true,
+    "plugins": [
+      { "transform": "typescript-transform-paths" },
+      {
+        "transform": "typescript-transform-paths",
+        "afterDeclarations": true
+      }
+    ],
+    "strict": false,
     "paths": {
-    }
-  },
-  "ts-node": {
-    "transpileOnly": true,
-    "compilerOptions": {
-      "module": "commonjs"
+      "@src/vrender": ["../vtable/src/vrender.ts"],
+      "@src/ts-types": ["../vtable/src/ts-types/index.ts"],
+      "@vutils-extension": ["./src/vutil-extension-temp"]
     }
   },
   "references": [
     {
-      "path": "../vtable"
+      "path": "../vtable-editors"
     }
   ],
-  "include": ["src"]
 }
