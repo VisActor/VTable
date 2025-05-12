@@ -444,6 +444,24 @@ setRecords(records: Array<any>)
   getCellOriginRecord(col: number, row: number)
 ```
 
+## getCellOriginColumn(Function)
+**只适用于 ListTable**
+
+根据索引获取表格列
+
+```
+
+/\*\*
+
+- 根据索引获取表格列
+- @param {number | number[]} col 索引值, 如果是嵌套表列则传入数组, 例如: [3, 0]
+- @return {object} 返回表格列的配置或者 undefined.
+  \*/
+  getCellOriginColumn(col: number)
+
+```
+
+
 ## getAllCells(Function)
 
 获取所有单元格上下文信息

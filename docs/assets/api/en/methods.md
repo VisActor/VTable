@@ -459,6 +459,23 @@ If it is a pivot analysis table (a pivot table with data analysis turned on), an
 
 ```
 
+## getCellOriginColumn(Function)
+**Only ListTable**
+
+Get table columns according to index
+
+```
+
+/\*\*
+
+- Get table columns according to index
+- @param {number | number[]} col index, get nested table columns to pass into the array, for example: [3, 0]
+- @return {object} Returns the configuration of a table column or undefined.
+  \*/
+  getCellOriginColumn(col: number)
+
+```
+
 ## getAllCells(Function)
 
 Get all cell context information
