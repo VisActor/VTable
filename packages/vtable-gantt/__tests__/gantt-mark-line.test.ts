@@ -2,7 +2,7 @@
 
 global.__VERSION__ = 'none';
 
-import { computeCountToTimeScale, createDateAtMidnight } from '../../src/tools/util';
+import { computeCountToTimeScale, createDateAtMidnight } from '../src/tools/util';
 
 describe('mark-line position test', () => {
   test('mark-line position calculation for day unit', () => {

@@ -57,7 +57,6 @@ export class MarkLine {
         const unitCount = computeCountToTimeScale(date, minDate, unit, step);
         const cellIndex = Math.floor(unitCount);
         positionOffset = unitCount - cellIndex;
-        console.log('unitCount', unitCount, cellIndex, positionOffset);
       }
       const dateX = this._scene._gantt.parsedOptions.timelineColWidth * (Math.floor(unitCount) + positionOffset);
       const markLineGroup = new Group({
@@ -96,7 +95,7 @@ export class MarkLine {
           cornerRadius: contentStyle.cornerRadius || [0, 2, 2, 0]
         });
         textGroup.name = 'mark-line-content';
-        (textGroup as any).data = line;
+        textGroup.data = line;
         markLineGroup.appendChild(textGroup);
         // 创建内容
         const text = new Text({
@@ -106,7 +105,12 @@ export class MarkLine {
           lineHeight: textContainerHeight,
           fontWeight: contentStyle.fontWeight || 'normal',
           fill: contentStyle.color || style.lineColor,
-          fontSize: contentStyle.fontSize || 12
+          fontSize: contentStyle.fontSize || 12,
+          poptip: {
+            position: 'top',
+            dx: textMaxLineWidth / 4,
+            dy: -textContainerHeight / 4
+          }
         });
         textGroup.appendChild(text);
       }
