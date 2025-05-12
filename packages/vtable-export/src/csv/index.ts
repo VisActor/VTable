@@ -1,5 +1,6 @@
 import type * as VTable from '@visactor/vtable';
 import type { CellInfo } from '../excel';
+import { handlePaginationExport } from '../util/pagination';
 
 type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 type CellRange = VTable.TYPES.CellRange;
@@ -15,16 +16,16 @@ export type ExportVTableToCsvOptions = {
 
 export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableToCsvOptions): string {
   const exportAllData = !!option?.exportAllData;
+  const { handleRowCount, reset } = handlePaginationExport(tableInstance, exportAllData);
   const minRow = 0;
-  const isPivot = tableInstance.isPivotTable() || tableInstance.isPivotChart();
-  const maxRow = (exportAllData ? tableInstance.maxRowCount : tableInstance.rowCount) - 1;
+  const maxRow = handleRowCount();
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
 
   let copyValue = '';
   for (let row = minRow; row <= maxRow; row++) {
     for (let col = minCol; col <= maxCol; col++) {
-      const copyCellValue = getCopyCellValue(col, row, tableInstance, option, isPivot);
+      const copyCellValue = getCopyCellValue(col, row, tableInstance, option);
       if (typeof Promise !== 'undefined' && copyCellValue instanceof Promise) {
         // not support async
       } else {
@@ -39,6 +40,8 @@ export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableT
     }
     copyValue += newLine;
   }
+  // 恢复透视表的pagination配置
+  reset();
   return copyValue;
 }
 
@@ -46,12 +49,10 @@ function getCopyCellValue(
   col: number,
   row: number,
   tableInstance: IVTable,
-  option?: ExportVTableToCsvOptions,
-  isPivot?: boolean
+  option?: ExportVTableToCsvOptions
 ): string | Promise<string> | void {
   const rawRecord = tableInstance.getCellRawRecord(col, row);
-  const cellValue =
-    (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row, false, !!option.exportAllData);
+  const cellValue = (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row, false);
 
   if (option?.formatExportOutput) {
     const cellType = tableInstance.getCellType(col, row);
@@ -66,7 +67,7 @@ function getCopyCellValue(
   }
   const cellRange: CellRange = tableInstance.getCellRange(col, row);
   const copyStartCol = cellRange.start.col;
-  const copyStartRow = isPivot ? row : cellRange.start.row;
+  const copyStartRow = cellRange.start.row;
 
   if (copyStartCol !== col || copyStartRow !== row) {
     return '';

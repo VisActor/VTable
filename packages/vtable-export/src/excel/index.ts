@@ -7,6 +7,7 @@ import { isArray } from '@visactor/vutils';
 import type { CellRange, ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/es/ts-types';
 import { getHierarchyOffset } from '../util/indent';
 import { isPromise } from '../util/promise';
+import { handlePaginationExport } from '../util/pagination';
 
 export type CellInfo = {
   cellType: string;
@@ -50,14 +51,13 @@ export async function exportVTableToExcel(
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
   const exportAllData = !!options?.exportAllData;
-  worksheet.properties.defaultRowHeight = 40;
-
-  const columns: { width: number }[] = [];
+  const { handleRowCount, reset } = handlePaginationExport(tableInstance, exportAllData);
   const minRow = 0;
-  const isPivot = tableInstance.isPivotTable();
-  const maxRow = (exportAllData ? tableInstance.maxRowCount : tableInstance.rowCount) - 1;
+  const maxRow = handleRowCount();
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
+  worksheet.properties.defaultRowHeight = 40;
+  const columns: { width: number }[] = [];
   const mergeCells: CellRange[] = [];
   const mergeCellSet = new Set();
 
@@ -84,17 +84,8 @@ export async function exportVTableToExcel(
             await addCell(col, row, tableInstance, worksheet, workbook, options);
 
             const cellRange = tableInstance.getCellRange(col, row);
-            /**
-             * 透视表需要将startRow换成当前循环row
-             * 否则会出现Set中的row始终为当前分页后页面的rowCount，从而导致Set无法正确去重
-             */
-            if (
-              cellRange.start.col !== cellRange.end.col ||
-              (isPivot ? row : cellRange.start.row) !== cellRange.end.row
-            ) {
-              const key = `${cellRange.start.col},${isPivot ? row : cellRange.start.row}:${cellRange.end.col},${
-                cellRange.end.row
-              }`;
+            if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
+              const key = `${cellRange.start.col},${cellRange.start.row}:${cellRange.end.col},${cellRange.end.row}`;
               if (!mergeCellSet.has(key)) {
                 mergeCellSet.add(key);
                 mergeCells.push(cellRange);
@@ -165,6 +156,8 @@ export async function exportVTableToExcel(
   }
 
   const buffer = await workbook.xlsx.writeBuffer();
+  // 恢复透视表的pagination配置
+  reset();
   return buffer;
 }
 
@@ -179,8 +172,7 @@ async function addCell(
   const { layoutMap } = tableInstance.internalProps;
   const cellType = tableInstance.getCellType(col, row);
   const rawRecord = tableInstance.getCellRawRecord(col, row);
-  let cellValue =
-    (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row, false, !!options?.exportAllData);
+  let cellValue = (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row, false);
   if (isPromise(cellValue)) {
     cellValue = await cellValue;
   }
