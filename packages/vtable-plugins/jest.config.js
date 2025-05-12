@@ -1,0 +1,57 @@
+const path = require('path');
+
+module.exports = {
+  preset: 'ts-jest',
+  runner: 'jest-electron/runner',
+  testEnvironment: 'jest-electron/environment',
+  testRegex: '/__tests__(/.*)+\\.test\\.(js|ts)$',
+  silent: false,
+  verbose: true,
+  globals: {
+    'ts-jest': {
+      diagnostics: false,
+      tsconfig: {
+        resolveJsonModule: true,
+        esModuleInterop: true
+      }
+    },
+    __DEV__: true
+  },
+  collectCoverage: false,
+  coverageReporters: ['json-summary', 'lcov', 'text'],
+  collectCoverageFrom: [
+    '**/src/**',
+    '!**/cjs/**',
+    '!**/dist/**',
+    '!**/es/**',
+    '!**/node_modules/**',
+    '!**/__tests__/**',
+    '!**/types/**',
+    '!**/interface.ts'
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 60,
+      functions: 60,
+      lines: 60,
+      statements: 60
+    }
+  },
+  moduleNameMapper: {
+    '@visactor/vtable': path.resolve(__dirname, '../vtable/src/index.ts'),
+    '@visactor/vtable/es/vrender': path.resolve(__dirname, '../vtable/src/vrender.ts'),
+    '@visactor/vtable-editors': '<rootDir>/../vtable-editors/src/index.ts',
+    '@visactor/vtable-plugins': '<rootDir>/../vtable-plugins/src/index.ts',
+    '@visactor/vtable-gantt': '<rootDir>/../vtable-gantt/src/index.ts',
+    '@visactor/vtable/es/(.*)': '<rootDir>/../vtable/src/$1',
+    '@src/vrender': path.resolve(__dirname, '../vtable/src/vrender.ts'),
+    '@vutils-extension': path.resolve(__dirname, '../vtable/src/vutil-extension-temp/index.ts'),
+    'd3-color': path.resolve(__dirname, './node_modules/d3-color/dist/d3-color.min.js'),
+    'd3-array': path.resolve(process.cwd(), './node_modules/d3-array/dist/d3-array.min.js'),
+    'd3-geo': path.resolve(__dirname, './node_modules/d3-geo/dist/d3-geo.min.js'),
+    'd3-dsv': path.resolve(__dirname, './node_modules/d3-dsv/dist/d3-dsv.min.js'),
+    'd3-hexbin': path.resolve(__dirname, './node_modules/d3-hexbin/build/d3-hexbin.min.js'),
+    'd3-hierarchy': path.resolve(__dirname, './node_modules/d3-hierarchy/dist/d3-hierarchy.min.js')
+  },
+  setupFiles: ['./setup-mock.js'],
+};
