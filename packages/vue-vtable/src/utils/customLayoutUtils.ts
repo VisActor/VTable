@@ -1,7 +1,7 @@
 import * as VTable from '@visactor/vtable';
 import { convertPropsToCamelCase, toCamelCase } from './stringUtils';
 import { isFunction, isObject } from '@visactor/vutils';
-import { isVNode } from 'vue';
+import { cloneVNode, isVNode } from 'vue';
 
 // 检查属性是否为事件
 function isEventProp(key: string, props: any) {
@@ -46,9 +46,18 @@ export function createCustomLayout(children: any, isHeader?: boolean, args?: any
     if (isObject(props?.vue)) {
       // vue 自定义节点：无需继续循环子节点
       const { element } = props.vue as any;
-      const targetVNode = element ?? subChildren.find(node => node?.type !== Symbol.for('v-cmt'));
+      let targetVNode = element ?? subChildren.find(node => node?.type !== Symbol.for('v-cmt'));
+      if (isVNode(targetVNode)) {
+        // node 标记 key 增加唯一项标记，避免重复渲染
+        targetVNode = !targetVNode.key
+          ? cloneVNode(targetVNode, { key: `row_${args.row}_col_${args.col}` })
+          : targetVNode;
+      } else {
+        targetVNode = null;
+      }
+
       Object.assign(child.props.vue, {
-        element: isVNode(targetVNode) ? targetVNode : null,
+        element: targetVNode,
         // 不接入外部指定
         container: isHeader ? args?.table?.headerDomContainer : args?.table?.bodyDomContainer
       });
