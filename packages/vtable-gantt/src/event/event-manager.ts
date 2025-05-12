@@ -16,6 +16,8 @@ import {
   judgeIfHasMarkLine
 } from '../gantt-helper';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
+import { bindTouchListener } from './touch';
+import { Inertia } from '../tools/inertia';
 
 export class EventManager {
   _gantt: Gantt;
@@ -24,11 +26,28 @@ export class EventManager {
   isDraging: boolean = false;
   lastDragPointerXYOnWindow: { x: number; y: number };
   //报错已绑定过的事件 后续清除绑定
-  globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
+  globalEventListeners: {
+    name: string;
+    env: 'document' | 'body' | 'window' | 'vglobal';
+    callback: (e?: any) => void;
+  }[] = [];
   poniterState: 'down' | 'draging' | 'up';
+  isTouchdown: boolean; // touch scrolling mode on
+  isTouchMove: boolean; // touchmove 事件中设置
+  isLongTouch: boolean; // is touch listener working, use to disable document touch scrolling function
+  touchMovePoints: {
+    x: number;
+    y: number;
+    timestamp: number;
+  }[]; // touch points record in touch scrolling mode
+  touchSetTimeout: any; // touch start timeout, use to distinguish touch scrolling mode and default touch event
+  touchEnd: boolean; // is touch event end when default touch event listener response
   // lastDragPointerXYOnResizeLine: { x: number; y: number };
+  _enableTableScroll: boolean = true;
+  inertiaScroll: Inertia;
   constructor(gantt: Gantt) {
     this._gantt = gantt;
+    this.inertiaScroll = new Inertia();
     this._eventHandler = new EventHandler();
     this.bindEvent();
   }
@@ -45,11 +64,13 @@ export class EventManager {
       }
     });
     this.globalEventListeners = [];
+    this.inertiaScroll.endInertia();
   }
   // 绑定DOM事件
   bindEvent() {
     bindTableGroupListener(this);
     bindContainerDomListener(this);
+    bindTouchListener(this);
     // bindScrollBarListener(this);
   }
 }
@@ -63,7 +84,7 @@ function bindTableGroupListener(event: EventManager) {
       // 只处理左键
       return;
     }
-    let downBarNode;
+    let downBarNode: any;
     let downCreationButtomNode;
     let downDependencyLineNode;
     let downLeftLinkPointNode;
@@ -113,27 +134,40 @@ function bindTableGroupListener(event: EventManager) {
         );
         stateManager.updateInteractionState(InteractionState.grabing);
       } else if (gantt.parsedOptions.taskBarMoveable) {
-        let moveable: boolean = true;
-        if (typeof gantt.parsedOptions.taskBarMoveable === 'function') {
-          const { startDate, endDate, taskRecord } = scene._gantt.getTaskInfoByTaskListIndex(
-            (downBarNode as GanttTaskBarNode).task_index,
-            (downBarNode as GanttTaskBarNode).sub_task_index
-          );
+        const moveTaskBar = () => {
+          let moveable: boolean = true;
+          if (typeof gantt.parsedOptions.taskBarMoveable === 'function') {
+            const { startDate, endDate, taskRecord } = scene._gantt.getTaskInfoByTaskListIndex(
+              (downBarNode as GanttTaskBarNode).task_index,
+              (downBarNode as GanttTaskBarNode).sub_task_index
+            );
 
-          const args = {
-            index: (downBarNode as GanttTaskBarNode).task_index,
-            startDate,
-            endDate,
-            taskRecord,
-            ganttInstance: scene._gantt
-          };
-          moveable = gantt.parsedOptions.taskBarMoveable(args);
+            const args = {
+              index: (downBarNode as GanttTaskBarNode).task_index,
+              startDate,
+              endDate,
+              taskRecord,
+              ganttInstance: scene._gantt
+            };
+            moveable = gantt.parsedOptions.taskBarMoveable(args);
+          } else {
+            moveable = gantt.parsedOptions.taskBarMoveable;
+          }
+          if (moveable) {
+            stateManager.startMoveTaskBar(downBarNode, (e.nativeEvent as any).x, (e.nativeEvent as any).y, e.offset.y);
+            stateManager.updateInteractionState(InteractionState.grabing);
+          }
+        };
+        if (e.pointerType === 'touch') {
+          // 移动端事件特殊处理
+          event.touchEnd = false;
+          event.touchSetTimeout = setTimeout(() => {
+            event.isTouchdown = false;
+            event.isLongTouch = true;
+            moveTaskBar();
+          }, 100);
         } else {
-          moveable = gantt.parsedOptions.taskBarMoveable;
-        }
-        if (moveable) {
-          stateManager.startMoveTaskBar(downBarNode, (e.nativeEvent as any).x, (e.nativeEvent as any).y, e.offset.y);
-          stateManager.updateInteractionState(InteractionState.grabing);
+          moveTaskBar();
         }
       }
     } else if (downLeftLinkPointNode) {
@@ -158,6 +192,11 @@ function bindTableGroupListener(event: EventManager) {
   });
 
   scene.ganttGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
+    if (event.touchSetTimeout) {
+      // 移动端事件特殊处理
+      clearTimeout(event.touchSetTimeout);
+      event.touchSetTimeout = undefined;
+    }
     if (stateManager.interactionState === InteractionState.default) {
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
@@ -363,6 +402,11 @@ function bindTableGroupListener(event: EventManager) {
   });
   // pointerup如果改为pointertap 问题：新建依赖关系线不起作用
   scene.ganttGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
+    if (event.touchSetTimeout) {
+      // 移动端事件特殊处理
+      clearTimeout(event.touchSetTimeout);
+      event.touchSetTimeout = undefined;
+    }
     if (e.button === 0) {
       let isClickBar = false;
       let isClickCreationButtom = false;
@@ -669,7 +713,6 @@ function bindContainerDomListener(eventManager: EventManager) {
   });
   if (gantt.taskListTableInstance && gantt.parsedOptions.verticalSplitLineMoveable) {
     handler.on(gantt.verticalSplitResizeLine, 'mousedown', (e: MouseEvent) => {
-      console.log('resizeLine mousedown');
       stateManager.updateInteractionState(InteractionState.grabing);
       stateManager.startResizeTableWidth(e);
     });
@@ -687,17 +730,17 @@ function bindContainerDomListener(eventManager: EventManager) {
         (gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement).style.opacity = '0';
       });
   }
-  const globalMousedownCallback = (e: FederatedPointerEvent) => {
+  const globalPointerdownCallback = (e: FederatedPointerEvent) => {
     gantt.eventManager.lastDragPointerXYOnWindow = { x: e.x, y: e.y };
     gantt.eventManager.poniterState = 'down';
   };
   eventManager.globalEventListeners.push({
-    name: 'mousedown',
+    name: 'pointerdown',
     env: 'document',
-    callback: globalMousedownCallback
+    callback: globalPointerdownCallback
   });
-  vglobal.addEventListener('mousedown', globalMousedownCallback);
-  const globalMousemoveCallback = (e: FederatedPointerEvent) => {
+  vglobal.addEventListener('pointerdown', globalPointerdownCallback);
+  const globalPointermoveCallback = (e: FederatedPointerEvent) => {
     if (gantt.eventManager.poniterState === 'down') {
       const x1 = gantt.eventManager.lastDragPointerXYOnWindow.x ?? e.x;
       const x2 = e.x;
@@ -734,12 +777,12 @@ function bindContainerDomListener(eventManager: EventManager) {
     }
   };
   eventManager.globalEventListeners.push({
-    name: 'mousemove',
+    name: 'pointermove',
     env: 'document',
-    callback: globalMousemoveCallback
+    callback: globalPointermoveCallback
   });
-  vglobal.addEventListener('mousemove', globalMousemoveCallback);
-  const globalMouseupCallback = (e: MouseEvent) => {
+  vglobal.addEventListener('pointermove', globalPointermoveCallback);
+  const globalPointerupCallback = (e: MouseEvent) => {
     if (stateManager.interactionState === 'grabing') {
       stateManager.updateInteractionState(InteractionState.default);
       if (stateManager.isResizingTableWidth()) {
@@ -750,15 +793,17 @@ function bindContainerDomListener(eventManager: EventManager) {
         stateManager.endResizeTaskBar(e.x);
       }
     }
-    gantt.eventManager.lastDragPointerXYOnWindow = undefined;
-    gantt.eventManager.poniterState = 'up';
+    setTimeout(() => {
+      gantt.eventManager.lastDragPointerXYOnWindow = undefined;
+      gantt.eventManager.poniterState = 'up';
+    }, 0);
   };
   eventManager.globalEventListeners.push({
-    name: 'mouseup',
+    name: 'pointerup',
     env: 'document',
-    callback: globalMouseupCallback
+    callback: globalPointerupCallback
   });
-  vglobal.addEventListener('mouseup', globalMouseupCallback);
+  vglobal.addEventListener('pointerup', globalPointerupCallback);
 
   const globalKeydownCallback = (e: KeyboardEvent) => {
     if (
