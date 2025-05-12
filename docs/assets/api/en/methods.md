@@ -462,7 +462,7 @@ If it is a pivot analysis table (a pivot table with data analysis turned on), an
 ## getCellOriginColumn(Function)
 **Only ListTable**
 
-Get table columns according to index
+Get table columns according to index, index starts from 0 (not including index column, index is the real index).
 
 ```
 

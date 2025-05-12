@@ -447,7 +447,7 @@ setRecords(records: Array<any>)
 ## getCellOriginColumn(Function)
 **只适用于 ListTable**
 
-根据索引获取表格列
+根据索引获取表格列, 索引从 0 列开始计算(不包含索引列，索引为真实索引)。
 
 ```
 
