@@ -443,6 +443,40 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return undefined;
   }
+
+  /**
+   * 获取单元格原始表列
+   * @param col 索引值，如果是嵌套表列则传入数组, 例如: [3, 0] 则是先获取第3列，再获取第3列的第0个子列
+   */
+  getCellOriginColumn(col: number | number[], row?: number): ColumnDefine | undefined {
+    let tableColumns = this.internalProps.columns;
+
+    // 数组索引基础边界判断
+    if (typeof col === 'number' && col <= -1) {
+      return undefined;
+    } else if (Array.isArray(col) && col.length <= 0) {
+      return undefined;
+    } else if (tableColumns.length <= 0) {
+      return undefined;
+    }
+
+    // 如果传入数组则可能是想访问嵌套表列
+    if (Array.isArray(col)) {
+      col = col.slice();
+
+      let targetColumn: ColumnDefine;
+
+      do {
+        targetColumn = tableColumns?.[col.shift()];
+        tableColumns = targetColumn?.columns;
+      } while (col.length > 0 && targetColumn);
+
+      return targetColumn;
+    }
+
+    return tableColumns[col];
+  }
+
   /**
    *
    * @param field 获取整体数据记录。可编辑的话 对应编辑前
