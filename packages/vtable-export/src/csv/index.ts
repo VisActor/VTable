@@ -17,7 +17,7 @@ export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableT
   const exportAllData = !!option?.exportAllData;
   const minRow = 0;
   const isPivot = tableInstance.isPivotTable() || tableInstance.isPivotChart();
-  const maxRow = exportAllData ? tableInstance.maxRowCount - (isPivot ? 1 : -1) : tableInstance.rowCount - 1;
+  const maxRow = (exportAllData ? tableInstance.maxRowCount : tableInstance.rowCount) - 1;
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
 
