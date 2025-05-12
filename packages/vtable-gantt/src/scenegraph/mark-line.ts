@@ -56,47 +56,8 @@ export class MarkLine {
         const date = createDateAtMidnight(line.date);
         const unitCount = computeCountToTimeScale(date, minDate, unit, step);
         const cellIndex = Math.floor(unitCount);
-        const scaleStart = new Date(minDate);
-        const cellStartDate = new Date(scaleStart);
-        let cellEndDate = new Date(scaleStart);
-
-        if (unit === 'week') {
-          cellStartDate.setDate(cellStartDate.getDate() + step * 7 * cellIndex);
-          cellEndDate = new Date(cellStartDate);
-          cellEndDate.setDate(cellEndDate.getDate() + step * 7);
-        } else if (unit === 'month') {
-          cellStartDate.setMonth(cellStartDate.getMonth() + step * cellIndex);
-          cellEndDate = new Date(cellStartDate);
-          cellEndDate.setMonth(cellEndDate.getMonth() + step);
-        } else if (unit === 'quarter') {
-          cellStartDate.setMonth(cellStartDate.getMonth() + step * 3 * cellIndex);
-          cellEndDate = new Date(cellStartDate);
-          cellEndDate.setMonth(cellEndDate.getMonth() + step * 3);
-        } else if (unit === 'year') {
-          cellStartDate.setFullYear(cellStartDate.getFullYear() + step * cellIndex);
-          cellEndDate = new Date(cellStartDate);
-          cellEndDate.setFullYear(cellEndDate.getFullYear() + step);
-        } else if (unit === 'hour') {
-          cellStartDate.setTime(cellStartDate.getTime() + step * cellIndex * 60 * 60 * 1000);
-          cellEndDate = new Date(cellStartDate);
-          cellEndDate.setTime(cellEndDate.getTime() + step * 60 * 60 * 1000);
-        } else if (unit === 'minute') {
-          cellStartDate.setTime(cellStartDate.getTime() + step * cellIndex * 60 * 1000);
-          cellEndDate = new Date(cellStartDate);
-          cellEndDate.setTime(cellEndDate.getTime() + step * 60 * 1000);
-        } else if (unit === 'second') {
-          cellStartDate.setTime(cellStartDate.getTime() + step * cellIndex * 1000);
-          cellEndDate = new Date(cellStartDate);
-          cellEndDate.setTime(cellEndDate.getTime() + step * 1000);
-        } else {
-          // 默认当做 day
-          cellStartDate.setTime(cellStartDate.getTime() + cellIndex * step * DayTimes);
-          cellEndDate = new Date(cellStartDate);
-          cellEndDate.setTime(cellEndDate.getTime() + step * DayTimes);
-        }
-
-        const markDate = date.getTime();
-        positionOffset = (markDate - cellStartDate.getTime()) / (cellEndDate.getTime() - cellStartDate.getTime());
+        positionOffset = unitCount - cellIndex;
+        console.log('unitCount', unitCount, cellIndex, positionOffset);
       }
       const dateX = this._scene._gantt.parsedOptions.timelineColWidth * (Math.floor(unitCount) + positionOffset);
       const markLineGroup = new Group({
@@ -135,7 +96,7 @@ export class MarkLine {
           cornerRadius: contentStyle.cornerRadius || [0, 2, 2, 0]
         });
         textGroup.name = 'mark-line-content';
-        textGroup.data = line;
+        (textGroup as any).data = line;
         markLineGroup.appendChild(textGroup);
         // 创建内容
         const text = new Text({
@@ -145,12 +106,7 @@ export class MarkLine {
           lineHeight: textContainerHeight,
           fontWeight: contentStyle.fontWeight || 'normal',
           fill: contentStyle.color || style.lineColor,
-          fontSize: contentStyle.fontSize || 12,
-          poptip: {
-            position: 'top',
-            dx: textMaxLineWidth / 4,
-            dy: -textContainerHeight / 4
-          }
+          fontSize: contentStyle.fontSize || 12
         });
         textGroup.appendChild(text);
       }
