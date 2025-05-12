@@ -16,14 +16,15 @@ export type ExportVTableToCsvOptions = {
 export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableToCsvOptions): string {
   const exportAllData = !!option?.exportAllData;
   const minRow = 0;
-  const maxRow = exportAllData ? tableInstance.recordsCount + 1 : tableInstance.rowCount - 1;
+  const isPivot = tableInstance.isPivotTable() || tableInstance.isPivotChart();
+  const maxRow = exportAllData ? tableInstance.maxRowCount - (isPivot ? 1 : -1) : tableInstance.rowCount - 1;
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
 
   let copyValue = '';
   for (let row = minRow; row <= maxRow; row++) {
     for (let col = minCol; col <= maxCol; col++) {
-      const copyCellValue = getCopyCellValue(col, row, tableInstance, option);
+      const copyCellValue = getCopyCellValue(col, row, tableInstance, option, isPivot);
       if (typeof Promise !== 'undefined' && copyCellValue instanceof Promise) {
         // not support async
       } else {
@@ -45,10 +46,12 @@ function getCopyCellValue(
   col: number,
   row: number,
   tableInstance: IVTable,
-  option?: ExportVTableToCsvOptions
+  option?: ExportVTableToCsvOptions,
+  isPivot?: boolean
 ): string | Promise<string> | void {
   const rawRecord = tableInstance.getCellRawRecord(col, row);
-  const cellValue = (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row);
+  const cellValue =
+    (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row, false, !!option.exportAllData);
 
   if (option?.formatExportOutput) {
     const cellType = tableInstance.getCellType(col, row);
@@ -63,7 +66,7 @@ function getCopyCellValue(
   }
   const cellRange: CellRange = tableInstance.getCellRange(col, row);
   const copyStartCol = cellRange.start.col;
-  const copyStartRow = cellRange.start.row;
+  const copyStartRow = isPivot ? row : cellRange.start.row;
 
   if (copyStartCol !== col || copyStartRow !== row) {
     return '';

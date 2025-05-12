@@ -4,7 +4,7 @@ import type { CellType, IVTable } from '../util/type';
 import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './style';
 import { updateCell, renderChart, graphicUtil } from '@visactor/vtable';
 import { isArray } from '@visactor/vutils';
-import type { ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/es/ts-types';
+import type { CellRange, ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/es/ts-types';
 import { getHierarchyOffset } from '../util/indent';
 import { isPromise } from '../util/promise';
 
@@ -52,12 +52,13 @@ export async function exportVTableToExcel(
   const exportAllData = !!options?.exportAllData;
   worksheet.properties.defaultRowHeight = 40;
 
-  const columns = [];
+  const columns: { width: number }[] = [];
   const minRow = 0;
-  const maxRow = exportAllData ? tableInstance.recordsCount + 1 : tableInstance.rowCount - 1;
+  const isPivot = tableInstance.isPivotTable();
+  const maxRow = (exportAllData ? tableInstance.maxRowCount : tableInstance.rowCount) - 1;
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
-  const mergeCells = [];
+  const mergeCells: CellRange[] = [];
   const mergeCellSet = new Set();
 
   const SLICE_SIZE = 100;
@@ -83,8 +84,17 @@ export async function exportVTableToExcel(
             await addCell(col, row, tableInstance, worksheet, workbook, options);
 
             const cellRange = tableInstance.getCellRange(col, row);
-            if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
-              const key = `${cellRange.start.col},${cellRange.start.row}:${cellRange.end.col},${cellRange.end.row}`;
+            /**
+             * 透视表需要将startRow换成当前循环row
+             * 否则会出现Set中的row始终为当前分页后页面的rowCount，从而导致Set无法正确去重
+             */
+            if (
+              cellRange.start.col !== cellRange.end.col ||
+              (isPivot ? row : cellRange.start.row) !== cellRange.end.row
+            ) {
+              const key = `${cellRange.start.col},${isPivot ? row : cellRange.start.row}:${cellRange.end.col},${
+                cellRange.end.row
+              }`;
               if (!mergeCellSet.has(key)) {
                 mergeCellSet.add(key);
                 mergeCells.push(cellRange);
@@ -169,7 +179,8 @@ async function addCell(
   const { layoutMap } = tableInstance.internalProps;
   const cellType = tableInstance.getCellType(col, row);
   const rawRecord = tableInstance.getCellRawRecord(col, row);
-  let cellValue = (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row);
+  let cellValue =
+    (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row, false, !!options?.exportAllData);
   if (isPromise(cellValue)) {
     cellValue = await cellValue;
   }

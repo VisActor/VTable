@@ -1327,7 +1327,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   //   return false;
   // }
 
-  isHeader(col: number, row: number): boolean {
+  isHeader(col: number, row: number, exportAllData?: boolean): boolean {
     if (
       col >= this.leftRowSeriesNumberColumnCount &&
       col < this.rowHeaderLevelCount + this.leftRowSeriesNumberColumnCount
@@ -1340,7 +1340,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (col >= this.colCount - this.rightHeaderColCount) {
       return true;
     }
-    if (row >= this.rowCount - this.bottomHeaderRowCount) {
+    // 经测试可以始终使用maxRowCount，但防止边界情况没有测试到，还是加一个三元
+    if (row >= (exportAllData ? this.maxRowCount : this.rowCount) - this.bottomHeaderRowCount) {
       return true;
     }
     return false;
@@ -1742,19 +1743,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return bodyColCount + this.rowHeaderLevelCount + this.rightHeaderColCount + this.leftRowSeriesNumberColumnCount; // 小心rightFrozenColCount和colCount的循环引用 造成调用栈溢出
   }
   get rowCount(): number {
-    return (
-      ((this._table.records || this.dataset.records
-        ? Array.isArray(this._table.records)
-          ? this._table.records.length > 0
-          : true
-        : false) &&
-      this._indicators?.length > 0 && // 前两个判断条件来判断  有展示的body值的情况 需要展示body row
-      !this._rowHeaderCellIds?.length // 需要展示body值 但 _rowHeaderCellIds的长度维度为0  无rows 行表头为空
-        ? 1 //兼容bugserver: https://bugserver.cn.goofy.app/case?product=VTable&fileid=65364a57173c354c242a7c4f
-        : this._rowHeaderCellIds?.length ?? 0) + //兼容 bugserver：https://bugserver.cn.goofy.app/case?product=VTable&fileid=6527ac0695c0cdbd788cf17d
-      this.columnHeaderLevelCount +
-      this.bottomHeaderRowCount // 小心bottomFrozenRowCount和rowCount的循环引用 造成调用栈溢出
-    );
+    return this.getRowCountByIds(this._rowHeaderCellIds);
+  }
+  get maxRowCount(): number {
+    return this.getRowCountByIds(this._rowHeaderCellIds_FULL);
   }
   get bodyRowSpanCount() {
     return this.rowDimensionTree.tree.size;
@@ -1839,7 +1831,22 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   get columnObjects(): IndicatorData[] {
     return this._indicators;
   }
-  getCellId(col: number, row: number): LayoutObjectId {
+  getRowCountByIds(ids: number[][]): number {
+    return (
+      ((this._table.records || this.dataset.records
+        ? Array.isArray(this._table.records)
+          ? this._table.records.length > 0
+          : true
+        : false) &&
+      this._indicators?.length > 0 && // 前两个判断条件来判断  有展示的body值的情况 需要展示body row
+      !ids?.length // 需要展示body值 但 _rowHeaderCellIds的长度维度为0  无rows 行表头为空
+        ? 1 //兼容bugserver: https://bugserver.cn.goofy.app/case?product=VTable&fileid=65364a57173c354c242a7c4f
+        : ids?.length ?? 0) + //兼容 bugserver：https://bugserver.cn.goofy.app/case?product=VTable&fileid=6527ac0695c0cdbd788cf17d
+      this.columnHeaderLevelCount +
+      this.bottomHeaderRowCount // 小心bottomFrozenRowCount和rowCount的循环引用 造成调用栈溢出
+    );
+  }
+  getCellId(col: number, row: number, exportAllData?: boolean): LayoutObjectId {
     if (row >= 0 && col >= 0) {
       if (this.isSeriesNumber(col, row)) {
         return '';
@@ -1848,7 +1855,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } else if (this.isColumnHeader(col, row)) {
         return this._columnHeaderCellIds[row]?.[col - this.rowHeaderLevelCount - this.leftRowSeriesNumberColumnCount];
       } else if (this.isRowHeader(col, row)) {
-        return this._rowHeaderCellIds[row - this.columnHeaderLevelCount]?.[col - this.leftRowSeriesNumberColumnCount];
+        return (exportAllData ? this._rowHeaderCellIds_FULL : this._rowHeaderCellIds)[
+          row - this.columnHeaderLevelCount
+        ]?.[col - this.leftRowSeriesNumberColumnCount];
       } else if (this.isRightFrozenColumn(col, row)) {
         return this._rowHeaderCellIds[row - this.columnHeaderLevelCount]?.[this.rowHeaderLevelCount - 1];
       } else if (this.isBottomFrozenRow(col, row)) {
@@ -1873,11 +1882,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   //   }
   //   return 0;
   // }
-  getHeader(col: number, row: number): HeaderData | SeriesNumberColumnData {
+  getHeader(col: number, row: number, exportAllData?: boolean): HeaderData | SeriesNumberColumnData {
     if (this.isSeriesNumberInHeader(col, row)) {
       return this.getSeriesNumberHeader(col, row);
     }
-    const id = this.getCellId(col, row);
+    const id = this.getCellId(col, row, exportAllData);
     return this._headerObjectMap[id as number] ?? { id: undefined, field: '', headerType: 'text', define: undefined };
   }
   getHeaderField(col: number, row: number) {
@@ -2101,7 +2110,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getBodyIndexByRow(row: number): number {
     if (row < this.columnHeaderLevelCount) {
       return -1;
-    } else if (row >= this.rowCount - this.bottomHeaderRowCount) {
+    } else if (row >= this.maxRowCount - this.bottomHeaderRowCount) {
       return -1;
     }
     return row - this.columnHeaderLevelCount;
@@ -2270,6 +2279,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return paths;
   }
   getCellHeaderPaths(col: number, row: number): IPivotTableCellHeaderPaths {
+    // 分页时，headerPathsWidthNode的rowHeaderPaths是错误的，导致导出后没有正确处理值
     const headerPathsWidthNode = this.getCellHeaderPathsWithTreeNode(col, row);
     const headerPaths: IPivotTableCellHeaderPaths = {
       colHeaderPaths: [],

@@ -275,6 +275,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   get recordsCount() {
     return this.records?.length;
   }
+  get maxRowCount(): number {
+    return this.internalProps.layoutMap.maxRowCount;
+  }
   _canResizeColumn(col: number, row: number): boolean {
     const ifCan = super._canResizeColumn(col, row);
     if (ifCan) {
@@ -716,7 +719,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
     }
   }
-  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData {
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean, exportAllData?: boolean): FieldData {
     if (!skipCustomMerge) {
       const customMergeText = this.getCustomMergeValue(col, row);
       if (customMergeText) {
@@ -730,8 +733,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
       const { format } = this.internalProps.layoutMap.getSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount + 1;
-    } else if (this.internalProps.layoutMap.isHeader(col, row)) {
-      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row) as HeaderData;
+    } else if (this.internalProps.layoutMap.isHeader(col, row, exportAllData)) {
+      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row, exportAllData) as HeaderData;
       return typeof fieldFormat === 'function' ? fieldFormat(title, col, row, this as BaseTableAPI) : title;
     }
     if (this.internalProps.recordsIsTwoDimensionalArray) {
@@ -1037,6 +1040,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       return dataValue;
     } else if (this.dataset) {
       let indicatorPosition: { position: 'col' | 'row'; index?: number };
+      //这里的cellDimensionPath.rowHeaderPaths的值不正确，导致没获取到正确的rowKeys
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths
         ?.filter((path: any) => {

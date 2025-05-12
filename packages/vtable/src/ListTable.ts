@@ -196,6 +196,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
   get recordsCount() {
     return this.dataSource.records.length;
   }
+
+  get maxRowCount() {
+    const layoutMap = this.internalProps.layoutMap;
+    return this.recordsCount * layoutMap.bodyRowCount + layoutMap.headerLevelCount;
+  }
   // /**
   //  * Gets the define of the header.
   //  */

@@ -289,6 +289,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     return this.records?.length;
   }
 
+  get maxRowCount() {
+    return this.records?.length;
+  }
+
   isListTable(): false {
     return false;
   }
