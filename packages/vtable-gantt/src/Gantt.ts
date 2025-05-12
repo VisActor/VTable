@@ -622,7 +622,6 @@ export class Gantt extends EventTarget {
       const sortOrder = ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second'];
       if (timelineScales.length === 1) {
         if (
-          timelineScales[0].unit === 'day' ||
           timelineScales[0].unit === 'hour' ||
           timelineScales[0].unit === 'minute' ||
           timelineScales[0].unit === 'second'
@@ -631,7 +630,7 @@ export class Gantt extends EventTarget {
         }
       }
       const orderedScales = timelineScales.slice().sort((a, b) => {
-        if (a.unit === 'day' || a.unit === 'hour' || a.unit === 'minute' || a.unit === 'second') {
+        if (a.unit === 'hour' || a.unit === 'minute' || a.unit === 'second') {
           this.parsedOptions.timeScaleIncludeHour = true;
         }
         const indexA = sortOrder.indexOf(a.unit);

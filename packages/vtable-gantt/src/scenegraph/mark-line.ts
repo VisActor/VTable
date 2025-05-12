@@ -53,6 +53,8 @@ export class MarkLine {
       } else if (line.position === 'middle') {
         positionOffset = 0.5;
       } else if (line.position === 'date') {
+        const date = createDateAtMidnight(line.date);
+        const unitCount = computeCountToTimeScale(date, minDate, unit, step);
         const cellIndex = Math.floor(unitCount);
         const scaleStart = new Date(minDate);
         const cellStartDate = new Date(scaleStart);
