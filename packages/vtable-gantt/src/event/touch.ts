@@ -7,6 +7,9 @@ export function bindTouchListener(eventManager: EventManager) {
   const gantt = eventManager._gantt;
   const stateManager = gantt.stateManager;
   const scenegraph = gantt.scenegraph;
+  if (vglobal.envContribution.supportsTouchEvents === false) {
+    return;
+  }
   // 阻止右键事件
   vglobal.addEventListener(
     'contextmenu',
