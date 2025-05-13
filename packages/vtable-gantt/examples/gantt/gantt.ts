@@ -809,7 +809,7 @@ export function createTable() {
     records: [],
     taskListTable: {
       columns: columns,
-      tableWidth: 400,
+      tableWidth: 100,
       minTableWidth: 100,
       maxTableWidth: 600
     },

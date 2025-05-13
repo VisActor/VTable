@@ -108,67 +108,6 @@ function isScrollToRight(deltaX: number, state: StateManager) {
   return totalWidth !== 0 && deltaX >= 0 && Math.abs(state.scroll.horizontalBarPos - totalWidth) < 1;
 }
 
-export class InertiaScroll {
-  friction: number;
-  lastTime: number;
-  speedX: number;
-  speedY: number;
-  stateManager: StateManager;
-  runingId: number;
-  scrollHandle: (dx: number, dy: number) => void;
-  constructor(stateManager: StateManager) {
-    this.stateManager = stateManager;
-  }
-  setScrollHandle(scrollHandle: (dx: number, dy: number) => void) {
-    this.scrollHandle = scrollHandle;
-  }
-
-  startInertia(speedX: number, speedY: number, friction: number) {
-    this.lastTime = Date.now();
-    this.speedX = speedX;
-    this.speedY = speedY;
-    this.friction = friction;
-    if (!this.runingId) {
-      this.runingId = requestAnimationFrame(this.inertia.bind(this));
-    }
-  }
-  inertia() {
-    const now = Date.now();
-    const dffTime = now - this.lastTime;
-    let stopped = true;
-    const f = Math.pow(this.friction, dffTime / 16);
-    const newSpeedX = f * this.speedX;
-    const newSpeedY = f * this.speedY;
-    let dx = 0;
-    let dy = 0;
-    if (Math.abs(newSpeedX) > 0.05) {
-      stopped = false;
-      dx = ((this.speedX + newSpeedX) / 2) * dffTime;
-    }
-    if (Math.abs(newSpeedY) > 0.05) {
-      stopped = false;
-      dy = ((this.speedY + newSpeedY) / 2) * dffTime;
-    }
-    this.scrollHandle?.(dx, dy);
-    if (stopped) {
-      this.runingId = null;
-      return;
-    }
-    this.lastTime = now;
-    this.speedX = newSpeedX;
-    this.speedY = newSpeedY;
-
-    this.runingId = requestAnimationFrame(this.inertia.bind(this));
-  }
-  endInertia() {
-    cancelAnimationFrame(this.runingId);
-    this.runingId = null;
-  }
-  isInertiaScrolling() {
-    return !!this.runingId;
-  }
-}
-
 export function bindScrollBarListener(eventManager: EventManager) {
   const table = eventManager._gantt;
   const stateManager = table.stateManager;
