@@ -8,6 +8,7 @@ import { cellInRange } from '@visactor/vtable/es/tools/helper';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type * as VTable from '@visactor/vtable';
 export interface FocusHighlightPluginOptions {
+  id?: string;
   fill?: string;
   opacity?: number;
   highlightRange?: CellAddress | CellRange; //初始化聚焦高亮范围
@@ -28,6 +29,7 @@ export class FocusHighlightPlugin implements VTable.plugins.IVTablePlugin {
       highlightRange: undefined
     }
   ) {
+    this.id = options.id ?? this.id;
     this.pluginOptions = Object.assign(
       {
         fill: '#000',

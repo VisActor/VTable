@@ -52,3 +52,11 @@ const option: VTable.ListTableConstructorOptions = {
 | `ExcelEditCellKeyboardPlugin` | Excel编辑单元格键盘插件 | `ListTable`,`PivotTable` |
 | `TableCarouselAnimationPlugin` | 表格轮播动画插件 | `ListTable`,`PivotTable` |
 | `RotateTablePlugin` | 表格旋转插件 | `ListTable`,`PivotTable` |
+
+<br>
+
+甘特图VTabe-Gantt组件目前支持的插件有：
+
+| 插件名称 | 插件描述 | 适用对象 |
+| --- | --- | --- |
+| `ExportGanttPlugin` | 实现全量导出甘特图,可以自适应甘特图的大小 | `Gantt` |

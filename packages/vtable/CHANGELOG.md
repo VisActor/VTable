@@ -1,6 +1,31 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 30 Apr 2025 09:48:20 GMT and should not be manually modified.
+This log was last generated on Tue, 13 May 2025 11:26:12 GMT and should not be manually modified.
+
+## 1.18.3
+Tue, 13 May 2025 11:26:12 GMT
+
+### Updates
+
+- feat: add frozenColumnLine visible on theme #3828
+
+
+- fix: when no rowTree treeMode occor error #3830
+
+
+- feat: add touch event for gantt chart #3864
+
+
+- feat: add support for text not to be hidden #3802
+- fix: unintended edit state activation on functional button clicks
+
+
+- feat: add exportAllData to export table plugin #3726
+
+
+- fix: resolve taskBar width problem when click linkPonitNode #3829
+
+
 
 ## 1.18.2
 Wed, 30 Apr 2025 09:48:20 GMT

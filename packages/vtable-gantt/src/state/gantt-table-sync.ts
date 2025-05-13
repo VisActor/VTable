@@ -14,7 +14,9 @@ export function syncScrollStateFromTable(gantt: Gantt) {
       if (args.scrollDirection === 'vertical') {
         const { scroll } = gantt.taskListTableInstance.stateManager;
         const { verticalBarPos } = scroll;
-        gantt.stateManager.setScrollTop(verticalBarPos, false);
+        if (gantt.stateManager.scroll.verticalBarPos !== verticalBarPos) {
+          gantt.stateManager.setScrollTop(verticalBarPos, false);
+        }
       }
     });
   }

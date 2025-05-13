@@ -2,6 +2,36 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.18.3",
+      "tag": "@visactor/vtable_v1.18.3",
+      "date": "Tue, 13 May 2025 11:26:12 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add frozenColumnLine visible on theme #3828\n\n"
+          },
+          {
+            "comment": "fix: when no rowTree treeMode occor error #3830\n\n"
+          },
+          {
+            "comment": "feat: add touch event for gantt chart #3864\n\n"
+          },
+          {
+            "comment": "feat: add support for text not to be hidden #3802"
+          },
+          {
+            "comment": "fix: unintended edit state activation on functional button clicks\n\n"
+          },
+          {
+            "comment": "feat: add exportAllData to export table plugin #3726\n\n"
+          },
+          {
+            "comment": "fix: resolve taskBar width problem when click linkPonitNode #3829\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.18.2",
       "tag": "@visactor/vtable_v1.18.2",
       "date": "Wed, 30 Apr 2025 09:48:20 GMT",

@@ -1,3 +1,28 @@
+# v1.18.2
+
+2025-04-30
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when records is blank updateColumns api occor error [#3766](https://github.com/VisActor/VTable/issues/3766)
+- **@visactor/vtable**: updateOption with dataSource object occor error [#3768](https://github.com/VisActor/VTable/issues/3768)
+- **@visactor/vtable**: when hide pivot header find headerPath error [#3791](https://github.com/VisActor/VTable/issues/3791)
+- **@visactor/vtable**: supplement adaptive widthAdaptiveMode logic [#3796](https://github.com/VisActor/VTable/issues/3796)
+- **@visactor/vtable**: transform rotate api
+- **@visactor/vtable**: after rotate resize column interaction error
+- **@visactor/vtable**: skip serial number calculation for aggregation rows when groupBy is enabled
+- **@visactor/vtable**: hide rowSeriesNumber and checkbox in aggregation [#2173](https://github.com/VisActor/VTable/issues/2173)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: change event listener with vglobal [#3734](https://github.com/VisActor/VTable/issues/3734)
+- **@visactor/vtable**: plugins update progress [#3788](https://github.com/VisActor/VTable/issues/3788)
+
+
+
+[more detail about v1.18.2](https://github.com/VisActor/VTable/releases/tag/v1.18.2)
+
 # v1.18.0
   v1.17.7 same content
 

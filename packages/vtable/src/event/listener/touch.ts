@@ -8,6 +8,19 @@ export function bindTouchListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
   const scenegraph = table.scenegraph;
+  if ((vglobal as any).envContribution.supportsTouchEvents === false) {
+    return;
+  }
+  // 阻止右键事件
+  vglobal.addEventListener(
+    'contextmenu',
+    e => {
+      e.stopPropagation();
+      e.preventDefault();
+    },
+    // 捕获阶段就阻止
+    { capture: true }
+  );
 
   // deal width touch scrolling in mobile devices
   eventManager.touchMovePoints = [];

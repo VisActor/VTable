@@ -322,7 +322,6 @@ export function createTable() {
     },
     headerRowHeight: 60,
     rowHeight: 40,
-
     taskBar: {
       startDateField: 'start',
       endDateField: 'end',

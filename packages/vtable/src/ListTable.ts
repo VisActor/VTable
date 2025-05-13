@@ -196,6 +196,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   get recordsCount() {
     return this.dataSource.records.length;
   }
+
   // /**
   //  * Gets the define of the header.
   //  */

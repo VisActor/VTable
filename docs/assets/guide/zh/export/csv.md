@@ -40,3 +40,43 @@ downloadCsv(exportVTableToCsv(tableInstance), 'export-csv');
 const { downloadCsv, exportVTableToCsv } = VTable.export;
 // ......
 ```
+
+## 配置项
+
+### exportAllData
+
+默认情况下，只导出表格中当前页的数据；如果有设置分页时，想导出所有数据，而不是当前页，可以设置`exportAllData`为 true
+
+### formatExportOutput
+
+默认情况下，表格导出时，会将导出单元格的内文字或图片输出到 Excel 中，如果需要自定义导出内容，可以设置`formatExportOutput`为一个函数，函数的参数为单元格信息，函数的返回值为导出字符串，如果返回`undefined`，则按照默认导出逻辑处理
+
+```ts
+type CellInfo = {
+  cellType: string;
+  cellValue: string;
+  table: IVTable;
+  col: number;
+  row: number;
+};
+
+type ExportVTableToExcelOptions = {
+  // ......
+  formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
+};
+```
+
+```js
+const excelOption = {
+  formatExportOutput: ({ cellType, cellValue, table, col, row }) => {
+    if (cellType === 'checkbox') {
+      return table.getCellCheckboxState(col, row) ? 'true' : 'false';
+    }
+  }
+};
+await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+```
+
+### excape
+
+是否需要将字符串中的特殊符号进行转义，以避免干扰CSV解析，默认为`false`
