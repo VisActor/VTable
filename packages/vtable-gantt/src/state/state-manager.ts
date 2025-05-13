@@ -750,6 +750,7 @@ export class StateManager {
     // if (target.name === 'task-bar-hover-shadow') {
     // target = target.parent.parent;
     // }
+    this.resizeTaskBar.resizing = false; // 关联线创建时，任务条resizing状态重置
     this.creatingDenpendencyLink.creating = true;
     this.creatingDenpendencyLink.startClickedPoint = target;
     this.creatingDenpendencyLink.startX = x;
