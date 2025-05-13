@@ -21,14 +21,16 @@
     "tool",
     "share",
     "package",
-    "doc"
+    "doc",
+    "unit-test"
   ],
   "projects": [
     {
       "packageName": "@visactor/vtable",
       "projectFolder": "packages/vtable",
       "tags": [
-        "package"
+        "package",
+        "unit-test"
       ],
       "shouldPublish": true,
       "versionPolicyName": "vtableMain"
@@ -141,7 +143,8 @@
       "packageName": "@visactor/vtable-plugins",
       "projectFolder": "packages/vtable-plugins",
       "tags": [
-        "package"
+        "package",
+        "unit-test"
       ],
       "shouldPublish": true,
       "versionPolicyName": "vtableMain"
