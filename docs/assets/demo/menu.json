@@ -274,6 +274,13 @@
           }
         },
         {
+          "path": "gantt-milestone",
+          "title": {
+            "zh": "甘特图里程碑",
+            "en": "Gantt Milestone"
+          }
+        },
+        {
           "path": "gantt-dependency-link-line",
           "title": {
             "zh": "甘特图依赖线（关联线）",

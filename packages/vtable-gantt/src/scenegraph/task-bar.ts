@@ -1,25 +1,6 @@
-import {
-  Group,
-  createText,
-  createRect,
-  Image,
-  Circle,
-  Line,
-  Rect,
-  type IText,
-  type IGroupGraphicAttribute,
-  type ITextGraphicAttribute
-} from '@visactor/vtable/es/vrender';
+import { Group, createText, createRect, Image, Circle, Line, Rect } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
-
-interface IGanttGroup extends Group {
-  task_index?: number;
-  sub_task_index?: number;
-  record?: any;
-  clipGroupBox?: Group;
-  milestoneTextLabel?: IText;
-}
 
 import {
   computeCountToTimeScale,
@@ -37,7 +18,7 @@ import {
   getTextPos
 } from '../gantt-helper';
 import { GanttTaskBarNode } from './gantt-node';
-import { TasksShowMode, type ITextGraphicAttribute } from '../ts-types';
+import { TasksShowMode } from '../ts-types';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -411,8 +392,6 @@ export class TaskBar {
         fontSize: textStyle.fontSize || 16,
         fontFamily: textStyle.fontFamily || 'Arial',
         fill: textStyle.color || '#ff0000',
-        textBaseline: textStyle.textBaseline || pos.textBaselineValue,
-        textAlign: textStyle.textAlign || pos.textAlignValue,
         text: this.formatMilestoneText(milestoneStyle.labelText, taskRecord),
         zIndex: 5001,
         pickable: false
