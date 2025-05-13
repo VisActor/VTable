@@ -45,6 +45,9 @@ export function handleTextStick(table: BaseTableAPI) {
     return;
   }
 
+  const horizontalUpdateTimeStamp = Date.now();
+  const verticalUpdateTimeStamp = Date.now();
+
   // column header
   for (let row = 0; row < frozenRowCount; row++) {
     if (colEnd < colStart) {
@@ -61,7 +64,8 @@ export function handleTextStick(table: BaseTableAPI) {
           table.tableNoFrameWidth - table.getRightFrozenColsWidth() + table.tableX,
           changedCells,
           style?.textStickBaseOnAlign,
-          table
+          table,
+          horizontalUpdateTimeStamp
         );
       }
     });
@@ -87,7 +91,8 @@ export function handleTextStick(table: BaseTableAPI) {
           table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() + table.tableY,
           changedCells,
           style?.textStickBaseOnAlign,
-          table
+          table,
+          verticalUpdateTimeStamp
         );
       }
     });
@@ -109,7 +114,8 @@ export function handleTextStick(table: BaseTableAPI) {
           table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() + table.tableY,
           changedCells,
           style?.textStickBaseOnAlign,
-          table
+          table,
+          verticalUpdateTimeStamp
         );
       }
     });
@@ -129,7 +135,8 @@ export function handleTextStick(table: BaseTableAPI) {
           table.tableNoFrameWidth - table.getRightFrozenColsWidth() + table.tableX,
           changedCells,
           style?.textStickBaseOnAlign,
-          table
+          table,
+          horizontalUpdateTimeStamp
         );
       }
     });
@@ -147,7 +154,8 @@ function adjustCellContentVerticalLayout(
   maxTop: number,
   changedCells: Map<string, StickCell>,
   textStickBaseOnAlign: boolean | undefined,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  updateTimeStamp: number
 ) {
   if (
     isNumber(cellGroup.mergeStartCol) &&
@@ -158,11 +166,17 @@ function adjustCellContentVerticalLayout(
     const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
-        const singleCellGroup = table.scenegraph.getCell(col, row);
+        const singleCellGroup = table.scenegraph.highPerformanceGetCell(col, row);
         if (singleCellGroup.role !== 'cell') {
           continue;
         }
-        dealVertical(singleCellGroup, minTop, maxTop, changedCells, textStickBaseOnAlign);
+        if ((singleCellGroup as any).updateTimeStamp !== updateTimeStamp) {
+          dealVertical(singleCellGroup, minTop, maxTop, changedCells, textStickBaseOnAlign);
+          (singleCellGroup as any).updateTimeStamp = updateTimeStamp;
+        } else {
+          // do nothing
+          // console.log('ignore');
+        }
       }
     }
   } else {
@@ -260,7 +274,8 @@ function adjustCellContentHorizontalLayout(
   maxLeft: number,
   changedCells: Map<string, StickCell>,
   textStickBaseOnAlign: boolean | undefined,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  updateTimeStamp: number
 ) {
   if (
     isNumber(cellGroup.mergeStartCol) &&
@@ -275,7 +290,13 @@ function adjustCellContentHorizontalLayout(
         if (singleCellGroup.role !== 'cell') {
           continue;
         }
-        dealHorizontal(singleCellGroup, minLeft, maxLeft, changedCells, textStickBaseOnAlign);
+        if ((singleCellGroup as any).updateTimeStamp !== updateTimeStamp) {
+          dealHorizontal(singleCellGroup, minLeft, maxLeft, changedCells, textStickBaseOnAlign);
+          (singleCellGroup as any).updateTimeStamp = updateTimeStamp;
+        } else {
+          // do nothing
+          // console.log('ignore');
+        }
       }
     }
   } else {
