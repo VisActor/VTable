@@ -796,10 +796,10 @@
           }
         },
         {
-          "path": "paste-add-row-column",
+          "path": "paste-add-row",
           "title": {
             "zh": "复制粘贴插入插件",
-            "en": "paste add row column plugin"
+            "en": "paste add row plugin"
           }
         },
         {
