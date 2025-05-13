@@ -1,6 +1,6 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
-import { PasteAddRowColumn } from '../../src';
+import { PasteAddRowPlugin } from '../../src';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -72,13 +72,13 @@ export function createTable() {
       width: 100
     }
   ];
-  const addRowColumn = new PasteAddRowColumn();
+  const pasteAddRow = new PasteAddRowPlugin();
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
     padding: 30,
-    plugins: [addRowColumn]
+    plugins: [pasteAddRow]
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
