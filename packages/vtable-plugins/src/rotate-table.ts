@@ -11,10 +11,11 @@ import * as VTable from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';
 import type { Matrix } from '@visactor/vutils';
-// export type IRotateTablePluginOptions = {
-//   // 旋转角度
-//   rotate?: number;
-// };
+export type IRotateTablePluginOptions = {
+  id?: string;
+  // // 旋转角度
+  // rotate?: number;
+};
 /**
  * 旋转表格插件。
  * 业务层旋转功能没有使用收系统接口的话，用的transform:'rotate(90deg)'的设置来达到旋转的目的。vtable及vrender都没有进行坐标处理，这样就会导致交互错乱。
@@ -22,20 +23,21 @@ import type { Matrix } from '@visactor/vutils';
  * 这里使用transform:'rotate(90deg)'的设置来达到旋转的目的。 其他角度应该也是可以实现的，请自行扩展这个插件并兼容
  */
 export class RotateTablePlugin implements VTable.plugins.IVTablePlugin {
-  id = 'rotate-table';
+  id = `rotate-table-${Date.now()}`;
   name = 'Rotate Table';
   runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
   table: VTable.ListTable;
   matrix: Matrix;
   vglobal_mapToCanvasPoint: any; // 保存vrender中vglobal的mapToCanvasPoint原方法
   // pluginOptions: IRotateTablePluginOptions;
-  constructor() {
+  constructor(pluginOptions?: IRotateTablePluginOptions) {
+    this.id = pluginOptions?.id ?? this.id;
     // this.pluginOptions = pluginOptions;
   }
   run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], VTable.BaseTableAPI]) {
     const table: VTable.BaseTableAPI = args[2];
     this.table = table as VTable.ListTable;
-    //将函数rotate90WithTransform绑定到table实例上
+    //将函数rotate90WithTransform绑定到table实例上，一般情况下插件不需要将api绑定到table实例上，可以直接自身实现某个api功能
     this.table.rotate90WithTransform = rotate90WithTransform.bind(this.table);
     this.table.cancelTransform = cancelTransform.bind(this.table);
   }

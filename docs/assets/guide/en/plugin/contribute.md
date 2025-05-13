@@ -34,6 +34,28 @@ export interface IVTablePlugin {
 
 The `runTime` parameter specifies when the plugin will run, configuring it with event types from `TableEvents`.
 
+The `Gantt` plugin needs to implement the `VTableGantt.plugins.IGanttPlugin` interface.
+
+```ts
+// Plugin unified interface
+export interface IGanttPlugin {
+  // Plugin unique identifier
+  id: string;
+  // Plugin name
+  name: string;
+  // Plugin runtime trigger, if not passed in, will run directly during the Gantt build by default
+  runTime?: EVENT_TYPES[keyof EVENT_TYPES][];
+  // Initialization method
+  run: (...args: any[]) => void;
+  // Update method, called when Gantt data or configuration updates
+  update?: () => void;
+  // Destruction method, called before Gantt instance is destroyed
+  release?: (gantt: Gantt) => void;   
+}
+```
+
+The `runTime` parameter specifies when the plugin will run, configuring it with event types from `EVENT_TYPES`.
+
 ####  Component Lifecycle Process:
 
 <div style="display: flex; justify-content: center;  width: 100%;">

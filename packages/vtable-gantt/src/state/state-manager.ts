@@ -485,6 +485,7 @@ export class StateManager {
     if (this.selectedTaskBar.target !== target) {
       target.setAttribute('zIndex', 0);
     }
+    target.updateTextPosition();
     this.moveTaskBar.target = null;
     this.moveTaskBar.deltaX = 0;
     this.moveTaskBar.deltaY = 0;
@@ -604,8 +605,6 @@ export class StateManager {
     }
 
     gantt.scenegraph.updateNextFrame();
-
-    //
   }
   //#region 调整拖拽任务条的大小
   startResizeTaskBar(target: Group, x: number, y: number, startOffsetY: number, onIconName: string) {
@@ -704,6 +703,7 @@ export class StateManager {
         reCreateCustomNode(this._gantt, taskBarGroup, taskIndex, sub_task_index);
         taskBarGroup.setAttribute('zIndex', 0);
       }
+      taskBarGroup.updateTextPosition();
       this.resizeTaskBar.resizing = false;
       this.resizeTaskBar.target = null;
 
@@ -743,7 +743,6 @@ export class StateManager {
     );
 
     this._gantt.scenegraph.updateNextFrame();
-    //
   }
   //#endregion
   //#region 生成关联线的交互处理
@@ -751,6 +750,7 @@ export class StateManager {
     // if (target.name === 'task-bar-hover-shadow') {
     // target = target.parent.parent;
     // }
+    this.resizeTaskBar.resizing = false; // 关联线创建时，任务条resizing状态重置
     this.creatingDenpendencyLink.creating = true;
     this.creatingDenpendencyLink.startClickedPoint = target;
     this.creatingDenpendencyLink.startX = x;
@@ -1071,6 +1071,8 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
     ]);
   }
 
+  target.updateTextPosition();
+
   state._gantt.scenegraph.refreshRecordLinkNodes(taskIndex, sub_task_index, target, dy);
 }
 
@@ -1110,6 +1112,9 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
     textLabel.setAttribute('maxLineWidth', newWidth - TASKBAR_HOVER_ICON_WIDTH * 2);
     textLabel.setAttribute('x', position.x);
   }
+
+  target.updateTextPosition();
+
   state.showTaskBarHover();
 
   reCreateCustomNode(state._gantt, target, taskIndex, sub_task_index);
