@@ -2,6 +2,7 @@ import type { CellRange } from '@visactor/vtable/es/ts-types';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { BaseTableAPI, plugins } from '@visactor/vtable';
 interface IHighlightHeaderWhenSelectCellPluginOptions {
+  id?: string;
   rowHighlight?: boolean;
   colHighlight?: boolean;
   colHighlightBGColor?: string;
@@ -24,6 +25,7 @@ export class HighlightHeaderWhenSelectCellPlugin implements plugins.IVTablePlugi
   colHeaderRanges: CellRange[] = [];
   rowHeaderRanges: CellRange[] = [];
   constructor(pluginOptions: IHighlightHeaderWhenSelectCellPluginOptions) {
+    this.id = pluginOptions.id ?? this.id;
     this.pluginOptions = pluginOptions;
   }
   run(...args: any[]) {

@@ -3,6 +3,7 @@ import * as VTable from '@visactor/vtable';
  * 添加行和列的插件的配置选项
  */
 export interface AddRowColumnOptions {
+  id?: string;
   /**
    * 是否启用添加列
    */
@@ -54,6 +55,7 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
       addRowEnable: true
     }
   ) {
+    this.id = pluginOptions.id ?? this.id;
     this.pluginOptions = pluginOptions;
     this.pluginOptions.addColumnEnable = this.pluginOptions.addColumnEnable ?? true;
     this.pluginOptions.addRowEnable = this.pluginOptions.addRowEnable ?? true;
