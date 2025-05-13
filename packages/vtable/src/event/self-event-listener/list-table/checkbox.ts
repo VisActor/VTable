@@ -1,6 +1,7 @@
 import { isArray, isNumber } from '@visactor/vutils';
 import type { BaseTableAPI, ListTableProtected } from '../../../ts-types/base-table';
 import { setCellCheckboxStateByAttribute } from '../../../state/checkbox/checkbox';
+import type { ListTableAPI } from '../../../ts-types';
 import { HierarchyState } from '../../../ts-types';
 import type { CachedDataSource } from '../../../data';
 
@@ -22,20 +23,6 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
     if (isNumber(titleIndex)) {
       titleIndex = [titleIndex];
     }
-    console.log(
-      'col',
-      col,
-      'row',
-      row,
-      'record',
-      record,
-      'indexedData',
-      indexedData,
-      'titleShowIndex',
-      titleShowIndex,
-      'titleIndex',
-      titleIndex
-    );
 
     if (record.vtableMerge || record.children?.length) {
       // 1. group title
@@ -43,22 +30,22 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
         // 1.1 group title check
         // 1.1.1 check all children
         if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
-          updateChildrenCheckboxState(true, titleIndex, table);
+          updateChildrenCheckboxState(true, titleIndex, table, field);
         } else {
-          setAllChildrenCheckboxState(true, titleShowIndex, titleIndex, indexedData, table);
+          setAllChildrenCheckboxState(true, titleShowIndex, titleIndex, indexedData, table, col);
         }
         // 1.1.2 update group title state
-        updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
+        updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table, col);
       } else {
         // 1.2 group title uncheck
         // 1.2.1 uncheck all children
         if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
-          updateChildrenCheckboxState(false, titleIndex, table);
+          updateChildrenCheckboxState(false, titleIndex, table, field);
         } else {
-          setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table);
+          setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table, col);
         }
         // 1.2.2 update group title state
-        updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
+        updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table, col);
 
         // 1.2.3 update header checkbox state
         const oldHeaderCheckedState = table.stateManager.headerCheckedState._vtable_rowSeries_number;
@@ -69,62 +56,67 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
       }
     } else {
       // 2. group content, reset group title state
-      updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
+      updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table, col);
     }
   });
 }
 
 // 在cellType: 'checkbox'与tree: true同时配置时，开启enableTreeCheckbox
-export function bindGroupCheckboxTreeChange(table: BaseTableAPI) {
-  // table.on('checkbox_state_change', args => {
-  //   const { col, row, checked, field } = args;
-  //   let isCheckboxAndTree = false;
-  //   isCheckboxAndTree = table.columns.some(column => {
-  //     if (column.tree && column.enableTreeCheckbox) {
-  //       return true;
-  //     }
-  //   });
-  //   if (!isCheckboxAndTree) {
-  //     return;
-  //   }
-  //   if (table.isHeader(col, row)) {
-  //     return;
-  //   }
-  //   const record = table.getCellOriginRecord(col, row);
-  //   const indexedData = (table.dataSource as any).currentPagerIndexedData as (number | number[])[];
-  //   const titleShowIndex = table.getRecordShowIndexByCell(col, row);
-  //   let titleIndex = indexedData[titleShowIndex];
-  //   if (isNumber(titleIndex)) {
-  //     titleIndex = [titleIndex];
-  //   }
-  //   if (record.vtableMerge || record.children?.length) {
-  //     // 1. group title
-  //     if (checked) {
-  //       // 1.1 group title check
-  //       // 1.1.1 check all children
-  //       if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
-  //         updateChildrenCheckboxState(true, titleIndex, table);
-  //       } else {
-  //         setAllChildrenCheckboxState(true, titleShowIndex, titleIndex, indexedData, table);
-  //       }
-  //       // 1.1.2 update group title state
-  //       updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
-  //     } else {
-  //       // 1.2 group title uncheck
-  //       // 1.2.1 uncheck all children
-  //       if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
-  //         updateChildrenCheckboxState(false, titleIndex, table);
-  //       } else {
-  //         setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table);
-  //       }
-  //       // 1.2.2 update group title state
-  //       updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
-  //     }
-  //   } else {
-  //     // 2. group content, reset group title state
-  //     updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table);
-  //   }
-  // });
+export function bindGroupCheckboxTreeChange(table: ListTableAPI) {
+  table.on('checkbox_state_change', args => {
+    const { col, row, checked, field } = args;
+
+    const isCheckboxAndTree =
+      table.internalProps.columns.some(column => column.tree && (column as any).enableTreeCheckbox) &&
+      field !== '_vtable_rowSeries_number';
+
+    if (!isCheckboxAndTree) {
+      return;
+    }
+    if (table.isHeader(col, row)) {
+      return;
+    }
+    const record = table.getCellOriginRecord(col, row);
+    const indexedData = (table.dataSource as any).currentPagerIndexedData as (number | number[])[];
+    const titleShowIndex = table.getRecordShowIndexByCell(col, row);
+    let titleIndex = indexedData[titleShowIndex];
+    if (isNumber(titleIndex)) {
+      titleIndex = [titleIndex];
+    }
+    if (record.vtableMerge || record.children?.length) {
+      // 1. group title
+      if (checked) {
+        // 1.1 group title check
+        // 1.1.1 check all children
+        if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
+          updateChildrenCheckboxState(true, titleIndex, table, field as string);
+        } else {
+          setAllChildrenCheckboxState(true, titleShowIndex, titleIndex, indexedData, table, col, field as string);
+        }
+        // 1.1.2 update group title state
+        updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table, col, field as string);
+      } else {
+        // 1.2 group title uncheck
+        // 1.2.1 uncheck all children
+        if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
+          updateChildrenCheckboxState(false, titleIndex, table, field as string);
+        } else {
+          setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table, col, field as string);
+        }
+        // 1.2.2 update group title state
+        updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table, col, field as string);
+        // 1.2.3 update header checkbox state
+        const oldHeaderCheckedState = table.stateManager.headerCheckedState._vtable_rowSeries_number;
+        const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(field as string, col, row);
+        if (oldHeaderCheckedState !== newHeaderCheckedState) {
+          table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
+        }
+      }
+    } else {
+      // 2. group content, reset group title state
+      updateGroupTitleCheckboxState(titleShowIndex, titleIndex, indexedData, table, col, field as string);
+    }
+  });
 }
 
 // update visible children checkbox state
@@ -133,13 +125,16 @@ function setAllChildrenCheckboxState(
   titleShowIndex: number,
   titleIndex: number[],
   indexedData: (number | number[])[],
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  col: number,
+  field?: string
 ) {
+  const fieldName = field || '_vtable_rowSeries_number';
   let i = titleShowIndex + 1;
   while (isArray(indexedData[i]) && (indexedData[i] as number[])?.length > titleIndex.length) {
     const row = table.columnHeaderLevelCount + i;
-    table.stateManager.setCheckedState(0, row, '_vtable_rowSeries_number', state);
-    setCellCheckboxStateByAttribute(0, row, state, table);
+    table.stateManager.setCheckedState(col, row, fieldName, state);
+    setCellCheckboxStateByAttribute(col, row, state, table);
     i++;
   }
 }
@@ -148,7 +143,9 @@ function updateGroupTitleCheckboxState(
   titleShowIndex: number,
   titleIndex: number[],
   indexedData: (number | number[])[],
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  col: number,
+  field?: string
 ) {
   let parentLength = titleIndex.length - 1;
   if (parentLength > 0) {
@@ -160,7 +157,7 @@ function updateGroupTitleCheckboxState(
       ) {
         const row = table.columnHeaderLevelCount + i;
         // check all children
-        updateParentCheckboxState(0, row, indexedData[i], table);
+        updateParentCheckboxState(col, row, indexedData[i], table, field);
         // table.stateManager.setCheckedState(0, row, '_vtable_rowSeries_number', 'indeterminate');
         // setCellCheckboxStateByAttribute(0, row, 'indeterminate', table);
 
@@ -171,9 +168,16 @@ function updateGroupTitleCheckboxState(
   }
 }
 
-function updateParentCheckboxState(col: number, row: number, currentIndex: number | number[], table: BaseTableAPI) {
+function updateParentCheckboxState(
+  col: number,
+  row: number,
+  currentIndex: number | number[],
+  table: BaseTableAPI,
+  field?: string
+) {
   const { checkedState } = table.stateManager;
   const key = currentIndex.toString();
+  const fieldName = field || '_vtable_rowSeries_number';
   const currentIndexLength = isArray(currentIndex) ? currentIndex.length : 1;
   let start = false;
   const result: (boolean | string)[] = [];
@@ -204,7 +208,7 @@ function updateParentCheckboxState(col: number, row: number, currentIndex: numbe
       if (indexData.length === currentIndexLength) {
         start = false;
       } else {
-        result.push(value._vtable_rowSeries_number);
+        result.push(value[fieldName]);
       }
     }
     if (index === key) {
@@ -220,19 +224,24 @@ function updateParentCheckboxState(col: number, row: number, currentIndex: numbe
   const allUnChecked = result.every(item => !item);
 
   if (allChecked) {
-    table.stateManager.setCheckedState(col, row, '_vtable_rowSeries_number', true);
+    table.stateManager.setCheckedState(col, row, fieldName, true);
     setCellCheckboxStateByAttribute(col, row, true, table);
   } else if (allUnChecked) {
-    table.stateManager.setCheckedState(col, row, '_vtable_rowSeries_number', false);
+    table.stateManager.setCheckedState(col, row, fieldName, false);
     setCellCheckboxStateByAttribute(col, row, false, table);
   } else {
-    table.stateManager.setCheckedState(col, row, '_vtable_rowSeries_number', 'indeterminate');
+    table.stateManager.setCheckedState(col, row, fieldName, 'indeterminate');
     setCellCheckboxStateByAttribute(col, row, 'indeterminate', table);
   }
 }
 
 // update invisible children checkbox state(collapsed)
-function updateChildrenCheckboxState(parentState: boolean, currentIndex: number | number[], table: BaseTableAPI) {
+function updateChildrenCheckboxState(
+  parentState: boolean,
+  currentIndex: number | number[],
+  table: BaseTableAPI,
+  field: string
+) {
   const { checkedState } = table.stateManager;
   const key = currentIndex.toString();
   const currentIndexLength = isArray(currentIndex) ? currentIndex.length : 1;
@@ -265,7 +274,7 @@ function updateChildrenCheckboxState(parentState: boolean, currentIndex: number 
       if (indexData.length === currentIndexLength) {
         start = false;
       } else {
-        value._vtable_rowSeries_number = parentState;
+        value[field] = parentState;
       }
     }
     if (index === key) {
