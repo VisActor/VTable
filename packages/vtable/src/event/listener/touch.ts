@@ -8,7 +8,7 @@ export function bindTouchListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
   const scenegraph = table.scenegraph;
-  if (vglobal.envContribution.supportsTouchEvents === false) {
+  if ((vglobal as any).envContribution.supportsTouchEvents === false) {
     return;
   }
   // 阻止右键事件
