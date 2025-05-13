@@ -7,7 +7,7 @@ export interface IMarkLine {
   date: string;
   style?: ILineStyle;
   /** The position where the mark line is displayed under the date column. Default is 'left' */
-  position?: 'left' | 'right' | 'middle';
+  position?: 'left' | 'right' | 'middle' | 'date';
   /** Automatically include the mark line within the date range */
   scrollToMarkLine?: boolean;
   content?: string; // markLine content
@@ -37,9 +37,11 @@ Optional
 
 {{ use: common-gantt-line-style }}
 
-${prefix} position('left' | 'right' | 'middle')
+${prefix} position('left' | 'right' | 'middle' | 'date')
 
 The position where the mark line is displayed under the date column. Default is 'left'
+
+'date 'is located based on the specific time
 
 Optional
 

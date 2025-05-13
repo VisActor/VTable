@@ -216,7 +216,7 @@ export function createTable() {
     markLine: [
       {
         date: '2024-10-06',
-        content: '我的啊啊得的',
+        content: 'mrkLine(left)',
         contentStyle: {
           color: '#fff'
           // fontSize: 40
@@ -224,6 +224,19 @@ export function createTable() {
         style: {
           lineWidth: 1,
           lineColor: 'red'
+        }
+      },
+      {
+        date: '2024-10-08 8:00:00',
+        content: 'mrkLine(date)',
+        position: 'date',
+        contentStyle: {
+          color: '#fff'
+          // fontSize: 40
+        },
+        style: {
+          lineWidth: 1,
+          lineColor: 'blue'
         }
       }
     ],
