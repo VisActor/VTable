@@ -534,7 +534,11 @@ export class StateManager {
         );
         gantt.scrollLeft = gantt.parsedOptions.timelineColWidth - 1;
         gantt.eventManager.lastDragPointerXYOnWindow.x = e.x;
-        target.setAttribute('x', gantt.scrollLeft);
+        if (target.record?.type === 'milestone') {
+          moveTaskBar(target, gantt.scrollLeft - target.attribute.x, 0, this);
+        } else {
+          target.setAttribute('x', gantt.scrollLeft);
+        }
       } else {
         this.moveTaskBar.moveTaskBarXSpeed = -gantt.parsedOptions.timelineColWidth / 100;
 
@@ -580,7 +584,12 @@ export class StateManager {
         );
         gantt.scrollLeft += 1;
         gantt.eventManager.lastDragPointerXYOnWindow.x = e.x;
-        target.setAttribute('x', gantt.scrollLeft + gantt.tableNoFrameWidth - target.attribute.width);
+        if (target.record?.type === 'milestone') {
+          const newX = gantt.scrollLeft + gantt.tableNoFrameWidth - target.attribute.width;
+          moveTaskBar(target, newX - target.attribute.x, 0, this);
+        } else {
+          target.setAttribute('x', gantt.scrollLeft + gantt.tableNoFrameWidth - target.attribute.width);
+        }
       } else {
         // 处理向右拖拽任务条时，整体向右滚动
         this.moveTaskBar.moveTaskBarXSpeed = gantt.parsedOptions.timelineColWidth / 100;
@@ -1081,11 +1090,6 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
       target.milestoneTextContainer.setAttribute('x', currentX + deltaX);
       target.milestoneTextContainer.setAttribute('y', currentY + deltaY);
     }
-    target.milestoneTextContainer.setAttribute('zIndex', 10001);
-
-    if (target.milestoneTextLabel) {
-      target.milestoneTextLabel.setAttribute('zIndex', 10002);
-    }
   }
 
   state._gantt.scenegraph.refreshRecordLinkNodes(taskIndex, sub_task_index, target, dy);
@@ -1123,10 +1127,6 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
       const currentY = target.milestoneTextContainer.attribute.y;
       target.milestoneTextContainer.setAttribute('x', currentX + deltaX);
       target.milestoneTextContainer.setAttribute('y', currentY);
-
-      if (target.milestoneTextLabel) {
-        target.updateMilestoneTextPosition();
-      }
     }
   }
 

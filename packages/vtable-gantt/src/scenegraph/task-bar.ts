@@ -444,14 +444,12 @@ export class TaskBar {
             width: barGroup.attribute.width,
             height: barGroup.attribute.height,
             angle: 0,
-            pickable: false,
-            zIndex: 2000
+            pickable: false
           });
 
           const milestoneLabel = createText({
             ...milestoneText,
-            pickable: false,
-            zIndex: 2000
+            pickable: false
           });
 
           textContainer.appendChild(milestoneLabel);
