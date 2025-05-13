@@ -11,3 +11,4 @@ export * from './focus-highlight';
 export * from './table-carousel-animation';
 export * from './rotate-table';
 export * from './paste-add-row';
+export * from './gantt-export-image';
