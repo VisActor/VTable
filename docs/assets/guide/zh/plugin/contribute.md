@@ -34,7 +34,7 @@ export interface IVTablePlugin {
 
 其中`runTime`指定了插件的运行时机，配置是`TableEvents`中的事件类型。
 
-The `Gantt` plugin needs to implement the `VTableGantt.plugins.IGanttPlugin` interface.
+注意：甘特图VTable-Gantt组件的插件需要实现 `VTableGantt.plugins.IGanttPlugin` 接口。
 
 ```ts
 // 插件统一接口

@@ -54,6 +54,7 @@ If you encounter issues with plugin usage, please provide feedback promptly.
 
 <br>
 
+Gantt chart VTable-Gantt component currently supports the following plugins:
 | Plugin Name | Plugin Description | Applicable Object |
 | --- | --- | --- |
 | `ExportGanttPlugin` | Realize the full export of Gantt charts and be able to adapt to the size of the Gantt chart | `Gantt` |
