@@ -24,7 +24,9 @@
   },
   "scripts": {
     "demo": "vite ./demo",
-    "build": "bundle --clean"
+    "build": "bundle --clean",
+    "test": "jest --silent",
+    "test-cov": "jest --coverage"
   },
   "unpkg": "latest",
   "unpkgFiles": [
@@ -85,6 +87,11 @@
     "node-fetch": "2.6.7",
     "form-data": "~4.0.0",
     "axios": "^1.4.0",
+    "d3-dsv": "^3.0.1",
+    "d3-array": "3.2.3",
+    "d3-geo": "^3.0.1",
+    "d3-hexbin": "^0.2.2",
+    "d3-hierarchy": "^3.1.1",
     "@types/react-is": "^17.0.3",
     "rollup-plugin-node-resolve": "5.2.0"
   }

@@ -792,6 +792,11 @@ importers:
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
+      d3-array: 3.2.3
+      d3-dsv: ^3.0.1
+      d3-geo: ^3.0.1
+      d3-hexbin: ^0.2.2
+      d3-hierarchy: ^3.1.1
       eslint: ~8.18.0
       form-data: ~4.0.0
       inversify: 6.0.1
@@ -842,6 +847,11 @@ importers:
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.8.2
       chai: 4.3.4
+      d3-array: 3.2.3
+      d3-dsv: 3.0.1
+      d3-geo: 3.1.1
+      d3-hexbin: 0.2.2
+      d3-hierarchy: 3.1.2
       eslint: 8.18.0
       form-data: 4.0.2
       inversify: 6.0.1

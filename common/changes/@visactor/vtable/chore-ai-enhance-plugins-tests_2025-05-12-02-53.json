@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-plugins",
+      "comment": "improvement of plug-in unit testing",
+      "type": "chore"
+    }
+  ],
+  "packageName": "@visactor/vtable-plugins"
+}
