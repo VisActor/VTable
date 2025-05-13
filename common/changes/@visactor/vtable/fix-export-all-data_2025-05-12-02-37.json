@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: solve which problem #3726\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "1170957523@qq.com"
+}
