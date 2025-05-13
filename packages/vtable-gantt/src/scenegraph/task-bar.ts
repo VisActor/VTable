@@ -392,6 +392,8 @@ export class TaskBar {
         fontSize: textStyle.fontSize || 16,
         fontFamily: textStyle.fontFamily || 'Arial',
         fill: textStyle.color || '#ff0000',
+        textBaseline: textStyle.textBaseline || pos.textBaselineValue,
+        textAlign: textStyle.textAlign || pos.textAlignValue,
         text: this.formatMilestoneText(milestoneStyle.labelText, taskRecord),
         zIndex: 5001,
         pickable: false
