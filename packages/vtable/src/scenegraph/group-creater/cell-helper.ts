@@ -92,7 +92,7 @@ export function createCell(
   //   );
   // }
 
-  // customMerge&customLayout cell as text cell
+  // 支持cellType: 'checkbox'与tree: true同时配置
   if (type === 'checkbox' && define.tree) {
     const createCheckboxCellGroup = Factory.getFunction('createCheckboxCellGroup') as CreateCheckboxCellGroup;
     cellGroup = createCheckboxCellGroup(
@@ -116,41 +116,8 @@ export function createCell(
       isAsync,
       true
     );
-    // const { customElementsGroup, renderDefault } = _generateCustomElementsGroup(
-    //   table,
-    //   define,
-    //   col,
-    //   row,
-    //   cellWidth,
-    //   cellHeight,
-    //   padding,
-    //   range,
-    //   customResult
-    // );
-
-    // const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
-    // cellGroup = createTextCellGroup(
-    //   table,
-    //   value,
-    //   columnGroup,
-    //   0,
-    //   y,
-    //   col,
-    //   row,
-    //   colWidth,
-    //   cellWidth,
-    //   cellHeight,
-    //   padding,
-    //   textAlign,
-    //   textBaseline,
-    //   mayHaveIcon,
-    //   customElementsGroup,
-    //   renderDefault,
-    //   cellTheme,
-    //   range,
-    //   isAsync
-    // );
   } else if (type === 'text' || type === 'link' || customResult) {
+    // customMerge&customLayout cell as text cell
     if (type === 'link') {
       //如果是超链接 颜色按照linkColor绘制 TODO：放到方法_getCellStyle中
       // const columnDefine = table.getHeaderDefine(col, row);

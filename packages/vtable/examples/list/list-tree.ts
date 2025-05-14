@@ -186,14 +186,6 @@ export function createTable() {
     select: {
       disableDragSelect: true
     }
-    // rowSeriesNumber: {
-    //   width: 50,
-    //   format: () => {
-    //     return '';
-    //   },
-    //   cellType: 'checkbox',
-    //   enableTreeCheckbox: true
-    // }
   };
 
   const instance = new ListTable(option);
