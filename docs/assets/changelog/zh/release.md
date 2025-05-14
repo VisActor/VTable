@@ -5,16 +5,16 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add frozenColumnLine visible on theme [#3828](https://github.com/VisActor/VTable/issues/3828)
-- **@visactor/vtable**: add touch event for gantt chart [#3864](https://github.com/VisActor/VTable/issues/3864)
-- **@visactor/vtable**: add support for text not to be hidden [#3802](https://github.com/VisActor/VTable/issues/3802)
-- **@visactor/vtable**: add exportAllData to export table plugin [#3726](https://github.com/VisActor/VTable/issues/3726)
+- **@visactor/vtable**: 在主题中添加 frozenColumnLine visible 配置 [#3828](https://github.com/VisActor/VTable/issues/3828)
+- **@visactor/vtable**: 为甘特图添加 touch 事件 [#3864](https://github.com/VisActor/VTable/issues/3864)
+- **@visactor/vtable-gantt**: 任务条支持文本不隐藏自适应显示到任务条外部 [#3802](https://github.com/VisActor/VTable/issues/3802)
+- **@visactor/vtable**: 为导出插件添加 exportAllData 配置 [#3726](https://github.com/VisActor/VTable/issues/3726)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when no rowTree treeMode occor error [#3830](https://github.com/VisActor/VTable/issues/3830)
-- **@visactor/vtable**: unintended edit state activation on functional button clicks
-- **@visactor/vtable**: resolve taskBar width problem when click linkPonitNode [#3829](https://github.com/VisActor/VTable/issues/3829)
+- **@visactor/vtable**: 当没有配置rowTree时，tree 模式下报错 [#3830](https://github.com/VisActor/VTable/issues/3830)
+- **@visactor/vtable**: 修复当点击功能按钮点击时意外激活编辑状态 [#3831](https://github.com/VisActor/VTable/issues/3831)
+- **@visactor/vtable**: 修复当点击 resize图标后再点击 linkPonitNode 时，触发任务条调整宽度问题 [#3829](https://github.com/VisActor/VTable/issues/3829)
 
 
 
