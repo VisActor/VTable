@@ -114,7 +114,7 @@ export class Gantt extends EventTarget {
   gridHeight: number;
 
   pluginManager: PluginManager;
-  
+
   parsedOptions: {
     timeLineHeaderRowHeights: number[];
     rowHeight: number;

@@ -13,6 +13,7 @@ option: plugins
 
 在本示例中我们组合运用了以下插件：
 - `AddRowColumnPlugin`：添加行和列；
+- `PasteAddRowPlugin`：粘贴添加行插件；
 - `ColumnSeriesPlugin`：列系列插件；
 - `RowSeriesPlugin`：行系列插件；
 - `HighlightHeaderWhenSelectCellPlugin`：高亮选中单元格；
@@ -64,6 +65,7 @@ VTable.register.editor('input', input_editor);
     columnCount: 26,
     autoExtendColumnTriggerKeys: ['ArrowRight', 'Tab']
   });
+  const pastePlugin = new VTablePlugins.PasteAddRowPlugin();
   const rowSeries = new VTablePlugins.RowSeriesPlugin({
     rowCount: 100,
     autoExtendRowTriggerKeys: ['ArrowDown', 'Enter'],
@@ -110,9 +112,11 @@ VTable.register.editor('input', input_editor);
     frozenColCount: 1,
     defaultRowHeight: 30,
     keyboardOptions: {
-      moveFocusCellOnEnter: true
+      moveFocusCellOnEnter: true,
+      copySelected: true,
+      pasteValueToCell: true,
     },
-    plugins: [addRowColumn, columnSeries, rowSeries, highlightPlugin, excelEditCellKeyboardPlugin]
+    plugins: [addRowColumn, columnSeries, rowSeries, highlightPlugin, pastePlugin,excelEditCellKeyboardPlugin]
   };
   const tableInstance = new VTable.ListTable( document.getElementById(CONTAINER_ID),option);
   window.tableInstance = tableInstance;
