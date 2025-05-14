@@ -51,7 +51,6 @@ export class PasteAddRowPlugin implements VTable.plugins.IVTablePlugin {
           rowValues.push(cell);
         });
       });
-      // const recordIndex = this.table.getRecordShowIndexByCell(ranges[0].start.col, ranges[0].start.row);
       // 处理粘贴行为
       // 1. 没有选中单元格
       if (ranges.length === 0) {
@@ -74,6 +73,7 @@ export class PasteAddRowPlugin implements VTable.plugins.IVTablePlugin {
         }
         this.table.changeCellValues(ranges[0].start.col, ranges[0].start.row, values, true);
       }
+      // 如果选择插入的行不是最后一行，则执行正常的paste操作
       if (!(ranges[0].start.row === this.table.rowCount - 1) && overRowCount <= 0) {
         this.table.internalProps.handler.fire(this.table.getElement(), 'paste');
       }
