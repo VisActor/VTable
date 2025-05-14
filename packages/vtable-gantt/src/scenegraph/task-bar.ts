@@ -1,7 +1,6 @@
 import { Group, createText, createRect, Image, Circle, Line, Rect } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
-
 import {
   computeCountToTimeScale,
   createDateAtLastHour,
@@ -25,13 +24,6 @@ const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.o
   <line x1="70" y1="10" x2="70" y2="190" stroke="black" stroke-width="4"/>
 </svg>`;
 export const TASKBAR_HOVER_ICON_WIDTH = 10;
-
-interface IMilestoneTextPosition {
-  textX: number;
-  textY: number;
-  textAlignValue: CanvasTextAlign;
-  textBaselineValue: CanvasTextBaseline;
-}
 
 export class TaskBar {
   formatMilestoneText(text: string, record: any): string {
@@ -382,8 +374,7 @@ export class TaskBar {
         width: milestoneStyle.width,
         height: milestoneStyle.width,
         angle: 0,
-        pickable: false,
-        zIndex: 5000
+        pickable: false
       });
 
       const milestoneLabel = createText({
@@ -395,7 +386,6 @@ export class TaskBar {
         textBaseline: textStyle.textBaseline || pos.textBaselineValue,
         textAlign: textStyle.textAlign || pos.textAlignValue,
         text: this.formatMilestoneText(milestoneStyle.labelText, taskRecord),
-        zIndex: 5001,
         pickable: false
       });
 
@@ -410,59 +400,11 @@ export class TaskBar {
   updateTaskBarNode(index: number, sub_task_index: number) {
     const taskbarGroup = this.getTaskBarNodeByIndex(index, sub_task_index);
     if (taskbarGroup) {
-      const hasMilestoneText = taskbarGroup.record?.type === 'milestone' && taskbarGroup.milestoneTextLabel;
-      let milestoneText;
-      let textContainerPos;
-
-      if (hasMilestoneText) {
-        milestoneText = {
-          text: taskbarGroup.milestoneTextLabel.attribute.text,
-          textAlign: taskbarGroup.milestoneTextLabel.attribute.textAlign,
-          textBaseline: taskbarGroup.milestoneTextLabel.attribute.textBaseline
-        };
-
-        // 如果有文本容器，保存其位置并移除
-        if (taskbarGroup.milestoneTextContainer) {
-          textContainerPos = {
-            x: taskbarGroup.milestoneTextContainer.attribute.x,
-            y: taskbarGroup.milestoneTextContainer.attribute.y
-          };
-          this.barContainer.removeChild(taskbarGroup.milestoneTextContainer);
-        }
-      }
-
       this.barContainer.removeChild(taskbarGroup);
-
-      const barGroup = this.initBar(index, sub_task_index);
-      if (barGroup) {
-        this.barContainer.insertInto(barGroup, index);
-
-        if (hasMilestoneText && barGroup.record?.type === 'milestone' && !barGroup.milestoneTextLabel) {
-          const textContainer = new Group({
-            x: textContainerPos ? textContainerPos.x : barGroup.attribute.x,
-            y: textContainerPos ? textContainerPos.y : barGroup.attribute.y,
-            width: barGroup.attribute.width,
-            height: barGroup.attribute.height,
-            angle: 0,
-            pickable: false
-          });
-
-          const milestoneLabel = createText({
-            ...milestoneText,
-            pickable: false
-          });
-
-          textContainer.appendChild(milestoneLabel);
-          this.barContainer.appendChild(textContainer);
-          barGroup.milestoneTextLabel = milestoneLabel;
-          barGroup.milestoneTextContainer = textContainer;
-        }
-      }
-    } else {
-      const barGroup = this.initBar(index, sub_task_index);
-      if (barGroup) {
-        this.barContainer.insertInto(barGroup, index);
-      }
+    }
+    const barGroup = this.initBar(index, sub_task_index);
+    if (barGroup) {
+      this.barContainer.insertInto(barGroup, index); //TODO
     }
   }
   initHoverBarIcons() {

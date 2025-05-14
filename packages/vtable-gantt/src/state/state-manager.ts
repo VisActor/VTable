@@ -1107,8 +1107,6 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
   const record = target.record;
   const progress = record[progressField];
   const isMilestone = record.type === 'milestone';
-  const oldX = target.attribute.x;
-  const oldY = target.attribute.y;
   target.setAttribute('zIndex', 10000);
   if (dx) {
     target.setAttribute('x', target.attribute.x + dx);
@@ -1119,15 +1117,6 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
       target.attribute.x + target.attribute.width / 2,
       target.attribute.y + target.attribute.height / 2
     ]);
-
-    if (target.milestoneTextContainer) {
-      const deltaX = target.attribute.x - oldX;
-
-      const currentX = target.milestoneTextContainer.attribute.x;
-      const currentY = target.milestoneTextContainer.attribute.y;
-      target.milestoneTextContainer.setAttribute('x', currentX + deltaX);
-      target.milestoneTextContainer.setAttribute('y', currentY);
-    }
   }
 
   if (newWidth) {

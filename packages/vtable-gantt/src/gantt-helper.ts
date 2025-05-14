@@ -208,22 +208,20 @@ export function initOptions(gantt: Gantt) {
       : Object.assign({}, defaultTaskBarStyle, options?.taskBar?.barStyle);
 
   const defaultMilestoneStyle = {
-    borderColor: '#096dd9',
+    borderColor: 'red',
     borderLineWidth: 1,
-    fillColor: '#1890ff',
+    fillColor: 'green',
     cornerRadius: 0,
-    width: 16,
+    width: 15,
     labelText: '${title}',
     labelTextStyle: {
       fontSize: 16,
-      color: '#ff0000',
+      color: 'red',
       fontFamily: 'Arial',
       padding: 4
-    },
-    textPosition: 'center'
+    }
   };
   gantt.parsedOptions.taskBarMilestoneStyle = Object.assign(
-    defaultMilestoneStyle,
     typeof gantt.parsedOptions.taskBarStyle === 'function'
       ? {}
       : {
@@ -233,8 +231,10 @@ export function initOptions(gantt: Gantt) {
           fillColor: gantt.parsedOptions.taskBarStyle.barColor,
           cornerRadius: 0
         },
+    defaultMilestoneStyle,
     options?.taskBar?.milestoneStyle
   );
+
   gantt.parsedOptions.taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneStyle.width * Math.sqrt(2);
 
   gantt.parsedOptions.dateFormat = options?.dateFormat;
