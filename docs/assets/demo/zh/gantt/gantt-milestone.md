@@ -2,7 +2,7 @@
 category: examples
 group: gantt
 title: 甘特图里程碑(Milestone)
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/milestone.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/gantt-label-symbol.jpeg
 link: gantt/introduction
 option: Gantt#taskBar.milestoneStyle
 ---
