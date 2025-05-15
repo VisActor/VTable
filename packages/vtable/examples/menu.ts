@@ -65,6 +65,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-checkbox-tree'
+      },
+      {
+        path: 'list',
         name: 'list-tree-20000'
       },
       {
