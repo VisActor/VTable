@@ -299,7 +299,7 @@ export type IPointStyle = {
 };
 export interface IMarkLine {
   date: string;
-  content: string;
+  content?: string;
   contentStyle?: {
     color?: string;
     fontSize?: number;
@@ -443,6 +443,14 @@ export enum TasksShowMode {
   Sub_Tasks_Arrange = 'sub_tasks_arrange',
   /** 省去父任务节点不展示，且所有子任务会按照日期早晚的属性来布局，并保证节点不重叠的紧凑型展示 */
   Sub_Tasks_Compact = 'sub_tasks_compact'
+}
+/**
+ * 任务类型枚举，用于区分不同类型的任务
+ */
+export enum TaskType {
+  TASK = 'task', // record没有指明type的 会默认使用TASK
+  PROJECT = 'project',
+  MILESTONE = 'milestone'
 }
 export type ITaskBarSelectedStyle = {
   shadowBlur?: number; //阴影宽度

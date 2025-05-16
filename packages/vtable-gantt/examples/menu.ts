@@ -142,6 +142,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-createMarkLine'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-project-type'
   }
   //   ]
   // }

@@ -7,7 +7,7 @@ import { isValid } from '@visactor/vutils';
 import { clearRecordLinkInfos, findRecordByTaskKey, getSubTaskRowIndexByRecordDate, getTextPos } from '../gantt-helper';
 import type { GanttTaskBarNode } from './gantt-node';
 import type { ITaskLink } from '../ts-types';
-import { DependencyType, TasksShowMode } from '../ts-types';
+import { DependencyType, TasksShowMode, TaskType } from '../ts-types';
 import type { Gantt } from '../Gantt';
 
 export class DependencyLink {
@@ -154,12 +154,12 @@ export class DependencyLink {
       linkedFromTaskEndDate,
       linkedFromTaskShowIndex,
       linkedFromTaskTaskDays,
-      linkedFromTaskRecord.record.type === 'milestone',
+      linkedFromTaskRecord.record.type === TaskType.MILESTONE,
       linkedToTaskStartDate,
       linkedToTaskEndDate,
       linkedToTaskShowIndex,
       linkedToTaskTaskDays,
-      linkedToTaskRecord.record.type === 'milestone',
+      linkedToTaskRecord.record.type === TaskType.MILESTONE,
       this._scene._gantt
     );
 

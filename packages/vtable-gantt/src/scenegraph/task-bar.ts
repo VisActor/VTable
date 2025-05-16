@@ -17,7 +17,7 @@ import {
   getTextPos
 } from '../gantt-helper';
 import { GanttTaskBarNode } from './gantt-node';
-import { TasksShowMode } from '../ts-types';
+import { TasksShowMode, TaskType } from '../ts-types';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -103,7 +103,7 @@ export class TaskBar {
       index,
       childIndex
     );
-    const isMilestone = taskRecord.type === 'milestone';
+    const isMilestone = taskRecord.type === TaskType.MILESTONE;
     if (
       (isMilestone && !startDate) ||
       (!isMilestone && (taskDays <= 0 || !startDate || !endDate || startDate.getTime() > endDate.getTime()))
@@ -226,7 +226,7 @@ export class TaskBar {
       rect.name = 'task-bar-rect';
       barGroup.appendChild(rect);
       barGroupBox.barRect = rect;
-      if (taskRecord.type !== 'milestone') {
+      if (taskRecord.type !== TaskType.MILESTONE) {
         // 创建已完成部分任务条rect
         const progress_rect = createRect({
           x: 0,
@@ -243,7 +243,7 @@ export class TaskBar {
     }
 
     rootContainer && barGroup.appendChild(rootContainer);
-    if (renderDefaultText && taskRecord.type !== 'milestone') {
+    if (renderDefaultText && taskRecord.type !== TaskType.MILESTONE) {
       const { textAlign, textBaseline, fontSize, fontFamily, textOverflow, color, padding } =
         this._scene._gantt.parsedOptions.taskBarLabelStyle;
       const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, taskBarSize, taskbarHeight);
@@ -388,7 +388,7 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('height', height);
     this.hoverBarGroup.setAttribute('visibleAll', true);
     const taskBarStyle = this._scene._gantt.getTaskBarStyle(target.task_index, target.sub_task_index);
-    if (taskRecord.type === 'milestone') {
+    if (taskRecord.type === TaskType.MILESTONE) {
       this.hoverBarGroup.setAttribute('cornerRadius', target.attribute.cornerRadius);
     } else {
       const cornerRadius =
@@ -400,7 +400,7 @@ export class TaskBar {
 
     let leftResizable = true;
     let rightResizable = true;
-    if (taskRecord.type === 'milestone') {
+    if (taskRecord.type === TaskType.MILESTONE) {
       leftResizable = false;
       rightResizable = false;
     } else if (typeof this._scene._gantt.parsedOptions.taskBarResizable === 'function') {
@@ -499,7 +499,7 @@ export class TaskBar {
     selectedBorder.appendChild(selectRectBorder);
 
     if (showLinkPoint) {
-      const isMilestone = record.type === 'milestone';
+      const isMilestone = record.type === TaskType.MILESTONE;
       const linePointPadding = isMilestone ? 15 : 10;
       const linkPointContainer = new Group({
         x: -linePointPadding,

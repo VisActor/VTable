@@ -16,7 +16,7 @@ import { ToolTip } from './tooltip';
 import { DependencyLink, updateLinkLinePoints } from './dependency-link';
 import { DragOrderLine } from './drag-order-line';
 import type { GanttTaskBarNode } from './gantt-node';
-import { TasksShowMode } from '../ts-types';
+import { TasksShowMode, TaskType } from '../ts-types';
 container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
@@ -450,14 +450,14 @@ export class Scenegraph {
         linkedFromTaskEndDate,
         linkedFromTaskShowIndex,
         linkedFromTaskTaskDays,
-        linkedFromTaskRecord.record.type === 'milestone',
+        linkedFromTaskRecord.record.type === TaskType.MILESTONE,
         null,
         0,
         linkedToTaskStartDate,
         linkedToTaskEndDate,
         linkedToTaskShowIndex,
         linkedToTaskTaskDays,
-        linkedToTaskRecord.record.type === 'milestone',
+        linkedToTaskRecord.record.type === TaskType.MILESTONE,
         target,
         diffY ?? 0,
         this._gantt
@@ -585,14 +585,14 @@ export class Scenegraph {
         linkedFromTaskEndDate,
         linkedFromTaskShowIndex,
         linkedFromTaskTaskDays,
-        linkedFromTaskRecord.record.type === 'milestone',
+        linkedFromTaskRecord.record.type === TaskType.MILESTONE,
         target,
         diffY ?? 0,
         linkedToTaskStartDate,
         linkedToTaskEndDate,
         linkedToTaskShowIndex,
         linkedToTaskTaskDays,
-        linkedToTaskRecord.record.type === 'milestone',
+        linkedToTaskRecord.record.type === TaskType.MILESTONE,
         null,
         0,
         this._gantt

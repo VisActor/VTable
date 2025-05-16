@@ -6,7 +6,8 @@ import {
   type IPosition,
   type IScrollStyle,
   type ITimelineDateInfo,
-  type ITimelineScale
+  type ITimelineScale,
+  TaskType
 } from './ts-types';
 import {
   createDateAtLastHour,
@@ -1132,4 +1133,116 @@ export function judgeIfHasMarkLine(data: { startDate: Date; endDate: Date }, mar
     const marklineTime = new Date(item.date).getTime();
     return marklineTime >= beginTime && marklineTime <= endTime;
   });
+}
+
+/**
+ * 检查任务是否有子任务
+ * @param gantt 甘特图实例
+ * @param taskIndex 任务索引
+ * @param subTaskIndex 子任务索引（可选）
+ * @returns 是否有子任务
+ */
+export function checkHasChildTasks(gantt: Gantt, taskIndex: number, subTaskIndex?: number): boolean {
+  const taskRecord = gantt.getRecordByIndex(taskIndex, subTaskIndex);
+  return !!(taskRecord?.children && taskRecord.children.length > 0);
+}
+
+/**
+ * 初始化项目类型任务的时间范围
+ * 根据子任务的时间范围计算父项目任务的时间范围
+ * @param gantt 甘特图实例
+ */
+export function initProjectTaskTimes(gantt: Gantt) {
+  if (!gantt.records || gantt.records.length === 0) {
+    return;
+  }
+
+  const startDateField = gantt.parsedOptions.startDateField;
+  const endDateField = gantt.parsedOptions.endDateField;
+
+  /**
+   * 递归处理任务及其子任务
+   * @param records 当前层级的任务记录数组
+   * @param parentIndex 父任务在其所属数组中的索引（为顶层任务时可能是undefined）
+   * @param parentArray 父任务所属的数组（为顶层任务时可能是undefined）
+   * @returns 返回该层级任务记录的时间范围 [earliestStart, latestEnd]
+   */
+  const processTasksRecursively = (
+    records: any[],
+    parentIndex?: number,
+    parentArray?: any[]
+  ): [Date | null, Date | null] => {
+    let earliestStartAll: Date | null = null;
+    let latestEndAll: Date | null = null;
+
+    // 处理当前层级的每个记录
+    records.forEach((record, index) => {
+      if (!record) {
+        return;
+      }
+
+      let earliestStart: Date | null = null;
+      let latestEnd: Date | null = null;
+
+      // 如果有子任务，递归处理
+      if (record.children && record.children.length > 0) {
+        // 递归处理子任务，并获取子任务的时间范围
+        const [childrenEarliestStart, childrenLatestEnd] = processTasksRecursively(record.children, index, records);
+
+        // 更新当前记录的时间范围
+        if (childrenEarliestStart && childrenLatestEnd) {
+          earliestStart = childrenEarliestStart;
+          latestEnd = childrenLatestEnd;
+
+          // 如果是project类型，更新记录的时间字段
+          if (record.type === TaskType.PROJECT) {
+            // 获取日期格式
+            const dateFormat =
+              gantt.parsedOptions.dateFormat ??
+              gantt.parseTimeFormat(record[startDateField] || record.children[0][startDateField]);
+
+            // 格式化日期
+            const formatDateValue = (date: Date) => {
+              return gantt.formatDate ? gantt.formatDate(date, dateFormat) : date.toISOString().split('T')[0];
+            };
+
+            // 创建更新记录对象
+            const updatedRecord = { ...record };
+            updatedRecord[startDateField] = formatDateValue(earliestStart);
+            updatedRecord[endDateField] = formatDateValue(latestEnd);
+
+            // 更新记录到原数组（直接修改引用）
+            records[index] = updatedRecord;
+          }
+        }
+      } else {
+        // 没有子任务的记录，直接取其自身的时间
+        if (record[startDateField] && record[endDateField]) {
+          earliestStart = new Date(record[startDateField]);
+          latestEnd = new Date(record[endDateField]);
+        }
+      }
+
+      // 更新当前层级的整体最早/最晚时间
+      if (earliestStart) {
+        if (!earliestStartAll || earliestStart < earliestStartAll) {
+          earliestStartAll = earliestStart;
+        }
+      }
+
+      if (latestEnd) {
+        if (!latestEndAll || latestEnd > latestEndAll) {
+          latestEndAll = latestEnd;
+        }
+      }
+    });
+
+    return [earliestStartAll, latestEndAll];
+  };
+
+  // 从顶层记录开始处理
+  processTasksRecursively(gantt.records);
+
+  // 更新UI
+  gantt.scenegraph?.refreshAll();
 }

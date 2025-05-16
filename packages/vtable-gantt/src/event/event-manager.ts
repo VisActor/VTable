@@ -4,7 +4,7 @@ import type { Gantt } from '../Gantt';
 import { EventHandler } from '../event/EventHandler';
 import { handleWhell } from '../event/scroll';
 import { formatDate, parseDateFormat, throttle } from '../tools/util';
-import { GANTT_EVENT_TYPE, InteractionState, TasksShowMode } from '../ts-types';
+import { GANTT_EVENT_TYPE, InteractionState, TasksShowMode, TaskType } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
 import {
@@ -115,59 +115,75 @@ function bindTableGroupListener(event: EventManager) {
       return false;
     });
     if (downBarNode) {
-      if (e.target.name === 'task-bar-hover-shadow-left-icon') {
-        stateManager.startResizeTaskBar(
-          downBarNode,
-          (e.nativeEvent as any).x,
-          (e.nativeEvent as any).y,
-          e.offset.y,
-          'left'
-        );
-        stateManager.updateInteractionState(InteractionState.grabing);
-      } else if (e.target.name === 'task-bar-hover-shadow-right-icon') {
-        stateManager.startResizeTaskBar(
-          downBarNode,
-          (e.nativeEvent as any).x,
-          (e.nativeEvent as any).y,
-          e.offset.y,
-          'right'
-        );
-        stateManager.updateInteractionState(InteractionState.grabing);
-      } else if (gantt.parsedOptions.taskBarMoveable) {
-        const moveTaskBar = () => {
-          let moveable: boolean = true;
-          if (typeof gantt.parsedOptions.taskBarMoveable === 'function') {
-            const { startDate, endDate, taskRecord } = scene._gantt.getTaskInfoByTaskListIndex(
-              (downBarNode as GanttTaskBarNode).task_index,
-              (downBarNode as GanttTaskBarNode).sub_task_index
-            );
+      // 获取任务记录
+      const { taskRecord } = scene._gantt.getTaskInfoByTaskListIndex(
+        downBarNode.task_index,
+        downBarNode.sub_task_index
+      );
 
-            const args = {
-              index: (downBarNode as GanttTaskBarNode).task_index,
-              startDate,
-              endDate,
-              taskRecord,
-              ganttInstance: scene._gantt
-            };
-            moveable = gantt.parsedOptions.taskBarMoveable(args);
+      // 检查是否是project类型
+      const isProjectTask = taskRecord?.type === TaskType.PROJECT;
+      if (!isProjectTask) {
+        // 左侧调整大小图标
+        if (e.target.name === 'task-bar-hover-shadow-left-icon') {
+          stateManager.startResizeTaskBar(
+            downBarNode,
+            (e.nativeEvent as any).x,
+            (e.nativeEvent as any).y,
+            e.offset.y,
+            'left'
+          );
+          stateManager.updateInteractionState(InteractionState.grabing);
+        } else if (e.target.name === 'task-bar-hover-shadow-right-icon') {
+          stateManager.startResizeTaskBar(
+            downBarNode,
+            (e.nativeEvent as any).x,
+            (e.nativeEvent as any).y,
+            e.offset.y,
+            'right'
+          );
+          stateManager.updateInteractionState(InteractionState.grabing);
+        } else if (gantt.parsedOptions.taskBarMoveable) {
+          const moveTaskBar = () => {
+            let moveable: boolean = true;
+            if (typeof gantt.parsedOptions.taskBarMoveable === 'function') {
+              const { startDate, endDate, taskRecord } = scene._gantt.getTaskInfoByTaskListIndex(
+                (downBarNode as GanttTaskBarNode).task_index,
+                (downBarNode as GanttTaskBarNode).sub_task_index
+              );
+
+              const args = {
+                index: (downBarNode as GanttTaskBarNode).task_index,
+                startDate,
+                endDate,
+                taskRecord,
+                ganttInstance: scene._gantt
+              };
+              moveable = gantt.parsedOptions.taskBarMoveable(args);
+            } else {
+              moveable = gantt.parsedOptions.taskBarMoveable;
+            }
+            if (moveable) {
+              stateManager.startMoveTaskBar(
+                downBarNode,
+                (e.nativeEvent as any).x,
+                (e.nativeEvent as any).y,
+                e.offset.y
+              );
+              stateManager.updateInteractionState(InteractionState.grabing);
+            }
+          };
+          if (e.pointerType === 'touch') {
+            // 移动端事件特殊处理
+            event.touchEnd = false;
+            event.touchSetTimeout = setTimeout(() => {
+              event.isTouchdown = false;
+              event.isLongTouch = true;
+              moveTaskBar();
+            }, 100);
           } else {
-            moveable = gantt.parsedOptions.taskBarMoveable;
-          }
-          if (moveable) {
-            stateManager.startMoveTaskBar(downBarNode, (e.nativeEvent as any).x, (e.nativeEvent as any).y, e.offset.y);
-            stateManager.updateInteractionState(InteractionState.grabing);
-          }
-        };
-        if (e.pointerType === 'touch') {
-          // 移动端事件特殊处理
-          event.touchEnd = false;
-          event.touchSetTimeout = setTimeout(() => {
-            event.isTouchdown = false;
-            event.isLongTouch = true;
             moveTaskBar();
-          }, 100);
-        } else {
-          moveTaskBar();
+          }
         }
       }
     } else if (downLeftLinkPointNode) {
@@ -226,12 +242,14 @@ function bindTableGroupListener(event: EventManager) {
       if (taskBarTarget) {
         if (scene._gantt.stateManager.hoverTaskBar.target !== (taskBarTarget as any as GanttTaskBarNode)) {
           scene._gantt.stateManager.hoverTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
-          stateManager.showTaskBarHover();
+          const taskIndex = taskBarTarget.task_index;
+          const sub_task_index = taskBarTarget.sub_task_index;
+          const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
+          if (record.type !== TaskType.PROJECT) {
+            stateManager.showTaskBarHover();
+          }
           if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR)) {
             // const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
-            const taskIndex = taskBarTarget.task_index;
-            const sub_task_index = taskBarTarget.sub_task_index;
-            const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
             scene._gantt.fireListeners(GANTT_EVENT_TYPE.MOUSEENTER_TASK_BAR, {
               federatedEvent: e,
               event: e.nativeEvent,

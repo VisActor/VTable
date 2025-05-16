@@ -29,7 +29,7 @@ import type {
   IKeyboardOptions,
   IMarkLineCreateOptions
 } from './ts-types';
-import { TasksShowMode } from './ts-types';
+import { TasksShowMode, TaskType } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
@@ -45,6 +45,7 @@ import {
   getHorizontalScrollBarSize,
   getVerticalScrollBarSize,
   initOptions,
+  initProjectTaskTimes,
   updateOptionsWhenDateRangeChanged,
   updateOptionsWhenMarkLineChanged,
   updateOptionsWhenRecordChanged,
@@ -114,7 +115,7 @@ export class Gantt extends EventTarget {
   gridHeight: number;
 
   pluginManager: PluginManager;
-  
+
   parsedOptions: {
     timeLineHeaderRowHeights: number[];
     rowHeight: number;
@@ -240,6 +241,9 @@ export class Gantt extends EventTarget {
     this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
+
+    // 初始化项目任务时间
+    initProjectTaskTimes(this);
 
     this.scenegraph.afterCreateSceneGraph();
     this._scrollToMarkLine();
@@ -884,6 +888,10 @@ export class Gantt extends EventTarget {
       //子任务不是独占左侧表格一行的情况
       const indexs = this.getRecordIndexByTaskShowIndex(index);
       this._updateRecordToListTable(taskRecord, indexs);
+      // 递归更新父级project任务的时间范围
+      if (Array.isArray(indexs)) {
+        this.stateManager.updateProjectTaskTimes(indexs);
+      }
     }
   }
 
@@ -898,6 +906,10 @@ export class Gantt extends EventTarget {
       //子任务不是独占左侧表格一行的情况
       const indexs = this.getRecordIndexByTaskShowIndex(index);
       this._updateRecordToListTable(taskRecord, indexs);
+      // 递归更新父级project任务的时间范围
+      if (Array.isArray(indexs)) {
+        this.stateManager.updateProjectTaskTimes(indexs);
+      }
     }
   }
 
@@ -914,6 +926,10 @@ export class Gantt extends EventTarget {
       const indexs = this.getRecordIndexByTaskShowIndex(index);
       //子任务不是独占左侧表格一行的情况
       this._updateRecordToListTable(taskRecord, indexs);
+      // 递归更新父级project任务的时间范围
+      if (Array.isArray(indexs)) {
+        this.stateManager.updateProjectTaskTimes(indexs);
+      }
     }
   }
 
@@ -1266,5 +1282,15 @@ export class Gantt extends EventTarget {
       return this.parsedOptions.taskBarStyle(args);
     }
     return this.parsedOptions.taskBarStyle;
+  }
+
+  /**
+   * 格式化日期
+   * @param date 日期对象或字符串
+   * @param format 格式字符串
+   * @returns 格式化后的日期字符串
+   */
+  formatDate(date: Date | string, format: string) {
+    return formatDate(date, format);
   }
 }
