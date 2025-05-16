@@ -88,6 +88,57 @@ export class TaskBar {
           }
         }
         continue;
+      } else if (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
+        const record = this._scene._gantt.getRecordByIndex(i);
+        const isExpanded = record.hierarchyState === 'expand';
+        // For project type records, we want to show all children in one line when collapsed
+        if (record.type === TaskType.PROJECT && record.children?.length > 0 && !isExpanded) {
+          // Check if the project is collapsed (we can check hierarchyState)
+          // console.log(
+          //   `Project record at index ${i}, hierarchyState: ${record.hierarchyState}, isExpanded: ${isExpanded}`
+          // );
+
+          // if (isExpanded || !this._scene._gantt.parsedOptions.projectSubTasksExpandable) {
+          //   // If expanded or expansion is disabled, show the project and all its children
+          //   const barGroup = this.initBar(i);
+          //   if (barGroup) {
+          //     this.barContainer.appendChild(barGroup);
+          //   }
+
+          //   for (let j = 0; j < record.children?.length; j++) {
+          //     const barGroup = this.initBar(i, j, record.children.length);
+          //     if (barGroup) {
+          //       this.barContainer.appendChild(barGroup);
+          //     }
+          //   }
+          // } else {
+          // If collapsed, only show subtasks inline WITHOUT the parent task bar
+
+          const recordIndex = this._scene._gantt.getRecordIndexByTaskShowIndex(i) as number[];
+          if (Array.isArray(recordIndex)) {
+            for (let j = 0; j < record.children?.length; j++) {
+              const barGroup = this.initBar(recordIndex[0], recordIndex[1], record.children.length);
+              if (barGroup) {
+                this.barContainer.appendChild(barGroup);
+              }
+            }
+          } else {
+            for (let j = 0; j < record.children?.length; j++) {
+              const barGroup = this.initBar(recordIndex, j, record.children.length);
+              if (barGroup) {
+                this.barContainer.appendChild(barGroup);
+              }
+            }
+          }
+          // }
+        } else {
+          // For non-project tasks, use the default Tasks_Separate mode
+          const barGroup = this.initBar(i);
+          if (barGroup) {
+            this.barContainer.appendChild(barGroup);
+          }
+        }
+        continue;
       } else {
         const barGroup = this.initBar(i);
         if (barGroup) {

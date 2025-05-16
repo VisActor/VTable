@@ -126,6 +126,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.startDateField = options.taskBar?.startDateField ?? 'startDate';
   gantt.parsedOptions.endDateField = options.taskBar?.endDateField ?? 'endDate';
   gantt.parsedOptions.progressField = options.taskBar?.progressField ?? 'progress';
+  gantt.parsedOptions.projectSubTasksExpandable = options?.projectSubTasksExpandable ?? true;
   // gantt.parsedOptions.minDate = options?.minDate
   //   ? gantt.parsedOptions.timeScaleIncludeHour
   //     ? createDateAtMidnight(options.minDate)
@@ -170,7 +171,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.timelineHeaderBackgroundColor = options?.timelineHeader?.backgroundColor;
   gantt.parsedOptions.timeLineHeaderRowHeights = [];
   gantt.parsedOptions.timelineHeaderStyles = [];
-  for (let i = 0; i < gantt.parsedOptions.sortedTimelineScales.length ?? 0; i++) {
+  for (let i = 0; i < gantt.parsedOptions.sortedTimelineScales.length; i++) {
     const style = gantt.parsedOptions.sortedTimelineScales[i].style;
     gantt.parsedOptions.timelineHeaderStyles.push(
       Object.assign(
@@ -392,7 +393,7 @@ export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
   gantt.parsedOptions.timeLineHeaderRowHeights = [];
   gantt.parsedOptions.timelineHeaderStyles = [];
-  for (let i = 0; i < gantt.parsedOptions.sortedTimelineScales.length ?? 0; i++) {
+  for (let i = 0; i < gantt.parsedOptions.sortedTimelineScales.length; i++) {
     const style = gantt.parsedOptions.sortedTimelineScales[i].style;
     gantt.parsedOptions.timelineHeaderStyles.push(
       Object.assign(
@@ -723,8 +724,8 @@ export function createSplitLineAndResizeLine(gantt: Gantt) {
       const highlightLine = document.createElement('div');
       highlightLine.style.position = 'absolute';
       highlightLine.style.top = '0px';
-      highlightLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) / 2}px`;
-      highlightLine.style.width = (gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) + 'px';
+      highlightLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLineHighlight.lineWidth) / 2}px`;
+      highlightLine.style.width = gantt.parsedOptions.verticalSplitLineHighlight.lineWidth + 'px';
       highlightLine.style.height = '100%';
       highlightLine.style.backgroundColor = gantt.parsedOptions.verticalSplitLineHighlight.lineColor;
       highlightLine.style.zIndex = '100';
@@ -786,8 +787,8 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
       const highlightLine = gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement;
       highlightLine.style.position = 'absolute';
       highlightLine.style.top = '0px';
-      highlightLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) / 2}px`;
-      highlightLine.style.width = (gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) + 'px';
+      highlightLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLineHighlight.lineWidth) / 2}px`;
+      highlightLine.style.width = gantt.parsedOptions.verticalSplitLineHighlight.lineWidth + 'px';
       highlightLine.style.height = '100%';
       highlightLine.style.backgroundColor = gantt.parsedOptions.verticalSplitLineHighlight.lineColor;
       highlightLine.style.zIndex = '100';
@@ -874,6 +875,17 @@ export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
         gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
       ) {
         sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+      } else if (gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
+        // For Project_Sub_Tasks_Inline, we need to check if the current record is a project
+        const record = gantt.getRecordByIndex(task_index);
+        if (record && record.type === TaskType.PROJECT && record.children?.length > 0) {
+          // Check if the project is collapsed
+          const isExpanded = record.hierarchyState === 'expand';
+          if (!isExpanded && gantt.parsedOptions.projectSubTasksExpandable !== false) {
+            // If collapsed and expandable is enabled, subtasks appear inline
+            sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+          }
+        }
       }
     }
   } else {
@@ -1099,7 +1111,11 @@ export function _getTaskInfoByXYForCreateSchedule(eventX: number, eventY: number
         ((gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact ||
           gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) &&
           taskRecord.vtable_gantt_showIndex === taskIndex.sub_task_index) ||
-        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+        (gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline &&
+          recordParent.type === TaskType.PROJECT &&
+          recordParent.hierarchyState !== 'expand' &&
+          gantt.parsedOptions.projectSubTasksExpandable !== false)
       ) {
         if (dateRange.startDate.getTime() >= startDate.getTime() && dateRange.endDate.getTime() <= endDate.getTime()) {
           return { startDate, endDate, taskDays, progress, taskRecord };

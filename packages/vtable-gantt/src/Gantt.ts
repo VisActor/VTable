@@ -159,6 +159,7 @@ export class Gantt extends EventTarget {
     outerFrameStyle: IFrameStyle;
     pixelRatio: number;
     tasksShowMode: TasksShowMode;
+    projectSubTasksExpandable: boolean;
 
     startDateField: string;
     endDateField: string;
@@ -392,6 +393,8 @@ export class Gantt extends EventTarget {
             }
           }
         }
+        // For Project_Sub_Tasks_Inline mode, we keep tree functionality
+        // This is because we want to maintain the expand/collapse functionality for project tasks
       }
       if (
         key === 'hierarchyExpandLevel' &&
@@ -402,6 +405,7 @@ export class Gantt extends EventTarget {
       ) {
         delete listTable_options[key];
       }
+      // For Project_Sub_Tasks_Inline mode, we keep hierarchyExpandLevel
     }
 
     // lineWidthArr[1] = 0;
