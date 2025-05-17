@@ -261,13 +261,10 @@ export function initOptions(gantt: Gantt) {
     fontFamily: options?.taskBar?.labelTextStyle?.fontFamily ?? 'Arial',
     fontSize: options?.taskBar?.labelTextStyle?.fontSize ?? 20,
     color: options?.taskBar?.labelTextStyle?.color ?? '#F01',
-    outsideColor: options?.taskBar?.labelTextStyle?.outsideColor ?? '#333333',
     textAlign: options?.taskBar?.labelTextStyle?.textAlign ?? 'left',
     textBaseline: options?.taskBar?.labelTextStyle?.textBaseline ?? 'middle',
     padding: options?.taskBar?.labelTextStyle?.padding ?? [0, 0, 0, 10],
-    textOverflow: options?.taskBar?.labelTextStyle?.textOverflow,
-    orient: options?.taskBar?.labelTextStyle?.orient,
-    orientHandleWithOverflow: options?.taskBar?.labelTextStyle?.orientHandleWithOverflow
+    textOverflow: options?.taskBar?.labelTextStyle?.textOverflow
   };
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
   gantt.parsedOptions.taskBarCreatable =
@@ -1132,4 +1129,25 @@ export function judgeIfHasMarkLine(data: { startDate: Date; endDate: Date }, mar
     const marklineTime = new Date(item.date).getTime();
     return marklineTime >= beginTime && marklineTime <= endTime;
   });
+}
+
+export const style = {
+  toBoxArray
+};
+
+export function toBoxArray<T>(obj: T | T[]): [T, T, T, T] {
+  if (!Array.isArray(obj)) {
+    return [obj /*top*/, obj /*right*/, obj /*bottom*/, obj /*left*/];
+  }
+  if (obj.length === 3) {
+    return [obj[0] /*top*/, obj[1] /*right*/, obj[2] /*bottom*/, obj[1] /*left*/];
+  }
+  if (obj.length === 2) {
+    return [obj[0] /*top*/, obj[1] /*right*/, obj[0] /*bottom*/, obj[1] /*left*/];
+  }
+  if (obj.length === 1) {
+    return [obj[0] /*top*/, obj[0] /*right*/, obj[0] /*bottom*/, obj[0] /*left*/];
+  }
+  // return obj as [T, T, T, T];//原先这种返回方式，会造成修改引用问题
+  return [obj[0] /*top*/, obj[1] /*right*/, obj[2] /*bottom*/, obj[3] /*left*/];
 }
